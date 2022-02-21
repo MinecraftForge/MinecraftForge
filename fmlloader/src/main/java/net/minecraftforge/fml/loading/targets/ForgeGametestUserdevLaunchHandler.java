@@ -24,7 +24,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import java.util.concurrent.Callable;
 
 public class ForgeGametestUserdevLaunchHandler extends ForgeUserdevLaunchHandler {
-    @Override public String name() { return "forgegametestuserdev"; }
+    @Override public String name() { return "forgegametestserveruserdev"; }
     @Override public Dist getDist() { return Dist.DEDICATED_SERVER; }
 
     @Override

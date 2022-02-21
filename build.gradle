@@ -390,11 +390,11 @@ def sharedFmlonlyForge = { Project prj ->
             }
 
             if (prj.name == 'forge') {
-                gametestserver {
+                gameTestServer {
                     environment 'MOD_CLASSES', '{source_roots}'
                     environment 'MCP_MAPPINGS', '{mcp_mappings}'
 
-                    args '--launchTarget', "${launchPrefix}gametestuserdev"
+                    args '--launchTarget', "${launchPrefix}gametestserveruserdev"
                 }
             }
 
@@ -975,9 +975,9 @@ project(':forge') {
                 }
             }
 
-            forge_gametestserver {
-                taskName 'forge_gametestserver'
-                args '--launchTarget', 'forgegametestdev'
+            forge_gameTestServer {
+                taskName 'forge_gameTestServer'
+                args '--launchTarget', 'forgegametestserverdev'
                 ideaModule "${rootProject.name}.${project.name}.main"
 
                 mods {
@@ -985,9 +985,9 @@ project(':forge') {
                 }
             }
 
-            forge_test_gametestserver {
-                parent runs.forge_gametestserver
-                taskName 'forge_test_gametestserver'
+            forge_test_gameTestServer {
+                parent runs.forge_gameTestServer
+                taskName 'forge_test_gameTestServer'
 
                 ideaModule "${rootProject.name}.${project.name}.test"
 
