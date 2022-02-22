@@ -429,9 +429,9 @@ public class ForgeHooks
         return event.getEntityItem();
     }
 
-    public static void onVanillaGameEvent(Level level, @Nullable Entity cause, GameEvent vanillaEvent, BlockPos position)
+    public static boolean onVanillaGameEvent(Level level, @Nullable Entity cause, GameEvent vanillaEvent, BlockPos position)
     {
-        MinecraftForge.EVENT_BUS.post(new VanillaGameEvent(level, cause, vanillaEvent, position));
+        return !MinecraftForge.EVENT_BUS.post(new VanillaGameEvent(level, cause, vanillaEvent, position));
     }
 
     @Nullable

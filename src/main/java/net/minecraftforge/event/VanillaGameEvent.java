@@ -25,6 +25,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
 
 /**
@@ -32,8 +33,11 @@ import net.minecraftforge.eventbus.api.Event;
  * <br>
  * This allows for listening to Vanilla's events in a more structured and global way that is not tied to needing a block entity listener. <br>
  * <br>
- * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
+ * This event is fired on the {@link MinecraftForge#EVENT_BUS}. <br>
+ * <br>
+ * Cancel this event to prevent Vanilla from posting the {@link GameEvent} to all nearby {@link net.minecraft.world.level.gameevent.GameEventListener GameEventListeners}.
  **/
+@Cancelable
 public class VanillaGameEvent extends Event
 {
     private final Level level;
