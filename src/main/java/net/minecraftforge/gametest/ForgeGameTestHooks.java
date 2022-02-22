@@ -54,18 +54,9 @@ public class ForgeGameTestHooks
     {
         if (!registeredGametests && isGametestEnabled())
         {
-            String enabledNamespacesStr = System.getProperty("forge.enabledGameTestNamespaces");
-            Set<String> enabledNamespaces;
-            if (enabledNamespacesStr == null)
-            {
-                enabledNamespaces = Set.of();
-            }
-            else
-            {
-                enabledNamespaces = Arrays.stream(enabledNamespacesStr.split(",")).collect(Collectors.toUnmodifiableSet());
-            }
-
+            Set<String> enabledNamespaces = getEnabledNamespaces();
             LOGGER.info("Enabled Gametest Namespaces: {}", enabledNamespaces);
+
             Set<Method> gameTestMethods = new HashSet<>();
             RegisterGameTestsEvent event = new RegisterGameTestsEvent(gameTestMethods);
 
@@ -84,6 +75,17 @@ public class ForgeGameTestHooks
 
             registeredGametests = true;
         }
+    }
+
+    private static Set<String> getEnabledNamespaces()
+    {
+        String enabledNamespacesStr = System.getProperty("forge.enabledGameTestNamespaces");
+        if (enabledNamespacesStr == null)
+        {
+            return Set.of();
+        }
+
+        return Arrays.stream(enabledNamespacesStr.split(",")).filter(s -> !s.isBlank()).collect(Collectors.toUnmodifiableSet());
     }
 
     private static void addGameTestMethods(AnnotationData annotationData, Set<Method> gameTestMethods)
