@@ -42,7 +42,7 @@
           if (!Minecraft.m_91085_()) {
              return Sheets.m_110792_();
           } else {
-@@ -340,9 +_,86 @@
+@@ -340,9 +_,75 @@
        }
     }
  
@@ -54,17 +54,36 @@
 +
 +   // FORGE START
 +
-+   private static final Map<net.minecraftforge.registries.IRegistryDelegate<Block>, java.util.function.Predicate<RenderType>> blockRenderChecks = createRenderCheckMap();
-+   private static final Map<net.minecraftforge.registries.IRegistryDelegate<Fluid>, java.util.function.Predicate<RenderType>> fluidRenderChecks = createRenderCheckMap();
-+   private static final java.util.concurrent.locks.StampedLock RENDER_CHECK_LOCK = new java.util.concurrent.locks.StampedLock();
-+   static {
-+      f_109275_.forEach(ItemBlockRenderTypes::setRenderLayer);
-+      f_109276_.forEach(ItemBlockRenderTypes::setRenderLayer);
++   private static final java.util.function.Predicate<RenderType> SOLID_PREDICATE = type -> type == RenderType.m_110451_();
++   private static volatile Map<net.minecraftforge.registries.IRegistryDelegate<Block>, java.util.function.Predicate<RenderType>> blockRenderChecks = createRenderCheckMap(f_109275_);
++   private static volatile Map<net.minecraftforge.registries.IRegistryDelegate<Fluid>, java.util.function.Predicate<RenderType>> fluidRenderChecks = createRenderCheckMap(f_109276_);
++
++   private static <T extends net.minecraftforge.registries.ForgeRegistryEntry<T>> Map<net.minecraftforge.registries.IRegistryDelegate<T>, java.util.function.Predicate<RenderType>> createRenderCheckMap(
++      Map<T, RenderType> source
++   ) {
++      Map<net.minecraftforge.registries.IRegistryDelegate<T>, java.util.function.Predicate<RenderType>> map = createRenderCheckMap(source.size());
++      for (Map.Entry<T, RenderType> entry : source.entrySet()) {
++         RenderType type = entry.getValue();
++         map.put(entry.getKey().delegate, type::equals);
++      }
++      return map;
 +   }
 +
-+   private static <T> Map<net.minecraftforge.registries.IRegistryDelegate<T>, java.util.function.Predicate<RenderType>> createRenderCheckMap() {
-+      java.util.function.Predicate<RenderType> solidPredicate = type -> type == RenderType.m_110451_();
-+      return Util.m_137469_(new it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap<>(), map -> map.defaultReturnValue(solidPredicate));
++   private static <T> Map<net.minecraftforge.registries.IRegistryDelegate<T>, java.util.function.Predicate<RenderType>> copyAndAddRenderCheck(
++           Map<net.minecraftforge.registries.IRegistryDelegate<T>, java.util.function.Predicate<RenderType>> source,
++           net.minecraftforge.registries.IRegistryDelegate<T> key, java.util.function.Predicate<RenderType> predicate
++   ) {
++      Map<net.minecraftforge.registries.IRegistryDelegate<T>, java.util.function.Predicate<RenderType>> map = createRenderCheckMap(source.size());
++      map.putAll(source);
++      map.put(key, predicate);
++      return map;
++   }
++
++   private static <T> Map<net.minecraftforge.registries.IRegistryDelegate<T>, java.util.function.Predicate<RenderType>> createRenderCheckMap(int size) {
++      it.unimi.dsi.fastutil.objects.Object2ObjectMap<net.minecraftforge.registries.IRegistryDelegate<T>, java.util.function.Predicate<RenderType>> map
++              = new it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap<>(size, 0.5F);
++      map.defaultReturnValue(SOLID_PREDICATE);
++      return map;
 +   }
 +
 +   public static boolean canRenderInLayer(BlockState state, RenderType type) {
@@ -72,32 +91,12 @@
 +      if (block instanceof LeavesBlock) {
 +         return f_109277_ ? type == RenderType.m_110457_() : type == RenderType.m_110451_();
 +      } else {
-+         return canRenderInLayer(type, blockRenderChecks, block.delegate);
++         return blockRenderChecks.get(block.delegate).test(type);
 +      }
 +   }
 +
 +   public static boolean canRenderInLayer(FluidState fluid, RenderType type) {
-+      return canRenderInLayer(type, fluidRenderChecks, fluid.m_76152_().delegate);
-+   }
-+
-+   private static <T> boolean canRenderInLayer(RenderType type, Map<T, java.util.function.Predicate<RenderType>> map, T key) {
-+      java.util.concurrent.locks.StampedLock lock = RENDER_CHECK_LOCK;
-+
-+      // attempt optimistic read to the render type predicate without blocking
-+      long stamp = lock.tryOptimisticRead();
-+      if (stamp != 0) {
-+         java.util.function.Predicate<RenderType> predicate = map.get(key);
-+         if (lock.validate(stamp)) {
-+            return predicate.test(type);
-+         }
-+      }
-+
-+      // optimistic read failed: block to wait for safe access
-+      stamp = lock.readLock();
-+      java.util.function.Predicate<RenderType> predicate = map.get(key);
-+      lock.unlockRead(stamp);
-+
-+      return predicate.test(type);
++      return fluidRenderChecks.get(fluid.m_76152_().delegate).test(type);
 +   }
 +
 +   public static void setRenderLayer(Block block, RenderType type) {
@@ -105,13 +104,8 @@
 +      setRenderLayer(block, type::equals);
 +   }
 +
-+   public static void setRenderLayer(Block block, java.util.function.Predicate<RenderType> predicate) {
-+      long stamp = RENDER_CHECK_LOCK.writeLock();
-+      try {
-+         blockRenderChecks.put(block.delegate, predicate);
-+      } finally {
-+         RENDER_CHECK_LOCK.unlockWrite(stamp);
-+      }
++   public static synchronized void setRenderLayer(Block block, java.util.function.Predicate<RenderType> predicate) {
++      blockRenderChecks = copyAndAddRenderCheck(blockRenderChecks, block.delegate, predicate);
 +   }
 +
 +   public static void setRenderLayer(Fluid fluid, RenderType type) {
@@ -119,13 +113,8 @@
 +      setRenderLayer(fluid, type::equals);
 +   }
 +
-+   public static void setRenderLayer(Fluid fluid, java.util.function.Predicate<RenderType> predicate) {
-+      long stamp = RENDER_CHECK_LOCK.writeLock();
-+      try {
-+         fluidRenderChecks.put(fluid.delegate, predicate);
-+      } finally {
-+         RENDER_CHECK_LOCK.unlockWrite(stamp);
-+      }
++   public static synchronized void setRenderLayer(Fluid fluid, java.util.function.Predicate<RenderType> predicate) {
++      fluidRenderChecks = copyAndAddRenderCheck(fluidRenderChecks, fluid.delegate, predicate);
     }
  
     public static void m_109291_(boolean p_109292_) {
