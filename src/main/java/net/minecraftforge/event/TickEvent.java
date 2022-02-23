@@ -51,6 +51,12 @@ public class TickEvent extends Event
 
         private final BooleanSupplier haveTime;
 
+        @Deprecated(forRemoval = true)
+        public ServerTickEvent(Phase phase)
+        {
+            this(phase, () -> false);
+        }
+
         public ServerTickEvent(Phase phase, BooleanSupplier haveTime)
         {
             super(Type.SERVER, LogicalSide.SERVER, phase);
@@ -78,6 +84,13 @@ public class TickEvent extends Event
     public static class WorldTickEvent extends TickEvent {
         public final Level world;
         private final BooleanSupplier haveTime;
+
+        @Deprecated(forRemoval = true)
+        public WorldTickEvent(LogicalSide side, Phase phase, Level world)
+        {
+            this(side, phase, world, () -> false);
+        }
+
         public WorldTickEvent(LogicalSide side, Phase phase, Level world, BooleanSupplier haveTime)
         {
             super(Type.WORLD, side, phase);
