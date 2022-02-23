@@ -58,6 +58,21 @@ public class CustomParticleTypeTest
                 ParticleRenderType.TERRAIN_SHEET.end(tess);
             }
         };
+        private static final ParticleRenderType CUSTOM_TYPE_TWO = new ParticleRenderType()
+        {
+            @Override
+            public void begin(BufferBuilder buffer, TextureManager texMgr)
+            {
+                Minecraft.getInstance().gameRenderer.lightTexture().turnOnLightLayer();
+                ParticleRenderType.TERRAIN_SHEET.begin(buffer, texMgr);
+            }
+
+            @Override
+            public void end(Tesselator tess)
+            {
+                ParticleRenderType.TERRAIN_SHEET.end(tess);
+            }
+        };
 
         private static class CustomParticle extends TerrainParticle
         {
@@ -72,6 +87,19 @@ public class CustomParticleTypeTest
                 return CUSTOM_TYPE;
             }
         }
+        private static class AnotherCustomParticle extends TerrainParticle
+        {
+            public AnotherCustomParticle(ClientLevel level, double x, double y, double z)
+            {
+                super(level, x, y, z, 0, .25, 0, Blocks.SAND.defaultBlockState());
+            }
+
+            @Override
+            public ParticleRenderType getRenderType()
+            {
+                return CUSTOM_TYPE_TWO;
+            }
+        }
 
         @SubscribeEvent
         public static void onClientTick(final TickEvent.ClientTickEvent event)
@@ -83,6 +111,7 @@ public class CustomParticleTypeTest
             if (player == null || level == null || !player.isShiftKeyDown()) { return; }
 
             Minecraft.getInstance().particleEngine.add(new CustomParticle(level, player.getX(), player.getY(), player.getZ()));
+            Minecraft.getInstance().particleEngine.add(new AnotherCustomParticle(level, player.getX(), player.getY(), player.getZ()));
         }
     }
 }

@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2021.
+ * Copyright (c) 2016-2022.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -44,6 +44,7 @@ import net.minecraftforge.fml.util.thread.EffectiveSide;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Locale;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 @Mod(CapabilitiesTest.MODID)
@@ -125,7 +126,7 @@ public class CapabilitiesTest
                 }
             });
 
-            messages.add(String.format("Attached capability to %s in %s", event.getObject().getClass(), EffectiveSide.get()));
+            messages.add(String.format(Locale.ENGLISH, "Attached capability to %s in %s", event.getObject().getClass(), EffectiveSide.get()));
         }
     }
 
