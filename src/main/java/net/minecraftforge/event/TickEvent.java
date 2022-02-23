@@ -51,7 +51,12 @@ public class TickEvent extends Event
 
         private final BooleanSupplier haveTime;
 
-        @Deprecated(forRemoval = true)
+        /**
+         * TODO: Remove in 1.19
+         * 
+         * @deprecated Use {@link ServerTickEvent#ServerTickEvent(Phase, BooleanSupplier)}
+         */
+        @Deprecated(forRemoval = true, since = "1.18.1")
         public ServerTickEvent(Phase phase)
         {
             this(phase, () -> false);
@@ -85,7 +90,12 @@ public class TickEvent extends Event
         public final Level world;
         private final BooleanSupplier haveTime;
 
-        @Deprecated(forRemoval = true)
+        /**
+         * TODO: Remove in 1.19
+         * 
+         * @deprecated Use {@link WorldTickEvent#WorldTickEvent(LogicalSide, Phase, Level, BooleanSupplier)}
+         */
+        @Deprecated(forRemoval = true, since = "1.18.1")
         public WorldTickEvent(LogicalSide side, Phase phase, Level world)
         {
             this(side, phase, world, () -> false);

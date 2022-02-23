@@ -857,6 +857,11 @@ public class ForgeEventFactory
         MinecraftForge.EVENT_BUS.post(new TickEvent.PlayerTickEvent(TickEvent.Phase.END, player));
     }
 
+    /**
+     * TODO: Remove in 1.19
+     * 
+     * @deprecated Use {@link #onPreWorldTick(Level, BooleanSupplier)}
+     */
     @Deprecated(forRemoval = true)
     public static void onPreWorldTick(Level world)
     {
@@ -868,6 +873,11 @@ public class ForgeEventFactory
         MinecraftForge.EVENT_BUS.post(new TickEvent.WorldTickEvent(LogicalSide.SERVER, TickEvent.Phase.START, world, haveTime));
     }
 
+    /**
+     * TODO: Remove in 1.19
+     * 
+     * @deprecated Use {@link #onPostWorldTick(Level, BooleanSupplier)}
+     */
     @Deprecated(forRemoval = true)
     public static void onPostWorldTick(Level world)
     {
@@ -888,8 +898,13 @@ public class ForgeEventFactory
     {
         MinecraftForge.EVENT_BUS.post(new TickEvent.ClientTickEvent(TickEvent.Phase.END));
     }
-    
-    @Deprecated(forRemoval = true)
+
+    /**
+     * TODO: Remove in 1.19
+     * 
+     * @deprecated Use {@link #onPreServerTick(BooleanSupplier)}
+     */
+    @Deprecated(forRemoval = true, since = "1.18.1")
     public static void onPreServerTick()
     {
         onPreServerTick(() -> false);
@@ -900,6 +915,11 @@ public class ForgeEventFactory
         MinecraftForge.EVENT_BUS.post(new TickEvent.ServerTickEvent(TickEvent.Phase.START, haveTime));
     }
 
+    /**
+     * TODO: Remove in 1.19
+     * 
+     * @deprecated Use {@link #onPostServerTick(BooleanSupplier)}
+     */
     @Deprecated(forRemoval = true)
     public static void onPostServerTick()
     {
