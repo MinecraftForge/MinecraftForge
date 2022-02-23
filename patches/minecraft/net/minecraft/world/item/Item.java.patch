@@ -29,6 +29,15 @@
     public void m_142023_(ItemEntity p_150887_) {
     }
  
+@@ -126,7 +_,7 @@
+    public InteractionResultHolder<ItemStack> m_7203_(Level p_41432_, Player p_41433_, InteractionHand p_41434_) {
+       if (this.m_41472_()) {
+          ItemStack itemstack = p_41433_.m_21120_(p_41434_);
+-         if (p_41433_.m_36391_(this.m_41473_().m_38747_())) {
++         if (p_41433_.m_36391_(this.getFoodProperties(itemstack, p_41433_).m_38747_())) {
+             p_41433_.m_6672_(p_41434_);
+             return InteractionResultHolder.m_19096_(itemstack);
+          } else {
 @@ -141,10 +_,12 @@
        return this.m_41472_() ? p_41411_.m_5584_(p_41410_, p_41409_) : p_41409_;
     }
@@ -55,6 +64,15 @@
     public boolean m_41470_() {
        return this.f_41378_ != null;
     }
+@@ -243,7 +_,7 @@
+ 
+    public int m_8105_(ItemStack p_41454_) {
+       if (p_41454_.m_41720_().m_41472_()) {
+-         return this.m_41473_().m_38748_() ? 16 : 32;
++         return this.getFoodProperties(p_41454_, null).m_38748_() ? 16 : 32;
+       } else {
+          return 0;
+       }
 @@ -285,7 +_,7 @@
     }
  

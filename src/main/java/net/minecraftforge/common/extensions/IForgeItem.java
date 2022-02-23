@@ -28,6 +28,7 @@ import javax.annotation.Nullable;
 import com.google.common.collect.Multimap;
 
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.block.state.BlockState;
@@ -762,6 +763,19 @@ public interface IForgeItem
     default int getDefaultTooltipHideFlags(@Nonnull ItemStack stack)
     {
         return 0;
+    }
+
+    /**
+     * Get the food properties for this item.
+     * Use this instead of the {@link Item#getFoodProperties()} method, for ItemStack sensitivity.
+     *
+     * @param stack The ItemStack the entity wants to eat.
+     * @param entity The entity which wants to eat the food. Be aware that this can be null!
+     * @return The current FoodProperties for the item.
+     */
+    default FoodProperties getFoodProperties(ItemStack stack, @Nullable LivingEntity entity)
+    {
+        return self().getFoodProperties();
     }
 
 }
