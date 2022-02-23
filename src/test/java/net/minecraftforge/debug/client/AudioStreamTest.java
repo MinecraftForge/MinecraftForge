@@ -1,12 +1,34 @@
+/*
+ * Minecraft Forge
+ * Copyright (c) 2016-2022.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package net.minecraftforge.debug.client;
 
+import com.mojang.math.Vector3d;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.sounds.AbstractSoundInstance;
 import net.minecraft.client.resources.sounds.Sound;
+import net.minecraft.client.resources.sounds.SoundInstance;
 import net.minecraft.client.sounds.AudioStream;
 import net.minecraft.client.sounds.SoundBufferLibrary;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.client.event.ClientChatEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
@@ -18,6 +40,11 @@ import javax.sound.sampled.AudioFormat;
 import java.nio.ByteBuffer;
 import java.util.concurrent.CompletableFuture;
 
+/**
+ * Tests support for custom {@link AudioStream}s ({@link SoundInstance#getStream(SoundBufferLibrary, Sound, boolean)}.
+ *
+ * When the message "sine wave" is sent in chat, this should play a sine wave of 220Hz at the player's current position.
+ */
 @Mod(AudioStreamTest.MOD_ID)
 public class AudioStreamTest
 {
@@ -28,24 +55,31 @@ public class AudioStreamTest
     {
         if (ENABLED && FMLLoader.getDist().isClient())
         {
-            MinecraftForge.EVENT_BUS.addListener(this::onClientChatEvent);
+            MinecraftForge.EVENT_BUS.addListener(ClientHandler::onClientChatEvent);
         }
     }
 
-    public void onClientChatEvent(ClientChatEvent event)
+    public static class ClientHandler
     {
-        if (event.getMessage().equalsIgnoreCase("sine wave"))
+        public static void onClientChatEvent(ClientChatEvent event)
         {
-            event.setCanceled(true);
-            Minecraft.getInstance().getSoundManager().play(new SineSound());
+            if (event.getMessage().equalsIgnoreCase("sine wave"))
+            {
+                event.setCanceled(true);
+                var mc = Minecraft.getInstance();
+                mc.getSoundManager().play(new SineSound(mc.player.position()));
+            }
         }
     }
 
     public static class SineSound extends AbstractSoundInstance
     {
-        protected SineSound()
+        protected SineSound(Vec3 position)
         {
             super(new ResourceLocation(MOD_ID, "sine_wave"), SoundSource.BLOCKS);
+            x = position.x;
+            y = position.y;
+            z = position.z;
         }
 
         @NotNull
