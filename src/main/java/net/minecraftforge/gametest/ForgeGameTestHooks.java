@@ -25,6 +25,7 @@ import net.minecraft.gametest.framework.GameTestRegistry;
 import net.minecraftforge.event.RegisterGameTestsEvent;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoader;
+import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.forgespi.language.ModFileScanData;
 import net.minecraftforge.forgespi.language.ModFileScanData.AnnotationData;
 import org.apache.logging.log4j.LogManager;
@@ -46,12 +47,12 @@ public class ForgeGameTestHooks
 
     public static boolean isGametestEnabled()
     {
-        return SharedConstants.IS_RUNNING_IN_IDE || isGametestServer() || Boolean.getBoolean("forge.enableGameTest");
+        return !FMLLoader.isProduction() && (SharedConstants.IS_RUNNING_IN_IDE || isGametestServer() || Boolean.getBoolean("forge.enableGameTest"));
     }
 
     public static boolean isGametestServer()
     {
-        return Boolean.getBoolean("forge.gameTestServer");
+        return !FMLLoader.isProduction() && Boolean.getBoolean("forge.gameTestServer");
     }
 
     @SuppressWarnings("deprecation")
