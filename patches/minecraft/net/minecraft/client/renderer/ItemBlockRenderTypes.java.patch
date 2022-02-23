@@ -42,7 +42,7 @@
           if (!Minecraft.m_91085_()) {
              return Sheets.m_110792_();
           } else {
-@@ -340,9 +_,75 @@
+@@ -340,9 +_,70 @@
        }
     }
  
@@ -55,35 +55,18 @@
 +   // FORGE START
 +
 +   private static final java.util.function.Predicate<RenderType> SOLID_PREDICATE = type -> type == RenderType.m_110451_();
-+   private static volatile Map<net.minecraftforge.registries.IRegistryDelegate<Block>, java.util.function.Predicate<RenderType>> blockRenderChecks = createRenderCheckMap(f_109275_);
-+   private static volatile Map<net.minecraftforge.registries.IRegistryDelegate<Fluid>, java.util.function.Predicate<RenderType>> fluidRenderChecks = createRenderCheckMap(f_109276_);
++   private static final Map<net.minecraftforge.registries.IRegistryDelegate<Block>, java.util.function.Predicate<RenderType>> blockRenderChecks = createRenderCheckMap(f_109275_);
++   private static final Map<net.minecraftforge.registries.IRegistryDelegate<Fluid>, java.util.function.Predicate<RenderType>> fluidRenderChecks = createRenderCheckMap(f_109276_);
 +
 +   private static <T extends net.minecraftforge.registries.ForgeRegistryEntry<T>> Map<net.minecraftforge.registries.IRegistryDelegate<T>, java.util.function.Predicate<RenderType>> createRenderCheckMap(
-+      Map<T, RenderType> source
++           Map<T, RenderType> vanillaMap
 +   ) {
-+      Map<net.minecraftforge.registries.IRegistryDelegate<T>, java.util.function.Predicate<RenderType>> map = createRenderCheckMap(source.size());
-+      for (Map.Entry<T, RenderType> entry : source.entrySet()) {
-+         RenderType type = entry.getValue();
-+         map.put(entry.getKey().delegate, type::equals);
-+      }
-+      return map;
-+   }
-+
-+   private static <T> Map<net.minecraftforge.registries.IRegistryDelegate<T>, java.util.function.Predicate<RenderType>> copyAndAddRenderCheck(
-+           Map<net.minecraftforge.registries.IRegistryDelegate<T>, java.util.function.Predicate<RenderType>> source,
-+           net.minecraftforge.registries.IRegistryDelegate<T> key, java.util.function.Predicate<RenderType> predicate
-+   ) {
-+      Map<net.minecraftforge.registries.IRegistryDelegate<T>, java.util.function.Predicate<RenderType>> map = createRenderCheckMap(source.size());
-+      map.putAll(source);
-+      map.put(key, predicate);
-+      return map;
-+   }
-+
-+   private static <T> Map<net.minecraftforge.registries.IRegistryDelegate<T>, java.util.function.Predicate<RenderType>> createRenderCheckMap(int size) {
-+      it.unimi.dsi.fastutil.objects.Object2ObjectMap<net.minecraftforge.registries.IRegistryDelegate<T>, java.util.function.Predicate<RenderType>> map
-+              = new it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap<>(size, 0.5F);
-+      map.defaultReturnValue(SOLID_PREDICATE);
-+      return map;
++      return Util.m_137469_(new it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap<>(vanillaMap.size(), 0.5F), map -> {
++         map.defaultReturnValue(SOLID_PREDICATE);
++         for (Map.Entry<T, RenderType> entry : vanillaMap.entrySet()) {
++            map.put(entry.getKey().delegate, createMatchingLayerPredicate(entry.getValue()));
++         }
++      });
 +   }
 +
 +   public static boolean canRenderInLayer(BlockState state, RenderType type) {
@@ -100,21 +83,33 @@
 +   }
 +
 +   public static void setRenderLayer(Block block, RenderType type) {
-+      java.util.Objects.requireNonNull(type);
-+      setRenderLayer(block, type::equals);
++      setRenderLayer(block, createMatchingLayerPredicate(type));
 +   }
 +
 +   public static synchronized void setRenderLayer(Block block, java.util.function.Predicate<RenderType> predicate) {
-+      blockRenderChecks = copyAndAddRenderCheck(blockRenderChecks, block.delegate, predicate);
++      checkClientLoading();
++      blockRenderChecks.put(block.delegate, predicate);
 +   }
 +
 +   public static void setRenderLayer(Fluid fluid, RenderType type) {
-+      java.util.Objects.requireNonNull(type);
-+      setRenderLayer(fluid, type::equals);
++      setRenderLayer(fluid, createMatchingLayerPredicate(type));
 +   }
 +
 +   public static synchronized void setRenderLayer(Fluid fluid, java.util.function.Predicate<RenderType> predicate) {
-+      fluidRenderChecks = copyAndAddRenderCheck(fluidRenderChecks, fluid.delegate, predicate);
++      checkClientLoading();
++      fluidRenderChecks.put(fluid.delegate, predicate);
++   }
++
++   private static void checkClientLoading() {
++      com.google.common.base.Preconditions.checkState(net.minecraftforge.client.loading.ClientModLoader.isLoading(),
++              "Render layers can only be set during client loading! " +
++                      "This might ideally be done from `FMLClientSetupEvent`."
++      );
++   }
++
++   private static java.util.function.Predicate<RenderType> createMatchingLayerPredicate(RenderType type) {
++      java.util.Objects.requireNonNull(type);
++      return type::equals;
     }
  
     public static void m_109291_(boolean p_109292_) {
