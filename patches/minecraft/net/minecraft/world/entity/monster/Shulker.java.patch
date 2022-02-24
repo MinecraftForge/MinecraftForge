@@ -1,0 +1,15 @@
+--- a/net/minecraft/world/entity/monster/Shulker.java
++++ b/net/minecraft/world/entity/monster/Shulker.java
+@@ -356,6 +_,12 @@
+             if (blockpos1.m_123342_() > this.f_19853_.m_141937_() && this.f_19853_.m_46859_(blockpos1) && this.f_19853_.m_6857_().m_61937_(blockpos1) && this.f_19853_.m_45756_(this, (new AABB(blockpos1)).m_82406_(1.0E-6D))) {
+                Direction direction = this.m_149810_(blockpos1);
+                if (direction != null) {
++                  net.minecraftforge.event.entity.EntityTeleportEvent.EnderEntity.EnderEntity event = net.minecraftforge.event.ForgeEventFactory.onEnderTeleport(this, blockpos1.m_123341_(), blockpos1.m_123342_(), blockpos1.m_123343_());
++                  if (event.isCanceled()) direction = null;
++                  blockpos1 = new BlockPos(event.getTargetX(), event.getTargetY(), event.getTargetZ());
++               }
++
++               if (direction != null) {
+                   this.m_19877_();
+                   this.m_149788_(direction);
+                   this.m_5496_(SoundEvents.f_12418_, 1.0F, 1.0F);
