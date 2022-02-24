@@ -5,7 +5,7 @@
        double d2 = this.f_9245_.m_20189_() - ((double)p_9282_.m_123343_() + 0.5D);
        double d3 = d0 * d0 + d1 * d1 + d2 * d2;
 -      if (d3 > 36.0D) {
-+      double dist = f_9245_.m_21051_(net.minecraftforge.common.ForgeMod.REACH_DISTANCE.get()).m_22135_() + 1;
++      double dist = f_9245_.m_21051_(net.minecraftforge.common.ForgeMod.REACH_DISTANCE.get()).m_22135_() + 1.5D;
 +      net.minecraftforge.event.entity.player.PlayerInteractEvent.LeftClickBlock event = net.minecraftforge.common.ForgeHooks.onLeftClickBlock(f_9245_, p_9282_, p_9284_);
 +      if (event.isCanceled() || (!this.m_9295_() && event.getUseItem() == net.minecraftforge.eventbus.api.Event.Result.DENY)) { // Restore block and te data
 +         f_9245_.f_8906_.m_141995_(new ClientboundBlockBreakAckPacket(p_9282_, f_9244_.m_8055_(p_9282_), p_9283_, false, "mod canceled"));

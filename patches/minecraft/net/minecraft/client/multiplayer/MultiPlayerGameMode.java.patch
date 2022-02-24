@@ -74,7 +74,7 @@
     public float m_105286_() {
 -      return this.f_105197_.m_46408_() ? 5.0F : 4.5F;
 +      float attrib = (float)f_105189_.f_91074_.m_21051_(net.minecraftforge.common.ForgeMod.REACH_DISTANCE.get()).m_22135_();
-+      return this.f_105197_.m_46408_() ? attrib : attrib - 0.5F;
++      return this.f_105197_.m_46408_() ? attrib + 0.5F : attrib;
     }
  
     public void m_105287_() {

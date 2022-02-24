@@ -70,7 +70,7 @@
        float f7 = f2 * f4;
 -      double d0 = 5.0D;
 -      Vec3 vec31 = vec3.m_82520_((double)f6 * 5.0D, (double)f5 * 5.0D, (double)f7 * 5.0D);
-+      double d0 = p_41437_.m_21051_(net.minecraftforge.common.ForgeMod.REACH_DISTANCE.get()).m_22135_();;
++      double d0 = p_41437_.m_21051_(net.minecraftforge.common.ForgeMod.REACH_DISTANCE.get()).m_22135_() + 0.5D;
 +      Vec3 vec31 = vec3.m_82520_((double)f6 * d0, (double)f5 * d0, (double)f7 * d0);
        return p_41436_.m_45547_(new ClipContext(vec3, vec31, ClipContext.Block.OUTLINE, p_41438_, p_41437_));
     }

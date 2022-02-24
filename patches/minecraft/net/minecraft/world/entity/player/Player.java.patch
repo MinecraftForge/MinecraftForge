@@ -23,7 +23,7 @@
  
     public static AttributeSupplier.Builder m_36340_() {
 -      return LivingEntity.m_21183_().m_22268_(Attributes.f_22281_, 1.0D).m_22268_(Attributes.f_22279_, (double)0.1F).m_22266_(Attributes.f_22283_).m_22266_(Attributes.f_22286_);
-+       return LivingEntity.m_21183_().m_22268_(Attributes.f_22281_, 1.0D).m_22268_(Attributes.f_22279_, (double) 0.1F).m_22266_(Attributes.f_22283_).m_22266_(Attributes.f_22286_).m_22266_(net.minecraftforge.common.ForgeMod.REACH_DISTANCE.get()).m_22266_(Attributes.f_22282_);
++       return LivingEntity.m_21183_().m_22268_(Attributes.f_22281_, 1.0D).m_22268_(Attributes.f_22279_, (double) 0.1F).m_22266_(Attributes.f_22283_).m_22266_(Attributes.f_22286_).m_22266_(net.minecraftforge.common.ForgeMod.REACH_DISTANCE.get()).m_22266_(Attributes.f_22282_).m_22266_(net.minecraftforge.common.ForgeMod.ATTACK_RANGE.get());
     }
  
     protected void m_8097_() {
@@ -232,15 +232,18 @@
                 }
  
                 float f4 = 0.0F;
-@@ -1097,7 +_,7 @@
+@@ -1097,8 +_,9 @@
                    if (flag3) {
                       float f3 = 1.0F + EnchantmentHelper.m_44821_(this) * f;
  
 -                     for(LivingEntity livingentity : this.f_19853_.m_45976_(LivingEntity.class, p_36347_.m_142469_().m_82377_(1.0D, 0.25D, 1.0D))) {
+-                        if (livingentity != this && livingentity != p_36347_ && !this.m_7307_(livingentity) && (!(livingentity instanceof ArmorStand) || !((ArmorStand)livingentity).m_31677_()) && this.m_20280_(livingentity) < 9.0D) {
 +                     for(LivingEntity livingentity : this.f_19853_.m_45976_(LivingEntity.class, this.m_21120_(InteractionHand.MAIN_HAND).getSweepHitBox(this, p_36347_))) {
-                         if (livingentity != this && livingentity != p_36347_ && !this.m_7307_(livingentity) && (!(livingentity instanceof ArmorStand) || !((ArmorStand)livingentity).m_31677_()) && this.m_20280_(livingentity) < 9.0D) {
++                        double atkRange = this.m_21133_(net.minecraftforge.common.ForgeMod.ATTACK_RANGE.get()); //Forge: Change constant value to reflect attack range attribute.
++                        if (livingentity != this && livingentity != p_36347_ && !this.m_7307_(livingentity) && (!(livingentity instanceof ArmorStand) || !((ArmorStand)livingentity).m_31677_()) && this.m_20280_(livingentity) < atkRange * atkRange) {
                             livingentity.m_147240_((double)0.4F, (double)Mth.m_14031_(this.m_146908_() * ((float)Math.PI / 180F)), (double)(-Mth.m_14089_(this.m_146908_() * ((float)Math.PI / 180F))));
                             livingentity.m_6469_(DamageSource.m_19344_(this), f3);
+                         }
 @@ -1139,13 +_,15 @@
                    EnchantmentHelper.m_44896_(this, p_36347_);
                    ItemStack itemstack1 = this.m_21205_();
