@@ -226,7 +226,15 @@
        return multimap;
     }
  
-@@ -954,6 +_,23 @@
+@@ -948,12 +_,31 @@
+       this.m_41720_().m_5929_(p_41732_, p_41733_, this, p_41734_);
+    }
+ 
++   /** @deprecated Forge: Use damage source sensitive version */
++   @Deprecated
+    public void m_150924_(ItemEntity p_150925_) {
+       this.m_41720_().m_142023_(p_150925_);
+    }
  
     public boolean m_41614_() {
        return this.m_41720_().m_41472_();
