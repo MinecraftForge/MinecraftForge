@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2021.
+ * Copyright (c) 2016-2022.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -70,6 +70,7 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.storage.WorldData;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.LootTable;
@@ -137,6 +138,7 @@ import net.minecraftforge.event.DifficultyChangeEvent;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.ItemAttributeModifierEvent;
 import net.minecraftforge.event.ServerChatEvent;
+import net.minecraftforge.event.VanillaGameEvent;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.event.entity.EntityAttributeModificationEvent;
 import net.minecraftforge.event.entity.EntityEvent;
@@ -349,7 +351,7 @@ public class ForgeHooks
         return (MinecraftForge.EVENT_BUS.post(event) ? null : new float[]{event.getDistance(), event.getDamageMultiplier()});
     }
 
-    public static int getLootingLevel(Entity target, @Nullable Entity killer, DamageSource cause)
+    public static int getLootingLevel(Entity target, @Nullable Entity killer, @Nullable DamageSource cause)
     {
         int looting = 0;
         if (killer instanceof LivingEntity)
@@ -359,7 +361,7 @@ public class ForgeHooks
         return looting;
     }
 
-    public static int getLootingLevel(LivingEntity target, DamageSource cause, int level)
+    public static int getLootingLevel(LivingEntity target, @Nullable DamageSource cause, int level)
     {
         LootingLevelEvent event = new LootingLevelEvent(target, cause, level);
         MinecraftForge.EVENT_BUS.post(event);
@@ -427,6 +429,11 @@ public class ForgeHooks
         if (!player.level.isClientSide)
             player.getCommandSenderWorld().addFreshEntity(event.getEntityItem());
         return event.getEntityItem();
+    }
+
+    public static boolean onVanillaGameEvent(Level level, @Nullable Entity cause, GameEvent vanillaEvent, BlockPos position)
+    {
+        return !MinecraftForge.EVENT_BUS.post(new VanillaGameEvent(level, cause, vanillaEvent, position));
     }
 
     @Nullable
@@ -771,15 +778,25 @@ public class ForgeHooks
         MinecraftForge.EVENT_BUS.post(new PlayerInteractEvent.LeftClickEmpty(player));
     }
 
+    @Deprecated(forRemoval = true, since = "1.18")
     public static boolean onChangeGameMode(Player player, GameType currentGameMode, GameType newGameMode)
     {
-        if (currentGameMode != newGameMode)
+        return onChangeGameType(player, currentGameMode, newGameMode) != null;
+    }
+
+    /**
+     * @return null if game type should not be changed, desired new GameType otherwise
+     */
+    @Nullable
+    public static GameType onChangeGameType(Player player, GameType currentGameType, GameType newGameType)
+    {
+        if (currentGameType != newGameType)
         {
-            PlayerEvent.PlayerChangeGameModeEvent evt = new PlayerEvent.PlayerChangeGameModeEvent(player, currentGameMode, newGameMode);
+            PlayerEvent.PlayerChangeGameModeEvent evt = new PlayerEvent.PlayerChangeGameModeEvent(player, currentGameType, newGameType);
             MinecraftForge.EVENT_BUS.post(evt);
-            return !evt.isCanceled();
+            return evt.isCanceled() ? null : evt.getNewGameMode();
         }
-        return true;
+        return newGameType;
     }
 
     private static ThreadLocal<Deque<LootTableContext>> lootContext = new ThreadLocal<Deque<LootTableContext>>();

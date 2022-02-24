@@ -228,6 +228,16 @@
     }
  
     protected void m_5907_() {
+@@ -1306,7 +_,8 @@
+ 
+    protected void m_21226_() {
+       if (this.f_19853_ instanceof ServerLevel && (this.m_6124_() || this.f_20889_ > 0 && this.m_6149_() && this.f_19853_.m_46469_().m_46207_(GameRules.f_46135_))) {
+-         ExperienceOrb.m_147082_((ServerLevel)this.f_19853_, this.m_20182_(), this.m_6552_(this.f_20888_));
++         int reward = net.minecraftforge.event.ForgeEventFactory.getExperienceDrop(this, this.f_20888_, this.m_6552_(this.f_20888_));
++         ExperienceOrb.m_147082_((ServerLevel)this.f_19853_, this.m_20182_(), reward);
+       }
+ 
+    }
 @@ -1322,7 +_,8 @@
        ResourceLocation resourcelocation = this.m_5743_();
        LootTable loottable = this.f_19853_.m_142572_().m_129898_().m_79217_(resourcelocation);

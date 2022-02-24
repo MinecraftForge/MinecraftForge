@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2021.
+ * Copyright (c) 2016-2022.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -24,6 +24,8 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraftforge.fml.ModList;
+
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 class ModListCommand {
@@ -35,7 +37,7 @@ class ModListCommand {
                             ctx.getSource().sendSuccess(new TranslatableComponent("commands.forge.mods.list",
                                     ModList.get().applyForEachModFile(modFile ->
                                             // locator - filename : firstmod (version) - numberofmods\n
-                                            String.format("%s %s : %s (%s) - %d",
+                                            String.format(Locale.ROOT, "%s %s : %s (%s) - %d",
                                                     modFile.getLocator().name().replace(' ', '_'),
                                                     modFile.getFileName(),
                                                     modFile.getModInfos().get(0).getModId(),

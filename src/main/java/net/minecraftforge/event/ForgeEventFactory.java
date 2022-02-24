@@ -206,6 +206,7 @@ public class ForgeEventFactory
         return event.getResult();
     }
 
+    @Deprecated(forRemoval = true, since = "1.18.1")
     public static boolean canEntitySpawnSpawner(Mob entity, Level world, float x, float y, float z, BaseSpawner spawner)
     {
         Result result = canEntitySpawn(entity, world, x, y, z, spawner, MobSpawnType.SPAWNER);
@@ -215,7 +216,12 @@ public class ForgeEventFactory
             return result == Result.ALLOW;
     }
 
+    @Deprecated(forRemoval = true, since = "1.18.1")
     public static boolean doSpecialSpawn(Mob entity, Level world, float x, float y, float z, BaseSpawner spawner, MobSpawnType spawnReason)
+    {
+        return doSpecialSpawn(entity, (LevelAccessor)world, x, y, z, spawner, spawnReason);
+    }
+    public static boolean doSpecialSpawn(Mob entity, LevelAccessor world, float x, float y, float z, BaseSpawner spawner, MobSpawnType spawnReason)
     {
         return MinecraftForge.EVENT_BUS.post(new LivingSpawnEvent.SpecialSpawn(entity, world, x, y, z, spawner, spawnReason));
     }
@@ -257,7 +263,7 @@ public class ForgeEventFactory
         MinecraftForge.EVENT_BUS.post(event);
         return event.getDisplayname();
     }
-    
+
     public static Component getPlayerTabListDisplayName(Player player)
     {
         PlayerEvent.TabListNameFormat event = new PlayerEvent.TabListNameFormat(player);

@@ -17,6 +17,8 @@ license="LGPL v2.1"
 [[mods]]
     modId="slipperiness_test"
 [[mods]]
+    modId="vanilla_game_event_test"
+[[mods]]
     modId="custom_slime_block_test"
 [[mods]]
     modId="client_chat_event_test"
@@ -177,6 +179,8 @@ license="LGPL v2.1"
 [[mods]]
     modId="capabilities_test"
 [[mods]]
+    modId="custom_mob_bucket_test"
+[[mods]]
     modId="custom_armor_model_test"
 [[mods]]
     modId="duplicate_optional_tag_test"
@@ -190,5 +194,11 @@ license="LGPL v2.1"
     modId="ingredient_invalidation"
 [[mods]]
     modId="client_command_test"
+[[mods]]
+    modId="registry_codec_test"
+[[mods]]
+    modId="registry_object_test"
+[[mods]]
+    modId="hidden_tooltip_parts"
 
 # ADD ABOVE THIS LINE

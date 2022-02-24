@@ -22,6 +22,7 @@ package net.minecraftforge.common.extensions;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.monster.EnderMan;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.state.pattern.BlockInWorld;
@@ -282,6 +283,17 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundTag>, I
     default void onHorseArmorTick(Level world, Mob horse)
     {
         self().getItem().onHorseArmorTick(self(), world, horse);
+    }
+
+    /**
+     * Called when an item entity for this stack is destroyed.
+     *
+     * @param itemEntity   The item entity that was destroyed.
+     * @param damageSource Damage source that caused the item entity to "die".
+     */
+    default void onDestroyed(ItemEntity itemEntity, DamageSource damageSource)
+    {
+        self().getItem().onDestroyed(itemEntity, damageSource);
     }
 
     /**
