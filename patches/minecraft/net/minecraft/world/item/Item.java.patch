@@ -129,6 +129,15 @@
     }
  
     public ItemStack m_7968_() {
+@@ -344,6 +_,8 @@
+       return this.f_41380_ != null;
+    }
+ 
++   // Use IForgeItem#getFoodProperties(ItemStack, LivingEntity) in favour of this.
++   @Deprecated
+    @Nullable
+    public FoodProperties m_41473_() {
+       return this.f_41380_;
 @@ -374,6 +_,32 @@
        return true;
     }

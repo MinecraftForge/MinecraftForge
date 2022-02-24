@@ -773,6 +773,7 @@ public interface IForgeItem
      * @param entity The entity which wants to eat the food. Be aware that this can be null!
      * @return The current FoodProperties for the item.
      */
+    @Nullable
     default FoodProperties getFoodProperties(ItemStack stack, @Nullable LivingEntity entity)
     {
         return self().getFoodProperties();
