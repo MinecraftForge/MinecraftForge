@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2022.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -34,7 +34,6 @@ import org.lwjgl.system.MemoryUtil;
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryUsage;
 import java.nio.ByteBuffer;
-import java.util.Locale;
 
 public class EarlyLoaderGUI {
     private final Minecraft minecraft;
@@ -120,7 +119,7 @@ public class EarlyLoaderGUI {
         final MemoryUsage heapusage = ManagementFactory.getMemoryMXBean().getHeapMemoryUsage();
         final MemoryUsage offheapusage = ManagementFactory.getMemoryMXBean().getNonHeapMemoryUsage();
         final float pctmemory = (float) heapusage.getUsed() / heapusage.getMax();
-        String memory = String.format(Locale.ENGLISH, "Memory Heap: %d / %d MB (%.1f%%)  OffHeap: %d MB", heapusage.getUsed() >> 20, heapusage.getMax() >> 20, pctmemory * 100.0, offheapusage.getUsed() >> 20);
+        String memory = String.format("Memory Heap: %d / %d MB (%.1f%%)  OffHeap: %d MB", heapusage.getUsed() >> 20, heapusage.getMax() >> 20, pctmemory * 100.0, offheapusage.getUsed() >> 20);
 
         final int i = Mth.hsvToRgb((1.0f - (float)Math.pow(pctmemory, 1.5f)) / 3f, 1.0f, 0.5f);
         memorycolour[2] = ((i) & 0xFF) / 255.0f;

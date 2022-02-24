@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2022.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -33,7 +33,6 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Locale;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -189,6 +188,6 @@ public class PathResourcePack extends AbstractPackResources
     @Override
     public String toString()
     {
-        return String.format(Locale.ROOT, "%s: %s", getClass().getName(), getSource());
+        return String.format("%s: %s", getClass().getName(), getSource());
     }
 }

@@ -73,7 +73,7 @@
 +         domain = texture.substring(0, idx);
 +         texture = texture.substring(idx + 1);
 +      }
-+      String s1 = String.format(java.util.Locale.ROOT, "%s:textures/models/armor/%s_layer_%d%s.png", domain, texture, (m_117128_(slot) ? 2 : 1), type == null ? "" : String.format(java.util.Locale.ROOT, "_%s", type));
++      String s1 = String.format("%s:textures/models/armor/%s_layer_%d%s.png", domain, texture, (m_117128_(slot) ? 2 : 1), type == null ? "" : String.format("_%s", type));
 +
 +      s1 = net.minecraftforge.client.ForgeHooksClient.getArmorTexture(entity, stack, s1, slot, type);
 +      ResourceLocation resourcelocation = f_117070_.get(s1);

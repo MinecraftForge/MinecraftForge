@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2022.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -22,12 +22,9 @@ package net.minecraftforge.debug.misc;
 import java.util.Set;
 import java.util.function.Supplier;
 import javax.annotation.Nullable;
-
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.item.enchantment.Enchantment;
@@ -46,7 +43,6 @@ import net.minecraft.tags.SerializationTags;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.levelgen.feature.StructureFeature;
 import net.minecraftforge.common.ForgeTagHandler;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.data.ExistingFileHelper;
@@ -83,7 +79,6 @@ public class CustomTagTypesTest
     private static final Tag.Named<Potion> DAMAGE = ForgeTagHandler.createOptionalTag(ForgeRegistries.POTIONS, new ResourceLocation(MODID, "damage"));
     private static final Tag.Named<BlockEntityType<?>> STORAGE = ForgeTagHandler.createOptionalTag(ForgeRegistries.BLOCK_ENTITIES, new ResourceLocation(MODID, "storage"));
     private static final Tag.Named<MobEffect> BEACON = ForgeTagHandler.createOptionalTag(ForgeRegistries.MOB_EFFECTS, new ResourceLocation(MODID, "beacon"));
-    private static final Tag.Named<StructureFeature<?>> OVERWORLD_TEMPLE = ForgeTagHandler.createOptionalTag(ForgeRegistries.STRUCTURE_FEATURES, new ResourceLocation(MODID, "overworld_temple"));
 
     public CustomTagTypesTest()
     {
@@ -104,7 +99,6 @@ public class CustomTagTypesTest
             gen.addProvider(new PotionTags(gen, existingFileHelper));
             gen.addProvider(new BlockEntityTypeTags(gen, existingFileHelper));
             gen.addProvider(new MobEffectTypeTags(gen, existingFileHelper));
-            gen.addProvider(new StructureFeatureTags(gen, existingFileHelper));
         }
     }
 
@@ -120,21 +114,6 @@ public class CustomTagTypesTest
             BlockEntity blockEntity = event.getWorld().getBlockEntity(event.getPos());
             if (blockEntity != null) logTagsIfPresent(blockEntity.getType().getTags());
             event.getEntityLiving().getActiveEffects().forEach((mobEffectInstance) -> logTagsIfPresent(mobEffectInstance.getEffect().getTags()));
-        }
-
-        if (event.getPlayer().getLevel() instanceof ServerLevel serverLevel)
-        {
-            OVERWORLD_TEMPLE.getValues().forEach(temple -> {
-                  final BlockPos found = serverLevel.findNearestMapFeature(temple, event.getPos(), 100, false);
-                  if (found != null)
-                  {
-                      LOGGER.info("Found {} at {}", temple.getRegistryName(), found);
-                  }
-                  else
-                  {
-                      LOGGER.info("Could not find {}", temple.getRegistryName());
-                  }
-            });
         }
     }
 
@@ -253,27 +232,6 @@ public class CustomTagTypesTest
         public String getName()
         {
             return "Mob Effect Tags";
-        }
-    }
-
-    public static class StructureFeatureTags extends ForgeRegistryTagsProvider<StructureFeature<?>>
-    {
-
-        public StructureFeatureTags(DataGenerator gen, @Nullable ExistingFileHelper existingFileHelper)
-        {
-            super(gen, ForgeRegistries.STRUCTURE_FEATURES, MODID, existingFileHelper);
-        }
-
-        @Override
-        public String getName()
-        {
-            return "Structure Feature Tags";
-        }
-
-        @Override
-        protected void addTags()
-        {
-            tag(OVERWORLD_TEMPLE).add(StructureFeature.DESERT_PYRAMID, StructureFeature.JUNGLE_TEMPLE);
         }
     }
 }

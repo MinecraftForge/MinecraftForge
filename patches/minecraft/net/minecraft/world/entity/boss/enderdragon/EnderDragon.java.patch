@@ -1,17 +1,5 @@
 --- a/net/minecraft/world/entity/boss/enderdragon/EnderDragon.java
 +++ b/net/minecraft/world/entity/boss/enderdragon/EnderDragon.java
-@@ -150,7 +_,11 @@
-       return adouble;
-    }
- 
-+   @javax.annotation.Nullable private Player unlimitedLastHurtByPlayer = null;
-    public void m_8107_() {
-+      // lastHurtByPlayer is cleared after 100 ticks, capture it indefinitely in unlimitedLastHurtByPlayer for LivingExperienceDropEvent
-+      if (this.f_20888_ != null) this.unlimitedLastHurtByPlayer = f_20888_;
-+      if (this.unlimitedLastHurtByPlayer != null && this.unlimitedLastHurtByPlayer.m_146910_()) this.unlimitedLastHurtByPlayer = null;
-       this.m_146874_();
-       if (this.f_19853_.f_46443_) {
-          this.m_21153_(this.m_21223_());
 @@ -420,7 +_,7 @@
                 BlockPos blockpos = new BlockPos(k1, l1, i2);
                 BlockState blockstate = this.f_19853_.m_8055_(blockpos);
@@ -21,26 +9,6 @@
                       flag1 = this.f_19853_.m_7471_(blockpos, false) || flag1;
                    } else {
                       flag = true;
-@@ -514,7 +_,8 @@
- 
-       if (this.f_19853_ instanceof ServerLevel) {
-          if (this.f_31084_ > 150 && this.f_31084_ % 5 == 0 && flag) {
--            ExperienceOrb.m_147082_((ServerLevel)this.f_19853_, this.m_20182_(), Mth.m_14143_((float)i * 0.08F));
-+            int award = net.minecraftforge.event.ForgeEventFactory.getExperienceDrop(this, this.unlimitedLastHurtByPlayer, Mth.m_14143_((float)i * 0.08F));
-+            ExperienceOrb.m_147082_((ServerLevel)this.f_19853_, this.m_20182_(), award);
-          }
- 
-          if (this.f_31084_ == 1 && !this.m_20067_()) {
-@@ -527,7 +_,8 @@
-       this.f_20883_ = this.m_146908_();
-       if (this.f_31084_ == 200 && this.f_19853_ instanceof ServerLevel) {
-          if (flag) {
--            ExperienceOrb.m_147082_((ServerLevel)this.f_19853_, this.m_20182_(), Mth.m_14143_((float)i * 0.2F));
-+            int award = net.minecraftforge.event.ForgeEventFactory.getExperienceDrop(this, this.unlimitedLastHurtByPlayer, Mth.m_14143_((float)i * 0.2F));
-+            ExperienceOrb.m_147082_((ServerLevel)this.f_19853_, this.m_20182_(), award);
-          }
- 
-          if (this.f_31073_ != null) {
 @@ -847,6 +_,16 @@
  
     public boolean m_6072_() {

@@ -19,11 +19,8 @@
 
 package net.minecraftforge.common;
 
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.ClientCommandHandler;
 import net.minecraftforge.eventbus.api.BusBuilder;
 import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.versions.forge.ForgeVersion;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -55,7 +52,6 @@ public class MinecraftForge
 
        UsernameCache.load();
        TierSortingRegistry.init();
-       if (FMLEnvironment.dist == Dist.CLIENT) ClientCommandHandler.init();
    }
 
 /*

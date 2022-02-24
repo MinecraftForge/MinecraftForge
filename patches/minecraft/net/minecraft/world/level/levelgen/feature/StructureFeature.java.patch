@@ -9,29 +9,6 @@
     public static final BiMap<String, StructureFeature<?>> f_67012_ = HashBiMap.create();
     private static final Map<StructureFeature<?>, GenerationStep.Decoration> f_67032_ = Maps.newHashMap();
     private static final Logger f_67033_ = LogManager.getLogger();
-@@ -79,6 +_,7 @@
-    public static final StructureFeature<JigsawConfiguration> f_67030_ = m_67089_("Bastion_Remnant", new BastionFeature(JigsawConfiguration.f_67756_), GenerationStep.Decoration.SURFACE_STRUCTURES);
-    public static final List<StructureFeature<?>> f_67031_ = ImmutableList.of(f_67013_, f_67028_, f_67029_, f_67022_);
-    public static final int f_160446_ = 8;
-+   private final net.minecraftforge.common.util.ReverseTagWrapper<StructureFeature<?>> reverseTags = new net.minecraftforge.common.util.ReverseTagWrapper<>(this, () -> net.minecraft.tags.SerializationTags.m_13199_().m_144452_(Registry.f_122840_));
-    private final Codec<ConfiguredStructureFeature<C, StructureFeature<C>>> f_67036_;
-    private final PieceGeneratorSupplier<C> f_191106_;
-    private final PostPlacementProcessor f_191107_;
-@@ -103,6 +_,14 @@
-       this.f_191107_ = p_197170_;
-    }
- 
-+   public java.util.Set<net.minecraft.resources.ResourceLocation> getTags() {
-+      return reverseTags.getTagNames();
-+   }
-+
-+   public boolean is(net.minecraft.tags.Tag<StructureFeature<?>> tag) {
-+        return tag.m_8110_(this);
-+    }
-+
-    public GenerationStep.Decoration m_67095_() {
-       return f_67032_.get(this);
-    }
 @@ -256,6 +_,11 @@
  
     public String m_67098_() {

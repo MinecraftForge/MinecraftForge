@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/item/ElytraItem.java
 +++ b/net/minecraft/world/item/ElytraItem.java
-@@ -43,6 +_,25 @@
+@@ -43,6 +_,19 @@
        }
     }
  
@@ -11,14 +11,8 @@
 +
 +   @Override
 +   public boolean elytraFlightTick(ItemStack stack, net.minecraft.world.entity.LivingEntity entity, int flightTicks) {
-+      if (!entity.f_19853_.f_46443_) {
-+         int nextFlightTick = flightTicks + 1;
-+         if (nextFlightTick % 10 == 0) {
-+            if (nextFlightTick % 20 == 0) {
-+               stack.m_41622_(1, entity, e -> e.m_21166_(net.minecraft.world.entity.EquipmentSlot.CHEST));
-+            }
-+            entity.m_146850_(net.minecraft.world.level.gameevent.GameEvent.f_157807_);
-+         }
++      if (!entity.f_19853_.f_46443_ && (flightTicks + 1) % 20 == 0) {
++         stack.m_41622_(1, entity, e -> e.m_21166_(net.minecraft.world.entity.EquipmentSlot.CHEST));
 +      }
 +      return true;
 +   }

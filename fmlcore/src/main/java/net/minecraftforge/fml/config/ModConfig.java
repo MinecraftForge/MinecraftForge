@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2022.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -27,7 +27,6 @@ import net.minecraftforge.fml.loading.StringUtils;
 
 import java.io.ByteArrayInputStream;
 import java.nio.file.Path;
-import java.util.Locale;
 import java.util.concurrent.Callable;
 
 public class ModConfig
@@ -55,7 +54,7 @@ public class ModConfig
 
     private static String defaultConfigName(Type type, String modId) {
         // config file name would be "forge-client.toml" and "forge-server.toml"
-        return String.format(Locale.ROOT, "%s-%s.toml", modId, type.extension());
+        return String.format("%s-%s.toml", modId, type.extension());
     }
     public Type getType() {
         return type;

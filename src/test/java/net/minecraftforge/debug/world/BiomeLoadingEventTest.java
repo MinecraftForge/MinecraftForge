@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2022.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -26,8 +26,6 @@ import net.minecraftforge.fml.common.Mod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.Locale;
-
 @Mod(BiomeLoadingEventTest.MODID)
 public class BiomeLoadingEventTest {
     static final String MODID = "biome_loading_event_test";
@@ -40,6 +38,6 @@ public class BiomeLoadingEventTest {
     }
     public void onBiomeLoading(BiomeLoadingEvent event){
         ResourceLocation biome = event.getName();
-        LOGGER.info("Biome loaded: {}", biome);
+        LOGGER.info(String.format("Biome loaded: %s", biome.toString()));
     }
 }

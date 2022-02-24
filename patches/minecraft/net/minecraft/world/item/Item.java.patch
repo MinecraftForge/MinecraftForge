@@ -12,7 +12,7 @@
     protected static final UUID f_41374_ = UUID.fromString("CB3F55D3-645C-4F38-A497-9C13A33DB5CF");
     protected static final UUID f_41375_ = UUID.fromString("FA233E1C-4180-4865-B01B-BCCE9785ACA3");
     public static final int f_150884_ = 64;
-@@ -95,12 +_,15 @@
+@@ -95,7 +_,8 @@
              f_150883_.error("Item classes should end with Item and {} doesn't.", (Object)s);
           }
        }
@@ -22,13 +22,6 @@
     }
  
     public void m_5929_(Level p_41428_, LivingEntity p_41429_, ItemStack p_41430_, int p_41431_) {
-    }
- 
-+   /** @deprecated Forge: Use damage source sensitive version */
-+   @Deprecated
-    public void m_142023_(ItemEntity p_150887_) {
-    }
- 
 @@ -141,10 +_,12 @@
        return this.m_41472_() ? p_41411_.m_5584_(p_41410_, p_41409_) : p_41409_;
     }

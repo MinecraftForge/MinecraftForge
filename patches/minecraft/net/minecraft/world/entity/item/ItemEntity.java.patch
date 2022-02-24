@@ -69,15 +69,6 @@
        if (this.m_6673_(p_32013_)) {
           return false;
        } else if (!this.m_32055_().m_41619_() && this.m_32055_().m_150930_(Items.f_42686_) && p_32013_.m_19372_()) {
-@@ -248,7 +_,7 @@
-          this.f_31987_ = (int)((float)this.f_31987_ - p_32014_);
-          this.m_146852_(GameEvent.f_157808_, p_32013_.m_7639_());
-          if (this.f_31987_ <= 0) {
--            this.m_32055_().m_150924_(this);
-+            this.m_32055_().onDestroyed(this, p_32013_);
-             this.m_146870_();
-          }
- 
 @@ -260,6 +_,7 @@
        p_32050_.m_128376_("Health", (short)this.f_31987_);
        p_32050_.m_128376_("Age", (short)this.f_31985_);

@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2022.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -167,7 +167,7 @@ public class DelegatingResourcePack extends AbstractPackResources
     private static String getFullPath(PackType type, ResourceLocation location)
     {
         // stolen from ResourcePack
-        return String.format(Locale.ROOT, "%s/%s/%s", type.getDirectory(), location.getNamespace(), location.getPath());
+        return String.format("%s/%s/%s", type.getDirectory(), location.getNamespace(), location.getPath());
     }
 
 }

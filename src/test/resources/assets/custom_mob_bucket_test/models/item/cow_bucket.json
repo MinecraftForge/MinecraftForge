@@ -1,6 +1,0 @@
-{
-  "parent": "item/generated",
-  "textures": {
-    "layer0": "custom_mob_bucket_test:item/cow_bucket"
-  }
-}

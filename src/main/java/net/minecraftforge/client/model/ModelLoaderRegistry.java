@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2022.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -125,7 +125,7 @@ public class ModelLoaderRegistry
         {
             if (!loaders.containsKey(loaderId))
             {
-                throw new IllegalStateException(String.format(Locale.ENGLISH, "Model loader '%s' not found. Registered loaders: %s", loaderId,
+                throw new IllegalStateException(String.format("Model loader '%s' not found. Registered loaders: %s", loaderId,
                         loaders.keySet().stream().map(ResourceLocation::toString).collect(Collectors.joining(", "))));
             }
 

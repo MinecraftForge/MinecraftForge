@@ -1,18 +1,16 @@
 --- a/net/minecraft/world/level/BaseSpawner.java
 +++ b/net/minecraft/world/level/BaseSpawner.java
-@@ -125,11 +_,15 @@
+@@ -125,11 +_,12 @@
                    entity.m_7678_(entity.m_20185_(), entity.m_20186_(), entity.m_20189_(), p_151312_.f_46441_.nextFloat() * 360.0F, 0.0F);
                    if (entity instanceof Mob) {
                       Mob mob = (Mob)entity;
-+                     net.minecraftforge.eventbus.api.Event.Result res = net.minecraftforge.event.ForgeEventFactory.canEntitySpawn(mob, p_151312_, (float)entity.m_20185_(), (float)entity.m_20186_(), (float)entity.m_20189_(), this, MobSpawnType.SPAWNER);
-+                     if (res == net.minecraftforge.eventbus.api.Event.Result.DENY) continue;
-+                     if (res == net.minecraftforge.eventbus.api.Event.Result.DEFAULT)
-                      if (this.f_45444_.m_186574_().isEmpty() && !mob.m_5545_(p_151312_, MobSpawnType.SPAWNER) || !mob.m_6914_(p_151312_)) {
+-                     if (this.f_45444_.m_186574_().isEmpty() && !mob.m_5545_(p_151312_, MobSpawnType.SPAWNER) || !mob.m_6914_(p_151312_)) {
++                     if (!net.minecraftforge.event.ForgeEventFactory.canEntitySpawnSpawner(mob, p_151312_, (float)entity.m_20185_(), (float)entity.m_20186_(), (float)entity.m_20189_(), this)) {
                          continue;
                       }
  
                       if (this.f_45444_.m_186567_().m_128440_() == 1 && this.f_45444_.m_186567_().m_128425_("id", 8)) {
-+                        if (!net.minecraftforge.event.ForgeEventFactory.doSpecialSpawn(mob, (LevelAccessor)p_151312_, (float)entity.m_20185_(), (float)entity.m_20186_(), (float)entity.m_20189_(), this, MobSpawnType.SPAWNER))
++                        if (!net.minecraftforge.event.ForgeEventFactory.doSpecialSpawn(mob, p_151312_, (float)entity.m_20185_(), (float)entity.m_20186_(), (float)entity.m_20189_(), this, MobSpawnType.SPAWNER))
                          ((Mob)entity).m_6518_(p_151312_, p_151312_.m_6436_(entity.m_142538_()), MobSpawnType.SPAWNER, (SpawnGroupData)null, (CompoundTag)null);
                       }
                    }

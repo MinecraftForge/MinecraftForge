@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2022.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -30,7 +30,6 @@ import net.minecraftforge.fml.loading.FMLEnvironment;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.List;
-import java.util.Locale;
 
 @Mod("overlay_layers_test")
 public class OverlayLayersTest
@@ -58,7 +57,7 @@ public class OverlayLayersTest
         for(int i=0;i<overlays.size();i++)
         {
             OverlayRegistry.OverlayEntry entry = overlays.get(i);
-            event.getLeft().add(String.format(Locale.ENGLISH, overlayIndex == i ? "> %s [%s] <" : "  %s [%s]  ", entry.getDisplayName(), entry.isEnabled()));
+            event.getLeft().add(String.format(overlayIndex == i ? "> %s [%s] <" : "  %s [%s]  ", entry.getDisplayName(), entry.isEnabled()));
         }
     }
 

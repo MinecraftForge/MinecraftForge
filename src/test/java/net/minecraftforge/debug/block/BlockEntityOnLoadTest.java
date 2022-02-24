@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2022.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -42,7 +42,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nullable;
-import java.util.Locale;
 
 @Mod("be_onload_test")
 public class BlockEntityOnLoadTest
@@ -121,7 +120,7 @@ public class BlockEntityOnLoadTest
                 LOGGER.info("[BE_ONLOAD] TestBlockEntity#tick at pos {} for {}", worldPosition, this);
                 if (!loaded)
                 {
-                    throw new IllegalStateException(String.format(Locale.ENGLISH, "BlockEntity at %s ticked before onLoad()!", getBlockPos()));
+                    throw new IllegalStateException(String.format("BlockEntity at %s ticked before onLoad()!", getBlockPos()));
                 }
             }
         }

@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2022.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -29,7 +29,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -907,7 +906,7 @@ public class DataGeneratorTest
         }
 
         private void blockstateError(Block block, String fmt, Object... args) {
-            errors.add("Generated blockstate for block " + block + " " + String.format(Locale.ENGLISH, fmt, args));
+            errors.add("Generated blockstate for block " + block + " " + String.format(fmt, args));
         }
 
         @Override

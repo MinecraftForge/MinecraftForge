@@ -53,6 +53,18 @@ function initializeCoreMod() {
                 return classNode;
             }
         },
+        /*
+        'mob_bucket_item': {
+            'target': {
+                'type': 'CLASS',
+                'name': 'net.minecraft.world.item.MobBucketItem'
+            },
+            'transformer': function(classNode) {
+                ASMAPI.redirectFieldToMethod(classNode, ASMAPI.mapField('f_41262_'), ASMAPI.mapMethod('getFishType')) // type - Not implemented
+                return classNode;
+            }
+        },
+        */
         'itemstack': {
             'target': {
                 'type': 'CLASS',

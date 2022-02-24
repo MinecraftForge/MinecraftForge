@@ -118,7 +118,7 @@ public class LivingSpawnEvent extends LivingEvent
      * SpecialSpawn is fired when an Entity is to be spawned.<br>
      * This allows you to do special inializers in the new entity.<br>
      * <br>
-     * This event is fired via the {@link ForgeEventFactory#doSpecialSpawn(Mob, LevelAccessor, float, float, float, BaseSpawner, MobSpawnType)}.<br>
+     * This event is fired via the {@link ForgeEventFactory#doSpecialSpawn(Mob, Level, float, float, float, BaseSpawner, MobSpawnType)}.<br>
      * <br>
      * This event is {@link net.minecraftforge.eventbus.api.Cancelable}.<br>
      * If this event is canceled, the Entity is not spawned.<br>
@@ -137,13 +137,7 @@ public class LivingSpawnEvent extends LivingEvent
         /**
          * @param spawner the position of a tileentity or approximate position of an entity that initiated the spawn if any
          */
-        @Deprecated(forRemoval = true, since = "1.18.1")
         public SpecialSpawn(Mob entity, Level world, double x, double y, double z, @Nullable BaseSpawner spawner, MobSpawnType spawnReason)
-        {
-            this(entity, (LevelAccessor)world, x, y, z, spawner, spawnReason);
-        }
-
-        public SpecialSpawn(Mob entity, LevelAccessor world, double x, double y, double z, @Nullable BaseSpawner spawner, MobSpawnType spawnReason)
         {
             super(entity, world, x, y, z);
             this.spawner = spawner;

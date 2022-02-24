@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2022.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -80,7 +80,7 @@ public class LanguageHook
     }
 
     private static void loadLanguage(String langName, MinecraftServer server) {
-        String langFile = String.format(Locale.ROOT, "lang/%s.json", langName);
+        String langFile = String.format("lang/%s.json", langName);
         ResourceManager resourceManager = server.getServerResources().getResourceManager();
         resourceManager.getNamespaces().forEach(namespace -> {
             try {

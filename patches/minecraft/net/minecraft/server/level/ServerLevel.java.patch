@@ -198,14 +198,6 @@
        this.f_8548_.m_6846_().m_11241_(p_8689_, p_8690_.m_20185_(), p_8690_.m_20186_(), p_8690_.m_20189_(), p_8693_ > 1.0F ? (double)(16.0F * p_8693_) : 16.0D, this.m_46472_(), new ClientboundSoundEntityPacket(p_8691_, p_8692_, p_8690_, p_8693_, p_8694_));
     }
  
-@@ -837,6 +_,7 @@
-    }
- 
-    public void m_142346_(@Nullable Entity p_143268_, GameEvent p_143269_, BlockPos p_143270_) {
-+      if (net.minecraftforge.common.ForgeHooks.onVanillaGameEvent(this, p_143268_, p_143269_, p_143270_))
-       this.m_151513_(p_143268_, p_143269_, p_143270_, p_143269_.m_157827_());
-    }
- 
 @@ -882,6 +_,7 @@
  
     public Explosion m_7703_(@Nullable Entity p_8653_, @Nullable DamageSource p_8654_, @Nullable ExplosionDamageCalculator p_8655_, double p_8656_, double p_8657_, double p_8658_, float p_8659_, boolean p_8660_, Explosion.BlockInteraction p_8661_) {

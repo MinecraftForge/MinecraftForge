@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2022.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -76,9 +76,8 @@ public final class RegistryObject<T extends IForgeRegistryEntry<? super T>> impl
         ObjectHolderRegistry.addHandler(pred ->
         {
             if (pred.test(registry.getRegistryName()))
-                this.updateReference((IForgeRegistry<? extends T>) registry);
+                this.value = registry.containsKey(this.name) ? (T)registry.getValue(this.name) : null;
         });
-        this.updateReference(((IForgeRegistry<? extends T>) registry));
     }
 
     @SuppressWarnings("unchecked")
@@ -100,15 +99,9 @@ public final class RegistryObject<T extends IForgeRegistryEntry<? super T>> impl
                         throw new IllegalStateException("Unable to find registry for type " + baseType.getName() + " for mod \"" + modid + "\". Check the 'caused by' to see futher stack.", callerStack);
                 }
                 if (pred.test(registry.getRegistryName()))
-                    RegistryObject.this.updateReference((IForgeRegistry<? extends T>) registry);
+                    RegistryObject.this.value = registry.containsKey(RegistryObject.this.name) ? (T)registry.getValue(RegistryObject.this.name) : null;
             }
         });
-        IForgeRegistry<V> registry = RegistryManager.ACTIVE.getRegistry(baseType);
-        // allow registry to be null, this might be for a custom registry that does not exist yet
-        if (registry != null)
-        {
-            this.updateReference(((IForgeRegistry<? extends T>) registry));
-        }
     }
 
     /**
@@ -124,10 +117,9 @@ public final class RegistryObject<T extends IForgeRegistryEntry<? super T>> impl
         return ret;
     }
 
-    @Deprecated(since = "1.18.1") // TODO: make package-private
     public void updateReference(IForgeRegistry<? extends T> registry)
     {
-        this.value = registry.containsKey(this.name) ? registry.getValue(getId()) : null;
+        this.value = registry.getValue(getId());
     }
 
     public ResourceLocation getId()
