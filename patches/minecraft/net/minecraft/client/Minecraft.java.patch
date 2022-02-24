@@ -271,11 +271,10 @@
                 ItemStack itemstack = this.f_91074_.m_21120_(interactionhand);
                 if (this.f_91077_ != null) {
                    switch(this.f_91077_.m_6662_()) {
-@@ -1494,7 +_,8 @@
-                      if (!this.f_91073_.m_6857_().m_61937_(entity.m_142538_())) {
+@@ -1495,6 +_,8 @@
                          return;
                       }
--
+ 
 +                     double reachDist = this.f_91074_.m_21133_(net.minecraftforge.common.ForgeMod.REACH_DISTANCE.get()) + 0.5D;
 +                     if(entityhitresult.m_82448_(this.f_91074_) > reachDist * reachDist) return; //Forge: Entity may be traced via attack range, but the player may not have sufficient reach.
                       InteractionResult interactionresult = this.f_91072_.m_105230_(this.f_91074_, entity, entityhitresult, interactionhand);
