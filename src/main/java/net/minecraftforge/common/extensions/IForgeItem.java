@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2021.
+ * Copyright (c) 2016-2022.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -27,6 +27,7 @@ import javax.annotation.Nullable;
 
 import com.google.common.collect.Multimap;
 
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.block.state.BlockState;
@@ -673,6 +674,17 @@ public interface IForgeItem
     }
 
     /**
+     * Called when an item entity for this stack is destroyed. Note: The {@link ItemStack} can be retrieved from the item entity.
+     *
+     * @param itemEntity   The item entity that was destroyed.
+     * @param damageSource Damage source that caused the item entity to "die".
+     */
+    default void onDestroyed(ItemEntity itemEntity, DamageSource damageSource)
+    {
+        self().onDestroyed(itemEntity);
+    }
+
+    /**
      * Whether this Item can be used to hide player head for enderman.
      *
      * @param stack the ItemStack
@@ -739,4 +751,16 @@ public interface IForgeItem
     {
         return target.getBoundingBox().inflate(1.0D, 0.25D, 1.0D);
     }
+
+    /**
+     * Get the tooltip parts that should be hidden by default on the given stack if the {@code HideFlags} tag is not set.
+     * @see ItemStack.TooltipPart
+     * @param stack the stack
+     * @return the default hide flags
+     */
+    default int getDefaultTooltipHideFlags(@Nonnull ItemStack stack)
+    {
+        return 0;
+    }
+
 }

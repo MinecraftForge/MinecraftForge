@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2021.
+ * Copyright (c) 2016-2022.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -293,6 +293,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         private Map<List<String>, String> levelComments = new HashMap<>();
         private List<String> currentPath = new ArrayList<>();
         private List<ConfigValue<?>> values = new ArrayList<>();
+        private boolean hasInvalidComment = false;
 
         //Object
         public <T> ConfigValue<T> define(String path, T defaultValue) {
@@ -326,6 +327,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
                 path = tmp;
             }
             storage.set(path, value);
+            checkComment(path);
             context = new BuilderContext();
             return new ConfigValue<>(this, path, defaultSupplier);
         }
@@ -549,28 +551,20 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
 
         public Builder comment(String comment)
         {
-            if(comment == null || comment.isEmpty())
+            hasInvalidComment = comment == null || comment.isEmpty();
+            if (hasInvalidComment)
             {
                 comment = "No comment";
-                if(!FMLEnvironment.production)
-                {
-                    LogManager.getLogger().error(CORE, "Null comment for config option {}, this is invalid and may be disallowed in the future.",
-                            DOT_JOINER.join(this.currentPath));
-                }
             }
             context.setComment(comment);
             return this;
         }
         public Builder comment(String... comment)
         {
-            if(comment == null || comment.length < 1 || (comment.length == 1 && comment[0].isEmpty()))
+            hasInvalidComment = comment == null || comment.length < 1 || (comment.length == 1 && comment[0].isEmpty());
+            if (hasInvalidComment)
             {
                 comment = new String[] {"No comment"};
-                if(!FMLEnvironment.production)
-                {
-                    LogManager.getLogger().error(CORE, "Null comment for config option {}, this is invalid and may be disallowed in the future.",
-                            DOT_JOINER.join(this.currentPath));
-                }
             }
 
             context.setComment(comment);
@@ -595,8 +589,8 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
 
         public Builder push(List<String> path) {
             currentPath.addAll(path);
+            checkComment(currentPath);
             if (context.hasComment()) {
-
                 levelComments.put(new ArrayList<String>(currentPath), context.buildComment());
                 context.setComment(); // Set to empty
             }
@@ -630,6 +624,19 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
             ForgeConfigSpec ret = new ForgeConfigSpec(storage, valueCfg, levelComments);
             values.forEach(v -> v.spec = ret);
             return ret;
+        }
+
+        private void checkComment(List<String> path)
+        {
+            if (hasInvalidComment)
+            {
+                hasInvalidComment = false;
+                if (!FMLEnvironment.production)
+                {
+                    LogManager.getLogger().error(CORE, "Null comment for config option {}, this is invalid and may be disallowed in the future.",
+                            DOT_JOINER.join(path));
+                }
+            }
         }
 
         public interface BuilderConsumer {
