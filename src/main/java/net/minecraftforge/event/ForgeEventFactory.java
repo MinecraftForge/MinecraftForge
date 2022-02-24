@@ -862,7 +862,7 @@ public class ForgeEventFactory
      * 
      * @deprecated Use {@link #onPreWorldTick(Level, BooleanSupplier)}
      */
-    @Deprecated(forRemoval = true)
+    @Deprecated(forRemoval = true, since = "1.18.1")
     public static void onPreWorldTick(Level world)
     {
         onPreWorldTick(world, () -> false);
@@ -878,7 +878,7 @@ public class ForgeEventFactory
      * 
      * @deprecated Use {@link #onPostWorldTick(Level, BooleanSupplier)}
      */
-    @Deprecated(forRemoval = true)
+    @Deprecated(forRemoval = true, since = "1.18.1")
     public static void onPostWorldTick(Level world)
     {
         onPostWorldTick(world, () -> false);
@@ -920,7 +920,7 @@ public class ForgeEventFactory
      * 
      * @deprecated Use {@link #onPostServerTick(BooleanSupplier)}
      */
-    @Deprecated(forRemoval = true)
+    @Deprecated(forRemoval = true, since = "1.18.1")
     public static void onPostServerTick()
     {
         onPostServerTick(() -> false);
