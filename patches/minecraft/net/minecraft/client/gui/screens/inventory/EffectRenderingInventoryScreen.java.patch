@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/gui/screens/inventory/EffectRenderingInventoryScreen.java
 +++ b/net/minecraft/client/gui/screens/inventory/EffectRenderingInventoryScreen.java
-@@ -32,13 +_,21 @@
+@@ -32,24 +_,35 @@
     }
  
     public boolean m_194018_() {
@@ -24,7 +24,12 @@
        int j = this.f_96543_ - i;
        Collection<MobEffectInstance> collection = this.f_96541_.f_91074_.m_21220_();
        if (!collection.isEmpty() && j >= 32) {
-@@ -49,7 +_,8 @@
+          RenderSystem.m_157429_(1.0F, 1.0F, 1.0F, 1.0F);
+          boolean flag = j >= 120;
++         var event = net.minecraftforge.client.ForgeHooksClient.onScreenPotionSize(this);
++         if (event != net.minecraftforge.eventbus.api.Event.Result.DEFAULT) flag = event == net.minecraftforge.eventbus.api.Event.Result.DENY; // true means classic mode
+          int k = 33;
+          if (collection.size() > 5) {
              k = 132 / (collection.size() - 1);
           }
  

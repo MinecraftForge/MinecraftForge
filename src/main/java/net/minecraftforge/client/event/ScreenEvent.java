@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2021.
+ * Copyright (c) 2016-2022.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -32,8 +32,10 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraft.client.gui.screens.Screen;
 
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.fml.LogicalSide;
 import org.lwjgl.glfw.GLFW;
 
 /**
@@ -228,6 +230,32 @@ public class ScreenEvent extends Event
     public static class PotionShiftEvent extends ScreenEvent
     {
         public PotionShiftEvent(Screen screen)
+        {
+            super(screen);
+        }
+    }
+
+    /**
+     * Fired to determine whether to render the potion indicators in the {@link EffectRenderingInventoryScreen inventory
+     * screen} in compact or classic mode.
+     *
+     * <p>This event is not {@linkplain Cancelable cancelable} and {@linkplain HasResult has a result}. </p>
+     * <ul>
+     *   <li>{@link Result#ALLOW} - forcibly renders the potion indicators in <em>compact</em> mode.</li>
+     *   <li>{@link Result#DEFAULT} - defaults to vanilla behavior to using compact mode if the the screen width is too
+     *   small for classic rendering of potion indicators.</li>
+     *   <li>{@link Result#DENY} - forcibly renders the potion indicators in <em>classic</em> mode.</li>
+     * </ul>
+     *
+     * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
+     * only on the {@linkplain LogicalSide#CLIENT logical client}. </p>
+     */
+    @HasResult
+    public static class PotionSizeEvent extends ScreenEvent {
+        /**
+         * @hidden For internal use only.
+         */
+        public PotionSizeEvent(Screen screen)
         {
             super(screen);
         }
