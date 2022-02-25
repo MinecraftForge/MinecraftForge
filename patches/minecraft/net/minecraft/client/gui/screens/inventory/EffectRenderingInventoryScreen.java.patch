@@ -1,28 +1,6 @@
 --- a/net/minecraft/client/gui/screens/inventory/EffectRenderingInventoryScreen.java
 +++ b/net/minecraft/client/gui/screens/inventory/EffectRenderingInventoryScreen.java
-@@ -32,24 +_,35 @@
-    }
- 
-    public boolean m_194018_() {
--      int i = this.f_97735_ + this.f_97726_ + 2;
-+      int i;
-+      if(cancelShift)
-+         i = (this.f_96543_ - this.f_97726_) / 2;
-+      else
-+         i = this.f_97735_ + this.f_97726_ + 2;
-       int j = this.f_96543_ - i;
-       return j >= 32;
-    }
- 
-    private void m_194014_(PoseStack p_194015_, int p_194016_, int p_194017_) {
--      int i = this.f_97735_ + this.f_97726_ + 2;
-+      int i;
-+      if(cancelShift)
-+         i = (this.f_96543_ - this.f_97726_) / 2;
-+      else
-+         i = this.f_97735_ + this.f_97726_ + 2;
-       int j = this.f_96543_ - i;
-       Collection<MobEffectInstance> collection = this.f_96541_.f_91074_.m_21220_();
+@@ -44,12 +_,15 @@
        if (!collection.isEmpty() && j >= 32) {
           RenderSystem.m_157429_(1.0F, 1.0F, 1.0F, 1.0F);
           boolean flag = j >= 120;
@@ -52,17 +30,3 @@
           Component component = this.m_194000_(mobeffectinstance);
           this.f_96547_.m_92763_(p_98723_, component, (float)(p_98724_ + 10 + 18), (float)(i + 6), 16777215);
           String s = MobEffectUtil.m_19581_(mobeffectinstance, 1.0F);
-@@ -126,5 +_,13 @@
-       }
- 
-       return mutablecomponent;
-+   }
-+
-+   // FORGE START
-+   boolean cancelShift = false;
-+   @Override
-+   protected void m_7856_() {
-+      super.m_7856_();
-+      cancelShift = net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.ScreenEvent.PotionShiftEvent(this));
-    }
- }

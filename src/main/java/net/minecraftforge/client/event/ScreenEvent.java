@@ -225,7 +225,12 @@ public class ScreenEvent extends Event
      * This event fires in {@link EffectRenderingInventoryScreen} in the
      * {@code checkEffectRendering} method when potion effects are active and the gui wants to move over.
      * Cancel this event to prevent the Gui from being moved.
+     *
+     * @deprecated This event was made redundant by the removal of the screen shifting due to potion indicators in the
+     * inventory screen (along with being moved to the right hand side). This has been changed to have no effect, and
+     * will be removed in 1.19. See {@link PotionSizeEvent} as a possible alternative instead.
      */
+    @Deprecated(forRemoval = true, since = "1.18.1")
     @Cancelable
     public static class PotionShiftEvent extends ScreenEvent
     {
