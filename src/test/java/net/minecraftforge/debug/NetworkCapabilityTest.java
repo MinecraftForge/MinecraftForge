@@ -47,7 +47,8 @@ import net.minecraftforge.network.ForgeNetwork;
 
 @Mod(NetworkCapabilityTest.ID)
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.FORGE, modid = NetworkCapabilityTest.ID)
-public class NetworkCapabilityTest {
+public class NetworkCapabilityTest
+{
     public static final String ID = "network_capability_test";
 
     private static final Logger logger = LogManager.getLogger();
