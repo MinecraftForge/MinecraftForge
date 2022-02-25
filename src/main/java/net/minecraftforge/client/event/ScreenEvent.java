@@ -256,7 +256,8 @@ public class ScreenEvent extends Event
      * only on the {@linkplain LogicalSide#CLIENT logical client}. </p>
      */
     @HasResult
-    public static class PotionSizeEvent extends ScreenEvent {
+    public static class PotionSizeEvent extends ScreenEvent
+    {
         /**
          * @hidden For internal use only.
          */
