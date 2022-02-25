@@ -200,5 +200,7 @@ license="LGPL v2.1"
     modId="hidden_tooltip_parts"
 [[mods]]
     modId="gametest_test"
+[[mods]]
+    modId="potion_size_event_test"
 
 # ADD ABOVE THIS LINE
