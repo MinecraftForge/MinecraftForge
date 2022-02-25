@@ -19,7 +19,7 @@
 
 package net.minecraftforge.client.event;
 
-import com.google.common.collect.ImmutableMap.Builder;
+import com.google.common.collect.ImmutableMap;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.SkullModelBase;
@@ -47,7 +47,6 @@ import net.minecraftforge.fml.event.IModBusEvent;
 import javax.annotation.Nullable;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class EntityRenderersEvent extends Event implements IModBusEvent
@@ -155,10 +154,10 @@ public class EntityRenderersEvent extends Event implements IModBusEvent
      */
     public static class CreateSkullModels extends EntityRenderersEvent
     {
-        private final Builder<Type,SkullModelBase> builder;
+        private final ImmutableMap.Builder<Type,SkullModelBase> builder;
         private final EntityModelSet entityModelSet;
 
-        public CreateSkullModels(Builder<Type,SkullModelBase> builder, EntityModelSet entityModelSet)
+        public CreateSkullModels(ImmutableMap.Builder<Type,SkullModelBase> builder, EntityModelSet entityModelSet)
         {
             this.builder = builder;
             this.entityModelSet = entityModelSet;
@@ -166,14 +165,14 @@ public class EntityRenderersEvent extends Event implements IModBusEvent
 
         public EntityModelSet getEntityModelSet()
         {
-            return  entityModelSet;
+            return entityModelSet;
         }
 
         /**
          * Registers the constructor for a skull block with the given {@link SkullBlock.Type}.
          * These will be inserted into the maps used by the item, entity, and block model renderers at the appropiate time.
          *
-         * @param type   Unique skull type. Cannot be used to replace vanilla skull models
+         * @param type   Unique skull type. Will cause an exception if multiple mods (including vanilla) register models for the same type
          * @param model  Model instance. A typical implementation will simply do {@code new SkullModel(entityModelSet.bakeLayer(layerLocation))}
          */
         public void registerSkullModel(SkullBlock.Type type, SkullModelBase model)

@@ -56,6 +56,12 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
+/**
+ * Adds a blaze head block and item to test the event for registering a custom skull model and to demonstrate the proper way to register a custom mob skull.
+ *
+ * To test it, locate "blaze_head", and test the item model, the model in the players head slot, the model in an armor stand, the wall block model, and the floor block model.
+ * Should appear identical in shape to vanilla heads such as zombies or skeletons, but use the blaze skin.
+ */
 @Mod(CustomHeadTest.MODID)
 public class CustomHeadTest
 {
