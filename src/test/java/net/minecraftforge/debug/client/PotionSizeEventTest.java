@@ -41,7 +41,7 @@ import java.util.Objects;
 public class PotionSizeEventTest
 {
     static final String MODID = "potion_size_event_test";
-    public static final boolean ENABLED = true;
+    public static final boolean ENABLED = false;
 
     public PotionSizeEventTest()
     {
