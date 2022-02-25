@@ -52,8 +52,8 @@
  
     public int m_142159_(ItemStack p_150901_) {
 -      float f = Math.max(0.0F, ((float)this.f_41371_ - (float)p_150901_.m_41773_()) / (float)this.f_41371_);
-+      int stackMaxDamage = this.getMaxDamage(p_150901_);
-+      float f = Math.max(0.0F, ((float)stackMaxDamage - (float)p_150901_.m_41773_()) / (float)stackMaxDamage);
++      float stackMaxDamage = this.getMaxDamage(p_150901_);
++      float f = Math.max(0.0F, (stackMaxDamage - (float)p_150901_.m_41773_()) / stackMaxDamage);
        return Mth.m_14169_(f / 3.0F, 1.0F, 1.0F);
     }
  
