@@ -35,6 +35,7 @@ net/minecraft/world/entity/item/ItemEntity.changeDimension(Lnet/minecraft/server
 net/minecraft/world/entity/npc/AbstractVillager.changeDimension(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraftforge/common/util/ITeleporter;)Lnet/minecraft/world/entity/Entity;=|p_35295_,teleporter
 net/minecraft/world/entity/player/Player.getDigSpeed(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/BlockPos;)F=|p_36282_,pos
 net/minecraft/world/entity/projectile/ThrownEnderpearl.changeDimension(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraftforge/common/util/ITeleporter;)Lnet/minecraft/world/entity/Entity;=|p_37506_,teleporter
+net/minecraft/world/food/FoodData.eat(Lnet/minecraft/world/item/Item;Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/entity/LivingEntity;)V=|p_38713_,p_38714_,entity
 net/minecraft/world/item/BoneMealItem.applyBonemeal(Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/entity/player/Player;)Z=|p_40628_,p_40629_,p_40630_,player
 net/minecraft/world/item/DyeableHorseArmorItem.<init>(ILnet/minecraft/resources/ResourceLocation;Lnet/minecraft/world/item/Item$Properties;)V=|p_41110_,p_41111_,p_41112_
 net/minecraft/world/item/HorseArmorItem.<init>(ILnet/minecraft/resources/ResourceLocation;Lnet/minecraft/world/item/Item$Properties;)V=|p_41364_,p_41111_,p_41366_
@@ -43,7 +44,6 @@ net/minecraft/world/item/ItemStack.onItemUse(Lnet/minecraft/world/item/context/U
 net/minecraft/world/item/ItemStack.onItemUseFirst(Lnet/minecraft/world/item/context/UseOnContext;)Lnet/minecraft/world/InteractionResult;=|p_41662_
 net/minecraft/world/item/MapItem.getCustomMapData(Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/level/Level;)Lnet/minecraft/world/level/saveddata/maps/MapItemSavedData;=|p_42910_,p_42911_
 net/minecraft/world/item/alchemy/PotionBrewing$Mix.<init>(Lnet/minecraftforge/registries/ForgeRegistryEntry;Lnet/minecraft/world/item/crafting/Ingredient;Lnet/minecraftforge/registries/ForgeRegistryEntry;)V=|p_43536_,p_43537_,p_43538_
-net/minecraft/world/food/FoodData.eat(Lnet/minecraft/world/item/Item;Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/entity/LivingEntity;)V=|p_38713_,p_38714_,entity
 net/minecraft/world/level/Level.markAndNotifyBlock(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/chunk/LevelChunk;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/block/state/BlockState;II)V=|p_46605_,levelchunk,blockstate,p_46606_,p_46607_,p_46608_
 net/minecraft/world/level/block/FireBlock.tryCatchFire(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;ILjava/util/Random;ILnet/minecraft/core/Direction;)V=|p_53432_,p_53433_,p_53434_,p_53435_,p_53436_,face
 net/minecraft/world/level/block/FlowerPotBlock.<init>(Ljava/util/function/Supplier;Ljava/util/function/Supplier;Lnet/minecraft/world/level/block/state/BlockBehaviour$Properties;)V=|emptyPot,p_53528_,properties
