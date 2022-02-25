@@ -42,6 +42,21 @@
     public final int m_41462_() {
        return this.f_41371_;
     }
+@@ -158,11 +_,12 @@
+    }
+ 
+    public int m_142158_(ItemStack p_150900_) {
+-      return Math.round(13.0F - (float)p_150900_.m_41773_() * 13.0F / (float)this.f_41371_);
++      return Math.round(13.0F - (float)p_150900_.m_41773_() * 13.0F / (float)this.getMaxDamage(p_150900_));
+    }
+ 
+    public int m_142159_(ItemStack p_150901_) {
+-      float f = Math.max(0.0F, ((float)this.f_41371_ - (float)p_150901_.m_41773_()) / (float)this.f_41371_);
++      int stackMaxDamage = this.getMaxDamage(p_150901_);
++      float f = Math.max(0.0F, ((float)stackMaxDamage - (float)p_150901_.m_41773_()) / (float)stackMaxDamage);
+       return Mth.m_14169_(f / 3.0F, 1.0F, 1.0F);
+    }
+ 
 @@ -219,10 +_,12 @@
     }
  
