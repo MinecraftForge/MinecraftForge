@@ -1,0 +1,14 @@
+--- a/net/minecraft/gametest/framework/GameTest.java
++++ b/net/minecraft/gametest/framework/GameTest.java
+@@ -16,6 +_,11 @@
+ 
+    boolean m_177045_() default true;
+ 
++   /**
++    * The namespace of where to grab the structure from, generally a mod id.
++    */
++   String templateNamespace() default "";
++
+    String m_177046_() default "";
+ 
+    long m_177047_() default 0L;

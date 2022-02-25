@@ -198,5 +198,7 @@ license="LGPL v2.1"
     modId="registry_object_test"
 [[mods]]
     modId="hidden_tooltip_parts"
+[[mods]]
+    modId="gametest_test"
 
 # ADD ABOVE THIS LINE
