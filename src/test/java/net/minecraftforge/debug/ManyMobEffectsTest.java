@@ -101,16 +101,16 @@ public class ManyMobEffectsTest
             effect = MOB_EFFECTS.register("effect_" + i, () -> new MobEffect(MobEffectCategory.NEUTRAL, 0xFF0000)
             {
                 @Override
-                public void applyEffectTick(LivingEntity p_19467_, int p_19468_)
+                public void applyEffectTick(LivingEntity entity, int amplifier)
                 {
-                    if (p_19467_.level.isClientSide)
+                    if (entity.level.isClientSide)
                     {
                         LOGGER.info("Effect Tick for {} on the client", index);
                     }
                 }
 
                 @Override
-                public boolean isDurationEffectTick(int p_19455_, int p_19456_)
+                public boolean isDurationEffectTick(int duration, int amplifier)
                 {
                     return true;
                 }
