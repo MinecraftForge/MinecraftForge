@@ -34,8 +34,8 @@ import java.util.Optional;
 public class DualStackUtils
 {
     /**
-     * Resolve the address and see if Java and the OS return an IPv6 or IPv4 one, then let netty know
-     * accordingly (it doesn't understand the java.net.preferIPv6Addresses=system property)
+     * Resolve the address and see if Java and the OS return an IPv6 or IPv4 one, then let Netty know
+     * accordingly (it doesn't understand the {@code java.net.preferIPv6Addresses=system} property).
      *
      * @author Paint_Ninja
      * @param hostAddress The address you want to check
@@ -53,7 +53,7 @@ public class DualStackUtils
     }
 
     /**
-     * Checks if an address is an IPv6 one or an IPv4 one, then lets netty know accordingly and returns the result
+     * Checks if an address is an IPv6 one or an IPv4 one, lets Netty know accordingly and returns the result.
      *
      * @author Paint_Ninja
      * @param inetAddress The address you want to check
@@ -80,7 +80,7 @@ public class DualStackUtils
      * supports IPv6 and has it enabled but the router's LAN does not.
      *
      * @author Paint_Ninja
-     * @return the client's local IP address or null if unable
+     * @return the client's local IP address or {@code null} if unable to determine it
      */
     @Nullable
     public static InetAddress getLocalAddress()
