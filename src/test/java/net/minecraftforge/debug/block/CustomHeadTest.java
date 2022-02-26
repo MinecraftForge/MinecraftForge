@@ -124,7 +124,10 @@ public class CustomHeadTest
         }
     }
 
-    private enum SkullType implements SkullBlock.Type { BLAZE }
+    private enum SkullType implements SkullBlock.Type
+    {
+        BLAZE
+    }
 
     @Mod.EventBusSubscriber(value= Dist.CLIENT, bus = Bus.MOD, modid = MODID)
     private static class ClientEvents
