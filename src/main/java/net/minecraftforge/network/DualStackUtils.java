@@ -31,7 +31,8 @@ import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.util.Optional;
 
-public class DualStackUtils {
+public class DualStackUtils
+{
     /**
      * Resolve the address and see if Java and the OS return an IPv6 or IPv4 one, then let netty know
      * accordingly (it doesn't understand the java.net.preferIPv6Addresses=system property)
@@ -40,7 +41,8 @@ public class DualStackUtils {
      * @param hostAddress The address you want to check
      * @return true if IPv6, false if IPv4
      */
-    public static boolean isIPv6(final String hostAddress) {
+    public static boolean isIPv6(final String hostAddress)
+    {
         final Optional<InetSocketAddress> hostAddr =
                 ServerNameResolver.DEFAULT
                         .resolveAddress(ServerAddress.parseString(hostAddress))
@@ -57,12 +59,16 @@ public class DualStackUtils {
      * @param inetAddress The address you want to check
      * @return true if IPv6, false if IPv4
      */
-    public static boolean isIPv6(final InetAddress inetAddress) {
-        if (inetAddress instanceof Inet6Address) {
+    public static boolean isIPv6(final InetAddress inetAddress)
+    {
+        if (inetAddress instanceof Inet6Address)
+        {
             System.setProperty("java.net.preferIPv4Stack", "false");
             System.setProperty("java.net.preferIPv6Addresses", "true");
             return true;
-        } else {
+        }
+        else
+        {
             System.setProperty("java.net.preferIPv4Stack", "true");
             System.setProperty("java.net.preferIPv6Addresses", "false");
             return false;
@@ -77,13 +83,17 @@ public class DualStackUtils {
      * @return the client's local IP address or null if unable
      */
     @Nullable
-    public static InetAddress getLocalAddress() {
+    public static InetAddress getLocalAddress()
+    {
         final InetAddress localAddr = new InetSocketAddress(HttpUtil.getAvailablePort()).getAddress();
         if (localAddr.isAnyLocalAddress()) return localAddr;
 
-        try {
+        try
+        {
             return InetAddress.getByName("localhost");
-        } catch (final UnknownHostException e) {
+        }
+        catch (final UnknownHostException e)
+        {
             return null;
         }
     }
