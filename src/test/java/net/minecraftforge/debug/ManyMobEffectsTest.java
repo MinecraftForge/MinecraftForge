@@ -98,7 +98,7 @@ public class ManyMobEffectsTest
         for (int i = 0; i < 255; i++)
         {
             final var index = i;
-            effect = MOB_EFFECTS.register("effect_" + i, () -> new MobEffect(MobEffectCategory.NEUTRAL, 0)
+            effect = MOB_EFFECTS.register("effect_" + i, () -> new MobEffect(MobEffectCategory.NEUTRAL, 0xFF0000)
             {
                 @Override
                 public void applyEffectTick(LivingEntity p_19467_, int p_19468_)
