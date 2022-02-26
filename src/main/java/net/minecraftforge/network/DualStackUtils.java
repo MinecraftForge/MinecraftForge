@@ -41,14 +41,14 @@ public class DualStackUtils
      * @param hostAddress The address you want to check
      * @return true if IPv6, false if IPv4
      */
-    public static boolean isIPv6(final String hostAddress)
+    public static boolean checkIPv6(final String hostAddress)
     {
         final Optional<InetSocketAddress> hostAddr =
                 ServerNameResolver.DEFAULT
                         .resolveAddress(ServerAddress.parseString(hostAddress))
                         .map(ResolvedServerAddress::asInetSocketAddress);
 
-        if (hostAddr.isPresent()) return isIPv6(hostAddr.get().getAddress());
+        if (hostAddr.isPresent()) return checkIPv6(hostAddr.get().getAddress());
         else return false;
     }
 
@@ -59,7 +59,7 @@ public class DualStackUtils
      * @param inetAddress The address you want to check
      * @return true if IPv6, false if IPv4
      */
-    public static boolean isIPv6(final InetAddress inetAddress)
+    public static boolean checkIPv6(final InetAddress inetAddress)
     {
         if (inetAddress instanceof Inet6Address)
         {
@@ -96,5 +96,10 @@ public class DualStackUtils
         {
             return null;
         }
+    }
+
+    public static String getMulticastGroup() {
+        if (checkIPv6(getLocalAddress())) return "FF75:230::60";
+        else return "224.0.2.60";
     }
 }
