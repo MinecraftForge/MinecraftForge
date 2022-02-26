@@ -29,6 +29,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
+import net.minecraft.gametest.framework.GameTestServer;
 import net.minecraft.server.packs.repository.PackSource;
 import net.minecraft.server.packs.repository.RepositorySource;
 import net.minecraft.world.level.storage.LevelResource;
@@ -97,7 +98,12 @@ public class ServerLifecycleHooks
 
     public static boolean handleServerStarting(final MinecraftServer server)
     {
-        DistExecutor.runWhenOn(Dist.DEDICATED_SERVER, ()->()->LanguageHook.loadLanguagesOnServer(server));
+        DistExecutor.runWhenOn(Dist.DEDICATED_SERVER, ()->()->{
+            LanguageHook.loadLanguagesOnServer(server);
+            // GameTestServer requires the gametests to be registered earlier, so it is done in main and should not be done twice.
+            if (!(server instanceof GameTestServer))
+                net.minecraftforge.gametest.ForgeGameTestHooks.registerGametests();
+        });
         PermissionAPI.initializePermissionAPI();
         return !MinecraftForge.EVENT_BUS.post(new ServerStartingEvent(server));
     }

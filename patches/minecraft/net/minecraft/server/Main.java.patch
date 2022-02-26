@@ -1,11 +1,18 @@
 --- a/net/minecraft/server/Main.java
 +++ b/net/minecraft/server/Main.java
-@@ -76,6 +_,8 @@
+@@ -76,6 +_,15 @@
        OptionSpec<String> optionspec12 = optionparser.accepts("serverId").withRequiredArg();
        OptionSpec<Void> optionspec13 = optionparser.accepts("jfrProfile");
        OptionSpec<String> optionspec14 = optionparser.nonOptions();
 +      optionparser.accepts("allowUpdates").withRequiredArg().ofType(Boolean.class).defaultsTo(Boolean.TRUE); // Forge: allow mod updates to proceed
 +      optionparser.accepts("gameDir").withRequiredArg().ofType(File.class).defaultsTo(new File(".")); //Forge: Consume this argument, we use it in the launcher, and the client side.
++      final OptionSpec<net.minecraft.core.BlockPos> spawnPosOpt;
++      boolean gametestEnabled = Boolean.getBoolean("forge.gameTestServer");
++      if (gametestEnabled) {
++         spawnPosOpt = optionparser.accepts("spawnPos").withRequiredArg().withValuesConvertedBy(new net.minecraftforge.gametest.BlockPosValueConverter()).defaultsTo(new net.minecraft.core.BlockPos(0, 60, 0));
++      } else {
++          spawnPosOpt = null;
++      }
  
        try {
           OptionSet optionset = optionparser.parse(p_129699_);
@@ -71,9 +78,39 @@
              worlddata = new PrimaryLevelData(levelsettings, worldgensettings, Lifecycle.stable());
           }
  
-@@ -191,6 +_,7 @@
+@@ -175,22 +_,33 @@
+ 
+          levelstoragesource$levelstorageaccess.m_78287_(registryaccess$registryholder, worlddata);
+          WorldData worlddata1 = worlddata;
+-         final DedicatedServer dedicatedserver = MinecraftServer.m_129872_((p_129697_) -> {
+-            DedicatedServer dedicatedserver1 = new DedicatedServer(p_129697_, registryaccess$registryholder, levelstoragesource$levelstorageaccess, packrepository, serverresources, worlddata1, dedicatedserversettings, DataFixers.m_14512_(), minecraftsessionservice, gameprofilerepository, gameprofilecache, LoggerChunkProgressListener::new);
++         final MinecraftServer dedicatedserver = MinecraftServer.m_129872_((p_129697_) -> {
++            MinecraftServer dedicatedserver1;
++            if (gametestEnabled) {
++               net.minecraftforge.gametest.ForgeGameTestHooks.registerGametests();
++               java.util.Collection<net.minecraft.gametest.framework.GameTestBatch> testBatches = net.minecraft.gametest.framework.GameTestRunner.m_127724_(net.minecraft.gametest.framework.GameTestRegistry.m_127658_());
++               net.minecraft.core.BlockPos spawnPos = optionset.valueOf(spawnPosOpt);
++               dedicatedserver1 = new net.minecraft.gametest.framework.GameTestServer(p_129697_, levelstoragesource$levelstorageaccess, packrepository, serverresources, testBatches, spawnPos, registryaccess$registryholder);
++            } else {
++               dedicatedserver1 = new DedicatedServer(p_129697_, registryaccess$registryholder, levelstoragesource$levelstorageaccess, packrepository, serverresources, worlddata1, dedicatedserversettings, DataFixers.m_14512_(), minecraftsessionservice, gameprofilerepository, gameprofilecache, LoggerChunkProgressListener::new);
++            }
+             dedicatedserver1.m_129981_(optionset.valueOf(optionspec8));
+             dedicatedserver1.m_129801_(optionset.valueOf(optionspec11));
+             dedicatedserver1.m_129975_(optionset.has(optionspec2));
+             dedicatedserver1.m_129948_(optionset.valueOf(optionspec12));
+             boolean flag1 = !optionset.has(optionspec) && !optionset.valuesOf(optionspec14).contains("nogui");
+-            if (flag1 && !GraphicsEnvironment.isHeadless()) {
+-               dedicatedserver1.m_139667_();
++            if (dedicatedserver1 instanceof DedicatedServer dedicatedServer && flag1 && !GraphicsEnvironment.isHeadless()) {
++               dedicatedServer.m_139667_();
+             }
+ 
+             return dedicatedserver1;
+          });
           Thread thread = new Thread("Server Shutdown Thread") {
              public void run() {
++               // FORGE: Halting as GameTestServer will cause issues as it always calls System#exit on both crash and normal exit, so skip it
++               if (!(dedicatedserver instanceof net.minecraft.gametest.framework.GameTestServer))
                 dedicatedserver.m_7570_(true);
 +               LogManager.shutdown(); // we're manually managing the logging shutdown on the server. Make sure we do it here at the end.
              }
