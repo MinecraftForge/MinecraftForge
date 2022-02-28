@@ -191,7 +191,7 @@ public class ModFileInfo implements IModFileInfo, IConfigurable
 
     @Override
     public String moduleName() {
-        return getMods().get(0).getModId();
+        return getMods().get(0).getModId().replace('-', '.');
     }
 
     @Override
