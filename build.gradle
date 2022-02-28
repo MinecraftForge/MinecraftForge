@@ -1488,10 +1488,6 @@ project(':forge') {
     license {
         header = file("$rootDir/LICENSE-header.txt")
 
-        ext {
-            year = new Date().format("yyyy")
-        }
-
         include 'net/minecraftforge/'
         exclude 'net/minecraftforge/server/terminalconsole/'
         exclude 'net/minecraftforge/api/' // exclude API here because it's validated in the SPI build
