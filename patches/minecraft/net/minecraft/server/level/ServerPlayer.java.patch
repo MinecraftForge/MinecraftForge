@@ -8,7 +8,7 @@
        boolean flag = this.f_19853_.m_46469_().m_46207_(GameRules.f_46142_);
        if (flag) {
           Component component = this.m_21231_().m_19293_();
-@@ -685,13 +_,14 @@
+@@ -685,11 +_,12 @@
     }
  
     @Nullable
@@ -21,19 +21,14 @@
 -      if (resourcekey == Level.f_46430_ && p_9180_.m_46472_() == Level.f_46428_) {
 +      if (resourcekey == Level.f_46430_ && p_9180_.m_46472_() == Level.f_46428_ && teleporter.isVanilla()) { //Forge: Fix non-vanilla teleporters triggering end credits
           this.m_19877_();
--         this.m_183503_().m_143261_(this, Entity.RemovalReason.CHANGED_DIMENSION);
-+         this.m_183503_().removePlayer(this, true); //Forge: The player entity is cloned so keep the data until after cloning calls copyFrom
+          this.m_183503_().m_143261_(this, Entity.RemovalReason.CHANGED_DIMENSION);
           if (!this.f_8944_) {
-             this.f_8944_ = true;
-             this.f_8906_.m_141995_(new ClientboundGameEventPacket(ClientboundGameEventPacket.f_132157_, this.f_8928_ ? 0.0F : 1.0F));
-@@ -705,14 +_,15 @@
-          this.f_8906_.m_141995_(new ClientboundChangeDifficultyPacket(leveldata.m_5472_(), leveldata.m_5474_()));
+@@ -706,13 +_,14 @@
           PlayerList playerlist = this.f_8924_.m_6846_();
           playerlist.m_11289_(this);
--         serverlevel.m_143261_(this, Entity.RemovalReason.CHANGED_DIMENSION);
+          serverlevel.m_143261_(this, Entity.RemovalReason.CHANGED_DIMENSION);
 -         this.m_146912_();
 -         PortalInfo portalinfo = this.m_7937_(p_9180_);
-+         serverlevel.removeEntity(this, true); //Forge: the player entity is moved to the new world, NOT cloned. So keep the data alive with no matching invalidate call.
 +         this.revive();
 +         PortalInfo portalinfo = teleporter.getPortalInfo(this, p_9180_, this::m_7937_);
           if (portalinfo != null) {
@@ -183,9 +178,8 @@
           this.f_8906_.m_141995_(new ClientboundRespawnPacket(p_9000_.m_6042_(), p_9000_.m_46472_(), BiomeManager.m_47877_(p_9000_.m_7328_()), this.f_8941_.m_9290_(), this.f_8941_.m_9293_(), p_9000_.m_46659_(), p_9000_.m_8584_(), true));
           this.f_8906_.m_141995_(new ClientboundChangeDifficultyPacket(leveldata.m_5472_(), leveldata.m_5474_()));
           this.f_8924_.m_6846_().m_11289_(this);
--         serverlevel.m_143261_(this, Entity.RemovalReason.CHANGED_DIMENSION);
+          serverlevel.m_143261_(this, Entity.RemovalReason.CHANGED_DIMENSION);
 -         this.m_146912_();
-+         serverlevel.removePlayer(this, true); //Forge: The player entity itself is moved, and not cloned. So we need to keep the data alive with no matching invalidate call later.
 +         this.revive();
           this.m_7678_(p_9001_, p_9002_, p_9003_, p_9004_, p_9005_);
           this.m_143425_(p_9000_);
