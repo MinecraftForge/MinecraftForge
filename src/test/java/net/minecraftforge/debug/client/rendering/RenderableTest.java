@@ -31,14 +31,20 @@ import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.event.RegisterClientReloadListenersEvent;
 import net.minecraftforge.client.event.RenderLevelLastEvent;
+import net.minecraftforge.client.model.ForgeModelBakery;
 import net.minecraftforge.client.model.StandaloneModelConfiguration;
+import net.minecraftforge.client.model.data.EmptyModelData;
+import net.minecraftforge.client.model.data.IModelData;
 import net.minecraftforge.client.model.obj.OBJLoader;
 import net.minecraftforge.client.model.obj.OBJModel;
+import net.minecraftforge.client.model.renderable.BakedRenderable;
 import net.minecraftforge.client.model.renderable.IRenderable;
 import net.minecraftforge.client.model.renderable.MultipartTransforms;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLEnvironment;
@@ -65,13 +71,22 @@ public class RenderableTest
 
     private static class Client
     {
+        private static ResourceLocation MODEL_LOC = new ResourceLocation("minecraft:block/diamond_block");
+
         private static IRenderable<MultipartTransforms> renderable;
+        private static IRenderable<IModelData> bakedRenderable;
 
         public static void init()
         {
             var bus = FMLJavaModLoadingContext.get().getModEventBus();
+            bus.addListener(Client::registerModels);
             bus.addListener(Client::registerReloadListeners);
             MinecraftForge.EVENT_BUS.addListener(Client::renderLast);
+        }
+
+        private static void registerModels(ModelRegistryEvent t)
+        {
+            ForgeModelBakery.addSpecialModel(MODEL_LOC);
         }
 
         public static void registerReloadListeners(RegisterClientReloadListenersEvent event)
@@ -107,6 +122,11 @@ public class RenderableTest
 
         public static void renderLast(RenderLevelLastEvent event)
         {
+            if (bakedRenderable == null)
+            {
+                bakedRenderable = BakedRenderable.of(MODEL_LOC);
+            }
+
             var poseStack = event.getPoseStack();
             var bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
 
@@ -127,6 +147,11 @@ public class RenderableTest
             var transforms = MultipartTransforms.of(map.build());
 
             renderable.render(poseStack, bufferSource, RenderType::entitySolid, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY, event.getPartialTick(), transforms);
+
+            poseStack.pushPose();
+            poseStack.translate(0,0.5f,0);
+            bakedRenderable.render(poseStack, bufferSource, RenderType::entitySolid, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY, event.getPartialTick(), EmptyModelData.INSTANCE);
+            poseStack.popPose();
 
             bufferSource.endBatch();
         }
