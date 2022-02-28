@@ -193,6 +193,8 @@ license="LGPL v2.1"
 [[mods]]
     modId="client_command_test"
 [[mods]]
+    modId="forge_datafix_test"
+[[mods]]
     modId="registry_codec_test"
 [[mods]]
     modId="registry_object_test"
