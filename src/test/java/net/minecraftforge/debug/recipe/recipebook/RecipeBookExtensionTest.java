@@ -33,6 +33,8 @@ import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.crafting.conditions.ICondition;
+import net.minecraftforge.common.crafting.conditions.IConditionSerializer;
 import net.minecraftforge.common.extensions.IForgeMenuType;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -48,7 +50,7 @@ import net.minecraftforge.registries.RegistryObject;
 @Mod(RecipeBookExtensionTest.MOD_ID)
 public class RecipeBookExtensionTest
 {
-    public static final boolean ENABLED = false;
+    public static final boolean ENABLED = true;
 
     public static final String MOD_ID = "recipe_book_extension_test";
     public static final RecipeBookType TEST_TYPE = RecipeBookType.create("TESTING");
@@ -73,7 +75,8 @@ public class RecipeBookExtensionTest
 
     private void commonSetup(FMLCommonSetupEvent event)
     {
-        event.enqueueWork(() -> {
+        event.enqueueWork(() ->
+        {
             RecipeType.register(getId("test_recipe").toString());
         });
     }
@@ -109,7 +112,8 @@ public class RecipeBookExtensionTest
 
     public static class RecipeBookTestContainer extends SimpleContainer
     {
-        public RecipeBookTestContainer() {
+        public RecipeBookTestContainer()
+        {
             super(8);
         }
     }
