@@ -426,7 +426,8 @@ def sharedFmlonlyForge = { Project prj ->
 
         // SecureJarHandler bootstrap values.
         run.property 'ignoreList', prj.configurations.moduleonly.files.collect {it.name.replaceAll(/([-_]([.\d]*\d+)|\.jar$)/, '') }.join(',') + ",client-extra,fmlcore,javafmllanguage,mclanguage,${prj.name}-"
-        //run.property 'mergeModules', 'jna-5.10.0.jar,jna-platform-5.10.0.jar,java-objc-bridge-1.0.0.jar'
+        // FIXME: Without this jna doesn't work at runtime. Someone figure out why please?
+        run.property 'mergeModules', 'jna-5.10.0.jar,jna-platform-5.10.0.jar,java-objc-bridge-1.0.0.jar'
         if (userdevRuns.contains(run)) {
             run.property 'legacyClassPath.file', '{minecraft_classpath_file}'
             run.jvmArgs '-p', '{modules}'
@@ -619,7 +620,7 @@ project(':fmlonly') {
                            '--fml.forgeGroup', project.group,
                            '--fml.mcpVersion', MCP_VERSION],
                     jvm: ["-DignoreList=${fmlonly_client.properties.ignoreList},\${version_name}.jar",
-                          //"-DmergeModules=${fmlonly_client.properties.mergeModules}",
+                          "-DmergeModules=${fmlonly_client.properties.mergeModules}",
                           '-DlibraryDirectory=${library_directory}',
                           '-p', Util.getArtifacts(project, configurations.moduleonly, false).values().collect{"\${library_directory}/${it.downloads.artifact.path}"}.join('${classpath_separator}'),
                           '--add-modules', 'ALL-MODULE-PATH',
@@ -1188,7 +1189,7 @@ project(':forge') {
                            '--fml.forgeGroup', project.group,
                            '--fml.mcpVersion', MCP_VERSION],
                     jvm: ["-DignoreList=${forge_client.properties.ignoreList},\${version_name}.jar",
-                          //"-DmergeModules=${forge_client.properties.mergeModules}",
+                          "-DmergeModules=${forge_client.properties.mergeModules}",
                           '-DlibraryDirectory=${library_directory}',
                           '-p', Util.getArtifacts(project, configurations.moduleonly, false).values().collect{'${library_directory}/' + it.downloads.artifact.path}.join('${classpath_separator}'),
                           '--add-modules', 'ALL-MODULE-PATH',
