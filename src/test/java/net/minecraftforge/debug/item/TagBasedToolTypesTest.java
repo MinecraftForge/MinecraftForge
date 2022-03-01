@@ -8,6 +8,7 @@ package net.minecraftforge.debug.item;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.Tag;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.block.Block;
@@ -26,8 +27,8 @@ import java.util.List;
 @Mod.EventBusSubscriber(bus= Mod.EventBusSubscriber.Bus.MOD)
 public class TagBasedToolTypesTest
 {
-    public static final Tag.Named<Block> MY_TOOL_TAG = BlockTags.createOptional(new ResourceLocation("tag_based_tool_types:minable/my_tool"));
-    public static final Tag.Named<Block> MY_TIER_TAG = BlockTags.createOptional(new ResourceLocation("tag_based_tool_types:needs_my_tier_tool"));
+    public static final TagKey<Block> MY_TOOL_TAG = BlockTags.create(new ResourceLocation("tag_based_tool_types:minable/my_tool"));
+    public static final TagKey<Block> MY_TIER_TAG = BlockTags.create(new ResourceLocation("tag_based_tool_types:needs_my_tier_tool"));
     public static final Tier MY_TIER = TierSortingRegistry.registerTier(
             new ForgeTier(5, 5000, 10, 100, 0, MY_TIER_TAG, () -> Ingredient.of(Items.BEDROCK)),
             new ResourceLocation("tag_based_tool_types:my_tier"),

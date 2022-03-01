@@ -95,7 +95,7 @@ public final class PermissionAPI
      */
     public static void initializePermissionAPI()
     {
-        Class callerClass = StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE).getCallerClass();
+        Class<?> callerClass = StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE).getCallerClass();
         if (callerClass != ServerLifecycleHooks.class)
         {
             LOGGER.warn("{} tried to initialize the PermissionAPI, this call will be ignored.", callerClass.getName());

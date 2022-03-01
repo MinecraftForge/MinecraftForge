@@ -14,6 +14,7 @@ import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.data.recipes.ShapelessRecipeBuilder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.Tag;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -32,7 +33,7 @@ import java.util.function.Consumer;
 
 public final class ForgeRecipeProvider extends RecipeProvider
 {
-    private Map<Item, Tag<Item>> replacements = new HashMap<>();
+    private Map<Item, TagKey<Item>> replacements = new HashMap<>();
     private Set<ResourceLocation> excludes = new HashSet<>();
 
     public ForgeRecipeProvider(DataGenerator generatorIn)
@@ -45,7 +46,7 @@ public final class ForgeRecipeProvider extends RecipeProvider
         excludes.add(item.asItem().getRegistryName());
     }
 
-    private void replace(ItemLike item, Tag<Item> tag)
+    private void replace(ItemLike item, TagKey<Item> tag)
     {
         replacements.put(item.asItem(), tag);
     }
@@ -148,7 +149,7 @@ public final class ForgeRecipeProvider extends RecipeProvider
             if (entry instanceof ItemValue)
             {
                 ItemStack stack = entry.getItems().stream().findFirst().orElse(ItemStack.EMPTY);
-                Tag<Item> replacement = replacements.get(stack.getItem());
+                TagKey<Item> replacement = replacements.get(stack.getItem());
                 if (replacement != null)
                 {
                     items.add(new TagValue(replacement));

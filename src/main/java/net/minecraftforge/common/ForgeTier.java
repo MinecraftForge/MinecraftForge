@@ -5,7 +5,7 @@
 
 package net.minecraftforge.common;
 
-import net.minecraft.tags.Tag;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Tier;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.block.Block;
@@ -26,12 +26,12 @@ public final class ForgeTier implements Tier
     private final float attackDamageBonus;
     private final int enchantmentValue;
     @Nonnull
-    private final Tag<Block> tag;
+    private final TagKey<Block> tag;
     @Nonnull
     private final Supplier<Ingredient> repairIngredient;
 
     public ForgeTier(int level, int uses, float speed, float attackDamageBonus, int enchantmentValue,
-                     @Nonnull Tag<Block> tag, @Nonnull Supplier<Ingredient> repairIngredient)
+                     @Nonnull TagKey<Block> tag, @Nonnull Supplier<Ingredient> repairIngredient)
     {
         this.level = level;
         this.uses = uses;
@@ -73,7 +73,7 @@ public final class ForgeTier implements Tier
     }
 
     @Nonnull
-    public Tag<Block> getTag()
+    public TagKey<Block> getTag()
     {
         return this.tag;
     }

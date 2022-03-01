@@ -175,7 +175,7 @@
 +      } else if (net.minecraftforge.common.ForgeHooks.onTravelToDimension(this, p_9000_.m_46472_())) {
           ServerLevel serverlevel = this.m_183503_();
           LevelData leveldata = p_9000_.m_6106_();
-          this.f_8906_.m_141995_(new ClientboundRespawnPacket(p_9000_.m_6042_(), p_9000_.m_46472_(), BiomeManager.m_47877_(p_9000_.m_7328_()), this.f_8941_.m_9290_(), this.f_8941_.m_9293_(), p_9000_.m_46659_(), p_9000_.m_8584_(), true));
+          this.f_8906_.m_141995_(new ClientboundRespawnPacket(p_9000_.m_204156_(), p_9000_.m_46472_(), BiomeManager.m_47877_(p_9000_.m_7328_()), this.f_8941_.m_9290_(), this.f_8941_.m_9293_(), p_9000_.m_46659_(), p_9000_.m_8584_(), true));
           this.f_8906_.m_141995_(new ClientboundChangeDifficultyPacket(leveldata.m_5472_(), leveldata.m_5474_()));
           this.f_8924_.m_6846_().m_11289_(this);
           serverlevel.m_143261_(this, Entity.RemovalReason.CHANGED_DIMENSION);

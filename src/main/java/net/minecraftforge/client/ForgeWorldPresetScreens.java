@@ -89,7 +89,7 @@ public class ForgeWorldPresetScreens
 
         @Nonnull
         @Override
-        public WorldGenSettings create(@Nonnull RegistryAccess.RegistryHolder dynamicRegistries, long seed, boolean generateStructures, boolean bonusChest)
+        public WorldGenSettings create(@Nonnull RegistryAccess dynamicRegistries, long seed, boolean generateStructures, boolean bonusChest)
         {
             return worldPreset.createSettings(dynamicRegistries, seed, generateStructures, bonusChest, "");
         }

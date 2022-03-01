@@ -8,9 +8,11 @@ package net.minecraftforge.registries;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Function;
 
 import com.google.common.collect.Lists;
 
+import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.registries.IForgeRegistry.*;
 
@@ -30,6 +32,7 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
     private List<CreateCallback<T>> createCallback = Lists.newArrayList();
     private List<ValidateCallback<T>> validateCallback = Lists.newArrayList();
     private List<BakeCallback<T>> bakeCallback = Lists.newArrayList();
+    private Function<T, Holder.Reference<T>> vanillaHolder;
     private boolean saveToDisc = true;
     private boolean sync = true;
     private boolean allowOverrides = true;
@@ -218,6 +221,12 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
         return this;
     }
 
+    RegistryBuilder<T> vanillaHolder(Function<T, Holder.Reference<T>> func)
+    {
+        this.vanillaHolder = func;
+        return this;
+    }
+
     public IForgeRegistry<T> create()
     {
         if (hasWrapper)
@@ -367,5 +376,10 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
     public Set<ResourceLocation> getLegacyNames()
     {
         return legacyNames;
+    }
+
+    Function<T, Holder.Reference<T>> getVanillaHolder()
+    {
+        return this.vanillaHolder;
     }
 }

@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/player/LocalPlayer.java
 +++ b/net/minecraft/client/player/LocalPlayer.java
-@@ -144,6 +_,7 @@
+@@ -145,6 +_,7 @@
     }
  
     public boolean m_6469_(DamageSource p_108662_, float p_108663_) {
@@ -8,7 +8,7 @@
        return false;
     }
  
-@@ -466,6 +_,11 @@
+@@ -461,6 +_,11 @@
     }
  
     public void m_5496_(SoundEvent p_108651_, float p_108652_, float p_108653_) {
@@ -20,7 +20,7 @@
        this.f_19853_.m_7785_(this.m_20185_(), this.m_20186_(), this.m_20189_(), p_108651_, this.m_5720_(), p_108652_, p_108653_, false);
     }
  
-@@ -621,6 +_,7 @@
+@@ -616,6 +_,7 @@
        boolean flag2 = this.m_108733_();
        this.f_108601_ = !this.m_150110_().f_35935_ && !this.m_6069_() && this.m_20175_(Pose.CROUCHING) && (this.m_6144_() || !this.m_5803_() && !this.m_20175_(Pose.STANDING));
        this.f_108618_.m_7606_(this.m_108635_());
@@ -28,7 +28,7 @@
        this.f_108619_.m_91301_().m_120586_(this.f_108618_);
        if (this.m_6117_() && !this.m_20159_()) {
           this.f_108618_.f_108566_ *= 0.2F;
-@@ -693,7 +_,7 @@
+@@ -688,7 +_,7 @@
  
        if (this.f_108618_.f_108572_ && !flag7 && !flag && !this.m_150110_().f_35935_ && !this.m_20159_() && !this.m_6147_()) {
           ItemStack itemstack = this.m_6844_(EquipmentSlot.CHEST);
@@ -37,7 +37,7 @@
              this.f_108617_.m_104955_(new ServerboundPlayerCommandPacket(this, ServerboundPlayerCommandPacket.Action.START_FALL_FLYING));
           }
        }
-@@ -811,6 +_,7 @@
+@@ -806,6 +_,7 @@
  
     public void m_6083_() {
        super.m_6083_();
@@ -45,7 +45,7 @@
        this.f_108611_ = false;
        if (this.m_20202_() instanceof Boat) {
           Boat boat = (Boat)this.m_20202_();
-@@ -1024,6 +_,18 @@
+@@ -1019,6 +_,18 @@
        } else {
           return super.m_7398_(p_108758_);
        }

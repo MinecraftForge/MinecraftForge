@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/MinecraftServer.java
 +++ b/net/minecraft/server/MinecraftServer.java
-@@ -254,7 +_,7 @@
+@@ -257,7 +_,7 @@
  
     public static <S extends MinecraftServer> S m_129872_(Function<Thread, S> p_129873_) {
        AtomicReference<S> atomicreference = new AtomicReference<>();
@@ -9,7 +9,7 @@
           atomicreference.get().m_130011_();
        }, "Server thread");
        thread.setUncaughtExceptionHandler((p_177909_, p_177910_) -> {
-@@ -355,6 +_,7 @@
+@@ -358,6 +_,7 @@
        this.m_129841_(dimensiondatastorage);
        this.f_129732_ = new CommandStorage(dimensiondatastorage);
        WorldBorder worldborder = serverlevel.m_6857_();
@@ -17,15 +17,15 @@
        if (!serverleveldata.m_6535_()) {
           try {
              m_177896_(serverlevel, serverleveldata, worldgensettings.m_64660_(), flag);
-@@ -391,6 +_,7 @@
-             ServerLevel serverlevel1 = new ServerLevel(this, this.f_129738_, this.f_129744_, derivedleveldata, resourcekey1, dimensiontype1, p_129816_, chunkgenerator1, flag, j, ImmutableList.of(), false);
+@@ -394,6 +_,7 @@
+             ServerLevel serverlevel1 = new ServerLevel(this, this.f_129738_, this.f_129744_, derivedleveldata, resourcekey1, holder1, p_129816_, chunkgenerator1, flag, j, ImmutableList.of(), false);
              worldborder.m_61929_(new BorderChangeListener.DelegateBorderChangeListener(serverlevel1.m_6857_()));
              this.f_129762_.put(resourcekey1, serverlevel1);
 +            net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.WorldEvent.Load(f_129762_.get(resourcekey)));
           }
        }
  
-@@ -402,6 +_,7 @@
+@@ -405,6 +_,7 @@
           p_177898_.m_7250_(BlockPos.f_121853_.m_6630_(80), 0.0F);
        } else {
           ChunkGenerator chunkgenerator = p_177897_.m_7726_().m_8481_();
@@ -33,15 +33,7 @@
           ChunkPos chunkpos = new ChunkPos(chunkgenerator.m_183403_().m_183230_());
           int i = chunkgenerator.m_142051_(p_177897_);
           if (i < p_177897_.m_141937_()) {
-@@ -455,6 +_,7 @@
-    }
- 
-    private void m_129940_(ChunkProgressListener p_129941_) {
-+      net.minecraftforge.common.world.StructureSpawnManager.gatherEntitySpawns();
-       ServerLevel serverlevel = this.m_129783_();
-       f_129750_.info("Preparing start region for dimension {}", (Object)serverlevel.m_46472_().m_135782_());
-       BlockPos blockpos = serverlevel.m_8900_();
-@@ -482,6 +_,7 @@
+@@ -485,6 +_,7 @@
                 ChunkPos chunkpos = new ChunkPos(i);
                 serverlevel1.m_7726_().m_6692_(chunkpos, true);
              }
@@ -49,15 +41,15 @@
           }
        }
  
-@@ -591,6 +_,7 @@
-       for(ServerLevel serverlevel1 : this.m_129785_()) {
-          if (serverlevel1 != null) {
+@@ -609,6 +_,7 @@
+       for(ServerLevel serverlevel2 : this.m_129785_()) {
+          if (serverlevel2 != null) {
              try {
-+               net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.WorldEvent.Unload(serverlevel1));
-                serverlevel1.close();
++               net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.WorldEvent.Unload(serverlevel2));
+                serverlevel2.close();
              } catch (IOException ioexception1) {
                 f_129750_.error("Exception closing the level", (Throwable)ioexception1);
-@@ -636,6 +_,7 @@
+@@ -654,6 +_,7 @@
     protected void m_130011_() {
        try {
           if (this.m_7038_()) {
@@ -65,7 +57,7 @@
              this.f_129726_ = Util.m_137550_();
              this.f_129757_.m_134908_(new TextComponent(this.f_129709_));
              this.f_129757_.m_134912_(new ServerStatus.Version(SharedConstants.m_183709_().getName(), SharedConstants.m_183709_().getProtocolVersion()));
-@@ -668,7 +_,10 @@
+@@ -686,7 +_,10 @@
                 this.f_129717_ = true;
                 JvmProfiler.f_185340_.m_183597_(this.f_129737_);
              }
@@ -76,7 +68,7 @@
              this.m_7268_((CrashReport)null);
           }
        } catch (Throwable throwable1) {
-@@ -688,6 +_,7 @@
+@@ -700,6 +_,7 @@
              f_129750_.error("We were unable to save this crash report to disk.");
           }
  
@@ -84,7 +76,7 @@
           this.m_7268_(crashreport);
        } finally {
           try {
-@@ -700,6 +_,7 @@
+@@ -712,6 +_,7 @@
                 this.f_129723_.m_196559_();
              }
  
@@ -92,7 +84,7 @@
              this.m_6988_();
           }
  
-@@ -791,6 +_,7 @@
+@@ -826,6 +_,7 @@
  
     public void m_5705_(BooleanSupplier p_129871_) {
        long i = Util.m_137569_();
@@ -100,7 +92,7 @@
        ++this.f_129766_;
        this.m_5703_(p_129871_);
        if (i - this.f_129724_ >= 5000000000L) {
-@@ -812,6 +_,7 @@
+@@ -847,6 +_,7 @@
              Collections.shuffle(Arrays.asList(agameprofile));
              this.f_129757_.m_134914_().m_134924_(agameprofile);
           }
@@ -108,7 +100,7 @@
        }
  
        if (this.f_129766_ % 6000 == 0) {
-@@ -828,6 +_,7 @@
+@@ -863,6 +_,7 @@
        long i1 = Util.m_137569_();
        this.f_129735_.m_13755_(i1 - i);
        this.f_129754_.m_7238_();
@@ -116,7 +108,7 @@
     }
  
     public void m_5703_(BooleanSupplier p_129954_) {
-@@ -835,7 +_,8 @@
+@@ -870,7 +_,8 @@
        this.m_129890_().m_136128_();
        this.f_129754_.m_6182_("levels");
  
@@ -126,7 +118,7 @@
           this.f_129754_.m_6521_(() -> {
              return serverlevel + " " + serverlevel.m_46472_().m_135782_();
           });
-@@ -846,6 +_,7 @@
+@@ -881,6 +_,7 @@
           }
  
           this.f_129754_.m_6180_("tick");
@@ -134,7 +126,7 @@
  
           try {
              serverlevel.m_8793_(p_129954_);
-@@ -854,16 +_,18 @@
+@@ -889,16 +_,18 @@
              serverlevel.m_6026_(crashreport);
              throw new ReportedException(crashreport);
           }
@@ -154,7 +146,7 @@
           GameTestTicker.f_177648_.m_127790_();
        }
  
-@@ -931,7 +_,7 @@
+@@ -966,7 +_,7 @@
  
     @DontObfuscate
     public String m_130001_() {
@@ -163,23 +155,23 @@
     }
  
     public SystemReport m_177935_(SystemReport p_177936_) {
-@@ -947,6 +_,7 @@
+@@ -982,6 +_,7 @@
        p_177936_.m_143522_("Data Packs", () -> {
           StringBuilder stringbuilder = new StringBuilder();
  
-+            LogManager.shutdown(); // we're manually managing the logging shutdown on the server. Make sure we do it here at the end.
++         //TODO-PATCHING:Figure out how to stop the logger here.
           for(Pack pack : this.f_129730_.m_10524_()) {
              if (stringbuilder.length() > 0) {
                 stringbuilder.append(", ");
-@@ -1261,6 +_,7 @@
+@@ -1316,6 +_,7 @@
           this.m_6846_().m_11315_();
-          this.f_129734_.m_136120_(this.f_129740_.m_136157_());
-          this.f_129741_.m_74335_(this.f_129740_.m_136178_());
+          this.f_129734_.m_136120_(this.f_129740_.f_206585_.m_206860_());
+          this.f_129741_.m_74335_(this.f_129740_.f_206584_);
 +         this.m_6846_().m_11314_().forEach(this.m_6846_()::m_11289_); //Forge: Fix newly added/modified commands not being sent to the client when commands reload.
        }, this);
        if (this.m_18695_()) {
           this.m_18701_(completablefuture::isDone);
-@@ -1270,10 +_,13 @@
+@@ -1325,10 +_,13 @@
     }
  
     public static DataPackConfig m_129819_(PackRepository p_129820_, DataPackConfig p_129821_, boolean p_129822_) {
@@ -195,7 +187,7 @@
        } else {
           Set<String> set = Sets.newLinkedHashSet();
  
-@@ -1428,6 +_,31 @@
+@@ -1479,6 +_,31 @@
  
     public abstract boolean m_7779_(GameProfile p_129840_);
  
@@ -227,14 +219,14 @@
     public void m_142116_(Path p_177911_) throws IOException {
     }
  
-@@ -1681,6 +_,10 @@
+@@ -1732,6 +_,10 @@
  
     public WorldData m_129910_() {
        return this.f_129749_;
 +   }
 +
-+   public ServerResources getServerResources() {
++   public MinecraftServer.ReloadableResources getServerResources() {
 +       return f_129740_;
     }
  
-    public RegistryAccess m_129911_() {
+    public RegistryAccess.Frozen m_206579_() {

@@ -46,7 +46,9 @@ import javax.annotation.Nullable;
 
 import it.unimi.dsi.fastutil.longs.LongSet;
 import net.minecraft.advancements.Advancement;
+import net.minecraft.core.*;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -56,6 +58,7 @@ import net.minecraft.world.item.*;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.gameevent.GameEvent;
+import net.minecraft.world.level.levelgen.feature.ConfiguredStructureFeature;
 import net.minecraft.world.level.storage.WorldData;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.LootTable;
@@ -88,8 +91,6 @@ import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.item.alchemy.PotionUtils;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.core.Registry;
-import net.minecraft.core.MappedRegistry;
 import net.minecraft.world.*;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.ChunkGenerator;
@@ -101,7 +102,6 @@ import net.minecraft.world.level.block.entity.FurnaceBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.phys.AABB;
-import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
@@ -170,7 +170,6 @@ import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
 import net.minecraft.ChatFormatting;
-import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.TextColor;
@@ -525,7 +524,7 @@ public class ForgeHooks
 
             if (!entityPlayer.mayBuild())
             {
-                if (itemstack.isEmpty() || !itemstack.hasAdventureModeBreakTagForBlock(level.getTagManager(), new BlockInWorld(level, pos, false)))
+                if (itemstack.isEmpty() || !itemstack.hasAdventureModeBreakTagForBlock(level.registryAccess().registryOrThrow(Registry.BLOCK_REGISTRY), new BlockInWorld(level, pos, false)))
                     preCancelEvent = true;
             }
         }
@@ -568,7 +567,7 @@ public class ForgeHooks
         Level level = context.getLevel();
 
         Player player = context.getPlayer();
-        if (player != null && !player.getAbilities().mayBuild && !itemstack.hasAdventureModePlaceTagForBlock(level.getTagManager(), new BlockInWorld(level, context.getClickedPos(), false)))
+        if (player != null && !player.getAbilities().mayBuild && !itemstack.hasAdventureModePlaceTagForBlock(level.registryAccess().registryOrThrow(Registry.BLOCK_REGISTRY), new BlockInWorld(level, context.getClickedPos(), false)))
             return InteractionResult.PASS;
 
         // handle all placement events here
@@ -860,7 +859,7 @@ public class ForgeHooks
         return "default";
     }
 
-    public static Tag<Block> getTagFromVanillaTier(Tiers tier)
+    public static TagKey<Block> getTagFromVanillaTier(Tiers tier)
     {
         return switch(tier)
                 {
@@ -1089,10 +1088,10 @@ public class ForgeHooks
                 String s = GsonHelper.convertToString(entry, "value");
                 Tag.Entry dummy;
                 if (!s.startsWith("#"))
-                    dummy = new Tag.ElementEntry(new ResourceLocation(s));
+                    dummy = new Tag.OptionalElementEntry(new ResourceLocation(s));
                 else
                     dummy = new Tag.TagEntry(new ResourceLocation(s.substring(1)));
-                allList.removeIf(e -> e.getEntry().equals(dummy));
+                allList.removeIf(e -> e.entry().equals(dummy));
             }
         }
     }
@@ -1217,7 +1216,7 @@ public class ForgeHooks
      * When a structure mod is removed, this map may contain null keys. This will make the world unable to save if this persists.
      * If we remove a structure from the save data in this way, we then mark the chunk for saving
      */
-    public static void fixNullStructureReferences(ChunkAccess chunk, Map<StructureFeature<?>, LongSet> structureReferences)
+    public static void fixNullStructureReferences(ChunkAccess chunk, Map<ConfiguredStructureFeature<?, ?>, LongSet> structureReferences)
     {
         if (structureReferences.remove(null) != null)
         {
@@ -1230,7 +1229,7 @@ public class ForgeHooks
     private static final String DIMENSIONS_KEY = "dimensions";
     private static final String SEED_KEY = "seed";
     //No to static init!
-    private static final Supplier<Codec<MappedRegistry<LevelStem>>> CODEC = Suppliers.memoize(() -> MappedRegistry.dataPackCodec(Registry.LEVEL_STEM_REGISTRY, Lifecycle.stable(), LevelStem.CODEC).xmap(LevelStem::sortMap, Function.identity()));
+    private static final Supplier<Codec<Registry<LevelStem>>> CODEC = Suppliers.memoize(() -> RegistryCodecs.dataPackAwareCodec(Registry.LEVEL_STEM_REGISTRY, Lifecycle.stable(), LevelStem.CODEC).xmap(LevelStem::sortMap, Function.identity()));
 
     private static final Map<EntityType<? extends LivingEntity>, AttributeSupplier> FORGE_ATTRIBUTES = new HashMap<>();
     /**  FOR INTERNAL USE ONLY, DO NOT CALL DIRECTLY */
@@ -1281,19 +1280,19 @@ public class ForgeHooks
         long seed = wgs.seed();
         boolean generateFeatures = wgs.generateFeatures();
         boolean generateBonusChest = wgs.generateBonusChest();
-        MappedRegistry<LevelStem> originalRegistry = wgs.dimensions();
+        Registry<LevelStem> originalRegistry = wgs.dimensions();
         Optional<String> legacyCustomOptions = wgs.legacyCustomOptions;
         
         // make a copy of the dimension registry; for dimensions that specify that they should use the server seed instead
         // of the hardcoded json seed, recreate them with the correct seed
-        MappedRegistry<LevelStem> seededRegistry = new MappedRegistry<>(Registry.LEVEL_STEM_REGISTRY, Lifecycle.experimental());
+        MappedRegistry<LevelStem> seededRegistry = new MappedRegistry<>(Registry.LEVEL_STEM_REGISTRY, Lifecycle.experimental(), (Function<LevelStem, Holder.Reference<LevelStem>>)null);
         for (Entry<ResourceKey<LevelStem>, LevelStem> entry : originalRegistry.entrySet())
         {
             ResourceKey<LevelStem> key = entry.getKey();
             LevelStem dimension = entry.getValue();
             if (dimension.useServerSeed())
             {
-                seededRegistry.register(key, new LevelStem(dimension.typeSupplier(), dimension.generator().withSeed(seed), true), originalRegistry.lifecycle(entry.getValue()));
+                seededRegistry.register(key, new LevelStem(dimension.typeHolder(), dimension.generator().withSeed(seed), true), originalRegistry.lifecycle(entry.getValue()));
             }
             else
             {
@@ -1310,7 +1309,7 @@ public class ForgeHooks
             App<Mu<LevelStem>, LevelStem> vanillaFields = vanillaFieldsSupplier.get();
             return builder.group(vanillaFields).and(
                     Codec.BOOL.optionalFieldOf("forge:use_server_seed", false).stable().forGetter(levelStem -> levelStem.useServerSeed()))
-                .apply(builder, builder.stable((stem, useServerSeed) -> new LevelStem(stem.typeSupplier(), stem.generator(), useServerSeed)));
+                .apply(builder, builder.stable((stem, useServerSeed) -> new LevelStem(stem.typeHolder(), stem.generator(), useServerSeed)));
     }
 
     public static void writeAdditionalLevelSaveData(WorldData worldData, CompoundTag levelTag)

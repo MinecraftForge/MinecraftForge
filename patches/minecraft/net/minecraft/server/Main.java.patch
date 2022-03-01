@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/Main.java
 +++ b/net/minecraft/server/Main.java
-@@ -76,6 +_,15 @@
+@@ -77,6 +_,15 @@
        OptionSpec<String> optionspec12 = optionparser.accepts("serverId").withRequiredArg();
        OptionSpec<Void> optionspec13 = optionparser.accepts("jfrProfile");
        OptionSpec<String> optionspec14 = optionparser.nonOptions();
@@ -16,7 +16,7 @@
  
        try {
           OptionSet optionset = optionparser.parse(p_129699_);
-@@ -83,6 +_,13 @@
+@@ -84,6 +_,13 @@
              optionparser.printHelpOn(System.err);
              return;
           }
@@ -30,13 +30,12 @@
  
           CrashReport.m_127529_();
           if (optionset.has(optionspec13)) {
-@@ -92,30 +_,30 @@
+@@ -93,29 +_,29 @@
           Bootstrap.m_135870_();
           Bootstrap.m_135889_();
           Util.m_137584_();
--         RegistryAccess.RegistryHolder registryaccess$registryholder = RegistryAccess.m_123086_();
 +         if (!optionset.has(optionspec1)) net.minecraftforge.server.loading.ServerModLoader.load(); // Load mods before we load almost anything else anymore. Single spot now. Only loads if they haven't passed the initserver param
-+         RegistryAccess.RegistryHolder registryaccess$registryholder; // RegistryAccess.builtin(); // Delay initialization until after we read additional save data
++         //TODO-PATCHING: Figure out how to handle the delayed initialization.
           Path path = Paths.get("server.properties");
           DedicatedServerSettings dedicatedserversettings = new DedicatedServerSettings(path);
           dedicatedserversettings.m_139780_();
@@ -65,34 +64,24 @@
           LevelStorageSource levelstoragesource = LevelStorageSource.m_78242_(file1.toPath());
           LevelStorageSource.LevelStorageAccess levelstoragesource$levelstorageaccess = levelstoragesource.m_78260_(s);
 +         levelstoragesource$levelstorageaccess.readAdditionalLevelSaveData();
-+         registryaccess$registryholder = RegistryAccess.m_123086_();
           LevelSummary levelsummary = levelstoragesource$levelstorageaccess.m_78308_();
           if (levelsummary != null) {
              if (levelsummary.m_193020_()) {
-@@ -164,6 +_,8 @@
-                worldgensettings = optionset.has(optionspec3) ? dedicatedserverproperties.m_180927_(registryaccess$registryholder).m_64671_() : dedicatedserverproperties.m_180927_(registryaccess$registryholder);
-             }
- 
-+            // Forge: Deserialize the DimensionGeneratorSettings to ensure modded dims are loaded on first server load (see SimpleRegistryCodec#decode). Vanilla behaviour only loads from the server.properties and deserializes only after the 2nd server load.
-+            worldgensettings = WorldGenSettings.f_64600_.encodeStart(net.minecraft.resources.RegistryWriteOps.m_135767_(NbtOps.f_128958_, registryaccess$registryholder), worldgensettings).flatMap(nbt -> WorldGenSettings.f_64600_.parse(registryreadops, nbt)).getOrThrow(false, errorMsg->{});
-             worlddata = new PrimaryLevelData(levelsettings, worldgensettings, Lifecycle.stable());
+@@ -181,22 +_,34 @@
           }
  
-@@ -175,22 +_,33 @@
- 
-          levelstoragesource$levelstorageaccess.m_78287_(registryaccess$registryholder, worlddata);
-          WorldData worlddata1 = worlddata;
--         final DedicatedServer dedicatedserver = MinecraftServer.m_129872_((p_129697_) -> {
--            DedicatedServer dedicatedserver1 = new DedicatedServer(p_129697_, registryaccess$registryholder, levelstoragesource$levelstorageaccess, packrepository, serverresources, worlddata1, dedicatedserversettings, DataFixers.m_14512_(), minecraftsessionservice, gameprofilerepository, gameprofilecache, LoggerChunkProgressListener::new);
+          levelstoragesource$levelstorageaccess.m_78287_(registryaccess$frozen, worlddata);
+-         final DedicatedServer dedicatedserver = MinecraftServer.m_129872_((p_206536_) -> {
+-            DedicatedServer dedicatedserver1 = new DedicatedServer(p_206536_, levelstoragesource$levelstorageaccess, packrepository, worldstem, dedicatedserversettings, DataFixers.m_14512_(), minecraftsessionservice, gameprofilerepository, gameprofilecache, LoggerChunkProgressListener::new);
 +         final MinecraftServer dedicatedserver = MinecraftServer.m_129872_((p_129697_) -> {
 +            MinecraftServer dedicatedserver1;
 +            if (gametestEnabled) {
 +               net.minecraftforge.gametest.ForgeGameTestHooks.registerGametests();
 +               java.util.Collection<net.minecraft.gametest.framework.GameTestBatch> testBatches = net.minecraft.gametest.framework.GameTestRunner.m_127724_(net.minecraft.gametest.framework.GameTestRegistry.m_127658_());
 +               net.minecraft.core.BlockPos spawnPos = optionset.valueOf(spawnPosOpt);
-+               dedicatedserver1 = new net.minecraft.gametest.framework.GameTestServer(p_129697_, levelstoragesource$levelstorageaccess, packrepository, serverresources, testBatches, spawnPos, registryaccess$registryholder);
++               dedicatedserver1 = new net.minecraft.gametest.framework.GameTestServer(p_129697_, levelstoragesource$levelstorageaccess, packrepository, worldstem, testBatches, spawnPos);
 +            } else {
-+               dedicatedserver1 = new DedicatedServer(p_129697_, registryaccess$registryholder, levelstoragesource$levelstorageaccess, packrepository, serverresources, worlddata1, dedicatedserversettings, DataFixers.m_14512_(), minecraftsessionservice, gameprofilerepository, gameprofilecache, LoggerChunkProgressListener::new);
++               dedicatedserver1 = new DedicatedServer(p_129697_, levelstoragesource$levelstorageaccess, packrepository, worldstem, dedicatedserversettings, DataFixers.m_14512_(), minecraftsessionservice, gameprofilerepository, gameprofilecache, LoggerChunkProgressListener::new);
 +            }
              dedicatedserver1.m_129981_(optionset.valueOf(optionspec8));
              dedicatedserver1.m_129801_(optionset.valueOf(optionspec11));
@@ -112,7 +101,8 @@
 +               // FORGE: Halting as GameTestServer will cause issues as it always calls System#exit on both crash and normal exit, so skip it
 +               if (!(dedicatedserver instanceof net.minecraft.gametest.framework.GameTestServer))
                 dedicatedserver.m_7570_(true);
-+               LogManager.shutdown(); // we're manually managing the logging shutdown on the server. Make sure we do it here at the end.
++               //TODO-PATCHING: Figure out what needs to be done here after the logging update.
++               //LogManager.shutdown(); // we're manually managing the logging shutdown on the server. Make sure we do it here at the end.
              }
           };
           thread.setUncaughtExceptionHandler(new DefaultUncaughtExceptionHandler(f_129670_));

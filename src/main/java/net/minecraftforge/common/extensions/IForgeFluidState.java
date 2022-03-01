@@ -5,10 +5,10 @@
 
 package net.minecraftforge.common.extensions;
 
+import net.minecraft.core.HolderSet;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
-import net.minecraft.tags.SetTag;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.BlockGetter;
@@ -32,7 +32,7 @@ public interface IForgeFluidState
      * @param tag to test for.
      * @param testingHead when true, its testing the entities head for vision, breathing ect... otherwise its testing the body, for swimming and movement adjustment.
      */
-    default boolean isEntityInside(LevelReader level, BlockPos pos, Entity entity, double yToTest, SetTag<Fluid> tag, boolean testingHead)
+    default boolean isEntityInside(LevelReader level, BlockPos pos, Entity entity, double yToTest, HolderSet<Fluid> tag, boolean testingHead)
     {
 //        return ifluidstate.isTagged(p_213290_1_) && d0 < (double)((float)blockpos.getY() + ifluidstate.getActualHeight(this.level, blockpos) + 0.11111111F);
         return self().getType().isEntityInside(self(), level, pos, entity, yToTest, tag, testingHead);

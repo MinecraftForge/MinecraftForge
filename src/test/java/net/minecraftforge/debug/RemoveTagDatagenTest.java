@@ -7,8 +7,10 @@ package net.minecraftforge.debug;
 
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.tags.BlockTagsProvider;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.Tag;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.common.data.ExistingFileHelper;
@@ -21,7 +23,7 @@ import net.minecraftforge.forge.event.lifecycle.GatherDataEvent;
 public class RemoveTagDatagenTest
 {
     public static final String MODID = "remove_tag_datagen_test";
-    public static final Tag.Named<Block> TEST_TAG = BlockTags.bind("test_tag"); 
+    public static final TagKey<Block> TEST_TAG = BlockTags.create(new ResourceLocation("test_tag"));
     
     public RemoveTagDatagenTest()
     {

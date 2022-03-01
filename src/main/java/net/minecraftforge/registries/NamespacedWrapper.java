@@ -5,15 +5,15 @@
 
 package net.minecraftforge.registries;
 
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Optional;
 import java.util.OptionalInt;
-import java.util.Random;
 import java.util.Set;
+import java.util.function.Function;
 import javax.annotation.Nullable;
 
+import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.core.MappedRegistry;
@@ -29,14 +29,14 @@ class NamespacedWrapper<T extends IForgeRegistryEntry<T>> extends MappedRegistry
     private boolean locked = false;
     private ForgeRegistry<T> delegate;
 
-    public NamespacedWrapper(ForgeRegistry<T> owner)
+    public NamespacedWrapper(ForgeRegistry<T> owner, Function<T, Holder.Reference<T>> holderLookup)
     {
-        super(owner.getRegistryKey(), Lifecycle.experimental());
+        super(owner.getRegistryKey(), Lifecycle.experimental(), holderLookup);
         this.delegate = owner;
     }
 
     @Override
-    public <V extends T> V registerMapping(int id, ResourceKey<T> key, V value, Lifecycle lifecycle)
+    public Holder<T> registerMapping(int id, ResourceKey<T> key, T value, Lifecycle lifecycle)
     {
         if (locked)
             throw new IllegalStateException("Can not register to a locked registry. Modder should use Forge Register methods.");
@@ -49,17 +49,17 @@ class NamespacedWrapper<T extends IForgeRegistryEntry<T>> extends MappedRegistry
         int realId = this.delegate.add(id, value);
         if (realId != id && id != -1)
             LOGGER.warn("Registered object did not get ID it asked for. Name: {} Type: {} Expected: {} Got: {}", key, value.getRegistryType().getName(), id, realId);
-        return value;
+        return super.registerMapping(realId, key, value, lifecycle);
     }
 
     @Override
-    public <R extends T> R register(ResourceKey<T> key, R value, Lifecycle lifecycle)
+    public Holder<T> register(ResourceKey<T> key, T value, Lifecycle lifecycle)
     {
         return registerMapping(-1, key, value, lifecycle);
     }
 
     @Override
-    public <V extends T> V registerOrOverride(OptionalInt id, ResourceKey<T> key, V value, Lifecycle lifecycle) {
+    public Holder<T> registerOrOverride(OptionalInt id, ResourceKey<T> key, T value, Lifecycle lifecycle) {
         int wanted = -1;
         if (id.isPresent() && byId(id.getAsInt()) != null)
             wanted = id.getAsInt();
@@ -142,13 +142,7 @@ class NamespacedWrapper<T extends IForgeRegistryEntry<T>> extends MappedRegistry
         return this.delegate.getEntries();
     }
 
-    @Override
-    @Nullable
-    public T getRandom(Random random)
-    {
-        Collection<T> values = this.delegate.getValues();
-        return values.stream().skip(random.nextInt(values.size())).findFirst().orElse(null);
-    }
+    // TODO-PATCHING: Figure out if getRandom needs to be overriden.
 
     /*
     @Override
@@ -162,13 +156,16 @@ class NamespacedWrapper<T extends IForgeRegistryEntry<T>> extends MappedRegistry
     @Override
     public void lock(){ this.locked = true; }
 
+    //@Override public void unfreeze() {}
+
     public static class Factory<V extends IForgeRegistryEntry<V>> implements IForgeRegistry.CreateCallback<V>
     {
         public static final ResourceLocation ID = new ResourceLocation("forge", "registry_defaulted_wrapper");
         @Override
         public void onCreate(IForgeRegistryInternal<V> owner, RegistryManager stage)
         {
-            owner.setSlaveMap(ID, new NamespacedWrapper<V>((ForgeRegistry<V>)owner));
+            ForgeRegistry<V> fowner = (ForgeRegistry<V>)owner;
+            owner.setSlaveMap(ID, new NamespacedWrapper<V>(fowner, fowner.getBuilder().getVanillaHolder()));
         }
     }
 }

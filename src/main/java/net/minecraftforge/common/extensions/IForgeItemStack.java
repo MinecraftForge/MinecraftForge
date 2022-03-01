@@ -8,9 +8,11 @@ package net.minecraftforge.common.extensions;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.minecraft.core.Registry;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.monster.EnderMan;
 import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.pattern.BlockInWorld;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.item.enchantment.Enchantment;
@@ -80,7 +82,8 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundTag>
        Player entityplayer = context.getPlayer();
        BlockPos blockpos = context.getClickedPos();
        BlockInWorld blockworldstate = new BlockInWorld(context.getLevel(), blockpos, false);
-       if (entityplayer != null && !entityplayer.getAbilities().mayBuild && !self().hasAdventureModePlaceTagForBlock(context.getLevel().getTagManager(), blockworldstate)) {
+       Registry<Block> registry = entityplayer.level.registryAccess().registryOrThrow(Registry.BLOCK_REGISTRY);
+       if (entityplayer != null && !entityplayer.getAbilities().mayBuild && !self().hasAdventureModePlaceTagForBlock(registry, blockworldstate)) {
           return InteractionResult.PASS;
        } else {
           Item item = self().getItem();
@@ -268,17 +271,6 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundTag>
     default void onHorseArmorTick(Level level, Mob horse)
     {
         self().getItem().onHorseArmorTick(self(), level, horse);
-    }
-
-    /**
-     * Called when an item entity for this stack is destroyed.
-     *
-     * @param itemEntity   The item entity that was destroyed.
-     * @param damageSource Damage source that caused the item entity to "die".
-     */
-    default void onDestroyed(ItemEntity itemEntity, DamageSource damageSource)
-    {
-        self().getItem().onDestroyed(itemEntity, damageSource);
     }
 
     /**
@@ -489,5 +481,16 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundTag>
     default AABB getSweepHitBox(@Nonnull Player player, @Nonnull Entity target)
     {
         return self().getItem().getSweepHitBox(self(), player, target);
+    }
+
+    /**
+     * Called when an item entity for this stack is destroyed. Note: The {@link ItemStack} can be retrieved from the item entity.
+     *
+     * @param itemEntity   The item entity that was destroyed.
+     * @param damageSource Damage source that caused the item entity to "die".
+     */
+    default void onDestroyed(ItemEntity itemEntity, DamageSource damageSource)
+    {
+        self().getItem().onDestroyed(itemEntity, damageSource);
     }
 }

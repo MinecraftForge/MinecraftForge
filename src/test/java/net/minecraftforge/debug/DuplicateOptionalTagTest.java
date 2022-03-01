@@ -41,45 +41,46 @@ public class DuplicateOptionalTagTest
     private static final Set<Supplier<Block>> TAG_A_DEFAULTS = Set.of(Blocks.BEDROCK.delegate);
     private static final Set<Supplier<Block>> TAG_B_DEFAULTS = Set.of(Blocks.WHITE_WOOL.delegate);
 
-    private static final Tags.IOptionalNamedTag<Block> TAG_A = ForgeTagHandler.createOptionalTag(ForgeRegistries.BLOCKS, TAG_NAME,
-            TAG_A_DEFAULTS);
-    private static final Tags.IOptionalNamedTag<Block> TAG_B = ForgeTagHandler.createOptionalTag(ForgeRegistries.BLOCKS, TAG_NAME,
-            TAG_B_DEFAULTS);
+    // TODO-PATCHING: fix or remove this accordingly with optional tags feature (specifically, default values for opt. tags)
+//    private static final Tags.IOptionalNamedTag<Block> TAG_A = ForgeTagHandler.createOptionalTag(ForgeRegistries.BLOCKS, TAG_NAME,
+//            TAG_A_DEFAULTS);
+//    private static final Tags.IOptionalNamedTag<Block> TAG_B = ForgeTagHandler.createOptionalTag(ForgeRegistries.BLOCKS, TAG_NAME,
+//            TAG_B_DEFAULTS);
 
     public DuplicateOptionalTagTest()
     {
-        MinecraftForge.EVENT_BUS.addListener(this::onServerStarted);
+//        MinecraftForge.EVENT_BUS.addListener(this::onServerStarted);
     }
 
-    private void onServerStarted(ServerStartedEvent event)
-    {
-        if (!TAG_A.isDefaulted())
-        {
-            LOGGER.warn("First instance of optional tag is not defaulted!");
-        }
-
-        if (!TAG_B.isDefaulted())
-        {
-            LOGGER.warn("Second instance of optional tag is not defaulted!");
-        }
-
-        if (!TAG_A.getValues().equals(TAG_B.getValues()))
-        {
-            LOGGER.error("Values of both optional tag instances are not the same: first instance: {}, second instance: {}",
-                    TAG_A.getValues(), TAG_B.getValues());
-            return;
-        }
-
-        final List<Block> expected = Sets.union(TAG_A_DEFAULTS, TAG_B_DEFAULTS).stream()
-                .map(Supplier::get)
-                .toList();
-        if (!TAG_A.getValues().equals(expected))
-        {
-            LOGGER.error("Values of the optional tag do not match the expected union of their defaults: expected {}, got {}",
-                    expected, TAG_A.getValues());
-            return;
-        }
-
-        LOGGER.info("Optional tag instances match each other and the expected union of their defaults");
-    }
+//    private void onServerStarted(ServerStartedEvent event)
+//    {
+//        if (!TAG_A.isDefaulted())
+//        {
+//            LOGGER.warn("First instance of optional tag is not defaulted!");
+//        }
+//
+//        if (!TAG_B.isDefaulted())
+//        {
+//            LOGGER.warn("Second instance of optional tag is not defaulted!");
+//        }
+//
+//        if (!TAG_A.getValues().equals(TAG_B.getValues()))
+//        {
+//            LOGGER.error("Values of both optional tag instances are not the same: first instance: {}, second instance: {}",
+//                    TAG_A.getValues(), TAG_B.getValues());
+//            return;
+//        }
+//
+//        final List<Block> expected = Sets.union(TAG_A_DEFAULTS, TAG_B_DEFAULTS).stream()
+//                .map(Supplier::get)
+//                .toList();
+//        if (!TAG_A.getValues().equals(expected))
+//        {
+//            LOGGER.error("Values of the optional tag do not match the expected union of their defaults: expected {}, got {}",
+//                    expected, TAG_A.getValues());
+//            return;
+//        }
+//
+//        LOGGER.info("Optional tag instances match each other and the expected union of their defaults");
+//    }
 }

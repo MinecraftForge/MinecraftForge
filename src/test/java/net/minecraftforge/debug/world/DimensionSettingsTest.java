@@ -9,9 +9,7 @@ import com.sun.jna.Structure;
 import net.minecraft.data.BuiltinRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.levelgen.NoiseGeneratorSettings;
-import net.minecraft.world.level.levelgen.StructureSettings;
 import net.minecraft.world.level.levelgen.feature.StructureFeature;
-import net.minecraft.world.level.levelgen.feature.configurations.StructureFeatureConfiguration;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
@@ -35,12 +33,14 @@ import java.util.Optional;
 @Mod(DimensionSettingsTest.MODID)
 public class DimensionSettingsTest {
     public static final String MODID = "dimension_settings_test";
+/*
     public static final ResourceLocation TEST_OVERWORLD = new ResourceLocation(MODID, "test_overworld");
 
     private static final Logger LOGGER = LogManager.getLogger();
 
     public DimensionSettingsTest()
     {
+        // TODO-PATCHING: Fix these dimensional stuffs
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::registerSettings);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::addStructure);
     }
@@ -49,7 +49,7 @@ public class DimensionSettingsTest {
      * Demonstrates how a mod can register custom DimensionSettings which can be referenced from
      * within a datapack dimension config whilst being discoverable for other mods to add to and
      * remove structures etc from.
-     */
+     * /
     private void registerSettings(FMLCommonSetupEvent event)
     {
         event.enqueueWork(() ->
@@ -62,7 +62,7 @@ public class DimensionSettingsTest {
 
     /**
      * Demonstrates how a mod could handle adding their structure settings to a specific dimension.
-     */
+     * /
     private void addStructure(FMLLoadCompleteEvent event)
     {
         event.enqueueWork(() ->
@@ -84,7 +84,7 @@ public class DimensionSettingsTest {
 
     /**
      * Create a NoiseGeneratorSettings instance copying all but the structure settings from overworld.
-     */
+     * /
     private static NoiseGeneratorSettings createNoiseGenerationSettings()
     {
         NoiseGeneratorSettings overworld = BuiltinRegistries.NOISE_GENERATOR_SETTINGS.getOrThrow(NoiseGeneratorSettings.OVERWORLD);
@@ -96,8 +96,8 @@ public class DimensionSettingsTest {
         return new NoiseGeneratorSettings(
                 structures,
                 overworld.noiseSettings(),
-                overworld.getDefaultBlock(),
-                overworld.getDefaultFluid(),
+                overworld.defaultBlock(),
+                overworld.defaultFluid(),
                 overworld.surfaceRule(),
                 overworld.seaLevel(),
                 overworld.disableMobGeneration(),
@@ -108,4 +108,29 @@ public class DimensionSettingsTest {
                 overworld.useLegacyRandomSource()
                 );
     }
+*/
 }
+
+/*
+TODO: Make this a data gen:
+data/dimension_settings_test/dimension/test_overworld.json
+{
+  "#comment": [
+    "This is an example Dimension showing how it can be configured to use a custom",
+    "DimensionSettings that possess similar generation settings to overworld but",
+    "has independently configurable structure settings.",
+    "",
+    "See the 'settings' field below"
+  ],
+  "type": "minecraft:overworld",
+  "generator": {
+    "type": "minecraft:noise",
+    "seed": 12345,
+    "settings": "dimension_settings_test:test_overworld",
+    "biome_source": {
+      "preset": "minecraft:overworld",
+      "type": "minecraft:multi_noise"
+    }
+  }
+}
+*/

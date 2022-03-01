@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/level/ServerLevel.java
 +++ b/net/minecraft/server/level/ServerLevel.java
-@@ -179,10 +_,11 @@
+@@ -181,10 +_,11 @@
     private final List<CustomSpawner> f_8558_;
     @Nullable
     private final EndDragonFight f_8559_;
@@ -11,9 +11,9 @@
     private final boolean f_8561_;
 +   private net.minecraftforge.common.util.WorldCapabilityData capabilityData;
  
-    public ServerLevel(MinecraftServer p_8571_, Executor p_8572_, LevelStorageSource.LevelStorageAccess p_8573_, ServerLevelData p_8574_, ResourceKey<Level> p_8575_, DimensionType p_8576_, ChunkProgressListener p_8577_, ChunkGenerator p_8578_, boolean p_8579_, long p_8580_, List<CustomSpawner> p_8581_, boolean p_8582_) {
-       super(p_8574_, p_8575_, p_8576_, p_8571_::m_129905_, false, p_8579_, p_8580_);
-@@ -220,6 +_,7 @@
+    public ServerLevel(MinecraftServer p_203762_, Executor p_203763_, LevelStorageSource.LevelStorageAccess p_203764_, ServerLevelData p_203765_, ResourceKey<Level> p_203766_, Holder<DimensionType> p_203767_, ChunkProgressListener p_203768_, ChunkGenerator p_203769_, boolean p_203770_, long p_203771_, List<CustomSpawner> p_203772_, boolean p_203773_) {
+       super(p_203765_, p_203766_, p_203767_, p_203762_::m_129905_, false, p_203770_, p_203771_);
+@@ -223,6 +_,7 @@
        }
  
        this.f_143245_ = new SleepStatus();
@@ -21,7 +21,7 @@
     }
  
     public void m_8606_(int p_8607_, int p_8608_, boolean p_8609_, boolean p_8610_) {
-@@ -248,8 +_,8 @@
+@@ -251,8 +_,8 @@
        int i = this.m_46469_().m_46215_(GameRules.f_151486_);
        if (this.f_143245_.m_144002_(i) && this.f_143245_.m_144004_(i, this.f_8546_)) {
           if (this.m_46469_().m_46207_(GameRules.f_46140_)) {
@@ -32,7 +32,7 @@
           }
  
           this.m_8804_();
-@@ -278,7 +_,7 @@
+@@ -281,7 +_,7 @@
        this.m_8807_();
        this.f_8557_ = false;
        profilerfiller.m_7238_();
@@ -41,7 +41,7 @@
        if (flag) {
           this.m_8886_();
        }
-@@ -310,7 +_,9 @@
+@@ -313,7 +_,9 @@
                       }
  
                       profilerfiller.m_6180_("tick");
@@ -52,15 +52,15 @@
                       profilerfiller.m_7238_();
                    }
                 }
-@@ -399,6 +_,7 @@
+@@ -402,6 +_,7 @@
           BlockPos blockpos2 = this.m_5452_(Heightmap.Types.MOTION_BLOCKING, this.m_46496_(i, 0, j, 15));
           BlockPos blockpos3 = blockpos2.m_7495_();
-          Biome biome = this.m_46857_(blockpos2);
+          Biome biome = this.m_204166_(blockpos2).m_203334_();
 +         if (this.isAreaLoaded(blockpos2, 1)) // Forge: check area to avoid loading neighbors in unloaded chunks
           if (biome.m_47477_(this, blockpos3)) {
              this.m_46597_(blockpos3, Blocks.f_50126_.m_49966_());
           }
-@@ -589,15 +_,19 @@
+@@ -592,15 +_,19 @@
           this.f_8548_.m_6846_().m_11270_(new ClientboundGameEventPacket(ClientboundGameEventPacket.f_132161_, this.f_46440_), this.m_46472_());
        }
  
@@ -84,7 +84,7 @@
        }
  
     }
-@@ -653,9 +_,10 @@
+@@ -656,9 +_,10 @@
              ++p_8664_.f_19797_;
              ProfilerFiller profilerfiller = this.m_46473_();
              profilerfiller.m_6521_(() -> {
@@ -96,7 +96,7 @@
              p_8664_.m_6083_();
              profilerfiller.m_7238_();
  
-@@ -692,6 +_,7 @@
+@@ -695,6 +_,7 @@
              this.f_143244_.m_157554_();
           }
  
@@ -104,7 +104,7 @@
        }
     }
  
-@@ -764,7 +_,55 @@
+@@ -767,7 +_,55 @@
        this.m_8853_(p_8846_);
     }
  
@@ -160,7 +160,7 @@
        Entity entity = this.m_142646_().m_142694_(p_8854_.m_142081_());
        if (entity != null) {
           f_8566_.warn("Force-added player with duplicate UUID {}", (Object)p_8854_.m_142081_().toString());
-@@ -772,7 +_,8 @@
+@@ -775,7 +_,8 @@
           this.m_143261_((ServerPlayer)entity, Entity.RemovalReason.DISCARDED);
        }
  
@@ -170,7 +170,7 @@
     }
  
     private boolean m_8872_(Entity p_8873_) {
-@@ -780,7 +_,12 @@
+@@ -783,7 +_,12 @@
           f_8566_.warn("Tried to add entity {} but it was marked as removed already", (Object)EntityType.m_20613_(p_8873_.m_6095_()));
           return false;
        } else {
@@ -184,7 +184,7 @@
        }
     }
  
-@@ -817,10 +_,20 @@
+@@ -820,10 +_,20 @@
     }
  
     public void m_6263_(@Nullable Player p_8675_, double p_8676_, double p_8677_, double p_8678_, SoundEvent p_8679_, SoundSource p_8680_, float p_8681_, float p_8682_) {
@@ -205,7 +205,7 @@
        this.f_8548_.m_6846_().m_11241_(p_8689_, p_8690_.m_20185_(), p_8690_.m_20186_(), p_8690_.m_20189_(), p_8693_ > 1.0F ? (double)(16.0F * p_8693_) : 16.0D, this.m_46472_(), new ClientboundSoundEntityPacket(p_8691_, p_8692_, p_8690_, p_8693_, p_8694_));
     }
  
-@@ -837,6 +_,7 @@
+@@ -840,6 +_,7 @@
     }
  
     public void m_142346_(@Nullable Entity p_143268_, GameEvent p_143269_, BlockPos p_143270_) {
@@ -213,7 +213,7 @@
        this.m_151513_(p_143268_, p_143269_, p_143270_, p_143269_.m_157827_());
     }
  
-@@ -882,6 +_,7 @@
+@@ -885,6 +_,7 @@
  
     public Explosion m_7703_(@Nullable Entity p_8653_, @Nullable DamageSource p_8654_, @Nullable ExplosionDamageCalculator p_8655_, double p_8656_, double p_8657_, double p_8658_, float p_8659_, boolean p_8660_, Explosion.BlockInteraction p_8661_) {
        Explosion explosion = new Explosion(this, p_8653_, p_8654_, p_8655_, p_8656_, p_8657_, p_8658_, p_8659_, p_8660_, p_8661_);
@@ -221,7 +221,7 @@
        explosion.m_46061_();
        explosion.m_46075_(false);
        if (p_8661_ == Explosion.BlockInteraction.NONE) {
-@@ -1409,6 +_,12 @@
+@@ -1412,6 +_,12 @@
        });
     }
  
@@ -234,7 +234,7 @@
     public LevelEntityGetter<Entity> m_142646_() {
        return this.f_143244_.m_157567_();
     }
-@@ -1490,10 +_,8 @@
+@@ -1497,10 +_,8 @@
              ServerLevel.this.f_143246_.add(mob);
           }
  
@@ -247,7 +247,7 @@
                 ServerLevel.this.f_143247_.put(enderdragonpart.m_142049_(), enderdragonpart);
              }
           }
-@@ -1518,10 +_,8 @@
+@@ -1525,10 +_,8 @@
              ServerLevel.this.f_143246_.remove(mob);
           }
  
@@ -260,7 +260,7 @@
                 ServerLevel.this.f_143247_.remove(enderdragonpart.m_142049_());
              }
           }
-@@ -1531,6 +_,8 @@
+@@ -1538,6 +_,8 @@
              gameeventlistenerregistrar.m_157854_(p_143375_.f_19853_);
           }
  

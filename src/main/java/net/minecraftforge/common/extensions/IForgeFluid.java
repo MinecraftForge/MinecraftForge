@@ -9,11 +9,11 @@ import java.util.Set;
 
 import javax.annotation.Nullable;
 
+import net.minecraft.core.HolderSet;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
-import net.minecraft.tags.SetTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.core.BlockPos;
@@ -35,7 +35,7 @@ public interface IForgeFluid
      * @param tag Fluid category
      * @param testingHead when true, its testing the entities head for vision, breathing ect... otherwise its testing the body, for swimming and movement adjustment.
      */
-    default boolean isEntityInside(FluidState state, LevelReader level, BlockPos pos, Entity entity, double yToTest, SetTag<Fluid> tag, boolean testingHead)
+    default boolean isEntityInside(FluidState state, LevelReader level, BlockPos pos, Entity entity, double yToTest, HolderSet<Fluid> tag, boolean testingHead)
     {
         return state.is(tag) && yToTest < (double)(pos.getY() + state.getHeight(level, pos) + 0.11111111F);
     }
@@ -94,11 +94,12 @@ public interface IForgeFluid
         return this.getFluid().getRenderLayer() == layer;
     }*/
 
-    /**
-     * Retrieves a list of tags names this is known to be associated with.
-     * This should be used in favor of TagCollection.getOwningTags, as this caches the result and automatically updates when the TagCollection changes.
-     */
-    Set<ResourceLocation> getTags();
+//    /**
+//     * Retrieves a list of tags names this is known to be associated with.
+//     * This should be used in favor of TagCollection.getOwningTags, as this caches the result and automatically updates when the TagCollection changes.
+//     */
+//    Set<ResourceLocation> getTags();
+    // TODO-PATCHING: Tag locations are now TagKeys
 
     /**
      * Retrieves the non-vanilla fluid attributes, including localized name.

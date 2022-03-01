@@ -20,7 +20,7 @@ import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.tags.Tag;
+import net.minecraft.tags.TagKey;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.item.DiggerItem;
@@ -127,7 +127,7 @@ public class TierSortingRegistry
             return isCorrectTierVanilla(tier, state);
 
         for (int x = sortedTiers.indexOf(tier) + 1; x < sortedTiers.size(); x++) {
-            Tag<Block> tag = sortedTiers.get(x).getTag();
+            TagKey<Block> tag = sortedTiers.get(x).getTag();
             if (tag != null && state.is(tag))
                 return false;
         }

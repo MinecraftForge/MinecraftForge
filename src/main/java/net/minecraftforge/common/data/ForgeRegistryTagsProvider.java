@@ -57,6 +57,7 @@ public abstract class ForgeRegistryTagsProvider<T extends IForgeRegistryEntry<T>
     @Override
     protected Path getPath(ResourceLocation id)
     {
+        //TODO-PATCHING: Mojang has introduced logic here to determine where the tags go, we need to replicate that logic possibly.
         return generator.getOutputFolder().resolve("data/" + id.getNamespace() + "/tags/" + folder + "/" + id.getPath() + ".json");
     }
 }

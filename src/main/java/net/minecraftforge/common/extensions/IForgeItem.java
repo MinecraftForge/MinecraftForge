@@ -640,12 +640,6 @@ public interface IForgeItem
     }
 
     /**
-     * Retrieves a list of tags names this is known to be associated with.
-     * This should be used in favor of TagCollection.getOwningTags, as this caches the result and automatically updates when the TagCollection changes.
-     */
-    Set<ResourceLocation> getTags();
-
-    /**
      * Reduce the durability of this item by the amount given.
      * This can be used to e.g. consume power from NBT before durability.
      *

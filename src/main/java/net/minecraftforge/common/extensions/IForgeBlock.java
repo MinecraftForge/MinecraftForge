@@ -602,7 +602,7 @@ public interface IForgeBlock
     {
         if (entity instanceof EnderDragon)
         {
-            return !BlockTags.DRAGON_IMMUNE.contains(this.self());
+            return !this.self().defaultBlockState().is(BlockTags.DRAGON_IMMUNE);
         }
         else if ((entity instanceof WitherBoss) ||
                  (entity instanceof WitherSkull))
@@ -620,12 +620,6 @@ public interface IForgeBlock
     {
         return state.getBlock().dropFromExplosion(explosion);
     }
-
-    /**
-     * Retrieves a list of tags names this is known to be associated with.
-     * This should be used in favor of TagCollection.getOwningTags, as this caches the result and automatically updates when the TagCollection changes.
-     */
-    Set<ResourceLocation> getTags();
 
     /**
      * Called when the block is destroyed by an explosion.

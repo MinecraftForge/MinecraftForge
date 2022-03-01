@@ -392,6 +392,12 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
             }
         }
 
+        if (this.builder.getVanillaHolder() != null)
+        {
+            var ref = this.builder.getVanillaHolder().apply(value);
+            ref.bind(rkey, value);
+        }
+
         if (this.add != null)
             this.add.onAdd(this, this.stage, idToUse, value, oldEntry);
 
@@ -1138,6 +1144,11 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
 
         if (failed.isEmpty() && ignored > 0)
             LOGGER.debug(REGISTRIES,"There were {} missing mappings that have been ignored", ignored);
+    }
+
+    RegistryBuilder<V> getBuilder()
+    {
+        return this.builder;
     }
 
     private record OverrideOwner<V>(String owner, ResourceKey<V> key){};

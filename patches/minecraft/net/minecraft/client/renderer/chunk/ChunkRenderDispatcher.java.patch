@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/chunk/ChunkRenderDispatcher.java
 +++ b/net/minecraft/client/renderer/chunk/ChunkRenderDispatcher.java
-@@ -72,12 +_,15 @@
+@@ -73,12 +_,15 @@
     private Vec3 f_112683_ = Vec3.f_82478_;
  
     public ChunkRenderDispatcher(ClientLevel p_194405_, LevelRenderer p_194406_, Executor p_194407_, boolean p_194408_, ChunkBufferBuilderPack p_194409_) {
@@ -17,7 +17,7 @@
        this.f_112678_ = p_194409_;
        List<ChunkBufferBuilderPack> list = Lists.newArrayListWithExpectedSize(l);
  
-@@ -415,7 +_,7 @@
+@@ -420,7 +_,7 @@
           if (!chunkrenderdispatcher$compiledchunk.f_112750_.contains(p_112810_)) {
              return false;
           } else {
@@ -26,16 +26,16 @@
              p_112811_.m_112709_(this.f_112788_);
              return true;
           }
-@@ -443,7 +_,7 @@
-          BlockPos blockpos = this.f_112793_.m_7949_();
-          int i = 1;
-          RenderChunkRegion renderchunkregion = p_200438_.m_200465_(ChunkRenderDispatcher.this.f_112681_, blockpos.m_142082_(-1, -1, -1), blockpos.m_142082_(16, 16, 16), 1);
--         this.f_112787_ = new ChunkRenderDispatcher.RenderChunk.RebuildTask(this.m_112832_(), renderchunkregion, flag || this.f_112784_.get() != ChunkRenderDispatcher.CompiledChunk.f_112748_);
+@@ -452,7 +_,7 @@
+             this.f_202433_.incrementAndGet();
+          }
+ 
+-         this.f_112787_ = new ChunkRenderDispatcher.RenderChunk.RebuildTask(this.m_112832_(), renderchunkregion, !flag1 || this.f_202433_.get() > 2);
 +         this.f_112787_ = new ChunkRenderDispatcher.RenderChunk.RebuildTask(new net.minecraft.world.level.ChunkPos(m_112839_()), this.m_112832_(), renderchunkregion, flag || this.f_112784_.get() != ChunkRenderDispatcher.CompiledChunk.f_112748_);
           return this.f_112787_;
        }
  
-@@ -476,10 +_,20 @@
+@@ -485,10 +_,20 @@
           protected final double f_112847_;
           protected final AtomicBoolean f_112848_ = new AtomicBoolean(false);
           protected final boolean f_194420_;
@@ -56,7 +56,7 @@
           }
  
           public abstract CompletableFuture<ChunkRenderDispatcher.ChunkTaskResult> m_5869_(ChunkBufferBuilderPack p_112853_);
-@@ -491,6 +_,10 @@
+@@ -500,6 +_,10 @@
           public int compareTo(ChunkRenderDispatcher.RenderChunk.ChunkCompileTask p_112855_) {
              return Doubles.compare(this.f_112847_, p_112855_.f_112847_);
           }
@@ -67,7 +67,7 @@
        }
  
        @OnlyIn(Dist.CLIENT)
-@@ -498,8 +_,13 @@
+@@ -507,8 +_,13 @@
           @Nullable
           protected RenderChunkRegion f_112858_;
  
@@ -82,10 +82,10 @@
              this.f_112858_ = p_194428_;
           }
  
-@@ -580,8 +_,10 @@
-                   }
+@@ -591,8 +_,10 @@
  
-                   FluidState fluidstate = renderchunkregion.m_6425_(blockpos2);
+                   BlockState blockstate1 = renderchunkregion.m_8055_(blockpos2);
+                   FluidState fluidstate = blockstate1.m_60819_();
 -                  if (!fluidstate.m_76178_()) {
 -                     RenderType rendertype = ItemBlockRenderTypes.m_109287_(fluidstate);
 +                  net.minecraftforge.client.model.data.IModelData modelData = getModelData(blockpos2);
@@ -95,7 +95,7 @@
                       BufferBuilder bufferbuilder = p_112870_.m_108839_(rendertype);
                       if (p_112869_.f_112750_.add(rendertype)) {
                          RenderChunk.this.m_112805_(bufferbuilder);
-@@ -593,8 +_,8 @@
+@@ -604,8 +_,8 @@
                       }
                    }
  
@@ -106,7 +106,7 @@
                       BufferBuilder bufferbuilder2 = p_112870_.m_108839_(rendertype1);
                       if (p_112869_.f_112750_.add(rendertype1)) {
                          RenderChunk.this.m_112805_(bufferbuilder2);
-@@ -602,14 +_,16 @@
+@@ -613,14 +_,16 @@
  
                       posestack.m_85836_();
                       posestack.m_85837_((double)(blockpos2.m_123341_() & 15), (double)(blockpos2.m_123342_() & 15), (double)(blockpos2.m_123343_() & 15));
@@ -124,7 +124,7 @@
  
                 if (p_112869_.f_112749_.contains(RenderType.m_110466_())) {
                    BufferBuilder bufferbuilder1 = p_112870_.m_108839_(RenderType.m_110466_());
-@@ -628,10 +_,10 @@
+@@ -639,10 +_,10 @@
           private <E extends BlockEntity> void m_112877_(ChunkRenderDispatcher.CompiledChunk p_112878_, Set<BlockEntity> p_112879_, E p_112880_) {
              BlockEntityRenderer<E> blockentityrenderer = Minecraft.m_91087_().m_167982_().m_112265_(p_112880_);
              if (blockentityrenderer != null) {
@@ -136,7 +136,7 @@
              }
  
           }
-@@ -649,8 +_,13 @@
+@@ -660,8 +_,13 @@
        class ResortTransparencyTask extends ChunkRenderDispatcher.RenderChunk.ChunkCompileTask {
           private final ChunkRenderDispatcher.CompiledChunk f_112886_;
  

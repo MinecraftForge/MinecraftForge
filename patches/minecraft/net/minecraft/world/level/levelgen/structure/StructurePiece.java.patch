@@ -4,9 +4,9 @@
     }
  
     public final CompoundTag m_192644_(StructurePieceSerializationContext p_192645_) {
-+      if (Registry.f_122843_.m_7981_(this.m_73550_()) == null) { // FORGE: Friendlier error then the Null String error below.
-+         throw new RuntimeException("StructurePiece \"" + this.getClass().getName() + "\": \"" + this.m_73550_() + "\" missing ID Mapping, Modder see MapGenStructureIO");
++      if (Registry.f_122843_.m_7981_(this.m_210000_()) == null) { // FORGE: Friendlier error then the Null String error below.
++         throw new RuntimeException("StructurePiece \"" + this.getClass().getName() + "\": \"" + this.m_210000_() + "\" missing ID Mapping, Modder see MapGenStructureIO");
 +      }
        CompoundTag compoundtag = new CompoundTag();
-       compoundtag.m_128359_("id", Registry.f_122843_.m_7981_(this.m_73550_()).toString());
+       compoundtag.m_128359_("id", Registry.f_122843_.m_7981_(this.m_210000_()).toString());
        BoundingBox.f_162354_.encodeStart(NbtOps.f_128958_, this.f_73383_).resultOrPartial(f_163536_::error).ifPresent((p_163579_) -> {

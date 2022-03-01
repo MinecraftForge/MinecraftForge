@@ -5,16 +5,16 @@
 
 package net.minecraftforge.registries;
 
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Optional;
 import java.util.OptionalInt;
-import java.util.Random;
 import java.util.Set;
+import java.util.function.Function;
 
 import javax.annotation.Nullable;
 
+import net.minecraft.core.Holder;
 import org.apache.commons.lang3.Validate;
 
 import net.minecraft.resources.ResourceKey;
@@ -31,14 +31,14 @@ class NamespacedDefaultedWrapper<T extends IForgeRegistryEntry<T>> extends Defau
     private boolean locked = false;
     private ForgeRegistry<T> delegate;
 
-    private NamespacedDefaultedWrapper(ForgeRegistry<T> owner)
+    private NamespacedDefaultedWrapper(ForgeRegistry<T> owner, Function<T, Holder.Reference<T>> holderLookup)
     {
-        super("empty", owner.getRegistryKey(), Lifecycle.experimental());
+        super("empty", owner.getRegistryKey(), Lifecycle.experimental(), holderLookup);
         this.delegate = owner;
     }
 
     @Override
-    public <V extends T> V registerMapping(int id, ResourceKey<T> key, V value, Lifecycle lifecycle)
+    public Holder<T> registerMapping(final int id, final ResourceKey<T> key, final T value, final Lifecycle lifecycle)
     {
         if (locked)
             throw new IllegalStateException("Can not register to a locked registry. Modder should use Forge Register methods.");
@@ -51,21 +51,22 @@ class NamespacedDefaultedWrapper<T extends IForgeRegistryEntry<T>> extends Defau
         if (realId != id && id != -1)
             LOGGER.warn("Registered object did not get ID it asked for. Name: {} Type: {} Expected: {} Got: {}", key, value.getRegistryType().getName(), id, realId);
 
-        return value;
+        return super.registerMapping(realId, key, value, lifecycle);
     }
 
     @Override
-    public <V extends T> V register(ResourceKey<T> key, V value, Lifecycle lifecycle)
+    public Holder<T> register(final ResourceKey<T> p_205891_, final T p_205892_, final Lifecycle p_205893_)
     {
-        return registerMapping(-1, key, value, lifecycle);
+        return registerMapping(-1, p_205891_, p_205892_, p_205893_);
     }
 
     @Override
-    public <V extends T> V registerOrOverride(OptionalInt id, ResourceKey<T> key, V value, Lifecycle lifecycle) {
+    public Holder<T> registerOrOverride(final OptionalInt id, final ResourceKey<T> p_205885_, final T p_205886_, final Lifecycle p_205887_)
+    {
         int wanted = -1;
         if (id.isPresent() && byId(id.getAsInt()) != null)
             wanted = id.getAsInt();
-        return registerMapping(wanted, key, value, lifecycle);
+        return registerMapping(wanted, p_205885_, p_205886_, p_205887_);
     }
 
     // Reading Functions
@@ -144,13 +145,7 @@ class NamespacedDefaultedWrapper<T extends IForgeRegistryEntry<T>> extends Defau
         return this.delegate.getEntries();
     }
 
-    @Override
-    @Nullable
-    public T getRandom(Random random)
-    {
-        Collection<T> values = this.delegate.getValues();
-        return values.stream().skip(random.nextInt(values.size())).findFirst().orElse(this.delegate.getDefault());
-    }
+    //TODO-PATCHING: Figure out if getRandom needs to be overriden.
 
     @Override
     public ResourceLocation getDefaultKey()
@@ -162,13 +157,16 @@ class NamespacedDefaultedWrapper<T extends IForgeRegistryEntry<T>> extends Defau
     @Override
     public void lock(){ this.locked = true; }
 
+    //@Override public void unfreeze() {}
+
     public static class Factory<V extends IForgeRegistryEntry<V>> implements IForgeRegistry.CreateCallback<V>
     {
         public static final ResourceLocation ID = new ResourceLocation("forge", "registry_defaulted_wrapper");
         @Override
         public void onCreate(IForgeRegistryInternal<V> owner, RegistryManager stage)
         {
-            owner.setSlaveMap(ID, new NamespacedDefaultedWrapper<V>((ForgeRegistry<V>)owner));
+            ForgeRegistry<V> fowner = (ForgeRegistry<V>)owner;
+            owner.setSlaveMap(ID, new NamespacedDefaultedWrapper<V>(fowner, fowner.getBuilder().getVanillaHolder()));
         }
     }
 }

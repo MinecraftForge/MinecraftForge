@@ -1,12 +1,12 @@
 --- a/net/minecraft/world/level/chunk/LevelChunk.java
 +++ b/net/minecraft/world/level/chunk/LevelChunk.java
 @@ -49,7 +_,7 @@
- import org.apache.logging.log4j.LogManager;
- import org.apache.logging.log4j.Logger;
+ import net.minecraft.world.ticks.TickContainerAccess;
+ import org.slf4j.Logger;
  
 -public class LevelChunk extends ChunkAccess {
 +public class LevelChunk extends ChunkAccess implements net.minecraftforge.common.capabilities.ICapabilityProviderImpl<LevelChunk> {
-    static final Logger f_62771_ = LogManager.getLogger();
+    static final Logger f_62771_ = LogUtils.getLogger();
     private static final TickingBlockEntity f_156361_ = new TickingBlockEntity() {
        public void m_142224_() {
 @@ -97,6 +_,7 @@
@@ -72,7 +72,7 @@
           compoundtag1.m_128379_("keepPacked", false);
           return compoundtag1;
 +         } catch (Exception e) {
-+            LogManager.getLogger().error("A BlockEntity type {} has thrown an exception trying to write state. It will not persist, Report this to the mod author", blockentity.getClass().getName(), e);
++            f_62771_.error("A BlockEntity type {} has thrown an exception trying to write state. It will not persist, Report this to the mod author", blockentity.getClass().getName(), e);
 +            return null;
 +         }
        } else {
@@ -162,20 +162,20 @@
                    profilerfiller.m_6521_(this::m_142280_);
                    BlockState blockstate = LevelChunk.this.m_8055_(blockpos);
                    if (this.f_156428_.m_58903_().m_155262_(blockstate)) {
-@@ -638,6 +_,12 @@
+@@ -636,6 +_,12 @@
                    CrashReport crashreport = CrashReport.m_127521_(throwable, "Ticking block entity");
                    CrashReportCategory crashreportcategory = crashreport.m_127514_("Block entity being ticked");
                    this.f_156428_.m_58886_(crashreportcategory);
 +
 +                  if (net.minecraftforge.common.ForgeConfig.SERVER.removeErroringBlockEntities.get()) {
-+                     LogManager.getLogger().fatal("{}", crashreport.m_127526_());
++                     f_62771_.error("{}", crashreport.m_127526_());
 +                     f_156428_.m_7651_();
 +                     LevelChunk.this.m_8114_(f_156428_.m_58899_());
 +                  } else
                    throw new ReportedException(crashreport);
                 }
              }
-@@ -666,6 +_,34 @@
+@@ -664,6 +_,34 @@
        IMMEDIATE,
        QUEUED,
        CHECK;

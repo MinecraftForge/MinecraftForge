@@ -456,7 +456,7 @@ public class DataGeneratorTest
         @Override
         protected void addTags()
         {
-            tag(BlockTags.bind(new ResourceLocation(MODID, "test").toString()))
+            tag(BlockTags.create(new ResourceLocation(MODID, "test")))
                 .add(Blocks.DIAMOND_BLOCK)
                 .addTag(BlockTags.STONE_BRICKS)
                 .addTag(net.minecraftforge.common.Tags.Blocks.COBBLESTONE)
@@ -464,14 +464,14 @@ public class DataGeneratorTest
                 .addOptionalTag(new ResourceLocation("forge", "storage_blocks/ruby"));
 
             // Hopefully sorting issues
-            tag(BlockTags.bind(new ResourceLocation(MODID, "thing/one").toString()))
+            tag(BlockTags.create(new ResourceLocation(MODID, "thing/one")))
                     .add(Blocks.COBBLESTONE);
-            tag(BlockTags.bind(new ResourceLocation(MODID, "thing/two").toString()))
+            tag(BlockTags.create(new ResourceLocation(MODID, "thing/two")))
                     .add(Blocks.DIORITE);
-            tag(BlockTags.bind(new ResourceLocation(MODID, "thing/three").toString()))
+            tag(BlockTags.create(new ResourceLocation(MODID, "thing/three")))
                     .add(Blocks.ANDESITE);
 
-            tag(BlockTags.bind(new ResourceLocation(MODID, "things").toString()))
+            tag(BlockTags.create(new ResourceLocation(MODID, "things")))
                     .add(Blocks.COBBLESTONE)
                     .add(Blocks.DIORITE)
                     .add(Blocks.ANDESITE);

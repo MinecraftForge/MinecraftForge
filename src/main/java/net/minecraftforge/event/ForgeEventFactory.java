@@ -16,6 +16,7 @@ import com.mojang.authlib.GameProfile;
 import com.mojang.blaze3d.vertex.PoseStack;
 
 import com.mojang.brigadier.CommandDispatcher;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.players.PlayerList;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.projectile.FireworkRocketEntity;
@@ -48,7 +49,6 @@ import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.LootTables;
 import net.minecraft.server.packs.resources.PreparableReloadListener;
-import net.minecraft.server.ServerResources;
 import net.minecraft.world.level.BaseSpawner;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.InteractionResult;
@@ -709,9 +709,9 @@ public class ForgeEventFactory
         return event.getNewTime();
     }
 
-    public static List<PreparableReloadListener> onResourceReload(ServerResources dataPackRegistries)
+    public static List<PreparableReloadListener> onResourceReload(/*MinecraftServer.ReloadableResources dataPackRegistries*/)
     {
-        AddReloadListenerEvent event = new AddReloadListenerEvent(dataPackRegistries);
+        AddReloadListenerEvent event = new AddReloadListenerEvent(/*dataPackRegistries*/);
         MinecraftForge.EVENT_BUS.post(event);
         return event.getListeners();
     }
