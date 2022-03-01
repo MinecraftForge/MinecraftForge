@@ -172,14 +172,14 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
         return tagFolder;
     }
 
-    @Override
     public Codec<V> getCodec()
     {
         return this.codec;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    public void registerAll(@SuppressWarnings("unchecked") V... values)
+    public void registerAll(V... values)
     {
         for (V value : values)
             register(value);

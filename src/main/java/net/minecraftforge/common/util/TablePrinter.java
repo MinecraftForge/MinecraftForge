@@ -54,7 +54,8 @@ public class TablePrinter<T>
         return this;
     }
 
-    public TablePrinter<T> add(T row, @SuppressWarnings("unchecked") T... more)
+    @SuppressWarnings("unchecked")
+    public TablePrinter<T> add(T row, T... more)
     {
         add(row);
         for (T t : more)

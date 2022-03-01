@@ -50,7 +50,7 @@ public class WorldEvent extends Event
     /**
      * WorldEvent.Load is fired when Minecraft loads a world.<br>
      * This event is fired when a world is loaded in
-     * {@link ClientLevel#ClientLevel(ClientPacketListener, ClientLevel.ClientLevelData, ResourceKey, DimensionType, int, Supplier, LevelRenderer, boolean, long)},
+     * {@link ClientLevel#ClientLevel(ClientPacketListener, ClientLevel.ClientLevelData, ResourceKey, DimensionType, int, int, Supplier, LevelRenderer, boolean, long)},
      * {@code MinecraftServer#createLevels(ChunkProgressListener)}. <br>
      * <br>
      * This event is not {@link Cancelable}.<br>
