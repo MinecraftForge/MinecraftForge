@@ -7,9 +7,11 @@ package net.minecraftforge.common;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.EntityTypeTags;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.Tag.Named;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
@@ -25,6 +27,7 @@ public class Tags
     {
         Blocks.init();
         Items.init();
+        EntityTypes.init();
         Fluids.init();
     }
 
@@ -399,6 +402,67 @@ public class Tags
         private static IOptionalNamedTag<Item> tag(String name)
         {
             return tag(name, null);
+        }
+    }
+
+    public static class EntityTypes
+    {
+        private static void init() {}
+
+        public static final IOptionalNamedTag<EntityType<?>> AMPHIBIANS = tag("amphibians");
+        public static final IOptionalNamedTag<EntityType<?>> AQUATIC = tag("aquatic");
+        public static final IOptionalNamedTag<EntityType<?>> ARTHROPODS = tag("arthropods");
+        public static final IOptionalNamedTag<EntityType<?>> AVIANS = tag("avians");
+        public static final IOptionalNamedTag<EntityType<?>> AVIANS_FOWLS = tag("avians/fowls");
+        public static final IOptionalNamedTag<EntityType<?>> BOSSES = tag("bosses");
+        public static final IOptionalNamedTag<EntityType<?>> CEPHALOPODS = tag("cephalopods");
+        public static final IOptionalNamedTag<EntityType<?>> CREEPERS = tag("creepers");
+        public static final IOptionalNamedTag<EntityType<?>> DRAGONS = tag("dragons");
+
+        /**
+         * Mobs that are logically composed of a base element
+         * If your mob is a combination of elements, feel free to add it to all appropriate tags
+         */
+        public static final IOptionalNamedTag<EntityType<?>> ELEMENTALS = tag("elementals");
+        public static final IOptionalNamedTag<EntityType<?>> ELEMENTALS_FIRE = tag("elementals/fire");
+        public static final IOptionalNamedTag<EntityType<?>> ELEMENTALS_ICE = tag("elementals/ice");
+        /**
+         * Mobs that are meant to be antagonistic to the player
+         */
+        public static final IOptionalNamedTag<EntityType<?>> ENEMIES = tag("enemies");
+        /**
+         * Mobs that have an associated item with the 'fish' tag
+         */
+        public static final IOptionalNamedTag<EntityType<?>> FISH = tag("fish");
+        public static final IOptionalNamedTag<EntityType<?>> FLYING = tag("flying");
+        public static final IOptionalNamedTag<EntityType<?>> LAND = tag("land");
+
+        public static final IOptionalNamedTag<EntityType<?>> MAMMALS = tag("mammals");
+        public static final IOptionalNamedTag<EntityType<?>> MAMMALS_BOVINES = tag("mammals/bovines");
+        public static final IOptionalNamedTag<EntityType<?>> MAMMALS_CAMELIDS = tag("mammals/camelids");
+        public static final IOptionalNamedTag<EntityType<?>> MAMMALS_CANIDS = tag("mammals/canids");
+        public static final IOptionalNamedTag<EntityType<?>> MAMMALS_CAPRINES = tag("mammals/caprines");
+        public static final IOptionalNamedTag<EntityType<?>> MAMMALS_EQUINES = tag("mammals/equines");
+        public static final IOptionalNamedTag<EntityType<?>> MAMMALS_FELIDS = tag("mammals/felids");
+        public static final IOptionalNamedTag<EntityType<?>> MAMMALS_SWINES = tag("mammals/swines");
+        public static final IOptionalNamedTag<EntityType<?>> MAMMALS_URSIDS = tag("mammals/ursids");
+
+        /**
+         * Mobs that simulate an intelligent, independent relationship of some sort with the player
+         */
+        public static final IOptionalNamedTag<EntityType<?>> NPC = tag("npc");
+        public static final IOptionalNamedTag<EntityType<?>> REPTILES = tag("reptiles");
+        public static final IOptionalNamedTag<EntityType<?>> UNDEAD = tag("undead");
+        public static final IOptionalNamedTag<EntityType<?>> UNDEAD_SKELETONS = tag("undead/skeletons");
+        public static final IOptionalNamedTag<EntityType<?>> UNDEAD_ZOMBIES = tag("undead/zombies");
+        /**
+         * Mobs that prefer to live in lava
+         */
+        public static final IOptionalNamedTag<EntityType<?>> VOLCANIC = tag("volcanic");
+
+        private static IOptionalNamedTag<EntityType<?>> tag(String name)
+        {
+            return EntityTypeTags.createOptional(new ResourceLocation("forge", name));
         }
     }
 
