@@ -1,20 +1,6 @@
 /*
- * Minecraft Forge
- * Copyright (c) 2016-2021.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation version 2.1
- * of the License.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Minecraft Forge - Forge Development LLC
+ * SPDX-License-Identifier: LGPL-2.1-only
  */
 
 package net.minecraftforge.client;
@@ -22,11 +8,15 @@ package net.minecraftforge.client;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.model.HumanoidModel;
+import net.minecraft.client.model.Model;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public interface IItemRenderProperties
 {
@@ -53,11 +43,38 @@ public interface IItemRenderProperties
      * @param itemStack    The itemStack to render the model of
      * @param armorSlot    The slot the armor is in
      * @param _default     Original armor model. Will have attributes set.
-     * @return A ModelBiped to render instead of the default
+     * @return A HumanoidModel to render instead of the default, will have the relevant properties copied in {@link #getBaseArmorModel(LivingEntity, ItemStack, EquipmentSlot, HumanoidModel).
+     *         Returning null will cause the default to render.
+     * @see #getBaseArmorModel(LivingEntity, ItemStack, EquipmentSlot, HumanoidModel)
      */
-    default <A extends HumanoidModel<?>> A getArmorModel(LivingEntity entityLiving, ItemStack itemStack, EquipmentSlot armorSlot, A _default)
+    @Nullable
+    default HumanoidModel<?> getArmorModel(LivingEntity entityLiving, ItemStack itemStack, EquipmentSlot armorSlot, HumanoidModel<?> _default)
     {
         return null;
+    }
+
+    /**
+     * Override this method to return a generic model rather than a {@link HumanoidModel}. More ideal for wrapping the original model or returning non-standard models like elytra wings.
+     * By default, this hook copies in the model properties from the default into the model returned by {@link #getArmorModel(LivingEntity, ItemStack, EquipmentSlot, HumanoidModel)},
+     * so if you override this method you are responsible for copying properties you care about
+     *
+     * @param entityLiving The entity wearing the armor
+     * @param itemStack    The itemStack to render the model of
+     * @param armorSlot    The slot the armor is in
+     * @param _default     Original armor model. Will have attributes set.
+     * @return A Model to render instead of the default
+     * @see #getArmorModel(LivingEntity, ItemStack, EquipmentSlot, HumanoidModel)
+     */
+    @Nonnull
+    default Model getBaseArmorModel(LivingEntity entityLiving, ItemStack itemStack, EquipmentSlot armorSlot, HumanoidModel<?> _default)
+    {
+        HumanoidModel<?> replacement = getArmorModel(entityLiving, itemStack, armorSlot, _default);
+        if (replacement != null && replacement != _default)
+        {
+            ForgeHooksClient.copyModelProperties(_default, replacement);
+            return replacement;
+        }
+        return _default;
     }
 
     /**

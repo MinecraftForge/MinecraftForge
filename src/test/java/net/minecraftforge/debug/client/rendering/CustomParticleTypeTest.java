@@ -1,20 +1,6 @@
 /*
- * Minecraft Forge
- * Copyright (c) 2016-2022.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation version 2.1
- * of the License.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Minecraft Forge - Forge Development LLC
+ * SPDX-License-Identifier: LGPL-2.1-only
  */
 
 package net.minecraftforge.debug.client.rendering;
@@ -58,6 +44,21 @@ public class CustomParticleTypeTest
                 ParticleRenderType.TERRAIN_SHEET.end(tess);
             }
         };
+        private static final ParticleRenderType CUSTOM_TYPE_TWO = new ParticleRenderType()
+        {
+            @Override
+            public void begin(BufferBuilder buffer, TextureManager texMgr)
+            {
+                Minecraft.getInstance().gameRenderer.lightTexture().turnOnLightLayer();
+                ParticleRenderType.TERRAIN_SHEET.begin(buffer, texMgr);
+            }
+
+            @Override
+            public void end(Tesselator tess)
+            {
+                ParticleRenderType.TERRAIN_SHEET.end(tess);
+            }
+        };
 
         private static class CustomParticle extends TerrainParticle
         {
@@ -72,6 +73,19 @@ public class CustomParticleTypeTest
                 return CUSTOM_TYPE;
             }
         }
+        private static class AnotherCustomParticle extends TerrainParticle
+        {
+            public AnotherCustomParticle(ClientLevel level, double x, double y, double z)
+            {
+                super(level, x, y, z, 0, .25, 0, Blocks.SAND.defaultBlockState());
+            }
+
+            @Override
+            public ParticleRenderType getRenderType()
+            {
+                return CUSTOM_TYPE_TWO;
+            }
+        }
 
         @SubscribeEvent
         public static void onClientTick(final TickEvent.ClientTickEvent event)
@@ -83,6 +97,7 @@ public class CustomParticleTypeTest
             if (player == null || level == null || !player.isShiftKeyDown()) { return; }
 
             Minecraft.getInstance().particleEngine.add(new CustomParticle(level, player.getX(), player.getY(), player.getZ()));
+            Minecraft.getInstance().particleEngine.add(new AnotherCustomParticle(level, player.getX(), player.getY(), player.getZ()));
         }
     }
 }

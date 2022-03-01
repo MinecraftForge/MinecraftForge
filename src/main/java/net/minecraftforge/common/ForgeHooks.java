@@ -1,20 +1,6 @@
 /*
- * Minecraft Forge
- * Copyright (c) 2016-2021.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation version 2.1
- * of the License.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Minecraft Forge - Forge Development LLC
+ * SPDX-License-Identifier: LGPL-2.1-only
  */
 
 package net.minecraftforge.common;
@@ -32,6 +18,8 @@ import java.util.Optional;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.regex.Matcher;
@@ -46,9 +34,12 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import com.mojang.datafixers.kinds.App;
+import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.Lifecycle;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import com.mojang.serialization.codecs.RecordCodecBuilder.Mu;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -64,6 +55,7 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.storage.WorldData;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.LootTable;
@@ -100,6 +92,9 @@ import net.minecraft.core.Registry;
 import net.minecraft.core.MappedRegistry;
 import net.minecraft.world.*;
 import net.minecraft.world.level.chunk.ChunkAccess;
+import net.minecraft.world.level.chunk.ChunkGenerator;
+import net.minecraft.world.level.levelgen.NoiseGeneratorSettings;
+import net.minecraft.world.level.levelgen.WorldGenSettings;
 import net.minecraft.world.level.levelgen.feature.StructureFeature;
 import net.minecraft.world.level.BaseSpawner;
 import net.minecraft.world.level.block.entity.FurnaceBlockEntity;
@@ -128,6 +123,7 @@ import net.minecraftforge.event.DifficultyChangeEvent;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.ItemAttributeModifierEvent;
 import net.minecraftforge.event.ServerChatEvent;
+import net.minecraftforge.event.VanillaGameEvent;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.event.entity.EntityAttributeModificationEvent;
 import net.minecraftforge.event.entity.EntityEvent;
@@ -145,6 +141,7 @@ import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.living.LivingKnockBackEvent;
 import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
 import net.minecraftforge.event.entity.living.LootingLevelEvent;
+import net.minecraftforge.event.entity.living.ShieldBlockEvent;
 import net.minecraftforge.event.entity.player.AdvancementEvent;
 import net.minecraftforge.event.entity.player.AnvilRepairEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
@@ -338,7 +335,7 @@ public class ForgeHooks
         return (MinecraftForge.EVENT_BUS.post(event) ? null : new float[]{event.getDistance(), event.getDamageMultiplier()});
     }
 
-    public static int getLootingLevel(Entity target, @Nullable Entity killer, DamageSource cause)
+    public static int getLootingLevel(Entity target, @Nullable Entity killer, @Nullable DamageSource cause)
     {
         int looting = 0;
         if (killer instanceof LivingEntity)
@@ -348,7 +345,7 @@ public class ForgeHooks
         return looting;
     }
 
-    public static int getLootingLevel(LivingEntity target, DamageSource cause, int level)
+    public static int getLootingLevel(LivingEntity target, @Nullable DamageSource cause, int level)
     {
         LootingLevelEvent event = new LootingLevelEvent(target, cause, level);
         MinecraftForge.EVENT_BUS.post(event);
@@ -416,6 +413,11 @@ public class ForgeHooks
         if (!player.level.isClientSide)
             player.getCommandSenderWorld().addFreshEntity(event.getEntityItem());
         return event.getEntityItem();
+    }
+
+    public static boolean onVanillaGameEvent(Level level, @Nullable Entity cause, GameEvent vanillaEvent, BlockPos position)
+    {
+        return !MinecraftForge.EVENT_BUS.post(new VanillaGameEvent(level, cause, vanillaEvent, position));
     }
 
     @Nullable
@@ -759,15 +761,25 @@ public class ForgeHooks
         MinecraftForge.EVENT_BUS.post(new PlayerInteractEvent.LeftClickEmpty(player));
     }
 
+    @Deprecated(forRemoval = true, since = "1.18")
     public static boolean onChangeGameMode(Player player, GameType currentGameMode, GameType newGameMode)
     {
-        if (currentGameMode != newGameMode)
+        return onChangeGameType(player, currentGameMode, newGameMode) != null;
+    }
+
+    /**
+     * @return null if game type should not be changed, desired new GameType otherwise
+     */
+    @Nullable
+    public static GameType onChangeGameType(Player player, GameType currentGameType, GameType newGameType)
+    {
+        if (currentGameType != newGameType)
         {
-            PlayerEvent.PlayerChangeGameModeEvent evt = new PlayerEvent.PlayerChangeGameModeEvent(player, currentGameMode, newGameMode);
+            PlayerEvent.PlayerChangeGameModeEvent evt = new PlayerEvent.PlayerChangeGameModeEvent(player, currentGameType, newGameType);
             MinecraftForge.EVENT_BUS.post(evt);
-            return !evt.isCanceled();
+            return evt.isCanceled() ? null : evt.getNewGameMode();
         }
-        return true;
+        return newGameType;
     }
 
     private static ThreadLocal<Deque<LootTableContext>> lootContext = new ThreadLocal<Deque<LootTableContext>>();
@@ -1250,6 +1262,57 @@ public class ForgeHooks
         MinecraftForge.EVENT_BUS.post(new EntityEvent.EnteringSection(entity, packedOldPos, packedNewPos));
     }
 
+    public static ShieldBlockEvent onShieldBlock(LivingEntity blocker, DamageSource source, float blocked)
+    {
+        ShieldBlockEvent e = new ShieldBlockEvent(blocker, source, blocked);
+        MinecraftForge.EVENT_BUS.post(e);
+        return e;
+    }
+
+    /**
+     * Called when dimension jsons are parsed.
+     * Creates a copy of the worldgen settings and its dimension registry,
+     * where dimensions that specify that they should use the server seed will use the server seed
+     * instead of the seed that mojang requires be specified in the json.
+     **/
+    public static WorldGenSettings loadDimensionsWithServerSeed(WorldGenSettings wgs)
+    {
+        // get the original worldgen settings' settings
+        long seed = wgs.seed();
+        boolean generateFeatures = wgs.generateFeatures();
+        boolean generateBonusChest = wgs.generateBonusChest();
+        MappedRegistry<LevelStem> originalRegistry = wgs.dimensions();
+        Optional<String> legacyCustomOptions = wgs.legacyCustomOptions;
+        
+        // make a copy of the dimension registry; for dimensions that specify that they should use the server seed instead
+        // of the hardcoded json seed, recreate them with the correct seed
+        MappedRegistry<LevelStem> seededRegistry = new MappedRegistry<>(Registry.LEVEL_STEM_REGISTRY, Lifecycle.experimental());
+        for (Entry<ResourceKey<LevelStem>, LevelStem> entry : originalRegistry.entrySet())
+        {
+            ResourceKey<LevelStem> key = entry.getKey();
+            LevelStem dimension = entry.getValue();
+            if (dimension.useServerSeed())
+            {
+                seededRegistry.register(key, new LevelStem(dimension.typeSupplier(), dimension.generator().withSeed(seed), true), originalRegistry.lifecycle(entry.getValue()));
+            }
+            else
+            {
+                seededRegistry.register(key, dimension, originalRegistry.lifecycle(dimension));
+            }
+        }
+        
+        return new WorldGenSettings(seed, generateFeatures, generateBonusChest, seededRegistry, legacyCustomOptions);
+    }
+    
+    /** Called in the LevelStem codec builder to add extra fields to dimension jsons **/
+    public static App<Mu<LevelStem>, LevelStem> expandLevelStemCodec(RecordCodecBuilder.Instance<LevelStem> builder, Supplier<App<Mu<LevelStem>, LevelStem>> vanillaFieldsSupplier)
+    {
+            App<Mu<LevelStem>, LevelStem> vanillaFields = vanillaFieldsSupplier.get();
+            return builder.group(vanillaFields).and(
+                    Codec.BOOL.optionalFieldOf("forge:use_server_seed", false).stable().forGetter(levelStem -> levelStem.useServerSeed()))
+                .apply(builder, builder.stable((stem, useServerSeed) -> new LevelStem(stem.typeSupplier(), stem.generator(), useServerSeed)));
+    }
+
     public static void writeAdditionalLevelSaveData(WorldData worldData, CompoundTag levelTag)
     {
         CompoundTag fmlData = new CompoundTag();
@@ -1331,5 +1394,4 @@ public class ForgeHooks
             LOGGER.error(WORLDPERSISTENCE, buf.toString());
         }
     }
-
 }

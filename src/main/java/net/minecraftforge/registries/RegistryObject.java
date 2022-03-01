@@ -1,20 +1,6 @@
 /*
- * Minecraft Forge
- * Copyright (c) 2016-2021.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation version 2.1
- * of the License.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Minecraft Forge - Forge Development LLC
+ * SPDX-License-Identifier: LGPL-2.1-only
  */
 
 package net.minecraftforge.registries;
@@ -76,8 +62,9 @@ public final class RegistryObject<T extends IForgeRegistryEntry<? super T>> impl
         ObjectHolderRegistry.addHandler(pred ->
         {
             if (pred.test(registry.getRegistryName()))
-                this.value = registry.containsKey(this.name) ? (T)registry.getValue(this.name) : null;
+                this.updateReference((IForgeRegistry<? extends T>) registry);
         });
+        this.updateReference(((IForgeRegistry<? extends T>) registry));
     }
 
     @SuppressWarnings("unchecked")
@@ -99,9 +86,15 @@ public final class RegistryObject<T extends IForgeRegistryEntry<? super T>> impl
                         throw new IllegalStateException("Unable to find registry for type " + baseType.getName() + " for mod \"" + modid + "\". Check the 'caused by' to see futher stack.", callerStack);
                 }
                 if (pred.test(registry.getRegistryName()))
-                    RegistryObject.this.value = registry.containsKey(RegistryObject.this.name) ? (T)registry.getValue(RegistryObject.this.name) : null;
+                    RegistryObject.this.updateReference((IForgeRegistry<? extends T>) registry);
             }
         });
+        IForgeRegistry<V> registry = RegistryManager.ACTIVE.getRegistry(baseType);
+        // allow registry to be null, this might be for a custom registry that does not exist yet
+        if (registry != null)
+        {
+            this.updateReference(((IForgeRegistry<? extends T>) registry));
+        }
     }
 
     /**
@@ -117,9 +110,10 @@ public final class RegistryObject<T extends IForgeRegistryEntry<? super T>> impl
         return ret;
     }
 
+    @Deprecated(since = "1.18.1") // TODO: make package-private
     public void updateReference(IForgeRegistry<? extends T> registry)
     {
-        this.value = registry.getValue(getId());
+        this.value = registry.containsKey(this.name) ? registry.getValue(getId()) : null;
     }
 
     public ResourceLocation getId()

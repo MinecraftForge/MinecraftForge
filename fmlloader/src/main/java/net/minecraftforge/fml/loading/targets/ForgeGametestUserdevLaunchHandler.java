@@ -17,10 +17,23 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-@ParametersAreNonnullByDefault
-@MethodsReturnNonnullByDefault
-package net.minecraftforge.client.model.animation;
+package net.minecraftforge.fml.loading.targets;
 
-import net.minecraft.MethodsReturnNonnullByDefault;
+import net.minecraftforge.api.distmarker.Dist;
 
-import javax.annotation.ParametersAreNonnullByDefault;
+import java.util.concurrent.Callable;
+
+public class ForgeGametestUserdevLaunchHandler extends ForgeUserdevLaunchHandler {
+    @Override public String name() { return "forgegametestserveruserdev"; }
+    @Override public Dist getDist() { return Dist.DEDICATED_SERVER; }
+
+    @Override
+    public Callable<Void> launchService(String[] arguments, ModuleLayer layer) {
+        return () -> {
+            var args = preLaunch(arguments, layer);
+
+            Class.forName(layer.findModule("forge").orElseThrow(), "net.minecraftforge.gametest.GameTestMain").getMethod("main", String[].class).invoke(null, (Object)args);
+            return null;
+        };
+    }
+}

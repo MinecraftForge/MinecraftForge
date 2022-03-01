@@ -1,11 +1,21 @@
 --- a/net/minecraft/commands/synchronization/ArgumentTypes.java
 +++ b/net/minecraft/commands/synchronization/ArgumentTypes.java
-@@ -257,4 +_,8 @@
+@@ -118,7 +_,7 @@
+       m_121601_("dimension", DimensionArgument.class, new EmptyArgumentSerializer<>(DimensionArgument::m_88805_));
+       m_121601_("time", TimeArgument.class, new EmptyArgumentSerializer<>(TimeArgument::m_113037_));
+       m_121601_("uuid", UuidArgument.class, new EmptyArgumentSerializer<>(UuidArgument::m_113850_));
+-      if (SharedConstants.f_136183_) {
++      if (net.minecraftforge.gametest.ForgeGameTestHooks.isGametestEnabled()) {
+          m_121601_("test_argument", TestFunctionArgument.class, new EmptyArgumentSerializer<>(TestFunctionArgument::m_128088_));
+          m_121601_("test_class", TestClassNameArgument.class, new EmptyArgumentSerializer<>(TestClassNameArgument::m_127917_));
+       }
+@@ -256,5 +_,9 @@
+          this.f_121619_ = p_121623_;
           this.f_121620_ = p_121624_;
        }
-    }
++   }
 +   @javax.annotation.Nullable public static ResourceLocation getId(ArgumentType<?> type) {
 +      Entry<?> entry = m_121616_(type);
 +      return entry == null ? null : entry.f_121620_;
-+   }
+    }
  }

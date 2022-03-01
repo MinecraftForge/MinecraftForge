@@ -1,20 +1,6 @@
 /*
- * Minecraft Forge
- * Copyright (c) 2016-2021.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation version 2.1
- * of the License.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Minecraft Forge - Forge Development LLC
+ * SPDX-License-Identifier: LGPL-2.1-only
  */
 
 package net.minecraftforge.event.entity.living;
@@ -118,7 +104,7 @@ public class LivingSpawnEvent extends LivingEvent
      * SpecialSpawn is fired when an Entity is to be spawned.<br>
      * This allows you to do special inializers in the new entity.<br>
      * <br>
-     * This event is fired via the {@link ForgeEventFactory#doSpecialSpawn(Mob, Level, float, float, float, BaseSpawner, MobSpawnType)}.<br>
+     * This event is fired via the {@link ForgeEventFactory#doSpecialSpawn(Mob, LevelAccessor, float, float, float, BaseSpawner, MobSpawnType)}.<br>
      * <br>
      * This event is {@link net.minecraftforge.eventbus.api.Cancelable}.<br>
      * If this event is canceled, the Entity is not spawned.<br>
@@ -137,7 +123,13 @@ public class LivingSpawnEvent extends LivingEvent
         /**
          * @param spawner the position of a tileentity or approximate position of an entity that initiated the spawn if any
          */
+        @Deprecated(forRemoval = true, since = "1.18.1")
         public SpecialSpawn(Mob entity, Level world, double x, double y, double z, @Nullable BaseSpawner spawner, MobSpawnType spawnReason)
+        {
+            this(entity, (LevelAccessor)world, x, y, z, spawner, spawnReason);
+        }
+
+        public SpecialSpawn(Mob entity, LevelAccessor world, double x, double y, double z, @Nullable BaseSpawner spawner, MobSpawnType spawnReason)
         {
             super(entity, world, x, y, z);
             this.spawner = spawner;

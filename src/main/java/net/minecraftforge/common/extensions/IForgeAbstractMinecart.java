@@ -1,20 +1,6 @@
 /*
- * Minecraft Forge
- * Copyright (c) 2016-2021.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation version 2.1
- * of the License.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Minecraft Forge - Forge Development LLC
+ * SPDX-License-Identifier: LGPL-2.1-only
  */
 
 package net.minecraftforge.common.extensions;
@@ -62,7 +48,10 @@ public interface IForgeAbstractMinecart
      * This should be an ItemStack that can be used by the player to place the cart,
      * but is not necessary the item the cart drops when destroyed.
      * @return An ItemStack that can be used to place the cart.
+     * 
+     * @deprecated TODO Remove in 1.19 - use {@link AbstractMinecart#getPickResult()} instead
      */
+    @Deprecated(forRemoval = true)
     default ItemStack getCartItem()
     {
         return new ItemStack(Items.MINECART);

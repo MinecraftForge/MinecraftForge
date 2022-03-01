@@ -5,7 +5,7 @@
           if (this.m_34329_()) {
              --this.f_34266_;
 -            if (this.f_34266_ < 0) {
-+            if (this.f_34266_ < 0 && net.minecraftforge.event.ForgeEventFactory.canLivingConvert(this, EntityType.f_20501_, (timer) -> this.f_34266_ = timer)) {
++            if (this.f_34266_ < 0 && net.minecraftforge.event.ForgeEventFactory.canLivingConvert(this, EntityType.f_20562_, (timer) -> this.f_34266_ = timer)) {
                 this.m_7595_();
              }
           } else if (this.m_7593_()) {

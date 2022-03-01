@@ -104,15 +104,19 @@
        }
     }
  
-@@ -764,7 +_,48 @@
+@@ -764,7 +_,55 @@
        this.m_8853_(p_8846_);
     }
  
++   /** @deprecated To be removed in 1.19. See {@link #removePlayerImmediately(ServerPlayer, Entity.RemovalReason)} as a possible replacement. */
++   @Deprecated(forRemoval = true, since = "1.18.1")
 +   public void removePlayer(ServerPlayer p_8850_, boolean keepData) {
 +      p_8850_.m_146870_();
 +      this.removeEntity(p_8850_, keepData);
 +   }
 +
++   /** @deprecated To be removed in 1.19. See {@link Entity#setRemoved(Entity.RemovalReason)} as a possible replacement. */
++   @Deprecated(forRemoval = true, since = "1.18.1")
 +   public void removeEntityComplete(Entity p_8865_, boolean keepData) {
 +      if(p_8865_.isMultipartEntity()) {
 +         for(net.minecraftforge.entity.PartEntity<?> parts : p_8865_.getParts()) {
@@ -131,15 +135,18 @@
 +         this.f_143246_.remove(((Mob)p_8865_).m_21573_());
 +      }
 +
-+      p_8865_.onRemovedFromWorld();
 +      p_8865_.m_146870_();
-+      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.EntityLeaveWorldEvent(p_8865_, this));
++      // onRemovedFromWorld and EntityLeaveWorldEvent are called by discard, so no need to do it ourselves here lest we double-call
 +   }
 +
++   /** @deprecated To be removed in 1.19. See {@link Entity#setRemoved(Entity.RemovalReason)} as a possible replacement. */
++   @Deprecated(forRemoval = true, since = "1.18.1")
 +   public void removeEntity(Entity entity) {
 +      removeEntity(entity, false);
 +   }
 +
++   /** @deprecated To be removed in 1.19. See {@link Entity#setRemoved(Entity.RemovalReason)} as a possible replacement. */
++   @Deprecated(forRemoval = true, since = "1.18.1")
 +   public void removeEntity(Entity p_8868_, boolean keepData) {
 +      if (this.f_8557_) {
 +         throw (IllegalStateException) net.minecraft.Util.m_137570_(new IllegalStateException("Removing entity while ticking!"));
@@ -198,6 +205,14 @@
        this.f_8548_.m_6846_().m_11241_(p_8689_, p_8690_.m_20185_(), p_8690_.m_20186_(), p_8690_.m_20189_(), p_8693_ > 1.0F ? (double)(16.0F * p_8693_) : 16.0D, this.m_46472_(), new ClientboundSoundEntityPacket(p_8691_, p_8692_, p_8690_, p_8693_, p_8694_));
     }
  
+@@ -837,6 +_,7 @@
+    }
+ 
+    public void m_142346_(@Nullable Entity p_143268_, GameEvent p_143269_, BlockPos p_143270_) {
++      if (net.minecraftforge.common.ForgeHooks.onVanillaGameEvent(this, p_143268_, p_143269_, p_143270_))
+       this.m_151513_(p_143268_, p_143269_, p_143270_, p_143269_.m_157827_());
+    }
+ 
 @@ -882,6 +_,7 @@
  
     public Explosion m_7703_(@Nullable Entity p_8653_, @Nullable DamageSource p_8654_, @Nullable ExplosionDamageCalculator p_8655_, double p_8656_, double p_8657_, double p_8658_, float p_8659_, boolean p_8660_, Explosion.BlockInteraction p_8661_) {
@@ -245,3 +260,12 @@
                 ServerLevel.this.f_143247_.remove(enderdragonpart.m_142049_());
              }
           }
+@@ -1531,6 +_,8 @@
+             gameeventlistenerregistrar.m_157854_(p_143375_.f_19853_);
+          }
+ 
++         p_143375_.onRemovedFromWorld();
++         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.EntityLeaveWorldEvent(p_143375_, ServerLevel.this));
+       }
+    }
+ }

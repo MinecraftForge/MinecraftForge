@@ -1,20 +1,6 @@
 /*
- * Minecraft Forge
- * Copyright (c) 2016-2021.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation version 2.1
- * of the License.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Minecraft Forge - Forge Development LLC
+ * SPDX-License-Identifier: LGPL-2.1-only
  */
 
 package net.minecraftforge.common;
@@ -53,6 +39,10 @@ public class Tags
         public static final IOptionalNamedTag<Block> CHESTS_TRAPPED = tag("chests/trapped");
         public static final IOptionalNamedTag<Block> CHESTS_WOODEN = tag("chests/wooden");
         public static final IOptionalNamedTag<Block> COBBLESTONE = tag("cobblestone");
+        public static final IOptionalNamedTag<Block> COBBLESTONE_NORMAL = tag("cobblestone/normal");
+        public static final IOptionalNamedTag<Block> COBBLESTONE_INFESTED = tag("cobblestone/infested");
+        public static final IOptionalNamedTag<Block> COBBLESTONE_MOSSY = tag("cobblestone/mossy");
+        public static final IOptionalNamedTag<Block> COBBLESTONE_DEEPSLATE = tag("cobblestone/deepslate");
         public static final IOptionalNamedTag<Block> END_STONES = tag("end_stones");
         public static final IOptionalNamedTag<Block> ENDERMAN_PLACE_ON_BLACKLIST = tag("enderman_place_on_blacklist");
         public static final IOptionalNamedTag<Block> FENCE_GATES = tag("fence_gates");
@@ -202,6 +192,10 @@ public class Tags
         public static final IOptionalNamedTag<Item> CHESTS_TRAPPED = tag("chests/trapped");
         public static final IOptionalNamedTag<Item> CHESTS_WOODEN = tag("chests/wooden");
         public static final IOptionalNamedTag<Item> COBBLESTONE = tag("cobblestone");
+        public static final IOptionalNamedTag<Item> COBBLESTONE_NORMAL = tag("cobblestone/normal");
+        public static final IOptionalNamedTag<Item> COBBLESTONE_INFESTED = tag("cobblestone/infested");
+        public static final IOptionalNamedTag<Item> COBBLESTONE_MOSSY = tag("cobblestone/mossy");
+        public static final IOptionalNamedTag<Item> COBBLESTONE_DEEPSLATE = tag("cobblestone/deepslate");
         public static final IOptionalNamedTag<Item> CROPS = tag("crops");
         public static final IOptionalNamedTag<Item> CROPS_BEETROOT = tag("crops/beetroot");
         public static final IOptionalNamedTag<Item> CROPS_CARROT = tag("crops/carrot");
