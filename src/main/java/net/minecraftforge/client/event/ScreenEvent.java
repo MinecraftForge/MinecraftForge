@@ -1,20 +1,6 @@
 /*
- * Minecraft Forge
- * Copyright (c) 2016-2022.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation version 2.1
- * of the License.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Minecraft Forge - Forge Development LLC
+ * SPDX-License-Identifier: LGPL-2.1-only
  */
 
 package net.minecraftforge.client.event;
@@ -142,7 +128,7 @@ public class ScreenEvent extends Event
         }
 
         /**
-         * The MatrixStack to render with.
+         * The PoseStack to render with.
          */
         public PoseStack getPoseStack()
         {
@@ -180,9 +166,9 @@ public class ScreenEvent extends Event
         @Cancelable
         public static class Pre extends DrawScreenEvent
         {
-            public Pre(Screen screen, PoseStack mStack, int mouseX, int mouseY, float renderPartialTicks)
+            public Pre(Screen screen, PoseStack poseStack, int mouseX, int mouseY, float partialTick)
             {
-                super(screen, mStack, mouseX, mouseY, renderPartialTicks);
+                super(screen, poseStack, mouseX, mouseY, partialTick);
             }
         }
 
@@ -191,9 +177,9 @@ public class ScreenEvent extends Event
          */
         public static class Post extends DrawScreenEvent
         {
-            public Post(Screen screen, PoseStack mStack, int mouseX, int mouseY, float renderPartialTicks)
+            public Post(Screen screen, PoseStack poseStack, int mouseX, int mouseY, float partialTick)
             {
-                super(screen, mStack, mouseX, mouseY, renderPartialTicks);
+                super(screen, poseStack, mouseX, mouseY, partialTick);
             }
         }
     }
@@ -213,7 +199,7 @@ public class ScreenEvent extends Event
         }
 
         /**
-         * The MatrixStack to render with.
+         * The PoseStack to render with.
          */
         public PoseStack getPoseStack()
         {

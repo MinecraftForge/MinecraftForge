@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/level/ServerPlayerGameMode.java
 +++ b/net/minecraft/server/level/ServerPlayerGameMode.java
-@@ -123,7 +_,15 @@
+@@ -125,7 +_,15 @@
        double d1 = this.f_9245_.m_20186_() - ((double)p_9282_.m_123342_() + 0.5D) + 1.5D;
        double d2 = this.f_9245_.m_20189_() - ((double)p_9282_.m_123343_() + 0.5D);
        double d3 = d0 * d0 + d1 * d1 + d2 * d2;
@@ -14,10 +14,10 @@
 +      }
 +      dist *= dist;
 +      if (d3 > dist) {
-          this.f_9245_.f_8906_.m_141995_(new ClientboundBlockBreakAckPacket(p_9282_, this.f_9244_.m_8055_(p_9282_), p_9283_, false, "too far"));
-       } else if (p_9282_.m_123342_() >= p_9285_) {
-          this.f_9245_.f_8906_.m_141995_(new ClientboundBlockBreakAckPacket(p_9282_, this.f_9244_.m_8055_(p_9282_), p_9283_, false, "too high"));
-@@ -148,6 +_,7 @@
+          BlockState blockstate1;
+          if (this.f_9245_.f_19853_.m_142572_() != null && this.f_9245_.m_146902_().m_45594_(new ChunkPos(p_9282_)) < this.f_9245_.f_19853_.m_142572_().m_6846_().m_11312_()) {
+             blockstate1 = this.f_9244_.m_8055_(p_9282_);
+@@ -157,6 +_,7 @@
              float f = 1.0F;
              BlockState blockstate = this.f_9244_.m_8055_(p_9282_);
              if (!blockstate.m_60795_()) {
@@ -25,7 +25,7 @@
                 blockstate.m_60686_(this.f_9244_, p_9282_, this.f_9245_);
                 f = blockstate.m_60625_(this.f_9245_, this.f_9245_.f_19853_, p_9282_);
              }
-@@ -215,7 +_,8 @@
+@@ -224,7 +_,8 @@
  
     public boolean m_9280_(BlockPos p_9281_) {
        BlockState blockstate = this.f_9244_.m_8055_(p_9281_);
@@ -35,7 +35,7 @@
           return false;
        } else {
           BlockEntity blockentity = this.f_9244_.m_7702_(p_9281_);
-@@ -223,30 +_,42 @@
+@@ -232,30 +_,42 @@
           if (block instanceof GameMasterBlock && !this.f_9245_.m_36337_()) {
              this.f_9244_.m_7260_(p_9281_, blockstate, blockstate, 3);
              return false;
@@ -85,7 +85,7 @@
     }
  
     public InteractionResult m_6261_(ServerPlayer p_9262_, Level p_9263_, ItemStack p_9264_, InteractionHand p_9265_) {
-@@ -255,6 +_,8 @@
+@@ -264,6 +_,8 @@
        } else if (p_9262_.m_36335_().m_41519_(p_9264_.m_41720_())) {
           return InteractionResult.PASS;
        } else {
@@ -94,7 +94,7 @@
           int i = p_9264_.m_41613_();
           int j = p_9264_.m_41773_();
           InteractionResultHolder<ItemStack> interactionresultholder = p_9264_.m_41682_(p_9263_, p_9262_, p_9265_);
-@@ -288,6 +_,8 @@
+@@ -297,6 +_,8 @@
     public InteractionResult m_7179_(ServerPlayer p_9266_, Level p_9267_, ItemStack p_9268_, InteractionHand p_9269_, BlockHitResult p_9270_) {
        BlockPos blockpos = p_9270_.m_82425_();
        BlockState blockstate = p_9267_.m_8055_(blockpos);
@@ -103,7 +103,7 @@
        if (this.f_9247_ == GameType.SPECTATOR) {
           MenuProvider menuprovider = blockstate.m_60750_(p_9267_, blockpos);
           if (menuprovider != null) {
-@@ -297,10 +_,15 @@
+@@ -306,10 +_,15 @@
              return InteractionResult.PASS;
           }
        } else {
@@ -121,7 +121,7 @@
              InteractionResult interactionresult = blockstate.m_60664_(p_9267_, p_9266_, p_9269_, p_9270_);
              if (interactionresult.m_19077_()) {
                 CriteriaTriggers.f_10562_.m_45482_(p_9266_, blockpos, itemstack);
-@@ -308,8 +_,8 @@
+@@ -317,8 +_,8 @@
              }
           }
  

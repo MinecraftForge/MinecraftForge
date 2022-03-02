@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity.java
-@@ -105,6 +_,7 @@
+@@ -107,6 +_,7 @@
        this.f_58312_ = p_154994_;
     }
  
@@ -8,7 +8,7 @@
     public static Map<Item, Integer> m_58423_() {
        Map<Item, Integer> map = Maps.newLinkedHashMap();
        m_58374_(map, Items.f_42448_, 20000);
-@@ -204,9 +_,9 @@
+@@ -206,9 +_,9 @@
        super.m_142466_(p_155025_);
        this.f_58310_ = NonNullList.m_122780_(this.m_6643_(), ItemStack.f_41583_);
        ContainerHelper.m_18980_(p_155025_, this.f_58310_);
@@ -21,7 +21,7 @@
        this.f_58317_ = this.m_7743_(this.f_58310_.get(1));
        CompoundTag compoundtag = p_155025_.m_128469_("RecipesUsed");
  
-@@ -218,9 +_,9 @@
+@@ -220,9 +_,9 @@
  
     protected void m_183515_(CompoundTag p_187452_) {
        super.m_183515_(p_187452_);
@@ -34,7 +34,7 @@
        ContainerHelper.m_18973_(p_187452_, this.f_58310_);
        CompoundTag compoundtag = new CompoundTag();
        this.f_58320_.forEach((p_187449_, p_187450_) -> {
-@@ -238,34 +_,35 @@
+@@ -240,34 +_,35 @@
  
        ItemStack itemstack = p_155017_.f_58310_.get(1);
        if (p_155017_.m_58425_() || !itemstack.m_41619_() && !p_155017_.f_58310_.get(0).m_41619_()) {
@@ -77,7 +77,7 @@
              }
           } else {
              p_155017_.f_58318_ = 0;
-@@ -286,9 +_,9 @@
+@@ -288,9 +_,9 @@
  
     }
  
@@ -89,7 +89,7 @@
           if (itemstack.m_41619_()) {
              return false;
           } else {
-@@ -297,10 +_,10 @@
+@@ -299,10 +_,10 @@
                 return true;
              } else if (!itemstack1.m_41656_(itemstack)) {
                 return false;
@@ -102,7 +102,7 @@
              }
           }
        } else {
-@@ -308,15 +_,15 @@
+@@ -310,15 +_,15 @@
        }
     }
  
@@ -122,7 +122,7 @@
           }
  
           if (itemstack.m_150930_(Blocks.f_50057_.m_5456_()) && !p_155028_.get(1).m_41619_() && p_155028_.get(1).m_150930_(Items.f_42446_)) {
-@@ -335,7 +_,7 @@
+@@ -337,7 +_,7 @@
           return 0;
        } else {
           Item item = p_58343_.m_41720_();
@@ -131,7 +131,7 @@
        }
     }
  
-@@ -344,7 +_,7 @@
+@@ -346,7 +_,7 @@
     }
  
     public static boolean m_58399_(ItemStack p_58400_) {
@@ -140,7 +140,7 @@
     }
  
     public int[] m_7071_(Direction p_58363_) {
-@@ -424,7 +_,7 @@
+@@ -426,7 +_,7 @@
           return true;
        } else {
           ItemStack itemstack = this.f_58310_.get(1);
@@ -149,7 +149,7 @@
        }
     }
  
-@@ -482,5 +_,34 @@
+@@ -484,5 +_,34 @@
           p_58342_.m_36491_(itemstack);
        }
  

@@ -1,8 +1,8 @@
 --- a/net/minecraft/gametest/framework/GameTestServer.java
 +++ b/net/minecraft/gametest/framework/GameTestServer.java
-@@ -69,12 +_,13 @@
+@@ -93,12 +_,13 @@
     public boolean m_7038_() {
-       this.m_129823_(new PlayerList(this, this.f_129746_, this.f_129745_, 1) {
+       this.m_129823_(new PlayerList(this, this.m_206579_(), this.f_129745_, 1) {
        });
 +      if (!net.minecraftforge.server.ServerLifecycleHooks.handleServerAboutToStart(this)) return false;
        this.m_130006_();

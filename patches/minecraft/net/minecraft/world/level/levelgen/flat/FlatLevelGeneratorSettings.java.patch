@@ -1,11 +1,11 @@
 --- a/net/minecraft/world/level/levelgen/flat/FlatLevelGeneratorSettings.java
 +++ b/net/minecraft/world/level/levelgen/flat/FlatLevelGeneratorSettings.java
-@@ -152,7 +_,7 @@
+@@ -147,7 +_,7 @@
           }
        }
  
--      return (new Biome.BiomeBuilder()).m_47597_(biome.m_47530_()).m_47595_(biome.m_47567_()).m_47609_(biome.m_47554_()).m_47611_(biome.m_47548_()).m_47603_(biome.m_47557_()).m_47601_(biomegenerationsettings$builder.m_47831_()).m_47605_(biome.m_47518_()).m_47592_();
-+      return (new Biome.BiomeBuilder()).m_47597_(biome.m_47530_()).m_47595_(biome.m_47567_()).m_47609_(biome.m_47554_()).m_47611_(biome.m_47548_()).m_47603_(biome.m_47557_()).m_47601_(biomegenerationsettings$builder.m_47831_()).m_47605_(biome.m_47518_()).m_47592_().setRegistryName(biome.getRegistryName());
+-      return Holder.m_205709_(Biome.BiomeBuilder.m_204185_(biome).m_47601_(biomegenerationsettings$builder.m_47831_()).m_47592_());
++      return Holder.m_205709_(Biome.BiomeBuilder.m_204185_(biome).m_47601_(biomegenerationsettings$builder.m_47831_()).m_47592_().setRegistryName(biome.getRegistryName()));
     }
  
-    public StructureSettings m_70395_() {
+    public Optional<HolderSet<StructureSet>> m_209810_() {

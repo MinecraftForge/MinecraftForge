@@ -1,20 +1,6 @@
 /*
- * Minecraft Forge
- * Copyright (c) 2016-2021.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation version 2.1
- * of the License.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Minecraft Forge - Forge Development LLC
+ * SPDX-License-Identifier: LGPL-2.1-only
  */
 
 package net.minecraftforge.client.model;
@@ -51,13 +37,13 @@ public class ModelDataManager
     
     private static final Map<ChunkPos, Map<BlockPos, IModelData>> modelDataCache = new ConcurrentHashMap<>();
 
-    private static void cleanCaches(Level world)
+    private static void cleanCaches(Level level)
     {
-        Preconditions.checkNotNull(world, "World must not be null");
-        Preconditions.checkArgument(world == Minecraft.getInstance().level, "Cannot use model data for a world other than the current client world");
-        if (world != currentLevel.get())
+        Preconditions.checkNotNull(level, "Level must not be null");
+        Preconditions.checkArgument(level == Minecraft.getInstance().level, "Cannot use model data for a level other than the current client level");
+        if (level != currentLevel.get())
         {
-            currentLevel = new WeakReference<>(world);
+            currentLevel = new WeakReference<>(level);
             needModelDataRefresh.clear();
             modelDataCache.clear();
         }
@@ -66,16 +52,16 @@ public class ModelDataManager
     public static void requestModelDataRefresh(BlockEntity te)
     {
         Preconditions.checkNotNull(te, "Tile entity must not be null");
-        Level world = te.getLevel();
+        Level level = te.getLevel();
 
-        cleanCaches(world);
+        cleanCaches(level);
         needModelDataRefresh.computeIfAbsent(new ChunkPos(te.getBlockPos()), $ -> Collections.synchronizedSet(new HashSet<>()))
                             .add(te.getBlockPos());
     }
     
-    private static void refreshModelData(Level world, ChunkPos chunk)
+    private static void refreshModelData(Level level, ChunkPos chunk)
     {        
-        cleanCaches(world);
+        cleanCaches(level);
         Set<BlockPos> needUpdate = needModelDataRefresh.remove(chunk);
 
         if (needUpdate != null)
@@ -83,7 +69,7 @@ public class ModelDataManager
             Map<BlockPos, IModelData> data = modelDataCache.computeIfAbsent(chunk, $ -> new ConcurrentHashMap<>());
             for (BlockPos pos : needUpdate)
             {
-                BlockEntity toUpdate = world.getBlockEntity(pos);
+                BlockEntity toUpdate = level.getBlockEntity(pos);
                 if (toUpdate != null && !toUpdate.isRemoved())
                 {
                     data.put(pos, toUpdate.getModelData());
@@ -106,15 +92,15 @@ public class ModelDataManager
         modelDataCache.remove(chunk);
     }
     
-    public static @Nullable IModelData getModelData(Level world, BlockPos pos)
+    public static @Nullable IModelData getModelData(Level level, BlockPos pos)
     {
-        return getModelData(world, new ChunkPos(pos)).get(pos);
+        return getModelData(level, new ChunkPos(pos)).get(pos);
     }
     
-    public static Map<BlockPos, IModelData> getModelData(Level world, ChunkPos pos)
+    public static Map<BlockPos, IModelData> getModelData(Level level, ChunkPos pos)
     {
-        Preconditions.checkArgument(world.isClientSide, "Cannot request model data for server world");
-        refreshModelData(world, pos);
+        Preconditions.checkArgument(level.isClientSide, "Cannot request model data for server level");
+        refreshModelData(level, pos);
         return modelDataCache.getOrDefault(pos, Collections.emptyMap());
     }
 }
