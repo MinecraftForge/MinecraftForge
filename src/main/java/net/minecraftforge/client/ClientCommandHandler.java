@@ -1,20 +1,6 @@
 /*
- * Minecraft Forge
- * Copyright (c) 2016-2021.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation version 2.1
- * of the License.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Minecraft Forge - Forge Development LLC
+ * SPDX-License-Identifier: LGPL-2.1-only
  */
 
 package net.minecraftforge.client;
@@ -35,6 +21,7 @@ import com.mojang.brigadier.tree.RootCommandNode;
 import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.commands.CommandRuntimeException;
 import net.minecraft.commands.CommandSourceStack;
@@ -46,6 +33,7 @@ import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.client.event.RegisterClientCommandsEvent;
 import net.minecraftforge.common.MinecraftForge;
 import org.apache.logging.log4j.LogManager;
@@ -59,6 +47,22 @@ public class ClientCommandHandler
 {
     private static final Logger LOGGER = LogManager.getLogger();
     private static CommandDispatcher<CommandSourceStack> commands = null;
+
+    public static void init()
+    {
+        MinecraftForge.EVENT_BUS.addListener(ClientCommandHandler::handleClientPlayerLogin);
+    }
+
+    private static void handleClientPlayerLogin(ClientPlayerNetworkEvent.LoggedInEvent event)
+    {
+        // some custom server implementations do not send ClientboundCommandsPacket, provide a fallback
+        var suggestionDispatcher = mergeServerCommands(new CommandDispatcher<>());
+        if (event.getConnection().getPacketListener() instanceof ClientPacketListener listener)
+        {
+            // Must set this, so that suggestions for client-only commands work, if server never sends commands packet
+            listener.commands = suggestionDispatcher;
+        }
+    }
 
     /*
      * For internal use
@@ -144,11 +148,17 @@ public class ClientCommandHandler
      */
     private static <S> void copy(CommandNode<S> sourceNode, CommandNode<S> resultNode)
     {
+        Map<CommandNode<S>, CommandNode<S>> newNodes = new IdentityHashMap<>();
+        newNodes.put(sourceNode, resultNode);
         for (CommandNode<S> child : sourceNode.getChildren())
         {
-            ArgumentBuilder<S, ?> builder = child.createBuilder();
-            CommandNode<S> copy = builder.build();
-            copy(child, copy);
+            CommandNode<S> copy = newNodes.computeIfAbsent(child, innerChild ->
+            {
+                ArgumentBuilder<S, ?> builder = innerChild.createBuilder();
+                CommandNode<S> innerCopy = builder.build();
+                copy(innerChild, innerCopy);
+                return innerCopy;
+            });
             resultNode.addChild(copy);
         }
     }
@@ -278,6 +288,11 @@ public class ClientCommandHandler
         }
         catch (CommandSyntaxException syntax)// Usually thrown by the CommandDispatcher
         {
+            if (syntax.getType() == CommandSyntaxException.BUILT_IN_EXCEPTIONS.dispatcherUnknownCommand())
+            {
+                // in case of unknown command, let the server try and handle it
+                return false;
+            }
             Minecraft.getInstance().player.sendMessage(
                     new TextComponent("").append(ComponentUtils.fromMessage(syntax.getRawMessage())).withStyle(ChatFormatting.RED), Util.NIL_UUID);
             if (syntax.getInput() != null && syntax.getCursor() >= 0)

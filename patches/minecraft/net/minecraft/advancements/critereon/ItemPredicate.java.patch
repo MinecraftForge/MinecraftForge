@@ -1,6 +1,6 @@
 --- a/net/minecraft/advancements/critereon/ItemPredicate.java
 +++ b/net/minecraft/advancements/critereon/ItemPredicate.java
-@@ -29,6 +_,8 @@
+@@ -28,6 +_,8 @@
  import net.minecraft.world.level.ItemLike;
  
  public class ItemPredicate {
@@ -8,8 +8,8 @@
 +   private static final Map<ResourceLocation, java.util.function.Function<JsonObject, ItemPredicate>> unmod_predicates = java.util.Collections.unmodifiableMap(custom_predicates);
     public static final ItemPredicate f_45028_ = new ItemPredicate();
     @Nullable
-    private final Tag<Item> f_45029_;
-@@ -108,6 +_,11 @@
+    private final TagKey<Item> f_45029_;
+@@ -107,6 +_,11 @@
     public static ItemPredicate m_45051_(@Nullable JsonElement p_45052_) {
        if (p_45052_ != null && !p_45052_.isJsonNull()) {
           JsonObject jsonobject = GsonHelper.m_13918_(p_45052_, "item");
@@ -21,7 +21,7 @@
           MinMaxBounds.Ints minmaxbounds$ints = MinMaxBounds.Ints.m_55373_(jsonobject.get("count"));
           MinMaxBounds.Ints minmaxbounds$ints1 = MinMaxBounds.Ints.m_55373_(jsonobject.get("durability"));
           if (jsonobject.has("data")) {
-@@ -219,6 +_,14 @@
+@@ -214,6 +_,14 @@
        } else {
           return new ItemPredicate[0];
        }

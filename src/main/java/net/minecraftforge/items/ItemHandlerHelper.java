@@ -1,20 +1,6 @@
 /*
- * Minecraft Forge
- * Copyright (c) 2016-2021.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation version 2.1
- * of the License.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Minecraft Forge - Forge Development LLC
+ * SPDX-License-Identifier: LGPL-2.1-only
  */
 
 package net.minecraftforge.items;
@@ -165,7 +151,7 @@ public class ItemHandlerHelper
         if (stack.isEmpty()) return;
 
         IItemHandler inventory = new PlayerMainInvWrapper(player.getInventory());
-        Level world = player.level;
+        Level level = player.level;
 
         // try adding it into the inventory
         ItemStack remainder = stack;
@@ -183,18 +169,18 @@ public class ItemHandlerHelper
         // play sound if something got picked up
         if (remainder.isEmpty() || remainder.getCount() != stack.getCount())
         {
-            world.playSound(null, player.getX(), player.getY() + 0.5, player.getZ(),
-                    SoundEvents.ITEM_PICKUP, SoundSource.PLAYERS, 0.2F, ((world.random.nextFloat() - world.random.nextFloat()) * 0.7F + 1.0F) * 2.0F);
+            level.playSound(null, player.getX(), player.getY() + 0.5, player.getZ(),
+                    SoundEvents.ITEM_PICKUP, SoundSource.PLAYERS, 0.2F, ((level.random.nextFloat() - level.random.nextFloat()) * 0.7F + 1.0F) * 2.0F);
         }
 
-        // drop remaining itemstack into the world
-        if (!remainder.isEmpty() && !world.isClientSide)
+        // drop remaining itemstack into the level
+        if (!remainder.isEmpty() && !level.isClientSide)
         {
-            ItemEntity entityitem = new ItemEntity(world, player.getX(), player.getY() + 0.5, player.getZ(), remainder);
+            ItemEntity entityitem = new ItemEntity(level, player.getX(), player.getY() + 0.5, player.getZ(), remainder);
             entityitem.setPickUpDelay(40);
             entityitem.setDeltaMovement(entityitem.getDeltaMovement().multiply(0, 1, 0));
 
-            world.addFreshEntity(entityitem);
+            level.addFreshEntity(entityitem);
         }
     }
 

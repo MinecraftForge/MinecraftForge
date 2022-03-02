@@ -20,7 +20,7 @@
           }
  
           BlockState blockstate = p_53450_.m_8055_(p_53451_.m_7495_());
--         boolean flag = blockstate.m_60620_(p_53450_.m_6042_().m_63968_());
+-         boolean flag = blockstate.m_204336_(p_53450_.m_6042_().m_204517_());
 +         boolean flag = blockstate.isFireSource(p_53450_, p_53451_, Direction.UP);
           int i = p_53449_.m_61143_(f_53408_);
           if (!flag && p_53450_.m_46471_() && this.m_53428_(p_53450_, p_53451_) && p_53452_.nextFloat() < 0.2F + (float)i * 0.03F) {

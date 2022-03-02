@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/inventory/AbstractContainerMenu.java
 +++ b/net/minecraft/world/inventory/AbstractContainerMenu.java
-@@ -204,9 +_,11 @@
+@@ -211,9 +_,11 @@
     private void m_150407_(int p_150408_, ItemStack p_150409_, Supplier<ItemStack> p_150410_) {
        ItemStack itemstack = this.f_38841_.get(p_150408_);
        if (!ItemStack.m_41728_(itemstack, p_150409_)) {
@@ -12,7 +12,7 @@
           for(ContainerListener containerlistener : this.f_38848_) {
              containerlistener.m_7934_(this, p_150408_, itemstack1);
           }
-@@ -592,14 +_,15 @@
+@@ -603,14 +_,15 @@
              ItemStack itemstack = slot.m_7993_();
              if (!itemstack.m_41619_() && ItemStack.m_150942_(p_38904_, itemstack)) {
                 int j = itemstack.m_41613_() + p_38904_.m_41613_();
@@ -32,7 +32,7 @@
                    slot.m_6654_();
                    flag = true;
                 }
-@@ -699,7 +_,7 @@
+@@ -710,7 +_,7 @@
           p_38925_.m_41764_(1);
           break;
        case 2:

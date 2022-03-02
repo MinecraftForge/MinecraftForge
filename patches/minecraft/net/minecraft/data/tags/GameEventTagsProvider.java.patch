@@ -1,6 +1,6 @@
 --- a/net/minecraft/data/tags/GameEventTagsProvider.java
 +++ b/net/minecraft/data/tags/GameEventTagsProvider.java
-@@ -8,8 +_,12 @@
+@@ -6,8 +_,12 @@
  import net.minecraft.world.level.gameevent.GameEvent;
  
  public class GameEventTagsProvider extends TagsProvider<GameEvent> {

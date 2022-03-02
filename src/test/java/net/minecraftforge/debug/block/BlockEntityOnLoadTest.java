@@ -1,24 +1,11 @@
 /*
- * Minecraft Forge
- * Copyright (c) 2016-2021.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation version 2.1
- * of the License.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Minecraft Forge - Forge Development LLC
+ * SPDX-License-Identifier: LGPL-2.1-only
  */
 
 package net.minecraftforge.debug.block;
 
+import com.mojang.logging.LogUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -38,15 +25,16 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
 
 import javax.annotation.Nullable;
+import java.util.Locale;
 
 @Mod("be_onload_test")
 public class BlockEntityOnLoadTest
 {
     private static final boolean ENABLED = true;
+    private static final Logger LOGGER = LogUtils.getLogger();
 
     private static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, "be_onload_test");
     private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, "be_onload_test");
@@ -95,7 +83,6 @@ public class BlockEntityOnLoadTest
 
     private static class TestBlockEntity extends BlockEntity
     {
-        private static final Logger LOGGER = LogManager.getLogger();
         private boolean loaded = false;
 
         public TestBlockEntity(BlockPos pos, BlockState state)
@@ -120,7 +107,7 @@ public class BlockEntityOnLoadTest
                 LOGGER.info("[BE_ONLOAD] TestBlockEntity#tick at pos {} for {}", worldPosition, this);
                 if (!loaded)
                 {
-                    throw new IllegalStateException(String.format("BlockEntity at %s ticked before onLoad()!", getBlockPos()));
+                    throw new IllegalStateException(String.format(Locale.ENGLISH, "BlockEntity at %s ticked before onLoad()!", getBlockPos()));
                 }
             }
         }

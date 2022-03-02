@@ -33,5 +33,5 @@
  
 +   @Deprecated //Forge: DO NOT USE use BlockState.canEntityDestroy
     public static boolean m_31491_(BlockState p_31492_) {
-       return !p_31492_.m_60795_() && !p_31492_.m_60620_(BlockTags.f_13070_);
+       return !p_31492_.m_60795_() && !p_31492_.m_204336_(BlockTags.f_13070_);
     }

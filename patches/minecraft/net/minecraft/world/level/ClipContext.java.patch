@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/ClipContext.java
 +++ b/net/minecraft/world/level/ClipContext.java
-@@ -18,12 +_,12 @@
+@@ -20,12 +_,12 @@
     private final ClipContext.Fluid f_45685_;
     private final CollisionContext f_45686_;
  
