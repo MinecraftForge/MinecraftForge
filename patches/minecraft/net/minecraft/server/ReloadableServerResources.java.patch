@@ -1,0 +1,21 @@
+--- a/net/minecraft/server/ReloadableServerResources.java
++++ b/net/minecraft/server/ReloadableServerResources.java
+@@ -76,7 +_,9 @@
+ 
+    public static CompletableFuture<ReloadableServerResources> m_206861_(ResourceManager p_206862_, RegistryAccess.Frozen p_206863_, Commands.CommandSelection p_206864_, int p_206865_, Executor p_206866_, Executor p_206867_) {
+       ReloadableServerResources reloadableserverresources = new ReloadableServerResources(p_206863_, p_206864_, p_206865_);
+-      return SimpleReloadInstance.m_203834_(p_206862_, reloadableserverresources.m_206890_(), p_206866_, p_206867_, f_206846_, f_206845_.isDebugEnabled()).m_7237_().thenApply((p_206880_) -> {
++      List<PreparableReloadListener> listeners = new java.util.ArrayList<>(reloadableserverresources.m_206890_());
++      listeners.addAll(net.minecraftforge.event.ForgeEventFactory.onResourceReload());
++      return SimpleReloadInstance.m_203834_(p_206862_, listeners, p_206866_, p_206867_, f_206846_, f_206845_.isDebugEnabled()).m_7237_().thenApply((p_206880_) -> {
+          return reloadableserverresources;
+       });
+    }
+@@ -86,6 +_,7 @@
+          m_206870_(p_206869_, p_206884_);
+       });
+       Blocks.m_50758_();
++      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.TagsUpdatedEvent(p_206869_));
+    }
+ 
+    private static <T> void m_206870_(RegistryAccess p_206871_, TagManager.LoadResult<T> p_206872_) {

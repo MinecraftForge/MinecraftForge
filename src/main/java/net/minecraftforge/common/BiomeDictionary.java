@@ -1,20 +1,6 @@
 /*
- * Minecraft Forge
- * Copyright (c) 2016-2021.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation version 2.1
- * of the License.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Minecraft Forge - Forge Development LLC
+ * SPDX-License-Identifier: LGPL-2.1-only
  */
 
 package net.minecraftforge.common;
@@ -88,7 +74,6 @@ public class BiomeDictionary
         public static final Type MESA = new Type("MESA");
         public static final Type FOREST = new Type("FOREST");
         public static final Type PLAINS = new Type("PLAINS");
-        public static final Type MOUNTAIN = new Type("MOUNTAIN");
         public static final Type HILLS = new Type("HILLS");
         public static final Type SWAMP = new Type("SWAMP");
         public static final Type SANDY = new Type("SANDY");
@@ -96,6 +81,12 @@ public class BiomeDictionary
         public static final Type WASTELAND = new Type("WASTELAND");
         public static final Type BEACH = new Type("BEACH");
         public static final Type VOID = new Type("VOID");
+        public static final Type UNDERGROUND = new Type("UNDERGROUND");
+
+        /*Mountain related tags*/
+        public static final Type PEAK = new Type("PEAK");
+        public static final Type SLOPE = new Type("SLOPE");
+        public static final Type MOUNTAIN = new Type("MOUNTAIN", PEAK, SLOPE);
 
         /*Tags specifying the dimension a biome generates in. Specifying none implies a biome that generates in a modded dimension*/
         public static final Type OVERWORLD = new Type("OVERWORLD");
@@ -302,7 +293,7 @@ public class BiomeDictionary
         addTypes(Biomes.OCEAN, OCEAN, OVERWORLD);
         addTypes(Biomes.PLAINS, PLAINS, OVERWORLD);
         addTypes(Biomes.DESERT, HOT, DRY, SANDY, OVERWORLD);
-        addTypes(Biomes.WINDSWEPT_HILLS, MOUNTAIN, HILLS, OVERWORLD);
+        addTypes(Biomes.WINDSWEPT_HILLS, HILLS, OVERWORLD);
         addTypes(Biomes.FOREST, FOREST, OVERWORLD);
         addTypes(Biomes.TAIGA, COLD, CONIFEROUS, FOREST, OVERWORLD);
         addTypes(Biomes.SWAMP, WET, SWAMP, OVERWORLD);
@@ -323,11 +314,17 @@ public class BiomeDictionary
         addTypes(Biomes.DARK_FOREST, SPOOKY, DENSE, FOREST, OVERWORLD);
         addTypes(Biomes.SNOWY_TAIGA, COLD, CONIFEROUS, FOREST, SNOWY, OVERWORLD);
         addTypes(Biomes.OLD_GROWTH_PINE_TAIGA, COLD, CONIFEROUS, FOREST, OVERWORLD);
-        addTypes(Biomes.WINDSWEPT_FOREST, MOUNTAIN, FOREST, SPARSE, OVERWORLD);
+        addTypes(Biomes.WINDSWEPT_FOREST, HILLS, FOREST, SPARSE, OVERWORLD);
         addTypes(Biomes.SAVANNA, HOT, SAVANNA, PLAINS, SPARSE, OVERWORLD);
-        addTypes(Biomes.SAVANNA_PLATEAU, HOT, SAVANNA, PLAINS, SPARSE, RARE, OVERWORLD, PLATEAU);
+        addTypes(Biomes.SAVANNA_PLATEAU, HOT, SAVANNA, PLAINS, SPARSE, RARE, OVERWORLD, SLOPE, PLATEAU);
         addTypes(Biomes.BADLANDS, MESA, SANDY, DRY, OVERWORLD);
-        addTypes(Biomes.WOODED_BADLANDS, MESA, SANDY, DRY, SPARSE, OVERWORLD, PLATEAU);
+        addTypes(Biomes.WOODED_BADLANDS, MESA, SANDY, DRY, SPARSE, OVERWORLD, SLOPE, PLATEAU);
+        addTypes(Biomes.MEADOW, PLAINS, PLATEAU, SLOPE, OVERWORLD);
+        addTypes(Biomes.GROVE, COLD, CONIFEROUS, FOREST, SNOWY, SLOPE, OVERWORLD);
+        addTypes(Biomes.SNOWY_SLOPES, COLD, SPARSE, SNOWY, SLOPE, OVERWORLD);
+        addTypes(Biomes.JAGGED_PEAKS, COLD, SPARSE, SNOWY, PEAK, OVERWORLD);
+        addTypes(Biomes.FROZEN_PEAKS, COLD, SPARSE, SNOWY, PEAK, OVERWORLD);
+        addTypes(Biomes.STONY_PEAKS, HOT, PEAK, OVERWORLD);
         addTypes(Biomes.SMALL_END_ISLANDS, END);
         addTypes(Biomes.END_MIDLANDS, END);
         addTypes(Biomes.END_HIGHLANDS, END);
@@ -340,14 +337,16 @@ public class BiomeDictionary
         addTypes(Biomes.DEEP_FROZEN_OCEAN, OCEAN, COLD, OVERWORLD);
         addTypes(Biomes.THE_VOID, VOID);
         addTypes(Biomes.SUNFLOWER_PLAINS, PLAINS, RARE, OVERWORLD);
-        addTypes(Biomes.WINDSWEPT_GRAVELLY_HILLS, MOUNTAIN, SPARSE, RARE, OVERWORLD);
-        addTypes(Biomes.FLOWER_FOREST, FOREST, HILLS, RARE, OVERWORLD);
-        addTypes(Biomes.ICE_SPIKES, COLD, SNOWY, HILLS, RARE, OVERWORLD);
-        addTypes(Biomes.OLD_GROWTH_BIRCH_FOREST, FOREST, DENSE, HILLS, RARE, OVERWORLD);
+        addTypes(Biomes.WINDSWEPT_GRAVELLY_HILLS, HILLS, SPARSE, RARE, OVERWORLD);
+        addTypes(Biomes.FLOWER_FOREST, FOREST, RARE, OVERWORLD);
+        addTypes(Biomes.ICE_SPIKES, COLD, SNOWY, RARE, OVERWORLD);
+        addTypes(Biomes.OLD_GROWTH_BIRCH_FOREST, FOREST, DENSE, RARE, OVERWORLD);
         addTypes(Biomes.OLD_GROWTH_SPRUCE_TAIGA, DENSE, FOREST, RARE, OVERWORLD);
-        addTypes(Biomes.WINDSWEPT_SAVANNA, HOT, DRY, SPARSE, SAVANNA, MOUNTAIN, RARE, OVERWORLD);
-        addTypes(Biomes.ERODED_BADLANDS, HOT, DRY, SPARSE, MOUNTAIN, RARE, OVERWORLD);
+        addTypes(Biomes.WINDSWEPT_SAVANNA, HOT, DRY, SPARSE, SAVANNA, HILLS, RARE, OVERWORLD);
+        addTypes(Biomes.ERODED_BADLANDS, MESA, HOT, DRY, SPARSE, RARE, OVERWORLD);
         addTypes(Biomes.BAMBOO_JUNGLE, HOT, WET, RARE, JUNGLE, OVERWORLD);
+        addTypes(Biomes.LUSH_CAVES, UNDERGROUND, LUSH, WET, OVERWORLD);
+        addTypes(Biomes.DRIPSTONE_CAVES, UNDERGROUND, SPARSE, OVERWORLD);
         addTypes(Biomes.SOUL_SAND_VALLEY, HOT, DRY, NETHER);
         addTypes(Biomes.CRIMSON_FOREST, HOT, DRY, NETHER, FOREST);
         addTypes(Biomes.WARPED_FOREST, HOT, DRY, NETHER, FOREST);

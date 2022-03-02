@@ -1,6 +1,6 @@
 --- a/net/minecraft/Util.java
 +++ b/net/minecraft/Util.java
-@@ -158,6 +_,9 @@
+@@ -155,6 +_,9 @@
        return 255;
     }
  
@@ -10,7 +10,7 @@
     public static ExecutorService m_183988_() {
        return f_137443_;
     }
-@@ -236,7 +_,7 @@
+@@ -233,7 +_,7 @@
        try {
           type = DataFixers.m_14512_().getSchema(DataFixUtils.makeKey(SharedConstants.m_183709_().getWorldVersion())).getChoiceType(p_137552_, p_137553_);
        } catch (IllegalArgumentException illegalargumentexception) {

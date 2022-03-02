@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/levelgen/DebugLevelSource.java
 +++ b/net/minecraft/world/level/levelgen/DebugLevelSource.java
-@@ -107,6 +_,12 @@
+@@ -117,6 +_,12 @@
  
        return blockstate;
     }
@@ -12,4 +12,4 @@
 +   }
  
     public Climate.Sampler m_183403_() {
-       return (p_188507_, p_188508_, p_188509_) -> {
+       return Climate.m_207841_();

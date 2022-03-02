@@ -249,7 +249,7 @@
 +      if (!canUseRail()) return m_7097_();
 +      BlockPos pos = this.getCurrentRailPosition();
 +      BlockState state = this.f_19853_.m_8055_(pos);
-+      if (!state.m_60620_(BlockTags.f_13034_)) return m_7097_();
++      if (!state.m_204336_(BlockTags.f_13034_)) return m_7097_();
 +
 +      float railMaxSpeed = ((BaseRailBlock)state.m_60734_()).getRailMaxSpeed(state, this.f_19853_, pos, this);
 +      return Math.min(railMaxSpeed, getCurrentCartSpeedCapOnRail());
