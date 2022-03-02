@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/npc/CatSpawner.java
 +++ b/net/minecraft/world/entity/npc/CatSpawner.java
-@@ -84,8 +_,9 @@
+@@ -90,8 +_,9 @@
        if (cat == null) {
           return 0;
        } else {

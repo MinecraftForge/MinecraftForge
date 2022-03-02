@@ -11,5 +11,5 @@
  
     Ingredient m_6282_();
 +
-+   @javax.annotation.Nullable default net.minecraft.tags.Tag<net.minecraft.world.level.block.Block> getTag() { return null; }
++   @javax.annotation.Nullable default net.minecraft.tags.TagKey<net.minecraft.world.level.block.Block> getTag() { return null; }
  }

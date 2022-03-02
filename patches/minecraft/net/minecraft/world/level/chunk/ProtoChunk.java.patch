@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/chunk/ProtoChunk.java
 +++ b/net/minecraft/world/level/chunk/ProtoChunk.java
-@@ -122,13 +_,13 @@
+@@ -123,13 +_,13 @@
           if (this.f_187612_[l].m_188008_() && p_63218_.m_60713_(Blocks.f_50016_)) {
              return p_63218_;
           } else {
