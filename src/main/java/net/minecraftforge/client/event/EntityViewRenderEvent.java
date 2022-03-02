@@ -11,6 +11,9 @@ import net.minecraft.client.renderer.FogRenderer.FogMode;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraftforge.eventbus.api.Cancelable;
 
+import com.mojang.blaze3d.shaders.FogShape;
+import com.mojang.blaze3d.systems.RenderSystem;
+
 /**
  * Event that hooks into GameRenderer, allowing any feature to customize visual attributes
  *  the player sees.
@@ -43,6 +46,7 @@ public abstract class EntityViewRenderEvent extends net.minecraftforge.eventbus.
         return partialTicks;
     }
 
+    //TODO: remove in 1.19
     private static class FogEvent extends EntityViewRenderEvent
     {
         private final FogMode mode;
@@ -57,10 +61,13 @@ public abstract class EntityViewRenderEvent extends net.minecraftforge.eventbus.
     }
 
     /**
+     * MODDERS: use RenderFogEvent
+     *
      * Event that allows any feature to customize the fog density the player sees.
      * NOTE: In order to make this event have an effect, you must cancel the event
      */
     @Cancelable
+    @Deprecated //TODO: remove in 1.19
     public static class FogDensity extends FogEvent
     {
         private float density;
@@ -83,22 +90,66 @@ public abstract class EntityViewRenderEvent extends net.minecraftforge.eventbus.
     }
 
     /**
-     * Event that allows any feature to customize the rendering of fog.
+     * This event allows for customization of parameters related to fog rendering. The plane distances are based on the player's render distance.
+     *
+     * A FogMode of FOG_SKY is the skybox's fog.
+     * A FogMode of FOG_TERRAIN is what the fog induced by render distance uses. This works best for reducing the camera's visibility.
      */
-    @HasResult
-    public static class RenderFogEvent extends FogEvent
+    public static class RenderFogEvent extends EntityViewRenderEvent
     {
+        private final FogMode type;
         private final float farPlaneDistance;
+        private final float nearPlaneDistance;
+        private final FogShape fogShape;
 
+        @Deprecated //TODO: remove in 1.19
         public RenderFogEvent(FogMode type, Camera camera, float partialTicks, float distance)
         {
-            super(type, camera, partialTicks);
-            this.farPlaneDistance = distance;
+            this(type, camera, partialTicks, 0f, distance, FogShape.SPHERE);
+        }
+
+        public RenderFogEvent(FogMode type, Camera camera, float partialTicks, float nearPlaneDistance, float farPlaneDistance, FogShape fogShape)
+        {
+            super(Minecraft.getInstance().gameRenderer, camera, partialTicks);
+            this.type = type;
+            this.farPlaneDistance = farPlaneDistance;
+            this.nearPlaneDistance = nearPlaneDistance;
+            this.fogShape = fogShape;
+        }
+
+        public FogMode getMode()
+        {
+            return type;
         }
 
         public float getFarPlaneDistance()
         {
             return farPlaneDistance;
+        }
+
+        public float getNearPlaneDistance()
+        {
+            return nearPlaneDistance;
+        }
+
+        public FogShape getFogShape()
+        {
+            return fogShape;
+        }
+
+        public void setFarPlaneDistance(float distance)
+        {
+            RenderSystem.setShaderFogEnd(distance);
+        }
+
+        public void setNearPlaneDistance(float distance)
+        {
+            RenderSystem.setShaderFogStart(distance);
+        }
+
+        public void setFogShape(FogShape shape)
+        {
+            RenderSystem.setShaderFogShape(shape);
         }
     }
 

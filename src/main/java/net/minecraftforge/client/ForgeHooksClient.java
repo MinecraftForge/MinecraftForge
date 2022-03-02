@@ -6,6 +6,8 @@
 package net.minecraftforge.client;
 
 import com.google.common.collect.ImmutableMap;
+
+import com.mojang.blaze3d.shaders.FogShape;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import com.mojang.datafixers.util.Either;
@@ -389,9 +391,9 @@ public class ForgeHooksClient
         return -1;
     }
 
-    public static void onFogRender(FogMode type, Camera camera, float partialTick, float distance)
+    public static void onFogRender(FogMode type, Camera camera, float partialTick, float nearDistance, float farDistance, FogShape shape)
     {
-        MinecraftForge.EVENT_BUS.post(new EntityViewRenderEvent.RenderFogEvent(type, camera, partialTick, distance));
+        MinecraftForge.EVENT_BUS.post(new EntityViewRenderEvent.RenderFogEvent(type, camera, partialTick, nearDistance, farDistance, shape));
     }
 
     public static EntityViewRenderEvent.CameraSetup onCameraSetup(GameRenderer renderer, Camera camera, float partial)
