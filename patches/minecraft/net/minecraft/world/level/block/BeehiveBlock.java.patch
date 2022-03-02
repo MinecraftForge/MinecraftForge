@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/BeehiveBlock.java
 +++ b/net/minecraft/world/level/block/BeehiveBlock.java
-@@ -72,6 +_,9 @@
+@@ -70,6 +_,9 @@
     public int m_6782_(BlockState p_49620_, Level p_49621_, BlockPos p_49622_) {
        return p_49620_.m_61143_(f_49564_);
     }
@@ -10,7 +10,7 @@
  
     public void m_6240_(Level p_49584_, Player p_49585_, BlockPos p_49586_, BlockState p_49587_, @Nullable BlockEntity p_49588_, ItemStack p_49589_) {
        super.m_6240_(p_49584_, p_49585_, p_49586_, p_49587_, p_49588_, p_49589_);
-@@ -92,6 +_,7 @@
+@@ -90,6 +_,7 @@
        List<Bee> list = p_49650_.m_45976_(Bee.class, (new AABB(p_49651_)).m_82377_(8.0D, 6.0D, 8.0D));
        if (!list.isEmpty()) {
           List<Player> list1 = p_49650_.m_45976_(Player.class, (new AABB(p_49651_)).m_82377_(8.0D, 6.0D, 8.0D));
@@ -18,7 +18,7 @@
           int i = list1.size();
  
           for(Bee bee : list) {
-@@ -113,7 +_,7 @@
+@@ -111,7 +_,7 @@
        boolean flag = false;
        if (i >= 5) {
           Item item = itemstack.m_41720_();

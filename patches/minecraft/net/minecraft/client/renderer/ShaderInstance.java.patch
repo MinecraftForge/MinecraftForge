@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/ShaderInstance.java
 +++ b/net/minecraft/client/renderer/ShaderInstance.java
-@@ -94,10 +_,14 @@
+@@ -96,10 +_,14 @@
     @Nullable
     public final Uniform f_173320_;
  
@@ -17,7 +17,7 @@
        Resource resource = null;
  
        try {
-@@ -206,8 +_,9 @@
+@@ -209,8 +_,9 @@
        Program program1 = p_173342_.m_85570_().get(p_173343_);
        Program program;
        if (program1 == null) {

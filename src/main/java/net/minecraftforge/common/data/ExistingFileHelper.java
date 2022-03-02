@@ -1,20 +1,6 @@
 /*
- * Minecraft Forge
- * Copyright (c) 2016-2021.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation version 2.1
- * of the License.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Minecraft Forge - Forge Development LLC
+ * SPDX-License-Identifier: LGPL-2.1-only
  */
 
 package net.minecraftforge.common.data;
@@ -22,7 +8,9 @@ package net.minecraftforge.common.data;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -37,22 +25,19 @@ import net.minecraft.data.HashCache;
 import net.minecraft.server.packs.FilePackResources;
 import net.minecraft.server.packs.FolderPackResources;
 import net.minecraft.server.packs.repository.ServerPacksSource;
+import net.minecraft.server.packs.resources.MultiPackResourceManager;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.PackResources;
 import net.minecraft.server.packs.PackType;
-import net.minecraft.server.packs.resources.SimpleReloadableResourceManager;
 import net.minecraft.server.packs.VanillaPackResources;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.model.generators.ModelBuilder;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.forge.event.lifecycle.GatherDataEvent;
 import net.minecraftforge.forgespi.language.IModFileInfo;
-import net.minecraftforge.forgespi.locating.IModFile;
-import net.minecraftforge.resource.PathResourcePack;
 import net.minecraftforge.resource.ResourcePackLoader;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
@@ -93,7 +78,7 @@ public class ExistingFileHelper {
         public String getPrefix() { return prefix; }
     }
 
-    private final SimpleReloadableResourceManager clientResources, serverData;
+    private final MultiPackResourceManager clientResources, serverData;
     private final boolean enable;
     private final Multimap<PackType, ResourceLocation> generated = HashMultimap.create();
 
@@ -104,37 +89,40 @@ public class ExistingFileHelper {
      * <p>
      * Only create a new helper if you intentionally want to ignore the existence of
      * other generated files.
-     * 
-     * @param existingPacks
-     * @param existingMods
-     * @param enable
-     * @param assetIndex
-     * @param assetsDir
+     * @param existingPacks a collection of paths to existing packs
+     * @param existingMods a set of mod IDs for existing mods
+     * @param enable {@code true} if validation is enabled
+     * @param assetIndex the identifier for the asset index, generally Minecraft's current major version
+     * @param assetsDir the directory in which to find vanilla assets and indexes
      */
     public ExistingFileHelper(Collection<Path> existingPacks, final Set<String> existingMods, boolean enable, @Nullable final String assetIndex, @Nullable final File assetsDir) {
-        this.clientResources = new SimpleReloadableResourceManager(PackType.CLIENT_RESOURCES);
-        this.serverData = new SimpleReloadableResourceManager(PackType.SERVER_DATA);
+        List<PackResources> candidateClientResources = new ArrayList<>();
+        List<PackResources> candidateServerResources = new ArrayList<>();
 
-        this.clientResources.add(new VanillaPackResources(ClientPackSource.BUILT_IN, "minecraft", "realms"));
+        candidateClientResources.add(new VanillaPackResources(ClientPackSource.BUILT_IN, "minecraft", "realms"));
         if (assetIndex != null && assetsDir != null)
         {
-            this.clientResources.add(new DefaultClientPackResources(ClientPackSource.BUILT_IN, new AssetIndex(assetsDir, assetIndex)));
+            candidateClientResources.add(new DefaultClientPackResources(ClientPackSource.BUILT_IN, new AssetIndex(assetsDir, assetIndex)));
         }
-        this.serverData.add(new VanillaPackResources(ServerPacksSource.BUILT_IN_METADATA, "minecraft"));
+        candidateServerResources.add(new VanillaPackResources(ServerPacksSource.BUILT_IN_METADATA, "minecraft"));
         for (Path existing : existingPacks) {
             File file = existing.toFile();
             PackResources pack = file.isDirectory() ? new FolderPackResources(file) : new FilePackResources(file);
-            this.clientResources.add(pack);
-            this.serverData.add(pack);
+            candidateClientResources.add(pack);
+            candidateServerResources.add(pack);
         }
         for (String existingMod : existingMods) {
             IModFileInfo modFileInfo = ModList.get().getModFileById(existingMod);
             if (modFileInfo != null) {
                 PackResources pack = ResourcePackLoader.createPackForMod(modFileInfo);
-                this.clientResources.add(pack);
-                this.serverData.add(pack);
+                candidateClientResources.add(pack);
+                candidateServerResources.add(pack);
             }
         }
+
+        this.clientResources = new MultiPackResourceManager(PackType.CLIENT_RESOURCES, candidateClientResources);
+        this.serverData = new MultiPackResourceManager(PackType.SERVER_DATA, candidateServerResources);
+
         this.enable = enable;
     }
 

@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/multiplayer/ClientPacketListener.java
 +++ b/net/minecraft/client/multiplayer/ClientPacketListener.java
-@@ -357,6 +_,7 @@
+@@ -360,6 +_,7 @@
  
        this.f_104888_.f_91064_.m_113434_();
        this.f_104888_.f_91074_.m_172530_();
@@ -8,7 +8,7 @@
        int i = p_105030_.f_132360_();
        this.f_104888_.f_91074_.m_20234_(i);
        this.f_104889_.m_104630_(i, this.f_104888_.f_91074_);
-@@ -368,6 +_,7 @@
+@@ -371,6 +_,7 @@
        this.f_104888_.f_91074_.m_108711_(p_105030_.f_132372_());
        this.f_104888_.f_91072_.m_171805_(p_105030_.f_132363_(), p_105030_.f_132364_());
        this.f_104888_.f_91066_.m_193770_(p_105030_.f_132370_());
@@ -16,7 +16,7 @@
        this.f_104888_.f_91066_.m_92172_();
        this.f_104885_.m_129512_(new ServerboundCustomPayloadPacket(ServerboundCustomPayloadPacket.f_133979_, (new FriendlyByteBuf(Unpooled.buffer())).m_130070_(ClientBrandRetriever.m_129629_())));
        this.f_104888_.m_91309_().m_90739_();
-@@ -715,7 +_,9 @@
+@@ -712,7 +_,9 @@
  
     public void m_5784_(ClientboundChatPacket p_104986_) {
        PacketUtils.m_131363_(p_104986_, this, this.f_104888_);
@@ -27,7 +27,7 @@
     }
  
     public void m_7791_(ClientboundAnimatePacket p_104968_) {
-@@ -886,8 +_,10 @@
+@@ -894,8 +_,10 @@
           localplayer1.m_21204_().m_22159_(localplayer.m_21204_());
        }
  
@@ -38,19 +38,19 @@
        this.f_104889_.m_104630_(i, localplayer1);
        localplayer1.m_146922_(-180.0F);
        localplayer1.f_108618_ = new KeyboardInput(this.f_104888_.f_91066_);
-@@ -990,10 +_,7 @@
+@@ -998,10 +_,7 @@
        PacketUtils.m_131363_(p_104976_, this, this.f_104888_);
        BlockPos blockpos = p_104976_.m_131704_();
-       this.f_104888_.f_91073_.m_141902_(blockpos, p_104976_.m_195645_()).ifPresent((p_194239_) -> {
+       this.f_104888_.f_91073_.m_141902_(blockpos, p_104976_.m_195645_()).ifPresent((p_205557_) -> {
 -         CompoundTag compoundtag = p_104976_.m_131708_();
 -         if (compoundtag != null) {
--            p_194239_.m_142466_(compoundtag);
+-            p_205557_.m_142466_(compoundtag);
 -         }
-+         p_194239_.onDataPacket(f_104885_, p_104976_);
++         p_205557_.onDataPacket(f_104885_, p_104976_);
  
-          if (p_194239_ instanceof CommandBlockEntity && this.f_104888_.f_91080_ instanceof CommandBlockEditScreen) {
+          if (p_205557_ instanceof CommandBlockEntity && this.f_104888_.f_91080_ instanceof CommandBlockEditScreen) {
              ((CommandBlockEditScreen)this.f_104888_.f_91080_).m_98398_();
-@@ -1139,6 +_,7 @@
+@@ -1147,6 +_,7 @@
     public void m_7443_(ClientboundCommandsPacket p_104990_) {
        PacketUtils.m_131363_(p_104990_, this, this.f_104888_);
        this.f_104899_ = new CommandDispatcher<>(p_104990_.m_131884_());
@@ -58,7 +58,7 @@
     }
  
     public void m_7183_(ClientboundStopSoundPacket p_105116_) {
-@@ -1160,6 +_,7 @@
+@@ -1168,6 +_,7 @@
        clientrecipebook.m_90625_(this.f_104900_.m_44051_());
        clientrecipebook.m_90639_().forEach(mutablesearchtree::m_8080_);
        mutablesearchtree.m_7729_();
@@ -66,24 +66,24 @@
     }
  
     public void m_7244_(ClientboundPlayerLookAtPacket p_105054_) {
-@@ -1237,7 +_,7 @@
+@@ -1245,7 +_,7 @@
        PacketUtils.m_131363_(p_105130_, this, this.f_104888_);
        Entity entity = this.f_104889_.m_6815_(p_105130_.m_133622_());
        if (entity instanceof LivingEntity) {
--         MobEffect mobeffect = MobEffect.m_19453_(p_105130_.m_133623_());
-+         MobEffect mobeffect = MobEffect.m_19453_(p_105130_.m_133623_() & 0xFF);
+-         MobEffect mobeffect = MobEffect.m_19453_(p_105130_.m_211135_());
++         MobEffect mobeffect = MobEffect.m_19453_(p_105130_.m_211135_() & 0xFF);
           if (mobeffect != null) {
              MobEffectInstance mobeffectinstance = new MobEffectInstance(mobeffect, p_105130_.m_133625_(), p_105130_.m_133624_(), p_105130_.m_133627_(), p_105130_.m_133626_(), p_105130_.m_133628_());
              mobeffectinstance.m_19562_(p_105130_.m_133619_());
-@@ -1254,6 +_,7 @@
-          f_104883_.warn("Incomplete server tags, disconnecting. Missing: {}", (Object)multimap);
-          this.f_104885_.m_129507_(new TranslatableComponent("multiplayer.disconnect.missing_tags"));
-       } else {
-+         tagcontainer = net.minecraftforge.common.ForgeTagHandler.reinjectOptionalTags(tagcontainer);
-          this.f_104895_ = tagcontainer;
-          if (!this.f_104885_.m_129531_()) {
-             tagcontainer.m_13431_();
-@@ -1803,7 +_,8 @@
+@@ -1262,6 +_,7 @@
+       }
+ 
+       this.f_104888_.m_91171_(SearchRegistry.f_119942_).m_7729_();
++      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.TagsUpdatedEvent(this.f_104903_));
+    }
+ 
+    private <T> void m_205560_(ResourceKey<? extends Registry<? extends T>> p_205561_, TagNetworkSerialization.NetworkPayload p_205562_) {
+@@ -1815,7 +_,8 @@
              int i5 = friendlybytebuf.m_130242_();
              this.f_104888_.f_91064_.f_173815_.m_173830_(positionsource, i5);
           } else {
