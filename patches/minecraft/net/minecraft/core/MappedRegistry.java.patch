@@ -1,10 +1,11 @@
 --- a/net/minecraft/core/MappedRegistry.java
 +++ b/net/minecraft/core/MappedRegistry.java
-@@ -279,6 +_,13 @@
+@@ -279,6 +_,14 @@
        return this.f_205842_.containsKey(p_175392_);
     }
  
-+   // Forge: For internal use only. Use the Register events when registering values.
++   /** @Depreciated Forge: For internal use only. Use the Register events when registering values. */
++   @Deprecated
 +   public void unfreeze() {
 +      this.f_205845_ = false;
 +      if (this.f_205846_ != null && this.f_205847_ == null)

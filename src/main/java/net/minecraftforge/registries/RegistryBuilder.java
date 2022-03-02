@@ -382,4 +382,9 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
     {
         return this.vanillaHolder;
     }
+
+    boolean getHasWrapper()
+    {
+        return this.hasWrapper;
+    }
 }

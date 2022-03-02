@@ -88,6 +88,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
 
     private final Codec<V> codec = new RegistryCodec();
 
+    @SuppressWarnings("unchecked")
     ForgeRegistry(RegistryManager stage, ResourceLocation name, RegistryBuilder<V> builder)
     {
         this.name = name;
@@ -207,6 +208,11 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
     public boolean isEmpty()
     {
         return this.names.isEmpty();
+    }
+
+    int size()
+    {
+        return this.names.size();
     }
 
     @Override
@@ -390,12 +396,6 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
                 if (this.stage == RegistryManager.ACTIVE)
                     getDelegate(oldEntry).changeReference(value);
             }
-        }
-
-        if (this.builder.getVanillaHolder() != null)
-        {
-            var ref = this.builder.getVanillaHolder().apply(value);
-            ref.bind(rkey, value);
         }
 
         if (this.add != null)
