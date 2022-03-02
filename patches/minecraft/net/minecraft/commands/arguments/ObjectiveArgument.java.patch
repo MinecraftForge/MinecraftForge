@@ -1,0 +1,20 @@
+--- a/net/minecraft/commands/arguments/ObjectiveArgument.java
++++ b/net/minecraft/commands/arguments/ObjectiveArgument.java
+@@ -31,7 +_,7 @@
+ 
+    public static Objective m_101960_(CommandContext<CommandSourceStack> p_101961_, String p_101962_) throws CommandSyntaxException {
+       String s = p_101961_.getArgument(p_101962_, String.class);
+-      Scoreboard scoreboard = p_101961_.getSource().m_81377_().m_129896_();
++      Scoreboard scoreboard = p_101961_.getSource().getScoreboard();
+       Objective objective = scoreboard.m_83477_(s);
+       if (objective == null) {
+          throw f_101953_.create(s);
+@@ -57,7 +_,7 @@
+       S s = p_101974_.getSource();
+       if (s instanceof CommandSourceStack) {
+          CommandSourceStack commandsourcestack = (CommandSourceStack)s;
+-         return SharedSuggestionProvider.m_82970_(commandsourcestack.m_81377_().m_129896_().m_83474_(), p_101975_);
++         return SharedSuggestionProvider.m_82970_(commandsourcestack.getScoreboard().m_83474_(), p_101975_);
+       } else if (s instanceof SharedSuggestionProvider) {
+          SharedSuggestionProvider sharedsuggestionprovider = (SharedSuggestionProvider)s;
+          return sharedsuggestionprovider.m_212155_(p_101974_);

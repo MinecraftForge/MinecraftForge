@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/level/ServerChunkCache.java
 +++ b/net/minecraft/server/level/ServerChunkCache.java
-@@ -163,6 +_,7 @@
+@@ -160,6 +_,7 @@
           if (chunkholder == null) {
              return null;
           } else {
@@ -12,8 +12,8 @@
           for(ServerChunkCache.ChunkAndHolder serverchunkcache$chunkandholder : list) {
              LevelChunk levelchunk1 = serverchunkcache$chunkandholder.f_184028_;
              ChunkPos chunkpos = levelchunk1.m_7697_();
--            if (this.f_8329_.m_143275_(chunkpos) && this.f_8325_.m_183879_(chunkpos)) {
-+            if ((this.f_8329_.m_143275_(chunkpos) && this.f_8325_.m_183879_(chunkpos)) || this.f_8327_.shouldForceTicks(chunkpos.m_45588_())) {
+-            if (this.f_8329_.m_201916_(chunkpos) && this.f_8325_.m_183879_(chunkpos)) {
++            if ((this.f_8329_.m_201916_(chunkpos) && this.f_8325_.m_183879_(chunkpos)) || this.f_8327_.shouldForceTicks(chunkpos.m_45588_())) {
                 levelchunk1.m_187632_(j);
                 if (flag2 && (this.f_8335_ || this.f_8336_) && this.f_8329_.m_6857_().m_61927_(chunkpos)) {
                    NaturalSpawner.m_47029_(this.f_8329_, levelchunk1, naturalspawner$spawnstate, this.f_8336_, this.f_8335_, flag1);

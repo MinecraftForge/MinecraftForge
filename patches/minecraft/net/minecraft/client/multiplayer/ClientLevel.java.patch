@@ -1,7 +1,7 @@
 --- a/net/minecraft/client/multiplayer/ClientLevel.java
 +++ b/net/minecraft/client/multiplayer/ClientLevel.java
-@@ -130,6 +_,8 @@
-       this.f_194123_ = p_194134_;
+@@ -129,6 +_,8 @@
+       this.f_194123_ = p_205510_;
        this.m_46465_();
        this.m_46466_();
 +      this.gatherCapabilities();
@@ -9,7 +9,7 @@
     }
  
     public void m_194171_(Runnable p_194172_) {
-@@ -216,6 +_,7 @@
+@@ -215,6 +_,7 @@
        this.m_46473_().m_6521_(() -> {
           return Registry.f_122826_.m_7981_(p_104640_.m_6095_()).toString();
        });
@@ -17,7 +17,7 @@
        p_104640_.m_8119_();
        this.m_46473_().m_7238_();
  
-@@ -243,7 +_,7 @@
+@@ -242,7 +_,7 @@
     }
  
     public void m_104665_(LevelChunk p_104666_) {
@@ -26,7 +26,7 @@
        this.f_104559_.m_7827_().m_141940_(p_104666_.m_7697_(), false);
        this.f_171631_.m_157658_(p_104666_.m_7697_());
     }
-@@ -278,8 +_,10 @@
+@@ -277,8 +_,10 @@
     }
  
     private void m_104739_(int p_104740_, Entity p_104741_) {
@@ -37,7 +37,7 @@
     }
  
     public void m_171642_(int p_171643_, Entity.RemovalReason p_171644_) {
-@@ -410,6 +_,11 @@
+@@ -409,6 +_,11 @@
     }
  
     public void m_6263_(@Nullable Player p_104645_, double p_104646_, double p_104647_, double p_104648_, SoundEvent p_104649_, SoundSource p_104650_, float p_104651_, float p_104652_) {
@@ -49,7 +49,7 @@
        if (p_104645_ == this.f_104565_.f_91074_) {
           this.m_7785_(p_104646_, p_104647_, p_104648_, p_104649_, p_104650_, p_104651_, p_104652_, false);
        }
-@@ -417,6 +_,11 @@
+@@ -416,6 +_,11 @@
     }
  
     public void m_6269_(@Nullable Player p_104659_, Entity p_104660_, SoundEvent p_104661_, SoundSource p_104662_, float p_104663_, float p_104664_) {
@@ -61,7 +61,7 @@
        if (p_104659_ == this.f_104565_.f_91074_) {
           this.f_104565_.m_91106_().m_120367_(new EntityBoundSoundInstance(p_104661_, p_104662_, p_104663_, p_104664_, p_104660_));
        }
-@@ -879,6 +_,7 @@
+@@ -870,6 +_,7 @@
        }
  
        public void m_104851_(Difficulty p_104852_) {
@@ -69,7 +69,7 @@
           this.f_104840_ = p_104852_;
        }
  
-@@ -921,6 +_,9 @@
+@@ -912,6 +_,9 @@
        public void m_141981_(Entity p_171716_) {
           p_171716_.m_19877_();
           ClientLevel.this.f_104566_.remove(p_171716_);

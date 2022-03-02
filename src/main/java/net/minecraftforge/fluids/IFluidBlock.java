@@ -1,20 +1,6 @@
 /*
- * Minecraft Forge
- * Copyright (c) 2016-2021.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation version 2.1
- * of the License.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Minecraft Forge - Forge Development LLC
+ * SPDX-License-Identifier: LGPL-2.1-only
  */
 
 package net.minecraftforge.fluids;
@@ -43,13 +29,13 @@ public interface IFluidBlock
      * This method should be called by fluid containers such as buckets, but it is recommended
      * to use {@link FluidUtil}.
      *
-     * @param world      the world to place the block in
+     * @param level      the level to place the block in
      * @param pos        the position to place the block at
      * @param fluidStack the fluid stack to get the required data from
      * @param action     If SIMULATE, the placement will only be simulated
      * @return the amount of fluid extracted from the provided stack to achieve some fluid level
      */
-    int place(Level world, BlockPos pos, @Nonnull FluidStack fluidStack, IFluidHandler.FluidAction action);
+    int place(Level level, BlockPos pos, @Nonnull FluidStack fluidStack, IFluidHandler.FluidAction action);
 
     /**
      * Attempt to drain the block. This method should be called by devices such as pumps.
@@ -58,18 +44,16 @@ public interface IFluidBlock
      *
      * @param action
      *            If SIMULATE, the drain will only be simulated.
-     * @return
+     * @return the fluid stack after draining the block
      */
     @Nonnull
-    FluidStack drain(Level world, BlockPos pos, IFluidHandler.FluidAction action);
+    FluidStack drain(Level level, BlockPos pos, IFluidHandler.FluidAction action);
 
     /**
      * Check to see if a block can be drained. This method should be called by devices such as
      * pumps.
-     *
-     * @return
      */
-    boolean canDrain(Level world, BlockPos pos);
+    boolean canDrain(Level level, BlockPos pos);
 
     /**
      * Returns the amount of a single block is filled. Value between 0 and 1.
@@ -77,8 +61,6 @@ public interface IFluidBlock
      *
      * If the return value is negative. It will be treated as filling the block
      * from the top down instead of bottom up.
-     *
-     * @return
      */
-    float getFilledPercentage(Level world, BlockPos pos);
+    float getFilledPercentage(Level level, BlockPos pos);
 }

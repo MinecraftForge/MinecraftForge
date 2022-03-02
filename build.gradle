@@ -27,7 +27,7 @@ import org.gradle.plugins.ide.eclipse.model.SourceFolder
 plugins {
     id 'org.cadixdev.licenser' version '0.6.1'
     id 'com.github.ben-manes.versions' version '0.36.0'
-    id 'net.minecraftforge.gradleutils' version '1.+'
+    id 'net.minecraftforge.gradleutils' version '2.+'
     id 'eclipse'
     id 'de.undercouch.download' version '4.1.2'
 }
@@ -44,17 +44,17 @@ ext {
         ]
     }
     MAPPING_CHANNEL = 'official'
-    MAPPING_VERSION = '1.18.1'
-    MC_VERSION = '1.18.1'
-    MCP_VERSION = '20211210.034407'
+    MAPPING_VERSION = '1.18.2'
+    MC_VERSION = '1.18.2'
+    MCP_VERSION = '20220228.144236'
     SPI_VERSION = '4.0.10'
     ACCESSTRANSFORMERS_VERSION = '8.0.4'
     COREMODS_VERSION = '5.0.1'
     EVENTBUS_VERSION = '5.0.3'
-    MODLAUNCHER_VERSION = '9.0.7'
-    SECUREJARHANDLER_VERSION = '0.9.54'
-    BOOTSTRAPLAUNCHER_VERSION = '0.1.17'
-    ASM_VERSION = '9.1'
+    MODLAUNCHER_VERSION = '9.1.3'
+    SECUREJARHANDLER_VERSION = '1.0.3'
+    BOOTSTRAPLAUNCHER_VERSION = '1.0.0'
+    ASM_VERSION = '9.2'
     INSTALLER_VERSION = '2.1.+'
     MIXIN_VERSION = '0.8.5'
 
@@ -68,6 +68,7 @@ ext {
     INSTALLER_TOOLS = 'net.minecraftforge:installertools:1.2.10'
     JAR_SPLITTER = 'net.minecraftforge:jarsplitter:1.1.4'
     FART = 'net.minecraftforge:ForgeAutoRenamingTool:0.1.17:all'
+    MIN_TAG_FOR_CHANGELOG = "39.0"
 }
 
 println('Version: ' + VERSION +
@@ -75,14 +76,15 @@ println('Version: ' + VERSION +
         ' JVM: ' + System.getProperty('java.vm.version') + '(' + System.getProperty('java.vendor') + ')' +
         ' Arch: ' + System.getProperty('os.arch'))
 
+changelog {
+    fromTag MIN_TAG_FOR_CHANGELOG
+}
+
 def extraTxts = [
     rootProject.file('CREDITS.txt'),
-    rootProject.file('LICENSE.txt')
+    rootProject.file('LICENSE.txt'),
+    rootProject.tasks.createChangelog.outputFile
 ]
-
-def changelog = rootProject.file('build/changelog.txt')
-if (changelog.exists())
-    extraTxts += changelog
 
 task downloadVersionManifest(type: Download) {
     src 'https://launchermeta.mojang.com/mc/game/version_manifest_v2.json'
@@ -181,20 +183,7 @@ subprojects {
             }
         }
         repositories {
-            maven {
-                if (System.env.MAVEN_USER) {
-                    url 'https://maven.minecraftforge.net/releases/'
-                    authentication {
-                        basic(BasicAuthentication)
-                    }
-                    credentials {
-                        username = System.env.MAVEN_USER ?: 'not'
-                        password = System.env.MAVEN_PASSWORD ?: 'set'
-                    }
-                } else {
-                    url 'file://' + rootProject.file('repo').getAbsolutePath()
-                }
-            }
+            maven gradleutils.getPublishingForgeMaven()
         }
     }
 }
@@ -277,19 +266,12 @@ def sharedDeps = {
     installer 'com.electronwill.night-config:core:3.6.4'
     installer 'com.electronwill.night-config:toml:3.6.4'
     installer 'org.apache.maven:maven-artifact:3.6.3'
-    installer 'org.apache.commons:commons-lang3:3.12.0'
     installer 'net.jodah:typetools:0.8.3'
-    installer 'org.apache.logging.log4j:log4j-api:2.15.0' //TODO: Unpin in 1.18.1 or when Mojang bumps the Log4J version
-    installer 'org.apache.logging.log4j:log4j-core:2.15.0' //TODO: Unpin in 1.18.1 or when Mojang bumps the Log4J version
-    installer 'org.apache.logging.log4j:log4j-slf4j18-impl:2.15.0' //TODO: Unpin in 1.18.1 or when Mojang bumps the Log4J version
     installer 'net.minecrell:terminalconsoleappender:1.2.0'
     installer 'org.jline:jline-reader:3.12.+'   //Dep of TerminaalConsoleeAppender
     installer 'org.jline:jline-terminal:3.12.+' //Dep of TerminaalConsoleeAppender
-    installer 'net.sf.jopt-simple:jopt-simple:5.0.4'
     installer "org.spongepowered:mixin:${MIXIN_VERSION}"
     installer 'org.openjdk.nashorn:nashorn-core:15.3'
-    installer 'com.google.guava:guava:31.0.1-jre'
-    installer 'com.google.code.gson:gson:2.8.8'
 
     /*
     installer 'org.lwjgl:lwjgl:3.2.2'
@@ -383,6 +365,9 @@ def sharedFmlonlyForge = { Project prj ->
                 environment 'MCP_MAPPINGS', '{mcp_mappings}'
 
                 property 'nativesDirectory', '{natives}'
+                if (prj.name == 'forge') {
+                    property 'forge.enableGameTest', 'true'
+                }
 
                 args '--launchTarget', "${launchPrefix}clientuserdev"
                 args '--version', 'MOD_DEV'
@@ -394,7 +379,20 @@ def sharedFmlonlyForge = { Project prj ->
                 environment 'MOD_CLASSES', '{source_roots}'
                 environment 'MCP_MAPPINGS', '{mcp_mappings}'
 
+                if (prj.name == 'forge') {
+                    property 'forge.enableGameTest', 'true'
+                }
+
                 args '--launchTarget', "${launchPrefix}serveruserdev"
+            }
+
+            if (prj.name == 'forge') {
+                gameTestServer {
+                    environment 'MOD_CLASSES', '{source_roots}'
+                    environment 'MCP_MAPPINGS', '{mcp_mappings}'
+
+                    args '--launchTarget', "${launchPrefix}gametestserveruserdev"
+                }
             }
 
             data {
@@ -428,7 +426,8 @@ def sharedFmlonlyForge = { Project prj ->
 
         // SecureJarHandler bootstrap values.
         run.property 'ignoreList', prj.configurations.moduleonly.files.collect {it.name.replaceAll(/([-_]([.\d]*\d+)|\.jar$)/, '') }.join(',') + ",client-extra,fmlcore,javafmllanguage,mclanguage,${prj.name}-"
-        run.property 'mergeModules', 'jna-5.8.0.jar,jna-platform-58.0.jar,java-objc-bridge-1.0.0.jar'
+        // FIXME: Without this jna doesn't work at runtime. Someone figure out why please?
+        run.property 'mergeModules', 'jna-5.10.0.jar,jna-platform-5.10.0.jar,java-objc-bridge-1.0.0.jar'
         if (userdevRuns.contains(run)) {
             run.property 'legacyClassPath.file', '{minecraft_classpath_file}'
             run.jvmArgs '-p', '{modules}'
@@ -915,6 +914,7 @@ project(':forge') {
         implementation project(':fmlloader')
         implementation project(':javafmllanguage')
         implementation project(':mclanguage')
+        runtimeOnly "cpw.mods:bootstraplauncher:${BOOTSTRAPLAUNCHER_VERSION}"
     }
     dependencies sharedDeps
 
@@ -941,6 +941,7 @@ project(':forge') {
                 parent runs.forge_client
                 taskName 'forge_test_client'
 
+                property 'forge.enableGameTest', 'true'
                 environment 'MOD_CLASSES', 'dummy' // Needed to work around FG limitation, FG will replace this!
 
                 ideaModule "${rootProject.name}.${project.name}.test"
@@ -963,7 +964,29 @@ project(':forge') {
                 parent runs.forge_server
                 taskName 'forge_test_server'
 
+                property 'forge.enableGameTest', 'true'
                 environment 'MOD_CLASSES', 'dummy' // Needed to work around FG limitation, FG will replace this!
+
+                ideaModule "${rootProject.name}.${project.name}.test"
+
+                mods {
+                    tests { sources sourceSets.test }
+                }
+            }
+
+            forge_gameTestServer {
+                taskName 'forge_gameTestServer'
+                args '--launchTarget', 'forgegametestserverdev'
+                ideaModule "${rootProject.name}.${project.name}.main"
+
+                mods {
+                    minecraft { source sourceSets.main }
+                }
+            }
+
+            forge_test_gameTestServer {
+                parent runs.forge_gameTestServer
+                taskName 'forge_test_gameTestServer'
 
                 ideaModule "${rootProject.name}.${project.name}.test"
 
@@ -1464,10 +1487,6 @@ project(':forge') {
     license {
         header = file("$rootDir/LICENSE-header.txt")
 
-        ext {
-            year = new Date().format("yyyy")
-        }
-
         include 'net/minecraftforge/'
         exclude 'net/minecraftforge/server/terminalconsole/'
         exclude 'net/minecraftforge/api/' // exclude API here because it's validated in the SPI build
@@ -1509,11 +1528,6 @@ project(':forge') {
         publications {
             mavenJava(MavenPublication) {
                 artifact universalJar
-                if (changelog.exists()) {
-                    artifact(changelog) {
-                        classifier = 'changelog'
-                    }
-                }
                 artifact installerJar
                 //TODO: installer-win
                 artifact makeMdk
@@ -1532,4 +1546,16 @@ task setup() {  //These must be strings so that we can do lazy resolution. Else 
     if (symlinkValid)
         dependsOn ':fmlonly:extractMapped'
     dependsOn ':forge:extractMapped'
+}
+
+//Also output FMLOnly when building a version.
+if (System.env.TEAMCITY_VERSION) {
+    //Only setup the CI environment if and only if the environment variables are set.
+    tasks.configureTeamCity {
+        doLast {
+            println "##teamcity[buildNumber '${project(':forge').version}']"
+            println "##teamcity[setParameter name='env.PUBLISHED_JAVA_ARTIFACT_VERSION' value='${project(':forge').version}']"
+            println "##teamcity[setParameter name='env.PUBLISHED_JAVA_FML_ARTIFACT_VERSION' value='${project(':fmlonly').version}']"
+        }
+    }
 }

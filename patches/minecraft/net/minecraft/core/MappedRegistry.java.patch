@@ -1,15 +1,16 @@
 --- a/net/minecraft/core/MappedRegistry.java
 +++ b/net/minecraft/core/MappedRegistry.java
-@@ -218,9 +_,10 @@
+@@ -279,6 +_,13 @@
+       return this.f_205842_.containsKey(p_175392_);
     }
  
-    public static <T> Codec<MappedRegistry<T>> m_122756_(ResourceKey<? extends Registry<T>> p_122757_, Lifecycle p_122758_, Codec<T> p_122759_) {
--      return Codec.unboundedMap(ResourceLocation.f_135803_.xmap(ResourceKey.m_135797_(p_122757_), ResourceKey::m_135782_), p_122759_).xmap((p_194547_) -> {
-+      // FORGE: Fix MC-197860
-+      return new net.minecraftforge.common.LenientUnboundedMapCodec<>(ResourceLocation.f_135803_.xmap(ResourceKey.m_135797_(p_122757_), ResourceKey::m_135782_), p_122759_).xmap((p_122726_) -> {
-          MappedRegistry<T> mappedregistry = new MappedRegistry<>(p_122757_, p_122758_);
--         p_194547_.forEach((p_194536_, p_194537_) -> {
-+         p_122726_.forEach((p_194536_, p_194537_) -> {
-             mappedregistry.m_7135_(p_194536_, p_194537_, p_122758_);
-          });
-          return mappedregistry;
++   // Forge: For internal use only. Use the Register events when registering values.
++   public void unfreeze() {
++      this.f_205845_ = false;
++      if (this.f_205846_ != null && this.f_205847_ == null)
++         this.f_205847_ = new IdentityHashMap<>();
++   }
++
+    public Registry<T> m_203521_() {
+       this.f_205845_ = true;
+       List<ResourceLocation> list = this.f_205842_.entrySet().stream().filter((p_211055_) -> {

@@ -1,0 +1,20 @@
+--- a/net/minecraft/commands/arguments/ResourceLocationArgument.java
++++ b/net/minecraft/commands/arguments/ResourceLocationArgument.java
+@@ -39,7 +_,7 @@
+ 
+    public static Advancement m_106987_(CommandContext<CommandSourceStack> p_106988_, String p_106989_) throws CommandSyntaxException {
+       ResourceLocation resourcelocation = m_107011_(p_106988_, p_106989_);
+-      Advancement advancement = p_106988_.getSource().m_81377_().m_129889_().m_136041_(resourcelocation);
++      Advancement advancement = p_106988_.getSource().getAdvancement(resourcelocation);
+       if (advancement == null) {
+          throw f_106978_.create(resourcelocation);
+       } else {
+@@ -48,7 +_,7 @@
+    }
+ 
+    public static Recipe<?> m_106994_(CommandContext<CommandSourceStack> p_106995_, String p_106996_) throws CommandSyntaxException {
+-      RecipeManager recipemanager = p_106995_.getSource().m_81377_().m_129894_();
++      RecipeManager recipemanager = p_106995_.getSource().getRecipeManager();
+       ResourceLocation resourcelocation = m_107011_(p_106995_, p_106996_);
+       return recipemanager.m_44043_(resourcelocation).orElseThrow(() -> {
+          return f_106979_.create(resourcelocation);

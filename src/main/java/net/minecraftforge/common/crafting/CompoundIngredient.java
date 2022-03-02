@@ -1,20 +1,6 @@
 /*
- * Minecraft Forge
- * Copyright (c) 2016-2021.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation version 2.1
- * of the License.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Minecraft Forge - Forge Development LLC
+ * SPDX-License-Identifier: LGPL-2.1-only
  */
 
 package net.minecraftforge.common.crafting;
@@ -74,9 +60,14 @@ public class CompoundIngredient extends Ingredient
     @Nonnull
     public IntList getStackingIds()
     {
-        //TODO: Add a child.isInvalid()?
-        if (this.itemIds == null)
+        boolean childrenNeedInvalidation = false;
+        for (Ingredient child : children)
         {
+            childrenNeedInvalidation |= child.checkInvalidation();
+        }
+        if (childrenNeedInvalidation || this.itemIds == null || checkInvalidation())
+        {
+            this.markValid();
             this.itemIds = new IntArrayList();
             for (Ingredient child : children)
                 this.itemIds.addAll(child.getStackingIds());
@@ -100,7 +91,6 @@ public class CompoundIngredient extends Ingredient
     {
         this.itemIds = null;
         this.stacks = null;
-        //Shouldn't need to invalidate children as this is only called form invalidateAll..
     }
 
     @Override

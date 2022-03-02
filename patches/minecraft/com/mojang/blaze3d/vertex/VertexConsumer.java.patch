@@ -1,15 +1,15 @@
 --- a/com/mojang/blaze3d/vertex/VertexConsumer.java
 +++ b/com/mojang/blaze3d/vertex/VertexConsumer.java
-@@ -16,7 +_,7 @@
+@@ -14,7 +_,7 @@
  import org.lwjgl.system.MemoryStack;
  
  @OnlyIn(Dist.CLIENT)
 -public interface VertexConsumer {
 +public interface VertexConsumer extends net.minecraftforge.client.extensions.IForgeVertexConsumer {
-    Logger f_85943_ = LogManager.getLogger();
- 
     VertexConsumer m_5483_(double p_85945_, double p_85946_, double p_85947_);
-@@ -105,11 +_,12 @@
+ 
+    VertexConsumer m_6122_(int p_85973_, int p_85974_, int p_85975_, int p_85976_);
+@@ -101,11 +_,12 @@
                 f5 = afloat[k] * p_86001_;
              }
  

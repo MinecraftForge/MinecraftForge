@@ -5,9 +5,9 @@
  
  public class Ingredient implements Predicate<ItemStack> {
 +   //Because Mojang caches things... we need to invalidate them.. so... here we go..
-+   private static final java.util.Set<Ingredient> INSTANCES = java.util.Collections.newSetFromMap(new java.util.WeakHashMap<Ingredient, Boolean>());
++   private static final java.util.concurrent.atomic.AtomicInteger INVALIDATION_COUNTER = new java.util.concurrent.atomic.AtomicInteger();
 +   public static void invalidateAll() {
-+      INSTANCES.stream().filter(e -> e != null).forEach(i -> i.invalidate());
++      INVALIDATION_COUNTER.incrementAndGet();
 +   }
 +
     public static final Ingredient f_43901_ = new Ingredient(Stream.empty());
@@ -16,6 +16,7 @@
     private ItemStack[] f_43903_;
     @Nullable
     private IntList f_43904_;
++   private int invalidationCounter;
 +   private final boolean isSimple;
  
     protected Ingredient(Stream<? extends Ingredient.Value> p_43907_) {
@@ -23,10 +24,19 @@
           return new Ingredient.Value[p_43933_];
        });
 +      this.isSimple = !net.minecraftforge.data.loading.DatagenModLoader.isRunningDataGen() && !Arrays.stream(f_43902_).anyMatch(list -> list.m_6223_().stream().anyMatch(stack -> stack.m_41720_().isDamageable(stack)));
-+      Ingredient.INSTANCES.add(this);
     }
  
     public ItemStack[] m_43908_() {
+@@ -78,7 +_,8 @@
+    }
+ 
+    public IntList m_43931_() {
+-      if (this.f_43904_ == null) {
++      if (this.f_43904_ == null || checkInvalidation()) {
++         this.markValid();
+          this.m_43948_();
+          this.f_43904_ = new IntArrayList(this.f_43903_.length);
+ 
 @@ -94,6 +_,10 @@
  
     public final void m_43923_(FriendlyByteBuf p_43924_) {
@@ -38,10 +48,23 @@
        p_43924_.m_178352_(Arrays.asList(this.f_43903_), FriendlyByteBuf::m_130055_);
     }
  
-@@ -115,6 +_,25 @@
+@@ -115,6 +_,38 @@
        return this.f_43902_.length == 0 && (this.f_43903_ == null || this.f_43903_.length == 0) && (this.f_43904_ == null || this.f_43904_.isEmpty());
     }
  
++   public final boolean checkInvalidation() {
++      int currentInvalidationCounter = INVALIDATION_COUNTER.get();
++      if (this.invalidationCounter != currentInvalidationCounter) {
++         invalidate();
++         return true;
++      }
++      return false;
++   }
++
++   protected final void markValid() {
++      this.invalidationCounter = INVALIDATION_COUNTER.get();
++   }
++
 +   protected void invalidate() {
 +      this.f_43903_ = null;
 +      this.f_43904_ = null;
@@ -81,7 +104,7 @@
           if (p_43918_.isJsonObject()) {
              return m_43938_(Stream.of(m_43919_(p_43918_.getAsJsonObject())));
           } else if (p_43918_.isJsonArray()) {
-@@ -184,6 +_,12 @@
+@@ -182,6 +_,12 @@
        }
     }
  
@@ -94,12 +117,12 @@
     public static class ItemValue implements Ingredient.Value {
        private final ItemStack f_43951_;
  
-@@ -216,6 +_,9 @@
-             list.add(new ItemStack(item));
+@@ -214,6 +_,9 @@
+             list.add(new ItemStack(holder));
           }
  
 +         if (list.size() == 0 && !net.minecraftforge.common.ForgeConfig.SERVER.treatEmptyTagsAsAir.get()) {
-+            list.add(new ItemStack(net.minecraft.world.level.block.Blocks.f_50375_).m_41714_(new net.minecraft.network.chat.TextComponent("Empty Tag: " + SerializationTags.m_13199_().m_144454_(Registry.f_122904_, this.f_43959_, () -> new IllegalStateException("Unrecognized tag")))));
++            list.add(new ItemStack(net.minecraft.world.level.block.Blocks.f_50375_).m_41714_(new net.minecraft.network.chat.TextComponent("Empty Tag: " + this.f_43959_.f_203868_())));
 +         }
           return list;
        }
