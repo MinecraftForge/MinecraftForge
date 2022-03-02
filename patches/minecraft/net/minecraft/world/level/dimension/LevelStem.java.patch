@@ -1,0 +1,25 @@
+--- a/net/minecraft/world/level/dimension/LevelStem.java
++++ b/net/minecraft/world/level/dimension/LevelStem.java
+@@ -23,7 +_,9 @@
+ 
+ public final class LevelStem {
+    public static final Codec<LevelStem> f_63970_ = RecordCodecBuilder.create((p_63986_) -> {
++      return net.minecraftforge.common.ForgeHooks.expandLevelStemCodec(p_63986_, () -> { // forge: reroute the codec builder here to add extra json fields
+       return p_63986_.group(DimensionType.f_63853_.fieldOf("type").forGetter(LevelStem::m_204521_), ChunkGenerator.f_62136_.fieldOf("generator").forGetter(LevelStem::m_63990_)).apply(p_63986_, p_63986_.stable(LevelStem::new));
++      }); // forge: we're wrapping the original codec builder in our expansion up there
+    });
+    public static final ResourceKey<LevelStem> f_63971_ = ResourceKey.m_135785_(Registry.f_122820_, new ResourceLocation("overworld"));
+    public static final ResourceKey<LevelStem> f_63972_ = ResourceKey.m_135785_(Registry.f_122820_, new ResourceLocation("the_nether"));
+@@ -33,6 +_,12 @@
+    private final ChunkGenerator f_63976_;
+ 
+    public LevelStem(Holder<DimensionType> p_204519_, ChunkGenerator p_204520_) {
++      this(p_204519_, p_204520_, false); // forge: by default, dimension jsons use the fixed seed required by the vanilla format
++   } // forge: reroute the vanilla constructor to our expanded constructor with default args
++   private final boolean useServerSeed; // forge: whether the dimension parser should use the server seed instead of the fixed seed
++   public boolean useServerSeed() { return this.useServerSeed; }
++   public LevelStem(Holder<DimensionType> p_204519_, ChunkGenerator p_204520_, boolean useServerSeed) { // forge: allow dimension jsons to specify that they should use the server seed instead of the fixed seed field
++      this.useServerSeed = useServerSeed; // forge
+       this.f_63975_ = p_204519_;
+       this.f_63976_ = p_204520_;
+    }

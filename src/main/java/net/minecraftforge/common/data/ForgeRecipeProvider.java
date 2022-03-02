@@ -1,58 +1,39 @@
 /*
- * Minecraft Forge
- * Copyright (c) 2016-2021.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation version 2.1
- * of the License.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Minecraft Forge - Forge Development LLC
+ * SPDX-License-Identifier: LGPL-2.1-only
  */
 
 package net.minecraftforge.common.data;
 
-import java.lang.reflect.Field;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.function.Consumer;
-
 import com.google.gson.JsonObject;
-
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.HashCache;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.data.recipes.RecipeProvider;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.data.recipes.ShapelessRecipeBuilder;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.Tag;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.item.crafting.Ingredient.Value;
-import net.minecraft.world.item.crafting.Ingredient.TagValue;
 import net.minecraft.world.item.crafting.Ingredient.ItemValue;
-import net.minecraft.tags.Tag;
+import net.minecraft.world.item.crafting.Ingredient.TagValue;
+import net.minecraft.world.item.crafting.Ingredient.Value;
 import net.minecraft.world.level.ItemLike;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.common.Tags;
+
+import java.lang.reflect.Field;
+import java.nio.file.Path;
+import java.util.*;
+import java.util.function.Consumer;
 
 public final class ForgeRecipeProvider extends RecipeProvider
 {
-    private Map<Item, Tag<Item>> replacements = new HashMap<>();
+    private Map<Item, TagKey<Item>> replacements = new HashMap<>();
     private Set<ResourceLocation> excludes = new HashSet<>();
 
     public ForgeRecipeProvider(DataGenerator generatorIn)
@@ -65,7 +46,7 @@ public final class ForgeRecipeProvider extends RecipeProvider
         excludes.add(item.asItem().getRegistryName());
     }
 
-    private void replace(ItemLike item, Tag<Item> tag)
+    private void replace(ItemLike item, TagKey<Item> tag)
     {
         replacements.put(item.asItem(), tag);
     }
@@ -77,10 +58,13 @@ public final class ForgeRecipeProvider extends RecipeProvider
         replace(Items.GOLD_INGOT,   Tags.Items.INGOTS_GOLD);
         replace(Items.IRON_INGOT,   Tags.Items.INGOTS_IRON);
         replace(Items.NETHERITE_INGOT, Tags.Items.INGOTS_NETHERITE);
+        replace(Items.COPPER_INGOT, Tags.Items.INGOTS_COPPER);
+        replace(Items.AMETHYST_SHARD, Tags.Items.GEMS_AMETHYST);
         replace(Items.DIAMOND,      Tags.Items.GEMS_DIAMOND);
         replace(Items.EMERALD,      Tags.Items.GEMS_EMERALD);
         replace(Items.CHEST,        Tags.Items.CHESTS_WOODEN);
-        replace(Blocks.COBBLESTONE, Tags.Items.COBBLESTONE);
+        replace(Blocks.COBBLESTONE, Tags.Items.COBBLESTONE_NORMAL);
+        replace(Blocks.COBBLED_DEEPSLATE, Tags.Items.COBBLESTONE_DEEPSLATE);
 
         exclude(Blocks.GOLD_BLOCK);
         exclude(Items.GOLD_NUGGET);
@@ -89,10 +73,15 @@ public final class ForgeRecipeProvider extends RecipeProvider
         exclude(Blocks.DIAMOND_BLOCK);
         exclude(Blocks.EMERALD_BLOCK);
         exclude(Blocks.NETHERITE_BLOCK);
+        exclude(Blocks.COPPER_BLOCK);
+        exclude(Blocks.AMETHYST_BLOCK);
 
         exclude(Blocks.COBBLESTONE_STAIRS);
         exclude(Blocks.COBBLESTONE_SLAB);
         exclude(Blocks.COBBLESTONE_WALL);
+        exclude(Blocks.COBBLED_DEEPSLATE_STAIRS);
+        exclude(Blocks.COBBLED_DEEPSLATE_SLAB);
+        exclude(Blocks.COBBLED_DEEPSLATE_WALL);
 
         super.buildCraftingRecipes(vanilla -> {
             FinishedRecipe modified = enhance(vanilla);
@@ -160,7 +149,7 @@ public final class ForgeRecipeProvider extends RecipeProvider
             if (entry instanceof ItemValue)
             {
                 ItemStack stack = entry.getItems().stream().findFirst().orElse(ItemStack.EMPTY);
-                Tag<Item> replacement = replacements.get(stack.getItem());
+                TagKey<Item> replacement = replacements.get(stack.getItem());
                 if (replacement != null)
                 {
                     items.add(new TagValue(replacement));
