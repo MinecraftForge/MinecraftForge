@@ -16,7 +16,7 @@ import com.mojang.authlib.GameProfile;
 import com.mojang.blaze3d.vertex.PoseStack;
 
 import com.mojang.brigadier.CommandDispatcher;
-import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.ReloadableServerResources;
 import net.minecraft.server.players.PlayerList;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.projectile.FireworkRocketEntity;
@@ -709,9 +709,9 @@ public class ForgeEventFactory
         return event.getNewTime();
     }
 
-    public static List<PreparableReloadListener> onResourceReload(/*MinecraftServer.ReloadableResources dataPackRegistries*/)
+    public static List<PreparableReloadListener> onResourceReload(ReloadableServerResources serverResources)
     {
-        AddReloadListenerEvent event = new AddReloadListenerEvent(/*dataPackRegistries*/);
+        AddReloadListenerEvent event = new AddReloadListenerEvent(serverResources);
         MinecraftForge.EVENT_BUS.post(event);
         return event.getListeners();
     }
