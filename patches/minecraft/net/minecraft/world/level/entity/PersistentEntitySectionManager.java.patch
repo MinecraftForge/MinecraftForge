@@ -17,6 +17,29 @@
        if (!this.m_157557_(p_157539_)) {
           return false;
        } else {
+@@ -104,12 +_,14 @@
+    public void m_157552_(Stream<T> p_157553_) {
+       p_157553_.forEach((p_157607_) -> {
+          this.m_157538_(p_157607_, true);
++         if (p_157607_ instanceof Entity entity) entity.onAddedToWorld();
+       });
+    }
+ 
+    public void m_157559_(Stream<T> p_157560_) {
+       p_157560_.forEach((p_157605_) -> {
+          this.m_157538_(p_157605_, false);
++         if (p_157605_ instanceof Entity entity) entity.onAddedToWorld();
+       });
+    }
+ 
+@@ -248,6 +_,7 @@
+       while((chunkentities = this.f_157500_.poll()) != null) {
+          chunkentities.m_156792_().forEach((p_157593_) -> {
+             this.m_157538_(p_157593_, true);
++            if (p_157593_ instanceof Entity entity) entity.onAddedToWorld();
+          });
+          this.f_157498_.put(chunkentities.m_156791_().m_45588_(), PersistentEntitySectionManager.ChunkLoadStatus.LOADED);
+       }
 @@ -350,11 +_,13 @@
  
     class Callback implements EntityInLevelCallback {

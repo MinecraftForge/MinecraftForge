@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/commands/SpreadPlayersCommand.java
 +++ b/net/minecraft/server/commands/SpreadPlayersCommand.java
-@@ -163,7 +_,8 @@
+@@ -173,7 +_,8 @@
              spreadplayerscommand$position = p_138732_[i++];
           }
  

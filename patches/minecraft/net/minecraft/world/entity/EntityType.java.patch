@@ -1,15 +1,15 @@
 --- a/net/minecraft/world/entity/EntityType.java
 +++ b/net/minecraft/world/entity/EntityType.java
-@@ -146,7 +_,7 @@
- import org.apache.logging.log4j.LogManager;
- import org.apache.logging.log4j.Logger;
+@@ -148,7 +_,7 @@
+ import net.minecraft.world.phys.shapes.VoxelShape;
+ import org.slf4j.Logger;
  
 -public class EntityType<T extends Entity> implements EntityTypeTest<Entity, T> {
 +public class EntityType<T extends Entity> extends net.minecraftforge.registries.ForgeRegistryEntry<EntityType<?>> implements EntityTypeTest<Entity, T> {
-    private static final Logger f_20534_ = LogManager.getLogger();
+    private static final Logger f_20534_ = LogUtils.getLogger();
     public static final String f_147037_ = "EntityTag";
-    private static final float f_147038_ = 1.3964844F;
-@@ -280,6 +_,12 @@
+    private final Holder.Reference<EntityType<?>> f_204038_ = Registry.f_122826_.m_203693_(this);
+@@ -283,6 +_,11 @@
     private ResourceLocation f_20546_;
     private final EntityDimensions f_20547_;
  
@@ -17,12 +17,11 @@
 +   private final java.util.function.ToIntFunction<EntityType<?>> trackingRangeSupplier;
 +   private final java.util.function.ToIntFunction<EntityType<?>> updateIntervalSupplier;
 +   private final java.util.function.BiFunction<net.minecraftforge.network.PlayMessages.SpawnEntity, Level, T> customClientFactory;
-+   private final net.minecraftforge.common.util.ReverseTagWrapper<EntityType<?>> reverseTags = new net.minecraftforge.common.util.ReverseTagWrapper<>(this, net.minecraft.tags.EntityTypeTags::m_13126_);
 +
     private static <T extends Entity> EntityType<T> m_20634_(String p_20635_, EntityType.Builder<T> p_20636_) {
        return Registry.m_122961_(Registry.f_122826_, p_20635_, p_20636_.m_20712_(p_20635_));
     }
-@@ -293,6 +_,9 @@
+@@ -296,6 +_,9 @@
     }
  
     public EntityType(EntityType.EntityFactory<T> p_20574_, MobCategory p_20575_, boolean p_20576_, boolean p_20577_, boolean p_20578_, boolean p_20579_, ImmutableSet<Block> p_20580_, EntityDimensions p_20581_, int p_20582_, int p_20583_) {
@@ -32,7 +31,7 @@
        this.f_20535_ = p_20574_;
        this.f_20536_ = p_20575_;
        this.f_20541_ = p_20579_;
-@@ -303,6 +_,10 @@
+@@ -306,6 +_,10 @@
        this.f_20547_ = p_20581_;
        this.f_20542_ = p_20582_;
        this.f_20543_ = p_20583_;
@@ -43,7 +42,7 @@
     }
  
     @Nullable
-@@ -314,6 +_,7 @@
+@@ -317,6 +_,7 @@
     public T m_20600_(ServerLevel p_20601_, @Nullable CompoundTag p_20602_, @Nullable Component p_20603_, @Nullable Player p_20604_, BlockPos p_20605_, MobSpawnType p_20606_, boolean p_20607_, boolean p_20608_) {
        T t = this.m_20655_(p_20601_, p_20602_, p_20603_, p_20604_, p_20605_, p_20606_, p_20607_, p_20608_);
        if (t != null) {
@@ -51,7 +50,7 @@
           p_20601_.m_47205_(t);
        }
  
-@@ -541,14 +_,23 @@
+@@ -544,14 +_,23 @@
     }
  
     public int m_20681_() {
@@ -75,27 +74,20 @@
        return this != f_20532_ && this != f_20467_ && this != f_20496_ && this != f_20549_ && this != f_20462_ && this != f_147033_ && this != f_20464_ && this != f_20506_ && this != f_20564_ && this != f_20569_;
     }
  
-@@ -565,6 +_,19 @@
-       return Entity.class;
+@@ -574,6 +_,12 @@
+       return this.f_204038_;
     }
  
 +   public T customClientSpawn(net.minecraftforge.network.PlayMessages.SpawnEntity packet, Level world) {
 +       if (customClientFactory == null) return this.m_20615_(world);
 +       return customClientFactory.apply(packet, world);
 +   }
-+
-+   /**
-+    * Retrieves a list of tags names this is known to be associated with.
-+    * This should be used in favor of TagCollection.getOwningTags, as this caches the result and automatically updates when the TagCollection changes.
-+    */
-+   public java.util.Set<ResourceLocation> getTags() {
-+       return reverseTags.getTagNames();
-+   }
++   public Stream<TagKey<EntityType<?>>> getTags() {return this.m_204041_().m_203616_();}
 +
     public static class Builder<T extends Entity> {
        private final EntityType.EntityFactory<T> f_20685_;
        private final MobCategory f_20686_;
-@@ -577,6 +_,11 @@
+@@ -586,6 +_,11 @@
        private int f_20693_ = 3;
        private EntityDimensions f_20694_ = EntityDimensions.m_20395_(0.6F, 1.8F);
  
@@ -107,7 +99,7 @@
        private Builder(EntityType.EntityFactory<T> p_20696_, MobCategory p_20697_) {
           this.f_20685_ = p_20696_;
           this.f_20686_ = p_20697_;
-@@ -633,12 +_,36 @@
+@@ -642,12 +_,36 @@
           return this;
        }
  

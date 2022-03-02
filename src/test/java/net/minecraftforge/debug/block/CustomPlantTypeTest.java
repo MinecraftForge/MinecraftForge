@@ -1,20 +1,6 @@
 /*
- * Minecraft Forge
- * Copyright (c) 2016-2021.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation version 2.1
- * of the License.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Minecraft Forge - Forge Development LLC
+ * SPDX-License-Identifier: LGPL-2.1-only
  */
 
 package net.minecraftforge.debug.block;
@@ -74,14 +60,14 @@ public class CustomPlantTypeTest
         }
 
         @Override
-        public boolean canSustainPlant(BlockState state, BlockGetter world, BlockPos pos, Direction facing, IPlantable plantable)
+        public boolean canSustainPlant(BlockState state, BlockGetter level, BlockPos pos, Direction facing, IPlantable plantable)
         {
-            PlantType type = plantable.getPlantType(world, pos.relative(facing));
+            PlantType type = plantable.getPlantType(level, pos.relative(facing));
             if (type != null && type == CustomPlantBlock.pt)
             {
                 return true;
             }
-            return super.canSustainPlant(state, world, pos, facing, plantable);
+            return super.canSustainPlant(state, level, pos, facing, plantable);
         }
     }
 
@@ -96,13 +82,13 @@ public class CustomPlantTypeTest
         }
 
         @Override
-        public PlantType getPlantType(BlockGetter world, BlockPos pos)
+        public PlantType getPlantType(BlockGetter level, BlockPos pos)
         {
             return pt;
         }
 
         @Override
-        public BlockState getPlant(BlockGetter world, BlockPos pos)
+        public BlockState getPlant(BlockGetter level, BlockPos pos)
         {
             return defaultBlockState();
         }
