@@ -17,6 +17,35 @@
        } catch (IOException ioexception) {
           list1.forEach((p_172772_) -> {
              p_172772_.getFirst().close();
+@@ -625,15 +_,17 @@
+             boolean flag = false;
+             int i = 3;
+             double d1 = d0;
++            double atkRange = this.f_109059_.f_91074_.m_21133_(net.minecraftforge.common.ForgeMod.ATTACK_RANGE.get());
+             if (this.f_109059_.f_91072_.m_105291_()) {
+-               d1 = 6.0D;
++               d1 = Math.max(d0 + 1, atkRange + 3);
+                d0 = d1;
+             } else {
+-               if (d0 > 3.0D) {
++               if (d0 > atkRange) {
+                   flag = true;
+                }
+ 
+                d0 = d0;
++               d0 = d1 = Math.max(d0, atkRange); // Pick entities with the max of the reach distance and attack range.
+             }
+ 
+             d1 *= d1;
+@@ -652,7 +_,7 @@
+                Entity entity1 = entityhitresult.m_82443_();
+                Vec3 vec33 = entityhitresult.m_82450_();
+                double d2 = vec3.m_82557_(vec33);
+-               if (flag && d2 > 9.0D) {
++               if (false && flag && d2 > 9.0D) { //Forge: Always keep the entity result to allow for extended reach interactions.
+                   this.f_109059_.f_91077_ = BlockHitResult.m_82426_(vec33, Direction.m_122366_(vec31.f_82479_, vec31.f_82480_, vec31.f_82481_), new BlockPos(vec33));
+                } else if (d2 < d1 || this.f_109059_.f_91077_ == null) {
+                   this.f_109059_.f_91077_ = entityhitresult;
 @@ -706,7 +_,7 @@
              d0 *= (double)Mth.m_14179_(this.f_109059_.f_91066_.f_92070_, 1.0F, 0.85714287F);
           }

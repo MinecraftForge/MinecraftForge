@@ -214,16 +214,24 @@
                 }
              }
  
-@@ -1460,6 +_,8 @@
+@@ -1460,14 +_,23 @@
           return false;
        } else {
           boolean flag = false;
+-         switch(this.f_91077_.m_6662_()) {
 +         net.minecraftforge.client.event.InputEvent.ClickInputEvent inputEvent = net.minecraftforge.client.ForgeHooksClient.onClickInput(0, this.f_91066_.f_92096_, InteractionHand.MAIN_HAND);
++         HitResult.Type hitType = this.f_91077_.m_6662_();
++         if(this.f_91077_ instanceof EntityHitResult entityHit) { // Forge: Perform attack range checks here, instead of in GameRenderer#pick, so extended-reach interactions work.
++             double range = this.f_91074_.m_21133_(net.minecraftforge.common.ForgeMod.ATTACK_RANGE.get());
++             if(this.f_91072_.m_105291_()) range += 3;
++             range *= range;
++             if(entityHit.m_82448_(this.f_91074_) > range) hitType = HitResult.Type.MISS;
++         }
 +         if (!inputEvent.isCanceled())
-          switch(this.f_91077_.m_6662_()) {
++         switch(hitType) {
           case ENTITY:
              this.f_91072_.m_105223_(this.f_91074_, ((EntityHitResult)this.f_91077_).m_82443_());
-@@ -1467,7 +_,7 @@
+             break;
           case BLOCK:
              BlockHitResult blockhitresult = (BlockHitResult)this.f_91077_;
              BlockPos blockpos = blockhitresult.m_82425_();
@@ -255,6 +263,15 @@
                 ItemStack itemstack = this.f_91074_.m_21120_(interactionhand);
                 if (this.f_91077_ != null) {
                    switch(this.f_91077_.m_6662_()) {
+@@ -1506,6 +_,8 @@
+                         return;
+                      }
+ 
++                     double reachDist = this.f_91074_.m_21133_(net.minecraftforge.common.ForgeMod.REACH_DISTANCE.get()) + 0.5D;
++                     if(entityhitresult.m_82448_(this.f_91074_) > reachDist * reachDist) return; //Forge: Entity may be traced via attack range, but the player may not have sufficient reach.
+                      InteractionResult interactionresult = this.f_91072_.m_105230_(this.f_91074_, entity, entityhitresult, interactionhand);
+                      if (!interactionresult.m_19077_()) {
+                         interactionresult = this.f_91072_.m_105226_(this.f_91074_, entity, interactionhand);
 @@ -1513,6 +_,7 @@
  
                       if (interactionresult.m_19077_()) {

@@ -26,7 +26,7 @@
              int i = this.f_9743_.f_19853_.m_151558_();
              if (blockpos.m_123342_() < i) {
 -               if (this.f_9766_ == null && this.f_9743_.m_20275_((double)blockpos.m_123341_() + 0.5D, (double)blockpos.m_123342_() + 0.5D, (double)blockpos.m_123343_() + 0.5D) < 64.0D && serverlevel.m_7966_(this.f_9743_, blockpos)) {
-+               double dist = f_9743_.m_21051_(net.minecraftforge.common.ForgeMod.REACH_DISTANCE.get()).m_22135_() + 3;
++               double dist = f_9743_.m_21051_(net.minecraftforge.common.ForgeMod.REACH_DISTANCE.get()).m_22135_() + 3.5D;
 +               dist *= dist;
 +               if (this.f_9766_ == null && this.f_9743_.m_20275_((double)blockpos.m_123341_() + 0.5D, (double)blockpos.m_123342_() + 0.5D, (double)blockpos.m_123343_() + 0.5D) < dist && serverlevel.m_7966_(this.f_9743_, blockpos)) {
                    InteractionResult interactionresult = this.f_9743_.f_8941_.m_7179_(this.f_9743_, serverlevel, itemstack, interactionhand, blockhitresult);
@@ -53,7 +53,16 @@
              }, ChatType.CHAT, this.f_9743_.m_142081_());
           }
  
-@@ -1222,6 +_,7 @@
+@@ -1216,12 +_,14 @@
+             return;
+          }
+ 
+-         double d0 = 36.0D;
+-         if (this.f_9743_.m_20280_(entity) < 36.0D) {
++         double maxRange = this.f_9743_.m_21133_(net.minecraftforge.common.ForgeMod.ATTACK_RANGE.get()) + 3; //Forge: Change constant value to max possible range. Equal to current value + 3 (because creative gives +3)
++         maxRange = Math.max(maxRange, this.f_9743_.m_21133_(net.minecraftforge.common.ForgeMod.REACH_DISTANCE.get()) + 0.5); //Used for both attacks and interacts, needs to be the highest of the two for sanity.
++         if (this.f_9743_.m_20280_(entity) < maxRange * maxRange) {
+             p_9866_.m_179617_(new ServerboundInteractPacket.Handler() {
                 private void m_143678_(InteractionHand p_143679_, ServerGamePacketListenerImpl.EntityInteraction p_143680_) {
                    ItemStack itemstack = ServerGamePacketListenerImpl.this.f_9743_.m_21120_(p_143679_).m_41777_();
                    InteractionResult interactionresult = p_143680_.m_143694_(ServerGamePacketListenerImpl.this.f_9743_, entity, p_143679_);
