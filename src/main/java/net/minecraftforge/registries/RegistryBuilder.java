@@ -217,6 +217,13 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
         return this;
     }
 
+    /**
+     * Enables tags for this registry if not already.
+     * All forge registries with wrappers inherently support tags.
+     *
+     * @return this builder
+     * @see RegistryBuilder#hasWrapper()
+     */
     public RegistryBuilder<T> hasTags()
     {
         // Tag system heavily relies on Registry<?> objects, so we need a wrapper for this registry to take advantage

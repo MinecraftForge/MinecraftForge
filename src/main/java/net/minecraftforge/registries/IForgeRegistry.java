@@ -5,11 +5,7 @@
 
 package net.minecraftforge.registries;
 
-import java.util.Collection;
-import java.util.Map.Entry;
-import java.util.Optional;
-import java.util.Set;
-
+import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
@@ -19,6 +15,12 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Collection;
+import java.util.Map.Entry;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Stream;
 
 /**
  * Main interface for the registry system. Use this to query the registry system.
@@ -39,6 +41,10 @@ public interface IForgeRegistry<V extends IForgeRegistryEntry<V>> extends Iterab
     boolean containsKey(ResourceLocation key);
     boolean containsValue(V value);
     boolean isEmpty();
+    /**
+     * @return true if this registry supports tags and has a wrapped {@link Registry} variant
+     * @see RegistryBuilder#hasTags()
+     */
     boolean supportsTags();
 
     @Nullable V getValue(ResourceLocation key);
@@ -52,11 +58,51 @@ public interface IForgeRegistry<V extends IForgeRegistryEntry<V>> extends Iterab
 
     @NotNull Codec<V> getCodec();
 
+    /**
+     * @throws IllegalStateException if {@link #supportsTags()} returns false
+     * @see Registry#getHolder(ResourceKey)
+     */
     @NotNull Optional<Holder<V>> getHolder(ResourceKey<V> key);
+    /**
+     * @throws IllegalStateException if {@link #supportsTags()} returns false
+     * @see Registry#getHolderOrThrow(ResourceKey)
+     */
     @NotNull Holder<V> getHolderOrThrow(ResourceKey<V> key);
+    /**
+     * @throws IllegalStateException if {@link #supportsTags()} returns false
+     * @see Registry#getOrCreateTag(TagKey)
+     */
     @NotNull HolderSet.Named<V> getOrCreateTag(TagKey<V> name);
+    /**
+     * @throws IllegalStateException if {@link #supportsTags()} returns false
+     * @see Registry#getTag(TagKey)
+     */
     @NotNull Optional<HolderSet.Named<V>> getTag(TagKey<V> name);
+    /**
+     * @throws IllegalStateException if {@link #supportsTags()} returns false
+     * @see Registry#getTagOrEmpty(TagKey)
+     */
     @NotNull Iterable<Holder<V>> getTagOrEmpty(TagKey<V> name);
+    /**
+     * @throws IllegalStateException if {@link #supportsTags()} returns false
+     * @see Registry#isKnownTagName(TagKey)
+     */
+    boolean isKnownTagName(TagKey<V> name);
+    /**
+     * @throws IllegalStateException if {@link #supportsTags()} returns false
+     * @see Registry#getTags()
+     */
+    @NotNull Stream<Pair<TagKey<V>, HolderSet.Named<V>>> getTags();
+    /**
+     * @throws IllegalStateException if {@link #supportsTags()} returns false
+     * @see Registry#getTagNames()
+     */
+    @NotNull Stream<TagKey<V>> getTagNames();
+    /**
+     * @throws IllegalStateException if {@link #supportsTags()} returns false
+     * @see TagKey#create(ResourceKey, ResourceLocation)
+     */
+    @NotNull TagKey<V> createTagKey(ResourceLocation location);
 
     /**
      * Retrieve the slave map of type T from the registry.

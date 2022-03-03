@@ -7,6 +7,7 @@ package net.minecraftforge.registries;
 
 import java.util.*;
 import java.util.Map.Entry;
+import java.util.stream.Stream;
 
 import com.mojang.datafixers.DataFixUtils;
 import com.mojang.datafixers.util.Pair;
@@ -79,6 +80,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
     private final int max;
     private final boolean allowOverrides;
     private final boolean isModifiable;
+    private final boolean hasWrapper;
 
     private V defaultValue = null;
     boolean isFrozen = false;
@@ -112,6 +114,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
         this.isDelegated = ForgeRegistryEntry.class.isAssignableFrom(superType); //TODO: Make this IDelegatedRegistryEntry?
         this.allowOverrides = builder.getAllowOverrides();
         this.isModifiable = builder.getAllowModifications();
+        this.hasWrapper = builder.getHasWrapper();
         if (this.create != null)
             this.create.onCreate(this, stage);
     }
@@ -171,7 +174,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
     @Override
     public boolean supportsTags()
     {
-        return this.builder.getHasWrapper();
+        return this.hasWrapper;
     }
 
     @NotNull
@@ -248,7 +251,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
     @Nullable
     Registry<V> getWrapper()
     {
-        if (!this.builder.getHasWrapper())
+        if (!this.hasWrapper)
             return null;
 
         return this.defaultKey != null
@@ -260,8 +263,8 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
     @NotNull
     NamespacedHolderHelper<V> getHolderHelper()
     {
-        if (!this.builder.getHasWrapper())
-            throw new IllegalStateException("Cannot query holder helper for non-wrapped registry");
+        if (!this.hasWrapper)
+            throw new IllegalStateException("Cannot query holder helper for non-wrapped forge registry!");
 
         return this.defaultKey != null
                 ? this.getSlaveMap(NamespacedDefaultedWrapper.Factory.ID, NamespacedDefaultedWrapper.class).getHolderHelper()
@@ -300,6 +303,34 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
     public Iterable<Holder<V>> getTagOrEmpty(TagKey<V> name)
     {
         return DataFixUtils.orElse(this.getTag(name), List.of());
+    }
+
+    @NotNull
+    @Override
+    public boolean isKnownTagName(TagKey<V> name)
+    {
+        return getHolderHelper().isKnownTagName(name);
+    }
+
+    @NotNull
+    @Override
+    public Stream<Pair<TagKey<V>, HolderSet.Named<V>>> getTags()
+    {
+        return getHolderHelper().getTags();
+    }
+
+    @NotNull
+    @Override
+    public Stream<TagKey<V>> getTagNames()
+    {
+        return getHolderHelper().getTagNames();
+    }
+
+    @NotNull
+    @Override
+    public TagKey<V> createTagKey(ResourceLocation location)
+    {
+        return TagKey.create(this.getRegistryKey(), location);
     }
 
     @NotNull
