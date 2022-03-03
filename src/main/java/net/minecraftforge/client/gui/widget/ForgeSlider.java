@@ -14,7 +14,7 @@ import org.lwjgl.glfw.GLFW;
 import java.text.DecimalFormat;
 
 /**
- *
+ * Slider widget implementation which allows inputting values in a certain range with optional step size.
  */
 public class ForgeSlider extends AbstractSliderButton
 {
@@ -24,7 +24,7 @@ public class ForgeSlider extends AbstractSliderButton
     protected double minValue;
     protected double maxValue;
 
-    /** Allows for discontinuous values with a certain step */
+    /** Allows input of discontinuous values with a certain step */
     protected double stepSize;
 
     protected boolean drawString;
@@ -149,6 +149,9 @@ public class ForgeSlider extends AbstractSliderButton
         this.setSliderValue((mouseX - (this.x + 4)) / (this.width - 8));
     }
 
+    /**
+     * @param value Percentage of slider range
+     */
     private void setSliderValue(double value)
     {
         double oldValue = this.value;
