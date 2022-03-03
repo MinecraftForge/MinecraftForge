@@ -200,17 +200,6 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
         return this;
     }
 
-    /**
-     * @deprecated use {@link net.minecraft.tags.TagManager#getTagDir(ResourceKey)}
-     */
-    @Deprecated(forRemoval = true, since = "1.18.2")
-    public RegistryBuilder<T> tagFolder(String tagFolder)
-    {
-        //Also mark this registry as having a wrapper to a vanilla registry so that it can be used in data generators properly
-        this.hasWrapper();
-        return this;
-    }
-
     public RegistryBuilder<T> legacyName(String name)
     {
         return legacyName(new ResourceLocation(name));
@@ -351,16 +340,6 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
     public boolean getAllowModifications()
     {
         return allowModifications;
-    }
-
-    /**
-     * @deprecated use {@link net.minecraft.tags.TagManager#getTagDir(ResourceKey)}
-     */
-    @Deprecated(forRemoval = true, since = "1.18.2")
-    @Nullable
-    public String getTagFolder()
-    {
-        return null;
     }
 
     @Nullable
