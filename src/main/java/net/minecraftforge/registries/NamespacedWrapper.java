@@ -184,6 +184,11 @@ class NamespacedWrapper<T extends IForgeRegistryEntry<T>> extends MappedRegistry
         return this.delegate.size();
     }
 
+    NamespacedHolderHelper<T> getHolderHelper()
+    {
+        return this.holders;
+    }
+
     @Override public Optional<Holder<T>> getHolder(int id) { return this.holders.getHolder(id); }
     @Override public Optional<Holder<T>> getHolder(ResourceKey<T> key) { return this.holders.getHolder(key); }
     @Override public Holder<T> getOrCreateHolder(ResourceKey<T> key) { return this.holders.getOrCreateHolder(key); }
@@ -200,7 +205,7 @@ class NamespacedWrapper<T extends IForgeRegistryEntry<T>> extends MappedRegistry
     @Override public void resetTags() { this.holders.resetTags(); }
     @Deprecated @Override public void unfreeze() { this.holders.unfreeze(); }
 
-    /** @Depreciated Forge: For internal use only. Use the Register events when registering values. */
+    /** @deprecated Forge: For internal use only. Use the Register events when registering values. */
     @Deprecated @Override public void lock(){ this.locked = true; }
 
 

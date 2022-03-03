@@ -8,13 +8,14 @@ package net.minecraftforge.registries;
 import java.util.*;
 import java.util.Map.Entry;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
+import com.mojang.datafixers.DataFixUtils;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.DynamicOps;
+import net.minecraft.core.Holder;
+import net.minecraft.core.HolderSet;
+import net.minecraft.tags.TagKey;
 import net.minecraftforge.common.util.LogMessageAdapter;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
@@ -44,6 +45,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRegistryInternal<V>, IForgeRegistryModifiable<V>
 {
@@ -76,8 +79,6 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
     private final int max;
     private final boolean allowOverrides;
     private final boolean isModifiable;
-    @Nullable
-    private final String tagFolder;
 
     private V defaultValue = null;
     boolean isFrozen = false;
@@ -111,7 +112,6 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
         this.isDelegated = ForgeRegistryEntry.class.isAssignableFrom(superType); //TODO: Make this IDelegatedRegistryEntry?
         this.allowOverrides = builder.getAllowOverrides();
         this.isModifiable = builder.getAllowModifications();
-        this.tagFolder = builder.getTagFolder();
         if (this.create != null)
             this.create.onCreate(this, stage);
     }
@@ -156,6 +156,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
         return this.name;
     }
 
+    @Override
     public ResourceKey<Registry<V>> getRegistryKey()
     {
         return this.key;
@@ -167,12 +168,17 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
         return superType;
     }
 
+    /**
+     * @deprecated use {@link net.minecraft.tags.TagManager#getTagDir(ResourceKey)}
+     */
+    @Deprecated(forRemoval = true, since = "1.18.2")
     @Nullable
     public String getTagFolder()
     {
-        return tagFolder;
+        return null;
     }
 
+    @NotNull
     public Codec<V> getCodec()
     {
         return this.codec;
@@ -234,6 +240,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
         return getResourceKey(value).map(ResourceKey::location).orElse(this.defaultKey);
     }
 
+    @NotNull
     @Override
     public Optional<ResourceKey<V>> getResourceKey(V value)
     {
@@ -241,19 +248,79 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
         return Optional.ofNullable(this.owners.inverse().get(value)).map(OverrideOwner::key);
     }
 
+    @SuppressWarnings("unchecked")
+    @Nullable
+    Registry<V> getWrapper()
+    {
+        if (!this.builder.getHasWrapper())
+            return null;
+
+        return this.defaultKey != null
+                ? this.getSlaveMap(NamespacedDefaultedWrapper.Factory.ID, NamespacedDefaultedWrapper.class)
+                : this.getSlaveMap(NamespacedWrapper.Factory.ID, NamespacedWrapper.class);
+    }
+
+    @SuppressWarnings("unchecked")
+    @NotNull
+    NamespacedHolderHelper<V> getHolderHelper()
+    {
+        if (!this.builder.getHasWrapper())
+            throw new IllegalStateException("Cannot query holder helper for non-wrapped registry");
+
+        return this.defaultKey != null
+                ? this.getSlaveMap(NamespacedDefaultedWrapper.Factory.ID, NamespacedDefaultedWrapper.class).getHolderHelper()
+                : this.getSlaveMap(NamespacedWrapper.Factory.ID, NamespacedWrapper.class).getHolderHelper();
+    }
+
+    @NotNull
+    @Override
+    public Optional<Holder<V>> getHolder(ResourceKey<V> key)
+    {
+        return getHolderHelper().getHolder(key);
+    }
+
+    @Override
+    public @NotNull Holder<V> getHolderOrThrow(ResourceKey<V> key)
+    {
+        return this.getHolder(key).orElseThrow(() -> new IllegalStateException("Missing key in " + this.key + ": " + key));
+    }
+
+    @NotNull
+    @Override
+    public HolderSet.Named<V> getOrCreateTag(TagKey<V> name)
+    {
+        return getHolderHelper().getOrCreateTag(name);
+    }
+
+    @NotNull
+    @Override
+    public Optional<HolderSet.Named<V>> getTag(TagKey<V> name)
+    {
+        return getHolderHelper().getTag(name);
+    }
+
+    @NotNull
+    @Override
+    public Iterable<Holder<V>> getTagOrEmpty(TagKey<V> name)
+    {
+        return DataFixUtils.orElse(this.getTag(name), List.of());
+    }
+
+    @NotNull
     @Override
     public Set<ResourceLocation> getKeys()
     {
         return Collections.unmodifiableSet(this.names.keySet());
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public Collection<V> getValues()
     {
         return Collections.unmodifiableSet(this.names.values());
     }
 
+    @NotNull
     @Override
     public Set<Entry<ResourceKey<V>, V>> getEntries()
     {

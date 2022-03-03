@@ -13,6 +13,7 @@ import java.util.function.Function;
 import com.google.common.collect.Lists;
 
 import net.minecraft.core.Holder;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.registries.IForgeRegistry.*;
 
@@ -38,8 +39,6 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
     private boolean allowOverrides = true;
     private boolean allowModifications = false;
     private boolean hasWrapper = false;
-    @Nullable
-    private String tagFolder;
     private DummyFactory<T> dummyFactory;
     private MissingFactory<T> missingFactory;
     private Set<ResourceLocation> legacyNames = new HashSet<>();
@@ -201,12 +200,14 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
         return this;
     }
 
+    /**
+     * @deprecated use {@link net.minecraft.tags.TagManager#getTagDir(ResourceKey)}
+     */
+    @Deprecated(forRemoval = true, since = "1.18.2")
     public RegistryBuilder<T> tagFolder(String tagFolder)
     {
-        if (tagFolder == null || !tagFolder.matches("[a-z_/]+")) throw new IllegalArgumentException("Non [a-z_/] character in tag folder " + tagFolder);
-        this.tagFolder = tagFolder;
         //Also mark this registry as having a wrapper to a vanilla registry so that it can be used in data generators properly
-        hasWrapper();
+        this.hasWrapper();
         return this;
     }
 
@@ -224,6 +225,13 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
     RegistryBuilder<T> vanillaHolder(Function<T, Holder.Reference<T>> func)
     {
         this.vanillaHolder = func;
+        return this;
+    }
+
+    public RegistryBuilder<T> hasTags()
+    {
+        // Tag system heavily relies on Registry<?> objects, so we need a wrapper for this registry to take advantage
+        this.hasWrapper();
         return this;
     }
 
@@ -345,10 +353,14 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
         return allowModifications;
     }
 
+    /**
+     * @deprecated use {@link net.minecraft.tags.TagManager#getTagDir(ResourceKey)}
+     */
+    @Deprecated(forRemoval = true, since = "1.18.2")
     @Nullable
     public String getTagFolder()
     {
-        return tagFolder;
+        return null;
     }
 
     @Nullable

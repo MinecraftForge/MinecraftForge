@@ -9,12 +9,16 @@ import java.util.Collection;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import com.mojang.serialization.Codec;
+import net.minecraft.core.Holder;
+import net.minecraft.core.HolderSet;
+import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Main interface for the registry system. Use this to query the registry system.
@@ -23,6 +27,7 @@ import net.minecraft.resources.ResourceLocation;
  */
 public interface IForgeRegistry<V extends IForgeRegistryEntry<V>> extends Iterable<V>
 {
+    ResourceKey<Registry<V>> getRegistryKey();
     ResourceLocation getRegistryName();
     Class<V> getRegistrySuperType();
 
@@ -38,13 +43,19 @@ public interface IForgeRegistry<V extends IForgeRegistryEntry<V>> extends Iterab
     @Nullable V getValue(ResourceLocation key);
     @Nullable ResourceLocation getKey(V value);
     @Nullable ResourceLocation getDefaultKey();
-    @Nullable Optional<ResourceKey<V>> getResourceKey(V value);
+    @NotNull Optional<ResourceKey<V>> getResourceKey(V value);
 
-    @Nonnull Set<ResourceLocation>         getKeys();
-    @Nonnull Collection<V>                 getValues();
-    @Nonnull Set<Entry<ResourceKey<V>, V>> getEntries();
+    @NotNull Set<ResourceLocation>         getKeys();
+    @NotNull Collection<V>                 getValues();
+    @NotNull Set<Entry<ResourceKey<V>, V>> getEntries();
 
-    @Nonnull Codec<V> getCodec();
+    @NotNull Codec<V> getCodec();
+
+    @NotNull Optional<Holder<V>> getHolder(ResourceKey<V> key);
+    @NotNull Holder<V> getHolderOrThrow(ResourceKey<V> key);
+    @NotNull HolderSet.Named<V> getOrCreateTag(TagKey<V> name);
+    @NotNull Optional<HolderSet.Named<V>> getTag(TagKey<V> name);
+    @NotNull Iterable<Holder<V>> getTagOrEmpty(TagKey<V> name);
 
     /**
      * Retrieve the slave map of type T from the registry.
