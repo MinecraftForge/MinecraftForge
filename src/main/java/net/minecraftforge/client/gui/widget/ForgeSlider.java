@@ -47,6 +47,8 @@ public class ForgeSlider extends AbstractSliderButton
 
         if (stepSize == 0D)
         {
+            precision = Math.min(precision, 4);
+
             StringBuilder builder = new StringBuilder("0");
 
             if (precision > 0)
@@ -134,6 +136,8 @@ public class ForgeSlider extends AbstractSliderButton
         boolean flag = keyCode == GLFW.GLFW_KEY_LEFT;
         if (flag || keyCode == GLFW.GLFW_KEY_RIGHT)
         {
+            if (this.minValue > this.maxValue)
+                flag = !flag;
             float f = flag ? -1F : 1F;
             if (stepSize <= 0D)
                 this.setSliderValue(this.value + (f / (this.width - 8)));
@@ -175,7 +179,16 @@ public class ForgeSlider extends AbstractSliderButton
 
         value = (stepSize * Math.round(value / stepSize));
 
-        return Mth.map(Mth.clamp(value, this.minValue, this.maxValue), this.minValue, this.maxValue, 0D, 1D);
+        if (this.minValue > this.maxValue)
+        {
+            value = Mth.clamp(value, this.maxValue, this.minValue);
+        }
+        else
+        {
+            value = Mth.clamp(value, this.minValue, this.maxValue);
+        }
+
+        return Mth.map(value, this.minValue, this.maxValue, 0D, 1D);
     }
 
     @Override
