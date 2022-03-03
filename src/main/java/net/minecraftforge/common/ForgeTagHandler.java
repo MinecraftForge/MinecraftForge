@@ -190,26 +190,6 @@ public class ForgeTagHandler
 //        StaticTagHelper.performDelayedAdd();
 //    }
 
-    /**
-     * Creates a map for custom tag type to tag reader
-     *
-     * @apiNote Internal: For use by TagManager
-     */
-    public static Map<ResourceLocation, TagLoader<?>> createCustomTagTypeReaders()
-    {
-        LOGGER.debug("Gathering custom tag collection reader from types.");
-        ImmutableMap.Builder<ResourceLocation, TagLoader<?>> builder = ImmutableMap.builder();
-        for (ResourceLocation registryName : customTagTypeNames)
-        {
-            ForgeRegistry<?> registry = RegistryManager.ACTIVE.getRegistry(registryName);
-            if (registry != null && registry.getTagFolder() != null)
-            {
-                builder.put(registryName, new TagLoader<>(rl -> Optional.ofNullable(registry.getValue(rl)), "tags/" + registry.getTagFolder()));
-            }
-        }
-        return builder.build();
-    }
-
 //    /**
 //     * Wraps the forge registry if it supports tags into the internal registry for use in serialization
 //     *

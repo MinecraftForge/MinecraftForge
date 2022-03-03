@@ -168,14 +168,10 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
         return superType;
     }
 
-    /**
-     * @deprecated use {@link net.minecraft.tags.TagManager#getTagDir(ResourceKey)}
-     */
-    @Deprecated(forRemoval = true, since = "1.18.2")
-    @Nullable
-    public String getTagFolder()
+    @Override
+    public boolean supportsTags()
     {
-        return null;
+        return this.builder.getHasWrapper();
     }
 
     @NotNull

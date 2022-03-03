@@ -1,13 +1,5 @@
 --- a/net/minecraft/tags/TagManager.java
 +++ b/net/minecraft/tags/TagManager.java
-@@ -17,6 +_,7 @@
- public class TagManager implements PreparableReloadListener {
-    private static final Map<ResourceKey<? extends Registry<?>>, String> f_203902_ = Map.of(Registry.f_122901_, "tags/blocks", Registry.f_122903_, "tags/entity_types", Registry.f_122899_, "tags/fluids", Registry.f_175423_, "tags/game_events", Registry.f_122904_, "tags/items");
-    private final RegistryAccess f_144569_;
-+   protected java.util.Map<ResourceLocation, TagLoader<?>> customTagTypeReaders = net.minecraftforge.common.ForgeTagHandler.createCustomTagTypeReaders();
-    private List<TagManager.LoadResult<?>> f_203903_ = List.of();
- 
-    public TagManager(RegistryAccess p_144572_) {
 @@ -33,7 +_,7 @@
     }
  
