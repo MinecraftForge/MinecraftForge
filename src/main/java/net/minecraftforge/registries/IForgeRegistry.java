@@ -20,6 +20,7 @@ import java.util.Collection;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 /**
@@ -70,6 +71,22 @@ public interface IForgeRegistry<V extends IForgeRegistryEntry<V>> extends Iterab
     @NotNull Holder<V> getHolderOrThrow(ResourceKey<V> key);
     /**
      * @throws IllegalStateException if {@link #supportsTags()} returns false
+     */
+    @NotNull Optional<Holder<V>> getHolder(ResourceLocation location);
+    /**
+     * @throws IllegalStateException if {@link #supportsTags()} returns false
+     */
+    @NotNull Holder<V> getHolderOrThrow(ResourceLocation location);
+    /**
+     * @throws IllegalStateException if {@link #supportsTags()} returns false
+     */
+    @NotNull Optional<Holder<V>> getHolder(V value);
+    /**
+     * @throws IllegalStateException if {@link #supportsTags()} returns false
+     */
+    @NotNull Holder<V> getHolderOrThrow(V value);
+    /**
+     * @throws IllegalStateException if {@link #supportsTags()} returns false
      * @see Registry#getOrCreateTag(TagKey)
      */
     @NotNull HolderSet.Named<V> getOrCreateTag(TagKey<V> name);
@@ -103,6 +120,13 @@ public interface IForgeRegistry<V extends IForgeRegistryEntry<V>> extends Iterab
      * @see TagKey#create(ResourceKey, ResourceLocation)
      */
     @NotNull TagKey<V> createTagKey(ResourceLocation location);
+    /**
+     * Creates a tag key that will use the set of defaults if no tag JSON is found.
+     * Useful on the client side when a server may not provide a specific tag.
+     *
+     * @throws IllegalStateException if {@link #supportsTags()} returns false
+     */
+    @NotNull TagKey<V> createOptionalTagKey(ResourceLocation location, Set<Supplier<V>> defaults);
 
     /**
      * Retrieve the slave map of type T from the registry.

@@ -15,6 +15,7 @@ import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -49,6 +50,7 @@ class NamespacedHolderHelper<T extends IForgeRegistryEntry<T>>
     private ObjectList<Holder.Reference<T>> holdersById = new ObjectArrayList<>(256);
     private Map<ResourceLocation, Holder.Reference<T>> holdersByName = new HashMap<>();
     private Map<T, Holder.Reference<T>> holders = new IdentityHashMap<>();
+    private Map<TagKey<T>, Supplier<List<Holder<T>>>> optionalTags = new IdentityHashMap<>();
     private volatile Map<TagKey<T>, HolderSet.Named<T>> tags = new IdentityHashMap<>();
     private Holder.Reference<T> defaultHolder;
 
@@ -68,6 +70,16 @@ class NamespacedHolderHelper<T extends IForgeRegistryEntry<T>>
     Optional<Holder<T>> getHolder(ResourceKey<T> key)
     {
         return Optional.ofNullable(this.holdersByName.get(key.location()));
+    }
+
+    Optional<Holder<T>> getHolder(ResourceLocation location)
+    {
+        return Optional.ofNullable(this.holdersByName.get(location));
+    }
+
+    Optional<Holder<T>> getHolder(T value)
+    {
+        return Optional.ofNullable(this.holders.get(value));
     }
 
     Holder<T> getOrCreateHolder(ResourceKey<T> key)
@@ -118,6 +130,11 @@ class NamespacedHolderHelper<T extends IForgeRegistryEntry<T>>
         }
 
         return named;
+    }
+
+    void addOptionalTag(TagKey<T> name, Supplier<List<Holder<T>>> defaults)
+    {
+        this.optionalTags.put(name, defaults);
     }
 
     Stream<TagKey<T>> getTagNames()
@@ -184,6 +201,14 @@ class NamespacedHolderHelper<T extends IForgeRegistryEntry<T>>
 
         Map<TagKey<T>, HolderSet.Named<T>> tmpTags = new IdentityHashMap<>(this.tags);
         newTags.forEach((k, v) -> tmpTags.computeIfAbsent(k, this::createTag).bind(v));
+        this.optionalTags.forEach((k, v) -> {
+            if (!tmpTags.containsKey(k))
+            {
+                HolderSet.Named<T> namedTag = this.createTag(k);
+                namedTag.bind(v.get());
+                tmpTags.put(k, namedTag);
+            }
+        });
         holderToTag.forEach(Holder.Reference::bindTags);
         this.tags = tmpTags;
     }

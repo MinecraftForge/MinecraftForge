@@ -7,6 +7,7 @@ package net.minecraftforge.registries;
 
 import java.util.*;
 import java.util.Map.Entry;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import com.mojang.datafixers.DataFixUtils;
@@ -286,6 +287,33 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
 
     @NotNull
     @Override
+    public Optional<Holder<V>> getHolder(ResourceLocation location)
+    {
+        return getHolderHelper().getHolder(location);
+    }
+
+    @NotNull
+    @Override
+    public Holder<V> getHolderOrThrow(ResourceLocation location)
+    {
+        return this.getHolder(location).orElseThrow(() -> new IllegalStateException("Missing key in " + this.key + ": " + location));
+    }
+
+    @NotNull
+    @Override
+    public Optional<Holder<V>> getHolder(V value)
+    {
+        return getHolderHelper().getHolder(value);
+    }
+
+    @Override
+    public @NotNull Holder<V> getHolderOrThrow(V value)
+    {
+        return this.getHolder(value).orElseThrow(() -> new IllegalStateException("Missing value in " + this.key + ": " + value));
+    }
+
+    @NotNull
+    @Override
     public HolderSet.Named<V> getOrCreateTag(TagKey<V> name)
     {
         return getHolderHelper().getOrCreateTag(name);
@@ -331,6 +359,20 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
     public TagKey<V> createTagKey(ResourceLocation location)
     {
         return TagKey.create(this.getRegistryKey(), location);
+    }
+
+    @NotNull
+    @Override
+    public TagKey<V> createOptionalTagKey(ResourceLocation location, Set<Supplier<V>> defaults)
+    {
+        TagKey<V> tagKey = createTagKey(location);
+
+        getHolderHelper().addOptionalTag(tagKey, () -> defaults.stream()
+                .map(valueSupplier -> getHolder(valueSupplier.get()).orElse(null))
+                .filter(Objects::nonNull)
+                .toList());
+
+        return tagKey;
     }
 
     @NotNull
