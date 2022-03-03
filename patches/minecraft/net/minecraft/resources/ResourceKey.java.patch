@@ -9,7 +9,7 @@
     private static final Map<String, ResourceKey<?>> f_135775_ = Collections.synchronizedMap(Maps.newIdentityHashMap());
     private final ResourceLocation f_135776_;
     private final ResourceLocation f_135777_;
-@@ -59,5 +_,23 @@
+@@ -63,5 +_,23 @@
        return (p_195974_) -> {
           return m_135785_(p_135798_, p_195974_);
        };
