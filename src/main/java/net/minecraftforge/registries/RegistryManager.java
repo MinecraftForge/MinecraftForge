@@ -10,6 +10,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 import java.util.stream.Collectors;
 
 import com.google.common.collect.BiMap;
@@ -18,9 +20,13 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.common.collect.Sets.SetView;
 
+import com.mojang.serialization.Lifecycle;
+import net.minecraft.core.WritableRegistry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.core.Registry;
+import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.fml.IModStateTransition;
 import net.minecraftforge.network.HandshakeMessages;
 import net.minecraftforge.registries.ForgeRegistry.Snapshot;
 import org.apache.commons.lang3.tuple.Pair;
@@ -33,6 +39,7 @@ public class RegistryManager
     public static final RegistryManager ACTIVE = new RegistryManager("ACTIVE");
     public static final RegistryManager VANILLA = new RegistryManager("VANILLA");
     public static final RegistryManager FROZEN = new RegistryManager("FROZEN");
+    private static boolean registerToRoot = false;
 
     BiMap<ResourceLocation, ForgeRegistry<? extends IForgeRegistryEntry<?>>> registries = HashBiMap.create();
     private BiMap<Class<? extends IForgeRegistryEntry<?>>, ResourceLocation> superTypes = HashBiMap.create();
@@ -133,7 +140,19 @@ public class RegistryManager
             this.synced.add(name);
         for (ResourceLocation legacyName : builder.getLegacyNames())
             addLegacyName(legacyName, name);
+        if (registerToRoot && this == RegistryManager.ACTIVE && builder.getHasWrapper() && !Registry.REGISTRY.containsKey(reg.getRegistryName()) && Registry.REGISTRY instanceof WritableRegistry<?> rootRegistry)
+            registerRegistry(rootRegistry, reg);
         return getRegistry(name);
+    }
+
+    @SuppressWarnings("unchecked")
+    private <T> void registerRegistry(WritableRegistry<T> rootRegistry, ForgeRegistry<?> forgeReg) {
+        rootRegistry.register((ResourceKey<T>) forgeReg.getRegistryKey(), (T) forgeReg.getWrapper(), Lifecycle.experimental());
+    }
+
+    public static CompletableFuture<List<Throwable>> preNewRegistryEvent(final Executor executor, final IModStateTransition.EventGenerator<? extends RegistryEvent.NewRegistry> eventGenerator) {
+        return CompletableFuture.runAsync(() -> registerToRoot = true, executor)
+                .handle((v, t) -> t != null ? Collections.singletonList(t) : Collections.emptyList());
     }
 
     private void addLegacyName(ResourceLocation legacyName, ResourceLocation name)

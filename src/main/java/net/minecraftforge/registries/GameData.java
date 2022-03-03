@@ -10,7 +10,6 @@ import com.mojang.serialization.Lifecycle;
 
 import java.util.*;
 
-import net.minecraft.core.RegistryAccess;
 import net.minecraft.world.level.block.AirBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -377,20 +376,6 @@ public class GameData
                 net.minecraftforge.common.ForgeHooks.modifyAttributes();
             }
         }, executor);
-    }
-
-    public static Stream<RegistryAccess.RegistryEntry<?>> getTagWrapperRegistries()
-    {
-        return RegistryManager.ACTIVE.registries.values().stream()
-                .filter(reg -> reg.getBuilder().getHasWrapper())
-                .<RegistryAccess.RegistryEntry<?>>map(GameData::makeRegEntry)
-                .filter(Objects::nonNull);
-    }
-
-    private static <V extends IForgeRegistryEntry<V>> RegistryAccess.RegistryEntry<?> makeRegEntry(ForgeRegistry<V> reg)
-    {
-        Registry<V> wrapper = reg.getWrapper();
-        return wrapper == null ? null : new RegistryAccess.RegistryEntry<>(reg.getRegistryKey(), wrapper);
     }
 
     //Lets us clear the map so we can rebuild it.

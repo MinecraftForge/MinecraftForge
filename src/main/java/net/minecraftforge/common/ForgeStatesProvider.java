@@ -13,6 +13,7 @@ import net.minecraftforge.fml.event.IModBusEvent;
 import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.registries.GameData;
 import net.minecraftforge.registries.ObjectHolderRegistry;
+import net.minecraftforge.registries.RegistryManager;
 
 import java.util.Collections;
 import java.util.List;
@@ -24,7 +25,7 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 public class ForgeStatesProvider implements IModStateProvider {
-    final ModLoadingState CREATE_REGISTRIES = ModLoadingState.withTransition("CREATE_REGISTRIES", "CONSTRUCT", ModLoadingPhase.GATHER, SerialTransition.of(()-> Stream.of(IModStateTransition.EventGenerator.fromFunction(RegistryEvent.NewRegistry::new))));
+    final ModLoadingState CREATE_REGISTRIES = ModLoadingState.withTransition("CREATE_REGISTRIES", "CONSTRUCT", ModLoadingPhase.GATHER, new SerialTransition<>(() -> Stream.of(IModStateTransition.EventGenerator.fromFunction(RegistryEvent.NewRegistry::new)), RegistryManager::preNewRegistryEvent, (t, f) -> CompletableFuture.completedFuture(Collections.emptyList()), (e, prev) -> prev.thenApplyAsync(Function.identity(), e)));
     final ModLoadingState OBJECT_HOLDERS = ModLoadingState.withInline("OBJECT_HOLDERS", "CREATE_REGISTRIES", ModLoadingPhase.GATHER, ml-> ObjectHolderRegistry.findObjectHolders());
     final ModLoadingState INJECT_CAPABILITIES = ModLoadingState.withInline("INJECT_CAPABILITIES", "OBJECT_HOLDERS", ModLoadingPhase.GATHER, ml-> CapabilityManager.INSTANCE.injectCapabilities(ml.getAllScanData()));
     final ModLoadingState UNFREEZE = ModLoadingState.withInline("UNFREEZE_DATA", "INJECT_CAPABILITIES", ModLoadingPhase.GATHER, ml->GameData.unfreezeData());

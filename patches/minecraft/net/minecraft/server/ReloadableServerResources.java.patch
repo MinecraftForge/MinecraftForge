@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/ReloadableServerResources.java
 +++ b/net/minecraft/server/ReloadableServerResources.java
-@@ -76,25 +_,35 @@
+@@ -76,7 +_,9 @@
  
     public static CompletableFuture<ReloadableServerResources> m_206861_(ResourceManager p_206862_, RegistryAccess.Frozen p_206863_, Commands.CommandSelection p_206864_, int p_206865_, Executor p_206866_, Executor p_206867_) {
        ReloadableServerResources reloadableserverresources = new ReloadableServerResources(p_206863_, p_206864_, p_206865_);
@@ -11,32 +11,11 @@
           return reloadableserverresources;
        });
     }
- 
-    public void m_206868_(RegistryAccess p_206869_) {
-+      Map<? extends ResourceKey<? extends Registry<?>>, ? extends Registry<?>> forgeTagWrappers = net.minecraftforge.registries.GameData.getTagWrapperRegistries().collect(Collectors.toMap(RegistryAccess.RegistryEntry::f_206233_, RegistryAccess.RegistryEntry::f_206234_));
-       this.f_206849_.m_203904_().forEach((p_206884_) -> {
--         m_206870_(p_206869_, p_206884_);
-+         updateRegistryTags(p_206869_, p_206884_, forgeTagWrappers);
+@@ -86,6 +_,7 @@
+          m_206870_(p_206869_, p_206884_);
        });
        Blocks.m_50758_();
 +      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.TagsUpdatedEvent(p_206869_));
     }
  
--   private static <T> void m_206870_(RegistryAccess p_206871_, TagManager.LoadResult<T> p_206872_) {
-+   private static <T> void updateRegistryTags(RegistryAccess p_206871_, TagManager.LoadResult<T> p_206872_, Map<? extends ResourceKey<? extends Registry<?>>, ? extends Registry<?>> forgeTagWrappers) {
-       ResourceKey<? extends Registry<T>> resourcekey = p_206872_.f_203928_();
-       Map<TagKey<T>, List<Holder<T>>> map = p_206872_.f_203929_().entrySet().stream().collect(Collectors.toUnmodifiableMap((p_206877_) -> {
-          return TagKey.m_203882_(resourcekey, p_206877_.getKey());
-       }, (p_206874_) -> {
-          return p_206874_.getValue().m_6497_();
-       }));
--      p_206871_.m_175515_(resourcekey).m_203652_(map);
-+      java.util.Optional.ofNullable(p_206871_.m_6632_(resourcekey).orElseGet(() -> getForgeTagWrapperRegistry(resourcekey, forgeTagWrappers))).orElseThrow(() -> new IllegalStateException("Missing registry: " + resourcekey)).m_203652_(map);
-+   }
-+
-+   @SuppressWarnings("unchecked")
-+   @org.jetbrains.annotations.Nullable
-+   private static <T, O> O getForgeTagWrapperRegistry(ResourceKey<? extends Registry<T>> key, Map<? extends ResourceKey<? extends Registry<?>>, ? extends Registry<?>> forgeTagWrappers) {
-+      return (O) forgeTagWrappers.get(key);
-    }
- }
+    private static <T> void m_206870_(RegistryAccess p_206871_, TagManager.LoadResult<T> p_206872_) {
