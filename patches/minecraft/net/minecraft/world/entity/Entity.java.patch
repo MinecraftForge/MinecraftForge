@@ -46,7 +46,7 @@
  
     }
  
-@@ -621,13 +_,13 @@
+@@ -621,7 +_,7 @@
                 double d1 = vec3.f_82479_;
                 double d2 = vec3.f_82480_;
                 double d3 = vec3.f_82481_;
@@ -55,14 +55,6 @@
                 if (!blockstate.m_204336_(BlockTags.f_13082_) && !blockstate.m_60713_(Blocks.f_152499_)) {
                    d2 = 0.0D;
                 }
- 
--               this.f_19787_ += (float)vec3.m_165924_() * 0.6F;
--               this.f_19788_ += (float)Math.sqrt(d1 * d1 + d2 * d2 + d3 * d3) * 0.6F;
-+               this.f_19787_ += (float) vec3.m_165924_() * 0.6F;
-+               this.f_19788_ += (float) Math.sqrt(d0 * d0 + d1 * d1 + d2 * d2) * 0.6F;
-                if (this.f_19788_ > this.f_19829_ && !blockstate.m_60795_()) {
-                   this.f_19829_ = this.m_6059_();
-                   if (this.m_20069_()) {
 @@ -659,25 +_,23 @@
  
              this.m_146872_();
