@@ -57,6 +57,9 @@ public interface IForgeRegistry<V extends IForgeRegistryEntry<V>> extends Iterab
     @NotNull Collection<V>                 getValues();
     @NotNull Set<Entry<ResourceKey<V>, V>> getEntries();
 
+    /**
+     * @see Registry#byNameCodec()
+     */
     @NotNull Codec<V> getCodec();
 
     /**
@@ -127,6 +130,11 @@ public interface IForgeRegistry<V extends IForgeRegistryEntry<V>> extends Iterab
      * @throws IllegalStateException if {@link #supportsTags()} returns false
      */
     @NotNull TagKey<V> createOptionalTagKey(ResourceLocation location, @NotNull Set<Supplier<V>> defaults);
+    /**
+     * @throws IllegalStateException if {@link #supportsTags()} returns false
+     * @see Registry#holderByNameCodec()
+     */
+    @NotNull Codec<Holder<V>> holderByNameCodec();
 
     /**
      * Retrieve the slave map of type T from the registry.

@@ -374,6 +374,17 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
 
     @NotNull
     @Override
+    public Codec<Holder<V>> holderByNameCodec()
+    {
+        Registry<V> wrapper = getWrapper();
+        if (wrapper == null)
+            throw new IllegalStateException("Cannot query holderByNameCodec for non-wrapped forge registry!");
+
+        return wrapper.holderByNameCodec();
+    }
+
+    @NotNull
+    @Override
     public Set<ResourceLocation> getKeys()
     {
         return Collections.unmodifiableSet(this.names.keySet());
