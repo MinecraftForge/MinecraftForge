@@ -40,6 +40,7 @@ public class RegistryManager
     public static final RegistryManager VANILLA = new RegistryManager("VANILLA");
     public static final RegistryManager FROZEN = new RegistryManager("FROZEN");
     private static boolean registerToRoot = false;
+    private static Set<ResourceLocation> vanillaRegistryKeys = Set.of();
 
     BiMap<ResourceLocation, ForgeRegistry<? extends IForgeRegistryEntry<?>>> registries = HashBiMap.create();
     private BiMap<Class<? extends IForgeRegistryEntry<?>>, ResourceLocation> superTypes = HashBiMap.create();
@@ -151,8 +152,10 @@ public class RegistryManager
     }
 
     public static CompletableFuture<List<Throwable>> preNewRegistryEvent(final Executor executor, final IModStateTransition.EventGenerator<? extends RegistryEvent.NewRegistry> eventGenerator) {
-        return CompletableFuture.runAsync(() -> registerToRoot = true, executor)
-                .handle((v, t) -> t != null ? Collections.singletonList(t) : Collections.emptyList());
+        return CompletableFuture.runAsync(() -> {
+            registerToRoot = true;
+            vanillaRegistryKeys = Set.copyOf(Registry.REGISTRY.keySet());
+        }, executor).handle((v, t) -> t != null ? Collections.singletonList(t) : Collections.emptyList());
     }
 
     private void addLegacyName(ResourceLocation legacyName, ResourceLocation name)
@@ -207,5 +210,10 @@ public class RegistryManager
         return ACTIVE.registries.keySet().stream().
                 filter(resloc -> ACTIVE.synced.contains(resloc)).
                 collect(Collectors.toList());
+    }
+
+    public static Set<ResourceLocation> getVanillaRegistryKeys()
+    {
+        return vanillaRegistryKeys;
     }
 }

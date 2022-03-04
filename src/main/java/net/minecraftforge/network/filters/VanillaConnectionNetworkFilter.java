@@ -19,6 +19,7 @@ import io.netty.channel.ChannelHandler;
 import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.commands.synchronization.ArgumentTypes;
 import net.minecraft.core.Registry;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.game.ClientboundCommandsPacket;
@@ -104,8 +105,14 @@ public class VanillaConnectionNetworkFilter extends VanillaPacketFilter
      */
     private static ClientboundUpdateTagsPacket filterCustomTagTypes(ClientboundUpdateTagsPacket packet) {
         Map<ResourceKey<? extends Registry<?>>, TagNetworkSerialization.NetworkPayload> tags = packet.getTags()
-                .entrySet().stream().filter(e -> RegistryManager.VANILLA.getRegistry(e.getKey().location()) != null && !FORGE_ADDED_REGISTRIES.contains(e.getKey().location()))
+                .entrySet().stream().filter(e -> isVanillaRegistry(e.getKey().location()))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
         return new ClientboundUpdateTagsPacket(tags);
+    }
+
+    private static boolean isVanillaRegistry(ResourceLocation location)
+    {
+        return (RegistryManager.getVanillaRegistryKeys().contains(location)
+                || RegistryAccess.REGISTRIES.keySet().stream().anyMatch(k -> k.location().equals(location))) && !FORGE_ADDED_REGISTRIES.contains(location);
     }
 }
