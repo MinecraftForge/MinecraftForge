@@ -36,6 +36,7 @@ import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
+import org.jetbrains.annotations.NotNull;
 
 class NamespacedHolderHelper<T extends IForgeRegistryEntry<T>>
 {
@@ -133,7 +134,7 @@ class NamespacedHolderHelper<T extends IForgeRegistryEntry<T>>
         return named;
     }
 
-    void addOptionalTag(TagKey<T> name, Set<Supplier<T>> defaults)
+    void addOptionalTag(TagKey<T> name, @NotNull Set<Supplier<T>> defaults)
     {
         this.optionalTags.computeIfAbsent(name, k -> new HashSet<>()).addAll(defaults);
     }
@@ -209,6 +210,7 @@ class NamespacedHolderHelper<T extends IForgeRegistryEntry<T>>
                 namedTag.bind(v.stream()
                         .map(valueSupplier -> getHolder(valueSupplier.get()).orElse(null))
                         .filter(Objects::nonNull)
+                        .distinct()
                         .toList());
                 tmpTags.put(k, namedTag);
             }

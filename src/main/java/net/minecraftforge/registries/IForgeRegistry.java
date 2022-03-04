@@ -126,7 +126,7 @@ public interface IForgeRegistry<V extends IForgeRegistryEntry<V>> extends Iterab
      *
      * @throws IllegalStateException if {@link #supportsTags()} returns false
      */
-    @NotNull TagKey<V> createOptionalTagKey(ResourceLocation location, Set<Supplier<V>> defaults);
+    @NotNull TagKey<V> createOptionalTagKey(ResourceLocation location, @NotNull Set<Supplier<V>> defaults);
 
     /**
      * Retrieve the slave map of type T from the registry.

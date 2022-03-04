@@ -363,7 +363,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
 
     @NotNull
     @Override
-    public TagKey<V> createOptionalTagKey(ResourceLocation location, Set<Supplier<V>> defaults)
+    public TagKey<V> createOptionalTagKey(ResourceLocation location, @NotNull Set<Supplier<V>> defaults)
     {
         TagKey<V> tagKey = createTagKey(location);
 
