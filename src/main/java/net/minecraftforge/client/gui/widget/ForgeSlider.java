@@ -32,7 +32,7 @@ public class ForgeSlider extends AbstractSliderButton
     private final DecimalFormat format;
 
     /**
-     * @param precision Only used when {@code stepSize} is 0
+     * @param precision Only used when {@code stepSize} is 0. Limited to a maximum of 4 (inclusive).
      */
     public ForgeSlider(int x, int y, int width, int height, Component prefix, Component suffix, double minValue, double maxValue, double currentValue, double stepSize, int precision, boolean drawString)
     {
