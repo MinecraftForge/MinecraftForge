@@ -7,6 +7,7 @@ package net.minecraftforge.registries;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
@@ -50,7 +51,7 @@ class NamespacedHolderHelper<T extends IForgeRegistryEntry<T>>
     private ObjectList<Holder.Reference<T>> holdersById = new ObjectArrayList<>(256);
     private Map<ResourceLocation, Holder.Reference<T>> holdersByName = new HashMap<>();
     private Map<T, Holder.Reference<T>> holders = new IdentityHashMap<>();
-    private Map<TagKey<T>, Supplier<List<Holder<T>>>> optionalTags = new IdentityHashMap<>();
+    private Map<TagKey<T>, Set<Supplier<T>>> optionalTags = new IdentityHashMap<>();
     private volatile Map<TagKey<T>, HolderSet.Named<T>> tags = new IdentityHashMap<>();
     private Holder.Reference<T> defaultHolder;
 
@@ -132,9 +133,9 @@ class NamespacedHolderHelper<T extends IForgeRegistryEntry<T>>
         return named;
     }
 
-    void addOptionalTag(TagKey<T> name, Supplier<List<Holder<T>>> defaults)
+    void addOptionalTag(TagKey<T> name, Set<Supplier<T>> defaults)
     {
-        this.optionalTags.put(name, defaults);
+        this.optionalTags.computeIfAbsent(name, k -> new HashSet<>()).addAll(defaults);
     }
 
     Stream<TagKey<T>> getTagNames()
@@ -205,7 +206,10 @@ class NamespacedHolderHelper<T extends IForgeRegistryEntry<T>>
             if (!tmpTags.containsKey(k))
             {
                 HolderSet.Named<T> namedTag = this.createTag(k);
-                namedTag.bind(v.get());
+                namedTag.bind(v.stream()
+                        .map(valueSupplier -> getHolder(valueSupplier.get()).orElse(null))
+                        .filter(Objects::nonNull)
+                        .toList());
                 tmpTags.put(k, namedTag);
             }
         });

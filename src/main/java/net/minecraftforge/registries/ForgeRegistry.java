@@ -367,10 +367,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
     {
         TagKey<V> tagKey = createTagKey(location);
 
-        getHolderHelper().addOptionalTag(tagKey, () -> defaults.stream()
-                .map(valueSupplier -> getHolder(valueSupplier.get()).orElse(null))
-                .filter(Objects::nonNull)
-                .toList());
+        getHolderHelper().addOptionalTag(tagKey, defaults);
 
         return tagKey;
     }

@@ -6,21 +6,22 @@
 package net.minecraftforge.debug;
 
 import com.google.common.collect.Sets;
+import net.minecraft.core.Holder;
+import net.minecraft.core.HolderSet;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraftforge.common.ForgeTagHandler;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.Tags;
 import net.minecraftforge.event.server.ServerStartedEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.List;
 import java.util.Set;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 /**
  * Tests that the values for defaulted optional tags defined in multiple places are combined.
@@ -41,46 +42,47 @@ public class DuplicateOptionalTagTest
     private static final Set<Supplier<Block>> TAG_A_DEFAULTS = Set.of(Blocks.BEDROCK.delegate);
     private static final Set<Supplier<Block>> TAG_B_DEFAULTS = Set.of(Blocks.WHITE_WOOL.delegate);
 
-    // TODO-PATCHING: fix or remove this accordingly with optional tags feature (specifically, default values for opt. tags)
-//    private static final Tags.IOptionalNamedTag<Block> TAG_A = ForgeTagHandler.createOptionalTag(ForgeRegistries.BLOCKS, TAG_NAME,
-//            TAG_A_DEFAULTS);
-//    private static final Tags.IOptionalNamedTag<Block> TAG_B = ForgeTagHandler.createOptionalTag(ForgeRegistries.BLOCKS, TAG_NAME,
-//            TAG_B_DEFAULTS);
+   private static final TagKey<Block> TAG_A = ForgeRegistries.BLOCKS.createOptionalTagKey(TAG_NAME, TAG_A_DEFAULTS);
+   private static final TagKey<Block> TAG_B = ForgeRegistries.BLOCKS.createOptionalTagKey(TAG_NAME, TAG_B_DEFAULTS);
 
     public DuplicateOptionalTagTest()
     {
-//        MinecraftForge.EVENT_BUS.addListener(this::onServerStarted);
+       MinecraftForge.EVENT_BUS.addListener(this::onServerStarted);
     }
 
-//    private void onServerStarted(ServerStartedEvent event)
-//    {
-//        if (!TAG_A.isDefaulted())
-//        {
-//            LOGGER.warn("First instance of optional tag is not defaulted!");
-//        }
-//
-//        if (!TAG_B.isDefaulted())
-//        {
-//            LOGGER.warn("Second instance of optional tag is not defaulted!");
-//        }
-//
-//        if (!TAG_A.getValues().equals(TAG_B.getValues()))
-//        {
-//            LOGGER.error("Values of both optional tag instances are not the same: first instance: {}, second instance: {}",
-//                    TAG_A.getValues(), TAG_B.getValues());
-//            return;
-//        }
-//
-//        final List<Block> expected = Sets.union(TAG_A_DEFAULTS, TAG_B_DEFAULTS).stream()
-//                .map(Supplier::get)
-//                .toList();
-//        if (!TAG_A.getValues().equals(expected))
-//        {
-//            LOGGER.error("Values of the optional tag do not match the expected union of their defaults: expected {}, got {}",
-//                    expected, TAG_A.getValues());
-//            return;
-//        }
-//
-//        LOGGER.info("Optional tag instances match each other and the expected union of their defaults");
-//    }
+   private void onServerStarted(ServerStartedEvent event)
+   {
+       // if (!TAG_A.isDefaulted())
+       // {
+       //     LOGGER.warn("First instance of optional tag is not defaulted!");
+       // }
+       //
+       // if (!TAG_B.isDefaulted())
+       // {
+       //     LOGGER.warn("Second instance of optional tag is not defaulted!");
+       // }
+
+       HolderSet.Named<Block> tagA = ForgeRegistries.BLOCKS.getOrCreateTag(TAG_A);
+       Set<Block> tagAValues = tagA.stream().map(Holder::value).collect(Collectors.toUnmodifiableSet());
+       HolderSet.Named<Block> tagB = ForgeRegistries.BLOCKS.getOrCreateTag(TAG_B);
+       Set<Block> tagBValues = tagB.stream().map(Holder::value).collect(Collectors.toUnmodifiableSet());
+
+       if (!tagAValues.equals(tagBValues))
+       {
+           LOGGER.error("Values of both optional tag instances are not the same: first instance: {}, second instance: {}", tagAValues, tagBValues);
+           return;
+       }
+
+       final Set<Block> expected = Sets.union(TAG_A_DEFAULTS, TAG_B_DEFAULTS).stream()
+               .map(Supplier::get)
+               .collect(Collectors.toUnmodifiableSet());
+       if (!tagAValues.equals(expected))
+       {
+           // TODO Turn this into an actual exception? This can easily get lost in logs if not looking carefully
+           LOGGER.error("Values of the optional tag do not match the expected union of their defaults: expected {}, got {}", expected, tagAValues);
+           return;
+       }
+
+       LOGGER.info("Optional tag instances match each other and the expected union of their defaults");
+   }
 }

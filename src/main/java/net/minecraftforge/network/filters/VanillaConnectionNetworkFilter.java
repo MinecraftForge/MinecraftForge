@@ -8,8 +8,10 @@ package net.minecraftforge.network.filters;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.annotation.Nonnull;
 
@@ -29,6 +31,7 @@ import net.minecraftforge.common.ForgeTagHandler;
 import net.minecraftforge.network.NetworkHooks;
 import net.minecraftforge.registries.ForgeRegistries;
 
+import net.minecraftforge.registries.RegistryManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -42,17 +45,19 @@ import com.mojang.brigadier.tree.RootCommandNode;
 @ChannelHandler.Sharable
 public class VanillaConnectionNetworkFilter extends VanillaPacketFilter
 {
-
     private static final Logger LOGGER = LogManager.getLogger();
+    private static final Set<ResourceLocation> FORGE_ADDED_REGISTRIES = Stream.of(ForgeRegistries.Keys.DATA_SERIALIZERS, ForgeRegistries.Keys.LOOT_MODIFIER_SERIALIZERS, ForgeRegistries.Keys.WORLD_TYPES)
+            .map(ResourceKey::location)
+            .collect(Collectors.toUnmodifiableSet());
 
     public VanillaConnectionNetworkFilter()
     {
         super(
                 ImmutableMap.<Class<? extends Packet<?>>, BiConsumer<Packet<?>, List<? super Packet<?>>>>builder()
-                .put(handler(ClientboundUpdateAttributesPacket.class, VanillaConnectionNetworkFilter::filterEntityProperties))
-                .put(handler(ClientboundCommandsPacket.class, VanillaConnectionNetworkFilter::filterCommandList))
-                .put(handler(ClientboundUpdateTagsPacket.class, VanillaConnectionNetworkFilter::filterCustomTagTypes))
-                .build()
+                        .put(handler(ClientboundUpdateAttributesPacket.class, VanillaConnectionNetworkFilter::filterEntityProperties))
+                        .put(handler(ClientboundCommandsPacket.class, VanillaConnectionNetworkFilter::filterCommandList))
+                        .put(handler(ClientboundUpdateTagsPacket.class, VanillaConnectionNetworkFilter::filterCustomTagTypes))
+                        .build()
         );
     }
 
@@ -100,7 +105,7 @@ public class VanillaConnectionNetworkFilter extends VanillaPacketFilter
      */
     private static ClientboundUpdateTagsPacket filterCustomTagTypes(ClientboundUpdateTagsPacket packet) {
         Map<ResourceKey<? extends Registry<?>>, TagNetworkSerialization.NetworkPayload> tags = packet.getTags()
-                .entrySet().stream().filter(e -> !ForgeTagHandler.getCustomTagTypeNames().contains(e.getKey().location()))
+                .entrySet().stream().filter(e -> RegistryManager.VANILLA.getRegistry(e.getKey().location()) != null && !FORGE_ADDED_REGISTRIES.contains(e.getKey().location()))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
         return new ClientboundUpdateTagsPacket(tags);
     }
