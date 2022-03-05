@@ -22,6 +22,8 @@ import java.util.stream.Stream;
 
 import javax.annotation.Nullable;
 
+import com.google.common.collect.Multimap;
+import com.google.common.collect.Multimaps;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -46,13 +48,13 @@ class NamespacedHolderHelper<T extends IForgeRegistryEntry<T>>
     private final ResourceLocation defaultKey;
     @Nullable
     private final Function<T, Holder.Reference<T>> holderLookup;
+    private final Multimap<TagKey<T>, Supplier<T>> optionalTags = Multimaps.newSetMultimap(new IdentityHashMap<>(), HashSet::new);
 
     private boolean frozen = false; // Frozen is vanilla's variant of locked, but it can be unfrozen
     private List<Holder.Reference<T>> holdersSorted;
     private ObjectList<Holder.Reference<T>> holdersById = new ObjectArrayList<>(256);
     private Map<ResourceLocation, Holder.Reference<T>> holdersByName = new HashMap<>();
     private Map<T, Holder.Reference<T>> holders = new IdentityHashMap<>();
-    private Map<TagKey<T>, Set<Supplier<T>>> optionalTags = new IdentityHashMap<>();
     private volatile Map<TagKey<T>, HolderSet.Named<T>> tags = new IdentityHashMap<>();
     private Holder.Reference<T> defaultHolder;
 
@@ -136,7 +138,7 @@ class NamespacedHolderHelper<T extends IForgeRegistryEntry<T>>
 
     void addOptionalTag(TagKey<T> name, @NotNull Set<Supplier<T>> defaults)
     {
-        this.optionalTags.computeIfAbsent(name, k -> new HashSet<>()).addAll(defaults);
+        this.optionalTags.putAll(name, defaults);
     }
 
     Stream<TagKey<T>> getTagNames()
@@ -203,7 +205,7 @@ class NamespacedHolderHelper<T extends IForgeRegistryEntry<T>>
 
         Map<TagKey<T>, HolderSet.Named<T>> tmpTags = new IdentityHashMap<>(this.tags);
         newTags.forEach((k, v) -> tmpTags.computeIfAbsent(k, this::createTag).bind(v));
-        this.optionalTags.forEach((k, v) -> {
+        this.optionalTags.asMap().forEach((k, v) -> {
             if (!tmpTags.containsKey(k))
             {
                 HolderSet.Named<T> namedTag = this.createTag(k);

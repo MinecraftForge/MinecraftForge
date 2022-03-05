@@ -147,13 +147,16 @@ public class RegistryManager
     }
 
     @SuppressWarnings("unchecked")
-    private <T> void registerRegistry(WritableRegistry<T> rootRegistry, ForgeRegistry<?> forgeReg) {
+    private <T> void registerRegistry(WritableRegistry<T> rootRegistry, ForgeRegistry<?> forgeReg)
+    {
         Registry<?> wrapper = forgeReg.getWrapper();
         if (wrapper != null)
             rootRegistry.register((ResourceKey<T>) forgeReg.getRegistryKey(), (T) wrapper, Lifecycle.experimental());
     }
 
-    public static CompletableFuture<List<Throwable>> preNewRegistryEvent(final Executor executor, final IModStateTransition.EventGenerator<? extends RegistryEvent.NewRegistry> eventGenerator) {
+    public static CompletableFuture<List<Throwable>> preNewRegistryEvent(final Executor executor,
+            final IModStateTransition.EventGenerator<? extends RegistryEvent.NewRegistry> eventGenerator)
+    {
         return CompletableFuture.runAsync(() -> {
             registerToRoot = true;
             vanillaRegistryKeys = Set.copyOf(Registry.REGISTRY.keySet());

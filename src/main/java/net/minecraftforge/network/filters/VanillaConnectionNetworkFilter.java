@@ -32,11 +32,11 @@ import net.minecraftforge.network.NetworkHooks;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import net.minecraftforge.registries.RegistryManager;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
 
 import com.google.common.collect.ImmutableMap;
 import com.mojang.brigadier.tree.RootCommandNode;
+import com.mojang.logging.LogUtils;
 
 /**
  * A filter for impl packets, used to filter/modify parts of vanilla impl messages that
@@ -45,7 +45,7 @@ import com.mojang.brigadier.tree.RootCommandNode;
 @ChannelHandler.Sharable
 public class VanillaConnectionNetworkFilter extends VanillaPacketFilter
 {
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger LOGGER = LogUtils.getLogger();
     private static final Set<ResourceLocation> FORGE_ADDED_REGISTRIES = Stream.of(ForgeRegistries.Keys.DATA_SERIALIZERS, ForgeRegistries.Keys.LOOT_MODIFIER_SERIALIZERS, ForgeRegistries.Keys.WORLD_TYPES)
             .map(ResourceKey::location)
             .collect(Collectors.toUnmodifiableSet());

@@ -279,8 +279,9 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
         return getHolderHelper().getHolder(key);
     }
 
+    @NotNull
     @Override
-    public @NotNull Holder<V> getHolderOrThrow(ResourceKey<V> key)
+    public Holder<V> getHolderOrThrow(ResourceKey<V> key)
     {
         return this.getHolder(key).orElseThrow(() -> new IllegalStateException("Missing key in " + this.key + ": " + key));
     }
@@ -306,8 +307,9 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
         return getHolderHelper().getHolder(value);
     }
 
+    @NotNull
     @Override
-    public @NotNull Holder<V> getHolderOrThrow(V value)
+    public Holder<V> getHolderOrThrow(V value)
     {
         return this.getHolder(value).orElseThrow(() -> new IllegalStateException("Missing value in " + this.key + ": " + value));
     }

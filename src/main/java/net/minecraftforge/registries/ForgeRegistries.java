@@ -127,7 +127,8 @@ public class ForgeRegistries
         // Vanilla Dynamic
         public static final ResourceKey<Registry<Biome>> BIOMES = key("worldgen/biome");
 
-        //Forge
+        // Forge
+        // New forge-added registries should be populated in VanillaConnectionNetworkFilter#FORGE_ADDED_REGISTRIES
         public static final ResourceKey<Registry<DataSerializerEntry>> DATA_SERIALIZERS = key("data_serializers");
         public static final ResourceKey<Registry<GlobalLootModifierSerializer<?>>> LOOT_MODIFIER_SERIALIZERS = key("forge:loot_modifier_serializers");
         public static final ResourceKey<Registry<ForgeWorldPreset>> WORLD_TYPES = key("forge:world_types");

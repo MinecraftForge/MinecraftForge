@@ -52,16 +52,6 @@ public class DuplicateOptionalTagTest
 
    private void onServerStarted(ServerStartedEvent event)
    {
-       // if (!TAG_A.isDefaulted())
-       // {
-       //     LOGGER.warn("First instance of optional tag is not defaulted!");
-       // }
-       //
-       // if (!TAG_B.isDefaulted())
-       // {
-       //     LOGGER.warn("Second instance of optional tag is not defaulted!");
-       // }
-
        HolderSet.Named<Block> tagA = ForgeRegistries.BLOCKS.getOrCreateTag(TAG_A);
        Set<Block> tagAValues = tagA.stream().map(Holder::value).collect(Collectors.toUnmodifiableSet());
        HolderSet.Named<Block> tagB = ForgeRegistries.BLOCKS.getOrCreateTag(TAG_B);
@@ -78,8 +68,8 @@ public class DuplicateOptionalTagTest
                .collect(Collectors.toUnmodifiableSet());
        if (!tagAValues.equals(expected))
        {
-           // TODO Turn this into an actual exception? This can easily get lost in logs if not looking carefully
-           LOGGER.error("Values of the optional tag do not match the expected union of their defaults: expected {}, got {}", expected, tagAValues);
+           IllegalStateException e = new IllegalStateException("Optional tag values do not match!");
+           LOGGER.error("Values of the optional tag do not match the expected union of their defaults: expected {}, got {}", expected, tagAValues, e);
            return;
        }
 
