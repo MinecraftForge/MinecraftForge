@@ -389,7 +389,7 @@
                 f4 = 0.96F;
              }
  
-+            f6 *= (float)this.m_21051_(net.minecraftforge.common.ForgeMod.SWIM_SPEED.get()).m_22135_();
++            f5 *= (float)this.m_21051_(net.minecraftforge.common.ForgeMod.SWIM_SPEED.get()).m_22135_();
              this.m_19920_(f5, p_21280_);
              this.m_6478_(MoverType.SELF, this.m_20184_());
              Vec3 vec36 = this.m_20184_();
