@@ -1,20 +1,6 @@
 /*
- * Minecraft Forge
- * Copyright (c) 2016-2021.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation version 2.1
- * of the License.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Minecraft Forge - Forge Development LLC
+ * SPDX-License-Identifier: LGPL-2.1-only
  */
 
 package net.minecraftforge.debug.client;
@@ -332,13 +318,11 @@ public class CustomTooltipTest
         }
 
         // legacy ToolTip methods
-        @SuppressWarnings("removal")
         private void test13(Button button, PoseStack poseStack, int mouseX, int mouseY)
         {
             renderTooltip(poseStack, List.of(new TextComponent("test").getVisualOrderText()), mouseX, mouseY, this.testFont);
         }
 
-        @SuppressWarnings("removal")
         private void test14(Button button, PoseStack poseStack, int mouseX, int mouseY)
         {
             renderComponentTooltip(poseStack, List.of(new TextComponent("test")), mouseX, mouseY, this.testFont, ItemStack.EMPTY);

@@ -1,17 +1,17 @@
 --- a/net/minecraft/commands/synchronization/ArgumentTypes.java
 +++ b/net/minecraft/commands/synchronization/ArgumentTypes.java
-@@ -118,7 +_,7 @@
-       m_121601_("dimension", DimensionArgument.class, new EmptyArgumentSerializer<>(DimensionArgument::m_88805_));
-       m_121601_("time", TimeArgument.class, new EmptyArgumentSerializer<>(TimeArgument::m_113037_));
+@@ -122,7 +_,7 @@
        m_121601_("uuid", UuidArgument.class, new EmptyArgumentSerializer<>(UuidArgument::m_113850_));
+       m_121601_("resource", m_211031_(ResourceKeyArgument.class), new ResourceKeyArgument.Serializer());
+       m_121601_("resource_or_tag", m_211031_(ResourceOrTagLocationArgument.class), new ResourceOrTagLocationArgument.Serializer());
 -      if (SharedConstants.f_136183_) {
 +      if (net.minecraftforge.gametest.ForgeGameTestHooks.isGametestEnabled()) {
           m_121601_("test_argument", TestFunctionArgument.class, new EmptyArgumentSerializer<>(TestFunctionArgument::m_128088_));
           m_121601_("test_class", TestClassNameArgument.class, new EmptyArgumentSerializer<>(TestClassNameArgument::m_127917_));
        }
-@@ -256,5 +_,9 @@
-          this.f_121619_ = p_121623_;
-          this.f_121620_ = p_121624_;
+@@ -262,5 +_,9 @@
+          this.f_121619_ = p_211034_;
+          this.f_121620_ = p_211035_;
        }
 +   }
 +   @javax.annotation.Nullable public static ResourceLocation getId(ArgumentType<?> type) {

@@ -1,28 +1,12 @@
 /*
- * Minecraft Forge
- * Copyright (c) 2016-2021.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation version 2.1
- * of the License.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Minecraft Forge - Forge Development LLC
+ * SPDX-License-Identifier: LGPL-2.1-only
  */
 
 package net.minecraftforge.client.model.renderable;
 
-import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -33,6 +17,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraftforge.client.model.data.IModelData;
 
+import java.util.Arrays;
 import java.util.Random;
 import java.util.function.Function;
 
@@ -41,10 +26,7 @@ import java.util.function.Function;
  */
 public class BakedRenderable implements IRenderable<IModelData>
 {
-    private static final ImmutableList<Direction> MODEL_FACINGS = Util.make(ImmutableList.<Direction>builder(), builder -> {
-        builder.add(Direction.values());
-        builder.add((Direction)null);
-    }).build();
+    private static final Direction[] MODEL_FACINGS = Arrays.copyOf(Direction.values(), Direction.values().length+1);
 
     /**
      * Constructs a BakedRenderable from the given model location.

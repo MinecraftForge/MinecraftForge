@@ -1,12 +1,12 @@
 --- a/net/minecraft/world/effect/MobEffectInstance.java
 +++ b/net/minecraft/world/effect/MobEffectInstance.java
 @@ -7,7 +_,7 @@
- import org.apache.logging.log4j.LogManager;
- import org.apache.logging.log4j.Logger;
+ import net.minecraft.world.entity.LivingEntity;
+ import org.slf4j.Logger;
  
 -public class MobEffectInstance implements Comparable<MobEffectInstance> {
 +public class MobEffectInstance implements Comparable<MobEffectInstance>, net.minecraftforge.common.extensions.IForgeMobEffectInstance {
-    private static final Logger f_19501_ = LogManager.getLogger();
+    private static final Logger f_19501_ = LogUtils.getLogger();
     private final MobEffect f_19502_;
     private int f_19503_;
 @@ -60,6 +_,7 @@

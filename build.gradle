@@ -44,15 +44,15 @@ ext {
         ]
     }
     MAPPING_CHANNEL = 'official'
-    MAPPING_VERSION = '1.18.1'
-    MC_VERSION = '1.18.1'
-    MCP_VERSION = '20211210.034407'
+    MAPPING_VERSION = '1.18.2'
+    MC_VERSION = '1.18.2'
+    MCP_VERSION = '20220228.144236'
     SPI_VERSION = '4.0.10'
     ACCESSTRANSFORMERS_VERSION = '8.0.4'
     COREMODS_VERSION = '5.0.1'
     EVENTBUS_VERSION = '5.0.3'
-    MODLAUNCHER_VERSION = '9.1.0'
-    SECUREJARHANDLER_VERSION = '1.0.1'
+    MODLAUNCHER_VERSION = '9.1.3'
+    SECUREJARHANDLER_VERSION = '1.0.3'
     BOOTSTRAPLAUNCHER_VERSION = '1.0.0'
     ASM_VERSION = '9.2'
     INSTALLER_VERSION = '2.1.+'
@@ -76,10 +76,14 @@ println('Version: ' + VERSION +
         ' JVM: ' + System.getProperty('java.vm.version') + '(' + System.getProperty('java.vendor') + ')' +
         ' Arch: ' + System.getProperty('os.arch'))
 
+changelog {
+    fromTag MIN_TAG_FOR_CHANGELOG
+}
+
 def extraTxts = [
     rootProject.file('CREDITS.txt'),
     rootProject.file('LICENSE.txt'),
-    rootProject.file('build/changelog.txt') //Now gets generated on build.
+    rootProject.tasks.createChangelog.outputFile
 ]
 
 task downloadVersionManifest(type: Download) {
@@ -262,19 +266,12 @@ def sharedDeps = {
     installer 'com.electronwill.night-config:core:3.6.4'
     installer 'com.electronwill.night-config:toml:3.6.4'
     installer 'org.apache.maven:maven-artifact:3.6.3'
-    installer 'org.apache.commons:commons-lang3:3.12.0'
     installer 'net.jodah:typetools:0.8.3'
-    installer 'org.apache.logging.log4j:log4j-api:2.15.0' //TODO: Unpin in 1.18.1 or when Mojang bumps the Log4J version
-    installer 'org.apache.logging.log4j:log4j-core:2.15.0' //TODO: Unpin in 1.18.1 or when Mojang bumps the Log4J version
-    installer 'org.apache.logging.log4j:log4j-slf4j18-impl:2.15.0' //TODO: Unpin in 1.18.1 or when Mojang bumps the Log4J version
     installer 'net.minecrell:terminalconsoleappender:1.2.0'
     installer 'org.jline:jline-reader:3.12.+'   //Dep of TerminaalConsoleeAppender
     installer 'org.jline:jline-terminal:3.12.+' //Dep of TerminaalConsoleeAppender
-    installer 'net.sf.jopt-simple:jopt-simple:5.0.4'
     installer "org.spongepowered:mixin:${MIXIN_VERSION}"
     installer 'org.openjdk.nashorn:nashorn-core:15.3'
-    installer 'com.google.guava:guava:31.0.1-jre'
-    installer 'com.google.code.gson:gson:2.8.8'
 
     /*
     installer 'org.lwjgl:lwjgl:3.2.2'
@@ -429,7 +426,8 @@ def sharedFmlonlyForge = { Project prj ->
 
         // SecureJarHandler bootstrap values.
         run.property 'ignoreList', prj.configurations.moduleonly.files.collect {it.name.replaceAll(/([-_]([.\d]*\d+)|\.jar$)/, '') }.join(',') + ",client-extra,fmlcore,javafmllanguage,mclanguage,${prj.name}-"
-        run.property 'mergeModules', 'jna-5.8.0.jar,jna-platform-58.0.jar,java-objc-bridge-1.0.0.jar'
+        // FIXME: Without this jna doesn't work at runtime. Someone figure out why please?
+        run.property 'mergeModules', 'jna-5.10.0.jar,jna-platform-5.10.0.jar,java-objc-bridge-1.0.0.jar'
         if (userdevRuns.contains(run)) {
             run.property 'legacyClassPath.file', '{minecraft_classpath_file}'
             run.jvmArgs '-p', '{modules}'
@@ -916,6 +914,7 @@ project(':forge') {
         implementation project(':fmlloader')
         implementation project(':javafmllanguage')
         implementation project(':mclanguage')
+        runtimeOnly "cpw.mods:bootstraplauncher:${BOOTSTRAPLAUNCHER_VERSION}"
     }
     dependencies sharedDeps
 
@@ -1041,6 +1040,7 @@ project(':forge') {
                             '--mod', 'custom_tag_types_test',
                             '--mod', 'new_model_loader_test',
                             '--mod', 'remove_tag_datagen_test',
+                            '--mod', 'tag_based_tool_types',
                             '--output', rootProject.file('src/generated_test/resources/'),
                             '--existing', sourceSets.main.resources.srcDirs[0],
                             '--existing', sourceSets.test.resources.srcDirs[0]
@@ -1488,10 +1488,6 @@ project(':forge') {
     license {
         header = file("$rootDir/LICENSE-header.txt")
 
-        ext {
-            year = new Date().format("yyyy")
-        }
-
         include 'net/minecraftforge/'
         exclude 'net/minecraftforge/server/terminalconsole/'
         exclude 'net/minecraftforge/api/' // exclude API here because it's validated in the SPI build
@@ -1563,8 +1559,4 @@ if (System.env.TEAMCITY_VERSION) {
             println "##teamcity[setParameter name='env.PUBLISHED_JAVA_FML_ARTIFACT_VERSION' value='${project(':fmlonly').version}']"
         }
     }
-}
-
-changelog {
-    fromTag MIN_TAG_FOR_CHANGELOG
 }

@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/GameRenderer.java
 +++ b/net/minecraft/client/renderer/GameRenderer.java
-@@ -286,6 +_,8 @@
+@@ -288,6 +_,8 @@
           this.m_109128_(new ResourceLocation("shaders/post/spider.json"));
        } else if (p_109107_ instanceof EnderMan) {
           this.m_109128_(new ResourceLocation("shaders/post/invert.json"));
@@ -9,7 +9,7 @@
        }
  
     }
-@@ -542,6 +_,7 @@
+@@ -544,6 +_,7 @@
           list1.add(Pair.of(new ShaderInstance(p_172768_, "rendertype_crumbling", DefaultVertexFormat.f_85811_), (p_172733_) -> {
              f_172607_ = p_172733_;
           }));
@@ -17,7 +17,7 @@
        } catch (IOException ioexception) {
           list1.forEach((p_172772_) -> {
              p_172772_.getFirst().close();
-@@ -704,7 +_,7 @@
+@@ -706,7 +_,7 @@
              d0 *= (double)Mth.m_14179_(this.f_109059_.f_91066_.f_92070_, 1.0F, 0.85714287F);
           }
  
@@ -26,7 +26,7 @@
        }
     }
  
-@@ -841,11 +_,11 @@
+@@ -843,11 +_,11 @@
  
           Window window = this.f_109059_.m_91268_();
           RenderSystem.m_69421_(256, Minecraft.f_91002_);
@@ -40,7 +40,7 @@
           RenderSystem.m_157182_();
           Lighting.m_84931_();
           PoseStack posestack1 = new PoseStack();
-@@ -880,7 +_,7 @@
+@@ -882,7 +_,7 @@
              }
           } else if (this.f_109059_.f_91080_ != null) {
              try {
@@ -49,7 +49,7 @@
              } catch (Throwable throwable1) {
                 CrashReport crashreport1 = CrashReport.m_127521_(throwable1, "Rendering screen");
                 CrashReportCategory crashreportcategory1 = crashreport1.m_127514_("Screen render details");
-@@ -1037,6 +_,11 @@
+@@ -1040,6 +_,11 @@
        Matrix4f matrix4f = posestack.m_85850_().m_85861_();
        this.m_109111_(matrix4f);
        camera.m_90575_(this.f_109059_.f_91073_, (Entity)(this.f_109059_.m_91288_() == null ? this.f_109059_.f_91074_ : this.f_109059_.m_91288_()), !this.f_109059_.f_91066_.m_92176_().m_90612_(), this.f_109059_.f_91066_.m_92176_().m_90613_(), p_109090_);
@@ -61,7 +61,7 @@
        p_109092_.m_85845_(Vector3f.f_122223_.m_122240_(camera.m_90589_()));
        p_109092_.m_85845_(Vector3f.f_122225_.m_122240_(camera.m_90590_() + 180.0F));
        Matrix3f matrix3f = p_109092_.m_85850_().m_85864_().m_8183_();
-@@ -1046,6 +_,8 @@
+@@ -1049,6 +_,8 @@
  
        this.f_109059_.f_91060_.m_172961_(p_109092_, camera.m_90583_(), this.m_172716_(Math.max(d0, this.f_109059_.f_91066_.f_92068_)));
        this.f_109059_.f_91060_.m_109599_(p_109092_, p_109090_, p_109091_, flag, camera, this, this.f_109074_, matrix4f);

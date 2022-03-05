@@ -1,20 +1,6 @@
 /*
- * Minecraft Forge
- * Copyright (c) 2016-2021.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation version 2.1
- * of the License.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Minecraft Forge - Forge Development LLC
+ * SPDX-License-Identifier: LGPL-2.1-only
  */
 
 package net.minecraftforge.client.gui;
@@ -173,7 +159,7 @@ public abstract class ScrollPanel extends AbstractContainerEventHandler implemen
     /**
      * Draws the background of the scroll panel. This runs AFTER Scissors are enabled.
      */
-    protected void drawBackground(PoseStack matrix, Tesselator tess, float partialTicks)
+    protected void drawBackground(PoseStack matrix, Tesselator tess, float partialTick)
     {
         BufferBuilder worldr = tess.getBuilder();
 
@@ -199,7 +185,7 @@ public abstract class ScrollPanel extends AbstractContainerEventHandler implemen
      * Draw anything special on the screen. Scissor (RenderSystem.enableScissor) is enabled
      * for anything that is rendered outside the view box. Do not mess with Scissor unless you support this.
      */
-    protected abstract void drawPanel(PoseStack mStack, int entryRight, int relativeY, Tesselator tess, int mouseX, int mouseY);
+    protected abstract void drawPanel(PoseStack poseStack, int entryRight, int relativeY, Tesselator tess, int mouseX, int mouseY);
 
     protected boolean clickPanel(double mouseX, double mouseY, int button) { return false; }
 
@@ -308,7 +294,7 @@ public abstract class ScrollPanel extends AbstractContainerEventHandler implemen
     }
 
     @Override
-    public void render(PoseStack matrix, int mouseX, int mouseY, float partialTicks)
+    public void render(PoseStack matrix, int mouseX, int mouseY, float partialTick)
     {
         Tesselator tess = Tesselator.getInstance();
         BufferBuilder worldr = tess.getBuilder();
@@ -317,7 +303,7 @@ public abstract class ScrollPanel extends AbstractContainerEventHandler implemen
         RenderSystem.enableScissor((int)(left  * scale), (int)(client.getWindow().getHeight() - (bottom * scale)),
                                    (int)(width * scale), (int)(height * scale));
 
-        this.drawBackground(matrix, tess, partialTicks);
+        this.drawBackground(matrix, tess, partialTick);
 
         int baseY = this.top + border - (int)this.scrollDistance;
         this.drawPanel(matrix, right, baseY, tess, mouseX, mouseY);
@@ -379,9 +365,9 @@ public abstract class ScrollPanel extends AbstractContainerEventHandler implemen
         RenderSystem.disableScissor();
     }
 
-    protected void drawGradientRect(PoseStack mStack, int left, int top, int right, int bottom, int color1, int color2)
+    protected void drawGradientRect(PoseStack poseStack, int left, int top, int right, int bottom, int color1, int color2)
     {
-        GuiUtils.drawGradientRect(mStack.last().pose(), 0, left, top, right, bottom, color1, color2);
+        GuiUtils.drawGradientRect(poseStack.last().pose(), 0, left, top, right, bottom, color1, color2);
     }
 
     @Override

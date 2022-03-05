@@ -1,6 +1,6 @@
 {
   "replace": false,
   "values": [
-    "custom_tag_types_test:custom"
+    "tag_based_tool_types:test_stone"
   ]
 }
