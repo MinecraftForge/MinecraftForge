@@ -33,30 +33,34 @@ public class ForgeConnectionNetworkFilter extends VanillaPacketFilter
         super(buildHandlers(manager));
     }
 
-    private static Map<Class<? extends Packet<?>>, BiConsumer<Packet<?>, List<? super Packet<?>>>> buildHandlers(@Nullable Connection connection)
+    private static Map<Class<? extends Packet<?>>, BiConsumer<Packet<?>, List<? super Packet<?>>>> buildHandlers(@Nullable Connection manager)
     {
-        if (connection == null)
+
+        VanillaPacketSplitter.RemoteCompatibility compatibility = manager == null ? VanillaPacketSplitter.RemoteCompatibility.ABSENT : VanillaPacketSplitter.getRemoteCompatibility(manager);
+        if (compatibility == VanillaPacketSplitter.RemoteCompatibility.ABSENT)
         {
             return ImmutableMap.of();
         }
-
-        ImmutableMap.Builder<Class<? extends Packet<?>>, BiConsumer<Packet<?>, List<? super Packet<?>>>> builder = ImmutableMap.builder();
-        if (VanillaPacketSplitter.shouldBeUsed(connection))
-        {
-            VanillaPacketSplitter.registerHandlers(builder);
-        }
-        if (ExtendedMobEffectChannel.shouldBeUsed(connection))
-        {
-            ExtendedMobEffectChannel.registerHandlers(builder);
-        }
+        ImmutableMap.Builder<Class<? extends Packet<?>>, BiConsumer<Packet<?>, List<? super Packet<?>>>> builder = ImmutableMap.<Class<? extends Packet<?>>, BiConsumer<Packet<?>, List<? super Packet<?>>>>builder()
+                .put(ClientboundUpdateRecipesPacket.class, ForgeConnectionNetworkFilter::splitPacket)
+                .put(ClientboundUpdateTagsPacket.class, ForgeConnectionNetworkFilter::splitPacket)
+                .put(ClientboundUpdateAdvancementsPacket.class, ForgeConnectionNetworkFilter::splitPacket);
 
         return builder.build();
     }
 
     @Override
-    protected boolean isNecessary(Connection connection)
+    protected boolean isNecessary(Connection manager)
     {
-        return ExtendedMobEffectChannel.shouldBeUsed(connection) || VanillaPacketSplitter.shouldBeUsed(connection);
+        // not needed on local connections, because packets are not encoded to bytes there
+        return !manager.isMemoryConnection() && VanillaPacketSplitter.isRemoteCompatible(manager);
+    }
+
+    private static void splitPacket(Packet<?> packet, List<? super Packet<?>> out)
+    {
+        VanillaPacketSplitter.appendPackets(
+                ConnectionProtocol.PLAY, PacketFlow.CLIENTBOUND, packet, out
+        );
     }
 
 }

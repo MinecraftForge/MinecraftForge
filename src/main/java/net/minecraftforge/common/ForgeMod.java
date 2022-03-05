@@ -35,7 +35,6 @@ import net.minecraftforge.fluids.ForgeFlowingFluid;
 import net.minecraftforge.fml.*;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.*;
-import net.minecraftforge.network.filters.ExtendedMobEffectChannel;
 import net.minecraftforge.registries.*;
 import net.minecraftforge.network.NetworkConstants;
 import net.minecraftforge.event.server.ServerStoppingEvent;
@@ -168,8 +167,6 @@ public class ForgeMod
 
         registerArgumentTypes();
         VanillaPacketSplitter.register();
-        ExtendedMobEffectChannel.register();
-
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
