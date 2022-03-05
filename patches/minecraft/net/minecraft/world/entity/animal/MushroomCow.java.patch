@@ -59,14 +59,14 @@
           p_28944_.m_128405_("EffectDuration", this.f_28910_);
        }
  
-@@ -193,6 +_,7 @@
+@@ -192,6 +_,7 @@
+       this.m_28928_(MushroomCow.MushroomType.m_28976_(p_28936_.m_128461_("Type")));
        if (p_28936_.m_128425_("EffectId", 1)) {
           this.f_28909_ = MobEffect.m_19453_(p_28936_.m_128445_("EffectId"));
++         this.f_28909_ = net.minecraftforge.common.ForgeHooks.loadMobEffect(p_28936_, "forge:effect_id", this.f_28909_);
        }
-+      this.f_28909_ = net.minecraftforge.common.ForgeHooks.loadMobEffect(p_28936_, "forge:effect_id", this.f_28909_);
  
        if (p_28936_.m_128425_("EffectDuration", 3)) {
-          this.f_28910_ = p_28936_.m_128451_("EffectDuration");
 @@ -238,6 +_,11 @@
        }
  

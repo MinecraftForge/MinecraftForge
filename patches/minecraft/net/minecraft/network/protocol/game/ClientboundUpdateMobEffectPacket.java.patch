@@ -9,7 +9,7 @@
     public ClientboundUpdateMobEffectPacket(int p_133611_, MobEffectInstance p_133612_) {
 +      this.effect = p_133612_.m_19544_();
        this.f_133604_ = p_133611_;
-       this.f_133605_ = (byte)(MobEffect.m_19459_(p_133612_.m_19544_()) & 255);
+       this.f_133605_ = MobEffect.m_19459_(p_133612_.m_19544_());
        this.f_133606_ = (byte)(p_133612_.m_19564_() & 255);
 @@ -42,6 +_,7 @@
     }
@@ -17,5 +17,5 @@
     public ClientboundUpdateMobEffectPacket(FriendlyByteBuf p_179466_) {
 +      this.effect = null;
        this.f_133604_ = p_179466_.m_130242_();
-       this.f_133605_ = p_179466_.readByte();
+       this.f_133605_ = p_179466_.m_130242_();
        this.f_133606_ = p_179466_.readByte();
