@@ -391,9 +391,24 @@ public class ForgeHooksClient
         return -1;
     }
 
+    /**
+     * @deprecated to be removed in 1.19, use other onFogRender hook with more params
+     */
+    @Deprecated(forRemoval = true, since = "1.18.2")
+    public static void onFogRender(FogMode type, Camera camera, float partialTick, float distance)
+    {
+        MinecraftForge.EVENT_BUS.post(new EntityViewRenderEvent.RenderFogEvent(type, camera, partialTick, distance));
+    }
+
     public static void onFogRender(FogMode type, Camera camera, float partialTick, float nearDistance, float farDistance, FogShape shape)
     {
-        MinecraftForge.EVENT_BUS.post(new EntityViewRenderEvent.RenderFogEvent(type, camera, partialTick, nearDistance, farDistance, shape));
+        EntityViewRenderEvent.RenderFogEvent event = new EntityViewRenderEvent.RenderFogEvent(type, camera, partialTick, nearDistance, farDistance, shape);
+        if (MinecraftForge.EVENT_BUS.post(event))
+        {
+            RenderSystem.setShaderFogStart(event.getNearPlaneDistance());
+            RenderSystem.setShaderFogEnd(event.getFarPlaneDistance());
+            RenderSystem.setShaderFogShape(event.getFogShape());
+        }
     }
 
     public static EntityViewRenderEvent.CameraSetup onCameraSetup(GameRenderer renderer, Camera camera, float partial)
