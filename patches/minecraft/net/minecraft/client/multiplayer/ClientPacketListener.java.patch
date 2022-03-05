@@ -66,15 +66,6 @@
     }
  
     public void m_7244_(ClientboundPlayerLookAtPacket p_105054_) {
-@@ -1245,7 +_,7 @@
-       PacketUtils.m_131363_(p_105130_, this, this.f_104888_);
-       Entity entity = this.f_104889_.m_6815_(p_105130_.m_133622_());
-       if (entity instanceof LivingEntity) {
--         MobEffect mobeffect = MobEffect.m_19453_(p_105130_.m_211135_());
-+         MobEffect mobeffect = MobEffect.m_19453_(p_105130_.m_211135_() & 0xFF);
-          if (mobeffect != null) {
-             MobEffectInstance mobeffectinstance = new MobEffectInstance(mobeffect, p_105130_.m_133625_(), p_105130_.m_133624_(), p_105130_.m_133627_(), p_105130_.m_133626_(), p_105130_.m_133628_());
-             mobeffectinstance.m_19562_(p_105130_.m_133619_());
 @@ -1262,6 +_,7 @@
        }
  

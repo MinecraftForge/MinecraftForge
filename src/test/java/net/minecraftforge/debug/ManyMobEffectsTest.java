@@ -48,8 +48,7 @@ import java.util.List;
 
 /**
  * Registers 255 mob effects that log every tick on the client.
- * Used to test {@link net.minecraftforge.network.filters.ExtendedMobEffectChannel} as well as the patches for saving
- * MobEffects to NBT.
+ * Used to test the patches for saving MobEffects to NBT.
  *
  * To verify correct function:
  * - Check that the Potion item and suspicious stew item provided via the creative tab function correctly
