@@ -1,12 +1,12 @@
 --- a/net/minecraft/world/level/levelgen/structure/StructureStart.java
 +++ b/net/minecraft/world/level/levelgen/structure/StructureStart.java
-@@ -62,6 +_,9 @@
+@@ -61,6 +_,9 @@
     public CompoundTag m_192660_(StructurePieceSerializationContext p_192661_, ChunkPos p_192662_) {
        CompoundTag compoundtag = new CompoundTag();
        if (this.m_73603_()) {
-+         if (Registry.f_122841_.m_7981_(this.m_73610_()) == null) { // FORGE: This is just a more friendly error instead of the 'Null String' below
-+            throw new RuntimeException("StructureStart \"" + this.getClass().getName() + "\": \"" + this.m_73610_() + "\" missing ID Mapping, Modder see MapGenStructureIO");
++         if (p_192661_.f_192763_().m_175515_(Registry.f_122882_).m_7981_(this.m_210081_()) == null) { // FORGE: This is just a more friendly error instead of the 'Null String' below
++            throw new RuntimeException("StructureStart \"" + this.getClass().getName() + "\": \"" + this.m_210081_() + "\" missing ID Mapping, Modder see MapGenStructureIO");
 +         }
-          compoundtag.m_128359_("id", Registry.f_122841_.m_7981_(this.m_73610_()).toString());
+          compoundtag.m_128359_("id", p_192661_.f_192763_().m_175515_(Registry.f_122882_).m_7981_(this.f_73565_).toString());
           compoundtag.m_128405_("ChunkX", p_192662_.f_45578_);
           compoundtag.m_128405_("ChunkZ", p_192662_.f_45579_);

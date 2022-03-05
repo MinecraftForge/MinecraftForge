@@ -1,6 +1,6 @@
 --- a/net/minecraft/data/tags/EntityTypeTagsProvider.java
 +++ b/net/minecraft/data/tags/EntityTypeTagsProvider.java
-@@ -8,8 +_,12 @@
+@@ -6,8 +_,12 @@
  import net.minecraft.world.entity.EntityType;
  
  public class EntityTypeTagsProvider extends TagsProvider<EntityType<?>> {

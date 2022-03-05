@@ -18,12 +18,13 @@
           this.m_5851_(SoundSource.PLAYERS);
           this.m_146852_(GameEvent.f_157781_, p_28941_);
           if (!this.f_19853_.f_46443_) {
-@@ -145,7 +_,16 @@
+@@ -145,7 +_,17 @@
        }
     }
  
 +   @Override
 +   public java.util.List<ItemStack> onSheared(@javax.annotation.Nullable Player player, @javax.annotation.Nonnull ItemStack item, Level world, BlockPos pos, int fortune) {
++      this.m_146852_(GameEvent.f_157781_, player);
 +      return shearInternal(player == null ? SoundSource.BLOCKS : SoundSource.PLAYERS);
 +   }
 +

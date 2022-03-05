@@ -15,7 +15,7 @@
        }
  
        if (!p_110719_.f_91074_.m_5833_()) {
-          if (p_110719_.f_91074_.m_19941_(FluidTags.f_13131_)) {
+          if (p_110719_.f_91074_.m_204029_(FluidTags.f_13131_)) {
 +            if (!net.minecraftforge.event.ForgeEventFactory.renderWaterOverlay(player, p_110720_))
              m_110725_(p_110719_, p_110720_);
           }

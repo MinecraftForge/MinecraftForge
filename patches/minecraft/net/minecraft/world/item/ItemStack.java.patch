@@ -1,25 +1,25 @@
 --- a/net/minecraft/world/item/ItemStack.java
 +++ b/net/minecraft/world/item/ItemStack.java
-@@ -70,7 +_,7 @@
- import org.apache.logging.log4j.LogManager;
- import org.apache.logging.log4j.Logger;
+@@ -72,7 +_,7 @@
+ import net.minecraft.world.level.block.state.pattern.BlockInWorld;
+ import org.slf4j.Logger;
  
 -public final class ItemStack {
 +public final class ItemStack extends net.minecraftforge.common.capabilities.CapabilityProvider<ItemStack> implements net.minecraftforge.common.extensions.IForgeItemStack {
     public static final Codec<ItemStack> f_41582_ = RecordCodecBuilder.create((p_41697_) -> {
        return p_41697_.group(Registry.f_122827_.m_194605_().fieldOf("id").forGetter((p_150946_) -> {
           return p_150946_.f_41589_;
-@@ -80,6 +_,9 @@
+@@ -82,6 +_,9 @@
           return Optional.ofNullable(p_150939_.f_41590_);
        })).apply(p_41697_, ItemStack::new);
     });
 +   private final net.minecraftforge.registries.IRegistryDelegate<Item> delegate;
 +   private CompoundTag capNBT;
 +
-    private static final Logger f_41585_ = LogManager.getLogger();
+    private static final Logger f_41585_ = LogUtils.getLogger();
     public static final ItemStack f_41583_ = new ItemStack((Item)null);
     public static final DecimalFormat f_41584_ = Util.m_137469_(new DecimalFormat("#.##"), (p_41704_) -> {
-@@ -126,10 +_,15 @@
+@@ -132,10 +_,15 @@
        p_41606_.ifPresent(this::m_41751_);
     }
  
@@ -39,7 +39,7 @@
           this.m_41721_(this.m_41773_());
        }
  
-@@ -142,14 +_,19 @@
+@@ -148,14 +_,19 @@
     }
  
     private ItemStack(CompoundTag p_41608_) {
@@ -60,7 +60,7 @@
           this.m_41721_(this.m_41773_());
        }
  
-@@ -184,7 +_,7 @@
+@@ -190,7 +_,7 @@
     }
  
     public Item m_41720_() {
@@ -68,8 +68,8 @@
 +      return this.f_41591_ || this.delegate == null ? Items.f_41852_ : this.delegate.get();
     }
  
-    public boolean m_150922_(Tag<Item> p_150923_) {
-@@ -196,6 +_,15 @@
+    public boolean m_204117_(TagKey<Item> p_204118_) {
+@@ -206,6 +_,15 @@
     }
  
     public InteractionResult m_41661_(UseOnContext p_41662_) {
@@ -85,7 +85,7 @@
        Player player = p_41662_.m_43723_();
        BlockPos blockpos = p_41662_.m_8083_();
        BlockInWorld blockinworld = new BlockInWorld(p_41662_.m_43725_(), blockpos, false);
-@@ -203,7 +_,7 @@
+@@ -213,7 +_,7 @@
           return InteractionResult.PASS;
        } else {
           Item item = this.m_41720_();
@@ -94,7 +94,7 @@
           if (player != null && interactionresult.m_146666_()) {
              player.m_36246_(Stats.f_12982_.m_12902_(item));
           }
-@@ -232,11 +_,15 @@
+@@ -242,11 +_,15 @@
           p_41740_.m_128365_("tag", this.f_41590_.m_6426_());
        }
  
@@ -111,7 +111,7 @@
     }
  
     public boolean m_41753_() {
-@@ -244,7 +_,7 @@
+@@ -254,7 +_,7 @@
     }
  
     public boolean m_41763_() {
@@ -120,7 +120,7 @@
           CompoundTag compoundtag = this.m_41783_();
           return compoundtag == null || !compoundtag.m_128471_("Unbreakable");
        } else {
-@@ -253,19 +_,19 @@
+@@ -263,19 +_,19 @@
     }
  
     public boolean m_41768_() {
@@ -144,7 +144,7 @@
     }
  
     public boolean m_41629_(int p_41630_, Random p_41631_, @Nullable ServerPlayer p_41632_) {
-@@ -301,6 +_,7 @@
+@@ -311,6 +_,7 @@
     public <T extends LivingEntity> void m_41622_(int p_41623_, T p_41624_, Consumer<T> p_41625_) {
        if (!p_41624_.f_19853_.f_46443_ && (!(p_41624_ instanceof Player) || !((Player)p_41624_).m_150110_().f_35937_)) {
           if (this.m_41763_()) {
@@ -152,7 +152,7 @@
              if (this.m_41629_(p_41623_, p_41624_.m_21187_(), p_41624_ instanceof ServerPlayer ? (ServerPlayer)p_41624_ : null)) {
                 p_41625_.accept(p_41624_);
                 Item item = this.m_41720_();
-@@ -353,7 +_,7 @@
+@@ -363,7 +_,7 @@
     }
  
     public boolean m_41735_(BlockState p_41736_) {
@@ -161,7 +161,7 @@
     }
  
     public InteractionResult m_41647_(Player p_41648_, LivingEntity p_41649_, InteractionHand p_41650_) {
-@@ -364,7 +_,7 @@
+@@ -374,7 +_,7 @@
        if (this.m_41619_()) {
           return f_41583_;
        } else {
@@ -170,7 +170,7 @@
           itemstack.m_41754_(this.m_41612_());
           if (this.f_41590_ != null) {
              itemstack.f_41590_ = this.f_41590_.m_6426_();
-@@ -381,7 +_,7 @@
+@@ -391,7 +_,7 @@
           if (p_41659_.f_41590_ == null && p_41660_.f_41590_ != null) {
              return false;
           } else {
@@ -179,7 +179,7 @@
           }
        } else {
           return false;
-@@ -404,7 +_,7 @@
+@@ -414,7 +_,7 @@
        } else if (this.f_41590_ == null && p_41745_.f_41590_ != null) {
           return false;
        } else {
@@ -188,7 +188,7 @@
        }
     }
  
-@@ -528,7 +_,7 @@
+@@ -538,7 +_,7 @@
  
     public void m_41751_(@Nullable CompoundTag p_41752_) {
        this.f_41590_ = p_41752_;
@@ -197,7 +197,7 @@
           this.m_41721_(this.m_41773_());
        }
  
-@@ -728,6 +_,7 @@
+@@ -738,6 +_,7 @@
           }
        }
  
@@ -205,7 +205,16 @@
        return list;
     }
  
-@@ -865,9 +_,10 @@
+@@ -746,7 +_,7 @@
+    }
+ 
+    private int m_41618_() {
+-      return this.m_41782_() && this.f_41590_.m_128425_("HideFlags", 99) ? this.f_41590_.m_128451_("HideFlags") : 0;
++      return this.m_41782_() && this.f_41590_.m_128425_("HideFlags", 99) ? this.f_41590_.m_128451_("HideFlags") : this.m_41720_().getDefaultTooltipHideFlags(this);
+    }
+ 
+    public void m_41654_(ItemStack.TooltipPart p_41655_) {
+@@ -874,9 +_,10 @@
              }
           }
        } else {
@@ -217,7 +226,15 @@
        return multimap;
     }
  
-@@ -954,6 +_,23 @@
+@@ -957,12 +_,31 @@
+       this.m_41720_().m_5929_(p_41732_, p_41733_, this, p_41734_);
+    }
+ 
++   /** @deprecated Forge: Use damage source sensitive version */
++   @Deprecated
+    public void m_150924_(ItemEntity p_150925_) {
+       this.m_41720_().m_142023_(p_150925_);
+    }
  
     public boolean m_41614_() {
        return this.m_41720_().m_41472_();

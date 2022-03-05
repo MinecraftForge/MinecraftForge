@@ -1,6 +1,18 @@
 --- a/net/minecraft/world/inventory/AbstractContainerMenu.java
 +++ b/net/minecraft/world/inventory/AbstractContainerMenu.java
-@@ -217,13 +_,14 @@
+@@ -211,9 +_,11 @@
+    private void m_150407_(int p_150408_, ItemStack p_150409_, Supplier<ItemStack> p_150410_) {
+       ItemStack itemstack = this.f_38841_.get(p_150408_);
+       if (!ItemStack.m_41728_(itemstack, p_150409_)) {
++         boolean clientStackChanged = !p_150409_.equals(itemstack, true);
+          ItemStack itemstack1 = p_150410_.get();
+          this.f_38841_.set(p_150408_, itemstack1);
+ 
++         if(clientStackChanged)
+          for(ContainerListener containerlistener : this.f_38848_) {
+             containerlistener.m_7934_(this, p_150408_, itemstack1);
+          }
+@@ -224,13 +_,14 @@
     private void m_150435_(int p_150436_, ItemStack p_150437_, Supplier<ItemStack> p_150438_) {
        if (!this.f_150398_) {
           ItemStack itemstack = this.f_150394_.get(p_150436_);
@@ -16,16 +28,7 @@
  
        }
     }
-@@ -243,7 +_,7 @@
- 
-    private void m_150445_() {
-       if (!this.f_150398_) {
--         if (!ItemStack.m_41728_(this.m_142621_(), this.f_150396_)) {
-+         if (!this.m_142621_().equals(this.f_150396_, true) || this.m_142621_().requiresSync()) {
-             this.f_150396_ = this.m_142621_().m_41777_();
-             if (this.f_150397_ != null) {
-                this.f_150397_.m_142529_(this, this.f_150396_);
-@@ -592,14 +_,15 @@
+@@ -603,14 +_,15 @@
              ItemStack itemstack = slot.m_7993_();
              if (!itemstack.m_41619_() && ItemStack.m_150942_(p_38904_, itemstack)) {
                 int j = itemstack.m_41613_() + p_38904_.m_41613_();
@@ -45,7 +48,7 @@
                    slot.m_6654_();
                    flag = true;
                 }
-@@ -699,7 +_,7 @@
+@@ -710,7 +_,7 @@
           p_38925_.m_41764_(1);
           break;
        case 2:

@@ -1,20 +1,6 @@
 /*
- * Minecraft Forge
- * Copyright (c) 2016-2021.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation version 2.1
- * of the License.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Minecraft Forge - Forge Development LLC
+ * SPDX-License-Identifier: LGPL-2.1-only
  */
 
 package net.minecraftforge.common.extensions;
@@ -22,8 +8,11 @@ package net.minecraftforge.common.extensions;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.minecraft.core.Registry;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.monster.EnderMan;
 import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.pattern.BlockInWorld;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.item.enchantment.Enchantment;
@@ -94,7 +83,8 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundTag>, I
        Player entityplayer = context.getPlayer();
        BlockPos blockpos = context.getClickedPos();
        BlockInWorld blockworldstate = new BlockInWorld(context.getLevel(), blockpos, false);
-       if (entityplayer != null && !entityplayer.getAbilities().mayBuild && !self().hasAdventureModePlaceTagForBlock(context.getLevel().getTagManager(), blockworldstate)) {
+       Registry<Block> registry = entityplayer.level.registryAccess().registryOrThrow(Registry.BLOCK_REGISTRY);
+       if (entityplayer != null && !entityplayer.getAbilities().mayBuild && !self().hasAdventureModePlaceTagForBlock(registry, blockworldstate)) {
           return InteractionResult.PASS;
        } else {
           Item item = self().getItem();
@@ -234,12 +224,12 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundTag>, I
      * Retrieves the normal 'lifespan' of this item when it is dropped on the ground
      * as a EntityItem. This is in ticks, standard result is 6000, or 5 mins.
      *
-     * @param world     The world the entity is in
+     * @param level     The level the entity is in
      * @return The normal lifespan in ticks.
      */
-    default int getEntityLifespan(Level world)
+    default int getEntityLifespan(Level level)
     {
-        return self().getItem().getEntityLifespan(self(), world);
+        return self().getItem().getEntityLifespan(self(), level);
     }
 
     /**
@@ -267,21 +257,21 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundTag>, I
     /**
      * Called to tick armor in the armor slot. Override to do something
      */
-    default void onArmorTick(Level world, Player player)
+    default void onArmorTick(Level level, Player player)
     {
-        self().getItem().onArmorTick(self(), world, player);
+        self().getItem().onArmorTick(self(), level, player);
     }
 
     /**
      * Called every tick from {@code Horse#playGallopSound(SoundEvent)} on the item in the
      * armor slot.
      *
-     * @param world the world the horse is in
+     * @param level the level the horse is in
      * @param horse the horse wearing this armor
      */
-    default void onHorseArmorTick(Level world, Mob horse)
+    default void onHorseArmorTick(Level level, Mob horse)
     {
-        self().getItem().onHorseArmorTick(self(), world, horse);
+        self().getItem().onHorseArmorTick(self(), level, horse);
     }
 
     /**
@@ -368,14 +358,13 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundTag>, I
      *
      * Should this item, when held, allow sneak-clicks to pass through to the underlying block?
      *
-     * @param world The world
-     * @param pos Block position in world
+     * @param level The level
+     * @param pos Block position in level
      * @param player The Player that is wielding the item
-     * @return
      */
-    default boolean doesSneakBypassUse(net.minecraft.world.level.LevelReader world, BlockPos pos, Player player)
+    default boolean doesSneakBypassUse(net.minecraft.world.level.LevelReader level, BlockPos pos, Player player)
     {
-        return self().isEmpty() || self().getItem().doesSneakBypassUse(self(), world, pos, player);
+        return self().isEmpty() || self().getItem().doesSneakBypassUse(self(), level, pos, player);
     }
 
     /**
@@ -493,5 +482,16 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundTag>, I
     default AABB getSweepHitBox(@Nonnull Player player, @Nonnull Entity target)
     {
         return self().getItem().getSweepHitBox(self(), player, target);
+    }
+
+    /**
+     * Called when an item entity for this stack is destroyed. Note: The {@link ItemStack} can be retrieved from the item entity.
+     *
+     * @param itemEntity   The item entity that was destroyed.
+     * @param damageSource Damage source that caused the item entity to "die".
+     */
+    default void onDestroyed(ItemEntity itemEntity, DamageSource damageSource)
+    {
+        self().getItem().onDestroyed(itemEntity, damageSource);
     }
 }
