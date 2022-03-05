@@ -25,6 +25,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import net.minecraft.core.Direction;
+import net.minecraft.nbt.IntTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
@@ -33,7 +34,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.capabilities.CapabilityToken;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.common.capabilities.INetworkCapability;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.common.util.LazyOptional;
@@ -53,8 +54,7 @@ public class NetworkCapabilityTest
 
     private static final Logger logger = LogManager.getLogger();
 
-    private static final Capability<TestCapability> TEST_CAP = CapabilityManager.get(new CapabilityToken<>() {
-    });
+    private static final Capability<TestCapability> TEST_CAP = CapabilityManager.get(new CapabilityToken<>() {});
 
     public NetworkCapabilityTest()
     {
@@ -66,8 +66,8 @@ public class NetworkCapabilityTest
         event.register(TestCapability.class);
     }
 
-    private static class TestCapability {
-
+    private static class TestCapability
+    {
         private int number;
         private boolean dirty;
 
@@ -78,8 +78,8 @@ public class NetworkCapabilityTest
         }
     }
 
-    private static class TestCapabilityProvider implements ICapabilityProvider, INetworkCapability {
-
+    private static class TestCapabilityProvider implements ICapabilitySerializable<IntTag>, INetworkCapability
+    {
         private final LazyOptional<TestCapability> cap = LazyOptional.of(() -> new TestCapability());
 
         private final Supplier<String> name;
@@ -122,6 +122,17 @@ public class NetworkCapabilityTest
             return cap == TEST_CAP ? this.cap.cast() : LazyOptional.empty();
         }
 
+        @Override
+        public IntTag serializeNBT()
+        {
+            return this.cap.map(cap -> cap.number).map(IntTag::valueOf).orElse(IntTag.valueOf(0));
+        }
+
+        @Override
+        public void deserializeNBT(IntTag nbt)
+        {
+            this.cap.ifPresent(cap -> cap.number = nbt.getAsInt());
+        }
     }
 
     @SubscribeEvent
@@ -146,7 +157,7 @@ public class NetworkCapabilityTest
     }
 
     @SubscribeEvent
-    public static void handleLivingEntityUseItem(LivingEntityUseItemEvent event)
+    public static void handleLivingEntityUseItem(LivingEntityUseItemEvent.Start event)
     {
         if (!event.getEntity().getLevel().isClientSide())
         {
