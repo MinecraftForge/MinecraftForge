@@ -545,7 +545,7 @@
  
     public ItemStack m_6298_(ItemStack p_21272_) {
 -      return ItemStack.f_41583_;
-+      return net.minecraftforge.common.ForgeHooks.findProjectile(this, p_21272_, ItemStack.f_41583_);
++      return net.minecraftforge.common.ForgeHooks.getProjectile(this, p_21272_, ItemStack.f_41583_);
     }
  
     public ItemStack m_5584_(Level p_21067_, ItemStack p_21068_) {

@@ -351,7 +351,7 @@
           ItemStack itemstack = ProjectileWeaponItem.m_43010_(this, predicate);
           if (!itemstack.m_41619_()) {
 -            return itemstack;
-+            return net.minecraftforge.common.ForgeHooks.findProjectile(this, p_36349_, itemstack);
++            return net.minecraftforge.common.ForgeHooks.getProjectile(this, p_36349_, itemstack);
           } else {
              predicate = ((ProjectileWeaponItem)p_36349_.m_41720_()).m_6437_();
  
@@ -359,12 +359,12 @@
                 ItemStack itemstack1 = this.f_36093_.m_8020_(i);
                 if (predicate.test(itemstack1)) {
 -                  return itemstack1;
-+                  return net.minecraftforge.common.ForgeHooks.findProjectile(this, p_36349_, itemstack1);
++                  return net.minecraftforge.common.ForgeHooks.getProjectile(this, p_36349_, itemstack1);
                 }
              }
  
 -            return this.f_36077_.f_35937_ ? new ItemStack(Items.f_42412_) : ItemStack.f_41583_;
-+            return net.minecraftforge.common.ForgeHooks.findProjectile(this, p_36349_, this.f_36077_.f_35937_ ? new ItemStack(Items.f_42412_) : ItemStack.f_41583_);
++            return net.minecraftforge.common.ForgeHooks.getProjectile(this, p_36349_, this.f_36077_.f_35937_ ? new ItemStack(Items.f_42412_) : ItemStack.f_41583_);
           }
        }
     }

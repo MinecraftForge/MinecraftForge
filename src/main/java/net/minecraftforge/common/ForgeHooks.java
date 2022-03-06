@@ -1015,7 +1015,7 @@ public class ForgeHooks
     /**
      * Hook to fire {@link LivingGetProjectileEvent}. Returns the ammo to be used.
      */
-    public static ItemStack findProjectile(LivingEntity entity, ItemStack projectileWeaponItem, ItemStack projectile)
+    public static ItemStack getProjectile(LivingEntity entity, ItemStack projectileWeaponItem, ItemStack projectile)
     {
         LivingGetProjectileEvent event = new LivingGetProjectileEvent(entity, projectileWeaponItem, projectile);
         MinecraftForge.EVENT_BUS.post(event);
