@@ -104,7 +104,7 @@
           if (p_43918_.isJsonObject()) {
              return m_43938_(Stream.of(m_43919_(p_43918_.getAsJsonObject())));
           } else if (p_43918_.isJsonArray()) {
-@@ -184,6 +_,12 @@
+@@ -182,6 +_,12 @@
        }
     }
  
@@ -117,12 +117,12 @@
     public static class ItemValue implements Ingredient.Value {
        private final ItemStack f_43951_;
  
-@@ -216,6 +_,9 @@
-             list.add(new ItemStack(item));
+@@ -214,6 +_,9 @@
+             list.add(new ItemStack(holder));
           }
  
 +         if (list.size() == 0 && !net.minecraftforge.common.ForgeConfig.SERVER.treatEmptyTagsAsAir.get()) {
-+            list.add(new ItemStack(net.minecraft.world.level.block.Blocks.f_50375_).m_41714_(new net.minecraft.network.chat.TextComponent("Empty Tag: " + SerializationTags.m_13199_().m_144454_(Registry.f_122904_, this.f_43959_, () -> new IllegalStateException("Unrecognized tag")))));
++            list.add(new ItemStack(net.minecraft.world.level.block.Blocks.f_50375_).m_41714_(new net.minecraft.network.chat.TextComponent("Empty Tag: " + this.f_43959_.f_203868_())));
 +         }
           return list;
        }

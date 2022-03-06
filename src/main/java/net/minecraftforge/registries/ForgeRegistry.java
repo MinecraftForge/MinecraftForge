@@ -1,20 +1,6 @@
 /*
- * Minecraft Forge
- * Copyright (c) 2016-2022.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation version 2.1
- * of the License.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Minecraft Forge - Forge Development LLC
+ * SPDX-License-Identifier: LGPL-2.1-only
  */
 
 package net.minecraftforge.registries;
@@ -102,6 +88,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
 
     private final Codec<V> codec = new RegistryCodec();
 
+    @SuppressWarnings("unchecked")
     ForgeRegistry(RegistryManager stage, ResourceLocation name, RegistryBuilder<V> builder)
     {
         this.name = name;
@@ -186,14 +173,14 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
         return tagFolder;
     }
 
-    @Override
     public Codec<V> getCodec()
     {
         return this.codec;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    public void registerAll(@SuppressWarnings("unchecked") V... values)
+    public void registerAll(V... values)
     {
         for (V value : values)
             register(value);
@@ -221,6 +208,11 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
     public boolean isEmpty()
     {
         return this.names.isEmpty();
+    }
+
+    int size()
+    {
+        return this.names.size();
     }
 
     @Override
@@ -1152,6 +1144,11 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
 
         if (failed.isEmpty() && ignored > 0)
             LOGGER.debug(REGISTRIES,"There were {} missing mappings that have been ignored", ignored);
+    }
+
+    RegistryBuilder<V> getBuilder()
+    {
+        return this.builder;
     }
 
     private record OverrideOwner<V>(String owner, ResourceKey<V> key){};
