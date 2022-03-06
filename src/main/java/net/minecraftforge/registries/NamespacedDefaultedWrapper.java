@@ -30,7 +30,7 @@ import net.minecraft.core.DefaultedRegistry;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Lifecycle;
 
-class NamespacedDefaultedWrapper<T extends IForgeRegistryEntry<T>> extends DefaultedRegistry<T> implements ILockableRegistry
+class NamespacedDefaultedWrapper<T extends IForgeRegistryEntry<T>> extends DefaultedRegistry<T> implements ILockableRegistry, IHolderHelperHolder<T>
 {
     private final ForgeRegistry<T> delegate;
     private final NamespacedHolderHelper<T> holders;
@@ -186,7 +186,8 @@ class NamespacedDefaultedWrapper<T extends IForgeRegistryEntry<T>> extends Defau
         return this.delegate.size();
     }
 
-    NamespacedHolderHelper<T> getHolderHelper()
+    @Override
+    public NamespacedHolderHelper<T> getHolderHelper()
     {
         return this.holders;
     }

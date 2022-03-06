@@ -32,7 +32,7 @@ import org.apache.logging.log4j.Logger;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Lifecycle;
 
-class NamespacedWrapper<T extends IForgeRegistryEntry<T>> extends MappedRegistry<T> implements ILockableRegistry
+class NamespacedWrapper<T extends IForgeRegistryEntry<T>> extends MappedRegistry<T> implements ILockableRegistry, IHolderHelperHolder<T>
 {
     private static final Logger LOGGER = LogManager.getLogger();
     private final ForgeRegistry<T> delegate;
@@ -184,7 +184,8 @@ class NamespacedWrapper<T extends IForgeRegistryEntry<T>> extends MappedRegistry
         return this.delegate.size();
     }
 
-    NamespacedHolderHelper<T> getHolderHelper()
+    @Override
+    public NamespacedHolderHelper<T> getHolderHelper()
     {
         return this.holders;
     }

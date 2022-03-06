@@ -264,12 +264,11 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
     @NotNull
     NamespacedHolderHelper<V> getHolderHelper()
     {
-        if (!this.hasWrapper)
+        Registry<V> wrapper = getWrapper();
+        if (!(wrapper instanceof IHolderHelperHolder))
             throw new IllegalStateException("Cannot query holder helper for non-wrapped forge registry!");
 
-        return this.defaultKey != null
-                ? this.getSlaveMap(NamespacedDefaultedWrapper.Factory.ID, NamespacedDefaultedWrapper.class).getHolderHelper()
-                : this.getSlaveMap(NamespacedWrapper.Factory.ID, NamespacedWrapper.class).getHolderHelper();
+        return ((IHolderHelperHolder<V>) wrapper).getHolderHelper();
     }
 
     @NotNull
