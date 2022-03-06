@@ -1,12 +1,12 @@
 --- a/net/minecraft/world/level/block/entity/BlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/BlockEntity.java
 @@ -15,7 +_,7 @@
- import org.apache.logging.log4j.LogManager;
- import org.apache.logging.log4j.Logger;
+ import net.minecraft.world.level.block.state.BlockState;
+ import org.slf4j.Logger;
  
 -public abstract class BlockEntity {
 +public abstract class BlockEntity extends net.minecraftforge.common.capabilities.CapabilityProvider<BlockEntity> implements net.minecraftforge.common.extensions.IForgeBlockEntity {
-    private static final Logger f_58854_ = LogManager.getLogger();
+    private static final Logger f_58854_ = LogUtils.getLogger();
     private final BlockEntityType<?> f_58855_;
     @Nullable
 @@ -23,11 +_,14 @@
