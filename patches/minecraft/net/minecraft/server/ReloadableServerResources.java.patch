@@ -6,7 +6,7 @@
        ReloadableServerResources reloadableserverresources = new ReloadableServerResources(p_206863_, p_206864_, p_206865_);
 -      return SimpleReloadInstance.m_203834_(p_206862_, reloadableserverresources.m_206890_(), p_206866_, p_206867_, f_206846_, f_206845_.isDebugEnabled()).m_7237_().thenApply((p_206880_) -> {
 +      List<PreparableReloadListener> listeners = new java.util.ArrayList<>(reloadableserverresources.m_206890_());
-+      listeners.addAll(net.minecraftforge.event.ForgeEventFactory.onResourceReload());
++      listeners.addAll(net.minecraftforge.event.ForgeEventFactory.onResourceReload(reloadableserverresources));
 +      return SimpleReloadInstance.m_203834_(p_206862_, listeners, p_206866_, p_206867_, f_206846_, f_206845_.isDebugEnabled()).m_7237_().thenApply((p_206880_) -> {
           return reloadableserverresources;
        });
