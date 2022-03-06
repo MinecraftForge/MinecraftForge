@@ -199,6 +199,8 @@ license="LGPL v2.1"
 [[mods]]
     modId="gametest_test"
 [[mods]]
+    modId="forge_datafix_test"
+[[mods]]
     modId="potion_size_event_test"
 [[mods]]
     modId="hide_neighbor_face_test"
