@@ -1,20 +1,6 @@
 /*
- * Minecraft Forge
- * Copyright (c) 2016-2021.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation version 2.1
- * of the License.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Minecraft Forge - Forge Development LLC
+ * SPDX-License-Identifier: LGPL-2.1-only
  */
 
 package net.minecraftforge.debug;
@@ -29,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -469,7 +456,7 @@ public class DataGeneratorTest
         @Override
         protected void addTags()
         {
-            tag(BlockTags.bind(new ResourceLocation(MODID, "test").toString()))
+            tag(BlockTags.create(new ResourceLocation(MODID, "test")))
                 .add(Blocks.DIAMOND_BLOCK)
                 .addTag(BlockTags.STONE_BRICKS)
                 .addTag(net.minecraftforge.common.Tags.Blocks.COBBLESTONE)
@@ -477,14 +464,14 @@ public class DataGeneratorTest
                 .addOptionalTag(new ResourceLocation("forge", "storage_blocks/ruby"));
 
             // Hopefully sorting issues
-            tag(BlockTags.bind(new ResourceLocation(MODID, "thing/one").toString()))
+            tag(BlockTags.create(new ResourceLocation(MODID, "thing/one")))
                     .add(Blocks.COBBLESTONE);
-            tag(BlockTags.bind(new ResourceLocation(MODID, "thing/two").toString()))
+            tag(BlockTags.create(new ResourceLocation(MODID, "thing/two")))
                     .add(Blocks.DIORITE);
-            tag(BlockTags.bind(new ResourceLocation(MODID, "thing/three").toString()))
+            tag(BlockTags.create(new ResourceLocation(MODID, "thing/three")))
                     .add(Blocks.ANDESITE);
 
-            tag(BlockTags.bind(new ResourceLocation(MODID, "things").toString()))
+            tag(BlockTags.create(new ResourceLocation(MODID, "things")))
                     .add(Blocks.COBBLESTONE)
                     .add(Blocks.DIORITE)
                     .add(Blocks.ANDESITE);
@@ -906,7 +893,7 @@ public class DataGeneratorTest
         }
 
         private void blockstateError(Block block, String fmt, Object... args) {
-            errors.add("Generated blockstate for block " + block + " " + String.format(fmt, args));
+            errors.add("Generated blockstate for block " + block + " " + String.format(Locale.ENGLISH, fmt, args));
         }
 
         @Override

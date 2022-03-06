@@ -9,11 +9,35 @@
     private static final int f_178834_ = 1048576;
     public static final ResourceLocation f_132012_ = new ResourceLocation("brand");
     public static final ResourceLocation f_132013_ = new ResourceLocation("debug/path");
+@@ -26,6 +_,7 @@
+    public static final ResourceLocation f_178833_ = new ResourceLocation("debug/game_event_listeners");
+    private final ResourceLocation f_132029_;
+    private final FriendlyByteBuf f_132030_;
++   private final boolean shouldRelease;
+ 
+    public ClientboundCustomPayloadPacket(ResourceLocation p_132034_, FriendlyByteBuf p_132035_) {
+       this.f_132029_ = p_132034_;
+@@ -33,6 +_,7 @@
+       if (p_132035_.writerIndex() > 1048576) {
+          throw new IllegalArgumentException("Payload may not be larger than 1048576 bytes");
+       }
++      this.shouldRelease = false; //We are not the owner of the buffer, don't release it, it might be reused.
+    }
+ 
+    public ClientboundCustomPayloadPacket(FriendlyByteBuf p_178836_) {
+@@ -43,6 +_,7 @@
+       } else {
+          throw new IllegalArgumentException("Payload may not be larger than 1048576 bytes");
+       }
++      this.shouldRelease = true; //We are the owner of the buffer, release it when we are done.
+    }
+ 
+    public void m_5779_(FriendlyByteBuf p_132044_) {
 @@ -52,6 +_,7 @@
  
     public void m_5797_(ClientGamePacketListener p_132041_) {
        p_132041_.m_7413_(this);
-+      this.f_132030_.release(); // FORGE: Fix impl buffer leaks (MC-121884)
++      if (this.shouldRelease) this.f_132030_.release(); // FORGE: Fix impl buffer leaks (MC-121884), can only be fixed partially, because else you get problems in LAN-Worlds
     }
  
     public ResourceLocation m_132042_() {

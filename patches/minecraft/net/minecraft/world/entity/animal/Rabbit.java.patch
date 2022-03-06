@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/animal/Rabbit.java
 +++ b/net/minecraft/world/entity/animal/Rabbit.java
-@@ -507,7 +_,7 @@
+@@ -510,7 +_,7 @@
  
        public boolean m_8036_() {
           if (this.f_25600_ <= 0) {

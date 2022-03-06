@@ -1,30 +1,14 @@
 --- a/net/minecraft/world/item/enchantment/Enchantment.java
 +++ b/net/minecraft/world/item/enchantment/Enchantment.java
-@@ -16,7 +_,8 @@
+@@ -16,7 +_,7 @@
  import net.minecraft.world.entity.MobType;
  import net.minecraft.world.item.ItemStack;
  
 -public abstract class Enchantment {
 +public abstract class Enchantment extends net.minecraftforge.registries.ForgeRegistryEntry<Enchantment> {
-+   private final net.minecraftforge.common.util.ReverseTagWrapper<Enchantment> reverseTags = new net.minecraftforge.common.util.ReverseTagWrapper<>(this, () -> net.minecraft.tags.SerializationTags.m_13199_().m_144452_(net.minecraftforge.registries.ForgeRegistries.Keys.ENCHANTMENTS));
     private final EquipmentSlot[] f_44671_;
     private final Enchantment.Rarity f_44674_;
     public final EnchantmentCategory f_44672_;
-@@ -34,6 +_,14 @@
-       this.f_44671_ = p_44678_;
-    }
- 
-+   public java.util.Set<net.minecraft.resources.ResourceLocation> getTags() {
-+      return reverseTags.getTagNames();
-+   }
-+
-+   public boolean is(net.minecraft.tags.Tag<Enchantment> tag) {
-+      return tag.m_8110_(this);
-+   }
-+
-    public Map<EquipmentSlot, ItemStack> m_44684_(LivingEntity p_44685_) {
-       Map<EquipmentSlot, ItemStack> map = Maps.newEnumMap(EquipmentSlot.class);
- 
 @@ -111,7 +_,7 @@
     }
  

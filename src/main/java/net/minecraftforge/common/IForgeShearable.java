@@ -1,20 +1,6 @@
 /*
- * Minecraft Forge
- * Copyright (c) 2016-2021.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation version 2.1
- * of the License.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Minecraft Forge - Forge Development LLC
+ * SPDX-License-Identifier: LGPL-2.1-only
  */
 
 package net.minecraftforge.common;
@@ -45,11 +31,11 @@ public interface IForgeShearable
      * Example: Sheep return false when they have no wool
      *
      * @param item The ItemStack that is being used, may be empty.
-     * @param world The current world.
-     * @param pos Block's position in world.
+     * @param level The current level.
+     * @param pos Block's position in level.
      * @return If this is shearable, and onSheared should be called.
      */
-    default boolean isShearable(@Nonnull ItemStack item, Level world, BlockPos pos)
+    default boolean isShearable(@Nonnull ItemStack item, Level level, BlockPos pos)
     {
         return true;
     }
@@ -67,13 +53,13 @@ public interface IForgeShearable
      * over the values passed into this function.
      *
      * @param item The ItemStack that is being used, may be empty.
-     * @param world The current world.
-     * @param pos If this is a block, the block's position in world.
+     * @param level The current level.
+     * @param pos If this is a block, the block's position in level.
      * @param fortune The fortune level of the shears being used.
      * @return A List containing all items from this shearing. May be empty.
      */
     @Nonnull
-    default List<ItemStack> onSheared(@Nullable Player player, @Nonnull ItemStack item, Level world, BlockPos pos, int fortune)
+    default List<ItemStack> onSheared(@Nullable Player player, @Nonnull ItemStack item, Level level, BlockPos pos, int fortune)
     {
         return Collections.emptyList();
     }

@@ -1,6 +1,6 @@
 --- a/net/minecraft/nbt/NbtIo.java
 +++ b/net/minecraft/nbt/NbtIo.java
-@@ -218,10 +_,12 @@
+@@ -268,10 +_,12 @@
  
     private static Tag m_128930_(DataInput p_128931_, int p_128932_, NbtAccounter p_128933_) throws IOException {
        byte b0 = p_128931_.readByte();

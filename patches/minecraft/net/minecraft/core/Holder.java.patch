@@ -1,0 +1,13 @@
+--- a/net/minecraft/core/Holder.java
++++ b/net/minecraft/core/Holder.java
+@@ -194,6 +_,10 @@
+          return this.f_205749_.stream();
+       }
+ 
++      public Type getType() {
++         return this.f_205750_;
++      }
++
+       public String toString() {
+          return "Reference{" + this.f_205751_ + "=" + this.f_205752_ + "}";
+       }

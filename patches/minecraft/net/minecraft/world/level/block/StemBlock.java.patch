@@ -18,7 +18,7 @@
                 Direction direction = Direction.Plane.HORIZONTAL.m_122560_(p_57045_);
                 BlockPos blockpos = p_57044_.m_142300_(direction);
                 BlockState blockstate = p_57043_.m_8055_(blockpos.m_7495_());
--               if (p_57043_.m_8055_(blockpos).m_60795_() && (blockstate.m_60713_(Blocks.f_50093_) || blockstate.m_60620_(BlockTags.f_144274_))) {
+-               if (p_57043_.m_8055_(blockpos).m_60795_() && (blockstate.m_60713_(Blocks.f_50093_) || blockstate.m_204336_(BlockTags.f_144274_))) {
 +               Block block = blockstate.m_60734_();
 +               if (p_57043_.m_46859_(blockpos) && (blockstate.canSustainPlant(p_57043_, blockpos.m_7495_(), Direction.UP, this) || block == Blocks.f_50093_ || block == Blocks.f_50493_ || block == Blocks.f_50546_ || block == Blocks.f_50599_ || block == Blocks.f_50440_)) {
                    p_57043_.m_46597_(blockpos, this.f_57015_.m_49966_());

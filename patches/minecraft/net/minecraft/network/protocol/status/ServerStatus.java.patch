@@ -91,7 +91,7 @@
           }
  
 +         if (jsonobject.has("forgeData")) {
-+            serverstatus.setForgeData(net.minecraftforge.network.ServerStatusPing.Serializer.deserialize(GsonHelper.m_13930_(jsonobject, "forgeData"), p_134949_));
++            serverstatus.setForgeData(net.minecraftforge.network.ServerStatusPing.Serializer.deserialize(GsonHelper.m_13930_(jsonobject, "forgeData")));
 +         }
 +
           return serverstatus;
@@ -104,7 +104,7 @@
 +         }
 +
 +         if(p_134951_.getForgeData() != null){
-+            jsonobject.add("forgeData", net.minecraftforge.network.ServerStatusPing.Serializer.serialize(p_134951_.getForgeData(), p_134953_));
++            jsonobject.add("forgeData", net.minecraftforge.network.ServerStatusPing.Serializer.serialize(p_134951_.getForgeData()));
           }
  
           return jsonobject;
