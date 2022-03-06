@@ -1,6 +1,6 @@
 --- a/net/minecraft/data/tags/TagsProvider.java
 +++ b/net/minecraft/data/tags/TagsProvider.java
-@@ -32,10 +_,28 @@
+@@ -32,10 +_,33 @@
     protected final DataGenerator f_126539_;
     protected final Registry<T> f_126540_;
     protected final Map<ResourceLocation, Tag.Builder> f_126543_ = Maps.newLinkedHashMap();
@@ -9,14 +9,19 @@
 +   protected final net.minecraftforge.common.data.ExistingFileHelper existingFileHelper;
 +   private final net.minecraftforge.common.data.ExistingFileHelper.IResourceType resourceType;
  
-+   /**@deprecated Forge: Use the ModID version**/ @Deprecated
++   /**
++    * @see #TagsProvider(DataGenerator, Registry, String, net.minecraftforge.common.data.ExistingFileHelper)
++    * @see #TagsProvider(DataGenerator, Registry, String, net.minecraftforge.common.data.ExistingFileHelper, String)
++    * @deprecated Forge: Use one of the mod id variants
++    */
++   @Deprecated
     protected TagsProvider(DataGenerator p_126546_, Registry<T> p_126547_) {
 +      this(p_126546_, p_126547_, "vanilla", null);
 +   }
-+   protected TagsProvider(DataGenerator p_126546_, Registry<T> p_126547_, String modId, @javax.annotation.Nullable net.minecraftforge.common.data.ExistingFileHelper existingFileHelper) {
++   protected TagsProvider(DataGenerator p_126546_, Registry<T> p_126547_, String modId, @org.jetbrains.annotations.Nullable net.minecraftforge.common.data.ExistingFileHelper existingFileHelper) {
 +      this(p_126546_, p_126547_, modId, existingFileHelper, null);
 +   }
-+   protected TagsProvider(DataGenerator p_126546_, Registry<T> p_126547_, String modId, @javax.annotation.Nullable net.minecraftforge.common.data.ExistingFileHelper existingFileHelper, @javax.annotation.Nullable String folder) {
++   protected TagsProvider(DataGenerator p_126546_, Registry<T> p_126547_, String modId, @org.jetbrains.annotations.Nullable net.minecraftforge.common.data.ExistingFileHelper existingFileHelper, @org.jetbrains.annotations.Nullable String folder) {
        this.f_126539_ = p_126546_;
        this.f_126540_ = p_126547_;
 +      this.modId = modId;

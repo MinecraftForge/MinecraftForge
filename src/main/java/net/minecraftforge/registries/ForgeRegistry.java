@@ -268,6 +268,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
         if (!(wrapper instanceof IHolderHelperHolder))
             throw new IllegalStateException("Cannot query holder helper for non-wrapped forge registry!");
 
+        // Unsafe cast means we can't use pattern matching here
         return ((IHolderHelperHolder<V>) wrapper).getHolderHelper();
     }
 
