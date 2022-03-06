@@ -9,7 +9,6 @@ import com.mojang.serialization.Lifecycle;
 import net.minecraft.core.Registry;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.tags.TagsProvider;
-import net.minecraft.tags.TagManager;
 import net.minecraftforge.registries.GameData;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistryEntry;
@@ -28,6 +27,6 @@ public abstract class ForgeRegistryTagsProvider<T extends IForgeRegistryEntry<T>
 
     public ForgeRegistryTagsProvider(DataGenerator generator, IForgeRegistry<T> forgeRegistry, String modId, @Nullable ExistingFileHelper existingFileHelper)
     {
-        super(generator, wrapRegistry(forgeRegistry), modId, existingFileHelper, TagManager.getTagDir(forgeRegistry.getRegistryKey()));
+        super(generator, wrapRegistry(forgeRegistry), modId, existingFileHelper);
     }
 }

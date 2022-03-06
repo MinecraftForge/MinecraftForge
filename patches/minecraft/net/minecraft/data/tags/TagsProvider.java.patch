@@ -1,6 +1,6 @@
 --- a/net/minecraft/data/tags/TagsProvider.java
 +++ b/net/minecraft/data/tags/TagsProvider.java
-@@ -32,10 +_,29 @@
+@@ -32,10 +_,28 @@
     protected final DataGenerator f_126539_;
     protected final Registry<T> f_126540_;
     protected final Map<ResourceLocation, Tag.Builder> f_126543_ = Maps.newLinkedHashMap();
@@ -22,8 +22,7 @@
 +      this.modId = modId;
 +      this.existingFileHelper = existingFileHelper;
 +      if (folder == null) {
-+         //noinspection unchecked,rawtypes
-+         folder = ((Registry) Registry.f_122897_).m_7981_(f_126540_).m_135815_() + "s";
++         folder = TagManager.m_203918_(p_126547_.m_123023_()).substring("tags/".length());
 +      }
 +      this.folder = folder;
 +      this.resourceType = new net.minecraftforge.common.data.ExistingFileHelper.ResourceType(net.minecraft.server.packs.PackType.SERVER_DATA, ".json", "tags/" + this.folder);
