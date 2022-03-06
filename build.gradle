@@ -436,6 +436,7 @@ def sharedFmlonlyForge = { Project prj ->
             run.jvmArgs '-p', prj.configurations.moduleonly.files.collect { it.path }.join(File.pathSeparator)
         }
         run.jvmArgs '--add-modules', 'ALL-MODULE-PATH'
+        // Additions to these JVM module args should be mirrored to server_files/args.txt and other similar blocks in the buildscript
         run.jvmArgs '--add-opens', 'java.base/java.util.jar=cpw.mods.securejarhandler'
         run.jvmArgs '--add-exports', 'java.base/sun.security.util=cpw.mods.securejarhandler'
         run.jvmArgs '--add-exports', 'jdk.naming.dns/com.sun.jndi.dns=java.naming'
@@ -624,6 +625,7 @@ project(':fmlonly') {
                           '-DlibraryDirectory=${library_directory}',
                           '-p', Util.getArtifacts(project, configurations.moduleonly, false).values().collect{"\${library_directory}/${it.downloads.artifact.path}"}.join('${classpath_separator}'),
                           '--add-modules', 'ALL-MODULE-PATH',
+                          // Additions to these JVM module args should be mirrored to server_files/args.txt and other similar blocks in the buildscript
                           '--add-opens', 'java.base/java.util.jar=cpw.mods.securejarhandler',
                           '--add-exports', 'java.base/sun.security.util=cpw.mods.securejarhandler',
                           '--add-exports', 'jdk.naming.dns/com.sun.jndi.dns=java.naming'
@@ -1194,7 +1196,7 @@ project(':forge') {
                           '-DlibraryDirectory=${library_directory}',
                           '-p', Util.getArtifacts(project, configurations.moduleonly, false).values().collect{'${library_directory}/' + it.downloads.artifact.path}.join('${classpath_separator}'),
                           '--add-modules', 'ALL-MODULE-PATH',
-                          // Additions to these JVM module args should be mirrored to server_files/args.txt, for the server
+                          // Additions to these JVM module args should be mirrored to server_files/args.txt and other similar blocks in the buildscript
                           '--add-opens', 'java.base/java.util.jar=cpw.mods.securejarhandler',
                           '--add-exports', 'java.base/sun.security.util=cpw.mods.securejarhandler',
                           '--add-exports', 'jdk.naming.dns/com.sun.jndi.dns=java.naming'
