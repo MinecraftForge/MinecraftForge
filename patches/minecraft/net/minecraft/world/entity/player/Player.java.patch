@@ -1,9 +1,11 @@
 --- a/net/minecraft/world/entity/player/Player.java
 +++ b/net/minecraft/world/entity/player/Player.java
-@@ -112,6 +_,7 @@
+@@ -111,7 +_,8 @@
+ import net.minecraft.world.scores.Scoreboard;
  import net.minecraft.world.scores.Team;
  
- public abstract class Player extends LivingEntity {
+-public abstract class Player extends LivingEntity {
++public abstract class Player extends LivingEntity implements net.minecraftforge.common.extensions.IForgePlayer {
 +   public static final String PERSISTED_NBT_TAG = "PlayerPersisted";
     public static final String f_150081_ = "OfflinePlayer:";
     public static final int f_150082_ = 16;
@@ -232,15 +234,14 @@
                 }
  
                 float f4 = 0.0F;
-@@ -1110,8 +_,9 @@
+@@ -1110,8 +_,8 @@
                    if (flag3) {
                       float f3 = 1.0F + EnchantmentHelper.m_44821_(this) * f;
  
 -                     for(LivingEntity livingentity : this.f_19853_.m_45976_(LivingEntity.class, p_36347_.m_142469_().m_82377_(1.0D, 0.25D, 1.0D))) {
 -                        if (livingentity != this && livingentity != p_36347_ && !this.m_7307_(livingentity) && (!(livingentity instanceof ArmorStand) || !((ArmorStand)livingentity).m_31677_()) && this.m_20280_(livingentity) < 9.0D) {
 +                     for(LivingEntity livingentity : this.f_19853_.m_45976_(LivingEntity.class, this.m_21120_(InteractionHand.MAIN_HAND).getSweepHitBox(this, p_36347_))) {
-+                        double atkRange = this.m_21133_(net.minecraftforge.common.ForgeMod.ATTACK_RANGE.get()); //Forge: Change constant value to reflect attack range attribute.
-+                        if (livingentity != this && livingentity != p_36347_ && !this.m_7307_(livingentity) && (!(livingentity instanceof ArmorStand) || !((ArmorStand)livingentity).m_31677_()) && this.m_20280_(livingentity) < atkRange * atkRange) {
++                        if (livingentity != this && livingentity != p_36347_ && !this.m_7307_(livingentity) && (!(livingentity instanceof ArmorStand) || !((ArmorStand)livingentity).m_31677_()) && this.canHit(livingentity, 0)) {
                             livingentity.m_147240_((double)0.4F, (double)Mth.m_14031_(this.m_146908_() * ((float)Math.PI / 180F)), (double)(-Mth.m_14089_(this.m_146908_() * ((float)Math.PI / 180F))));
                             livingentity.m_6469_(DamageSource.m_19344_(this), f3);
                          }

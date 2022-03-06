@@ -21,10 +21,10 @@
              boolean flag = false;
              int i = 3;
              double d1 = d0;
-+            double atkRange = this.f_109059_.f_91074_.m_21133_(net.minecraftforge.common.ForgeMod.ATTACK_RANGE.get());
++            double atkRange = this.f_109059_.f_91074_.getAttackRange();
              if (this.f_109059_.f_91072_.m_105291_()) {
 -               d1 = 6.0D;
-+               d1 = Math.max(d0 + 1, atkRange + 3);
++               d1 = Math.max(d0, atkRange);
                 d0 = d1;
              } else {
 -               if (d0 > 3.0D) {
