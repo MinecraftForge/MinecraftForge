@@ -27,7 +27,7 @@
        BlockState blockstate = p_152446_.m_8055_(p_152449_);
        if (p_152445_.m_60719_(blockstate, p_152448_)) {
           return false;
-+      } else if (blockstate.hidesNeighborFace(p_152446_, p_152449_, p_152445_, p_152448_.m_122424_())) {
++      } else if (p_152445_.supportsExternalFaceHiding() && blockstate.hidesNeighborFace(p_152446_, p_152449_, p_152445_, p_152448_.m_122424_())) {
 +         return false;
        } else if (blockstate.m_60815_()) {
           Block.BlockStatePairKey block$blockstatepairkey = new Block.BlockStatePairKey(p_152445_, blockstate, p_152448_);

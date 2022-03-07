@@ -32,6 +32,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.IPlantable;
 
@@ -44,6 +45,7 @@ import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.ToolAction;
 import net.minecraftforge.common.ToolActions;
+import net.minecraftforge.fml.loading.FMLEnvironment;
 
 @SuppressWarnings("deprecation")
 public interface IForgeBlock
@@ -773,5 +775,19 @@ public interface IForgeBlock
     default boolean hidesNeighborFace(BlockGetter level, BlockPos pos, BlockState state, BlockState neighborState, Direction dir)
     {
         return false;
+    }
+
+    /**
+     * Whether this block allows a neighboring block to hide the face of this block it touches.
+     * If this returns true, {@link IForgeBlockState#hidesNeighborFace(BlockGetter, BlockPos, BlockState, Direction)}
+     * will be called on the neighboring block.
+     */
+    default boolean supportsExternalFaceHiding(BlockState state)
+    {
+        if (FMLEnvironment.dist.isClient())
+        {
+            return !ForgeHooksClient.isBlockInSolidLayer(state);
+        }
+        return true;
     }
 }

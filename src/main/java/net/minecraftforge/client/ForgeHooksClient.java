@@ -1074,4 +1074,9 @@ public class ForgeHooksClient
         MinecraftForge.EVENT_BUS.post(event);
         return event.getResult();
     }
+
+    public static boolean isBlockInSolidLayer(BlockState state)
+    {
+        return ItemBlockRenderTypes.canRenderInLayer(state, RenderType.solid());
+    }
 }

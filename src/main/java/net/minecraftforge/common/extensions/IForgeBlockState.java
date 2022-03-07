@@ -663,4 +663,14 @@ public interface IForgeBlockState
     {
         return self().getBlock().hidesNeighborFace(level, pos, self(), neighborState, dir);
     }
+
+    /**
+     * Whether this block allows a neighboring block to hide the face of this block it touches.
+     * If this returns true, {@link IForgeBlockState#hidesNeighborFace(BlockGetter, BlockPos, BlockState, Direction)}
+     * will be called on the neighboring block.
+     */
+    default boolean supportsExternalFaceHiding()
+    {
+        return self().getBlock().supportsExternalFaceHiding(self());
+    }
 }
