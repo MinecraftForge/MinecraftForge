@@ -434,7 +434,7 @@ public class BlockEvent extends Event
         @Nullable
         private final UseOnContext context;
         private BlockState state;
-        private ToolModificationResult toolModificationResult = ToolModificationResult.passEmpty();
+        private ToolModificationResult toolModificationResult = ToolModificationResult.passToFallbackBehavior();
 
         /**
          * @deprecated Use {@link #BlockToolInteractEvent(UseOnContext, BlockState, ToolAction)} instead

@@ -50,7 +50,7 @@ public final class ToolModificationResult
      * @return An immutable tool modification result that signifies a fallback on default behavior
      */
     @NotNull
-    public static ToolModificationResult passEmpty()
+    public static ToolModificationResult passToFallbackBehavior()
     {
         return EMPTY_PASS_RESULT;
     }
