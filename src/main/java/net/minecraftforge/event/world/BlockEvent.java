@@ -434,7 +434,7 @@ public class BlockEvent extends Event
         @Nullable
         private final UseOnContext context;
         private BlockState state;
-        private ToolModificationResult toolModificationResult = ToolModificationResult.pass(null);
+        private ToolModificationResult toolModificationResult = ToolModificationResult.passEmpty();
 
         /**
          * @deprecated Use {@link #BlockToolInteractEvent(UseOnContext, BlockState, ToolAction)} instead
@@ -524,12 +524,12 @@ public class BlockEvent extends Event
         {
             Objects.requireNonNull(toolModificationResult, "toolModificationResult cannot be null");
             this.toolModificationResult = toolModificationResult;
-            this.state = toolModificationResult.toolModifiedState();
+            this.state = toolModificationResult.toolModifiedState().orElse(null);
         }
 
         /**
          * @return The tool modification result with a tool-modified block state and attached pass or failure state.
-         * Never null, this value will default to a {@link ToolModificationResult.Type#PASS} with a null tool-modified state.
+         * Never null, this value will default to a {@link ToolModificationResult.Type#PASS} with an empty tool-modified state.
          */
         @NotNull
         public ToolModificationResult getToolModificationResult()

@@ -7,19 +7,22 @@ package net.minecraftforge.common;
 
 import com.google.common.base.Objects;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Optional;
 
 /**
  * Holds a {@link #toolModifiedState() tool-modified state} and whether the modification {@link #passed()} or {@link #failed()}.
  * <p>
- * If the tool modification result has a fail state, the tool-modified state is always null.
+ * If the tool modification result has a fail state, the tool-modified state is always an empty optional.
  * <p>
- * If the tool modification result has a pass state, a null tool-modified state signifies a fallback on the default behavior.
+ * If the tool modification result has a pass state, an empty tool-modified state signifies a fallback on the default behavior.
  */
 public final class ToolModificationResult
 {
     private static final ToolModificationResult FAIL_RESULT = new ToolModificationResult(Type.FAIL, null);
-    private static final ToolModificationResult NULL_PASS_RESULT = new ToolModificationResult(Type.PASS, null);
+    private static final ToolModificationResult EMPTY_PASS_RESULT = new ToolModificationResult(Type.PASS, null);
     private final Type type;
     @Nullable
     private final BlockState toolModifiedState;
@@ -30,14 +33,38 @@ public final class ToolModificationResult
         this.toolModifiedState = toolModifiedState;
     }
 
+    /**
+     * Signifies that this action failed and should be canceled immediately.
+     *
+     * @return An immutable tool modification result that signifies a fail state
+     */
+    @NotNull
     public static ToolModificationResult fail()
     {
         return FAIL_RESULT;
     }
 
-    public static ToolModificationResult pass(@Nullable BlockState toolModifiedState)
+    /**
+     * Signifies that the default behavior should be invoked.
+     *
+     * @return An immutable tool modification result that signifies a fallback on default behavior
+     */
+    @NotNull
+    public static ToolModificationResult passEmpty()
     {
-        return toolModifiedState == null ? NULL_PASS_RESULT : new ToolModificationResult(Type.PASS, toolModifiedState);
+        return EMPTY_PASS_RESULT;
+    }
+
+    /**
+     * Signifies that action should be taken with the given tool-modified state.
+     *
+     * @param toolModifiedState The tool-modified state to complete this action with, never null
+     * @return An immutable tool modification result that signifies a pass with the given tool-modified state
+     */
+
+    public static ToolModificationResult pass(@NotNull BlockState toolModifiedState)
+    {
+        return new ToolModificationResult(Type.PASS, toolModifiedState);
     }
 
     public boolean passed()
@@ -56,16 +83,16 @@ public final class ToolModificationResult
     }
 
     /**
-     * If this tool modification result has a {@link #failed() fail state}, this return value is always null.
+     * If this tool modification result has a {@link #failed() fail state}, this return value is always an empty optional.
      * <p>
-     * If this tool modification result has a {@link #passed() pass state}, a null return value signifies a fallback on the default behavior.
+     * If this tool modification result has a {@link #passed() pass state}, an empty optional signifies a fallback on the default behavior.
      *
-     * @return the nullable tool-modified state
+     * @return an optional tool-modified state
      */
-    @Nullable
-    public BlockState toolModifiedState()
+    @NotNull
+    public Optional<BlockState> toolModifiedState()
     {
-        return toolModifiedState;
+        return Optional.ofNullable(toolModifiedState);
     }
 
     @Override

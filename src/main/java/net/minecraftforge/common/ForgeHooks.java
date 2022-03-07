@@ -222,16 +222,16 @@ public class ForgeHooks
         }
 
         // The tool modification result type is implicitly a PASS if we got here
-        BlockState toolModifiedState = toolModificationResult.toolModifiedState();
+        Optional<BlockState> toolModifiedState = toolModificationResult.toolModifiedState();
 
-        if (toolModifiedState == null)
+        if (toolModifiedState.isEmpty())
         {
-            // Null in a PASS ToolModificationResult means default behavior
+            // Empty tool-modified state in a PASS ToolModificationResult means default behavior
             return HoeItem.getTillables().get(state.getBlock());
         }
 
-        // We assume that the default behavior with a non-null tool-modified state is to set it with HoeItem#changeIntoState
-        return Pair.of(ctx -> true, HoeItem.changeIntoState(toolModifiedState));
+        // We assume that the default behavior with a non-empty tool-modified state is to set it with HoeItem#changeIntoState
+        return Pair.of(ctx -> true, HoeItem.changeIntoState(toolModifiedState.get()));
     }
 
     /**
