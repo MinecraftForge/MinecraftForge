@@ -676,6 +676,9 @@ public interface IForgeBlock
     @NotNull
     default ToolModificationResult getToolModificationResult(BlockState state, UseOnContext context, ToolAction toolAction)
     {
+        if (toolAction == ToolActions.HOE_TILL)
+            return ToolModificationResult.pass(null);
+
         BlockState toolModifiedState = getToolModifiedState(state, context.getLevel(), context.getClickedPos(),
                 context.getPlayer(), context.getItemInHand(), toolAction);
 
