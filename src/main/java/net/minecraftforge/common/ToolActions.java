@@ -93,7 +93,7 @@ public class ToolActions
     /**
      * Passed onto {@link IForgeBlock#getToolModificationResult} when a hoe wants to turn dirt into soil
      */
-    public static final ToolAction HOE_TILL = ToolAction.get("till");
+    public static final ToolAction HOE_TILL = ToolAction.get("hoe_till");
 
     /**
      * A tool action corresponding to the 'block' action of shields.
