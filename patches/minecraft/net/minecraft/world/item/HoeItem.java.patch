@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/item/HoeItem.java
 +++ b/net/minecraft/world/item/HoeItem.java
-@@ -30,6 +_,8 @@
+@@ -30,9 +_,11 @@
     }
  
     public InteractionResult m_6225_(UseOnContext p_41341_) {
@@ -8,15 +8,24 @@
 +      if (hook != 0) return hook > 0 ? InteractionResult.SUCCESS : InteractionResult.FAIL;
        Level level = p_41341_.m_43725_();
        BlockPos blockpos = p_41341_.m_8083_();
-       Pair<Predicate<UseOnContext>, Consumer<UseOnContext>> pair = f_41332_.get(level.m_8055_(blockpos).m_60734_());
-@@ -72,5 +_,10 @@
- 
+-      Pair<Predicate<UseOnContext>, Consumer<UseOnContext>> pair = f_41332_.get(level.m_8055_(blockpos).m_60734_());
++      Pair<Predicate<UseOnContext>, Consumer<UseOnContext>> pair = net.minecraftforge.common.ForgeHooks.getHoeTillablePair(p_41341_);
+       if (pair == null) {
+          return InteractionResult.PASS;
+       } else {
+@@ -73,4 +_,15 @@
     public static boolean m_150856_(UseOnContext p_150857_) {
        return p_150857_.m_43719_() != Direction.DOWN && p_150857_.m_43725_().m_8055_(p_150857_.m_8083_().m_7494_()).m_60795_();
-+   }
-+
-+   @Override
-+   public boolean canPerformAction(ItemStack stack, net.minecraftforge.common.ToolAction toolAction) {
-+      return net.minecraftforge.common.ToolActions.DEFAULT_HOE_ACTIONS.contains(toolAction);
     }
++
++    // FORGE START
++    @Override
++    public boolean canPerformAction(ItemStack stack, net.minecraftforge.common.ToolAction toolAction) {
++       return net.minecraftforge.common.ToolActions.DEFAULT_HOE_ACTIONS.contains(toolAction);
++    }
++
++    public static Map<Block, Pair<Predicate<UseOnContext>, Consumer<UseOnContext>>> getTillables() {
++       return f_41332_;
++    }
++    // FORGE END
  }

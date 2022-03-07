@@ -17,6 +17,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.FishingHook;
+import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.pathfinder.BlockPathTypes;
@@ -37,6 +38,10 @@ import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.ToolAction;
+import net.minecraftforge.common.ToolActions;
+import net.minecraftforge.common.ToolModificationResult;
+import net.minecraftforge.event.ForgeEventFactory;
+import org.jetbrains.annotations.NotNull;
 
 public interface IForgeBlockState
 {
@@ -603,9 +608,32 @@ public interface IForgeBlockState
     }
 
     /**
-     * Returns the state that this block should transform into when right clicked by a tool.
-     * For example: Used to determine if an axe can strip, a shovel can path, or a hoe can till.
-     * Return null if vanilla behavior should be disabled.
+     * Returns the tool modification result describing what should happen to this block when right-clicked by a tool.
+     * For example: Used to determine if {@link ToolActions#AXE_STRIP an axe can strip},
+     * {@link ToolActions#SHOVEL_FLATTEN a shovel can path}, or {@link ToolActions#HOE_TILL a hoe can till}.
+     * If {@link ToolModificationResult#passed()} is true, a null tool modified state will fall back on default behavior.
+     * A non-null tool modified state will update the block accordingly.
+     * If {@link ToolModificationResult#failed()} is true, the action will be cancelled regardless of the tool modified state.
+     *
+     * @param context The use on context that the action was performed in
+     * @param toolAction The action being performed by the tool
+     * @return The result holder containing the tool modified state attached to a pass or failure state
+     */
+    @NotNull
+    default ToolModificationResult getToolModificationResult(UseOnContext context, ToolAction toolAction)
+    {
+        ToolModificationResult toolModificationResult = ForgeEventFactory.onToolUse(context, self(), toolAction);
+        if (toolModificationResult.failed() || (toolModificationResult.passed() && toolModificationResult.toolModifiedState() != null))
+            return toolModificationResult;
+
+        return self().getBlock().getToolModificationResult(self(), context, toolAction);
+    }
+
+    /**
+     * Returns the state that this block should transform into when right-clicked by a tool.
+     * For example: Used to determine if {@link ToolActions#AXE_STRIP an axe can strip},
+     * {@link ToolActions#SHOVEL_FLATTEN a shovel can path}, or {@link ToolActions#HOE_TILL a hoe can till}.
+     * Returns {@code null} if the default behavior should be disabled.
      *
      * @param level The level
      * @param pos The block position in level
@@ -613,11 +641,14 @@ public interface IForgeBlockState
      * @param stack The stack being used by the player
      * @param toolAction The tool type to be considered when performing the action
      * @return The resulting state after the action has been performed
+     * @deprecated Use {@link #getToolModificationResult(net.minecraft.world.item.context.UseOnContext, ToolAction)} instead
      */
+    @SuppressWarnings("removal")
     @Nullable
+    @Deprecated(forRemoval = true, since = "1.18.2")
     default BlockState getToolModifiedState(Level level, BlockPos pos, Player player, ItemStack stack, ToolAction toolAction)
     {
-        BlockState eventState = net.minecraftforge.event.ForgeEventFactory.onToolUse(self(), level, pos, player, stack, toolAction);
+        BlockState eventState = ForgeEventFactory.onToolUse(self(), level, pos, player, stack, toolAction);
         return eventState != self() ? eventState : self().getBlock().getToolModifiedState(self(), level, pos, player, stack, toolAction);
     }
 

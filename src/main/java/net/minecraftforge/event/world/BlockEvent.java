@@ -7,7 +7,9 @@ package net.minecraftforge.event.world;
 
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Objects;
 
+import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.portal.PortalShape;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
@@ -22,11 +24,13 @@ import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.ToolAction;
+import net.minecraftforge.common.ToolModificationResult;
 import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
 
 import com.google.common.collect.ImmutableList;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -415,10 +419,8 @@ public class BlockEvent extends Event
     }
 
     /**
-     * Fired when when this block is right clicked by a tool to change its state.
+     * Fired when this block is right-clicked by a tool to change its state.
      * For example: Used to determine if an axe can strip or a shovel can path.
-     * For hoes, see {@code net.minecraft.world.item.HoeItem#TILLABLES} and
-     * {@link net.minecraftforge.event.entity.player.UseHoeEvent}.
      *
      * This event is {@link Cancelable}. If canceled, this will prevent the tool
      * from changing the block's state.
@@ -426,19 +428,46 @@ public class BlockEvent extends Event
     @Cancelable
     public static class BlockToolInteractEvent extends BlockEvent
     {
-
         private final Player player;
         private final ItemStack stack;
         private final ToolAction toolAction;
+        @Nullable
+        private final UseOnContext context;
         private BlockState state;
+        private ToolModificationResult toolModificationResult = ToolModificationResult.pass(null);
 
+        /**
+         * @deprecated Use {@link #BlockToolInteractEvent(UseOnContext, BlockState, ToolAction)} instead
+         */
+        @Deprecated(forRemoval = true, since = "1.18.2")
         public BlockToolInteractEvent(LevelAccessor world, BlockPos pos, BlockState originalState, Player player, ItemStack stack, ToolAction toolAction)
         {
             super(world, pos, originalState);
+            this.context = null;
             this.player = player;
             this.stack = stack;
             this.state = originalState;
             this.toolAction = toolAction;
+        }
+
+        public BlockToolInteractEvent(UseOnContext context, BlockState originalState, ToolAction toolAction)
+        {
+            super(context.getLevel(), context.getClickedPos(), originalState);
+            this.context = context;
+            this.player = context.getPlayer();
+            this.stack = context.getItemInHand();
+            this.state = originalState;
+            this.toolAction = toolAction;
+        }
+
+        /**
+         * @return The use on context for this tool interaction.
+         * Starting with 1.19, this should never be null.
+         */
+        @Nullable
+        public UseOnContext getContext()
+        {
+            return context;
         }
 
         /**Gets the player using the tool.*/
@@ -463,20 +492,49 @@ public class BlockEvent extends Event
          * Sets the transformed state after tool use.
          * If not set, will return the original state.
          * This will be bypassed if canceled returning null instead.
-         * */
-        public void setFinalState(BlockState finalState)
+         *
+         * @deprecated Use {@link #setToolModificationResult(ToolModificationResult)} instead
+         */
+        @Deprecated(forRemoval = true, since = "1.18.2")
+        public void setFinalState(@Nullable BlockState finalState)
         {
             this.state = finalState;
+            this.toolModificationResult = finalState == null ? ToolModificationResult.fail() : ToolModificationResult.pass(finalState);
         }
 
         /**
          * Gets the transformed state after tool use.
          * If setFinalState not called, will return the original state.
          * This will be bypassed if canceled returning null instead.
-         * */
+         *
+         * @deprecated Use {@link #getToolModificationResult()} instead
+         */
+        @Nullable
+        @Deprecated(forRemoval = true, since = "1.18.2")
         public BlockState getFinalState()
         {
             return state;
+        }
+
+        /**
+         * Sets the tool modification result with a tool-modified block state and attached pass or failure state.
+         * This will set {@link #getFinalState() the final state} as well.
+         */
+        public void setToolModificationResult(@NotNull ToolModificationResult toolModificationResult)
+        {
+            Objects.requireNonNull(toolModificationResult, "toolModificationResult cannot be null");
+            this.toolModificationResult = toolModificationResult;
+            this.state = toolModificationResult.toolModifiedState();
+        }
+
+        /**
+         * @return The tool modification result with a tool-modified block state and attached pass or failure state.
+         * Never null, this value will default to a {@link ToolModificationResult.Type#PASS} with a null tool-modified state.
+         */
+        @NotNull
+        public ToolModificationResult getToolModificationResult()
+        {
+            return toolModificationResult;
         }
     }
 }

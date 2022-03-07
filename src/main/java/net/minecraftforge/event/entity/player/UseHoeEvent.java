@@ -6,6 +6,7 @@
 package net.minecraftforge.event.entity.player;
 
 import net.minecraft.world.item.context.UseOnContext;
+import net.minecraftforge.common.ToolActions;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event.HasResult;
 
@@ -19,15 +20,15 @@ import javax.annotation.Nonnull;
  * and damage the hoe.
  *
  * setResult(ALLOW) is the same as the old setHandled();
- * 
- * TODO: 1.17 Remove
+ *
+ * @deprecated Use {@link net.minecraftforge.event.world.BlockEvent.BlockToolInteractEvent} instead and check for {@link ToolActions#HOE_TILL}
  */
 @Cancelable
 @HasResult
-@Deprecated
+@Deprecated(forRemoval = true, since = "1.18.2")
 public class UseHoeEvent extends PlayerEvent
 {
-    private final UseOnContext context;;
+    private final UseOnContext context;
 
     public UseHoeEvent(UseOnContext context)
     {

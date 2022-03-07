@@ -16,11 +16,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
 import java.util.Map.Entry;
-import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -209,6 +209,29 @@ public class ForgeHooks
             return ForgeEventFactory.doPlayerHarvestCheck(player, state, true);
 
         return player.hasCorrectToolForDrops(state);
+    }
+
+    public static Pair<Predicate<UseOnContext>, Consumer<UseOnContext>> getHoeTillablePair(UseOnContext context)
+    {
+        BlockState state = context.getLevel().getBlockState(context.getClickedPos());
+        ToolModificationResult toolModificationResult = state.getToolModificationResult(context, ToolActions.HOE_TILL);
+        if (toolModificationResult.failed())
+        {
+            // Immediately cancel the action
+            return null;
+        }
+
+        // The tool modification result type is implicitly a PASS if we got here
+        BlockState toolModifiedState = toolModificationResult.toolModifiedState();
+
+        if (toolModifiedState == null)
+        {
+            // Null in a PASS ToolModificationResult means default behavior
+            return HoeItem.getTillables().get(state.getBlock());
+        }
+
+        // We assume that the default behavior with a non-null tool-modified state is to set it with HoeItem#changeIntoState
+        return Pair.of(ctx -> true, HoeItem.changeIntoState(toolModifiedState));
     }
 
     /**

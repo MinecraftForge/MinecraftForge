@@ -83,6 +83,7 @@ import net.minecraftforge.client.event.RenderBlockOverlayEvent;
 import net.minecraftforge.client.event.RenderBlockOverlayEvent.OverlayType;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.ToolAction;
+import net.minecraftforge.common.ToolModificationResult;
 import net.minecraftforge.common.capabilities.CapabilityDispatcher;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.BlockSnapshot;
@@ -345,8 +346,12 @@ public class ForgeEventFactory
         return MinecraftForge.EVENT_BUS.post(event) ? "" : event.getMessage();
     }
 
-    //TODO: 1.17 Remove
-    @Deprecated
+    /**
+     * @deprecated Use {@link net.minecraftforge.common.ForgeHooks#getHoeTillablePair(UseOnContext)}
+     * or {@link net.minecraftforge.common.extensions.IForgeBlockState#getToolModificationResult(UseOnContext, ToolAction)} instead
+     */
+    @SuppressWarnings("removal")
+    @Deprecated(forRemoval = true, since = "1.18.2")
     public static int onHoeUse(UseOnContext context)
     {
         UseHoeEvent event = new UseHoeEvent(context);
@@ -359,11 +364,22 @@ public class ForgeEventFactory
         return 0;
     }
 
+    /**
+     * @deprecated Use {@link #onToolUse(UseOnContext, BlockState, ToolAction)} instead
+     */
+    @SuppressWarnings("removal")
     @Nullable
+    @Deprecated(forRemoval = true, since = "1.18.2")
     public static BlockState onToolUse(BlockState originalState, Level level, BlockPos pos, Player player, ItemStack stack, ToolAction toolAction)
     {
         BlockToolInteractEvent event = new BlockToolInteractEvent(level, pos, originalState, player, stack, toolAction);
         return MinecraftForge.EVENT_BUS.post(event) ? null : event.getFinalState();
+    }
+
+    public static ToolModificationResult onToolUse(UseOnContext context, BlockState originalState, ToolAction toolAction)
+    {
+        BlockToolInteractEvent event = new BlockToolInteractEvent(context, originalState, toolAction);
+        return MinecraftForge.EVENT_BUS.post(event) ? ToolModificationResult.fail() : event.getToolModificationResult();
     }
 
     public static int onApplyBonemeal(@Nonnull Player player, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull BlockState state, @Nonnull ItemStack stack)

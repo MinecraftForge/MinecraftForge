@@ -6,7 +6,6 @@
 package net.minecraftforge.common.extensions;
 
 import java.util.Optional;
-import java.util.Set;
 import javax.annotation.Nullable;
 
 import net.minecraft.client.Camera;
@@ -22,12 +21,12 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.FishingHook;
 import net.minecraft.world.entity.projectile.WitherSkull;
 import net.minecraft.world.item.*;
+import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.pathfinder.BlockPathTypes;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
@@ -44,6 +43,8 @@ import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.ToolAction;
 import net.minecraftforge.common.ToolActions;
+import net.minecraftforge.common.ToolModificationResult;
+import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("deprecation")
 public interface IForgeBlock
@@ -660,9 +661,32 @@ public interface IForgeBlock
     }
 
     /**
-     * Returns the state that this block should transform into when right clicked by a tool.
-     * For example: Used to determine if an axe can strip, a shovel can path, or a hoe can till.
-     * Return null if vanilla behavior should be disabled.
+     * Returns the tool modification result describing what should happen to this block when right-clicked by a tool.
+     * For example: Used to determine if {@link ToolActions#AXE_STRIP an axe can strip},
+     * {@link ToolActions#SHOVEL_FLATTEN a shovel can path}, or {@link ToolActions#HOE_TILL a hoe can till}.
+     * If {@link ToolModificationResult#passed()} is true, a null tool modified state will fall back on default behavior.
+     * A non-null tool modified state will update the block accordingly.
+     * If {@link ToolModificationResult#failed()} is true, the action will be cancelled regardless of the tool modified state.
+     *
+     * @param state The current state
+     * @param context The use on context that the action was performed in
+     * @param toolAction The action being performed by the tool
+     * @return The result holder containing the tool modified state attached to a pass or failure state
+     */
+    @NotNull
+    default ToolModificationResult getToolModificationResult(BlockState state, UseOnContext context, ToolAction toolAction)
+    {
+        BlockState toolModifiedState = getToolModifiedState(state, context.getLevel(), context.getClickedPos(),
+                context.getPlayer(), context.getItemInHand(), toolAction);
+
+        return toolModifiedState == null ? ToolModificationResult.fail() : ToolModificationResult.pass(toolModifiedState);
+    }
+
+    /**
+     * Returns the state that this block should transform into when right-clicked by a tool.
+     * For example: Used to determine if {@link ToolActions#AXE_STRIP an axe can strip},
+     * {@link ToolActions#SHOVEL_FLATTEN a shovel can path}, or {@link ToolActions#HOE_TILL a hoe can till}.
+     * Return {@code null} if the default behavior should be disabled.
      *
      * @param state The current state
      * @param level The level
@@ -671,8 +695,11 @@ public interface IForgeBlock
      * @param stack The stack being used by the player
      * @param toolAction The action being performed by the tool
      * @return The resulting state after the action has been performed
+     * @deprecated Override and use {@link #getToolModificationResult(BlockState, UseOnContext, ToolAction)} instead
      */
     @Nullable
+    // TODO: Move this default implementation to getToolModificationResult in 1.19. Has to stay here to preserve behavior of overrides on this method.
+    @Deprecated(forRemoval = true, since = "1.18.2")
     default BlockState getToolModifiedState(BlockState state, Level level, BlockPos pos, Player player, ItemStack stack, ToolAction toolAction)
     {
         if (!stack.canPerformAction(toolAction)) return null;
@@ -681,7 +708,6 @@ public interface IForgeBlock
         else if(ToolActions.AXE_WAX_OFF.equals(toolAction)) return Optional.ofNullable(HoneycombItem.WAX_OFF_BY_BLOCK.get().get(state.getBlock())).map((p_150694_) -> {
             return p_150694_.withPropertiesOf(state);
         }).orElse(null);
-        //else if(ToolActions.HOE_TILL.equals(toolAction)) return HoeItem.getHoeTillingState(state); //TODO HoeItem bork
         else if (ToolActions.SHOVEL_FLATTEN.equals(toolAction)) return ShovelItem.getShovelPathingState(state);
         return null;
     }
