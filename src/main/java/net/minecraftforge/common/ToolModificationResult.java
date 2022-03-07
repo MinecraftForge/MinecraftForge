@@ -5,10 +5,9 @@
 
 package net.minecraftforge.common;
 
+import com.google.common.base.Objects;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Objects;
 
 /**
  * Holds a {@link #toolModifiedState() tool-modified state} and whether the modification {@link #passed()} or {@link #failed()}.
@@ -27,9 +26,6 @@ public final class ToolModificationResult
 
     private ToolModificationResult(Type type, @Nullable BlockState toolModifiedState)
     {
-        if (type == Type.PASS)
-            Objects.requireNonNull(toolModifiedState, "toolModifiedState must not be null for PASS");
-
         this.type = type;
         this.toolModifiedState = toolModifiedState;
     }
@@ -79,6 +75,24 @@ public final class ToolModificationResult
                 "type=" + type +
                 ", toolModifiedState=" + toolModifiedState +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o)
+    {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+
+        ToolModificationResult that = (ToolModificationResult) o;
+        return type == that.type && Objects.equal(toolModifiedState, that.toolModifiedState);
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hashCode(type, toolModifiedState);
     }
 
     public enum Type
