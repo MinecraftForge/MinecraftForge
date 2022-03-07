@@ -12,7 +12,6 @@ import net.minecraft.client.renderer.GameRenderer;
 import net.minecraftforge.eventbus.api.Cancelable;
 
 import com.mojang.blaze3d.shaders.FogShape;
-import com.mojang.blaze3d.systems.RenderSystem;
 
 /**
  * Event that hooks into GameRenderer, allowing any feature to customize visual attributes
@@ -157,6 +156,16 @@ public abstract class EntityViewRenderEvent extends net.minecraftforge.eventbus.
         public void setFogShape(FogShape shape)
         {
             fogShape = shape;
+        }
+
+        public void scaleFarPlaneDistance(float factor)
+        {
+            farPlaneDistance *= factor;
+        }
+
+        public void scaleNearPlaneDistance(float factor)
+        {
+            nearPlaneDistance *= factor;
         }
     }
 
