@@ -36,7 +36,8 @@ public class RegisterFixesEvent extends Event implements IModBusEvent
     public RegisterFixesEvent(
       final Schema schema,
       final ModContainer container
-    ) {
+    )
+    {
         this.schema = schema;
         this.container = container;
         this.fixerFactories = Lists.newArrayList();
@@ -90,7 +91,8 @@ public class RegisterFixesEvent extends Event implements IModBusEvent
      * @return The event itself, with the fixer factories added.
      */
     @SafeVarargs
-    public final RegisterFixesEvent addFixer(final Function<Schema, DataFix> fixerFactory, final Function<Schema, DataFix>... others) {
+    public final RegisterFixesEvent addFixer(final Function<Schema, DataFix> fixerFactory, final Function<Schema, DataFix>... others)
+    {
         this.fixerFactories.add(fixerFactory);
         this.fixerFactories.addAll(List.of(others));
 

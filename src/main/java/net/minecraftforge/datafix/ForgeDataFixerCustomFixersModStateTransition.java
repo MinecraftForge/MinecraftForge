@@ -23,6 +23,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
 import java.util.function.Function;
 import java.util.stream.Stream;
@@ -46,7 +47,8 @@ public class ForgeDataFixerCustomFixersModStateTransition
      *
      * @return The mod state transition used to add DFU fixers.
      */
-    public static IModStateTransition get() {
+    public static IModStateTransition get()
+    {
         return new ForgeSerialModStateTransition<>(
           ForgeDataFixerCustomFixersModStateTransition::generateFixersEvents,
           ForgeDataFixerCustomFixersModStateTransition::preDispatchFixerEvents,
@@ -65,7 +67,8 @@ public class ForgeDataFixerCustomFixersModStateTransition
     private static List<ForgeSchema> getAllSchemas()
     {
         //Check if we are running in a compatible environment.
-        if (DataFixers.getDataFixer() instanceof ForgeDataFixerDelegateHandler forgeDataFixerDelegateHandler) {
+        if (DataFixers.getDataFixer() instanceof ForgeDataFixerDelegateHandler forgeDataFixerDelegateHandler)
+        {
             //Forge DFU wrapper is active, grab its configured schemas.
             return forgeDataFixerDelegateHandler.getAllSchemas();
         }
@@ -107,16 +110,14 @@ public class ForgeDataFixerCustomFixersModStateTransition
       final Executor executor, final IModStateTransition.EventGenerator<RegisterFixesEvent> eventGenerator
     )
     {
-        if (!(eventGenerator instanceof InternalEventGenerator internalEventGenerator)) {
+        if (!(eventGenerator instanceof InternalEventGenerator internalEventGenerator))
+        {
             return CompletableFuture.completedFuture(Collections.emptyList());
         }
 
         return CompletableFuture.runAsync(() -> {
             //Notify of the update that is about to start.
-            LOGGER.debug("Resetting and collecting custom fixes in DFU for: {}", internalEventGenerator.schema.getVersionKey());
-
-            //And reset the stored fixes.
-            internalEventGenerator.schema.resetCustomFixes();
+            LOGGER.debug("Collecting custom fixes in DFU for: {}", internalEventGenerator.schema.getVersionKey());
         }, executor).thenApply(v -> Collections.emptyList());
     }
 
@@ -130,7 +131,8 @@ public class ForgeDataFixerCustomFixersModStateTransition
      */
     private static CompletableFuture<List<Throwable>> postDispatchFixerEvents(
       final Executor executor, final IModStateTransition.EventGenerator<RegisterFixesEvent> eventGenerator
-    ) {
+    )
+    {
         if (!(eventGenerator instanceof InternalEventGenerator internalEventGenerator)) {
             return CompletableFuture.completedFuture(Collections.emptyList());
         }
@@ -161,7 +163,8 @@ public class ForgeDataFixerCustomFixersModStateTransition
      */
     private static CompletableFuture<List<Throwable>> rebuildRulesAfterSchemaEvents(
       final Executor executor, final CompletableFuture<List<Throwable>> listCompletableFuture
-    ) {
+    )
+    {
         return listCompletableFuture.whenCompleteAsync((errors, except) -> {
             //Check for errors.
             if (except != null)
@@ -183,21 +186,27 @@ public class ForgeDataFixerCustomFixersModStateTransition
         }, executor);
     }
 
-    private static class InternalEventGenerator implements IModStateTransition.EventGenerator<RegisterFixesEvent> {
+    private static class InternalEventGenerator implements IModStateTransition.EventGenerator<RegisterFixesEvent>
+    {
 
         private static final Logger LOGGER = LogUtils.getLogger();
 
         private final ForgeSchema                           schema;
-        private final Map<ModContainer, RegisterFixesEvent> eventPerContainerMap = Maps.newConcurrentMap();
+        private final Map<ModContainer, RegisterFixesEvent> eventPerContainerMap = new ConcurrentHashMap<>();
 
-        private InternalEventGenerator(final ForgeSchema schema) {this.schema = schema;}
+        private InternalEventGenerator(final ForgeSchema schema)
+        {
+            this.schema = schema;
+        }
 
         @Override
-        public RegisterFixesEvent apply(final ModContainer modContainer) {
+        public RegisterFixesEvent apply(final ModContainer modContainer)
+        {
             return eventPerContainerMap.computeIfAbsent(modContainer, this::createEvent);
         }
 
-        private RegisterFixesEvent createEvent(final ModContainer modContainer) {
+        private RegisterFixesEvent createEvent(final ModContainer modContainer)
+        {
             LOGGER.debug("Creating register fixes event for mod: {} and schema: {}", modContainer.getModId(), schema.getVersionKey());
 
             return new RegisterFixesEvent(schema, modContainer);

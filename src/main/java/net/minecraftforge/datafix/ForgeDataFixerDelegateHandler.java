@@ -12,6 +12,7 @@ import com.mojang.datafixers.DSL;
 import com.mojang.datafixers.TypeRewriteRule;
 import com.mojang.datafixers.schemas.Schema;
 import com.mojang.datafixers.types.Type;
+import com.mojang.logging.LogUtils;
 import com.mojang.serialization.Dynamic;
 import it.unimi.dsi.fastutil.ints.Int2ObjectAVLTreeMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectSortedMap;
@@ -20,8 +21,7 @@ import it.unimi.dsi.fastutil.ints.IntAVLTreeSet;
 import it.unimi.dsi.fastutil.ints.IntSortedSet;
 import it.unimi.dsi.fastutil.ints.IntSortedSets;
 import it.unimi.dsi.fastutil.ints.IntBidirectionalIterator;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -34,7 +34,8 @@ import java.util.concurrent.Executor;
  */
 class ForgeDataFixerDelegateHandler extends DataFixerUpper
 {
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final boolean DISABLE_OFF_THREAD_RULE_PRE_COMPUTE = Boolean.getBoolean("forge.datafixer.disablePreCompute");
+    private static final Logger LOGGER = LogUtils.getLogger();
 
     private final int                              dataVersion;
     private final List<ForgeSchema>                allSchemas;
@@ -95,7 +96,7 @@ class ForgeDataFixerDelegateHandler extends DataFixerUpper
             });
           });
 
-        //Reset our rules, normal vanilla rules (ours too) keep a cache of their schemas
+        //Reset our rules, all rules keep their schemas cached.
         //We can not use that and need to forcefully recompute them.
         this.vanillaFixers.forEach(ForgeDataFixDelegate::resetRule);
 
@@ -112,14 +113,15 @@ class ForgeDataFixerDelegateHandler extends DataFixerUpper
         //to fill up the cache.
         //To enable it start the JVM with the system property set to true, -Dforge.datafixer.disablePreCompute=true needs to be added as
         //a JVM Launch argument.
-        if (Boolean.getBoolean("forge.datafixer.disablePreCompute"))
+        if (DISABLE_OFF_THREAD_RULE_PRE_COMPUTE)
         {
             LOGGER.warn("The pre-compute of the data fixer rules is disabled, this is not recommended for normal use, but can be useful for debugging or in low-memory situations.");
             return;
         }
 
         //We only rebuild once we are told to do so.
-        if (!triggerOffThreadCompute) {
+        if (!triggerOffThreadCompute)
+        {
             return;
         }
 
@@ -151,6 +153,7 @@ class ForgeDataFixerDelegateHandler extends DataFixerUpper
                     LOGGER.error("Unable to build datafixers", e);
 
                     //Just kill it, if this fails we have a problem anyway!
+                    //This is literally what vanilla does hence the 1 to 1 copy.
                     Runtime.getRuntime().exit(1);
                     return null;
                 });

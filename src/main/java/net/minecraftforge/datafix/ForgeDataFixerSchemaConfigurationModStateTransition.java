@@ -7,25 +7,19 @@ package net.minecraftforge.datafix;
 
 import com.google.common.collect.Lists;
 import com.mojang.datafixers.schemas.Schema;
+import com.mojang.logging.LogUtils;
 import net.minecraft.Util;
 import net.minecraft.util.datafix.DataFixers;
 import net.minecraftforge.common.ForgeSerialModStateTransition;
 import net.minecraftforge.event.datafix.ConfigureDataFixSchemaEvent;
-import net.minecraftforge.event.datafix.RegisterFixesEvent;
-import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.IModStateTransition;
-import net.minecraftforge.fml.ThreadSelector;
-import net.minecraftforge.fml.event.IModBusEvent;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
 
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
-import java.util.function.BiFunction;
-import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 /**
@@ -40,14 +34,15 @@ import java.util.stream.Stream;
  */
 public class ForgeDataFixerSchemaConfigurationModStateTransition
 {
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger LOGGER = LogUtils.getLogger();
 
     /**
      * Builds a new mod state transition which can be used to fire the appropriate schema configuration events on the mod bus.
      *
      * @return The mod state transition used to configure DFU schemas.
      */
-    public static IModStateTransition get() {
+    public static IModStateTransition get()
+    {
         return new ForgeSerialModStateTransition<>(
           ForgeDataFixerSchemaConfigurationModStateTransition::generateConfigureSchemaEvents,
           ForgeDataFixerSchemaConfigurationModStateTransition::preDispatchSchemaEvents,
@@ -179,7 +174,7 @@ public class ForgeDataFixerSchemaConfigurationModStateTransition
             if (except != null)
             {
                 //Ouch that failed, log it and escape.
-                LOGGER.fatal("Detected errors during dfu setup. DFU might not be available.", except);
+                LOGGER.error("Detected errors during dfu setup. DFU might not be available.", except);
             }
             else
             {

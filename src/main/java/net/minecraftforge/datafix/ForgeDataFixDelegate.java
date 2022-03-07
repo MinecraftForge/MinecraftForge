@@ -21,10 +21,7 @@ import java.lang.reflect.Method;
 class ForgeDataFixDelegate extends DataFix
 {
 
-    private static final Method makeRuleMethod = ObfuscationReflectionHelper.findMethod(
-      DataFix.class,
-      "makeRule"
-    );
+    private static final Method makeRuleMethod = ObfuscationReflectionHelper.findMethod(DataFix.class,"makeRule");
 
     private final DataFix wrapped;
 
@@ -47,11 +44,9 @@ class ForgeDataFixDelegate extends DataFix
         //Check if OUR cached rule is available.
         if (this.wrappedRule == null)
         {
-            //Not available get a new one.
             this.wrappedRule = rebuildRuleReflectively();
         }
 
-        //Cached version available, return it.
         return wrappedRule;
     }
 

@@ -5,19 +5,18 @@
 
 package net.minecraftforge.datafix;
 
-import com.google.common.collect.Lists;
 import com.mojang.datafixers.DataFixUtils;
 import com.mojang.datafixers.DataFixer;
 import com.mojang.datafixers.DataFixerBuilder;
 import com.mojang.datafixers.DataFixerUpper;
 import com.mojang.datafixers.DataFix;
 import com.mojang.datafixers.schemas.Schema;
+import com.mojang.logging.LogUtils;
 import it.unimi.dsi.fastutil.ints.Int2ObjectAVLTreeMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectSortedMap;
 import it.unimi.dsi.fastutil.ints.IntAVLTreeSet;
 import it.unimi.dsi.fastutil.ints.IntSortedSet;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,12 +32,12 @@ import java.util.function.BiFunction;
  */
 public class ForgeDataFixerBuilder extends DataFixerBuilder
 {
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger LOGGER = LogUtils.getLogger();
 
     private final int                              dataVersion;
     private final List<ForgeSchema>                allSchemas    = new ArrayList<>();
     private final Int2ObjectSortedMap<ForgeSchema> schemas       = new Int2ObjectAVLTreeMap<>();
-    private final List<ForgeDataFixDelegate>       globalList    = Lists.newArrayList();
+    private final List<ForgeDataFixDelegate>       globalList    = new ArrayList<>();
     private final IntSortedSet                     fixerVersions = new IntAVLTreeSet();
 
     public ForgeDataFixerBuilder(final int dataVersion)

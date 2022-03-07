@@ -19,12 +19,8 @@ import com.mojang.datafixers.types.families.TypeFamily;
 import com.mojang.datafixers.types.templates.RecursivePoint;
 import com.mojang.datafixers.types.templates.TypeTemplate;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.Objects;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -41,8 +37,8 @@ class ForgeSchema extends Schema
     private Map<String, Supplier<TypeTemplate>> TYPE_TEMPLATES;
     private Map<String, Integer>                RECURSIVE_TYPES;
 
-    private final Map<String, Supplier<TypeTemplate>> MODDED_ENTITY_TYPES = Maps.newConcurrentMap();
-    private final Map<String, Supplier<TypeTemplate>> MODDED_BLOCK_ENTITY_TYPES = Maps.newConcurrentMap();
+    private final Map<String, Supplier<TypeTemplate>> MODDED_ENTITY_TYPES = new ConcurrentHashMap<>();
+    private final Map<String, Supplier<TypeTemplate>> MODDED_BLOCK_ENTITY_TYPES = new ConcurrentHashMap<>();
 
     private final Set<Function<Schema, DataFix>> fixerFactories = Sets.newConcurrentHashSet();
 
@@ -66,7 +62,7 @@ class ForgeSchema extends Schema
         this.wrapped = wrapped;
 
         final int subVersion = DataFixUtils.getSubVersion(versionKey);
-        name = "V" + DataFixUtils.getVersion(versionKey) + (subVersion == 0 ? "" : "." + subVersion);
+        this.name = "V" + DataFixUtils.getVersion(versionKey) + (subVersion == 0 ? "" : "." + subVersion);
 
         //Now with the vanilla data in the schema, lets build our first version again.
         //Yes this executes the type resolve multiple times per schema (but it's not a big deal)
@@ -166,6 +162,8 @@ class ForgeSchema extends Schema
         });
         if (type1 instanceof RecursivePoint.RecursivePointType<?>)
         {
+            //The -1 is a dummy value, there can never be a type with the index of -1.
+            //The recursive point type will look for a choice type with its own index.
             return type1.findCheckedType(-1).orElseThrow(() -> new IllegalStateException("Could not find choice type in the recursive type"));
         }
         return type1;
@@ -243,7 +241,7 @@ class ForgeSchema extends Schema
             return parent.registerEntities(schema);
         }
 
-        return Maps.newHashMap();
+        return new HashMap<>();
     }
 
     @Override
@@ -264,7 +262,7 @@ class ForgeSchema extends Schema
             return parent.registerBlockEntities(schema);
         }
 
-        return Maps.newHashMap();
+        return new HashMap<>();
     }
 
     /**
@@ -351,11 +349,6 @@ class ForgeSchema extends Schema
 
         //Build the type map again.
         TYPES = buildTypes();
-    }
-
-    public void resetCustomFixes()
-    {
-
     }
 
     public void registerCustomFixes(final List<Function<Schema, DataFix>> fixerFactories)

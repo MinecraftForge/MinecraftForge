@@ -25,8 +25,10 @@ public record ForgeSerialModStateTransition<T extends Event & IModBusEvent>(
   BiFunction<Executor, ? extends EventGenerator<T>, CompletableFuture<List<Throwable>>> preDispatchHook,
   BiFunction<Executor, ? extends EventGenerator<T>, CompletableFuture<List<Throwable>>> postDispatchHook,
   BiFunction<Executor, CompletableFuture<List<Throwable>>, CompletableFuture<List<Throwable>>> finalActivityGenerator
-  ) implements IModStateTransition {
-    public static <T extends Event & IModBusEvent> ForgeSerialModStateTransition<T> of(Supplier<Stream<EventGenerator<?>>> eventStream) {
+  ) implements IModStateTransition
+{
+    public static <T extends Event & IModBusEvent> ForgeSerialModStateTransition<T> of(Supplier<Stream<EventGenerator<?>>> eventStream)
+    {
         return new ForgeSerialModStateTransition<T>(eventStream,
           (t, f) -> CompletableFuture.completedFuture(Collections.emptyList()),
           (t, f) -> CompletableFuture.completedFuture(Collections.emptyList()),
@@ -35,18 +37,21 @@ public record ForgeSerialModStateTransition<T extends Event & IModBusEvent>(
     }
 
     @Override
-    public Supplier<Stream<EventGenerator<?>>> eventFunctionStream() {
+    public Supplier<Stream<EventGenerator<?>>> eventFunctionStream()
+    {
         return eventStream;
     }
 
     @Override
-    public ThreadSelector threadSelector() {
+    public ThreadSelector threadSelector()
+    {
         return ThreadSelector.SYNC;
     }
 
     // These never progress the ModLoadingStage..
     @Override
-    public BiFunction<ModLoadingStage, Throwable, ModLoadingStage> nextModLoadingStage() {
+    public BiFunction<ModLoadingStage, Throwable, ModLoadingStage> nextModLoadingStage()
+    {
         return ModLoadingStage::currentState;
     }
 }

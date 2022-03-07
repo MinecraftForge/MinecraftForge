@@ -22,15 +22,15 @@ import java.util.function.Supplier;
 /**
  * Event fired in parallel on the mod event bus to allow for the modification
  * of a DFU Schemas type signature.
- *
+ * <p>
  * If used to register a new entity or block entity to a particular version,
  * then this also will need to be registered to all newer versions to persist properly!
  * As opposed to vanilla which automatically transfers the entities and block entities from older
  * schemas to newer ones, this event does not do that and the modder is on their own to implement this properly.
- *
+ * <p>
  * We suggest instead of checking for version equality to check for a greater or equal version, and to unregister (or override with a newer version)
  * when the type changes again in a newer version.
- *
+ * <p>
  * If a DFU touches a vanilla type (like a list of block entities in a chunk), then all the possible variations of that type need to be known,
  * in other words, when mojang changes the type signature of a vanilla type, all the mods that touch that type need also to register their types in that schema to persist.
  * An example of this is when Mojang moved the block entity list in the chunk during the upgrade from 1.17 to 1.18, any block entity type which is
