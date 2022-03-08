@@ -16,6 +16,7 @@ import net.minecraft.world.level.Level;
 import net.minecraftforge.fluids.FluidAttributes;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -93,7 +94,7 @@ public class BucketPickupHandlerWrapper implements IFluidHandler
                         {
                             //Be loud if something went wrong
                             LOGGER.error("Fluid removed without successfully being picked up. Fluid {} at {} in {} matched requested type, but after performing pickup was {}.",
-                                  fluidState.getType().getRegistryName(), blockPos, world.dimension().location(), bucket.getFluid().getRegistryName());
+                                    ForgeRegistries.FLUIDS.getKey(fluidState.getType()), blockPos, world.dimension().location(), ForgeRegistries.FLUIDS.getKey(bucket.getFluid()));
                             return FluidStack.EMPTY;
                         }
                         return extracted;

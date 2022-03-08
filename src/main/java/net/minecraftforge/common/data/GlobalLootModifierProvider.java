@@ -17,6 +17,7 @@ import net.minecraft.util.Tuple;
 import net.minecraftforge.common.loot.GlobalLootModifierSerializer;
 import net.minecraftforge.common.loot.IGlobalLootModifier;
 import net.minecraftforge.common.loot.LootModifier;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -73,7 +74,7 @@ public abstract class GlobalLootModifierProvider implements DataProvider
             Path modifierPath = gen.getOutputFolder().resolve(modPath + name + ".json");
 
             JsonObject json = pair.getB();
-            json.addProperty("type", pair.getA().getRegistryName().toString());
+            json.addProperty("type", ForgeRegistries.LOOT_MODIFIER_SERIALIZERS.getKey(pair.getA()).toString());
 
             DataProvider.save(GSON, cache, json, modifierPath);
         }));

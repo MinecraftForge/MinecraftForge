@@ -77,7 +77,7 @@ class EntityCommand
 
             Map<ResourceLocation, MutablePair<Integer, Map<ChunkPos, Integer>>> list = Maps.newHashMap();
             level.getEntities().getAll().forEach(e -> {
-                MutablePair<Integer, Map<ChunkPos, Integer>> info = list.computeIfAbsent(e.getType().getRegistryName(), k -> MutablePair.of(0, Maps.newHashMap()));
+                MutablePair<Integer, Map<ChunkPos, Integer>> info = list.computeIfAbsent(ForgeRegistries.ENTITIES.getKey(e.getType()), k -> MutablePair.of(0, Maps.newHashMap()));
                 ChunkPos chunk = new ChunkPos(e.blockPosition());
                 info.left++;
                 info.right.put(chunk, info.right.getOrDefault(chunk, 0) + 1);

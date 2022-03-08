@@ -5,6 +5,7 @@
 
 package net.minecraftforge.debug.block;
 
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Material;
@@ -17,6 +18,7 @@ import net.minecraft.world.level.LevelReader;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
+import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.ObjectHolder;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
@@ -33,20 +35,20 @@ public class SlipperinessTest
     @SubscribeEvent
     public static void registerBlocks(RegistryEvent.Register<Block> e)
     {
-        e.getRegistry().register((new Block(Block.Properties.of(Material.ICE_SOLID))
+        e.getRegistry().register(new ResourceLocation(MOD_ID, BLOCK_ID), new Block(Block.Properties.of(Material.ICE_SOLID))
         {
             @Override
             public float getFriction(BlockState state, LevelReader level, BlockPos pos, Entity entity)
             {
                 return entity instanceof Boat ? 2 : super.getFriction(state, level, pos, entity);
             }
-        }).setRegistryName(MOD_ID, BLOCK_ID));
+        });
     }
 
     @SubscribeEvent
     public static void registerItems(RegistryEvent.Register<Item> e)
     {
-        e.getRegistry().register(new BlockItem(BB_BLOCK, new Item.Properties()).setRegistryName(BB_BLOCK.getRegistryName()));
+        e.getRegistry().register(ForgeRegistries.BLOCKS.getKey(BB_BLOCK), new BlockItem(BB_BLOCK, new Item.Properties()));
     }
 
     /*

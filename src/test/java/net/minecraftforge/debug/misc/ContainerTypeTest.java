@@ -6,6 +6,7 @@
 package net.minecraftforge.debug.misc;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -87,7 +88,7 @@ public class ContainerTypeTest
 
     private void registerContainers(final RegistryEvent.Register<MenuType<?>> event)
     {
-        event.getRegistry().register(IForgeMenuType.create(TestContainer::new).setRegistryName("container"));
+        event.getRegistry().register(new ResourceLocation("containertypetest", "container"), IForgeMenuType.create(TestContainer::new));
     }
     
     private void setup(FMLClientSetupEvent event)

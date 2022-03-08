@@ -244,7 +244,7 @@ public final class DynamicBucketModel implements IModelGeometry<DynamicBucketMod
             return FluidUtil.getFluidContained(stack)
                     .map(fluidStack -> {
                         Fluid fluid = fluidStack.getFluid();
-                        String name = fluid.getRegistryName().toString();
+                        String name = ForgeRegistries.FLUIDS.getKey(fluid).toString();
 
                         if (!cache.containsKey(name))
                         {

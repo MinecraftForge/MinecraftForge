@@ -92,15 +92,6 @@
     }
  
     public boolean m_49967_() {
-@@ -474,7 +_,7 @@
-    }
- 
-    public String toString() {
--      return "Block{" + Registry.f_122824_.m_7981_(this) + "}";
-+      return "Block{" + getRegistryName() + "}";
-    }
- 
-    public void m_5871_(ItemStack p_49816_, @Nullable BlockGetter p_49817_, List<Component> p_49818_, TooltipFlag p_49819_) {
 @@ -487,6 +_,76 @@
     protected ImmutableMap<BlockState, VoxelShape> m_152458_(Function<BlockState, VoxelShape> p_152459_) {
        return this.f_49792_.m_61056_().stream().collect(ImmutableMap.toImmutableMap(Function.identity(), p_152459_));

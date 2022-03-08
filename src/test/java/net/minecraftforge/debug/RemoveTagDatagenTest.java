@@ -18,6 +18,7 @@ import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.forge.event.lifecycle.GatherDataEvent;
+import net.minecraftforge.registries.ForgeRegistries;
 
 @Mod(RemoveTagDatagenTest.MODID)
 public class RemoveTagDatagenTest
@@ -43,8 +44,8 @@ public class RemoveTagDatagenTest
             protected void addTags()
             {
                 this.tag(TEST_TAG)
-                    .remove(Blocks.DIRT.getRegistryName())
-                    .remove(Blocks.OAK_DOOR.getRegistryName(), Blocks.DARK_OAK_DOOR.getRegistryName())
+                    .remove(ForgeRegistries.BLOCKS.getKey(Blocks.DIRT))
+                    .remove(ForgeRegistries.BLOCKS.getKey(Blocks.OAK_DOOR), ForgeRegistries.BLOCKS.getKey(Blocks.DARK_OAK_DOOR))
                     .remove(Blocks.ANVIL)
                     .remove(Blocks.BASALT, Blocks.POLISHED_BASALT)
                     .remove(BlockTags.BEEHIVES)

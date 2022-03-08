@@ -84,12 +84,8 @@
        }
  
     }
-@@ -656,9 +_,10 @@
-             ++p_8664_.f_19797_;
-             ProfilerFiller profilerfiller = this.m_46473_();
-             profilerfiller.m_6521_(() -> {
--               return Registry.f_122826_.m_7981_(p_8664_.m_6095_()).toString();
-+               return p_8664_.m_6095_().getRegistryName() == null ? p_8664_.m_6095_().toString() : p_8664_.m_6095_().getRegistryName().toString();
+@@ -659,6 +_,7 @@
+                return Registry.f_122826_.m_7981_(p_8664_.m_6095_()).toString();
              });
              profilerfiller.m_6174_("tickPassenger");
 +            if (p_8664_.canUpdate())

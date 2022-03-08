@@ -237,12 +237,10 @@ class NamespacedHolderHelper<T extends IForgeRegistryEntry<T>>
     }
 
     @Nullable
-    Holder<T> onAdded(RegistryManager stage, int id, T newValue, T oldValue)
+    Holder<T> onAdded(RegistryManager stage, int id, ResourceKey<T> key, T newValue, T oldValue)
     {
         if (stage != RegistryManager.ACTIVE)
             return null; // Only do holder shit on the active registries, not pending or snapshots.
-
-        ResourceKey<T> key = ResourceKey.create(this.self.key(), newValue.getRegistryName());
 
         //Holder.Reference<T> oldHolder = oldValue == null ? null : getHolder(key, oldValue);
         // Do we need to do anything with the old holder? We cant update its pointer unless its non-intrusive...
@@ -252,7 +250,7 @@ class NamespacedHolderHelper<T extends IForgeRegistryEntry<T>>
 
         this.holdersById.size(Math.max(this.holdersById.size(), id + 1));
         this.holdersById.set(id, newHolder);
-        this.holdersByName.put(newValue.getRegistryName(), newHolder);
+        this.holdersByName.put(key.location(), newHolder);
         this.holders.put(newValue, newHolder);
         newHolder.bind(key, newValue);
         this.holdersSorted = null;
@@ -275,7 +273,7 @@ class NamespacedHolderHelper<T extends IForgeRegistryEntry<T>>
         if (this.holderLookup != null)
             return this.holderLookup.apply(value);
 
-        return this.holdersByName.computeIfAbsent(value.getRegistryName(), k -> Holder.Reference.createStandAlone(this.self, key));
+        return this.holdersByName.computeIfAbsent(key.location(), k -> Holder.Reference.createStandAlone(this.self, key));
     }
 
     private List<Holder.Reference<T>> getSortedHolders()

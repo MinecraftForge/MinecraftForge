@@ -239,7 +239,7 @@ public class ForgeHooks
             result = state.getCloneItemStack(target, level, pos, player);
 
             if (result.isEmpty())
-                LOGGER.warn("Picking on: [{}] {} gave null item", target.getType(), state.getBlock().getRegistryName());
+                LOGGER.warn("Picking on: [{}] {} gave null item", target.getType(), ForgeRegistries.BLOCKS.getKey(state.getBlock()));
         }
         else if (target.getType() == HitResult.Type.ENTITY)
         {
@@ -247,7 +247,7 @@ public class ForgeHooks
             result = entity.getPickedResult(target);
 
             if (result.isEmpty())
-                LOGGER.warn("Picking on: [{}] {} gave null item", target.getType(), entity.getType().getRegistryName());
+                LOGGER.warn("Picking on: [{}] {} gave null item", target.getType(), ForgeRegistries.ENTITIES.getKey(entity.getType()));
         }
 
         if (result.isEmpty())
@@ -859,7 +859,7 @@ public class ForgeHooks
     {
         ForgeWorldPreset def = ForgeWorldPreset.getDefaultWorldPreset();
         if (def != null)
-            return def.getRegistryName().toString();
+            return ForgeRegistries.WORLD_TYPES.getKey(def).toString();
         return "default";
     }
 
@@ -1032,7 +1032,7 @@ public class ForgeHooks
     public static String getDefaultCreatorModId(@Nonnull ItemStack itemStack)
     {
         Item item = itemStack.getItem();
-        ResourceLocation registryName = item.getRegistryName();
+        ResourceLocation registryName = ForgeRegistries.ITEMS.getKey(item);
         String modId = registryName == null ? null : registryName.getNamespace();
         if ("minecraft".equals(modId))
         {
@@ -1060,7 +1060,7 @@ public class ForgeHooks
             }
             else if (item instanceof SpawnEggItem)
             {
-                ResourceLocation resourceLocation = ((SpawnEggItem)item).getType(null).getRegistryName();
+                ResourceLocation resourceLocation = ForgeRegistries.ENTITIES.getKey(((SpawnEggItem) item).getType(null));
                 if (resourceLocation != null)
                 {
                     return resourceLocation.getNamespace();

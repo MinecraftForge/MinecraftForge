@@ -40,7 +40,7 @@ public class FlowerPotTest
     
     @SubscribeEvent
     public static void onItemRegister(RegistryEvent.Register<Item> event) {
-        EMPTY_FLOWER_POT.get().addPlant(Blocks.OAK_SAPLING.getRegistryName(), OAK_FLOWER_POT);
+        EMPTY_FLOWER_POT.get().addPlant(ForgeRegistries.BLOCKS.getKey(Blocks.OAK_SAPLING), OAK_FLOWER_POT);
     }
 
     public FlowerPotTest() {

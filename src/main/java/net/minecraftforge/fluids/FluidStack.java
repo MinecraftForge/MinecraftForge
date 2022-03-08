@@ -66,7 +66,7 @@ public class FluidStack
         }
         else if (ForgeRegistries.FLUIDS.getKey(fluid) == null)
         {
-            LOGGER.fatal("Failed attempt to create a FluidStack for an unregistered Fluid {} (type {})", fluid.getRegistryName(), fluid.getClass().getName());
+            LOGGER.fatal("Failed attempt to create a FluidStack for an unregistered Fluid {} (type {})", ForgeRegistries.FLUIDS.getKey(fluid), fluid.getClass().getName());
             throw new IllegalArgumentException("Cannot create a fluidstack from an unregistered fluid");
         }
         this.fluidDelegate = ForgeRegistries.FLUIDS.getDelegateOrThrow(fluid);
@@ -122,7 +122,7 @@ public class FluidStack
 
     public CompoundTag writeToNBT(CompoundTag nbt)
     {
-        nbt.putString("FluidName", getFluid().getRegistryName().toString());
+        nbt.putString("FluidName", ForgeRegistries.FLUIDS.getKey(getFluid()).toString());
         nbt.putInt("Amount", amount);
 
         if (tag != null)

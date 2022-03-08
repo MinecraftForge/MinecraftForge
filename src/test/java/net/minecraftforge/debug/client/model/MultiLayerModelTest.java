@@ -16,6 +16,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.ObjectHolder;
 
 @Mod(MultiLayerModelTest.MODID)
@@ -38,11 +39,7 @@ public class MultiLayerModelTest
         {
             if (!ENABLED)
                 return;
-            event.getRegistry().register(
-                new Block(Block.Properties.of(Material.WOOD).noOcclusion())
-                {
-                }.setRegistryName(blockId)
-            );
+            event.getRegistry().register(blockId, new Block(Block.Properties.of(Material.WOOD).noOcclusion()));
         }
 
         @net.minecraftforge.eventbus.api.SubscribeEvent
@@ -50,7 +47,7 @@ public class MultiLayerModelTest
         {
             if (!ENABLED)
                 return;
-            event.getRegistry().register(new BlockItem(TEST_BLOCK, new Item.Properties().tab(CreativeModeTab.TAB_MISC)).setRegistryName(TEST_BLOCK.getRegistryName()));
+            event.getRegistry().register(ForgeRegistries.BLOCKS.getKey(TEST_BLOCK), new BlockItem(TEST_BLOCK, new Item.Properties().tab(CreativeModeTab.TAB_MISC)));
         }
 
         @net.minecraftforge.eventbus.api.SubscribeEvent

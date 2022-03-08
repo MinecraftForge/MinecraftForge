@@ -57,7 +57,7 @@ public class ForgeWorldPreset extends ForgeRegistryEntry<ForgeWorldPreset>
 
     public String getTranslationKey()
     {
-        return Util.makeDescriptionId("generator", getRegistryName());
+        return Util.makeDescriptionId("generator", ForgeRegistries.WORLD_TYPES.getKey(this));
     }
 
     public Component getDisplayName()

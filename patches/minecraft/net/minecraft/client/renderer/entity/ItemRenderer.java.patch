@@ -53,7 +53,7 @@
              crashreportcategory.m_128165_("Item Type", () -> {
                 return String.valueOf((Object)p_174237_.m_41720_());
              });
-+            crashreportcategory.m_128165_("Registry Name", () -> String.valueOf(p_174237_.m_41720_().getRegistryName()));
++            crashreportcategory.m_128165_("Registry Name", () -> String.valueOf(net.minecraftforge.registries.ForgeRegistries.ITEMS.getKey(p_174237_.m_41720_())));
              crashreportcategory.m_128165_("Item Damage", () -> {
                 return String.valueOf(p_174237_.m_41773_());
              });

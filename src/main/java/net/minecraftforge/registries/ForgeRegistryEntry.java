@@ -18,8 +18,6 @@ import javax.annotation.Nullable;
 @SuppressWarnings("unchecked")
 public abstract class ForgeRegistryEntry<V extends IForgeRegistryEntry<V>> implements IForgeRegistryEntry<V>
 {
-    @SuppressWarnings("serial")
-    private final TypeToken<V> token = new TypeToken<V>(getClass()){};
     private ResourceLocation registryName = null;
 
     public final V setRegistryName(String name)

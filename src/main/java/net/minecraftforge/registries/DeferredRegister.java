@@ -210,14 +210,9 @@ public class DeferredRegister<T>
         else
             throw new IllegalStateException("Could not create RegistryObject in DeferredRegister");
 
-        Supplier<? extends T> prevValue = entries.putIfAbsent((RegistryObject<T>) ret, () -> {
-            I value = sup.get();
-            if (value instanceof IForgeRegistryEntry<?> regEntry)
-                regEntry.setRegistryName(key);
-            return value;
-        });
-        if (prevValue != null)
+        if (entries.putIfAbsent((RegistryObject<T>) ret, sup) != null) {
             throw new IllegalArgumentException("Duplicate registration " + name);
+        }
 
         return ret;
     }
@@ -443,7 +438,7 @@ public class DeferredRegister<T>
             IForgeRegistry<? extends T> reg = (IForgeRegistry<? extends T>) event.getRegistry();
             for (Entry<RegistryObject<T>, Supplier<? extends T>> e : entries.entrySet())
             {
-                ((IForgeRegistry) reg).register((IForgeRegistryEntry) e.getValue().get());
+                ((IForgeRegistry) reg).register(e.getKey().getId(), (IForgeRegistryEntry) e.getValue().get());
                 e.getKey().updateReference(reg);
             }
         }

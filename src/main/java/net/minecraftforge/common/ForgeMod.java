@@ -236,8 +236,8 @@ public class ForgeMod
             FluidAttributes.Builder attributesBuilder = FluidAttributes.builder(new ResourceLocation("forge", "block/milk_still"), new ResourceLocation("forge", "block/milk_flowing")).density(1024).viscosity(1024);
             ForgeFlowingFluid.Properties properties = new ForgeFlowingFluid.Properties(MILK, FLOWING_MILK, attributesBuilder).bucket(() -> Items.MILK_BUCKET);
             // register fluids
-            event.getRegistry().register(new ForgeFlowingFluid.Source(properties).setRegistryName(MILK.getId()));
-            event.getRegistry().register(new ForgeFlowingFluid.Flowing(properties).setRegistryName(FLOWING_MILK.getId()));
+            event.getRegistry().register(MILK.getId(), new ForgeFlowingFluid.Source(properties));
+            event.getRegistry().register(FLOWING_MILK.getId(), new ForgeFlowingFluid.Flowing(properties));
         }
     }
 
@@ -260,7 +260,7 @@ public class ForgeMod
         CraftingHelper.register(new ResourceLocation("forge", "intersection"), IntersectionIngredient.Serializer.INSTANCE);
         CraftingHelper.register(new ResourceLocation("minecraft", "item"), VanillaIngredientSerializer.INSTANCE);
 
-        event.getRegistry().register(new ConditionalRecipe.Serializer<Recipe<?>>().setRegistryName(new ResourceLocation("forge", "conditional")));
+        event.getRegistry().register(new ResourceLocation("forge", "conditional"), new ConditionalRecipe.Serializer<Recipe<?>>());
 
     }
 

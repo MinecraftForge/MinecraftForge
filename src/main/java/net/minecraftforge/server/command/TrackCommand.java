@@ -22,6 +22,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.server.timings.ForgeTimings;
 import net.minecraftforge.server.timings.TimeTracker;
 
@@ -143,7 +144,7 @@ class TrackCommand
                     double averageTimings = data.getAverageTimings();
                     String tickTime = (averageTimings > 1000 ? TIME_FORMAT.format(averageTimings / 1000) : TIME_FORMAT.format(averageTimings)) + (averageTimings < 1000 ? "\u03bcs" : "ms");
 
-                    return new TranslatableComponent("commands.forge.tracking.timing_entry", entity.getType().getRegistryName(), entity.level.dimension().location().toString(), pos.getX(), pos.getY(), pos.getZ(), tickTime);
+                    return new TranslatableComponent("commands.forge.tracking.timing_entry", ForgeRegistries.ENTITIES.getKey(entity.getType()), entity.level.dimension().location().toString(), pos.getX(), pos.getY(), pos.getZ(), tickTime);
                 })
             );
         }
@@ -155,15 +156,15 @@ class TrackCommand
         {
             return Commands.literal("te").executes(ctx -> TrackResults.execute(ctx.getSource(), TimeTracker.BLOCK_ENTITY_UPDATE, data ->
                 {
-                    BlockEntity te = data.getObject().get();
-                    if (te == null)
+                    BlockEntity be = data.getObject().get();
+                    if (be == null)
                         return new TranslatableComponent("commands.forge.tracking.invalid");
 
-                    BlockPos pos = te.getBlockPos();
+                    BlockPos pos = be.getBlockPos();
 
                     double averageTimings = data.getAverageTimings();
                     String tickTime = (averageTimings > 1000 ? TIME_FORMAT.format(averageTimings / 1000) : TIME_FORMAT.format(averageTimings)) + (averageTimings < 1000 ? "\u03bcs" : "ms");
-                    return new TranslatableComponent("commands.forge.tracking.timing_entry", te.getType().getRegistryName(), te.getLevel().dimension().location().toString(), pos.getX(), pos.getY(), pos.getZ(), tickTime);
+                    return new TranslatableComponent("commands.forge.tracking.timing_entry", ForgeRegistries.BLOCK_ENTITIES.getKey(be.getType()), be.getLevel().dimension().location().toString(), pos.getX(), pos.getY(), pos.getZ(), tickTime);
                 })
             );
         }

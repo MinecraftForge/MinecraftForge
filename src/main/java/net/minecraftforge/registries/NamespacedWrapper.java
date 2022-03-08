@@ -60,13 +60,13 @@ class NamespacedWrapper<T extends IForgeRegistryEntry<T>> extends MappedRegistry
         if (value.getRegistryName() == null)
             value.setRegistryName(key.location());
 
-        T oldValue = get(value.getRegistryName());
+        T oldValue = get(key);
 
-        int realId = this.delegate.add(id, value);
+        int realId = this.delegate.add(id, key.location(), value);
         if (realId != id && id != -1)
             LOGGER.warn("Registered object did not get ID it asked for. Name: {} Type: {} Expected: {} Got: {}", key, delegate.getRegistrySuperType().getName(), id, realId);
 
-        return this.holders.onAdded(RegistryManager.ACTIVE, realId, value, oldValue);
+        return this.holders.onAdded(RegistryManager.ACTIVE, realId, key, value, oldValue);
     }
 
     @Override
@@ -223,9 +223,9 @@ class NamespacedWrapper<T extends IForgeRegistryEntry<T>> extends MappedRegistry
 
         @Override
         @SuppressWarnings("unchecked")
-        public void onAdd(IForgeRegistryInternal<V> owner, RegistryManager stage, int id, V value, V oldValue)
+        public void onAdd(IForgeRegistryInternal<V> owner, RegistryManager stage, int id, ResourceKey<V> key, V value, V oldValue)
         {
-            owner.getSlaveMap(ID, NamespacedWrapper.class).holders.onAdded(stage, id, value, oldValue);
+            owner.getSlaveMap(ID, NamespacedWrapper.class).holders.onAdded(stage, id, key, value, oldValue);
         }
     }
 }

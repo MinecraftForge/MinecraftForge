@@ -57,11 +57,11 @@ class NamespacedDefaultedWrapper<T extends IForgeRegistryEntry<T>> extends Defau
         if (value.getRegistryName() == null)
             value.setRegistryName(key.location());
 
-        T oldValue = this.delegate.getRaw(value.getRegistryName());
+        T oldValue = this.delegate.getRaw(key.location());
 
-        int realId = this.delegate.add(id, value);
+        int realId = this.delegate.add(id, key.location(), value);
 
-        return this.holders.onAdded(RegistryManager.ACTIVE, realId, value, oldValue);
+        return this.holders.onAdded(RegistryManager.ACTIVE, realId, key, value, oldValue);
     }
 
     @Override
@@ -225,9 +225,9 @@ class NamespacedDefaultedWrapper<T extends IForgeRegistryEntry<T>> extends Defau
 
         @Override
         @SuppressWarnings("unchecked")
-        public void onAdd(IForgeRegistryInternal<V> owner, RegistryManager stage, int id, V value, V oldValue)
+        public void onAdd(IForgeRegistryInternal<V> owner, RegistryManager stage, int id, ResourceKey<V> key, V value, V oldValue)
         {
-            owner.getSlaveMap(ID, NamespacedDefaultedWrapper.class).holders.onAdded(stage, id, value, oldValue);
+            owner.getSlaveMap(ID, NamespacedDefaultedWrapper.class).holders.onAdded(stage, id, key, value, oldValue);
         }
     }
 }

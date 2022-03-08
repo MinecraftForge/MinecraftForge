@@ -25,6 +25,7 @@ import net.minecraft.world.item.crafting.Ingredient.Value;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.common.Tags;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import java.lang.reflect.Field;
 import java.nio.file.Path;
@@ -43,7 +44,7 @@ public final class ForgeRecipeProvider extends RecipeProvider
 
     private void exclude(ItemLike item)
     {
-        excludes.add(item.asItem().getRegistryName());
+        excludes.add(ForgeRegistries.ITEMS.getKey(item.asItem()));
     }
 
     private void replace(ItemLike item, TagKey<Item> tag)

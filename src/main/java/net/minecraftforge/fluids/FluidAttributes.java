@@ -33,6 +33,7 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraftforge.registries.ForgeRegistries;
 
 /**
  * Minecraft Forge Fluid Implementation
@@ -126,7 +127,7 @@ public class FluidAttributes
 
     protected FluidAttributes(Builder builder, Fluid fluid)
     {
-        this.translationKey = builder.translationKey != null ? builder.translationKey :  Util.makeDescriptionId("fluid", fluid.getRegistryName());
+        this.translationKey = builder.translationKey != null ? builder.translationKey :  Util.makeDescriptionId("fluid", ForgeRegistries.FLUIDS.getKey(fluid));
         this.stillTexture = builder.stillTexture;
         this.flowingTexture = builder.flowingTexture;
         this.overlayTexture = builder.overlayTexture;

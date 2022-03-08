@@ -8,12 +8,10 @@ package net.minecraftforge.debug.world;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.chat.TextComponent;
-import net.minecraft.world.level.biome.Biome;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.chunk.ChunkGenerator;
-import net.minecraft.world.level.levelgen.NoiseGeneratorSettings;
 import net.minecraft.world.level.levelgen.WorldGenSettings;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.ForgeWorldPresetScreens;
@@ -39,11 +37,13 @@ public class ForgeWorldTypeTest
 
     private void registerWorldTypes(RegistryEvent.Register<ForgeWorldPreset> event)
     {
-        event.getRegistry().registerAll(
-                new ForgeWorldPreset(WorldGenSettings::makeDefaultOverworld).setRegistryName("test_world_type")
+        event.getRegistry().register(
+                new ResourceLocation("forge_world_type_test", "test_world_type"),
+                new ForgeWorldPreset(WorldGenSettings::makeDefaultOverworld)
         );
-        event.getRegistry().registerAll(
-                new ForgeWorldPreset(this::createChunkGenerator).setRegistryName("test_world_type2")
+        event.getRegistry().register(
+                new ResourceLocation("forge_world_type_test", "test_world_type2"),
+                new ForgeWorldPreset(this::createChunkGenerator)
         );
     }
 

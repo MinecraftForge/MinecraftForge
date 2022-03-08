@@ -36,6 +36,7 @@ class ObjectHolderRef implements Consumer<Predicate<ResourceLocation>>
         this(field, injectedObject.toString(), false);
     }
 
+    @SuppressWarnings("unchecked")
     ObjectHolderRef(Field field, String injectedObject, boolean extractFromExistingValues)
     {
         this.registry = getRegistryForType(field);
@@ -57,7 +58,7 @@ class ObjectHolderRef implements Consumer<Predicate<ResourceLocation>>
                 }
                 else
                 {
-                    this.injectedObject = ((IForgeRegistryEntry)existing).getRegistryName();
+                    this.injectedObject = ((ForgeRegistry) registry).getKey((IForgeRegistryEntry) existing);
                 }
             }
             catch (IllegalAccessException e)

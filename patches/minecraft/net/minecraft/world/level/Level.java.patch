@@ -101,18 +101,6 @@
        if (p_46593_ != Direction.WEST) {
           this.m_46586_(p_46591_.m_142125_(), p_46592_, p_46591_);
        }
-@@ -313,9 +_,9 @@
-             CrashReportCategory crashreportcategory = crashreport.m_127514_("Block being updated");
-             crashreportcategory.m_128165_("Source block type", () -> {
-                try {
--                  return String.format("ID #%s (%s // %s)", Registry.f_122824_.m_7981_(p_46588_), p_46588_.m_7705_(), p_46588_.getClass().getCanonicalName());
-+                  return String.format("ID #%s (%s // %s)", p_46588_.getRegistryName(), p_46588_.m_7705_(), p_46588_.getClass().getCanonicalName());
-                } catch (Throwable throwable1) {
--                  return "ID #" + Registry.f_122824_.m_7981_(p_46588_);
-+                  return "ID #" + p_46588_.getRegistryName();
-                }
-             });
-             CrashReportCategory.m_178950_(crashreportcategory, this, p_46587_, blockstate);
 @@ -401,10 +_,26 @@
        (this.f_151504_ ? this.f_151503_ : this.f_151512_).add(p_151526_);
     }

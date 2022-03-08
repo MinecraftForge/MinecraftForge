@@ -162,7 +162,7 @@ public class TagBasedToolTypesTest
                 @Override
                 protected void registerStatesAndModels()
                 {
-                    ModelFile model = models().cubeAll(STONE.get().getRegistryName().getPath(), mcLoc("block/debug"));
+                    ModelFile model = models().cubeAll(STONE.getId().getPath(), mcLoc("block/debug"));
                     simpleBlock(STONE.get(), model);
                     simpleBlockItem(STONE.get(), model);
                 }
@@ -172,7 +172,7 @@ public class TagBasedToolTypesTest
                 @Override
                 protected void registerModels()
                 {
-                    getBuilder(TOOL.get().getRegistryName().getPath())
+                    getBuilder(TOOL.getId().getPath())
                         .parent(new UncheckedModelFile("item/generated"))
                         .texture("layer0", mcLoc("item/wooden_pickaxe"));
                 }

@@ -38,14 +38,14 @@ import java.util.Collections;
 public class EntityRendererEventsTest
 {
     private static final ResourceLocation MY_ENTITY = new ResourceLocation("entity_renderer_events_test", "test_entity");
-    
+
     @ObjectHolder("entity_renderer_events_test:test_entity")
     public static EntityType<MyEntity> MY_ENTITY_TYPE;
 
     @SubscribeEvent
     public static void entityRegistry(RegistryEvent.Register<EntityType<?>> event)
     {
-        event.getRegistry().register(EntityType.Builder.of(MyEntity::new, MobCategory.MONSTER).build("test_entity").setRegistryName("test_entity"));
+        event.getRegistry().register(MY_ENTITY, EntityType.Builder.of(MyEntity::new, MobCategory.MONSTER).build("test_entity"));
     }
     
     @SubscribeEvent

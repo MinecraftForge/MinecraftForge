@@ -30,10 +30,15 @@ public interface IForgeRegistry<V extends IForgeRegistryEntry<V>> extends Iterab
     ResourceLocation getRegistryName();
     Class<V> getRegistrySuperType();
 
-    void register(V value);
+    /**
+     * The supplied string key will be prefixed with the currently active mod's mod id.
+     * If the supplied name already has a prefix that is different, it will be used and a warning will be logged.
+     */
+    void register(String key, V value);
+    void register(ResourceLocation key, V value);
 
-    @SuppressWarnings("unchecked")
-    void registerAll(V... values);
+    // @SuppressWarnings("unchecked")
+    // void registerAll(V... values);
 
     boolean containsKey(ResourceLocation key);
     boolean containsValue(V value);
@@ -100,7 +105,7 @@ public interface IForgeRegistry<V extends IForgeRegistryEntry<V>> extends Iterab
     @FunctionalInterface
     interface AddCallback<V extends IForgeRegistryEntry<V>>
     {
-        void onAdd(IForgeRegistryInternal<V> owner, RegistryManager stage, int id, V obj, @Nullable V oldObj);
+        void onAdd(IForgeRegistryInternal<V> owner, RegistryManager stage, int id, ResourceKey<V> key, V obj, @Nullable V oldObj);
     }
 
     /**

@@ -5,6 +5,7 @@
 
 package net.minecraftforge.debug.block;
 
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.FlowerBlock;
@@ -41,14 +42,15 @@ public class CustomPlantTypeTest
     @SubscribeEvent
     public static void registerBlocks(RegistryEvent.Register<Block> event)
     {
-        event.getRegistry().registerAll(new CustomBlock(), new CustomPlantBlock());
+        event.getRegistry().register(new ResourceLocation(MODID, CUSTOM_SOIL_BLOCK), new CustomBlock());
+        event.getRegistry().register(new ResourceLocation(MODID, CUSTOM_PLANT_BLOCK), new CustomPlantBlock());
     }
 
     @SubscribeEvent
     public static void registerItems(RegistryEvent.Register<Item> event)
     {
-        event.getRegistry().registerAll(new BlockItem(CUSTOM_SOIL, (new Item.Properties())).setRegistryName(MODID, CUSTOM_SOIL_BLOCK),
-                new BlockItem(CUSTOM_PLANT, (new Item.Properties())).setRegistryName(MODID, CUSTOM_PLANT_BLOCK));
+        event.getRegistry().register(new ResourceLocation(MODID, CUSTOM_SOIL_BLOCK), new BlockItem(CUSTOM_SOIL, new Item.Properties()));
+        event.getRegistry().register(new ResourceLocation(MODID, CUSTOM_PLANT_BLOCK), new BlockItem(CUSTOM_PLANT, new Item.Properties()));
     }
 
     public static class CustomBlock extends Block
@@ -56,7 +58,6 @@ public class CustomPlantTypeTest
         public CustomBlock()
         {
             super(Properties.of(Material.STONE));
-            this.setRegistryName(MODID, CUSTOM_SOIL_BLOCK);
         }
 
         @Override
@@ -78,7 +79,6 @@ public class CustomPlantTypeTest
         public CustomPlantBlock()
         {
             super(MobEffects.WEAKNESS, 9, Properties.of(Material.PLANT).noCollission().sound(SoundType.GRASS));
-            this.setRegistryName(MODID, CUSTOM_PLANT_BLOCK);
         }
 
         @Override

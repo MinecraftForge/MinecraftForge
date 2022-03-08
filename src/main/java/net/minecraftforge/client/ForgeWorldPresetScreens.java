@@ -49,7 +49,7 @@ public class ForgeWorldPresetScreens
         WorldPreset gen = GENERATORS.get(def);
         if (gen == null)
         {
-            LOGGER.error("The default world type '{}' has not been added to the GUI. Was it registered too late?", def.getRegistryName());
+            LOGGER.error("The default world type '{}' has not been added to the GUI. Was it registered too late?", ForgeRegistries.WORLD_TYPES.getKey(def));
             return WorldPreset.NORMAL;
         }
 

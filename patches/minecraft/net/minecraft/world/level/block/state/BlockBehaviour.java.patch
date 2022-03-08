@@ -15,7 +15,7 @@
        this.f_60438_ = p_60452_.f_60903_;
        this.f_60439_ = p_60452_;
 +      final ResourceLocation lootTableCache = p_60452_.f_60894_;
-+      this.lootTableSupplier = lootTableCache != null ? () -> lootTableCache : p_60452_.lootTableSupplier != null ? p_60452_.lootTableSupplier : () -> new ResourceLocation(this.getRegistryName().m_135827_(), "blocks/" + this.getRegistryName().m_135815_());
++      this.lootTableSupplier = lootTableCache != null ? () -> lootTableCache : p_60452_.lootTableSupplier != null ? p_60452_.lootTableSupplier : () -> new ResourceLocation(net.minecraftforge.registries.ForgeRegistries.BLOCKS.getKey((Block)this).m_135827_(), "blocks/" + net.minecraftforge.registries.ForgeRegistries.BLOCKS.getKey((Block)this).m_135815_());
     }
  
     /** @deprecated */

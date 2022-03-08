@@ -15,6 +15,7 @@ import com.google.gson.JsonObject;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraftforge.registries.ForgeRegistries;
 
 /** Ingredient that matches the given stack, performing an exact NBT match. Use {@link PartialNBTIngredient} if you need partial match. */
 public class NBTIngredient extends AbstractIngredient
@@ -58,7 +59,7 @@ public class NBTIngredient extends AbstractIngredient
     {
         JsonObject json = new JsonObject();
         json.addProperty("type", CraftingHelper.getID(Serializer.INSTANCE).toString());
-        json.addProperty("item", stack.getItem().getRegistryName().toString());
+        json.addProperty("item", ForgeRegistries.ITEMS.getKey(stack.getItem()).toString());
         json.addProperty("count", stack.getCount());
         if (stack.hasTag())
             json.addProperty("nbt", stack.getTag().toString());

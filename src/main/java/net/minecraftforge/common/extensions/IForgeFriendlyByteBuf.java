@@ -83,7 +83,7 @@ public interface IForgeFriendlyByteBuf
         Objects.requireNonNull(registry, "Cannot write a null registry key!");
         Objects.requireNonNull(entry,"Cannot write a null registry entry!");
         ResourceLocation name = registry.getRegistryName();
-        Preconditions.checkArgument(registry.containsValue(entry), "Cannot find %s in %s", entry.getRegistryName()!=null ? entry.getRegistryName() : entry, name);
+        Preconditions.checkArgument(registry.containsValue(entry), "Cannot find %s in %s", registry.getKey(entry) != null ? registry.getKey(entry) : entry, name);
         ForgeRegistry<T> reg = (ForgeRegistry<T>) registry;
         self().writeResourceLocation(name); //TODO change to writing a varInt once registries use id's
         self().writeVarInt(reg.getID(entry));
