@@ -132,6 +132,9 @@ public class RegistryManager
                     foundType, superTypes.get(foundType), name, builder.getType(), builder.getType());
             throw new IllegalArgumentException("Duplicate registry parent type found - you can only have one registry for a particular super type");
         }
+        if (registries.containsKey(name))
+            throw new IllegalArgumentException("Attempted to register a registry for " + name + " with type "
+                    + builder.getType().getName() + " but it already exists as " + registries.get(name).getRegistrySuperType().getName());
         ForgeRegistry<V> reg = new ForgeRegistry<V>(this, name, builder);
         registries.put(name, reg);
         superTypes.put(builder.getType(), name);
