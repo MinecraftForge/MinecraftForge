@@ -5,7 +5,7 @@
 
 package net.minecraftforge.registries;
 
-interface IHolderHelperHolder<T extends IForgeRegistryEntry<T>>
+interface IHolderHelperHolder<T>
 {
     NamespacedHolderHelper<T> getHolderHelper();
 }

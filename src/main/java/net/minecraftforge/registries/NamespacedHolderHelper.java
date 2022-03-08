@@ -40,7 +40,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import org.jetbrains.annotations.NotNull;
 
-class NamespacedHolderHelper<T extends IForgeRegistryEntry<T>>
+class NamespacedHolderHelper<T>
 {
     private static final Logger LOGGER = LogManager.getLogger();
     private final ForgeRegistry<T> owner;

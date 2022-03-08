@@ -5,7 +5,7 @@
  import net.minecraft.world.entity.player.Player;
  
 -public class MobEffect {
-+public class MobEffect extends net.minecraftforge.registries.ForgeRegistryEntry<MobEffect> implements net.minecraftforge.common.extensions.IForgeMobEffect {
++public class MobEffect implements net.minecraftforge.common.extensions.IForgeMobEffect {
     private final Map<Attribute, AttributeModifier> f_19446_ = Maps.newHashMap();
     private final MobEffectCategory f_19447_;
     private final int f_19448_;

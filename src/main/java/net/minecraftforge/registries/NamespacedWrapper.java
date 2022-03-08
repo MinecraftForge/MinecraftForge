@@ -32,7 +32,7 @@ import org.apache.logging.log4j.Logger;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Lifecycle;
 
-class NamespacedWrapper<T extends IForgeRegistryEntry<T>> extends MappedRegistry<T> implements ILockableRegistry, IHolderHelperHolder<T>
+class NamespacedWrapper<T> extends MappedRegistry<T> implements ILockableRegistry, IHolderHelperHolder<T>
 {
     private static final Logger LOGGER = LogManager.getLogger();
     private final ForgeRegistry<T> delegate;
@@ -57,8 +57,8 @@ class NamespacedWrapper<T extends IForgeRegistryEntry<T>> extends MappedRegistry
         Validate.notNull(value);
         this.elementsLifecycle = this.elementsLifecycle.add(lifecycle);
 
-        if (value.getRegistryName() == null)
-            value.setRegistryName(key.location());
+        if (value instanceof IForgeRegistryEntry<?> regEntry && regEntry.getRegistryName() == null)
+            regEntry.setRegistryName(key.location());
 
         T oldValue = get(key);
 
@@ -210,7 +210,7 @@ class NamespacedWrapper<T extends IForgeRegistryEntry<T>> extends MappedRegistry
     @Deprecated @Override public void lock(){ this.locked = true; }
 
 
-    public static class Factory<V extends IForgeRegistryEntry<V>> implements IForgeRegistry.CreateCallback<V>, IForgeRegistry.AddCallback<V>
+    public static class Factory<V> implements IForgeRegistry.CreateCallback<V>, IForgeRegistry.AddCallback<V>
     {
         public static final ResourceLocation ID = new ResourceLocation("forge", "registry_defaulted_wrapper");
 

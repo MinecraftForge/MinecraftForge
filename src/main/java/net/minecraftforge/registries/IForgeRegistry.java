@@ -24,7 +24,7 @@ import java.util.Set;
  *
  * @param <V> The top level type for the registry
  */
-public interface IForgeRegistry<V extends IForgeRegistryEntry<V>> extends Iterable<V>
+public interface IForgeRegistry<V> extends Iterable<V>
 {
     ResourceKey<Registry<V>> getRegistryKey();
     ResourceLocation getRegistryName();
@@ -103,7 +103,7 @@ public interface IForgeRegistry<V extends IForgeRegistryEntry<V>> extends Iterab
      * on the client side from a server side synchronization, or when a world is loaded.
      */
     @FunctionalInterface
-    interface AddCallback<V extends IForgeRegistryEntry<V>>
+    interface AddCallback<V>
     {
         void onAdd(IForgeRegistryInternal<V> owner, RegistryManager stage, int id, ResourceKey<V> key, V obj, @Nullable V oldObj);
     }
@@ -113,7 +113,7 @@ public interface IForgeRegistry<V extends IForgeRegistryEntry<V>> extends Iterab
      * or server.
      */
     @FunctionalInterface
-    interface ClearCallback<V extends IForgeRegistryEntry<V>>
+    interface ClearCallback<V>
     {
         void onClear(IForgeRegistryInternal<V> owner, RegistryManager stage);
     }
@@ -122,7 +122,7 @@ public interface IForgeRegistry<V extends IForgeRegistryEntry<V>> extends Iterab
      * Callback fired when a registry instance is created. Populate slave maps here.
      */
     @FunctionalInterface
-    interface CreateCallback<V extends IForgeRegistryEntry<V>>
+    interface CreateCallback<V>
     {
         void onCreate(IForgeRegistryInternal<V> owner, RegistryManager stage);
     }
@@ -131,7 +131,7 @@ public interface IForgeRegistry<V extends IForgeRegistryEntry<V>> extends Iterab
      * Callback fired when the registry contents are validated.
      */
     @FunctionalInterface
-    interface ValidateCallback<V extends IForgeRegistryEntry<V>>
+    interface ValidateCallback<V>
     {
         void onValidate(IForgeRegistryInternal<V> owner, RegistryManager stage, int id, ResourceLocation key, V obj);
     }
@@ -140,7 +140,7 @@ public interface IForgeRegistry<V extends IForgeRegistryEntry<V>> extends Iterab
      * Callback fired when the registry is done processing. Used to calculate state ID maps.
      */
     @FunctionalInterface
-    interface BakeCallback<V extends IForgeRegistryEntry<V>>
+    interface BakeCallback<V>
     {
         void onBake(IForgeRegistryInternal<V> owner, RegistryManager stage);
     }
@@ -149,7 +149,7 @@ public interface IForgeRegistry<V extends IForgeRegistryEntry<V>> extends Iterab
      * Factory for creating dummy entries, allowing worlds to be loaded and keep the missing block references.
      */
     @FunctionalInterface
-    interface DummyFactory<V extends IForgeRegistryEntry<V>>
+    interface DummyFactory<V>
     {
         V createDummy(ResourceLocation key);
     }
@@ -158,7 +158,7 @@ public interface IForgeRegistry<V extends IForgeRegistryEntry<V>> extends Iterab
      *
      */
     @FunctionalInterface
-    interface MissingFactory<V extends IForgeRegistryEntry<V>>
+    interface MissingFactory<V>
     {
         V createMissing(ResourceLocation key, boolean isNetwork);
     }

@@ -43,8 +43,8 @@ public class RegistryManager
     public static final RegistryManager FROZEN = new RegistryManager("FROZEN");
     private static Set<ResourceLocation> vanillaRegistryKeys = Set.of();
 
-    BiMap<ResourceLocation, ForgeRegistry<? extends IForgeRegistryEntry<?>>> registries = HashBiMap.create();
-    private BiMap<Class<? extends IForgeRegistryEntry<?>>, ResourceLocation> superTypes = HashBiMap.create();
+    BiMap<ResourceLocation, ForgeRegistry<?>> registries = HashBiMap.create();
+    private BiMap<Class<?>, ResourceLocation> superTypes = HashBiMap.create();
     private Set<ResourceLocation> persisted = Sets.newHashSet();
     private Set<ResourceLocation> synced = Sets.newHashSet();
     private Map<ResourceLocation, ResourceLocation> legacyNames = new HashMap<>();
@@ -61,18 +61,18 @@ public class RegistryManager
     }
 
     @SuppressWarnings("unchecked")
-    public <V extends IForgeRegistryEntry<V>> Class<V> getSuperType(ResourceLocation key)
+    public <V> Class<V> getSuperType(ResourceLocation key)
     {
         return (Class<V>)superTypes.inverse().get(key);
     }
 
     @SuppressWarnings("unchecked")
-    public <V extends IForgeRegistryEntry<V>> ForgeRegistry<V> getRegistry(ResourceLocation key)
+    public <V> ForgeRegistry<V> getRegistry(ResourceLocation key)
     {
         return (ForgeRegistry<V>)this.registries.get(key);
     }
 
-    public <V extends IForgeRegistryEntry<V>> ForgeRegistry<V> getRegistry(ResourceKey<? extends Registry<V>> key)
+    public <V> ForgeRegistry<V> getRegistry(ResourceKey<? extends Registry<V>> key)
     {
         return getRegistry(key.location());
     }
@@ -83,17 +83,17 @@ public class RegistryManager
      * @deprecated The uniqueness of registry super types will not be guaranteed starting in 1.19.
      */
     @Deprecated(forRemoval = true, since = "1.18.2")
-    public <V extends IForgeRegistryEntry<V>> IForgeRegistry<V> getRegistry(Class<? super V> cls)
+    public <V> IForgeRegistry<V> getRegistry(Class<? super V> cls)
     {
         return getRegistry(superTypes.get(cls));
     }
 
-    public <V extends IForgeRegistryEntry<V>> ResourceLocation getName(IForgeRegistry<V> reg)
+    public <V> ResourceLocation getName(IForgeRegistry<V> reg)
     {
         return this.registries.inverse().get(reg);
     }
 
-    public <V extends IForgeRegistryEntry<V>> ResourceLocation updateLegacyName(ResourceLocation legacyName)
+    public <V> ResourceLocation updateLegacyName(ResourceLocation legacyName)
     {
         ResourceLocation originalName = legacyName;
         while (getRegistry(legacyName) == null)
@@ -107,7 +107,7 @@ public class RegistryManager
         return legacyName;
     }
 
-    public <V extends IForgeRegistryEntry<V>> ForgeRegistry<V> getRegistry(ResourceLocation key, RegistryManager other)
+    public <V> ForgeRegistry<V> getRegistry(ResourceLocation key, RegistryManager other)
     {
         if (!this.registries.containsKey(key))
         {
@@ -127,7 +127,7 @@ public class RegistryManager
         return getRegistry(key);
     }
 
-    <V extends IForgeRegistryEntry<V>> ForgeRegistry<V> createRegistry(ResourceLocation name, RegistryBuilder<V> builder)
+    <V> ForgeRegistry<V> createRegistry(ResourceLocation name, RegistryBuilder<V> builder)
     {
         Set<Class<?>> parents = Sets.newHashSet();
         findSuperTypes(builder.getType(), parents);
@@ -155,7 +155,7 @@ public class RegistryManager
     }
 
     @SuppressWarnings("unchecked")
-    static <V extends IForgeRegistryEntry<V>> void registerToRootRegistry(ForgeRegistry<V> forgeReg)
+    static <V> void registerToRootRegistry(ForgeRegistry<V> forgeReg)
     {
         WritableRegistry<Registry<V>> registry = (WritableRegistry<Registry<V>>) Registry.REGISTRY;
         Registry<V> wrapper = forgeReg.getWrapper();

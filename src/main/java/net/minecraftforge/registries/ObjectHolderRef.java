@@ -58,7 +58,7 @@ class ObjectHolderRef implements Consumer<Predicate<ResourceLocation>>
                 }
                 else
                 {
-                    this.injectedObject = ((ForgeRegistry) registry).getKey((IForgeRegistryEntry) existing);
+                    this.injectedObject = ((ForgeRegistry) registry).getKey(existing);
                 }
             }
             catch (IllegalAccessException e)
@@ -103,14 +103,11 @@ class ObjectHolderRef implements Consumer<Predicate<ResourceLocation>>
         {
             Class<?> type = typesToExamine.remove();
             Collections.addAll(typesToExamine, type.getInterfaces());
-            if (IForgeRegistryEntry.class.isAssignableFrom(type))
+            registry = (ForgeRegistry<?>)RegistryManager.ACTIVE.getRegistry(type);
+            final Class<?> parentType = type.getSuperclass();
+            if (parentType != null)
             {
-                registry = (ForgeRegistry<?>)RegistryManager.ACTIVE.getRegistry((Class<IForgeRegistryEntry>)type);
-                final Class<?> parentType = type.getSuperclass();
-                if (parentType != null)
-                {
-                    typesToExamine.add(parentType);
-                }
+                typesToExamine.add(parentType);
             }
         }
         return registry;

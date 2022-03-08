@@ -24,12 +24,11 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.eventbus.api.GenericEvent;
 import net.minecraftforge.registries.IForgeRegistry;
-import net.minecraftforge.registries.IForgeRegistryEntry;
 
 /**
  * RegistryEvent supertype.
  */
-public class RegistryEvent<T extends IForgeRegistryEntry<T>> extends GenericEvent<T> implements IModBusEvent
+public class RegistryEvent<T> extends GenericEvent<T> implements IModBusEvent
 {
     RegistryEvent(Class<T> clazz) {
         super(clazz);
@@ -46,7 +45,7 @@ public class RegistryEvent<T extends IForgeRegistryEntry<T>> extends GenericEven
      * ObjectHolders will reload between Blocks and Items, and after all registries have been visited.
      * @param <T> The registry top level type
      */
-    public static class Register<T extends IForgeRegistryEntry<T>> extends RegistryEvent<T>
+    public static class Register<T> extends RegistryEvent<T>
     {
         private final IForgeRegistry<T> registry;
         private final ResourceLocation name;
@@ -74,7 +73,7 @@ public class RegistryEvent<T extends IForgeRegistryEntry<T>> extends GenericEven
         }
     }
 
-    public static class MissingMappings<T extends IForgeRegistryEntry<T>> extends RegistryEvent<T>
+    public static class MissingMappings<T> extends RegistryEvent<T>
     {
         private final IForgeRegistry<T> registry;
         private final ResourceLocation name;
@@ -157,7 +156,7 @@ public class RegistryEvent<T extends IForgeRegistryEntry<T>> extends GenericEven
             REMAP
         }
 
-        public static class Mapping<T extends IForgeRegistryEntry<T>> implements Comparable<Mapping<T>>
+        public static class Mapping<T> implements Comparable<Mapping<T>>
         {
             public final IForgeRegistry<T> registry;
             private final IForgeRegistry<T> pool;

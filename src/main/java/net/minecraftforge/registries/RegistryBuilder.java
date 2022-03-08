@@ -18,7 +18,7 @@ import net.minecraftforge.registries.IForgeRegistry.*;
 
 import javax.annotation.Nullable;
 
-public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
+public class RegistryBuilder<T>
 {
     private static final int MAX_ID = Integer.MAX_VALUE - 1;
 

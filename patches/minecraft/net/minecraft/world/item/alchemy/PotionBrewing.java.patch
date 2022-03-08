@@ -66,9 +66,8 @@
 +      f_43494_.add(new PotionBrewing.Mix<>(net.minecraftforge.registries.ForgeRegistries.POTIONS, p_43514_, Ingredient.m_43929_(p_43515_), p_43516_));
     }
  
--   public static class Mix<T> {
+    public static class Mix<T> {
 -      final T f_43532_;
-+   public static class Mix<T extends net.minecraftforge.registries.ForgeRegistryEntry<T>> {
 +      public final net.minecraft.core.Holder.Reference<T> f_43532_;
        public final Ingredient f_43533_;
 -      final T f_43534_;

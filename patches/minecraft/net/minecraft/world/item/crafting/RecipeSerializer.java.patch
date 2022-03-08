@@ -5,7 +5,7 @@
  import net.minecraft.resources.ResourceLocation;
  
 -public interface RecipeSerializer<T extends Recipe<?>> {
-+public interface RecipeSerializer<T extends Recipe<?>> extends net.minecraftforge.registries.IForgeRegistryEntry<RecipeSerializer<?>>, net.minecraftforge.common.extensions.IForgeRecipeSerializer<T> {
++public interface RecipeSerializer<T extends Recipe<?>> extends net.minecraftforge.common.extensions.IForgeRecipeSerializer<T> {
     RecipeSerializer<ShapedRecipe> f_44076_ = m_44098_("crafting_shaped", new ShapedRecipe.Serializer());
     RecipeSerializer<ShapelessRecipe> f_44077_ = m_44098_("crafting_shapeless", new ShapelessRecipe.Serializer());
     SimpleRecipeSerializer<ArmorDyeRecipe> f_44078_ = m_44098_("crafting_special_armordye", new SimpleRecipeSerializer<>(ArmorDyeRecipe::new));

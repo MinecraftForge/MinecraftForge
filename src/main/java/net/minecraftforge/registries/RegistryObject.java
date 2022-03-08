@@ -38,7 +38,7 @@ public final class RegistryObject<T> implements Supplier<T>
      * Use {@link #create(ResourceLocation, ResourceLocation, String)}.
      */
     @Deprecated(forRemoval = true, since = "1.18.2")
-    public static <T extends IForgeRegistryEntry<T>, U extends T> RegistryObject<U> of(final ResourceLocation name, Supplier<Class<? super T>> registryType) {
+    public static <T, U extends T> RegistryObject<U> of(final ResourceLocation name, Supplier<Class<? super T>> registryType) {
         return new RegistryObject<>(name, registryType);
     }
 
@@ -51,7 +51,7 @@ public final class RegistryObject<T> implements Supplier<T>
      * @deprecated Use {@link #create(ResourceLocation, IForgeRegistry)} instead.
      */
     @Deprecated(forRemoval = true, since = "1.18.2")
-    public static <T extends IForgeRegistryEntry<T>, U extends T> RegistryObject<U> of(final ResourceLocation name, IForgeRegistry<T> registry)
+    public static <T, U extends T> RegistryObject<U> of(final ResourceLocation name, IForgeRegistry<T> registry)
     {
         return new RegistryObject<>(name, registry);
     }
@@ -73,7 +73,7 @@ public final class RegistryObject<T> implements Supplier<T>
      * Use {@link #create(ResourceLocation, ResourceLocation, String)}.
      */
     @Deprecated(forRemoval = true, since = "1.18.2")
-    public static <T extends IForgeRegistryEntry<T>, U extends T> RegistryObject<U> of(final ResourceLocation name, final Class<T> baseType, String modid) {
+    public static <T, U extends T> RegistryObject<U> of(final ResourceLocation name, final Class<T> baseType, String modid) {
         return new RegistryObject<>(name, baseType, modid);
     }
 
@@ -212,13 +212,13 @@ public final class RegistryObject<T> implements Supplier<T>
     }
 
     @Deprecated(forRemoval = true, since = "1.18.2")
-    private <V extends IForgeRegistryEntry<V>> RegistryObject(ResourceLocation name, Supplier<Class<? super V>> registryType)
+    private <V> RegistryObject(ResourceLocation name, Supplier<Class<? super V>> registryType)
     {
         this(name, RegistryManager.ACTIVE.<V>getRegistry(registryType.get()));
     }
 
     @SuppressWarnings("unchecked")
-    private <V extends IForgeRegistryEntry<V>> RegistryObject(ResourceLocation name, IForgeRegistry<V> registry)
+    private <V> RegistryObject(ResourceLocation name, IForgeRegistry<V> registry)
     {
         if (registry == null)
             throw new IllegalArgumentException("Invalid registry argument, must not be null");
@@ -234,7 +234,7 @@ public final class RegistryObject<T> implements Supplier<T>
 
     @SuppressWarnings("unchecked")
     @Deprecated(forRemoval = true, since = "1.18.2")
-    private <V extends IForgeRegistryEntry<V>> RegistryObject(final ResourceLocation name, final Class<V> baseType, final String modid)
+    private <V> RegistryObject(final ResourceLocation name, final Class<V> baseType, final String modid)
     {
         this.name = name;
         this.optionalRegistry = false;

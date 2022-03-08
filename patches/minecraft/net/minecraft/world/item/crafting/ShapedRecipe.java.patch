@@ -91,12 +91,10 @@
     }
  
     public static Item m_151278_(JsonObject p_151279_) {
-@@ -269,7 +_,8 @@
-       }
+@@ -270,6 +_,7 @@
     }
  
--   public static class Serializer implements RecipeSerializer<ShapedRecipe> {
-+   public static class Serializer extends net.minecraftforge.registries.ForgeRegistryEntry<RecipeSerializer<?>>  implements RecipeSerializer<ShapedRecipe> {
+    public static class Serializer implements RecipeSerializer<ShapedRecipe> {
 +      private static final ResourceLocation NAME = new ResourceLocation("minecraft", "crafting_shaped");
        public ShapedRecipe m_6729_(ResourceLocation p_44236_, JsonObject p_44237_) {
           String s = GsonHelper.m_13851_(p_44237_, "group", "");

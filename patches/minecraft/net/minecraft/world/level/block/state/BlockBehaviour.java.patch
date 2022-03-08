@@ -1,15 +1,13 @@
 --- a/net/minecraft/world/level/block/state/BlockBehaviour.java
 +++ b/net/minecraft/world/level/block/state/BlockBehaviour.java
-@@ -66,7 +_,8 @@
+@@ -66,6 +_,7 @@
  import net.minecraft.world.phys.shapes.Shapes;
  import net.minecraft.world.phys.shapes.VoxelShape;
  
--public abstract class BlockBehaviour {
 +//TODO, Delegates are weird here now, because Block extends this.
-+public abstract class BlockBehaviour extends net.minecraftforge.registries.ForgeRegistryEntry<Block> {
+ public abstract class BlockBehaviour {
     protected static final Direction[] f_60441_ = new Direction[]{Direction.WEST, Direction.EAST, Direction.NORTH, Direction.SOUTH, Direction.DOWN, Direction.UP};
     protected final Material f_60442_;
-    protected final boolean f_60443_;
 @@ -93,6 +_,8 @@
        this.f_60449_ = p_60452_.f_60893_;
        this.f_60438_ = p_60452_.f_60903_;

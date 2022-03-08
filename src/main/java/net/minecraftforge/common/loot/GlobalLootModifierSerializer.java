@@ -10,8 +10,6 @@ import com.google.gson.JsonObject;
 import net.minecraft.advancements.critereon.SerializationContext;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.registries.GameData;
-import net.minecraftforge.registries.IForgeRegistryEntry;
 
 /**
  * Abstract base deserializer for LootModifiers. Takes care of Forge registry things.<br/>
@@ -19,28 +17,7 @@ import net.minecraftforge.registries.IForgeRegistryEntry;
  * <code>read</code> method to deserialize from json.
  * @param <T> the Type to deserialize
  */
-public abstract class GlobalLootModifierSerializer<T extends IGlobalLootModifier> implements IForgeRegistryEntry<GlobalLootModifierSerializer<?>> {
-    private ResourceLocation registryName = null;
-    
-    public final GlobalLootModifierSerializer<T> setRegistryName(String name) {
-        if (getRegistryName() != null)
-            throw new IllegalStateException("Attempted to set registry name with existing registry name! New: " + name + " Old: " + getRegistryName());
-
-        this.registryName = GameData.checkPrefix(name, true);
-        return this;
-    }
-    
-    //Helpers
-    @Override
-    public final GlobalLootModifierSerializer<T> setRegistryName(ResourceLocation name){ return setRegistryName(name.toString()); }
-
-    public final GlobalLootModifierSerializer<T> setRegistryName(String modID, String name){ return setRegistryName(modID + ":" + name); }
-
-    @Override
-    public final ResourceLocation getRegistryName() {
-        return registryName;
-    }
-    
+public abstract class GlobalLootModifierSerializer<T extends IGlobalLootModifier> {
     /**
      * Most mods will likely not need more than<br/>
      * <code>return new MyModifier(conditionsIn)</code><br/>

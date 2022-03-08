@@ -1,14 +1,5 @@
 --- a/net/minecraft/world/item/enchantment/Enchantment.java
 +++ b/net/minecraft/world/item/enchantment/Enchantment.java
-@@ -16,7 +_,7 @@
- import net.minecraft.world.entity.MobType;
- import net.minecraft.world.item.ItemStack;
- 
--public abstract class Enchantment {
-+public abstract class Enchantment extends net.minecraftforge.registries.ForgeRegistryEntry<Enchantment> {
-    private final EquipmentSlot[] f_44671_;
-    private final Enchantment.Rarity f_44674_;
-    public final EnchantmentCategory f_44672_;
 @@ -111,7 +_,7 @@
     }
  

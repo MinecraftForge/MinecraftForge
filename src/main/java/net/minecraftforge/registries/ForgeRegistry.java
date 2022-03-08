@@ -48,7 +48,7 @@ import org.apache.logging.log4j.MarkerManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRegistryInternal<V>, IForgeRegistryModifiable<V>
+public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegistryModifiable<V>
 {
     public static Marker REGISTRIES = MarkerManager.getMarker("REGISTRIES");
     private static Marker REGISTRYDUMP = MarkerManager.getMarker("REGISTRYDUMP");
@@ -464,7 +464,12 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
 
         if (hasWrapper)
         {
-            bindDelegate(rkey, value);
+            Holder.Reference<V> delegate = bindDelegate(rkey, value);
+            if (value instanceof IForgeRegistryEntry<?> regEntry && regEntry.getDelegate().isEmpty())
+            {
+                //noinspection unchecked
+                ((IForgeRegistryEntry<V>) regEntry).setDelegate(delegate);
+            }
             if (oldEntry != null)
             {
                 if (!this.overrides.get(key).contains(oldEntry))

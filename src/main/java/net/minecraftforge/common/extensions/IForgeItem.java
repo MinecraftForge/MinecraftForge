@@ -41,7 +41,6 @@ import net.minecraft.world.level.Level;
 import net.minecraftforge.common.ToolAction;
 import net.minecraftforge.common.ToolActions;
 import net.minecraftforge.registries.IForgeRegistry;
-import net.minecraftforge.registries.IForgeRegistryEntry;
 
 // TODO systemic review of all extension functions. lots of unused -C
 public interface IForgeItem
@@ -599,7 +598,7 @@ public interface IForgeItem
      *
      * @param itemStack the ItemStack to check
      * @return the Mod ID for the ItemStack, or null when there is no specially
-     *         associated mod and {@link IForgeRegistry#getKey(IForgeRegistryEntry)} would return null.
+     *         associated mod and {@link IForgeRegistry#getKey(Object)} would return null.
      */
     @Nullable
     default String getCreatorModId(ItemStack itemStack)

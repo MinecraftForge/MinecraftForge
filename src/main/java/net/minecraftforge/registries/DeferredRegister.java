@@ -64,7 +64,7 @@ public class DeferredRegister<T>
      * @see #create(ResourceKey, String)
      * @see #create(ResourceLocation, String)
      */
-    public static <B extends IForgeRegistryEntry<B>> DeferredRegister<B> create(IForgeRegistry<B> reg, String modid)
+    public static <B> DeferredRegister<B> create(IForgeRegistry<B> reg, String modid)
     {
         return new DeferredRegister<>(reg, modid);
     }
@@ -75,7 +75,7 @@ public class DeferredRegister<T>
      * @deprecated Use {@link #create(ResourceLocation, String)} and {@link #makeRegistry(Class, Supplier)} instead
      */
     @Deprecated(forRemoval = true, since = "1.18.2")
-    public static <B extends IForgeRegistryEntry<B>> DeferredRegister<B> create(Class<B> base, String modid)
+    public static <B> DeferredRegister<B> create(Class<B> base, String modid)
     {
         return new DeferredRegister<>(null, base, modid, false);
     }

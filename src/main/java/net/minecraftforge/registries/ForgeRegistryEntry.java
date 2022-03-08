@@ -5,10 +5,13 @@
 
 package net.minecraftforge.registries;
 
-import com.google.common.reflect.TypeToken;
-
+import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.Locale;
+import java.util.Optional;
 
 /**
  * Default implementation of IForgeRegistryEntry, this is necessary to reduce redundant code.
@@ -19,6 +22,7 @@ import javax.annotation.Nullable;
 public abstract class ForgeRegistryEntry<V extends IForgeRegistryEntry<V>> implements IForgeRegistryEntry<V>
 {
     private ResourceLocation registryName = null;
+    private Holder.Reference<V> delegate = null;
 
     public final V setRegistryName(String name)
     {
@@ -37,8 +41,7 @@ public abstract class ForgeRegistryEntry<V extends IForgeRegistryEntry<V>> imple
     @Nullable
     public final ResourceLocation getRegistryName()
     {
-        // if (delegate.name() != null) return delegate.name();
-        return registryName != null ? registryName : null;
+        return this.getDelegate().map(ref -> ref.key().location()).orElse(this.registryName);
     }
 
     /**
@@ -50,6 +53,29 @@ public abstract class ForgeRegistryEntry<V extends IForgeRegistryEntry<V>> imple
     ResourceLocation checkRegistryName(String name)
     {
         return GameData.checkPrefix(name, true);
+    }
+
+    @NotNull
+    @Override
+    public Optional<Holder.Reference<V>> getDelegate()
+    {
+        return Optional.ofNullable(this.delegate);
+    }
+
+    @NotNull
+    @Override
+    public Holder.Reference<V> getDelegateOrThrow()
+    {
+        return getDelegate().orElseThrow(() -> new IllegalArgumentException(String.format(Locale.ENGLISH, "No delegate exists for key: %s, value: %s", registryName, this)));
+    }
+
+    @Override
+    public void setDelegate(@NotNull Holder.Reference<V> delegate)
+    {
+        if (this.getDelegate().isPresent())
+            throw new IllegalStateException("Attempted to set delegate after it was already set! New: " + delegate + " Old: " + this.getDelegateOrThrow());
+
+        this.delegate = delegate;
     }
 
     /**

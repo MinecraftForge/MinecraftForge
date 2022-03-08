@@ -38,27 +38,6 @@ public class ConditionalRecipe
 
     public static class Serializer<T extends Recipe<?>> implements RecipeSerializer<T>
     {
-        private ResourceLocation name;
-
-        @Override
-        public RecipeSerializer<?> setRegistryName(ResourceLocation name)
-        {
-            this.name = name;
-            return this;
-        }
-
-        @Override
-        public ResourceLocation getRegistryName()
-        {
-            return name;
-        }
-
-        @SuppressWarnings("unchecked") // Need this wrapper, because generics
-        private static <G> Class<G> castClass(Class<?> cls)
-        {
-            return (Class<G>)cls;
-        }
-
         @Override
         public T fromJson(ResourceLocation recipeId, JsonObject json)
         {

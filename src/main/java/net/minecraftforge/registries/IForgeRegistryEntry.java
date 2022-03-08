@@ -4,9 +4,13 @@
  */
 
 package net.minecraftforge.registries;
-import net.minecraft.resources.ResourceLocation;
 
-import javax.annotation.Nullable;
+import net.minecraft.core.Holder;
+import net.minecraft.resources.ResourceLocation;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.Optional;
 
 public interface IForgeRegistryEntry<V>
 {
@@ -36,4 +40,12 @@ public interface IForgeRegistryEntry<V>
      */
     @Nullable
     ResourceLocation getRegistryName();
+
+    @NotNull
+    Optional<Holder.Reference<V>> getDelegate();
+
+    @NotNull
+    Holder.Reference<V> getDelegateOrThrow();
+
+    void setDelegate(@NotNull Holder.Reference<V> delegate);
 }
