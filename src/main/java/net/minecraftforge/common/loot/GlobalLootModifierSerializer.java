@@ -68,18 +68,4 @@ public abstract class GlobalLootModifierSerializer<T extends IGlobalLootModifier
         json.add("conditions", SerializationContext.INSTANCE.serializeConditions(conditions));
         return json;
     }
-
-    /**
-     * Used by Forge's registry system.
-     */
-    @Override
-    public final Class<GlobalLootModifierSerializer<?>> getRegistryType() {
-        return castClass(GlobalLootModifierSerializer.class);
-    }
-    
-    @SuppressWarnings("unchecked") // Need this wrapper, because generics
-    private static <G> Class<G> castClass(Class<?> cls)
-    {
-        return (Class<G>)cls;
-    }
 }

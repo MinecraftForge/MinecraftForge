@@ -13,7 +13,7 @@
           return Optional.ofNullable(p_150939_.f_41590_);
        })).apply(p_41697_, ItemStack::new);
     });
-+   private final net.minecraftforge.registries.IRegistryDelegate<Item> delegate;
++   private final net.minecraft.core.Holder.Reference<Item> delegate;
 +   private CompoundTag capNBT;
 +
     private static final Logger f_41585_ = LogUtils.getLogger();
@@ -32,7 +32,7 @@
 +      super(ItemStack.class, true);
 +      this.capNBT = p_41606_;
 +      this.f_41589_ = p_41604_ == null ? null : p_41604_.m_5456_();
-+      this.delegate = p_41604_ == null ? null : p_41604_.m_5456_().delegate;
++      this.delegate = p_41604_ == null ? null : net.minecraftforge.registries.ForgeRegistries.ITEMS.getDelegateOrThrow(p_41604_.m_5456_());
 +      this.f_41587_ = p_41605_;
 +      this.forgeInit();
 +      if (this.f_41589_ != null && this.f_41589_.isDamageable(this)) {
@@ -47,7 +47,7 @@
 +      this.capNBT = p_41608_.m_128441_("ForgeCaps") ? p_41608_.m_128469_("ForgeCaps") : null;
 +      Item rawItem =
        this.f_41589_ = Registry.f_122827_.m_7745_(new ResourceLocation(p_41608_.m_128461_("id")));
-+      this.delegate = rawItem.delegate;
++      this.delegate = net.minecraftforge.registries.ForgeRegistries.ITEMS.getDelegateOrThrow(rawItem);
        this.f_41587_ = p_41608_.m_128445_("Count");
        if (p_41608_.m_128425_("tag", 10)) {
           this.f_41590_ = p_41608_.m_128469_("tag");

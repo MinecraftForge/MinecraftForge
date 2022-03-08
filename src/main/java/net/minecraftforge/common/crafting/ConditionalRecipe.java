@@ -53,12 +53,6 @@ public class ConditionalRecipe
             return name;
         }
 
-        @Override
-        public Class<RecipeSerializer<?>> getRegistryType()
-        {
-            return Serializer.<RecipeSerializer<?>>castClass(RecipeSerializer.class);
-        }
-
         @SuppressWarnings("unchecked") // Need this wrapper, because generics
         private static <G> Class<G> castClass(Class<?> cls)
         {

@@ -115,7 +115,7 @@
 +      @Deprecated // FORGE: Use the variant that takes a Supplier below
        public BlockBehaviour.Properties m_60916_(Block p_60917_) {
 -         this.f_60894_ = p_60917_.m_60589_();
-+         this.lootTableSupplier = () -> p_60917_.delegate.get().m_60589_();
++         this.lootTableSupplier = () -> net.minecraftforge.registries.ForgeRegistries.BLOCKS.getDelegateOrThrow(p_60917_).get().m_60589_();
           return this;
 +      }
 +

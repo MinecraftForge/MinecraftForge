@@ -20,7 +20,7 @@
        this.f_54691_.add(p_54694_.m_75953_(8, true));
        this.m_49959_(this.f_49792_.m_61090_().m_61124_(f_54688_, Integer.valueOf(0)));
 +      fluidStateCacheInitialized = true;
-+      supplier = p_54694_.delegate;
++      supplier = net.minecraftforge.registries.ForgeRegistries.FLUIDS.getDelegateOrThrow(p_54694_);
 +   }
 +
 +   /**

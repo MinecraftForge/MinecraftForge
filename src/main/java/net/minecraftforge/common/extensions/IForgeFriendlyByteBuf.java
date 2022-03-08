@@ -67,23 +67,24 @@ public interface IForgeFriendlyByteBuf
     }
 
     /**
-     * Writes an given registry-entry's integer id to the specified buffer in combination with writing the containing registry's id. In contrast to
+     * Writes a given registry-entry's integer id to the specified buffer in combination with writing the containing registry's id. In contrast to
      * {@link #writeRegistryIdUnsafe(IForgeRegistry, IForgeRegistryEntry)} this method checks every single step performed as well as
      * writing the registry-id to the buffer, in order to prevent any unexpected behaviour. Therefore this method is to be preferred whenever possible,
      * over using the unsafe methods.
+     *
+     * @param registry The registry containing the entry
      * @param entry The entry to write
      * @param <T> The type of the registry-entry
-     * @throws NullPointerException if the entry was null
-     * @throws IllegalArgumentException if the the registry could not be found or the registry does not contain the specified value
+     * @throws NullPointerException if the registry or entry was null
+     * @throws IllegalArgumentException if the registry does not contain the specified value
      */
-    default <T extends IForgeRegistryEntry<T>> void writeRegistryId(@Nonnull T entry)
+    default <T extends IForgeRegistryEntry<T>> void writeRegistryId(@Nonnull IForgeRegistry<T> registry, @Nonnull T entry)
     {
-        Class<T> regType = Objects.requireNonNull(entry,"Cannot write a null registry entry!").getRegistryType();
-        IForgeRegistry<T> retrievedRegistry = RegistryManager.ACTIVE.getRegistry(regType);
-        Preconditions.checkArgument(retrievedRegistry!=null,"Cannot write registry id for an unknown registry type: %s",regType.getName());
-        ResourceLocation name = retrievedRegistry.getRegistryName();
-        Preconditions.checkArgument(retrievedRegistry.containsValue(entry),"Cannot find %s in %s",entry.getRegistryName()!=null?entry.getRegistryName():entry,name);
-        ForgeRegistry<T> reg = (ForgeRegistry<T>)retrievedRegistry;
+        Objects.requireNonNull(registry, "Cannot write a null registry key!");
+        Objects.requireNonNull(entry,"Cannot write a null registry entry!");
+        ResourceLocation name = registry.getRegistryName();
+        Preconditions.checkArgument(registry.containsValue(entry), "Cannot find %s in %s", entry.getRegistryName()!=null ? entry.getRegistryName() : entry, name);
+        ForgeRegistry<T> reg = (ForgeRegistry<T>) registry;
         self().writeResourceLocation(name); //TODO change to writing a varInt once registries use id's
         self().writeVarInt(reg.getID(entry));
     }
@@ -110,7 +111,7 @@ public interface IForgeFriendlyByteBuf
     default <T extends IForgeRegistryEntry<T>> T readRegistryIdSafe(Class<? super T> registrySuperType)
     {
         T value = readRegistryId();
-        if (!value.getRegistryType().equals(registrySuperType))
+        if (!registrySuperType.isAssignableFrom(value.getClass()))
             throw new IllegalArgumentException("Attempted to read an registryValue of the wrong type from the Buffer!");
         return value;
     }

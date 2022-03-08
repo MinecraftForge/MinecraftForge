@@ -20,7 +20,6 @@ public abstract class ForgeRegistryEntry<V extends IForgeRegistryEntry<V>> imple
 {
     @SuppressWarnings("serial")
     private final TypeToken<V> token = new TypeToken<V>(getClass()){};
-    public final IRegistryDelegate<V> delegate = new RegistryDelegate<>((V)this, (Class<V>)token.getRawType());
     private ResourceLocation registryName = null;
 
     public final V setRegistryName(String name)
@@ -40,11 +39,9 @@ public abstract class ForgeRegistryEntry<V extends IForgeRegistryEntry<V>> imple
     @Nullable
     public final ResourceLocation getRegistryName()
     {
-        if (delegate.name() != null) return delegate.name();
+        // if (delegate.name() != null) return delegate.name();
         return registryName != null ? registryName : null;
     }
-
-    public final Class<V> getRegistryType() { return (Class<V>)token.getRawType(); }
 
     /**
      * This will assert that the registry name is valid and warn about potential registry overrides

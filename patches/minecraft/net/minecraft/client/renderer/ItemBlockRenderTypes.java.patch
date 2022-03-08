@@ -54,8 +54,8 @@
 +
 +   // FORGE START
 +
-+   private static final Map<net.minecraftforge.registries.IRegistryDelegate<Block>, java.util.function.Predicate<RenderType>> blockRenderChecks = Maps.newHashMap();
-+   private static final Map<net.minecraftforge.registries.IRegistryDelegate<Fluid>, java.util.function.Predicate<RenderType>> fluidRenderChecks = Maps.newHashMap();
++   private static final Map<net.minecraft.core.Holder.Reference<Block>, java.util.function.Predicate<RenderType>> blockRenderChecks = Maps.newHashMap();
++   private static final Map<net.minecraft.core.Holder.Reference<Fluid>, java.util.function.Predicate<RenderType>> fluidRenderChecks = Maps.newHashMap();
 +   static {
 +      f_109275_.forEach(ItemBlockRenderTypes::setRenderLayer);
 +      f_109276_.forEach(ItemBlockRenderTypes::setRenderLayer);
@@ -68,7 +68,7 @@
 +      } else {
 +         java.util.function.Predicate<RenderType> rendertype;
 +         synchronized (ItemBlockRenderTypes.class) {
-+            rendertype = blockRenderChecks.get(block.delegate);
++            rendertype = blockRenderChecks.get(net.minecraftforge.registries.ForgeRegistries.BLOCKS.getDelegateOrThrow(block));
 +         }
 +         return rendertype != null ? rendertype.test(type) : type == RenderType.m_110451_();
 +      }
@@ -77,7 +77,7 @@
 +   public static boolean canRenderInLayer(FluidState fluid, RenderType type) {
 +      java.util.function.Predicate<RenderType> rendertype;
 +      synchronized (ItemBlockRenderTypes.class) {
-+         rendertype = fluidRenderChecks.get(fluid.m_76152_().delegate);
++         rendertype = fluidRenderChecks.get(net.minecraftforge.registries.ForgeRegistries.FLUIDS.getDelegateOrThrow(fluid.m_76152_()));
 +      }
 +      return rendertype != null ? rendertype.test(type) : type == RenderType.m_110451_();
 +   }
@@ -88,7 +88,7 @@
 +   }
 +
 +   public static synchronized void setRenderLayer(Block block, java.util.function.Predicate<RenderType> predicate) {
-+      blockRenderChecks.put(block.delegate, predicate);
++      blockRenderChecks.put(net.minecraftforge.registries.ForgeRegistries.BLOCKS.getDelegateOrThrow(block), predicate);
 +   }
 +
 +   public static void setRenderLayer(Fluid fluid, RenderType type) {
@@ -97,7 +97,7 @@
 +   }
 +
 +   public static synchronized void setRenderLayer(Fluid fluid, java.util.function.Predicate<RenderType> predicate) {
-+      fluidRenderChecks.put(fluid.delegate, predicate);
++      fluidRenderChecks.put(net.minecraftforge.registries.ForgeRegistries.FLUIDS.getDelegateOrThrow(fluid), predicate);
     }
  
     public static void m_109291_(boolean p_109292_) {

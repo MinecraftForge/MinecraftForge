@@ -72,10 +72,11 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
     private final Set<ResourceLocation> dummies = Sets.newHashSet();
     private final Set<Integer> blocked = Sets.newHashSet();
     private final Multimap<ResourceLocation, V> overrides = ArrayListMultimap.create();
+    private final Map<ResourceLocation, Holder.Reference<V>> delegatesByName = Maps.newHashMap();
+    private final Map<V, Holder.Reference<V>> delegatesByValue = Maps.newHashMap();
     private final BiMap<OverrideOwner<V>, V> owners = HashBiMap.create();
     private final ForgeRegistryTagManager<V> tagManager;
     private final DummyFactory<V> dummyFactory;
-    private final boolean isDelegated;
     private final int min;
     private final int max;
     private final boolean allowOverrides;
@@ -111,7 +112,6 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
         this.bake = builder.getBake();
         this.missing = builder.getMissingFactory();
         this.dummyFactory = builder.getDummyFactory();
-        this.isDelegated = ForgeRegistryEntry.class.isAssignableFrom(superType); //TODO: Make this IDelegatedRegistryEntry?
         this.allowOverrides = builder.getAllowOverrides();
         this.isModifiable = builder.getAllowModifications();
         this.hasWrapper = builder.getHasWrapper();
@@ -252,6 +252,17 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
         return this.defaultKey != null
                 ? this.getSlaveMap(NamespacedDefaultedWrapper.Factory.ID, NamespacedDefaultedWrapper.class)
                 : this.getSlaveMap(NamespacedWrapper.Factory.ID, NamespacedWrapper.class);
+    }
+
+    @NotNull
+    Registry<V> getWrapperOrThrow()
+    {
+        Registry<V> wrapper = getWrapper();
+
+        if (wrapper == null)
+            throw new IllegalStateException("Cannot query wrapper for non-wrapped forge registry!");
+
+        return wrapper;
     }
 
     @SuppressWarnings("unchecked")
@@ -446,16 +457,14 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
         this.availabilityMap.set(idToUse);
         this.owners.put(new OverrideOwner<V>(owner == null ? key.getPath() : owner, rkey), value);
 
-        if (isDelegated)
+        if (hasWrapper)
         {
-            getDelegate(value).setName(key);
+            bindDelegate(rkey, value);
             if (oldEntry != null)
             {
                 if (!this.overrides.get(key).contains(oldEntry))
                     this.overrides.put(key, oldEntry);
                 this.overrides.get(key).remove(value);
-                if (this.stage == RegistryManager.ACTIVE)
-                    getDelegate(oldEntry).changeReference(value);
             }
         }
 
@@ -505,25 +514,66 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
         LOGGER.trace(REGISTRIES,"Registry {} dummy: {}", this.name, key);
     }
 
-    @SuppressWarnings("unchecked")
-    private RegistryDelegate<V> getDelegate(V thing)
+    @NotNull
+    @Override
+    public Optional<Holder.Reference<V>> getDelegate(ResourceKey<V> rkey)
     {
-        if (isDelegated)
-            return (RegistryDelegate<V>)((ForgeRegistryEntry<V>)thing).delegate;
-        else
-            throw new IllegalStateException("Tried to get existing delegate from registry that is not delegated.");
+        return Optional.ofNullable(delegatesByName.get(rkey.location()));
+    }
+
+    @NotNull
+    @Override
+    public Holder.Reference<V> getDelegateOrThrow(ResourceKey<V> rkey)
+    {
+        return getDelegate(rkey).orElseThrow(() -> new IllegalArgumentException(String.format(Locale.ENGLISH, "No delegate exists for key %s", rkey)));
+    }
+
+    @NotNull
+    @Override
+    public Optional<Holder.Reference<V>> getDelegate(ResourceLocation key)
+    {
+        return Optional.ofNullable(delegatesByName.get(key));
+    }
+
+    @NotNull
+    @Override
+    public Holder.Reference<V> getDelegateOrThrow(ResourceLocation key)
+    {
+        return getDelegate(key).orElseThrow(() -> new IllegalArgumentException(String.format(Locale.ENGLISH, "No delegate exists for key %s", key)));
+    }
+
+    @NotNull
+    @Override
+    public Optional<Holder.Reference<V>> getDelegate(V value)
+    {
+        return Optional.ofNullable(delegatesByValue.get(value));
+    }
+
+    @NotNull
+    @Override
+    public Holder.Reference<V> getDelegateOrThrow(V value)
+    {
+        return getDelegate(value).orElseThrow(() -> new IllegalArgumentException(String.format(Locale.ENGLISH, "No delegate exists for value %s", value)));
+    }
+
+    private Holder.Reference<V> bindDelegate(ResourceKey<V> rkey, V value)
+    {
+        Holder.Reference<V> delegate = delegatesByName.computeIfAbsent(rkey.location(), k -> Holder.Reference.createStandAlone(this.getWrapperOrThrow(), rkey));
+        delegate.bind(rkey, value);
+        delegatesByValue.put(value, delegate);
+        return delegate;
     }
 
     void resetDelegates()
     {
-        if (!this.isDelegated)
+        if (!this.hasWrapper)
             return;
 
-        for (V value : this)
-            getDelegate(value).changeReference(value);
+        for (Entry<ResourceKey<V>, V> entry : this.keys.entrySet())
+            bindDelegate(entry.getKey(), entry.getValue());
 
-        for (V value: this.overrides.values())
-            getDelegate(value).changeReference(value);
+        for (Entry<ResourceLocation, V> entry : this.overrides.entries())
+            bindDelegate(ResourceKey.create(this.key, entry.getKey()), entry.getValue());
     }
 
     V getDefault()

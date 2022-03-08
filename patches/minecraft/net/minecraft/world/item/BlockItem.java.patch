@@ -33,7 +33,7 @@
     }
  
     public Block m_40614_() {
-+      return this.getBlockRaw() == null ? null : this.getBlockRaw().delegate.get();
++      return this.getBlockRaw() == null ? null : net.minecraftforge.registries.ForgeRegistries.BLOCKS.getDelegateOrThrow(this.getBlockRaw()).get();
 +   }
 +
 +   private Block getBlockRaw() {

@@ -64,7 +64,7 @@ class NamespacedWrapper<T extends IForgeRegistryEntry<T>> extends MappedRegistry
 
         int realId = this.delegate.add(id, value);
         if (realId != id && id != -1)
-            LOGGER.warn("Registered object did not get ID it asked for. Name: {} Type: {} Expected: {} Got: {}", key, value.getRegistryType().getName(), id, realId);
+            LOGGER.warn("Registered object did not get ID it asked for. Name: {} Type: {} Expected: {} Got: {}", key, delegate.getRegistrySuperType().getName(), id, realId);
 
         return this.holders.onAdded(RegistryManager.ACTIVE, realId, value, oldValue);
     }

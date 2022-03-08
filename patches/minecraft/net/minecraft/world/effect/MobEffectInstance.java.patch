@@ -22,7 +22,7 @@
  
     public MobEffect m_19544_() {
 -      return this.f_19502_;
-+      return this.f_19502_ == null ? null : this.f_19502_.delegate.get();
++      return this.f_19502_ == null ? null : net.minecraftforge.registries.ForgeRegistries.MOB_EFFECTS.getDelegateOrThrow(this.f_19502_).get();
     }
  
     public int m_19557_() {

@@ -9,7 +9,7 @@
     public BucketItem(Fluid p_40689_, Item.Properties p_40690_) {
        super(p_40690_);
        this.f_40687_ = p_40689_;
-+      this.fluidSupplier = p_40689_.delegate;
++      this.fluidSupplier = net.minecraftforge.registries.ForgeRegistries.FLUIDS.getDelegateOrThrow(p_40689_);
 +   }
 +
 +   /**

@@ -9,7 +9,7 @@
 -      super(p_53529_);
 -      this.f_53525_ = p_53528_;
 -      f_53524_.put(p_53528_, this);
-+       this(Blocks.f_50276_ == null ? null : () -> (FlowerPotBlock) Blocks.f_50276_.delegate.get(), () -> p_53528_.delegate.get(), p_53529_);
++       this(Blocks.f_50276_ == null ? null : () -> (FlowerPotBlock) net.minecraftforge.registries.ForgeRegistries.BLOCKS.getDelegateOrThrow(Blocks.f_50276_).get(), () -> net.minecraftforge.registries.ForgeRegistries.BLOCKS.getDelegateOrThrow(p_53528_).get(), p_53529_);
 +       if (Blocks.f_50276_ != null) {
 +           ((FlowerPotBlock)Blocks.f_50276_).addPlant(p_53528_.getRegistryName(), () -> this);
 +       }
@@ -42,7 +42,7 @@
        ItemStack itemstack = p_53543_.m_21120_(p_53544_);
        Item item = itemstack.m_41720_();
 -      BlockState blockstate = (item instanceof BlockItem ? f_53524_.getOrDefault(((BlockItem)item).m_40614_(), Blocks.f_50016_) : Blocks.f_50016_).m_49966_();
-+      BlockState blockstate = (item instanceof BlockItem ? getEmptyPot().fullPots.getOrDefault(((BlockItem)item).m_40614_().getRegistryName(), Blocks.f_50016_.delegate).get() : Blocks.f_50016_).m_49966_();
++      BlockState blockstate = (item instanceof BlockItem ? getEmptyPot().fullPots.getOrDefault(((BlockItem)item).m_40614_().getRegistryName(), net.minecraftforge.registries.ForgeRegistries.BLOCKS.getDelegateOrThrow(Blocks.f_50016_)).get() : Blocks.f_50016_).m_49966_();
        boolean flag = blockstate.m_60713_(Blocks.f_50016_);
        boolean flag1 = this.m_153267_();
        if (flag != flag1) {

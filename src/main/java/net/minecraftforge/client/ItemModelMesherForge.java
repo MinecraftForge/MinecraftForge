@@ -17,17 +17,18 @@ import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.ModelManager;
 import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.core.Holder;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.registries.IRegistryDelegate;
+import net.minecraftforge.registries.ForgeRegistries;
 
 /**
  * Wrapper around ItemModeMesher that cleans up the internal maps to respect ID remapping.
  */
 public class ItemModelMesherForge extends ItemModelShaper
 {
-    final Map<IRegistryDelegate<Item>, ModelResourceLocation> locations = Maps.newHashMap();
-    final Map<IRegistryDelegate<Item>, BakedModel> models = Maps.newHashMap();
+    final Map<Holder.Reference<Item>, ModelResourceLocation> locations = Maps.newHashMap();
+    final Map<Holder.Reference<Item>, BakedModel> models = Maps.newHashMap();
 
     public ItemModelMesherForge(ModelManager manager)
     {
@@ -38,13 +39,13 @@ public class ItemModelMesherForge extends ItemModelShaper
     @Nullable
     public BakedModel getItemModel(Item item)
     {
-        return models.get(item.delegate);
+        return models.get(ForgeRegistries.ITEMS.getDelegateOrThrow(item));
     }
 
     @Override
     public void register(Item item, ModelResourceLocation location)
     {
-        IRegistryDelegate<Item> key = item.delegate;
+        Holder.Reference<Item> key = ForgeRegistries.ITEMS.getDelegateOrThrow(item);
         locations.put(key, location);
         models.put(key, getModelManager().getModel(location));
     }
@@ -53,7 +54,7 @@ public class ItemModelMesherForge extends ItemModelShaper
     public void rebuildCache()
     {
         final ModelManager manager = this.getModelManager();
-        for (Map.Entry<IRegistryDelegate<Item>, ModelResourceLocation> e : locations.entrySet())
+        for (Map.Entry<Holder.Reference<Item>, ModelResourceLocation> e : locations.entrySet())
         {
         	models.put(e.getKey(), manager.getModel(e.getValue()));
         }
@@ -61,7 +62,7 @@ public class ItemModelMesherForge extends ItemModelShaper
 
     public ModelResourceLocation getLocation(@Nonnull ItemStack stack)
     {
-        ModelResourceLocation location = locations.get(stack.getItem().delegate);
+        ModelResourceLocation location = locations.get(ForgeRegistries.ITEMS.getDelegateOrThrow(stack.getItem()));
 
         if (location == null)
         {

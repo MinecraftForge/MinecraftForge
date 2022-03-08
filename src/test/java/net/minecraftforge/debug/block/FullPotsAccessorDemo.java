@@ -301,7 +301,7 @@ public class FullPotsAccessorDemo
 
             private List<BakedQuad> getPlantQuads(Block plant, @Nullable Direction face, Random rand)
             {
-                BlockState potState = ((FlowerPotBlock) Blocks.FLOWER_POT).getFullPotsView().getOrDefault(plant.getRegistryName(), Blocks.AIR.delegate).get().defaultBlockState();
+                BlockState potState = ((FlowerPotBlock) Blocks.FLOWER_POT).getFullPotsView().getOrDefault(plant.getRegistryName(), ForgeRegistries.BLOCKS.getDelegateOrThrow(Blocks.AIR)).get().defaultBlockState();
                 BakedModel potModel = Minecraft.getInstance().getBlockRenderer().getBlockModel(potState);
 
                 return potModel.getQuads(potState, face, rand, EmptyModelData.INSTANCE)

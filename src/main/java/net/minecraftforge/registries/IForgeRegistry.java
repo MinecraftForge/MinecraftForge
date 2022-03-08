@@ -76,6 +76,13 @@ public interface IForgeRegistry<V extends IForgeRegistryEntry<V>> extends Iterab
      */
     @Nullable ITagManager<V> tags();
 
+    @NotNull Optional<Holder.Reference<V>> getDelegate(ResourceKey<V> rkey);
+    @NotNull Holder.Reference<V> getDelegateOrThrow(ResourceKey<V> rkey);
+    @NotNull Optional<Holder.Reference<V>> getDelegate(ResourceLocation key);
+    @NotNull Holder.Reference<V> getDelegateOrThrow(ResourceLocation key);
+    @NotNull Optional<Holder.Reference<V>> getDelegate(V value);
+    @NotNull Holder.Reference<V> getDelegateOrThrow(V value);
+
     /**
      * Retrieve the slave map of type T from the registry.
      * Slave maps are maps which are dependent on registry content in some way.

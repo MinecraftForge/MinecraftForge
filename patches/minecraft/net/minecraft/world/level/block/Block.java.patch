@@ -88,7 +88,7 @@
        }
  
 -      return this.f_49788_;
-+      return this.f_49788_.delegate.get(); //Forge: Vanilla caches the items, update with registry replacements.
++      return net.minecraftforge.registries.ForgeRegistries.ITEMS.getDelegateOrThrow(this.f_49788_).get(); //Forge: Vanilla caches the items, update with registry replacements.
     }
  
     public boolean m_49967_() {
