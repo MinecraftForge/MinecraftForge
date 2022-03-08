@@ -5,6 +5,7 @@
 
 package net.minecraftforge.registries;
 
+import net.minecraft.network.syncher.EntityDataSerializer;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.entity.EntityType;
@@ -91,8 +92,8 @@ public class ForgeRegistries
     public static final IForgeRegistry<Biome> BIOMES = RegistryManager.ACTIVE.getRegistry(Keys.BIOMES);
 
     // Custom forge registries
-    static final DeferredRegister<DataSerializerEntry> DEFERRED_DATA_SERIALIZERS = DeferredRegister.create(Keys.DATA_SERIALIZERS, Keys.DATA_SERIALIZERS.location().getNamespace());
-    public static final Supplier<IForgeRegistry<DataSerializerEntry>> DATA_SERIALIZERS = DEFERRED_DATA_SERIALIZERS.makeRegistry(DataSerializerEntry.class, GameData::getDataSerializersRegistryBuilder);
+    static final DeferredRegister<EntityDataSerializer<?>> DEFERRED_DATA_SERIALIZERS = DeferredRegister.create(Keys.DATA_SERIALIZERS, Keys.DATA_SERIALIZERS.location().getNamespace());
+    public static final Supplier<IForgeRegistry<EntityDataSerializer<?>>> DATA_SERIALIZERS = DEFERRED_DATA_SERIALIZERS.makeRegistry(GameData.c(EntityDataSerializer.class), GameData::getDataSerializersRegistryBuilder);
     static final DeferredRegister<GlobalLootModifierSerializer<?>> DEFERRED_LOOT_MODIFIER_SERIALIZERS = DeferredRegister.create(Keys.LOOT_MODIFIER_SERIALIZERS, Keys.LOOT_MODIFIER_SERIALIZERS.location().getNamespace());
     public static final Supplier<IForgeRegistry<GlobalLootModifierSerializer<?>>> LOOT_MODIFIER_SERIALIZERS = DEFERRED_LOOT_MODIFIER_SERIALIZERS.makeRegistry(GameData.c(GlobalLootModifierSerializer.class), GameData::getGLMSerializersRegistryBuilder);
     static final DeferredRegister<ForgeWorldPreset> DEFERRED_WORLD_TYPES = DeferredRegister.create(Keys.WORLD_TYPES, Keys.WORLD_TYPES.location().getNamespace());
@@ -133,7 +134,7 @@ public class ForgeRegistries
         public static final ResourceKey<Registry<Biome>> BIOMES = key("worldgen/biome");
 
         // Forge
-        public static final ResourceKey<Registry<DataSerializerEntry>> DATA_SERIALIZERS = key("data_serializers");
+        public static final ResourceKey<Registry<EntityDataSerializer<?>>> DATA_SERIALIZERS = key("data_serializers");
         public static final ResourceKey<Registry<GlobalLootModifierSerializer<?>>> LOOT_MODIFIER_SERIALIZERS = key("forge:loot_modifier_serializers");
         public static final ResourceKey<Registry<ForgeWorldPreset>> WORLD_TYPES = key("forge:world_types");
 

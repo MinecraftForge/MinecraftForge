@@ -162,7 +162,6 @@ import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoader;
 import net.minecraftforge.resource.ResourcePackLoader;
-import net.minecraftforge.registries.DataSerializerEntry;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.ForgeRegistry;
 import net.minecraftforge.registries.GameData;
@@ -1123,18 +1122,16 @@ public class ForgeHooks
         }
     }
 
-    private static Map<EntityDataSerializer<?>, DataSerializerEntry> serializerEntries = GameData.getSerializerMap();
-    //private static final ForgeRegistry<DataSerializerEntry> serializerRegistry = (ForgeRegistry<DataSerializerEntry>) ForgeRegistries.DATA_SERIALIZERS;
-    // Do not reimplement this ^ it introduces a chicken-egg scenario by classloading registries during bootstrap
-
     @Nullable
     public static EntityDataSerializer<?> getSerializer(int id, CrudeIncrementalIntIdentityHashBiMap<EntityDataSerializer<?>> vanilla)
     {
         EntityDataSerializer<?> serializer = vanilla.byId(id);
         if (serializer == null)
         {
-            DataSerializerEntry entry = ((ForgeRegistry<DataSerializerEntry>)ForgeRegistries.DATA_SERIALIZERS.get()).getValue(id);
-            if (entry != null) serializer = entry.getSerializer();
+            // ForgeRegistries.DATA_SERIALIZERS is a deferred register now, so if this method is called too early, the registry will be null
+            ForgeRegistry<EntityDataSerializer<?>> registry = (ForgeRegistry<EntityDataSerializer<?>>) ForgeRegistries.DATA_SERIALIZERS.get();
+            if (registry != null)
+                serializer = registry.getValue(id);
         }
         return serializer;
     }
@@ -1144,15 +1141,12 @@ public class ForgeHooks
         int id = vanilla.getId(serializer);
         if (id < 0)
         {
-            // ForgeRegistries.DATA_SERIALIZERS is a deferred register now, so if this method is called too early, the serializer map will be null
-            // This should keep checking until it's not null
-            if (serializerEntries == null)
-                serializerEntries = GameData.getSerializerMap();
-            if (serializerEntries != null)
             {
-                DataSerializerEntry entry = serializerEntries.get(serializer);
-                if (entry != null)
-                    id = ((ForgeRegistry<DataSerializerEntry>) ForgeRegistries.DATA_SERIALIZERS.get()).getID(entry);
+                id = ((ForgeRegistry<EntityDataSerializer<?>>) ForgeRegistries.DATA_SERIALIZERS).getID(serializer);
+                // ForgeRegistries.DATA_SERIALIZERS is a deferred register now, so if this method is called too early, the registry will be null
+                ForgeRegistry<EntityDataSerializer<?>> registry = (ForgeRegistry<EntityDataSerializer<?>>) ForgeRegistries.DATA_SERIALIZERS.get();
+                if (registry != null)
+                    id = registry.getID(serializer);
             }
         }
         return id;

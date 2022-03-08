@@ -97,7 +97,6 @@ public class GameData
     private static final ResourceLocation BLOCK_TO_ITEM = new ResourceLocation("minecraft:blocktoitemmap");
     private static final ResourceLocation BLOCKSTATE_TO_ID = new ResourceLocation("minecraft:blockstatetoid");
     private static final ResourceLocation BLOCKSTATE_TO_POINT_OF_INTEREST_TYPE = new ResourceLocation("minecraft:blockstatetopointofinteresttype");
-    private static final ResourceLocation SERIALIZER_TO_ENTRY = new ResourceLocation("forge:serializer_to_entry");
     private static final ResourceLocation STRUCTURES = new ResourceLocation("minecraft:structures");
 
     private static boolean hasInit = false;
@@ -158,9 +157,9 @@ public class GameData
         makeRegistry(BIOMES, Biome.class).disableSync().create();
     }
 
-    static RegistryBuilder<DataSerializerEntry> getDataSerializersRegistryBuilder()
+    static RegistryBuilder<EntityDataSerializer<?>> getDataSerializersRegistryBuilder()
     {
-        return makeRegistry(DATA_SERIALIZERS, DataSerializerEntry.class, 256 /*vanilla space*/, MAX_VARINT).disableSaving().disableOverrides()
+        return makeRegistry(DATA_SERIALIZERS, c(EntityDataSerializer.class), 256 /*vanilla space*/, MAX_VARINT).disableSaving().disableOverrides()
                 .addCallback(SerializerCallbacks.INSTANCE);
     }
 
@@ -226,13 +225,6 @@ public class GameData
     public static Map<BlockState, PoiType> getBlockStatePointOfInterestTypeMap()
     {
         return RegistryManager.ACTIVE.getRegistry(POI_TYPES).getSlaveMap(BLOCKSTATE_TO_POINT_OF_INTEREST_TYPE, Map.class);
-    }
-
-    @SuppressWarnings("unchecked")
-    public static Map<EntityDataSerializer<?>, DataSerializerEntry> getSerializerMap()
-    {
-        ForgeRegistry<DataSerializerEntry> registry = RegistryManager.ACTIVE.getRegistry(DATA_SERIALIZERS);
-        return registry == null ? null : registry.getSlaveMap(SERIALIZER_TO_ENTRY, Map.class);
     }
 
     @SuppressWarnings("unchecked")
@@ -572,32 +564,6 @@ public class GameData
         {
             // some stuff hard patched in can cause this to derp if it's JUST vanilla, so skip
             if (stage!=RegistryManager.VANILLA) DefaultAttributes.validate();
-        }
-    }
-
-    private static class SerializerCallbacks implements IForgeRegistry.AddCallback<DataSerializerEntry>, IForgeRegistry.ClearCallback<DataSerializerEntry>, IForgeRegistry.CreateCallback<DataSerializerEntry>
-    {
-        static final SerializerCallbacks INSTANCE = new SerializerCallbacks();
-
-        @Override
-        public void onAdd(IForgeRegistryInternal<DataSerializerEntry> owner, RegistryManager stage, int id, ResourceKey<DataSerializerEntry> key, DataSerializerEntry entry, @Nullable DataSerializerEntry oldEntry)
-        {
-            @SuppressWarnings("unchecked")
-            Map<EntityDataSerializer<?>, DataSerializerEntry> map = owner.getSlaveMap(SERIALIZER_TO_ENTRY, Map.class);
-            if (oldEntry != null) map.remove(oldEntry.getSerializer());
-            map.put(entry.getSerializer(), entry);
-        }
-
-        @Override
-        public void onClear(IForgeRegistryInternal<DataSerializerEntry> owner, RegistryManager stage)
-        {
-            owner.getSlaveMap(SERIALIZER_TO_ENTRY, Map.class).clear();
-        }
-
-        @Override
-        public void onCreate(IForgeRegistryInternal<DataSerializerEntry> owner, RegistryManager stage)
-        {
-            owner.setSlaveMap(SERIALIZER_TO_ENTRY, new IdentityHashMap<>());
         }
     }
 
