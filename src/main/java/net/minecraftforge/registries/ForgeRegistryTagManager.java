@@ -5,6 +5,7 @@
 
 package net.minecraftforge.registries;
 
+import com.google.common.collect.Iterators;
 import com.google.common.collect.Sets;
 import net.minecraft.core.HolderSet;
 import net.minecraft.resources.ResourceLocation;
@@ -91,13 +92,7 @@ class ForgeRegistryTagManager<V extends IForgeRegistryEntry<V>> implements ITagM
     @Override
     public Iterator<ITag<V>> iterator()
     {
-        return this.tags.values().iterator();
-    }
-
-    @Override
-    public Spliterator<ITag<V>> spliterator()
-    {
-        return this.tags.values().spliterator();
+        return Iterators.unmodifiableIterator(this.tags.values().iterator());
     }
 
     @NotNull
