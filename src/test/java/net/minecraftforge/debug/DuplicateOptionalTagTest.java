@@ -6,8 +6,6 @@
 package net.minecraftforge.debug;
 
 import com.google.common.collect.Sets;
-import net.minecraft.core.Holder;
-import net.minecraft.core.HolderSet;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
@@ -42,8 +40,8 @@ public class DuplicateOptionalTagTest
     private static final Set<Supplier<Block>> TAG_A_DEFAULTS = Set.of(Blocks.BEDROCK.delegate);
     private static final Set<Supplier<Block>> TAG_B_DEFAULTS = Set.of(Blocks.WHITE_WOOL.delegate);
 
-   private static final TagKey<Block> TAG_A = ForgeRegistries.BLOCKS.getTagManager().createOptionalTagKey(TAG_NAME, TAG_A_DEFAULTS);
-   private static final TagKey<Block> TAG_B = ForgeRegistries.BLOCKS.getTagManager().createOptionalTagKey(TAG_NAME, TAG_B_DEFAULTS);
+   private static final TagKey<Block> TAG_A = ForgeRegistries.BLOCKS.tags().createOptionalTagKey(TAG_NAME, TAG_A_DEFAULTS);
+   private static final TagKey<Block> TAG_B = ForgeRegistries.BLOCKS.tags().createOptionalTagKey(TAG_NAME, TAG_B_DEFAULTS);
 
     public DuplicateOptionalTagTest()
     {
@@ -52,8 +50,8 @@ public class DuplicateOptionalTagTest
 
    private void onServerStarted(ServerStartedEvent event)
    {
-       Set<Block> tagAValues = ForgeRegistries.BLOCKS.getTagManager().getTag(TAG_A).stream().collect(Collectors.toUnmodifiableSet());
-       Set<Block> tagBValues = ForgeRegistries.BLOCKS.getTagManager().getTag(TAG_B).stream().collect(Collectors.toUnmodifiableSet());
+       Set<Block> tagAValues = ForgeRegistries.BLOCKS.tags().getTag(TAG_A).stream().collect(Collectors.toUnmodifiableSet());
+       Set<Block> tagBValues = ForgeRegistries.BLOCKS.tags().getTag(TAG_B).stream().collect(Collectors.toUnmodifiableSet());
 
        if (!tagAValues.equals(tagBValues))
        {

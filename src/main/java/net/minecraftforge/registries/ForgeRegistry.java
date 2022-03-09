@@ -295,7 +295,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
 
     @Nullable
     @Override
-    public ITagManager<V> getTagManager()
+    public ITagManager<V> tags()
     {
         return this.tagManager;
     }

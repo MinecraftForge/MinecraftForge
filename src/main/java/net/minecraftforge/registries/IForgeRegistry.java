@@ -55,26 +55,26 @@ public interface IForgeRegistry<V extends IForgeRegistryEntry<V>> extends Iterab
 
     /**
      * This method exists purely as a stopgap for vanilla compatibility.
-     * For anything tag related, use {@link #getTagManager()}.
+     * For anything tag related, use {@link #tags()}.
      *
      * @see Registry#getHolder(ResourceKey)
      */
     @NotNull Optional<Holder<V>> getHolder(ResourceKey<V> key);
     /**
      * This method exists purely as a stopgap for vanilla compatibility.
-     * For anything tag related, use {@link #getTagManager()}.
+     * For anything tag related, use {@link #tags()}.
      */
     @NotNull Optional<Holder<V>> getHolder(ResourceLocation location);
     /**
      * This method exists purely as a stopgap for vanilla compatibility.
-     * For anything tag related, use {@link #getTagManager()}.
+     * For anything tag related, use {@link #tags()}.
      */
     @NotNull Optional<Holder<V>> getHolder(V value);
 
     /**
      * @return an instance of {@link ITagManager} if this registry supports tags and/or has a wrapper registry, null otherwise
      */
-    @Nullable ITagManager<V> getTagManager();
+    @Nullable ITagManager<V> tags();
 
     /**
      * Retrieve the slave map of type T from the registry.
