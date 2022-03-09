@@ -43,6 +43,7 @@ import org.jetbrains.annotations.NotNull;
 class NamespacedHolderHelper<T extends IForgeRegistryEntry<T>>
 {
     private static final Logger LOGGER = LogManager.getLogger();
+    private final ForgeRegistry<T> owner;
     private final Registry<T> self;
     @Nullable
     private final ResourceLocation defaultKey;
@@ -58,8 +59,9 @@ class NamespacedHolderHelper<T extends IForgeRegistryEntry<T>>
     private volatile Map<TagKey<T>, HolderSet.Named<T>> tags = new IdentityHashMap<>();
     private Holder.Reference<T> defaultHolder;
 
-    NamespacedHolderHelper(Registry<T> self, @Nullable ResourceLocation defaultKey, @Nullable Function<T, Holder.Reference<T>> holderLookup)
+    NamespacedHolderHelper(ForgeRegistry<T> owner, Registry<T> self, @Nullable ResourceLocation defaultKey, @Nullable Function<T, Holder.Reference<T>> holderLookup)
     {
+        this.owner = owner;
         this.self = self;
         this.defaultKey = defaultKey;
         this.holderLookup = holderLookup;
@@ -219,6 +221,8 @@ class NamespacedHolderHelper<T extends IForgeRegistryEntry<T>>
         });
         holderToTag.forEach(Holder.Reference::bindTags);
         this.tags = tmpTags;
+
+        this.owner.onBindTags(this.tags);
     }
 
     void resetTags()

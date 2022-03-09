@@ -45,7 +45,7 @@ class NamespacedWrapper<T extends IForgeRegistryEntry<T>> extends MappedRegistry
     {
         super(owner.getRegistryKey(), Lifecycle.experimental(), holderLookup);
         this.delegate = owner;
-        this.holders = new NamespacedHolderHelper<>(this, null, holderLookup);
+        this.holders = new NamespacedHolderHelper<>(owner, this, null, holderLookup);
     }
 
     @Override

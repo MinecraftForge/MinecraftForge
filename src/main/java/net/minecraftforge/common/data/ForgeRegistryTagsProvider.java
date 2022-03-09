@@ -18,7 +18,7 @@ public abstract class ForgeRegistryTagsProvider<T extends IForgeRegistryEntry<T>
 {
     private static <T extends IForgeRegistryEntry<T>> Registry<T> wrapRegistry(IForgeRegistry<T> forgeRegistry)
     {
-        if (!forgeRegistry.supportsTags())
+        if (forgeRegistry.getTagManager() == null)
             throw new IllegalArgumentException("Forge registry " + forgeRegistry.getRegistryName() + " does not have support for tags");
         if (forgeRegistry.getDefaultKey() == null)
             return GameData.getWrapper(forgeRegistry.getRegistryKey(), Lifecycle.experimental());

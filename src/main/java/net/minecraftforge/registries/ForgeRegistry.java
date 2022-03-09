@@ -7,10 +7,7 @@ package net.minecraftforge.registries;
 
 import java.util.*;
 import java.util.Map.Entry;
-import java.util.function.Supplier;
-import java.util.stream.Stream;
 
-import com.mojang.datafixers.DataFixUtils;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
@@ -21,6 +18,7 @@ import net.minecraft.tags.TagKey;
 import net.minecraftforge.common.util.LogMessageAdapter;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
+import net.minecraftforge.registries.tags.ITagManager;
 import org.apache.commons.lang3.Validate;
 
 import com.google.common.base.Preconditions;
@@ -75,6 +73,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
     private final Set<Integer> blocked = Sets.newHashSet();
     private final Multimap<ResourceLocation, V> overrides = ArrayListMultimap.create();
     private final BiMap<OverrideOwner<V>, V> owners = HashBiMap.create();
+    private final ForgeRegistryTagManager<V> tagManager;
     private final DummyFactory<V> dummyFactory;
     private final boolean isDelegated;
     private final int min;
@@ -116,6 +115,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
         this.allowOverrides = builder.getAllowOverrides();
         this.isModifiable = builder.getAllowModifications();
         this.hasWrapper = builder.getHasWrapper();
+        this.tagManager = this.hasWrapper ? new ForgeRegistryTagManager<>(this) : null;
         if (this.create != null)
             this.create.onCreate(this, stage);
     }
@@ -170,12 +170,6 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
     public Class<V> getRegistrySuperType()
     {
         return superType;
-    }
-
-    @Override
-    public boolean supportsTags()
-    {
-        return this.hasWrapper;
     }
 
     @NotNull
@@ -262,127 +256,48 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
 
     @SuppressWarnings("unchecked")
     @NotNull
-    NamespacedHolderHelper<V> getHolderHelper()
+    Optional<NamespacedHolderHelper<V>> getHolderHelper()
     {
         Registry<V> wrapper = getWrapper();
         if (!(wrapper instanceof IHolderHelperHolder))
-            throw new IllegalStateException("Cannot query holder helper for non-wrapped forge registry!");
+            return Optional.empty();
 
         // Unsafe cast means we can't use pattern matching here
-        return ((IHolderHelperHolder<V>) wrapper).getHolderHelper();
+        return Optional.of(((IHolderHelperHolder<V>) wrapper).getHolderHelper());
+    }
+
+    void onBindTags(Map<TagKey<V>, HolderSet.Named<V>> tags)
+    {
+        if (this.tagManager != null)
+            this.tagManager.bind(tags);
     }
 
     @NotNull
     @Override
     public Optional<Holder<V>> getHolder(ResourceKey<V> key)
     {
-        return getHolderHelper().getHolder(key);
-    }
-
-    @NotNull
-    @Override
-    public Holder<V> getHolderOrThrow(ResourceKey<V> key)
-    {
-        return this.getHolder(key).orElseThrow(() -> new IllegalStateException("Missing key in " + this.key + ": " + key));
+        return getHolderHelper().flatMap(h -> h.getHolder(key));
     }
 
     @NotNull
     @Override
     public Optional<Holder<V>> getHolder(ResourceLocation location)
     {
-        return getHolderHelper().getHolder(location);
-    }
-
-    @NotNull
-    @Override
-    public Holder<V> getHolderOrThrow(ResourceLocation location)
-    {
-        return this.getHolder(location).orElseThrow(() -> new IllegalStateException("Missing key in " + this.key + ": " + location));
+        return getHolderHelper().flatMap(h -> h.getHolder(location));
     }
 
     @NotNull
     @Override
     public Optional<Holder<V>> getHolder(V value)
     {
-        return getHolderHelper().getHolder(value);
+        return getHolderHelper().flatMap(h -> h.getHolder(value));
     }
 
-    @NotNull
+    @Nullable
     @Override
-    public Holder<V> getHolderOrThrow(V value)
+    public ITagManager<V> getTagManager()
     {
-        return this.getHolder(value).orElseThrow(() -> new IllegalStateException("Missing value in " + this.key + ": " + value));
-    }
-
-    @NotNull
-    @Override
-    public HolderSet.Named<V> getOrCreateTag(TagKey<V> name)
-    {
-        return getHolderHelper().getOrCreateTag(name);
-    }
-
-    @NotNull
-    @Override
-    public Optional<HolderSet.Named<V>> getTag(TagKey<V> name)
-    {
-        return getHolderHelper().getTag(name);
-    }
-
-    @NotNull
-    @Override
-    public Iterable<Holder<V>> getTagOrEmpty(TagKey<V> name)
-    {
-        return DataFixUtils.orElse(this.getTag(name), List.of());
-    }
-
-    @NotNull
-    @Override
-    public boolean isKnownTagName(TagKey<V> name)
-    {
-        return getHolderHelper().isKnownTagName(name);
-    }
-
-    @NotNull
-    @Override
-    public Stream<Pair<TagKey<V>, HolderSet.Named<V>>> getTags()
-    {
-        return getHolderHelper().getTags();
-    }
-
-    @NotNull
-    @Override
-    public Stream<TagKey<V>> getTagNames()
-    {
-        return getHolderHelper().getTagNames();
-    }
-
-    @NotNull
-    @Override
-    public TagKey<V> createTagKey(ResourceLocation location)
-    {
-        return TagKey.create(this.getRegistryKey(), location);
-    }
-
-    @NotNull
-    @Override
-    public TagKey<V> createOptionalTagKey(ResourceLocation location, @NotNull Set<Supplier<V>> defaults)
-    {
-        TagKey<V> tagKey = createTagKey(location);
-
-        getHolderHelper().addOptionalTag(tagKey, defaults);
-
-        return tagKey;
-    }
-
-    @NotNull
-    @Override
-    public Codec<Holder<V>> holderByNameCodec()
-    {
-        Registry<V> wrapper = getWrapper();
-        if (wrapper == null)
-            throw new IllegalStateException("Cannot query holderByNameCodec for non-wrapped forge registry!");
-
-        return wrapper.holderByNameCodec();
+        return this.tagManager;
     }
 
     @NotNull

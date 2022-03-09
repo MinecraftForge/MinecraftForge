@@ -42,7 +42,7 @@ class NamespacedDefaultedWrapper<T extends IForgeRegistryEntry<T>> extends Defau
     {
         super("empty", owner.getRegistryKey(), Lifecycle.experimental(), holderLookup);
         this.delegate = owner;
-        this.holders = new NamespacedHolderHelper<>(this, this.delegate.getDefaultKey(), holderLookup);
+        this.holders = new NamespacedHolderHelper<>(owner, this, this.delegate.getDefaultKey(), holderLookup);
     }
 
     @Override
