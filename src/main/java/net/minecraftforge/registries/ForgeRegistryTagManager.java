@@ -19,9 +19,9 @@ import java.util.HashSet;
 import java.util.IdentityHashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import java.util.Spliterator;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
@@ -53,8 +53,9 @@ class ForgeRegistryTagManager<V extends IForgeRegistryEntry<V>> implements ITagM
 
     @NotNull
     @Override
-    public ITag<V> getTag(TagKey<V> name)
+    public ITag<V> getTag(@NotNull TagKey<V> name)
     {
+        Objects.requireNonNull(name);
         ITag<V> tag = this.tags.get(name);
 
         if (tag == null)
@@ -75,15 +76,17 @@ class ForgeRegistryTagManager<V extends IForgeRegistryEntry<V>> implements ITagM
     @SuppressWarnings({ "unchecked", "rawtypes" })
     @NotNull
     @Override
-    public Optional<IReverseTag<V>> getReverseTag(V value)
+    public Optional<IReverseTag<V>> getReverseTag(@NotNull V value)
     {
+        Objects.requireNonNull(value);
         // All Holders are implementors of IReverseTag
         return (Optional<IReverseTag<V>>) (Optional) this.owner.getHolder(value);
     }
 
     @Override
-    public boolean isKnownTagName(TagKey<V> name)
+    public boolean isKnownTagName(@NotNull TagKey<V> name)
     {
+        Objects.requireNonNull(name);
         ITag<V> tag = this.tags.get(name);
         return tag != null && tag.isBound();
     }
@@ -111,14 +114,15 @@ class ForgeRegistryTagManager<V extends IForgeRegistryEntry<V>> implements ITagM
 
     @NotNull
     @Override
-    public TagKey<V> createTagKey(ResourceLocation location)
+    public TagKey<V> createTagKey(@NotNull ResourceLocation location)
     {
+        Objects.requireNonNull(location);
         return TagKey.create(this.owner.getRegistryKey(), location);
     }
 
     @NotNull
     @Override
-    public TagKey<V> createOptionalTagKey(ResourceLocation location, @NotNull Set<Supplier<V>> defaults)
+    public TagKey<V> createOptionalTagKey(@NotNull ResourceLocation location, @NotNull Set<Supplier<V>> defaults)
     {
         TagKey<V> tagKey = createTagKey(location);
 

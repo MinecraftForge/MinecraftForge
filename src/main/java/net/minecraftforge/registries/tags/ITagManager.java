@@ -25,21 +25,21 @@ public interface ITagManager<V extends IForgeRegistryEntry<V>> extends Iterable<
     /**
      * Will create an empty tag if it does not exist.
      */
-    @NotNull ITag<V> getTag(TagKey<V> name);
+    @NotNull ITag<V> getTag(@NotNull TagKey<V> name);
 
-    @NotNull Optional<IReverseTag<V>> getReverseTag(V value);
+    @NotNull Optional<IReverseTag<V>> getReverseTag(@NotNull V value);
 
-    boolean isKnownTagName(TagKey<V> name);
+    boolean isKnownTagName(@NotNull TagKey<V> name);
 
     @NotNull Stream<ITag<V>> stream();
 
     @NotNull Stream<TagKey<V>> getTagNames();
 
-    @NotNull TagKey<V> createTagKey(ResourceLocation location);
+    @NotNull TagKey<V> createTagKey(@NotNull ResourceLocation location);
 
     /**
      * Creates a tag key that will use the set of defaults if no tag JSON is found.
      * Useful on the client side when a server may not provide a specific tag.
      */
-    @NotNull TagKey<V> createOptionalTagKey(ResourceLocation location, @NotNull Set<Supplier<V>> defaults);
+    @NotNull TagKey<V> createOptionalTagKey(@NotNull ResourceLocation location, @NotNull Set<Supplier<V>> defaults);
 }
