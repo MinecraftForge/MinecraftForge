@@ -138,7 +138,7 @@ class NamespacedHolderHelper<T extends IForgeRegistryEntry<T>>
         return named;
     }
 
-    void addOptionalTag(TagKey<T> name, @NotNull Set<Supplier<T>> defaults)
+    void addOptionalTag(TagKey<T> name, @NotNull Set<? extends Supplier<T>> defaults)
     {
         this.optionalTags.putAll(name, defaults);
     }

@@ -23,23 +23,53 @@ import java.util.stream.Stream;
 public interface ITagManager<V extends IForgeRegistryEntry<V>> extends Iterable<ITag<V>>
 {
     /**
-     * Will create an empty tag if it does not exist.
+     * Queries this tag manager for a tag with the given tag key.
+     * If it does not exist, this will create an empty tag and return it.
+     *
+     * @apiNote This method guarantees that all future calls to this method on the same tag manager instance with the same tag key will return the same tag.
+     * @see #isKnownTagName(TagKey)
      */
     @NotNull ITag<V> getTag(@NotNull TagKey<V> name);
 
+    /**
+     * Queries a reverse tag for a given value from the forge registry linked to this tag manager.
+     * A reverse tag stores all tags that the given {@code value} is contained in.
+     *
+     * @param value A value currently registered to the forge registry linked to this tag manager
+     * @return A reverse tag for the given value, or an empty optional if the value is not registered
+     */
     @NotNull Optional<IReverseTag<V>> getReverseTag(@NotNull V value);
 
+    /**
+     * Checks whether the given tag key exists in this tag manager and is bound.
+     * Unlike {@link #getTag(TagKey)}, this method will <b>not</b> create the tag if it does not exist.
+     *
+     * @see ITag#isBound()
+     */
     boolean isKnownTagName(@NotNull TagKey<V> name);
 
+    /**
+     * @return A stream of all tags stored in this tag manager, bound or unbound.
+     */
     @NotNull Stream<ITag<V>> stream();
 
+    /**
+     * @return A stream of all tag keys stored in this tag manager, bound or unbound.
+     */
     @NotNull Stream<TagKey<V>> getTagNames();
 
+    /**
+     * Creates a tag key based on the location and the forge registry linked to this tag manager.
+     *
+     * @see #createOptionalTagKey(ResourceLocation, Set)
+     */
     @NotNull TagKey<V> createTagKey(@NotNull ResourceLocation location);
 
     /**
      * Creates a tag key that will use the set of defaults if no tag JSON is found.
      * Useful on the client side when a server may not provide a specific tag.
+     *
+     * @see #createTagKey(ResourceLocation)
      */
-    @NotNull TagKey<V> createOptionalTagKey(@NotNull ResourceLocation location, @NotNull Set<Supplier<V>> defaults);
+    @NotNull TagKey<V> createOptionalTagKey(@NotNull ResourceLocation location, @NotNull Set<? extends Supplier<V>> defaults);
 }

@@ -122,7 +122,7 @@ class ForgeRegistryTagManager<V extends IForgeRegistryEntry<V>> implements ITagM
 
     @NotNull
     @Override
-    public TagKey<V> createOptionalTagKey(@NotNull ResourceLocation location, @NotNull Set<Supplier<V>> defaults)
+    public TagKey<V> createOptionalTagKey(@NotNull ResourceLocation location, @NotNull Set<? extends Supplier<V>> defaults)
     {
         TagKey<V> tagKey = createTagKey(location);
 

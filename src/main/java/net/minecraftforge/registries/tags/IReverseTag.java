@@ -5,13 +5,18 @@
 
 package net.minecraftforge.registries.tags;
 
+import net.minecraft.core.Holder;
 import net.minecraft.tags.TagKey;
 
 import java.util.stream.Stream;
 
+/**
+ * A reverse tag is an object aware of what tags it is contained in.
+ * {@link Holder}s implement this interface.
+ */
 public interface IReverseTag<V>
 {
-    Stream<TagKey<V>> getTagKeyStream();
+    Stream<TagKey<V>> getTagKeys();
 
     boolean containsTag(TagKey<V> key);
 

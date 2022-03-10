@@ -9,6 +9,12 @@ import net.minecraft.tags.TagKey;
 
 import java.util.stream.Stream;
 
+/**
+ * A tag is a collection of elements with an identifying {@link TagKey tag key}.
+ * For Forge, these are bound on world load.
+ * Tags will always be empty until they are bound.
+ * A tag instance provided for a given {@link TagKey} from a given {@link ITagManager} will always return the same instance on future invocations.
+ */
 public interface ITag<V> extends Iterable<V>
 {
     TagKey<V> getKey();
