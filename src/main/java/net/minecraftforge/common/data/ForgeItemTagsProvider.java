@@ -1,20 +1,6 @@
 /*
- * Minecraft Forge
- * Copyright (c) 2016-2021.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation version 2.1
- * of the License.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Minecraft Forge - Forge Development LLC
+ * SPDX-License-Identifier: LGPL-2.1-only
  */
 
 package net.minecraftforge.common.data;
@@ -24,6 +10,7 @@ import net.minecraft.data.tags.BlockTagsProvider;
 import net.minecraft.data.tags.ItemTagsProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.Tag;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
@@ -169,13 +156,13 @@ public final class ForgeItemTagsProvider extends ItemTagsProvider
         tag(Tags.Items.STRING).add(Items.STRING);
     }
 
-    private void addColored(Consumer<Tag.Named<Item>> consumer, Tag.Named<Item> group, String pattern)
+    private void addColored(Consumer<TagKey<Item>> consumer, TagKey<Item> group, String pattern)
     {
-        String prefix = group.getName().getPath().toUpperCase(Locale.ENGLISH) + '_';
+        String prefix = group.location().getPath().toUpperCase(Locale.ENGLISH) + '_';
         for (DyeColor color  : DyeColor.values())
         {
             ResourceLocation key = new ResourceLocation("minecraft", pattern.replace("{color}",  color.getName()));
-            Tag.Named<Item> tag = getForgeItemTag(prefix + color.getName());
+            TagKey<Item> tag = getForgeItemTag(prefix + color.getName());
             Item item = ForgeRegistries.ITEMS.getValue(key);
             if (item == null || item  == Items.AIR)
                 throw new IllegalStateException("Unknown vanilla item: " + key.toString());
@@ -184,26 +171,26 @@ public final class ForgeItemTagsProvider extends ItemTagsProvider
         }
     }
 
-    private void copyColored(Tag.Named<Block> blockGroup, Tag.Named<Item> itemGroup)
+    private void copyColored(TagKey<Block> blockGroup, TagKey<Item> itemGroup)
     {
-        String blockPre = blockGroup.getName().getPath().toUpperCase(Locale.ENGLISH) + '_';
-        String itemPre = itemGroup.getName().getPath().toUpperCase(Locale.ENGLISH) + '_';
+        String blockPre = blockGroup.location().getPath().toUpperCase(Locale.ENGLISH) + '_';
+        String itemPre = itemGroup.location().getPath().toUpperCase(Locale.ENGLISH) + '_';
         for (DyeColor color  : DyeColor.values())
         {
-            Tag.Named<Block> from = getForgeBlockTag(blockPre + color.getName());
-            Tag.Named<Item> to = getForgeItemTag(itemPre + color.getName());
+            TagKey<Block> from = getForgeBlockTag(blockPre + color.getName());
+            TagKey<Item> to = getForgeItemTag(itemPre + color.getName());
             copy(from, to);
         }
         copy(getForgeBlockTag(blockPre + "colorless"), getForgeItemTag(itemPre + "colorless"));
     }
 
     @SuppressWarnings("unchecked")
-    private Tag.Named<Block> getForgeBlockTag(String name)
+    private TagKey<Block> getForgeBlockTag(String name)
     {
         try
         {
             name = name.toUpperCase(Locale.ENGLISH);
-            return (Tag.Named<Block>)Tags.Blocks.class.getDeclaredField(name).get(null);
+            return (TagKey<Block>)Tags.Blocks.class.getDeclaredField(name).get(null);
         }
         catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException | SecurityException e)
         {
@@ -212,12 +199,12 @@ public final class ForgeItemTagsProvider extends ItemTagsProvider
     }
 
     @SuppressWarnings("unchecked")
-    private Tag.Named<Item> getForgeItemTag(String name)
+    private TagKey<Item> getForgeItemTag(String name)
     {
         try
         {
             name = name.toUpperCase(Locale.ENGLISH);
-            return (Tag.Named<Item>)Tags.Items.class.getDeclaredField(name).get(null);
+            return (TagKey<Item>)Tags.Items.class.getDeclaredField(name).get(null);
         }
         catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException | SecurityException e)
         {

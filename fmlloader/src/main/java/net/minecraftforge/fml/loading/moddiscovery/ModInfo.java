@@ -42,7 +42,8 @@ public class ModInfo implements IModInfo, IConfigurable
 {
     private static final Logger LOGGER = LogManager.getLogger();
     private static final DefaultArtifactVersion DEFAULT_VERSION = new DefaultArtifactVersion("1");
-    private static final Pattern VALID_LABEL = Pattern.compile("^[a-z][a-z0-9_-]{1,63}$");
+    private static final Pattern VALID_MODID = Pattern.compile("^[a-z][a-z0-9_]{1,63}$");
+    private static final Pattern VALID_NAMESPACE = Pattern.compile("^[a-z][a-z0-9_.-]{1,63}$");
 
     private final ModFileInfo owningFile;
     private final String modId;
@@ -64,13 +65,13 @@ public class ModInfo implements IModInfo, IConfigurable
         this.config = config;
         this.modId = config.<String>getConfigElement("modId")
                 .orElseThrow(() -> new InvalidModFileException("Missing modId", owningFile));
-        if (!VALID_LABEL.matcher(this.modId).matches()) {
-            LOGGER.fatal("Invalid modId found in file {} - {} does not match the standard: {}", this.owningFile.getFile().getFilePath(), this.modId, VALID_LABEL.pattern());
+        if (!VALID_MODID.matcher(this.modId).matches()) {
+            LOGGER.fatal("Invalid modId found in file {} - {} does not match the standard: {}", this.owningFile.getFile().getFilePath(), this.modId, VALID_MODID.pattern());
             throw new InvalidModFileException("Invalid modId found : " + this.modId, owningFile);
         }
         this.namespace = config.<String>getConfigElement("namespace").orElse(this.modId);
-        if (!VALID_LABEL.matcher(this.namespace).matches()) {
-            LOGGER.fatal("Invalid override namespace found in file {} - {} does not match the standard: {}", this.owningFile.getFile().getFilePath(), this.namespace, VALID_LABEL.pattern());
+        if (!VALID_NAMESPACE.matcher(this.namespace).matches()) {
+            LOGGER.fatal("Invalid override namespace found in file {} - {} does not match the standard: {}", this.owningFile.getFile().getFilePath(), this.namespace, VALID_NAMESPACE.pattern());
             throw new InvalidModFileException("Invalid override namespace found : " + this.namespace, owningFile);
         }
         this.version = config.<String>getConfigElement("version")

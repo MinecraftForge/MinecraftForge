@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/level/ChunkHolder.java
 +++ b/net/minecraft/server/level/ChunkHolder.java
-@@ -64,6 +_,7 @@
+@@ -67,6 +_,7 @@
     private final ChunkHolder.PlayerProvider f_140016_;
     private boolean f_140017_;
     private boolean f_140018_;

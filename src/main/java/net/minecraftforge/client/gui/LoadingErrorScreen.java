@@ -1,20 +1,6 @@
 /*
- * Minecraft Forge
- * Copyright (c) 2016-2021.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation version 2.1
- * of the License.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Minecraft Forge - Forge Development LLC
+ * SPDX-License-Identifier: LGPL-2.1-only
  */
 
 package net.minecraftforge.client.gui;
@@ -94,17 +80,17 @@ public class LoadingErrorScreen extends ErrorScreen {
     }
 
     @Override
-    public void render(PoseStack mStack, int mouseX, int mouseY, float partialTicks)
+    public void render(PoseStack poseStack, int mouseX, int mouseY, float partialTick)
     {
-        this.renderBackground(mStack);
-        this.entryList.render(mStack, mouseX, mouseY, partialTicks);
-        drawMultiLineCenteredString(mStack, font, this.modLoadErrors.isEmpty() ? warningHeader : errorHeader, this.width / 2, 10);
-        this.renderables.forEach(button -> button.render(mStack, mouseX, mouseY, partialTicks));
+        this.renderBackground(poseStack);
+        this.entryList.render(poseStack, mouseX, mouseY, partialTick);
+        drawMultiLineCenteredString(poseStack, font, this.modLoadErrors.isEmpty() ? warningHeader : errorHeader, this.width / 2, 10);
+        this.renderables.forEach(button -> button.render(poseStack, mouseX, mouseY, partialTick));
     }
 
-    private void drawMultiLineCenteredString(PoseStack mStack, Font fr, Component str, int x, int y) {
+    private void drawMultiLineCenteredString(PoseStack poseStack, Font fr, Component str, int x, int y) {
         for (FormattedCharSequence s : fr.split(str, this.width)) {
-            fr.drawShadow(mStack, s, (float) (x - fr.width(s) / 2.0), y, 0xFFFFFF);
+            fr.drawShadow(poseStack, s, (float) (x - fr.width(s) / 2.0), y, 0xFFFFFF);
             y+=fr.lineHeight;
         }
     }
@@ -154,15 +140,15 @@ public class LoadingErrorScreen extends ErrorScreen {
             }
 
             @Override
-            public void render(PoseStack pStack, int entryIdx, int top, int left, final int entryWidth, final int entryHeight, final int mouseX, final int mouseY, final boolean p_194999_5_, final float partialTicks) {
+            public void render(PoseStack poseStack, int entryIdx, int top, int left, final int entryWidth, final int entryHeight, final int mouseX, final int mouseY, final boolean p_194999_5_, final float partialTick) {
                 Font font = Minecraft.getInstance().font;
                 final List<FormattedCharSequence> strings = font.split(message, LoadingEntryList.this.width);
                 int y = top + 2;
                 for (int i = 0; i < Math.min(strings.size(), 2); i++) {
                     if (center)
-                        font.draw(pStack, strings.get(i), left + (width) - font.width(strings.get(i)) / 2F, y, 0xFFFFFF);
+                        font.draw(poseStack, strings.get(i), left + (width) - font.width(strings.get(i)) / 2F, y, 0xFFFFFF);
                     else
-                        font.draw(pStack, strings.get(i), left + 5, y, 0xFFFFFF);
+                        font.draw(poseStack, strings.get(i), left + 5, y, 0xFFFFFF);
                     y += font.lineHeight;
                 }
             }

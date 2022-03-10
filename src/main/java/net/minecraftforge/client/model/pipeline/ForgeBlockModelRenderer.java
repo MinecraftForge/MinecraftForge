@@ -1,20 +1,6 @@
 /*
- * Minecraft Forge
- * Copyright (c) 2016-2021.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation version 2.1
- * of the License.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Minecraft Forge - Forge Development LLC
+ * SPDX-License-Identifier: LGPL-2.1-only
  */
 
 package net.minecraftforge.client.model.pipeline;
@@ -51,7 +37,7 @@ public class ForgeBlockModelRenderer extends ModelBlockRenderer
     }
 
     @Override
-    public boolean tesselateWithoutAO(BlockAndTintGetter world, BakedModel model, BlockState state, BlockPos pos, PoseStack matrixStack, VertexConsumer buffer, boolean checkSides, Random rand, long seed, int combinedOverlayIn, IModelData modelData)
+    public boolean tesselateWithoutAO(BlockAndTintGetter level, BakedModel model, BlockState state, BlockPos pos, PoseStack poseStack, VertexConsumer buffer, boolean checkSides, Random rand, long seed, int packedOverlay, IModelData modelData)
     {
         if(ForgeConfig.CLIENT.experimentalForgeLightPipelineEnabled.get())
         {
@@ -60,18 +46,18 @@ public class ForgeBlockModelRenderer extends ModelBlockRenderer
 
             VertexLighterFlat lighter = lighterFlat.get();
             lighter.setParent(consumer);
-            lighter.setTransform(matrixStack.last());
+            lighter.setTransform(poseStack.last());
 
-            return render(lighter, world, model, state, pos, matrixStack, checkSides, rand, seed, modelData);
+            return render(lighter, level, model, state, pos, poseStack, checkSides, rand, seed, modelData);
         }
         else
         {
-            return super.tesselateWithoutAO(world, model, state, pos, matrixStack, buffer, checkSides, rand, seed, combinedOverlayIn, modelData);
+            return super.tesselateWithoutAO(level, model, state, pos, poseStack, buffer, checkSides, rand, seed, packedOverlay, modelData);
         }
     }
 
     @Override
-    public boolean tesselateWithAO(BlockAndTintGetter world, BakedModel model, BlockState state, BlockPos pos, PoseStack matrixStack, VertexConsumer buffer, boolean checkSides, Random rand, long seed, int combinedOverlayIn, IModelData modelData)
+    public boolean tesselateWithAO(BlockAndTintGetter level, BakedModel model, BlockState state, BlockPos pos, PoseStack poseStack, VertexConsumer buffer, boolean checkSides, Random rand, long seed, int packedOverlay, IModelData modelData)
     {
         if(ForgeConfig.CLIENT.experimentalForgeLightPipelineEnabled.get())
         {
@@ -80,19 +66,19 @@ public class ForgeBlockModelRenderer extends ModelBlockRenderer
 
             VertexLighterSmoothAo lighter = lighterSmooth.get();
             lighter.setParent(consumer);
-            lighter.setTransform(matrixStack.last());
+            lighter.setTransform(poseStack.last());
 
-            return render(lighter, world, model, state, pos, matrixStack, checkSides, rand, seed, modelData);
+            return render(lighter, level, model, state, pos, poseStack, checkSides, rand, seed, modelData);
         }
         else
         {
-            return super.tesselateWithAO(world, model, state, pos, matrixStack, buffer, checkSides, rand, seed, combinedOverlayIn, modelData);
+            return super.tesselateWithAO(level, model, state, pos, poseStack, buffer, checkSides, rand, seed, packedOverlay, modelData);
         }
     }
 
-    public static boolean render(VertexLighterFlat lighter, BlockAndTintGetter world, BakedModel model, BlockState state, BlockPos pos, PoseStack matrixStack, boolean checkSides, Random rand, long seed, IModelData modelData)
+    public static boolean render(VertexLighterFlat lighter, BlockAndTintGetter level, BakedModel model, BlockState state, BlockPos pos, PoseStack poseStack, boolean checkSides, Random rand, long seed, IModelData modelData)
     {
-        lighter.setWorld(world);
+        lighter.setWorld(level);
         lighter.setState(state);
         lighter.setBlockPos(pos);
         boolean empty = true;
@@ -113,7 +99,7 @@ public class ForgeBlockModelRenderer extends ModelBlockRenderer
             quads = model.getQuads(state, side, rand, modelData);
             if(!quads.isEmpty())
             {
-                if(!checkSides || Block.shouldRenderFace(state, world, pos, side, pos.relative(side)))
+                if(!checkSides || Block.shouldRenderFace(state, level, pos, side, pos.relative(side)))
                 {
                     if(empty) lighter.updateBlockInfo();
                     empty = false;

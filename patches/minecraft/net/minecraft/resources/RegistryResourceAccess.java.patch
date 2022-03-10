@@ -8,11 +8,12 @@
                          optional = Optional.of(p_195896_.parse(p_195893_, jsonelement).map(RegistryResourceAccess.ParsedEntry::m_195956_));
                       } catch (Throwable throwable2) {
                          try {
-@@ -138,6 +_,7 @@
+@@ -138,6 +_,8 @@
  
        public <E> Optional<DataResult<RegistryResourceAccess.ParsedEntry<E>>> m_183313_(DynamicOps<JsonElement> p_195917_, ResourceKey<? extends Registry<E>> p_195918_, ResourceKey<E> p_195919_, Decoder<E> p_195920_) {
           RegistryResourceAccess.InMemoryStorage.Entry registryresourceaccess$inmemorystorage$entry = this.f_195913_.get(p_195919_);
-+         if (registryresourceaccess$inmemorystorage$entry != null && registryresourceaccess$inmemorystorage$entry.f_195936_ != null) registryresourceaccess$inmemorystorage$entry.f_195936_.getAsJsonObject().addProperty("forge:registry_name", p_195919_.m_135782_().toString());
++         if (registryresourceaccess$inmemorystorage$entry != null && registryresourceaccess$inmemorystorage$entry.f_195936_ != null && registryresourceaccess$inmemorystorage$entry.f_195936_.isJsonObject())
++            registryresourceaccess$inmemorystorage$entry.f_195936_.getAsJsonObject().addProperty("forge:registry_name", p_195919_.m_135782_().toString());
           return registryresourceaccess$inmemorystorage$entry == null ? Optional.of(DataResult.error("Unknown element: " + p_195919_)) : Optional.of(p_195920_.parse(p_195917_, registryresourceaccess$inmemorystorage$entry.f_195936_).setLifecycle(registryresourceaccess$inmemorystorage$entry.f_195938_).map((p_195930_) -> {
              return RegistryResourceAccess.ParsedEntry.m_195958_(p_195930_, registryresourceaccess$inmemorystorage$entry.f_195937_);
           }));
