@@ -462,6 +462,9 @@ public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegist
         this.availabilityMap.set(idToUse);
         this.owners.put(new OverrideOwner<V>(owner == null ? key.getNamespace() : owner, rkey), value);
 
+        if (value instanceof IForgeRegistryEntry<?> regEntry && regEntry.getRegistryName() == null)
+            regEntry.setRegistryName(key);
+
         if (hasWrapper)
         {
             Holder.Reference<V> delegate = bindDelegate(rkey, value);

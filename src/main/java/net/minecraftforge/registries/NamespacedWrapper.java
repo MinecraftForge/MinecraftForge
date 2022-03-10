@@ -57,9 +57,6 @@ class NamespacedWrapper<T> extends MappedRegistry<T> implements ILockableRegistr
         Validate.notNull(value);
         this.elementsLifecycle = this.elementsLifecycle.add(lifecycle);
 
-        if (value instanceof IForgeRegistryEntry<?> regEntry && regEntry.getRegistryName() == null)
-            regEntry.setRegistryName(key.location());
-
         T oldValue = get(key);
 
         int realId = this.delegate.add(id, key.location(), value);

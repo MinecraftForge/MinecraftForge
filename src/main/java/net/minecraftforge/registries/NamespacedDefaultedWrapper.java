@@ -54,9 +54,6 @@ class NamespacedDefaultedWrapper<T> extends DefaultedRegistry<T> implements ILoc
         Validate.notNull(value);
         this.elementsLifecycle = this.elementsLifecycle.add(lifecycle);
 
-        if (value instanceof IForgeRegistryEntry<?> regEntry && regEntry.getRegistryName() == null)
-            regEntry.setRegistryName(key.location());
-
         T oldValue = this.delegate.getRaw(key.location());
 
         int realId = this.delegate.add(id, key.location(), value);
