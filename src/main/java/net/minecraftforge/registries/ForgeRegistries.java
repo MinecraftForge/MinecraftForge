@@ -52,7 +52,7 @@ import java.util.function.Supplier;
  */
 public class ForgeRegistries
 {
-    static { init(); } // This must be above the fields so we guarantee it's run before getRegistry is called. Yay static inializers
+    static { init(); } // This must be above the fields so we guarantee it's run before getRegistry is called. Yay static initializers
 
     // Game objects
     public static final IForgeRegistry<Block> BLOCKS = RegistryManager.ACTIVE.getRegistry(Keys.BLOCKS);

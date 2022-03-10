@@ -28,7 +28,7 @@ import javax.annotation.Nullable;
 
 public class ConditionalRecipe
 {
-    @ObjectHolder("forge:conditional")
+    @ObjectHolder(registryName = "recipe_serializer", value = "forge:conditional")
     public static final RecipeSerializer<Recipe<?>> SERIALZIER = null;
 
     public static Builder builder()

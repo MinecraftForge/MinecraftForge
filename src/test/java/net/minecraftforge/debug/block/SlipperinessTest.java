@@ -29,7 +29,7 @@ public class SlipperinessTest
     static final String MOD_ID = "slipperiness_test";
     static final String BLOCK_ID = "test_block";
 
-    @ObjectHolder(BLOCK_ID)
+    @ObjectHolder(registryName = "block", value = BLOCK_ID)
     public static final Block BB_BLOCK = null;
 
     @SubscribeEvent

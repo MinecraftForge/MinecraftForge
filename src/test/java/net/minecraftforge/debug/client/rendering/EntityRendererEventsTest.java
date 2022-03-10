@@ -39,7 +39,7 @@ public class EntityRendererEventsTest
 {
     private static final ResourceLocation MY_ENTITY = new ResourceLocation("entity_renderer_events_test", "test_entity");
 
-    @ObjectHolder("entity_renderer_events_test:test_entity")
+    @ObjectHolder(registryName = "entity_type", value = "entity_renderer_events_test:test_entity")
     public static EntityType<MyEntity> MY_ENTITY_TYPE;
 
     @SubscribeEvent

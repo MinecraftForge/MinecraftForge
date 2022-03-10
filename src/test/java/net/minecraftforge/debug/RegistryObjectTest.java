@@ -41,6 +41,6 @@ public class RegistryObjectTest
     public void commonSetup(FMLCommonSetupEvent event)
     {
         LOGGER.info("Stone 1: {}", RegistryObject.create(new ResourceLocation("minecraft", "stone"), ForgeRegistries.BLOCKS).get());
-        LOGGER.info("Stone 2: {}", RegistryObject.create(new ResourceLocation("minecraft", "stone"), ForgeRegistries.BLOCKS.getRegistryKey(), MODID).get());
+        LOGGER.info("Stone 2: {}", RegistryObject.create(new ResourceLocation("minecraft", "stone"), ForgeRegistries.Keys.BLOCKS, MODID).get());
     }
 }

@@ -7,17 +7,12 @@ package net.minecraftforge.registries;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.Collections;
-import java.util.LinkedList;
 import java.util.Locale;
-import java.util.Queue;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.ResourceLocationException;
-
-import javax.annotation.Nullable;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -31,17 +26,12 @@ class ObjectHolderRef implements Consumer<Predicate<ResourceLocation>>
     private boolean isValid;
     private ForgeRegistry<?> registry;
 
-    public ObjectHolderRef(Field field, ResourceLocation injectedObject)
-    {
-        this(field, injectedObject.toString(), false);
-    }
-
     @SuppressWarnings("unchecked")
-    ObjectHolderRef(Field field, String injectedObject, boolean extractFromExistingValues)
+    ObjectHolderRef(ResourceLocation registryName, Field field, String injectedObject, boolean extractFromExistingValues)
     {
-        this.registry = getRegistryForType(field);
+        this.registry = RegistryManager.ACTIVE.getRegistry(registryName);
         this.field = field;
-        this.isValid = registry != null;
+        this.isValid = registry != null && canHoldRegistryValue(registry, field);
 
         if (extractFromExistingValues)
         {
@@ -91,26 +81,9 @@ class ObjectHolderRef implements Consumer<Predicate<ResourceLocation>>
         }
     }
 
-    @SuppressWarnings("unchecked")
-    @Nullable
-    private ForgeRegistry<?> getRegistryForType(Field field)
+    private static boolean canHoldRegistryValue(ForgeRegistry<?> registry, Field field)
     {
-        Queue<Class<?>> typesToExamine = new LinkedList<Class<?>>();
-        typesToExamine.add(field.getType());
-
-        ForgeRegistry<?> registry = null;
-        while (!typesToExamine.isEmpty() && registry == null)
-        {
-            Class<?> type = typesToExamine.remove();
-            Collections.addAll(typesToExamine, type.getInterfaces());
-            registry = (ForgeRegistry<?>)RegistryManager.ACTIVE.getRegistry(type);
-            final Class<?> parentType = type.getSuperclass();
-            if (parentType != null)
-            {
-                typesToExamine.add(parentType);
-            }
-        }
-        return registry;
+        return registry.getRegistrySuperType().isAssignableFrom(field.getType());
     }
 
     public boolean isValid()

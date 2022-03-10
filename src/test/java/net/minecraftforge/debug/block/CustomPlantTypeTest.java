@@ -34,9 +34,9 @@ public class CustomPlantTypeTest
     private static final String CUSTOM_SOIL_BLOCK = "test_custom_block";
     private static final String CUSTOM_PLANT_BLOCK = "test_custom_plant";
 
-    @ObjectHolder(CUSTOM_SOIL_BLOCK)
+    @ObjectHolder(registryName = "block", value = CUSTOM_SOIL_BLOCK)
     public static Block CUSTOM_SOIL;
-    @ObjectHolder(CUSTOM_PLANT_BLOCK)
+    @ObjectHolder(registryName = "block", value = CUSTOM_PLANT_BLOCK)
     public static Block CUSTOM_PLANT;
 
     @SubscribeEvent

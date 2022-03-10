@@ -4,7 +4,7 @@
  import java.util.function.Function;
  import net.minecraft.core.Registry;
  
-+@net.minecraftforge.registries.ObjectHolder("minecraft")
++@net.minecraftforge.registries.ObjectHolder(registryName = "particle_type", value = "minecraft")
  public class ParticleTypes {
     public static final SimpleParticleType f_123770_ = m_123824_("ambient_entity_effect", false);
     public static final SimpleParticleType f_123792_ = m_123824_("angry_villager", false);

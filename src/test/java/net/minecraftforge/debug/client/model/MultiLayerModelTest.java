@@ -28,7 +28,7 @@ public class MultiLayerModelTest
 
     private static final String blockName = "test_layer_block";
     private static final ResourceLocation blockId = new ResourceLocation(MODID, blockName);
-    @ObjectHolder(blockName)
+    @ObjectHolder(registryName = "block", value = blockName)
     public static final Block TEST_BLOCK = null;
 
     @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.MOD)

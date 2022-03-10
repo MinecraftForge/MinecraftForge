@@ -5,6 +5,8 @@
 
 package net.minecraftforge.registries;
 
+import net.minecraft.resources.ResourceLocation;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -18,6 +20,14 @@ import java.lang.annotation.Target;
 @Target({ElementType.TYPE, ElementType.FIELD})
 public @interface ObjectHolder
 {
+    /**
+     * The name of the registry to load registry entries from.
+     * This string is parsed as a {@link ResourceLocation} and can contain a namespace.
+     *
+     * @return the registry name
+     */
+    String registryName() default "";
+
     /**
      * If used on a class, this represents a modid only.
      * If used on a field, it represents a name, which can be abbreviated or complete.

@@ -37,7 +37,7 @@ import net.minecraftforge.registries.ObjectHolder;
 @Mod("containertypetest")
 public class ContainerTypeTest
 {
-    @ObjectHolder("containertypetest:container")
+    @ObjectHolder(registryName = "menu", value = "containertypetest:container")
     public static final MenuType<TestContainer> TYPE = null;
     public class TestContainer extends AbstractContainerMenu
     {

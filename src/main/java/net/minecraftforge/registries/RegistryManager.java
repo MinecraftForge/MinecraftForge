@@ -44,7 +44,7 @@ public class RegistryManager
     private static Set<ResourceLocation> vanillaRegistryKeys = Set.of();
 
     BiMap<ResourceLocation, ForgeRegistry<?>> registries = HashBiMap.create();
-    private BiMap<Class<?>, ResourceLocation> superTypes = HashBiMap.create();
+    private Map<ResourceLocation, Class<?>> superTypes = HashBiMap.create();
     private Set<ResourceLocation> persisted = Sets.newHashSet();
     private Set<ResourceLocation> synced = Sets.newHashSet();
     private Map<ResourceLocation, ResourceLocation> legacyNames = new HashMap<>();
@@ -63,7 +63,7 @@ public class RegistryManager
     @SuppressWarnings("unchecked")
     public <V> Class<V> getSuperType(ResourceLocation key)
     {
-        return (Class<V>)superTypes.inverse().get(key);
+        return (Class<V>)superTypes.get(key);
     }
 
     @SuppressWarnings("unchecked")
@@ -75,17 +75,6 @@ public class RegistryManager
     public <V> ForgeRegistry<V> getRegistry(ResourceKey<? extends Registry<V>> key)
     {
         return getRegistry(key.location());
-    }
-
-    /**
-     * @see #getRegistry(ResourceLocation)
-     * @see #getRegistry(ResourceKey)
-     * @deprecated The uniqueness of registry super types will not be guaranteed starting in 1.19.
-     */
-    @Deprecated(forRemoval = true, since = "1.18.2")
-    public <V> IForgeRegistry<V> getRegistry(Class<? super V> cls)
-    {
-        return getRegistry(superTypes.get(cls));
     }
 
     public <V> ResourceLocation getName(IForgeRegistry<V> reg)
@@ -115,7 +104,7 @@ public class RegistryManager
             if (ot == null)
                 return null;
             this.registries.put(key, ot.copy(this));
-            this.superTypes.put(ot.getRegistrySuperType(), key);
+            this.superTypes.put(key, ot.getRegistrySuperType());
             if (other.persisted.contains(key))
                 this.persisted.add(key);
             if (other.synced.contains(key))
@@ -129,22 +118,12 @@ public class RegistryManager
 
     <V> ForgeRegistry<V> createRegistry(ResourceLocation name, RegistryBuilder<V> builder)
     {
-        Set<Class<?>> parents = Sets.newHashSet();
-        findSuperTypes(builder.getType(), parents);
-        SetView<Class<?>> overlappedTypes = Sets.intersection(parents, superTypes.keySet());
-        if (!overlappedTypes.isEmpty())
-        {
-            Class<?> foundType = overlappedTypes.iterator().next();
-            LOGGER.error("Found existing registry of type {} named {}, you cannot create a new registry ({}) with type {}, as {} has a parent of that type",
-                    foundType, superTypes.get(foundType), name, builder.getType(), builder.getType());
-            throw new IllegalArgumentException("Duplicate registry parent type found - you can only have one registry for a particular super type");
-        }
         if (registries.containsKey(name))
             throw new IllegalArgumentException("Attempted to register a registry for " + name + " with type "
                     + builder.getType().getName() + " but it already exists as " + registries.get(name).getRegistrySuperType().getName());
         ForgeRegistry<V> reg = new ForgeRegistry<V>(this, name, builder);
         registries.put(name, reg);
-        superTypes.put(builder.getType(), name);
+        superTypes.put(name, builder.getType());
         if (builder.getSaveToDisc())
             this.persisted.add(name);
         if (builder.getSync())

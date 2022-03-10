@@ -25,7 +25,7 @@ public class StickyBlockTest
     static final String MODID = "custom_slime_block_test";
     static final String BLOCK_ID = "test_block";
 
-    @ObjectHolder(BLOCK_ID)
+    @ObjectHolder(registryName = "block", value = BLOCK_ID)
     public static Block BLUE_BLOCK;
 
     @SubscribeEvent

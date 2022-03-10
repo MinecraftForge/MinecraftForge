@@ -27,7 +27,7 @@ import net.minecraftforge.registries.ObjectHolder;
 @Mod("forge_world_type_test")
 public class ForgeWorldTypeTest
 {
-    @ObjectHolder("forge_world_type_test:test_world_type")
+    @ObjectHolder(registryName = "forge:world_types", value = "forge_world_type_test:test_world_type")
     public static ForgeWorldPreset testWorldType;
 
     public ForgeWorldTypeTest()

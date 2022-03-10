@@ -159,8 +159,7 @@ public class GameData
 
     static RegistryBuilder<EntityDataSerializer<?>> getDataSerializersRegistryBuilder()
     {
-        return makeRegistry(DATA_SERIALIZERS, c(EntityDataSerializer.class), 256 /*vanilla space*/, MAX_VARINT).disableSaving().disableOverrides()
-                .addCallback(SerializerCallbacks.INSTANCE);
+        return makeRegistry(DATA_SERIALIZERS, c(EntityDataSerializer.class), 256 /*vanilla space*/, MAX_VARINT).disableSaving().disableOverrides();
     }
 
     static RegistryBuilder<GlobalLootModifierSerializer<?>> getGLMSerializersRegistryBuilder()

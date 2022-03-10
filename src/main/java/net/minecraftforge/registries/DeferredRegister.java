@@ -346,7 +346,7 @@ public class DeferredRegister<T>
 
     /**
      * Adds our event handler to the specified event bus, this MUST be called in order for this class to function.
-     * See the example usage.
+     * See {@link DeferredRegister the example usage}.
      *
      * @param bus The Mod Specific event bus.
      */
@@ -382,10 +382,10 @@ public class DeferredRegister<T>
     /**
      * @return The registry name stored in this deferred register. Useful for creating new deferred registers based on an existing one.
      */
-    @Nullable
+    @NotNull
     public ResourceLocation getRegistryName()
     {
-        return this.registryKey == null ? null : this.registryKey.location();
+        return Objects.requireNonNull(this.registryKey).location();
     }
 
     // TODO 1.19: Remove this E method generic in favor of the class generic T when IForgeRegistry and RegistryBuilder no longer require IForgeRegistryEntry
