@@ -23,7 +23,7 @@ import java.util.Set;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-class ForgeRegistryTagManager<V extends IForgeRegistryEntry<V>> implements ITagManager<V>
+class ForgeRegistryTagManager<V> implements ITagManager<V>
 {
     private final ForgeRegistry<V> owner;
     private volatile Map<TagKey<V>, ITag<V>> tags = new IdentityHashMap<>();
