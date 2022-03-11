@@ -229,7 +229,8 @@ public class GameData
     @SuppressWarnings("unchecked")
     public static Map<EntityDataSerializer<?>, DataSerializerEntry> getSerializerMap()
     {
-        return RegistryManager.ACTIVE.getRegistry(DATA_SERIALIZERS).getSlaveMap(SERIALIZER_TO_ENTRY, Map.class);
+        ForgeRegistry<DataSerializerEntry> registry = RegistryManager.ACTIVE.getRegistry(DATA_SERIALIZERS);
+        return registry == null ? null : registry.getSlaveMap(SERIALIZER_TO_ENTRY, Map.class);
     }
 
     @SuppressWarnings("unchecked")
