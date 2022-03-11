@@ -9,7 +9,6 @@ import com.google.common.collect.ImmutableMap;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import com.mojang.datafixers.util.Either;
-import com.mojang.datafixers.util.Function4;
 import net.minecraft.client.gui.chat.NarratorChatListener;
 import net.minecraft.client.gui.components.toasts.SystemToast;
 import net.minecraft.client.gui.screens.ConfirmScreen;
@@ -24,15 +23,14 @@ import net.minecraft.client.multiplayer.ServerData;
 import net.minecraft.client.particle.ParticleRenderType;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.core.RegistryAccess;
 import net.minecraft.locale.Language;
 import net.minecraft.network.Connection;
 import net.minecraft.network.chat.*;
 import net.minecraft.network.protocol.status.ServerStatus;
+import net.minecraft.server.WorldStem;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
-import net.minecraft.world.level.DataPackConfig;
 import net.minecraft.world.level.block.state.BlockState;
 import com.mojang.blaze3d.platform.Window;
 import net.minecraft.client.Minecraft;
@@ -76,10 +74,8 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.client.player.Input;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.storage.LevelData;
 import net.minecraft.world.level.storage.LevelStorageSource;
 import net.minecraft.world.level.storage.PrimaryLevelData;
-import net.minecraft.world.level.storage.WorldData;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
@@ -1083,8 +1079,8 @@ public class ForgeHooksClient
 
     public static void createWorldConfirmationScreen(
             LevelStorageSource save, String worldName, boolean creatingWorld,
-            Function4<LevelStorageSource.LevelStorageAccess, RegistryAccess.RegistryHolder, ResourceManager, DataPackConfig, WorldData> f4,
-            Function<Function4<LevelStorageSource.LevelStorageAccess, RegistryAccess.RegistryHolder, ResourceManager, DataPackConfig, WorldData>, Runnable> runAfter)
+            Function<LevelStorageSource.LevelStorageAccess, WorldStem.WorldDataSupplier> worldData,
+            Function<Function<LevelStorageSource.LevelStorageAccess, WorldStem.WorldDataSupplier>, Runnable> runAfter)
     {
         Component title = new TranslatableComponent("selectWorld.backupQuestion.experimental");
         Component msg = new TranslatableComponent("selectWorld.backupWarning.experimental")
@@ -1097,13 +1093,8 @@ public class ForgeHooksClient
             {
                 //The WorldData is re-created when re-running the runnable,
                 // so make sure to be setting the field to true on the right instance.
-                runAfter.apply((a, b, c, d) ->
-                {
-                    WorldData worldData = f4.apply(a, b, c, d);
-                    if (worldData instanceof PrimaryLevelData pld) //instance check should always be true.
-                        pld.withConfirmedWarning(true);
-                    return worldData;
-                }).run();
+                runAfter.apply(worldData.andThen(wds -> (rm, dpc) ->
+                        wds.get(rm, dpc).mapFirst(wd -> wd instanceof PrimaryLevelData pld ? pld.withConfirmedWarning(true) : wd)));
             }
             else
             {
