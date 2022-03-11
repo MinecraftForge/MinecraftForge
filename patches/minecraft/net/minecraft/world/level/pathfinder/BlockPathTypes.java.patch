@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/pathfinder/BlockPathTypes.java
 +++ b/net/minecraft/world/level/pathfinder/BlockPathTypes.java
-@@ -36,4 +_,13 @@
+@@ -37,4 +_,13 @@
     public float m_77124_() {
        return this.f_77117_;
     }

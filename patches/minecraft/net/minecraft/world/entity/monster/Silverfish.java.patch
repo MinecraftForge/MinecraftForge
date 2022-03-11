@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/monster/Silverfish.java
 +++ b/net/minecraft/world/entity/monster/Silverfish.java
-@@ -138,7 +_,7 @@
+@@ -140,7 +_,7 @@
              return false;
           } else {
              Random random = this.f_25725_.m_21187_();
@@ -9,7 +9,7 @@
                 this.f_33555_ = Direction.m_122404_(random);
                 BlockPos blockpos = (new BlockPos(this.f_25725_.m_20185_(), this.f_25725_.m_20186_() + 0.5D, this.f_25725_.m_20189_())).m_142300_(this.f_33555_);
                 BlockState blockstate = this.f_25725_.f_19853_.m_8055_(blockpos);
-@@ -207,7 +_,7 @@
+@@ -209,7 +_,7 @@
                       BlockState blockstate = level.m_8055_(blockpos1);
                       Block block = blockstate.m_60734_();
                       if (block instanceof InfestedBlock) {

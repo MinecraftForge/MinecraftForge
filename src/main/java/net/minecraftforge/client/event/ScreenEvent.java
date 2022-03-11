@@ -1,20 +1,6 @@
 /*
- * Minecraft Forge
- * Copyright (c) 2016-2021.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation version 2.1
- * of the License.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Minecraft Forge - Forge Development LLC
+ * SPDX-License-Identifier: LGPL-2.1-only
  */
 
 package net.minecraftforge.client.event;
@@ -32,8 +18,10 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraft.client.gui.screens.Screen;
 
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.fml.LogicalSide;
 import org.lwjgl.glfw.GLFW;
 
 /**
@@ -140,7 +128,7 @@ public class ScreenEvent extends Event
         }
 
         /**
-         * The MatrixStack to render with.
+         * The PoseStack to render with.
          */
         public PoseStack getPoseStack()
         {
@@ -178,9 +166,9 @@ public class ScreenEvent extends Event
         @Cancelable
         public static class Pre extends DrawScreenEvent
         {
-            public Pre(Screen screen, PoseStack mStack, int mouseX, int mouseY, float renderPartialTicks)
+            public Pre(Screen screen, PoseStack poseStack, int mouseX, int mouseY, float partialTick)
             {
-                super(screen, mStack, mouseX, mouseY, renderPartialTicks);
+                super(screen, poseStack, mouseX, mouseY, partialTick);
             }
         }
 
@@ -189,9 +177,9 @@ public class ScreenEvent extends Event
          */
         public static class Post extends DrawScreenEvent
         {
-            public Post(Screen screen, PoseStack mStack, int mouseX, int mouseY, float renderPartialTicks)
+            public Post(Screen screen, PoseStack poseStack, int mouseX, int mouseY, float partialTick)
             {
-                super(screen, mStack, mouseX, mouseY, renderPartialTicks);
+                super(screen, poseStack, mouseX, mouseY, partialTick);
             }
         }
     }
@@ -211,7 +199,7 @@ public class ScreenEvent extends Event
         }
 
         /**
-         * The MatrixStack to render with.
+         * The PoseStack to render with.
          */
         public PoseStack getPoseStack()
         {
@@ -223,11 +211,43 @@ public class ScreenEvent extends Event
      * This event fires in {@link EffectRenderingInventoryScreen} in the
      * {@code checkEffectRendering} method when potion effects are active and the gui wants to move over.
      * Cancel this event to prevent the Gui from being moved.
+     *
+     * @deprecated This event was made redundant by the removal of the screen shifting due to potion indicators in the
+     * inventory screen (along with being moved to the right hand side). This has been changed to have no effect, and
+     * will be removed in 1.19. See {@link PotionSizeEvent} as a possible alternative instead.
      */
+    @Deprecated(forRemoval = true, since = "1.18.1")
     @Cancelable
     public static class PotionShiftEvent extends ScreenEvent
     {
         public PotionShiftEvent(Screen screen)
+        {
+            super(screen);
+        }
+    }
+
+    /**
+     * Fired to determine whether to render the potion indicators in the {@link EffectRenderingInventoryScreen inventory
+     * screen} in compact or classic mode.
+     *
+     * <p>This event is not {@linkplain Cancelable cancelable} and {@linkplain HasResult has a result}. </p>
+     * <ul>
+     *   <li>{@link Result#ALLOW} - forcibly renders the potion indicators in <em>compact</em> mode.</li>
+     *   <li>{@link Result#DEFAULT} - defaults to vanilla behavior to using compact mode if the the screen width is too
+     *   small for classic rendering of potion indicators.</li>
+     *   <li>{@link Result#DENY} - forcibly renders the potion indicators in <em>classic</em> mode.</li>
+     * </ul>
+     *
+     * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
+     * only on the {@linkplain LogicalSide#CLIENT logical client}. </p>
+     */
+    @HasResult
+    public static class PotionSizeEvent extends ScreenEvent
+    {
+        /**
+         * @hidden For internal use only.
+         */
+        public PotionSizeEvent(Screen screen)
         {
             super(screen);
         }

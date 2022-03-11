@@ -1,48 +1,48 @@
 --- a/net/minecraft/client/gui/screens/TitleScreen.java
 +++ b/net/minecraft/client/gui/screens/TitleScreen.java
-@@ -64,6 +_,7 @@
-    private final PanoramaRenderer f_96729_ = new PanoramaRenderer(f_96716_);
-    private final boolean f_96714_;
-    private long f_96715_;
+@@ -73,6 +_,7 @@
+    private TitleScreen.Warning32Bit f_210857_;
+    private RealmsClient f_210858_;
+    private boolean f_210859_ = false;
 +   private net.minecraftforge.client.gui.NotificationModUpdateScreen modUpdateNotification;
  
     public TitleScreen() {
        this(false);
-@@ -107,11 +_,16 @@
-       this.f_96728_ = this.f_96543_ - this.f_96727_ - 2;
-       int i = 24;
-       int j = this.f_96544_ / 4 + 48;
+@@ -131,11 +_,16 @@
+       int j = this.f_96543_ - i - 2;
+       int k = 24;
+       int l = this.f_96544_ / 4 + 48;
 +      Button modButton = null;
        if (this.f_96541_.m_91402_()) {
-          this.m_96772_(j, 24);
+          this.m_96772_(l, 24);
        } else {
-          this.m_96763_(j, 24);
-+         modButton = this.m_142416_(new Button(this.f_96543_ / 2 - 100, j + 24 * 2, 98, 20, new TranslatableComponent("fml.menu.mods"), button -> {
+          this.m_96763_(l, 24);
++         modButton = this.m_142416_(new Button(this.f_96543_ / 2 - 100, l + 24 * 2, 98, 20, new TranslatableComponent("fml.menu.mods"), button -> {
 +            this.f_96541_.m_91152_(new net.minecraftforge.client.gui.ModListScreen(this));
 +         }));
        }
 +      modUpdateNotification = net.minecraftforge.client.gui.NotificationModUpdateScreen.init(this, modButton);
  
-       this.m_142416_(new ImageButton(this.f_96543_ / 2 - 124, j + 72 + 12, 20, 20, 0, 106, 20, Button.f_93617_, 256, 256, (p_96791_) -> {
+       this.m_142416_(new ImageButton(this.f_96543_ / 2 - 124, l + 72 + 12, 20, 20, 0, 106, 20, Button.f_93617_, 256, 256, (p_96791_) -> {
           this.f_96541_.m_91152_(new LanguageSelectScreen(this, this.f_96541_.f_91066_, this.f_96541_.m_91102_()));
-@@ -159,7 +_,7 @@
+@@ -201,7 +_,7 @@
           Screen screen = (Screen)(this.f_96541_.f_91066_.f_92083_ ? new JoinMultiplayerScreen(this) : new SafetyScreen(this));
           this.f_96541_.m_91152_(screen);
        }, button$ontooltip))).f_93623_ = flag;
--      (this.m_142416_(new Button(this.f_96543_ / 2 - 100, p_96764_ + p_96765_ * 2, 200, 20, new TranslatableComponent("menu.online"), (p_96776_) -> {
+-      (this.m_142416_(new Button(this.f_96543_ / 2 - 100, p_96764_ + p_96765_ * 2, 200, 20, new TranslatableComponent("menu.online"), (p_211788_) -> {
 +      (this.m_142416_(new Button(this.f_96543_ / 2 + 2, p_96764_ + p_96765_ * 2, 98, 20, new TranslatableComponent("menu.online"), (p_96771_) -> {
           this.m_96793_();
        }, button$ontooltip))).f_93623_ = flag;
     }
-@@ -284,6 +_,7 @@
+@@ -331,6 +_,7 @@
+             this.f_210857_.f_210875_.m_6514_(p_96739_, this.f_210857_.f_210876_, this.f_210857_.f_210877_, 9, 16777215 | l);
+          }
  
-          RenderSystem.m_157456_(0, f_96724_);
-          m_93133_(p_96739_, j + 88, 67, 0.0F, 0.0F, 98, 14, 128, 16);
 +         net.minecraftforge.client.ForgeHooksClient.renderMainMenu(this, p_96739_, this.f_96547_, this.f_96543_, this.f_96544_, l);
           if (this.f_96721_ != null) {
              p_96739_.m_85836_();
              p_96739_.m_85837_((double)(this.f_96543_ / 2 + 90), 70.0D, 0.0D);
-@@ -306,7 +_,14 @@
+@@ -353,7 +_,14 @@
              s = s + I18n.m_118938_("menu.modded");
           }
  
@@ -55,10 +55,10 @@
 +            m_93236_(p_96739_, this.f_96547_, brd, this.f_96543_ - f_96547_.m_92895_(brd), this.f_96544_ - (10 + (brdline + 1) * ( this.f_96547_.f_92710_ + 1)), 16777215 | l)
 +         );
 +
-          m_93236_(p_96739_, this.f_96547_, "Copyright Mojang AB. Do not distribute!", this.f_96728_, this.f_96544_ - 10, 16777215 | l);
-          if (p_96740_ > this.f_96728_ && p_96740_ < this.f_96728_ + this.f_96727_ && p_96741_ > this.f_96544_ - 10 && p_96741_ < this.f_96544_) {
-             m_93172_(p_96739_, this.f_96728_, this.f_96544_ - 1, this.f_96728_ + this.f_96727_, this.f_96544_, 16777215 | l);
-@@ -322,6 +_,7 @@
+ 
+          for(GuiEventListener guieventlistener : this.m_6702_()) {
+             if (guieventlistener instanceof AbstractWidget) {
+@@ -365,6 +_,7 @@
           if (this.m_96789_() && f1 >= 1.0F) {
              this.f_96726_.m_6305_(p_96739_, p_96740_, p_96741_, p_96742_);
           }

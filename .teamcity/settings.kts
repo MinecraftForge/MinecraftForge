@@ -33,7 +33,7 @@ project {
 
     params {
         text("docker_jdk_version", "17", label = "Gradle version", description = "The version of the JDK to use during execution of tasks in a JDK.", display = ParameterDisplay.HIDDEN, allowEmpty = false)
-        text("docker_gradle_version", "7.3", label = "Gradle version", description = "The version of Gradle to use during execution of Gradle tasks.", display = ParameterDisplay.HIDDEN, allowEmpty = false)
+        text("docker_gradle_version", "7.4", label = "Gradle version", description = "The version of Gradle to use during execution of Gradle tasks.", display = ParameterDisplay.HIDDEN, allowEmpty = false)
         text("git_main_branch", "1.18.x", label = "Git Main Branch", description = "The git main or default branch to use in VCS operations.", display = ParameterDisplay.HIDDEN, allowEmpty = false)
         text("git_branch_spec", """
                 +:refs/heads/(main*)
@@ -124,5 +124,13 @@ object PullRequests : BuildType({
             display = ParameterDisplay.HIDDEN,
             allowEmpty = false
         )
+    }
+
+    vcs {
+        branchFilter = """
+            +:*
+            -:1.*
+            -:<default>
+        """.trimIndent()
     }
 })

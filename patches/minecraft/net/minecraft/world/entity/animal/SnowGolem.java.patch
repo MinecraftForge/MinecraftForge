@@ -36,7 +36,7 @@
           this.m_5851_(SoundSource.PLAYERS);
           this.m_146852_(GameEvent.f_157781_, p_29920_);
           if (!this.f_19853_.f_46443_) {
-@@ -193,5 +_,21 @@
+@@ -193,5 +_,22 @@
  
     public Vec3 m_7939_() {
        return new Vec3(0.0D, (double)(0.75F * this.m_20192_()), (double)(this.m_20205_() * 0.4F));
@@ -51,6 +51,7 @@
 +   @Override
 +   public java.util.List<ItemStack> onSheared(@Nullable Player player, @javax.annotation.Nonnull ItemStack item, Level world, BlockPos pos, int fortune) {
 +      world.m_6269_(null, this, SoundEvents.f_12480_, player == null ? SoundSource.BLOCKS : SoundSource.PLAYERS, 1.0F, 1.0F);
++      this.m_146852_(GameEvent.f_157781_, player);
 +      if (!world.m_5776_()) {
 +         m_29936_(false);
 +         return java.util.Collections.singletonList(new ItemStack(Items.f_42047_));

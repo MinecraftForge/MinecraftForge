@@ -7,4 +7,4 @@
 +      net.minecraftforge.common.ForgeHooks.onLivingJump(this);
     }
  
-    protected void m_6197_(Tag<Fluid> p_32988_) {
+    protected void m_203347_(TagKey<Fluid> p_204065_) {

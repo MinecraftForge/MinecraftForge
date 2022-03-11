@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/gui/screens/worldselection/WorldGenSettingsComponent.java
 +++ b/net/minecraft/client/gui/screens/worldselection/WorldGenSettingsComponent.java
-@@ -113,6 +_,7 @@
+@@ -107,6 +_,7 @@
        this.f_170244_.f_93624_ = false;
        this.f_101391_ = p_101430_.m_142416_(new Button(j, 120, 150, 20, new TranslatableComponent("selectWorld.customizeType"), (p_170248_) -> {
           WorldPreset.PresetEditor worldpreset$preseteditor = WorldPreset.f_101509_.get(this.f_101395_);
@@ -8,7 +8,7 @@
           if (worldpreset$preseteditor != null) {
              p_101431_.m_91152_(worldpreset$preseteditor.m_101642_(p_101430_, this.f_101394_));
           }
-@@ -283,7 +_,7 @@
+@@ -273,7 +_,7 @@
        } else {
           this.f_101389_.f_93624_ = p_170288_;
           this.f_101380_.f_93624_ = p_170288_;

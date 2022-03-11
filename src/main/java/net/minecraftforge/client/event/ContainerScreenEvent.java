@@ -1,20 +1,6 @@
 /*
- * Minecraft Forge
- * Copyright (c) 2016-2021.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation version 2.1
- * of the License.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Minecraft Forge - Forge Development LLC
+ * SPDX-License-Identifier: LGPL-2.1-only
  */
 
 package net.minecraftforge.client.event;
@@ -57,14 +43,14 @@ public class ContainerScreenEvent extends Event
          * Called directly after the GuiContainer has drawn any foreground elements.
          *
          * @param guiContainer The container.
-         * @param mStack       The MatrixStack.
+         * @param poseStack    The pose stack.
          * @param mouseX       The current X position of the players mouse.
          * @param mouseY       The current Y position of the players mouse.
          */
-        public DrawForeground(AbstractContainerScreen<?> guiContainer, PoseStack mStack, int mouseX, int mouseY)
+        public DrawForeground(AbstractContainerScreen<?> guiContainer, PoseStack poseStack, int mouseX, int mouseY)
         {
             super(guiContainer);
-            this.poseStack = mStack;
+            this.poseStack = poseStack;
             this.mouseX = mouseX;
             this.mouseY = mouseY;
         }
@@ -99,14 +85,14 @@ public class ContainerScreenEvent extends Event
          * Called directly after the GuiContainer has drawn any background elements.
          *
          * @param guiContainer The container.
-         * @param mStack       The MatrixStack.
+         * @param poseStack    The PoseStack.
          * @param mouseX       The current X position of the players mouse.
          * @param mouseY       The current Y position of the players mouse.
          */
-        public DrawBackground(AbstractContainerScreen<?> guiContainer, PoseStack mStack, int mouseX, int mouseY)
+        public DrawBackground(AbstractContainerScreen<?> guiContainer, PoseStack poseStack, int mouseX, int mouseY)
         {
             super(guiContainer);
-            this.poseStack = mStack;
+            this.poseStack = poseStack;
             this.mouseX = mouseX;
             this.mouseY = mouseY;
         }

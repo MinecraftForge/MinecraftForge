@@ -1,15 +1,15 @@
 --- a/net/minecraft/client/gui/screens/worldselection/CreateWorldScreen.java
 +++ b/net/minecraft/client/gui/screens/worldselection/CreateWorldScreen.java
-@@ -116,7 +_,7 @@
+@@ -106,7 +_,7 @@
  
-    public static CreateWorldScreen m_100898_(@Nullable Screen p_100899_) {
-       RegistryAccess.RegistryHolder registryaccess$registryholder = RegistryAccess.m_123086_();
--      return new CreateWorldScreen(p_100899_, DataPackConfig.f_45842_, new WorldGenSettingsComponent(registryaccess$registryholder, WorldGenSettings.m_190050_(registryaccess$registryholder), Optional.of(WorldPreset.f_101506_), OptionalLong.empty()));
-+      return new CreateWorldScreen(p_100899_, DataPackConfig.f_45842_, new WorldGenSettingsComponent(registryaccess$registryholder, net.minecraftforge.client.ForgeHooksClient.getDefaultWorldPreset().map(type -> type.m_7012_(registryaccess$registryholder, new java.util.Random().nextLong(), true, false)).orElseGet(() -> WorldGenSettings.m_190050_(registryaccess$registryholder)), net.minecraftforge.client.ForgeHooksClient.getDefaultWorldPreset(), OptionalLong.empty()));
+    public static CreateWorldScreen m_205424_(@Nullable Screen p_205425_) {
+       RegistryAccess.Frozen registryaccess$frozen = RegistryAccess.f_123049_.get();
+-      return new CreateWorldScreen(p_205425_, DataPackConfig.f_45842_, new WorldGenSettingsComponent(registryaccess$frozen, WorldGenSettings.m_190050_(registryaccess$frozen), Optional.of(WorldPreset.f_101506_), OptionalLong.empty()));
++      return new CreateWorldScreen(p_205425_, DataPackConfig.f_45842_, new WorldGenSettingsComponent(registryaccess$frozen, net.minecraftforge.client.ForgeHooksClient.getDefaultWorldPreset().map(type -> type.m_205485_(registryaccess$frozen, new java.util.Random().nextLong(), true, false)).orElseGet(() -> WorldGenSettings.m_190050_(registryaccess$frozen)), net.minecraftforge.client.ForgeHooksClient.getDefaultWorldPreset(), OptionalLong.empty()));
     }
  
-    private CreateWorldScreen(@Nullable Screen p_100861_, DataPackConfig p_100862_, WorldGenSettingsComponent p_100863_) {
-@@ -595,6 +_,7 @@
+    public static CreateWorldScreen m_205426_(@Nullable Screen p_205427_, WorldStem p_205428_, @Nullable Path p_205429_) {
+@@ -625,6 +_,7 @@
           File file1 = path.toFile();
           if (this.f_100832_ == null) {
              this.f_100832_ = new PackRepository(PackType.SERVER_DATA, new ServerPacksSource(), new FolderRepositorySource(file1, PackSource.f_10527_));

@@ -1,0 +1,11 @@
+--- a/net/minecraft/gametest/framework/StructureUtils.java
++++ b/net/minecraft/gametest/framework/StructureUtils.java
+@@ -238,7 +_,7 @@
+       if (optional.isPresent()) {
+          return optional.get();
+       } else {
+-         String s = p_127881_ + ".snbt";
++         String s = new ResourceLocation(p_127881_).m_135815_() + ".snbt";
+          Path path = Paths.get(f_127833_, s);
+          CompoundTag compoundtag = m_127902_(path);
+          if (compoundtag == null) {
