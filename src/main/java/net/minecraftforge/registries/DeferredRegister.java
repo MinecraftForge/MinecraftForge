@@ -5,16 +5,23 @@
 
 package net.minecraftforge.registries;
 
+import com.google.common.collect.Multimaps;
+import com.google.common.collect.SetMultimap;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.registries.tags.ITagManager;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.IdentityHashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -97,6 +104,7 @@ public class DeferredRegister<T extends IForgeRegistryEntry<T>>
     private IForgeRegistry<T> type;
     private Supplier<IForgeRegistry<T>> typeSupplier;
     private Supplier<RegistryBuilder<T>> registryFactory;
+    private SetMultimap<TagKey<T>, Supplier<T>> optionalTags;
     private boolean seenRegisterEvent = false;
 
     private DeferredRegister(@Nullable ResourceLocation registryName, @Nullable Class<T> base, String modid)
@@ -177,6 +185,52 @@ public class DeferredRegister<T extends IForgeRegistryEntry<T>>
     }
 
     /**
+     * Creates a tag key based on the current modid and provided path as the location and the registry name linked to this DeferredRegister.
+     *
+     * @see #createOptionalTagKey(String, Set)
+     */
+    @NotNull
+    public TagKey<T> createTagKey(@NotNull String path)
+    {
+        if (this.registryName == null)
+            throw new IllegalStateException("The registry name was not set, cannot create a tag key");
+        Objects.requireNonNull(path);
+        return TagKey.create(ResourceKey.createRegistryKey(this.registryName), new ResourceLocation(modid, path));
+    }
+
+    /**
+     * Creates a tag key with the current modid and provided path that will use the set of defaults if the tag is not loaded from any datapacks.
+     * Useful on the client side when a server may not provide a specific tag.
+     *
+     * @see #createTagKey(String)
+     * @see #addOptionalTagDefaults(TagKey, Set)
+     */
+    @NotNull
+    public TagKey<T> createOptionalTagKey(@NotNull String path, @NotNull Set<? extends Supplier<T>> defaults)
+    {
+        TagKey<T> tagKey = createTagKey(path);
+
+        addOptionalTagDefaults(tagKey, defaults);
+
+        return tagKey;
+    }
+
+    /**
+     * Adds defaults to an existing tag key.
+     * The set of defaults will be bound to the tag if the tag is not loaded from any datapacks.
+     * Useful on the client side when a server may not provide a specific tag.
+     *
+     * @see #createOptionalTagKey(String, Set)
+     */
+    public void addOptionalTagDefaults(@NotNull TagKey<T> name, @NotNull Set<? extends Supplier<T>> defaults)
+    {
+        if (optionalTags == null)
+            optionalTags = Multimaps.newSetMultimap(new IdentityHashMap<>(), HashSet::new);
+
+        optionalTags.putAll(name, defaults);
+    }
+
+    /**
      * Adds our event handler to the specified event bus, this MUST be called in order for this class to function.
      * See the example usage.
      *
@@ -238,6 +292,18 @@ public class DeferredRegister<T extends IForgeRegistryEntry<T>>
         return this.type;
     }
 
+    private void onFill(IForgeRegistry<T> registry)
+    {
+        if (this.optionalTags == null)
+            return;
+
+        ITagManager<T> tagManager = registry.tags();
+        if (tagManager == null)
+            throw new IllegalStateException("The forge registry " + registry.getRegistryName() + " does not support tags, but optional tags were registered!");
+
+        Multimaps.asMap(this.optionalTags).forEach(tagManager::addOptionalTagDefaults);
+    }
+
     private void addEntries(RegistryEvent.Register<?> event)
     {
         IForgeRegistry<T> storedType = this.getForgeRegistry();
@@ -264,7 +330,7 @@ public class DeferredRegister<T extends IForgeRegistryEntry<T>>
 
     private void createRegistry(RegistryEvent.NewRegistry event)
     {
-        this.typeSupplier = event.create(this.registryFactory.get());
+        this.typeSupplier = event.create(this.registryFactory.get(), this::onFill);
     }
 
     private void captureRegistry()

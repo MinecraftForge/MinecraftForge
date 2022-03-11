@@ -66,10 +66,20 @@ public interface ITagManager<V extends IForgeRegistryEntry<V>> extends Iterable<
     @NotNull TagKey<V> createTagKey(@NotNull ResourceLocation location);
 
     /**
-     * Creates a tag key that will use the set of defaults if no tag JSON is found.
+     * Creates a tag key that will use the set of defaults if the tag is not loaded from any datapacks.
      * Useful on the client side when a server may not provide a specific tag.
      *
      * @see #createTagKey(ResourceLocation)
+     * @see #addOptionalTagDefaults(TagKey, Set)
      */
     @NotNull TagKey<V> createOptionalTagKey(@NotNull ResourceLocation location, @NotNull Set<? extends Supplier<V>> defaults);
+
+    /**
+     * Adds defaults to an existing tag key.
+     * The set of defaults will be bound to the tag if the tag is not loaded from any datapacks.
+     * Useful on the client side when a server may not provide a specific tag.
+     *
+     * @see #createOptionalTagKey(ResourceLocation, Set)
+     */
+    void addOptionalTagDefaults(@NotNull TagKey<V> name, @NotNull Set<? extends Supplier<V>> defaults);
 }

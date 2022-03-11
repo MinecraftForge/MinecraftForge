@@ -126,8 +126,17 @@ class ForgeRegistryTagManager<V extends IForgeRegistryEntry<V>> implements ITagM
     {
         TagKey<V> tagKey = createTagKey(location);
 
-        this.owner.getHolderHelper().ifPresent(h -> h.addOptionalTag(tagKey, defaults));
+        addOptionalTagDefaults(tagKey, defaults);
 
         return tagKey;
+    }
+
+    @Override
+    public void addOptionalTagDefaults(@NotNull TagKey<V> name, @NotNull Set<? extends Supplier<V>> defaults)
+    {
+        Objects.requireNonNull(name);
+        Objects.requireNonNull(defaults);
+
+        this.owner.getHolderHelper().ifPresent(h -> h.addOptionalTag(name, defaults));
     }
 }
