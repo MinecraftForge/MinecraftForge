@@ -5,10 +5,13 @@
 
 package net.minecraftforge.registries;
 
+import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -51,31 +54,61 @@ public class DeferredRegister<T extends IForgeRegistryEntry<T>>
     }
 
     /**
-     * Use for custom registries that are made during the NewRegistry event. 
+     * Use for custom registries that are made during the NewRegistry event.
+     *
+     * @deprecated Use {@link #create(ResourceLocation, String)} and {@link #makeRegistry(Class, Supplier)} instead
      */
+    @Deprecated(forRemoval = true, since = "1.18.2")
     public static <B extends IForgeRegistryEntry<B>> DeferredRegister<B> create(Class<B> base, String modid)
     {
-        return new DeferredRegister<B>(base, modid);
+        return new DeferredRegister<B>(null, base, modid);
     }
 
+    /**
+     * DeferredRegister factory for custom registries that are made during the {@link RegistryEvent.NewRegistry} event
+     * or with {@link #makeRegistry(Class, Supplier)}.
+     *
+     * @param key The key of the registry to reference
+     * @param modid The namespace for all objects registered to this DeferredRegister
+     */
+    public static <B extends IForgeRegistryEntry<B>> DeferredRegister<B> create(ResourceKey<? extends Registry<B>> key, String modid)
+    {
+        return new DeferredRegister<B>(key.location(), null, modid);
+    }
+
+    /**
+     * DeferredRegister factory for custom registries that are made during the {@link RegistryEvent.NewRegistry} event
+     * or with {@link #makeRegistry(Class, Supplier)}.
+     *
+     * @param registryName The name of the registry, should include namespace. May come from another DeferredRegister through {@link #getRegistryName()}.
+     * @param modid The namespace for all objects registered to this DeferredRegister
+     */
+    public static <B extends IForgeRegistryEntry<B>> DeferredRegister<B> create(ResourceLocation registryName, String modid)
+    {
+        return new DeferredRegister<B>(registryName, null, modid);
+    }
+
+    private final ResourceLocation registryName;
     private final Class<T> superType;
     private final String modid;
     private final Map<RegistryObject<T>, Supplier<? extends T>> entries = new LinkedHashMap<>();
     private final Set<RegistryObject<T>> entriesView = Collections.unmodifiableSet(entries.keySet());
 
     private IForgeRegistry<T> type;
+    private Supplier<IForgeRegistry<T>> typeSupplier;
     private Supplier<RegistryBuilder<T>> registryFactory;
     private boolean seenRegisterEvent = false;
 
-    private DeferredRegister(Class<T> base, String modid)
+    private DeferredRegister(@Nullable ResourceLocation registryName, @Nullable Class<T> base, String modid)
     {
+        this.registryName = registryName;
         this.superType = base;
         this.modid = modid;
     }
 
     private DeferredRegister(IForgeRegistry<T> reg, String modid)
     {
-        this(reg.getRegistrySuperType(), modid);
+        this(reg.getRegistryName(), reg.getRegistrySuperType(), modid);
         this.type = reg;
     }
 
@@ -96,8 +129,11 @@ public class DeferredRegister<T extends IForgeRegistryEntry<T>>
         final ResourceLocation key = new ResourceLocation(modid, name);
 
         RegistryObject<I> ret;
-        if (this.type != null)
-            ret = RegistryObject.of(key, this.type);
+        IForgeRegistry<T> reg = getForgeRegistry();
+        if (reg != null)
+            ret = RegistryObject.of(key, reg);
+        else if (this.registryName != null)
+            ret = RegistryObject.of(key, this.registryName, this.modid);
         else if (this.superType != null)
             ret = RegistryObject.of(key, this.superType, this.modid);
         else
@@ -118,15 +154,26 @@ public class DeferredRegister<T extends IForgeRegistryEntry<T>>
      * @param name  Path of the registry's {@link ResourceLocation}
      * @param sup   Supplier of the RegistryBuilder that is called to fill {@link #type} during the NewRegistry event
      * @return      A supplier of the {@link IForgeRegistry} created by the builder.
+     *
+     * @deprecated Use {@link #create(ResourceLocation, String)} and {@link #makeRegistry(Class, Supplier)} instead
      */
+    @Deprecated(forRemoval = true, since = "1.18.2")
     public Supplier<IForgeRegistry<T>> makeRegistry(final String name, final Supplier<RegistryBuilder<T>> sup) {
-        if (this.superType == null)
-            throw new IllegalStateException("Cannot create a registry without specifying a base type");
-        if (this.type != null || this.registryFactory != null)
-            throw new IllegalStateException("Cannot create a registry for a type that already exists");
+        return makeRegistry(new ResourceLocation(modid, name), this.superType, sup);
+    }
 
-        this.registryFactory = () -> sup.get().setName(new ResourceLocation(modid, name)).setType(this.superType);
-        return () -> this.type;
+    /**
+     * Only used for custom registries to fill the forge registry held in this DeferredRegister.
+     *
+     * Calls {@link RegistryBuilder#setName} and {@link RegistryBuilder#setType} automatically.
+     *
+     * @param base The base type to use in the created {@link IForgeRegistry}
+     * @param sup Supplier of a RegistryBuilder that initializes a {@link IForgeRegistry} during the {@link RegistryEvent.NewRegistry} event
+     * @return A supplier of the {@link IForgeRegistry} created by the builder.
+     * Will always return null until after the {@link RegistryEvent.NewRegistry} event fires.
+     */
+    public Supplier<IForgeRegistry<T>> makeRegistry(final Class<T> base, final Supplier<RegistryBuilder<T>> sup) {
+        return makeRegistry(this.registryName, base, sup);
     }
 
     /**
@@ -162,9 +209,39 @@ public class DeferredRegister<T extends IForgeRegistryEntry<T>>
         return entriesView;
     }
 
+    /**
+     * @return The registry name stored in this deferred register. Useful for creating new deferred registers based on an existing one.
+     */
+    @Nullable
+    public ResourceLocation getRegistryName()
+    {
+        return this.registryName;
+    }
+
+    private Supplier<IForgeRegistry<T>> makeRegistry(final ResourceLocation registryName, final Class<T> superType, final Supplier<RegistryBuilder<T>> sup) {
+        if (registryName == null)
+            throw new IllegalStateException("Cannot create a registry without specifying a registry name");
+        if (superType == null)
+            throw new IllegalStateException("Cannot create a registry without specifying a base type");
+        if (this.type != null || this.registryFactory != null)
+            throw new IllegalStateException("Cannot create a registry for a type that already exists");
+
+        this.registryFactory = () -> sup.get().setName(registryName).setType(superType);
+        return this::getForgeRegistry;
+    }
+
+    private IForgeRegistry<T> getForgeRegistry()
+    {
+        if (this.type == null && this.typeSupplier != null)
+            this.type = this.typeSupplier.get();
+
+        return this.type;
+    }
+
     private void addEntries(RegistryEvent.Register<?> event)
     {
-        if (this.type == null && this.registryFactory == null)
+        IForgeRegistry<T> storedType = this.getForgeRegistry();
+        if (storedType == null && this.registryFactory == null)
         {
             //If there is no type yet and we don't have a registry factory, attempt to capture the registry
             //Note: This will only ever get run on the first registry event, as after that time,
@@ -172,7 +249,7 @@ public class DeferredRegister<T extends IForgeRegistryEntry<T>>
             // to ensure that mods can properly use deferred registers for custom registries added by other mods
             captureRegistry();
         }
-        if (this.type != null && event.getGenericType() == this.type.getRegistrySuperType())
+        if (storedType != null && event.getGenericType() == storedType.getRegistrySuperType())
         {
             this.seenRegisterEvent = true;
             @SuppressWarnings("unchecked")
@@ -187,12 +264,18 @@ public class DeferredRegister<T extends IForgeRegistryEntry<T>>
 
     private void createRegistry(RegistryEvent.NewRegistry event)
     {
-        this.type = this.registryFactory.get().create();
+        this.typeSupplier = event.create(this.registryFactory.get());
     }
 
     private void captureRegistry()
     {
-        if (this.superType != null)
+        if (this.registryName != null)
+        {
+            this.type = RegistryManager.ACTIVE.getRegistry(this.registryName);
+            if (this.type == null)
+                throw new IllegalStateException("Unable to find registry with key " + this.registryName + " for modid \"" + modid + "\" after NewRegistry event");
+        }
+        else if (this.superType != null)
         {
             this.type = RegistryManager.ACTIVE.getRegistry(this.superType);
             if (this.type == null)

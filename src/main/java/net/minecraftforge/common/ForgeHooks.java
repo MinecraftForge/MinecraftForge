@@ -1106,7 +1106,7 @@ public class ForgeHooks
         EntityDataSerializer<?> serializer = vanilla.byId(id);
         if (serializer == null)
         {
-            DataSerializerEntry entry = ((ForgeRegistry<DataSerializerEntry>)ForgeRegistries.DATA_SERIALIZERS).getValue(id);
+            DataSerializerEntry entry = ((ForgeRegistry<DataSerializerEntry>)ForgeRegistries.DATA_SERIALIZERS.get()).getValue(id);
             if (entry != null) serializer = entry.getSerializer();
         }
         return serializer;
@@ -1118,7 +1118,7 @@ public class ForgeHooks
         if (id < 0)
         {
             DataSerializerEntry entry = serializerEntries.get(serializer);
-            if (entry != null) id = ((ForgeRegistry<DataSerializerEntry>)ForgeRegistries.DATA_SERIALIZERS).getID(entry);
+            if (entry != null) id = ((ForgeRegistry<DataSerializerEntry>)ForgeRegistries.DATA_SERIALIZERS.get()).getID(entry);
         }
         return id;
     }

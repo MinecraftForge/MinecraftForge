@@ -7,11 +7,13 @@ package net.minecraftforge.registries;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import com.google.common.collect.BiMap;
@@ -27,6 +29,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.core.Registry;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.IModStateTransition;
+import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.network.HandshakeMessages;
 import net.minecraftforge.registries.ForgeRegistry.Snapshot;
 import org.apache.commons.lang3.tuple.Pair;
@@ -39,7 +42,6 @@ public class RegistryManager
     public static final RegistryManager ACTIVE = new RegistryManager("ACTIVE");
     public static final RegistryManager VANILLA = new RegistryManager("VANILLA");
     public static final RegistryManager FROZEN = new RegistryManager("FROZEN");
-    private static boolean registerToRoot = false;
     private static Set<ResourceLocation> vanillaRegistryKeys = Set.of();
 
     BiMap<ResourceLocation, ForgeRegistry<? extends IForgeRegistryEntry<?>>> registries = HashBiMap.create();
@@ -76,6 +78,12 @@ public class RegistryManager
         return getRegistry(key.location());
     }
 
+    /**
+     * @see #getRegistry(ResourceLocation)
+     * @see #getRegistry(ResourceKey)
+     * @deprecated The uniqueness of registry super types will not be guaranteed starting in 1.19.
+     */
+    @Deprecated(forRemoval = true, since = "1.18.2")
     public <V extends IForgeRegistryEntry<V>> IForgeRegistry<V> getRegistry(Class<? super V> cls)
     {
         return getRegistry(superTypes.get(cls));
@@ -144,25 +152,47 @@ public class RegistryManager
             this.synced.add(name);
         for (ResourceLocation legacyName : builder.getLegacyNames())
             addLegacyName(legacyName, name);
-        if (registerToRoot && this == RegistryManager.ACTIVE && builder.getHasWrapper() && !Registry.REGISTRY.containsKey(reg.getRegistryName()) && Registry.REGISTRY instanceof WritableRegistry<?> rootRegistry)
-            registerRegistry(rootRegistry, reg);
         return getRegistry(name);
     }
 
     @SuppressWarnings("unchecked")
-    private <T> void registerRegistry(WritableRegistry<T> rootRegistry, ForgeRegistry<?> forgeReg)
+    private static <V extends IForgeRegistryEntry<V>> void registerToRootRegistry(ForgeRegistry<V> forgeReg)
     {
-        Registry<?> wrapper = forgeReg.getWrapper();
+        WritableRegistry<Registry<V>> registry = (WritableRegistry<Registry<V>>) Registry.REGISTRY;
+        Registry<V> wrapper = forgeReg.getWrapper();
         if (wrapper != null)
-            rootRegistry.register((ResourceKey<T>) forgeReg.getRegistryKey(), (T) wrapper, Lifecycle.experimental());
+            registry.register(forgeReg.getRegistryKey(), wrapper, Lifecycle.experimental());
     }
+
+    // TODO 1.19: Remove this in favor of fixing up the IModStateTransition system
+    private static final RegistryEvent.NewRegistry NEW_REGISTRY_EVENT = new RegistryEvent.NewRegistry();
+
+    public static RegistryEvent.NewRegistry newRegistryEventGenerator(ModContainer modContainer)
+    {
+        return NEW_REGISTRY_EVENT;
+    }
+
 
     public static CompletableFuture<List<Throwable>> preNewRegistryEvent(final Executor executor,
             final IModStateTransition.EventGenerator<? extends RegistryEvent.NewRegistry> eventGenerator)
     {
+        return CompletableFuture.runAsync(() -> vanillaRegistryKeys = Set.copyOf(Registry.REGISTRY.keySet()), executor)
+                .handle((v, t) -> t != null ? Collections.singletonList(t) : Collections.emptyList());
+    }
+
+    public static CompletableFuture<List<Throwable>> postNewRegistryEvent(final Executor executor,
+            final IModStateTransition.EventGenerator<? extends RegistryEvent.NewRegistry> eventGenerator)
+    {
         return CompletableFuture.runAsync(() -> {
-            registerToRoot = true;
-            vanillaRegistryKeys = Set.copyOf(Registry.REGISTRY.keySet());
+            Map<RegistryBuilder<?>, IForgeRegistry<?>> registries = NEW_REGISTRY_EVENT.getRegistryBuilders()
+                    .collect(Collectors.toMap(Function.identity(), RegistryBuilder::create, (a, b) -> a, IdentityHashMap::new));
+
+            registries.forEach((builder, reg) -> {
+                if (builder.getHasWrapper() && !Registry.REGISTRY.containsKey(reg.getRegistryName()))
+                    registerToRootRegistry((ForgeRegistry<?>) reg);
+            });
+
+            NEW_REGISTRY_EVENT.fill(registries);
         }, executor).handle((v, t) -> t != null ? Collections.singletonList(t) : Collections.emptyList());
     }
 

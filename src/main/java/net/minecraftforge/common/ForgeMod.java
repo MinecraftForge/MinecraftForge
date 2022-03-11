@@ -144,6 +144,7 @@ public class ForgeMod
         ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, ForgeConfig.serverSpec);
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, ForgeConfig.commonSpec);
         modEventBus.register(ForgeConfig.class);
+        ForgeDeferredRegistriesSetup.setup(modEventBus);
         // Forge does not display problems when the remote is not matching.
         ModLoadingContext.get().registerExtensionPoint(IExtensionPoint.DisplayTest.class, ()->new IExtensionPoint.DisplayTest(()->"ANY", (remote, isServer)-> true));
         StartupMessageManager.addModMessage("Forge version "+ForgeVersion.getVersion());

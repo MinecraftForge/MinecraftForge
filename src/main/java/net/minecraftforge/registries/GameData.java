@@ -154,18 +154,30 @@ public class GameData
 
         // Dynamic Worldgen
         makeRegistry(BIOMES, Biome.class).disableSync().create();
-
-        // Custom forge registries
-        makeRegistry(DATA_SERIALIZERS, DataSerializerEntry.class, 256 /*vanilla space*/, MAX_VARINT).disableSaving().disableOverrides().addCallback(SerializerCallbacks.INSTANCE).create();
-        makeRegistry(LOOT_MODIFIER_SERIALIZERS, c(GlobalLootModifierSerializer.class)).disableSaving().disableSync().create();
-        makeRegistry(WORLD_TYPES, ForgeWorldPreset.class).disableSaving().disableSync().create();
     }
+
+    static RegistryBuilder<DataSerializerEntry> getDataSerializersRegistryBuilder()
+    {
+        return makeRegistry(DATA_SERIALIZERS, DataSerializerEntry.class, 256 /*vanilla space*/, MAX_VARINT).disableSaving().disableOverrides()
+                .addCallback(SerializerCallbacks.INSTANCE);
+    }
+
+    static RegistryBuilder<GlobalLootModifierSerializer<?>> getGLMSerializersRegistryBuilder()
+    {
+        return makeRegistry(LOOT_MODIFIER_SERIALIZERS, c(GlobalLootModifierSerializer.class)).disableSaving().disableSync();
+    }
+
+    static RegistryBuilder<ForgeWorldPreset> getWorldTypesRegistryBuilder()
+    {
+        return makeRegistry(WORLD_TYPES, ForgeWorldPreset.class).disableSaving().disableSync();
+    }
+
     @SuppressWarnings("unchecked") //Ugly hack to let us pass in a typed Class object. Remove when we remove type specific references.
-    private static <T> Class<T> c(Class<?> cls) { return (Class<T>)cls; }
+    static <T> Class<T> c(Class<?> cls) { return (Class<T>)cls; }
 
     private static <T extends IForgeRegistryEntry<T>> RegistryBuilder<T> makeRegistry(ResourceKey<? extends Registry<T>> key, Class<T> type)
     {
-        return new RegistryBuilder<T>().setName(key.location()).setType(type).setMaxID(MAX_VARINT).addCallback(new NamespacedWrapper.Factory<T>());
+        return new RegistryBuilder<T>().setName(key.location()).setType(type).setMaxID(MAX_VARINT).hasWrapper();
     }
     private static <T extends IForgeRegistryEntry<T>> RegistryBuilder<T> makeRegistry(ResourceKey<? extends Registry<T>> key, Class<T> type, int min, int max)
     {
@@ -199,31 +211,31 @@ public class GameData
     @SuppressWarnings("unchecked")
     public static Map<Block,Item> getBlockItemMap()
     {
-        return RegistryManager.ACTIVE.getRegistry(Item.class).getSlaveMap(BLOCK_TO_ITEM, Map.class);
+        return RegistryManager.ACTIVE.getRegistry(ITEMS).getSlaveMap(BLOCK_TO_ITEM, Map.class);
     }
 
     @SuppressWarnings("unchecked")
     public static IdMapper<BlockState> getBlockStateIDMap()
     {
-        return RegistryManager.ACTIVE.getRegistry(Block.class).getSlaveMap(BLOCKSTATE_TO_ID, IdMapper.class);
+        return RegistryManager.ACTIVE.getRegistry(BLOCKS).getSlaveMap(BLOCKSTATE_TO_ID, IdMapper.class);
     }
 
     @SuppressWarnings("unchecked")
     public static Map<BlockState, PoiType> getBlockStatePointOfInterestTypeMap()
     {
-        return RegistryManager.ACTIVE.getRegistry(PoiType.class).getSlaveMap(BLOCKSTATE_TO_POINT_OF_INTEREST_TYPE, Map.class);
+        return RegistryManager.ACTIVE.getRegistry(POI_TYPES).getSlaveMap(BLOCKSTATE_TO_POINT_OF_INTEREST_TYPE, Map.class);
     }
 
     @SuppressWarnings("unchecked")
     public static Map<EntityDataSerializer<?>, DataSerializerEntry> getSerializerMap()
     {
-        return RegistryManager.ACTIVE.getRegistry(DataSerializerEntry.class).getSlaveMap(SERIALIZER_TO_ENTRY, Map.class);
+        return RegistryManager.ACTIVE.getRegistry(DATA_SERIALIZERS).getSlaveMap(SERIALIZER_TO_ENTRY, Map.class);
     }
 
     @SuppressWarnings("unchecked")
     public static BiMap<String, StructureFeature<?>> getStructureMap()
     {
-        return (BiMap<String, StructureFeature<?>>) RegistryManager.ACTIVE.getRegistry(Feature.class).getSlaveMap(STRUCTURES, BiMap.class);
+        return (BiMap<String, StructureFeature<?>>) RegistryManager.ACTIVE.getRegistry(FEATURES).getSlaveMap(STRUCTURES, BiMap.class);
     }
 
     public static <K extends IForgeRegistryEntry<K>> K register_impl(K value)

@@ -13,8 +13,8 @@ import java.util.function.Function;
 import com.google.common.collect.Lists;
 
 import net.minecraft.core.Holder;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.registries.IForgeRegistry.*;
 
 import javax.annotation.Nullable;
@@ -231,7 +231,10 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
         return this;
     }
 
-    public IForgeRegistry<T> create()
+    /**
+     * Modders: Use {@link RegistryEvent.NewRegistry#create(RegistryBuilder)} instead
+     */
+    IForgeRegistry<T> create()
     {
         if (hasWrapper)
         {
