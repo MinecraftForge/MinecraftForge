@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/item/BoneMealItem.java
 +++ b/net/minecraft/world/item/BoneMealItem.java
-@@ -34,7 +_,7 @@
+@@ -33,7 +_,7 @@
        Level level = p_40637_.m_43725_();
        BlockPos blockpos = p_40637_.m_8083_();
        BlockPos blockpos1 = blockpos.m_142300_(p_40637_.m_43719_());
@@ -9,7 +9,7 @@
           if (!level.f_46443_) {
              level.m_46796_(1505, blockpos, 0);
           }
-@@ -55,8 +_,17 @@
+@@ -54,8 +_,17 @@
        }
     }
  

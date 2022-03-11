@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/FogRenderer.java
 +++ b/net/minecraft/client/renderer/FogRenderer.java
-@@ -171,21 +_,40 @@
+@@ -173,24 +_,42 @@
  
        if (f_109010_ != 0.0F && f_109011_ != 0.0F && f_109012_ != 0.0F) {
           float f8 = Math.min(1.0F / f_109010_, Math.min(1.0F / f_109011_, 1.0F / f_109012_));
@@ -33,20 +33,22 @@
 +   public static void setupFog(Camera p_109025_, FogRenderer.FogMode p_109026_, float p_109027_, boolean p_109028_, float partialTicks) {
        FogType fogtype = p_109025_.m_167685_();
        Entity entity = p_109025_.m_90592_();
-+      // TODO
+       FogShape fogshape = FogShape.SPHERE;
+       float f;
+       float f1;
 +      float hook = net.minecraftforge.client.ForgeHooksClient.getFogDensity(p_109026_, p_109025_, partialTicks, 0.1F);
 +      if (hook >= 0) {
-+         RenderSystem.m_157445_(-8.0F);
-+         RenderSystem.m_157443_(hook * 0.5F);
++         f = -8.0f;
++         f1 = hook * 0.5F;
 +      } else
-       if (fogtype == FogType.WATER) {
-          float f = 192.0F;
-          if (entity instanceof LocalPlayer) {
-@@ -245,6 +_,7 @@
- 
-          RenderSystem.m_157445_(f2);
-          RenderSystem.m_157443_(f3);
-+         net.minecraftforge.client.ForgeHooksClient.onFogRender(p_109026_, p_109025_, partialTicks, f3);
-       }
- 
+       if (fogtype == FogType.LAVA) {
+          if (entity.m_5833_()) {
+             f = -8.0F;
+@@ -253,6 +_,7 @@
+       RenderSystem.m_157445_(f);
+       RenderSystem.m_157443_(f1);
+       RenderSystem.m_202160_(fogshape);
++      net.minecraftforge.client.ForgeHooksClient.onFogRender(p_109026_, p_109025_, partialTicks, f1);
     }
+ 
+    public static void m_109036_() {

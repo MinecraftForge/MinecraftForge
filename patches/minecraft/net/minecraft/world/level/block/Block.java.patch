@@ -1,19 +1,20 @@
 --- a/net/minecraft/world/level/block/Block.java
 +++ b/net/minecraft/world/level/block/Block.java
-@@ -61,9 +_,10 @@
- import org.apache.logging.log4j.LogManager;
- import org.apache.logging.log4j.Logger;
+@@ -62,10 +_,11 @@
+ import net.minecraft.world.phys.shapes.VoxelShape;
+ import org.slf4j.Logger;
  
 -public class Block extends BlockBehaviour implements ItemLike {
 +public class Block extends BlockBehaviour implements ItemLike, net.minecraftforge.common.extensions.IForgeBlock {
-    protected static final Logger f_49790_ = LogManager.getLogger();
+    private static final Logger f_49790_ = LogUtils.getLogger();
+    private final Holder.Reference<Block> f_204296_ = Registry.f_122824_.m_203693_(this);
 -   public static final IdMapper<BlockState> f_49791_ = new IdMapper<>();
 +   @Deprecated //Forge: Do not use, use GameRegistry
 +   public static final IdMapper<BlockState> f_49791_ = net.minecraftforge.registries.GameData.getBlockStateIDMap();
     private static final LoadingCache<VoxelShape, Boolean> f_49785_ = CacheBuilder.newBuilder().maximumSize(512L).weakKeys().build(new CacheLoader<VoxelShape, Boolean>() {
        public Boolean load(VoxelShape p_49972_) {
           return !Shapes.m_83157_(Shapes.m_83144_(), p_49972_, BooleanOp.f_82687_);
-@@ -176,7 +_,7 @@
+@@ -178,7 +_,7 @@
              f_49790_.error("Block classes should end with Block and {} doesn't.", (Object)s);
           }
        }
@@ -22,7 +23,7 @@
     }
  
     public static boolean m_152463_(BlockState p_152464_) {
-@@ -322,7 +_,7 @@
+@@ -324,7 +_,7 @@
     }
  
     private static void m_152440_(Level p_152441_, Supplier<ItemEntity> p_152442_, ItemStack p_152443_) {
@@ -31,7 +32,7 @@
           ItemEntity itementity = p_152442_.get();
           itementity.m_32060_();
           p_152441_.m_7967_(itementity);
-@@ -330,12 +_,13 @@
+@@ -332,12 +_,13 @@
     }
  
     public void m_49805_(ServerLevel p_49806_, BlockPos p_49807_, int p_49808_) {
@@ -46,7 +47,7 @@
     public float m_7325_() {
        return this.f_60444_;
     }
-@@ -382,8 +_,10 @@
+@@ -384,8 +_,10 @@
  
     public void m_5548_(BlockGetter p_49821_, Entity p_49822_) {
        p_49822_.m_20256_(p_49822_.m_20184_().m_82542_(1.0D, 0.0D, 1.0D));
@@ -57,7 +58,7 @@
     public ItemStack m_7397_(BlockGetter p_49823_, BlockPos p_49824_, BlockState p_49825_) {
        return new ItemStack(this);
     }
-@@ -420,6 +_,7 @@
+@@ -422,6 +_,7 @@
     public void m_141997_(BlockState p_152450_, Level p_152451_, BlockPos p_152452_, Biome.Precipitation p_152453_) {
     }
  
@@ -65,7 +66,7 @@
     public boolean m_6903_(Explosion p_49826_) {
        return true;
     }
-@@ -455,6 +_,7 @@
+@@ -457,6 +_,7 @@
        return p_152456_.m_61124_(p_152457_, p_152455_.m_61143_(p_152457_));
     }
  
@@ -73,7 +74,7 @@
     public SoundType m_49962_(BlockState p_49963_) {
        return this.f_60446_;
     }
-@@ -464,7 +_,7 @@
+@@ -466,7 +_,7 @@
           this.f_49788_ = Item.m_41439_(this);
        }
  
@@ -82,7 +83,7 @@
     }
  
     public boolean m_49967_() {
-@@ -472,7 +_,7 @@
+@@ -474,7 +_,7 @@
     }
  
     public String toString() {
@@ -91,14 +92,13 @@
     }
  
     public void m_5871_(ItemStack p_49816_, @Nullable BlockGetter p_49817_, List<Component> p_49818_, TooltipFlag p_49819_) {
-@@ -485,6 +_,82 @@
+@@ -487,6 +_,76 @@
     protected ImmutableMap<BlockState, VoxelShape> m_152458_(Function<BlockState, VoxelShape> p_152459_) {
        return this.f_49792_.m_61056_().stream().collect(ImmutableMap.toImmutableMap(Function.identity(), p_152459_));
     }
 +
 +   /* ======================================== FORGE START =====================================*/
 +   protected Random RANDOM = new Random();
-+   private final net.minecraftforge.common.util.ReverseTagWrapper<Block> reverseTags = new net.minecraftforge.common.util.ReverseTagWrapper<>(this, BlockTags::m_13115_);
 +   private Object renderProperties;
 +
 +   /*
@@ -146,17 +146,17 @@
 +      } else if (net.minecraftforge.common.PlantType.CAVE.equals(type)) {
 +         return state.m_60783_(world, pos, Direction.UP);
 +      } else if (net.minecraftforge.common.PlantType.PLAINS.equals(type)) {
-+         return this == Blocks.f_50440_ || net.minecraftforge.common.Tags.Blocks.DIRT.m_8110_(this) || this == Blocks.f_50093_;
++         return this == Blocks.f_50440_ || this.m_49966_().m_204336_(BlockTags.f_144274_) || this == Blocks.f_50093_;
 +      } else if (net.minecraftforge.common.PlantType.WATER.equals(type)) {
 +         return state.m_60767_() == net.minecraft.world.level.material.Material.f_76305_; //&& state.getValue(BlockLiquidWrapper)
 +      } else if (net.minecraftforge.common.PlantType.BEACH.equals(type)) {
-+         boolean isBeach = state.m_60713_(Blocks.f_50440_) || net.minecraftforge.common.Tags.Blocks.DIRT.m_8110_(this) || state.m_60713_(Blocks.f_49992_) || state.m_60713_(Blocks.f_49993_);
++         boolean isBeach = state.m_60713_(Blocks.f_50440_) || this.m_49966_().m_204336_(BlockTags.f_144274_) || state.m_60713_(Blocks.f_49992_) || state.m_60713_(Blocks.f_49993_);
 +         boolean hasWater = false;
 +         for (Direction face : Direction.Plane.HORIZONTAL) {
 +            BlockState blockState = world.m_8055_(pos.m_142300_(face));
 +            net.minecraft.world.level.material.FluidState fluidState = world.m_6425_(pos.m_142300_(face));
 +            hasWater |= blockState.m_60713_(Blocks.f_50449_);
-+            hasWater |= fluidState.m_76153_(net.minecraft.tags.FluidTags.f_13131_);
++            hasWater |= fluidState.m_205070_(net.minecraft.tags.FluidTags.f_13131_);
 +            if (hasWater)
 +               break; //No point continuing.
 +         }
@@ -165,12 +165,7 @@
 +      return false;
 +   }
 +
-+   @Override
-+   public final java.util.Set<net.minecraft.resources.ResourceLocation> getTags() {
-+      return reverseTags.getTagNames();
-+   }
-+
 +   /* ========================================= FORGE END ======================================*/
  
-    public static final class BlockStatePairKey {
-       private final BlockState f_49980_;
+    /** @deprecated */
+    @Deprecated

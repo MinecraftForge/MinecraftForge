@@ -9,7 +9,7 @@
       "item": "minecraft:quartz"
     },
     "C": {
-      "tag": "forge:cobblestone"
+      "tag": "forge:cobblestone/normal"
     }
   },
   "result": {

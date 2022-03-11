@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/gui/screens/worldselection/WorldPreset.java
 +++ b/net/minecraft/client/gui/screens/worldselection/WorldPreset.java
-@@ -83,6 +_,9 @@
+@@ -93,6 +_,9 @@
     WorldPreset(String p_101519_) {
        this.f_101516_ = new TranslatableComponent("generator." + p_101519_);
     }
@@ -8,9 +8,9 @@
 +      this.f_101516_ = displayName;
 +   }
  
-    private static WorldGenSettings m_101549_(RegistryAccess p_101550_, WorldGenSettings p_101551_, WorldPreset p_101552_, Biome p_101553_) {
-       BiomeSource biomesource = new FixedBiomeSource(p_101553_);
-@@ -125,4 +_,8 @@
+    private static WorldGenSettings m_205493_(RegistryAccess p_205494_, WorldGenSettings p_205495_, Holder<Biome> p_205496_) {
+       BiomeSource biomesource = new FixedBiomeSource(p_205496_);
+@@ -134,4 +_,8 @@
     public interface PresetEditor {
        Screen m_101642_(CreateWorldScreen p_101643_, WorldGenSettings p_101644_);
     }

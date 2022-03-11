@@ -1,16 +1,16 @@
 --- a/net/minecraft/data/tags/ItemTagsProvider.java
 +++ b/net/minecraft/data/tags/ItemTagsProvider.java
-@@ -15,8 +_,13 @@
+@@ -14,8 +_,13 @@
  public class ItemTagsProvider extends TagsProvider<Item> {
-    private final Function<Tag.Named<Block>, Tag.Builder> f_126528_;
+    private final Function<TagKey<Block>, Tag.Builder> f_126528_;
  
 +   @Deprecated
     public ItemTagsProvider(DataGenerator p_126530_, BlockTagsProvider p_126531_) {
        super(p_126530_, Registry.f_122827_);
-+      this.f_126528_ = p_126531_::m_126562_;
++      this.f_126528_ = p_126531_::m_206426_;
 +   }
 +   public ItemTagsProvider(DataGenerator p_126530_, BlockTagsProvider p_126531_, String modId, @javax.annotation.Nullable net.minecraftforge.common.data.ExistingFileHelper existingFileHelper) {
 +      super(p_126530_, Registry.f_122827_, modId, existingFileHelper);
-       this.f_126528_ = p_126531_::m_126562_;
+       this.f_126528_ = p_126531_::m_206426_;
     }
  

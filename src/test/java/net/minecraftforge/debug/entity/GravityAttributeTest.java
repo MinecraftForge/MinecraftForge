@@ -1,20 +1,6 @@
 /*
- * Minecraft Forge
- * Copyright (c) 2016-2021.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation version 2.1
- * of the License.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Minecraft Forge - Forge Development LLC
+ * SPDX-License-Identifier: LGPL-2.1-only
  */
 
 package net.minecraftforge.debug.entity;
@@ -27,6 +13,7 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.level.biome.Biome;
 import net.minecraftforge.common.ForgeMod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -107,7 +94,7 @@ public class GravityAttributeTest
                 for(LivingEntity liv : list)
                 {
                     AttributeInstance grav = liv.getAttribute(ForgeMod.ENTITY_GRAVITY.get());
-                    boolean inPlains = liv.level.getBiome(liv.blockPosition()).getBiomeCategory() == BiomeCategory.PLAINS;
+                    boolean inPlains = Biome.getBiomeCategory(liv.level.getBiome(liv.blockPosition())) == BiomeCategory.PLAINS;
                     if (inPlains && !grav.hasModifier(REDUCED_GRAVITY))
                     {
                         logger.info("Granted low gravity to Entity: {}", liv);

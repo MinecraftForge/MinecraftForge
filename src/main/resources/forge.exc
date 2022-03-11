@@ -20,6 +20,7 @@ net/minecraft/data/tags/GameEventTagsProvider.<init>(Lnet/minecraft/data/DataGen
 net/minecraft/data/tags/ItemTagsProvider.<init>(Lnet/minecraft/data/DataGenerator;Lnet/minecraft/data/tags/BlockTagsProvider;Ljava/lang/String;Lnet/minecraftforge/common/data/ExistingFileHelper;)V=|p_126530_,p_126531_,modId,existingFileHelper
 net/minecraft/data/tags/TagsProvider.<init>(Lnet/minecraft/data/DataGenerator;Lnet/minecraft/core/Registry;Ljava/lang/String;Lnet/minecraftforge/common/data/ExistingFileHelper;)V=|p_126546_,p_126547_,modId,existingFileHelper
 net/minecraft/data/tags/TagsProvider.<init>(Lnet/minecraft/data/DataGenerator;Lnet/minecraft/core/Registry;Ljava/lang/String;Lnet/minecraftforge/common/data/ExistingFileHelper;Ljava/lang/String;)V=|p_126546_,p_126547_,modId,existingFileHelper,folder
+net/minecraft/gametest/framework/GameTestRegistry.register(Ljava/lang/reflect/Method;)V=|p_177504_,allowedNamespaces
 net/minecraft/network/FriendlyByteBuf.writeItemStack(Lnet/minecraft/world/item/ItemStack;Z)Lnet/minecraft/network/FriendlyByteBuf;=|p_130056_,limitedTag
 net/minecraft/server/dedicated/DedicatedServer.sendMessage(Lnet/minecraft/network/chat/Component;Ljava/util/UUID;)V=|message,p_108776_
 net/minecraft/server/level/ServerLevel.removeEntity(Lnet/minecraft/world/entity/Entity;Z)V=|p_8868_,keepData
@@ -48,6 +49,7 @@ net/minecraft/world/level/block/FireBlock.tryCatchFire(Lnet/minecraft/world/leve
 net/minecraft/world/level/block/FlowerPotBlock.<init>(Ljava/util/function/Supplier;Ljava/util/function/Supplier;Lnet/minecraft/world/level/block/state/BlockBehaviour$Properties;)V=|emptyPot,p_53528_,properties
 net/minecraft/world/level/block/LiquidBlock.<init>(Ljava/util/function/Supplier;Lnet/minecraft/world/level/block/state/BlockBehaviour$Properties;)V=|p_54694_,p_54695_
 net/minecraft/world/level/chunk/PalettedContainer.setBits(IZ)V=|p_63122_,forceBits
+net/minecraft/world/level/dimension/LevelStem.<init>(Ljava/util/function/Supplier;Lnet/minecraft/world/level/dimension/LevelStem;Z)V=|p_63979_,p_63980_,useServerSeed
 net/minecraft/world/level/entity/PersistentEntitySectionManager.addEntityWithoutEvent(Lnet/minecraft/world/level/entity/EntityAccess;Z)Z=|p_157539_,p_157540_
 net/minecraft/world/level/levelgen/structure/templatesystem/StructureTemplate.processEntityInfos(Lnet/minecraft/world/level/levelgen/structure/templatesystem/StructureTemplate;Lnet/minecraft/world/level/LevelAccessor;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/levelgen/structure/templatesystem/StructurePlaceSettings;Ljava/util/List;)Ljava/util/List;=|template,p_215387_0_,p_215387_1_,p_215387_2_,p_215387_3_
 net/minecraft/world/level/storage/loot/LootPool.<init>([Lnet/minecraft/world/level/storage/loot/entries/LootPoolEntryContainer;[Lnet/minecraft/world/level/storage/loot/predicates/LootItemCondition;[Lnet/minecraft/world/level/storage/loot/functions/LootItemFunction;Lnet/minecraft/world/level/storage/loot/providers/number/NumberProvider;Lnet/minecraft/world/level/storage/loot/providers/number/NumberProvider;Ljava/lang/String;)V=|p_165128_,p_165129_,p_165130_,p_165131_,p_165132_,name

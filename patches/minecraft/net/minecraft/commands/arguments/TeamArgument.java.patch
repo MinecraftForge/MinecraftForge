@@ -1,0 +1,11 @@
+--- a/net/minecraft/commands/arguments/TeamArgument.java
++++ b/net/minecraft/commands/arguments/TeamArgument.java
+@@ -28,7 +_,7 @@
+ 
+    public static PlayerTeam m_112091_(CommandContext<CommandSourceStack> p_112092_, String p_112093_) throws CommandSyntaxException {
+       String s = p_112092_.getArgument(p_112093_, String.class);
+-      Scoreboard scoreboard = p_112092_.getSource().m_81377_().m_129896_();
++      Scoreboard scoreboard = p_112092_.getSource().getScoreboard();
+       PlayerTeam playerteam = scoreboard.m_83489_(s);
+       if (playerteam == null) {
+          throw f_112085_.create(s);

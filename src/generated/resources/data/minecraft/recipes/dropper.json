@@ -10,7 +10,7 @@
       "item": "minecraft:redstone"
     },
     "#": {
-      "tag": "forge:cobblestone"
+      "tag": "forge:cobblestone/normal"
     }
   },
   "result": {

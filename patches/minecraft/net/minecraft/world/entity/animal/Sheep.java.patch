@@ -18,7 +18,7 @@
           if (!this.f_19853_.f_46443_ && this.m_6220_()) {
              this.m_5851_(SoundSource.PLAYERS);
              this.m_146852_(GameEvent.f_157781_, p_29853_);
-@@ -357,5 +_,27 @@
+@@ -357,5 +_,28 @@
  
     protected float m_6431_(Pose p_29850_, EntityDimensions p_29851_) {
        return 0.95F * p_29851_.f_20378_;
@@ -33,6 +33,7 @@
 +   @Override
 +   public java.util.List<ItemStack> onSheared(@Nullable Player player, @javax.annotation.Nonnull ItemStack item, Level world, BlockPos pos, int fortune) {
 +      world.m_6269_(null, this, SoundEvents.f_12344_, player == null ? SoundSource.BLOCKS : SoundSource.PLAYERS, 1.0F, 1.0F);
++      this.m_146852_(GameEvent.f_157781_, player);
 +      if (!world.f_46443_) {
 +         this.m_29878_(true);
 +         int i = 1 + this.f_19796_.nextInt(3);

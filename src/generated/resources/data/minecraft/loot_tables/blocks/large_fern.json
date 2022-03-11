@@ -63,8 +63,7 @@
           },
           "offsetY": 1
         }
-      ],
-      "functions": []
+      ]
     },
     {
       "rolls": 1.0,
@@ -128,8 +127,7 @@
           },
           "offsetY": -1
         }
-      ],
-      "functions": []
+      ]
     }
   ]
 }

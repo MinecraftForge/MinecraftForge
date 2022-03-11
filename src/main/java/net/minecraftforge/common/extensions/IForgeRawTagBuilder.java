@@ -1,20 +1,6 @@
 /*
- * Minecraft Forge
- * Copyright (c) 2016-2021.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation version 2.1
- * of the License.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Minecraft Forge - Forge Development LLC
+ * SPDX-License-Identifier: LGPL-2.1-only
  */
 
 package net.minecraftforge.common.extensions;
@@ -33,7 +19,7 @@ public interface IForgeRawTagBuilder
     {
         return (Tag.Builder)this;
     }
-    
+
     /**
      * internal, called when a raw builder is written to json to add forge additions (e.g. the remove list)
      */
@@ -42,14 +28,14 @@ public interface IForgeRawTagBuilder
         Tag.Builder rawBuilder = this.getRawBuilder();
         Stream<Tag.BuilderEntry> removeEntries = rawBuilder.getRemoveEntries();
         JsonArray removeEntriesAsJsonArray = new JsonArray();
-        removeEntries.forEach(proxy ->proxy.getEntry().serializeTo(removeEntriesAsJsonArray));
+        removeEntries.forEach(proxy ->proxy.entry().serializeTo(removeEntriesAsJsonArray));
         if (removeEntriesAsJsonArray.size() > 0)
         {
             tagJson.add("remove", removeEntriesAsJsonArray);
         }
-        
+
     }
-    
+
     /**
      * Adds a tag entry to the remove list.
      * @param tagEntry The tag entry to add to the remove list
@@ -60,7 +46,7 @@ public interface IForgeRawTagBuilder
     {
         return this.getRawBuilder().remove(new Tag.BuilderEntry(tagEntry,source));
     }
-    
+
     /**
      * Adds a single-element entry to the remove list.
      * @param elementID The ID of the element to add to the remove list
@@ -72,7 +58,7 @@ public interface IForgeRawTagBuilder
         return this.remove(new Tag.ElementEntry(elementID), source);
     }
 
-    
+
     /**
      * Adds a tag to the remove list.
      * @param tagID The ID of the tag to add to the remove list
