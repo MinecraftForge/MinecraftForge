@@ -66,7 +66,7 @@ public final class RegistryObject<T extends IForgeRegistryEntry<? super T>> impl
      * @param modid The mod id calling context
      * @return A {@link RegistryObject} that stores the value of an object in a registry once it is ready
      */
-    public static <T extends IForgeRegistryEntry<T>> RegistryObject<T> of(final ResourceLocation name, final ResourceLocation registryName, String modid) {
+    public static <T extends IForgeRegistryEntry<T>, U extends T> RegistryObject<U> of(final ResourceLocation name, final ResourceLocation registryName, String modid) {
         return new RegistryObject<>(name, registryName, modid);
     }
 

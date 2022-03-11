@@ -1,11 +1,10 @@
 --- a/net/minecraft/data/tags/TagsProvider.java
 +++ b/net/minecraft/data/tags/TagsProvider.java
-@@ -32,10 +_,33 @@
+@@ -32,10 +_,25 @@
     protected final DataGenerator f_126539_;
     protected final Registry<T> f_126540_;
     protected final Map<ResourceLocation, Tag.Builder> f_126543_ = Maps.newLinkedHashMap();
 +   protected final String modId;
-+   protected final String folder;
 +   protected final net.minecraftforge.common.data.ExistingFileHelper existingFileHelper;
 +   private final net.minecraftforge.common.data.ExistingFileHelper.IResourceType resourceType;
  
@@ -19,18 +18,11 @@
 +      this(p_126546_, p_126547_, "vanilla", null);
 +   }
 +   protected TagsProvider(DataGenerator p_126546_, Registry<T> p_126547_, String modId, @org.jetbrains.annotations.Nullable net.minecraftforge.common.data.ExistingFileHelper existingFileHelper) {
-+      this(p_126546_, p_126547_, modId, existingFileHelper, null);
-+   }
-+   protected TagsProvider(DataGenerator p_126546_, Registry<T> p_126547_, String modId, @org.jetbrains.annotations.Nullable net.minecraftforge.common.data.ExistingFileHelper existingFileHelper, @org.jetbrains.annotations.Nullable String folder) {
        this.f_126539_ = p_126546_;
        this.f_126540_ = p_126547_;
 +      this.modId = modId;
 +      this.existingFileHelper = existingFileHelper;
-+      if (folder == null) {
-+         folder = TagManager.m_203918_(p_126547_.m_123023_()).substring("tags/".length());
-+      }
-+      this.folder = folder;
-+      this.resourceType = new net.minecraftforge.common.data.ExistingFileHelper.ResourceType(net.minecraft.server.packs.PackType.SERVER_DATA, ".json", "tags/" + this.folder);
++      this.resourceType = new net.minecraftforge.common.data.ExistingFileHelper.ResourceType(net.minecraft.server.packs.PackType.SERVER_DATA, ".json", TagManager.m_203918_(p_126547_.m_123023_()));
     }
  
     protected abstract void m_6577_();
