@@ -21,6 +21,10 @@ public interface ITag<V> extends Iterable<V>
 
     Stream<V> stream();
 
+    boolean isEmpty();
+
+    int size();
+
     boolean contains(V value);
 
     /**

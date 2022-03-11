@@ -50,6 +50,18 @@ class ForgeRegistryTag<V extends IForgeRegistryEntry<V>> implements ITag<V>
     }
 
     @Override
+    public boolean isEmpty()
+    {
+        return this.getContents().isEmpty();
+    }
+
+    @Override
+    public int size()
+    {
+        return this.getContents().size();
+    }
+
+    @Override
     public Stream<V> stream()
     {
         return this.getContents().stream();
