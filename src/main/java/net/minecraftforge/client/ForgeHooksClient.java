@@ -1094,7 +1094,8 @@ public class ForgeHooksClient
                 //The WorldData is re-created when re-running the runnable,
                 // so make sure to be setting the field to true on the right instance.
                 runAfter.apply(worldData.andThen(wds -> (rm, dpc) ->
-                        wds.get(rm, dpc).mapFirst(wd -> wd instanceof PrimaryLevelData pld ? pld.withConfirmedWarning(true) : wd)));
+                        wds.get(rm, dpc).mapFirst(wd -> wd instanceof PrimaryLevelData pld ? pld.withConfirmedWarning(true) : wd))
+                ).run();
             }
             else
             {

@@ -13,8 +13,8 @@
        this.f_78466_ = p_164966_;
        this.f_78465_ = p_164967_;
 -      this.f_78443_ = p_164968_;
-+      this.f_78443_ = p_164968_.withLifecycle(p_164970_); //Reset to unconfirmed if the lifecycle goes back to stable
-+      if (p_164970_ == Lifecycle.stable())
++      this.f_78443_ = p_164968_.withLifecycle(p_164970_);
++      if (p_164970_ == Lifecycle.stable()) //Reset to unconfirmed if the lifecycle goes back to stable
 +         this.confirmedExperimentalWarning = false;
        this.f_78444_ = p_164969_;
        this.f_78445_ = p_164970_;
@@ -32,7 +32,7 @@
           p_78547_.m_128362_("WanderingTraderId", this.f_78438_);
        }
  
-+      p_78547_.m_128359_("forgeLifecycle", net.minecraftforge.common.ForgeHooks.encodeLifecycle(this.f_78445_));
++      p_78547_.m_128359_("forgeLifecycle", net.minecraftforge.common.ForgeHooks.encodeLifecycle(this.f_78443_.getLifecycle()));
 +      p_78547_.m_128379_("confirmedExperimentalSettings", this.confirmedExperimentalWarning);
     }
  

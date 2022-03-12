@@ -351,7 +351,7 @@
        boolean flag = worlddata.m_5961_().m_64670_();
        boolean flag1 = worlddata.m_5754_() != Lifecycle.stable();
 -      if (p_205210_ == Minecraft.ExperimentalDialogType.NONE || !flag && !flag1) {
-+      //Skip confirmation if it has been done already for this world and that the registries have not changed on client.
++      //Skip confirmation if it has been done already for this world
 +      boolean skipConfirmation = worlddata instanceof PrimaryLevelData pld && pld.hasConfirmedExperimentalWarning();
 +      if (skipConfirmation || p_205210_ == Minecraft.ExperimentalDialogType.NONE || !flag && !flag1) {
           this.m_91399_();
