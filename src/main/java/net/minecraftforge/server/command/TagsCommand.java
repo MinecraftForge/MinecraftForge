@@ -66,11 +66,11 @@ class TagsCommand
             ResourceKey.createRegistryKey(new ResourceLocation("root"));
 
     private static final DynamicCommandExceptionType UNKNOWN_REGISTRY = new DynamicCommandExceptionType(key ->
-            new TranslatableComponent("Unknown registry '%s'", key));
+            new TranslatableComponent("commands.forge.tags.error.unknown_registry", key));
     private static final Dynamic2CommandExceptionType UNKNOWN_TAG = new Dynamic2CommandExceptionType((tag, registry) ->
-            new TranslatableComponent("Unknown tag '%s' in registry '%s'", tag, registry));
+            new TranslatableComponent("commands.forge.tags.error.unknown_tag", tag, registry));
     private static final Dynamic2CommandExceptionType UNKNOWN_ELEMENT = new Dynamic2CommandExceptionType((tag, registry) ->
-            new TranslatableComponent("Unknown element '%s' in registry '%s'", tag, registry));
+            new TranslatableComponent("commands.forge.tags.error.unknown_element", tag, registry));
 
     public static ArgumentBuilder<CommandSourceStack, ?> register()
     {
@@ -120,9 +120,9 @@ class TagsCommand
         final long tagCount = registry.getTags().count();
 
         ctx.getSource().sendSuccess(createMessage(
-                new TranslatableComponent("%s", new TextComponent(registryKey.location().toString()).withStyle(ChatFormatting.GOLD)),
-                "Tags: %s",
-                "Click to copy all tag names to clipboard",
+                new TranslatableComponent("commands.forge.tags.registry_key", new TextComponent(registryKey.location().toString()).withStyle(ChatFormatting.GOLD)),
+                "commands.forge.tags.tag_count",
+                "commands.forge.tags.copy_tag_names",
                 tagCount,
                 page,
                 ChatFormatting.DARK_GREEN,
@@ -148,11 +148,11 @@ class TagsCommand
                 .orElseThrow(() -> UNKNOWN_TAG.create(tagKey.location(), registryKey.location()));
 
         ctx.getSource().sendSuccess(createMessage(
-                new TranslatableComponent("%s / %s",
+                new TranslatableComponent("commands.forge.tags.tag_key",
                         new TextComponent(tagKey.registry().location().toString()).withStyle(ChatFormatting.GOLD),
                         new TextComponent(tagKey.location().toString()).withStyle(ChatFormatting.DARK_GREEN)),
-                "Elements: %s",
-                "Click to copy all element names to clipboard",
+                "commands.forge.tags.element_count",
+                "commands.forge.tags.copy_element_names",
                 tag.size(),
                 page,
                 ChatFormatting.YELLOW,
@@ -178,11 +178,11 @@ class TagsCommand
         final long containingTagsCount = elementHolder.tags().count();
 
         ctx.getSource().sendSuccess(createMessage(
-                new TranslatableComponent("%s : %s",
+                new TranslatableComponent("commands.forge.tags.element",
                         new TextComponent(registryKey.location().toString()).withStyle(ChatFormatting.GOLD),
                         new TextComponent(elementLocation.toString()).withStyle(ChatFormatting.YELLOW)),
-                "Containing tags: %s",
-                "Click to copy all tag names to clipboard",
+                "commands.forge.tags.containing_tag_count",
+                "commands.forge.tags.copy_tag_names",
                 containingTagsCount,
                 page,
                 ChatFormatting.DARK_GREEN,
@@ -212,7 +212,7 @@ class TagsCommand
                     .withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, allElementNames))
                     .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
                             new TranslatableComponent(copyHoverText)))));
-            containsComponent = new TranslatableComponent("%s <page %s / %s>",
+            containsComponent = new TranslatableComponent("commands.forge.tags.page_info",
                     containsComponent, actualPage, totalPages);
         }
 
@@ -223,7 +223,7 @@ class TagsCommand
                 .limit(PAGE_SIZE)
                 .map(TextComponent::new)
                 .map(t -> t.withStyle(elementColor))
-                .map(t -> new TranslatableComponent("\n - %s", t))
+                .map(t -> new TextComponent("\n - ").append(t))
                 .forEach(tagElements::append);
 
         return header.append("\n").append(tagElements);

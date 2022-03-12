@@ -1117,6 +1117,8 @@ public class ForgeHooks
         int id = vanilla.getId(serializer);
         if (id < 0)
         {
+            // ForgeRegistries.DATA_SERIALIZERS is a deferred register now, so if this method is called too early, the serializer map will be null
+            // This should keep checking until it's not null
             if (serializerEntries == null)
                 serializerEntries = GameData.getSerializerMap();
             if (serializerEntries != null)

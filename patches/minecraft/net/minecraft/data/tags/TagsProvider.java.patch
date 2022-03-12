@@ -1,6 +1,6 @@
 --- a/net/minecraft/data/tags/TagsProvider.java
 +++ b/net/minecraft/data/tags/TagsProvider.java
-@@ -32,10 +_,25 @@
+@@ -32,10 +_,24 @@
     protected final DataGenerator f_126539_;
     protected final Registry<T> f_126540_;
     protected final Map<ResourceLocation, Tag.Builder> f_126543_ = Maps.newLinkedHashMap();
@@ -10,7 +10,6 @@
  
 +   /**
 +    * @see #TagsProvider(DataGenerator, Registry, String, net.minecraftforge.common.data.ExistingFileHelper)
-+    * @see #TagsProvider(DataGenerator, Registry, String, net.minecraftforge.common.data.ExistingFileHelper, String)
 +    * @deprecated Forge: Use one of the mod id variants
 +    */
 +   @Deprecated
