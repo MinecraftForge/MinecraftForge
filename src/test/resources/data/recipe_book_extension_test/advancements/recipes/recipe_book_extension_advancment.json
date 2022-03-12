@@ -1,5 +1,10 @@
 {
   "parent": "minecraft:recipes/root",
+  "conditions" : [
+    {
+      "type" : "forge:false"
+    }
+  ],
   "rewards": {
     "recipes": [
       "recipe_book_extension_test:recipe_book_extension_recipe_1"
