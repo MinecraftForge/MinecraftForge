@@ -40,17 +40,18 @@ public class RecipeBookRegistry
     private static final Map<RecipeBookType, List<RecipeBookCategories>> TYPE_TO_CATEGORIES = new HashMap<>();
     private static final Map<RecipeType<?>, Function<Recipe<?>, RecipeBookCategories>> FIND_CATEGORIES_FOR_TYPE = new HashMap<>();
 
+    //Unmodifiable view, the nested lists are immutable
     public static final Map<RecipeBookCategories, List<RecipeBookCategories>> AGGREGATE_CATEGORIES_VIEW = Collections.unmodifiableMap(MUTABLE_AGGREGATE_CATEGORIES);
     public static final Map<RecipeBookType, List<RecipeBookCategories>> TYPE_TO_CATEGORIES_VIEW = Collections.unmodifiableMap(TYPE_TO_CATEGORIES);
 
     public static void addCategoriesToType(RecipeBookType type, List<RecipeBookCategories> categories)
     {
-        TYPE_TO_CATEGORIES.put(type, categories);
+        TYPE_TO_CATEGORIES.put(type, categories instanceof ImmutableList ? categories : Collections.unmodifiableList(categories));
     }
 
     public static void addAggregateCategories(RecipeBookCategories search, List<RecipeBookCategories> aggregate)
     {
-        MUTABLE_AGGREGATE_CATEGORIES.put(search, aggregate);
+        MUTABLE_AGGREGATE_CATEGORIES.put(search, aggregate instanceof ImmutableList ? aggregate : Collections.unmodifiableList(aggregate));
     }
 
     public static void addCategoriesFinder(RecipeType<?> type, Function<Recipe<?>, RecipeBookCategories> finder)
