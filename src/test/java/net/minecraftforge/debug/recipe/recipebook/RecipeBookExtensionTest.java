@@ -50,7 +50,7 @@ import net.minecraftforge.registries.RegistryObject;
 @Mod(RecipeBookExtensionTest.MOD_ID)
 public class RecipeBookExtensionTest
 {
-    public static final boolean ENABLED = true;
+    public static final boolean ENABLED = false;
 
     public static final String MOD_ID = "recipe_book_extension_test";
     public static final RecipeBookType TEST_TYPE = RecipeBookType.create("TESTING");

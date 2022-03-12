@@ -1,5 +1,10 @@
 {
   "type": "recipe_book_extension_test:test_recipe",
+  "conditions" : [
+    {
+      "type" : "forge:false"
+    }
+  ],
   "result": {
     "id": "stone",
     "Count" : 1
