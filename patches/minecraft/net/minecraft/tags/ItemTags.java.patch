@@ -1,17 +1,11 @@
 --- a/net/minecraft/tags/ItemTags.java
 +++ b/net/minecraft/tags/ItemTags.java
-@@ -84,6 +_,14 @@
-       return f_13163_.m_13244_(p_13195_);
+@@ -83,4 +_,8 @@
+    private static TagKey<Item> m_203854_(String p_203855_) {
+       return TagKey.m_203882_(Registry.f_122904_, new ResourceLocation(p_203855_));
     }
- 
-+   public static net.minecraftforge.common.Tags.IOptionalNamedTag<Item> createOptional(net.minecraft.resources.ResourceLocation name) {
-+       return createOptional(name, null);
-+   }
 +
-+   public static net.minecraftforge.common.Tags.IOptionalNamedTag<Item> createOptional(net.minecraft.resources.ResourceLocation name, @javax.annotation.Nullable java.util.Set<java.util.function.Supplier<Item>> defaults) {
-+      return f_13163_.createOptional(name, defaults);
++   public static TagKey<Item> create(final ResourceLocation name) {
++      return TagKey.m_203882_(Registry.f_122904_, name);
 +   }
-+
-    public static TagCollection<Item> m_13193_() {
-       return f_13163_.m_13246_();
-    }
+ }

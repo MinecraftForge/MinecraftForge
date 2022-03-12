@@ -1,26 +1,14 @@
 /*
- * Minecraft Forge
- * Copyright (c) 2016-2021.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation version 2.1
- * of the License.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Minecraft Forge - Forge Development LLC
+ * SPDX-License-Identifier: LGPL-2.1-only
  */
 
 package net.minecraftforge.fml.loading;
 
 import com.google.common.graph.GraphBuilder;
 import com.google.common.graph.MutableGraph;
+import cpw.mods.jarhandling.SecureJar;
+import net.minecraftforge.fml.loading.moddiscovery.MinecraftLocator;
 import net.minecraftforge.forgespi.language.IModFileInfo;
 import net.minecraftforge.forgespi.language.IModInfo;
 import net.minecraftforge.fml.loading.EarlyLoadingException.ExceptionData;
@@ -38,6 +26,7 @@ import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
+import java.util.jar.Manifest;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -50,7 +39,7 @@ public class ModSorter
     private List<ModFile> modFiles;
     private List<ModInfo> sortedList;
     private Map<String, ModInfo> modIdNameLookup;
-    private List<ModFile> forgeAndMC;
+    private List<ModFile> systemMods;
 
     private ModSorter(final List<ModFile> modFiles)
     {
@@ -64,13 +53,13 @@ public class ModSorter
             ms.buildUniqueList();
         } catch (EarlyLoadingException e) {
             // We cannot build any list with duped mods. We have to abort immediately and report it
-            return LoadingModList.of(ms.forgeAndMC, ms.forgeAndMC.stream().map(mf->(ModInfo)mf.getModInfos().get(0)).collect(toList()), e);
+            return LoadingModList.of(ms.systemMods, ms.systemMods.stream().map(mf->(ModInfo)mf.getModInfos().get(0)).collect(toList()), e);
         }
         // try and validate dependencies
         final List<ExceptionData> failedList = Stream.concat(ms.verifyDependencyVersions().stream(), errors.stream()).toList();
         // if we miss one or the other, we abort now
         if (!failedList.isEmpty()) {
-            return LoadingModList.of(ms.forgeAndMC, ms.forgeAndMC.stream().map(mf->(ModInfo)mf.getModInfos().get(0)).collect(toList()), new EarlyLoadingException("failure to validate mod list", null, failedList));
+            return LoadingModList.of(ms.systemMods, ms.systemMods.stream().map(mf->(ModInfo)mf.getModInfos().get(0)).collect(toList()), new EarlyLoadingException("failure to validate mod list", null, failedList));
         } else {
             // Otherwise, lets try and sort the modlist and proceed
             EarlyLoadingException earlyLoadingException = null;
@@ -154,17 +143,32 @@ public class ModSorter
         final Map<String, List<IModFile>> modFilesByFirstId = modFiles.stream()
                 .collect(groupingBy(mf -> mf.getModFileInfo().moduleName()));
 
-        // Capture forge and MC here, so we can keep them for later
-        forgeAndMC = new ArrayList<>();
-        var mc = modFilesByFirstId.get("minecraft");
-        if (mc != null && !mc.isEmpty())
-            forgeAndMC.add((ModFile) mc.get(0));
-        else
-            throw new IllegalStateException("Failed to find minecraft somehow?");
-        // TODO: remove this hardcoding and make it more flexible
-        var forge = modFilesByFirstId.get("forge");
-        if (forge != null && !forge.isEmpty())
-            forgeAndMC.add((ModFile) forge.get(0)); // Silently ignore if Forge isn't present
+        // Capture system mods (ex. MC, Forge) here, so we can keep them for later
+        final Set<String> systemMods = new HashSet<>();
+        // The minecraft mod is always a system mod
+        systemMods.add("minecraft");
+        // Find mod file from MinecraftLocator to define the system mods
+        modFiles.stream()
+                .filter(modFile -> modFile.getLocator().getClass() == MinecraftLocator.class)
+                .map(ModFile::getSecureJar)
+                .map(SecureJar::getManifest)
+                .map(Manifest::getMainAttributes)
+                .map(mf -> mf.getValue("FML-System-Mods"))
+                .filter(Objects::nonNull)
+                .findFirst()
+                .ifPresent(value -> systemMods.addAll(Arrays.asList(value.split(","))));
+        LOGGER.debug("Configured system mods: {}", systemMods);
+
+        this.systemMods = new ArrayList<>();
+        for (String systemMod : systemMods) {
+            var container = modFilesByFirstId.get(systemMod);
+            if (container != null && !container.isEmpty()) {
+                LOGGER.debug("Found system mod: {}", systemMod);
+                this.systemMods.add((ModFile) container.get(0));
+            } else {
+                throw new IllegalStateException("Failed to find system mod: " + systemMod);
+            }
+        }
 
         // Select the newest by artifact version sorting of non-unique files thus identified
         this.modFiles = modFilesByFirstId.entrySet().stream()

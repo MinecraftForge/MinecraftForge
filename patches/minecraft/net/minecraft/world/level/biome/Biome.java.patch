@@ -1,20 +1,20 @@
 --- a/net/minecraft/world/level/biome/Biome.java
 +++ b/net/minecraft/world/level/biome/Biome.java
-@@ -37,7 +_,7 @@
- import org.apache.logging.log4j.LogManager;
- import org.apache.logging.log4j.Logger;
+@@ -34,7 +_,7 @@
+ import net.minecraft.world.level.material.FluidState;
+ import net.minecraft.world.level.material.Fluids;
  
 -public final class Biome {
 +public final class Biome extends net.minecraftforge.registries.ForgeRegistryEntry.UncheckedRegistryEntry<Biome> {
-    public static final Logger f_47428_ = LogManager.getLogger();
     public static final Codec<Biome> f_47429_ = RecordCodecBuilder.create((p_186636_) -> {
        return p_186636_.group(Biome.ClimateSettings.f_47679_.forGetter((p_151717_) -> {
-@@ -50,7 +_,9 @@
+          return p_151717_.f_47437_;
+@@ -46,7 +_,9 @@
           return p_186642_.f_47438_;
        }), MobSpawnSettings.f_48327_.forGetter((p_186640_) -> {
           return p_186640_.f_47439_;
 -      })).apply(p_186636_, Biome::new);
-+      }), ResourceLocation.f_135803_.optionalFieldOf("forge:registry_name").forGetter(b -> Optional.ofNullable(b.getRegistryName())))
++      }), net.minecraft.resources.ResourceLocation.f_135803_.optionalFieldOf("forge:registry_name").forGetter(b -> Optional.ofNullable(b.getRegistryName())))
 +      .apply(p_186636_, (climate, category, effects, gen, spawns, name) ->
 +          net.minecraftforge.common.ForgeHooks.enhanceBiome(name.orElse(null), climate, category, effects, gen, spawns, p_186636_, Biome::new));
     });

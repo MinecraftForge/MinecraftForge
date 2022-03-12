@@ -3,7 +3,7 @@
 @@ -50,11 +_,12 @@
  
  public class ServerConnectionListener {
-    private static final Logger f_9701_ = LogManager.getLogger();
+    private static final Logger f_9701_ = LogUtils.getLogger();
 +   private static final int READ_TIMEOUT = Integer.parseInt(System.getProperty("forge.readTimeout", "30"));
     public static final LazyLoadedValue<NioEventLoopGroup> f_9698_ = new LazyLoadedValue<>(() -> {
 -      return new NioEventLoopGroup(0, (new ThreadFactoryBuilder()).setNameFormat("Netty Server IO #%d").setDaemon(true).build());

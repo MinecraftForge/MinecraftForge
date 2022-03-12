@@ -1,20 +1,6 @@
 /*
- * Minecraft Forge
- * Copyright (c) 2016-2021.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation version 2.1
- * of the License.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Minecraft Forge - Forge Development LLC
+ * SPDX-License-Identifier: LGPL-2.1-only
  */
 
 package net.minecraftforge.debug.item;
@@ -30,6 +16,7 @@ import net.minecraft.client.model.PlayerModel;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -103,10 +90,18 @@ public class CustomElytraTest
         @Override
         public boolean elytraFlightTick(ItemStack stack, LivingEntity entity, int flightTicks)
         {
-            //Adding 1 to ticksElytraFlying prevents damage on the very first tick.
-            if (!entity.level.isClientSide && (flightTicks + 1) % 20 == 0)
+            if (!entity.level.isClientSide)
             {
-                stack.hurtAndBreak(1, entity, e -> e.broadcastBreakEvent(EquipmentSlot.CHEST));
+                //Adding 1 to flightTicks prevents damage on the very first tick.
+                int nextFlightTick = flightTicks + 1;
+                if (nextFlightTick % 10 == 0)
+                {
+                    if (nextFlightTick % 20 == 0)
+                    {
+                        stack.hurtAndBreak(1, entity, e -> e.broadcastBreakEvent(EquipmentSlot.CHEST));
+                    }
+                    entity.gameEvent(GameEvent.ELYTRA_FREE_FALL);
+                }
             }
             return true;
         }

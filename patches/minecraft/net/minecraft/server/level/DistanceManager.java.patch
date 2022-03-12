@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/level/DistanceManager.java
 +++ b/net/minecraft/server/level/DistanceManager.java
-@@ -58,6 +_,8 @@
+@@ -59,6 +_,8 @@
     private long f_140771_;
     private int f_183902_ = 10;
  
@@ -9,7 +9,7 @@
     protected DistanceManager(Executor p_140774_, Executor p_140775_) {
        ProcessorHandle<Runnable> processorhandle = ProcessorHandle.m_18714_("player ticket throttler", p_140775_::execute);
        ChunkTaskPriorityQueueSorter chunktaskpriorityqueuesorter = new ChunkTaskPriorityQueueSorter(ImmutableList.of(processorhandle), p_140774_, 4);
-@@ -163,6 +_,10 @@
+@@ -164,6 +_,10 @@
           this.f_140762_.m_140715_(p_140785_, p_140786_.m_9433_(), true);
        }
  
@@ -20,7 +20,7 @@
     }
  
     void m_140818_(long p_140819_, Ticket<?> p_140820_) {
-@@ -175,6 +_,13 @@
+@@ -176,6 +_,13 @@
        }
  
        this.f_140762_.m_140715_(p_140819_, m_140797_(sortedarrayset), false);
@@ -34,7 +34,7 @@
     }
  
     public <T> void m_140792_(TicketType<T> p_140793_, ChunkPos p_140794_, int p_140795_, T p_140796_) {
-@@ -200,6 +_,14 @@
+@@ -201,6 +_,14 @@
        this.f_183901_.m_184165_(i, ticket);
     }
  
@@ -49,7 +49,7 @@
     private SortedArraySet<Ticket<?>> m_140857_(long p_140858_) {
        return this.f_140761_.computeIfAbsent(p_140858_, (p_183923_) -> {
           return SortedArraySet.m_14246_(4);
-@@ -285,6 +_,11 @@
+@@ -286,6 +_,11 @@
  
     public String m_140837_() {
        return this.f_140766_.m_140558_();

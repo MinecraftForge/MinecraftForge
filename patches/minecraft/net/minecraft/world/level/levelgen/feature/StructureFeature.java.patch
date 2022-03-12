@@ -1,23 +1,11 @@
 --- a/net/minecraft/world/level/levelgen/feature/StructureFeature.java
 +++ b/net/minecraft/world/level/levelgen/feature/StructureFeature.java
-@@ -55,7 +_,7 @@
- import org.apache.logging.log4j.LogManager;
- import org.apache.logging.log4j.Logger;
+@@ -46,7 +_,7 @@
+ import net.minecraft.world.level.levelgen.structure.templatesystem.StructureManager;
+ import org.slf4j.Logger;
  
 -public class StructureFeature<C extends FeatureConfiguration> {
-+public abstract class StructureFeature<C extends FeatureConfiguration> extends net.minecraftforge.registries.ForgeRegistryEntry<StructureFeature<?>> implements net.minecraftforge.common.extensions.IForgeStructureFeature {
-    public static final BiMap<String, StructureFeature<?>> f_67012_ = HashBiMap.create();
++public abstract class StructureFeature<C extends FeatureConfiguration> extends net.minecraftforge.registries.ForgeRegistryEntry<StructureFeature<?>> {
     private static final Map<StructureFeature<?>, GenerationStep.Decoration> f_67032_ = Maps.newHashMap();
-    private static final Logger f_67033_ = LogManager.getLogger();
-@@ -256,6 +_,11 @@
- 
-    public String m_67098_() {
-       return f_67012_.inverse().get(this);
-+   }
-+
-+   @Override
-+   public final net.minecraft.util.random.WeightedRandomList<net.minecraft.world.level.biome.MobSpawnSettings.SpawnerData> getSpawnList(net.minecraft.world.entity.MobCategory classification) {
-+      return net.minecraftforge.common.world.StructureSpawnManager.getSpawnList(this, classification);
-    }
- 
-    public BoundingBox m_183606_(BoundingBox p_191127_) {
+    private static final Logger f_67033_ = LogUtils.getLogger();
+    public static final StructureFeature<JigsawConfiguration> f_67013_ = m_67089_("pillager_outpost", new PillagerOutpostFeature(JigsawConfiguration.f_67756_), GenerationStep.Decoration.SURFACE_STRUCTURES);

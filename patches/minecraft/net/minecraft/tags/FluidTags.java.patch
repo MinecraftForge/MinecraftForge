@@ -1,15 +1,11 @@
 --- a/net/minecraft/tags/FluidTags.java
 +++ b/net/minecraft/tags/FluidTags.java
-@@ -29,4 +_,12 @@
-    public static List<Tag<Fluid>> m_144300_() {
-       return f_144297_;
+@@ -14,4 +_,8 @@
+    private static TagKey<Fluid> m_203850_(String p_203851_) {
+       return TagKey.m_203882_(Registry.f_122899_, new ResourceLocation(p_203851_));
     }
 +
-+   public static net.minecraftforge.common.Tags.IOptionalNamedTag<Fluid> createOptional(net.minecraft.resources.ResourceLocation name) {
-+      return createOptional(name, null);
-+   }
-+
-+   public static net.minecraftforge.common.Tags.IOptionalNamedTag<Fluid> createOptional(net.minecraft.resources.ResourceLocation name, @javax.annotation.Nullable java.util.Set<java.util.function.Supplier<Fluid>> defaults) {
-+      return f_13130_.createOptional(name, defaults);
++   public static TagKey<Fluid> create(ResourceLocation name) {
++      return TagKey.m_203882_(Registry.f_122899_, name);
 +   }
  }

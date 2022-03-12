@@ -90,14 +90,14 @@
 @@ -390,10 +_,10 @@
              compoundtag.m_128365_("Pos", listtag);
              compoundtag.m_128473_("UUID");
-             m_74543_(p_74524_, compoundtag).ifPresent((p_74553_) -> {
--               float f = p_74553_.m_6961_(p_74526_);
--               f += p_74553_.m_146908_() - p_74553_.m_7890_(p_74527_);
-+               float f = p_74553_.m_6961_(placementIn.m_74401_());
-+               f = f + (p_74553_.m_146908_() - p_74553_.m_7890_(placementIn.m_74404_()));
-                p_74553_.m_7678_(vec31.f_82479_, vec31.f_82480_, vec31.f_82481_, f, p_74553_.m_146909_());
--               if (p_74530_ && p_74553_ instanceof Mob) {
-+               if (placementIn.m_74414_() && p_74553_ instanceof Mob) {
-                   ((Mob)p_74553_).m_6518_(p_74524_, p_74524_.m_6436_(new BlockPos(vec31)), MobSpawnType.STRUCTURE, (SpawnGroupData)null, compoundtag);
+             m_74543_(p_74524_, compoundtag).ifPresent((p_205061_) -> {
+-               float f = p_205061_.m_7890_(p_74527_);
+-               f += p_205061_.m_6961_(p_74526_) - p_205061_.m_146908_();
++               float f = p_205061_.m_6961_(placementIn.m_74401_());
++               f = f + (p_205061_.m_146908_() - p_205061_.m_7890_(placementIn.m_74404_()));
+                p_205061_.m_7678_(vec31.f_82479_, vec31.f_82480_, vec31.f_82481_, f, p_205061_.m_146909_());
+-               if (p_74530_ && p_205061_ instanceof Mob) {
++               if (placementIn.m_74414_() && p_205061_ instanceof Mob) {
+                   ((Mob)p_205061_).m_6518_(p_74524_, p_74524_.m_6436_(new BlockPos(vec31)), MobSpawnType.STRUCTURE, (SpawnGroupData)null, compoundtag);
                 }
  

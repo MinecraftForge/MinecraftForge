@@ -1,20 +1,6 @@
 /*
- * Minecraft Forge
- * Copyright (c) 2016-2021.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation version 2.1
- * of the License.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Minecraft Forge - Forge Development LLC
+ * SPDX-License-Identifier: LGPL-2.1-only
  */
 
 package net.minecraftforge.common.data;
@@ -24,6 +10,7 @@ import net.minecraft.data.tags.BlockTagsProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.Tag;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -117,13 +104,13 @@ public final class ForgeBlockTagsProvider extends BlockTagsProvider
         tag(STORAGE_BLOCKS_NETHERITE).add(Blocks.NETHERITE_BLOCK);
     }
 
-    private void addColored(Consumer<Block> consumer, Tag.Named<Block> group, String pattern)
+    private void addColored(Consumer<Block> consumer, TagKey<Block> group, String pattern)
     {
-        String prefix = group.getName().getPath().toUpperCase(Locale.ENGLISH) + '_';
+        String prefix = group.location().getPath().toUpperCase(Locale.ENGLISH) + '_';
         for (DyeColor color  : DyeColor.values())
         {
             ResourceLocation key = new ResourceLocation("minecraft", pattern.replace("{color}",  color.getName()));
-            Tag.Named<Block> tag = getForgeTag(prefix + color.getName());
+            TagKey<Block> tag = getForgeTag(prefix + color.getName());
             Block block = ForgeRegistries.BLOCKS.getValue(key);
             if (block == null || block  == Blocks.AIR)
                 throw new IllegalStateException("Unknown vanilla block: " + key.toString());
@@ -133,12 +120,12 @@ public final class ForgeBlockTagsProvider extends BlockTagsProvider
     }
 
     @SuppressWarnings("unchecked")
-    private Tag.Named<Block> getForgeTag(String name)
+    private TagKey<Block> getForgeTag(String name)
     {
         try
         {
             name = name.toUpperCase(Locale.ENGLISH);
-            return (Tag.Named<Block>)Tags.Blocks.class.getDeclaredField(name).get(null);
+            return (TagKey<Block>) Tags.Blocks.class.getDeclaredField(name).get(null);
         }
         catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException | SecurityException e)
         {
