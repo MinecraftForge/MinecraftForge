@@ -57,7 +57,7 @@ public class DeferredRegister<T extends IForgeRegistryEntry<T>>
      */
     public static <B extends IForgeRegistryEntry<B>> DeferredRegister<B> create(IForgeRegistry<B> reg, String modid)
     {
-        return new DeferredRegister<B>(reg, modid);
+        return new DeferredRegister<>(reg, modid);
     }
 
     /**
@@ -68,7 +68,7 @@ public class DeferredRegister<T extends IForgeRegistryEntry<T>>
     @Deprecated(forRemoval = true, since = "1.18.2")
     public static <B extends IForgeRegistryEntry<B>> DeferredRegister<B> create(Class<B> base, String modid)
     {
-        return new DeferredRegister<B>(null, base, modid);
+        return new DeferredRegister<>(null, base, modid);
     }
 
     /**
@@ -80,7 +80,7 @@ public class DeferredRegister<T extends IForgeRegistryEntry<T>>
      */
     public static <B extends IForgeRegistryEntry<B>> DeferredRegister<B> create(ResourceKey<? extends Registry<B>> key, String modid)
     {
-        return new DeferredRegister<B>(key.location(), null, modid);
+        return new DeferredRegister<>(key.location(), null, modid);
     }
 
     /**
@@ -92,7 +92,7 @@ public class DeferredRegister<T extends IForgeRegistryEntry<T>>
      */
     public static <B extends IForgeRegistryEntry<B>> DeferredRegister<B> create(ResourceLocation registryName, String modid)
     {
-        return new DeferredRegister<B>(registryName, null, modid);
+        return new DeferredRegister<>(registryName, null, modid);
     }
 
     private final ResourceLocation registryName;
@@ -186,29 +186,65 @@ public class DeferredRegister<T extends IForgeRegistryEntry<T>>
 
     /**
      * Creates a tag key based on the current modid and provided path as the location and the registry name linked to this DeferredRegister.
+     * To control the namespace, use {@link #createTagKey(ResourceLocation)}.
      *
+     * @see #createTagKey(ResourceLocation)
      * @see #createOptionalTagKey(String, Set)
      */
     @NotNull
     public TagKey<T> createTagKey(@NotNull String path)
     {
-        if (this.registryName == null)
-            throw new IllegalStateException("The registry name was not set, cannot create a tag key");
         Objects.requireNonNull(path);
-        return TagKey.create(ResourceKey.createRegistryKey(this.registryName), new ResourceLocation(modid, path));
+        return createTagKey(new ResourceLocation(this.modid, path));
     }
 
     /**
-     * Creates a tag key with the current modid and provided path that will use the set of defaults if the tag is not loaded from any datapacks.
-     * Useful on the client side when a server may not provide a specific tag.
+     * Creates a tag key based on the provided resource location and the registry name linked to this DeferredRegister.
+     * To use the current modid as the namespace, use {@link #createTagKey(String)}.
      *
      * @see #createTagKey(String)
+     * @see #createOptionalTagKey(ResourceLocation, Set)
+     */
+    @NotNull
+    public TagKey<T> createTagKey(@NotNull ResourceLocation location)
+    {
+        if (this.registryName == null)
+            throw new IllegalStateException("The registry name was not set, cannot create a tag key");
+        Objects.requireNonNull(location);
+        return TagKey.create(ResourceKey.createRegistryKey(this.registryName), location);
+    }
+
+    /**
+     * Creates a tag key with the provided location that will use the set of defaults if the tag is not loaded from any datapacks.
+     * Useful on the client side when a server may not provide a specific tag.
+     * To control the namespace, use {@link #createOptionalTagKey(ResourceLocation, Set)}.
+     *
+     * @see #createTagKey(String)
+     * @see #createTagKey(ResourceLocation)
+     * @see #createOptionalTagKey(ResourceLocation, Set)
      * @see #addOptionalTagDefaults(TagKey, Set)
      */
     @NotNull
     public TagKey<T> createOptionalTagKey(@NotNull String path, @NotNull Set<? extends Supplier<T>> defaults)
     {
-        TagKey<T> tagKey = createTagKey(path);
+        Objects.requireNonNull(path);
+        return createOptionalTagKey(new ResourceLocation(this.modid, path), defaults);
+    }
+
+    /**
+     * Creates a tag key with the current modid and provided path that will use the set of defaults if the tag is not loaded from any datapacks.
+     * Useful on the client side when a server may not provide a specific tag.
+     * To use the current modid as the namespace, use {@link #createOptionalTagKey(String, Set)}.
+     *
+     * @see #createTagKey(String)
+     * @see #createTagKey(ResourceLocation)
+     * @see #createOptionalTagKey(String, Set)
+     * @see #addOptionalTagDefaults(TagKey, Set)
+     */
+    @NotNull
+    public TagKey<T> createOptionalTagKey(@NotNull ResourceLocation location, @NotNull Set<? extends Supplier<T>> defaults)
+    {
+        TagKey<T> tagKey = createTagKey(location);
 
         addOptionalTagDefaults(tagKey, defaults);
 
@@ -221,9 +257,11 @@ public class DeferredRegister<T extends IForgeRegistryEntry<T>>
      * Useful on the client side when a server may not provide a specific tag.
      *
      * @see #createOptionalTagKey(String, Set)
+     * @see #createOptionalTagKey(ResourceLocation, Set)
      */
     public void addOptionalTagDefaults(@NotNull TagKey<T> name, @NotNull Set<? extends Supplier<T>> defaults)
     {
+        Objects.requireNonNull(defaults);
         if (optionalTags == null)
             optionalTags = Multimaps.newSetMultimap(new IdentityHashMap<>(), HashSet::new);
 
@@ -314,6 +352,7 @@ public class DeferredRegister<T extends IForgeRegistryEntry<T>>
             // the type will no longer be null. This is needed here rather than during the NewRegistry event
             // to ensure that mods can properly use deferred registers for custom registries added by other mods
             captureRegistry();
+            storedType = this.type;
         }
         if (storedType != null && event.getGenericType() == storedType.getRegistrySuperType())
         {

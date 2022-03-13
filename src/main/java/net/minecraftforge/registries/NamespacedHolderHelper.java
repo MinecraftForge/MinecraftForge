@@ -207,18 +207,15 @@ class NamespacedHolderHelper<T extends IForgeRegistryEntry<T>>
 
         Map<TagKey<T>, HolderSet.Named<T>> tmpTags = new IdentityHashMap<>(this.tags);
         newTags.forEach((k, v) -> tmpTags.computeIfAbsent(k, this::createTag).bind(v));
-        this.optionalTags.asMap().forEach((k, v) -> {
-            if (!tmpTags.containsKey(k))
-            {
-                HolderSet.Named<T> namedTag = this.createTag(k);
-                namedTag.bind(v.stream()
-                        .map(valueSupplier -> getHolder(valueSupplier.get()).orElse(null))
-                        .filter(Objects::nonNull)
-                        .distinct()
-                        .toList());
-                tmpTags.put(k, namedTag);
-            }
-        });
+        this.optionalTags.asMap().forEach((name, defaults) -> tmpTags.computeIfAbsent(name, k -> {
+            HolderSet.Named<T> namedTag = this.createTag(k);
+            namedTag.bind(defaults.stream()
+                    .map(valueSupplier -> getHolder(valueSupplier.get()).orElse(null))
+                    .filter(Objects::nonNull)
+                    .distinct()
+                    .toList());
+            return namedTag;
+        }));
         holderToTag.forEach(Holder.Reference::bindTags);
         this.tags = tmpTags;
 

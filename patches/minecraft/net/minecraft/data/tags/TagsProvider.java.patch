@@ -10,7 +10,7 @@
  
 +   /**
 +    * @see #TagsProvider(DataGenerator, Registry, String, net.minecraftforge.common.data.ExistingFileHelper)
-+    * @deprecated Forge: Use one of the mod id variants
++    * @deprecated Forge: Use the mod id variant
 +    */
 +   @Deprecated
     protected TagsProvider(DataGenerator p_126546_, Registry<T> p_126547_) {

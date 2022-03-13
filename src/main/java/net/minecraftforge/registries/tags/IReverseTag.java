@@ -13,6 +13,7 @@ import java.util.stream.Stream;
 /**
  * A reverse tag is an object aware of what tags it is contained in.
  * {@link Holder}s implement this interface.
+ * A reverse tag makes no guarantees about its persistence relative to a registry value.
  */
 public interface IReverseTag<V>
 {

@@ -38,15 +38,11 @@ class ForgeRegistryTagManager<V extends IForgeRegistryEntry<V>> implements ITagM
     void bind(Map<TagKey<V>, HolderSet.Named<V>> holderTags)
     {
         IdentityHashMap<TagKey<V>, ITag<V>> newTags = new IdentityHashMap<>(this.tags);
-        Set<TagKey<V>> bound = new HashSet<>();
 
-        holderTags.forEach((key, holderSet) -> {
-            bound.add(key);
-            ((ForgeRegistryTag<V>) newTags.computeIfAbsent(key, ForgeRegistryTag::new)).bind(holderSet);
-        });
+        holderTags.forEach((key, holderSet) -> ((ForgeRegistryTag<V>) newTags.computeIfAbsent(key, ForgeRegistryTag::new)).bind(holderSet));
 
         // Forcefully unbind any tags that didn't get bound
-        Sets.difference(this.tags.keySet(), bound).forEach(key -> ((ForgeRegistryTag<V>) newTags.get(key)).bind(null));
+        Sets.difference(this.tags.keySet(), holderTags.keySet()).forEach(key -> ((ForgeRegistryTag<V>) newTags.get(key)).bind(null));
 
         this.tags = newTags;
     }
@@ -64,7 +60,7 @@ class ForgeRegistryTagManager<V extends IForgeRegistryEntry<V>> implements ITagM
             tag = new ForgeRegistryTag<>(name);
 
             // Mojang uses volatile and sets the tag map this way to not have the performance penalties of synced read access.
-            // However, this can generate a lot of new maps. We should to look into performance alternatives.
+            // However, this can generate a lot of new maps. We should look into performance alternatives.
             IdentityHashMap<TagKey<V>, ITag<V>> map = new IdentityHashMap<>(this.tags);
             map.put(name, tag);
             this.tags = map;

@@ -119,7 +119,7 @@ public final class RegistryObject<T extends IForgeRegistryEntry<? super T>> impl
                 {
                     this.registry = RegistryManager.ACTIVE.getRegistry(baseType);
                     if (registry == null)
-                        throw new IllegalStateException("Unable to find registry for type " + baseType.getName() + " for mod \"" + modid + "\". Check the 'caused by' to see futher stack.", callerStack);
+                        throw new IllegalStateException("Unable to find registry for type " + baseType.getName() + " for mod \"" + modid + "\". Check the 'caused by' to see further stack.", callerStack);
                 }
                 if (pred.test(registry.getRegistryName()))
                     RegistryObject.this.updateReference((IForgeRegistry<? extends T>) registry);
@@ -149,7 +149,7 @@ public final class RegistryObject<T extends IForgeRegistryEntry<? super T>> impl
                 {
                     this.registry = RegistryManager.ACTIVE.getRegistry(registryName);
                     if (registry == null)
-                        throw new IllegalStateException("Unable to find registry with key " + registryName + " for mod \"" + modid + "\". Check the 'caused by' to see futher stack.", callerStack);
+                        throw new IllegalStateException("Unable to find registry with key " + registryName + " for mod \"" + modid + "\". Check the 'caused by' to see further stack.", callerStack);
                 }
                 if (pred.test(registry.getRegistryName()))
                     RegistryObject.this.updateReference((IForgeRegistry<? extends T>) registry);

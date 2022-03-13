@@ -7,6 +7,8 @@ package net.minecraftforge.registries.tags;
 
 import net.minecraft.tags.TagKey;
 
+import java.util.Optional;
+import java.util.Random;
 import java.util.stream.Stream;
 
 /**
@@ -26,6 +28,8 @@ public interface ITag<V> extends Iterable<V>
     int size();
 
     boolean contains(V value);
+
+    Optional<V> getRandomElement(Random random);
 
     /**
      * @return true if this tag was loaded with a value (including empty), otherwise the tag is always empty and this returns false

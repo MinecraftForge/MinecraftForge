@@ -8,6 +8,7 @@ package net.minecraftforge.registries.tags;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
+import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 import org.jetbrains.annotations.NotNull;
 
@@ -60,17 +61,21 @@ public interface ITagManager<V extends IForgeRegistryEntry<V>> extends Iterable<
 
     /**
      * Creates a tag key based on the location and the forge registry linked to this tag manager.
+     * Custom registries can use {@link DeferredRegister#createTagKey(ResourceLocation)} to create tag keys before the tag manager is created.
      *
      * @see #createOptionalTagKey(ResourceLocation, Set)
+     * @see DeferredRegister#createTagKey(ResourceLocation)
      */
     @NotNull TagKey<V> createTagKey(@NotNull ResourceLocation location);
 
     /**
      * Creates a tag key that will use the set of defaults if the tag is not loaded from any datapacks.
      * Useful on the client side when a server may not provide a specific tag.
+     * Custom registries can use {@link DeferredRegister#addOptionalTagDefaults(TagKey, Set)} to create tag keys before the tag manager is created.
      *
      * @see #createTagKey(ResourceLocation)
      * @see #addOptionalTagDefaults(TagKey, Set)
+     * @see DeferredRegister#createOptionalTagKey(ResourceLocation, Set)
      */
     @NotNull TagKey<V> createOptionalTagKey(@NotNull ResourceLocation location, @NotNull Set<? extends Supplier<V>> defaults);
 
@@ -78,8 +83,10 @@ public interface ITagManager<V extends IForgeRegistryEntry<V>> extends Iterable<
      * Adds defaults to an existing tag key.
      * The set of defaults will be bound to the tag if the tag is not loaded from any datapacks.
      * Useful on the client side when a server may not provide a specific tag.
+     * Custom registries can use {@link DeferredRegister#addOptionalTagDefaults(TagKey, Set)} to add defaults before the tag manager is created.
      *
      * @see #createOptionalTagKey(ResourceLocation, Set)
+     * @see DeferredRegister#addOptionalTagDefaults(TagKey, Set)
      */
     void addOptionalTagDefaults(@NotNull TagKey<V> name, @NotNull Set<? extends Supplier<V>> defaults);
 }
