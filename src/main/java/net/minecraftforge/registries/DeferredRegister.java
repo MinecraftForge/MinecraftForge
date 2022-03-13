@@ -188,6 +188,8 @@ public class DeferredRegister<T extends IForgeRegistryEntry<T>>
      * Creates a tag key based on the current modid and provided path as the location and the registry name linked to this DeferredRegister.
      * To control the namespace, use {@link #createTagKey(ResourceLocation)}.
      *
+     * @throws IllegalStateException If the registry name was not set.
+     * Use the factories that take {@link #create(ResourceLocation, String) a registry name} or {@link #create(IForgeRegistry, String) forge registry}.
      * @see #createTagKey(ResourceLocation)
      * @see #createOptionalTagKey(String, Set)
      */
@@ -202,6 +204,8 @@ public class DeferredRegister<T extends IForgeRegistryEntry<T>>
      * Creates a tag key based on the provided resource location and the registry name linked to this DeferredRegister.
      * To use the current modid as the namespace, use {@link #createTagKey(String)}.
      *
+     * @throws IllegalStateException If the registry name was not set.
+     * Use the factories that take {@link #create(ResourceLocation, String) a registry name} or {@link #create(IForgeRegistry, String) forge registry}.
      * @see #createTagKey(String)
      * @see #createOptionalTagKey(ResourceLocation, Set)
      */
@@ -219,6 +223,8 @@ public class DeferredRegister<T extends IForgeRegistryEntry<T>>
      * Useful on the client side when a server may not provide a specific tag.
      * To control the namespace, use {@link #createOptionalTagKey(ResourceLocation, Set)}.
      *
+     * @throws IllegalStateException If the registry name was not set.
+     * Use the factories that take {@link #create(ResourceLocation, String) a registry name} or {@link #create(IForgeRegistry, String) forge registry}.
      * @see #createTagKey(String)
      * @see #createTagKey(ResourceLocation)
      * @see #createOptionalTagKey(ResourceLocation, Set)
@@ -236,6 +242,8 @@ public class DeferredRegister<T extends IForgeRegistryEntry<T>>
      * Useful on the client side when a server may not provide a specific tag.
      * To use the current modid as the namespace, use {@link #createOptionalTagKey(String, Set)}.
      *
+     * @throws IllegalStateException If the registry name was not set.
+     * Use the factories that take {@link #create(ResourceLocation, String) a registry name} or {@link #create(IForgeRegistry, String) forge registry}.
      * @see #createTagKey(String)
      * @see #createTagKey(ResourceLocation)
      * @see #createOptionalTagKey(String, Set)
@@ -256,6 +264,8 @@ public class DeferredRegister<T extends IForgeRegistryEntry<T>>
      * The set of defaults will be bound to the tag if the tag is not loaded from any datapacks.
      * Useful on the client side when a server may not provide a specific tag.
      *
+     * @throws IllegalStateException If the registry name was not set.
+     * Use the factories that take {@link #create(ResourceLocation, String) a registry name} or {@link #create(IForgeRegistry, String) forge registry}.
      * @see #createOptionalTagKey(String, Set)
      * @see #createOptionalTagKey(ResourceLocation, Set)
      */
