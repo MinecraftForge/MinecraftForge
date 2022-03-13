@@ -32,6 +32,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.IPlantable;
 
@@ -44,6 +45,7 @@ import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.ToolAction;
 import net.minecraftforge.common.ToolActions;
+import net.minecraftforge.fml.loading.FMLEnvironment;
 
 @SuppressWarnings("deprecation")
 public interface IForgeBlock
@@ -748,5 +750,44 @@ public interface IForgeBlock
         {
             return state.isSignalSource() && direction != null;
         }
+    }
+
+    /**
+     * Whether this block hides the neighbors face pointed towards by the given direction.
+     * <p>
+     * This method should only be used for blocks you don't control, for your own blocks override
+     * {@link Block#skipRendering(BlockState, BlockState, Direction)} on the respective block instead
+     * <p>
+     * WARNING: This method is likely to be called from a worker thread! If you want to retrieve a
+     *          {@link net.minecraft.world.level.block.entity.BlockEntity} from the given level, make sure to use
+     *          {@link net.minecraftforge.common.extensions.IForgeBlockGetter#getExistingBlockEntity(BlockPos)} to not
+     *          accidentally create a new or delete an old {@link net.minecraft.world.level.block.entity.BlockEntity}
+     *          off of the main thread as this would cause a write operation to the given {@link BlockGetter} and cause
+     *          a CME in the process. Any other direct or indirect write operation to the {@link BlockGetter} will have
+     *          the same outcome.
+     *
+     * @param level The world
+     * @param pos The blocks position in the world
+     * @param state The blocks {@link BlockState}
+     * @param neighborState The neighboring blocks {@link BlockState}
+     * @param dir The direction towards the neighboring block
+     */
+    default boolean hidesNeighborFace(BlockGetter level, BlockPos pos, BlockState state, BlockState neighborState, Direction dir)
+    {
+        return false;
+    }
+
+    /**
+     * Whether this block allows a neighboring block to hide the face of this block it touches.
+     * If this returns true, {@link IForgeBlockState#hidesNeighborFace(BlockGetter, BlockPos, BlockState, Direction)}
+     * will be called on the neighboring block.
+     */
+    default boolean supportsExternalFaceHiding(BlockState state)
+    {
+        if (FMLEnvironment.dist.isClient())
+        {
+            return !ForgeHooksClient.isBlockInSolidLayer(state);
+        }
+        return true;
     }
 }
