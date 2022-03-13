@@ -1,5 +1,14 @@
 --- a/net/minecraft/world/level/BlockGetter.java
 +++ b/net/minecraft/world/level/BlockGetter.java
+@@ -18,7 +_,7 @@
+ import net.minecraft.world.phys.Vec3;
+ import net.minecraft.world.phys.shapes.VoxelShape;
+ 
+-public interface BlockGetter extends LevelHeightAccessor {
++public interface BlockGetter extends LevelHeightAccessor, net.minecraftforge.common.extensions.IForgeBlockGetter {
+    @Nullable
+    BlockEntity m_7702_(BlockPos p_45570_);
+ 
 @@ -32,7 +_,7 @@
     FluidState m_6425_(BlockPos p_45569_);
  
