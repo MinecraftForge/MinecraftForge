@@ -1,0 +1,12 @@
+--- a/net/minecraft/data/recipes/ShapelessRecipeBuilder.java
++++ b/net/minecraft/data/recipes/ShapelessRecipeBuilder.java
+@@ -85,7 +_,8 @@
+    public void m_142700_(Consumer<FinishedRecipe> p_126205_, ResourceLocation p_126206_) {
+       this.m_126207_(p_126206_);
+       this.f_126176_.m_138396_(new ResourceLocation("recipes/root")).m_138386_("has_the_recipe", RecipeUnlockedTrigger.m_63728_(p_126206_)).m_138354_(AdvancementRewards.Builder.m_10009_(p_126206_)).m_138360_(RequirementsStrategy.f_15979_);
+-      p_126205_.accept(new ShapelessRecipeBuilder.Result(p_126206_, this.f_126173_, this.f_126174_, this.f_126177_ == null ? "" : this.f_126177_, this.f_126175_, this.f_126176_, new ResourceLocation(p_126206_.m_135827_(), "recipes/" + this.f_126173_.m_41471_().m_40783_() + "/" + p_126206_.m_135815_())));
++      String group = this.f_126173_.m_41471_() == null ? "empty" : this.f_126173_.m_41471_().m_40783_();
++      p_126205_.accept(new ShapelessRecipeBuilder.Result(p_126206_, this.f_126173_, this.f_126174_, this.f_126177_ == null ? "" : this.f_126177_, this.f_126175_, this.f_126176_, new ResourceLocation(p_126206_.m_135827_(), "recipes/" + group + "/" + p_126206_.m_135815_())));
+    }
+ 
+    private void m_126207_(ResourceLocation p_126208_) {
