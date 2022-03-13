@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2021.
+ * Copyright (c) 2016-2022.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -150,6 +150,19 @@ public class RuntimeEnumExtender implements ILaunchPluginService {
 
             mtd.access |= Opcodes.ACC_SYNCHRONIZED;
             mtd.instructions.clear();
+            mtd.localVariables.clear();
+            if (mtd.tryCatchBlocks != null)
+            {
+                mtd.tryCatchBlocks.clear();
+            }
+            if (mtd.visibleLocalVariableAnnotations != null)
+            {
+                mtd.visibleLocalVariableAnnotations.clear();
+            }
+            if (mtd.invisibleLocalVariableAnnotations != null)
+            {
+                mtd.invisibleLocalVariableAnnotations.clear();
+            }
             InstructionAdapter ins = new InstructionAdapter(mtd);
 
             int vars = 0;
