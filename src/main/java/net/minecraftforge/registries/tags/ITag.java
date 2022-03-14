@@ -16,6 +16,8 @@ import java.util.stream.Stream;
  * For Forge, these are bound on world load.
  * Tags will always be empty until they are bound.
  * A tag instance provided for a given {@link TagKey} from a given {@link ITagManager} will always return the same instance on future invocations.
+ * This means that the same tag instance will be rebound across reloads assuming the same registry instance is in use.
+ * It is safe to store instances of this class for long periods of time.
  */
 public interface ITag<V> extends Iterable<V>
 {
