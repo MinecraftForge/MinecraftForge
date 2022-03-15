@@ -5,6 +5,8 @@
 
 package net.minecraftforge.common.extensions;
 
+import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
 
@@ -545,8 +547,31 @@ public interface IForgeItem
      */
     default boolean shouldCauseBlockBreakReset(ItemStack oldStack, ItemStack newStack)
     {
-        return !(newStack.getItem() == oldStack.getItem() && ItemStack.tagMatches(newStack, oldStack)
-                && (newStack.isDamageableItem() || newStack.getDamageValue() == oldStack.getDamageValue()));
+        // Fix MC-176559 mending resets mining progress / breaking animation
+        if (!newStack.is(oldStack.getItem()))
+            return true;
+
+        if (!newStack.isDamageableItem() || !oldStack.isDamageableItem())
+            return !ItemStack.tagMatches(newStack, oldStack);
+
+        CompoundTag newTag = newStack.getTag();
+        CompoundTag oldTag = oldStack.getTag();
+
+        if (newTag == null || oldTag == null)
+            return !(newTag == null && oldTag == null);
+
+        Set<String> newKeys = new HashSet<>(newTag.getAllKeys());
+        Set<String> oldKeys = new HashSet<>(oldTag.getAllKeys());
+
+        newKeys.remove(ItemStack.TAG_DAMAGE);
+        oldKeys.remove(ItemStack.TAG_DAMAGE);
+
+        if (!newKeys.equals(oldKeys))
+            return true;
+
+        return !newKeys.stream().allMatch(key -> Objects.equals(newTag.get(key), oldTag.get(key)));
+        // return !(newStack.is(oldStack.getItem()) && ItemStack.tagMatches(newStack, oldStack)
+        //         && (newStack.isDamageableItem() || newStack.getDamageValue() == oldStack.getDamageValue()));
     }
 
     /**
