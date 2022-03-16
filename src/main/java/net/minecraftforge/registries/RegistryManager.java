@@ -163,12 +163,10 @@ public class RegistryManager
             registry.register(forgeReg.getRegistryKey(), wrapper, Lifecycle.experimental());
     }
 
-    // TODO 1.19: Remove this in favor of fixing up the IModStateTransition system
-    private static final NewRegistryEvent NEW_REGISTRY_EVENT = new NewRegistryEvent();
-
-    public static NewRegistryEvent newRegistryEventGenerator(ModContainer modContainer)
+    public static IModStateTransition.EventGenerator<NewRegistryEvent> newRegistryEventGenerator()
     {
-        return NEW_REGISTRY_EVENT;
+        NewRegistryEvent event = new NewRegistryEvent();
+        return mc -> event;
     }
 
 
@@ -182,7 +180,7 @@ public class RegistryManager
     public static CompletableFuture<List<Throwable>> postNewRegistryEvent(final Executor executor,
             final IModStateTransition.EventGenerator<? extends NewRegistryEvent> eventGenerator)
     {
-        return CompletableFuture.runAsync(NEW_REGISTRY_EVENT::fill, executor)
+        return CompletableFuture.runAsync(() -> eventGenerator.apply(null).fill(), executor)
                 .handle((v, t) -> t != null ? Collections.singletonList(t) : Collections.emptyList());
     }
 

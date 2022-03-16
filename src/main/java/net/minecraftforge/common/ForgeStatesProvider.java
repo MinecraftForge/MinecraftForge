@@ -25,7 +25,7 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 public class ForgeStatesProvider implements IModStateProvider {
-    final ModLoadingState CREATE_REGISTRIES = ModLoadingState.withTransition("CREATE_REGISTRIES", "CONSTRUCT", ModLoadingPhase.GATHER, new SerialTransition<>(() -> Stream.of(IModStateTransition.EventGenerator.fromFunction(RegistryManager::newRegistryEventGenerator)), RegistryManager::preNewRegistryEvent, RegistryManager::postNewRegistryEvent, (e, prev) -> prev.thenApplyAsync(Function.identity(), e)));
+    final ModLoadingState CREATE_REGISTRIES = ModLoadingState.withTransition("CREATE_REGISTRIES", "CONSTRUCT", ModLoadingPhase.GATHER, new SerialTransition<>(() -> Stream.of(IModStateTransition.EventGenerator.fromFunction(RegistryManager.newRegistryEventGenerator())), RegistryManager::preNewRegistryEvent, RegistryManager::postNewRegistryEvent, (e, prev) -> prev.thenApplyAsync(Function.identity(), e)));
     final ModLoadingState OBJECT_HOLDERS = ModLoadingState.withInline("OBJECT_HOLDERS", "CREATE_REGISTRIES", ModLoadingPhase.GATHER, ml-> ObjectHolderRegistry.findObjectHolders());
     final ModLoadingState INJECT_CAPABILITIES = ModLoadingState.withInline("INJECT_CAPABILITIES", "OBJECT_HOLDERS", ModLoadingPhase.GATHER, ml-> CapabilityManager.INSTANCE.injectCapabilities(ml.getAllScanData()));
     final ModLoadingState UNFREEZE = ModLoadingState.withInline("UNFREEZE_DATA", "INJECT_CAPABILITIES", ModLoadingPhase.GATHER, ml->GameData.unfreezeData());
