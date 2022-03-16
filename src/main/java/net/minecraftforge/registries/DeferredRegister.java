@@ -166,7 +166,8 @@ public class DeferredRegister<T extends IForgeRegistryEntry<T>>
      * @deprecated Use {@link #create(ResourceLocation, String)} and {@link #makeRegistry(Class, Supplier)} instead
      */
     @Deprecated(forRemoval = true, since = "1.18.2")
-    public Supplier<IForgeRegistry<T>> makeRegistry(final String name, final Supplier<RegistryBuilder<T>> sup) {
+    public Supplier<IForgeRegistry<T>> makeRegistry(final String name, final Supplier<RegistryBuilder<T>> sup)
+    {
         return makeRegistry(new ResourceLocation(modid, name), this.superType, sup);
     }
 
@@ -180,7 +181,8 @@ public class DeferredRegister<T extends IForgeRegistryEntry<T>>
      * @return A supplier of the {@link IForgeRegistry} created by the builder.
      * Will always return null until after the {@link NewRegistryEvent} event fires.
      */
-    public Supplier<IForgeRegistry<T>> makeRegistry(final Class<T> base, final Supplier<RegistryBuilder<T>> sup) {
+    public Supplier<IForgeRegistry<T>> makeRegistry(final Class<T> base, final Supplier<RegistryBuilder<T>> sup)
+    {
         return makeRegistry(this.registryName, base, sup);
     }
 
