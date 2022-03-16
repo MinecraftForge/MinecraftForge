@@ -34,7 +34,8 @@ public interface ITag<V> extends Iterable<V>
     Optional<V> getRandomElement(Random random);
 
     /**
-     * @return true if this tag was loaded with a value (including empty), otherwise the tag is always empty and this returns false
+     * @return {@code true} if this tag was loaded with a value (including empty),
+     * otherwise the tag is always empty and this returns {@code false}
      */
     boolean isBound();
 }

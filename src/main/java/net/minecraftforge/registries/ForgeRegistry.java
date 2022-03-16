@@ -266,10 +266,10 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
         return Optional.of(((IHolderHelperHolder<V>) wrapper).getHolderHelper());
     }
 
-    void onBindTags(Map<TagKey<V>, HolderSet.Named<V>> tags)
+    void onBindTags(Map<TagKey<V>, HolderSet.Named<V>> tags, Set<TagKey<V>> defaultedTags)
     {
         if (this.tagManager != null)
-            this.tagManager.bind(tags);
+            this.tagManager.bind(tags, defaultedTags);
     }
 
     @NotNull

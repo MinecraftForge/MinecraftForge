@@ -14,7 +14,6 @@ import com.google.common.collect.Lists;
 
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.registries.IForgeRegistry.*;
 
 import javax.annotation.Nullable;
@@ -232,7 +231,7 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
     }
 
     /**
-     * Modders: Use {@link RegistryEvent.NewRegistry#create(RegistryBuilder)} instead
+     * Modders: Use {@link NewRegistryEvent#create(RegistryBuilder)} instead
      */
     IForgeRegistry<T> create()
     {

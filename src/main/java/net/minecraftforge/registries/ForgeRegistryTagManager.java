@@ -6,7 +6,6 @@
 package net.minecraftforge.registries;
 
 import com.google.common.collect.Iterators;
-import com.google.common.collect.Sets;
 import net.minecraft.core.HolderSet;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
@@ -15,7 +14,6 @@ import net.minecraftforge.registries.tags.ITag;
 import net.minecraftforge.registries.tags.ITagManager;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashSet;
 import java.util.IdentityHashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -35,14 +33,16 @@ class ForgeRegistryTagManager<V extends IForgeRegistryEntry<V>> implements ITagM
         this.owner = owner;
     }
 
-    void bind(Map<TagKey<V>, HolderSet.Named<V>> holderTags)
+    void bind(Map<TagKey<V>, HolderSet.Named<V>> holderTags, Set<TagKey<V>> defaultedTags)
     {
         IdentityHashMap<TagKey<V>, ITag<V>> newTags = new IdentityHashMap<>(this.tags);
 
-        holderTags.forEach((key, holderSet) -> ((ForgeRegistryTag<V>) newTags.computeIfAbsent(key, ForgeRegistryTag::new)).bind(holderSet));
+        // Forcefully unbind all pre-existing tags
+        newTags.values().forEach(tag -> ((ForgeRegistryTag<V>) tag).bind(null));
 
-        // Forcefully unbind any tags that didn't get bound
-        Sets.difference(this.tags.keySet(), holderTags.keySet()).forEach(key -> ((ForgeRegistryTag<V>) newTags.get(key)).bind(null));
+        // Bind all tags that were loaded
+        holderTags.forEach((key, holderSet) ->
+                ((ForgeRegistryTag<V>) newTags.computeIfAbsent(key, ForgeRegistryTag::new)).bind(holderSet));
 
         this.tags = newTags;
     }

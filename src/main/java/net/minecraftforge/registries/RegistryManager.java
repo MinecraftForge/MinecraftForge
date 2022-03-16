@@ -27,7 +27,6 @@ import net.minecraft.core.WritableRegistry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.core.Registry;
-import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.IModStateTransition;
 import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.network.HandshakeMessages;
@@ -156,7 +155,7 @@ public class RegistryManager
     }
 
     @SuppressWarnings("unchecked")
-    private static <V extends IForgeRegistryEntry<V>> void registerToRootRegistry(ForgeRegistry<V> forgeReg)
+    static <V extends IForgeRegistryEntry<V>> void registerToRootRegistry(ForgeRegistry<V> forgeReg)
     {
         WritableRegistry<Registry<V>> registry = (WritableRegistry<Registry<V>>) Registry.REGISTRY;
         Registry<V> wrapper = forgeReg.getWrapper();
@@ -165,35 +164,26 @@ public class RegistryManager
     }
 
     // TODO 1.19: Remove this in favor of fixing up the IModStateTransition system
-    private static final RegistryEvent.NewRegistry NEW_REGISTRY_EVENT = new RegistryEvent.NewRegistry();
+    private static final NewRegistryEvent NEW_REGISTRY_EVENT = new NewRegistryEvent();
 
-    public static RegistryEvent.NewRegistry newRegistryEventGenerator(ModContainer modContainer)
+    public static NewRegistryEvent newRegistryEventGenerator(ModContainer modContainer)
     {
         return NEW_REGISTRY_EVENT;
     }
 
 
     public static CompletableFuture<List<Throwable>> preNewRegistryEvent(final Executor executor,
-            final IModStateTransition.EventGenerator<? extends RegistryEvent.NewRegistry> eventGenerator)
+            final IModStateTransition.EventGenerator<? extends NewRegistryEvent> eventGenerator)
     {
         return CompletableFuture.runAsync(() -> vanillaRegistryKeys = Set.copyOf(Registry.REGISTRY.keySet()), executor)
                 .handle((v, t) -> t != null ? Collections.singletonList(t) : Collections.emptyList());
     }
 
     public static CompletableFuture<List<Throwable>> postNewRegistryEvent(final Executor executor,
-            final IModStateTransition.EventGenerator<? extends RegistryEvent.NewRegistry> eventGenerator)
+            final IModStateTransition.EventGenerator<? extends NewRegistryEvent> eventGenerator)
     {
-        return CompletableFuture.runAsync(() -> {
-            Map<RegistryBuilder<?>, IForgeRegistry<?>> registries = NEW_REGISTRY_EVENT.getRegistryBuilders()
-                    .collect(Collectors.toMap(Function.identity(), RegistryBuilder::create, (a, b) -> a, IdentityHashMap::new));
-
-            registries.forEach((builder, reg) -> {
-                if (builder.getHasWrapper() && !Registry.REGISTRY.containsKey(reg.getRegistryName()))
-                    registerToRootRegistry((ForgeRegistry<?>) reg);
-            });
-
-            NEW_REGISTRY_EVENT.fill(registries);
-        }, executor).handle((v, t) -> t != null ? Collections.singletonList(t) : Collections.emptyList());
+        return CompletableFuture.runAsync(NEW_REGISTRY_EVENT::fill, executor)
+                .handle((v, t) -> t != null ? Collections.singletonList(t) : Collections.emptyList());
     }
 
     private void addLegacyName(ResourceLocation legacyName, ResourceLocation name)

@@ -72,7 +72,7 @@ public class DeferredRegister<T extends IForgeRegistryEntry<T>>
     }
 
     /**
-     * DeferredRegister factory for custom registries that are made during the {@link RegistryEvent.NewRegistry} event
+     * DeferredRegister factory for custom registries that are made during the {@link NewRegistryEvent} event
      * or with {@link #makeRegistry(Class, Supplier)}.
      *
      * @param key The key of the registry to reference
@@ -84,7 +84,7 @@ public class DeferredRegister<T extends IForgeRegistryEntry<T>>
     }
 
     /**
-     * DeferredRegister factory for custom registries that are made during the {@link RegistryEvent.NewRegistry} event
+     * DeferredRegister factory for custom registries that are made during the {@link NewRegistryEvent} event
      * or with {@link #makeRegistry(Class, Supplier)}.
      *
      * @param registryName The name of the registry, should include namespace. May come from another DeferredRegister through {@link #getRegistryName()}.
@@ -176,9 +176,9 @@ public class DeferredRegister<T extends IForgeRegistryEntry<T>>
      * Calls {@link RegistryBuilder#setName} and {@link RegistryBuilder#setType} automatically.
      *
      * @param base The base type to use in the created {@link IForgeRegistry}
-     * @param sup Supplier of a RegistryBuilder that initializes a {@link IForgeRegistry} during the {@link RegistryEvent.NewRegistry} event
+     * @param sup Supplier of a RegistryBuilder that initializes a {@link IForgeRegistry} during the {@link NewRegistryEvent} event
      * @return A supplier of the {@link IForgeRegistry} created by the builder.
-     * Will always return null until after the {@link RegistryEvent.NewRegistry} event fires.
+     * Will always return null until after the {@link NewRegistryEvent} event fires.
      */
     public Supplier<IForgeRegistry<T>> makeRegistry(final Class<T> base, final Supplier<RegistryBuilder<T>> sup) {
         return makeRegistry(this.registryName, base, sup);
@@ -219,7 +219,7 @@ public class DeferredRegister<T extends IForgeRegistryEntry<T>>
     }
 
     /**
-     * Creates a tag key with the provided location that will use the set of defaults if the tag is not loaded from any datapacks.
+     * Creates a tag key with the current modid and provided path that will use the set of defaults if the tag is not loaded from any datapacks.
      * Useful on the client side when a server may not provide a specific tag.
      * To control the namespace, use {@link #createOptionalTagKey(ResourceLocation, Set)}.
      *
@@ -238,7 +238,7 @@ public class DeferredRegister<T extends IForgeRegistryEntry<T>>
     }
 
     /**
-     * Creates a tag key with the current modid and provided path that will use the set of defaults if the tag is not loaded from any datapacks.
+     * Creates a tag key with the provided location that will use the set of defaults if the tag is not loaded from any datapacks.
      * Useful on the client side when a server may not provide a specific tag.
      * To use the current modid as the namespace, use {@link #createOptionalTagKey(String, Set)}.
      *
@@ -377,7 +377,7 @@ public class DeferredRegister<T extends IForgeRegistryEntry<T>>
         }
     }
 
-    private void createRegistry(RegistryEvent.NewRegistry event)
+    private void createRegistry(NewRegistryEvent event)
     {
         this.typeSupplier = event.create(this.registryFactory.get(), this::onFill);
     }

@@ -188,18 +188,7 @@ class NamespacedHolderHelper<T extends IForgeRegistryEntry<T>>
     {
         Map<Holder.Reference<T>, List<TagKey<T>>> holderToTag = new IdentityHashMap<>();
         this.holdersByName.values().forEach(v -> holderToTag.put(v, new ArrayList<>()));
-        newTags.forEach((k, v) ->
-        {
-            for(Holder<T> holder : v)
-            {
-                if (!holder.isValidInRegistry(this.self))
-                    throw new IllegalStateException("Can't create named set " + k + " containing value " + holder + " from outside registry " + this);
-
-                if (!(holder instanceof Holder.Reference<T>))
-                    throw new IllegalStateException("Found direct holder " + holder + " value in tag " + k);
-                holderToTag.get((Holder.Reference<T>)holder).add(k);
-            }
-        });
+        newTags.forEach((name, values) -> values.forEach(holder -> addTagToHolder(holderToTag, name, holder)));
 
         Set<TagKey<T>> set = Sets.difference(this.tags.keySet(), newTags.keySet());
         if (!set.isEmpty())
@@ -207,19 +196,33 @@ class NamespacedHolderHelper<T extends IForgeRegistryEntry<T>>
 
         Map<TagKey<T>, HolderSet.Named<T>> tmpTags = new IdentityHashMap<>(this.tags);
         newTags.forEach((k, v) -> tmpTags.computeIfAbsent(k, this::createTag).bind(v));
-        this.optionalTags.asMap().forEach((name, defaults) -> tmpTags.computeIfAbsent(name, k -> {
-            HolderSet.Named<T> namedTag = this.createTag(k);
-            namedTag.bind(defaults.stream()
+
+        Set<TagKey<T>> defaultedTags = Sets.difference(this.optionalTags.keySet(), newTags.keySet());
+        defaultedTags.forEach(name -> {
+            List<Holder<T>> defaults = this.optionalTags.get(name).stream()
                     .map(valueSupplier -> getHolder(valueSupplier.get()).orElse(null))
                     .filter(Objects::nonNull)
                     .distinct()
-                    .toList());
-            return namedTag;
-        }));
+                    .toList();
+            defaults.forEach(holder -> addTagToHolder(holderToTag, name, holder));
+            tmpTags.computeIfAbsent(name, this::createTag).bind(defaults);
+        });
+
         holderToTag.forEach(Holder.Reference::bindTags);
         this.tags = tmpTags;
 
-        this.owner.onBindTags(this.tags);
+        this.owner.onBindTags(this.tags, defaultedTags);
+    }
+
+    private void addTagToHolder(Map<Holder.Reference<T>, List<TagKey<T>>> holderToTag, TagKey<T> name, Holder<T> holder)
+    {
+        if (!holder.isValidInRegistry(this.self))
+            throw new IllegalStateException("Can't create named set " + name + " containing value " + holder + " from outside registry " + this);
+
+        if (!(holder instanceof Holder.Reference<T>))
+            throw new IllegalStateException("Found direct holder " + holder + " value in tag " + name);
+
+        holderToTag.get((Holder.Reference<T>) holder).add(name);
     }
 
     void resetTags()

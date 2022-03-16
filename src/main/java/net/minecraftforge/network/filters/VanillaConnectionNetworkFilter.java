@@ -46,9 +46,6 @@ import com.mojang.logging.LogUtils;
 public class VanillaConnectionNetworkFilter extends VanillaPacketFilter
 {
     private static final Logger LOGGER = LogUtils.getLogger();
-    private static final Set<ResourceLocation> FORGE_ADDED_REGISTRIES = Stream.of(ForgeRegistries.Keys.DATA_SERIALIZERS, ForgeRegistries.Keys.LOOT_MODIFIER_SERIALIZERS, ForgeRegistries.Keys.WORLD_TYPES)
-            .map(ResourceKey::location)
-            .collect(Collectors.toUnmodifiableSet());
 
     public VanillaConnectionNetworkFilter()
     {
@@ -112,7 +109,8 @@ public class VanillaConnectionNetworkFilter extends VanillaPacketFilter
 
     private static boolean isVanillaRegistry(ResourceLocation location)
     {
-        return (RegistryManager.getVanillaRegistryKeys().contains(location)
-                || RegistryAccess.REGISTRIES.keySet().stream().anyMatch(k -> k.location().equals(location))) && !FORGE_ADDED_REGISTRIES.contains(location);
+        // Checks if the registry name is contained within the static view of vanilla registries both in Registry and builtin registries
+        return RegistryManager.getVanillaRegistryKeys().contains(location)
+                || RegistryAccess.REGISTRIES.keySet().stream().anyMatch(k -> k.location().equals(location));
     }
 }
