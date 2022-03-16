@@ -67,7 +67,7 @@ ext {
     BINPATCH_TOOL = 'net.minecraftforge:binarypatcher:1.0.12:fatjar'
     INSTALLER_TOOLS = 'net.minecraftforge:installertools:1.2.10'
     JAR_SPLITTER = 'net.minecraftforge:jarsplitter:1.1.4'
-    FART = 'net.minecraftforge:ForgeAutoRenamingTool:0.1.17:all'
+    FART = 'net.minecraftforge:ForgeAutoRenamingTool:0.1.22:all'
     MIN_TAG_FOR_CHANGELOG = "39.0"
 }
 
