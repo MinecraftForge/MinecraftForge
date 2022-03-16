@@ -5,6 +5,8 @@
 
 package net.minecraftforge.registries;
 
+import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 
 import javax.annotation.Nonnull;
@@ -24,6 +26,10 @@ public final class RegistryObject<T extends IForgeRegistryEntry<? super T>> impl
     @Nullable
     private T value;
 
+    /**
+     * @deprecated The uniqueness of registry super types will not be guaranteed starting in 1.19. Use {@link #of(ResourceLocation, ResourceLocation, String)}.
+     */
+    @Deprecated(forRemoval = true, since = "1.18.2")
     public static <T extends IForgeRegistryEntry<T>, U extends T> RegistryObject<U> of(final ResourceLocation name, Supplier<Class<? super T>> registryType) {
         return new RegistryObject<>(name, registryType);
     }
@@ -32,8 +38,36 @@ public final class RegistryObject<T extends IForgeRegistryEntry<? super T>> impl
         return new RegistryObject<>(name, registry);
     }
 
+    /**
+     * @deprecated The uniqueness of registry super types will not be guaranteed starting in 1.19. Use {@link #of(ResourceLocation, ResourceLocation, String)}.
+     */
+    @Deprecated(forRemoval = true, since = "1.18.2")
     public static <T extends IForgeRegistryEntry<T>, U extends T> RegistryObject<U> of(final ResourceLocation name, final Class<T> baseType, String modid) {
         return new RegistryObject<>(name, baseType, modid);
+    }
+
+    /**
+     * Factory for a {@link RegistryObject} that stores the value of an object in a registry once it is ready.
+     *
+     * @param name The name of the object to look up in a forge registry
+     * @param key The key of the forge registry to grab from {@link RegistryManager#ACTIVE}
+     * @param modid The mod id calling context
+     * @return A {@link RegistryObject} that stores the value of an object in a registry once it is ready
+     */
+    public static <T extends IForgeRegistryEntry<T>, U extends T> RegistryObject<U> of(final ResourceLocation name, final ResourceKey<? extends Registry<T>> key, String modid) {
+        return new RegistryObject<>(name, key.location(), modid);
+    }
+
+    /**
+     * Factory for a {@link RegistryObject} that stores the value of an object in a registry once it is ready.
+     *
+     * @param name The name of the object to look up in a forge registry
+     * @param registryName The name of the forge registry to grab from {@link RegistryManager#ACTIVE}
+     * @param modid The mod id calling context
+     * @return A {@link RegistryObject} that stores the value of an object in a registry once it is ready
+     */
+    public static <T extends IForgeRegistryEntry<T>, U extends T> RegistryObject<U> of(final ResourceLocation name, final ResourceLocation registryName, String modid) {
+        return new RegistryObject<>(name, registryName, modid);
     }
 
     private static RegistryObject<?> EMPTY = new RegistryObject<>();
@@ -48,6 +82,7 @@ public final class RegistryObject<T extends IForgeRegistryEntry<? super T>> impl
         this.name = null;
     }
 
+    @Deprecated(forRemoval = true, since = "1.18.2")
     private <V extends IForgeRegistryEntry<V>> RegistryObject(ResourceLocation name, Supplier<Class<? super V>> registryType)
     {
         this(name, RegistryManager.ACTIVE.<V>getRegistry(registryType.get()));
@@ -68,6 +103,7 @@ public final class RegistryObject<T extends IForgeRegistryEntry<? super T>> impl
     }
 
     @SuppressWarnings("unchecked")
+    @Deprecated(forRemoval = true, since = "1.18.2")
     private <V extends IForgeRegistryEntry<V>> RegistryObject(final ResourceLocation name, final Class<V> baseType, final String modid)
     {
         this.name = name;
@@ -83,13 +119,43 @@ public final class RegistryObject<T extends IForgeRegistryEntry<? super T>> impl
                 {
                     this.registry = RegistryManager.ACTIVE.getRegistry(baseType);
                     if (registry == null)
-                        throw new IllegalStateException("Unable to find registry for type " + baseType.getName() + " for mod \"" + modid + "\". Check the 'caused by' to see futher stack.", callerStack);
+                        throw new IllegalStateException("Unable to find registry for type " + baseType.getName() + " for mod \"" + modid + "\". Check the 'caused by' to see further stack.", callerStack);
                 }
                 if (pred.test(registry.getRegistryName()))
                     RegistryObject.this.updateReference((IForgeRegistry<? extends T>) registry);
             }
         });
         IForgeRegistry<V> registry = RegistryManager.ACTIVE.getRegistry(baseType);
+        // allow registry to be null, this might be for a custom registry that does not exist yet
+        if (registry != null)
+        {
+            this.updateReference(((IForgeRegistry<? extends T>) registry));
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private <V extends IForgeRegistryEntry<V>> RegistryObject(final ResourceLocation name, final ResourceLocation registryName, final String modid)
+    {
+        this.name = name;
+        final Throwable callerStack = new Throwable("Calling Site from mod: " + modid);
+        ObjectHolderRegistry.addHandler(new Consumer<>()
+        {
+            private IForgeRegistry<V> registry;
+
+            @Override
+            public void accept(Predicate<ResourceLocation> pred)
+            {
+                if (registry == null)
+                {
+                    this.registry = RegistryManager.ACTIVE.getRegistry(registryName);
+                    if (registry == null)
+                        throw new IllegalStateException("Unable to find registry with key " + registryName + " for mod \"" + modid + "\". Check the 'caused by' to see further stack.", callerStack);
+                }
+                if (pred.test(registry.getRegistryName()))
+                    RegistryObject.this.updateReference((IForgeRegistry<? extends T>) registry);
+            }
+        });
+        IForgeRegistry<V> registry = RegistryManager.ACTIVE.getRegistry(registryName);
         // allow registry to be null, this might be for a custom registry that does not exist yet
         if (registry != null)
         {

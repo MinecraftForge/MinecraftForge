@@ -8,16 +8,17 @@ package net.minecraftforge.registries;
 import java.util.*;
 import java.util.Map.Entry;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.DynamicOps;
+import net.minecraft.core.Holder;
+import net.minecraft.core.HolderSet;
+import net.minecraft.tags.TagKey;
 import net.minecraftforge.common.util.LogMessageAdapter;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
+import net.minecraftforge.registries.tags.ITagManager;
 import org.apache.commons.lang3.Validate;
 
 import com.google.common.base.Preconditions;
@@ -44,6 +45,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRegistryInternal<V>, IForgeRegistryModifiable<V>
 {
@@ -70,14 +73,14 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
     private final Set<Integer> blocked = Sets.newHashSet();
     private final Multimap<ResourceLocation, V> overrides = ArrayListMultimap.create();
     private final BiMap<OverrideOwner<V>, V> owners = HashBiMap.create();
+    private final ForgeRegistryTagManager<V> tagManager;
     private final DummyFactory<V> dummyFactory;
     private final boolean isDelegated;
     private final int min;
     private final int max;
     private final boolean allowOverrides;
     private final boolean isModifiable;
-    @Nullable
-    private final String tagFolder;
+    private final boolean hasWrapper;
 
     private V defaultValue = null;
     boolean isFrozen = false;
@@ -111,7 +114,8 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
         this.isDelegated = ForgeRegistryEntry.class.isAssignableFrom(superType); //TODO: Make this IDelegatedRegistryEntry?
         this.allowOverrides = builder.getAllowOverrides();
         this.isModifiable = builder.getAllowModifications();
-        this.tagFolder = builder.getTagFolder();
+        this.hasWrapper = builder.getHasWrapper();
+        this.tagManager = this.hasWrapper ? new ForgeRegistryTagManager<>(this) : null;
         if (this.create != null)
             this.create.onCreate(this, stage);
     }
@@ -156,6 +160,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
         return this.name;
     }
 
+    @Override
     public ResourceKey<Registry<V>> getRegistryKey()
     {
         return this.key;
@@ -167,12 +172,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
         return superType;
     }
 
-    @Nullable
-    public String getTagFolder()
-    {
-        return tagFolder;
-    }
-
+    @NotNull
     public Codec<V> getCodec()
     {
         return this.codec;
@@ -234,6 +234,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
         return getResourceKey(value).map(ResourceKey::location).orElse(this.defaultKey);
     }
 
+    @NotNull
     @Override
     public Optional<ResourceKey<V>> getResourceKey(V value)
     {
@@ -241,19 +242,79 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
         return Optional.ofNullable(this.owners.inverse().get(value)).map(OverrideOwner::key);
     }
 
+    @SuppressWarnings("unchecked")
+    @Nullable
+    Registry<V> getWrapper()
+    {
+        if (!this.hasWrapper)
+            return null;
+
+        return this.defaultKey != null
+                ? this.getSlaveMap(NamespacedDefaultedWrapper.Factory.ID, NamespacedDefaultedWrapper.class)
+                : this.getSlaveMap(NamespacedWrapper.Factory.ID, NamespacedWrapper.class);
+    }
+
+    @SuppressWarnings("unchecked")
+    @NotNull
+    Optional<NamespacedHolderHelper<V>> getHolderHelper()
+    {
+        Registry<V> wrapper = getWrapper();
+        if (!(wrapper instanceof IHolderHelperHolder))
+            return Optional.empty();
+
+        // Unsafe cast means we can't use pattern matching here
+        return Optional.of(((IHolderHelperHolder<V>) wrapper).getHolderHelper());
+    }
+
+    void onBindTags(Map<TagKey<V>, HolderSet.Named<V>> tags, Set<TagKey<V>> defaultedTags)
+    {
+        if (this.tagManager != null)
+            this.tagManager.bind(tags, defaultedTags);
+    }
+
+    @NotNull
+    @Override
+    public Optional<Holder<V>> getHolder(ResourceKey<V> key)
+    {
+        return getHolderHelper().flatMap(h -> h.getHolder(key));
+    }
+
+    @NotNull
+    @Override
+    public Optional<Holder<V>> getHolder(ResourceLocation location)
+    {
+        return getHolderHelper().flatMap(h -> h.getHolder(location));
+    }
+
+    @NotNull
+    @Override
+    public Optional<Holder<V>> getHolder(V value)
+    {
+        return getHolderHelper().flatMap(h -> h.getHolder(value));
+    }
+
+    @Nullable
+    @Override
+    public ITagManager<V> tags()
+    {
+        return this.tagManager;
+    }
+
+    @NotNull
     @Override
     public Set<ResourceLocation> getKeys()
     {
         return Collections.unmodifiableSet(this.names.keySet());
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public Collection<V> getValues()
     {
         return Collections.unmodifiableSet(this.names.values());
     }
 
+    @NotNull
     @Override
     public Set<Entry<ResourceKey<V>, V>> getEntries()
     {

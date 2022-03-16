@@ -21,6 +21,7 @@ public class ForgeCommand
             .then(GenerateCommand.register())
             .then(DimensionsCommand.register())
             .then(ModListCommand.register())
+            .then(TagsCommand.register())
         );
     }
 }

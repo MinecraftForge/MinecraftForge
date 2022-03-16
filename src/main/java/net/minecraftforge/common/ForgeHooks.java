@@ -1096,7 +1096,7 @@ public class ForgeHooks
         }
     }
 
-    private static final Map<EntityDataSerializer<?>, DataSerializerEntry> serializerEntries = GameData.getSerializerMap();
+    private static Map<EntityDataSerializer<?>, DataSerializerEntry> serializerEntries = GameData.getSerializerMap();
     //private static final ForgeRegistry<DataSerializerEntry> serializerRegistry = (ForgeRegistry<DataSerializerEntry>) ForgeRegistries.DATA_SERIALIZERS;
     // Do not reimplement this ^ it introduces a chicken-egg scenario by classloading registries during bootstrap
 
@@ -1106,7 +1106,7 @@ public class ForgeHooks
         EntityDataSerializer<?> serializer = vanilla.byId(id);
         if (serializer == null)
         {
-            DataSerializerEntry entry = ((ForgeRegistry<DataSerializerEntry>)ForgeRegistries.DATA_SERIALIZERS).getValue(id);
+            DataSerializerEntry entry = ((ForgeRegistry<DataSerializerEntry>)ForgeRegistries.DATA_SERIALIZERS.get()).getValue(id);
             if (entry != null) serializer = entry.getSerializer();
         }
         return serializer;
@@ -1117,8 +1117,16 @@ public class ForgeHooks
         int id = vanilla.getId(serializer);
         if (id < 0)
         {
-            DataSerializerEntry entry = serializerEntries.get(serializer);
-            if (entry != null) id = ((ForgeRegistry<DataSerializerEntry>)ForgeRegistries.DATA_SERIALIZERS).getID(entry);
+            // ForgeRegistries.DATA_SERIALIZERS is a deferred register now, so if this method is called too early, the serializer map will be null
+            // This should keep checking until it's not null
+            if (serializerEntries == null)
+                serializerEntries = GameData.getSerializerMap();
+            if (serializerEntries != null)
+            {
+                DataSerializerEntry entry = serializerEntries.get(serializer);
+                if (entry != null)
+                    id = ((ForgeRegistry<DataSerializerEntry>) ForgeRegistries.DATA_SERIALIZERS.get()).getID(entry);
+            }
         }
         return id;
     }
