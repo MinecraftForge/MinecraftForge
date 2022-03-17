@@ -76,7 +76,7 @@ public class DeferredRegister<T>
      * If the registry is never created, any {@link RegistryObject}s made from this DeferredRegister will throw an exception.
      * To allow the optional existence of a registry without error, use {@link #createOptional(ResourceKey, String)}.
      *
-     * @param key the key of the registry to reference
+     * @param key the key of the registry to reference. May come from another DeferredRegister through {@link #getRegistryKey()}.
      * @param modid the namespace for all objects registered to this DeferredRegister
      * @see #createOptional(ResourceKey, String)
      * @see #create(IForgeRegistry, String)
@@ -161,10 +161,10 @@ public class DeferredRegister<T>
         this.optionalRegistry = optionalRegistry;
     }
 
-    @SuppressWarnings("unchecked")
-    private <E extends IForgeRegistryEntry<E>> DeferredRegister(IForgeRegistry<E> reg, String modid)
+    private DeferredRegister(IForgeRegistry<T> reg, String modid)
     {
-        this((ResourceKey<? extends Registry<T>>) (ResourceKey) reg.getRegistryKey(), modid, false);
+        this(reg.getRegistryKey(), modid, false);
+        this.type = reg;
     }
 
     /**
@@ -343,6 +343,14 @@ public class DeferredRegister<T>
     }
 
     /**
+     * @return The registry key stored in this deferred register. Useful for creating new deferred registers based on an existing one.
+     */
+    public ResourceKey<? extends Registry<T>> getRegistryKey()
+    {
+        return this.registryKey;
+    }
+
+    /**
      * @return The registry name stored in this deferred register. Useful for creating new deferred registers based on an existing one.
      */
     @NotNull
@@ -361,20 +369,7 @@ public class DeferredRegister<T>
             throw new IllegalStateException("Cannot create a registry for a type that already exists");
 
         this.registryFactory = () -> sup.get().setName(registryName).setType(superType);
-        return new Supplier<>()
-        {
-            private IForgeRegistry<E> registry;
-
-            @Override
-            public IForgeRegistry<E> get()
-            {
-                // Keep trying to capture until it's not null
-                if (registry == null)
-                    registry = RegistryManager.ACTIVE.getRegistry(registryName);
-
-                return registry;
-            }
-        };
+        return new RegistryHolder<>(this.registryKey);
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
@@ -393,19 +388,13 @@ public class DeferredRegister<T>
 
     private void addEntries(RegisterEvent event)
     {
-        IForgeRegistry<?> storedType = findForgeRegistry();
-        if (storedType != null && event.getRegistryKey().equals(storedType.getRegistryKey()))
+        if (event.getRegistryKey().equals(this.registryKey))
         {
             this.seenRegisterEvent = true;
-            @SuppressWarnings("unchecked")
-            IForgeRegistry<T> reg = (IForgeRegistry<T>) event.getForgeRegistry();
-            if (reg != null)
+            for (Entry<RegistryObject<T>, Supplier<? extends T>> e : entries.entrySet())
             {
-                for (Entry<RegistryObject<T>, Supplier<? extends T>> e : entries.entrySet())
-                {
-                    reg.register(e.getKey().getId(), e.getValue().get());
-                    e.getKey().updateReference(reg);
-                }
+                event.register(this.registryKey, e.getKey().getId(), e.getValue().get());
+                e.getKey().updateReference(event);
             }
         }
     }
@@ -415,29 +404,24 @@ public class DeferredRegister<T>
         event.create(this.registryFactory.get(), this::onFill);
     }
 
-    @SuppressWarnings({ "unchecked", "removal", "rawtypes" })
-    private void vanillaRegister(VanillaRegisterEvent event)
+    private static class RegistryHolder<V> implements Supplier<IForgeRegistry<V>>
     {
-        if (this.registryKey != null && event.vanillaRegistry.key() == (ResourceKey)this.registryKey)
-        {
-            this.seenRegisterEvent = true;
-            for (Entry<RegistryObject<T>, Supplier<? extends T>> e : entries.entrySet())
-            {
-                Registry.register((Registry<T>) event.vanillaRegistry, e.getKey().getId(), e.getValue().get());
-                e.getKey().updateReference((Registry<T>) event.vanillaRegistry);
-            }
-        }
-    }
+        private final ResourceKey<? extends Registry<V>> registryKey;
+        private IForgeRegistry<V> registry = null;
 
-    @SuppressWarnings({ "rawtypes", "unchecked" })
-    @Nullable
-    private IForgeRegistry<?> findForgeRegistry()
-    {
-        if (this.registryKey != null)
+        private RegistryHolder(ResourceKey<? extends Registry<V>> registryKey)
         {
-            return RegistryManager.ACTIVE.getRegistry((ResourceKey) this.registryKey);
+            this.registryKey = registryKey;
         }
-        else
-            throw new IllegalStateException("Unable to find registry for mod \"" + modid + "\" No lookup criteria specified.");
+
+        @Override
+        public IForgeRegistry<V> get()
+        {
+            // Keep looking up the registry until it's not null
+            if (this.registry == null)
+                this.registry = RegistryManager.ACTIVE.getRegistry(this.registryKey);
+
+            return this.registry;
+        }
     }
 }

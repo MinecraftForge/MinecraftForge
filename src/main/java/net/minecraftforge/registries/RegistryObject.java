@@ -269,6 +269,22 @@ public final class RegistryObject<T> implements Supplier<T>
         this.holder = null;
     }
 
+    void updateReference(RegisterEvent event)
+    {
+        IForgeRegistry<? extends T> forgeRegistry = event.getForgeRegistry();
+        if (forgeRegistry != null)
+        {
+            updateReference(forgeRegistry);
+            return;
+        }
+
+        Registry<? extends T> vanillaRegistry = event.getVanillaRegistry();
+        if (vanillaRegistry != null)
+            updateReference(vanillaRegistry);
+        else
+            this.value = null;
+    }
+
     private static boolean registryExists(ResourceLocation registryName)
     {
         return RegistryManager.ACTIVE.getRegistry(registryName) != null

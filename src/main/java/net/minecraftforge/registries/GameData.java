@@ -381,8 +381,8 @@ public class GameData
             final RegisterEvent event = eventGenerator.apply(null);
             final ResourceKey<? extends Registry<?>> registryKey = event.getRegistryKey();
             StartupMessageManager.modLoaderConsumer().ifPresent(s -> s.accept("REGISTERING " + registryKey.location()));
-            if (event.getForgeRegistry() != null)
-                event.getForgeRegistry().unfreeze();
+            if (event.forgeRegistry != null)
+                event.forgeRegistry.unfreeze();
         }, executor).thenApply(v -> Collections.emptyList());
     }
 
@@ -390,8 +390,8 @@ public class GameData
         return CompletableFuture.runAsync(()-> {
             final RegisterEvent event = eventGenerator.apply(null);
             final ResourceKey<? extends Registry<?>> registryKey = event.getRegistryKey();
-            if (event.getForgeRegistry() != null)
-                event.getForgeRegistry().freeze();
+            if (event.forgeRegistry != null)
+                event.forgeRegistry.freeze();
             LOGGER.debug(REGISTRIES, "Applying holder lookups: {}", registryKey.location());
             ObjectHolderRegistry.applyObjectHolders(registryKey.location()::equals);
             LOGGER.debug(REGISTRIES, "Holder lookups applied: {}", registryKey.location());

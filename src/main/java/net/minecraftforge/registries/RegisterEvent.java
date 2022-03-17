@@ -21,7 +21,7 @@ public class RegisterEvent extends Event implements IModBusEvent
     @NotNull
     private final ResourceKey<? extends Registry<?>> registryKey;
     @Nullable
-    private final ForgeRegistry<?> forgeRegistry;
+    final ForgeRegistry<?> forgeRegistry;
     @Nullable
     private final Registry<?> vanillaRegistry;
 
@@ -65,18 +65,20 @@ public class RegisterEvent extends Event implements IModBusEvent
      * @return The forge registry for the given registry key, or {@code null} if the registry is not a forge registry
      */
     @Nullable
-    public ForgeRegistry<?> getForgeRegistry()
+    @SuppressWarnings("unchecked")
+    public <T> IForgeRegistry<T> getForgeRegistry()
     {
-        return forgeRegistry;
+        return (IForgeRegistry<T>) forgeRegistry;
     }
 
     /**
      * @return The vanilla registry for the given registry key, or {@code null} if the registry is not a vanilla registry
      */
     @Nullable
-    public Registry<?> getVanillaRegistry()
+    @SuppressWarnings("unchecked")
+    public <T> Registry<T> getVanillaRegistry()
     {
-        return vanillaRegistry;
+        return (Registry<T>) vanillaRegistry;
     }
 
     @Override
