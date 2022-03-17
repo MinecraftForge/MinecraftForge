@@ -16,7 +16,7 @@ import java.util.function.Consumer;
  *
  * Called before {@link FMLClientSetupEvent} or {@link FMLDedicatedServerSetupEvent} during mod startup.
  *
- * Called after {@link net.minecraftforge.event.RegistryEvent.Register} events have been fired.
+ * Called after {@link net.minecraftforge.registries.RegisterEvent} events have been fired.
  *
  * Either register your listener using {@link net.minecraftforge.fml.javafmlmod.AutomaticEventSubscriber} and
  * {@link net.minecraftforge.eventbus.api.SubscribeEvent} or

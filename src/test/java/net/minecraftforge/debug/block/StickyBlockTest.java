@@ -11,12 +11,12 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
-import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.ObjectHolder;
+import net.minecraftforge.registries.RegisterEvent;
 
 @Mod(StickyBlockTest.MODID)
 @Mod.EventBusSubscriber(bus = Bus.MOD)
@@ -29,21 +29,27 @@ public class StickyBlockTest
     public static Block BLUE_BLOCK;
 
     @SubscribeEvent
-    public static void registerBlocks(RegistryEvent.Register<Block> event)
+    public static void registerBlocks(RegisterEvent event)
     {
-        event.getRegistry().register(new ResourceLocation(MODID, BLOCK_ID), new Block(Block.Properties.of(Material.STONE))
+        if (event.getRegistryKey().equals(ForgeRegistries.Keys.BLOCKS))
         {
-            @Override
-            public boolean isStickyBlock(BlockState state)
+            event.register(ForgeRegistries.Keys.BLOCKS, new ResourceLocation(MODID, BLOCK_ID), new Block(Block.Properties.of(Material.STONE))
             {
-                return true;
-            }
-        });
+                @Override
+                public boolean isStickyBlock(BlockState state)
+                {
+                    return true;
+                }
+            });
+        }
     }
 
     @SubscribeEvent
-    public static void registerItems(RegistryEvent.Register<Item> event)
+    public static void registerItems(RegisterEvent event)
     {
-        event.getRegistry().register(ForgeRegistries.BLOCKS.getKey(BLUE_BLOCK), new BlockItem(BLUE_BLOCK, new Item.Properties()));
+        if (event.getRegistryKey().equals(ForgeRegistries.Keys.ITEMS))
+        {
+            event.register(ForgeRegistries.Keys.ITEMS, ForgeRegistries.BLOCKS.getKey(BLUE_BLOCK), new BlockItem(BLUE_BLOCK, new Item.Properties()));
+        }
     }
 }

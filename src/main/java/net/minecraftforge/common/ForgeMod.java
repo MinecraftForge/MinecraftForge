@@ -24,10 +24,8 @@ import net.minecraftforge.common.crafting.IntersectionIngredient;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.common.data.ForgeFluidTagsProvider;
 import net.minecraftforge.common.loot.CanToolPerformAction;
-import net.minecraftforge.common.loot.GlobalLootModifierSerializer;
 import net.minecraftforge.common.loot.LootTableIdCondition;
 import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fluids.FluidAttributes;
 import net.minecraftforge.fluids.ForgeFlowingFluid;
 import net.minecraftforge.fml.*;
@@ -50,7 +48,6 @@ import org.apache.logging.log4j.Logger;
 
 import net.minecraft.data.DataGenerator;
 import net.minecraft.world.item.crafting.Recipe;
-import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.crafting.CompoundIngredient;
 import net.minecraftforge.common.crafting.ConditionalRecipe;
@@ -70,7 +67,6 @@ import net.minecraftforge.common.data.ForgeItemTagsProvider;
 import net.minecraftforge.common.data.ForgeLootTableProvider;
 import net.minecraftforge.common.data.ForgeRecipeProvider;
 import net.minecraftforge.energy.CapabilityEnergy;
-import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.fml.common.Mod;
@@ -132,7 +128,9 @@ public class ForgeMod
         modEventBus.addListener(this::preInit);
         modEventBus.addListener(this::gatherData);
         modEventBus.addListener(this::loadComplete);
-        modEventBus.addGenericListener(Fluid.class, this::registerFluids);
+        modEventBus.addListener(this::registerFluids);
+        modEventBus.addListener(this::registerRecipeSerializers);
+        modEventBus.addListener(this::registerLootData);
         modEventBus.register(this);
         ATTRIBUTES.register(modEventBus);
         MinecraftForge.EVENT_BUS.addListener(this::serverStopping);
@@ -187,7 +185,7 @@ public class ForgeMod
         WorldWorkerManager.clear();
     }
 
-    public void mappingChanged(RegistryEvent.IdMappingEvent evt)
+    public void mappingChanged(IdMappingEvent evt)
     {
         Ingredient.invalidateAll();
     }
@@ -208,11 +206,11 @@ public class ForgeMod
         }
     }
 
-    public void missingSoundMapping(RegistryEvent.MissingMappings<SoundEvent> event)
+    public void missingSoundMapping(MissingMappingsEvent<SoundEvent> event)
     {
         //Removed in 1.15, see https://minecraft.gamepedia.com/Parrot#History
         List<String> removedSounds = Arrays.asList("entity.parrot.imitate.panda", "entity.parrot.imitate.zombie_pigman", "entity.parrot.imitate.enderman", "entity.parrot.imitate.polar_bear", "entity.parrot.imitate.wolf");
-        for (RegistryEvent.MissingMappings.Mapping<SoundEvent> mapping : event.getAllMappings())
+        for (MissingMappingsEvent.Mapping<SoundEvent> mapping : event.getAllMappings())
         {
             ResourceLocation regName = mapping.key;
             if (regName != null && regName.getNamespace().equals("minecraft"))
@@ -228,48 +226,50 @@ public class ForgeMod
     }
 
     // done in an event instead of deferred to only enable if a mod requests it
-    public void registerFluids(RegistryEvent.Register<Fluid> event)
+    public void registerFluids(RegisterEvent event)
     {
-        if (enableMilkFluid)
+        if (enableMilkFluid && event.getRegistryKey().equals(ForgeRegistries.Keys.FLUIDS))
         {
             // set up attributes
             FluidAttributes.Builder attributesBuilder = FluidAttributes.builder(new ResourceLocation("forge", "block/milk_still"), new ResourceLocation("forge", "block/milk_flowing")).density(1024).viscosity(1024);
             ForgeFlowingFluid.Properties properties = new ForgeFlowingFluid.Properties(MILK, FLOWING_MILK, attributesBuilder).bucket(() -> Items.MILK_BUCKET);
             // register fluids
-            event.getRegistry().register(MILK.getId(), new ForgeFlowingFluid.Source(properties));
-            event.getRegistry().register(FLOWING_MILK.getId(), new ForgeFlowingFluid.Flowing(properties));
+            event.register(ForgeRegistries.Keys.FLUIDS, MILK.getId(), new ForgeFlowingFluid.Source(properties));
+            event.register(ForgeRegistries.Keys.FLUIDS, FLOWING_MILK.getId(), new ForgeFlowingFluid.Flowing(properties));
         }
     }
 
-    @SubscribeEvent //ModBus, can't use addListener due to nested genetics.
-    public void registerRecipeSerialziers(RegistryEvent.Register<RecipeSerializer<?>> event)
+    public void registerRecipeSerializers(RegisterEvent event)
     {
-        CraftingHelper.register(AndCondition.Serializer.INSTANCE);
-        CraftingHelper.register(FalseCondition.Serializer.INSTANCE);
-        CraftingHelper.register(ItemExistsCondition.Serializer.INSTANCE);
-        CraftingHelper.register(ModLoadedCondition.Serializer.INSTANCE);
-        CraftingHelper.register(NotCondition.Serializer.INSTANCE);
-        CraftingHelper.register(OrCondition.Serializer.INSTANCE);
-        CraftingHelper.register(TrueCondition.Serializer.INSTANCE);
-        CraftingHelper.register(TagEmptyCondition.Serializer.INSTANCE);
+        if (event.getRegistryKey().equals(ForgeRegistries.Keys.RECIPE_SERIALIZERS))
+        {
+            CraftingHelper.register(AndCondition.Serializer.INSTANCE);
+            CraftingHelper.register(FalseCondition.Serializer.INSTANCE);
+            CraftingHelper.register(ItemExistsCondition.Serializer.INSTANCE);
+            CraftingHelper.register(ModLoadedCondition.Serializer.INSTANCE);
+            CraftingHelper.register(NotCondition.Serializer.INSTANCE);
+            CraftingHelper.register(OrCondition.Serializer.INSTANCE);
+            CraftingHelper.register(TrueCondition.Serializer.INSTANCE);
+            CraftingHelper.register(TagEmptyCondition.Serializer.INSTANCE);
 
-        CraftingHelper.register(new ResourceLocation("forge", "compound"), CompoundIngredient.Serializer.INSTANCE);
-        CraftingHelper.register(new ResourceLocation("forge", "nbt"), NBTIngredient.Serializer.INSTANCE);
-        CraftingHelper.register(new ResourceLocation("forge", "partial_nbt"), PartialNBTIngredient.Serializer.INSTANCE);
-        CraftingHelper.register(new ResourceLocation("forge", "difference"), DifferenceIngredient.Serializer.INSTANCE);
-        CraftingHelper.register(new ResourceLocation("forge", "intersection"), IntersectionIngredient.Serializer.INSTANCE);
-        CraftingHelper.register(new ResourceLocation("minecraft", "item"), VanillaIngredientSerializer.INSTANCE);
+            CraftingHelper.register(new ResourceLocation("forge", "compound"), CompoundIngredient.Serializer.INSTANCE);
+            CraftingHelper.register(new ResourceLocation("forge", "nbt"), NBTIngredient.Serializer.INSTANCE);
+            CraftingHelper.register(new ResourceLocation("forge", "partial_nbt"), PartialNBTIngredient.Serializer.INSTANCE);
+            CraftingHelper.register(new ResourceLocation("forge", "difference"), DifferenceIngredient.Serializer.INSTANCE);
+            CraftingHelper.register(new ResourceLocation("forge", "intersection"), IntersectionIngredient.Serializer.INSTANCE);
+            CraftingHelper.register(new ResourceLocation("minecraft", "item"), VanillaIngredientSerializer.INSTANCE);
 
-        event.getRegistry().register(new ResourceLocation("forge", "conditional"), new ConditionalRecipe.Serializer<Recipe<?>>());
-
+            event.register(ForgeRegistries.Keys.RECIPE_SERIALIZERS, new ResourceLocation("forge", "conditional"), new ConditionalRecipe.Serializer<>());
+        }
     }
 
-    @SubscribeEvent //ModBus
-    @SuppressWarnings("unused") // automatically called by Forge
-    public void registerLootData(RegistryEvent.Register<GlobalLootModifierSerializer<?>> event)
+    public void registerLootData(RegisterEvent event)
     {
-        // Ignore the event itself: this is done only not to statically initialize our custom LootConditionType
-        Registry.register(Registry.LOOT_CONDITION_TYPE, new ResourceLocation("forge:loot_table_id"), LootTableIdCondition.LOOT_TABLE_ID);
-        Registry.register(Registry.LOOT_CONDITION_TYPE, new ResourceLocation("forge:can_tool_perform_action"), CanToolPerformAction.LOOT_CONDITION_TYPE);
+        if (event.getRegistryKey().equals(ForgeRegistries.Keys.LOOT_MODIFIER_SERIALIZERS))
+        {
+            // Ignore the event itself: this is done only not to statically initialize our custom LootConditionType
+            Registry.register(Registry.LOOT_CONDITION_TYPE, new ResourceLocation("forge:loot_table_id"), LootTableIdCondition.LOOT_TABLE_ID);
+            Registry.register(Registry.LOOT_CONDITION_TYPE, new ResourceLocation("forge:can_tool_perform_action"), CanToolPerformAction.LOOT_CONDITION_TYPE);
+        }
     }
 }

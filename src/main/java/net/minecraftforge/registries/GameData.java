@@ -5,71 +5,77 @@
 
 package net.minecraftforge.registries;
 
-import com.google.common.collect.*;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Multimap;
 import com.mojang.serialization.Lifecycle;
-
-import java.util.*;
-
-import net.minecraft.data.BuiltinRegistries;
-import net.minecraft.world.level.block.AirBlock;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.material.Material;
-import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.core.DefaultedRegistry;
+import net.minecraft.core.IdMapper;
+import net.minecraft.core.MappedRegistry;
+import net.minecraft.core.Registry;
+import net.minecraft.core.particles.ParticleType;
+import net.minecraft.network.syncher.EntityDataSerializer;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.stats.StatType;
+import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.DefaultAttributes;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
-import net.minecraft.world.entity.schedule.Activity;
-import net.minecraft.world.entity.schedule.Schedule;
 import net.minecraft.world.entity.ai.sensing.SensorType;
+import net.minecraft.world.entity.ai.village.poi.PoiType;
 import net.minecraft.world.entity.decoration.Motive;
 import net.minecraft.world.entity.npc.VillagerProfession;
-import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.entity.schedule.Activity;
+import net.minecraft.world.entity.schedule.Schedule;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.minecraft.network.syncher.EntityDataSerializer;
-import net.minecraft.core.particles.ParticleType;
-import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.item.alchemy.Potion;
-import net.minecraft.world.level.block.state.StateDefinition;
-import net.minecraft.stats.StatType;
-import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraft.core.DefaultedRegistry;
-import net.minecraft.core.Registry;
-import net.minecraft.core.MappedRegistry;
-import net.minecraft.world.entity.ai.village.poi.PoiType;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.block.AirBlock;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.chunk.ChunkStatus;
 import net.minecraft.world.level.levelgen.DebugLevelSource;
-import net.minecraft.world.level.levelgen.feature.stateproviders.BlockStateProviderType;
 import net.minecraft.world.level.levelgen.carver.WorldCarver;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.StructureFeature;
 import net.minecraft.world.level.levelgen.feature.foliageplacers.FoliagePlacerType;
+import net.minecraft.world.level.levelgen.feature.stateproviders.BlockStateProviderType;
 import net.minecraft.world.level.levelgen.feature.treedecorators.TreeDecoratorType;
+import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.level.material.Material;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.loot.GlobalLootModifierSerializer;
 import net.minecraftforge.common.util.LogMessageAdapter;
 import net.minecraftforge.common.world.ForgeWorldPreset;
-import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.event.RegistryEvent.MissingMappings;
-import net.minecraftforge.fml.ModLoader;
-import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.IModStateTransition;
+import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.StartupMessageManager;
 import net.minecraftforge.fml.util.EnhancedRuntimeException;
 import net.minecraftforge.fml.util.thread.EffectiveSide;
-
 import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nullable;
-
-import java.lang.reflect.Field;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.function.BiConsumer;
@@ -77,13 +83,39 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static net.minecraftforge.registries.ForgeRegistries.Keys.ACTIVITIES;
+import static net.minecraftforge.registries.ForgeRegistries.Keys.ATTRIBUTES;
+import static net.minecraftforge.registries.ForgeRegistries.Keys.BIOMES;
+import static net.minecraftforge.registries.ForgeRegistries.Keys.BLOCKS;
+import static net.minecraftforge.registries.ForgeRegistries.Keys.BLOCK_ENTITY_TYPES;
+import static net.minecraftforge.registries.ForgeRegistries.Keys.BLOCK_STATE_PROVIDER_TYPES;
+import static net.minecraftforge.registries.ForgeRegistries.Keys.CHUNK_STATUS;
+import static net.minecraftforge.registries.ForgeRegistries.Keys.CONTAINER_TYPES;
+import static net.minecraftforge.registries.ForgeRegistries.Keys.DATA_SERIALIZERS;
+import static net.minecraftforge.registries.ForgeRegistries.Keys.ENCHANTMENTS;
+import static net.minecraftforge.registries.ForgeRegistries.Keys.ENTITY_TYPES;
+import static net.minecraftforge.registries.ForgeRegistries.Keys.FEATURES;
+import static net.minecraftforge.registries.ForgeRegistries.Keys.FLUIDS;
+import static net.minecraftforge.registries.ForgeRegistries.Keys.FOLIAGE_PLACER_TYPES;
+import static net.minecraftforge.registries.ForgeRegistries.Keys.ITEMS;
+import static net.minecraftforge.registries.ForgeRegistries.Keys.LOOT_MODIFIER_SERIALIZERS;
+import static net.minecraftforge.registries.ForgeRegistries.Keys.MEMORY_MODULE_TYPES;
+import static net.minecraftforge.registries.ForgeRegistries.Keys.MOB_EFFECTS;
+import static net.minecraftforge.registries.ForgeRegistries.Keys.PAINTING_TYPES;
+import static net.minecraftforge.registries.ForgeRegistries.Keys.PARTICLE_TYPES;
+import static net.minecraftforge.registries.ForgeRegistries.Keys.POI_TYPES;
+import static net.minecraftforge.registries.ForgeRegistries.Keys.POTIONS;
+import static net.minecraftforge.registries.ForgeRegistries.Keys.RECIPE_SERIALIZERS;
+import static net.minecraftforge.registries.ForgeRegistries.Keys.SCHEDULES;
+import static net.minecraftforge.registries.ForgeRegistries.Keys.SENSOR_TYPES;
+import static net.minecraftforge.registries.ForgeRegistries.Keys.SOUND_EVENTS;
+import static net.minecraftforge.registries.ForgeRegistries.Keys.STAT_TYPES;
+import static net.minecraftforge.registries.ForgeRegistries.Keys.STRUCTURE_FEATURES;
+import static net.minecraftforge.registries.ForgeRegistries.Keys.TREE_DECORATOR_TYPES;
+import static net.minecraftforge.registries.ForgeRegistries.Keys.VILLAGER_PROFESSIONS;
+import static net.minecraftforge.registries.ForgeRegistries.Keys.WORLD_CARVERS;
+import static net.minecraftforge.registries.ForgeRegistries.Keys.WORLD_TYPES;
 import static net.minecraftforge.registries.ForgeRegistry.REGISTRIES;
-import static net.minecraftforge.registries.ForgeRegistries.Keys.*;
-
-import net.minecraft.core.IdMapper;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.sounds.SoundEvent;
 
 /**
  * INTERNAL ONLY
@@ -325,8 +357,10 @@ public class GameData
     }
 
     public static Stream<IModStateTransition.EventGenerator<?>> generateRegistryEvents() {
-        List<ResourceLocation> keys = Lists.newArrayList(RegistryManager.ACTIVE.registries.keySet());
-        keys.sort((o1, o2) -> String.valueOf(o1).compareToIgnoreCase(String.valueOf(o2)));
+        List<ResourceLocation> keys = Stream.concat(RegistryManager.ACTIVE.registries.keySet().stream(), RegistryManager.getVanillaRegistryKeys().stream())
+                .distinct()
+                .sorted((o1, o2) -> String.valueOf(o1).compareToIgnoreCase(String.valueOf(o2)))
+                .collect(Collectors.toList());
 
         //Move Blocks to first, and Items to second.
         keys.remove(BLOCKS.location());
@@ -335,35 +369,33 @@ public class GameData
         keys.add(0, BLOCKS.location());
         keys.add(1, ITEMS.location());
 
-        final Function<ResourceLocation, ? extends RegistryEvent.Register<?>> registerEventGenerator = rl -> RegistryManager.ACTIVE.getRegistry(rl).getRegisterEvent(rl);
+        Map<ResourceLocation, RegisterEvent> cache = Maps.newHashMap();
+        final Function<ResourceLocation, ? extends RegisterEvent> registerEventGenerator =
+                rl -> cache.computeIfAbsent(rl, k -> new RegisterEvent(ResourceKey.createRegistryKey(rl), RegistryManager.ACTIVE.getRegistry(rl), Registry.REGISTRY.get(rl)));
         return keys.stream().map(rl -> IModStateTransition.EventGenerator.fromFunction(mc -> registerEventGenerator.apply(rl)));
     }
 
-    public static CompletableFuture<List<Throwable>> preRegistryEventDispatch(final Executor executor, final IModStateTransition.EventGenerator<? extends RegistryEvent.Register<?>> eventGenerator) {
-        return CompletableFuture.runAsync(()-> {
-                    final RegistryEvent.Register<?> event = eventGenerator.apply(null);
-                    final ResourceLocation rl = event.getName();
-                    ForgeRegistry<?> fr = (ForgeRegistry<?>) event.getRegistry();
-                    StartupMessageManager.modLoaderConsumer().ifPresent(s -> s.accept("REGISTERING " + rl));
-                    fr.unfreeze();
-                }, executor).thenApply(v->Collections.emptyList());
+    public static CompletableFuture<List<Throwable>> preRegistryEventDispatch(final Executor executor, final IModStateTransition.EventGenerator<? extends RegisterEvent> eventGenerator) {
+        return CompletableFuture.runAsync(() ->
+        {
+            final RegisterEvent event = eventGenerator.apply(null);
+            final ResourceKey<? extends Registry<?>> registryKey = event.getRegistryKey();
+            StartupMessageManager.modLoaderConsumer().ifPresent(s -> s.accept("REGISTERING " + registryKey.location()));
+            if (event.getForgeRegistry() != null)
+                event.getForgeRegistry().unfreeze();
+        }, executor).thenApply(v -> Collections.emptyList());
     }
 
-    public static CompletableFuture<List<Throwable>> postRegistryEventDispatch(final Executor executor, final IModStateTransition.EventGenerator<? extends RegistryEvent.Register<?>> eventGenerator) {
+    public static CompletableFuture<List<Throwable>> postRegistryEventDispatch(final Executor executor, final IModStateTransition.EventGenerator<? extends RegisterEvent> eventGenerator) {
         return CompletableFuture.runAsync(()-> {
-            final RegistryEvent.Register<?> event = eventGenerator.apply(null);
-            final ResourceLocation rl = event.getName();
-            ForgeRegistry<?> fr = (ForgeRegistry<?>) event.getRegistry();
-            fr.freeze();
-            applyHolderLookups(rl);
-        }, executor).handle((v, t)->t != null ? Collections.singletonList(t): Collections.emptyList());
-    }
-
-    private static void applyHolderLookups(ResourceLocation registryName)
-    {
-        LOGGER.debug(REGISTRIES, "Applying holder lookups: {}", registryName);
-        ObjectHolderRegistry.applyObjectHolders(registryName::equals);
-        LOGGER.debug(REGISTRIES, "Holder lookups applied: {}", registryName);
+            final RegisterEvent event = eventGenerator.apply(null);
+            final ResourceKey<? extends Registry<?>> registryKey = event.getRegistryKey();
+            if (event.getForgeRegistry() != null)
+                event.getForgeRegistry().freeze();
+            LOGGER.debug(REGISTRIES, "Applying holder lookups: {}", registryKey.location());
+            ObjectHolderRegistry.applyObjectHolders(registryKey.location()::equals);
+            LOGGER.debug(REGISTRIES, "Holder lookups applied: {}", registryKey.location());
+        }, executor).handle((v, t)-> t != null ? Collections.singletonList(t) : Collections.emptyList());
     }
 
     @SuppressWarnings("deprecation")
@@ -374,26 +406,9 @@ public class GameData
                 revertTo(RegistryManager.VANILLA, false);
                 LOGGER.fatal("Detected errors during registry event dispatch, roll back to VANILLA complete");
             } else {
-                RegistryManager.getVanillaRegistryKeys().forEach(registryName -> {
-                    Registry<?> registry = Registry.REGISTRY.get(registryName);
-                    if (registry == null)
-                        return;
-                    postVanillaRegisterEvent(registry);
-                });
-                BuiltinRegistries.REGISTRY.forEach(GameData::postVanillaRegisterEvent);
                 net.minecraftforge.common.ForgeHooks.modifyAttributes();
             }
         }, executor);
-    }
-
-    @SuppressWarnings("removal")
-    private static void postVanillaRegisterEvent(Registry<?> registry)
-    {
-        if (RegistryManager.ACTIVE.getRegistry(registry.key().location()) != null)
-            return;
-
-        ModLoader.get().postEvent(new VanillaRegisterEvent(registry));
-        applyHolderLookups(registry.key().location());
     }
 
     //Lets us clear the map so we can rebuild it.
@@ -743,10 +758,10 @@ public class GameData
             {
                 ResourceLocation name = m.getKey();
                 ForgeRegistry<?> reg = STAGING.getRegistry(name);
-                RegistryEvent.MissingMappings<?> event = reg.getMissingEvent(name, m.getValue());
+                MissingMappingsEvent<?> event = reg.getMissingEvent(name, m.getValue());
                 MinecraftForge.EVENT_BUS.post(event);
 
-                List<MissingMappings.Mapping<?>> lst = event.getAllMappings().stream().filter(e -> e.getAction() == MissingMappings.Action.DEFAULT).sorted((a, b) -> a.toString().compareTo(b.toString())).collect(Collectors.toList());
+                List<MissingMappingsEvent.Mapping<?>> lst = event.getAllMappings().stream().filter(e -> e.getAction() == MissingMappingsEvent.Action.DEFAULT).sorted((a, b) -> a.toString().compareTo(b.toString())).collect(Collectors.toList());
                 if (!lst.isEmpty())
                 {
                     LOGGER.error(REGISTRIES,()->LogMessageAdapter.adapt(sb->{
@@ -754,7 +769,7 @@ public class GameData
                        lst.stream().sorted().forEach(map->sb.append('\t').append(map.key).append(": ").append(map.id).append('\n'));
                     }));
                 }
-                event.getAllMappings().stream().filter(e -> e.getAction() == MissingMappings.Action.FAIL).forEach(fail -> failed.put(name, fail.key));
+                event.getAllMappings().stream().filter(e -> e.getAction() == MissingMappingsEvent.Action.FAIL).forEach(fail -> failed.put(name, fail.key));
 
                 final Class<?> clazz = RegistryManager.ACTIVE.getSuperType(name);
                 processMissing(clazz, name, STAGING, event, m.getValue(), remaps.get(name), defaulted.get(name), failed.get(name), !isLocalWorld);
@@ -842,7 +857,7 @@ public class GameData
 
     private static void fireRemapEvent(final Map<ResourceLocation, Map<ResourceLocation, Integer[]>> remaps, final boolean isFreezing) {
         StartupMessageManager.modLoaderConsumer().ifPresent(s->s.accept("Remapping mod data"));
-        MinecraftForge.EVENT_BUS.post(new RegistryEvent.IdMappingEvent(remaps, isFreezing));
+        MinecraftForge.EVENT_BUS.post(new IdMappingEvent(remaps, isFreezing));
         StartupMessageManager.modLoaderConsumer().ifPresent(s->s.accept("Remap complete"));
     }
 
@@ -862,9 +877,9 @@ public class GameData
 
     //Another bouncer for generic reasons
     @SuppressWarnings("unchecked")
-    private static <T> void processMissing(Class<T> clazz, ResourceLocation name, RegistryManager STAGING, MissingMappings<?> e, Map<ResourceLocation, Integer> missing, Map<ResourceLocation, Integer[]> remaps, Collection<ResourceLocation> defaulted, Collection<ResourceLocation> failed, boolean injectNetworkDummies)
+    private static <T> void processMissing(Class<T> clazz, ResourceLocation name, RegistryManager STAGING, MissingMappingsEvent<?> e, Map<ResourceLocation, Integer> missing, Map<ResourceLocation, Integer[]> remaps, Collection<ResourceLocation> defaulted, Collection<ResourceLocation> failed, boolean injectNetworkDummies)
     {
-        List<MissingMappings.Mapping<T>> mappings = ((MissingMappings<T>)e).getAllMappings();
+        List<MissingMappingsEvent.Mapping<T>> mappings = ((MissingMappingsEvent<T>)e).getAllMappings();
         ForgeRegistry<T> active = RegistryManager.ACTIVE.getRegistry(name);
         ForgeRegistry<T> staging = STAGING.getRegistry(name);
         staging.processMissingEvent(name, active, mappings, missing, remaps, defaulted, failed, injectNetworkDummies);

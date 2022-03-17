@@ -12,7 +12,6 @@ import net.minecraft.data.BuiltinRegistries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
-import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.registries.tags.ITagManager;
@@ -179,7 +178,7 @@ public class DeferredRegister<T>
     public <I extends T> RegistryObject<I> register(final String name, final Supplier<? extends I> sup)
     {
         if (seenRegisterEvent)
-            throw new IllegalStateException("Cannot register new entries to DeferredRegister after RegistryEvent.Register has been fired.");
+            throw new IllegalStateException("Cannot register new entries to DeferredRegister after RegisterEvent has been fired.");
         Objects.requireNonNull(name);
         Objects.requireNonNull(sup);
         final ResourceLocation key = new ResourceLocation(modid, name);
@@ -331,7 +330,7 @@ public class DeferredRegister<T>
         }
 
         @SubscribeEvent
-        public void handleEvent(RegistryEvent.Register<?> event) {
+        public void handleEvent(RegisterEvent event) {
             register.addEntries(event);
         }
     }
@@ -392,18 +391,21 @@ public class DeferredRegister<T>
         Multimaps.asMap(this.optionalTags).forEach(tagManager::addOptionalTagDefaults);
     }
 
-    @SuppressWarnings({ "rawtypes", "unchecked" })
-    private void addEntries(RegistryEvent.Register<?> event)
+    private void addEntries(RegisterEvent event)
     {
         IForgeRegistry<?> storedType = findForgeRegistry();
-        if (storedType != null && event.getGenericType() == storedType.getRegistrySuperType())
+        if (storedType != null && event.getRegistryKey().equals(storedType.getRegistryKey()))
         {
             this.seenRegisterEvent = true;
-            IForgeRegistry<? extends T> reg = (IForgeRegistry<? extends T>) event.getRegistry();
-            for (Entry<RegistryObject<T>, Supplier<? extends T>> e : entries.entrySet())
+            @SuppressWarnings("unchecked")
+            IForgeRegistry<T> reg = (IForgeRegistry<T>) event.getForgeRegistry();
+            if (reg != null)
             {
-                ((IForgeRegistry) reg).register(e.getKey().getId(), (IForgeRegistryEntry) e.getValue().get());
-                e.getKey().updateReference(reg);
+                for (Entry<RegistryObject<T>, Supplier<? extends T>> e : entries.entrySet())
+                {
+                    reg.register(e.getKey().getId(), e.getValue().get());
+                    e.getKey().updateReference(reg);
+                }
             }
         }
     }

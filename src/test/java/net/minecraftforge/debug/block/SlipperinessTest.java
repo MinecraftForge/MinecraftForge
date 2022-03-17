@@ -15,12 +15,12 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.LevelReader;
-import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.ObjectHolder;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.registries.RegisterEvent;
 
 @Mod(SlipperinessTest.MOD_ID)
 @EventBusSubscriber
@@ -33,22 +33,28 @@ public class SlipperinessTest
     public static final Block BB_BLOCK = null;
 
     @SubscribeEvent
-    public static void registerBlocks(RegistryEvent.Register<Block> e)
+    public static void registerBlocks(RegisterEvent e)
     {
-        e.getRegistry().register(new ResourceLocation(MOD_ID, BLOCK_ID), new Block(Block.Properties.of(Material.ICE_SOLID))
+        if (e.getRegistryKey().equals(ForgeRegistries.Keys.BLOCKS))
         {
-            @Override
-            public float getFriction(BlockState state, LevelReader level, BlockPos pos, Entity entity)
+            e.register(ForgeRegistries.Keys.BLOCKS, new ResourceLocation(MOD_ID, BLOCK_ID), new Block(Block.Properties.of(Material.ICE_SOLID))
             {
-                return entity instanceof Boat ? 2 : super.getFriction(state, level, pos, entity);
-            }
-        });
+                @Override
+                public float getFriction(BlockState state, LevelReader level, BlockPos pos, Entity entity)
+                {
+                    return entity instanceof Boat ? 2 : super.getFriction(state, level, pos, entity);
+                }
+            });
+        }
     }
 
     @SubscribeEvent
-    public static void registerItems(RegistryEvent.Register<Item> e)
+    public static void registerItems(RegisterEvent e)
     {
-        e.getRegistry().register(ForgeRegistries.BLOCKS.getKey(BB_BLOCK), new BlockItem(BB_BLOCK, new Item.Properties()));
+        if (e.getRegistryKey().equals(ForgeRegistries.Keys.ITEMS))
+        {
+            e.register(ForgeRegistries.Keys.ITEMS, ForgeRegistries.BLOCKS.getKey(BB_BLOCK), new BlockItem(BB_BLOCK, new Item.Properties()));
+        }
     }
 
     /*

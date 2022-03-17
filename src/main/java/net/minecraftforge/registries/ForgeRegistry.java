@@ -39,8 +39,6 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.core.Registry;
 import net.minecraftforge.common.util.TablePrinter;
-import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.event.RegistryEvent.MissingMappings;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
@@ -802,11 +800,6 @@ public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegist
         this.isFrozen = false;
     }
 
-    RegistryEvent.Register<V> getRegisterEvent(ResourceLocation name)
-    {
-        return new RegistryEvent.Register<V>(name, this);
-    }
-
     void dump(ResourceLocation name)
     {
         // Building a good looking table is not cheap, so only do it if the debug logger is enabled.
@@ -1199,24 +1192,24 @@ public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegist
         }
     }
 
-    public MissingMappings<?> getMissingEvent(ResourceLocation name, Map<ResourceLocation, Integer> map)
+    public MissingMappingsEvent<?> getMissingEvent(ResourceLocation name, Map<ResourceLocation, Integer> map)
     {
-        List<MissingMappings.Mapping<V>> lst = Lists.newArrayList();
+        List<MissingMappingsEvent.Mapping<V>> lst = Lists.newArrayList();
         ForgeRegistry<V> pool = RegistryManager.ACTIVE.getRegistry(name);
-        map.forEach((rl, id) -> lst.add(new MissingMappings.Mapping<V>(this, pool, rl, id)));
-        return new MissingMappings<V>(name, this, lst);
+        map.forEach((rl, id) -> lst.add(new MissingMappingsEvent.Mapping<V>(this, pool, rl, id)));
+        return new MissingMappingsEvent<V>(name, this, lst);
     }
 
-    void processMissingEvent(ResourceLocation name, ForgeRegistry<V> pool, List<MissingMappings.Mapping<V>> mappings, Map<ResourceLocation, Integer> missing, Map<ResourceLocation, Integer[]> remaps, Collection<ResourceLocation> defaulted, Collection<ResourceLocation> failed, boolean injectNetworkDummies)
+    void processMissingEvent(ResourceLocation name, ForgeRegistry<V> pool, List<MissingMappingsEvent.Mapping<V>> mappings, Map<ResourceLocation, Integer> missing, Map<ResourceLocation, Integer[]> remaps, Collection<ResourceLocation> defaulted, Collection<ResourceLocation> failed, boolean injectNetworkDummies)
     {
         LOGGER.debug(REGISTRIES,"Processing missing event for {}:", name);
         int ignored = 0;
 
-        for (MissingMappings.Mapping<V> remap : mappings)
+        for (MissingMappingsEvent.Mapping<V> remap : mappings)
         {
-            MissingMappings.Action action = remap.getAction();
+            MissingMappingsEvent.Action action = remap.getAction();
 
-            if (action == MissingMappings.Action.REMAP)
+            if (action == MissingMappingsEvent.Action.REMAP)
             {
                 // entry re-mapped, finish the registration with the new name/object, but the old id
                 int currId = getID(remap.getTarget());
@@ -1240,7 +1233,7 @@ public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegist
             else
             {
                 // block item missing, warn as requested and block the id
-                if (action == MissingMappings.Action.DEFAULT)
+                if (action == MissingMappingsEvent.Action.DEFAULT)
                 {
                     V m = this.missing == null ? null : this.missing.createMissing(remap.key, injectNetworkDummies);
                     if (m == null)
@@ -1248,17 +1241,17 @@ public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegist
                     else
                         this.add(remap.id, remap.key, m, remap.key.getNamespace());
                 }
-                else if (action == MissingMappings.Action.IGNORE)
+                else if (action == MissingMappingsEvent.Action.IGNORE)
                 {
                     LOGGER.debug(REGISTRIES,"Ignoring {}", remap.key);
                     ignored++;
                 }
-                else if (action == MissingMappings.Action.FAIL)
+                else if (action == MissingMappingsEvent.Action.FAIL)
                 {
                     LOGGER.debug(REGISTRIES,"Failing {}!", remap.key);
                     failed.add(remap.key);
                 }
-                else if (action == MissingMappings.Action.WARN)
+                else if (action == MissingMappingsEvent.Action.WARN)
                 {
                     LOGGER.warn(REGISTRIES,"{} may cause world breakage!", remap.key);
                 }

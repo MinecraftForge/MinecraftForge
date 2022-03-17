@@ -25,11 +25,12 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
-import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.ObjectHolder;
+import net.minecraftforge.registries.RegisterEvent;
 
 import java.util.Collections;
 
@@ -43,9 +44,12 @@ public class EntityRendererEventsTest
     public static EntityType<MyEntity> MY_ENTITY_TYPE;
 
     @SubscribeEvent
-    public static void entityRegistry(RegistryEvent.Register<EntityType<?>> event)
+    public static void entityRegistry(RegisterEvent event)
     {
-        event.getRegistry().register(MY_ENTITY, EntityType.Builder.of(MyEntity::new, MobCategory.MONSTER).build("test_entity"));
+        if (event.getRegistryKey().equals(ForgeRegistries.Keys.ENTITY_TYPES))
+        {
+            event.register(ForgeRegistries.Keys.ENTITY_TYPES, MY_ENTITY, EntityType.Builder.of(MyEntity::new, MobCategory.MONSTER).build("test_entity"));
+        }
     }
     
     @SubscribeEvent

@@ -16,13 +16,14 @@ import net.minecraft.world.level.levelgen.WorldGenSettings;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.ForgeWorldPresetScreens;
 import net.minecraftforge.common.world.ForgeWorldPreset;
-import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.ObjectHolder;
+import net.minecraftforge.registries.RegisterEvent;
 
 @Mod("forge_world_type_test")
 public class ForgeWorldTypeTest
@@ -32,19 +33,24 @@ public class ForgeWorldTypeTest
 
     public ForgeWorldTypeTest()
     {
-        FMLJavaModLoadingContext.get().getModEventBus().addGenericListener(ForgeWorldPreset.class, this::registerWorldTypes);
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::registerWorldTypes);
     }
 
-    private void registerWorldTypes(RegistryEvent.Register<ForgeWorldPreset> event)
+    private void registerWorldTypes(RegisterEvent event)
     {
-        event.getRegistry().register(
-                new ResourceLocation("forge_world_type_test", "test_world_type"),
-                new ForgeWorldPreset(WorldGenSettings::makeDefaultOverworld)
-        );
-        event.getRegistry().register(
-                new ResourceLocation("forge_world_type_test", "test_world_type2"),
-                new ForgeWorldPreset(this::createChunkGenerator)
-        );
+        if (event.getRegistryKey().equals(ForgeRegistries.Keys.WORLD_TYPES))
+        {
+            event.register(
+                    ForgeRegistries.Keys.WORLD_TYPES,
+                    new ResourceLocation("forge_world_type_test", "test_world_type"),
+                    new ForgeWorldPreset(WorldGenSettings::makeDefaultOverworld)
+            );
+            event.register(
+                    ForgeRegistries.Keys.WORLD_TYPES,
+                    new ResourceLocation("forge_world_type_test", "test_world_type2"),
+                    new ForgeWorldPreset(this::createChunkGenerator)
+            );
+        }
     }
 
     private ChunkGenerator createChunkGenerator(RegistryAccess registry, long seed, String settings)

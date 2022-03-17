@@ -20,11 +20,12 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.LevelReader;
 import net.minecraftforge.common.IPlantable;
 import net.minecraftforge.common.PlantType;
-import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
+import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.ObjectHolder;
+import net.minecraftforge.registries.RegisterEvent;
 
 @Mod(CustomPlantTypeTest.MODID)
 @Mod.EventBusSubscriber(bus = Bus.MOD)
@@ -40,17 +41,23 @@ public class CustomPlantTypeTest
     public static Block CUSTOM_PLANT;
 
     @SubscribeEvent
-    public static void registerBlocks(RegistryEvent.Register<Block> event)
+    public static void registerBlocks(RegisterEvent event)
     {
-        event.getRegistry().register(new ResourceLocation(MODID, CUSTOM_SOIL_BLOCK), new CustomBlock());
-        event.getRegistry().register(new ResourceLocation(MODID, CUSTOM_PLANT_BLOCK), new CustomPlantBlock());
+        if (event.getRegistryKey().equals(ForgeRegistries.Keys.BLOCKS))
+        {
+            event.register(ForgeRegistries.Keys.BLOCKS, new ResourceLocation(MODID, CUSTOM_SOIL_BLOCK), new CustomBlock());
+            event.register(ForgeRegistries.Keys.BLOCKS, new ResourceLocation(MODID, CUSTOM_PLANT_BLOCK), new CustomPlantBlock());
+        }
     }
 
     @SubscribeEvent
-    public static void registerItems(RegistryEvent.Register<Item> event)
+    public static void registerItems(RegisterEvent event)
     {
-        event.getRegistry().register(new ResourceLocation(MODID, CUSTOM_SOIL_BLOCK), new BlockItem(CUSTOM_SOIL, new Item.Properties()));
-        event.getRegistry().register(new ResourceLocation(MODID, CUSTOM_PLANT_BLOCK), new BlockItem(CUSTOM_PLANT, new Item.Properties()));
+        if (event.getRegistryKey().equals(ForgeRegistries.Keys.ITEMS))
+        {
+            event.register(ForgeRegistries.Keys.ITEMS, new ResourceLocation(MODID, CUSTOM_SOIL_BLOCK), new BlockItem(CUSTOM_SOIL, new Item.Properties()));
+            event.register(ForgeRegistries.Keys.ITEMS, new ResourceLocation(MODID, CUSTOM_PLANT_BLOCK), new BlockItem(CUSTOM_PLANT, new Item.Properties()));
+        }
     }
 
     public static class CustomBlock extends Block
