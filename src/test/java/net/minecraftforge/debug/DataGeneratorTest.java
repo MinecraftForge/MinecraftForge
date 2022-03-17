@@ -237,11 +237,12 @@ public class DataGeneratorTest
 
             // ingredient tests
             // strict NBT match - should match an unnamed iron pickaxe that lost 3 durability
-            Ingredient nbtIngredient = NBTIngredient.of(Util.make(() -> {
-                ItemStack stack = new ItemStack(Items.IRON_PICKAXE);
-                stack.setDamageValue(3);
-                return stack;
-            }));
+            Ingredient nbtIngredient = NBTIngredient.of(Util.make(() ->
+                {
+                    ItemStack stack = new ItemStack(Items.IRON_PICKAXE);
+                    stack.setDamageValue(3);
+                    return stack;
+                }));
             ShapelessRecipeBuilder.shapeless(Items.GOLDEN_PICKAXE)
                                   .requires(nbtIngredient)
                                   .unlockedBy("has_pickaxe", has(Items.IRON_PICKAXE))
@@ -250,23 +251,25 @@ public class DataGeneratorTest
             // ingredient tests
             // contains NBT match - should match a stone pickaxe that lost 3 durability, regardless of setting its name
             ShapelessRecipeBuilder.shapeless(Items.IRON_PICKAXE)
-                                  .requires(PartialNBTIngredient.of(Items.STONE_PICKAXE, Util.make(() -> {
-                                      CompoundTag nbt = new CompoundTag();
-                                      nbt.putInt(ItemStack.TAG_DAMAGE, 3);
-                                      return nbt;
-                                  })))
+                                  .requires(PartialNBTIngredient.of(Items.STONE_PICKAXE, Util.make(() ->
+                                      {
+                                        CompoundTag nbt = new CompoundTag();
+                                        nbt.putInt(ItemStack.TAG_DAMAGE, 3);
+                                        return nbt;
+                                      })))
                                   .unlockedBy("has_pickaxe", has(Items.STONE_PICKAXE))
                                   .save(consumer, new ResourceLocation("data_gen_test", "contains_nbt_ingredient_single_item"));
 
             // contains NBT match - should match a wood, stone, or iron pickaxe that was named "Diamond Pickaxe", regardless of damage
             ShapelessRecipeBuilder.shapeless(Items.DIAMOND_PICKAXE)
-                                  .requires(PartialNBTIngredient.of(Util.make(() -> {
-                                      CompoundTag nbt = new CompoundTag();
-                                      CompoundTag display = new CompoundTag();
-                                      display.putString(ItemStack.TAG_DISPLAY_NAME, "{\"text\":\"Diamond Pickaxe\"}");
-                                      nbt.put(ItemStack.TAG_DISPLAY, display);
-                                      return nbt;
-                                  }), Items.WOODEN_PICKAXE, Items.STONE_PICKAXE, Items.IRON_PICKAXE))
+                                  .requires(PartialNBTIngredient.of(Util.make(() ->
+                                      {
+                                          CompoundTag nbt = new CompoundTag();
+                                          CompoundTag display = new CompoundTag();
+                                          display.putString(ItemStack.TAG_DISPLAY_NAME, "{\"text\":\"Diamond Pickaxe\"}");
+                                          nbt.put(ItemStack.TAG_DISPLAY, display);
+                                          return nbt;
+                                      }), Items.WOODEN_PICKAXE, Items.STONE_PICKAXE, Items.IRON_PICKAXE))
                                   .unlockedBy("has_pickaxe", has(Items.WOODEN_PICKAXE))
                                   .save(consumer, new ResourceLocation("data_gen_test", "contains_nbt_ingredient_item_set"));
 

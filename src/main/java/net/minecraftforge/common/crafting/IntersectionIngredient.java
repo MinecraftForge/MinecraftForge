@@ -75,13 +75,15 @@ public class IntersectionIngredient extends AbstractIngredient
         {
             this.intersectedMatchingStacks = Arrays
                     .stream(children.get(0).getItems())
-                    .filter(stack -> {
-                        // the first ingredient is treated as a base, filtered by the second onwards
-                        for (int i = 1; i < children.size(); i++)
-                            if (!children.get(i).test(stack))
-                                return false;
-                        return true;
-                    }).toArray(ItemStack[]::new);
+                    .filter(stack ->
+                        {
+                            // the first ingredient is treated as a base, filtered by the second onwards
+                            for (int i = 1; i < children.size(); i++)
+                                if (!children.get(i).test(stack))
+                                    return false;
+                            return true;
+                        })
+                    .toArray(ItemStack[]::new);
         }
         return intersectedMatchingStacks;
     }
@@ -145,7 +147,8 @@ public class IntersectionIngredient extends AbstractIngredient
         public static final IIngredientSerializer<IntersectionIngredient> INSTANCE = new Serializer();
 
         @Override
-        public IntersectionIngredient parse(JsonObject json) {
+        public IntersectionIngredient parse(JsonObject json)
+        {
             JsonArray children = GsonHelper.getAsJsonArray(json, "children");
             if (children.size() < 2)
                 throw new JsonSyntaxException("Must have at least two children for an intersection ingredient");

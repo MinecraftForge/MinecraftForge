@@ -37,12 +37,13 @@ public class PartialNBTIngredient extends AbstractIngredient
     private final NbtPredicate predicate;
     protected PartialNBTIngredient(Set<Item> items, CompoundTag nbt)
     {
-        super(items.stream().map(item -> {
-            ItemStack stack = new ItemStack(item);
-            // copy NBT to prevent the stack from modifying the original, as capabilities or vanilla item durability will modify the tag
-            stack.setTag(nbt.copy());
-            return new Ingredient.ItemValue(stack);
-        }));
+        super(items.stream().map(item ->
+            {
+                ItemStack stack = new ItemStack(item);
+                // copy NBT to prevent the stack from modifying the original, as capabilities or vanilla item durability will modify the tag
+                stack.setTag(nbt.copy());
+                return new Ingredient.ItemValue(stack);
+            }));
         if (items.isEmpty())
         {
             throw new IllegalArgumentException("Cannot create a PartialNBTIngredient with no items");
@@ -148,9 +149,8 @@ public class PartialNBTIngredient extends AbstractIngredient
         public void write(FriendlyByteBuf buffer, PartialNBTIngredient ingredient)
         {
             buffer.writeVarInt(ingredient.items.size());
-            for (Item item : ingredient.items) {
+            for (Item item : ingredient.items)
                 buffer.writeRegistryIdUnsafe(ForgeRegistries.ITEMS, item);
-            }
             buffer.writeNbt(ingredient.nbt);
         }
     }

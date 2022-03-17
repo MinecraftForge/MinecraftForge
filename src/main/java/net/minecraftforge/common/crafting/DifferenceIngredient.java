@@ -56,7 +56,7 @@ public class DifferenceIngredient extends AbstractIngredient
     {
         if (this.filteredMatchingStacks == null)
             this.filteredMatchingStacks = Arrays.stream(base.getItems())
-						                                    .filter(stack -> !subtracted.test(stack))
+                                                .filter(stack -> !subtracted.test(stack))
                                                 .toArray(ItemStack[]::new);
         return filteredMatchingStacks;
     }
@@ -108,11 +108,13 @@ public class DifferenceIngredient extends AbstractIngredient
     }
 
     @Override
-    public IIngredientSerializer<DifferenceIngredient> getSerializer() {
+    public IIngredientSerializer<DifferenceIngredient> getSerializer()
+    {
         return Serializer.INSTANCE;
     }
 
-    public static class Serializer implements IIngredientSerializer<DifferenceIngredient> {
+    public static class Serializer implements IIngredientSerializer<DifferenceIngredient>
+    {
         public static final IIngredientSerializer<DifferenceIngredient> INSTANCE = new Serializer();
 
         @Override
