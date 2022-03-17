@@ -858,7 +858,7 @@ public class ForgeHooks
     {
         ForgeWorldPreset def = ForgeWorldPreset.getDefaultWorldPreset();
         if (def != null)
-            return ForgeRegistries.WORLD_TYPES.getKey(def).toString();
+            return ForgeRegistries.WORLD_TYPES.get().getKey(def).toString();
         return "default";
     }
 
@@ -1141,13 +1141,11 @@ public class ForgeHooks
         int id = vanilla.getId(serializer);
         if (id < 0)
         {
-            {
-                id = ((ForgeRegistry<EntityDataSerializer<?>>) ForgeRegistries.DATA_SERIALIZERS).getID(serializer);
-                // ForgeRegistries.DATA_SERIALIZERS is a deferred register now, so if this method is called too early, the registry will be null
-                ForgeRegistry<EntityDataSerializer<?>> registry = (ForgeRegistry<EntityDataSerializer<?>>) ForgeRegistries.DATA_SERIALIZERS.get();
-                if (registry != null)
-                    id = registry.getID(serializer);
-            }
+            id = ((ForgeRegistry<EntityDataSerializer<?>>) ForgeRegistries.DATA_SERIALIZERS).getID(serializer);
+            // ForgeRegistries.DATA_SERIALIZERS is a deferred register now, so if this method is called too early, the registry will be null
+            ForgeRegistry<EntityDataSerializer<?>> registry = (ForgeRegistry<EntityDataSerializer<?>>) ForgeRegistries.DATA_SERIALIZERS.get();
+            if (registry != null)
+                id = registry.getID(serializer);
         }
         return id;
     }

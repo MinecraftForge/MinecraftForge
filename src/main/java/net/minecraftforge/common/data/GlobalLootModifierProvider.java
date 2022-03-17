@@ -74,7 +74,7 @@ public abstract class GlobalLootModifierProvider implements DataProvider
             Path modifierPath = gen.getOutputFolder().resolve(modPath + name + ".json");
 
             JsonObject json = pair.getB();
-            json.addProperty("type", ForgeRegistries.LOOT_MODIFIER_SERIALIZERS.getKey(pair.getA()).toString());
+            json.addProperty("type", ForgeRegistries.LOOT_MODIFIER_SERIALIZERS.get().getKey(pair.getA()).toString());
 
             DataProvider.save(GSON, cache, json, modifierPath);
         }));

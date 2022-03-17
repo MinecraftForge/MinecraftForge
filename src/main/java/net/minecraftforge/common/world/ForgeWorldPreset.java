@@ -54,7 +54,7 @@ public class ForgeWorldPreset
 
     public String getTranslationKey()
     {
-        return Util.makeDescriptionId("generator", ForgeRegistries.WORLD_TYPES.getKey(this));
+        return Util.makeDescriptionId("generator", ForgeRegistries.WORLD_TYPES.get().getKey(this));
     }
 
     public Component getDisplayName()

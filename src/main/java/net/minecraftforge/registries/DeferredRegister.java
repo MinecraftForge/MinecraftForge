@@ -70,17 +70,6 @@ public class DeferredRegister<T>
     }
 
     /**
-     * Use for custom registries that are made during the NewRegistry event.
-     *
-     * @deprecated Use {@link #create(ResourceLocation, String)} and {@link #makeRegistry(Class, Supplier)} instead
-     */
-    @Deprecated(forRemoval = true, since = "1.18.2")
-    public static <B> DeferredRegister<B> create(Class<B> base, String modid)
-    {
-        return new DeferredRegister<>(null, base, modid, false);
-    }
-
-    /**
      * DeferredRegister factory for custom forge registries, {@link Registry vanilla registries},
      * or {@link BuiltinRegistries built-in registries} to lookup based on the provided registry key.
      * Supports both registries that already exist or do not exist yet.
@@ -96,7 +85,7 @@ public class DeferredRegister<T>
      */
     public static <B> DeferredRegister<B> create(ResourceKey<? extends Registry<B>> key, String modid)
     {
-        return new DeferredRegister<>(key, null, modid, false);
+        return new DeferredRegister<>(key, modid, false);
     }
 
     /**
@@ -114,7 +103,7 @@ public class DeferredRegister<T>
      */
     public static <B> DeferredRegister<B> createOptional(ResourceKey<? extends Registry<B>> key, String modid)
     {
-        return new DeferredRegister<>(key, null, modid, true);
+        return new DeferredRegister<>(key, modid, true);
     }
 
     /**
@@ -133,7 +122,7 @@ public class DeferredRegister<T>
      */
     public static <B> DeferredRegister<B> create(ResourceLocation registryName, String modid)
     {
-        return new DeferredRegister<>(ResourceKey.createRegistryKey(registryName), null, modid, false);
+        return new DeferredRegister<>(ResourceKey.createRegistryKey(registryName), modid, false);
     }
 
     /**
@@ -151,13 +140,10 @@ public class DeferredRegister<T>
      */
     public static <B> DeferredRegister<B> createOptional(ResourceLocation registryName, String modid)
     {
-        return new DeferredRegister<>(ResourceKey.createRegistryKey(registryName), null, modid, true);
+        return new DeferredRegister<>(ResourceKey.createRegistryKey(registryName), modid, true);
     }
 
-    @Nullable // Nullable when superType is not null
     private final ResourceKey<? extends Registry<T>> registryKey;
-    @Nullable // Nullable when registryKey is not null
-    private final Class<? extends IForgeRegistryEntry<?>> superType;
     private final String modid;
     private final boolean optionalRegistry;
     private final Map<RegistryObject<T>, Supplier<? extends T>> entries = new LinkedHashMap<>();
@@ -169,11 +155,9 @@ public class DeferredRegister<T>
     private SetMultimap<TagKey<T>, Supplier<T>> optionalTags;
     private boolean seenRegisterEvent = false;
 
-    private <E extends IForgeRegistryEntry<E>> DeferredRegister(@Nullable ResourceKey<? extends Registry<T>> registryKey, @Nullable Class<E> base,
-            String modid, boolean optionalRegistry)
+    private DeferredRegister(ResourceKey<? extends Registry<T>> registryKey, String modid, boolean optionalRegistry)
     {
         this.registryKey = registryKey;
-        this.superType = base;
         this.modid = modid;
         this.optionalRegistry = optionalRegistry;
     }
@@ -181,7 +165,7 @@ public class DeferredRegister<T>
     @SuppressWarnings("unchecked")
     private <E extends IForgeRegistryEntry<E>> DeferredRegister(IForgeRegistry<E> reg, String modid)
     {
-        this((ResourceKey<? extends Registry<T>>) (ResourceKey) reg.getRegistryKey(), reg.getRegistrySuperType(), modid, false);
+        this((ResourceKey<? extends Registry<T>>) (ResourceKey) reg.getRegistryKey(), modid, false);
     }
 
     /**
@@ -205,8 +189,6 @@ public class DeferredRegister<T>
             ret = this.optionalRegistry
                     ? RegistryObject.createOptional(key, this.registryKey, this.modid)
                     : RegistryObject.create(key, this.registryKey, this.modid);
-        else if (this.superType != null)
-            ret = RegistryObject.of(key, (Class) this.superType, this.modid);
         else
             throw new IllegalStateException("Could not create RegistryObject in DeferredRegister");
 
@@ -215,24 +197,6 @@ public class DeferredRegister<T>
         }
 
         return ret;
-    }
-
-    /**
-     * For custom registries only, fills the {@link #registryFactory} to be called later see {@link #register(IEventBus)}
-     *
-     * Calls {@link RegistryBuilder#setName} and {@link RegistryBuilder#setType} automatically.
-     *
-     * @param name  Path of the registry's {@link ResourceLocation}
-     * @param sup   Supplier of the RegistryBuilder that is called to fill {@link #type} during the NewRegistry event
-     * @return      A supplier of the {@link IForgeRegistry} created by the builder.
-     *
-     * @deprecated Use {@link #create(ResourceLocation, String)} and {@link #makeRegistry(Class, Supplier)} instead
-     */
-    @SuppressWarnings("unchecked")
-    @Deprecated(forRemoval = true, since = "1.18.2")
-    public <E extends IForgeRegistryEntry<E>> Supplier<IForgeRegistry<E>> makeRegistry(final String name, final Supplier<RegistryBuilder<E>> sup)
-    {
-        return makeRegistry(new ResourceLocation(modid, name), (Class<E>) this.superType, sup);
     }
 
     /**
@@ -471,11 +435,7 @@ public class DeferredRegister<T>
         {
             return RegistryManager.ACTIVE.getRegistry((ResourceKey) this.registryKey);
         }
-        else if (this.superType != null)
-        {
-            return RegistryManager.ACTIVE.getRegistry((Class) this.superType);
-        }
-
-        return null;
+        else
+            throw new IllegalStateException("Unable to find registry for mod \"" + modid + "\" No lookup criteria specified.");
     }
 }
