@@ -7,6 +7,7 @@ package net.minecraftforge.registries;
 
 import com.google.common.collect.Multimaps;
 import com.google.common.collect.SetMultimap;
+import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -18,15 +19,8 @@ import net.minecraftforge.registries.tags.ITagManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.IdentityHashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Objects;
-import java.util.Set;
 import java.util.function.Supplier;
 
 /**
@@ -293,6 +287,11 @@ public class DeferredRegister<T extends IForgeRegistryEntry<T>>
             bus.addListener(this::createRegistry);
         }
     }
+
+    public Optional<Holder<T>> getHolder(ResourceLocation location) {
+        return this.type != null ? this.type.getHolder(location) : Optional.empty();
+    }
+
     public static class EventDispatcher {
         private final DeferredRegister<?> register;
 

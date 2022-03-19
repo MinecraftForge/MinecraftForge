@@ -22,8 +22,10 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.common.collect.Sets.SetView;
 
+import com.mojang.serialization.Codec;
 import com.mojang.serialization.Lifecycle;
 import net.minecraft.core.WritableRegistry;
+import net.minecraft.data.BuiltinRegistries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.core.Registry;
@@ -47,6 +49,7 @@ public class RegistryManager
     private BiMap<Class<? extends IForgeRegistryEntry<?>>, ResourceLocation> superTypes = HashBiMap.create();
     private Set<ResourceLocation> persisted = Sets.newHashSet();
     private Set<ResourceLocation> synced = Sets.newHashSet();
+    private Map<ResourceLocation, Codec<?>> builtinRegistries = new HashMap<>();
     private Map<ResourceLocation, ResourceLocation> legacyNames = new HashMap<>();
     private final String name;
 
@@ -149,6 +152,8 @@ public class RegistryManager
             this.persisted.add(name);
         if (builder.getSync())
             this.synced.add(name);
+        if (builder.getDirectCodec() != null)
+            this.builtinRegistries.put(name, builder.getDirectCodec());
         for (ResourceLocation legacyName : builder.getLegacyNames())
             addLegacyName(legacyName, name);
         return getRegistry(name);
@@ -158,6 +163,15 @@ public class RegistryManager
     static <V extends IForgeRegistryEntry<V>> void registerToRootRegistry(ForgeRegistry<V> forgeReg)
     {
         WritableRegistry<Registry<V>> registry = (WritableRegistry<Registry<V>>) Registry.REGISTRY;
+        Registry<V> wrapper = forgeReg.getWrapper();
+        if (wrapper != null)
+            registry.register(forgeReg.getRegistryKey(), wrapper, Lifecycle.experimental());
+    }
+
+    @SuppressWarnings("unchecked")
+    static <V extends IForgeRegistryEntry<V>> void registerToBuiltinRegistry(ForgeRegistry<V> forgeReg)
+    {
+        WritableRegistry<Registry<V>> registry = (WritableRegistry<Registry<V>>) BuiltinRegistries.REGISTRY;
         Registry<V> wrapper = forgeReg.getWrapper();
         if (wrapper != null)
             registry.register(forgeReg.getRegistryKey(), wrapper, Lifecycle.experimental());
@@ -236,6 +250,11 @@ public class RegistryManager
         return ACTIVE.registries.keySet().stream().
                 filter(resloc -> ACTIVE.synced.contains(resloc)).
                 collect(Collectors.toList());
+    }
+
+    public static Map<ResourceLocation, Codec<?>> getBuiltinRegistryNames()
+    {
+        return ACTIVE.builtinRegistries;
     }
 
     public static Set<ResourceLocation> getVanillaRegistryKeys()

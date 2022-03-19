@@ -1,0 +1,8 @@
+{
+  "replace": false,
+  "values": [
+    "data_pack_registries_test:builtin_a",
+    "data_pack_registries_test:builtin_a_overridden",
+    "data_pack_registries_test:builtin_a_data_pack_test"
+  ]
+}

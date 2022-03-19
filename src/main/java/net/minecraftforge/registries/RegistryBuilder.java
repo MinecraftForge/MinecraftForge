@@ -12,6 +12,7 @@ import java.util.function.Function;
 
 import com.google.common.collect.Lists;
 
+import com.mojang.serialization.Codec;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.registries.IForgeRegistry.*;
@@ -38,6 +39,7 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
     private boolean allowOverrides = true;
     private boolean allowModifications = false;
     private boolean hasWrapper = false;
+    private Codec<T> directCodec = null;
     private DummyFactory<T> dummyFactory;
     private MissingFactory<T> missingFactory;
     private Set<ResourceLocation> legacyNames = new HashSet<>();
@@ -230,6 +232,13 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
         return this;
     }
 
+    public RegistryBuilder<T> directCodec(Codec<T> directCodec)
+    {
+        this.hasWrapper();// A Wrapper is required for data pack registries
+        this.directCodec = directCodec;
+        return this;
+    }
+
     /**
      * Modders: Use {@link NewRegistryEvent#create(RegistryBuilder)} instead
      */
@@ -386,5 +395,10 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
     boolean getHasWrapper()
     {
         return this.hasWrapper;
+    }
+
+    Codec<T> getDirectCodec()
+    {
+        return this.directCodec;
     }
 }

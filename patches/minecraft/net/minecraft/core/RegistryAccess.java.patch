@@ -1,5 +1,23 @@
 --- a/net/minecraft/core/RegistryAccess.java
 +++ b/net/minecraft/core/RegistryAccess.java
+@@ -44,7 +_,7 @@
+ 
+ public interface RegistryAccess {
+    Logger f_123047_ = LogUtils.getLogger();
+-   Map<ResourceKey<? extends Registry<?>>, RegistryAccess.RegistryData<?>> f_123048_ = Util.m_137537_(() -> {
++   Map<ResourceKey<? extends Registry<?>>, RegistryAccess.RegistryData<?>> f_123048_ = new java.util.HashMap<>(Util.m_137537_(() -> {
+       Builder<ResourceKey<? extends Registry<?>>, RegistryAccess.RegistryData<?>> builder = ImmutableMap.builder();
+       m_123057_(builder, Registry.f_122818_, DimensionType.f_63843_, DimensionType.f_63843_);
+       m_123057_(builder, Registry.f_122885_, Biome.f_47429_, Biome.f_47430_);
+@@ -59,7 +_,7 @@
+       m_123053_(builder, Registry.f_194568_, NormalNoise.NoiseParameters.f_192851_);
+       m_123053_(builder, Registry.f_211074_, DensityFunction.f_208216_);
+       return builder.build();
+-   });
++   }));
+    Codec<RegistryAccess> f_206151_ = m_206205_();
+    Supplier<RegistryAccess.Frozen> f_123049_ = Suppliers.memoize(() -> {
+       return m_206197_().m_203557_();
 @@ -185,6 +_,8 @@
     private static <E> void m_211081_(RegistryResourceAccess.InMemoryStorage p_211082_, RegistryAccess.RegistryData<E> p_211083_) {
        ResourceKey<? extends Registry<E>> resourcekey = p_211083_.f_123101_();
@@ -9,3 +27,9 @@
  
        for(Entry<ResourceKey<E>, E> entry : registry.m_6579_()) {
           ResourceKey<E> resourcekey1 = entry.getKey();
+@@ -321,4 +_,5 @@
+          return this.f_206257_.entrySet().stream().map(RegistryAccess.RegistryEntry::m_206241_);
+       }
+    }
++   static void injectBuiltinRegistries() { net.minecraftforge.common.ForgeHooks.injectBuiltinRegistries(f_123048_);}
+ }

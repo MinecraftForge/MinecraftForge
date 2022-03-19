@@ -244,7 +244,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
 
     @SuppressWarnings("unchecked")
     @Nullable
-    Registry<V> getWrapper()
+    public Registry<V> getWrapper()
     {
         if (!this.hasWrapper)
             return null;

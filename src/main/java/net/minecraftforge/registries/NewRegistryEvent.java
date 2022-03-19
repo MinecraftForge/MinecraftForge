@@ -6,6 +6,7 @@
 package net.minecraftforge.registries;
 
 import net.minecraft.core.Registry;
+import net.minecraft.data.BuiltinRegistries;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.event.IModBusEvent;
 import org.jetbrains.annotations.Nullable;
@@ -62,8 +63,15 @@ public class NewRegistryEvent extends Event implements IModBusEvent
                 .collect(Collectors.toMap(RegistryData::builder, d -> d.builder().create(), (a, b) -> a, IdentityHashMap::new));
 
         builtRegistries.forEach((builder, reg) -> {
-            if (builder.getHasWrapper() && !Registry.REGISTRY.containsKey(reg.getRegistryName()))
-                RegistryManager.registerToRootRegistry((ForgeRegistry<?>) reg);
+            if(builder.getDirectCodec() != null)
+            {
+                if (builder.getHasWrapper() && !BuiltinRegistries.REGISTRY.containsKey(reg.getRegistryName()))
+                    RegistryManager.registerToBuiltinRegistry((ForgeRegistry<?>) reg);
+            } else
+            {
+                if (builder.getHasWrapper() && !Registry.REGISTRY.containsKey(reg.getRegistryName()))
+                    RegistryManager.registerToRootRegistry((ForgeRegistry<?>) reg);
+            }
         });
 
         for (RegistryData data : this.registries)

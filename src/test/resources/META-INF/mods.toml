@@ -202,5 +202,7 @@ license="LGPL v2.1"
     modId="potion_size_event_test"
 [[mods]]
     modId="hide_neighbor_face_test"
+[[mods]]
+    modId="data_pack_registries_test"
 
 # ADD ABOVE THIS LINE
