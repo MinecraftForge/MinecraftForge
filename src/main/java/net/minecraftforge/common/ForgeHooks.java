@@ -155,7 +155,6 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BiomeLoadingEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.NoteBlockEvent;
-import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.Event.Result;
 import net.minecraftforge.fluids.FluidAttributes;
 import net.minecraftforge.fml.ModContainer;
@@ -1456,11 +1455,9 @@ public class ForgeHooks
         }
     }
 
-    public static Event.Result onEnderManAnger(EnderMan enderMan, Player player)
+    public static boolean shouldSuppressEnderManAnger(EnderMan enderMan, Player player, ItemStack mask)
     {
-        EnderManAngerEvent event = new EnderManAngerEvent(enderMan, player);
-        MinecraftForge.EVENT_BUS.post(event);
-        return event.getResult();
+        return MinecraftForge.EVENT_BUS.post(new EnderManAngerEvent(enderMan, player)) || mask.isEnderMask(player, enderMan);
     }
 
 }
