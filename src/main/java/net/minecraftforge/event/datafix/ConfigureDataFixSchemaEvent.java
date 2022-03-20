@@ -6,6 +6,7 @@
 package net.minecraftforge.event.datafix;
 
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.mojang.datafixers.DSL;
 import com.mojang.datafixers.schemas.Schema;
 import com.mojang.datafixers.types.templates.TypeTemplate;
@@ -16,6 +17,7 @@ import net.minecraftforge.fml.event.IModBusEvent;
 
 import java.util.Collections;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -43,10 +45,14 @@ public class ConfigureDataFixSchemaEvent extends Event implements IModBusEvent
 
     private final Map<String, Supplier<TypeTemplate>> entityTypes = Maps.newConcurrentMap();
     private final Map<String, Supplier<TypeTemplate>> blockEntityTypes = Maps.newConcurrentMap();
+    private final Set<String> entityTypesToRemove = Sets.newConcurrentHashSet();
+    private final Set<String> blockEntityTypesToRemove = Sets.newConcurrentHashSet();
 
     //Some unmodifiable views of the above maps
     private final Map<String, Supplier<TypeTemplate>> entityTypesView = Collections.unmodifiableMap(entityTypes);
     private final Map<String, Supplier<TypeTemplate>> blockEntityTypesView = Collections.unmodifiableMap(blockEntityTypes);
+    private final Set<String> entityTypesToRemoveView = Collections.unmodifiableSet(entityTypesToRemove);
+    private final Set<String> blockEntityTypesToRemoveView = Collections.unmodifiableSet(blockEntityTypesToRemove);
 
     public ConfigureDataFixSchemaEvent(final Schema schema)
     {
@@ -126,7 +132,7 @@ public class ConfigureDataFixSchemaEvent extends Event implements IModBusEvent
      */
     public void removeBlockEntity(final ResourceLocation registryName)
     {
-        blockEntityTypes.put(registryName.toString(), null);
+        blockEntityTypesToRemove.add(registryName.toString());
     }
 
     /**
@@ -171,13 +177,11 @@ public class ConfigureDataFixSchemaEvent extends Event implements IModBusEvent
      */
     public void removeEntity(final ResourceLocation registryName)
     {
-        entityTypes.put(registryName.toString(), null);
+        entityTypesToRemove.add(registryName.toString());
     }
 
     /**
      * An unmodifiable map of all registered additional modded block entity types.
-     * Keys may be mapped to a null value if they are supposed to be removed from the schema and its descendant versions, overriding the
-     * type specification added in a parent version.
      *
      * @return The already registered additional modded block entity types.
      */
@@ -188,13 +192,31 @@ public class ConfigureDataFixSchemaEvent extends Event implements IModBusEvent
 
     /**
      * An unmodifiable map of all registered additional modded entity types.
-     * Keys may be mapped to a null value if they are supposed to be removed from the schema and its descendant versions, overriding the
-     * type specification added in a parent version.
      *
      * @return The already registered additional modded entity types.
      */
     public Map<String, Supplier<TypeTemplate>> getBlockEntityTypes()
     {
         return blockEntityTypesView;
+    }
+
+    /**
+     * An unmodifiable view of all entity types which are supposed to be removed from the type specification from the parent schema in this schema.
+     *
+     * @return The entity types to remove.
+     */
+    public Set<String> getEntityTypesToRemove()
+    {
+        return entityTypesToRemoveView;
+    }
+
+    /**
+     * An unmodifiable view of all block entity types which are supposed to be removed from the type specification from the parent schema in this schema.
+     *
+     * @return The block entity types to remove.
+     */
+    public Set<String> getBlockEntityTypesToRemove()
+    {
+        return blockEntityTypesToRemoveView;
     }
 }

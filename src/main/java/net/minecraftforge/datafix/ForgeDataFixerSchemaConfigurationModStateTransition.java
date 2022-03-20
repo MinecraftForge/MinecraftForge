@@ -149,7 +149,9 @@ public class ForgeDataFixerSchemaConfigurationModStateTransition
                 //Rebuild the schema with the mod data.
                 forgeSchema.rebuildSchema(
                   event.getEntityTypes(),
-                  event.getBlockEntityTypes()
+                  event.getBlockEntityTypes(),
+                  event.getEntityTypesToRemove(),
+                  event.getBlockEntityTypesToRemove()
                 );
             }
         }, executor).handle((v, t) -> t != null ? Collections.singletonList(t) : Collections.emptyList());

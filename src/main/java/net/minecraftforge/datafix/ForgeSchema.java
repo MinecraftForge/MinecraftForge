@@ -11,7 +11,6 @@ import com.google.common.collect.Sets;
 import com.mojang.datafixers.DSL;
 import com.mojang.datafixers.DataFix;
 import com.mojang.datafixers.DataFixUtils;
-import com.mojang.datafixers.DataFixer;
 import com.mojang.datafixers.schemas.Schema;
 import com.mojang.datafixers.types.Type;
 import com.mojang.datafixers.types.families.RecursiveTypeFamily;
@@ -70,7 +69,9 @@ class ForgeSchema extends Schema
         resetSchema();
         rebuildSchema(
           Collections.emptyMap(),
-          Collections.emptyMap()
+          Collections.emptyMap(),
+          Collections.emptySet(),
+          Collections.emptySet()
         );
     }
 
@@ -317,7 +318,9 @@ class ForgeSchema extends Schema
      */
     void rebuildSchema(
       final Map<String, Supplier<TypeTemplate>> modEntityTypes,
-      final Map<String, Supplier<TypeTemplate>> modBlockEntityTypes
+      final Map<String, Supplier<TypeTemplate>> modBlockEntityTypes,
+      final Set<String> modEntityTypesToRemove,
+      final Set<String> modBlockEntityTypesToRemove
     )
     {
         //First grab the parent's additional modded types, if the parent is compatible.
@@ -335,6 +338,8 @@ class ForgeSchema extends Schema
         //Remove those types from the map, which the event marked for removal.
         this.MODDED_ENTITY_TYPES.values().removeIf(Objects::isNull);
         this.MODDED_BLOCK_ENTITY_TYPES.values().removeIf(Objects::isNull);
+        this.MODDED_ENTITY_TYPES.keySet().removeIf(modEntityTypesToRemove::contains);
+        this.MODDED_BLOCK_ENTITY_TYPES.keySet().removeIf(modBlockEntityTypesToRemove::contains);
 
         //Grab the vanilla entities.
         final Map<String, Supplier<TypeTemplate>> entityTypes = registerEntities(this);
