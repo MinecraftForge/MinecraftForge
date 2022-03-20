@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/LevelReader.java
 +++ b/net/minecraft/world/level/LevelReader.java
-@@ -175,6 +_,10 @@
+@@ -176,6 +_,10 @@
     }
  
     /** @deprecated */

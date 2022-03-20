@@ -51,7 +51,6 @@ public class BackgroundScanHandler
     private ScanStatus status;
     private LoadingModList loadingModList;
 
-    @SuppressWarnings("UnstableApiUsage")
     public BackgroundScanHandler(final List<ModFile> modFiles) {
         this.modFiles = modFiles;
         modContentScanner = Executors.newSingleThreadExecutor(r -> {

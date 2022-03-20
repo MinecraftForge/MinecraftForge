@@ -1,0 +1,12 @@
+--- a/net/minecraft/core/RegistryCodecs.java
++++ b/net/minecraft/core/RegistryCodecs.java
+@@ -95,7 +_,8 @@
+    }
+ 
+    private static <T> Codec<Map<ResourceKey<T>, T>> m_206315_(ResourceKey<? extends Registry<T>> p_206316_, Codec<T> p_206317_) {
+-      return Codec.unboundedMap(ResourceLocation.f_135803_.xmap(ResourceKey.m_135797_(p_206316_), ResourceKey::m_135782_), p_206317_);
++      // FORGE: Fix MC-197860
++      return new net.minecraftforge.common.LenientUnboundedMapCodec<>(ResourceLocation.f_135803_.xmap(ResourceKey.m_135797_(p_206316_), ResourceKey::m_135782_), p_206317_);
+    }
+ 
+    public static <E> Codec<HolderSet<E>> m_206279_(ResourceKey<? extends Registry<E>> p_206280_, Codec<E> p_206281_) {

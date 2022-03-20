@@ -1,24 +1,24 @@
 --- a/net/minecraft/tags/Tag.java
 +++ b/net/minecraft/tags/Tag.java
-@@ -47,8 +_,16 @@
-       return SetTag.m_13222_(p_13301_);
+@@ -31,8 +_,16 @@
+       return (Tag<T>)f_203856_;
     }
  
 -   public static class Builder {
 +   public static class Builder implements net.minecraftforge.common.extensions.IForgeRawTagBuilder {
-+      private final List<Tag.BuilderEntry> removeEntries = Lists.newArrayList(); // FORGE: internal field for tracking "remove" entries
++      private final List<Tag.BuilderEntry> removeEntries = new java.util.ArrayList<>(); // FORGE: internal field for tracking "remove" entries
 +      /** FORGE: Gets a view of this builder's "remove" entries (only used during datagen) **/
 +      public Stream<Tag.BuilderEntry> getRemoveEntries() { return this.removeEntries.stream(); }
 +      public Tag.Builder remove(final Tag.BuilderEntry proxy) { // internal forge method for adding remove entries
 +         this.removeEntries.add(proxy);
 +         return this;
 +      }
-       private final List<Tag.BuilderEntry> f_13302_ = Lists.newArrayList();
+       private final List<Tag.BuilderEntry> f_13302_ = new ArrayList<>();
 +      private boolean replace = false;
  
        public static Tag.Builder m_13304_() {
           return new Tag.Builder();
-@@ -79,6 +_,15 @@
+@@ -63,6 +_,15 @@
           return this.m_13307_(new Tag.OptionalTagEntry(p_144383_), p_144384_);
        }
  
@@ -33,8 +33,8 @@
 +
        public <T> Either<Collection<Tag.BuilderEntry>, Tag<T>> m_144371_(Function<ResourceLocation, Tag<T>> p_144372_, Function<ResourceLocation, T> p_144373_) {
           ImmutableSet.Builder<T> builder = ImmutableSet.builder();
-          List<Tag.BuilderEntry> list = Lists.newArrayList();
-@@ -120,6 +_,7 @@
+          List<Tag.BuilderEntry> list = new ArrayList<>();
+@@ -104,6 +_,7 @@
              this.f_13302_.clear();
           }
  
@@ -42,8 +42,8 @@
           list.forEach((p_13319_) -> {
              this.f_13302_.add(new Tag.BuilderEntry(p_13319_, p_13314_));
           });
-@@ -155,8 +_,9 @@
-             tag$builderentry.m_13347_().m_6383_(jsonarray);
+@@ -139,8 +_,9 @@
+             tag$builderentry.f_13338_().m_6383_(jsonarray);
           }
  
 -         jsonobject.addProperty("replace", false);
@@ -53,7 +53,7 @@
           return jsonobject;
        }
     }
-@@ -211,6 +_,7 @@
+@@ -179,6 +_,7 @@
        public String toString() {
           return this.f_13349_.toString();
        }
@@ -61,7 +61,7 @@
     }
  
     public interface Entry {
-@@ -323,6 +_,8 @@
+@@ -287,6 +_,8 @@
        public String toString() {
           return "#" + this.f_13383_;
        }

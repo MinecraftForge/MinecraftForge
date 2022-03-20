@@ -63,11 +63,11 @@
 @@ -135,6 +_,7 @@
                 }
  
-                this.f_91518_ -= (double)f1;
+                this.f_91518_ -= (double)i;
 +               if (net.minecraftforge.client.ForgeHooksClient.onMouseScroll(this, d0)) return;
                 if (this.f_91503_.f_91074_.m_5833_()) {
                    if (this.f_91503_.f_91065_.m_93085_().m_94768_()) {
-                      this.f_91503_.f_91065_.m_93085_().m_94769_((double)(-f1));
+                      this.f_91503_.f_91065_.m_93085_().m_205380_(-i);
 @@ -203,7 +_,9 @@
                 double d2 = (p_91563_ - this.f_91507_) * (double)this.f_91503_.m_91268_().m_85445_() / (double)this.f_91503_.m_91268_().m_85443_();
                 double d3 = (p_91564_ - this.f_91508_) * (double)this.f_91503_.m_91268_().m_85446_() / (double)this.f_91503_.m_91268_().m_85444_();

@@ -1,20 +1,6 @@
 /*
- * Minecraft Forge
- * Copyright (c) 2016-2022.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation version 2.1
- * of the License.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Minecraft Forge - Forge Development LLC
+ * SPDX-License-Identifier: LGPL-2.1-only
  */
 
 package net.minecraftforge.common;
@@ -422,16 +408,20 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         public <V extends Enum<V>> EnumValue<V> defineEnum(List<String> path, V defaultValue, EnumGetMethod converter) {
             return defineEnum(path, defaultValue, converter, defaultValue.getDeclaringClass().getEnumConstants());
         }
-        public <V extends Enum<V>> EnumValue<V> defineEnum(String path, V defaultValue, @SuppressWarnings("unchecked") V... acceptableValues) {
+        @SuppressWarnings("unchecked")
+        public <V extends Enum<V>> EnumValue<V> defineEnum(String path, V defaultValue, V... acceptableValues) {
             return defineEnum(split(path), defaultValue, acceptableValues);
         }
-        public <V extends Enum<V>> EnumValue<V> defineEnum(String path, V defaultValue, EnumGetMethod converter, @SuppressWarnings("unchecked") V... acceptableValues) {
+        @SuppressWarnings("unchecked")
+        public <V extends Enum<V>> EnumValue<V> defineEnum(String path, V defaultValue, EnumGetMethod converter, V... acceptableValues) {
             return defineEnum(split(path), defaultValue, converter, acceptableValues);
         }
-        public <V extends Enum<V>> EnumValue<V> defineEnum(List<String> path, V defaultValue, @SuppressWarnings("unchecked") V... acceptableValues) {
+        @SuppressWarnings("unchecked")
+        public <V extends Enum<V>> EnumValue<V> defineEnum(List<String> path, V defaultValue, V... acceptableValues) {
             return defineEnum(path, defaultValue, (Collection<V>) Arrays.asList(acceptableValues));
         }
-        public <V extends Enum<V>> EnumValue<V> defineEnum(List<String> path, V defaultValue, EnumGetMethod converter, @SuppressWarnings("unchecked") V... acceptableValues) {
+        @SuppressWarnings("unchecked")
+        public <V extends Enum<V>> EnumValue<V> defineEnum(List<String> path, V defaultValue, EnumGetMethod converter, V... acceptableValues) {
             return defineEnum(path, defaultValue, converter, Arrays.asList(acceptableValues));
         }
         public <V extends Enum<V>> EnumValue<V> defineEnum(String path, V defaultValue, Collection<V> acceptableValues) {
@@ -443,7 +433,6 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         public <V extends Enum<V>> EnumValue<V> defineEnum(List<String> path, V defaultValue, Collection<V> acceptableValues) {
             return defineEnum(path, defaultValue, EnumGetMethod.NAME_IGNORECASE, acceptableValues);
         }
-        @SuppressWarnings("unchecked")
         public <V extends Enum<V>> EnumValue<V> defineEnum(List<String> path, V defaultValue, EnumGetMethod converter, Collection<V> acceptableValues) {
             return defineEnum(path, defaultValue, converter, obj -> {
                 if (obj instanceof Enum) {

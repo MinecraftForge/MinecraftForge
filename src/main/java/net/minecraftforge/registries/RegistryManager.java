@@ -1,29 +1,19 @@
 /*
- * Minecraft Forge
- * Copyright (c) 2016-2021.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation version 2.1
- * of the License.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Minecraft Forge - Forge Development LLC
+ * SPDX-License-Identifier: LGPL-2.1-only
  */
 
 package net.minecraftforge.registries;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import com.google.common.collect.BiMap;
@@ -32,9 +22,13 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.common.collect.Sets.SetView;
 
+import com.mojang.serialization.Lifecycle;
+import net.minecraft.core.WritableRegistry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.core.Registry;
+import net.minecraftforge.fml.IModStateTransition;
+import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.network.HandshakeMessages;
 import net.minecraftforge.registries.ForgeRegistry.Snapshot;
 import org.apache.commons.lang3.tuple.Pair;
@@ -47,6 +41,7 @@ public class RegistryManager
     public static final RegistryManager ACTIVE = new RegistryManager("ACTIVE");
     public static final RegistryManager VANILLA = new RegistryManager("VANILLA");
     public static final RegistryManager FROZEN = new RegistryManager("FROZEN");
+    private static Set<ResourceLocation> vanillaRegistryKeys = Set.of();
 
     BiMap<ResourceLocation, ForgeRegistry<? extends IForgeRegistryEntry<?>>> registries = HashBiMap.create();
     private BiMap<Class<? extends IForgeRegistryEntry<?>>, ResourceLocation> superTypes = HashBiMap.create();
@@ -82,6 +77,12 @@ public class RegistryManager
         return getRegistry(key.location());
     }
 
+    /**
+     * @see #getRegistry(ResourceLocation)
+     * @see #getRegistry(ResourceKey)
+     * @deprecated The uniqueness of registry super types will not be guaranteed starting in 1.19.
+     */
+    @Deprecated(forRemoval = true, since = "1.18.2")
     public <V extends IForgeRegistryEntry<V>> IForgeRegistry<V> getRegistry(Class<? super V> cls)
     {
         return getRegistry(superTypes.get(cls));
@@ -138,6 +139,9 @@ public class RegistryManager
                     foundType, superTypes.get(foundType), name, builder.getType(), builder.getType());
             throw new IllegalArgumentException("Duplicate registry parent type found - you can only have one registry for a particular super type");
         }
+        if (registries.containsKey(name))
+            throw new IllegalArgumentException("Attempted to register a registry for " + name + " with type "
+                    + builder.getType().getName() + " but it already exists as " + registries.get(name).getRegistrySuperType().getName());
         ForgeRegistry<V> reg = new ForgeRegistry<V>(this, name, builder);
         registries.put(name, reg);
         superTypes.put(builder.getType(), name);
@@ -148,6 +152,36 @@ public class RegistryManager
         for (ResourceLocation legacyName : builder.getLegacyNames())
             addLegacyName(legacyName, name);
         return getRegistry(name);
+    }
+
+    @SuppressWarnings("unchecked")
+    static <V extends IForgeRegistryEntry<V>> void registerToRootRegistry(ForgeRegistry<V> forgeReg)
+    {
+        WritableRegistry<Registry<V>> registry = (WritableRegistry<Registry<V>>) Registry.REGISTRY;
+        Registry<V> wrapper = forgeReg.getWrapper();
+        if (wrapper != null)
+            registry.register(forgeReg.getRegistryKey(), wrapper, Lifecycle.experimental());
+    }
+
+    public static IModStateTransition.EventGenerator<NewRegistryEvent> newRegistryEventGenerator()
+    {
+        NewRegistryEvent event = new NewRegistryEvent();
+        return mc -> event;
+    }
+
+
+    public static CompletableFuture<List<Throwable>> preNewRegistryEvent(final Executor executor,
+            final IModStateTransition.EventGenerator<? extends NewRegistryEvent> eventGenerator)
+    {
+        return CompletableFuture.runAsync(() -> vanillaRegistryKeys = Set.copyOf(Registry.REGISTRY.keySet()), executor)
+                .handle((v, t) -> t != null ? Collections.singletonList(t) : Collections.emptyList());
+    }
+
+    public static CompletableFuture<List<Throwable>> postNewRegistryEvent(final Executor executor,
+            final IModStateTransition.EventGenerator<? extends NewRegistryEvent> eventGenerator)
+    {
+        return CompletableFuture.runAsync(() -> eventGenerator.apply(null).fill(), executor)
+                .handle((v, t) -> t != null ? Collections.singletonList(t) : Collections.emptyList());
     }
 
     private void addLegacyName(ResourceLocation legacyName, ResourceLocation name)
@@ -202,5 +236,10 @@ public class RegistryManager
         return ACTIVE.registries.keySet().stream().
                 filter(resloc -> ACTIVE.synced.contains(resloc)).
                 collect(Collectors.toList());
+    }
+
+    public static Set<ResourceLocation> getVanillaRegistryKeys()
+    {
+        return vanillaRegistryKeys;
     }
 }

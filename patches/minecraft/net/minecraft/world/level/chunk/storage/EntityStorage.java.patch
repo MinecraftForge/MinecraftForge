@@ -9,7 +9,7 @@
                 listtag.add(compoundtag1);
 +            }
 +            } catch (Exception e) {
-+               LogManager.getLogger().error("An Entity type {} has thrown an exception trying to write state. It will not persist. Report this to the mod author", p_156567_.m_6095_(), e);
++               f_156535_.error("An Entity type {} has thrown an exception trying to write state. It will not persist. Report this to the mod author", p_156567_.m_6095_(), e);
              }
  
           });

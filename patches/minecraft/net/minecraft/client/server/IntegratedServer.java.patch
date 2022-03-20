@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/server/IntegratedServer.java
 +++ b/net/minecraft/client/server/IntegratedServer.java
-@@ -62,9 +_,10 @@
+@@ -60,9 +_,10 @@
        this.m_129997_(true);
        this.m_129999_(true);
        this.m_129793_();
@@ -12,7 +12,7 @@
     }
  
     public void m_5705_(BooleanSupplier p_120049_) {
-@@ -181,6 +_,7 @@
+@@ -179,6 +_,7 @@
     }
  
     public void m_7570_(boolean p_120053_) {

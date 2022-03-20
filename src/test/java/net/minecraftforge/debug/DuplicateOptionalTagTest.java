@@ -1,40 +1,25 @@
 /*
- * Minecraft Forge
- * Copyright (c) 2016-2021.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation version 2.1
- * of the License.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Minecraft Forge - Forge Development LLC
+ * SPDX-License-Identifier: LGPL-2.1-only
  */
 
 package net.minecraftforge.debug;
 
 import com.google.common.collect.Sets;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraftforge.common.ForgeTagHandler;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.Tags;
 import net.minecraftforge.event.server.ServerStartedEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.List;
 import java.util.Set;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 /**
  * Tests that the values for defaulted optional tags defined in multiple places are combined.
@@ -55,10 +40,8 @@ public class DuplicateOptionalTagTest
     private static final Set<Supplier<Block>> TAG_A_DEFAULTS = Set.of(Blocks.BEDROCK.delegate);
     private static final Set<Supplier<Block>> TAG_B_DEFAULTS = Set.of(Blocks.WHITE_WOOL.delegate);
 
-    private static final Tags.IOptionalNamedTag<Block> TAG_A = ForgeTagHandler.createOptionalTag(ForgeRegistries.BLOCKS, TAG_NAME,
-            TAG_A_DEFAULTS);
-    private static final Tags.IOptionalNamedTag<Block> TAG_B = ForgeTagHandler.createOptionalTag(ForgeRegistries.BLOCKS, TAG_NAME,
-            TAG_B_DEFAULTS);
+    private static final TagKey<Block> TAG_A = ForgeRegistries.BLOCKS.tags().createOptionalTagKey(TAG_NAME, TAG_A_DEFAULTS);
+    private static final TagKey<Block> TAG_B = ForgeRegistries.BLOCKS.tags().createOptionalTagKey(TAG_NAME, TAG_B_DEFAULTS);
 
     public DuplicateOptionalTagTest()
     {
@@ -67,30 +50,22 @@ public class DuplicateOptionalTagTest
 
     private void onServerStarted(ServerStartedEvent event)
     {
-        if (!TAG_A.isDefaulted())
-        {
-            LOGGER.warn("First instance of optional tag is not defaulted!");
-        }
+        Set<Block> tagAValues = ForgeRegistries.BLOCKS.tags().getTag(TAG_A).stream().collect(Collectors.toUnmodifiableSet());
+        Set<Block> tagBValues = ForgeRegistries.BLOCKS.tags().getTag(TAG_B).stream().collect(Collectors.toUnmodifiableSet());
 
-        if (!TAG_B.isDefaulted())
+        if (!tagAValues.equals(tagBValues))
         {
-            LOGGER.warn("Second instance of optional tag is not defaulted!");
-        }
-
-        if (!TAG_A.getValues().equals(TAG_B.getValues()))
-        {
-            LOGGER.error("Values of both optional tag instances are not the same: first instance: {}, second instance: {}",
-                    TAG_A.getValues(), TAG_B.getValues());
+            LOGGER.error("Values of both optional tag instances are not the same: first instance: {}, second instance: {}", tagAValues, tagBValues);
             return;
         }
 
-        final List<Block> expected = Sets.union(TAG_A_DEFAULTS, TAG_B_DEFAULTS).stream()
+        final Set<Block> expected = Sets.union(TAG_A_DEFAULTS, TAG_B_DEFAULTS).stream()
                 .map(Supplier::get)
-                .toList();
-        if (!TAG_A.getValues().equals(expected))
+                .collect(Collectors.toUnmodifiableSet());
+        if (!tagAValues.equals(expected))
         {
-            LOGGER.error("Values of the optional tag do not match the expected union of their defaults: expected {}, got {}",
-                    expected, TAG_A.getValues());
+            IllegalStateException e = new IllegalStateException("Optional tag values do not match!");
+            LOGGER.error("Values of the optional tag do not match the expected union of their defaults: expected {}, got {}", expected, tagAValues, e);
             return;
         }
 

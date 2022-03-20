@@ -1,20 +1,6 @@
 /*
- * Minecraft Forge
- * Copyright (c) 2016-2021.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation version 2.1
- * of the License.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Minecraft Forge - Forge Development LLC
+ * SPDX-License-Identifier: LGPL-2.1-only
  */
 
 package net.minecraftforge.common.loot;
@@ -130,16 +116,15 @@ public class LootModifierManager extends SimpleJsonResourceReloadListener {
 
         ResourceLocation serializer = new ResourceLocation(GsonHelper.getAsString(object, "type"));
 
-        return ForgeRegistries.LOOT_MODIFIER_SERIALIZERS.getValue(serializer).read(location, object, lootConditions);
+        return ForgeRegistries.LOOT_MODIFIER_SERIALIZERS.get().getValue(serializer).read(location, object, lootConditions);
     }
 
     public static GlobalLootModifierSerializer<?> getSerializerForName(ResourceLocation resourcelocation) {
-        return ForgeRegistries.LOOT_MODIFIER_SERIALIZERS.getValue(resourcelocation);
+        return ForgeRegistries.LOOT_MODIFIER_SERIALIZERS.get().getValue(resourcelocation);
     }
 
     /**
      * An immutable collection of the registered loot modifiers in layered order.
-     * @return
      */
     public Collection<IGlobalLootModifier> getAllLootMods() {
         return registeredLootModifiers.values();

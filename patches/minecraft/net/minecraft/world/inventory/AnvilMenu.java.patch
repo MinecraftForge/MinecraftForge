@@ -13,8 +13,8 @@
        this.f_39002_.m_6422_(0);
        this.f_39770_.m_39292_((p_150479_, p_150480_) -> {
           BlockState blockstate = p_150479_.m_8055_(p_150480_);
--         if (!p_150474_.m_150110_().f_35937_ && blockstate.m_60620_(BlockTags.f_13033_) && p_150474_.m_21187_().nextFloat() < 0.12F) {
-+         if (!p_150474_.m_150110_().f_35937_ && blockstate.m_60620_(BlockTags.f_13033_) && p_150474_.m_21187_().nextFloat() < breakChance) {
+-         if (!p_150474_.m_150110_().f_35937_ && blockstate.m_204336_(BlockTags.f_13033_) && p_150474_.m_21187_().nextFloat() < 0.12F) {
++         if (!p_150474_.m_150110_().f_35937_ && blockstate.m_204336_(BlockTags.f_13033_) && p_150474_.m_21187_().nextFloat() < breakChance) {
              BlockState blockstate1 = AnvilBlock.m_48824_(blockstate);
              if (blockstate1 == null) {
                 p_150479_.m_7471_(p_150480_, false);

@@ -1,20 +1,6 @@
 /*
- * Minecraft Forge
- * Copyright (c) 2016-2021.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation version 2.1
- * of the License.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Minecraft Forge - Forge Development LLC
+ * SPDX-License-Identifier: LGPL-2.1-only
  */
 
 package net.minecraftforge.network.filters;
@@ -22,8 +8,10 @@ package net.minecraftforge.network.filters;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.annotation.Nonnull;
 
@@ -31,6 +19,7 @@ import io.netty.channel.ChannelHandler;
 import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.commands.synchronization.ArgumentTypes;
 import net.minecraft.core.Registry;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.game.ClientboundCommandsPacket;
@@ -38,16 +27,16 @@ import net.minecraft.network.protocol.game.ClientboundUpdateAttributesPacket;
 import net.minecraft.network.protocol.game.ClientboundUpdateTagsPacket;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.TagCollection;
-import net.minecraftforge.common.ForgeTagHandler;
+import net.minecraft.tags.TagNetworkSerialization;
 import net.minecraftforge.network.NetworkHooks;
 import net.minecraftforge.registries.ForgeRegistries;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import net.minecraftforge.registries.RegistryManager;
+import org.slf4j.Logger;
 
 import com.google.common.collect.ImmutableMap;
 import com.mojang.brigadier.tree.RootCommandNode;
+import com.mojang.logging.LogUtils;
 
 /**
  * A filter for impl packets, used to filter/modify parts of vanilla impl messages that
@@ -56,8 +45,7 @@ import com.mojang.brigadier.tree.RootCommandNode;
 @ChannelHandler.Sharable
 public class VanillaConnectionNetworkFilter extends VanillaPacketFilter
 {
-
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger LOGGER = LogUtils.getLogger();
 
     public VanillaConnectionNetworkFilter()
     {
@@ -113,9 +101,16 @@ public class VanillaConnectionNetworkFilter extends VanillaPacketFilter
      * It prevents a rare error from logging and reduces the packet size
      */
     private static ClientboundUpdateTagsPacket filterCustomTagTypes(ClientboundUpdateTagsPacket packet) {
-        Map<ResourceKey<? extends Registry<?>>, TagCollection.NetworkPayload> tags = packet.getTags()
-                .entrySet().stream().filter(e -> !ForgeTagHandler.getCustomTagTypeNames().contains(e.getKey().location()))
+        Map<ResourceKey<? extends Registry<?>>, TagNetworkSerialization.NetworkPayload> tags = packet.getTags()
+                .entrySet().stream().filter(e -> isVanillaRegistry(e.getKey().location()))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
         return new ClientboundUpdateTagsPacket(tags);
+    }
+
+    private static boolean isVanillaRegistry(ResourceLocation location)
+    {
+        // Checks if the registry name is contained within the static view of vanilla registries both in Registry and builtin registries
+        return RegistryManager.getVanillaRegistryKeys().contains(location)
+                || RegistryAccess.REGISTRIES.keySet().stream().anyMatch(k -> k.location().equals(location));
     }
 }

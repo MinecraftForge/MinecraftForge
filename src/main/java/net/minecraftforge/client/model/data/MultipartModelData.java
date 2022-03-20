@@ -1,20 +1,6 @@
 /*
- * Minecraft Forge
- * Copyright (c) 2016-2021.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation version 2.1
- * of the License.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Minecraft Forge - Forge Development LLC
+ * SPDX-License-Identifier: LGPL-2.1-only
  */
 
 package net.minecraftforge.client.model.data;
@@ -35,7 +21,7 @@ public class MultipartModelData implements IModelData
 {
     public static final ModelProperty<MultipartModelData> MULTIPART_DATA = new ModelProperty<>();
 
-    public static IModelData create(List<Pair<Predicate<BlockState>, BakedModel>> selectors, BlockAndTintGetter world, BlockPos pos, BlockState state, IModelData tileData)
+    public static IModelData create(List<Pair<Predicate<BlockState>, BakedModel>> selectors, BlockAndTintGetter level, BlockPos pos, BlockState state, IModelData tileData)
     {
         MultipartModelData multipartData = new MultipartModelData(tileData);
         for (Pair<Predicate<BlockState>, BakedModel> selector : selectors)
@@ -43,7 +29,7 @@ public class MultipartModelData implements IModelData
             if (selector.getLeft().test(state))
             {
                 BakedModel part = selector.getRight();
-                IModelData partData = part.getModelData(world, pos, state, tileData);
+                IModelData partData = part.getModelData(level, pos, state, tileData);
                 multipartData.setPartData(part, partData);
             }
         }

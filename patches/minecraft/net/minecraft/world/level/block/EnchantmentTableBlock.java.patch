@@ -1,11 +1,11 @@
 --- a/net/minecraft/world/level/block/EnchantmentTableBlock.java
 +++ b/net/minecraft/world/level/block/EnchantmentTableBlock.java
-@@ -55,7 +_,7 @@
-             if (p_52984_.nextInt(16) == 0) {
-                for(int k = 0; k <= 1; ++k) {
-                   BlockPos blockpos = p_52983_.m_142082_(i, k, j);
--                  if (p_52982_.m_8055_(blockpos).m_60713_(Blocks.f_50078_)) {
-+                  if (p_52982_.m_8055_(blockpos).getEnchantPowerBonus(p_52982_, blockpos) > 0) {
-                      if (!p_52982_.m_46859_(p_52983_.m_142082_(i / 2, 0, j / 2))) {
-                         break;
-                      }
+@@ -40,7 +_,7 @@
+    }
+ 
+    public static boolean m_207909_(Level p_207910_, BlockPos p_207911_, BlockPos p_207912_) {
+-      return p_207910_.m_8055_(p_207911_.m_141952_(p_207912_)).m_60713_(Blocks.f_50078_) && p_207910_.m_46859_(p_207911_.m_142082_(p_207912_.m_123341_() / 2, p_207912_.m_123342_(), p_207912_.m_123343_() / 2));
++      return p_207910_.m_8055_(p_207911_.m_141952_(p_207912_)).getEnchantPowerBonus(p_207910_, p_207911_.m_141952_(p_207912_)) != 0 && p_207910_.m_46859_(p_207911_.m_142082_(p_207912_.m_123341_() / 2, p_207912_.m_123342_(), p_207912_.m_123343_() / 2));
+    }
+ 
+    public boolean m_7923_(BlockState p_52997_) {

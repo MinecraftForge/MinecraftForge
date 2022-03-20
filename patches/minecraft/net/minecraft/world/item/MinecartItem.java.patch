@@ -7,7 +7,7 @@
 -         RailShape railshape = blockstate.m_60734_() instanceof BaseRailBlock ? blockstate.m_61143_(((BaseRailBlock)blockstate.m_60734_()).m_7978_()) : RailShape.NORTH_SOUTH;
 +         RailShape railshape = blockstate.m_60734_() instanceof BaseRailBlock ? ((BaseRailBlock)blockstate.m_60734_()).getRailDirection(blockstate, level, blockpos, null) : RailShape.NORTH_SOUTH;
           double d3;
-          if (blockstate.m_60620_(BlockTags.f_13034_)) {
+          if (blockstate.m_204336_(BlockTags.f_13034_)) {
              if (railshape.m_61745_()) {
 @@ -81,7 +_,7 @@
        } else {
