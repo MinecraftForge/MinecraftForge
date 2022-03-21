@@ -336,10 +336,8 @@ class ForgeSchema extends Schema
         this.MODDED_BLOCK_ENTITY_TYPES.putAll(modBlockEntityTypes);
 
         //Remove those types from the map, which the event marked for removal.
-        this.MODDED_ENTITY_TYPES.values().removeIf(Objects::isNull);
-        this.MODDED_BLOCK_ENTITY_TYPES.values().removeIf(Objects::isNull);
-        this.MODDED_ENTITY_TYPES.keySet().removeIf(modEntityTypesToRemove::contains);
-        this.MODDED_BLOCK_ENTITY_TYPES.keySet().removeIf(modBlockEntityTypesToRemove::contains);
+        this.MODDED_ENTITY_TYPES.entrySet().removeIf(entry -> entry.getValue() == null || modEntityTypesToRemove.contains(entry.getKey()));
+        this.MODDED_BLOCK_ENTITY_TYPES.entrySet().removeIf(entry -> entry.getValue() == null || modBlockEntityTypesToRemove.contains(entry.getKey()));
 
         //Grab the vanilla entities.
         final Map<String, Supplier<TypeTemplate>> entityTypes = registerEntities(this);

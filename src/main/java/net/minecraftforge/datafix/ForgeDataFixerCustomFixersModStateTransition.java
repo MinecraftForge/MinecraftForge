@@ -87,13 +87,10 @@ public class ForgeDataFixerCustomFixersModStateTransition
      */
     private static Stream<IModStateTransition.EventGenerator<?>> generateFixersEvents()
     {
-        //Grab the schemas
-        List<ForgeSchema> schemas = Lists.newArrayList(getAllSchemas());
-        //Sort them based on their version key.
-        schemas.sort(Comparator.comparingInt(Schema::getVersionKey));
-
-        //Create one generator per schema.
-        return schemas.stream().map(InternalEventGenerator::new);
+        //Sort on the version key and generate one event generator per schema.
+        return getAllSchemas().stream()
+          .sorted(Comparator.comparingInt(Schema::getVersionKey))
+          .map(InternalEventGenerator::new);
     }
 
     /**
