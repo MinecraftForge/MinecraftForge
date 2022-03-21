@@ -20,6 +20,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
+// TODO 1.19: Pass the event instances to the pre and post hooks rather than the event generators
 public record ForgeSerialModStateTransition<T extends Event & IModBusEvent>(
   Supplier<Stream<EventGenerator<?>>> eventStream,
   BiFunction<Executor, ? extends EventGenerator<T>, CompletableFuture<List<Throwable>>> preDispatchHook,
@@ -34,6 +35,15 @@ public record ForgeSerialModStateTransition<T extends Event & IModBusEvent>(
           (t, f) -> CompletableFuture.completedFuture(Collections.emptyList()),
           (e, prev) -> prev.thenApplyAsync(
             Function.identity(), e));
+    }
+
+    public static <T extends Event & IModBusEvent> ForgeSerialModStateTransition<T> of(Supplier<Stream<EventGenerator<?>>> eventStream, BiFunction<Executor, ? extends EventGenerator<T>, CompletableFuture<List<Throwable>>> preDispatchHook, BiFunction<Executor, ? extends EventGenerator<T>, CompletableFuture<List<Throwable>>> postDispatchHook)
+    {
+        return new ForgeSerialModStateTransition<T>(eventStream,
+                preDispatchHook,
+                postDispatchHook,
+                (e, prev) -> prev.thenApplyAsync(
+                        Function.identity(), e));
     }
 
     @Override
