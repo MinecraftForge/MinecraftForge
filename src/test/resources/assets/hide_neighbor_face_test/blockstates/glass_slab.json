@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "type=bottom": {
+      "model": "hide_neighbor_face_test:block/glass_slab"
+    },
+    "type=double": {
+      "model": "minecraft:block/glass"
+    },
+    "type=top": {
+      "model": "hide_neighbor_face_test:block/glass_slab_top"
+    }
+  }
+}

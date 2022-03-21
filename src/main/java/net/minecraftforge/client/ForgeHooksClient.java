@@ -1077,6 +1077,11 @@ public class ForgeHooksClient
         return event.getResult();
     }
 
+    public static boolean isBlockInSolidLayer(BlockState state)
+    {
+        return ItemBlockRenderTypes.canRenderInLayer(state, RenderType.solid());
+    }
+
     public static void createWorldConfirmationScreen(
             LevelStorageSource save, String worldName, boolean creatingWorld,
             Function<LevelStorageSource.LevelStorageAccess, WorldStem.WorldDataSupplier> worldData,

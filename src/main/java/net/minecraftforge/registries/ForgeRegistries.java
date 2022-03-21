@@ -42,6 +42,8 @@ import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.loot.GlobalLootModifierSerializer;
 import net.minecraftforge.common.world.ForgeWorldPreset;
 
+import java.util.function.Supplier;
+
 /**
  * A class that exposes static references to all vanilla and Forge registries.
  * Created to have a central place to access the registries directly if modders need.
@@ -52,46 +54,49 @@ public class ForgeRegistries
     static { init(); } // This must be above the fields so we guarantee it's run before getRegistry is called. Yay static inializers
 
     // Game objects
-    public static final IForgeRegistry<Block> BLOCKS = RegistryManager.ACTIVE.getRegistry(Block.class);
-    public static final IForgeRegistry<Fluid> FLUIDS = RegistryManager.ACTIVE.getRegistry(Fluid.class);
-    public static final IForgeRegistry<Item> ITEMS = RegistryManager.ACTIVE.getRegistry(Item.class);
-    public static final IForgeRegistry<MobEffect> MOB_EFFECTS = RegistryManager.ACTIVE.getRegistry(MobEffect.class);
-    public static final IForgeRegistry<SoundEvent> SOUND_EVENTS = RegistryManager.ACTIVE.getRegistry(SoundEvent.class);
-    public static final IForgeRegistry<Potion> POTIONS = RegistryManager.ACTIVE.getRegistry(Potion.class);
-    public static final IForgeRegistry<Enchantment> ENCHANTMENTS = RegistryManager.ACTIVE.getRegistry(Enchantment.class);
-    public static final IForgeRegistry<EntityType<?>> ENTITIES = RegistryManager.ACTIVE.getRegistry(EntityType.class);
-    public static final IForgeRegistry<BlockEntityType<?>> BLOCK_ENTITIES = RegistryManager.ACTIVE.getRegistry(BlockEntityType.class);
-    public static final IForgeRegistry<ParticleType<?>> PARTICLE_TYPES = RegistryManager.ACTIVE.getRegistry(ParticleType.class);
-    public static final IForgeRegistry<MenuType<?>> CONTAINERS = RegistryManager.ACTIVE.getRegistry(MenuType.class);
-    public static final IForgeRegistry<Motive> PAINTING_TYPES = RegistryManager.ACTIVE.getRegistry(Motive.class);
-    public static final IForgeRegistry<RecipeSerializer<?>> RECIPE_SERIALIZERS = RegistryManager.ACTIVE.getRegistry(RecipeSerializer.class);
-    public static final IForgeRegistry<Attribute> ATTRIBUTES = RegistryManager.ACTIVE.getRegistry(Attribute.class);
-    public static final IForgeRegistry<StatType<?>> STAT_TYPES = RegistryManager.ACTIVE.getRegistry(StatType.class);
+    public static final IForgeRegistry<Block> BLOCKS = RegistryManager.ACTIVE.getRegistry(Keys.BLOCKS);
+    public static final IForgeRegistry<Fluid> FLUIDS = RegistryManager.ACTIVE.getRegistry(Keys.FLUIDS);
+    public static final IForgeRegistry<Item> ITEMS = RegistryManager.ACTIVE.getRegistry(Keys.ITEMS);
+    public static final IForgeRegistry<MobEffect> MOB_EFFECTS = RegistryManager.ACTIVE.getRegistry(Keys.MOB_EFFECTS);
+    public static final IForgeRegistry<SoundEvent> SOUND_EVENTS = RegistryManager.ACTIVE.getRegistry(Keys.SOUND_EVENTS);
+    public static final IForgeRegistry<Potion> POTIONS = RegistryManager.ACTIVE.getRegistry(Keys.POTIONS);
+    public static final IForgeRegistry<Enchantment> ENCHANTMENTS = RegistryManager.ACTIVE.getRegistry(Keys.ENCHANTMENTS);
+    public static final IForgeRegistry<EntityType<?>> ENTITIES = RegistryManager.ACTIVE.getRegistry(Keys.ENTITY_TYPES);
+    public static final IForgeRegistry<BlockEntityType<?>> BLOCK_ENTITIES = RegistryManager.ACTIVE.getRegistry(Keys.BLOCK_ENTITY_TYPES);
+    public static final IForgeRegistry<ParticleType<?>> PARTICLE_TYPES = RegistryManager.ACTIVE.getRegistry(Keys.PARTICLE_TYPES);
+    public static final IForgeRegistry<MenuType<?>> CONTAINERS = RegistryManager.ACTIVE.getRegistry(Keys.CONTAINER_TYPES);
+    public static final IForgeRegistry<Motive> PAINTING_TYPES = RegistryManager.ACTIVE.getRegistry(Keys.PAINTING_TYPES);
+    public static final IForgeRegistry<RecipeSerializer<?>> RECIPE_SERIALIZERS = RegistryManager.ACTIVE.getRegistry(Keys.RECIPE_SERIALIZERS);
+    public static final IForgeRegistry<Attribute> ATTRIBUTES = RegistryManager.ACTIVE.getRegistry(Keys.ATTRIBUTES);
+    public static final IForgeRegistry<StatType<?>> STAT_TYPES = RegistryManager.ACTIVE.getRegistry(Keys.STAT_TYPES);
 
     // Villages
-    public static final IForgeRegistry<VillagerProfession> PROFESSIONS = RegistryManager.ACTIVE.getRegistry(VillagerProfession.class);
-    public static final IForgeRegistry<PoiType> POI_TYPES = RegistryManager.ACTIVE.getRegistry(PoiType.class);
-    public static final IForgeRegistry<MemoryModuleType<?>> MEMORY_MODULE_TYPES = RegistryManager.ACTIVE.getRegistry(MemoryModuleType.class);
-    public static final IForgeRegistry<SensorType<?>> SENSOR_TYPES = RegistryManager.ACTIVE.getRegistry(SensorType.class);
-    public static final IForgeRegistry<Schedule> SCHEDULES = RegistryManager.ACTIVE.getRegistry(Schedule.class);
-    public static final IForgeRegistry<Activity> ACTIVITIES = RegistryManager.ACTIVE.getRegistry(Activity.class);
+    public static final IForgeRegistry<VillagerProfession> PROFESSIONS = RegistryManager.ACTIVE.getRegistry(Keys.VILLAGER_PROFESSIONS);
+    public static final IForgeRegistry<PoiType> POI_TYPES = RegistryManager.ACTIVE.getRegistry(Keys.POI_TYPES);
+    public static final IForgeRegistry<MemoryModuleType<?>> MEMORY_MODULE_TYPES = RegistryManager.ACTIVE.getRegistry(Keys.MEMORY_MODULE_TYPES);
+    public static final IForgeRegistry<SensorType<?>> SENSOR_TYPES = RegistryManager.ACTIVE.getRegistry(Keys.SENSOR_TYPES);
+    public static final IForgeRegistry<Schedule> SCHEDULES = RegistryManager.ACTIVE.getRegistry(Keys.SCHEDULES);
+    public static final IForgeRegistry<Activity> ACTIVITIES = RegistryManager.ACTIVE.getRegistry(Keys.ACTIVITIES);
 
     // Worldgen
-    public static final IForgeRegistry<WorldCarver<?>> WORLD_CARVERS = RegistryManager.ACTIVE.getRegistry(WorldCarver.class);
-    public static final IForgeRegistry<Feature<?>> FEATURES = RegistryManager.ACTIVE.getRegistry(Feature.class);
-    public static final IForgeRegistry<ChunkStatus> CHUNK_STATUS = RegistryManager.ACTIVE.getRegistry(ChunkStatus.class);
-    public static final IForgeRegistry<StructureFeature<?>> STRUCTURE_FEATURES = RegistryManager.ACTIVE.getRegistry(StructureFeature.class);
-    public static final IForgeRegistry<BlockStateProviderType<?>> BLOCK_STATE_PROVIDER_TYPES = RegistryManager.ACTIVE.getRegistry(BlockStateProviderType.class);
-    public static final IForgeRegistry<FoliagePlacerType<?>> FOLIAGE_PLACER_TYPES = RegistryManager.ACTIVE.getRegistry(FoliagePlacerType.class);
-    public static final IForgeRegistry<TreeDecoratorType<?>> TREE_DECORATOR_TYPES = RegistryManager.ACTIVE.getRegistry(TreeDecoratorType.class);
+    public static final IForgeRegistry<WorldCarver<?>> WORLD_CARVERS = RegistryManager.ACTIVE.getRegistry(Keys.WORLD_CARVERS);
+    public static final IForgeRegistry<Feature<?>> FEATURES = RegistryManager.ACTIVE.getRegistry(Keys.FEATURES);
+    public static final IForgeRegistry<ChunkStatus> CHUNK_STATUS = RegistryManager.ACTIVE.getRegistry(Keys.CHUNK_STATUS);
+    public static final IForgeRegistry<StructureFeature<?>> STRUCTURE_FEATURES = RegistryManager.ACTIVE.getRegistry(Keys.STRUCTURE_FEATURES);
+    public static final IForgeRegistry<BlockStateProviderType<?>> BLOCK_STATE_PROVIDER_TYPES = RegistryManager.ACTIVE.getRegistry(Keys.BLOCK_STATE_PROVIDER_TYPES);
+    public static final IForgeRegistry<FoliagePlacerType<?>> FOLIAGE_PLACER_TYPES = RegistryManager.ACTIVE.getRegistry(Keys.FOLIAGE_PLACER_TYPES);
+    public static final IForgeRegistry<TreeDecoratorType<?>> TREE_DECORATOR_TYPES = RegistryManager.ACTIVE.getRegistry(Keys.TREE_DECORATOR_TYPES);
 
     // Dynamic/Data driven.
     public static final IForgeRegistry<Biome> BIOMES = RegistryManager.ACTIVE.getRegistry(Keys.BIOMES);
 
     // Custom forge registries
-    public static final IForgeRegistry<DataSerializerEntry> DATA_SERIALIZERS = RegistryManager.ACTIVE.getRegistry(DataSerializerEntry.class);
-    public static final IForgeRegistry<GlobalLootModifierSerializer<?>> LOOT_MODIFIER_SERIALIZERS = RegistryManager.ACTIVE.getRegistry(GlobalLootModifierSerializer.class);
-    public static final IForgeRegistry<ForgeWorldPreset> WORLD_TYPES = RegistryManager.ACTIVE.getRegistry(ForgeWorldPreset.class);
+    static final DeferredRegister<DataSerializerEntry> DEFERRED_DATA_SERIALIZERS = DeferredRegister.create(Keys.DATA_SERIALIZERS, Keys.DATA_SERIALIZERS.location().getNamespace());
+    public static final Supplier<IForgeRegistry<DataSerializerEntry>> DATA_SERIALIZERS = DEFERRED_DATA_SERIALIZERS.makeRegistry(DataSerializerEntry.class, GameData::getDataSerializersRegistryBuilder);
+    static final DeferredRegister<GlobalLootModifierSerializer<?>> DEFERRED_LOOT_MODIFIER_SERIALIZERS = DeferredRegister.create(Keys.LOOT_MODIFIER_SERIALIZERS, Keys.LOOT_MODIFIER_SERIALIZERS.location().getNamespace());
+    public static final Supplier<IForgeRegistry<GlobalLootModifierSerializer<?>>> LOOT_MODIFIER_SERIALIZERS = DEFERRED_LOOT_MODIFIER_SERIALIZERS.makeRegistry(GameData.c(GlobalLootModifierSerializer.class), GameData::getGLMSerializersRegistryBuilder);
+    static final DeferredRegister<ForgeWorldPreset> DEFERRED_WORLD_TYPES = DeferredRegister.create(Keys.WORLD_TYPES, Keys.WORLD_TYPES.location().getNamespace());
+    public static final Supplier<IForgeRegistry<ForgeWorldPreset>> WORLD_TYPES = DEFERRED_WORLD_TYPES.makeRegistry(ForgeWorldPreset.class, GameData::getWorldTypesRegistryBuilder);
 
     public static final class Keys {
         //Vanilla
@@ -127,7 +132,7 @@ public class ForgeRegistries
         // Vanilla Dynamic
         public static final ResourceKey<Registry<Biome>> BIOMES = key("worldgen/biome");
 
-        //Forge
+        // Forge
         public static final ResourceKey<Registry<DataSerializerEntry>> DATA_SERIALIZERS = key("data_serializers");
         public static final ResourceKey<Registry<GlobalLootModifierSerializer<?>>> LOOT_MODIFIER_SERIALIZERS = key("forge:loot_modifier_serializers");
         public static final ResourceKey<Registry<ForgeWorldPreset>> WORLD_TYPES = key("forge:world_types");

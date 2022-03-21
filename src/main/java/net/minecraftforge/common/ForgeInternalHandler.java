@@ -33,7 +33,7 @@ import net.minecraftforge.server.command.ConfigCommand;
 
 public class ForgeInternalHandler
 {
-    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    @SubscribeEvent(priority = EventPriority.HIGH)
     public void onEntityJoinWorld(EntityJoinWorldEvent event)
     {
         Entity entity = event.getEntity();

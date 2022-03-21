@@ -1,14 +1,15 @@
 --- a/net/minecraft/data/tags/FluidTagsProvider.java
 +++ b/net/minecraft/data/tags/FluidTagsProvider.java
-@@ -7,8 +_,12 @@
+@@ -7,8 +_,13 @@
  import net.minecraft.world.level.material.Fluids;
  
  public class FluidTagsProvider extends TagsProvider<Fluid> {
++   /** @deprecated Forge: Use the {@link #FluidTagsProvider(DataGenerator, String, net.minecraftforge.common.data.ExistingFileHelper) mod id variant} */
 +   @Deprecated
     public FluidTagsProvider(DataGenerator p_126523_) {
        super(p_126523_, Registry.f_122822_);
 +   }
-+   public FluidTagsProvider(DataGenerator p_126523_, String modId, @javax.annotation.Nullable net.minecraftforge.common.data.ExistingFileHelper existingFileHelper) {
++   public FluidTagsProvider(DataGenerator p_126523_, String modId, @org.jetbrains.annotations.Nullable net.minecraftforge.common.data.ExistingFileHelper existingFileHelper) {
 +      super(p_126523_, Registry.f_122822_, modId, existingFileHelper);
     }
  

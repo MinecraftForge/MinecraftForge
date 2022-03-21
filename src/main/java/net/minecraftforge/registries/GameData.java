@@ -121,13 +121,13 @@ public class GameData
         makeRegistry(BLOCKS, Block.class, "air").addCallback(BlockCallbacks.INSTANCE).legacyName("blocks").vanillaHolder(Block::builtInRegistryHolder).create();
         makeRegistry(FLUIDS, Fluid.class, "empty").vanillaHolder(Fluid::builtInRegistryHolder).create();
         makeRegistry(ITEMS, Item.class, "air").addCallback(ItemCallbacks.INSTANCE).legacyName("items").vanillaHolder(Item::builtInRegistryHolder).create();
-        makeRegistry(MOB_EFFECTS, MobEffect.class).legacyName("potions").tagFolder("mob_effects").create();
+        makeRegistry(MOB_EFFECTS, MobEffect.class).legacyName("potions").create();
         //makeRegistry(BIOMES, Biome.class).legacyName("biomes").create();
         makeRegistry(SOUND_EVENTS, SoundEvent.class).legacyName("soundevents").create();
-        makeRegistry(POTIONS, Potion.class, "empty").legacyName("potiontypes").tagFolder("potions").create();
-        makeRegistry(ENCHANTMENTS, Enchantment.class).legacyName("enchantments").tagFolder("enchantments").create();
+        makeRegistry(POTIONS, Potion.class, "empty").legacyName("potiontypes").create();
+        makeRegistry(ENCHANTMENTS, Enchantment.class).legacyName("enchantments").create();
         makeRegistry(ENTITY_TYPES, c(EntityType.class), "pig").legacyName("entities").vanillaHolder(EntityType::builtInRegistryHolder).create();
-        makeRegistry(BLOCK_ENTITY_TYPES, c(BlockEntityType.class)).disableSaving().legacyName("blockentities").tagFolder("block_entity_types").create();
+        makeRegistry(BLOCK_ENTITY_TYPES, c(BlockEntityType.class)).disableSaving().legacyName("blockentities").create();
         makeRegistry(PARTICLE_TYPES, c(ParticleType.class)).disableSaving().create();
         makeRegistry(CONTAINER_TYPES, c(MenuType.class)).disableSaving().create();
         makeRegistry(PAINTING_TYPES, Motive.class, "kebab").create();
@@ -147,25 +147,37 @@ public class GameData
         makeRegistry(WORLD_CARVERS, c(WorldCarver.class)).disableSaving().disableSync().create();
         makeRegistry(FEATURES, c(Feature.class)).addCallback(FeatureCallbacks.INSTANCE).disableSaving().disableSync().create();
         makeRegistry(CHUNK_STATUS, ChunkStatus.class, "empty").disableSaving().disableSync().create();
-        makeRegistry(STRUCTURE_FEATURES, c(StructureFeature.class)).disableSaving().disableSync().tagFolder("structure_features").create();
+        makeRegistry(STRUCTURE_FEATURES, c(StructureFeature.class)).disableSaving().disableSync().create();
         makeRegistry(BLOCK_STATE_PROVIDER_TYPES, c(BlockStateProviderType.class)).disableSaving().disableSync().create();
         makeRegistry(FOLIAGE_PLACER_TYPES, c(FoliagePlacerType.class)).disableSaving().disableSync().create();
         makeRegistry(TREE_DECORATOR_TYPES, c(TreeDecoratorType.class)).disableSaving().disableSync().create();
 
         // Dynamic Worldgen
         makeRegistry(BIOMES, Biome.class).disableSync().create();
-
-        // Custom forge registries
-        makeRegistry(DATA_SERIALIZERS, DataSerializerEntry.class, 256 /*vanilla space*/, MAX_VARINT).disableSaving().disableOverrides().addCallback(SerializerCallbacks.INSTANCE).create();
-        makeRegistry(LOOT_MODIFIER_SERIALIZERS, c(GlobalLootModifierSerializer.class)).disableSaving().disableSync().create();
-        makeRegistry(WORLD_TYPES, ForgeWorldPreset.class).disableSaving().disableSync().create();
     }
+
+    static RegistryBuilder<DataSerializerEntry> getDataSerializersRegistryBuilder()
+    {
+        return makeRegistry(DATA_SERIALIZERS, DataSerializerEntry.class, 256 /*vanilla space*/, MAX_VARINT).disableSaving().disableOverrides()
+                .addCallback(SerializerCallbacks.INSTANCE);
+    }
+
+    static RegistryBuilder<GlobalLootModifierSerializer<?>> getGLMSerializersRegistryBuilder()
+    {
+        return makeRegistry(LOOT_MODIFIER_SERIALIZERS, c(GlobalLootModifierSerializer.class)).disableSaving().disableSync();
+    }
+
+    static RegistryBuilder<ForgeWorldPreset> getWorldTypesRegistryBuilder()
+    {
+        return makeRegistry(WORLD_TYPES, ForgeWorldPreset.class).disableSaving().disableSync();
+    }
+
     @SuppressWarnings("unchecked") //Ugly hack to let us pass in a typed Class object. Remove when we remove type specific references.
-    private static <T> Class<T> c(Class<?> cls) { return (Class<T>)cls; }
+    static <T> Class<T> c(Class<?> cls) { return (Class<T>)cls; }
 
     private static <T extends IForgeRegistryEntry<T>> RegistryBuilder<T> makeRegistry(ResourceKey<? extends Registry<T>> key, Class<T> type)
     {
-        return new RegistryBuilder<T>().setName(key.location()).setType(type).setMaxID(MAX_VARINT).addCallback(new NamespacedWrapper.Factory<T>());
+        return new RegistryBuilder<T>().setName(key.location()).setType(type).setMaxID(MAX_VARINT).hasWrapper();
     }
     private static <T extends IForgeRegistryEntry<T>> RegistryBuilder<T> makeRegistry(ResourceKey<? extends Registry<T>> key, Class<T> type, int min, int max)
     {
@@ -199,31 +211,32 @@ public class GameData
     @SuppressWarnings("unchecked")
     public static Map<Block,Item> getBlockItemMap()
     {
-        return RegistryManager.ACTIVE.getRegistry(Item.class).getSlaveMap(BLOCK_TO_ITEM, Map.class);
+        return RegistryManager.ACTIVE.getRegistry(ITEMS).getSlaveMap(BLOCK_TO_ITEM, Map.class);
     }
 
     @SuppressWarnings("unchecked")
     public static IdMapper<BlockState> getBlockStateIDMap()
     {
-        return RegistryManager.ACTIVE.getRegistry(Block.class).getSlaveMap(BLOCKSTATE_TO_ID, IdMapper.class);
+        return RegistryManager.ACTIVE.getRegistry(BLOCKS).getSlaveMap(BLOCKSTATE_TO_ID, IdMapper.class);
     }
 
     @SuppressWarnings("unchecked")
     public static Map<BlockState, PoiType> getBlockStatePointOfInterestTypeMap()
     {
-        return RegistryManager.ACTIVE.getRegistry(PoiType.class).getSlaveMap(BLOCKSTATE_TO_POINT_OF_INTEREST_TYPE, Map.class);
+        return RegistryManager.ACTIVE.getRegistry(POI_TYPES).getSlaveMap(BLOCKSTATE_TO_POINT_OF_INTEREST_TYPE, Map.class);
     }
 
     @SuppressWarnings("unchecked")
     public static Map<EntityDataSerializer<?>, DataSerializerEntry> getSerializerMap()
     {
-        return RegistryManager.ACTIVE.getRegistry(DataSerializerEntry.class).getSlaveMap(SERIALIZER_TO_ENTRY, Map.class);
+        ForgeRegistry<DataSerializerEntry> registry = RegistryManager.ACTIVE.getRegistry(DATA_SERIALIZERS);
+        return registry == null ? null : registry.getSlaveMap(SERIALIZER_TO_ENTRY, Map.class);
     }
 
     @SuppressWarnings("unchecked")
     public static BiMap<String, StructureFeature<?>> getStructureMap()
     {
-        return (BiMap<String, StructureFeature<?>>) RegistryManager.ACTIVE.getRegistry(Feature.class).getSlaveMap(STRUCTURES, BiMap.class);
+        return (BiMap<String, StructureFeature<?>>) RegistryManager.ACTIVE.getRegistry(FEATURES).getSlaveMap(STRUCTURES, BiMap.class);
     }
 
     public static <K extends IForgeRegistryEntry<K>> K register_impl(K value)
