@@ -12,7 +12,7 @@ import net.minecraftforge.eventbus.api.Event;
 
 /**
  * Event that fires when a lightning strikes.
- * Cancel to prevent vanilla behavior.
+ * Cancel to prevent vanilla behavior and remove the LightningBolt.
  */
 @Cancelable
 public class LightningStrikeEvent extends Event
