@@ -8,7 +8,7 @@
  
     public LightningBolt(EntityType<? extends LightningBolt> p_20865_, Level p_20866_) {
        super(p_20865_, p_20866_);
-@@ -74,6 +_,14 @@
+@@ -74,8 +_,17 @@
  
     }
  
@@ -22,7 +22,10 @@
 +
     public void m_8119_() {
        super.m_8119_();
++      if (net.minecraftforge.common.ForgeHooks.onLightningStrike(this, this.m_147162_())) return;
        if (this.f_20860_ == 2) {
+          if (this.f_19853_.m_5776_()) {
+             this.f_19853_.m_7785_(this.m_20185_(), this.m_20186_(), this.m_20189_(), SoundEvents.f_12090_, SoundSource.WEATHER, 10000.0F, 0.8F + this.f_19796_.nextFloat() * 0.2F, false);
 @@ -123,6 +_,7 @@
              List<Entity> list1 = this.f_19853_.m_6249_(this, new AABB(this.m_20185_() - 3.0D, this.m_20186_() - 3.0D, this.m_20189_() - 3.0D, this.m_20185_() + 3.0D, this.m_20186_() + 6.0D + 3.0D, this.m_20189_() + 3.0D), Entity::m_6084_);
  

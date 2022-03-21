@@ -49,6 +49,7 @@ import net.minecraft.advancements.Advancement;
 import net.minecraft.core.*;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -128,6 +129,7 @@ import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.event.entity.EntityAttributeModificationEvent;
 import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.EntityTravelToDimensionEvent;
+import net.minecraftforge.event.entity.LightningStrikeEvent;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
@@ -1400,5 +1402,10 @@ public class ForgeHooks
             });
             LOGGER.error(WORLDPERSISTENCE, buf.toString());
         }
+    }
+
+    public static boolean onLightningStrike(LightningBolt lightningBolt, BlockPos pos)
+    {
+        return MinecraftForge.EVENT_BUS.post(new LightningStrikeEvent(lightningBolt, pos));
     }
 }
