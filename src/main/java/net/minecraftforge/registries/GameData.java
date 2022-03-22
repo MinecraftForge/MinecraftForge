@@ -55,6 +55,7 @@ import net.minecraftforge.common.util.LogMessageAdapter;
 import net.minecraftforge.common.world.ForgeWorldPreset;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.RegistryEvent.MissingMappings;
+import net.minecraftforge.fml.ModLoader;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.IModStateTransition;
 import net.minecraftforge.fml.StartupMessageManager;
@@ -386,6 +387,14 @@ public class GameData
                 revertTo(RegistryManager.VANILLA, false);
                 LOGGER.fatal("Detected errors during registry event dispatch, roll back to VANILLA complete");
             } else {
+                RegistryManager.getVanillaRegistryKeys().stream()
+                        .filter(rl -> RegistryManager.ACTIVE.getRegistry(rl) == null)
+                        .forEach(registryName -> {
+                            Registry<?> registry = Registry.REGISTRY.get(registryName);
+                            if (registry == null)
+                                return;
+                            ModLoader.get().postEvent(new VanillaRegisterEvent(registry));
+                        });
                 net.minecraftforge.common.ForgeHooks.modifyAttributes();
             }
         }, executor);

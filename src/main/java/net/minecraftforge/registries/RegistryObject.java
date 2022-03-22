@@ -20,7 +20,7 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-public final class RegistryObject<T extends IForgeRegistryEntry<? super T>> implements Supplier<T>
+public final class RegistryObject<T> implements Supplier<T>
 {
     private final ResourceLocation name;
     @Nullable
@@ -72,7 +72,7 @@ public final class RegistryObject<T extends IForgeRegistryEntry<? super T>> impl
 
     private static RegistryObject<?> EMPTY = new RegistryObject<>();
 
-    private static <T extends IForgeRegistryEntry<? super T>> RegistryObject<T> empty() {
+    private static <T> RegistryObject<T> empty() {
         @SuppressWarnings("unchecked")
         RegistryObject<T> t = (RegistryObject<T>) EMPTY;
         return t;
@@ -134,33 +134,30 @@ public final class RegistryObject<T extends IForgeRegistryEntry<? super T>> impl
     }
 
     @SuppressWarnings("unchecked")
-    private <V extends IForgeRegistryEntry<V>> RegistryObject(final ResourceLocation name, final ResourceLocation registryName, final String modid)
+    private <V> RegistryObject(final ResourceLocation name, final ResourceLocation registryName, final String modid)
     {
         this.name = name;
         final Throwable callerStack = new Throwable("Calling Site from mod: " + modid);
         ObjectHolderRegistry.addHandler(new Consumer<>()
         {
-            private IForgeRegistry<V> registry;
+            private boolean registryExists = false;
 
             @Override
             public void accept(Predicate<ResourceLocation> pred)
             {
-                if (registry == null)
+                if (!registryExists)
                 {
-                    this.registry = RegistryManager.ACTIVE.getRegistry(registryName);
-                    if (registry == null)
-                        throw new IllegalStateException("Unable to find registry with key " + registryName + " for mod \"" + modid + "\". Check the 'caused by' to see further stack.", callerStack);
+                    if (!registryExists(registryName))
+                        throw new IllegalStateException(
+                                "Unable to find registry with key " + registryName + " for mod \"" + modid + "\". Check the 'caused by' to see further stack.",
+                                callerStack);
+                    registryExists = true;
                 }
-                if (pred.test(registry.getRegistryName()))
-                    RegistryObject.this.updateReference((IForgeRegistry<? extends T>) registry);
+                if (pred.test(registryName))
+                    RegistryObject.this.updateReference(registryName);
             }
         });
-        IForgeRegistry<V> registry = RegistryManager.ACTIVE.getRegistry(registryName);
-        // allow registry to be null, this might be for a custom registry that does not exist yet
-        if (registry != null)
-        {
-            this.updateReference(((IForgeRegistry<? extends T>) registry));
-        }
+        this.updateReference(registryName);
     }
 
     /**
@@ -179,7 +176,37 @@ public final class RegistryObject<T extends IForgeRegistryEntry<? super T>> impl
     @Deprecated(since = "1.18.1") // TODO: make package-private
     public void updateReference(IForgeRegistry<? extends T> registry)
     {
-        this.value = registry.containsKey(this.name) ? registry.getValue(getId()) : null;
+        this.value = registry.containsKey(this.name) ? registry.getValue(this.name) : null;
+    }
+
+    void updateReference(Registry<? extends T> registry)
+    {
+        this.value = registry.containsKey(this.name) ? registry.get(this.name) : null;
+    }
+
+    @SuppressWarnings("unchecked")
+    void updateReference(ResourceLocation registryName)
+    {
+        IForgeRegistry<? extends T> forgeRegistry = RegistryManager.ACTIVE.getRegistry(registryName);
+        if (forgeRegistry != null)
+        {
+            updateReference(forgeRegistry);
+            return;
+        }
+
+        Registry<? extends T> vanillaRegistry = (Registry<? extends T>) Registry.REGISTRY.get(registryName);
+        if (vanillaRegistry != null)
+        {
+            updateReference(vanillaRegistry);
+            return;
+        }
+
+        this.value = null;
+    }
+
+    private static boolean registryExists(ResourceLocation registryName)
+    {
+        return RegistryManager.ACTIVE.getRegistry(registryName) != null || Registry.REGISTRY.containsKey(registryName);
     }
 
     public ResourceLocation getId()
