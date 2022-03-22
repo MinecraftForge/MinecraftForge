@@ -17,23 +17,23 @@ import java.lang.annotation.Target;
  * from the registry. These values can then be referred within mod code directly.
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.TYPE, ElementType.FIELD})
+@Target(ElementType.FIELD)
 public @interface ObjectHolder
 {
     /**
      * The name of the registry to load registry entries from.
      * This string is parsed as a {@link ResourceLocation} and can contain a namespace.
      *
-     * @return the registry name
+     * @return The registry name
      */
-    String registryName() default "";
+    String registryName();
 
     /**
      * If used on a class, this represents a modid only.
      * If used on a field, it represents a name, which can be abbreviated or complete.
      * Abbreviated names derive their modid from an enclosing ObjectHolder at the class level.
      *
-     * @return either a modid or a name based on the rules above
+     * @return Either a modid or a name based on the rules above
      */
     String value();
 }
