@@ -38,9 +38,10 @@ import cpw.mods.modlauncher.serviceapi.ILaunchPluginService;
  * Will also de-finalize all fields in on class level annotations.
  */
 public class ObjectHolderDefinalize implements ILaunchPluginService {
-    // Hardcoded list of vanilla classes that should have object holders for each field of the given registry type.
+    // Hardcoded map of vanilla classes that should have object holders for each field of the given registry type.
+    // IMPORTANT: Updates to this collection must be reflected in ObjectHolderRegistry. Duplicated cuz classloaders, yay!
     // Classnames are validated in ObjectHolderRegistry.
-    public static final Map<String, VanillaObjectHolderData> VANILLA_OBJECT_HOLDERS = Stream.of(
+    private static final Map<String, VanillaObjectHolderData> VANILLA_OBJECT_HOLDERS = Stream.of(
             new VanillaObjectHolderData("net.minecraft.world.level.block.Blocks", "block", "net.minecraft.world.level.block.Block"),
             new VanillaObjectHolderData("net.minecraft.world.item.Items", "item", "net.minecraft.world.item.Item"),
             new VanillaObjectHolderData("net.minecraft.world.item.enchantment.Enchantments", "enchantment", "net.minecraft.world.item.enchantment.Enchantment"),

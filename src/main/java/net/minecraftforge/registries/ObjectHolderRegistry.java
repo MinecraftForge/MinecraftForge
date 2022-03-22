@@ -72,6 +72,17 @@ public class ObjectHolderRegistry
     private static final Set<Consumer<Predicate<ResourceLocation>>> objectHolders = new HashSet<>();
     private static final Type OBJECT_HOLDER = Type.getType(ObjectHolder.class);
     private static final Type MOD = Type.getType(Mod.class);
+    // Hardcoded list of vanilla classes that should have object holders for each field of the given registry type.
+    // IMPORTANT: Updates to this collection must be reflected in ObjectHolderDefinalize. Duplicated cuz classloaders, yay!
+    // Classnames are validated below.
+    private static final List<ObjectHolderDefinalize.VanillaObjectHolderData> VANILLA_OBJECT_HOLDERS = List.of(
+            new ObjectHolderDefinalize.VanillaObjectHolderData("net.minecraft.world.level.block.Blocks", "block", "net.minecraft.world.level.block.Block"),
+            new ObjectHolderDefinalize.VanillaObjectHolderData("net.minecraft.world.item.Items", "item", "net.minecraft.world.item.Item"),
+            new ObjectHolderDefinalize.VanillaObjectHolderData("net.minecraft.world.item.enchantment.Enchantments", "enchantment", "net.minecraft.world.item.enchantment.Enchantment"),
+            new ObjectHolderDefinalize.VanillaObjectHolderData("net.minecraft.world.effect.MobEffects", "mob_effect", "net.minecraft.world.effect.MobEffect"),
+            new ObjectHolderDefinalize.VanillaObjectHolderData("net.minecraft.core.particles.ParticleTypes", "particle_type", "net.minecraft.core.particles.ParticleType"),
+            new ObjectHolderDefinalize.VanillaObjectHolderData("net.minecraft.sounds.SoundEvents", "sound_event", "net.minecraft.sounds.SoundEvent")
+    );
 
     public static void findObjectHolders()
     {
@@ -91,7 +102,7 @@ public class ObjectHolderRegistry
                 .forEach(data -> classModIds.put(data.clazz(), (String)data.annotationData().get("value")));
 
         // Validate all the vanilla class-level object holders then scan those first
-        ObjectHolderDefinalize.VANILLA_OBJECT_HOLDERS.values().forEach(data -> {
+        VANILLA_OBJECT_HOLDERS.forEach(data -> {
             try
             {
                 Class<?> holderClass = Class.forName(data.holderClass(), true, ObjectHolderRegistry.class.getClassLoader());
