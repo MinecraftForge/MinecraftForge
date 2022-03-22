@@ -1,0 +1,16 @@
+--- a/net/minecraft/data/tags/ConfiguredStructureTagsProvider.java
++++ b/net/minecraft/data/tags/ConfiguredStructureTagsProvider.java
+@@ -7,8 +_,13 @@
+ import net.minecraft.world.level.levelgen.structure.BuiltinStructures;
+ 
+ public class ConfiguredStructureTagsProvider extends TagsProvider<ConfiguredStructureFeature<?, ?>> {
++   /** @deprecated Forge: Use the {@link #ConfiguredStructureTagsProvider(DataGenerator, String, net.minecraftforge.common.data.ExistingFileHelper) mod id variant} */
++   @Deprecated
+    public ConfiguredStructureTagsProvider(DataGenerator p_211098_) {
+       super(p_211098_, BuiltinRegistries.f_123862_);
++   }
++   public ConfiguredStructureTagsProvider(DataGenerator p_211098_, String modId, @org.jetbrains.annotations.Nullable net.minecraftforge.common.data.ExistingFileHelper existingFileHelper) {
++      super(p_211098_, BuiltinRegistries.f_123862_, modId, existingFileHelper);
+    }
+ 
+    protected void m_6577_() {

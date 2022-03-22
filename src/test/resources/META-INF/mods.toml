@@ -175,6 +175,8 @@ license="LGPL v2.1"
 [[mods]]
     modId="capabilities_test"
 [[mods]]
+    modId="audio_stream_test"
+[[mods]]
     modId="custom_mob_bucket_test"
 [[mods]]
     modId="custom_armor_model_test"
@@ -200,5 +202,9 @@ license="LGPL v2.1"
     modId="gametest_test"
 [[mods]]
     modId="many_mob_effects_test"
+[[mods]]
+    modId="potion_size_event_test"
+[[mods]]
+    modId="hide_neighbor_face_test"
 
 # ADD ABOVE THIS LINE

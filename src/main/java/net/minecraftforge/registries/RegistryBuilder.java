@@ -38,8 +38,6 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
     private boolean allowOverrides = true;
     private boolean allowModifications = false;
     private boolean hasWrapper = false;
-    @Nullable
-    private String tagFolder;
     private DummyFactory<T> dummyFactory;
     private MissingFactory<T> missingFactory;
     private Set<ResourceLocation> legacyNames = new HashSet<>();
@@ -201,15 +199,6 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
         return this;
     }
 
-    public RegistryBuilder<T> tagFolder(String tagFolder)
-    {
-        if (tagFolder == null || !tagFolder.matches("[a-z_/]+")) throw new IllegalArgumentException("Non [a-z_/] character in tag folder " + tagFolder);
-        this.tagFolder = tagFolder;
-        //Also mark this registry as having a wrapper to a vanilla registry so that it can be used in data generators properly
-        hasWrapper();
-        return this;
-    }
-
     public RegistryBuilder<T> legacyName(String name)
     {
         return legacyName(new ResourceLocation(name));
@@ -227,7 +216,24 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
         return this;
     }
 
-    public IForgeRegistry<T> create()
+    /**
+     * Enables tags for this registry if not already.
+     * All forge registries with wrappers inherently support tags.
+     *
+     * @return this builder
+     * @see RegistryBuilder#hasWrapper()
+     */
+    public RegistryBuilder<T> hasTags()
+    {
+        // Tag system heavily relies on Registry<?> objects, so we need a wrapper for this registry to take advantage
+        this.hasWrapper();
+        return this;
+    }
+
+    /**
+     * Modders: Use {@link NewRegistryEvent#create(RegistryBuilder)} instead
+     */
+    IForgeRegistry<T> create()
     {
         if (hasWrapper)
         {
@@ -343,12 +349,6 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
     public boolean getAllowModifications()
     {
         return allowModifications;
-    }
-
-    @Nullable
-    public String getTagFolder()
-    {
-        return tagFolder;
     }
 
     @Nullable

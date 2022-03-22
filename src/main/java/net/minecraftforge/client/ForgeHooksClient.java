@@ -1067,4 +1067,16 @@ public class ForgeHooksClient
             return vanillaOne ? -1 : 1;
         };
     }
+
+    public static Event.Result onScreenPotionSize(Screen screen)
+    {
+        final ScreenEvent.PotionSizeEvent event = new ScreenEvent.PotionSizeEvent(screen);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event.getResult();
+    }
+
+    public static boolean isBlockInSolidLayer(BlockState state)
+    {
+        return ItemBlockRenderTypes.canRenderInLayer(state, RenderType.solid());
+    }
 }
