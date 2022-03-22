@@ -48,7 +48,7 @@ public class IntersectionIngredient extends AbstractIngredient
     public static Ingredient of(Ingredient... ingredients)
     {
         if (ingredients.length == 0)
-            throw new IllegalArgumentException("Cannot create a compound ingredient with no children, use Ingredient.of() to create an empty ingredient");
+            throw new IllegalArgumentException("Cannot create an IntersectionIngredient with no children, use Ingredient.of() to create an empty ingredient");
         if (ingredients.length == 1)
             return ingredients[0];
 
