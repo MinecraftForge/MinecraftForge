@@ -66,6 +66,14 @@
           LevelSummary levelsummary = levelstoragesource$levelstorageaccess.m_78308_();
           if (levelsummary != null) {
              if (levelsummary.m_193020_()) {
+@@ -146,6 +_,7 @@
+                RegistryAccess.Writable registryaccess$writable = RegistryAccess.m_206197_();
+                DynamicOps<Tag> dynamicops = RegistryOps.m_206813_(NbtOps.f_128958_, registryaccess$writable, p_206543_);
+                WorldData worlddata1 = levelstoragesource$levelstorageaccess.m_211747_(dynamicops, p_206544_, registryaccess$writable.m_211816_());
++               net.minecraftforge.event.async.ForgeAsyncEventFactories.doFireWorldRegistriesLoadedEvent(registryaccess$writable, ((RegistryOps<Tag>) dynamicops).m_206831_(), p_206543_, net.minecraftforge.common.util.ExecutorUtils.getLocalThreadExecutor(), net.minecraftforge.common.util.ExecutorUtils::managedBlock);
+                if (worlddata1 != null) {
+                   return Pair.of(worlddata1, registryaccess$writable.m_203557_());
+                } else {
 @@ -181,22 +_,33 @@
           }
  

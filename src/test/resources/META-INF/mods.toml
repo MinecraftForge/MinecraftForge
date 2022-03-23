@@ -213,6 +213,8 @@ license="LGPL v2.1"
 [[mods]]
     modId="hide_neighbor_face_test"
 [[mods]]
+    modId="world_registries_loaded_event"
+[[mods]]
     modId="living_get_projectile_event_test"
 
 # ADD ABOVE THIS LINE

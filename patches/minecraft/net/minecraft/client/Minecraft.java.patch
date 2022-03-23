@@ -313,8 +313,11 @@
           return p_205187_::m_46934_;
        }, (p_210718_) -> {
           return (p_210712_, p_210713_) -> {
-@@ -1831,10 +_,10 @@
+@@ -1829,12 +_,13 @@
+                return WorldGenSettings.f_64600_.parse(dynamicops1, p_210687_);
+             });
              WorldGenSettings worldgensettings = dataresult.getOrThrow(false, Util.m_137489_("Error reading worldgen settings after loading data packs: ", f_90982_::error));
++            net.minecraftforge.event.async.ForgeAsyncEventFactories.doFireWorldRegistriesLoadedEvent(registryaccess$writable, dynamicops1, p_210712_, this, this::m_18701_);
              return Pair.of(new PrimaryLevelData(p_205187_, worldgensettings, dataresult.lifecycle()), registryaccess$writable.m_203557_());
           };
 -      }, false, Minecraft.ExperimentalDialogType.CREATE);
