@@ -1,0 +1,29 @@
+--- a/net/minecraft/client/gui/screens/inventory/LoomScreen.java
++++ b/net/minecraft/client/gui/screens/inventory/LoomScreen.java
+@@ -41,7 +_,7 @@
+    private static final int f_169775_ = 1;
+    private static final int f_169776_ = 4;
+    private static final int f_169777_ = 4;
+-   private static final int f_99061_ = (BannerPattern.f_58526_ - BannerPattern.f_58527_ - 1 + 4 - 1) / 4;
++   private static final int f_99061_ = (net.minecraftforge.common.ForgeHooks.getNonPatternItemCount() - 1 + 4 - 1) / 4;
+    private static final int f_169778_ = 12;
+    private static final int f_169779_ = 15;
+    private static final int f_169780_ = 14;
+@@ -125,7 +_,7 @@
+          int l2 = j + 13;
+          int l = this.f_99072_ + 16;
+ 
+-         for(int i1 = this.f_99072_; i1 < l && i1 < BannerPattern.f_58526_ - BannerPattern.f_58527_; ++i1) {
++         for(int i1 = this.f_99072_; i1 < l && i1 < net.minecraftforge.common.ForgeHooks.getNonPatternItemCount(); ++i1) {
+             int j1 = i1 - this.f_99072_;
+             int k1 = j2 + j1 % 4 * 14;
+             int l1 = l2 + j1 / 4 * 14;
+@@ -138,7 +_,7 @@
+             }
+ 
+             this.m_93228_(p_99099_, k1, l1, 0, i2, 14, 14);
+-            this.m_99108_(i1, k1, l1);
++            this.m_99108_(net.minecraftforge.common.ForgeHooks.getActualPatternIndex(i1), k1, l1);
+          }
+       } else if (this.f_99068_) {
+          int k2 = i + 60;

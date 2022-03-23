@@ -7,6 +7,7 @@ package net.minecraftforge.common;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Deque;
@@ -60,6 +61,7 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BannerPattern;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.levelgen.feature.ConfiguredStructureFeature;
 import net.minecraft.world.level.storage.WorldData;
@@ -1432,4 +1434,24 @@ public class ForgeHooks
         }
     }
 
+    private static BannerPattern[] nonPatternItems;
+
+    private static void initBannerPatternData()
+    {
+        nonPatternItems = Arrays.stream(BannerPattern.values())
+                .filter(p -> !p.hasPatternItem)
+                .toArray(BannerPattern[]::new);
+    }
+
+    public static int getNonPatternItemCount()
+    {
+        if (nonPatternItems == null) initBannerPatternData();
+        return nonPatternItems.length;
+    }
+
+    public static int getActualPatternIndex(int index)
+    {
+        if (nonPatternItems == null) initBannerPatternData();
+        return nonPatternItems[index].ordinal();
+    }
 }
