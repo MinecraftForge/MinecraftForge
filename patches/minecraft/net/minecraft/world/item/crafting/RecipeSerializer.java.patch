@@ -16,7 +16,7 @@
 +   //Forge: use fromJson with IContext if you need the context
     T m_6729_(ResourceLocation p_44103_, JsonObject p_44104_);
  
-+   @javax.annotation.Nullable
++   @org.jetbrains.annotations.Nullable
     T m_8005_(ResourceLocation p_44105_, FriendlyByteBuf p_44106_);
  
     void m_6178_(FriendlyByteBuf p_44101_, T p_44102_);

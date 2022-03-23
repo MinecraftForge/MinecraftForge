@@ -18,7 +18,7 @@
        }
 +   }
 +
-+   @javax.annotation.Nullable
++   @org.jetbrains.annotations.Nullable
 +   public static BlockState getShovelPathingState(BlockState originalState) {
 +      return f_43110_.get(originalState.m_60734_());
 +   }

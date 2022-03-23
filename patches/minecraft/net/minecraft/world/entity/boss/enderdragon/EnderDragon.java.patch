@@ -4,7 +4,7 @@
        return adouble;
     }
  
-+   @javax.annotation.Nullable private Player unlimitedLastHurtByPlayer = null;
++   @org.jetbrains.annotations.Nullable private Player unlimitedLastHurtByPlayer = null;
     public void m_8107_() {
 +      // lastHurtByPlayer is cleared after 100 ticks, capture it indefinitely in unlimitedLastHurtByPlayer for LivingExperienceDropEvent
 +      if (this.f_20888_ != null) this.unlimitedLastHurtByPlayer = f_20888_;

@@ -23,7 +23,7 @@
 +    * @param p_53528_ The flower block.
 +    * @param properties
 +    */
-+   public FlowerPotBlock(@javax.annotation.Nullable java.util.function.Supplier<FlowerPotBlock> emptyPot, java.util.function.Supplier<? extends Block> p_53528_, BlockBehaviour.Properties properties) {
++   public FlowerPotBlock(@org.jetbrains.annotations.Nullable java.util.function.Supplier<FlowerPotBlock> emptyPot, java.util.function.Supplier<? extends Block> p_53528_, BlockBehaviour.Properties properties) {
 +      super(properties);
 +      this.f_53525_ = null; // Unused, redirected by coremod
 +      this.flowerDelegate = p_53528_;

@@ -188,7 +188,7 @@
 +    * Only public for use in {@link net.minecraft.world.level.chunk.storage.ChunkSerializer}.
 +    */
 +   @java.lang.Deprecated
-+   @javax.annotation.Nullable
++   @org.jetbrains.annotations.Nullable
 +   public final CompoundTag writeCapsToNBT() {
 +      return capProvider.serializeInternal();
 +   }

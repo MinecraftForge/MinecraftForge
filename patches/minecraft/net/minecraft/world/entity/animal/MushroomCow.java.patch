@@ -23,7 +23,7 @@
     }
  
 +   @Override
-+   public java.util.List<ItemStack> onSheared(@javax.annotation.Nullable Player player, @javax.annotation.Nonnull ItemStack item, Level world, BlockPos pos, int fortune) {
++   public java.util.List<ItemStack> onSheared(@org.jetbrains.annotations.Nullable Player player, @org.jetbrains.annotations.NotNull ItemStack item, Level world, BlockPos pos, int fortune) {
 +      this.m_146852_(GameEvent.f_157781_, player);
 +      return shearInternal(player == null ? SoundSource.BLOCKS : SoundSource.PLAYERS);
 +   }
@@ -74,7 +74,7 @@
 +   }
 +
 +   @Override
-+   public boolean isShearable(@javax.annotation.Nonnull ItemStack item, Level world, BlockPos pos) {
++   public boolean isShearable(@org.jetbrains.annotations.NotNull ItemStack item, Level world, BlockPos pos) {
 +      return m_6220_();
     }
  

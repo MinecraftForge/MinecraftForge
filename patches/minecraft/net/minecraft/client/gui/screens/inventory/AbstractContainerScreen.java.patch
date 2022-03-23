@@ -170,7 +170,7 @@
        return this.f_97732_;
 +   }
 +
-+   @javax.annotation.Nullable
++   @org.jetbrains.annotations.Nullable
 +   public Slot getSlotUnderMouse() { return this.f_97734_; }
 +   public int getGuiLeft() { return f_97735_; }
 +   public int getGuiTop() { return f_97736_; }
