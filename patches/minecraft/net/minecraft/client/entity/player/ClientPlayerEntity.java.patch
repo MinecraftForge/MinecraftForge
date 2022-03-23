@@ -37,6 +37,14 @@
              this.field_71174_a.func_147297_a(new CEntityActionPacket(this, CEntityActionPacket.Action.START_FALL_FLYING));
           }
        }
+@@ -777,6 +_,7 @@
+ 
+    public void func_70098_U() {
+       super.func_70098_U();
++      if (this.func_226564_dU_() && this.func_184218_aH()) this.field_71158_b.field_228350_h_ = false;
+       this.field_184844_co = false;
+       if (this.func_184187_bx() instanceof BoatEntity) {
+          BoatEntity boatentity = (BoatEntity)this.func_184187_bx();
 @@ -974,5 +_,17 @@
        } else {
           return super.func_241843_o(p_241843_1_);
