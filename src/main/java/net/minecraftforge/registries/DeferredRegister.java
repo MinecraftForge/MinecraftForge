@@ -80,7 +80,7 @@ public class DeferredRegister<T>
      */
     public static <B> DeferredRegister<B> create(ResourceKey<? extends Registry<B>> key, String modid)
     {
-        return new DeferredRegister<>(key.location(), null, modid);
+        return new DeferredRegister<>(key, null, modid);
     }
 
     /**
@@ -92,10 +92,10 @@ public class DeferredRegister<T>
      */
     public static <B> DeferredRegister<B> create(ResourceLocation registryName, String modid)
     {
-        return new DeferredRegister<>(registryName, null, modid);
+        return new DeferredRegister<>(ResourceKey.createRegistryKey(registryName), null, modid);
     }
 
-    private final ResourceLocation registryName;
+    private final ResourceKey<? extends Registry<T>> registryKey;
     private final Class<? extends IForgeRegistryEntry<?>> superType;
     private final String modid;
     private final Map<RegistryObject<T>, Supplier<? extends T>> entries = new LinkedHashMap<>();
@@ -105,9 +105,9 @@ public class DeferredRegister<T>
     private SetMultimap<TagKey<T>, Supplier<T>> optionalTags;
     private boolean seenRegisterEvent = false;
 
-    private <E extends IForgeRegistryEntry<E>> DeferredRegister(@Nullable ResourceLocation registryName, @Nullable Class<E> base, String modid)
+    private <E extends IForgeRegistryEntry<E>> DeferredRegister(@Nullable ResourceKey<? extends Registry<T>> registryKey, @Nullable Class<E> base, String modid)
     {
-        this.registryName = registryName;
+        this.registryKey = registryKey;
         this.superType = base;
         this.modid = modid;
     }
@@ -115,7 +115,7 @@ public class DeferredRegister<T>
     @SuppressWarnings("unchecked")
     private <E extends IForgeRegistryEntry<E>> DeferredRegister(IForgeRegistry<E> reg, String modid)
     {
-        this(reg.getRegistryName(), reg.getRegistrySuperType(), modid);
+        this((ResourceKey<? extends Registry<T>>) (ResourceKey) reg.getRegistryKey(), reg.getRegistrySuperType(), modid);
     }
 
     /**
@@ -134,9 +134,9 @@ public class DeferredRegister<T>
         Objects.requireNonNull(sup);
         final ResourceLocation key = new ResourceLocation(modid, name);
 
-        RegistryObject<?> ret;
-        if (this.registryName != null)
-            ret = RegistryObject.of(key, this.registryName, this.modid);
+        RegistryObject<I> ret;
+        if (this.registryKey != null)
+            ret = RegistryObject.of(key, this.registryKey, this.modid);
         else if (this.superType != null)
             ret = RegistryObject.of(key, (Class) this.superType, this.modid);
         else
@@ -151,7 +151,7 @@ public class DeferredRegister<T>
         if (prevValue != null)
             throw new IllegalArgumentException("Duplicate registration " + name);
 
-        return (RegistryObject<I>) ret;
+        return ret;
     }
 
     /**
@@ -184,7 +184,7 @@ public class DeferredRegister<T>
      */
     public <E extends IForgeRegistryEntry<E>> Supplier<IForgeRegistry<E>> makeRegistry(final Class<E> base, final Supplier<RegistryBuilder<E>> sup)
     {
-        return makeRegistry(this.registryName, base, sup);
+        return makeRegistry(this.registryKey.location(), base, sup);
     }
 
     /**
@@ -215,10 +215,10 @@ public class DeferredRegister<T>
     @NotNull
     public TagKey<T> createTagKey(@NotNull ResourceLocation location)
     {
-        if (this.registryName == null)
+        if (this.registryKey == null)
             throw new IllegalStateException("The registry name was not set, cannot create a tag key");
         Objects.requireNonNull(location);
-        return TagKey.create(ResourceKey.createRegistryKey(this.registryName), location);
+        return TagKey.create(this.registryKey, location);
     }
 
     /**
@@ -290,7 +290,7 @@ public class DeferredRegister<T>
     public void register(IEventBus bus)
     {
         bus.register(new EventDispatcher(this));
-        if (this.registryName != null && this.findForgeRegistry() == null)
+        if (this.registryKey != null && this.findForgeRegistry() == null)
             bus.addListener(this::vanillaRegister);
         if (this.registryFactory != null) {
             bus.addListener(this::createRegistry);
@@ -322,7 +322,7 @@ public class DeferredRegister<T>
     @Nullable
     public ResourceLocation getRegistryName()
     {
-        return this.registryName;
+        return this.registryKey == null ? null : this.registryKey.location();
     }
 
     // TODO 1.19: Remove this E method generic in favor of the class generic T when IForgeRegistry and RegistryBuilder no longer require IForgeRegistryEntry
@@ -389,7 +389,7 @@ public class DeferredRegister<T>
     @SuppressWarnings("unchecked")
     private void vanillaRegister(VanillaRegisterEvent event)
     {
-        if (this.registryName != null && event.vanillaRegistry.key().location().equals(this.registryName))
+        if (this.registryKey != null && event.vanillaRegistry.key() == this.registryKey)
         {
             this.seenRegisterEvent = true;
             for (Entry<RegistryObject<T>, Supplier<? extends T>> e : entries.entrySet())
@@ -404,9 +404,9 @@ public class DeferredRegister<T>
     @Nullable
     private IForgeRegistry<?> findForgeRegistry()
     {
-        if (this.registryName != null)
+        if (this.registryKey != null)
         {
-            return RegistryManager.ACTIVE.getRegistry(this.registryName);
+            return RegistryManager.ACTIVE.getRegistry((ResourceKey) this.registryKey);
         }
         else if (this.superType != null)
         {
