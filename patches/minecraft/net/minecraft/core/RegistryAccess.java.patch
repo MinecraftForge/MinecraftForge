@@ -1,13 +1,14 @@
 --- a/net/minecraft/core/RegistryAccess.java
 +++ b/net/minecraft/core/RegistryAccess.java
-@@ -58,6 +_,7 @@
+@@ -58,7 +_,7 @@
        m_123053_(builder, Registry.f_122878_, NoiseGeneratorSettings.f_64430_);
        m_123053_(builder, Registry.f_194568_, NormalNoise.NoiseParameters.f_192851_);
        m_123053_(builder, Registry.f_211074_, DensityFunction.f_208216_);
-+      net.minecraftforge.common.ForgeHooks.addBuiltinRegistriesEvent(builder);
-       return builder.build();
+-      return builder.build();
++      return net.minecraftforge.registries.DataPackRegistriesHooks.addBuiltinRegistriesEvent(builder);
     });
     Codec<RegistryAccess> f_206151_ = m_206205_();
+    Supplier<RegistryAccess.Frozen> f_123049_ = Suppliers.memoize(() -> {
 @@ -185,6 +_,8 @@
     private static <E> void m_211081_(RegistryResourceAccess.InMemoryStorage p_211082_, RegistryAccess.RegistryData<E> p_211083_) {
        ResourceKey<? extends Registry<E>> resourcekey = p_211083_.f_123101_();

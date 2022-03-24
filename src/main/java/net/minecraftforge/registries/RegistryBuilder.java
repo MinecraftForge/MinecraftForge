@@ -12,7 +12,6 @@ import java.util.function.Function;
 
 import com.google.common.collect.Lists;
 
-import com.mojang.serialization.Codec;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.registries.IForgeRegistry.*;
