@@ -7,6 +7,7 @@ package net.minecraftforge.registries;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,11 +16,14 @@ import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.annotation.Nullable;
 
+import com.google.common.collect.Multimap;
+import com.google.common.collect.Multimaps;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -34,15 +38,18 @@ import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
+import org.jetbrains.annotations.NotNull;
 
 class NamespacedHolderHelper<T extends IForgeRegistryEntry<T>>
 {
     private static final Logger LOGGER = LogManager.getLogger();
+    private final ForgeRegistry<T> owner;
     private final Registry<T> self;
     @Nullable
     private final ResourceLocation defaultKey;
     @Nullable
     private final Function<T, Holder.Reference<T>> holderLookup;
+    private final Multimap<TagKey<T>, Supplier<T>> optionalTags = Multimaps.newSetMultimap(new IdentityHashMap<>(), HashSet::new);
 
     private boolean frozen = false; // Frozen is vanilla's variant of locked, but it can be unfrozen
     private List<Holder.Reference<T>> holdersSorted;
@@ -52,8 +59,9 @@ class NamespacedHolderHelper<T extends IForgeRegistryEntry<T>>
     private volatile Map<TagKey<T>, HolderSet.Named<T>> tags = new IdentityHashMap<>();
     private Holder.Reference<T> defaultHolder;
 
-    NamespacedHolderHelper(Registry<T> self, @Nullable ResourceLocation defaultKey, @Nullable Function<T, Holder.Reference<T>> holderLookup)
+    NamespacedHolderHelper(ForgeRegistry<T> owner, Registry<T> self, @Nullable ResourceLocation defaultKey, @Nullable Function<T, Holder.Reference<T>> holderLookup)
     {
+        this.owner = owner;
         this.self = self;
         this.defaultKey = defaultKey;
         this.holderLookup = holderLookup;
@@ -68,6 +76,16 @@ class NamespacedHolderHelper<T extends IForgeRegistryEntry<T>>
     Optional<Holder<T>> getHolder(ResourceKey<T> key)
     {
         return Optional.ofNullable(this.holdersByName.get(key.location()));
+    }
+
+    Optional<Holder<T>> getHolder(ResourceLocation location)
+    {
+        return Optional.ofNullable(this.holdersByName.get(location));
+    }
+
+    Optional<Holder<T>> getHolder(T value)
+    {
+        return Optional.ofNullable(this.holders.get(value));
     }
 
     Holder<T> getOrCreateHolder(ResourceKey<T> key)
@@ -120,6 +138,11 @@ class NamespacedHolderHelper<T extends IForgeRegistryEntry<T>>
         return named;
     }
 
+    void addOptionalTag(TagKey<T> name, @NotNull Set<? extends Supplier<T>> defaults)
+    {
+        this.optionalTags.putAll(name, defaults);
+    }
+
     Stream<TagKey<T>> getTagNames()
     {
         return this.tags.keySet().stream();
@@ -165,18 +188,7 @@ class NamespacedHolderHelper<T extends IForgeRegistryEntry<T>>
     {
         Map<Holder.Reference<T>, List<TagKey<T>>> holderToTag = new IdentityHashMap<>();
         this.holdersByName.values().forEach(v -> holderToTag.put(v, new ArrayList<>()));
-        newTags.forEach((k, v) ->
-        {
-            for(Holder<T> holder : v)
-            {
-                if (!holder.isValidInRegistry(this.self))
-                    throw new IllegalStateException("Can't create named set " + k + " containing value " + holder + " from outside registry " + this);
-
-                if (!(holder instanceof Holder.Reference<T>))
-                    throw new IllegalStateException("Found direct holder " + holder + " value in tag " + k);
-                holderToTag.get((Holder.Reference<T>)holder).add(k);
-            }
-        });
+        newTags.forEach((name, values) -> values.forEach(holder -> addTagToHolder(holderToTag, name, holder)));
 
         Set<TagKey<T>> set = Sets.difference(this.tags.keySet(), newTags.keySet());
         if (!set.isEmpty())
@@ -184,8 +196,33 @@ class NamespacedHolderHelper<T extends IForgeRegistryEntry<T>>
 
         Map<TagKey<T>, HolderSet.Named<T>> tmpTags = new IdentityHashMap<>(this.tags);
         newTags.forEach((k, v) -> tmpTags.computeIfAbsent(k, this::createTag).bind(v));
+
+        Set<TagKey<T>> defaultedTags = Sets.difference(this.optionalTags.keySet(), newTags.keySet());
+        defaultedTags.forEach(name -> {
+            List<Holder<T>> defaults = this.optionalTags.get(name).stream()
+                    .map(valueSupplier -> getHolder(valueSupplier.get()).orElse(null))
+                    .filter(Objects::nonNull)
+                    .distinct()
+                    .toList();
+            defaults.forEach(holder -> addTagToHolder(holderToTag, name, holder));
+            tmpTags.computeIfAbsent(name, this::createTag).bind(defaults);
+        });
+
         holderToTag.forEach(Holder.Reference::bindTags);
         this.tags = tmpTags;
+
+        this.owner.onBindTags(this.tags, defaultedTags);
+    }
+
+    private void addTagToHolder(Map<Holder.Reference<T>, List<TagKey<T>>> holderToTag, TagKey<T> name, Holder<T> holder)
+    {
+        if (!holder.isValidInRegistry(this.self))
+            throw new IllegalStateException("Can't create named set " + name + " containing value " + holder + " from outside registry " + this);
+
+        if (!(holder instanceof Holder.Reference<T>))
+            throw new IllegalStateException("Found direct holder " + holder + " value in tag " + name);
+
+        holderToTag.get((Holder.Reference<T>) holder).add(name);
     }
 
     void resetTags()

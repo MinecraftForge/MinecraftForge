@@ -346,7 +346,16 @@
           }));
  
           try {
-@@ -1875,7 +_,7 @@
+@@ -1869,13 +_,15 @@
+       WorldData worlddata = worldstem.f_206895_();
+       boolean flag = worlddata.m_5961_().m_64670_();
+       boolean flag1 = worlddata.m_5754_() != Lifecycle.stable();
+-      if (p_205210_ == Minecraft.ExperimentalDialogType.NONE || !flag && !flag1) {
++      //Skip confirmation if it has been done already for this world
++      boolean skipConfirmation = worlddata instanceof PrimaryLevelData pld && pld.hasConfirmedExperimentalWarning();
++      if (skipConfirmation || p_205210_ == Minecraft.ExperimentalDialogType.NONE || !flag && !flag1) {
+          this.m_91399_();
+          this.f_90999_.set((StoringChunkProgressListener)null);
  
           try {
              RegistryAccess.Frozen registryaccess$frozen = worldstem.f_206894_();
@@ -364,7 +373,7 @@
                    StoringChunkProgressListener storingchunkprogresslistener = new StoringChunkProgressListener(p_210795_ + 0);
                    this.f_90999_.set(storingchunkprogresslistener);
                    return ProcessorChunkProgressListener.m_143583_(storingchunkprogresslistener, this.f_91023_::add);
-@@ -1929,11 +_,16 @@
+@@ -1929,12 +_,19 @@
           connection.m_129505_(new ClientHandshakePacketListenerImpl(connection, this, (Screen)null, (p_210793_) -> {
           }));
           connection.m_129512_(new ClientIntentionPacket(socketaddress.toString(), 0, ConnectionProtocol.LOGIN));
@@ -377,12 +386,15 @@
 +         connection.m_129512_(new ServerboundHelloPacket(gameProfile));
           this.f_91009_ = connection;
        } else {
++         if (flag) //FORGE: For legacy world options, let vanilla handle it.
           this.m_91143_(p_205210_, p_205206_, flag, () -> {
 -            this.m_205205_(p_205206_, p_205207_, p_205208_, p_205209_, Minecraft.ExperimentalDialogType.NONE);
 +            this.doLoadLevel(p_205206_, p_205207_, p_205208_, p_205209_, Minecraft.ExperimentalDialogType.NONE, creating);
           });
++         else net.minecraftforge.client.ForgeHooksClient.createWorldConfirmationScreen(f_91031_, p_205206_, creating, p_205208_, wds -> () -> this.doLoadLevel(p_205206_, p_205207_, wds, p_205209_, ExperimentalDialogType.NONE, creating));
           worldstem.close();
  
+          try {
 @@ -2026,6 +_,7 @@
     }
  

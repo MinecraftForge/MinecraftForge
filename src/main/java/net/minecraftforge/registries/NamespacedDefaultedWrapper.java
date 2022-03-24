@@ -30,7 +30,7 @@ import net.minecraft.core.DefaultedRegistry;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Lifecycle;
 
-class NamespacedDefaultedWrapper<T extends IForgeRegistryEntry<T>> extends DefaultedRegistry<T> implements ILockableRegistry
+class NamespacedDefaultedWrapper<T extends IForgeRegistryEntry<T>> extends DefaultedRegistry<T> implements ILockableRegistry, IHolderHelperHolder<T>
 {
     private final ForgeRegistry<T> delegate;
     private final NamespacedHolderHelper<T> holders;
@@ -42,7 +42,7 @@ class NamespacedDefaultedWrapper<T extends IForgeRegistryEntry<T>> extends Defau
     {
         super("empty", owner.getRegistryKey(), Lifecycle.experimental(), holderLookup);
         this.delegate = owner;
-        this.holders = new NamespacedHolderHelper<>(this, this.delegate.getDefaultKey(), holderLookup);
+        this.holders = new NamespacedHolderHelper<>(owner, this, this.delegate.getDefaultKey(), holderLookup);
     }
 
     @Override
@@ -186,6 +186,12 @@ class NamespacedDefaultedWrapper<T extends IForgeRegistryEntry<T>> extends Defau
         return this.delegate.size();
     }
 
+    @Override
+    public NamespacedHolderHelper<T> getHolderHelper()
+    {
+        return this.holders;
+    }
+
     @Override public Optional<Holder<T>> getHolder(int id) { return this.holders.getHolder(id); }
     @Override public Optional<Holder<T>> getHolder(ResourceKey<T> key) { return this.holders.getHolder(key); }
     @Override public Holder<T> getOrCreateHolder(ResourceKey<T> key) { return this.holders.getOrCreateHolder(key); }
@@ -202,7 +208,7 @@ class NamespacedDefaultedWrapper<T extends IForgeRegistryEntry<T>> extends Defau
     @Override public void resetTags() { this.holders.resetTags(); }
     @Deprecated @Override public void unfreeze() { this.holders.unfreeze(); }
 
-    /** @Depreciated Forge: For internal use only. Use the Register events when registering values. */
+    /** @deprecated Forge: For internal use only. Use the Register events when registering values. */
     @Deprecated @Override public void lock(){ this.locked = true; }
 
 
