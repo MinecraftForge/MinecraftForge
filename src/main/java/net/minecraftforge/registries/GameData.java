@@ -10,6 +10,7 @@ import com.mojang.serialization.Lifecycle;
 
 import java.util.*;
 
+import net.minecraft.server.Bootstrap;
 import net.minecraft.world.level.block.AirBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -49,6 +50,8 @@ import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.StructureFeature;
 import net.minecraft.world.level.levelgen.feature.foliageplacers.FoliagePlacerType;
 import net.minecraft.world.level.levelgen.feature.treedecorators.TreeDecoratorType;
+import net.minecraftforge.client.ForgeHooksClient;
+import net.minecraftforge.common.ForgeStatesProvider;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.loot.GlobalLootModifierSerializer;
 import net.minecraftforge.common.util.LogMessageAdapter;
@@ -61,6 +64,8 @@ import net.minecraftforge.fml.StartupMessageManager;
 import net.minecraftforge.fml.util.EnhancedRuntimeException;
 import net.minecraftforge.fml.util.thread.EffectiveSide;
 
+import net.minecraftforge.internal.ForgeExceptionFactories;
+import net.minecraftforge.server.ServerLifecycleHooks;
 import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -252,6 +257,10 @@ public class GameData
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public static void vanillaSnapshot()
     {
+        if (StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE).getCallerClass() != Bootstrap.class)
+        {
+            throw ForgeExceptionFactories.INTERNAL_METHOD;
+        }
         LOGGER.debug(REGISTRIES, "Creating vanilla freeze snapshot");
         for (Map.Entry<ResourceLocation, ForgeRegistry<? extends IForgeRegistryEntry<?>>> r : RegistryManager.ACTIVE.registries.entrySet())
         {
@@ -270,6 +279,10 @@ public class GameData
 
     public static void unfreezeData()
     {
+        if (StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE).getCallerClass() != ForgeStatesProvider.class)
+        {
+            throw new IllegalCallerException("This is an internal forge method and cannot be used by mods: Use DeferredRegisters or RegistryEvents for registering objects, as statically instantiating those is no longer possible.");
+        }
         LOGGER.debug(REGISTRIES, "Unfreezing vanilla registries");
         Registry.REGISTRY.stream().filter(r -> r instanceof MappedRegistry).forEach(r -> ((MappedRegistry<?>)r).unfreeze());
     }
@@ -277,6 +290,10 @@ public class GameData
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public static void freezeData()
     {
+        if (StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE).getCallerClass() != ForgeStatesProvider.class)
+        {
+            throw ForgeExceptionFactories.INTERNAL_METHOD;
+        }
         LOGGER.debug(REGISTRIES, "Freezing registries");
         Registry.REGISTRY.stream().filter(r -> r instanceof MappedRegistry).forEach(r -> ((MappedRegistry<?>)r).freeze());
 
@@ -303,10 +320,15 @@ public class GameData
     }
 
     public static void revertToFrozen() {
+        final var caller = StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE).getCallerClass();
+        if (caller != ForgeHooksClient.class && caller != ServerLifecycleHooks.class)
+        {
+            throw ForgeExceptionFactories.INTERNAL_METHOD;
+        }
         revertTo(RegistryManager.FROZEN, true);
     }
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    public static void revertTo(final RegistryManager target, boolean fireEvents)
+    static void revertTo(final RegistryManager target, boolean fireEvents)
     {
         if (target.registries.isEmpty())
         {
@@ -333,6 +355,7 @@ public class GameData
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
+    // This method seems to not be called anywhere?
     public static void revert(RegistryManager state, ResourceLocation registry, boolean lock)
     {
         LOGGER.debug(REGISTRIES, "Reverting {} to {}", registry, state.getName());

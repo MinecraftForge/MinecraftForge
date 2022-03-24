@@ -101,6 +101,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.*;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.common.ForgeI18n;
+import net.minecraftforge.internal.ForgeExceptionFactories;
 import net.minecraftforge.network.NetworkConstants;
 import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -937,6 +938,10 @@ public class ForgeHooksClient
 
     public static void handleClientLevelClosing(ClientLevel level)
     {
+        if (StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE).getCallerClass() != Minecraft.class)
+        {
+            throw ForgeExceptionFactories.INTERNAL_METHOD;
+        }
         Connection client = getClientConnection();
         // ONLY revert a non-local connection
         if (client != null && !client.isMemoryConnection())

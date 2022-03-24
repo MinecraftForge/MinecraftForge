@@ -24,6 +24,7 @@ import net.minecraftforge.common.util.LogicalSidedProvider;
 import net.minecraftforge.fml.ModLoader;
 import net.minecraftforge.fml.ModLoadingStage;
 import net.minecraftforge.fml.ModLoadingWarning;
+import net.minecraftforge.internal.ForgeExceptionFactories;
 import net.minecraftforge.network.ConnectionType;
 import net.minecraftforge.network.NetworkConstants;
 import net.minecraftforge.network.ServerStatusPing;
@@ -113,6 +114,10 @@ public class ServerLifecycleHooks
 
     public static void handleServerStopped(final MinecraftServer server)
     {
+        if (StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE).getCallerClass() != MinecraftServer.class)
+        {
+            throw ForgeExceptionFactories.INTERNAL_METHOD;
+        }
         if (!server.isDedicatedServer()) GameData.revertToFrozen();
         MinecraftForge.EVENT_BUS.post(new ServerStoppedEvent(server));
         currentServer = null;
