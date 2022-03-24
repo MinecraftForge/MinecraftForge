@@ -10,8 +10,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.eventbus.api.Cancelable;
 
 /**
- * This event is fired when an Enderman detects that a player is looking at them.
- * It will not be fired if the detection is prevented by {@link IForgeItem#isEnderMask}
+ * This event is fired on the forge bus before an Enderman detects that a player is looking at them.
+ * It will not be fired if the detection is already prevented by {@link IForgeItem#isEnderMask}
  * <p>
  * This event is {@link Cancelable}.
  * If this event is canceled, the Enderman will not target the player.
