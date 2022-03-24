@@ -1457,7 +1457,7 @@ public class ForgeHooks
 
     public static boolean shouldSuppressEnderManAnger(EnderMan enderMan, Player player, ItemStack mask)
     {
-        return MinecraftForge.EVENT_BUS.post(new EnderManAngerEvent(enderMan, player)) || mask.isEnderMask(player, enderMan);
+        return mask.isEnderMask(player, enderMan) || MinecraftForge.EVENT_BUS.post(new EnderManAngerEvent(enderMan, player));
     }
 
 }
