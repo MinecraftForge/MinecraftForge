@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/level/block/PowderSnowBlock.java
++++ b/net/minecraft/world/level/block/PowderSnowBlock.java
+@@ -109,7 +_,7 @@
+       if (p_154256_.m_6095_().m_204039_(EntityTypeTags.f_144291_)) {
+          return true;
+       } else {
+-         return p_154256_ instanceof LivingEntity ? ((LivingEntity)p_154256_).m_6844_(EquipmentSlot.FEET).m_150930_(Items.f_42463_) : false;
++         return p_154256_ instanceof LivingEntity ? ((LivingEntity)p_154256_).m_6844_(EquipmentSlot.FEET).canWalkOnPowderedSnow((LivingEntity)p_154256_) : false;
+       }
+    }
+ 
