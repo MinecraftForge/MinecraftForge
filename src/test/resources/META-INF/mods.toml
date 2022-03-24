@@ -212,4 +212,7 @@ license="LGPL v2.1"
     modId="recipe_book_extension_test"
 [[mods]]
     modId="hide_neighbor_face_test"
+[[mods]]
+    modId="living_get_projectile_event_test"
+
 # ADD ABOVE THIS LINE
