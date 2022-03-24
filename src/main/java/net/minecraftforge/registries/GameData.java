@@ -387,17 +387,23 @@ public class GameData
                 revertTo(RegistryManager.VANILLA, false);
                 LOGGER.fatal("Detected errors during registry event dispatch, roll back to VANILLA complete");
             } else {
-                RegistryManager.getVanillaRegistryKeys().stream()
-                        .filter(rl -> RegistryManager.ACTIVE.getRegistry(rl) == null)
-                        .forEach(registryName -> {
-                            Registry<?> registry = Registry.REGISTRY.get(registryName);
-                            if (registry == null)
-                                return;
-                            ModLoader.get().postEvent(new VanillaRegisterEvent(registry));
-                        });
+                RegistryManager.getVanillaRegistryKeys().forEach(registryName -> {
+                    Registry<?> registry = Registry.REGISTRY.get(registryName);
+                    if (registry == null)
+                        return;
+                    postVanillaRegisterEvent(registry);
+                });
                 net.minecraftforge.common.ForgeHooks.modifyAttributes();
             }
         }, executor);
+    }
+
+    public static void postVanillaRegisterEvent(Registry<?> registry)
+    {
+        if (RegistryManager.ACTIVE.getRegistry(registry.key().location()) != null)
+            return;
+
+        ModLoader.get().postEvent(new VanillaRegisterEvent(registry));
     }
 
     //Lets us clear the map so we can rebuild it.
