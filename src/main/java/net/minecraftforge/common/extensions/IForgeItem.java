@@ -733,6 +733,20 @@ public interface IForgeItem
     }
 
     /**
+     * Called by the powdered snow block to check if a living entity wearing this can walk on the snow, granting the same behavior as leather boots.
+     * Only affects items worn in the boots slot.
+     *
+     * @param stack  Stack instance
+     * @param wearer The entity wearing this ItemStack
+     *
+     * @return True if the entity can walk on powdered snow
+     */
+    default boolean canWalkOnPowderedSnow(ItemStack stack, LivingEntity wearer)
+    {
+        return stack.is(Items.LEATHER_BOOTS);
+    }
+
+    /**
      * Used to test if this item can be damaged, but with the ItemStack in question.
      * Please note that in some cases no ItemStack is available, so the stack-less method will be used.
      *
