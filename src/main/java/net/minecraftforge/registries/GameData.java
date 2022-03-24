@@ -51,6 +51,7 @@ import net.minecraft.world.level.levelgen.feature.StructureFeature;
 import net.minecraft.world.level.levelgen.feature.foliageplacers.FoliagePlacerType;
 import net.minecraft.world.level.levelgen.feature.treedecorators.TreeDecoratorType;
 import net.minecraftforge.client.ForgeHooksClient;
+import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.ForgeStatesProvider;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.loot.GlobalLootModifierSerializer;
@@ -65,6 +66,7 @@ import net.minecraftforge.fml.util.EnhancedRuntimeException;
 import net.minecraftforge.fml.util.thread.EffectiveSide;
 
 import net.minecraftforge.internal.ForgeExceptionFactories;
+import net.minecraftforge.network.HandshakeHandler;
 import net.minecraftforge.server.ServerLifecycleHooks;
 import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.LogManager;
@@ -706,6 +708,11 @@ public class GameData
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public static Multimap<ResourceLocation, ResourceLocation> injectSnapshot(Map<ResourceLocation, ForgeRegistry.Snapshot> snapshot, boolean injectFrozenData, boolean isLocalWorld)
     {
+        final var caller = StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE).getCallerClass();
+        if (caller != ForgeHooks.class && caller != HandshakeHandler.class)
+        {
+            throw ForgeExceptionFactories.INTERNAL_METHOD;
+        }
         LOGGER.info(REGISTRIES, "Injecting existing registry data into this {} instance", EffectiveSide.get());
         RegistryManager.ACTIVE.registries.forEach((name, reg) -> reg.validateContent(name));
         RegistryManager.ACTIVE.registries.forEach((name, reg) -> reg.dump(name));

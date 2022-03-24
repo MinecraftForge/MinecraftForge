@@ -1,17 +1,35 @@
 --- a/net/minecraft/core/MappedRegistry.java
 +++ b/net/minecraft/core/MappedRegistry.java
-@@ -279,6 +_,14 @@
-       return this.f_205842_.containsKey(p_175392_);
+@@ -75,7 +_,13 @@
+ 
+    private void m_205921_(ResourceKey<T> p_205922_) {
+       if (this.f_205845_) {
+-         throw new IllegalStateException("Registry is already frozen (trying to add key " + p_205922_ + ")");
++         f_211050_.warn("""
++                 If you are a player, this message indicates that a mod is incompatible with the new changes in 1.18.2! Please see the stacktrace to determine what mod causes it.
++                 
++                 Due to changes in Minecraft, registries are now frozen after vanilla finishes registering its objects, and as such, registry objects cannot be statically initialized anymore.
++                 It is recommended to use DeferredRegisters for registries wrapped by forge. 
++                 For registries which are not wrapped, the instantiation of registry objects can only happen inside a RegistryEvent.Register, when vanilla registries are unfrozen temporarily.""");
++         throw new IllegalStateException("Registry is already frozen (trying to add key " + p_205922_ + "). Please look at the logs for more information.");
+       }
     }
  
+@@ -277,6 +_,17 @@
+ 
+    public boolean m_142003_(ResourceKey<T> p_175392_) {
+       return this.f_205842_.containsKey(p_175392_);
++   }
++
 +   /** @deprecated Forge: For internal use only. Use the Register events when registering values. */
 +   @Deprecated
 +   public void unfreeze() {
++      if (StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE).getCallerClass() != net.minecraftforge.registries.GameData.class) {
++         throw new IllegalCallerException("This is an internal forge method and cannot be used by mods: Use DeferredRegisters or RegistryEvents for registering objects, as statically instantiating those is no longer possible.");
++      }
 +      this.f_205845_ = false;
 +      if (this.f_205846_ != null && this.f_205847_ == null)
 +         this.f_205847_ = new IdentityHashMap<>();
-+   }
-+
+    }
+ 
     public Registry<T> m_203521_() {
-       this.f_205845_ = true;
-       List<ResourceLocation> list = this.f_205842_.entrySet().stream().filter((p_211055_) -> {
