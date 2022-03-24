@@ -5,6 +5,7 @@
 
 package net.minecraftforge.common.crafting;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -14,6 +15,7 @@ import java.util.stream.Stream;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -27,7 +29,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.network.FriendlyByteBuf;
 
-public class CompoundIngredient extends Ingredient
+/** Ingredient that matches if any of the child ingredients match */
+public class CompoundIngredient extends AbstractIngredient
 {
     private List<Ingredient> children;
     private ItemStack[] stacks;
@@ -36,9 +39,33 @@ public class CompoundIngredient extends Ingredient
 
     protected CompoundIngredient(List<Ingredient> children)
     {
-        super(Stream.of());
         this.children = Collections.unmodifiableList(children);
         this.isSimple = children.stream().allMatch(Ingredient::isSimple);
+    }
+
+    /** Creates a compound ingredient from the given list of ingredients */
+    public static Ingredient of(Ingredient... children)
+    {
+        // if 0 or 1 ingredient, can save effort
+        if (children.length == 0)
+            throw new IllegalArgumentException("Cannot create a compound ingredient with no children, use Ingredient.of() to create an empty ingredient");
+        if (children.length == 1)
+            return children[0];
+
+        // need to merge vanilla ingredients, as otherwise the JSON produced by this ingredient could be invalid
+        List<Ingredient> vanillaIngredients = new ArrayList<>();
+        List<Ingredient> allIngredients = new ArrayList<>();
+        for (Ingredient child : children) {
+            if (child.getSerializer() == VanillaIngredientSerializer.INSTANCE)
+                vanillaIngredients.add(child);
+            else
+                allIngredients.add(child);
+        }
+        if (!vanillaIngredients.isEmpty())
+            allIngredients.add(merge(vanillaIngredients));
+        if (allIngredients.size() == 1)
+            return allIngredients.get(0);
+        return new CompoundIngredient(allIngredients);
     }
 
     @Override
