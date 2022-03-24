@@ -65,7 +65,6 @@ import net.minecraftforge.fml.StartupMessageManager;
 import net.minecraftforge.fml.util.EnhancedRuntimeException;
 import net.minecraftforge.fml.util.thread.EffectiveSide;
 
-import net.minecraftforge.internal.ForgeExceptionFactories;
 import net.minecraftforge.network.HandshakeHandler;
 import net.minecraftforge.server.ServerLifecycleHooks;
 import org.apache.commons.lang3.Validate;
@@ -261,7 +260,7 @@ public class GameData
     {
         if (StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE).getCallerClass() != Bootstrap.class)
         {
-            throw ForgeExceptionFactories.INTERNAL_METHOD;
+            throw new IllegalCallerException("This is an internal forge method and cannot be used by mods");
         }
         LOGGER.debug(REGISTRIES, "Creating vanilla freeze snapshot");
         for (Map.Entry<ResourceLocation, ForgeRegistry<? extends IForgeRegistryEntry<?>>> r : RegistryManager.ACTIVE.registries.entrySet())
@@ -294,7 +293,7 @@ public class GameData
     {
         if (StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE).getCallerClass() != ForgeStatesProvider.class)
         {
-            throw ForgeExceptionFactories.INTERNAL_METHOD;
+            throw new IllegalCallerException("This is an internal forge method and cannot be used by mods");
         }
         LOGGER.debug(REGISTRIES, "Freezing registries");
         Registry.REGISTRY.stream().filter(r -> r instanceof MappedRegistry).forEach(r -> ((MappedRegistry<?>)r).freeze());
@@ -325,7 +324,7 @@ public class GameData
         final var caller = StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE).getCallerClass();
         if (caller != ForgeHooksClient.class && caller != ServerLifecycleHooks.class)
         {
-            throw ForgeExceptionFactories.INTERNAL_METHOD;
+            throw new IllegalCallerException("This is an internal forge method and cannot be used by mods");
         }
         revertTo(RegistryManager.FROZEN, true);
     }
@@ -711,7 +710,7 @@ public class GameData
         final var caller = StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE).getCallerClass();
         if (caller != ForgeHooks.class && caller != HandshakeHandler.class)
         {
-            throw ForgeExceptionFactories.INTERNAL_METHOD;
+            throw new IllegalCallerException("This is an internal forge method and cannot be used by mods");
         }
         LOGGER.info(REGISTRIES, "Injecting existing registry data into this {} instance", EffectiveSide.get());
         RegistryManager.ACTIVE.registries.forEach((name, reg) -> reg.validateContent(name));
