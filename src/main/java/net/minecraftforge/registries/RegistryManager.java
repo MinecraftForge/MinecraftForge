@@ -7,20 +7,17 @@ package net.minecraftforge.registries;
 
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import com.google.common.collect.Sets.SetView;
 
 import com.mojang.serialization.Lifecycle;
 import net.minecraft.core.WritableRegistry;
@@ -28,7 +25,6 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.core.Registry;
 import net.minecraftforge.fml.IModStateTransition;
-import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.network.HandshakeMessages;
 import net.minecraftforge.registries.ForgeRegistry.Snapshot;
 import org.apache.commons.lang3.tuple.Pair;
@@ -44,7 +40,6 @@ public class RegistryManager
     private static Set<ResourceLocation> vanillaRegistryKeys = Set.of();
 
     BiMap<ResourceLocation, ForgeRegistry<?>> registries = HashBiMap.create();
-    private Map<ResourceLocation, Class<?>> superTypes = HashBiMap.create();
     private Set<ResourceLocation> persisted = Sets.newHashSet();
     private Set<ResourceLocation> synced = Sets.newHashSet();
     private Map<ResourceLocation, ResourceLocation> legacyNames = new HashMap<>();
@@ -58,12 +53,6 @@ public class RegistryManager
     public String getName()
     {
         return this.name;
-    }
-
-    @SuppressWarnings("unchecked")
-    public <V> Class<V> getSuperType(ResourceLocation key)
-    {
-        return (Class<V>)superTypes.get(key);
     }
 
     @SuppressWarnings("unchecked")
@@ -104,7 +93,6 @@ public class RegistryManager
             if (ot == null)
                 return null;
             this.registries.put(key, ot.copy(this));
-            this.superTypes.put(key, ot.getRegistrySuperType());
             if (other.persisted.contains(key))
                 this.persisted.add(key);
             if (other.synced.contains(key))
@@ -119,11 +107,9 @@ public class RegistryManager
     <V> ForgeRegistry<V> createRegistry(ResourceLocation name, RegistryBuilder<V> builder)
     {
         if (registries.containsKey(name))
-            throw new IllegalArgumentException("Attempted to register a registry for " + name + " with type "
-                    + builder.getType().getName() + " but it already exists as " + registries.get(name).getRegistrySuperType().getName());
+            throw new IllegalArgumentException("Attempted to register a registry for " + name + " but it already exists");
         ForgeRegistry<V> reg = new ForgeRegistry<V>(this, name, builder);
         registries.put(name, reg);
-        superTypes.put(name, builder.getType());
         if (builder.getSaveToDisc())
             this.persisted.add(name);
         if (builder.getSync())
@@ -200,7 +186,6 @@ public class RegistryManager
         this.persisted.clear();
         this.synced.clear();
         this.registries.clear();
-        this.superTypes.clear();
     }
 
     public static List<Pair<String, HandshakeMessages.S2CRegistry>> generateRegistryPackets(boolean isLocal)

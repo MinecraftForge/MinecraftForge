@@ -16,43 +16,22 @@ import net.minecraft.core.DefaultedRegistry;
 import net.minecraft.core.IdMapper;
 import net.minecraft.core.MappedRegistry;
 import net.minecraft.core.Registry;
-import net.minecraft.core.particles.ParticleType;
 import net.minecraft.network.syncher.EntityDataSerializer;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.sounds.SoundEvent;
-import net.minecraft.stats.StatType;
-import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.DefaultAttributes;
-import net.minecraft.world.entity.ai.memory.MemoryModuleType;
-import net.minecraft.world.entity.ai.sensing.SensorType;
 import net.minecraft.world.entity.ai.village.poi.PoiType;
-import net.minecraft.world.entity.decoration.Motive;
-import net.minecraft.world.entity.npc.VillagerProfession;
-import net.minecraft.world.entity.schedule.Activity;
-import net.minecraft.world.entity.schedule.Schedule;
-import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.alchemy.Potion;
-import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.AirBlock;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
-import net.minecraft.world.level.chunk.ChunkStatus;
 import net.minecraft.world.level.levelgen.DebugLevelSource;
-import net.minecraft.world.level.levelgen.carver.WorldCarver;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.StructureFeature;
-import net.minecraft.world.level.levelgen.feature.foliageplacers.FoliagePlacerType;
-import net.minecraft.world.level.levelgen.feature.stateproviders.BlockStateProviderType;
-import net.minecraft.world.level.levelgen.feature.treedecorators.TreeDecoratorType;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Material;
 import net.minecraftforge.common.MinecraftForge;
@@ -71,6 +50,7 @@ import org.apache.logging.log4j.Logger;
 import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -151,73 +131,70 @@ public class GameData
         hasInit = true;
 
         // Game objects
-        makeRegistry(BLOCKS, Block.class, "air").addCallback(BlockCallbacks.INSTANCE).legacyName("blocks").vanillaHolder(Block::builtInRegistryHolder).create();
-        makeRegistry(FLUIDS, Fluid.class, "empty").vanillaHolder(Fluid::builtInRegistryHolder).create();
-        makeRegistry(ITEMS, Item.class, "air").addCallback(ItemCallbacks.INSTANCE).legacyName("items").vanillaHolder(Item::builtInRegistryHolder).create();
-        makeRegistry(MOB_EFFECTS, MobEffect.class).legacyName("potions").create();
+        makeRegistry(BLOCKS, "air").addCallback(BlockCallbacks.INSTANCE).legacyName("blocks").vanillaHolder(Block::builtInRegistryHolder).create();
+        makeRegistry(FLUIDS, "empty").vanillaHolder(Fluid::builtInRegistryHolder).create();
+        makeRegistry(ITEMS, "air").addCallback(ItemCallbacks.INSTANCE).legacyName("items").vanillaHolder(Item::builtInRegistryHolder).create();
+        makeRegistry(MOB_EFFECTS).legacyName("potions").create();
         //makeRegistry(BIOMES, Biome.class).legacyName("biomes").create();
-        makeRegistry(SOUND_EVENTS, SoundEvent.class).legacyName("soundevents").create();
-        makeRegistry(POTIONS, Potion.class, "empty").legacyName("potiontypes").create();
-        makeRegistry(ENCHANTMENTS, Enchantment.class).legacyName("enchantments").create();
-        makeRegistry(ENTITY_TYPES, c(EntityType.class), "pig").legacyName("entities").vanillaHolder(EntityType::builtInRegistryHolder).create();
-        makeRegistry(BLOCK_ENTITY_TYPES, c(BlockEntityType.class)).disableSaving().legacyName("blockentities").create();
-        makeRegistry(PARTICLE_TYPES, c(ParticleType.class)).disableSaving().create();
-        makeRegistry(CONTAINER_TYPES, c(MenuType.class)).disableSaving().create();
-        makeRegistry(PAINTING_TYPES, Motive.class, "kebab").create();
-        makeRegistry(RECIPE_SERIALIZERS, c(RecipeSerializer.class)).disableSaving().create();
-        makeRegistry(ATTRIBUTES, Attribute.class).onValidate(AttributeCallbacks.INSTANCE).disableSaving().disableSync().create();
-        makeRegistry(STAT_TYPES, c(StatType.class)).create();
+        makeRegistry(SOUND_EVENTS).legacyName("soundevents").create();
+        makeRegistry(POTIONS, "empty").legacyName("potiontypes").create();
+        makeRegistry(ENCHANTMENTS).legacyName("enchantments").create();
+        makeRegistry(ENTITY_TYPES, "pig").legacyName("entities").vanillaHolder(EntityType::builtInRegistryHolder).create();
+        makeRegistry(BLOCK_ENTITY_TYPES).disableSaving().legacyName("blockentities").create();
+        makeRegistry(PARTICLE_TYPES).disableSaving().create();
+        makeRegistry(CONTAINER_TYPES).disableSaving().create();
+        makeRegistry(PAINTING_TYPES, "kebab").create();
+        makeRegistry(RECIPE_SERIALIZERS).disableSaving().create();
+        makeRegistry(ATTRIBUTES).onValidate(AttributeCallbacks.INSTANCE).disableSaving().disableSync().create();
+        makeRegistry(STAT_TYPES).create();
 
         // Villagers
-        makeRegistry(VILLAGER_PROFESSIONS, VillagerProfession.class, "none").create();
-        makeRegistry(POI_TYPES, PoiType.class, "unemployed").addCallback(PointOfInterestTypeCallbacks.INSTANCE).disableSync().create();
-        makeRegistry(MEMORY_MODULE_TYPES, c(MemoryModuleType.class), "dummy").disableSync().create();
-        makeRegistry(SENSOR_TYPES, c(SensorType.class), "dummy").disableSaving().disableSync().create();
-        makeRegistry(SCHEDULES, Schedule.class).disableSaving().disableSync().create();
-        makeRegistry(ACTIVITIES, Activity.class).disableSaving().disableSync().create();
+        makeRegistry(VILLAGER_PROFESSIONS, "none").create();
+        makeRegistry(POI_TYPES, "unemployed").addCallback(PointOfInterestTypeCallbacks.INSTANCE).disableSync().create();
+        makeRegistry(MEMORY_MODULE_TYPES, "dummy").disableSync().create();
+        makeRegistry(SENSOR_TYPES, "dummy").disableSaving().disableSync().create();
+        makeRegistry(SCHEDULES).disableSaving().disableSync().create();
+        makeRegistry(ACTIVITIES).disableSaving().disableSync().create();
 
         // Worldgen
-        makeRegistry(WORLD_CARVERS, c(WorldCarver.class)).disableSaving().disableSync().create();
-        makeRegistry(FEATURES, c(Feature.class)).addCallback(FeatureCallbacks.INSTANCE).disableSaving().disableSync().create();
-        makeRegistry(CHUNK_STATUS, ChunkStatus.class, "empty").disableSaving().disableSync().create();
-        makeRegistry(STRUCTURE_FEATURES, c(StructureFeature.class)).disableSaving().disableSync().create();
-        makeRegistry(BLOCK_STATE_PROVIDER_TYPES, c(BlockStateProviderType.class)).disableSaving().disableSync().create();
-        makeRegistry(FOLIAGE_PLACER_TYPES, c(FoliagePlacerType.class)).disableSaving().disableSync().create();
-        makeRegistry(TREE_DECORATOR_TYPES, c(TreeDecoratorType.class)).disableSaving().disableSync().create();
+        makeRegistry(WORLD_CARVERS).disableSaving().disableSync().create();
+        makeRegistry(FEATURES).addCallback(FeatureCallbacks.INSTANCE).disableSaving().disableSync().create();
+        makeRegistry(CHUNK_STATUS, "empty").disableSaving().disableSync().create();
+        makeRegistry(STRUCTURE_FEATURES).disableSaving().disableSync().create();
+        makeRegistry(BLOCK_STATE_PROVIDER_TYPES).disableSaving().disableSync().create();
+        makeRegistry(FOLIAGE_PLACER_TYPES).disableSaving().disableSync().create();
+        makeRegistry(TREE_DECORATOR_TYPES).disableSaving().disableSync().create();
 
         // Dynamic Worldgen
-        makeRegistry(BIOMES, Biome.class).disableSync().create();
+        makeRegistry(BIOMES).disableSync().create();
     }
 
     static RegistryBuilder<EntityDataSerializer<?>> getDataSerializersRegistryBuilder()
     {
-        return makeRegistry(DATA_SERIALIZERS, c(EntityDataSerializer.class), 256 /*vanilla space*/, MAX_VARINT).disableSaving().disableOverrides();
+        return makeRegistry(DATA_SERIALIZERS, 256 /*vanilla space*/, MAX_VARINT).disableSaving().disableOverrides();
     }
 
     static RegistryBuilder<GlobalLootModifierSerializer<?>> getGLMSerializersRegistryBuilder()
     {
-        return makeRegistry(LOOT_MODIFIER_SERIALIZERS, c(GlobalLootModifierSerializer.class)).disableSaving().disableSync();
+        return makeRegistry(LOOT_MODIFIER_SERIALIZERS).disableSaving().disableSync();
     }
 
     static RegistryBuilder<ForgeWorldPreset> getWorldTypesRegistryBuilder()
     {
-        return makeRegistry(WORLD_TYPES, ForgeWorldPreset.class).disableSaving().disableSync();
+        return makeRegistry(WORLD_TYPES).disableSaving().disableSync();
     }
 
-    @SuppressWarnings("unchecked") //Ugly hack to let us pass in a typed Class object. Remove when we remove type specific references.
-    static <T> Class<T> c(Class<?> cls) { return (Class<T>)cls; }
-
-    private static <T> RegistryBuilder<T> makeRegistry(ResourceKey<? extends Registry<T>> key, Class<T> type)
+    private static <T> RegistryBuilder<T> makeRegistry(ResourceKey<? extends Registry<T>> key)
     {
-        return new RegistryBuilder<T>().setName(key.location()).setType(type).setMaxID(MAX_VARINT).hasWrapper();
+        return new RegistryBuilder<T>().setName(key.location()).setMaxID(MAX_VARINT).hasWrapper();
     }
-    private static <T> RegistryBuilder<T> makeRegistry(ResourceKey<? extends Registry<T>> key, Class<T> type, int min, int max)
+    private static <T> RegistryBuilder<T> makeRegistry(ResourceKey<? extends Registry<T>> key, int min, int max)
     {
-        return new RegistryBuilder<T>().setName(key.location()).setType(type).setIDRange(min, max).hasWrapper();
+        return new RegistryBuilder<T>().setName(key.location()).setIDRange(min, max).hasWrapper();
     }
-    private static <T> RegistryBuilder<T> makeRegistry(ResourceKey<? extends Registry<T>> key, Class<T> type, String _default)
+    private static <T> RegistryBuilder<T> makeRegistry(ResourceKey<? extends Registry<T>> key, String _default)
     {
-        return new RegistryBuilder<T>().setName(key.location()).setType(type).setMaxID(MAX_VARINT).hasWrapper().setDefaultKey(new ResourceLocation(_default));
+        return new RegistryBuilder<T>().setName(key.location()).setMaxID(MAX_VARINT).hasWrapper().setDefaultKey(new ResourceLocation(_default));
     }
 
     public static <T> MappedRegistry<T> getWrapper(ResourceKey<? extends Registry<T>> key, Lifecycle lifecycle)
@@ -270,8 +247,7 @@ public class GameData
         LOGGER.debug(REGISTRIES, "Creating vanilla freeze snapshot");
         for (Map.Entry<ResourceLocation, ForgeRegistry<?>> r : RegistryManager.ACTIVE.registries.entrySet())
         {
-            final Class<?> clazz = RegistryManager.ACTIVE.getSuperType(r.getKey());
-            loadRegistry(r.getKey(), RegistryManager.ACTIVE, RegistryManager.VANILLA, clazz, true);
+            loadRegistry(r.getKey(), RegistryManager.ACTIVE, RegistryManager.VANILLA, true);
         }
         RegistryManager.VANILLA.registries.forEach((name, reg) ->
         {
@@ -297,8 +273,7 @@ public class GameData
 
         for (Map.Entry<ResourceLocation, ForgeRegistry<?>> r : RegistryManager.ACTIVE.registries.entrySet())
         {
-            final Class<?> clazz = RegistryManager.ACTIVE.getSuperType(r.getKey());
-            loadRegistry(r.getKey(), RegistryManager.ACTIVE, RegistryManager.FROZEN, clazz, true);
+            loadRegistry(r.getKey(), RegistryManager.ACTIVE, RegistryManager.FROZEN, true);
         }
         RegistryManager.FROZEN.registries.forEach((name, reg) ->
         {
@@ -333,8 +308,7 @@ public class GameData
         LOGGER.debug(REGISTRIES, "Reverting to {} data state.", target.getName());
         for (Map.Entry<ResourceLocation, ForgeRegistry<?>> r : RegistryManager.ACTIVE.registries.entrySet())
         {
-            final Class<?> clazz = RegistryManager.ACTIVE.getSuperType(r.getKey());
-            loadRegistry(r.getKey(), target, RegistryManager.ACTIVE, clazz, true);
+            loadRegistry(r.getKey(), target, RegistryManager.ACTIVE, true);
         }
         RegistryManager.ACTIVE.registries.forEach((name, reg) -> reg.bake());
         // the id mapping has reverted, fire remap events for those that care about id changes
@@ -351,8 +325,7 @@ public class GameData
     public static void revert(RegistryManager state, ResourceLocation registry, boolean lock)
     {
         LOGGER.debug(REGISTRIES, "Reverting {} to {}", registry, state.getName());
-        final Class<?> clazz = RegistryManager.ACTIVE.getSuperType(registry);
-        loadRegistry(registry, state, RegistryManager.ACTIVE, clazz, lock);
+        loadRegistry(registry, state, RegistryManager.ACTIVE, lock);
         LOGGER.debug(REGISTRIES, "Reverting complete");
     }
 
@@ -633,7 +606,7 @@ public class GameData
         }
     }
 
-    private static <T> void loadRegistry(final ResourceLocation registryName, final RegistryManager from, final RegistryManager to, final Class<T> regType, boolean freeze)
+    private static <T> void loadRegistry(final ResourceLocation registryName, final RegistryManager from, final RegistryManager to, boolean freeze)
     {
         ForgeRegistry<T> fromRegistry = from.getRegistry(registryName);
         if (fromRegistry == null)
@@ -713,10 +686,9 @@ public class GameData
         // Load the snapshot into the "STAGING" registry
         snapshot.forEach((key, value) ->
         {
-            final Class<?> clazz = RegistryManager.ACTIVE.getSuperType(key);
             remaps.put(key, Maps.newLinkedHashMap());
             missing.put(key, Maps.newLinkedHashMap());
-            loadPersistentDataToStagingRegistry(RegistryManager.ACTIVE, STAGING, remaps.get(key), missing.get(key), key, value, clazz);
+            loadPersistentDataToStagingRegistry(RegistryManager.ACTIVE, STAGING, remaps.get(key), missing.get(key), key, value);
         });
 
         snapshot.forEach((key, value) ->
@@ -758,21 +730,25 @@ public class GameData
             {
                 ResourceLocation name = m.getKey();
                 ForgeRegistry<?> reg = STAGING.getRegistry(name);
-                MissingMappingsEvent<?> event = reg.getMissingEvent(name, m.getValue());
+                MissingMappingsEvent event = reg.getMissingEvent(name, m.getValue());
                 MinecraftForge.EVENT_BUS.post(event);
 
-                List<MissingMappingsEvent.Mapping<?>> lst = event.getAllMappings().stream().filter(e -> e.getAction() == MissingMappingsEvent.Action.DEFAULT).sorted((a, b) -> a.toString().compareTo(b.toString())).collect(Collectors.toList());
+                List<MissingMappingsEvent.Mapping<?>> lst = event.getAllMappings(reg.getRegistryKey()).stream()
+                        .filter(e -> e.getAction() == MissingMappingsEvent.Action.DEFAULT)
+                        .sorted(Comparator.comparing(Object::toString))
+                        .collect(Collectors.toList());
                 if (!lst.isEmpty())
                 {
-                    LOGGER.error(REGISTRIES,()->LogMessageAdapter.adapt(sb->{
+                    LOGGER.error(REGISTRIES, () -> LogMessageAdapter.adapt(sb -> {
                        sb.append("Unidentified mapping from registry ").append(name).append('\n');
-                       lst.stream().sorted().forEach(map->sb.append('\t').append(map.key).append(": ").append(map.id).append('\n'));
+                       lst.stream().sorted().forEach(map -> sb.append('\t').append(map.key).append(": ").append(map.id).append('\n'));
                     }));
                 }
-                event.getAllMappings().stream().filter(e -> e.getAction() == MissingMappingsEvent.Action.FAIL).forEach(fail -> failed.put(name, fail.key));
+                event.getAllMappings(reg.getRegistryKey()).stream()
+                        .filter(e -> e.getAction() == MissingMappingsEvent.Action.FAIL)
+                        .forEach(fail -> failed.put(name, fail.key));
 
-                final Class<?> clazz = RegistryManager.ACTIVE.getSuperType(name);
-                processMissing(clazz, name, STAGING, event, m.getValue(), remaps.get(name), defaulted.get(name), failed.get(name), !isLocalWorld);
+                processMissing(name, STAGING, event, m.getValue(), remaps.get(name), defaulted.get(name), failed.get(name), !isLocalWorld);
             });
 
             if (!defaulted.isEmpty() && !isLocalWorld)
@@ -822,8 +798,7 @@ public class GameData
             // So we load it from the frozen persistent registry
             RegistryManager.ACTIVE.registries.forEach((name, reg) ->
             {
-                final Class<?> clazz = RegistryManager.ACTIVE.getSuperType(name);
-                loadFrozenDataToStagingRegistry(STAGING, name, remaps.get(name), clazz);
+                loadFrozenDataToStagingRegistry(STAGING, name, remaps.get(name));
             });
         }
 
@@ -834,8 +809,7 @@ public class GameData
         //for (Map.Entry<ResourceLocation, IForgeRegistry<?>>> r : RegistryManager.ACTIVE.registries.entrySet())
         RegistryManager.ACTIVE.registries.forEach((key, value) ->
         {
-            final Class<?> registrySuperType = RegistryManager.ACTIVE.getSuperType(key);
-            loadRegistry(key, STAGING, RegistryManager.ACTIVE, registrySuperType, true);
+            loadRegistry(key, STAGING, RegistryManager.ACTIVE, true);
         });
 
         RegistryManager.ACTIVE.registries.forEach((name, reg) -> {
@@ -862,7 +836,7 @@ public class GameData
     }
 
     //Has to be split because of generics, Yay!
-    private static <T> void loadPersistentDataToStagingRegistry(RegistryManager pool, RegistryManager to, Map<ResourceLocation, Integer[]> remaps, Map<ResourceLocation, Integer> missing, ResourceLocation name, ForgeRegistry.Snapshot snap, Class<T> regType)
+    private static <T> void loadPersistentDataToStagingRegistry(RegistryManager pool, RegistryManager to, Map<ResourceLocation, Integer[]> remaps, Map<ResourceLocation, Integer> missing, ResourceLocation name, ForgeRegistry.Snapshot snap)
     {
         ForgeRegistry<T> active  = pool.getRegistry(name);
         if (active == null)
@@ -877,15 +851,15 @@ public class GameData
 
     //Another bouncer for generic reasons
     @SuppressWarnings("unchecked")
-    private static <T> void processMissing(Class<T> clazz, ResourceLocation name, RegistryManager STAGING, MissingMappingsEvent<?> e, Map<ResourceLocation, Integer> missing, Map<ResourceLocation, Integer[]> remaps, Collection<ResourceLocation> defaulted, Collection<ResourceLocation> failed, boolean injectNetworkDummies)
+    private static <T> void processMissing(ResourceLocation name, RegistryManager STAGING, MissingMappingsEvent e, Map<ResourceLocation, Integer> missing, Map<ResourceLocation, Integer[]> remaps, Collection<ResourceLocation> defaulted, Collection<ResourceLocation> failed, boolean injectNetworkDummies)
     {
-        List<MissingMappingsEvent.Mapping<T>> mappings = ((MissingMappingsEvent<T>)e).getAllMappings();
+        List<MissingMappingsEvent.Mapping<T>> mappings = e.getAllMappings(ResourceKey.createRegistryKey(name));
         ForgeRegistry<T> active = RegistryManager.ACTIVE.getRegistry(name);
         ForgeRegistry<T> staging = STAGING.getRegistry(name);
         staging.processMissingEvent(name, active, mappings, missing, remaps, defaulted, failed, injectNetworkDummies);
     }
 
-    private static <T> void loadFrozenDataToStagingRegistry(RegistryManager STAGING, ResourceLocation name, Map<ResourceLocation, Integer[]> remaps, Class<T> clazz)
+    private static <T> void loadFrozenDataToStagingRegistry(RegistryManager STAGING, ResourceLocation name, Map<ResourceLocation, Integer[]> remaps)
     {
         ForgeRegistry<T> frozen = RegistryManager.FROZEN.getRegistry(name);
         ForgeRegistry<T> newRegistry = STAGING.getRegistry(name, RegistryManager.FROZEN);

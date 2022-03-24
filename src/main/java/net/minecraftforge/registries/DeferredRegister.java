@@ -201,16 +201,15 @@ public class DeferredRegister<T>
     /**
      * Only used for custom registries to fill the forge registry held in this DeferredRegister.
      *
-     * Calls {@link RegistryBuilder#setName} and {@link RegistryBuilder#setType} automatically.
+     * Calls {@link RegistryBuilder#setName} automatically.
      *
-     * @param base The base type to use in the created {@link IForgeRegistry}
      * @param sup Supplier of a RegistryBuilder that initializes a {@link IForgeRegistry} during the {@link NewRegistryEvent} event
      * @return A supplier of the {@link IForgeRegistry} created by the builder.
      * Will always return null until after the {@link NewRegistryEvent} event fires.
      */
-    public <E extends IForgeRegistryEntry<E>> Supplier<IForgeRegistry<E>> makeRegistry(final Class<E> base, final Supplier<RegistryBuilder<E>> sup)
+    public Supplier<IForgeRegistry<T>> makeRegistry(final Supplier<RegistryBuilder<T>> sup)
     {
-        return makeRegistry(this.registryKey.location(), base, sup);
+        return makeRegistry(this.registryKey.location(), sup);
     }
 
     /**
@@ -359,16 +358,13 @@ public class DeferredRegister<T>
         return Objects.requireNonNull(this.registryKey).location();
     }
 
-    // TODO 1.19: Remove this E method generic in favor of the class generic T when IForgeRegistry and RegistryBuilder no longer require IForgeRegistryEntry
-    private <E extends IForgeRegistryEntry<E>> Supplier<IForgeRegistry<E>> makeRegistry(final ResourceLocation registryName, final Class<E> superType, final Supplier<RegistryBuilder<E>> sup) {
+    private Supplier<IForgeRegistry<T>> makeRegistry(final ResourceLocation registryName, final Supplier<RegistryBuilder<T>> sup) {
         if (registryName == null)
             throw new IllegalStateException("Cannot create a registry without specifying a registry name");
-        if (superType == null)
-            throw new IllegalStateException("Cannot create a registry without specifying a base type");
         if (RegistryManager.ACTIVE.getRegistry(registryName) != null || this.registryFactory != null)
             throw new IllegalStateException("Cannot create a registry for a type that already exists");
 
-        this.registryFactory = () -> sup.get().setName(registryName).setType(superType);
+        this.registryFactory = () -> sup.get().setName(registryName);
         return new RegistryHolder<>(this.registryKey);
     }
 

@@ -1,67 +1,61 @@
 package net.minecraftforge.registries;
 
-import com.google.common.collect.ImmutableList;
+import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.eventbus.api.GenericEvent;
-import net.minecraftforge.fml.ModContainer;
+import net.minecraftforge.eventbus.api.Event;
 import org.apache.commons.lang3.Validate;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Locale;
-import java.util.stream.Collectors;
 
 /**
  * Fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS forge bus}.
  */
-public class MissingMappingsEvent<T> extends GenericEvent<T>
+public class MissingMappingsEvent extends Event
 {
-    private final IForgeRegistry<T> registry;
-    private final ResourceLocation name;
-    private final ImmutableList<Mapping<T>> mappings;
-    private ModContainer activeMod;
+    private final ResourceKey<? extends Registry<?>> key;
+    private final IForgeRegistry<?> registry;
+    private final List<Mapping<?>> mappings;
 
-    public MissingMappingsEvent(ResourceLocation name, IForgeRegistry<T> registry, Collection<Mapping<T>> missed)
+    public MissingMappingsEvent(ResourceKey<? extends Registry<?>> key, IForgeRegistry<?> registry, Collection<Mapping<?>> missed)
     {
-        super(registry.getRegistrySuperType());
+        this.key = key;
         this.registry = registry;
-        this.name = name;
-        this.mappings = ImmutableList.copyOf(missed);
+        this.mappings = List.copyOf(missed);
     }
 
-    public void setModContainer(ModContainer mod)
+    public ResourceKey<? extends Registry<?>> getKey()
     {
-        this.activeMod = mod;
+        return this.key;
     }
 
-    public ResourceLocation getName()
-    {
-        return this.name;
-    }
-
-    public IForgeRegistry<T> getRegistry()
+    public IForgeRegistry<?> getRegistry()
     {
         return this.registry;
     }
 
-    /*
-     * This used to be fired on the Mod specific bus, and we could tell which mod was asking for mappings.
-     * It no longer is, so this method is useless and just returns getAllMappings.
-     * TODO: Ask cpw how if he wants to re-enable the ModBus rethrow.
+    /**
+     * @return An immutable list of missing mappings for the given namespace.
+     * Empty if the registry key doesn't match {@link #getKey()}.
      */
-    @Deprecated
-    public ImmutableList<Mapping<T>> getMappings()
+    @SuppressWarnings("unchecked")
+    public <T> List<Mapping<T>> getMappings(ResourceKey<? extends Registry<T>> registryKey, String namespace)
     {
-        return this.activeMod == null ? getAllMappings() : getMappings(this.activeMod.getModId());
+        return registryKey == this.key
+                ? (List<Mapping<T>>) (List<?>) this.mappings.stream().filter(e -> e.key.getNamespace().equals(namespace)).toList()
+                : List.of();
     }
 
-    public ImmutableList<Mapping<T>> getMappings(String modid)
+    /**
+     * @return An immutable list of all missing mappings.
+     * Empty if the registry key doesn't match {@link #getKey()}.
+     */
+    @SuppressWarnings("unchecked")
+    public <T> List<Mapping<T>> getAllMappings(ResourceKey<? extends Registry<T>> registryKey)
     {
-        return ImmutableList.copyOf(this.mappings.stream().filter(e -> e.key.getNamespace().equals(modid)).collect(Collectors.toList()));
-    }
-
-    public ImmutableList<Mapping<T>> getAllMappings()
-    {
-        return this.mappings;
+        return registryKey == this.key ? (List<Mapping<T>>) (List<?>) this.mappings : List.of();
     }
 
     /**

@@ -55,7 +55,6 @@ public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegist
     private final BiMap<Integer, V> ids = HashBiMap.create();
     private final BiMap<ResourceLocation, V> names = HashBiMap.create();
     private final BiMap<ResourceKey<V>, V> keys = HashBiMap.create();
-    private final Class<V> superType;
     private final Map<ResourceLocation, ResourceLocation> aliases = Maps.newHashMap();
     final Map<ResourceLocation, ?> slaves = Maps.newHashMap();
     private final ResourceLocation defaultKey;
@@ -97,7 +96,6 @@ public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegist
         this.key = ResourceKey.createRegistryKey(name);
         this.builder = builder;
         this.stage = stage;
-        this.superType = builder.getType();
         this.defaultKey = builder.getDefault();
         this.defaultResourceKey = ResourceKey.create(key, defaultKey);
         this.min = builder.getMinId();
@@ -168,12 +166,6 @@ public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegist
     public ResourceKey<Registry<V>> getRegistryKey()
     {
         return this.key;
-    }
-
-    @Override
-    public Class<V> getRegistrySuperType()
-    {
-        return superType;
     }
 
     @NotNull
@@ -388,7 +380,7 @@ public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegist
     void validateKey()
     {
         if (this.defaultKey != null)
-            Validate.notNull(this.defaultValue, "Missing default of ForgeRegistry: " + this.defaultKey + " Type: " + this.superType);
+            Validate.notNull(this.defaultValue, "Missing default of ForgeRegistry: " + this.defaultKey + " Name: " + this.name);
     }
 
     @Nullable
@@ -657,8 +649,6 @@ public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegist
         LOGGER.debug(REGISTRIES,"Registry {} Sync: {} -> {}", this.name, this.stage.getName(), from.stage.getName());
         if (this == from)
             throw new IllegalArgumentException("WTF We are the same!?!?!");
-        if (from.superType != this.superType)
-            throw new IllegalArgumentException("Attempted to copy to incompatible registry: " + name + " " + from.superType + " -> " + this.superType);
 
         this.isFrozen = false;
 
@@ -1192,12 +1182,13 @@ public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegist
         }
     }
 
-    public MissingMappingsEvent<?> getMissingEvent(ResourceLocation name, Map<ResourceLocation, Integer> map)
+    @SuppressWarnings("unchecked")
+    public MissingMappingsEvent getMissingEvent(ResourceLocation name, Map<ResourceLocation, Integer> map)
     {
         List<MissingMappingsEvent.Mapping<V>> lst = Lists.newArrayList();
         ForgeRegistry<V> pool = RegistryManager.ACTIVE.getRegistry(name);
-        map.forEach((rl, id) -> lst.add(new MissingMappingsEvent.Mapping<V>(this, pool, rl, id)));
-        return new MissingMappingsEvent<V>(name, this, lst);
+        map.forEach((rl, id) -> lst.add(new MissingMappingsEvent.Mapping<>(this, pool, rl, id)));
+        return new MissingMappingsEvent(ResourceKey.createRegistryKey(name), this, (Collection<MissingMappingsEvent.Mapping<?>>) (Collection<?>) lst);
     }
 
     void processMissingEvent(ResourceLocation name, ForgeRegistry<V> pool, List<MissingMappingsEvent.Mapping<V>> mappings, Map<ResourceLocation, Integer> missing, Map<ResourceLocation, Integer[]> remaps, Collection<ResourceLocation> defaulted, Collection<ResourceLocation> failed, boolean injectNetworkDummies)
@@ -1220,7 +1211,7 @@ public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegist
                 //I don't think this will work, but I dont think it ever worked.. the item is already in the map with a different id... we want to fix that..
                 int realId = this.add(remap.id, newName, remap.getTarget());
                 if (realId != remap.id)
-                    LOGGER.warn(REGISTRIES,"Registered object did not get ID it asked for. Name: {} Type: {} Expected: {} Got: {}", newName, this.getRegistrySuperType(), remap.id, realId);
+                    LOGGER.warn(REGISTRIES, "Registered object did not get ID it asked for. Name: {} Expected: {} Got: {}", newName, remap.id, realId);
                 this.addAlias(remap.key, newName);
 
 

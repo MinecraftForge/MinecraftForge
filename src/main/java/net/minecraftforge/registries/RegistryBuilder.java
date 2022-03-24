@@ -23,7 +23,6 @@ public class RegistryBuilder<T>
     private static final int MAX_ID = Integer.MAX_VALUE - 1;
 
     private ResourceLocation registryName;
-    private Class<T> registryType;
     private ResourceLocation optionalDefaultKey;
     private int minId = 0;
     private int maxId = MAX_ID;
@@ -45,12 +44,6 @@ public class RegistryBuilder<T>
     public RegistryBuilder<T> setName(ResourceLocation name)
     {
         this.registryName = name;
-        return this;
-    }
-
-    public RegistryBuilder<T> setType(Class<T> type)
-    {
-        this.registryType = type;
         return this;
     }
 
@@ -318,11 +311,6 @@ public class RegistryBuilder<T>
             for (BakeCallback<T> cb : this.bakeCallback)
                 cb.onBake(owner, stage);
         };
-    }
-
-    public Class<T> getType()
-    {
-        return registryType;
     }
 
     @Nullable

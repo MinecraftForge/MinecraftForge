@@ -64,7 +64,7 @@ public class DeferredRegistryTest {
     private static final RegistryObject<PlacedFeature> PLACED_FEATURE = PLACED_FEATURES.register("test", () -> new PlacedFeature(Holder.hackyErase(OreFeatures.ORE_DIORITE), List.of()));
 
     private static final TagKey<Custom> CUSTOM_TAG_KEY = CUSTOMS.createOptionalTagKey("test_tag", Set.of(CUSTOM));
-    private static final Supplier<IForgeRegistry<Custom>> CUSTOM_REG = CUSTOMS.makeRegistry(Custom.class, () ->
+    private static final Supplier<IForgeRegistry<Custom>> CUSTOM_REG = CUSTOMS.makeRegistry(() ->
         new RegistryBuilder<Custom>().disableSaving().setMaxID(Integer.MAX_VALUE - 1).hasTags()
             .onAdd((owner, stage, id, key, obj, old) -> LOGGER.info("Custom Added: " + id + " " + obj.foo()))
     );

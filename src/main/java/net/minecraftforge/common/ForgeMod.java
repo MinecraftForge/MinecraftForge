@@ -134,7 +134,7 @@ public class ForgeMod
         modEventBus.register(this);
         ATTRIBUTES.register(modEventBus);
         MinecraftForge.EVENT_BUS.addListener(this::serverStopping);
-        MinecraftForge.EVENT_BUS.addGenericListener(SoundEvent.class, this::missingSoundMapping);
+        MinecraftForge.EVENT_BUS.addListener(this::missingSoundMapping);
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, ForgeConfig.clientSpec);
         ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, ForgeConfig.serverSpec);
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, ForgeConfig.commonSpec);
@@ -206,11 +206,14 @@ public class ForgeMod
         }
     }
 
-    public void missingSoundMapping(MissingMappingsEvent<SoundEvent> event)
+    public void missingSoundMapping(MissingMappingsEvent event)
     {
+        if (event.getKey() != ForgeRegistries.Keys.SOUND_EVENTS)
+            return;
+
         //Removed in 1.15, see https://minecraft.gamepedia.com/Parrot#History
         List<String> removedSounds = Arrays.asList("entity.parrot.imitate.panda", "entity.parrot.imitate.zombie_pigman", "entity.parrot.imitate.enderman", "entity.parrot.imitate.polar_bear", "entity.parrot.imitate.wolf");
-        for (MissingMappingsEvent.Mapping<SoundEvent> mapping : event.getAllMappings())
+        for (MissingMappingsEvent.Mapping<SoundEvent> mapping : event.getAllMappings(ForgeRegistries.Keys.SOUND_EVENTS))
         {
             ResourceLocation regName = mapping.key;
             if (regName != null && regName.getNamespace().equals("minecraft"))

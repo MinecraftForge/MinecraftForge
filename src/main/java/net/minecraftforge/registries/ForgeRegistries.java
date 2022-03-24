@@ -93,11 +93,11 @@ public class ForgeRegistries
 
     // Custom forge registries
     static final DeferredRegister<EntityDataSerializer<?>> DEFERRED_DATA_SERIALIZERS = DeferredRegister.create(Keys.DATA_SERIALIZERS, Keys.DATA_SERIALIZERS.location().getNamespace());
-    public static final Supplier<IForgeRegistry<EntityDataSerializer<?>>> DATA_SERIALIZERS = DEFERRED_DATA_SERIALIZERS.makeRegistry(GameData.c(EntityDataSerializer.class), GameData::getDataSerializersRegistryBuilder);
+    public static final Supplier<IForgeRegistry<EntityDataSerializer<?>>> DATA_SERIALIZERS = DEFERRED_DATA_SERIALIZERS.makeRegistry(GameData::getDataSerializersRegistryBuilder);
     static final DeferredRegister<GlobalLootModifierSerializer<?>> DEFERRED_LOOT_MODIFIER_SERIALIZERS = DeferredRegister.create(Keys.LOOT_MODIFIER_SERIALIZERS, Keys.LOOT_MODIFIER_SERIALIZERS.location().getNamespace());
-    public static final Supplier<IForgeRegistry<GlobalLootModifierSerializer<?>>> LOOT_MODIFIER_SERIALIZERS = DEFERRED_LOOT_MODIFIER_SERIALIZERS.makeRegistry(GameData.c(GlobalLootModifierSerializer.class), GameData::getGLMSerializersRegistryBuilder);
+    public static final Supplier<IForgeRegistry<GlobalLootModifierSerializer<?>>> LOOT_MODIFIER_SERIALIZERS = DEFERRED_LOOT_MODIFIER_SERIALIZERS.makeRegistry(GameData::getGLMSerializersRegistryBuilder);
     static final DeferredRegister<ForgeWorldPreset> DEFERRED_WORLD_TYPES = DeferredRegister.create(Keys.WORLD_TYPES, Keys.WORLD_TYPES.location().getNamespace());
-    public static final Supplier<IForgeRegistry<ForgeWorldPreset>> WORLD_TYPES = DEFERRED_WORLD_TYPES.makeRegistry(ForgeWorldPreset.class, GameData::getWorldTypesRegistryBuilder);
+    public static final Supplier<IForgeRegistry<ForgeWorldPreset>> WORLD_TYPES = DEFERRED_WORLD_TYPES.makeRegistry(GameData::getWorldTypesRegistryBuilder);
 
     public static final class Keys {
         //Vanilla

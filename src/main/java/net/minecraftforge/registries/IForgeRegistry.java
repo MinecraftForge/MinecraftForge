@@ -28,7 +28,6 @@ public interface IForgeRegistry<V> extends Iterable<V>
 {
     ResourceKey<Registry<V>> getRegistryKey();
     ResourceLocation getRegistryName();
-    Class<V> getRegistrySuperType();
 
     /**
      * The supplied string key will be prefixed with the currently active mod's mod id.
