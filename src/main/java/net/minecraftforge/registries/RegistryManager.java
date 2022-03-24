@@ -49,7 +49,6 @@ public class RegistryManager
     private BiMap<Class<? extends IForgeRegistryEntry<?>>, ResourceLocation> superTypes = HashBiMap.create();
     private Set<ResourceLocation> persisted = Sets.newHashSet();
     private Set<ResourceLocation> synced = Sets.newHashSet();
-    private Map<ResourceLocation, Codec<?>> builtinRegistries = new HashMap<>();
     private Map<ResourceLocation, ResourceLocation> legacyNames = new HashMap<>();
     private final String name;
 
@@ -152,8 +151,6 @@ public class RegistryManager
             this.persisted.add(name);
         if (builder.getSync())
             this.synced.add(name);
-        if (builder.getDirectCodec() != null)
-            this.builtinRegistries.put(name, builder.getDirectCodec());
         for (ResourceLocation legacyName : builder.getLegacyNames())
             addLegacyName(legacyName, name);
         return getRegistry(name);
@@ -250,11 +247,6 @@ public class RegistryManager
         return ACTIVE.registries.keySet().stream().
                 filter(resloc -> ACTIVE.synced.contains(resloc)).
                 collect(Collectors.toList());
-    }
-
-    public static Map<ResourceLocation, Codec<?>> getBuiltinRegistryNames()
-    {
-        return ACTIVE.builtinRegistries;
     }
 
     public static Set<ResourceLocation> getVanillaRegistryKeys()

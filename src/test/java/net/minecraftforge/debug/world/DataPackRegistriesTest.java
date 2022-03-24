@@ -14,12 +14,15 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.Biomes;
-import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.server.ServerAboutToStartEvent;
+import net.minecraftforge.event.world.AddBuiltinRegistryEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.registries.*;
+import net.minecraftforge.registries.DataPackRegistriesHooks;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.ForgeRegistryEntry;
+import net.minecraftforge.registries.RegistryObject;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
@@ -33,8 +36,8 @@ public class DataPackRegistriesTest
 
    private static final Logger LOGGER = LogUtils.getLogger();
 
-   private static final DeferredRegister<TestA> TEST_A_REGISTER = ForgeHooks.createDataPackRegistry(TestA.REGISTRY, MODID, TestA.DIRECT_CODEC, TestA.class);
-   private static final DeferredRegister<TestB> TEST_B_REGISTER = ForgeHooks.createDataPackRegistry(TestB.REGISTRY, MODID, TestB.DIRECT_CODEC, TestB.class);
+   private static final DeferredRegister<TestA> TEST_A_REGISTER = DataPackRegistriesHooks.createDataPackRegistry(TestA.REGISTRY, MODID, TestA.class);
+   private static final DeferredRegister<TestB> TEST_B_REGISTER = DataPackRegistriesHooks.createDataPackRegistry(TestB.REGISTRY, MODID, TestB.class);
 
    private static final RegistryObject<TestA> BUILTIN_A = TEST_A_REGISTER.register("builtin_a", DataPackRegistriesTest::createBuiltinA);
    private static final RegistryObject<TestA> BUILTIN_A_OVERRIDDEN = TEST_A_REGISTER.register("builtin_a_overridden", DataPackRegistriesTest::createBuiltinA);
@@ -47,6 +50,13 @@ public class DataPackRegistriesTest
       var modBus = FMLJavaModLoadingContext.get().getModEventBus();
       TEST_A_REGISTER.register(modBus);
       TEST_B_REGISTER.register(modBus);
+      modBus.addListener(this::onAddBuiltinRegistries);
+   }
+
+   private void onAddBuiltinRegistries(AddBuiltinRegistryEvent event)
+   {
+      event.addRegistry(TestA.REGISTRY, TestA.DIRECT_CODEC);
+      event.addRegistry(TestB.REGISTRY, TestB.DIRECT_CODEC);
    }
 
    private void onServerAboutToStart(ServerAboutToStartEvent event)
@@ -55,11 +65,13 @@ public class DataPackRegistriesTest
       printTestRegistries(registries);
       Optional<HolderSet.Named<TestA>> testATag = registries.ownedRegistryOrThrow(TestA.REGISTRY)
             .getTag(TagKey.create(TestA.REGISTRY, new ResourceLocation(MODID, "test_a_tag")));
-      testATag.ifPresent(tag -> {
+      testATag.ifPresent(tag ->
+            {
                LOGGER.info("DataPackRegistries Test Tag: test_a_tag:");
                int i = 0;
-               for (Holder<TestA> tagElement : tag) {
-                  if(tagElement instanceof Holder.Reference<TestA> tagElementReference)
+               for (Holder<TestA> tagElement : tag)
+               {
+                  if (tagElement instanceof Holder.Reference<TestA> tagElementReference)
                      LOGGER.info("  [{}] {}", i++, tagElementReference.key());
                   else
                      LOGGER.info("  [{}] String: {}, Int: {}, Biome: {}", i++,
@@ -129,7 +141,7 @@ public class DataPackRegistriesTest
 
    public static class TestA extends ForgeRegistryEntry<TestA>
    {
-      public static final ResourceKey<Registry<TestA>> REGISTRY = ForgeHooks.createRegistryKey(new ResourceLocation(MODID, "worldgen/test_a"));
+      public static final ResourceKey<Registry<TestA>> REGISTRY = DataPackRegistriesHooks.createRegistryKey(new ResourceLocation(MODID, "worldgen/test_a"));
 
       public static final Codec<TestA> DIRECT_CODEC = RecordCodecBuilder.create(instance -> instance.group(
             Codec.STRING.fieldOf("string_value").forGetter(TestA::getStringValue),
@@ -169,7 +181,7 @@ public class DataPackRegistriesTest
 
    public static class TestB extends ForgeRegistryEntry<TestB>
    {
-      public static final ResourceKey<Registry<TestB>> REGISTRY = ForgeHooks.createRegistryKey(new ResourceLocation(MODID, "worldgen/test_b"));
+      public static final ResourceKey<Registry<TestB>> REGISTRY = DataPackRegistriesHooks.createRegistryKey(new ResourceLocation(MODID, "worldgen/test_b"));
 
       public static final Codec<TestB> DIRECT_CODEC = RecordCodecBuilder.create(instance -> instance.group(
             TestA.CODEC.fieldOf("test_a").forGetter(TestB::getTestA),

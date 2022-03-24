@@ -8,7 +8,6 @@ package net.minecraftforge.common;
 import net.minecraft.commands.synchronization.EmptyArgumentSerializer;
 import net.minecraft.commands.synchronization.ArgumentTypes;
 import net.minecraft.commands.synchronization.ArgumentSerializer;
-import net.minecraft.core.RegistryAccess;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.RangedAttribute;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -176,7 +175,7 @@ public class ForgeMod
     {
         if (FMLEnvironment.dist == Dist.CLIENT)
             ForgeHooksClient.registerForgeWorldPresetScreens();
-        RegistryAccess.injectBuiltinRegistries();
+        DataPackRegistriesHooks.fireAddBuiltinRegistriesEvent();
     }
 
     public void serverStopping(ServerStoppingEvent evt)

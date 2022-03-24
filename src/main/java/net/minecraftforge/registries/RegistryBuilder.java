@@ -39,7 +39,7 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
     private boolean allowOverrides = true;
     private boolean allowModifications = false;
     private boolean hasWrapper = false;
-    private Codec<T> directCodec = null;
+    private boolean isDataPackRegistry = false;
     private DummyFactory<T> dummyFactory;
     private MissingFactory<T> missingFactory;
     private Set<ResourceLocation> legacyNames = new HashSet<>();
@@ -232,10 +232,10 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
         return this;
     }
 
-    public RegistryBuilder<T> directCodec(Codec<T> directCodec)
+    public RegistryBuilder<T> isDataPackRegistry()
     {
         this.hasWrapper();// A Wrapper is required for data pack registries
-        this.directCodec = directCodec;
+        this.isDataPackRegistry = true;
         return this;
     }
 
@@ -397,8 +397,8 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
         return this.hasWrapper;
     }
 
-    Codec<T> getDirectCodec()
+    boolean getIsDataPackRegistry()
     {
-        return this.directCodec;
+        return this.isDataPackRegistry;
     }
 }
