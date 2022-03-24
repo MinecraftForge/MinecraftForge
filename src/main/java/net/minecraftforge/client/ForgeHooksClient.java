@@ -6,6 +6,8 @@
 package net.minecraftforge.client;
 
 import com.google.common.collect.ImmutableMap;
+
+import com.mojang.blaze3d.shaders.FogShape;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import com.mojang.datafixers.util.Either;
@@ -389,9 +391,24 @@ public class ForgeHooksClient
         return -1;
     }
 
+    /**
+     * @deprecated to be removed in 1.19, use other onFogRender hook with more params
+     */
+    @Deprecated(forRemoval = true, since = "1.18.2")
     public static void onFogRender(FogMode type, Camera camera, float partialTick, float distance)
     {
         MinecraftForge.EVENT_BUS.post(new EntityViewRenderEvent.RenderFogEvent(type, camera, partialTick, distance));
+    }
+
+    public static void onFogRender(FogMode type, Camera camera, float partialTick, float nearDistance, float farDistance, FogShape shape)
+    {
+        EntityViewRenderEvent.RenderFogEvent event = new EntityViewRenderEvent.RenderFogEvent(type, camera, partialTick, nearDistance, farDistance, shape);
+        if (MinecraftForge.EVENT_BUS.post(event))
+        {
+            RenderSystem.setShaderFogStart(event.getNearPlaneDistance());
+            RenderSystem.setShaderFogEnd(event.getFarPlaneDistance());
+            RenderSystem.setShaderFogShape(event.getFogShape());
+        }
     }
 
     public static EntityViewRenderEvent.CameraSetup onCameraSetup(GameRenderer renderer, Camera camera, float partial)
@@ -1073,5 +1090,10 @@ public class ForgeHooksClient
         final ScreenEvent.PotionSizeEvent event = new ScreenEvent.PotionSizeEvent(screen);
         MinecraftForge.EVENT_BUS.post(event);
         return event.getResult();
+    }
+
+    public static boolean isBlockInSolidLayer(BlockState state)
+    {
+        return ItemBlockRenderTypes.canRenderInLayer(state, RenderType.solid());
     }
 }
