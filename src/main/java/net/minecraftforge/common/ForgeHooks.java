@@ -16,13 +16,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.google.common.base.Strings;
 import com.google.common.base.Suppliers;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
@@ -33,6 +36,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.mojang.datafixers.kinds.App;
+import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.Lifecycle;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -42,10 +46,12 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import it.unimi.dsi.fastutil.longs.LongSet;
+import net.minecraft.ResourceLocationException;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.core.*;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -90,7 +96,10 @@ import net.minecraft.stats.Stats;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.*;
 import net.minecraft.world.level.chunk.ChunkAccess;
+import net.minecraft.world.level.chunk.ChunkGenerator;
+import net.minecraft.world.level.levelgen.NoiseGeneratorSettings;
 import net.minecraft.world.level.levelgen.WorldGenSettings;
+import net.minecraft.world.level.levelgen.feature.StructureFeature;
 import net.minecraft.world.level.BaseSpawner;
 import net.minecraft.world.level.block.entity.FurnaceBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -150,8 +159,13 @@ import net.minecraftforge.fluids.FluidAttributes;
 import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoader;
-import net.minecraftforge.registries.*;
 import net.minecraftforge.resource.ResourcePackLoader;
+import net.minecraftforge.registries.DataSerializerEntry;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.ForgeRegistry;
+import net.minecraftforge.registries.GameData;
+import net.minecraftforge.registries.IRegistryDelegate;
+import net.minecraftforge.registries.RegistryManager;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -1391,48 +1405,31 @@ public class ForgeHooks
         }
     }
 
-    @SuppressWarnings("unchecked")
-    /**  FOR INTERNAL USE ONLY, DO NOT CALL DIRECTLY */
-    public static <T extends IForgeRegistryEntry<T>> void injectBuiltinRegistries(Map<ResourceKey<? extends Registry<?>>, RegistryAccess.RegistryData<?>> registries) {
-        for(Entry<ResourceLocation, Codec<?>> builtinRegistry : RegistryManager.getBuiltinRegistryNames().entrySet()){
-            ForgeRegistry<T> forgeRegistry = RegistryManager.ACTIVE.getRegistry(builtinRegistry.getKey());
-            registries.put(forgeRegistry.getRegistryKey(), new RegistryAccess.RegistryData<>(forgeRegistry.getRegistryKey(), (Codec<T>) builtinRegistry.getValue(), null));
-        }
-    }
-
-    public static <T> ResourceKey<Registry<T>> createRegistryKey(ResourceLocation location)
+    public static void saveMobEffect(CompoundTag nbt, String key, MobEffect effect)
     {
-        String namespace = location.getNamespace();
-        String path = location.getPath();
-        String prefix = getPathPrefix(namespace);
-        if (!path.startsWith(prefix))
+        var registryName = effect.getRegistryName();
+        if (registryName != null)
         {
-            path = prefix + path;
+            nbt.putString(key, registryName.toString());
         }
-
-        return ResourceKey.createRegistryKey(new ResourceLocation(namespace, path));
     }
 
-    private static String getPathPrefix(String namespace)
+    @Nullable
+    public static MobEffect loadMobEffect(CompoundTag nbt, String key, @Nullable MobEffect fallback)
     {
-        return namespace + '/';
-    }
-
-    private static void validateRegistryKey(ResourceKey<? extends Registry<?>> registryKey)
-    {
-        var location = registryKey.location();
-        var prefix = getPathPrefix(location.getNamespace());
-
-        if (!location.getPath().startsWith(prefix))
+        var registryName = nbt.getString(key);
+        if (Strings.isNullOrEmpty(registryName))
         {
-            throw new IllegalArgumentException(String.format("Registry path must be prefixed with '%s'", prefix));
+            return fallback;
+        }
+        try
+        {
+            return ForgeRegistries.MOB_EFFECTS.getValue(new ResourceLocation(registryName));
+        }
+        catch (ResourceLocationException e)
+        {
+            return fallback;
         }
     }
 
-    public static <T extends IForgeRegistryEntry<T>> DeferredRegister<T> createDataPackRegistry(ResourceKey<? extends Registry<T>> registryKey, String modid, Codec<T> directCodec, Class<T> baseClass)
-    {
-        DeferredRegister<T> deferredRegister = DeferredRegister.create(registryKey, modid);
-        deferredRegister.makeRegistry(baseClass, () -> new RegistryBuilder<T>().disableSync().disableSaving().directCodec(directCodec));
-        return deferredRegister;
-    }
 }

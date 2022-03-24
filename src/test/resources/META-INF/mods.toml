@@ -77,6 +77,8 @@ license="LGPL v2.1"
 [[mods]]
     modId="ender_mask_test"
 [[mods]]
+    modId="custom_head_test"
+[[mods]]
     modId="raid_enum_test"
 [[mods]]
     modId="player_name_event_test"
@@ -175,6 +177,8 @@ license="LGPL v2.1"
 [[mods]]
     modId="capabilities_test"
 [[mods]]
+    modId="audio_stream_test"
+[[mods]]
     modId="custom_mob_bucket_test"
 [[mods]]
     modId="custom_armor_model_test"
@@ -198,6 +202,8 @@ license="LGPL v2.1"
     modId="hidden_tooltip_parts"
 [[mods]]
     modId="gametest_test"
+[[mods]]
+    modId="many_mob_effects_test"
 [[mods]]
     modId="potion_size_event_test"
 [[mods]]
