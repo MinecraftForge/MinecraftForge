@@ -150,6 +150,7 @@ import net.minecraftforge.event.entity.player.AnvilRepairEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.event.entity.player.CriticalHitEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.event.entity.living.LivingGetProjectileEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BiomeLoadingEvent;
 import net.minecraftforge.event.world.BlockEvent;
@@ -1012,6 +1013,16 @@ public class ForgeHooks
         ItemAttributeModifierEvent event = new ItemAttributeModifierEvent(stack, equipmentSlot, attributes);
         MinecraftForge.EVENT_BUS.post(event);
         return event.getModifiers();
+    }
+
+    /**
+     * Hook to fire {@link LivingGetProjectileEvent}. Returns the ammo to be used.
+     */
+    public static ItemStack getProjectile(LivingEntity entity, ItemStack projectileWeaponItem, ItemStack projectile)
+    {
+        LivingGetProjectileEvent event = new LivingGetProjectileEvent(entity, projectileWeaponItem, projectile);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event.getProjectileItemStack();
     }
 
     /**
