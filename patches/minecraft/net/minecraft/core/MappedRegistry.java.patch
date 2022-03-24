@@ -33,5 +33,3 @@
     }
  
     public Registry<T> m_203521_() {
-       this.f_205845_ = true;
-       List<ResourceLocation> list = this.f_205842_.entrySet().stream().filter((p_211055_) -> {
