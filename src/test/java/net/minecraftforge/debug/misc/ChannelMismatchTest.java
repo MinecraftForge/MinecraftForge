@@ -39,7 +39,7 @@ public class ChannelMismatchTest
     public static final String MOD_ID = "channel_mismatch";
 
     private static final boolean ENABLED = false;
-    //Disable this to cause a missing mod to be logged instead of a mod mismatch, this also makes the server send a S2CModMismatchData packet to the server, containing all the information about the channel mismatch
+    //Disable this to cause a missing mod to be logged instead of a mod mismatch, this also makes the server send a S2CModMismatchData packet to the client, containing all the information about the channel mismatch
     private static final boolean REGISTER_FOR_CLIENT = true;
 
     private static final String PROTOCOL_VERSION = FMLEnvironment.dist == Dist.CLIENT ? "V1" : "V2";
