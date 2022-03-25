@@ -111,6 +111,10 @@ public class ServerLifecycleHooks
         exitLatch = new CountDownLatch(1);
     }
 
+    /**
+     * This method is <strong>only</strong> for internal Forge use.
+     * @throws IllegalCallerException if the method was called illegally by a mod
+     */
     public static void handleServerStopped(final MinecraftServer server)
     {
         if (StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE).getCallerClass() != MinecraftServer.class)
