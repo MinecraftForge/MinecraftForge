@@ -119,7 +119,7 @@ public class ServerLifecycleHooks
     {
         if (StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE).getCallerClass() != MinecraftServer.class)
         {
-            throw new IllegalCallerException("This is an internal forge method and cannot be used by mods");
+            throw new IllegalCallerException("handleServerStopped is an internal forge method and cannot be used by mods");
         }
         if (!server.isDedicatedServer()) GameData.revertToFrozen();
         MinecraftForge.EVENT_BUS.post(new ServerStoppedEvent(server));
