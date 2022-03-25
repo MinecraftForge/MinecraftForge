@@ -1,17 +1,11 @@
 --- a/net/minecraft/tags/BlockTags.java
 +++ b/net/minecraft/tags/BlockTags.java
-@@ -145,6 +_,14 @@
-       return f_13053_.m_13244_(p_13117_);
+@@ -145,4 +_,8 @@
+    private static TagKey<Block> m_203846_(String p_203847_) {
+       return TagKey.m_203882_(Registry.f_122901_, new ResourceLocation(p_203847_));
     }
- 
-+   public static net.minecraftforge.common.Tags.IOptionalNamedTag<Block> createOptional(net.minecraft.resources.ResourceLocation name) {
-+       return createOptional(name, null);
-+   }
 +
-+   public static net.minecraftforge.common.Tags.IOptionalNamedTag<Block> createOptional(net.minecraft.resources.ResourceLocation name, @javax.annotation.Nullable java.util.Set<java.util.function.Supplier<Block>> defaults) {
-+      return f_13053_.createOptional(name, defaults);
++   public static TagKey<Block> create(ResourceLocation name) {
++      return TagKey.m_203882_(Registry.f_122901_, name);
 +   }
-+
-    public static TagCollection<Block> m_13115_() {
-       return f_13053_.m_13246_();
-    }
+ }

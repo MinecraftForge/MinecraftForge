@@ -1,3 +1,4 @@
+net.minecraftforge.fml.loading.log4j.SLF4JFixerLaunchPluginService
 net.minecraftforge.fml.loading.RuntimeDistCleaner
 net.minecraftforge.fml.common.asm.RuntimeEnumExtender
 net.minecraftforge.fml.common.asm.ObjectHolderDefinalize

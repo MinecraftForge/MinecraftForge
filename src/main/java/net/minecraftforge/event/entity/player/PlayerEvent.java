@@ -304,7 +304,6 @@ public class PlayerEvent extends LivingEvent
         /**
          * Construct and return a recommended file for the supplied suffix
          * @param suffix The suffix to use.
-         * @return
          */
         public File getPlayerFile(String suffix)
         {
@@ -357,7 +356,6 @@ public class PlayerEvent extends LivingEvent
         /**
          * Construct and return a recommended file for the supplied suffix
          * @param suffix The suffix to use.
-         * @return
          */
         public File getPlayerFile(String suffix)
         {

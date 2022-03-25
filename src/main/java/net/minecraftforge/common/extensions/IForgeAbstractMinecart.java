@@ -113,8 +113,6 @@ public interface IForgeAbstractMinecart
      * functions differs from getMaxCartSpeedOnRail() in that it controls
      * current movement and cannot be overridden. The value however can never be
      * higher than getMaxCartSpeedOnRail().
-     *
-     * @return
      */
     float getCurrentCartSpeedCapOnRail();
     void setCurrentCartSpeedCapOnRail(float value);

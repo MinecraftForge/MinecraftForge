@@ -5,6 +5,8 @@
 
 package net.minecraftforge.common.world;
 
+import net.minecraft.core.Holder;
+import net.minecraft.core.HolderSet;
 import net.minecraft.world.level.biome.BiomeGenerationSettings;
 import net.minecraft.world.level.levelgen.GenerationStep;
 import net.minecraft.world.level.levelgen.carver.ConfiguredWorldCarver;
@@ -18,16 +20,23 @@ public class BiomeGenerationSettingsBuilder extends BiomeGenerationSettings.Buil
 {
     public BiomeGenerationSettingsBuilder(BiomeGenerationSettings orig)
     {
-        orig.getCarvingStages().forEach(k -> carvers.put(k, new ArrayList<>(orig.getCarvers(k))));
-        orig.features().forEach(l -> features.add(new ArrayList<>(l)));
+        orig.getCarvingStages().forEach(k -> {
+            carvers.put(k, new ArrayList<>());
+            orig.getCarvers(k).forEach(v -> carvers.get(k).add(v));
+        });
+        orig.features().forEach(l -> {
+            final ArrayList<Holder<PlacedFeature>> featureList = new ArrayList<>();
+            l.forEach(featureList::add);
+            features.add(featureList);
+        });
     }
 
-    public List<Supplier<PlacedFeature>> getFeatures(GenerationStep.Decoration stage) {
+    public List<Holder<PlacedFeature>> getFeatures(GenerationStep.Decoration stage) {
         addFeatureStepsUpTo(stage.ordinal());
         return features.get(stage.ordinal());
     }
 
-    public List<Supplier<ConfiguredWorldCarver<?>>> getCarvers(GenerationStep.Carving stage) {
+    public List<Holder<ConfiguredWorldCarver<?>>> getCarvers(GenerationStep.Carving stage) {
         return carvers.computeIfAbsent(stage, key -> new ArrayList<>());
     }
 }

@@ -11,6 +11,8 @@ import net.minecraft.client.renderer.FogRenderer.FogMode;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraftforge.eventbus.api.Cancelable;
 
+import com.mojang.blaze3d.shaders.FogShape;
+
 /**
  * Event that hooks into GameRenderer, allowing any feature to customize visual attributes
  *  the player sees.
@@ -43,13 +45,14 @@ public abstract class EntityViewRenderEvent extends net.minecraftforge.eventbus.
         return partialTicks;
     }
 
+    @Deprecated(forRemoval = true, since = "1.18.2")
     private static class FogEvent extends EntityViewRenderEvent
     {
         private final FogMode mode;
         @SuppressWarnings("resource")
-        protected FogEvent(FogMode mode, Camera info, double renderPartialTicks)
+        protected FogEvent(FogMode mode, Camera camera, double partialTick)
         {
-            super(Minecraft.getInstance().gameRenderer, info, renderPartialTicks);
+            super(Minecraft.getInstance().gameRenderer, camera, partialTick);
             this.mode = mode;
         }
 
@@ -57,17 +60,20 @@ public abstract class EntityViewRenderEvent extends net.minecraftforge.eventbus.
     }
 
     /**
+     * @deprecated Use RenderFogEvent. This event will be removed as the other event has better functionality.
+     *
      * Event that allows any feature to customize the fog density the player sees.
      * NOTE: In order to make this event have an effect, you must cancel the event
      */
     @Cancelable
+    @Deprecated(forRemoval = true, since = "1.18.2")
     public static class FogDensity extends FogEvent
     {
         private float density;
 
-        public FogDensity(FogMode type, Camera info, float partialTicks, float density)
+        public FogDensity(FogMode type, Camera camera, float partialTick, float density)
         {
-            super(type, info, partialTicks);
+            super(type, camera, partialTick);
             this.setDensity(density);
         }
 
@@ -83,22 +89,83 @@ public abstract class EntityViewRenderEvent extends net.minecraftforge.eventbus.
     }
 
     /**
-     * Event that allows any feature to customize the rendering of fog.
+     * This event allows for customization of parameters related to fog rendering. The plane distances are based on the player's render distance.
+     * For the event to have an effect, you must cancel it.
+     *
+     * The FogMode is NOT customizable. It describes the type of fog being modified.
+     * A FogMode of FOG_SKY is the skybox's fog.
+     * A FogMode of FOG_TERRAIN is what the fog induced by render distance uses. This works best for reducing the camera's visibility.
      */
-    @HasResult
-    public static class RenderFogEvent extends FogEvent
+    @HasResult // TODO: remove in 1.19. Setting a result for this event has no effect.
+    @Cancelable
+    public static class RenderFogEvent extends FogEvent // TODO: In 1.19, change superclass to EntityViewRenderEvent
     {
-        private final float farPlaneDistance;
+        private final FogMode type;
+        private float farPlaneDistance;
+        private float nearPlaneDistance;
+        private FogShape fogShape;
 
-        public RenderFogEvent(FogMode type, Camera info, float partialTicks, float distance)
+        /**
+         * @deprecated Use other constructor with all the params. Will be removed in 1.19
+         */
+        @Deprecated(forRemoval = true, since = "1.18.2")
+        public RenderFogEvent(FogMode type, Camera camera, float partialTicks, float distance)
         {
-            super(type, info, partialTicks);
-            this.farPlaneDistance = distance;
+            this(type, camera, partialTicks, -8f, distance, FogShape.SPHERE);
+        }
+
+        public RenderFogEvent(FogMode type, Camera camera, float partialTicks, float nearPlaneDistance, float farPlaneDistance, FogShape fogShape)
+        {
+            super(type, camera, partialTicks);
+            this.type = type;
+            setFarPlaneDistance(farPlaneDistance);
+            setNearPlaneDistance(nearPlaneDistance);
+            setFogShape(fogShape);
+        }
+
+        public FogMode getMode()
+        {
+            return type;
         }
 
         public float getFarPlaneDistance()
         {
             return farPlaneDistance;
+        }
+
+        public float getNearPlaneDistance()
+        {
+            return nearPlaneDistance;
+        }
+
+        public FogShape getFogShape()
+        {
+            return fogShape;
+        }
+
+        public void setFarPlaneDistance(float distance)
+        {
+            farPlaneDistance = distance;
+        }
+
+        public void setNearPlaneDistance(float distance)
+        {
+            nearPlaneDistance = distance;
+        }
+
+        public void setFogShape(FogShape shape)
+        {
+            fogShape = shape;
+        }
+
+        public void scaleFarPlaneDistance(float factor)
+        {
+            farPlaneDistance *= factor;
+        }
+
+        public void scaleNearPlaneDistance(float factor)
+        {
+            nearPlaneDistance *= factor;
         }
     }
 
@@ -113,9 +180,9 @@ public abstract class EntityViewRenderEvent extends net.minecraftforge.eventbus.
         private float blue;
 
         @SuppressWarnings("resource")
-        public FogColors(Camera info, float partialTicks, float red, float green, float blue)
+        public FogColors(Camera camera, float partialTicks, float red, float green, float blue)
         {
-            super(Minecraft.getInstance().gameRenderer, info, partialTicks);
+            super(Minecraft.getInstance().gameRenderer, camera, partialTicks);
             this.setRed(red);
             this.setGreen(green);
             this.setBlue(blue);
@@ -138,9 +205,9 @@ public abstract class EntityViewRenderEvent extends net.minecraftforge.eventbus.
         private float pitch;
         private float roll;
 
-        public CameraSetup(GameRenderer renderer, Camera info, double renderPartialTicks, float yaw, float pitch, float roll)
+        public CameraSetup(GameRenderer renderer, Camera camera, double renderPartialTicks, float yaw, float pitch, float roll)
         {
-            super(renderer, info, renderPartialTicks);
+            super(renderer, camera, renderPartialTicks);
             this.setYaw(yaw);
             this.setPitch(pitch);
             this.setRoll(roll);
@@ -162,8 +229,8 @@ public abstract class EntityViewRenderEvent extends net.minecraftforge.eventbus.
     {
         private double fov;
 
-        public FieldOfView(GameRenderer renderer, Camera info, double renderPartialTicks, double fov) {
-            super(renderer, info, renderPartialTicks);
+        public FieldOfView(GameRenderer renderer, Camera camera, double renderPartialTicks, double fov) {
+            super(renderer, camera, renderPartialTicks);
             this.setFOV(fov);
         }
 

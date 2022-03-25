@@ -13,6 +13,7 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.level.biome.Biome;
 import net.minecraftforge.common.ForgeMod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -93,7 +94,7 @@ public class GravityAttributeTest
                 for(LivingEntity liv : list)
                 {
                     AttributeInstance grav = liv.getAttribute(ForgeMod.ENTITY_GRAVITY.get());
-                    boolean inPlains = liv.level.getBiome(liv.blockPosition()).getBiomeCategory() == BiomeCategory.PLAINS;
+                    boolean inPlains = Biome.getBiomeCategory(liv.level.getBiome(liv.blockPosition())) == BiomeCategory.PLAINS;
                     if (inPlains && !grav.hasModifier(REDUCED_GRAVITY))
                     {
                         logger.info("Granted low gravity to Entity: {}", liv);

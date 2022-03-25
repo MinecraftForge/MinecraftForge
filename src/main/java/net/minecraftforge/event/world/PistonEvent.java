@@ -23,7 +23,6 @@ public abstract class PistonEvent extends BlockEvent
     private final PistonMoveType moveType;
 
     /**
-     * @param world
      * @param pos - The position of the piston
      * @param direction - The move direction of the piston
      */

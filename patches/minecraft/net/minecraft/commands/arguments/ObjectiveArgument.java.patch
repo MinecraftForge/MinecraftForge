@@ -9,12 +9,12 @@
        Objective objective = scoreboard.m_83477_(s);
        if (objective == null) {
           throw f_101953_.create(s);
-@@ -55,7 +_,7 @@
- 
-    public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> p_101974_, SuggestionsBuilder p_101975_) {
-       if (p_101974_.getSource() instanceof CommandSourceStack) {
--         return SharedSuggestionProvider.m_82970_(((CommandSourceStack)p_101974_.getSource()).m_81377_().m_129896_().m_83474_(), p_101975_);
-+         return SharedSuggestionProvider.m_82970_(((CommandSourceStack)p_101974_.getSource()).getScoreboard().m_83474_(), p_101975_);
-       } else if (p_101974_.getSource() instanceof SharedSuggestionProvider) {
-          SharedSuggestionProvider sharedsuggestionprovider = (SharedSuggestionProvider)p_101974_.getSource();
-          return sharedsuggestionprovider.m_5497_((CommandContext<SharedSuggestionProvider>)p_101974_, p_101975_);
+@@ -57,7 +_,7 @@
+       S s = p_101974_.getSource();
+       if (s instanceof CommandSourceStack) {
+          CommandSourceStack commandsourcestack = (CommandSourceStack)s;
+-         return SharedSuggestionProvider.m_82970_(commandsourcestack.m_81377_().m_129896_().m_83474_(), p_101975_);
++         return SharedSuggestionProvider.m_82970_(commandsourcestack.getScoreboard().m_83474_(), p_101975_);
+       } else if (s instanceof SharedSuggestionProvider) {
+          SharedSuggestionProvider sharedsuggestionprovider = (SharedSuggestionProvider)s;
+          return sharedsuggestionprovider.m_212155_(p_101974_);

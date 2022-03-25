@@ -43,7 +43,7 @@ public class ClientCommandTest
                         // Used for checking suggestion providers that are registered
                         .then(Commands.literal("registeredsuggest").then(
                                 Commands.argument("block", ResourceLocationArgument.id())
-                                        .suggests(SuggestionProviders.AVAILABLE_BIOMES)
+                                        .suggests(SuggestionProviders.ALL_RECIPES)
                                         .executes(this::testCommand)))
                         // Used for checking if attempting to get the server on the client side errors
                         .then(Commands.literal("server")

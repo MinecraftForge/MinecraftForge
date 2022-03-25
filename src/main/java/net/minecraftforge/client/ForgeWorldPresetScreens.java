@@ -65,7 +65,7 @@ public class ForgeWorldPresetScreens
 
     static void registerPresets()
     {
-        ForgeRegistries.WORLD_TYPES.forEach(wt -> {
+        ForgeRegistries.WORLD_TYPES.get().forEach(wt -> {
             GeneratorPreset gen = new GeneratorPreset(wt);
             GENERATORS.put(wt, gen);
             WorldPreset.registerGenerator(gen);
@@ -89,7 +89,7 @@ public class ForgeWorldPresetScreens
 
         @Nonnull
         @Override
-        public WorldGenSettings create(@Nonnull RegistryAccess.RegistryHolder dynamicRegistries, long seed, boolean generateStructures, boolean bonusChest)
+        public WorldGenSettings create(@Nonnull RegistryAccess dynamicRegistries, long seed, boolean generateStructures, boolean bonusChest)
         {
             return worldPreset.createSettings(dynamicRegistries, seed, generateStructures, bonusChest, "");
         }

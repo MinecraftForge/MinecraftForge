@@ -17,8 +17,8 @@
 +      if (this.f_19853_.f_46443_ || this.m_146910_()) return false; //Forge: Fixes MC-53850
        if (this.m_6673_(p_20785_)) {
           return false;
-       } else {
-@@ -197,6 +_,7 @@
+       } else if (this.f_19853_.f_46443_) {
+@@ -199,6 +_,7 @@
     public void m_6123_(Player p_20792_) {
        if (!this.f_19853_.f_46443_) {
           if (p_20792_.f_36101_ == 0) {
@@ -26,7 +26,7 @@
              p_20792_.f_36101_ = 2;
              p_20792_.m_7938_(this, 1);
              int i = this.m_147092_(p_20792_, this.f_20770_);
-@@ -217,7 +_,7 @@
+@@ -219,7 +_,7 @@
        Entry<EquipmentSlot, ItemStack> entry = EnchantmentHelper.m_44839_(Enchantments.f_44962_, p_147093_, ItemStack::m_41768_);
        if (entry != null) {
           ItemStack itemstack = entry.getValue();

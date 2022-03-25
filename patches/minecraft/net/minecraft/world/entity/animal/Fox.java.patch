@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/animal/Fox.java
 +++ b/net/minecraft/world/entity/animal/Fox.java
-@@ -646,13 +_,16 @@
+@@ -649,13 +_,16 @@
     }
  
     protected void m_6668_(DamageSource p_28536_) {
@@ -18,7 +18,7 @@
     }
  
     public static boolean m_28471_(Fox p_28472_, LivingEntity p_28473_) {
-@@ -802,6 +_,17 @@
+@@ -805,6 +_,17 @@
        protected void m_8026_() {
           ServerLevel serverlevel = (ServerLevel)this.f_25114_;
           Fox fox = (Fox)this.f_25113_.m_142606_(serverlevel, this.f_25115_);
@@ -36,7 +36,7 @@
           if (fox != null) {
              ServerPlayer serverplayer = this.f_25113_.m_27592_();
              ServerPlayer serverplayer1 = this.f_25115_.m_27592_();
-@@ -873,7 +_,7 @@
+@@ -876,7 +_,7 @@
        }
  
        protected void m_28686_() {

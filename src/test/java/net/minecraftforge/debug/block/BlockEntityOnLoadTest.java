@@ -5,6 +5,7 @@
 
 package net.minecraftforge.debug.block;
 
+import com.mojang.logging.LogUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -24,8 +25,7 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
 
 import javax.annotation.Nullable;
 import java.util.Locale;
@@ -34,6 +34,7 @@ import java.util.Locale;
 public class BlockEntityOnLoadTest
 {
     private static final boolean ENABLED = true;
+    private static final Logger LOGGER = LogUtils.getLogger();
 
     private static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, "be_onload_test");
     private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, "be_onload_test");
@@ -82,7 +83,6 @@ public class BlockEntityOnLoadTest
 
     private static class TestBlockEntity extends BlockEntity
     {
-        private static final Logger LOGGER = LogManager.getLogger();
         private boolean loaded = false;
 
         public TestBlockEntity(BlockPos pos, BlockState state)

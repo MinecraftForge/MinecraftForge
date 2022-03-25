@@ -48,7 +48,7 @@
        return ParticleTypes.f_123800_;
 @@ -164,7 +_,7 @@
           FluidState fluidstate = p_76220_.m_6425_(p_76221_);
-          if (this.m_76108_(FluidTags.f_13132_) && fluidstate.m_76153_(FluidTags.f_13131_)) {
+          if (this.m_205067_(FluidTags.f_13132_) && fluidstate.m_205070_(FluidTags.f_13131_)) {
              if (p_76222_.m_60734_() instanceof LiquidBlock) {
 -               p_76220_.m_7731_(p_76221_, Blocks.f_50069_.m_49966_(), 3);
 +               p_76220_.m_7731_(p_76221_, net.minecraftforge.event.ForgeEventFactory.fireFluidPlaceBlockEvent(p_76220_, p_76221_, p_76221_, Blocks.f_50069_.m_49966_()), 3);

@@ -52,9 +52,9 @@ public class DrawSelectionEvent extends Event
     @Cancelable
     public static class HighlightBlock extends DrawSelectionEvent
     {
-        public HighlightBlock(LevelRenderer context, Camera info, HitResult target, float partialTicks, PoseStack matrix, MultiBufferSource buffers)
+        public HighlightBlock(LevelRenderer levelRenderer, Camera camera, HitResult target, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource)
         {
-            super(context, info, target, partialTicks, matrix, buffers);
+            super(levelRenderer, camera, target, partialTick, poseStack, bufferSource);
         }
 
         @Override
@@ -71,9 +71,9 @@ public class DrawSelectionEvent extends Event
     @Cancelable
     public static class HighlightEntity extends DrawSelectionEvent
     {
-        public HighlightEntity(LevelRenderer context, Camera info, HitResult target, float partialTicks, PoseStack matrix, MultiBufferSource buffers)
+        public HighlightEntity(LevelRenderer levelRenderer, Camera camera, HitResult target, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource)
         {
-            super(context, info, target, partialTicks, matrix, buffers);
+            super(levelRenderer, camera, target, partialTick, poseStack, bufferSource);
         }
 
         @Override

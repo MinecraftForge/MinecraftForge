@@ -43,13 +43,15 @@ public class StructureSpawnListGatherEvent extends Event
     public StructureSpawnListGatherEvent(StructureFeature<?> structure)
     {
         this.structure = structure;
-        this.insideOnly = this.structure.getDefaultRestrictsSpawnsToInside();
+        this.insideOnly = false;
+        /*this.insideOnly = this.structure.getDefaultRestrictsSpawnsToInside();
 
         for (MobCategory cat : MobCategory.values()) {
             List<SpawnerData> lst = this.structure.getDefaultSpawnList(cat);
             if (!lst.isEmpty())
                 addEntitySpawns(cat, lst);
-        }
+        }*/
+        // TODO-PATCHING: follow how StructureSpawnManager is reengineered
     }
 
     /**

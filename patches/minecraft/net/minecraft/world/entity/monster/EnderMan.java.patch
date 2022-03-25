@@ -27,7 +27,7 @@
           Vec3 vec3 = p_32535_.m_20252_(1.0F).m_82541_();
 @@ -273,7 +_,9 @@
        boolean flag = blockstate.m_60767_().m_76334_();
-       boolean flag1 = blockstate.m_60819_().m_76153_(FluidTags.f_13131_);
+       boolean flag1 = blockstate.m_60819_().m_205070_(FluidTags.f_13131_);
        if (flag && !flag1) {
 -         boolean flag2 = this.m_20984_(p_32544_, p_32545_, p_32546_, true);
 +         net.minecraftforge.event.entity.EntityTeleportEvent.EnderEntity event = net.minecraftforge.event.ForgeEventFactory.onEnderTeleport(this, p_32544_, p_32545_, p_32546_);
@@ -59,7 +59,7 @@
  
        private boolean m_32558_(Level p_32559_, BlockPos p_32560_, BlockState p_32561_, BlockState p_32562_, BlockState p_32563_, BlockPos p_32564_) {
 -         return p_32562_.m_60795_() && !p_32563_.m_60795_() && !p_32563_.m_60713_(Blocks.f_50752_) && p_32563_.m_60838_(p_32559_, p_32564_) && p_32561_.m_60710_(p_32559_, p_32560_) && p_32559_.m_45933_(this.f_32554_, AABB.m_82333_(Vec3.m_82528_(p_32560_))).isEmpty();
-+         return p_32562_.m_60795_() && !p_32563_.m_60795_() && !p_32563_.m_60713_(Blocks.f_50752_) && !p_32563_.m_60620_(net.minecraftforge.common.Tags.Blocks.ENDERMAN_PLACE_ON_BLACKLIST) && p_32563_.m_60838_(p_32559_, p_32564_) && p_32561_.m_60710_(p_32559_, p_32560_) && p_32559_.m_45933_(this.f_32554_, AABB.m_82333_(Vec3.m_82528_(p_32560_))).isEmpty();
++         return p_32562_.m_60795_() && !p_32563_.m_60795_() && !p_32563_.m_60713_(Blocks.f_50752_) && !p_32563_.m_204336_(net.minecraftforge.common.Tags.Blocks.ENDERMAN_PLACE_ON_BLACKLIST) && p_32563_.m_60838_(p_32559_, p_32564_) && p_32561_.m_60710_(p_32559_, p_32560_) && p_32559_.m_45933_(this.f_32554_, AABB.m_82333_(Vec3.m_82528_(p_32560_))).isEmpty();
        }
     }
  

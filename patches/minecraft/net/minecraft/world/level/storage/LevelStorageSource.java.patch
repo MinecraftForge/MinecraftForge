@@ -1,7 +1,7 @@
 --- a/net/minecraft/world/level/storage/LevelStorageSource.java
 +++ b/net/minecraft/world/level/storage/LevelStorageSource.java
-@@ -299,6 +_,19 @@
-          return LevelStorageSource.this.m_78229_(this.f_78271_.toFile(), LevelStorageSource.m_78247_(p_78281_, p_78282_));
+@@ -324,6 +_,19 @@
+          return LevelStorageSource.this.m_78229_(this.f_78271_.toFile(), LevelStorageSource.m_211737_(p_211748_, p_211749_, p_211750_));
        }
  
 +      public void readAdditionalLevelSaveData() {
@@ -20,7 +20,7 @@
        @Nullable
        public DataPackConfig m_78309_() {
           this.m_78313_();
-@@ -315,6 +_,8 @@
+@@ -340,6 +_,8 @@
           CompoundTag compoundtag1 = new CompoundTag();
           compoundtag1.m_128365_("Data", compoundtag);
  
@@ -29,7 +29,7 @@
           try {
              File file2 = File.createTempFile("level", ".dat", file1);
              NbtIo.m_128944_(compoundtag1, file2);
-@@ -329,6 +_,10 @@
+@@ -354,6 +_,10 @@
  
        public Optional<Path> m_182514_() {
           return !this.f_78270_.m_13639_() ? Optional.empty() : Optional.of(this.f_78271_.resolve("icon.png"));

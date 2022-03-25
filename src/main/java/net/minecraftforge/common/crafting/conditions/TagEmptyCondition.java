@@ -7,17 +7,19 @@ package net.minecraftforge.common.crafting.conditions;
 
 import com.google.gson.JsonObject;
 
+import net.minecraft.core.HolderSet;
 import net.minecraft.core.Registry;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
-import net.minecraft.tags.Tag;
-import net.minecraft.tags.SerializationTags;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.resources.ResourceLocation;
+
+import java.util.Iterator;
 
 public class TagEmptyCondition implements ICondition
 {
     private static final ResourceLocation NAME = new ResourceLocation("forge", "tag_empty");
-    private final ResourceLocation tag_name;
+    private final TagKey<Item> tag;
 
     public TagEmptyCondition(String location)
     {
@@ -31,7 +33,7 @@ public class TagEmptyCondition implements ICondition
 
     public TagEmptyCondition(ResourceLocation tag)
     {
-        this.tag_name = tag;
+        this.tag = TagKey.create(Registry.ITEM_REGISTRY, tag);
     }
 
     @Override
@@ -43,14 +45,13 @@ public class TagEmptyCondition implements ICondition
     @Override
     public boolean test()
     {
-        Tag<Item> tag = SerializationTags.getInstance().getOrEmpty(Registry.ITEM_REGISTRY).getTag(tag_name);
-        return tag == null || tag.getValues().isEmpty();
+        return !Registry.ITEM.getTag(tag).map(HolderSet.Named::iterator).map(Iterator::hasNext).orElse(false);
     }
 
     @Override
     public String toString()
     {
-        return "tag_empty(\"" + tag_name + "\")";
+        return "tag_empty(\"" + tag.location() + "\")";
     }
 
     public static class Serializer implements IConditionSerializer<TagEmptyCondition>
@@ -60,7 +61,7 @@ public class TagEmptyCondition implements ICondition
         @Override
         public void write(JsonObject json, TagEmptyCondition value)
         {
-            json.addProperty("tag", value.tag_name.toString());
+            json.addProperty("tag", value.tag.location().toString());
         }
 
         @Override
