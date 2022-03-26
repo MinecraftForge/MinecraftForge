@@ -45,7 +45,7 @@ public class ObjectHolderRegistry
      * and hashCode function to de-duplicate callers here.
      * The default @ObjectHolder implementation uses the hashCode/equals for the field the annotation is on.
      */
-    public static void addHandler(Consumer<Predicate<ResourceLocation>> ref)
+    public static synchronized void addHandler(Consumer<Predicate<ResourceLocation>> ref)
     {
         objectHolders.add(ref);
     }
@@ -59,7 +59,7 @@ public class ObjectHolderRegistry
      *
      * @return true if handler was matched and removed.
      */
-    public static boolean removeHandler(Consumer<Predicate<ResourceLocation>> ref)
+    public static synchronized boolean removeHandler(Consumer<Predicate<ResourceLocation>> ref)
     {
         return objectHolders.remove(ref);
     }

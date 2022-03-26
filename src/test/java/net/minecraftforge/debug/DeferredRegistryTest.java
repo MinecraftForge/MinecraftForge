@@ -16,6 +16,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.server.ServerStartedEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -47,9 +49,9 @@ public class DeferredRegistryTest {
     private static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, MODID);
     private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MODID);
     private static final DeferredRegister<Custom> CUSTOMS = DeferredRegister.create(new ResourceLocation(MODID, "test_registry"), MODID);
-    // Vanilla Registry
+    // Vanilla Registry - filled directly after all custom register events
     private static final DeferredRegister<RecipeType<?>> RECIPE_TYPES = DeferredRegister.create(Registry.RECIPE_TYPE_REGISTRY, MODID);
-    // Vanilla Dynamic Registry
+    // Vanilla Builtin Registry - filled during each world load
     private static final DeferredRegister<PlacedFeature> PLACED_FEATURES = DeferredRegister.create(Registry.PLACED_FEATURE_REGISTRY, MODID);
 
     private static final RegistryObject<Block> BLOCK = BLOCKS.register("test", () -> new Block(Block.Properties.of(Material.STONE)));
@@ -70,7 +72,18 @@ public class DeferredRegistryTest {
         ITEMS.register(modBus);
         CUSTOMS.register(modBus);
         RECIPE_TYPES.register(modBus);
+        PLACED_FEATURES.register(modBus);
         modBus.addListener(this::gatherData);
+
+        MinecraftForge.EVENT_BUS.addListener(this::serverStarted);
+    }
+
+    public void serverStarted(ServerStartedEvent event) {
+        // Validate all the RegistryObjects are filled
+        BLOCK.get();
+        ITEM.get();
+        CUSTOM.get();
+        PLACED_FEATURE.get();
     }
 
     public void gatherData(GatherDataEvent event) {

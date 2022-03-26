@@ -5,9 +5,12 @@
 
 package net.minecraftforge.registries;
 
+import com.mojang.logging.LogUtils;
 import net.minecraft.core.Registry;
+import net.minecraft.data.BuiltinRegistries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import org.slf4j.Logger;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -22,6 +25,7 @@ import java.util.stream.Stream;
 
 public final class RegistryObject<T> implements Supplier<T>
 {
+    private static final Logger LOGGER = LogUtils.getLogger();
     private final ResourceLocation name;
     @Nullable
     private T value;
@@ -111,15 +115,25 @@ public final class RegistryObject<T> implements Supplier<T>
         ObjectHolderRegistry.addHandler(new Consumer<Predicate<ResourceLocation>>()
         {
             private IForgeRegistry<V> registry;
+            private boolean invalidRegistry = false;
 
             @Override
             public void accept(Predicate<ResourceLocation> pred)
             {
+                if (invalidRegistry)
+                    return;
                 if (registry == null)
                 {
                     this.registry = RegistryManager.ACTIVE.getRegistry(baseType);
                     if (registry == null)
-                        throw new IllegalStateException("Unable to find registry for type " + baseType.getName() + " for mod \"" + modid + "\". Check the 'caused by' to see further stack.", callerStack);
+                    {
+                        invalidRegistry = true;
+                        LOGGER.error(
+                                "Unable to find registry for type " + baseType.getName() + " for mod \"" + modid + "\". Check the 'caused by' to see further stack.",
+                                callerStack
+                        );
+                        return;
+                    }
                 }
                 if (pred.test(registry.getRegistryName()))
                     RegistryObject.this.updateReference((IForgeRegistry<? extends T>) registry);
@@ -140,16 +154,24 @@ public final class RegistryObject<T> implements Supplier<T>
         ObjectHolderRegistry.addHandler(new Consumer<>()
         {
             private boolean registryExists = false;
+            private boolean invalidRegistry = false;
 
             @Override
             public void accept(Predicate<ResourceLocation> pred)
             {
+                if (invalidRegistry)
+                    return;
                 if (!registryExists)
                 {
                     if (!registryExists(registryName))
-                        throw new IllegalStateException(
+                    {
+                        invalidRegistry = true;
+                        LOGGER.error(
                                 "Unable to find registry with key " + registryName + " for mod \"" + modid + "\". Check the 'caused by' to see further stack.",
-                                callerStack);
+                                callerStack
+                        );
+                        return;
+                    }
                     registryExists = true;
                 }
                 if (pred.test(registryName))
@@ -205,7 +227,9 @@ public final class RegistryObject<T> implements Supplier<T>
 
     private static boolean registryExists(ResourceLocation registryName)
     {
-        return RegistryManager.ACTIVE.getRegistry(registryName) != null || Registry.REGISTRY.containsKey(registryName);
+        return RegistryManager.ACTIVE.getRegistry(registryName) != null
+                || Registry.REGISTRY.containsKey(registryName)
+                || BuiltinRegistries.REGISTRY.containsKey(registryName);
     }
 
     public ResourceLocation getId()
