@@ -326,17 +326,11 @@
        LevelStorageSource.LevelStorageAccess levelstoragesource$levelstorageaccess;
        try {
           levelstoragesource$levelstorageaccess = this.f_91031_.m_78260_(p_205206_);
-@@ -1849,11 +_,18 @@
+@@ -1849,11 +_,12 @@
  
        WorldStem worldstem;
        try {
-+
-+         //TODO-PATCHING: World loading has changed massively. Figure out what calls need to be delayed.
-+          /*if (!creating) levelstoragesource$levelstorageaccess.readAdditionalLevelSaveData();
-+          registryHolder = creating ? p_91221_ : RegistryAccess.m_123086_();
-+          minecraft$serverstem = this.m_91190_(registryHolder, p_91222_, p_91223_, p_91224_, levelstoragesource$levelstorageaccess);
-+*/
-+
++         if (!creating) levelstoragesource$levelstorageaccess.readAdditionalLevelSaveData();
           worldstem = this.m_205125_(packrepository, p_205209_, p_205207_.apply(levelstoragesource$levelstorageaccess), p_205208_.apply(levelstoragesource$levelstorageaccess));
        } catch (Exception exception) {
           f_90982_.warn("Failed to load datapacks, can't proceed with server load", (Throwable)exception);
