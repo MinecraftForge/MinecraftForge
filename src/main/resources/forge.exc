@@ -38,7 +38,7 @@ net/minecraft/world/entity/npc/AbstractVillager.changeDimension(Lnet/minecraft/s
 net/minecraft/world/entity/player/Player.getDigSpeed(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/BlockPos;)F=|p_36282_,pos
 net/minecraft/world/entity/projectile/ThrownEnderpearl.changeDimension(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraftforge/common/util/ITeleporter;)Lnet/minecraft/world/entity/Entity;=|p_37506_,teleporter
 net/minecraft/world/item/BoneMealItem.applyBonemeal(Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/entity/player/Player;)Z=|p_40628_,p_40629_,p_40630_,player
-net/minecraft/world/item/DyeableHorseArmorItem.<init>(ILnet/minecraft/resources/ResourceLocation;Lnet/minecraft/world/item/Item$Properties;)V=|p_41110_,p_41365_,p_41112_
+net/minecraft/world/item/DyeableHorseArmorItem.<init>(ILnet/minecraft/resources/ResourceLocation;Lnet/minecraft/world/item/Item$Properties;)V=|p_41110_,p_41111_,p_41112_
 net/minecraft/world/item/HorseArmorItem.<init>(ILnet/minecraft/resources/ResourceLocation;Lnet/minecraft/world/item/Item$Properties;)V=|p_41364_,p_41365_,p_41366_
 net/minecraft/world/item/ItemStack.<init>(Lnet/minecraft/world/level/ItemLike;ILnet/minecraft/nbt/CompoundTag;)V=|p_41604_,p_41605_,p_41606_
 net/minecraft/world/item/ItemStack.onItemUse(Lnet/minecraft/world/item/context/UseOnContext;Ljava/util/function/Function;)Lnet/minecraft/world/InteractionResult;=|p_41662_,callback
