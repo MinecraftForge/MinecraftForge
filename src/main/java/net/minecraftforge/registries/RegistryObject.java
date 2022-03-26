@@ -128,10 +128,8 @@ public final class RegistryObject<T> implements Supplier<T>
                     if (registry == null)
                     {
                         invalidRegistry = true;
-                        LOGGER.error(
-                                "Unable to find registry for type " + baseType.getName() + " for mod \"" + modid + "\". Check the 'caused by' to see further stack.",
-                                callerStack
-                        );
+                        LOGGER.error("Unable to find registry for type {} for mod \"{}\". Check the 'caused by' to see further stack.",
+                                baseType.getName(), modid, callerStack);
                         return;
                     }
                 }
@@ -166,10 +164,8 @@ public final class RegistryObject<T> implements Supplier<T>
                     if (!registryExists(registryName))
                     {
                         invalidRegistry = true;
-                        LOGGER.error(
-                                "Unable to find registry with key " + registryName + " for mod \"" + modid + "\". Check the 'caused by' to see further stack.",
-                                callerStack
-                        );
+                        LOGGER.error("Unable to find registry with key {} for mod \"{}\". Check the 'caused by' to see further stack.",
+                                registryName, modid, callerStack);
                         return;
                     }
                     registryExists = true;

@@ -6,6 +6,13 @@ var TypeInsnNode = Java.type('org.objectweb.asm.tree.TypeInsnNode')
 var InsnNode = Java.type('org.objectweb.asm.tree.InsnNode')
 
 // TODO 1.19: Delete this whole coremod. We won't need to maintain binary compatibility then.
+// This coremod exists purely because of Java limitations - 2 methods with the same parameters and name but different return types are not allowed.
+// However, this restriction does not exist in the JVM.
+// The bounds of RegistryObject's T generic parameter were changed to no longer require IForgeRegistryEntry.
+// This changes the erased type of the T parameter to just Object instead of IForgeRegistryEntry.
+// This coremod was made to maintain compatibility with mods compiled on old forge in the least invasive way.
+// It adds runtime methods for the 4 methods in RegistryObject that return type T to allow calling them with the erased bound of IForgeRegistryEntry.
+// The ASM methods just delegate to the original methods and return with a cast.
 function initializeCoreMod() {
     return {
         'registry_object_binary_compat': {

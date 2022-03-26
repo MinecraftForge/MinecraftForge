@@ -95,13 +95,17 @@ public class DeferredRegister<T>
         return new DeferredRegister<>(ResourceKey.createRegistryKey(registryName), null, modid);
     }
 
+    @Nullable // Nullable when superType is not null
     private final ResourceKey<? extends Registry<T>> registryKey;
+    @Nullable // Nullable when registryKey is not null
     private final Class<? extends IForgeRegistryEntry<?>> superType;
     private final String modid;
     private final Map<RegistryObject<T>, Supplier<? extends T>> entries = new LinkedHashMap<>();
     private final Set<RegistryObject<T>> entriesView = Collections.unmodifiableSet(entries.keySet());
 
+    @Nullable
     private Supplier<RegistryBuilder<?>> registryFactory;
+    @Nullable
     private SetMultimap<TagKey<T>, Supplier<T>> optionalTags;
     private boolean seenRegisterEvent = false;
 
@@ -386,7 +390,7 @@ public class DeferredRegister<T>
         event.create(this.registryFactory.get(), this::onFill);
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "removal" })
     private void vanillaRegister(VanillaRegisterEvent event)
     {
         if (this.registryKey != null && event.vanillaRegistry.key() == this.registryKey)
