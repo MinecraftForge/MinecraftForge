@@ -36,9 +36,6 @@ public interface IForgeRegistry<V> extends Iterable<V>
     void register(String key, V value);
     void register(ResourceLocation key, V value);
 
-    // @SuppressWarnings("unchecked")
-    // void registerAll(V... values);
-
     boolean containsKey(ResourceLocation key);
     boolean containsValue(V value);
     boolean isEmpty();

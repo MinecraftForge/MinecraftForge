@@ -174,14 +174,6 @@ public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegist
         return this.codec;
     }
 
-    // @SuppressWarnings("unchecked")
-    // @Override
-    // public void registerAll(V... values)
-    // {
-    //     for (V value : values)
-    //         register(value);
-    // }
-
     @Override
     public boolean containsKey(ResourceLocation key)
     {

@@ -48,6 +48,7 @@ public class RegisterEvent extends Event implements IModBusEvent
      * @param name the name of the object to register as its key
      * @param valueSupplier a supplier of the object value
      * @param <T> the type of the registry
+     * @see #register(ResourceKey, Consumer) a register variant making registration of multiple objects less redundant
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public <T> void register(ResourceKey<? extends Registry<T>> registryKey, ResourceLocation name, Supplier<T> valueSupplier)
@@ -66,8 +67,8 @@ public class RegisterEvent extends Event implements IModBusEvent
      *
      * @param registryKey the key of the registry to register objects to
      * @param <T> the type of the registry
+     * @see #register(ResourceKey, ResourceLocation, Supplier) a register variant targeted towards registering one or two objects
      */
-    @SuppressWarnings("unchecked")
     public <T> void register(ResourceKey<? extends Registry<T>> registryKey, Consumer<RegisterHelper<T>> consumer)
     {
         if (this.registryKey.equals(registryKey))
@@ -112,7 +113,8 @@ public class RegisterEvent extends Event implements IModBusEvent
     }
 
     @FunctionalInterface
-    public interface RegisterHelper<T> {
+    public interface RegisterHelper<T>
+    {
         /**
          * Registers the given value with the given name to the registry.
          * The namespace is inferred based on the active mod container.
