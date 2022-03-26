@@ -12,7 +12,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraftforge.common.ForgeMod;
@@ -116,11 +115,8 @@ public class GravityAttributeTest
     @SubscribeEvent
     public void registerItems(RegisterEvent event)
     {
-        if (event.getRegistryKey().equals(ForgeRegistries.Keys.ITEMS))
-        {
-            event.register(ForgeRegistries.Keys.ITEMS, new ResourceLocation("gravity_attribute_test", "gravity_stick"),
-                    new ItemGravityStick(new Properties().tab(CreativeModeTab.TAB_TOOLS).rarity(Rarity.RARE)));
-        }
+        event.register(ForgeRegistries.Keys.ITEMS, helper -> helper.register("gravity_stick",
+                new ItemGravityStick(new Properties().tab(CreativeModeTab.TAB_TOOLS).rarity(Rarity.RARE))));
     }
 
     public static class ItemGravityStick extends Item

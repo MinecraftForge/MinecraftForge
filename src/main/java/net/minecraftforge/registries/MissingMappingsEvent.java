@@ -1,3 +1,8 @@
+/*
+ * Minecraft Forge - Forge Development LLC
+ * SPDX-License-Identifier: LGPL-2.1-only
+ */
+
 package net.minecraftforge.registries;
 
 import net.minecraft.core.Registry;
@@ -92,12 +97,12 @@ public class MissingMappingsEvent extends Event
 
     public static class Mapping<T> implements Comparable<Mapping<T>>
     {
-        public final IForgeRegistry<T> registry;
+        private final IForgeRegistry<T> registry;
         private final IForgeRegistry<T> pool;
-        public final ResourceLocation key;
-        public final int id;
-        private Action action = Action.DEFAULT;
-        private T target;
+        final ResourceLocation key;
+        final int id;
+        Action action = Action.DEFAULT;
+        T target;
 
         public Mapping(IForgeRegistry<T> registry, IForgeRegistry<T> pool, ResourceLocation key, int id)
         {
@@ -148,15 +153,19 @@ public class MissingMappingsEvent extends Event
             this.target = target;
         }
 
-        // internal
-        public Action getAction()
+        public IForgeRegistry<T> getRegistry()
         {
-            return this.action;
+            return this.registry;
         }
 
-        public T getTarget()
+        public ResourceLocation getKey()
         {
-            return target;
+            return key;
+        }
+
+        public int getId()
+        {
+            return this.id;
         }
 
         @Override

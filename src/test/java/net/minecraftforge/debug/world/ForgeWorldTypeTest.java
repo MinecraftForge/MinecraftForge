@@ -10,7 +10,6 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.chat.TextComponent;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.WorldGenSettings;
 import net.minecraftforge.api.distmarker.Dist;
@@ -38,19 +37,11 @@ public class ForgeWorldTypeTest
 
     private void registerWorldTypes(RegisterEvent event)
     {
-        if (event.getRegistryKey().equals(ForgeRegistries.Keys.WORLD_TYPES))
+        event.register(ForgeRegistries.Keys.WORLD_TYPES, helper ->
         {
-            event.register(
-                    ForgeRegistries.Keys.WORLD_TYPES,
-                    new ResourceLocation("forge_world_type_test", "test_world_type"),
-                    new ForgeWorldPreset(WorldGenSettings::makeDefaultOverworld)
-            );
-            event.register(
-                    ForgeRegistries.Keys.WORLD_TYPES,
-                    new ResourceLocation("forge_world_type_test", "test_world_type2"),
-                    new ForgeWorldPreset(this::createChunkGenerator)
-            );
-        }
+            helper.register("test_world_type", new ForgeWorldPreset(WorldGenSettings::makeDefaultOverworld));
+            helper.register("test_world_type2", new ForgeWorldPreset(this::createChunkGenerator));
+        });
     }
 
     private ChunkGenerator createChunkGenerator(RegistryAccess registry, long seed, String settings)

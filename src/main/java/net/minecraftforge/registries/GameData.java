@@ -683,7 +683,7 @@ public class GameData
 
         RegistryManager STAGING = new RegistryManager("STAGING");
 
-        final Map<ResourceLocation, Map<ResourceLocation, Integer[]>> remaps = Maps.newHashMap();
+        final Map<ResourceLocation, Map<ResourceLocation, IdMappingEvent.IdRemapping>> remaps = Maps.newHashMap();
         final LinkedHashMap<ResourceLocation, Map<ResourceLocation, Integer>> missing = Maps.newLinkedHashMap();
         // Load the snapshot into the "STAGING" registry
         snapshot.forEach((key, value) ->
@@ -736,7 +736,7 @@ public class GameData
                 MinecraftForge.EVENT_BUS.post(event);
 
                 List<MissingMappingsEvent.Mapping<?>> lst = event.getAllMappings(reg.getRegistryKey()).stream()
-                        .filter(e -> e.getAction() == MissingMappingsEvent.Action.DEFAULT)
+                        .filter(e -> e.action == MissingMappingsEvent.Action.DEFAULT)
                         .sorted(Comparator.comparing(Object::toString))
                         .collect(Collectors.toList());
                 if (!lst.isEmpty())
@@ -747,7 +747,7 @@ public class GameData
                     }));
                 }
                 event.getAllMappings(reg.getRegistryKey()).stream()
-                        .filter(e -> e.getAction() == MissingMappingsEvent.Action.FAIL)
+                        .filter(e -> e.action == MissingMappingsEvent.Action.FAIL)
                         .forEach(fail -> failed.put(name, fail.key));
 
                 processMissing(name, STAGING, event, m.getValue(), remaps.get(name), defaulted.get(name), failed.get(name), !isLocalWorld);
@@ -831,14 +831,14 @@ public class GameData
         return ArrayListMultimap.create();
     }
 
-    private static void fireRemapEvent(final Map<ResourceLocation, Map<ResourceLocation, Integer[]>> remaps, final boolean isFreezing) {
+    private static void fireRemapEvent(final Map<ResourceLocation, Map<ResourceLocation, IdMappingEvent.IdRemapping>> remaps, final boolean isFreezing) {
         StartupMessageManager.modLoaderConsumer().ifPresent(s->s.accept("Remapping mod data"));
         MinecraftForge.EVENT_BUS.post(new IdMappingEvent(remaps, isFreezing));
         StartupMessageManager.modLoaderConsumer().ifPresent(s->s.accept("Remap complete"));
     }
 
     //Has to be split because of generics, Yay!
-    private static <T> void loadPersistentDataToStagingRegistry(RegistryManager pool, RegistryManager to, Map<ResourceLocation, Integer[]> remaps, Map<ResourceLocation, Integer> missing, ResourceLocation name, ForgeRegistry.Snapshot snap)
+    private static <T> void loadPersistentDataToStagingRegistry(RegistryManager pool, RegistryManager to, Map<ResourceLocation, IdMappingEvent.IdRemapping> remaps, Map<ResourceLocation, Integer> missing, ResourceLocation name, ForgeRegistry.Snapshot snap)
     {
         ForgeRegistry<T> active  = pool.getRegistry(name);
         if (active == null)
@@ -853,7 +853,7 @@ public class GameData
 
     //Another bouncer for generic reasons
     @SuppressWarnings("unchecked")
-    private static <T> void processMissing(ResourceLocation name, RegistryManager STAGING, MissingMappingsEvent e, Map<ResourceLocation, Integer> missing, Map<ResourceLocation, Integer[]> remaps, Collection<ResourceLocation> defaulted, Collection<ResourceLocation> failed, boolean injectNetworkDummies)
+    private static <T> void processMissing(ResourceLocation name, RegistryManager STAGING, MissingMappingsEvent e, Map<ResourceLocation, Integer> missing, Map<ResourceLocation, IdMappingEvent.IdRemapping> remaps, Collection<ResourceLocation> defaulted, Collection<ResourceLocation> failed, boolean injectNetworkDummies)
     {
         List<MissingMappingsEvent.Mapping<T>> mappings = e.getAllMappings(ResourceKey.createRegistryKey(name));
         ForgeRegistry<T> active = RegistryManager.ACTIVE.getRegistry(name);
@@ -861,7 +861,7 @@ public class GameData
         staging.processMissingEvent(name, active, mappings, missing, remaps, defaulted, failed, injectNetworkDummies);
     }
 
-    private static <T> void loadFrozenDataToStagingRegistry(RegistryManager STAGING, ResourceLocation name, Map<ResourceLocation, Integer[]> remaps)
+    private static <T> void loadFrozenDataToStagingRegistry(RegistryManager STAGING, ResourceLocation name, Map<ResourceLocation, IdMappingEvent.IdRemapping> remaps)
     {
         ForgeRegistry<T> frozen = RegistryManager.FROZEN.getRegistry(name);
         ForgeRegistry<T> newRegistry = STAGING.getRegistry(name, RegistryManager.FROZEN);

@@ -1,19 +1,20 @@
 --- a/net/minecraft/world/level/block/state/BlockBehaviour.java
 +++ b/net/minecraft/world/level/block/state/BlockBehaviour.java
-@@ -66,6 +_,7 @@
- import net.minecraft.world.phys.shapes.Shapes;
- import net.minecraft.world.phys.shapes.VoxelShape;
- 
-+//TODO, Delegates are weird here now, because Block extends this.
- public abstract class BlockBehaviour {
-    protected static final Direction[] f_60441_ = new Direction[]{Direction.WEST, Direction.EAST, Direction.NORTH, Direction.SOUTH, Direction.DOWN, Direction.UP};
-    protected final Material f_60442_;
-@@ -93,6 +_,8 @@
+@@ -93,6 +_,17 @@
        this.f_60449_ = p_60452_.f_60893_;
        this.f_60438_ = p_60452_.f_60903_;
        this.f_60439_ = p_60452_;
 +      final ResourceLocation lootTableCache = p_60452_.f_60894_;
-+      this.lootTableSupplier = lootTableCache != null ? () -> lootTableCache : p_60452_.lootTableSupplier != null ? p_60452_.lootTableSupplier : () -> new ResourceLocation(net.minecraftforge.registries.ForgeRegistries.BLOCKS.getKey((Block)this).m_135827_(), "blocks/" + net.minecraftforge.registries.ForgeRegistries.BLOCKS.getKey((Block)this).m_135815_());
++      if (lootTableCache != null) {
++         this.lootTableSupplier = () -> lootTableCache;
++      } else if (p_60452_.lootTableSupplier != null) {
++         this.lootTableSupplier = p_60452_.lootTableSupplier;
++      } else {
++         this.lootTableSupplier = () -> {
++            ResourceLocation registryName = net.minecraftforge.registries.ForgeRegistries.BLOCKS.getKey((Block) this);
++            return new ResourceLocation(registryName.m_135827_(), "blocks/" + registryName.m_135815_());
++         };
++      }
     }
  
     /** @deprecated */

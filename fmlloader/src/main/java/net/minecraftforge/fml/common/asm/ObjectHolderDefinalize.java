@@ -120,5 +120,5 @@ public class ObjectHolderDefinalize implements ILaunchPluginService {
         return changes.get() ? ComputeFlags.SIMPLE_REWRITE : ComputeFlags.NO_REWRITE;
     }
 
-    public record VanillaObjectHolderData(String holderClass, String registryName, String registryType) {}
+    private record VanillaObjectHolderData(String holderClass, String registryName, String registryType) {}
 }

@@ -214,7 +214,7 @@ public class ForgeMod
         List<String> removedSounds = Arrays.asList("entity.parrot.imitate.panda", "entity.parrot.imitate.zombie_pigman", "entity.parrot.imitate.enderman", "entity.parrot.imitate.polar_bear", "entity.parrot.imitate.wolf");
         for (MissingMappingsEvent.Mapping<SoundEvent> mapping : event.getAllMappings(ForgeRegistries.Keys.SOUND_EVENTS))
         {
-            ResourceLocation regName = mapping.key;
+            ResourceLocation regName = mapping.getKey();
             if (regName != null && regName.getNamespace().equals("minecraft"))
             {
                 String path = regName.getPath();
@@ -236,8 +236,8 @@ public class ForgeMod
             FluidAttributes.Builder attributesBuilder = FluidAttributes.builder(new ResourceLocation("forge", "block/milk_still"), new ResourceLocation("forge", "block/milk_flowing")).density(1024).viscosity(1024);
             ForgeFlowingFluid.Properties properties = new ForgeFlowingFluid.Properties(MILK, FLOWING_MILK, attributesBuilder).bucket(() -> Items.MILK_BUCKET);
             // register fluids
-            event.register(ForgeRegistries.Keys.FLUIDS, MILK.getId(), new ForgeFlowingFluid.Source(properties));
-            event.register(ForgeRegistries.Keys.FLUIDS, FLOWING_MILK.getId(), new ForgeFlowingFluid.Flowing(properties));
+            event.register(ForgeRegistries.Keys.FLUIDS, MILK.getId(), () -> new ForgeFlowingFluid.Source(properties));
+            event.register(ForgeRegistries.Keys.FLUIDS, FLOWING_MILK.getId(), () -> new ForgeFlowingFluid.Flowing(properties));
         }
     }
 
@@ -261,17 +261,16 @@ public class ForgeMod
             CraftingHelper.register(new ResourceLocation("forge", "intersection"), IntersectionIngredient.Serializer.INSTANCE);
             CraftingHelper.register(new ResourceLocation("minecraft", "item"), VanillaIngredientSerializer.INSTANCE);
 
-            event.register(ForgeRegistries.Keys.RECIPE_SERIALIZERS, new ResourceLocation("forge", "conditional"), new ConditionalRecipe.Serializer<>());
+            event.register(ForgeRegistries.Keys.RECIPE_SERIALIZERS, new ResourceLocation("forge", "conditional"), ConditionalRecipe.Serializer::new);
         }
     }
 
     public void registerLootData(RegisterEvent event)
     {
-        if (event.getRegistryKey().equals(ForgeRegistries.Keys.LOOT_MODIFIER_SERIALIZERS))
-        {
-            // Ignore the event itself: this is done only not to statically initialize our custom LootConditionType
-            Registry.register(Registry.LOOT_CONDITION_TYPE, new ResourceLocation("forge:loot_table_id"), LootTableIdCondition.LOOT_TABLE_ID);
-            Registry.register(Registry.LOOT_CONDITION_TYPE, new ResourceLocation("forge:can_tool_perform_action"), CanToolPerformAction.LOOT_CONDITION_TYPE);
-        }
+        if (!event.getRegistryKey().equals(Registry.LOOT_ITEM_REGISTRY))
+            return;
+
+        event.register(Registry.LOOT_ITEM_REGISTRY, new ResourceLocation("forge:loot_table_id"), () -> LootTableIdCondition.LOOT_TABLE_ID);
+        event.register(Registry.LOOT_ITEM_REGISTRY, new ResourceLocation("forge:can_tool_perform_action"), () -> CanToolPerformAction.LOOT_CONDITION_TYPE);
     }
 }

@@ -5,7 +5,6 @@
 
 package net.minecraftforge.debug.block;
 
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Material;
@@ -35,26 +34,20 @@ public class SlipperinessTest
     @SubscribeEvent
     public static void registerBlocks(RegisterEvent e)
     {
-        if (e.getRegistryKey().equals(ForgeRegistries.Keys.BLOCKS))
+        e.register(ForgeRegistries.Keys.BLOCKS, helper -> helper.register(BLOCK_ID, new Block(Block.Properties.of(Material.ICE_SOLID))
         {
-            e.register(ForgeRegistries.Keys.BLOCKS, new ResourceLocation(MOD_ID, BLOCK_ID), new Block(Block.Properties.of(Material.ICE_SOLID))
+            @Override
+            public float getFriction(BlockState state, LevelReader level, BlockPos pos, Entity entity)
             {
-                @Override
-                public float getFriction(BlockState state, LevelReader level, BlockPos pos, Entity entity)
-                {
-                    return entity instanceof Boat ? 2 : super.getFriction(state, level, pos, entity);
-                }
-            });
-        }
+                return entity instanceof Boat ? 2 : super.getFriction(state, level, pos, entity);
+            }
+        }));
     }
 
     @SubscribeEvent
     public static void registerItems(RegisterEvent e)
     {
-        if (e.getRegistryKey().equals(ForgeRegistries.Keys.ITEMS))
-        {
-            e.register(ForgeRegistries.Keys.ITEMS, ForgeRegistries.BLOCKS.getKey(BB_BLOCK), new BlockItem(BB_BLOCK, new Item.Properties()));
-        }
+        e.register(ForgeRegistries.Keys.ITEMS, helper -> helper.register(BLOCK_ID, new BlockItem(BB_BLOCK, new Item.Properties())));
     }
 
     /*

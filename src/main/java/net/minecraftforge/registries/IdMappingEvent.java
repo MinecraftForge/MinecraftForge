@@ -1,3 +1,8 @@
+/*
+ * Minecraft Forge - Forge Development LLC
+ * SPDX-License-Identifier: LGPL-2.1-only
+ */
+
 package net.minecraftforge.registries;
 
 import com.google.common.collect.ImmutableList;
@@ -21,7 +26,7 @@ import java.util.Map;
  * this event to update caches or other in-mod artifacts that might be impacted by an ID
  * change.
  * <p>
- * Fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}
+ * Fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS forge bus}.
  */
 public class IdMappingEvent extends Event
 {
@@ -41,19 +46,21 @@ public class IdMappingEvent extends Event
         }
     }
 
+    public record IdRemapping(int currId, int newId) {}
+
     private final Map<ResourceLocation, ImmutableList<ModRemapping>> remaps;
     private final ImmutableSet<ResourceLocation> keys;
 
-    public final boolean isFrozen;
+    private final boolean isFrozen;
 
-    public IdMappingEvent(Map<ResourceLocation, Map<ResourceLocation, Integer[]>> remaps, boolean isFrozen)
+    public IdMappingEvent(Map<ResourceLocation, Map<ResourceLocation, IdRemapping>> remaps, boolean isFrozen)
     {
         this.isFrozen = isFrozen;
         this.remaps = Maps.newHashMap();
         remaps.forEach((name, rm) ->
         {
             List<ModRemapping> tmp = Lists.newArrayList();
-            rm.forEach((key, value) -> tmp.add(new ModRemapping(name, key, value[0], value[1])));
+            rm.forEach((key, value) -> tmp.add(new ModRemapping(name, key, value.currId, value.newId)));
             tmp.sort(Comparator.comparingInt(o -> o.newId));
             this.remaps.put(name, ImmutableList.copyOf(tmp));
         });
@@ -68,5 +75,10 @@ public class IdMappingEvent extends Event
     public ImmutableList<ModRemapping> getRemaps(ResourceLocation registry)
     {
         return this.remaps.get(registry);
+    }
+
+    public boolean isFrozen()
+    {
+        return isFrozen;
     }
 }

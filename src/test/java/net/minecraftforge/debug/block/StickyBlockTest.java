@@ -5,7 +5,6 @@
 
 package net.minecraftforge.debug.block;
 
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Material;
@@ -31,25 +30,19 @@ public class StickyBlockTest
     @SubscribeEvent
     public static void registerBlocks(RegisterEvent event)
     {
-        if (event.getRegistryKey().equals(ForgeRegistries.Keys.BLOCKS))
+        event.register(ForgeRegistries.Keys.BLOCKS, helper -> helper.register(BLOCK_ID, new Block(Block.Properties.of(Material.STONE))
         {
-            event.register(ForgeRegistries.Keys.BLOCKS, new ResourceLocation(MODID, BLOCK_ID), new Block(Block.Properties.of(Material.STONE))
+            @Override
+            public boolean isStickyBlock(BlockState state)
             {
-                @Override
-                public boolean isStickyBlock(BlockState state)
-                {
-                    return true;
-                }
-            });
-        }
+                return true;
+            }
+        }));
     }
 
     @SubscribeEvent
     public static void registerItems(RegisterEvent event)
     {
-        if (event.getRegistryKey().equals(ForgeRegistries.Keys.ITEMS))
-        {
-            event.register(ForgeRegistries.Keys.ITEMS, ForgeRegistries.BLOCKS.getKey(BLUE_BLOCK), new BlockItem(BLUE_BLOCK, new Item.Properties()));
-        }
+        event.register(ForgeRegistries.Keys.ITEMS, helper -> helper.register(BLOCK_ID, new BlockItem(BLUE_BLOCK, new Item.Properties())));
     }
 }

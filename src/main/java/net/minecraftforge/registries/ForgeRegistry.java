@@ -817,7 +817,7 @@ public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegist
 
     private record DumpRow(String id, String key, String value, String dummied) {}
 
-    public void loadIds(Map<ResourceLocation, Integer> ids, Map<ResourceLocation, String> overrides, Map<ResourceLocation, Integer> missing, Map<ResourceLocation, Integer[]> remapped, ForgeRegistry<V> old, ResourceLocation name)
+    public void loadIds(Map<ResourceLocation, Integer> ids, Map<ResourceLocation, String> overrides, Map<ResourceLocation, Integer> missing, Map<ResourceLocation, IdMappingEvent.IdRemapping> remapped, ForgeRegistry<V> old, ResourceLocation name)
     {
         Map<ResourceLocation, String> ovs = Maps.newHashMap(overrides);
         for (Map.Entry<ResourceLocation, Integer> entry : ids.entrySet())
@@ -850,7 +850,7 @@ public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegist
             else if (currId != newId)
             {
                 LOGGER.debug(REGISTRIES,"Registry {}: Fixed {} id mismatch {}: {} (init) -> {} (map).", this.name, name, itemName, currId, newId);
-                remapped.put(itemName, new Integer[] {currId, newId});
+                remapped.put(itemName, new IdMappingEvent.IdRemapping(currId, newId));
             }
 
             V obj = old.getRaw(itemName);
@@ -1191,25 +1191,25 @@ public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegist
         return new MissingMappingsEvent(ResourceKey.createRegistryKey(name), this, (Collection<MissingMappingsEvent.Mapping<?>>) (Collection<?>) lst);
     }
 
-    void processMissingEvent(ResourceLocation name, ForgeRegistry<V> pool, List<MissingMappingsEvent.Mapping<V>> mappings, Map<ResourceLocation, Integer> missing, Map<ResourceLocation, Integer[]> remaps, Collection<ResourceLocation> defaulted, Collection<ResourceLocation> failed, boolean injectNetworkDummies)
+    void processMissingEvent(ResourceLocation name, ForgeRegistry<V> pool, List<MissingMappingsEvent.Mapping<V>> mappings, Map<ResourceLocation, Integer> missing, Map<ResourceLocation, IdMappingEvent.IdRemapping> remaps, Collection<ResourceLocation> defaulted, Collection<ResourceLocation> failed, boolean injectNetworkDummies)
     {
         LOGGER.debug(REGISTRIES,"Processing missing event for {}:", name);
         int ignored = 0;
 
         for (MissingMappingsEvent.Mapping<V> remap : mappings)
         {
-            MissingMappingsEvent.Action action = remap.getAction();
+            MissingMappingsEvent.Action action = remap.action;
 
             if (action == MissingMappingsEvent.Action.REMAP)
             {
                 // entry re-mapped, finish the registration with the new name/object, but the old id
-                int currId = getID(remap.getTarget());
-                ResourceLocation newName = pool.getKey(remap.getTarget());
+                int currId = getID(remap.target);
+                ResourceLocation newName = pool.getKey(remap.target);
                 LOGGER.debug(REGISTRIES,"  Remapping {} -> {}.", remap.key, newName);
 
                 missing.remove(remap.key);
                 //I don't think this will work, but I dont think it ever worked.. the item is already in the map with a different id... we want to fix that..
-                int realId = this.add(remap.id, newName, remap.getTarget());
+                int realId = this.add(remap.id, newName, remap.target);
                 if (realId != remap.id)
                     LOGGER.warn(REGISTRIES, "Registered object did not get ID it asked for. Name: {} Expected: {} Got: {}", newName, remap.id, realId);
                 this.addAlias(remap.key, newName);
@@ -1218,7 +1218,7 @@ public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegist
                 if (currId != realId)
                 {
                     LOGGER.info(REGISTRIES,"Fixed id mismatch {}: {} (init) -> {} (map).", newName, currId, realId);
-                    remaps.put(newName, new Integer[] {currId, realId});
+                    remaps.put(newName, new IdMappingEvent.IdRemapping(currId, realId));
                 }
             }
             else

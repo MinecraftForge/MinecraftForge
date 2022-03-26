@@ -389,7 +389,7 @@ public class DeferredRegister<T>
             this.seenRegisterEvent = true;
             for (Entry<RegistryObject<T>, Supplier<? extends T>> e : entries.entrySet())
             {
-                event.register(this.registryKey, e.getKey().getId(), e.getValue().get());
+                event.register(this.registryKey, e.getKey().getId(), () -> e.getValue().get());
                 e.getKey().updateReference(event);
             }
         }

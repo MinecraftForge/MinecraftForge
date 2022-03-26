@@ -22,6 +22,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.extensions.IForgeMenuType;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
@@ -54,8 +55,12 @@ public class RecipeBookExtensionTest
     {
         if (!ENABLED)
             return;
-        RECIPE_SERIALIZER.register(FMLJavaModLoadingContext.get().getModEventBus());
-        MENU_TYPE.register(FMLJavaModLoadingContext.get().getModEventBus());
+
+        IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();
+        RECIPE_SERIALIZER.register(modBus);
+        MENU_TYPE.register(modBus);
+        RECIPE_TYPE.register(modBus);
+
         MinecraftForge.EVENT_BUS.addListener(this::onRightClick);
     }
 

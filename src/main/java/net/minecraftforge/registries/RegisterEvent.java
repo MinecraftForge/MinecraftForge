@@ -1,20 +1,29 @@
+/*
+ * Minecraft Forge - Forge Development LLC
+ * SPDX-License-Identifier: LGPL-2.1-only
+ */
+
 package net.minecraftforge.registries;
 
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.event.IModBusEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.function.Consumer;
+import java.util.function.Supplier;
+
 /**
- * This event fires when all registries are ready to have modded objects registered.
- * All registries will be ready and unfrozen when this event fires.
+ * This event fires for each forge and vanilla registry when all registries are ready to have modded objects registered.
  * <p>
  * Fired on the {@link IModBusEvent mod bus}.
  *
- * @see #register(ResourceKey, ResourceLocation, Object)
+ * @see #register(ResourceKey, ResourceLocation, Supplier)
+ * @see #register(ResourceKey, Consumer)
  */
 public class RegisterEvent extends Event implements IModBusEvent
 {
@@ -35,20 +44,35 @@ public class RegisterEvent extends Event implements IModBusEvent
     /**
      * Registers the value with the given name to the stored registry if the provided registry key matches this event's registry key.
      *
-     * @param registryKey The key of the registry to register the value to
-     * @param name The name of the object to register as its key
-     * @param value The object value
-     * @param <T> The type of the registry
+     * @param registryKey the key of the registry to register the value to
+     * @param name the name of the object to register as its key
+     * @param valueSupplier a supplier of the object value
+     * @param <T> the type of the registry
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    public <T> void register(ResourceKey<? extends Registry<T>> registryKey, ResourceLocation name, T value)
+    public <T> void register(ResourceKey<? extends Registry<T>> registryKey, ResourceLocation name, Supplier<T> valueSupplier)
     {
         if (this.registryKey.equals(registryKey))
         {
             if (this.forgeRegistry != null)
-                ((IForgeRegistry) this.forgeRegistry).register(name, value);
+                ((IForgeRegistry) this.forgeRegistry).register(name, valueSupplier.get());
             else if (this.vanillaRegistry != null)
-                Registry.register((Registry) this.vanillaRegistry, name, value);
+                Registry.register((Registry) this.vanillaRegistry, name, valueSupplier.get());
+        }
+    }
+
+    /**
+     * Calls the provided consumer with a register helper if the provided registry key matches this event's registry key.
+     *
+     * @param registryKey the key of the registry to register objects to
+     * @param <T> the type of the registry
+     */
+    @SuppressWarnings("unchecked")
+    public <T> void register(ResourceKey<? extends Registry<T>> registryKey, Consumer<RegisterHelper<T>> consumer)
+    {
+        if (this.registryKey.equals(registryKey))
+        {
+            consumer.accept((name, value) -> register(registryKey, name, () -> value));
         }
     }
 
@@ -85,5 +109,40 @@ public class RegisterEvent extends Event implements IModBusEvent
     public String toString()
     {
         return "RegisterEvent";
+    }
+
+    @FunctionalInterface
+    public interface RegisterHelper<T> {
+        /**
+         * Registers the given value with the given name to the registry.
+         * The namespace is inferred based on the active mod container.
+         * If you wish to specify a namespace, use {@link #register(ResourceLocation, Object)} instead.
+         *
+         * @param name the name of the object to register as its key with the namespaced inferred from the active mod container
+         * @param value the object value
+         */
+        default void register(String name, T value)
+        {
+            register(new ResourceLocation(ModLoadingContext.get().getActiveNamespace(), name), value);
+        }
+
+        /**
+         * Registers the given value with the given name to the registry.
+         *
+         * @param key the resource key of the object to register
+         * @param value the object value
+         */
+        default void register(ResourceKey<T> key, T value)
+        {
+            register(key.location(), value);
+        }
+
+        /**
+         * Registers the given value with the given name to the registry.
+         *
+         * @param name the name of the object to register as its key
+         * @param value the object value
+         */
+        void register(ResourceLocation name, T value);
     }
 }

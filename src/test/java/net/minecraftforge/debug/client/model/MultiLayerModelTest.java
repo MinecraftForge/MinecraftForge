@@ -40,7 +40,7 @@ public class MultiLayerModelTest
         {
             if (!ENABLED || !event.getRegistryKey().equals(ForgeRegistries.Keys.BLOCKS))
                 return;
-            event.register(ForgeRegistries.Keys.BLOCKS, blockId, new Block(Block.Properties.of(Material.WOOD).noOcclusion()));
+            event.register(ForgeRegistries.Keys.BLOCKS, blockId, () -> new Block(Block.Properties.of(Material.WOOD).noOcclusion()));
         }
 
         @SubscribeEvent
@@ -48,7 +48,7 @@ public class MultiLayerModelTest
         {
             if (!ENABLED || !event.getRegistryKey().equals(ForgeRegistries.Keys.ITEMS))
                 return;
-            event.register(ForgeRegistries.Keys.ITEMS, ForgeRegistries.BLOCKS.getKey(TEST_BLOCK), new BlockItem(TEST_BLOCK, new Item.Properties().tab(CreativeModeTab.TAB_MISC)));
+            event.register(ForgeRegistries.Keys.ITEMS, blockId, () -> new BlockItem(TEST_BLOCK, new Item.Properties().tab(CreativeModeTab.TAB_MISC)));
         }
 
         @SubscribeEvent

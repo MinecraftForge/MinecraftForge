@@ -5,7 +5,6 @@
 
 package net.minecraftforge.debug.block;
 
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.FlowerBlock;
@@ -43,21 +42,21 @@ public class CustomPlantTypeTest
     @SubscribeEvent
     public static void registerBlocks(RegisterEvent event)
     {
-        if (event.getRegistryKey().equals(ForgeRegistries.Keys.BLOCKS))
+        event.register(ForgeRegistries.Keys.BLOCKS, helper ->
         {
-            event.register(ForgeRegistries.Keys.BLOCKS, new ResourceLocation(MODID, CUSTOM_SOIL_BLOCK), new CustomBlock());
-            event.register(ForgeRegistries.Keys.BLOCKS, new ResourceLocation(MODID, CUSTOM_PLANT_BLOCK), new CustomPlantBlock());
-        }
+            helper.register(CUSTOM_SOIL_BLOCK, new CustomBlock());
+            helper.register(CUSTOM_PLANT_BLOCK, new CustomPlantBlock());
+        });
     }
 
     @SubscribeEvent
     public static void registerItems(RegisterEvent event)
     {
-        if (event.getRegistryKey().equals(ForgeRegistries.Keys.ITEMS))
+        event.register(ForgeRegistries.Keys.ITEMS, helper ->
         {
-            event.register(ForgeRegistries.Keys.ITEMS, new ResourceLocation(MODID, CUSTOM_SOIL_BLOCK), new BlockItem(CUSTOM_SOIL, new Item.Properties()));
-            event.register(ForgeRegistries.Keys.ITEMS, new ResourceLocation(MODID, CUSTOM_PLANT_BLOCK), new BlockItem(CUSTOM_PLANT, new Item.Properties()));
-        }
+            helper.register(CUSTOM_SOIL_BLOCK, new BlockItem(CUSTOM_SOIL, new Item.Properties()));
+            helper.register(CUSTOM_PLANT_BLOCK, new BlockItem(CUSTOM_PLANT, new Item.Properties()));
+        });
     }
 
     public static class CustomBlock extends Block

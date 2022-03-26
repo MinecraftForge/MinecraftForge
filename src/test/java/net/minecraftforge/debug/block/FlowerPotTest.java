@@ -34,19 +34,22 @@ public class FlowerPotTest
     public static final RegistryObject<FlowerPotBlock> OAK_FLOWER_POT = BLOCKS.<FlowerPotBlock>register(
             BLOCK_ID + "_oak", () -> new FlowerPotBlock(EMPTY_FLOWER_POT, ForgeRegistries.BLOCKS.getDelegateOrThrow(Blocks.OAK_SAPLING), Block.Properties.copy(Blocks.FLOWER_POT)));
     
-    static {
+    static
+    {
         ITEMS.register(BLOCK_ID, () -> new BlockItem(EMPTY_FLOWER_POT.get(), new Item.Properties()));
     }
     
     @SubscribeEvent
-    public static void onItemRegister(RegisterEvent event) {
+    public static void onItemRegister(RegisterEvent event)
+    {
         if (event.getRegistryKey().equals(ForgeRegistries.Keys.ITEMS))
         {
             EMPTY_FLOWER_POT.get().addPlant(ForgeRegistries.BLOCKS.getKey(Blocks.OAK_SAPLING), OAK_FLOWER_POT);
         }
     }
 
-    public FlowerPotTest() {
+    public FlowerPotTest()
+    {
         IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();
         BLOCKS.register(modBus);
         ITEMS.register(modBus);

@@ -48,7 +48,7 @@ public class EntityRendererEventsTest
     {
         if (event.getRegistryKey().equals(ForgeRegistries.Keys.ENTITY_TYPES))
         {
-            event.register(ForgeRegistries.Keys.ENTITY_TYPES, MY_ENTITY, EntityType.Builder.of(MyEntity::new, MobCategory.MONSTER).build("test_entity"));
+            event.register(ForgeRegistries.Keys.ENTITY_TYPES, MY_ENTITY, () -> EntityType.Builder.of(MyEntity::new, MobCategory.MONSTER).build("test_entity"));
         }
     }
     
