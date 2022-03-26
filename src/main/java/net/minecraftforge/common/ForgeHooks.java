@@ -1445,7 +1445,7 @@ public class ForgeHooks
   
     public static void saveMobEffect(CompoundTag nbt, String key, MobEffect effect)
     {
-        var registryName = effect.getRegistryName();
+        var registryName = ForgeRegistries.MOB_EFFECTS.getKey(effect);
         if (registryName != null)
         {
             nbt.putString(key, registryName.toString());

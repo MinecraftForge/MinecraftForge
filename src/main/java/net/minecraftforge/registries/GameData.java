@@ -86,6 +86,7 @@ import static net.minecraftforge.registries.ForgeRegistries.Keys.PARTICLE_TYPES;
 import static net.minecraftforge.registries.ForgeRegistries.Keys.POI_TYPES;
 import static net.minecraftforge.registries.ForgeRegistries.Keys.POTIONS;
 import static net.minecraftforge.registries.ForgeRegistries.Keys.RECIPE_SERIALIZERS;
+import static net.minecraftforge.registries.ForgeRegistries.Keys.RECIPE_TYPES;
 import static net.minecraftforge.registries.ForgeRegistries.Keys.SCHEDULES;
 import static net.minecraftforge.registries.ForgeRegistries.Keys.SENSOR_TYPES;
 import static net.minecraftforge.registries.ForgeRegistries.Keys.SOUND_EVENTS;
@@ -144,6 +145,7 @@ public class GameData
         makeRegistry(PARTICLE_TYPES).disableSaving().create();
         makeRegistry(CONTAINER_TYPES).disableSaving().create();
         makeRegistry(PAINTING_TYPES, "kebab").create();
+        makeRegistry(RECIPE_TYPES).disableSaving().disableSync().create();
         makeRegistry(RECIPE_SERIALIZERS).disableSaving().create();
         makeRegistry(ATTRIBUTES).onValidate(AttributeCallbacks.INSTANCE).disableSaving().disableSync().create();
         makeRegistry(STAT_TYPES).create();

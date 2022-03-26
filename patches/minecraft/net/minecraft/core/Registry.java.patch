@@ -75,7 +75,8 @@
 +   @Deprecated public static final Registry<MenuType<?>> f_122863_ = forge(f_122913_, (registry) -> {
        return MenuType.f_39964_;
     });
-    public static final Registry<RecipeType<?>> f_122864_ = m_206008_(f_122914_, (p_205954_) -> {
+-   public static final Registry<RecipeType<?>> f_122864_ = m_206008_(f_122914_, (p_205954_) -> {
++   @Deprecated public static final Registry<RecipeType<?>> f_122864_ = forge(f_122914_, (p_205954_) -> {
        return RecipeType.f_44107_;
     });
 -   public static final Registry<RecipeSerializer<?>> f_122865_ = m_206008_(f_122915_, (p_205952_) -> {

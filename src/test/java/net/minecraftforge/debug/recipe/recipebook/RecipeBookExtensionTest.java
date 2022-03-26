@@ -14,19 +14,17 @@ import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.RecipeBookType;
+import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.crafting.conditions.ICondition;
-import net.minecraftforge.common.crafting.conditions.IConditionSerializer;
 import net.minecraftforge.common.extensions.IForgeMenuType;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.network.NetworkHooks;
 import net.minecraftforge.registries.DeferredRegister;
@@ -49,22 +47,16 @@ public class RecipeBookExtensionTest
     public static final RegistryObject<MenuType<RecipeBookTestMenu>> RECIPE_BOOK_TEST_MENU_TYPE =
             MENU_TYPE.register("test_recipe_menu", () -> IForgeMenuType.create(RecipeBookTestMenu::new));
 
+    public static final DeferredRegister<RecipeType<?>> RECIPE_TYPE = DeferredRegister.create(ForgeRegistries.RECIPE_TYPES, MOD_ID);
+    public static final RegistryObject<RecipeType<RecipeBookTestRecipe>> RECIPE_BOOK_TEST_RECIPE_TYPE = registerRecipeType("test_recipe");
+
     public RecipeBookExtensionTest()
     {
         if (!ENABLED)
             return;
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::commonSetup);
         RECIPE_SERIALIZER.register(FMLJavaModLoadingContext.get().getModEventBus());
         MENU_TYPE.register(FMLJavaModLoadingContext.get().getModEventBus());
         MinecraftForge.EVENT_BUS.addListener(this::onRightClick);
-    }
-
-    private void commonSetup(FMLCommonSetupEvent event)
-    {
-        event.enqueueWork(() ->
-        {
-            RecipeType.register(getId("test_recipe").toString());
-        });
     }
 
     private void onRightClick(PlayerInteractEvent.RightClickBlock event)
@@ -78,6 +70,18 @@ public class RecipeBookExtensionTest
     public static ResourceLocation getId(String name)
     {
         return new ResourceLocation(MOD_ID, name);
+    }
+
+    private static <T extends Recipe<?>> RegistryObject<RecipeType<T>> registerRecipeType(String name) {
+        String id = getId(name).toString();
+        return RECIPE_TYPE.register(name, () -> new RecipeType<>()
+        {
+            @Override
+            public String toString()
+            {
+                return id;
+            }
+        });
     }
 
     @Mod.EventBusSubscriber(modid = MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)

@@ -11,11 +11,10 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraftforge.debug.recipe.recipebook.RecipeBookTestRecipe.Ingredients;
-import net.minecraftforge.registries.ForgeRegistryEntry;
 
 import javax.annotation.Nullable;
 
-public class RecipeBookTestRecipeSerializer extends ForgeRegistryEntry<RecipeSerializer<?>> implements RecipeSerializer<RecipeBookTestRecipe>
+public class RecipeBookTestRecipeSerializer implements RecipeSerializer<RecipeBookTestRecipe>
 {
     @Override
     public RecipeBookTestRecipe fromJson(ResourceLocation id, JsonObject json)

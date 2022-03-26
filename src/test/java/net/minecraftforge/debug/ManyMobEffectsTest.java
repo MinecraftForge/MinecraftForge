@@ -131,7 +131,7 @@ public class ManyMobEffectsTest
                 var effect = ((MobEffect) ObfuscationReflectionHelper.getPrivateValue(MushroomCow.class, cow, "f_289" + "09_"));
                 if (effect != null)
                 {
-                    event.getPlayer().sendMessage(new TextComponent(String.valueOf(effect.getRegistryName())), Util.NIL_UUID);
+                    event.getPlayer().sendMessage(new TextComponent(String.valueOf(ForgeRegistries.MOB_EFFECTS.getKey(effect))), Util.NIL_UUID);
                 }
             }
         }
