@@ -36,4 +36,10 @@ public class EnderManAngerEvent extends LivingEvent
     {
         return player;
     }
+
+    @Override
+    public EnderMan getEntity()
+    {
+        return (EnderMan) super.getEntity();
+    }
 }
