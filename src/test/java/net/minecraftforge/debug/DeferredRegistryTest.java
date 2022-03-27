@@ -78,7 +78,8 @@ public class DeferredRegistryTest {
         MinecraftForge.EVENT_BUS.addListener(this::serverStarted);
     }
 
-    public void serverStarted(ServerStartedEvent event) {
+    public void serverStarted(ServerStartedEvent event)
+    {
         // Validate all the RegistryObjects are filled
         BLOCK.get();
         ITEM.get();
