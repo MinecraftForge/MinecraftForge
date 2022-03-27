@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "###",
+    " # "
+  ],
+  "key": {
+    "#": [
+      {
+        "tag": "minecraft:planks"
+      },
+      {
+        "tag": "minecraft:logs"
+      },
+      {
+        "item": "minecraft:bedrock"
+      }
+    ]
+  },
+  "result": {
+    "item": "minecraft:dirt"
+  }
+}

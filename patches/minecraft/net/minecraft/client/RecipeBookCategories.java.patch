@@ -1,0 +1,38 @@
+--- a/net/minecraft/client/RecipeBookCategories.java
++++ b/net/minecraft/client/RecipeBookCategories.java
+@@ -12,7 +_,7 @@
+ import net.minecraftforge.api.distmarker.OnlyIn;
+ 
+ @OnlyIn(Dist.CLIENT)
+-public enum RecipeBookCategories {
++public enum RecipeBookCategories implements net.minecraftforge.common.IExtensibleEnum {
+    CRAFTING_SEARCH(new ItemStack(Items.f_42522_)),
+    CRAFTING_BUILDING_BLOCKS(new ItemStack(Blocks.f_50076_)),
+    CRAFTING_REDSTONE(new ItemStack(Items.f_42451_)),
+@@ -36,7 +_,7 @@
+    public static final List<RecipeBookCategories> f_92257_ = ImmutableList.of(BLAST_FURNACE_SEARCH, BLAST_FURNACE_BLOCKS, BLAST_FURNACE_MISC);
+    public static final List<RecipeBookCategories> f_92258_ = ImmutableList.of(FURNACE_SEARCH, FURNACE_FOOD, FURNACE_BLOCKS, FURNACE_MISC);
+    public static final List<RecipeBookCategories> f_92259_ = ImmutableList.of(CRAFTING_SEARCH, CRAFTING_EQUIPMENT, CRAFTING_BUILDING_BLOCKS, CRAFTING_MISC, CRAFTING_REDSTONE);
+-   public static final Map<RecipeBookCategories, List<RecipeBookCategories>> f_92260_ = ImmutableMap.of(CRAFTING_SEARCH, ImmutableList.of(CRAFTING_EQUIPMENT, CRAFTING_BUILDING_BLOCKS, CRAFTING_MISC, CRAFTING_REDSTONE), FURNACE_SEARCH, ImmutableList.of(FURNACE_FOOD, FURNACE_BLOCKS, FURNACE_MISC), BLAST_FURNACE_SEARCH, ImmutableList.of(BLAST_FURNACE_BLOCKS, BLAST_FURNACE_MISC), SMOKER_SEARCH, ImmutableList.of(SMOKER_FOOD));
++   public static final Map<RecipeBookCategories, List<RecipeBookCategories>> f_92260_ = net.minecraftforge.client.RecipeBookRegistry.AGGREGATE_CATEGORIES_VIEW;
+    private final List<ItemStack> f_92261_;
+ 
+    private RecipeBookCategories(ItemStack... p_92267_) {
+@@ -54,11 +_,17 @@
+       case SMOKER:
+          return f_92256_;
+       default:
++         if (net.minecraftforge.client.RecipeBookRegistry.TYPE_TO_CATEGORIES_VIEW.containsKey(p_92270_))
++            return net.minecraftforge.client.RecipeBookRegistry.TYPE_TO_CATEGORIES_VIEW.get(p_92270_);
+          return ImmutableList.of();
+       }
+    }
+ 
+    public List<ItemStack> m_92268_() {
+       return this.f_92261_;
++   }
++
++   public static RecipeBookCategories create(String name, ItemStack... icons) {
++      throw new IllegalStateException("Enum not extended");
+    }
+ }

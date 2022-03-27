@@ -1,0 +1,21 @@
+--- a/net/minecraft/stats/RecipeBookSettings.java
++++ b/net/minecraft/stats/RecipeBookSettings.java
+@@ -10,7 +_,7 @@
+ import net.minecraft.world.inventory.RecipeBookType;
+ 
+ public final class RecipeBookSettings {
+-   private static final Map<RecipeBookType, Pair<String, String>> f_12725_ = ImmutableMap.of(RecipeBookType.CRAFTING, Pair.of("isGuiOpen", "isFilteringCraftable"), RecipeBookType.FURNACE, Pair.of("isFurnaceGuiOpen", "isFurnaceFilteringCraftable"), RecipeBookType.BLAST_FURNACE, Pair.of("isBlastingFurnaceGuiOpen", "isBlastingFurnaceFilteringCraftable"), RecipeBookType.SMOKER, Pair.of("isSmokerGuiOpen", "isSmokerFilteringCraftable"));
++   private static final Map<RecipeBookType, Pair<String, String>> f_12725_ = new java.util.HashMap<>(ImmutableMap.of(RecipeBookType.CRAFTING, Pair.of("isGuiOpen", "isFilteringCraftable"), RecipeBookType.FURNACE, Pair.of("isFurnaceGuiOpen", "isFurnaceFilteringCraftable"), RecipeBookType.BLAST_FURNACE, Pair.of("isBlastingFurnaceGuiOpen", "isBlastingFurnaceFilteringCraftable"), RecipeBookType.SMOKER, Pair.of("isSmokerGuiOpen", "isSmokerFilteringCraftable")));
+    private final Map<RecipeBookType, RecipeBookSettings.TypeSettings> f_12726_;
+ 
+    private RecipeBookSettings(Map<RecipeBookType, RecipeBookSettings.TypeSettings> p_12730_) {
+@@ -147,5 +_,9 @@
+       public String toString() {
+          return "[open=" + this.f_12766_ + ", filtering=" + this.f_12767_ + "]";
+       }
++   }
++   //FORGE -- called automatically on Enum creation - used for serialization
++   public static void addTagsForType(RecipeBookType type, String openTag, String filteringTag) {
++      f_12725_.put(type, Pair.of(openTag, filteringTag));
+    }
+ }

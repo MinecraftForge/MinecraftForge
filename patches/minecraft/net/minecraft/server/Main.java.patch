@@ -30,12 +30,11 @@
  
           CrashReport.m_127529_();
           if (optionset.has(optionspec13)) {
-@@ -93,29 +_,29 @@
+@@ -93,29 +_,28 @@
           Bootstrap.m_135870_();
           Bootstrap.m_135889_();
           Util.m_137584_();
 +         if (!optionset.has(optionspec1)) net.minecraftforge.server.loading.ServerModLoader.load(); // Load mods before we load almost anything else anymore. Single spot now. Only loads if they haven't passed the initserver param
-+         //TODO-PATCHING: Figure out how to handle the delayed initialization.
           Path path = Paths.get("server.properties");
           DedicatedServerSettings dedicatedserversettings = new DedicatedServerSettings(path);
           dedicatedserversettings.m_139780_();
@@ -67,7 +66,7 @@
           LevelSummary levelsummary = levelstoragesource$levelstorageaccess.m_78308_();
           if (levelsummary != null) {
              if (levelsummary.m_193020_()) {
-@@ -181,22 +_,34 @@
+@@ -181,22 +_,33 @@
           }
  
           levelstoragesource$levelstorageaccess.m_78287_(registryaccess$frozen, worlddata);
@@ -101,8 +100,7 @@
 +               // FORGE: Halting as GameTestServer will cause issues as it always calls System#exit on both crash and normal exit, so skip it
 +               if (!(dedicatedserver instanceof net.minecraft.gametest.framework.GameTestServer))
                 dedicatedserver.m_7570_(true);
-+               //TODO-PATCHING: Figure out what needs to be done here after the logging update.
-+               //LogManager.shutdown(); // we're manually managing the logging shutdown on the server. Make sure we do it here at the end.
++               org.apache.logging.log4j.LogManager.shutdown(); // we're manually managing the logging shutdown on the server. Make sure we do it here at the end.
              }
           };
           thread.setUncaughtExceptionHandler(new DefaultUncaughtExceptionHandler(f_129670_));
