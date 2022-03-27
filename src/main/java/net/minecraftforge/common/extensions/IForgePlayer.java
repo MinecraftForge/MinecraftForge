@@ -13,7 +13,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.ForgeMod;
 
-public interface IForgePlayer {
+public interface IForgePlayer
+{
 
     private Player self()
     {
@@ -37,7 +38,7 @@ public interface IForgePlayer {
     default double getReachDistance()
     {
         double reach = self().getAttributeValue(ForgeMod.REACH_DISTANCE.get());
-        return reach == 0 ? 0 : + (self().isCreative() ? 0.5 : 0);
+        return reach == 0 ? 0 : reach + (self().isCreative() ? 0.5 : 0);
     }
 
     /**
@@ -64,6 +65,12 @@ public interface IForgePlayer {
         return isCloseEnough(entity, getReachDistance() + padding);
     }
 
+    /**
+     * Utility check to see if the player is close enough to a target entity.
+     * @param entity The entity being checked against
+     * @param dist The max distance allowed
+     * @return If the eye-to-center distance between this player and the passed entity is less than dist.
+     */
     default boolean isCloseEnough(Entity entity, double dist)
     {
         Vec3 eye = self().getEyePosition();
