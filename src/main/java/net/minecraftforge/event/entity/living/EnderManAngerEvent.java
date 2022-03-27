@@ -19,7 +19,8 @@ import net.minecraftforge.eventbus.api.Cancelable;
  * This event does not have a {@link Result}.
  */
 @Cancelable
-public class EnderManAngerEvent extends LivingEvent {
+public class EnderManAngerEvent extends LivingEvent
+{
     private final Player player;
 
     public EnderManAngerEvent(EnderMan enderman, Player player)
