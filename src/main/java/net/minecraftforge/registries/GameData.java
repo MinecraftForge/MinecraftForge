@@ -10,6 +10,7 @@ import com.mojang.serialization.Lifecycle;
 
 import java.util.*;
 
+import net.minecraft.data.BuiltinRegistries;
 import net.minecraft.world.level.block.AirBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -393,12 +394,14 @@ public class GameData
                         return;
                     postVanillaRegisterEvent(registry);
                 });
+                BuiltinRegistries.REGISTRY.forEach(GameData::postVanillaRegisterEvent);
                 net.minecraftforge.common.ForgeHooks.modifyAttributes();
             }
         }, executor);
     }
 
-    public static void postVanillaRegisterEvent(Registry<?> registry)
+    @SuppressWarnings("removal")
+    private static void postVanillaRegisterEvent(Registry<?> registry)
     {
         if (RegistryManager.ACTIVE.getRegistry(registry.key().location()) != null)
             return;
