@@ -193,7 +193,7 @@
           boolean flag = false;
           if (p_21269_ instanceof WitherBoss) {
 -            if (this.f_19853_.m_46469_().m_46207_(GameRules.f_46132_)) {
-+            if (net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.f_19853_, this)) {
++            if (net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.f_19853_, p_21269_)) {
                 BlockPos blockpos = this.m_142538_();
                 BlockState blockstate = Blocks.f_50070_.m_49966_();
 -               if (this.f_19853_.m_8055_(blockpos).m_60795_() && blockstate.m_60710_(this.f_19853_, blockpos)) {
@@ -389,7 +389,7 @@
                 f4 = 0.96F;
              }
  
-+            f6 *= (float)this.m_21051_(net.minecraftforge.common.ForgeMod.SWIM_SPEED.get()).m_22135_();
++            f5 *= (float)this.m_21051_(net.minecraftforge.common.ForgeMod.SWIM_SPEED.get()).m_22135_();
              this.m_19920_(f5, p_21280_);
              this.m_6478_(MoverType.SELF, this.m_20184_());
              Vec3 vec36 = this.m_20184_();
@@ -540,6 +540,15 @@
     }
  
     public boolean m_5830_() {
+@@ -3139,7 +_,7 @@
+    }
+ 
+    public ItemStack m_6298_(ItemStack p_21272_) {
+-      return ItemStack.f_41583_;
++      return net.minecraftforge.common.ForgeHooks.getProjectile(this, p_21272_, ItemStack.f_41583_);
+    }
+ 
+    public ItemStack m_5584_(Level p_21067_, ItemStack p_21068_) {
 @@ -3196,6 +_,64 @@
        this.m_21166_(p_21191_ == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND);
     }

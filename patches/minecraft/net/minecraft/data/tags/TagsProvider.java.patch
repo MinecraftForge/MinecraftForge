@@ -1,32 +1,27 @@
 --- a/net/minecraft/data/tags/TagsProvider.java
 +++ b/net/minecraft/data/tags/TagsProvider.java
-@@ -32,10 +_,29 @@
+@@ -32,10 +_,24 @@
     protected final DataGenerator f_126539_;
     protected final Registry<T> f_126540_;
     protected final Map<ResourceLocation, Tag.Builder> f_126543_ = Maps.newLinkedHashMap();
 +   protected final String modId;
-+   protected final String folder;
 +   protected final net.minecraftforge.common.data.ExistingFileHelper existingFileHelper;
 +   private final net.minecraftforge.common.data.ExistingFileHelper.IResourceType resourceType;
  
-+   /**@deprecated Forge: Use the ModID version**/ @Deprecated
++   /**
++    * @see #TagsProvider(DataGenerator, Registry, String, net.minecraftforge.common.data.ExistingFileHelper)
++    * @deprecated Forge: Use the mod id variant
++    */
++   @Deprecated
     protected TagsProvider(DataGenerator p_126546_, Registry<T> p_126547_) {
 +      this(p_126546_, p_126547_, "vanilla", null);
 +   }
-+   protected TagsProvider(DataGenerator p_126546_, Registry<T> p_126547_, String modId, @javax.annotation.Nullable net.minecraftforge.common.data.ExistingFileHelper existingFileHelper) {
-+      this(p_126546_, p_126547_, modId, existingFileHelper, null);
-+   }
-+   protected TagsProvider(DataGenerator p_126546_, Registry<T> p_126547_, String modId, @javax.annotation.Nullable net.minecraftforge.common.data.ExistingFileHelper existingFileHelper, @javax.annotation.Nullable String folder) {
++   protected TagsProvider(DataGenerator p_126546_, Registry<T> p_126547_, String modId, @org.jetbrains.annotations.Nullable net.minecraftforge.common.data.ExistingFileHelper existingFileHelper) {
        this.f_126539_ = p_126546_;
        this.f_126540_ = p_126547_;
 +      this.modId = modId;
 +      this.existingFileHelper = existingFileHelper;
-+      if (folder == null) {
-+         //noinspection unchecked,rawtypes
-+         folder = ((Registry) Registry.f_122897_).m_7981_(f_126540_).m_135815_() + "s";
-+      }
-+      this.folder = folder;
-+      this.resourceType = new net.minecraftforge.common.data.ExistingFileHelper.ResourceType(net.minecraft.server.packs.PackType.SERVER_DATA, ".json", "tags/" + this.folder);
++      this.resourceType = new net.minecraftforge.common.data.ExistingFileHelper.ResourceType(net.minecraft.server.packs.PackType.SERVER_DATA, ".json", TagManager.m_203918_(p_126547_.m_123023_()));
     }
  
     protected abstract void m_6577_();
@@ -45,7 +40,7 @@
  
              try {
                 String s = f_126542_.toJson((JsonElement)jsonobject);
-@@ -88,6 +_,18 @@
+@@ -88,6 +_,17 @@
        });
     }
  
@@ -54,9 +49,8 @@
 +      // We only care about non-optional tag entries, this is the only type that can reference a resource and needs validation
 +      // Optional tags should not be validated
 +
-+      //TODO-PATCHING:Figure out optional tag data.
-+      if (entry instanceof Tag.TagEntry) {
-+         return existingFileHelper == null || !existingFileHelper.exists(((Tag.TagEntry)entry).getId(), resourceType);
++      if (entry instanceof Tag.TagEntry nonOptionalEntry) {
++         return existingFileHelper == null || !existingFileHelper.exists(nonOptionalEntry.getId(), resourceType);
 +      }
 +      return false;
 +   }
