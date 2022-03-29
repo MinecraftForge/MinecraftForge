@@ -14,8 +14,8 @@ import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.material.Fluid;
-import net.minecraftforge.registries.ForgeRegistries;
 
+import javax.annotation.Nullable;
 import java.util.Set;
 import java.util.function.Supplier;
 
@@ -391,14 +391,14 @@ public class Tags
         public static final TagKey<Item> STORAGE_BLOCKS_REDSTONE = tag("storage_blocks/redstone");
         public static final TagKey<Item> STRING                  = tag("string");
 
-        private static TagKey<Item> tag(String name, Set<Supplier<Item>> defaults)
+        private static TagKey<Item> tag(String name, @Nullable Set<Supplier<Item>> defaults)
         {
-            return ForgeRegistries.ITEMS.tags().createOptionalTagKey(new ResourceLocation("forge", name), defaults);
+            return ItemTags.create(new ResourceLocation("forge", name));
         }
 
         private static TagKey<Item> tag(String name)
         {
-            return ItemTags.create(new ResourceLocation("forge", name));
+            return tag(name, null);
         }
     }
 

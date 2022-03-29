@@ -98,8 +98,6 @@ public class ForgeRegistries
     static final DeferredRegister<ForgeWorldPreset> DEFERRED_WORLD_TYPES = DeferredRegister.create(Keys.WORLD_TYPES, Keys.WORLD_TYPES.location().getNamespace());
     public static final Supplier<IForgeRegistry<ForgeWorldPreset>> WORLD_TYPES = DEFERRED_WORLD_TYPES.makeRegistry(ForgeWorldPreset.class, GameData::getWorldTypesRegistryBuilder);
 
-    static { Tags.init(); }
-
     public static final class Keys {
         //Vanilla
         public static final ResourceKey<Registry<Block>>  BLOCKS  = key("block");
@@ -147,12 +145,13 @@ public class ForgeRegistries
     }
 
     /**
-     * This function is just to make sure static initializers in other classes have run and setup their registries before we query them.
+     * This function is just to make sure static inializers in other classes have run and setup their registries before we query them.
      */
     private static void init()
     {
         Keys.init();
         GameData.init();
         Bootstrap.bootStrap();
+        Tags.init();
     }
 }
