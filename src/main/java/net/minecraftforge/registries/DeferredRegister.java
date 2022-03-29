@@ -8,6 +8,7 @@ package net.minecraftforge.registries;
 import com.google.common.collect.Multimaps;
 import com.google.common.collect.SetMultimap;
 import net.minecraft.core.Registry;
+import net.minecraft.data.BuiltinRegistries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
@@ -53,7 +54,15 @@ import java.util.function.Supplier;
 public class DeferredRegister<T>
 {
     /**
-     * Use for vanilla/forge registries. See example above.
+     * DeferredRegister factory for forge registries that exist <i>before</i> this DeferredRegister is created.
+     * <p>
+     * If you have a supplier, <u>do not use this method.</u>
+     * Instead, use one of the other factories that takes in a registry key or registry name.
+     *
+     * @param reg the forge registry to wrap
+     * @param modid the namespace for all objects registered to this DeferredRegister
+     * @see #create(ResourceKey, String)
+     * @see #create(ResourceLocation, String)
      */
     public static <B extends IForgeRegistryEntry<B>> DeferredRegister<B> create(IForgeRegistry<B> reg, String modid)
     {
@@ -68,31 +77,81 @@ public class DeferredRegister<T>
     @Deprecated(forRemoval = true, since = "1.18.2")
     public static <B extends IForgeRegistryEntry<B>> DeferredRegister<B> create(Class<B> base, String modid)
     {
-        return new DeferredRegister<>(null, base, modid);
+        return new DeferredRegister<>(null, base, modid, false);
     }
 
     /**
-     * DeferredRegister factory for custom registries that are made during the {@link NewRegistryEvent} event
-     * or with {@link #makeRegistry(Class, Supplier)}.
+     * DeferredRegister factory for custom forge registries, {@link Registry vanilla registries},
+     * or {@link BuiltinRegistries built-in registries}.
+     * Supports both registries that already exist or do not exist yet.
+     * <p>
+     * If the registry is never created, any {@link RegistryObject}s made from this DeferredRegister will throw an exception.
+     * To allow the optional existence of a registry without error, use {@link #createOptional(ResourceKey, String)}.
      *
-     * @param key The key of the registry to reference
-     * @param modid The namespace for all objects registered to this DeferredRegister
+     * @param key the key of the registry to reference
+     * @param modid the namespace for all objects registered to this DeferredRegister
+     * @see #createOptional(ResourceKey, String)
+     * @see #create(IForgeRegistry, String)
+     * @see #create(ResourceLocation, String)
      */
     public static <B> DeferredRegister<B> create(ResourceKey<? extends Registry<B>> key, String modid)
     {
-        return new DeferredRegister<>(key, null, modid);
+        return new DeferredRegister<>(key, null, modid, false);
     }
 
     /**
-     * DeferredRegister factory for custom registries that are made during the {@link NewRegistryEvent} event
-     * or with {@link #makeRegistry(Class, Supplier)}.
+     * DeferredRegister factory for custom forge registries, {@link Registry vanilla registries},
+     * or {@link BuiltinRegistries built-in registries}.
+     * Supports both registries that already exist or do not exist yet.
+     * <p>
+     * If the registry is never created, any {@link RegistryObject}s made from this DeferredRegister will never be filled but will not throw an exception.
+     *
+     * @param key the key of the registry to reference
+     * @param modid the namespace for all objects registered to this DeferredRegister
+     * @see #create(ResourceKey, String)
+     * @see #create(IForgeRegistry, String)
+     * @see #create(ResourceLocation, String)
+     */
+    public static <B> DeferredRegister<B> createOptional(ResourceKey<? extends Registry<B>> key, String modid)
+    {
+        return new DeferredRegister<>(key, null, modid, true);
+    }
+
+    /**
+     * DeferredRegister factory for custom forge registries, {@link Registry vanilla registries},
+     * or {@link BuiltinRegistries built-in registries}.
+     * Supports both registries that already exist or do not exist yet.
+     * <p>
+     * If the registry is never created, any {@link RegistryObject}s made from this DeferredRegister will throw an exception.
+     * To allow the optional existence of a registry without error, use {@link #createOptional(ResourceLocation, String)}.
      *
      * @param registryName The name of the registry, should include namespace. May come from another DeferredRegister through {@link #getRegistryName()}.
      * @param modid The namespace for all objects registered to this DeferredRegister
+     * @see #createOptional(ResourceLocation, String)
+     * @see #create(IForgeRegistry, String)
+     * @see #create(ResourceKey, String)
      */
     public static <B> DeferredRegister<B> create(ResourceLocation registryName, String modid)
     {
-        return new DeferredRegister<>(ResourceKey.createRegistryKey(registryName), null, modid);
+        return new DeferredRegister<>(ResourceKey.createRegistryKey(registryName), null, modid, false);
+    }
+
+    /**
+     * DeferredRegister factory for custom forge registries, {@link Registry vanilla registries},
+     * or {@link BuiltinRegistries built-in registries}.
+     * <p>
+     * The registry may not exist at the time this DeferredRegister is created.
+     * If the registry is never created, any {@link RegistryObject}s made from this DeferredRegister will never be filled but will not throw an exception.
+     *
+     * @param registryName The name of the registry, should include namespace. May come from another DeferredRegister through {@link #getRegistryName()}.
+     * @param modid The namespace for all objects registered to this DeferredRegister
+     * @see #create(ResourceLocation, String)
+     * @see #create(IForgeRegistry, String)
+     * @see #create(ResourceKey, String)
+     */
+    public static <B> DeferredRegister<B> createOptional(ResourceLocation registryName, String modid)
+    {
+        return new DeferredRegister<>(ResourceKey.createRegistryKey(registryName), null, modid, true);
     }
 
     @Nullable // Nullable when superType is not null
@@ -100,6 +159,7 @@ public class DeferredRegister<T>
     @Nullable // Nullable when registryKey is not null
     private final Class<? extends IForgeRegistryEntry<?>> superType;
     private final String modid;
+    private final boolean optionalRegistry;
     private final Map<RegistryObject<T>, Supplier<? extends T>> entries = new LinkedHashMap<>();
     private final Set<RegistryObject<T>> entriesView = Collections.unmodifiableSet(entries.keySet());
 
@@ -109,17 +169,19 @@ public class DeferredRegister<T>
     private SetMultimap<TagKey<T>, Supplier<T>> optionalTags;
     private boolean seenRegisterEvent = false;
 
-    private <E extends IForgeRegistryEntry<E>> DeferredRegister(@Nullable ResourceKey<? extends Registry<T>> registryKey, @Nullable Class<E> base, String modid)
+    private <E extends IForgeRegistryEntry<E>> DeferredRegister(@Nullable ResourceKey<? extends Registry<T>> registryKey, @Nullable Class<E> base,
+            String modid, boolean optionalRegistry)
     {
         this.registryKey = registryKey;
         this.superType = base;
         this.modid = modid;
+        this.optionalRegistry = optionalRegistry;
     }
 
     @SuppressWarnings("unchecked")
     private <E extends IForgeRegistryEntry<E>> DeferredRegister(IForgeRegistry<E> reg, String modid)
     {
-        this((ResourceKey<? extends Registry<T>>) (ResourceKey) reg.getRegistryKey(), reg.getRegistrySuperType(), modid);
+        this((ResourceKey<? extends Registry<T>>) (ResourceKey) reg.getRegistryKey(), reg.getRegistrySuperType(), modid, false);
     }
 
     /**
@@ -140,7 +202,7 @@ public class DeferredRegister<T>
 
         RegistryObject<I> ret;
         if (this.registryKey != null)
-            ret = RegistryObject.of(key, this.registryKey, this.modid);
+            ret = RegistryObject.of(key, this.registryKey, this.modid, this.optionalRegistry);
         else if (this.superType != null)
             ret = RegistryObject.of(key, (Class) this.superType, this.modid);
         else

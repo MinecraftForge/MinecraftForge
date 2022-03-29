@@ -171,7 +171,23 @@ public class ObjectHolderRegistry
 
     public static void applyObjectHolders(Predicate<ResourceLocation> filter)
     {
-        objectHolders.forEach(e -> e.accept(filter));
+        RuntimeException aggregate = new RuntimeException("Failed to apply some object holders, see suppressed exceptions for details");
+        objectHolders.forEach(objectHolder -> {
+            try
+            {
+                objectHolder.accept(filter);
+            }
+            catch (Exception e)
+            {
+                aggregate.addSuppressed(e);
+            }
+        });
+
+        if (aggregate.getSuppressed().length > 0) {
+            // Something had an exception, log and propagate with a throw for when FML eventually logs this too
+            LOGGER.error("", aggregate);
+            throw aggregate;
+        }
     }
 
 }

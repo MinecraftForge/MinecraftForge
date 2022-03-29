@@ -374,10 +374,15 @@ public class GameData
             final ResourceLocation rl = event.getName();
             ForgeRegistry<?> fr = (ForgeRegistry<?>) event.getRegistry();
             fr.freeze();
-            LOGGER.debug(REGISTRIES, "Applying holder lookups: {}", rl.toString());
-            ObjectHolderRegistry.applyObjectHolders(rl::equals);
-            LOGGER.debug(REGISTRIES, "Holder lookups applied: {}", rl.toString());
+            applyHolderLookups(rl);
         }, executor).handle((v, t)->t != null ? Collections.singletonList(t): Collections.emptyList());
+    }
+
+    private static void applyHolderLookups(ResourceLocation registryName)
+    {
+        LOGGER.debug(REGISTRIES, "Applying holder lookups: {}", registryName);
+        ObjectHolderRegistry.applyObjectHolders(registryName::equals);
+        LOGGER.debug(REGISTRIES, "Holder lookups applied: {}", registryName);
     }
 
     @SuppressWarnings("deprecation")
@@ -407,6 +412,7 @@ public class GameData
             return;
 
         ModLoader.get().postEvent(new VanillaRegisterEvent(registry));
+        applyHolderLookups(registry.key().location());
     }
 
     //Lets us clear the map so we can rebuild it.
