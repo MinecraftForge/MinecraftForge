@@ -1469,7 +1469,7 @@ public class ForgeHooks
 
     private static BannerPattern[] nonPatternItems;
 
-    private static void initBannerPatternData()
+    public static void refreshBannerPatternData()
     {
         nonPatternItems = Arrays.stream(BannerPattern.values())
                 .filter(p -> !p.hasPatternItem)
@@ -1478,13 +1478,11 @@ public class ForgeHooks
 
     public static int getNonPatternItemCount()
     {
-        if (nonPatternItems == null) initBannerPatternData();
         return nonPatternItems.length;
     }
 
     public static int getActualPatternIndex(int index)
     {
-        if (nonPatternItems == null) initBannerPatternData();
         return nonPatternItems[index].ordinal();
     }
 }

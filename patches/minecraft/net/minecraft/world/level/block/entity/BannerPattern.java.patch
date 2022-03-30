@@ -36,7 +36,7 @@
     }
  
     public String m_58572_() {
-@@ -106,6 +_,14 @@
+@@ -106,6 +_,19 @@
        }
  
        return null;
@@ -48,6 +48,11 @@
 +
 +   public static BannerPattern create(String enumName, String fileNameIn, String hashNameIn, boolean hasPatternItem) {
 +      throw new IllegalStateException("Enum not extended");
++   }
++
++   @Override
++   public void init() {
++      net.minecraftforge.common.ForgeHooks.refreshBannerPatternData();
     }
  
     public static class Builder {

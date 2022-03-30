@@ -9,7 +9,7 @@
     private static final int f_169778_ = 12;
     private static final int f_169779_ = 15;
     private static final int f_169780_ = 14;
-@@ -125,7 +_,7 @@
+@@ -125,20 +_,20 @@
           int l2 = j + 13;
           int l = this.f_99072_ + 16;
  
@@ -18,7 +18,13 @@
              int j1 = i1 - this.f_99072_;
              int k1 = j2 + j1 % 4 * 14;
              int l1 = l2 + j1 / 4 * 14;
-@@ -138,7 +_,7 @@
+             RenderSystem.m_157456_(0, f_99060_);
+             int i2 = this.f_97727_;
+-            if (i1 == this.f_97732_.m_39891_()) {
++            if (net.minecraftforge.common.ForgeHooks.getActualPatternIndex(i1) == this.f_97732_.m_39891_()) {
+                i2 += 14;
+             } else if (p_99101_ >= k1 && p_99102_ >= l1 && p_99101_ < k1 + 14 && p_99102_ < l1 + 14) {
+                i2 += 28;
              }
  
              this.m_93228_(p_99099_, k1, l1, 0, i2, 14, 14);
