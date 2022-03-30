@@ -1,14 +1,5 @@
 --- a/net/minecraft/client/gui/screens/inventory/LoomScreen.java
 +++ b/net/minecraft/client/gui/screens/inventory/LoomScreen.java
-@@ -41,7 +_,7 @@
-    private static final int f_169775_ = 1;
-    private static final int f_169776_ = 4;
-    private static final int f_169777_ = 4;
--   private static final int f_99061_ = (BannerPattern.f_58526_ - BannerPattern.f_58527_ - 1 + 4 - 1) / 4;
-+   private static final int f_99061_ = (net.minecraftforge.common.ForgeHooks.getNonPatternItemCount() - 1 + 4 - 1) / 4;
-    private static final int f_169778_ = 12;
-    private static final int f_169779_ = 15;
-    private static final int f_169780_ = 14;
 @@ -125,20 +_,20 @@
           int l2 = j + 13;
           int l = this.f_99072_ + 16;
@@ -33,3 +24,21 @@
           }
        } else if (this.f_99068_) {
           int k2 = i + 60;
+@@ -209,7 +_,7 @@
+          int j = i + 56;
+          this.f_99070_ = ((float)p_99088_ - (float)i - 7.5F) / ((float)(j - i) - 15.0F);
+          this.f_99070_ = Mth.m_14036_(this.f_99070_, 0.0F, 1.0F);
+-         int k = f_99061_ - 4;
++         int k = net.minecraftforge.common.ForgeHooks.getTotalPatternRows() - 4;
+          int l = (int)((double)(this.f_99070_ * (float)k) + 0.5D);
+          if (l < 0) {
+             l = 0;
+@@ -224,7 +_,7 @@
+ 
+    public boolean m_6050_(double p_99079_, double p_99080_, double p_99081_) {
+       if (this.f_99067_) {
+-         int i = f_99061_ - 4;
++         int i = net.minecraftforge.common.ForgeHooks.getTotalPatternRows() - 4;
+          float f = (float)p_99081_ / (float)i;
+          this.f_99070_ = Mth.m_14036_(this.f_99070_ - f, 0.0F, 1.0F);
+          this.f_99072_ = 1 + (int)(this.f_99070_ * (float)i + 0.5F) * 4;
