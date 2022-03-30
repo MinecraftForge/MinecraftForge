@@ -59,63 +59,72 @@ public final class RegistryObject<T> implements Supplier<T>
      * Factory for a {@link RegistryObject} that stores the value of an object from a registry once it is ready.
      * <p>
      * If a registry with the given key cannot be found, an exception will be thrown when trying to fill this RegistryObject.
-     * Use {@link #of(ResourceLocation, ResourceKey, String, boolean)} for RegistryObjects of optional registries.
+     * Use {@link #optional(ResourceLocation, ResourceKey, String)} for RegistryObjects of optional registries.
      *
      * @param name the name of the object to look up in a registry
      * @param registryKey the key of the registry. Supports lookups on {@link BuiltinRegistries}, {@link Registry}, and {@link RegistryManager#ACTIVE}.
      * @param modid the mod id calling context
      * @return a {@link RegistryObject} that stores the value of an object from a registry once it is ready
+     * @see #optional(ResourceLocation, ResourceKey, String)
+     * @see #of(ResourceLocation, IForgeRegistry)
+     * @see #of(ResourceLocation, ResourceLocation, String)
      */
     public static <T, U extends T> RegistryObject<U> of(final ResourceLocation name, final ResourceKey<? extends Registry<T>> registryKey, String modid) {
-        return of(name, registryKey, modid, false);
+        return new RegistryObject<>(name, registryKey.location(), modid, false);
     }
 
     /**
      * Factory for a {@link RegistryObject} that stores the value of an object from a registry once it is ready.
+     * <p>
+     * If a registry with the given key cannot be found, it will be silently ignored and this RegistryObject will not be filled.
+     * Use {@link #of(ResourceLocation, ResourceKey, String)} for RegistryObjects that should throw exceptions on missing registry.
      *
      * @param name the name of the object to look up in a registry
      * @param registryKey the key of the registry. Supports lookups on {@link BuiltinRegistries}, {@link Registry}, and {@link RegistryManager#ACTIVE}.
      * @param modid the mod id calling context
-     * @param optionalRegistry {@code false} if this RegistryObject should require a registry to be present and
-     * throw an exception if a registry with the given key cannot be found.
-     * If {@code true}, a non-existent registry will be silently ignored and cause this RegistryObject to never be filled.
      * @return a {@link RegistryObject} that stores the value of an object from a registry once it is ready
+     * @see #of(ResourceLocation, ResourceKey, String)
+     * @see #of(ResourceLocation, IForgeRegistry)
+     * @see #of(ResourceLocation, ResourceLocation, String)
      */
-    public static <T, U extends T> RegistryObject<U> of(final ResourceLocation name, final ResourceKey<? extends Registry<T>> registryKey, String modid,
-            boolean optionalRegistry) {
-        return new RegistryObject<>(name, registryKey.location(), modid, optionalRegistry);
+    public static <T, U extends T> RegistryObject<U> optional(final ResourceLocation name, final ResourceKey<? extends Registry<T>> registryKey, String modid) {
+        return new RegistryObject<>(name, registryKey.location(), modid, true);
     }
 
     /**
      * Factory for a {@link RegistryObject} that stores the value of an object from a registry once it is ready.
      * <p>
      * If a registry with the given name cannot be found, an exception will be thrown when trying to fill this RegistryObject.
-     * Use {@link #of(ResourceLocation, ResourceLocation, String, boolean)} for RegistryObjects of optional registries.
+     * Use {@link #optional(ResourceLocation, ResourceLocation, String)} for RegistryObjects of optional registries.
      *
      * @param name the name of the object to look up in a registry
      * @param registryName the name of the registry. Supports lookups on {@link BuiltinRegistries}, {@link Registry}, and {@link RegistryManager#ACTIVE}.
      * @param modid the mod id calling context
      * @return a {@link RegistryObject} that stores the value of an object from a registry once it is ready
-     * @see #of(ResourceLocation, ResourceLocation, String, boolean)
+     * @see #optional(ResourceLocation, ResourceLocation, String)
+     * @see #of(ResourceLocation, IForgeRegistry)
+     * @see #of(ResourceLocation, ResourceKey, String)
      */
     public static <T, U extends T> RegistryObject<U> of(final ResourceLocation name, final ResourceLocation registryName, String modid) {
-        return of(name, registryName, modid, false);
+        return new RegistryObject<>(name, registryName, modid, false);
     }
 
     /**
      * Factory for a {@link RegistryObject} that stores the value of an object from a registry once it is ready.
+     * <p>
+     * If a registry with the given name cannot be found, it will be silently ignored and this RegistryObject will not be filled.
+     * Use {@link #of(ResourceLocation, ResourceLocation, String)} for RegistryObjects that should throw exceptions on missing registry.
      *
      * @param name the name of the object to look up in a registry
      * @param registryName the name of the registry. Supports lookups on {@link BuiltinRegistries}, {@link Registry}, and {@link RegistryManager#ACTIVE}.
      * @param modid the mod id calling context
-     * @param optionalRegistry {@code false} if this RegistryObject should require a registry to be present and
-     * throw an exception if a registry with the given name cannot be found.
-     * If {@code true}, a non-existent registry will be silently ignored and cause this RegistryObject to never be filled.
      * @return a {@link RegistryObject} that stores the value of an object from a registry once it is ready
+     * @see #of(ResourceLocation, ResourceLocation, String)
+     * @see #of(ResourceLocation, IForgeRegistry)
+     * @see #of(ResourceLocation, ResourceKey, String)
      */
-    public static <T, U extends T> RegistryObject<U> of(final ResourceLocation name, final ResourceLocation registryName, String modid,
-            boolean optionalRegistry) {
-        return new RegistryObject<>(name, registryName, modid, optionalRegistry);
+    public static <T, U extends T> RegistryObject<U> optional(final ResourceLocation name, final ResourceLocation registryName, String modid) {
+        return new RegistryObject<>(name, registryName, modid, true);
     }
 
     private static RegistryObject<?> EMPTY = new RegistryObject<>();
