@@ -10,11 +10,15 @@
        private ResourceLocation f_138332_;
        @Nullable
        private Advancement f_138333_;
-@@ -321,6 +_,7 @@
+@@ -321,6 +_,11 @@
        }
  
        public static Advancement.Builder m_138380_(JsonObject p_138381_, DeserializationContext p_138382_) {
-+         if ((p_138381_ = net.minecraftforge.common.crafting.ConditionalAdvancement.processConditional(p_138381_)) == null) return null;
++         return fromJson(p_138381_, p_138382_, null);
++      }
++
++      public static Advancement.Builder fromJson(JsonObject p_138381_, DeserializationContext p_138382_, @Nullable net.minecraftforge.common.crafting.conditions.ICondition.IContext context) {
++         if ((p_138381_ = net.minecraftforge.common.crafting.ConditionalAdvancement.processConditional(p_138381_, context)) == null) return null;
           ResourceLocation resourcelocation = p_138381_.has("parent") ? new ResourceLocation(GsonHelper.m_13906_(p_138381_, "parent")) : null;
           DisplayInfo displayinfo = p_138381_.has("display") ? DisplayInfo.m_14981_(GsonHelper.m_13930_(p_138381_, "display")) : null;
           AdvancementRewards advancementrewards = p_138381_.has("rewards") ? AdvancementRewards.m_9991_(GsonHelper.m_13930_(p_138381_, "rewards")) : AdvancementRewards.f_9978_;

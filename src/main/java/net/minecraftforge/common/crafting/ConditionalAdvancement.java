@@ -29,17 +29,23 @@ public class ConditionalAdvancement
         return new Builder();
     }
 
+    @Deprecated(forRemoval = true, since = "1.18.2")
+    @Nullable
+    public static JsonObject processConditional(JsonObject json) {
+        return processConditional(json, null);
+    }
+
     /**
      * Processes the conditional advancement during loading.
      * @param json The incoming json from the advancement file.
      * @return The advancement that passed the conditions, or null if none did.
      */
     @Nullable
-    public static JsonObject processConditional(JsonObject json) {
+    public static JsonObject processConditional(JsonObject json, @Nullable ICondition.IContext context) {
         JsonArray entries = GsonHelper.getAsJsonArray(json, "advancements", null);
         if (entries == null)
         {
-            return CraftingHelper.processConditions(json, "conditions") ? json : null;
+            return CraftingHelper.processConditions(json, "conditions", context) ? json : null;
         }
 
         int idx = 0;
@@ -47,7 +53,7 @@ public class ConditionalAdvancement
         {
             if (!ele.isJsonObject())
                 throw new JsonSyntaxException("Invalid advancement entry at index " + idx + " Must be JsonObject");
-            if (CraftingHelper.processConditions(GsonHelper.getAsJsonArray(ele.getAsJsonObject(), "conditions")))
+            if (CraftingHelper.processConditions(GsonHelper.getAsJsonArray(ele.getAsJsonObject(), "conditions"), context))
                 return GsonHelper.getAsJsonObject(ele.getAsJsonObject(), "advancement");
             idx++;
         }

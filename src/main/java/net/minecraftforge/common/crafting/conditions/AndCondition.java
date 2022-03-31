@@ -43,12 +43,18 @@ public class AndCondition implements ICondition
         return NAME;
     }
 
+
     @Override
-    public boolean test()
+    public boolean test() {
+        return test(null);
+    }
+
+    @Override
+    public boolean test(IContext context)
     {
         for (ICondition child : children)
         {
-            if (!child.test())
+            if (!child.test(context))
                 return false;
         }
         return true;

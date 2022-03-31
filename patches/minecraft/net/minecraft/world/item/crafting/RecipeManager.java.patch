@@ -1,17 +1,37 @@
 --- a/net/minecraft/world/item/crafting/RecipeManager.java
 +++ b/net/minecraft/world/item/crafting/RecipeManager.java
-@@ -49,9 +_,18 @@
+@@ -37,21 +_,37 @@
+    private Map<RecipeType<?>, Map<ResourceLocation, Recipe<?>>> f_44007_ = ImmutableMap.of();
+    private Map<ResourceLocation, Recipe<?>> f_199900_ = ImmutableMap.of();
+    private boolean f_44008_;
++   private final @javax.annotation.Nullable net.minecraft.tags.TagManager tagManager; //Forge: keep reference to tag manager
+ 
+    public RecipeManager() {
++      this(null);
++   }
++
++   public RecipeManager(@javax.annotation.Nullable net.minecraft.tags.TagManager tagManager) {
+       super(f_44005_, "recipes");
++      this.tagManager = tagManager;
+    }
+ 
+    protected void m_5787_(Map<ResourceLocation, JsonElement> p_44037_, ResourceManager p_44038_, ProfilerFiller p_44039_) {
+       this.f_44008_ = false;
+       Map<RecipeType<?>, Builder<ResourceLocation, Recipe<?>>> map = Maps.newHashMap();
+       Builder<ResourceLocation, Recipe<?>> builder = ImmutableMap.builder();
++      var recipeContext = net.minecraftforge.common.crafting.CraftingHelper.buildContext(tagManager);
  
        for(Entry<ResourceLocation, JsonElement> entry : p_44037_.entrySet()) {
           ResourceLocation resourcelocation = entry.getKey();
 +         if (resourcelocation.m_135815_().startsWith("_")) continue; //Forge: filter anything beginning with "_" as it's used for metadata.
  
           try {
-+            if (entry.getValue().isJsonObject() && !net.minecraftforge.common.crafting.CraftingHelper.processConditions(entry.getValue().getAsJsonObject(), "conditions")) {
+-            Recipe<?> recipe = m_44045_(resourcelocation, GsonHelper.m_13918_(entry.getValue(), "top element"));
++            if (entry.getValue().isJsonObject() && !net.minecraftforge.common.crafting.CraftingHelper.processConditions(entry.getValue().getAsJsonObject(), "conditions", recipeContext)) {
 +               f_44006_.debug("Skipping loading recipe {} as it's conditions were not met", resourcelocation);
 +               continue;
 +            }
-             Recipe<?> recipe = m_44045_(resourcelocation, GsonHelper.m_13918_(entry.getValue(), "top element"));
++            Recipe<?> recipe = fromJson(resourcelocation, GsonHelper.m_13918_(entry.getValue(), "top element"), recipeContext);
 +            if (recipe == null) {
 +               f_44006_.info("Skipping loading recipe {} as it's serializer returned null", resourcelocation);
 +               continue;
@@ -19,3 +39,19 @@
              map.computeIfAbsent(recipe.m_6671_(), (p_44075_) -> {
                 return ImmutableMap.builder();
              }).put(resourcelocation, recipe);
+@@ -128,10 +_,14 @@
+    }
+ 
+    public static Recipe<?> m_44045_(ResourceLocation p_44046_, JsonObject p_44047_) {
++      return fromJson(p_44046_, p_44047_, null);
++   }
++
++   public static Recipe<?> fromJson(ResourceLocation p_44046_, JsonObject p_44047_, @javax.annotation.Nullable net.minecraftforge.common.crafting.conditions.ICondition.IContext context) {
+       String s = GsonHelper.m_13906_(p_44047_, "type");
+       return Registry.f_122865_.m_6612_(new ResourceLocation(s)).orElseThrow(() -> {
+          return new JsonSyntaxException("Invalid or unsupported recipe type '" + s + "'");
+-      }).m_6729_(p_44046_, p_44047_);
++      }).fromJson(p_44046_, p_44047_, context);
+    }
+ 
+    public void m_44024_(Iterable<Recipe<?>> p_44025_) {

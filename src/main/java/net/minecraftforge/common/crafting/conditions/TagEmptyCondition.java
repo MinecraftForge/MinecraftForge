@@ -9,10 +9,13 @@ import com.google.gson.JsonObject;
 
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.Registry;
+import net.minecraft.data.BuiltinRegistries;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.resources.ResourceLocation;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Iterator;
 
@@ -43,9 +46,20 @@ public class TagEmptyCondition implements ICondition
     }
 
     @Override
+    public boolean test(@Nullable ICondition.IContext context) {
+        if (context == null) return true; // no tags available -> empty
+
+        var itemTags = context.getTags(tag.registry());
+        if (itemTags == null) return true;
+
+        var tagContents = itemTags.get(tag.location());
+        return tagContents == null || tagContents.getValues().isEmpty();
+    }
+
+    @Override
     public boolean test()
     {
-        return !Registry.ITEM.getTag(tag).map(HolderSet.Named::iterator).map(Iterator::hasNext).orElse(false);
+        return test(null);
     }
 
     @Override

@@ -5,7 +5,9 @@
 
 package net.minecraftforge.common.crafting;
 
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -23,6 +25,11 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
+import net.minecraft.core.Holder;
+import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.tags.Tag;
+import net.minecraft.tags.TagManager;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -199,12 +206,23 @@ public class CraftingHelper
         return new ItemStack(item, GsonHelper.getAsInt(json, "count", 1));
     }
 
-    public static boolean processConditions(JsonObject json, String memberName)
-    {
-        return !json.has(memberName) || processConditions(GsonHelper.getAsJsonArray(json, memberName));
+    @Deprecated(forRemoval = true, since = "1.18.2")
+    public static boolean processConditions(JsonObject json, String memberName) {
+        return processConditions(json, memberName, null);
     }
 
+    public static boolean processConditions(JsonObject json, String memberName, @Nullable ICondition.IContext context)
+    {
+        return !json.has(memberName) || processConditions(GsonHelper.getAsJsonArray(json, memberName), context);
+    }
+
+    @Deprecated(forRemoval = true, since = "1.18.2")
     public static boolean processConditions(JsonArray conditions)
+    {
+        return processConditions(conditions, null);
+    }
+
+    public static boolean processConditions(JsonArray conditions, @Nullable ICondition.IContext context)
     {
         for (int x = 0; x < conditions.size(); x++)
         {
@@ -212,7 +230,7 @@ public class CraftingHelper
                 throw new JsonSyntaxException("Conditions must be an array of JsonObjects");
 
             JsonObject json = conditions.get(x).getAsJsonObject();
-            if (!CraftingHelper.getCondition(json).test())
+            if (!CraftingHelper.getCondition(json).test(context))
                 return false;
         }
         return true;
@@ -234,5 +252,25 @@ public class CraftingHelper
         if (serializer == null)
             throw new JsonSyntaxException("Unknown condition type: " + condition.getID().toString());
         return serializer.getJson(condition);
+    }
+
+    @Nullable
+    public static ICondition.IContext buildContext(@Nullable TagManager tagManager) {
+        if (tagManager == null) return null;
+
+        Map<ResourceKey<?>, Map<ResourceLocation, Tag<Holder<?>>>> tagsMap = new IdentityHashMap<>();
+        for (var result : tagManager.getResult())
+        {
+            tagsMap.put(result.key(), Collections.unmodifiableMap((Map) result.tags()));
+        }
+
+        return new ICondition.IContext() {
+            @Override
+            @Nullable
+            public <T> Map<ResourceLocation, Tag<Holder<T>>> getTags(ResourceKey<? extends Registry<T>> key)
+            {
+                return (Map) tagsMap.get(key);
+            }
+        };
     }
 }

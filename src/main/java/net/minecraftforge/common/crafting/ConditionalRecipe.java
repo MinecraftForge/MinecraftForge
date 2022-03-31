@@ -65,9 +65,14 @@ public class ConditionalRecipe
             return (Class<G>)cls;
         }
 
+        @Override
+        public T fromJson(ResourceLocation recipeId, JsonObject json) {
+            return fromJson(recipeId, json, null);
+        }
+
         @SuppressWarnings("unchecked") // We return a nested one, so we can't know what type it is.
         @Override
-        public T fromJson(ResourceLocation recipeId, JsonObject json)
+        public T fromJson(ResourceLocation recipeId, JsonObject json, @Nullable ICondition.IContext context)
         {
             JsonArray items = GsonHelper.getAsJsonArray(json, "recipes");
             int idx = 0;
@@ -75,7 +80,7 @@ public class ConditionalRecipe
             {
                 if (!ele.isJsonObject())
                     throw new JsonSyntaxException("Invalid recipes entry at index " + idx + " Must be JsonObject");
-                if (CraftingHelper.processConditions(GsonHelper.getAsJsonArray(ele.getAsJsonObject(), "conditions")))
+                if (CraftingHelper.processConditions(GsonHelper.getAsJsonArray(ele.getAsJsonObject(), "conditions"), context))
                     return (T)RecipeManager.fromJson(recipeId, GsonHelper.getAsJsonObject(ele.getAsJsonObject(), "recipe"));
                 idx++;
             }

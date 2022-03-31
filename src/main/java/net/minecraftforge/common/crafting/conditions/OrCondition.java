@@ -46,9 +46,15 @@ public class OrCondition implements ICondition
     @Override
     public boolean test()
     {
+        return test(null);
+    }
+
+    @Override
+    public boolean test(IContext context)
+    {
         for (ICondition child : children)
         {
-            if (child.test())
+            if (child.test(context))
                 return true;
         }
 
