@@ -11,14 +11,13 @@ import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraftforge.common.crafting.conditions.ICondition;
 
-import javax.annotation.Nullable;
-
 public interface IForgeRecipeSerializer<T extends Recipe<?>> {
 	private RecipeSerializer<T> self() {
 		return (RecipeSerializer<T>) this;
 	}
 
-	default T fromJson(ResourceLocation recipeLoc, JsonObject recipeJson, @Nullable ICondition.IContext context) {
+	default T fromJson(ResourceLocation recipeLoc, JsonObject recipeJson, ICondition.IContext context)
+	{
 		return self().fromJson(recipeLoc, recipeJson);
 	}
 }

@@ -46,7 +46,7 @@ public class OrCondition implements ICondition
     @Override
     public boolean test()
     {
-        return test(null);
+        return test(IContext.EMPTY);
     }
 
     @Override

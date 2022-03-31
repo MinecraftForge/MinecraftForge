@@ -45,8 +45,9 @@ public class AndCondition implements ICondition
 
 
     @Override
-    public boolean test() {
-        return test(null);
+    public boolean test()
+    {
+        return test(IContext.EMPTY);
     }
 
     @Override

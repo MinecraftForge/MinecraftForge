@@ -32,7 +32,7 @@ public class ConditionalAdvancement
     @Deprecated(forRemoval = true, since = "1.18.2")
     @Nullable
     public static JsonObject processConditional(JsonObject json) {
-        return processConditional(json, null);
+        return processConditional(json, ICondition.IContext.EMPTY);
     }
 
     /**
@@ -41,7 +41,7 @@ public class ConditionalAdvancement
      * @return The advancement that passed the conditions, or null if none did.
      */
     @Nullable
-    public static JsonObject processConditional(JsonObject json, @Nullable ICondition.IContext context) {
+    public static JsonObject processConditional(JsonObject json, ICondition.IContext context) {
         JsonArray entries = GsonHelper.getAsJsonArray(json, "advancements", null);
         if (entries == null)
         {

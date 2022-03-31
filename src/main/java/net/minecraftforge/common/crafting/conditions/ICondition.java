@@ -6,19 +6,15 @@
 package net.minecraftforge.common.crafting.conditions;
 
 import net.minecraft.core.Holder;
-import net.minecraft.core.Registry;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.Tag;
-
-import javax.annotation.Nullable;
-import java.util.Map;
+import net.minecraft.tags.TagKey;
 
 public interface ICondition
 {
     ResourceLocation getID();
 
-    default boolean test(@Nullable IContext context)
+    default boolean test(IContext context)
     {
         return test();
     }
@@ -31,7 +27,18 @@ public interface ICondition
 
     interface IContext
     {
-        @Nullable
-        <T> Map<ResourceLocation, Tag<Holder<T>>> getTags(ResourceKey<? extends Registry<T>> key);
+        IContext EMPTY = new IContext()
+        {
+            @Override
+            public <T> Tag<Holder<T>> getTag(TagKey<T> key)
+            {
+                return Tag.empty();
+            }
+        };
+
+        /**
+         * Return the requested tag if available, or an empty tag otherwise.
+         */
+        <T> Tag<Holder<T>> getTag(TagKey<T> key);
     }
 }
