@@ -1,0 +1,11 @@
+plugins {
+    id 'java'
+}
+
+jar {
+    manifest {
+        attributes(
+                'Main-Class': 'net.minecraftforge.launcherscript.LauncherScript'
+        )
+    }
+}

@@ -486,8 +486,20 @@ def sharedFmlonlyForge = { Project prj ->
             IGNORE_LIST: Util.getArtifacts(prj, prj.configurations.moduleonly, false).values().collect{it.downloads.artifact.path.rsplit('/', 1)[1]}.join(','),
             MODULES: 'ALL-MODULE-PATH'
     ]
+
+    def makeLauncherScriptJar = prj.tasks.register('makeLauncherScriptJar', Zip) {
+        dependsOn ':launcherscript:jar'
+
+        from(zipTree(project(':launcherscript').tasks.jar.outputs.files.singleFile)) {
+            exclude("maven_path.txt")
+        }
+        from(zipTree(project(':launcherscript').tasks.jar.outputs.files.singleFile)) {
+            include("maven_path.txt")
+            filter(ReplaceTokens, tokens: tokens)
+        }
+    }
     
-    prj.task([dependsOn: rootProject.downloadServerRaw], 'makeClasspathFiles') {
+    prj.task([dependsOn: [rootProject.downloadServerRaw, makeLauncherScriptJar]], 'makeClasspathFiles') {
         doLast {
             def CLASS_PATH = Util.getArtifacts(prj, prj.configurations.installer, false).values().collect{"libraries/${it.downloads.artifact.path}"} +
             [
@@ -509,6 +521,9 @@ def sharedFmlonlyForge = { Project prj ->
                 from(rootProject.file('server_files/args.txt')) {
                     filter(ReplaceTokens, tokens: tokens + [MODULE_PATH: MODULE_PATH.join(':'), CLASS_PATH: CLASS_PATH.join(':')])
                     rename { 'data/unix_args.txt' }
+                }
+                from(makeLauncherScriptJar) {
+                    rename { 'data/start_server.jar' }
                 }
             }
         }
@@ -717,6 +732,10 @@ project(':fmlonly') {
                             '--to',   '{ROOT}/run.bat',
                             //'--from', 'data/run_fml_${VERSION.replace('-', '_').bat',
                             //'--to',   '{ROOT}/run_fml_${VERSION.replace('-', '_').bat',
+
+                            '--from', 'data/start_server.jar',
+                            '--to',   '{ROOT}/start_server.jar',
+                            '--exec', '{ROOT}/start_server.jar', // executable bit allows double-clicking in Linux Desktop
 
                             '--from',     'data/user_jvm_args.txt',
                             '--to',       '{ROOT}/user_jvm_args.txt',
@@ -1305,6 +1324,10 @@ project(':forge') {
                             '--to',   '{ROOT}/run.bat',
                             //'--from', 'data/run_forge_${VERSION.replace('-', '_').bat',
                             //'--to',   '{ROOT}/run_forge_${VERSION.replace('-', '_').bat',
+
+                            '--from', 'data/start_server.jar',
+                            '--to',   '{ROOT}/start_server.jar',
+                            '--exec', '{ROOT}/start_server.jar', // executable bit allows double-clicking in Linux Desktop
 
                             '--from',     'data/user_jvm_args.txt',
                             '--to',       '{ROOT}/user_jvm_args.txt',
