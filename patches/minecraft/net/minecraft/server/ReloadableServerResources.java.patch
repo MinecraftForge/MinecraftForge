@@ -18,7 +18,7 @@
        this.f_206849_ = new TagManager(p_206857_);
        this.f_206847_ = new Commands(p_206858_);
        this.f_206854_ = new ServerFunctionLibrary(p_206859_, this.f_206847_.m_82094_());
-+      // Forge: pass condition context too too
++      // Forge: pass condition context too
 +      var context = new net.minecraftforge.common.crafting.conditions.ConditionContext(this.f_206849_);
 +      this.f_206848_ = new RecipeManager(context);
 +      this.f_206853_ = new ServerAdvancementManager(this.f_206850_, context);

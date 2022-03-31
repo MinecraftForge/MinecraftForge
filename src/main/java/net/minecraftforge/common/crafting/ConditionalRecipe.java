@@ -66,13 +66,14 @@ public class ConditionalRecipe
         }
 
         @Override
-        public T fromJson(ResourceLocation recipeId, JsonObject json) {
-            return fromJson(recipeId, json, null);
+        public T fromJson(ResourceLocation recipeId, JsonObject json)
+        {
+            return fromJson(recipeId, json, ICondition.IContext.EMPTY);
         }
 
         @SuppressWarnings("unchecked") // We return a nested one, so we can't know what type it is.
         @Override
-        public T fromJson(ResourceLocation recipeId, JsonObject json, @Nullable ICondition.IContext context)
+        public T fromJson(ResourceLocation recipeId, JsonObject json, ICondition.IContext context)
         {
             JsonArray items = GsonHelper.getAsJsonArray(json, "recipes");
             int idx = 0;

@@ -40,7 +40,8 @@ public class TagEmptyCondition implements ICondition
     }
 
     @Override
-    public boolean test(ICondition.IContext context) {
+    public boolean test(ICondition.IContext context)
+    {
         return context.getTag(tag).getValues().isEmpty();
     }
 

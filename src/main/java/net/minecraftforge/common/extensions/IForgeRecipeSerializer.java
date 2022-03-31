@@ -11,8 +11,10 @@ import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraftforge.common.crafting.conditions.ICondition;
 
-public interface IForgeRecipeSerializer<T extends Recipe<?>> {
-	private RecipeSerializer<T> self() {
+public interface IForgeRecipeSerializer<T extends Recipe<?>>
+{
+	private RecipeSerializer<T> self()
+	{
 		return (RecipeSerializer<T>) this;
 	}
 

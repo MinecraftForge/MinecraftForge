@@ -14,16 +14,19 @@ import net.minecraft.tags.TagManager;
 import java.util.IdentityHashMap;
 import java.util.Map;
 
-public class ConditionContext implements ICondition.IContext {
+public class ConditionContext implements ICondition.IContext
+{
 	private final TagManager tagManager;
 	private Map<ResourceKey<?>, TagManager.LoadResult<?>> loadedTags = null;
 
-	public ConditionContext(TagManager tagManager) {
+	public ConditionContext(TagManager tagManager)
+	{
 		this.tagManager = tagManager;
 	}
 
 	@Override
-	public <T> Tag<Holder<T>> getTag(TagKey<T> key) {
+	public <T> Tag<Holder<T>> getTag(TagKey<T> key)
+	{
 		if (loadedTags == null)
 		{
 			var tags = tagManager.getResult();
