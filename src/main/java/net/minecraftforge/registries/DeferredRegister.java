@@ -202,7 +202,9 @@ public class DeferredRegister<T>
 
         RegistryObject<I> ret;
         if (this.registryKey != null)
-            ret = this.optionalRegistry ? RegistryObject.optional(key, this.registryKey, this.modid) : RegistryObject.of(key, this.registryKey, this.modid);
+            ret = this.optionalRegistry
+                    ? RegistryObject.createOptional(key, this.registryKey, this.modid)
+                    : RegistryObject.create(key, this.registryKey, this.modid);
         else if (this.superType != null)
             ret = RegistryObject.of(key, (Class) this.superType, this.modid);
         else

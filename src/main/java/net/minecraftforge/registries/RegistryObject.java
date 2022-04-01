@@ -29,7 +29,8 @@ public final class RegistryObject<T> implements Supplier<T>
     private T value;
 
     /**
-     * @deprecated The uniqueness of registry super types will not be guaranteed starting in 1.19. Use {@link #of(ResourceLocation, ResourceLocation, String)}.
+     * @deprecated The uniqueness of registry super types will not be guaranteed starting in 1.19.
+     * Use {@link #create(ResourceLocation, ResourceLocation, String)}.
      */
     @Deprecated(forRemoval = true, since = "1.18.2")
     public static <T extends IForgeRegistryEntry<T>, U extends T> RegistryObject<U> of(final ResourceLocation name, Supplier<Class<? super T>> registryType) {
@@ -42,14 +43,29 @@ public final class RegistryObject<T> implements Supplier<T>
      * @param name the name of the object to look up in the forge registry
      * @param registry the forge registry
      * @return a {@link RegistryObject} that stores the value of an object from the provided forge registry once it is ready
+     * @deprecated Use {@link #create(ResourceLocation, IForgeRegistry)} instead.
      */
+    @Deprecated(forRemoval = true, since = "1.18.2")
     public static <T extends IForgeRegistryEntry<T>, U extends T> RegistryObject<U> of(final ResourceLocation name, IForgeRegistry<T> registry)
     {
         return new RegistryObject<>(name, registry);
     }
 
     /**
-     * @deprecated The uniqueness of registry super types will not be guaranteed starting in 1.19. Use {@link #of(ResourceLocation, ResourceLocation, String)}.
+     * Factory for a {@link RegistryObject} that stores the value of an object from the provided forge registry once it is ready.
+     *
+     * @param name the name of the object to look up in the forge registry
+     * @param registry the forge registry
+     * @return a {@link RegistryObject} that stores the value of an object from the provided forge registry once it is ready
+     */
+    public static <T extends IForgeRegistryEntry<T>, U extends T> RegistryObject<U> create(final ResourceLocation name, IForgeRegistry<T> registry)
+    {
+        return new RegistryObject<>(name, registry);
+    }
+
+    /**
+     * @deprecated The uniqueness of registry super types will not be guaranteed starting in 1.19.
+     * Use {@link #create(ResourceLocation, ResourceLocation, String)}.
      */
     @Deprecated(forRemoval = true, since = "1.18.2")
     public static <T extends IForgeRegistryEntry<T>, U extends T> RegistryObject<U> of(final ResourceLocation name, final Class<T> baseType, String modid) {
@@ -60,17 +76,38 @@ public final class RegistryObject<T> implements Supplier<T>
      * Factory for a {@link RegistryObject} that stores the value of an object from a registry once it is ready based on a lookup of the provided registry key.
      * <p>
      * If a registry with the given key cannot be found, an exception will be thrown when trying to fill this RegistryObject.
-     * Use {@link #optional(ResourceLocation, ResourceKey, String)} for RegistryObjects of optional registries.
+     * Use {@link #createOptional(ResourceLocation, ResourceKey, String)} for RegistryObjects of optional registries.
      *
      * @param name the name of the object to look up in a registry
      * @param registryKey the key of the registry. Supports lookups on {@link BuiltinRegistries}, {@link Registry}, and {@link RegistryManager#ACTIVE}.
      * @param modid the mod id calling context
      * @return a {@link RegistryObject} that stores the value of an object from a registry once it is ready
-     * @see #optional(ResourceLocation, ResourceKey, String)
-     * @see #of(ResourceLocation, IForgeRegistry)
-     * @see #of(ResourceLocation, ResourceLocation, String)
+     * @see #createOptional(ResourceLocation, ResourceKey, String)
+     * @see #create(ResourceLocation, IForgeRegistry)
+     * @see #create(ResourceLocation, ResourceLocation, String)
+     * @deprecated Use {@link #create(ResourceLocation, ResourceKey, String)} instead.
      */
+    @Deprecated(forRemoval = true, since = "1.18.2")
     public static <T, U extends T> RegistryObject<U> of(final ResourceLocation name, final ResourceKey<? extends Registry<T>> registryKey, String modid)
+    {
+        return new RegistryObject<>(name, registryKey.location(), modid, false);
+    }
+
+    /**
+     * Factory for a {@link RegistryObject} that stores the value of an object from a registry once it is ready based on a lookup of the provided registry key.
+     * <p>
+     * If a registry with the given key cannot be found, an exception will be thrown when trying to fill this RegistryObject.
+     * Use {@link #createOptional(ResourceLocation, ResourceKey, String)} for RegistryObjects of optional registries.
+     *
+     * @param name the name of the object to look up in a registry
+     * @param registryKey the key of the registry. Supports lookups on {@link BuiltinRegistries}, {@link Registry}, and {@link RegistryManager#ACTIVE}.
+     * @param modid the mod id calling context
+     * @return a {@link RegistryObject} that stores the value of an object from a registry once it is ready
+     * @see #createOptional(ResourceLocation, ResourceKey, String)
+     * @see #create(ResourceLocation, IForgeRegistry)
+     * @see #create(ResourceLocation, ResourceLocation, String)
+     */
+    public static <T, U extends T> RegistryObject<U> create(final ResourceLocation name, final ResourceKey<? extends Registry<T>> registryKey, String modid)
     {
         return new RegistryObject<>(name, registryKey.location(), modid, false);
     }
@@ -80,17 +117,18 @@ public final class RegistryObject<T> implements Supplier<T>
      * based on a lookup of the provided registry key.
      * <p>
      * If a registry with the given key cannot be found, it will be silently ignored and this RegistryObject will not be filled.
-     * Use {@link #of(ResourceLocation, ResourceKey, String)} for RegistryObjects that should throw exceptions on missing registry.
+     * Use {@link #create(ResourceLocation, ResourceKey, String)} for RegistryObjects that should throw exceptions on missing registry.
      *
      * @param name the name of the object to look up in a registry
      * @param registryKey the key of the registry. Supports lookups on {@link BuiltinRegistries}, {@link Registry}, and {@link RegistryManager#ACTIVE}.
      * @param modid the mod id calling context
      * @return a {@link RegistryObject} that stores the value of an object from a registry once it is ready
-     * @see #of(ResourceLocation, ResourceKey, String)
-     * @see #of(ResourceLocation, IForgeRegistry)
-     * @see #of(ResourceLocation, ResourceLocation, String)
+     * @see #create(ResourceLocation, ResourceKey, String)
+     * @see #create(ResourceLocation, IForgeRegistry)
+     * @see #create(ResourceLocation, ResourceLocation, String)
      */
-    public static <T, U extends T> RegistryObject<U> optional(final ResourceLocation name, final ResourceKey<? extends Registry<T>> registryKey, String modid)
+    public static <T, U extends T> RegistryObject<U> createOptional(final ResourceLocation name, final ResourceKey<? extends Registry<T>> registryKey,
+            String modid)
     {
         return new RegistryObject<>(name, registryKey.location(), modid, true);
     }
@@ -99,17 +137,38 @@ public final class RegistryObject<T> implements Supplier<T>
      * Factory for a {@link RegistryObject} that stores the value of an object from a registry once it is ready based on a lookup of the provided registry name.
      * <p>
      * If a registry with the given name cannot be found, an exception will be thrown when trying to fill this RegistryObject.
-     * Use {@link #optional(ResourceLocation, ResourceLocation, String)} for RegistryObjects of optional registries.
+     * Use {@link #createOptional(ResourceLocation, ResourceLocation, String)} for RegistryObjects of optional registries.
      *
      * @param name the name of the object to look up in a registry
      * @param registryName the name of the registry. Supports lookups on {@link BuiltinRegistries}, {@link Registry}, and {@link RegistryManager#ACTIVE}.
      * @param modid the mod id calling context
      * @return a {@link RegistryObject} that stores the value of an object from a registry once it is ready
-     * @see #optional(ResourceLocation, ResourceLocation, String)
-     * @see #of(ResourceLocation, IForgeRegistry)
-     * @see #of(ResourceLocation, ResourceKey, String)
+     * @see #createOptional(ResourceLocation, ResourceLocation, String)
+     * @see #create(ResourceLocation, IForgeRegistry)
+     * @see #create(ResourceLocation, ResourceKey, String)
+     * @deprecated Use {@link #create(ResourceLocation, ResourceLocation, String)} instead.
      */
+    @Deprecated(forRemoval = true, since = "1.18.2")
     public static <T, U extends T> RegistryObject<U> of(final ResourceLocation name, final ResourceLocation registryName, String modid)
+    {
+        return new RegistryObject<>(name, registryName, modid, false);
+    }
+
+    /**
+     * Factory for a {@link RegistryObject} that stores the value of an object from a registry once it is ready based on a lookup of the provided registry name.
+     * <p>
+     * If a registry with the given name cannot be found, an exception will be thrown when trying to fill this RegistryObject.
+     * Use {@link #createOptional(ResourceLocation, ResourceLocation, String)} for RegistryObjects of optional registries.
+     *
+     * @param name the name of the object to look up in a registry
+     * @param registryName the name of the registry. Supports lookups on {@link BuiltinRegistries}, {@link Registry}, and {@link RegistryManager#ACTIVE}.
+     * @param modid the mod id calling context
+     * @return a {@link RegistryObject} that stores the value of an object from a registry once it is ready
+     * @see #createOptional(ResourceLocation, ResourceLocation, String)
+     * @see #create(ResourceLocation, IForgeRegistry)
+     * @see #create(ResourceLocation, ResourceKey, String)
+     */
+    public static <T, U extends T> RegistryObject<U> create(final ResourceLocation name, final ResourceLocation registryName, String modid)
     {
         return new RegistryObject<>(name, registryName, modid, false);
     }
@@ -119,17 +178,17 @@ public final class RegistryObject<T> implements Supplier<T>
      * based on a lookup of the provided registry name.
      * <p>
      * If a registry with the given name cannot be found, it will be silently ignored and this RegistryObject will not be filled.
-     * Use {@link #of(ResourceLocation, ResourceLocation, String)} for RegistryObjects that should throw exceptions on missing registry.
+     * Use {@link #create(ResourceLocation, ResourceLocation, String)} for RegistryObjects that should throw exceptions on missing registry.
      *
      * @param name the name of the object to look up in a registry
      * @param registryName the name of the registry. Supports lookups on {@link BuiltinRegistries}, {@link Registry}, and {@link RegistryManager#ACTIVE}.
      * @param modid the mod id calling context
      * @return a {@link RegistryObject} that stores the value of an object from a registry once it is ready
-     * @see #of(ResourceLocation, ResourceLocation, String)
-     * @see #of(ResourceLocation, IForgeRegistry)
-     * @see #of(ResourceLocation, ResourceKey, String)
+     * @see #create(ResourceLocation, ResourceLocation, String)
+     * @see #create(ResourceLocation, IForgeRegistry)
+     * @see #create(ResourceLocation, ResourceKey, String)
      */
-    public static <T, U extends T> RegistryObject<U> optional(final ResourceLocation name, final ResourceLocation registryName, String modid)
+    public static <T, U extends T> RegistryObject<U> createOptional(final ResourceLocation name, final ResourceLocation registryName, String modid)
     {
         return new RegistryObject<>(name, registryName, modid, true);
     }
