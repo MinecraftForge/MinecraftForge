@@ -82,7 +82,7 @@ public class DeferredRegister<T>
 
     /**
      * DeferredRegister factory for custom forge registries, {@link Registry vanilla registries},
-     * or {@link BuiltinRegistries built-in registries}.
+     * or {@link BuiltinRegistries built-in registries} to lookup based on the provided registry key.
      * Supports both registries that already exist or do not exist yet.
      * <p>
      * If the registry is never created, any {@link RegistryObject}s made from this DeferredRegister will throw an exception.
@@ -100,8 +100,8 @@ public class DeferredRegister<T>
     }
 
     /**
-     * DeferredRegister factory for custom forge registries, {@link Registry vanilla registries},
-     * or {@link BuiltinRegistries built-in registries}.
+     * DeferredRegister factory for the optional existence of custom forge registries, {@link Registry vanilla registries},
+     * or {@link BuiltinRegistries built-in registries} to lookup based on the provided registry key.
      * Supports both registries that already exist or do not exist yet.
      * <p>
      * If the registry is never created, any {@link RegistryObject}s made from this DeferredRegister will never be filled but will not throw an exception.
@@ -119,7 +119,7 @@ public class DeferredRegister<T>
 
     /**
      * DeferredRegister factory for custom forge registries, {@link Registry vanilla registries},
-     * or {@link BuiltinRegistries built-in registries}.
+     * or {@link BuiltinRegistries built-in registries} to lookup based on the provided registry name.
      * Supports both registries that already exist or do not exist yet.
      * <p>
      * If the registry is never created, any {@link RegistryObject}s made from this DeferredRegister will throw an exception.
@@ -137,8 +137,8 @@ public class DeferredRegister<T>
     }
 
     /**
-     * DeferredRegister factory for custom forge registries, {@link Registry vanilla registries},
-     * or {@link BuiltinRegistries built-in registries}.
+     * DeferredRegister factory for the optional existence of custom forge registries, {@link Registry vanilla registries},
+     * or {@link BuiltinRegistries built-in registries} to lookup based on the provided registry name.
      * <p>
      * The registry may not exist at the time this DeferredRegister is created.
      * If the registry is never created, any {@link RegistryObject}s made from this DeferredRegister will never be filled but will not throw an exception.

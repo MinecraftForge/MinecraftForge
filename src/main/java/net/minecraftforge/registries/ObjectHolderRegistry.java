@@ -183,7 +183,8 @@ public class ObjectHolderRegistry
             }
         });
 
-        if (aggregate.getSuppressed().length > 0) {
+        if (aggregate.getSuppressed().length > 0)
+        {
             // Something had an exception, log and propagate with a throw for when FML eventually logs this too
             LOGGER.error("", aggregate);
             throw aggregate;
