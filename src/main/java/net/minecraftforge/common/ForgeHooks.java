@@ -58,6 +58,7 @@ import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.DefaultAttributes;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.*;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.gameevent.GameEvent;
@@ -1091,6 +1092,19 @@ public class ForgeHooks
     public static int canEntitySpawn(Mob entity, LevelAccessor world, double x, double y, double z, BaseSpawner spawner, MobSpawnType spawnReason) {
         Result res = ForgeEventFactory.canEntitySpawn(entity, world, x, y, z, null, spawnReason);
         return res == Result.DEFAULT ? 0 : res == Result.DENY ? -1 : 1;
+    }
+
+    public static boolean hasNoElements(Ingredient ingredient)
+    {
+        ItemStack[] items = ingredient.getItems();
+        if (items.length == 0) return true;
+        if (items.length == 1 && !ForgeConfig.SERVER.treatEmptyTagsAsAir.get())
+        {
+            //If we potentially added a barrier due to the ingredient being an empty tag, try and check if it is the stack we added
+            ItemStack item = items[0];
+            return item.getItem() == Items.BARRIER && item.getHoverName() instanceof TextComponent hoverName && hoverName.getText().startsWith("Empty Tag: ");
+        }
+        return false;
     }
 
     public static <T> void deserializeTagAdditions(List<Tag.Entry> list, JsonObject json, List<Tag.BuilderEntry> allList)
