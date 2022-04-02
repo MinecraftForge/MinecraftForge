@@ -404,7 +404,7 @@ public final class RegistryObject<T> implements Supplier<T>
 
     /**
      * Returns the resource key that points to the registry and name of this registry object.
-     * Nullable only when the deprecated functions {@link #of(ResourceLocation, Class, String)} or {@link #of(ResourceLocation, Supplier)} are used.
+     * Nullable only when the deprecated factories {@link #of(ResourceLocation, Class, String)} or {@link #of(ResourceLocation, Supplier)} are used.
      *
      * @return the resource key that points to the registry and name of this registry object
      */
