@@ -396,6 +396,18 @@ public final class RegistryObject<T> implements Supplier<T>
         return this.name;
     }
 
+    /**
+     * Returns the resource key that points to the registry and name of this registry object.
+     * Nullable only when the deprecated functions {@link #of(ResourceLocation, Class, String)} or {@link #of(ResourceLocation, Supplier)} are used.
+     *
+     * @return the resource key that points to the registry and name of this registry object
+     */
+    @Nullable
+    public ResourceKey<T> getKey()
+    {
+        return this.key;
+    }
+
     public Stream<T> stream() {
         return isPresent() ? Stream.of(get()) : Stream.of();
     }
