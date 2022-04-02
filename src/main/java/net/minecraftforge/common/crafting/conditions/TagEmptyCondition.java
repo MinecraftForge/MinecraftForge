@@ -7,14 +7,11 @@ package net.minecraftforge.common.crafting.conditions;
 
 import com.google.gson.JsonObject;
 
-import net.minecraft.core.HolderSet;
 import net.minecraft.core.Registry;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.resources.ResourceLocation;
-
-import java.util.Iterator;
 
 public class TagEmptyCondition implements ICondition
 {
@@ -43,9 +40,15 @@ public class TagEmptyCondition implements ICondition
     }
 
     @Override
+    public boolean test(ICondition.IContext context)
+    {
+        return context.getTag(tag).getValues().isEmpty();
+    }
+
+    @Override
     public boolean test()
     {
-        return !Registry.ITEM.getTag(tag).map(HolderSet.Named::iterator).map(Iterator::hasNext).orElse(false);
+        return test(IContext.EMPTY);
     }
 
     @Override

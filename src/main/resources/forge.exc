@@ -1,3 +1,4 @@
+net/minecraft/advancements/Advancement$Builder.fromJson(Lcom/google/gson/JsonObject;Lnet/minecraft/advancements/critereon/DeserializationContext;Lnet/minecraftforge/common/crafting/conditions/ICondition$IContext;)Lnet/minecraft/advancements/Advancement$Builder;=|p_138381_,p_138382_,context
 net/minecraft/client/Minecraft.doLoadLevel(Ljava/lang/String;Ljava/util/function/Function;Ljava/util/function/Function;ZLnet/minecraft/client/Minecraft$ExperimentalDialogType;Z)V=|p_205206_,p_205207_,p_205208_,p_205209_,p_205210_,creating
 net/minecraft/client/gui/screens/MenuScreens.getScreenFactory(Lnet/minecraft/world/inventory/MenuType;Lnet/minecraft/client/Minecraft;ILnet/minecraft/network/chat/Component;)Ljava/util/Optional;=|p_96202_,p_96203_,p_96204_,p_96205_
 net/minecraft/client/renderer/FogRenderer.setupFog(Lnet/minecraft/client/Camera;Lnet/minecraft/client/renderer/FogRenderer$FogMode;FZF)V=|p_109025_,p_109026_,p_109027_,p_109028_,partialTicks
@@ -23,6 +24,7 @@ net/minecraft/data/tags/ItemTagsProvider.<init>(Lnet/minecraft/data/DataGenerato
 net/minecraft/data/tags/TagsProvider.<init>(Lnet/minecraft/data/DataGenerator;Lnet/minecraft/core/Registry;Ljava/lang/String;Lnet/minecraftforge/common/data/ExistingFileHelper;)V=|p_126546_,p_126547_,modId,existingFileHelper
 net/minecraft/gametest/framework/GameTestRegistry.register(Ljava/lang/reflect/Method;Ljava/util/Set;)V=|p_177504_,allowedNamespaces
 net/minecraft/network/FriendlyByteBuf.writeItemStack(Lnet/minecraft/world/item/ItemStack;Z)Lnet/minecraft/network/FriendlyByteBuf;=|p_130056_,limitedTag
+net/minecraft/server/ServerAdvancementManager.<init>(Lnet/minecraft/world/level/storage/loot/PredicateManager;Lnet/minecraftforge/common/crafting/conditions/ICondition$IContext;)V=|p_136027_,context
 net/minecraft/server/dedicated/DedicatedServer.sendMessage(Lnet/minecraft/network/chat/Component;Ljava/util/UUID;)V=|message,p_108776_
 net/minecraft/server/level/ServerLevel.removeEntity(Lnet/minecraft/world/entity/Entity;Z)V=|p_8868_,keepData
 net/minecraft/server/level/ServerLevel.removeEntityComplete(Lnet/minecraft/world/entity/Entity;Z)V=|p_8865_,keepData
@@ -45,6 +47,8 @@ net/minecraft/world/item/ItemStack.onItemUse(Lnet/minecraft/world/item/context/U
 net/minecraft/world/item/ItemStack.onItemUseFirst(Lnet/minecraft/world/item/context/UseOnContext;)Lnet/minecraft/world/InteractionResult;=|p_41662_
 net/minecraft/world/item/MapItem.getCustomMapData(Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/level/Level;)Lnet/minecraft/world/level/saveddata/maps/MapItemSavedData;=|p_42910_,p_42911_
 net/minecraft/world/item/alchemy/PotionBrewing$Mix.<init>(Lnet/minecraftforge/registries/ForgeRegistryEntry;Lnet/minecraft/world/item/crafting/Ingredient;Lnet/minecraftforge/registries/ForgeRegistryEntry;)V=|p_43536_,p_43537_,p_43538_
+net/minecraft/world/item/crafting/RecipeManager.<init>(Lnet/minecraftforge/common/crafting/conditions/ICondition$IContext;)V=|context
+net/minecraft/world/item/crafting/RecipeManager.fromJson(Lnet/minecraft/resources/ResourceLocation;Lcom/google/gson/JsonObject;Lnet/minecraftforge/common/crafting/conditions/ICondition$IContext;)Lnet/minecraft/world/item/crafting/Recipe;=|p_44046_,p_44047_,context
 net/minecraft/world/level/Level.markAndNotifyBlock(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/chunk/LevelChunk;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/block/state/BlockState;II)V=|p_46605_,levelchunk,blockstate,p_46606_,p_46607_,p_46608_
 net/minecraft/world/level/LevelSettings.<init>(Ljava/lang/String;Lnet/minecraft/world/level/GameType;ZLnet/minecraft/world/Difficulty;ZLnet/minecraft/world/level/GameRules;Lnet/minecraft/world/level/DataPackConfig;Lcom/mojang/serialization/Lifecycle;)V=|p_46910_,p_46911_,p_46912_,p_46913_,p_46914_,p_46915_,p_46916_,lifecycle
 net/minecraft/world/level/block/FireBlock.tryCatchFire(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;ILjava/util/Random;ILnet/minecraft/core/Direction;)V=|p_53432_,p_53433_,p_53434_,p_53435_,p_53436_,face

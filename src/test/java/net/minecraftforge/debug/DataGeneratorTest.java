@@ -235,6 +235,36 @@ public class DataGeneratorTest
                     .generateAdvancement()
                     .build(consumer, new ResourceLocation("data_gen_test", "conditional2"));
 
+            ConditionalRecipe.builder()
+                    .addCondition(
+                            tagEmpty(ItemTags.PLANKS)
+                    )
+                    .addRecipe(
+                            ShapedRecipeBuilder.shaped(Blocks.NETHERITE_BLOCK, 1)
+                                    .pattern("XX")
+                                    .pattern("XX")
+                                    .define('X', Blocks.DIAMOND_BLOCK)
+                                    .group("")
+                                    .unlockedBy("has_diamond_block", has(Blocks.DIAMOND_BLOCK))
+                                    ::save
+                    )
+                    .addCondition(
+                            not(
+                                    tagEmpty(ItemTags.PLANKS)
+                            )
+                    )
+                    .addRecipe(
+                            ShapedRecipeBuilder.shaped(Blocks.NETHERITE_BLOCK, 9)
+                                    .pattern("XX")
+                                    .pattern("XX")
+                                    .define('X', Blocks.DIAMOND_BLOCK)
+                                    .group("")
+                                    .unlockedBy("has_diamond_block", has(Blocks.DIAMOND_BLOCK))
+                                    ::save
+                    )
+                    .generateAdvancement()
+                    .build(consumer, new ResourceLocation("data_gen_test", "conditional3"));
+
             // ingredient tests
             // strict NBT match - should match an unnamed iron pickaxe that lost 3 durability
             Ingredient nbtIngredient = NBTIngredient.of(Util.make(() ->

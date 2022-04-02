@@ -199,12 +199,30 @@ public class CraftingHelper
         return new ItemStack(item, GsonHelper.getAsInt(json, "count", 1));
     }
 
+    /**
+     * @deprecated Please use the {@linkplain #processConditions(JsonObject, String, ICondition.IContext) other more general overload}.
+     */
+    @Deprecated(forRemoval = true, since = "1.18.2")
     public static boolean processConditions(JsonObject json, String memberName)
     {
-        return !json.has(memberName) || processConditions(GsonHelper.getAsJsonArray(json, memberName));
+        return processConditions(json, memberName, ICondition.IContext.EMPTY);
     }
 
+    public static boolean processConditions(JsonObject json, String memberName, ICondition.IContext context)
+    {
+        return !json.has(memberName) || processConditions(GsonHelper.getAsJsonArray(json, memberName), context);
+    }
+
+    /**
+     * @deprecated Please use the {@linkplain #processConditions(JsonArray, ICondition.IContext) other more general overload}.
+     */
+    @Deprecated(forRemoval = true, since = "1.18.2")
     public static boolean processConditions(JsonArray conditions)
+    {
+        return processConditions(conditions, ICondition.IContext.EMPTY);
+    }
+
+    public static boolean processConditions(JsonArray conditions, ICondition.IContext context)
     {
         for (int x = 0; x < conditions.size(); x++)
         {
@@ -212,7 +230,7 @@ public class CraftingHelper
                 throw new JsonSyntaxException("Conditions must be an array of JsonObjects");
 
             JsonObject json = conditions.get(x).getAsJsonObject();
-            if (!CraftingHelper.getCondition(json).test())
+            if (!CraftingHelper.getCondition(json).test(context))
                 return false;
         }
         return true;
