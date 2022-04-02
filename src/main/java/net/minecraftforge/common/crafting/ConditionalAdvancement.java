@@ -29,6 +29,9 @@ public class ConditionalAdvancement
         return new Builder();
     }
 
+    /**
+     * @deprecated Please use {@linkplain #processConditional(JsonObject, ICondition.IContext) the more general overload}.
+     */
     @Deprecated(forRemoval = true, since = "1.18.2")
     @Nullable
     public static JsonObject processConditional(JsonObject json) {

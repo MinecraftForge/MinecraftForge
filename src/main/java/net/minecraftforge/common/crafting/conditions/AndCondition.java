@@ -43,7 +43,6 @@ public class AndCondition implements ICondition
         return NAME;
     }
 
-
     @Override
     public boolean test()
     {

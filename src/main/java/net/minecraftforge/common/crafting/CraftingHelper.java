@@ -199,8 +199,12 @@ public class CraftingHelper
         return new ItemStack(item, GsonHelper.getAsInt(json, "count", 1));
     }
 
+    /**
+     * @deprecated Please use the {@linkplain #processConditions(JsonObject, String, ICondition.IContext) other more general overload}.
+     */
     @Deprecated(forRemoval = true, since = "1.18.2")
-    public static boolean processConditions(JsonObject json, String memberName) {
+    public static boolean processConditions(JsonObject json, String memberName)
+    {
         return processConditions(json, memberName, ICondition.IContext.EMPTY);
     }
 
@@ -209,6 +213,9 @@ public class CraftingHelper
         return !json.has(memberName) || processConditions(GsonHelper.getAsJsonArray(json, memberName), context);
     }
 
+    /**
+     * @deprecated Please use the {@linkplain #processConditions(JsonArray, ICondition.IContext) other more general overload}.
+     */
     @Deprecated(forRemoval = true, since = "1.18.2")
     public static boolean processConditions(JsonArray conditions)
     {
