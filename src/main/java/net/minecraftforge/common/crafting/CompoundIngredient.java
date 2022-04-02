@@ -156,7 +156,7 @@ public class CompoundIngredient extends AbstractIngredient
     @Override
     public boolean isEmpty()
     {
-        return getItems().length == 0;
+        return children.stream().allMatch(Ingredient::isEmpty);
     }
 
     public static class Serializer implements IIngredientSerializer<CompoundIngredient>
