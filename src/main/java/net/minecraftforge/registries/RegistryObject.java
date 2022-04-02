@@ -198,7 +198,7 @@ public final class RegistryObject<T> implements Supplier<T>
         return new RegistryObject<>(name, registryName, modid, true);
     }
 
-    private static RegistryObject<?> EMPTY = new RegistryObject<>();
+    private static final RegistryObject<?> EMPTY = new RegistryObject<>();
 
     private static <T> RegistryObject<T> empty() {
         @SuppressWarnings("unchecked")
@@ -325,6 +325,8 @@ public final class RegistryObject<T> implements Supplier<T>
     @Deprecated(since = "1.18.1") // TODO: make package-private
     public void updateReference(IForgeRegistry<? extends T> registry)
     {
+        if (this.name == null)
+            return;
         if (registry.containsKey(this.name))
         {
             this.value = registry.getValue(this.name);
@@ -342,6 +344,8 @@ public final class RegistryObject<T> implements Supplier<T>
     @SuppressWarnings("unchecked")
     void updateReference(Registry<? extends T> registry)
     {
+        if (this.name == null)
+            return;
         if (registry.containsKey(this.name))
         {
             this.value = registry.get(this.name);
@@ -359,6 +363,8 @@ public final class RegistryObject<T> implements Supplier<T>
     @SuppressWarnings("unchecked")
     void updateReference(ResourceLocation registryName)
     {
+        if (this.name == null)
+            return;
         IForgeRegistry<? extends T> forgeRegistry = RegistryManager.ACTIVE.getRegistry(registryName);
         if (forgeRegistry != null)
         {
