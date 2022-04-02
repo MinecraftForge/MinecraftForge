@@ -40,6 +40,6 @@ public class ConditionContext implements ICondition.IContext
 				loadedTags.put(loadResult.key(), (Map) Collections.unmodifiableMap(loadResult.tags()));
 			}
 		}
-		return (Map) loadedTags.get(registry);
+		return (Map) loadedTags.getOrDefault(registry, Collections.emptyMap());
 	}
 }
