@@ -45,7 +45,7 @@ public class ObjectHolderRegistry
      * and hashCode function to de-duplicate callers here.
      * The default @ObjectHolder implementation uses the hashCode/equals for the field the annotation is on.
      */
-    public static void addHandler(Consumer<Predicate<ResourceLocation>> ref)
+    public static synchronized void addHandler(Consumer<Predicate<ResourceLocation>> ref)
     {
         objectHolders.add(ref);
     }
@@ -59,7 +59,7 @@ public class ObjectHolderRegistry
      *
      * @return true if handler was matched and removed.
      */
-    public static boolean removeHandler(Consumer<Predicate<ResourceLocation>> ref)
+    public static synchronized boolean removeHandler(Consumer<Predicate<ResourceLocation>> ref)
     {
         return objectHolders.remove(ref);
     }
@@ -171,7 +171,24 @@ public class ObjectHolderRegistry
 
     public static void applyObjectHolders(Predicate<ResourceLocation> filter)
     {
-        objectHolders.forEach(e -> e.accept(filter));
+        RuntimeException aggregate = new RuntimeException("Failed to apply some object holders, see suppressed exceptions for details");
+        objectHolders.forEach(objectHolder -> {
+            try
+            {
+                objectHolder.accept(filter);
+            }
+            catch (Exception e)
+            {
+                aggregate.addSuppressed(e);
+            }
+        });
+
+        if (aggregate.getSuppressed().length > 0)
+        {
+            // Something had an exception, log and propagate with a throw for when FML eventually logs this too
+            LOGGER.error("", aggregate);
+            throw aggregate;
+        }
     }
 
 }

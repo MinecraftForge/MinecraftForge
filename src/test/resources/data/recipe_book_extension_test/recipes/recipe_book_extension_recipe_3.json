@@ -1,0 +1,25 @@
+{
+  "type": "recipe_book_extension_test:test_recipe",
+  "conditions" : [
+    {
+      "type" : "forge:false"
+    }
+  ],
+  "result": {
+    "id": "netherite_block",
+    "Count" : 1
+  },
+  "group": "test_2",
+  "pattern": [
+    "TA",
+    "A "
+  ],
+  "key": {
+    "T": {
+      "item": "minecraft:stone"
+    },
+    "A" : {
+      "item" : "gold_ingot"
+    }
+  }
+}

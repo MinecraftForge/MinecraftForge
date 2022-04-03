@@ -10,7 +10,11 @@ import com.mojang.serialization.Lifecycle;
 
 import java.util.*;
 
+
 import net.minecraft.server.Bootstrap;
+
+import net.minecraft.data.BuiltinRegistries;
+
 import net.minecraft.world.level.block.AirBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -59,6 +63,7 @@ import net.minecraftforge.common.util.LogMessageAdapter;
 import net.minecraftforge.common.world.ForgeWorldPreset;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.RegistryEvent.MissingMappings;
+import net.minecraftforge.fml.ModLoader;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.IModStateTransition;
 import net.minecraftforge.fml.StartupMessageManager;
@@ -396,10 +401,15 @@ public class GameData
             final ResourceLocation rl = event.getName();
             ForgeRegistry<?> fr = (ForgeRegistry<?>) event.getRegistry();
             fr.freeze();
-            LOGGER.debug(REGISTRIES, "Applying holder lookups: {}", rl.toString());
-            ObjectHolderRegistry.applyObjectHolders(rl::equals);
-            LOGGER.debug(REGISTRIES, "Holder lookups applied: {}", rl.toString());
+            applyHolderLookups(rl);
         }, executor).handle((v, t)->t != null ? Collections.singletonList(t): Collections.emptyList());
+    }
+
+    private static void applyHolderLookups(ResourceLocation registryName)
+    {
+        LOGGER.debug(REGISTRIES, "Applying holder lookups: {}", registryName);
+        ObjectHolderRegistry.applyObjectHolders(registryName::equals);
+        LOGGER.debug(REGISTRIES, "Holder lookups applied: {}", registryName);
     }
 
     @SuppressWarnings("deprecation")
@@ -410,9 +420,26 @@ public class GameData
                 revertTo(RegistryManager.VANILLA, false);
                 LOGGER.fatal("Detected errors during registry event dispatch, roll back to VANILLA complete");
             } else {
+                RegistryManager.getVanillaRegistryKeys().forEach(registryName -> {
+                    Registry<?> registry = Registry.REGISTRY.get(registryName);
+                    if (registry == null)
+                        return;
+                    postVanillaRegisterEvent(registry);
+                });
+                BuiltinRegistries.REGISTRY.forEach(GameData::postVanillaRegisterEvent);
                 net.minecraftforge.common.ForgeHooks.modifyAttributes();
             }
         }, executor);
+    }
+
+    @SuppressWarnings("removal")
+    private static void postVanillaRegisterEvent(Registry<?> registry)
+    {
+        if (RegistryManager.ACTIVE.getRegistry(registry.key().location()) != null)
+            return;
+
+        ModLoader.get().postEvent(new VanillaRegisterEvent(registry));
+        applyHolderLookups(registry.key().location());
     }
 
     //Lets us clear the map so we can rebuild it.

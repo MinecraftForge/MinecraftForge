@@ -190,5 +190,8 @@
   "generic.reachDistance": "Reach Distance",
 
   "fluid.minecraft.milk": "Milk",
-  "fluid.minecraft.flowing_milk": "Milk"
+  "fluid.minecraft.flowing_milk": "Milk",
+
+  "forge.experimentalsettings.tooltip": "This world uses experimental settings, which could stop working at any time.",
+  "forge.selectWorld.backupWarning.experimental.additional" : "This message will not show again for this world."
 }
