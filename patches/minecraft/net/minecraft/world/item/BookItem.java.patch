@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/item/BookItem.java
++++ b/net/minecraft/world/item/BookItem.java
+@@ -12,4 +_,8 @@
+    public int m_6473_() {
+       return 1;
+    }
++
++   public ItemStack createEnchantedBook(ItemStack stack) {
++      return new ItemStack(Items.f_42690_);
++   }
+ }

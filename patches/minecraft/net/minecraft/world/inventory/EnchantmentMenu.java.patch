@@ -37,6 +37,15 @@
                 }
  
                 for(int l = 0; l < 3; ++l) {
+@@ -146,7 +_,7 @@
+                   p_39465_.m_7408_(itemstack, i);
+                   boolean flag = itemstack.m_150930_(Items.f_42517_);
+                   if (flag) {
+-                     itemstack2 = new ItemStack(Items.f_42690_);
++                     itemstack2 = ((net.minecraft.world.item.BookItem) itemstack.m_41720_()).createEnchantedBook(itemstack);
+                      CompoundTag compoundtag = itemstack.m_41783_();
+                      if (compoundtag != null) {
+                         itemstack2.m_41751_(compoundtag.m_6426_());
 @@ -235,7 +_,7 @@
              if (!this.m_38903_(itemstack1, 2, 38, true)) {
                 return ItemStack.f_41583_;

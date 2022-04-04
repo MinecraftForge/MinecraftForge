@@ -69,6 +69,15 @@
     }
  
     public boolean m_204117_(TagKey<Item> p_204118_) {
+@@ -198,7 +_,7 @@
+    }
+ 
+    public boolean m_150930_(Item p_150931_) {
+-      return this.m_41720_() == p_150931_;
++      return this.m_41720_().is(this, p_150931_);
+    }
+ 
+    public Stream<TagKey<Item>> m_204131_() {
 @@ -206,6 +_,15 @@
     }
  

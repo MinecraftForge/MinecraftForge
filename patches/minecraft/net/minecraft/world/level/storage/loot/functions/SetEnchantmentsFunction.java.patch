@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/level/storage/loot/functions/SetEnchantmentsFunction.java
++++ b/net/minecraft/world/level/storage/loot/functions/SetEnchantmentsFunction.java
+@@ -53,7 +_,7 @@
+          object2intmap.put(p_165353_, p_165354_.m_142683_(p_165347_));
+       });
+       if (p_165346_.m_41720_() == Items.f_42517_) {
+-         ItemStack itemstack = new ItemStack(Items.f_42690_);
++         ItemStack itemstack = ((net.minecraft.world.item.BookItem) p_165346_.m_41720_()).createEnchantedBook(p_165346_);
+          object2intmap.forEach((p_165343_, p_165344_) -> {
+             EnchantedBookItem.m_41153_(itemstack, new EnchantmentInstance(p_165343_, p_165344_));
+          });

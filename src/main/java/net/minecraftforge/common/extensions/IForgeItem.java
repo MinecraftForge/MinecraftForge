@@ -782,4 +782,20 @@ public interface IForgeItem
         return 0;
     }
 
+    /**
+     * Used to test if this item is "sufficiently equivalent" to another item.<br>
+     * Overriding this can be used to "impersonate" a particular item for certain comparison operations.<br>
+     * <br>
+     * "Sufficiently Equivalent" implies that this item is a drop-in replacement for the "other" item, and should be able to handle
+     * all operations the "other" item would need to. This requires being a subclass or instance of the "other" item's class.<br>
+     * <br>
+     * Contractually, returning true to this method implies <pre>other.getClass().isInstance(this) == true</pre>
+     *
+     * @param stack An ItemStack containing this item.
+     * @param other The Item being checked against.
+     * @return If this item is "sufficiently equivalent" to the other item.
+     */
+    default boolean is(ItemStack stack, Item other) {
+        return self() == other;
+    }
 }

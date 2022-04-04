@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/level/storage/loot/functions/EnchantRandomlyFunction.java
++++ b/net/minecraft/world/level/storage/loot/functions/EnchantRandomlyFunction.java
+@@ -66,7 +_,7 @@
+    private static ItemStack m_80424_(ItemStack p_80425_, Enchantment p_80426_, Random p_80427_) {
+       int i = Mth.m_14072_(p_80427_, p_80426_.m_44702_(), p_80426_.m_6586_());
+       if (p_80425_.m_150930_(Items.f_42517_)) {
+-         p_80425_ = new ItemStack(Items.f_42690_);
++         p_80425_ = ((net.minecraft.world.item.BookItem) p_80425_.m_41720_()).createEnchantedBook(p_80425_);
+          EnchantedBookItem.m_41153_(p_80425_, new EnchantmentInstance(p_80426_, i));
+       } else {
+          p_80425_.m_41663_(p_80426_, i);

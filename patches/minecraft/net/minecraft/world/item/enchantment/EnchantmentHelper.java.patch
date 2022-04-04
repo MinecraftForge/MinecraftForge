@@ -9,6 +9,15 @@
        if (i <= 0) {
           return 0;
        } else {
+@@ -319,7 +_,7 @@
+       List<EnchantmentInstance> list = m_44909_(p_44878_, p_44879_, p_44880_, p_44881_);
+       boolean flag = p_44879_.m_150930_(Items.f_42517_);
+       if (flag) {
+-         p_44879_ = new ItemStack(Items.f_42690_);
++         p_44879_ = ((net.minecraft.world.item.BookItem) p_44879_.m_41720_()).createEnchantedBook(p_44879_);
+       }
+ 
+       for(EnchantmentInstance enchantmentinstance : list) {
 @@ -336,7 +_,7 @@
     public static List<EnchantmentInstance> m_44909_(Random p_44910_, ItemStack p_44911_, int p_44912_, boolean p_44913_) {
        List<EnchantmentInstance> list = Lists.newArrayList();
