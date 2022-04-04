@@ -12,7 +12,7 @@
        Registry<StructureSet> registry2 = p_209717_.m_175515_(Registry.f_211073_);
        Registry<LevelStem> registry3 = DimensionType.m_204490_(p_209717_, i);
        String s = p_209718_.f_207545_();
-+      net.minecraftforge.common.world.ForgeWorldPreset type = net.minecraftforge.registries.ForgeRegistries.WORLD_TYPES.getValue(new net.minecraft.resources.ResourceLocation(s));
++      net.minecraftforge.common.world.ForgeWorldPreset type = net.minecraftforge.registries.ForgeRegistries.WORLD_TYPES.get().getValue(new net.minecraft.resources.ResourceLocation(s));
 +      if (type != null) return type.createSettings(p_209717_, i, p_209718_.f_207544_(), false, s);
        switch(s) {
        case "flat":

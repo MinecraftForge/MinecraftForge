@@ -25,6 +25,7 @@ import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.google.common.base.Strings;
 import com.google.common.base.Suppliers;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
@@ -45,10 +46,12 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import it.unimi.dsi.fastutil.longs.LongSet;
+import net.minecraft.ResourceLocationException;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.core.*;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -147,6 +150,7 @@ import net.minecraftforge.event.entity.player.AnvilRepairEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.event.entity.player.CriticalHitEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.event.entity.living.LivingGetProjectileEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BiomeLoadingEvent;
 import net.minecraftforge.event.world.BlockEvent;
@@ -1012,6 +1016,16 @@ public class ForgeHooks
     }
 
     /**
+     * Hook to fire {@link LivingGetProjectileEvent}. Returns the ammo to be used.
+     */
+    public static ItemStack getProjectile(LivingEntity entity, ItemStack projectileWeaponItem, ItemStack projectile)
+    {
+        LivingGetProjectileEvent event = new LivingGetProjectileEvent(entity, projectileWeaponItem, projectile);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event.getProjectileItemStack();
+    }
+
+    /**
      * Used as the default implementation of {@link Item#getCreatorModId}. Call that method instead.
      */
     @Nullable
@@ -1096,7 +1110,7 @@ public class ForgeHooks
         }
     }
 
-    private static final Map<EntityDataSerializer<?>, DataSerializerEntry> serializerEntries = GameData.getSerializerMap();
+    private static Map<EntityDataSerializer<?>, DataSerializerEntry> serializerEntries = GameData.getSerializerMap();
     //private static final ForgeRegistry<DataSerializerEntry> serializerRegistry = (ForgeRegistry<DataSerializerEntry>) ForgeRegistries.DATA_SERIALIZERS;
     // Do not reimplement this ^ it introduces a chicken-egg scenario by classloading registries during bootstrap
 
@@ -1106,7 +1120,7 @@ public class ForgeHooks
         EntityDataSerializer<?> serializer = vanilla.byId(id);
         if (serializer == null)
         {
-            DataSerializerEntry entry = ((ForgeRegistry<DataSerializerEntry>)ForgeRegistries.DATA_SERIALIZERS).getValue(id);
+            DataSerializerEntry entry = ((ForgeRegistry<DataSerializerEntry>)ForgeRegistries.DATA_SERIALIZERS.get()).getValue(id);
             if (entry != null) serializer = entry.getSerializer();
         }
         return serializer;
@@ -1117,8 +1131,16 @@ public class ForgeHooks
         int id = vanilla.getId(serializer);
         if (id < 0)
         {
-            DataSerializerEntry entry = serializerEntries.get(serializer);
-            if (entry != null) id = ((ForgeRegistry<DataSerializerEntry>)ForgeRegistries.DATA_SERIALIZERS).getID(entry);
+            // ForgeRegistries.DATA_SERIALIZERS is a deferred register now, so if this method is called too early, the serializer map will be null
+            // This should keep checking until it's not null
+            if (serializerEntries == null)
+                serializerEntries = GameData.getSerializerMap();
+            if (serializerEntries != null)
+            {
+                DataSerializerEntry entry = serializerEntries.get(serializer);
+                if (entry != null)
+                    id = ((ForgeRegistry<DataSerializerEntry>) ForgeRegistries.DATA_SERIALIZERS.get()).getID(entry);
+            }
         }
         return id;
     }
@@ -1393,4 +1415,54 @@ public class ForgeHooks
             LOGGER.error(WORLDPERSISTENCE, buf.toString());
         }
     }
+
+    public static String encodeLifecycle(Lifecycle lifecycle)
+    {
+        if (lifecycle == Lifecycle.stable())
+            return "stable";
+        if (lifecycle == Lifecycle.experimental())
+            return "experimental";
+        if (lifecycle instanceof Lifecycle.Deprecated dep)
+            return "deprecated=" + dep.since();
+        throw new IllegalArgumentException("Unknown lifecycle.");
+    }
+
+    public static Lifecycle parseLifecycle(String lifecycle)
+    {
+        if (lifecycle.equals("stable"))
+            return Lifecycle.stable();
+        if (lifecycle.equals("experimental"))
+            return Lifecycle.experimental();
+        if (lifecycle.startsWith("deprecated="))
+            return Lifecycle.deprecated(Integer.parseInt(lifecycle.substring(lifecycle.indexOf('=') + 1)));
+        throw new IllegalArgumentException("Unknown lifecycle.");
+    }
+  
+    public static void saveMobEffect(CompoundTag nbt, String key, MobEffect effect)
+    {
+        var registryName = effect.getRegistryName();
+        if (registryName != null)
+        {
+            nbt.putString(key, registryName.toString());
+        }
+    }
+
+    @Nullable
+    public static MobEffect loadMobEffect(CompoundTag nbt, String key, @Nullable MobEffect fallback)
+    {
+        var registryName = nbt.getString(key);
+        if (Strings.isNullOrEmpty(registryName))
+        {
+            return fallback;
+        }
+        try
+        {
+            return ForgeRegistries.MOB_EFFECTS.getValue(new ResourceLocation(registryName));
+        }
+        catch (ResourceLocationException e)
+        {
+            return fallback;
+        }
+    }
+
 }

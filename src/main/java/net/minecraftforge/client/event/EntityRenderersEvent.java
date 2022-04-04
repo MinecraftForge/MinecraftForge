@@ -5,8 +5,10 @@
 
 package net.minecraftforge.client.event;
 
+import com.google.common.collect.ImmutableMap;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.EntityModel;
+import net.minecraft.client.model.SkullModelBase;
 import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
@@ -20,6 +22,8 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.block.SkullBlock;
+import net.minecraft.world.level.block.SkullBlock.Type;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraftforge.client.ForgeHooksClient;
@@ -128,6 +132,38 @@ public class EntityRenderersEvent extends Event implements IModBusEvent
         public EntityModelSet getEntityModels()
         {
             return entityModels;
+        }
+    }
+
+    /**
+     * Provides a safe place to register models for the skull block
+     */
+    public static class CreateSkullModels extends EntityRenderersEvent
+    {
+        private final ImmutableMap.Builder<Type,SkullModelBase> builder;
+        private final EntityModelSet entityModelSet;
+
+        public CreateSkullModels(ImmutableMap.Builder<Type,SkullModelBase> builder, EntityModelSet entityModelSet)
+        {
+            this.builder = builder;
+            this.entityModelSet = entityModelSet;
+        }
+
+        public EntityModelSet getEntityModelSet()
+        {
+            return entityModelSet;
+        }
+
+        /**
+         * Registers the constructor for a skull block with the given {@link SkullBlock.Type}.
+         * These will be inserted into the maps used by the item, entity, and block model renderers at the appropiate time.
+         *
+         * @param type   Unique skull type. Will cause an exception if multiple mods (including vanilla) register models for the same type
+         * @param model  Model instance. A typical implementation will simply do {@code new SkullModel(entityModelSet.bakeLayer(layerLocation))}
+         */
+        public void registerSkullModel(SkullBlock.Type type, SkullModelBase model)
+        {
+            builder.put(type, model);
         }
     }
 }

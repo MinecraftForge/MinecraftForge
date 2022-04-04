@@ -8,6 +8,7 @@ package net.minecraftforge.common.crafting;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.annotation.Nullable;
 
@@ -147,59 +148,81 @@ public class CraftingHelper
         return getItemStack(json, readNBT, false);
     }
 
-    public static ItemStack getItemStack(JsonObject json, boolean readNBT, boolean disallowsAirInRecipe)
+    public static Item getItem(String itemName, boolean disallowsAirInRecipe)
     {
-        String itemName = GsonHelper.getAsString(json, "item");
         ResourceLocation itemKey = new ResourceLocation(itemName);
-
         if (!ForgeRegistries.ITEMS.containsKey(itemKey))
             throw new JsonSyntaxException("Unknown item '" + itemName + "'");
 
         Item item = ForgeRegistries.ITEMS.getValue(itemKey);
-
         if (disallowsAirInRecipe && item == Items.AIR)
             throw new JsonSyntaxException("Invalid item: " + itemName);
+        return Objects.requireNonNull(item);
+    }
 
+    public static CompoundTag getNBT(JsonElement element)
+    {
+        try
+        {
+            if (element.isJsonObject())
+                return TagParser.parseTag(GSON.toJson(element));
+            else
+                return TagParser.parseTag(GsonHelper.convertToString(element, "nbt"));
+        }
+        catch (CommandSyntaxException e)
+        {
+            throw new JsonSyntaxException("Invalid NBT Entry: " + e);
+        }
+    }
+
+    public static ItemStack getItemStack(JsonObject json, boolean readNBT, boolean disallowsAirInRecipe)
+    {
+        String itemName = GsonHelper.getAsString(json, "item");
+        Item item = getItem(itemName, disallowsAirInRecipe);
         if (readNBT && json.has("nbt"))
         {
-            // Lets hope this works? Needs test
-            try
+            CompoundTag nbt = getNBT(json.get("nbt"));
+            CompoundTag tmp = new CompoundTag();
+            if (nbt.contains("ForgeCaps"))
             {
-                JsonElement element = json.get("nbt");
-                CompoundTag nbt;
-                if(element.isJsonObject())
-                    nbt = TagParser.parseTag(GSON.toJson(element));
-                else
-                    nbt = TagParser.parseTag(GsonHelper.convertToString(element, "nbt"));
-
-                CompoundTag tmp = new CompoundTag();
-                if (nbt.contains("ForgeCaps"))
-                {
-                    tmp.put("ForgeCaps", nbt.get("ForgeCaps"));
-                    nbt.remove("ForgeCaps");
-                }
-
-                tmp.put("tag", nbt);
-                tmp.putString("id", itemName);
-                tmp.putInt("Count", GsonHelper.getAsInt(json, "count", 1));
-
-                return ItemStack.of(tmp);
+                tmp.put("ForgeCaps", nbt.get("ForgeCaps"));
+                nbt.remove("ForgeCaps");
             }
-            catch (CommandSyntaxException e)
-            {
-                throw new JsonSyntaxException("Invalid NBT Entry: " + e.toString());
-            }
+
+            tmp.put("tag", nbt);
+            tmp.putString("id", itemName);
+            tmp.putInt("Count", GsonHelper.getAsInt(json, "count", 1));
+
+            return ItemStack.of(tmp);
         }
 
         return new ItemStack(item, GsonHelper.getAsInt(json, "count", 1));
     }
 
+    /**
+     * @deprecated Please use the {@linkplain #processConditions(JsonObject, String, ICondition.IContext) other more general overload}.
+     */
+    @Deprecated(forRemoval = true, since = "1.18.2")
     public static boolean processConditions(JsonObject json, String memberName)
     {
-        return !json.has(memberName) || processConditions(GsonHelper.getAsJsonArray(json, memberName));
+        return processConditions(json, memberName, ICondition.IContext.EMPTY);
     }
 
+    public static boolean processConditions(JsonObject json, String memberName, ICondition.IContext context)
+    {
+        return !json.has(memberName) || processConditions(GsonHelper.getAsJsonArray(json, memberName), context);
+    }
+
+    /**
+     * @deprecated Please use the {@linkplain #processConditions(JsonArray, ICondition.IContext) other more general overload}.
+     */
+    @Deprecated(forRemoval = true, since = "1.18.2")
     public static boolean processConditions(JsonArray conditions)
+    {
+        return processConditions(conditions, ICondition.IContext.EMPTY);
+    }
+
+    public static boolean processConditions(JsonArray conditions, ICondition.IContext context)
     {
         for (int x = 0; x < conditions.size(); x++)
         {
@@ -207,7 +230,7 @@ public class CraftingHelper
                 throw new JsonSyntaxException("Conditions must be an array of JsonObjects");
 
             JsonObject json = conditions.get(x).getAsJsonObject();
-            if (!CraftingHelper.getCondition(json).test())
+            if (!CraftingHelper.getCondition(json).test(context))
                 return false;
         }
         return true;

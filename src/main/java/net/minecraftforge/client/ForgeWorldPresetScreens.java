@@ -65,7 +65,7 @@ public class ForgeWorldPresetScreens
 
     static void registerPresets()
     {
-        ForgeRegistries.WORLD_TYPES.forEach(wt -> {
+        ForgeRegistries.WORLD_TYPES.get().forEach(wt -> {
             GeneratorPreset gen = new GeneratorPreset(wt);
             GENERATORS.put(wt, gen);
             WorldPreset.registerGenerator(gen);

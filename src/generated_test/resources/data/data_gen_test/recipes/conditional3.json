@@ -1,0 +1,55 @@
+{
+  "type": "forge:conditional",
+  "recipes": [
+    {
+      "conditions": [
+        {
+          "tag": "minecraft:planks",
+          "type": "forge:tag_empty"
+        }
+      ],
+      "recipe": {
+        "type": "minecraft:crafting_shaped",
+        "pattern": [
+          "XX",
+          "XX"
+        ],
+        "key": {
+          "X": {
+            "item": "minecraft:diamond_block"
+          }
+        },
+        "result": {
+          "item": "minecraft:netherite_block"
+        }
+      }
+    },
+    {
+      "conditions": [
+        {
+          "value": {
+            "tag": "minecraft:planks",
+            "type": "forge:tag_empty"
+          },
+          "type": "forge:not"
+        }
+      ],
+      "recipe": {
+        "type": "minecraft:crafting_shaped",
+        "pattern": [
+          "XX",
+          "XX"
+        ],
+        "key": {
+          "X": {
+            "item": "minecraft:diamond_block"
+          }
+        },
+        "result": {
+          "item": "minecraft:netherite_block",
+          "count": 9
+        }
+      }
+    }
+  ]
+}

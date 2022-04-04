@@ -46,9 +46,15 @@ public class AndCondition implements ICondition
     @Override
     public boolean test()
     {
+        return test(IContext.EMPTY);
+    }
+
+    @Override
+    public boolean test(IContext context)
+    {
         for (ICondition child : children)
         {
-            if (!child.test())
+            if (!child.test(context))
                 return false;
         }
         return true;

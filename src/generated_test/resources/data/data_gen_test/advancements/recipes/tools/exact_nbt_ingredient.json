@@ -1,0 +1,34 @@
+{
+  "parent": "minecraft:recipes/root",
+  "rewards": {
+    "recipes": [
+      "data_gen_test:exact_nbt_ingredient"
+    ]
+  },
+  "criteria": {
+    "has_pickaxe": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "minecraft:iron_pickaxe"
+            ]
+          }
+        ]
+      }
+    },
+    "has_the_recipe": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipe": "data_gen_test:exact_nbt_ingredient"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_pickaxe",
+      "has_the_recipe"
+    ]
+  ]
+}

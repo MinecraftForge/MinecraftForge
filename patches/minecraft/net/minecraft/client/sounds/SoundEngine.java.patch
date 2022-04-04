@@ -26,7 +26,7 @@
              WeighedSoundEvents weighedsoundevents = p_120313_.m_6775_(this.f_120217_);
              ResourceLocation resourcelocation = p_120313_.m_7904_();
              if (weighedsoundevents == null) {
-@@ -389,11 +_,13 @@
+@@ -389,18 +_,21 @@
                                p_194488_.m_83654_(vec3);
                                p_194488_.m_83670_(flag);
                             });
@@ -40,7 +40,8 @@
                                   });
                                });
                             } else {
-@@ -401,6 +_,7 @@
+-                              this.f_120222_.m_120204_(sound.m_119790_(), flag2).thenAccept((p_194504_) -> {
++                              soundinstance.getStream(this.f_120222_, sound, flag2).thenAccept((p_194504_) -> {
                                   channelaccess$channelhandle.m_120154_((p_194498_) -> {
                                      p_194498_.m_83658_(p_194504_);
                                      p_194498_.m_83672_();

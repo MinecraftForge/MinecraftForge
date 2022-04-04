@@ -5,6 +5,8 @@
 
 package net.minecraftforge.common.extensions;
 
+import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
 
@@ -546,8 +548,31 @@ public interface IForgeItem
      */
     default boolean shouldCauseBlockBreakReset(ItemStack oldStack, ItemStack newStack)
     {
-        return !(newStack.getItem() == oldStack.getItem() && ItemStack.tagMatches(newStack, oldStack)
-                && (newStack.isDamageableItem() || newStack.getDamageValue() == oldStack.getDamageValue()));
+        // Fix MC-176559 mending resets mining progress / breaking animation
+        if (!newStack.is(oldStack.getItem()))
+            return true;
+
+        if (!newStack.isDamageableItem() || !oldStack.isDamageableItem())
+            return !ItemStack.tagMatches(newStack, oldStack);
+
+        CompoundTag newTag = newStack.getTag();
+        CompoundTag oldTag = oldStack.getTag();
+
+        if (newTag == null || oldTag == null)
+            return !(newTag == null && oldTag == null);
+
+        Set<String> newKeys = new HashSet<>(newTag.getAllKeys());
+        Set<String> oldKeys = new HashSet<>(oldTag.getAllKeys());
+
+        newKeys.remove(ItemStack.TAG_DAMAGE);
+        oldKeys.remove(ItemStack.TAG_DAMAGE);
+
+        if (!newKeys.equals(oldKeys))
+            return true;
+
+        return !newKeys.stream().allMatch(key -> Objects.equals(newTag.get(key), oldTag.get(key)));
+        // return !(newStack.is(oldStack.getItem()) && ItemStack.tagMatches(newStack, oldStack)
+        //         && (newStack.isDamageableItem() || newStack.getDamageValue() == oldStack.getDamageValue()));
     }
 
     /**
@@ -706,6 +731,20 @@ public interface IForgeItem
     default boolean elytraFlightTick(ItemStack stack, LivingEntity entity, int flightTicks)
     {
         return false;
+    }
+
+    /**
+     * Called by the powdered snow block to check if a living entity wearing this can walk on the snow, granting the same behavior as leather boots.
+     * Only affects items worn in the boots slot.
+     *
+     * @param stack  Stack instance
+     * @param wearer The entity wearing this ItemStack
+     *
+     * @return True if the entity can walk on powdered snow
+     */
+    default boolean canWalkOnPowderedSnow(ItemStack stack, LivingEntity wearer)
+    {
+        return stack.is(Items.LEATHER_BOOTS);
     }
 
     /**

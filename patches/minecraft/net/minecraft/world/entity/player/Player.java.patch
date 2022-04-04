@@ -346,15 +346,28 @@
        return this.m_36218_(mutablecomponent);
     }
  
-@@ -1912,7 +_,7 @@
-    }
+@@ -1895,18 +_,18 @@
+          Predicate<ItemStack> predicate = ((ProjectileWeaponItem)p_36349_.m_41720_()).m_6442_();
+          ItemStack itemstack = ProjectileWeaponItem.m_43010_(this, predicate);
+          if (!itemstack.m_41619_()) {
+-            return itemstack;
++            return net.minecraftforge.common.ForgeHooks.getProjectile(this, p_36349_, itemstack);
+          } else {
+             predicate = ((ProjectileWeaponItem)p_36349_.m_41720_()).m_6437_();
  
-    public ItemStack m_5584_(Level p_36185_, ItemStack p_36186_) {
--      this.m_36324_().m_38712_(p_36186_.m_41720_(), p_36186_);
-+      this.m_36324_().eat(p_36186_.m_41720_(), p_36186_, this);
-       this.m_36246_(Stats.f_12982_.m_12902_(p_36186_.m_41720_()));
-       p_36185_.m_6263_((Player)null, this.m_20185_(), this.m_20186_(), this.m_20189_(), SoundEvents.f_12321_, SoundSource.PLAYERS, 0.5F, p_36185_.f_46441_.nextFloat() * 0.1F + 0.9F);
-       if (this instanceof ServerPlayer) {
+             for(int i = 0; i < this.f_36093_.m_6643_(); ++i) {
+                ItemStack itemstack1 = this.f_36093_.m_8020_(i);
+                if (predicate.test(itemstack1)) {
+-                  return itemstack1;
++                  return net.minecraftforge.common.ForgeHooks.getProjectile(this, p_36349_, itemstack1);
+                }
+             }
+ 
+-            return this.f_36077_.f_35937_ ? new ItemStack(Items.f_42412_) : ItemStack.f_41583_;
++            return net.minecraftforge.common.ForgeHooks.getProjectile(this, p_36349_, this.f_36077_.f_35937_ ? new ItemStack(Items.f_42412_) : ItemStack.f_41583_);
+          }
+       }
+    }
 @@ -1991,5 +_,63 @@
        public Component m_36423_() {
           return this.f_36413_;

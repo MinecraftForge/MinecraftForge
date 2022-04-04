@@ -5,12 +5,15 @@
  import net.minecraft.resources.ResourceLocation;
  
 -public interface RecipeSerializer<T extends Recipe<?>> {
-+public interface RecipeSerializer<T extends Recipe<?>> extends net.minecraftforge.registries.IForgeRegistryEntry<RecipeSerializer<?>> {
++public interface RecipeSerializer<T extends Recipe<?>> extends net.minecraftforge.registries.IForgeRegistryEntry<RecipeSerializer<?>>, net.minecraftforge.common.extensions.IForgeRecipeSerializer<T> {
     RecipeSerializer<ShapedRecipe> f_44076_ = m_44098_("crafting_shaped", new ShapedRecipe.Serializer());
     RecipeSerializer<ShapelessRecipe> f_44077_ = m_44098_("crafting_shapeless", new ShapelessRecipe.Serializer());
     SimpleRecipeSerializer<ArmorDyeRecipe> f_44078_ = m_44098_("crafting_special_armordye", new SimpleRecipeSerializer<>(ArmorDyeRecipe::new));
-@@ -30,6 +_,7 @@
+@@ -28,8 +_,10 @@
+    RecipeSerializer<StonecutterRecipe> f_44095_ = m_44098_("stonecutting", new SingleItemRecipe.Serializer<>(StonecutterRecipe::new));
+    RecipeSerializer<UpgradeRecipe> f_44096_ = m_44098_("smithing", new UpgradeRecipe.Serializer());
  
++   //Forge: use fromJson with IContext if you need the context
     T m_6729_(ResourceLocation p_44103_, JsonObject p_44104_);
  
 +   @javax.annotation.Nullable
