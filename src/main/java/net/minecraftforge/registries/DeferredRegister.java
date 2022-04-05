@@ -454,10 +454,10 @@ public class DeferredRegister<T>
         event.create(this.registryFactory.get(), this::onFill);
     }
 
-    @SuppressWarnings({ "unchecked", "removal" })
+    @SuppressWarnings({ "unchecked", "removal", "rawtypes" })
     private void vanillaRegister(VanillaRegisterEvent event)
     {
-        if (this.registryKey != null && event.vanillaRegistry.key() == this.registryKey)
+        if (this.registryKey != null && event.vanillaRegistry.key() == (ResourceKey)this.registryKey)
         {
             this.seenRegisterEvent = true;
             for (Entry<RegistryObject<T>, Supplier<? extends T>> e : entries.entrySet())
