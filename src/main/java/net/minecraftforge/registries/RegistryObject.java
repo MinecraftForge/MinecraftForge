@@ -351,7 +351,7 @@ public final class RegistryObject<T> implements Supplier<T>
             this.value = registry.get(this.name);
             if (this.key == null)
                 this.key = (ResourceKey<T>) ResourceKey.create(registry.key(), this.name);
-            this.holder = ((Registry<T>) registry).getHolder(ResourceKey.create((ResourceKey<? extends Registry<T>>) registry.key(), this.name)).orElse(null);
+            this.holder = ((Registry<T>) registry).getHolder(this.key).orElse(null);
         }
         else
         {
