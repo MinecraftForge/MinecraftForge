@@ -16,6 +16,7 @@ import net.minecraft.core.DefaultedRegistry;
 import net.minecraft.core.IdMapper;
 import net.minecraft.core.MappedRegistry;
 import net.minecraft.core.Registry;
+import net.minecraft.data.BuiltinRegistries;
 import net.minecraft.network.syncher.EntityDataSerializer;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -52,10 +53,12 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.function.BiConsumer;
@@ -332,8 +335,10 @@ public class GameData
     }
 
     public static Stream<IModStateTransition.EventGenerator<?>> generateRegistryEvents() {
-        List<ResourceLocation> keys = Stream.concat(RegistryManager.ACTIVE.registries.keySet().stream(), RegistryManager.getVanillaRegistryKeys().stream())
-                .distinct()
+        Set<ResourceLocation> keySet = new HashSet<>(RegistryManager.ACTIVE.registries.keySet());
+        keySet.addAll(RegistryManager.getVanillaRegistryKeys());
+        keySet.addAll(BuiltinRegistries.REGISTRY.keySet());
+        List<ResourceLocation> keys = keySet.stream()
                 .sorted((o1, o2) -> String.valueOf(o1).compareToIgnoreCase(String.valueOf(o2)))
                 .collect(Collectors.toList());
 
@@ -346,7 +351,8 @@ public class GameData
 
         Map<ResourceLocation, RegisterEvent> cache = Maps.newHashMap();
         final Function<ResourceLocation, ? extends RegisterEvent> registerEventGenerator =
-                rl -> cache.computeIfAbsent(rl, k -> new RegisterEvent(ResourceKey.createRegistryKey(rl), RegistryManager.ACTIVE.getRegistry(rl), Registry.REGISTRY.get(rl)));
+                rl -> cache.computeIfAbsent(rl, k -> new RegisterEvent(ResourceKey.createRegistryKey(rl), RegistryManager.ACTIVE.getRegistry(rl),
+                        Registry.REGISTRY.containsKey(rl) ? Registry.REGISTRY.get(rl) : BuiltinRegistries.REGISTRY.get(rl)));
         return keys.stream().map(rl -> IModStateTransition.EventGenerator.fromFunction(mc -> registerEventGenerator.apply(rl)));
     }
 
