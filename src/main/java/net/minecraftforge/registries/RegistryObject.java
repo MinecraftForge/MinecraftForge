@@ -578,6 +578,19 @@ public final class RegistryObject<T> implements Supplier<T>
         }
     }
 
+    /**
+     * Returns an optional {@link Holder} instance pointing to this RegistryObject's name and value.
+     * <p>
+     * This should <b>only</b> be used in cases where vanilla code requires passing in a Holder.
+     * Mod-written code should rely on RegistryObjects or Suppliers instead.
+     * <p>
+     * The returned optional will be empty if the registry does not exist
+     * or if the deprecated factories {@link #of(ResourceLocation, Class, String)}
+     * or {@link #of(ResourceLocation, Supplier)} are used.
+     * Otherwise, the optional Holder will be present even if {@link #isPresent()} returns false.
+     *
+     * @return an optional {@link Holder} instance pointing to this RegistryObject's name and value
+     */
     @SuppressWarnings("unchecked")
     @NotNull
     public Optional<Holder<T>> getHolder()
