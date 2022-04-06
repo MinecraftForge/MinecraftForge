@@ -1,0 +1,10 @@
+--- a/net/minecraft/world/level/dimension/DimensionType.java
++++ b/net/minecraft/world/level/dimension/DimensionType.java
+@@ -192,6 +_,7 @@
+       Registry<NormalNoise.NoiseParameters> registry4 = p_204494_.m_175515_(Registry.f_194568_);
+       writableregistry.m_203505_(LevelStem.f_63972_, new LevelStem(registry.m_203538_(f_63846_), new NoiseBasedChunkGenerator(registry2, registry4, MultiNoiseBiomeSource.Preset.f_48512_.m_187104_(registry1, p_204496_), p_204495_, registry3.m_203538_(NoiseGeneratorSettings.f_64434_))), Lifecycle.stable());
+       writableregistry.m_203505_(LevelStem.f_63973_, new LevelStem(registry.m_203538_(f_63847_), new NoiseBasedChunkGenerator(registry2, registry4, new TheEndBiomeSource(registry1, p_204495_), p_204495_, registry3.m_203538_(NoiseGeneratorSettings.f_64435_))), Lifecycle.stable());
++      net.minecraftforge.common.ForgeHooks.registerDefaultDimensions(writableregistry);
+       return writableregistry;
+    }
+ 
