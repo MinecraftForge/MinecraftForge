@@ -1,0 +1,12 @@
+{
+  "type": "server_world_creation_test:server_world_creation_test",
+  "generator": {
+    "type": "minecraft:noise",
+    "seed": -831522711,
+    "settings": "server_world_creation_test:server_world_creation_test_noise",
+    "biome_source": {
+      "type": "minecraft:fixed",
+      "biome": "minecraft:plains"
+    }
+  }
+}
