@@ -5,13 +5,13 @@
 
 package net.minecraftforge.registries;
 
+import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.data.BuiltinRegistries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -23,10 +23,15 @@ import java.util.stream.Stream;
 
 public final class RegistryObject<T> implements Supplier<T>
 {
+    @Nullable
     private final ResourceLocation name;
+    @Nullable
+    private ResourceKey<T> key;
     private final boolean optionalRegistry;
     @Nullable
     private T value;
+    @Nullable
+    private Holder<T> holder;
 
     /**
      * @deprecated The uniqueness of registry super types will not be guaranteed starting in 1.19.
@@ -193,7 +198,7 @@ public final class RegistryObject<T> implements Supplier<T>
         return new RegistryObject<>(name, registryName, modid, true);
     }
 
-    private static RegistryObject<?> EMPTY = new RegistryObject<>();
+    private static final RegistryObject<?> EMPTY = new RegistryObject<>();
 
     private static <T> RegistryObject<T> empty() {
         @SuppressWarnings("unchecked")
@@ -268,6 +273,7 @@ public final class RegistryObject<T> implements Supplier<T>
     private RegistryObject(final ResourceLocation name, final ResourceLocation registryName, final String modid, boolean optionalRegistry)
     {
         this.name = name;
+        this.key = ResourceKey.create(ResourceKey.createRegistryKey(registryName), name);
         this.optionalRegistry = optionalRegistry;
         final Throwable callerStack = new Throwable("Calling Site from mod: " + modid);
         ObjectHolderRegistry.addHandler(new Consumer<>()
@@ -297,11 +303,17 @@ public final class RegistryObject<T> implements Supplier<T>
     }
 
     /**
-     * Directly retrieves the wrapped Registry Object. This value will automatically be updated when the backing registry is updated.
-     * Will throw NPE if the value is null, use isPresent to check first. Or use any of the other guarded functions.
+     * Retrieves the wrapped object in the registry.
+     * This value will automatically be updated when the backing registry is updated.
+     *
+     * @throws NullPointerException If the value is null. Use {@link #isPresent()} to check if the value exists first.
+     * @see #isPresent()
+     * @see #orElse(Object)
+     * @see #orElseGet(Supplier)
+     * @see #orElseThrow(Supplier)
      */
+    @NotNull
     @Override
-    @Nonnull
     public T get()
     {
         T ret = this.value;
@@ -309,20 +321,50 @@ public final class RegistryObject<T> implements Supplier<T>
         return ret;
     }
 
+    @SuppressWarnings("unchecked")
     @Deprecated(since = "1.18.1") // TODO: make package-private
     public void updateReference(IForgeRegistry<? extends T> registry)
     {
-        this.value = registry.containsKey(this.name) ? registry.getValue(this.name) : null;
+        if (this.name == null)
+            return;
+        if (registry.containsKey(this.name))
+        {
+            this.value = registry.getValue(this.name);
+            if (this.key == null)
+                this.key = (ResourceKey<T>) ResourceKey.create(registry.getRegistryKey(), this.name);
+            this.holder = (Holder<T>) registry.getHolder(this.name).orElse(null);
+        }
+        else
+        {
+            this.value = null;
+            this.holder = null;
+        }
     }
 
+    @SuppressWarnings("unchecked")
     void updateReference(Registry<? extends T> registry)
     {
-        this.value = registry.containsKey(this.name) ? registry.get(this.name) : null;
+        if (this.name == null)
+            return;
+        if (registry.containsKey(this.name))
+        {
+            this.value = registry.get(this.name);
+            if (this.key == null)
+                this.key = (ResourceKey<T>) ResourceKey.create(registry.key(), this.name);
+            this.holder = ((Registry<T>) registry).getHolder(this.key).orElse(null);
+        }
+        else
+        {
+            this.value = null;
+            this.holder = null;
+        }
     }
 
     @SuppressWarnings("unchecked")
     void updateReference(ResourceLocation registryName)
     {
+        if (this.name == null)
+            return;
         IForgeRegistry<? extends T> forgeRegistry = RegistryManager.ACTIVE.getRegistry(registryName);
         if (forgeRegistry != null)
         {
@@ -345,6 +387,7 @@ public final class RegistryObject<T> implements Supplier<T>
         }
 
         this.value = null;
+        this.holder = null;
     }
 
     private static boolean registryExists(ResourceLocation registryName)
@@ -357,6 +400,18 @@ public final class RegistryObject<T> implements Supplier<T>
     public ResourceLocation getId()
     {
         return this.name;
+    }
+
+    /**
+     * Returns the resource key that points to the registry and name of this registry object.
+     * Nullable only when the deprecated factories {@link #of(ResourceLocation, Class, String)} or {@link #of(ResourceLocation, Supplier)} are used.
+     *
+     * @return the resource key that points to the registry and name of this registry object
+     */
+    @Nullable
+    public ResourceKey<T> getKey()
+    {
+        return this.key;
     }
 
     public Stream<T> stream() {
@@ -521,6 +576,37 @@ public final class RegistryObject<T> implements Supplier<T>
         } else {
             throw exceptionSupplier.get();
         }
+    }
+
+    /**
+     * Returns an optional {@link Holder} instance pointing to this RegistryObject's name and value.
+     * <p>
+     * This should <b>only</b> be used in cases where vanilla code requires passing in a Holder.
+     * Mod-written code should rely on RegistryObjects or Suppliers instead.
+     * <p>
+     * The returned optional will be empty if the registry does not exist
+     * or if the deprecated factories {@link #of(ResourceLocation, Class, String)}
+     * or {@link #of(ResourceLocation, Supplier)} are used.
+     * Otherwise, the optional Holder will be present even if {@link #isPresent()} returns false.
+     *
+     * @return an optional {@link Holder} instance pointing to this RegistryObject's name and value
+     */
+    @SuppressWarnings("unchecked")
+    @NotNull
+    public Optional<Holder<T>> getHolder()
+    {
+        if (this.holder == null && this.key != null && registryExists(this.key.registry()))
+        {
+            ResourceLocation registryName = this.key.registry();
+            Registry<T> registry = (Registry<T>) Registry.REGISTRY.get(registryName);
+            if (registry == null)
+                registry = (Registry<T>) BuiltinRegistries.REGISTRY.get(registryName);
+
+            if (registry != null)
+                this.holder = registry.getOrCreateHolder(this.key);
+        }
+
+        return Optional.ofNullable(this.holder);
     }
 
     @Override
