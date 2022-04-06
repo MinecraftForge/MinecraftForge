@@ -1489,6 +1489,7 @@ public class ForgeHooks
 
     //Called from the tail of DimensionType#defaultDimensions
     public static void registerDefaultDimensions(WritableRegistry<LevelStem> writableregistry) {
+        //This will always return unless #createAndCacheWritable has been called (we're on a dedicated server creating a new world)
         if(registryAccess.get() == null || registryResouceAccess.get() == null) {
             return;
         }
