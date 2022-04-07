@@ -148,7 +148,7 @@ public class ForgeMod
         MinecraftForge.EVENT_BUS.addListener(this::mappingChanged);
         BiomeDictionary.init();
 
-        ForgeRegistries.ITEMS.tags().addOptionalTagDefaults(Tags.Items.ENCHANTING_FUELS, Set.of(Items.LAPIS_LAZULI.delegate));
+        ForgeRegistries.ITEMS.tags().addOptionalTagDefaults(Tags.Items.ENCHANTING_FUELS, Set.of(ForgeRegistries.ITEMS.getDelegateOrThrow(Items.LAPIS_LAZULI)));
     }
 
     public void registerCapabilities(RegisterCapabilitiesEvent event)

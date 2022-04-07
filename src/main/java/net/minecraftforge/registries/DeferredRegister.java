@@ -164,7 +164,6 @@ public class DeferredRegister<T>
     private DeferredRegister(IForgeRegistry<T> reg, String modid)
     {
         this(reg.getRegistryKey(), modid, false);
-        this.type = reg;
     }
 
     /**
@@ -315,8 +314,6 @@ public class DeferredRegister<T>
     public void register(IEventBus bus)
     {
         bus.register(new EventDispatcher(this));
-        if (this.registryKey != null && this.findForgeRegistry() == null)
-            bus.addListener(this::vanillaRegister);
         if (this.registryFactory != null) {
             bus.addListener(this::createRegistry);
         }
@@ -368,14 +365,13 @@ public class DeferredRegister<T>
         return new RegistryHolder<>(this.registryKey);
     }
 
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @SuppressWarnings("unchecked")
     private void onFill(IForgeRegistry<?> registry)
     {
         if (this.optionalTags == null)
             return;
 
-        // TODO 1.19: Put back the <T> here and fix the unsafe generic operations
-        ITagManager tagManager = registry.tags();
+        ITagManager<T> tagManager = (ITagManager<T>) registry.tags();
         if (tagManager == null)
             throw new IllegalStateException("The forge registry " + registry.getRegistryName() + " does not support tags, but optional tags were registered!");
 

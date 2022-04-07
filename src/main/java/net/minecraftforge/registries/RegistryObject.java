@@ -42,7 +42,7 @@ public final class RegistryObject<T> implements Supplier<T>
      */
     public static <T, U extends T> RegistryObject<U> create(final ResourceLocation name, IForgeRegistry<T> registry)
     {
-        return new RegistryObject<>(name, registry);
+        return new RegistryObject<U>(name, registry);
     }
 
     /**
@@ -139,19 +139,19 @@ public final class RegistryObject<T> implements Supplier<T>
     }
 
     @SuppressWarnings("unchecked")
-    private RegistryObject(ResourceLocation name, IForgeRegistry<? extends T> registry)
+    private RegistryObject(ResourceLocation name, IForgeRegistry<?> registry)
     {
         if (registry == null)
             throw new IllegalArgumentException("Invalid registry argument, must not be null");
         this.name = name;
-        this.key = ResourceKey.create(registry.getRegistryKey(), name);
+        this.key = (ResourceKey<T>) ResourceKey.create(registry.getRegistryKey(), name);
         this.optionalRegistry = false;
         ObjectHolderRegistry.addHandler(pred ->
         {
             if (pred.test(registry.getRegistryName()))
-                this.updateReference(registry);
+                this.updateReference((IForgeRegistry<? extends T>) registry);
         });
-        this.updateReference((registry));
+        this.updateReference((IForgeRegistry<? extends T>) registry);
     }
 
     private RegistryObject(final ResourceLocation name, final ResourceLocation registryName, final String modid, boolean optionalRegistry)
