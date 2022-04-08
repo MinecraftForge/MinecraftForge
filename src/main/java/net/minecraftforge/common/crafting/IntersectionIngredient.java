@@ -91,7 +91,7 @@ public class IntersectionIngredient extends AbstractIngredient
     @Override
     public boolean isEmpty()
     {
-        return getItems().length == 0;
+        return children.stream().anyMatch(Ingredient::isEmpty);
     }
 
     @Override

@@ -64,7 +64,7 @@ public class DifferenceIngredient extends AbstractIngredient
     @Override
     public boolean isEmpty()
     {
-        return getItems().length == 0;
+        return base.isEmpty();
     }
 
     @Override
