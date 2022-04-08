@@ -367,10 +367,6 @@ public class DeferredRegister<T>
         }
     }
 
-    public Optional<Holder<T>> getHolder(ResourceLocation location) {
-        return this.type != null ? this.type.getHolder(location) : Optional.empty();
-    }
-
     public static class EventDispatcher {
         private final DeferredRegister<?> register;
 

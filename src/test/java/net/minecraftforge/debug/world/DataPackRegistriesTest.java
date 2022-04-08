@@ -93,8 +93,8 @@ public class DataPackRegistriesTest
    @Nullable
    private static TestB createBuiltinB()
    {
-      Optional<Holder<TestA>> builtin_a = TEST_A_REGISTER.getHolder(new ResourceLocation(MODID, "builtin_a"));
-      Optional<Holder<TestA>> builtin_a_overridden = TEST_A_REGISTER.getHolder(new ResourceLocation(MODID, "builtin_a_overridden"));
+      Optional<Holder<TestA>> builtin_a = DataPackRegistriesHooks.getHolder(BUILTIN_A.getKey());
+      Optional<Holder<TestA>> builtin_a_overridden = DataPackRegistriesHooks.getHolder(ResourceKey.create(TestA.REGISTRY, new ResourceLocation(MODID, "builtin_a_overridden")));
       if (builtin_a.isEmpty() || builtin_a_overridden.isEmpty())
       {
          return null;

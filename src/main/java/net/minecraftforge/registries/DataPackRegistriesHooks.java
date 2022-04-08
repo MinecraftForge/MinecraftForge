@@ -1,17 +1,18 @@
 package net.minecraftforge.registries;
 
 import com.google.common.collect.ImmutableMap;
+import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.data.BuiltinRegistries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.world.AddBuiltinRegistryEvent;
 import net.minecraftforge.fml.ModLoader;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 public class DataPackRegistriesHooks
 {
@@ -72,5 +73,28 @@ public class DataPackRegistriesHooks
       DeferredRegister<T> deferredRegister = DeferredRegister.create(registryKey, modid);
       deferredRegister.makeRegistry(baseClass, () -> new RegistryBuilder<T>().disableSync().disableSaving().isDataPackRegistry());
       return deferredRegister;
+   }
+
+   @SuppressWarnings("unchecked")
+   public static <T> Optional<Holder<T>> getHolder(ResourceKey<T> key) {
+      if (key != null && registryExists(key.registry()))
+      {
+         ResourceLocation registryName = key.registry();
+         Registry<T> registry = (Registry<T>) Registry.REGISTRY.get(registryName);
+         if (registry == null)
+            registry = (Registry<T>) BuiltinRegistries.REGISTRY.get(registryName);
+
+         if (registry != null)
+            return Optional.of(registry.getOrCreateHolder(key));
+      }
+
+      return Optional.empty();
+   }
+
+   private static boolean registryExists(ResourceLocation registryName)
+   {
+      return RegistryManager.ACTIVE.getRegistry(registryName) != null
+            || Registry.REGISTRY.containsKey(registryName)
+            || BuiltinRegistries.REGISTRY.containsKey(registryName);
    }
 }
