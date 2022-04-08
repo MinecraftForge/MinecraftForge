@@ -27,6 +27,7 @@ public class ForgeConfig {
         public final DoubleValue zombieBabyChance;
 
         public final BooleanValue treatEmptyTagsAsAir;
+        public final BooleanValue skipEmptyShapelessCheck;
 
         public final BooleanValue fixAdvancementLoading;
 
@@ -64,6 +65,11 @@ public class ForgeConfig {
                     .comment("Vanilla will treat crafting recipes using empty tags as air, and allow you to craft with nothing in that slot. This changes empty tags to use BARRIER as the item. To prevent crafting with air.")
                     .translation("forge.configgui.treatEmptyTagsAsAir")
                     .define("treatEmptyTagsAsAir", false);
+
+            skipEmptyShapelessCheck = builder
+                  .comment("Skip checking if an ingredient is empty during shapeless recipe deserialization to prevent complex ingredients from caching tags too early.")
+                  .translation("forge.configgui.skipEmptyShapelessCheck")
+                  .define("skipEmptyShapelessCheck", true);
 
             fixAdvancementLoading = builder
                     .comment("Fix advancement loading to use a proper topological sort. This may have visibility side-effects and can thus be turned off if needed for data-pack compatibility.")
