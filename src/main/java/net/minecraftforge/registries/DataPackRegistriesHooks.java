@@ -76,7 +76,8 @@ public class DataPackRegistriesHooks
    }
 
    @SuppressWarnings("unchecked")
-   public static <T> Optional<Holder<T>> getHolder(ResourceKey<T> key) {
+   public static <T> Optional<Holder<T>> getHolder(ResourceKey<T> key)
+   {
       if (key != null && registryExists(key.registry()))
       {
          ResourceLocation registryName = key.registry();
