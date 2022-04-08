@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "###",
+    "###",
+    " # "
+  ],
+  "key": {
+    "#": {
+      "type": "forge:intersection",
+      "children": [
+        {
+          "tag": "minecraft:planks"
+        },
+        {
+          "tag": "minecraft:non_flammable_wood"
+        }
+      ]
+    }
+  },
+  "result": {
+    "item": "minecraft:netherrack"
+  }
+}

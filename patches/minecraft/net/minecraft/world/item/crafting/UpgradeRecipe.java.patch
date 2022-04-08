@@ -1,6 +1,11 @@
 --- a/net/minecraft/world/item/crafting/UpgradeRecipe.java
 +++ b/net/minecraft/world/item/crafting/UpgradeRecipe.java
-@@ -72,7 +_,7 @@
+@@ -68,11 +_,11 @@
+ 
+    public boolean m_142505_() {
+       return Stream.of(this.f_44518_, this.f_44519_).anyMatch((p_151284_) -> {
+-         return p_151284_.m_43908_().length == 0;
++         return net.minecraftforge.common.ForgeHooks.hasNoElements(p_151284_);
        });
     }
  

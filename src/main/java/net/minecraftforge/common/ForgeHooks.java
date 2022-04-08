@@ -58,6 +58,7 @@ import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.DefaultAttributes;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.*;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.gameevent.GameEvent;
@@ -150,6 +151,7 @@ import net.minecraftforge.event.entity.player.AnvilRepairEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.event.entity.player.CriticalHitEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.event.entity.living.LivingGetProjectileEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BiomeLoadingEvent;
 import net.minecraftforge.event.world.BlockEvent;
@@ -1015,6 +1017,16 @@ public class ForgeHooks
     }
 
     /**
+     * Hook to fire {@link LivingGetProjectileEvent}. Returns the ammo to be used.
+     */
+    public static ItemStack getProjectile(LivingEntity entity, ItemStack projectileWeaponItem, ItemStack projectile)
+    {
+        LivingGetProjectileEvent event = new LivingGetProjectileEvent(entity, projectileWeaponItem, projectile);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event.getProjectileItemStack();
+    }
+
+    /**
      * Used as the default implementation of {@link Item#getCreatorModId}. Call that method instead.
      */
     @Nullable
@@ -1080,6 +1092,19 @@ public class ForgeHooks
     public static int canEntitySpawn(Mob entity, LevelAccessor world, double x, double y, double z, BaseSpawner spawner, MobSpawnType spawnReason) {
         Result res = ForgeEventFactory.canEntitySpawn(entity, world, x, y, z, null, spawnReason);
         return res == Result.DEFAULT ? 0 : res == Result.DENY ? -1 : 1;
+    }
+
+    public static boolean hasNoElements(Ingredient ingredient)
+    {
+        ItemStack[] items = ingredient.getItems();
+        if (items.length == 0) return true;
+        if (items.length == 1 && !ForgeConfig.SERVER.treatEmptyTagsAsAir.get())
+        {
+            //If we potentially added a barrier due to the ingredient being an empty tag, try and check if it is the stack we added
+            ItemStack item = items[0];
+            return item.getItem() == Items.BARRIER && item.getHoverName() instanceof TextComponent hoverName && hoverName.getText().startsWith("Empty Tag: ");
+        }
+        return false;
     }
 
     public static <T> void deserializeTagAdditions(List<Tag.Entry> list, JsonObject json, List<Tag.BuilderEntry> allList)
@@ -1405,6 +1430,28 @@ public class ForgeHooks
         }
     }
 
+    public static String encodeLifecycle(Lifecycle lifecycle)
+    {
+        if (lifecycle == Lifecycle.stable())
+            return "stable";
+        if (lifecycle == Lifecycle.experimental())
+            return "experimental";
+        if (lifecycle instanceof Lifecycle.Deprecated dep)
+            return "deprecated=" + dep.since();
+        throw new IllegalArgumentException("Unknown lifecycle.");
+    }
+
+    public static Lifecycle parseLifecycle(String lifecycle)
+    {
+        if (lifecycle.equals("stable"))
+            return Lifecycle.stable();
+        if (lifecycle.equals("experimental"))
+            return Lifecycle.experimental();
+        if (lifecycle.startsWith("deprecated="))
+            return Lifecycle.deprecated(Integer.parseInt(lifecycle.substring(lifecycle.indexOf('=') + 1)));
+        throw new IllegalArgumentException("Unknown lifecycle.");
+    }
+  
     public static void saveMobEffect(CompoundTag nbt, String key, MobEffect effect)
     {
         var registryName = effect.getRegistryName();

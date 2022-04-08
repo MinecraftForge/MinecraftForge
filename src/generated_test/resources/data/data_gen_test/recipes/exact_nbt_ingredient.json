@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "type": "forge:nbt",
+      "item": "minecraft:iron_pickaxe",
+      "count": 1,
+      "nbt": "{Damage:3}"
+    }
+  ],
+  "result": {
+    "item": "minecraft:golden_pickaxe"
+  }
+}
