@@ -623,7 +623,7 @@ public interface IForgeBlockState
     default ToolModificationResult getToolModificationResult(UseOnContext context, ToolAction toolAction)
     {
         ToolModificationResult toolModificationResult = ForgeEventFactory.onToolUse(context, self(), toolAction);
-        if (toolModificationResult.failed() || (toolModificationResult.passed() && toolModificationResult.toolModifiedState() != null))
+        if (toolModificationResult.failed() || (toolModificationResult.passed() && toolModificationResult.toolModifiedState().isPresent()))
             return toolModificationResult;
 
         return self().getBlock().getToolModificationResult(self(), context, toolAction);

@@ -10,8 +10,8 @@
 -         return p_150694_.m_152465_(blockstate);
 -      });
 +      Optional<BlockState> optional = blockstate.getToolModificationResult(p_40529_, net.minecraftforge.common.ToolActions.AXE_STRIP).toolModifiedState();
-+      Optional<BlockState> optional1 = blockstate.getToolModificationResult(p_40529_, net.minecraftforge.common.ToolActions.AXE_SCRAPE).toolModifiedState();
-+      Optional<BlockState> optional2 = blockstate.getToolModificationResult(p_40529_, net.minecraftforge.common.ToolActions.AXE_WAX_OFF).toolModifiedState();
++      Optional<BlockState> optional1 = optional.isPresent() ? Optional.empty() : blockstate.getToolModificationResult(p_40529_, net.minecraftforge.common.ToolActions.AXE_SCRAPE).toolModifiedState();
++      Optional<BlockState> optional2 = optional.isPresent() || optional1.isPresent() ? Optional.empty() : blockstate.getToolModificationResult(p_40529_, net.minecraftforge.common.ToolActions.AXE_WAX_OFF).toolModifiedState();
        ItemStack itemstack = p_40529_.m_43722_();
        Optional<BlockState> optional3 = Optional.empty();
        if (optional.isPresent()) {

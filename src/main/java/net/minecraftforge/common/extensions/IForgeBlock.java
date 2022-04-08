@@ -703,7 +703,7 @@ public interface IForgeBlock
      * @deprecated Override and use {@link #getToolModificationResult(BlockState, UseOnContext, ToolAction)} instead
      */
     @Nullable
-    // TODO: Move this default implementation to getToolModificationResult in 1.19. Has to stay here to preserve behavior of overrides on this method.
+    // TODO 1.19: Move this default implementation to getToolModificationResult in 1.19. Has to stay here to preserve behavior of overrides on this method.
     @Deprecated(forRemoval = true, since = "1.18.2")
     default BlockState getToolModifiedState(BlockState state, Level level, BlockPos pos, Player player, ItemStack stack, ToolAction toolAction)
     {
