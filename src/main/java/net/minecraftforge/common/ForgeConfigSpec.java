@@ -879,6 +879,14 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
             return config.getOrElse(path, defaultSupplier);
         }
 
+        /**
+         * {@return the default value for the configuration setting}
+         */
+        public T getDefault()
+        {
+            return defaultSupplier.get();
+        }
+
         public Builder next()
         {
             return parent;
