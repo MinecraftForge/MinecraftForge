@@ -17,13 +17,14 @@ import net.minecraftforge.common.ToolAction;
 import net.minecraftforge.common.ToolActions;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
 
 @Mod("custom_shield_test")
 public class CustomShieldTest
 {
-    private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(Item.class, "custom_shield_test");
+    private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, "custom_shield_test");
 
     private static final RegistryObject<CustomShieldItem> CUSTOM_SHIELD_ITEM = ITEMS.register("custom_shield",
             () -> new CustomShieldItem((new Item.Properties()).durability(336).tab(CreativeModeTab.TAB_COMBAT)));

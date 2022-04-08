@@ -26,7 +26,15 @@
     }
  
     public int m_19557_() {
-@@ -221,12 +_,13 @@
+@@ -206,6 +_,7 @@
+ 
+    public CompoundTag m_19555_(CompoundTag p_19556_) {
+       p_19556_.m_128344_("Id", (byte)MobEffect.m_19459_(this.m_19544_()));
++      net.minecraftforge.common.ForgeHooks.saveMobEffect(p_19556_, "forge:id", this.m_19544_());
+       this.m_19567_(p_19556_);
+       return p_19556_;
+    }
+@@ -221,13 +_,15 @@
           this.f_19510_.m_19555_(compoundtag);
           p_19568_.m_128365_("HiddenEffect", compoundtag);
        }
@@ -39,8 +47,10 @@
 -      int i = p_19561_.m_128445_("Id");
 +      int i = p_19561_.m_128445_("Id") & 0xFF;
        MobEffect mobeffect = MobEffect.m_19453_(i);
++      mobeffect = net.minecraftforge.common.ForgeHooks.loadMobEffect(p_19561_, "forge:id", mobeffect);
        return mobeffect == null ? null : m_19545_(mobeffect, p_19561_);
     }
+ 
 @@ -250,7 +_,7 @@
           mobeffectinstance = m_19545_(p_19546_, p_19547_.m_128469_("HiddenEffect"));
        }

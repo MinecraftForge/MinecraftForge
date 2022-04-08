@@ -40,7 +40,7 @@ public class RegistryObjectTest
 
     public void commonSetup(FMLCommonSetupEvent event)
     {
-        LOGGER.info("Stone 1: {}", RegistryObject.of(new ResourceLocation("minecraft", "stone"), ForgeRegistries.BLOCKS).get());
-        LOGGER.info("Stone 2: {}", RegistryObject.of(new ResourceLocation("minecraft", "stone"), Block.class, MODID).get());
+        LOGGER.info("Stone 1: {}", RegistryObject.create(new ResourceLocation("minecraft", "stone"), ForgeRegistries.BLOCKS).get());
+        LOGGER.info("Stone 2: {}", RegistryObject.create(new ResourceLocation("minecraft", "stone"), ForgeRegistries.BLOCKS.getRegistryKey(), MODID).get());
     }
 }

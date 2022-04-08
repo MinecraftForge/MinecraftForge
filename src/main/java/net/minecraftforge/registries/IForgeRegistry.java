@@ -5,16 +5,19 @@
 
 package net.minecraftforge.registries;
 
+import com.mojang.serialization.Codec;
+import net.minecraft.core.Holder;
+import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.registries.tags.ITagManager;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.Collection;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import com.mojang.serialization.Codec;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 
 /**
  * Main interface for the registry system. Use this to query the registry system.
@@ -23,6 +26,7 @@ import net.minecraft.resources.ResourceLocation;
  */
 public interface IForgeRegistry<V extends IForgeRegistryEntry<V>> extends Iterable<V>
 {
+    ResourceKey<Registry<V>> getRegistryKey();
     ResourceLocation getRegistryName();
     Class<V> getRegistrySuperType();
 
@@ -38,13 +42,39 @@ public interface IForgeRegistry<V extends IForgeRegistryEntry<V>> extends Iterab
     @Nullable V getValue(ResourceLocation key);
     @Nullable ResourceLocation getKey(V value);
     @Nullable ResourceLocation getDefaultKey();
-    @Nullable Optional<ResourceKey<V>> getResourceKey(V value);
+    @NotNull Optional<ResourceKey<V>> getResourceKey(V value);
 
-    @Nonnull Set<ResourceLocation>         getKeys();
-    @Nonnull Collection<V>                 getValues();
-    @Nonnull Set<Entry<ResourceKey<V>, V>> getEntries();
+    @NotNull Set<ResourceLocation>         getKeys();
+    @NotNull Collection<V>                 getValues();
+    @NotNull Set<Entry<ResourceKey<V>, V>> getEntries();
 
-    @Nonnull Codec<V> getCodec();
+    /**
+     * @see Registry#byNameCodec()
+     */
+    @NotNull Codec<V> getCodec();
+
+    /**
+     * This method exists purely as a stopgap for vanilla compatibility.
+     * For anything tag related, use {@link #tags()}.
+     *
+     * @see Registry#getHolder(ResourceKey)
+     */
+    @NotNull Optional<Holder<V>> getHolder(ResourceKey<V> key);
+    /**
+     * This method exists purely as a stopgap for vanilla compatibility.
+     * For anything tag related, use {@link #tags()}.
+     */
+    @NotNull Optional<Holder<V>> getHolder(ResourceLocation location);
+    /**
+     * This method exists purely as a stopgap for vanilla compatibility.
+     * For anything tag related, use {@link #tags()}.
+     */
+    @NotNull Optional<Holder<V>> getHolder(V value);
+
+    /**
+     * @return an instance of {@link ITagManager} if this registry supports tags and/or has a wrapper registry, null otherwise
+     */
+    @Nullable ITagManager<V> tags();
 
     /**
      * Retrieve the slave map of type T from the registry.

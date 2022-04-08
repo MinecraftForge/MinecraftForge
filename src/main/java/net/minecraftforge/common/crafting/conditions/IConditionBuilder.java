@@ -5,6 +5,9 @@
 
 package net.minecraftforge.common.crafting.conditions;
 
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.Item;
+
 public interface IConditionBuilder
 {
     default ICondition and(ICondition... values)
@@ -40,5 +43,10 @@ public interface IConditionBuilder
     default ICondition modLoaded(String modid)
     {
         return new ModLoadedCondition(modid);
+    }
+
+    default ICondition tagEmpty(TagKey<Item> tag)
+    {
+        return new TagEmptyCondition(tag.location());
     }
 }

@@ -646,4 +646,31 @@ public interface IForgeBlockState
     {
         return self().getBlock().canConnectRedstone(self(), level, pos, direction);
     }
+
+    /**
+     * Whether this block hides the neighbors face pointed towards by the given direction.
+     * <p>
+     * This method should only be used for blocks you don't control, for your own blocks override
+     * {@link net.minecraft.world.level.block.Block#skipRendering(BlockState, BlockState, Direction)}
+     * on the respective block instead
+     *
+     * @param level The world
+     * @param pos The blocks position in the world
+     * @param neighborState The neighboring blocks {@link BlockState}
+     * @param dir The direction towards the neighboring block
+     */
+    default boolean hidesNeighborFace(BlockGetter level, BlockPos pos, BlockState neighborState, Direction dir)
+    {
+        return self().getBlock().hidesNeighborFace(level, pos, self(), neighborState, dir);
+    }
+
+    /**
+     * Whether this block allows a neighboring block to hide the face of this block it touches.
+     * If this returns true, {@link IForgeBlockState#hidesNeighborFace(BlockGetter, BlockPos, BlockState, Direction)}
+     * will be called on the neighboring block.
+     */
+    default boolean supportsExternalFaceHiding()
+    {
+        return self().getBlock().supportsExternalFaceHiding(self());
+    }
 }
