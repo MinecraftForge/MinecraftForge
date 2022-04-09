@@ -422,17 +422,16 @@ public class BlockEvent extends Event
      * {@link ToolActions#SHOVEL_FLATTEN a shovel can path}, or {@link ToolActions#HOE_TILL a hoe can till}.
      * <p>
      * This deprecated subclass event is <i>only</i> fired when {@link #isSimulate()} is false.
-     * To receive simulated events, use {@link BlockToolInteractEventNew}.
+     * To receive simulated events, use {@link BlockToolModificationEvent}.
      * <p>
      * This event is {@link Cancelable}. If canceled, this will prevent the tool
      * from changing the block's state.
      *
-     * @deprecated Use {@link BlockToolInteractEventNew} and put world-modifying actions behind <code>if (!event.isSimulate())</code>.
-     * This event will be removed in 1.19, and BlockToolInteractEventNew will be renamed to BlockToolInteractEvent.
+     * @deprecated Use {@link BlockToolModificationEvent} and put world-modifying actions behind <code>if (!event.isSimulate())</code>.
      */
     @Cancelable
     @Deprecated(forRemoval = true, since = "1.18.2")
-    public static class BlockToolInteractEvent extends BlockToolInteractEventNew
+    public static class BlockToolInteractEvent extends BlockToolModificationEvent
     {
         private final Player player;
         private final ItemStack stack;
@@ -472,15 +471,14 @@ public class BlockEvent extends Event
      * This event is {@link Cancelable}. If canceled, this will prevent the tool
      * from changing the block's state.
      */
-    // TODO 1.19: Merge with BlockToolInteractEvent
-    public static class BlockToolInteractEventNew extends BlockEvent
+    public static class BlockToolModificationEvent extends BlockEvent
     {
         private final UseOnContext context;
         private final ToolAction toolAction;
         private final boolean simulate;
         private BlockState state;
 
-        public BlockToolInteractEventNew(BlockState originalState, @Nonnull UseOnContext context, ToolAction toolAction, boolean simulate)
+        public BlockToolModificationEvent(BlockState originalState, @Nonnull UseOnContext context, ToolAction toolAction, boolean simulate)
         {
             super(context.getLevel(), context.getClickedPos(), originalState);
             this.context = context;
@@ -490,7 +488,7 @@ public class BlockEvent extends Event
         }
 
         // TODO 1.19: Remove
-        BlockToolInteractEventNew(LevelAccessor level, BlockPos pos, BlockState originalState, ToolAction toolAction)
+        BlockToolModificationEvent(LevelAccessor level, BlockPos pos, BlockState originalState, ToolAction toolAction)
         {
             super(level, pos, originalState);
             this.context = null;
