@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/item/HoeItem.java
 +++ b/net/minecraft/world/item/HoeItem.java
-@@ -30,6 +_,8 @@
+@@ -30,9 +_,11 @@
     }
  
     public InteractionResult m_6225_(UseOnContext p_41341_) {
@@ -8,7 +8,11 @@
 +      if (hook != 0) return hook > 0 ? InteractionResult.SUCCESS : InteractionResult.FAIL;
        Level level = p_41341_.m_43725_();
        BlockPos blockpos = p_41341_.m_8083_();
-       Pair<Predicate<UseOnContext>, Consumer<UseOnContext>> pair = f_41332_.get(level.m_8055_(blockpos).m_60734_());
+-      Pair<Predicate<UseOnContext>, Consumer<UseOnContext>> pair = f_41332_.get(level.m_8055_(blockpos).m_60734_());
++      Pair<Predicate<UseOnContext>, Consumer<UseOnContext>> pair = Pair.of(ctx -> ctx.m_43725_().m_8055_(ctx.m_8083_()).getToolModifiedState(ctx, net.minecraftforge.common.ToolActions.HOE_TILL, true) != null, ctx -> ctx.m_43725_().m_8055_(ctx.m_8083_()).getToolModifiedState(ctx, net.minecraftforge.common.ToolActions.HOE_TILL, false));
+       if (pair == null) {
+          return InteractionResult.PASS;
+       } else {
 @@ -72,5 +_,10 @@
  
     public static boolean m_150856_(UseOnContext p_150857_) {

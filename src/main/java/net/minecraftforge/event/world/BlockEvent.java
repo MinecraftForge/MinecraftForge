@@ -8,6 +8,7 @@ package net.minecraftforge.event.world;
 import java.util.EnumSet;
 import java.util.List;
 
+import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.portal.PortalShape;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
@@ -22,6 +23,7 @@ import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.ToolAction;
+import net.minecraftforge.common.ToolActions;
 import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
@@ -415,10 +417,9 @@ public class BlockEvent extends Event
     }
 
     /**
-     * Fired when when this block is right clicked by a tool to change its state.
-     * For example: Used to determine if an axe can strip or a shovel can path.
-     * For hoes, see {@code net.minecraft.world.item.HoeItem#TILLABLES} and
-     * {@link net.minecraftforge.event.entity.player.UseHoeEvent}.
+     * Fired when this block is right-clicked by a tool to change its state.
+     * For example: Used to determine if {@link ToolActions#AXE_STRIP an axe can strip},
+     * {@link ToolActions#SHOVEL_FLATTEN a shovel can path}, or {@link ToolActions#HOE_TILL a hoe can till}.
      *
      * This event is {@link Cancelable}. If canceled, this will prevent the tool
      * from changing the block's state.
@@ -426,19 +427,38 @@ public class BlockEvent extends Event
     @Cancelable
     public static class BlockToolInteractEvent extends BlockEvent
     {
-
+        private final UseOnContext context;
         private final Player player;
         private final ItemStack stack;
         private final ToolAction toolAction;
+        private final boolean simulate;
         private BlockState state;
 
+        public BlockToolInteractEvent(BlockState originalState, @Nonnull UseOnContext context, ToolAction toolAction, boolean simulate)
+        {
+            super(context.getLevel(), context.getClickedPos(), originalState);
+            this.context = context;
+            this.player = context.getPlayer();
+            this.stack = context.getItemInHand();
+            this.toolAction = toolAction;
+            this.state = originalState;
+            this.simulate = simulate;
+        }
+
+        /**
+         * @deprecated Use {@link #BlockToolInteractEvent(BlockState, UseOnContext, ToolAction, boolean)} instead.
+         */
+        // TODO 1.19: Remove
+        @Deprecated(forRemoval = true, since = "1.18.2")
         public BlockToolInteractEvent(LevelAccessor world, BlockPos pos, BlockState originalState, Player player, ItemStack stack, ToolAction toolAction)
         {
             super(world, pos, originalState);
+            this.context = null;
             this.player = player;
             this.stack = stack;
             this.state = originalState;
             this.toolAction = toolAction;
+            this.simulate = false;
         }
 
         /**Gets the player using the tool.*/
@@ -457,6 +477,31 @@ public class BlockEvent extends Event
         public ToolAction getToolAction()
         {
             return toolAction;
+        }
+
+        /**
+         * Returns {@code true} if this event should not perform any actions that modify the world.
+         * If {@code false}, then world-modifying actions can be performed.
+         *
+         * @return {@code true} if this event should not perform any actions that modify the world.
+         * If {@code false}, then world-modifying actions can be performed.
+         */
+        public boolean isSimulate()
+        {
+            return simulate;
+        }
+
+        /**
+         * Returns the nullable use on context that this event was performed in.
+         * Starting in 1.19, this will not be null.
+         *
+         * @return the nullable use on context that this event was performed in
+         */
+        // TODO 1.19: Remove nullable annotation
+        @Nullable
+        public UseOnContext getContext()
+        {
+            return context;
         }
 
         /**

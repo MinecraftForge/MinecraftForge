@@ -345,8 +345,8 @@ public class ForgeEventFactory
         return MinecraftForge.EVENT_BUS.post(event) ? "" : event.getMessage();
     }
 
-    //TODO: 1.17 Remove
-    @Deprecated
+    //TODO 1.19: Remove
+    @Deprecated(forRemoval = true, since = "1.18.2")
     public static int onHoeUse(UseOnContext context)
     {
         UseHoeEvent event = new UseHoeEvent(context);
@@ -360,6 +360,18 @@ public class ForgeEventFactory
     }
 
     @Nullable
+    public static BlockState onToolUse(BlockState originalState, UseOnContext context, ToolAction toolAction, boolean simulate)
+    {
+        BlockToolInteractEvent event = new BlockToolInteractEvent(originalState, context, toolAction, simulate);
+        return MinecraftForge.EVENT_BUS.post(event) ? null : event.getFinalState();
+    }
+
+    /**
+     * @deprecated Use {@link #onToolUse(BlockState, UseOnContext, ToolAction, boolean)} instead.
+     */
+    @Nullable
+    // TODO 1.19: Remove
+    @Deprecated(forRemoval = true, since = "1.18.2")
     public static BlockState onToolUse(BlockState originalState, Level level, BlockPos pos, Player player, ItemStack stack, ToolAction toolAction)
     {
         BlockToolInteractEvent event = new BlockToolInteractEvent(level, pos, originalState, player, stack, toolAction);
