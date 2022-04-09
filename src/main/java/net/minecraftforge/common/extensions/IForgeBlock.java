@@ -680,7 +680,7 @@ public interface IForgeBlock
         BlockState toolModifiedState = getToolModifiedState(state, context.getLevel(), context.getClickedPos(),
                 context.getPlayer(), context.getItemInHand(), toolAction);
 
-        if (toolModifiedState == null && ToolActions.HOE_TILL.equals(toolAction))
+        if (toolModifiedState == null && ToolActions.HOE_TILL == toolAction)
         {
             // Logic copied from HoeItem#TILLABLES; needs to be kept in sync during updating
             Block block = state.getBlock();
@@ -723,12 +723,12 @@ public interface IForgeBlock
     default BlockState getToolModifiedState(BlockState state, Level level, BlockPos pos, Player player, ItemStack stack, ToolAction toolAction)
     {
         if (!stack.canPerformAction(toolAction)) return null;
-        if (ToolActions.AXE_STRIP.equals(toolAction)) return AxeItem.getAxeStrippingState(state);
-        else if(ToolActions.AXE_SCRAPE.equals(toolAction)) return WeatheringCopper.getPrevious(state).orElse(null);
-        else if(ToolActions.AXE_WAX_OFF.equals(toolAction)) return Optional.ofNullable(HoneycombItem.WAX_OFF_BY_BLOCK.get().get(state.getBlock())).map((p_150694_) -> {
+        if (ToolActions.AXE_STRIP == toolAction) return AxeItem.getAxeStrippingState(state);
+        else if(ToolActions.AXE_SCRAPE == toolAction) return WeatheringCopper.getPrevious(state).orElse(null);
+        else if(ToolActions.AXE_WAX_OFF == toolAction) return Optional.ofNullable(HoneycombItem.WAX_OFF_BY_BLOCK.get().get(state.getBlock())).map((p_150694_) -> {
             return p_150694_.withPropertiesOf(state);
         }).orElse(null);
-        else if (ToolActions.SHOVEL_FLATTEN.equals(toolAction)) return ShovelItem.getShovelPathingState(state);
+        else if (ToolActions.SHOVEL_FLATTEN == toolAction) return ShovelItem.getShovelPathingState(state);
         return null;
     }
 
