@@ -417,66 +417,110 @@ public class BlockEvent extends Event
     }
 
     /**
-     * Fired when this block is right-clicked by a tool to change its state.
+     * Fired when a block is right-clicked by a tool to change its state.
      * For example: Used to determine if {@link ToolActions#AXE_STRIP an axe can strip},
      * {@link ToolActions#SHOVEL_FLATTEN a shovel can path}, or {@link ToolActions#HOE_TILL a hoe can till}.
+     * <p>
+     * This deprecated subclass event is <i>only</i> fired when {@link #isSimulate()} is false.
+     * To receive simulated events, use {@link BlockToolInteractEventNew}.
+     * <p>
+     * This event is {@link Cancelable}. If canceled, this will prevent the tool
+     * from changing the block's state.
      *
+     * @deprecated Use {@link BlockToolInteractEventNew} and put world-modifying actions behind <code>if (!event.isSimulate())</code>.
+     * This event will be removed in 1.19, and BlockToolInteractEventNew will be renamed to BlockToolInteractEvent.
+     */
+    @Cancelable
+    @Deprecated(forRemoval = true, since = "1.18.2")
+    public static class BlockToolInteractEvent extends BlockToolInteractEventNew
+    {
+        private final Player player;
+        private final ItemStack stack;
+
+        public BlockToolInteractEvent(BlockState originalState, @Nonnull UseOnContext context, ToolAction toolAction)
+        {
+            super(originalState, context, toolAction, false);
+            this.player = context.getPlayer();
+            this.stack = context.getItemInHand();
+        }
+
+        public BlockToolInteractEvent(LevelAccessor world, BlockPos pos, BlockState originalState, Player player, ItemStack stack, ToolAction toolAction)
+        {
+            super(world, pos, originalState, toolAction);
+            this.player = player;
+            this.stack = stack;
+        }
+
+        public Player getPlayer()
+        {
+            return this.player;
+        }
+
+        public ItemStack getHeldItemStack()
+        {
+            return this.stack;
+        }
+    }
+
+    /**
+     * Fired when a block is right-clicked by a tool to change its state.
+     * For example: Used to determine if {@link ToolActions#AXE_STRIP an axe can strip},
+     * {@link ToolActions#SHOVEL_FLATTEN a shovel can path}, or {@link ToolActions#HOE_TILL a hoe can till}.
+     * <p>
+     * Care must be taken to ensure world-modifying events are only performed if {@link #isSimulate()} returns {@code true}.
+     * <p>
      * This event is {@link Cancelable}. If canceled, this will prevent the tool
      * from changing the block's state.
      */
-    @Cancelable
-    public static class BlockToolInteractEvent extends BlockEvent
+    // TODO 1.19: Merge with BlockToolInteractEvent
+    public static class BlockToolInteractEventNew extends BlockEvent
     {
         private final UseOnContext context;
-        private final Player player;
-        private final ItemStack stack;
         private final ToolAction toolAction;
         private final boolean simulate;
         private BlockState state;
 
-        public BlockToolInteractEvent(BlockState originalState, @Nonnull UseOnContext context, ToolAction toolAction, boolean simulate)
+        public BlockToolInteractEventNew(BlockState originalState, @Nonnull UseOnContext context, ToolAction toolAction, boolean simulate)
         {
             super(context.getLevel(), context.getClickedPos(), originalState);
             this.context = context;
-            this.player = context.getPlayer();
-            this.stack = context.getItemInHand();
-            this.toolAction = toolAction;
             this.state = originalState;
+            this.toolAction = toolAction;
             this.simulate = simulate;
         }
 
-        /**
-         * @deprecated Use {@link #BlockToolInteractEvent(BlockState, UseOnContext, ToolAction, boolean)} instead.
-         */
         // TODO 1.19: Remove
-        @Deprecated(forRemoval = true, since = "1.18.2")
-        public BlockToolInteractEvent(LevelAccessor world, BlockPos pos, BlockState originalState, Player player, ItemStack stack, ToolAction toolAction)
+        BlockToolInteractEventNew(LevelAccessor level, BlockPos pos, BlockState originalState, ToolAction toolAction)
         {
-            super(world, pos, originalState);
+            super(level, pos, originalState);
             this.context = null;
-            this.player = player;
-            this.stack = stack;
             this.state = originalState;
             this.toolAction = toolAction;
             this.simulate = false;
         }
 
-        /**Gets the player using the tool.*/
+        /**
+         * @return the player using the tool
+         */
         public Player getPlayer()
         {
-            return player;
+            return this.context.getPlayer();
         }
 
-        /**Gets the tool being used.*/
+        /**
+         * @return the tool being used
+         */
         public ItemStack getHeldItemStack()
         {
-            return stack;
+            return this.context.getItemInHand();
         }
 
-        /**Gets the action being performed.*/
+        /**
+         * @return the action being performed
+         */
         public ToolAction getToolAction()
         {
-            return toolAction;
+            return this.toolAction;
         }
 
         /**
@@ -488,16 +532,16 @@ public class BlockEvent extends Event
          */
         public boolean isSimulate()
         {
-            return simulate;
+            return this.simulate;
         }
 
         /**
          * Returns the nullable use on context that this event was performed in.
-         * Starting in 1.19, this will not be null.
+         * Starting in 1.19, this will never be null.
          *
          * @return the nullable use on context that this event was performed in
          */
-        // TODO 1.19: Remove nullable annotation
+        // TODO 1.19: Remove nullable annotation and add non-null annotation
         @Nullable
         public UseOnContext getContext()
         {
@@ -505,20 +549,23 @@ public class BlockEvent extends Event
         }
 
         /**
-         * Sets the transformed state after tool use.
-         * If not set, will return the original state.
-         * This will be bypassed if canceled returning null instead.
-         * */
-        public void setFinalState(BlockState finalState)
+         * Sets the state to transform the block into after tool use.
+         *
+         * @param finalState the state to transform the block into after tool use
+         * @see #getFinalState()
+         */
+        public void setFinalState(@Nullable BlockState finalState)
         {
             this.state = finalState;
         }
 
         /**
-         * Gets the transformed state after tool use.
-         * If setFinalState not called, will return the original state.
-         * This will be bypassed if canceled returning null instead.
-         * */
+         * Returns the state to transform the block into after tool use.
+         * If {@link #setFinalState(BlockState)} is not called, this will return the original state.
+         * If {@link #isCanceled()} is {@code true}, this value will be ignored and the tool action will be canceled.
+         *
+         * @return the state to transform the block into after tool use
+         */
         public BlockState getFinalState()
         {
             return state;

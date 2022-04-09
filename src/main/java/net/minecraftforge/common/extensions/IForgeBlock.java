@@ -691,7 +691,7 @@ public interface IForgeBlock
             }
             else if (block == Blocks.ROOTED_DIRT)
             {
-                if (simulate)
+                if (!simulate)
                 {
                     Block.popResourceFromFace(context.getLevel(), context.getClickedPos(), context.getClickedFace(), new ItemStack(Items.HANGING_ROOTS));
                 }

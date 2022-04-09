@@ -125,6 +125,7 @@ import net.minecraftforge.event.entity.player.UseHoeEvent;
 import net.minecraftforge.event.furnace.FurnaceFuelBurnTimeEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.BlockEvent.BlockToolInteractEvent;
+import net.minecraftforge.event.world.BlockEvent.BlockToolInteractEventNew;
 import net.minecraftforge.event.world.BlockEvent.CreateFluidSourceEvent;
 import net.minecraftforge.event.world.BlockEvent.EntityMultiPlaceEvent;
 import net.minecraftforge.event.world.BlockEvent.EntityPlaceEvent;
@@ -362,7 +363,9 @@ public class ForgeEventFactory
     @Nullable
     public static BlockState onToolUse(BlockState originalState, UseOnContext context, ToolAction toolAction, boolean simulate)
     {
-        BlockToolInteractEvent event = new BlockToolInteractEvent(originalState, context, toolAction, simulate);
+        BlockToolInteractEventNew event = simulate
+                ? new BlockToolInteractEventNew(originalState, context, toolAction, true)
+                : new BlockToolInteractEvent(originalState, context, toolAction);
         return MinecraftForge.EVENT_BUS.post(event) ? null : event.getFinalState();
     }
 
