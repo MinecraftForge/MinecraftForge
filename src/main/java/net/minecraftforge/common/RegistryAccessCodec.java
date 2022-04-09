@@ -28,8 +28,7 @@ import com.mojang.serialization.MapLike;
 import com.mojang.serialization.RecordBuilder;
 
 import net.minecraft.core.RegistryAccess;
-import net.minecraft.resources.RegistryLookupCodec;
-import net.minecraft.resources.RegistryReadOps;
+import net.minecraft.resources.RegistryOps;
 
 /**
  * Unit codec for getting access to dynamic registries during dimension loading.
@@ -48,7 +47,7 @@ public final class RegistryAccessCodec extends MapCodec<RegistryAccess>
     @Override
     public <T> DataResult<RegistryAccess> decode(DynamicOps<T> ops, MapLike<T> input)
     {
-        return ops instanceof RegistryReadOps ? DataResult.success(((RegistryReadOps) ops).registryAccess) : DataResult.error("Not a registry ops");
+        return ops instanceof RegistryOps<T> ? DataResult.success(((RegistryOps<T>) ops).registryAccess) : DataResult.error("Not a registry ops");
     }
 
     @Override

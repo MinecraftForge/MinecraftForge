@@ -26,6 +26,7 @@ import javax.annotation.Nullable;
 
 import com.mojang.datafixers.util.Pair;
 
+import net.minecraft.core.Holder;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.biome.Biome;
@@ -56,12 +57,12 @@ import net.minecraftforge.eventbus.api.EventPriority;
 @Cancelable
 public class MultiNoiseBiomeSourceLoadingEvent extends Event
 {
-    private final List<Pair<ParameterPoint, Supplier<Biome>>> parameters;
+    private final List<Pair<ParameterPoint, Holder<Biome>>> parameters;
     @Nullable
     private final ResourceLocation name;
     private final RegistryAccess registries;
     
-    public MultiNoiseBiomeSourceLoadingEvent(List<Pair<ParameterPoint, Supplier<Biome>>> parameters, ResourceLocation name, RegistryAccess registries)
+    public MultiNoiseBiomeSourceLoadingEvent(List<Pair<ParameterPoint, Holder<Biome>>> parameters, ResourceLocation name, RegistryAccess registries)
     {
         this.parameters = parameters;
         this.name = name;
@@ -71,17 +72,17 @@ public class MultiNoiseBiomeSourceLoadingEvent extends Event
     /**
      * Convenience method for adding a single biome entry to the parameter list
      * @param point Biome entry parameters
-     * @param biomeSupplier Biome supplier
+     * @param biomeHolder Biome holder, can be retrieved from RegistryAccess's biome registry
      */
-    public void addParameter(ParameterPoint point, Supplier<Biome> biomeSupplier)
+    public void addParameter(ParameterPoint point, Holder<Biome> biomeHolder)
     {
-        this.getParameters().add(Pair.of(point, biomeSupplier));
+        this.getParameters().add(Pair.of(point, biomeHolder));
     }
 
     /**
      * @return Mutable parameter list that can be modified as needed.
      */
-    public List<Pair<ParameterPoint, Supplier<Biome>>> getParameters()
+    public List<Pair<ParameterPoint, Holder<Biome>>> getParameters()
     {
         return parameters;
     }

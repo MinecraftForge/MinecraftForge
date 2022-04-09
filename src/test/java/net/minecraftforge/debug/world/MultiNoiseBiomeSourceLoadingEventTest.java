@@ -40,14 +40,14 @@ import com.mojang.serialization.JsonOps;
 
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
+import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
-import net.minecraft.core.RegistryAccess.RegistryHolder;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.HashCache;
 import net.minecraft.network.chat.TextComponent;
-import net.minecraft.resources.RegistryWriteOps;
+import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.packs.PackType;
@@ -64,6 +64,7 @@ import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.dimension.LevelStem;
 import net.minecraft.world.level.levelgen.NoiseBasedChunkGenerator;
 import net.minecraft.world.level.levelgen.NoiseGeneratorSettings;
+import net.minecraft.world.level.levelgen.structure.StructureSet;
 import net.minecraft.world.level.levelgen.synth.NormalNoise.NoiseParameters;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegisterCommandsEvent;
@@ -104,31 +105,32 @@ public class MultiNoiseBiomeSourceLoadingEventTest
     private void onGatherServerData(GatherDataEvent event)
     {
         // need dynamic registries to do worldgen datagen
-        RegistryHolder registries = RegistryAccess.builtin();
-        RegistryWriteOps<JsonElement> writeOps = RegistryWriteOps.create(JsonOps.INSTANCE, registries);
+        RegistryAccess registries = RegistryAccess.builtinCopy();
+        RegistryOps<JsonElement> writeOps = RegistryOps.create(JsonOps.INSTANCE, registries);
         
         // the objects we reference must have been registered to the registryaccess
         // creating a registry access deep-copies most of the BuiltinRegistries objects,
         // so we must get vanilla objects from the registryaccess instead of getting static references
+        Registry<StructureSet> structureSets = registries.registryOrThrow(Registry.STRUCTURE_SET_REGISTRY);
         Registry<DimensionType> dimensionTypes = registries.registryOrThrow(Registry.DIMENSION_TYPE_REGISTRY);
         Registry<NoiseGeneratorSettings> noiseSettings = registries.registryOrThrow(Registry.NOISE_GENERATOR_SETTINGS_REGISTRY);
         Registry<NoiseParameters> noiseParameters = registries.registryOrThrow(Registry.NOISE_REGISTRY);
         Registry<Biome> biomes = registries.registryOrThrow(Registry.BIOME_REGISTRY);
         
-        DimensionType overworldDimensionType = dimensionTypes.get(DimensionType.OVERWORLD_LOCATION);
-        NoiseGeneratorSettings overworldNoiseSettings = noiseSettings.get(NoiseGeneratorSettings.OVERWORLD);
-        Biome desert = biomes.get(Biomes.DESERT);
+        Holder<DimensionType> overworldDimensionType = dimensionTypes.getHolderOrThrow(DimensionType.OVERWORLD_LOCATION);
+        Holder<NoiseGeneratorSettings> overworldNoiseSettings = noiseSettings.getHolderOrThrow(NoiseGeneratorSettings.OVERWORLD);
+        Holder<Biome> desert = biomes.getHolderOrThrow(Biomes.DESERT);
         
         // make three dimensions for testing
         // one with a preset biome source, one with a fully custom biome source and a dimension name, one with a fully custom source without name
         
         // preset biome source dimension
         BiomeSource presetSource = MultiNoiseBiomeSource.Preset.OVERWORLD.biomeSource(biomes);
-        ChunkGenerator presetGenerator = new NoiseBasedChunkGenerator(noiseParameters, presetSource, 0, () -> overworldNoiseSettings);
-        LevelStem presetDimension = new LevelStem(() -> overworldDimensionType, presetGenerator);
+        ChunkGenerator presetGenerator = new NoiseBasedChunkGenerator(structureSets, noiseParameters, presetSource, 0, overworldNoiseSettings);
+        LevelStem presetDimension = new LevelStem(overworldDimensionType, presetGenerator);
         
         // some sample points used for the latter dimensions
-        List<Pair<ParameterPoint, Supplier<Biome>>> parameterPoints = new ArrayList<>();
+        List<Pair<ParameterPoint, Holder<Biome>>> parameterPoints = new ArrayList<>();
         parameterPoints.add(Pair.of(new ParameterPoint(
             Parameter.span(0.2F, 0.55F), // temperature
             Parameter.span(0.3F, 1.0F), // humidity
@@ -137,18 +139,18 @@ public class MultiNoiseBiomeSourceLoadingEventTest
             Parameter.point(1.0F), // depth
             Parameter.span(0.9333F, 1.0F), // weirdness
             0L // offset
-            ), () -> desert));
-        ParameterList<Supplier<Biome>> biomeParams = new ParameterList<>(parameterPoints);
+            ), desert));
+        ParameterList<Holder<Biome>> biomeParams = new ParameterList<>(parameterPoints);
         
         // fully custom biome source dimension with forge:name field
         BiomeSource namedSource =  new MultiNoiseBiomeSource(biomeParams, Optional.empty(), Optional.of(NAMED_TEST));
-        ChunkGenerator namedGenerator = new NoiseBasedChunkGenerator(noiseParameters, namedSource, 0, () -> overworldNoiseSettings);
-        LevelStem namedDimension = new LevelStem(() -> overworldDimensionType, namedGenerator);
+        ChunkGenerator namedGenerator = new NoiseBasedChunkGenerator(structureSets, noiseParameters, namedSource, 0, overworldNoiseSettings);
+        LevelStem namedDimension = new LevelStem(overworldDimensionType, namedGenerator);
         
         // fully custom biome source dimension without forge:name field
         BiomeSource namelessSource =  new MultiNoiseBiomeSource(biomeParams, Optional.empty(), Optional.empty());
-        ChunkGenerator namelessGenerator = new NoiseBasedChunkGenerator(noiseParameters, namelessSource, 0, () -> overworldNoiseSettings);
-        LevelStem namelessDimension = new LevelStem(() -> overworldDimensionType, namelessGenerator);
+        ChunkGenerator namelessGenerator = new NoiseBasedChunkGenerator(structureSets, noiseParameters, namelessSource, 0, overworldNoiseSettings);
+        LevelStem namelessDimension = new LevelStem(overworldDimensionType, namelessGenerator);
         
         // now generate those dimensions
         DataGenerator generator = event.getGenerator();
@@ -201,7 +203,7 @@ public class MultiNoiseBiomeSourceLoadingEventTest
         // and the named test dimension has an extra nether biome
         if (Objects.equals(event.getName(), Preset.OVERWORLD.name))
         {
-            Biome biome = event.getRegistries().registryOrThrow(Registry.BIOME_REGISTRY).get(Biomes.SMALL_END_ISLANDS);
+            Holder<Biome> biome = event.getRegistries().registryOrThrow(Registry.BIOME_REGISTRY).getHolderOrThrow(Biomes.SMALL_END_ISLANDS);
             var parameters = event.getParameters();
             LOGGER.info("Adding end islands biome to overworld biome source with {} biomes", parameters.size());
             event.addParameter(new ParameterPoint(
@@ -212,11 +214,11 @@ public class MultiNoiseBiomeSourceLoadingEventTest
                 Parameter.span(0.5F, 1F), // depth
                 Parameter.span(0.5F, 1F), // weirdness
                 0L // offset
-                ), () -> biome);
+                ), biome);
         }
         else if (Objects.equals(event.getName(), Preset.NETHER.name))
         {
-            Biome biome = event.getRegistries().registryOrThrow(Registry.BIOME_REGISTRY).get(Biomes.JUNGLE);
+            Holder<Biome> biome = event.getRegistries().registryOrThrow(Registry.BIOME_REGISTRY).getHolderOrThrow(Biomes.JUNGLE);
             var parameters = event.getParameters();
             LOGGER.info("Adding jungle biome to nether biome source with {} biomes", parameters.size());
             event.addParameter(new ParameterPoint(
@@ -227,11 +229,11 @@ public class MultiNoiseBiomeSourceLoadingEventTest
                 Parameter.point(0.5F), // depth
                 Parameter.point(0.5F), // weirdness
                 0L // offset
-                ), () -> biome);
+                ), biome);
         }
         else if (Objects.equals(event.getName(), NAMED_TEST))
         {
-            Biome biome = event.getRegistries().registryOrThrow(Registry.BIOME_REGISTRY).get(Biomes.BASALT_DELTAS);
+            Holder<Biome> biome = event.getRegistries().registryOrThrow(Registry.BIOME_REGISTRY).getHolderOrThrow(Biomes.BASALT_DELTAS);
             var parameters = event.getParameters();
             LOGGER.info("Adding basalt deltas biome to test biome source with {} biomes", parameters.size());
             event.addParameter(new ParameterPoint(
@@ -242,7 +244,7 @@ public class MultiNoiseBiomeSourceLoadingEventTest
                 Parameter.point(0.5F), // depth
                 Parameter.point(0.5F), // weirdness
                 0L // offset
-                ), () -> biome);
+                ), biome);
         }
     }
     

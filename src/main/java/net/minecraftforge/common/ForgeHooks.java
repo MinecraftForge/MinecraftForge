@@ -1509,23 +1509,23 @@ public class ForgeHooks
     @Deprecated
     public static MultiNoiseBiomeSource enhancePresetMultiNoiseBiomeSource(PresetInstance presetInstance, RegistryAccess registryAccess)
     {
-        ParameterList<Supplier<Biome>> parameters = presetInstance.biomeSource().parameters;
-        List<Pair<ParameterPoint, Supplier<Biome>>> parameterBuilder = new ArrayList<>(parameters.values());
+        ParameterList<Holder<Biome>> parameters = presetInstance.biomeSource().parameters;
+        List<Pair<ParameterPoint, Holder<Biome>>> parameterBuilder = new ArrayList<>(parameters.values());
         ResourceLocation name = presetInstance.preset().name;
         MultiNoiseBiomeSourceLoadingEvent event = new MultiNoiseBiomeSourceLoadingEvent(parameterBuilder, name, registryAccess);
         MinecraftForge.EVENT_BUS.post(event);
-        ParameterList<Supplier<Biome>> actualParameters = event.isCanceled() ? parameters : new ParameterList<>(parameterBuilder);
+        ParameterList<Holder<Biome>> actualParameters = event.isCanceled() ? parameters : new ParameterList<>(parameterBuilder);
         return new MultiNoiseBiomeSource(actualParameters, Optional.of(presetInstance), Optional.empty());
     }
 
     /** @deprecated Forge internal use, called via the {@link MultiNoiseBiomeSource.DIRECT_CODEC} used for non-preset sources **/
     @Deprecated
-    public static MultiNoiseBiomeSource enhanceMultiNoiseBiomeSource(ParameterList<Supplier<Biome>> parameters, @Nullable ResourceLocation name, RegistryAccess registryAccess)
+    public static MultiNoiseBiomeSource enhanceMultiNoiseBiomeSource(ParameterList<Holder<Biome>> parameters, @Nullable ResourceLocation name, RegistryAccess registryAccess)
     {
-        List<Pair<ParameterPoint, Supplier<Biome>>> parameterBuilder = new ArrayList<>(parameters.values());
+        List<Pair<ParameterPoint, Holder<Biome>>> parameterBuilder = new ArrayList<>(parameters.values());
         MultiNoiseBiomeSourceLoadingEvent event = new MultiNoiseBiomeSourceLoadingEvent(parameterBuilder, name, registryAccess);
         MinecraftForge.EVENT_BUS.post(event);
-        ParameterList<Supplier<Biome>> actualParameters = event.isCanceled() ? parameters : new ParameterList<>(parameterBuilder);
+        ParameterList<Holder<Biome>> actualParameters = event.isCanceled() ? parameters : new ParameterList<>(parameterBuilder);
         return new MultiNoiseBiomeSource(actualParameters, Optional.empty(), Optional.ofNullable(name));
     }
 }
