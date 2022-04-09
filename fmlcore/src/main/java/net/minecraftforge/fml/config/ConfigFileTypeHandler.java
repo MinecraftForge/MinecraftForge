@@ -81,6 +81,7 @@ public class ConfigFileTypeHandler {
     }
 
     private boolean setupConfigFile(final ModConfig modConfig, final Path file, final ConfigFormat<?> conf) throws IOException {
+        Files.createDirectories(file.getParent());
         Path p = defaultConfigPath.resolve(modConfig.getFileName());
         if (Files.exists(p)) {
             LOGGER.info(CONFIG, "Loading default config file from path {}", p);

@@ -1,14 +1,15 @@
 --- a/net/minecraft/data/tags/BlockTagsProvider.java
 +++ b/net/minecraft/data/tags/BlockTagsProvider.java
-@@ -9,8 +_,12 @@
+@@ -7,8 +_,13 @@
  import net.minecraft.world.level.block.Blocks;
  
  public class BlockTagsProvider extends TagsProvider<Block> {
++   /** @deprecated Forge: Use the {@link #BlockTagsProvider(DataGenerator, String, net.minecraftforge.common.data.ExistingFileHelper) mod id variant} */
 +   @Deprecated
     public BlockTagsProvider(DataGenerator p_126511_) {
        super(p_126511_, Registry.f_122824_);
 +   }
-+   public BlockTagsProvider(DataGenerator p_126511_, String modId, @javax.annotation.Nullable net.minecraftforge.common.data.ExistingFileHelper existingFileHelper) {
++   public BlockTagsProvider(DataGenerator p_126511_, String modId, @org.jetbrains.annotations.Nullable net.minecraftforge.common.data.ExistingFileHelper existingFileHelper) {
 +      super(p_126511_, Registry.f_122824_, modId, existingFileHelper);
     }
  

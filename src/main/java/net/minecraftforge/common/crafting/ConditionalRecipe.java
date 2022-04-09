@@ -1,20 +1,6 @@
 /*
- * Minecraft Forge
- * Copyright (c) 2016-2021.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation version 2.1
- * of the License.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Minecraft Forge - Forge Development LLC
+ * SPDX-License-Identifier: LGPL-2.1-only
  */
 
 package net.minecraftforge.common.crafting;
@@ -79,9 +65,15 @@ public class ConditionalRecipe
             return (Class<G>)cls;
         }
 
-        @SuppressWarnings("unchecked") // We return a nested one, so we can't know what type it is.
         @Override
         public T fromJson(ResourceLocation recipeId, JsonObject json)
+        {
+            return fromJson(recipeId, json, ICondition.IContext.EMPTY);
+        }
+
+        @SuppressWarnings("unchecked") // We return a nested one, so we can't know what type it is.
+        @Override
+        public T fromJson(ResourceLocation recipeId, JsonObject json, ICondition.IContext context)
         {
             JsonArray items = GsonHelper.getAsJsonArray(json, "recipes");
             int idx = 0;
@@ -89,7 +81,7 @@ public class ConditionalRecipe
             {
                 if (!ele.isJsonObject())
                     throw new JsonSyntaxException("Invalid recipes entry at index " + idx + " Must be JsonObject");
-                if (CraftingHelper.processConditions(GsonHelper.getAsJsonArray(ele.getAsJsonObject(), "conditions")))
+                if (CraftingHelper.processConditions(GsonHelper.getAsJsonArray(ele.getAsJsonObject(), "conditions"), context))
                     return (T)RecipeManager.fromJson(recipeId, GsonHelper.getAsJsonObject(ele.getAsJsonObject(), "recipe"));
                 idx++;
             }

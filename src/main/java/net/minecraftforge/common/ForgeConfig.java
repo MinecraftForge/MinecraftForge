@@ -1,20 +1,6 @@
 /*
- * Minecraft Forge
- * Copyright (c) 2016-2021.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation version 2.1
- * of the License.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Minecraft Forge - Forge Development LLC
+ * SPDX-License-Identifier: LGPL-2.1-only
  */
 
 package net.minecraftforge.common;
@@ -41,6 +27,7 @@ public class ForgeConfig {
         public final DoubleValue zombieBabyChance;
 
         public final BooleanValue treatEmptyTagsAsAir;
+        public final BooleanValue skipEmptyShapelessCheck;
 
         public final BooleanValue fixAdvancementLoading;
 
@@ -79,13 +66,18 @@ public class ForgeConfig {
                     .translation("forge.configgui.treatEmptyTagsAsAir")
                     .define("treatEmptyTagsAsAir", false);
 
+            skipEmptyShapelessCheck = builder
+                  .comment("Skip checking if an ingredient is empty during shapeless recipe deserialization to prevent complex ingredients from caching tags too early.")
+                  .translation("forge.configgui.skipEmptyShapelessCheck")
+                  .define("skipEmptyShapelessCheck", true);
+
             fixAdvancementLoading = builder
                     .comment("Fix advancement loading to use a proper topological sort. This may have visibility side-effects and can thus be turned off if needed for data-pack compatibility.")
                     .translation("forge.configgui.fixAdvancementLoading")
                     .define("fixAdvancementLoading", true);
 
             permissionHandler = builder
-                    .comment("")
+                    .comment("The permission handler used by the server. Defaults to forge:default_handler if no such handler with that name is registered.")
                     .translation("forge.configgui.permissionHandler")
                     .define("permissionHandler", "forge:default_handler");
 

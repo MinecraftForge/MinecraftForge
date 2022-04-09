@@ -1,20 +1,6 @@
 /*
- * Minecraft Forge
- * Copyright (c) 2016-2021.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation version 2.1
- * of the License.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Minecraft Forge - Forge Development LLC
+ * SPDX-License-Identifier: LGPL-2.1-only
  */
 
 package net.minecraftforge.client.model.obj;
@@ -38,6 +24,8 @@ import net.minecraftforge.client.model.geometry.IModelGeometryPart;
 import net.minecraftforge.client.model.geometry.IMultipartModelGeometry;
 import net.minecraftforge.client.model.pipeline.BakedQuadBuilder;
 import net.minecraftforge.client.model.pipeline.IVertexConsumer;
+import net.minecraftforge.client.model.renderable.SimpleRenderable;
+import net.minecraftforge.client.textures.UnitSprite;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
@@ -46,6 +34,7 @@ import java.io.IOException;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.resources.model.Material;
@@ -510,6 +499,20 @@ public class OBJModel implements IMultipartModelGeometry<OBJModel>
         }
     }
 
+    public SimpleRenderable bakeRenderable(IModelConfiguration configuration)
+    {
+        var builder = SimpleRenderable.builder();
+
+        for(var entry : parts.entrySet())
+        {
+            var name = entry.getKey();
+            var part = entry.getValue();
+            part.bake(builder.child(name), configuration);
+        }
+
+        return builder.get();
+    }
+
     public class ModelObject implements IModelGeometryPart
     {
         public final String name;
@@ -532,28 +535,26 @@ public class OBJModel implements IMultipartModelGeometry<OBJModel>
         {
             for(ModelMesh mesh : meshes)
             {
-                MaterialLibrary.Material mat = mesh.mat;
-                if (mat == null)
-                    continue;
-                TextureAtlasSprite texture = spriteGetter.apply(ModelLoaderRegistry.resolveTexture(mat.diffuseColorMap, owner));
-                int tintIndex = mat.diffuseTintIndex;
-                Vector4f colorTint = mat.diffuseColor;
+                mesh.addQuads(owner, modelBuilder, spriteGetter, modelTransform);
+            }
+        }
 
-                for (int[][] face : mesh.faces)
-                {
-                    Pair<BakedQuad, Direction> quad = makeQuad(face, tintIndex, colorTint, mat.ambientColor, texture, modelTransform.getRotation());
-                    if (quad.getRight() == null)
-                        modelBuilder.addGeneralQuad(quad.getLeft());
-                    else
-                        modelBuilder.addFaceQuad(quad.getRight(), quad.getLeft());
-                }
+        public void bake(SimpleRenderable.PartBuilder<?> builder, IModelConfiguration configuration)
+        {
+            for (ModelMesh mesh : this.meshes)
+            {
+                mesh.bake(builder, configuration);
             }
         }
 
         @Override
         public Collection<Material> getTextures(IModelConfiguration owner, Function<ResourceLocation, UnbakedModel> modelGetter, Set<com.mojang.datafixers.util.Pair<String, String>> missingTextureErrors)
         {
-            return meshes.stream().map(mesh -> ModelLoaderRegistry.resolveTexture(mesh.mat.diffuseColorMap, owner)).collect(Collectors.toSet());
+            return meshes.stream()
+                    .flatMap(mesh -> mesh.mat != null
+                            ? Stream.of(ModelLoaderRegistry.resolveTexture(mesh.mat.diffuseColorMap, owner))
+                            : Stream.of())
+                    .collect(Collectors.toSet());
         }
     }
 
@@ -576,8 +577,21 @@ public class OBJModel implements IMultipartModelGeometry<OBJModel>
         {
             super.addQuads(owner, modelBuilder, bakery, spriteGetter, modelTransform, modelLocation);
 
-            getParts().stream().filter(part -> owner.getPartVisibility(part))
+            getParts().stream().filter(owner::getPartVisibility)
                     .forEach(part -> part.addQuads(owner, modelBuilder, bakery, spriteGetter, modelTransform, modelLocation));
+        }
+
+        @Override
+        public void bake(SimpleRenderable.PartBuilder<?> builder, IModelConfiguration configuration)
+        {
+            super.bake(builder, configuration);
+
+            for(var entry : parts.entrySet())
+            {
+                var name = entry.getKey();
+                var part = entry.getValue();
+                part.bake(builder.child(name), configuration);
+            }
         }
 
         @Override
@@ -604,53 +618,50 @@ public class OBJModel implements IMultipartModelGeometry<OBJModel>
             this.mat = currentMat;
             this.smoothingGroup = currentSmoothingGroup;
         }
-    }
 
-    public static class ModelSettings
-    {
-        @Nonnull
-        public final ResourceLocation modelLocation;
-        public final boolean detectCullableFaces;
-        public final boolean diffuseLighting;
-        public final boolean flipV;
-        public final boolean ambientToFullbright;
-        @Nullable
-        public final String materialLibraryOverrideLocation;
-
-        public ModelSettings(@Nonnull ResourceLocation modelLocation, boolean detectCullableFaces, boolean diffuseLighting, boolean flipV, boolean ambientToFullbright,
-                             @Nullable String materialLibraryOverrideLocation)
+        public void addQuads(IModelConfiguration owner, IModelBuilder<?> modelBuilder, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelTransform)
         {
-            this.modelLocation = modelLocation;
-            this.detectCullableFaces = detectCullableFaces;
-            this.diffuseLighting = diffuseLighting;
-            this.flipV = flipV;
-            this.ambientToFullbright = ambientToFullbright;
-            this.materialLibraryOverrideLocation = materialLibraryOverrideLocation;
+            if (mat == null)
+                return;
+            TextureAtlasSprite texture = spriteGetter.apply(ModelLoaderRegistry.resolveTexture(mat.diffuseColorMap, owner));
+            int tintIndex = mat.diffuseTintIndex;
+            Vector4f colorTint = mat.diffuseColor;
+
+            for (int[][] face : faces)
+            {
+                Pair<BakedQuad, Direction> quad = makeQuad(face, tintIndex, colorTint, mat.ambientColor, texture, modelTransform.getRotation());
+                if (quad.getRight() == null)
+                    modelBuilder.addGeneralQuad(quad.getLeft());
+                else
+                    modelBuilder.addFaceQuad(quad.getRight(), quad.getLeft());
+            }
         }
 
-        @Override
-        public boolean equals(Object o)
+        public void bake(SimpleRenderable.PartBuilder<?> builder, IModelConfiguration configuration)
         {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            ModelSettings that = (ModelSettings) o;
-            return equals(that);
-        }
+            MaterialLibrary.Material mat = this.mat;
+            if (mat == null)
+                return;
+            int tintIndex = mat.diffuseTintIndex;
+            Vector4f colorTint = mat.diffuseColor;
 
-        public boolean equals(@Nonnull ModelSettings that)
-        {
-            return detectCullableFaces == that.detectCullableFaces &&
-                    diffuseLighting == that.diffuseLighting &&
-                    flipV == that.flipV &&
-                    ambientToFullbright == that.ambientToFullbright &&
-                    modelLocation.equals(that.modelLocation) &&
-                    Objects.equals(materialLibraryOverrideLocation, that.materialLibraryOverrideLocation);
-        }
+            final List<BakedQuad> quads = new ArrayList<>();
 
-        @Override
-        public int hashCode()
-        {
-            return Objects.hash(modelLocation, detectCullableFaces, diffuseLighting, flipV, ambientToFullbright, materialLibraryOverrideLocation);
+            for(var face : this.faces)
+            {
+                var pair = makeQuad(face, tintIndex, colorTint, mat.ambientColor, UnitSprite.INSTANCE, Transformation.identity());
+                quads.add(pair.getLeft());
+            }
+
+            ResourceLocation textureLocation = ModelLoaderRegistry.resolveTexture(mat.diffuseColorMap, configuration).texture();
+            ResourceLocation texturePath = new ResourceLocation(textureLocation.getNamespace(), "textures/" + textureLocation.getPath() + ".png");
+
+            builder.addMesh(texturePath, quads);
         }
     }
+
+    public record ModelSettings(@Nonnull ResourceLocation modelLocation,
+                                boolean detectCullableFaces, boolean diffuseLighting, boolean flipV,
+                                boolean ambientToFullbright, @Nullable String materialLibraryOverrideLocation)
+    {}
 }

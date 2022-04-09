@@ -14,3 +14,5 @@ net.minecraftforge.fml.loading.targets.ForgeServerDevLaunchHandler
 net.minecraftforge.fml.loading.targets.ForgeServerUserdevLaunchHandler
 net.minecraftforge.fml.loading.targets.ForgeDataDevLaunchHandler
 net.minecraftforge.fml.loading.targets.ForgeDataUserdevLaunchHandler
+net.minecraftforge.fml.loading.targets.ForgeGametestDevLaunchHandler
+net.minecraftforge.fml.loading.targets.ForgeGametestUserdevLaunchHandler

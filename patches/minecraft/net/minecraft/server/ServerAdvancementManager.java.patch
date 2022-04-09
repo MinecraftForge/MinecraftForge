@@ -1,9 +1,30 @@
 --- a/net/minecraft/server/ServerAdvancementManager.java
 +++ b/net/minecraft/server/ServerAdvancementManager.java
-@@ -38,6 +_,10 @@
+@@ -26,10 +_,18 @@
+    private static final Gson f_136022_ = (new GsonBuilder()).create();
+    private AdvancementList f_136023_ = new AdvancementList();
+    private final PredicateManager f_136024_;
++   private final net.minecraftforge.common.crafting.conditions.ICondition.IContext context; //Forge: add context
+ 
++   /** @deprecated Forge: use {@linkplain ServerAdvancementManager#ServerAdvancementManager(PredicateManager, net.minecraftforge.common.crafting.conditions.ICondition.IContext) constructor with context}. */
++   @Deprecated
+    public ServerAdvancementManager(PredicateManager p_136027_) {
++      this(p_136027_, net.minecraftforge.common.crafting.conditions.ICondition.IContext.EMPTY);
++   }
++
++   public ServerAdvancementManager(PredicateManager p_136027_, net.minecraftforge.common.crafting.conditions.ICondition.IContext context) {
+       super(f_136022_, "advancements");
+       this.f_136024_ = p_136027_;
++      this.context = context;
+    }
+ 
+    protected void m_5787_(Map<ResourceLocation, JsonElement> p_136034_, ResourceManager p_136035_, ProfilerFiller p_136036_) {
+@@ -37,7 +_,11 @@
+       p_136034_.forEach((p_136039_, p_136040_) -> {
           try {
              JsonObject jsonobject = GsonHelper.m_13918_(p_136040_, "advancement");
-             Advancement.Builder advancement$builder = Advancement.Builder.m_138380_(jsonobject, new DeserializationContext(p_136039_, this.f_136024_));
+-            Advancement.Builder advancement$builder = Advancement.Builder.m_138380_(jsonobject, new DeserializationContext(p_136039_, this.f_136024_));
++            Advancement.Builder advancement$builder = Advancement.Builder.fromJson(jsonobject, new DeserializationContext(p_136039_, this.f_136024_), this.context);
 +            if (advancement$builder == null) {
 +                f_136021_.debug("Skipping loading advancement {} as it's conditions were not met", p_136039_);
 +                return;

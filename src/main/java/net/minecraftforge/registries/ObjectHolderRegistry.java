@@ -1,20 +1,6 @@
 /*
- * Minecraft Forge
- * Copyright (c) 2016-2021.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation version 2.1
- * of the License.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Minecraft Forge - Forge Development LLC
+ * SPDX-License-Identifier: LGPL-2.1-only
  */
 
 package net.minecraftforge.registries;
@@ -59,7 +45,7 @@ public class ObjectHolderRegistry
      * and hashCode function to de-duplicate callers here.
      * The default @ObjectHolder implementation uses the hashCode/equals for the field the annotation is on.
      */
-    public static void addHandler(Consumer<Predicate<ResourceLocation>> ref)
+    public static synchronized void addHandler(Consumer<Predicate<ResourceLocation>> ref)
     {
         objectHolders.add(ref);
     }
@@ -73,7 +59,7 @@ public class ObjectHolderRegistry
      *
      * @return true if handler was matched and removed.
      */
-    public static boolean removeHandler(Consumer<Predicate<ResourceLocation>> ref)
+    public static synchronized boolean removeHandler(Consumer<Predicate<ResourceLocation>> ref)
     {
         return objectHolders.remove(ref);
     }
@@ -185,7 +171,24 @@ public class ObjectHolderRegistry
 
     public static void applyObjectHolders(Predicate<ResourceLocation> filter)
     {
-        objectHolders.forEach(e -> e.accept(filter));
+        RuntimeException aggregate = new RuntimeException("Failed to apply some object holders, see suppressed exceptions for details");
+        objectHolders.forEach(objectHolder -> {
+            try
+            {
+                objectHolder.accept(filter);
+            }
+            catch (Exception e)
+            {
+                aggregate.addSuppressed(e);
+            }
+        });
+
+        if (aggregate.getSuppressed().length > 0)
+        {
+            // Something had an exception, log and propagate with a throw for when FML eventually logs this too
+            LOGGER.error("", aggregate);
+            throw aggregate;
+        }
     }
 
 }

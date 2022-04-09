@@ -1,20 +1,6 @@
 /*
- * Minecraft Forge
- * Copyright (c) 2016-2021.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation version 2.1
- * of the License.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Minecraft Forge - Forge Development LLC
+ * SPDX-License-Identifier: LGPL-2.1-only
  */
 
 package net.minecraftforge.common.crafting;
@@ -30,13 +16,20 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.network.FriendlyByteBuf;
 
-public class NBTIngredient extends Ingredient
+/** Ingredient that matches the given stack, performing an exact NBT match. Use {@link PartialNBTIngredient} if you need partial match. */
+public class NBTIngredient extends AbstractIngredient
 {
     private final ItemStack stack;
     protected NBTIngredient(ItemStack stack)
     {
         super(Stream.of(new Ingredient.ItemValue(stack)));
         this.stack = stack;
+    }
+
+    /** Creates a new ingredient matching the given stack and tag */
+    public static NBTIngredient of(ItemStack stack)
+    {
+        return new NBTIngredient(stack);
     }
 
     @Override

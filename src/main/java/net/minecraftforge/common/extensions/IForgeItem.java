@@ -1,24 +1,12 @@
 /*
- * Minecraft Forge
- * Copyright (c) 2016-2021.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation version 2.1
- * of the License.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Minecraft Forge - Forge Development LLC
+ * SPDX-License-Identifier: LGPL-2.1-only
  */
 
 package net.minecraftforge.common.extensions;
 
+import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
 
@@ -27,6 +15,7 @@ import javax.annotation.Nullable;
 
 import com.google.common.collect.Multimap;
 
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.block.state.BlockState;
@@ -259,10 +248,10 @@ public interface IForgeItem
      * as a EntityItem. This is in ticks, standard result is 6000, or 5 mins.
      *
      * @param itemStack The current ItemStack
-     * @param world     The world the entity is in
+     * @param level     The level the entity is in
      * @return The normal lifespan in ticks.
      */
-    default int getEntityLifespan(ItemStack itemStack, Level world)
+    default int getEntityLifespan(ItemStack itemStack, Level level)
     {
         return 6000;
     }
@@ -285,16 +274,16 @@ public interface IForgeItem
     /**
      * This function should return a new entity to replace the dropped item.
      * Returning null here will not kill the EntityItem and will leave it to
-     * function normally. Called when the item it placed in a world.
+     * function normally. Called when the item it placed in a level.
      *
-     * @param world     The world object
+     * @param level     The level object
      * @param location  The EntityItem object, useful for getting the position of
      *                  the entity
-     * @param itemstack The current item stack
+     * @param stack The current item stack
      * @return A new Entity object to spawn or null
      */
     @Nullable
-    default Entity createEntity(Level world, Entity location, ItemStack itemstack)
+    default Entity createEntity(Level level, Entity location, ItemStack stack)
     {
         return null;
     }
@@ -329,12 +318,11 @@ public interface IForgeItem
      * Should this item, when held, allow sneak-clicks to pass through to the
      * underlying block?
      *
-     * @param world  The world
-     * @param pos    Block position in world
+     * @param level  The level
+     * @param pos    Block position in level
      * @param player The Player that is wielding the item
-     * @return
      */
-    default boolean doesSneakBypassUse(ItemStack stack, net.minecraft.world.level.LevelReader world, BlockPos pos, Player player)
+    default boolean doesSneakBypassUse(ItemStack stack, net.minecraft.world.level.LevelReader level, BlockPos pos, Player player)
     {
         return false;
     }
@@ -342,7 +330,7 @@ public interface IForgeItem
     /**
      * Called to tick armor in the armor slot. Override to do something
      */
-    default void onArmorTick(ItemStack stack, Level world, Player player)
+    default void onArmorTick(ItemStack stack, Level level, Player player)
     {
     }
 
@@ -559,8 +547,31 @@ public interface IForgeItem
      */
     default boolean shouldCauseBlockBreakReset(ItemStack oldStack, ItemStack newStack)
     {
-        return !(newStack.getItem() == oldStack.getItem() && ItemStack.tagMatches(newStack, oldStack)
-                && (newStack.isDamageableItem() || newStack.getDamageValue() == oldStack.getDamageValue()));
+        // Fix MC-176559 mending resets mining progress / breaking animation
+        if (!newStack.is(oldStack.getItem()))
+            return true;
+
+        if (!newStack.isDamageableItem() || !oldStack.isDamageableItem())
+            return !ItemStack.tagMatches(newStack, oldStack);
+
+        CompoundTag newTag = newStack.getTag();
+        CompoundTag oldTag = oldStack.getTag();
+
+        if (newTag == null || oldTag == null)
+            return !(newTag == null && oldTag == null);
+
+        Set<String> newKeys = new HashSet<>(newTag.getAllKeys());
+        Set<String> oldKeys = new HashSet<>(oldTag.getAllKeys());
+
+        newKeys.remove(ItemStack.TAG_DAMAGE);
+        oldKeys.remove(ItemStack.TAG_DAMAGE);
+
+        if (!newKeys.equals(oldKeys))
+            return true;
+
+        return !newKeys.stream().allMatch(key -> Objects.equals(newTag.get(key), oldTag.get(key)));
+        // return !(newStack.is(oldStack.getItem()) && ItemStack.tagMatches(newStack, oldStack)
+        //         && (newStack.isDamageableItem() || newStack.getDamageValue() == oldStack.getDamageValue()));
     }
 
     /**
@@ -646,18 +657,12 @@ public interface IForgeItem
      * armor slot.
      *
      * @param stack the armor itemstack
-     * @param world the world the horse is in
+     * @param level the level the horse is in
      * @param horse the horse wearing this armor
      */
-    default void onHorseArmorTick(ItemStack stack, Level world, Mob horse)
+    default void onHorseArmorTick(ItemStack stack, Level level, Mob horse)
     {
     }
-
-    /**
-     * Retrieves a list of tags names this is known to be associated with.
-     * This should be used in favor of TagCollection.getOwningTags, as this caches the result and automatically updates when the TagCollection changes.
-     */
-    Set<ResourceLocation> getTags();
 
     /**
      * Reduce the durability of this item by the amount given.
@@ -671,6 +676,17 @@ public interface IForgeItem
      */
     default <T extends LivingEntity> int damageItem(ItemStack stack, int amount, T entity, Consumer<T> onBroken) {
         return amount;
+    }
+
+    /**
+     * Called when an item entity for this stack is destroyed. Note: The {@link ItemStack} can be retrieved from the item entity.
+     *
+     * @param itemEntity   The item entity that was destroyed.
+     * @param damageSource Damage source that caused the item entity to "die".
+     */
+    default void onDestroyed(ItemEntity itemEntity, DamageSource damageSource)
+    {
+        self().onDestroyed(itemEntity);
     }
 
     /**
@@ -717,6 +733,20 @@ public interface IForgeItem
     }
 
     /**
+     * Called by the powdered snow block to check if a living entity wearing this can walk on the snow, granting the same behavior as leather boots.
+     * Only affects items worn in the boots slot.
+     *
+     * @param stack  Stack instance
+     * @param wearer The entity wearing this ItemStack
+     *
+     * @return True if the entity can walk on powdered snow
+     */
+    default boolean canWalkOnPowderedSnow(ItemStack stack, LivingEntity wearer)
+    {
+        return stack.is(Items.LEATHER_BOOTS);
+    }
+
+    /**
      * Used to test if this item can be damaged, but with the ItemStack in question.
      * Please note that in some cases no ItemStack is available, so the stack-less method will be used.
      *
@@ -740,4 +770,16 @@ public interface IForgeItem
     {
         return target.getBoundingBox().inflate(1.0D, 0.25D, 1.0D);
     }
+
+    /**
+     * Get the tooltip parts that should be hidden by default on the given stack if the {@code HideFlags} tag is not set.
+     * @see ItemStack.TooltipPart
+     * @param stack the stack
+     * @return the default hide flags
+     */
+    default int getDefaultTooltipHideFlags(@Nonnull ItemStack stack)
+    {
+        return 0;
+    }
+
 }

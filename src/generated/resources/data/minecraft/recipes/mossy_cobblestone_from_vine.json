@@ -3,7 +3,7 @@
   "group": "mossy_cobblestone",
   "ingredients": [
     {
-      "tag": "forge:cobblestone"
+      "tag": "forge:cobblestone/normal"
     },
     {
       "item": "minecraft:vine"

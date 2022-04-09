@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/gui/screens/Screen.java
 +++ b/net/minecraft/client/gui/screens/Screen.java
-@@ -126,7 +_,7 @@
+@@ -127,7 +_,7 @@
     }
  
     public void m_7379_() {
@@ -9,7 +9,7 @@
     }
  
     protected <T extends GuiEventListener & Widget & NarratableEntry> T m_142416_(T p_169406_) {
-@@ -163,15 +_,29 @@
+@@ -164,15 +_,29 @@
        this.f_169368_.clear();
     }
  
@@ -43,7 +43,7 @@
        this.m_169383_(p_169389_, list, p_169392_, p_169393_);
     }
  
-@@ -184,20 +_,44 @@
+@@ -185,20 +_,44 @@
     }
  
     public void m_96597_(PoseStack p_96598_, List<Component> p_96599_, int p_96600_, int p_96601_) {
@@ -90,7 +90,7 @@
              if (k > i) {
                 i = k;
              }
-@@ -205,8 +_,8 @@
+@@ -206,8 +_,8 @@
              j += clienttooltipcomponent.m_142103_();
           }
  
@@ -101,7 +101,7 @@
           if (j2 + i > this.f_96543_) {
              j2 -= 28 + i;
           }
-@@ -227,15 +_,16 @@
+@@ -228,15 +_,16 @@
           RenderSystem.m_157427_(GameRenderer::m_172811_);
           bufferbuilder.m_166779_(VertexFormat.Mode.QUADS, DefaultVertexFormat.f_85815_);
           Matrix4f matrix4f = p_169384_.m_85850_().m_85861_();
@@ -127,7 +127,7 @@
           RenderSystem.m_69482_();
           RenderSystem.m_69472_();
           RenderSystem.m_69478_();
-@@ -250,7 +_,7 @@
+@@ -251,7 +_,7 @@
  
           for(int i2 = 0; i2 < p_169385_.size(); ++i2) {
              ClientTooltipComponent clienttooltipcomponent1 = p_169385_.get(i2);
@@ -136,7 +136,7 @@
              l1 += clienttooltipcomponent1.m_142103_() + (i2 == 0 ? 2 : 0);
           }
  
-@@ -260,7 +_,7 @@
+@@ -261,7 +_,7 @@
  
           for(int l2 = 0; l2 < p_169385_.size(); ++l2) {
              ClientTooltipComponent clienttooltipcomponent2 = p_169385_.get(l2);
@@ -145,7 +145,7 @@
              l1 += clienttooltipcomponent2.m_142103_() + (l2 == 0 ? 2 : 0);
           }
  
-@@ -354,9 +_,12 @@
+@@ -355,9 +_,12 @@
     }
  
     public void m_96612_(String p_96613_, boolean p_96614_) {
@@ -154,11 +154,11 @@
        if (p_96614_) {
           this.f_96541_.f_91065_.m_93076_().m_93783_(p_96613_);
        }
-+      //if (net.minecraftforge.client.ClientCommandHandler.instance.executeCommand(mc.player, msg) != 0) return; //Forge: TODO Client command re-write
++      if (net.minecraftforge.client.ClientCommandHandler.sendMessage(p_96613_)) return;
  
        this.f_96541_.f_91074_.m_108739_(p_96613_);
     }
-@@ -367,11 +_,21 @@
+@@ -368,11 +_,21 @@
        this.f_96547_ = p_96607_.f_91062_;
        this.f_96543_ = p_96608_;
        this.f_96544_ = p_96609_;
@@ -180,7 +180,7 @@
     }
  
     public List<? extends GuiEventListener> m_6702_() {
-@@ -394,6 +_,7 @@
+@@ -395,6 +_,7 @@
     public void m_96558_(PoseStack p_96559_, int p_96560_) {
        if (this.f_96541_.f_91073_ != null) {
           this.m_93179_(p_96559_, 0, 0, this.f_96543_, this.f_96544_, -1072689136, -804253680);
@@ -188,7 +188,7 @@
        } else {
           this.m_96626_(p_96560_);
        }
-@@ -413,6 +_,7 @@
+@@ -414,6 +_,7 @@
        bufferbuilder.m_5483_((double)this.f_96543_, 0.0D, 0.0D).m_7421_((float)this.f_96543_ / 32.0F, (float)p_96627_).m_6122_(64, 64, 64, 255).m_5752_();
        bufferbuilder.m_5483_(0.0D, 0.0D, 0.0D).m_7421_(0.0F, (float)p_96627_).m_6122_(64, 64, 64, 255).m_5752_();
        tesselator.m_85914_();
@@ -196,7 +196,7 @@
     }
  
     public boolean m_7043_() {
-@@ -498,6 +_,10 @@
+@@ -499,6 +_,10 @@
     }
  
     public void m_7400_(List<Path> p_96591_) {

@@ -1,0 +1,11 @@
+--- a/net/minecraft/client/ClientRecipeBook.java
++++ b/net/minecraft/client/ClientRecipeBook.java
+@@ -104,6 +_,8 @@
+       } else if (recipetype == RecipeType.f_44113_) {
+          return RecipeBookCategories.SMITHING;
+       } else {
++         RecipeBookCategories categories = net.minecraftforge.client.RecipeBookRegistry.findCategories(recipetype, p_90647_);
++         if (categories != null) return categories;
+          f_90618_.warn("Unknown recipe category: {}/{}", LogUtils.defer(() -> {
+             return Registry.f_122864_.m_7981_(p_90647_.m_6671_());
+          }), LogUtils.defer(p_90647_::m_6423_));

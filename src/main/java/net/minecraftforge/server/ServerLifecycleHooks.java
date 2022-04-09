@@ -1,20 +1,6 @@
 /*
- * Minecraft Forge
- * Copyright (c) 2016-2021.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation version 2.1
- * of the License.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Minecraft Forge - Forge Development LLC
+ * SPDX-License-Identifier: LGPL-2.1-only
  */
 
 package net.minecraftforge.server;
@@ -29,6 +15,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
+import net.minecraft.gametest.framework.GameTestServer;
 import net.minecraft.server.packs.repository.PackSource;
 import net.minecraft.server.packs.repository.RepositorySource;
 import net.minecraft.world.level.storage.LevelResource;
@@ -97,7 +84,12 @@ public class ServerLifecycleHooks
 
     public static boolean handleServerStarting(final MinecraftServer server)
     {
-        DistExecutor.runWhenOn(Dist.DEDICATED_SERVER, ()->()->LanguageHook.loadLanguagesOnServer(server));
+        DistExecutor.runWhenOn(Dist.DEDICATED_SERVER, ()->()->{
+            LanguageHook.loadLanguagesOnServer(server);
+            // GameTestServer requires the gametests to be registered earlier, so it is done in main and should not be done twice.
+            if (!(server instanceof GameTestServer))
+                net.minecraftforge.gametest.ForgeGameTestHooks.registerGametests();
+        });
         PermissionAPI.initializePermissionAPI();
         return !MinecraftForge.EVENT_BUS.post(new ServerStartingEvent(server));
     }
@@ -111,7 +103,6 @@ public class ServerLifecycleHooks
     public static void handleServerStopping(final MinecraftServer server)
     {
         allowLogins.set(false);
-        PermissionAPI.resetPermissionAPI();
         MinecraftForge.EVENT_BUS.post(new ServerStoppingEvent(server));
     }
 

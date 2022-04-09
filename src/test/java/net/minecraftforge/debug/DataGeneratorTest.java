@@ -1,20 +1,6 @@
 /*
- * Minecraft Forge
- * Copyright (c) 2016-2021.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation version 2.1
- * of the License.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Minecraft Forge - Forge Development LLC
+ * SPDX-License-Identifier: LGPL-2.1-only
  */
 
 package net.minecraftforge.debug;
@@ -29,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -40,14 +27,25 @@ import java.util.stream.Stream;
 
 import com.google.gson.JsonNull;
 import com.google.gson.JsonPrimitive;
+import net.minecraft.Util;
 import net.minecraft.advancements.critereon.InventoryChangeTrigger;
 import net.minecraft.data.advancements.AdvancementProvider;
+import net.minecraft.data.recipes.ShapelessRecipeBuilder;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.tags.ItemTags;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.block.ButtonBlock;
 import net.minecraft.world.level.block.PressurePlateBlock;
 import net.minecraft.world.level.block.StandingSignBlock;
 import net.minecraft.world.level.block.WallSignBlock;
+import net.minecraftforge.common.crafting.CompoundIngredient;
+import net.minecraftforge.common.crafting.PartialNBTIngredient;
+import net.minecraftforge.common.crafting.DifferenceIngredient;
+import net.minecraftforge.common.crafting.IntersectionIngredient;
+import net.minecraftforge.common.crafting.NBTIngredient;
 import net.minecraftforge.common.data.SoundDefinition;
 import net.minecraftforge.common.data.SoundDefinitionsProvider;
 import org.apache.commons.lang3.tuple.Triple;
@@ -170,6 +168,7 @@ public class DataGeneratorTest
         @Override
         protected void buildCraftingRecipes(Consumer<FinishedRecipe> consumer)
         {
+            // conditional recipe
             ResourceLocation ID = new ResourceLocation("data_gen_test", "conditional");
 
             ConditionalRecipe.builder()
@@ -235,6 +234,108 @@ public class DataGeneratorTest
                     )
                     .generateAdvancement()
                     .build(consumer, new ResourceLocation("data_gen_test", "conditional2"));
+
+            ConditionalRecipe.builder()
+                    .addCondition(
+                            tagEmpty(ItemTags.PLANKS)
+                    )
+                    .addRecipe(
+                            ShapedRecipeBuilder.shaped(Blocks.NETHERITE_BLOCK, 1)
+                                    .pattern("XX")
+                                    .pattern("XX")
+                                    .define('X', Blocks.DIAMOND_BLOCK)
+                                    .group("")
+                                    .unlockedBy("has_diamond_block", has(Blocks.DIAMOND_BLOCK))
+                                    ::save
+                    )
+                    .addCondition(
+                            not(
+                                    tagEmpty(ItemTags.PLANKS)
+                            )
+                    )
+                    .addRecipe(
+                            ShapedRecipeBuilder.shaped(Blocks.NETHERITE_BLOCK, 9)
+                                    .pattern("XX")
+                                    .pattern("XX")
+                                    .define('X', Blocks.DIAMOND_BLOCK)
+                                    .group("")
+                                    .unlockedBy("has_diamond_block", has(Blocks.DIAMOND_BLOCK))
+                                    ::save
+                    )
+                    .generateAdvancement()
+                    .build(consumer, new ResourceLocation("data_gen_test", "conditional3"));
+
+            // ingredient tests
+            // strict NBT match - should match an unnamed iron pickaxe that lost 3 durability
+            Ingredient nbtIngredient = NBTIngredient.of(Util.make(() ->
+                {
+                    ItemStack stack = new ItemStack(Items.IRON_PICKAXE);
+                    stack.setDamageValue(3);
+                    return stack;
+                }));
+            ShapelessRecipeBuilder.shapeless(Items.GOLDEN_PICKAXE)
+                                  .requires(nbtIngredient)
+                                  .unlockedBy("has_pickaxe", has(Items.IRON_PICKAXE))
+                                  .save(consumer, new ResourceLocation("data_gen_test", "exact_nbt_ingredient"));
+
+            // ingredient tests
+            // contains NBT match - should match a stone pickaxe that lost 3 durability, regardless of setting its name
+            ShapelessRecipeBuilder.shapeless(Items.IRON_PICKAXE)
+                                  .requires(PartialNBTIngredient.of(Items.STONE_PICKAXE, Util.make(() ->
+                                      {
+                                        CompoundTag nbt = new CompoundTag();
+                                        nbt.putInt(ItemStack.TAG_DAMAGE, 3);
+                                        return nbt;
+                                      })))
+                                  .unlockedBy("has_pickaxe", has(Items.STONE_PICKAXE))
+                                  .save(consumer, new ResourceLocation("data_gen_test", "contains_nbt_ingredient_single_item"));
+
+            // contains NBT match - should match a wood, stone, or iron pickaxe that was named "Diamond Pickaxe", regardless of damage
+            ShapelessRecipeBuilder.shapeless(Items.DIAMOND_PICKAXE)
+                                  .requires(PartialNBTIngredient.of(Util.make(() ->
+                                      {
+                                          CompoundTag nbt = new CompoundTag();
+                                          CompoundTag display = new CompoundTag();
+                                          display.putString(ItemStack.TAG_DISPLAY_NAME, "{\"text\":\"Diamond Pickaxe\"}");
+                                          nbt.put(ItemStack.TAG_DISPLAY, display);
+                                          return nbt;
+                                      }), Items.WOODEN_PICKAXE, Items.STONE_PICKAXE, Items.IRON_PICKAXE))
+                                  .unlockedBy("has_pickaxe", has(Items.WOODEN_PICKAXE))
+                                  .save(consumer, new ResourceLocation("data_gen_test", "contains_nbt_ingredient_item_set"));
+
+            // intersection - should match all non-flammable planks
+            ShapedRecipeBuilder.shaped(Blocks.NETHERRACK)
+                    .pattern("###")
+                    .pattern("###")
+                    .pattern(" # ")
+                    .define('#', IntersectionIngredient.of(Ingredient.of(ItemTags.PLANKS), Ingredient.of(ItemTags.NON_FLAMMABLE_WOOD)))
+                    .unlockedBy("has_planks", has(Items.CRIMSON_PLANKS))
+                    .save(consumer, new ResourceLocation("data_gen_test", "intersection_ingredient"));
+
+            // difference - should match all flammable fences
+            ShapedRecipeBuilder.shaped(Items.FLINT_AND_STEEL)
+                               .pattern(" # ")
+                               .pattern("###")
+                               .pattern(" # ")
+                               .define('#', DifferenceIngredient.of(Ingredient.of(ItemTags.FENCES), Ingredient.of(ItemTags.NON_FLAMMABLE_WOOD)))
+                               .unlockedBy("has_fence", has(Items.CRIMSON_FENCE))
+                               .save(consumer, new ResourceLocation("data_gen_test", "difference_ingredient"));
+
+            // compound - should match planks, logs, or bedrock
+            ShapedRecipeBuilder.shaped(Blocks.DIRT)
+                               .pattern("###")
+                               .pattern(" # ")
+                               .define('#', CompoundIngredient.of(Ingredient.of(ItemTags.PLANKS), Ingredient.of(ItemTags.LOGS), Ingredient.of(Blocks.BEDROCK)))
+                               .unlockedBy("has_planks", has(Items.CRIMSON_PLANKS))
+                               .save(consumer, new ResourceLocation("data_gen_test", "compound_ingredient_only_vanilla"));
+
+            // compound - should match planks, logs, or a stone pickaxe with 3 damage
+            ShapedRecipeBuilder.shaped(Blocks.GOLD_BLOCK)
+                               .pattern("#")
+                               .pattern("#")
+                               .define('#', CompoundIngredient.of(Ingredient.of(ItemTags.PLANKS), Ingredient.of(ItemTags.LOGS), nbtIngredient))
+                               .unlockedBy("has_planks", has(Items.CRIMSON_PLANKS))
+                               .save(consumer, new ResourceLocation("data_gen_test", "compound_ingredient_custom_types"));
         }
     }
 
@@ -469,7 +570,7 @@ public class DataGeneratorTest
         @Override
         protected void addTags()
         {
-            tag(BlockTags.bind(new ResourceLocation(MODID, "test").toString()))
+            tag(BlockTags.create(new ResourceLocation(MODID, "test")))
                 .add(Blocks.DIAMOND_BLOCK)
                 .addTag(BlockTags.STONE_BRICKS)
                 .addTag(net.minecraftforge.common.Tags.Blocks.COBBLESTONE)
@@ -477,14 +578,14 @@ public class DataGeneratorTest
                 .addOptionalTag(new ResourceLocation("forge", "storage_blocks/ruby"));
 
             // Hopefully sorting issues
-            tag(BlockTags.bind(new ResourceLocation(MODID, "thing/one").toString()))
+            tag(BlockTags.create(new ResourceLocation(MODID, "thing/one")))
                     .add(Blocks.COBBLESTONE);
-            tag(BlockTags.bind(new ResourceLocation(MODID, "thing/two").toString()))
+            tag(BlockTags.create(new ResourceLocation(MODID, "thing/two")))
                     .add(Blocks.DIORITE);
-            tag(BlockTags.bind(new ResourceLocation(MODID, "thing/three").toString()))
+            tag(BlockTags.create(new ResourceLocation(MODID, "thing/three")))
                     .add(Blocks.ANDESITE);
 
-            tag(BlockTags.bind(new ResourceLocation(MODID, "things").toString()))
+            tag(BlockTags.create(new ResourceLocation(MODID, "things")))
                     .add(Blocks.COBBLESTONE)
                     .add(Blocks.DIORITE)
                     .add(Blocks.ANDESITE);
@@ -906,7 +1007,7 @@ public class DataGeneratorTest
         }
 
         private void blockstateError(Block block, String fmt, Object... args) {
-            errors.add("Generated blockstate for block " + block + " " + String.format(fmt, args));
+            errors.add("Generated blockstate for block " + block + " " + String.format(Locale.ENGLISH, fmt, args));
         }
 
         @Override

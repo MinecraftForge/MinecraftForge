@@ -1,0 +1,14 @@
+--- a/net/minecraft/world/entity/monster/Monster.java
++++ b/net/minecraft/world/entity/monster/Monster.java
+@@ -116,9 +_,9 @@
+       if (p_33038_.m_41720_() instanceof ProjectileWeaponItem) {
+          Predicate<ItemStack> predicate = ((ProjectileWeaponItem)p_33038_.m_41720_()).m_6442_();
+          ItemStack itemstack = ProjectileWeaponItem.m_43010_(this, predicate);
+-         return itemstack.m_41619_() ? new ItemStack(Items.f_42412_) : itemstack;
++         return net.minecraftforge.common.ForgeHooks.getProjectile(this, p_33038_, itemstack.m_41619_() ? new ItemStack(Items.f_42412_) : itemstack);
+       } else {
+-         return ItemStack.f_41583_;
++         return net.minecraftforge.common.ForgeHooks.getProjectile(this, p_33038_, ItemStack.f_41583_);
+       }
+    }
+ }

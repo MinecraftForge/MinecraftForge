@@ -1,20 +1,6 @@
 /*
- * Minecraft Forge
- * Copyright (c) 2016-2021.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation version 2.1
- * of the License.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Minecraft Forge - Forge Development LLC
+ * SPDX-License-Identifier: LGPL-2.1-only
  */
 
 package net.minecraftforge.common.crafting;
@@ -44,16 +30,25 @@ public class ConditionalAdvancement
     }
 
     /**
+     * @deprecated Please use {@linkplain #processConditional(JsonObject, ICondition.IContext) the more general overload}.
+     */
+    @Deprecated(forRemoval = true, since = "1.18.2")
+    @Nullable
+    public static JsonObject processConditional(JsonObject json) {
+        return processConditional(json, ICondition.IContext.EMPTY);
+    }
+
+    /**
      * Processes the conditional advancement during loading.
      * @param json The incoming json from the advancement file.
      * @return The advancement that passed the conditions, or null if none did.
      */
     @Nullable
-    public static JsonObject processConditional(JsonObject json) {
+    public static JsonObject processConditional(JsonObject json, ICondition.IContext context) {
         JsonArray entries = GsonHelper.getAsJsonArray(json, "advancements", null);
         if (entries == null)
         {
-            return CraftingHelper.processConditions(json, "conditions") ? json : null;
+            return CraftingHelper.processConditions(json, "conditions", context) ? json : null;
         }
 
         int idx = 0;
@@ -61,7 +56,7 @@ public class ConditionalAdvancement
         {
             if (!ele.isJsonObject())
                 throw new JsonSyntaxException("Invalid advancement entry at index " + idx + " Must be JsonObject");
-            if (CraftingHelper.processConditions(GsonHelper.getAsJsonArray(ele.getAsJsonObject(), "conditions")))
+            if (CraftingHelper.processConditions(GsonHelper.getAsJsonArray(ele.getAsJsonObject(), "conditions"), context))
                 return GsonHelper.getAsJsonObject(ele.getAsJsonObject(), "advancement");
             idx++;
         }

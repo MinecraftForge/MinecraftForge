@@ -1,0 +1,13 @@
+--- a/net/minecraft/world/level/block/BucketPickup.java
++++ b/net/minecraft/world/level/block/BucketPickup.java
+@@ -7,8 +_,9 @@
+ import net.minecraft.world.level.LevelAccessor;
+ import net.minecraft.world.level.block.state.BlockState;
+ 
+-public interface BucketPickup {
++public interface BucketPickup extends net.minecraftforge.common.extensions.IForgeBucketPickup {
+    ItemStack m_142598_(LevelAccessor p_152719_, BlockPos p_152720_, BlockState p_152721_);
+ 
++   @Deprecated//Forge: Use state sensitive variant instead
+    Optional<SoundEvent> m_142298_();
+ }

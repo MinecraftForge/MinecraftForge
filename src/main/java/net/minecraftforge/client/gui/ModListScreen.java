@@ -1,20 +1,6 @@
 /*
- * Minecraft Forge
- * Copyright (c) 2016-2021.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation version 2.1
- * of the License.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Minecraft Forge - Forge Development LLC
+ * SPDX-License-Identifier: LGPL-2.1-only
  */
 
 package net.minecraftforge.client.gui;
@@ -118,9 +104,6 @@ public class ModListScreen extends Screen
     private boolean sorted = false;
     private SortType sortType = SortType.NORMAL;
 
-    /**
-     * @param parentScreen
-     */
     public ModListScreen(Screen parentScreen)
     {
         super(new TranslatableComponent("fml.menu.mods.title"));
@@ -191,7 +174,7 @@ public class ModListScreen extends Screen
         }
 
         @Override
-        protected void drawPanel(PoseStack mStack, int entryRight, int relativeY, Tesselator tess, int mouseX, int mouseY)
+        protected void drawPanel(PoseStack poseStack, int entryRight, int relativeY, Tesselator tess, int mouseX, int mouseY)
         {
             if (logoPath != null) {
                 RenderSystem.setShader(GameRenderer::getPositionTexShader);
@@ -200,7 +183,7 @@ public class ModListScreen extends Screen
                 RenderSystem.setShaderTexture(0, logoPath);
                 // Draw the logo image inscribed in a rectangle with width entryWidth (minus some padding) and height 50
                 int headerHeight = 50;
-                GuiUtils.drawInscribedRect(mStack, left + PADDING, relativeY, width - (PADDING * 2), headerHeight, logoDims.width, logoDims.height, false, true);
+                GuiUtils.drawInscribedRect(poseStack, left + PADDING, relativeY, width - (PADDING * 2), headerHeight, logoDims.width, logoDims.height, false, true);
                 relativeY += headerHeight + PADDING;
             }
 
@@ -209,7 +192,7 @@ public class ModListScreen extends Screen
                 if (line != null)
                 {
                     RenderSystem.enableBlend();
-                    ModListScreen.this.font.drawShadow(mStack, line, left + PADDING, relativeY, 0xFFFFFF);
+                    ModListScreen.this.font.drawShadow(poseStack, line, left + PADDING, relativeY, 0xFFFFFF);
                     RenderSystem.disableBlend();
                 }
                 relativeY += font.lineHeight;
@@ -217,7 +200,7 @@ public class ModListScreen extends Screen
 
             final Style component = findTextLine(mouseX, mouseY);
             if (component!=null) {
-                ModListScreen.this.renderComponentHoverEffect(mStack, component, mouseX, mouseY);
+                ModListScreen.this.renderComponentHoverEffect(poseStack, component, mouseX, mouseY);
             }
         }
 
@@ -377,17 +360,17 @@ public class ModListScreen extends Screen
     }
 
     @Override
-    public void render(PoseStack mStack, int mouseX, int mouseY, float partialTicks)
+    public void render(PoseStack poseStack, int mouseX, int mouseY, float partialTick)
     {
-        this.modList.render(mStack, mouseX, mouseY, partialTicks);
+        this.modList.render(poseStack, mouseX, mouseY, partialTick);
         if (this.modInfo != null)
-            this.modInfo.render(mStack, mouseX, mouseY, partialTicks);
+            this.modInfo.render(poseStack, mouseX, mouseY, partialTick);
 
         Component text = new TranslatableComponent("fml.menu.mods.search");
         int x = modList.getLeft() + ((modList.getRight() - modList.getLeft()) / 2) - (getFontRenderer().width(text) / 2);
-        this.search.render(mStack, mouseX , mouseY, partialTicks);
-        super.render(mStack, mouseX, mouseY, partialTicks);
-        getFontRenderer().draw(mStack, text.getVisualOrderText(), x, search.y - getFontRenderer().lineHeight, 0xFFFFFF);
+        this.search.render(poseStack, mouseX , mouseY, partialTick);
+        super.render(poseStack, mouseX, mouseY, partialTick);
+        getFontRenderer().draw(poseStack, text.getVisualOrderText(), x, search.y - getFontRenderer().lineHeight, 0xFFFFFF);
     }
 
     public Minecraft getMinecraftInstance()

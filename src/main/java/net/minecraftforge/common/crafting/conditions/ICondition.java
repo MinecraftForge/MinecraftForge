@@ -1,29 +1,58 @@
 /*
- * Minecraft Forge
- * Copyright (c) 2016-2021.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation version 2.1
- * of the License.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Minecraft Forge - Forge Development LLC
+ * SPDX-License-Identifier: LGPL-2.1-only
  */
 
 package net.minecraftforge.common.crafting.conditions;
 
+import net.minecraft.core.Holder;
+import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.Tag;
+import net.minecraft.tags.TagKey;
+
+import java.util.Collections;
+import java.util.Map;
 
 public interface ICondition
 {
     ResourceLocation getID();
 
+    default boolean test(IContext context)
+    {
+        return test();
+    }
+
+    /**
+     * @deprecated Use {@linkplain #test(IContext) the other more general overload}.
+     */
+    @Deprecated(forRemoval = true, since = "1.18.2")
     boolean test();
+
+    interface IContext
+    {
+        IContext EMPTY = new IContext()
+        {
+            @Override
+            public <T> Map<ResourceLocation, Tag<Holder<T>>> getAllTags(ResourceKey<? extends Registry<T>> registry)
+            {
+                return Collections.emptyMap();
+            }
+        };
+
+        /**
+         * Return the requested tag if available, or an empty tag otherwise.
+         */
+        default <T> Tag<Holder<T>> getTag(TagKey<T> key)
+        {
+            return getAllTags(key.registry()).getOrDefault(key.location(), Tag.empty());
+        }
+
+        /**
+         * Return all the loaded tags for the passed registry, or an empty map if none is available.
+         * Note that the map and the tags are unmodifiable.
+         */
+        <T> Map<ResourceLocation, Tag<Holder<T>>> getAllTags(ResourceKey<? extends Registry<T>> registry);
+    }
 }

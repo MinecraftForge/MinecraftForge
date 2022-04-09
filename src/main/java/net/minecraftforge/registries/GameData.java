@@ -1,20 +1,6 @@
 /*
- * Minecraft Forge
- * Copyright (c) 2016-2021.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation version 2.1
- * of the License.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Minecraft Forge - Forge Development LLC
+ * SPDX-License-Identifier: LGPL-2.1-only
  */
 
 package net.minecraftforge.registries;
@@ -24,6 +10,7 @@ import com.mojang.serialization.Lifecycle;
 
 import java.util.*;
 
+import net.minecraft.data.BuiltinRegistries;
 import net.minecraft.world.level.block.AirBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -49,7 +36,6 @@ import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.stats.StatType;
-import net.minecraft.tags.StaticTags;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.core.DefaultedRegistry;
 import net.minecraft.core.Registry;
@@ -64,13 +50,13 @@ import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.StructureFeature;
 import net.minecraft.world.level.levelgen.feature.foliageplacers.FoliagePlacerType;
 import net.minecraft.world.level.levelgen.feature.treedecorators.TreeDecoratorType;
-import net.minecraftforge.common.ForgeTagHandler;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.loot.GlobalLootModifierSerializer;
 import net.minecraftforge.common.util.LogMessageAdapter;
 import net.minecraftforge.common.world.ForgeWorldPreset;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.RegistryEvent.MissingMappings;
+import net.minecraftforge.fml.ModLoader;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.IModStateTransition;
 import net.minecraftforge.fml.StartupMessageManager;
@@ -134,16 +120,16 @@ public class GameData
         hasInit = true;
 
         // Game objects
-        makeRegistry(BLOCKS, Block.class, "air").addCallback(BlockCallbacks.INSTANCE).legacyName("blocks").create();
-        makeRegistry(FLUIDS, Fluid.class, "empty").create();
-        makeRegistry(ITEMS, Item.class, "air").addCallback(ItemCallbacks.INSTANCE).legacyName("items").create();
-        makeRegistry(MOB_EFFECTS, MobEffect.class).legacyName("potions").tagFolder("mob_effects").create();
+        makeRegistry(BLOCKS, Block.class, "air").addCallback(BlockCallbacks.INSTANCE).legacyName("blocks").vanillaHolder(Block::builtInRegistryHolder).create();
+        makeRegistry(FLUIDS, Fluid.class, "empty").vanillaHolder(Fluid::builtInRegistryHolder).create();
+        makeRegistry(ITEMS, Item.class, "air").addCallback(ItemCallbacks.INSTANCE).legacyName("items").vanillaHolder(Item::builtInRegistryHolder).create();
+        makeRegistry(MOB_EFFECTS, MobEffect.class).legacyName("potions").create();
         //makeRegistry(BIOMES, Biome.class).legacyName("biomes").create();
         makeRegistry(SOUND_EVENTS, SoundEvent.class).legacyName("soundevents").create();
-        makeRegistry(POTIONS, Potion.class, "empty").legacyName("potiontypes").tagFolder("potions").create();
-        makeRegistry(ENCHANTMENTS, Enchantment.class).legacyName("enchantments").tagFolder("enchantments").create();
-        makeRegistry(ENTITY_TYPES, c(EntityType.class), "pig").legacyName("entities").create();
-        makeRegistry(BLOCK_ENTITY_TYPES, c(BlockEntityType.class)).disableSaving().legacyName("blockentities").tagFolder("block_entity_types").create();
+        makeRegistry(POTIONS, Potion.class, "empty").legacyName("potiontypes").create();
+        makeRegistry(ENCHANTMENTS, Enchantment.class).legacyName("enchantments").create();
+        makeRegistry(ENTITY_TYPES, c(EntityType.class), "pig").legacyName("entities").vanillaHolder(EntityType::builtInRegistryHolder).create();
+        makeRegistry(BLOCK_ENTITY_TYPES, c(BlockEntityType.class)).disableSaving().legacyName("blockentities").create();
         makeRegistry(PARTICLE_TYPES, c(ParticleType.class)).disableSaving().create();
         makeRegistry(CONTAINER_TYPES, c(MenuType.class)).disableSaving().create();
         makeRegistry(PAINTING_TYPES, Motive.class, "kebab").create();
@@ -170,18 +156,30 @@ public class GameData
 
         // Dynamic Worldgen
         makeRegistry(BIOMES, Biome.class).disableSync().create();
-
-        // Custom forge registries
-        makeRegistry(DATA_SERIALIZERS, DataSerializerEntry.class, 256 /*vanilla space*/, MAX_VARINT).disableSaving().disableOverrides().addCallback(SerializerCallbacks.INSTANCE).create();
-        makeRegistry(LOOT_MODIFIER_SERIALIZERS, c(GlobalLootModifierSerializer.class)).disableSaving().disableSync().create();
-        makeRegistry(WORLD_TYPES, ForgeWorldPreset.class).disableSaving().disableSync().create();
     }
+
+    static RegistryBuilder<DataSerializerEntry> getDataSerializersRegistryBuilder()
+    {
+        return makeRegistry(DATA_SERIALIZERS, DataSerializerEntry.class, 256 /*vanilla space*/, MAX_VARINT).disableSaving().disableOverrides()
+                .addCallback(SerializerCallbacks.INSTANCE);
+    }
+
+    static RegistryBuilder<GlobalLootModifierSerializer<?>> getGLMSerializersRegistryBuilder()
+    {
+        return makeRegistry(LOOT_MODIFIER_SERIALIZERS, c(GlobalLootModifierSerializer.class)).disableSaving().disableSync();
+    }
+
+    static RegistryBuilder<ForgeWorldPreset> getWorldTypesRegistryBuilder()
+    {
+        return makeRegistry(WORLD_TYPES, ForgeWorldPreset.class).disableSaving().disableSync();
+    }
+
     @SuppressWarnings("unchecked") //Ugly hack to let us pass in a typed Class object. Remove when we remove type specific references.
-    private static <T> Class<T> c(Class<?> cls) { return (Class<T>)cls; }
+    static <T> Class<T> c(Class<?> cls) { return (Class<T>)cls; }
 
     private static <T extends IForgeRegistryEntry<T>> RegistryBuilder<T> makeRegistry(ResourceKey<? extends Registry<T>> key, Class<T> type)
     {
-        return new RegistryBuilder<T>().setName(key.location()).setType(type).setMaxID(MAX_VARINT).addCallback(new NamespacedWrapper.Factory<T>());
+        return new RegistryBuilder<T>().setName(key.location()).setType(type).setMaxID(MAX_VARINT).hasWrapper();
     }
     private static <T extends IForgeRegistryEntry<T>> RegistryBuilder<T> makeRegistry(ResourceKey<? extends Registry<T>> key, Class<T> type, int min, int max)
     {
@@ -215,37 +213,38 @@ public class GameData
     @SuppressWarnings("unchecked")
     public static Map<Block,Item> getBlockItemMap()
     {
-        return RegistryManager.ACTIVE.getRegistry(Item.class).getSlaveMap(BLOCK_TO_ITEM, Map.class);
+        return RegistryManager.ACTIVE.getRegistry(ITEMS).getSlaveMap(BLOCK_TO_ITEM, Map.class);
     }
 
     @SuppressWarnings("unchecked")
     public static IdMapper<BlockState> getBlockStateIDMap()
     {
-        return RegistryManager.ACTIVE.getRegistry(Block.class).getSlaveMap(BLOCKSTATE_TO_ID, IdMapper.class);
+        return RegistryManager.ACTIVE.getRegistry(BLOCKS).getSlaveMap(BLOCKSTATE_TO_ID, IdMapper.class);
     }
 
     @SuppressWarnings("unchecked")
     public static Map<BlockState, PoiType> getBlockStatePointOfInterestTypeMap()
     {
-        return RegistryManager.ACTIVE.getRegistry(PoiType.class).getSlaveMap(BLOCKSTATE_TO_POINT_OF_INTEREST_TYPE, Map.class);
+        return RegistryManager.ACTIVE.getRegistry(POI_TYPES).getSlaveMap(BLOCKSTATE_TO_POINT_OF_INTEREST_TYPE, Map.class);
     }
 
     @SuppressWarnings("unchecked")
     public static Map<EntityDataSerializer<?>, DataSerializerEntry> getSerializerMap()
     {
-        return RegistryManager.ACTIVE.getRegistry(DataSerializerEntry.class).getSlaveMap(SERIALIZER_TO_ENTRY, Map.class);
+        ForgeRegistry<DataSerializerEntry> registry = RegistryManager.ACTIVE.getRegistry(DATA_SERIALIZERS);
+        return registry == null ? null : registry.getSlaveMap(SERIALIZER_TO_ENTRY, Map.class);
     }
 
     @SuppressWarnings("unchecked")
     public static BiMap<String, StructureFeature<?>> getStructureMap()
     {
-        return (BiMap<String, StructureFeature<?>>) RegistryManager.ACTIVE.getRegistry(Feature.class).getSlaveMap(STRUCTURES, BiMap.class);
+        return (BiMap<String, StructureFeature<?>>) RegistryManager.ACTIVE.getRegistry(FEATURES).getSlaveMap(STRUCTURES, BiMap.class);
     }
 
     public static <K extends IForgeRegistryEntry<K>> K register_impl(K value)
     {
         Validate.notNull(value, "Attempted to register a null object");
-        Validate.notNull(value.getRegistryName(), String.format("Attempt to register object without having set a registry name %s (type %s)", value, value.getClass().getName()));
+        Validate.notNull(value.getRegistryName(), String.format(Locale.ENGLISH, "Attempt to register object without having set a registry name %s (type %s)", value, value.getClass().getName()));
         final IForgeRegistry<K> registry = RegistryManager.ACTIVE.getRegistry(value.getRegistryType());
         Validate.notNull(registry, "Attempted to registry object without creating registry first: " + value.getRegistryType().getName());
         registry.register(value);
@@ -271,10 +270,18 @@ public class GameData
         LOGGER.debug(REGISTRIES, "Vanilla freeze snapshot created");
     }
 
+    public static void unfreezeData()
+    {
+        LOGGER.debug(REGISTRIES, "Unfreezing vanilla registries");
+        Registry.REGISTRY.stream().filter(r -> r instanceof MappedRegistry).forEach(r -> ((MappedRegistry<?>)r).unfreeze());
+    }
+
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public static void freezeData()
     {
         LOGGER.debug(REGISTRIES, "Freezing registries");
+        Registry.REGISTRY.stream().filter(r -> r instanceof MappedRegistry).forEach(r -> ((MappedRegistry<?>)r).freeze());
+
         for (Map.Entry<ResourceLocation, ForgeRegistry<? extends IForgeRegistryEntry<?>>> r : RegistryManager.ACTIVE.registries.entrySet())
         {
             final Class<? extends IForgeRegistryEntry> clazz = RegistryManager.ACTIVE.getSuperType(r.getKey());
@@ -336,7 +343,6 @@ public class GameData
         LOGGER.debug(REGISTRIES, "Reverting complete");
     }
 
-    @SuppressWarnings("rawtypes") //Eclipse compiler generics issue.
     public static Stream<IModStateTransition.EventGenerator<?>> generateRegistryEvents() {
         List<ResourceLocation> keys = Lists.newArrayList(RegistryManager.ACTIVE.registries.keySet());
         keys.sort((o1, o2) -> String.valueOf(o1).compareToIgnoreCase(String.valueOf(o2)));
@@ -368,10 +374,15 @@ public class GameData
             final ResourceLocation rl = event.getName();
             ForgeRegistry<?> fr = (ForgeRegistry<?>) event.getRegistry();
             fr.freeze();
-            LOGGER.debug(REGISTRIES, "Applying holder lookups: {}", rl.toString());
-            ObjectHolderRegistry.applyObjectHolders(rl::equals);
-            LOGGER.debug(REGISTRIES, "Holder lookups applied: {}", rl.toString());
+            applyHolderLookups(rl);
         }, executor).handle((v, t)->t != null ? Collections.singletonList(t): Collections.emptyList());
+    }
+
+    private static void applyHolderLookups(ResourceLocation registryName)
+    {
+        LOGGER.debug(REGISTRIES, "Applying holder lookups: {}", registryName);
+        ObjectHolderRegistry.applyObjectHolders(registryName::equals);
+        LOGGER.debug(REGISTRIES, "Holder lookups applied: {}", registryName);
     }
 
     @SuppressWarnings("deprecation")
@@ -382,25 +393,26 @@ public class GameData
                 revertTo(RegistryManager.VANILLA, false);
                 LOGGER.fatal("Detected errors during registry event dispatch, roll back to VANILLA complete");
             } else {
+                RegistryManager.getVanillaRegistryKeys().forEach(registryName -> {
+                    Registry<?> registry = Registry.REGISTRY.get(registryName);
+                    if (registry == null)
+                        return;
+                    postVanillaRegisterEvent(registry);
+                });
+                BuiltinRegistries.REGISTRY.forEach(GameData::postVanillaRegisterEvent);
                 net.minecraftforge.common.ForgeHooks.modifyAttributes();
             }
         }, executor);
     }
 
-    public static void setCustomTagTypesFromRegistries()
+    @SuppressWarnings("removal")
+    private static void postVanillaRegisterEvent(Registry<?> registry)
     {
-        Set<ResourceLocation> customTagTypes = new HashSet<>();
-        for (Map.Entry<ResourceLocation, ForgeRegistry<? extends IForgeRegistryEntry<?>>> entry : RegistryManager.ACTIVE.registries.entrySet())
-        {
-            ResourceLocation registryName = entry.getKey();
-            if (entry.getValue().getTagFolder() != null && StaticTags.get(registryName) == null)
-            {
-                LOGGER.debug(REGISTRIES, "Registering custom tag type for: {}", registryName);
-                customTagTypes.add(registryName);
-                StaticTags.create(ResourceKey.createRegistryKey(registryName), "tags/" + entry.getValue().getTagFolder());
-            }
-        }
-        ForgeTagHandler.setCustomTagTypes(customTagTypes);
+        if (RegistryManager.ACTIVE.getRegistry(registry.key().location()) != null)
+            return;
+
+        ModLoader.get().postEvent(new VanillaRegisterEvent(registry));
+        applyHolderLookups(registry.key().location());
     }
 
     //Lets us clear the map so we can rebuild it.
@@ -439,11 +451,11 @@ public class GameData
                 if (block.getRegistryName().getNamespace().equals("minecraft") && !oldContainer.getProperties().equals(newContainer.getProperties()))
                 {
                     String oldSequence = oldContainer.getProperties().stream()
-                            .map(s -> String.format("%s={%s}", s.getName(),
+                            .map(s -> String.format(Locale.ENGLISH, "%s={%s}", s.getName(),
                                     s.getPossibleValues().stream().map(Object::toString).collect(Collectors.joining( "," ))))
                             .collect(Collectors.joining(";"));
                     String newSequence = newContainer.getProperties().stream()
-                            .map(s -> String.format("%s={%s}", s.getName(),
+                            .map(s -> String.format(Locale.ENGLISH, "%s={%s}", s.getName(),
                                     s.getPossibleValues().stream().map(Object::toString).collect(Collectors.joining( "," ))))
                             .collect(Collectors.joining(";"));
 
@@ -634,7 +646,7 @@ public class GameData
                 PoiType oldType = map.put(state, obj);
                 if (oldType != null)
                 {
-                    throw new IllegalStateException(String.format("Point of interest types %s and %s both list %s in their blockstates, this is not allowed. Blockstates can only have one point of interest type each.", oldType, obj, state));
+                    throw new IllegalStateException(String.format(Locale.ENGLISH, "Point of interest types %s and %s both list %s in their blockstates, this is not allowed. Blockstates can only have one point of interest type each.", oldType, obj, state));
                 }
             });
         }

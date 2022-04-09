@@ -1,20 +1,6 @@
 /*
- * Minecraft Forge
- * Copyright (c) 2016-2021.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation version 2.1
- * of the License.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Minecraft Forge - Forge Development LLC
+ * SPDX-License-Identifier: LGPL-2.1-only
  */
 
 package net.minecraftforge.registries;
@@ -22,12 +8,17 @@ package net.minecraftforge.registries;
 import java.util.*;
 import java.util.Map.Entry;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
+import com.mojang.datafixers.util.Pair;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.DataResult;
+import com.mojang.serialization.DynamicOps;
+import net.minecraft.core.Holder;
+import net.minecraft.core.HolderSet;
+import net.minecraft.tags.TagKey;
 import net.minecraftforge.common.util.LogMessageAdapter;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
+import net.minecraftforge.registries.tags.ITagManager;
 import org.apache.commons.lang3.Validate;
 
 import com.google.common.base.Preconditions;
@@ -54,6 +45,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRegistryInternal<V>, IForgeRegistryModifiable<V>
 {
@@ -80,14 +73,14 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
     private final Set<Integer> blocked = Sets.newHashSet();
     private final Multimap<ResourceLocation, V> overrides = ArrayListMultimap.create();
     private final BiMap<OverrideOwner<V>, V> owners = HashBiMap.create();
+    private final ForgeRegistryTagManager<V> tagManager;
     private final DummyFactory<V> dummyFactory;
     private final boolean isDelegated;
     private final int min;
     private final int max;
     private final boolean allowOverrides;
     private final boolean isModifiable;
-    @Nullable
-    private final String tagFolder;
+    private final boolean hasWrapper;
 
     private V defaultValue = null;
     boolean isFrozen = false;
@@ -96,6 +89,9 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
     private final ResourceKey<Registry<V>> key;
     private final RegistryBuilder<V> builder;
 
+    private final Codec<V> codec = new RegistryCodec();
+
+    @SuppressWarnings("unchecked")
     ForgeRegistry(RegistryManager stage, ResourceLocation name, RegistryBuilder<V> builder)
     {
         this.name = name;
@@ -118,7 +114,8 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
         this.isDelegated = ForgeRegistryEntry.class.isAssignableFrom(superType); //TODO: Make this IDelegatedRegistryEntry?
         this.allowOverrides = builder.getAllowOverrides();
         this.isModifiable = builder.getAllowModifications();
-        this.tagFolder = builder.getTagFolder();
+        this.hasWrapper = builder.getHasWrapper();
+        this.tagManager = this.hasWrapper ? new ForgeRegistryTagManager<>(this) : null;
         if (this.create != null)
             this.create.onCreate(this, stage);
     }
@@ -163,6 +160,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
         return this.name;
     }
 
+    @Override
     public ResourceKey<Registry<V>> getRegistryKey()
     {
         return this.key;
@@ -174,14 +172,15 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
         return superType;
     }
 
-    @Nullable
-    public String getTagFolder()
+    @NotNull
+    public Codec<V> getCodec()
     {
-        return tagFolder;
+        return this.codec;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    public void registerAll(@SuppressWarnings("unchecked") V... values)
+    public void registerAll(V... values)
     {
         for (V value : values)
             register(value);
@@ -211,6 +210,11 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
         return this.names.isEmpty();
     }
 
+    int size()
+    {
+        return this.names.size();
+    }
+
     @Override
     public V getValue(ResourceLocation key)
     {
@@ -230,6 +234,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
         return getResourceKey(value).map(ResourceKey::location).orElse(this.defaultKey);
     }
 
+    @NotNull
     @Override
     public Optional<ResourceKey<V>> getResourceKey(V value)
     {
@@ -237,19 +242,79 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
         return Optional.ofNullable(this.owners.inverse().get(value)).map(OverrideOwner::key);
     }
 
+    @SuppressWarnings("unchecked")
+    @Nullable
+    Registry<V> getWrapper()
+    {
+        if (!this.hasWrapper)
+            return null;
+
+        return this.defaultKey != null
+                ? this.getSlaveMap(NamespacedDefaultedWrapper.Factory.ID, NamespacedDefaultedWrapper.class)
+                : this.getSlaveMap(NamespacedWrapper.Factory.ID, NamespacedWrapper.class);
+    }
+
+    @SuppressWarnings("unchecked")
+    @NotNull
+    Optional<NamespacedHolderHelper<V>> getHolderHelper()
+    {
+        Registry<V> wrapper = getWrapper();
+        if (!(wrapper instanceof IHolderHelperHolder))
+            return Optional.empty();
+
+        // Unsafe cast means we can't use pattern matching here
+        return Optional.of(((IHolderHelperHolder<V>) wrapper).getHolderHelper());
+    }
+
+    void onBindTags(Map<TagKey<V>, HolderSet.Named<V>> tags, Set<TagKey<V>> defaultedTags)
+    {
+        if (this.tagManager != null)
+            this.tagManager.bind(tags, defaultedTags);
+    }
+
+    @NotNull
+    @Override
+    public Optional<Holder<V>> getHolder(ResourceKey<V> key)
+    {
+        return getHolderHelper().flatMap(h -> h.getHolder(key));
+    }
+
+    @NotNull
+    @Override
+    public Optional<Holder<V>> getHolder(ResourceLocation location)
+    {
+        return getHolderHelper().flatMap(h -> h.getHolder(location));
+    }
+
+    @NotNull
+    @Override
+    public Optional<Holder<V>> getHolder(V value)
+    {
+        return getHolderHelper().flatMap(h -> h.getHolder(value));
+    }
+
+    @Nullable
+    @Override
+    public ITagManager<V> tags()
+    {
+        return this.tagManager;
+    }
+
+    @NotNull
     @Override
     public Set<ResourceLocation> getKeys()
     {
         return Collections.unmodifiableSet(this.names.keySet());
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public Collection<V> getValues()
     {
         return Collections.unmodifiableSet(this.names.values());
     }
 
+    @NotNull
     @Override
     public Set<Entry<ResourceKey<V>, V>> getEntries()
     {
@@ -339,7 +404,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
             idToUse = availabilityMap.nextClearBit(min);
 
         if (idToUse > max)
-            throw new RuntimeException(String.format("Invalid id %d - maximum id range exceeded.", idToUse));
+            throw new RuntimeException(String.format(Locale.ENGLISH, "Invalid id %d - maximum id range exceeded.", idToUse));
 
         V oldEntry = getRaw(key);
         if (oldEntry == value) // already registered, return prev registration's id
@@ -350,9 +415,9 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
         if (oldEntry != null) // duplicate name
         {
             if (!this.allowOverrides)
-                throw new IllegalArgumentException(String.format("The name %s has been registered twice, for %s and %s.", key, getRaw(key), value));
+                throw new IllegalArgumentException(String.format(Locale.ENGLISH, "The name %s has been registered twice, for %s and %s.", key, getRaw(key), value));
             if (owner == null)
-                throw new IllegalStateException(String.format("Could not determine owner for the override on %s. Value: %s", key, value));
+                throw new IllegalStateException(String.format(Locale.ENGLISH, "Could not determine owner for the override on %s. Value: %s", key, value));
             LOGGER.debug(REGISTRIES,"Registry {} Override: {} {} -> {}", this.name, key, oldEntry, value);
             idToUse = this.getID(oldEntry);
         }
@@ -361,16 +426,16 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
         if (foundId != null)
         {
             V otherThing = this.ids.get(foundId);
-            throw new IllegalArgumentException(String.format("The object %s{%x} has been registered twice, using the names %s and %s. (Other object at this id is %s{%x})", value, System.identityHashCode(value), getKey(value), key, otherThing, System.identityHashCode(otherThing)));
+            throw new IllegalArgumentException(String.format(Locale.ENGLISH, "The object %s{%x} has been registered twice, using the names %s and %s. (Other object at this id is %s{%x})", value, System.identityHashCode(value), getKey(value), key, otherThing, System.identityHashCode(otherThing)));
         }
 
         if (isLocked())
-            throw new IllegalStateException(String.format("The object %s (name %s) is being added too late.", value, key));
+            throw new IllegalStateException(String.format(Locale.ENGLISH, "The object %s (name %s) is being added too late.", value, key));
 
         if (defaultKey != null && defaultKey.equals(key))
         {
             if (this.defaultValue != null)
-                throw new IllegalStateException(String.format("Attemped to override already set default value. This is not allowed: The object %s (name %s)", value, key));
+                throw new IllegalStateException(String.format(Locale.ENGLISH, "Attemped to override already set default value. This is not allowed: The object %s (name %s)", value, key));
             this.defaultValue = value;
         }
 
@@ -420,7 +485,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
     void addAlias(ResourceLocation from, ResourceLocation to)
     {
         if (this.isLocked())
-            throw new IllegalStateException(String.format("Attempted to register the alias %s -> %s to late", from, to));
+            throw new IllegalStateException(String.format(Locale.ENGLISH, "Attempted to register the alias %s -> %s to late", from, to));
 
         if (from.equals(to))
         {
@@ -435,7 +500,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
     void addDummy(ResourceLocation key)
     {
         if (this.isLocked())
-            throw new IllegalStateException(String.format("Attempted to register the dummy %s to late", key));
+            throw new IllegalStateException(String.format(Locale.ENGLISH, "Attempted to register the dummy %s to late", key));
         this.dummies.add(key);
         LOGGER.trace(REGISTRIES,"Registry {} dummy: {}", this.name, key);
     }
@@ -490,23 +555,23 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
 
             // name lookup failed -> obj is not in the obj<->name map
             if (name == null)
-                throw new IllegalStateException(String.format("Registry entry for %s %s, id %d, doesn't yield a name.", registryName, obj, id));
+                throw new IllegalStateException(String.format(Locale.ENGLISH, "Registry entry for %s %s, id %d, doesn't yield a name.", registryName, obj, id));
 
             // id is too high
             if (id > max)
-                throw new IllegalStateException(String.format("Registry entry for %s %s, name %s uses the too large id %d.", registryName, obj, name, id));
+                throw new IllegalStateException(String.format(Locale.ENGLISH, "Registry entry for %s %s, name %s uses the too large id %d.", registryName, obj, name, id));
 
             // id -> obj lookup is inconsistent
             if (getValue(id) != obj)
-                throw new IllegalStateException(String.format("Registry entry for id %d, name %s, doesn't yield the expected %s %s.", id, name, registryName, obj));
+                throw new IllegalStateException(String.format(Locale.ENGLISH, "Registry entry for id %d, name %s, doesn't yield the expected %s %s.", id, name, registryName, obj));
 
             // name -> obj lookup is inconsistent
             if (getValue(name) != obj)
-                throw new IllegalStateException(String.format("Registry entry for name %s, id %d, doesn't yield the expected %s %s.", name, id, registryName, obj));
+                throw new IllegalStateException(String.format(Locale.ENGLISH, "Registry entry for name %s, id %d, doesn't yield the expected %s %s.", name, id, registryName, obj));
 
             // name -> id lookup is inconsistent
             if (getID(name) != id)
-                throw new IllegalStateException(String.format("Registry entry for name %s doesn't yield the expected id %d.", name, id));
+                throw new IllegalStateException(String.format(Locale.ENGLISH, "Registry entry for name %s doesn't yield the expected id %d.", name, id));
 
             /*
             // entry is blocked, thus should be empty
@@ -871,6 +936,45 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
         return ret;
     }
 
+    private class RegistryCodec implements Codec<V>
+    {
+        @Override
+        public <T> DataResult<Pair<V, T>> decode(DynamicOps<T> ops, T input)
+        {
+            if (ops.compressMaps())
+            {
+                return ops.getNumberValue(input).flatMap(n ->
+                {
+                    int id = n.intValue();
+                    if (ids.get(id) == null)
+                    {
+                        return DataResult.error("Unknown registry id in " + ForgeRegistry.this.key + ": " + n);
+                    }
+                    V val = ForgeRegistry.this.getValue(id);
+                    return DataResult.success(val);
+                }).map(v -> Pair.of(v, ops.empty()));
+            }
+            else
+            {
+                return ResourceLocation.CODEC.decode(ops, input).flatMap(keyValuePair -> !ForgeRegistry.this.containsKey(keyValuePair.getFirst())
+                        ? DataResult.error("Unknown registry key in " + ForgeRegistry.this.key + ": " + keyValuePair.getFirst())
+                        : DataResult.success(keyValuePair.mapFirst(ForgeRegistry.this::getValue)));
+            }
+        }
+
+        @Override
+        public <T> DataResult<T> encode(V input, DynamicOps<T> ops, T prefix)
+        {
+            ResourceLocation key = getKey(input);
+            if (key == null)
+            {
+                return DataResult.error("Unknown registry element in " + ForgeRegistry.this.key + ": " + input);
+            }
+            T toMerge = ops.compressMaps() ? ops.createInt(getID(input)) : ops.createString(key.toString());
+            return ops.mergeToPrimitive(prefix, toMerge);
+        }
+    }
+
     public static class Snapshot
     {
         private static final Comparator<ResourceLocation> sorter = (a,b) -> a.compareNamespaced(b);
@@ -1101,6 +1205,11 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
 
         if (failed.isEmpty() && ignored > 0)
             LOGGER.debug(REGISTRIES,"There were {} missing mappings that have been ignored", ignored);
+    }
+
+    RegistryBuilder<V> getBuilder()
+    {
+        return this.builder;
     }
 
     private record OverrideOwner<V>(String owner, ResourceKey<V> key){};

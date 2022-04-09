@@ -1,20 +1,6 @@
 /*
- * Minecraft Forge
- * Copyright (c) 2016-2021.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation version 2.1
- * of the License.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Minecraft Forge - Forge Development LLC
+ * SPDX-License-Identifier: LGPL-2.1-only
  */
 
 package net.minecraftforge.registries;
@@ -22,9 +8,11 @@ package net.minecraftforge.registries;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Function;
 
 import com.google.common.collect.Lists;
 
+import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.registries.IForgeRegistry.*;
 
@@ -44,13 +32,12 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
     private List<CreateCallback<T>> createCallback = Lists.newArrayList();
     private List<ValidateCallback<T>> validateCallback = Lists.newArrayList();
     private List<BakeCallback<T>> bakeCallback = Lists.newArrayList();
+    private Function<T, Holder.Reference<T>> vanillaHolder;
     private boolean saveToDisc = true;
     private boolean sync = true;
     private boolean allowOverrides = true;
     private boolean allowModifications = false;
     private boolean hasWrapper = false;
-    @Nullable
-    private String tagFolder;
     private DummyFactory<T> dummyFactory;
     private MissingFactory<T> missingFactory;
     private Set<ResourceLocation> legacyNames = new HashSet<>();
@@ -212,15 +199,6 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
         return this;
     }
 
-    public RegistryBuilder<T> tagFolder(String tagFolder)
-    {
-        if (tagFolder == null || !tagFolder.matches("[a-z_/]+")) throw new IllegalArgumentException("Non [a-z_/] character in tag folder " + tagFolder);
-        this.tagFolder = tagFolder;
-        //Also mark this registry as having a wrapper to a vanilla registry so that it can be used in data generators properly
-        hasWrapper();
-        return this;
-    }
-
     public RegistryBuilder<T> legacyName(String name)
     {
         return legacyName(new ResourceLocation(name));
@@ -232,7 +210,30 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
         return this;
     }
 
-    public IForgeRegistry<T> create()
+    RegistryBuilder<T> vanillaHolder(Function<T, Holder.Reference<T>> func)
+    {
+        this.vanillaHolder = func;
+        return this;
+    }
+
+    /**
+     * Enables tags for this registry if not already.
+     * All forge registries with wrappers inherently support tags.
+     *
+     * @return this builder
+     * @see RegistryBuilder#hasWrapper()
+     */
+    public RegistryBuilder<T> hasTags()
+    {
+        // Tag system heavily relies on Registry<?> objects, so we need a wrapper for this registry to take advantage
+        this.hasWrapper();
+        return this;
+    }
+
+    /**
+     * Modders: Use {@link NewRegistryEvent#create(RegistryBuilder)} instead
+     */
+    IForgeRegistry<T> create()
     {
         if (hasWrapper)
         {
@@ -351,12 +352,6 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
     }
 
     @Nullable
-    public String getTagFolder()
-    {
-        return tagFolder;
-    }
-
-    @Nullable
     public DummyFactory<T> getDummyFactory()
     {
         return dummyFactory;
@@ -381,5 +376,15 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
     public Set<ResourceLocation> getLegacyNames()
     {
         return legacyNames;
+    }
+
+    Function<T, Holder.Reference<T>> getVanillaHolder()
+    {
+        return this.vanillaHolder;
+    }
+
+    boolean getHasWrapper()
+    {
+        return this.hasWrapper;
     }
 }

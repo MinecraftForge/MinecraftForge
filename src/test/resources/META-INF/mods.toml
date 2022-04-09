@@ -17,6 +17,8 @@ license="LGPL v2.1"
 [[mods]]
     modId="slipperiness_test"
 [[mods]]
+    modId="vanilla_game_event_test"
+[[mods]]
     modId="custom_slime_block_test"
 [[mods]]
     modId="client_chat_event_test"
@@ -75,6 +77,8 @@ license="LGPL v2.1"
 [[mods]]
     modId="ender_mask_test"
 [[mods]]
+    modId="custom_head_test"
+[[mods]]
     modId="raid_enum_test"
 [[mods]]
     modId="player_name_event_test"
@@ -83,11 +87,11 @@ license="LGPL v2.1"
 [[mods]]
     modId="custom_elytra_test"
 [[mods]]
+    modId="snow_boots_test"
+[[mods]]
     modId="finite_water_test"
 [[mods]]
     modId="scaffolding_test"
-[[mods]]
-    modId="custom_tag_types_test"
 [[mods]]
     modId="biome_loading_event_test"
 [[mods]]
@@ -174,6 +178,42 @@ license="LGPL v2.1"
     modId="part_entity_test"
 [[mods]]
     modId="capabilities_test"
+[[mods]]
+    modId="audio_stream_test"
+[[mods]]
+    modId="custom_mob_bucket_test"
+[[mods]]
+    modId="custom_armor_model_test"
+[[mods]]
+    modId="duplicate_optional_tag_test"
+[[mods]]
+    modId="custom_particle_type_test"
+[[mods]]
+    modId="shield_block_event"
+[[mods]]
+    modId="renderable_test"
+[[mods]]
+    modId="ingredient_invalidation"
+[[mods]]
+    modId="client_command_test"
+[[mods]]
+    modId="registry_codec_test"
+[[mods]]
+    modId="registry_object_test"
+[[mods]]
+    modId="hidden_tooltip_parts"
+[[mods]]
+    modId="gametest_test"
+[[mods]]
+    modId="many_mob_effects_test"
+[[mods]]
+    modId="potion_size_event_test"
+[[mods]]
+    modId="recipe_book_extension_test"
+[[mods]]
+    modId="hide_neighbor_face_test"
+[[mods]]
+    modId="living_get_projectile_event_test"
 [[mods]]
     modId="multi_noise_biome_source_loading_event_test"
 
