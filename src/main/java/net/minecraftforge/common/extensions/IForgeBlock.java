@@ -680,7 +680,7 @@ public interface IForgeBlock
         BlockState toolModifiedState = getToolModifiedState(state, context.getLevel(), context.getClickedPos(),
                 context.getPlayer(), context.getItemInHand(), toolAction);
 
-        if (toolModifiedState == null && ToolActions.HOE_TILL == toolAction)
+        if (toolModifiedState == null && ToolActions.HOE_TILL == toolAction && context.getItemInHand().canPerformAction(ToolActions.HOE_TILL))
         {
             // Logic copied from HoeItem#TILLABLES; needs to be kept in sync during updating
             Block block = state.getBlock();
