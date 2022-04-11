@@ -788,7 +788,7 @@ public interface IForgeItem
      * Use this instead of the {@link Item#getFoodProperties()} method, for ItemStack sensitivity.
      *
      * The @Nullable annotation was only added, due to the default method, also being @Nullable.
-     * Use this with a grain of salt, as if you return null here and true at isEditable(), NPEs will occur!
+     * Use this with a grain of salt, as if you return null here and true at {@link Item#isEdible()}, NPEs will occur!
      *
      * @param stack The ItemStack the entity wants to eat.
      * @param entity The entity which wants to eat the food. Be aware that this can be null!

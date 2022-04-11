@@ -460,7 +460,7 @@
     private boolean m_21332_() {
        int i = this.m_21212_();
 -      FoodProperties foodproperties = this.f_20935_.m_41720_().m_41473_();
-+      FoodProperties foodproperties = this.f_20935_.m_41720_().getFoodProperties(this.f_20935_, this);
++      FoodProperties foodproperties = this.f_20935_.getFoodProperties(this);
        boolean flag = foodproperties != null && foodproperties.m_38748_();
        flag |= i <= this.f_20935_.m_41779_() - 7;
        return flag && i % 4 == 0;
