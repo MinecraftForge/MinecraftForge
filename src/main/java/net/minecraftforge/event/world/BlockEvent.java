@@ -450,6 +450,10 @@ public class BlockEvent extends Event
             this.stack = stack;
         }
 
+        /**
+         * @return the player using the tool, never null
+         */
+        @Nonnull
         public Player getPlayer()
         {
             return this.player;
@@ -498,8 +502,10 @@ public class BlockEvent extends Event
         }
 
         /**
-         * @return the player using the tool
+         * @return the player using the tool.
+         * May be null based on what was provided by {@link #getContext() the use on context}.
          */
+        @Nullable
         public Player getPlayer()
         {
             return this.context.getPlayer();

@@ -9,7 +9,7 @@
        Level level = p_41341_.m_43725_();
        BlockPos blockpos = p_41341_.m_8083_();
 -      Pair<Predicate<UseOnContext>, Consumer<UseOnContext>> pair = f_41332_.get(level.m_8055_(blockpos).m_60734_());
-+      BlockState toolModifiedState = p_41341_.m_43725_().m_8055_(p_41341_.m_8083_()).getToolModifiedState(p_41341_, net.minecraftforge.common.ToolActions.HOE_TILL, false);
++      BlockState toolModifiedState = level.m_8055_(blockpos).getToolModifiedState(p_41341_, net.minecraftforge.common.ToolActions.HOE_TILL, false);
 +      Pair<Predicate<UseOnContext>, Consumer<UseOnContext>> pair = toolModifiedState == null ? null : Pair.of(ctx -> true, m_150858_(toolModifiedState));
        if (pair == null) {
           return InteractionResult.PASS;
