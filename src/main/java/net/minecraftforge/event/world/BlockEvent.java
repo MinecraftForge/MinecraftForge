@@ -421,13 +421,13 @@ public class BlockEvent extends Event
      * For example: Used to determine if {@link ToolActions#AXE_STRIP an axe can strip},
      * {@link ToolActions#SHOVEL_FLATTEN a shovel can path}, or {@link ToolActions#HOE_TILL a hoe can till}.
      * <p>
-     * This deprecated subclass event is <i>only</i> fired when {@link #isSimulate()} is false.
+     * This deprecated subclass event is <i>only</i> fired when {@link #isSimulated()} is false.
      * To receive simulated events, use {@link BlockToolModificationEvent}.
      * <p>
      * This event is {@link Cancelable}. If canceled, this will prevent the tool
      * from changing the block's state.
      *
-     * @deprecated Use {@link BlockToolModificationEvent} and put world-modifying actions behind <code>if (!event.isSimulate())</code>.
+     * @deprecated Use {@link BlockToolModificationEvent} and put world-modifying actions behind <code>if (!event.isSimulated())</code>.
      */
     @Cancelable
     @Deprecated(forRemoval = true, since = "1.18.2")
@@ -466,7 +466,7 @@ public class BlockEvent extends Event
      * For example: Used to determine if {@link ToolActions#AXE_STRIP an axe can strip},
      * {@link ToolActions#SHOVEL_FLATTEN a shovel can path}, or {@link ToolActions#HOE_TILL a hoe can till}.
      * <p>
-     * Care must be taken to ensure world-modifying events are only performed if {@link #isSimulate()} returns {@code true}.
+     * Care must be taken to ensure world-modifying events are only performed if {@link #isSimulated()} returns {@code true}.
      * <p>
      * This event is {@link Cancelable}. If canceled, this will prevent the tool
      * from changing the block's state.
@@ -528,7 +528,7 @@ public class BlockEvent extends Event
          * @return {@code true} if this event should not perform any actions that modify the world.
          * If {@code false}, then world-modifying actions can be performed.
          */
-        public boolean isSimulate()
+        public boolean isSimulated()
         {
             return this.simulate;
         }

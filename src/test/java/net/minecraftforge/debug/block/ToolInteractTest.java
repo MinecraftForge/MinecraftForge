@@ -26,7 +26,7 @@ public class ToolInteractTest
     private void onToolInteraction(final BlockToolModificationEvent event)
     {
         //Test 1: No Changes, just test if event is called. State and Final State should be the same
-        LOGGER.info("BlockState {} is modified to {} at position {} by {} with {}", event.getState(), event.getFinalState(), event.getPos(), event.getPlayer(), event.getHeldItemStack());
+        LOGGER.info("BlockState {} is modified to {} at position {} by {} with {} simulated={}", event.getState(), event.getFinalState(), event.getPos(), event.getPlayer(), event.getHeldItemStack(), event.isSimulated());
 
         //Test 2: Canceling, nothing in game should change
         /*event.setCanceled(true);
