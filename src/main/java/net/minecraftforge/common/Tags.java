@@ -29,6 +29,7 @@ public class Tags
         Blocks.init();
         Items.init();
         Fluids.init();
+        Biomes.init();
     }
 
     public static class Blocks
