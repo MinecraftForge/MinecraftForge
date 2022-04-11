@@ -684,18 +684,17 @@ public interface IForgeBlock
         {
             // Logic copied from HoeItem#TILLABLES; needs to be kept in sync during updating
             Block block = state.getBlock();
-            if (context.getLevel().getBlockState(context.getClickedPos().above()).isAir() &&
-                    (block == Blocks.GRASS_BLOCK || block == Blocks.DIRT_PATH || block == Blocks.DIRT || block == Blocks.COARSE_DIRT))
-            {
-                return block == Blocks.COARSE_DIRT ? Blocks.DIRT.defaultBlockState() : Blocks.FARMLAND.defaultBlockState();
-            }
-            else if (block == Blocks.ROOTED_DIRT)
+            if (block == Blocks.ROOTED_DIRT)
             {
                 if (!simulate)
                 {
                     Block.popResourceFromFace(context.getLevel(), context.getClickedPos(), context.getClickedFace(), new ItemStack(Items.HANGING_ROOTS));
                 }
                 return Blocks.DIRT.defaultBlockState();
+            } else if ((block == Blocks.GRASS_BLOCK || block == Blocks.DIRT_PATH || block == Blocks.DIRT || block == Blocks.COARSE_DIRT) &&
+                    context.getLevel().getBlockState(context.getClickedPos().above()).isAir())
+            {
+                return block == Blocks.COARSE_DIRT ? Blocks.DIRT.defaultBlockState() : Blocks.FARMLAND.defaultBlockState();
             }
         }
 
