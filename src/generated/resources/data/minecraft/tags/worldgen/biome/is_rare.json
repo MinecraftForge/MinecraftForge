@@ -1,0 +1,17 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:mushroom_fields",
+    "minecraft:sparse_jungle",
+    "minecraft:savanna_plateau",
+    "minecraft:sunflower_plains",
+    "minecraft:windswept_gravelly_hills",
+    "minecraft:flower_forest",
+    "minecraft:ice_spikes",
+    "minecraft:old_growth_birch_forest",
+    "minecraft:old_growth_spruce_taiga",
+    "minecraft:windswept_savanna",
+    "minecraft:eroded_badlands",
+    "minecraft:bamboo_jungle"
+  ]
+}

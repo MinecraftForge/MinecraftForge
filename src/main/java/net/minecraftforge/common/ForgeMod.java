@@ -22,6 +22,7 @@ import net.minecraftforge.common.crafting.PartialNBTIngredient;
 import net.minecraftforge.common.crafting.DifferenceIngredient;
 import net.minecraftforge.common.crafting.IntersectionIngredient;
 import net.minecraftforge.common.data.ExistingFileHelper;
+import net.minecraftforge.common.data.ForgeBiomeTagsProvider;
 import net.minecraftforge.common.data.ForgeFluidTagsProvider;
 import net.minecraftforge.common.loot.CanToolPerformAction;
 import net.minecraftforge.common.loot.GlobalLootModifierSerializer;
@@ -205,6 +206,7 @@ public class ForgeMod
             gen.addProvider(new ForgeFluidTagsProvider(gen, existingFileHelper));
             gen.addProvider(new ForgeRecipeProvider(gen));
             gen.addProvider(new ForgeLootTableProvider(gen));
+            gen.addProvider(new ForgeBiomeTagsProvider(gen, existingFileHelper));
         }
     }
 

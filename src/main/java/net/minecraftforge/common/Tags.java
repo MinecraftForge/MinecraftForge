@@ -6,14 +6,17 @@
 package net.minecraftforge.common;
 
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.BiomeTags;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.material.Fluid;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nullable;
 import java.util.Set;
@@ -409,6 +412,53 @@ public class Tags
         private static TagKey<Fluid> tag(String name)
         {
             return FluidTags.create(new ResourceLocation("forge", name));
+        }
+    }
+
+    public static class Biomes
+    {
+        private static void init() {}
+
+        public static final TagKey<Biome> IS_HOT = tag("is_hot");
+        public static final TagKey<Biome> IS_COLD = tag("is_cold");
+
+        public static final TagKey<Biome> IS_SPARSE = tag("is_sparse");
+        public static final TagKey<Biome> IS_DENSE = tag("is_dense");
+
+        public static final TagKey<Biome> IS_WET = tag("is_wet");
+        public static final TagKey<Biome> IS_DRY = tag("is_dry");
+
+        public static final TagKey<Biome> IS_SAVANNA = tag("is_savanna");
+        public static final TagKey<Biome> IS_CONIFEROUS = tag("is_coniferous");
+
+        public static final TagKey<Biome> IS_SPOOKY = tag("is_spooky");
+        public static final TagKey<Biome> IS_DEAD = tag("is_dead");
+        public static final TagKey<Biome> IS_LUSH = tag("is_lush");
+        public static final TagKey<Biome> IS_MUSHROOM = tag("is_mushroom");
+        public static final TagKey<Biome> IS_MAGICAL = tag("is_magical");
+        public static final TagKey<Biome> IS_RARE = tag("is_rare");
+        public static final TagKey<Biome> IS_PLATEAU = tag("is_plateau");
+        public static final TagKey<Biome> IS_MODIFIED = tag("is_modified");
+
+        public static final TagKey<Biome> IS_WATER = tag("is_water");
+
+        public static final TagKey<Biome> IS_PLAINS = tag("is_plains");
+        public static final TagKey<Biome> IS_SWAMP = tag("is_swamp");
+        public static final TagKey<Biome> IS_SANDY = tag("is_sandy");
+        public static final TagKey<Biome> IS_SNOWY = tag("is_snowy");
+        public static final TagKey<Biome> IS_WASTELAND = tag("is_wasteland");
+        public static final TagKey<Biome> IS_BEACH = tag("is_beach");
+        public static final TagKey<Biome> IS_VOID = tag("is_void");
+        public static final TagKey<Biome> IS_UNDERGROUND = tag("is_underground");
+
+        public static final TagKey<Biome> IS_PEAK = tag("is_peak");
+        public static final TagKey<Biome> IS_SLOPE = tag("is_slope");
+
+        public static final TagKey<Biome> IS_OVERWORLD = tag("is_overworld");
+        public static final TagKey<Biome> IS_END = tag("is_end");
+
+        private static TagKey<Biome> tag(String name) {
+            return ForgeRegistries.BIOMES.tags().createTagKey(new ResourceLocation("minecraft", name));
         }
     }
 }
