@@ -19,7 +19,6 @@
 
 package net.minecraftforge.fml;
 
-import com.google.common.io.ByteStreams;
 import com.google.gson.Gson;
 import net.minecraftforge.fml.loading.FMLConfig;
 import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
@@ -28,12 +27,14 @@ import net.minecraftforge.versions.mcp.MCPVersion;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.maven.artifact.versioning.ComparableVersion;
+
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -41,6 +42,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
+import java.util.zip.GZIPInputStream;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -140,9 +143,9 @@ public class VersionChecker
             }
 
             /**
-             * Opens stream for given URL while following redirects
+             * Returns the response body as a String for the given URL while following redirects
              */
-            private InputStream openUrlStream(URL url) throws IOException
+            private String openUrlString(URL url) throws IOException
             {
                 URL currentUrl = url;
                 for (int redirects = 0; redirects < MAX_HTTP_REDIRECTS; redirects++)
@@ -152,6 +155,7 @@ public class VersionChecker
                     {
                         HttpURLConnection huc = (HttpURLConnection) c;
                         huc.setInstanceFollowRedirects(false);
+                        huc.setRequestProperty("Accept-Encoding", "gzip");
                         int responseCode = huc.getResponseCode();
                         if (responseCode >= 300 && responseCode <= 399)
                         {
@@ -166,9 +170,19 @@ public class VersionChecker
                                 huc.disconnect();
                             }
                         }
-                    }
 
-                    return c.getInputStream();
+                        final boolean isGzipEncoded = huc.getContentEncoding().equals("gzip");
+
+                        final String bodyStr;
+                        try (InputStream inStream = isGzipEncoded ? new GZIPInputStream(huc.getInputStream()) : huc.getInputStream())
+                        {
+                            try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inStream)))
+                            {
+                                bodyStr = bufferedReader.lines().collect(Collectors.joining("\n"));
+                            }
+                        }
+                        return bodyStr;
+                    }
                 }
                 throw new IOException("Too many redirects while trying to fetch " + url);
             }
@@ -184,9 +198,7 @@ public class VersionChecker
                     URL url = mod.getUpdateURL();
                     LOGGER.info("[{}] Starting version check at {}", mod.getModId(), url.toString());
 
-                    InputStream con = openUrlStream(url);
-                    String data = new String(ByteStreams.toByteArray(con), StandardCharsets.UTF_8);
-                    con.close();
+                    String data = openUrlString(url);
 
                     LOGGER.debug("[{}] Received version check data:\n{}", mod.getModId(), data);
 
