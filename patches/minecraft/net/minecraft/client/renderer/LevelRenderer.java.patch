@@ -131,15 +131,6 @@
        float f = this.f_109465_.m_104583_().m_108871_();
        if (!Float.isNaN(f)) {
           RenderSystem.m_69464_();
-@@ -2095,7 +_,7 @@
-                }
-             } else {
-                BlockPos blockpos1 = chunkrenderdispatcher$renderchunk.m_112839_().m_142082_(8, 8, 8);
--               flag = blockpos1.m_123331_(blockpos) < 768.0D || chunkrenderdispatcher$renderchunk.m_112842_();
-+               flag = !net.minecraftforge.common.ForgeConfig.CLIENT.alwaysSetupTerrainOffThread.get() && (blockpos1.m_123331_(blockpos) < 768.0D || chunkrenderdispatcher$renderchunk.m_112842_()); // the target is the else block below, so invert the forge addition to get there early
-             }
- 
-             if (flag) {
 @@ -2393,7 +_,12 @@
        this.f_109469_.m_110859_(p_109502_, p_109503_, p_109504_, p_109505_);
     }

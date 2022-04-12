@@ -110,6 +110,7 @@ public class ForgeConfig {
      * Client specific configuration - only loaded clientside from forge-client.toml
      */
     public static class Client {
+        @Deprecated(forRemoval = true) // Superseded by vanilla option
         public final BooleanValue alwaysSetupTerrainOffThread;
 
         public final BooleanValue experimentalForgeLightPipelineEnabled;
