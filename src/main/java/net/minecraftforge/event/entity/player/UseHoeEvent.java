@@ -19,12 +19,11 @@ import javax.annotation.Nonnull;
  * and damage the hoe.
  *
  * setResult(ALLOW) is the same as the old setHandled();
- * 
- * TODO: 1.17 Remove
  */
 @Cancelable
 @HasResult
-@Deprecated
+// TODO 1.19: Remove
+@Deprecated(forRemoval = true, since = "1.18.2")
 public class UseHoeEvent extends PlayerEvent
 {
     private final UseOnContext context;;
