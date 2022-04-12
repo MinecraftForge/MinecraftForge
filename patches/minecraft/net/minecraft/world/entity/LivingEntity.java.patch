@@ -558,12 +558,15 @@
     }
  
     public ItemStack m_5584_(Level p_21067_, ItemStack p_21068_) {
-@@ -3160,7 +_,7 @@
+@@ -3158,9 +_,8 @@
+    }
+ 
     private void m_21063_(ItemStack p_21064_, Level p_21065_, LivingEntity p_21066_) {
-       Item item = p_21064_.m_41720_();
-       if (item.m_41472_()) {
+-      Item item = p_21064_.m_41720_();
+-      if (item.m_41472_()) {
 -         for(Pair<MobEffectInstance, Float> pair : item.m_41473_().m_38749_()) {
-+         for(Pair<MobEffectInstance, Float> pair : item.getFoodProperties(p_21064_, this).m_38749_()) {
++      if (p_21064_.m_41720_().m_41472_()) {
++         for(Pair<MobEffectInstance, Float> pair : p_21064_.getFoodProperties(this).m_38749_()) {
              if (!p_21065_.f_46443_ && pair.getFirst() != null && p_21065_.f_46441_.nextFloat() < pair.getSecond()) {
                 p_21066_.m_7292_(new MobEffectInstance(pair.getFirst()));
              }
