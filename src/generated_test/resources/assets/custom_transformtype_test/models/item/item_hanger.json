@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "custom_transformtype_test:item/item_hanger"
+  }
+}
