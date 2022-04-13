@@ -16,8 +16,13 @@ import javax.annotation.Nullable;
 /**
  * This class is blatantly stolen from iChunUtils with permission.
  *
+ * @deprecated This class has a few issues,
+ * mainly <a href="https://github.com/MinecraftForge/MinecraftForge/issues/8485">MinecraftForge/MinecraftForge#8485</a>.
+ * Use {@link ForgeSlider} instead.
+ *
  * @author iChun
  */
+@Deprecated(since = "1.18.2", forRemoval = true)
 public class Slider extends ExtendedButton
 {
     /** The value of this slider control. */
