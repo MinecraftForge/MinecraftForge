@@ -18,13 +18,12 @@
                 this.m_21828_(p_30412_);
                 this.f_21344_.m_26573_();
                 this.m_6710_((LivingEntity)null);
-@@ -400,8 +_,7 @@
-    }
+@@ -401,7 +_,7 @@
  
     public boolean m_6898_(ItemStack p_30440_) {
--      Item item = p_30440_.m_41720_();
+       Item item = p_30440_.m_41720_();
 -      return item.m_41472_() && item.m_41473_().m_38746_();
-+      return p_30440_.m_41720_().m_41472_() && p_30440_.getFoodProperties(this).m_38746_();
++      return item.m_41472_() && p_30440_.getFoodProperties(this).m_38746_();
     }
  
     public int m_5792_() {
