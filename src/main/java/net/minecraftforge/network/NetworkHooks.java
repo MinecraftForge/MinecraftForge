@@ -209,12 +209,16 @@ public class NetworkHooks
         MinecraftForge.EVENT_BUS.post(new PlayerContainerEvent.Open(player, c));
     }
 
+    /**
+     * Updates the current ConnectionData instance with new mod or channel data if the old instance did not have either of these yet,
+     * or creates a new ConnectionData instance with the new data if the current ConnectionData instance doesn't exist yet.
+     */
     static void appendConnectionData(Connection mgr, Map<String, Pair<String, String>> modData, Map<ResourceLocation, String> channels)
     {
-        ConnectionData data = mgr.channel().attr(NetworkConstants.FML_CONNECTION_DATA).get();
+        ConnectionData oldData = mgr.channel().attr(NetworkConstants.FML_CONNECTION_DATA).get();
 
-        data = data != null ? new ConnectionData(data.getModData().isEmpty() ? modData : data.getModData(), data.getChannels().isEmpty() ? channels : data.getChannels()) : new ConnectionData(modData, channels);
-        mgr.channel().attr(NetworkConstants.FML_CONNECTION_DATA).set(data);
+        oldData = oldData != null ? new ConnectionData(oldData.getModData().isEmpty() ? modData : oldData.getModData(), oldData.getChannels().isEmpty() ? channels : oldData.getChannels()) : new ConnectionData(modData, channels);
+        mgr.channel().attr(NetworkConstants.FML_CONNECTION_DATA).set(oldData);
     }
 
     @Nullable

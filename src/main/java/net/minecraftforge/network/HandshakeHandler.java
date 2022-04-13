@@ -174,6 +174,7 @@ public class HandshakeHandler
         c.get().setPacketHandled(true);
         if (!mismatchedChannels.isEmpty()) {
             LOGGER.error(FMLHSMARKER, "Terminating connection with server, mismatched mod list");
+            //Populate the mod mismatch attribute with a new mismatch data instance to indicate that the disconnect happened due to a mod mismatch
             c.get().getNetworkManager().channel().attr(NetworkConstants.FML_MOD_MISMATCH_DATA).set(ModMismatchData.channel(mismatchedChannels, NetworkHooks.getConnectionData(c.get().getNetworkManager()), true));
             c.get().getNetworkManager().disconnect(new TextComponent("Connection closed - mismatched mod channel list"));
             return;
@@ -229,6 +230,7 @@ public class HandshakeHandler
                     modMismatchData.getMismatchedChannelData().keySet().stream().map(Object::toString).collect(Collectors.joining(",")));
             LOGGER.error(FMLHSMARKER, "Terminating connection with server, mismatched mod list");
             c.get().setPacketHandled(true);
+            //Populate the mod mismatch attribute with a new mismatch data instance to indicate that the disconnect happened due to a mod mismatch
             c.get().getNetworkManager().channel().attr(NetworkConstants.FML_MOD_MISMATCH_DATA).set(ModMismatchData.channel(modMismatchData.getMismatchedChannelData(), NetworkHooks.getConnectionData(c.get().getNetworkManager()), false));
             c.get().getNetworkManager().disconnect(new TextComponent("Connection closed - mismatched mod channel list"));
         }
@@ -279,6 +281,7 @@ public class HandshakeHandler
             LOGGER.debug(FMLHSMARKER, "Registry load complete, continuing handshake.");
         } else {
             LOGGER.error(FMLHSMARKER, "Failed to load registry, closing connection.");
+            //Populate the mod mismatch attribute with a new mismatch data instance to indicate that the disconnect happened due to a mod mismatch
             this.manager.channel().attr(NetworkConstants.FML_MOD_MISMATCH_DATA).set(ModMismatchData.registry(registryMismatches.get(), NetworkHooks.getConnectionData(contextSupplier.get().getNetworkManager())));
             this.manager.disconnect(new TextComponent("Failed to synchronize registry data from server, closing connection"));
         }
@@ -329,6 +332,9 @@ public class HandshakeHandler
         return false;
     }
 
+    /**
+     * Helper method to determine if the packet at the given packet index needs a response for the handshake to progress.
+     */
     public static boolean packetNeedsResponse(Connection mgr, int packetIndex)
     {
         HandshakeHandler handler = mgr.channel().attr(NetworkConstants.FML_HANDSHAKE_HANDLER).get();

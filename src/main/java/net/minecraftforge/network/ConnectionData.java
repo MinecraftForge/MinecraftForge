@@ -79,76 +79,103 @@ public class ConnectionData
     /**
      * A class for holding the mod mismatch data of a failed handshake.
      * Contains a list of mismatched channels, the channels present on the side the handshake failed on, the mods with mismatching registries (if available) and the information of whether the mismatching data's origin is the server.
-     * @param mismatchedModData The ids and respective mod versions of the mismatched or missing mods/channels
-     * @param presentModData The ids and respective mod names and versions corresponding to the mismatched mods/channels, stored like this: [id -> [modName, modVersion]]
-     * @param mismatchedDataFromServer Whether the mismatched data originates from the server. Note that if the mismatched data is from the server, the actual mismatch check happened on the client and vice versa
+     * @param mismatchedModData The ids and respective mod versions of the mismatched or missing mods/channels. If the mod version is absent, it is assumed that the mod is missing, if it is present, the mod gets treated as a mismatch.
+     * @param presentModData The ids and respective mod names and versions corresponding to the mismatched mods/channel, gathered from the side the mismatch didn't happen on. The data is stored like this: [id -> [modName, modVersion]]
+     * @param mismatchedDataFromServer Whether the mismatched data originates from the server. Note that the mismatched data origin does not tell us if the actual mismatch check happened on the client or the server.
      */
     public record ModMismatchData(Map<ResourceLocation, String> mismatchedModData, Map<ResourceLocation, Pair<String, String>> presentModData, boolean mismatchedDataFromServer)
     {
         /**
          * Creates a ModMismatchData instance from given channel mismatch data, which is processed side-aware depending on the value of mismatchedDataFromServer
+         * @param mismatchedChannels The list of channels that were listed as mismatches, either because they are missing on one side or because their versions mismatched
+         * @param connectionData The connection data instance responsible for collecting the server mod data.
+         * @param mismatchedDataFromServer Whether the mismatched data originates from the server.
          */
         public static ModMismatchData channel(Map<ResourceLocation, String> mismatchedChannels, ConnectionData connectionData, boolean mismatchedDataFromServer)
         {
-            Map<ResourceLocation, String> mismatchedChannelData = enhanceWithModData(mismatchedChannels, connectionData, mismatchedDataFromServer);
-            Map<ResourceLocation, Pair<String, String>> presentChannelData = getChannelDataFromSide(mismatchedChannels.keySet(), connectionData, mismatchedDataFromServer);
+            Map<ResourceLocation, String> mismatchedChannelData = enhanceWithModVersion(mismatchedChannels, connectionData, mismatchedDataFromServer);
+            Map<ResourceLocation, Pair<String, String>> presentChannelData = getPresentChannelData(mismatchedChannels.keySet(), connectionData, mismatchedDataFromServer);
 
             return new ModMismatchData(mismatchedChannelData, presentChannelData, mismatchedDataFromServer);
         }
 
         /**
-         * Creates a ModMismatchData instance from given mismatched registry entries
+         * Creates a ModMismatchData instance from given mismatched registry entries. In this case, the mismatched data is treated as originating from the client in order to correctly display some table version header strings TODO: VERIFY
+         * @param mismatchedRegistryData The list of mismatched registries and the associated mismatched registry entries. The data is stored like this: "registryNamespace:registryPath" -> "entryNamespace:entryPath"
+         * @param connectionData The connection data instance responsible for collecting the server mod data.
          */
         public static ModMismatchData registry(Multimap<ResourceLocation, ResourceLocation> mismatchedRegistryData, ConnectionData connectionData)
         {
             List<ResourceLocation> mismatchedRegistryMods = mismatchedRegistryData.values().stream().map(ResourceLocation::getNamespace).distinct().map(id -> new ResourceLocation(id, "")).toList();
             Map<ResourceLocation, String> mismatchedRegistryModData = mismatchedRegistryMods.stream().map(id -> ModList.get().getModContainerById(id.getNamespace()).map(modContainer -> Pair.of(id, modContainer.getModInfo().getVersion().toString())).orElse(Pair.of(id, NetworkRegistry.ABSENT))).collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
-            Map<ResourceLocation, Pair<String, String>> presentModData = getServerSideModData(mismatchedRegistryModData.keySet(), connectionData).entrySet().stream().collect(Collectors.toMap(e -> new ResourceLocation(e.getKey().getNamespace(), ""), Entry::getValue));
+            Map<ResourceLocation, Pair<String, String>> presentModData = getServerSidePresentModData(mismatchedRegistryModData.keySet(), connectionData);
 
-            return new ModMismatchData(mismatchedRegistryModData, presentModData, false); //false because mods marked with NetworkRegistry.ABSENT should be displayed as missing from the client, not the server
+            return new ModMismatchData(mismatchedRegistryModData, presentModData, false);
         }
 
         /**
-         * Returns true if this ModMismatchData instance contains channel or registry mismatches
+         * @return true if this ModMismatchData instance contains channel or registry mismatches
          */
         public boolean containsMismatches()
         {
             return mismatchedModData != null && !mismatchedModData.isEmpty();
         }
 
-        private static Map<ResourceLocation, String> enhanceWithModData(Map<ResourceLocation, String> mismatchedChannels, ConnectionData connectionData, boolean mismatchedDataFromServer)
+        /**
+         * Enhances a map of mismatched channels with the corresponding mod version.
+         * @param mismatchedChannels The original mismatched channel list, containing the id and version of the mismatched channel.
+         * @param connectionData The connection data instance responsible for collecting the server mod data.
+         * @param mismatchedDataFromServer Whether the mismatched data originates from the server. The given mismatched channel list gets processed side-aware depending on the value of this parameter.
+         * @return A map containing the id of the channel and the version of the corresponding mod, or NetworkRegistry.ABSENT if the channel is missing.
+         */
+        private static Map<ResourceLocation, String> enhanceWithModVersion(Map<ResourceLocation, String> mismatchedChannels, ConnectionData connectionData, boolean mismatchedDataFromServer)
         {
-            Map<String, String> remoteModVersions;
+            Map<String, String> mismatchedModVersions;
 
             if (mismatchedDataFromServer) //enhance with data from the server
             {
-                remoteModVersions = connectionData != null ? connectionData.getModData().entrySet().stream().collect(Collectors.toMap(Entry::getKey, e -> e.getValue().getRight())) : Map.of();
+                mismatchedModVersions = connectionData != null ? connectionData.getModData().entrySet().stream().collect(Collectors.toMap(Entry::getKey, e -> e.getValue().getRight())) : Map.of();
             }
             else //enhance with data from the client
             {
-                remoteModVersions = ModList.get().getMods().stream().map(info -> Pair.of(info.getModId(), info.getVersion().toString())).collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
+                mismatchedModVersions = ModList.get().getMods().stream().map(info -> Pair.of(info.getModId(), info.getVersion().toString())).collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
             }
-            return mismatchedChannels.keySet().stream().map(channel -> Pair.of(channel, mismatchedChannels.get(channel).equals(NetworkRegistry.ABSENT) ? NetworkRegistry.ABSENT : remoteModVersions.getOrDefault(channel.getNamespace(), NetworkRegistry.ABSENT))).collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
+            return mismatchedChannels.keySet().stream().map(channel -> Pair.of(channel, mismatchedChannels.get(channel).equals(NetworkRegistry.ABSENT) ? NetworkRegistry.ABSENT : mismatchedModVersions.getOrDefault(channel.getNamespace(), NetworkRegistry.ABSENT))).collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
         }
 
-        private static Map<ResourceLocation, Pair<String, String>> getChannelDataFromSide(Set<ResourceLocation> mismatchedChannelsFilter, ConnectionData connectionData, boolean fromClientSide)
+
+        /**
+         * Queries the channel data from the side the mismatched data isn't from, to provide a map of all the present channels for a proper comparison against the mismatched channel data.
+         * @param mismatchedChannelsFilter A filter that gets used in order to only query the data of mismatched mods, because that's the only one we need for a proper comparison between mismatched and present mods.
+         * @param connectionData The connection data instance responsible for collecting the server mod data.
+         * @param mismatchedDataFromServer Whether the mismatched data originates from the server. The data gets queried from the side that the mismatch data does not originate from.
+         * @return A map containing the channel id, the corresponding mod name and the corresponding mod version.
+         */
+        private static Map<ResourceLocation, Pair<String, String>> getPresentChannelData(Set<ResourceLocation> mismatchedChannelsFilter, ConnectionData connectionData, boolean mismatchedDataFromServer)
         {
             Map<ResourceLocation, String> channelData;
 
-            if (fromClientSide) //mismatch happened on the client, use client data
+            if (mismatchedDataFromServer) //mismatch data comes from the server, use client channel data
             {
                 channelData = NetworkRegistry.buildChannelVersions();
             }
-            else //mismatch happened on the server, use server data
+            else //mismatch data comes from the client, use server channel data
             {
                 channelData = connectionData != null ? connectionData.getChannels() : Map.of();
             }
-            return channelData.keySet().stream().filter(mismatchedChannelsFilter::contains).map(id -> getModDataFromChannel(id, connectionData, fromClientSide)).collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
+            return channelData.keySet().stream().filter(mismatchedChannelsFilter::contains).map(id -> getPresentModDataFromChannel(id, connectionData, mismatchedDataFromServer)).collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
         }
 
-        private static Pair<ResourceLocation, Pair<String, String>> getModDataFromChannel(ResourceLocation channel, ConnectionData connectionData, boolean fromClientSide)
+        /**
+         * Queries the mod data from a given channel id from the side the mismatched data isn't from.
+         * @param channel The id of the channel the mod data should be queried for.
+         * @param connectionData The connection data instance responsible for collecting the server mod data.
+         * @param mismatchedDataFromServer Whether the mismatched data originates from the server. The data gets queried from the side that the mismatch data does not originate from.
+         * @return The mod data corresponding to the channel id, containing the channel id, the corresponding mod name and the corresponding mod version.
+         */
+        private static Pair<ResourceLocation, Pair<String, String>> getPresentModDataFromChannel(ResourceLocation channel, ConnectionData connectionData, boolean mismatchedDataFromServer)
         {
-            if (fromClientSide)
+            if (mismatchedDataFromServer)
             {
                 return ModList.get().getModContainerById(channel.getNamespace()).map(modContainer -> Pair.of(channel, Pair.of(modContainer.getModInfo().getDisplayName(), modContainer.getModInfo().getVersion().toString()))).orElse(Pair.of(channel, Pair.of(channel.getNamespace(), "")));
             }
@@ -159,11 +186,17 @@ public class ConnectionData
             }
         }
 
-        private static Map<ResourceLocation, Pair<String, String>> getServerSideModData(Set<ResourceLocation> mismatchedModsFilter, ConnectionData connectionData)
+        /**
+         * Queries the mod data from the server side. Useful in case of a registry mismatch, which always gets detected on the client.
+         * @param mismatchedModsFilter A filter that gets used in order to only query the data of mismatched mods, because that's the only one we need for a proper comparison between mismatched and present mods.
+         * @param connectionData The connection data instance responsible for collecting the server mod data.
+         * @return The mod data from the server, containing the mod id, the corresponding mod name and the corresponding mod version.
+         */
+        private static Map<ResourceLocation, Pair<String, String>> getServerSidePresentModData(Set<ResourceLocation> mismatchedModsFilter, ConnectionData connectionData)
         {
-            Map<String, Pair<String, String>> localChannelData = connectionData != null ? connectionData.getModData() : Map.of();
+            Map<String, Pair<String, String>> serverModData = connectionData != null ? connectionData.getModData() : Map.of();
             Set<String> modIdFilter = mismatchedModsFilter.stream().map(ResourceLocation::getNamespace).collect(Collectors.toSet());
-            return localChannelData.entrySet().stream().filter(e -> modIdFilter.contains(e.getKey())).collect(Collectors.toMap(e -> new ResourceLocation(e.getKey(), ""), Entry::getValue));
+            return serverModData.entrySet().stream().filter(e -> modIdFilter.contains(e.getKey())).collect(Collectors.toMap(e -> new ResourceLocation(e.getKey(), ""), Entry::getValue));
         }
     }
 }

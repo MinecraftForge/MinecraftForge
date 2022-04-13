@@ -199,7 +199,7 @@ public class NetworkRegistry
      * supplied impl protocol version.
      *
      * @param channels An @{@link Map} of name->version pairs for testing
-     * @return true if all channels accept themselves
+     * @return a map of mismatched channel ids and versions, or an empty map if all channels accept themselves
      */
     static Map<ResourceLocation, String> validateClientChannels(final Map<ResourceLocation, String> channels) {
         return validateChannels(channels, "server", NetworkInstance::tryServerVersionOnClient);
@@ -209,7 +209,7 @@ public class NetworkRegistry
      * Validate the channels from the client on the server. Tests the server predicates against the client
      * supplied impl protocol version.
      * @param channels An @{@link Map} of name->version pairs for testing
-     * @return true if all channels accept themselves
+     * @return a map of mismatched channel ids and versions, or an empty map if all channels accept themselves
      */
     static Map<ResourceLocation, String> validateServerChannels(final Map<ResourceLocation, String> channels) {
         return validateChannels(channels, "client", NetworkInstance::tryClientVersionOnServer);
@@ -221,7 +221,7 @@ public class NetworkRegistry
      * @param incoming An @{@link Map} of name->version pairs for testing
      * @param originName A label for use in logging (where the version pairs came from)
      * @param testFunction The test function to use for testing
-     * @return true if all channels accept themselves
+     * @return a map of mismatched channel ids and versions, or an empty map if all channels accept themselves
      */
     private static Map<ResourceLocation, String> validateChannels(final Map<ResourceLocation, String> incoming, final String originName, BiFunction<NetworkInstance, String, Boolean> testFunction) {
         final Map<ResourceLocation, String> results = instances.values().stream().
@@ -317,7 +317,7 @@ public class NetworkRegistry
         private final String messageContext;
 
         /**
-         * If the connection should await a response to this packet to continue
+         * If the connection should await a response to this packet to continue with the handshake
          */
         private final boolean needsResponse;
 
