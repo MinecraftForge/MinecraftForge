@@ -5,51 +5,51 @@
 
 package net.minecraftforge.client.gui;
 
-import static net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType.*;
-
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 import java.util.ArrayList;
 import java.util.List;
-
-import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.gui.components.DebugScreenOverlay;
 import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.resources.language.I18n;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.FluidTags;
+import net.minecraft.util.Mth;
+import net.minecraft.util.StringUtil;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.food.FoodData;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.GameType;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.scores.Objective;
 import net.minecraft.world.scores.PlayerTeam;
 import net.minecraft.world.scores.Scoreboard;
-import net.minecraft.tags.FluidTags;
-import net.minecraft.world.food.FoodData;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.StringUtil;
-import net.minecraft.Util;
-import net.minecraft.util.Mth;
-import net.minecraft.world.level.GameType;
 import net.minecraftforge.client.RenderProperties;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
 import net.minecraftforge.common.MinecraftForge;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.Nullable;
 import org.lwjgl.opengl.GL11;
 
-import com.mojang.blaze3d.systems.RenderSystem;
-
-import javax.annotation.Nullable;
+import static net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType.ALL;
+import static net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType.CHAT;
+import static net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType.DEBUG;
+import static net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType.PLAYER_LIST;
+import static net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType.TEXT;
 
 public class ForgeIngameGui extends Gui
 {

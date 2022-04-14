@@ -6,14 +6,13 @@
 package net.minecraftforge.common.util;
 
 import com.google.common.collect.Streams;
-import org.apache.commons.lang3.StringUtils;
-
-import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Utility to format data into a textual (markdown-compliant) table.
@@ -93,7 +92,7 @@ public class TextTable
         }
     }
 
-    public void add(@Nonnull Object... values)
+    public void add(@NotNull Object... values)
     {
         if (values.length != columns.size())
         {

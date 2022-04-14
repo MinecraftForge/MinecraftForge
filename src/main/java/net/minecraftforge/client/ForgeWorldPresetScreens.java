@@ -6,22 +6,18 @@
 package net.minecraftforge.client;
 
 import com.google.common.collect.Maps;
+import java.util.Map;
+import java.util.Optional;
 import net.minecraft.client.gui.screens.worldselection.WorldPreset;
 import net.minecraft.core.RegistryAccess;
-import net.minecraft.core.Registry;
-import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.chunk.ChunkGenerator;
-import net.minecraft.world.level.levelgen.NoiseGeneratorSettings;
 import net.minecraft.world.level.levelgen.WorldGenSettings;
 import net.minecraftforge.common.world.ForgeWorldPreset;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.util.Map;
-import java.util.Optional;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class ForgeWorldPresetScreens
 {
@@ -87,9 +83,9 @@ public class ForgeWorldPresetScreens
             return worldPreset;
         }
 
-        @Nonnull
+        @NotNull
         @Override
-        public WorldGenSettings create(@Nonnull RegistryAccess dynamicRegistries, long seed, boolean generateStructures, boolean bonusChest)
+        public WorldGenSettings create(@NotNull RegistryAccess dynamicRegistries, long seed, boolean generateStructures, boolean bonusChest)
         {
             return worldPreset.createSettings(dynamicRegistries, seed, generateStructures, bonusChest, "");
         }

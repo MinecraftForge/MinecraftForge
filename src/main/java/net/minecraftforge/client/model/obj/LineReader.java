@@ -6,16 +6,15 @@
 package net.minecraftforge.client.model.obj;
 
 import com.google.common.base.Charsets;
-import joptsimple.internal.Strings;
-import net.minecraft.server.packs.resources.Resource;
-
-import javax.annotation.Nullable;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import joptsimple.internal.Strings;
+import net.minecraft.server.packs.resources.Resource;
+import org.jetbrains.annotations.Nullable;
 
 public class LineReader implements AutoCloseable
 {

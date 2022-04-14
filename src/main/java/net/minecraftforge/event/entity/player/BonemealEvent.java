@@ -5,14 +5,13 @@
 
 package net.minecraftforge.event.entity.player;
 
-import net.minecraftforge.eventbus.api.Cancelable;
-import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
-
-import javax.annotation.Nonnull;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.eventbus.api.Cancelable;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * This event is called when a player attempts to use Bonemeal on a block.
@@ -33,7 +32,7 @@ public class BonemealEvent extends PlayerEvent
     private final BlockState block;
     private final ItemStack stack;
 
-    public BonemealEvent(@Nonnull Player player, @Nonnull Level world, @Nonnull BlockPos pos, @Nonnull BlockState block, @Nonnull ItemStack stack)
+    public BonemealEvent(@NotNull Player player, @NotNull Level world, @NotNull BlockPos pos, @NotNull BlockState block, @NotNull ItemStack stack)
     {
         super(player);
         this.world = world;
@@ -57,7 +56,7 @@ public class BonemealEvent extends PlayerEvent
         return block;
     }
 
-    @Nonnull
+    @NotNull
     public ItemStack getStack()
     {
         return stack;

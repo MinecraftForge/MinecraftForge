@@ -6,26 +6,24 @@
 package net.minecraftforge.event.entity.player;
 
 import java.io.File;
-
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.Container;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.world.level.GameType;
-import net.minecraft.world.level.Level;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.ForgeEventFactory;
-import net.minecraftforge.eventbus.api.Cancelable;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.Container;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.GameType;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.entity.living.LivingEvent;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import net.minecraftforge.eventbus.api.Cancelable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * PlayerEvent is fired whenever an event involving Living entities occurs. <br>
@@ -144,7 +142,7 @@ public class PlayerEvent extends LivingEvent
         private final Component username;
         private Component displayname;
 
-        public NameFormat(Player player, Component username) 
+        public NameFormat(Player player, Component username)
         {
             super(player);
             this.username = username;
@@ -191,7 +189,7 @@ public class PlayerEvent extends LivingEvent
         {
             super(player);
         }
-        
+
         @Nullable
         public Component getDisplayName()
         {
@@ -408,17 +406,17 @@ public class PlayerEvent extends LivingEvent
     }
 
     public static class ItemCraftedEvent extends PlayerEvent {
-        @Nonnull
+        @NotNull
         private final ItemStack crafting;
         private final Container craftMatrix;
-        public ItemCraftedEvent(Player player, @Nonnull ItemStack crafting, Container craftMatrix)
+        public ItemCraftedEvent(Player player, @NotNull ItemStack crafting, Container craftMatrix)
         {
             super(player);
             this.crafting = crafting;
             this.craftMatrix = craftMatrix;
         }
 
-        @Nonnull
+        @NotNull
         public ItemStack getCrafting()
         {
             return this.crafting;
@@ -431,15 +429,15 @@ public class PlayerEvent extends LivingEvent
     }
 
     public static class ItemSmeltedEvent extends PlayerEvent {
-        @Nonnull
+        @NotNull
         private final ItemStack smelting;
-        public ItemSmeltedEvent(Player player, @Nonnull ItemStack crafting)
+        public ItemSmeltedEvent(Player player, @NotNull ItemStack crafting)
         {
             super(player);
             this.smelting = crafting;
         }
 
-        @Nonnull
+        @NotNull
         public ItemStack getSmelting()
         {
             return this.smelting;

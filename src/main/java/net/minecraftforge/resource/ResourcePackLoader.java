@@ -5,6 +5,9 @@
 
 package net.minecraftforge.resource;
 
+import com.mojang.datafixers.util.Pair;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -17,19 +20,13 @@ import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-
-import com.mojang.datafixers.util.Pair;
-import it.unimi.dsi.fastutil.objects.Object2IntMap;
-import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
-import net.minecraft.server.packs.repository.RepositorySource;
 import net.minecraft.server.packs.repository.Pack;
 import net.minecraft.server.packs.repository.PackRepository;
+import net.minecraft.server.packs.repository.RepositorySource;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.forgespi.language.IModFileInfo;
 import net.minecraftforge.forgespi.locating.IModFile;
 import org.jetbrains.annotations.NotNull;
-
-import javax.annotation.Nonnull;
 
 public class ResourcePackLoader {
     private static Map<IModFile, PathResourcePack> modResourcePacks;
@@ -57,9 +54,9 @@ public class ResourcePackLoader {
     {
         return new PathResourcePack(mf.getFile().getFileName(), mf.getFile().getFilePath()){
             final IModFile modFile = mf.getFile();
-            @Nonnull
+            @NotNull
             @Override
-            protected Path resolve(@Nonnull String... paths)
+            protected Path resolve(@NotNull String... paths)
             {
                 return modFile.findResource(paths);
             }

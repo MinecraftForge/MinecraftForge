@@ -5,14 +5,13 @@
 
 package net.minecraftforge.fluids.capability;
 
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.fluids.capability.templates.FluidHandlerItemStack;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * A simple fluid container, to replace the functionality of the old FluidContainerRegistry and IFluidContainerItem.
@@ -33,7 +32,7 @@ public class ItemFluidContainer extends Item
     }
 
     @Override
-    public ICapabilityProvider initCapabilities(@Nonnull ItemStack stack, @Nullable CompoundTag nbt)
+    public ICapabilityProvider initCapabilities(@NotNull ItemStack stack, @Nullable CompoundTag nbt)
     {
         return new FluidHandlerItemStack(stack, capacity);
     }

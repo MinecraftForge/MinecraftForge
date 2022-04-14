@@ -51,8 +51,8 @@ import net.minecraftforge.registries.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -284,9 +284,9 @@ public class FullPotsAccessorDemo
 
             public DioritePotModel(BakedModel wrappedModel) { super(wrappedModel); }
 
-            @Nonnull
+            @NotNull
             @Override
-            public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, @Nonnull Random rand, @Nonnull IModelData extraData)
+            public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, @NotNull Random rand, @NotNull IModelData extraData)
             {
                 List<BakedQuad> quads = new ArrayList<>(originalModel.getQuads(state, side, rand, extraData));
 

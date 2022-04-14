@@ -6,16 +6,14 @@
 package net.minecraftforge.common.util;
 
 import java.util.function.Function;
-
-import javax.annotation.Nullable;
-
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.portal.PortalInfo;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.phys.Vec3;
-import net.minecraft.world.level.portal.PortalForcer;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.portal.PortalForcer;
+import net.minecraft.world.level.portal.PortalInfo;
+import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Interface for handling the placement of entities during dimension change.
@@ -52,16 +50,16 @@ public interface ITeleporter
     }
 
     /**
-     * Gets the PortalInfo. defaultPortalInfo references the 
-     * vanilla code and should not be used for your purposes. 
-     * Override this method to handle your own logic. 
+     * Gets the PortalInfo. defaultPortalInfo references the
+     * vanilla code and should not be used for your purposes.
+     * Override this method to handle your own logic.
      * <p>
      * Return {@code null} to prevent teleporting.
-     * 
+     *
      * @param entity The entity teleporting before the teleport
      * @param destWorld The world the entity is teleporting to
      * @param defaultPortalInfo A reference to the vanilla method for getting portal info. You should implement your own logic instead of using this
-     * 
+     *
      * @return The location, rotation, and motion of the entity in the destWorld after the teleport
      */
     @Nullable
@@ -69,7 +67,7 @@ public interface ITeleporter
     {
         return this.isVanilla() ? defaultPortalInfo.apply(destWorld) : new PortalInfo(entity.position(), Vec3.ZERO, entity.getYRot(), entity.getXRot());
     }
-    
+
     /**
      * Is this teleporter the vanilla instance.
      */

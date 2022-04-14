@@ -5,16 +5,15 @@
 
 package net.minecraftforge.client.settings;
 
-import net.minecraft.client.KeyMapping;
 import com.mojang.blaze3d.platform.InputConstants;
-
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import net.minecraft.client.KeyMapping;
+import org.jetbrains.annotations.Nullable;
 
 public class KeyBindingMap
 {

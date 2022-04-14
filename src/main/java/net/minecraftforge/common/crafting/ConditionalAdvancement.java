@@ -5,22 +5,19 @@
 
 package net.minecraftforge.common.crafting;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
-
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
-
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.util.GsonHelper;
 import net.minecraftforge.common.crafting.conditions.ICondition;
-
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 public class ConditionalAdvancement
 {

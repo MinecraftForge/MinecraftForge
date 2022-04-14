@@ -5,22 +5,20 @@
 
 package net.minecraftforge.client.model;
 
-import javax.annotation.Nullable;
-
-import java.util.List;
-import java.util.Random;
-
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.world.level.block.state.BlockState;
 import com.mojang.math.Transformation;
+import java.util.List;
+import java.util.Random;
 import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.resources.model.BakedModel;
-import net.minecraft.client.renderer.block.model.ItemTransforms.TransformType;
 import net.minecraft.client.renderer.block.model.ItemOverrides;
+import net.minecraft.client.renderer.block.model.ItemTransforms.TransformType;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.Direction;
+import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.Nullable;
 
 public class BakedItemModel implements BakedModel
 {

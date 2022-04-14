@@ -8,8 +8,7 @@ package net.minecraftforge.event.entity.player;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event.HasResult;
-
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * This event is fired when a player attempts to use a Hoe on a block, it
@@ -34,7 +33,7 @@ public class UseHoeEvent extends PlayerEvent
         this.context = context;
     }
 
-    @Nonnull
+    @NotNull
     public UseOnContext getContext()
     {
         return context;

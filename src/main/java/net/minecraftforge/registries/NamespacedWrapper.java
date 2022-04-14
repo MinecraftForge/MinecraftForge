@@ -5,6 +5,8 @@
 
 package net.minecraftforge.registries;
 
+import com.mojang.datafixers.util.Pair;
+import com.mojang.serialization.Lifecycle;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -14,23 +16,17 @@ import java.util.Random;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Stream;
-
-import javax.annotation.Nullable;
-
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
+import net.minecraft.core.MappedRegistry;
+import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
-import net.minecraft.core.MappedRegistry;
-import net.minecraft.core.Registry;
-
 import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import com.mojang.datafixers.util.Pair;
-import com.mojang.serialization.Lifecycle;
+import org.jetbrains.annotations.Nullable;
 
 class NamespacedWrapper<T extends IForgeRegistryEntry<T>> extends MappedRegistry<T> implements ILockableRegistry, IHolderHelperHolder<T>
 {

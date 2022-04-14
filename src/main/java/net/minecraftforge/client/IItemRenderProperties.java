@@ -14,9 +14,8 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public interface IItemRenderProperties
 {
@@ -65,7 +64,7 @@ public interface IItemRenderProperties
      * @return A Model to render instead of the default
      * @see #getArmorModel(LivingEntity, ItemStack, EquipmentSlot, HumanoidModel)
      */
-    @Nonnull
+    @NotNull
     default Model getBaseArmorModel(LivingEntity entityLiving, ItemStack itemStack, EquipmentSlot armorSlot, HumanoidModel<?> _default)
     {
         HumanoidModel<?> replacement = getArmorModel(entityLiving, itemStack, armorSlot, _default);

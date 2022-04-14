@@ -12,8 +12,7 @@ import net.minecraft.world.entity.decoration.ItemFrame;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
-
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * This event is called when an item is rendered in an item frame.
@@ -41,7 +40,7 @@ public class RenderItemInFrameEvent extends Event
         this.packedLight = packedLight;
     }
 
-    @Nonnull
+    @NotNull
     public ItemStack getItemStack()
     {
         return itemStack;

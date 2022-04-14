@@ -6,8 +6,7 @@
 package net.minecraftforge.server.permission.nodes;
 
 import net.minecraft.network.chat.Component;
-
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Default PermissionTypes, if you need additional ones, please PR it.

@@ -6,32 +6,30 @@
 package net.minecraftforge.event.entity.player;
 
 import com.google.common.base.Preconditions;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.core.Direction;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.world.level.Level;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Cancelable;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import net.minecraftforge.fml.LogicalSide;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import static net.minecraftforge.eventbus.api.Event.Result.DEFAULT;
 import static net.minecraftforge.eventbus.api.Event.Result.DENY;
-
-import net.minecraftforge.fml.LogicalSide;
 
 /**
  * PlayerInteractEvent is fired when a player interacts in some way.
@@ -134,7 +132,7 @@ public class PlayerInteractEvent extends PlayerEvent
      * If result equals {@link InteractionResult#PASS}, we proceed to {@link RightClickItem}.  <br>
      * <br>
      * There are various results to this event, see the getters below.  <br>
-     * Note that handling things differently on the client vs server may cause desynchronizations! 
+     * Note that handling things differently on the client vs server may cause desynchronizations!
      */
     @Cancelable
     public static class RightClickBlock extends PlayerInteractEvent
@@ -311,7 +309,7 @@ public class PlayerInteractEvent extends PlayerEvent
     /**
      * @return The hand involved in this interaction. Will never be null.
      */
-    @Nonnull
+    @NotNull
     public InteractionHand getHand()
     {
         return hand;
@@ -320,7 +318,7 @@ public class PlayerInteractEvent extends PlayerEvent
     /**
      * @return The itemstack involved in this interaction, {@code ItemStack.EMPTY} if the hand was empty.
      */
-    @Nonnull
+    @NotNull
     public ItemStack getItemStack()
     {
         return getPlayer().getItemInHand(hand);
@@ -333,7 +331,7 @@ public class PlayerInteractEvent extends PlayerEvent
      * Will never be null.
      * @return The position involved in this interaction.
      */
-    @Nonnull
+    @NotNull
     public BlockPos getPos()
     {
         return pos;

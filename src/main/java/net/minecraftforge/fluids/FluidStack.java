@@ -7,24 +7,21 @@ package net.minecraftforge.fluids;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import java.util.Optional;
+import net.minecraft.core.Registry;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.core.Registry;
-import net.minecraft.network.chat.Component;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.IRegistryDelegate;
-
-import javax.annotation.Nonnull;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import java.util.Optional;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * ItemStack substitute for Fluids.
@@ -258,7 +255,7 @@ public class FluidStack
      *            The FluidStack for comparison
      * @return true if the Fluids (IDs and NBT Tags) are the same
      */
-    public boolean isFluidEqual(@Nonnull FluidStack other)
+    public boolean isFluidEqual(@NotNull FluidStack other)
     {
         return getFluid() == other.getFluid() && isFluidStackTagEqual(other);
     }
@@ -271,7 +268,7 @@ public class FluidStack
     /**
      * Determines if the NBT Tags are equal. Useful if the FluidIDs are known to be equal.
      */
-    public static boolean areFluidStackTagsEqual(@Nonnull FluidStack stack1, @Nonnull FluidStack stack2)
+    public static boolean areFluidStackTagsEqual(@NotNull FluidStack stack1, @NotNull FluidStack stack2)
     {
         return stack1.isFluidStackTagEqual(stack2);
     }
@@ -281,7 +278,7 @@ public class FluidStack
      *
      * @return true if this FluidStack contains the other FluidStack (same fluid and >= amount)
      */
-    public boolean containsFluid(@Nonnull FluidStack other)
+    public boolean containsFluid(@NotNull FluidStack other)
     {
         return isFluidEqual(other) && amount >= other.amount;
     }
@@ -306,7 +303,7 @@ public class FluidStack
      *            The ItemStack for comparison
      * @return true if the Fluids (IDs and NBT Tags) are the same
      */
-    public boolean isFluidEqual(@Nonnull ItemStack other)
+    public boolean isFluidEqual(@NotNull ItemStack other)
     {
         return FluidUtil.getFluidContained(other).map(this::isFluidEqual).orElse(false);
     }

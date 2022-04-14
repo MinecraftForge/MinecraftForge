@@ -5,38 +5,25 @@
 
 package net.minecraftforge.client;
 
+import com.mojang.blaze3d.platform.NativeImage;
 import java.io.IOException;
 import java.util.BitSet;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.function.Supplier;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.world.inventory.tooltip.TooltipComponent;
-import org.apache.commons.lang3.tuple.Pair;
-
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
-
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.chunk.RenderChunkRegion;
-import com.mojang.blaze3d.platform.NativeImage;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.Level;
+import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraftforge.client.textures.ITextureAtlasSpriteLoader;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class MinecraftForgeClient
 {
@@ -107,7 +94,7 @@ public class MinecraftForgeClient
         bufferedImageSuppliers.put(resourceLocation, supplier);
     }
 
-    @Nonnull
+    @NotNull
     public static NativeImage getImageLayer(ResourceLocation resourceLocation, ResourceManager resourceManager) throws IOException
     {
         Supplier<NativeImage> supplier = bufferedImageSuppliers.get(resourceLocation);

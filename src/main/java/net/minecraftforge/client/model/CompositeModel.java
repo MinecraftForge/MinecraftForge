@@ -11,31 +11,41 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.datafixers.util.Pair;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.server.packs.resources.ResourceManager;
-import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.BlockAndTintGetter;
-import net.minecraftforge.client.model.data.*;
-import net.minecraftforge.client.model.geometry.IModelGeometryPart;
-import net.minecraftforge.client.model.geometry.IMultipartModelGeometry;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Random;
+import java.util.Set;
 import java.util.function.Function;
-
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.client.renderer.block.model.ItemOverrides;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.Material;
 import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.ModelState;
 import net.minecraft.client.resources.model.UnbakedModel;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.world.level.BlockAndTintGetter;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.client.model.data.EmptyModelData;
+import net.minecraftforge.client.model.data.IDynamicBakedModel;
+import net.minecraftforge.client.model.data.IModelData;
+import net.minecraftforge.client.model.data.ModelDataMap;
+import net.minecraftforge.client.model.data.ModelProperty;
+import net.minecraftforge.client.model.geometry.IModelGeometryPart;
+import net.minecraftforge.client.model.geometry.IMultipartModelGeometry;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class CompositeModel implements IDynamicBakedModel
 {
@@ -58,9 +68,9 @@ public class CompositeModel implements IDynamicBakedModel
         this.transforms = combinedTransform;
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, @Nonnull Random rand, @Nonnull IModelData extraData)
+    public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, @NotNull Random rand, @NotNull IModelData extraData)
     {
         List<BakedQuad> quads = new ArrayList<>();
         for(Map.Entry<String, BakedModel> entry : bakedParts.entrySet())
@@ -70,9 +80,9 @@ public class CompositeModel implements IDynamicBakedModel
         return quads;
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public IModelData getModelData(@Nonnull BlockAndTintGetter level, @Nonnull BlockPos pos, @Nonnull BlockState state, @Nonnull IModelData modelData)
+    public IModelData getModelData(@NotNull BlockAndTintGetter level, @NotNull BlockPos pos, @NotNull BlockState state, @NotNull IModelData modelData)
     {
         CompositeModelData composite = new CompositeModelData();
         for(Map.Entry<String, BakedModel> entry : bakedParts.entrySet())

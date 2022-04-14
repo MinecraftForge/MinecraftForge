@@ -5,25 +5,61 @@
 
 package net.minecraftforge.common;
 
-import java.util.*;
+import com.google.common.collect.ImmutableList;
+import java.util.ArrayDeque;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Deque;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
+import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.biome.Biomes;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import net.minecraft.world.level.biome.Biomes;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.core.Registry;
-import static net.minecraftforge.common.BiomeDictionary.Type.*;
-import net.minecraftforge.registries.ForgeRegistries;
-
-import com.google.common.collect.ImmutableList;
-
-import net.minecraft.world.level.biome.Biome;
+import static net.minecraftforge.common.BiomeDictionary.Type.BEACH;
+import static net.minecraftforge.common.BiomeDictionary.Type.COLD;
+import static net.minecraftforge.common.BiomeDictionary.Type.CONIFEROUS;
+import static net.minecraftforge.common.BiomeDictionary.Type.DENSE;
+import static net.minecraftforge.common.BiomeDictionary.Type.DRY;
+import static net.minecraftforge.common.BiomeDictionary.Type.END;
+import static net.minecraftforge.common.BiomeDictionary.Type.FOREST;
+import static net.minecraftforge.common.BiomeDictionary.Type.HILLS;
+import static net.minecraftforge.common.BiomeDictionary.Type.HOT;
+import static net.minecraftforge.common.BiomeDictionary.Type.JUNGLE;
+import static net.minecraftforge.common.BiomeDictionary.Type.LUSH;
+import static net.minecraftforge.common.BiomeDictionary.Type.MESA;
+import static net.minecraftforge.common.BiomeDictionary.Type.MUSHROOM;
+import static net.minecraftforge.common.BiomeDictionary.Type.NETHER;
+import static net.minecraftforge.common.BiomeDictionary.Type.OCEAN;
+import static net.minecraftforge.common.BiomeDictionary.Type.OVERWORLD;
+import static net.minecraftforge.common.BiomeDictionary.Type.PEAK;
+import static net.minecraftforge.common.BiomeDictionary.Type.PLAINS;
+import static net.minecraftforge.common.BiomeDictionary.Type.PLATEAU;
+import static net.minecraftforge.common.BiomeDictionary.Type.RARE;
+import static net.minecraftforge.common.BiomeDictionary.Type.RIVER;
+import static net.minecraftforge.common.BiomeDictionary.Type.SANDY;
+import static net.minecraftforge.common.BiomeDictionary.Type.SAVANNA;
+import static net.minecraftforge.common.BiomeDictionary.Type.SLOPE;
+import static net.minecraftforge.common.BiomeDictionary.Type.SNOWY;
+import static net.minecraftforge.common.BiomeDictionary.Type.SPARSE;
+import static net.minecraftforge.common.BiomeDictionary.Type.SPOOKY;
+import static net.minecraftforge.common.BiomeDictionary.Type.SWAMP;
+import static net.minecraftforge.common.BiomeDictionary.Type.UNDERGROUND;
+import static net.minecraftforge.common.BiomeDictionary.Type.VOID;
+import static net.minecraftforge.common.BiomeDictionary.Type.WASTELAND;
+import static net.minecraftforge.common.BiomeDictionary.Type.WET;
 
 public class BiomeDictionary
 {
@@ -216,7 +252,7 @@ public class BiomeDictionary
      * Gets the set of biomes that have the given type.
      *
      */
-    @Nonnull
+    @NotNull
     public static Set<ResourceKey<Biome>> getBiomes(Type type)
     {
         return type.biomesUn;
@@ -226,7 +262,7 @@ public class BiomeDictionary
      * Gets the set of types that have been added to the given biome.
      *
      */
-    @Nonnull
+    @NotNull
     public static Set<Type> getTypes(ResourceKey<Biome> biome)
     {
         return getBiomeInfo(biome).typesUn;

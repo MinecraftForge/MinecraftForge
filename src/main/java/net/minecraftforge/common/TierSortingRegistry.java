@@ -5,12 +5,32 @@
 
 package net.minecraftforge.common;
 
-import com.google.common.collect.*;
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 import com.google.common.graph.ElementOrder;
 import com.google.common.graph.GraphBuilder;
 import com.google.common.graph.MutableGraph;
-import com.google.gson.*;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import it.unimi.dsi.fastutil.booleans.BooleanConsumer;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
@@ -41,14 +61,8 @@ import net.minecraftforge.network.simple.SimpleChannel;
 import net.minecraftforge.server.ServerLifecycleHooks;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.io.*;
-import java.nio.charset.StandardCharsets;
-import java.util.*;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class TierSortingRegistry
 {
@@ -246,9 +260,9 @@ public class TierSortingRegistry
         {
             final Gson gson = (new GsonBuilder()).create();
 
-            @Nonnull
+            @NotNull
             @Override
-            protected JsonObject prepare(@Nonnull ResourceManager resourceManager, ProfilerFiller p)
+            protected JsonObject prepare(@NotNull ResourceManager resourceManager, ProfilerFiller p)
             {
                 if (!resourceManager.hasResource(ITEM_TIER_ORDERING_JSON))
                     return new JsonObject();
@@ -265,7 +279,7 @@ public class TierSortingRegistry
             }
 
             @Override
-            protected void apply(@Nonnull JsonObject data, @Nonnull ResourceManager resourceManager, ProfilerFiller p)
+            protected void apply(@NotNull JsonObject data, @NotNull ResourceManager resourceManager, ProfilerFiller p)
             {
                 try
                 {

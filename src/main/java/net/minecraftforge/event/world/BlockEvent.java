@@ -5,33 +5,30 @@
 
 package net.minecraftforge.event.world;
 
+import com.google.common.collect.ImmutableList;
 import java.util.EnumSet;
 import java.util.List;
-
-import net.minecraft.world.item.context.UseOnContext;
-import net.minecraft.world.level.portal.PortalShape;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.enchantment.Enchantments;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
-import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.portal.PortalShape;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.ToolAction;
 import net.minecraftforge.common.ToolActions;
 import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
-
-import com.google.common.collect.ImmutableList;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class BlockEvent extends Event
 {
@@ -129,7 +126,7 @@ public class BlockEvent extends Event
         private final BlockState placedBlock;
         private final BlockState placedAgainst;
 
-        public EntityPlaceEvent(@Nonnull BlockSnapshot blockSnapshot, @Nonnull BlockState placedAgainst, @Nullable Entity entity)
+        public EntityPlaceEvent(@NotNull BlockSnapshot blockSnapshot, @NotNull BlockState placedAgainst, @Nullable Entity entity)
         {
             super(blockSnapshot.getLevel(), blockSnapshot.getPos(), !(entity instanceof Player) ? blockSnapshot.getReplacedBlock() : blockSnapshot.getCurrentBlock());
             this.entity = entity;
@@ -162,7 +159,7 @@ public class BlockEvent extends Event
     {
         private final List<BlockSnapshot> blockSnapshots;
 
-        public EntityMultiPlaceEvent(@Nonnull List<BlockSnapshot> blockSnapshots, @Nonnull BlockState placedAgainst, @Nullable Entity entity) {
+        public EntityMultiPlaceEvent(@NotNull List<BlockSnapshot> blockSnapshots, @NotNull BlockState placedAgainst, @Nullable Entity entity) {
             super(blockSnapshots.get(0), placedAgainst, entity);
             this.blockSnapshots = ImmutableList.copyOf(blockSnapshots);
             if (DEBUG)
@@ -436,7 +433,7 @@ public class BlockEvent extends Event
         private final Player player;
         private final ItemStack stack;
 
-        public BlockToolInteractEvent(BlockState originalState, @Nonnull UseOnContext context, ToolAction toolAction)
+        public BlockToolInteractEvent(BlockState originalState, @NotNull UseOnContext context, ToolAction toolAction)
         {
             super(originalState, context, toolAction, false);
             this.player = context.getPlayer();
@@ -453,7 +450,7 @@ public class BlockEvent extends Event
         /**
          * @return the player using the tool, never null
          */
-        @Nonnull
+        @NotNull
         public Player getPlayer()
         {
             return this.player;
@@ -482,7 +479,7 @@ public class BlockEvent extends Event
         private final boolean simulate;
         private BlockState state;
 
-        public BlockToolModificationEvent(BlockState originalState, @Nonnull UseOnContext context, ToolAction toolAction, boolean simulate)
+        public BlockToolModificationEvent(BlockState originalState, @NotNull UseOnContext context, ToolAction toolAction, boolean simulate)
         {
             super(context.getLevel(), context.getClickedPos(), originalState);
             this.context = context;

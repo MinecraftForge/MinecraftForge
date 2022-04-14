@@ -5,13 +5,8 @@
 
 package net.minecraftforge.client;
 
-import java.util.Map;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import com.google.common.collect.Maps;
-
+import java.util.Map;
 import net.minecraft.client.renderer.ItemModelShaper;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.ModelBakery;
@@ -20,6 +15,8 @@ import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.registries.IRegistryDelegate;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Wrapper around ItemModeMesher that cleans up the internal maps to respect ID remapping.
@@ -59,7 +56,7 @@ public class ItemModelMesherForge extends ItemModelShaper
         }
     }
 
-    public ModelResourceLocation getLocation(@Nonnull ItemStack stack)
+    public ModelResourceLocation getLocation(@NotNull ItemStack stack)
     {
         ModelResourceLocation location = locations.get(stack.getItem().delegate);
 

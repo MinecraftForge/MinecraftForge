@@ -11,19 +11,18 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.level.ServerPlayerGameMode;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.eventbus.api.Cancelable;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * PlayerDestroyItemEvent is fired when a player destroys an item.<br>
@@ -51,18 +50,18 @@ import javax.annotation.Nullable;
  **/
 public class PlayerDestroyItemEvent extends PlayerEvent
 {
-    @Nonnull
+    @NotNull
     private final ItemStack original;
     @Nullable
     private final InteractionHand hand; // May be null if this player destroys the item by any use besides holding it.
-    public PlayerDestroyItemEvent(Player player, @Nonnull ItemStack original, @Nullable InteractionHand hand)
+    public PlayerDestroyItemEvent(Player player, @NotNull ItemStack original, @Nullable InteractionHand hand)
     {
         super(player);
         this.original = original;
         this.hand = hand;
     }
 
-    @Nonnull
+    @NotNull
     public ItemStack getOriginal() { return this.original; }
     @Nullable
     public InteractionHand getHand() { return this.hand; }

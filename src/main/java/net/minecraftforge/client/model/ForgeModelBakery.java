@@ -5,33 +5,28 @@
 
 package net.minecraftforge.client.model;
 
+import com.google.common.collect.Maps;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-
-import net.minecraft.client.color.block.BlockColors;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.renderer.texture.TextureAtlas;
-import net.minecraft.util.profiling.ProfilerFiller;
-import net.minecraft.server.packs.resources.ResourceManager;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.logging.ModelLoaderErrorMessage;
-
 import java.util.function.Function;
-
-import com.google.common.collect.Maps;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import javax.annotation.Nullable;
-
-import static net.minecraftforge.fml.Logging.MODELLOADING;
-
+import net.minecraft.client.color.block.BlockColors;
+import net.minecraft.client.renderer.texture.TextureAtlas;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.Material;
 import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.client.resources.model.UnbakedModel;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.util.profiling.ProfilerFiller;
+import net.minecraftforge.logging.ModelLoaderErrorMessage;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.Nullable;
+
+import static net.minecraftforge.fml.Logging.MODELLOADING;
 
 public final class ForgeModelBakery extends ModelBakery
 {

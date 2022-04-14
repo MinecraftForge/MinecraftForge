@@ -5,11 +5,6 @@
 
 package net.minecraftforge.common.util;
 
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.util.List;
-import java.util.Map;
-
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.reflect.TypeParameter;
@@ -23,11 +18,13 @@ import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import com.google.gson.JsonSyntaxException;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-
-import net.minecraft.nbt.TagParser;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.List;
+import java.util.Map;
 import net.minecraft.nbt.CompoundTag;
-
-import javax.annotation.Nullable;
+import net.minecraft.nbt.TagParser;
+import org.jetbrains.annotations.Nullable;
 
 public class JsonUtils
 {

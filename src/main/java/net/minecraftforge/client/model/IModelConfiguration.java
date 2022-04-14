@@ -5,13 +5,12 @@
 
 package net.minecraftforge.client.model;
 
-import net.minecraft.client.resources.model.ModelState;
-import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.resources.model.Material;
+import net.minecraft.client.resources.model.ModelState;
+import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraftforge.client.model.geometry.IModelGeometryPart;
-
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 /*
  * Interface that provides generic access to the data within BlockModel,

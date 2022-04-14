@@ -6,11 +6,9 @@
 package net.minecraftforge.common.loot;
 
 import java.util.List;
-
-import javax.annotation.Nonnull;
-
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootContext;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Implementation that defines what a global loot modifier must implement in order to be functional.
@@ -25,6 +23,6 @@ public interface IGlobalLootModifier {
      * @param context the LootContext, identical to what is passed to loot tables
      * @return modified loot drops
      */
-    @Nonnull
+    @NotNull
     List<ItemStack> apply(List<ItemStack> generatedLoot, LootContext context);
 }

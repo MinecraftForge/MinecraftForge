@@ -9,17 +9,36 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import joptsimple.internal.Strings;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import com.mojang.blaze3d.vertex.VertexFormatElement;
+import com.mojang.math.Transformation;
+import com.mojang.math.Vector3f;
+import com.mojang.math.Vector4f;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import joptsimple.internal.Strings;
+import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.resources.model.Material;
+import net.minecraft.client.resources.model.ModelBakery;
+import net.minecraft.client.resources.model.ModelState;
+import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
-import com.mojang.math.Transformation;
 import net.minecraft.world.phys.Vec2;
-import com.mojang.math.Vector3f;
-import com.mojang.math.Vector4f;
-import net.minecraftforge.client.model.*;
+import net.minecraftforge.client.model.IModelBuilder;
+import net.minecraftforge.client.model.IModelConfiguration;
+import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.client.model.geometry.IModelGeometryPart;
 import net.minecraftforge.client.model.geometry.IMultipartModelGeometry;
 import net.minecraftforge.client.model.pipeline.BakedQuadBuilder;
@@ -27,20 +46,8 @@ import net.minecraftforge.client.model.pipeline.IVertexConsumer;
 import net.minecraftforge.client.model.renderable.SimpleRenderable;
 import net.minecraftforge.client.textures.UnitSprite;
 import org.apache.commons.lang3.tuple.Pair;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.io.IOException;
-import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.resources.model.Material;
-import net.minecraft.client.resources.model.ModelBakery;
-import net.minecraft.client.resources.model.ModelState;
-import net.minecraft.client.resources.model.UnbakedModel;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class OBJModel implements IMultipartModelGeometry<OBJModel>
 {
@@ -660,7 +667,7 @@ public class OBJModel implements IMultipartModelGeometry<OBJModel>
         }
     }
 
-    public record ModelSettings(@Nonnull ResourceLocation modelLocation,
+    public record ModelSettings(@NotNull ResourceLocation modelLocation,
                                 boolean detectCullableFaces, boolean diffuseLighting, boolean flipV,
                                 boolean ambientToFullbright, @Nullable String materialLibraryOverrideLocation)
     {}

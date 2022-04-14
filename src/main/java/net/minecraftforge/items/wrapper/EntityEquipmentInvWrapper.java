@@ -6,16 +6,16 @@
 package net.minecraftforge.items.wrapper;
 
 import com.google.common.collect.ImmutableList;
-import net.minecraft.world.entity.LivingEntity;
+import java.util.ArrayList;
+import java.util.List;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemHandlerHelper;
-import java.util.ArrayList;
-import java.util.List;
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 
 /**
@@ -61,16 +61,16 @@ public abstract class EntityEquipmentInvWrapper implements IItemHandlerModifiabl
         return slots.size();
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public ItemStack getStackInSlot(final int slot)
     {
         return entity.getItemBySlot(validateSlotIndex(slot));
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public ItemStack insertItem(final int slot, @Nonnull final ItemStack stack, final boolean simulate)
+    public ItemStack insertItem(final int slot, @NotNull final ItemStack stack, final boolean simulate)
     {
         if (stack.isEmpty())
             return ItemStack.EMPTY;
@@ -109,7 +109,7 @@ public abstract class EntityEquipmentInvWrapper implements IItemHandlerModifiabl
         return reachedLimit ? ItemHandlerHelper.copyStackWithSize(stack, stack.getCount() - limit) : ItemStack.EMPTY;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public ItemStack extractItem(final int slot, final int amount, final boolean simulate)
     {
@@ -152,13 +152,13 @@ public abstract class EntityEquipmentInvWrapper implements IItemHandlerModifiabl
         return equipmentSlot.getType() == EquipmentSlot.Type.ARMOR ? 1 : 64;
     }
 
-    protected int getStackLimit(final int slot, @Nonnull final ItemStack stack)
+    protected int getStackLimit(final int slot, @NotNull final ItemStack stack)
     {
         return Math.min(getSlotLimit(slot), stack.getMaxStackSize());
     }
 
     @Override
-    public void setStackInSlot(final int slot, @Nonnull final ItemStack stack)
+    public void setStackInSlot(final int slot, @NotNull final ItemStack stack)
     {
         final EquipmentSlot equipmentSlot = validateSlotIndex(slot);
         if (ItemStack.matches(entity.getItemBySlot(equipmentSlot), stack))
@@ -167,7 +167,7 @@ public abstract class EntityEquipmentInvWrapper implements IItemHandlerModifiabl
     }
 
     @Override
-    public boolean isItemValid(int slot, @Nonnull ItemStack stack)
+    public boolean isItemValid(int slot, @NotNull ItemStack stack)
     {
         return true;
     }

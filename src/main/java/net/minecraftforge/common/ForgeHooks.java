@@ -5,25 +5,6 @@
 
 package net.minecraftforge.common;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Deque;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Objects;
-import java.util.Set;
-import java.util.Map.Entry;
-import java.util.Optional;
-import java.util.function.Function;
-import java.util.function.Supplier;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import com.google.common.base.Strings;
 import com.google.common.base.Suppliers;
 import com.google.common.collect.Lists;
@@ -35,85 +16,128 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.mojang.datafixers.kinds.App;
-import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.Lifecycle;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.mojang.serialization.codecs.RecordCodecBuilder.Mu;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import it.unimi.dsi.fastutil.longs.LongSet;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Deque;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.function.Supplier;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import net.minecraft.ChatFormatting;
 import net.minecraft.ResourceLocationException;
 import net.minecraft.advancements.Advancement;
-import net.minecraft.core.*;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.Holder;
+import net.minecraft.core.MappedRegistry;
+import net.minecraft.core.Registry;
+import net.minecraft.core.RegistryCodecs;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.network.chat.ClickEvent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.TextColor;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientboundBlockUpdatePacket;
+import net.minecraft.network.syncher.EntityDataSerializer;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.network.ServerGamePacketListenerImpl;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.stats.Stats;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.Tag;
 import net.minecraft.tags.TagKey;
+import net.minecraft.util.CrudeIncrementalIntIdentityHashBiMap;
+import net.minecraft.util.GsonHelper;
+import net.minecraft.util.Mth;
+import net.minecraft.world.Container;
+import net.minecraft.world.Difficulty;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.DefaultAttributes;
-import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.EnderMan;
-import net.minecraft.world.item.*;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AnvilMenu;
+import net.minecraft.world.item.BucketItem;
+import net.minecraft.world.item.EnchantedBookItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.PotionItem;
+import net.minecraft.world.item.SpawnEggItem;
+import net.minecraft.world.item.Tiers;
+import net.minecraft.world.item.TippedArrowItem;
+import net.minecraft.world.item.alchemy.Potion;
+import net.minecraft.world.item.alchemy.PotionUtils;
+import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.level.BaseSpawner;
+import net.minecraft.world.level.GameType;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.biome.BiomeGenerationSettings;
+import net.minecraft.world.level.biome.BiomeSpecialEffects;
+import net.minecraft.world.level.biome.MobSpawnSettings;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.FurnaceBlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.pattern.BlockInWorld;
+import net.minecraft.world.level.chunk.ChunkAccess;
+import net.minecraft.world.level.dimension.LevelStem;
 import net.minecraft.world.level.gameevent.GameEvent;
+import net.minecraft.world.level.levelgen.WorldGenSettings;
 import net.minecraft.world.level.levelgen.feature.ConfiguredStructureFeature;
+import net.minecraft.world.level.material.EmptyFluid;
+import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.level.material.LavaFluid;
+import net.minecraft.world.level.material.WaterFluid;
 import net.minecraft.world.level.storage.WorldData;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.LootTables;
-import net.minecraft.tags.Tag;
-import net.minecraft.util.*;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.MobSpawnType;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.inventory.AnvilMenu;
-import net.minecraft.world.Container;
-import net.minecraft.world.item.context.UseOnContext;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.server.network.ServerGamePacketListenerImpl;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.syncher.EntityDataSerializer;
-import net.minecraft.network.protocol.game.ClientboundBlockUpdatePacket;
-import net.minecraft.world.item.alchemy.Potion;
-import net.minecraft.world.item.alchemy.PotionUtils;
-import net.minecraft.stats.Stats;
-import net.minecraft.world.phys.Vec3;
-import net.minecraft.world.*;
-import net.minecraft.world.level.chunk.ChunkAccess;
-import net.minecraft.world.level.chunk.ChunkGenerator;
-import net.minecraft.world.level.levelgen.NoiseGeneratorSettings;
-import net.minecraft.world.level.levelgen.WorldGenSettings;
-import net.minecraft.world.level.levelgen.feature.StructureFeature;
-import net.minecraft.world.level.BaseSpawner;
-import net.minecraft.world.level.block.entity.FurnaceBlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
-import net.minecraft.network.chat.ClickEvent;
-import net.minecraft.world.level.biome.Biome;
-import net.minecraft.world.level.biome.BiomeSpecialEffects;
-import net.minecraft.world.level.biome.BiomeGenerationSettings;
-import net.minecraft.world.level.biome.MobSpawnSettings;
+import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.loot.IGlobalLootModifier;
 import net.minecraftforge.common.loot.LootModifierManager;
 import net.minecraftforge.common.loot.LootTableIdCondition;
@@ -142,6 +166,7 @@ import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingJumpEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
+import net.minecraftforge.event.entity.living.LivingGetProjectileEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.living.LivingKnockBackEvent;
 import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
@@ -152,7 +177,6 @@ import net.minecraftforge.event.entity.player.AnvilRepairEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.event.entity.player.CriticalHitEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
-import net.minecraftforge.event.entity.living.LivingGetProjectileEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BiomeLoadingEvent;
 import net.minecraftforge.event.world.BlockEvent;
@@ -162,36 +186,19 @@ import net.minecraftforge.fluids.FluidAttributes;
 import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoader;
-import net.minecraftforge.resource.ResourcePackLoader;
 import net.minecraftforge.registries.DataSerializerEntry;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.ForgeRegistry;
 import net.minecraftforge.registries.GameData;
 import net.minecraftforge.registries.IRegistryDelegate;
 import net.minecraftforge.registries.RegistryManager;
-
+import net.minecraftforge.resource.ResourcePackLoader;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
-
-import net.minecraft.ChatFormatting;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TextColor;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.level.GameType;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.world.level.block.state.pattern.BlockInWorld;
-import net.minecraft.world.level.dimension.LevelStem;
-import net.minecraft.world.level.material.EmptyFluid;
-import net.minecraft.world.level.material.Fluid;
-import net.minecraft.world.level.material.LavaFluid;
-import net.minecraft.world.level.material.WaterFluid;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class ForgeHooks
 {
@@ -200,7 +207,7 @@ public class ForgeHooks
     private static final Marker FORGEHOOKS = MarkerManager.getMarker("FORGEHOOKS");
     private static final Marker WORLDPERSISTENCE = MarkerManager.getMarker("WP");
 
-    public static boolean canContinueUsing(@Nonnull ItemStack from, @Nonnull ItemStack to)
+    public static boolean canContinueUsing(@NotNull ItemStack from, @NotNull ItemStack to)
     {
         if (!from.isEmpty() && !to.isEmpty())
         {
@@ -209,7 +216,7 @@ public class ForgeHooks
         return false;
     }
 
-    public static boolean isCorrectToolForDrops(@Nonnull BlockState state, @Nonnull Player player)
+    public static boolean isCorrectToolForDrops(@NotNull BlockState state, @NotNull Player player)
     {
         if (!state.requiresCorrectToolForDrops())
             return ForgeEventFactory.doPlayerHarvestCheck(player, state, true);
@@ -363,7 +370,7 @@ public class ForgeHooks
         return Math.max(0,event.getVisibilityModifier());
     }
 
-    public static Optional<BlockPos> isLivingOnLadder(@Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull LivingEntity entity)
+    public static Optional<BlockPos> isLivingOnLadder(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull LivingEntity entity)
     {
         boolean isSpectator = (entity instanceof Player && entity.isSpectator());
         if (isSpectator) return Optional.empty();
@@ -402,7 +409,7 @@ public class ForgeHooks
     }
 
     @Nullable
-    public static ItemEntity onPlayerTossEvent(@Nonnull Player player, @Nonnull ItemStack item, boolean includeName)
+    public static ItemEntity onPlayerTossEvent(@NotNull Player player, @NotNull ItemStack item, boolean includeName)
     {
         player.captureDrops(Lists.newArrayList());
         ItemEntity ret = player.drop(item, false, includeName);
@@ -567,7 +574,7 @@ public class ForgeHooks
         return event.isCanceled() ? -1 : event.getExpToDrop();
     }
 
-    public static InteractionResult onPlaceItemIntoWorld(@Nonnull UseOnContext context)
+    public static InteractionResult onPlaceItemIntoWorld(@NotNull UseOnContext context)
     {
         ItemStack itemstack = context.getItemInHand();
         Level level = context.getLevel();
@@ -657,7 +664,7 @@ public class ForgeHooks
         return ret;
     }
 
-    public static boolean onAnvilChange(AnvilMenu container, @Nonnull ItemStack left, @Nonnull ItemStack right, Container outputSlot, String name, int baseCost, Player player)
+    public static boolean onAnvilChange(AnvilMenu container, @NotNull ItemStack left, @NotNull ItemStack right, Container outputSlot, String name, int baseCost, Player player)
     {
         AnvilUpdateEvent e = new AnvilUpdateEvent(left, right, name, baseCost, player);
         if (MinecraftForge.EVENT_BUS.post(e)) return false;
@@ -669,7 +676,7 @@ public class ForgeHooks
         return false;
     }
 
-    public static float onAnvilRepair(Player player, @Nonnull ItemStack output, @Nonnull ItemStack left, @Nonnull ItemStack right)
+    public static float onAnvilRepair(Player player, @NotNull ItemStack output, @NotNull ItemStack left, @NotNull ItemStack right)
     {
         AnvilRepairEvent e = new AnvilRepairEvent(player, left, right, output);
         MinecraftForge.EVENT_BUS.post(e);
@@ -685,8 +692,8 @@ public class ForgeHooks
     {
         return craftingPlayer.get();
     }
-    @Nonnull
-    public static ItemStack getContainerItem(@Nonnull ItemStack stack)
+    @NotNull
+    public static ItemStack getContainerItem(@NotNull ItemStack stack)
     {
         if (stack.getItem().hasContainerItem(stack))
         {
@@ -1031,7 +1038,7 @@ public class ForgeHooks
      * Used as the default implementation of {@link Item#getCreatorModId}. Call that method instead.
      */
     @Nullable
-    public static String getDefaultCreatorModId(@Nonnull ItemStack itemStack)
+    public static String getDefaultCreatorModId(@NotNull ItemStack itemStack)
     {
         Item item = itemStack.getItem();
         ResourceLocation registryName = item.getRegistryName();
@@ -1319,7 +1326,7 @@ public class ForgeHooks
         boolean generateBonusChest = wgs.generateBonusChest();
         Registry<LevelStem> originalRegistry = wgs.dimensions();
         Optional<String> legacyCustomOptions = wgs.legacyCustomOptions;
-        
+
         // make a copy of the dimension registry; for dimensions that specify that they should use the server seed instead
         // of the hardcoded json seed, recreate them with the correct seed
         MappedRegistry<LevelStem> seededRegistry = new MappedRegistry<>(Registry.LEVEL_STEM_REGISTRY, Lifecycle.experimental(), (Function<LevelStem, Holder.Reference<LevelStem>>)null);
@@ -1336,10 +1343,10 @@ public class ForgeHooks
                 seededRegistry.register(key, dimension, originalRegistry.lifecycle(dimension));
             }
         }
-        
+
         return new WorldGenSettings(seed, generateFeatures, generateBonusChest, seededRegistry, legacyCustomOptions);
     }
-    
+
     /** Called in the LevelStem codec builder to add extra fields to dimension jsons **/
     public static App<Mu<LevelStem>, LevelStem> expandLevelStemCodec(RecordCodecBuilder.Instance<LevelStem> builder, Supplier<App<Mu<LevelStem>, LevelStem>> vanillaFieldsSupplier)
     {
@@ -1452,7 +1459,7 @@ public class ForgeHooks
             return Lifecycle.deprecated(Integer.parseInt(lifecycle.substring(lifecycle.indexOf('=') + 1)));
         throw new IllegalArgumentException("Unknown lifecycle.");
     }
-  
+
     public static void saveMobEffect(CompoundTag nbt, String key, MobEffect effect)
     {
         var registryName = effect.getRegistryName();

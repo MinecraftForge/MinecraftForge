@@ -5,15 +5,13 @@
 
 package net.minecraftforge.client.event;
 
-import javax.annotation.Nonnull;
-
 import com.mojang.blaze3d.vertex.PoseStack;
-
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * This event is fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}
@@ -31,12 +29,12 @@ public class RenderHandEvent extends Event
     private final float interpolatedPitch;
     private final float swingProgress;
     private final float equipProgress;
-    @Nonnull
+    @NotNull
     private final ItemStack stack;
 
     public RenderHandEvent(InteractionHand hand, PoseStack poseStack, MultiBufferSource multiBufferSource, int packedLight,
                            float partialTicks, float interpolatedPitch,
-                           float swingProgress, float equipProgress, @Nonnull ItemStack stack)
+                           float swingProgress, float equipProgress, @NotNull ItemStack stack)
     {
         this.hand = hand;
         this.poseStack = poseStack;
@@ -99,7 +97,7 @@ public class RenderHandEvent extends Event
     /**
      * @return The ItemStack to be rendered
      */
-    @Nonnull
+    @NotNull
     public ItemStack getItemStack()
     {
         return stack;

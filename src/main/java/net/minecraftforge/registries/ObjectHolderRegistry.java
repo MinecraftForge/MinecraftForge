@@ -5,6 +5,7 @@
 
 package net.minecraftforge.registries;
 
+import com.google.common.collect.Maps;
 import java.lang.annotation.ElementType;
 import java.lang.reflect.Field;
 import java.util.Collection;
@@ -16,18 +17,13 @@ import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.forgespi.language.ModFileScanData;
-
-import com.google.common.collect.Maps;
-
-import javax.annotation.Nullable;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 

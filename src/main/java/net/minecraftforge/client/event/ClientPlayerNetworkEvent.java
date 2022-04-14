@@ -5,12 +5,11 @@
 
 package net.minecraftforge.client.event;
 
-import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.multiplayer.MultiPlayerGameMode;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.Connection;
 import net.minecraftforge.eventbus.api.Event;
-
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Client side player connectivity events.

@@ -5,75 +5,72 @@
 
 package net.minecraftforge.event;
 
-import java.io.File;
-import java.util.*;
-import java.util.function.BooleanSupplier;
-import java.util.function.Consumer;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import com.mojang.authlib.GameProfile;
 import com.mojang.blaze3d.vertex.PoseStack;
-
 import com.mojang.brigadier.CommandDispatcher;
-import net.minecraft.server.ReloadableServerResources;
-import net.minecraft.server.players.PlayerList;
-import net.minecraft.world.Container;
-import net.minecraft.world.entity.projectile.FireworkRocketEntity;
-import net.minecraft.world.entity.projectile.Projectile;
-import net.minecraft.world.entity.projectile.ThrownEnderpearl;
-import net.minecraft.world.level.portal.PortalShape;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.item.TooltipFlag;
+import java.io.File;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Random;
+import java.util.UUID;
+import java.util.function.BooleanSupplier;
+import java.util.function.Consumer;
+import javax.annotation.Nonnull;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.Pose;
-import net.minecraft.world.entity.EntityDimensions;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.MobSpawnType;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.MobCategory;
-import net.minecraft.world.entity.LightningBolt;
-import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.entity.monster.Zombie;
-import net.minecraft.world.entity.animal.Animal;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.player.Player.BedSleepingProblem;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.context.UseOnContext;
-import net.minecraft.world.item.crafting.RecipeType;
-import net.minecraft.world.level.storage.loot.LootTable;
-import net.minecraft.world.level.storage.loot.LootTables;
-import net.minecraft.server.packs.resources.PreparableReloadListener;
-import net.minecraft.world.level.BaseSpawner;
-import net.minecraft.world.InteractionResultHolder;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.core.Direction;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.core.NonNullList;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.sounds.SoundEvent;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.ChunkPos;
-import net.minecraft.world.phys.HitResult;
+import net.minecraft.core.Direction;
+import net.minecraft.core.NonNullList;
 import net.minecraft.network.chat.ChatType;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.ReloadableServerResources;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.packs.resources.PreparableReloadListener;
+import net.minecraft.server.players.PlayerList;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.Container;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityDimensions;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LightningBolt;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.Pose;
+import net.minecraft.world.entity.animal.Animal;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.monster.Zombie;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.player.Player.BedSleepingProblem;
+import net.minecraft.world.entity.projectile.Projectile;
+import net.minecraft.world.entity.projectile.ThrownEnderpearl;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.level.BaseSpawner;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.GameRules;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
-import net.minecraft.world.level.Level;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.level.biome.MobSpawnSettings;
-import net.minecraft.world.level.storage.ServerLevelData;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.portal.PortalShape;
 import net.minecraft.world.level.storage.PlayerDataStorage;
+import net.minecraft.world.level.storage.ServerLevelData;
+import net.minecraft.world.level.storage.loot.LootTable;
+import net.minecraft.world.level.storage.loot.LootTables;
+import net.minecraft.world.phys.HitResult;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.MinecraftForgeClient;
@@ -139,6 +136,7 @@ import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.Event.Result;
 import net.minecraftforge.fml.LogicalSide;
+import org.jetbrains.annotations.Nullable;
 
 public class ForgeEventFactory
 {
@@ -867,7 +865,7 @@ public class ForgeEventFactory
 
     /**
      * TODO: Remove in 1.19
-     * 
+     *
      * @deprecated Use {@link #onPreWorldTick(Level, BooleanSupplier)}
      */
     @Deprecated(forRemoval = true, since = "1.18.1")
@@ -883,7 +881,7 @@ public class ForgeEventFactory
 
     /**
      * TODO: Remove in 1.19
-     * 
+     *
      * @deprecated Use {@link #onPostWorldTick(Level, BooleanSupplier)}
      */
     @Deprecated(forRemoval = true, since = "1.18.1")
@@ -909,7 +907,7 @@ public class ForgeEventFactory
 
     /**
      * TODO: Remove in 1.19
-     * 
+     *
      * @deprecated Use {@link #onPreServerTick(BooleanSupplier)}
      */
     @Deprecated(forRemoval = true, since = "1.18.1")
@@ -925,7 +923,7 @@ public class ForgeEventFactory
 
     /**
      * TODO: Remove in 1.19
-     * 
+     *
      * @deprecated Use {@link #onPostServerTick(BooleanSupplier)}
      */
     @Deprecated(forRemoval = true, since = "1.18.1")

@@ -5,6 +5,7 @@
 
 package net.minecraftforge.client.model;
 
+import java.util.Map;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.resources.model.BlockModelRotation;
 import net.minecraft.client.resources.model.Material;
@@ -12,9 +13,7 @@ import net.minecraft.client.resources.model.ModelState;
 import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.textures.UnitSprite;
-
-import javax.annotation.Nullable;
-import java.util.Map;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Helper to allow baking models outwise the context of block/item model loading.

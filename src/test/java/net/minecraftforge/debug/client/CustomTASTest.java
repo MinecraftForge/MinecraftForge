@@ -7,7 +7,7 @@ package net.minecraftforge.debug.client;
 
 import java.util.Random;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 import com.mojang.blaze3d.platform.NativeImage;
 import net.minecraft.client.renderer.texture.TextureAtlas;
@@ -55,7 +55,7 @@ public class CustomTASTest
     private static class TasLoader implements ITextureAtlasSpriteLoader
     {
         @Override
-        @Nonnull
+        @NotNull
         public TextureAtlasSprite load(TextureAtlas atlas, ResourceManager resourceManager, TextureAtlasSprite.Info textureInfo, Resource resource, int atlasWidth, int atlasHeight, int spriteX, int spriteY, int mipmapLevel, NativeImage image)
         {
             return new TextureAtlasSprite(

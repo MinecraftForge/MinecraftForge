@@ -5,19 +5,18 @@
 
 package net.minecraftforge.fluids.capability.wrappers;
 
-import javax.annotation.Nonnull;
-
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.BucketItem;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BucketPickup;
 import net.minecraft.world.level.material.FluidState;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.Level;
 import net.minecraftforge.fluids.FluidAttributes;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 
 public class BucketPickupHandlerWrapper implements IFluidHandler
 {
@@ -40,7 +39,7 @@ public class BucketPickupHandlerWrapper implements IFluidHandler
         return 1;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public FluidStack getFluidInTank(int tank)
     {
@@ -63,7 +62,7 @@ public class BucketPickupHandlerWrapper implements IFluidHandler
     }
 
     @Override
-    public boolean isFluidValid(int tank, @Nonnull FluidStack stack)
+    public boolean isFluidValid(int tank, @NotNull FluidStack stack)
     {
         return true;
     }
@@ -74,7 +73,7 @@ public class BucketPickupHandlerWrapper implements IFluidHandler
         return 0;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public FluidStack drain(FluidStack resource, FluidAction action)
     {
@@ -113,7 +112,7 @@ public class BucketPickupHandlerWrapper implements IFluidHandler
         return FluidStack.EMPTY;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public FluidStack drain(int maxDrain, FluidAction action)
     {

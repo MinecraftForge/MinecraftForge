@@ -5,22 +5,18 @@
 
 package net.minecraftforge.common.extensions;
 
-import java.util.Set;
-
-import javax.annotation.Nullable;
-
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderSet;
-import net.minecraft.world.level.material.Material;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Explosion;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.material.Material;
 import net.minecraft.world.phys.AABB;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.Explosion;
-import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.LevelReader;
 import net.minecraftforge.fluids.FluidAttributes;
+import org.jetbrains.annotations.Nullable;
 
 public interface IForgeFluid
 {

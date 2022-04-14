@@ -5,16 +5,13 @@
 
 package net.minecraftforge.common.crafting;
 
-import java.util.stream.Stream;
-
-import javax.annotation.Nullable;
-
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-
+import java.util.stream.Stream;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.network.FriendlyByteBuf;
+import org.jetbrains.annotations.Nullable;
 
 /** Ingredient that matches the given stack, performing an exact NBT match. Use {@link PartialNBTIngredient} if you need partial match. */
 public class NBTIngredient extends AbstractIngredient

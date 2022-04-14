@@ -5,39 +5,45 @@
 
 package net.minecraftforge.client.model;
 
-import com.google.common.collect.*;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
-import com.mojang.datafixers.util.Pair;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.block.model.ItemModelGenerator;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormatElement;
-import net.minecraft.server.packs.resources.ResourceManager;
-import net.minecraft.core.Direction;
-import net.minecraft.util.GsonHelper;
-import net.minecraft.resources.ResourceLocation;
+import com.mojang.datafixers.util.Pair;
 import com.mojang.math.Transformation;
-import net.minecraftforge.client.ForgeRenderTypes;
-import net.minecraftforge.client.model.geometry.IModelGeometry;
-import net.minecraftforge.client.model.pipeline.BakedQuadBuilder;
-import net.minecraftforge.client.model.pipeline.IVertexConsumer;
-import net.minecraftforge.client.model.pipeline.TRSRTransformer;
-
-import javax.annotation.Nullable;
-import java.util.*;
+import java.util.Arrays;
+import java.util.BitSet;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.EnumMap;
+import java.util.List;
+import java.util.Set;
 import java.util.function.Function;
-
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.renderer.block.model.ItemModelGenerator;
 import net.minecraft.client.renderer.block.model.ItemOverrides;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.Material;
 import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.ModelState;
 import net.minecraft.client.resources.model.UnbakedModel;
+import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.util.GsonHelper;
+import net.minecraftforge.client.ForgeRenderTypes;
+import net.minecraftforge.client.model.geometry.IModelGeometry;
+import net.minecraftforge.client.model.pipeline.BakedQuadBuilder;
+import net.minecraftforge.client.model.pipeline.IVertexConsumer;
+import net.minecraftforge.client.model.pipeline.TRSRTransformer;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Forge reimplementation of vanilla {@link ItemModelGenerator}, i.e. builtin/generated models,

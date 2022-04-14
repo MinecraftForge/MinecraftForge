@@ -5,6 +5,19 @@
 
 package net.minecraftforge.client.model.b3d;
 
+import com.google.common.base.Joiner;
+import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableTable;
+import com.google.common.collect.Table;
+import com.mojang.math.Matrix4f;
+import com.mojang.math.Quaternion;
+import com.mojang.math.Transformation;
+import com.mojang.math.Vector3f;
+import com.mojang.math.Vector4f;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -22,34 +35,17 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
-
-import javax.annotation.Nullable;
-
+import java.util.function.Function;
+import net.minecraft.world.phys.Vec2;
 import net.minecraftforge.versions.forge.ForgeVersion;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import java.util.function.Function;
-import com.google.common.base.Joiner;
-import java.util.Optional;
-import com.google.common.collect.HashBasedTable;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.ImmutableTable;
-import com.google.common.collect.Table;
-
-import com.mojang.math.Matrix4f;
-import com.mojang.math.Quaternion;
-import com.mojang.math.Transformation;
-import com.mojang.math.Vector3f;
-import com.mojang.math.Vector4f;
-import net.minecraft.world.phys.Vec2;
+import org.jetbrains.annotations.Nullable;
 
 @Deprecated(forRemoval = true, since = "1.18")
 public class B3DModel

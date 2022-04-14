@@ -5,16 +5,16 @@
 
 package net.minecraftforge.common.util;
 
-import javax.annotation.Nonnull;
 import java.util.function.Supplier;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Equivalent to {@link Supplier}, except with nonnull contract.
- * 
+ *
  * @see Supplier
  */
 @FunctionalInterface
 public interface NonNullSupplier<T>
 {
-    @Nonnull T get();
+    @NotNull T get();
 }

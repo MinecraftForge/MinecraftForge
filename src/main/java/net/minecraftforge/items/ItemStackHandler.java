@@ -5,14 +5,13 @@
 
 package net.minecraftforge.items;
 
-import net.minecraft.nbt.Tag;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.core.NonNullList;
+import net.minecraft.nbt.Tag;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.util.INBTSerializable;
-
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class ItemStackHandler implements IItemHandler, IItemHandlerModifiable, INBTSerializable<CompoundTag>
 {
@@ -39,7 +38,7 @@ public class ItemStackHandler implements IItemHandler, IItemHandlerModifiable, I
     }
 
     @Override
-    public void setStackInSlot(int slot, @Nonnull ItemStack stack)
+    public void setStackInSlot(int slot, @NotNull ItemStack stack)
     {
         validateSlotIndex(slot);
         this.stacks.set(slot, stack);
@@ -53,7 +52,7 @@ public class ItemStackHandler implements IItemHandler, IItemHandlerModifiable, I
     }
 
     @Override
-    @Nonnull
+    @NotNull
     public ItemStack getStackInSlot(int slot)
     {
         validateSlotIndex(slot);
@@ -61,12 +60,12 @@ public class ItemStackHandler implements IItemHandler, IItemHandlerModifiable, I
     }
 
     @Override
-    @Nonnull
-    public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate)
+    @NotNull
+    public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate)
     {
         if (stack.isEmpty())
             return ItemStack.EMPTY;
-            
+
         if (!isItemValid(slot, stack))
             return stack;
 
@@ -106,7 +105,7 @@ public class ItemStackHandler implements IItemHandler, IItemHandlerModifiable, I
     }
 
     @Override
-    @Nonnull
+    @NotNull
     public ItemStack extractItem(int slot, int amount, boolean simulate)
     {
         if (amount == 0)
@@ -152,13 +151,13 @@ public class ItemStackHandler implements IItemHandler, IItemHandlerModifiable, I
         return 64;
     }
 
-    protected int getStackLimit(int slot, @Nonnull ItemStack stack)
+    protected int getStackLimit(int slot, @NotNull ItemStack stack)
     {
         return Math.min(getSlotLimit(slot), stack.getMaxStackSize());
     }
 
     @Override
-    public boolean isItemValid(int slot, @Nonnull ItemStack stack)
+    public boolean isItemValid(int slot, @NotNull ItemStack stack)
     {
         return true;
     }

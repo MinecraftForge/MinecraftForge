@@ -5,6 +5,10 @@
 
 package net.minecraftforge.server.permission;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Map;
+import java.util.UUID;
 import net.minecraft.ResourceLocationException;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -20,12 +24,7 @@ import net.minecraftforge.server.permission.nodes.PermissionDynamicContext;
 import net.minecraftforge.server.permission.nodes.PermissionNode;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import javax.annotation.Nullable;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Map;
-import java.util.UUID;
+import org.jetbrains.annotations.Nullable;
 
 public final class PermissionAPI
 {

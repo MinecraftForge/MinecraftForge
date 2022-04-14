@@ -13,14 +13,11 @@ import java.util.Locale;
 import java.util.Queue;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
-
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.ResourceLocationException;
-
-import javax.annotation.Nullable;
-
+import net.minecraft.resources.ResourceLocation;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.Nullable;
 
 @SuppressWarnings("rawtypes")
 class ObjectHolderRef implements Consumer<Predicate<ResourceLocation>>

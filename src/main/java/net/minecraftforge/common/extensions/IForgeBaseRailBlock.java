@@ -5,14 +5,13 @@
 
 package net.minecraftforge.common.extensions;
 
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.entity.vehicle.AbstractMinecart;
-import net.minecraft.world.level.block.state.properties.RailShape;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.vehicle.AbstractMinecart;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-
-import javax.annotation.Nullable;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.RailShape;
+import org.jetbrains.annotations.Nullable;
 
 public interface IForgeBaseRailBlock
 {

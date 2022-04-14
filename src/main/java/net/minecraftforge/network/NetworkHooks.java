@@ -5,40 +5,37 @@
 
 package net.minecraftforge.network;
 
+import io.netty.buffer.Unpooled;
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelHandlerContext;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
-
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelHandlerContext;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraftforge.fml.util.thread.EffectiveSide;
-import net.minecraftforge.client.ConfigGuiHandler.ConfigGuiFactory;
-import net.minecraftforge.network.filters.NetworkFilters;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import io.netty.buffer.Unpooled;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.MenuType;
-import net.minecraft.world.MenuProvider;
-import net.minecraft.network.protocol.Packet;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.Connection;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.handshake.ClientIntentionPacket;
-import net.minecraft.server.network.ServerLoginPacketListenerImpl;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.network.ServerLoginPacketListenerImpl;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.MenuType;
+import net.minecraftforge.client.ConfigGuiHandler.ConfigGuiFactory;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerContainerEvent;
 import net.minecraftforge.fml.config.ConfigTracker;
-
-import javax.annotation.Nullable;
+import net.minecraftforge.fml.util.thread.EffectiveSide;
+import net.minecraftforge.network.filters.NetworkFilters;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.Nullable;
 
 public class NetworkHooks
 {

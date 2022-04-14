@@ -5,41 +5,44 @@
 
 package net.minecraftforge.client.model;
 
-import com.google.common.collect.*;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import com.mojang.datafixers.util.Pair;
-import net.minecraft.client.multiplayer.ClientLevel;
 import com.mojang.math.Quaternion;
 import com.mojang.math.Transformation;
+import java.util.Collection;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Function;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.renderer.block.model.ItemOverrides;
 import net.minecraft.client.renderer.block.model.ItemTransforms.TransformType;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.level.material.Fluid;
-import net.minecraft.world.level.material.Fluids;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.server.packs.resources.ResourceManager;
-import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.client.ForgeHooksClient;
-import net.minecraftforge.client.model.geometry.IModelGeometry;
-import net.minecraftforge.fluids.FluidUtil;
-import net.minecraftforge.registries.ForgeRegistries;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.util.*;
-import java.util.function.Function;
-
-import net.minecraft.client.renderer.block.model.ItemOverrides;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.BlockModelRotation;
 import net.minecraft.client.resources.model.Material;
 import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.ModelState;
 import net.minecraft.client.resources.model.UnbakedModel;
+import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.level.material.Fluids;
+import net.minecraftforge.client.ForgeHooksClient;
+import net.minecraftforge.client.model.geometry.IModelGeometry;
+import net.minecraftforge.fluids.FluidUtil;
+import net.minecraftforge.registries.ForgeRegistries;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public final class DynamicBucketModel implements IModelGeometry<DynamicBucketModel>
 {
@@ -51,7 +54,7 @@ public final class DynamicBucketModel implements IModelGeometry<DynamicBucketMod
     private static final float NORTH_Z_FLUID = 7.498f / 16f;
     private static final float SOUTH_Z_FLUID = 8.502f / 16f;
 
-    @Nonnull
+    @NotNull
     private final Fluid fluid;
 
     private final boolean flipGas;

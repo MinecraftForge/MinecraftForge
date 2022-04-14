@@ -15,10 +15,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.material.Fluid;
 
-import javax.annotation.Nullable;
-import java.util.Set;
-import java.util.function.Supplier;
-
 public class Tags
 {
     public static void init ()

@@ -5,11 +5,10 @@
 
 package net.minecraftforge.items.wrapper;
 
-import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
-
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class PlayerArmorInvWrapper extends RangedWrapper
 {
@@ -22,8 +21,8 @@ public class PlayerArmorInvWrapper extends RangedWrapper
     }
 
     @Override
-    @Nonnull
-    public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate)
+    @NotNull
+    public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate)
     {
         EquipmentSlot equ = null;
         for (EquipmentSlot s : EquipmentSlot.values())

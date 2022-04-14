@@ -5,7 +5,7 @@
 
 package net.minecraftforge.client.model.renderable;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * A standard interface for renderable context values that support providing different values for parts of the model.

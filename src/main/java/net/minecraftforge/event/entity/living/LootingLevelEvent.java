@@ -5,11 +5,9 @@
 
 package net.minecraftforge.event.entity.living;
 
-import net.minecraft.world.entity.LivingEntity;
-
-import javax.annotation.Nullable;
-
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.LivingEntity;
+import org.jetbrains.annotations.Nullable;
 
 public class LootingLevelEvent extends LivingEvent {
 

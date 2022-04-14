@@ -8,16 +8,6 @@ package net.minecraftforge.common.data;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
-import net.minecraft.data.DataGenerator;
-import net.minecraft.data.HashCache;
-import net.minecraft.data.DataProvider;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.packs.PackType;
-import net.minecraft.sounds.SoundEvent;
-import net.minecraftforge.registries.ForgeRegistries;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.LinkedHashMap;
@@ -25,6 +15,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import net.minecraft.data.DataGenerator;
+import net.minecraft.data.DataProvider;
+import net.minecraft.data.HashCache;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.PackType;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraftforge.registries.ForgeRegistries;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Data provider for the {@code sounds.json} file, which identifies sound definitions
@@ -229,7 +228,7 @@ public abstract class SoundDefinitionsProvider implements DataProvider
         // Differently from all the other errors, this is not a 'missing sound' but rather something completely different
         // that has broken the invariants of this sound definitions provider. In fact, a sound may only be either of
         // SOUND or EVENT type. Any other values is somebody messing with the internals, reflectively adding something
-        // to an enum or passing `null` to a parameter annotated with `@Nonnull`.
+        // to an enum or passing `null` to a parameter annotated with `@NotNull`.
         throw new IllegalArgumentException("The given sound '" + sound.name() + "' does not have a valid type: expected either SOUND or EVENT, but found " + sound.type());
     }
 

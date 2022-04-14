@@ -4,9 +4,9 @@
  */
 
 package net.minecraftforge.registries;
-import net.minecraft.resources.ResourceLocation;
 
-import javax.annotation.Nullable;
+import net.minecraft.resources.ResourceLocation;
+import org.jetbrains.annotations.Nullable;
 
 public interface IForgeRegistryEntry<V>
 {

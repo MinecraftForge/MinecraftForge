@@ -47,7 +47,7 @@ import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -133,7 +133,7 @@ public class GlobalLootModifiersTest {
             super(conditionsIn);
         }
 
-        @Nonnull
+        @NotNull
         @Override
         public List<ItemStack> doApply(List<ItemStack> generatedLoot, LootContext context) {
             ArrayList<ItemStack> ret = new ArrayList<ItemStack>();
@@ -171,7 +171,7 @@ public class GlobalLootModifiersTest {
             super(conditionsIn);
         }
 
-        @Nonnull
+        @NotNull
         @Override
         public List<ItemStack> doApply(List<ItemStack> generatedLoot, LootContext context) {
             ItemStack ctxTool = context.getParamOrNull(LootContextParams.TOOL);
@@ -215,7 +215,7 @@ public class GlobalLootModifiersTest {
             itemReward = reward;
         }
 
-        @Nonnull
+        @NotNull
         @Override
         public List<ItemStack> doApply(List<ItemStack> generatedLoot, LootContext context) {
             //

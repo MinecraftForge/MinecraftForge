@@ -5,24 +5,22 @@
 
 package net.minecraftforge.items;
 
+import java.util.Optional;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.util.Mth;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.DropperBlock;
 import net.minecraft.world.level.block.HopperBlock;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.entity.Hopper;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.DispenserBlockEntity;
+import net.minecraft.world.level.block.entity.Hopper;
 import net.minecraft.world.level.block.entity.HopperBlockEntity;
-import net.minecraft.core.Direction;
-import net.minecraft.core.BlockPos;
-import net.minecraft.util.Mth;
-import net.minecraft.world.level.Level;
-
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.util.Optional;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class VanillaInventoryCodeHooks
 {
@@ -70,7 +68,7 @@ public class VanillaInventoryCodeHooks
     /**
      * Copied from BlockDropper#dispense and added capability support
      */
-    public static boolean dropperInsertHook(Level level, BlockPos pos, DispenserBlockEntity dropper, int slot, @Nonnull ItemStack stack)
+    public static boolean dropperInsertHook(Level level, BlockPos pos, DispenserBlockEntity dropper, int slot, @NotNull ItemStack stack)
     {
         Direction enumfacing = level.getBlockState(pos).getValue(DropperBlock.FACING);
         BlockPos blockpos = pos.relative(enumfacing);

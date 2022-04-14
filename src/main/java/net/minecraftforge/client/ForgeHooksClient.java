@@ -6,116 +6,18 @@
 package net.minecraftforge.client;
 
 import com.google.common.collect.ImmutableMap;
-
+import com.mojang.blaze3d.platform.NativeImage;
+import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.shaders.FogShape;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.*;
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.datafixers.util.Either;
-import net.minecraft.client.gui.chat.NarratorChatListener;
-import net.minecraft.client.gui.components.toasts.SystemToast;
-import net.minecraft.client.gui.screens.ConfirmScreen;
-import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
-import net.minecraft.client.gui.screens.multiplayer.JoinMultiplayerScreen;
-import net.minecraft.client.model.Model;
-import net.minecraft.client.model.geom.ModelLayerLocation;
-import net.minecraft.client.model.geom.builders.LayerDefinition;
-import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.multiplayer.MultiPlayerGameMode;
-import net.minecraft.client.multiplayer.ServerData;
-import net.minecraft.client.particle.ParticleRenderType;
-import net.minecraft.client.player.AbstractClientPlayer;
-import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.locale.Language;
-import net.minecraft.network.Connection;
-import net.minecraft.network.chat.*;
-import net.minecraft.network.protocol.status.ServerStatus;
-import net.minecraft.server.WorldStem;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.entity.HumanoidArm;
-import net.minecraft.world.inventory.tooltip.TooltipComponent;
-import net.minecraft.world.level.block.state.BlockState;
-import com.mojang.blaze3d.platform.Window;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.MouseHandler;
-import net.minecraft.client.resources.sounds.SoundInstance;
-import net.minecraft.client.sounds.SoundEngine;
-import net.minecraft.client.gui.GuiComponent;
-import net.minecraft.client.gui.components.LerpingBossEvent;
-import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.screens.worldselection.WorldPreset;
-import net.minecraft.client.gui.screens.TitleScreen;
-import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.multiplayer.PlayerInfo;
-import net.minecraft.client.renderer.*;
-import net.minecraft.client.renderer.FogRenderer.FogMode;
-import net.minecraft.client.color.block.BlockColors;
-import net.minecraft.client.color.item.ItemColors;
-import net.minecraft.client.model.HumanoidModel;
-import net.minecraft.client.resources.model.BakedModel;
-import net.minecraft.client.renderer.block.model.ItemTransforms;
-import net.minecraft.client.resources.model.ModelManager;
-import net.minecraft.client.resources.model.Material;
-import net.minecraft.client.renderer.texture.TextureAtlas;
-import com.mojang.blaze3d.platform.NativeImage;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.resources.language.I18n;
-import net.minecraft.client.KeyMapping;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.attributes.AttributeInstance;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.material.Fluid;
-import net.minecraft.world.level.material.FluidState;
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.RecipeManager;
-import net.minecraft.server.packs.resources.Resource;
-import net.minecraft.server.packs.resources.ResourceManager;
-import net.minecraft.core.Direction;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.client.player.Input;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.storage.LevelStorageSource;
-import net.minecraft.world.level.storage.PrimaryLevelData;
-import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.EntityHitResult;
-import net.minecraft.world.phys.HitResult;
 import com.mojang.math.Matrix3f;
 import com.mojang.math.Matrix4f;
 import com.mojang.math.Transformation;
 import com.mojang.math.Vector3f;
-import net.minecraft.ChatFormatting;
-import net.minecraft.world.level.GameType;
-import net.minecraft.world.level.BlockAndTintGetter;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.levelgen.WorldGenSettings;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.*;
-import net.minecraftforge.client.event.sound.PlaySoundEvent;
-import net.minecraftforge.client.model.ForgeModelBakery;
-import net.minecraftforge.client.textures.ForgeTextureMetadata;
-import net.minecraftforge.common.ForgeMod;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.model.TransformationHelper;
-import net.minecraftforge.eventbus.api.Event;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.*;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.common.ForgeI18n;
-import net.minecraftforge.network.NetworkConstants;
-import net.minecraftforge.network.NetworkRegistry;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.GameData;
-import net.minecraftforge.versions.forge.ForgeVersion;
-import org.apache.commons.lang3.tuple.Pair;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.Marker;
-import org.apache.logging.log4j.MarkerManager;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -134,14 +36,143 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.Camera;
+import net.minecraft.client.KeyMapping;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.MouseHandler;
+import net.minecraft.client.color.block.BlockColors;
+import net.minecraft.client.color.item.ItemColors;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.gui.chat.NarratorChatListener;
+import net.minecraft.client.gui.components.LerpingBossEvent;
+import net.minecraft.client.gui.components.toasts.SystemToast;
+import net.minecraft.client.gui.screens.ConfirmScreen;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.TitleScreen;
+import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
+import net.minecraft.client.gui.screens.multiplayer.JoinMultiplayerScreen;
+import net.minecraft.client.gui.screens.worldselection.WorldPreset;
+import net.minecraft.client.model.HumanoidModel;
+import net.minecraft.client.model.Model;
+import net.minecraft.client.model.geom.ModelLayerLocation;
+import net.minecraft.client.model.geom.builders.LayerDefinition;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.multiplayer.MultiPlayerGameMode;
+import net.minecraft.client.multiplayer.PlayerInfo;
+import net.minecraft.client.multiplayer.ServerData;
+import net.minecraft.client.particle.ParticleRenderType;
+import net.minecraft.client.player.AbstractClientPlayer;
+import net.minecraft.client.player.Input;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.client.renderer.FogRenderer.FogMode;
+import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.renderer.ItemBlockRenderTypes;
+import net.minecraft.client.renderer.LevelRenderer;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.ShaderInstance;
+import net.minecraft.client.renderer.Sheets;
+import net.minecraft.client.renderer.block.BlockRenderDispatcher;
+import net.minecraft.client.renderer.block.model.ItemTransforms;
+import net.minecraft.client.renderer.entity.ItemRenderer;
+import net.minecraft.client.renderer.texture.TextureAtlas;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.resources.language.I18n;
+import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.client.resources.model.Material;
+import net.minecraft.client.resources.model.ModelManager;
+import net.minecraft.client.resources.sounds.SoundInstance;
+import net.minecraft.client.sounds.SoundEngine;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.locale.Language;
+import net.minecraft.network.Connection;
+import net.minecraft.network.chat.CommonComponents;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.FormattedText;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.protocol.status.ServerStatus;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.WorldStem;
+import net.minecraft.server.packs.resources.Resource;
+import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.HumanoidArm;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.tooltip.TooltipComponent;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeManager;
+import net.minecraft.world.level.BlockAndTintGetter;
+import net.minecraft.world.level.GameType;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.levelgen.WorldGenSettings;
+import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.level.storage.LevelStorageSource;
+import net.minecraft.world.level.storage.PrimaryLevelData;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.phys.HitResult;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.ClientPlayerChangeGameTypeEvent;
+import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
+import net.minecraftforge.client.event.ColorHandlerEvent;
+import net.minecraftforge.client.event.DrawSelectionEvent;
+import net.minecraftforge.client.event.EntityViewRenderEvent;
+import net.minecraftforge.client.event.FOVModifierEvent;
+import net.minecraftforge.client.event.InputEvent;
+import net.minecraftforge.client.event.ModelBakeEvent;
+import net.minecraftforge.client.event.MovementInputUpdateEvent;
+import net.minecraftforge.client.event.RecipesUpdatedEvent;
+import net.minecraftforge.client.event.RegisterShadersEvent;
+import net.minecraftforge.client.event.RenderArmEvent;
+import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import net.minecraftforge.client.event.RenderHandEvent;
+import net.minecraftforge.client.event.RenderLevelLastEvent;
+import net.minecraftforge.client.event.RenderTooltipEvent;
+import net.minecraftforge.client.event.ScreenEvent;
+import net.minecraftforge.client.event.ScreenshotEvent;
+import net.minecraftforge.client.event.TextureStitchEvent;
+import net.minecraftforge.client.event.sound.PlaySoundEvent;
+import net.minecraftforge.client.model.ForgeModelBakery;
+import net.minecraftforge.client.textures.ForgeTextureMetadata;
+import net.minecraftforge.common.ForgeI18n;
+import net.minecraftforge.common.ForgeMod;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.model.TransformationHelper;
+import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.IExtensionPoint;
+import net.minecraftforge.fml.ModList;
+import net.minecraftforge.fml.ModLoader;
+import net.minecraftforge.fml.StartupMessageManager;
+import net.minecraftforge.fml.VersionChecker;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.network.NetworkConstants;
+import net.minecraftforge.network.NetworkRegistry;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.GameData;
+import net.minecraftforge.versions.forge.ForgeVersion;
+import org.apache.commons.lang3.tuple.Pair;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import static net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType.BOSSINFO;
 import static net.minecraftforge.fml.VersionChecker.Status.BETA;
 import static net.minecraftforge.fml.VersionChecker.Status.BETA_OUTDATED;
-
-import net.minecraft.client.Camera;
-import net.minecraft.client.renderer.block.BlockRenderDispatcher;
-import net.minecraft.client.renderer.entity.ItemRenderer;
 
 public class ForgeHooksClient
 {
@@ -540,7 +571,7 @@ public class ForgeHooksClient
 
     private static int slotMainHand = 0;
 
-    public static boolean shouldCauseReequipAnimation(@Nonnull ItemStack from, @Nonnull ItemStack to, int slot)
+    public static boolean shouldCauseReequipAnimation(@NotNull ItemStack from, @NotNull ItemStack to, int slot)
     {
         boolean fromInvalid = from.isEmpty();
         boolean toInvalid   = to.isEmpty();
@@ -980,7 +1011,7 @@ public class ForgeHooksClient
         }
     }
 
-    public static Font getTooltipFont(@Nullable Font forcedFont, @Nonnull ItemStack stack, Font fallbackFont)
+    public static Font getTooltipFont(@Nullable Font forcedFont, @NotNull ItemStack stack, Font fallbackFont)
     {
         if (forcedFont != null)
         {
@@ -990,14 +1021,14 @@ public class ForgeHooksClient
         return stackFont == null ? fallbackFont : stackFont;
     }
 
-    public static RenderTooltipEvent.Pre onRenderTooltipPre(@Nonnull ItemStack stack, PoseStack poseStack, int x, int y, int screenWidth, int screenHeight, @Nonnull List<ClientTooltipComponent> components, @Nullable Font forcedFont, @Nonnull Font fallbackFont)
+    public static RenderTooltipEvent.Pre onRenderTooltipPre(@NotNull ItemStack stack, PoseStack poseStack, int x, int y, int screenWidth, int screenHeight, @NotNull List<ClientTooltipComponent> components, @Nullable Font forcedFont, @NotNull Font fallbackFont)
     {
         var preEvent = new RenderTooltipEvent.Pre(stack, poseStack, x, y, screenWidth, screenHeight, getTooltipFont(forcedFont, stack, fallbackFont), components);
         MinecraftForge.EVENT_BUS.post(preEvent);
         return preEvent;
     }
 
-    public static RenderTooltipEvent.Color onRenderTooltipColor(@Nonnull ItemStack stack, PoseStack poseStack, int x, int y, @Nonnull Font font, @Nonnull List<ClientTooltipComponent> components)
+    public static RenderTooltipEvent.Color onRenderTooltipColor(@NotNull ItemStack stack, PoseStack poseStack, int x, int y, @NotNull Font font, @NotNull List<ClientTooltipComponent> components)
     {
         var colorEvent = new RenderTooltipEvent.Color(stack, poseStack, x, y, font, 0xf0100010, 0x505000FF, 0x5028007f, components);
         MinecraftForge.EVENT_BUS.post(colorEvent);

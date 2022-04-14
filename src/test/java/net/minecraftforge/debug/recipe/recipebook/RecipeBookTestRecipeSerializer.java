@@ -13,7 +13,7 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraftforge.debug.recipe.recipebook.RecipeBookTestRecipe.Ingredients;
 import net.minecraftforge.registries.ForgeRegistryEntry;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 public class RecipeBookTestRecipeSerializer extends ForgeRegistryEntry<RecipeSerializer<?>> implements RecipeSerializer<RecipeBookTestRecipe>
 {

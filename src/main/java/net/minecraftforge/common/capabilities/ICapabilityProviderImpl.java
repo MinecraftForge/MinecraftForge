@@ -5,7 +5,7 @@
 
 package net.minecraftforge.common.capabilities;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 public interface ICapabilityProviderImpl<B extends ICapabilityProviderImpl<B>> extends ICapabilityProvider
 {

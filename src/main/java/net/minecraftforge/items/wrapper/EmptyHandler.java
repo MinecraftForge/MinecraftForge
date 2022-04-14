@@ -8,8 +8,7 @@ package net.minecraftforge.items.wrapper;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
-
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class EmptyHandler implements IItemHandlerModifiable
 {
@@ -22,28 +21,28 @@ public class EmptyHandler implements IItemHandlerModifiable
     }
 
     @Override
-    @Nonnull
+    @NotNull
     public ItemStack getStackInSlot(int slot)
     {
         return ItemStack.EMPTY;
     }
 
     @Override
-    @Nonnull
-    public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate)
+    @NotNull
+    public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate)
     {
         return stack;
     }
 
     @Override
-    @Nonnull
+    @NotNull
     public ItemStack extractItem(int slot, int amount, boolean simulate)
     {
         return ItemStack.EMPTY;
     }
 
     @Override
-    public void setStackInSlot(int slot, @Nonnull ItemStack stack)
+    public void setStackInSlot(int slot, @NotNull ItemStack stack)
     {
         // nothing to do here
     }
@@ -55,7 +54,7 @@ public class EmptyHandler implements IItemHandlerModifiable
     }
 
     @Override
-    public boolean isItemValid(int slot, @Nonnull ItemStack stack)
+    public boolean isItemValid(int slot, @NotNull ItemStack stack)
     {
         return false;
     }

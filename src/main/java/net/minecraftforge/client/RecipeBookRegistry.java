@@ -7,16 +7,32 @@ package net.minecraftforge.client;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.function.Function;
 import net.minecraft.client.RecipeBookCategories;
 import net.minecraft.world.inventory.RecipeBookType;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeType;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
-import java.util.*;
-import java.util.function.Function;
-
-import static net.minecraft.client.RecipeBookCategories.*;
+import static net.minecraft.client.RecipeBookCategories.BLAST_FURNACE_BLOCKS;
+import static net.minecraft.client.RecipeBookCategories.BLAST_FURNACE_MISC;
+import static net.minecraft.client.RecipeBookCategories.BLAST_FURNACE_SEARCH;
+import static net.minecraft.client.RecipeBookCategories.CRAFTING_BUILDING_BLOCKS;
+import static net.minecraft.client.RecipeBookCategories.CRAFTING_EQUIPMENT;
+import static net.minecraft.client.RecipeBookCategories.CRAFTING_MISC;
+import static net.minecraft.client.RecipeBookCategories.CRAFTING_REDSTONE;
+import static net.minecraft.client.RecipeBookCategories.CRAFTING_SEARCH;
+import static net.minecraft.client.RecipeBookCategories.FURNACE_BLOCKS;
+import static net.minecraft.client.RecipeBookCategories.FURNACE_FOOD;
+import static net.minecraft.client.RecipeBookCategories.FURNACE_MISC;
+import static net.minecraft.client.RecipeBookCategories.FURNACE_SEARCH;
+import static net.minecraft.client.RecipeBookCategories.SMOKER_FOOD;
+import static net.minecraft.client.RecipeBookCategories.SMOKER_SEARCH;
 
 public class RecipeBookRegistry
 {

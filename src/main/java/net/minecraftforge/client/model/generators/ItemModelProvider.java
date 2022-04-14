@@ -5,10 +5,9 @@
 
 package net.minecraftforge.client.model.generators;
 
-import javax.annotation.Nonnull;
-
 import net.minecraft.data.DataGenerator;
 import net.minecraftforge.common.data.ExistingFileHelper;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Stub class to extend for item model data providers, eliminates some
@@ -20,7 +19,7 @@ public abstract class ItemModelProvider extends ModelProvider<ItemModelBuilder> 
         super(generator, modid, ITEM_FOLDER, ItemModelBuilder::new, existingFileHelper);
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public String getName() {
         return "Item Models: " + modid;

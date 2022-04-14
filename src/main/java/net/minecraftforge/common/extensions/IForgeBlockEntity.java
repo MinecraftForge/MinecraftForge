@@ -5,27 +5,26 @@
 
 package net.minecraftforge.common.extensions;
 
-import javax.annotation.Nonnull;
-
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.phys.AABB;
-import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraft.world.level.Level;
 import net.minecraftforge.client.model.ModelDataManager;
 import net.minecraftforge.client.model.data.EmptyModelData;
 import net.minecraftforge.client.model.data.IModelData;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
+import org.jetbrains.annotations.NotNull;
 
 public interface IForgeBlockEntity extends ICapabilitySerializable<CompoundTag>
 {
@@ -169,7 +168,7 @@ public interface IForgeBlockEntity extends ICapabilitySerializable<CompoundTag>
      * <b>Note that this method may be called on a chunk render thread instead of the main client thread</b>
      * @return Your model data
      */
-     default @Nonnull IModelData getModelData()
+     default @NotNull IModelData getModelData()
      {
          return EmptyModelData.INSTANCE;
      }

@@ -5,32 +5,28 @@
 
 package net.minecraftforge.client.model;
 
-import java.util.EnumMap;
-import java.util.Random;
-
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import com.mojang.math.Transformation;
+import java.util.EnumMap;
+import java.util.List;
+import java.util.Random;
 import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.renderer.block.model.ItemOverrides;
+import net.minecraft.client.renderer.block.model.ItemTransforms;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.client.resources.model.ModelState;
+import net.minecraft.core.Direction;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.core.Direction;
-import com.mojang.math.Transformation;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.client.model.data.IDynamicBakedModel;
 import net.minecraftforge.client.model.data.IModelData;
 import net.minecraftforge.common.model.TransformationHelper;
-
-import javax.annotation.Nullable;
-import java.util.List;
-
-import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.block.model.ItemOverride;
-import net.minecraft.client.renderer.block.model.ItemOverrides;
-import net.minecraft.client.renderer.block.model.ItemTransforms;
-import net.minecraft.client.resources.model.BakedModel;
-import net.minecraft.client.resources.model.ModelState;
+import org.jetbrains.annotations.Nullable;
 
 public class PerspectiveMapWrapper implements IDynamicBakedModel
 {

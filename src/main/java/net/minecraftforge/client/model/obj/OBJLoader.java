@@ -8,16 +8,15 @@ package net.minecraftforge.client.model.obj;
 import com.google.common.collect.Maps;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
+import java.io.FileNotFoundException;
+import java.util.Map;
 import net.minecraft.client.Minecraft;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.GsonHelper;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.model.IModelLoader;
-
-import javax.annotation.Nullable;
-import java.io.FileNotFoundException;
-import java.util.*;
+import org.jetbrains.annotations.Nullable;
 
 public class OBJLoader implements IModelLoader<OBJModel>
 {

@@ -5,20 +5,17 @@
 
 package net.minecraftforge.common.capabilities;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
-
 import com.google.common.annotations.VisibleForTesting;
+import java.util.function.Supplier;
+import javax.annotation.ParametersAreNonnullByDefault;
 import net.minecraft.MethodsReturnNonnullByDefault;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.ForgeEventFactory;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.function.Supplier;
+import org.jetbrains.annotations.Nullable;
 
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
@@ -27,7 +24,7 @@ public abstract class CapabilityProvider<B extends ICapabilityProviderImpl<B>> i
     @VisibleForTesting
     static boolean SUPPORTS_LAZY_CAPABILITIES = true;
 
-    private final @Nonnull Class<B> baseClass;
+    private final @NotNull Class<B> baseClass;
     private @Nullable CapabilityDispatcher capabilities;
     private boolean valid = true;
 
@@ -176,8 +173,8 @@ public abstract class CapabilityProvider<B extends ICapabilityProviderImpl<B>> i
     }
 
     @Override
-    @Nonnull
-    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side)
+    @NotNull
+    public <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side)
     {
         final CapabilityDispatcher disp = getCapabilities();
         return !valid || disp == null ? LazyOptional.empty() : disp.getCapability(cap, side);

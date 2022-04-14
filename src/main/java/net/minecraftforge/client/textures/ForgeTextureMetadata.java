@@ -5,17 +5,15 @@
 
 package net.minecraftforge.client.textures;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSyntaxException;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.metadata.MetadataSectionSerializer;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.util.GsonHelper;
 import net.minecraftforge.client.MinecraftForgeClient;
-
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSyntaxException;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * The "forge" section of texture metadata files (.mcmeta). Currently used only to specify custom
@@ -52,14 +50,14 @@ public final class ForgeTextureMetadata
     {
 
         @Override
-        @Nonnull
+        @NotNull
         public String getMetadataSectionName()
         {
             return "forge";
         }
 
         @Override
-        @Nonnull
+        @NotNull
         public ForgeTextureMetadata fromJson(JsonObject json)
         {
             @Nullable

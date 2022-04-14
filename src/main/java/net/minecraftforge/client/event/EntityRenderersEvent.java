@@ -6,6 +6,9 @@
 package net.minecraftforge.client.event;
 
 import com.google.common.collect.ImmutableMap;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Supplier;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.SkullModelBase;
@@ -29,11 +32,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.event.IModBusEvent;
-
-import javax.annotation.Nullable;
-import java.util.Map;
-import java.util.Set;
-import java.util.function.Supplier;
+import org.jetbrains.annotations.Nullable;
 
 public class EntityRenderersEvent extends Event implements IModBusEvent
 {

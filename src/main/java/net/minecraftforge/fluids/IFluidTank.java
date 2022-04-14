@@ -6,8 +6,7 @@
 package net.minecraftforge.fluids;
 
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
-
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * This interface represents a Fluid Tank. IT IS NOT REQUIRED but is provided for convenience.
@@ -19,7 +18,7 @@ public interface IFluidTank {
     /**
      * @return FluidStack representing the fluid in the tank, null if the tank is empty.
      */
-    @Nonnull
+    @NotNull
     FluidStack getFluid();
 
     /**
@@ -50,7 +49,7 @@ public interface IFluidTank {
      * @param action   If SIMULATE, the drain will only be simulated.
      * @return Amount of fluid that was removed (or would be, if simulated) from the tank.
      */
-    @Nonnull
+    @NotNull
     FluidStack drain(int maxDrain, FluidAction action);
 
     /**
@@ -58,7 +57,7 @@ public interface IFluidTank {
      * @param action   If SIMULATE, the drain will only be simulated.
      * @return FluidStack representing fluid that was removed (or would be, if simulated) from the tank.
      */
-    @Nonnull
+    @NotNull
     FluidStack drain(FluidStack resource, FluidAction action);
 
 }

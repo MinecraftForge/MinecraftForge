@@ -6,6 +6,7 @@
 package net.minecraftforge.common.extensions;
 
 import com.google.common.base.Preconditions;
+import java.util.Objects;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.fluids.FluidStack;
@@ -13,9 +14,7 @@ import net.minecraftforge.registries.ForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 import net.minecraftforge.registries.RegistryManager;
-
-import javax.annotation.Nonnull;
-import java.util.Objects;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Extension-Interface providing methods for writing registry-id's instead of their registry-names.
@@ -34,7 +33,7 @@ public interface IForgeFriendlyByteBuf
      * @param entry The entry who's registryName is to be written
      * @param <T> The type of the entry.
      */
-    default <T extends IForgeRegistryEntry<T>> void writeRegistryIdUnsafe(@Nonnull IForgeRegistry<T> registry, @Nonnull T entry)
+    default <T extends IForgeRegistryEntry<T>> void writeRegistryIdUnsafe(@NotNull IForgeRegistry<T> registry, @NotNull T entry)
     {
         ForgeRegistry<T> forgeRegistry = (ForgeRegistry<T>) registry;
         int id = forgeRegistry.getID(entry);
@@ -47,7 +46,7 @@ public interface IForgeFriendlyByteBuf
      * @param registry The registry containing the entry represented by this key
      * @param entryKey The registry-name of an entry in this {@link IForgeRegistry}
      */
-    default void writeRegistryIdUnsafe(@Nonnull IForgeRegistry<?> registry, @Nonnull ResourceLocation entryKey)
+    default void writeRegistryIdUnsafe(@NotNull IForgeRegistry<?> registry, @NotNull ResourceLocation entryKey)
     {
         ForgeRegistry<?> forgeRegistry = (ForgeRegistry<?>) registry;
         int id = forgeRegistry.getID(entryKey);
@@ -59,7 +58,7 @@ public interface IForgeFriendlyByteBuf
      * read id, that the registry's default value will be returned.
      * @param registry The registry containing the entry
      */
-    default <T extends IForgeRegistryEntry<T>> T readRegistryIdUnsafe(@Nonnull IForgeRegistry<T> registry)
+    default <T extends IForgeRegistryEntry<T>> T readRegistryIdUnsafe(@NotNull IForgeRegistry<T> registry)
     {
         ForgeRegistry<T> forgeRegistry = (ForgeRegistry<T>) registry;
         int id = self().readVarInt();
@@ -76,7 +75,7 @@ public interface IForgeFriendlyByteBuf
      * @throws NullPointerException if the entry was null
      * @throws IllegalArgumentException if the the registry could not be found or the registry does not contain the specified value
      */
-    default <T extends IForgeRegistryEntry<T>> void writeRegistryId(@Nonnull T entry)
+    default <T extends IForgeRegistryEntry<T>> void writeRegistryId(@NotNull T entry)
     {
         Class<T> regType = Objects.requireNonNull(entry,"Cannot write a null registry entry!").getRegistryType();
         IForgeRegistry<T> retrievedRegistry = RegistryManager.ACTIVE.getRegistry(regType);

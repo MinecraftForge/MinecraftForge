@@ -6,9 +6,8 @@
 package net.minecraftforge.registries;
 
 import com.google.common.reflect.TypeToken;
-
 import net.minecraft.resources.ResourceLocation;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Default implementation of IForgeRegistryEntry, this is necessary to reduce redundant code.

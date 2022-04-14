@@ -5,15 +5,14 @@
 
 package net.minecraftforge.items.wrapper;
 
+import net.minecraft.core.Direction;
 import net.minecraft.world.WorldlyContainer;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.core.Direction;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemHandlerHelper;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class SidedInvWrapper implements IItemHandlerModifiable
 {
@@ -73,7 +72,7 @@ public class SidedInvWrapper implements IItemHandlerModifiable
     }
 
     @Override
-    @Nonnull
+    @NotNull
     public ItemStack getStackInSlot(int slot)
     {
         int i = getSlot(inv, slot, side);
@@ -81,8 +80,8 @@ public class SidedInvWrapper implements IItemHandlerModifiable
     }
 
     @Override
-    @Nonnull
-    public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate)
+    @NotNull
+    public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate)
     {
         if (stack.isEmpty())
             return ItemStack.EMPTY;
@@ -169,7 +168,7 @@ public class SidedInvWrapper implements IItemHandlerModifiable
     }
 
     @Override
-    public void setStackInSlot(int slot, @Nonnull ItemStack stack)
+    public void setStackInSlot(int slot, @NotNull ItemStack stack)
     {
         int slot1 = getSlot(inv, slot, side);
 
@@ -183,7 +182,7 @@ public class SidedInvWrapper implements IItemHandlerModifiable
     }
 
     @Override
-    @Nonnull
+    @NotNull
     public ItemStack extractItem(int slot, int amount, boolean simulate)
     {
         if (amount == 0)
@@ -231,7 +230,7 @@ public class SidedInvWrapper implements IItemHandlerModifiable
     }
 
     @Override
-    public boolean isItemValid(int slot, @Nonnull ItemStack stack)
+    public boolean isItemValid(int slot, @NotNull ItemStack stack)
     {
         int slot1 = getSlot(inv, slot, side);
         return slot1 == -1 ? false : inv.canPlaceItem(slot1, stack);

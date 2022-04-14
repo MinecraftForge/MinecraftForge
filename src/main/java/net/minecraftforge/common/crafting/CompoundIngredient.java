@@ -5,29 +5,25 @@
 
 package net.minecraftforge.common.crafting;
 
+import com.google.common.collect.Lists;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSyntaxException;
+import it.unimi.dsi.fastutil.ints.IntArrayList;
+import it.unimi.dsi.fastutil.ints.IntComparators;
+import it.unimi.dsi.fastutil.ints.IntList;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSyntaxException;
-
-import it.unimi.dsi.fastutil.ints.IntArrayList;
-import it.unimi.dsi.fastutil.ints.IntComparators;
-import it.unimi.dsi.fastutil.ints.IntList;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.network.FriendlyByteBuf;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /** Ingredient that matches if any of the child ingredients match */
 public class CompoundIngredient extends AbstractIngredient
@@ -69,7 +65,7 @@ public class CompoundIngredient extends AbstractIngredient
     }
 
     @Override
-    @Nonnull
+    @NotNull
     public ItemStack[] getItems()
     {
         if (stacks == null)
@@ -84,7 +80,7 @@ public class CompoundIngredient extends AbstractIngredient
     }
 
     @Override
-    @Nonnull
+    @NotNull
     public IntList getStackingIds()
     {
         boolean childrenNeedInvalidation = false;
@@ -132,7 +128,7 @@ public class CompoundIngredient extends AbstractIngredient
         return Serializer.INSTANCE;
     }
 
-    @Nonnull
+    @NotNull
     public Collection<Ingredient> getChildren()
     {
         return this.children;

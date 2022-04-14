@@ -8,6 +8,9 @@ package net.minecraftforge.common.util;
 import com.mojang.authlib.GameProfile;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
+import java.util.Set;
+import java.util.UUID;
+import javax.annotation.ParametersAreNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.Connection;
 import net.minecraft.network.chat.Component;
@@ -67,11 +70,7 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.server.ServerLifecycleHooks;
-
-import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.Set;
-import java.util.UUID;
+import org.jetbrains.annotations.Nullable;
 
 //Preliminary, simple Fake Player class
 public class FakePlayer extends ServerPlayer

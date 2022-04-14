@@ -10,13 +10,12 @@ import com.google.gson.JsonObject;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntComparators;
 import it.unimi.dsi.fastutil.ints.IntList;
+import java.util.Arrays;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.StackedContents;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
-
-import javax.annotation.Nullable;
-import java.util.Arrays;
+import org.jetbrains.annotations.Nullable;
 
 /** Ingredient that matches everything from the first ingredient that is not included in the second ingredient */
 public class DifferenceIngredient extends AbstractIngredient

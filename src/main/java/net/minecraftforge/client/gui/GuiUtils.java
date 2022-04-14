@@ -5,29 +5,16 @@
 
 package net.minecraftforge.client.gui;
 
-import com.mojang.blaze3d.vertex.VertexFormat;
-import net.minecraft.client.gui.GuiComponent;
-import net.minecraft.client.gui.Font;
-import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.client.renderer.MultiBufferSource;
-import com.mojang.blaze3d.vertex.Tesselator;
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.resources.ResourceLocation;
-import com.mojang.math.Matrix4f;
-import net.minecraft.network.chat.FormattedText;
-import net.minecraft.locale.Language;
-import net.minecraft.network.chat.Style;
-import net.minecraftforge.client.event.RenderTooltipEvent;
-import net.minecraftforge.common.MinecraftForge;
-
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.systems.RenderSystem;
-
-import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.List;
+import com.mojang.blaze3d.vertex.Tesselator;
+import com.mojang.blaze3d.vertex.VertexFormat;
+import com.mojang.math.Matrix4f;
+import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.resources.ResourceLocation;
 
 /**
  * This class provides several methods and constants used by the Config GUI classes.

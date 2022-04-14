@@ -6,16 +6,15 @@
 package net.minecraftforge.server.permission.nodes;
 
 import com.google.common.base.Preconditions;
+import java.util.Objects;
+import java.util.UUID;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.server.permission.events.PermissionGatherEvent;
 import net.minecraftforge.server.permission.handler.IPermissionHandler;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.util.Objects;
-import java.util.UUID;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Represents the basic unit at the heart of the permission system.
@@ -101,7 +100,7 @@ public final class PermissionNode<T>
      *                     when using TranslatableComponent, key should be of format "permission.desc.<nodename>"
      * @return itself with the new information set.
      */
-    public PermissionNode setInformation(@Nonnull Component readableName, @Nonnull Component description)
+    public PermissionNode setInformation(@NotNull Component readableName, @NotNull Component description)
     {
         Preconditions.checkNotNull(readableName, "Readable name for PermissionNodes must not be null %s", this.nodeName);
         Preconditions.checkNotNull(description, "Description for PermissionNodes must not be null %s", this.nodeName);

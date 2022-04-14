@@ -5,18 +5,15 @@
 
 package net.minecraftforge.event.entity.living;
 
-import javax.annotation.Nullable;
-
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.level.BaseSpawner;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
-import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.BaseSpawner;
 import net.minecraft.world.level.Level;
-
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.ForgeEventFactory;
-import net.minecraftforge.eventbus.api.Event.HasResult;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * LivingSpawnEvent is fired for any events associated with Living Entities spawn status. <br>
