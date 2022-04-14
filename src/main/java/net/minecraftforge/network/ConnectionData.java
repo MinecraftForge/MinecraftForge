@@ -79,9 +79,9 @@ public class ConnectionData
     /**
      * A class for holding the mod mismatch data of a failed handshake.
      * Contains a list of mismatched channels, the channels present on the side the handshake failed on, the mods with mismatching registries (if available) and the information of whether the mismatching data's origin is the server.
-     * @param mismatchedModData The ids and respective mod versions of the mismatched or missing mods/channels. If the mod version is absent, it is assumed that the mod is missing, if it is present, the mod gets treated as a mismatch.
-     * @param presentModData The ids and respective mod names and versions corresponding to the mismatched mods/channel, gathered from the side the mismatch didn't happen on. The data is stored like this: [id -> [modName, modVersion]]
-     * @param mismatchedDataFromServer Whether the mismatched data originates from the server. Note that the mismatched data origin does not tell us if the actual mismatch check happened on the client or the server.
+     * @param mismatchedModData The data of the mismatched or missing mods/channels, consisting of the mod or channel id and the version of the respective mod. If the mod version is absent, the entry is assumed to be missing on either side. If it is present, the entry gets treated as a mismatch.
+     * @param presentModData The data of the channels/mods from the side the mismatch data doesn't originate from, consisting of the mod or channel id and the name and version of the respective mod. This data is useful for a proper comparison against the mismatched channel data. The data is stored like this: [id -> [modName, modVersion]]
+     * @param mismatchedDataFromServer Whether the mismatched data originates from the server. Note, that the mismatched data origin does not tell us if the actual mismatch check happened on the client or the server.
      */
     public record ModMismatchData(Map<ResourceLocation, String> mismatchedModData, Map<ResourceLocation, Pair<String, String>> presentModData, boolean mismatchedDataFromServer)
     {
@@ -145,11 +145,11 @@ public class ConnectionData
 
 
         /**
-         * Queries the channel data from the side the mismatched data isn't from, to provide a map of all the present channels for a proper comparison against the mismatched channel data.
+         * Queries the channel data from the side the mismatched data isn't from, in order to provide a map of all the present channels for a proper comparison against the mismatched channel data.
          * @param mismatchedChannelsFilter A filter that gets used in order to only query the data of mismatched mods, because that's the only one we need for a proper comparison between mismatched and present mods.
          * @param connectionData The connection data instance responsible for collecting the server mod data.
          * @param mismatchedDataFromServer Whether the mismatched data originates from the server. The data gets queried from the side that the mismatch data does not originate from.
-         * @return A map containing the channel id, the corresponding mod name and the corresponding mod version.
+         * @return The data of all relevant present channels, containing the channel id and the name and version of the corresponding mod.
          */
         private static Map<ResourceLocation, Pair<String, String>> getPresentChannelData(Set<ResourceLocation> mismatchedChannelsFilter, ConnectionData connectionData, boolean mismatchedDataFromServer)
         {
@@ -171,7 +171,7 @@ public class ConnectionData
          * @param channel The id of the channel the mod data should be queried for.
          * @param connectionData The connection data instance responsible for collecting the server mod data.
          * @param mismatchedDataFromServer Whether the mismatched data originates from the server. The data gets queried from the side that the mismatch data does not originate from.
-         * @return The mod data corresponding to the channel id, containing the channel id, the corresponding mod name and the corresponding mod version.
+         * @return The mod data corresponding to the channel id, containing the channel id and the name and version of the corresponding mod.
          */
         private static Pair<ResourceLocation, Pair<String, String>> getPresentModDataFromChannel(ResourceLocation channel, ConnectionData connectionData, boolean mismatchedDataFromServer)
         {
@@ -190,7 +190,7 @@ public class ConnectionData
          * Queries the mod data from the server side. Useful in case of a registry mismatch, which always gets detected on the client.
          * @param mismatchedModsFilter A filter that gets used in order to only query the data of mismatched mods, because that's the only one we need for a proper comparison between mismatched and present mods.
          * @param connectionData The connection data instance responsible for collecting the server mod data.
-         * @return The mod data from the server, containing the mod id, the corresponding mod name and the corresponding mod version.
+         * @return The mod data from the server, containing the channel id and the name and version of the corresponding mod.
          */
         private static Map<ResourceLocation, Pair<String, String>> getServerSidePresentModData(Set<ResourceLocation> mismatchedModsFilter, ConnectionData connectionData)
         {

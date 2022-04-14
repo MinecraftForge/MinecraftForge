@@ -333,14 +333,17 @@ public class HandshakeHandler
     }
 
     /**
-     * Helper method to determine if the packet at the given packet index needs a response for the handshake to progress.
+     * Helper method to determine if the S2C packet at the given packet position needs a response in form of a packet handled in {@link HandshakeHandler#handleIndexedMessage} for the handshake to progress.
+     * @param mgr The impl manager for this connection
+     * @param packetPosition The packet position of the packet that the status is queried of
+     * @return true if the packet at the given packet position needs a response and thus may stop the handshake from progressing
      */
-    public static boolean packetNeedsResponse(Connection mgr, int packetIndex)
+    public static boolean packetNeedsResponse(Connection mgr, int packetPosition)
     {
         HandshakeHandler handler = mgr.channel().attr(NetworkConstants.FML_HANDSHAKE_HANDLER).get();
         if (handler != null)
         {
-            return handler.sentMessages.contains(packetIndex);
+            return handler.sentMessages.contains(packetPosition);
         }
         return false;
     }

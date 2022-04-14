@@ -178,7 +178,7 @@ public class ModMismatchDisconnectedScreen extends Screen
          * Splits the raw name and version strings, making them use multiple lines if needed, to fit within the table dimensions.
          * The style assigned to the name element is then applied to the entire content row.
          * @param name The first element of the content row, usually representing a table section header or the name of a mod entry
-         * @param versions The last two elements of the content row, usually representing the mod versions. If either or both of them are not given, the first element may take up more space within the table.
+         * @param versions The last two elements of the content row, usually representing the mod versions. If either one or both of them are not given, the first element may take up more space within the table.
          * @return A list of table rows consisting of 3 elements each which consist of the same content as was given by the parameters, but split up to fit within the table dimensions.
          */
         private List<Pair<FormattedCharSequence, Pair<FormattedCharSequence, FormattedCharSequence>>> splitLineToWidth(MutableComponent name, Pair<String, String> versions)
@@ -199,9 +199,9 @@ public class ModMismatchDisconnectedScreen extends Screen
 
         /**
          * Adds a style information to the given mod name string. The style assigned to the returned component contains the color of the mod name,
-         * a hover event containing the given id and an optional click event, which opens the homepage of mod if one was found.
-         * @param id An id that gets displayed in the hover event, depending on the origin it may only consist of a namespace (the mod id) or a namespace + path (a channel id associated with the mod).
-         * @param modName The name of the mod, it will be rendered as the main text component.
+         * a hover event containing the given id, and an optional click event, which opens the homepage of mod, if present.
+         * @param id An id that gets displayed in the hover event. Depending on the origin it may only consist of a namespace (the mod id) or a namespace + path (a channel id associated with the mod).
+         * @param modName The name of the mod. It will be rendered as the main text component.
          * @param color Defines the color of the returned style information. An odd number will result in a yellow, an even one in a gold color. This color variation makes it easier for users to distinguish different mod entries.
          * @return A component with the mod name as the main text component, and an assigned style which will be used for the whole content row.
          */
@@ -267,7 +267,7 @@ public class ModMismatchDisconnectedScreen extends Screen
                 int slotIndex = (int)(relativeY + (border / 2)) / 12;
                 if (slotIndex < contentSize)
                 {
-                    //The relative x needs to take into account the potentially missing indent of the row, it does that by checking if the line has a version associated to it
+                    //The relative x needs to take the potentially missing indent of the row into account. It does that by checking if the line has a version associated to it
                     double relativeX = x - left - border - (lineTable.get(slotIndex).getRight() == null ? 0 : nameIndent);
                     if (relativeX >= 0)
                         return font.getSplitter().componentStyleAtWidth(lineTable.get(slotIndex).getLeft(), (int)relativeX);
