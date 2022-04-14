@@ -172,6 +172,8 @@ public class HandshakeHandler
         LOGGER.debug(FMLHSMARKER, "Logging into server with mod list [{}]", String.join(", ", serverModList.getModList()));
         Map<ResourceLocation, String> mismatchedChannels = NetworkRegistry.validateClientChannels(serverModList.getChannels());
         c.get().setPacketHandled(true);
+        //The connection data needs to be modified before a new ModMismatchData instance could be constructed
+        NetworkHooks.appendConnectionData(c.get().getNetworkManager(), serverModList.getModList().stream().collect(Collectors.toMap(Function.identity(), s -> Pair.of("", ""))), serverModList.getChannels());
         if (!mismatchedChannels.isEmpty()) {
             LOGGER.error(FMLHSMARKER, "Terminating connection with server, mismatched mod list");
             //Populate the mod mismatch attribute with a new mismatch data instance to indicate that the disconnect happened due to a mod mismatch
@@ -184,7 +186,6 @@ public class HandshakeHandler
         LOGGER.debug(FMLHSMARKER, "Accepted server connection");
         // Set the modded marker on the channel so we know we got packets
         c.get().getNetworkManager().channel().attr(NetworkConstants.FML_NETVERSION).set(NetworkConstants.NETVERSION);
-        NetworkHooks.appendConnectionData(c.get().getNetworkManager(), serverModList.getModList().stream().collect(Collectors.toMap(Function.identity(), s -> Pair.of("", ""))), serverModList.getChannels());
 
         this.registriesToReceive = new HashSet<>(serverModList.getRegistries());
         this.registrySnapshots = Maps.newHashMap();

@@ -100,7 +100,7 @@ public class ConnectionData
         }
 
         /**
-         * Creates a ModMismatchData instance from given mismatched registry entries. In this case, the mismatched data is treated as originating from the client in order to correctly display some table version header strings TODO: VERIFY
+         * Creates a ModMismatchData instance from given mismatched registry entries. In this case, the mismatched data is always treated as originating from the client because registry entries missing on the server never cause the handshake to fail.
          * @param mismatchedRegistryData The list of mismatched registries and the associated mismatched registry entries. The data is stored like this: "registryNamespace:registryPath" -> "entryNamespace:entryPath"
          * @param connectionData The connection data instance responsible for collecting the server mod data.
          */
@@ -182,7 +182,8 @@ public class ConnectionData
             else
             {
                 Map<String, Pair<String, String>> modData = connectionData != null ? connectionData.getModData() : Map.of();
-                return Pair.of(channel, modData.getOrDefault(channel.getNamespace(), Pair.of(channel.getNamespace(), "")));
+                Pair<String, String> modDataFromChannel = modData.getOrDefault(channel.getNamespace(), Pair.of(channel.getNamespace(), ""));
+                return Pair.of(channel, modDataFromChannel.getLeft().isEmpty() ? Pair.of(channel.getNamespace(), modDataFromChannel.getRight()) : modDataFromChannel);
             }
         }
 
