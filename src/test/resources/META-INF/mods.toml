@@ -214,5 +214,7 @@ license="LGPL v2.1"
     modId="hide_neighbor_face_test"
 [[mods]]
     modId="living_get_projectile_event_test"
+[[mods]]
+    modId="multi_noise_biome_source_loading_event_test"
 
 # ADD ABOVE THIS LINE
