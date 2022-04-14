@@ -236,10 +236,20 @@ class NamespacedHolderHelper<T extends IForgeRegistryEntry<T>>
         this.frozen = false;
     }
 
+    boolean isFrozen()
+    {
+        return this.frozen;
+    }
+
+    boolean isIntrusive()
+    {
+        return this.holderLookup != null;
+    }
+
     @Nullable
     Holder<T> onAdded(RegistryManager stage, int id, T newValue, T oldValue)
     {
-        if (stage != RegistryManager.ACTIVE)
+        if (stage != RegistryManager.ACTIVE && (this.holderLookup == null || !stage.isStaging()))  // Intrusive handlers need updating in staging.
             return null; // Only do holder shit on the active registries, not pending or snapshots.
 
         ResourceKey<T> key = ResourceKey.create(this.self.key(), newValue.getRegistryName());

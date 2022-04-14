@@ -737,7 +737,7 @@ public class GameData
             }
         }
 
-        RegistryManager STAGING = new RegistryManager("STAGING");
+        RegistryManager STAGING = new RegistryManager();
 
         final Map<ResourceLocation, Map<ResourceLocation, Integer[]>> remaps = Maps.newHashMap();
         final LinkedHashMap<ResourceLocation, Map<ResourceLocation, Integer>> missing = Maps.newLinkedHashMap();
