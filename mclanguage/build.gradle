@@ -1,6 +1,7 @@
 plugins {
     id 'com.github.ben-manes.versions'
     id 'org.javamodularity.moduleplugin' version '1.8.3' apply false
+    id 'org.cadixdev.licenser'
 }
 apply plugin: 'java-library'
 apply plugin: 'jacoco'
@@ -50,6 +51,12 @@ jar.doFirst {
 
 tasks.withType(JavaCompile) {
     options.compilerArgs << '-Xlint:unchecked'
+}
+
+license {
+    header = rootProject.file('LICENSE-header.txt')
+
+    include 'net/minecraftforge/'
 }
 
 artifacts {
