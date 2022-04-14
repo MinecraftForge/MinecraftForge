@@ -1,6 +1,19 @@
 --- a/net/minecraft/world/item/HoeItem.java
 +++ b/net/minecraft/world/item/HoeItem.java
-@@ -30,6 +_,8 @@
+@@ -21,6 +_,12 @@
+ import net.minecraft.world.level.block.state.BlockState;
+ 
+ public class HoeItem extends DiggerItem {
++   /**
++    * @deprecated Forge: This map is patched out of vanilla code.
++    * Listen to {@link net.minecraftforge.event.world.BlockEvent.BlockToolModificationEvent}
++    * or override {@link net.minecraftforge.common.extensions.IForgeBlock#getToolModifiedState(BlockState, UseOnContext, net.minecraftforge.common.ToolAction, boolean)}.
++    */
++   @Deprecated
+    protected static final Map<Block, Pair<Predicate<UseOnContext>, Consumer<UseOnContext>>> f_41332_ = Maps.newHashMap(ImmutableMap.of(Blocks.f_50440_, Pair.of(HoeItem::m_150856_, m_150858_(Blocks.f_50093_.m_49966_())), Blocks.f_152481_, Pair.of(HoeItem::m_150856_, m_150858_(Blocks.f_50093_.m_49966_())), Blocks.f_50493_, Pair.of(HoeItem::m_150856_, m_150858_(Blocks.f_50093_.m_49966_())), Blocks.f_50546_, Pair.of(HoeItem::m_150856_, m_150858_(Blocks.f_50493_.m_49966_())), Blocks.f_152549_, Pair.of((p_150861_) -> {
+       return true;
+    }, m_150849_(Blocks.f_50493_.m_49966_(), Items.f_151017_))));
+@@ -30,9 +_,12 @@
     }
  
     public InteractionResult m_6225_(UseOnContext p_41341_) {
@@ -8,7 +21,12 @@
 +      if (hook != 0) return hook > 0 ? InteractionResult.SUCCESS : InteractionResult.FAIL;
        Level level = p_41341_.m_43725_();
        BlockPos blockpos = p_41341_.m_8083_();
-       Pair<Predicate<UseOnContext>, Consumer<UseOnContext>> pair = f_41332_.get(level.m_8055_(blockpos).m_60734_());
+-      Pair<Predicate<UseOnContext>, Consumer<UseOnContext>> pair = f_41332_.get(level.m_8055_(blockpos).m_60734_());
++      BlockState toolModifiedState = level.m_8055_(blockpos).getToolModifiedState(p_41341_, net.minecraftforge.common.ToolActions.HOE_TILL, false);
++      Pair<Predicate<UseOnContext>, Consumer<UseOnContext>> pair = toolModifiedState == null ? null : Pair.of(ctx -> true, m_150858_(toolModifiedState));
+       if (pair == null) {
+          return InteractionResult.PASS;
+       } else {
 @@ -72,5 +_,10 @@
  
     public static boolean m_150856_(UseOnContext p_150857_) {

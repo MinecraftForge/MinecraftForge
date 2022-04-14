@@ -64,7 +64,7 @@ public class CustomShieldTest
         @Override
         public boolean canPerformAction(ItemStack stack, ToolAction toolAction)
         {
-            return toolAction.equals(ToolActions.SHIELD_BLOCK);
+            return toolAction == ToolActions.SHIELD_BLOCK;
         }
     }
 }

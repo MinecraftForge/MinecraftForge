@@ -40,7 +40,7 @@
  
              try {
                 String s = f_126542_.toJson((JsonElement)jsonobject);
-@@ -88,6 +_,18 @@
+@@ -88,6 +_,17 @@
        });
     }
  
@@ -49,9 +49,8 @@
 +      // We only care about non-optional tag entries, this is the only type that can reference a resource and needs validation
 +      // Optional tags should not be validated
 +
-+      //TODO-PATCHING:Figure out optional tag data.
-+      if (entry instanceof Tag.TagEntry) {
-+         return existingFileHelper == null || !existingFileHelper.exists(((Tag.TagEntry)entry).getId(), resourceType);
++      if (entry instanceof Tag.TagEntry nonOptionalEntry) {
++         return existingFileHelper == null || !existingFileHelper.exists(nonOptionalEntry.getId(), resourceType);
 +      }
 +      return false;
 +   }

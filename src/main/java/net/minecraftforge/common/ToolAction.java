@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @SuppressWarnings("ClassCanBeRecord")
-public class ToolAction
+public final class ToolAction
 {
     private static final Map<String, ToolAction> actions = new ConcurrentHashMap<>();
 

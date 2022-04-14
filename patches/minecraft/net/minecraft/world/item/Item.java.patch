@@ -31,6 +31,15 @@
     public void m_5929_(Level p_41428_, LivingEntity p_41429_, ItemStack p_41430_, int p_41431_) {
     }
  
+@@ -134,7 +_,7 @@
+    public InteractionResultHolder<ItemStack> m_7203_(Level p_41432_, Player p_41433_, InteractionHand p_41434_) {
+       if (this.m_41472_()) {
+          ItemStack itemstack = p_41433_.m_21120_(p_41434_);
+-         if (p_41433_.m_36391_(this.m_41473_().m_38747_())) {
++         if (p_41433_.m_36391_(itemstack.getFoodProperties(p_41433_).m_38747_())) {
+             p_41433_.m_6672_(p_41434_);
+             return InteractionResultHolder.m_19096_(itemstack);
+          } else {
 @@ -149,10 +_,12 @@
        return this.m_41472_() ? p_41411_.m_5584_(p_41410_, p_41409_) : p_41409_;
     }
@@ -72,6 +81,15 @@
     public boolean m_41470_() {
        return this.f_41378_ != null;
     }
+@@ -251,7 +_,7 @@
+ 
+    public int m_8105_(ItemStack p_41454_) {
+       if (p_41454_.m_41720_().m_41472_()) {
+-         return this.m_41473_().m_38748_() ? 16 : 32;
++         return p_41454_.getFoodProperties(null).m_38748_() ? 16 : 32;
+       } else {
+          return 0;
+       }
 @@ -293,7 +_,7 @@
     }
  
@@ -122,6 +140,15 @@
     }
  
     public ItemStack m_7968_() {
+@@ -352,6 +_,8 @@
+       return this.f_41380_ != null;
+    }
+ 
++   // Use IForgeItem#getFoodProperties(ItemStack, LivingEntity) in favour of this.
++   @Deprecated
+    @Nullable
+    public FoodProperties m_41473_() {
+       return this.f_41380_;
 @@ -382,6 +_,32 @@
        return true;
     }

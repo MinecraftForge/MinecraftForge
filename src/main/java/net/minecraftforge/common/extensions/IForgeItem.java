@@ -16,6 +16,7 @@ import javax.annotation.Nullable;
 import com.google.common.collect.Multimap;
 
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.block.state.BlockState;
@@ -733,6 +734,20 @@ public interface IForgeItem
     }
 
     /**
+     * Called by the powdered snow block to check if a living entity wearing this can walk on the snow, granting the same behavior as leather boots.
+     * Only affects items worn in the boots slot.
+     *
+     * @param stack  Stack instance
+     * @param wearer The entity wearing this ItemStack
+     *
+     * @return True if the entity can walk on powdered snow
+     */
+    default boolean canWalkOnPowderedSnow(ItemStack stack, LivingEntity wearer)
+    {
+        return stack.is(Items.LEATHER_BOOTS);
+    }
+
+    /**
      * Used to test if this item can be damaged, but with the ItemStack in question.
      * Please note that in some cases no ItemStack is available, so the stack-less method will be used.
      *
@@ -766,6 +781,23 @@ public interface IForgeItem
     default int getDefaultTooltipHideFlags(@Nonnull ItemStack stack)
     {
         return 0;
+    }
+
+    /**
+     * Get the food properties for this item.
+     * Use this instead of the {@link Item#getFoodProperties()} method, for ItemStack sensitivity.
+     *
+     * The @Nullable annotation was only added, due to the default method, also being @Nullable.
+     * Use this with a grain of salt, as if you return null here and true at {@link Item#isEdible()}, NPEs will occur!
+     *
+     * @param stack The ItemStack the entity wants to eat.
+     * @param entity The entity which wants to eat the food. Be aware that this can be null!
+     * @return The current FoodProperties for the item.
+     */
+    @Nullable // read javadoc to find a potential problem
+    default FoodProperties getFoodProperties(ItemStack stack, @Nullable LivingEntity entity)
+    {
+        return self().getFoodProperties();
     }
 
 }

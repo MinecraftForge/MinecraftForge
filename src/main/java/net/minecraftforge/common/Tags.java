@@ -226,7 +226,10 @@ public class Tags
         public static final TagKey<Item> DYES_WHITE = DyeColor.WHITE.getTag();
 
         public static final TagKey<Item> EGGS = tag("eggs");
-        public static final TagKey<Item> ENCHANTING_FUELS = tag("enchanting_fuels", Set.of(() -> net.minecraft.world.item.Items.LAPIS_LAZULI));
+        /**
+         * This tag defaults to {@link net.minecraft.world.item.Items#LAPIS_LAZULI} when not present in any datapacks, including forge client on vanilla server
+         */
+        public static final TagKey<Item> ENCHANTING_FUELS = tag("enchanting_fuels");
         public static final TagKey<Item> END_STONES = tag("end_stones");
         public static final TagKey<Item> ENDER_PEARLS = tag("ender_pearls");
         public static final TagKey<Item> FEATHERS = tag("feathers");
@@ -391,14 +394,9 @@ public class Tags
         public static final TagKey<Item> STORAGE_BLOCKS_REDSTONE = tag("storage_blocks/redstone");
         public static final TagKey<Item> STRING                  = tag("string");
 
-        private static TagKey<Item> tag(String name, @Nullable Set<Supplier<Item>> defaults)
-        {
-            return ItemTags.create(new ResourceLocation("forge", name));
-        }
-
         private static TagKey<Item> tag(String name)
         {
-            return tag(name, null);
+            return ItemTags.create(new ResourceLocation("forge", name));
         }
     }
 

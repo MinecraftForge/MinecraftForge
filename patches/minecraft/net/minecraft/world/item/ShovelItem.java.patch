@@ -5,7 +5,7 @@
        } else {
           Player player = p_43119_.m_43723_();
 -         BlockState blockstate1 = f_43110_.get(blockstate.m_60734_());
-+         BlockState blockstate1 = blockstate.getToolModifiedState(level, blockpos, player, p_43119_.m_43722_(), net.minecraftforge.common.ToolActions.SHOVEL_FLATTEN);
++         BlockState blockstate1 = blockstate.getToolModifiedState(p_43119_, net.minecraftforge.common.ToolActions.SHOVEL_FLATTEN, false);
           BlockState blockstate2 = null;
 -         if (blockstate1 != null && level.m_8055_(blockpos.m_7494_()).m_60795_()) {
 +         if (blockstate1 != null && level.m_46859_(blockpos.m_7494_())) {
