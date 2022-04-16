@@ -23,6 +23,6 @@ public class ServerWorldCreationTest
     static final String MODID = "server_world_creation_test";
     public ServerWorldCreationTest()
     {
-}
+    }
 }
 
