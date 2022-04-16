@@ -20,6 +20,7 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 public class LevelRendererHooks
 {
     private static final EnumMap<Phase, List<ILevelRendererHook>> HOOKS = new EnumMap<>(Phase.class);
+    private static float partialTicks = 0.0F;
 
     /**
      * Registers the {@link ILevelRendererHook} passed to the {@link Phase} specified.
@@ -30,15 +31,31 @@ public class LevelRendererHooks
     }
 
     /**
+     * @return The current partial ticks from the start of LevelRenderer.renderLevel
+     */
+    public static float getPartialTicks()
+    {
+        return LevelRendererHooks.partialTicks;
+    }
+
+    /**
      * Called internally. You should have no reason to call this.
      */
-    public static void render(Phase phase, LevelRenderer levelRenderer, PoseStack poseStack, Matrix4f projectionMatrix, float partialTick, double camX, double camY, double camZ)
+    public static void render(Phase phase, LevelRenderer levelRenderer, PoseStack poseStack, Matrix4f projectionMatrix, double camX, double camY, double camZ)
     {
         Minecraft.getInstance().getProfiler().popPush(phase.profillerLabel());
         List<ILevelRendererHook> hooks = HOOKS.get(phase);
         if (hooks != null)
             for (ILevelRendererHook hook : hooks)
-                hook.render(levelRenderer, poseStack, projectionMatrix, partialTick, camX, camY, camZ);
+                hook.render(levelRenderer, poseStack, projectionMatrix, partialTicks, camX, camY, camZ);
+    }
+
+    /**
+     * Called internally. You should have no reason to call this.
+     */
+    public static void setPartialTicks(float partialTicks)
+    {
+        LevelRendererHooks.partialTicks = partialTicks;
     }
 
     /**
