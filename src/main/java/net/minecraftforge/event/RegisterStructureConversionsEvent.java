@@ -65,12 +65,12 @@ public class RegisterStructureConversionsEvent extends Event
      *     structure ID in the corresponding entry is used as the new structure ID. If there is no such biome found,
      *     the new structure ID will be the fallback structure ID.</p>
      *
-     *     <p>For example, the following registers a biome-mapped conversion for {@code "exampleStructure} with the
+     *     <p>For example, the following registers a biome-mapped conversion for {@code exampleStructure} with the
      *     following logic:</p>
      *     <ul>
      *         <li>If the structure is within either a {@code minecraft:desert} or a {@code minecraft:jungle} biome,
      *         it is mapped to {@code examplemod:deserted_structure}.</li>
-     *         <li>If the structure is within a {@code "minecraft:ocean"} biome, it is mapped to
+     *         <li>If the structure is within a {@code minecraft:ocean} biome, it is mapped to
      *         {@code examplemod:flooded_structure}.</li>
      *         <li>Otherwise, the structure is mapped to {@code examplemod:structure}</li>
      *     </ul>
