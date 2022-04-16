@@ -1,0 +1,11 @@
+--- a/net/minecraft/resources/RegistryLoader.java
++++ b/net/minecraft/resources/RegistryLoader.java
+@@ -19,7 +_,7 @@
+    private final RegistryResourceAccess f_206750_;
+    private final Map<ResourceKey<? extends Registry<?>>, RegistryLoader.ReadCache<?>> f_206751_ = new IdentityHashMap<>();
+ 
+-   RegistryLoader(RegistryResourceAccess p_206753_) {
++   public RegistryLoader(RegistryResourceAccess p_206753_) {
+       this.f_206750_ = p_206753_;
+    }
+ 

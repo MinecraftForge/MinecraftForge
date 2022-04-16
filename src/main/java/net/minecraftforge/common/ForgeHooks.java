@@ -24,7 +24,6 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Stream;
 
 import com.google.common.base.Strings;
 import com.google.common.base.Suppliers;
@@ -39,8 +38,6 @@ import com.google.gson.JsonParseException;
 import com.mojang.datafixers.kinds.App;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
-import com.mojang.serialization.DataResult;
-import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.Lifecycle;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.mojang.serialization.codecs.RecordCodecBuilder.Mu;
@@ -52,8 +49,6 @@ import it.unimi.dsi.fastutil.longs.LongSet;
 import net.minecraft.ResourceLocationException;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.core.*;
-import net.minecraft.resources.*;
-import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.effect.MobEffect;
@@ -65,7 +60,6 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.levelgen.feature.ConfiguredStructureFeature;
 import net.minecraft.world.level.storage.WorldData;
@@ -184,6 +178,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.TextColor;
 import net.minecraft.network.chat.TextComponent;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.Level;
@@ -1469,36 +1465,4 @@ public class ForgeHooks
         }
     }
 
-    private static final ThreadLocal<RegistryResourceAccess> registryResouceAccess = new ThreadLocal<>();
-    private static final ThreadLocal<RegistryAccess> registryAccess = new ThreadLocal<>();
-
-    public static RegistryAccess.Writable createAndCacheWritable(ResourceManager manager) {
-        RegistryResourceAccess resourceAccess = RegistryResourceAccess.forResourceManager(manager);
-        RegistryAccess.Writable writable = RegistryAccess.builtinCopy();
-
-        //Register the default DimensionTypes
-        RegistryLoader loader = new RegistryLoader(resourceAccess);
-        WritableRegistry<DimensionType> registry = writable.ownedWritableRegistryOrThrow(Registry.DIMENSION_TYPE_REGISTRY);
-        DataResult<? extends Registry<DimensionType>> result = loader.overrideRegistryFromResources(registry, registry.key(), DimensionType.DIRECT_CODEC, RegistryOps.create(JsonOps.INSTANCE, writable));
-        result.error().ifPresent(err -> LOGGER.error("Unable to load Modded Dimension Types: {}", err.message()));
-
-        registryResouceAccess.set(resourceAccess);
-        registryAccess.set(writable);
-        return writable;
-    }
-
-    //Called from the tail of DimensionType#defaultDimensions
-    public static void registerDefaultDimensions(WritableRegistry<LevelStem> writableregistry) {
-        //This will always return unless #createAndCacheWritable has been called (we're on a dedicated server creating a new world)
-        if(registryAccess.get() == null || registryResouceAccess.get() == null) {
-            return;
-        }
-
-        RegistryLoader loader = new RegistryLoader(registryResouceAccess.get());
-        DataResult<? extends Registry<LevelStem>> result = loader.overrideRegistryFromResources(writableregistry, writableregistry.key(), LevelStem.CODEC, RegistryOps.create(JsonOps.INSTANCE, registryAccess.get()));
-        result.error().ifPresent(err -> LOGGER.error("Unable to load Modded Dimensions: {}", err.message()));
-
-        registryAccess.set(null);
-        registryResouceAccess.set(null);
-    }
 }

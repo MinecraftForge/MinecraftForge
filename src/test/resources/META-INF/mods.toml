@@ -216,4 +216,5 @@ license="LGPL v2.1"
     modId="living_get_projectile_event_test"
 [[mods]]
     modId="server_world_creation_test"
+
 # ADD ABOVE THIS LINE
