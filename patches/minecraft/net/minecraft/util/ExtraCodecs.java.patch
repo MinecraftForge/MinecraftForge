@@ -1,0 +1,13 @@
+--- a/net/minecraft/util/ExtraCodecs.java
++++ b/net/minecraft/util/ExtraCodecs.java
+@@ -294,8 +_,9 @@
+    }
+ 
+    static record LazyInitializedCodec<A>(Supplier<Codec<A>> f_184540_) implements Codec<A> {
+-      LazyInitializedCodec {
++      LazyInitializedCodec(Supplier<Codec<A>> f_184540_) {
+          f_184540_ = Suppliers.memoize(f_184540_::get);
++         this.f_184540_ = f_184540_;
+       }
+ 
+       public <T> DataResult<Pair<A, T>> decode(DynamicOps<T> p_184545_, T p_184546_) {

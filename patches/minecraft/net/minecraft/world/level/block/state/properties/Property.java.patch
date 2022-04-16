@@ -1,0 +1,16 @@
+--- a/net/minecraft/world/level/block/state/properties/Property.java
++++ b/net/minecraft/world/level/block/state/properties/Property.java
+@@ -96,9 +_,12 @@
+    }
+ 
+    public static record Value<T extends Comparable<T>>(Property<T> f_61712_, T f_61713_) {
+-      public Value {
++      public Value(Property<T> f_61712_, T f_61713_) {
+          if (!f_61712_.m_6908_().contains(f_61713_)) {
+             throw new IllegalArgumentException("Value " + f_61713_ + " does not belong to property " + f_61712_);
++         } else {
++            this.f_61712_ = f_61712_;
++            this.f_61713_ = f_61713_;
+          }
+       }
+ 

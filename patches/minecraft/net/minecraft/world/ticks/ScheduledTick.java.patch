@@ -1,0 +1,17 @@
+--- a/net/minecraft/world/ticks/ScheduledTick.java
++++ b/net/minecraft/world/ticks/ScheduledTick.java
+@@ -39,8 +_,13 @@
+       this(p_193383_, p_193384_, p_193385_, TickPriority.NORMAL, p_193386_);
+    }
+ 
+-   public ScheduledTick {
++   public ScheduledTick(T f_193376_, BlockPos f_193377_, long f_193378_, TickPriority f_193379_, long f_193380_) {
+       f_193377_ = f_193377_.m_7949_();
++      this.f_193376_ = f_193376_;
++      this.f_193377_ = f_193377_;
++      this.f_193378_ = f_193378_;
++      this.f_193379_ = f_193379_;
++      this.f_193380_ = f_193380_;
+    }
+ 
+    public static <T> ScheduledTick<T> m_193397_(T p_193398_, BlockPos p_193399_) {

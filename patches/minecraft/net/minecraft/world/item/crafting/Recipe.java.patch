@@ -13,12 +13,3 @@
           }
        }
  
-@@ -55,7 +_,7 @@
-    default boolean m_142505_() {
-       NonNullList<Ingredient> nonnulllist = this.m_7527_();
-       return nonnulllist.isEmpty() || nonnulllist.stream().anyMatch((p_151268_) -> {
--         return p_151268_.m_43908_().length == 0;
-+         return net.minecraftforge.common.ForgeHooks.hasNoElements(p_151268_);
-       });
-    }
- }

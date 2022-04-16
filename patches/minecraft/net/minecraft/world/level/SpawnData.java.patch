@@ -1,0 +1,15 @@
+--- a/net/minecraft/world/level/SpawnData.java
++++ b/net/minecraft/world/level/SpawnData.java
+@@ -27,9 +_,11 @@
+       }), Optional.empty());
+    }
+ 
+-   public SpawnData {
++   public SpawnData(CompoundTag f_186561_, Optional<SpawnData.CustomSpawnRules> f_186562_) {
+       ResourceLocation resourcelocation = ResourceLocation.m_135820_(f_186561_.m_128461_("id"));
+       f_186561_.m_128359_("id", resourcelocation != null ? resourcelocation.toString() : "minecraft:pig");
++      this.f_186561_ = f_186561_;
++      this.f_186562_ = f_186562_;
+    }
+ 
+    public CompoundTag m_186567_() {

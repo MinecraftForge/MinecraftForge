@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/item/crafting/Ingredient.java
 +++ b/net/minecraft/world/item/crafting/Ingredient.java
-@@ -29,12 +_,19 @@
+@@ -29,17 +_,26 @@
  import net.minecraft.world.level.ItemLike;
  
  public class Ingredient implements Predicate<ItemStack> {
@@ -17,9 +17,16 @@
     @Nullable
     private IntList f_43904_;
 +   private int invalidationCounter;
++   private final boolean isSimple;
  
     protected Ingredient(Stream<? extends Ingredient.Value> p_43907_) {
        this.f_43902_ = p_43907_.toArray((p_43933_) -> {
+          return new Ingredient.Value[p_43933_];
+       });
++      this.isSimple = !net.minecraftforge.data.loading.DatagenModLoader.isRunningDataGen() && !Arrays.stream(f_43902_).anyMatch(list -> list.m_6223_().stream().anyMatch(stack -> stack.m_41720_().isDamageable(stack)));
+    }
+ 
+    public ItemStack[] m_43908_() {
 @@ -78,7 +_,8 @@
     }
  
@@ -64,7 +71,7 @@
 +   }
 +
 +   public boolean isSimple() {
-+      return true;
++      return isSimple || this == f_43901_;
 +   }
 +
 +   private final boolean isVanilla = this.getClass() == Ingredient.class;

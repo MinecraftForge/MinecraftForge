@@ -1,0 +1,16 @@
+--- a/net/minecraft/util/InclusiveRange.java
++++ b/net/minecraft/util/InclusiveRange.java
+@@ -7,9 +_,12 @@
+ public record InclusiveRange<T extends Comparable<T>>(T f_184563_, T f_184564_) {
+    public static final Codec<InclusiveRange<Integer>> f_184562_ = m_184572_(Codec.INT);
+ 
+-   public InclusiveRange {
++   public InclusiveRange(T f_184563_, T f_184564_) {
+       if (f_184563_.compareTo(f_184564_) > 0) {
+          throw new IllegalArgumentException("min_inclusive must be less than or equal to max_inclusive");
++      } else {
++         this.f_184563_ = f_184563_;
++         this.f_184564_ = f_184564_;
+       }
+    }
+ 

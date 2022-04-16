@@ -1,0 +1,16 @@
+--- a/net/minecraft/network/protocol/game/ClientboundBlockBreakAckPacket.java
++++ b/net/minecraft/network/protocol/game/ClientboundBlockBreakAckPacket.java
+@@ -15,8 +_,12 @@
+       this(p_131654_, p_131655_, p_131656_, p_131657_);
+    }
+ 
+-   public ClientboundBlockBreakAckPacket {
++   public ClientboundBlockBreakAckPacket(BlockPos f_131648_, BlockState f_131649_, ServerboundPlayerActionPacket.Action f_131646_, boolean f_131650_) {
+       f_131648_ = f_131648_.m_7949_();
++      this.f_131648_ = f_131648_;
++      this.f_131649_ = f_131649_;
++      this.f_131646_ = f_131646_;
++      this.f_131650_ = f_131650_;
+    }
+ 
+    public ClientboundBlockBreakAckPacket(FriendlyByteBuf p_178604_) {
