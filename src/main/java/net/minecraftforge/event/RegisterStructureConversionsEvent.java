@@ -72,7 +72,7 @@ public class RegisterStructureConversionsEvent extends Event
      *         it is mapped to {@code examplemod:deserted_structure}.</li>
      *         <li>If the structure is within a {@code minecraft:ocean} biome, it is mapped to
      *         {@code examplemod:flooded_structure}.</li>
-     *         <li>Otherwise, the structure is mapped to {@code examplemod:structure}</li>
+     *         <li>Otherwise, the structure is mapped to {@code examplemod:structure}.</li>
      *     </ul>
      *     <pre>{@code
      * event.register("exampleStructure", StructuresBecomeConfiguredFix.Conversion.biomeMapped(Map.of(
