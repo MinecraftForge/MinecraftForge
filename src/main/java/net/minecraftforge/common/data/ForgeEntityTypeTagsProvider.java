@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2021.
+ * Copyright (c) 2016-2022.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -24,7 +24,8 @@ import net.minecraft.data.tags.EntityTypeTagsProvider;
 import net.minecraft.world.entity.EntityType;
 import net.minecraftforge.common.Tags;
 
-public class ForgeEntityTypeTagsProvider extends EntityTypeTagsProvider {
+public final class ForgeEntityTypeTagsProvider extends EntityTypeTagsProvider
+{
 
     public ForgeEntityTypeTagsProvider(DataGenerator generator, ExistingFileHelper existingFileHelper)
     {
