@@ -2,8 +2,7 @@
   "replace": false,
   "values": [
     "minecraft:plains",
-    "minecraft:savanna",
-    "minecraft:savanna_plateau",
+    "minecraft:snowy_plains",
     "minecraft:meadow",
     "minecraft:sunflower_plains"
   ]

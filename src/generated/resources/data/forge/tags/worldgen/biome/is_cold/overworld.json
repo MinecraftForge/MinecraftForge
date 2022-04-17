@@ -2,7 +2,6 @@
   "replace": false,
   "values": [
     "minecraft:taiga",
-    "minecraft:the_end",
     "minecraft:frozen_ocean",
     "minecraft:frozen_river",
     "minecraft:snowy_plains",
@@ -13,10 +12,6 @@
     "minecraft:snowy_slopes",
     "minecraft:jagged_peaks",
     "minecraft:frozen_peaks",
-    "minecraft:small_end_islands",
-    "minecraft:end_midlands",
-    "minecraft:end_highlands",
-    "minecraft:end_barrens",
     "minecraft:cold_ocean",
     "minecraft:deep_cold_ocean",
     "minecraft:deep_frozen_ocean",
