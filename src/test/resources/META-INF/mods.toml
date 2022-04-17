@@ -214,5 +214,7 @@ license="LGPL v2.1"
     modId="hide_neighbor_face_test"
 [[mods]]
     modId="living_get_projectile_event_test"
+[[mods]]
+    modId="server_world_creation_test"
 
 # ADD ABOVE THIS LINE
