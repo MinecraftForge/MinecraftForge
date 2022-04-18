@@ -1,5 +1,5 @@
 /*
- * Minecraft Forge - Forge Development LLC
+ * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
@@ -75,8 +75,8 @@ public interface IForgePlayer
     {
         Vec3 eye = self().getEyePosition();
         Vec3 targetCenter = entity.getPosition(1.0F).add(0, entity.getBbHeight() / 2, 0);
-        Optional<Vec3> hit = entity.getBoundingBox().clip(eye, targetCenter);
-        return (hit.isPresent() ? self().distanceToSqr(entity) : self().distanceToSqr(targetCenter)) < dist * dist;
+        Optional<Vec3> hit = entity.getBoundingBox().clip(eye, targetCenter); //This hit should almost always be present, but we have a fallback just in case.  It likely indicates lag if it is not present.
+        return (hit.isPresent() ? eye.distanceToSqr(hit.get()) : self().distanceToSqr(entity)) < dist * dist;
     }
 
     /**

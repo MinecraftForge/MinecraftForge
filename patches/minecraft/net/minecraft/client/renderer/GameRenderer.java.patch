@@ -17,7 +17,7 @@
        } catch (IOException ioexception) {
           list1.forEach((p_172772_) -> {
              p_172772_.getFirst().close();
-@@ -625,15 +_,17 @@
+@@ -625,19 +_,21 @@
              boolean flag = false;
              int i = 3;
              double d1 = d0;
@@ -37,6 +37,11 @@
              }
  
              d1 *= d1;
+-            if (this.f_109059_.f_91077_ != null) {
++            if (this.f_109059_.f_91077_ != null && this.f_109059_.f_91077_.m_6662_() != HitResult.Type.MISS) {
+                d1 = this.f_109059_.f_91077_.m_82450_().m_82557_(vec3);
+             }
+ 
 @@ -652,7 +_,7 @@
                 Entity entity1 = entityhitresult.m_82443_();
                 Vec3 vec33 = entityhitresult.m_82450_();
