@@ -1,5 +1,5 @@
 /*
- * Minecraft Forge - Forge Development LLC
+ * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
@@ -91,7 +91,7 @@ public class IntersectionIngredient extends AbstractIngredient
     @Override
     public boolean isEmpty()
     {
-        return getItems().length == 0;
+        return children.stream().anyMatch(Ingredient::isEmpty);
     }
 
     @Override

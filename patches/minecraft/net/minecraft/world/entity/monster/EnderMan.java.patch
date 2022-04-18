@@ -21,7 +21,7 @@
     boolean m_32534_(Player p_32535_) {
        ItemStack itemstack = p_32535_.m_150109_().f_35975_.get(3);
 -      if (itemstack.m_150930_(Blocks.f_50143_.m_5456_())) {
-+      if (itemstack.isEnderMask(p_32535_, this)) {
++      if (net.minecraftforge.common.ForgeHooks.shouldSuppressEnderManAnger(this, p_32535_, itemstack)) {
           return false;
        } else {
           Vec3 vec3 = p_32535_.m_20252_(1.0F).m_82541_();
