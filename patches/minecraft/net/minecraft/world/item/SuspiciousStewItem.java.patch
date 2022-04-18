@@ -10,7 +10,7 @@
        compoundtag.m_128365_("Effects", listtag);
 @@ -41,6 +_,7 @@
              }
-
+ 
              MobEffect mobeffect = MobEffect.m_19453_(compoundtag1.m_128445_("EffectId"));
 +            mobeffect = net.minecraftforge.common.ForgeHooks.loadMobEffect(compoundtag1, "forge:effect_id", mobeffect);
              if (mobeffect != null) {
