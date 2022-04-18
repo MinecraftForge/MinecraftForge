@@ -7,7 +7,6 @@ package net.minecraftforge.registries;
 
 import com.google.common.collect.Multimaps;
 import com.google.common.collect.SetMultimap;
-import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.data.BuiltinRegistries;
 import net.minecraft.resources.ResourceKey;
@@ -28,7 +27,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
 import java.util.function.Supplier;
 
