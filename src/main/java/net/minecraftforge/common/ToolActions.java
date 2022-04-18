@@ -1,5 +1,5 @@
 /*
- * Minecraft Forge - Forge Development LLC
+ * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
@@ -31,7 +31,7 @@ public class ToolActions
     public static final ToolAction SHOVEL_DIG = ToolAction.get("shovel_dig");
 
     /**
-     *  Exposed by shovels to allow querying tool behaviours
+     *  Exposed by hoes to allow querying tool behaviours
      */
     public static final ToolAction HOE_DIG = ToolAction.get("hoe_dig");
 
@@ -90,10 +90,10 @@ public class ToolActions
      */
     public static final ToolAction SHEARS_DISARM = ToolAction.get("shears_disarm");
 
-    ///**
-    // *  Passed onto {@link IForgeBlock#getToolModifiedState} when a hoe wants to turn dirt into soil
-    // */
-    // TODO: public static final ToolAction HOE_TILL = ToolAction.get("till");
+    /**
+    *  Passed onto {@link IForgeBlock#getToolModifiedState} when a hoe wants to turn dirt into soil
+    */
+    public static final ToolAction HOE_TILL = ToolAction.get("till");
 
     /**
      * A tool action corresponding to the 'block' action of shields.
@@ -102,7 +102,7 @@ public class ToolActions
 
     // Default actions supported by each tool type
     public static final Set<ToolAction> DEFAULT_AXE_ACTIONS = of(AXE_DIG, AXE_STRIP, AXE_SCRAPE, AXE_WAX_OFF);
-    public static final Set<ToolAction> DEFAULT_HOE_ACTIONS = of(HOE_DIG /* TODO: , HOE_TILL */);
+    public static final Set<ToolAction> DEFAULT_HOE_ACTIONS = of(HOE_DIG, HOE_TILL);
     public static final Set<ToolAction> DEFAULT_SHOVEL_ACTIONS = of(SHOVEL_DIG, SHOVEL_FLATTEN);
     public static final Set<ToolAction> DEFAULT_PICKAXE_ACTIONS = of(PICKAXE_DIG);
     public static final Set<ToolAction> DEFAULT_SWORD_ACTIONS = of(SWORD_DIG, SWORD_SWEEP);

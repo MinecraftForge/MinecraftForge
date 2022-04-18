@@ -1,5 +1,5 @@
 /*
- * Minecraft Forge - Forge Development LLC
+ * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
@@ -103,8 +103,8 @@ public class ForgeMod
     public static final RegistryObject<Attribute> ATTACK_RANGE = ATTRIBUTES.register("attack_range", () -> new RangedAttribute("generic.attack_range", 3.0D, 0.0D, 1024.0D).setSyncable(true));
 
     private static boolean enableMilkFluid = false;
-    public static final RegistryObject<Fluid> MILK = RegistryObject.of(new ResourceLocation("milk"), ForgeRegistries.FLUIDS);
-    public static final RegistryObject<Fluid> FLOWING_MILK = RegistryObject.of(new ResourceLocation("flowing_milk"), ForgeRegistries.FLUIDS);
+    public static final RegistryObject<Fluid> MILK = RegistryObject.create(new ResourceLocation("milk"), ForgeRegistries.FLUIDS);
+    public static final RegistryObject<Fluid> FLOWING_MILK = RegistryObject.create(new ResourceLocation("flowing_milk"), ForgeRegistries.FLUIDS);
 
     private static ForgeMod INSTANCE;
     public static ForgeMod getInstance()
@@ -158,6 +158,8 @@ public class ForgeMod
         MinecraftForge.EVENT_BUS.register(MinecraftForge.INTERNAL_HANDLER);
         MinecraftForge.EVENT_BUS.addListener(this::mappingChanged);
         BiomeDictionary.init();
+
+        ForgeRegistries.ITEMS.tags().addOptionalTagDefaults(Tags.Items.ENCHANTING_FUELS, Set.of(Items.LAPIS_LAZULI.delegate));
     }
 
     public void registerCapabilities(RegisterCapabilitiesEvent event)

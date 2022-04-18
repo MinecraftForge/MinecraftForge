@@ -46,7 +46,7 @@ ext {
     MAPPING_CHANNEL = 'official'
     MAPPING_VERSION = '1.18.2'
     MC_VERSION = '1.18.2'
-    MCP_VERSION = '20220228.144236'
+    MCP_VERSION = '20220404.173914'
     SPI_VERSION = '4.0.10'
     ACCESSTRANSFORMERS_VERSION = '8.0.4'
     COREMODS_VERSION = '5.0.1'
@@ -1493,12 +1493,6 @@ project(':forge') {
         header = file("$rootDir/LICENSE-header.txt")
 
         include 'net/minecraftforge/'
-        exclude 'net/minecraftforge/server/terminalconsole/'
-        exclude 'net/minecraftforge/api/' // exclude API here because it's validated in the SPI build
-        exclude 'net/minecraftforge/fml/common/versioning/ComparableVersion.java'
-        exclude 'net/minecraftforge/fml/common/versioning/InvalidVersionSpecificationException.java'
-        exclude 'net/minecraftforge/fml/common/versioning/Restriction.java'
-        exclude 'net/minecraftforge/fml/common/versioning/VersionRange.java'
         exclude 'net/minecraftforge/common/LenientUnboundedMapCodec.java'
 
         tasks {

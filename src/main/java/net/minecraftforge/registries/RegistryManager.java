@@ -1,5 +1,5 @@
 /*
- * Minecraft Forge - Forge Development LLC
+ * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
@@ -7,13 +7,11 @@ package net.minecraftforge.registries;
 
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import com.google.common.collect.BiMap;
@@ -28,7 +26,6 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.core.Registry;
 import net.minecraftforge.fml.IModStateTransition;
-import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.network.HandshakeMessages;
 import net.minecraftforge.registries.ForgeRegistry.Snapshot;
 import org.apache.commons.lang3.tuple.Pair;
@@ -50,6 +47,11 @@ public class RegistryManager
     private Map<ResourceLocation, ResourceLocation> legacyNames = new HashMap<>();
     private final String name;
 
+    RegistryManager()
+    {
+        this("STAGING");
+    }
+
     public RegistryManager(String name)
     {
         this.name = name;
@@ -58,6 +60,11 @@ public class RegistryManager
     public String getName()
     {
         return this.name;
+    }
+
+    boolean isStaging()
+    {
+        return "STAGING".equals(this.name);
     }
 
     @SuppressWarnings("unchecked")
