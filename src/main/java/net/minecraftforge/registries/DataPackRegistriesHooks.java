@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) Forge Development LLC and contributors
+ * SPDX-License-Identifier: LGPL-2.1-only
+ */
+
 package net.minecraftforge.registries;
 
 import com.google.common.collect.ImmutableMap;
@@ -19,6 +24,7 @@ public class DataPackRegistriesHooks
    private static Map<ResourceKey<? extends Registry<?>>, RegistryAccess.RegistryData<?>> REGISTRY_ACCESS_REGISTRIES_COPY;
 
    /** Modders, DO NOT USE. Internal use only */
+   @Deprecated
    public static Map<ResourceKey<? extends Registry<?>>, RegistryAccess.RegistryData<?>> addBuiltinRegistriesEvent(ImmutableMap.Builder<ResourceKey<? extends Registry<?>>, RegistryAccess.RegistryData<?>> builder)
    {
       REGISTRY_ACCESS_REGISTRIES_COPY = new HashMap<>(builder.build());
@@ -26,6 +32,7 @@ public class DataPackRegistriesHooks
    }
 
    /** Modders, DO NOT USE. Internal use only */
+   @Deprecated
    public static void fireAddBuiltinRegistriesEvent()
    {
       AddBuiltinRegistryEvent registryEvent = new AddBuiltinRegistryEvent((resourceKey, registryData) ->
@@ -33,69 +40,21 @@ public class DataPackRegistriesHooks
          validateRegistryKey(resourceKey);
          if (!BuiltinRegistries.REGISTRY.containsKey(resourceKey.location()))
          {
-            throw new IllegalArgumentException("DataPack registry must be marked as DataPack Registry in RegistryBuilder");
+            throw new IllegalArgumentException("Data-pack registries must be marked as such via RegistryBuilder#dataPackRegistry");
          }
          REGISTRY_ACCESS_REGISTRIES_COPY.put(resourceKey, registryData);
       });
       ModLoader.get().postEvent(registryEvent);
    }
 
-   public static <T> ResourceKey<Registry<T>> createRegistryKey(ResourceLocation location)
-   {
-      String namespace = location.getNamespace();
-      String path = location.getPath();
-      String prefix = getPathPrefix(namespace);
-      if (!path.startsWith(prefix))
-      {
-         path = prefix + path;
-      }
-      return ResourceKey.createRegistryKey(new ResourceLocation(namespace, path));
-   }
-
-   private static String getPathPrefix(String namespace)
-   {
-      return namespace + '/';
-   }
-
    private static void validateRegistryKey(ResourceKey<? extends Registry<?>> registryKey)
    {
       var location = registryKey.location();
-      var prefix = getPathPrefix(location.getNamespace());
+      var prefix = location.getNamespace() + '/';
 
       if (!location.getPath().startsWith(prefix))
       {
          throw new IllegalArgumentException(String.format("Registry path must be prefixed with '%s'", prefix));
       }
-   }
-
-   public static <T extends IForgeRegistryEntry<T>> DeferredRegister<T> createDataPackRegistry(ResourceKey<? extends Registry<T>> registryKey, String modid, Class<T> baseClass)
-   {
-      DeferredRegister<T> deferredRegister = DeferredRegister.create(registryKey, modid);
-      deferredRegister.makeRegistry(baseClass, () -> new RegistryBuilder<T>().disableSync().disableSaving().isDataPackRegistry());
-      return deferredRegister;
-   }
-
-   @SuppressWarnings("unchecked")
-   public static <T> Optional<Holder<T>> getHolder(ResourceKey<T> key)
-   {
-      if (key != null && registryExists(key.registry()))
-      {
-         ResourceLocation registryName = key.registry();
-         Registry<T> registry = (Registry<T>) Registry.REGISTRY.get(registryName);
-         if (registry == null)
-            registry = (Registry<T>) BuiltinRegistries.REGISTRY.get(registryName);
-
-         if (registry != null)
-            return Optional.of(registry.getOrCreateHolder(key));
-      }
-
-      return Optional.empty();
-   }
-
-   private static boolean registryExists(ResourceLocation registryName)
-   {
-      return RegistryManager.ACTIVE.getRegistry(registryName) != null
-            || Registry.REGISTRY.containsKey(registryName)
-            || BuiltinRegistries.REGISTRY.containsKey(registryName);
    }
 }

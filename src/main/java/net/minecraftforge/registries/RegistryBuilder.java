@@ -231,9 +231,9 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
         return this;
     }
 
-    public RegistryBuilder<T> isDataPackRegistry()
+    public RegistryBuilder<T> dataPackRegistry()
     {
-        this.hasWrapper();// A Wrapper is required for data pack registries
+        this.hasWrapper(); // A wrapper is required for data pack registries
         this.isDataPackRegistry = true;
         return this;
     }
@@ -396,7 +396,7 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
         return this.hasWrapper;
     }
 
-    boolean getIsDataPackRegistry()
+    boolean isDataPackRegistry()
     {
         return this.isDataPackRegistry;
     }

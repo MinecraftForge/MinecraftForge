@@ -366,7 +366,6 @@ public class DeferredRegister<T>
             bus.addListener(this::createRegistry);
         }
     }
-
     public static class EventDispatcher {
         private final DeferredRegister<?> register;
 

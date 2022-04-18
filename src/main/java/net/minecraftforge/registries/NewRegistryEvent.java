@@ -63,14 +63,13 @@ public class NewRegistryEvent extends Event implements IModBusEvent
                 .collect(Collectors.toMap(RegistryData::builder, d -> d.builder().create(), (a, b) -> a, IdentityHashMap::new));
 
         builtRegistries.forEach((builder, reg) -> {
-            if(builder.getIsDataPackRegistry())
+            if (builder.isDataPackRegistry())
             {
                 if (builder.getHasWrapper() && !BuiltinRegistries.REGISTRY.containsKey(reg.getRegistryName()))
                     RegistryManager.registerToBuiltinRegistry((ForgeRegistry<?>) reg);
-            } else
+            } else if (builder.getHasWrapper() && !Registry.REGISTRY.containsKey(reg.getRegistryName()))
             {
-                if (builder.getHasWrapper() && !Registry.REGISTRY.containsKey(reg.getRegistryName()))
-                    RegistryManager.registerToRootRegistry((ForgeRegistry<?>) reg);
+                RegistryManager.registerToRootRegistry((ForgeRegistry<?>) reg);
             }
         });
 

@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) Forge Development LLC and contributors
+ * SPDX-License-Identifier: LGPL-2.1-only
+ */
+
 package net.minecraftforge.debug.world;
 
 import com.mojang.logging.LogUtils;
@@ -19,10 +24,7 @@ import net.minecraftforge.event.server.ServerAboutToStartEvent;
 import net.minecraftforge.event.world.AddBuiltinRegistryEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.registries.DataPackRegistriesHooks;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.ForgeRegistryEntry;
-import net.minecraftforge.registries.RegistryObject;
+import net.minecraftforge.registries.*;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
@@ -32,25 +34,50 @@ import java.util.Optional;
 @Mod(DataPackRegistriesTest.MODID)
 public class DataPackRegistriesTest
 {
+   private static final boolean ENABLED = false;
    public static final String MODID = "data_pack_registries_test";
 
    private static final Logger LOGGER = LogUtils.getLogger();
 
-   private static final DeferredRegister<TestA> TEST_A_REGISTER = DataPackRegistriesHooks.createDataPackRegistry(TestA.REGISTRY, MODID, TestA.class);
-   private static final DeferredRegister<TestB> TEST_B_REGISTER = DataPackRegistriesHooks.createDataPackRegistry(TestB.REGISTRY, MODID, TestB.class);
+   private static final DeferredRegister<TestA> TEST_A_REGISTER;
+   private static final DeferredRegister<TestB> TEST_B_REGISTER;
 
-   private static final RegistryObject<TestA> BUILTIN_A = TEST_A_REGISTER.register("builtin_a", DataPackRegistriesTest::createBuiltinA);
-   private static final RegistryObject<TestA> BUILTIN_A_OVERRIDDEN = TEST_A_REGISTER.register("builtin_a_overridden", DataPackRegistriesTest::createBuiltinA);
-   private static final RegistryObject<TestB> BUILTIN_B = TEST_B_REGISTER.register("builtin_b", DataPackRegistriesTest::createBuiltinB);
+   private static final RegistryObject<TestA> BUILTIN_A;
+   private static final RegistryObject<TestA> BUILTIN_A_OVERRIDDEN;
+   private static final RegistryObject<TestB> BUILTIN_B;
 
+   static
+   {
+      if(ENABLED)
+      {
+         TEST_A_REGISTER = DeferredRegister.create(TestA.REGISTRY, MODID);
+         TEST_A_REGISTER.makeRegistry(TestA.class, () -> new RegistryBuilder<TestA>().disableSync().disableSaving().dataPackRegistry());
+         TEST_B_REGISTER = DeferredRegister.create(TestB.REGISTRY, MODID);
+         TEST_B_REGISTER.makeRegistry(TestB.class, () -> new RegistryBuilder<TestB>().disableSync().disableSaving().dataPackRegistry());
+
+         BUILTIN_A = TEST_A_REGISTER.register("builtin_a", DataPackRegistriesTest::createBuiltinA);
+         BUILTIN_A_OVERRIDDEN = TEST_A_REGISTER.register("builtin_a_overridden", DataPackRegistriesTest::createBuiltinA);
+         BUILTIN_B = TEST_B_REGISTER.register("builtin_b", DataPackRegistriesTest::createBuiltinB);
+      } else
+      {
+         TEST_A_REGISTER = null;
+         TEST_B_REGISTER = null;
+         BUILTIN_A = null;
+         BUILTIN_A_OVERRIDDEN = null;
+         BUILTIN_B = null;
+      }
+   }
    public DataPackRegistriesTest()
    {
-      MinecraftForge.EVENT_BUS.addListener(this::onServerAboutToStart);
+      if(ENABLED)
+      {
+         MinecraftForge.EVENT_BUS.addListener(this::onServerAboutToStart);
 
-      var modBus = FMLJavaModLoadingContext.get().getModEventBus();
-      TEST_A_REGISTER.register(modBus);
-      TEST_B_REGISTER.register(modBus);
-      modBus.addListener(this::onAddBuiltinRegistries);
+         var modBus = FMLJavaModLoadingContext.get().getModEventBus();
+         TEST_A_REGISTER.register(modBus);
+         TEST_B_REGISTER.register(modBus);
+         modBus.addListener(this::onAddBuiltinRegistries);
+      }
    }
 
    private void onAddBuiltinRegistries(AddBuiltinRegistryEvent event)
@@ -93,8 +120,8 @@ public class DataPackRegistriesTest
    @Nullable
    private static TestB createBuiltinB()
    {
-      Optional<Holder<TestA>> builtin_a = DataPackRegistriesHooks.getHolder(BUILTIN_A.getKey());
-      Optional<Holder<TestA>> builtin_a_overridden = DataPackRegistriesHooks.getHolder(ResourceKey.create(TestA.REGISTRY, new ResourceLocation(MODID, "builtin_a_overridden")));
+      Optional<Holder<TestA>> builtin_a = BUILTIN_A.getHolder();
+      Optional<Holder<TestA>> builtin_a_overridden = BUILTIN_A_OVERRIDDEN.getHolder();
       if (builtin_a.isEmpty() || builtin_a_overridden.isEmpty())
       {
          return null;
@@ -141,7 +168,7 @@ public class DataPackRegistriesTest
 
    public static class TestA extends ForgeRegistryEntry<TestA>
    {
-      public static final ResourceKey<Registry<TestA>> REGISTRY = DataPackRegistriesHooks.createRegistryKey(new ResourceLocation(MODID, "worldgen/test_a"));
+      public static final ResourceKey<Registry<TestA>> REGISTRY = ResourceKey.createRegistryKey(new ResourceLocation(MODID, MODID + "/worldgen/test_a"));
 
       public static final Codec<TestA> DIRECT_CODEC = RecordCodecBuilder.create(instance -> instance.group(
             Codec.STRING.fieldOf("string_value").forGetter(TestA::getStringValue),
@@ -181,7 +208,7 @@ public class DataPackRegistriesTest
 
    public static class TestB extends ForgeRegistryEntry<TestB>
    {
-      public static final ResourceKey<Registry<TestB>> REGISTRY = DataPackRegistriesHooks.createRegistryKey(new ResourceLocation(MODID, "worldgen/test_b"));
+      public static final ResourceKey<Registry<TestB>> REGISTRY = ResourceKey.createRegistryKey(new ResourceLocation(MODID, MODID + "/worldgen/test_b"));
 
       public static final Codec<TestB> DIRECT_CODEC = RecordCodecBuilder.create(instance -> instance.group(
             TestA.CODEC.fieldOf("test_a").forGetter(TestB::getTestA),
