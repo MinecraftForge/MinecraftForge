@@ -1,11 +1,10 @@
 --- a/net/minecraft/client/renderer/blockentity/SkullBlockRenderer.java
 +++ b/net/minecraft/client/renderer/blockentity/SkullBlockRenderer.java
-@@ -35,7 +_,7 @@
- @OnlyIn(Dist.CLIENT)
- public class SkullBlockRenderer implements BlockEntityRenderer<SkullBlockEntity> {
-    private final Map<SkullBlock.Type, SkullModelBase> f_173658_;
--   public static final Map<SkullBlock.Type, ResourceLocation> f_112519_ = Util.m_137469_(Maps.newHashMap(), (p_112552_) -> {
-+   private static final Map<SkullBlock.Type, ResourceLocation> f_112519_ = Util.m_137469_(Maps.newHashMap(), (p_112552_) -> {
-       p_112552_.put(SkullBlock.Types.SKELETON, new ResourceLocation("textures/entity/skeleton/skeleton.png"));
-       p_112552_.put(SkullBlock.Types.WITHER_SKELETON, new ResourceLocation("textures/entity/skeleton/wither_skeleton.png"));
-       p_112552_.put(SkullBlock.Types.ZOMBIE, new ResourceLocation("textures/entity/zombie/zombie.png"));
+@@ -52,6 +_,7 @@
+       builder.put(SkullBlock.Types.ZOMBIE, new SkullModel(p_173662_.m_171103_(ModelLayers.f_171224_)));
+       builder.put(SkullBlock.Types.CREEPER, new SkullModel(p_173662_.m_171103_(ModelLayers.f_171130_)));
+       builder.put(SkullBlock.Types.DRAGON, new DragonHeadModel(p_173662_.m_171103_(ModelLayers.f_171135_)));
++      net.minecraftforge.fml.ModLoader.get().postEvent(new net.minecraftforge.client.event.EntityRenderersEvent.CreateSkullModels(builder, p_173662_));
+       return builder.build();
+    }
+ 
