@@ -1,5 +1,5 @@
 /*
- * Minecraft Forge - Forge Development LLC
+ * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
@@ -29,7 +29,13 @@ public class NotCondition implements ICondition
     @Override
     public boolean test()
     {
-        return !child.test();
+        return test(IContext.EMPTY);
+    }
+
+    @Override
+    public boolean test(IContext context)
+    {
+        return !child.test(context);
     }
 
     @Override

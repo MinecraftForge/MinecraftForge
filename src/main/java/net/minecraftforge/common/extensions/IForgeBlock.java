@@ -1,5 +1,5 @@
 /*
- * Minecraft Forge - Forge Development LLC
+ * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
@@ -22,6 +22,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.FishingHook;
 import net.minecraft.world.entity.projectile.WitherSkull;
 import net.minecraft.world.item.*;
+import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.pathfinder.BlockPathTypes;
@@ -32,6 +33,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.IPlantable;
 
@@ -44,6 +46,7 @@ import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.ToolAction;
 import net.minecraftforge.common.ToolActions;
+import net.minecraftforge.fml.loading.FMLEnvironment;
 
 @SuppressWarnings("deprecation")
 public interface IForgeBlock
@@ -660,9 +663,48 @@ public interface IForgeBlock
     }
 
     /**
-     * Returns the state that this block should transform into when right clicked by a tool.
-     * For example: Used to determine if an axe can strip, a shovel can path, or a hoe can till.
-     * Return null if vanilla behavior should be disabled.
+     * Returns the state that this block should transform into when right-clicked by a tool.
+     * For example: Used to determine if {@link ToolActions#AXE_STRIP an axe can strip},
+     * {@link ToolActions#SHOVEL_FLATTEN a shovel can path}, or {@link ToolActions#HOE_TILL a hoe can till}.
+     * Returns {@code null} if nothing should happen.
+     *
+     * @param state The current state
+     * @param context The use on context that the action was performed in
+     * @param toolAction The action being performed by the tool
+     * @param simulate If {@code true}, no actions that modify the world in any way should be performed. If {@code false}, the world may be modified.
+     * @return The resulting state after the action has been performed
+     */
+    @Nullable
+    default BlockState getToolModifiedState(BlockState state, UseOnContext context, ToolAction toolAction, boolean simulate)
+    {
+        BlockState toolModifiedState = getToolModifiedState(state, context.getLevel(), context.getClickedPos(),
+                context.getPlayer(), context.getItemInHand(), toolAction);
+
+        if (toolModifiedState == null && ToolActions.HOE_TILL == toolAction && context.getItemInHand().canPerformAction(ToolActions.HOE_TILL))
+        {
+            // Logic copied from HoeItem#TILLABLES; needs to be kept in sync during updating
+            Block block = state.getBlock();
+            if (block == Blocks.ROOTED_DIRT)
+            {
+                if (!simulate && !context.getLevel().isClientSide)
+                {
+                    Block.popResourceFromFace(context.getLevel(), context.getClickedPos(), context.getClickedFace(), new ItemStack(Items.HANGING_ROOTS));
+                }
+                return Blocks.DIRT.defaultBlockState();
+            } else if ((block == Blocks.GRASS_BLOCK || block == Blocks.DIRT_PATH || block == Blocks.DIRT || block == Blocks.COARSE_DIRT) &&
+                    context.getLevel().getBlockState(context.getClickedPos().above()).isAir())
+            {
+                return block == Blocks.COARSE_DIRT ? Blocks.DIRT.defaultBlockState() : Blocks.FARMLAND.defaultBlockState();
+            }
+        }
+
+        return toolModifiedState;
+    }
+
+    /**
+     * Returns the state that this block should transform into when right-clicked by a tool.
+     * For example: Used to determine if {@link ToolActions#AXE_STRIP an axe can strip} or {@link ToolActions#SHOVEL_FLATTEN a shovel can path}.
+     * Returns {@code null} if nothing should happen.
      *
      * @param state The current state
      * @param level The level
@@ -671,18 +713,20 @@ public interface IForgeBlock
      * @param stack The stack being used by the player
      * @param toolAction The action being performed by the tool
      * @return The resulting state after the action has been performed
+     * @deprecated Override and use {@link #getToolModifiedState(BlockState, UseOnContext, ToolAction, boolean)} instead
      */
     @Nullable
+    // TODO 1.19: Remove this and move the default impl to the newer method in 1.19. Has to stay here to preserve behavior of overrides on this method.
+    @Deprecated(forRemoval = true, since = "1.18.2")
     default BlockState getToolModifiedState(BlockState state, Level level, BlockPos pos, Player player, ItemStack stack, ToolAction toolAction)
     {
         if (!stack.canPerformAction(toolAction)) return null;
-        if (ToolActions.AXE_STRIP.equals(toolAction)) return AxeItem.getAxeStrippingState(state);
-        else if(ToolActions.AXE_SCRAPE.equals(toolAction)) return WeatheringCopper.getPrevious(state).orElse(null);
-        else if(ToolActions.AXE_WAX_OFF.equals(toolAction)) return Optional.ofNullable(HoneycombItem.WAX_OFF_BY_BLOCK.get().get(state.getBlock())).map((p_150694_) -> {
+        if (ToolActions.AXE_STRIP == toolAction) return AxeItem.getAxeStrippingState(state);
+        else if(ToolActions.AXE_SCRAPE == toolAction) return WeatheringCopper.getPrevious(state).orElse(null);
+        else if(ToolActions.AXE_WAX_OFF == toolAction) return Optional.ofNullable(HoneycombItem.WAX_OFF_BY_BLOCK.get().get(state.getBlock())).map((p_150694_) -> {
             return p_150694_.withPropertiesOf(state);
         }).orElse(null);
-        //else if(ToolActions.HOE_TILL.equals(toolAction)) return HoeItem.getHoeTillingState(state); //TODO HoeItem bork
-        else if (ToolActions.SHOVEL_FLATTEN.equals(toolAction)) return ShovelItem.getShovelPathingState(state);
+        else if (ToolActions.SHOVEL_FLATTEN == toolAction) return ShovelItem.getShovelPathingState(state);
         return null;
     }
 
@@ -748,5 +792,44 @@ public interface IForgeBlock
         {
             return state.isSignalSource() && direction != null;
         }
+    }
+
+    /**
+     * Whether this block hides the neighbors face pointed towards by the given direction.
+     * <p>
+     * This method should only be used for blocks you don't control, for your own blocks override
+     * {@link Block#skipRendering(BlockState, BlockState, Direction)} on the respective block instead
+     * <p>
+     * WARNING: This method is likely to be called from a worker thread! If you want to retrieve a
+     *          {@link net.minecraft.world.level.block.entity.BlockEntity} from the given level, make sure to use
+     *          {@link net.minecraftforge.common.extensions.IForgeBlockGetter#getExistingBlockEntity(BlockPos)} to not
+     *          accidentally create a new or delete an old {@link net.minecraft.world.level.block.entity.BlockEntity}
+     *          off of the main thread as this would cause a write operation to the given {@link BlockGetter} and cause
+     *          a CME in the process. Any other direct or indirect write operation to the {@link BlockGetter} will have
+     *          the same outcome.
+     *
+     * @param level The world
+     * @param pos The blocks position in the world
+     * @param state The blocks {@link BlockState}
+     * @param neighborState The neighboring blocks {@link BlockState}
+     * @param dir The direction towards the neighboring block
+     */
+    default boolean hidesNeighborFace(BlockGetter level, BlockPos pos, BlockState state, BlockState neighborState, Direction dir)
+    {
+        return false;
+    }
+
+    /**
+     * Whether this block allows a neighboring block to hide the face of this block it touches.
+     * If this returns true, {@link IForgeBlockState#hidesNeighborFace(BlockGetter, BlockPos, BlockState, Direction)}
+     * will be called on the neighboring block.
+     */
+    default boolean supportsExternalFaceHiding(BlockState state)
+    {
+        if (FMLEnvironment.dist.isClient())
+        {
+            return !ForgeHooksClient.isBlockInSolidLayer(state);
+        }
+        return true;
     }
 }

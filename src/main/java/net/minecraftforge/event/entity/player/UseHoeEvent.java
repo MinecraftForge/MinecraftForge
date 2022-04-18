@@ -1,5 +1,5 @@
 /*
- * Minecraft Forge - Forge Development LLC
+ * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
@@ -19,12 +19,11 @@ import javax.annotation.Nonnull;
  * and damage the hoe.
  *
  * setResult(ALLOW) is the same as the old setHandled();
- * 
- * TODO: 1.17 Remove
  */
 @Cancelable
 @HasResult
-@Deprecated
+// TODO 1.19: Remove
+@Deprecated(forRemoval = true, since = "1.18.2")
 public class UseHoeEvent extends PlayerEvent
 {
     private final UseOnContext context;;

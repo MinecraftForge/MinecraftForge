@@ -1,5 +1,5 @@
 /*
- * Minecraft Forge - Forge Development LLC
+ * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
@@ -65,7 +65,7 @@ public class ForgeWorldPresetScreens
 
     static void registerPresets()
     {
-        ForgeRegistries.WORLD_TYPES.forEach(wt -> {
+        ForgeRegistries.WORLD_TYPES.get().forEach(wt -> {
             GeneratorPreset gen = new GeneratorPreset(wt);
             GENERATORS.put(wt, gen);
             WorldPreset.registerGenerator(gen);

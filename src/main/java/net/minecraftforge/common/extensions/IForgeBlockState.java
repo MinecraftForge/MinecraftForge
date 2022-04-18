@@ -1,5 +1,5 @@
 /*
- * Minecraft Forge - Forge Development LLC
+ * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
@@ -17,6 +17,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.FishingHook;
+import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.pathfinder.BlockPathTypes;
@@ -37,6 +38,7 @@ import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.ToolAction;
+import net.minecraftforge.common.ToolActions;
 
 public interface IForgeBlockState
 {
@@ -603,9 +605,27 @@ public interface IForgeBlockState
     }
 
     /**
-     * Returns the state that this block should transform into when right clicked by a tool.
-     * For example: Used to determine if an axe can strip, a shovel can path, or a hoe can till.
-     * Return null if vanilla behavior should be disabled.
+     * Returns the state that this block should transform into when right-clicked by a tool.
+     * For example: Used to determine if {@link ToolActions#AXE_STRIP an axe can strip},
+     * {@link ToolActions#SHOVEL_FLATTEN a shovel can path}, or {@link ToolActions#HOE_TILL a hoe can till}.
+     * Returns {@code null} if nothing should happen.
+     *
+     * @param context The use on context that the action was performed in
+     * @param toolAction The action being performed by the tool
+     * @param simulate If {@code true}, no actions that modify the world in any way should be performed. If {@code false}, the world may be modified.
+     * @return The resulting state after the action has been performed
+     */
+    @Nullable
+    default BlockState getToolModifiedState(UseOnContext context, ToolAction toolAction, boolean simulate)
+    {
+        BlockState eventState = net.minecraftforge.event.ForgeEventFactory.onToolUse(self(), context, toolAction, simulate);
+        return eventState != self() ? eventState : self().getBlock().getToolModifiedState(self(), context, toolAction, simulate);
+    }
+
+    /**
+     * Returns the state that this block should transform into when right-clicked by a tool.
+     * For example: Used to determine if {@link ToolActions#AXE_STRIP an axe can strip} or {@link ToolActions#SHOVEL_FLATTEN a shovel can path}.
+     * Returns {@code null} if nothing should happen.
      *
      * @param level The level
      * @param pos The block position in level
@@ -613,8 +633,11 @@ public interface IForgeBlockState
      * @param stack The stack being used by the player
      * @param toolAction The tool type to be considered when performing the action
      * @return The resulting state after the action has been performed
+     * @deprecated Use {@link #getToolModifiedState(UseOnContext, ToolAction, boolean)} instead
      */
     @Nullable
+    // TODO 1.19: Remove
+    @Deprecated(forRemoval = true, since = "1.18.2")
     default BlockState getToolModifiedState(Level level, BlockPos pos, Player player, ItemStack stack, ToolAction toolAction)
     {
         BlockState eventState = net.minecraftforge.event.ForgeEventFactory.onToolUse(self(), level, pos, player, stack, toolAction);
@@ -645,5 +668,32 @@ public interface IForgeBlockState
     default boolean canRedstoneConnectTo(BlockGetter level, BlockPos pos, @Nullable Direction direction)
     {
         return self().getBlock().canConnectRedstone(self(), level, pos, direction);
+    }
+
+    /**
+     * Whether this block hides the neighbors face pointed towards by the given direction.
+     * <p>
+     * This method should only be used for blocks you don't control, for your own blocks override
+     * {@link net.minecraft.world.level.block.Block#skipRendering(BlockState, BlockState, Direction)}
+     * on the respective block instead
+     *
+     * @param level The world
+     * @param pos The blocks position in the world
+     * @param neighborState The neighboring blocks {@link BlockState}
+     * @param dir The direction towards the neighboring block
+     */
+    default boolean hidesNeighborFace(BlockGetter level, BlockPos pos, BlockState neighborState, Direction dir)
+    {
+        return self().getBlock().hidesNeighborFace(level, pos, self(), neighborState, dir);
+    }
+
+    /**
+     * Whether this block allows a neighboring block to hide the face of this block it touches.
+     * If this returns true, {@link IForgeBlockState#hidesNeighborFace(BlockGetter, BlockPos, BlockState, Direction)}
+     * will be called on the neighboring block.
+     */
+    default boolean supportsExternalFaceHiding()
+    {
+        return self().getBlock().supportsExternalFaceHiding(self());
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Minecraft Forge - Forge Development LLC
+ * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
@@ -137,8 +137,6 @@ public class BrewingRecipeRegistry {
      */
     public static boolean isValidInput(ItemStack stack)
     {
-        if (stack.getCount() != 1) return false;
-
         for (IBrewingRecipe recipe : recipes)
         {
             if (recipe.isInput(stack))

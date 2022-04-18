@@ -1,5 +1,5 @@
 /*
- * Minecraft Forge - Forge Development LLC
+ * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
@@ -116,11 +116,11 @@ public class LootModifierManager extends SimpleJsonResourceReloadListener {
 
         ResourceLocation serializer = new ResourceLocation(GsonHelper.getAsString(object, "type"));
 
-        return ForgeRegistries.LOOT_MODIFIER_SERIALIZERS.getValue(serializer).read(location, object, lootConditions);
+        return ForgeRegistries.LOOT_MODIFIER_SERIALIZERS.get().getValue(serializer).read(location, object, lootConditions);
     }
 
     public static GlobalLootModifierSerializer<?> getSerializerForName(ResourceLocation resourcelocation) {
-        return ForgeRegistries.LOOT_MODIFIER_SERIALIZERS.getValue(resourcelocation);
+        return ForgeRegistries.LOOT_MODIFIER_SERIALIZERS.get().getValue(resourcelocation);
     }
 
     /**

@@ -1,5 +1,5 @@
 /*
- * Minecraft Forge - Forge Development LLC
+ * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
@@ -18,8 +18,10 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraft.client.gui.screens.Screen;
 
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.fml.LogicalSide;
 import org.lwjgl.glfw.GLFW;
 
 /**
@@ -209,11 +211,43 @@ public class ScreenEvent extends Event
      * This event fires in {@link EffectRenderingInventoryScreen} in the
      * {@code checkEffectRendering} method when potion effects are active and the gui wants to move over.
      * Cancel this event to prevent the Gui from being moved.
+     *
+     * @deprecated This event was made redundant by the removal of the screen shifting due to potion indicators in the
+     * inventory screen (along with being moved to the right hand side). This has been changed to have no effect, and
+     * will be removed in 1.19. See {@link PotionSizeEvent} as a possible alternative instead.
      */
+    @Deprecated(forRemoval = true, since = "1.18.1")
     @Cancelable
     public static class PotionShiftEvent extends ScreenEvent
     {
         public PotionShiftEvent(Screen screen)
+        {
+            super(screen);
+        }
+    }
+
+    /**
+     * Fired to determine whether to render the potion indicators in the {@link EffectRenderingInventoryScreen inventory
+     * screen} in compact or classic mode.
+     *
+     * <p>This event is not {@linkplain Cancelable cancelable} and {@linkplain HasResult has a result}. </p>
+     * <ul>
+     *   <li>{@link Result#ALLOW} - forcibly renders the potion indicators in <em>compact</em> mode.</li>
+     *   <li>{@link Result#DEFAULT} - defaults to vanilla behavior to using compact mode if the the screen width is too
+     *   small for classic rendering of potion indicators.</li>
+     *   <li>{@link Result#DENY} - forcibly renders the potion indicators in <em>classic</em> mode.</li>
+     * </ul>
+     *
+     * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
+     * only on the {@linkplain LogicalSide#CLIENT logical client}. </p>
+     */
+    @HasResult
+    public static class PotionSizeEvent extends ScreenEvent
+    {
+        /**
+         * @hidden For internal use only.
+         */
+        public PotionSizeEvent(Screen screen)
         {
             super(screen);
         }

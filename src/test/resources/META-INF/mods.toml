@@ -77,6 +77,8 @@ license="LGPL v2.1"
 [[mods]]
     modId="ender_mask_test"
 [[mods]]
+    modId="custom_head_test"
+[[mods]]
     modId="raid_enum_test"
 [[mods]]
     modId="player_name_event_test"
@@ -84,6 +86,8 @@ license="LGPL v2.1"
     modId="tool_interact_test"
 [[mods]]
     modId="custom_elytra_test"
+[[mods]]
+    modId="snow_boots_test"
 [[mods]]
     modId="finite_water_test"
 [[mods]]
@@ -175,6 +179,8 @@ license="LGPL v2.1"
 [[mods]]
     modId="capabilities_test"
 [[mods]]
+    modId="audio_stream_test"
+[[mods]]
     modId="custom_mob_bucket_test"
 [[mods]]
     modId="custom_armor_model_test"
@@ -198,5 +204,17 @@ license="LGPL v2.1"
     modId="hidden_tooltip_parts"
 [[mods]]
     modId="gametest_test"
+[[mods]]
+    modId="many_mob_effects_test"
+[[mods]]
+    modId="potion_size_event_test"
+[[mods]]
+    modId="recipe_book_extension_test"
+[[mods]]
+    modId="hide_neighbor_face_test"
+[[mods]]
+    modId="living_get_projectile_event_test"
+[[mods]]
+    modId="server_world_creation_test"
 
 # ADD ABOVE THIS LINE

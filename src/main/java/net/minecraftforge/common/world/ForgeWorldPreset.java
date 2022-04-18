@@ -1,5 +1,5 @@
 /*
- * Minecraft Forge - Forge Development LLC
+ * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
@@ -34,7 +34,7 @@ public class ForgeWorldPreset extends ForgeRegistryEntry<ForgeWorldPreset>
         if (StringUtil.isNullOrEmpty(defaultWorldType) || "default".equals(defaultWorldType))
             return null; // use vanilla
 
-        ForgeWorldPreset def = ForgeRegistries.WORLD_TYPES.getValue(new ResourceLocation(defaultWorldType));
+        ForgeWorldPreset def = ForgeRegistries.WORLD_TYPES.get().getValue(new ResourceLocation(defaultWorldType));
         if (def == null)
         {
             LOGGER.error("The defaultWorldType '{}' specified in the forge config has not been registered. The vanilla default generator will be used.", defaultWorldType);

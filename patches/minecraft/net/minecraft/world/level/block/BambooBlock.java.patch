@@ -1,5 +1,14 @@
 --- a/net/minecraft/world/level/block/BambooBlock.java
 +++ b/net/minecraft/world/level/block/BambooBlock.java
+@@ -26,7 +_,7 @@
+ import net.minecraft.world.phys.shapes.CollisionContext;
+ import net.minecraft.world.phys.shapes.VoxelShape;
+ 
+-public class BambooBlock extends Block implements BonemealableBlock {
++public class BambooBlock extends Block implements BonemealableBlock, net.minecraftforge.common.IPlantable  {
+    protected static final float f_152092_ = 3.0F;
+    protected static final float f_152093_ = 5.0F;
+    protected static final float f_152094_ = 1.5F;
 @@ -114,10 +_,11 @@
  
     public void m_7455_(BlockState p_48936_, ServerLevel p_48937_, BlockPos p_48938_, Random p_48939_) {
@@ -23,3 +32,16 @@
     }
  
     protected void m_48910_(BlockState p_48911_, Level p_48912_, BlockPos p_48913_, Random p_48914_, int p_48915_) {
+@@ -212,5 +_,12 @@
+       }
+ 
+       return i;
++   }
++
++   @Override
++   public BlockState getPlant(BlockGetter world, BlockPos pos) {
++      BlockState state = world.m_8055_(pos);
++      if (state.m_60734_() != this) return m_49966_();
++      return state;
+    }
+ }

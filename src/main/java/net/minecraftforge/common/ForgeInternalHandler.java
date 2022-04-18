@@ -1,5 +1,5 @@
 /*
- * Minecraft Forge - Forge Development LLC
+ * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
@@ -33,7 +33,7 @@ import net.minecraftforge.server.command.ConfigCommand;
 
 public class ForgeInternalHandler
 {
-    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    @SubscribeEvent(priority = EventPriority.HIGH)
     public void onEntityJoinWorld(EntityJoinWorldEvent event)
     {
         Entity entity = event.getEntity();
