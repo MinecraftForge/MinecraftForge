@@ -217,6 +217,6 @@ license="LGPL v2.1"
 [[mods]]
     modId="server_world_creation_test"
 [[mods]]
-    modId="channel_mismatch"
+    modId="mod_mismatch"
 
 # ADD ABOVE THIS LINE
