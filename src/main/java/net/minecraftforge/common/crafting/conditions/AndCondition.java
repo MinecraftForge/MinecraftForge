@@ -1,5 +1,5 @@
 /*
- * Minecraft Forge - Forge Development LLC
+ * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
@@ -46,9 +46,15 @@ public class AndCondition implements ICondition
     @Override
     public boolean test()
     {
+        return test(IContext.EMPTY);
+    }
+
+    @Override
+    public boolean test(IContext context)
+    {
         for (ICondition child : children)
         {
-            if (!child.test())
+            if (!child.test(context))
                 return false;
         }
         return true;

@@ -1,5 +1,5 @@
 /*
- * Minecraft Forge - Forge Development LLC
+ * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
@@ -93,13 +93,6 @@ public interface IForgeFluid
     {
         return this.getFluid().getRenderLayer() == layer;
     }*/
-
-//    /**
-//     * Retrieves a list of tags names this is known to be associated with.
-//     * This should be used in favor of TagCollection.getOwningTags, as this caches the result and automatically updates when the TagCollection changes.
-//     */
-//    Set<ResourceLocation> getTags();
-    // TODO-PATCHING: Tag locations are now TagKeys
 
     /**
      * Retrieves the non-vanilla fluid attributes, including localized name.

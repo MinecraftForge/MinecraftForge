@@ -215,6 +215,8 @@ license="LGPL v2.1"
 [[mods]]
     modId="living_get_projectile_event_test"
 [[mods]]
+    modId="server_world_creation_test"
+[[mods]]
     modId="channel_mismatch"
 
 # ADD ABOVE THIS LINE

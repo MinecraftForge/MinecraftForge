@@ -1,5 +1,5 @@
 /*
- * Minecraft Forge - Forge Development LLC
+ * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
@@ -673,20 +673,24 @@ public class ForgeIngameGui extends Gui
             int top = 2;
             for (String msg : listL)
             {
-                if (msg == null) continue;
-                fill(poseStack, 1, top - 1, 2 + font.width(msg) + 1, top + font.lineHeight - 1, -1873784752);
-                font.draw(poseStack, msg, 2, top, 14737632);
+                if (msg != null && !msg.isEmpty())
+                {
+                    fill(poseStack, 1, top - 1, 2 + font.width(msg) + 1, top + font.lineHeight - 1, -1873784752);
+                    font.draw(poseStack, msg, 2, top, 14737632);
+                }
                 top += font.lineHeight;
             }
 
             top = 2;
             for (String msg : listR)
             {
-                if (msg == null) continue;
-                int w = font.width(msg);
-                int left = width - 2 - w;
-                fill(poseStack, left - 1, top - 1, left + w + 1, top + font.lineHeight - 1, -1873784752);
-                font.draw(poseStack, msg, left, top, 14737632);
+                if (msg != null && !msg.isEmpty())
+                {
+                    int w = font.width(msg);
+                    int left = width - 2 - w;
+                    fill(poseStack, left - 1, top - 1, left + w + 1, top + font.lineHeight - 1, -1873784752);
+                    font.draw(poseStack, msg, left, top, 14737632);
+                }
                 top += font.lineHeight;
             }
         }
@@ -897,7 +901,8 @@ public class ForgeIngameGui extends Gui
         {
             List<String> ret = this.getGameInformation();
             ret.add("");
-            ret.add("Debug: Pie [shift]: " + (this.mc.options.renderDebugCharts ? "visible" : "hidden") + " FPS [alt]: " + (this.mc.options.renderFpsChart ? "visible" : "hidden"));
+            boolean flag = this.mc.getSingleplayerServer() != null;
+            ret.add("Debug: Pie [shift]: " + (this.mc.options.renderDebugCharts ? "visible" : "hidden") + (flag ? " FPS + TPS" : " FPS") + " [alt]: " + (this.mc.options.renderFpsChart ? "visible" : "hidden"));
             ret.add("For help: press F3 + Q");
             return ret;
         }

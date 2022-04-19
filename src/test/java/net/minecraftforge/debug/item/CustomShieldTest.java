@@ -1,5 +1,5 @@
 /*
- * Minecraft Forge - Forge Development LLC
+ * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
@@ -64,7 +64,7 @@ public class CustomShieldTest
         @Override
         public boolean canPerformAction(ItemStack stack, ToolAction toolAction)
         {
-            return toolAction.equals(ToolActions.SHIELD_BLOCK);
+            return toolAction == ToolActions.SHIELD_BLOCK;
         }
     }
 }

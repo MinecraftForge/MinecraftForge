@@ -1,5 +1,30 @@
 --- a/net/minecraft/server/ReloadableServerResources.java
 +++ b/net/minecraft/server/ReloadableServerResources.java
+@@ -28,18 +_,22 @@
+    private static final Logger f_206845_ = LogUtils.getLogger();
+    private static final CompletableFuture<Unit> f_206846_ = CompletableFuture.completedFuture(Unit.INSTANCE);
+    private final Commands f_206847_;
+-   private final RecipeManager f_206848_ = new RecipeManager();
++   private final RecipeManager f_206848_;
+    private final TagManager f_206849_;
+    private final PredicateManager f_206850_ = new PredicateManager();
+    private final LootTables f_206851_ = new LootTables(this.f_206850_);
+    private final ItemModifierManager f_206852_ = new ItemModifierManager(this.f_206850_, this.f_206851_);
+-   private final ServerAdvancementManager f_206853_ = new ServerAdvancementManager(this.f_206850_);
++   private final ServerAdvancementManager f_206853_;
+    private final ServerFunctionLibrary f_206854_;
+ 
+    public ReloadableServerResources(RegistryAccess.Frozen p_206857_, Commands.CommandSelection p_206858_, int p_206859_) {
+       this.f_206849_ = new TagManager(p_206857_);
+       this.f_206847_ = new Commands(p_206858_);
+       this.f_206854_ = new ServerFunctionLibrary(p_206859_, this.f_206847_.m_82094_());
++      // Forge: pass condition context too
++      var context = new net.minecraftforge.common.crafting.conditions.ConditionContext(this.f_206849_);
++      this.f_206848_ = new RecipeManager(context);
++      this.f_206853_ = new ServerAdvancementManager(this.f_206850_, context);
+    }
+ 
+    public ServerFunctionLibrary m_206860_() {
 @@ -76,7 +_,9 @@
  
     public static CompletableFuture<ReloadableServerResources> m_206861_(ResourceManager p_206862_, RegistryAccess.Frozen p_206863_, Commands.CommandSelection p_206864_, int p_206865_, Executor p_206866_, Executor p_206867_) {

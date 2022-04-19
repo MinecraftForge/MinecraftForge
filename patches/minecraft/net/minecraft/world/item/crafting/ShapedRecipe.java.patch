@@ -43,6 +43,15 @@
     static NonNullList<Ingredient> m_44202_(String[] p_44203_, Map<String, Ingredient> p_44204_, int p_44205_, int p_44206_) {
        NonNullList<Ingredient> nonnulllist = NonNullList.m_122780_(p_44205_ * p_44206_, Ingredient.f_43901_);
        Set<String> set = Sets.newHashSet(p_44204_.keySet());
+@@ -180,7 +_,7 @@
+       return nonnulllist.isEmpty() || nonnulllist.stream().filter((p_151277_) -> {
+          return !p_151277_.m_43947_();
+       }).anyMatch((p_151273_) -> {
+-         return p_151273_.m_43908_().length == 0;
++         return net.minecraftforge.common.ForgeHooks.hasNoElements(p_151273_);
+       });
+    }
+ 
 @@ -202,15 +_,15 @@
  
     static String[] m_44196_(JsonArray p_44197_) {
