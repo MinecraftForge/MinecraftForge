@@ -38,7 +38,7 @@
  
              d1 *= d1;
 -            if (this.f_109059_.f_91077_ != null) {
-+            if (this.f_109059_.f_91077_ != null && this.f_109059_.f_91077_.m_6662_() != HitResult.Type.MISS) {
++            if (this.f_109059_.f_91077_ != null && this.f_109059_.f_91077_.m_6662_() != HitResult.Type.MISS) { // Add != MISS to ensure Attack Range is not clamped at the value of Reach Distance.
                 d1 = this.f_109059_.f_91077_.m_82450_().m_82557_(vec3);
              }
  
