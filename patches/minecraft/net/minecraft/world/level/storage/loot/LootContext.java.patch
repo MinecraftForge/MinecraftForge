@@ -66,3 +66,14 @@
              }
           }
        }
+@@ -230,6 +_,10 @@
+ 
+       public LootContextParam<? extends Entity> m_79003_() {
+          return this.f_78995_;
++      }
++
++      public String getName() {
++         return this.f_78994_;
+       }
+ 
+       public static LootContext.EntityTarget m_79006_(String p_79007_) {
