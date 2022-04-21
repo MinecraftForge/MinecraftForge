@@ -35,8 +35,8 @@
        ItemStack itemstack1 = this.f_39560_.m_8020_(1);
        boolean flag = !itemstack.m_41619_() || !itemstack1.m_41619_();
        boolean flag1 = !itemstack.m_41619_() && !itemstack1.m_41619_();
-+      this.xp = -1;
-+      if (!net.minecraftforge.common.ForgeHooks.onGrindstoneChange(this, itemstack, itemstack1, f_39559_, xp)) return;
++      this.xp = net.minecraftforge.common.ForgeHooks.onGrindstoneChange(this, itemstack, itemstack1, f_39559_);
++      if (this.xp != Integer.MIN_VALUE) return;
        if (!flag) {
           this.f_39559_.m_6836_(0, ItemStack.f_41583_);
        } else {

@@ -32,6 +32,11 @@ public class GrindstoneEventTest {
         	event.setXp(-1);
         }
         
+        if (event.getTop().is(Items.IRON_SHOVEL) && event.getBottom().is(Items.AIR))
+        {
+        	event.setOutput(ItemStack.EMPTY);
+        }
+        
         if (event.getTop().is(Items.IRON_SWORD) && event.getBottom().is(Items.AIR))
         {
         	event.setCanceled(true);

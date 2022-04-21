@@ -678,22 +678,20 @@ public class ForgeHooks
         return e.getBreakChance();
     }
     
-    public static boolean onGrindstoneChange(GrindstoneMenu container, @Nonnull ItemStack top, @Nonnull ItemStack bottem, Container outputSlot, int xp)
+    public static int onGrindstoneChange(GrindstoneMenu container, @Nonnull ItemStack top, @Nonnull ItemStack bottem, Container outputSlot)
     {
         GrindstoneUpdateEvent e = new GrindstoneUpdateEvent(top, bottem);
         if (MinecraftForge.EVENT_BUS.post(e))
         {
-            xp = e.getXp();
-            return false;
+            return e.getXp();
         }
         if (e.getOutput().isEmpty()) 
         {
-            return true;
+            return Integer.MIN_VALUE;
         }
 
         outputSlot.setItem(0, e.getOutput());
-        xp = e.getXp();
-        return false;
+        return e.getXp();
     }
 
     private static ThreadLocal<Player> craftingPlayer = new ThreadLocal<Player>();

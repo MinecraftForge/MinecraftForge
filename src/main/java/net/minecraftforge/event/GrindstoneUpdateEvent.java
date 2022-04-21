@@ -23,14 +23,14 @@ public class GrindstoneUpdateEvent extends Event
 {
 	
     private final ItemStack top;
-    private final ItemStack bottem;
+    private final ItemStack bottom;
     private ItemStack output;
     private int xp;
     
-    public GrindstoneUpdateEvent(ItemStack top, ItemStack bottem) 
+    public GrindstoneUpdateEvent(ItemStack top, ItemStack bottom) 
     {
         this.top = top;
-        this.bottem = bottem;
+        this.bottom = bottom;
         this.output = ItemStack.EMPTY;
         this.xp = 0;
     }
@@ -48,7 +48,7 @@ public class GrindstoneUpdateEvent extends Event
      */
     public ItemStack getBottom() 
     {
-        return bottem;
+        return bottom;
     }
     
     /**
@@ -75,7 +75,7 @@ public class GrindstoneUpdateEvent extends Event
     /**
      * This is the experience amount determined by the event, not the vanilla behavior. <br>
      * If you are the first receiver of this event, it is guaranteed to be 0. <br>
-     * if the value is lower than 0, the vanilla behavior for calculating experience will run. <br>
+     * if the value is equal to -1, the vanilla behavior for calculating experience will run. <br>
      * @return The experience amount given to the player.
      */
     public int getXp()
@@ -91,5 +91,4 @@ public class GrindstoneUpdateEvent extends Event
     {
         this.xp = xp;
     }
-
 }
