@@ -35,6 +35,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.mojang.datafixers.kinds.App;
+import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.Lifecycle;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -83,6 +84,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AnvilMenu;
+import net.minecraft.world.inventory.GrindstoneMenu;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.nbt.CompoundTag;
@@ -123,6 +125,7 @@ import net.minecraftforge.common.world.MobSpawnSettingsBuilder;
 import net.minecraftforge.event.AnvilUpdateEvent;
 import net.minecraftforge.event.DifficultyChangeEvent;
 import net.minecraftforge.event.ForgeEventFactory;
+import net.minecraftforge.event.GrindstoneUpdateEvent;
 import net.minecraftforge.event.ItemAttributeModifierEvent;
 import net.minecraftforge.event.ServerChatEvent;
 import net.minecraftforge.event.RegisterStructureConversionsEvent;
@@ -673,6 +676,24 @@ public class ForgeHooks
         AnvilRepairEvent e = new AnvilRepairEvent(player, left, right, output);
         MinecraftForge.EVENT_BUS.post(e);
         return e.getBreakChance();
+    }
+    
+    public static boolean onGrindstoneChange(GrindstoneMenu container, @Nonnull ItemStack top, @Nonnull ItemStack bottem, Container outputSlot, int xp)
+    {
+        GrindstoneUpdateEvent e = new GrindstoneUpdateEvent(top, bottem);
+        if (MinecraftForge.EVENT_BUS.post(e))
+        {
+            xp = e.getXp();
+            return false;
+        }
+        if (e.getOutput().isEmpty()) 
+        {
+            return true;
+        }
+
+        outputSlot.setItem(0, e.getOutput());
+        xp = e.getXp();
+        return false;
     }
 
     private static ThreadLocal<Player> craftingPlayer = new ThreadLocal<Player>();

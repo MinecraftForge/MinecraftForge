@@ -213,6 +213,8 @@ license="LGPL v2.1"
 [[mods]]
     modId="hide_neighbor_face_test"
 [[mods]]
+    modId="grindstone_event_test"
+[[mods]]
     modId="living_get_projectile_event_test"
 [[mods]]
     modId="server_world_creation_test"
