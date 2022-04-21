@@ -25,8 +25,10 @@ import net.minecraftforge.common.util.LogicalSidedProvider;
 import net.minecraft.core.Registry;
 import net.minecraft.network.chat.Component;
 import net.minecraftforge.entity.IEntityAdditionalSpawnData;
+import net.minecraftforge.entity.PartEntity;
 import net.minecraftforge.network.NetworkEvent;
 
+import java.util.Arrays;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.UUID;
@@ -50,6 +52,7 @@ public class PlayMessages
         private final double posX, posY, posZ;
         private final byte pitch, yaw, headYaw;
         private final int velX, velY, velZ;
+        private final int[] partIds;
         private final FriendlyByteBuf buf;
 
         SpawnEntity(Entity e)
@@ -71,11 +74,12 @@ public class PlayMessages
             this.velX = (int)(d1 * 8000.0D);
             this.velY = (int)(d2 * 8000.0D);
             this.velZ = (int)(d3 * 8000.0D);
+            this.partIds = e.isMultipartEntity() ? Arrays.stream(e.getParts()).mapToInt(Entity::getId).toArray() : new int[0];
             this.buf = null;
         }
 
         private SpawnEntity(int typeId, int entityId, UUID uuid, double posX, double posY, double posZ,
-                byte pitch, byte yaw, byte headYaw, int velX, int velY, int velZ, FriendlyByteBuf buf)
+                byte pitch, byte yaw, byte headYaw, int velX, int velY, int velZ, int[] partIds, FriendlyByteBuf buf)
         {
             this.entity = null;
             this.typeId = typeId;
@@ -90,6 +94,7 @@ public class PlayMessages
             this.velX = velX;
             this.velY = velY;
             this.velZ = velZ;
+            this.partIds = partIds;
             this.buf = buf;
         }
 
@@ -108,6 +113,7 @@ public class PlayMessages
             buf.writeShort(msg.velX);
             buf.writeShort(msg.velY);
             buf.writeShort(msg.velZ);
+            buf.writeVarIntArray(msg.partIds);
             if (msg.entity instanceof IEntityAdditionalSpawnData)
             {
                 ((IEntityAdditionalSpawnData) msg.entity).writeSpawnData(buf);
@@ -123,6 +129,7 @@ public class PlayMessages
                     buf.readDouble(), buf.readDouble(), buf.readDouble(),
                     buf.readByte(), buf.readByte(), buf.readByte(),
                     buf.readShort(), buf.readShort(), buf.readShort(),
+                    buf.readVarIntArray(),
                     buf
                     );
         }
@@ -152,6 +159,14 @@ public class PlayMessages
                 e.setUUID(msg.uuid);
                 world.filter(ClientLevel.class::isInstance).ifPresent(w->((ClientLevel)w).putNonPlayerEntity(msg.entityId, e));
                 e.lerpMotion(msg.velX / 8000.0, msg.velY / 8000.0, msg.velZ / 8000.0);
+                if (e.isMultipartEntity())
+                {
+                    PartEntity<?>[] parts = e.getParts();
+                    for (int i = 0; i < parts.length; i++)
+                    {
+                        parts[i].setId(msg.partIds[i]);
+                    }
+                }
                 if (e instanceof IEntityAdditionalSpawnData)
                 {
                     ((IEntityAdditionalSpawnData) e).readSpawnData(msg.buf);
