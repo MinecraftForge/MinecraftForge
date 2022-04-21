@@ -650,3 +650,16 @@
           }
        } else {
           return EquipmentSlot.HEAD;
+@@ -3276,6 +_,12 @@
+       this.m_20084_(p_147206_.m_131555_());
+       this.m_19890_(d0, d1, d2, f, f1);
+       this.m_20334_((double)((float)p_147206_.m_131560_() / 8000.0F), (double)((float)p_147206_.m_131561_() / 8000.0F), (double)((float)p_147206_.m_131562_() / 8000.0F));
++      if (this.isMultipartEntity()) {
++         net.minecraftforge.entity.PartEntity<?>[] parts = this.getParts();
++         for (int i = 0; i < parts.length; i++) {
++            parts[i].m_20234_(p_147206_.getPartIds()[i]);
++         }
++      }
+    }
+ 
+    public static record Fallsounds(SoundEvent f_196626_, SoundEvent f_196627_) {

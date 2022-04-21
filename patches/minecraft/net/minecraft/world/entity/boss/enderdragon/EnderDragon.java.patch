@@ -41,12 +41,10 @@
           }
  
           if (this.f_31073_ != null) {
-@@ -847,6 +_,16 @@
- 
-    public boolean m_6072_() {
+@@ -849,8 +_,19 @@
        return false;
-+   }
-+
+    }
+ 
 +   @Override
 +   public boolean isMultipartEntity() {
 +      return true;
@@ -55,6 +53,11 @@
 +   @Override
 +   public net.minecraftforge.entity.PartEntity<?>[] getParts() {
 +      return this.f_31089_;
-    }
- 
++   }
++
     public void m_142223_(ClientboundAddMobPacket p_149572_) {
+       super.m_142223_(p_149572_);
++      if (true) return;
+       EnderDragonPart[] aenderdragonpart = this.m_31156_();
+ 
+       for(int i = 0; i < aenderdragonpart.length; ++i) {
