@@ -1,13 +1,5 @@
 --- a/net/minecraft/client/multiplayer/ClientLevel.java
 +++ b/net/minecraft/client/multiplayer/ClientLevel.java
-@@ -117,6 +_,7 @@
-    private final Deque<Runnable> f_194122_ = Queues.newArrayDeque();
-    private int f_194123_;
-    private static final Set<Item> f_194124_ = Set.of(Items.f_42127_, Items.f_151033_);
-+   private final it.unimi.dsi.fastutil.ints.Int2ObjectMap<net.minecraftforge.entity.PartEntity<?>> partEntities = new it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap<>();
- 
-    public ClientLevel(ClientPacketListener p_205505_, ClientLevel.ClientLevelData p_205506_, ResourceKey<Level> p_205507_, Holder<DimensionType> p_205508_, int p_205509_, int p_205510_, Supplier<ProfilerFiller> p_205511_, LevelRenderer p_205512_, boolean p_205513_, long p_205514_) {
-       super(p_205506_, p_205507_, p_205508_, p_205511_, true, p_205513_, p_205514_);
 @@ -129,6 +_,8 @@
        this.f_194123_ = p_205510_;
        this.m_46465_();
@@ -68,34 +60,13 @@
           this.f_104840_ = p_104852_;
        }
  
-@@ -907,11 +_,30 @@
-             ClientLevel.this.f_104566_.add((AbstractClientPlayer)p_171712_);
-          }
- 
-+         if (p_171712_.isMultipartEntity()) {
-+            for (net.minecraftforge.entity.PartEntity<?> part : p_171712_.getParts()) {
-+               ClientLevel.this.partEntities.put(part.m_142049_(), part);
-+            }
-+         }
-       }
- 
+@@ -912,6 +_,9 @@
        public void m_141981_(Entity p_171716_) {
           p_171716_.m_19877_();
           ClientLevel.this.f_104566_.remove(p_171716_);
 +
 +          p_171716_.onRemovedFromWorld();
 +          net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.EntityLeaveWorldEvent(p_171716_, ClientLevel.this));
-+
-+         if (p_171716_.isMultipartEntity()) {
-+            for (net.minecraftforge.entity.PartEntity<?> part : p_171716_.getParts()) {
-+               ClientLevel.this.partEntities.remove(part.m_142049_());
-+            }
-+         }
        }
-+   }
-+
-+   @Override
-+   public java.util.Collection<net.minecraftforge.entity.PartEntity<?>> getPartEntities() {
-+      return this.partEntities.values();
     }
  }
