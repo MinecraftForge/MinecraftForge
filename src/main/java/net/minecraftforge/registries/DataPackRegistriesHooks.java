@@ -15,6 +15,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.event.world.AddBuiltinRegistryEvent;
 import net.minecraftforge.fml.ModLoader;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -28,7 +29,7 @@ public class DataPackRegistriesHooks
    public static Map<ResourceKey<? extends Registry<?>>, RegistryAccess.RegistryData<?>> addBuiltinRegistriesEvent(ImmutableMap.Builder<ResourceKey<? extends Registry<?>>, RegistryAccess.RegistryData<?>> builder)
    {
       REGISTRY_ACCESS_REGISTRIES_COPY = new HashMap<>(builder.build());
-      return REGISTRY_ACCESS_REGISTRIES_COPY;
+      return Collections.unmodifiableMap(REGISTRY_ACCESS_REGISTRIES_COPY);
    }
 
    /** Modders, DO NOT USE. Internal use only */
