@@ -3,6 +3,7 @@ package net.minecraftforge.debug;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraftforge.event.AnvilUpdateEvent;
+import net.minecraftforge.event.GrindstoneResultEvent;
 import net.minecraftforge.event.GrindstoneUpdateEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -43,4 +44,16 @@ public class GrindstoneEventTest {
         }
     }
 	
+    @SubscribeEvent
+    public static void onGrindstoneResult(GrindstoneResultEvent event) {
+        if (event.getTop().is(Items.LAPIS_LAZULI) && event.getBottom().is(Items.NETHERITE_INGOT))
+	    {
+	        ItemStack top = event.getTop().copy();
+	        ItemStack bottom = event.getBottom().copy();
+	        bottom.shrink(1);
+	        top.shrink(1);
+			event.setnewBottom(bottom);
+            event.setnewTop(top);
+        }
+    }
 }

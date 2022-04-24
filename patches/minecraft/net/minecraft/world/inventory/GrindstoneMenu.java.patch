@@ -23,7 +23,13 @@
           }
        });
        this.m_38897_(new Slot(this.f_39559_, 2, 129, 34) {
-@@ -71,6 +_,7 @@
+@@ -66,11 +_,13 @@
+ 
+                p_39634_.m_46796_(1042, p_39635_, 0);
+             });
++            if (!net.minecraftforge.common.ForgeHooks.onGrindstoneTake(GrindstoneMenu.this.f_39560_.m_8020_(0), GrindstoneMenu.this.f_39560_.m_8020_(1),  GrindstoneMenu.this.f_39560_)) return;
+             GrindstoneMenu.this.f_39560_.m_6836_(0, ItemStack.f_41583_);
+             GrindstoneMenu.this.f_39560_.m_6836_(1, ItemStack.f_41583_);
           }
  
           private int m_39631_(Level p_39632_) {
@@ -35,7 +41,7 @@
        ItemStack itemstack1 = this.f_39560_.m_8020_(1);
        boolean flag = !itemstack.m_41619_() || !itemstack1.m_41619_();
        boolean flag1 = !itemstack.m_41619_() && !itemstack1.m_41619_();
-+      this.xp = net.minecraftforge.common.ForgeHooks.onGrindstoneChange(this, itemstack, itemstack1, f_39559_);
++      this.xp = net.minecraftforge.common.ForgeHooks.onGrindstoneChange(itemstack, itemstack1, f_39559_);
 +      if (this.xp != Integer.MIN_VALUE) return;
        if (!flag) {
           this.f_39559_.m_6836_(0, ItemStack.f_41583_);

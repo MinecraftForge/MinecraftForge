@@ -35,7 +35,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.mojang.datafixers.kinds.App;
-import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.Lifecycle;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -84,7 +83,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AnvilMenu;
-import net.minecraft.world.inventory.GrindstoneMenu;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.nbt.CompoundTag;
@@ -125,6 +123,7 @@ import net.minecraftforge.common.world.MobSpawnSettingsBuilder;
 import net.minecraftforge.event.AnvilUpdateEvent;
 import net.minecraftforge.event.DifficultyChangeEvent;
 import net.minecraftforge.event.ForgeEventFactory;
+import net.minecraftforge.event.GrindstoneResultEvent;
 import net.minecraftforge.event.GrindstoneUpdateEvent;
 import net.minecraftforge.event.ItemAttributeModifierEvent;
 import net.minecraftforge.event.ServerChatEvent;
@@ -678,20 +677,23 @@ public class ForgeHooks
         return e.getBreakChance();
     }
     
-    public static int onGrindstoneChange(GrindstoneMenu container, @Nonnull ItemStack top, @Nonnull ItemStack bottem, Container outputSlot)
+    public static int onGrindstoneChange(@Nonnull ItemStack top, @Nonnull ItemStack bottom, Container outputSlot)
     {
-        GrindstoneUpdateEvent e = new GrindstoneUpdateEvent(top, bottem);
-        if (MinecraftForge.EVENT_BUS.post(e))
-        {
-            return e.getXp();
-        }
-        if (e.getOutput().isEmpty()) 
-        {
-            return Integer.MIN_VALUE;
-        }
+        GrindstoneUpdateEvent e = new GrindstoneUpdateEvent(top, bottom);
+        if (MinecraftForge.EVENT_BUS.post(e)) return e.getXp();
+        if (e.getOutput().isEmpty()) return Integer.MIN_VALUE;
 
         outputSlot.setItem(0, e.getOutput());
         return e.getXp();
+    }
+    
+    public static boolean onGrindstoneTake(@Nonnull ItemStack top, @Nonnull ItemStack bottom, Container inputSlots) {
+        GrindstoneResultEvent e = new GrindstoneResultEvent(top, bottom);
+        if (MinecraftForge.EVENT_BUS.post(e)) return false;
+        inputSlots.setItem(0, e.getnewTop());
+        inputSlots.setItem(1, e.getnewBottom());
+        inputSlots.setChanged();
+        return false;
     }
 
     private static ThreadLocal<Player> craftingPlayer = new ThreadLocal<Player>();
