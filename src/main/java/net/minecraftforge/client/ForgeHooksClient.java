@@ -223,6 +223,7 @@ public class ForgeHooksClient
         }
     }
 
+    @Deprecated
     public static void dispatchRenderLast(LevelRenderer context, PoseStack poseStack, float partialTick, Matrix4f projectionMatrix, long finishTimeNano)
     {
         MinecraftForge.EVENT_BUS.post(new RenderLevelLastEvent(context, poseStack, partialTick, projectionMatrix, finishTimeNano));

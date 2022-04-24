@@ -10,6 +10,10 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.LevelRenderer;
 import com.mojang.math.Matrix4f;
 
+/**
+ * @see net.minecraftforge.client.LevelRendererHooks
+ */
+@Deprecated
 public class RenderLevelLastEvent extends net.minecraftforge.eventbus.api.Event
 {
     private final LevelRenderer levelRenderer;
