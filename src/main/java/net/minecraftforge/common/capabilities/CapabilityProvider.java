@@ -119,7 +119,7 @@ public abstract class CapabilityProvider<B extends ICapabilityProviderImpl<B>> i
         }
     }
 
-    protected final @Nullable CompoundTag serializeCaps()
+    public final @Nullable CompoundTag serializeCaps()
     {
         if (isLazy && !initialized)
         {
