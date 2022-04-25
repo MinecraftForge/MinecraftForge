@@ -11,10 +11,10 @@ import com.mojang.math.Matrix4f;
 import com.mojang.math.Quaternion;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
@@ -46,7 +46,7 @@ public class RenderableTest
 {
     public static final String MODID = "renderable_test";
 
-    public static final boolean ENABLED = false;
+    public static final boolean ENABLED = true; // Renders at (0, 120, 0)
     public static final boolean USE_LEVEL_RENDERER_HOOKS = true; // True when using LevelRendererHooks. False when using RenderLevelLastEvent
 
     public RenderableTest()
@@ -62,7 +62,7 @@ public class RenderableTest
 
     private static class Client
     {
-        private static ResourceLocation MODEL_LOC = new ResourceLocation("minecraft:block/diamond_block");
+        private static ResourceLocation MODEL_LOC = new ResourceLocation("minecraft:block/blue_stained_glass");
 
         private static IRenderable<MultipartTransforms> renderable;
         private static IRenderable<IModelData> bakedRenderable;
@@ -73,7 +73,17 @@ public class RenderableTest
             bus.addListener(Client::registerModels);
             bus.addListener(Client::registerReloadListeners);
             if (USE_LEVEL_RENDERER_HOOKS)
-                LevelRendererHooks.registerHook(LevelRendererHooks.Phase.LAST, Client::renderHook);
+            {
+                // Registers level renderer hooks for each of phases, offsetting them on the x axis. AFTER_SKY is at (0, 120, 0)
+                LevelRendererHooks.register(LevelRendererHooks.Phase.AFTER_SKY, context -> Client.renderHook(context, 0));
+                LevelRendererHooks.register(LevelRendererHooks.Phase.AFTER_SOLID_BLOCKS, context -> Client.renderHook(context, 1));
+                LevelRendererHooks.register(LevelRendererHooks.Phase.AFTER_ENTITIES, context -> Client.renderHook(context, 2));
+                LevelRendererHooks.register(LevelRendererHooks.Phase.AFTER_TRANSLUCENT_BLOCKS, context -> Client.renderHook(context, 3));
+                LevelRendererHooks.register(LevelRendererHooks.Phase.AFTER_PARTICLES, context -> Client.renderHook(context, 4));
+                LevelRendererHooks.register(LevelRendererHooks.Phase.AFTER_CLOUDS, context -> Client.renderHook(context, 5));
+                LevelRendererHooks.register(LevelRendererHooks.Phase.AFTER_WEATHER, context -> Client.renderHook(context, 6));
+                LevelRendererHooks.register(LevelRendererHooks.Phase.LAST, context -> Client.renderHook(context, 7));
+            }
             else
                 MinecraftForge.EVENT_BUS.addListener(Client::renderLast);
         }
@@ -112,16 +122,21 @@ public class RenderableTest
             });
         }
 
-        private static double time;
-
         public static void renderLast(RenderLevelLastEvent event)
         {
             Vec3 cam = Minecraft.getInstance().gameRenderer.getMainCamera().getPosition();
-            renderHook(event.getLevelRenderer(), event.getPoseStack(), event.getProjectionMatrix(), event.getPartialTick(), cam.x, cam.y, cam.z);
+            renderHook(new LevelRendererHooks.RenderContext(event.getLevelRenderer(), event.getPoseStack(), event.getProjectionMatrix(), 0, event.getPartialTick(), cam.x, cam.y, cam.z), 0);
         }
 
-        private static void renderHook(LevelRenderer levelRenderer, PoseStack poseStack, Matrix4f projectionMatrix, float partialTick, double camX, double camY, double camZ)
+        private static void renderHook(LevelRendererHooks.RenderContext context, int xOffset)
         {
+            double x = context.camX(), y = context.camY(), z = context.camZ();
+            if (!new BlockPos(0, y, 0).closerThan(new BlockPos(x, y, z), 200))
+                return;
+
+            PoseStack poseStack = context.poseStack();
+            float partialTick = context.partialTick();
+
             if (bakedRenderable == null)
             {
                 bakedRenderable = BakedRenderable.of(MODEL_LOC);
@@ -129,27 +144,28 @@ public class RenderableTest
 
             var bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
 
-            time += Minecraft.getInstance().getDeltaFrameTime();
-
+            double time = context.ticks() + partialTick;
+            
             var map = ImmutableMap.<String, Matrix4f>builder();
 
             var left = new Matrix4f();
             left.setIdentity();
-            left.multiply(Quaternion.fromYXZ(0, 0, (float)Math.sin(time * 0.05) * 0.1f));
+            left.multiply(Quaternion.fromYXZ(0, 0, (float)Math.sin(time * 0.4) * 0.1f));
             map.put("object_1", left);
 
             var right = new Matrix4f();
             right.setIdentity();
-            right.multiply(Quaternion.fromYXZ(0, 0, -(float)Math.sin(time * 0.05) * 0.1f));
+            right.multiply(Quaternion.fromYXZ(0, 0, -(float)Math.sin(time * 0.4) * 0.1f));
             map.put("object_9", right);
 
             var transforms = MultipartTransforms.of(map.build());
 
+            poseStack.pushPose();
+            poseStack.translate(0 - x + xOffset, 120 - y, 0 - z);
             renderable.render(poseStack, bufferSource, RenderType::entitySolid, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY, partialTick, transforms);
 
-            poseStack.pushPose();
-            poseStack.translate(0,0.5f,0);
-            bakedRenderable.render(poseStack, bufferSource, RenderType::entitySolid, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY, partialTick, EmptyModelData.INSTANCE);
+            poseStack.translate(0, -1, 0);
+            bakedRenderable.render(poseStack, bufferSource, RenderType::entityTranslucent, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY, partialTick, EmptyModelData.INSTANCE);
             poseStack.popPose();
 
             bufferSource.endBatch();

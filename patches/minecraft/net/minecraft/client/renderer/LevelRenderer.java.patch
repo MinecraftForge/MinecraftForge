@@ -43,6 +43,7 @@
 -         FogRenderer.m_109024_(p_109604_, FogRenderer.FogMode.FOG_SKY, f, flag2);
 +         FogRenderer.setupFog(p_109604_, FogRenderer.FogMode.FOG_SKY, f, flag2, p_109601_);
        });
++      net.minecraftforge.client.LevelRendererHooks.render(net.minecraftforge.client.LevelRendererHooks.Phase.AFTER_SKY, this, p_109600_, p_109607_, this.f_109477_, d0, d1, d2);
        profilerfiller.m_6182_("fog");
 -      FogRenderer.m_109024_(p_109604_, FogRenderer.FogMode.FOG_TERRAIN, Math.max(f, 32.0F), flag2);
 +      FogRenderer.setupFog(p_109604_, FogRenderer.FogMode.FOG_TERRAIN, Math.max(f, 32.0F), flag2, p_109601_);
@@ -50,7 +51,6 @@
        this.m_194338_(p_109604_, frustum, flag1, this.f_109461_.f_91074_.m_5833_());
        profilerfiller.m_6182_("compilechunks");
        this.m_194370_(p_109604_);
-+      net.minecraftforge.client.LevelRendererHooks.render(net.minecraftforge.client.LevelRendererHooks.Phase.BEFORE_SOLID_BLOCKS, this, p_109600_, p_109607_, d0, d1, d2);
        profilerfiller.m_6182_("terrain");
        this.m_172993_(RenderType.m_110451_(), p_109600_, d0, d1, d2, p_109607_);
 +      this.f_109461_.m_91304_().m_119428_(TextureAtlas.f_118259_).setBlurMipmap(false, this.f_109461_.f_91066_.f_92027_ > 0); // FORGE: fix flickering leaves when mods mess up the blurMipmap settings
@@ -68,7 +68,14 @@
                 ++this.f_109439_;
                 if (entity.f_19797_ == 0) {
                    entity.f_19790_ = entity.m_20185_();
-@@ -1219,6 +_,7 @@
+@@ -1213,12 +_,14 @@
+       multibuffersource$buffersource.m_109912_(RenderType.m_110452_(TextureAtlas.f_118259_));
+       multibuffersource$buffersource.m_109912_(RenderType.m_110458_(TextureAtlas.f_118259_));
+       multibuffersource$buffersource.m_109912_(RenderType.m_110476_(TextureAtlas.f_118259_));
++      net.minecraftforge.client.LevelRendererHooks.render(net.minecraftforge.client.LevelRendererHooks.Phase.AFTER_ENTITIES, this, p_109600_, p_109607_, this.f_109477_, d0, d1, d2);
+       profilerfiller.m_6182_("blockentities");
+ 
+       for(LevelRenderer.RenderChunkInfo levelrenderer$renderchunkinfo : this.f_194297_) {
           List<BlockEntity> list = levelrenderer$renderchunkinfo.f_109839_.m_112835_().m_112773_();
           if (!list.isEmpty()) {
              for(BlockEntity blockentity1 : list) {
@@ -104,7 +111,7 @@
           profilerfiller.m_6182_("particles");
 -         this.f_109461_.f_91061_.m_107336_(p_109600_, multibuffersource$buffersource, p_109606_, p_109604_, p_109601_);
 +         this.f_109461_.f_91061_.render(p_109600_, multibuffersource$buffersource, p_109606_, p_109604_, p_109601_, frustum);
-+         net.minecraftforge.client.LevelRendererHooks.render(net.minecraftforge.client.LevelRendererHooks.Phase.AFTER_PARTICLES, this, p_109600_, p_109607_, d0, d1, d2);
++         net.minecraftforge.client.LevelRendererHooks.render(net.minecraftforge.client.LevelRendererHooks.Phase.AFTER_PARTICLES, this, p_109600_, p_109607_, this.f_109477_, d0, d1, d2);
           RenderStateShard.f_110126_.m_110188_();
        } else {
           profilerfiller.m_6182_("translucent");
@@ -114,7 +121,7 @@
           profilerfiller.m_6182_("particles");
 -         this.f_109461_.f_91061_.m_107336_(p_109600_, multibuffersource$buffersource, p_109606_, p_109604_, p_109601_);
 +         this.f_109461_.f_91061_.render(p_109600_, multibuffersource$buffersource, p_109606_, p_109604_, p_109601_, frustum);
-+         net.minecraftforge.client.LevelRendererHooks.render(net.minecraftforge.client.LevelRendererHooks.Phase.AFTER_PARTICLES, this, p_109600_, p_109607_, d0, d1, d2);
++         net.minecraftforge.client.LevelRendererHooks.render(net.minecraftforge.client.LevelRendererHooks.Phase.AFTER_PARTICLES, this, p_109600_, p_109607_, this.f_109477_, d0, d1, d2);
        }
  
        posestack.m_85836_();
@@ -122,13 +129,13 @@
              RenderStateShard.f_110128_.m_110185_();
              profilerfiller.m_6182_("clouds");
              this.m_172954_(p_109600_, p_109607_, p_109601_, d0, d1, d2);
-+            net.minecraftforge.client.LevelRendererHooks.render(net.minecraftforge.client.LevelRendererHooks.Phase.AFTER_CLOUDS, this, p_109600_, p_109607_, d0, d1, d2);
++            net.minecraftforge.client.LevelRendererHooks.render(net.minecraftforge.client.LevelRendererHooks.Phase.AFTER_CLOUDS, this, p_109600_, p_109607_, this.f_109477_, d0, d1, d2);
              RenderStateShard.f_110128_.m_110188_();
           } else {
              profilerfiller.m_6182_("clouds");
              RenderSystem.m_157427_(GameRenderer::m_172838_);
              this.m_172954_(p_109600_, p_109607_, p_109601_, d0, d1, d2);
-+            net.minecraftforge.client.LevelRendererHooks.render(net.minecraftforge.client.LevelRendererHooks.Phase.AFTER_CLOUDS, this, p_109600_, p_109607_, d0, d1, d2);
++            net.minecraftforge.client.LevelRendererHooks.render(net.minecraftforge.client.LevelRendererHooks.Phase.AFTER_CLOUDS, this, p_109600_, p_109607_, this.f_109477_, d0, d1, d2);
           }
        }
  
@@ -136,7 +143,7 @@
           RenderStateShard.f_110127_.m_110185_();
           profilerfiller.m_6182_("weather");
           this.m_109703_(p_109606_, p_109601_, d0, d1, d2);
-+         net.minecraftforge.client.LevelRendererHooks.render(net.minecraftforge.client.LevelRendererHooks.Phase.AFTER_WEATHER, this, p_109600_, p_109607_, d0, d1, d2);
++         net.minecraftforge.client.LevelRendererHooks.render(net.minecraftforge.client.LevelRendererHooks.Phase.AFTER_WEATHER, this, p_109600_, p_109607_, this.f_109477_, d0, d1, d2);
           this.m_173012_(p_109604_);
           RenderStateShard.f_110127_.m_110188_();
           this.f_109418_.m_110023_(p_109601_);
@@ -144,7 +151,7 @@
           RenderSystem.m_69458_(false);
           profilerfiller.m_6182_("weather");
           this.m_109703_(p_109606_, p_109601_, d0, d1, d2);
-+         net.minecraftforge.client.LevelRendererHooks.render(net.minecraftforge.client.LevelRendererHooks.Phase.AFTER_WEATHER, this, p_109600_, p_109607_, d0, d1, d2);
++         net.minecraftforge.client.LevelRendererHooks.render(net.minecraftforge.client.LevelRendererHooks.Phase.AFTER_WEATHER, this, p_109600_, p_109607_, this.f_109477_, d0, d1, d2);
           this.m_173012_(p_109604_);
           RenderSystem.m_69458_(true);
        }
@@ -152,19 +159,18 @@
        posestack.m_85849_();
        RenderSystem.m_157182_();
        FogRenderer.m_109017_();
-+      net.minecraftforge.client.LevelRendererHooks.render(net.minecraftforge.client.LevelRendererHooks.Phase.LAST, this, p_109600_, p_109607_, d0, d1, d2);
++      net.minecraftforge.client.LevelRendererHooks.render(net.minecraftforge.client.LevelRendererHooks.Phase.LAST, this, p_109600_, p_109607_, this.f_109477_, d0, d1, d2);
     }
  
     private void m_109588_(PoseStack p_109589_) {
-@@ -1520,6 +_,8 @@
- 
+@@ -1521,6 +_,7 @@
        VertexBuffer.m_85931_();
        VertexBuffer.m_166875_();
-+      if (p_172994_ == RenderType.m_110451_()) net.minecraftforge.client.LevelRendererHooks.render(net.minecraftforge.client.LevelRendererHooks.Phase.AFTER_SOLID_BLOCKS, this, p_172995_, p_172999_, p_172996_, p_172997_, p_172998_);
-+      if (p_172994_ == RenderType.m_110466_()) net.minecraftforge.client.LevelRendererHooks.render(net.minecraftforge.client.LevelRendererHooks.Phase.AFTER_TRANSLUCENT_BLOCKS, this, p_172995_, p_172999_, p_172996_, p_172997_, p_172998_);
        this.f_109461_.m_91307_().m_7238_();
++      net.minecraftforge.client.LevelRendererHooks.render(p_172994_, this, p_172995_, p_172999_, this.f_109477_, p_172996_, p_172997_, p_172998_);
        p_172994_.m_110188_();
     }
+ 
 @@ -1783,6 +_,11 @@
  
     public void m_202423_(PoseStack p_202424_, Matrix4f p_202425_, float p_202426_, Camera p_202427_, boolean p_202428_, Runnable p_202429_) {
