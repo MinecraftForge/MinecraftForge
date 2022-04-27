@@ -17,7 +17,7 @@
  
        this.f_82090_.findAmbiguities((p_82108_, p_82109_, p_82110_, p_82111_) -> {
           f_82089_.warn("Ambiguity between arguments {} and {} with inputs: {}", this.f_82090_.getPath(p_82109_), this.f_82090_.getPath(p_82110_), p_82111_);
-@@ -220,7 +_,15 @@
+@@ -220,7 +_,17 @@
  
        try {
           try {
@@ -25,7 +25,9 @@
 +            ParseResults<CommandSourceStack> parse = this.f_82090_.parse(stringreader, p_82118_);
 +            net.minecraftforge.event.CommandEvent event = new net.minecraftforge.event.CommandEvent(parse);
 +            if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event)) {
-+               if (event.getException() != null) {
++               if (event.getException() instanceof Exception) {
++                  throw (Exception) event.getException();
++               } else if (event.getException() != null) {
 +                  com.google.common.base.Throwables.throwIfUnchecked(event.getException());
 +               }
 +               return 1;
