@@ -25,8 +25,8 @@
 +            ParseResults<CommandSourceStack> parse = this.f_82090_.parse(stringreader, p_82118_);
 +            net.minecraftforge.event.CommandEvent event = new net.minecraftforge.event.CommandEvent(parse);
 +            if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event)) {
-+               if (event.getException() instanceof Exception) {
-+                  throw (Exception) event.getException();
++               if (event.getException() instanceof Exception exception) {
++                  throw exception;
 +               } else if (event.getException() != null) {
 +                  com.google.common.base.Throwables.throwIfUnchecked(event.getException());
 +               }
