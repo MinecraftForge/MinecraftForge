@@ -56,7 +56,7 @@
     public float m_7325_() {
        return this.f_60444_;
     }
-@@ -384,8 +_,10 @@
+@@ -384,14 +_,16 @@
  
     public void m_5548_(BlockGetter p_49821_, Entity p_49822_) {
        p_49822_.m_20256_(p_49822_.m_20184_().m_82542_(1.0D, 0.0D, 1.0D));
@@ -65,8 +65,16 @@
  
 +   @Deprecated //Forge: Use more sensitive version
     public ItemStack m_7397_(BlockGetter p_49823_, BlockPos p_49824_, BlockState p_49825_) {
-       return new ItemStack(this);
+-      return new ItemStack(this);
++      return this.m_5456_().m_7968_();
     }
+ 
+    public void m_49811_(CreativeModeTab p_49812_, NonNullList<ItemStack> p_49813_) {
+-      p_49813_.add(new ItemStack(this));
++      p_49813_.add(this.m_5456_().m_7968_());
+    }
+ 
+    public float m_49958_() {
 @@ -422,6 +_,7 @@
     public void m_141997_(BlockState p_152450_, Level p_152451_, BlockPos p_152452_, Biome.Precipitation p_152453_) {
     }

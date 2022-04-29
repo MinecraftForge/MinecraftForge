@@ -110,7 +110,14 @@
        return p_41436_.m_45547_(new ClipContext(vec3, vec31, ClipContext.Block.OUTLINE, p_41438_, p_41437_));
     }
  
-@@ -323,6 +_,7 @@
+@@ -317,12 +_,13 @@
+ 
+    public void m_6787_(CreativeModeTab p_41391_, NonNullList<ItemStack> p_41392_) {
+       if (this.m_41389_(p_41391_)) {
+-         p_41392_.add(new ItemStack(this));
++         p_41392_.add(m_7968_());
+       }
+ 
     }
  
     protected boolean m_41389_(CreativeModeTab p_41390_) {

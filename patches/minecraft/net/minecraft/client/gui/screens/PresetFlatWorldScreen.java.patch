@@ -1,0 +1,11 @@
+--- a/net/minecraft/client/gui/screens/PresetFlatWorldScreen.java
++++ b/net/minecraft/client/gui/screens/PresetFlatWorldScreen.java
+@@ -351,7 +_,7 @@
+ 
+          private void m_96499_(PoseStack p_96500_, int p_96501_, int p_96502_, Item p_96503_) {
+             this.m_96484_(p_96500_, p_96501_ + 1, p_96502_ + 1);
+-            PresetFlatWorldScreen.this.f_96542_.m_115123_(new ItemStack(p_96503_), p_96501_ + 2, p_96502_ + 2);
++            PresetFlatWorldScreen.this.f_96542_.m_115123_(p_96503_.m_7968_(), p_96501_ + 2, p_96502_ + 2);
+          }
+ 
+          private void m_96484_(PoseStack p_96485_, int p_96486_, int p_96487_) {

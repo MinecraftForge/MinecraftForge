@@ -1,0 +1,21 @@
+--- a/net/minecraft/advancements/DisplayInfo.java
++++ b/net/minecraft/advancements/DisplayInfo.java
+@@ -110,8 +_,9 @@
+          if (p_14987_.has("data")) {
+             throw new JsonParseException("Disallowed data tag found");
+          } else {
+-            ItemStack itemstack = new ItemStack(item);
++            ItemStack itemstack;
+             if (p_14987_.has("nbt")) {
++               itemstack = new ItemStack(item);
+                try {
+                   CompoundTag compoundtag = TagParser.m_129359_(GsonHelper.m_13805_(p_14987_.get("nbt"), "nbt"));
+                   itemstack.m_41751_(compoundtag);
+@@ -119,6 +_,7 @@
+                   throw new JsonSyntaxException("Invalid nbt tag: " + commandsyntaxexception.getMessage());
+                }
+             }
++            else itemstack = item.m_7968_();
+ 
+             return itemstack;
+          }

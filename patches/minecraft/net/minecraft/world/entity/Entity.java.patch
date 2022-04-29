@@ -158,6 +158,15 @@
                 if (p_20259_.m_128425_("Tags", 9)) {
                    this.f_19841_.clear();
                    ListTag listtag3 = p_20259_.m_128437_("Tags", 8);
+@@ -1623,7 +_,7 @@
+ 
+    @Nullable
+    public ItemEntity m_20000_(ItemLike p_20001_, int p_20002_) {
+-      return this.m_5552_(new ItemStack(p_20001_), (float)p_20002_);
++      return this.m_5552_(p_20001_.m_5456_().m_7968_(), (float)p_20002_);
+    }
+ 
+    @Nullable
 @@ -1640,6 +_,8 @@
        } else {
           ItemEntity itementity = new ItemEntity(this.f_19853_, this.m_20185_(), this.m_20186_() + (double)p_19986_, this.m_20189_(), p_19985_);

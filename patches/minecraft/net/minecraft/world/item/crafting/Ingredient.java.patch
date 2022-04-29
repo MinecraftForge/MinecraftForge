@@ -80,6 +80,15 @@
     public static Ingredient m_43938_(Stream<? extends Ingredient.Value> p_43939_) {
        Ingredient ingredient = new Ingredient(p_43939_);
        return ingredient.f_43902_.length == 0 ? f_43901_ : ingredient;
+@@ -125,7 +_,7 @@
+    }
+ 
+    public static Ingredient m_43929_(ItemLike... p_43930_) {
+-      return m_43921_(Arrays.stream(p_43930_).map(ItemStack::new));
++      return m_43921_(Arrays.stream(p_43930_).map(item -> item.m_5456_().m_7968_()));
+    }
+ 
+    public static Ingredient m_43927_(ItemStack... p_43928_) {
 @@ -143,11 +_,15 @@
     }
  

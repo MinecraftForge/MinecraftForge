@@ -32,3 +32,20 @@
           if (entity != null) {
              double d0 = entity.m_20280_(this);
              int i = this.m_6095_().m_20674_().m_21611_();
+@@ -888,7 +_,7 @@
+                if (itemstack.m_41619_()) {
+                   Item item = m_21412_(equipmentslot, i);
+                   if (item != null) {
+-                     this.m_8061_(equipmentslot, new ItemStack(item));
++                     this.m_8061_(equipmentslot, item.m_7968_());
+                   }
+                }
+             }
+@@ -1382,6 +_,6 @@
+    @Nullable
+    public ItemStack m_142340_() {
+       SpawnEggItem spawneggitem = SpawnEggItem.m_43213_(this.m_6095_());
+-      return spawneggitem == null ? null : new ItemStack(spawneggitem);
++      return spawneggitem == null ? null : spawneggitem.m_7968_();
+    }
+ }

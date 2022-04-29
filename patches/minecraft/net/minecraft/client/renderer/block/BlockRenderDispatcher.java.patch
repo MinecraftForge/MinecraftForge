@@ -59,7 +59,7 @@
              break;
           case ENTITYBLOCK_ANIMATED:
 -            this.f_173397_.m_108829_(new ItemStack(p_110913_.m_60734_()), ItemTransforms.TransformType.NONE, p_110914_, p_110915_, p_110916_, p_110917_);
-+            ItemStack stack = new ItemStack(p_110913_.m_60734_());
++            ItemStack stack = p_110913_.m_60734_().m_5456_().m_7968_();
 +            net.minecraftforge.client.RenderProperties.get(stack).getItemStackRenderer().m_108829_(stack, ItemTransforms.TransformType.NONE, p_110914_, p_110915_, p_110916_, p_110917_);
           }
  

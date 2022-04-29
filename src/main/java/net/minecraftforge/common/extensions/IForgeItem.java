@@ -229,7 +229,7 @@ public interface IForgeItem
         {
             return ItemStack.EMPTY;
         }
-        return new ItemStack(self().getCraftingRemainingItem());
+        return self().getCraftingRemainingItem().getDefaultInstance();
     }
 
     /**

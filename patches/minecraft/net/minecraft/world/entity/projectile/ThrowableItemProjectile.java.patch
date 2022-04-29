@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/entity/projectile/ThrowableItemProjectile.java
++++ b/net/minecraft/world/entity/projectile/ThrowableItemProjectile.java
+@@ -43,7 +_,7 @@
+ 
+    public ItemStack m_7846_() {
+       ItemStack itemstack = this.m_37454_();
+-      return itemstack.m_41619_() ? new ItemStack(this.m_7881_()) : itemstack;
++      return itemstack.m_41619_() ? this.m_7881_().m_7968_() : itemstack;
+    }
+ 
+    protected void m_8097_() {

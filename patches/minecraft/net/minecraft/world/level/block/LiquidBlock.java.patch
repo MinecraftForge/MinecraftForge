@@ -59,8 +59,12 @@
                 this.m_54700_(p_54697_, p_54698_);
                 return false;
              }
-@@ -150,6 +_,25 @@
-          return new ItemStack(this.f_54689_.m_6859_());
+@@ -147,9 +_,28 @@
+    public ItemStack m_142598_(LevelAccessor p_153772_, BlockPos p_153773_, BlockState p_153774_) {
+       if (p_153774_.m_61143_(f_54688_) == 0) {
+          p_153772_.m_7731_(p_153773_, Blocks.f_50016_.m_49966_(), 11);
+-         return new ItemStack(this.f_54689_.m_6859_());
++         return this.f_54689_.m_6859_().m_7968_();
        } else {
           return ItemStack.f_41583_;
 +      }

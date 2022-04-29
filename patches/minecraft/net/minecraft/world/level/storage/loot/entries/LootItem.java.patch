@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/level/storage/loot/entries/LootItem.java
++++ b/net/minecraft/world/level/storage/loot/entries/LootItem.java
+@@ -27,7 +_,7 @@
+    }
+ 
+    public void m_6948_(Consumer<ItemStack> p_79590_, LootContext p_79591_) {
+-      p_79590_.accept(new ItemStack(this.f_79564_));
++      p_79590_.accept(this.f_79564_.m_7968_());
+    }
+ 
+    public static LootPoolSingletonContainer.Builder<?> m_79579_(ItemLike p_79580_) {

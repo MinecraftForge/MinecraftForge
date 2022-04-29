@@ -1,0 +1,48 @@
+--- a/net/minecraft/world/entity/npc/VillagerTrades.java
++++ b/net/minecraft/world/entity/npc/VillagerTrades.java
+@@ -100,7 +_,7 @@
+ 
+       public MerchantOffer m_5670_(Entity p_35647_, Random p_35648_) {
+          ItemStack itemstack = new ItemStack(Items.f_42616_, this.f_35635_);
+-         ItemStack itemstack1 = new ItemStack(this.f_35634_);
++         ItemStack itemstack1 = this.f_35634_.m_7968_();
+          if (this.f_35634_ instanceof DyeableArmorItem) {
+             List<DyeItem> list = Lists.newArrayList();
+             list.add(m_35649_(p_35648_));
+@@ -210,7 +_,7 @@
+       }
+ 
+       public EnchantedItemForEmeralds(Item p_35698_, int p_35699_, int p_35700_, int p_35701_, float p_35702_) {
+-         this.f_35687_ = new ItemStack(p_35698_);
++         this.f_35687_ = p_35698_.m_7968_();
+          this.f_35688_ = p_35699_;
+          this.f_35689_ = p_35700_;
+          this.f_35690_ = p_35701_;
+@@ -249,7 +_,7 @@
+          this.f_35708_ = new ItemStack(p_35717_);
+          this.f_35709_ = p_35718_;
+          this.f_35710_ = p_35719_;
+-         this.f_35711_ = new ItemStack(p_35720_);
++         this.f_35711_ = p_35720_.m_7968_();
+          this.f_35712_ = p_35721_;
+          this.f_35713_ = p_35722_;
+          this.f_35714_ = p_35723_;
+@@ -271,15 +_,15 @@
+       private final float f_35739_;
+ 
+       public ItemsForEmeralds(Block p_35765_, int p_35766_, int p_35767_, int p_35768_, int p_35769_) {
+-         this(new ItemStack(p_35765_), p_35766_, p_35767_, p_35768_, p_35769_);
++         this(p_35765_.m_5456_(), p_35766_, p_35767_, p_35768_, p_35769_);
+       }
+ 
+       public ItemsForEmeralds(Item p_35741_, int p_35742_, int p_35743_, int p_35744_) {
+-         this(new ItemStack(p_35741_), p_35742_, p_35743_, 12, p_35744_);
++         this(p_35741_.m_7968_(), p_35742_, p_35743_, 12, p_35744_);
+       }
+ 
+       public ItemsForEmeralds(Item p_35746_, int p_35747_, int p_35748_, int p_35749_, int p_35750_) {
+-         this(new ItemStack(p_35746_), p_35747_, p_35748_, p_35749_, p_35750_);
++         this(p_35746_.m_7968_(), p_35747_, p_35748_, p_35749_, p_35750_);
+       }
+ 
+       public ItemsForEmeralds(ItemStack p_35752_, int p_35753_, int p_35754_, int p_35755_, int p_35756_) {

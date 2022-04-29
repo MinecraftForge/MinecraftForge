@@ -1,0 +1,11 @@
+--- a/net/minecraft/client/gui/screens/recipebook/AbstractFurnaceRecipeBookComponent.java
++++ b/net/minecraft/client/gui/screens/recipebook/AbstractFurnaceRecipeBookComponent.java
+@@ -38,7 +_,7 @@
+       Slot slot = p_100123_.get(1);
+       if (slot.m_7993_().m_41619_()) {
+          if (this.f_100113_ == null) {
+-            this.f_100113_ = Ingredient.m_43921_(this.m_7690_().stream().map(ItemStack::new));
++            this.f_100113_ = Ingredient.m_43921_(this.m_7690_().stream().map(Item::m_7968_));
+          }
+ 
+          this.f_100269_.m_100143_(this.f_100113_, slot.f_40220_, slot.f_40221_);

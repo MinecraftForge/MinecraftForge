@@ -1,0 +1,11 @@
+--- a/net/minecraft/client/gui/screens/CreateFlatWorldScreen.java
++++ b/net/minecraft/client/gui/screens/CreateFlatWorldScreen.java
+@@ -181,7 +_,7 @@
+                }
+             }
+ 
+-            return new ItemStack(item);
++            return item.m_7968_();
+          }
+ 
+          public Component m_142172_() {

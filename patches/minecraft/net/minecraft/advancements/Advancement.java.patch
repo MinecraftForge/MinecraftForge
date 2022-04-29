@@ -10,6 +10,15 @@
        private ResourceLocation f_138332_;
        @Nullable
        private Advancement f_138333_;
+@@ -172,7 +_,7 @@
+       }
+ 
+       public Advancement.Builder m_138371_(ItemLike p_138372_, Component p_138373_, Component p_138374_, @Nullable ResourceLocation p_138375_, FrameType p_138376_, boolean p_138377_, boolean p_138378_, boolean p_138379_) {
+-         return this.m_138358_(new DisplayInfo(new ItemStack(p_138372_.m_5456_()), p_138373_, p_138374_, p_138375_, p_138376_, p_138377_, p_138378_, p_138379_));
++         return this.m_138358_(new DisplayInfo(p_138372_.m_5456_().m_7968_(), p_138373_, p_138374_, p_138375_, p_138376_, p_138377_, p_138378_, p_138379_));
+       }
+ 
+       public Advancement.Builder m_138358_(DisplayInfo p_138359_) {
 @@ -320,7 +_,14 @@
           return "Task Advancement{parentId=" + this.f_138332_ + ", display=" + this.f_138334_ + ", rewards=" + this.f_138335_ + ", criteria=" + this.f_138336_ + ", requirements=" + Arrays.deepToString(this.f_138337_) + "}";
        }

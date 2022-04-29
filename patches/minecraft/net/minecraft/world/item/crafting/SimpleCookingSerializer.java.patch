@@ -21,9 +21,10 @@
        String s1 = GsonHelper.m_13906_(p_44348_, "result");
        ResourceLocation resourcelocation = new ResourceLocation(s1);
 -      ItemStack itemstack = new ItemStack(Registry.f_122827_.m_6612_(resourcelocation).orElseThrow(() -> {
-+      itemstack = new ItemStack(Registry.f_122827_.m_6612_(resourcelocation).orElseThrow(() -> {
++      itemstack = Registry.f_122827_.m_6612_(resourcelocation).orElseThrow(() -> {
           return new IllegalStateException("Item: " + s1 + " does not exist");
-       }));
+-      }));
++      }).m_7968_();
 +      }
        float f = GsonHelper.m_13820_(p_44348_, "experience", 0.0F);
        int i = GsonHelper.m_13824_(p_44348_, "cookingtime", this.f_44327_);

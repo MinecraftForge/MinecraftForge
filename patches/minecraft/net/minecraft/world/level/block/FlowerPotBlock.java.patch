@@ -46,7 +46,15 @@
        boolean flag = blockstate.m_60713_(Blocks.f_50016_);
        boolean flag1 = this.m_153267_();
        if (flag != flag1) {
-@@ -63,7 +_,7 @@
+@@ -56,14 +_,14 @@
+                itemstack.m_41774_(1);
+             }
+          } else {
+-            ItemStack itemstack1 = new ItemStack(this.f_53525_);
++            ItemStack itemstack1 = this.f_53525_.m_5456_().m_7968_();
+             if (itemstack.m_41619_()) {
+                p_53543_.m_21008_(p_53544_, itemstack1);
+             } else if (!p_53543_.m_36356_(itemstack1)) {
                 p_53543_.m_36176_(itemstack1, false);
              }
  
@@ -55,6 +63,15 @@
           }
  
           p_53541_.m_142346_(p_53543_, GameEvent.f_157792_, p_53542_);
+@@ -74,7 +_,7 @@
+    }
+ 
+    public ItemStack m_7397_(BlockGetter p_53531_, BlockPos p_53532_, BlockState p_53533_) {
+-      return this.m_153267_() ? super.m_7397_(p_53531_, p_53532_, p_53533_) : new ItemStack(this.f_53525_);
++      return this.m_153267_() ? super.m_7397_(p_53531_, p_53532_, p_53533_) : this.f_53525_.m_5456_().m_7968_();
+    }
+ 
+    private boolean m_153267_() {
 @@ -86,10 +_,31 @@
     }
  
