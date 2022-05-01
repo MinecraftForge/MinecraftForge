@@ -48,6 +48,10 @@ public class AddReloadListenerEvent extends Event
        return ImmutableList.copyOf(listeners);
     }
 
+    /**
+     * For access to the currently-staged tags, see {@link ReloadableServerResources#getTagContext()}
+     * @return The ReloableServerResources being reloaded.
+     */
     public ReloadableServerResources getServerResources()
     {
         return serverResources;
