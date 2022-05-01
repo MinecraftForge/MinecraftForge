@@ -49,7 +49,7 @@ public class AddReloadListenerEvent extends Event
     }
 
     /**
-     * For access to the currently-staged tags, see {@link ReloadableServerResources#getTagContext()}
+     * For additional context, see {@link ReloadableServerResources#getConditionContext()}
      * @return The ReloableServerResources being reloaded.
      */
     public ReloadableServerResources getServerResources()

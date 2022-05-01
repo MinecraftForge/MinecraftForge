@@ -44,21 +44,20 @@
     }
  
     private static <T> void m_206870_(RegistryAccess p_206871_, TagManager.LoadResult<T> p_206872_) {
-@@ -96,5 +_,17 @@
+@@ -96,5 +_,16 @@
           return p_206874_.getValue().m_6497_();
        }));
        p_206871_.m_175515_(resourcekey).m_203652_(map);
 +   }
 +
-+   private final net.minecraftforge.common.crafting.conditions.ConditionContext context;
++   private final net.minecraftforge.common.crafting.conditions.ICondition.IContext context;
 +
 +   /**
-+    * Exposes the currently staged TagManager wrapped in an IContext so that mods can use<br>
-+    * tags in their custom reload listeners.<br>
-+    * This is only useful for reload listeners who need the currently staged tag values.<br>
-+    * @return A ConditionContext with access to the current TagManager.
++    * Exposes the current condition context for usage in other reload listeners.<br>
++    * This is not useful outside the reloading stage.
++    * @return The condition context for the currently active reload.
 +    */
-+   public net.minecraftforge.common.crafting.conditions.ConditionContext getTagContext() {
++   public net.minecraftforge.common.crafting.conditions.ICondition.IContext getConditionContext() {
 +      return this.context;
     }
  }
