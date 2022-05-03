@@ -17,7 +17,7 @@
 +               net.minecraft.world.entity.item.ItemEntity ent = entity.m_5552_(d, 1.0F);
 +               ent.m_20256_(ent.m_20184_().m_82520_((double)((rand.nextFloat() - rand.nextFloat()) * 0.1F), (double)(rand.nextFloat() * 0.05F), (double)((rand.nextFloat() - rand.nextFloat()) * 0.1F)));
 +            });
-+            stack.m_41622_(1, entity, e -> e.m_21190_(hand));
++            stack.m_41622_(1, playerIn, e -> e.m_21190_(hand));
 +         }
 +         return net.minecraft.world.InteractionResult.SUCCESS;
 +      }
