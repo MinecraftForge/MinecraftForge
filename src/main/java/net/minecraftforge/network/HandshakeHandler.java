@@ -313,7 +313,7 @@ public class HandshakeHandler
             try {
                 future.get();
             } catch (ExecutionException ex) {
-                LOGGER.error(FMLHSMARKER, "Error during negotiation", ex.getCause());
+                LOGGER.error("Error during negotiation", ex.getCause());
             } catch (CancellationException | InterruptedException ex) {
                 // no-op
             }
