@@ -66,3 +66,15 @@
              }
           }
        }
+@@ -230,6 +_,11 @@
+ 
+       public LootContextParam<? extends Entity> m_79003_() {
+          return this.f_78995_;
++      }
++
++      // Forge: This method is patched in to expose the same name used in getByName so that ContextNbtProvider#forEntity serializes it properly
++      public String getName() {
++         return this.f_78994_;
+       }
+ 
+       public static LootContext.EntityTarget m_79006_(String p_79007_) {
