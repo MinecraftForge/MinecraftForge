@@ -15,16 +15,19 @@ import org.apache.logging.log4j.Logger;
 @Mod.EventBusSubscriber()
 public class PlayerNegotiationEventTest
 {
-    private static final boolean ENABLE = true;
+    private static final boolean ENABLE = false;
     private static final Logger LOGGER = LogManager.getLogger(PlayerNegotiationEventTest.class);
 
     @SubscribeEvent
     public static void onPlayerNegotiation(PlayerNegotiationEvent event)
     {
         if (!ENABLE) return;
-        LOGGER.info("{}[{}] started negotiation", event.getProfile().getName(), event.getConnection().getRemoteAddress());
+        LOGGER.info("{} ({})[{}] started negotiation", event.getProfile().getName(), event.getProfile().getId(), event.getConnection().getRemoteAddress());
         event.enqueueWork(() -> {
             LOGGER.info("Hello from {}", Thread.currentThread().getName());
+        });
+        event.enqueueWork(() -> {
+            throw new RuntimeException("Test Exception from PlayerNegotiationEventTest");
         });
     }
 }
