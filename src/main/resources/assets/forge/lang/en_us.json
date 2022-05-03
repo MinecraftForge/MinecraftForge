@@ -190,6 +190,7 @@
   "forge.nameTagDistance": "Nametag Render Distance",
   "forge.entity_gravity": "Entity Gravity",
   "generic.reachDistance": "Reach Distance",
+  "forge.stepHeight": "Step Height",
 
   "fluid.minecraft.milk": "Milk",
   "fluid.minecraft.flowing_milk": "Milk",
