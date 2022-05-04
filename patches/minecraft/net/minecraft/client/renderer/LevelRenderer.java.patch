@@ -28,7 +28,7 @@
     }
  
     public void m_109599_(PoseStack p_109600_, float p_109601_, long p_109602_, boolean p_109603_, Camera p_109604_, GameRenderer p_109605_, LightTexture p_109606_, Matrix4f p_109607_) {
-+      net.minecraftforge.client.LevelRendererHooks.setPartialTicks(p_109601_);
++      net.minecraftforge.client.LevelRendererHooks.partialTicks = p_109601_;
        RenderSystem.m_157447_(this.f_109465_.m_46467_(), p_109601_);
        this.f_172946_.m_173564_(this.f_109465_, p_109604_, this.f_109461_.f_91077_);
        this.f_109463_.m_114408_(this.f_109465_, p_109604_, this.f_109461_.f_91076_);

@@ -26,7 +26,7 @@ public class LevelRendererHooks
 {
     private static final HashMap<Phase, List<Consumer<RenderContext>>> HOOKS = new HashMap<>();
     private static final HashMap<RenderType, Phase> RENDER_TYPE_PHASES = new HashMap<>();
-    private static float partialTicks = 0.0F;
+    public static float partialTicks = 0.0F;
 
     /**
      * Registers the Consumer passed to the {@link Phase} specified.
@@ -41,10 +41,10 @@ public class LevelRendererHooks
      */
     public static void render(Phase phase, LevelRenderer levelRenderer, PoseStack poseStack, Matrix4f projectionMatrix, int ticks, double camX, double camY, double camZ)
     {
-        Minecraft.getInstance().getProfiler().popPush(phase.toString());
         List<Consumer<RenderContext>> hooks = HOOKS.get(phase);
         if (hooks != null)
         {
+            Minecraft.getInstance().getProfiler().popPush(phase.toString());
             RenderContext context = new RenderContext(levelRenderer, poseStack, projectionMatrix, ticks, partialTicks, camX, camY, camZ);
             for (Consumer<RenderContext> hook : hooks)
                 hook.accept(context);
@@ -52,29 +52,13 @@ public class LevelRendererHooks
     }
 
     /**
-     * Renders the registered hooks that correspond to the RenderType passed, if one exists.
+     * Renders the registered for the {@link Phase} that matches the RenderType passed, if a Phase exists.
      */
     public static void render(RenderType renderType, LevelRenderer levelRenderer, PoseStack poseStack, Matrix4f projectionMatrix, int ticks, double camX, double camY, double camZ)
     {
         Phase phase = RENDER_TYPE_PHASES.get(renderType);
         if (phase != null)
             render(phase, levelRenderer, poseStack, projectionMatrix, ticks, camX, camY, camZ);
-    }
-
-    /**
-     * @return The current partial ticks obtained from the start of LevelRenderer.renderLevel
-     */
-    public static float getPartialTicks()
-    {
-        return LevelRendererHooks.partialTicks;
-    }
-
-    /**
-     * Sets the stored partial ticks
-     */
-    public static void setPartialTicks(float partialTicks)
-    {
-        LevelRendererHooks.partialTicks = partialTicks;
     }
 
     /**
@@ -107,11 +91,11 @@ public class LevelRendererHooks
          * @param name The name of your Phase. Used for logging.
          * @param chunkLayer If your Phase should render during LevelRenderer.renderChunkLayer, supply a RenderType. If not, pass null.
          */
-        public static Phase create(ResourceLocation name, @Nullable RenderType chunkLayer) throws IllegalArgumentException
+        public static Phase create(ResourceLocation name, @Nullable RenderType chunkLayer)
         {
             Phase phase = new Phase(name);
             if (chunkLayer != null && RENDER_TYPE_PHASES.put(chunkLayer, phase) != null)
-                throw new IllegalArgumentException("Attempted to replace an existing Phase for a RenderType: Phase = " + name + ", RenderType = " + chunkLayer.toString());
+                throw new IllegalArgumentException("Attempted to replace an existing LevelRendererHooks.Phase for a RenderType: Phase = " + name + ", RenderType = " + chunkLayer.toString());
             return phase;
         }
 
