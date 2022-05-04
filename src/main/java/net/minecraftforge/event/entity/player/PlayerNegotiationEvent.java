@@ -7,6 +7,7 @@ package net.minecraftforge.event.entity.player;
 
 import com.mojang.authlib.GameProfile;
 import net.minecraft.network.Connection;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Event;
 
 import java.util.List;
@@ -14,8 +15,12 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
 
 /**
- * This event is fired when a connection has started the Forge Handshake.<br>
+ * This event is fired on the server when a connection has started the Forge handshake,
  * Forge will wait for all enqueued work to be completed before proceeding further with the login process.
+ * <br>
+ * This event can be used to delay the player login until any necessary work such as preloading user data has completed.
+ * <br>
+ * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  */
 public class PlayerNegotiationEvent extends Event
 {
