@@ -105,7 +105,7 @@ public class HandshakeHandler
     private Map<ResourceLocation, ForgeRegistry.Snapshot> registrySnapshots;
     private Set<ResourceLocation> registriesToReceive;
     private Map<ResourceLocation, String> registryHashes;
-    private boolean negotiationStarted;
+    private boolean negotiationStarted = false;
     private final List<Future<Void>> pendingFutures = new ArrayList<>();
 
     private HandshakeHandler(Connection networkManager, NetworkDirection side)
