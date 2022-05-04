@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.function.Consumer;
 
+import javax.annotation.Nullable;
+
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Matrix4f;
 
@@ -16,13 +18,14 @@ import net.minecraft.resources.ResourceLocation;
 /**
  * Renders registered hooks to render during their appropriate {@link Phase}.
  * Renderer hooks may be registered at any time.
- * Custom Phases are allowed.
+ * Custom Phases may be created if needed.
  * 
  * @see #register
  */
 public class LevelRendererHooks
 {
     private static final HashMap<Phase, List<Consumer<RenderContext>>> HOOKS = new HashMap<>();
+    private static final HashMap<RenderType, Phase> RENDER_TYPE_PHASES = new HashMap<>();
     private static float partialTicks = 0.0F;
 
     /**
@@ -34,11 +37,11 @@ public class LevelRendererHooks
     }
 
     /**
-     * Renders registered hooks.
+     * Renders registered hooks for the {@link Phase} passed.
      */
     public static void render(Phase phase, LevelRenderer levelRenderer, PoseStack poseStack, Matrix4f projectionMatrix, int ticks, double camX, double camY, double camZ)
     {
-        Minecraft.getInstance().getProfiler().popPush(phase.name.toString());
+        Minecraft.getInstance().getProfiler().popPush(phase.toString());
         List<Consumer<RenderContext>> hooks = HOOKS.get(phase);
         if (hooks != null)
         {
@@ -49,14 +52,11 @@ public class LevelRendererHooks
     }
 
     /**
-     * Renders the registered hooks that correspond to for the renderType passed, if any match.
+     * Renders the registered hooks that correspond to the RenderType passed, if one exists.
      */
     public static void render(RenderType renderType, LevelRenderer levelRenderer, PoseStack poseStack, Matrix4f projectionMatrix, int ticks, double camX, double camY, double camZ)
     {
-        Phase phase = null;
-        if (renderType == RenderType.solid()) phase = Phase.AFTER_SOLID_BLOCKS;
-        else if (renderType == RenderType.translucent()) phase = Phase.AFTER_TRANSLUCENT_BLOCKS;
-
+        Phase phase = RENDER_TYPE_PHASES.get(renderType);
         if (phase != null)
             render(phase, levelRenderer, poseStack, projectionMatrix, ticks, camX, camY, camZ);
     }
@@ -80,22 +80,63 @@ public class LevelRendererHooks
     /**
      * Times during {@link LevelRenderer#renderLevel} to render hooks.
      */
-    public static record Phase(ResourceLocation name)
+    public static class Phase
     {
-        public static final Phase AFTER_SKY = new Phase("after_sky");
-        public static final Phase AFTER_SOLID_BLOCKS = new Phase("after_solid_blocks");
-        public static final Phase AFTER_ENTITIES = new Phase("after_entities");
-        public static final Phase AFTER_TRANSLUCENT_BLOCKS = new Phase("after_translucent_blocks");
-        public static final Phase AFTER_PARTICLES = new Phase("after_particles");
-        /** Only renders when clouds render */
-        public static final Phase AFTER_CLOUDS = new Phase("after_clouds");
-        public static final Phase AFTER_WEATHER = new Phase("after_weather");
-        /** May not work with fabulous graphics */
-        public static final Phase LAST = new Phase("last");
+        public static final Phase AFTER_SKY = create("after_sky");
+        public static final Phase AFTER_SOLID_BLOCKS = create("after_solid_blocks", RenderType.solid());
+        public static final Phase AFTER_CUTOUT_MIPPED_BLOCKS_BLOCKS = create("after_cutout_mipped_blocks", RenderType.cutoutMipped());
+        public static final Phase AFTER_CUTOUT_BLOCKS = create("after_cutout_blocks", RenderType.cutout());
+        public static final Phase AFTER_ENTITIES = create("after_entities");
+        public static final Phase AFTER_TRANSLUCENT_BLOCKS = create("after_translucent_blocks", RenderType.translucent());
+        public static final Phase AFTER_TRIPWIRE_BLOCKS = create("after_tripwire_blocks", RenderType.tripwire());
+        public static final Phase AFTER_PARTICLES = create("after_particles");
+        /** Only renders when clouds render. */
+        public static final Phase AFTER_CLOUDS = create("after_clouds");
+        public static final Phase AFTER_WEATHER = create("after_weather");
+        /** May not work with fabulous graphics. */
+        public static final Phase LAST = create("last");
 
-        private Phase(String name)
+        private ResourceLocation name;
+
+        private Phase(ResourceLocation name)
         {
-            this(new ResourceLocation("forge", name));
+            this.name = name;
+        }
+
+        /**
+         * @param name The name of your Phase. Used for logging.
+         * @param chunkLayer If your Phase should render during LevelRenderer.renderChunkLayer, supply a RenderType. If not, pass null.
+         */
+        public static Phase create(ResourceLocation name, @Nullable RenderType chunkLayer) throws IllegalArgumentException
+        {
+            Phase phase = new Phase(name);
+            if (chunkLayer != null && RENDER_TYPE_PHASES.put(chunkLayer, phase) != null)
+                throw new IllegalArgumentException("Attempted to replace an existing Phase for a RenderType: Phase = " + name + ", RenderType = " + chunkLayer.toString());
+            return phase;
+        }
+
+        /**
+         * @param name The name of your Phase. Used for logging.
+         */
+        public static Phase create(ResourceLocation name)
+        {
+            return create(name, null);
+        }
+
+        private static Phase create(String name, @Nullable RenderType chunkLayer)
+        {
+            return create(new ResourceLocation("forge", name), chunkLayer);
+        }
+
+        private static Phase create(String name)
+        {
+            return create(name, null);
+        }
+
+        @Override
+        public String toString()
+        {
+            return this.name.toString();
         }
     }
 
