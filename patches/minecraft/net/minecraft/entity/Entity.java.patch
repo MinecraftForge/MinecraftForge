@@ -7,7 +7,7 @@
 -public abstract class Entity implements INameable, ICommandSource {
 +public abstract class Entity extends net.minecraftforge.common.capabilities.CapabilityProvider<Entity> implements INameable, ICommandSource, net.minecraftforge.common.extensions.IForgeEntity {
     protected static final Logger field_184243_a = LogManager.getLogger();
-    private static final AtomicInteger field_213331_b = new AtomicInteger();
+    protected static final AtomicInteger field_213331_b = new AtomicInteger();
     private static final List<ItemStack> field_190535_b = Collections.emptyList();
     private static final AxisAlignedBB field_174836_a = new AxisAlignedBB(0.0D, 0.0D, 0.0D, 0.0D, 0.0D, 0.0D);
     private static double field_70155_l = 1.0D;

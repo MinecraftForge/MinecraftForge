@@ -1,5 +1,20 @@
 --- a/net/minecraft/entity/boss/dragon/EnderDragonEntity.java
 +++ b/net/minecraft/entity/boss/dragon/EnderDragonEntity.java
+@@ -104,6 +_,14 @@
+       }
+ 
+       this.field_184677_bJ = new PhaseManager(this);
++      this.func_145769_d(field_213331_b.getAndAdd(this.field_70977_g.length + 1) + 1); // Forge: Fix MC-158205: Make sure part ids are successors of parent mob id
++   }
++
++   @Override
++   public void func_145769_d(int p_145769_1_) {
++      super.func_145769_d(p_145769_1_);
++      for(int i = 0; i < this.field_70977_g.length; ++i) // Forge: Fix MC-158205: Set part ids to successors of parent mob id
++         this.field_70977_g[i].func_145769_d(p_145769_1_ + i + 1);
+    }
+ 
+    public static AttributeModifierMap.MutableAttribute func_234257_m_() {
 @@ -408,8 +_,8 @@
                 BlockPos blockpos = new BlockPos(k1, l1, i2);
                 BlockState blockstate = this.field_70170_p.func_180495_p(blockpos);
