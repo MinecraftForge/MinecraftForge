@@ -299,7 +299,18 @@
        AbstractChunkProvider abstractchunkprovider = this.func_72863_F();
  
        for(int i1 = i; i1 <= j; ++i1) {
-@@ -671,10 +_,10 @@
+@@ -665,16 +_,21 @@
+             }
+          }
+       }
++      for (net.minecraftforge.entity.PartEntity<?> p : this.getPartEntities()) {
++         if (p != p_175674_1_ && p.func_174813_aQ().func_72326_a(p_175674_2_) && (p_175674_3_ == null || p_175674_3_.test(p))) {
++            list.add(p);
++         }
++      }
+ 
+       return list;
+    }
  
     public <T extends Entity> List<T> func_217394_a(@Nullable EntityType<T> p_217394_1_, AxisAlignedBB p_217394_2_, Predicate<? super T> p_217394_3_) {
        this.func_217381_Z().func_230035_c_("getEntities");

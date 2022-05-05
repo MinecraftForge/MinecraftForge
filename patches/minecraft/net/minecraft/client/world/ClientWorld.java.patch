@@ -1,5 +1,13 @@
 --- a/net/minecraft/client/world/ClientWorld.java
 +++ b/net/minecraft/client/world/ClientWorld.java
+@@ -93,6 +_,7 @@
+       p_228319_0_.put(BiomeColors.field_180290_c, new ColorCache());
+    });
+    private final ClientChunkProvider field_239129_E_;
++   private final it.unimi.dsi.fastutil.ints.Int2ObjectMap<net.minecraftforge.entity.PartEntity<?>> partEntities = new it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap<>();
+ 
+    public ClientWorld(ClientPlayNetHandler p_i242067_1_, ClientWorld.ClientWorldInfo p_i242067_2_, RegistryKey<World> p_i242067_3_, DimensionType p_i242067_4_, int p_i242067_5_, Supplier<IProfiler> p_i242067_6_, WorldRenderer p_i242067_7_, boolean p_i242067_8_, long p_i242067_9_) {
+       super(p_i242067_2_, p_i242067_3_, p_i242067_4_, p_i242067_6_, true, p_i242067_8_, p_i242067_9_);
 @@ -104,6 +_,8 @@
        this.func_239136_a_(new BlockPos(8, 64, 8), 0.0F);
        this.func_72966_v();
@@ -17,7 +25,7 @@
              p_217418_1_.func_70071_h_();
              this.func_217381_Z().func_76319_b();
           }
-@@ -285,9 +_,11 @@
+@@ -285,9 +_,16 @@
     }
  
     private void func_217424_b(int p_217424_1_, Entity p_217424_2_) {
@@ -26,15 +34,25 @@
        this.field_217429_b.put(p_217424_1_, p_217424_2_);
        this.func_72863_F().func_212849_a_(MathHelper.func_76128_c(p_217424_2_.func_226277_ct_() / 16.0D), MathHelper.func_76128_c(p_217424_2_.func_226281_cx_() / 16.0D), ChunkStatus.field_222617_m, true).func_76612_a(p_217424_2_);
 +      p_217424_2_.onAddedToWorld();
++      if (p_217424_2_.isMultipartEntity()) {
++         for(net.minecraftforge.entity.PartEntity<?> part : p_217424_2_.getParts()) {
++            this.partEntities.put(part.func_145782_y(), part);
++         }
++      }
     }
  
     public void func_217413_d(int p_217413_1_) {
-@@ -306,6 +_,8 @@
+@@ -306,6 +_,13 @@
        }
  
        this.field_217431_w.remove(p_217414_1_);
 +      p_217414_1_.onRemovedFromWorld();
 +      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.EntityLeaveWorldEvent(p_217414_1_, this));
++      if (p_217414_1_.isMultipartEntity()) {
++         for(net.minecraftforge.entity.PartEntity<?> part : p_217414_1_.getParts()) {
++            this.partEntities.remove(part.func_145782_y());
++         }
++      }
     }
  
     public void func_217417_b(Chunk p_217417_1_) {
@@ -70,3 +88,14 @@
           this.field_239153_j_ = p_239156_1_;
        }
  
+@@ -890,5 +_,10 @@
+       public double func_239160_g_() {
+          return this.field_239146_c_ ? 1.0D : 0.03125D;
+       }
++   }
++
++   @Override
++   public java.util.Collection<net.minecraftforge.entity.PartEntity<?>> getPartEntities() {
++      return this.partEntities.values();
+    }
+ }
