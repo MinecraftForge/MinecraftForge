@@ -5,19 +5,25 @@
 
 package net.minecraftforge.debug.item;
 
+import java.util.Map;
 import net.minecraft.client.renderer.entity.PigRenderer;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
+import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.animal.Pig;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
+import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.ForgeSpawnEggItem;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
 import net.minecraftforge.registries.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -52,7 +58,13 @@ public class ForgeSpawnEggItemTest
     @SubscribeEvent
     public void onRegisterAttributes(final EntityAttributeCreationEvent event)
     {
-        event.put(ENTITY.get(), Pig.createAttributes().build());
+        AttributeSupplier.Builder attributes = Pig.createAttributes();
+        //Remove step height attribute to validate that things are handled properly when an entity doesn't have it
+        Map<Attribute, AttributeInstance> builder = ObfuscationReflectionHelper.getPrivateValue(AttributeSupplier.Builder.class, attributes, "f_2226" + "2_");
+        if (builder != null) {
+            builder.remove(ForgeMod.STEP_HEIGHT_ADDITION.get());
+        }
+        event.put(ENTITY.get(), attributes.build());
     }
 
     @Mod.EventBusSubscriber(modid = MODID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
