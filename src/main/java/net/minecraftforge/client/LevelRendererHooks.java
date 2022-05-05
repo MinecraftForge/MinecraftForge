@@ -70,6 +70,7 @@ public class LevelRendererHooks
         public static final Phase AFTER_CUTOUT_MIPPED_BLOCKS_BLOCKS = create("after_cutout_mipped_blocks", RenderType.cutoutMipped());
         public static final Phase AFTER_CUTOUT_BLOCKS = create("after_cutout_blocks", RenderType.cutout());
         public static final Phase AFTER_ENTITIES = create("after_entities", null);
+        /** Also happens after block entities */
         public static final Phase AFTER_TRANSLUCENT_BLOCKS = create("after_translucent_blocks", RenderType.translucent());
         public static final Phase AFTER_TRIPWIRE_BLOCKS = create("after_tripwire_blocks", RenderType.tripwire());
         public static final Phase AFTER_PARTICLES = create("after_particles", null);
