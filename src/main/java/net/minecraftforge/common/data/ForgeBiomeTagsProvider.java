@@ -61,7 +61,7 @@ public final class ForgeBiomeTagsProvider extends BiomeTagsProvider
         tag(Biomes.STONY_SHORE, Tags.Biomes.IS_BEACH, Tags.Biomes.IS_OVERWORLD);
         tag(Biomes.SNOWY_BEACH, Tags.Biomes.IS_COLD, Tags.Biomes.IS_COLD_OVERWORLD, Tags.Biomes.IS_BEACH, Tags.Biomes.IS_SNOWY, Tags.Biomes.IS_OVERWORLD);
         tag(Biomes.BIRCH_FOREST, Tags.Biomes.IS_OVERWORLD);
-        tag(Biomes.DARK_FOREST, Tags.Biomes.IS_SPOOKY, Tags.Biomes.IS_DENSE, Tags.Biomes.IS_OVERWORLD);
+        tag(Biomes.DARK_FOREST, Tags.Biomes.IS_SPOOKY, Tags.Biomes.IS_DENSE, Tags.Biomes.IS_DENSE_OVERWORLD, Tags.Biomes.IS_OVERWORLD);
         tag(Biomes.SNOWY_TAIGA, Tags.Biomes.IS_COLD, Tags.Biomes.IS_COLD_OVERWORLD, Tags.Biomes.IS_CONIFEROUS, Tags.Biomes.IS_SNOWY, Tags.Biomes.IS_OVERWORLD);
         tag(Biomes.OLD_GROWTH_PINE_TAIGA, Tags.Biomes.IS_COLD, Tags.Biomes.IS_COLD_OVERWORLD, Tags.Biomes.IS_CONIFEROUS, Tags.Biomes.IS_OVERWORLD);
         tag(Biomes.WINDSWEPT_FOREST, Tags.Biomes.IS_SPARSE, Tags.Biomes.IS_SPARSE_OVERWORLD, Tags.Biomes.IS_OVERWORLD);
