@@ -24,6 +24,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.LevelRendererHooks;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.event.RegisterClientReloadListenersEvent;
+import net.minecraftforge.client.event.RegisterLevelRendererHooksEvent;
 import net.minecraftforge.client.event.RenderLevelLastEvent;
 import net.minecraftforge.client.model.ForgeModelBakery;
 import net.minecraftforge.client.model.StandaloneModelConfiguration;
@@ -75,14 +76,7 @@ public class RenderableTest
             if (USE_LEVEL_RENDERER_HOOKS)
             {
                 // Registers level renderer hooks for each of phases, offsetting them on the x axis. AFTER_SKY is at (0, 120, 0)
-                LevelRendererHooks.register(LevelRendererHooks.Phase.AFTER_SKY, context -> Client.renderHook(context, 0));
-                LevelRendererHooks.register(LevelRendererHooks.Phase.AFTER_SOLID_BLOCKS, context -> Client.renderHook(context, 1));
-                LevelRendererHooks.register(LevelRendererHooks.Phase.AFTER_ENTITIES, context -> Client.renderHook(context, 2));
-                LevelRendererHooks.register(LevelRendererHooks.Phase.AFTER_TRANSLUCENT_BLOCKS, context -> Client.renderHook(context, 3));
-                LevelRendererHooks.register(LevelRendererHooks.Phase.AFTER_PARTICLES, context -> Client.renderHook(context, 4));
-                LevelRendererHooks.register(LevelRendererHooks.Phase.AFTER_CLOUDS, context -> Client.renderHook(context, 5));
-                LevelRendererHooks.register(LevelRendererHooks.Phase.AFTER_WEATHER, context -> Client.renderHook(context, 6));
-                LevelRendererHooks.register(LevelRendererHooks.Phase.LAST, context -> Client.renderHook(context, 7));
+                FMLJavaModLoadingContext.get().getModEventBus().addListener(Client::registerHooks);
             }
             else
                 MinecraftForge.EVENT_BUS.addListener(Client::renderLast);
@@ -126,6 +120,18 @@ public class RenderableTest
         {
             Vec3 cam = Minecraft.getInstance().gameRenderer.getMainCamera().getPosition();
             renderHook(new LevelRendererHooks.RenderContext(event.getLevelRenderer(), event.getPoseStack(), event.getProjectionMatrix(), 0, event.getPartialTick(), cam.x, cam.y, cam.z), 0);
+        }
+
+        public static void registerHooks(RegisterLevelRendererHooksEvent event)
+        {
+            event.register(LevelRendererHooks.Phase.AFTER_SKY, context -> Client.renderHook(context, 0));
+            event.register(LevelRendererHooks.Phase.AFTER_SOLID_BLOCKS, context -> Client.renderHook(context, 1));
+            event.register(LevelRendererHooks.Phase.AFTER_ENTITIES, context -> Client.renderHook(context, 2));
+            event.register(LevelRendererHooks.Phase.AFTER_TRANSLUCENT_BLOCKS, context -> Client.renderHook(context, 3));
+            event.register(LevelRendererHooks.Phase.AFTER_PARTICLES, context -> Client.renderHook(context, 4));
+            event.register(LevelRendererHooks.Phase.AFTER_CLOUDS, context -> Client.renderHook(context, 5));
+            event.register(LevelRendererHooks.Phase.AFTER_WEATHER, context -> Client.renderHook(context, 6));
+            event.register(LevelRendererHooks.Phase.LAST, context -> Client.renderHook(context, 7));
         }
 
         private static void renderHook(LevelRendererHooks.RenderContext context, int xOffset)

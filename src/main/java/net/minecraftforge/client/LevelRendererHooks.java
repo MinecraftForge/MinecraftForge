@@ -20,9 +20,8 @@ import net.minecraftforge.client.event.RegisterLevelRendererHooksEvent;
 
 /**
  * Renders registered hooks to render during their appropriate {@link Phase}.
- * Renderer hooks may be registered at any time.
  * 
- * @see #register
+ * @see RegisterLevelRendererHooksEvent
  */
 public class LevelRendererHooks
 {
@@ -31,7 +30,7 @@ public class LevelRendererHooks
     public static float partialTicks = 0.0F;
 
     /**
-     * Registers the Consumer passed to the {@link Phase} specified.
+     * @see RegisterLevelRendererHooksEvent
      */
     public static void register(Phase phase, Consumer<RenderContext> hook)
     {
