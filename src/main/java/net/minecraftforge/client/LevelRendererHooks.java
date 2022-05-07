@@ -17,6 +17,7 @@ import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.event.RegisterLevelRendererHooksEvent;
+import net.minecraftforge.fml.ModLoader;
 
 /**
  * Renders registered hooks to render during their appropriate {@link Phase}.
@@ -40,7 +41,7 @@ public class LevelRendererHooks
         if (hooksMap == null)
         {
             hooksMap = ArrayListMultimap.create();
-            net.minecraftforge.fml.ModLoader.get().postEvent(new net.minecraftforge.client.event.RegisterLevelRendererHooksEvent(hooksMap));
+            ModLoader.get().postEvent(new RegisterLevelRendererHooksEvent(hooksMap));
         }
     }
 
