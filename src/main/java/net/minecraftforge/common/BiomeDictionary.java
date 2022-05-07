@@ -12,6 +12,7 @@ import java.util.stream.StreamSupport;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.minecraftforge.event.world.BiomeLoadingEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -25,6 +26,11 @@ import com.google.common.collect.ImmutableList;
 
 import net.minecraft.world.level.biome.Biome;
 
+/**
+ * Use {@link Tags.Biomes} when possible.
+ * Note that tags are not usable yet during {@link BiomeLoadingEvent} so BiomeDictionary are still necessary there
+ */
+@Deprecated
 public class BiomeDictionary
 {
     private static final boolean DEBUG = false;
