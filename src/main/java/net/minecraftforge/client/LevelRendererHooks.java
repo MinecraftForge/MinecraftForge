@@ -7,6 +7,8 @@ import java.util.function.Consumer;
 
 import javax.annotation.Nullable;
 
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Matrix4f;
 
@@ -14,6 +16,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.client.event.RegisterLevelRendererHooksEvent;
 
 /**
  * Renders registered hooks to render during their appropriate {@link Phase}.
@@ -23,8 +26,8 @@ import net.minecraft.resources.ResourceLocation;
  */
 public class LevelRendererHooks
 {
-    private static final HashMap<Phase, List<Consumer<RenderContext>>> HOOKS = new HashMap<>();
-    private static final HashMap<RenderType, Phase> RENDER_TYPE_PHASES = new HashMap<>();
+    private static final Multimap<Phase, Consumer<RenderContext>> HOOKS = ArrayListMultimap.create();
+    private static final Map<RenderType, Phase> RENDER_TYPE_PHASES = new HashMap<>();
     public static float partialTicks = 0.0F;
 
     /**
@@ -32,7 +35,7 @@ public class LevelRendererHooks
      */
     public static void register(Phase phase, Consumer<RenderContext> hook)
     {
-        HOOKS.computeIfAbsent(phase, p -> new ArrayList<>()).add(hook);
+        HOOKS.put(phase, hook);
     }
 
     /**
@@ -40,7 +43,7 @@ public class LevelRendererHooks
      */
     public static void render(Phase phase, LevelRenderer levelRenderer, PoseStack poseStack, Matrix4f projectionMatrix, int ticks, double camX, double camY, double camZ)
     {
-        List<Consumer<RenderContext>> hooks = HOOKS.get(phase);
+        Collection<Consumer<RenderContext>> hooks = HOOKS.get(phase);
         if (hooks != null)
         {
             Minecraft.getInstance().getProfiler().popPush(phase.toString());
