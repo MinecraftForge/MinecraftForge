@@ -45,7 +45,7 @@ public class LevelRendererHooks
         Collection<Consumer<RenderContext>> hooks = HOOKS.get(phase);
         if (hooks != null)
         {
-            Minecraft.getInstance().getProfiler().popPush(phase.toString());
+            Minecraft.getInstance().getProfiler().popPush(phase.name);
             RenderContext ctx = new RenderContext(levelRenderer, poseStack, projectionMatrix, ticks, partialTicks, camX, camY, camZ);
             for (Consumer<RenderContext> hook : hooks)
                 hook.accept(ctx);
@@ -85,9 +85,9 @@ public class LevelRendererHooks
         /** May not work with fabulous graphics. */
         public static final Phase LAST = create("last", null);
 
-        private ResourceLocation name;
+        private String name;
 
-        private Phase(ResourceLocation name)
+        private Phase(String name)
         {
             this.name = name;
         }
@@ -98,7 +98,7 @@ public class LevelRendererHooks
          */
         public static Phase create(ResourceLocation name, @Nullable RenderType chunkLayer)
         {
-            Phase phase = new Phase(name);
+            Phase phase = new Phase(name.toString());
             if (chunkLayer != null && RENDER_TYPE_PHASES.put(chunkLayer, phase) != null)
                 throw new IllegalArgumentException("Attempted to replace an existing LevelRendererHooks.Phase for a RenderType: Phase = " + name + ", RenderType = " + chunkLayer.toString());
             return phase;
@@ -112,7 +112,7 @@ public class LevelRendererHooks
         @Override
         public String toString()
         {
-            return this.name.toString();
+            return this.name;
         }
     }
 
