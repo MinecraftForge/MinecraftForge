@@ -1,8 +1,8 @@
 package net.minecraftforge.client;
 
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 
 import javax.annotation.Nullable;
@@ -44,8 +44,9 @@ public class LevelRendererHooks
         if (hooks != null)
         {
             Minecraft.getInstance().getProfiler().popPush(phase.toString());
+            RenderContext ctx = new RenderContext(levelRenderer, poseStack, projectionMatrix, ticks, partialTicks, camX, camY, camZ);
             for (Consumer<RenderContext> hook : hooks)
-                hook.accept(new RenderContext(levelRenderer, poseStack, projectionMatrix, ticks, partialTicks, camX, camY, camZ));
+                hook.accept(ctx);
         }
     }
 
@@ -64,18 +65,20 @@ public class LevelRendererHooks
      */
     public static class Phase
     {
-        /** May render even if the sky doesn't render. */
+        /** Called regardless of if they sky actually renders or not. */
         public static final Phase AFTER_SKY = create("after_sky", null);
         public static final Phase AFTER_SOLID_BLOCKS = create("after_solid_blocks", RenderType.solid());
         public static final Phase AFTER_CUTOUT_MIPPED_BLOCKS_BLOCKS = create("after_cutout_mipped_blocks", RenderType.cutoutMipped());
         public static final Phase AFTER_CUTOUT_BLOCKS = create("after_cutout_blocks", RenderType.cutout());
         public static final Phase AFTER_ENTITIES = create("after_entities", null);
-        /** Also happens after block entities */
+        /** Called within a fabulous graphics target. Also happens after block entities */
         public static final Phase AFTER_TRANSLUCENT_BLOCKS = create("after_translucent_blocks", RenderType.translucent());
         public static final Phase AFTER_TRIPWIRE_BLOCKS = create("after_tripwire_blocks", RenderType.tripwire());
+        /** Called within a fabulous graphics target. */
         public static final Phase AFTER_PARTICLES = create("after_particles", null);
-        /** Only renders when clouds actually render. */
+        /** Called within a fabulous graphics target. Only renders when clouds actually render. */
         public static final Phase AFTER_CLOUDS = create("after_clouds", null);
+        /** Called within a fabulous graphics target. */
         public static final Phase AFTER_WEATHER = create("after_weather", null);
         /** May not work with fabulous graphics. */
         public static final Phase LAST = create("last", null);
