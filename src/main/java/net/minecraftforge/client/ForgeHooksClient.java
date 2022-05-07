@@ -129,6 +129,7 @@ import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
 import java.util.Stack;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -1139,5 +1140,12 @@ public class ForgeHooksClient
         }, title, msg, CommonComponents.GUI_PROCEED, CommonComponents.GUI_CANCEL);
 
         Minecraft.getInstance().setScreen(screen);
+    }
+
+    public static Component onNarratorChat(ChatType chatType, Component message, UUID sender)
+    {
+        NarratorChatEvent event = new NarratorChatEvent(chatType, message, sender);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event.getMessage();
     }
 }

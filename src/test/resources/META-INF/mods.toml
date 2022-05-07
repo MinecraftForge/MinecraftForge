@@ -218,5 +218,7 @@ license="LGPL v2.1"
     modId="server_world_creation_test"
 [[mods]]
     modId="valid_railshape_test"
+[[mods]]
+    modId="narrator_chat_event_test"
 
 # ADD ABOVE THIS LINE

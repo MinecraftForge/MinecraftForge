@@ -1,0 +1,10 @@
+--- a/net/minecraft/client/gui/chat/NarratorChatListener.java
++++ b/net/minecraft/client/gui/chat/NarratorChatListener.java
+@@ -30,6 +_,7 @@
+             this.m_168787_(p_93323_.getString());
+          } else {
+             if (narratorstatus == NarratorStatus.ALL || narratorstatus == NarratorStatus.CHAT && p_93322_ == ChatType.CHAT || narratorstatus == NarratorStatus.SYSTEM && p_93322_ == ChatType.SYSTEM) {
++               p_93323_ = net.minecraftforge.client.ForgeHooksClient.onNarratorChat(p_93322_, p_93323_, p_93324_);
+                Component component;
+                if (p_93323_ instanceof TranslatableComponent && "chat.type.text".equals(((TranslatableComponent)p_93323_).m_131328_())) {
+                   component = new TranslatableComponent("chat.type.text.narrate", ((TranslatableComponent)p_93323_).m_131329_());
