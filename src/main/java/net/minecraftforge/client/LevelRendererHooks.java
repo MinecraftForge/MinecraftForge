@@ -50,7 +50,7 @@ public class LevelRendererHooks
     public static void render(Phase phase, LevelRenderer levelRenderer, PoseStack poseStack, Matrix4f projectionMatrix, int ticks, double camX, double camY, double camZ)
     {
         Collection<Consumer<RenderContext>> hooks = hooksMap.get(phase);
-        if (hooks != null)
+        if (!hooks.isEmpty())
         {
             Minecraft.getInstance().getProfiler().popPush(phase.name);
             RenderContext ctx = new RenderContext(levelRenderer, poseStack, projectionMatrix, ticks, partialTicks, camX, camY, camZ);
