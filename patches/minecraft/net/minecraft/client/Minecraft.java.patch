@@ -53,7 +53,7 @@
        this.f_91052_ = new BlockRenderDispatcher(this.f_91051_.m_119430_(), blockentitywithoutlevelrenderer, this.f_91040_);
        this.f_91036_.m_7217_(this.f_91052_);
        this.f_91060_ = new LevelRenderer(this, this.f_90993_);
-+      net.minecraftforge.fml.ModLoader.get().postEvent(new net.minecraftforge.client.event.RegisterLevelRendererHooksEvent());
++      net.minecraftforge.client.LevelRendererHooks.registerHooks();
        this.f_91036_.m_7217_(this.f_91060_);
        this.m_91271_();
        this.f_91036_.m_7217_(this.f_90997_);

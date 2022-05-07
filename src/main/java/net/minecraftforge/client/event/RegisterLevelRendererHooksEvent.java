@@ -2,6 +2,8 @@ package net.minecraftforge.client.event;
 
 import java.util.function.Consumer;
 
+import com.google.common.collect.Multimap;
+
 import net.minecraftforge.client.LevelRendererHooks;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.event.IModBusEvent;
@@ -13,8 +15,15 @@ import net.minecraftforge.fml.event.IModBusEvent;
  */
 public class RegisterLevelRendererHooksEvent extends Event implements IModBusEvent
 {
+    private final Multimap<LevelRendererHooks.Phase, Consumer<LevelRendererHooks.RenderContext>> hooksMap;
+
+    public RegisterLevelRendererHooksEvent(Multimap<LevelRendererHooks.Phase, Consumer<LevelRendererHooks.RenderContext>> hooksMap)
+    {
+        this.hooksMap = hooksMap;
+    }
+
     public void register(LevelRendererHooks.Phase phase, Consumer<LevelRendererHooks.RenderContext> hook)
     {
-        LevelRendererHooks.register(phase, hook);
+        this.hooksMap.put(phase, hook);
     }
 }

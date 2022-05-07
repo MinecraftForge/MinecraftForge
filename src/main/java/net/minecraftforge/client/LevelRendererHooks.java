@@ -25,16 +25,23 @@ import net.minecraftforge.client.event.RegisterLevelRendererHooksEvent;
  */
 public class LevelRendererHooks
 {
-    private static final Multimap<Phase, Consumer<RenderContext>> HOOKS = ArrayListMultimap.create();
+    @Nullable // Should never be null when it's actually being used to render things
+    private static Multimap<Phase, Consumer<RenderContext>> hooksMap;
     private static final Map<RenderType, Phase> RENDER_TYPE_PHASES = new HashMap<>();
     public static float partialTicks = 0.0F;
 
     /**
+     * Called internally on startup.
+     * 
      * @see RegisterLevelRendererHooksEvent
      */
-    public static void register(Phase phase, Consumer<RenderContext> hook)
+    public static void registerHooks()
     {
-        HOOKS.put(phase, hook);
+        if (hooksMap == null)
+        {
+            hooksMap = ArrayListMultimap.create();
+            net.minecraftforge.fml.ModLoader.get().postEvent(new net.minecraftforge.client.event.RegisterLevelRendererHooksEvent(hooksMap));
+        }
     }
 
     /**
@@ -42,7 +49,7 @@ public class LevelRendererHooks
      */
     public static void render(Phase phase, LevelRenderer levelRenderer, PoseStack poseStack, Matrix4f projectionMatrix, int ticks, double camX, double camY, double camZ)
     {
-        Collection<Consumer<RenderContext>> hooks = HOOKS.get(phase);
+        Collection<Consumer<RenderContext>> hooks = hooksMap.get(phase);
         if (hooks != null)
         {
             Minecraft.getInstance().getProfiler().popPush(phase.name);
