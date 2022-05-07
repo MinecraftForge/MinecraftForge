@@ -21,11 +21,11 @@ import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.LevelRendererHooks;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.event.RegisterClientReloadListenersEvent;
-import net.minecraftforge.client.event.RegisterLevelRendererHooksEvent;
 import net.minecraftforge.client.event.RenderLevelLastEvent;
+import net.minecraftforge.client.event.RenderLevelStageEvent;
+import net.minecraftforge.client.event.RenderLevelStageEvent.Stage;
 import net.minecraftforge.client.model.ForgeModelBakery;
 import net.minecraftforge.client.model.StandaloneModelConfiguration;
 import net.minecraftforge.client.model.data.EmptyModelData;
@@ -42,13 +42,17 @@ import net.minecraftforge.fml.loading.FMLEnvironment;
 
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 @Mod(RenderableTest.MODID)
 public class RenderableTest
 {
     public static final String MODID = "renderable_test";
+    private static final Logger LOGGER = LogManager.getLogger();
 
     public static final boolean ENABLED = true; // Renders at (0, 120, 0)
-    public static final boolean USE_LEVEL_RENDERER_HOOKS = true; // True when using LevelRendererHooks. False when using RenderLevelLastEvent
+    public static final boolean USE_LEVEL_RENDERER_HOOKS = true; // True when using RenderLevelStageEvent. False when using RenderLevelLastEvent
 
     public RenderableTest()
     {
@@ -70,16 +74,17 @@ public class RenderableTest
 
         public static void init()
         {
-            var bus = FMLJavaModLoadingContext.get().getModEventBus();
-            bus.addListener(Client::registerModels);
-            bus.addListener(Client::registerReloadListeners);
+            var modBus = FMLJavaModLoadingContext.get().getModEventBus();
+            var forgeBus = MinecraftForge.EVENT_BUS;
+            modBus.addListener(Client::registerModels);
+            modBus.addListener(Client::registerReloadListeners);
             if (USE_LEVEL_RENDERER_HOOKS)
             {
-                // Registers level renderer hooks for each of phases, offsetting them on the x axis. AFTER_SKY is at (0, 120, 0)
-                FMLJavaModLoadingContext.get().getModEventBus().addListener(Client::registerHooks);
+                modBus.addListener(Client::registerStage);
+                forgeBus.addListener(Client::renderStage);
             }
             else
-                MinecraftForge.EVENT_BUS.addListener(Client::renderLast);
+                forgeBus.addListener(Client::renderLast);
         }
 
         private static void registerModels(ModelRegistryEvent t)
@@ -116,33 +121,45 @@ public class RenderableTest
             });
         }
 
+        public static void registerStage(RenderLevelStageEvent.RegisterStageEvent event)
+        {
+            var stage = event.register(new ResourceLocation(MODID, "test_stage"), null);
+            LOGGER.info("Registered RenderLevelStageEvent.Stage: {}", stage);
+        }
+
         public static void renderLast(RenderLevelLastEvent event)
         {
             Vec3 cam = Minecraft.getInstance().gameRenderer.getMainCamera().getPosition();
-            renderHook(new LevelRendererHooks.RenderContext(event.getLevelRenderer(), event.getPoseStack(), event.getProjectionMatrix(), 0, event.getPartialTick(), cam.x, cam.y, cam.z), 0);
+            render(event.getPoseStack(), 0, event.getPartialTick(), cam.x, cam.y, cam.z, 0);
         }
 
-        public static void registerHooks(RegisterLevelRendererHooksEvent event)
+        private static void renderStage(RenderLevelStageEvent event)
         {
-            event.register(LevelRendererHooks.Phase.AFTER_SKY, context -> Client.renderHook(context, 0));
-            event.register(LevelRendererHooks.Phase.AFTER_SOLID_BLOCKS, context -> Client.renderHook(context, 1));
-            event.register(LevelRendererHooks.Phase.AFTER_ENTITIES, context -> Client.renderHook(context, 2));
-            event.register(LevelRendererHooks.Phase.AFTER_TRANSLUCENT_BLOCKS, context -> Client.renderHook(context, 3));
-            event.register(LevelRendererHooks.Phase.AFTER_PARTICLES, context -> Client.renderHook(context, 4));
-            event.register(LevelRendererHooks.Phase.AFTER_CLOUDS, context -> Client.renderHook(context, 5));
-            event.register(LevelRendererHooks.Phase.AFTER_WEATHER, context -> Client.renderHook(context, 6));
-            event.register(LevelRendererHooks.Phase.LAST, context -> Client.renderHook(context, 7));
+            int xOffset = -1;
+            var stage = event.stage;
+            if (stage == Stage.AFTER_SKY)
+                xOffset = 0;
+            else if (stage == Stage.AFTER_SOLID_BLOCKS)
+                xOffset = 1;
+            else if (stage == Stage.AFTER_TRANSLUCENT_BLOCKS)
+                xOffset = 2;
+            else if (stage == Stage.AFTER_PARTICLES)
+                xOffset = 3;
+            else if (stage == Stage.AFTER_WEATHER)
+                xOffset = 4;
+
+            if (xOffset > -1)
+                render(event.poseStack, event.ticks, event.partialTick, event.camX, event.camY, event.camZ, xOffset);
         }
 
-        private static void renderHook(LevelRendererHooks.RenderContext context, int xOffset)
+        private static void render(PoseStack poseStack, int ticks, float partialTick, double camX, double camY, double camZ, int xOffset)
         {
-            double x = context.camX(), y = context.camY(), z = context.camZ();
-            if (!new BlockPos(0, y, 0).closerThan(new BlockPos(x, y, z), 200))
+            double x = camX, y = camY, z = camZ;
+            if (!new BlockPos(0, y, 0).closerThan(new BlockPos(x, y, z), 100))
                 return;
 
-            PoseStack poseStack = context.poseStack();
-            float partialTick = context.partialTick();
-
+            var profiler = Minecraft.getInstance().getProfiler();
+            profiler.push("renderable_test");
             if (bakedRenderable == null)
             {
                 bakedRenderable = BakedRenderable.of(MODEL_LOC);
@@ -150,8 +167,8 @@ public class RenderableTest
 
             var bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
 
-            double time = context.ticks() + partialTick;
-            
+            double time = ticks + partialTick;
+
             var map = ImmutableMap.<String, Matrix4f>builder();
 
             var left = new Matrix4f();
@@ -175,6 +192,7 @@ public class RenderableTest
             poseStack.popPose();
 
             bufferSource.endBatch();
+            profiler.pop();
         }
     }
 }

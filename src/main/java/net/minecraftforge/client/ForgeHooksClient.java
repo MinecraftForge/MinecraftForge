@@ -223,10 +223,27 @@ public class ForgeHooksClient
         }
     }
 
-    @Deprecated
+    @Deprecated(forRemoval = true, since = "1.18.2")
     public static void dispatchRenderLast(LevelRenderer context, PoseStack poseStack, float partialTick, Matrix4f projectionMatrix, long finishTimeNano)
     {
         MinecraftForge.EVENT_BUS.post(new RenderLevelLastEvent(context, poseStack, partialTick, projectionMatrix, finishTimeNano));
+    }
+
+    public static float partialTicks = 0.0F;
+
+    public static void dispatchRenderStage(RenderLevelStageEvent.Stage stage, LevelRenderer levelRenderer, PoseStack poseStack, Matrix4f projectionMatrix, int ticks, double camX, double camY, double camZ)
+    {
+        var profiler = Minecraft.getInstance().getProfiler();
+        profiler.push(stage.toString());
+        MinecraftForge.EVENT_BUS.post(new RenderLevelStageEvent(stage, levelRenderer, poseStack, projectionMatrix, ticks, partialTicks, camX, camY, camZ));
+        profiler.pop();
+    }
+
+    public static void dispatchRenderStage(RenderType renderType, LevelRenderer levelRenderer, PoseStack poseStack, Matrix4f projectionMatrix, int ticks, double camX, double camY, double camZ)
+    {
+        RenderLevelStageEvent.Stage stage = RenderLevelStageEvent.Stage.fromRenderType(renderType);
+        if (stage != null)
+            dispatchRenderStage(stage, levelRenderer, poseStack, projectionMatrix, ticks, camX, camY, camZ);
     }
 
     public static boolean renderSpecificFirstPersonHand(InteractionHand hand, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, float partialTick, float interpPitch, float swingProgress, float equipProgress, ItemStack stack)

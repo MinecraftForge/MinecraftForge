@@ -11,9 +11,9 @@ import net.minecraft.client.renderer.LevelRenderer;
 import com.mojang.math.Matrix4f;
 
 /**
- * @see net.minecraftforge.client.LevelRendererHooks
+ * @see net.minecraftforge.client.event.RenderLevelStageEvent
  */
-@Deprecated
+@Deprecated(forRemoval = true, since = "1.18.2")
 public class RenderLevelLastEvent extends net.minecraftforge.eventbus.api.Event
 {
     private final LevelRenderer levelRenderer;
