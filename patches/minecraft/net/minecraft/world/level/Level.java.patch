@@ -71,9 +71,11 @@
              if (blockstate1 == p_46606_) {
                 if (blockstate != blockstate1) {
                    this.m_6550_(p_46605_, blockstate, blockstate1);
-@@ -216,8 +_,6 @@
+@@ -215,9 +_,8 @@
+                }
  
                 this.m_6559_(p_46605_, blockstate, blockstate1);
++               p_46606_.onBlockStateChange(this, p_46605_, blockstate);
              }
 -
 -            return true;
