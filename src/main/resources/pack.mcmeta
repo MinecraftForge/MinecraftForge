@@ -1,6 +1,8 @@
 {
    "pack": {
       "pack_format": 8,
-      "description": "Forge resource pack"
+      "description": "Forge resource pack",
+      "forge:resource_pack_format": 8,
+      "forge:data_pack_format": 9
    }
 }
