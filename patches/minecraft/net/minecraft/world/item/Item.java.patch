@@ -31,11 +31,15 @@
     public void m_5929_(Level p_41428_, LivingEntity p_41429_, ItemStack p_41430_, int p_41431_) {
     }
  
-@@ -134,7 +_,7 @@
+@@ -132,9 +_,9 @@
+    }
+ 
     public InteractionResultHolder<ItemStack> m_7203_(Level p_41432_, Player p_41433_, InteractionHand p_41434_) {
-       if (this.m_41472_()) {
-          ItemStack itemstack = p_41433_.m_21120_(p_41434_);
+-      if (this.m_41472_()) {
+-         ItemStack itemstack = p_41433_.m_21120_(p_41434_);
 -         if (p_41433_.m_36391_(this.m_41473_().m_38747_())) {
++      ItemStack itemstack = p_41433_.m_21120_(p_41434_);
++      if (itemstack.m_41614_()) {
 +         if (p_41433_.m_36391_(itemstack.getFoodProperties(p_41433_).m_38747_())) {
              p_41433_.m_6672_(p_41434_);
              return InteractionResultHolder.m_19096_(itemstack);
