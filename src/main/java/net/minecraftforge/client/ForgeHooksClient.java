@@ -1145,8 +1145,8 @@ public class ForgeHooksClient
     public static int getMaxMipmapLevel(int width, int height)
     {
         return Math.min(
-                Mth.log2(Math.max(1, width >> 1)),
-                Mth.log2(Math.max(1, height >> 1))
+                Mth.log2(Math.max(1, width)),
+                Mth.log2(Math.max(1, height))
         );
     }
 }
