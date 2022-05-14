@@ -3,7 +3,7 @@
 @@ -16,7 +_,7 @@
  public class LanServerPinger extends Thread {
     private static final AtomicInteger f_120101_ = new AtomicInteger(0);
-    private static final Logger f_120102_ = LogManager.getLogger();
+    private static final Logger f_120102_ = LogUtils.getLogger();
 -   public static final String f_174974_ = "224.0.2.60";
 +   public static final String f_174974_ = net.minecraftforge.network.DualStackUtils.getMulticastGroup();
     public static final int f_174975_ = 4445;

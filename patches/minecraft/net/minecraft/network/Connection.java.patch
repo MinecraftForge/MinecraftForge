@@ -1,6 +1,6 @@
 --- a/net/minecraft/network/Connection.java
 +++ b/net/minecraft/network/Connection.java
-@@ -77,6 +_,7 @@
+@@ -87,6 +_,7 @@
     private float f_129477_;
     private int f_129478_;
     private boolean f_129479_;
@@ -29,7 +29,7 @@
     }
  
     public static Connection m_178300_(InetSocketAddress p_178301_, boolean p_178302_) {
-+      net.minecraftforge.network.DualStackUtils.isIPv6(p_178301_.getAddress());
++      net.minecraftforge.network.DualStackUtils.checkIPv6(p_178301_.getAddress());
        final Connection connection = new Connection(PacketFlow.CLIENTBOUND);
 +      connection.activationHandler = net.minecraftforge.network.NetworkHooks::registerClientLoginChannel;
        Class<? extends SocketChannel> oclass;

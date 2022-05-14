@@ -13,7 +13,7 @@
           String s = LanServerPinger.m_120111_(p_120097_);
           String s1 = LanServerPinger.m_120116_(p_120097_);
           if (s1 != null) {
-+            if (net.minecraftforge.network.DualStackUtils.isIPv6(p_120098_)) {
++            if (net.minecraftforge.network.DualStackUtils.checkIPv6(p_120098_)) {
 +               final String ip;
 +
 +               // compress to short form if enabled in config
