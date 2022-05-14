@@ -37,6 +37,17 @@
           if (BaseRailBlock.m_49364_(this.f_55414_, blockpos3.m_7494_())) {
              railshape = RailShape.ASCENDING_EAST;
           }
+@@ -203,6 +_,10 @@
+          railshape = RailShape.NORTH_SOUTH;
+       }
+ 
++      if (!this.f_55416_.isValidRailShape(railshape)) { // Forge: allow rail block to decide if the new shape is valid
++         this.f_55419_.remove(p_55442_.f_55415_);
++         return;
++      }
+       this.f_55417_ = this.f_55417_.m_61124_(this.f_55416_.m_7978_(), railshape);
+       this.f_55414_.m_7731_(this.f_55415_, this.f_55417_, 3);
+    }
 @@ -305,7 +_,7 @@
           }
        }
@@ -55,3 +66,12 @@
           if (BaseRailBlock.m_49364_(this.f_55414_, blockpos3.m_7494_())) {
              railshape = RailShape.ASCENDING_EAST;
           }
+@@ -325,7 +_,7 @@
+          }
+       }
+ 
+-      if (railshape == null) {
++      if (railshape == null || !this.f_55416_.isValidRailShape(railshape)) { // Forge: allow rail block to decide if the new shape is valid
+          railshape = p_55434_;
+       }
+ 

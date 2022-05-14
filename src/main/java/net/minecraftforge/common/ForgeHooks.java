@@ -1161,6 +1161,8 @@ public class ForgeHooks
 
     public static boolean canEntityDestroy(Level level, BlockPos pos, LivingEntity entity)
     {
+        if (!level.isLoaded(pos))
+            return false;
         BlockState state = level.getBlockState(pos);
         return ForgeEventFactory.getMobGriefingEvent(level, entity) && state.canEntityDestroy(level, pos, entity) && ForgeEventFactory.onEntityDestroyBlock(entity, pos, state);
     }

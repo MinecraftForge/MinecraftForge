@@ -288,7 +288,7 @@ public class ClientCommandHandler
         }
         catch (CommandSyntaxException syntax)// Usually thrown by the CommandDispatcher
         {
-            if (syntax.getType() == CommandSyntaxException.BUILT_IN_EXCEPTIONS.dispatcherUnknownCommand())
+            if (syntax.getType() == CommandSyntaxException.BUILT_IN_EXCEPTIONS.dispatcherUnknownCommand() || syntax.getType() == CommandSyntaxException.BUILT_IN_EXCEPTIONS.dispatcherUnknownArgument())
             {
                 // in case of unknown command, let the server try and handle it
                 return false;

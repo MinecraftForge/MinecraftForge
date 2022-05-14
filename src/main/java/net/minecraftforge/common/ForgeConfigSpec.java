@@ -55,17 +55,27 @@ import com.google.common.collect.ObjectArrays;
  */
 public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfig> implements IConfigSpec<ForgeConfigSpec>//TODO: Remove extends and pipe everything through getSpec/getValues?
 {
-    private Map<List<String>, String> levelComments = new HashMap<>();
+    private Map<List<String>, String> levelComments;
+    private Map<List<String>, String> levelTranslationKeys;
 
     private UnmodifiableConfig values;
     private Config childConfig;
 
     private boolean isCorrecting = false;
 
-    private ForgeConfigSpec(UnmodifiableConfig storage, UnmodifiableConfig values, Map<List<String>, String> levelComments) {
+    private ForgeConfigSpec(UnmodifiableConfig storage, UnmodifiableConfig values, Map<List<String>, String> levelComments, Map<List<String>, String> levelTranslationKeys) {
         super(storage);
         this.values = values;
         this.levelComments = levelComments;
+        this.levelTranslationKeys = levelTranslationKeys;
+    }
+
+    public String getLevelComment(List<String> path) {
+        return levelComments.get(path);
+    }
+
+    public String getLevelTranslationKey(List<String> path) {
+        return levelTranslationKeys.get(path);
     }
 
     public void setConfig(CommentedConfig config) {
@@ -277,6 +287,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         private final Config storage = Config.of(LinkedHashMap::new, InMemoryFormat.withUniversalSupport()); // Use LinkedHashMap for consistent ordering
         private BuilderContext context = new BuilderContext();
         private Map<List<String>, String> levelComments = new HashMap<>();
+        private Map<List<String>, String> levelTranslationKeys = new HashMap<>();
         private List<String> currentPath = new ArrayList<>();
         private List<ConfigValue<?>> values = new ArrayList<>();
         private boolean hasInvalidComment = false;
@@ -580,6 +591,10 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
                 levelComments.put(new ArrayList<String>(currentPath), context.buildComment());
                 context.setComment(); // Set to empty
             }
+            if (context.getTranslationKey() != null) {
+                levelTranslationKeys.put(new ArrayList<String>(currentPath), context.getTranslationKey());
+                context.setTranslationKey(null);
+            }
             context.ensureEmpty();
             return this;
         }
@@ -607,7 +622,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
             Config valueCfg = Config.of(Config.getDefaultMapCreator(true, true), InMemoryFormat.withSupport(ConfigValue.class::isAssignableFrom));
             values.forEach(v -> valueCfg.set(v.getPath(), v));
 
-            ForgeConfigSpec ret = new ForgeConfigSpec(storage, valueCfg, levelComments);
+            ForgeConfigSpec ret = new ForgeConfigSpec(storage, valueCfg, levelComments, levelTranslationKeys);
             values.forEach(v -> v.spec = ret);
             return ret;
         }

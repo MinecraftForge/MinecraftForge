@@ -217,6 +217,8 @@ license="LGPL v2.1"
 [[mods]]
     modId="server_world_creation_test"
 [[mods]]
+    modId="valid_railshape_test"
+[[mods]]
     modId="data_pack_registries_test"
 
 # ADD ABOVE THIS LINE
