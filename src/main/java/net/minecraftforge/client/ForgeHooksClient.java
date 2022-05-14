@@ -229,6 +229,10 @@ public class ForgeHooksClient
         MinecraftForge.EVENT_BUS.post(new RenderLevelLastEvent(context, poseStack, partialTick, projectionMatrix, finishTimeNano));
     }
 
+    /**
+     * The current partial ticks when LevelRenderer.renderLevel is called.
+     * Use this for places where partial ticks are unavailable, but do not modify it.
+     */
     public static float partialTicks = 0.0F;
 
     public static void dispatchRenderStage(RenderLevelStageEvent.Stage stage, LevelRenderer levelRenderer, PoseStack poseStack, Matrix4f projectionMatrix, int ticks, double camX, double camY, double camZ)
