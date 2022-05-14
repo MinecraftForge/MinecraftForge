@@ -249,6 +249,35 @@ public class OBJModel implements IMultipartModelGeometry<OBJModel>
                 case "o":
                 {
                     String name = line[1];
+                    if (settings.allowHomonymObjectName)
+                    {
+                        if (parts.containsKey(name))
+                        {
+                            int index = name.length();
+                            char c;
+                            do
+                            {
+                                c = name.charAt(--index);
+                            }
+                            while (index > 0 || ( c >= '0' && c <= '9'));
+                            if (index != name.length() - 1)
+                            {
+                                String strName = name.substring(0,index);
+                                int num = Integer.parseInt(name.substring(index + 1));
+                                String renamed;
+                                do
+                                {
+                                    renamed = strName + (num++);
+                                }
+                                while (!parts.containsKey(renamed));
+                                name = renamed;
+                            }
+                            else
+                            {
+                                name+=1;
+                            }
+                        }
+                    }
                     if (objAboveGroup || currentGroup == null)
                     {
                         objAboveGroup = true;
@@ -662,6 +691,7 @@ public class OBJModel implements IMultipartModelGeometry<OBJModel>
 
     public record ModelSettings(@Nonnull ResourceLocation modelLocation,
                                 boolean detectCullableFaces, boolean diffuseLighting, boolean flipV,
-                                boolean ambientToFullbright, @Nullable String materialLibraryOverrideLocation)
+                                boolean ambientToFullbright, @Nullable String materialLibraryOverrideLocation,
+                                boolean allowHomonymObjectName)
     {}
 }

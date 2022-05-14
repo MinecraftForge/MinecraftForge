@@ -88,7 +88,8 @@ public class RenderableTest
                             true,
                             true,
                             false,
-                            null
+                            null,
+                            false
                     );
                     return OBJLoader.INSTANCE.loadModel(settings);
                 }

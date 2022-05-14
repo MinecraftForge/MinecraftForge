@@ -48,10 +48,11 @@ public class OBJLoader implements IModelLoader<OBJModel>
         boolean diffuseLighting = GsonHelper.getAsBoolean(modelContents, "diffuseLighting", false);
         boolean flipV = GsonHelper.getAsBoolean(modelContents, "flip-v", false);
         boolean ambientToFullbright = GsonHelper.getAsBoolean(modelContents, "ambientToFullbright", true);
+        boolean allowHomonymObjectName = GsonHelper.getAsBoolean(modelContents,"allowHomonymObjectName",false);
         @Nullable
         String materialLibraryOverrideLocation = modelContents.has("materialLibraryOverride") ? GsonHelper.getAsString(modelContents, "materialLibraryOverride") : null;
 
-        return loadModel(new OBJModel.ModelSettings(new ResourceLocation(modelLocation), detectCullableFaces, diffuseLighting, flipV, ambientToFullbright, materialLibraryOverrideLocation));
+        return loadModel(new OBJModel.ModelSettings(new ResourceLocation(modelLocation), detectCullableFaces, diffuseLighting, flipV, ambientToFullbright, materialLibraryOverrideLocation, allowHomonymObjectName));
     }
 
     public OBJModel loadModel(OBJModel.ModelSettings settings)
