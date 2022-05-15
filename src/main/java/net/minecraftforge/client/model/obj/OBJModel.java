@@ -249,34 +249,17 @@ public class OBJModel implements IMultipartModelGeometry<OBJModel>
                 case "o":
                 {
                     String name = line[1];
-                    if (settings.allowHomonymObjectName)
+                    if (settings.allowHomonymObjectName && parts.containsKey(name))
                     {
-                        if (parts.containsKey(name))
+                        int suffixNum = 0;
+                        String trueName = name + '_';
+                        String renamed;
+                        do
                         {
-                            int index = name.length();
-                            char c;
-                            do
-                            {
-                                c = name.charAt(--index);
-                            }
-                            while (index > 0 || ( c >= '0' && c <= '9'));
-                            if (index != name.length() - 1)
-                            {
-                                String strName = name.substring(0,index);
-                                int num = Integer.parseInt(name.substring(index + 1));
-                                String renamed;
-                                do
-                                {
-                                    renamed = strName + (num++);
-                                }
-                                while (!parts.containsKey(renamed));
-                                name = renamed;
-                            }
-                            else
-                            {
-                                name+=1;
-                            }
+                            renamed = trueName + (suffixNum++);
                         }
+                        while (parts.containsKey(renamed));
+                        name = renamed;
                     }
                     if (objAboveGroup || currentGroup == null)
                     {
