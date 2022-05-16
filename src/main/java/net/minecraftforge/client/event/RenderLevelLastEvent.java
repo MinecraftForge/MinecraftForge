@@ -11,7 +11,8 @@ import net.minecraft.client.renderer.LevelRenderer;
 import com.mojang.math.Matrix4f;
 
 /**
- * @see net.minecraftforge.client.event.RenderLevelStageEvent
+ * @deprecated Use {@link RenderLevelStageEvent} instead for more flexibility and improved compatibility with translucent objects.
+ * There is no {@link RenderLevelStageEvent.Stage} that directly replaces this event, instead you must decide which Stage best fits your use case.
  */
 @Deprecated(forRemoval = true, since = "1.18.2")
 public class RenderLevelLastEvent extends net.minecraftforge.eventbus.api.Event

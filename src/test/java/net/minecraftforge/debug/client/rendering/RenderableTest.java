@@ -45,6 +45,16 @@ import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+/**
+ * This mod is testing the use of {@link RenderLevelStageEvent} and is a modifaction of a pre-existing test mod that used the old
+ * {@link RenderLevelLastEvent}. To restore the old behavior, set {@link #USE_LEVEL_RENDERER_STAGE} to false.
+ * 
+ * When you enter a world, there should be 4 dogs rendering at (0, 120, 0) that test the various stages in {@link RenderLevelStageEvent}.
+ * From left to right (with the dogs facing you) they represent {@link Stage#AFTER_SKY}, {@link Stage#AFTER_SOLID_BLOCKS},
+ * {@link Stage#AFTER_TRANSLUCENT_BLOCKS}, {@link Stage#AFTER_PARTICLES}, and {@link Stage#AFTER_WEATHER}. Due to how weather modifies the
+ * projection matrix, it's dog will be positioned weirdly. Below each dog is a render of blue stained glass. This is to test translucency
+ * with fabulous graphics.
+ */
 @Mod(RenderableTest.MODID)
 public class RenderableTest
 {
@@ -52,7 +62,7 @@ public class RenderableTest
     private static final Logger LOGGER = LogManager.getLogger();
 
     public static final boolean ENABLED = true; // Renders at (0, 120, 0)
-    public static final boolean USE_LEVEL_RENDERER_HOOKS = true; // True when using RenderLevelStageEvent. False when using RenderLevelLastEvent
+    public static final boolean USE_LEVEL_RENDERER_STAGE = true; // True when using RenderLevelStageEvent. False when using RenderLevelLastEvent
 
     public RenderableTest()
     {
@@ -78,7 +88,7 @@ public class RenderableTest
             var forgeBus = MinecraftForge.EVENT_BUS;
             modBus.addListener(Client::registerModels);
             modBus.addListener(Client::registerReloadListeners);
-            if (USE_LEVEL_RENDERER_HOOKS)
+            if (USE_LEVEL_RENDERER_STAGE)
             {
                 modBus.addListener(Client::registerStage);
                 forgeBus.addListener(Client::renderStage);
@@ -136,7 +146,7 @@ public class RenderableTest
         private static void renderStage(RenderLevelStageEvent event)
         {
             int xOffset = -1;
-            var stage = event.stage;
+            var stage = event.getStage();
             if (stage == Stage.AFTER_SKY)
                 xOffset = 0;
             else if (stage == Stage.AFTER_SOLID_BLOCKS)
@@ -149,10 +159,10 @@ public class RenderableTest
                 xOffset = 4;
 
             if (xOffset > -1)
-                render(event.poseStack, event.ticks, event.partialTick, event.camX, event.camY, event.camZ, xOffset);
+                render(event.getPoseStack(), event.getRenderTick(), event.getPartialTick(), event.getCamX(), event.getCamY(), event.getCamZ(), xOffset);
         }
 
-        private static void render(PoseStack poseStack, int ticks, float partialTick, double camX, double camY, double camZ, int xOffset)
+        private static void render(PoseStack poseStack, int renderTick, float partialTick, double camX, double camY, double camZ, int xOffset)
         {
             double x = camX, y = camY, z = camZ;
             if (!new BlockPos(0, y, 0).closerThan(new BlockPos(x, y, z), 100))
@@ -167,7 +177,7 @@ public class RenderableTest
 
             var bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
 
-            double time = ticks + partialTick;
+            double time = renderTick + partialTick;
 
             var map = ImmutableMap.<String, Matrix4f>builder();
 
