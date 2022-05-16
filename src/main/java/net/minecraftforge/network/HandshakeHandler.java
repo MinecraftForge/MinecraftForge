@@ -6,6 +6,7 @@
 package net.minecraftforge.network;
 
 import com.google.common.collect.Multimap;
+import com.mojang.authlib.GameProfile;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.handshake.ClientIntentionPacket;
 import net.minecraft.network.protocol.login.ClientboundCustomQueryPacket;
@@ -13,7 +14,9 @@ import net.minecraft.network.protocol.login.ServerboundCustomQueryPacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.server.network.ServerLoginPacketListenerImpl;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.LogMessageAdapter;
+import net.minecraftforge.event.entity.player.PlayerNegotiationEvent;
 import net.minecraftforge.network.ConnectionData.ModMismatchData;
 import net.minecraftforge.network.simple.SimpleChannel;
 import net.minecraftforge.registries.ForgeRegistry;
@@ -27,7 +30,10 @@ import org.apache.logging.log4j.MarkerManager;
 import com.google.common.collect.Maps;
 
 import java.util.*;
+import java.util.concurrent.CancellationException;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiConsumer;
@@ -104,6 +110,8 @@ public class HandshakeHandler
     private Map<ResourceLocation, ForgeRegistry.Snapshot> registrySnapshots;
     private Set<ResourceLocation> registriesToReceive;
     private Map<ResourceLocation, String> registryHashes;
+    private boolean negotiationStarted = false;
+    private final List<Future<Void>> pendingFutures = new ArrayList<>();
 
     private HandshakeHandler(Connection networkManager, NetworkDirection side)
     {
@@ -313,6 +321,13 @@ public class HandshakeHandler
      */
     public boolean tickServer()
     {
+        if (!negotiationStarted) {
+            GameProfile profile = ((ServerLoginPacketListenerImpl) manager.getPacketListener()).gameProfile;
+            PlayerNegotiationEvent event = new PlayerNegotiationEvent(manager, profile, pendingFutures);
+            MinecraftForge.EVENT_BUS.post(event);
+            negotiationStarted = true;
+        }
+
         if (packetPosition < messageList.size()) {
             NetworkRegistry.LoginPayload message = messageList.get(packetPosition);
 
@@ -323,8 +338,24 @@ public class HandshakeHandler
             packetPosition++;
         }
 
+        pendingFutures.removeIf(future -> {
+            if (!future.isDone()) {
+                return false;
+            }
+
+            try {
+                future.get();
+            } catch (ExecutionException ex) {
+                LOGGER.error("Error during negotiation", ex.getCause());
+            } catch (CancellationException | InterruptedException ex) {
+                // no-op
+            }
+
+            return true;
+        });
+
         // we're done when sentMessages is empty
-        if (sentMessages.isEmpty() && packetPosition >= messageList.size()-1) {
+        if (sentMessages.isEmpty() && packetPosition >= messageList.size()-1 && pendingFutures.isEmpty()) {
             // clear ourselves - we're done!
             this.manager.channel().attr(NetworkConstants.FML_HANDSHAKE_HANDLER).set(null);
             LOGGER.debug(FMLHSMARKER, "Handshake complete!");

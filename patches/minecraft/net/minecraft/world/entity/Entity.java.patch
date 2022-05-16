@@ -17,6 +17,14 @@
     private final EntityType<?> f_19847_;
     private int f_19848_ = f_19843_.incrementAndGet();
     public boolean f_19850_;
+@@ -175,6 +_,7 @@
+    public double f_19790_;
+    public double f_19791_;
+    public double f_19792_;
++   @Deprecated // Forge - see IForgeEntity#getStepHeight
+    public float f_19793_;
+    public boolean f_19794_;
+    protected final Random f_19796_ = new Random();
 @@ -229,6 +_,7 @@
     private BlockState f_185934_ = null;
  
@@ -108,6 +116,22 @@
              return blockpos1;
           }
        }
+@@ -791,10 +_,11 @@
+       boolean flag1 = p_20273_.f_82480_ != vec3.f_82480_;
+       boolean flag2 = p_20273_.f_82481_ != vec3.f_82481_;
+       boolean flag3 = this.f_19861_ || flag1 && p_20273_.f_82480_ < 0.0D;
+-      if (this.f_19793_ > 0.0F && flag3 && (flag || flag2)) {
+-         Vec3 vec31 = m_198894_(this, new Vec3(p_20273_.f_82479_, (double)this.f_19793_, p_20273_.f_82481_), aabb, this.f_19853_, list);
+-         Vec3 vec32 = m_198894_(this, new Vec3(0.0D, (double)this.f_19793_, 0.0D), aabb.m_82363_(p_20273_.f_82479_, 0.0D, p_20273_.f_82481_), this.f_19853_, list);
+-         if (vec32.f_82480_ < (double)this.f_19793_) {
++      float stepHeight = getStepHeight();
++      if (stepHeight > 0.0F && flag3 && (flag || flag2)) {
++         Vec3 vec31 = m_198894_(this, new Vec3(p_20273_.f_82479_, (double)stepHeight, p_20273_.f_82481_), aabb, this.f_19853_, list);
++         Vec3 vec32 = m_198894_(this, new Vec3(0.0D, (double)stepHeight, 0.0D), aabb.m_82363_(p_20273_.f_82479_, 0.0D, p_20273_.f_82481_), this.f_19853_, list);
++         if (vec32.f_82480_ < (double)stepHeight) {
+             Vec3 vec33 = m_198894_(this, new Vec3(p_20273_.f_82479_, 0.0D, p_20273_.f_82481_), aabb.m_82383_(vec32), this.f_19853_, list).m_82549_(vec32);
+             if (vec33.m_165925_() > vec31.m_165925_()) {
+                vec31 = vec33;
 @@ -929,7 +_,7 @@
     protected void m_7355_(BlockPos p_20135_, BlockState p_20136_) {
        if (!p_20136_.m_60767_().m_76332_()) {
@@ -217,7 +241,7 @@
     }
  
     public boolean m_7306_(Entity p_20356_) {
-@@ -2237,14 +_,19 @@
+@@ -2237,14 +_,20 @@
  
     @Nullable
     public Entity m_5489_(ServerLevel p_20118_) {
@@ -225,6 +249,7 @@
 +   }
 +   @Nullable
 +   public Entity changeDimension(ServerLevel p_20118_, net.minecraftforge.common.util.ITeleporter teleporter) {
++      if (!net.minecraftforge.common.ForgeHooks.onTravelToDimension(this, p_20118_.m_46472_())) return null;
        if (this.f_19853_ instanceof ServerLevel && !this.m_146910_()) {
           this.f_19853_.m_46473_().m_6180_("changeDimension");
           this.m_19877_();

@@ -1,14 +1,13 @@
 --- a/net/minecraft/world/item/ShearsItem.java
 +++ b/net/minecraft/world/item/ShearsItem.java
-@@ -48,6 +_,32 @@
+@@ -48,6 +_,31 @@
        }
     }
  
 +   @Override
 +   public net.minecraft.world.InteractionResult m_6880_(ItemStack stack, net.minecraft.world.entity.player.Player playerIn, LivingEntity entity, net.minecraft.world.InteractionHand hand) {
-+      if (entity.f_19853_.f_46443_) return net.minecraft.world.InteractionResult.PASS;
-+      if (entity instanceof net.minecraftforge.common.IForgeShearable) {
-+          net.minecraftforge.common.IForgeShearable target = (net.minecraftforge.common.IForgeShearable)entity;
++      if (entity instanceof net.minecraftforge.common.IForgeShearable target) {
++         if (entity.f_19853_.f_46443_) return net.minecraft.world.InteractionResult.SUCCESS;
 +         BlockPos pos = new BlockPos(entity.m_20185_(), entity.m_20186_(), entity.m_20189_());
 +         if (target.isShearable(stack, entity.f_19853_, pos)) {
 +            java.util.List<ItemStack> drops = target.onSheared(playerIn, stack, entity.f_19853_, pos,
@@ -18,7 +17,7 @@
 +               net.minecraft.world.entity.item.ItemEntity ent = entity.m_5552_(d, 1.0F);
 +               ent.m_20256_(ent.m_20184_().m_82520_((double)((rand.nextFloat() - rand.nextFloat()) * 0.1F), (double)(rand.nextFloat() * 0.05F), (double)((rand.nextFloat() - rand.nextFloat()) * 0.1F)));
 +            });
-+            stack.m_41622_(1, entity, e -> e.m_21190_(hand));
++            stack.m_41622_(1, playerIn, e -> e.m_21190_(hand));
 +         }
 +         return net.minecraft.world.InteractionResult.SUCCESS;
 +      }

@@ -142,16 +142,6 @@
              }
  
              return interactionresultholder.m_19089_();
-@@ -343,6 +_,9 @@
-    public InteractionResult m_105226_(Player p_105227_, Entity p_105228_, InteractionHand p_105229_) {
-       this.m_105297_();
-       this.f_105190_.m_104955_(ServerboundInteractPacket.m_179608_(p_105228_, p_105227_.m_6144_(), p_105229_));
-+      if (this.f_105197_ == GameType.SPECTATOR) return InteractionResult.PASS; // don't fire for spectators to match non-specific EntityInteract
-+      InteractionResult cancelResult = net.minecraftforge.common.ForgeHooks.onInteractEntity(p_105227_, p_105228_, p_105229_);
-+      if(cancelResult != null) return cancelResult;
-       return this.f_105197_ == GameType.SPECTATOR ? InteractionResult.PASS : p_105227_.m_36157_(p_105228_, p_105229_);
-    }
- 
 @@ -350,6 +_,9 @@
        this.m_105297_();
        Vec3 vec3 = p_105233_.m_82450_().m_82492_(p_105232_.m_20185_(), p_105232_.m_20186_(), p_105232_.m_20189_());

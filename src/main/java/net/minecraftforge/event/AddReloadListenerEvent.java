@@ -11,6 +11,7 @@ import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.server.packs.resources.PreparableReloadListener;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.crafting.conditions.ICondition;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.ModLoader;
 
@@ -48,9 +49,21 @@ public class AddReloadListenerEvent extends Event
        return ImmutableList.copyOf(listeners);
     }
 
+    /**
+     * @return The ReloableServerResources being reloaded.
+     */
     public ReloadableServerResources getServerResources()
     {
         return serverResources;
+    }
+
+    /**
+     * This context object holds data relevant to the current reload, such as staged tags.
+     * @return The condition context for the currently active reload.
+     */
+    public ICondition.IContext getConditionContext()
+    {
+        return serverResources.getConditionContext();
     }
 
     private static class WrappedStateAwareListener implements PreparableReloadListener {

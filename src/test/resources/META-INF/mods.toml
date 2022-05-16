@@ -217,6 +217,10 @@ license="LGPL v2.1"
 [[mods]]
     modId="server_world_creation_test"
 [[mods]]
+    modId="valid_railshape_test"
+[[mods]]
+    modId="player_negotiation_event_test"
+[[mods]]
     modId="mod_mismatch"
 
 # ADD ABOVE THIS LINE
