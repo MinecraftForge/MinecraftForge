@@ -43,7 +43,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 @Mod(ModMismatchTest.MOD_ID)
 public class ModMismatchTest
 {
-    public static final String MOD_ID = "mod_mismatch";
+    public static final String MOD_ID = "mod_mismatch_test";
 
     private static final boolean ENABLED = false;
     // Enable these fields to register the channel for either the server, the client, or both.
