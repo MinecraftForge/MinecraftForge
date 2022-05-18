@@ -7,12 +7,20 @@ package net.minecraftforge.registries;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
+import com.google.common.base.Suppliers;
 import com.google.common.collect.Lists;
+import com.mojang.serialization.Codec;
 
+import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.core.Holder;
+import net.minecraft.core.Registry;
+import net.minecraft.core.RegistryAccess;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.registries.IForgeRegistry.*;
 
@@ -38,7 +46,7 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
     private boolean allowOverrides = true;
     private boolean allowModifications = false;
     private boolean hasWrapper = false;
-    private boolean isDataPackRegistry = false;
+    private Supplier<RegistryAccess.RegistryData<T>> dataPackRegistryData = () -> null; // if present, implies this is a datapack registry
     private DummyFactory<T> dummyFactory;
     private MissingFactory<T> missingFactory;
     private Set<ResourceLocation> legacyNames = new HashSet<>();
@@ -231,10 +239,49 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
         return this;
     }
 
-    public RegistryBuilder<T> dataPackRegistry()
+    /**
+     * <p>Register this registry as an unsynced datapack registry, which will cause data to be loaded from
+     * a datapack folder based on the registry's name. The mod that registers this registry does not need to exist
+     * on the client to connect to servers with the mod/registry.</p>
+     * <p>The registry's name must be of the form {@code modid:modid/folder}.
+     * Data JSONs will be loaded from {@code data/<datapack_namespace>/modid/folder/}, where modid is the mod that registered this registry.</p>
+     * @param codec the codec to be used for loading data from datapacks on servers
+     * @return this builder
+     */
+    public RegistryBuilder<T> dataPackRegistry(Codec<T> codec)
+    {
+        return this.dataPackRegistry(codec, null);
+    }
+
+    /**
+     * <p>Register this registry as a datapack registry, which will cause data to be loaded from
+     * a datapack folder based on the registry's name.</p>
+     * <p>The registry's name must be of the form {@code modid:modid/folder}.
+     * Data JSONs will be loaded from {@code data/<datapack_namespace>/modid/folder/}, where modid is the mod that registered this registry.</p>
+     * @param codec the codec to be used for loading data from datapacks on servers
+     * @param networkCodec the codec to be used for syncing loaded data to clients.<br>
+     * If networkCodec is null, data will not be synced, and clients without the mod that registered this registry can
+     * connect to servers with the mod.<br>
+     * If networkCodec is not null, then data will be synced (accessible via {@link ClientPacketListener#registryAccess()}),
+     * and the mod must be present on a client to connect to servers with the mod.
+     * @return this builder
+     */
+    public RegistryBuilder<T> dataPackRegistry(Codec<T> codec, @Nullable Codec<T> networkCodec)
     {
         this.hasWrapper(); // A wrapper is required for data pack registries
-        this.isDataPackRegistry = true;
+        this.disableSync(); // datapack registries are synced using a different system than static registries
+        // supplier averts having to set the registry name before calling this
+        this.dataPackRegistryData = Suppliers.memoize(() -> {
+            // validate registry key
+            if (this.registryName == null)
+                throw new IllegalStateException("Registry builder cannot build a datapack registry: registry name not set");
+            var prefix = this.registryName.getNamespace() + '/';
+            if (!this.registryName.getPath().startsWith(prefix))
+                throw new IllegalArgumentException(String.format(Locale.ENGLISH, "Registry path must be prefixed with '%s'", prefix));
+            
+            ResourceKey<Registry<T>> registryKey = ResourceKey.createRegistryKey(this.registryName);
+            return new RegistryAccess.RegistryData<>(registryKey, codec, networkCodec); 
+        });
         return this;
     }
 
@@ -396,8 +443,12 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
         return this.hasWrapper;
     }
 
-    boolean isDataPackRegistry()
+    @Nullable
+    /** 
+     * @return if returned data is non-null, indicates this registry is a builtin/datapack registry
+     */
+    RegistryAccess.RegistryData<T> getDataPackRegistryData()
     {
-        return this.isDataPackRegistry;
+        return this.dataPackRegistryData.get();
     }
 }

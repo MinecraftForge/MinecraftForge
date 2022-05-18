@@ -181,7 +181,6 @@ public class ForgeMod
     {
         if (FMLEnvironment.dist == Dist.CLIENT)
             ForgeHooksClient.registerForgeWorldPresetScreens();
-        DataPackRegistriesHooks.fireAddBuiltinRegistriesEvent();
     }
 
     public void serverStopping(ServerStoppingEvent evt)
