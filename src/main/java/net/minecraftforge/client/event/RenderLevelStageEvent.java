@@ -16,6 +16,7 @@ import com.mojang.math.Matrix4f;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.client.ForgeRenderTypes;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.event.IModBusEvent;
 
@@ -150,8 +151,9 @@ public class RenderLevelStageEvent extends Event
         public static final Stage AFTER_CUTOUT_BLOCKS = register("after_cutout_blocks", RenderType.cutout());
         /**
          * Use this to render custom block-like geometry into the world.
-         * Called within a fabulous graphics target. 
-         * Happens after block entities render. 
+         * Due to how transparency sorting works, this stage may not work properly with translucency. If you intend to render translucency,
+         * try using {@link #AFTER_TRIPWIRE_BLOCKS} or {@link #AFTER_PARTICLES}.
+         * Although this is called within a fabulous graphics target, it does not function properly in many cases.
          */
         public static final Stage AFTER_TRANSLUCENT_BLOCKS = register("after_translucent_blocks", RenderType.translucent());
         /**
@@ -162,6 +164,8 @@ public class RenderLevelStageEvent extends Event
          * Use this to render custom effects into the world, such as custom entity-like objects or special rendering effects.
          * Called within a fabulous graphics target.
          * Happens after entities render.
+         * 
+         * @see ForgeRenderTypes#TRANSLUCENT_ON_PARTICLES_TARGET
          */
         public static final Stage AFTER_PARTICLES = register("after_particles", null);
         /**
