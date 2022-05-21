@@ -219,6 +219,8 @@ license="LGPL v2.1"
 [[mods]]
     modId="valid_railshape_test"
 [[mods]]
+    modId="player_negotiation_event_test"
+[[mods]]
     modId="data_pack_registries_test"
 
 # ADD ABOVE THIS LINE
