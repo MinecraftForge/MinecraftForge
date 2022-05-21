@@ -134,7 +134,7 @@ public class ForgeConfig {
             experimentalForgeLightPipelineEnabled = builder
                 .comment("EXPERIMENTAL: Enable the Forge block rendering pipeline - fixes the lighting of custom models.")
                 .translation("forge.configgui.forgeLightPipelineEnabled")
-                .define("experimentalForgeLightPipelineEnabled", false);
+                .define("experimentalForgeLightPipelineEnabled", true);
 
             showLoadWarnings = builder
                 .comment("When enabled, Forge will show any warnings that occurred during loading.")
