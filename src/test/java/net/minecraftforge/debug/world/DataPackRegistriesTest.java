@@ -46,7 +46,7 @@ import net.minecraftforge.registries.RegistryObject;
 @Mod(DataPackRegistriesTest.MODID)
 public class DataPackRegistriesTest
 {
-    private static final boolean ENABLED = FMLEnvironment.dist != Dist.CLIENT;
+    private static final boolean ENABLED = true;
     public static final String MODID = "data_pack_registries_test";
 
     private static final Logger LOGGER = LogUtils.getLogger();

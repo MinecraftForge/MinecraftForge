@@ -1,0 +1,11 @@
+--- a/net/minecraft/network/protocol/game/ClientboundLoginPacket.java
++++ b/net/minecraft/network/protocol/game/ClientboundLoginPacket.java
+@@ -17,7 +_,7 @@
+    public ClientboundLoginPacket(FriendlyByteBuf p_178960_) {
+       this(p_178960_.readInt(), p_178960_.readBoolean(), GameType.m_46393_(p_178960_.readByte()), GameType.m_151497_(p_178960_.readByte()), p_178960_.m_178371_(Sets::newHashSetWithExpectedSize, (p_178965_) -> {
+          return ResourceKey.m_135785_(Registry.f_122819_, p_178965_.m_130281_());
+-      }), p_178960_.m_130057_(RegistryAccess.f_206151_).m_203557_(), p_178960_.m_130057_(DimensionType.f_63853_), ResourceKey.m_135785_(Registry.f_122819_, p_178960_.m_130281_()), p_178960_.readLong(), p_178960_.m_130242_(), p_178960_.m_130242_(), p_178960_.m_130242_(), p_178960_.readBoolean(), p_178960_.readBoolean(), p_178960_.readBoolean(), p_178960_.readBoolean());
++      }), net.minecraftforge.common.ForgeHooks.politelyDecodeRegistryAccess(p_178960_).m_203557_(), p_178960_.m_130057_(DimensionType.f_63853_), ResourceKey.m_135785_(Registry.f_122819_, p_178960_.m_130281_()), p_178960_.readLong(), p_178960_.m_130242_(), p_178960_.m_130242_(), p_178960_.m_130242_(), p_178960_.readBoolean(), p_178960_.readBoolean(), p_178960_.readBoolean(), p_178960_.readBoolean()); // forge: redirects the RegistryAccess decoding to provide a more helpful error message if custom datapack registries are missing 
+    }
+ 
+    public void m_5779_(FriendlyByteBuf p_132400_) {

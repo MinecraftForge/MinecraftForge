@@ -5,8 +5,7 @@
        m_123053_(builder, Registry.f_194568_, NormalNoise.NoiseParameters.f_192851_);
        m_123053_(builder, Registry.f_211074_, DensityFunction.f_208216_);
 -      return builder.build();
-+      return net.minecraftforge.registries.DataPackRegistriesHooks.addBuiltinRegistriesEvent(builder);
++      return net.minecraftforge.registries.DataPackRegistriesHooks.grabBuiltinRegistries(builder); // forge: keep the map so custom registries can be added later
     });
     Codec<RegistryAccess> f_206151_ = m_206205_();
     Supplier<RegistryAccess.Frozen> f_123049_ = Suppliers.memoize(() -> {
-

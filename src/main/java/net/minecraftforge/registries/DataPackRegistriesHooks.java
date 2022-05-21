@@ -24,7 +24,7 @@ import net.minecraft.resources.ResourceLocation;
 public class DataPackRegistriesHooks
 {
     private static Map<ResourceKey<? extends Registry<?>>, RegistryAccess.RegistryData<?>> REGISTRY_ACCESS_REGISTRIES_COPY;
-    private static Set<ResourceLocation> SYNCED_CUSTOM_REGISTRIES = new HashSet<>();
+    private static Set<ResourceKey<? extends Registry<?>>> SYNCED_CUSTOM_REGISTRIES = new HashSet<>();
 
     /** Modders, DO NOT USE. Internal use only */
     @Deprecated
@@ -44,8 +44,18 @@ public class DataPackRegistriesHooks
         REGISTRY_ACCESS_REGISTRIES_COPY.put(registryKey, data);
         if (data.networkCodec() != null)
         {
-            SYNCED_CUSTOM_REGISTRIES.add(registryKey.location());
+            SYNCED_CUSTOM_REGISTRIES.add(registryKey);
         }
+    }
+    
+    /**
+     * @return unmodifiable view of the set of synced non-vanilla datapack registry IDs.
+     * Clients must have each of a server's synced datapack registries to be able to connect to that server;
+     * vanilla clients therefore cannot connect if this list is non-empty on the server.
+     */
+    public static Set<ResourceKey<? extends Registry<?>>> getSyncedCustomRegistries()
+    {
+        return Collections.unmodifiableSet(SYNCED_CUSTOM_REGISTRIES);
     }
 
     /* Enforces the modid:modid/folder convention for custom datapack registries, ensuring loading folders are properly namespaced */

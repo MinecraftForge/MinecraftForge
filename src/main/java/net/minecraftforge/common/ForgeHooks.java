@@ -7,6 +7,7 @@ package net.minecraftforge.common;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Deque;
@@ -36,9 +37,12 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.mojang.datafixers.kinds.App;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.DataResult;
 import com.mojang.serialization.Lifecycle;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.mojang.serialization.codecs.RecordCodecBuilder.Mu;
+
+import io.netty.handler.codec.DecoderException;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -87,10 +91,12 @@ import net.minecraft.world.Container;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.NbtOps;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.syncher.EntityDataSerializer;
 import net.minecraft.network.protocol.game.ClientboundBlockUpdatePacket;
+import net.minecraft.network.protocol.game.ClientboundLoginPacket;
 import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.item.alchemy.PotionUtils;
 import net.minecraft.stats.Stats;
@@ -106,6 +112,7 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.BiomeSpecialEffects;
@@ -1509,5 +1516,42 @@ public class ForgeHooks
     {
         @Nullable ResourceLocation biomeLocation = ResourceLocation.tryParse(biome);
         return biomeLocation != null && !biomeLocation.getNamespace().equals(ResourceLocation.DEFAULT_NAMESPACE);
+    }
+    
+    /**
+     * Used for decoding the {@link ClientboundLoginPacket}'s RegistryAccess on the client and providing cleaner errors.
+     */
+    public static RegistryAccess politelyDecodeRegistryAccess(FriendlyByteBuf buf)
+    {
+        CompoundTag nbt = buf.readAnySizeNbt();
+        // RegistryAccess is encoded as a Map<RegistryID, Map<ElementID, Element>>
+        // check for invalid registries first
+        List<String> unknownRegistries = new ArrayList<>();
+        for (String nbtKey : nbt.getAllKeys())
+        {
+            ResourceLocation registryName = new ResourceLocation(nbtKey);
+            ResourceKey<? extends Registry<?>> registryKey = ResourceKey.createRegistryKey(registryName);
+            @Nullable RegistryAccess.RegistryData<?> registryData = RegistryAccess.REGISTRIES.get(registryKey);
+            if (registryData == null || registryData.networkCodec() == null)
+            {
+                unknownRegistries.add(nbtKey);
+            }
+        }
+        if (!unknownRegistries.isEmpty())
+        {
+            throw new DecoderException("Unknown or unsyncable datapack registries:\n" + String.join("\n", unknownRegistries));
+        }
+        DataResult<RegistryAccess> result = RegistryAccess.NETWORK_CODEC.parse(NbtOps.INSTANCE, nbt);
+        result.error().ifPresent(r ->
+        {
+            // If this parse fails, Vanilla reports a registry dump in the exception (by displaying the registry nbt)
+            // however this can be very large and the dump is usually larger than can fit into the login error window.
+            // Here we report the error but only dump the registry into the log.
+            String message = r.message();
+            LOGGER.error("Failed to decode datapack registries: {}", message);
+            LOGGER.error("Registry dump: {}", nbt);
+            throw new DecoderException("Failed to decode datapack registries (see log for full registry dump): " + message);
+        });
+        return result.result().get();
     }
 }
