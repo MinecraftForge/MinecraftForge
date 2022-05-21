@@ -9,9 +9,9 @@
 -      Optional<BlockState> optional2 = Optional.ofNullable(HoneycombItem.f_150864_.get().get(blockstate.m_60734_())).map((p_150694_) -> {
 -         return p_150694_.m_152465_(blockstate);
 -      });
-+      Optional<BlockState> optional = Optional.ofNullable(blockstate.getToolModifiedState(level, blockpos, player, p_40529_.m_43722_(), net.minecraftforge.common.ToolActions.AXE_STRIP));
-+      Optional<BlockState> optional1 = Optional.ofNullable(blockstate.getToolModifiedState(level, blockpos, player, p_40529_.m_43722_(), net.minecraftforge.common.ToolActions.AXE_SCRAPE));
-+      Optional<BlockState> optional2 = Optional.ofNullable(blockstate.getToolModifiedState(level, blockpos, player, p_40529_.m_43722_(), net.minecraftforge.common.ToolActions.AXE_WAX_OFF));
++      Optional<BlockState> optional = Optional.ofNullable(blockstate.getToolModifiedState(p_40529_, net.minecraftforge.common.ToolActions.AXE_STRIP, false));
++      Optional<BlockState> optional1 = optional.isPresent() ? Optional.empty() : Optional.ofNullable(blockstate.getToolModifiedState(p_40529_, net.minecraftforge.common.ToolActions.AXE_SCRAPE, false));
++      Optional<BlockState> optional2 = optional.isPresent() || optional1.isPresent() ? Optional.empty() : Optional.ofNullable(blockstate.getToolModifiedState(p_40529_, net.minecraftforge.common.ToolActions.AXE_WAX_OFF, false));
        ItemStack itemstack = p_40529_.m_43722_();
        Optional<BlockState> optional3 = Optional.empty();
        if (optional.isPresent()) {

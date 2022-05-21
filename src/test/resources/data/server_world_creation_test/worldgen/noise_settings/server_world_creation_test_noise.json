@@ -1,0 +1,67 @@
+{
+  "sea_level": 22,
+  "disable_mob_generation": false,
+  "aquifers_enabled": true,
+  "ore_veins_enabled": true,
+  "legacy_random_source": false,
+  "default_block": {
+    "Name": "minecraft:stone"
+  },
+  "default_fluid": {
+    "Name": "minecraft:water",
+    "Properties": {
+      "level": "0"
+    }
+  },
+  "noise": {
+    "min_y": -64,
+    "height": 384,
+    "size_horizontal": 1,
+    "size_vertical": 2,
+    "sampling": {
+      "xz_scale": 0.9999999814507745,
+      "y_scale": 0.9999999814507745,
+      "xz_factor": 80,
+      "y_factor": 160
+    },
+    "bottom_slide": {
+      "target": 0.1171875,
+      "size": 3,
+      "offset": 0
+    },
+    "top_slide": {
+      "target": -0.078125,
+      "size": 2,
+      "offset": 8
+    },
+    "terrain_shaper": {
+      "offset": 0,
+      "factor": 0,
+      "jaggedness": 0
+    }
+  },
+  "noise_router": {
+    "barrier": 0,
+    "fluid_level_floodedness": 0,
+    "fluid_level_spread": 0,
+    "lava": 0,
+    "temperature": 0,
+    "vegetation": 0,
+    "continents": 0,
+    "erosion": 0,
+    "depth": 0,
+    "ridges": 0,
+    "initial_density_without_jaggedness": 0,
+    "final_density": {
+      "type": "minecraft:interpolated",
+      "argument": "minecraft:overworld/base_3d_noise"
+    },
+    "vein_toggle": 0,
+    "vein_ridged": 0,
+    "vein_gap": 0
+  },
+  "surface_rule": {
+    "type": "minecraft:sequence",
+    "sequence": []
+  }
+}

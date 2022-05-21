@@ -1,11 +1,12 @@
 /*
- * Minecraft Forge - Forge Development LLC
+ * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
 package net.minecraftforge.common;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -32,78 +33,76 @@ public class BiomeDictionary
 
     public static final class Type
     {
-        private static final Map<String, Type> byName = new TreeMap<>();
+        private static final Map<String, Type> byName = new ConcurrentHashMap<>();
         private static Collection<Type> allTypes = Collections.unmodifiableCollection(byName.values());
 
         /*Temperature-based tags. Specifying neither implies a biome is temperate*/
-        public static final Type HOT = new Type("HOT");
-        public static final Type COLD = new Type("COLD");
+        public static final Type HOT = getType("HOT");
+        public static final Type COLD = getType("COLD");
 
         //Tags specifying the amount of vegetation a biome has. Specifying neither implies a biome to have moderate amounts*/
-        public static final Type SPARSE = new Type("SPARSE");
-        public static final Type DENSE = new Type("DENSE");
+        public static final Type SPARSE = getType("SPARSE");
+        public static final Type DENSE = getType("DENSE");
 
         //Tags specifying how moist a biome is. Specifying neither implies the biome as having moderate humidity*/
-        public static final Type WET = new Type("WET");
-        public static final Type DRY = new Type("DRY");
+        public static final Type WET = getType("WET");
+        public static final Type DRY = getType("DRY");
 
         /*Tree-based tags, SAVANNA refers to dry, desert-like trees (Such as Acacia), CONIFEROUS refers to snowy trees (Such as Spruce) and JUNGLE refers to jungle trees.
          * Specifying no tag implies a biome has temperate trees (Such as Oak)*/
-        public static final Type SAVANNA = new Type("SAVANNA");
-        public static final Type CONIFEROUS = new Type("CONIFEROUS");
-        public static final Type JUNGLE = new Type("JUNGLE");
+        public static final Type SAVANNA = getType("SAVANNA");
+        public static final Type CONIFEROUS = getType("CONIFEROUS");
+        public static final Type JUNGLE = getType("JUNGLE");
 
         /*Tags specifying the nature of a biome*/
-        public static final Type SPOOKY = new Type("SPOOKY");
-        public static final Type DEAD = new Type("DEAD");
-        public static final Type LUSH = new Type("LUSH");
-        public static final Type MUSHROOM = new Type("MUSHROOM");
-        public static final Type MAGICAL = new Type("MAGICAL");
-        public static final Type RARE = new Type("RARE");
-        public static final Type PLATEAU = new Type("PLATEAU");
-        public static final Type MODIFIED = new Type("MODIFIED");
+        public static final Type SPOOKY = getType("SPOOKY");
+        public static final Type DEAD = getType("DEAD");
+        public static final Type LUSH = getType("LUSH");
+        public static final Type MUSHROOM = getType("MUSHROOM");
+        public static final Type MAGICAL = getType("MAGICAL");
+        public static final Type RARE = getType("RARE");
+        public static final Type PLATEAU = getType("PLATEAU");
+        public static final Type MODIFIED = getType("MODIFIED");
 
-        public static final Type OCEAN = new Type("OCEAN");
-        public static final Type RIVER = new Type("RIVER");
+        public static final Type OCEAN = getType("OCEAN");
+        public static final Type RIVER = getType("RIVER");
         /**
          * A general tag for all water-based biomes. Shown as present if OCEAN or RIVER are.
          **/
-        public static final Type WATER = new Type("WATER", OCEAN, RIVER);
+        public static final Type WATER = getType("WATER", OCEAN, RIVER);
 
         /*Generic types which a biome can be*/
-        public static final Type MESA = new Type("MESA");
-        public static final Type FOREST = new Type("FOREST");
-        public static final Type PLAINS = new Type("PLAINS");
-        public static final Type HILLS = new Type("HILLS");
-        public static final Type SWAMP = new Type("SWAMP");
-        public static final Type SANDY = new Type("SANDY");
-        public static final Type SNOWY = new Type("SNOWY");
-        public static final Type WASTELAND = new Type("WASTELAND");
-        public static final Type BEACH = new Type("BEACH");
-        public static final Type VOID = new Type("VOID");
-        public static final Type UNDERGROUND = new Type("UNDERGROUND");
+        public static final Type MESA = getType("MESA");
+        public static final Type FOREST = getType("FOREST");
+        public static final Type PLAINS = getType("PLAINS");
+        public static final Type HILLS = getType("HILLS");
+        public static final Type SWAMP = getType("SWAMP");
+        public static final Type SANDY = getType("SANDY");
+        public static final Type SNOWY = getType("SNOWY");
+        public static final Type WASTELAND = getType("WASTELAND");
+        public static final Type BEACH = getType("BEACH");
+        public static final Type VOID = getType("VOID");
+        public static final Type UNDERGROUND = getType("UNDERGROUND");
 
         /*Mountain related tags*/
-        public static final Type PEAK = new Type("PEAK");
-        public static final Type SLOPE = new Type("SLOPE");
-        public static final Type MOUNTAIN = new Type("MOUNTAIN", PEAK, SLOPE);
+        public static final Type PEAK = getType("PEAK");
+        public static final Type SLOPE = getType("SLOPE");
+        public static final Type MOUNTAIN = getType("MOUNTAIN", PEAK, SLOPE);
 
         /*Tags specifying the dimension a biome generates in. Specifying none implies a biome that generates in a modded dimension*/
-        public static final Type OVERWORLD = new Type("OVERWORLD");
-        public static final Type NETHER = new Type("NETHER");
-        public static final Type END = new Type("END");
+        public static final Type OVERWORLD = getType("OVERWORLD");
+        public static final Type NETHER = getType("NETHER");
+        public static final Type END = getType("END");
 
         private final String name;
         private final List<Type> subTypes;
-        private final Set<ResourceKey<Biome>> biomes = new HashSet<>();
+        private final Set<ResourceKey<Biome>> biomes = ConcurrentHashMap.newKeySet();
         private final Set<ResourceKey<Biome>> biomesUn = Collections.unmodifiableSet(biomes);
 
         private Type(String name, Type... subTypes)
         {
             this.name = name;
             this.subTypes = ImmutableList.copyOf(subTypes);
-
-            byName.put(name, this);
         }
 
         /**
@@ -136,15 +135,9 @@ public class BiomeDictionary
          * @param name The name of this Type
          * @return An instance of Type for this name.
          */
-        public static Type getType(String name, Type... subTypes)
+        public synchronized static Type getType(String name, Type... subTypes)
         {
-            name = name.toUpperCase();
-            Type t = byName.get(name);
-            if (t == null)
-            {
-                t = new Type(name, subTypes);
-            }
-            return t;
+            return byName.computeIfAbsent(name.toUpperCase(Locale.ENGLISH), n -> new Type(n, subTypes));
         }
 
         /**
@@ -157,7 +150,7 @@ public class BiomeDictionary
          */
         public static boolean hasType(String name)
         {
-            return byName.containsKey(name.toUpperCase());
+            return byName.containsKey(name.toUpperCase(Locale.ENGLISH));
         }
 
         /**
@@ -356,7 +349,10 @@ public class BiomeDictionary
         {
             StringBuilder buf = new StringBuilder();
             buf.append("BiomeDictionary:\n");
-            Type.byName.forEach((name, type) ->
+
+            Type.getAll().stream()
+            .sorted((l,r) -> l.getName().compareTo(r.getName()))
+            .forEach(type ->
                 buf.append("    ").append(type.name).append(": ")
                 .append(type.biomes.stream()
                     .map(ResourceKey::location)

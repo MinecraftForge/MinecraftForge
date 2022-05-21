@@ -256,12 +256,17 @@
                 ServerLevel.this.f_143247_.remove(enderdragonpart.m_142049_());
              }
           }
-@@ -1538,6 +_,8 @@
+@@ -1538,6 +_,13 @@
              gameeventlistenerregistrar.m_157854_(p_143375_.f_19853_);
           }
  
 +         p_143375_.onRemovedFromWorld();
 +         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.EntityLeaveWorldEvent(p_143375_, ServerLevel.this));
        }
++   }
++
++   @Override
++   public java.util.Collection<net.minecraftforge.entity.PartEntity<?>> getPartEntities() {
++      return this.f_143247_.values();
     }
  }

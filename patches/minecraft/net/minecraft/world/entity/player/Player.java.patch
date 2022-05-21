@@ -1,9 +1,11 @@
 --- a/net/minecraft/world/entity/player/Player.java
 +++ b/net/minecraft/world/entity/player/Player.java
-@@ -112,6 +_,7 @@
+@@ -111,7 +_,8 @@
+ import net.minecraft.world.scores.Scoreboard;
  import net.minecraft.world.scores.Team;
  
- public abstract class Player extends LivingEntity {
+-public abstract class Player extends LivingEntity {
++public abstract class Player extends LivingEntity implements net.minecraftforge.common.extensions.IForgePlayer {
 +   public static final String PERSISTED_NBT_TAG = "PlayerPersisted";
     public static final String f_150081_ = "OfflinePlayer:";
     public static final int f_150082_ = 16;
@@ -23,7 +25,7 @@
  
     public static AttributeSupplier.Builder m_36340_() {
 -      return LivingEntity.m_21183_().m_22268_(Attributes.f_22281_, 1.0D).m_22268_(Attributes.f_22279_, (double)0.1F).m_22266_(Attributes.f_22283_).m_22266_(Attributes.f_22286_);
-+       return LivingEntity.m_21183_().m_22268_(Attributes.f_22281_, 1.0D).m_22268_(Attributes.f_22279_, (double) 0.1F).m_22266_(Attributes.f_22283_).m_22266_(Attributes.f_22286_).m_22266_(net.minecraftforge.common.ForgeMod.REACH_DISTANCE.get()).m_22266_(Attributes.f_22282_);
++       return LivingEntity.m_21183_().m_22268_(Attributes.f_22281_, 1.0D).m_22268_(Attributes.f_22279_, (double) 0.1F).m_22266_(Attributes.f_22283_).m_22266_(Attributes.f_22286_).m_22266_(net.minecraftforge.common.ForgeMod.REACH_DISTANCE.get()).m_22266_(Attributes.f_22282_).m_22266_(net.minecraftforge.common.ForgeMod.ATTACK_RANGE.get());
     }
  
     protected void m_8097_() {
@@ -192,7 +194,39 @@
                       this.m_21008_(p_36159_, ItemStack.f_41583_);
                    }
  
-@@ -1041,6 +_,7 @@
+@@ -992,7 +_,7 @@
+          double d1 = p_36201_.f_82481_;
+          double d2 = 0.05D;
+ 
+-         while(d0 != 0.0D && this.f_19853_.m_45756_(this, this.m_142469_().m_82386_(d0, (double)(-this.f_19793_), 0.0D))) {
++         while(d0 != 0.0D && this.f_19853_.m_45756_(this, this.m_142469_().m_82386_(d0, (double)(-this.getStepHeight()), 0.0D))) {
+             if (d0 < 0.05D && d0 >= -0.05D) {
+                d0 = 0.0D;
+             } else if (d0 > 0.0D) {
+@@ -1002,7 +_,7 @@
+             }
+          }
+ 
+-         while(d1 != 0.0D && this.f_19853_.m_45756_(this, this.m_142469_().m_82386_(0.0D, (double)(-this.f_19793_), d1))) {
++         while(d1 != 0.0D && this.f_19853_.m_45756_(this, this.m_142469_().m_82386_(0.0D, (double)(-this.getStepHeight()), d1))) {
+             if (d1 < 0.05D && d1 >= -0.05D) {
+                d1 = 0.0D;
+             } else if (d1 > 0.0D) {
+@@ -1012,7 +_,7 @@
+             }
+          }
+ 
+-         while(d0 != 0.0D && d1 != 0.0D && this.f_19853_.m_45756_(this, this.m_142469_().m_82386_(d0, (double)(-this.f_19793_), d1))) {
++         while(d0 != 0.0D && d1 != 0.0D && this.f_19853_.m_45756_(this, this.m_142469_().m_82386_(d0, (double)(-this.getStepHeight()), d1))) {
+             if (d0 < 0.05D && d0 >= -0.05D) {
+                d0 = 0.0D;
+             } else if (d0 > 0.0D) {
+@@ -1037,10 +_,11 @@
+    }
+ 
+    private boolean m_36386_() {
+-      return this.f_19861_ || this.f_19789_ < this.f_19793_ && !this.f_19853_.m_45756_(this, this.m_142469_().m_82386_(0.0D, (double)(this.f_19789_ - this.f_19793_), 0.0D));
++      return this.f_19861_ || this.f_19789_ < this.getStepHeight() && !this.f_19853_.m_45756_(this, this.m_142469_().m_82386_(0.0D, (double)(this.f_19789_ - this.getStepHeight()), 0.0D));
     }
  
     public void m_5706_(Entity p_36347_) {
@@ -232,15 +266,17 @@
                 }
  
                 float f4 = 0.0F;
-@@ -1110,7 +_,7 @@
+@@ -1110,8 +_,8 @@
                    if (flag3) {
                       float f3 = 1.0F + EnchantmentHelper.m_44821_(this) * f;
  
 -                     for(LivingEntity livingentity : this.f_19853_.m_45976_(LivingEntity.class, p_36347_.m_142469_().m_82377_(1.0D, 0.25D, 1.0D))) {
+-                        if (livingentity != this && livingentity != p_36347_ && !this.m_7307_(livingentity) && (!(livingentity instanceof ArmorStand) || !((ArmorStand)livingentity).m_31677_()) && this.m_20280_(livingentity) < 9.0D) {
 +                     for(LivingEntity livingentity : this.f_19853_.m_45976_(LivingEntity.class, this.m_21120_(InteractionHand.MAIN_HAND).getSweepHitBox(this, p_36347_))) {
-                         if (livingentity != this && livingentity != p_36347_ && !this.m_7307_(livingentity) && (!(livingentity instanceof ArmorStand) || !((ArmorStand)livingentity).m_31677_()) && this.m_20280_(livingentity) < 9.0D) {
++                        if (livingentity != this && livingentity != p_36347_ && !this.m_7307_(livingentity) && (!(livingentity instanceof ArmorStand) || !((ArmorStand)livingentity).m_31677_()) && this.canHit(livingentity, 0)) { // Original check was dist < 3, range is 3, so vanilla used padding=0
                             livingentity.m_147240_((double)0.4F, (double)Mth.m_14031_(this.m_146908_() * ((float)Math.PI / 180F)), (double)(-Mth.m_14089_(this.m_146908_() * ((float)Math.PI / 180F))));
                             livingentity.m_6469_(DamageSource.m_19344_(this), f3);
+                         }
 @@ -1152,13 +_,15 @@
                    EnchantmentHelper.m_44896_(this, p_36347_);
                    ItemStack itemstack1 = this.m_21205_();
@@ -346,7 +382,7 @@
        return this.m_36218_(mutablecomponent);
     }
  
-@@ -1895,18 +_,18 @@
+@@ -1895,24 +_,24 @@
           Predicate<ItemStack> predicate = ((ProjectileWeaponItem)p_36349_.m_41720_()).m_6442_();
           ItemStack itemstack = ProjectileWeaponItem.m_43010_(this, predicate);
           if (!itemstack.m_41619_()) {
@@ -368,6 +404,13 @@
           }
        }
     }
+ 
+    public ItemStack m_5584_(Level p_36185_, ItemStack p_36186_) {
+-      this.m_36324_().m_38712_(p_36186_.m_41720_(), p_36186_);
++      this.m_36324_().eat(p_36186_.m_41720_(), p_36186_, this);
+       this.m_36246_(Stats.f_12982_.m_12902_(p_36186_.m_41720_()));
+       p_36185_.m_6263_((Player)null, this.m_20185_(), this.m_20186_(), this.m_20189_(), SoundEvents.f_12321_, SoundSource.PLAYERS, 0.5F, p_36185_.f_46441_.nextFloat() * 0.1F + 0.9F);
+       if (this instanceof ServerPlayer) {
 @@ -1991,5 +_,63 @@
        public Component m_36423_() {
           return this.f_36413_;

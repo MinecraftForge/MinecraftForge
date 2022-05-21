@@ -1,5 +1,5 @@
 /*
- * Minecraft Forge - Forge Development LLC
+ * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
@@ -11,6 +11,7 @@ import javax.annotation.Nullable;
 import net.minecraft.core.Registry;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.monster.EnderMan;
+import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.pattern.BlockInWorld;
@@ -505,5 +506,21 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundTag>
     default void onDestroyed(ItemEntity itemEntity, DamageSource damageSource)
     {
         self().getItem().onDestroyed(itemEntity, damageSource);
+    }
+
+    /**
+     * Get the food properties for this item.
+     * This is a bouncer for easier use of {@link IForgeItem#getFoodProperties(ItemStack, LivingEntity)}
+     *
+     * The @Nullable annotation was only added, due to the default method, also being @Nullable.
+     * Use this with a grain of salt, as if you return null here and true at {@link Item#isEdible()}, NPEs will occur!
+     *
+     * @param entity The entity which wants to eat the food. Be aware that this can be null!
+     * @return The current FoodProperties for the item.
+     */
+    @Nullable // read javadoc to find a potential problem
+    default FoodProperties getFoodProperties(@Nullable LivingEntity entity)
+    {
+        return self().getItem().getFoodProperties(self(), entity);
     }
 }

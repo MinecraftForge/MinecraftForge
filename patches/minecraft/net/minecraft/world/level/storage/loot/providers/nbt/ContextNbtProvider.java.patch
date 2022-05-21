@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/level/storage/loot/providers/nbt/ContextNbtProvider.java
++++ b/net/minecraft/world/level/storage/loot/providers/nbt/ContextNbtProvider.java
+@@ -46,7 +_,7 @@
+          }
+ 
+          public String m_142016_() {
+-            return p_165578_.name();
++            return p_165578_.getName();
+          }
+ 
+          public Set<LootContextParam<?>> m_142524_() {

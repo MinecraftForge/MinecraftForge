@@ -1,5 +1,5 @@
 /*
- * Minecraft Forge - Forge Development LLC
+ * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
@@ -45,6 +45,11 @@ public class RegistryManager
     private Map<ResourceLocation, ResourceLocation> legacyNames = new HashMap<>();
     private final String name;
 
+    RegistryManager()
+    {
+        this("STAGING");
+    }
+
     public RegistryManager(String name)
     {
         this.name = name;
@@ -53,6 +58,11 @@ public class RegistryManager
     public String getName()
     {
         return this.name;
+    }
+
+    boolean isStaging()
+    {
+        return "STAGING".equals(this.name);
     }
 
     @SuppressWarnings("unchecked")
