@@ -32,6 +32,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.RightClickBlock;
 import net.minecraftforge.event.server.ServerAboutToStartEvent;
+import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
@@ -101,7 +102,7 @@ public class DataPackRegistriesTest
             MinecraftForge.EVENT_BUS.addListener(this::onServerAboutToStart);
             MinecraftForge.EVENT_BUS.addListener(this::onRightClickBlock);
 
-            var modBus = FMLJavaModLoadingContext.get().getModEventBus();
+            IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();
             TEST_A_REGISTER.register(modBus);
             TEST_B_REGISTER.register(modBus);
             TEST_C_REGISTER.register(modBus);
@@ -110,7 +111,7 @@ public class DataPackRegistriesTest
 
     private void onServerAboutToStart(ServerAboutToStartEvent event)
     {
-        var registries = event.getServer().registryAccess();
+        RegistryAccess registries = event.getServer().registryAccess();
         printTestRegistries(registries);
         Optional<HolderSet.Named<TestA>> testATag = registries.ownedRegistryOrThrow(TestA.REGISTRY)
             .getTag(TagKey.create(TestA.REGISTRY, new ResourceLocation(MODID, "test_a_tag")));
@@ -146,19 +147,19 @@ public class DataPackRegistriesTest
 
     private static void printTestRegistries(RegistryAccess registries)
     {
-        var biomeRegistry = registries.registryOrThrow(Registry.BIOME_REGISTRY);
-        var testARegistry = registries.ownedRegistryOrThrow(TestA.REGISTRY);
-        var testBRegistry = registries.ownedRegistryOrThrow(TestB.REGISTRY);
+        Registry<Biome> biomeRegistry = registries.registryOrThrow(Registry.BIOME_REGISTRY);
+        Registry<TestA> testARegistry = registries.ownedRegistryOrThrow(TestA.REGISTRY);
+        Registry<TestB> testBRegistry = registries.ownedRegistryOrThrow(TestB.REGISTRY);
 
         LOGGER.info("DataPackRegistriesTest TestA:");
         for (var entry : testARegistry.entrySet())
         {
-            var registryName = entry.getKey().location();
+            ResourceLocation registryName = entry.getKey().location();
 
-            var value = entry.getValue();
-            var name = value.getStringValue();
+            TestA value = entry.getValue();
+            String name = value.getStringValue();
             int intValue = value.getIntValue();
-            var biomeName = biomeRegistry.getKey(value.getBiome().value());
+            ResourceLocation biomeName = biomeRegistry.getKey(value.getBiome().value());
 
             LOGGER.info(" - Registry Name: {}, String: {}, Int: {}, Biome: {} (valid={})", registryName, name, intValue, biomeName, biomeName != null);
         }
@@ -166,16 +167,16 @@ public class DataPackRegistriesTest
         LOGGER.info("DataPackRegistriesTest TestB:");
         for (var entry : testBRegistry.entrySet())
         {
-            var registryName = entry.getKey().location();
-            var value = entry.getValue();
+            ResourceLocation registryName = entry.getKey().location();
+            TestB value = entry.getValue();
 
-            var testAName = testARegistry.getKey(value.getTestA().value());
+            ResourceLocation testAName = testARegistry.getKey(value.getTestA().value());
             LOGGER.info(" - Registry Name: {}, TestA: {} (valid={}), TestAList:", registryName, testAName, testAName != null);
 
             for (int i = 0; i < value.getTestAList().size(); i++)
             {
-                var element = value.getTestAList().get(i);
-                var elementName = testARegistry.getKey(element.value());
+                Holder<TestA> element = value.getTestAList().get(i);
+                ResourceLocation elementName = testARegistry.getKey(element.value());
                 LOGGER.info("   [{}] {} (valid={})", i, elementName, elementName != null);
             }
         }
@@ -203,7 +204,7 @@ public class DataPackRegistriesTest
         });
     }
     
-    @EventBusSubscriber(modid=DataPackRegistriesTest.MODID, bus=Bus.FORGE, value=Dist.CLIENT)
+    @EventBusSubscriber(modid = DataPackRegistriesTest.MODID, bus = Bus.FORGE, value = Dist.CLIENT)
     public static class ClientForgeEvents
     {
         @SubscribeEvent
