@@ -69,7 +69,7 @@ public class NewRegistryEvent extends Event implements IModBusEvent
             {
                 if (builder.getHasWrapper() && !BuiltinRegistries.REGISTRY.containsKey(reg.getRegistryName()))
                 {
-                    DataPackRegistriesHooks.validateAndAddRegistryCodec(dataPackRegistryData);
+                    DataPackRegistriesHooks.addRegistryCodec(dataPackRegistryData);
                     RegistryManager.registerToBuiltinRegistry((ForgeRegistry<?>) reg);
                 }
             }

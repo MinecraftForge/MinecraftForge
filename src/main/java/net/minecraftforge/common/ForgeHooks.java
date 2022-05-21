@@ -1525,7 +1525,7 @@ public class ForgeHooks
     {
         CompoundTag nbt = buf.readAnySizeNbt();
         // RegistryAccess is encoded as a Map<RegistryID, Map<ElementID, Element>>
-        // check for invalid registries first
+        // Check for invalid registries first
         List<String> unknownRegistries = new ArrayList<>();
         for (String nbtKey : nbt.getAllKeys())
         {
@@ -1539,14 +1539,14 @@ public class ForgeHooks
         }
         if (!unknownRegistries.isEmpty())
         {
-            throw new DecoderException("Unknown or unsyncable datapack registries:\n" + String.join("\n", unknownRegistries));
+            throw new DecoderException("Unknown or unsyncable datapack registries: " + String.join(" ", unknownRegistries));
         }
         DataResult<RegistryAccess> result = RegistryAccess.NETWORK_CODEC.parse(NbtOps.INSTANCE, nbt);
         result.error().ifPresent(r ->
         {
-            // If this parse fails, Vanilla reports a registry dump in the exception (by displaying the registry nbt)
+            // If this parse fails, Vanilla reports a registry dump in the exception (by displaying the registry nbt),
             // however this can be very large and the dump is usually larger than can fit into the login error window.
-            // Here we report the error but only dump the registry into the log.
+            // Here we report the error, but only dump the registry into the log.
             String message = r.message();
             LOGGER.error("Failed to decode datapack registries: {}", message);
             LOGGER.error("Registry dump: {}", nbt);

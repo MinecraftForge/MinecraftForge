@@ -37,10 +37,9 @@ public class DataPackRegistriesHooks
 
     /* Registers a datapack registry codec and folder. Internal forge use only. */
     @Deprecated
-    public static <T> void validateAndAddRegistryCodec(@NotNull RegistryAccess.RegistryData<T> data)
+    public static <T> void addRegistryCodec(@NotNull RegistryAccess.RegistryData<T> data)
     {
         ResourceKey<? extends Registry<T>> registryKey = data.key();
-        validateRegistryKey(registryKey);
         REGISTRY_ACCESS_REGISTRIES_COPY.put(registryKey, data);
         if (data.networkCodec() != null)
         {
@@ -58,15 +57,13 @@ public class DataPackRegistriesHooks
         return Collections.unmodifiableSet(SYNCED_CUSTOM_REGISTRIES);
     }
 
-    /* Enforces the modid:modid/folder convention for custom datapack registries, ensuring loading folders are properly namespaced */
-    private static void validateRegistryKey(ResourceKey<? extends Registry<?>> registryKey)
+    /**
+     * @param registryName name of registry
+     * @return true if registry name follows modid:modid/folder namespacing convention, false otherwise
+     */
+    public static boolean isNamespacedRegistryFolder(ResourceLocation registryName)
     {
-        var location = registryKey.location();
-        var prefix = location.getNamespace() + '/';
-
-        if (!location.getPath().startsWith(prefix))
-        {
-            throw new IllegalArgumentException(String.format(Locale.ENGLISH, "Registry path must be prefixed with '%s'", prefix));
-        }
+        var prefix = registryName.getNamespace() + '/';
+        return registryName.getPath().startsWith(prefix);
     }
 }
