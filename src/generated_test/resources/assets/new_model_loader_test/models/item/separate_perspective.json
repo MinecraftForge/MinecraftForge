@@ -8,7 +8,7 @@
     "gui": {
       "parent": "minecraft:item/snowball"
     },
-    "first_person_left_hand": {
+    "firstperson_lefthand": {
       "parent": "minecraft:item/bone"
     }
   }
