@@ -214,18 +214,18 @@ public class ModelLoaderRegistry
             JsonObject transform = transformData.getAsJsonObject();
             EnumMap<ItemTransforms.TransformType, Transformation> transforms = Maps.newEnumMap(ItemTransforms.TransformType.class);
 
-            deserializeTRSR(context, transforms, transform, "thirdperson", ItemTransforms.TransformType.THIRD_PERSON_RIGHT_HAND);
-            deserializeTRSR(context, transforms, transform, "thirdperson_righthand", ItemTransforms.TransformType.THIRD_PERSON_RIGHT_HAND);
-            deserializeTRSR(context, transforms, transform, "thirdperson_lefthand", ItemTransforms.TransformType.THIRD_PERSON_LEFT_HAND);
-
-            deserializeTRSR(context, transforms, transform, "firstperson", ItemTransforms.TransformType.FIRST_PERSON_RIGHT_HAND);
-            deserializeTRSR(context, transforms, transform, "firstperson_righthand", ItemTransforms.TransformType.FIRST_PERSON_RIGHT_HAND);
-            deserializeTRSR(context, transforms, transform, "firstperson_lefthand", ItemTransforms.TransformType.FIRST_PERSON_LEFT_HAND);
-
-            deserializeTRSR(context, transforms, transform, "head", ItemTransforms.TransformType.HEAD);
-            deserializeTRSR(context, transforms, transform, "gui", ItemTransforms.TransformType.GUI);
-            deserializeTRSR(context, transforms, transform, "ground", ItemTransforms.TransformType.GROUND);
-            deserializeTRSR(context, transforms, transform, "fixed", ItemTransforms.TransformType.FIXED);
+            for (var type : ItemTransforms.TransformType.values())
+            {
+                var fallbackType = type;
+                while (fallbackType.fallback() != null && !transform.has(fallbackType.getSerializeName())) {
+                    fallbackType = fallbackType.fallback();
+                }
+                if(transform.has(fallbackType.getSerializeName()))
+                {
+                    Transformation t = context.deserialize(transform.remove(fallbackType.getSerializeName()), Transformation.class);
+                    transforms.put(type, t.blockCenterToCorner());
+                }
+            }
 
             int k = transform.entrySet().size();
             if(transform.has("matrix")) k--;
@@ -236,7 +236,8 @@ public class ModelLoaderRegistry
             if(transform.has("origin")) k--;
             if(k > 0)
             {
-                throw new JsonParseException("transform: allowed keys: 'thirdperson', 'firstperson', 'gui', 'head', 'matrix', 'translation', 'rotation', 'scale', 'post-rotation', 'origin'");
+                throw new JsonParseException("transform: allowed keys: 'matrix', 'translation', 'rotation', 'scale', 'post-rotation', 'origin', "
+                        + Arrays.stream(ItemTransforms.TransformType.values()).map(v -> "'" + v.getSerializeName() + "'").collect(Collectors.joining(", ")));
             }
             Transformation base = Transformation.identity();
             if(!transform.entrySet().isEmpty())
@@ -245,15 +246,6 @@ public class ModelLoaderRegistry
             }
             ModelState state = new SimpleModelState(Maps.immutableEnumMap(transforms), base);
             return Optional.of(state);
-        }
-    }
-
-    private static void deserializeTRSR(JsonDeserializationContext context, EnumMap<ItemTransforms.TransformType, Transformation> transforms, JsonObject transform, String name, ItemTransforms.TransformType itemCameraTransform)
-    {
-        if(transform.has(name))
-        {
-            Transformation t = context.deserialize(transform.remove(name), Transformation.class);
-            transforms.put(itemCameraTransform, t.blockCenterToCorner());
         }
     }
 
