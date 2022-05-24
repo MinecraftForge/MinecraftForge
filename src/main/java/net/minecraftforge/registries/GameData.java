@@ -629,7 +629,7 @@ public class GameData
         }
     }
 
-    private static class PointOfInterestTypeCallbacks implements IForgeRegistry.AddCallback<PoiType> , IForgeRegistry.ClearCallback<PoiType>, IForgeRegistry.CreateCallback<PoiType>
+    private static class PointOfInterestTypeCallbacks implements IForgeRegistry.AddCallback<PoiType> , IForgeRegistry.ClearCallback<PoiType>, IForgeRegistry.CreateCallback<PoiType>, IForgeRegistry.BakeCallback<PoiType>
     {
         static final PointOfInterestTypeCallbacks INSTANCE = new PointOfInterestTypeCallbacks();
 
@@ -641,7 +641,7 @@ public class GameData
             {
                 oldObj.getBlockStates().forEach(map::remove);
             }
-            obj.getBlockStates().forEach((state) ->
+            poiTypeInitialMatchingStatesGetter.apply(obj).forEach((state) ->
             {
                 PoiType oldType = map.put(state, obj);
                 if (oldType != null)
@@ -661,6 +661,38 @@ public class GameData
         public void onCreate(IForgeRegistryInternal<PoiType> owner, RegistryManager stage)
         {
             owner.setSlaveMap(BLOCKSTATE_TO_POINT_OF_INTEREST_TYPE, new HashMap<>());
+        }
+
+        @Override
+        public void onBake(IForgeRegistryInternal<PoiType> owner, RegistryManager stage)
+        {
+            Map<BlockState, PoiType> stateToPoiMap = owner.getSlaveMap(BLOCKSTATE_TO_POINT_OF_INTEREST_TYPE, Map.class);
+            Multimap<PoiType, BlockState> poiTypeToStatesMap = HashMultimap.create();
+            for (Block block : ForgeRegistries.BLOCKS.getValues())
+            {
+                for (BlockState state : block.getStateDefinition().getPossibleStates())
+                {
+                    block.getPoiType(state).ifPresent(poiType -> {
+                        if (poiTypeInitialMatchingStatesGetter.apply(poiType).contains(state))
+                        {
+                            throw new IllegalStateException(String.format(Locale.ENGLISH, "Point of interest type %1$s already lists %2$s in its blockstates. Cannot add %2$s to %1$s again.", poiType, state));
+                        }
+                        PoiType oldType = stateToPoiMap.put(state, poiType);
+                        if (oldType != null)
+                        {
+                            throw new IllegalStateException(String.format(Locale.ENGLISH, "Point of interest type %1$s already lists %3$s in its blockstates. Cannot add blockstate %3$s to %2$s, Blockstates can only have one point of interest type each.", oldType, poiType, state));
+                        }
+                        poiTypeToStatesMap.put(poiType, state);
+                    });
+                }
+            }
+            poiTypeToStatesMap.asMap().forEach((poiType, states) -> {
+                var allStatesForPoi = ImmutableSet.<BlockState>builder()
+                        .addAll(poiTypeInitialMatchingStatesGetter.apply(poiType))
+                        .addAll(states)
+                        .build();
+                poiTypeMatchingStatesSetter.accept(poiType, allStatesForPoi);
+            });
         }
     }
 
@@ -976,4 +1008,15 @@ public class GameData
         }
 
     }
+
+    private static volatile BiConsumer<PoiType, Set<BlockState>> poiTypeMatchingStatesSetter;
+    private static volatile Function<PoiType, Set<BlockState>> poiTypeInitialMatchingStatesGetter;
+
+    public static void setPoiTypeAccessors(BiConsumer<PoiType, Set<BlockState>> allMatchingStatesSetter, Function<PoiType, Set<BlockState>> initialMatchingStatesGetter)
+    {
+        poiTypeMatchingStatesSetter = allMatchingStatesSetter;
+        poiTypeInitialMatchingStatesGetter = initialMatchingStatesGetter;
+
+    }
+
 }

@@ -15,6 +15,7 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.SpawnPlacements;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.ai.village.poi.PoiType;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.entity.boss.wither.WitherBoss;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -832,4 +833,20 @@ public interface IForgeBlock
         }
         return true;
     }
+
+    /**
+     * Get the PoiType for this BlockState.
+     * This method can be used to assign a PoiType to your Block, if the PoiType is not under your control.<br>
+     *
+     * Do <i>not</i> use this method to determine the PoiType for a BlockState in general. Use {@link PoiType#forState}
+     * for that purpose instead.<br>
+     *
+     * @param state the BlockState being queried
+     * @return the PoiType for the BlockState, if one should be assigned
+     */
+    default Optional<PoiType> getPoiType(BlockState state)
+    {
+        return Optional.empty();
+    }
+
 }
