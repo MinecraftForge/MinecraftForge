@@ -64,7 +64,7 @@ public class DataPackRegistriesHooks
      */
     public static boolean isNamespacedRegistryFolder(ResourceLocation registryName)
     {
-        var prefix = registryName.getNamespace() + '/';
+        String prefix = registryName.getNamespace() + '/';
         return registryName.getPath().startsWith(prefix);
     }
 }
