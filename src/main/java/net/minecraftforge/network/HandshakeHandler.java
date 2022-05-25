@@ -199,6 +199,7 @@ public class HandshakeHandler
         if (!missingDataPackRegistries.isEmpty())
         {
             c.get().getNetworkManager().disconnect(new TextComponent("Connection closed - missing required datapack registries: " + String.join(", ", missingDataPackRegistries)));
+            return;
         }
         NetworkConstants.handshakeChannel.reply(new HandshakeMessages.C2SModListReply(), c.get());
 
