@@ -16,6 +16,7 @@ import net.minecraft.network.protocol.login.ServerboundCustomQueryPacket;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.network.ServerLoginPacketListenerImpl;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.LogMessageAdapter;
@@ -198,7 +199,7 @@ public class HandshakeHandler
         }
         if (!missingDataPackRegistries.isEmpty())
         {
-            c.get().getNetworkManager().disconnect(new TextComponent("Connection closed - missing required datapack registries: " + String.join(", ", missingDataPackRegistries)));
+            c.get().getNetworkManager().disconnect(new TranslatableComponent("fml.menu.multiplayer.missingdatapackregistries", String.join(", ", missingDataPackRegistries)));
             return;
         }
         NetworkConstants.handshakeChannel.reply(new HandshakeMessages.C2SModListReply(), c.get());
