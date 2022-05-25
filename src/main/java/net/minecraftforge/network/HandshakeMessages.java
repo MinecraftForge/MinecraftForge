@@ -91,8 +91,7 @@ public class HandshakeMessages
                 registries.add(input.readResourceLocation());
 
             // Datapack Registries may or may not be sent in 1.18.2 due to netcode changes.
-            // In 1.19, they will always be sent.
-            // TODO Remove optionalness of datapack registries in the mod list packet in 1.19.
+            // TODO 1.19: Remove optionalness of datapack registry list in the mod list packet.
             List<ResourceKey<? extends Registry<?>>> dataPackRegistries = new ArrayList<>();
             if (input.isReadable())
             {
@@ -120,7 +119,7 @@ public class HandshakeMessages
             registries.forEach(output::writeResourceLocation);
             
             // The list of synced datapack registry names is not sent in 1.18.2 if the list is empty.
-            // TODO 1.19 should send an empty list if the list is empty
+            // TODO 1.19: should send an empty list if the list is empty.
             Set<ResourceKey<? extends Registry<?>>> dataPackRegistries = DataPackRegistriesHooks.getSyncedCustomRegistries();
             int size = dataPackRegistries.size();
             if (size > 0)

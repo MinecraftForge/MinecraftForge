@@ -188,7 +188,7 @@ public class HandshakeHandler
         // Validate synced custom datapack registries, client cannot be missing any present on the server.
         List<String> missingDataPackRegistries = new ArrayList<>();
         Set<ResourceKey<? extends Registry<?>>> clientDataPackRegistries = DataPackRegistriesHooks.getSyncedCustomRegistries();
-        for (ResourceKey<? extends Registry<?>> key: serverModList.getCustomDataPackRegistries())
+        for (ResourceKey<? extends Registry<?>> key : serverModList.getCustomDataPackRegistries())
         {
             if (!clientDataPackRegistries.contains(key))
             {
