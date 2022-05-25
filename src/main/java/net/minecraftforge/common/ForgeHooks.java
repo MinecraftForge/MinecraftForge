@@ -1517,41 +1517,4 @@ public class ForgeHooks
         @Nullable ResourceLocation biomeLocation = ResourceLocation.tryParse(biome);
         return biomeLocation != null && !biomeLocation.getNamespace().equals(ResourceLocation.DEFAULT_NAMESPACE);
     }
-    
-    /**
-     * Used for decoding the {@link ClientboundLoginPacket}'s RegistryAccess on the client and providing cleaner errors.
-     */
-    public static RegistryAccess politelyDecodeRegistryAccess(FriendlyByteBuf buf)
-    {
-        CompoundTag nbt = buf.readAnySizeNbt();
-        // RegistryAccess is encoded as a Map<RegistryID, Map<ElementID, Element>>
-        // Check for invalid registries first
-        List<String> unknownRegistries = new ArrayList<>();
-        for (String nbtKey : nbt.getAllKeys())
-        {
-            ResourceLocation registryName = new ResourceLocation(nbtKey);
-            ResourceKey<? extends Registry<?>> registryKey = ResourceKey.createRegistryKey(registryName);
-            @Nullable RegistryAccess.RegistryData<?> registryData = RegistryAccess.REGISTRIES.get(registryKey);
-            if (registryData == null || registryData.networkCodec() == null)
-            {
-                unknownRegistries.add(nbtKey);
-            }
-        }
-        if (!unknownRegistries.isEmpty())
-        {
-            throw new DecoderException("Unknown or unsyncable datapack registries: " + String.join(" ", unknownRegistries));
-        }
-        DataResult<RegistryAccess> result = RegistryAccess.NETWORK_CODEC.parse(NbtOps.INSTANCE, nbt);
-        result.error().ifPresent(r ->
-        {
-            // If this parse fails, Vanilla reports a registry dump in the exception (by displaying the registry nbt),
-            // however this can be very large and the dump is usually larger than can fit into the login error window.
-            // Here we report the error, but only dump the registry into the log.
-            String message = r.message();
-            LOGGER.error("Failed to decode datapack registries: {}", message);
-            LOGGER.error("Registry dump: {}", nbt);
-            throw new DecoderException("Failed to decode datapack registries (see log for full registry dump): " + message);
-        });
-        return result.result().get();
-    }
 }

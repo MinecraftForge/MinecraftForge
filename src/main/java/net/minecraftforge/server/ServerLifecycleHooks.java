@@ -11,10 +11,12 @@ import java.nio.file.Path;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
+import net.minecraft.core.Registry;
 import net.minecraft.gametest.framework.GameTestServer;
 import net.minecraft.server.packs.repository.PackSource;
 import net.minecraft.server.packs.repository.RepositorySource;
@@ -41,6 +43,7 @@ import net.minecraft.network.Connection;
 import net.minecraft.network.ConnectionProtocol;
 import net.minecraft.network.protocol.handshake.ClientIntentionPacket;
 import net.minecraft.network.protocol.login.ClientboundLoginDisconnectPacket;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.packs.repository.Pack;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.network.chat.TextComponent;
@@ -55,6 +58,7 @@ import net.minecraftforge.event.server.ServerStoppedEvent;
 import net.minecraftforge.event.server.ServerStoppingEvent;
 import net.minecraftforge.fml.loading.FileUtils;
 import net.minecraftforge.forgespi.language.IModInfo;
+import net.minecraftforge.registries.DataPackRegistriesHooks;
 import net.minecraftforge.registries.GameData;
 
 public class ServerLifecycleHooks
@@ -147,9 +151,22 @@ public class ServerLifecycleHooks
             final ConnectionType connectionType = ConnectionType.forVersionFlag(packet.getFMLVersion());
             final int versionNumber = connectionType.getFMLVersionNumber(packet.getFMLVersion());
 
-            if (connectionType == ConnectionType.MODDED && versionNumber != NetworkConstants.FMLNETVERSION) {
-                rejectConnection(manager, connectionType, "This modded server is not impl compatible with your modded client. Please verify your Forge version closely matches the server. Got net version "+ versionNumber + " this server is net version "+ NetworkConstants.FMLNETVERSION);
-                return false;
+            if (connectionType == ConnectionType.MODDED)
+            {
+                // Allow clients with incorrect netcode version to connect to netversion 3 servers,
+                // if and only if client is netversion 2 and server has no syncable non-vanilla datapack registries.
+                // TODO Remove netcode backwards-compatability in 1.19, as there will be no clients on netversion 2 in 1.19. 
+                Set<ResourceKey<? extends Registry<?>>> customDatapackRegistries = DataPackRegistriesHooks.getSyncedCustomRegistries();
+                if (versionNumber == 2) {
+                    if (!customDatapackRegistries.isEmpty()) {
+                        rejectConnection(manager, connectionType, "Missing required datapack registries: " + String.join(", ", customDatapackRegistries.stream().map(key -> key.location().toString()).toList()));
+                        return false;
+                    }
+                }
+                else if (versionNumber != NetworkConstants.FMLNETVERSION)  {
+                    rejectConnection(manager, connectionType, "This modded server is not impl compatible with your modded client. Please verify your Forge version closely matches the server. Got net version "+ versionNumber + " this server is net version "+ NetworkConstants.FMLNETVERSION);
+                    return false;
+                }
             }
 
             if (connectionType == ConnectionType.VANILLA && !NetworkRegistry.acceptsVanillaClientConnections()) {

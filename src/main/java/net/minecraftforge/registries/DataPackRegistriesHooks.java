@@ -25,6 +25,7 @@ public class DataPackRegistriesHooks
 {
     private static Map<ResourceKey<? extends Registry<?>>, RegistryAccess.RegistryData<?>> REGISTRY_ACCESS_REGISTRIES_COPY;
     private static Set<ResourceKey<? extends Registry<?>>> SYNCED_CUSTOM_REGISTRIES = new HashSet<>();
+    private static Set<ResourceKey<? extends Registry<?>>> SYNCED_CUSTOM_REGISTRIES_UNMODIFIABLE = Collections.unmodifiableSet(SYNCED_CUSTOM_REGISTRIES); 
 
     /** Modders, DO NOT USE. Internal use only */
     @Deprecated
@@ -32,6 +33,7 @@ public class DataPackRegistriesHooks
     {
         REGISTRY_ACCESS_REGISTRIES_COPY = new HashMap<>(builder.build());
         SYNCED_CUSTOM_REGISTRIES = new HashSet<>();
+        SYNCED_CUSTOM_REGISTRIES_UNMODIFIABLE = Collections.unmodifiableSet(SYNCED_CUSTOM_REGISTRIES);
         return Collections.unmodifiableMap(REGISTRY_ACCESS_REGISTRIES_COPY);
     }
 
@@ -54,7 +56,7 @@ public class DataPackRegistriesHooks
      */
     public static Set<ResourceKey<? extends Registry<?>>> getSyncedCustomRegistries()
     {
-        return Collections.unmodifiableSet(SYNCED_CUSTOM_REGISTRIES);
+        return SYNCED_CUSTOM_REGISTRIES_UNMODIFIABLE;
     }
 
     /**

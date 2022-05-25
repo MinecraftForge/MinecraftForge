@@ -5,11 +5,14 @@
 
 package net.minecraftforge.network;
 
+import net.minecraft.core.Registry;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.forgespi.language.IModInfo;
 import net.minecraftforge.network.NetworkRegistry;
+import net.minecraftforge.registries.DataPackRegistriesHooks;
 import net.minecraftforge.registries.ForgeRegistry;
 import net.minecraftforge.registries.RegistryManager;
 
@@ -17,6 +20,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.IntSupplier;
 import java.util.stream.Collectors;
 
@@ -51,19 +55,22 @@ public class HandshakeMessages
         private List<String> mods;
         private Map<ResourceLocation, String> channels;
         private List<ResourceLocation> registries;
+        private final List<ResourceKey<? extends Registry<?>>> dataPackRegistries;
 
         public S2CModList()
         {
             this.mods = ModList.get().getMods().stream().map(IModInfo::getModId).collect(Collectors.toList());
             this.channels = NetworkRegistry.buildChannelVersions();
             this.registries = RegistryManager.getRegistryNamesForSyncToClient();
+            this.dataPackRegistries = List.copyOf(DataPackRegistriesHooks.getSyncedCustomRegistries());
         }
 
-        private S2CModList(List<String> mods, Map<ResourceLocation, String> channels, List<ResourceLocation> registries)
+        private S2CModList(List<String> mods, Map<ResourceLocation, String> channels, List<ResourceLocation> registries, List<ResourceKey<? extends Registry<?>>> dataPackRegistries)
         {
             this.mods = mods;
             this.channels = channels;
             this.registries = registries;
+            this.dataPackRegistries = dataPackRegistries;
         }
 
         public static S2CModList decode(FriendlyByteBuf input)
@@ -83,7 +90,19 @@ public class HandshakeMessages
             for (int x = 0; x < len; x++)
                 registries.add(input.readResourceLocation());
 
-            return new S2CModList(mods, channels, registries);
+            // Datapack Registries may or may not be sent in 1.18.2 due to netcode changes.
+            // In 1.19, they will always be sent.
+            // TODO Remove optionalness of datapack registries in the mod list packet in 1.19.
+            List<ResourceKey<? extends Registry<?>>> dataPackRegistries = new ArrayList<>();
+            if (input.isReadable())
+            {
+                len = input.readVarInt();
+                for (int x = 0; x < len; x++)
+                {
+                    dataPackRegistries.add(ResourceKey.createRegistryKey(input.readResourceLocation()));
+                }
+            }
+            return new S2CModList(mods, channels, registries, dataPackRegistries);
         }
 
         public void encode(FriendlyByteBuf output)
@@ -99,6 +118,16 @@ public class HandshakeMessages
 
             output.writeVarInt(registries.size());
             registries.forEach(output::writeResourceLocation);
+            
+            // The list of synced datapack registry names is not sent in 1.18.2 if the list is empty.
+            // TODO 1.19 should send an empty list if the list is empty
+            Set<ResourceKey<? extends Registry<?>>> dataPackRegistries = DataPackRegistriesHooks.getSyncedCustomRegistries();
+            int size = dataPackRegistries.size();
+            if (size > 0)
+            {
+                output.writeVarInt(size);
+                dataPackRegistries.forEach(key -> output.writeResourceLocation(key.location()));
+            }
         }
 
         public List<String> getModList() {
@@ -111,6 +140,13 @@ public class HandshakeMessages
 
         public Map<ResourceLocation, String> getChannels() {
             return this.channels;
+        }
+        
+        /**
+         * @return list of ids of non-vanilla syncable datapack registries on the server.
+         */
+        public List<ResourceKey<? extends Registry<?>>> getCustomDataPackRegistries() {
+            return this.dataPackRegistries;
         }
     }
 
