@@ -140,7 +140,7 @@
        if (!this.f_151503_.isEmpty()) {
           this.f_151512_.addAll(this.f_151503_);
           this.f_151503_.clear();
-@@ -427,12 +_,15 @@
+@@ -427,12 +_,19 @@
  
     public <T extends Entity> void m_46653_(Consumer<T> p_46654_, T p_46655_) {
        try {
@@ -150,6 +150,10 @@
           CrashReport crashreport = CrashReport.m_127521_(throwable, "Ticking entity");
           CrashReportCategory crashreportcategory = crashreport.m_127514_("Entity being ticked");
           p_46655_.m_7976_(crashreportcategory);
++         if (net.minecraftforge.common.ForgeConfig.SERVER.removeErroringEntities.get()) {
++            com.mojang.logging.LogUtils.getLogger().error("{}", crashreport.m_127526_());
++            p_46655_.m_146870_();
++         } else
           throw new ReportedException(crashreport);
 +      } finally {
 +         net.minecraftforge.server.timings.TimeTracker.ENTITY_UPDATE.trackEnd(p_46655_);

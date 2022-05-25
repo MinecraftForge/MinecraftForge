@@ -1,0 +1,24 @@
+--- a/net/minecraft/client/renderer/texture/MipmapGenerator.java
++++ b/net/minecraft/client/renderer/texture/MipmapGenerator.java
+@@ -34,9 +_,12 @@
+             }
+          }
+ 
++         int maxMipmapLevel = net.minecraftforge.client.ForgeHooksClient.getMaxMipmapLevel(p_118055_.m_84982_(), p_118055_.m_85084_());
+          for(int k1 = 1; k1 <= p_118056_; ++k1) {
+             NativeImage nativeimage1 = anativeimage[k1 - 1];
+-            NativeImage nativeimage = new NativeImage(nativeimage1.m_84982_() >> 1, nativeimage1.m_85084_() >> 1, false);
++            // Forge: guard against invalid texture size, because we allow generating mipmaps regardless of texture sizes
++            NativeImage nativeimage = new NativeImage(Math.max(1, nativeimage1.m_84982_() >> 1), Math.max(1, nativeimage1.m_85084_() >> 1), false);
++            if (k1 <= maxMipmapLevel) {
+             int k = nativeimage.m_84982_();
+             int l = nativeimage.m_85084_();
+ 
+@@ -44,6 +_,7 @@
+                for(int j1 = 0; j1 < l; ++j1) {
+                   nativeimage.m_84988_(i1, j1, m_118048_(nativeimage1.m_84985_(i1 * 2 + 0, j1 * 2 + 0), nativeimage1.m_84985_(i1 * 2 + 1, j1 * 2 + 0), nativeimage1.m_84985_(i1 * 2 + 0, j1 * 2 + 1), nativeimage1.m_84985_(i1 * 2 + 1, j1 * 2 + 1), flag));
+                }
++            }
+             }
+ 
+             anativeimage[k1] = nativeimage;

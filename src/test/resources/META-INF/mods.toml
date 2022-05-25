@@ -221,6 +221,8 @@ license="LGPL v2.1"
 [[mods]]
     modId="player_negotiation_event_test"
 [[mods]]
+    modId="custom_transformtype_test"
+[[mods]]
     modId="data_pack_registries_test"
 
 # ADD ABOVE THIS LINE

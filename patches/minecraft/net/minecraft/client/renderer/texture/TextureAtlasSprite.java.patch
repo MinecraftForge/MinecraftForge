@@ -8,6 +8,25 @@
           p_118378_[i].m_85003_(i, this.f_118349_ >> i, this.f_118350_ >> i, p_118376_ >> i, p_118377_ >> i, this.f_174723_ >> i, this.f_174724_ >> i, this.f_118342_.length > 1, false);
        }
  
+@@ -389,7 +_,8 @@
+             int j = p_118446_.f_118423_ >> i;
+             int k = p_118446_.f_118424_ >> i;
+             if (this.f_118443_[i] == null) {
+-               this.f_118443_[i] = new NativeImage(j, k, false);
++               // Forge: guard against invalid texture size, because we allow generating mipmaps regardless of texture sizes
++               this.f_118443_[i] = new NativeImage(Math.max(1, j), Math.max(1, k), false);
+             }
+          }
+ 
+@@ -404,6 +_,8 @@
+             for(int k = 0; k < this.f_118443_.length; ++k) {
+                int l = TextureAtlasSprite.this.f_174723_ >> k;
+                int i1 = TextureAtlasSprite.this.f_174724_ >> k;
++               // Forge: guard against invalid texture size, because we allow generating mipmaps regardless of texture sizes
++               if (l == 0 || i1 == 0) continue;
+ 
+                for(int j1 = 0; j1 < i1; ++j1) {
+                   for(int k1 = 0; k1 < l; ++k1) {
 @@ -438,5 +_,15 @@
           }
  
