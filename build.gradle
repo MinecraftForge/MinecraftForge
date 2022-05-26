@@ -425,7 +425,7 @@ def sharedFmlonlyForge = { Project prj ->
         }
 
         // SecureJarHandler bootstrap values.
-        run.property 'ignoreList', prj.configurations.moduleonly.files.collect {it.name.replaceAll(/([-_]([.\d]*\d+)|\.jar$)/, '') }.join(',') + ",client-extra,fmlcore,javafmllanguage,mclanguage,${prj.name}-"
+        run.property 'ignoreList', prj.configurations.moduleonly.files.collect {it.name.replaceAll(/([-_]([.\d]*\d+)|\.jar$)/, '') }.join(',') + ",client-extra,fmlcore,javafmllanguage,lowcodelanguage,mclanguage,${prj.name}-"
         // FIXME: Without this jna doesn't work at runtime. Someone figure out why please?
         run.property 'mergeModules', 'jna-5.10.0.jar,jna-platform-5.10.0.jar,java-objc-bridge-1.0.0.jar'
         if (userdevRuns.contains(run)) {
@@ -539,7 +539,7 @@ project(':fmlonly') {
 
     ext {
         MCP_ARTIFACT = project(':mcp').mcp.config.get()
-        PACKED_DEPS = [':fmlcore:jar', ':fmlloader:jar', ':javafmllanguage:jar', ':mclanguage:jar']
+        PACKED_DEPS = [':fmlcore:jar', ':fmlloader:jar', ':javafmllanguage:jar', ':lowcodelanguage:jar', ':mclanguage:jar']
         MAVEN_PATH = "${group.replace('.', '/')}/${project.name}/${VERSION}"
     }
 
@@ -568,6 +568,7 @@ project(':fmlonly') {
         implementation project(':fmlcore')
         implementation project(':fmlloader')
         implementation project(':javafmllanguage')
+        implementation project(':lowcodelanguage')
         implementation project(':mclanguage')
         runtimeOnly "cpw.mods:bootstraplauncher:${BOOTSTRAPLAUNCHER_VERSION}"
     }
@@ -845,7 +846,7 @@ project(':fmlonly') {
     }
 
     // Since we need the modules in the bootstrap, we need to make sure they are compiled before we do each run
-    afterEvaluate { prepareRuns.dependsOn(':fmlcore:jar', ':fmlloader:jar', ':javafmllanguage:jar', ':mclanguage:jar') }
+    afterEvaluate { prepareRuns.dependsOn(':fmlcore:jar', ':fmlloader:jar', ':javafmllanguage:jar', ':lowcodelanguage:jar', ':mclanguage:jar') }
 }
 
 project(':forge') {
@@ -894,7 +895,7 @@ project(':forge') {
         // Essentially, the same as the old, except dropping the first number, and the builds are no longer unique.
         MCP_ARTIFACT = project(':mcp').mcp.config.get()
         VERSION_JSON = project(':mcp').file('build/mcp/downloadJson/version.json')
-        PACKED_DEPS = [':fmlcore:jar', ':fmlloader:jar', ':javafmllanguage:jar', ':mclanguage:jar']
+        PACKED_DEPS = [':fmlcore:jar', ':fmlloader:jar', ':javafmllanguage:jar', ':lowcodelanguage:jar', ':mclanguage:jar']
         MAVEN_PATH = "${group.replace('.', '/')}/${project.name}/${VERSION}"
     }
 
@@ -915,6 +916,7 @@ project(':forge') {
         implementation project(':fmlcore')
         implementation project(':fmlloader')
         implementation project(':javafmllanguage')
+        implementation project(':lowcodelanguage')
         implementation project(':mclanguage')
         runtimeOnly "cpw.mods:bootstraplauncher:${BOOTSTRAPLAUNCHER_VERSION}"
     }
@@ -1538,7 +1540,7 @@ project(':forge') {
         }
     }
     // Since we need the modules in the bootstrap, we need to make sure they are compiled before we do each run
-    afterEvaluate { prepareRuns.dependsOn(':fmlcore:jar', ':fmlloader:jar', ':javafmllanguage:jar', ':mclanguage:jar') }
+    afterEvaluate { prepareRuns.dependsOn(':fmlcore:jar', ':fmlloader:jar', ':javafmllanguage:jar', ':lowcodelanguage:jar', ':mclanguage:jar') }
 
     tasks.withType(JavaCompile).configureEach {
         options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
