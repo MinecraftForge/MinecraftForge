@@ -157,13 +157,16 @@ public class ServerLifecycleHooks
                 // if and only if client is netversion 2 and server has no syncable non-vanilla datapack registries.
                 // TODO 1.19: Remove netcode backwards-compatability in 1.19, as there will be no clients on netversion 2 in 1.19. 
                 Set<ResourceKey<? extends Registry<?>>> customDatapackRegistries = DataPackRegistriesHooks.getSyncedCustomRegistries();
-                if (versionNumber == 2) {
-                    if (!customDatapackRegistries.isEmpty()) {
+                if (versionNumber == 2)
+                {
+                    if (!customDatapackRegistries.isEmpty())
+                    {
                         rejectConnection(manager, connectionType, "Missing required datapack registries: " + String.join(", ", customDatapackRegistries.stream().map(key -> key.location().toString()).toList()));
                         return false;
                     }
                 }
-                else if (versionNumber != NetworkConstants.FMLNETVERSION)  {
+                else if (versionNumber != NetworkConstants.FMLNETVERSION)
+                {
                     rejectConnection(manager, connectionType, "This modded server is not impl compatible with your modded client. Please verify your Forge version closely matches the server. Got net version "+ versionNumber + " this server is net version "+ NetworkConstants.FMLNETVERSION);
                     return false;
                 }
