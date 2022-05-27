@@ -67,7 +67,7 @@ public class NewRegistryEvent extends Event implements IModBusEvent
             RegistryAccess.RegistryData<?> dataPackRegistryData = builder.getDataPackRegistryData();
             if (dataPackRegistryData != null) // if this is a datapack registry
             {
-                if (builder.getHasWrapper() && !BuiltinRegistries.REGISTRY.containsKey(reg.getRegistryName()))
+                if (!BuiltinRegistries.REGISTRY.containsKey(reg.getRegistryName()))
                 {
                     DataPackRegistriesHooks.addRegistryCodec(dataPackRegistryData);
                     RegistryManager.registerToBuiltinRegistry((ForgeRegistry<?>) reg);
