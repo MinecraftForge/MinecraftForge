@@ -7,7 +7,6 @@ package net.minecraftforge.registries;
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -248,8 +247,7 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
      * <p>Register this registry as an unsynced datapack registry, which will cause data to be loaded from
      * a datapack folder based on the registry's name. The mod that registers this registry does not need to exist
      * on the client to connect to servers with the mod/registry.</p>
-     * <p>The registry's name must be of the form {@code modid:modid/folder}.
-     * Data JSONs will be loaded from {@code data/<datapack_namespace>/modid/folder/}, where modid is the mod that registered this registry.</p>
+     * <p>Data JSONs will be loaded from {@code data/<datapack_namespace>/modid/registryname/}, where modid is the mod that registered this registry.</p>
      * 
      * @param codec the codec to be used for loading data from datapacks on servers
      * @return this builder
@@ -264,8 +262,7 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
     /**
      * <p>Register this registry as a datapack registry, which will cause data to be loaded from
      * a datapack folder based on the registry's name.</p>
-     * <p>The registry's name must be of the form {@code modid:modid/folder}.
-     * Data JSONs will be loaded from {@code data/<datapack_namespace>/modid/folder/}, where modid is the mod that registered this registry.</p>
+     * <p>Data JSONs will be loaded from {@code data/<datapack_namespace>/modid/registryname/}, where modid is the mod that registered this registry.</p>
      * 
      * @param codec the codec to be used for loading data from datapacks on servers
      * @param networkCodec the codec to be used for syncing loaded data to clients.<br>
@@ -286,8 +283,6 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
             // Validate registry key.
             if (this.registryName == null)
                 throw new IllegalStateException("Registry builder cannot build a datapack registry: registry name not set");
-            if (!DataPackRegistriesHooks.isNamespacedRegistryFolder(this.registryName))
-                throw new IllegalStateException(String.format(Locale.ENGLISH, "Invalid datapack registry name %s: Registry path must be prefixed with '%s'", registryName, registryName.getNamespace() + '/'));
                             
             ResourceKey<Registry<T>> registryKey = ResourceKey.createRegistryKey(this.registryName);
             return new RegistryAccess.RegistryData<>(registryKey, codec, networkCodec); 

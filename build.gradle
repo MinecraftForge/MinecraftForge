@@ -1044,6 +1044,7 @@ project(':forge') {
                             '--mod', 'remove_tag_datagen_test',
                             '--mod', 'tag_based_tool_types',
                             '--mod', 'custom_transformtype_test',
+                            '--mod', 'data_pack_registries_test',
                             '--output', rootProject.file('src/generated_test/resources/'),
                             '--existing', sourceSets.main.resources.srcDirs[0],
                             '--existing', sourceSets.test.resources.srcDirs[0]

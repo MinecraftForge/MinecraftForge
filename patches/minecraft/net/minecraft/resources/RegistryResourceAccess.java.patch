@@ -8,6 +8,15 @@
                          optional = Optional.of(p_195896_.parse(p_195893_, jsonelement).map(RegistryResourceAccess.ParsedEntry::m_195956_));
                       } catch (Throwable throwable2) {
                          try {
+@@ -102,6 +_,8 @@
+          }
+ 
+          private static String m_195909_(ResourceKey<? extends Registry<?>> p_195910_) {
++            if (net.minecraftforge.registries.RegistryManager.FROZEN.getRegistry(p_195910_.m_135782_()) != null && !(p_195910_.m_135782_().m_135827_().equals("minecraft")))
++               return p_195910_.m_135782_().m_135827_() + "/" + p_195910_.m_135782_().m_135815_(); // FORGE: add non-vanilla registry namespace to loader directory, same format as tag directory (see net.minecraft.tags.TagManager#getTagDir(ResourceKey)) 
+             return p_195910_.m_135782_().m_135815_();
+          }
+ 
 @@ -138,6 +_,8 @@
  
        public <E> Optional<DataResult<RegistryResourceAccess.ParsedEntry<E>>> m_183313_(DynamicOps<JsonElement> p_195917_, ResourceKey<? extends Registry<E>> p_195918_, ResourceKey<E> p_195919_, Decoder<E> p_195920_) {

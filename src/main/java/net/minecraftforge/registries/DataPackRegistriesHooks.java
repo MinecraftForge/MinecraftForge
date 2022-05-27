@@ -57,14 +57,4 @@ public class DataPackRegistriesHooks
     {
         return SYNCED_CUSTOM_REGISTRIES_VIEW;
     }
-
-    /**
-     * @param registryName name of registry
-     * @return true if registry name follows modid:modid/folder namespacing convention, false otherwise
-     */
-    public static boolean isNamespacedRegistryFolder(ResourceLocation registryName)
-    {
-        String prefix = registryName.getNamespace() + '/';
-        return registryName.getPath().startsWith(prefix);
-    }
 }
