@@ -167,7 +167,6 @@ public class RegistryManager
         injectForgeRegistry(forgeReg, Registry.REGISTRY);
     }
 
-
     static <V extends IForgeRegistryEntry<V>> void registerToBuiltinRegistry(ForgeRegistry<V> forgeReg)
     {
         injectForgeRegistry(forgeReg, BuiltinRegistries.REGISTRY);
