@@ -23,16 +23,15 @@ import net.minecraft.resources.ResourceLocation;
 public class DataPackRegistriesHooks
 {
     private static Map<ResourceKey<? extends Registry<?>>, RegistryAccess.RegistryData<?>> REGISTRY_ACCESS_REGISTRIES_COPY;
-    private static Set<ResourceKey<? extends Registry<?>>> SYNCED_CUSTOM_REGISTRIES = new HashSet<>();
-    private static Set<ResourceKey<? extends Registry<?>>> SYNCED_CUSTOM_REGISTRIES_VIEW = Collections.unmodifiableSet(SYNCED_CUSTOM_REGISTRIES); 
+    private static final Set<ResourceKey<? extends Registry<?>>> SYNCED_CUSTOM_REGISTRIES = new HashSet<>();
+    private static final Set<ResourceKey<? extends Registry<?>>> SYNCED_CUSTOM_REGISTRIES_VIEW = Collections.unmodifiableSet(SYNCED_CUSTOM_REGISTRIES); 
 
     /** Modders, DO NOT USE. Internal use only */
     @Deprecated
     public static Map<ResourceKey<? extends Registry<?>>, RegistryAccess.RegistryData<?>> grabBuiltinRegistries(ImmutableMap.Builder<ResourceKey<? extends Registry<?>>, RegistryAccess.RegistryData<?>> builder)
     {
         REGISTRY_ACCESS_REGISTRIES_COPY = new HashMap<>(builder.build());
-        SYNCED_CUSTOM_REGISTRIES = new HashSet<>();
-        SYNCED_CUSTOM_REGISTRIES_VIEW = Collections.unmodifiableSet(SYNCED_CUSTOM_REGISTRIES);
+        SYNCED_CUSTOM_REGISTRIES.clear();
         return Collections.unmodifiableMap(REGISTRY_ACCESS_REGISTRIES_COPY);
     }
 
@@ -49,9 +48,9 @@ public class DataPackRegistriesHooks
     }
     
     /**
-     * @return unmodifiable view of the set of synced non-vanilla datapack registry IDs.
+     * {@return unmodifiable view of the set of synced non-vanilla datapack registry IDs.
      * Clients must have each of a server's synced datapack registries to be able to connect to that server;
-     * vanilla clients therefore cannot connect if this list is non-empty on the server.
+     * vanilla clients therefore cannot connect if this list is non-empty on the server.}
      */
     public static Set<ResourceKey<? extends Registry<?>>> getSyncedCustomRegistries()
     {
