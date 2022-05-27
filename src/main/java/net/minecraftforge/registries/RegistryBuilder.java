@@ -252,7 +252,7 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
      * @param codec the codec to be used for loading data from datapacks on servers
      * @return this builder
      * 
-     * @see {@link #dataPackRegistry(Codec, Codec)} for registering a synced datapack registry
+     * @see #dataPackRegistry(Codec, Codec)
      */
     public RegistryBuilder<T> dataPackRegistry(Codec<T> codec)
     {
@@ -272,7 +272,7 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
      * and the mod must be present on a client to connect to servers with the mod.
      * @return this builder
      * 
-     * @see {@link #dataPackRegistry(Codec)} for registering an unsynced datapack registry
+     * @see #dataPackRegistry(Codec)
      */
     public RegistryBuilder<T> dataPackRegistry(Codec<T> codec, @Nullable Codec<T> networkCodec)
     {
@@ -288,6 +288,19 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
             return new RegistryAccess.RegistryData<>(registryKey, codec, networkCodec); 
         });
         return this;
+    }
+
+    /**
+     * Retrieves datapack registry information, if any.
+     * 
+     * @return RegistryData containing the registry's key and codec(s). If returned data is null, this has not been marked as a datapack registry.
+     * 
+     * @throws IllegalStateException if this has been marked as a datapack registry, but registry name has not been set.
+     */
+    @Nullable
+    RegistryAccess.RegistryData<T> getDataPackRegistryData()
+    {
+        return this.dataPackRegistryData.get();
     }
 
     /**
@@ -446,14 +459,5 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
     boolean getHasWrapper()
     {
         return this.hasWrapper;
-    }
-
-    /** 
-     * @return if returned data is non-null, indicates this registry is a builtin/datapack registry
-     */
-    @Nullable
-    RegistryAccess.RegistryData<T> getDataPackRegistryData()
-    {
-        return this.dataPackRegistryData.get();
     }
 }

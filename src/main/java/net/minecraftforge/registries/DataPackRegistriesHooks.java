@@ -11,6 +11,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 import com.google.common.collect.ImmutableMap;
@@ -18,16 +19,17 @@ import com.google.common.collect.ImmutableMap;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 
-public class DataPackRegistriesHooks
+@ApiStatus.Internal
+public final class DataPackRegistriesHooks
 {
+    private DataPackRegistriesHooks() {} // utility class
+    
     private static Map<ResourceKey<? extends Registry<?>>, RegistryAccess.RegistryData<?>> REGISTRY_ACCESS_REGISTRIES_COPY;
     private static final Set<ResourceKey<? extends Registry<?>>> SYNCED_CUSTOM_REGISTRIES = new HashSet<>();
     private static final Set<ResourceKey<? extends Registry<?>>> SYNCED_CUSTOM_REGISTRIES_VIEW = Collections.unmodifiableSet(SYNCED_CUSTOM_REGISTRIES); 
 
-    /** Modders, DO NOT USE. Internal use only */
-    @Deprecated
+    /* Internal forge hook for retaining mutable access to RegistryAccess's codec registry when it bootstraps. */
     public static Map<ResourceKey<? extends Registry<?>>, RegistryAccess.RegistryData<?>> grabBuiltinRegistries(ImmutableMap.Builder<ResourceKey<? extends Registry<?>>, RegistryAccess.RegistryData<?>> builder)
     {
         REGISTRY_ACCESS_REGISTRIES_COPY = new HashMap<>(builder.build());
@@ -35,8 +37,7 @@ public class DataPackRegistriesHooks
         return Collections.unmodifiableMap(REGISTRY_ACCESS_REGISTRIES_COPY);
     }
 
-    /* Registers a datapack registry codec and folder. Internal forge use only. */
-    @Deprecated
+    /* Internal forge method, registers a datapack registry codec and folder. */
     public static <T> void addRegistryCodec(@NotNull RegistryAccess.RegistryData<T> data)
     {
         ResourceKey<? extends Registry<T>> registryKey = data.key();
