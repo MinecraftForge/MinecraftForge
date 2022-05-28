@@ -70,7 +70,7 @@
        }
  
        this.f_104888_.m_91171_(SearchRegistry.f_119942_).m_7729_();
-+      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.TagsUpdatedEvent(this.f_104903_));
++      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.TagsUpdatedEvent(this.f_104903_, true, f_104885_.m_129531_()));
     }
  
     private <T> void m_205560_(ResourceKey<? extends Registry<? extends T>> p_205561_, TagNetworkSerialization.NetworkPayload p_205562_) {
