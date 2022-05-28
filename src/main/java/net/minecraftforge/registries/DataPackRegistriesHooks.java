@@ -49,9 +49,9 @@ public final class DataPackRegistriesHooks
     }
     
     /**
-     * {@return unmodifiable view of the set of synced non-vanilla datapack registry IDs.
+     * {@return unmodifiable view of the set of synced non-vanilla datapack registry IDs}
      * Clients must have each of a server's synced datapack registries to be able to connect to that server;
-     * vanilla clients therefore cannot connect if this list is non-empty on the server.}
+     * vanilla clients therefore cannot connect if this list is non-empty on the server.
      */
     public static Set<ResourceKey<? extends Registry<?>>> getSyncedCustomRegistries()
     {
