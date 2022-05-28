@@ -19,6 +19,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.JsonOps;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
@@ -38,6 +39,7 @@ import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLEnvironment;
+import net.minecraftforge.fml.util.thread.EffectiveSide;
 import net.minecraftforge.forge.event.lifecycle.GatherDataEvent;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistryEntry;
@@ -173,9 +175,18 @@ public class DataPackRegistriesTest
         
         private static void onClientTagsUpdated(final TagsUpdatedEvent event)
         {
-            // assert existence of synced objects and tags
-            @SuppressWarnings("resource")
-            final RegistryAccess registries = Minecraft.getInstance().player.connection.registryAccess();
+            // We want to check whether tags have been synced after the player logs in.
+            // Tags are synced late in the login process and many relevant events fire before tags are synced.
+            // TagsUpdatedEvent has the correct timing, but fires on both server and render thread,
+            // so we need to make sure we're on the render thread.
+            LocalPlayer player = Minecraft.getInstance().player;
+            if (player == null || EffectiveSide.get().isServer())
+                return;
+
+            // Assert existence of synced objects and tags. The TagsUpdatedEvent has its own RegistryAccess,
+            // but we should check the player's connection's RegistryAccess as that's where the client's copy
+            // lives during game runtime, and where mods should be querying on the client in most cases.
+            RegistryAccess registries = player.connection.registryAccess();
             final Registry<Syncable> registry = registries.registryOrThrow(Syncable.REGISTRY_KEY);
             final ResourceKey<Syncable> key = ResourceKey.create(Syncable.REGISTRY_KEY, TEST_RL);
             final Holder<Syncable> holder = registry.getHolderOrThrow(key);
