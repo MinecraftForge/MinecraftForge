@@ -5,7 +5,7 @@
  import net.minecraft.world.item.ItemStack;
  
 -public abstract class Enchantment {
-+public abstract class Enchantment extends net.minecraftforge.registries.ForgeRegistryEntry<Enchantment> {
++public abstract class Enchantment extends net.minecraftforge.registries.ForgeRegistryEntry<Enchantment> implements net.minecraftforge.common.extensions.IForgeEnchantment {
     private final EquipmentSlot[] f_44671_;
     private final Enchantment.Rarity f_44674_;
     public final EnchantmentCategory f_44672_;
