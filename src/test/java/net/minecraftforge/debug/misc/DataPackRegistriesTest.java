@@ -18,6 +18,7 @@ import com.mojang.logging.LogUtils;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.JsonOps;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
@@ -30,8 +31,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.tags.TagKey;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.ClientPlayerNetworkEvent.LoggedInEvent;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.TagsUpdatedEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
@@ -104,6 +105,8 @@ public class DataPackRegistriesTest
     
     private void onGatherData(final GatherDataEvent event)
     {
+        if (!event.includeServer())
+            return;
         // Example of how to datagen datapack registry objects.
         // Objects to be datagenerated must be registered (e.g. via DeferredRegister above).
         // This outputs to data/data_pack_registries_test/data_pack_registries_test/unsyncable/datagen_test.json
@@ -165,13 +168,14 @@ public class DataPackRegistriesTest
     {
         private static void subscribeClientEvents()
         {
-            MinecraftForge.EVENT_BUS.addListener(ClientEvents::onPlayerLogin);
+            MinecraftForge.EVENT_BUS.addListener(ClientEvents::onClientTagsUpdated);
         }
         
-        private static void onPlayerLogin(final LoggedInEvent event)
+        private static void onClientTagsUpdated(final TagsUpdatedEvent event)
         {
             // assert existence of synced objects and tags
-            final RegistryAccess registries = event.getPlayer().connection.registryAccess();
+            @SuppressWarnings("resource")
+            final RegistryAccess registries = Minecraft.getInstance().player.connection.registryAccess();
             final Registry<Syncable> registry = registries.registryOrThrow(Syncable.REGISTRY_KEY);
             final ResourceKey<Syncable> key = ResourceKey.create(Syncable.REGISTRY_KEY, TEST_RL);
             final Holder<Syncable> holder = registry.getHolderOrThrow(key);
