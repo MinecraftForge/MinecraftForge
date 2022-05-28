@@ -127,14 +127,14 @@ public class DataPackRegistriesTest
             public void run(final HashCache cache) throws IOException
             {
                 Unsyncable.DIRECT_CODEC.encodeStart(ops, element)
-                    .resultOrPartial(msg -> LOGGER.error("Failed to encode {}: {}", path, msg)) // log error on encode failure
-                    .ifPresent(json -> // output to file on encode success
+                    .resultOrPartial(msg -> LOGGER.error("Failed to encode {}: {}", path, msg)) // Log error on encode failure.
+                    .ifPresent(json -> // Output to file on encode success.
                     {
                         try
                         {
                             DataProvider.save(gson, cache, json, path);
                         }
-                        catch(IOException e) // we're inside this ifpresent so the throws can't deal with this
+                        catch (IOException e) // The throws can't deal with this exception, because we're inside the ifPresent.
                         {
                             LOGGER.error("Failed to save " + pathString, e);
                         }
@@ -151,7 +151,7 @@ public class DataPackRegistriesTest
     
     private void onServerStarting(final ServerStartingEvent event)
     {
-        // assert existence of json objects and tags
+        // Assert existence of json objects and tags.
         final RegistryAccess registries = event.getServer().registryAccess();
         final Registry<Unsyncable> registry = registries.registryOrThrow(Unsyncable.REGISTRY_KEY);
         final ResourceKey<Unsyncable> key = ResourceKey.create(Unsyncable.REGISTRY_KEY, TEST_RL);
