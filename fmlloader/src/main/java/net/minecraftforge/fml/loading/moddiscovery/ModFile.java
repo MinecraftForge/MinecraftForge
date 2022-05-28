@@ -18,6 +18,8 @@ import net.minecraftforge.forgespi.language.ModFileScanData;
 import net.minecraftforge.forgespi.locating.IModFile;
 import net.minecraftforge.forgespi.locating.IModProvider;
 import net.minecraftforge.forgespi.locating.ModFileFactory;
+import org.apache.maven.artifact.versioning.ArtifactVersion;
+import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 import org.slf4j.Logger;
 
 import java.nio.file.Files;
@@ -51,9 +53,9 @@ public class ModFile implements IModFile {
     private Throwable scanError;
     private final SecureJar jar;
     private final Type modFileType;
-    private final Manifest manifest;
+    private final Manifest     manifest;
     private final IModProvider provider;
-    private IModFileInfo modFileInfo;
+    private       IModFileInfo modFileInfo;
     private ModFileScanData fileModFileScanData;
     private CompletableFuture<ModFileScanData> futureScanResult;
     private List<CoreModFile> coreMods;
@@ -71,6 +73,18 @@ public class ModFile implements IModFile {
         final Optional<String> value = Optional.ofNullable(manifest.getMainAttributes().getValue(TYPE));
         modFileType = Type.valueOf(value.orElse("MOD"));
         jarVersion = Optional.ofNullable(manifest.getMainAttributes().getValue(Attributes.Name.IMPLEMENTATION_VERSION)).orElse("0.0NONE");
+        this.modFileInfo = ModFileParser.readModList(this, this.parser);
+    }
+
+    public ModFile(final SecureJar jar, final IModProvider provider, final ModFileFactory.ModFileInfoParser parser, String type) {
+        this.provider = provider;
+        this.jar = jar;
+        this.parser = parser;
+
+        manifest = this.jar.getManifest();
+        modFileType = Type.valueOf(type);
+        jarVersion = Optional.ofNullable(manifest.getMainAttributes().getValue(Attributes.Name.IMPLEMENTATION_VERSION)).orElse("0.0NONE");
+        this.modFileInfo = ModFileParser.readModList(this, this.parser);
     }
 
     @Override
@@ -154,6 +168,14 @@ public class ModFile implements IModFile {
         StartupMessageManager.modLoaderConsumer().ifPresent(c->c.accept("Completed deep scan of "+this.getFileName()));
     }
 
+    public Map<String, Object> getFileProperties()
+    {
+        if (this.fileProperties == null)
+            return ImmutableMap.of();
+
+        return ImmutableMap.copyOf(this.fileProperties);
+    }
+
     public void setFileProperties(Map<String, Object> fileProperties) {
         this.fileProperties = fileProperties;
     }
@@ -189,7 +211,7 @@ public class ModFile implements IModFile {
 
     @Override
     public IModProvider getProvider() {
-        return this.provider;
+        return provider;
     }
 
     @Override
@@ -200,5 +222,10 @@ public class ModFile implements IModFile {
     @Override
     public void setSecurityStatus(final SecureJar.Status status) {
         this.securityStatus = status;
+    }
+
+    public ArtifactVersion getJarVersion()
+    {
+        return new DefaultArtifactVersion(this.jarVersion);
     }
 }

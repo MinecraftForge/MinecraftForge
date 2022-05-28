@@ -138,7 +138,7 @@ public class ModFileInfo implements IModFileInfo, IConfigurable
         return issueURL;
     }
 
-    public boolean missingLicense()
+    public boolean isMissingLicense()
     {
         return Strings.isNullOrEmpty(license);
     }

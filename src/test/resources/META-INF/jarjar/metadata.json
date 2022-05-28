@@ -1,0 +1,15 @@
+{
+  "jars": [
+    {
+      "identifier": {
+        "group": "net.minecraftforge.jij",
+        "artifact": "JijTestMod"
+      },
+      "version": {
+        "range": "[1.0,)",
+        "artifactVersion": "1.2"
+      },
+      "path": "META-INF/jarjar/ForgeJiJTestMod-1.2.jar"
+    }
+  ]
+}

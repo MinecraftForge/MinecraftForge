@@ -40,13 +40,13 @@ public class ModInfo implements IModInfo, IConfigurable
     private final String description;
     private final Optional<String> logoFile;
     private final boolean logoBlur;
-    private final Optional<URL> updateJSONURL;
+    private final Optional<URL>                       updateJSONURL;
+    private final Optional<URL>                       modUrl;
     private final List<? extends IModInfo.ModVersion> dependencies;
 
     private final List<ForgeFeature.Bound> features;
     private final Map<String,Object> properties;
     private final IConfigurable config;
-    private final Optional<URL> modUrl;
 
     public ModInfo(final ModFileInfo owningFile, final IConfigurable config)
     {
@@ -96,7 +96,7 @@ public class ModInfo implements IModInfo, IConfigurable
                 .orElse(Collections.emptyMap());
 
         this.modUrl = config.<String>getConfigElement("modUrl")
-                .map(StringUtils::toURL);
+                        .map(StringUtils::toURL);
     }
 
     @Override
@@ -147,6 +147,12 @@ public class ModInfo implements IModInfo, IConfigurable
     }
 
     @Override
+    public Optional<URL> getModURL()
+    {
+        return modUrl;
+    }
+
+    @Override
     public Optional<String> getLogoFile()
     {
         return this.logoFile;
@@ -178,11 +184,6 @@ public class ModInfo implements IModInfo, IConfigurable
         return null;
     }
 
-    @Override
-    public Optional<URL> getModURL() {
-        return modUrl;
-    }
-
     class ModVersion implements net.minecraftforge.forgespi.language.IModInfo.ModVersion {
         private IModInfo owner;
         private final String modId;
@@ -190,7 +191,8 @@ public class ModInfo implements IModInfo, IConfigurable
         private final boolean mandatory;
         private final Ordering ordering;
         private final DependencySide side;
-        private Optional<URL> referralUrl;
+        @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
+        private final Optional<URL>  referralUrl;
 
         public ModVersion(final IModInfo owner, final IConfigurable config) {
             this.owner = owner;
@@ -208,7 +210,7 @@ public class ModInfo implements IModInfo, IConfigurable
                     .map(DependencySide::valueOf)
                     .orElse(DependencySide.BOTH);
             this.referralUrl = config.<String>getConfigElement("referralUrl")
-                    .map(StringUtils::toURL);
+                           .map(StringUtils::toURL);
         }
 
 
