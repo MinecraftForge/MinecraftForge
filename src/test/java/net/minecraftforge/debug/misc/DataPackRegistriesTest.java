@@ -70,38 +70,38 @@ public class DataPackRegistriesTest
 
     public DataPackRegistriesTest()
     {
-        if (ENABLED)
+        if (!ENABLED)
+            return;
+
+        final IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();
+        final IEventBus forgeBus = MinecraftForge.EVENT_BUS;
+        
+        // Deferred Registers can be created for datapack registries in static init or mod constructor.
+        // (We'll do it in mod constructor, as when doing the ENABLED check it's less verbose than static init.)
+        // As with static registries, any mod can make a Deferred Register for a given datapack registry,
+        // but only one mod can register the internal registry with makeRegistry.
+        final DeferredRegister<Unsyncable> unsyncables = DeferredRegister.create(Unsyncable.REGISTRY_KEY, MODID);
+        final DeferredRegister<Syncable> syncables = DeferredRegister.create(Syncable.REGISTRY_KEY, MODID);
+        
+        // RegistryBuilder#dataPackRegistry marks the registry as a datapack registry rather than a static registry.
+        unsyncables.makeRegistry(Unsyncable.class,
+            () -> new RegistryBuilder<Unsyncable>().disableSaving().dataPackRegistry(Unsyncable.DIRECT_CODEC));
+        // The overload of #dataPackRegistry that takes a second codec marks the datapack registry as syncable.
+        syncables.makeRegistry(Syncable.class,
+            () -> new RegistryBuilder<Syncable>().disableSaving().dataPackRegistry(Syncable.DIRECT_CODEC, Syncable.DIRECT_CODEC));
+        
+        // Datapack registry elements can be datagenerated, but they must be registered as builtin objects first.
+        this.datagenTestObject = unsyncables.register("datagen_test", () -> new Unsyncable("Datagen Success"));
+        
+        unsyncables.register(modBus);
+        syncables.register(modBus);
+        
+        modBus.addListener(this::onGatherData);
+        forgeBus.addListener(this::onServerStarting);
+        
+        if (FMLEnvironment.dist == Dist.CLIENT)
         {
-            final IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();
-            final IEventBus forgeBus = MinecraftForge.EVENT_BUS;
-            
-            // Deferred Registers can be created for datapack registries in static init or mod constructor.
-            // (We'll do it in mod constructor, as when doing the ENABLED check it's less verbose than static init.)
-            // As with static registries, any mod can make a Deferred Register for a given datapack registry,
-            // but only one mod can register the internal registry with makeRegistry.
-            final DeferredRegister<Unsyncable> unsyncables = DeferredRegister.create(Unsyncable.REGISTRY_KEY, MODID);
-            final DeferredRegister<Syncable> syncables = DeferredRegister.create(Syncable.REGISTRY_KEY, MODID);
-            
-            // RegistryBuilder#dataPackRegistry marks the registry as a datapack registry rather than a static registry.
-            unsyncables.makeRegistry(Unsyncable.class,
-                () -> new RegistryBuilder<Unsyncable>().disableSaving().dataPackRegistry(Unsyncable.DIRECT_CODEC));
-            // The overload of #dataPackRegistry that takes a second codec marks the datapack registry as syncable.
-            syncables.makeRegistry(Syncable.class,
-                () -> new RegistryBuilder<Syncable>().disableSaving().dataPackRegistry(Syncable.DIRECT_CODEC, Syncable.DIRECT_CODEC));
-            
-            // Datapack registry elements can be datagenerated, but they must be registered as builtin objects first.
-            this.datagenTestObject = unsyncables.register("datagen_test", () -> new Unsyncable("Datagen Success"));
-            
-            unsyncables.register(modBus);
-            syncables.register(modBus);
-            
-            modBus.addListener(this::onGatherData);
-            forgeBus.addListener(this::onServerStarting);            
-            
-            if (FMLEnvironment.dist == Dist.CLIENT)
-            {
-                ClientEvents.subscribeClientEvents();
-            }
+            ClientEvents.subscribeClientEvents();
         }
     }
     
