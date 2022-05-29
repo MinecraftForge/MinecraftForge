@@ -20,28 +20,28 @@ public class TagsUpdatedEvent extends Event
     private final boolean integratedServer;
 
     @Deprecated(forRemoval = true, since = "1.18.2")
-     public TagsUpdatedEvent(RegistryAccess registries)
-     {
-         this.registries = registries;
-         this.updateCause = ClientGamePacketListener.class.isAssignableFrom(StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE).getCallerClass()) ? UpdateCause.CLIENT_PACKET_RECEIVED : UpdateCause.SERVER_DATA_LOAD;
-         var currentServer = ServerLifecycleHooks.getCurrentServer();
-         this.integratedServer = currentServer != null && !currentServer.isDedicatedServer();
-     }
+    public TagsUpdatedEvent(RegistryAccess registries)
+    {
+        this.registries = registries;
+        this.updateCause = ClientGamePacketListener.class.isAssignableFrom(StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE).getCallerClass()) ? UpdateCause.CLIENT_PACKET_RECEIVED : UpdateCause.SERVER_DATA_LOAD;
+        var currentServer = ServerLifecycleHooks.getCurrentServer();
+        this.integratedServer = currentServer != null && !currentServer.isDedicatedServer();
+    }
 
-     public TagsUpdatedEvent(RegistryAccess registries, boolean fromClientPacket, boolean isIntegratedServerConnection)
-     {
-         this.registries = registries;
-         this.updateCause = fromClientPacket ? UpdateCause.CLIENT_PACKET_RECEIVED : UpdateCause.SERVER_DATA_LOAD;
-         this.integratedServer = isIntegratedServerConnection;
-     }
+    public TagsUpdatedEvent(RegistryAccess registries, boolean fromClientPacket, boolean isIntegratedServerConnection)
+    {
+        this.registries = registries;
+        this.updateCause = fromClientPacket ? UpdateCause.CLIENT_PACKET_RECEIVED : UpdateCause.SERVER_DATA_LOAD;
+        this.integratedServer = isIntegratedServerConnection;
+    }
 
-     /**
-      * @return The dynamic registries that have had their tags rebound.
-      */
-     public RegistryAccess getTagManager()
-     {
-         return registries;
-     }
+    /**
+     * @return The dynamic registries that have had their tags rebound.
+     */
+    public RegistryAccess getTagManager()
+    {
+        return registries;
+    }
 
     /**
      * @return the cause for this tag update
@@ -75,6 +75,4 @@ public class TagsUpdatedEvent extends Event
          */
         CLIENT_PACKET_RECEIVED
     }
-
-
 }
