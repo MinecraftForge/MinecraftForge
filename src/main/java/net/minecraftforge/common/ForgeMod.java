@@ -95,20 +95,23 @@ public class ForgeMod
     public static final RegistryObject<Attribute> ENTITY_GRAVITY = ATTRIBUTES.register("entity_gravity", () -> new RangedAttribute("forge.entity_gravity", 0.08D, -8.0D, 8.0D).setSyncable(true));
 
     /**
-     * Reach Distance represents the distance at which a player may interact with the world.  The default is 4.5 blocks.  Players in creative mode have an additional 0.5 blocks of reach distance.<br>
-     * See {@link IForgePlayer#getReachDistance} and {@link IForgePlayer#canInteractWith}
+     * Reach Distance represents the distance at which a player may interact with the world.  The default is 4.5 blocks.  Players in creative mode have an additional 0.5 blocks of reach distance.
+     * @see IForgePlayer#getReachDistance()
+     * @see IForgePlayer#canInteractWith(BlockPos, double)
+     * @see IForgePlayer#canInteractWith(Entity, double)
      */
     public static final RegistryObject<Attribute> REACH_DISTANCE = ATTRIBUTES.register("reach_distance", () -> new RangedAttribute("generic.reachDistance", 4.5D, 0.0D, 1024.0D).setSyncable(true));
 
     /**
-     * Attack Range represents the distance at which a player may attack an entity.  The default is 3 blocks.  Players in creative mode have an additional 3 blocks of attack reach.<br>
-     * See {@link IForgePlayer#getAttackRange} and {@link IForgePlayer#canHit}
+     * Attack Range represents the distance at which a player may attack an entity.  The default is 3 blocks.  Players in creative mode have an additional 3 blocks of attack reach.
+     * @see IForgePlayer#getAttackRange()
+     * @see IForgePlayer#canHit(Entity, double)
      */
     public static final RegistryObject<Attribute> ATTACK_RANGE = ATTRIBUTES.register("attack_range", () -> new RangedAttribute("generic.attack_range", 3.0D, 0.0D, 1024.0D).setSyncable(true));
 
     /**
-     * Step Height Addition modifies the amount of blocks an entity may walk up without jumping.<br>
-     * See {@link IForgeEntity#getStepHeight}
+     * Step Height Addition modifies the amount of blocks an entity may walk up without jumping.
+     * @see IForgeEntity#getStepHeight()
      */
     public static final RegistryObject<Attribute> STEP_HEIGHT_ADDITION = ATTRIBUTES.register("step_height_addition", () -> new RangedAttribute("forge.stepHeight", 0.0D, -512.0D, 512.0D).setSyncable(true));
 
