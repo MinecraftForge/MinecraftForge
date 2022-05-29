@@ -31,8 +31,7 @@ public class LowCodeModContainer extends ModContainer
         this.scanResults = modFileScanResults;
         this.modInstance = new Object();
         this.contextExtension = () -> null;
-        registerExtensionPoint(IExtensionPoint.DisplayTest.class, () -> new IExtensionPoint.DisplayTest(()->this.modInfo.getVersion().toString(),
-                (incoming, isNetwork)-> true));
+        this.extensionPoints.remove(IExtensionPoint.DisplayTest.class);
     }
 
     @Override
