@@ -9,15 +9,12 @@ apply plugin: 'org.javamodularity.moduleplugin'
 
 dependencyUpdates.rejectVersionIf { isNonStable(it.candidate.version) }
 
+java.withSourcesJar()
+
 dependencies {
     compileOnly('org.jetbrains:annotations:21.0.1')
     implementation(project(':fmlloader'))
     implementation(project(':fmlcore'))
-}
-
-task sourcesJar(type: Jar) {
-    archiveClassifier = 'sources'
-    from sourceSets.main.allSource
 }
 
 ext {
@@ -55,16 +52,9 @@ tasks.withType(JavaCompile) {
 
 license {
     header = rootProject.file('LICENSE-header.txt')
-
     include 'net/minecraftforge/'
-}
-
-artifacts {
-    archives jar
-    archives sourcesJar
 }
 
 publishing.publications.mavenJava(MavenPublication) {
     from components.java
-    artifact sourcesJar
 }
