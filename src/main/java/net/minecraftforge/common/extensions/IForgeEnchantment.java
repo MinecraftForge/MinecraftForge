@@ -11,7 +11,6 @@ import net.minecraft.world.item.enchantment.Enchantment;
 
 public interface IForgeEnchantment
 {
-
     private Enchantment self()
     {
         return (Enchantment) this;
@@ -28,5 +27,4 @@ public interface IForgeEnchantment
     {
         return self().getDamageBonus(level, mobType);
     }
-
 }
