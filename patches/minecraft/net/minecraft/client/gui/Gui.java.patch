@@ -1,5 +1,13 @@
 --- a/net/minecraft/client/gui/Gui.java
 +++ b/net/minecraft/client/gui/Gui.java
+@@ -411,6 +_,7 @@
+                   if (this.f_92986_.f_91076_ != null && this.f_92986_.f_91076_ instanceof LivingEntity && f >= 1.0F) {
+                      flag = this.f_92986_.f_91074_.m_36333_() > 5.0F;
+                      flag &= this.f_92986_.f_91076_.m_6084_();
++                     flag &= this.f_92986_.f_91074_.canHit(this.f_92986_.f_91076_, 0);
+                   }
+ 
+                   int j = this.f_92978_ / 2 - 7 + 16;
 @@ -463,6 +_,10 @@
  
           for(MobEffectInstance mobeffectinstance : Ordering.natural().reverse().sortedCopy(collection)) {
