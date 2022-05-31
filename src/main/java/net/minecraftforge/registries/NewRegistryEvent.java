@@ -5,10 +5,12 @@
 
 package net.minecraftforge.registries;
 
+import com.mojang.logging.LogUtils;
 import net.minecraft.core.Registry;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.event.IModBusEvent;
 import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
 
 import java.util.ArrayList;
 import java.util.IdentityHashMap;
@@ -16,13 +18,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 /**
  * Register new registries when you receive this event through {@link RegistryBuilder} and {@link #create(RegistryBuilder)}.
  */
 public class NewRegistryEvent extends Event implements IModBusEvent
 {
+    private static final Logger LOGGER = LogUtils.getLogger();
     private final List<RegistryData<?>> registries = new ArrayList<>();
 
     public NewRegistryEvent() {}
@@ -57,13 +59,29 @@ public class NewRegistryEvent extends Event implements IModBusEvent
     @SuppressWarnings("rawtypes")
     void fill()
     {
-        Map<RegistryBuilder<?>, IForgeRegistry<?>> builtRegistries = this.registries
-                .stream()
-                .collect(Collectors.toMap(RegistryData::builder, d -> d.builder().create(), (a, b) -> a, IdentityHashMap::new));
+        Map<RegistryBuilder<?>, IForgeRegistry<?>> builtRegistries = new IdentityHashMap<>();
+        RuntimeException aggregate = new RuntimeException("Failed to create some forge registries, see suppressed exceptions for details");
+        for (RegistryData<?> registryData : this.registries)
+        {
+            RegistryBuilder<?> builder = registryData.builder();
+            try
+            {
+                builtRegistries.put(builder, builder.create());
+            } catch (Exception e)
+            {
+                aggregate.addSuppressed(e);
+            }
+        }
 
         builtRegistries.forEach((builder, reg) -> {
-            if (builder.getHasWrapper() && !Registry.REGISTRY.containsKey(reg.getRegistryName()))
-                RegistryManager.registerToRootRegistry((ForgeRegistry<?>) reg);
+            try
+            {
+                if (builder.getHasWrapper() && !Registry.REGISTRY.containsKey(reg.getRegistryName()))
+                    RegistryManager.registerToRootRegistry((ForgeRegistry<?>) reg);
+            } catch (Exception e)
+            {
+                aggregate.addSuppressed(e);
+            }
         });
 
         for (RegistryData data : this.registries)
@@ -72,9 +90,22 @@ public class NewRegistryEvent extends Event implements IModBusEvent
             if (registry != null)
             {
                 data.registryHolder.registry = registry;
-                if (data.onFill != null)
-                    data.onFill.accept(registry);
+                try
+                {
+                    if (data.onFill != null)
+                        data.onFill.accept(registry);
+                } catch (Exception e)
+                {
+                    aggregate.addSuppressed(e);
+                }
             }
+        }
+
+        if (aggregate.getSuppressed().length > 0)
+        {
+            // Something had an exception, log and propagate with a throw for when FML eventually logs this too
+            LOGGER.error("", aggregate);
+            throw aggregate;
         }
     }
 
