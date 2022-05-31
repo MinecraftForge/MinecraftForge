@@ -13,6 +13,7 @@ import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Objects;
@@ -47,6 +48,7 @@ import it.unimi.dsi.fastutil.longs.LongSet;
 import net.minecraft.ResourceLocationException;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.core.*;
+import net.minecraft.server.packs.PackType;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.datafix.fixes.StructuresBecomeConfiguredFix;
@@ -1509,5 +1511,21 @@ public class ForgeHooks
     {
         @Nullable ResourceLocation biomeLocation = ResourceLocation.tryParse(biome);
         return biomeLocation != null && !biomeLocation.getNamespace().equals(ResourceLocation.DEFAULT_NAMESPACE);
+    }
+
+    public static Map<PackType, Integer> readTypedPackFormats(JsonObject json)
+    {
+        ImmutableMap.Builder<PackType, Integer> map = ImmutableMap.builder();
+
+        for (PackType packType : PackType.values())
+        {
+            String key = "forge:" + packType.bridgeType.name().toLowerCase(Locale.ROOT) + "_pack_format";
+            if (json.has(key))
+            {
+                map.put(packType, GsonHelper.getAsInt(json, key));
+            }
+        }
+
+        return map.buildOrThrow();
     }
 }
