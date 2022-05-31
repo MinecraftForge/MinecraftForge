@@ -23,6 +23,8 @@ import net.minecraftforge.common.crafting.DifferenceIngredient;
 import net.minecraftforge.common.crafting.IntersectionIngredient;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.common.data.ForgeFluidTagsProvider;
+import net.minecraftforge.common.extensions.IForgeEntity;
+import net.minecraftforge.common.extensions.IForgePlayer;
 import net.minecraftforge.common.loot.CanToolPerformAction;
 import net.minecraftforge.common.loot.GlobalLootModifierSerializer;
 import net.minecraftforge.common.loot.LootTableIdCondition;
@@ -94,13 +96,23 @@ public class ForgeMod
 
     /**
      * Reach Distance represents the distance at which a player may interact with the world.  The default is 4.5 blocks.  Players in creative mode have an additional 0.5 blocks of reach distance.
+     * @see IForgePlayer#getReachDistance()
+     * @see IForgePlayer#canInteractWith(BlockPos, double)
+     * @see IForgePlayer#canInteractWith(Entity, double)
      */
     public static final RegistryObject<Attribute> REACH_DISTANCE = ATTRIBUTES.register("reach_distance", () -> new RangedAttribute("generic.reachDistance", 4.5D, 0.0D, 1024.0D).setSyncable(true));
 
     /**
      * Attack Range represents the distance at which a player may attack an entity.  The default is 3 blocks.  Players in creative mode have an additional 3 blocks of attack reach.
+     * @see IForgePlayer#getAttackRange()
+     * @see IForgePlayer#canHit(Entity, double)
      */
     public static final RegistryObject<Attribute> ATTACK_RANGE = ATTRIBUTES.register("attack_range", () -> new RangedAttribute("generic.attack_range", 3.0D, 0.0D, 1024.0D).setSyncable(true));
+
+    /**
+     * Step Height Addition modifies the amount of blocks an entity may walk up without jumping.
+     * @see IForgeEntity#getStepHeight()
+     */
     public static final RegistryObject<Attribute> STEP_HEIGHT_ADDITION = ATTRIBUTES.register("step_height_addition", () -> new RangedAttribute("forge.stepHeight", 0.0D, -512.0D, 512.0D).setSyncable(true));
 
 
