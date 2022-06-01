@@ -11,6 +11,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.play.client.CPlayerDiggingPacket;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
@@ -251,7 +252,6 @@ public class PlayerInteractEvent extends PlayerEvent
         private Result useBlock = DEFAULT;
         private Result useItem = DEFAULT;
         private Action blockAction;
-        
         
         public LeftClickBlock(PlayerEntity player, BlockPos pos, Direction face, CPlayerDiggingPacket.Action blockAction)
         {
