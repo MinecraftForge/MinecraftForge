@@ -9,6 +9,14 @@
     private final EquipmentSlot[] f_44671_;
     private final Enchantment.Rarity f_44674_;
     public final EnchantmentCategory f_44672_;
+@@ -71,6 +_,7 @@
+       return 0;
+    }
+ 
++   @Deprecated // Forge: Use ItemStack aware version in IForgeEnchantment
+    public float m_7335_(int p_44682_, MobType p_44683_) {
+       return 0.0F;
+    }
 @@ -111,7 +_,7 @@
     }
  

@@ -23,6 +23,7 @@ public interface IForgeEnchantment
      * @param enchantedItem the item used for the attack
      * @return the damage bonus
      */
+    @SuppressWarnings("deprecation")
     default float getDamageBonus(int level, MobType mobType, ItemStack enchantedItem)
     {
         return self().getDamageBonus(level, mobType);
