@@ -163,6 +163,7 @@ public class SeparatePerspectiveModel implements IModelGeometry<SeparatePerspect
     {
         public static final Loader INSTANCE = new Loader();
 
+        @Deprecated(forRemoval = true, since = "1.18.2")
         public static final ImmutableBiMap<String, ItemTransforms.TransformType> PERSPECTIVES = ImmutableBiMap.<String, ItemTransforms.TransformType>builder()
                 .put("none", ItemTransforms.TransformType.NONE)
                 .put("third_person_left_hand", ItemTransforms.TransformType.THIRD_PERSON_LEFT_HAND)
@@ -173,6 +174,14 @@ public class SeparatePerspectiveModel implements IModelGeometry<SeparatePerspect
                 .put("gui", ItemTransforms.TransformType.GUI)
                 .put("ground", ItemTransforms.TransformType.GROUND)
                 .put("fixed", ItemTransforms.TransformType.FIXED)
+                .build();
+
+        @Deprecated(forRemoval = true, since = "1.18.2")
+        private static final ImmutableBiMap<String, ItemTransforms.TransformType> BACKWARD_COMPATIBILITY = ImmutableBiMap.<String, ItemTransforms.TransformType>builder()
+                .put("third_person_left_hand", ItemTransforms.TransformType.THIRD_PERSON_LEFT_HAND)
+                .put("third_person_right_hand", ItemTransforms.TransformType.THIRD_PERSON_RIGHT_HAND)
+                .put("first_person_left_hand", ItemTransforms.TransformType.FIRST_PERSON_LEFT_HAND)
+                .put("first_person_right_hand", ItemTransforms.TransformType.FIRST_PERSON_RIGHT_HAND)
                 .build();
 
         @Override
@@ -187,17 +196,25 @@ public class SeparatePerspectiveModel implements IModelGeometry<SeparatePerspect
 
             JsonObject perspectiveData = GsonHelper.getAsJsonObject(modelContents, "perspectives");
 
-            ImmutableMap.Builder<ItemTransforms.TransformType, BlockModel> perspectives = ImmutableMap.builder();
-            for(Map.Entry<String, ItemTransforms.TransformType> perspective : PERSPECTIVES.entrySet())
+            Map<ItemTransforms.TransformType, BlockModel> perspectives = new HashMap<>();
+            for(Map.Entry<String, ItemTransforms.TransformType> entry : BACKWARD_COMPATIBILITY.entrySet())
             {
-                if (perspectiveData.has(perspective.getKey()))
+                if (perspectiveData.has(entry.getKey()))
                 {
-                    BlockModel perspectiveModel = deserializationContext.deserialize(GsonHelper.getAsJsonObject(perspectiveData, perspective.getKey()), BlockModel.class);
-                    perspectives.put(perspective.getValue(), perspectiveModel);
+                    BlockModel perspectiveModel = deserializationContext.deserialize(GsonHelper.getAsJsonObject(perspectiveData, entry.getKey()), BlockModel.class);
+                    perspectives.put(entry.getValue(), perspectiveModel);
+                }
+            }
+            for(ItemTransforms.TransformType perspective : ItemTransforms.TransformType.values())
+            {
+                if (perspectiveData.has(perspective.getSerializeName()))
+                {
+                    BlockModel perspectiveModel = deserializationContext.deserialize(GsonHelper.getAsJsonObject(perspectiveData, perspective.getSerializeName()), BlockModel.class);
+                    perspectives.put(perspective, perspectiveModel);
                 }
             }
 
-            return new SeparatePerspectiveModel(baseModel, perspectives.build());
+            return new SeparatePerspectiveModel(baseModel, ImmutableMap.copyOf(perspectives));
         }
     }
 }

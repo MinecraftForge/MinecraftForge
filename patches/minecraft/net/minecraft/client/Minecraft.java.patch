@@ -214,16 +214,21 @@
                 }
              }
  
-@@ -1460,6 +_,8 @@
+@@ -1460,14 +_,20 @@
           return false;
        } else {
           boolean flag = false;
+-         switch(this.f_91077_.m_6662_()) {
 +         net.minecraftforge.client.event.InputEvent.ClickInputEvent inputEvent = net.minecraftforge.client.ForgeHooksClient.onClickInput(0, this.f_91066_.f_92096_, InteractionHand.MAIN_HAND);
++         HitResult.Type hitType = this.f_91077_.m_6662_();
++         if(this.f_91077_ instanceof EntityHitResult entityHit) { // Forge: Perform attack range checks here, instead of in GameRenderer#pick, so extended-reach interactions work.
++             if(!f_91074_.canHit(entityHit.m_82443_(), 0)) hitType = HitResult.Type.MISS; // No padding in client code.
++         }
 +         if (!inputEvent.isCanceled())
-          switch(this.f_91077_.m_6662_()) {
++         switch(hitType) {
           case ENTITY:
              this.f_91072_.m_105223_(this.f_91074_, ((EntityHitResult)this.f_91077_).m_82443_());
-@@ -1467,7 +_,7 @@
+             break;
           case BLOCK:
              BlockHitResult blockhitresult = (BlockHitResult)this.f_91077_;
              BlockPos blockpos = blockhitresult.m_82425_();
@@ -255,6 +260,14 @@
                 ItemStack itemstack = this.f_91074_.m_21120_(interactionhand);
                 if (this.f_91077_ != null) {
                    switch(this.f_91077_.m_6662_()) {
+@@ -1506,6 +_,7 @@
+                         return;
+                      }
+ 
++                     if(!this.f_91074_.canInteractWith(entityhitresult.m_82443_(), 0)) return; //Forge: Entity may be traced via attack range, but the player may not have sufficient reach.  No padding in client code.
+                      InteractionResult interactionresult = this.f_91072_.m_105230_(this.f_91074_, entity, entityhitresult, interactionhand);
+                      if (!interactionresult.m_19077_()) {
+                         interactionresult = this.f_91072_.m_105226_(this.f_91074_, entity, interactionhand);
 @@ -1513,6 +_,7 @@
  
                       if (interactionresult.m_19077_()) {
@@ -488,15 +501,17 @@
        }
     }
  
-@@ -2713,7 +_,7 @@
+@@ -2713,8 +_,8 @@
        return this.f_90993_;
     }
  
 -   private static Pack m_167933_(String p_167934_, Component p_167935_, boolean p_167936_, Supplier<PackResources> p_167937_, PackMetadataSection p_167938_, Pack.Position p_167939_, PackSource p_167940_) {
+-      int i = p_167938_.m_10374_();
 +   private static Pack createClientPackAdapter(String p_167934_, Component p_167935_, boolean p_167936_, Supplier<PackResources> p_167937_, PackMetadataSection p_167938_, Pack.Position p_167939_, PackSource p_167940_, boolean hidden) {
-       int i = p_167938_.m_10374_();
++      int i = p_167938_.getPackFormat(PackType.CLIENT_RESOURCES);
        Supplier<PackResources> supplier = p_167937_;
        if (i <= 3) {
+          supplier = m_91330_(p_167937_);
 @@ -2724,7 +_,7 @@
           supplier = m_91352_(supplier);
        }

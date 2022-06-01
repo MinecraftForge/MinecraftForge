@@ -21,14 +21,12 @@
     }
  
     public void m_7376_(ServerboundAcceptTeleportationPacket p_9835_) {
-@@ -979,7 +_,9 @@
+@@ -979,7 +_,7 @@
              this.f_9743_.m_9243_();
              int i = this.f_9743_.f_19853_.m_151558_();
              if (blockpos.m_123342_() < i) {
 -               if (this.f_9766_ == null && this.f_9743_.m_20275_((double)blockpos.m_123341_() + 0.5D, (double)blockpos.m_123342_() + 0.5D, (double)blockpos.m_123343_() + 0.5D) < 64.0D && serverlevel.m_7966_(this.f_9743_, blockpos)) {
-+               double dist = f_9743_.m_21051_(net.minecraftforge.common.ForgeMod.REACH_DISTANCE.get()).m_22135_() + 3;
-+               dist *= dist;
-+               if (this.f_9766_ == null && this.f_9743_.m_20275_((double)blockpos.m_123341_() + 0.5D, (double)blockpos.m_123342_() + 0.5D, (double)blockpos.m_123343_() + 0.5D) < dist && serverlevel.m_7966_(this.f_9743_, blockpos)) {
++               if (this.f_9766_ == null && this.f_9743_.canInteractWith(blockpos, 3) && serverlevel.m_7966_(this.f_9743_, blockpos)) {
                    InteractionResult interactionresult = this.f_9743_.f_8941_.m_7179_(this.f_9743_, serverlevel, itemstack, interactionhand, blockhitresult);
                    if (direction == Direction.UP && !interactionresult.m_19077_() && blockpos.m_123342_() >= i - 1 && m_9790_(this.f_9743_, itemstack)) {
                       Component component = (new TranslatableComponent("build.tooHigh", i - 1)).m_130940_(ChatFormatting.RED);
@@ -54,14 +52,31 @@
              }, ChatType.CHAT, this.f_9743_.m_142081_());
           }
  
-@@ -1222,6 +_,7 @@
+@@ -1216,12 +_,13 @@
+             return;
+          }
+ 
+-         double d0 = 36.0D;
+-         if (this.f_9743_.m_20280_(entity) < 36.0D) {
++         if (true) { //Forge: Perform distance checks below since interactions and attacks differ.
+             p_9866_.m_179617_(new ServerboundInteractPacket.Handler() {
                 private void m_143678_(InteractionHand p_143679_, ServerGamePacketListenerImpl.EntityInteraction p_143680_) {
++                  if(!ServerGamePacketListenerImpl.this.f_9743_.canInteractWith(entity, 1.5D)) return; //Forge: If the entity cannot be reached, do nothing. Original check was dist < 6, range is 4.5, so vanilla used padding=1.5
                    ItemStack itemstack = ServerGamePacketListenerImpl.this.f_9743_.m_21120_(p_143679_).m_41777_();
                    InteractionResult interactionresult = p_143680_.m_143694_(ServerGamePacketListenerImpl.this.f_9743_, entity, p_143679_);
 +                  if (net.minecraftforge.common.ForgeHooks.onInteractEntityAt(f_9743_, entity, entity.m_20182_(), p_143679_) != null) return;
                    if (interactionresult.m_19077_()) {
                       CriteriaTriggers.f_10565_.m_61494_(ServerGamePacketListenerImpl.this.f_9743_, itemstack, entity);
                       if (interactionresult.m_19080_()) {
+@@ -1243,7 +_,7 @@
+ 
+                public void m_141994_() {
+                   if (!(entity instanceof ItemEntity) && !(entity instanceof ExperienceOrb) && !(entity instanceof AbstractArrow) && entity != ServerGamePacketListenerImpl.this.f_9743_) {
+-                     ServerGamePacketListenerImpl.this.f_9743_.m_5706_(entity);
++                     if(ServerGamePacketListenerImpl.this.f_9743_.canHit(entity, 3)) ServerGamePacketListenerImpl.this.f_9743_.m_5706_(entity); //Forge: Perform attack range check. Original check was dist < 6, range is 3, so vanilla used padding=3
+                   } else {
+                      ServerGamePacketListenerImpl.this.m_9942_(new TranslatableComponent("multiplayer.disconnect.invalid_entity_attacked"));
+                      ServerGamePacketListenerImpl.f_9744_.warn("Player {} tried to attack an invalid entity", (Object)ServerGamePacketListenerImpl.this.f_9743_.m_7755_().getString());
 @@ -1430,6 +_,8 @@
     }
  

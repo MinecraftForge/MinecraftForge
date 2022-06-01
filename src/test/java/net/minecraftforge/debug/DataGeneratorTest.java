@@ -92,7 +92,6 @@ import net.minecraftforge.client.model.generators.BlockStateProvider;
 import net.minecraftforge.client.model.generators.ConfiguredModel;
 import net.minecraftforge.client.model.generators.ItemModelProvider;
 import net.minecraftforge.client.model.generators.ModelBuilder;
-import net.minecraftforge.client.model.generators.ModelBuilder.Perspective;
 import net.minecraftforge.client.model.generators.ModelFile;
 import net.minecraftforge.client.model.generators.ModelFile.UncheckedModelFile;
 import net.minecraftforge.client.model.generators.MultiPartBlockStateBuilder;
@@ -753,27 +752,27 @@ public class DataGeneratorTest
             ModelFile block = models().getBuilder("block")
                     .guiLight(GuiLight.SIDE)
                     .transforms()
-                    .transform(Perspective.GUI)
+                    .transform(ItemTransforms.TransformType.GUI)
                     .rotation(30, 225, 0)
                     .scale(0.625f)
                     .end()
-                    .transform(Perspective.GROUND)
+                    .transform(ItemTransforms.TransformType.GROUND)
                     .translation(0, 3, 0)
                     .scale(0.25f)
                     .end()
-                    .transform(Perspective.FIXED)
+                    .transform(ItemTransforms.TransformType.FIXED)
                     .scale(0.5f)
                     .end()
-                    .transform(Perspective.THIRDPERSON_RIGHT)
+                    .transform(ItemTransforms.TransformType.THIRD_PERSON_RIGHT_HAND)
                     .rotation(75, 45, 0)
                     .translation(0, 2.5f, 0)
                     .scale(0.375f)
                     .end()
-                    .transform(Perspective.FIRSTPERSON_RIGHT)
+                    .transform(ItemTransforms.TransformType.FIRST_PERSON_RIGHT_HAND)
                     .rotation(0, 45, 0)
                     .scale(0.4f)
                     .end()
-                    .transform(Perspective.FIRSTPERSON_LEFT)
+                    .transform(ItemTransforms.TransformType.FIRST_PERSON_LEFT_HAND)
                     .rotation(0, 225, 0)
                     .scale(0.4f)
                     .end()
@@ -1111,8 +1110,8 @@ public class DataGeneratorTest
                 } else if (generatedDisplay != null) { // Both must be non-null
                     ItemTransforms generatedTransforms = GSON.fromJson(generatedDisplay, ItemTransforms.class);
                     ItemTransforms vanillaTransforms = GSON.fromJson(vanillaDisplay, ItemTransforms.class);
-                    for (Perspective type : Perspective.values()) {
-                        if (!generatedTransforms.getTransform(type.vanillaType).equals(vanillaTransforms.getTransform(type.vanillaType))) {
+                    for (ItemTransforms.TransformType type : ItemTransforms.TransformType.values()) {
+                        if (!generatedTransforms.getTransform(type).equals(vanillaTransforms.getTransform(type))) {
                             ret.add("Model " + loc  + " has transforms that differ from vanilla equivalent for perspective " + type.name());
                             return;
                         }

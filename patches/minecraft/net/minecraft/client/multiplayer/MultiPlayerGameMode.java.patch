@@ -68,13 +68,12 @@
              if (this.f_105193_ >= 1.0F) {
                 this.f_105196_ = false;
                 this.m_105272_(ServerboundPlayerActionPacket.Action.STOP_DESTROY_BLOCK, p_105284_, p_105285_);
-@@ -227,7 +_,8 @@
+@@ -227,7 +_,7 @@
     }
  
     public float m_105286_() {
 -      return this.f_105197_.m_46408_() ? 5.0F : 4.5F;
-+      float attrib = (float)f_105189_.f_91074_.m_21051_(net.minecraftforge.common.ForgeMod.REACH_DISTANCE.get()).m_22135_();
-+      return this.f_105197_.m_46408_() ? attrib : attrib - 0.5F;
++      return (float) this.f_105189_.f_91074_.getReachDistance();
     }
  
     public void m_105287_() {

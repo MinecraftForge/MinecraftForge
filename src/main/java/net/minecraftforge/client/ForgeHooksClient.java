@@ -30,6 +30,7 @@ import net.minecraft.network.Connection;
 import net.minecraft.network.chat.*;
 import net.minecraft.network.protocol.status.ServerStatus;
 import net.minecraft.server.WorldStem;
+import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
@@ -1139,5 +1140,13 @@ public class ForgeHooksClient
         }, title, msg, CommonComponents.GUI_PROCEED, CommonComponents.GUI_CANCEL);
 
         Minecraft.getInstance().setScreen(screen);
+    }
+
+    public static int getMaxMipmapLevel(int width, int height)
+    {
+        return Math.min(
+                Mth.log2(Math.max(1, width)),
+                Mth.log2(Math.max(1, height))
+        );
     }
 }

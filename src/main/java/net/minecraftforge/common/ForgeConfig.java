@@ -21,6 +21,8 @@ public class ForgeConfig {
     public static class Server {
         public final BooleanValue removeErroringBlockEntities;
 
+        public final BooleanValue removeErroringEntities;
+
         public final BooleanValue fullBoundingBoxLadders;
 
         public final DoubleValue zombieBaseSummonChance;
@@ -42,6 +44,12 @@ public class ForgeConfig {
                     .translation("forge.configgui.removeErroringBlockEntities")
                     .worldRestart()
                     .define("removeErroringBlockEntities", false);
+
+            removeErroringEntities = builder
+                    .comment("Set this to true to remove any Entity (Note: Does not include BlockEntities) that throws an error in its tick method instead of closing the server and reporting a crash log. BE WARNED THIS COULD SCREW UP EVERYTHING USE SPARINGLY WE ARE NOT RESPONSIBLE FOR DAMAGES.")
+                    .translation("forge.configgui.removeErroringEntities")
+                    .worldRestart()
+                    .define("removeErroringEntities", false);
 
             fullBoundingBoxLadders = builder
                     .comment("Set this to true to check the entire entity's collision bounding box for ladders instead of just the block they are in. Causes noticeable differences in mechanics so default is vanilla behavior. Default: false.")

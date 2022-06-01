@@ -28,36 +28,80 @@ abstract class CheckSAS extends DefaultTask {
 				}
 				def comment = idx == -1 ? null : line.substring(idx)
 				if (idx != -1) line = line.substring(0, idx - 1)
-				def (cls, desc) = (line.trim() + '    ').split(' ', -1)
+				def (cls, name, desc) = (line.trim().replace('(', ' (') + '     ').split(' ', -1)
 				cls = cls.replaceAll('\\.', '/')
-				desc = desc.replace('(', ' (')
 
-				if (json[cls] == null || (!desc.isEmpty() && (json[cls]['methods'] == null || json[cls]['methods'][desc] == null))) {
+				if (json[cls] == null) {
 					println('Invalid: ' + line)
-					return
-				}
-
-				//Class SAS
-				if (desc.isEmpty()) {
-					lines.add(cls + (comment == null ? '' : ' ' + comment))
-					if (json[cls]['methods'] != null)
-						(json[cls]['methods'] as TreeMap).each {
-							findChildMethods(json, cls, it.key).each { lines.add('\t' + it) }
+				} else if (name.isEmpty()) { //Class SAS
+                    def toAdd = []
+                    def clsSided = isSided(json[cls])
+                    def sided = clsSided
+                    
+                    /* TODO: MergeTool doesn't do fields
+                    if (json[cls]['fields'] != null) {
+						for (entry in json[cls]['fields']) {
+                            if (isSided(entry.value)) {
+                                sided = true
+                                toAdd.add('\t' + cls + ' ' + entry.key)
+                            }
 						}
-					return
-				}
-
-				//Method SAS
-				lines.add(cls + ' ' + desc.replace(' ', '') + (comment == null ? '' : ' ' + comment))
-				findChildMethods(json, cls, desc).each { lines.add('\t' + it) }
+                    }
+                    */
+					if (json[cls]['methods'] != null) {
+                        for (entry in json[cls]['methods']) {
+                            if (isSided(entry.value)) {
+                                sided = true
+                                toAdd.add('\t' + cls + ' ' + entry.key.replaceAll(' ', ''))
+                                findChildMethods(json, cls, entry.key).each { lines.add('\t' + it) }
+                                findChildMethods(json, cls, entry.key).each { println(line + ' -- ' + it) }
+                            } else if (clsSided) {
+                                findChildMethods(json, cls, entry.key).each { lines.add('\t' + it) }
+                                findChildMethods(json, cls, entry.key).each { println(line + ' -- ' + it) }
+                            }
+						}
+                    }
+                    
+                    if (sided) {
+                        lines.add(cls + (comment == null ? '' : ' ' + comment))
+                        lines.addAll(toAdd.sort())
+                    } else
+                        println('Invalid: ' + line)
+                    
+                } else if (desc.isEmpty()) { // Fields
+                    /* TODO: MergeTool doesn't do fields
+                    if (json[cls]['fields'] != null && isSided(json[cls]['fields'][name]))
+                        lines.add(cls + ' ' + name + (comment == null ? '' : ' ' + comment))
+                    else
+                    */
+                        println('Invalid: ' + line)
+                } else { // Methods
+                    if (json[cls]['methods'] == null || !isSided(json[cls]['methods'][name + ' ' + desc]))
+                        println('Invalid: ' + line)
+                    else {
+                        lines.add(cls + ' ' + name + desc + (comment == null ? '' : ' ' + comment))
+                        findChildMethods(json, cls, name + ' ' + desc).each { println(line + ' -- ' + it) }
+                        findChildMethods(json, cls, name + ' ' + desc).each { lines.add('\t' + it) }
+                    }
+                }
 			}
 			f.text = lines.join('\n')
 		}
 	}
 
+    protected static isSided(json) {
+        if (json == null || json['annotations'] == null)
+            return false
+        for (ann in json['annotations']) {
+            if ('Lnet/minecraftforge/api/distmarker/OnlyIn;'.equals(ann.desc))
+                return true
+        }
+        return false
+    }
+    
 	protected static findChildMethods(json, cls, desc)
 	{
-		return json.values().findAll{ it.methods != null && it.methods[desc] != null && it.methods[desc].override == cls}
+		return json.values().findAll{ it.methods != null && it.methods[desc] != null && it.methods[desc].override == cls && isSided(it.methods[desc]) }
 				.collect { it.name + ' ' + desc.replace(' ', '') } as TreeSet
 	}
 }
