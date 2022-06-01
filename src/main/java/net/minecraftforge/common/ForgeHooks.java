@@ -86,6 +86,7 @@ import net.minecraft.item.TippedArrowItem;
 import net.minecraft.item.ItemUseContext;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
+import net.minecraft.network.play.client.CPlayerDiggingPacket;
 import net.minecraft.network.play.ServerPlayNetHandler;
 import net.minecraft.network.IPacket;
 import net.minecraft.network.datasync.IDataSerializer;
@@ -803,9 +804,9 @@ public class ForgeHooks
         return evt.isCanceled() ? evt.getCancellationResult() : null;
     }
 
-    public static PlayerInteractEvent.LeftClickBlock onLeftClickBlock(PlayerEntity player, BlockPos pos, Direction face)
+    public static PlayerInteractEvent.LeftClickBlock onLeftClickBlock(PlayerEntity player, BlockPos pos, Direction face, CPlayerDiggingPacket.Action blockAction)
     {
-        PlayerInteractEvent.LeftClickBlock evt = new PlayerInteractEvent.LeftClickBlock(player, pos, face);
+        PlayerInteractEvent.LeftClickBlock evt = new PlayerInteractEvent.LeftClickBlock(player, pos, face, blockAction);
         MinecraftForge.EVENT_BUS.post(evt);
         return evt;
     }
