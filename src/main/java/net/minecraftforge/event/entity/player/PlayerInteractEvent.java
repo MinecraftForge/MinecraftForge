@@ -129,7 +129,7 @@ public class PlayerInteractEvent extends PlayerEvent
      * If result equals {@link ActionResultType#PASS}, we proceed to {@link RightClickItem}.  <br>
      * <br>
      * There are various results to this event, see the getters below.  <br>
-     * Note that handling things differently on the client vs server may cause desynchronizations! 
+     * Note that handling things differently on the client vs server may cause desynchronizations!
      */
     @Cancelable
     public static class RightClickBlock extends PlayerInteractEvent
@@ -251,13 +251,13 @@ public class PlayerInteractEvent extends PlayerEvent
     {
         private Result useBlock = DEFAULT;
         private Result useItem = DEFAULT;
-        private Action blockAction;
-        
+        private CPlayerDiggingPacket.Action blockAction;
+
         public LeftClickBlock(PlayerEntity player, BlockPos pos, Direction face, CPlayerDiggingPacket.Action blockAction)
         {
             super(player, Hand.MAIN_HAND, pos, face);
             this.blockAction = blockAction;
-            
+
         }
 
         /**
@@ -276,11 +276,11 @@ public class PlayerInteractEvent extends PlayerEvent
             return useItem;
         }
 
-        public CPlayerDiggingPacket.Action getAction() 
+        public CPlayerDiggingPacket.Action getAction()
         {
             return blockAction;
         }
-        
+
         public void setUseBlock(Result triggerBlock)
         {
             this.useBlock = triggerBlock;

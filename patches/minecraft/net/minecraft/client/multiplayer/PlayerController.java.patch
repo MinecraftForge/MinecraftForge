@@ -27,14 +27,14 @@
              BlockState blockstate = this.field_78776_a.field_71441_e.func_180495_p(p_180511_1_);
              this.field_78776_a.func_193032_ao().func_193294_a(this.field_78776_a.field_71441_e, p_180511_1_, blockstate, 1.0F);
              this.func_225324_a(CPlayerDiggingPacket.Action.START_DESTROY_BLOCK, p_180511_1_, p_180511_2_);
-+            if (!net.minecraftforge.common.ForgeHooks.onLeftClickBlock(this.field_78776_a.field_71439_g, p_180511_1_, p_180511_2_).isCanceled())
++            if (!net.minecraftforge.common.ForgeHooks.onLeftClickBlock(this.field_78776_a.field_71439_g, p_180511_1_, p_180511_2_, CPlayerDiggingPacket.Action.START_DESTROY_BLOCK).isCanceled())
              this.func_187103_a(p_180511_1_);
              this.field_78781_i = 5;
           } else if (!this.field_78778_j || !this.func_178893_a(p_180511_1_)) {
              if (this.field_78778_j) {
                 this.func_225324_a(CPlayerDiggingPacket.Action.ABORT_DESTROY_BLOCK, this.field_178895_c, p_180511_2_);
              }
-+            net.minecraftforge.event.entity.player.PlayerInteractEvent.LeftClickBlock event = net.minecraftforge.common.ForgeHooks.onLeftClickBlock(this.field_78776_a.field_71439_g, p_180511_1_, p_180511_2_);
++            net.minecraftforge.event.entity.player.PlayerInteractEvent.LeftClickBlock event = net.minecraftforge.common.ForgeHooks.onLeftClickBlock(this.field_78776_a.field_71439_g, p_180511_1_, p_180511_2_, CPlayerDiggingPacket.Action.START_DESTROY_BLOCK);
  
              BlockState blockstate1 = this.field_78776_a.field_71441_e.func_180495_p(p_180511_1_);
              this.field_78776_a.func_193032_ao().func_193294_a(this.field_78776_a.field_71441_e, p_180511_1_, blockstate1, 0.0F);
@@ -54,7 +54,7 @@
           BlockState blockstate1 = this.field_78776_a.field_71441_e.func_180495_p(p_180512_1_);
           this.field_78776_a.func_193032_ao().func_193294_a(this.field_78776_a.field_71441_e, p_180512_1_, blockstate1, 1.0F);
           this.func_225324_a(CPlayerDiggingPacket.Action.START_DESTROY_BLOCK, p_180512_1_, p_180512_2_);
-+         if (!net.minecraftforge.common.ForgeHooks.onLeftClickBlock(this.field_78776_a.field_71439_g, p_180512_1_, p_180512_2_).isCanceled())
++         if (!net.minecraftforge.common.ForgeHooks.onLeftClickBlock(this.field_78776_a.field_71439_g, p_180512_1_, p_180512_2_, CPlayerDiggingPacket.Action.START_DESTROY_BLOCK).isCanceled())
           this.func_187103_a(p_180512_1_);
           return true;
        } else if (this.func_178893_a(p_180512_1_)) {
@@ -73,7 +73,7 @@
  
              ++this.field_78780_h;
              this.field_78776_a.func_193032_ao().func_193294_a(this.field_78776_a.field_71441_e, p_180512_1_, blockstate, MathHelper.func_76131_a(this.field_78770_f, 0.0F, 1.0F));
-+            if (net.minecraftforge.common.ForgeHooks.onLeftClickBlock(this.field_78776_a.field_71439_g, p_180512_1_, p_180512_2_).getUseItem() == net.minecraftforge.eventbus.api.Event.Result.DENY) return true;
++            if (net.minecraftforge.common.ForgeHooks.onLeftClickBlock(this.field_78776_a.field_71439_g, p_180512_1_, p_180512_2_, CPlayerDiggingPacket.Action.START_DESTROY_BLOCK).getUseItem() == net.minecraftforge.eventbus.api.Event.Result.DENY) return true;
              if (this.field_78770_f >= 1.0F) {
                 this.field_78778_j = false;
                 this.func_225324_a(CPlayerDiggingPacket.Action.STOP_DESTROY_BLOCK, p_180512_1_, p_180512_2_);
