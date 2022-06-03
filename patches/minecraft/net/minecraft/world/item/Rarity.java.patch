@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/item/Rarity.java
 +++ b/net/minecraft/world/item/Rarity.java
-@@ -2,15 +_,35 @@
+@@ -2,15 +_,36 @@
  
  import net.minecraft.ChatFormatting;
  
@@ -11,7 +11,8 @@
     RARE(ChatFormatting.AQUA),
     EPIC(ChatFormatting.LIGHT_PURPLE);
  
-+   @Deprecated // Forge: Use getStyleModifier
++   /** @deprecated Forge: Use IForgeRarity#applyStyle */
++   @Deprecated
     public final ChatFormatting f_43022_;
 +   private final java.util.function.UnaryOperator<net.minecraft.network.chat.Style> styleModifier;
  
