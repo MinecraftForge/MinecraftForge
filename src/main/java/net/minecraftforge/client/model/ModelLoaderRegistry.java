@@ -66,12 +66,12 @@ public class ModelLoaderRegistry
     public static void init()
     {
         var builtInLoaders = Map.of(
-            new ResourceLocation("minecraft","elements"), VanillaProxy.Loader.INSTANCE,
-            new ResourceLocation("forge","obj"), OBJLoader.INSTANCE,
-            new ResourceLocation("forge","bucket"), DynamicBucketModel.Loader.INSTANCE,
-            new ResourceLocation("forge","composite"), CompositeModel.Loader.INSTANCE,
-            new ResourceLocation("forge","multi-layer"), MultiLayerModel.Loader.INSTANCE,
-            new ResourceLocation("forge","item-layers"), ItemLayerModel.Loader.INSTANCE,
+            new ResourceLocation("minecraft", "elements"), VanillaProxy.Loader.INSTANCE,
+            new ResourceLocation("forge", "obj"), OBJLoader.INSTANCE,
+            new ResourceLocation("forge", "bucket"), DynamicBucketModel.Loader.INSTANCE,
+            new ResourceLocation("forge", "composite"), CompositeModel.Loader.INSTANCE,
+            new ResourceLocation("forge", "multi-layer"), MultiLayerModel.Loader.INSTANCE,
+            new ResourceLocation("forge", "item-layers"), ItemLayerModel.Loader.INSTANCE,
             new ResourceLocation("forge", "separate-perspective"), SeparatePerspectiveModel.Loader.INSTANCE
         );
 
