@@ -56,9 +56,20 @@ public abstract class ModContainer
         this.namespace = this.modId;
         this.modInfo = info;
         this.modLoadingStage = ModLoadingStage.CONSTRUCT;
-        // default displaytest extension checks for version string match
-        registerExtensionPoint(IExtensionPoint.DisplayTest.class, () -> new IExtensionPoint.DisplayTest(()->this.modInfo.getVersion().toString(),
-                (incoming, isNetwork)->Objects.equals(incoming, this.modInfo.getVersion().toString())));
+
+        final String displayTestString = info.getConfig().<String>getConfigElement("displayTest").orElse("DEFAULT"); // missing defaults to DEFAULT type
+        Supplier<IExtensionPoint.DisplayTest> displayTestSupplier = switch (displayTestString) {
+            case "DEFAULT" -> // default displaytest checks for version string match
+                    ()->new IExtensionPoint.DisplayTest(()->this.modInfo.getVersion().toString(),
+                        (incoming, isNetwork)->Objects.equals(incoming, this.modInfo.getVersion().toString()));
+            case "SERVERONLY" -> // server only displaytest returns special IGNORESERVERONLY value and accepts anything
+                    ()->new IExtensionPoint.DisplayTest(()->IExtensionPoint.DisplayTest.IGNORESERVERONLY, (incoming, isNetwork)->true);
+            case "CLIENTONLY" -> // client only displaytest sends empty string and accepts anything
+                    ()->new IExtensionPoint.DisplayTest(()->"", (incoming, isNetwork)->true);
+            default -> // any other value throws an exception
+                    throw new IllegalArgumentException("Invalid displayTest value supplied in mods.toml");
+        };
+        registerExtensionPoint(IExtensionPoint.DisplayTest.class, displayTestSupplier);
     }
 
     /**
