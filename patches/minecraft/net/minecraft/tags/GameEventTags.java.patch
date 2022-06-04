@@ -1,0 +1,11 @@
+--- a/net/minecraft/tags/GameEventTags.java
++++ b/net/minecraft/tags/GameEventTags.java
+@@ -11,4 +_,8 @@
+    private static TagKey<GameEvent> m_203852_(String p_203853_) {
+       return TagKey.m_203882_(Registry.f_175423_, new ResourceLocation(p_203853_));
+    }
++
++   public static TagKey<GameEvent> create(ResourceLocation name) {
++      return TagKey.m_203882_(Registry.f_175423_, name);
++   }
+ }

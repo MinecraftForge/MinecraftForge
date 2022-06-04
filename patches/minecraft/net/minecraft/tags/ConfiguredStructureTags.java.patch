@@ -1,0 +1,11 @@
+--- a/net/minecraft/tags/ConfiguredStructureTags.java
++++ b/net/minecraft/tags/ConfiguredStructureTags.java
+@@ -19,4 +_,8 @@
+    private static TagKey<ConfiguredStructureFeature<?, ?>> m_207643_(String p_207644_) {
+       return TagKey.m_203882_(Registry.f_122882_, new ResourceLocation(p_207644_));
+    }
++
++   public static TagKey<ConfiguredStructureFeature<?, ?>> create(ResourceLocation name) {
++      return TagKey.m_203882_(Registry.f_122882_, name);
++   }
+ }

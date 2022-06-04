@@ -1,0 +1,11 @@
+--- a/net/minecraft/tags/BiomeTags.java
++++ b/net/minecraft/tags/BiomeTags.java
+@@ -54,4 +_,8 @@
+    private static TagKey<Biome> m_207630_(String p_207631_) {
+       return TagKey.m_203882_(Registry.f_122885_, new ResourceLocation(p_207631_));
+    }
++
++   public static TagKey<Biome> create(ResourceLocation name) {
++      return TagKey.m_203882_(Registry.f_122885_, name);
++   }
+ }
