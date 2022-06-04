@@ -37,7 +37,6 @@ public class DualStackUtils
      * Resolve the address and see if Java and the OS return an IPv6 or IPv4 one, then let Netty know
      * accordingly (it doesn't understand the {@code java.net.preferIPv6Addresses=system} property).
      *
-     * @author Paint_Ninja
      * @param hostAddress The address you want to check
      * @return true if IPv6, false if IPv4
      */
@@ -55,7 +54,6 @@ public class DualStackUtils
     /**
      * Checks if an address is an IPv6 one or an IPv4 one, lets Netty know accordingly and returns the result.
      *
-     * @author Paint_Ninja
      * @param inetAddress The address you want to check
      * @return true if IPv6, false if IPv4
      */
@@ -79,7 +77,6 @@ public class DualStackUtils
      * Get the device's local IP address, taking into account scenarios where the client's network adapter
      * supports IPv6 and has it enabled but the router's LAN does not.
      *
-     * @author Paint_Ninja
      * @return the client's local IP address or {@code null} if unable to determine it
      */
     @Nullable
