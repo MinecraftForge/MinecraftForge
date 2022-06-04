@@ -11,7 +11,7 @@
     RARE(ChatFormatting.AQUA),
     EPIC(ChatFormatting.LIGHT_PURPLE);
  
-+   /** @deprecated Forge: Use IForgeRarity#applyStyle */
++   /** @deprecated Forge: Use {@link #getStyleModifier()} */
 +   @Deprecated
     public final ChatFormatting f_43022_;
 +   private final java.util.function.UnaryOperator<net.minecraft.network.chat.Style> styleModifier;
