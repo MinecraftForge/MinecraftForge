@@ -197,6 +197,15 @@
           this.m_41721_(this.m_41773_());
        }
  
+@@ -599,7 +_,7 @@
+ 
+    public List<Component> m_41651_(@Nullable Player p_41652_, TooltipFlag p_41653_) {
+       List<Component> list = Lists.newArrayList();
+-      MutableComponent mutablecomponent = (new TextComponent("")).m_7220_(this.m_41786_()).m_130940_(this.m_41791_().f_43022_);
++      MutableComponent mutablecomponent = (new TextComponent("")).m_7220_(this.m_41786_()).m_130938_(this.m_41791_().getStyleModifier());
+       if (this.m_41788_()) {
+          mutablecomponent.m_130940_(ChatFormatting.ITALIC);
+       }
 @@ -738,6 +_,7 @@
           }
        }
@@ -226,6 +235,15 @@
        return multimap;
     }
  
+@@ -904,7 +_,7 @@
+ 
+       MutableComponent mutablecomponent1 = ComponentUtils.m_130748_(mutablecomponent);
+       if (!this.f_41591_) {
+-         mutablecomponent1.m_130940_(this.m_41791_().f_43022_).m_130938_((p_204127_) -> {
++         mutablecomponent1.m_130938_(this.m_41791_().getStyleModifier()).m_130938_((p_204127_) -> {
+             return p_204127_.m_131144_(new HoverEvent(HoverEvent.Action.f_130832_, new HoverEvent.ItemStackInfo(this)));
+          });
+       }
 @@ -957,12 +_,31 @@
        this.m_41720_().m_5929_(p_41732_, p_41733_, this, p_41734_);
     }

@@ -1,0 +1,22 @@
+--- a/net/minecraft/world/inventory/LoomMenu.java
++++ b/net/minecraft/world/inventory/LoomMenu.java
+@@ -114,8 +_,8 @@
+    }
+ 
+    public boolean m_6366_(Player p_39867_, int p_39868_) {
+-      if (p_39868_ > 0 && p_39868_ <= BannerPattern.f_58528_) {
+-         this.f_39846_.m_6422_(p_39868_);
++      if (p_39868_ > 0 && p_39868_ <= net.minecraftforge.common.ForgeHooks.getNonPatternItemCount() - 1) {
++         this.f_39846_.m_6422_(net.minecraftforge.common.ForgeHooks.getActualPatternIndex(p_39868_));
+          this.m_39898_();
+          return true;
+       } else {
+@@ -128,7 +_,7 @@
+       ItemStack itemstack1 = this.f_39849_.m_7993_();
+       ItemStack itemstack2 = this.f_39850_.m_7993_();
+       ItemStack itemstack3 = this.f_39851_.m_7993_();
+-      if (itemstack3.m_41619_() || !itemstack.m_41619_() && !itemstack1.m_41619_() && this.f_39846_.m_6501_() > 0 && (this.f_39846_.m_6501_() < BannerPattern.f_58526_ - BannerPattern.f_58527_ || !itemstack2.m_41619_())) {
++      if (itemstack3.m_41619_() || !itemstack.m_41619_() && !itemstack1.m_41619_() && this.f_39846_.m_6501_() > 0 && (this.f_39846_.m_6501_() < net.minecraftforge.common.ForgeHooks.getNonPatternItemCount() || !itemstack2.m_41619_())) {
+          if (!itemstack2.m_41619_() && itemstack2.m_41720_() instanceof BannerPatternItem) {
+             CompoundTag compoundtag = BlockItem.m_186336_(itemstack);
+             boolean flag = compoundtag != null && compoundtag.m_128425_("Patterns", 9) && !itemstack.m_41619_() && compoundtag.m_128437_("Patterns", 10).size() >= 6;

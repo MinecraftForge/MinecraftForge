@@ -42,7 +42,7 @@
           if (!Minecraft.m_91085_()) {
              return Sheets.m_110792_();
           } else {
-@@ -340,9 +_,58 @@
+@@ -340,9 +_,70 @@
        }
     }
  
@@ -54,11 +54,19 @@
 +
 +   // FORGE START
 +
-+   private static final Map<net.minecraftforge.registries.IRegistryDelegate<Block>, java.util.function.Predicate<RenderType>> blockRenderChecks = Maps.newHashMap();
-+   private static final Map<net.minecraftforge.registries.IRegistryDelegate<Fluid>, java.util.function.Predicate<RenderType>> fluidRenderChecks = Maps.newHashMap();
-+   static {
-+      f_109275_.forEach(ItemBlockRenderTypes::setRenderLayer);
-+      f_109276_.forEach(ItemBlockRenderTypes::setRenderLayer);
++   private static final java.util.function.Predicate<RenderType> SOLID_PREDICATE = type -> type == RenderType.m_110451_();
++   private static final Map<net.minecraftforge.registries.IRegistryDelegate<Block>, java.util.function.Predicate<RenderType>> blockRenderChecks = createRenderCheckMap(f_109275_);
++   private static final Map<net.minecraftforge.registries.IRegistryDelegate<Fluid>, java.util.function.Predicate<RenderType>> fluidRenderChecks = createRenderCheckMap(f_109276_);
++
++   private static <T extends net.minecraftforge.registries.ForgeRegistryEntry<T>> Map<net.minecraftforge.registries.IRegistryDelegate<T>, java.util.function.Predicate<RenderType>> createRenderCheckMap(
++           Map<T, RenderType> vanillaMap
++   ) {
++      return Util.m_137469_(new it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap<>(vanillaMap.size(), 0.5F), map -> {
++         map.defaultReturnValue(SOLID_PREDICATE);
++         for (Map.Entry<T, RenderType> entry : vanillaMap.entrySet()) {
++            map.put(entry.getKey().delegate, createMatchingLayerPredicate(entry.getValue()));
++         }
++      });
 +   }
 +
 +   public static boolean canRenderInLayer(BlockState state, RenderType type) {
@@ -66,38 +74,42 @@
 +      if (block instanceof LeavesBlock) {
 +         return f_109277_ ? type == RenderType.m_110457_() : type == RenderType.m_110451_();
 +      } else {
-+         java.util.function.Predicate<RenderType> rendertype;
-+         synchronized (ItemBlockRenderTypes.class) {
-+            rendertype = blockRenderChecks.get(block.delegate);
-+         }
-+         return rendertype != null ? rendertype.test(type) : type == RenderType.m_110451_();
++         return blockRenderChecks.get(block.delegate).test(type);
 +      }
 +   }
 +
 +   public static boolean canRenderInLayer(FluidState fluid, RenderType type) {
-+      java.util.function.Predicate<RenderType> rendertype;
-+      synchronized (ItemBlockRenderTypes.class) {
-+         rendertype = fluidRenderChecks.get(fluid.m_76152_().delegate);
-+      }
-+      return rendertype != null ? rendertype.test(type) : type == RenderType.m_110451_();
++      return fluidRenderChecks.get(fluid.m_76152_().delegate).test(type);
 +   }
 +
 +   public static void setRenderLayer(Block block, RenderType type) {
-+      java.util.Objects.requireNonNull(type);
-+      setRenderLayer(block, type::equals);
++      setRenderLayer(block, createMatchingLayerPredicate(type));
 +   }
 +
 +   public static synchronized void setRenderLayer(Block block, java.util.function.Predicate<RenderType> predicate) {
++      checkClientLoading();
 +      blockRenderChecks.put(block.delegate, predicate);
 +   }
 +
 +   public static void setRenderLayer(Fluid fluid, RenderType type) {
-+      java.util.Objects.requireNonNull(type);
-+      setRenderLayer(fluid, type::equals);
++      setRenderLayer(fluid, createMatchingLayerPredicate(type));
 +   }
 +
 +   public static synchronized void setRenderLayer(Fluid fluid, java.util.function.Predicate<RenderType> predicate) {
++      checkClientLoading();
 +      fluidRenderChecks.put(fluid.delegate, predicate);
++   }
++
++   private static void checkClientLoading() {
++      com.google.common.base.Preconditions.checkState(net.minecraftforge.client.loading.ClientModLoader.isLoading(),
++              "Render layers can only be set during client loading! " +
++                      "This might ideally be done from `FMLClientSetupEvent`."
++      );
++   }
++
++   private static java.util.function.Predicate<RenderType> createMatchingLayerPredicate(RenderType type) {
++      java.util.Objects.requireNonNull(type);
++      return type::equals;
     }
  
     public static void m_109291_(boolean p_109292_) {

@@ -96,7 +96,6 @@ public class ClientModLoader
             DataPackConfig.DEFAULT.addModPacks(ResourcePackLoader.getPackNames());
             mcResourceManager.registerReloadListener(ClientModLoader::onResourceReload);
             mcResourceManager.registerReloadListener(BrandingControl.resourceManagerReloadListener());
-            ModelLoaderRegistry.init();
         }
     }
 
@@ -163,6 +162,8 @@ public class ClientModLoader
         if (error == null) {
             // We can finally start the forge eventbus up
             MinecraftForge.EVENT_BUS.start();
+            // allow the ModelLoaderRegistry to register loaders as reload listeners
+            ModelLoaderRegistry.afterFirstReload();
         } else {
             // Double check we have the langs loaded for forge
             LanguageHook.loadForgeAndMCLangs();

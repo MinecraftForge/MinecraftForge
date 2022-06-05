@@ -9,6 +9,7 @@ import io.netty.util.AttributeKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.fml.IExtensionPoint.DisplayTest;
 import net.minecraftforge.network.ConnectionData.ModMismatchData;
+import net.minecraftforge.network.HandshakeMessages.S2CModList;
 import net.minecraftforge.network.event.EventNetworkChannel;
 import net.minecraftforge.network.simple.SimpleChannel;
 import org.apache.logging.log4j.Marker;
@@ -21,7 +22,10 @@ import java.util.List;
 public class NetworkConstants
 {
     public static final String FMLNETMARKER = "FML";
-    public static final int FMLNETVERSION = 2;
+    /**
+     * Netversion 3: {@link S2CModList} packet may include a list of non-vanilla synced datapack registry ids.
+     */
+    public static final int FMLNETVERSION = 3;
     public static final String NETVERSION = FMLNETMARKER + FMLNETVERSION;
     public static final String NOVERSION = "NONE";
 

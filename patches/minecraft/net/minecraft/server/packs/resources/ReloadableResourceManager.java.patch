@@ -1,0 +1,13 @@
+--- a/net/minecraft/server/packs/resources/ReloadableResourceManager.java
++++ b/net/minecraft/server/packs/resources/ReloadableResourceManager.java
+@@ -68,4 +_,10 @@
+    public Stream<PackResources> m_7536_() {
+       return this.f_203815_.m_7536_();
+    }
++
++   public void registerReloadListenerIfNotPresent(PreparableReloadListener listener) {
++      if (!this.f_203816_.contains(listener)) {
++         this.m_7217_(listener);
++      }
++   }
+ }

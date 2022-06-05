@@ -1,0 +1,20 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:desert",
+    "minecraft:nether_wastes",
+    "minecraft:the_end",
+    "minecraft:badlands",
+    "minecraft:wooded_badlands",
+    "minecraft:small_end_islands",
+    "minecraft:end_midlands",
+    "minecraft:end_highlands",
+    "minecraft:end_barrens",
+    "minecraft:windswept_savanna",
+    "minecraft:eroded_badlands",
+    "minecraft:soul_sand_valley",
+    "minecraft:crimson_forest",
+    "minecraft:warped_forest",
+    "minecraft:basalt_deltas"
+  ]
+}
