@@ -39,7 +39,7 @@ public class ForgeBlockModelRenderer extends ModelBlockRenderer
     @Override
     public boolean tesselateWithoutAO(BlockAndTintGetter level, BakedModel model, BlockState state, BlockPos pos, PoseStack poseStack, VertexConsumer buffer, boolean checkSides, Random rand, long seed, int packedOverlay, IModelData modelData)
     {
-        if(ForgeConfig.CLIENT.experimentalForgeLightPipelineEnabled.get())
+        if(ForgeConfig.CLIENT.forgeLightPipelineEnabled.get())
         {
             VertexBufferConsumer consumer = consumerFlat.get();
             consumer.setBuffer(buffer);
@@ -59,7 +59,7 @@ public class ForgeBlockModelRenderer extends ModelBlockRenderer
     @Override
     public boolean tesselateWithAO(BlockAndTintGetter level, BakedModel model, BlockState state, BlockPos pos, PoseStack poseStack, VertexConsumer buffer, boolean checkSides, Random rand, long seed, int packedOverlay, IModelData modelData)
     {
-        if(ForgeConfig.CLIENT.experimentalForgeLightPipelineEnabled.get())
+        if(ForgeConfig.CLIENT.forgeLightPipelineEnabled.get())
         {
             VertexBufferConsumer consumer = consumerSmooth.get();
             consumer.setBuffer(buffer);
