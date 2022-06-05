@@ -17,6 +17,7 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.core.Registry;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.ForgeHooksClient;
+import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.common.crafting.PartialNBTIngredient;
 import net.minecraftforge.common.crafting.DifferenceIngredient;
@@ -174,6 +175,11 @@ public class ForgeMod
         BiomeDictionary.init();
 
         ForgeRegistries.ITEMS.tags().addOptionalTagDefaults(Tags.Items.ENCHANTING_FUELS, Set.of(Items.LAPIS_LAZULI.delegate));
+
+        if (FMLEnvironment.dist == Dist.CLIENT)
+        {
+            ModelLoaderRegistry.init();
+        }
     }
 
     public void registerCapabilities(RegisterCapabilitiesEvent event)
