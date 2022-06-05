@@ -7,6 +7,7 @@ package net.minecraftforge.common;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Deque;
@@ -63,6 +64,7 @@ import net.minecraft.world.item.*;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BannerPattern;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.levelgen.feature.ConfiguredStructureFeature;
 import net.minecraft.world.level.storage.WorldData;
@@ -1482,7 +1484,33 @@ public class ForgeHooks
             return fallback;
         }
     }
+  
+    private static BannerPattern[] nonPatternItems;
+    private static int totalPatternRows;
 
+    public static void refreshBannerPatternData()
+    {
+        nonPatternItems = Arrays.stream(BannerPattern.values())
+                .filter(p -> !p.hasPatternItem)
+                .toArray(BannerPattern[]::new);
+        totalPatternRows = (nonPatternItems.length + 2) / 4;
+    }
+
+    public static int getTotalPatternRows()
+    {
+        return totalPatternRows;
+    }
+
+    public static int getNonPatternItemCount()
+    {
+        return nonPatternItems.length;
+    }
+
+    public static int getActualPatternIndex(int index)
+    {
+        return nonPatternItems[index].ordinal();
+    }
+  
     public static boolean shouldSuppressEnderManAnger(EnderMan enderMan, Player player, ItemStack mask)
     {
         return mask.isEnderMask(player, enderMan) || MinecraftForge.EVENT_BUS.post(new EnderManAngerEvent(enderMan, player));

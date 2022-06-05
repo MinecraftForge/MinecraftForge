@@ -226,5 +226,7 @@ license="LGPL v2.1"
     modId="custom_rarity_test"
 [[mods]]
     modId="data_pack_registries_test"
+[[mods]]
+    modId="banner_pattern_test"
 
 # ADD ABOVE THIS LINE
