@@ -222,7 +222,5 @@ license="LGPL v2.1"
     modId="player_negotiation_event_test"
 [[mods]]
     modId="custom_transformtype_test"
-[[mods]]
-    modId="custom_crossbow_test"
 
 # ADD ABOVE THIS LINE
