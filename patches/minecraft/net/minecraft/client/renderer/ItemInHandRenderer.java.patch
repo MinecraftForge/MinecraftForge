@@ -15,6 +15,15 @@
           this.m_109371_(p_109318_, p_109315_, f1, InteractionHand.OFF_HAND, f6, this.f_109301_, f7, p_109316_, p_109317_, p_109319_);
        }
  
+@@ -342,7 +_,7 @@
+             } else {
+                this.m_109353_(p_109379_, p_109380_, p_109381_, p_109378_, humanoidarm, p_109376_, p_109377_);
+             }
+-         } else if (p_109377_.m_150930_(Items.f_42717_)) {
++         } else if (p_109377_.m_41720_() instanceof CrossbowItem) {
+             boolean flag1 = CrossbowItem.m_40932_(p_109377_);
+             boolean flag2 = humanoidarm == HumanoidArm.RIGHT;
+             int i = flag2 ? 1 : -1;
 @@ -487,8 +_,16 @@
           this.f_109304_ = Mth.m_14036_(this.f_109304_ - 0.4F, 0.0F, 1.0F);
        } else {
