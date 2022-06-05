@@ -228,5 +228,7 @@ license="LGPL v2.1"
     modId="data_pack_registries_test"
 [[mods]]
     modId="banner_pattern_test"
+[[mods]]
+    modId="mod_mismatch_test"
 
 # ADD ABOVE THIS LINE

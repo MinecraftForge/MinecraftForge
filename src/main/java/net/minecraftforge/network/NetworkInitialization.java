@@ -29,6 +29,15 @@ class NetworkInitialization {
                 consumer(HandshakeHandler.indexFirst(HandshakeHandler::handleClientAck)).
                 add();
 
+        handshakeChannel.messageBuilder(HandshakeMessages.S2CModData.class, 5, NetworkDirection.LOGIN_TO_CLIENT).
+                loginIndex(HandshakeMessages.LoginIndexedMessage::getLoginIndex, HandshakeMessages.LoginIndexedMessage::setLoginIndex).
+                decoder(HandshakeMessages.S2CModData::decode).
+                encoder(HandshakeMessages.S2CModData::encode).
+                markAsLoginPacket().
+                noResponse().
+                consumer(HandshakeHandler.biConsumerFor(HandshakeHandler::handleModData)).
+                add();
+
         handshakeChannel.messageBuilder(HandshakeMessages.S2CModList.class, 1, NetworkDirection.LOGIN_TO_CLIENT).
                 loginIndex(HandshakeMessages.LoginIndexedMessage::getLoginIndex, HandshakeMessages.LoginIndexedMessage::setLoginIndex).
                 decoder(HandshakeMessages.S2CModList::decode).
@@ -58,6 +67,13 @@ class NetworkInitialization {
                 encoder(HandshakeMessages.S2CConfigData::encode).
                 buildLoginPacketList(ConfigSync.INSTANCE::syncConfigs).
                 consumer(HandshakeHandler.biConsumerFor(HandshakeHandler::handleConfigSync)).
+                add();
+
+        handshakeChannel.messageBuilder(HandshakeMessages.S2CChannelMismatchData.class, 6, NetworkDirection.LOGIN_TO_CLIENT).
+                loginIndex(HandshakeMessages.LoginIndexedMessage::getLoginIndex, HandshakeMessages.LoginIndexedMessage::setLoginIndex).
+                decoder(HandshakeMessages.S2CChannelMismatchData::decode).
+                encoder(HandshakeMessages.S2CChannelMismatchData::encode).
+                consumer(HandshakeHandler.biConsumerFor(HandshakeHandler::handleModMismatchData)).
                 add();
 
         return handshakeChannel;

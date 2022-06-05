@@ -26,6 +26,8 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
 
+import org.apache.commons.lang3.tuple.Pair;
+
 import com.google.common.collect.Maps;
 
 public class HandshakeMessages
@@ -48,7 +50,7 @@ public class HandshakeMessages
         }
     }
     /**
-     * Server to client "list of mods". Always first handshake message.
+     * Server to client "list of mods". Always first handshake message after the data sent by S2CModData.
      */
     public static class S2CModList extends LoginIndexedMessage
     {
@@ -138,6 +140,44 @@ public class HandshakeMessages
          */
         public List<ResourceKey<? extends Registry<?>>> getCustomDataPackRegistries() {
             return this.dataPackRegistries;
+        }
+    }
+
+    /**
+     * Prefixes S2CModList by sending additional data about the mods installed on the server to the client
+     * The mod data is stored as follows: [modId -> [modName, modVersion]]
+     */
+    public static class S2CModData extends LoginIndexedMessage
+    {
+        private final Map<String, Pair<String, String>> mods;
+
+        public S2CModData()
+        {
+            this.mods = ModList.get().getMods().stream().collect(Collectors.toMap(IModInfo::getModId, info -> Pair.of(info.getDisplayName(), info.getVersion().toString())));
+        }
+
+        private S2CModData(Map<String, Pair<String, String>> mods)
+        {
+            this.mods = mods;
+        }
+
+        public static S2CModData decode(FriendlyByteBuf input)
+        {
+            Map<String, Pair<String, String>> mods = input.readMap(o -> o.readUtf(0x100), o -> Pair.of(o.readUtf(0x100), o.readUtf(0x100)));
+            return new S2CModData(mods);
+        }
+
+        public void encode(FriendlyByteBuf output)
+        {
+            output.writeMap(mods, (o, s) -> o.writeUtf(s, 0x100), (o, p) -> {
+                o.writeUtf(p.getLeft(), 0x100);
+                o.writeUtf(p.getRight(), 0x100);
+            });
+        }
+
+        public Map<String, Pair<String, String>> getMods()
+        {
+            return mods;
         }
     }
 
@@ -286,6 +326,37 @@ public class HandshakeMessages
 
         public byte[] getBytes() {
             return fileData;
+        }
+    }
+
+    /**
+     * Notifies the client of a channel mismatch on the server, so a {@link net.minecraftforge.client.gui.ModMismatchDisconnectedScreen} is used to notify the user of the disconnection.
+     * This packet also sends the data of a channel mismatch (currently, the ids and versions of the mismatched channels) to the client for it to display the correct information in said screen.
+     */
+    public static class S2CChannelMismatchData extends LoginIndexedMessage
+    {
+        private final Map<ResourceLocation, String> mismatchedChannelData;
+
+        public S2CChannelMismatchData(Map<ResourceLocation, String> mismatchedChannelData)
+        {
+            this.mismatchedChannelData = mismatchedChannelData;
+        }
+
+        public static S2CChannelMismatchData decode(FriendlyByteBuf input)
+        {
+            Map<ResourceLocation, String> mismatchedMods = input.readMap(i -> new ResourceLocation(i.readUtf(0x100)), i -> i.readUtf(0x100));
+
+            return new S2CChannelMismatchData(mismatchedMods);
+        }
+
+        public void encode(FriendlyByteBuf output)
+        {
+            output.writeMap(mismatchedChannelData, (o, r) -> o.writeUtf(r.toString(), 0x100), (o, v) -> o.writeUtf(v, 0x100));
+        }
+
+        public Map<ResourceLocation, String> getMismatchedChannelData()
+        {
+            return mismatchedChannelData;
         }
     }
 }
