@@ -22,6 +22,7 @@ import com.google.common.collect.Sets.SetView;
 
 import com.mojang.serialization.Lifecycle;
 import net.minecraft.core.WritableRegistry;
+import net.minecraft.data.BuiltinRegistries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.core.Registry;
@@ -161,10 +162,20 @@ public class RegistryManager
         return getRegistry(name);
     }
 
-    @SuppressWarnings("unchecked")
     static <V extends IForgeRegistryEntry<V>> void registerToRootRegistry(ForgeRegistry<V> forgeReg)
     {
-        WritableRegistry<Registry<V>> registry = (WritableRegistry<Registry<V>>) Registry.REGISTRY;
+        injectForgeRegistry(forgeReg, Registry.REGISTRY);
+    }
+
+    static <V extends IForgeRegistryEntry<V>> void registerToBuiltinRegistry(ForgeRegistry<V> forgeReg)
+    {
+        injectForgeRegistry(forgeReg, BuiltinRegistries.REGISTRY);
+    }
+
+    @SuppressWarnings("unchecked")
+    private static <V extends IForgeRegistryEntry<V>> void injectForgeRegistry(ForgeRegistry<V> forgeReg, Registry<? extends Registry<?>> rootRegistry)
+    {
+        WritableRegistry<Registry<V>> registry = (WritableRegistry<Registry<V>>) rootRegistry;
         Registry<V> wrapper = forgeReg.getWrapper();
         if (wrapper != null)
             registry.register(forgeReg.getRegistryKey(), wrapper, Lifecycle.experimental());

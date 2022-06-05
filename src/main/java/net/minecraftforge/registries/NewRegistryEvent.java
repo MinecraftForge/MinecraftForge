@@ -7,6 +7,8 @@ package net.minecraftforge.registries;
 
 import com.mojang.logging.LogUtils;
 import net.minecraft.core.Registry;
+import net.minecraft.core.RegistryAccess;
+import net.minecraft.data.BuiltinRegistries;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.event.IModBusEvent;
 import org.jetbrains.annotations.Nullable;
@@ -76,7 +78,16 @@ public class NewRegistryEvent extends Event implements IModBusEvent
         builtRegistries.forEach((builder, reg) -> {
             try
             {
-                if (builder.getHasWrapper() && !Registry.REGISTRY.containsKey(reg.getRegistryName()))
+                RegistryAccess.RegistryData<?> dataPackRegistryData = builder.getDataPackRegistryData();
+                if (dataPackRegistryData != null) // if this is a datapack registry
+                {
+                    if (!BuiltinRegistries.REGISTRY.containsKey(reg.getRegistryName()))
+                    {
+                        DataPackRegistriesHooks.addRegistryCodec(dataPackRegistryData);
+                        RegistryManager.registerToBuiltinRegistry((ForgeRegistry<?>) reg);
+                    }
+                }
+                else if (builder.getHasWrapper() && !Registry.REGISTRY.containsKey(reg.getRegistryName()))
                     RegistryManager.registerToRootRegistry((ForgeRegistry<?>) reg);
             } catch (Exception e)
             {
