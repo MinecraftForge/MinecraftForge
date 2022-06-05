@@ -501,15 +501,17 @@
        }
     }
  
-@@ -2713,7 +_,7 @@
+@@ -2713,8 +_,8 @@
        return this.f_90993_;
     }
  
 -   private static Pack m_167933_(String p_167934_, Component p_167935_, boolean p_167936_, Supplier<PackResources> p_167937_, PackMetadataSection p_167938_, Pack.Position p_167939_, PackSource p_167940_) {
+-      int i = p_167938_.m_10374_();
 +   private static Pack createClientPackAdapter(String p_167934_, Component p_167935_, boolean p_167936_, Supplier<PackResources> p_167937_, PackMetadataSection p_167938_, Pack.Position p_167939_, PackSource p_167940_, boolean hidden) {
-       int i = p_167938_.m_10374_();
++      int i = p_167938_.getPackFormat(PackType.CLIENT_RESOURCES);
        Supplier<PackResources> supplier = p_167937_;
        if (i <= 3) {
+          supplier = m_91330_(p_167937_);
 @@ -2724,7 +_,7 @@
           supplier = m_91352_(supplier);
        }

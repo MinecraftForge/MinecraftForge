@@ -22,6 +22,7 @@ import net.minecraft.util.GsonHelper;
 import net.minecraft.resources.ResourceLocation;
 import com.mojang.math.Transformation;
 import net.minecraftforge.client.event.ModelRegistryEvent;
+import net.minecraftforge.client.event.RegisterClientReloadListenersEvent;
 import net.minecraftforge.client.model.geometry.IModelGeometry;
 import net.minecraftforge.client.model.geometry.ISimpleModelGeometry;
 import net.minecraftforge.client.model.obj.OBJLoader;
@@ -48,6 +49,7 @@ import net.minecraft.client.resources.model.Material;
 import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.ModelState;
 import net.minecraft.client.resources.model.UnbakedModel;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
 /**
  * Central hub for custom model loaders.
@@ -63,17 +65,23 @@ public class ModelLoaderRegistry
     // Forge built-in loaders
     public static void init()
     {
-        registerLoader(new ResourceLocation("minecraft","elements"), VanillaProxy.Loader.INSTANCE);
-        registerLoader(new ResourceLocation("forge","obj"), OBJLoader.INSTANCE);
-        registerLoader(new ResourceLocation("forge","bucket"), DynamicBucketModel.Loader.INSTANCE);
-        registerLoader(new ResourceLocation("forge","composite"), CompositeModel.Loader.INSTANCE);
-        registerLoader(new ResourceLocation("forge","multi-layer"), MultiLayerModel.Loader.INSTANCE);
-        registerLoader(new ResourceLocation("forge","item-layers"), ItemLayerModel.Loader.INSTANCE);
-        registerLoader(new ResourceLocation("forge", "separate-perspective"), SeparatePerspectiveModel.Loader.INSTANCE);
+        var builtInLoaders = Map.of(
+            new ResourceLocation("minecraft", "elements"), VanillaProxy.Loader.INSTANCE,
+            new ResourceLocation("forge", "obj"), OBJLoader.INSTANCE,
+            new ResourceLocation("forge", "bucket"), DynamicBucketModel.Loader.INSTANCE,
+            new ResourceLocation("forge", "composite"), CompositeModel.Loader.INSTANCE,
+            new ResourceLocation("forge", "multi-layer"), MultiLayerModel.Loader.INSTANCE,
+            new ResourceLocation("forge", "item-layers"), ItemLayerModel.Loader.INSTANCE,
+            new ResourceLocation("forge", "separate-perspective"), SeparatePerspectiveModel.Loader.INSTANCE
+        );
 
         // TODO: Implement as new model loaders
         //registerLoader(new ResourceLocation("forge:b3d"), new ModelLoaderAdapter(B3DLoader.INSTANCE));
         //registerLoader(new ResourceLocation("forge:fluid"), new ModelLoaderAdapter(ModelFluid.FluidLoader.INSTANCE));
+
+        var modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
+        modEventBus.<RegisterClientReloadListenersEvent>addListener(event -> builtInLoaders.values().forEach(event::registerReloadListener));
+        modEventBus.<ModelRegistryEvent>addListener(event -> builtInLoaders.forEach(ModelLoaderRegistry::registerLoader));
     }
 
     /**
@@ -90,8 +98,25 @@ public class ModelLoaderRegistry
     }
 
     /**
-     * Makes system aware of your loader.
+     * Internal method, only present for enabling legacy behavior of automatic registration of model loaders
+     * as resource reload listeners.
+     */
+    @Deprecated
+    public static void afterFirstReload()
+    {
+        for (IModelLoader<?> loader : loaders.values())
+        {
+            ((ReloadableResourceManager) Minecraft.getInstance().getResourceManager()).registerReloadListenerIfNotPresent(loader);
+        }
+    }
+
+    /**
+     * Makes system aware of your loader.<br>
      * <b>Must be called from within {@link ModelRegistryEvent}</b>
+     * <br><br>
+     * <b>Note:</b> This method currently registers the model loader as a resource reload listener automatically,
+     * if it is not already registered. This behavior is <i>deprecated</i> and will be removed in the future.
+     * If the model loader needs to be a resource reload listener as well, use {@link net.minecraftforge.client.event.RegisterClientReloadListenersEvent}.
      */
     public static void registerLoader(ResourceLocation id, IModelLoader<?> loader)
     {
@@ -101,7 +126,6 @@ public class ModelLoaderRegistry
         synchronized(loaders)
         {
             loaders.put(id, loader);
-            ((ReloadableResourceManager) Minecraft.getInstance().getResourceManager()).registerReloadListener(loader);
         }
     }
 

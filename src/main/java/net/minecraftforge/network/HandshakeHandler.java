@@ -7,17 +7,22 @@ package net.minecraftforge.network;
 
 import com.google.common.collect.Multimap;
 import com.mojang.authlib.GameProfile;
+
+import net.minecraft.core.Registry;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.handshake.ClientIntentionPacket;
 import net.minecraft.network.protocol.login.ClientboundCustomQueryPacket;
 import net.minecraft.network.protocol.login.ServerboundCustomQueryPacket;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.network.ServerLoginPacketListenerImpl;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.LogMessageAdapter;
 import net.minecraftforge.event.entity.player.PlayerNegotiationEvent;
 import net.minecraftforge.network.simple.SimpleChannel;
+import net.minecraftforge.registries.DataPackRegistriesHooks;
 import net.minecraftforge.registries.ForgeRegistry;
 import net.minecraftforge.registries.GameData;
 import org.apache.logging.log4j.LogManager;
@@ -178,6 +183,23 @@ public class HandshakeHandler
         if (!accepted) {
             LOGGER.error(FMLHSMARKER, "Terminating connection with server, mismatched mod list");
             c.get().getNetworkManager().disconnect(new TextComponent("Connection closed - mismatched mod channel list"));
+            return;
+        }
+        // Validate synced custom datapack registries, client cannot be missing any present on the server.
+        List<String> missingDataPackRegistries = new ArrayList<>();
+        Set<ResourceKey<? extends Registry<?>>> clientDataPackRegistries = DataPackRegistriesHooks.getSyncedCustomRegistries();
+        for (ResourceKey<? extends Registry<?>> key : serverModList.getCustomDataPackRegistries())
+        {
+            if (!clientDataPackRegistries.contains(key))
+            {
+                ResourceLocation location = key.location();
+                LOGGER.error(FMLHSMARKER, "Missing required datapack registry: {}", location);
+                missingDataPackRegistries.add(key.location().toString());
+            }
+        }
+        if (!missingDataPackRegistries.isEmpty())
+        {
+            c.get().getNetworkManager().disconnect(new TranslatableComponent("fml.menu.multiplayer.missingdatapackregistries", String.join(", ", missingDataPackRegistries)));
             return;
         }
         NetworkConstants.handshakeChannel.reply(new HandshakeMessages.C2SModListReply(), c.get());
