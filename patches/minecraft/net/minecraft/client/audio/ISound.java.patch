@@ -1,0 +1,13 @@
+--- a/net/minecraft/client/audio/ISound.java
++++ b/net/minecraft/client/audio/ISound.java
+@@ -48,4 +_,10 @@
+       NONE,
+       LINEAR;
+    }
++
++   /*================================ FORGE START ================================================*/
++
++   default java.util.concurrent.CompletableFuture<net.minecraft.client.audio.IAudioStream> getStream(net.minecraft.client.audio.AudioStreamManager soundBuffers, Sound sound, boolean looping) {
++      return soundBuffers.func_217917_b(sound.func_188721_b(), looping);
++   }
+ }
