@@ -49,6 +49,7 @@ import net.minecraft.client.resources.model.Material;
 import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.ModelState;
 import net.minecraft.client.resources.model.UnbakedModel;
+import net.minecraftforge.common.util.Lazy;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
 /**
@@ -65,7 +66,8 @@ public class ModelLoaderRegistry
     // Forge built-in loaders
     public static void init()
     {
-        var builtInLoaders = Map.of(
+    // avoid loading the loaders eagerly. This method gets called during datagen, which the loaders cannot deal with
+    var builtInLoaders = Lazy.of(() -> Map.of(
             new ResourceLocation("minecraft", "elements"), VanillaProxy.Loader.INSTANCE,
             new ResourceLocation("forge", "obj"), OBJLoader.INSTANCE,
             new ResourceLocation("forge", "bucket"), DynamicBucketModel.Loader.INSTANCE,
@@ -73,15 +75,15 @@ public class ModelLoaderRegistry
             new ResourceLocation("forge", "multi-layer"), MultiLayerModel.Loader.INSTANCE,
             new ResourceLocation("forge", "item-layers"), ItemLayerModel.Loader.INSTANCE,
             new ResourceLocation("forge", "separate-perspective"), SeparatePerspectiveModel.Loader.INSTANCE
-        );
+    ));
 
         // TODO: Implement as new model loaders
         //registerLoader(new ResourceLocation("forge:b3d"), new ModelLoaderAdapter(B3DLoader.INSTANCE));
         //registerLoader(new ResourceLocation("forge:fluid"), new ModelLoaderAdapter(ModelFluid.FluidLoader.INSTANCE));
 
         var modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
-        modEventBus.<RegisterClientReloadListenersEvent>addListener(event -> builtInLoaders.values().forEach(event::registerReloadListener));
-        modEventBus.<ModelRegistryEvent>addListener(event -> builtInLoaders.forEach(ModelLoaderRegistry::registerLoader));
+        modEventBus.<RegisterClientReloadListenersEvent>addListener(event -> builtInLoaders.get().values().forEach(event::registerReloadListener));
+        modEventBus.<ModelRegistryEvent>addListener(event -> builtInLoaders.get().forEach(ModelLoaderRegistry::registerLoader));
     }
 
     /**
