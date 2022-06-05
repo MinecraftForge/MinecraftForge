@@ -1,17 +1,27 @@
 --- a/net/minecraft/core/MappedRegistry.java
 +++ b/net/minecraft/core/MappedRegistry.java
-@@ -279,6 +_,14 @@
-       return this.f_205842_.containsKey(p_175392_);
-    }
+@@ -90,7 +_,8 @@
+       this.f_122672_.size(Math.max(this.f_122672_.size(), p_205858_ + 1));
+       this.f_122673_.put(p_205860_, p_205858_);
+       this.f_211051_ = null;
+-      if (p_205862_ && this.f_205842_.containsKey(p_205859_)) {
++      // Forge: Fix bug where a key is considered a duplicate if getOrCreateHolder was called before the entry was registered
++      if (p_205862_ && this.f_205842_.containsKey(p_205859_) && this.f_205842_.get(p_205859_).m_203633_()) {
+          Util.m_143785_("Adding duplicate key '" + p_205859_ + "' to registry");
+       }
  
+@@ -277,6 +_,14 @@
+ 
+    public boolean m_142003_(ResourceKey<T> p_175392_) {
+       return this.f_205842_.containsKey(p_175392_);
++   }
++
 +   /** @deprecated Forge: For internal use only. Use the Register events when registering values. */
 +   @Deprecated
 +   public void unfreeze() {
 +      this.f_205845_ = false;
 +      if (this.f_205846_ != null && this.f_205847_ == null)
 +         this.f_205847_ = new IdentityHashMap<>();
-+   }
-+
+    }
+ 
     public Registry<T> m_203521_() {
-       this.f_205845_ = true;
-       List<ResourceLocation> list = this.f_205842_.entrySet().stream().filter((p_211055_) -> {

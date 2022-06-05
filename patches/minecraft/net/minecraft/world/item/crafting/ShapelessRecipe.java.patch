@@ -56,3 +56,12 @@
           } else {
              ItemStack itemstack = ShapedRecipe.m_151274_(GsonHelper.m_13930_(p_44291_, "result"));
              return new ShapelessRecipe(p_44290_, s, itemstack, nonnulllist);
+@@ -88,7 +_,7 @@
+ 
+          for(int i = 0; i < p_44276_.size(); ++i) {
+             Ingredient ingredient = Ingredient.m_43917_(p_44276_.get(i));
+-            if (!ingredient.m_43947_()) {
++            if (net.minecraftforge.common.ForgeConfig.SERVER.skipEmptyShapelessCheck.get() || !ingredient.m_43947_()) {
+                nonnulllist.add(ingredient);
+             }
+          }

@@ -1,19 +1,17 @@
 --- a/net/minecraft/server/level/ServerPlayerGameMode.java
 +++ b/net/minecraft/server/level/ServerPlayerGameMode.java
-@@ -125,7 +_,15 @@
+@@ -125,7 +_,13 @@
        double d1 = this.f_9245_.m_20186_() - ((double)p_9282_.m_123342_() + 0.5D) + 1.5D;
        double d2 = this.f_9245_.m_20189_() - ((double)p_9282_.m_123343_() + 0.5D);
        double d3 = d0 * d0 + d1 * d1 + d2 * d2;
 -      if (d3 > 36.0D) {
-+      double dist = f_9245_.m_21051_(net.minecraftforge.common.ForgeMod.REACH_DISTANCE.get()).m_22135_() + 1;
 +      net.minecraftforge.event.entity.player.PlayerInteractEvent.LeftClickBlock event = net.minecraftforge.common.ForgeHooks.onLeftClickBlock(f_9245_, p_9282_, p_9284_);
 +      if (event.isCanceled() || (!this.m_9295_() && event.getUseItem() == net.minecraftforge.eventbus.api.Event.Result.DENY)) { // Restore block and te data
 +         f_9245_.f_8906_.m_141995_(new ClientboundBlockBreakAckPacket(p_9282_, f_9244_.m_8055_(p_9282_), p_9283_, false, "mod canceled"));
 +         f_9244_.m_7260_(p_9282_, f_9244_.m_8055_(p_9282_), f_9244_.m_8055_(p_9282_), 3);
 +         return;
 +      }
-+      dist *= dist;
-+      if (d3 > dist) {
++      if (!this.f_9245_.canInteractWith(p_9282_, 1)) {
           BlockState blockstate1;
           if (this.f_9245_.f_19853_.m_142572_() != null && this.f_9245_.m_146902_().m_45594_(new ChunkPos(p_9282_)) < this.f_9245_.f_19853_.m_142572_().m_6846_().m_11312_()) {
              blockstate1 = this.f_9244_.m_8055_(p_9282_);

@@ -1,20 +1,28 @@
 /*
- * Minecraft Forge - Forge Development LLC
+ * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
 package net.minecraftforge.network;
 
 import com.google.common.collect.Multimap;
+import com.mojang.authlib.GameProfile;
+
+import net.minecraft.core.Registry;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.handshake.ClientIntentionPacket;
 import net.minecraft.network.protocol.login.ClientboundCustomQueryPacket;
 import net.minecraft.network.protocol.login.ServerboundCustomQueryPacket;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.network.ServerLoginPacketListenerImpl;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.LogMessageAdapter;
+import net.minecraftforge.event.entity.player.PlayerNegotiationEvent;
 import net.minecraftforge.network.simple.SimpleChannel;
+import net.minecraftforge.registries.DataPackRegistriesHooks;
 import net.minecraftforge.registries.ForgeRegistry;
 import net.minecraftforge.registries.GameData;
 import org.apache.logging.log4j.LogManager;
@@ -25,7 +33,10 @@ import org.apache.logging.log4j.MarkerManager;
 import com.google.common.collect.Maps;
 
 import java.util.*;
+import java.util.concurrent.CancellationException;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BiConsumer;
 import java.util.function.IntSupplier;
@@ -99,6 +110,8 @@ public class HandshakeHandler
     private Map<ResourceLocation, ForgeRegistry.Snapshot> registrySnapshots;
     private Set<ResourceLocation> registriesToReceive;
     private Map<ResourceLocation, String> registryHashes;
+    private boolean negotiationStarted = false;
+    private final List<Future<Void>> pendingFutures = new ArrayList<>();
 
     private HandshakeHandler(Connection networkManager, NetworkDirection side)
     {
@@ -170,6 +183,23 @@ public class HandshakeHandler
         if (!accepted) {
             LOGGER.error(FMLHSMARKER, "Terminating connection with server, mismatched mod list");
             c.get().getNetworkManager().disconnect(new TextComponent("Connection closed - mismatched mod channel list"));
+            return;
+        }
+        // Validate synced custom datapack registries, client cannot be missing any present on the server.
+        List<String> missingDataPackRegistries = new ArrayList<>();
+        Set<ResourceKey<? extends Registry<?>>> clientDataPackRegistries = DataPackRegistriesHooks.getSyncedCustomRegistries();
+        for (ResourceKey<? extends Registry<?>> key : serverModList.getCustomDataPackRegistries())
+        {
+            if (!clientDataPackRegistries.contains(key))
+            {
+                ResourceLocation location = key.location();
+                LOGGER.error(FMLHSMARKER, "Missing required datapack registry: {}", location);
+                missingDataPackRegistries.add(key.location().toString());
+            }
+        }
+        if (!missingDataPackRegistries.isEmpty())
+        {
+            c.get().getNetworkManager().disconnect(new TranslatableComponent("fml.menu.multiplayer.missingdatapackregistries", String.join(", ", missingDataPackRegistries)));
             return;
         }
         NetworkConstants.handshakeChannel.reply(new HandshakeMessages.C2SModListReply(), c.get());
@@ -281,6 +311,13 @@ public class HandshakeHandler
      */
     public boolean tickServer()
     {
+        if (!negotiationStarted) {
+            GameProfile profile = ((ServerLoginPacketListenerImpl) manager.getPacketListener()).gameProfile;
+            PlayerNegotiationEvent event = new PlayerNegotiationEvent(manager, profile, pendingFutures);
+            MinecraftForge.EVENT_BUS.post(event);
+            negotiationStarted = true;
+        }
+
         if (packetPosition < messageList.size()) {
             NetworkRegistry.LoginPayload message = messageList.get(packetPosition);
 
@@ -290,8 +327,24 @@ public class HandshakeHandler
             packetPosition++;
         }
 
+        pendingFutures.removeIf(future -> {
+            if (!future.isDone()) {
+                return false;
+            }
+
+            try {
+                future.get();
+            } catch (ExecutionException ex) {
+                LOGGER.error("Error during negotiation", ex.getCause());
+            } catch (CancellationException | InterruptedException ex) {
+                // no-op
+            }
+
+            return true;
+        });
+
         // we're done when sentMessages is empty
-        if (sentMessages.isEmpty() && packetPosition >= messageList.size()-1) {
+        if (sentMessages.isEmpty() && packetPosition >= messageList.size()-1 && pendingFutures.isEmpty()) {
             // clear ourselves - we're done!
             this.manager.channel().attr(NetworkConstants.FML_HANDSHAKE_HANDLER).set(null);
             LOGGER.debug(FMLHSMARKER, "Handshake complete!");

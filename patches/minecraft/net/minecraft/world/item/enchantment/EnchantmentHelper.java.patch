@@ -1,5 +1,14 @@
 --- a/net/minecraft/world/item/enchantment/EnchantmentHelper.java
 +++ b/net/minecraft/world/item/enchantment/EnchantmentHelper.java
+@@ -150,7 +_,7 @@
+    public static float m_44833_(ItemStack p_44834_, MobType p_44835_) {
+       MutableFloat mutablefloat = new MutableFloat();
+       m_44850_((p_44887_, p_44888_) -> {
+-         mutablefloat.add(p_44887_.m_7335_(p_44888_, p_44835_));
++         mutablefloat.add(p_44887_.getDamageBonus(p_44888_, p_44835_, p_44834_));
+       }, p_44834_);
+       return mutablefloat.floatValue();
+    }
 @@ -298,7 +_,7 @@
  
     public static int m_44872_(Random p_44873_, int p_44874_, int p_44875_, ItemStack p_44876_) {

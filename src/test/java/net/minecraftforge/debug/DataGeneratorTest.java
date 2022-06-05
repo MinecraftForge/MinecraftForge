@@ -1,5 +1,5 @@
 /*
- * Minecraft Forge - Forge Development LLC
+ * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
@@ -92,7 +92,6 @@ import net.minecraftforge.client.model.generators.BlockStateProvider;
 import net.minecraftforge.client.model.generators.ConfiguredModel;
 import net.minecraftforge.client.model.generators.ItemModelProvider;
 import net.minecraftforge.client.model.generators.ModelBuilder;
-import net.minecraftforge.client.model.generators.ModelBuilder.Perspective;
 import net.minecraftforge.client.model.generators.ModelFile;
 import net.minecraftforge.client.model.generators.ModelFile.UncheckedModelFile;
 import net.minecraftforge.client.model.generators.MultiPartBlockStateBuilder;
@@ -234,6 +233,36 @@ public class DataGeneratorTest
                     )
                     .generateAdvancement()
                     .build(consumer, new ResourceLocation("data_gen_test", "conditional2"));
+
+            ConditionalRecipe.builder()
+                    .addCondition(
+                            tagEmpty(ItemTags.PLANKS)
+                    )
+                    .addRecipe(
+                            ShapedRecipeBuilder.shaped(Blocks.NETHERITE_BLOCK, 1)
+                                    .pattern("XX")
+                                    .pattern("XX")
+                                    .define('X', Blocks.DIAMOND_BLOCK)
+                                    .group("")
+                                    .unlockedBy("has_diamond_block", has(Blocks.DIAMOND_BLOCK))
+                                    ::save
+                    )
+                    .addCondition(
+                            not(
+                                    tagEmpty(ItemTags.PLANKS)
+                            )
+                    )
+                    .addRecipe(
+                            ShapedRecipeBuilder.shaped(Blocks.NETHERITE_BLOCK, 9)
+                                    .pattern("XX")
+                                    .pattern("XX")
+                                    .define('X', Blocks.DIAMOND_BLOCK)
+                                    .group("")
+                                    .unlockedBy("has_diamond_block", has(Blocks.DIAMOND_BLOCK))
+                                    ::save
+                    )
+                    .generateAdvancement()
+                    .build(consumer, new ResourceLocation("data_gen_test", "conditional3"));
 
             // ingredient tests
             // strict NBT match - should match an unnamed iron pickaxe that lost 3 durability
@@ -723,27 +752,27 @@ public class DataGeneratorTest
             ModelFile block = models().getBuilder("block")
                     .guiLight(GuiLight.SIDE)
                     .transforms()
-                    .transform(Perspective.GUI)
+                    .transform(ItemTransforms.TransformType.GUI)
                     .rotation(30, 225, 0)
                     .scale(0.625f)
                     .end()
-                    .transform(Perspective.GROUND)
+                    .transform(ItemTransforms.TransformType.GROUND)
                     .translation(0, 3, 0)
                     .scale(0.25f)
                     .end()
-                    .transform(Perspective.FIXED)
+                    .transform(ItemTransforms.TransformType.FIXED)
                     .scale(0.5f)
                     .end()
-                    .transform(Perspective.THIRDPERSON_RIGHT)
+                    .transform(ItemTransforms.TransformType.THIRD_PERSON_RIGHT_HAND)
                     .rotation(75, 45, 0)
                     .translation(0, 2.5f, 0)
                     .scale(0.375f)
                     .end()
-                    .transform(Perspective.FIRSTPERSON_RIGHT)
+                    .transform(ItemTransforms.TransformType.FIRST_PERSON_RIGHT_HAND)
                     .rotation(0, 45, 0)
                     .scale(0.4f)
                     .end()
-                    .transform(Perspective.FIRSTPERSON_LEFT)
+                    .transform(ItemTransforms.TransformType.FIRST_PERSON_LEFT_HAND)
                     .rotation(0, 225, 0)
                     .scale(0.4f)
                     .end()
@@ -1081,8 +1110,8 @@ public class DataGeneratorTest
                 } else if (generatedDisplay != null) { // Both must be non-null
                     ItemTransforms generatedTransforms = GSON.fromJson(generatedDisplay, ItemTransforms.class);
                     ItemTransforms vanillaTransforms = GSON.fromJson(vanillaDisplay, ItemTransforms.class);
-                    for (Perspective type : Perspective.values()) {
-                        if (!generatedTransforms.getTransform(type.vanillaType).equals(vanillaTransforms.getTransform(type.vanillaType))) {
+                    for (ItemTransforms.TransformType type : ItemTransforms.TransformType.values()) {
+                        if (!generatedTransforms.getTransform(type).equals(vanillaTransforms.getTransform(type))) {
                             ret.add("Model " + loc  + " has transforms that differ from vanilla equivalent for perspective " + type.name());
                             return;
                         }

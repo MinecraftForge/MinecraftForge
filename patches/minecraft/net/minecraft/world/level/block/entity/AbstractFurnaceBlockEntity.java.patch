@@ -34,7 +34,7 @@
        ContainerHelper.m_18973_(p_187452_, this.f_58310_);
        CompoundTag compoundtag = new CompoundTag();
        this.f_58320_.forEach((p_187449_, p_187450_) -> {
-@@ -240,34 +_,35 @@
+@@ -240,30 +_,32 @@
  
        ItemStack itemstack = p_155017_.f_58310_.get(1);
        if (p_155017_.m_58425_() || !itemstack.m_41619_() && !p_155017_.f_58310_.get(0).m_41619_()) {
@@ -73,10 +73,6 @@
                    p_155017_.m_6029_(recipe);
                 }
  
--               flag1 = true;
-             }
-          } else {
-             p_155017_.f_58318_ = 0;
 @@ -288,9 +_,9 @@
  
     }

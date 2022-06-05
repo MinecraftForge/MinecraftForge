@@ -78,6 +78,26 @@
     public boolean m_111477_(String p_111478_) {
        return !MissingTextureAtlasSprite.m_118071_().equals(this.m_111480_(p_111478_).m_119203_());
     }
+@@ -269,7 +_,18 @@
+       ItemTransform itemtransform5 = this.m_111444_(ItemTransforms.TransformType.GUI);
+       ItemTransform itemtransform6 = this.m_111444_(ItemTransforms.TransformType.GROUND);
+       ItemTransform itemtransform7 = this.m_111444_(ItemTransforms.TransformType.FIXED);
+-      return new ItemTransforms(itemtransform, itemtransform1, itemtransform2, itemtransform3, itemtransform4, itemtransform5, itemtransform6, itemtransform7);
++
++      var builder = com.google.common.collect.ImmutableMap.<ItemTransforms.TransformType, ItemTransform>builder();
++      for(ItemTransforms.TransformType type : ItemTransforms.TransformType.values()) {
++         if (type.isModded()) {
++            var transform = this.m_111444_(type);
++            if (transform != ItemTransform.f_111754_) {
++               builder.put(type, transform);
++            }
++         }
++      }
++
++      return new ItemTransforms(itemtransform, itemtransform1, itemtransform2, itemtransform3, itemtransform4, itemtransform5, itemtransform6, itemtransform7, builder.build());
+    }
+ 
+    private ItemTransform m_111444_(ItemTransforms.TransformType p_111445_) {
 @@ -388,6 +_,8 @@
        public boolean m_111526_() {
           return this == SIDE;

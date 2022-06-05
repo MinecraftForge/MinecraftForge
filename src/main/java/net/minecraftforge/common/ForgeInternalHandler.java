@@ -1,5 +1,5 @@
 /*
- * Minecraft Forge - Forge Development LLC
+ * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
@@ -99,9 +99,12 @@ public class ForgeInternalHandler
     }
 
     @SubscribeEvent
-    public synchronized void tagsUpdated(TagsUpdatedEvent event)
+    public void tagsUpdated(TagsUpdatedEvent event)
     {
-        ForgeHooks.updateBurns();
+        if (event.shouldUpdateStaticData())
+        {
+            ForgeHooks.updateBurns();
+        }
     }
 
     @SubscribeEvent

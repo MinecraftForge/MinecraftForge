@@ -1,0 +1,18 @@
+{
+  "variants": {
+    "shape=ascending_east": {
+      "model": "minecraft:block/rail_raised_ne",
+      "y": 90
+    },
+    "shape=ascending_north": {
+      "model": "minecraft:block/rail_raised_ne"
+    },
+    "shape=ascending_south": {
+      "model": "minecraft:block/rail_raised_sw"
+    },
+    "shape=ascending_west": {
+      "model": "minecraft:block/rail_raised_sw",
+      "y": 90
+    }
+  }
+}

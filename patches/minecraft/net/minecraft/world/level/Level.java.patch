@@ -140,7 +140,7 @@
        if (!this.f_151503_.isEmpty()) {
           this.f_151512_.addAll(this.f_151503_);
           this.f_151503_.clear();
-@@ -427,12 +_,15 @@
+@@ -427,12 +_,19 @@
  
     public <T extends Entity> void m_46653_(Consumer<T> p_46654_, T p_46655_) {
        try {
@@ -150,6 +150,10 @@
           CrashReport crashreport = CrashReport.m_127521_(throwable, "Ticking entity");
           CrashReportCategory crashreportcategory = crashreport.m_127514_("Entity being ticked");
           p_46655_.m_7976_(crashreportcategory);
++         if (net.minecraftforge.common.ForgeConfig.SERVER.removeErroringEntities.get()) {
++            com.mojang.logging.LogUtils.getLogger().error("{}", crashreport.m_127526_());
++            p_46655_.m_146870_();
++         } else
           throw new ReportedException(crashreport);
 +      } finally {
 +         net.minecraftforge.server.timings.TimeTracker.ENTITY_UPDATE.trackEnd(p_46655_);
@@ -172,30 +176,48 @@
     }
  
     public boolean m_46749_(BlockPos p_46750_) {
-@@ -538,8 +_,8 @@
+@@ -538,6 +_,7 @@
              list.add(p_151522_);
           }
  
--         if (p_151522_ instanceof EnderDragon) {
--            for(EnderDragonPart enderdragonpart : ((EnderDragon)p_151522_).m_31156_()) {
-+         if (p_151522_.isMultipartEntity()) {
-+            for(net.minecraftforge.entity.PartEntity<?> enderdragonpart : p_151522_.getParts()) {
++         if (false)
+          if (p_151522_ instanceof EnderDragon) {
+             for(EnderDragonPart enderdragonpart : ((EnderDragon)p_151522_).m_31156_()) {
                 if (p_151522_ != p_46536_ && p_46538_.test(enderdragonpart)) {
-                   list.add(enderdragonpart);
-                }
-@@ -558,10 +_,8 @@
+@@ -547,6 +_,11 @@
+          }
+ 
+       });
++      for (net.minecraftforge.entity.PartEntity<?> p : this.getPartEntities()) {
++         if (p != p_46536_ && p.m_142469_().m_82381_(p_46537_) && p_46538_.test(p)) {
++            list.add(p);
++         }
++      }
+       return list;
+    }
+ 
+@@ -558,6 +_,8 @@
              list.add(p_151539_);
           }
  
--         if (p_151539_ instanceof EnderDragon) {
--            EnderDragon enderdragon = (EnderDragon)p_151539_;
--
--            for(EnderDragonPart enderdragonpart : enderdragon.m_31156_()) {
-+         if (p_151539_.isMultipartEntity()) {
-+            for(net.minecraftforge.entity.PartEntity<?> enderdragonpart : p_151539_.getParts()) {
-                T t = p_151528_.m_141992_(enderdragonpart);
-                if (t != null && p_151530_.test(t)) {
-                   list.add(t);
++
++         if (false)
+          if (p_151539_ instanceof EnderDragon) {
+             EnderDragon enderdragon = (EnderDragon)p_151539_;
+ 
+@@ -570,6 +_,12 @@
+          }
+ 
+       });
++      for (net.minecraftforge.entity.PartEntity<?> p : this.getPartEntities()) {
++         T t = p_151528_.m_141992_(p);
++         if (t != null && t.m_142469_().m_82381_(p_151529_) && p_151530_.test(t)) {
++            list.add(t);
++         }
++      }
+       return list;
+    }
+ 
 @@ -581,6 +_,7 @@
           this.m_46745_(p_151544_).m_8092_(true);
        }

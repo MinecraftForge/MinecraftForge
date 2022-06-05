@@ -1,5 +1,5 @@
 /*
- * Minecraft Forge - Forge Development LLC
+ * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
@@ -8,6 +8,8 @@ package net.minecraftforge.common.extensions;
 import java.util.Collection;
 import javax.annotation.Nullable;
 
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -19,6 +21,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.HitResult;
+import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.ForgeSpawnEggItem;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.entity.PartEntity;
@@ -188,5 +191,25 @@ public interface IForgeEntity extends ICapabilitySerializable<CompoundTag>
     default PartEntity<?>[] getParts()
     {
         return null;
+    }
+
+    /**
+     * @return Return the height in blocks the Entity can step up without needing to jump
+     * This is the sum of vanilla's {@link Entity#maxUpStep} field and the current value
+     * of the {@link net.minecraftforge.common.ForgeMod#STEP_HEIGHT_ADDITION} attribute
+     * (if this Entity is a {@link LivingEntity} and has the attribute), clamped at 0.
+     */
+    default float getStepHeight()
+    {
+        float vanillaStep = self().maxUpStep;
+        if (self() instanceof LivingEntity living)
+        {
+            AttributeInstance stepHeightAttribute = living.getAttribute(ForgeMod.STEP_HEIGHT_ADDITION.get());
+            if (stepHeightAttribute != null)
+            {
+                return (float) Math.max(0, vanillaStep + stepHeightAttribute.getValue());
+            }
+        }
+        return vanillaStep;
     }
 }

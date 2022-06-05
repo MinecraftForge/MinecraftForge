@@ -24,7 +24,7 @@
     }
  
     public static BlockPos m_187472_(CompoundTag p_187473_) {
-@@ -48,6 +_,8 @@
+@@ -48,9 +_,13 @@
     }
  
     public void m_142466_(CompoundTag p_155245_) {
@@ -33,15 +33,11 @@
     }
  
     protected void m_183515_(CompoundTag p_187471_) {
-@@ -93,6 +_,8 @@
-       p_187479_.m_128405_("x", this.f_58858_.m_123341_());
-       p_187479_.m_128405_("y", this.f_58858_.m_123342_());
-       p_187479_.m_128405_("z", this.f_58858_.m_123343_());
-+         if (this.customTileData != null) p_187479_.m_128365_("ForgeData", this.customTileData.m_6426_());
-+         if (getCapabilities() != null) p_187479_.m_128365_("ForgeCaps", serializeCaps());
++      if (this.customTileData != null) p_187471_.m_128365_("ForgeData", this.customTileData.m_6426_());
++      if (getCapabilities() != null) p_187471_.m_128365_("ForgeCaps", serializeCaps());
     }
  
-    @Nullable
+    public final CompoundTag m_187480_() {
 @@ -163,6 +_,13 @@
  
     public void m_7651_() {

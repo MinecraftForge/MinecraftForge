@@ -1,5 +1,5 @@
 /*
- * Minecraft Forge - Forge Development LLC
+ * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
@@ -40,7 +40,7 @@ public class RegistryObjectTest
 
     public void commonSetup(FMLCommonSetupEvent event)
     {
-        LOGGER.info("Stone 1: {}", RegistryObject.of(new ResourceLocation("minecraft", "stone"), ForgeRegistries.BLOCKS).get());
-        LOGGER.info("Stone 2: {}", RegistryObject.of(new ResourceLocation("minecraft", "stone"), ForgeRegistries.BLOCKS.getRegistryKey(), MODID).get());
+        LOGGER.info("Stone 1: {}", RegistryObject.create(new ResourceLocation("minecraft", "stone"), ForgeRegistries.BLOCKS).get());
+        LOGGER.info("Stone 2: {}", RegistryObject.create(new ResourceLocation("minecraft", "stone"), ForgeRegistries.BLOCKS.getRegistryKey(), MODID).get());
     }
 }

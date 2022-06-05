@@ -1,5 +1,5 @@
 /*
- * Minecraft Forge - Forge Development LLC
+ * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
@@ -145,7 +145,7 @@ public class ForgeRegistries
     }
 
     /**
-     * This function is just to make sure static inializers in other classes have run and setup their registries before we query them.
+     * This function is just to make sure static initializers in other classes have run and setup their registries before we query them.
      */
     private static void init()
     {

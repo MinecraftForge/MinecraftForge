@@ -215,6 +215,18 @@ license="LGPL v2.1"
 [[mods]]
     modId="living_get_projectile_event_test"
 [[mods]]
+    modId="server_world_creation_test"
+[[mods]]
+    modId="valid_railshape_test"
+[[mods]]
+    modId="player_negotiation_event_test"
+[[mods]]
+    modId="custom_transformtype_test"
+[[mods]]
+    modId="custom_rarity_test"
+[[mods]]
+    modId="data_pack_registries_test"
+[[mods]]
     modId="banner_pattern_test"
 
 # ADD ABOVE THIS LINE

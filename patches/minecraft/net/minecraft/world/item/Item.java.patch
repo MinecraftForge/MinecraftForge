@@ -31,6 +31,19 @@
     public void m_5929_(Level p_41428_, LivingEntity p_41429_, ItemStack p_41430_, int p_41431_) {
     }
  
+@@ -132,9 +_,9 @@
+    }
+ 
+    public InteractionResultHolder<ItemStack> m_7203_(Level p_41432_, Player p_41433_, InteractionHand p_41434_) {
+-      if (this.m_41472_()) {
+-         ItemStack itemstack = p_41433_.m_21120_(p_41434_);
+-         if (p_41433_.m_36391_(this.m_41473_().m_38747_())) {
++      ItemStack itemstack = p_41433_.m_21120_(p_41434_);
++      if (itemstack.m_41614_()) {
++         if (p_41433_.m_36391_(itemstack.getFoodProperties(p_41433_).m_38747_())) {
+             p_41433_.m_6672_(p_41434_);
+             return InteractionResultHolder.m_19096_(itemstack);
+          } else {
 @@ -149,10 +_,12 @@
        return this.m_41472_() ? p_41411_.m_5584_(p_41410_, p_41409_) : p_41409_;
     }
@@ -72,6 +85,15 @@
     public boolean m_41470_() {
        return this.f_41378_ != null;
     }
+@@ -251,7 +_,7 @@
+ 
+    public int m_8105_(ItemStack p_41454_) {
+       if (p_41454_.m_41720_().m_41472_()) {
+-         return this.m_41473_().m_38748_() ? 16 : 32;
++         return p_41454_.getFoodProperties(null).m_38748_() ? 16 : 32;
+       } else {
+          return 0;
+       }
 @@ -293,7 +_,7 @@
     }
  
@@ -87,7 +109,7 @@
        float f7 = f2 * f4;
 -      double d0 = 5.0D;
 -      Vec3 vec31 = vec3.m_82520_((double)f6 * 5.0D, (double)f5 * 5.0D, (double)f7 * 5.0D);
-+      double d0 = p_41437_.m_21051_(net.minecraftforge.common.ForgeMod.REACH_DISTANCE.get()).m_22135_();;
++      double d0 = p_41437_.getReachDistance();
 +      Vec3 vec31 = vec3.m_82520_((double)f6 * d0, (double)f5 * d0, (double)f7 * d0);
        return p_41436_.m_45547_(new ClipContext(vec3, vec31, ClipContext.Block.OUTLINE, p_41438_, p_41437_));
     }
@@ -122,6 +144,15 @@
     }
  
     public ItemStack m_7968_() {
+@@ -352,6 +_,8 @@
+       return this.f_41380_ != null;
+    }
+ 
++   // Use IForgeItem#getFoodProperties(ItemStack, LivingEntity) in favour of this.
++   @Deprecated
+    @Nullable
+    public FoodProperties m_41473_() {
+       return this.f_41380_;
 @@ -382,6 +_,32 @@
        return true;
     }
