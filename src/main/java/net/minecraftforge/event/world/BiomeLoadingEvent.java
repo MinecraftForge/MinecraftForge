@@ -9,6 +9,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.BiomeSpecialEffects;
 import net.minecraftforge.common.world.BiomeGenerationSettingsBuilder;
+import net.minecraftforge.common.world.BiomeModifier;
 import net.minecraftforge.common.world.MobSpawnSettingsBuilder;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
@@ -28,7 +29,9 @@ import javax.annotation.Nullable;
  *
  * Be aware that another mod could have done an operation beforehand, so an expected value out of a vanilla biome might not
  * always be the same, depending on other mods.
+ * @deprecated Use {@link BiomeModifier} jsons instead. TODO 1.19: Remove BiomeLoadingEvent in favor of biome modifiers.
  */
+@Deprecated(forRemoval=true)
 public class BiomeLoadingEvent extends Event
 {
     private final ResourceLocation name;

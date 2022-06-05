@@ -230,5 +230,7 @@ license="LGPL v2.1"
     modId="banner_pattern_test"
 [[mods]]
     modId="mod_mismatch_test"
+[[mods]]
+    modId="biome_modifiers_test"
 
 # ADD ABOVE THIS LINE

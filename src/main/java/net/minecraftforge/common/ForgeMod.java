@@ -30,6 +30,8 @@ import net.minecraftforge.common.extensions.IForgePlayer;
 import net.minecraftforge.common.loot.CanToolPerformAction;
 import net.minecraftforge.common.loot.GlobalLootModifierSerializer;
 import net.minecraftforge.common.loot.LootTableIdCondition;
+import net.minecraftforge.common.world.BiomeModifierSerializer;
+import net.minecraftforge.common.world.NoBiomeModifier;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fluids.FluidAttributes;
@@ -81,6 +83,8 @@ import net.minecraftforge.fml.common.Mod;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
+import com.mojang.serialization.Codec;
+
 import java.util.*;
 
 @Mod("forge")
@@ -91,6 +95,7 @@ public class ForgeMod
     private static final Marker FORGEMOD = MarkerManager.getMarker("FORGEMOD");
 
     private static final DeferredRegister<Attribute> ATTRIBUTES = DeferredRegister.create(ForgeRegistries.Keys.ATTRIBUTES, "forge");
+    private static final DeferredRegister<BiomeModifierSerializer<?>> BIOME_MODIFIER_SERIALIZERS = DeferredRegister.create(ForgeRegistries.Keys.BIOME_MODIFIER_SERIALIZERS, "forge");
 
     public static final RegistryObject<Attribute> SWIM_SPEED = ATTRIBUTES.register("swim_speed", () -> new RangedAttribute("forge.swimSpeed", 1.0D, 0.0D, 1024.0D).setSyncable(true));
     public static final RegistryObject<Attribute> NAMETAG_DISTANCE = ATTRIBUTES.register("nametag_distance", () -> new RangedAttribute("forge.nameTagDistance", 64.0D, 0.0D, 64.0).setSyncable(true));
@@ -116,6 +121,11 @@ public class ForgeMod
      * @see IForgeEntity#getStepHeight()
      */
     public static final RegistryObject<Attribute> STEP_HEIGHT_ADDITION = ATTRIBUTES.register("step_height_addition", () -> new RangedAttribute("forge.stepHeight", 0.0D, -512.0D, 512.0D).setSyncable(true));
+    
+    /**
+     * Noop biome modifier. Can be used in a biome modifier json with "type": "forge:none".
+     */
+    public static final RegistryObject<BiomeModifierSerializer<?>> NO_BIOME_MODIFIER = BIOME_MODIFIER_SERIALIZERS.register("none", () -> new BiomeModifierSerializer<>(Codec.unit(NoBiomeModifier.INSTANCE)));
 
 
     private static boolean enableMilkFluid = false;
@@ -159,6 +169,7 @@ public class ForgeMod
         modEventBus.addGenericListener(Fluid.class, this::registerFluids);
         modEventBus.register(this);
         ATTRIBUTES.register(modEventBus);
+        BIOME_MODIFIER_SERIALIZERS.register(modEventBus);
         MinecraftForge.EVENT_BUS.addListener(this::serverStopping);
         MinecraftForge.EVENT_BUS.addGenericListener(SoundEvent.class, this::missingSoundMapping);
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, ForgeConfig.clientSpec);

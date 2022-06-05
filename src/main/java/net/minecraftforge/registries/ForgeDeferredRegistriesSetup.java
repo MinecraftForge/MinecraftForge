@@ -22,6 +22,8 @@ public class ForgeDeferredRegistriesSetup
         ForgeRegistries.DEFERRED_DATA_SERIALIZERS.register(modEventBus);
         ForgeRegistries.DEFERRED_LOOT_MODIFIER_SERIALIZERS.register(modEventBus);
         ForgeRegistries.DEFERRED_WORLD_TYPES.register(modEventBus);
+        ForgeRegistries.DEFERRED_BIOME_MODIFIER_SERIALIZERS.register(modEventBus);
+        ForgeRegistries.DEFERRED_BIOME_MODIFIERS.register(modEventBus);
 
         setup = true;
     }

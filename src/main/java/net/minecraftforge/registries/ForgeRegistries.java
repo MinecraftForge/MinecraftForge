@@ -40,6 +40,8 @@ import net.minecraft.world.level.levelgen.feature.foliageplacers.FoliagePlacerTy
 import net.minecraft.world.level.levelgen.feature.treedecorators.TreeDecoratorType;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.loot.GlobalLootModifierSerializer;
+import net.minecraftforge.common.world.BiomeModifier;
+import net.minecraftforge.common.world.BiomeModifierSerializer;
 import net.minecraftforge.common.world.ForgeWorldPreset;
 
 import java.util.function.Supplier;
@@ -97,6 +99,12 @@ public class ForgeRegistries
     public static final Supplier<IForgeRegistry<GlobalLootModifierSerializer<?>>> LOOT_MODIFIER_SERIALIZERS = DEFERRED_LOOT_MODIFIER_SERIALIZERS.makeRegistry(GameData.c(GlobalLootModifierSerializer.class), GameData::getGLMSerializersRegistryBuilder);
     static final DeferredRegister<ForgeWorldPreset> DEFERRED_WORLD_TYPES = DeferredRegister.create(Keys.WORLD_TYPES, Keys.WORLD_TYPES.location().getNamespace());
     public static final Supplier<IForgeRegistry<ForgeWorldPreset>> WORLD_TYPES = DEFERRED_WORLD_TYPES.makeRegistry(ForgeWorldPreset.class, GameData::getWorldTypesRegistryBuilder);
+    static final DeferredRegister<BiomeModifierSerializer<?>> DEFERRED_BIOME_MODIFIER_SERIALIZERS = DeferredRegister.create(Keys.BIOME_MODIFIER_SERIALIZERS, Keys.BIOME_MODIFIER_SERIALIZERS.location().getNamespace());
+    public static final Supplier<IForgeRegistry<BiomeModifierSerializer<?>>> BIOME_MODIFIER_SERIALIZERS = DEFERRED_BIOME_MODIFIER_SERIALIZERS.makeRegistry(GameData.c(BiomeModifierSerializer.class), GameData::getBiomeModifierSerializersRegistryBuilder);
+    
+    // Custom forge datapack registries
+    static final DeferredRegister<BiomeModifier> DEFERRED_BIOME_MODIFIERS = DeferredRegister.create(Keys.BIOME_MODIFIERS, "forge");
+    public static final Supplier<IForgeRegistry<BiomeModifier>> BIOME_MODIFIERS_BUILTIN = DEFERRED_BIOME_MODIFIERS.makeRegistry(BiomeModifier.class, () -> new RegistryBuilder<BiomeModifier>().disableSaving().dataPackRegistry(BiomeModifier.DIRECT_CODEC));
 
     public static final class Keys {
         //Vanilla
@@ -136,6 +144,10 @@ public class ForgeRegistries
         public static final ResourceKey<Registry<DataSerializerEntry>> DATA_SERIALIZERS = key("data_serializers");
         public static final ResourceKey<Registry<GlobalLootModifierSerializer<?>>> LOOT_MODIFIER_SERIALIZERS = key("forge:loot_modifier_serializers");
         public static final ResourceKey<Registry<ForgeWorldPreset>> WORLD_TYPES = key("forge:world_types");
+        public static final ResourceKey<Registry<BiomeModifierSerializer<?>>> BIOME_MODIFIER_SERIALIZERS = key("forge:biome_modifier_serializers");
+        
+        // Forge Dynamic
+        public static final ResourceKey<Registry<BiomeModifier>> BIOME_MODIFIERS = key("forge:biome_modifier");
 
         private static <T> ResourceKey<Registry<T>> key(String name)
         {

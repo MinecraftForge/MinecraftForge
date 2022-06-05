@@ -1,0 +1,12 @@
+{
+  "feature": "minecraft:large_basalt_columns",
+  "placement": [
+    {
+      "count": 1,
+      "type": "minecraft:count_on_every_layer"
+    },
+    {
+      "type": "minecraft:biome"
+    }
+  ]
+}

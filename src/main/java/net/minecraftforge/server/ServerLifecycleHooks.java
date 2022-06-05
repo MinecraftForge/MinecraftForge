@@ -8,6 +8,7 @@ package net.minecraftforge.server;
 import static net.minecraftforge.fml.Logging.CORE;
 
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
@@ -16,13 +17,16 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
+import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.gametest.framework.GameTestServer;
 import net.minecraft.server.packs.repository.PackSource;
 import net.minecraft.server.packs.repository.RepositorySource;
 import net.minecraft.world.level.storage.LevelResource;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.common.util.LogicalSidedProvider;
+import net.minecraftforge.common.world.BiomeModifier;
 import net.minecraftforge.fml.ModLoader;
 import net.minecraftforge.fml.ModLoadingStage;
 import net.minecraftforge.fml.ModLoadingWarning;
@@ -59,6 +63,7 @@ import net.minecraftforge.event.server.ServerStoppingEvent;
 import net.minecraftforge.fml.loading.FileUtils;
 import net.minecraftforge.forgespi.language.IModInfo;
 import net.minecraftforge.registries.DataPackRegistriesHooks;
+import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.GameData;
 
 public class ServerLifecycleHooks
@@ -83,6 +88,7 @@ public class ServerLifecycleHooks
         // on the dedi server we need to force the stuff to setup properly
         LogicalSidedProvider.setServer(()->server);
         ConfigTracker.INSTANCE.loadConfigs(ModConfig.Type.SERVER, getServerConfigPath(server));
+        runBiomeModifiers(server);
         return !MinecraftForge.EVENT_BUS.post(new ServerAboutToStartEvent(server));
     }
 
@@ -218,5 +224,22 @@ public class ServerLifecycleHooks
             LOGGER.debug(CORE, "Generating PackInfo named {} for mod file {}", name, e.getKey().getFilePath());
             consumer.accept(packInfo);
         }
+    }
+    
+    private static void runBiomeModifiers(final MinecraftServer server)
+    {
+        final RegistryAccess registries = server.registryAccess();
+        
+        // The order of holders() is the order modifiers were loaded in.
+        final List<BiomeModifier> modifiers = registries.registryOrThrow(ForgeRegistries.Keys.BIOME_MODIFIERS)
+            .holders()
+            .map(Holder::value)
+            .toList();
+        
+        // Apply sorted biome modifiers to each biome.
+        registries.registryOrThrow(Registry.BIOME_REGISTRY).holders().forEach(biomeHolder ->
+        {
+            biomeHolder.value().modifiableBiomeInfo.applyBiomeModifiers(biomeHolder, modifiers);
+        });
     }
 }

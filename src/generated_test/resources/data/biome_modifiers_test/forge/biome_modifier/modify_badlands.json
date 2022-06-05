@@ -1,0 +1,14 @@
+{
+  "spawn": {
+    "type": "minecraft:magma_cube",
+    "weight": 100,
+    "minCount": 1,
+    "maxCount": 4
+  },
+  "precipitation": "snow",
+  "water_color": 16711680,
+  "biomes": "#minecraft:is_badlands",
+  "generation_stage": "TOP_LAYER_MODIFICATION",
+  "features": "biome_modifiers_test:large_basalt_columns",
+  "type": "biome_modifiers_test:test"
+}

@@ -53,6 +53,7 @@ import net.minecraft.world.level.levelgen.feature.treedecorators.TreeDecoratorTy
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.loot.GlobalLootModifierSerializer;
 import net.minecraftforge.common.util.LogMessageAdapter;
+import net.minecraftforge.common.world.BiomeModifierSerializer;
 import net.minecraftforge.common.world.ForgeWorldPreset;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.RegistryEvent.MissingMappings;
@@ -172,6 +173,11 @@ public class GameData
     static RegistryBuilder<ForgeWorldPreset> getWorldTypesRegistryBuilder()
     {
         return makeRegistry(WORLD_TYPES, ForgeWorldPreset.class).disableSaving().disableSync();
+    }
+
+    static RegistryBuilder<BiomeModifierSerializer<?>> getBiomeModifierSerializersRegistryBuilder()
+    {
+        return makeRegistry(BIOME_MODIFIER_SERIALIZERS, c(BiomeModifierSerializer.class)).disableSaving().disableSync();
     }
 
     @SuppressWarnings("unchecked") //Ugly hack to let us pass in a typed Class object. Remove when we remove type specific references.
