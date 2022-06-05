@@ -27,7 +27,13 @@
              }
           }
  
-@@ -625,7 +_,8 @@
+@@ -620,12 +_,13 @@
+    public void m_93069_(PoseStack p_93070_) {
+       this.f_92986_.m_91307_().m_6180_("selectedItemName");
+       if (this.f_92993_ > 0 && !this.f_92994_.m_41619_()) {
+-         MutableComponent mutablecomponent = (new TextComponent("")).m_7220_(this.f_92994_.m_41786_()).m_130940_(this.f_92994_.m_41791_().f_43022_);
++         MutableComponent mutablecomponent = (new TextComponent("")).m_7220_(this.f_92994_.m_41786_()).m_130938_(this.f_92994_.m_41791_().getStyleModifier());
+          if (this.f_92994_.m_41788_()) {
              mutablecomponent.m_130940_(ChatFormatting.ITALIC);
           }
  

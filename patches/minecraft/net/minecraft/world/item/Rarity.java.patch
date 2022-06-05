@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/item/Rarity.java
 +++ b/net/minecraft/world/item/Rarity.java
-@@ -2,7 +_,7 @@
+@@ -2,15 +_,36 @@
  
  import net.minecraft.ChatFormatting;
  
@@ -9,13 +9,32 @@
     COMMON(ChatFormatting.WHITE),
     UNCOMMON(ChatFormatting.YELLOW),
     RARE(ChatFormatting.AQUA),
-@@ -12,5 +_,9 @@
+    EPIC(ChatFormatting.LIGHT_PURPLE);
+ 
++   /** @deprecated Forge: Use {@link #getStyleModifier()} */
++   @Deprecated
+    public final ChatFormatting f_43022_;
++   private final java.util.function.UnaryOperator<net.minecraft.network.chat.Style> styleModifier;
  
     private Rarity(ChatFormatting p_43028_) {
        this.f_43022_ = p_43028_;
++      this.styleModifier = style -> style.m_131140_(p_43028_);
++   }
++
++   Rarity(java.util.function.UnaryOperator<net.minecraft.network.chat.Style> styleModifier) {
++      this.f_43022_ = ChatFormatting.BLACK;
++      this.styleModifier = styleModifier;
++   }
++
++   public java.util.function.UnaryOperator<net.minecraft.network.chat.Style> getStyleModifier() {
++      return this.styleModifier;
 +   }
 +
 +   public static Rarity create(String name, ChatFormatting p_43028_) {
++      throw new IllegalStateException("Enum not extended");
++   }
++
++   public static Rarity create(String name, java.util.function.UnaryOperator<net.minecraft.network.chat.Style> styleModifier) {
 +      throw new IllegalStateException("Enum not extended");
     }
  }
