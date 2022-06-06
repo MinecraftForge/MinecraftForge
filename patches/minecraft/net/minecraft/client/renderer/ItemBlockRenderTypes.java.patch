@@ -42,7 +42,7 @@
           if (!Minecraft.m_91085_()) {
              return Sheets.m_110792_();
           } else {
-@@ -340,9 +_,65 @@
+@@ -340,12 +_,87 @@
        }
     }
  
@@ -50,61 +50,83 @@
     public static RenderType m_109287_(FluidState p_109288_) {
        RenderType rendertype = f_109276_.get(p_109288_.m_76152_());
        return rendertype != null ? rendertype : RenderType.m_110451_();
-+   }
-+
+    }
+ 
 +   // FORGE START
 +
 +   private static final java.util.function.Predicate<RenderType> SOLID_PREDICATE = type -> type == RenderType.m_110451_();
-+   private static volatile Map<net.minecraftforge.registries.IRegistryDelegate<Block>, java.util.function.Predicate<RenderType>> blockRenderChecks = createRenderCheckMap(f_109275_);
-+   private static volatile Map<net.minecraftforge.registries.IRegistryDelegate<Fluid>, java.util.function.Predicate<RenderType>> fluidRenderChecks = createRenderCheckMap(f_109276_);
-+
-+   private static <T extends net.minecraftforge.registries.ForgeRegistryEntry<T>> Map<net.minecraftforge.registries.IRegistryDelegate<T>, java.util.function.Predicate<RenderType>> createRenderCheckMap(Map<T, RenderType> vanillaMap) {
-+      return copyRenderCheckMap(vanillaMap.entrySet().stream()
-+              .collect(java.util.stream.Collectors.toMap(e -> e.getKey().delegate, e -> createMatchingLayerPredicate(e.getValue()))));
-+   }
-+
-+   private static <T> Map<net.minecraftforge.registries.IRegistryDelegate<T>, java.util.function.Predicate<RenderType>> copyRenderCheckMap(Map<net.minecraftforge.registries.IRegistryDelegate<T>, java.util.function.Predicate<RenderType>> source) {
-+      return Util.m_137469_(new it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap<>(source, 0.5F), map -> map.defaultReturnValue(SOLID_PREDICATE));
-+   }
-+
-+   private static <T> Map<net.minecraftforge.registries.IRegistryDelegate<T>, java.util.function.Predicate<RenderType>> copyAndAddRenderCheck(Map<net.minecraftforge.registries.IRegistryDelegate<T>, java.util.function.Predicate<RenderType>> source, net.minecraftforge.registries.IRegistryDelegate<T> key, java.util.function.Predicate<RenderType> predicate) {
-+      var map = copyRenderCheckMap(source);
-+      map.put(key, predicate);
-+      return map;
-+   }
++   private static final RenderChecks<Block> BLOCK_RENDER_CHECKS = new RenderChecks<>(f_109275_);
++   private static final RenderChecks<Fluid> FLUID_RENDER_CHECKS = new RenderChecks<>(f_109276_);
 +
 +   public static boolean canRenderInLayer(BlockState state, RenderType type) {
 +      Block block = state.m_60734_();
 +      if (block instanceof LeavesBlock) {
 +         return f_109277_ ? type == RenderType.m_110457_() : type == RenderType.m_110451_();
 +      } else {
-+         return blockRenderChecks.get(block.delegate).test(type);
++         return BLOCK_RENDER_CHECKS.test(block, type);
 +      }
 +   }
 +
 +   public static boolean canRenderInLayer(FluidState fluid, RenderType type) {
-+      return fluidRenderChecks.get(fluid.m_76152_().delegate).test(type);
++      return FLUID_RENDER_CHECKS.test(fluid.m_76152_(), type);
 +   }
 +
 +   public static void setRenderLayer(Block block, RenderType type) {
-+      setRenderLayer(block, createMatchingLayerPredicate(type));
++      BLOCK_RENDER_CHECKS.set(block, type);
 +   }
 +
-+   public static synchronized void setRenderLayer(Block block, java.util.function.Predicate<RenderType> predicate) {
-+      blockRenderChecks = copyAndAddRenderCheck(blockRenderChecks, block.delegate, predicate);
++   public static void setRenderLayer(Block block, java.util.function.Predicate<RenderType> predicate) {
++      BLOCK_RENDER_CHECKS.set(block, predicate);
 +   }
 +
 +   public static void setRenderLayer(Fluid fluid, RenderType type) {
-+      setRenderLayer(fluid, createMatchingLayerPredicate(type));
++      FLUID_RENDER_CHECKS.set(fluid, type);
 +   }
 +
-+   public static synchronized void setRenderLayer(Fluid fluid, java.util.function.Predicate<RenderType> predicate) {
-+      fluidRenderChecks = copyAndAddRenderCheck(fluidRenderChecks, fluid.delegate, predicate);
++   public static void setRenderLayer(Fluid fluid, java.util.function.Predicate<RenderType> predicate) {
++      FLUID_RENDER_CHECKS.set(fluid, predicate);
 +   }
 +
-+   private static java.util.function.Predicate<RenderType> createMatchingLayerPredicate(RenderType type) {
-+      java.util.Objects.requireNonNull(type);
-+      return type::equals;
-    }
- 
     public static void m_109291_(boolean p_109292_) {
+       f_109277_ = p_109292_;
++   }
++
++   private static class RenderChecks<T extends net.minecraftforge.registries.ForgeRegistryEntry<T>> {
++      private final Map<net.minecraftforge.registries.IRegistryDelegate<T>, java.util.function.Predicate<RenderType>> checks = Maps.newHashMap();
++      @javax.annotation.Nullable
++      private volatile java.util.function.BiPredicate<T, RenderType> testFunction;
++
++      public RenderChecks(Map<T, RenderType> vanillaTypes) {
++         vanillaTypes.forEach((entry, type) -> this.checks.put(entry.delegate, matchesType(type)));
++      }
++
++      public void set(T entry, RenderType type) {
++         this.set(entry, matchesType(type));
++      }
++
++      public synchronized void set(T entry, java.util.function.Predicate<RenderType> predicate) {
++         this.checks.put(entry.delegate, predicate);
++         this.testFunction = null;
++      }
++
++      public boolean test(T entry, RenderType type) {
++         var testFunction = this.testFunction;
++         if (testFunction == null) {
++            synchronized (this) {
++               this.testFunction = testFunction = this.buildTestFunction();
++            }
++         }
++         return testFunction.test(entry, type);
++      }
++
++      private java.util.function.BiPredicate<T, RenderType> buildTestFunction() {
++         var lookup = new it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap<>(this.checks, 0.5F);
++         lookup.defaultReturnValue(SOLID_PREDICATE);
++         return (entry, type) -> lookup.get(entry.delegate).test(type);
++      }
++
++      private static java.util.function.Predicate<RenderType> matchesType(RenderType type) {
++         return java.util.Objects.requireNonNull(type)::equals;
++      }
+    }
+ }
