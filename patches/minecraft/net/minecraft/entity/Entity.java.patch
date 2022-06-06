@@ -262,6 +262,24 @@
           }
        } else {
           return null;
+@@ -2154,7 +_,7 @@
+                   vector3d = new Vector3d(0.5D, 0.0D, 0.0D);
+                }
+ 
+-               return PortalSize.func_242963_a(p_241829_1_, p_242275_2_, direction$axis, vector3d, this.func_213305_a(this.func_213283_Z()), this.func_213322_ci(), this.field_70177_z, this.field_70125_A);
++               return PortalSize.func_242963_a(p_241829_1_, p_242275_2_, direction$axis, vector3d, this.getDimensionsForge(this.func_213283_Z()), this.func_213322_ci(), this.field_70177_z, this.field_70125_A);
+             }).orElse((PortalInfo)null);
+          }
+       } else {
+@@ -2170,7 +_,7 @@
+    }
+ 
+    protected Vector3d func_241839_a(Direction.Axis p_241839_1_, TeleportationRepositioner.Result p_241839_2_) {
+-      return PortalSize.func_242973_a(p_241839_2_, p_241839_1_, this.func_213303_ch(), this.func_213305_a(this.func_213283_Z()));
++      return PortalSize.func_242973_a(p_241839_2_, p_241839_1_, this.func_213303_ch(), this.getDimensionsForge(this.func_213283_Z()));
+    }
+ 
+    protected Optional<TeleportationRepositioner.Result> func_241830_a(ServerWorld p_241830_1_, BlockPos p_241830_2_, boolean p_241830_3_) {
 @@ -2321,8 +_,10 @@
        EntitySize entitysize = this.field_213325_aI;
        Pose pose = this.func_213283_Z();
@@ -274,6 +292,45 @@
        if (entitysize1.field_220315_a < entitysize.field_220315_a) {
           double d0 = (double)entitysize1.field_220315_a / 2.0D;
           this.func_174826_a(new AxisAlignedBB(this.func_226277_ct_() - d0, this.func_226278_cu_(), this.func_226281_cx_() - d0, this.func_226277_ct_() + d0, this.func_226278_cu_() + (double)entitysize1.field_220316_b, this.func_226281_cx_() + d0));
+@@ -2363,7 +_,7 @@
+    }
+ 
+    protected AxisAlignedBB func_213321_d(Pose p_213321_1_) {
+-      EntitySize entitysize = this.func_213305_a(p_213321_1_);
++      EntitySize entitysize = this.getDimensionsForge(p_213321_1_);
+       float f = entitysize.field_220315_a / 2.0F;
+       Vector3d vector3d = new Vector3d(this.func_226277_ct_() - (double)f, this.func_226278_cu_(), this.func_226281_cx_() - (double)f);
+       Vector3d vector3d1 = new Vector3d(this.func_226277_ct_() + (double)f, this.func_226278_cu_() + (double)entitysize.field_220316_b, this.func_226281_cx_() + (double)f);
+@@ -2374,13 +_,17 @@
+       this.field_70121_D = p_174826_1_;
+    }
+ 
++   /**
++    * @deprecated Can be overridden but call {@link #getEyeHeightForge(Pose, EntitySize)} instead.
++    */
++   @Deprecated
+    protected float func_213316_a(Pose p_213316_1_, EntitySize p_213316_2_) {
+       return p_213316_2_.field_220316_b * 0.85F;
+    }
+ 
+    @OnlyIn(Dist.CLIENT)
+    public float func_213307_e(Pose p_213307_1_) {
+-      return this.func_213316_a(p_213307_1_, this.func_213305_a(p_213307_1_));
++      return this.getEyeHeightForge(p_213307_1_, this.getDimensionsForge(p_213307_1_));
+    }
+ 
+    public final float func_70047_e() {
+@@ -2720,6 +_,10 @@
+ 
+    public abstract IPacket<?> func_213297_N();
+ 
++   /**
++    * @deprecated Can be overridden but call {@link #getDimensionsForge(Pose)} instead.
++    */
++   @Deprecated
+    public EntitySize func_213305_a(Pose p_213305_1_) {
+       return this.field_200606_g.func_220334_j();
+    }
 @@ -2796,6 +_,7 @@
  
           this.field_233555_aA_ = true;
@@ -282,7 +339,7 @@
  
     }
  
-@@ -2810,5 +_,72 @@
+@@ -2810,5 +_,85 @@
     @FunctionalInterface
     public interface IMoveCallback {
        void accept(Entity p_accept_1_, double p_accept_2_, double p_accept_4_, double p_accept_6_);
@@ -353,5 +410,18 @@
 +    */
 +   public float getEyeHeightAccess(Pose pose, EntitySize size) {
 +      return this.func_213316_a(pose, size);
++   }
++
++   public EntitySize getDimensionsForge(Pose pose) {
++      EntitySize size = this.func_213305_a(pose);
++      float eyeHeight = this.func_213316_a(pose, size);
++      net.minecraftforge.event.entity.EntityEvent.Size e = net.minecraftforge.event.ForgeEventFactory.getEntitySizeForge(this, pose, size, eyeHeight);
++      return e.getNewSize();
++   }
++
++   protected float getEyeHeightForge(Pose pose, EntitySize size) {
++      float eyeHeight = this.func_213316_a(pose, size);
++      net.minecraftforge.event.entity.EntityEvent.Size e = net.minecraftforge.event.ForgeEventFactory.getEntitySizeForge(this, pose, size, eyeHeight);
++      return e.getNewEyeHeight();
     }
  }
