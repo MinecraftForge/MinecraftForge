@@ -20,7 +20,6 @@ import com.mojang.brigadier.CommandDispatcher;
 import net.minecraft.server.ReloadableServerResources;
 import net.minecraft.server.players.PlayerList;
 import net.minecraft.world.Container;
-import net.minecraft.world.entity.projectile.FireworkRocketEntity;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.entity.projectile.ThrownEnderpearl;
 import net.minecraft.world.level.portal.PortalShape;
@@ -35,7 +34,6 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.Zombie;
@@ -62,6 +60,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.network.chat.ChatType;
 import net.minecraft.network.chat.Component;
@@ -71,7 +70,6 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.Level;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.level.biome.MobSpawnSettings;
 import net.minecraft.world.level.storage.ServerLevelData;
 import net.minecraft.world.level.storage.PlayerDataStorage;
 import net.minecraftforge.api.distmarker.Dist;
@@ -123,6 +121,7 @@ import net.minecraftforge.event.entity.player.SleepingLocationCheckEvent;
 import net.minecraftforge.event.entity.player.SleepingTimeCheckEvent;
 import net.minecraftforge.event.entity.player.UseHoeEvent;
 import net.minecraftforge.event.furnace.FurnaceFuelBurnTimeEvent;
+import net.minecraftforge.event.item.SweepHitBoxEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.BlockEvent.BlockToolInteractEvent;
 import net.minecraftforge.event.world.BlockEvent.BlockToolModificationEvent;
@@ -938,4 +937,12 @@ public class ForgeEventFactory
     {
         MinecraftForge.EVENT_BUS.post(new TickEvent.ServerTickEvent(TickEvent.Phase.END, haveTime));
     }
+
+    public static AABB onSweepHitBox(ItemStack stack, Player player, Entity target, AABB hitBox)
+    {
+        SweepHitBoxEvent event = new SweepHitBoxEvent(player, stack, target, hitBox);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event.getResultHitBox();
+    }
+
 }

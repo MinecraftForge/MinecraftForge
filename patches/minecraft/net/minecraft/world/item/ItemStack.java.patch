@@ -244,7 +244,7 @@
              return p_204127_.m_131144_(new HoverEvent(HoverEvent.Action.f_130832_, new HoverEvent.ItemStackInfo(this)));
           });
        }
-@@ -957,12 +_,31 @@
+@@ -957,6 +_,8 @@
        this.m_41720_().m_5929_(p_41732_, p_41733_, this, p_41734_);
     }
  
@@ -253,11 +253,10 @@
     public void m_150924_(ItemEntity p_150925_) {
        this.m_41720_().m_142023_(p_150925_);
     }
- 
-    public boolean m_41614_() {
+@@ -965,6 +_,23 @@
        return this.m_41720_().m_41472_();
-+   }
-+
+    }
+ 
 +   // FORGE START
 +   public void deserializeNBT(CompoundTag nbt) {
 +      final ItemStack itemStack = ItemStack.m_41712_(nbt);
@@ -273,6 +272,22 @@
 +         this.gatherCapabilities(() -> f_41589_.initCapabilities(this, this.capNBT));
 +         if (this.capNBT != null) deserializeCaps(this.capNBT);
 +      }
-    }
- 
++   }
++
     public SoundEvent m_41615_() {
+       return this.m_41720_().m_6023_();
+    }
+@@ -977,6 +_,13 @@
+    public SoundEvent m_150920_() {
+       return this.m_41720_().m_142602_();
+    }
++
++   @Override
++   public net.minecraft.world.phys.AABB getSweepHitBox(Player player, Entity target) {
++      net.minecraft.world.phys.AABB hitBox = net.minecraftforge.common.extensions.IForgeItemStack.super.getSweepHitBox(player, target);
++      return net.minecraftforge.event.ForgeEventFactory.onSweepHitBox(this, player, target, hitBox);
++   }
++
+ 
+    public static enum TooltipPart {
+       ENCHANTMENTS,
