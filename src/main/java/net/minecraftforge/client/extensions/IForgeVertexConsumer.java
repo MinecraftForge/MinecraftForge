@@ -12,6 +12,7 @@ import com.mojang.blaze3d.vertex.VertexFormat;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraftforge.client.model.pipeline.LightUtil;
 
+import org.jetbrains.annotations.Nullable;
 import org.lwjgl.system.MemoryStack;
 
 import java.nio.Buffer;
@@ -26,7 +27,12 @@ import net.minecraft.core.Vec3i;
 
 public interface IForgeVertexConsumer
 {
-    VertexFormat getVertexFormat();
+    // TODO 1.19: Make not default and not nullable
+    @Nullable
+    default VertexFormat getVertexFormat()
+    {
+        return null;
+    }
 
     // Copy of putBulkData, but enables tinting and per-vertex alpha
     default void putBulkData(PoseStack.Pose poseStack, BakedQuad bakedQuad, float red, float green, float blue, int packedLight, int packedOverlay, boolean readExistingColor) {

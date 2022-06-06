@@ -8,7 +8,6 @@ package net.minecraftforge.client.model.pipeline;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 
 import com.mojang.blaze3d.vertex.VertexFormatElement;
-import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormat;
@@ -99,10 +98,10 @@ public class VertexBufferConsumer implements IVertexConsumer
         setVertexFormat(buffer.getVertexFormat());
     }
 
-    public void setVertexFormat(VertexFormat format)
+    public void setVertexFormat(@Nullable VertexFormat format)
     {
-        this.format = format;
-        this.elements = format.getElements();
+        this.format = format != null ? format : DefaultVertexFormat.BLOCK;
+        this.elements = this.format.getElements();
     }
 
     @Override
