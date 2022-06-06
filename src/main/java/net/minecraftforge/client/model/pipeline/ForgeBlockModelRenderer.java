@@ -43,6 +43,7 @@ public class ForgeBlockModelRenderer extends ModelBlockRenderer
         {
             VertexBufferConsumer consumer = consumerFlat.get();
             consumer.setBuffer(buffer);
+            consumer.setPackedOverlay(packedOverlay);
 
             VertexLighterFlat lighter = lighterFlat.get();
             lighter.setParent(consumer);
@@ -63,6 +64,7 @@ public class ForgeBlockModelRenderer extends ModelBlockRenderer
         {
             VertexBufferConsumer consumer = consumerSmooth.get();
             consumer.setBuffer(buffer);
+            consumer.setPackedOverlay(packedOverlay);
 
             VertexLighterSmoothAo lighter = lighterSmooth.get();
             lighter.setParent(consumer);
