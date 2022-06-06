@@ -1485,8 +1485,8 @@ public class ForgeHooks
         }
     }
   
-    private static BannerPattern[] nonPatternItems;
-    private static int totalPatternRows;
+    private static BannerPattern[] nonPatternItems= Arrays.stream(BannerPattern.values()).filter(p -> !p.hasPatternItem).toArray(BannerPattern[]::new);
+    private static int totalPatternRows = (nonPatternItems.length + 2) / 4;
 
     public static void refreshBannerPatternData()
     {
