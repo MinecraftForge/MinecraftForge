@@ -43,7 +43,7 @@ public class SweepHitBoxEvent extends PlayerItemStackEvent {
 	}
 
 	/**
-	 * modify the hit box
+	 * Set the hitbox.
 	 */
 	public void setResultHitBox(AABB hitBox) {
 		resultHitBox = hitBox;
