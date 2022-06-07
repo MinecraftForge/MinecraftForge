@@ -213,7 +213,7 @@ public class FluidAttributes
      */
     public Component getDisplayName(FluidStack stack)
     {
-        return new TranslatableComponent(getTranslationKey());
+        return new TranslatableComponent(getTranslationKey(stack));
     }
 
     /**
