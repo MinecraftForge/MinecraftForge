@@ -10,9 +10,9 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.world.ModifiableBiomeInfo.BiomeInfo.Builder;
 
-public class NoBiomeModifier extends BiomeModifier
+public class NoneBiomeModifier extends BiomeModifier
 {
-    public static final NoBiomeModifier INSTANCE = new NoBiomeModifier();
+    public static final NoneBiomeModifier INSTANCE = new NoneBiomeModifier();
 
     @Override
     public void modify(Holder<Biome> biome, Phase phase, Builder builder)
@@ -23,6 +23,6 @@ public class NoBiomeModifier extends BiomeModifier
     @Override
     public BiomeModifierSerializer<?> type()
     {
-        return ForgeMod.NO_BIOME_MODIFIER.get();
+        return ForgeMod.NONE_BIOME_MODIFIER_TYPE.get();
     }
 }

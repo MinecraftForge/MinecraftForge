@@ -31,7 +31,7 @@ import net.minecraftforge.common.loot.CanToolPerformAction;
 import net.minecraftforge.common.loot.GlobalLootModifierSerializer;
 import net.minecraftforge.common.loot.LootTableIdCondition;
 import net.minecraftforge.common.world.BiomeModifierSerializer;
-import net.minecraftforge.common.world.NoBiomeModifier;
+import net.minecraftforge.common.world.NoneBiomeModifier;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fluids.FluidAttributes;
@@ -125,7 +125,7 @@ public class ForgeMod
     /**
      * Noop biome modifier. Can be used in a biome modifier json with "type": "forge:none".
      */
-    public static final RegistryObject<BiomeModifierSerializer<?>> NO_BIOME_MODIFIER = BIOME_MODIFIER_SERIALIZERS.register("none", () -> new BiomeModifierSerializer<>(Codec.unit(NoBiomeModifier.INSTANCE)));
+    public static final RegistryObject<BiomeModifierSerializer<?>> NONE_BIOME_MODIFIER_TYPE = BIOME_MODIFIER_SERIALIZERS.register("none", () -> new BiomeModifierSerializer<>(Codec.unit(NoneBiomeModifier.INSTANCE)));
 
 
     private static boolean enableMilkFluid = false;
