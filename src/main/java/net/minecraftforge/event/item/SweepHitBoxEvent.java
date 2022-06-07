@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) Forge Development LLC and contributors
+ * SPDX-License-Identifier: LGPL-2.1-only
+ */
+
 package net.minecraftforge.event.item;
 
 import net.minecraft.world.entity.Entity;
@@ -8,13 +13,15 @@ import net.minecraft.world.phys.AABB;
 /**
  * Event that modifies the Sweeping Edge Hit Box of items
  */
-public class SweepHitBoxEvent extends PlayerItemStackEvent {
+public class SweepHitBoxEvent extends PlayerItemStackEvent
+{
 
 	private final Entity target;
 	private final AABB originalHitBox;
 	private AABB resultHitBox;
 
-	public SweepHitBoxEvent(Player player, ItemStack stack, Entity target, AABB hitBox) {
+	public SweepHitBoxEvent(Player player, ItemStack stack, Entity target, AABB hitBox)
+	{
 		super(player, stack);
 		this.target = target;
 		this.originalHitBox = hitBox;
@@ -24,28 +31,32 @@ public class SweepHitBoxEvent extends PlayerItemStackEvent {
 	/**
 	 * @return the entity being attacked
 	 */
-	public Entity getTarget() {
+	public Entity getTarget()
+	{
 		return target;
 	}
 
 	/**
 	 * @return the original hitbox as given by the item
 	 */
-	public AABB getOriginalHitBox() {
+	public AABB getOriginalHitBox()
+	{
 		return originalHitBox;
 	}
 
 	/**
-	 * get modified hit box
+	 * @return get modified hit box
 	 */
-	public AABB getResultHitBox() {
+	public AABB getResultHitBox()
+	{
 		return resultHitBox;
 	}
 
 	/**
 	 * Set the hitbox.
 	 */
-	public void setResultHitBox(AABB hitBox) {
+	public void setResultHitBox(AABB hitBox)
+	{
 		resultHitBox = hitBox;
 	}
 
@@ -53,7 +64,8 @@ public class SweepHitBoxEvent extends PlayerItemStackEvent {
 	 * Inflates the hitbox by the specified amount.
 	 * @see AABB#inflate
 	 */
-	public void inflate(double x, double y, double z) {
+	public void inflate(double x, double y, double z)
+	{
 		resultHitBox = resultHitBox.inflate(x, y, z);
 	}
 

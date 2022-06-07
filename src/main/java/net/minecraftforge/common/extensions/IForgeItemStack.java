@@ -494,7 +494,8 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundTag>
     @Nonnull
     default AABB getSweepHitBox(@Nonnull Player player, @Nonnull Entity target)
     {
-        return self().getItem().getSweepHitBox(self(), player, target);
+        AABB hitBox = self().getItem().getSweepHitBox(self(), player, target);
+        return net.minecraftforge.event.ForgeEventFactory.onSweepHitBox(self(), player, target, hitBox);
     }
 
     /**
