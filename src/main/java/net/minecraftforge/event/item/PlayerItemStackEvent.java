@@ -15,17 +15,17 @@ import net.minecraftforge.event.entity.player.PlayerEvent;
 public abstract class PlayerItemStackEvent extends PlayerEvent
 {
 
-	private final ItemStack stack;
+    private final ItemStack stack;
 
-	public PlayerItemStackEvent(Player user, ItemStack stack)
-	{
-		super(user);
-		this.stack = stack;
-	}
+    public PlayerItemStackEvent(Player user, ItemStack stack)
+    {
+        super(user);
+        this.stack = stack;
+    }
 
-	public ItemStack getStack()
-	{
-		return stack;
-	}
+    public ItemStack getStack()
+    {
+        return stack;
+    }
 
 }
