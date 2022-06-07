@@ -50,7 +50,8 @@ public class SweepHitBoxEvent extends PlayerItemStackEvent {
 	}
 
 	/**
-	 * inflate the hit box
+	 * Inflates the hitbox by the specified amount.
+	 * @see AABB#inflate
 	 */
 	public void inflate(double x, double y, double z) {
 		resultHitBox = resultHitBox.inflate(x, y, z);
