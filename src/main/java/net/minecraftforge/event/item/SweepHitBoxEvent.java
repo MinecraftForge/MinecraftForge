@@ -45,7 +45,7 @@ public class SweepHitBoxEvent extends PlayerItemStackEvent
 	}
 
 	/**
-	 * @return modified hitbox
+	 * @return the modified hitbox
 	 */
 	public AABB getResultHitBox()
 	{
