@@ -5,7 +5,6 @@
 
 package net.minecraftforge.event;
 
-import net.minecraft.network.chat.MessageSignature;
 import net.minecraft.network.protocol.game.ServerboundChatPacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.network.chat.Component;
@@ -13,8 +12,8 @@ import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Cancelable;
-
-import javax.annotation.Nullable;
+import net.minecraftforge.eventbus.api.Event;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * ServerChatEvent is fired whenever a C01PacketChatMessage is processed. <br>
@@ -34,12 +33,15 @@ import javax.annotation.Nullable;
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  **/
 @Cancelable
-public class ServerChatEvent extends net.minecraftforge.eventbus.api.Event
+public class ServerChatEvent extends Event
 {
     private final String message;
-    private final @Nullable String username;
-    private final @Nullable ServerPlayer player;
+    @Nullable
+    private final String username;
+    @Nullable
+    private final ServerPlayer player;
     private Component component;
+
     public ServerChatEvent(@Nullable ServerPlayer player, String message, Component component)
     {
         super();

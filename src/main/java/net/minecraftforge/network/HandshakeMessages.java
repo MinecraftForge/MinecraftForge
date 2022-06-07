@@ -11,7 +11,6 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.forgespi.language.IModInfo;
-import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.registries.DataPackRegistriesHooks;
 import net.minecraftforge.registries.ForgeRegistry;
 import net.minecraftforge.registries.RegistryManager;
@@ -24,11 +23,10 @@ import java.util.Set;
 import java.util.function.IntSupplier;
 import java.util.stream.Collectors;
 
-import javax.annotation.Nullable;
-
 import org.apache.commons.lang3.tuple.Pair;
 
 import com.google.common.collect.Maps;
+import org.jetbrains.annotations.Nullable;
 
 public class HandshakeMessages
 {
