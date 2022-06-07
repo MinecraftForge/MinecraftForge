@@ -1488,6 +1488,10 @@ public class ForgeHooks
     private static BannerPattern[] nonPatternItems;
     private static int totalPatternRows;
 
+    static
+    {
+        refreshBannerPatternData();
+    }
     public static void refreshBannerPatternData()
     {
         nonPatternItems = Arrays.stream(BannerPattern.values())
