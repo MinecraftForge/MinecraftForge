@@ -9,12 +9,12 @@
     public static final Codec<Biome> f_47429_ = RecordCodecBuilder.create((p_186636_) -> {
        return p_186636_.group(Biome.ClimateSettings.f_47679_.forGetter((p_151717_) -> {
 -         return p_151717_.f_47437_;
-+         return p_151717_.modifiableBiomeInfo.getOriginalBiomeInfo().climateSettings(); // FORGE: Patch codec to ignore field redirect coremods.
++         return p_151717_.modifiableBiomeInfo().getOriginalBiomeInfo().climateSettings(); // FORGE: Patch codec to ignore field redirect coremods.
        }), Biome.BiomeCategory.f_47631_.fieldOf("category").forGetter((p_151715_) -> {
           return p_151715_.f_47442_;
        }), BiomeSpecialEffects.f_47926_.fieldOf("effects").forGetter((p_186644_) -> {
 -         return p_186644_.f_47443_;
-+         return p_186644_.modifiableBiomeInfo.getOriginalBiomeInfo().effects(); // FORGE: Patch codec to ignore field redirect coremods.
++         return p_186644_.modifiableBiomeInfo().getOriginalBiomeInfo().effects(); // FORGE: Patch codec to ignore field redirect coremods.
        }), BiomeGenerationSettings.f_47778_.forGetter((p_186642_) -> {
           return p_186642_.f_47438_;
        }), MobSpawnSettings.f_48327_.forGetter((p_186640_) -> {
@@ -39,7 +39,7 @@
  
     public MobSpawnSettings m_47518_() {
 -      return this.f_47439_;
-+      return this.modifiableBiomeInfo.get().mobSpawnSettings();
++      return this.modifiableBiomeInfo().get().mobSpawnSettings();
     }
  
     public Biome.Precipitation m_47530_() {
@@ -48,7 +48,7 @@
  
     public BiomeGenerationSettings m_47536_() {
 -      return this.f_47438_;
-+      return this.modifiableBiomeInfo.get().generationSettings();
++      return this.modifiableBiomeInfo().get().generationSettings();
     }
  
     public int m_47539_() {
@@ -73,14 +73,14 @@
 +    * {@return The biome's climate settings, with modifications if called after modifiers are applied in server init.}
 +    */
 +   public ClimateSettings getModifiedClimateSettings() {
-+      return this.modifiableBiomeInfo.get().climateSettings();
++      return this.modifiableBiomeInfo().get().climateSettings();
 +   }
 +   
 +   /**
 +    * {@return The biome's client effects, with modifications if called after modifiers are applied in server init.}
 +    */
 +   public BiomeSpecialEffects getModifiedSpecialEffects() {
-+      return this.modifiableBiomeInfo.get().effects();
++      return this.modifiableBiomeInfo().get().effects();
 +   }
 +   
 +   // forge end
