@@ -11,7 +11,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.AABB;
 
 /**
- * Event that modifies the Sweeping Edge Hit Box of items
+ * Event that modifies the Sweeping Edge Hitbox of items
  */
 public class SweepHitBoxEvent extends PlayerItemStackEvent
 {
@@ -45,7 +45,7 @@ public class SweepHitBoxEvent extends PlayerItemStackEvent
 	}
 
 	/**
-	 * @return get modified hit box
+	 * @return modified hitbox
 	 */
 	public AABB getResultHitBox()
 	{
