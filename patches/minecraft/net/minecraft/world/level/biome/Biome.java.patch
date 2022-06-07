@@ -52,25 +52,36 @@
     }
  
     public int m_47539_() {
-@@ -491,5 +_,21 @@
-       public static Biome.TemperatureModifier m_47756_(String p_47757_) {
+@@ -492,4 +_,32 @@
           return f_47739_.get(p_47757_);
        }
-+   }
-+   /** FORGE: Cache of biome data modified by biome modifiers, set by server after datapacks and serverconfigs load. Climate and effects field reads are coremodded to redirect to this.**/
-+   public final net.minecraftforge.common.world.ModifiableBiomeInfo modifiableBiomeInfo;
-+   /**
-+    * {@return The biome's climate settings, with modifications if called after modifiers are applied in server init.
-+    */
-+   public ClimateSettings getModifiedClimateSettings()
-+   {
-+       return this.modifiableBiomeInfo.get().climateSettings();
-+   }
-+   /**
-+    * {@return The biome's client effects, with modifications if called after modifiers are applied in server init.
-+    */
-+   public BiomeSpecialEffects getModifiedSpecialEffects()
-+   {
-+       return this.modifiableBiomeInfo.get().effects();
     }
++   // forge start
++   private final net.minecraftforge.common.world.ModifiableBiomeInfo modifiableBiomeInfo;
++   
++   /**
++    * {@return Cache of original biome data and biome data modified by biome modifiers}
++    * Modified biome data is set by server after datapacks and serverconfigs load.
++    * Climate and effects field reads are coremodded to redirect to this.
++    **/
++   public net.minecraftforge.common.world.ModifiableBiomeInfo modifiableBiomeInfo()
++   {
++       return this.modifiableBiomeInfo;
++   }
++   
++   /**
++    * {@return The biome's climate settings, with modifications if called after modifiers are applied in server init.}
++    */
++   public ClimateSettings getModifiedClimateSettings() {
++      return this.modifiableBiomeInfo.get().climateSettings();
++   }
++   
++   /**
++    * {@return The biome's client effects, with modifications if called after modifiers are applied in server init.}
++    */
++   public BiomeSpecialEffects getModifiedSpecialEffects() {
++      return this.modifiableBiomeInfo.get().effects();
++   }
++   
++   // forge end
  }

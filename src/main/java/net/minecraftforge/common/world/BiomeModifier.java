@@ -21,12 +21,12 @@ import net.minecraftforge.registries.ForgeRegistryEntry;
  * <p>JSON-serializable biome modifier. Implement this in a subclass and register a {@link BiomeModifierSerializer}
  * for that class to read your biome modifier from biome modifier jsons.</p>
  * <p>Biome Modifier jsons have the following json format:</p>
-<pre>
-{
-    "type": "yourmod:yourserializer", // Indicates a registered serializer/codec.
-    // Additional fields can be specified here according to the serializer codec.
-}
-</pre>
+ * <pre>
+ * {
+ *   "type": "yourmod:yourserializer", // Indicates a registered serializer/codec.
+ *   // Additional fields can be specified here according to the serializer codec.
+ * }
+ * </pre>
  * <p>The loading conditions are parsed first (if any), the rest of the json will not be loaded if the conditions fail.
  * If the loading conditions pass, the serializer codec is read secondly, which is used to parse the rest of the BiomeModifier json.
  * Datapacks can also disable a biome modifier by overriding the json with an empty {} object.</p>
@@ -56,8 +56,11 @@ public abstract class BiomeModifier extends ForgeRegistryEntry<BiomeModifier>
     public static final Codec<HolderSet<BiomeModifier>> LIST_CODEC = RegistryCodecs.homogeneousList(ForgeRegistries.Keys.BIOME_MODIFIERS, DIRECT_CODEC);
     
     /**
+     * Modifies the information via the provided biome builder.
+     * Allows mob spawns and worldgen features to be added or removed,
+     * and climate and client effects to be modified.
      * @param biome the named biome being modified (with original data readable).
-     * @param phase Biome modification phase.
+     * @param phase Biome modification phase. Biome modifiers apply in each phase in enum order.
      * @param builder mutable biome info builder. Apply changes to this.
      */
     public abstract void modify(Holder<Biome> biome, Phase phase, BiomeInfo.Builder builder);
@@ -72,7 +75,7 @@ public abstract class BiomeModifier extends ForgeRegistryEntry<BiomeModifier>
         /**
          * Catch-all for anything that needs to run before standard phases.
          */
-        BEFORE_ADD,
+        BEFORE_EVERYTHING,
         /**
          * Additional features, mob spawns, etc.
          */
@@ -88,6 +91,6 @@ public abstract class BiomeModifier extends ForgeRegistryEntry<BiomeModifier>
         /**
          * Catch-all for anything that needs to run after standard phases.
          */
-        AFTER_MODIFY
+        AFTER_EVERYTHING
     }
 }

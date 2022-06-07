@@ -9,7 +9,7 @@
     private final Supplier<List<BiomeSource.StepFeatureData>> f_186695_;
  
     protected BiomeSource(Stream<Holder<Biome>> p_47896_) {
-@@ -49,10 +_,14 @@
+@@ -49,10 +_,15 @@
     }
  
     protected BiomeSource(List<Holder<Biome>> p_47894_) {
@@ -19,6 +19,7 @@
 -      });
 +       this(() -> p_47894_); // FORGE: Redirect vanilla constructor to forge's lazy constructor.
 +   }
++   
 +   protected BiomeSource(Supplier<List<Holder<Biome>>> biomes)
 +   {
 +       this.lazyPossibleBiomes = Suppliers.memoize(() -> new ObjectLinkedOpenHashSet<>(biomes.get()));

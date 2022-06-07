@@ -175,11 +175,6 @@ public class GameData
         return makeRegistry(WORLD_TYPES, ForgeWorldPreset.class).disableSaving().disableSync();
     }
 
-    static RegistryBuilder<BiomeModifierSerializer<?>> getBiomeModifierSerializersRegistryBuilder()
-    {
-        return makeRegistry(BIOME_MODIFIER_SERIALIZERS, c(BiomeModifierSerializer.class)).disableSaving().disableSync();
-    }
-
     @SuppressWarnings("unchecked") //Ugly hack to let us pass in a typed Class object. Remove when we remove type specific references.
     static <T> Class<T> c(Class<?> cls) { return (Class<T>)cls; }
 

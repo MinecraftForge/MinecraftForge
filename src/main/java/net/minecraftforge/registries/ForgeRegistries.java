@@ -100,7 +100,7 @@ public class ForgeRegistries
     static final DeferredRegister<ForgeWorldPreset> DEFERRED_WORLD_TYPES = DeferredRegister.create(Keys.WORLD_TYPES, Keys.WORLD_TYPES.location().getNamespace());
     public static final Supplier<IForgeRegistry<ForgeWorldPreset>> WORLD_TYPES = DEFERRED_WORLD_TYPES.makeRegistry(ForgeWorldPreset.class, GameData::getWorldTypesRegistryBuilder);
     static final DeferredRegister<BiomeModifierSerializer<?>> DEFERRED_BIOME_MODIFIER_SERIALIZERS = DeferredRegister.create(Keys.BIOME_MODIFIER_SERIALIZERS, Keys.BIOME_MODIFIER_SERIALIZERS.location().getNamespace());
-    public static final Supplier<IForgeRegistry<BiomeModifierSerializer<?>>> BIOME_MODIFIER_SERIALIZERS = DEFERRED_BIOME_MODIFIER_SERIALIZERS.makeRegistry(GameData.c(BiomeModifierSerializer.class), GameData::getBiomeModifierSerializersRegistryBuilder);
+    public static final Supplier<IForgeRegistry<BiomeModifierSerializer<?>>> BIOME_MODIFIER_SERIALIZERS = DEFERRED_BIOME_MODIFIER_SERIALIZERS.makeRegistry(GameData.c(BiomeModifierSerializer.class), () -> new RegistryBuilder<BiomeModifierSerializer<?>>().disableSaving().disableSync());
     
     // Custom forge datapack registries
     static final DeferredRegister<BiomeModifier> DEFERRED_BIOME_MODIFIERS = DeferredRegister.create(Keys.BIOME_MODIFIERS, "forge");

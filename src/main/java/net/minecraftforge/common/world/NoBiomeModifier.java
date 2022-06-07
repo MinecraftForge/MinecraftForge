@@ -25,5 +25,4 @@ public class NoBiomeModifier extends BiomeModifier
     {
         return ForgeMod.NO_BIOME_MODIFIER.get();
     }
-
 }

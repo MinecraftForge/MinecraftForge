@@ -17,7 +17,7 @@ import net.minecraft.world.level.biome.BiomeSpecialEffects;
 /**
  * Extension of the vanilla builder but also provides read access and a copy-from-existing-data helper.
  * Also, the base builder crashes if certain values aren't specified on build, so this enforces the setting of those.
- **/
+ */
 public class BiomeSpecialEffectsBuilder extends BiomeSpecialEffects.Builder
 {
     public static BiomeSpecialEffectsBuilder copyOf(BiomeSpecialEffects baseEffects)

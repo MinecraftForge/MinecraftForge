@@ -239,7 +239,7 @@ public class ServerLifecycleHooks
         // Apply sorted biome modifiers to each biome.
         registries.registryOrThrow(Registry.BIOME_REGISTRY).holders().forEach(biomeHolder ->
         {
-            biomeHolder.value().modifiableBiomeInfo.applyBiomeModifiers(biomeHolder, modifiers);
+            biomeHolder.value().modifiableBiomeInfo().applyBiomeModifiers(biomeHolder, modifiers);
         });
     }
 }

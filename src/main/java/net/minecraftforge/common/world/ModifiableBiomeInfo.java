@@ -8,9 +8,9 @@ package net.minecraftforge.common.world;
 import java.util.List;
 import java.util.Locale;
 
-import javax.annotation.Nullable;
-
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.core.Holder;
 import net.minecraft.world.level.biome.Biome;
@@ -26,6 +26,7 @@ import net.minecraft.world.level.biome.MobSpawnSettings;
  */
 public class ModifiableBiomeInfo
 {
+    @NotNull
     private final BiomeInfo originalBiomeInfo;
     @Nullable
     private BiomeInfo modifiedBiomeInfo = null;
@@ -33,7 +34,7 @@ public class ModifiableBiomeInfo
     /**
      * @param originalBiomeInfo BiomeInfo representing the original state of a biome when the biome was constructed.
      */
-    public ModifiableBiomeInfo(final BiomeInfo originalBiomeInfo)
+    public ModifiableBiomeInfo(@NotNull final BiomeInfo originalBiomeInfo)
     {
         this.originalBiomeInfo = originalBiomeInfo;
     }
@@ -41,6 +42,7 @@ public class ModifiableBiomeInfo
     /**
      * {@return The modified biome info if modified biome info has been generated, otherwise gets original biome info}
      */
+    @NotNull
     public BiomeInfo get()
     {
         return this.modifiedBiomeInfo == null
@@ -51,6 +53,7 @@ public class ModifiableBiomeInfo
     /**
      * {@return The original biome info that the associated biome was created with}
      */
+    @NotNull
     public BiomeInfo getOriginalBiomeInfo()
     {
         return this.originalBiomeInfo;
