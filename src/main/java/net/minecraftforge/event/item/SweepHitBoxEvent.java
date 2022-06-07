@@ -29,7 +29,7 @@ public class SweepHitBoxEvent extends PlayerItemStackEvent {
 	}
 
 	/**
-	 * get the original hit box provided by the Item
+	 * @return the original hitbox as given by the item
 	 */
 	public AABB getOriginalHitBox() {
 		return originalHitBox;
