@@ -14,7 +14,9 @@ import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.MobCategory;
+import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.SpawnEggItem;
 import net.minecraft.world.item.ItemStack;
@@ -25,6 +27,8 @@ import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.ForgeSpawnEggItem;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.entity.PartEntity;
+import net.minecraftforge.event.ForgeEventFactory;
+import net.minecraftforge.event.entity.EntityEvent;
 
 public interface IForgeEntity extends ICapabilitySerializable<CompoundTag>
 {
@@ -211,5 +215,20 @@ public interface IForgeEntity extends ICapabilitySerializable<CompoundTag>
             }
         }
         return vanillaStep;
+    }
+
+    default EntityDimensions getDimensionsForge(Pose pose)
+    {
+        EntityDimensions size = self().getDimensions(pose);
+        float eyeHeight = self().getEyeHeightAccess(pose, size);
+        EntityEvent.Size e = ForgeEventFactory.getEntitySizeForge(self(), pose, size, eyeHeight);
+        return e.getNewSize();
+    }
+
+    default float getEyeHeightForge(Pose pose, EntityDimensions size)
+    {
+        float eyeHeight = self().getEyeHeightAccess(pose, size);
+        EntityEvent.Size e = ForgeEventFactory.getEntitySizeForge(self(), pose, size, eyeHeight);
+        return e.getNewEyeHeight();
     }
 }

@@ -372,7 +372,7 @@
  
     }
  
-@@ -3061,6 +_,89 @@
+@@ -3061,6 +_,76 @@
     public boolean m_142265_(Level p_146843_, BlockPos p_146844_) {
        return true;
     }
@@ -442,19 +442,6 @@
 +    */
 +   public float getEyeHeightAccess(Pose pose, EntityDimensions size) {
 +      return this.m_6380_(pose, size);
-+   }
-+
-+   public EntityDimensions getDimensionsForge(Pose pose) {
-+      EntityDimensions size = this.m_6972_(pose);
-+      float eyeHeight = this.m_6380_(pose, size);
-+      net.minecraftforge.event.entity.EntityEvent.Size e = net.minecraftforge.event.ForgeEventFactory.getEntitySizeForge(this, pose, size, eyeHeight);
-+      return e.getNewSize();
-+   }
-+
-+   protected float getEyeHeightForge(Pose pose, EntityDimensions size) {
-+      float eyeHeight = this.m_6380_(pose, size);
-+      net.minecraftforge.event.entity.EntityEvent.Size e = net.minecraftforge.event.ForgeEventFactory.getEntitySizeForge(this, pose, size, eyeHeight);
-+      return e.getNewEyeHeight();
 +   }
 +
 +   /* ================================== Forge End =====================================*/
