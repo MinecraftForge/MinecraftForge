@@ -24,12 +24,10 @@ import net.minecraftforge.registries.ForgeRegistryEntry;
  * <pre>
  * {
  *   "type": "yourmod:yourserializer", // Indicates a registered serializer/codec.
- *   // Additional fields can be specified here according to the serializer codec.
+ *   // Additional fields can be specified here according to the codec.
  * }
  * </pre>
- * <p>The loading conditions are parsed first (if any), the rest of the json will not be loaded if the conditions fail.
- * If the loading conditions pass, the serializer codec is read secondly, which is used to parse the rest of the BiomeModifier json.
- * Datapacks can also disable a biome modifier by overriding the json with an empty {} object.</p>
+ * <p>Datapacks can also disable a biome modifier by overriding the json and using {@code "type": "forge:none"}.</p>
  * <p>TODO 1.19: Remove `extends ForgeRegistryEntry` and make this an interface.</p>
  */
 public abstract class BiomeModifier extends ForgeRegistryEntry<BiomeModifier>
