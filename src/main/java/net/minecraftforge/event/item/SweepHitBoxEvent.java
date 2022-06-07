@@ -22,7 +22,7 @@ public class SweepHitBoxEvent extends PlayerItemStackEvent {
 	}
 
 	/**
-	 * get the attacked entity
+	 * @return the entity being attacked
 	 */
 	public Entity getTarget() {
 		return target;
