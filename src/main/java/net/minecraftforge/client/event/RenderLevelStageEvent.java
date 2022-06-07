@@ -13,8 +13,10 @@ import javax.annotation.Nullable;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Matrix4f;
 
+import net.minecraft.client.Camera;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.ForgeRenderTypes;
 import net.minecraftforge.eventbus.api.Event;
@@ -32,9 +34,10 @@ public class RenderLevelStageEvent extends Event
     private final Matrix4f projectionMatrix;
     private final int renderTick;
     private final float partialTick;
-    private final double camX, camY, camZ;
+    private final Camera camera;
+    private final Frustum frustum;
 
-    public RenderLevelStageEvent(Stage stage, LevelRenderer levelRenderer, PoseStack poseStack, Matrix4f projectionMatrix, int renderTick, float partialTick, double camX, double camY, double camZ)
+    public RenderLevelStageEvent(Stage stage, LevelRenderer levelRenderer, PoseStack poseStack, Matrix4f projectionMatrix, int renderTick, float partialTick, Camera camera, Frustum frustum)
     {
         this.stage = stage;
         this.levelRenderer = levelRenderer;
@@ -42,9 +45,8 @@ public class RenderLevelStageEvent extends Event
         this.projectionMatrix = projectionMatrix;
         this.renderTick = renderTick;
         this.partialTick = partialTick;
-        this.camX = camX;
-        this.camY = camY;
-        this.camZ = camZ;
+        this.camera = camera;
+        this.frustum = frustum;
     }
 
     /**
@@ -87,19 +89,14 @@ public class RenderLevelStageEvent extends Event
         return partialTick;
     }
 
-    public double getCamX()
+    public Camera getCamera()
     {
-        return camX;
+        return camera;
     }
 
-    public double getCamY()
+    public Frustum getFrustum()
     {
-        return camY;
-    }
-
-    public double getCamZ()
-    {
-        return camZ;
+        return frustum;
     }
 
     /**

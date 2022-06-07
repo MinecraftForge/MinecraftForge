@@ -24,14 +24,6 @@
        float f = this.f_109461_.f_91073_.m_46722_(1.0F) / (Minecraft.m_91405_() ? 1.0F : 2.0F);
        if (!(f <= 0.0F)) {
           Random random = new Random((long)this.f_109477_ * 312987231L);
-@@ -1098,6 +_,7 @@
-    }
- 
-    public void m_109599_(PoseStack p_109600_, float p_109601_, long p_109602_, boolean p_109603_, Camera p_109604_, GameRenderer p_109605_, LightTexture p_109606_, Matrix4f p_109607_) {
-+      net.minecraftforge.client.ForgeHooksClient.partialTick = p_109601_;
-       RenderSystem.m_157447_(this.f_109465_.m_46467_(), p_109601_);
-       this.f_172946_.m_173564_(this.f_109465_, p_109604_, this.f_109461_.f_91077_);
-       this.f_109463_.m_114408_(this.f_109465_, p_109604_, this.f_109461_.f_91076_);
 @@ -1134,20 +_,24 @@
        RenderSystem.m_69421_(16640, Minecraft.f_91002_);
        float f = p_109605_.m_109152_();
@@ -43,7 +35,7 @@
 -         FogRenderer.m_109024_(p_109604_, FogRenderer.FogMode.FOG_SKY, f, flag2);
 +         FogRenderer.setupFog(p_109604_, FogRenderer.FogMode.FOG_SKY, f, flag2, p_109601_);
        });
-+      net.minecraftforge.client.ForgeHooksClient.dispatchRenderStage(net.minecraftforge.client.event.RenderLevelStageEvent.Stage.AFTER_SKY, this, p_109600_, p_109607_, this.f_109477_, d0, d1, d2);
++      net.minecraftforge.client.ForgeHooksClient.dispatchRenderStage(net.minecraftforge.client.event.RenderLevelStageEvent.Stage.AFTER_SKY, this, p_109600_, p_109607_, this.f_109477_, p_109604_, frustum);
        profilerfiller.m_6182_("fog");
 -      FogRenderer.m_109024_(p_109604_, FogRenderer.FogMode.FOG_TERRAIN, Math.max(f, 32.0F), flag2);
 +      FogRenderer.setupFog(p_109604_, FogRenderer.FogMode.FOG_TERRAIN, Math.max(f, 32.0F), flag2, p_109601_);
@@ -104,7 +96,7 @@
           profilerfiller.m_6182_("particles");
 -         this.f_109461_.f_91061_.m_107336_(p_109600_, multibuffersource$buffersource, p_109606_, p_109604_, p_109601_);
 +         this.f_109461_.f_91061_.render(p_109600_, multibuffersource$buffersource, p_109606_, p_109604_, p_109601_, frustum);
-+         net.minecraftforge.client.ForgeHooksClient.dispatchRenderStage(net.minecraftforge.client.event.RenderLevelStageEvent.Stage.AFTER_PARTICLES, this, p_109600_, p_109607_, this.f_109477_, d0, d1, d2);
++         net.minecraftforge.client.ForgeHooksClient.dispatchRenderStage(net.minecraftforge.client.event.RenderLevelStageEvent.Stage.AFTER_PARTICLES, this, p_109600_, p_109607_, this.f_109477_, p_109604_, frustum);
           RenderStateShard.f_110126_.m_110188_();
        } else {
           profilerfiller.m_6182_("translucent");
@@ -114,7 +106,7 @@
           profilerfiller.m_6182_("particles");
 -         this.f_109461_.f_91061_.m_107336_(p_109600_, multibuffersource$buffersource, p_109606_, p_109604_, p_109601_);
 +         this.f_109461_.f_91061_.render(p_109600_, multibuffersource$buffersource, p_109606_, p_109604_, p_109601_, frustum);
-+         net.minecraftforge.client.ForgeHooksClient.dispatchRenderStage(net.minecraftforge.client.event.RenderLevelStageEvent.Stage.AFTER_PARTICLES, this, p_109600_, p_109607_, this.f_109477_, d0, d1, d2);
++         net.minecraftforge.client.ForgeHooksClient.dispatchRenderStage(net.minecraftforge.client.event.RenderLevelStageEvent.Stage.AFTER_PARTICLES, this, p_109600_, p_109607_, this.f_109477_, p_109604_, frustum);
        }
  
        posestack.m_85836_();
@@ -122,7 +114,7 @@
           RenderStateShard.f_110127_.m_110185_();
           profilerfiller.m_6182_("weather");
           this.m_109703_(p_109606_, p_109601_, d0, d1, d2);
-+         net.minecraftforge.client.ForgeHooksClient.dispatchRenderStage(net.minecraftforge.client.event.RenderLevelStageEvent.Stage.AFTER_WEATHER, this, p_109600_, p_109607_, this.f_109477_, d0, d1, d2);
++         net.minecraftforge.client.ForgeHooksClient.dispatchRenderStage(net.minecraftforge.client.event.RenderLevelStageEvent.Stage.AFTER_WEATHER, this, p_109600_, p_109607_, this.f_109477_, p_109604_, frustum);
           this.m_173012_(p_109604_);
           RenderStateShard.f_110127_.m_110188_();
           this.f_109418_.m_110023_(p_109601_);
@@ -130,7 +122,7 @@
           RenderSystem.m_69458_(false);
           profilerfiller.m_6182_("weather");
           this.m_109703_(p_109606_, p_109601_, d0, d1, d2);
-+         net.minecraftforge.client.ForgeHooksClient.dispatchRenderStage(net.minecraftforge.client.event.RenderLevelStageEvent.Stage.AFTER_WEATHER, this, p_109600_, p_109607_, this.f_109477_, d0, d1, d2);
++         net.minecraftforge.client.ForgeHooksClient.dispatchRenderStage(net.minecraftforge.client.event.RenderLevelStageEvent.Stage.AFTER_WEATHER, this, p_109600_, p_109607_, this.f_109477_, p_109604_, frustum);
           this.m_173012_(p_109604_);
           RenderSystem.m_69458_(true);
        }
@@ -138,7 +130,7 @@
        VertexBuffer.m_85931_();
        VertexBuffer.m_166875_();
        this.f_109461_.m_91307_().m_7238_();
-+      net.minecraftforge.client.ForgeHooksClient.dispatchRenderStage(p_172994_, this, p_172995_, p_172999_, this.f_109477_, p_172996_, p_172997_, p_172998_);
++      net.minecraftforge.client.ForgeHooksClient.dispatchRenderStage(p_172994_, this, p_172995_, p_172999_, this.f_109477_, this.f_109461_.f_91063_.m_109153_(), this.f_109442_ != null ? this.f_109442_ : this.f_172938_);
        p_172994_.m_110188_();
     }
  

@@ -162,8 +162,9 @@ public class RenderableTest
             else if (stage == Stage.AFTER_WEATHER)
                 xOffset = 5;
 
+            Vec3 cam = event.getCamera().getPosition();
             if (xOffset > -1)
-                render(stage, event.getPoseStack(), event.getRenderTick(), event.getPartialTick(), event.getCamX(), event.getCamY(), event.getCamZ(), xOffset);
+                render(stage, event.getPoseStack(), event.getRenderTick(), event.getPartialTick(), cam.x, cam.y, cam.z, xOffset);
         }
 
         private static void render(Stage stage, PoseStack poseStack, int renderTick, float partialTick, double camX, double camY, double camZ, int xOffset)

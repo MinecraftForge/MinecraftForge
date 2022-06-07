@@ -53,6 +53,7 @@ import net.minecraft.client.color.item.ItemColors;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
+import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.client.resources.model.ModelManager;
 import net.minecraft.client.resources.model.Material;
 import net.minecraft.client.renderer.texture.TextureAtlas;
@@ -229,25 +230,19 @@ public class ForgeHooksClient
         MinecraftForge.EVENT_BUS.post(new RenderLevelLastEvent(context, poseStack, partialTick, projectionMatrix, finishTimeNano));
     }
 
-    /**
-     * The current partial ticks when LevelRenderer.renderLevel is called.
-     * Use this for places where partial ticks are unavailable, but do not modify it.
-     */
-    public static float partialTick = 0.0F;
-
-    public static void dispatchRenderStage(RenderLevelStageEvent.Stage stage, LevelRenderer levelRenderer, PoseStack poseStack, Matrix4f projectionMatrix, int renderTick, double camX, double camY, double camZ)
+    public static void dispatchRenderStage(RenderLevelStageEvent.Stage stage, LevelRenderer levelRenderer, PoseStack poseStack, Matrix4f projectionMatrix, int renderTick, Camera camera, Frustum frustum)
     {
         var profiler = Minecraft.getInstance().getProfiler();
         profiler.push(stage.toString());
-        MinecraftForge.EVENT_BUS.post(new RenderLevelStageEvent(stage, levelRenderer, poseStack, projectionMatrix, renderTick, partialTick, camX, camY, camZ));
+        MinecraftForge.EVENT_BUS.post(new RenderLevelStageEvent(stage, levelRenderer, poseStack, projectionMatrix, renderTick, MinecraftForgeClient.getPartialTick(), camera, frustum));
         profiler.pop();
     }
 
-    public static void dispatchRenderStage(RenderType renderType, LevelRenderer levelRenderer, PoseStack poseStack, Matrix4f projectionMatrix, int renderTick, double camX, double camY, double camZ)
+    public static void dispatchRenderStage(RenderType renderType, LevelRenderer levelRenderer, PoseStack poseStack, Matrix4f projectionMatrix, int renderTick, Camera camera, Frustum frustum)
     {
         RenderLevelStageEvent.Stage stage = RenderLevelStageEvent.Stage.fromRenderType(renderType);
         if (stage != null)
-            dispatchRenderStage(stage, levelRenderer, poseStack, projectionMatrix, renderTick, camX, camY, camZ);
+            dispatchRenderStage(stage, levelRenderer, poseStack, projectionMatrix, renderTick, camera, frustum);
     }
 
     public static boolean renderSpecificFirstPersonHand(InteractionHand hand, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, float partialTick, float interpPitch, float swingProgress, float equipProgress, ItemStack stack)
