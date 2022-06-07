@@ -10,13 +10,12 @@ import com.mojang.authlib.GameProfile;
 
 import net.minecraft.core.Registry;
 import net.minecraft.network.Connection;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.handshake.ClientIntentionPacket;
 import net.minecraft.network.protocol.login.ClientboundCustomQueryPacket;
 import net.minecraft.network.protocol.login.ServerboundCustomQueryPacket;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.network.ServerLoginPacketListenerImpl;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.LogMessageAdapter;
@@ -191,7 +190,7 @@ public class HandshakeHandler
             LOGGER.error(FMLHSMARKER, "Terminating connection with server, mismatched mod list");
             //Populate the mod mismatch attribute with a new mismatch data instance to indicate that the disconnect happened due to a mod mismatch
             c.get().getNetworkManager().channel().attr(NetworkConstants.FML_MOD_MISMATCH_DATA).set(ModMismatchData.channel(mismatchedChannels, NetworkHooks.getConnectionData(c.get().getNetworkManager()), true));
-            c.get().getNetworkManager().disconnect(new TextComponent("Connection closed - mismatched mod channel list"));
+            c.get().getNetworkManager().disconnect(Component.literal("Connection closed - mismatched mod channel list"));
             return;
         }
         // Validate synced custom datapack registries, client cannot be missing any present on the server.
@@ -208,7 +207,7 @@ public class HandshakeHandler
         }
         if (!missingDataPackRegistries.isEmpty())
         {
-            c.get().getNetworkManager().disconnect(new TranslatableComponent("fml.menu.multiplayer.missingdatapackregistries", String.join(", ", missingDataPackRegistries)));
+            c.get().getNetworkManager().disconnect(Component.translatable("fml.menu.multiplayer.missingdatapackregistries", String.join(", ", missingDataPackRegistries)));
             return;
         }
         NetworkConstants.handshakeChannel.reply(new HandshakeMessages.C2SModListReply(), c.get());
@@ -247,7 +246,7 @@ public class HandshakeHandler
         if (!mismatchedChannels.isEmpty()) {
             LOGGER.error(FMLHSMARKER, "Terminating connection with client, mismatched mod list");
             NetworkConstants.handshakeChannel.reply(new HandshakeMessages.S2CChannelMismatchData(mismatchedChannels), c.get());
-            c.get().getNetworkManager().disconnect(new TextComponent("Connection closed - mismatched mod channel list"));
+            c.get().getNetworkManager().disconnect(Component.literal("Connection closed - mismatched mod channel list"));
             return;
         }
         LOGGER.debug(FMLHSMARKER, "Accepted client connection mod list");
@@ -263,7 +262,7 @@ public class HandshakeHandler
             c.get().setPacketHandled(true);
             //Populate the mod mismatch attribute with a new mismatch data instance to indicate that the disconnect happened due to a mod mismatch
             c.get().getNetworkManager().channel().attr(NetworkConstants.FML_MOD_MISMATCH_DATA).set(ModMismatchData.channel(modMismatchData.getMismatchedChannelData(), NetworkHooks.getConnectionData(c.get().getNetworkManager()), false));
-            c.get().getNetworkManager().disconnect(new TextComponent("Connection closed - mismatched mod channel list"));
+            c.get().getNetworkManager().disconnect(Component.literal("Connection closed - mismatched mod channel list"));
         }
     }
 
@@ -314,7 +313,7 @@ public class HandshakeHandler
             LOGGER.error(FMLHSMARKER, "Failed to load registry, closing connection.");
             //Populate the mod mismatch attribute with a new mismatch data instance to indicate that the disconnect happened due to a mod mismatch
             this.manager.channel().attr(NetworkConstants.FML_MOD_MISMATCH_DATA).set(ModMismatchData.registry(registryMismatches.get(), NetworkHooks.getConnectionData(contextSupplier.get().getNetworkManager())));
-            this.manager.disconnect(new TextComponent("Failed to synchronize registry data from server, closing connection"));
+            this.manager.disconnect(Component.literal("Failed to synchronize registry data from server, closing connection"));
         }
         return successfulConnection.get();
     }

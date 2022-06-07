@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/inventory/GrindstoneMenu.java
 +++ b/net/minecraft/world/inventory/GrindstoneMenu.java
-@@ -144,12 +_,13 @@
+@@ -143,12 +_,13 @@
              }
  
              Item item = itemstack.m_41720_();

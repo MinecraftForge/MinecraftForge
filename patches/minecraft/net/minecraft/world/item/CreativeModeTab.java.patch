@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/item/CreativeModeTab.java
 +++ b/net/minecraft/world/item/CreativeModeTab.java
-@@ -85,18 +_,23 @@
+@@ -84,18 +_,23 @@
     private final String f_40763_;
     private final Component f_40764_;
     private String f_40765_;
@@ -19,14 +19,14 @@
     public CreativeModeTab(int p_40773_, String p_40774_) {
 -      this.f_40762_ = p_40773_;
        this.f_40763_ = p_40774_;
-       this.f_40764_ = new TranslatableComponent("itemGroup." + p_40774_);
+       this.f_40764_ = Component.m_237115_("itemGroup." + p_40774_);
        this.f_40770_ = ItemStack.f_41583_;
 -      f_40748_[p_40773_] = this;
 +      this.f_40762_ = addGroupSafe(p_40773_, this);
     }
  
     public int m_40775_() {
-@@ -121,15 +_,28 @@
+@@ -120,15 +_,28 @@
  
     public abstract ItemStack m_6976_();
  
@@ -55,7 +55,7 @@
     public CreativeModeTab m_40784_(String p_40785_) {
        this.f_40765_ = p_40785_;
        return this;
-@@ -154,10 +_,12 @@
+@@ -153,10 +_,12 @@
     }
  
     public int m_40793_() {
@@ -68,7 +68,7 @@
        return this.f_40762_ < 6;
     }
  
-@@ -191,5 +_,58 @@
+@@ -190,5 +_,58 @@
           item.m_6787_(this, p_40778_);
        }
  

@@ -113,7 +113,7 @@ public class CustomTransformTypeTest
     public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITY_TYPES = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITIES, MODID);
 
     public static final RegistryObject<Block>
-            ITEM_HANGER_BLOCK = BLOCKS.register("item_hanger", () -> new ItemHangerBlock(BlockBehaviour.Properties.of(Material.WOOL).noCollission().noOcclusion().noDrops()));
+            ITEM_HANGER_BLOCK = BLOCKS.register("item_hanger", () -> new ItemHangerBlock(BlockBehaviour.Properties.of(Material.WOOL).noCollission().noOcclusion().noLootTable()));
     public static final RegistryObject<BlockEntityType<ItemHangerBlockEntity>>
             ITEM_HANGER_BE = BLOCK_ENTITY_TYPES.register("item_hanger", () -> BlockEntityType.Builder.of(ItemHangerBlockEntity::new, ITEM_HANGER_BLOCK.get()).build(null));
     public static final RegistryObject<Item>
@@ -132,11 +132,8 @@ public class CustomTransformTypeTest
     {
         DataGenerator gen = event.getGenerator();
 
-        if (event.includeClient())
-        {
-            gen.addProvider(new ItemModels(gen, event.getExistingFileHelper()));
-            gen.addProvider(new BlockStateModels(gen, event.getExistingFileHelper()));
-        }
+        gen.addProvider(event.includeClient(), new ItemModels(gen, event.getExistingFileHelper()));
+        gen.addProvider(event.includeClient(), new BlockStateModels(gen, event.getExistingFileHelper()));
     }
 
     public static class BlockStateModels extends BlockStateProvider

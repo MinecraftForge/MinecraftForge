@@ -10,17 +10,12 @@ import net.minecraftforge.fml.loading.LibraryFinder;
 import net.minecraftforge.fml.loading.VersionInfo;
 import net.minecraftforge.api.distmarker.Dist;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import java.nio.file.Path;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.stream.Stream;
 
 public abstract class CommonClientLaunchHandler extends CommonLaunchHandler {
-    private static final Logger LOGGER = LogManager.getLogger();
-
     @Override public Dist getDist()  { return Dist.CLIENT; }
     @Override public String getNaming() { return "srg"; }
     @Override public boolean isProduction() { return true; }

@@ -5,6 +5,7 @@
 
 package net.minecraftforge.fml.loading;
 
+import com.mojang.logging.LogUtils;
 import cpw.mods.modlauncher.Launcher;
 import cpw.mods.modlauncher.api.IModuleLayerManager;
 import cpw.mods.modlauncher.util.ServiceLoaderUtils;
@@ -12,11 +13,10 @@ import net.minecraftforge.fml.loading.progress.StartupMessageManager;
 import net.minecraftforge.forgespi.language.IModLanguageProvider;
 import net.minecraftforge.fml.loading.moddiscovery.ExplodedDirectoryLocator;
 import net.minecraftforge.fml.loading.moddiscovery.ModFile;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 import org.apache.maven.artifact.versioning.VersionRange;
+import org.slf4j.Logger;
 
 import java.net.URISyntaxException;
 import java.nio.file.Files;
@@ -38,7 +38,7 @@ import static net.minecraftforge.fml.loading.LogMarkers.LOADING;
 
 public class LanguageLoadingProvider
 {
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger LOGGER = LogUtils.getLogger();
     private final List<IModLanguageProvider> languageProviders = new ArrayList<>();
     private final ServiceLoader<IModLanguageProvider> serviceLoader;
     private final Map<String, ModLanguageWrapper> languageProviderMap = new HashMap<>();
@@ -81,7 +81,7 @@ public class LanguageLoadingProvider
         loadLanguageProviders();
     }
     private void loadLanguageProviders() {
-        LOGGER.debug(CORE, "Found {} language providers", ServiceLoaderUtils.streamServiceLoader(()->serviceLoader, sce->LOGGER.fatal("Problem with language loaders")).count());
+        LOGGER.debug(CORE, "Found {} language providers", ServiceLoaderUtils.streamServiceLoader(()->serviceLoader, sce->LOGGER.error("Problem with language loaders")).count());
         serviceLoader.forEach(languageProviders::add);
 
         languageProviders.forEach(lp -> {
@@ -94,7 +94,7 @@ public class LanguageLoadingProvider
             Optional<String> implementationVersion = JarVersionLookupHandler.getImplementationVersion(lp.getClass());
             String impl = implementationVersion.orElse(Files.isDirectory(lpPath) ? FMLLoader.versionInfo().forgeVersion().split("\\.")[0] : null);
             if (impl == null) {
-                LOGGER.fatal(CORE, "Found unversioned language provider {}", lp.name());
+                LOGGER.error(CORE, "Found unversioned language provider {}", lp.name());
                 throw new RuntimeException("Failed to find implementation version for language provider "+ lp.name());
             }
             LOGGER.debug(CORE, "Found language provider {}, version {}", lp.name(), impl);

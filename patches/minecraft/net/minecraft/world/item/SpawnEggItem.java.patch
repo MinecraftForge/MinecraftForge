@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/item/SpawnEggItem.java
 +++ b/net/minecraft/world/item/SpawnEggItem.java
-@@ -39,11 +_,14 @@
+@@ -40,11 +_,14 @@
     private final int f_151201_;
     private final EntityType<?> f_43204_;
  
@@ -15,7 +15,7 @@
        f_43201_.put(p_43207_, this);
     }
  
-@@ -125,6 +_,8 @@
+@@ -128,6 +_,8 @@
        return p_43212_ == 0 ? this.f_151200_ : this.f_151201_;
     }
  

@@ -13,8 +13,8 @@
        this.f_39002_.m_6422_(0);
        this.f_39770_.m_39292_((p_150479_, p_150480_) -> {
           BlockState blockstate = p_150479_.m_8055_(p_150480_);
--         if (!p_150474_.m_150110_().f_35937_ && blockstate.m_204336_(BlockTags.f_13033_) && p_150474_.m_21187_().nextFloat() < 0.12F) {
-+         if (!p_150474_.m_150110_().f_35937_ && blockstate.m_204336_(BlockTags.f_13033_) && p_150474_.m_21187_().nextFloat() < breakChance) {
+-         if (!p_150474_.m_150110_().f_35937_ && blockstate.m_204336_(BlockTags.f_13033_) && p_150474_.m_217043_().m_188501_() < 0.12F) {
++         if (!p_150474_.m_150110_().f_35937_ && blockstate.m_204336_(BlockTags.f_13033_) && p_150474_.m_217043_().m_188501_() < breakChance) {
              BlockState blockstate1 = AnvilBlock.m_48824_(blockstate);
              if (blockstate1 == null) {
                 p_150479_.m_7471_(p_150480_, false);
@@ -33,7 +33,7 @@
                 if (l2 <= 0) {
 @@ -218,6 +_,7 @@
              i += k;
-             itemstack1.m_41714_(new TextComponent(this.f_39001_));
+             itemstack1.m_41714_(Component.m_237113_(this.f_39001_));
           }
 +         if (flag && !itemstack1.isBookEnchantable(itemstack2)) itemstack1 = ItemStack.f_41583_;
  

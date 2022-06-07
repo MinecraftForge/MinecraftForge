@@ -1,9 +1,9 @@
 --- a/net/minecraft/network/protocol/status/ServerStatus.java
 +++ b/net/minecraft/network/protocol/status/ServerStatus.java
-@@ -26,6 +_,16 @@
-    private ServerStatus.Version f_134902_;
+@@ -27,6 +_,16 @@
     @Nullable
     private String f_134903_;
+    private boolean f_238077_;
 +   private transient net.minecraftforge.network.ServerStatusPing forgeData;
 +
 +   public net.minecraftforge.network.ServerStatusPing getForgeData() {
@@ -17,7 +17,7 @@
  
     @Nullable
     public Component m_134905_() {
-@@ -34,6 +_,7 @@
+@@ -35,6 +_,7 @@
  
     public void m_134908_(Component p_134909_) {
        this.f_134900_ = p_134909_;
@@ -25,7 +25,7 @@
     }
  
     @Nullable
-@@ -43,6 +_,7 @@
+@@ -44,6 +_,7 @@
  
     public void m_134910_(ServerStatus.Players p_134911_) {
        this.f_134901_ = p_134911_;
@@ -33,7 +33,7 @@
     }
  
     @Nullable
-@@ -52,10 +_,12 @@
+@@ -53,10 +_,12 @@
  
     public void m_134912_(ServerStatus.Version p_134913_) {
        this.f_134902_ = p_134913_;
@@ -46,8 +46,8 @@
     }
  
     @Nullable
-@@ -63,6 +_,39 @@
-       return this.f_134903_;
+@@ -72,6 +_,39 @@
+       return this.f_238077_;
     }
  
 +   private java.util.concurrent.Semaphore mutex = new java.util.concurrent.Semaphore(1);
@@ -86,8 +86,8 @@
     public static class Players {
        private final int f_134917_;
        private final int f_134918_;
-@@ -157,6 +_,10 @@
-             serverstatus.m_134906_(GsonHelper.m_13906_(jsonobject, "favicon"));
+@@ -170,6 +_,10 @@
+             serverstatus.m_238078_(GsonHelper.m_13912_(jsonobject, "previewsChat"));
           }
  
 +         if (jsonobject.has("forgeData")) {
@@ -97,7 +97,7 @@
           return serverstatus;
        }
  
-@@ -176,6 +_,10 @@
+@@ -190,6 +_,10 @@
  
           if (p_134951_.m_134916_() != null) {
              jsonobject.addProperty("favicon", p_134951_.m_134916_());

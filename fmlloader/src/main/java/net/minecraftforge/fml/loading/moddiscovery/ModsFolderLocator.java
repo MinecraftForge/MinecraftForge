@@ -5,12 +5,12 @@
 
 package net.minecraftforge.fml.loading.moddiscovery;
 
+import com.mojang.logging.LogUtils;
 import net.minecraftforge.fml.loading.FMLPaths;
 import net.minecraftforge.fml.loading.LogMarkers;
 import net.minecraftforge.fml.loading.ModDirTransformerDiscoverer;
 import net.minecraftforge.fml.loading.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -25,7 +25,7 @@ import static cpw.mods.modlauncher.api.LamdbaExceptionUtils.uncheck;
  */
 public class ModsFolderLocator extends AbstractJarFileLocator {
     private static final String SUFFIX = ".jar";
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger LOGGER = LogUtils.getLogger();
     private final Path modFolder;
     private final String customName;
 

@@ -1,25 +1,24 @@
 --- a/net/minecraft/world/level/block/state/BlockBehaviour.java
 +++ b/net/minecraft/world/level/block/state/BlockBehaviour.java
-@@ -66,7 +_,8 @@
- import net.minecraft.world.phys.shapes.Shapes;
- import net.minecraft.world.phys.shapes.VoxelShape;
- 
--public abstract class BlockBehaviour {
-+//TODO, Delegates are weird here now, because Block extends this.
-+public abstract class BlockBehaviour extends net.minecraftforge.registries.ForgeRegistryEntry<Block> {
-    protected static final Direction[] f_60441_ = new Direction[]{Direction.WEST, Direction.EAST, Direction.NORTH, Direction.SOUTH, Direction.DOWN, Direction.UP};
-    protected final Material f_60442_;
-    protected final boolean f_60443_;
-@@ -93,6 +_,8 @@
+@@ -94,6 +_,17 @@
        this.f_60449_ = p_60452_.f_60893_;
        this.f_60438_ = p_60452_.f_60903_;
        this.f_60439_ = p_60452_;
 +      final ResourceLocation lootTableCache = p_60452_.f_60894_;
-+      this.lootTableSupplier = lootTableCache != null ? () -> lootTableCache : p_60452_.lootTableSupplier != null ? p_60452_.lootTableSupplier : () -> new ResourceLocation(this.getRegistryName().m_135827_(), "blocks/" + this.getRegistryName().m_135815_());
++      if (lootTableCache != null) {
++         this.lootTableSupplier = () -> lootTableCache;
++      } else if (p_60452_.lootTableSupplier != null) {
++         this.lootTableSupplier = p_60452_.lootTableSupplier;
++      } else {
++         this.lootTableSupplier = () -> {
++            ResourceLocation registryName = net.minecraftforge.registries.ForgeRegistries.BLOCKS.getKey((Block) this);
++            return new ResourceLocation(registryName.m_135827_(), "blocks/" + registryName.m_135815_());
++         };
++      }
     }
  
     /** @deprecated */
-@@ -141,7 +_,7 @@
+@@ -142,7 +_,7 @@
     /** @deprecated */
     @Deprecated
     public void m_6810_(BlockState p_60515_, Level p_60516_, BlockPos p_60517_, BlockState p_60518_, boolean p_60519_) {
@@ -28,7 +27,7 @@
           p_60516_.m_46747_(p_60517_);
        }
  
-@@ -222,7 +_,7 @@
+@@ -219,7 +_,7 @@
     /** @deprecated */
     @Deprecated
     public boolean m_6864_(BlockState p_60470_, BlockPlaceContext p_60471_) {
@@ -37,7 +36,7 @@
     }
  
     /** @deprecated */
-@@ -346,8 +_,8 @@
+@@ -349,8 +_,8 @@
        if (f == -1.0F) {
           return 0.0F;
        } else {
@@ -48,7 +47,7 @@
        }
     }
  
-@@ -380,8 +_,7 @@
+@@ -383,8 +_,7 @@
  
     public final ResourceLocation m_60589_() {
        if (this.f_60440_ == null) {
@@ -58,7 +57,7 @@
        }
  
        return this.f_60440_;
-@@ -404,6 +_,14 @@
+@@ -407,6 +_,14 @@
        return this.f_60439_.f_60888_;
     }
  
@@ -73,7 +72,7 @@
     public abstract static class BlockStateBase extends StateHolder<Block, BlockState> {
        private final int f_60594_;
        private final boolean f_60595_;
-@@ -482,18 +_,22 @@
+@@ -491,18 +_,22 @@
           return this.f_60595_;
        }
  
@@ -97,7 +96,7 @@
        public BlockState m_60717_(Rotation p_60718_) {
           return this.m_60734_().m_6843_(this.m_7160_(), p_60718_);
        }
-@@ -873,8 +_,9 @@
+@@ -885,8 +_,9 @@
        ResourceLocation f_60894_;
        boolean f_60895_ = true;
        boolean f_60896_;
@@ -108,14 +107,14 @@
        };
        BlockBehaviour.StatePredicate f_60898_ = (p_60985_, p_60986_, p_60987_) -> {
           return p_60985_.m_60767_().m_76337_() && p_60985_.m_60838_(p_60986_, p_60987_);
-@@ -1001,9 +_,15 @@
+@@ -1017,9 +_,15 @@
           return this;
        }
  
 +      @Deprecated // FORGE: Use the variant that takes a Supplier below
        public BlockBehaviour.Properties m_60916_(Block p_60917_) {
 -         this.f_60894_ = p_60917_.m_60589_();
-+         this.lootTableSupplier = () -> p_60917_.delegate.get().m_60589_();
++         this.lootTableSupplier = () -> net.minecraftforge.registries.ForgeRegistries.BLOCKS.getDelegateOrThrow(p_60917_).get().m_60589_();
           return this;
 +      }
 +

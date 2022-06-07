@@ -5,7 +5,7 @@
 
 package net.minecraftforge.debug.entity.player;
 
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -20,6 +20,6 @@ public class PlayerNameEventTest
     public static void onPlayerNameEvent(PlayerEvent.NameFormat event)
     {
         if (!ENABLE) return;
-        event.setDisplayname(new TextComponent("Test Name"));
+        event.setDisplayname(Component.literal("Test Name"));
     }
 }

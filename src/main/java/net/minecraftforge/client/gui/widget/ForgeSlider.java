@@ -7,7 +7,6 @@ package net.minecraftforge.client.gui.widget;
 
 import net.minecraft.client.gui.components.AbstractSliderButton;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.util.Mth;
 import org.lwjgl.glfw.GLFW;
 
@@ -47,7 +46,7 @@ public class ForgeSlider extends AbstractSliderButton
      */
     public ForgeSlider(int x, int y, int width, int height, Component prefix, Component suffix, double minValue, double maxValue, double currentValue, double stepSize, int precision, boolean drawString)
     {
-        super(x, y, width, height, TextComponent.EMPTY, 0D);
+        super(x, y, width, height, Component.empty(), 0D);
         this.prefix = prefix;
         this.suffix = suffix;
         this.minValue = minValue;
@@ -207,11 +206,11 @@ public class ForgeSlider extends AbstractSliderButton
     {
         if (this.drawString)
         {
-            this.setMessage(new TextComponent("").append(prefix).append(this.getValueString()).append(suffix));
+            this.setMessage(Component.literal("").append(prefix).append(this.getValueString()).append(suffix));
         }
         else
         {
-            this.setMessage(TextComponent.EMPTY);
+            this.setMessage(Component.empty());
         }
     }
 

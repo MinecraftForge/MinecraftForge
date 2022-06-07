@@ -9,7 +9,6 @@ import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.event.IModBusEvent;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
@@ -24,18 +23,26 @@ public interface IModStateTransition {
         return new NoopTransition();
     }
 
-    default <T extends Event & IModBusEvent> CompletableFuture<List<Throwable>> build(Executor syncExecutor, Executor parallelExecutor, Function<Executor, CompletableFuture<Void>> preSyncTask, Function<Executor, CompletableFuture<Void>> postSyncTask) {
-        List<CompletableFuture<List<Throwable>>> cfs = new ArrayList<>();
+    default <T extends Event & IModBusEvent>
+    CompletableFuture<Void> build(final Executor syncExecutor,
+                                  final Executor parallelExecutor,
+                                  final Function<Executor, CompletableFuture<Void>> preSyncTask,
+                                  final Function<Executor, CompletableFuture<Void>> postSyncTask) {
+        List<CompletableFuture<Void>> futures = new ArrayList<>();
+
         this.eventFunctionStream().get()
-                .map(f->(EventGenerator<T>)f)
-                .reduce((head, tail)-> addCompletableFutureTaskForModDispatch(syncExecutor, parallelExecutor, cfs, head, ModLoadingStage::currentState, tail))
-                .ifPresent(last-> addCompletableFutureTaskForModDispatch(syncExecutor, parallelExecutor, cfs, last, nextModLoadingStage(), null));
+                .map(f -> (EventGenerator<T>) f)
+                .reduce((head, tail) -> addCompletableFutureTaskForModDispatch(syncExecutor, parallelExecutor, futures, head, ModLoadingStage::currentState, tail))
+                .ifPresent(last -> addCompletableFutureTaskForModDispatch(syncExecutor, parallelExecutor, futures, last, nextModLoadingStage(), null));
+
         final CompletableFuture<Void> preSyncTaskCF = preSyncTask.apply(syncExecutor);
-        final CompletableFuture<List<Throwable>> eventDispatchCF = ModList.gather(cfs).thenCompose(ModList::completableFutureFromExceptionList);
-        final CompletableFuture<List<Throwable>> postEventDispatchCF = preSyncTaskCF.thenComposeAsync(n -> eventDispatchCF, parallelExecutor).thenApply(r -> {
-            postSyncTask.apply(syncExecutor);
-            return r;
-        });
+        final CompletableFuture<Void> eventDispatchCF = ModList.gather(futures).thenCompose(ModList::completableFutureFromExceptionList);
+        final CompletableFuture<Void> postEventDispatchCF = preSyncTaskCF
+                .thenComposeAsync(n -> eventDispatchCF, parallelExecutor)
+                .thenApply(r -> {
+                    postSyncTask.apply(syncExecutor);
+                    return null;
+                });
         return this.finalActivityGenerator().apply(syncExecutor, postEventDispatchCF);
     }
 
@@ -43,18 +50,31 @@ public interface IModStateTransition {
         return ModLoadingStage::nextState;
     }
 
-    private <T extends Event & IModBusEvent> EventGenerator<T> addCompletableFutureTaskForModDispatch(final Executor syncExecutor, final Executor parallelExecutor, final List<CompletableFuture<List<Throwable>>> completeableFutures, final EventGenerator<T> eventGenerator, BiFunction<ModLoadingStage, Throwable, ModLoadingStage> nextState, final EventGenerator<T> nextGenerator) {
-        completeableFutures.add(((BiFunction<Executor, EventGenerator<T>, CompletableFuture<List<Throwable>>>)preDispatchHook()).apply(threadSelector().apply(syncExecutor, parallelExecutor), eventGenerator));
-        completeableFutures.add(ModList.get().futureVisitor(eventGenerator, nextState).apply(threadSelector().apply(syncExecutor, parallelExecutor)));
-        completeableFutures.add(((BiFunction<Executor, EventGenerator<T>, CompletableFuture<List<Throwable>>>)postDispatchHook()).apply(threadSelector().apply(syncExecutor, parallelExecutor), eventGenerator));
+    private <T extends Event & IModBusEvent>
+    EventGenerator<T> addCompletableFutureTaskForModDispatch(final Executor syncExecutor,
+                                                             final Executor parallelExecutor,
+                                                             final List<CompletableFuture<Void>> completableFutures,
+                                                             final EventGenerator<T> eventGenerator,
+                                                             final BiFunction<ModLoadingStage, Throwable, ModLoadingStage> nextState,
+                                                             final EventGenerator<T> nextGenerator) {
+        final Executor selectedExecutor = threadSelector().apply(syncExecutor, parallelExecutor);
+
+        var preDispatchHook = (BiFunction<Executor, EventGenerator<T>, CompletableFuture<Void>>) preDispatchHook();
+        completableFutures.add(preDispatchHook.apply(selectedExecutor, eventGenerator));
+
+        completableFutures.add(ModList.get().futureVisitor(eventGenerator, nextState).apply(threadSelector().apply(syncExecutor, parallelExecutor)));
+
+        var postDispatchHook = (BiFunction<Executor, EventGenerator<T>, CompletableFuture<Void>>) postDispatchHook();
+        completableFutures.add(postDispatchHook.apply(selectedExecutor, eventGenerator));
+
         return nextGenerator;
     }
 
     Supplier<Stream<EventGenerator<?>>> eventFunctionStream();
     ThreadSelector threadSelector();
-    BiFunction<Executor, CompletableFuture<List<Throwable>>, CompletableFuture<List<Throwable>>> finalActivityGenerator();
-    BiFunction<Executor, ? extends EventGenerator<?>, CompletableFuture<List<Throwable>>> preDispatchHook();
-    BiFunction<Executor, ? extends EventGenerator<?>, CompletableFuture<List<Throwable>>> postDispatchHook();
+    BiFunction<Executor, CompletableFuture<Void>, CompletableFuture<Void>> finalActivityGenerator();
+    BiFunction<Executor, ? extends EventGenerator<?>, CompletableFuture<Void>> preDispatchHook();
+    BiFunction<Executor, ? extends EventGenerator<?>, CompletableFuture<Void>> postDispatchHook();
 
     interface EventGenerator<T extends Event & IModBusEvent> extends Function<ModContainer, T> {
         static <FN extends Event & IModBusEvent> EventGenerator<FN> fromFunction(Function<ModContainer, FN> fn) {
@@ -76,17 +96,17 @@ record NoopTransition() implements IModStateTransition {
     }
 
     @Override
-    public BiFunction<Executor, CompletableFuture<List<Throwable>>, CompletableFuture<List<Throwable>>> finalActivityGenerator() {
+    public BiFunction<Executor, CompletableFuture<Void>, CompletableFuture<Void>> finalActivityGenerator() {
         return (e, t) -> t.thenApplyAsync(Function.identity(), e);
     }
 
     @Override
-    public BiFunction<Executor, ? extends EventGenerator<?>, CompletableFuture<List<Throwable>>> preDispatchHook() {
-        return (t, f)-> CompletableFuture.completedFuture(Collections.emptyList());
+    public BiFunction<Executor, ? extends EventGenerator<?>, CompletableFuture<Void>> preDispatchHook() {
+        return (t, f)-> CompletableFuture.completedFuture(null);
     }
 
     @Override
-    public BiFunction<Executor, ? extends EventGenerator<?>, CompletableFuture<List<Throwable>>> postDispatchHook() {
-        return (t, f)-> CompletableFuture.completedFuture(Collections.emptyList());
+    public BiFunction<Executor, ? extends EventGenerator<?>, CompletableFuture<Void>> postDispatchHook() {
+        return (t, f)-> CompletableFuture.completedFuture(null);
     }
 }

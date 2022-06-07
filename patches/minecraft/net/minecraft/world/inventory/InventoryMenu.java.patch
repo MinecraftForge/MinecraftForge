@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/inventory/InventoryMenu.java
 +++ b/net/minecraft/world/inventory/InventoryMenu.java
-@@ -57,7 +_,7 @@
+@@ -63,7 +_,7 @@
              }
  
              public boolean m_5857_(ItemStack p_39746_) {

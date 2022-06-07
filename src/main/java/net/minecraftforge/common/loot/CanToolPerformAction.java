@@ -16,8 +16,8 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.world.level.storage.loot.predicates.LootItemConditionType;
 import net.minecraftforge.common.ToolAction;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
 import java.util.Set;
 
 /**
@@ -33,12 +33,12 @@ public class CanToolPerformAction implements LootItemCondition {
         this.action = action;
     }
 
-    @Nonnull
+    @NotNull
     public LootItemConditionType getType() {
         return LOOT_CONDITION_TYPE;
     }
 
-    @Nonnull
+    @NotNull
     public Set<LootContextParam<?>> getReferencedContextParams() {
         return ImmutableSet.of(LootContextParams.TOOL);
     }
@@ -53,12 +53,12 @@ public class CanToolPerformAction implements LootItemCondition {
     }
 
     public static class Serializer implements net.minecraft.world.level.storage.loot.Serializer<CanToolPerformAction> {
-        public void serialize(JsonObject json, CanToolPerformAction itemCondition, @Nonnull JsonSerializationContext context) {
+        public void serialize(JsonObject json, CanToolPerformAction itemCondition, @NotNull JsonSerializationContext context) {
             json.addProperty("action", itemCondition.action.name());
         }
 
-        @Nonnull
-        public CanToolPerformAction deserialize(JsonObject json, @Nonnull JsonDeserializationContext context) {
+        @NotNull
+        public CanToolPerformAction deserialize(JsonObject json, @NotNull JsonDeserializationContext context) {
             return new CanToolPerformAction(ToolAction.get(json.get("action").getAsString()));
         }
     }

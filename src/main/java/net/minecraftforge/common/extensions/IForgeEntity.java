@@ -6,7 +6,6 @@
 package net.minecraftforge.common.extensions;
 
 import java.util.Collection;
-import javax.annotation.Nullable;
 
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
@@ -25,6 +24,7 @@ import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.ForgeSpawnEggItem;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.entity.PartEntity;
+import org.jetbrains.annotations.Nullable;
 
 public interface IForgeEntity extends ICapabilitySerializable<CompoundTag>
 {

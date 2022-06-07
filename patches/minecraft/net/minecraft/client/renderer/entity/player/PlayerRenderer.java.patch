@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/entity/player/PlayerRenderer.java
 +++ b/net/minecraft/client/renderer/entity/player/PlayerRenderer.java
-@@ -58,7 +_,9 @@
+@@ -57,7 +_,9 @@
  
     public void m_7392_(AbstractClientPlayer p_117788_, float p_117789_, float p_117790_, PoseStack p_117791_, MultiBufferSource p_117792_, int p_117793_) {
        this.m_117818_(p_117788_);
@@ -10,16 +10,16 @@
     }
  
     public Vec3 m_7860_(AbstractClientPlayer p_117785_, float p_117786_) {
-@@ -123,7 +_,7 @@
-             if (useanim == UseAnim.SPYGLASS) {
-                return HumanoidModel.ArmPose.SPYGLASS;
+@@ -126,7 +_,7 @@
+             if (useanim == UseAnim.TOOT_HORN) {
+                return HumanoidModel.ArmPose.TOOT_HORN;
              }
 -         } else if (!p_117795_.f_20911_ && itemstack.m_150930_(Items.f_42717_) && CrossbowItem.m_40932_(itemstack)) {
 +         } else if (!p_117795_.f_20911_ && itemstack.m_41720_() instanceof CrossbowItem && CrossbowItem.m_40932_(itemstack)) {
              return HumanoidModel.ArmPose.CROSSBOW_HOLD;
           }
  
-@@ -158,10 +_,12 @@
+@@ -161,10 +_,12 @@
     }
  
     public void m_117770_(PoseStack p_117771_, MultiBufferSource p_117772_, int p_117773_, AbstractClientPlayer p_117774_) {

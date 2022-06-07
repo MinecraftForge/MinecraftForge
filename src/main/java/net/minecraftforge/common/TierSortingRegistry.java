@@ -41,11 +41,10 @@ import net.minecraftforge.network.simple.SimpleChannel;
 import net.minecraftforge.server.ServerLifecycleHooks;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.io.*;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -246,14 +245,15 @@ public class TierSortingRegistry
         {
             final Gson gson = (new GsonBuilder()).create();
 
-            @Nonnull
+            @NotNull
             @Override
-            protected JsonObject prepare(@Nonnull ResourceManager resourceManager, ProfilerFiller p)
+            protected JsonObject prepare(@NotNull ResourceManager resourceManager, ProfilerFiller p)
             {
-                if (!resourceManager.hasResource(ITEM_TIER_ORDERING_JSON))
+                Optional<Resource> res = resourceManager.getResource(ITEM_TIER_ORDERING_JSON);
+                if (res.isEmpty())
                     return new JsonObject();
 
-                try (Resource r = resourceManager.getResource(ITEM_TIER_ORDERING_JSON); InputStream stream = r.getInputStream(); Reader reader = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8)))
+                try (Reader reader = res.get().openAsReader())
                 {
                     return gson.fromJson(reader, JsonObject.class);
                 }
@@ -265,7 +265,7 @@ public class TierSortingRegistry
             }
 
             @Override
-            protected void apply(@Nonnull JsonObject data, @Nonnull ResourceManager resourceManager, ProfilerFiller p)
+            protected void apply(@NotNull JsonObject data, @NotNull ResourceManager resourceManager, ProfilerFiller p)
             {
                 try
                 {

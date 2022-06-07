@@ -5,8 +5,6 @@
 
 package net.minecraftforge.common.extensions;
 
-import javax.annotation.Nonnull;
-
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.network.Connection;
@@ -26,6 +24,7 @@ import net.minecraftforge.client.model.ModelDataManager;
 import net.minecraftforge.client.model.data.EmptyModelData;
 import net.minecraftforge.client.model.data.IModelData;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
+import org.jetbrains.annotations.NotNull;
 
 public interface IForgeBlockEntity extends ICapabilitySerializable<CompoundTag>
 {
@@ -137,7 +136,7 @@ public interface IForgeBlockEntity extends ICapabilitySerializable<CompoundTag>
              {
                  // We have to capture any exceptions that may occur here because BUKKIT servers like to send
                  // the tile entity data BEFORE the chunk data, you know, the OPPOSITE of what vanilla does!
-                 // So we can not GARENTEE that the world state is the real state for the block...
+                 // So we can not GUARANTEE that the world state is the real state for the block...
                  // So, once again in the long line of US having to accommodate BUKKIT breaking things,
                  // here it is, assume that the TE is only 1 cubic block. Problem with this is that it may
                  // cause the TileEntity renderer to error further down the line! But alas, nothing we can do.
@@ -169,7 +168,7 @@ public interface IForgeBlockEntity extends ICapabilitySerializable<CompoundTag>
      * <b>Note that this method may be called on a chunk render thread instead of the main client thread</b>
      * @return Your model data
      */
-     default @Nonnull IModelData getModelData()
+     default @NotNull IModelData getModelData()
      {
          return EmptyModelData.INSTANCE;
      }

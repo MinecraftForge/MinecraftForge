@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/gui/components/DebugScreenOverlay.java
 +++ b/net/minecraft/client/gui/components/DebugScreenOverlay.java
-@@ -399,6 +_,7 @@
+@@ -409,6 +_,7 @@
              list.add("");
              list.add(ChatFormatting.UNDERLINE + "Targeted Entity");
              list.add(String.valueOf((Object)Registry.f_122826_.m_7981_(entity.m_6095_())));

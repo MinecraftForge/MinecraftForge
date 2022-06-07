@@ -5,6 +5,7 @@
 
 package net.minecraftforge.fml.loading.moddiscovery;
 
+import com.mojang.logging.LogUtils;
 import cpw.mods.modlauncher.Launcher;
 import cpw.mods.modlauncher.api.IModuleLayerManager;
 import cpw.mods.modlauncher.util.ServiceLoaderUtils;
@@ -13,8 +14,7 @@ import net.minecraftforge.fml.loading.progress.StartupMessageManager;
 import net.minecraftforge.forgespi.Environment;
 import net.minecraftforge.forgespi.locating.IModFile;
 import net.minecraftforge.forgespi.locating.IModLocator;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +23,7 @@ import java.util.ServiceLoader;
 import java.util.stream.Collectors;
 
 public class ModDiscoverer {
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger LOGGER = LogUtils.getLogger();
     private final ServiceLoader<IModLocator> locators;
     private final List<IModLocator> locatorList;
 
@@ -34,7 +34,11 @@ public class ModDiscoverer {
         locators = ServiceLoader.load(moduleLayerManager.getLayer(IModuleLayerManager.Layer.SERVICE).orElseThrow(), IModLocator.class);
         locatorList = ServiceLoaderUtils.streamServiceLoader(()->locators, sce->LOGGER.error("Failed to load locator list", sce)).collect(Collectors.toList());
         locatorList.forEach(l->l.initArguments(arguments));
-        LOGGER.debug(LogMarkers.CORE,"Found Mod Locators : {}", ()->locatorList.stream().map(iModLocator -> "("+iModLocator.name() + ":" + iModLocator.getClass().getPackage().getImplementationVersion()+")").collect(Collectors.joining(",")));
+        if (LOGGER.isDebugEnabled(LogMarkers.CORE))
+        {
+            LOGGER.debug(LogMarkers.CORE, "Found Mod Locators : {}", locatorList.stream()
+                    .map(iModLocator -> "(" + iModLocator.name() + ":" + iModLocator.getClass().getPackage().getImplementationVersion() + ")").collect(Collectors.joining(",")));
+        }
     }
 
     ModDiscoverer(List<IModLocator> locatorList) {

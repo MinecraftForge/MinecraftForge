@@ -5,32 +5,23 @@
 
 package net.minecraftforge.fml.loading.moddiscovery;
 
+import com.mojang.logging.LogUtils;
 import cpw.mods.jarhandling.SecureJar;
-import cpw.mods.jarhandling.JarMetadata;
-import net.minecraftforge.fml.loading.LogMarkers;
-import net.minecraftforge.forgespi.language.IConfigurable;
-import net.minecraftforge.forgespi.language.IModFileInfo;
-import net.minecraftforge.forgespi.language.IModInfo;
-import net.minecraftforge.forgespi.locating.IModFile;
-import net.minecraftforge.forgespi.locating.IModLocator;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.jar.Manifest;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import net.minecraftforge.fml.loading.LogMarkers;
+import net.minecraftforge.forgespi.locating.IModFile;
+import org.slf4j.Logger;
 
 public abstract class AbstractJarFileLocator extends AbstractModLocator {
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger LOGGER = LogUtils.getLogger();
 
     @Override
     public void scanFile(final IModFile file, final Consumer<Path> pathConsumer) {

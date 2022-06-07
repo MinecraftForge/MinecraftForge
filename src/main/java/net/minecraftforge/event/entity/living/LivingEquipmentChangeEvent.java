@@ -10,8 +10,7 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Cancelable;
-
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * {@link LivingEquipmentChangeEvent} is fired when the Equipment of a Entity changes. <br>
@@ -35,7 +34,7 @@ public class LivingEquipmentChangeEvent extends LivingEvent
     private final ItemStack from;
     private final ItemStack to;
 
-    public LivingEquipmentChangeEvent(LivingEntity entity, EquipmentSlot slot, @Nonnull ItemStack from, @Nonnull ItemStack to)
+    public LivingEquipmentChangeEvent(LivingEntity entity, EquipmentSlot slot, @NotNull ItemStack from, @NotNull ItemStack to)
     {
         super(entity);
         this.slot = slot;
@@ -44,8 +43,8 @@ public class LivingEquipmentChangeEvent extends LivingEvent
     }
 
     public EquipmentSlot getSlot() { return this.slot; }
-    @Nonnull
+    @NotNull
     public ItemStack getFrom() { return this.from; }
-    @Nonnull
+    @NotNull
     public ItemStack getTo() { return this.to; }
 }

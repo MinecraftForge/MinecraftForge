@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/inventory/BeaconMenu.java
 +++ b/net/minecraft/world/inventory/BeaconMenu.java
-@@ -90,10 +_,8 @@
+@@ -91,10 +_,8 @@
              }
  
              slot.m_40234_(itemstack1, itemstack);

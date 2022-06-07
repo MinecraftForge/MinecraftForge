@@ -6,18 +6,27 @@
 package net.minecraftforge.client.extensions;
 
 import com.mojang.math.Transformation;
+import net.minecraft.client.resources.model.ModelState;
 
 /**
- * An {@code IModelState} is a function from model part to a transformation that should be applied
- * when that part is baked, thus representing the current "state" of the model and its parts.
+ * Extension interface for {@link ModelState}. An {@code ModelState} is a function from model part to a
+ * transformation that should be applied when that part is baked, thus representing the current "state" of the model
+ * and its parts.
  */
 public interface IForgeModelState
 {
+    private ModelState self()
+    {
+        return (ModelState) this;
+    }
+
     /**
-     * @param part Part of the model we are wanting to transform. An empty optional means
+     * {@return A transformation to apply to the part} This may be an {@linkplain Transformation#isIdentity() identity
+     * transformation} if there is no transformation to be applied. The coordinate system of the transform is determined
+     * by the part type.
+     *
+     * @param part part of the model we are wanting to transform. An empty optional means
      *             we want a transform for the entire model.
-     * @return A transformation to apply to the part, if any. The coordinate system of the transform
-     *         is determined by the part type.
      */
     default Transformation getPartTransformation(Object part)
     {

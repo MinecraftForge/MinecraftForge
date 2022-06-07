@@ -5,9 +5,9 @@
 
 package net.minecraftforge.fml.loading;
 
+import com.mojang.logging.LogUtils;
 import cpw.mods.modlauncher.api.IEnvironment;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -22,7 +22,7 @@ public enum FMLPaths
     CONFIGDIR("config"),
     FMLCONFIG(false, CONFIGDIR, "fml.toml");
 
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger LOGGER = LogUtils.getLogger();
     private final Path relativePath;
     private final boolean isDirectory;
     private Path absolutePath;
@@ -61,7 +61,10 @@ public enum FMLPaths
             {
                 FileUtils.getOrCreateDirectory(path.absolutePath, path.name());
             }
-            LOGGER.debug(CORE,"Path {} is {}", ()-> path, ()-> path.absolutePath);
+            if (LOGGER.isDebugEnabled(CORE))
+            {
+                LOGGER.debug(CORE, "Path {} is {}", path, path.absolutePath);
+            }
         }
     }
 

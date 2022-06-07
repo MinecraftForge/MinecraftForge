@@ -8,7 +8,6 @@ package net.minecraftforge.debug.client;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.model.EndermanModel;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.Model;
 import net.minecraft.client.model.geom.ModelLayers;
@@ -35,7 +34,6 @@ import net.minecraftforge.registries.RegistryObject;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nonnull;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -68,7 +66,7 @@ public class CustomArmorModelTest
         {
             consumer.accept(new IItemRenderProperties()
             {
-                @Override @Nonnull
+                @Override @NotNull
                 public Model getBaseArmorModel(LivingEntity entityLiving, ItemStack itemStack, EquipmentSlot armorSlot, HumanoidModel<?> _default)
                 {
                     TintedArmorModel.INSTANCE.base = _default;
@@ -118,7 +116,7 @@ public class CustomArmorModelTest
         }
 
         @Override
-        public void renderToBuffer(@Nonnull PoseStack poseStack, @Nonnull VertexConsumer consumer, int light, int overlay, float red, float green, float blue, float alpha)
+        public void renderToBuffer(@NotNull PoseStack poseStack, @NotNull VertexConsumer consumer, int light, int overlay, float red, float green, float blue, float alpha)
         {
             if (base != null)
             {

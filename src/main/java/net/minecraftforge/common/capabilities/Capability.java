@@ -6,12 +6,11 @@
 package net.minecraftforge.common.capabilities;
 
 import net.minecraftforge.common.util.LazyOptional;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
-
-import javax.annotation.Nonnull;
 
 /**
  * This is the core holder object Capabilities.
@@ -28,7 +27,7 @@ public class Capability<T>
      */
     public String getName() { return name; }
 
-    public @Nonnull <R> LazyOptional<R> orEmpty(Capability<R> toCheck, LazyOptional<T> inst)
+    public @NotNull <R> LazyOptional<R> orEmpty(Capability<R> toCheck, LazyOptional<T> inst)
     {
         return this == toCheck ? inst.cast() : LazyOptional.empty();
     }

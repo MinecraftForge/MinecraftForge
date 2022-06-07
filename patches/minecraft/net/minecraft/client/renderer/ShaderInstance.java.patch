@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/ShaderInstance.java
 +++ b/net/minecraft/client/renderer/ShaderInstance.java
-@@ -96,10 +_,14 @@
+@@ -95,10 +_,14 @@
     @Nullable
     public final Uniform f_173320_;
  
@@ -14,18 +14,19 @@
        this.f_173307_ = p_173338_;
 -      ResourceLocation resourcelocation = new ResourceLocation("shaders/core/" + p_173337_ + ".json");
 +      ResourceLocation resourcelocation = new ResourceLocation(shaderLocation.m_135827_(), "shaders/core/" + shaderLocation.m_135815_() + ".json");
-       Resource resource = null;
  
        try {
-@@ -209,8 +_,9 @@
+          Reader reader = p_173336_.m_215597_(resourcelocation);
+@@ -222,8 +_,10 @@
        Program program1 = p_173342_.m_85570_().get(p_173343_);
        Program program;
        if (program1 == null) {
 -         String s = "shaders/core/" + p_173343_ + p_173342_.m_85569_();
--         ResourceLocation resourcelocation = new ResourceLocation(s);
+-         Resource resource = p_173341_.m_215593_(new ResourceLocation(s));
 +         ResourceLocation loc = new ResourceLocation(p_173343_);
 +         String s = "shaders/core/" + loc.m_135815_() + p_173342_.m_85569_();
 +         ResourceLocation resourcelocation = new ResourceLocation(loc.m_135827_(), s);
-          Resource resource = p_173341_.m_142591_(resourcelocation);
-          final String s1 = FileUtil.m_179922_(s);
++         Resource resource = p_173341_.m_215593_(resourcelocation);
+          InputStream inputstream = resource.m_215507_();
  
+          try {

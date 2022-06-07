@@ -1,0 +1,16 @@
+--- a/net/minecraft/data/tags/FlatLevelGeneratorPresetTagsProvider.java
++++ b/net/minecraft/data/tags/FlatLevelGeneratorPresetTagsProvider.java
+@@ -7,8 +_,13 @@
+ import net.minecraft.world.level.levelgen.flat.FlatLevelGeneratorPresets;
+ 
+ public class FlatLevelGeneratorPresetTagsProvider extends TagsProvider<FlatLevelGeneratorPreset> {
++   /** @deprecated Forge: Use the {@link #FlatLevelGeneratorPresetTagsProvider(DataGenerator, String, net.minecraftforge.common.data.ExistingFileHelper) mod id variant} */
++   @Deprecated
+    public FlatLevelGeneratorPresetTagsProvider(DataGenerator p_236423_) {
+       super(p_236423_, BuiltinRegistries.f_235990_);
++   }
++   public FlatLevelGeneratorPresetTagsProvider(DataGenerator p_236423_, String modId, @org.jetbrains.annotations.Nullable net.minecraftforge.common.data.ExistingFileHelper existingFileHelper) {
++      super(p_236423_, BuiltinRegistries.f_235990_, modId, existingFileHelper);
+    }
+ 
+    protected void m_6577_() {

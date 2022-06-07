@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/storage/loot/LootTable.java
 +++ b/net/minecraft/world/level/storage/loot/LootTable.java
-@@ -34,13 +_,13 @@
+@@ -35,13 +_,13 @@
     public static final LootTable f_79105_ = new LootTable(LootContextParamSets.f_81410_, new LootPool[0], new LootItemFunction[0]);
     public static final LootContextParamSet f_79106_ = LootContextParamSets.f_81420_;
     final LootContextParamSet f_79108_;
@@ -16,7 +16,7 @@
        this.f_79110_ = p_79116_;
        this.f_79111_ = LootItemFunctions.m_80770_(p_79116_);
     }
-@@ -78,6 +_,7 @@
+@@ -79,6 +_,7 @@
  
     }
  
@@ -24,15 +24,15 @@
     public void m_79148_(LootContext p_79149_, Consumer<ItemStack> p_79150_) {
        this.m_79131_(p_79149_, m_79142_(p_79150_));
     }
-@@ -85,6 +_,7 @@
-    public List<ItemStack> m_79129_(LootContext p_79130_) {
-       List<ItemStack> list = Lists.newArrayList();
-       this.m_79148_(p_79130_, list::add);
-+      list = net.minecraftforge.common.ForgeHooks.modifyLoot(this.getLootTableId(), list, p_79130_);
-       return list;
+@@ -86,6 +_,7 @@
+    public ObjectArrayList<ItemStack> m_230922_(LootContext p_230923_) {
+       ObjectArrayList<ItemStack> objectarraylist = new ObjectArrayList<>();
+       this.m_79148_(p_230923_, objectarraylist::add);
++      objectarraylist = net.minecraftforge.common.ForgeHooks.modifyLoot(this.getLootTableId(), objectarraylist, p_230923_);
+       return objectarraylist;
     }
  
-@@ -93,8 +_,8 @@
+@@ -94,8 +_,8 @@
     }
  
     public void m_79136_(ValidationContext p_79137_) {
@@ -43,7 +43,7 @@
        }
  
        for(int j = 0; j < this.f_79110_.length; ++j) {
-@@ -176,6 +_,48 @@
+@@ -177,6 +_,48 @@
        return new LootTable.Builder();
     }
  
@@ -92,7 +92,7 @@
     public static class Builder implements FunctionUserBuilder<LootTable.Builder> {
        private final List<LootPool> f_79156_ = Lists.newArrayList();
        private final List<LootItemFunction> f_79157_ = Lists.newArrayList();
-@@ -230,7 +_,7 @@
+@@ -231,7 +_,7 @@
              }
           }
  

@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/ComparatorBlock.java
 +++ b/net/minecraft/world/level/block/ComparatorBlock.java
-@@ -166,4 +_,16 @@
+@@ -165,4 +_,16 @@
     protected void m_7926_(StateDefinition.Builder<Block, BlockState> p_51887_) {
        p_51887_.m_61104_(f_54117_, f_51854_, f_52496_);
     }

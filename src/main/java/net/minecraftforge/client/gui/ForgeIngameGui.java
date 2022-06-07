@@ -45,11 +45,10 @@ import net.minecraftforge.common.MinecraftForge;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.Nullable;
 import org.lwjgl.opengl.GL11;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-
-import javax.annotation.Nullable;
 
 public class ForgeIngameGui extends Gui
 {
@@ -319,7 +318,7 @@ public class ForgeIngameGui extends Gui
 
     public ForgeIngameGui(Minecraft mc)
     {
-        super(mc);
+        super(mc, mc.getItemRenderer());
         debugOverlay = new ForgeDebugScreenOverlay(mc);
     }
 

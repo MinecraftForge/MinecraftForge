@@ -9,6 +9,7 @@ import net.minecraft.Util;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
 import net.minecraft.tags.TagKey;
+import net.minecraft.util.RandomSource;
 import net.minecraftforge.registries.tags.ITag;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -20,7 +21,7 @@ import java.util.Random;
 import java.util.Spliterator;
 import java.util.stream.Stream;
 
-class ForgeRegistryTag<V extends IForgeRegistryEntry<V>> implements ITag<V>
+class ForgeRegistryTag<V> implements ITag<V>
 {
     private final TagKey<V> key;
     @Nullable
@@ -77,7 +78,7 @@ class ForgeRegistryTag<V extends IForgeRegistryEntry<V>> implements ITag<V>
     }
 
     @Override
-    public Optional<V> getRandomElement(Random random)
+    public Optional<V> getRandomElement(RandomSource random)
     {
         return Util.getRandomSafe(this.getContents(), random);
     }

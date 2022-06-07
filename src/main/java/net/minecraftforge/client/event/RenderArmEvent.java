@@ -7,19 +7,24 @@ package net.minecraftforge.client.event;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.player.AbstractClientPlayer;
+import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.world.entity.HumanoidArm;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.fml.LogicalSide;
 
 /**
- * This is a more targeted version of {@link RenderHandEvent} event that is fired specifically when
- * a player's arm is being rendered in first person, and should be used instead if the desired
- * outcome is just to replace the rendering of the arm, such as to make armor render on it or
- * instead of it.
+ * Fired before the player's arm is rendered in first person. This is a more targeted version of {@link RenderHandEvent},
+ * and can be used to replace the rendering of the player's arm, such as for rendering armor on the arm or outright
+ * replacing the arm with armor.
  *
- * This event is fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}
- * Canceling the event causes the arm to not render.
+ * <p>This event is {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}.
+ * If this event is cancelled, then the arm will not be rendered. </p>
+ *
+ * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
+ * only on the {@linkplain LogicalSide#CLIENT logical client}. </p>
  */
 @Cancelable
 public class RenderArmEvent extends Event
@@ -30,6 +35,10 @@ public class RenderArmEvent extends Event
     private final AbstractClientPlayer player;
     private final HumanoidArm arm;
 
+    /**
+     * @hidden
+     * @see net.minecraftforge.client.ForgeHooksClient#renderSpecificFirstPersonArm(PoseStack, MultiBufferSource, int, AbstractClientPlayer, HumanoidArm)
+     */
     public RenderArmEvent(PoseStack poseStack, MultiBufferSource multiBufferSource, int packedLight, AbstractClientPlayer player, HumanoidArm arm)
     {
         this.poseStack = poseStack;
@@ -40,30 +49,42 @@ public class RenderArmEvent extends Event
     }
 
     /**
-     * @return The arm being rendered.
+     * {@return the arm being rendered}
      */
     public HumanoidArm getArm()
     {
         return arm;
     }
 
+    /**
+     * {@return the pose stack used for rendering}
+     */
     public PoseStack getPoseStack()
     {
         return poseStack;
     }
 
+    /**
+     * {@return the source of rendering buffers}
+     */
     public MultiBufferSource getMultiBufferSource()
     {
         return multiBufferSource;
     }
 
+    /**
+     * {@return the amount of packed (sky and block) light for rendering}
+     *
+     * @see LightTexture
+     */
     public int getPackedLight()
     {
         return packedLight;
     }
 
     /**
-     * @return the client player that is having their arm rendered. In general this will be the same as {@link net.minecraft.client.Minecraft#player}.
+     * {@return the client player that is having their arm rendered} In general, this will be the same as
+     * {@link net.minecraft.client.Minecraft#player}.
      */
     public AbstractClientPlayer getPlayer()
     {

@@ -9,17 +9,17 @@
           if (this.m_6162_()) {
              this.m_35518_();
              return InteractionResult.m_19078_(this.f_19853_.f_46443_);
-@@ -658,7 +_,8 @@
+@@ -657,7 +_,8 @@
     }
  
     protected Component m_5677_() {
--      return new TranslatableComponent(this.m_6095_().m_20675_() + "." + Registry.f_122869_.m_7981_(this.m_7141_().m_35571_()).m_135815_());
-+      net.minecraft.resources.ResourceLocation profName = this.m_7141_().m_35571_().getRegistryName();
-+      return new TranslatableComponent(this.m_6095_().m_20675_() + '.' + (!"minecraft".equals(profName.m_135827_()) ? profName.m_135827_() + '.' : "") + profName.m_135815_());
+-      return Component.m_237115_(this.m_6095_().m_20675_() + "." + Registry.f_122869_.m_7981_(this.m_7141_().m_35571_()).m_135815_());
++      net.minecraft.resources.ResourceLocation profName = net.minecraftforge.registries.ForgeRegistries.PROFESSIONS.getKey(this.m_7141_().m_35571_());
++      return Component.m_237115_(this.m_6095_().m_20675_() + '.' + (!"minecraft".equals(profName.m_135827_()) ? profName.m_135827_() + '.' : "") + profName.m_135815_());
     }
  
     public void m_7822_(byte p_35391_) {
-@@ -710,7 +_,7 @@
+@@ -709,7 +_,7 @@
     }
  
     public void m_8038_(ServerLevel p_35409_, LightningBolt p_35410_) {
@@ -28,7 +28,7 @@
           f_201976_.info("Villager {} was struck by lightning {}.", this, p_35410_);
           Witch witch = EntityType.f_20495_.m_20615_(p_35409_);
           witch.m_7678_(this.m_20185_(), this.m_20186_(), this.m_20189_(), this.m_146908_(), this.m_146909_());
-@@ -722,6 +_,7 @@
+@@ -721,6 +_,7 @@
           }
  
           witch.m_21530_();

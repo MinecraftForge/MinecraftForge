@@ -10,8 +10,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 import net.minecraft.MethodsReturnNonnullByDefault;
@@ -21,6 +19,8 @@ import org.apache.commons.lang3.mutable.MutableObject;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * This object encapsulates a lazy value, with typical transformation operations
@@ -35,7 +35,7 @@ import org.apache.logging.log4j.Logger;
  * must never be null.
  * <p>
  * The empty instance can be retrieved with {@link #empty()}.
- * 
+ *
  * @param <T> The type of the optional value.
  */
 @ParametersAreNonnullByDefault
@@ -51,13 +51,13 @@ public class LazyOptional<T>
     private Set<NonNullConsumer<LazyOptional<T>>> listeners = new HashSet<>();
     private boolean isValid = true;
 
-    private static final @Nonnull LazyOptional<Void> EMPTY = new LazyOptional<>(null);
+    private static final @NotNull LazyOptional<Void> EMPTY = new LazyOptional<>(null);
     private static final Logger LOGGER = LogManager.getLogger();
 
     /**
      * Construct a new {@link LazyOptional} that wraps the given
      * {@link NonNullSupplier}.
-     * 
+     *
      * @param instanceSupplier The {@link NonNullSupplier} to wrap. Cannot return
      *                         null, but can be null itself. If null, this method
      *                         returns {@link #empty()}.
@@ -79,7 +79,7 @@ public class LazyOptional<T>
      * This method hides an unchecked cast to the inferred type. Only use this if
      * you are sure the type should match. For capabilities, generally
      * {@link Capability#orEmpty(Capability, LazyOptional)} should be used.
-     * 
+     *
      * @return This {@link LazyOptional}, cast to the inferred generic type
      */
     @SuppressWarnings("unchecked")
@@ -126,7 +126,7 @@ public class LazyOptional<T>
 
     /**
      * Check if this {@link LazyOptional} is non-empty.
-     * 
+     *
      * @return {@code true} if this {@link LazyOptional} is non-empty, i.e. holds a
      *         non-null supplier
      */
@@ -202,7 +202,7 @@ public class LazyOptional<T>
      * <em>It is important to note that this method is <strong>not</strong> lazy, as
      * it must resolve the value of the supplier to validate it with the
      * predicate.</em>
-     * 
+     *
      * @param predicate A {@link NonNullPredicate} to apply to the result of the
      *                  contained supplier, if non-empty
      * @return An {@link Optional} containing the result of the contained

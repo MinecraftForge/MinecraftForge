@@ -1,16 +1,18 @@
 --- a/net/minecraft/Util.java
 +++ b/net/minecraft/Util.java
-@@ -155,6 +_,9 @@
+@@ -164,6 +_,11 @@
        return 255;
     }
  
-+   // We add this inner class to compensate for Mojang's missing inner class and allow us to obf subsequent anon inner classes correctly.
-+   @SuppressWarnings("unused") private static LongSupplier INNER_CLASS_SHIFT = new LongSupplier() { public long getAsLong() { return 0; } };
++   // We add these inner classes to compensate for Mojang's missing inner classes and shift the anonymous class index.
++   // This allows us to obfuscate subsequent anonymous inner classes correctly.
++   @SuppressWarnings("unused") private static LongSupplier INNER_CLASS_SHIFT1 = new LongSupplier() { public long getAsLong() { return 0; } };
++   @SuppressWarnings("unused") private static LongSupplier INNER_CLASS_SHIFT2 = new LongSupplier() { public long getAsLong() { return 0; } };
 +
     public static ExecutorService m_183988_() {
        return f_137443_;
     }
-@@ -233,7 +_,7 @@
+@@ -242,7 +_,7 @@
        try {
           type = DataFixers.m_14512_().getSchema(DataFixUtils.makeKey(SharedConstants.m_183709_().getWorldVersion())).getChoiceType(p_137552_, p_137553_);
        } catch (IllegalArgumentException illegalargumentexception) {

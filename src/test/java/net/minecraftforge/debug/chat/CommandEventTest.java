@@ -9,7 +9,7 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.context.ParsedCommandNode;
 import net.minecraft.commands.CommandRuntimeException;
 import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraftforge.event.CommandEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -42,7 +42,7 @@ public class CommandEventTest
         if (nodes.size() > 0 && nodes.get(0).getNode() == dispatcher.getRoot().getChild("give"))
         {
             String msg = source.getTextName() + " used the give command: " + event.getParseResults().getReader().getString();
-            source.getServer().getPlayerList().getPlayers().forEach(player -> player.sendMessage(new TextComponent(msg), player.getUUID()));
+            source.getServer().getPlayerList().getPlayers().forEach(player -> player.sendSystemMessage(Component.literal(msg)));
             return;
         }
 

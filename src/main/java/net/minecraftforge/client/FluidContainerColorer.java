@@ -5,16 +5,15 @@
 
 package net.minecraftforge.client;
 
-import javax.annotation.Nonnull;
-
 import net.minecraft.client.color.item.ItemColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.fluids.FluidUtil;
+import org.jetbrains.annotations.NotNull;
 
 public class FluidContainerColorer implements ItemColor
 {
     @Override
-    public int getColor(@Nonnull ItemStack stack, int tintIndex)
+    public int getColor(@NotNull ItemStack stack, int tintIndex)
     {
         if (tintIndex != 1) return 0xFFFFFFFF;
         return FluidUtil.getFluidContained(stack)

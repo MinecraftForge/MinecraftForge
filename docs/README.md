@@ -8,10 +8,10 @@ MinecraftForge
 
 Forge is a free, open-source modding API all of your favourite mods use!
 
-|    Version    |    Support    |
-| ------------- | ------------- |
-|    1.18.x     |    Active     |
-|    1.16.x     |    LTS        |
+| Version |    Support    |
+|---------| ------------- |
+| 1.19.x  |    Active     |
+| 1.18.x  |    LTS        |
 
 * [Download]
 * [Forum]
@@ -29,7 +29,7 @@ You can download the installer for the *Recommended Build* or the
  into your vanilla launcher environment, where you can then create a new
  profile using that version and play the game!
  
-For support and questions, visit [the Support Forum](https://www.minecraftforge.net/forum/forum/18-support-bug-reports/).
+For support and questions, visit [the Support Forum](https://www.minecraftforge.net/forum/forum/18-support-bug-reports/) or [the Forge Discord server](https://discord.gg/forge).
 
 [Here is a short video from Rorax showing how to install and setup Forge.](https://www.youtube.com/watch?v=lB3ArN_-3Oc)
 
@@ -41,7 +41,7 @@ For support and questions, visit [the Support Forum](https://www.minecraftforge.
 
 If you wish to actually inspect Forge, submit PRs or otherwise work
  with Forge itself, you're in the right place!
- 
+
  [See the guide to setting up a Forge workspace](http://mcforge.readthedocs.io/en/latest/forgedev/).
 
 ### Pull requests
@@ -51,13 +51,14 @@ If you wish to actually inspect Forge, submit PRs or otherwise work
 Please read the contributing guidelines found [here](CONTRIBUTING.md) before making a pull request.
 
 ### Contributor License Agreement
-We require all contributors to acknowledge the [Forge Contributor
- License Agreement](https://cla-assistant.io/MinecraftForge/MinecraftForge). Please ensure you have a valid email address
- associated with your GitHub account to do this. If you have previously
+We require all contributors to acknowledge the [Forge Contributor License Agreement](https://cla-assistant.io/MinecraftForge/MinecraftForge). 
+Please ensure you have a valid email address associated with your GitHub account to do this. If you have previously 
  signed it, you should be OK.
 
 #### Donate
-*Forge is a large project with many collaborators working on it around the clock. Forge is and will always remain free to use and modify. However, it costs money to run such a large project as this, so please consider [becoming a patron](https://www.patreon.com/LexManos).*
+*Forge is a large project with many collaborators working on it around the clock. Forge is and will always remain free 
+ to use and modify. However, it costs money to run such a large project as this, so please consider 
+ [becoming a patron](https://www.patreon.com/LexManos).*
 
 [Download]: https://files.minecraftforge.net/
 [Forum]: https://www.minecraftforge.net/forum/

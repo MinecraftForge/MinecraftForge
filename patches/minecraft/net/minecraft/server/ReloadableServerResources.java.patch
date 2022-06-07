@@ -1,8 +1,8 @@
 --- a/net/minecraft/server/ReloadableServerResources.java
 +++ b/net/minecraft/server/ReloadableServerResources.java
-@@ -28,18 +_,22 @@
-    private static final Logger f_206845_ = LogUtils.getLogger();
+@@ -30,12 +_,12 @@
     private static final CompletableFuture<Unit> f_206846_ = CompletableFuture.completedFuture(Unit.INSTANCE);
+    private final CommandBuildContext f_214300_;
     private final Commands f_206847_;
 -   private final RecipeManager f_206848_ = new RecipeManager();
 +   private final RecipeManager f_206848_;
@@ -15,8 +15,9 @@
     private final ServerFunctionLibrary f_206854_;
  
     public ReloadableServerResources(RegistryAccess.Frozen p_206857_, Commands.CommandSelection p_206858_, int p_206859_) {
-       this.f_206849_ = new TagManager(p_206857_);
-       this.f_206847_ = new Commands(p_206858_);
+@@ -44,6 +_,10 @@
+       this.f_206847_ = new Commands(p_206858_, this.f_214300_);
+       this.f_214300_.m_227135_(CommandBuildContext.MissingTagAccessPolicy.CREATE_NEW);
        this.f_206854_ = new ServerFunctionLibrary(p_206859_, this.f_206847_.m_82094_());
 +      // Forge: Create context object and pass it to the recipe manager.
 +      this.context = new net.minecraftforge.common.crafting.conditions.ConditionContext(this.f_206849_);
@@ -25,27 +26,27 @@
     }
  
     public ServerFunctionLibrary m_206860_() {
-@@ -76,7 +_,9 @@
+@@ -80,7 +_,9 @@
  
     public static CompletableFuture<ReloadableServerResources> m_206861_(ResourceManager p_206862_, RegistryAccess.Frozen p_206863_, Commands.CommandSelection p_206864_, int p_206865_, Executor p_206866_, Executor p_206867_) {
        ReloadableServerResources reloadableserverresources = new ReloadableServerResources(p_206863_, p_206864_, p_206865_);
--      return SimpleReloadInstance.m_203834_(p_206862_, reloadableserverresources.m_206890_(), p_206866_, p_206867_, f_206846_, f_206845_.isDebugEnabled()).m_7237_().thenApply((p_206880_) -> {
+-      return SimpleReloadInstance.m_203834_(p_206862_, reloadableserverresources.m_206890_(), p_206866_, p_206867_, f_206846_, f_206845_.isDebugEnabled()).m_7237_().whenComplete((p_214309_, p_214310_) -> {
 +      List<PreparableReloadListener> listeners = new java.util.ArrayList<>(reloadableserverresources.m_206890_());
 +      listeners.addAll(net.minecraftforge.event.ForgeEventFactory.onResourceReload(reloadableserverresources));
-+      return SimpleReloadInstance.m_203834_(p_206862_, listeners, p_206866_, p_206867_, f_206846_, f_206845_.isDebugEnabled()).m_7237_().thenApply((p_206880_) -> {
++      return SimpleReloadInstance.m_203834_(p_206862_, listeners, p_206866_, p_206867_, f_206846_, f_206845_.isDebugEnabled()).m_7237_().whenComplete((p_214309_, p_214310_) -> {
+          reloadableserverresources.f_214300_.m_227135_(CommandBuildContext.MissingTagAccessPolicy.FAIL);
+       }).thenApply((p_214306_) -> {
           return reloadableserverresources;
-       });
-    }
-@@ -86,6 +_,7 @@
-          m_206870_(p_206869_, p_206884_);
+@@ -92,6 +_,7 @@
+          m_206870_(p_206869_, p_214315_);
        });
        Blocks.m_50758_();
 +      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.TagsUpdatedEvent(p_206869_, false, false));
     }
  
     private static <T> void m_206870_(RegistryAccess p_206871_, TagManager.LoadResult<T> p_206872_) {
-@@ -96,5 +_,16 @@
-          return p_206874_.getValue().m_6497_();
+@@ -102,5 +_,16 @@
+          return List.copyOf(p_214312_.getValue());
        }));
        p_206871_.m_175515_(resourcekey).m_203652_(map);
 +   }

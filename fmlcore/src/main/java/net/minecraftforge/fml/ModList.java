@@ -21,7 +21,6 @@ import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -111,7 +110,7 @@ public class ModList
         return this.fileById.get(modid);
     }
 
-    <T extends Event & IModBusEvent> Function<Executor, CompletableFuture<List<Throwable>>> futureVisitor(
+    <T extends Event & IModBusEvent> Function<Executor, CompletableFuture<Void>> futureVisitor(
             final IModStateTransition.EventGenerator<T> eventGenerator,
             final BiFunction<ModLoadingStage, Throwable, ModLoadingStage> stateChange) {
         return executor -> gather(
@@ -120,12 +119,12 @@ public class ModList
                 .collect(Collectors.toList()))
             .thenComposeAsync(ModList::completableFutureFromExceptionList, executor);
     }
-    static CompletionStage<List<Throwable>> completableFutureFromExceptionList(List<? extends Map.Entry<?, Throwable>> t) {
+    static CompletionStage<Void> completableFutureFromExceptionList(List<? extends Map.Entry<?, Throwable>> t) {
         if (t.stream().noneMatch(e->e.getValue()!=null)) {
-            return CompletableFuture.completedFuture(Collections.emptyList());
+            return CompletableFuture.completedFuture(null);
         } else {
             final List<Throwable> throwables = t.stream().filter(e -> e.getValue() != null).map(Map.Entry::getValue).collect(Collectors.toList());
-            CompletableFuture<List<Throwable>> cf = new CompletableFuture<>();
+            CompletableFuture<Void> cf = new CompletableFuture<>();
             final RuntimeException accumulator = new RuntimeException();
             cf.completeExceptionally(accumulator);
             throwables.forEach(exception -> {

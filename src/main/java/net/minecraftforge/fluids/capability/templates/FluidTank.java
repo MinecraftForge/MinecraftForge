@@ -9,9 +9,8 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
 import java.util.function.Predicate;
 
 /**
@@ -22,7 +21,7 @@ import java.util.function.Predicate;
 public class FluidTank implements IFluidHandler, IFluidTank {
 
     protected Predicate<FluidStack> validator;
-    @Nonnull
+    @NotNull
     protected FluidStack fluid = FluidStack.EMPTY;
     protected int capacity;
 
@@ -61,7 +60,7 @@ public class FluidTank implements IFluidHandler, IFluidTank {
         return capacity;
     }
 
-    @Nonnull
+    @NotNull
     public FluidStack getFluid()
     {
         return fluid;
@@ -92,7 +91,7 @@ public class FluidTank implements IFluidHandler, IFluidTank {
         return 1;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public FluidStack getFluidInTank(int tank) {
 
@@ -106,7 +105,7 @@ public class FluidTank implements IFluidHandler, IFluidTank {
     }
 
     @Override
-    public boolean isFluidValid(int tank, @Nonnull FluidStack stack) {
+    public boolean isFluidValid(int tank, @NotNull FluidStack stack) {
 
         return isFluidValid(stack);
     }
@@ -156,7 +155,7 @@ public class FluidTank implements IFluidHandler, IFluidTank {
         return filled;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public FluidStack drain(FluidStack resource, FluidAction action)
     {
@@ -167,7 +166,7 @@ public class FluidTank implements IFluidHandler, IFluidTank {
         return drain(resource.getAmount(), action);
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public FluidStack drain(int maxDrain, FluidAction action)
     {

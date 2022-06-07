@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/gui/screens/inventory/CreativeModeInventoryScreen.java
 +++ b/net/minecraft/client/gui/screens/inventory/CreativeModeInventoryScreen.java
-@@ -73,6 +_,8 @@
+@@ -72,6 +_,8 @@
     private Slot f_98512_;
     private CreativeInventoryListener f_98513_;
     private boolean f_98514_;
@@ -9,20 +9,20 @@
     private boolean f_98515_;
     private final Set<TagKey<Item>> f_98516_ = new HashSet<>();
  
-@@ -232,6 +_,12 @@
+@@ -231,6 +_,12 @@
     protected void m_7856_() {
        if (this.f_96541_.f_91072_.m_105290_()) {
           super.m_7856_();
 +         int tabCount = CreativeModeTab.f_40748_.length;
 +         if (tabCount > 12) {
-+            m_142416_(new net.minecraft.client.gui.components.Button(f_97735_,              f_97736_ - 50, 20, 20, new TextComponent("<"), b -> tabPage = Math.max(tabPage - 1, 0       )));
-+            m_142416_(new net.minecraft.client.gui.components.Button(f_97735_ + f_97726_ - 20, f_97736_ - 50, 20, 20, new TextComponent(">"), b -> tabPage = Math.min(tabPage + 1, maxPages)));
++            m_142416_(new net.minecraft.client.gui.components.Button(f_97735_,              f_97736_ - 50, 20, 20, Component.m_237113_("<"), b -> tabPage = Math.max(tabPage - 1, 0       )));
++            m_142416_(new net.minecraft.client.gui.components.Button(f_97735_ + f_97726_ - 20, f_97736_ - 50, 20, 20, Component.m_237113_(">"), b -> tabPage = Math.min(tabPage + 1, maxPages)));
 +            maxPages = (int) Math.ceil((tabCount - 12) / 10D);
 +         }
           this.f_96541_.f_91068_.m_90926_(true);
-          this.f_98510_ = new EditBox(this.f_96547_, this.f_97735_ + 82, this.f_97736_ + 6, 80, 9, new TranslatableComponent("itemGroup.search"));
+          this.f_98510_ = new EditBox(this.f_96547_, this.f_97735_ + 82, this.f_97736_ + 6, 80, 9, Component.m_237115_("itemGroup.search"));
           this.f_98510_.m_94199_(50);
-@@ -273,7 +_,7 @@
+@@ -272,7 +_,7 @@
     public boolean m_5534_(char p_98521_, int p_98522_) {
        if (this.f_98514_) {
           return false;
@@ -31,7 +31,7 @@
           return false;
        } else {
           String s = this.f_98510_.m_94155_();
-@@ -291,7 +_,7 @@
+@@ -290,7 +_,7 @@
  
     public boolean m_7933_(int p_98547_, int p_98548_, int p_98549_) {
        this.f_98514_ = false;
@@ -40,7 +40,7 @@
           if (this.f_96541_.f_91066_.f_92098_.m_90832_(p_98547_, p_98548_)) {
              this.f_98514_ = true;
              this.m_98560_(CreativeModeTab.f_40754_);
-@@ -328,6 +_,32 @@
+@@ -327,6 +_,32 @@
     private void m_98630_() {
        (this.f_97732_).f_98639_.clear();
        this.f_98516_.clear();
@@ -73,7 +73,7 @@
        String s = this.f_98510_.m_94155_();
        if (s.isEmpty()) {
           for(Item item : Registry.f_122827_) {
-@@ -372,9 +_,9 @@
+@@ -371,9 +_,9 @@
  
     protected void m_7027_(PoseStack p_98616_, int p_98617_, int p_98618_) {
        CreativeModeTab creativemodetab = CreativeModeTab.f_40748_[f_98507_];
@@ -85,7 +85,7 @@
        }
  
     }
-@@ -385,7 +_,7 @@
+@@ -384,7 +_,7 @@
           double d1 = p_98532_ - (double)this.f_97736_;
  
           for(CreativeModeTab creativemodetab : CreativeModeTab.f_40748_) {
@@ -94,7 +94,7 @@
                 return true;
              }
           }
-@@ -406,7 +_,7 @@
+@@ -405,7 +_,7 @@
           this.f_98509_ = false;
  
           for(CreativeModeTab creativemodetab : CreativeModeTab.f_40748_) {
@@ -103,7 +103,7 @@
                 this.m_98560_(creativemodetab);
                 return true;
              }
-@@ -417,12 +_,15 @@
+@@ -416,12 +_,15 @@
     }
  
     private boolean m_98631_() {
@@ -118,7 +118,7 @@
 +      slotColor = p_98561_.getSlotColor();
        this.f_97737_.clear();
        (this.f_97732_).f_98639_.clear();
-       if (p_98561_ == CreativeModeTab.f_40760_) {
+       this.m_238391_();
 @@ -499,13 +_,15 @@
        }
  
@@ -162,7 +162,7 @@
        }
  
 +      if (maxPages != 0) {
-+          Component page = new TextComponent(String.format("%d / %d", tabPage + 1, maxPages + 1));
++          Component page = Component.m_237113_(String.format("%d / %d", tabPage + 1, maxPages + 1));
 +          this.m_93250_(300);
 +          this.f_96542_.f_115093_ = 300.0F;
 +          f_96547_.m_92744_(p_98577_, page.m_7532_(), f_97735_ + (f_97726_ / 2) - (f_96547_.m_92852_(page) / 2), f_97736_ - 44, -1);

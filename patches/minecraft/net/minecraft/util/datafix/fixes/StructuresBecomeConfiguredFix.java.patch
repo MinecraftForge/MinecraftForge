@@ -1,6 +1,6 @@
 --- a/net/minecraft/util/datafix/fixes/StructuresBecomeConfiguredFix.java
 +++ b/net/minecraft/util/datafix/fixes/StructuresBecomeConfiguredFix.java
-@@ -93,7 +_,10 @@
+@@ -92,7 +_,10 @@
     private Dynamic<?> m_207723_(Pair<Dynamic<?>, Dynamic<?>> p_207724_, Dynamic<?> p_207725_) {
        String s = p_207724_.getFirst().asString("UNKNOWN").toLowerCase(Locale.ROOT);
        StructuresBecomeConfiguredFix.Conversion structuresbecomeconfiguredfix$conversion = f_207676_.get(s);

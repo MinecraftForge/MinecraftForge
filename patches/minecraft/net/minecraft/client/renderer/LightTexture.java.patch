@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/LightTexture.java
 +++ b/net/minecraft/client/renderer/LightTexture.java
-@@ -160,7 +_,7 @@
+@@ -193,7 +_,7 @@
     }
  
     public static int m_109883_(int p_109884_) {

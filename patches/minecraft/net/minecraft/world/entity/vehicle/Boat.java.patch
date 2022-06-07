@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/vehicle/Boat.java
 +++ b/net/minecraft/world/entity/vehicle/Boat.java
-@@ -475,7 +_,7 @@
+@@ -480,7 +_,7 @@
                       blockpos$mutableblockpos.m_122178_(l1, k2, i2);
                       BlockState blockstate = this.f_19853_.m_8055_(blockpos$mutableblockpos);
                       if (!(blockstate.m_60734_() instanceof WaterlilyBlock) && Shapes.m_83157_(blockstate.m_60812_(this.f_19853_, blockpos$mutableblockpos).m_83216_((double)l1, (double)k2, (double)i2), voxelshape, BooleanOp.f_82689_)) {
@@ -9,7 +9,7 @@
                          ++k1;
                       }
                    }
-@@ -821,6 +_,16 @@
+@@ -834,6 +_,16 @@
  
     public boolean m_5842_() {
        return this.f_38279_ == Boat.Status.UNDER_WATER || this.f_38279_ == Boat.Status.UNDER_FLOWING_WATER;

@@ -2,7 +2,7 @@
    "pack": {
       "pack_format": 8,
       "description": "Forge tests resource pack",
-      "forge:resource_pack_format": 8,
-      "forge:data_pack_format": 9
+      "forge:resource_pack_format": 9,
+      "forge:data_pack_format": 10
    }
 }

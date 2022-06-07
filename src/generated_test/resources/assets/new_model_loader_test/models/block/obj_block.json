@@ -1,9 +1,9 @@
 {
-  "textures": {
-    "qr": "minecraft:block/oak_planks",
-    "particle": "#qr"
-  },
+  "flip-v": true,
   "loader": "forge:obj",
   "model": "new_model_loader_test:models/item/sugar_glider.obj",
-  "flip-v": true
+  "textures": {
+    "particle": "#qr",
+    "qr": "minecraft:block/oak_planks"
+  }
 }

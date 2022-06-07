@@ -5,18 +5,23 @@
 
 package net.minecraftforge.client.extensions;
 
-import javax.annotation.Nonnull;
-
 import net.minecraft.client.KeyMapping;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraftforge.client.settings.IKeyConflictContext;
 import net.minecraftforge.client.settings.KeyModifier;
+import org.jetbrains.annotations.NotNull;
 
+/**
+ * Extension interface for {@link KeyMapping}.
+ */
 public interface IForgeKeyMapping
 {
-    private KeyMapping self() { return (KeyMapping) this; }
-    
-    @Nonnull InputConstants.Key getKey();
+    private KeyMapping self()
+    {
+        return (KeyMapping) this;
+    }
+
+    @NotNull InputConstants.Key getKey();
 
     /**
      * Checks that the key conflict context and modifier are active, and that the keyCode matches this binding.
@@ -25,7 +30,7 @@ public interface IForgeKeyMapping
     {
         return keyCode != InputConstants.UNKNOWN && keyCode.equals(getKey()) && getKeyConflictContext().isActive() && getKeyModifier().isActive(getKeyConflictContext());
     }
-    
+
     default void setToDefault()
     {
         setKeyModifierAndCode(getDefaultKeyModifier(), self().getDefaultKey());

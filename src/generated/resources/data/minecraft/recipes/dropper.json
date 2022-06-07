@@ -1,18 +1,18 @@
 {
   "type": "minecraft:crafting_shaped",
+  "key": {
+    "#": {
+      "tag": "forge:cobblestone/normal"
+    },
+    "R": {
+      "item": "minecraft:redstone"
+    }
+  },
   "pattern": [
     "###",
     "# #",
     "#R#"
   ],
-  "key": {
-    "R": {
-      "item": "minecraft:redstone"
-    },
-    "#": {
-      "tag": "forge:cobblestone/normal"
-    }
-  },
   "result": {
     "item": "minecraft:dropper"
   }

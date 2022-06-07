@@ -8,7 +8,7 @@
 +      if(false) {
        RenderType rendertype = ItemBlockRenderTypes.m_109293_(p_112460_);
        VertexConsumer vertexconsumer = p_112462_.m_6299_(rendertype);
-       this.f_112441_.m_110937_().m_111047_(p_112463_, this.f_112441_.m_110910_(p_112460_), p_112460_, p_112459_, p_112461_, vertexconsumer, p_112464_, new Random(), p_112460_.m_60726_(p_112459_), p_112465_);
+       this.f_112441_.m_110937_().m_234379_(p_112463_, this.f_112441_.m_110910_(p_112460_), p_112460_, p_112459_, p_112461_, vertexconsumer, p_112464_, RandomSource.m_216327_(), p_112460_.m_60726_(p_112459_), p_112465_);
 +      }
     }
  

@@ -10,8 +10,7 @@ import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.resources.model.Material;
 import net.minecraftforge.client.model.geometry.IModelGeometryPart;
-
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 /*
  * Interface that provides generic access to the data within BlockModel,

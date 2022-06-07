@@ -34,19 +34,7 @@ public class TickEvent extends Event
     }
 
     public static class ServerTickEvent extends TickEvent {
-
         private final BooleanSupplier haveTime;
-
-        /**
-         * TODO: Remove in 1.19
-         * 
-         * @deprecated Use {@link ServerTickEvent#ServerTickEvent(Phase, BooleanSupplier)}
-         */
-        @Deprecated(forRemoval = true, since = "1.18.1")
-        public ServerTickEvent(Phase phase)
-        {
-            this(phase, () -> false);
-        }
 
         public ServerTickEvent(Phase phase, BooleanSupplier haveTime)
         {
@@ -76,17 +64,6 @@ public class TickEvent extends Event
         public final Level world;
         private final BooleanSupplier haveTime;
 
-        /**
-         * TODO: Remove in 1.19
-         * 
-         * @deprecated Use {@link WorldTickEvent#WorldTickEvent(LogicalSide, Phase, Level, BooleanSupplier)}
-         */
-        @Deprecated(forRemoval = true, since = "1.18.1")
-        public WorldTickEvent(LogicalSide side, Phase phase, Level world)
-        {
-            this(side, phase, world, () -> false);
-        }
-
         public WorldTickEvent(LogicalSide side, Phase phase, Level world, BooleanSupplier haveTime)
         {
             super(Type.WORLD, side, phase);
@@ -98,7 +75,7 @@ public class TickEvent extends Event
          * @return {@code true} whether the server has enough time to perform any
          *         additional tasks (usually IO related) during the current tick,
          *         otherwise {@code false}
-         * 
+         *
          * @see ServerTickEvent#haveTime()
          */
         public boolean haveTime()

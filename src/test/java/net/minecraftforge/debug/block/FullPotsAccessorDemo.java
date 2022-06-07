@@ -22,6 +22,7 @@ import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.stats.Stats;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -50,9 +51,9 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -104,7 +105,7 @@ public class FullPotsAccessorDemo
             if (level.getBlockEntity(pos) instanceof DioriteFlowerPotBlockEntity be)
             {
                 ItemStack stack = player.getItemInHand(hand);
-                boolean isFlower = stack.getItem() instanceof BlockItem item && ((FlowerPotBlock) Blocks.FLOWER_POT).getFullPotsView().containsKey(item.getRegistryName());
+                boolean isFlower = stack.getItem() instanceof BlockItem item && ((FlowerPotBlock) Blocks.FLOWER_POT).getFullPotsView().containsKey(ForgeRegistries.ITEMS.getKey(item));
                 boolean hasFlower = be.plant != Blocks.AIR;
 
                 if (isFlower != hasFlower)
@@ -227,7 +228,7 @@ public class FullPotsAccessorDemo
         protected void saveAdditional(CompoundTag tag)
         {
             //noinspection ConstantConditions
-            tag.putString("plant", plant.getRegistryName().toString());
+            tag.putString("plant", ForgeRegistries.BLOCKS.getKey(plant).toString());
             super.saveAdditional(tag);
         }
     }
@@ -284,9 +285,9 @@ public class FullPotsAccessorDemo
 
             public DioritePotModel(BakedModel wrappedModel) { super(wrappedModel); }
 
-            @Nonnull
+            @NotNull
             @Override
-            public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, @Nonnull Random rand, @Nonnull IModelData extraData)
+            public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, @NotNull RandomSource rand, @NotNull IModelData extraData)
             {
                 List<BakedQuad> quads = new ArrayList<>(originalModel.getQuads(state, side, rand, extraData));
 
@@ -299,9 +300,9 @@ public class FullPotsAccessorDemo
                 return quads;
             }
 
-            private List<BakedQuad> getPlantQuads(Block plant, @Nullable Direction face, Random rand)
+            private List<BakedQuad> getPlantQuads(Block plant, @Nullable Direction face, RandomSource rand)
             {
-                BlockState potState = ((FlowerPotBlock) Blocks.FLOWER_POT).getFullPotsView().getOrDefault(plant.getRegistryName(), Blocks.AIR.delegate).get().defaultBlockState();
+                BlockState potState = ((FlowerPotBlock) Blocks.FLOWER_POT).getFullPotsView().getOrDefault(ForgeRegistries.BLOCKS.getKey(plant), ForgeRegistries.BLOCKS.getDelegateOrThrow(Blocks.AIR)).get().defaultBlockState();
                 BakedModel potModel = Minecraft.getInstance().getBlockRenderer().getBlockModel(potState);
 
                 return potModel.getQuads(potState, face, rand, EmptyModelData.INSTANCE)

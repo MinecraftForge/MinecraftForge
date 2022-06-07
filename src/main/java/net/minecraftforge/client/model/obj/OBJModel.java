@@ -28,8 +28,6 @@ import net.minecraftforge.client.model.renderable.SimpleRenderable;
 import net.minecraftforge.client.textures.UnitSprite;
 import org.apache.commons.lang3.tuple.Pair;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.*;
 import java.util.function.Function;
@@ -41,6 +39,8 @@ import net.minecraft.client.resources.model.Material;
 import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.ModelState;
 import net.minecraft.client.resources.model.UnbakedModel;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class OBJModel implements IMultipartModelGeometry<OBJModel>
 {
@@ -660,7 +660,7 @@ public class OBJModel implements IMultipartModelGeometry<OBJModel>
         }
     }
 
-    public record ModelSettings(@Nonnull ResourceLocation modelLocation,
+    public record ModelSettings(@NotNull ResourceLocation modelLocation,
                                 boolean detectCullableFaces, boolean diffuseLighting, boolean flipV,
                                 boolean ambientToFullbright, @Nullable String materialLibraryOverrideLocation)
     {}

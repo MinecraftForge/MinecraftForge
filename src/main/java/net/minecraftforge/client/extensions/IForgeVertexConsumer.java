@@ -24,8 +24,16 @@ import com.mojang.math.Vector3f;
 import com.mojang.math.Vector4f;
 import net.minecraft.core.Vec3i;
 
+/**
+ * Extension interface for {@link VertexConsumer}.
+ */
 public interface IForgeVertexConsumer
 {
+    private VertexConsumer self()
+    {
+        return (VertexConsumer) this;
+    }
+
     // Copy of putBulkData, but enables tinting and per-vertex alpha
     default void putBulkData(PoseStack.Pose poseStack, BakedQuad bakedQuad, float red, float green, float blue, int packedLight, int packedOverlay, boolean readExistingColor) {
         putBulkData(poseStack, bakedQuad, red, green, blue, 1.0f, packedLight, packedOverlay, readExistingColor);
@@ -87,7 +95,7 @@ public interface IForgeVertexConsumer
                 Vector4f pos = new Vector4f(f, f1, f2, 1.0F);
                 pos.transform(matrix4f);
                 applyBakedNormals(normal, bytebuffer, pose.normal());
-                ((VertexConsumer)this).vertex(pos.x(), pos.y(), pos.z(), cr, cg, cb, ca, f9, f10, packedOverlay, lightmapCoord, normal.x(), normal.y(), normal.z());
+                self().vertex(pos.x(), pos.y(), pos.z(), cr, cg, cb, ca, f9, f10, packedOverlay, lightmapCoord, normal.x(), normal.y(), normal.z());
             }
         }
     }

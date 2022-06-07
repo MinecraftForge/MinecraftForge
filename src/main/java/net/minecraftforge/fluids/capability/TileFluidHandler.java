@@ -15,17 +15,16 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidAttributes;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class TileFluidHandler extends BlockEntity
 {
     protected FluidTank tank = new FluidTank(FluidAttributes.BUCKET_VOLUME);
-    
+
     private final LazyOptional<IFluidHandler> holder = LazyOptional.of(() -> tank);
 
-    public TileFluidHandler(@Nonnull BlockEntityType<?> blockEntityType, BlockPos pos, BlockState state)
+    public TileFluidHandler(@NotNull BlockEntityType<?> blockEntityType, BlockPos pos, BlockState state)
     {
         super(blockEntityType, pos, state);
     }
@@ -45,8 +44,8 @@ public class TileFluidHandler extends BlockEntity
     }
 
     @Override
-    @Nonnull
-    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> capability, @Nullable Direction facing)
+    @NotNull
+    public <T> LazyOptional<T> getCapability(@NotNull Capability<T> capability, @Nullable Direction facing)
     {
         if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY)
             return holder.cast();

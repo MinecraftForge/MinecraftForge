@@ -62,7 +62,7 @@ public class AudioStreamTest
     {
         protected SineSound(Vec3 position)
         {
-            super(new ResourceLocation(MOD_ID, "sine_wave"), SoundSource.BLOCKS);
+            super(new ResourceLocation(MOD_ID, "sine_wave"), SoundSource.BLOCKS, SoundInstance.createUnseededRandom());
             x = position.x;
             y = position.y;
             z = position.z;

@@ -9,9 +9,7 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import net.minecraftforge.fml.loading.AdvancedLogMessageAdapter;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import com.mojang.logging.LogUtils;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
@@ -21,6 +19,9 @@ import org.objectweb.asm.tree.FieldNode;
 import org.objectweb.asm.tree.MethodNode;
 
 import cpw.mods.modlauncher.serviceapi.ILaunchPluginService;
+import org.slf4j.Logger;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
 
 /**
  * Modifies specified enums to allow runtime extension by making the $VALUES field non-final and
@@ -28,7 +29,7 @@ import cpw.mods.modlauncher.serviceapi.ILaunchPluginService;
  */
 public class RuntimeEnumExtender implements ILaunchPluginService {
 
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger LOGGER = LogUtils.getLogger();
     private final Type STRING = Type.getType(String.class);
     private final Type ENUM = Type.getType(Enum.class);
     private final Type MARKER_IFACE = Type.getType("Lnet/minecraftforge/common/IExtensibleEnum;");
@@ -63,43 +64,49 @@ public class RuntimeEnumExtender implements ILaunchPluginService {
         final int flags = Opcodes.ACC_PRIVATE | Opcodes.ACC_STATIC | Opcodes.ACC_FINAL | Opcodes.ACC_SYNTHETIC;
 
         FieldNode values = classNode.fields.stream().filter(f -> f.desc.contentEquals(array.getDescriptor()) && ((f.access & flags) == flags)).findFirst().orElse(null);
-        
+
         if (!classNode.interfaces.contains(MARKER_IFACE.getInternalName())) {
             return ComputeFlags.NO_REWRITE;
         }
-        
+
         //Static methods named "create" with first argument as a string
         List<MethodNode> candidates = classNode.methods.stream()
                 .filter(m -> ((m.access & Opcodes.ACC_STATIC) != 0) && m.name.equals("create"))
                 .collect(Collectors.toList());
-        
+
         if (candidates.isEmpty()) {
             throw new IllegalStateException("IExtensibleEnum has no candidate factory methods: " + classType.getClassName());
         }
-        
+
         candidates.forEach(mtd ->
         {
             Type[] args = Type.getArgumentTypes(mtd.desc);
             if (args.length == 0 || !args[0].equals(STRING)) {
-                LOGGER.fatal(()->new AdvancedLogMessageAdapter(sb-> {
+                if (LOGGER.isErrorEnabled(LogUtils.FATAL_MARKER))
+                {
+                    StringBuilder sb = new StringBuilder();
                     sb.append("Enum has create method without String as first parameter:\n");
                     sb.append("  Enum: ").append(classType.getDescriptor()).append("\n");
                     sb.append("  Target: ").append(mtd.name).append(mtd.desc).append("\n");
-                }));
+                    LOGGER.error(LogUtils.FATAL_MARKER, sb.toString());
+                }
                 throw new IllegalStateException("Enum has create method without String as first parameter: " + mtd.name + mtd.desc);
             }
 
             Type ret = Type.getReturnType(mtd.desc);
             if (!ret.equals(classType)) {
-                LOGGER.fatal(()->new AdvancedLogMessageAdapter(sb-> {
+                if (LOGGER.isErrorEnabled(LogUtils.FATAL_MARKER))
+                {
+                    StringBuilder sb = new StringBuilder();
                     sb.append("Enum has create method with incorrect return type:\n");
                     sb.append("  Enum: ").append(classType.getDescriptor()).append("\n");
                     sb.append("  Target: ").append(mtd.name).append(mtd.desc).append("\n");
                     sb.append("  Found: ").append(ret.getClassName()).append(", Expected: ").append(classType.getClassName());
-                }));
+                    LOGGER.error(LogUtils.FATAL_MARKER, sb.toString());
+                }
                 throw new IllegalStateException("Enum has create method with incorrect return type: " + mtd.name + mtd.desc);
             }
-            
+
             Type[] ctrArgs = new Type[args.length + 1];
             ctrArgs[0] = STRING;
             ctrArgs[1] = Type.INT_TYPE;
@@ -111,23 +118,29 @@ public class RuntimeEnumExtender implements ILaunchPluginService {
             MethodNode ctr = classNode.methods.stream().filter(m -> m.name.equals("<init>") && m.desc.equals(desc)).findFirst().orElse(null);
             if (ctr == null)
             {
-                LOGGER.fatal(()->new AdvancedLogMessageAdapter(sb-> {
+                if (LOGGER.isErrorEnabled(LogUtils.FATAL_MARKER))
+                {
+                    StringBuilder sb = new StringBuilder();
                     sb.append("Enum has create method with no matching constructor:\n");
                     sb.append("  Enum: ").append(classType.getDescriptor()).append("\n");
                     sb.append("  Candidate: ").append(mtd.desc).append("\n");
                     sb.append("  Target: ").append(desc).append("\n");
                     classNode.methods.stream().filter(m -> m.name.equals("<init>")).forEach(m -> sb.append("        : ").append(m.desc).append("\n"));
-                }));
+                    LOGGER.error(LogUtils.FATAL_MARKER, sb.toString());
+                }
                 throw new IllegalStateException("Enum has create method with no matching constructor: " + desc);
             }
 
             if (values == null)
             {
-                LOGGER.fatal(()->new AdvancedLogMessageAdapter(sb-> {
+                if (LOGGER.isErrorEnabled(LogUtils.FATAL_MARKER))
+                {
+                    StringBuilder sb = new StringBuilder();
                     sb.append("Enum has create method but we could not find $VALUES. Found:\n");
                     classNode.fields.stream().filter(f -> (f.access & Opcodes.ACC_STATIC) != 0).
                             forEach(m -> sb.append("  ").append(m.name).append(" ").append(m.desc).append("\n"));
-                }));
+                    LOGGER.error(LogUtils.FATAL_MARKER, sb.toString());
+                }
                 throw new IllegalStateException("Enum has create method but we could not find $VALUES");
             }
 

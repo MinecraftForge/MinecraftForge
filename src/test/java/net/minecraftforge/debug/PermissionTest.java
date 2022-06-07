@@ -8,7 +8,6 @@ package net.minecraftforge.debug;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.StringRepresentable;
 import net.minecraftforge.common.MinecraftForge;
@@ -32,7 +31,7 @@ public class PermissionTest
     private static final PermissionNode<Boolean> boolPerm = new PermissionNode<>("permissiontest", "test.blob", PermissionTypes.BOOLEAN, (player, playerUUID, context) -> true);
     private static final PermissionNode<String> stringPerm = new PermissionNode<>("permissiontest", "test.blobText", PermissionTypes.STRING, (player, playerUUID, context) -> "Hello World");
     private static final PermissionNode<Integer> intPerm = new PermissionNode<>("permissiontest", "test.blob.integer", PermissionTypes.INTEGER, (player, playerUUID, context) -> 3);
-    private static final PermissionNode<Component> componentPerm = new PermissionNode<>("permissiontest", "test.blob.component", PermissionTypes.COMPONENT, (player, playerUUID, context) -> new TextComponent("This is a component"));
+    private static final PermissionNode<Component> componentPerm = new PermissionNode<>("permissiontest", "test.blob.component", PermissionTypes.COMPONENT, (player, playerUUID, context) -> Component.literal("This is a component"));
 
     private static final PermissionNode<Boolean> unregisteredPerm = new PermissionNode<>("permissiontest", "test.unregistered", PermissionTypes.BOOLEAN, (player, playerUUID, context) -> false);
 
@@ -57,9 +56,9 @@ public class PermissionTest
         event.getDispatcher().register(Commands.literal("permtest")
             .requires(src -> canUseCommand(src, boolPerm))
             .executes(context -> {
-                context.getSource().sendSuccess(new TextComponent("Blob"), false);
-                context.getSource().sendSuccess(new TextComponent("String:" + PermissionAPI.getPermission((ServerPlayer) context.getSource().getEntity(), stringPerm)), false);
-                context.getSource().sendSuccess(new TextComponent("Int: " + PermissionAPI.getPermission((ServerPlayer) context.getSource().getEntity(), intPerm)), false);
+                context.getSource().sendSuccess(Component.literal("Blob"), false);
+                context.getSource().sendSuccess(Component.literal("String:" + PermissionAPI.getPermission((ServerPlayer) context.getSource().getEntity(), stringPerm)), false);
+                context.getSource().sendSuccess(Component.literal("Int: " + PermissionAPI.getPermission((ServerPlayer) context.getSource().getEntity(), intPerm)), false);
                 context.getSource().sendSuccess(PermissionAPI.getPermission((ServerPlayer) context.getSource().getEntity(), componentPerm), false);
 
                 return 1;
@@ -70,7 +69,7 @@ public class PermissionTest
         event.getDispatcher().register(Commands.literal("permtesterr")
             .requires(src -> canUseCommand(src, unregisteredPerm))
             .executes(context -> {
-                context.getSource().sendSuccess(new TextComponent("Blob"), false);
+                context.getSource().sendSuccess(Component.literal("Blob"), false);
                 return 1;
             }));
     }

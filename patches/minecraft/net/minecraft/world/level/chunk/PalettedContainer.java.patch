@@ -3,8 +3,8 @@
 @@ -24,6 +_,7 @@
  import net.minecraft.util.ZeroBitStorage;
  
- public class PalettedContainer<T> implements PaletteResize<T> {
+ public class PalettedContainer<T> implements PaletteResize<T>, PalettedContainerRO<T> {
 +   // TODO: forceBits-parametered setBits function. -C
     private static final int f_188031_ = 0;
-    private final PaletteResize<T> f_63070_ = (p_63139_, p_63140_) -> {
+    private final PaletteResize<T> f_63070_ = (p_238275_, p_238276_) -> {
        return 0;

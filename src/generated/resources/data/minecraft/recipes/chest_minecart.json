@@ -1,17 +1,13 @@
 {
-  "type": "minecraft:crafting_shaped",
-  "pattern": [
-    "A",
-    "B"
-  ],
-  "key": {
-    "A": {
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
       "tag": "forge:chests/wooden"
     },
-    "B": {
+    {
       "item": "minecraft:minecart"
     }
-  },
+  ],
   "result": {
     "item": "minecraft:chest_minecart"
   }

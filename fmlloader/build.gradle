@@ -11,29 +11,34 @@ dependencyUpdates.rejectVersionIf { isNonStable(it.candidate.version) }
 configurations.forEach{ it.transitive = false }
 
 dependencies {
-    implementation('net.sf.jopt-simple:jopt-simple:5.0.4')
-    compileOnly('org.jetbrains:annotations:23.0.0')
+    compileOnly("org.jetbrains:annotations:${JETBRAINS_ANNOTATIONS_VERSION}")
+
     api("org.ow2.asm:asm:${ASM_VERSION}")
     api("org.ow2.asm:asm-tree:${ASM_VERSION}")
     api("org.ow2.asm:asm-commons:${ASM_VERSION}")
-    api('net.minecraftforge:forgespi:4.0.+')
-    api('org.apache.logging.log4j:log4j-api:2.17.0')
-    api('org.slf4j:slf4j-api:1.8.0-beta4')
-    api('com.google.guava:guava:21.0')
-    api('com.google.code.gson:gson:2.8.9')
-    api('org.apache.maven:maven-artifact:3.8.1')
-    api('org.apache.commons:commons-lang3:3.12.0')
-    api('com.electronwill.night-config:core:3.6.4')
-    api('com.electronwill.night-config:toml:3.6.4')
-    api('cpw.mods:modlauncher:9.0.+')
-    api('net.minecraftforge:coremods:5.0.+')
+    api("net.minecraftforge:forgespi:${SPI_VERSION}")
+    api("org.apache.logging.log4j:log4j-api:${LOG4J_VERSION}")
+    api("org.slf4j:slf4j-api:${SLF4J_API_VERSION}")
+    api("com.google.guava:guava:${GUAVA_VERSION}")
+    api("com.google.code.gson:gson:${GSON_VERSION}")
+    api("org.apache.maven:maven-artifact:${APACHE_MAVEN_ARTIFACT_VERSION}")
+    api("org.apache.commons:commons-lang3:${APACHE_COMMONS_LANG3_VERSION}")
+    api("com.electronwill.night-config:core:${NIGHTCONFIG_VERSION}")
+    api("com.electronwill.night-config:toml:${NIGHTCONFIG_VERSION}")
+    api("cpw.mods:modlauncher:${MODLAUNCHER_VERSION}")
+    api("net.minecraftforge:coremods:${COREMODS_VERSION}")
+    api("com.mojang:logging:${MOJANG_LOGGING_VERSION}")
+
+    implementation("net.sf.jopt-simple:jopt-simple:${JOPT_SIMPLE_VERSION}")
     implementation("cpw.mods:securejarhandler:${SECUREJARHANDLER_VERSION}")
-    implementation('org.apache.logging.log4j:log4j-core:2.17.0')
-    annotationProcessor('org.apache.logging.log4j:log4j-core:2.17.0')
-    implementation('net.minecraftforge:accesstransformers:8.0.4')
-    implementation('net.minecrell:terminalconsoleappender:1.2.0')
-//    implementation('org.jline:jline:3.12.+')
-    testCompileOnly('org.jetbrains:annotations:21.0.0')
+    implementation("net.minecraftforge:accesstransformers:${ACCESSTRANSFORMERS_VERSION}")
+    implementation("net.minecrell:terminalconsoleappender:${TERMINALCONSOLEAPPENDER_VERSION}")
+    // implementation("org.jline:jline:${JLINE_VERSION}")
+
+    implementation("org.apache.logging.log4j:log4j-core:${LOG4J_VERSION}")
+    annotationProcessor("org.apache.logging.log4j:log4j-core:${LOG4J_VERSION}")
+
+    testCompileOnly("org.jetbrains:annotations:${JETBRAINS_ANNOTATIONS_VERSION}")
     testRuntimeOnly("cpw.mods:bootstraplauncher:${BOOTSTRAPLAUNCHER_VERSION}")
 }
 

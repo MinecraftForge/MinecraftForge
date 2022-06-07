@@ -1,7 +1,7 @@
 --- a/net/minecraft/world/entity/MobCategory.java
 +++ b/net/minecraft/world/entity/MobCategory.java
-@@ -6,7 +_,7 @@
- import java.util.stream.Collectors;
+@@ -3,7 +_,7 @@
+ import com.mojang.serialization.Codec;
  import net.minecraft.util.StringRepresentable;
  
 -public enum MobCategory implements StringRepresentable {
@@ -9,16 +9,17 @@
     MONSTER("monster", 70, false, false, 128),
     CREATURE("creature", 10, true, true, 128),
     AMBIENT("ambient", 15, true, false, 128),
-@@ -16,7 +_,7 @@
+@@ -13,7 +_,8 @@
     WATER_AMBIENT("water_ambient", 20, true, false, 64),
     MISC("misc", -1, true, true, 128);
  
--   public static final Codec<MobCategory> f_21584_ = StringRepresentable.m_14350_(MobCategory::values, MobCategory::m_21605_);
-+   public static final Codec<MobCategory> f_21584_ = net.minecraftforge.common.IExtensibleEnum.createCodecForExtensibleEnum(MobCategory::values, MobCategory::m_21605_);
-    private static final Map<String, MobCategory> f_21585_ = Arrays.stream(values()).collect(Collectors.toMap(MobCategory::m_21607_, (p_21604_) -> {
-       return p_21604_;
-    }));
-@@ -57,6 +_,16 @@
+-   public static final Codec<MobCategory> f_21584_ = StringRepresentable.m_216439_(MobCategory::values);
++   public static final Codec<MobCategory> f_21584_ = net.minecraftforge.common.IExtensibleEnum.createCodecForExtensibleEnum(MobCategory::values, MobCategory::byName);
++   private static final java.util.Map<String, MobCategory> BY_NAME = java.util.Arrays.stream(values()).collect(java.util.stream.Collectors.toMap(MobCategory::m_21607_, mobCategory -> mobCategory));
+    private final int f_21586_;
+    private final boolean f_21587_;
+    private final boolean f_21588_;
+@@ -47,6 +_,21 @@
  
     public boolean m_21610_() {
        return this.f_21588_;
@@ -31,7 +32,12 @@
 +   @Override
 +   @Deprecated
 +   public void init() {
-+      f_21585_.put(this.m_21607_(), this);
++      BY_NAME.put(this.m_21607_(), this);
++   }
++
++   // Forge: Access enum members by name
++   public static MobCategory byName(String name) {
++      return BY_NAME.get(name);
     }
  
     public int m_21611_() {

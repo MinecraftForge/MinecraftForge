@@ -2,27 +2,27 @@
   "type": "minecraft:block",
   "pools": [
     {
-      "rolls": 1.0,
       "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "action": "shears_dig",
+          "condition": "forge:can_tool_perform_action"
+        }
+      ],
       "entries": [
         {
           "type": "minecraft:item",
           "functions": [
             {
-              "function": "minecraft:set_count",
+              "add": false,
               "count": 2.0,
-              "add": false
+              "function": "minecraft:set_count"
             }
           ],
           "name": "minecraft:seagrass"
         }
       ],
-      "conditions": [
-        {
-          "condition": "forge:can_tool_perform_action",
-          "action": "shears_dig"
-        }
-      ]
+      "rolls": 1.0
     }
   ]
 }

@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/network/ServerConnectionListener.java
 +++ b/net/minecraft/server/network/ServerConnectionListener.java
-@@ -50,11 +_,12 @@
+@@ -49,11 +_,12 @@
  
  public class ServerConnectionListener {
     private static final Logger f_9701_ = LogUtils.getLogger();
@@ -15,7 +15,7 @@
     });
     final MinecraftServer f_9702_;
     public volatile boolean f_9700_;
-@@ -67,6 +_,7 @@
+@@ -66,6 +_,7 @@
     }
  
     public void m_9711_(@Nullable InetAddress p_9712_, int p_9713_) throws IOException {
@@ -23,7 +23,7 @@
        synchronized(this.f_9703_) {
           Class<? extends ServerSocketChannel> oclass;
           LazyLoadedValue<? extends EventLoopGroup> lazyloadedvalue;
-@@ -87,7 +_,7 @@
+@@ -86,7 +_,7 @@
                 } catch (ChannelException channelexception) {
                 }
  

@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/packs/repository/PackCompatibility.java
 +++ b/net/minecraft/server/packs/repository/PackCompatibility.java
-@@ -34,7 +_,7 @@
+@@ -33,7 +_,7 @@
     }
  
     public static PackCompatibility m_143885_(PackMetadataSection p_143886_, PackType p_143887_) {

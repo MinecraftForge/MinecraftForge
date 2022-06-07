@@ -7,14 +7,12 @@ package net.minecraftforge.client.settings;
 
 import java.util.function.Supplier;
 
-import javax.annotation.Nullable;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import com.mojang.blaze3d.platform.InputConstants;
 
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
+import org.jetbrains.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
 
 public enum KeyModifier {
@@ -43,7 +41,7 @@ public enum KeyModifier {
         public Component getCombinedName(InputConstants.Key key, Supplier<Component> defaultLogic)
         {
             String localizationFormatKey = Minecraft.ON_OSX ? "forge.controlsgui.control.mac" : "forge.controlsgui.control";
-            return new TranslatableComponent(localizationFormatKey, defaultLogic.get());
+            return Component.translatable(localizationFormatKey, defaultLogic.get());
         }
     },
     SHIFT {
@@ -62,7 +60,7 @@ public enum KeyModifier {
         @Override
         public Component getCombinedName(InputConstants.Key key, Supplier<Component> defaultLogic)
         {
-            return new TranslatableComponent("forge.controlsgui.shift", defaultLogic.get());
+            return Component.translatable("forge.controlsgui.shift", defaultLogic.get());
         }
     },
     ALT {
@@ -81,7 +79,7 @@ public enum KeyModifier {
         @Override
         public Component getCombinedName(InputConstants.Key keyCode, Supplier<Component> defaultLogic)
         {
-            return new TranslatableComponent("forge.controlsgui.alt", defaultLogic.get());
+            return Component.translatable("forge.controlsgui.alt", defaultLogic.get());
         }
     },
     NONE {

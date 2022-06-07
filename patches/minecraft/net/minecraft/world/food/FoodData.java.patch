@@ -10,7 +10,7 @@
 +      this.eat(p_38713_, p_38714_, null);
 +   }
 +
-+   public void eat(Item p_38713_, ItemStack p_38714_, @javax.annotation.Nullable net.minecraft.world.entity.LivingEntity entity) {
++   public void eat(Item p_38713_, ItemStack p_38714_, @org.jetbrains.annotations.Nullable net.minecraft.world.entity.LivingEntity entity) {
        if (p_38713_.m_41472_()) {
 -         FoodProperties foodproperties = p_38713_.m_41473_();
 +         FoodProperties foodproperties = p_38714_.getFoodProperties(entity);

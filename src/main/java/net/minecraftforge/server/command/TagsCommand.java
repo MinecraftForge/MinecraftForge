@@ -25,12 +25,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
-import net.minecraft.network.chat.ClickEvent;
-import net.minecraft.network.chat.ComponentUtils;
-import net.minecraft.network.chat.HoverEvent;
-import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.*;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
@@ -67,11 +62,11 @@ class TagsCommand
             ResourceKey.createRegistryKey(new ResourceLocation("root"));
 
     private static final DynamicCommandExceptionType UNKNOWN_REGISTRY = new DynamicCommandExceptionType(key ->
-            new TranslatableComponent("commands.forge.tags.error.unknown_registry", key));
+            Component.translatable("commands.forge.tags.error.unknown_registry", key));
     private static final Dynamic2CommandExceptionType UNKNOWN_TAG = new Dynamic2CommandExceptionType((tag, registry) ->
-            new TranslatableComponent("commands.forge.tags.error.unknown_tag", tag, registry));
+            Component.translatable("commands.forge.tags.error.unknown_tag", tag, registry));
     private static final Dynamic2CommandExceptionType UNKNOWN_ELEMENT = new Dynamic2CommandExceptionType((tag, registry) ->
-            new TranslatableComponent("commands.forge.tags.error.unknown_element", tag, registry));
+            Component.translatable("commands.forge.tags.error.unknown_element", tag, registry));
 
     public static ArgumentBuilder<CommandSourceStack, ?> register()
     {
@@ -121,7 +116,7 @@ class TagsCommand
         final long tagCount = registry.getTags().count();
 
         ctx.getSource().sendSuccess(createMessage(
-                new TranslatableComponent("commands.forge.tags.registry_key", new TextComponent(registryKey.location().toString()).withStyle(ChatFormatting.GOLD)),
+                Component.translatable("commands.forge.tags.registry_key", Component.literal(registryKey.location().toString()).withStyle(ChatFormatting.GOLD)),
                 "commands.forge.tags.tag_count",
                 "commands.forge.tags.copy_tag_names",
                 tagCount,
@@ -149,9 +144,9 @@ class TagsCommand
                 .orElseThrow(() -> UNKNOWN_TAG.create(tagKey.location(), registryKey.location()));
 
         ctx.getSource().sendSuccess(createMessage(
-                new TranslatableComponent("commands.forge.tags.tag_key",
-                        new TextComponent(tagKey.registry().location().toString()).withStyle(ChatFormatting.GOLD),
-                        new TextComponent(tagKey.location().toString()).withStyle(ChatFormatting.DARK_GREEN)),
+                Component.translatable("commands.forge.tags.tag_key",
+                        Component.literal(tagKey.registry().location().toString()).withStyle(ChatFormatting.GOLD),
+                        Component.literal(tagKey.location().toString()).withStyle(ChatFormatting.DARK_GREEN)),
                 "commands.forge.tags.element_count",
                 "commands.forge.tags.copy_element_names",
                 tag.size(),
@@ -179,9 +174,9 @@ class TagsCommand
         final long containingTagsCount = elementHolder.tags().count();
 
         ctx.getSource().sendSuccess(createMessage(
-                new TranslatableComponent("commands.forge.tags.element",
-                        new TextComponent(registryKey.location().toString()).withStyle(ChatFormatting.GOLD),
-                        new TextComponent(elementLocation.toString()).withStyle(ChatFormatting.YELLOW)),
+                Component.translatable("commands.forge.tags.element",
+                        Component.literal(registryKey.location().toString()).withStyle(ChatFormatting.GOLD),
+                        Component.literal(elementLocation.toString()).withStyle(ChatFormatting.YELLOW)),
                 "commands.forge.tags.containing_tag_count",
                 "commands.forge.tags.copy_tag_names",
                 containingTagsCount,
@@ -193,7 +188,7 @@ class TagsCommand
         return (int) containingTagsCount;
     }
 
-    private static MutableComponent createMessage(final TranslatableComponent header,
+    private static MutableComponent createMessage(final MutableComponent header,
             final String containsText,
             final String copyHoverText,
             final long count,
@@ -205,26 +200,26 @@ class TagsCommand
         final long totalPages = (count - 1) / PAGE_SIZE + 1;
         final long actualPage = Mth.clamp(currentPage, 1, totalPages);
 
-        MutableComponent containsComponent = new TranslatableComponent(containsText, count);
+        MutableComponent containsComponent = Component.translatable(containsText, count);
         if (count > 0) // Highlight the count text, make it clickable, and append page counters
         {
             containsComponent = ComponentUtils.wrapInSquareBrackets(containsComponent.withStyle(s -> s
                     .withColor(ChatFormatting.GREEN)
                     .withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, allElementNames))
                     .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-                            new TranslatableComponent(copyHoverText)))));
-            containsComponent = new TranslatableComponent("commands.forge.tags.page_info",
+                            Component.translatable(copyHoverText)))));
+            containsComponent = Component.translatable("commands.forge.tags.page_info",
                     containsComponent, actualPage, totalPages);
         }
 
-        final MutableComponent tagElements = new TextComponent("").append(containsComponent);
+        final MutableComponent tagElements = Component.literal("").append(containsComponent);
         names.get()
                 .sorted()
                 .skip(PAGE_SIZE * (actualPage - 1))
                 .limit(PAGE_SIZE)
-                .map(TextComponent::new)
+                .map(Component::literal)
                 .map(t -> t.withStyle(elementColor))
-                .map(t -> new TextComponent("\n - ").append(t))
+                .map(t -> Component.translatable("\n - ").append(t))
                 .forEach(tagElements::append);
 
         return header.append("\n").append(tagElements);

@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/dedicated/DedicatedServer.java
 +++ b/net/minecraft/server/dedicated/DedicatedServer.java
-@@ -89,6 +_,7 @@
+@@ -82,6 +_,7 @@
     public boolean m_7038_() throws IOException {
        Thread thread = new Thread("Server console handler") {
           public void run() {
@@ -8,9 +8,9 @@
              BufferedReader bufferedreader = new BufferedReader(new InputStreamReader(System.in, StandardCharsets.UTF_8));
  
              String s1;
-@@ -167,11 +_,13 @@
+@@ -159,11 +_,13 @@
           long i = Util.m_137569_();
-          SkullBlockEntity.m_196700_(this.m_129927_(), this.m_129925_(), this);
+          SkullBlockEntity.m_222885_(this.f_236721_, this);
           GameProfileCache.m_11004_(this.m_129797_());
 +         if (!net.minecraftforge.server.ServerLifecycleHooks.handleServerAboutToStart(this)) return false;
           f_139598_.info("Preparing level \"{}\"", (Object)this.m_7123_());
@@ -22,7 +22,7 @@
           if (dedicatedserverproperties.f_139744_ != null) {
              this.m_129900_().m_46170_(GameRules.f_46153_).m_46246_(dedicatedserverproperties.f_139744_, this);
           }
-@@ -195,12 +_,13 @@
+@@ -187,12 +_,13 @@
           }
  
           Items.f_41852_.m_6787_(CreativeModeTab.f_40754_, NonNullList.m_122779_());
@@ -37,15 +37,3 @@
        }
     }
  
-@@ -543,6 +_,11 @@
- 
-    public boolean m_7779_(GameProfile p_139642_) {
-       return false;
-+   }
-+
-+   @Override //Forge: Enable formated text for colors in console.
-+   public void m_6352_(net.minecraft.network.chat.Component message, java.util.UUID p_108776_) {
-+      f_139598_.info(message.getString());
-    }
- 
-    public int m_7186_(int p_139659_) {

@@ -1,0 +1,19 @@
+--- a/net/minecraft/world/level/block/SculkShriekerBlock.java
++++ b/net/minecraft/world/level/block/SculkShriekerBlock.java
+@@ -121,10 +_,12 @@
+ 
+    public void m_213646_(BlockState p_222192_, ServerLevel p_222193_, BlockPos p_222194_, ItemStack p_222195_, boolean p_222196_) {
+       super.m_213646_(p_222192_, p_222193_, p_222194_, p_222195_, p_222196_);
+-      if (p_222196_) {
+-         this.m_220822_(p_222193_, p_222194_, p_222195_, ConstantInt.m_146483_(5));
+-      }
+-
++
++   }
++
++   @Override
++   public int getExpDrop(BlockState state, net.minecraft.world.level.LevelReader level, RandomSource randomSource, BlockPos pos, int fortuneLevel, int silkTouchLevel) {
++      return silkTouchLevel == 0 ? 5 : 0;
+    }
+ 
+    @Nullable

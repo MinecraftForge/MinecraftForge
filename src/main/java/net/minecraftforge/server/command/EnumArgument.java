@@ -13,10 +13,11 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.Dynamic2CommandExceptionType;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
+import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.SharedSuggestionProvider;
-import net.minecraft.commands.synchronization.ArgumentSerializer;
+import net.minecraft.commands.synchronization.ArgumentTypeInfo;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -26,7 +27,7 @@ import java.util.stream.Stream;
 
 public class EnumArgument<T extends Enum<T>> implements ArgumentType<T> {
     private static final Dynamic2CommandExceptionType INVALID_ENUM = new Dynamic2CommandExceptionType(
-            (found, constants) -> new TranslatableComponent("commands.forge.arguments.enum.invalid", constants, found));
+            (found, constants) -> Component.translatable("commands.forge.arguments.enum.invalid", constants, found));
     private final Class<T> enumClass;
 
     public static <R extends Enum<R>> EnumArgument<R> enumArgument(Class<R> enumClass) {
@@ -56,22 +57,22 @@ public class EnumArgument<T extends Enum<T>> implements ArgumentType<T> {
         return Stream.of(enumClass.getEnumConstants()).map(Object::toString).collect(Collectors.toList());
     }
 
-    public static class Serializer implements ArgumentSerializer<EnumArgument<?>>
+    public static class Info<T extends Enum<T>> implements ArgumentTypeInfo<EnumArgument<T>, Info<T>.Template>
     {
         @Override
-        public void serializeToNetwork(EnumArgument<?> argument, FriendlyByteBuf buffer)
+        public void serializeToNetwork(Template template, FriendlyByteBuf buffer)
         {
-            buffer.writeUtf(argument.enumClass.getName());
+            buffer.writeUtf(template.enumClass.getName());
         }
 
-        @SuppressWarnings({"unchecked", "rawtypes"})
+        @SuppressWarnings("unchecked")
         @Override
-        public EnumArgument<?> deserializeFromNetwork(FriendlyByteBuf buffer)
+        public Template deserializeFromNetwork(FriendlyByteBuf buffer)
         {
             try
             {
                 String name = buffer.readUtf();
-                return new EnumArgument(Class.forName(name));
+                return new Template((Class<T>) Class.forName(name));
             }
             catch (ClassNotFoundException e)
             {
@@ -80,9 +81,37 @@ public class EnumArgument<T extends Enum<T>> implements ArgumentType<T> {
         }
 
         @Override
-        public void serializeToJson(EnumArgument<?> argument, JsonObject json)
+        public void serializeToJson(Template template, JsonObject json)
         {
-            json.addProperty("enum", argument.enumClass.getName());
+            json.addProperty("enum", template.enumClass.getName());
+        }
+
+        @Override
+        public Template unpack(EnumArgument<T> argument)
+        {
+            return new Template(argument.enumClass);
+        }
+
+        public class Template implements ArgumentTypeInfo.Template<EnumArgument<T>>
+        {
+            final Class<T> enumClass;
+
+            Template(Class<T> enumClass)
+            {
+                this.enumClass = enumClass;
+            }
+
+            @Override
+            public EnumArgument<T> instantiate(CommandBuildContext p_223435_)
+            {
+                return new EnumArgument<>(this.enumClass);
+            }
+
+            @Override
+            public ArgumentTypeInfo<EnumArgument<T>, ?> type()
+            {
+                return Info.this;
+            }
         }
     }
 }

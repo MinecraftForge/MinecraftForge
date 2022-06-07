@@ -3,28 +3,28 @@
 @@ -64,12 +_,14 @@
     }
  
-    public void m_7455_(BlockState p_52292_, ServerLevel p_52293_, BlockPos p_52294_, Random p_52295_) {
-+      if (!p_52293_.isAreaLoaded(p_52294_, 1)) return; // Forge: prevent loading unloaded chunks when checking neighbor's light
-       if (p_52293_.m_45524_(p_52294_, 0) >= 9) {
-          int i = this.m_52305_(p_52292_);
+    public void m_213898_(BlockState p_221050_, ServerLevel p_221051_, BlockPos p_221052_, RandomSource p_221053_) {
++      if (!p_221051_.isAreaLoaded(p_221052_, 1)) return; // Forge: prevent loading unloaded chunks when checking neighbor's light
+       if (p_221051_.m_45524_(p_221052_, 0) >= 9) {
+          int i = this.m_52305_(p_221050_);
           if (i < this.m_7419_()) {
-             float f = m_52272_(this, p_52293_, p_52294_);
--            if (p_52295_.nextInt((int)(25.0F / f) + 1) == 0) {
-+            if (net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_52293_, p_52294_, p_52292_, p_52295_.nextInt((int)(25.0F / f) + 1) == 0)) {
-                p_52293_.m_7731_(p_52294_, this.m_52289_(i + 1), 2);
-+               net.minecraftforge.common.ForgeHooks.onCropsGrowPost(p_52293_, p_52294_, p_52292_);
+             float f = m_52272_(this, p_221051_, p_221052_);
+-            if (p_221053_.m_188503_((int)(25.0F / f) + 1) == 0) {
++            if (net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_221051_, p_221052_, p_221050_, p_221053_.m_188503_((int)(25.0F / f) + 1) == 0)) {
+                p_221051_.m_7731_(p_221052_, this.m_52289_(i + 1), 2);
++               net.minecraftforge.common.ForgeHooks.onCropsGrowPost(p_221051_, p_221052_, p_221050_);
              }
           }
        }
 @@ -98,9 +_,9 @@
           for(int j = -1; j <= 1; ++j) {
              float f1 = 0.0F;
-             BlockState blockstate = p_52274_.m_8055_(blockpos.m_142082_(i, 0, j));
+             BlockState blockstate = p_52274_.m_8055_(blockpos.m_7918_(i, 0, j));
 -            if (blockstate.m_60713_(Blocks.f_50093_)) {
-+            if (blockstate.canSustainPlant(p_52274_, blockpos.m_142082_(i, 0, j), net.minecraft.core.Direction.UP, (net.minecraftforge.common.IPlantable) p_52273_)) {
++            if (blockstate.canSustainPlant(p_52274_, blockpos.m_7918_(i, 0, j), net.minecraft.core.Direction.UP, (net.minecraftforge.common.IPlantable) p_52273_)) {
                 f1 = 1.0F;
 -               if (blockstate.m_61143_(FarmBlock.f_53243_) > 0) {
-+               if (blockstate.isFertile(p_52274_, p_52275_.m_142082_(i, 0, j))) {
++               if (blockstate.isFertile(p_52274_, p_52275_.m_7918_(i, 0, j))) {
                    f1 = 3.0F;
                 }
              }

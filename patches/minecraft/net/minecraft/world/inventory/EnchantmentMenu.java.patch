@@ -19,15 +19,15 @@
                 for(BlockPos blockpos : EnchantmentTableBlock.f_207902_) {
                    if (EnchantmentTableBlock.m_207909_(p_39485_, p_39486_, blockpos)) {
 -                     ++j;
-+                     j += p_39485_.m_8055_(p_39486_.m_141952_(blockpos)).getEnchantPowerBonus(p_39485_, p_39486_.m_141952_(blockpos));
++                     j += p_39485_.m_8055_(p_39486_.m_121955_(blockpos)).getEnchantPowerBonus(p_39485_, p_39486_.m_121955_(blockpos));
                    }
                 }
  
-                this.f_39451_.setSeed((long)this.f_39452_.m_6501_());
+                this.f_39451_.m_188584_((long)this.f_39452_.m_6501_());
  
                 for(int k = 0; k < 3; ++k) {
--                  this.f_39446_[k] = EnchantmentHelper.m_44872_(this.f_39451_, k, j, itemstack);
-+                  this.f_39446_[k] = EnchantmentHelper.m_44872_(this.f_39451_, k, (int)j, itemstack);
+-                  this.f_39446_[k] = EnchantmentHelper.m_220287_(this.f_39451_, k, j, itemstack);
++                  this.f_39446_[k] = EnchantmentHelper.m_220287_(this.f_39451_, k, (int)j, itemstack);
                    this.f_39447_[k] = -1;
                    this.f_39448_[k] = -1;
                    if (this.f_39446_[k] < k + 1) {

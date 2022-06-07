@@ -21,16 +21,15 @@ import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.eventbus.api.Cancelable;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * PlayerDestroyItemEvent is fired when a player destroys an item.<br>
  * This event is fired whenever a player destroys an item in
  * {@link MultiPlayerGameMode#destroyBlock(BlockPos)},
- * {@link MultiPlayerGameMode#useItem(Player, Level, InteractionHand)},
- * {@link MultiPlayerGameMode#useItemOn(LocalPlayer, ClientLevel, InteractionHand, BlockHitResult)} ,
+ * {@link MultiPlayerGameMode#useItem(Player, InteractionHand)},
+ * {@link MultiPlayerGameMode#useItemOn(LocalPlayer, InteractionHand, BlockHitResult)} ,
  * {@link Player#attack(Entity)},
  * {@code Player#hurtCurrentlyUsedShield(float)},
  * {@link Player#interactOn(Entity, InteractionHand)},
@@ -51,18 +50,18 @@ import javax.annotation.Nullable;
  **/
 public class PlayerDestroyItemEvent extends PlayerEvent
 {
-    @Nonnull
+    @NotNull
     private final ItemStack original;
     @Nullable
     private final InteractionHand hand; // May be null if this player destroys the item by any use besides holding it.
-    public PlayerDestroyItemEvent(Player player, @Nonnull ItemStack original, @Nullable InteractionHand hand)
+    public PlayerDestroyItemEvent(Player player, @NotNull ItemStack original, @Nullable InteractionHand hand)
     {
         super(player);
         this.original = original;
         this.hand = hand;
     }
 
-    @Nonnull
+    @NotNull
     public ItemStack getOriginal() { return this.original; }
     @Nullable
     public InteractionHand getHand() { return this.hand; }

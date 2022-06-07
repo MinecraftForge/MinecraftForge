@@ -1,14 +1,25 @@
 --- a/net/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity.java
-@@ -107,6 +_,7 @@
-       this.f_58312_ = p_154994_;
+@@ -58,6 +_,7 @@
+    public static final int f_154987_ = 4;
+    public static final int f_154988_ = 200;
+    public static final int f_154989_ = 2;
++   private final RecipeType<? extends AbstractCookingRecipe> recipeType;
+    protected NonNullList<ItemStack> f_58310_ = NonNullList.m_122780_(3, ItemStack.f_41583_);
+    int f_58316_;
+    int f_58317_;
+@@ -106,8 +_,10 @@
+    protected AbstractFurnaceBlockEntity(BlockEntityType<?> p_154991_, BlockPos p_154992_, BlockState p_154993_, RecipeType<? extends AbstractCookingRecipe> p_154994_) {
+       super(p_154991_, p_154992_, p_154993_);
+       this.f_222691_ = RecipeManager.m_220267_((RecipeType)p_154994_);
++      this.recipeType = p_154994_;
     }
  
 +   /**@deprecated Forge: get burn times by calling ForgeHooks#getBurnTime(ItemStack)*/ @Deprecated
     public static Map<Item, Integer> m_58423_() {
        Map<Item, Integer> map = Maps.newLinkedHashMap();
        m_58374_(map, Items.f_42448_, 20000);
-@@ -206,9 +_,9 @@
+@@ -210,9 +_,9 @@
        super.m_142466_(p_155025_);
        this.f_58310_ = NonNullList.m_122780_(this.m_6643_(), ItemStack.f_41583_);
        ContainerHelper.m_18980_(p_155025_, this.f_58310_);
@@ -21,7 +32,7 @@
        this.f_58317_ = this.m_7743_(this.f_58310_.get(1));
        CompoundTag compoundtag = p_155025_.m_128469_("RecipesUsed");
  
-@@ -220,9 +_,9 @@
+@@ -224,9 +_,9 @@
  
     protected void m_183515_(CompoundTag p_187452_) {
        super.m_183515_(p_187452_);
@@ -34,12 +45,9 @@
        ContainerHelper.m_18973_(p_187452_, this.f_58310_);
        CompoundTag compoundtag = new CompoundTag();
        this.f_58320_.forEach((p_187449_, p_187450_) -> {
-@@ -240,30 +_,32 @@
+@@ -254,28 +_,30 @@
+          }
  
-       ItemStack itemstack = p_155017_.f_58310_.get(1);
-       if (p_155017_.m_58425_() || !itemstack.m_41619_() && !p_155017_.f_58310_.get(0).m_41619_()) {
--         Recipe<?> recipe = p_155014_.m_7465_().m_44015_((RecipeType<AbstractCookingRecipe>)p_155017_.f_58312_, p_155017_, p_155014_).orElse((AbstractCookingRecipe)null);
-+         Recipe<?> recipe = p_155014_.m_7465_().m_44015_((RecipeType<AbstractCookingRecipe>)p_155017_.f_58312_, p_155017_, p_155014_).orElse(null);
           int i = p_155017_.m_6893_();
 -         if (!p_155017_.m_58425_() && m_155005_(recipe, p_155017_.f_58310_, i)) {
 +         if (!p_155017_.m_58425_() && p_155017_.m_155005_(recipe, p_155017_.f_58310_, i)) {
@@ -50,7 +58,7 @@
 +               if (itemstack.hasContainerItem())
 +                  p_155017_.f_58310_.set(1, itemstack.getContainerItem());
 +               else
-                if (!itemstack.m_41619_()) {
+                if (flag3) {
                    Item item = itemstack.m_41720_();
                    itemstack.m_41774_(1);
                    if (itemstack.m_41619_()) {
@@ -67,13 +75,13 @@
              ++p_155017_.f_58318_;
              if (p_155017_.f_58318_ == p_155017_.f_58319_) {
                 p_155017_.f_58318_ = 0;
-                p_155017_.f_58319_ = m_155009_(p_155014_, p_155017_.f_58312_, p_155017_);
+                p_155017_.f_58319_ = m_222692_(p_155014_, p_155017_);
 -               if (m_155026_(recipe, p_155017_.f_58310_, i)) {
 +               if (p_155017_.m_155026_(recipe, p_155017_.f_58310_, i)) {
                    p_155017_.m_6029_(recipe);
                 }
  
-@@ -288,9 +_,9 @@
+@@ -300,9 +_,9 @@
  
     }
  
@@ -85,7 +93,7 @@
           if (itemstack.m_41619_()) {
              return false;
           } else {
-@@ -299,10 +_,10 @@
+@@ -311,10 +_,10 @@
                 return true;
              } else if (!itemstack1.m_41656_(itemstack)) {
                 return false;
@@ -98,7 +106,7 @@
              }
           }
        } else {
-@@ -310,15 +_,15 @@
+@@ -322,15 +_,15 @@
        }
     }
  
@@ -118,16 +126,16 @@
           }
  
           if (itemstack.m_150930_(Blocks.f_50057_.m_5456_()) && !p_155028_.get(1).m_41619_() && p_155028_.get(1).m_150930_(Items.f_42446_)) {
-@@ -337,7 +_,7 @@
+@@ -349,7 +_,7 @@
           return 0;
        } else {
           Item item = p_58343_.m_41720_();
 -         return m_58423_().getOrDefault(item, 0);
-+         return net.minecraftforge.common.ForgeHooks.getBurnTime(p_58343_, this.f_58312_);
++         return net.minecraftforge.common.ForgeHooks.getBurnTime(p_58343_, this.recipeType);
        }
     }
  
-@@ -346,7 +_,7 @@
+@@ -358,7 +_,7 @@
     }
  
     public static boolean m_58399_(ItemStack p_58400_) {
@@ -136,16 +144,16 @@
     }
  
     public int[] m_7071_(Direction p_58363_) {
-@@ -426,7 +_,7 @@
+@@ -438,7 +_,7 @@
           return true;
        } else {
           ItemStack itemstack = this.f_58310_.get(1);
 -         return m_58399_(p_58390_) || p_58390_.m_150930_(Items.f_42446_) && !itemstack.m_150930_(Items.f_42446_);
-+         return net.minecraftforge.common.ForgeHooks.getBurnTime(p_58390_, this.f_58312_) > 0 || p_58390_.m_150930_(Items.f_42446_) && !itemstack.m_150930_(Items.f_42446_);
++         return net.minecraftforge.common.ForgeHooks.getBurnTime(p_58390_, this.recipeType) > 0 || p_58390_.m_150930_(Items.f_42446_) && !itemstack.m_150930_(Items.f_42446_);
        }
     }
  
-@@ -484,5 +_,34 @@
+@@ -496,5 +_,34 @@
           p_58342_.m_36491_(itemstack);
        }
  

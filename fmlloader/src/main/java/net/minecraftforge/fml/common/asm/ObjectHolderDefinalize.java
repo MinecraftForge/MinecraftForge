@@ -7,7 +7,11 @@ package net.minecraftforge.fml.common.asm;
 
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
@@ -20,14 +24,23 @@ import cpw.mods.modlauncher.serviceapi.ILaunchPluginService;
  * Will also de-finalize all fields in on class level annotations.
  */
 public class ObjectHolderDefinalize implements ILaunchPluginService {
-
+    // Hardcoded map of vanilla classes that should have object holders for each field of the given registry type.
+    // IMPORTANT: Updates to this collection must be reflected in ObjectHolderRegistry. Duplicated cuz classloaders, yay!
+    // Classnames are validated in ObjectHolderRegistry.
+    private static final Map<String, VanillaObjectHolderData> VANILLA_OBJECT_HOLDERS = Stream.of(
+            new VanillaObjectHolderData("net.minecraft.world.level.block.Blocks", "block", "net.minecraft.world.level.block.Block"),
+            new VanillaObjectHolderData("net.minecraft.world.item.Items", "item", "net.minecraft.world.item.Item"),
+            new VanillaObjectHolderData("net.minecraft.world.item.enchantment.Enchantments", "enchantment", "net.minecraft.world.item.enchantment.Enchantment"),
+            new VanillaObjectHolderData("net.minecraft.world.effect.MobEffects", "mob_effect", "net.minecraft.world.effect.MobEffect"),
+            new VanillaObjectHolderData("net.minecraft.core.particles.ParticleTypes", "particle_type", "net.minecraft.core.particles.ParticleType"),
+            new VanillaObjectHolderData("net.minecraft.sounds.SoundEvents", "sound_event", "net.minecraft.sounds.SoundEvent")
+    ).collect(Collectors.toMap(VanillaObjectHolderData::holderClass, Function.identity()));
     private final String OBJECT_HOLDER = "Lnet/minecraftforge/registries/ObjectHolder;"; //Don't directly reference this to prevent class loading.
 
     @Override
     public String name() {
         return "object_holder_definalize";
     }
-
 
     private static final EnumSet<Phase> YAY = EnumSet.of(Phase.AFTER);
     private static final EnumSet<Phase> NAY = EnumSet.noneOf(Phase.class);
@@ -73,10 +86,8 @@ public class ObjectHolderDefinalize implements ILaunchPluginService {
             changes.compareAndSet(false, prev != f.access);
         });
 
-        if (hasHolder(classNode.visibleAnnotations)) //Class level, de-finalize all fields and add @ObjectHolder to them!
+        if (VANILLA_OBJECT_HOLDERS.containsKey(classType.getClassName())) //Class level, de-finalize all fields and add @ObjectHolder to them!
         {
-            @SuppressWarnings("unused")
-            String value = getValue(classNode.visibleAnnotations);
             classNode.fields.stream().filter(f -> ((f.access & flags) == flags) && f.desc.startsWith("L")).forEach(f ->
             {
                 int prev = f.access;
@@ -95,4 +106,5 @@ public class ObjectHolderDefinalize implements ILaunchPluginService {
         return changes.get() ? ComputeFlags.SIMPLE_REWRITE : ComputeFlags.NO_REWRITE;
     }
 
+    private record VanillaObjectHolderData(String holderClass, String registryName, String registryType) {}
 }

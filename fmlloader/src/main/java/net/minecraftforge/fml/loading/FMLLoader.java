@@ -5,6 +5,7 @@
 
 package net.minecraftforge.fml.loading;
 
+import com.mojang.logging.LogUtils;
 import cpw.mods.modlauncher.Launcher;
 import cpw.mods.modlauncher.api.*;
 import cpw.mods.modlauncher.serviceapi.ILaunchPluginService;
@@ -21,8 +22,7 @@ import net.minecraftforge.fml.loading.targets.CommonLaunchHandler;
 import net.minecraftforge.forgespi.Environment;
 import net.minecraftforge.forgespi.coremod.ICoreModProvider;
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -35,7 +35,7 @@ import static net.minecraftforge.fml.loading.LogMarkers.SCAN;
 
 public class FMLLoader
 {
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger LOGGER = LogUtils.getLogger();
     private static AccessTransformerService accessTransformer;
     private static ModDiscoverer modDiscoverer;
     private static ICoreModProvider coreModProvider;
@@ -62,47 +62,47 @@ public class FMLLoader
         final Package modLauncherPackage = ITransformationService.class.getPackage();
         LOGGER.debug(CORE,"FML found ModLauncher version : {}", modLauncherPackage.getImplementationVersion());
         if (!modLauncherPackage.isCompatibleWith("4.0")) {
-            LOGGER.fatal(CORE,"Found incompatible ModLauncher specification : {}, version {} from {}", modLauncherPackage.getSpecificationVersion(), modLauncherPackage.getImplementationVersion(), modLauncherPackage.getImplementationVendor());
+            LOGGER.error(CORE, "Found incompatible ModLauncher specification : {}, version {} from {}", modLauncherPackage.getSpecificationVersion(), modLauncherPackage.getImplementationVersion(), modLauncherPackage.getImplementationVendor());
             throw new IncompatibleEnvironmentException("Incompatible modlauncher found "+modLauncherPackage.getSpecificationVersion());
         }
 
         accessTransformer = (AccessTransformerService) environment.findLaunchPlugin("accesstransformer").orElseThrow(()-> {
-            LOGGER.fatal(CORE,"Access Transformer library is missing, we need this to run");
+            LOGGER.error(CORE, "Access Transformer library is missing, we need this to run");
             return new IncompatibleEnvironmentException("Missing AccessTransformer, cannot run");
         });
 
         final Package atPackage = accessTransformer.getClass().getPackage();
         LOGGER.debug(CORE,"FML found AccessTransformer version : {}", atPackage.getImplementationVersion());
         if (!atPackage.isCompatibleWith("1.0")) {
-            LOGGER.fatal(CORE,"Found incompatible AccessTransformer specification : {}, version {} from {}", atPackage.getSpecificationVersion(), atPackage.getImplementationVersion(), atPackage.getImplementationVendor());
+            LOGGER.error(CORE, "Found incompatible AccessTransformer specification : {}, version {} from {}", atPackage.getSpecificationVersion(), atPackage.getImplementationVersion(), atPackage.getImplementationVendor());
             throw new IncompatibleEnvironmentException("Incompatible accesstransformer found "+atPackage.getSpecificationVersion());
         }
 
         eventBus = environment.findLaunchPlugin("eventbus").orElseThrow(()-> {
-            LOGGER.fatal(CORE,"Event Bus library is missing, we need this to run");
+            LOGGER.error(CORE, "Event Bus library is missing, we need this to run");
             return new IncompatibleEnvironmentException("Missing EventBus, cannot run");
         });
 
         final Package eventBusPackage = eventBus.getClass().getPackage();
         LOGGER.debug(CORE,"FML found EventBus version : {}", eventBusPackage.getImplementationVersion());
         if (!eventBusPackage.isCompatibleWith("1.0")) {
-            LOGGER.fatal(CORE,"Found incompatible EventBus specification : {}, version {} from {}", eventBusPackage.getSpecificationVersion(), eventBusPackage.getImplementationVersion(), eventBusPackage.getImplementationVendor());
+            LOGGER.error(CORE, "Found incompatible EventBus specification : {}, version {} from {}", eventBusPackage.getSpecificationVersion(), eventBusPackage.getImplementationVersion(), eventBusPackage.getImplementationVendor());
             throw new IncompatibleEnvironmentException("Incompatible eventbus found "+eventBusPackage.getSpecificationVersion());
         }
 
         runtimeDistCleaner = (RuntimeDistCleaner)environment.findLaunchPlugin("runtimedistcleaner").orElseThrow(()-> {
-            LOGGER.fatal(CORE,"Dist Cleaner is missing, we need this to run");
+            LOGGER.error(CORE, "Dist Cleaner is missing, we need this to run");
             return new IncompatibleEnvironmentException("Missing DistCleaner, cannot run!");
         });
         LOGGER.debug(CORE, "Found Runtime Dist Cleaner");
 
-        var coreModProviders = ServiceLoaderUtils.streamWithErrorHandling(ServiceLoader.load(FMLLoader.class.getModule().getLayer(), ICoreModProvider.class), sce -> LOGGER.fatal(CORE, "Failed to load a coremod library, expect problems", sce)).toList();
+        var coreModProviders = ServiceLoaderUtils.streamWithErrorHandling(ServiceLoader.load(FMLLoader.class.getModule().getLayer(), ICoreModProvider.class), sce -> LOGGER.error(CORE, "Failed to load a coremod library, expect problems", sce)).toList();
 
         if (coreModProviders.isEmpty()) {
-            LOGGER.fatal(CORE, "Found no coremod provider. Cannot run");
+            LOGGER.error(CORE, "Found no coremod provider. Cannot run");
             throw new IncompatibleEnvironmentException("No coremod library found");
         } else if (coreModProviders.size() > 1) {
-            LOGGER.fatal(CORE, "Found multiple coremod providers : {}. Cannot run", coreModProviders.stream().map(p -> p.getClass().getName()).collect(Collectors.toList()));
+            LOGGER.error(CORE, "Found multiple coremod providers : {}. Cannot run", coreModProviders.stream().map(p -> p.getClass().getName()).collect(Collectors.toList()));
             throw new IncompatibleEnvironmentException("Multiple coremod libraries found");
         }
 
@@ -114,7 +114,7 @@ public class FMLLoader
         LOGGER.debug(CORE, "Found ForgeSPI package implementation version {}", Environment.class.getPackage().getImplementationVersion());
         LOGGER.debug(CORE, "Found ForgeSPI package specification {}", Environment.class.getPackage().getSpecificationVersion());
         if (Integer.parseInt(Environment.class.getPackage().getSpecificationVersion()) < 2) {
-            LOGGER.fatal(CORE, "Found an out of date ForgeSPI implementation: {}, loading cannot continue", Environment.class.getPackage().getSpecificationVersion());
+            LOGGER.error(CORE, "Found an out of date ForgeSPI implementation: {}, loading cannot continue", Environment.class.getPackage().getSpecificationVersion());
             throw new IncompatibleEnvironmentException("ForgeSPI is out of date, we cannot continue");
         }
 
@@ -122,7 +122,7 @@ public class FMLLoader
             Class.forName("com.electronwill.nightconfig.core.Config", false, environment.getClass().getClassLoader());
             Class.forName("com.electronwill.nightconfig.toml.TomlFormat", false, environment.getClass().getClassLoader());
         } catch (ClassNotFoundException e) {
-            LOGGER.fatal(CORE, "Failed to load NightConfig");
+            LOGGER.error(CORE, "Failed to load NightConfig");
             throw new IncompatibleEnvironmentException("Missing NightConfig");
         }
     }
@@ -134,12 +134,12 @@ public class FMLLoader
         final Optional<ILaunchHandlerService> launchHandler = environment.findLaunchHandler(launchTarget);
         LOGGER.debug(CORE, "Using {} as launch service", launchTarget);
         if (launchHandler.isEmpty()) {
-            LOGGER.fatal(CORE,"Missing LaunchHandler {}, cannot continue", launchTarget);
+            LOGGER.error(CORE, "Missing LaunchHandler {}, cannot continue", launchTarget);
             throw new RuntimeException("Missing launch handler: " + launchTarget);
         }
 
         if (!(launchHandler.get() instanceof CommonLaunchHandler)) {
-            LOGGER.fatal(CORE, "Incompatible Launch handler found - type {}, cannot continue", launchHandler.get().getClass().getName());
+            LOGGER.error(CORE, "Incompatible Launch handler found - type {}, cannot continue", launchHandler.get().getClass().getName());
             throw new RuntimeException("Incompatible launch handler found");
         }
         commonLaunchHandler = (CommonLaunchHandler)launchHandler.get();

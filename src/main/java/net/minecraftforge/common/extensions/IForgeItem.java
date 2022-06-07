@@ -10,9 +10,6 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import com.google.common.collect.Multimap;
 
 import net.minecraft.world.damagesource.DamageSource;
@@ -36,14 +33,14 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.core.BlockPos;
-import net.minecraft.util.Mth;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.ToolAction;
 import net.minecraftforge.common.ToolActions;
-import net.minecraftforge.registries.IForgeRegistryEntry;
+import net.minecraftforge.registries.IForgeRegistry;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 // TODO systemic review of all extension functions. lots of unused -C
 public interface IForgeItem
@@ -601,7 +598,7 @@ public interface IForgeItem
      *
      * @param itemStack the ItemStack to check
      * @return the Mod ID for the ItemStack, or null when there is no specially
-     *         associated mod and {@link IForgeRegistryEntry#getRegistryName()} would return null.
+     *         associated mod and {@link IForgeRegistry#getKey(Object)} would return null.
      */
     @Nullable
     default String getCreatorModId(ItemStack itemStack)
@@ -757,17 +754,17 @@ public interface IForgeItem
     {
         return self().canBeDepleted();
     }
-    
+
     /**
      * Get a bounding box ({@link AABB}) of a sweep attack.
-     * 
+     *
      * @param stack the stack held by the player.
      * @param player the performing the attack the attack.
      * @param target the entity targeted by the attack.
      * @return the bounding box.
      */
-    @Nonnull
-    default AABB getSweepHitBox(@Nonnull ItemStack stack, @Nonnull Player player, @Nonnull Entity target)
+    @NotNull
+    default AABB getSweepHitBox(@NotNull ItemStack stack, @NotNull Player player, @NotNull Entity target)
     {
         return target.getBoundingBox().inflate(1.0D, 0.25D, 1.0D);
     }
@@ -778,7 +775,7 @@ public interface IForgeItem
      * @param stack the stack
      * @return the default hide flags
      */
-    default int getDefaultTooltipHideFlags(@Nonnull ItemStack stack)
+    default int getDefaultTooltipHideFlags(@NotNull ItemStack stack)
     {
         return 0;
     }

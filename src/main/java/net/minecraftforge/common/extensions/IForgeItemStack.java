@@ -5,9 +5,6 @@
 
 package net.minecraftforge.common.extensions;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import net.minecraft.core.Registry;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.monster.EnderMan;
@@ -35,6 +32,8 @@ import net.minecraft.world.level.Level;
 import net.minecraftforge.common.ToolAction;
 import net.minecraftforge.common.ToolActions;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /*
  * Extension added to ItemStack that bounces to ItemSack sensitive Item methods. Typically this is just for convince.
@@ -483,16 +482,16 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundTag>
     {
         return self().getItem().canWalkOnPowderedSnow(self(), wearer);
     }
-    
+
     /**
      * Get a bounding box ({@link AABB}) of a sweep attack.
-     * 
+     *
      * @param player the performing the attack the attack.
      * @param target the entity targeted by the attack.
      * @return the bounding box.
      */
-    @Nonnull
-    default AABB getSweepHitBox(@Nonnull Player player, @Nonnull Entity target)
+    @NotNull
+    default AABB getSweepHitBox(@NotNull Player player, @NotNull Entity target)
     {
         return self().getItem().getSweepHitBox(self(), player, target);
     }

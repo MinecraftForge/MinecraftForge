@@ -5,14 +5,14 @@
 
 package net.minecraftforge.fml.loading;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import com.mojang.logging.LogUtils;
+import org.slf4j.Logger;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
 
 public class LibraryFinder {
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger LOGGER = LogUtils.getLogger();
     private static Path libsPath;
     static Path findLibsPath() {
         if (libsPath == null) {

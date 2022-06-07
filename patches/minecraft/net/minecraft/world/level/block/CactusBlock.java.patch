@@ -12,25 +12,29 @@
 @@ -34,6 +_,7 @@
     }
  
-    public void m_7458_(BlockState p_51138_, ServerLevel p_51139_, BlockPos p_51140_, Random p_51141_) {
-+      if (!p_51139_.isAreaLoaded(p_51140_, 1)) return; // Forge: prevent growing cactus from loading unloaded chunks with block update
-       if (!p_51138_.m_60710_(p_51139_, p_51140_)) {
-          p_51139_.m_46961_(p_51140_, true);
+    public void m_213897_(BlockState p_220908_, ServerLevel p_220909_, BlockPos p_220910_, RandomSource p_220911_) {
++      if (!p_220909_.isAreaLoaded(p_220910_, 1)) return; // Forge: prevent growing cactus from loading unloaded chunks with block update
+       if (!p_220908_.m_60710_(p_220909_, p_220910_)) {
+          p_220909_.m_46961_(p_220910_, true);
        }
-@@ -49,6 +_,7 @@
+@@ -49,15 +_,17 @@
  
           if (i < 3) {
-             int j = p_51166_.m_61143_(f_51131_);
-+            if(net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_51167_, blockpos, p_51166_, true)) {
+             int j = p_220913_.m_61143_(f_51131_);
++            if(net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_220914_, blockpos, p_220913_, true)) {
              if (j == 15) {
-                p_51167_.m_46597_(blockpos, this.m_49966_());
-                BlockState blockstate = p_51166_.m_61124_(f_51131_, Integer.valueOf(0));
-@@ -57,7 +_,8 @@
+                p_220914_.m_46597_(blockpos, this.m_49966_());
+-               BlockState blockstate = p_220913_.m_61124_(f_51131_, Integer.valueOf(0));
++               BlockState blockstate = p_220913_.m_61124_(f_51131_, 0);
+                p_220914_.m_7731_(p_220915_, blockstate, 4);
+                p_220914_.m_213960_(blockstate, blockpos, this, p_220915_, false);
              } else {
-                p_51167_.m_7731_(p_51168_, p_51166_.m_61124_(f_51131_, Integer.valueOf(j + 1)), 4);
-             }
+-               p_220914_.m_7731_(p_220915_, p_220913_.m_61124_(f_51131_, Integer.valueOf(j + 1)), 4);
+-            }
 -
-+            net.minecraftforge.common.ForgeHooks.onCropsGrowPost(p_51167_, p_51168_, p_51166_);
++               p_220914_.m_7731_(p_220915_, p_220913_.m_61124_(f_51131_, j + 1), 4);
++            }
++            net.minecraftforge.common.ForgeHooks.onCropsGrowPost(p_220914_, p_220915_, p_220913_);
 +            }
           }
        }

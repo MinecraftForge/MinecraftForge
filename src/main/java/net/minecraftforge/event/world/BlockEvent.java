@@ -29,9 +29,8 @@ import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
 
 import com.google.common.collect.ImmutableList;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class BlockEvent extends Event
 {
@@ -86,7 +85,7 @@ public class BlockEvent extends Event
             {
                 int fortuneLevel = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.BLOCK_FORTUNE, player.getMainHandItem());
                 int silkTouchLevel = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.SILK_TOUCH, player.getMainHandItem());
-                this.exp = state.getExpDrop(world, pos, fortuneLevel, silkTouchLevel);
+                this.exp = state.getExpDrop(world, world.random, pos, fortuneLevel, silkTouchLevel);
             }
         }
 
@@ -129,7 +128,7 @@ public class BlockEvent extends Event
         private final BlockState placedBlock;
         private final BlockState placedAgainst;
 
-        public EntityPlaceEvent(@Nonnull BlockSnapshot blockSnapshot, @Nonnull BlockState placedAgainst, @Nullable Entity entity)
+        public EntityPlaceEvent(@NotNull BlockSnapshot blockSnapshot, @NotNull BlockState placedAgainst, @Nullable Entity entity)
         {
             super(blockSnapshot.getLevel(), blockSnapshot.getPos(), !(entity instanceof Player) ? blockSnapshot.getReplacedBlock() : blockSnapshot.getCurrentBlock());
             this.entity = entity;
@@ -162,7 +161,7 @@ public class BlockEvent extends Event
     {
         private final List<BlockSnapshot> blockSnapshots;
 
-        public EntityMultiPlaceEvent(@Nonnull List<BlockSnapshot> blockSnapshots, @Nonnull BlockState placedAgainst, @Nullable Entity entity) {
+        public EntityMultiPlaceEvent(@NotNull List<BlockSnapshot> blockSnapshots, @NotNull BlockState placedAgainst, @Nullable Entity entity) {
             super(blockSnapshots.get(0), placedAgainst, entity);
             this.blockSnapshots = ImmutableList.copyOf(blockSnapshots);
             if (DEBUG)
@@ -421,56 +420,7 @@ public class BlockEvent extends Event
      * For example: Used to determine if {@link ToolActions#AXE_STRIP an axe can strip},
      * {@link ToolActions#SHOVEL_FLATTEN a shovel can path}, or {@link ToolActions#HOE_TILL a hoe can till}.
      * <p>
-     * This deprecated subclass event is <i>only</i> fired when {@link #isSimulated()} is false.
-     * To receive simulated events, use {@link BlockToolModificationEvent}.
-     * <p>
-     * This event is {@link Cancelable}. If canceled, this will prevent the tool
-     * from changing the block's state.
-     *
-     * @deprecated Use {@link BlockToolModificationEvent} and put world-modifying actions behind <code>if (!event.isSimulated())</code>.
-     */
-    @Cancelable
-    @Deprecated(forRemoval = true, since = "1.18.2")
-    public static class BlockToolInteractEvent extends BlockToolModificationEvent
-    {
-        private final Player player;
-        private final ItemStack stack;
-
-        public BlockToolInteractEvent(BlockState originalState, @Nonnull UseOnContext context, ToolAction toolAction)
-        {
-            super(originalState, context, toolAction, false);
-            this.player = context.getPlayer();
-            this.stack = context.getItemInHand();
-        }
-
-        public BlockToolInteractEvent(LevelAccessor world, BlockPos pos, BlockState originalState, Player player, ItemStack stack, ToolAction toolAction)
-        {
-            super(world, pos, originalState, toolAction);
-            this.player = player;
-            this.stack = stack;
-        }
-
-        /**
-         * @return the player using the tool, never null
-         */
-        @Nonnull
-        public Player getPlayer()
-        {
-            return this.player;
-        }
-
-        public ItemStack getHeldItemStack()
-        {
-            return this.stack;
-        }
-    }
-
-    /**
-     * Fired when a block is right-clicked by a tool to change its state.
-     * For example: Used to determine if {@link ToolActions#AXE_STRIP an axe can strip},
-     * {@link ToolActions#SHOVEL_FLATTEN a shovel can path}, or {@link ToolActions#HOE_TILL a hoe can till}.
-     * <p>
-     * Care must be taken to ensure world-modifying events are only performed if {@link #isSimulated()} returns {@code true}.
+     * Care must be taken to ensure world-modifying events are only performed if {@link #isSimulated()} returns {@code false}.
      * <p>
      * This event is {@link Cancelable}. If canceled, this will prevent the tool
      * from changing the block's state.
@@ -482,23 +432,13 @@ public class BlockEvent extends Event
         private final boolean simulate;
         private BlockState state;
 
-        public BlockToolModificationEvent(BlockState originalState, @Nonnull UseOnContext context, ToolAction toolAction, boolean simulate)
+        public BlockToolModificationEvent(BlockState originalState, @NotNull UseOnContext context, ToolAction toolAction, boolean simulate)
         {
             super(context.getLevel(), context.getClickedPos(), originalState);
             this.context = context;
             this.state = originalState;
             this.toolAction = toolAction;
             this.simulate = simulate;
-        }
-
-        // TODO 1.19: Remove
-        BlockToolModificationEvent(LevelAccessor level, BlockPos pos, BlockState originalState, ToolAction toolAction)
-        {
-            super(level, pos, originalState);
-            this.context = null;
-            this.state = originalState;
-            this.toolAction = toolAction;
-            this.simulate = false;
         }
 
         /**
@@ -540,13 +480,11 @@ public class BlockEvent extends Event
         }
 
         /**
-         * Returns the nullable use on context that this event was performed in.
-         * Starting in 1.19, this will never be null.
+         * Returns the nonnull use on context that this event was performed in.
          *
-         * @return the nullable use on context that this event was performed in
+         * @return the nonnull use on context that this event was performed in
          */
-        // TODO 1.19: Remove nullable annotation and add non-null annotation
-        @Nullable
+        @NotNull
         public UseOnContext getContext()
         {
             return context;

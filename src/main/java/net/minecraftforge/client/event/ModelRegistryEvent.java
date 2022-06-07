@@ -8,14 +8,29 @@ package net.minecraftforge.client.event;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.model.IModelLoader;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
+import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.event.IModBusEvent;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
 /**
- * Fired when the {@link ModelLoaderRegistry} is ready to register model loaders
+ * Fired when the {@link ModelLoaderRegistry} is ready for model loader registrations.
+ *
+ * <p>This event is not {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}. </p>
+ *
+ * <p>This event is fired on the {@linkplain FMLJavaModLoadingContext#getModEventBus() mod-specific event bus},
+ * only on the {@linkplain LogicalSide#CLIENT logical client}. </p>
  *
  * @see ModelLoaderRegistry#registerLoader(ResourceLocation, IModelLoader)
  */
 public class ModelRegistryEvent extends Event implements IModBusEvent
 {
+    /**
+     * @hidden
+     * @see ModelLoaderRegistry#onModelLoadingStart()
+     */
+    public ModelRegistryEvent()
+    {
+    }
 }

@@ -23,7 +23,7 @@ public final class TrueCondition implements ICondition
     }
 
     @Override
-    public boolean test()
+    public boolean test(IContext context)
     {
         return true;
     }

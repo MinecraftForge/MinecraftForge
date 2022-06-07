@@ -27,12 +27,6 @@ public class NotCondition implements ICondition
     }
 
     @Override
-    public boolean test()
-    {
-        return test(IContext.EMPTY);
-    }
-
-    @Override
     public boolean test(IContext context)
     {
         return !child.test(context);

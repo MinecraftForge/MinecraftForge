@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/player/LocalPlayer.java
 +++ b/net/minecraft/client/player/LocalPlayer.java
-@@ -145,6 +_,7 @@
+@@ -159,6 +_,7 @@
     }
  
     public boolean m_6469_(DamageSource p_108662_, float p_108663_) {
@@ -8,27 +8,48 @@
        return false;
     }
  
-@@ -461,6 +_,11 @@
+@@ -290,6 +_,9 @@
+    }
+ 
+    public void m_234125_(String p_234126_, @Nullable Component p_234127_) {
++      // TODO-PATCHING: If the chat preview component is not null and the message is changed by this event, it looks like the signatures will de-sync and the server will skip the message. Fix? -SS
++      p_234126_ = net.minecraftforge.event.ForgeEventFactory.onClientSendMessage(p_234126_);
++      if (p_234126_.isEmpty()) return;
+       MessageSigner messagesigner = MessageSigner.m_237183_(this.m_20148_());
+       this.m_234141_(messagesigner, p_234126_, p_234127_);
+    }
+@@ -328,6 +_,7 @@
+    }
+ 
+    private void m_234151_(MessageSigner p_234152_, String p_234153_, @Nullable Component p_234154_) {
++      if (net.minecraftforge.client.ClientCommandHandler.runCommand(p_234153_)) return;
+       ParseResults<SharedSuggestionProvider> parseresults = this.f_108617_.m_105146_().parse(p_234153_, this.f_108617_.m_105137_());
+       ArgumentSignatures argumentsignatures = this.m_234137_(p_234152_, parseresults, p_234154_);
+       this.f_108617_.m_104955_(new ServerboundChatCommandPacket(p_234153_, p_234152_.f_237170_(), argumentsignatures, p_234154_ != null));
+@@ -544,7 +_,13 @@
     }
  
     public void m_5496_(SoundEvent p_108651_, float p_108652_, float p_108653_) {
-+      net.minecraftforge.event.entity.PlaySoundAtEntityEvent event = net.minecraftforge.event.ForgeEventFactory.onPlaySoundAtEntity(this, p_108651_, this.m_5720_(), p_108652_, p_108653_);
+-      this.f_19853_.m_7785_(this.m_20185_(), this.m_20186_(), this.m_20189_(), p_108651_, this.m_5720_(), p_108652_, p_108653_, false);
++      net.minecraftforge.event.PlayLevelSoundEvent.AtEntity event = net.minecraftforge.event.ForgeEventFactory.onPlaySoundAtEntity(this, p_108651_, this.m_5720_(), p_108652_, p_108653_);
 +      if (event.isCanceled() || event.getSound() == null) return;
 +      p_108651_ = event.getSound();
-+      p_108652_ = event.getVolume();
-+      p_108653_ = event.getPitch();
-       this.f_19853_.m_7785_(this.m_20185_(), this.m_20186_(), this.m_20189_(), p_108651_, this.m_5720_(), p_108652_, p_108653_, false);
++      SoundSource source = event.getSource();
++      p_108652_ = event.getNewVolume();
++      p_108653_ = event.getNewPitch();
++      this.f_19853_.m_7785_(this.m_20185_(), this.m_20186_(), this.m_20189_(), p_108651_, source, p_108652_, p_108653_, false);
     }
  
-@@ -616,6 +_,7 @@
-       boolean flag2 = this.m_108733_();
+    public void m_6330_(SoundEvent p_108655_, SoundSource p_108656_, float p_108657_, float p_108658_) {
+@@ -700,6 +_,7 @@
        this.f_108601_ = !this.m_150110_().f_35935_ && !this.m_6069_() && this.m_20175_(Pose.CROUCHING) && (this.m_6144_() || !this.m_5803_() && !this.m_20175_(Pose.STANDING));
-       this.f_108618_.m_7606_(this.m_108635_());
+       float f = Mth.m_14036_(0.3F + EnchantmentHelper.m_220302_(this), 0.0F, 1.0F);
+       this.f_108618_.m_214106_(this.m_108635_(), f);
 +      net.minecraftforge.client.ForgeHooksClient.onMovementInputUpdate(this, this.f_108618_);
        this.f_108619_.m_91301_().m_120586_(this.f_108618_);
        if (this.m_6117_() && !this.m_20159_()) {
           this.f_108618_.f_108566_ *= 0.2F;
-@@ -688,7 +_,7 @@
+@@ -772,7 +_,7 @@
  
        if (this.f_108618_.f_108572_ && !flag7 && !flag && !this.m_150110_().f_35935_ && !this.m_20159_() && !this.m_6147_()) {
           ItemStack itemstack = this.m_6844_(EquipmentSlot.CHEST);
@@ -37,7 +58,7 @@
              this.f_108617_.m_104955_(new ServerboundPlayerCommandPacket(this, ServerboundPlayerCommandPacket.Action.START_FALL_FLYING));
           }
        }
-@@ -806,6 +_,7 @@
+@@ -890,6 +_,7 @@
  
     public void m_6083_() {
        super.m_6083_();
@@ -45,7 +66,7 @@
        this.f_108611_ = false;
        if (this.m_20202_() instanceof Boat) {
           Boat boat = (Boat)this.m_20202_();
-@@ -1019,6 +_,18 @@
+@@ -1103,6 +_,18 @@
        } else {
           return super.m_7398_(p_108758_);
        }

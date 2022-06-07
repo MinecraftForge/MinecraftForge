@@ -8,7 +8,7 @@
 +            Explosion.BlockInteraction explosion$blockinteraction = net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.f_19853_, this) ? Explosion.BlockInteraction.DESTROY : Explosion.BlockInteraction.NONE;
              this.f_19853_.m_46518_(this, this.m_20185_(), this.m_20188_(), this.m_20189_(), 7.0F, false, explosion$blockinteraction);
              if (!this.m_20067_()) {
-                this.f_19853_.m_6798_(1023, this.m_142538_(), 0);
+                this.f_19853_.m_6798_(1023, this.m_20183_(), 0);
 @@ -280,7 +_,7 @@
  
           if (this.f_31429_ > 0) {

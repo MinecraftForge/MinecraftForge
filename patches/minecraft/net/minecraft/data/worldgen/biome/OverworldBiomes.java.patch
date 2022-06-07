@@ -1,6 +1,6 @@
 --- a/net/minecraft/data/worldgen/biome/OverworldBiomes.java
 +++ b/net/minecraft/data/worldgen/biome/OverworldBiomes.java
-@@ -19,6 +_,8 @@
+@@ -20,6 +_,8 @@
  import net.minecraft.world.level.levelgen.GenerationStep;
  
  public class OverworldBiomes {

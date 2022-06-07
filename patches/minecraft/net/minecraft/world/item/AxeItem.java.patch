@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/item/AxeItem.java
 +++ b/net/minecraft/world/item/AxeItem.java
-@@ -31,11 +_,9 @@
+@@ -32,11 +_,9 @@
        BlockPos blockpos = p_40529_.m_8083_();
        Player player = p_40529_.m_43723_();
        BlockState blockstate = level.m_8055_(blockpos);
@@ -15,11 +15,11 @@
        ItemStack itemstack = p_40529_.m_43722_();
        Optional<BlockState> optional3 = Optional.empty();
        if (optional.isPresent()) {
-@@ -69,9 +_,20 @@
+@@ -71,9 +_,20 @@
        }
     }
  
-+   @javax.annotation.Nullable
++   @org.jetbrains.annotations.Nullable
 +   public static BlockState getAxeStrippingState(BlockState originalState) {
 +      Block block = f_150683_.get(originalState.m_60734_());
 +      return block != null ? block.m_49966_().m_61124_(RotatedPillarBlock.f_55923_, originalState.m_61143_(RotatedPillarBlock.f_55923_)) : null;

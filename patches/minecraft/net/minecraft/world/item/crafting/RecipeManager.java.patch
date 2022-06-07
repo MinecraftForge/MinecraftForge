@@ -20,7 +20,7 @@
     protected void m_5787_(Map<ResourceLocation, JsonElement> p_44037_, ResourceManager p_44038_, ProfilerFiller p_44039_) {
 @@ -49,9 +_,18 @@
  
-       for(Entry<ResourceLocation, JsonElement> entry : p_44037_.entrySet()) {
+       for(Map.Entry<ResourceLocation, JsonElement> entry : p_44037_.entrySet()) {
           ResourceLocation resourcelocation = entry.getKey();
 +         if (resourcelocation.m_135815_().startsWith("_")) continue; //Forge: filter anything beginning with "_" as it's used for metadata.
  
@@ -38,7 +38,7 @@
              map.computeIfAbsent(recipe.m_6671_(), (p_44075_) -> {
                 return ImmutableMap.builder();
              }).put(resourcelocation, recipe);
-@@ -127,11 +_,17 @@
+@@ -141,11 +_,17 @@
        });
     }
  

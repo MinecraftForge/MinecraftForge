@@ -10,8 +10,7 @@ import net.minecraft.core.NonNullList;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
-
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class PotionBrewEvent extends Event
 {
@@ -22,14 +21,14 @@ public class PotionBrewEvent extends Event
         this.stacks = stacks;
     }
 
-    @Nonnull
+    @NotNull
     public ItemStack getItem(int index)
     {
         if (index < 0 || index >= stacks.size()) return ItemStack.EMPTY;
         return stacks.get(index);
     }
 
-    public void setItem(int index, @Nonnull ItemStack stack)
+    public void setItem(int index, @NotNull ItemStack stack)
     {
         if (index < stacks.size())
         {

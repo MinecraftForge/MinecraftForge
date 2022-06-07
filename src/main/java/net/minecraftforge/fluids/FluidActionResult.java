@@ -5,9 +5,8 @@
 
 package net.minecraftforge.fluids;
 
-import javax.annotation.Nonnull;
-
 import net.minecraft.world.item.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Holds the result of a fluid action from {@link FluidUtil}.
@@ -23,15 +22,15 @@ public class FluidActionResult
 	public static final FluidActionResult FAILURE = new FluidActionResult(false, ItemStack.EMPTY);
 
 	public final boolean success;
-	@Nonnull
+	@NotNull
 	public final ItemStack result;
 
-	public FluidActionResult(@Nonnull ItemStack result)
+	public FluidActionResult(@NotNull ItemStack result)
 	{
 		this(true, result);
 	}
 
-	private FluidActionResult(boolean success, @Nonnull ItemStack result)
+	private FluidActionResult(boolean success, @NotNull ItemStack result)
 	{
 		this.success = success;
 		this.result = result;
@@ -42,7 +41,7 @@ public class FluidActionResult
 		return success;
 	}
 
-	@Nonnull
+	@NotNull
 	public ItemStack getResult()
 	{
 		return result;

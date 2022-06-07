@@ -1,18 +1,18 @@
 --- a/net/minecraft/client/sounds/SoundEngine.java
 +++ b/net/minecraft/client/sounds/SoundEngine.java
-@@ -76,6 +_,7 @@
+@@ -75,6 +_,7 @@
        this.f_120217_ = p_120236_;
        this.f_120218_ = p_120237_;
        this.f_120222_ = new SoundBufferLibrary(p_120238_);
-+      net.minecraftforge.fml.ModLoader.get().postEvent(new net.minecraftforge.client.event.sound.SoundLoadEvent(this));
++      net.minecraftforge.fml.ModLoader.get().postEvent(new net.minecraftforge.client.event.sound.SoundEngineLoadEvent(this));
     }
  
     public void m_120239_() {
-@@ -91,6 +_,7 @@
+@@ -90,6 +_,7 @@
  
        this.m_120304_();
        this.m_120323_();
-+      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.sound.SoundLoadEvent(this));
++      net.minecraftforge.fml.ModLoader.get().postEvent(new net.minecraftforge.client.event.sound.SoundEngineLoadEvent(this));
     }
  
     private synchronized void m_120323_() {

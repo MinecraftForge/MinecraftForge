@@ -1,19 +1,19 @@
 {
   "type": "minecraft:crafting_shaped",
+  "key": {
+    "C": {
+      "tag": "forge:cobblestone/normal"
+    },
+    "Q": {
+      "item": "minecraft:quartz"
+    }
+  },
   "pattern": [
     "CQ",
     "QC"
   ],
-  "key": {
-    "Q": {
-      "item": "minecraft:quartz"
-    },
-    "C": {
-      "tag": "forge:cobblestone/normal"
-    }
-  },
   "result": {
-    "item": "minecraft:diorite",
-    "count": 2
+    "count": 2,
+    "item": "minecraft:diorite"
   }
 }

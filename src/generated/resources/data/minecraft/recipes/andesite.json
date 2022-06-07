@@ -9,7 +9,7 @@
     }
   ],
   "result": {
-    "item": "minecraft:andesite",
-    "count": 2
+    "count": 2,
+    "item": "minecraft:andesite"
   }
 }

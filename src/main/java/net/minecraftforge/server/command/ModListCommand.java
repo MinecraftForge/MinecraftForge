@@ -8,7 +8,7 @@ package net.minecraftforge.server.command;
 import com.mojang.brigadier.builder.ArgumentBuilder;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraftforge.fml.ModList;
 
 import java.util.Locale;
@@ -20,7 +20,7 @@ class ModListCommand {
         return Commands.literal("mods")
                 .requires(cs->cs.hasPermission(0)) //permission
                 .executes(ctx -> {
-                            ctx.getSource().sendSuccess(new TranslatableComponent("commands.forge.mods.list",
+                            ctx.getSource().sendSuccess(Component.translatable("commands.forge.mods.list",
                                     ModList.get().applyForEachModFile(modFile ->
                                             // locator - filename : firstmod (version) - numberofmods\n
                                             String.format(Locale.ROOT, "%s %s : %s (%s) - %d",

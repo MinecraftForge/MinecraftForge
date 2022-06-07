@@ -17,6 +17,6 @@
           try {
 -            zombie = new Zombie(p_27017_);
 +            zombie = EntityType.f_20501_.m_20615_(p_27017_); //Forge: Direct Initialization is deprecated, use EntityType.
-             zombie.m_6518_(p_27017_, p_27017_.m_6436_(zombie.m_142538_()), MobSpawnType.EVENT, (SpawnGroupData)null, (CompoundTag)null);
+             zombie.m_6518_(p_27017_, p_27017_.m_6436_(zombie.m_20183_()), MobSpawnType.EVENT, (SpawnGroupData)null, (CompoundTag)null);
           } catch (Exception exception) {
              f_26997_.warn("Failed to create zombie for village siege at {}", vec3, exception);

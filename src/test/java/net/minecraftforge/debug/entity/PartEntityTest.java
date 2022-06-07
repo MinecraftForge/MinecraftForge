@@ -8,7 +8,7 @@ package net.minecraftforge.debug.entity;
 import net.minecraft.client.renderer.entity.PigRenderer;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientboundAddMobPacket;
+import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityDimensions;
@@ -64,8 +64,8 @@ public class PartEntityTest
             event.registerEntityRenderer(TEST_ENTITY.get(), PigRenderer::new);
         }
     }
-    
-    private static class TestEntity extends Pig 
+
+    private static class TestEntity extends Pig
     {
         private final TestEntityPart[] subEntities;
         public final TestEntityPart head;
@@ -76,8 +76,8 @@ public class PartEntityTest
         private final TestEntityPart tail3;
         private final TestEntityPart wing1;
         private final TestEntityPart wing2;
-        
-        public TestEntity(EntityType<? extends Pig> entity, Level world) 
+
+        public TestEntity(EntityType<? extends Pig> entity, Level world)
         {
             super(entity, world);
             this.head = new TestEntityPart(this, 1.0F, 1.0F);
@@ -92,22 +92,22 @@ public class PartEntityTest
         }
 
         @Override
-        public void aiStep() 
+        public void aiStep()
         {
             super.aiStep();
 
-            for (TestEntityPart part : this.subEntities) 
+            for (TestEntityPart part : this.subEntities)
             {
                 part.setPos(this.getX(), this.getY(), this.getZ());
             }
-            
+
             Vec3[] vec3 = new Vec3[this.subEntities.length];
-            for(int j = 0; j < this.subEntities.length; ++j) 
+            for(int j = 0; j < this.subEntities.length; ++j)
             {
                 vec3[j] = new Vec3(this.subEntities[j].getX(), this.subEntities[j].getY(), this.subEntities[j].getZ());
             }
-            
-            for(int l = 0; l < this.subEntities.length; ++l) 
+
+            for(int l = 0; l < this.subEntities.length; ++l)
             {
                 this.subEntities[l].xo = vec3[l].x;
                 this.subEntities[l].yo = vec3[l].y;
@@ -119,24 +119,24 @@ public class PartEntityTest
         }
 
         @Override
-        public boolean isMultipartEntity() 
+        public boolean isMultipartEntity()
         {
             return true;
         }
 
         @Override
-        public PartEntity<?>[] getParts() 
+        public PartEntity<?>[] getParts()
         {
             return this.subEntities;
         }
-        
+
         @Override
-        public void recreateFromPacket(ClientboundAddMobPacket packet) 
+        public void recreateFromPacket(ClientboundAddEntityPacket packet)
         {
             super.recreateFromPacket(packet);
             PartEntity<?>[] parts = this.getParts();
 
-            for(int i = 0; i < parts.length; ++i) 
+            for(int i = 0; i < parts.length; ++i)
             {
                 parts[i].setId(i + packet.getId());
             }
@@ -144,12 +144,12 @@ public class PartEntityTest
         }
     }
 
-    private static class TestEntityPart extends PartEntity<TestEntity> 
+    private static class TestEntityPart extends PartEntity<TestEntity>
     {
         public final TestEntity parent;
         private final EntityDimensions size;
 
-        public TestEntityPart(TestEntity parent, float width, float height) 
+        public TestEntityPart(TestEntity parent, float width, float height)
         {
             super(parent);
             this.size = EntityDimensions.scalable(width, height);
@@ -163,32 +163,32 @@ public class PartEntityTest
 
         protected void addAdditionalSaveData(CompoundTag nbt) {}
 
-        public boolean isPickable() 
+        public boolean isPickable()
         {
             return true;
         }
 
-        public boolean hurt(DamageSource source, float amount) 
+        public boolean hurt(DamageSource source, float amount)
         {
             return !this.isInvulnerableTo(source) && this.parent.hurt(source, amount);
         }
 
-        public boolean is(Entity entity) 
+        public boolean is(Entity entity)
         {
             return this == entity || this.parent == entity;
         }
 
-        public Packet<?> getAddEntityPacket() 
+        public Packet<?> getAddEntityPacket()
         {
             throw new UnsupportedOperationException();
         }
 
-        public EntityDimensions getDimensions(Pose matrix) 
+        public EntityDimensions getDimensions(Pose matrix)
         {
             return this.size;
         }
 
-        public boolean shouldBeSaved() 
+        public boolean shouldBeSaved()
         {
             return false;
         }

@@ -7,8 +7,8 @@ package net.minecraftforge.common.util;
 
 import com.google.common.collect.Streams;
 import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -93,7 +93,7 @@ public class TextTable
         }
     }
 
-    public void add(@Nonnull Object... values)
+    public void add(@NotNull Object... values)
     {
         if (values.length != columns.size())
         {

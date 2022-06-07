@@ -9,4 +9,4 @@
 +      this.m_108337_(model.m_7343_().m_173464_(model, p_105669_, p_105665_, null, 0).getParticleIcon(net.minecraftforge.client.model.data.EmptyModelData.INSTANCE));
        this.f_107226_ = 1.0F;
        this.f_107663_ /= 2.0F;
-       this.f_105643_ = this.f_107223_.nextFloat() * 3.0F;
+       this.f_105643_ = this.f_107223_.m_188501_() * 3.0F;

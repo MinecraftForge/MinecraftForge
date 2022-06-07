@@ -55,7 +55,7 @@ public class ScaffoldingTest
     private void gatherData(final GatherDataEvent event)
     {
         DataGenerator gen = event.getGenerator();
-        if(event.includeClient()) gen.addProvider(new ScaffoldingBlockState(gen, MODID, event.getExistingFileHelper()));
+        gen.addProvider(event.includeClient(), new ScaffoldingBlockState(gen, MODID, event.getExistingFileHelper()));
     }
 
     static class ScaffoldingBlockState extends BlockStateProvider

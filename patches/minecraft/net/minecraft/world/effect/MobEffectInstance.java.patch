@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/effect/MobEffectInstance.java
 +++ b/net/minecraft/world/effect/MobEffectInstance.java
-@@ -7,7 +_,7 @@
+@@ -14,7 +_,7 @@
  import net.minecraft.world.entity.LivingEntity;
  import org.slf4j.Logger;
  
@@ -8,8 +8,8 @@
 +public class MobEffectInstance implements Comparable<MobEffectInstance>, net.minecraftforge.common.extensions.IForgeMobEffectInstance {
     private static final Logger f_19501_ = LogUtils.getLogger();
     private final MobEffect f_19502_;
-    private int f_19503_;
-@@ -60,6 +_,7 @@
+    int f_19503_;
+@@ -74,6 +_,7 @@
        this.f_19506_ = p_19549_.f_19506_;
        this.f_19508_ = p_19549_.f_19508_;
        this.f_19509_ = p_19549_.f_19509_;
@@ -17,50 +17,52 @@
     }
  
     public boolean m_19558_(MobEffectInstance p_19559_) {
-@@ -108,7 +_,7 @@
+@@ -130,7 +_,7 @@
     }
  
     public MobEffect m_19544_() {
 -      return this.f_19502_;
-+      return this.f_19502_ == null ? null : this.f_19502_.delegate.get();
++      return this.f_19502_ == null ? null : net.minecraftforge.registries.ForgeRegistries.MOB_EFFECTS.getDelegateOrThrow(this.f_19502_).get();
     }
  
     public int m_19557_() {
-@@ -206,6 +_,7 @@
+@@ -231,6 +_,7 @@
  
     public CompoundTag m_19555_(CompoundTag p_19556_) {
-       p_19556_.m_128344_("Id", (byte)MobEffect.m_19459_(this.m_19544_()));
+       p_19556_.m_128405_("Id", MobEffect.m_19459_(this.m_19544_()));
 +      net.minecraftforge.common.ForgeHooks.saveMobEffect(p_19556_, "forge:id", this.m_19544_());
        this.m_19567_(p_19556_);
        return p_19556_;
     }
-@@ -221,13 +_,15 @@
+@@ -246,6 +_,7 @@
           this.f_19510_.m_19555_(compoundtag);
           p_19568_.m_128365_("HiddenEffect", compoundtag);
        }
 +      writeCurativeItems(p_19568_);
  
-    }
+       this.f_216885_.ifPresent((p_216903_) -> {
+          MobEffectInstance.FactorData.f_216907_.encodeStart(NbtOps.f_128958_, p_216903_).resultOrPartial(f_19501_::error).ifPresent((p_216906_) -> {
+@@ -256,8 +_,9 @@
  
     @Nullable
     public static MobEffectInstance m_19560_(CompoundTag p_19561_) {
--      int i = p_19561_.m_128445_("Id");
+-      int i = p_19561_.m_128451_("Id");
 +      int i = p_19561_.m_128445_("Id") & 0xFF;
        MobEffect mobeffect = MobEffect.m_19453_(i);
 +      mobeffect = net.minecraftforge.common.ForgeHooks.loadMobEffect(p_19561_, "forge:id", mobeffect);
        return mobeffect == null ? null : m_19545_(mobeffect, p_19561_);
     }
  
-@@ -250,7 +_,7 @@
-          mobeffectinstance = m_19545_(p_19546_, p_19547_.m_128469_("HiddenEffect"));
+@@ -287,7 +_,7 @@
+          optional = Optional.empty();
        }
  
--      return new MobEffectInstance(p_19546_, j, i < 0 ? 0 : i, flag, flag1, flag2, mobeffectinstance);
-+      return readCurativeItems(new MobEffectInstance(p_19546_, j, i < 0 ? 0 : i, flag, flag1, flag2, mobeffectinstance), p_19547_);
+-      return new MobEffectInstance(p_19546_, j, Math.max(i, 0), flag, flag1, flag2, mobeffectinstance, optional);
++      return readCurativeItems(new MobEffectInstance(p_19546_, j, Math.max(0, i), flag, flag1, flag2, mobeffectinstance, optional), p_19547_);
     }
  
     public void m_19562_(boolean p_19563_) {
-@@ -263,6 +_,32 @@
+@@ -300,7 +_,33 @@
  
     public int compareTo(MobEffectInstance p_19566_) {
        int i = 32147;
@@ -93,4 +95,5 @@
 +
 +      return effect;
     }
- }
+ 
+    public static class FactorData {

@@ -5,7 +5,7 @@
  import net.minecraft.world.phys.shapes.VoxelShape;
  
 -public abstract class Fluid {
-+public abstract class Fluid extends net.minecraftforge.registries.ForgeRegistryEntry<Fluid> implements net.minecraftforge.common.extensions.IForgeFluid {
++public abstract class Fluid implements net.minecraftforge.common.extensions.IForgeFluid {
     public static final IdMapper<FluidState> f_76104_ = new IdMapper<>();
     protected final StateDefinition<Fluid, FluidState> f_76105_;
     private FluidState f_76103_;

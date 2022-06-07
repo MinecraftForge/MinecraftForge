@@ -23,14 +23,14 @@
        }
  
 @@ -83,18 +_,18 @@
-                float f11 = (this.f_115020_.nextFloat() * 2.0F - 1.0F) * 0.15F;
-                float f13 = (this.f_115020_.nextFloat() * 2.0F - 1.0F) * 0.15F;
-                float f10 = (this.f_115020_.nextFloat() * 2.0F - 1.0F) * 0.15F;
+                float f11 = (this.f_115020_.m_188501_() * 2.0F - 1.0F) * 0.15F;
+                float f13 = (this.f_115020_.m_188501_() * 2.0F - 1.0F) * 0.15F;
+                float f10 = (this.f_115020_.m_188501_() * 2.0F - 1.0F) * 0.15F;
 -               p_115039_.m_85837_((double)f11, (double)f13, (double)f10);
 +               p_115039_.m_85837_(shouldSpreadItems() ? f11 : 0, shouldSpreadItems() ? f13 : 0, shouldSpreadItems() ? f10 : 0);
              } else {
-                float f12 = (this.f_115020_.nextFloat() * 2.0F - 1.0F) * 0.15F * 0.5F;
-                float f14 = (this.f_115020_.nextFloat() * 2.0F - 1.0F) * 0.15F * 0.5F;
+                float f12 = (this.f_115020_.m_188501_() * 2.0F - 1.0F) * 0.15F * 0.5F;
+                float f14 = (this.f_115020_.m_188501_() * 2.0F - 1.0F) * 0.15F * 0.5F;
 -               p_115039_.m_85837_((double)f12, (double)f14, 0.0D);
 +               p_115039_.m_85837_(shouldSpreadItems() ? f12 : 0, shouldSpreadItems() ? f14 : 0, 0.0D);
              }

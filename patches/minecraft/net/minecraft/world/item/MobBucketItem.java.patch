@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/item/MobBucketItem.java
 +++ b/net/minecraft/world/item/MobBucketItem.java
-@@ -23,13 +_,18 @@
+@@ -22,13 +_,18 @@
  import net.minecraft.world.level.material.Fluid;
  
  public class MobBucketItem extends BucketItem {
@@ -24,7 +24,7 @@
     }
  
     public void m_142131_(@Nullable Player p_151146_, Level p_151147_, ItemStack p_151148_, BlockPos p_151149_) {
-@@ -41,11 +_,11 @@
+@@ -40,11 +_,11 @@
     }
  
     protected void m_7718_(@Nullable Player p_151151_, LevelAccessor p_151152_, BlockPos p_151153_) {
@@ -35,10 +35,10 @@
     private void m_151141_(ServerLevel p_151142_, ItemStack p_151143_, BlockPos p_151144_) {
 -      Entity entity = this.f_151134_.m_20592_(p_151142_, p_151143_, (Player)null, p_151144_, MobSpawnType.BUCKET, true, false);
 +      Entity entity = getFishType().m_20592_(p_151142_, p_151143_, (Player)null, p_151144_, MobSpawnType.BUCKET, true, false);
-       if (entity instanceof Bucketable) {
-          Bucketable bucketable = (Bucketable)entity;
+       if (entity instanceof Bucketable bucketable) {
           bucketable.m_142278_(p_151143_.m_41784_());
-@@ -55,7 +_,7 @@
+          bucketable.m_27497_(true);
+@@ -53,7 +_,7 @@
     }
  
     public void m_7373_(ItemStack p_151155_, @Nullable Level p_151156_, List<Component> p_151157_, TooltipFlag p_151158_) {
@@ -47,7 +47,7 @@
           CompoundTag compoundtag = p_151155_.m_41783_();
           if (compoundtag != null && compoundtag.m_128425_("BucketVariantTag", 3)) {
              int i = compoundtag.m_128451_("BucketVariantTag");
-@@ -81,5 +_,14 @@
+@@ -79,5 +_,14 @@
           }
        }
  

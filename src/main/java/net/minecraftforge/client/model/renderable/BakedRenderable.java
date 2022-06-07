@@ -14,6 +14,7 @@ import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraftforge.client.model.data.IModelData;
 
@@ -47,7 +48,7 @@ public class BakedRenderable implements IRenderable<IModelData>
         return new BakedRenderable(model);
     }
 
-    private final Random rand = new Random();
+    private final RandomSource rand = RandomSource.create();
     private final BakedModel model;
 
     private BakedRenderable(BakedModel model)

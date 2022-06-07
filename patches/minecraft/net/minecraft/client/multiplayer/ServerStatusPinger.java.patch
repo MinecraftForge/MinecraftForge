@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/multiplayer/ServerStatusPinger.java
 +++ b/net/minecraft/client/multiplayer/ServerStatusPinger.java
-@@ -125,6 +_,7 @@
+@@ -124,6 +_,7 @@
                       p_105461_.run();
                    }
  

@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/DimensionSpecialEffects.java
 +++ b/net/minecraft/client/renderer/DimensionSpecialEffects.java
-@@ -26,6 +_,10 @@
+@@ -27,6 +_,10 @@
     private final DimensionSpecialEffects.SkyType f_108861_;
     private final boolean f_108862_;
     private final boolean f_108863_;
@@ -11,7 +11,7 @@
  
     public DimensionSpecialEffects(float p_108866_, boolean p_108867_, DimensionSpecialEffects.SkyType p_108868_, boolean p_108869_, boolean p_108870_) {
        this.f_108859_ = p_108866_;
-@@ -80,6 +_,35 @@
+@@ -81,6 +_,35 @@
  
     public boolean m_108885_() {
        return this.f_108863_;

@@ -1,21 +1,21 @@
 {
   "type": "minecraft:crafting_shaped",
-  "pattern": [
-    "###",
-    "RRQ",
-    "###"
-  ],
   "key": {
+    "#": {
+      "tag": "forge:cobblestone/normal"
+    },
     "Q": {
       "item": "minecraft:quartz"
     },
     "R": {
       "item": "minecraft:redstone"
-    },
-    "#": {
-      "tag": "forge:cobblestone/normal"
     }
   },
+  "pattern": [
+    "###",
+    "RRQ",
+    "###"
+  ],
   "result": {
     "item": "minecraft:observer"
   }

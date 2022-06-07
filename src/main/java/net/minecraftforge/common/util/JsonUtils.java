@@ -26,8 +26,7 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
 import net.minecraft.nbt.TagParser;
 import net.minecraft.nbt.CompoundTag;
-
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 public class JsonUtils
 {

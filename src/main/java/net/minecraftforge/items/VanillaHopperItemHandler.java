@@ -8,8 +8,7 @@ package net.minecraftforge.items;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.HopperBlockEntity;
 import net.minecraftforge.items.wrapper.InvWrapper;
-
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class VanillaHopperItemHandler extends InvWrapper
 {
@@ -22,8 +21,8 @@ public class VanillaHopperItemHandler extends InvWrapper
     }
 
     @Override
-    @Nonnull
-    public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate)
+    @NotNull
+    public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate)
     {
         if (simulate)
         {

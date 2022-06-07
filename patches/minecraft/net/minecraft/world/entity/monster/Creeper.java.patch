@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/monster/Creeper.java
 +++ b/net/minecraft/world/entity/monster/Creeper.java
-@@ -220,7 +_,7 @@
+@@ -219,7 +_,7 @@
  
     private void m_32315_() {
        if (!this.f_19853_.f_46443_) {

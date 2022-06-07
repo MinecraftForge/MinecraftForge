@@ -6,7 +6,7 @@
  
 -               SoundType soundtype = blockstate1.m_60827_();
 -               level.m_5594_(player, blockpos, this.m_40587_(blockstate1), SoundSource.BLOCKS, (soundtype.m_56773_() + 1.0F) / 2.0F, soundtype.m_56774_() * 0.8F);
-                level.m_142346_(player, GameEvent.f_157797_, blockpos);
+                level.m_220407_(GameEvent.f_157797_, blockpos, GameEvent.Context.m_223719_(player, blockstate1));
 +               SoundType soundtype = blockstate1.getSoundType(level, blockpos, p_40577_.m_43723_());
 +               level.m_5594_(player, blockpos, this.getPlaceSound(blockstate1, level, blockpos, p_40577_.m_43723_()), SoundSource.BLOCKS, (soundtype.m_56773_() + 1.0F) / 2.0F, soundtype.m_56774_() * 0.8F);
                 if (player == null || !player.m_150110_().f_35937_) {
@@ -33,7 +33,7 @@
     }
  
     public Block m_40614_() {
-+      return this.getBlockRaw() == null ? null : this.getBlockRaw().delegate.get();
++      return this.getBlockRaw() == null ? null : net.minecraftforge.registries.ForgeRegistries.BLOCKS.getDelegateOrThrow(this.getBlockRaw()).get();
 +   }
 +
 +   private Block getBlockRaw() {

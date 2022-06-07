@@ -5,7 +5,7 @@
 
 package net.minecraftforge.debug;
 
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.metadata.pack.PackMetadataSection;
 import net.minecraft.server.packs.repository.Pack;
@@ -38,7 +38,7 @@ public class AddPackFinderEventTest
                 {
                     event.addRepositorySource((packConsumer, packConstructor) ->
                             packConsumer.accept(packConstructor.create(
-                                    "builtin/add_pack_finders_test", new TextComponent("display name"), false,
+                                    "builtin/add_pack_finders_test", Component.literal("display name"), false,
                                     () -> pack, metadataSection, Pack.Position.BOTTOM, PackSource.BUILT_IN, false)));
                 }
             }

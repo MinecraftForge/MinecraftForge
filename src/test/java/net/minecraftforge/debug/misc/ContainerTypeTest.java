@@ -22,31 +22,31 @@ import net.minecraft.world.item.Items;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.extensions.IForgeMenuType;
-import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.network.NetworkHooks;
+import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.ObjectHolder;
+import net.minecraftforge.registries.RegisterEvent;
 
 @Mod("containertypetest")
 public class ContainerTypeTest
 {
-    @ObjectHolder("containertypetest:container")
+    @ObjectHolder(registryName = "menu", value = "containertypetest:container")
     public static final MenuType<TestContainer> TYPE = null;
     public class TestContainer extends AbstractContainerMenu
     {
         private final String text;
-        
+
         protected TestContainer(int windowId, Inventory playerInv, FriendlyByteBuf extraData)
         {
             this(windowId, new SimpleContainer(9), extraData.readUtf(128));
         }
-        
+
         public TestContainer(int windowId, SimpleContainer inv, String text)
         {
             super(TYPE, windowId);
@@ -58,12 +58,18 @@ public class ContainerTypeTest
         }
 
         @Override
+        public ItemStack quickMoveStack(Player p_38941_, int p_38942_)
+        {
+            return ItemStack.EMPTY;
+        }
+
+        @Override
         public boolean stillValid(Player playerIn)
         {
             return true;
         }
     }
-    
+
     public class TestGui extends AbstractContainerScreen<TestContainer>
     {
         public TestGui(TestContainer container, Inventory inv, Component name)
@@ -80,21 +86,21 @@ public class ContainerTypeTest
 
     public ContainerTypeTest()
     {
-        FMLJavaModLoadingContext.get().getModEventBus().addGenericListener(MenuType.class, this::registerContainers);
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::registerContainers);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
         MinecraftForge.EVENT_BUS.addListener(this::onRightClick);
     }
 
-    private void registerContainers(final RegistryEvent.Register<MenuType<?>> event)
+    private void registerContainers(final RegisterEvent event)
     {
-        event.getRegistry().register(IForgeMenuType.create(TestContainer::new).setRegistryName("container"));
+        event.register(ForgeRegistries.Keys.CONTAINER_TYPES, helper -> helper.register("container", IForgeMenuType.create(TestContainer::new)));
     }
-    
+
     private void setup(FMLClientSetupEvent event)
     {
         MenuScreens.register(TYPE, TestGui::new);
     }
-    
+
     private void onRightClick(PlayerInteractEvent.RightClickBlock event)
     {
         if (!event.getWorld().isClientSide && event.getHand() == InteractionHand.MAIN_HAND)
@@ -114,11 +120,11 @@ public class ContainerTypeTest
                         }
                         return new TestContainer(p_createMenu_1_, inv, text);
                     }
-                    
+
                     @Override
                     public Component getDisplayName()
                     {
-                        return new TextComponent("Test");
+                        return Component.literal("Test");
                     }
                 }, extraData -> {
                     extraData.writeUtf(text);

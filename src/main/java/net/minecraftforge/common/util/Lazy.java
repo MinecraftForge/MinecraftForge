@@ -5,8 +5,8 @@
 
 package net.minecraftforge.common.util;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.util.function.Supplier;
 
 /**
@@ -19,7 +19,7 @@ public interface Lazy<T> extends Supplier<T>
      * Constructs a lazy-initialized object
      * @param supplier The supplier for the value, to be called the first time the value is needed.
      */
-    static <T> Lazy<T> of(@Nonnull Supplier<T> supplier)
+    static <T> Lazy<T> of(@NotNull Supplier<T> supplier)
     {
         return new Lazy.Fast<>(supplier);
     }
@@ -28,7 +28,7 @@ public interface Lazy<T> extends Supplier<T>
      * Constructs a thread-safe lazy-initialized object
      * @param supplier The supplier for the value, to be called the first time the value is needed.
      */
-    static <T> Lazy<T> concurrentOf(@Nonnull Supplier<T> supplier)
+    static <T> Lazy<T> concurrentOf(@NotNull Supplier<T> supplier)
     {
         return new Lazy.Concurrent<>(supplier);
     }

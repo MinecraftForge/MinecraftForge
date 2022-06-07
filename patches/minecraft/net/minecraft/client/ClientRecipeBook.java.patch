@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/ClientRecipeBook.java
 +++ b/net/minecraft/client/ClientRecipeBook.java
-@@ -104,6 +_,8 @@
+@@ -103,6 +_,8 @@
        } else if (recipetype == RecipeType.f_44113_) {
           return RecipeBookCategories.SMITHING;
        } else {

@@ -55,38 +55,6 @@ public class EntityEvent extends Event
     }
 
     /**
-     * CanUpdate is fired when an Entity is being created. <br>
-     * This event is fired whenever vanilla Minecraft determines that an entity<br>
-     * cannot update in {@code World#updateEntityWithOptionalForce(net.minecraft.entity.Entity, boolean)} <br>
-     * <br>
-     * {@link CanUpdate#canUpdate} contains the boolean value of whether this entity can update.<br>
-     * If the modder decides that this Entity can be updated, they may change canUpdate to true, <br>
-     * and the entity with then be updated.<br>
-     * <br>
-     * This event is not {@link Cancelable}.<br>
-     * <br>
-     * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
-     **/
-    public static class CanUpdate extends EntityEvent
-    {
-        private boolean canUpdate = false;
-        public CanUpdate(Entity entity)
-        {
-            super(entity);
-        }
-
-        public boolean getCanUpdate()
-        {
-            return canUpdate;
-        }
-
-        public void setCanUpdate(boolean canUpdate)
-        {
-            this.canUpdate = canUpdate;
-        }
-    }
-
-    /**
      * This event is fired on server and client after an Entity has entered a different section. <br>
      * Sections are 16x16x16 block grids of the world.<br>
      * This event does not fire when a new entity is spawned, only when an entity moves from one section to another one.

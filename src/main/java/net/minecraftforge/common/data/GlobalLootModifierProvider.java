@@ -9,6 +9,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import cpw.mods.modlauncher.api.LamdbaExceptionUtils;
+import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.HashCache;
 import net.minecraft.data.DataProvider;
@@ -17,6 +18,7 @@ import net.minecraft.util.Tuple;
 import net.minecraftforge.common.loot.GlobalLootModifierSerializer;
 import net.minecraftforge.common.loot.IGlobalLootModifier;
 import net.minecraftforge.common.loot.LootModifier;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -59,7 +61,7 @@ public abstract class GlobalLootModifierProvider implements DataProvider
     protected abstract void start();
 
     @Override
-    public void run(HashCache cache) throws IOException
+    public void run(CachedOutput cache) throws IOException
     {
         start();
 
@@ -73,16 +75,16 @@ public abstract class GlobalLootModifierProvider implements DataProvider
             Path modifierPath = gen.getOutputFolder().resolve(modPath + name + ".json");
 
             JsonObject json = pair.getB();
-            json.addProperty("type", pair.getA().getRegistryName().toString());
+            json.addProperty("type", ForgeRegistries.LOOT_MODIFIER_SERIALIZERS.get().getKey(pair.getA()).toString());
 
-            DataProvider.save(GSON, cache, json, modifierPath);
+            DataProvider.saveStable(cache, json, modifierPath);
         }));
 
         JsonObject forgeJson = new JsonObject();
         forgeJson.addProperty("replace", this.replace);
         forgeJson.add("entries", GSON.toJsonTree(entries.stream().map(ResourceLocation::toString).collect(Collectors.toList())));
 
-        DataProvider.save(GSON, cache, forgeJson, forgePath);
+        DataProvider.saveStable(cache, forgeJson, forgePath);
     }
 
     /**

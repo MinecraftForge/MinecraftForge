@@ -1,14 +1,14 @@
 --- a/net/minecraft/client/multiplayer/ClientLevel.java
 +++ b/net/minecraft/client/multiplayer/ClientLevel.java
-@@ -117,6 +_,7 @@
-    private final Deque<Runnable> f_194122_ = Queues.newArrayDeque();
+@@ -121,6 +_,7 @@
     private int f_194123_;
+    private final BlockStatePredictionHandler f_233599_ = new BlockStatePredictionHandler();
     private static final Set<Item> f_194124_ = Set.of(Items.f_42127_, Items.f_151033_);
 +   private final it.unimi.dsi.fastutil.ints.Int2ObjectMap<net.minecraftforge.entity.PartEntity<?>> partEntities = new it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap<>();
  
-    public ClientLevel(ClientPacketListener p_205505_, ClientLevel.ClientLevelData p_205506_, ResourceKey<Level> p_205507_, Holder<DimensionType> p_205508_, int p_205509_, int p_205510_, Supplier<ProfilerFiller> p_205511_, LevelRenderer p_205512_, boolean p_205513_, long p_205514_) {
-       super(p_205506_, p_205507_, p_205508_, p_205511_, true, p_205513_, p_205514_);
-@@ -129,6 +_,8 @@
+    public void m_233651_(int p_233652_) {
+       this.f_233599_.m_233856_(p_233652_, this);
+@@ -174,6 +_,8 @@
        this.f_194123_ = p_205510_;
        this.m_46465_();
        this.m_46466_();
@@ -17,7 +17,7 @@
     }
  
     public void m_194171_(Runnable p_194172_) {
-@@ -215,6 +_,7 @@
+@@ -260,6 +_,7 @@
        this.m_46473_().m_6521_(() -> {
           return Registry.f_122826_.m_7981_(p_104640_.m_6095_()).toString();
        });
@@ -25,7 +25,7 @@
        p_104640_.m_8119_();
        this.m_46473_().m_7238_();
  
-@@ -277,8 +_,10 @@
+@@ -322,8 +_,10 @@
     }
  
     private void m_104739_(int p_104740_, Entity p_104741_) {
@@ -36,31 +36,33 @@
     }
  
     public void m_171642_(int p_171643_, Entity.RemovalReason p_171644_) {
-@@ -409,6 +_,11 @@
+@@ -450,6 +_,12 @@
     }
  
-    public void m_6263_(@Nullable Player p_104645_, double p_104646_, double p_104647_, double p_104648_, SoundEvent p_104649_, SoundSource p_104650_, float p_104651_, float p_104652_) {
-+      net.minecraftforge.event.entity.PlaySoundAtEntityEvent event = net.minecraftforge.event.ForgeEventFactory.onPlaySoundAtEntity(p_104645_, p_104649_, p_104650_, p_104651_, p_104652_);
+    public void m_214150_(@Nullable Player p_233621_, double p_233622_, double p_233623_, double p_233624_, SoundEvent p_233625_, SoundSource p_233626_, float p_233627_, float p_233628_, long p_233629_) {
++      net.minecraftforge.event.PlayLevelSoundEvent.AtPosition event = net.minecraftforge.event.ForgeEventFactory.onPlaySoundAtPosition(this, p_233622_, p_233623_, p_233624_, p_233625_, p_233626_, p_233627_, p_233628_);
 +      if (event.isCanceled() || event.getSound() == null) return;
-+      p_104649_ = event.getSound();
-+      p_104650_ = event.getCategory();
-+      p_104651_ = event.getVolume();
-       if (p_104645_ == this.f_104565_.f_91074_) {
-          this.m_7785_(p_104646_, p_104647_, p_104648_, p_104649_, p_104650_, p_104651_, p_104652_, false);
++      p_233625_ = event.getSound();
++      p_233626_ = event.getSource();
++      p_233627_ = event.getNewVolume();
++      p_233628_ = event.getNewPitch();
+       if (p_233621_ == this.f_104565_.f_91074_) {
+          this.m_233602_(p_233622_, p_233623_, p_233624_, p_233625_, p_233626_, p_233627_, p_233628_, false, p_233629_);
        }
-@@ -416,6 +_,11 @@
+@@ -457,6 +_,12 @@
     }
  
-    public void m_6269_(@Nullable Player p_104659_, Entity p_104660_, SoundEvent p_104661_, SoundSource p_104662_, float p_104663_, float p_104664_) {
-+      net.minecraftforge.event.entity.PlaySoundAtEntityEvent event = net.minecraftforge.event.ForgeEventFactory.onPlaySoundAtEntity(p_104659_, p_104661_, p_104662_, p_104663_, p_104664_);
+    public void m_213890_(@Nullable Player p_233631_, Entity p_233632_, SoundEvent p_233633_, SoundSource p_233634_, float p_233635_, float p_233636_, long p_233637_) {
++      net.minecraftforge.event.PlayLevelSoundEvent.AtEntity event = net.minecraftforge.event.ForgeEventFactory.onPlaySoundAtEntity(p_233631_, p_233633_, p_233634_, p_233635_, p_233636_);
 +      if (event.isCanceled() || event.getSound() == null) return;
-+      p_104661_ = event.getSound();
-+      p_104662_ = event.getCategory();
-+      p_104663_ = event.getVolume();
-       if (p_104659_ == this.f_104565_.f_91074_) {
-          this.f_104565_.m_91106_().m_120367_(new EntityBoundSoundInstance(p_104661_, p_104662_, p_104663_, p_104664_, p_104660_));
++      p_233633_ = event.getSound();
++      p_233634_ = event.getSource();
++      p_233635_ = event.getNewVolume();
++      p_233636_ = event.getNewPitch();
+       if (p_233631_ == this.f_104565_.f_91074_) {
+          this.f_104565_.m_91106_().m_120367_(new EntityBoundSoundInstance(p_233633_, p_233634_, p_233635_, p_233636_, p_233632_, p_233637_));
        }
-@@ -870,6 +_,7 @@
+@@ -902,6 +_,7 @@
        }
  
        public void m_104851_(Difficulty p_104852_) {
@@ -68,13 +70,13 @@
           this.f_104840_ = p_104852_;
        }
  
-@@ -907,11 +_,30 @@
+@@ -939,14 +_,33 @@
              ClientLevel.this.f_104566_.add((AbstractClientPlayer)p_171712_);
           }
  
 +         if (p_171712_.isMultipartEntity()) {
 +            for (net.minecraftforge.entity.PartEntity<?> part : p_171712_.getParts()) {
-+               ClientLevel.this.partEntities.put(part.m_142049_(), part);
++               ClientLevel.this.partEntities.put(part.m_19879_(), part);
 +            }
 +         }
        }
@@ -88,9 +90,12 @@
 +
 +         if (p_171716_.isMultipartEntity()) {
 +            for (net.minecraftforge.entity.PartEntity<?> part : p_171716_.getParts()) {
-+               ClientLevel.this.partEntities.remove(part.m_142049_());
++               ClientLevel.this.partEntities.remove(part.m_19879_());
 +            }
 +         }
+       }
+ 
+       public void m_214006_(Entity p_233660_) {
        }
 +   }
 +

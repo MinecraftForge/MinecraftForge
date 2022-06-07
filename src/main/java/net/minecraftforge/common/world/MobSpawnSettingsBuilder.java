@@ -9,11 +9,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import javax.annotation.Nullable;
-
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.biome.MobSpawnSettings;
+import org.jetbrains.annotations.Nullable;
 
 public class MobSpawnSettingsBuilder extends MobSpawnSettings.Builder
 {

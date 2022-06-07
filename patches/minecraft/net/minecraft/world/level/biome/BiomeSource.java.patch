@@ -1,0 +1,30 @@
+--- a/net/minecraft/world/level/biome/BiomeSource.java
++++ b/net/minecraft/world/level/biome/BiomeSource.java
+@@ -23,20 +_,24 @@
+ 
+ public abstract class BiomeSource implements BiomeResolver {
+    public static final Codec<BiomeSource> f_47888_ = Registry.f_122889_.m_194605_().dispatchStable(BiomeSource::m_5820_, Function.identity());
+-   private final Set<Holder<Biome>> f_47891_;
++   private final java.util.function.Supplier<Set<Holder<Biome>>> lazyPossibleBiomes; // FORGE: Allow custom biome sources to lazily evaluate possible biomes.
+ 
+    protected BiomeSource(Stream<Holder<Biome>> p_47896_) {
+       this(p_47896_.distinct().toList());
+    }
+ 
+    protected BiomeSource(List<Holder<Biome>> p_47894_) {
+-      this.f_47891_ = new ObjectLinkedOpenHashSet<>(p_47894_);
++       this(() -> p_47894_); // FORGE: Redirect vanilla constructor to forge's lazy constructor.
++   }
++
++   protected BiomeSource(java.util.function.Supplier<List<Holder<Biome>>> biomes) {
++       this.lazyPossibleBiomes = com.google.common.base.Suppliers.memoize(() -> new ObjectLinkedOpenHashSet<>(biomes.get()));
+    }
+ 
+    protected abstract Codec<? extends BiomeSource> m_5820_();
+ 
+    public Set<Holder<Biome>> m_207840_() {
+-      return this.f_47891_;
++      return this.lazyPossibleBiomes.get(); // FORGE: Patch getter to use the lazy field.
+    }
+ 
+    public Set<Holder<Biome>> m_183399_(int p_186705_, int p_186706_, int p_186707_, int p_186708_, Climate.Sampler p_186709_) {

@@ -12,13 +12,13 @@
 @@ -47,12 +_,14 @@
  
           if (i < 3) {
-             int j = p_57188_.m_61143_(f_57164_);
-+            if (net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_57189_, p_57190_, p_57188_, true)) {
+             int j = p_222548_.m_61143_(f_57164_);
++            if (net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_222549_, p_222550_, p_222548_, true)) {
              if (j == 15) {
-                p_57189_.m_46597_(p_57190_.m_7494_(), this.m_49966_());
-                p_57189_.m_7731_(p_57190_, p_57188_.m_61124_(f_57164_, Integer.valueOf(0)), 4);
+                p_222549_.m_46597_(p_222550_.m_7494_(), this.m_49966_());
+                p_222549_.m_7731_(p_222550_, p_222548_.m_61124_(f_57164_, Integer.valueOf(0)), 4);
              } else {
-                p_57189_.m_7731_(p_57190_, p_57188_.m_61124_(f_57164_, Integer.valueOf(j + 1)), 4);
+                p_222549_.m_7731_(p_222550_, p_222548_.m_61124_(f_57164_, Integer.valueOf(j + 1)), 4);
              }
 +            }
           }

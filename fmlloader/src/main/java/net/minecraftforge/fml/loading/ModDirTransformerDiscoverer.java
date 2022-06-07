@@ -5,10 +5,11 @@
 
 package net.minecraftforge.fml.loading;
 
+import com.mojang.logging.LogUtils;
 import cpw.mods.modlauncher.api.LamdbaExceptionUtils;
 import cpw.mods.modlauncher.api.NamedPath;
 import cpw.mods.modlauncher.serviceapi.ITransformerDiscoveryService;
-import org.apache.logging.log4j.LogManager;
+import org.slf4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,6 +20,8 @@ import java.util.List;
 import java.util.zip.ZipFile;
 
 public class ModDirTransformerDiscoverer implements ITransformerDiscoveryService {
+    private static final Logger LOGGER = LogUtils.getLogger();
+
     @Override
     public List<NamedPath> candidates(final Path gameDirectory) {
         ModDirTransformerDiscoverer.scan(gameDirectory);
@@ -40,7 +43,7 @@ public class ModDirTransformerDiscoverer implements ITransformerDiscoveryService
         try (var walk = Files.walk(modsDir, 1)){
             walk.forEach(ModDirTransformerDiscoverer::visitFile);
         } catch (IOException | IllegalStateException ioe) {
-            LogManager.getLogger().error("Error during early discovery", ioe);
+            LOGGER.error("Error during early discovery", ioe);
         }
     }
 
@@ -55,7 +58,7 @@ public class ModDirTransformerDiscoverer implements ITransformerDiscoveryService
                 found.add(new NamedPath(zf.getName(), path));
             }
         } catch (IOException ioe) {
-            LogManager.getLogger().error("Zip Error when loading jar file {}", path, ioe);
+            LOGGER.error("Zip Error when loading jar file {}", path, ioe);
         }
     }
 }

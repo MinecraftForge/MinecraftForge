@@ -11,10 +11,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import net.minecraft.world.entity.MobCategory;
-import net.minecraft.world.level.SpawnData;
 import net.minecraft.world.level.biome.MobSpawnSettings;
-import net.minecraft.world.level.biome.MobSpawnSettings.SpawnerData;
-import net.minecraft.world.level.levelgen.feature.StructureFeature;
+import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
 
@@ -34,13 +32,13 @@ import net.minecraftforge.eventbus.api.EventPriority;
 public class StructureSpawnListGatherEvent extends Event
 {
 
-    private final StructureFeature<?> structure;
+    private final Structure structure;
     private final Map<MobCategory, List<MobSpawnSettings.SpawnerData>> entitySpawns = new HashMap<>();
     private final Map<MobCategory, List<MobSpawnSettings.SpawnerData>> entitySpawnsUnmodifiableLists = new HashMap<>();
     private final Map<MobCategory, List<MobSpawnSettings.SpawnerData>> entitySpawnsUnmodifiable = Collections.unmodifiableMap(entitySpawnsUnmodifiableLists);
     private boolean insideOnly;
 
-    public StructureSpawnListGatherEvent(StructureFeature<?> structure)
+    public StructureSpawnListGatherEvent(Structure structure)
     {
         this.structure = structure;
         this.insideOnly = false;
@@ -57,7 +55,7 @@ public class StructureSpawnListGatherEvent extends Event
     /**
      * @return Structure to add or remove spawns to/from.
      */
-    public StructureFeature<?> getStructure()
+    public Structure getStructure()
     {
         return structure;
     }

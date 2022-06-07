@@ -5,8 +5,6 @@
 
 package net.minecraftforge.network;
 
-import javax.annotation.Nullable;
-
 import io.netty.util.Attribute;
 import io.netty.util.AttributeKey;
 
@@ -20,6 +18,7 @@ import net.minecraft.util.thread.BlockableEventLoop;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.common.util.LogicalSidedProvider;
 import org.apache.commons.lang3.tuple.Pair;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;

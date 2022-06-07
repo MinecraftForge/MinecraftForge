@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "group": "chest_boat",
+  "ingredients": [
+    {
+      "tag": "forge:chests/wooden"
+    },
+    {
+      "item": "minecraft:mangrove_boat"
+    }
+  ],
+  "result": {
+    "item": "minecraft:mangrove_chest_boat"
+  }
+}

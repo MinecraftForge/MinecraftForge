@@ -23,14 +23,15 @@ public interface IForgeAdvancementBuilder
     }
 
     /**
-     * save function for the {@link Advancement.Builder} which uses the {@link ExistingFileHelper} to check if the parent is already known
-     * @param consumer A {@link Consumer} which the build {@link Advancement} is passed to
-     * @param id The {@link ResourceLocation} for the new {@link Advancement}
-     * @param fileHelper The {@link ExistingFileHelper} where all known {@link Advancement}s are registered
-     * @return The build {@link Advancement}
-     * @throws IllegalStateException is thrown if the parent of the {@link Advancement} is not known
+     * Saves this builder with the given id using the {@link ExistingFileHelper} to check if the parent is already known.
+     *
+     * @param saver a {@link Consumer} which saves any advancements provided
+     * @param id the {@link ResourceLocation} id for the new advancement
+     * @param fileHelper the {@link ExistingFileHelper} where all known advancements are registered
+     * @return the built advancement
+     * @throws IllegalStateException if the parent of the advancement is not known
      */
-    default Advancement save(Consumer<Advancement> consumer ,ResourceLocation id, ExistingFileHelper fileHelper)
+    default Advancement save(Consumer<Advancement> saver, ResourceLocation id, ExistingFileHelper fileHelper)
     {
         boolean canBuild = self().canBuild((advancementId) ->
         {
@@ -46,7 +47,7 @@ public interface IForgeAdvancementBuilder
         }
 
         Advancement advancement = self().build(id);
-        consumer.accept(advancement);
+        saver.accept(advancement);
         return advancement;
     }
 }

@@ -5,10 +5,11 @@
 
 package net.minecraftforge.debug.world;
 
+import net.minecraft.data.worldgen.Structures;
+import net.minecraft.tags.StructureTags;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.biome.MobSpawnSettings;
-import net.minecraft.world.level.levelgen.feature.StructureFeature;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.world.StructureSpawnListGatherEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
@@ -30,12 +31,13 @@ public class StructureSpawnListGatherEventTest
 
     private void onStructureSpawnListGather(StructureSpawnListGatherEvent event)
     {
-        if (event.getStructure() == StructureFeature.STRONGHOLD)
+        // TODO-PATCHING: we likely want to get registry access here, so we can resolve tags instead of hardcoding structure objects
+        if (Structures.STRONGHOLD.get() == event.getStructure())
         {
             event.addEntitySpawn(MobCategory.MONSTER, new MobSpawnSettings.SpawnerData(EntityType.WITHER_SKELETON, 100, 5, 15));
             LOGGER.info("Adding wither skeleton spawns to strong holds");
         }
-        else if (event.getStructure() == StructureFeature.SHIPWRECK)
+        else if (Structures.SHIPWRECK.get() == event.getStructure())
         {
             event.setInsideOnly(false);
             event.addEntitySpawn(MobCategory.MONSTER, new MobSpawnSettings.SpawnerData(EntityType.GUARDIAN, 100, 5, 15));

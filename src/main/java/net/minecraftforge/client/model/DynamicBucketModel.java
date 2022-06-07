@@ -28,8 +28,6 @@ import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.Function;
 
@@ -40,6 +38,8 @@ import net.minecraft.client.resources.model.Material;
 import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.ModelState;
 import net.minecraft.client.resources.model.UnbakedModel;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public final class DynamicBucketModel implements IModelGeometry<DynamicBucketModel>
 {
@@ -51,7 +51,7 @@ public final class DynamicBucketModel implements IModelGeometry<DynamicBucketMod
     private static final float NORTH_Z_FLUID = 7.498f / 16f;
     private static final float SOUTH_Z_FLUID = 8.502f / 16f;
 
-    @Nonnull
+    @NotNull
     private final Fluid fluid;
 
     private final boolean flipGas;
@@ -244,7 +244,7 @@ public final class DynamicBucketModel implements IModelGeometry<DynamicBucketMod
             return FluidUtil.getFluidContained(stack)
                     .map(fluidStack -> {
                         Fluid fluid = fluidStack.getFluid();
-                        String name = fluid.getRegistryName().toString();
+                        String name = ForgeRegistries.FLUIDS.getKey(fluid).toString();
 
                         if (!cache.containsKey(name))
                         {

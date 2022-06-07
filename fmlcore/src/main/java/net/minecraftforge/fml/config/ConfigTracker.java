@@ -7,18 +7,18 @@ package net.minecraftforge.fml.config;
 
 import com.electronwill.nightconfig.core.CommentedConfig;
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.Marker;
-import org.apache.logging.log4j.MarkerManager;
+import com.mojang.logging.LogUtils;
+import org.slf4j.Logger;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
 
 import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ConfigTracker {
-    private static final Logger LOGGER = LogManager.getLogger();
-    static final Marker CONFIG = MarkerManager.getMarker("CONFIG");
+    private static final Logger LOGGER = LogUtils.getLogger();
+    static final Marker CONFIG = MarkerFactory.getMarker("CONFIG");
     public static final ConfigTracker INSTANCE = new ConfigTracker();
     private final ConcurrentHashMap<String, ModConfig> fileMap;
     private final EnumMap<ModConfig.Type, Set<ModConfig>> configSets;

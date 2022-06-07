@@ -5,9 +5,6 @@
 
 package net.minecraftforge.fluids.capability.wrappers;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.core.Direction;
 import net.minecraftforge.common.ForgeMod;
@@ -20,13 +17,13 @@ import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 
-import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
-
 import net.minecraft.world.item.BucketItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.MilkBucketItem;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Wrapper for vanilla and forge buckets.
@@ -36,15 +33,15 @@ public class FluidBucketWrapper implements IFluidHandlerItem, ICapabilityProvide
 {
     private final LazyOptional<IFluidHandlerItem> holder = LazyOptional.of(() -> this);
 
-    @Nonnull
+    @NotNull
     protected ItemStack container;
 
-    public FluidBucketWrapper(@Nonnull ItemStack container)
+    public FluidBucketWrapper(@NotNull ItemStack container)
     {
         this.container = container;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public ItemStack getContainer()
     {
@@ -60,7 +57,7 @@ public class FluidBucketWrapper implements IFluidHandlerItem, ICapabilityProvide
         return !fluid.getFluid().getAttributes().getBucket(fluid).isEmpty();
     }
 
-    @Nonnull
+    @NotNull
     public FluidStack getFluid()
     {
         Item item = container.getItem();
@@ -78,7 +75,7 @@ public class FluidBucketWrapper implements IFluidHandlerItem, ICapabilityProvide
         }
     }
 
-    protected void setFluid(@Nonnull FluidStack fluidStack)
+    protected void setFluid(@NotNull FluidStack fluidStack)
     {
         if (fluidStack.isEmpty())
             container = new ItemStack(Items.BUCKET);
@@ -92,7 +89,7 @@ public class FluidBucketWrapper implements IFluidHandlerItem, ICapabilityProvide
         return 1;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public FluidStack getFluidInTank(int tank) {
 
@@ -106,7 +103,7 @@ public class FluidBucketWrapper implements IFluidHandlerItem, ICapabilityProvide
     }
 
     @Override
-    public boolean isFluidValid(int tank, @Nonnull FluidStack stack) {
+    public boolean isFluidValid(int tank, @NotNull FluidStack stack) {
 
         return true;
     }
@@ -127,7 +124,7 @@ public class FluidBucketWrapper implements IFluidHandlerItem, ICapabilityProvide
         return FluidAttributes.BUCKET_VOLUME;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public FluidStack drain(FluidStack resource, FluidAction action)
     {
@@ -149,7 +146,7 @@ public class FluidBucketWrapper implements IFluidHandlerItem, ICapabilityProvide
         return FluidStack.EMPTY;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public FluidStack drain(int maxDrain, FluidAction action)
     {
@@ -170,10 +167,10 @@ public class FluidBucketWrapper implements IFluidHandlerItem, ICapabilityProvide
 
         return FluidStack.EMPTY;
     }
-    
+
     @Override
-    @Nonnull
-    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> capability, @Nullable Direction facing)
+    @NotNull
+    public <T> LazyOptional<T> getCapability(@NotNull Capability<T> capability, @Nullable Direction facing)
     {
         return CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY.orEmpty(capability, holder);
     }

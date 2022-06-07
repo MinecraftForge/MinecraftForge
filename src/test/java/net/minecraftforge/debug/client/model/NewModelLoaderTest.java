@@ -50,7 +50,6 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 
-import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
@@ -65,6 +64,7 @@ import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
+import org.jetbrains.annotations.Nullable;
 
 @Mod(NewModelLoaderTest.MODID)
 public class NewModelLoaderTest
@@ -215,13 +215,10 @@ public class NewModelLoaderTest
     {
         DataGenerator gen = event.getGenerator();
 
-        if (event.includeClient())
-        {
-            // Let blockstate provider see generated item models by passing its existing file helper
-            ItemModelProvider itemModels = new ItemModels(gen, event.getExistingFileHelper());
-            gen.addProvider(itemModels);
-            gen.addProvider(new BlockStates(gen, itemModels.existingFileHelper));
-        }
+        // Let blockstate provider see generated item models by passing its existing file helper
+        ItemModelProvider itemModels = new ItemModels(gen, event.getExistingFileHelper());
+        gen.addProvider(event.includeClient(), itemModels);
+        gen.addProvider(event.includeClient(), new BlockStates(gen, itemModels.existingFileHelper));
     }
 
     public static class ItemModels extends ItemModelProvider

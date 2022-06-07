@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/biome/BiomeGenerationSettings.java
 +++ b/net/minecraft/world/level/biome/BiomeGenerationSettings.java
-@@ -38,6 +_,7 @@
+@@ -37,6 +_,7 @@
        })).apply(p_186655_, BiomeGenerationSettings::new);
     });
     private final Map<GenerationStep.Carving, HolderSet<ConfiguredWorldCarver<?>>> f_47780_;
@@ -8,7 +8,7 @@
     private final List<HolderSet<PlacedFeature>> f_47781_;
     private final Supplier<List<ConfiguredFeature<?, ?>>> f_47783_;
     private final Supplier<Set<PlacedFeature>> f_186648_;
-@@ -53,10 +_,15 @@
+@@ -52,10 +_,15 @@
        this.f_186648_ = Suppliers.memoize(() -> {
           return p_186651_.stream().flatMap(HolderSet::m_203614_).map(Holder::m_203334_).collect(Collectors.toSet());
        });

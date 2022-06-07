@@ -2,7 +2,6 @@
   "type": "minecraft:block",
   "pools": [
     {
-      "rolls": 1.0,
       "bonus_rolls": 0.0,
       "entries": [
         {
@@ -15,8 +14,8 @@
                   "condition": "minecraft:alternative",
                   "terms": [
                     {
-                      "condition": "forge:can_tool_perform_action",
-                      "action": "shears_dig"
+                      "action": "shears_dig",
+                      "condition": "forge:can_tool_perform_action"
                     },
                     {
                       "condition": "minecraft:match_tool",
@@ -43,58 +42,25 @@
                   "condition": "minecraft:survives_explosion"
                 },
                 {
-                  "condition": "minecraft:table_bonus",
-                  "enchantment": "minecraft:fortune",
                   "chances": [
                     0.05,
                     0.0625,
                     0.083333336,
                     0.1
-                  ]
+                  ],
+                  "condition": "minecraft:table_bonus",
+                  "enchantment": "minecraft:fortune"
                 }
               ],
               "name": "minecraft:acacia_sapling"
             }
           ]
         }
-      ]
+      ],
+      "rolls": 1.0
     },
     {
-      "rolls": 1.0,
       "bonus_rolls": 0.0,
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "conditions": [
-            {
-              "condition": "minecraft:table_bonus",
-              "enchantment": "minecraft:fortune",
-              "chances": [
-                0.02,
-                0.022222223,
-                0.025,
-                0.033333335,
-                0.1
-              ]
-            }
-          ],
-          "functions": [
-            {
-              "function": "minecraft:set_count",
-              "count": {
-                "type": "minecraft:uniform",
-                "min": 1.0,
-                "max": 2.0
-              },
-              "add": false
-            },
-            {
-              "function": "minecraft:explosion_decay"
-            }
-          ],
-          "name": "minecraft:stick"
-        }
-      ],
       "conditions": [
         {
           "condition": "minecraft:inverted",
@@ -102,8 +68,8 @@
             "condition": "minecraft:alternative",
             "terms": [
               {
-                "condition": "forge:can_tool_perform_action",
-                "action": "shears_dig"
+                "action": "shears_dig",
+                "condition": "forge:can_tool_perform_action"
               },
               {
                 "condition": "minecraft:match_tool",
@@ -121,7 +87,41 @@
             ]
           }
         }
-      ]
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "conditions": [
+            {
+              "chances": [
+                0.02,
+                0.022222223,
+                0.025,
+                0.033333335,
+                0.1
+              ],
+              "condition": "minecraft:table_bonus",
+              "enchantment": "minecraft:fortune"
+            }
+          ],
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 2.0,
+                "min": 1.0
+              },
+              "function": "minecraft:set_count"
+            },
+            {
+              "function": "minecraft:explosion_decay"
+            }
+          ],
+          "name": "minecraft:stick"
+        }
+      ],
+      "rolls": 1.0
     }
   ]
 }

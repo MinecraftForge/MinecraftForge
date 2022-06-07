@@ -10,8 +10,8 @@ import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import com.electronwill.nightconfig.core.file.FileNotFoundAction;
 import com.electronwill.nightconfig.core.io.ParsingException;
 import com.electronwill.nightconfig.core.io.WritingMode;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import com.mojang.logging.LogUtils;
+import org.slf4j.Logger;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -21,7 +21,7 @@ import static net.minecraftforge.fml.loading.LogMarkers.CORE;
 
 public class FMLConfig
 {
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger LOGGER = LogUtils.getLogger();
     private static FMLConfig INSTANCE = new FMLConfig();
     private static ConfigSpec configSpec = new ConfigSpec();
     static {
@@ -60,11 +60,14 @@ public class FMLConfig
     {
         final Path configFile = FMLPaths.FMLCONFIG.get();
         INSTANCE.loadFrom(configFile);
-        LOGGER.trace(CORE, "Loaded FML config from {}", FMLPaths.FMLCONFIG.get());
-        LOGGER.trace(CORE, "Splash screen is {}", FMLConfig::splashScreenEnabled);
-        LOGGER.trace(CORE, "Max threads for mod loading computed at {}", FMLConfig::loadingThreadCount);
-        LOGGER.trace(CORE, "Version check is {}", FMLConfig::runVersionCheck);
-        LOGGER.trace(CORE, "Default config paths at {}", FMLConfig::defaultConfigPath);
+        if (LOGGER.isTraceEnabled(CORE))
+        {
+            LOGGER.trace(CORE, "Loaded FML config from {}", FMLPaths.FMLCONFIG.get());
+            LOGGER.trace(CORE, "Splash screen is {}", FMLConfig.splashScreenEnabled());
+            LOGGER.trace(CORE, "Max threads for mod loading computed at {}", FMLConfig.loadingThreadCount());
+            LOGGER.trace(CORE, "Version check is {}", FMLConfig.runVersionCheck());
+            LOGGER.trace(CORE, "Default config paths at {}", FMLConfig.defaultConfigPath());
+        }
         FMLPaths.getOrCreateGameRelativePath(Paths.get(FMLConfig.defaultConfigPath()), "default config directory");
     }
 

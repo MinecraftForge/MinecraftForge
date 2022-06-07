@@ -12,6 +12,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.model.generators.CustomLoaderBuilder;
 import net.minecraftforge.client.model.generators.ModelBuilder;
 import net.minecraftforge.common.data.ExistingFileHelper;
+import net.minecraftforge.registries.ForgeRegistries;
 
 public class DynamicBucketModelBuilder<T extends ModelBuilder<T>> extends CustomLoaderBuilder<T>
 {
@@ -34,7 +35,7 @@ public class DynamicBucketModelBuilder<T extends ModelBuilder<T>> extends Custom
     public DynamicBucketModelBuilder<T> fluid(Fluid fluid)
     {
         Preconditions.checkNotNull(fluid, "fluid must not be null");
-        this.fluid = fluid.getRegistryName();
+        this.fluid = ForgeRegistries.FLUIDS.getKey(fluid);
         return this;
     }
 

@@ -18,14 +18,15 @@ import net.minecraftforge.forgespi.language.IModInfo;
 import net.minecraftforge.forgespi.language.ModFileScanData;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 
 import java.util.Optional;
-
-import static net.minecraftforge.fml.loading.LogMarkers.LOADING;
 
 public class FMLModContainer extends ModContainer
 {
     private static final Logger LOGGER = LogManager.getLogger();
+    private static final Marker LOADING = MarkerManager.getMarker("LOADING");
     private final ModFileScanData scanResults;
     private final IEventBus eventBus;
     private Object modInstance;

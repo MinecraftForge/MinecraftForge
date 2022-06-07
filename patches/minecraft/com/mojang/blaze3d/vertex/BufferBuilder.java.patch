@@ -1,14 +1,6 @@
 --- a/com/mojang/blaze3d/vertex/BufferBuilder.java
 +++ b/com/mojang/blaze3d/vertex/BufferBuilder.java
-@@ -332,6 +_,7 @@
-       }
- 
-       ByteBuffer bytebuffer = this.f_85648_.slice();
-+      bytebuffer.order(this.f_85648_.order()); // FORGE: Fix incorrect byte order
-       this.f_85648_.clear();
-       return Pair.of(bufferbuilder$drawstate, bytebuffer);
-    }
-@@ -444,4 +_,15 @@
+@@ -486,4 +_,15 @@
           this.f_166822_ = p_166829_;
        }
     }

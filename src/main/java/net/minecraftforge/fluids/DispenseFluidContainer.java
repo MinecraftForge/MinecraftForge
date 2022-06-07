@@ -5,8 +5,6 @@
 
 package net.minecraftforge.fluids;
 
-import javax.annotation.Nonnull;
-
 import net.minecraft.world.level.block.DispenserBlock;
 import net.minecraft.core.dispenser.DefaultDispenseItemBehavior;
 import net.minecraft.core.BlockSource;
@@ -18,6 +16,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Fills or drains a fluid container item using a Dispenser.
@@ -36,8 +35,8 @@ public class DispenseFluidContainer extends DefaultDispenseItemBehavior
     private final DefaultDispenseItemBehavior dispenseBehavior = new DefaultDispenseItemBehavior();
 
     @Override
-    @Nonnull
-    public ItemStack execute(@Nonnull BlockSource source, @Nonnull ItemStack stack)
+    @NotNull
+    public ItemStack execute(@NotNull BlockSource source, @NotNull ItemStack stack)
     {
         if (FluidUtil.getFluidContained(stack).isPresent())
         {
@@ -52,8 +51,8 @@ public class DispenseFluidContainer extends DefaultDispenseItemBehavior
     /**
      * Picks up fluid in front of a Dispenser and fills a container with it.
      */
-    @Nonnull
-    private ItemStack fillContainer(@Nonnull BlockSource source, @Nonnull ItemStack stack)
+    @NotNull
+    private ItemStack fillContainer(@NotNull BlockSource source, @NotNull ItemStack stack)
     {
         Level level = source.getLevel();
         Direction dispenserFacing = source.getBlockState().getValue(DispenserBlock.FACING);
@@ -84,8 +83,8 @@ public class DispenseFluidContainer extends DefaultDispenseItemBehavior
     /**
      * Drains a filled container and places the fluid in front of the Dispenser.
      */
-    @Nonnull
-    private ItemStack dumpContainer(BlockSource source, @Nonnull ItemStack stack)
+    @NotNull
+    private ItemStack dumpContainer(BlockSource source, @NotNull ItemStack stack)
     {
         ItemStack singleStack = stack.copy();
         singleStack.setCount(1);

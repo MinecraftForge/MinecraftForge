@@ -7,8 +7,7 @@ package net.minecraftforge.client.model.renderable;
 
 import com.google.common.collect.ImmutableMap;
 import com.mojang.math.Matrix4f;
-
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * A context value that provides {@link Matrix4f} transforms for certain parts of the model.

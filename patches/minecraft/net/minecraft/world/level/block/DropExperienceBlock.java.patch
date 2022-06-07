@@ -1,0 +1,18 @@
+--- a/net/minecraft/world/level/block/DropExperienceBlock.java
++++ b/net/minecraft/world/level/block/DropExperienceBlock.java
+@@ -22,9 +_,11 @@
+ 
+    public void m_213646_(BlockState p_221086_, ServerLevel p_221087_, BlockPos p_221088_, ItemStack p_221089_, boolean p_221090_) {
+       super.m_213646_(p_221086_, p_221087_, p_221088_, p_221089_, p_221090_);
+-      if (p_221090_) {
+-         this.m_220822_(p_221087_, p_221088_, p_221089_, this.f_221079_);
+-      }
+-
++
++   }
++
++   @Override
++   public int getExpDrop(BlockState state, net.minecraft.world.level.LevelReader level, net.minecraft.util.RandomSource randomSource, BlockPos pos, int fortuneLevel, int silkTouchLevel) {
++      return silkTouchLevel == 0 ? this.f_221079_.m_214085_(randomSource) : 0;
+    }
+ }

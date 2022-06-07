@@ -7,7 +7,7 @@ package net.minecraftforge.debug;
 
 import net.minecraft.Util;
 import net.minecraft.core.NonNullList;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -131,7 +131,7 @@ public class ManyMobEffectsTest
                 var effect = ((MobEffect) ObfuscationReflectionHelper.getPrivateValue(MushroomCow.class, cow, "f_289" + "09_"));
                 if (effect != null)
                 {
-                    event.getPlayer().sendMessage(new TextComponent(String.valueOf(effect.getRegistryName())), Util.NIL_UUID);
+                    event.getPlayer().sendSystemMessage(Component.literal(String.valueOf(ForgeRegistries.MOB_EFFECTS.getKey(effect))));
                 }
             }
         }

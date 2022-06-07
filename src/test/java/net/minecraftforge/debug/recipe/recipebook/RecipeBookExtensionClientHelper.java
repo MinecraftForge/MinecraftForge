@@ -25,7 +25,7 @@ public class RecipeBookExtensionClientHelper
     {
         RecipeBookRegistry.addCategoriesToType(RecipeBookExtensionTest.TEST_TYPE, ImmutableList.of(TESTING_SEARCH.get(), TESTING_CAT_1.get(), TESTING_CAT_2.get()));
         RecipeBookRegistry.addAggregateCategories(TESTING_SEARCH.get(), ImmutableList.of(TESTING_CAT_1.get(), TESTING_CAT_2.get()));
-        RecipeBookRegistry.addCategoriesFinder(RecipeBookTestRecipe.TYPE.get(), r ->
+        RecipeBookRegistry.addCategoriesFinder(RecipeBookExtensionTest.RECIPE_BOOK_TEST_RECIPE_TYPE.get(), r ->
         {
             if (r.getResultItem().getItem() == Items.DIAMOND_BLOCK)
                 return TESTING_CAT_1.get();

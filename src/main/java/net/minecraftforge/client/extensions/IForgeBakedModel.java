@@ -7,14 +7,11 @@ package net.minecraftforge.client.extensions;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Random;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 
 import com.mojang.datafixers.util.Pair;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
@@ -27,7 +24,12 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraftforge.client.model.data.IModelData;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+/**
+ * Extension interface for {@link IForgeBakedModel}.
+ */
 public interface IForgeBakedModel
 {
     private BakedModel self()
@@ -35,8 +37,8 @@ public interface IForgeBakedModel
         return (BakedModel) this;
     }
 
-    @Nonnull
-    default List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, @Nonnull Random rand, @Nonnull IModelData extraData)
+    @NotNull
+    default List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, @NotNull RandomSource rand, @NotNull IModelData extraData)
     {
         return self().getQuads(state, side, rand);
     }
@@ -57,12 +59,12 @@ public interface IForgeBakedModel
         return net.minecraftforge.client.ForgeHooksClient.handlePerspective(self(), cameraTransformType, poseStack);
     }
 
-    default @Nonnull IModelData getModelData(@Nonnull BlockAndTintGetter level, @Nonnull BlockPos pos, @Nonnull BlockState state, @Nonnull IModelData modelData)
+    default @NotNull IModelData getModelData(@NotNull BlockAndTintGetter level, @NotNull BlockPos pos, @NotNull BlockState state, @NotNull IModelData modelData)
     {
         return modelData;
     }
 
-    default TextureAtlasSprite getParticleIcon(@Nonnull IModelData data)
+    default TextureAtlasSprite getParticleIcon(@NotNull IModelData data)
     {
         return self().getParticleIcon();
     }

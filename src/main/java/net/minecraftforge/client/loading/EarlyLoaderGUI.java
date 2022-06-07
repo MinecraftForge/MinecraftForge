@@ -67,7 +67,7 @@ public class EarlyLoaderGUI {
 
     private void renderBackground() {
         GL11.glBegin(GL11.GL_QUADS);
-        boolean isDarkBackground = minecraft.options.darkMojangStudiosBackground;
+        boolean isDarkBackground = minecraft.options.darkMojangStudiosBackground().get();
         GL11.glColor4f(isDarkBackground ? 0 : (239F / 255F), isDarkBackground ? 0 : (50F / 255F), isDarkBackground ? 0 : (61F / 255F), 1); //Color from LoadingOverlay
         GL11.glVertex3f(0, 0, -10);
         GL11.glVertex3f(0, window.getGuiScaledHeight(), -10);

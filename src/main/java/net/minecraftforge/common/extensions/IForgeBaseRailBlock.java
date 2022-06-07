@@ -11,8 +11,7 @@ import net.minecraft.world.level.block.state.properties.RailShape;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 public interface IForgeBaseRailBlock
 {

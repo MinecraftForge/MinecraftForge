@@ -8,8 +8,7 @@ package net.minecraftforge.items.wrapper;
 import com.google.common.base.Preconditions;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.IItemHandlerModifiable;
-
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * A wrapper that composes another IItemHandlerModifiable, exposing only a range of the composed slots.
@@ -36,7 +35,7 @@ public class RangedWrapper implements IItemHandlerModifiable {
     }
 
     @Override
-    @Nonnull
+    @NotNull
     public ItemStack getStackInSlot(int slot)
     {
         if (checkSlot(slot))
@@ -48,8 +47,8 @@ public class RangedWrapper implements IItemHandlerModifiable {
     }
 
     @Override
-    @Nonnull
-    public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate)
+    @NotNull
+    public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate)
     {
         if (checkSlot(slot))
         {
@@ -60,7 +59,7 @@ public class RangedWrapper implements IItemHandlerModifiable {
     }
 
     @Override
-    @Nonnull
+    @NotNull
     public ItemStack extractItem(int slot, int amount, boolean simulate)
     {
         if (checkSlot(slot))
@@ -72,7 +71,7 @@ public class RangedWrapper implements IItemHandlerModifiable {
     }
 
     @Override
-    public void setStackInSlot(int slot, @Nonnull ItemStack stack)
+    public void setStackInSlot(int slot, @NotNull ItemStack stack)
     {
         if (checkSlot(slot))
         {
@@ -92,7 +91,7 @@ public class RangedWrapper implements IItemHandlerModifiable {
     }
 
     @Override
-    public boolean isItemValid(int slot, @Nonnull ItemStack stack)
+    public boolean isItemValid(int slot, @NotNull ItemStack stack)
     {
         if (checkSlot(slot))
         {

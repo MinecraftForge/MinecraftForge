@@ -10,17 +10,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.OptionalInt;
-import java.util.Random;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
-import javax.annotation.Nullable;
-
+import com.mojang.serialization.DataResult;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.Registry;
 
+import net.minecraft.util.RandomSource;
 import org.apache.commons.lang3.Validate;
 
 import net.minecraft.resources.ResourceKey;
@@ -29,8 +28,9 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.core.DefaultedRegistry;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Lifecycle;
+import org.jetbrains.annotations.Nullable;
 
-class NamespacedDefaultedWrapper<T extends IForgeRegistryEntry<T>> extends DefaultedRegistry<T> implements ILockableRegistry, IHolderHelperHolder<T>
+class NamespacedDefaultedWrapper<T> extends DefaultedRegistry<T> implements ILockableRegistry, IHolderHelperHolder<T>
 {
     private final ForgeRegistry<T> delegate;
     private final NamespacedHolderHelper<T> holders;
@@ -54,14 +54,11 @@ class NamespacedDefaultedWrapper<T extends IForgeRegistryEntry<T>> extends Defau
         Validate.notNull(value);
         this.elementsLifecycle = this.elementsLifecycle.add(lifecycle);
 
-        if (value.getRegistryName() == null)
-            value.setRegistryName(key.location());
+        T oldValue = this.delegate.getRaw(key.location());
 
-        T oldValue = this.delegate.getRaw(value.getRegistryName());
+        int realId = this.delegate.add(id, key.location(), value);
 
-        int realId = this.delegate.add(id, value);
-
-        return this.holders.onAdded(RegistryManager.ACTIVE, realId, value, oldValue);
+        return this.holders.onAdded(RegistryManager.ACTIVE, realId, key, value, oldValue);
     }
 
     @Override
@@ -194,8 +191,8 @@ class NamespacedDefaultedWrapper<T extends IForgeRegistryEntry<T>> extends Defau
 
     @Override public Optional<Holder<T>> getHolder(int id) { return this.holders.getHolder(id); }
     @Override public Optional<Holder<T>> getHolder(ResourceKey<T> key) { return this.holders.getHolder(key); }
-    @Override public Holder<T> getOrCreateHolder(ResourceKey<T> key) { return this.holders.getOrCreateHolder(key); }
-    @Override public Optional<Holder<T>> getRandom(Random rand) { return this.holders.getRandom(rand); }
+    @Override public DataResult<Holder<T>> getOrCreateHolder(ResourceKey<T> key) { return DataResult.success(this.holders.getOrCreateHolder(key)); }
+    @Override public Optional<Holder<T>> getRandom(RandomSource rand) { return this.holders.getRandom(rand); }
     @Override public Stream<Holder.Reference<T>> holders() { return this.holders.holders();  }
     @Override public boolean isKnownTagName(TagKey<T> name) { return this.holders.isKnownTagName(name); }
     @Override public Stream<Pair<TagKey<T>, HolderSet.Named<T>>> getTags() { return this.holders.getTags(); }
@@ -212,7 +209,7 @@ class NamespacedDefaultedWrapper<T extends IForgeRegistryEntry<T>> extends Defau
     @Deprecated @Override public void lock(){ this.locked = true; }
 
 
-    public static class Factory<V extends IForgeRegistryEntry<V>> implements IForgeRegistry.CreateCallback<V>, IForgeRegistry.AddCallback<V>
+    public static class Factory<V> implements IForgeRegistry.CreateCallback<V>, IForgeRegistry.AddCallback<V>
     {
         public static final ResourceLocation ID = new ResourceLocation("forge", "registry_defaulted_wrapper");
 
@@ -225,9 +222,9 @@ class NamespacedDefaultedWrapper<T extends IForgeRegistryEntry<T>> extends Defau
 
         @Override
         @SuppressWarnings("unchecked")
-        public void onAdd(IForgeRegistryInternal<V> owner, RegistryManager stage, int id, V value, V oldValue)
+        public void onAdd(IForgeRegistryInternal<V> owner, RegistryManager stage, int id, ResourceKey<V> key, V value, V oldValue)
         {
-            owner.getSlaveMap(ID, NamespacedDefaultedWrapper.class).holders.onAdded(stage, id, value, oldValue);
+            owner.getSlaveMap(ID, NamespacedDefaultedWrapper.class).holders.onAdded(stage, id, key, value, oldValue);
         }
     }
 }

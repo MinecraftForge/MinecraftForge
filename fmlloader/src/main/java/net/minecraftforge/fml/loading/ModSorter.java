@@ -7,6 +7,7 @@ package net.minecraftforge.fml.loading;
 
 import com.google.common.graph.GraphBuilder;
 import com.google.common.graph.MutableGraph;
+import com.mojang.logging.LogUtils;
 import cpw.mods.jarhandling.SecureJar;
 import net.minecraftforge.fml.loading.moddiscovery.MinecraftLocator;
 import net.minecraftforge.forgespi.language.IModFileInfo;
@@ -18,10 +19,9 @@ import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
 import net.minecraftforge.fml.loading.toposort.CyclePresentException;
 import net.minecraftforge.fml.loading.toposort.TopologicalSort;
 import net.minecraftforge.forgespi.locating.IModFile;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
+import org.slf4j.Logger;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -35,7 +35,7 @@ import static net.minecraftforge.fml.loading.LogMarkers.LOADING;
 
 public class ModSorter
 {
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger LOGGER = LogUtils.getLogger();
     private List<ModFile> modFiles;
     private List<ModInfo> sortedList;
     private Map<String, ModInfo> modIdNameLookup;
@@ -98,11 +98,10 @@ public class ModSorter
         catch (CyclePresentException e)
         {
             Set<Set<ModFileInfo>> cycles = e.getCycles();
-            LOGGER.error(LOADING, () -> new AdvancedLogMessageAdapter(buffer ->
-                    buffer.append("Mod Sorting failed.\n")
-                    .append("Detected Cycles: ")
-                    .append(cycles)
-                    .append('\n')));
+            if (LOGGER.isErrorEnabled(LOADING))
+            {
+                LOGGER.error(LOADING, "Mod Sorting failed.\nDetected Cycles: {}\n", cycles);
+            }
             var dataList = cycles.stream()
                     .<ModFileInfo>mapMulti(Iterable::forEach)
                     .<IModInfo>mapMulti((mf,c)->mf.getMods().forEach(c))

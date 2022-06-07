@@ -11,12 +11,10 @@ import java.util.Collection;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Optional;
-import java.util.Random;
 import java.util.Set;
 
-import javax.annotation.Nullable;
-
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.state.BlockState;
 import com.mojang.math.Transformation;
 import net.minecraft.client.renderer.block.model.ItemTransforms.TransformType;
@@ -51,6 +49,7 @@ import net.minecraft.client.resources.model.Material;
 import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.ModelState;
 import net.minecraft.client.resources.model.UnbakedModel;
+import org.jetbrains.annotations.Nullable;
 
 public final class FluidModel implements IModelGeometry<FluidModel>
 {
@@ -186,7 +185,7 @@ public final class FluidModel implements IModelGeometry<FluidModel>
         }
 
         @Override
-        public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, Random rand, IModelData modelData)
+        public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, RandomSource rand, IModelData modelData)
         {
             if (side != null)
             {
@@ -450,7 +449,7 @@ public final class FluidModel implements IModelGeometry<FluidModel>
         }
 
         @Override
-        public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, Random rand)
+        public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, RandomSource rand)
         {
             return side == null ? ImmutableList.of() : faceQuads.get(side);
         }

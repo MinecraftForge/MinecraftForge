@@ -5,7 +5,7 @@
        return this.f_77117_;
     }
 +
-+   @javax.annotation.Nullable
++   @org.jetbrains.annotations.Nullable
 +   public BlockPathTypes getDanger() {
 +     return (this == DAMAGE_FIRE   || this == DANGER_FIRE  ) ? DANGER_FIRE   :
 +            (this == DAMAGE_CACTUS || this == DANGER_CACTUS) ? DANGER_CACTUS :

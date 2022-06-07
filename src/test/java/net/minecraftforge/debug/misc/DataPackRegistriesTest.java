@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Locale;
 
+import net.minecraft.data.CachedOutput;
 import org.slf4j.Logger;
 
 import com.google.gson.Gson;
@@ -42,7 +43,6 @@ import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.fml.util.thread.EffectiveSide;
 import net.minecraftforge.forge.event.lifecycle.GatherDataEvent;
 import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.ForgeRegistryEntry;
 import net.minecraftforge.registries.RegistryBuilder;
 import net.minecraftforge.registries.RegistryObject;
 
@@ -65,7 +65,7 @@ public class DataPackRegistriesTest
     public static final String MODID = "data_pack_registries_test";
     private static final Logger LOGGER = LogUtils.getLogger();
     private static final ResourceLocation TEST_RL = new ResourceLocation(MODID, "test");
-    
+
     private final RegistryObject<Unsyncable> datagenTestObject;
 
     public DataPackRegistriesTest()
@@ -75,40 +75,36 @@ public class DataPackRegistriesTest
 
         final IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();
         final IEventBus forgeBus = MinecraftForge.EVENT_BUS;
-        
+
         // Deferred Registers can be created for datapack registries in static init or mod constructor.
         // (We'll do it in mod constructor, as when doing the ENABLED check it's less verbose than static init.)
         // As with static registries, any mod can make a Deferred Register for a given datapack registry,
         // but only one mod can register the internal registry with makeRegistry.
         final DeferredRegister<Unsyncable> unsyncables = DeferredRegister.create(Unsyncable.REGISTRY_KEY, MODID);
         final DeferredRegister<Syncable> syncables = DeferredRegister.create(Syncable.REGISTRY_KEY, MODID);
-        
+
         // RegistryBuilder#dataPackRegistry marks the registry as a datapack registry rather than a static registry.
-        unsyncables.makeRegistry(Unsyncable.class,
-            () -> new RegistryBuilder<Unsyncable>().disableSaving().dataPackRegistry(Unsyncable.DIRECT_CODEC));
+        unsyncables.makeRegistry(() -> new RegistryBuilder<Unsyncable>().disableSaving().dataPackRegistry(Unsyncable.DIRECT_CODEC));
         // The overload of #dataPackRegistry that takes a second codec marks the datapack registry as syncable.
-        syncables.makeRegistry(Syncable.class,
-            () -> new RegistryBuilder<Syncable>().disableSaving().dataPackRegistry(Syncable.DIRECT_CODEC, Syncable.DIRECT_CODEC));
-        
+        syncables.makeRegistry(() -> new RegistryBuilder<Syncable>().disableSaving().dataPackRegistry(Syncable.DIRECT_CODEC, Syncable.DIRECT_CODEC));
+
         // Datapack registry elements can be datagenerated, but they must be registered as builtin objects first.
         this.datagenTestObject = unsyncables.register("datagen_test", () -> new Unsyncable("Datagen Success"));
-        
+
         unsyncables.register(modBus);
         syncables.register(modBus);
-        
+
         modBus.addListener(this::onGatherData);
         forgeBus.addListener(this::onServerStarting);
-        
+
         if (FMLEnvironment.dist == Dist.CLIENT)
         {
             ClientEvents.subscribeClientEvents();
         }
     }
-    
+
     private void onGatherData(final GatherDataEvent event)
     {
-        if (!event.includeServer())
-            return;
         // Example of how to datagen datapack registry objects.
         // Objects to be datagenerated must be registered (e.g. via DeferredRegister above).
         // This outputs to data/data_pack_registries_test/data_pack_registries_test/unsyncable/datagen_test.json
@@ -121,10 +117,11 @@ public class DataPackRegistriesTest
         final Unsyncable element = this.datagenTestObject.get();
         final String pathString = String.join("/", PackType.SERVER_DATA.getDirectory(), id.getNamespace(), registryId.getNamespace(), registryId.getPath(), id.getPath()+".json");
         final Path path = outputFolder.resolve(pathString);
-        generator.addProvider(new DataProvider()
+
+        generator.addProvider(event.includeServer(), new DataProvider()
         {
             @Override
-            public void run(final HashCache cache) throws IOException
+            public void run(final CachedOutput cache) throws IOException
             {
                 Unsyncable.DIRECT_CODEC.encodeStart(ops, element)
                     .resultOrPartial(msg -> LOGGER.error("Failed to encode {}: {}", path, msg)) // Log error on encode failure.
@@ -132,7 +129,7 @@ public class DataPackRegistriesTest
                     {
                         try
                         {
-                            DataProvider.save(gson, cache, json, path);
+                            DataProvider.saveStable(cache, json, path);
                         }
                         catch (IOException e) // The throws can't deal with this exception, because we're inside the ifPresent.
                         {
@@ -148,7 +145,7 @@ public class DataPackRegistriesTest
             }
         });
     }
-    
+
     private void onServerStarting(final ServerStartingEvent event)
     {
         // Assert existence of json objects and tags.
@@ -162,17 +159,17 @@ public class DataPackRegistriesTest
         final TagKey<Unsyncable> tag = TagKey.create(Unsyncable.REGISTRY_KEY, TEST_RL);
         if (!registry.getTag(tag).get().contains(holder))
             throw new IllegalStateException(String.format(Locale.ENGLISH, "Tag %s does not contain %s", tag, TEST_RL));
-        
+
         LOGGER.info("DataPackRegistriesTest server data loaded successfully!");
     }
-    
+
     public static class ClientEvents
     {
         private static void subscribeClientEvents()
         {
             MinecraftForge.EVENT_BUS.addListener(ClientEvents::onClientTagsUpdated);
         }
-        
+
         private static void onClientTagsUpdated(final TagsUpdatedEvent event)
         {
             // We want to check whether tags have been synced after the player logs in.
@@ -196,12 +193,12 @@ public class DataPackRegistriesTest
             final TagKey<Syncable> tag = TagKey.create(Syncable.REGISTRY_KEY, TEST_RL);
             if (!registry.getTag(tag).get().contains(holder))
                 throw new IllegalStateException(String.format(Locale.ENGLISH, "Tag %s does not contain %s", tag, TEST_RL));
-            
+
             LOGGER.info("DataPackRegistriesTest client data synced successfully!");
         }
     }
 
-    public static class Unsyncable extends ForgeRegistryEntry<Unsyncable>
+    public static class Unsyncable
     {
         public static final ResourceKey<Registry<Unsyncable>> REGISTRY_KEY = ResourceKey.createRegistryKey(new ResourceLocation(MODID, "unsyncable"));
         public static final Codec<Unsyncable> DIRECT_CODEC = Codec.STRING.fieldOf("value").codec().xmap(Unsyncable::new, Unsyncable::value);
@@ -218,19 +215,19 @@ public class DataPackRegistriesTest
             return this.value;
         }
     }
-    
-    public static class Syncable extends ForgeRegistryEntry<Syncable>
+
+    public static class Syncable
     {
         public static final ResourceKey<Registry<Syncable>> REGISTRY_KEY = ResourceKey.createRegistryKey(new ResourceLocation(MODID, "syncable"));
         public static final Codec<Syncable> DIRECT_CODEC = Codec.STRING.fieldOf("value").codec().xmap(Syncable::new, Syncable::value);
-        
+
         private final String value;
-        
+
         public Syncable(final String value)
         {
             this.value = value;
         }
-        
+
         public String value()
         {
             return this.value;

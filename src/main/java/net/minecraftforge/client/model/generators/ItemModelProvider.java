@@ -5,12 +5,14 @@
 
 package net.minecraftforge.client.model.generators;
 
-import javax.annotation.Nonnull;
-
 import net.minecraft.data.DataGenerator;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.common.data.ExistingFileHelper;
+import net.minecraftforge.registries.ForgeRegistries;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Objects;
 
 /**
  * Stub class to extend for item model data providers, eliminates some
@@ -24,7 +26,7 @@ public abstract class ItemModelProvider extends ModelProvider<ItemModelBuilder> 
 
     public ItemModelBuilder basicItem(Item item)
     {
-        return basicItem(item.getRegistryName());
+        return basicItem(Objects.requireNonNull(ForgeRegistries.ITEMS.getKey(item)));
     }
 
     public ItemModelBuilder basicItem(ResourceLocation item)
@@ -34,7 +36,7 @@ public abstract class ItemModelProvider extends ModelProvider<ItemModelBuilder> 
                 .texture("layer0", new ResourceLocation(item.getNamespace(), "item/" + item.getPath()));
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public String getName() {
         return "Item Models: " + modid;

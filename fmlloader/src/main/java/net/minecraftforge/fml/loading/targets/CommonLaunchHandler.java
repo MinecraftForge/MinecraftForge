@@ -5,12 +5,12 @@
 
 package net.minecraftforge.fml.loading.targets;
 
+import com.mojang.logging.LogUtils;
 import cpw.mods.modlauncher.api.ILaunchHandlerService;
 import cpw.mods.modlauncher.api.ITransformingClassLoaderBuilder;
 import net.minecraftforge.fml.loading.LogMarkers;
 import net.minecraftforge.api.distmarker.Dist;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 public abstract class CommonLaunchHandler implements ILaunchHandlerService {
     public record LocatedPaths(List<Path> minecraftPaths, BiPredicate<String, String> minecraftFilter, List<List<Path>> otherModPaths, List<Path> otherArtifacts) {}
 
-    protected static final Logger LOGGER = LogManager.getLogger();
+    protected static final Logger LOGGER = LogUtils.getLogger();
 
     public abstract Dist getDist();
 

@@ -1,20 +1,20 @@
 {
   "type": "minecraft:crafting_shaped",
   "group": "wooden_fence",
+  "key": {
+    "#": {
+      "tag": "forge:rods/wooden"
+    },
+    "W": {
+      "item": "minecraft:warped_planks"
+    }
+  },
   "pattern": [
     "W#W",
     "W#W"
   ],
-  "key": {
-    "W": {
-      "item": "minecraft:warped_planks"
-    },
-    "#": {
-      "tag": "forge:rods/wooden"
-    }
-  },
   "result": {
-    "item": "minecraft:warped_fence",
-    "count": 3
+    "count": 3,
+    "item": "minecraft:warped_fence"
   }
 }

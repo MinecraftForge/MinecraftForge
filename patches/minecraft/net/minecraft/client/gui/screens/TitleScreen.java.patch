@@ -1,14 +1,14 @@
 --- a/net/minecraft/client/gui/screens/TitleScreen.java
 +++ b/net/minecraft/client/gui/screens/TitleScreen.java
-@@ -73,6 +_,7 @@
-    private TitleScreen.Warning32Bit f_210857_;
-    private RealmsClient f_210858_;
-    private boolean f_210859_ = false;
+@@ -66,6 +_,7 @@
+    private long f_96715_;
+    @Nullable
+    private TitleScreen.WarningLabel f_232768_;
 +   private net.minecraftforge.client.gui.NotificationModUpdateScreen modUpdateNotification;
  
     public TitleScreen() {
        this(false);
-@@ -131,11 +_,16 @@
+@@ -110,11 +_,16 @@
        int j = this.f_96543_ - i - 2;
        int k = 24;
        int l = this.f_96544_ / 4 + 48;
@@ -17,7 +17,7 @@
           this.m_96772_(l, 24);
        } else {
           this.m_96763_(l, 24);
-+         modButton = this.m_142416_(new Button(this.f_96543_ / 2 - 100, l + 24 * 2, 98, 20, new TranslatableComponent("fml.menu.mods"), button -> {
++         modButton = this.m_142416_(new Button(this.f_96543_ / 2 - 100, l + 24 * 2, 98, 20, Component.m_237115_("fml.menu.mods"), button -> {
 +            this.f_96541_.m_91152_(new net.minecraftforge.client.gui.ModListScreen(this));
 +         }));
        }
@@ -25,24 +25,24 @@
  
        this.m_142416_(new ImageButton(this.f_96543_ / 2 - 124, l + 72 + 12, 20, 20, 0, 106, 20, Button.f_93617_, 256, 256, (p_96791_) -> {
           this.f_96541_.m_91152_(new LanguageSelectScreen(this, this.f_96541_.f_91066_, this.f_96541_.m_91102_()));
-@@ -201,7 +_,7 @@
+@@ -169,7 +_,7 @@
           Screen screen = (Screen)(this.f_96541_.f_91066_.f_92083_ ? new JoinMultiplayerScreen(this) : new SafetyScreen(this));
           this.f_96541_.m_91152_(screen);
        }, button$ontooltip))).f_93623_ = flag;
--      (this.m_142416_(new Button(this.f_96543_ / 2 - 100, p_96764_ + p_96765_ * 2, 200, 20, new TranslatableComponent("menu.online"), (p_211788_) -> {
-+      (this.m_142416_(new Button(this.f_96543_ / 2 + 2, p_96764_ + p_96765_ * 2, 98, 20, new TranslatableComponent("menu.online"), (p_96771_) -> {
+-      (this.m_142416_(new Button(this.f_96543_ / 2 - 100, p_96764_ + p_96765_ * 2, 200, 20, Component.m_237115_("menu.online"), (p_210872_) -> {
++      (this.m_142416_(new Button(this.f_96543_ / 2 + 2, p_96764_ + p_96765_ * 2, 98, 20, Component.m_237115_("menu.online"), (p_96771_) -> {
           this.m_96793_();
        }, button$ontooltip))).f_93623_ = flag;
     }
-@@ -331,6 +_,7 @@
-             this.f_210857_.f_210875_.m_6514_(p_96739_, this.f_210857_.f_210876_, this.f_210857_.f_210877_, 9, 16777215 | l);
+@@ -298,6 +_,7 @@
+             this.f_232768_.m_232790_(p_96739_, l);
           }
  
 +         net.minecraftforge.client.ForgeHooksClient.renderMainMenu(this, p_96739_, this.f_96547_, this.f_96543_, this.f_96544_, l);
           if (this.f_96721_ != null) {
              p_96739_.m_85836_();
              p_96739_.m_85837_((double)(this.f_96543_ / 2 + 90), 70.0D, 0.0D);
-@@ -353,7 +_,14 @@
+@@ -320,7 +_,14 @@
              s = s + I18n.m_118938_("menu.modded");
           }
  
@@ -58,7 +58,7 @@
  
           for(GuiEventListener guieventlistener : this.m_6702_()) {
              if (guieventlistener instanceof AbstractWidget) {
-@@ -365,6 +_,7 @@
+@@ -332,6 +_,7 @@
           if (this.m_96789_() && f1 >= 1.0F) {
              this.f_96726_.m_6305_(p_96739_, p_96740_, p_96741_, p_96742_);
           }

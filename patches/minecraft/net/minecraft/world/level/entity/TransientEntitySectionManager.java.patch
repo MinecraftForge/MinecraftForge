@@ -21,8 +21,8 @@
 +            long oldSectionKey = f_157669_;
              this.f_157670_ = entitysection;
              this.f_157669_ = i;
-             if (!this.f_157668_.m_142389_()) {
-@@ -124,6 +_,7 @@
+             TransientEntitySectionManager.this.f_157636_.m_214006_(this.f_157668_);
+@@ -125,6 +_,7 @@
                    TransientEntitySectionManager.this.f_157636_.m_141987_(this.f_157668_);
                 }
              }

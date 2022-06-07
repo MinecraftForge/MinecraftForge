@@ -1,13 +1,15 @@
 --- a/net/minecraft/data/HashCache.java
 +++ b/net/minecraft/data/HashCache.java
-@@ -55,8 +_,8 @@
-       }
+@@ -231,10 +_,10 @@
+                bufferedwriter.write(p_236145_);
+                bufferedwriter.newLine();
  
-       IOUtils.writeLines(this.f_123931_.entrySet().stream().map((p_123944_) -> {
--         return (String)p_123944_.getValue() + " " + this.f_123927_.relativize(p_123944_.getKey());
--      }).collect(Collectors.toList()), System.lineSeparator(), writer);
-+         return (String)p_123944_.getValue() + ' ' + this.f_123927_.relativize(p_123944_.getKey()).toString().replace('\\', '/'); //Forge: Standardize file paths.
-+      }).sorted(java.util.Comparator.comparing(a -> a.split(" ")[1])).collect(Collectors.toList()), System.lineSeparator(), writer);
-       writer.close();
-       f_123926_.debug("Caching: cache hits: {}, created: {} removed: {}", this.f_123929_, this.f_123931_.size() - this.f_123929_, this.f_123930_.size());
-    }
+-               for(Map.Entry<Path, HashCode> entry : this.f_236127_.entrySet()) {
++               for(Map.Entry<Path, HashCode> entry : this.f_236127_.entrySet().stream().sorted(Map.Entry.comparingByKey()).toList()) {
+                   bufferedwriter.write(entry.getValue().toString());
+                   bufferedwriter.write(32);
+-                  bufferedwriter.write(p_236143_.relativize(entry.getKey()).toString());
++                  bufferedwriter.write(p_236143_.relativize(entry.getKey()).toString().replace("\\", "/")); // Forge: Standardize file paths.
+                   bufferedwriter.newLine();
+                }
+             } catch (Throwable throwable1) {

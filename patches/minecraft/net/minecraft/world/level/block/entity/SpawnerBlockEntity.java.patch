@@ -5,7 +5,7 @@
  
        }
 +
-+      @javax.annotation.Nullable
++      @org.jetbrains.annotations.Nullable
 +       public net.minecraft.world.level.block.entity.BlockEntity getSpawnerBlockEntity(){ return SpawnerBlockEntity.this; }
     };
  

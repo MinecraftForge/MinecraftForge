@@ -6,10 +6,9 @@
 package net.minecraftforge.common.extensions;
 
 import java.util.Optional;
-import java.util.Set;
-import javax.annotation.Nullable;
 
 import net.minecraft.client.Camera;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.LivingEntity;
@@ -28,7 +27,6 @@ import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.pathfinder.BlockPathTypes;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
@@ -47,6 +45,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.ToolAction;
 import net.minecraftforge.common.ToolActions;
 import net.minecraftforge.fml.loading.FMLEnvironment;
+import org.jetbrains.annotations.Nullable;
 
 @SuppressWarnings("deprecation")
 public interface IForgeBlock
@@ -375,12 +374,13 @@ public interface IForgeBlock
     *
     * @param state The current state
     * @param level The level
+    * @param randomSource Random source to use for experience randomness
     * @param pos Block position
     * @param fortuneLevel fortune enchantment level of tool being used
     * @param silkTouchLevel silk touch enchantment level of tool being used
     * @return Amount of XP from breaking this block.
     */
-    default int getExpDrop(BlockState state, LevelReader level, BlockPos pos, int fortuneLevel, int silkTouchLevel)
+    default int getExpDrop(BlockState state, LevelReader level, RandomSource randomSource, BlockPos pos, int fortuneLevel, int silkTouchLevel)
     {
        return 0;
     }
@@ -533,7 +533,7 @@ public interface IForgeBlock
      */
     default int getFlammability(BlockState state, BlockGetter level, BlockPos pos, Direction direction)
     {
-        return ((FireBlock)Blocks.FIRE).getBurnOdd(state);
+        return ((FireBlock)Blocks.FIRE).getBurnOdds(state);
     }
 
     /**
@@ -574,7 +574,7 @@ public interface IForgeBlock
      */
     default int getFireSpreadSpeed(BlockState state, BlockGetter level, BlockPos pos, Direction direction)
     {
-        return ((FireBlock)Blocks.FIRE).getFlameOdds(state);
+        return ((FireBlock)Blocks.FIRE).getIgniteOdds(state);
     }
 
     /**
@@ -677,10 +677,23 @@ public interface IForgeBlock
     @Nullable
     default BlockState getToolModifiedState(BlockState state, UseOnContext context, ToolAction toolAction, boolean simulate)
     {
-        BlockState toolModifiedState = getToolModifiedState(state, context.getLevel(), context.getClickedPos(),
-                context.getPlayer(), context.getItemInHand(), toolAction);
+        ItemStack itemStack = context.getItemInHand();
+        if (!itemStack.canPerformAction(toolAction))
+            return null;
 
-        if (toolModifiedState == null && ToolActions.HOE_TILL == toolAction && context.getItemInHand().canPerformAction(ToolActions.HOE_TILL))
+        if (ToolActions.AXE_STRIP == toolAction)
+        {
+            return AxeItem.getAxeStrippingState(state);
+        } else if (ToolActions.AXE_SCRAPE == toolAction)
+        {
+            return WeatheringCopper.getPrevious(state).orElse(null);
+        } else if (ToolActions.AXE_WAX_OFF == toolAction)
+        {
+            return Optional.ofNullable(HoneycombItem.WAX_OFF_BY_BLOCK.get().get(state.getBlock())).map(block -> block.withPropertiesOf(state)).orElse(null);
+        } else if (ToolActions.SHOVEL_FLATTEN == toolAction)
+        {
+            return ShovelItem.getShovelPathingState(state);
+        } else if (ToolActions.HOE_TILL == toolAction)
         {
             // Logic copied from HoeItem#TILLABLES; needs to be kept in sync during updating
             Block block = state.getBlock();
@@ -698,35 +711,6 @@ public interface IForgeBlock
             }
         }
 
-        return toolModifiedState;
-    }
-
-    /**
-     * Returns the state that this block should transform into when right-clicked by a tool.
-     * For example: Used to determine if {@link ToolActions#AXE_STRIP an axe can strip} or {@link ToolActions#SHOVEL_FLATTEN a shovel can path}.
-     * Returns {@code null} if nothing should happen.
-     *
-     * @param state The current state
-     * @param level The level
-     * @param pos The block position in level
-     * @param player The player clicking the block
-     * @param stack The stack being used by the player
-     * @param toolAction The action being performed by the tool
-     * @return The resulting state after the action has been performed
-     * @deprecated Override and use {@link #getToolModifiedState(BlockState, UseOnContext, ToolAction, boolean)} instead
-     */
-    @Nullable
-    // TODO 1.19: Remove this and move the default impl to the newer method in 1.19. Has to stay here to preserve behavior of overrides on this method.
-    @Deprecated(forRemoval = true, since = "1.18.2")
-    default BlockState getToolModifiedState(BlockState state, Level level, BlockPos pos, Player player, ItemStack stack, ToolAction toolAction)
-    {
-        if (!stack.canPerformAction(toolAction)) return null;
-        if (ToolActions.AXE_STRIP == toolAction) return AxeItem.getAxeStrippingState(state);
-        else if(ToolActions.AXE_SCRAPE == toolAction) return WeatheringCopper.getPrevious(state).orElse(null);
-        else if(ToolActions.AXE_WAX_OFF == toolAction) return Optional.ofNullable(HoneycombItem.WAX_OFF_BY_BLOCK.get().get(state.getBlock())).map((p_150694_) -> {
-            return p_150694_.withPropertiesOf(state);
-        }).orElse(null);
-        else if (ToolActions.SHOVEL_FLATTEN == toolAction) return ShovelItem.getShovelPathingState(state);
         return null;
     }
 

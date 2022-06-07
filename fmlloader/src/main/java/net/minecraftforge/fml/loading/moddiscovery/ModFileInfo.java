@@ -6,6 +6,7 @@
 package net.minecraftforge.fml.loading.moddiscovery;
 
 import com.google.common.base.Strings;
+import com.mojang.logging.LogUtils;
 import cpw.mods.modlauncher.api.LamdbaExceptionUtils;
 import net.minecraftforge.fml.loading.LogMarkers;
 import net.minecraftforge.fml.loading.StringUtils;
@@ -13,8 +14,7 @@ import net.minecraftforge.forgespi.language.IConfigurable;
 import net.minecraftforge.forgespi.language.IModFileInfo;
 import net.minecraftforge.forgespi.language.IModInfo;
 import net.minecraftforge.forgespi.language.MavenVersionAdapter;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
 import javax.security.auth.x500.X500Principal;
 import java.net.URL;
 import java.security.CodeSigner;
@@ -32,7 +32,7 @@ import java.util.stream.Stream;
 
 public class ModFileInfo implements IModFileInfo, IConfigurable
 {
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger LOGGER = LogUtils.getLogger();
     private final IConfigurable config;
     private final ModFile modFile;
     private final URL issueURL;
@@ -68,10 +68,13 @@ public class ModFileInfo implements IModFileInfo, IConfigurable
         this.mods = modConfigs.stream()
                 .map(mi-> new ModInfo(this, mi))
                 .collect(Collectors.toList());
-        LOGGER.debug(LogMarkers.LOADING, "Found valid mod file {} with {} mods - versions {}",
-                this.modFile::getFileName,
-                () -> this.mods.stream().map(IModInfo::getModId).collect(Collectors.joining(",", "{", "}")),
-                () -> this.mods.stream().map(IModInfo::getVersion).map(Objects::toString).collect(Collectors.joining(",", "{", "}")));
+        if (LOGGER.isDebugEnabled(LogMarkers.LOADING))
+        {
+            LOGGER.debug(LogMarkers.LOADING, "Found valid mod file {} with {} mods - versions {}",
+                    this.modFile.getFileName(),
+                    this.mods.stream().map(IModInfo::getModId).collect(Collectors.joining(",", "{", "}")),
+                    this.mods.stream().map(IModInfo::getVersion).map(Objects::toString).collect(Collectors.joining(",", "{", "}")));
+        }
     }
 
     public ModFileInfo(final ModFile file, final IConfigurable config, final List<LanguageSpec> languageSpecs) {

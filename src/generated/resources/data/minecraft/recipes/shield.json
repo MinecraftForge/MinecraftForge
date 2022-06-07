@@ -1,10 +1,5 @@
 {
   "type": "minecraft:crafting_shaped",
-  "pattern": [
-    "WoW",
-    "WWW",
-    " W "
-  ],
   "key": {
     "W": {
       "tag": "minecraft:planks"
@@ -13,6 +8,11 @@
       "tag": "forge:ingots/iron"
     }
   },
+  "pattern": [
+    "WoW",
+    "WWW",
+    " W "
+  ],
   "result": {
     "item": "minecraft:shield"
   }

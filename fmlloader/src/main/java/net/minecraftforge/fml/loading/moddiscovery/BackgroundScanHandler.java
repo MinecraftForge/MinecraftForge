@@ -5,11 +5,11 @@
 
 package net.minecraftforge.fml.loading.moddiscovery;
 
+import com.mojang.logging.LogUtils;
 import net.minecraftforge.fml.loading.LoadingModList;
 import net.minecraftforge.fml.loading.LogMarkers;
 import net.minecraftforge.forgespi.language.ModFileScanData;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -28,7 +28,7 @@ public class BackgroundScanHandler
         ERRORED
     }
 
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger LOGGER = LogUtils.getLogger();
     private final ExecutorService modContentScanner;
     private final List<ModFile> pendingFiles;
     private final List<ModFile> scannedFiles;

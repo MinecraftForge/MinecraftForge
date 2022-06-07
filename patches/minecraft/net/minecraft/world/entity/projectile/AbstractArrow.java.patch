@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/projectile/AbstractArrow.java
 +++ b/net/minecraft/world/entity/projectile/AbstractArrow.java
-@@ -184,7 +_,7 @@
+@@ -185,7 +_,7 @@
                 }
              }
  

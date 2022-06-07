@@ -37,8 +37,7 @@ import net.minecraftforge.fml.ModList;
 import net.minecraftforge.forge.event.lifecycle.GatherDataEvent;
 import net.minecraftforge.forgespi.language.IModFileInfo;
 import net.minecraftforge.resource.ResourcePackLoader;
-
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Enables data providers to check if other data files currently exist. The
@@ -147,7 +146,7 @@ public class ExistingFileHelper {
         if (!enable) {
             return true;
         }
-        return generated.get(packType).contains(loc) || getManager(packType).hasResource(loc);
+        return generated.get(packType).contains(loc) || getManager(packType).getResource(loc).isPresent();
     }
 
     /**
@@ -155,7 +154,7 @@ public class ExistingFileHelper {
      * convenience method to avoid repeating type/prefix/suffix and instead use the
      * common definitions in {@link ResourceType}, or a custom {@link IResourceType}
      * definition.
-     * 
+     *
      * @param loc  the base location of the resource, e.g.
      *             {@code "minecraft:block/stone"}
      * @param type a {@link IResourceType} describing how to form the path to the
@@ -169,7 +168,7 @@ public class ExistingFileHelper {
 
     /**
      * Check if a given resource exists in the known resource packs.
-     * 
+     *
      * @param loc        the base location of the resource, e.g.
      *                   {@code "minecraft:block/stone"}
      * @param packType   the type of resources to check
@@ -190,13 +189,13 @@ public class ExistingFileHelper {
      * <p>
      * This should be called by data providers immediately when a new data object is
      * created, i.e. not during
-     * {@link DataProvider#run(net.minecraft.data.HashCache) run} but instead
+     * {@link DataProvider#run(net.minecraft.data.CachedOutput) run} but instead
      * when the "builder" (or whatever intermediate object) is created, such as a
      * {@link ModelBuilder}.
      * <p>
      * This represents a <em>promise</em> to generate the file later, since other
      * datagen may rely on this file existing.
-     * 
+     *
      * @param loc  the base location of the resource, e.g.
      *             {@code "minecraft:block/stone"}
      * @param type a {@link IResourceType} describing how to form the path to the
@@ -211,13 +210,13 @@ public class ExistingFileHelper {
      * <p>
      * This should be called by data providers immediately when a new data object is
      * created, i.e. not during
-     * {@link DataProvider#run(HashCache) run} but instead
+     * {@link DataProvider#run(net.minecraft.data.CachedOutput) run} but instead
      * when the "builder" (or whatever intermediate object) is created, such as a
      * {@link ModelBuilder}.
      * <p>
      * This represents a <em>promise</em> to generate the file later, since other
      * datagen may rely on this file existing.
-     * 
+     *
      * @param loc        the base location of the resource, e.g.
      *                   {@code "minecraft:block/stone"}
      * @param packType   the type of resources to check
@@ -236,7 +235,7 @@ public class ExistingFileHelper {
 
     @VisibleForTesting
     public Resource getResource(ResourceLocation loc, PackType packType) throws IOException {
-        return getManager(packType).getResource(loc);
+        return getManager(packType).getResource(loc).orElseThrow();
     }
 
     /**

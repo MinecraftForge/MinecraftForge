@@ -5,7 +5,6 @@
 
 package net.minecraftforge.debug.recipe.recipebook;
 
-import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableList;
 import com.google.gson.JsonElement;
 import com.mojang.serialization.Codec;
@@ -14,7 +13,6 @@ import com.mojang.serialization.Dynamic;
 import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.NonNullList;
-import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -33,9 +31,6 @@ import java.util.stream.Stream;
 
 public class RecipeBookTestRecipe implements Recipe<RecipeBookExtensionTest.RecipeBookTestContainer>
 {
-    @SuppressWarnings("unchecked")
-    public static final Supplier<RecipeType<RecipeBookTestRecipe>> TYPE = Suppliers.memoize(() -> (RecipeType<RecipeBookTestRecipe>) Registry.RECIPE_TYPE.get(RecipeBookExtensionTest.getId("test_recipe")));
-
     public final ResourceLocation id;
     public final Ingredients ingredients;
     private final int width;
@@ -132,7 +127,7 @@ public class RecipeBookTestRecipe implements Recipe<RecipeBookExtensionTest.Reci
     @Override
     public RecipeType<?> getType()
     {
-        return TYPE.get();
+        return RecipeBookExtensionTest.RECIPE_BOOK_TEST_RECIPE_TYPE.get();
     }
 
     @Override

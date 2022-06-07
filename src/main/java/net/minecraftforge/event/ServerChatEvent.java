@@ -5,6 +5,7 @@
 
 package net.minecraftforge.event;
 
+import net.minecraft.network.chat.MessageSignature;
 import net.minecraft.network.protocol.game.ServerboundChatPacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.network.chat.Component;
@@ -13,15 +14,17 @@ import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Cancelable;
 
+import javax.annotation.Nullable;
+
 /**
  * ServerChatEvent is fired whenever a C01PacketChatMessage is processed. <br>
- * This event is fired via {@link ForgeHooks#onServerChatEvent(ServerGamePacketListenerImpl, String, Component)},
+ * This event is fired via {@link ForgeHooks#onServerChatEvent(ServerPlayer, String, Component)},
  * which is executed by the {@link ServerGamePacketListenerImpl#handleChat(ServerboundChatPacket)}<br>
  * <br>
- * {@link #username} contains the username of the player sending the chat message.<br>
+ * {@link #username} contains the username of the player sending the chat message, unless fired from the server, where it is null.<br>
  * {@link #message} contains the message being sent.<br>
- * {@link #player} the instance of EntityPlayerMP for the player sending the chat message.<br>
- * {@link #component} contains the instance of ChatComponentTranslation for the sent message.<br>
+ * {@link #player} the instance of ServerPlayer for the player sending the chat message, or null when fired from the server.<br>
+ * {@link #component} contains the instance of Component for the sent message.<br>
  * <br>
  * This event is {@link Cancelable}. <br>
  * If this event is canceled, the chat message is never distributed to all clients.<br>
@@ -33,15 +36,16 @@ import net.minecraftforge.eventbus.api.Cancelable;
 @Cancelable
 public class ServerChatEvent extends net.minecraftforge.eventbus.api.Event
 {
-    private final String message, username;
-    private final ServerPlayer player;
+    private final String message;
+    private final @Nullable String username;
+    private final @Nullable ServerPlayer player;
     private Component component;
-    public ServerChatEvent(ServerPlayer player, String message, Component component)
+    public ServerChatEvent(@Nullable ServerPlayer player, String message, Component component)
     {
         super();
         this.message = message;
         this.player = player;
-        this.username = player.getGameProfile().getName();
+        this.username = player != null ? player.getGameProfile().getName() : null;
         this.component = component;
     }
 
@@ -56,6 +60,6 @@ public class ServerChatEvent extends net.minecraftforge.eventbus.api.Event
     }
 
     public String getMessage() { return this.message; }
-    public String getUsername() { return this.username; }
-    public ServerPlayer getPlayer() { return this.player; }
+    public @Nullable String getUsername() { return this.username; }
+    public @Nullable ServerPlayer getPlayer() { return this.player; }
 }

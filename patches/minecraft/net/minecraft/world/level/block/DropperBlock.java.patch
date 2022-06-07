@@ -7,5 +7,5 @@
 -         if (!itemstack.m_41619_()) {
 +         if (!itemstack.m_41619_() && net.minecraftforge.items.VanillaInventoryCodeHooks.dropperInsertHook(p_52944_, p_52945_, dispenserblockentity, i, itemstack)) {
              Direction direction = p_52944_.m_8055_(p_52945_).m_61143_(f_52659_);
-             Container container = HopperBlockEntity.m_59390_(p_52944_, p_52945_.m_142300_(direction));
+             Container container = HopperBlockEntity.m_59390_(p_52944_, p_52945_.m_121945_(direction));
              ItemStack itemstack1;

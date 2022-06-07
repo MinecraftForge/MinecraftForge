@@ -11,9 +11,9 @@
        } else {
           this.m_121304_();
 @@ -476,6 +_,7 @@
-       p_121248_.suggest("@r", new TranslatableComponent("argument.entity.selector.randomPlayer"));
-       p_121248_.suggest("@s", new TranslatableComponent("argument.entity.selector.self"));
-       p_121248_.suggest("@e", new TranslatableComponent("argument.entity.selector.allEntities"));
+       p_121248_.suggest("@r", Component.m_237115_("argument.entity.selector.randomPlayer"));
+       p_121248_.suggest("@s", Component.m_237115_("argument.entity.selector.self"));
+       p_121248_.suggest("@e", Component.m_237115_("argument.entity.selector.allEntities"));
 +      net.minecraftforge.common.command.EntitySelectorManager.fillSelectorSuggestions(p_121248_);
     }
  

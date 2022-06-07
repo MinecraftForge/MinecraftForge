@@ -5,7 +5,7 @@
     private final CollisionContext f_45686_;
  
 -   public ClipContext(Vec3 p_45688_, Vec3 p_45689_, ClipContext.Block p_45690_, ClipContext.Fluid p_45691_, Entity p_45692_) {
-+   public ClipContext(Vec3 p_45688_, Vec3 p_45689_, ClipContext.Block p_45690_, ClipContext.Fluid p_45691_, @javax.annotation.Nullable Entity p_45692_) {
++   public ClipContext(Vec3 p_45688_, Vec3 p_45689_, ClipContext.Block p_45690_, ClipContext.Fluid p_45691_, @org.jetbrains.annotations.Nullable Entity p_45692_) {
        this.f_45682_ = p_45688_;
        this.f_45683_ = p_45689_;
        this.f_45684_ = p_45690_;

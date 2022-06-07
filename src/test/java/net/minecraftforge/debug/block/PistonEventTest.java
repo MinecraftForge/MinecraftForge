@@ -8,6 +8,7 @@ package net.minecraftforge.debug.block;
 import java.util.List;
 import java.util.Locale;
 
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.Blocks;
@@ -22,7 +23,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.core.Direction;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.model.generators.BlockStateProvider;
@@ -80,11 +80,11 @@ public class PistonEventTest
             {
                 if (pistonHelper.resolve())
                 {
-                    player.sendMessage(new TextComponent(String.format(Locale.ENGLISH, "Piston will extend moving %d blocks and destroy %d blocks", pistonHelper.getToPush().size(), pistonHelper.getToDestroy().size())), player.getUUID());
+                    player.sendSystemMessage(Component.literal(String.format(Locale.ENGLISH, "Piston will extend moving %d blocks and destroy %d blocks", pistonHelper.getToPush().size(), pistonHelper.getToDestroy().size())));
                 }
                 else
                 {
-                    player.sendMessage(new TextComponent("Piston won't extend"), player.getUUID());
+                    player.sendSystemMessage(Component.literal("Piston won't extend"));
                 }
             }
 
@@ -125,11 +125,11 @@ public class PistonEventTest
                     BlockPos targetPos = event.getFaceOffsetPos().relative(event.getDirection());
                     boolean canPush = PistonBaseBlock.isPushable(event.getWorld().getBlockState(targetPos), (Level) event.getWorld(), event.getFaceOffsetPos(), event.getDirection().getOpposite(), false, event.getDirection());
                     boolean isAir = event.getWorld().isEmptyBlock(targetPos);
-                    player.sendMessage(new TextComponent(String.format(Locale.ENGLISH, "Piston will retract moving %d blocks", !isAir && canPush ? 1 : 0)), player.getUUID());
+                    player.sendSystemMessage(Component.literal(String.format(Locale.ENGLISH, "Piston will retract moving %d blocks", !isAir && canPush ? 1 : 0)));
                 }
                 else
                 {
-                    player.sendMessage(new TextComponent("Piston will retract"), player.getUUID());
+                    player.sendSystemMessage(Component.literal("Piston will retract"));
                 }
             }
             // Offset twice to see if retraction will pull cobblestone
@@ -141,10 +141,7 @@ public class PistonEventTest
     {
         DataGenerator gen = event.getGenerator();
 
-        if (event.includeClient())
-        {
-            gen.addProvider(new BlockStates(gen, event.getExistingFileHelper()));
-        }
+        gen.addProvider(event.includeClient(), new BlockStates(gen, event.getExistingFileHelper()));
     }
 
     private class BlockStates extends BlockStateProvider
@@ -157,7 +154,7 @@ public class PistonEventTest
         @Override
         protected void registerStatesAndModels()
         {
-            ModelFile model = models().cubeAll(shiftOnMove.get().getRegistryName().getPath(), mcLoc("block/furnace_top"));
+            ModelFile model = models().cubeAll(shiftOnMove.getId().getPath(), mcLoc("block/furnace_top"));
             simpleBlock(shiftOnMove.get(), model);
             simpleBlockItem(shiftOnMove.get(), model);
         }

@@ -5,11 +5,10 @@
 
 package net.minecraftforge.event;
 
-import javax.annotation.Nullable;
-
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.players.PlayerList;
 import net.minecraftforge.eventbus.api.Event;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Fires when a player joins the server or when the reload command is ran,

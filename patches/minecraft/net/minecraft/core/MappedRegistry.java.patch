@@ -10,7 +10,7 @@
           Util.m_143785_("Adding duplicate key '" + p_205859_ + "' to registry");
        }
  
-@@ -277,6 +_,14 @@
+@@ -299,6 +_,14 @@
  
     public boolean m_142003_(ResourceKey<T> p_175392_) {
        return this.f_205842_.containsKey(p_175392_);

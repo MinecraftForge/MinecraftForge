@@ -3,7 +3,7 @@
 @@ -33,7 +_,7 @@
        Level level = p_40637_.m_43725_();
        BlockPos blockpos = p_40637_.m_8083_();
-       BlockPos blockpos1 = blockpos.m_142300_(p_40637_.m_43719_());
+       BlockPos blockpos1 = blockpos.m_121945_(p_40637_.m_43719_());
 -      if (m_40627_(p_40637_.m_43722_(), level, blockpos)) {
 +      if (applyBonemeal(p_40637_.m_43722_(), level, blockpos, p_40637_.m_43723_())) {
           if (!level.f_46443_) {

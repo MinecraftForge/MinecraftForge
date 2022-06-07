@@ -61,7 +61,7 @@
                    }
 @@ -174,7 +_,7 @@
           if (direction.m_122434_() != this.f_60413_.m_122434_()) {
-             BlockPos blockpos = p_60432_.m_142300_(direction);
+             BlockPos blockpos = p_60432_.m_121945_(direction);
              BlockState blockstate1 = this.f_60409_.m_8055_(blockpos);
 -            if (m_155939_(blockstate1, blockstate) && !this.m_60433_(blockpos, direction)) {
 +            if (blockstate1.canStickTo(blockstate) && !this.m_60433_(blockpos, direction)) {

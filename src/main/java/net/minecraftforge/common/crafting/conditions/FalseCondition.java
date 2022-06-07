@@ -22,7 +22,7 @@ public final class FalseCondition implements ICondition
     }
 
     @Override
-    public boolean test()
+    public boolean test(IContext condition)
     {
         return false;
     }

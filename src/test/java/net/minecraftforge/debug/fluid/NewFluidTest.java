@@ -74,7 +74,7 @@ public class NewFluidTest
     );
 
     public static RegistryObject<LiquidBlock> test_fluid_block = BLOCKS.register("test_fluid_block", () ->
-            new LiquidBlock(test_fluid, Properties.of(Material.WATER).noCollission().strength(100.0F).noDrops())
+            new LiquidBlock(test_fluid, Properties.of(Material.WATER).noCollission().strength(100.0F).noLootTable())
     );
     public static RegistryObject<Item> test_fluid_bucket = ITEMS.register("test_fluid_bucket", () ->
             new BucketItem(test_fluid, new Item.Properties().craftRemainder(Items.BUCKET).stacksTo(1).tab(CreativeModeTab.TAB_MISC))
@@ -82,7 +82,7 @@ public class NewFluidTest
 
     // WARNING: this doesn't allow "any fluid", only the fluid from this test mod!
     public static RegistryObject<Block> fluidloggable_block = BLOCKS.register("fluidloggable_block", () ->
-            new FluidloggableBlock(Properties.of(Material.WOOD).noCollission().strength(100.0F).noDrops())
+            new FluidloggableBlock(Properties.of(Material.WOOD).noCollission().strength(100.0F).noLootTable())
     );
     public static RegistryObject<Item> fluidloggable_blockitem = ITEMS.register("fluidloggable_block", () ->
             new BlockItem(fluidloggable_block.get(), new Item.Properties().tab(CreativeModeTab.TAB_MISC))

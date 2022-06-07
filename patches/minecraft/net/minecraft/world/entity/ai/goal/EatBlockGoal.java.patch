@@ -1,15 +1,15 @@
 --- a/net/minecraft/world/entity/ai/goal/EatBlockGoal.java
 +++ b/net/minecraft/world/entity/ai/goal/EatBlockGoal.java
-@@ -61,7 +_,7 @@
+@@ -60,7 +_,7 @@
        if (this.f_25204_ == this.m_183277_(4)) {
-          BlockPos blockpos = this.f_25202_.m_142538_();
+          BlockPos blockpos = this.f_25202_.m_20183_();
           if (f_25201_.test(this.f_25203_.m_8055_(blockpos))) {
 -            if (this.f_25203_.m_46469_().m_46207_(GameRules.f_46132_)) {
 +            if (net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.f_25203_, this.f_25202_)) {
                 this.f_25203_.m_46961_(blockpos, false);
              }
  
-@@ -70,7 +_,7 @@
+@@ -68,7 +_,7 @@
           } else {
              BlockPos blockpos1 = blockpos.m_7495_();
              if (this.f_25203_.m_8055_(blockpos1).m_60713_(Blocks.f_50440_)) {

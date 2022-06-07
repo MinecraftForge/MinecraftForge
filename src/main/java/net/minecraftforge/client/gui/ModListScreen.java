@@ -57,7 +57,6 @@ import net.minecraftforge.forgespi.language.IModInfo;
 import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
-import net.minecraft.network.chat.TranslatableComponent;
 
 public class ModListScreen extends Screen
 {
@@ -79,7 +78,7 @@ public class ModListScreen extends Screen
         }
 
         Component getButtonText() {
-            return new TranslatableComponent("fml.menu.mods." + StringUtils.toLowerCase(name()));
+            return Component.translatable("fml.menu.mods." + StringUtils.toLowerCase(name()));
         }
     }
 
@@ -106,7 +105,7 @@ public class ModListScreen extends Screen
 
     public ModListScreen(Screen parentScreen)
     {
-        super(new TranslatableComponent("fml.menu.mods.title"));
+        super(Component.translatable("fml.menu.mods.title"));
         this.parentScreen = parentScreen;
         this.mods = Collections.unmodifiableList(ModList.get().getMods());
         this.unsortedMods = Collections.unmodifiableList(this.mods);
@@ -263,12 +262,12 @@ public class ModListScreen extends Screen
         int y = this.height - 20 - PADDING;
         int fullButtonHeight = PADDING + 20 + PADDING;
 
-        doneButton = new Button(((listWidth + PADDING + this.width - doneButtonWidth) / 2), y, doneButtonWidth, 20, new TranslatableComponent("gui.done"), b -> ModListScreen.this.onClose());
-        openModsFolderButton = new Button(6, y, this.listWidth, 20, new TranslatableComponent("fml.menu.mods.openmodsfolder"), b -> Util.getPlatform().openFile(FMLPaths.MODSDIR.get().toFile()));
+        doneButton = new Button(((listWidth + PADDING + this.width - doneButtonWidth) / 2), y, doneButtonWidth, 20, Component.translatable("gui.done"), b -> ModListScreen.this.onClose());
+        openModsFolderButton = new Button(6, y, this.listWidth, 20, Component.translatable("fml.menu.mods.openmodsfolder"), b -> Util.getPlatform().openFile(FMLPaths.MODSDIR.get().toFile()));
         y -= 20 + PADDING;
-        configButton = new Button(6, y, this.listWidth, 20, new TranslatableComponent("fml.menu.mods.config"), b -> ModListScreen.this.displayModConfig());
+        configButton = new Button(6, y, this.listWidth, 20, Component.translatable("fml.menu.mods.config"), b -> ModListScreen.this.displayModConfig());
         y -= 14 + PADDING;
-        search = new EditBox(getFontRenderer(), PADDING + 1, y, listWidth - 2, 14, new TranslatableComponent("fml.menu.mods.search"));
+        search = new EditBox(getFontRenderer(), PADDING + 1, y, listWidth - 2, 14, Component.translatable("fml.menu.mods.search"));
 
         this.modList = new ModListWidget(this, listWidth, fullButtonHeight, search.y - getFontRenderer().lineHeight - PADDING);
         this.modList.setLeftPos(6);
@@ -366,7 +365,7 @@ public class ModListScreen extends Screen
         if (this.modInfo != null)
             this.modInfo.render(poseStack, mouseX, mouseY, partialTick);
 
-        Component text = new TranslatableComponent("fml.menu.mods.search");
+        Component text = Component.translatable("fml.menu.mods.search");
         int x = modList.getLeft() + ((modList.getRight() - modList.getLeft()) / 2) - (getFontRenderer().width(text) / 2);
         this.search.render(poseStack, mouseX , mouseY, partialTick);
         super.render(poseStack, mouseX, mouseY, partialTick);

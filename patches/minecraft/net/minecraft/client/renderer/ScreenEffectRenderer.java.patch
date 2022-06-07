@@ -9,19 +9,19 @@
 -            m_173296_(p_110719_.m_91289_().m_110907_().m_110882_(blockstate), p_110720_);
 +         org.apache.commons.lang3.tuple.Pair<BlockState, BlockPos> overlay = getOverlayBlock(player);
 +         if (overlay != null) {
-+            if (!net.minecraftforge.event.ForgeEventFactory.renderBlockOverlay(player, p_110720_, net.minecraftforge.client.event.RenderBlockOverlayEvent.OverlayType.BLOCK, overlay.getLeft(), overlay.getRight()))
-+                m_173296_(p_110719_.m_91289_().m_110907_().getTexture(overlay.getLeft(), p_110719_.f_91073_, overlay.getRight()), p_110720_);
++            if (!net.minecraftforge.client.ForgeHooksClient.renderBlockOverlay(player, p_110720_, net.minecraftforge.client.event.RenderBlockOverlayEvent.OverlayType.BLOCK, overlay.getLeft(), overlay.getRight()))
++               m_173296_(p_110719_.m_91289_().m_110907_().getTexture(overlay.getLeft(), p_110719_.f_91073_, overlay.getRight()), p_110720_);
           }
        }
  
        if (!p_110719_.f_91074_.m_5833_()) {
           if (p_110719_.f_91074_.m_204029_(FluidTags.f_13131_)) {
-+            if (!net.minecraftforge.event.ForgeEventFactory.renderWaterOverlay(player, p_110720_))
++            if (!net.minecraftforge.client.ForgeHooksClient.renderWaterOverlay(player, p_110720_))
              m_110725_(p_110719_, p_110720_);
           }
  
           if (p_110719_.f_91074_.m_6060_()) {
-+            if (!net.minecraftforge.event.ForgeEventFactory.renderFireOverlay(player, p_110720_))
++            if (!net.minecraftforge.client.ForgeHooksClient.renderFireOverlay(player, p_110720_))
              m_110728_(p_110719_, p_110720_);
           }
        }

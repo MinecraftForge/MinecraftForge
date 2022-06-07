@@ -5,8 +5,7 @@
 
 package net.minecraftforge.fml.loading;
 
-import org.apache.logging.log4j.Logger;
-
+import org.slf4j.Logger;
 import java.io.PrintStream;
 
 /**

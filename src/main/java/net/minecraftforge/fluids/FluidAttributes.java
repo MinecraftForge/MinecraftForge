@@ -5,8 +5,6 @@
 
 package net.minecraftforge.fluids;
 
-import javax.annotation.Nullable;
-
 import net.minecraft.world.item.BucketItem;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.dimension.DimensionType;
@@ -15,7 +13,6 @@ import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.level.BlockAndTintGetter;
 
 import java.util.function.BiFunction;
@@ -33,6 +30,8 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraftforge.registries.ForgeRegistries;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Minecraft Forge Fluid Implementation
@@ -126,7 +125,7 @@ public class FluidAttributes
 
     protected FluidAttributes(Builder builder, Fluid fluid)
     {
-        this.translationKey = builder.translationKey != null ? builder.translationKey :  Util.makeDescriptionId("fluid", fluid.getRegistryName());
+        this.translationKey = builder.translationKey != null ? builder.translationKey :  Util.makeDescriptionId("fluid", ForgeRegistries.FLUIDS.getKey(fluid));
         this.stillTexture = builder.stillTexture;
         this.flowingTexture = builder.flowingTexture;
         this.overlayTexture = builder.overlayTexture;
@@ -213,7 +212,7 @@ public class FluidAttributes
      */
     public Component getDisplayName(FluidStack stack)
     {
-        return new TranslatableComponent(getTranslationKey());
+        return Component.translatable(getTranslationKey());
     }
 
     /**

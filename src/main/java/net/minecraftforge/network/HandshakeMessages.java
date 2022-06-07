@@ -92,11 +92,7 @@ public class HandshakeMessages
             for (int x = 0; x < len; x++)
                 registries.add(input.readResourceLocation());
 
-            // Datapack Registries may or may not be sent in 1.18.2 due to netcode changes.
-            // TODO 1.19: Remove optionalness of datapack registry list in the mod list packet.
-            List<ResourceKey<? extends Registry<?>>> dataPackRegistries = input.isReadable()
-                ? input.readCollection(ArrayList::new, buf -> ResourceKey.createRegistryKey(buf.readResourceLocation()))
-                : List.of();
+            List<ResourceKey<? extends Registry<?>>> dataPackRegistries = input.readCollection(ArrayList::new, buf -> ResourceKey.createRegistryKey(buf.readResourceLocation()));
             return new S2CModList(mods, channels, registries, dataPackRegistries);
         }
 
@@ -113,14 +109,9 @@ public class HandshakeMessages
 
             output.writeVarInt(registries.size());
             registries.forEach(output::writeResourceLocation);
-            
-            // The list of synced datapack registry names is not sent in 1.18.2 if the list is empty.
-            // TODO 1.19: should send an empty list if the list is empty.
+
             Set<ResourceKey<? extends Registry<?>>> dataPackRegistries = DataPackRegistriesHooks.getSyncedCustomRegistries();
-            if (!dataPackRegistries.isEmpty())
-            {
-                output.writeCollection(dataPackRegistries, (buf,key) -> buf.writeResourceLocation(key.location()));
-            }
+            output.writeCollection(dataPackRegistries, (buf, key) -> buf.writeResourceLocation(key.location()));
         }
 
         public List<String> getModList() {
@@ -134,7 +125,7 @@ public class HandshakeMessages
         public Map<ResourceLocation, String> getChannels() {
             return this.channels;
         }
-        
+
         /**
          * @return list of ids of non-vanilla syncable datapack registries on the server.
          */

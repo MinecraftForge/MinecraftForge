@@ -1,10 +1,5 @@
 {
   "type": "minecraft:crafting_shaped",
-  "pattern": [
-    " #X",
-    "# X",
-    " #X"
-  ],
   "key": {
     "#": {
       "tag": "forge:rods/wooden"
@@ -13,6 +8,11 @@
       "item": "minecraft:string"
     }
   },
+  "pattern": [
+    " #X",
+    "# X",
+    " #X"
+  ],
   "result": {
     "item": "minecraft:bow"
   }

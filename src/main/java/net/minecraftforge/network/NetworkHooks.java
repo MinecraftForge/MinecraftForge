@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraftforge.fml.util.thread.EffectiveSide;
 import net.minecraftforge.client.ConfigGuiHandler.ConfigGuiFactory;
 import net.minecraftforge.network.ConnectionData.ModMismatchData;
@@ -40,8 +40,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerContainerEvent;
 import net.minecraftforge.fml.config.ConfigTracker;
-
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 public class NetworkHooks
 {
@@ -80,7 +79,7 @@ public class NetworkHooks
 
     private static boolean validateSideForProcessing(final ICustomPacket<?> packet, final NetworkInstance ni, final Connection manager) {
         if (packet.getDirection().getReceptionSide() != EffectiveSide.get()) {
-            manager.disconnect(new TextComponent("Illegal packet received, terminating connection"));
+            manager.disconnect(Component.literal("Illegal packet received, terminating connection"));
             return false;
         }
         return true;
@@ -88,7 +87,7 @@ public class NetworkHooks
 
     public static void validatePacketDirection(final NetworkDirection packetDirection, final Optional<NetworkDirection> expectedDirection, final Connection connection) {
         if (packetDirection != expectedDirection.orElse(packetDirection)) {
-            connection.disconnect(new TextComponent("Illegal packet received, terminating connection"));
+            connection.disconnect(Component.literal("Illegal packet received, terminating connection"));
             throw new IllegalStateException("Invalid packet received, aborting connection");
         }
     }

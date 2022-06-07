@@ -6,14 +6,13 @@
 package net.minecraftforge.common.data;
 
 import com.google.gson.JsonObject;
+import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.data.HashCache;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.data.recipes.RecipeProvider;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.data.recipes.ShapelessRecipeBuilder;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.Tag;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -25,6 +24,8 @@ import net.minecraft.world.item.crafting.Ingredient.Value;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.common.Tags;
+import net.minecraftforge.registries.ForgeRegistries;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
 import java.nio.file.Path;
@@ -33,8 +34,8 @@ import java.util.function.Consumer;
 
 public final class ForgeRecipeProvider extends RecipeProvider
 {
-    private Map<Item, TagKey<Item>> replacements = new HashMap<>();
-    private Set<ResourceLocation> excludes = new HashSet<>();
+    private final Map<Item, TagKey<Item>> replacements = new HashMap<>();
+    private final Set<ResourceLocation> excludes = new HashSet<>();
 
     public ForgeRecipeProvider(DataGenerator generatorIn)
     {
@@ -43,7 +44,7 @@ public final class ForgeRecipeProvider extends RecipeProvider
 
     private void exclude(ItemLike item)
     {
-        excludes.add(item.asItem().getRegistryName());
+        excludes.add(ForgeRegistries.ITEMS.getKey(item.asItem()));
     }
 
     private void replace(ItemLike item, TagKey<Item> tag)
@@ -54,15 +55,15 @@ public final class ForgeRecipeProvider extends RecipeProvider
     @Override
     protected void buildCraftingRecipes(Consumer<FinishedRecipe> consumer)
     {
-        replace(Items.STICK,        Tags.Items.RODS_WOODEN);
-        replace(Items.GOLD_INGOT,   Tags.Items.INGOTS_GOLD);
-        replace(Items.IRON_INGOT,   Tags.Items.INGOTS_IRON);
+        replace(Items.STICK, Tags.Items.RODS_WOODEN);
+        replace(Items.GOLD_INGOT, Tags.Items.INGOTS_GOLD);
+        replace(Items.IRON_INGOT, Tags.Items.INGOTS_IRON);
         replace(Items.NETHERITE_INGOT, Tags.Items.INGOTS_NETHERITE);
         replace(Items.COPPER_INGOT, Tags.Items.INGOTS_COPPER);
         replace(Items.AMETHYST_SHARD, Tags.Items.GEMS_AMETHYST);
-        replace(Items.DIAMOND,      Tags.Items.GEMS_DIAMOND);
-        replace(Items.EMERALD,      Tags.Items.GEMS_EMERALD);
-        replace(Items.CHEST,        Tags.Items.CHESTS_WOODEN);
+        replace(Items.DIAMOND, Tags.Items.GEMS_DIAMOND);
+        replace(Items.EMERALD, Tags.Items.GEMS_EMERALD);
+        replace(Items.CHEST, Tags.Items.CHESTS_WOODEN);
         replace(Blocks.COBBLESTONE, Tags.Items.COBBLESTONE_NORMAL);
         replace(Blocks.COBBLED_DEEPSLATE, Tags.Items.COBBLESTONE_DEEPSLATE);
 
@@ -90,20 +91,17 @@ public final class ForgeRecipeProvider extends RecipeProvider
         });
     }
 
-    @Override
-    protected void saveAdvancement(HashCache cache, JsonObject advancementJson, Path pathIn) {
-        //NOOP - We dont replace any of the advancement things yet...
-    }
-
+    @Nullable
     private FinishedRecipe enhance(FinishedRecipe vanilla)
     {
-        if (vanilla instanceof ShapelessRecipeBuilder.Result)
-            return enhance((ShapelessRecipeBuilder.Result)vanilla);
-        if (vanilla instanceof ShapedRecipeBuilder.Result)
-            return enhance((ShapedRecipeBuilder.Result)vanilla);
+        if (vanilla instanceof ShapelessRecipeBuilder.Result shapeless)
+            return enhance(shapeless);
+        if (vanilla instanceof ShapedRecipeBuilder.Result shaped)
+            return enhance(shaped);
         return null;
     }
 
+    @Nullable
     private FinishedRecipe enhance(ShapelessRecipeBuilder.Result vanilla)
     {
         List<Ingredient> ingredients = getField(ShapelessRecipeBuilder.Result.class, vanilla, 4);
@@ -120,6 +118,13 @@ public final class ForgeRecipeProvider extends RecipeProvider
         return modified ? vanilla : null;
     }
 
+    @Override
+    protected void saveAdvancement(CachedOutput output, JsonObject advancementJson, Path pathIn)
+    {
+        //NOOP - We dont replace any of the advancement things yet...
+    }
+
+    @Nullable
     private FinishedRecipe enhance(ShapedRecipeBuilder.Result vanilla)
     {
         Map<Character, Ingredient> ingredients = getField(ShapedRecipeBuilder.Result.class, vanilla, 5);
@@ -136,6 +141,7 @@ public final class ForgeRecipeProvider extends RecipeProvider
         return modified ? vanilla : null;
     }
 
+    @Nullable
     private Ingredient enhance(ResourceLocation name, Ingredient vanilla)
     {
         if (excludes.contains(name))
@@ -154,11 +160,9 @@ public final class ForgeRecipeProvider extends RecipeProvider
                 {
                     items.add(new TagValue(replacement));
                     modified = true;
-                }
-                else
+                } else
                     items.add(entry);
-            }
-            else
+            } else
                 items.add(entry);
         }
         return modified ? Ingredient.fromValues(items.stream()) : null;
@@ -171,9 +175,8 @@ public final class ForgeRecipeProvider extends RecipeProvider
         fld.setAccessible(true);
         try
         {
-            return (R)fld.get(inst);
-        }
-        catch (IllegalArgumentException | IllegalAccessException e)
+            return (R) fld.get(inst);
+        } catch (IllegalArgumentException | IllegalAccessException e)
         {
             throw new RuntimeException(e);
         }

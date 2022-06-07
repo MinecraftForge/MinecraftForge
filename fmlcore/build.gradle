@@ -10,10 +10,12 @@ apply plugin: 'org.javamodularity.moduleplugin'
 dependencyUpdates.rejectVersionIf { isNonStable(it.candidate.version) }
 
 dependencies {
-    compileOnly('org.jetbrains:annotations:21.0.1')
+    compileOnly("org.jetbrains:annotations:${JETBRAINS_ANNOTATIONS_VERSION}")
+
+    api("net.minecraftforge:eventbus:${EVENTBUS_VERSION}")
+
     implementation(project(':fmlloader'))
-    api('net.minecraftforge:eventbus:5.0.+')
-    implementation('commons-io:commons-io:2.5')
+    implementation("commons-io:commons-io:${COMMONS_IO_VERSION}")
 }
 
 task sourcesJar(type: Jar) {

@@ -1,6 +1,6 @@
 --- a/net/minecraft/data/Main.java
 +++ b/net/minecraft/data/Main.java
-@@ -43,8 +_,15 @@
+@@ -52,8 +_,15 @@
        OptionSpec<Void> optionspec6 = optionparser.accepts("all", "Include all generators");
        OptionSpec<String> optionspec7 = optionparser.accepts("output", "Output folder").withRequiredArg().defaultsTo("generated");
        OptionSpec<String> optionspec8 = optionparser.accepts("input", "Input folder").withRequiredArg();
@@ -17,13 +17,13 @@
           Path path = Paths.get(optionspec7.value(optionset));
           boolean flag = optionset.has(optionspec6);
           boolean flag1 = flag || optionset.has(optionspec2);
-@@ -52,10 +_,14 @@
+@@ -61,10 +_,14 @@
           boolean flag3 = flag || optionset.has(optionspec3);
           boolean flag4 = flag || optionset.has(optionspec4);
           boolean flag5 = flag || optionset.has(optionspec5);
--         DataGenerator datagenerator = m_129660_(path, optionset.valuesOf(optionspec8).stream().map((p_129659_) -> {
+-         DataGenerator datagenerator = m_236679_(path, optionset.valuesOf(optionspec8).stream().map((p_129659_) -> {
 -            return Paths.get(p_129659_);
--         }).collect(Collectors.toList()), flag1, flag2, flag3, flag4, flag5);
+-         }).collect(Collectors.toList()), flag1, flag2, flag3, flag4, flag5, SharedConstants.m_183709_(), true);
 -         datagenerator.m_123917_();
 +         Collection<Path> inputs = optionset.valuesOf(optionspec8).stream().map(Paths::get).collect(Collectors.toList());
 +         Collection<Path> existingPacks = optionset.valuesOf(existing).stream().map(Paths::get).collect(Collectors.toList());
@@ -32,7 +32,7 @@
 +         boolean isFlat = mods.isEmpty() || optionset.has(flat);
 +         net.minecraftforge.data.loading.DatagenModLoader.begin(mods, path, inputs, existingPacks, existingMods, flag2, flag1, flag3, flag4, flag5, isFlat, optionset.valueOf(assetIndex), optionset.valueOf(assetsDir));
 +         if (mods.contains("minecraft") || mods.isEmpty())
-+            m_129660_(isFlat ? path : path.resolve("minecraft"), inputs, flag1, flag2, flag3, flag4, flag5).m_123917_();
++            m_236679_(isFlat ? path : path.resolve("minecraft"), inputs, flag1, flag2, flag3, flag4, flag5, SharedConstants.m_183709_(), true).m_123917_();
        } else {
           optionparser.printHelpOn(System.out);
        }

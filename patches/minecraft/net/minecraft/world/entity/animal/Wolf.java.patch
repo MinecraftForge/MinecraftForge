@@ -1,24 +1,25 @@
 --- a/net/minecraft/world/entity/animal/Wolf.java
 +++ b/net/minecraft/world/entity/animal/Wolf.java
-@@ -329,7 +_,7 @@
+@@ -329,7 +_,8 @@
                    itemstack.m_41774_(1);
                 }
  
 -               this.m_5634_((float)item.m_41473_().m_38744_());
 +               this.m_5634_((float)itemstack.getFoodProperties(this).m_38744_());
-                this.m_146859_(GameEvent.f_157771_, this.m_146901_());
++               this.m_146852_(GameEvent.f_157806_, this);
                 return InteractionResult.SUCCESS;
              }
-@@ -361,7 +_,7 @@
+ 
+@@ -360,7 +_,7 @@
                 itemstack.m_41774_(1);
              }
  
--            if (this.f_19796_.nextInt(3) == 0) {
-+            if (this.f_19796_.nextInt(3) == 0 && !net.minecraftforge.event.ForgeEventFactory.onAnimalTame(this, p_30412_)) {
+-            if (this.f_19796_.m_188503_(3) == 0) {
++            if (this.f_19796_.m_188503_(3) == 0 && !net.minecraftforge.event.ForgeEventFactory.onAnimalTame(this, p_30412_)) {
                 this.m_21828_(p_30412_);
                 this.f_21344_.m_26573_();
                 this.m_6710_((LivingEntity)null);
-@@ -401,7 +_,7 @@
+@@ -400,7 +_,7 @@
  
     public boolean m_6898_(ItemStack p_30440_) {
        Item item = p_30440_.m_41720_();

@@ -5,14 +5,14 @@
 
 package net.minecraftforge.fml.loading;
 
+import com.mojang.logging.LogUtils;
 import cpw.mods.modlauncher.api.*;
 import joptsimple.ArgumentAcceptingOptionSpec;
 import joptsimple.OptionSpecBuilder;
 import net.minecraftforge.fml.loading.moddiscovery.ModFile;
 import net.minecraftforge.forgespi.Environment;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,7 +26,7 @@ import static net.minecraftforge.fml.loading.LogMarkers.CORE;
 
 public class FMLServiceProvider implements ITransformationService
 {
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger LOGGER = LogUtils.getLogger();
     private ArgumentAcceptingOptionSpec<String> modsOption;
     private ArgumentAcceptingOptionSpec<String> modListsOption;
     private ArgumentAcceptingOptionSpec<String> mavenRootsOption;

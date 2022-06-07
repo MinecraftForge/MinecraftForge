@@ -33,6 +33,7 @@
 /projects/**/*.launch
 /repo/
 src/generated/resources/.cache/
+src/generated_test/resources/.cache/
 
 #Patch rejects
 /patches-/

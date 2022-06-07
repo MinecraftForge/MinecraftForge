@@ -38,7 +38,7 @@ public class ItemExistsCondition implements ICondition
     }
 
     @Override
-    public boolean test()
+    public boolean test(IContext context)
     {
         return ForgeRegistries.ITEMS.containsKey(item);
     }

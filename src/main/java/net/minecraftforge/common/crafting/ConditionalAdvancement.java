@@ -19,23 +19,13 @@ import net.minecraft.advancements.Advancement;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.util.GsonHelper;
 import net.minecraftforge.common.crafting.conditions.ICondition;
-
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 public class ConditionalAdvancement
 {
     public static Builder builder()
     {
         return new Builder();
-    }
-
-    /**
-     * @deprecated Please use {@linkplain #processConditional(JsonObject, ICondition.IContext) the more general overload}.
-     */
-    @Deprecated(forRemoval = true, since = "1.18.2")
-    @Nullable
-    public static JsonObject processConditional(JsonObject json) {
-        return processConditional(json, ICondition.IContext.EMPTY);
     }
 
     /**

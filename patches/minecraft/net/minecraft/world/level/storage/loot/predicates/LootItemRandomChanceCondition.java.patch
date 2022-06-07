@@ -4,9 +4,9 @@
     }
  
     public boolean test(LootContext p_81930_) {
--      return p_81930_.m_78933_().nextFloat() < this.f_81921_;
+-      return p_81930_.m_230907_().m_188501_() < this.f_81921_;
 +      int i = p_81930_.getLootingModifier();
-+      return p_81930_.m_78933_().nextFloat() < this.f_81921_ + (float) i;
++      return p_81930_.m_230907_().m_188501_() < this.f_81921_ + (float) i;
     }
  
     public static LootItemCondition.Builder m_81927_(float p_81928_) {

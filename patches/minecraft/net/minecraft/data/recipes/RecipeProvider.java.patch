@@ -1,23 +1,23 @@
 --- a/net/minecraft/data/recipes/RecipeProvider.java
 +++ b/net/minecraft/data/recipes/RecipeProvider.java
-@@ -106,6 +_,7 @@
+@@ -100,6 +_,7 @@
  
           }
        });
 +      if (this.getClass() == RecipeProvider.class) //Forge: Subclasses don't need this.
-       m_126013_(p_125982_, Advancement.Builder.m_138353_().m_138386_("impossible", new ImpossibleTrigger.TriggerInstance()).m_138400_(), path.resolve("data/minecraft/advancements/recipes/root.json"));
+       m_236367_(p_236358_, Advancement.Builder.m_138353_().m_138386_("impossible", new ImpossibleTrigger.TriggerInstance()).m_138400_(), this.f_236356_.m_236048_(RecipeBuilder.f_236353_));
     }
  
-@@ -143,7 +_,7 @@
+@@ -112,7 +_,7 @@
  
     }
  
--   protected static void m_126013_(HashCache p_126014_, JsonObject p_126015_, Path p_126016_) {
-+   protected void m_126013_(HashCache p_126014_, JsonObject p_126015_, Path p_126016_) {
+-   protected static void m_236367_(CachedOutput p_236368_, JsonObject p_236369_, Path p_236370_) {
++   protected void m_236367_(CachedOutput p_236368_, JsonObject p_236369_, Path p_236370_) {
        try {
-          String s = f_125969_.toJson((JsonElement)p_126015_);
-          String s1 = f_123918_.hashUnencodedChars(s).toString();
-@@ -177,7 +_,7 @@
+          DataProvider.m_236072_(p_236368_, p_236369_, p_236370_);
+       } catch (IOException ioexception) {
+@@ -121,7 +_,7 @@
  
     }
  

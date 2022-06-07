@@ -5,10 +5,7 @@
 
 package net.minecraftforge.common;
 
-import java.util.Random;
-
-import javax.annotation.Nullable;
-
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.npc.VillagerTrades.ItemListing;
 import net.minecraft.world.item.ItemStack;
@@ -54,11 +51,9 @@ public class BasicItemListing implements ItemListing
         this(new ItemStack(Items.EMERALD, emeralds), forSale, maxTrades, xp, 1);
     }
 
+    @org.jetbrains.annotations.Nullable
     @Override
-    @Nullable
-    public MerchantOffer getOffer(Entity merchant, Random rand)
-    {
+    public MerchantOffer getOffer(Entity p_219693_, RandomSource p_219694_) {
         return new MerchantOffer(price, price2, forSale, maxTrades, xp, priceMult);
     }
-
 }

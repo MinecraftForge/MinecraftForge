@@ -68,32 +68,26 @@ public class LootModifierManager extends SimpleJsonResourceReloadListener {
         //new way
         ArrayList<ResourceLocation> finalLocations = new ArrayList<ResourceLocation>();
         ResourceLocation resourcelocation = new ResourceLocation("forge","loot_modifiers/global_loot_modifiers.json");
-        try {
-            //read in all data files from forge:loot_modifiers/global_loot_modifiers in order to do layering
-            for(Resource iresource : resourceManagerIn.getResources(resourcelocation)) {
-                try (   InputStream inputstream = iresource.getInputStream();
-                        Reader reader = new BufferedReader(new InputStreamReader(inputstream, StandardCharsets.UTF_8));
-                        ) {
-                    JsonObject jsonobject = GsonHelper.fromJson(GSON_INSTANCE, reader, JsonObject.class);
-                    boolean replace = jsonobject.get("replace").getAsBoolean();
-                    if(replace) finalLocations.clear();
-                    JsonArray entryList = jsonobject.get("entries").getAsJsonArray();
-                    for(JsonElement entry : entryList) {
-                        String loc = entry.getAsString();
-                        ResourceLocation res = new ResourceLocation(loc);
-                        if(finalLocations.contains(res)) finalLocations.remove(res);
-                        finalLocations.add(res);
-                    }
-                }
-
-                catch (RuntimeException | IOException ioexception) {
-                    LOGGER.error("Couldn't read global loot modifier list {} in data pack {}", resourcelocation, iresource.getSourceName(), ioexception);
-                } finally {
-                    IOUtils.closeQuietly((Closeable)iresource);
+        //read in all data files from forge:loot_modifiers/global_loot_modifiers in order to do layering
+        for(Resource iresource : resourceManagerIn.getResourceStack(resourcelocation)) {
+            try (   InputStream inputstream = iresource.open();
+                    Reader reader = new BufferedReader(new InputStreamReader(inputstream, StandardCharsets.UTF_8));
+                    ) {
+                JsonObject jsonobject = GsonHelper.fromJson(GSON_INSTANCE, reader, JsonObject.class);
+                boolean replace = jsonobject.get("replace").getAsBoolean();
+                if(replace) finalLocations.clear();
+                JsonArray entryList = jsonobject.get("entries").getAsJsonArray();
+                for(JsonElement entry : entryList) {
+                    String loc = entry.getAsString();
+                    ResourceLocation res = new ResourceLocation(loc);
+                    if(finalLocations.contains(res)) finalLocations.remove(res);
+                    finalLocations.add(res);
                 }
             }
-        } catch (IOException ioexception1) {
-            LOGGER.error("Couldn't read global loot modifier list from {}", resourcelocation, ioexception1);
+
+            catch (RuntimeException | IOException ioexception) {
+                LOGGER.error("Couldn't read global loot modifier list {} in data pack {}", resourcelocation, iresource.sourcePackId(), ioexception);
+            }
         }
         //use layered config to fetch modifier data files (modifiers missing from config are disabled)
         finalLocations.forEach(location -> {

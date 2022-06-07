@@ -6,9 +6,9 @@
 package net.minecraftforge.common.ticket;
 
 import com.google.common.base.Preconditions;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.function.Consumer;
 
 /**
@@ -28,7 +28,7 @@ public abstract class SimpleTicket<T>
      * Should <b>not</b> be called if you just want to register a ticket to a system like the {@link net.minecraftforge.common.FarmlandWaterManager}
      */
     @SafeVarargs
-    public final void setManager(@Nonnull ITicketManager<T> masterManager, @Nonnull ITicketManager<T>... dummyManagers)
+    public final void setManager(@NotNull ITicketManager<T> masterManager, @NotNull ITicketManager<T>... dummyManagers)
     {
         Preconditions.checkState(this.masterManager == null, "Ticket is already registered to a managing system");
         this.masterManager = masterManager;

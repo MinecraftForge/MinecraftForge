@@ -28,7 +28,6 @@ import net.minecraftforge.client.model.geometry.ISimpleModelGeometry;
 import net.minecraftforge.client.model.obj.OBJLoader;
 import net.minecraftforge.common.model.TransformationHelper;
 
-import javax.annotation.Nullable;
 import java.lang.reflect.Type;
 import java.util.*;
 import java.util.function.Function;
@@ -49,6 +48,7 @@ import net.minecraft.client.resources.model.Material;
 import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.ModelState;
 import net.minecraft.client.resources.model.UnbakedModel;
+import org.jetbrains.annotations.Nullable;
 import net.minecraftforge.common.util.Lazy;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 

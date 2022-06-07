@@ -2,6 +2,32 @@
   "parent": "data_gen_test:block/block",
   "elements": [
     {
+      "faces": {
+        "down": {
+          "cullface": "down",
+          "texture": "#down"
+        },
+        "east": {
+          "cullface": "east",
+          "texture": "#east"
+        },
+        "north": {
+          "cullface": "north",
+          "texture": "#north"
+        },
+        "south": {
+          "cullface": "south",
+          "texture": "#south"
+        },
+        "up": {
+          "cullface": "up",
+          "texture": "#up"
+        },
+        "west": {
+          "cullface": "west",
+          "texture": "#west"
+        }
+      },
       "from": [
         0,
         0,
@@ -11,33 +37,7 @@
         16,
         16,
         16
-      ],
-      "faces": {
-        "down": {
-          "texture": "#down",
-          "cullface": "down"
-        },
-        "up": {
-          "texture": "#up",
-          "cullface": "up"
-        },
-        "north": {
-          "texture": "#north",
-          "cullface": "north"
-        },
-        "south": {
-          "texture": "#south",
-          "cullface": "south"
-        },
-        "west": {
-          "texture": "#west",
-          "cullface": "west"
-        },
-        "east": {
-          "texture": "#east",
-          "cullface": "east"
-        }
-      }
+      ]
     }
   ]
 }

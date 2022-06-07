@@ -5,13 +5,13 @@
 
 package net.minecraftforge.fml.loading;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import com.mojang.logging.LogUtils;
+import org.slf4j.Logger;
 
 import static net.minecraftforge.fml.loading.LogMarkers.CORE;
 
 public class LauncherVersion {
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger LOGGER = LogUtils.getLogger();
     private static final String launcherVersion;
 
     static {

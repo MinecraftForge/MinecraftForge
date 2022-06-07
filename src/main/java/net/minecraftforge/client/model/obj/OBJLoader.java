@@ -14,8 +14,8 @@ import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.model.IModelLoader;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.io.FileNotFoundException;
 import java.util.*;
 
@@ -57,9 +57,8 @@ public class OBJLoader implements IModelLoader<OBJModel>
     public OBJModel loadModel(OBJModel.ModelSettings settings)
     {
         return modelCache.computeIfAbsent(settings, (data) -> {
-
-            try(Resource resource = manager.getResource(settings.modelLocation());
-                LineReader rdr = new LineReader(resource))
+            Resource resource = manager.getResource(settings.modelLocation()).orElseThrow();
+            try(LineReader rdr = new LineReader(resource))
             {
                 return new OBJModel(rdr, settings);
             }
@@ -77,8 +76,8 @@ public class OBJLoader implements IModelLoader<OBJModel>
     public MaterialLibrary loadMaterialLibrary(ResourceLocation materialLocation)
     {
         return materialCache.computeIfAbsent(materialLocation, (location) -> {
-            try(Resource resource = manager.getResource(location);
-                LineReader rdr = new LineReader(resource))
+            Resource resource = manager.getResource(location).orElseThrow();
+            try(LineReader rdr = new LineReader(resource))
             {
                 return new MaterialLibrary(rdr);
             }

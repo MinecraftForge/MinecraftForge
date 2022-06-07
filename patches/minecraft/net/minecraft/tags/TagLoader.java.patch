@@ -1,11 +1,11 @@
 --- a/net/minecraft/tags/TagLoader.java
 +++ b/net/minecraft/tags/TagLoader.java
-@@ -156,7 +_,7 @@
-       p_203899_.keySet().forEach((p_144522_) -> {
-          m_144523_(p_203899_, multimap, set, p_144522_, (p_144537_, p_144538_) -> {
-             p_144538_.m_144371_(function, function1).ifLeft((p_144543_) -> {
--               f_13445_.error("Couldn't load tag {} as it is missing following references: {}", p_144537_, p_144543_.stream().map(Objects::toString).collect(Collectors.joining(", ")));
-+               f_13445_.error("Couldn't load tag {} as it is missing following references: {}", p_144537_, p_144543_.stream().map(Objects::toString).collect(Collectors.joining(", \n\t")));
-             }).ifRight((p_144532_) -> {
-                map.put(p_144537_, p_144532_);
+@@ -164,7 +_,7 @@
+       p_203899_.keySet().forEach((p_216008_) -> {
+          m_144523_(p_203899_, multimap, set, p_216008_, (p_215984_, p_215985_) -> {
+             this.m_215978_(lookup, p_215985_).ifLeft((p_215977_) -> {
+-               f_13445_.error("Couldn't load tag {} as it is missing following references: {}", p_215984_, p_215977_.stream().map(Objects::toString).collect(Collectors.joining(", ")));
++               f_13445_.error("Couldn't load tag {} as it is missing following references: {}", p_215977_, p_215977_.stream().map(Objects::toString).collect(Collectors.joining(", \n\t")));
+             }).ifRight((p_216001_) -> {
+                map.put(p_215984_, p_216001_);
              });

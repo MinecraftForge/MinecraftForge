@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/TripWireHookBlock.java
 +++ b/net/minecraft/world/level/block/TripWireHookBlock.java
-@@ -155,8 +_,8 @@
+@@ -156,8 +_,8 @@
              BlockPos blockpos2 = p_57687_.m_5484_(direction, k);
              BlockState blockstate2 = ablockstate[k];
              if (blockstate2 != null) {

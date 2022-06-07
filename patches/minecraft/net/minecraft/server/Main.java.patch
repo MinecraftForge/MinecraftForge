@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/Main.java
 +++ b/net/minecraft/server/Main.java
-@@ -77,6 +_,15 @@
+@@ -78,6 +_,15 @@
        OptionSpec<String> optionspec12 = optionparser.accepts("serverId").withRequiredArg();
        OptionSpec<Void> optionspec13 = optionparser.accepts("jfrProfile");
        OptionSpec<String> optionspec14 = optionparser.nonOptions();
@@ -16,7 +16,7 @@
  
        try {
           OptionSet optionset = optionparser.parse(p_129699_);
-@@ -84,6 +_,13 @@
+@@ -85,6 +_,13 @@
              optionparser.printHelpOn(System.err);
              return;
           }
@@ -30,7 +30,7 @@
  
           CrashReport.m_127529_();
           if (optionset.has(optionspec13)) {
-@@ -93,29 +_,28 @@
+@@ -94,26 +_,25 @@
           Bootstrap.m_135870_();
           Bootstrap.m_135889_();
           Util.m_137584_();
@@ -51,10 +51,7 @@
 -         }
 -
           File file1 = new File(optionset.valueOf(optionspec9));
-          YggdrasilAuthenticationService yggdrasilauthenticationservice = new YggdrasilAuthenticationService(Proxy.NO_PROXY);
-          MinecraftSessionService minecraftsessionservice = yggdrasilauthenticationservice.createMinecraftSessionService();
-          GameProfileRepository gameprofilerepository = yggdrasilauthenticationservice.createProfileRepository();
-          GameProfileCache gameprofilecache = new GameProfileCache(gameprofilerepository, new File(file1, MinecraftServer.f_129742_.getName()));
+          Services services = Services.m_214344_(new YggdrasilAuthenticationService(Proxy.NO_PROXY), file1);
           String s = Optional.ofNullable(optionset.valueOf(optionspec10)).orElse(dedicatedserversettings.m_139777_().f_139741_);
 +         if (s == null || s.isEmpty() || new File(file1, s).getAbsolutePath().equals(new File(s).getAbsolutePath())) {
 +            f_129670_.error("Invalid world directory specified, must not be null, empty or the same directory as your universe! " + s);
@@ -66,21 +63,21 @@
           LevelSummary levelsummary = levelstoragesource$levelstorageaccess.m_78308_();
           if (levelsummary != null) {
              if (levelsummary.m_193020_()) {
-@@ -160,6 +_,8 @@
-                      worldgensettings = optionset.has(optionspec3) ? dedicatedserverproperties.m_180927_(registryaccess$writable).m_64671_() : dedicatedserverproperties.m_180927_(registryaccess$writable);
-                   }
+@@ -158,6 +_,8 @@
+                         worldgensettings = optionset.has(optionspec3) ? dedicatedserverproperties.m_180927_(registryaccess$writable).m_64671_() : dedicatedserverproperties.m_180927_(registryaccess$writable);
+                      }
  
 +                  // Forge: Deserialize the WorldGenSettings to ensure modded dims are loaded on first server load. Vanilla behavior only loads from the server.properties and deserializes only after the 2nd server load.
 +                  worldgensettings = WorldGenSettings.f_64600_.encodeStart(dynamicops, worldgensettings).flatMap(nbt -> WorldGenSettings.f_64600_.parse(dynamicops, nbt)).getOrThrow(false, errorMsg -> {});
-                   PrimaryLevelData primaryleveldata = new PrimaryLevelData(levelsettings, worldgensettings, Lifecycle.stable());
-                   return Pair.of(primaryleveldata, registryaccess$writable.m_203557_());
-                }
-@@ -181,22 +_,33 @@
+                      PrimaryLevelData primaryleveldata = new PrimaryLevelData(levelsettings, worldgensettings, Lifecycle.stable());
+                      return Pair.of(primaryleveldata, registryaccess$writable.m_203557_());
+                   }
+@@ -178,22 +_,33 @@
           }
  
           levelstoragesource$levelstorageaccess.m_78287_(registryaccess$frozen, worlddata);
--         final DedicatedServer dedicatedserver = MinecraftServer.m_129872_((p_206536_) -> {
--            DedicatedServer dedicatedserver1 = new DedicatedServer(p_206536_, levelstoragesource$levelstorageaccess, packrepository, worldstem, dedicatedserversettings, DataFixers.m_14512_(), minecraftsessionservice, gameprofilerepository, gameprofilecache, LoggerChunkProgressListener::new);
+-         final DedicatedServer dedicatedserver = MinecraftServer.m_129872_((p_236710_) -> {
+-            DedicatedServer dedicatedserver1 = new DedicatedServer(p_236710_, levelstoragesource$levelstorageaccess, packrepository, worldstem, dedicatedserversettings, DataFixers.m_14512_(), services, LoggerChunkProgressListener::new);
 +         final MinecraftServer dedicatedserver = MinecraftServer.m_129872_((p_129697_) -> {
 +            MinecraftServer dedicatedserver1;
 +            if (gametestEnabled) {
@@ -89,9 +86,9 @@
 +               net.minecraft.core.BlockPos spawnPos = optionset.valueOf(spawnPosOpt);
 +               dedicatedserver1 = new net.minecraft.gametest.framework.GameTestServer(p_129697_, levelstoragesource$levelstorageaccess, packrepository, worldstem, testBatches, spawnPos);
 +            } else {
-+               dedicatedserver1 = new DedicatedServer(p_129697_, levelstoragesource$levelstorageaccess, packrepository, worldstem, dedicatedserversettings, DataFixers.m_14512_(), minecraftsessionservice, gameprofilerepository, gameprofilecache, LoggerChunkProgressListener::new);
++               dedicatedserver1 = new DedicatedServer(p_129697_, levelstoragesource$levelstorageaccess, packrepository, worldstem, dedicatedserversettings, DataFixers.m_14512_(), services, LoggerChunkProgressListener::new);
 +            }
-             dedicatedserver1.m_129981_(optionset.valueOf(optionspec8));
+             dedicatedserver1.m_236740_(optionset.has(optionspec8) ? new GameProfile((UUID)null, optionset.valueOf(optionspec8)) : null);
              dedicatedserver1.m_129801_(optionset.valueOf(optionspec11));
              dedicatedserver1.m_129975_(optionset.has(optionspec2));
              dedicatedserver1.m_129948_(optionset.valueOf(optionspec12));

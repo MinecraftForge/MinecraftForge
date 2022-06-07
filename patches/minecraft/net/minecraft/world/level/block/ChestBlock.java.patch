@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/ChestBlock.java
 +++ b/net/minecraft/world/level/block/ChestBlock.java
-@@ -336,7 +_,8 @@
+@@ -335,7 +_,8 @@
     }
  
     public BlockState m_6943_(BlockState p_51549_, Mirror p_51550_) {

@@ -1,10 +1,5 @@
 {
   "type": "minecraft:crafting_shaped",
-  "pattern": [
-    " # ",
-    "###",
-    " # "
-  ],
   "key": {
     "#": {
       "type": "forge:difference",
@@ -16,6 +11,11 @@
       }
     }
   },
+  "pattern": [
+    " # ",
+    "###",
+    " # "
+  ],
   "result": {
     "item": "minecraft:flint_and_steel"
   }

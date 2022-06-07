@@ -7,15 +7,37 @@ package net.minecraftforge.client.event;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
+import net.minecraft.client.MouseHandler;
 import net.minecraft.world.InteractionHand;
+import net.minecraftforge.client.ForgeHooksClient;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.fml.LogicalSide;
 import org.lwjgl.glfw.GLFW;
 
+/**
+ * Fired when an input is detected from the user's input devices.
+ * See the various subclasses to listen for specific devices and inputs.
+ *
+ * @see InputEvent.RawMouseEvent
+ * @see InputEvent.MouseInputEvent
+ * @see InputEvent.MouseScrollEvent
+ * @see InputEvent.KeyInputEvent
+ * @see InputEvent.ClickInputEvent
+ */
 public class InputEvent extends Event
 {
     /**
-     * A cancellable mouse event fired before key bindings are updated
+     * Fired when a mouse button is clicked, <b>before</b> being processed by vanilla.
+     *
+     * <p>This event is {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}.
+     * If the event is cancelled, then the mouse event will not be processed by vanilla (e.g. keymappings and screens) </p>
+     *
+     * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
+     * only on the {@linkplain LogicalSide#CLIENT logical client}. </p>
+     *
+     * @see <a href="https://www.glfw.org/docs/latest/input_guide.html#input_mouse_button" target="_top">the online GLFW documentation</a>
      */
     @Cancelable
     public static class RawMouseEvent extends InputEvent
@@ -24,6 +46,10 @@ public class InputEvent extends Event
         private final int action;
         private final int modifiers;
 
+        /**
+         * @hidden
+         * @see ForgeHooksClient#onRawMouseClicked(int, int, int)
+         */
         public RawMouseEvent(int button, int action, int modifiers)
         {
             this.button = button;
@@ -32,10 +58,11 @@ public class InputEvent extends Event
         }
 
         /**
-         * The mouse button that triggered this event.
-         * https://www.glfw.org/docs/latest/group__buttons.html
+         * {@return the mouse button's input code}
          *
-         * @see GLFW mouse constants starting with "GLFW_MOUSE_BUTTON_"
+         * @see InputConstants input constants starting with {@code MOUSE_BUTTON_}
+         * @see GLFW mouse constants starting with {@code GLFW_MOUSE_BUTTON_}
+         * @see <a href="https://www.glfw.org/docs/latest/group__buttons.html" target="_top">the online GLFW documentation</a>
          */
         public int getButton()
         {
@@ -43,10 +70,10 @@ public class InputEvent extends Event
         }
 
         /**
-         * Integer representing the mouse button's action.
+         * {@return the mouse button's action}
          *
-         * @see GLFW#GLFW_PRESS
-         * @see GLFW#GLFW_RELEASE
+         * @see InputConstants#PRESS
+         * @see InputConstants#RELEASE
          */
         public int getAction()
         {
@@ -54,13 +81,15 @@ public class InputEvent extends Event
         }
 
         /**
-         * Bit field representing the modifier keys pressed.
-         * https://www.glfw.org/docs/latest/group__mods.html
+         * {@return a bit field representing the active modifier keys}
          *
-         * @see GLFW#GLFW_MOD_SHIFT
-         * @see GLFW#GLFW_MOD_CONTROL
-         * @see GLFW#GLFW_MOD_ALT
-         * @see GLFW#GLFW_MOD_SUPER
+         * @see InputConstants#MOD_CONTROL CTRL modifier key bit
+         * @see GLFW#GLFW_MOD_SHIFT SHIFT modifier key bit
+         * @see GLFW#GLFW_MOD_ALT ALT modifier key bit
+         * @see GLFW#GLFW_MOD_SUPER SUPER modifier key bit
+         * @see GLFW#GLFW_KEY_CAPS_LOCK CAPS LOCK modifier key bit
+         * @see GLFW#GLFW_KEY_NUM_LOCK NUM LOCK modifier key bit
+         * @see <a href="https://www.glfw.org/docs/latest/group__mods.html" target="_top">the online GLFW documentation</a>
          */
         public int getModifiers()
         {
@@ -69,13 +98,25 @@ public class InputEvent extends Event
     }
 
     /**
-     * This event fires when a mouse input is detected.
+     * Fired when a mouse button is clicked, <b>after</b> processing.
+     *
+     * <p>This event is not {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}. </p>
+     *
+     * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
+     * only on the {@linkplain LogicalSide#CLIENT logical client}. </p>
+     *
+     * @see <a href="https://www.glfw.org/docs/latest/input_guide.html#input_mouse_button" target="_top">the online GLFW documentation</a>
      */
     public static class MouseInputEvent extends InputEvent
     {
         private final int button;
         private final int action;
         private final int modifiers;
+
+        /**
+         * @hidden
+         * @see ForgeHooksClient#onRawMouseClicked(int, int, int)
+         */
         public MouseInputEvent(int button, int action, int modifiers)
         {
             this.button = button;
@@ -84,10 +125,10 @@ public class InputEvent extends Event
         }
 
         /**
-         * The mouse button that triggered this event.
-         * https://www.glfw.org/docs/latest/group__buttons.html
+         * {@return the mouse button's input code}
          *
-         * @see GLFW mouse constants starting with "GLFW_MOUSE_BUTTON_"
+         * @see GLFW mouse constants starting with 'GLFW_MOUSE_BUTTON_'
+         * @see <a href="https://www.glfw.org/docs/latest/group__buttons.html" target="_top">the online GLFW documentation</a>
          */
         public int getButton()
         {
@@ -95,10 +136,10 @@ public class InputEvent extends Event
         }
 
         /**
-         * Integer representing the mouse button's action.
+         * {@return the mouse button's action}
          *
-         * @see GLFW#GLFW_PRESS
-         * @see GLFW#GLFW_RELEASE
+         * @see InputConstants#PRESS
+         * @see InputConstants#RELEASE
          */
         public int getAction()
         {
@@ -106,13 +147,15 @@ public class InputEvent extends Event
         }
 
         /**
-         * Bit field representing the modifier keys pressed.
-         * https://www.glfw.org/docs/latest/group__mods.html
+         * {@return a bit field representing the active modifier keys}
          *
-         * @see GLFW#GLFW_MOD_SHIFT
-         * @see GLFW#GLFW_MOD_CONTROL
-         * @see GLFW#GLFW_MOD_ALT
-         * @see GLFW#GLFW_MOD_SUPER
+         * @see InputConstants#MOD_CONTROL CTRL modifier key bit
+         * @see GLFW#GLFW_MOD_SHIFT SHIFT modifier key bit
+         * @see GLFW#GLFW_MOD_ALT ALT modifier key bit
+         * @see GLFW#GLFW_MOD_SUPER SUPER modifier key bit
+         * @see GLFW#GLFW_KEY_CAPS_LOCK CAPS LOCK modifier key bit
+         * @see GLFW#GLFW_KEY_NUM_LOCK NUM LOCK modifier key bit
+         * @see <a href="https://www.glfw.org/docs/latest/group__mods.html" target="_top">the online GLFW documentation</a>
          */
         public int getModifiers()
         {
@@ -121,7 +164,16 @@ public class InputEvent extends Event
     }
 
     /**
-     * This event fires when the mouse scroll wheel is used outside of a gui.
+     * Fired when a mouse scroll wheel is used outside of a screen and a player is loaded, <b>before</b> being
+     * processed by vanilla.
+     *
+     * <p>This event is {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}.
+     * If the event is cancelled, then the mouse scroll event will not be processed further. </p>
+     *
+     * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
+     * only on the {@linkplain LogicalSide#CLIENT logical client}. </p>
+     *
+     * @see <a href="https://www.glfw.org/docs/latest/input_guide.html#input_mouse_button" target="_top">the online GLFW documentation</a>
      */
     @Cancelable
     public static class MouseScrollEvent extends InputEvent
@@ -132,6 +184,11 @@ public class InputEvent extends Event
         private final boolean leftDown;
         private final boolean middleDown;
         private final boolean rightDown;
+
+        /**
+         * @hidden
+         * @see ForgeHooksClient#onMouseScroll(MouseHandler, double)
+         */
         public MouseScrollEvent(double scrollDelta, boolean leftDown, boolean middleDown, boolean rightDown, double mouseX, double mouseY)
         {
             this.scrollDelta = scrollDelta;
@@ -142,31 +199,49 @@ public class InputEvent extends Event
             this.mouseY = mouseY;
         }
 
+        /**
+         * {@return the amount of change / delta of the mouse scroll}
+         */
         public double getScrollDelta()
         {
             return this.scrollDelta;
         }
 
+        /**
+         * {@return {@code true} if the left mouse button is pressed}
+         */
         public boolean isLeftDown()
         {
             return this.leftDown;
         }
 
+        /**
+         * {@return {@code true} if the right mouse button is pressed}
+         */
         public boolean isRightDown()
         {
             return this.rightDown;
         }
 
+        /**
+         * {@return  {@code true} if the middle mouse button is pressed}
+         */
         public boolean isMiddleDown()
         {
             return this.middleDown;
         }
 
+        /**
+         * {@return the X position of the mouse cursor}
+         */
         public double getMouseX()
         {
             return this.mouseX;
         }
 
+        /**
+         * {@return the Y position of the mouse cursor}
+         */
         public double getMouseY()
         {
             return this.mouseY;
@@ -174,7 +249,12 @@ public class InputEvent extends Event
     }
 
     /**
-     * This event fires when a keyboard input is detected.
+     * Fired when a keyboard key input occurs, such as pressing, releasing, or repeating a key.
+     *
+     * <p>This event is not {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}. </p>
+     *
+     * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
+     * only on the {@linkplain LogicalSide#CLIENT logical client}. </p>
      */
     public static class KeyInputEvent extends InputEvent
     {
@@ -182,6 +262,11 @@ public class InputEvent extends Event
         private final int scanCode;
         private final int action;
         private final int modifiers;
+
+        /**
+         * @hidden
+         * @see ForgeHooksClient#fireKeyInput(int, int, int, int)
+         */
         public KeyInputEvent(int key, int scanCode, int action, int modifiers)
         {
             this.key = key;
@@ -191,10 +276,11 @@ public class InputEvent extends Event
         }
 
         /**
-         * The keyboard key that triggered this event.
-         * https://www.glfw.org/docs/latest/group__keys.html
+         * {@return the {@code GLFW} (platform-agnostic) key code}
          *
-         * @see GLFW key constants starting with "GLFW_KEY_"
+         * @see InputConstants input constants starting with {@code KEY_}
+         * @see GLFW key constants starting with {@code GLFW_KEY_}
+         * @see <a href="https://www.glfw.org/docs/latest/group__keys.html" target="_top">the online GLFW documentation</a>
          */
         public int getKey()
         {
@@ -202,12 +288,13 @@ public class InputEvent extends Event
         }
 
         /**
-         * Platform-specific scan code.
-         * Used for {@link InputConstants#getKey(int, int)}
+         * {@return the platform-specific scan code}
          *
          * The scan code is unique for every key, regardless of whether it has a key code.
          * Scan codes are platform-specific but consistent over time, so keys will have different scan codes depending
          * on the platform but they are safe to save to disk as custom key bindings.
+         *
+         * @see InputConstants#getKey(int, int)
          */
         public int getScanCode()
         {
@@ -215,11 +302,11 @@ public class InputEvent extends Event
         }
 
         /**
-         * Integer representing the key's action.
+         * {@return the mouse button's action}
          *
-         * @see GLFW#GLFW_PRESS
-         * @see GLFW#GLFW_RELEASE
-         * @see GLFW#GLFW_REPEAT
+         * @see InputConstants#PRESS
+         * @see InputConstants#RELEASE
+         * @see InputConstants#REPEAT
          */
         public int getAction()
         {
@@ -227,13 +314,15 @@ public class InputEvent extends Event
         }
 
         /**
-         * Bit field representing the modifier keys pressed.
-         * https://www.glfw.org/docs/latest/group__mods.html
+         * {@return a bit field representing the active modifier keys}
          *
-         * @see GLFW#GLFW_MOD_SHIFT
-         * @see GLFW#GLFW_MOD_CONTROL
-         * @see GLFW#GLFW_MOD_ALT
-         * @see GLFW#GLFW_MOD_SUPER
+         * @see InputConstants#MOD_CONTROL CTRL modifier key bit
+         * @see GLFW#GLFW_MOD_SHIFT SHIFT modifier key bit
+         * @see GLFW#GLFW_MOD_ALT ALT modifier key bit
+         * @see GLFW#GLFW_MOD_SUPER SUPER modifier key bit
+         * @see GLFW#GLFW_KEY_CAPS_LOCK CAPS LOCK modifier key bit
+         * @see GLFW#GLFW_KEY_NUM_LOCK NUM LOCK modifier key bit
+         * @see <a href="https://www.glfw.org/docs/latest/group__mods.html" target="_top">the online GLFW documentation</a>
          */
         public int getModifiers()
         {
@@ -242,11 +331,21 @@ public class InputEvent extends Event
     }
 
     /**
-     * This event fires when one of the keybindings that by default involves clicking the mouse buttons
-     * is triggered.
+     * Fired when a keymapping that by default involves clicking the mouse buttons is triggered.
      *
-     * These key bindings are use item, pick block and attack keybindings. (right, middle and left mouse click)
-     * In the case that these key bindings are re-bound to a keyboard key the event will still be fired as normal.
+     * <p>The key bindings that trigger this event are:</p>
+     * <ul>
+     *     <li><b>Use Item</b> - defaults to <em>left mouse click</em></li>
+     *     <li><b>Pick Block</b> - defaults to <em>middle mouse click</em></li>
+     *     <li><b>Attack</b> - defaults to <em>right mouse click</em></li>
+     * </ul>
+     *
+     * <p>This event is {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}.
+     * If this event is cancelled, then the keymapping's action is not processed further, and the hand will be swung
+     * according to {@link #shouldSwingHand()}. </p>
+     *
+     * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
+     * only on the {@linkplain LogicalSide#CLIENT logical client}. </p>
      */
     @Cancelable
     public static class ClickInputEvent extends InputEvent
@@ -255,6 +354,11 @@ public class InputEvent extends Event
         private final KeyMapping keyMapping;
         private final InteractionHand hand;
         private boolean handSwing = true;
+
+        /**
+         * @hidden
+         * @see ForgeHooksClient#onClickInput(int, KeyMapping, InteractionHand)
+         */
         public ClickInputEvent(int button, KeyMapping keyMapping, InteractionHand hand)
         {
             this.button = button;
@@ -263,45 +367,62 @@ public class InputEvent extends Event
         }
 
         /**
-         * Set to false to disable the hand swing animation.
-         * Has no effect if this is a pick block input.
+         * Sets whether to swing the hand. This takes effect whether or not the event is cancelled.
+         *
+         * @param value whether to swing the hand
          */
         public void setSwingHand(boolean value)
         {
             handSwing = value;
         }
 
+        /**
+         * {@return whether to swing the hand; always takes effect, regardless of cancellation}
+         */
         public boolean shouldSwingHand()
         {
             return handSwing;
         }
 
         /**
-         * The hand which is causing the event to get triggered.
+         * {@return the hand that caused the input}
+         *
          * The event will be called for both hands if this is a use item input regardless
-         * of if either gets canceled.
-         * Will always be MAIN_HAND if this is an attack or pick block input.
+         * of both event's cancellation.
+         * Will always be {@link InteractionHand#MAIN_HAND} if this is an attack or pick block input.
          */
         public InteractionHand getHand()
         {
             return hand;
         }
 
+        /**
+         * {@return {@code true} if the mouse button is the left mouse button}
+         */
         public boolean isAttack()
         {
             return button == 0;
         }
 
+        /**
+         * {@return {@code true} if the mouse button is the right mouse button}
+         */
         public boolean isUseItem()
         {
             return button == 1;
         }
 
+        /**
+         * {@return {@code true} if the mouse button is the middle mouse button}
+         */
         public boolean isPickBlock()
         {
             return button == 2;
         }
 
+        /**
+         * {@return the key mapping which triggered this event}
+         */
         public KeyMapping getKeyMapping()
         {
             return keyMapping;

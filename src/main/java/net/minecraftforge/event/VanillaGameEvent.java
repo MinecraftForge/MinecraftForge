@@ -5,14 +5,14 @@
 
 package net.minecraftforge.event;
 
-import javax.annotation.Nullable;
-import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.gameevent.GameEvent;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * VanillaGameEvent is fired on the server whenever one of Vanilla's {@link GameEvent GameEvents} fire. <br>
@@ -27,17 +27,16 @@ import net.minecraftforge.eventbus.api.Event;
 public class VanillaGameEvent extends Event
 {
     private final Level level;
-    @Nullable
-    private final Entity cause;
     private final GameEvent vanillaEvent;
-    private final BlockPos position;
+    private final Vec3 position;
+    private final GameEvent.Context context;
 
-    public VanillaGameEvent(Level level, @Nullable Entity cause, GameEvent vanillaEvent, BlockPos position)
+    public VanillaGameEvent(Level level, GameEvent vanillaEvent, Vec3 position, GameEvent.Context context)
     {
         this.level = level;
-        this.cause = cause;
         this.vanillaEvent = vanillaEvent;
         this.position = position;
+        this.context = context;
     }
 
     /**
@@ -54,7 +53,7 @@ public class VanillaGameEvent extends Event
     @Nullable
     public Entity getCause()
     {
-        return cause;
+        return context.sourceEntity();
     }
 
     /**
@@ -66,10 +65,18 @@ public class VanillaGameEvent extends Event
     }
 
     /**
-     * @return The position the event took place at. This may be a block or the block position of the entity targeted.
+     * @return The position the event took place at.
      */
-    public BlockPos getEventPosition()
+    public Vec3 getEventPosition()
     {
         return position;
+    }
+
+    /**
+     * @return the context of the vanilla event
+     */
+    public GameEvent.Context getContext()
+    {
+        return context;
     }
 }

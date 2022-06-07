@@ -6,71 +6,71 @@
       }
     },
     {
-      "when": {
-        "north": "true"
-      },
       "apply": {
         "model": "data_gen_test:block/glass_pane_side"
+      },
+      "when": {
+        "north": "true"
       }
     },
     {
-      "when": {
-        "north": "false"
-      },
       "apply": {
         "model": "data_gen_test:block/glass_pane_noside"
+      },
+      "when": {
+        "north": "false"
       }
     },
     {
-      "when": {
-        "south": "true"
-      },
       "apply": {
         "model": "data_gen_test:block/glass_pane_side_alt"
+      },
+      "when": {
+        "south": "true"
       }
     },
     {
-      "when": {
-        "south": "false"
-      },
       "apply": {
         "model": "data_gen_test:block/glass_pane_noside_alt",
         "y": 90
+      },
+      "when": {
+        "south": "false"
       }
     },
     {
-      "when": {
-        "west": "true"
-      },
       "apply": {
         "model": "data_gen_test:block/glass_pane_side_alt",
         "y": 90
+      },
+      "when": {
+        "west": "true"
       }
     },
     {
-      "when": {
-        "west": "false"
-      },
       "apply": {
         "model": "data_gen_test:block/glass_pane_noside",
         "y": 270
+      },
+      "when": {
+        "west": "false"
       }
     },
     {
-      "when": {
-        "east": "true"
-      },
       "apply": {
         "model": "data_gen_test:block/glass_pane_side",
         "y": 90
+      },
+      "when": {
+        "east": "true"
       }
     },
     {
-      "when": {
-        "east": "false"
-      },
       "apply": {
         "model": "data_gen_test:block/glass_pane_noside_alt"
+      },
+      "when": {
+        "east": "false"
       }
     }
   ]

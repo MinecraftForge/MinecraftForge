@@ -6,9 +6,9 @@
 package net.minecraftforge.common.extensions;
 
 import java.util.Optional;
-import javax.annotation.Nullable;
 
 import net.minecraft.client.Camera;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.LivingEntity;
@@ -39,6 +39,7 @@ import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.ToolAction;
 import net.minecraftforge.common.ToolActions;
+import org.jetbrains.annotations.Nullable;
 
 public interface IForgeBlockState
 {
@@ -316,14 +317,15 @@ public interface IForgeBlockState
     * Gathers how much experience this block drops when broken.
     *
     * @param level The level
+    * @param randomSource Random source to use for experience randomness
     * @param pos Block position
     * @param fortuneLevel fortune enchantment level of tool being used
     * @param silkTouchLevel silk touch enchantment level of tool being used
     * @return Amount of XP from breaking this block.
     */
-    default int getExpDrop(LevelReader level, BlockPos pos, int fortuneLevel, int silkTouchLevel)
+    default int getExpDrop(LevelReader level, RandomSource randomSource, BlockPos pos, int fortuneLevel, int silkTouchLevel)
     {
-        return self().getBlock().getExpDrop(self(), level, pos, fortuneLevel, silkTouchLevel);
+        return self().getBlock().getExpDrop(self(), level, randomSource, pos, fortuneLevel, silkTouchLevel);
     }
 
     default BlockState rotate(LevelAccessor level, BlockPos pos, Rotation direction)
@@ -620,28 +622,6 @@ public interface IForgeBlockState
     {
         BlockState eventState = net.minecraftforge.event.ForgeEventFactory.onToolUse(self(), context, toolAction, simulate);
         return eventState != self() ? eventState : self().getBlock().getToolModifiedState(self(), context, toolAction, simulate);
-    }
-
-    /**
-     * Returns the state that this block should transform into when right-clicked by a tool.
-     * For example: Used to determine if {@link ToolActions#AXE_STRIP an axe can strip} or {@link ToolActions#SHOVEL_FLATTEN a shovel can path}.
-     * Returns {@code null} if nothing should happen.
-     *
-     * @param level The level
-     * @param pos The block position in level
-     * @param player The player clicking the block
-     * @param stack The stack being used by the player
-     * @param toolAction The tool type to be considered when performing the action
-     * @return The resulting state after the action has been performed
-     * @deprecated Use {@link #getToolModifiedState(UseOnContext, ToolAction, boolean)} instead
-     */
-    @Nullable
-    // TODO 1.19: Remove
-    @Deprecated(forRemoval = true, since = "1.18.2")
-    default BlockState getToolModifiedState(Level level, BlockPos pos, Player player, ItemStack stack, ToolAction toolAction)
-    {
-        BlockState eventState = net.minecraftforge.event.ForgeEventFactory.onToolUse(self(), level, pos, player, stack, toolAction);
-        return eventState != self() ? eventState : self().getBlock().getToolModifiedState(self(), level, pos, player, stack, toolAction);
     }
 
     /**

@@ -1,11 +1,34 @@
 {
   "parent": "minecraft:block/block",
-  "textures": {
-    "all": "minecraft:block/dirt",
-    "top": "minecraft:block/stone"
-  },
   "elements": [
     {
+      "faces": {
+        "down": {
+          "cullface": "down",
+          "texture": "#all"
+        },
+        "east": {
+          "cullface": "east",
+          "texture": "#all"
+        },
+        "north": {
+          "cullface": "north",
+          "texture": "#all"
+        },
+        "south": {
+          "cullface": "south",
+          "texture": "#all"
+        },
+        "up": {
+          "cullface": "up",
+          "texture": "#top",
+          "tintindex": 0
+        },
+        "west": {
+          "cullface": "west",
+          "texture": "#all"
+        }
+      },
       "from": [
         0,
         0,
@@ -15,34 +38,11 @@
         16,
         16,
         16
-      ],
-      "faces": {
-        "down": {
-          "texture": "#all",
-          "cullface": "down"
-        },
-        "up": {
-          "texture": "#top",
-          "cullface": "up",
-          "tintindex": 0
-        },
-        "north": {
-          "texture": "#all",
-          "cullface": "north"
-        },
-        "south": {
-          "texture": "#all",
-          "cullface": "south"
-        },
-        "west": {
-          "texture": "#all",
-          "cullface": "west"
-        },
-        "east": {
-          "texture": "#all",
-          "cullface": "east"
-        }
-      }
+      ]
     }
-  ]
+  ],
+  "textures": {
+    "all": "minecraft:block/dirt",
+    "top": "minecraft:block/stone"
+  }
 }

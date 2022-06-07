@@ -8,6 +8,7 @@ package net.minecraftforge.server;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import net.minecraft.locale.Language;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.MinecraftServer;
@@ -19,6 +20,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
@@ -45,7 +47,11 @@ public class LanguageHook
 
     // The below is based on client side net.minecraft.client.resources.Locale code
     private static void loadLocaleData(final List<Resource> allResources) {
-        allResources.stream().map(Resource::getInputStream).forEach(LanguageHook::loadLocaleData);
+        allResources.forEach(res -> {
+            try {
+                LanguageHook.loadLocaleData(res.open());
+            } catch (IOException ignored) {} // TODO: this should not be ignored -C
+        });
     }
 
     private static void loadLocaleData(final InputStream inputstream) {
@@ -71,8 +77,7 @@ public class LanguageHook
         resourceManager.getNamespaces().forEach(namespace -> {
             try {
                 ResourceLocation langResource = new ResourceLocation(namespace, langFile);
-                loadLocaleData(resourceManager.getResources(langResource));
-            } catch (FileNotFoundException fnfe) {
+                loadLocaleData(resourceManager.getResourceStack(langResource));
             } catch (Exception exception) {
                 LOGGER.warn("Skipped language file: {}:{}", namespace, langFile, exception);
             }

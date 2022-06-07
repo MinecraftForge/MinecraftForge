@@ -5,9 +5,9 @@
 
 package net.minecraftforge.fml.loading;
 
+import com.mojang.logging.LogUtils;
 import cpw.mods.modlauncher.api.LamdbaExceptionUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -24,7 +24,7 @@ import static net.minecraftforge.fml.loading.LogMarkers.CORE;
 
 public class ModJarURLHandler extends URLStreamHandler
 {
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger LOGGER = LogUtils.getLogger();
     // modjar://modid/path/to/file
     @Override
     protected URLConnection openConnection(URL url) {

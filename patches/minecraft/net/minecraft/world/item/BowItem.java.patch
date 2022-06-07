@@ -1,7 +1,7 @@
 --- a/net/minecraft/world/item/BowItem.java
 +++ b/net/minecraft/world/item/BowItem.java
-@@ -26,18 +_,23 @@
-          Player player = (Player)p_40669_;
+@@ -25,18 +_,23 @@
+       if (p_40669_ instanceof Player player) {
           boolean flag = player.m_150110_().f_35937_ || EnchantmentHelper.m_44843_(Enchantments.f_44952_, p_40667_) > 0;
           ItemStack itemstack = player.m_6298_(p_40667_);
 +
@@ -26,7 +26,7 @@
                    abstractarrow.m_37251_(player, player.m_146909_(), player.m_146908_(), 0.0F, f * 3.0F, 1.0F);
                    if (f == 1.0F) {
                       abstractarrow.m_36762_(true);
-@@ -102,6 +_,10 @@
+@@ -101,6 +_,10 @@
     public InteractionResultHolder<ItemStack> m_7203_(Level p_40672_, Player p_40673_, InteractionHand p_40674_) {
        ItemStack itemstack = p_40673_.m_21120_(p_40674_);
        boolean flag = !p_40673_.m_6298_(itemstack).m_41619_();
@@ -37,7 +37,7 @@
        if (!p_40673_.m_150110_().f_35937_ && !flag) {
           return InteractionResultHolder.m_19100_(itemstack);
        } else {
-@@ -112,6 +_,10 @@
+@@ -111,6 +_,10 @@
  
     public Predicate<ItemStack> m_6437_() {
        return f_43005_;

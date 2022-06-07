@@ -1,0 +1,32 @@
+--- a/net/minecraft/commands/synchronization/ArgumentTypeInfos.java
++++ b/net/minecraft/commands/synchronization/ArgumentTypeInfos.java
+@@ -63,6 +_,20 @@
+ public class ArgumentTypeInfos {
+    private static final Map<Class<?>, ArgumentTypeInfo<?, ?>> f_235379_ = Maps.newHashMap();
+ 
++   /**
++    * Forge: Use this in conjunction with a
++    * {@link net.minecraftforge.registries.DeferredRegister#register(String, java.util.function.Supplier) DeferredRegister#register(String, Supplier)}
++    * call to both populate the {@code BY_CLASS} map and register the argument type info so it can be used in commands.
++    *
++    * @param infoClass the class type of the argument type info
++    * @param argumentTypeInfo the argument type info instance
++    * @return the provided argument type info instance for chaining
++    */
++   public static synchronized <A extends ArgumentType<?>, T extends ArgumentTypeInfo.Template<A>, I extends ArgumentTypeInfo<A, T>> I registerByClass(Class<A> infoClass, I argumentTypeInfo) {
++      f_235379_.put(infoClass, argumentTypeInfo);
++      return argumentTypeInfo;
++   }
++
+    private static <A extends ArgumentType<?>, T extends ArgumentTypeInfo.Template<A>> ArgumentTypeInfo<A, T> m_235386_(Registry<ArgumentTypeInfo<?, ?>> p_235387_, String p_235388_, Class<? extends A> p_235389_, ArgumentTypeInfo<A, T> p_235390_) {
+       f_235379_.put(p_235389_, p_235390_);
+       return Registry.m_122961_(p_235387_, p_235388_, p_235390_);
+@@ -116,7 +_,7 @@
+       m_235386_(p_235385_, "resource", m_235395_(ResourceKeyArgument.class), new ResourceKeyArgument.Info<Object>());
+       m_235386_(p_235385_, "template_mirror", TemplateMirrorArgument.class, SingletonArgumentInfo.m_235451_(TemplateMirrorArgument::m_234343_));
+       m_235386_(p_235385_, "template_rotation", TemplateRotationArgument.class, SingletonArgumentInfo.m_235451_(TemplateRotationArgument::m_234414_));
+-      if (SharedConstants.f_136183_) {
++      if (net.minecraftforge.gametest.ForgeGameTestHooks.isGametestEnabled()) {
+          m_235386_(p_235385_, "test_argument", TestFunctionArgument.class, SingletonArgumentInfo.m_235451_(TestFunctionArgument::m_128088_));
+          m_235386_(p_235385_, "test_class", TestClassNameArgument.class, SingletonArgumentInfo.m_235451_(TestClassNameArgument::m_127917_));
+       }

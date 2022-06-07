@@ -2,7 +2,7 @@
 +++ b/net/minecraft/client/gui/screens/controls/KeyBindsScreen.java
 @@ -31,7 +_,7 @@
        this.m_7787_(this.f_193977_);
-       this.f_193978_ = this.m_142416_(new Button(this.f_96543_ / 2 - 155, this.f_96544_ - 29, 150, 20, new TranslatableComponent("controls.resetAll"), (p_193999_) -> {
+       this.f_193978_ = this.m_142416_(new Button(this.f_96543_ / 2 - 155, this.f_96544_ - 29, 150, 20, Component.m_237115_("controls.resetAll"), (p_193999_) -> {
           for(KeyMapping keymapping : this.f_96282_.f_92059_) {
 -            keymapping.m_90848_(keymapping.m_90861_());
 +            keymapping.setToDefault();

@@ -10,8 +10,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.core.BlockPos;
 import net.minecraftforge.eventbus.api.Cancelable;
-
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * This event is fired when a player's spawn point is set or reset.<br>
@@ -24,7 +23,7 @@ public class PlayerSetSpawnEvent extends PlayerEvent
     private final boolean forced;
     @Nullable
     private final BlockPos newSpawn;
-    
+
     public PlayerSetSpawnEvent(Player player, ResourceKey<Level> spawnWorld, @Nullable BlockPos newSpawn, boolean forced)
     {
         super(player);

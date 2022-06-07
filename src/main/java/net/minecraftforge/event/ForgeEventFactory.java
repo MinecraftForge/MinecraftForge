@@ -10,17 +10,14 @@ import java.util.*;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import com.mojang.authlib.GameProfile;
-import com.mojang.blaze3d.vertex.PoseStack;
 
 import com.mojang.brigadier.CommandDispatcher;
+import net.minecraft.network.chat.ChatSender;
 import net.minecraft.server.ReloadableServerResources;
 import net.minecraft.server.players.PlayerList;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.Container;
-import net.minecraft.world.entity.projectile.FireworkRocketEntity;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.entity.projectile.ThrownEnderpearl;
 import net.minecraft.world.level.portal.PortalShape;
@@ -35,15 +32,12 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.Zombie;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.player.Player.BedSleepingProblem;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.item.crafting.RecipeType;
@@ -71,16 +65,12 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.Level;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.level.biome.MobSpawnSettings;
 import net.minecraft.world.level.storage.ServerLevelData;
 import net.minecraft.world.level.storage.PlayerDataStorage;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.client.event.ClientChatEvent;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
-import net.minecraftforge.client.event.RenderBlockOverlayEvent;
-import net.minecraftforge.client.event.RenderBlockOverlayEvent.OverlayType;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.ToolAction;
 import net.minecraftforge.common.capabilities.CapabilityDispatcher;
@@ -93,7 +83,6 @@ import net.minecraftforge.event.entity.EntityMobGriefingEvent;
 import net.minecraftforge.event.entity.EntityMountEvent;
 import net.minecraftforge.event.entity.EntityStruckByLightningEvent;
 import net.minecraftforge.event.entity.EntityTeleportEvent;
-import net.minecraftforge.event.entity.PlaySoundAtEntityEvent;
 import net.minecraftforge.event.entity.ProjectileImpactEvent;
 import net.minecraftforge.event.entity.item.ItemExpireEvent;
 import net.minecraftforge.event.entity.living.AnimalTameEvent;
@@ -121,10 +110,8 @@ import net.minecraftforge.event.entity.player.PlayerSleepInBedEvent;
 import net.minecraftforge.event.entity.player.PlayerWakeUpEvent;
 import net.minecraftforge.event.entity.player.SleepingLocationCheckEvent;
 import net.minecraftforge.event.entity.player.SleepingTimeCheckEvent;
-import net.minecraftforge.event.entity.player.UseHoeEvent;
 import net.minecraftforge.event.furnace.FurnaceFuelBurnTimeEvent;
 import net.minecraftforge.event.world.BlockEvent;
-import net.minecraftforge.event.world.BlockEvent.BlockToolInteractEvent;
 import net.minecraftforge.event.world.BlockEvent.BlockToolModificationEvent;
 import net.minecraftforge.event.world.BlockEvent.CreateFluidSourceEvent;
 import net.minecraftforge.event.world.BlockEvent.EntityMultiPlaceEvent;
@@ -139,6 +126,8 @@ import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.Event.Result;
 import net.minecraftforge.fml.LogicalSide;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class ForgeEventFactory
 {
@@ -151,7 +140,7 @@ public class ForgeEventFactory
         return MinecraftForge.EVENT_BUS.post(event);
     }
 
-    public static boolean onBlockPlace(@Nullable Entity entity, @Nonnull BlockSnapshot blockSnapshot, @Nonnull Direction direction)
+    public static boolean onBlockPlace(@Nullable Entity entity, @NotNull BlockSnapshot blockSnapshot, @NotNull Direction direction)
     {
         BlockState placedAgainst = blockSnapshot.getLevel().getBlockState(blockSnapshot.getPos().relative(direction.getOpposite()));
         EntityPlaceEvent event = new BlockEvent.EntityPlaceEvent(blockSnapshot, placedAgainst, entity);
@@ -178,7 +167,7 @@ public class ForgeEventFactory
         return (MinecraftForge.EVENT_BUS.post(event) ? -1 : event.getNewSpeed());
     }
 
-    public static void onPlayerDestroyItem(Player player, @Nonnull ItemStack stack, @Nullable InteractionHand hand)
+    public static void onPlayerDestroyItem(Player player, @NotNull ItemStack stack, @Nullable InteractionHand hand)
     {
         MinecraftForge.EVENT_BUS.post(new PlayerDestroyItemEvent(player, stack, hand));
     }
@@ -192,21 +181,6 @@ public class ForgeEventFactory
         return event.getResult();
     }
 
-    @Deprecated(forRemoval = true, since = "1.18.1")
-    public static boolean canEntitySpawnSpawner(Mob entity, Level level, float x, float y, float z, BaseSpawner spawner)
-    {
-        Result result = canEntitySpawn(entity, level, x, y, z, spawner, MobSpawnType.SPAWNER);
-        if (result == Result.DEFAULT)
-            return entity.checkSpawnRules(level, MobSpawnType.SPAWNER) && entity.checkSpawnObstruction(level); // vanilla logic (inverted)
-        else
-            return result == Result.ALLOW;
-    }
-
-    @Deprecated(forRemoval = true, since = "1.18.1")
-    public static boolean doSpecialSpawn(Mob entity, Level level, float x, float y, float z, BaseSpawner spawner, MobSpawnType spawnReason)
-    {
-        return doSpecialSpawn(entity, (LevelAccessor)level, x, y, z, spawner, spawnReason);
-    }
     public static boolean doSpecialSpawn(Mob entity, LevelAccessor level, float x, float y, float z, BaseSpawner spawner, MobSpawnType spawnReason)
     {
         return MinecraftForge.EVENT_BUS.post(new LivingSpawnEvent.SpecialSpawn(entity, level, x, y, z, spawner, spawnReason));
@@ -219,7 +193,7 @@ public class ForgeEventFactory
         return event.getResult();
     }
 
-    public static int getItemBurnTime(@Nonnull ItemStack itemStack, int burnTime, @Nullable RecipeType<?> recipeType)
+    public static int getItemBurnTime(@NotNull ItemStack itemStack, int burnTime, @Nullable RecipeType<?> recipeType)
     {
         FurnaceFuelBurnTimeEvent event = new FurnaceFuelBurnTimeEvent(itemStack, burnTime, recipeType);
         MinecraftForge.EVENT_BUS.post(event);
@@ -333,56 +307,27 @@ public class ForgeEventFactory
     }
 
     @Nullable
-    public static Component onClientChat(ChatType type, Component message, @Nullable UUID senderUUID)
+    public static Component onClientChat(ChatType type, Component message, ChatSender chatSender)
     {
-        ClientChatReceivedEvent event = new ClientChatReceivedEvent(type, message, senderUUID);
+        ClientChatReceivedEvent event = new ClientChatReceivedEvent(type, message, chatSender);
         return MinecraftForge.EVENT_BUS.post(event) ? null : event.getMessage();
     }
 
-    @Nonnull
+    @NotNull
     public static String onClientSendMessage(String message)
     {
         ClientChatEvent event = new ClientChatEvent(message);
         return MinecraftForge.EVENT_BUS.post(event) ? "" : event.getMessage();
     }
 
-    //TODO 1.19: Remove
-    @Deprecated(forRemoval = true, since = "1.18.2")
-    public static int onHoeUse(UseOnContext context)
-    {
-        UseHoeEvent event = new UseHoeEvent(context);
-        if (MinecraftForge.EVENT_BUS.post(event)) return -1;
-        if (event.getResult() == Result.ALLOW)
-        {
-            context.getItemInHand().hurtAndBreak(1, context.getPlayer(), player -> player.broadcastBreakEvent(context.getHand()));
-            return 1;
-        }
-        return 0;
-    }
-
     @Nullable
     public static BlockState onToolUse(BlockState originalState, UseOnContext context, ToolAction toolAction, boolean simulate)
     {
-        // TODO 1.19: Remove ternary and just use BlockToolModificationEvent constructor with simulate parameter passed in
-        BlockToolModificationEvent event = simulate
-                ? new BlockToolModificationEvent(originalState, context, toolAction, true)
-                : new BlockToolInteractEvent(originalState, context, toolAction);
+        BlockToolModificationEvent event = new BlockToolModificationEvent(originalState, context, toolAction, simulate);
         return MinecraftForge.EVENT_BUS.post(event) ? null : event.getFinalState();
     }
 
-    /**
-     * @deprecated Use {@link #onToolUse(BlockState, UseOnContext, ToolAction, boolean)} instead.
-     */
-    @Nullable
-    // TODO 1.19: Remove
-    @Deprecated(forRemoval = true, since = "1.18.2")
-    public static BlockState onToolUse(BlockState originalState, Level level, BlockPos pos, Player player, ItemStack stack, ToolAction toolAction)
-    {
-        BlockToolInteractEvent event = new BlockToolInteractEvent(level, pos, originalState, player, stack, toolAction);
-        return MinecraftForge.EVENT_BUS.post(event) ? null : event.getFinalState();
-    }
-
-    public static int onApplyBonemeal(@Nonnull Player player, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull BlockState state, @Nonnull ItemStack stack)
+    public static int onApplyBonemeal(@NotNull Player player, @NotNull Level level, @NotNull BlockPos pos, @NotNull BlockState state, @NotNull ItemStack stack)
     {
         BonemealEvent event = new BonemealEvent(player, level, pos, state, stack);
         if (MinecraftForge.EVENT_BUS.post(event)) return -1;
@@ -396,7 +341,7 @@ public class ForgeEventFactory
     }
 
     @Nullable
-    public static InteractionResultHolder<ItemStack> onBucketUse(@Nonnull Player player, @Nonnull Level level, @Nonnull ItemStack stack, @Nullable HitResult target)
+    public static InteractionResultHolder<ItemStack> onBucketUse(@NotNull Player player, @NotNull Level level, @NotNull ItemStack stack, @Nullable HitResult target)
     {
         FillBucketEvent event = new FillBucketEvent(player, stack, level, target);
         if (MinecraftForge.EVENT_BUS.post(event)) return new InteractionResultHolder<ItemStack>(InteractionResult.FAIL, stack);
@@ -418,21 +363,22 @@ public class ForgeEventFactory
         return null;
     }
 
-    public static boolean canEntityUpdate(Entity entity)
+    public static PlayLevelSoundEvent.AtEntity onPlaySoundAtEntity(Entity entity, SoundEvent name, SoundSource category, float volume, float pitch)
     {
-        EntityEvent.CanUpdate event = new EntityEvent.CanUpdate(entity);
-        MinecraftForge.EVENT_BUS.post(event);
-        return event.getCanUpdate();
-    }
-
-    public static PlaySoundAtEntityEvent onPlaySoundAtEntity(Entity entity, SoundEvent name, SoundSource category, float volume, float pitch)
-    {
-        PlaySoundAtEntityEvent event = new PlaySoundAtEntityEvent(entity, name, category, volume, pitch);
+        PlayLevelSoundEvent.AtEntity event = new PlayLevelSoundEvent.AtEntity(entity, name, category, volume, pitch);
         MinecraftForge.EVENT_BUS.post(event);
         return event;
     }
 
-    public static int onItemExpire(ItemEntity entity, @Nonnull ItemStack item)
+
+    public static PlayLevelSoundEvent.AtPosition onPlaySoundAtPosition(Level level, double x, double y, double z, SoundEvent name, SoundSource category, float volume, float pitch)
+    {
+        PlayLevelSoundEvent.AtPosition event = new PlayLevelSoundEvent.AtPosition(level, new Vec3(x, y, z), name, category, volume, pitch);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event;
+    }
+
+    public static int onItemExpire(ItemEntity entity, @NotNull ItemStack item)
     {
         if (item.isEmpty()) return -1;
         ItemExpireEvent event = new ItemExpireEvent(entity, (item.isEmpty() ? 6000 : item.getItem().getEntityLifespan(item, entity.level)));
@@ -465,7 +411,7 @@ public class ForgeEventFactory
         return MinecraftForge.EVENT_BUS.post(new AnimalTameEvent(animal, tamer));
     }
 
-    public static BedSleepingProblem onPlayerSleepInBed(Player player, Optional<BlockPos> pos)
+    public static Player.BedSleepingProblem onPlayerSleepInBed(Player player, Optional<BlockPos> pos)
     {
         PlayerSleepInBedEvent event = new PlayerSleepInBedEvent(player, pos);
         MinecraftForge.EVENT_BUS.post(event);
@@ -554,24 +500,6 @@ public class ForgeEventFactory
     public static void onPlayerBrewedPotion(Player player, ItemStack stack)
     {
         MinecraftForge.EVENT_BUS.post(new PlayerBrewedPotionEvent(player, stack));
-    }
-
-    @OnlyIn(Dist.CLIENT)
-    public static boolean renderFireOverlay(Player player, PoseStack mat)
-    {
-        return renderBlockOverlay(player, mat, OverlayType.FIRE, Blocks.FIRE.defaultBlockState(), player.blockPosition());
-    }
-
-    @OnlyIn(Dist.CLIENT)
-    public static boolean renderWaterOverlay(Player player, PoseStack mat)
-    {
-        return renderBlockOverlay(player, mat, OverlayType.WATER, Blocks.WATER.defaultBlockState(), player.blockPosition());
-    }
-
-    @OnlyIn(Dist.CLIENT)
-    public static boolean renderBlockOverlay(Player player, PoseStack mat, OverlayType type, BlockState block, BlockPos pos)
-    {
-        return MinecraftForge.EVENT_BUS.post(new RenderBlockOverlayEvent(player, mat, type, block, pos));
     }
 
     @Nullable
@@ -688,7 +616,7 @@ public class ForgeEventFactory
         return result == Result.DEFAULT ? level.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING) : result == Result.ALLOW;
     }
 
-    public static boolean saplingGrowTree(LevelAccessor level, Random rand, BlockPos pos)
+    public static boolean saplingGrowTree(LevelAccessor level, RandomSource rand, BlockPos pos)
     {
         SaplingGrowTreeEvent event = new SaplingGrowTreeEvent(level, rand, pos);
         MinecraftForge.EVENT_BUS.post(event);
@@ -865,31 +793,9 @@ public class ForgeEventFactory
         MinecraftForge.EVENT_BUS.post(new TickEvent.PlayerTickEvent(TickEvent.Phase.END, player));
     }
 
-    /**
-     * TODO: Remove in 1.19
-     * 
-     * @deprecated Use {@link #onPreWorldTick(Level, BooleanSupplier)}
-     */
-    @Deprecated(forRemoval = true, since = "1.18.1")
-    public static void onPreWorldTick(Level level)
-    {
-        onPreWorldTick(level, () -> false);
-    }
-
     public static void onPreWorldTick(Level level, BooleanSupplier haveTime)
     {
         MinecraftForge.EVENT_BUS.post(new TickEvent.WorldTickEvent(LogicalSide.SERVER, TickEvent.Phase.START, level, haveTime));
-    }
-
-    /**
-     * TODO: Remove in 1.19
-     * 
-     * @deprecated Use {@link #onPostWorldTick(Level, BooleanSupplier)}
-     */
-    @Deprecated(forRemoval = true, since = "1.18.1")
-    public static void onPostWorldTick(Level level)
-    {
-        onPostWorldTick(level, () -> false);
     }
 
     public static void onPostWorldTick(Level level, BooleanSupplier haveTime)
@@ -907,31 +813,9 @@ public class ForgeEventFactory
         MinecraftForge.EVENT_BUS.post(new TickEvent.ClientTickEvent(TickEvent.Phase.END));
     }
 
-    /**
-     * TODO: Remove in 1.19
-     * 
-     * @deprecated Use {@link #onPreServerTick(BooleanSupplier)}
-     */
-    @Deprecated(forRemoval = true, since = "1.18.1")
-    public static void onPreServerTick()
-    {
-        onPreServerTick(() -> false);
-    }
-
     public static void onPreServerTick(BooleanSupplier haveTime)
     {
         MinecraftForge.EVENT_BUS.post(new TickEvent.ServerTickEvent(TickEvent.Phase.START, haveTime));
-    }
-
-    /**
-     * TODO: Remove in 1.19
-     * 
-     * @deprecated Use {@link #onPostServerTick(BooleanSupplier)}
-     */
-    @Deprecated(forRemoval = true, since = "1.18.1")
-    public static void onPostServerTick()
-    {
-        onPostServerTick(() -> false);
     }
 
     public static void onPostServerTick(BooleanSupplier haveTime)

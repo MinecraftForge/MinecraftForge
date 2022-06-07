@@ -3,8 +3,8 @@
   "ingredients": [
     {
       "type": "forge:nbt",
-      "item": "minecraft:iron_pickaxe",
       "count": 1,
+      "item": "minecraft:iron_pickaxe",
       "nbt": "{Damage:3}"
     }
   ],

@@ -19,7 +19,6 @@ import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.server.packs.resources.ReloadableResourceManager;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -44,8 +43,8 @@ import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.registries.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -113,7 +112,7 @@ public class CustomTooltipTest
         public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> components, TooltipFlag flag)
         {
             super.appendHoverText(stack, level, components, flag);
-            components.add(new TextComponent("This is a very very very very very very long hover text that should really really be split across multiple lines.").withStyle(ChatFormatting.YELLOW));
+            components.add(Component.literal("This is a very very very very very very long hover text that should really really be split across multiple lines.").withStyle(ChatFormatting.YELLOW));
         }
 
         @Override
@@ -192,7 +191,7 @@ public class CustomTooltipTest
 
         protected TooltipTestScreen()
         {
-            super(new TextComponent("TooltipMethodTest"));
+            super(Component.literal("TooltipMethodTest"));
         }
 
         static void show()
@@ -210,14 +209,14 @@ public class CustomTooltipTest
         @Override
         protected void init()
         {
-            addRenderableWidget(new Button(10, 10, 200, 20, new TextComponent("Toggle Stack: EMPTY"), button -> {
+            addRenderableWidget(new Button(10, 10, 200, 20, Component.literal("Toggle Stack: EMPTY"), button -> {
                 this.testStack = this.testStack.isEmpty() ? new ItemStack(Items.APPLE) : ItemStack.EMPTY;
-                button.setMessage(new TextComponent("Toggle Stack: " + (testStack.isEmpty() ? "EMPTY" : "Apple")));
+                button.setMessage(Component.literal("Toggle Stack: " + (testStack.isEmpty() ? "EMPTY" : "Apple")));
             }));
 
-            addRenderableWidget(new Button(220, 10, 200, 20, new TextComponent("Toggle Font: null"), button -> {
+            addRenderableWidget(new Button(220, 10, 200, 20, Component.literal("Toggle Font: null"), button -> {
                 this.testFont = this.testFont == null ? ClientModBusEventHandler.customFont : null;
-                button.setMessage(new TextComponent("Toggle Font: " + (testFont == null ? "null" : "customFont")));
+                button.setMessage(Component.literal("Toggle Font: " + (testFont == null ? "null" : "customFont")));
             }));
 
             // * must have stack context
@@ -242,7 +241,7 @@ public class CustomTooltipTest
             int y = 50;
             for (var test : tooltipTests)
             {
-                addRenderableWidget(new Button(x, y, 100, 20, new TextComponent(test.getKey()), button -> {}, test.getValue()));
+                addRenderableWidget(new Button(x, y, 100, 20, Component.literal(test.getKey()), button -> {}, test.getValue()));
                 y+= 22;
                 if (y >= height - 50)
                 {
@@ -260,72 +259,72 @@ public class CustomTooltipTest
         // renderTooltip with List<Component> and all combinations of ItemStack/Font
         private void test2(Button button, PoseStack poseStack, int mouseX, int mouseY)
         {
-            renderTooltip(poseStack, List.of(new TextComponent("test")), Optional.empty(), mouseX, mouseY, this.testStack);
+            renderTooltip(poseStack, List.of(Component.literal("test")), Optional.empty(), mouseX, mouseY, this.testStack);
         }
 
         private void test3(Button button, PoseStack poseStack, int mouseX, int mouseY)
         {
-            renderTooltip(poseStack, List.of(new TextComponent("test")), Optional.empty(), mouseX, mouseY, this.testFont);
+            renderTooltip(poseStack, List.of(Component.literal("test")), Optional.empty(), mouseX, mouseY, this.testFont);
         }
 
         private void test4(Button button, PoseStack poseStack, int mouseX, int mouseY)
         {
-            renderTooltip(poseStack, List.of(new TextComponent("test")), Optional.empty(), mouseX, mouseY, this.testFont, this.testStack);
+            renderTooltip(poseStack, List.of(Component.literal("test")), Optional.empty(), mouseX, mouseY, this.testFont, this.testStack);
         }
 
         private void test5(Button button, PoseStack poseStack, int mouseX, int mouseY)
         {
-            renderTooltip(poseStack, List.of(new TextComponent("test")), Optional.empty(), mouseX, mouseY);
+            renderTooltip(poseStack, List.of(Component.literal("test")), Optional.empty(), mouseX, mouseY);
         }
 
         // renderTooltip with just Component
         private void test6(Button button, PoseStack poseStack, int mouseX, int mouseY)
         {
-            renderTooltip(poseStack, new TextComponent("test"), mouseX, mouseY);
+            renderTooltip(poseStack, Component.literal("test"), mouseX, mouseY);
         }
 
         // renderComponentTooltip with all combinations of ItemStack/Font
         private void test7(Button button, PoseStack poseStack, int mouseX, int mouseY)
         {
-            renderComponentTooltip(poseStack, List.of(new TextComponent("test")), mouseX, mouseY, this.testStack);
+            renderComponentTooltip(poseStack, List.of(Component.literal("test")), mouseX, mouseY, this.testStack);
         }
 
         private void test8(Button button, PoseStack poseStack, int mouseX, int mouseY)
         {
-            renderComponentTooltip(poseStack, List.of(new TextComponent("test")), mouseX, mouseY, this.testFont);
+            renderComponentTooltip(poseStack, List.of(Component.literal("test")), mouseX, mouseY, this.testFont);
         }
 
         private void test9(Button button, PoseStack poseStack, int mouseX, int mouseY)
         {
-            renderComponentTooltip(poseStack, List.of(new TextComponent("test")), mouseX, mouseY, this.testFont, this.testStack);
+            renderComponentTooltip(poseStack, List.of(Component.literal("test")), mouseX, mouseY, this.testFont, this.testStack);
         }
 
         private void test10(Button button, PoseStack poseStack, int mouseX, int mouseY)
         {
-            renderComponentTooltip(poseStack, List.of(new TextComponent("test")), mouseX, mouseY);
+            renderComponentTooltip(poseStack, List.of(Component.literal("test")), mouseX, mouseY);
         }
 
         // renderTooltip with list of FormattedCharSequence
         private void test11(Button button, PoseStack poseStack, int mouseX, int mouseY)
         {
-            renderTooltip(poseStack, List.of(new TextComponent("test").getVisualOrderText()), mouseX, mouseY);
+            renderTooltip(poseStack, List.of(Component.literal("test").getVisualOrderText()), mouseX, mouseY);
         }
 
         // renderTooltip with list of FormattedCharSequence and Font
         private void test12(Button button, PoseStack poseStack, int mouseX, int mouseY)
         {
-            renderTooltip(poseStack, List.of(new TextComponent("test").getVisualOrderText()), mouseX, mouseY, this.testFont);
+            renderTooltip(poseStack, List.of(Component.literal("test").getVisualOrderText()), mouseX, mouseY, this.testFont);
         }
 
         // legacy ToolTip methods
         private void test13(Button button, PoseStack poseStack, int mouseX, int mouseY)
         {
-            renderTooltip(poseStack, List.of(new TextComponent("test").getVisualOrderText()), mouseX, mouseY, this.testFont);
+            renderTooltip(poseStack, List.of(Component.literal("test").getVisualOrderText()), mouseX, mouseY, this.testFont);
         }
 
         private void test14(Button button, PoseStack poseStack, int mouseX, int mouseY)
         {
-            renderComponentTooltip(poseStack, List.of(new TextComponent("test")), mouseX, mouseY, this.testFont, ItemStack.EMPTY);
+            renderComponentTooltip(poseStack, List.of(Component.literal("test")), mouseX, mouseY, this.testFont, ItemStack.EMPTY);
         }
     }
 

@@ -1,0 +1,16 @@
+--- a/net/minecraft/data/tags/InstrumentTagsProvider.java
++++ b/net/minecraft/data/tags/InstrumentTagsProvider.java
+@@ -7,8 +_,13 @@
+ import net.minecraft.world.item.Instruments;
+ 
+ public class InstrumentTagsProvider extends TagsProvider<Instrument> {
++   /** @deprecated Forge: Use the {@link #InstrumentTagsProvider(DataGenerator, String, net.minecraftforge.common.data.ExistingFileHelper) mod id variant} */
++   @Deprecated
+    public InstrumentTagsProvider(DataGenerator p_236428_) {
+       super(p_236428_, Registry.f_235738_);
++   }
++   public InstrumentTagsProvider(DataGenerator p_236428_, String modId, @org.jetbrains.annotations.Nullable net.minecraftforge.common.data.ExistingFileHelper existingFileHelper) {
++      super(p_236428_, Registry.f_235738_, modId, existingFileHelper);
+    }
+ 
+    protected void m_6577_() {
