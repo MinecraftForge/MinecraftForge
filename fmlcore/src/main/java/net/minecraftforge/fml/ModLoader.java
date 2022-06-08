@@ -28,6 +28,8 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 import java.util.concurrent.Executor;
+import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -282,6 +284,17 @@ public class ModLoader
             return;
         }
         ModList.get().forEachModContainer((id, mc) -> mc.acceptEvent(e));
+    }
+    public <T extends Event & IModBusEvent> void postEventWithWrap(T e, BiConsumer<ModContainer, T> pre, BiConsumer<ModContainer, T> post) {
+        if (!loadingStateValid) {
+            LOGGER.error("Cowardly refusing to send event {} to a broken mod state", e.getClass().getName());
+            return;
+        }
+        ModList.get().forEachModContainer((id, mc) -> {
+            pre.accept(mc, e);
+            mc.acceptEvent(e);
+            post.accept(mc, e);
+        });
     }
 
     public List<ModLoadingWarning> getWarnings()
