@@ -98,9 +98,9 @@ public class VertexBufferConsumer implements IVertexConsumer
         setVertexFormat(buffer.getVertexFormat());
     }
 
-    public void setVertexFormat(@Nullable VertexFormat format)
+    public void setVertexFormat(VertexFormat format)
     {
-        this.format = format != null ? format : DefaultVertexFormat.BLOCK;
+        this.format = format;
         this.elements = this.format.getElements();
     }
 
