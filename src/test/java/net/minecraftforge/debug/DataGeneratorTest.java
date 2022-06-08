@@ -798,9 +798,11 @@ public class DataGeneratorTest
             stairsBlock((StairBlock) Blocks.ACACIA_STAIRS, "acacia", mcLoc("block/acacia_planks"));
             slabBlock((SlabBlock) Blocks.ACACIA_SLAB, ForgeRegistries.BLOCKS.getKey(Blocks.ACACIA_PLANKS), mcLoc("block/acacia_planks"));
 
-            // TODO 1.19: fix fenceBlock, wallBlock, doorBlock, and co -SS
+            // TODO 1.19: fix fenceBlock, and co -SS
             // fenceBlock((FenceBlock) Blocks.ACACIA_FENCE, "acacia", mcLoc("block/acacia_planks"));
             fenceGateBlock((FenceGateBlock) Blocks.ACACIA_FENCE_GATE, "acacia", mcLoc("block/acacia_planks"));
+            doorBlock((DoorBlock) Blocks.ACACIA_DOOR, "acacia", mcLoc("block/acacia_door_bottom"), mcLoc("block/acacia_door_top"));
+            wallBlock((WallBlock) Blocks.ANDESITE_WALL, mcLoc("block/andesite"));
 
             // wallBlock((WallBlock) Blocks.COBBLESTONE_WALL, "cobblestone", mcLoc("block/cobblestone"));
 
