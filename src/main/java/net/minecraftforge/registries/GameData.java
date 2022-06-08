@@ -293,12 +293,15 @@ public class GameData
     @SuppressWarnings("deprecation")
     public static void postRegisterEvents()
     {
+        Comparator<ResourceLocation> alphabetical = (o1, o2) -> String.valueOf(o1).compareToIgnoreCase(String.valueOf(o2));
         Set<ResourceLocation> keySet = new HashSet<>(RegistryManager.ACTIVE.registries.keySet());
         keySet.addAll(RegistryManager.getVanillaRegistryKeys());
-        keySet.addAll(BuiltinRegistries.REGISTRY.keySet());
         List<ResourceLocation> keys = keySet.stream()
-                .sorted((o1, o2) -> String.valueOf(o1).compareToIgnoreCase(String.valueOf(o2)))
+                .sorted(alphabetical)
                 .collect(Collectors.toList());
+        keys.addAll(BuiltinRegistries.REGISTRY.keySet().stream()
+              .sorted(alphabetical)
+              .toList());
 
         //Move Blocks to first, and Items to second.
         keys.remove(BLOCKS.location());
