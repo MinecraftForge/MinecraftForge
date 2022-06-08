@@ -42,7 +42,7 @@
           if (!Minecraft.m_91085_()) {
              return Sheets.m_110792_();
           } else {
-@@ -350,9 +_,68 @@
+@@ -350,9 +_,103 @@
        }
     }
  
@@ -55,8 +55,11 @@
 +   // FORGE START
 +
 +   private static final java.util.function.Predicate<RenderType> SOLID_PREDICATE = type -> type == RenderType.m_110451_();
++   private static final Object LOCK = new Object();
 +   private static final Map<net.minecraft.core.Holder.Reference<Block>, java.util.function.Predicate<RenderType>> blockRenderChecks = createRenderCheckMap(net.minecraftforge.registries.ForgeRegistries.BLOCKS, f_109275_);
 +   private static final Map<net.minecraft.core.Holder.Reference<Fluid>, java.util.function.Predicate<RenderType>> fluidRenderChecks = createRenderCheckMap(net.minecraftforge.registries.ForgeRegistries.FLUIDS, f_109276_);
++   @org.jetbrains.annotations.Nullable private static volatile Map<net.minecraft.core.Holder.Reference<Block>, java.util.function.Predicate<RenderType>> blockRenderChecksReadOnly = null;
++   @org.jetbrains.annotations.Nullable private static volatile Map<net.minecraft.core.Holder.Reference<Fluid>, java.util.function.Predicate<RenderType>> fluidRenderChecksReadOnly = null;
 +
 +   private static <T> Map<net.minecraft.core.Holder.Reference<T>, java.util.function.Predicate<RenderType>> createRenderCheckMap(net.minecraftforge.registries.IForgeRegistry<T> registry, Map<T, RenderType> vanillaMap) {
 +      return Util.m_137469_(new it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap<>(vanillaMap.size(), 0.5F), map -> {
@@ -72,37 +75,69 @@
 +      if (block instanceof LeavesBlock) {
 +         return f_109277_ ? type == RenderType.m_110457_() : type == RenderType.m_110451_();
 +      } else {
-+         return blockRenderChecks.get(net.minecraftforge.registries.ForgeRegistries.BLOCKS.getDelegateOrThrow(block)).test(type);
++         return getBlockLayerPredicates().get(net.minecraftforge.registries.ForgeRegistries.BLOCKS.getDelegateOrThrow(block)).test(type);
 +      }
 +   }
 +
 +   public static boolean canRenderInLayer(FluidState fluid, RenderType type) {
-+      return fluidRenderChecks.get(net.minecraftforge.registries.ForgeRegistries.FLUIDS.getDelegateOrThrow(fluid.m_76152_())).test(type);
++      return getFluidLayerPredicates().get(net.minecraftforge.registries.ForgeRegistries.FLUIDS.getDelegateOrThrow(fluid.m_76152_())).test(type);
 +   }
 +
 +   public static void setRenderLayer(Block block, RenderType type) {
 +      setRenderLayer(block, createMatchingLayerPredicate(type));
 +   }
 +
-+   public static synchronized void setRenderLayer(Block block, java.util.function.Predicate<RenderType> predicate) {
-+      checkClientLoading();
-+      blockRenderChecks.put(net.minecraftforge.registries.ForgeRegistries.BLOCKS.getDelegateOrThrow(block), predicate);
++   public static void setRenderLayer(Block block, java.util.function.Predicate<RenderType> predicate) {
++      synchronized (LOCK) {
++         blockRenderChecks.put(net.minecraftforge.registries.ForgeRegistries.BLOCKS.getDelegateOrThrow(block), predicate);
++         blockRenderChecksReadOnly = null;
++      }
 +   }
 +
 +   public static void setRenderLayer(Fluid fluid, RenderType type) {
 +      setRenderLayer(fluid, createMatchingLayerPredicate(type));
 +   }
 +
-+   public static synchronized void setRenderLayer(Fluid fluid, java.util.function.Predicate<RenderType> predicate) {
-+      checkClientLoading();
-+      fluidRenderChecks.put(net.minecraftforge.registries.ForgeRegistries.FLUIDS.getDelegateOrThrow(fluid), predicate);
++   public static void setRenderLayer(Fluid fluid, java.util.function.Predicate<RenderType> predicate) {
++      synchronized (LOCK) {
++            fluidRenderChecks.put(net.minecraftforge.registries.ForgeRegistries.FLUIDS.getDelegateOrThrow(fluid), predicate);
++            fluidRenderChecksReadOnly = null;
++      }
 +   }
 +
-+   private static void checkClientLoading() {
-+      com.google.common.base.Preconditions.checkState(net.minecraftforge.client.loading.ClientModLoader.isLoading(),
-+              "Render layers can only be set during client loading! " +
-+                      "This might ideally be done from `FMLClientSetupEvent`."
-+      );
++   public static Map<net.minecraft.core.Holder.Reference<Block>, java.util.function.Predicate<RenderType>> getBlockLayerPredicatesView() {
++      return java.util.Collections.unmodifiableMap(getBlockLayerPredicates());
++   }
++
++   private static Map<net.minecraft.core.Holder.Reference<Block>, java.util.function.Predicate<RenderType>> getBlockLayerPredicates() {
++      Map<net.minecraft.core.Holder.Reference<Block>, java.util.function.Predicate<RenderType>> map = blockRenderChecksReadOnly;
++      if (map == null) {
++         synchronized (LOCK) {
++            blockRenderChecksReadOnly = map = copy(blockRenderChecks);
++         }
++      }
++      return map;
++   }
++
++
++   public static Map<net.minecraft.core.Holder.Reference<Fluid>, java.util.function.Predicate<RenderType>> getFluidLayerPredicatesView() {
++      return java.util.Collections.unmodifiableMap(getFluidLayerPredicates());
++   }
++
++   private static Map<net.minecraft.core.Holder.Reference<Fluid>, java.util.function.Predicate<RenderType>> getFluidLayerPredicates() {
++      Map<net.minecraft.core.Holder.Reference<Fluid>, java.util.function.Predicate<RenderType>> map = fluidRenderChecksReadOnly;
++      if (map == null) {
++         synchronized (LOCK) {
++            fluidRenderChecksReadOnly = map = copy(fluidRenderChecks);
++         }
++      }
++      return map;
++   }
++
++   private static <T> Map<net.minecraft.core.Holder.Reference<T>, java.util.function.Predicate<RenderType>> copy(Map<net.minecraft.core.Holder.Reference<T>, java.util.function.Predicate<RenderType>> map) {
++      var newMap = new it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap<>(map);
++      newMap.defaultReturnValue(SOLID_PREDICATE);
++      return newMap;
 +   }
 +
 +   private static java.util.function.Predicate<RenderType> createMatchingLayerPredicate(RenderType type) {
