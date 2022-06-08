@@ -52,6 +52,7 @@ class NamespacedDefaultedWrapper<T> extends DefaultedRegistry<T> implements ILoc
             throw new IllegalStateException("Can not register to a locked registry. Modder should use Forge Register methods.");
 
         Validate.notNull(value);
+        markKnown();
         this.elementsLifecycle = this.elementsLifecycle.add(lifecycle);
 
         T oldValue = this.delegate.getRaw(key.location());
