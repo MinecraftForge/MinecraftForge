@@ -1,6 +1,22 @@
 --- a/net/minecraft/core/MappedRegistry.java
 +++ b/net/minecraft/core/MappedRegistry.java
-@@ -90,7 +_,8 @@
+@@ -83,14 +_,24 @@
+       return this.m_205857_(p_205853_, p_205854_, p_205855_, p_205856_, true);
+    }
+ 
++   private static final Set<ResourceLocation> KNOWN = new java.util.LinkedHashSet<>();
++   public static Set<ResourceLocation> getKnownRegistries() {
++      return java.util.Collections.unmodifiableSet(KNOWN);
++   }
++   protected final void markKnown() {
++      KNOWN.add(m_123023_().m_135782_());
++   }
++
+    private Holder<T> m_205857_(int p_205858_, ResourceKey<T> p_205859_, T p_205860_, Lifecycle p_205861_, boolean p_205862_) {
++      markKnown();
+       this.m_205921_(p_205859_);
+       Validate.notNull(p_205859_);
+       Validate.notNull(p_205860_);
        this.f_122672_.size(Math.max(this.f_122672_.size(), p_205858_ + 1));
        this.f_122673_.put(p_205860_, p_205858_);
        this.f_211051_ = null;

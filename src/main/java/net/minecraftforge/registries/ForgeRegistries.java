@@ -142,7 +142,7 @@ public class ForgeRegistries
         public static final ResourceKey<Registry<Biome>> BIOMES = key("worldgen/biome");
 
         // Forge
-        public static final ResourceKey<Registry<EntityDataSerializer<?>>> DATA_SERIALIZERS = key("data_serializers");
+        public static final ResourceKey<Registry<EntityDataSerializer<?>>> DATA_SERIALIZERS = key("forge:data_serializers");
         public static final ResourceKey<Registry<GlobalLootModifierSerializer<?>>> LOOT_MODIFIER_SERIALIZERS = key("forge:loot_modifier_serializers");
         public static final ResourceKey<Registry<ForgeWorldPreset>> WORLD_TYPES = key("forge:world_types");
         public static final ResourceKey<Registry<Codec<? extends BiomeModifier>>> BIOME_MODIFIER_SERIALIZERS = key("forge:biome_modifier_serializers");

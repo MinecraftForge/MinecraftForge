@@ -12,6 +12,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.mojang.serialization.Lifecycle;
+import java.util.LinkedHashSet;
 import net.minecraft.core.DefaultedRegistry;
 import net.minecraft.core.IdMapper;
 import net.minecraft.core.MappedRegistry;
@@ -297,20 +298,14 @@ public class GameData
         Set<ResourceLocation> keySet = new HashSet<>(RegistryManager.ACTIVE.registries.keySet());
         keySet.addAll(RegistryManager.getVanillaRegistryKeys());
         keySet.addAll(BuiltinRegistries.REGISTRY.keySet());
-        List<ResourceLocation> keys = keySet.stream()
-                .sorted((o1, o2) -> String.valueOf(o1).compareToIgnoreCase(String.valueOf(o2)))
-                .collect(Collectors.toList());
 
-        //Move Blocks to first, and Items to second.
-        keys.remove(BLOCKS.location());
-        keys.remove(ITEMS.location());
-
-        keys.add(0, BLOCKS.location());
-        keys.add(1, ITEMS.location());
+        Set<ResourceLocation> ordered = new LinkedHashSet<>(MappedRegistry.getKnownRegistries());
+        ordered.retainAll(keySet);
+        ordered.addAll(keySet.stream().sorted(ResourceLocation::compareNamespaced).toList());
 
         RuntimeException aggregate = new RuntimeException();
 
-        for (ResourceLocation rootRegistryName : keys)
+        for (ResourceLocation rootRegistryName : ordered)
         {
             try
             {
