@@ -47,7 +47,8 @@ public class SlotItemHandler extends Slot
         ((IItemHandlerModifiable) this.getItemHandler()).setStackInSlot(index, stack);
         this.setChanged();
     }
-    
+
+    // Override if your IItemHandler does not implement IItemHandlerModifiable
     @Override
     public void initialize(ItemStack stack)
     {
