@@ -16,7 +16,7 @@ jobs:
     steps:
     - uses: dessant/support-requests@v2
       with:
-        support-label: forum
+        support-label: Forum
         issue-comment: |
             :wave: We use the issue tracker exclusively for final bug reports and feature requests.
             However, this issue appears to be better suited for the
