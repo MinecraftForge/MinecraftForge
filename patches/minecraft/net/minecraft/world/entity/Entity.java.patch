@@ -95,14 +95,6 @@
        }
     }
  
-@@ -710,6 +_,7 @@
-             this.m_146850_(GameEvent.f_157815_);
-          }
-       }
-+      this.invalidateCaps();
- 
-    }
- 
 @@ -728,10 +_,10 @@
        int j = Mth.m_14107_(this.f_19825_.f_82480_ - (double)p_216987_);
        int k = Mth.m_14107_(this.f_19825_.f_82481_);
@@ -318,6 +310,14 @@
  
     }
  
+@@ -3062,6 +_,7 @@
+ 
+       this.m_20197_().forEach(Entity::m_8127_);
+       this.f_146801_.m_142472_(p_146876_);
++      this.invalidateCaps();
+    }
+ 
+    protected void m_146912_() {
 @@ -3089,6 +_,76 @@
     public boolean m_142265_(Level p_146843_, BlockPos p_146844_) {
        return true;
