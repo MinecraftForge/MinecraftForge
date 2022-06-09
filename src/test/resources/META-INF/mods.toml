@@ -8,5 +8,7 @@ license="LGPL v2.1"
     modId="client_command_test"
 [[mods]]
     modId="biome_modifiers_test"
+[[mods]]
+    modId="network_capability_test"
 
 # ADD ABOVE THIS LINE
