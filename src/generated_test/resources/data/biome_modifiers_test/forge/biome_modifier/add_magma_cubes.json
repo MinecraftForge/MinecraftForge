@@ -1,0 +1,10 @@
+{
+  "type": "forge:add_spawn",
+  "biomes": "#minecraft:is_badlands",
+  "spawner": {
+    "type": "minecraft:magma_cube",
+    "maxCount": 4,
+    "minCount": 1,
+    "weight": 100
+  }
+}

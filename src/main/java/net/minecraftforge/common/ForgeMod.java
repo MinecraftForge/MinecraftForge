@@ -13,6 +13,10 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.RangedAttribute;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.biome.MobSpawnSettings.SpawnerData;
+import net.minecraft.world.level.levelgen.GenerationStep.Decoration;
+import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.item.Items;
 import net.minecraft.sounds.SoundEvent;
@@ -30,6 +34,8 @@ import net.minecraftforge.common.extensions.IForgeEntity;
 import net.minecraftforge.common.extensions.IForgePlayer;
 import net.minecraftforge.common.loot.CanToolPerformAction;
 import net.minecraftforge.common.loot.LootTableIdCondition;
+import net.minecraftforge.common.world.AddFeaturesBiomeModifier;
+import net.minecraftforge.common.world.AddSpawnBiomeModifier;
 import net.minecraftforge.common.world.BiomeModifier;
 import net.minecraftforge.common.world.NoneBiomeModifier;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -80,6 +86,7 @@ import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import java.util.*;
 
@@ -131,6 +138,26 @@ public class ForgeMod
      */
     public static final RegistryObject<Codec<NoneBiomeModifier>> NONE_BIOME_MODIFIER_TYPE = BIOME_MODIFIER_SERIALIZERS.register("none", () -> Codec.unit(NoneBiomeModifier.INSTANCE));
 
+    /**
+     * Stock biome modifier for adding features to biomes.
+     */
+    public static final RegistryObject<Codec<AddFeaturesBiomeModifier>> ADD_FEATURES_BIOME_MODIFIER_TYPE = BIOME_MODIFIER_SERIALIZERS.register("add_features", () ->
+        RecordCodecBuilder.create(builder -> builder.group(
+            Biome.LIST_CODEC.fieldOf("biomes").forGetter(AddFeaturesBiomeModifier::biomes),
+                PlacedFeature.LIST_CODEC.fieldOf("features").forGetter(AddFeaturesBiomeModifier::features),
+                Decoration.CODEC.fieldOf("step").forGetter(AddFeaturesBiomeModifier::step)
+            ).apply(builder, AddFeaturesBiomeModifier::new))
+        );
+    
+    /**
+     * Stock biome modifier for adding mob spawns to biomes.
+     */
+    public static final RegistryObject<Codec<AddSpawnBiomeModifier>> ADD_SPAWN_BIOME_MODIFIER_TYPE = BIOME_MODIFIER_SERIALIZERS.register("add_spawn", () ->
+        RecordCodecBuilder.create(builder -> builder.group(
+                Biome.LIST_CODEC.fieldOf("biomes").forGetter(AddSpawnBiomeModifier::biomes),
+                SpawnerData.CODEC.fieldOf("spawner").forGetter(AddSpawnBiomeModifier::spawner)
+            ).apply(builder, AddSpawnBiomeModifier::new))
+        );
 
     private static boolean enableMilkFluid = false;
     public static final RegistryObject<Fluid> MILK = RegistryObject.create(new ResourceLocation("milk"), ForgeRegistries.FLUIDS);
