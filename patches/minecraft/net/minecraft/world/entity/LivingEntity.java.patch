@@ -419,7 +419,8 @@
        super.m_8119_();
        this.m_21329_();
        this.m_21333_();
-@@ -2352,6 +_,7 @@
+@@ -2351,7 +_,8 @@
+          }
  
           ItemStack itemstack1 = this.m_6844_(equipmentslot);
 -         if (!ItemStack.m_41728_(itemstack1, itemstack)) {
