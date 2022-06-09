@@ -143,9 +143,9 @@ public class PlayMessages
                 }
 
                 /*
-	            * Sets the postiion on the client, Mirrors what
-	            * Entity#recreateFromPacket and LivingEntity#recreateFromPacket does.
-	            */
+	        * Sets the postiion on the client, Mirrors what
+	        * Entity#recreateFromPacket and LivingEntity#recreateFromPacket does.
+	        */
                 e.syncPacketPositionCodec(msg.posX, msg.posY, msg.posZ);
                 e.absMoveTo(msg.posX, msg.posY, msg.posZ, (msg.yaw * 360) / 256.0F, (msg.pitch * 360) / 256.0F);
                 e.setYHeadRot((msg.headYaw * 360) / 256.0F);
