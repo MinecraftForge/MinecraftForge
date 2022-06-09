@@ -45,6 +45,7 @@ public class ModInfo implements IModInfo, IConfigurable
     private final List<? extends IModInfo.ModVersion> dependencies;
     private final Map<String,Object> properties;
     private final IConfigurable config;
+    private final Optional<URL> modUrl;
 
     public ModInfo(final ModFileInfo owningFile, final IConfigurable config)
     {
@@ -86,6 +87,9 @@ public class ModInfo implements IModInfo, IConfigurable
         this.properties = ownFile.map(mfi -> mfi.<Map<String, Object>>getConfigElement("modproperties", this.modId)
                 .orElse(Collections.emptyMap()))
                 .orElse(Collections.emptyMap());
+
+        this.modUrl = config.<String>getConfigElement("modUrl")
+                .map(StringUtils::toURL);
     }
 
     @Override
@@ -162,6 +166,11 @@ public class ModInfo implements IModInfo, IConfigurable
         return null;
     }
 
+    @Override
+    public Optional<URL> getModURL() {
+        return modUrl;
+    }
+
     class ModVersion implements net.minecraftforge.forgespi.language.IModInfo.ModVersion {
         private IModInfo owner;
         private final String modId;
@@ -169,6 +178,7 @@ public class ModInfo implements IModInfo, IConfigurable
         private final boolean mandatory;
         private final Ordering ordering;
         private final DependencySide side;
+        private Optional<URL> referralUrl;
 
         public ModVersion(final IModInfo owner, final IConfigurable config) {
             this.owner = owner;
@@ -185,6 +195,8 @@ public class ModInfo implements IModInfo, IConfigurable
             this.side = config.<String>getConfigElement("side")
                     .map(DependencySide::valueOf)
                     .orElse(DependencySide.BOTH);
+            this.referralUrl = config.<String>getConfigElement("referralUrl")
+                    .map(StringUtils::toURL);
         }
 
 
@@ -228,6 +240,11 @@ public class ModInfo implements IModInfo, IConfigurable
         public IModInfo getOwner()
         {
             return owner;
+        }
+
+        @Override
+        public Optional<URL> getReferralURL() {
+            return referralUrl;
         }
     }
 
