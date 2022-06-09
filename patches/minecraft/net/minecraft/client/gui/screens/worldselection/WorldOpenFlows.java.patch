@@ -1,13 +1,13 @@
 --- a/net/minecraft/client/gui/screens/worldselection/WorldOpenFlows.java
 +++ b/net/minecraft/client/gui/screens/worldselection/WorldOpenFlows.java
-@@ -66,6 +_,7 @@
+@@ -138,6 +_,7 @@
  
+          WorldStem worldstem;
           try {
-             WorldLoader.PackConfig worldloader$packconfig = new WorldLoader.PackConfig(packrepository, datapackconfig, false);
 +            levelstoragesource$levelstorageaccess.readAdditionalLevelSaveData(); // Read extra (e.g. modded) data from the world before creating it
-             WorldStem worldstem = this.m_233096_(worldloader$packconfig, (p_233103_, p_233104_) -> {
-                return Pair.of(new PrimaryLevelData(p_233159_, p_233161_, Lifecycle.stable()), p_233160_.m_203557_());
-             });
+             worldstem = this.m_233122_(levelstoragesource$levelstorageaccess, p_233148_, packrepository);
+          } catch (Exception exception) {
+             f_233088_.warn("Failed to load datapacks, can't proceed with server load", (Throwable)exception);
 @@ -151,7 +_,9 @@
           WorldData worlddata = worldstem.f_206895_();
           boolean flag = worlddata.m_5961_().m_64670_();
