@@ -1,10 +1,15 @@
 --- a/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-@@ -171,6 +_,7 @@
+@@ -171,6 +_,12 @@
  public class ServerGamePacketListenerImpl implements ServerPlayerConnection, ServerGamePacketListener {
     static final Logger f_9744_ = LogUtils.getLogger();
     private static final int f_143608_ = 15000;
-+   @Deprecated // Forge: See Reach Distance / Attack Range attributes.
++   /**
++    * Forge: Deprecated in favor of range/reach attributes.
++    * @see net.minecraftforge.common.ForgeMod#REACH_DISTANCE
++    * @see net.minecraftforge.common.ForgeMod#ATTACK_RANGE
++    */
++   @Deprecated
     public static final double f_215198_ = Mth.m_144952_(6.0D);
     private static final int f_215199_ = -1;
     public final Connection f_9742_;
