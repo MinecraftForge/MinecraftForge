@@ -15,17 +15,36 @@ import java.util.List;
 
 import static net.minecraftforge.fml.Logging.CAPABILITIES;
 
+/**
+ * The Capability Manager is responsible for managing {@link Capability} instances.
+ * @See {@link CapabilityManager#get(String, boolean)} to retrieve an instance.
+ */
 public enum CapabilityManager
 {
     INSTANCE;
     static final Logger LOGGER = LogManager.getLogger();
 
 
+    /**
+     * Acquires the unique {@link Capability} instance for the specified type.<br>
+     * Usage: <pre>public static final Capability<IMyInterface> MY_CAP = CapabilityManager.get(new CapabilityToken<>(){});</pre>
+     * @param <T> The generic type of the capability.
+     * @param type An anonymous {@link CapabilityToken} subclass, created inline.
+     * @return A {@link Capability} instance, typed as requested.  Will never be null.
+     */
     public static <T> Capability<T> get(CapabilityToken<T> type)
     {
         return INSTANCE.get(type.getType(), false);
     }
 
+    /**
+     * Internal API for creating/retrieving {@link Capability} instances.<br>
+     * This method is used by {@link RegisterCapabilitiesEvent} to create {@link Capability} instances.
+     * @param <T> The generic type of the capability.
+     * @param realName The name of the generic type as defined by {@link CapabilityToken}
+     * @param registering If true, the {@link Capability} instance will be marked as registered.
+     * @return A {@link Capability} instance, typed as requested.  Will never be null.
+     */
     @SuppressWarnings("unchecked")
     <T> Capability<T> get(String realName, boolean registering)
     {
@@ -35,7 +54,6 @@ public enum CapabilityManager
         {
             realName = realName.intern();
             cap = (Capability<T>)providers.computeIfAbsent(realName, Capability::new);
-
         }
 
 
@@ -60,6 +78,10 @@ public enum CapabilityManager
 
     // INTERNAL
     private final IdentityHashMap<String, Capability<?>> providers = new IdentityHashMap<>();
+
+    /**
+     * INTERNAL API - Do not call!
+     */
     public void injectCapabilities(List<ModFileScanData> data)
     {
         var event = new RegisterCapabilitiesEvent();

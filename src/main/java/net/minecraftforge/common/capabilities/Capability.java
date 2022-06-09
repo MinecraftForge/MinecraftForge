@@ -13,11 +13,11 @@ import java.util.List;
 import java.util.function.Consumer;
 
 /**
- * This is the core holder object Capabilities.
- * Each capability will have ONE instance of this class,
- * and it will the the one passed into the ICapabilityProvider functions.
+ * This is the core holder object for Capabilities.<br>
+ * Each cap will only have one {@link Capability} instance.<br>
+ * The instance should only be used at runtime if it returns true to {@link Capability#isRegistered()}.
  *
- * The CapabilityManager is in charge of creating this class.
+ * @see {@link CapabilityManager#get(CapabilityToken)}
  */
 public class Capability<T>
 {
