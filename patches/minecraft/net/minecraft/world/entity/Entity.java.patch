@@ -46,6 +46,14 @@
     }
  
     public boolean m_20039_(BlockPos p_20040_, BlockState p_20041_) {
+@@ -338,6 +_,7 @@
+ 
+    public void m_142687_(Entity.RemovalReason p_146834_) {
+       this.m_142467_(p_146834_);
++      this.invalidateCaps();
+    }
+ 
+    public void m_142036_() {
 @@ -623,7 +_,7 @@
                 double d1 = vec3.f_82479_;
                 double d2 = vec3.f_82480_;
@@ -93,14 +101,6 @@
 +
 +         this.f_19853_.m_46473_().m_7238_();
        }
-    }
- 
-@@ -710,6 +_,7 @@
-             this.m_146850_(GameEvent.f_157815_);
-          }
-       }
-+      this.invalidateCaps();
- 
     }
  
 @@ -728,10 +_,10 @@
