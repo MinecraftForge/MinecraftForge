@@ -144,123 +144,6 @@ public class FluidType
     }
 
     /**
-     * Returns how much the velocity of the fluid should be scaled by.
-     *
-     * @return a scalar to multiply to the fluid velocity
-     */
-    public double motionScale()
-    {
-        return this.motionScale;
-    }
-
-    /**
-     * Returns whether the fluid can push.
-     *
-     * @return {@code true} if the fluid can push, {@code false} otherwise
-     */
-    public boolean canPushEntity()
-    {
-        return this.canPushEntity;
-    }
-
-    /**
-     * Returns whether the fluid can be swum in.
-     *
-     * @return {@code true} if the fluid can be swum in, {@code false} otherwise
-     */
-    public boolean canSwim()
-    {
-        return this.canSwim;
-    }
-
-    /**
-     * Returns whether the fluid can drown something.
-     *
-     * @return {@code true} if the fluid can drown something, {@code false} otherwise
-     */
-    public boolean canDrown()
-    {
-        return this.canDrown;
-    }
-
-    /**
-     * Returns how much the fluid should scale the damage done when hitting
-     * the ground per tick.
-     *
-     * @return a scalar to multiply to the fall damage
-     */
-    public float getFallDistanceModifier()
-    {
-        return this.fallDistanceModifier;
-    }
-
-    /**
-     * Returns whether the fluid can extinguish.
-     *
-     * @return {@code true} if the fluid can extinguish, {@code false} otherwise
-     */
-    public boolean canExtinguish()
-    {
-        return this.canExtinguish;
-    }
-
-    /**
-     * Returns whether the fluid supports boating.
-     *
-     * @return {@code true} if the fluid supports boating, {@code false} otherwise
-     */
-    public boolean supportsBoating()
-    {
-        return this.supportsBoating;
-    }
-
-    /**
-     * Gets the path type of this fluid.
-     *
-     * @return the path type of this fluid
-     */
-    @Nullable
-    public BlockPathTypes getBlockPathType()
-    {
-        return this.pathType;
-    }
-
-    /**
-     * Gets the path type of the adjacent fluid. Path types with a negative
-     * malus are not traversable. Pathfinding will favor paths consisting of
-     * a lower malus.
-     *
-     * @return the path type of this fluid
-     */
-    @Nullable
-    public BlockPathTypes getAdjacentBlockPathType()
-    {
-        return this.adjacentPathType;
-    }
-
-    /**
-     * Returns whether the fluid can create a source.
-     *
-     * @return {@code true} if the fluid can create a source, {@code false} otherwise
-     */
-    public boolean canConvertToSource()
-    {
-        return this.canConvertToSource;
-    }
-
-    /**
-     * Returns whether the fluid can hydrate.
-     *
-     * <p>Hydration is an arbitrary word which depends on the implementation.
-     *
-     * @return {@code true} if the fluid can hydrate, {@code false} otherwise
-     */
-    public boolean canHydrate()
-    {
-        return this.canHydrate;
-    }
-
-    /**
      * Returns the light level emitted by the fluid.
      *
      * <p>Note: This should be a value between {@code [0,15]}. If not specified, the
@@ -355,7 +238,7 @@ public class FluidType
      */
     public double motionScale(Entity entity)
     {
-        return this.motionScale();
+        return this.motionScale;
     }
 
     /**
@@ -366,7 +249,7 @@ public class FluidType
      */
     public boolean canPushEntity(Entity entity)
     {
-        return this.canPushEntity();
+        return this.canPushEntity;
     }
 
     /**
@@ -377,7 +260,7 @@ public class FluidType
      */
     public boolean canSwim(Entity entity)
     {
-        return this.canSwim();
+        return this.canSwim;
     }
 
     /**
@@ -392,7 +275,7 @@ public class FluidType
      */
     public float getFallDistanceModifier(Entity entity)
     {
-        return this.getFallDistanceModifier();
+        return this.fallDistanceModifier;
     }
 
     /**
@@ -403,7 +286,7 @@ public class FluidType
      */
     public boolean canExtinguish(Entity entity)
     {
-        return this.canExtinguish();
+        return this.canExtinguish;
     }
 
     /**
@@ -430,7 +313,7 @@ public class FluidType
      */
     public boolean canDrownIn(LivingEntity entity)
     {
-        return this.canDrown();
+        return this.canDrown;
     }
 
     /**
@@ -452,7 +335,7 @@ public class FluidType
      */
     public boolean supportsBoating(Boat boat)
     {
-        return this.supportsBoating();
+        return this.supportsBoating;
     }
 
     /**
@@ -478,7 +361,7 @@ public class FluidType
      */
     public boolean canHydrate(Entity entity)
     {
-        return this.canHydrate();
+        return this.canHydrate;
     }
 
     /**
@@ -490,6 +373,7 @@ public class FluidType
      * @param action the action being performed
      * @return the sound to play when performing the action
      */
+    @Nullable
     public SoundEvent getSound(Entity entity, SoundAction action)
     {
         return this.getSound(action);
@@ -507,7 +391,7 @@ public class FluidType
      */
     public boolean canExtinguish(FluidState state, BlockGetter getter, BlockPos pos)
     {
-        return this.canExtinguish();
+        return this.canExtinguish;
     }
 
     /**
@@ -520,7 +404,7 @@ public class FluidType
      */
     public boolean canConvertToSource(FluidState state, LevelReader reader, BlockPos pos)
     {
-        return this.canConvertToSource();
+        return this.canConvertToSource;
     }
 
     /**
@@ -538,7 +422,7 @@ public class FluidType
     @Nullable
     public BlockPathTypes getBlockPathType(FluidState state, BlockGetter level, BlockPos pos, @Nullable Mob mob, boolean canFluidLog)
     {
-        return this.getBlockPathType();
+        return this.pathType;
     }
 
     /**
@@ -557,7 +441,7 @@ public class FluidType
     @Nullable
     public BlockPathTypes getAdjacentBlockPathType(FluidState state, BlockGetter level, BlockPos pos, @Nullable Mob mob, BlockPathTypes originalType)
     {
-        return this.getAdjacentBlockPathType();
+        return this.adjacentPathType;
     }
 
     /**
@@ -589,7 +473,7 @@ public class FluidType
      */
     public boolean canHydrate(FluidState state, BlockGetter getter, BlockPos pos, BlockState source, BlockPos sourcePos)
     {
-        return this.canHydrate();
+        return this.canHydrate;
     }
 
     /**
@@ -670,7 +554,7 @@ public class FluidType
      */
     public boolean canConvertToSource(FluidStack stack)
     {
-        return this.canConvertToSource();
+        return this.canConvertToSource;
     }
 
     /**
@@ -721,7 +605,7 @@ public class FluidType
      */
     public boolean canHydrate(FluidStack stack)
     {
-        return this.canHydrate();
+        return this.canHydrate;
     }
 
     /**

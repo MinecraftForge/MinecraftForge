@@ -77,7 +77,7 @@ public abstract class ForgeFlowingFluid extends FlowingFluid
     @Override
     protected boolean canConvertToSource()
     {
-        return this.getFluidType().canConvertToSource();
+        return false;
     }
 
     @Override
