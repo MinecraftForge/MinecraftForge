@@ -17,10 +17,11 @@ jobs:
     - uses: dessant/support-requests@v2
       with:
         support-label: Forum
-        issue-comment: |
-            :wave: We use the issue tracker exclusively for final bug reports and feature requests.
-            However, this issue appears to be better suited for the
-            [Forge Support Forums](http://www.minecraftforge.net/forum/forum/18-support-bug-reports/).
-            Please create a new topic on the support forum with this issue, and the conversation can
-            continue there.
+        issue-comment: >
+            :wave: We use the issue tracker exclusively for final bug reports and feature requests. 
+            However, this issue appears to be better suited for the 
+            [Forge Support Forums](https://forums.minecraftforge.net/) or 
+            [Forge Discord](https://discord.gg/forge). Please create a new topic on the support forum
+            with this issue or ask in the `#tech-support` channel in the Discord server, and the 
+            conversation can continue there.
         lock-issue: true
