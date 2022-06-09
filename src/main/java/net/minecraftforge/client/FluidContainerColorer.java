@@ -17,7 +17,7 @@ public class FluidContainerColorer implements ItemColor
     {
         if (tintIndex != 1) return 0xFFFFFFFF;
         return FluidUtil.getFluidContained(stack)
-                .map(fstack -> fstack.getFluid().getAttributes().getColor(fstack))
+                .map(fstack -> RenderProperties.get(fstack.getFluid()).getColorTint(fstack))
                 .orElse(0xFFFFFFFF);
     }
 }

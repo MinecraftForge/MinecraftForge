@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/entity/monster/Witch.java
++++ b/net/minecraft/world/entity/monster/Witch.java
+@@ -125,7 +_,7 @@
+             }
+          } else {
+             Potion potion = null;
+-            if (this.f_19796_.m_188501_() < 0.15F && this.m_204029_(FluidTags.f_13131_) && !this.m_21023_(MobEffects.f_19608_)) {
++            if (this.f_19796_.m_188501_() < 0.15F && this.isEyeInFluidType(net.minecraftforge.common.ForgeMod.WATER_TYPE.get()) && !this.m_21023_(MobEffects.f_19608_)) {
+                potion = Potions.f_43621_;
+             } else if (this.f_19796_.m_188501_() < 0.15F && (this.m_6060_() || this.m_21225_() != null && this.m_21225_().m_19384_()) && !this.m_21023_(MobEffects.f_19607_)) {
+                potion = Potions.f_43610_;

@@ -1,6 +1,12 @@
 --- a/net/minecraft/world/entity/LivingEntity.java
 +++ b/net/minecraft/world/entity/LivingEntity.java
-@@ -123,7 +_,9 @@
+@@ -118,12 +_,14 @@
+ import net.minecraft.world.scores.PlayerTeam;
+ import org.slf4j.Logger;
+ 
+-public abstract class LivingEntity extends Entity {
++public abstract class LivingEntity extends Entity implements net.minecraftforge.common.extensions.IForgeLivingEntity {
+    private static final Logger f_201943_ = LogUtils.getLogger();
     private static final UUID f_20929_ = UUID.fromString("662A6B8D-DA3E-4C1C-8813-96EA6097278D");
     private static final UUID f_20959_ = UUID.fromString("87f46a96-686f-4796-b035-22e16ee9e038");
     private static final UUID f_147184_ = UUID.fromString("1eaf83ff-7207-4596-b37a-d7a07b3ec4ce");
@@ -19,7 +25,7 @@
     }
  
     protected void m_7840_(double p_20990_, boolean p_20991_, BlockState p_20992_, BlockPos p_20993_) {
-@@ -292,7 +_,8 @@
+@@ -292,13 +_,15 @@
           if (!p_20992_.m_60795_()) {
              double d0 = Math.min((double)(0.2F + f / 15.0F), 2.5D);
              int i = (int)(150.0D * d0);
@@ -29,6 +35,25 @@
           }
        }
  
+       super.m_7840_(p_20990_, p_20991_, p_20992_, p_20993_);
+    }
+ 
++   @Deprecated //FORGE: Use canDrownInFluidType instead
+    public boolean m_6040_() {
+       return this.m_6336_() == MobType.f_21641_;
+    }
+@@ -337,8 +_,9 @@
+             }
+          }
+ 
+-         if (this.m_204029_(FluidTags.f_13131_) && !this.f_19853_.m_8055_(new BlockPos(this.m_20185_(), this.m_20188_(), this.m_20189_())).m_60713_(Blocks.f_50628_)) {
+-            boolean flag1 = !this.m_6040_() && !MobEffectUtil.m_19588_(this) && (!flag || !((Player)this).m_150110_().f_35934_);
++         boolean canDrown = this.canDrownInFluidType(this.getEyeInFluidType());
++         if (!this.getEyeInFluidType().isAir() && canDrown && !this.f_19853_.m_8055_(new BlockPos(this.m_20185_(), this.m_20188_(), this.m_20189_())).m_60713_(Blocks.f_50628_)) {
++            boolean flag1 = canDrown && !MobEffectUtil.m_19588_(this) && (!flag || !((Player)this).m_150110_().f_35934_);
+             if (flag1) {
+                this.m_20301_(this.m_7302_(this.m_20146_()));
+                if (this.m_20146_() == -20) {
 @@ -356,7 +_,7 @@
                 }
              }
@@ -350,25 +375,27 @@
        if (!this.f_20911_ || this.f_20913_ >= this.m_21304_() / 2 || this.f_20913_ < 0) {
           this.f_20913_ = -1;
           this.f_20911_ = true;
-@@ -1972,14 +_,15 @@
+@@ -1972,14 +_,17 @@
        }
  
        this.f_19812_ = true;
 +      net.minecraftforge.common.ForgeHooks.onLivingJump(this);
     }
  
++   @Deprecated // FORGE: use sinkInFluid instead
     protected void m_21208_() {
 -      this.m_20256_(this.m_20184_().m_82520_(0.0D, (double)-0.04F, 0.0D));
 +      this.m_20256_(this.m_20184_().m_82520_(0.0D, (double)-0.04F * this.m_21051_(net.minecraftforge.common.ForgeMod.SWIM_SPEED.get()).m_22135_(), 0.0D));
     }
  
++   @Deprecated // FORGE: use jumpInFluid instead
     protected void m_203347_(TagKey<Fluid> p_204043_) {
 -      this.m_20256_(this.m_20184_().m_82520_(0.0D, (double)0.04F, 0.0D));
 +      this.m_20256_(this.m_20184_().m_82520_(0.0D, (double)0.04F * this.m_21051_(net.minecraftforge.common.ForgeMod.SWIM_SPEED.get()).m_22135_(), 0.0D));
     }
  
     protected float m_6108_() {
-@@ -1993,11 +_,15 @@
+@@ -1993,14 +_,19 @@
     public void m_7023_(Vec3 p_21280_) {
        if (this.m_6142_() || this.m_6109_()) {
           double d0 = 0.08D;
@@ -384,7 +411,12 @@
 +         d0 = gravity.m_22135_();
  
           FluidState fluidstate = this.f_19853_.m_6425_(this.m_20183_());
-          if (this.m_20069_() && this.m_6129_() && !this.m_203441_(fluidstate)) {
+-         if (this.m_20069_() && this.m_6129_() && !this.m_203441_(fluidstate)) {
++         if ((this.m_20069_() || (this.isInFluidType(fluidstate) && fluidstate.getFluidType() != net.minecraftforge.common.ForgeMod.LAVA_TYPE.get())) && this.m_6129_() && !this.m_203441_(fluidstate)) {
++            if (this.m_20069_() || (this.isInFluidType(fluidstate) && !this.moveInFluid(fluidstate, p_21280_, d0))) {
+             double d9 = this.m_20186_();
+             float f4 = this.m_20142_() ? 0.9F : this.m_6108_();
+             float f5 = 0.02F;
 @@ -2022,6 +_,7 @@
                 f4 = 0.96F;
              }
@@ -393,6 +425,20 @@
              this.m_19920_(f5, p_21280_);
              this.m_6478_(MoverType.SELF, this.m_20184_());
              Vec3 vec36 = this.m_20184_();
+@@ -2035,11 +_,12 @@
+             if (this.f_19862_ && this.m_20229_(vec32.f_82479_, vec32.f_82480_ + (double)0.6F - this.m_20186_() + d9, vec32.f_82481_)) {
+                this.m_20334_(vec32.f_82479_, (double)0.3F, vec32.f_82481_);
+             }
++            }
+          } else if (this.m_20077_() && this.m_6129_() && !this.m_203441_(fluidstate)) {
+             double d8 = this.m_20186_();
+             this.m_19920_(0.02F, p_21280_);
+             this.m_6478_(MoverType.SELF, this.m_20184_());
+-            if (this.m_204036_(FluidTags.f_13132_) <= this.m_20204_()) {
++            if (this.getFluidTypeHeight(net.minecraftforge.common.ForgeMod.LAVA_TYPE.get()) <= this.m_20204_()) {
+                this.m_20256_(this.m_20184_().m_82542_(0.5D, (double)0.8F, 0.5D));
+                Vec3 vec33 = this.m_20994_(d0, flag, this.m_20184_());
+                this.m_20256_(vec33);
 @@ -2100,7 +_,7 @@
              }
           } else {
@@ -427,6 +473,40 @@
              if (map == null) {
                 map = Maps.newEnumMap(EquipmentSlot.class);
              }
+@@ -2502,25 +_,29 @@
+       this.f_19853_.m_46473_().m_6180_("jump");
+       if (this.f_20899_ && this.m_6129_()) {
+          double d7;
++         net.minecraftforge.fluids.FluidType fluidType = this.getMaxHeightFluidType();
++         if (!fluidType.isAir()) d7 = this.getFluidTypeHeight(fluidType);
+          if (this.m_20077_()) {
+-            d7 = this.m_204036_(FluidTags.f_13132_);
++            d7 = this.getFluidTypeHeight(net.minecraftforge.common.ForgeMod.LAVA_TYPE.get());
+          } else {
+-            d7 = this.m_204036_(FluidTags.f_13131_);
++            d7 = this.getFluidTypeHeight(net.minecraftforge.common.ForgeMod.WATER_TYPE.get());
+          }
+ 
+          boolean flag1 = this.m_20069_() && d7 > 0.0D;
+          double d8 = this.m_20204_();
+          if (!flag1 || this.f_19861_ && !(d7 > d8)) {
+             if (!this.m_20077_() || this.f_19861_ && !(d7 > d8)) {
++               if (fluidType.isAir() || this.f_19861_ && !(d7 > d8)) {
+                if ((this.f_19861_ || flag1 && d7 <= d8) && this.f_20954_ == 0) {
+                   this.m_6135_();
+                   this.f_20954_ = 10;
+                }
++               } else this.jumpInFluid(fluidType);
+             } else {
+-               this.m_203347_(FluidTags.f_13132_);
++               this.jumpInFluid(net.minecraftforge.common.ForgeMod.LAVA_TYPE.get());
+             }
+          } else {
+-            this.m_203347_(FluidTags.f_13131_);
++            this.jumpInFluid(net.minecraftforge.common.ForgeMod.WATER_TYPE.get());
+          }
+       } else {
+          this.f_20954_ = 0;
 @@ -2575,6 +_,8 @@
        boolean flag = this.m_20291_(7);
        if (flag && !this.f_19861_ && !this.m_20159_() && !this.m_21023_(MobEffects.f_19620_)) {

@@ -1,0 +1,20 @@
+--- a/net/minecraft/world/entity/monster/Strider.java
++++ b/net/minecraft/world/entity/monster/Strider.java
+@@ -276,7 +_,7 @@
+       if (!this.m_21525_()) {
+          BlockState blockstate = this.f_19853_.m_8055_(this.m_20183_());
+          BlockState blockstate1 = this.m_217002_();
+-         boolean flag = blockstate.m_204336_(BlockTags.f_13086_) || blockstate1.m_204336_(BlockTags.f_13086_) || this.m_204036_(FluidTags.f_13132_) > 0.0D;
++         boolean flag = blockstate.m_204336_(BlockTags.f_13086_) || blockstate1.m_204336_(BlockTags.f_13086_) || this.getFluidTypeHeight(net.minecraftforge.common.ForgeMod.LAVA_TYPE.get()) > 0.0D;
+          this.m_33951_(!flag);
+       }
+ 
+@@ -326,7 +_,7 @@
+    }
+ 
+    protected boolean m_7310_(Entity p_33950_) {
+-      return !this.m_20160_() && !this.m_204029_(FluidTags.f_13132_);
++      return !this.m_20160_() && !this.isEyeInFluidType(net.minecraftforge.common.ForgeMod.LAVA_TYPE.get());
+    }
+ 
+    public boolean m_6126_() {

@@ -234,12 +234,12 @@ public class FluidStack
 
     public Component getDisplayName()
     {
-        return this.getFluid().getAttributes().getDisplayName(this);
+        return this.getFluid().getFluidType().getDescription(this);
     }
 
     public String getTranslationKey()
     {
-        return this.getFluid().getAttributes().getTranslationKey(this);
+        return this.getFluid().getFluidType().getDescriptionId(this);
     }
 
     /**

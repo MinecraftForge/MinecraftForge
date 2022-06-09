@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/entity/animal/horse/SkeletonHorse.java
++++ b/net/minecraft/world/entity/animal/horse/SkeletonHorse.java
+@@ -43,7 +_,7 @@
+ 
+    protected SoundEvent m_7515_() {
+       super.m_7515_();
+-      return this.m_204029_(FluidTags.f_13131_) ? SoundEvents.f_12429_ : SoundEvents.f_12425_;
++      return this.isEyeInFluidType(net.minecraftforge.common.ForgeMod.WATER_TYPE.get()) ? SoundEvents.f_12429_ : SoundEvents.f_12425_;
+    }
+ 
+    protected SoundEvent m_5592_() {

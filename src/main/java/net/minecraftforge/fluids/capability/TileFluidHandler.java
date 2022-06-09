@@ -13,14 +13,14 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.core.Direction;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.fluids.FluidAttributes;
+import net.minecraftforge.fluids.FluidType;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class TileFluidHandler extends BlockEntity
 {
-    protected FluidTank tank = new FluidTank(FluidAttributes.BUCKET_VOLUME);
+    protected FluidTank tank = new FluidTank(FluidType.BUCKET_VOLUME);
 
     private final LazyOptional<IFluidHandler> holder = LazyOptional.of(() -> tank);
 
