@@ -11,12 +11,11 @@ import net.minecraftforge.fml.loading.StringUtils;
 import net.minecraftforge.forgespi.language.IConfigurable;
 import net.minecraftforge.forgespi.language.IModInfo;
 import net.minecraftforge.forgespi.language.MavenVersionAdapter;
+import net.minecraftforge.forgespi.locating.ForgeFeature;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 import org.apache.maven.artifact.versioning.VersionRange;
 import org.slf4j.Logger;
-import org.slf4j.Marker;
-import org.slf4j.MarkerFactory;
 
 import java.net.URL;
 import java.util.Collections;
@@ -43,6 +42,8 @@ public class ModInfo implements IModInfo, IConfigurable
     private final boolean logoBlur;
     private final Optional<URL> updateJSONURL;
     private final List<? extends IModInfo.ModVersion> dependencies;
+
+    private final List<ForgeFeature.Bound> features;
     private final Map<String,Object> properties;
     private final IConfigurable config;
     private final Optional<URL> modUrl;
@@ -83,6 +84,12 @@ public class ModInfo implements IModInfo, IConfigurable
                 .map(dep -> new ModVersion(this, dep))
                 .collect(Collectors.toList()))
                 .orElse(Collections.emptyList());
+
+        this.features = ownFile.map(mfi -> mfi.<Map<String, String>>getConfigElement("features", this.modId)
+                .stream()
+                .flatMap(m->m.entrySet().stream())
+                .map(e->new ForgeFeature.Bound(e.getKey(), e.getValue(), this))
+                .collect(Collectors.toList())).orElse(Collections.emptyList());
 
         this.properties = ownFile.map(mfi -> mfi.<Map<String, Object>>getConfigElement("modproperties", this.modId)
                 .orElse(Collections.emptyMap()))
@@ -154,6 +161,11 @@ public class ModInfo implements IModInfo, IConfigurable
     @Override
     public IConfigurable getConfig() {
         return this;
+    }
+
+    @Override
+    public List<? extends ForgeFeature.Bound> getForgeFeatures() {
+        return this.features;
     }
 
     @Override
