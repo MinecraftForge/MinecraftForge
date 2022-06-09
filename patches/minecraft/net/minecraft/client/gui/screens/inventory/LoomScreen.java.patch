@@ -1,0 +1,44 @@
+--- a/net/minecraft/client/gui/screens/inventory/LoomScreen.java
++++ b/net/minecraft/client/gui/screens/inventory/LoomScreen.java
+@@ -125,20 +_,20 @@
+          int l2 = j + 13;
+          int l = this.f_99072_ + 16;
+ 
+-         for(int i1 = this.f_99072_; i1 < l && i1 < BannerPattern.f_58526_ - BannerPattern.f_58527_; ++i1) {
++         for(int i1 = this.f_99072_; i1 < l && i1 < net.minecraftforge.common.ForgeHooks.getNonPatternItemCount(); ++i1) {
+             int j1 = i1 - this.f_99072_;
+             int k1 = j2 + j1 % 4 * 14;
+             int l1 = l2 + j1 / 4 * 14;
+             RenderSystem.m_157456_(0, f_99060_);
+             int i2 = this.f_97727_;
+-            if (i1 == this.f_97732_.m_39891_()) {
++            if (net.minecraftforge.common.ForgeHooks.getActualPatternIndex(i1) == this.f_97732_.m_39891_()) {
+                i2 += 14;
+             } else if (p_99101_ >= k1 && p_99102_ >= l1 && p_99101_ < k1 + 14 && p_99102_ < l1 + 14) {
+                i2 += 28;
+             }
+ 
+             this.m_93228_(p_99099_, k1, l1, 0, i2, 14, 14);
+-            this.m_99108_(i1, k1, l1);
++            this.m_99108_(net.minecraftforge.common.ForgeHooks.getActualPatternIndex(i1), k1, l1);
+          }
+       } else if (this.f_99068_) {
+          int k2 = i + 60;
+@@ -209,7 +_,7 @@
+          int j = i + 56;
+          this.f_99070_ = ((float)p_99088_ - (float)i - 7.5F) / ((float)(j - i) - 15.0F);
+          this.f_99070_ = Mth.m_14036_(this.f_99070_, 0.0F, 1.0F);
+-         int k = f_99061_ - 4;
++         int k = net.minecraftforge.common.ForgeHooks.getTotalPatternRows() - 4;
+          int l = (int)((double)(this.f_99070_ * (float)k) + 0.5D);
+          if (l < 0) {
+             l = 0;
+@@ -224,7 +_,7 @@
+ 
+    public boolean m_6050_(double p_99079_, double p_99080_, double p_99081_) {
+       if (this.f_99067_) {
+-         int i = f_99061_ - 4;
++         int i = net.minecraftforge.common.ForgeHooks.getTotalPatternRows() - 4;
+          float f = (float)p_99081_ / (float)i;
+          this.f_99070_ = Mth.m_14036_(this.f_99070_ - f, 0.0F, 1.0F);
+          this.f_99072_ = 1 + (int)(this.f_99070_ * (float)i + 0.5F) * 4;

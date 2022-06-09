@@ -8,7 +8,7 @@
        this.f_85648_.clear();
        return Pair.of(bufferbuilder$drawstate, bytebuffer);
     }
-@@ -444,4 +_,15 @@
+@@ -444,4 +_,16 @@
           this.f_166822_ = p_166829_;
        }
     }
@@ -22,5 +22,6 @@
 +      this.f_85652_ += buffer.limit();
 +   }
 +
++   @Override
 +   public VertexFormat getVertexFormat() { return this.f_85658_; }
  }

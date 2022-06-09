@@ -10,6 +10,8 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.network.event.EventNetworkChannel;
 import net.minecraftforge.network.simple.SimpleChannel;
+import net.minecraftforge.registries.DataPackRegistriesHooks;
+
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -80,7 +82,7 @@ public class NetworkRegistry
     }
 
     public static boolean acceptsVanillaClientConnections() {
-        return instances.isEmpty() || getServerNonVanillaNetworkMods().isEmpty();
+        return (instances.isEmpty() || getServerNonVanillaNetworkMods().isEmpty()) && DataPackRegistriesHooks.getSyncedCustomRegistries().isEmpty();
     }
 
     public static boolean canConnectToVanillaServer() {
@@ -199,9 +201,9 @@ public class NetworkRegistry
      * supplied impl protocol version.
      *
      * @param channels An @{@link Map} of name->version pairs for testing
-     * @return true if all channels accept themselves
+     * @return a map of mismatched channel ids and versions, or an empty map if all channels accept themselves
      */
-    static boolean validateClientChannels(final Map<ResourceLocation, String> channels) {
+    static Map<ResourceLocation, String> validateClientChannels(final Map<ResourceLocation, String> channels) {
         return validateChannels(channels, "server", NetworkInstance::tryServerVersionOnClient);
     }
 
@@ -209,9 +211,9 @@ public class NetworkRegistry
      * Validate the channels from the client on the server. Tests the server predicates against the client
      * supplied impl protocol version.
      * @param channels An @{@link Map} of name->version pairs for testing
-     * @return true if all channels accept themselves
+     * @return a map of mismatched channel ids and versions, or an empty map if all channels accept themselves
      */
-    static boolean validateServerChannels(final Map<ResourceLocation, String> channels) {
+    static Map<ResourceLocation, String> validateServerChannels(final Map<ResourceLocation, String> channels) {
         return validateChannels(channels, "client", NetworkInstance::tryClientVersionOnServer);
     }
 
@@ -221,25 +223,25 @@ public class NetworkRegistry
      * @param incoming An @{@link Map} of name->version pairs for testing
      * @param originName A label for use in logging (where the version pairs came from)
      * @param testFunction The test function to use for testing
-     * @return true if all channels accept themselves
+     * @return a map of mismatched channel ids and versions, or an empty map if all channels accept themselves
      */
-    private static boolean validateChannels(final Map<ResourceLocation, String> incoming, final String originName, BiFunction<NetworkInstance, String, Boolean> testFunction) {
-        final List<Pair<ResourceLocation, Boolean>> results = instances.values().stream().
+    private static Map<ResourceLocation, String> validateChannels(final Map<ResourceLocation, String> incoming, final String originName, BiFunction<NetworkInstance, String, Boolean> testFunction) {
+        final Map<ResourceLocation, String> results = instances.values().stream().
                 map(ni -> {
                     final String incomingVersion = incoming.getOrDefault(ni.getChannelName(), ABSENT);
                     final boolean test = testFunction.apply(ni, incomingVersion);
                     LOGGER.debug(NETREGISTRY, "Channel '{}' : Version test of '{}' from {} : {}", ni.getChannelName(), incomingVersion, originName, test ? "ACCEPTED" : "REJECTED");
-                    return Pair.of(ni.getChannelName(), test);
-                }).filter(p->!p.getRight()).collect(Collectors.toList());
+                    return Pair.of(Pair.of(ni.getChannelName(), incomingVersion), test);
+                }).filter(p->!p.getRight()).map(Pair::getLeft).collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
 
         if (!results.isEmpty()) {
             LOGGER.error(NETREGISTRY, "Channels [{}] rejected their {} side version number",
-                    results.stream().map(Pair::getLeft).map(Object::toString).collect(Collectors.joining(",")),
+                    results.keySet().stream().map(Object::toString).collect(Collectors.joining(",")),
                     originName);
-            return false;
+            return results;
         }
         LOGGER.debug(NETREGISTRY, "Accepting channel list from {}", originName);
-        return true;
+        return results;
     }
 
     /**
@@ -316,10 +318,21 @@ public class NetworkRegistry
          */
         private final String messageContext;
 
+        /**
+         * If the connection should await a response to this packet to continue with the handshake
+         */
+        private final boolean needsResponse;
+
         public LoginPayload(final FriendlyByteBuf buffer, final ResourceLocation channelName, final String messageContext) {
+            this(buffer, channelName, messageContext, true);
+        }
+
+        public LoginPayload(final FriendlyByteBuf buffer, final ResourceLocation channelName, final String messageContext, final boolean needsResponse)
+        {
             this.data = buffer;
             this.channelName = channelName;
             this.messageContext = messageContext;
+            this.needsResponse = needsResponse;
         }
 
         public FriendlyByteBuf getData() {
@@ -332,6 +345,11 @@ public class NetworkRegistry
 
         public String getMessageContext() {
             return messageContext;
+        }
+
+        public boolean needsResponse()
+        {
+            return needsResponse;
         }
     }
 

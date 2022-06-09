@@ -223,6 +223,14 @@ license="LGPL v2.1"
 [[mods]]
     modId="custom_transformtype_test"
 [[mods]]
+    modId="custom_rarity_test"
+[[mods]]
+    modId="data_pack_registries_test"
+[[mods]]
+    modId="banner_pattern_test"
+[[mods]]
+    modId="mod_mismatch_test"
+[[mods]]
     modId="poi_type_for_block_state_test"
 
 # ADD ABOVE THIS LINE

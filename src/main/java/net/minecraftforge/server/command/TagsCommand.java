@@ -24,6 +24,7 @@ import net.minecraft.commands.arguments.ResourceLocationArgument;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.Registry;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.ComponentUtils;
 import net.minecraft.network.chat.HoverEvent;
@@ -232,8 +233,11 @@ class TagsCommand
     private static CompletableFuture<Suggestions> suggestRegistries(final CommandContext<CommandSourceStack> ctx,
             final SuggestionsBuilder builder)
     {
-        ctx.getSource().suggestRegistryElements(Registry.REGISTRY,
-                SharedSuggestionProvider.ElementSuggestionType.ELEMENTS, builder);
+        ctx.getSource().registryAccess().registries()
+                .map(RegistryAccess.RegistryEntry::key)
+                .map(ResourceKey::location)
+                .map(ResourceLocation::toString)
+                .forEach(builder::suggest);
         return builder.buildFuture();
     }
 

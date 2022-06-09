@@ -5,7 +5,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:[5.1.26,)'
+        classpath 'net.minecraftforge.gradle:ForgeGradle:[5.1.39,)'
     }
 }
 
@@ -17,6 +17,7 @@ import java.util.LinkedHashMap
 import net.minecraftforge.forge.tasks.*
 import static net.minecraftforge.forge.tasks.Util.*
 import net.minecraftforge.gradle.common.tasks.ApplyBinPatches
+import net.minecraftforge.gradle.common.tasks.CheckJarCompatibility
 import net.minecraftforge.gradle.common.tasks.DownloadMavenArtifact
 import net.minecraftforge.gradle.common.tasks.ExtractInheritance
 import net.minecraftforge.gradle.common.tasks.SignJar
@@ -69,6 +70,7 @@ ext {
     JAR_SPLITTER = 'net.minecraftforge:jarsplitter:1.1.4'
     FART = 'net.minecraftforge:ForgeAutoRenamingTool:0.1.22:all'
     MIN_TAG_FOR_CHANGELOG = "39.0"
+    LAST_RB = GIT_INFO.tag.rsplit('.', 1)[1] as int >= 1 ? GIT_INFO.tag + '.0' : null
 }
 
 println('Version: ' + VERSION +
@@ -425,7 +427,7 @@ def sharedFmlonlyForge = { Project prj ->
         }
 
         // SecureJarHandler bootstrap values.
-        run.property 'ignoreList', prj.configurations.moduleonly.files.collect {it.name.replaceAll(/([-_]([.\d]*\d+)|\.jar$)/, '') }.join(',') + ",client-extra,fmlcore,javafmllanguage,mclanguage,${prj.name}-"
+        run.property 'ignoreList', prj.configurations.moduleonly.files.collect {it.name.replaceAll(/([-_]([.\d]*\d+)|\.jar$)/, '') }.join(',') + ",client-extra,fmlcore,javafmllanguage,lowcodelanguage,mclanguage,${prj.name}-"
         // FIXME: Without this jna doesn't work at runtime. Someone figure out why please?
         run.property 'mergeModules', 'jna-5.10.0.jar,jna-platform-5.10.0.jar,java-objc-bridge-1.0.0.jar'
         if (userdevRuns.contains(run)) {
@@ -486,7 +488,7 @@ def sharedFmlonlyForge = { Project prj ->
             IGNORE_LIST: Util.getArtifacts(prj, prj.configurations.moduleonly, false).values().collect{it.downloads.artifact.path.rsplit('/', 1)[1]}.join(','),
             MODULES: 'ALL-MODULE-PATH'
     ]
-    
+
     prj.task([dependsOn: rootProject.downloadServerRaw], 'makeClasspathFiles') {
         doLast {
             def CLASS_PATH = Util.getArtifacts(prj, prj.configurations.installer, false).values().collect{"libraries/${it.downloads.artifact.path}"} +
@@ -539,7 +541,7 @@ project(':fmlonly') {
 
     ext {
         MCP_ARTIFACT = project(':mcp').mcp.config.get()
-        PACKED_DEPS = [':fmlcore:jar', ':fmlloader:jar', ':javafmllanguage:jar', ':mclanguage:jar']
+        PACKED_DEPS = [':fmlcore:jar', ':fmlloader:jar', ':javafmllanguage:jar', ':lowcodelanguage:jar', ':mclanguage:jar']
         MAVEN_PATH = "${group.replace('.', '/')}/${project.name}/${VERSION}"
     }
 
@@ -568,6 +570,7 @@ project(':fmlonly') {
         implementation project(':fmlcore')
         implementation project(':fmlloader')
         implementation project(':javafmllanguage')
+        implementation project(':lowcodelanguage')
         implementation project(':mclanguage')
         runtimeOnly "cpw.mods:bootstraplauncher:${BOOTSTRAPLAUNCHER_VERSION}"
     }
@@ -845,7 +848,7 @@ project(':fmlonly') {
     }
 
     // Since we need the modules in the bootstrap, we need to make sure they are compiled before we do each run
-    afterEvaluate { prepareRuns.dependsOn(':fmlcore:jar', ':fmlloader:jar', ':javafmllanguage:jar', ':mclanguage:jar') }
+    afterEvaluate { prepareRuns.dependsOn(PACKED_DEPS) }
 }
 
 project(':forge') {
@@ -894,7 +897,7 @@ project(':forge') {
         // Essentially, the same as the old, except dropping the first number, and the builds are no longer unique.
         MCP_ARTIFACT = project(':mcp').mcp.config.get()
         VERSION_JSON = project(':mcp').file('build/mcp/downloadJson/version.json')
-        PACKED_DEPS = [':fmlcore:jar', ':fmlloader:jar', ':javafmllanguage:jar', ':mclanguage:jar']
+        PACKED_DEPS = [':fmlcore:jar', ':fmlloader:jar', ':javafmllanguage:jar', ':lowcodelanguage:jar', ':mclanguage:jar']
         MAVEN_PATH = "${group.replace('.', '/')}/${project.name}/${VERSION}"
     }
 
@@ -915,6 +918,7 @@ project(':forge') {
         implementation project(':fmlcore')
         implementation project(':fmlloader')
         implementation project(':javafmllanguage')
+        implementation project(':lowcodelanguage')
         implementation project(':mclanguage')
         runtimeOnly "cpw.mods:bootstraplauncher:${BOOTSTRAPLAUNCHER_VERSION}"
     }
@@ -1044,6 +1048,7 @@ project(':forge') {
                             '--mod', 'remove_tag_datagen_test',
                             '--mod', 'tag_based_tool_types',
                             '--mod', 'custom_transformtype_test',
+                            '--mod', 'data_pack_registries_test',
                             '--output', rootProject.file('src/generated_test/resources/'),
                             '--existing', sourceSets.main.resources.srcDirs[0],
                             '--existing', sourceSets.test.resources.srcDirs[0]
@@ -1173,6 +1178,54 @@ project(':forge') {
         finalizedBy checkPatches
         autoHeader true
         lineEnding = '\n'
+    }
+
+    def baseForgeVersion = LAST_RB == null ? null : "${MC_VERSION}-${LAST_RB}"
+
+    task downloadBaseCompatibilityBinPatches(type: DownloadBaseCompatibilityBinPatches) {
+        inputVersion = baseForgeVersion
+    }
+
+    task applyBaseCompatibilityJarBinPatches(type: ApplyBinPatches) {
+        group = 'jar compatibility'
+        onlyIf {
+            baseForgeVersion != null
+        }
+        inputs.property 'baseForgeVersion', baseForgeVersion
+
+        clean = createJoinedSRG.output
+        patch = downloadBaseCompatibilityBinPatches.output
+        output = project.layout.buildDirectory.dir(name).map { it.file('output.jar') }
+    }
+
+    task checkJarCompatibility(type: CheckJarCompatibility) {
+        group = 'jar compatibility'
+        onlyIf {
+            baseForgeVersion != null
+        }
+        inputs.property 'baseForgeVersion', baseForgeVersion
+
+        if (baseForgeVersion != null) {
+            def baseForgeUniversal = project.configurations.detachedConfiguration(project.dependencies.create("net.minecraftforge:forge:${baseForgeVersion}:universal"))
+            def fmlLibs = project.configurations.detachedConfiguration(PACKED_DEPS.collect {
+                def artifactId = it.split(':')[1]
+                return project.dependencies.create("net.minecraftforge:${artifactId}:${baseForgeVersion}")
+            }.toArray(Dependency[]::new))
+
+            baseJar = project.tasks.applyBaseCompatibilityJarBinPatches.output
+            baseLibraries.from(project.file(project.provider {
+                baseForgeUniversal.resolve().iterator().next()
+            }))
+            baseLibraries.from(project.tasks.createJoinedSRG.output)
+            baseLibraries.from(fmlLibs)
+
+            inputJar = project.tasks.reobfJar.output
+            concreteLibraries.from(PACKED_DEPS.collect { rootProject.tasks.getByPath(it).archiveFile })
+
+            commonLibraries.from(project.configurations.minecraftImplementation)
+            commonLibraries.from(project.configurations.installer)
+            commonLibraries.from(project.configurations.moduleonly)
+        }
     }
 
     task launcherJson(type: LauncherJson) {
@@ -1538,7 +1591,7 @@ project(':forge') {
         }
     }
     // Since we need the modules in the bootstrap, we need to make sure they are compiled before we do each run
-    afterEvaluate { prepareRuns.dependsOn(':fmlcore:jar', ':fmlloader:jar', ':javafmllanguage:jar', ':mclanguage:jar') }
+    afterEvaluate { prepareRuns.dependsOn(PACKED_DEPS) }
 
     tasks.withType(JavaCompile).configureEach {
         options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation

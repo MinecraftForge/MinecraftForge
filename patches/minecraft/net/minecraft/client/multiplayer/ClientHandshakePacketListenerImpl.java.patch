@@ -8,6 +8,15 @@
        this.f_104522_.m_129505_(new ClientPacketListener(this.f_104519_, this.f_104520_, this.f_104522_, this.f_104523_, this.f_104519_.m_193590_()));
     }
  
+@@ -122,7 +_,7 @@
+       if (this.f_104520_ != null && this.f_104520_ instanceof RealmsScreen) {
+          this.f_104519_.m_91152_(new DisconnectedRealmsScreen(this.f_104520_, CommonComponents.f_130661_, p_104543_));
+       } else {
+-         this.f_104519_.m_91152_(new DisconnectedScreen(this.f_104520_, CommonComponents.f_130661_, p_104543_));
++         this.f_104519_.m_91152_(net.minecraftforge.network.NetworkHooks.getModMismatchData(f_104522_) != null ? new net.minecraftforge.client.gui.ModMismatchDisconnectedScreen(this.f_104520_, CommonComponents.f_130661_, p_104543_, net.minecraftforge.network.NetworkHooks.getModMismatchData(f_104522_)) : new DisconnectedScreen(this.f_104520_, CommonComponents.f_130661_, p_104543_));
+       }
+ 
+    }
 @@ -143,6 +_,7 @@
     }
  

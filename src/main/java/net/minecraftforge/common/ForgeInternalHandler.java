@@ -99,9 +99,12 @@ public class ForgeInternalHandler
     }
 
     @SubscribeEvent
-    public synchronized void tagsUpdated(TagsUpdatedEvent event)
+    public void tagsUpdated(TagsUpdatedEvent event)
     {
-        ForgeHooks.updateBurns();
+        if (event.shouldUpdateStaticData())
+        {
+            ForgeHooks.updateBurns();
+        }
     }
 
     @SubscribeEvent

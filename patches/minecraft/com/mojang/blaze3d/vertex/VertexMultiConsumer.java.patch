@@ -1,0 +1,25 @@
+--- a/com/mojang/blaze3d/vertex/VertexMultiConsumer.java
++++ b/com/mojang/blaze3d/vertex/VertexMultiConsumer.java
+@@ -91,6 +_,8 @@
+          this.f_86171_.m_141991_();
+          this.f_86172_.m_141991_();
+       }
++
++      public VertexFormat getVertexFormat() { return f_86171_.getVertexFormat(); }
+    }
+ 
+    @OnlyIn(Dist.CLIENT)
+@@ -176,6 +_,13 @@
+ 
+       public void m_141991_() {
+          this.m_167144_(VertexConsumer::m_141991_);
++      }
++
++      public VertexFormat getVertexFormat()
++      {
++         if (f_167071_.length > 0)
++            return f_167071_[0].getVertexFormat();
++         return DefaultVertexFormat.f_85811_;
+       }
+    }
+ }
