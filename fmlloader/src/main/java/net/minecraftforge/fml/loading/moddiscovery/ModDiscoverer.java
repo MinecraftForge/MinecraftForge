@@ -53,7 +53,7 @@ public class ModDiscoverer {
             LOGGER.debug(LogMarkers.SCAN,"Trying locator {}", locator);
             var modFiles = locator.scanMods();
             for (IModFile mf : modFiles) {
-                LOGGER.info(LogMarkers.SCAN, "Found mod file {} of type {} with locator {}", mf.getFileName(), mf.getType(), mf.getLocator());
+                LOGGER.info(LogMarkers.SCAN, "Found mod file {} of type {} with provider {}", mf.getFileName(), mf.getType(), mf.getProvider());
                 StartupMessageManager.modLoaderConsumer().ifPresent(c->c.accept("Found mod file "+mf.getFileName()+" of type "+mf.getType()));
             }
             loadedFiles.addAll(modFiles);
