@@ -6,7 +6,7 @@ on:
     - labeled
     - unlabeled
     - reopened
-    
+
 permissions:
   issues: write
 
@@ -24,4 +24,3 @@ jobs:
             Please create a new topic on the support forum with this issue, and the conversation can
             continue there.
         lock-issue: true
-    
