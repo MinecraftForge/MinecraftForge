@@ -5,7 +5,7 @@
           this.f_86172_.m_141991_();
        }
 +
-+      public com.mojang.blaze3d.vertex.VertexFormat getVertexFormat() { return f_86171_.getVertexFormat(); }
++      public VertexFormat getVertexFormat() { return f_86171_.getVertexFormat(); }
     }
  
     @OnlyIn(Dist.CLIENT)
@@ -15,7 +15,7 @@
           this.m_167144_(VertexConsumer::m_141991_);
 +      }
 +
-+      public com.mojang.blaze3d.vertex.VertexFormat getVertexFormat()
++      public VertexFormat getVertexFormat()
 +      {
 +         if (f_167071_.length > 0)
 +            return f_167071_[0].getVertexFormat();

@@ -5,5 +5,5 @@
        return this;
     }
 +
-+   public com.mojang.blaze3d.vertex.VertexFormat getVertexFormat() { return f_85867_.getVertexFormat(); }
++   public VertexFormat getVertexFormat() { return f_85867_.getVertexFormat(); }
  }
