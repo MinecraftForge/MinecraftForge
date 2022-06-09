@@ -1,0 +1,10 @@
+--- a/net/minecraft/client/renderer/OutlineBufferSource.java
++++ b/net/minecraft/client/renderer/OutlineBufferSource.java
+@@ -105,5 +_,7 @@
+       public void m_5752_() {
+          this.f_109936_.m_5483_(this.f_109937_, this.f_109938_, this.f_109939_).m_6122_(this.f_85825_, this.f_85826_, this.f_85827_, this.f_85828_).m_7421_(this.f_109940_, this.f_109941_).m_5752_();
+       }
++
++      public com.mojang.blaze3d.vertex.VertexFormat getVertexFormat() { return f_109936_.getVertexFormat(); }
+    }
+ }
