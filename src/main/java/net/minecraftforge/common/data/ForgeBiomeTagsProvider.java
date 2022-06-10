@@ -39,12 +39,12 @@ public final class ForgeBiomeTagsProvider extends BiomeTagsProvider
         tag(Biomes.FROZEN_RIVER, Tags.Biomes.IS_COLD_OVERWORLD, Tags.Biomes.IS_SNOWY, Tags.Biomes.IS_OVERWORLD);
         tag(Biomes.SNOWY_PLAINS, Tags.Biomes.IS_COLD_OVERWORLD, Tags.Biomes.IS_SNOWY, Tags.Biomes.IS_WASTELAND, Tags.Biomes.IS_PLAINS, Tags.Biomes.IS_OVERWORLD);
         tag(Biomes.MUSHROOM_FIELDS, Tags.Biomes.IS_MUSHROOM, Tags.Biomes.IS_RARE, Tags.Biomes.IS_OVERWORLD);
-        tag(Biomes.BEACH, Tags.Biomes.IS_BEACH, Tags.Biomes.IS_OVERWORLD);
+        tag(Biomes.BEACH, Tags.Biomes.IS_OVERWORLD);
         tag(Biomes.JUNGLE, Tags.Biomes.IS_HOT_OVERWORLD, Tags.Biomes.IS_WET_OVERWORLD, Tags.Biomes.IS_DENSE_OVERWORLD, Tags.Biomes.IS_OVERWORLD);
         tag(Biomes.SPARSE_JUNGLE, Tags.Biomes.IS_HOT_OVERWORLD, Tags.Biomes.IS_WET_OVERWORLD, Tags.Biomes.IS_RARE, Tags.Biomes.IS_OVERWORLD);
         tag(Biomes.DEEP_OCEAN, Tags.Biomes.IS_OVERWORLD);
-        tag(Biomes.STONY_SHORE, Tags.Biomes.IS_BEACH, Tags.Biomes.IS_OVERWORLD);
-        tag(Biomes.SNOWY_BEACH, Tags.Biomes.IS_COLD_OVERWORLD, Tags.Biomes.IS_BEACH, Tags.Biomes.IS_SNOWY, Tags.Biomes.IS_OVERWORLD);
+        tag(Biomes.STONY_SHORE, Tags.Biomes.IS_OVERWORLD);
+        tag(Biomes.SNOWY_BEACH, Tags.Biomes.IS_COLD_OVERWORLD, Tags.Biomes.IS_SNOWY, Tags.Biomes.IS_OVERWORLD);
         tag(Biomes.BIRCH_FOREST, Tags.Biomes.IS_OVERWORLD);
         tag(Biomes.DARK_FOREST, Tags.Biomes.IS_SPOOKY, Tags.Biomes.IS_DENSE_OVERWORLD, Tags.Biomes.IS_OVERWORLD);
         tag(Biomes.SNOWY_TAIGA, Tags.Biomes.IS_COLD_OVERWORLD, Tags.Biomes.IS_CONIFEROUS, Tags.Biomes.IS_SNOWY, Tags.Biomes.IS_OVERWORLD);
