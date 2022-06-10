@@ -24,6 +24,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.core.Registry;
 import net.minecraftforge.fml.ModLoader;
+import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.network.HandshakeMessages;
 import net.minecraftforge.registries.ForgeRegistry.Snapshot;
 import org.apache.commons.lang3.tuple.Pair;
@@ -152,7 +153,7 @@ public class RegistryManager
         NewRegistryEvent event = new NewRegistryEvent();
         vanillaRegistryKeys = Set.copyOf(Registry.REGISTRY.keySet());
 
-        ModLoader.get().postEvent(event);
+        ModLoader.get().postEventWithWrap(event, (mc, e) -> ModLoadingContext.get().setActiveContainer(mc), (mc, e) -> ModLoadingContext.get().setActiveContainer(null));
 
         event.fill();
     }

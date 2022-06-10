@@ -148,7 +148,7 @@ public class ModSorter
         systemMods.add("minecraft");
         // Find mod file from MinecraftLocator to define the system mods
         modFiles.stream()
-                .filter(modFile -> modFile.getLocator().getClass() == MinecraftLocator.class)
+                .filter(modFile -> modFile.getProvider().getClass() == MinecraftLocator.class)
                 .map(ModFile::getSecureJar)
                 .map(SecureJar::getManifest)
                 .map(Manifest::getMainAttributes)

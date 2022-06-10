@@ -12,6 +12,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.mojang.serialization.Lifecycle;
+import java.util.LinkedHashSet;
 import net.minecraft.core.DefaultedRegistry;
 import net.minecraft.core.IdMapper;
 import net.minecraft.core.MappedRegistry;
@@ -39,6 +40,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.loot.GlobalLootModifierSerializer;
 import net.minecraftforge.common.util.LogMessageAdapter;
 import net.minecraftforge.common.world.ForgeWorldPreset;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoader;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.StartupMessageManager;
@@ -296,20 +298,14 @@ public class GameData
         Set<ResourceLocation> keySet = new HashSet<>(RegistryManager.ACTIVE.registries.keySet());
         keySet.addAll(RegistryManager.getVanillaRegistryKeys());
         keySet.addAll(BuiltinRegistries.REGISTRY.keySet());
-        List<ResourceLocation> keys = keySet.stream()
-                .sorted((o1, o2) -> String.valueOf(o1).compareToIgnoreCase(String.valueOf(o2)))
-                .collect(Collectors.toList());
 
-        //Move Blocks to first, and Items to second.
-        keys.remove(BLOCKS.location());
-        keys.remove(ITEMS.location());
-
-        keys.add(0, BLOCKS.location());
-        keys.add(1, ITEMS.location());
+        Set<ResourceLocation> ordered = new LinkedHashSet<>(MappedRegistry.getKnownRegistries());
+        ordered.retainAll(keySet);
+        ordered.addAll(keySet.stream().sorted(ResourceLocation::compareNamespaced).toList());
 
         RuntimeException aggregate = new RuntimeException();
 
-        for (ResourceLocation rootRegistryName : keys)
+        for (ResourceLocation rootRegistryName : ordered)
         {
             try
             {
@@ -322,7 +318,7 @@ public class GameData
                 if (forgeRegistry != null)
                     forgeRegistry.unfreeze();
 
-                ModLoader.get().postEvent(registerEvent);
+                ModLoader.get().postEventWithWrap(registerEvent, (mc, e) -> ModLoadingContext.get().setActiveContainer(mc), (mc, e)-> ModLoadingContext.get().setActiveContainer(null));
 
                 if (forgeRegistry != null)
                     forgeRegistry.freeze();

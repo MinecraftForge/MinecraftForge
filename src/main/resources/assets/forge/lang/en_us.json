@@ -61,6 +61,7 @@
   "fml.modloading.missingmetadata": "mods.toml missing metadata for modid {3}",
   "fml.modloading.failedtoloadmodclass":"{0,modinfo,name} has class loading errors\n\u00a77{2,exc,msg}",
   "fml.modloading.failedtoloadmod":"{0,modinfo,name} ({0,modinfo,id}) has failed to load correctly\n\u00a77{2,exc,msg}",
+  "fml.modloading.feature.missing": "{0,modinfo,name} ({0,modinfo,id}) is missing a feature it requires to run\n§7It requires {3}=>{4} but {5} is available",
   "fml.modloading.uncaughterror":"An uncaught parallel processing error has occurred.\n\u00a77{2,exc,msg}",
   "fml.modloading.errorduringevent":"{0,modinfo,name} ({0,modinfo,id}) encountered an error during the {1,lower} event phase\n\u00a77{2,exc,msg}",
   "fml.modloading.failedtoloadforge": "Failed to load Forge",

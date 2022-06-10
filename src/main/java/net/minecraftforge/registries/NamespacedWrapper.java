@@ -55,6 +55,7 @@ class NamespacedWrapper<T> extends MappedRegistry<T> implements ILockableRegistr
             throw new IllegalStateException("Can not register to a locked registry. Modder should use Forge Register methods.");
 
         Validate.notNull(value);
+        markKnown();
         this.elementsLifecycle = this.elementsLifecycle.add(lifecycle);
 
         T oldValue = get(key);
