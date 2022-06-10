@@ -6,6 +6,7 @@
 package net.minecraftforge.event;
 
 import com.mojang.brigadier.CommandDispatcher;
+import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.server.ReloadableServerResources;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Event;
@@ -24,11 +25,13 @@ public class RegisterCommandsEvent extends Event
 {
     private final CommandDispatcher<CommandSourceStack> dispatcher;
     private final Commands.CommandSelection environment;
+    private final CommandBuildContext context;
     
-    public RegisterCommandsEvent(CommandDispatcher<CommandSourceStack> dispatcher, Commands.CommandSelection environment)
+    public RegisterCommandsEvent(CommandDispatcher<CommandSourceStack> dispatcher, Commands.CommandSelection environment, CommandBuildContext context)
     {
         this.dispatcher = dispatcher;
         this.environment = environment;
+        this.context = context;
     }
     
     public CommandDispatcher<CommandSourceStack> getDispatcher()
@@ -39,5 +42,10 @@ public class RegisterCommandsEvent extends Event
     public Commands.CommandSelection getEnvironment()
     {
         return environment;
+    }
+
+    public CommandBuildContext getContext()
+    {
+        return context;
     }
 }
