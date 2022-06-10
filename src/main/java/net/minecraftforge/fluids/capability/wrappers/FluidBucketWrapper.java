@@ -5,34 +5,31 @@
 
 package net.minecraftforge.fluids.capability.wrappers;
 
-import net.minecraft.world.level.material.Fluids;
-import net.minecraft.core.Direction;
-import net.minecraftforge.common.ForgeMod;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.fluids.FluidAttributes;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidUtil;
-import net.minecraftforge.fluids.capability.IFluidHandlerItem;
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import org.jetbrains.annotations.NotNull;
 
+import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.BucketItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.MilkBucketItem;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import net.minecraft.world.level.material.Fluids;
+import net.minecraftforge.common.ForgeMod;
+import net.minecraftforge.common.capabilities.AttachCapabilitiesEvent;
+import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.fluids.FluidAttributes;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidUtil;
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 
 /**
  * Wrapper for vanilla and forge buckets.
  * Swaps between empty bucket and filled bucket of the correct type.
  */
-public class FluidBucketWrapper implements IFluidHandlerItem, ICapabilityProvider
+public class FluidBucketWrapper implements IFluidHandlerItem
 {
-    private final LazyOptional<IFluidHandlerItem> holder = LazyOptional.of(() -> this);
-
     @NotNull
     protected ItemStack container;
 
@@ -167,11 +164,14 @@ public class FluidBucketWrapper implements IFluidHandlerItem, ICapabilityProvide
 
         return FluidStack.EMPTY;
     }
-
-    @Override
-    @NotNull
-    public <T> LazyOptional<T> getCapability(@NotNull Capability<T> capability, @Nullable Direction facing)
+    
+    public static void addToBucket(AttachCapabilitiesEvent.Items event)
     {
-        return CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY.orEmpty(capability, holder);
+        event.addCapability(
+            new ResourceLocation("forge", "bucket"), 
+            CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY,
+            LazyOptional.of(()->new FluidBucketWrapper(event.getObject())), 
+            new Direction[] { null }
+        );
     }
 }

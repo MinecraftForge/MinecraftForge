@@ -5,7 +5,7 @@
  import org.slf4j.Logger;
  
 -public abstract class Entity implements Nameable, EntityAccess, CommandSource {
-+public abstract class Entity extends net.minecraftforge.common.capabilities.CapabilityProvider<Entity> implements Nameable, EntityAccess, CommandSource, net.minecraftforge.common.extensions.IForgeEntity {
++public abstract class Entity extends net.minecraftforge.common.capabilities.CapabilityProvider implements Nameable, EntityAccess, CommandSource, net.minecraftforge.common.extensions.IForgeEntity {
     private static final Logger f_19849_ = LogUtils.getLogger();
     public static final String f_146815_ = "id";
     public static final String f_146816_ = "Passengers";
@@ -25,15 +25,7 @@
     public float f_19793_;
     public boolean f_19794_;
     protected final RandomSource f_19796_ = RandomSource.m_216327_();
-@@ -231,6 +_,7 @@
-    private BlockState f_185934_ = null;
- 
-    public Entity(EntityType<?> p_19870_, Level p_19871_) {
-+      super(Entity.class);
-       this.f_19847_ = p_19870_;
-       this.f_19853_ = p_19871_;
-       this.f_19815_ = p_19870_.m_20680_();
-@@ -248,7 +_,11 @@
+@@ -248,7 +_,10 @@
        this.f_19804_.m_135372_(f_146800_, 0);
        this.m_8097_();
        this.m_6034_(0.0D, 0.0D, 0.0D);
@@ -42,7 +34,6 @@
 +      this.f_19815_ = sizeEvent.getNewSize();
 +      this.f_19816_ = sizeEvent.getNewEyeHeight();
 +      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.EntityEvent.EntityConstructing(this));
-+      this.gatherCapabilities();
     }
  
     public boolean m_20039_(BlockPos p_20040_, BlockState p_20041_) {
@@ -318,7 +309,7 @@
  
     }
  
-@@ -3089,6 +_,76 @@
+@@ -3089,6 +_,80 @@
     public boolean m_142265_(Level p_146843_, BlockPos p_146844_) {
        return true;
     }
@@ -389,7 +380,11 @@
 +   public float getEyeHeightAccess(Pose pose, EntityDimensions size) {
 +      return this.m_6380_(pose, size);
 +   }
-+
++   
++   @Override
++   protected net.minecraftforge.common.capabilities.AttachCapabilitiesEvent<?> getEvent() {
++      return new net.minecraftforge.common.capabilities.AttachCapabilitiesEvent.Entities(this);
++   }
 +   /* ================================== Forge End =====================================*/
 +
  

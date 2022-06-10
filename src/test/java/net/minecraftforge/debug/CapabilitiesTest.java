@@ -23,7 +23,6 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.*;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -52,11 +51,11 @@ public class CapabilitiesTest
     {
         if (ENABLED)
         {
-            new AttachTest<>(BlockEntity.class);
-            new AttachTest<>(Entity.class);
-            new AttachTest<>(ItemStack.class);
-            new AttachTest<>(LevelChunk.class);
-            new AttachTest<>(Level.class);
+          //  new AttachTest<>(BlockEntity.class);
+          //  new AttachTest<>(Entity.class);
+          //  new AttachTest<>(ItemStack.class);
+          //  new AttachTest<>(LevelChunk.class);
+          //  new AttachTest<>(Level.class);
         }
     }
 
@@ -70,7 +69,7 @@ public class CapabilitiesTest
         }
     }
 
-    public static class AttachTest<T extends ICapabilityProviderImpl<T>>
+    public static class AttachTest<T extends IComparableCapabilityProvider<T>>
     {
         private final Class<T> cls;
 
@@ -78,12 +77,12 @@ public class CapabilitiesTest
         {
             this.cls = cls;
 
-            MinecraftForge.EVENT_BUS.addGenericListener(cls, this::attach);
+           // MinecraftForge.EVENT_BUS.addGenericListener(cls, this::attach);
         }
-
+/**
         public void attach(AttachCapabilitiesEvent<T> event)
         {
-            event.addCapability(TEST_CAP_ID, new ICapabilitySerializable<>()
+            event.addCapability(TEST_CAP_ID, new ISerializableCapabilityProvider<>()
             {
                 final LazyOptional<CapClass> instance = LazyOptional.of(() -> new CapClass(this));
 
@@ -116,6 +115,7 @@ public class CapabilitiesTest
 
             messages.add(String.format(Locale.ENGLISH, "Attached capability to %s in %s", event.getObject().getClass(), EffectiveSide.get()));
         }
+	**/
     }
 
     @Mod.EventBusSubscriber(value= Dist.CLIENT, modid = CapabilitiesTest.MODID, bus= Mod.EventBusSubscriber.Bus.FORGE)

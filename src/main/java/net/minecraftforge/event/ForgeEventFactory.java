@@ -73,6 +73,7 @@ import net.minecraftforge.client.event.ClientChatEvent;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.ToolAction;
+import net.minecraftforge.common.capabilities.AttachCapabilitiesEvent;
 import net.minecraftforge.common.capabilities.CapabilityDispatcher;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.BlockSnapshot;
@@ -503,23 +504,10 @@ public class ForgeEventFactory
     }
 
     @Nullable
-    public static <T extends ICapabilityProvider> CapabilityDispatcher gatherCapabilities(Class<? extends T> type, T provider)
-    {
-        return gatherCapabilities(type, provider, null);
-    }
-
-    @SuppressWarnings("unchecked")
-    @Nullable
-    public static <T extends ICapabilityProvider> CapabilityDispatcher gatherCapabilities(Class<? extends T> type, T provider, @Nullable ICapabilityProvider parent)
-    {
-        return gatherCapabilities(new AttachCapabilitiesEvent<T>((Class<T>) type, provider), parent);
-    }
-
-    @Nullable
-    private static CapabilityDispatcher gatherCapabilities(AttachCapabilitiesEvent<?> event, @Nullable ICapabilityProvider parent)
+	public static CapabilityDispatcher gatherCapabilities(AttachCapabilitiesEvent<?> event, ICapabilityProvider owner)
     {
         MinecraftForge.EVENT_BUS.post(event);
-        return event.getCapabilities().size() > 0 || parent != null ? new CapabilityDispatcher(event.getCapabilities(), event.getListeners(), parent) : null;
+        return event.getSize() > 0 ? new CapabilityDispatcher(event, owner) : null;
     }
 
     public static boolean fireSleepingLocationCheck(LivingEntity player, BlockPos sleepingLocation)

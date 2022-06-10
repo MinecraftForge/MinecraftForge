@@ -230,4 +230,14 @@ public class FluidHandlerItemStackSimple implements IFluidHandlerItem, ICapabili
             container = emptyContainer;
         }
     }
+
+	@Override
+	public void invalidateCaps() {
+		this.holder.invalidate();
+	}
+
+	@Override
+	public void reviveCaps() {
+		this.holder.revive();
+	}
 }

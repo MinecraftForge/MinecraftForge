@@ -11,9 +11,9 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.capabilities.AttachCapabilitiesEvent;
 import net.minecraftforge.common.capabilities.CapabilityProvider;
 import net.minecraftforge.common.util.TextTable;
-import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fluids.capability.templates.FluidHandlerItemStackSimple;
 import net.minecraftforge.fml.common.Mod;
@@ -69,7 +69,7 @@ public class LazyCapabilitiesOnItemsTest
             final ResourceLocation testCapId = new ResourceLocation(MOD_ID, "test");
             final Consumer<AttachCapabilitiesEvent<ItemStack>> capAttachmentHandler = e -> {
                 //Example capability we make everything a bucket :D
-                e.addCapability(testCapId, new FluidHandlerItemStackSimple(e.getObject(), SAMPLE_SIZE));
+                //e.addCapability(testCapId, new FluidHandlerItemStackSimple(e.getObject(), SAMPLE_SIZE));
             };
 
             //Warmup:
@@ -90,7 +90,7 @@ public class LazyCapabilitiesOnItemsTest
             timer.reset();
 
             ///Second test: SAMPLE_SIZE itemstacks with a capability attached.
-            bus.addGenericListener(ItemStack.class, capAttachmentHandler);
+            //bus.addGenericListener(ItemStack.class, capAttachmentHandler);
             //Warmup:
             for (int i = 0; i < (SAMPLE_SIZE); i++)
             {
@@ -127,7 +127,7 @@ public class LazyCapabilitiesOnItemsTest
             timer.reset();
 
             ///Fourth test: SAMPLE_SIZE itemstacks with a capability attached.
-            bus.addGenericListener(ItemStack.class, capAttachmentHandler);
+            //bus.addGenericListener(ItemStack.class, capAttachmentHandler);
             //Warmup:
             for (int i = 0; i < (SAMPLE_SIZE); i++)
             {

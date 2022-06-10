@@ -8,11 +8,10 @@
  
     public void m_233651_(int p_233652_) {
        this.f_233599_.m_233856_(p_233652_, this);
-@@ -174,6 +_,8 @@
+@@ -174,6 +_,7 @@
        this.f_194123_ = p_205510_;
        this.m_46465_();
        this.m_46466_();
-+      this.gatherCapabilities();
 +      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.WorldEvent.Load(this));
     }
  

@@ -9,6 +9,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.common.capabilities.AttachCapabilitiesEvent.Items;
 import net.minecraftforge.fluids.capability.templates.FluidHandlerItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -32,8 +33,8 @@ public class ItemFluidContainer extends Item
     }
 
     @Override
-    public ICapabilityProvider initCapabilities(@NotNull ItemStack stack, @Nullable CompoundTag nbt)
+    public void attachBuiltinCaps(Items event)
     {
-        return new FluidHandlerItemStack(stack, capacity);
+        FluidHandlerItemStack.addBuiltin(event, capacity);
     }
 }

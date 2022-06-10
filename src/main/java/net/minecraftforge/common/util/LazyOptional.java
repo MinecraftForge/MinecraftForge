@@ -320,4 +320,8 @@ public class LazyOptional<T>
             this.listeners.forEach(e -> e.accept(this));
         }
     }
+
+	public void revive() {
+		this.isValid = true;
+	}
 }

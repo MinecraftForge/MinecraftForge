@@ -5,12 +5,13 @@
 
 package net.minecraftforge.common.capabilities;
 
-import net.minecraftforge.common.util.LazyOptional;
-import org.jetbrains.annotations.NotNull;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
+
+import org.jetbrains.annotations.NotNull;
+
+import net.minecraftforge.common.util.LazyOptional;
 
 /**
  * This is the core holder object for Capabilities.<br>
@@ -33,8 +34,8 @@ public class Capability<T>
     }
 
     /**
+     * This is a marker that the class for this capability exists, and can be used.
      * @return true if something has registered this capability to the Manager.
-     *   This is a marker that the class for this capability exists, and can be used.
      */
     public boolean isRegistered()
     {
@@ -59,6 +60,7 @@ public class Capability<T>
 
     // INTERNAL
     private final String name;
+    private int id;
     List<Consumer<Capability<T>>> listeners = new ArrayList<>();
 
     Capability(String name)
@@ -71,5 +73,13 @@ public class Capability<T>
         var listeners = this.listeners;
         this.listeners = null;
         listeners.forEach(l -> l.accept(this));
+    }
+    
+    void setId(int id) {
+    	this.id = id;
+    }
+    
+    public int getId() {
+    	return this.id;
     }
 }

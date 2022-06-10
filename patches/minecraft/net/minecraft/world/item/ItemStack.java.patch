@@ -5,7 +5,7 @@
  import org.slf4j.Logger;
  
 -public final class ItemStack {
-+public final class ItemStack extends net.minecraftforge.common.capabilities.CapabilityProvider<ItemStack> implements net.minecraftforge.common.extensions.IForgeItemStack {
++public final class ItemStack extends net.minecraftforge.common.capabilities.CapabilityProvider implements net.minecraftforge.common.extensions.IForgeItemStack {
     public static final Codec<ItemStack> f_41582_ = RecordCodecBuilder.create((p_41697_) -> {
        return p_41697_.group(Registry.f_122827_.m_194605_().fieldOf("id").forGetter((p_150946_) -> {
           return p_150946_.f_41589_;
@@ -19,7 +19,7 @@
     private static final Logger f_41585_ = LogUtils.getLogger();
     public static final ItemStack f_41583_ = new ItemStack((Item)null);
     public static final DecimalFormat f_41584_ = Util.m_137469_(new DecimalFormat("#.##"), (p_41704_) -> {
-@@ -134,10 +_,15 @@
+@@ -134,10 +_,14 @@
        this(p_220155_.m_203334_(), p_220156_);
     }
  
@@ -29,7 +29,6 @@
 -      if (this.f_41589_ != null && this.f_41589_.m_41465_()) {
 +   public ItemStack(ItemLike p_41601_, int p_41602_) { this(p_41601_, p_41602_, (CompoundTag) null); }
 +   public ItemStack(ItemLike p_41604_, int p_41605_, @Nullable CompoundTag p_41606_) {
-+      super(ItemStack.class, true);
 +      this.capNBT = p_41606_;
 +      this.f_41589_ = p_41604_ == null ? null : p_41604_.m_5456_();
 +      this.delegate = p_41604_ == null ? null : net.minecraftforge.registries.ForgeRegistries.ITEMS.getDelegateOrThrow(p_41604_.m_5456_());
@@ -39,11 +38,10 @@
           this.m_41721_(this.m_41773_());
        }
  
-@@ -150,14 +_,19 @@
+@@ -150,14 +_,18 @@
     }
  
     private ItemStack(CompoundTag p_41608_) {
-+      super(ItemStack.class, true);
 +      this.capNBT = p_41608_.m_128441_("ForgeCaps") ? p_41608_.m_128469_("ForgeCaps") : null;
 +      Item rawItem =
        this.f_41589_ = Registry.f_122827_.m_7745_(new ResourceLocation(p_41608_.m_128461_("id")));
@@ -244,7 +242,7 @@
              return p_220170_.m_131144_(new HoverEvent(HoverEvent.Action.f_130832_, new HoverEvent.ItemStackInfo(this)));
           });
        }
-@@ -958,12 +_,31 @@
+@@ -958,12 +_,40 @@
        this.m_41720_().m_5929_(p_41732_, p_41733_, this, p_41734_);
     }
  
@@ -269,10 +267,19 @@
 +    * Set up forge's ItemStack additions.
 +    */
 +   private void forgeInit() {
-+      if (this.delegate != null) {
-+         this.gatherCapabilities(() -> f_41589_.initCapabilities(this, this.capNBT));
-+         if (this.capNBT != null) deserializeCaps(this.capNBT);
++      if (this.delegate != null && this.capNBT != null) {
++         this.lazyCapNbt = this.capNBT;
 +      }
++   }
++   
++   @Override
++   protected net.minecraftforge.common.capabilities.AttachCapabilitiesEvent<?> getEvent() {
++      return new net.minecraftforge.common.capabilities.AttachCapabilitiesEvent.Items(this);
++   }
++   
++   @Override
++   public net.minecraftforge.common.capabilities.CapabilityDispatcher getCapDispatcher() {
++      return this.getDispatcher();
     }
  
     public SoundEvent m_41615_() {

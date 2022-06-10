@@ -23,7 +23,7 @@ public enum CapabilityManager
 {
     INSTANCE;
     static final Logger LOGGER = LogManager.getLogger();
-
+    static int numCaps = -1;
 
     /**
      * Acquires the unique {@link Capability} instance for the specified type.<br>
@@ -86,5 +86,12 @@ public enum CapabilityManager
     {
         var event = new RegisterCapabilitiesEvent();
         ModLoader.get().postEvent(event);
+        int id = 0;
+        for(Capability<?> c : providers.values()) if(c.isRegistered()) c.setId(id++);
+        numCaps = id;
+    }
+    
+    public static int getNumCaps() {
+    	return numCaps;
     }
 }

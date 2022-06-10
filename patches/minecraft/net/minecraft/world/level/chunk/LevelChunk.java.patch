@@ -5,18 +5,10 @@
  import org.slf4j.Logger;
  
 -public class LevelChunk extends ChunkAccess {
-+public class LevelChunk extends ChunkAccess implements net.minecraftforge.common.capabilities.ICapabilityProviderImpl<LevelChunk> {
++public class LevelChunk extends ChunkAccess implements net.minecraftforge.common.capabilities.ICapabilityProvider {
     static final Logger f_62771_ = LogUtils.getLogger();
     private static final TickingBlockEntity f_156361_ = new TickingBlockEntity() {
        public void m_142224_() {
-@@ -96,6 +_,7 @@
-       this.f_62791_ = p_196861_;
-       this.f_62784_ = p_196857_;
-       this.f_187943_ = p_196858_;
-+      this.capProvider.initInternal();
-    }
- 
-    public LevelChunk(ServerLevel p_196850_, ProtoChunk p_196851_, @Nullable LevelChunk.PostLoadProcessor p_196852_) {
 @@ -237,14 +_,14 @@
              boolean flag2 = blockstate.m_155947_();
              if (!this.f_62776_.f_46443_) {
@@ -112,30 +104,18 @@
        this.f_187610_.values().forEach((p_187988_) -> {
           Level level = this.f_62776_;
           if (level instanceof ServerLevel serverlevel) {
-@@ -619,6 +_,41 @@
+@@ -619,6 +_,29 @@
        this.f_196848_ = p_196865_;
     }
  
 +   // FORGE START
-+   private final net.minecraftforge.common.capabilities.CapabilityProvider.AsField<LevelChunk> capProvider = new net.minecraftforge.common.capabilities.CapabilityProvider.AsField<>(LevelChunk.class, this);
++   private final net.minecraftforge.common.capabilities.CapabilityProvider.AsField capProvider = new net.minecraftforge.common.capabilities.CapabilityProvider.AsField(() -> new net.minecraftforge.common.capabilities.AttachCapabilitiesEvent.Chunks(this));
 +
 +   @org.jetbrains.annotations.NotNull
 +   @Override
 +   public <T> net.minecraftforge.common.util.LazyOptional<T> getCapability(@org.jetbrains.annotations.NotNull net.minecraftforge.common.capabilities.Capability<T> cap, @org.jetbrains.annotations.Nullable net.minecraft.core.Direction side)
 +   {
 +      return capProvider.getCapability(cap, side);
-+   }
-+
-+   @Override
-+   public boolean areCapsCompatible(net.minecraftforge.common.capabilities.CapabilityProvider<LevelChunk> other)
-+   {
-+      return capProvider.areCapsCompatible(other);
-+   }
-+
-+   @Override
-+   public boolean areCapsCompatible(@org.jetbrains.annotations.Nullable net.minecraftforge.common.capabilities.CapabilityDispatcher other)
-+   {
-+      return capProvider.areCapsCompatible(other);
 +   }
 +
 +   @Override

@@ -5,139 +5,118 @@
 
 package net.minecraftforge.common.capabilities;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import javax.annotation.ParametersAreNonnullByDefault;
 
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import com.google.common.collect.Lists;
+import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.MethodsReturnNonnullByDefault;
-import net.minecraft.nbt.Tag;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.common.util.LazyOptional;
-import org.jetbrains.annotations.Nullable;
 
 /**
- * A high-speed implementation of a capability delegator.
- * This is used to wrap the results of the AttachCapabilitiesEvent.
- * It is HIGHLY recommended that you DO NOT use this approach unless
- * you MUST delegate to multiple providers instead just implement y
- * our handlers using normal if statements.
+ * A high-speed implementation of a capability delegator. This is used to wrap
+ * the results of the AttachCapabilitiesEvent. It is HIGHLY recommended that you
+ * DO NOT use this approach unless you MUST delegate to multiple providers
+ * instead just implement y our handlers using normal if statements.
  *
- * Internally the handlers are baked into arrays for fast iteration.
- * The ResourceLocations will be used for the NBT Key when serializing.
+ * Internally the handlers are baked into arrays for fast iteration. The
+ * ResourceLocations will be used for the NBT Key when serializing.
  */
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-public final class CapabilityDispatcher implements INBTSerializable<CompoundTag>, ICapabilityProvider
-{
-    private ICapabilityProvider[] caps;
-    private INBTSerializable<Tag>[] writers;
-    private String[] names;
-    private final List<Runnable> listeners;
+public final class CapabilityDispatcher implements INBTSerializable<CompoundTag>, ICapabilityProvider {
 
-    public CapabilityDispatcher(Map<ResourceLocation, ICapabilityProvider> list, List<Runnable> listeners)
+	protected final AttachedCapability<?>[][] caps;
+	private final Map<ResourceLocation, AttachedCapability<?>> uniqueCaps;
+	private final List<AttachedCapability<?>> serializable;
+	private final List<AttachedCapability<?>> comparable;
+	private final ICapabilityProvider owner;
+
+	public CapabilityDispatcher(AttachCapabilitiesEvent<?> event, ICapabilityProvider owner) {
+		this.caps = event.getCapabilities();
+		this.uniqueCaps = new HashMap<>();
+		for(int i = 0; i < caps.length; i++) {
+			for(int j = 0; j < caps[i].length; j++) {
+				if(caps[i][j] != null) this.uniqueCaps.put(caps[i][j].getId(), caps[i][j]);
+			}
+		}
+		serializable = uniqueCaps.values().stream().filter(AttachedCapability::isSerializable).collect(Collectors.toList());
+		comparable = uniqueCaps.values().stream().filter(AttachedCapability::isComparable).collect(Collectors.toList());
+		this.owner = owner;
+	}
+	
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+	public boolean areCompatible(@Nullable CapabilityDispatcher other)
     {
-        this(list, listeners, null);
-    }
-
-    @SuppressWarnings("unchecked")
-    public CapabilityDispatcher(Map<ResourceLocation, ICapabilityProvider> list, List<Runnable> listeners, @Nullable ICapabilityProvider parent)
-    {
-        List<ICapabilityProvider> lstCaps = Lists.newArrayList();
-        List<INBTSerializable<Tag>> lstWriters = Lists.newArrayList();
-        List<String> lstNames = Lists.newArrayList();
-        this.listeners = listeners;
-
-        if (parent != null) // Parents go first!
-        {
-            lstCaps.add(parent);
-            if (parent instanceof INBTSerializable)
-            {
-                lstWriters.add((INBTSerializable<Tag>)parent);
-                lstNames.add("Parent");
-            }
+        if (other == null) return this.comparable.size() == 0;
+        if (this.comparable.size() != other.comparable.size()) return false;
+        for(AttachedCapability<?> c : this.comparable) {
+        	Object ob1 = c.getInst().orElse(null);
+        	Object ob2 = other.uniqueCaps.getOrDefault(c.getId(), AttachedCapability.EMPTY).getInst().orElse(null);
+        	if(ob1 instanceof Comparable cmp && cmp.compareTo(ob2) != 0) return false;
         }
-
-        for (Map.Entry<ResourceLocation, ICapabilityProvider> entry : list.entrySet())
-        {
-            ICapabilityProvider prov = entry.getValue();
-            lstCaps.add(prov);
-            if (prov instanceof INBTSerializable)
-            {
-                lstWriters.add((INBTSerializable<Tag>)prov);
-                lstNames.add(entry.getKey().toString());
-            }
-        }
-
-        caps = lstCaps.toArray(new ICapabilityProvider[lstCaps.size()]);
-        writers = lstWriters.toArray(new INBTSerializable[lstWriters.size()]);
-        names = lstNames.toArray(new String[lstNames.size()]);
+        return true;
     }
 
+	@Override
+	public <T> LazyOptional<T> getCapability(Capability<T> cap, @Nullable Direction side) {
+		if (!this.owner.isDirectionSensitive())
+			side = null;
+		int dKey = side == null ? 6 : side.ordinal();
+		return caps[cap.getId()][dKey] == null ? LazyOptional.empty() : caps[cap.getId()][dKey].getInst().cast();
+	}
 
-    @Override
-    public <T> LazyOptional<T> getCapability(Capability<T> cap, @Nullable Direction side)
-    {
-        for (ICapabilityProvider c : caps)
-        {
-            LazyOptional<T> ret = c.getCapability(cap, side);
-            //noinspection ConstantConditions
-            if (ret == null)
-            {
-                throw new RuntimeException(
-                        String.format(
-                                Locale.ENGLISH,
-                                "Provider %s.getCapability() returned null; return LazyOptional.empty() instead!",
-                                c.getClass().getTypeName()
-                        )
-                );
-            }
-            if (ret.isPresent())
-            {
-                return ret;
-            }
-        }
-        return LazyOptional.empty();
-    }
+	@Override
+	public void invalidateCaps() {
+		for (AttachedCapability<?> cap : this.uniqueCaps.values()) {
+			LazyOptional<?> inst = cap.getInst();
+			if (inst.isPresent())
+				inst.invalidate();
+		}
+	}
 
-    @Override
-    public CompoundTag serializeNBT()
-    {
-        CompoundTag nbt = new CompoundTag();
-        for (int x = 0; x < writers.length; x++)
-        {
-            nbt.put(names[x], writers[x].serializeNBT());
-        }
-        return nbt;
-    }
+	@Override
+	public void reviveCaps() {
+		for (AttachedCapability<?> cap : this.uniqueCaps.values()) {
+			cap.getInst().revive();
+		}
+	}
 
-    @Override
-    public void deserializeNBT(CompoundTag nbt)
-    {
-        for (int x = 0; x < writers.length; x++)
-        {
-            if (nbt.contains(names[x]))
-            {
-                writers[x].deserializeNBT(nbt.get(names[x]));
-            }
-        }
-    }
+	@Override
+	public CompoundTag serializeNBT() {
+		CompoundTag tag = new CompoundTag();
+		for (AttachedCapability<?> cap : this.serializable) {
+			cap.getInst().ifPresent(obj -> {
+				if (obj instanceof INBTSerializable<?> serial) {
+					tag.put(cap.getId().toString(), serial.serializeNBT());
+				}
+			});
+		}
+		return tag;
+	}
 
-    public boolean areCompatible(@Nullable CapabilityDispatcher other) //Called from ItemStack to compare equality.
-    {                                                        // Only compares serializeable caps.
-        if (other == null) return this.writers.length == 0;  // Done this way so we can do some pre-checks before doing the costly NBT serialization and compare
-        if (this.writers.length == 0) return other.writers.length == 0;
-        return this.serializeNBT().equals(other.serializeNBT());
-    }
+	@Override
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public void deserializeNBT(CompoundTag tag) {
+		for (AttachedCapability<?> cap : this.serializable) {
+			Tag tg = tag.get(cap.getId().toString());
+			if (tg != null) {
+				cap.getInst().ifPresent(obj -> {
+					if (obj instanceof INBTSerializable serial) {
+						serial.deserializeNBT(tg);
+					}
+				});
+			}
+		}
+	}
 
-    public void invalidate()
-    {
-        this.listeners.forEach(Runnable::run);
-    }
 }

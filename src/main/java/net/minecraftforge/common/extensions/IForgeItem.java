@@ -10,37 +10,45 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.google.common.collect.Multimap;
 
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.food.FoodProperties;
-import net.minecraft.world.item.*;
-import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.AABB;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.EnderMan;
 import net.minecraft.world.entity.monster.piglin.PiglinAi;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.food.FoodProperties;
+import net.minecraft.world.item.ArmorItem;
+import net.minecraft.world.item.ArmorMaterials;
+import net.minecraft.world.item.AxeItem;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.item.crafting.RecipeType;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 import net.minecraftforge.common.ToolAction;
 import net.minecraftforge.common.ToolActions;
+import net.minecraftforge.common.capabilities.AttachCapabilitiesEvent;
 import net.minecraftforge.registries.IForgeRegistry;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 // TODO systemic review of all extension functions. lots of unused -C
 public interface IForgeItem
@@ -606,24 +614,9 @@ public interface IForgeItem
         return net.minecraftforge.common.ForgeHooks.getDefaultCreatorModId(itemStack);
     }
 
-    /**
-     * Called from ItemStack.setItem, will hold extra data for the life of this
-     * ItemStack. Can be retrieved from stack.getCapabilities() The NBT can be null
-     * if this is not called from readNBT or if the item the stack is changing FROM
-     * is different then this item, or the previous item had no capabilities.
-     *
-     * This is called BEFORE the stacks item is set so you can use stack.getItem()
-     * to see the OLD item. Remember that getItem CAN return null.
-     *
-     * @param stack The ItemStack
-     * @param nbt   NBT of this item serialized, or null.
-     * @return A holder instance associated with this ItemStack where you can hold
-     *         capabilities for the life of this item.
-     */
     @Nullable
-    default net.minecraftforge.common.capabilities.ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundTag nbt)
+    default void attachBuiltinCaps(AttachCapabilitiesEvent.Items event)
     {
-        return null;
     }
 
     /**

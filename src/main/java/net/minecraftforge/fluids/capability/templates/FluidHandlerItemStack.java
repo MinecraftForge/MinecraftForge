@@ -7,13 +7,16 @@ package net.minecraftforge.fluids.capability.templates;
 
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.core.Direction;
+import net.minecraftforge.common.capabilities.AttachCapabilitiesEvent;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.*;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
+import net.minecraftforge.fluids.capability.wrappers.FluidBucketWrapper;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -27,11 +30,9 @@ import org.jetbrains.annotations.Nullable;
  * Additional examples are provided to enable consumable fluid containers (see {@link Consumable}),
  * fluid containers with different empty and full items (see {@link SwapEmpty},
  */
-public class FluidHandlerItemStack implements IFluidHandlerItem, ICapabilityProvider
+public class FluidHandlerItemStack implements IFluidHandlerItem
 {
     public static final String FLUID_NBT_KEY = "Fluid";
-
-    private final LazyOptional<IFluidHandlerItem> holder = LazyOptional.of(() -> this);
 
     @NotNull
     protected ItemStack container;
@@ -208,13 +209,6 @@ public class FluidHandlerItemStack implements IFluidHandlerItem, ICapabilityProv
         container.removeTagKey(FLUID_NBT_KEY);
     }
 
-    @Override
-    @NotNull
-    public <T> LazyOptional<T> getCapability(@NotNull Capability<T> capability, @Nullable Direction facing)
-    {
-        return CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY.orEmpty(capability, holder);
-    }
-
     /**
      * Destroys the container item when it's emptied.
      */
@@ -252,5 +246,15 @@ public class FluidHandlerItemStack implements IFluidHandlerItem, ICapabilityProv
             super.setContainerToEmpty();
             container = emptyContainer;
         }
+    }
+
+    public static void addBuiltin(AttachCapabilitiesEvent.Items event, int capacity)
+    {
+        event.addCapability(
+            new ResourceLocation("forge", "fh_itemstack"), 
+            CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY,
+            LazyOptional.of(()->new FluidHandlerItemStack(event.getObject(), capacity)), 
+            new Direction[] { null }
+        );
     }
 }
