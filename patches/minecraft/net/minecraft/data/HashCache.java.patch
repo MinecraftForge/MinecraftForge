@@ -1,11 +1,10 @@
 --- a/net/minecraft/data/HashCache.java
 +++ b/net/minecraft/data/HashCache.java
-@@ -92,6 +_,8 @@
+@@ -92,6 +_,7 @@
        MutableInt mutableint = new MutableInt();
        this.f_236083_.forEach((p_236100_, p_236101_) -> {
           Path path = this.m_236109_(p_236100_);
-+         //Forge: Only rewrite the cache file if the version id changed, there are new values, some values were removed, or the cache is missing
-+         if (!p_236101_.f_236113_.f_236126_.equals(p_236101_.f_236114_.f_236126_) || p_236101_.f_236115_ > 0 || p_236101_.f_236114_.m_236133_() < p_236101_.f_236113_.m_236133_() || !Files.exists(path))
++         if (!p_236101_.f_236114_.equals(p_236101_.f_236113_) || !Files.exists(path))//Forge: Only rewrite the cache file if it changed or is missing
           p_236101_.f_236114_.m_236142_(this.f_236079_, path, DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(LocalDateTime.now()) + "\t" + p_236100_.m_6055_());
           mutableint.add(p_236101_.f_236115_);
        });
