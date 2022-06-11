@@ -20,6 +20,7 @@ import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.item.Items;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.util.ExtraCodecs;
 import net.minecraft.core.Registry;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
@@ -35,7 +36,7 @@ import net.minecraftforge.common.extensions.IForgePlayer;
 import net.minecraftforge.common.loot.CanToolPerformAction;
 import net.minecraftforge.common.loot.LootTableIdCondition;
 import net.minecraftforge.common.world.AddFeaturesBiomeModifier;
-import net.minecraftforge.common.world.AddSpawnBiomeModifier;
+import net.minecraftforge.common.world.AddSpawnsBiomeModifier;
 import net.minecraftforge.common.world.BiomeModifier;
 import net.minecraftforge.common.world.NoneBiomeModifier;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -85,10 +86,12 @@ import net.minecraftforge.fml.common.Mod;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
+import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import java.util.*;
+import java.util.function.Function;
 
 @Mod("forge")
 public class ForgeMod
@@ -152,11 +155,16 @@ public class ForgeMod
     /**
      * Stock biome modifier for adding mob spawns to biomes.
      */
-    public static final RegistryObject<Codec<AddSpawnBiomeModifier>> ADD_SPAWN_BIOME_MODIFIER_TYPE = BIOME_MODIFIER_SERIALIZERS.register("add_spawn", () ->
+    public static final RegistryObject<Codec<AddSpawnsBiomeModifier>> ADD_SPAWN_BIOME_MODIFIER_TYPE = BIOME_MODIFIER_SERIALIZERS.register("add_spawns", () ->
         RecordCodecBuilder.create(builder -> builder.group(
-                Biome.LIST_CODEC.fieldOf("biomes").forGetter(AddSpawnBiomeModifier::biomes),
-                SpawnerData.CODEC.fieldOf("spawner").forGetter(AddSpawnBiomeModifier::spawner)
-            ).apply(builder, AddSpawnBiomeModifier::new))
+                Biome.LIST_CODEC.fieldOf("biomes").forGetter(AddSpawnsBiomeModifier::biomes),
+                // Allow either a list or single spawner, attempting to decode the list format first.
+                // Uses the better EitherCodec that logs both errors if both formats fail to parse.
+                new ExtraCodecs.EitherCodec<>(SpawnerData.CODEC.listOf(), SpawnerData.CODEC).xmap(
+                        either -> either.map(Function.identity(), List::of), // convert list/singleton to list when decoding
+                        list -> list.size() == 1 ? Either.right(list.get(0)) : Either.left(list) // convert list to singleton/list when encoding
+                    ).fieldOf("spawners").forGetter(AddSpawnsBiomeModifier::spawners)
+            ).apply(builder, AddSpawnsBiomeModifier::new))
         );
 
     private static boolean enableMilkFluid = false;

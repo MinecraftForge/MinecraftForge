@@ -16,8 +16,7 @@ import com.google.gson.JsonElement;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-
-import cpw.mods.util.LambdaExceptionUtils;
+import cpw.mods.modlauncher.api.LamdbaExceptionUtils;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.Registry;
@@ -41,7 +40,7 @@ import net.minecraft.world.level.levelgen.placement.BiomeFilter;
 import net.minecraft.world.level.levelgen.placement.CountOnEveryLayerPlacement;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 import net.minecraftforge.common.world.AddFeaturesBiomeModifier;
-import net.minecraftforge.common.world.AddSpawnBiomeModifier;
+import net.minecraftforge.common.world.AddSpawnsBiomeModifier;
 import net.minecraftforge.common.world.BiomeModifier;
 import net.minecraftforge.common.world.ModifiableBiomeInfo.BiomeInfo.Builder;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -127,7 +126,7 @@ public class BiomeModifierTest
         // Prepare to datagenerate our add-spawn biome modifier.
         final String addSpawnPathString = String.join("/", directory, MODID, biomeModifiersNamespace, biomeModifiersPath, ADD_MAGMA_CUBES + ".json");
         final Path addSpawnPath = outputFolder.resolve(addSpawnPathString);
-        final BiomeModifier addSpawn = new AddSpawnBiomeModifier(
+        final BiomeModifier addSpawn = AddSpawnsBiomeModifier.singleSpawn(
             badlandsTag,
             new SpawnerData(EntityType.MAGMA_CUBE, 100, 1, 4));
 
@@ -147,19 +146,19 @@ public class BiomeModifierTest
             {
                 PlacedFeature.DIRECT_CODEC.encodeStart(ops, feature)
                     .resultOrPartial(msg -> LOGGER.error("Failed to encode {}: {}", featurePathString, msg)) // Log error on encode failure.
-                    .ifPresent(LambdaExceptionUtils.rethrowConsumer(json -> DataProvider.saveStable(cache, json, featurePath))); // Output to file on encode success.
+                    .ifPresent(LamdbaExceptionUtils.rethrowConsumer(json -> DataProvider.saveStable(cache, json, featurePath))); // Output to file on encode success.
 
                 BiomeModifier.DIRECT_CODEC.encodeStart(ops, addFeature)
                     .resultOrPartial(msg -> LOGGER.error("Failed to encode {}: {}", addFeaturePathString, msg)) // Log error on encode failure.
-                    .ifPresent(LambdaExceptionUtils.rethrowConsumer(json -> DataProvider.saveStable(cache, json, addFeaturePath)));
+                    .ifPresent(LamdbaExceptionUtils.rethrowConsumer(json -> DataProvider.saveStable(cache, json, addFeaturePath)));
 
                 BiomeModifier.DIRECT_CODEC.encodeStart(ops, addSpawn)
                     .resultOrPartial(msg -> LOGGER.error("Failed to encode {}: {}", addSpawnPathString, msg)) // Log error on encode failure.
-                    .ifPresent(LambdaExceptionUtils.rethrowConsumer(json -> DataProvider.saveStable(cache, json, addSpawnPath)));
+                    .ifPresent(LamdbaExceptionUtils.rethrowConsumer(json -> DataProvider.saveStable(cache, json, addSpawnPath)));
 
                 BiomeModifier.DIRECT_CODEC.encodeStart(ops, biomeModifier)
                     .resultOrPartial(msg -> LOGGER.error("Failed to encode {}: {}", biomeModifierPathString, msg)) // Log error on encode failure.
-                    .ifPresent(LambdaExceptionUtils.rethrowConsumer(json -> DataProvider.saveStable(cache, json, biomeModifierPath)));
+                    .ifPresent(LamdbaExceptionUtils.rethrowConsumer(json -> DataProvider.saveStable(cache, json, biomeModifierPath)));
             }
 
             @Override
