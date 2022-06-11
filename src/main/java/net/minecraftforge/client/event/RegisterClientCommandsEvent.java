@@ -58,9 +58,9 @@ public class RegisterClientCommandsEvent extends Event
     }
 
     /**
-     * @return the context to build the commands for
+     * {@return the context to build the commands for}
      */
-    public CommandBuildContext getContext()
+    public CommandBuildContext getBuildContext()
     {
         return context;
     }

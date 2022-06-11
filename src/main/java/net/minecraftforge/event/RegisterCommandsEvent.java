@@ -33,18 +33,27 @@ public class RegisterCommandsEvent extends Event
         this.environment = environment;
         this.context = context;
     }
-    
+
+    /**
+     * {@return the command dispatcher for registering commands to be executed on the client}
+     */
     public CommandDispatcher<CommandSourceStack> getDispatcher()
     {
         return dispatcher;
     }
-    
+
+    /**
+     * {@return the environment the command is being registered for}
+     */
     public Commands.CommandSelection getEnvironment()
     {
         return environment;
     }
 
-    public CommandBuildContext getContext()
+    /**
+     * {@return the context to build the commands for}
+     */
+    public CommandBuildContext getBuildContext()
     {
         return context;
     }
