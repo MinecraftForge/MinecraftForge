@@ -5,16 +5,12 @@
 
 package net.minecraftforge.debug.world;
 
-import java.io.IOException;
-import java.nio.file.Path;
 import java.util.List;
+import java.util.Map;
 
-import net.minecraft.data.CachedOutput;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
@@ -31,7 +27,6 @@ import net.minecraft.data.worldgen.features.NetherFeatures;
 import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.packs.PackType;
 import net.minecraft.tags.BiomeTags;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.biome.Biome;
@@ -42,6 +37,7 @@ import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 import net.minecraft.world.level.levelgen.placement.BiomeFilter;
 import net.minecraft.world.level.levelgen.placement.CountOnEveryLayerPlacement;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
+import net.minecraftforge.common.data.JsonCodecProvider;
 import net.minecraftforge.common.world.BiomeGenerationSettingsBuilder;
 import net.minecraftforge.common.world.BiomeModifier;
 import net.minecraftforge.common.world.ModifiableBiomeInfo.BiomeInfo.Builder;
@@ -72,9 +68,11 @@ public class BiomeModifierTest
     public static final boolean ENABLED = true;
     public static final String BASALT_PILLARS = "large_basalt_columns";
     public static final ResourceLocation BASALT_PILLARS_RL = new ResourceLocation(MODID, BASALT_PILLARS);
+    public static final ResourceKey<PlacedFeature> BASALT_PILLARS_KEY = ResourceKey.create(Registry.PLACED_FEATURE_REGISTRY, BASALT_PILLARS_RL);
     public static final String TEST = "test";
     public static final ResourceLocation ADD_FEATURES_TO_BIOMES_RL = new ResourceLocation(MODID, TEST);
     public static final String MODIFY_BADLANDS = "modify_badlands";
+    public static final ResourceLocation MODIFY_BADLANDS_RL = new ResourceLocation(MODID, MODIFY_BADLANDS);
 
     @SuppressWarnings("unchecked")
     public BiomeModifierTest()
@@ -89,86 +87,50 @@ public class BiomeModifierTest
         serializers.register(modBus);
         serializers.register(TEST, TestModifier::makeCodec);
 
-        // Biome modifiers don't need to be registered when defined in json, but they do need to be registered if we are to datagenerate the jsons.
-        // We'll also datagenerate a placedfeature json (using our own placedfeature avoids feature cycle problems when we add it to biomes).
-        final DeferredRegister<PlacedFeature> placedFeatures = DeferredRegister.create(Registry.PLACED_FEATURE_REGISTRY, MODID);
-        placedFeatures.register(modBus);
-        placedFeatures.register(BASALT_PILLARS,
-            () -> new PlacedFeature((Holder<ConfiguredFeature<?,?>>) (Holder<? extends ConfiguredFeature<?,?>>)NetherFeatures.LARGE_BASALT_COLUMNS,
-                List.of(CountOnEveryLayerPlacement.of(1), BiomeFilter.biome())));
-
         modBus.addListener(this::onGatherData);
     }
 
     private void onGatherData(GatherDataEvent event)
     {
         // Example of how to datagen datapack registry objects.
-        // Datapack registry objects referred to by other datapack registry objects must be registered first.
-        DataGenerator generator = event.getGenerator();
-        final Path outputFolder = generator.getOutputFolder();
-        final RegistryOps<JsonElement> ops = RegistryOps.create(JsonOps.INSTANCE, RegistryAccess.BUILTIN.get());
-        final Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        final String directory = PackType.SERVER_DATA.getDirectory();
-        Registry<PlacedFeature> placedFeatures = ops.registry(Registry.PLACED_FEATURE_REGISTRY).get();
+        final DataGenerator generator = event.getGenerator();
+        // Using builtinCopy() averts the need to register json-only objects before we datagen them.
+        // Any reference holders our objects have must come from this same RegistryAccess instance,
+        // or encoding our objects will fail.
+        final RegistryAccess registries = RegistryAccess.builtinCopy();
+        final RegistryOps<JsonElement> ops = RegistryOps.create(JsonOps.INSTANCE, registries);
 
-        // prepare to datagenerate our placed feature
-        final String featurePathString = String.join("/", directory, MODID, Registry.PLACED_FEATURE_REGISTRY.location().getPath(), BASALT_PILLARS + ".json");
-        final Path featurePath = outputFolder.resolve(featurePathString);
-        final PlacedFeature feature = placedFeatures.get(BASALT_PILLARS_RL);
+        // Create our PlacedFeature so we can generate it.
+        final ResourceKey<ConfiguredFeature<?,?>> configuredFeatureKey = NetherFeatures.LARGE_BASALT_COLUMNS.unwrapKey().get().cast(Registry.CONFIGURED_FEATURE_REGISTRY).get();
+        final Registry<ConfiguredFeature<?,?>> configuredFeatures = ops.registry(Registry.CONFIGURED_FEATURE_REGISTRY).get();
+        final Holder<ConfiguredFeature<?,?>> configuredFeatureHolder = configuredFeatures.getOrCreateHolderOrThrow(configuredFeatureKey);
+        final PlacedFeature placedFeature = new PlacedFeature(configuredFeatureHolder, List.of(CountOnEveryLayerPlacement.of(1), BiomeFilter.biome()));
+        
+        // Our BiomeModifier needs a holder for our PlacedFeature.
+        final Registry<PlacedFeature> placedFeatures = ops.registry(Registry.PLACED_FEATURE_REGISTRY).get();
+        final HolderSet<PlacedFeature> placedFeatureHolderSet =
+            HolderSet.direct(placedFeatures.getOrCreateHolderOrThrow(BASALT_PILLARS_KEY));
 
-        // prepare to datagenerate our biome modifier
-        final ResourceLocation biomeModifiersRegistryID = ForgeRegistries.Keys.BIOME_MODIFIERS.location();
-        final String biomeModifierPathString = String.join("/", directory, MODID, biomeModifiersRegistryID.getNamespace(), biomeModifiersRegistryID.getPath(), MODIFY_BADLANDS + ".json");
-        final Path biomeModifierPath = outputFolder.resolve(biomeModifierPathString);
+        // Create our BiomeModifier so we can generate it.
         final BiomeModifier biomeModifier = new TestModifier(
             new HolderSet.Named<>(ops.registry(Registry.BIOME_REGISTRY).get(), BiomeTags.IS_BADLANDS),
             Decoration.TOP_LAYER_MODIFICATION,
-            HolderSet.direct(placedFeatures.getOrCreateHolderOrThrow(ResourceKey.create(Registry.PLACED_FEATURE_REGISTRY, BASALT_PILLARS_RL))),
+            placedFeatureHolderSet,
             new SpawnerData(EntityType.MAGMA_CUBE, 100, 1, 4),
             Precipitation.SNOW,
             0xFF0000
             );
 
-        generator.addProvider(event.includeServer(), new DataProvider()
-        {
-            @Override
-            public void run(final CachedOutput cache) throws IOException
-            {
-                PlacedFeature.DIRECT_CODEC.encodeStart(ops, feature)
-                    .resultOrPartial(msg -> LOGGER.error("Failed to encode {}: {}", featurePathString, msg)) // Log error on encode failure.
-                    .ifPresent(json -> // Output to file on encode success.
-                    {
-                        try
-                        {
-                            DataProvider.saveStable(cache, json, featurePath);
-                        }
-                        catch (IOException e) // The throws can't deal with this exception, because we're inside the ifPresent.
-                        {
-                            LOGGER.error("Failed to save " + featurePathString, e);
-                        }
-                    });
-
-                BiomeModifier.DIRECT_CODEC.encodeStart(ops, biomeModifier)
-                    .resultOrPartial(msg -> LOGGER.error("Failed to encode {}: {}", biomeModifierPathString, msg)) // Log error on encode failure.
-                    .ifPresent(json -> // Output to file on encode success.
-                    {
-                        try
-                        {
-                            DataProvider.saveStable(cache, json, biomeModifierPath);
-                        }
-                        catch (IOException e) // The throws can't deal with this exception, because we're inside the ifPresent.
-                        {
-                            LOGGER.error("Failed to save " + biomeModifierPathString, e);
-                        }
-                    });
-            }
-
-            @Override
-            public String getName()
-            {
-                return MODID + " data provider";
-            }
-        });
+        // Create and add our data providers.
+        final DataProvider placedFeatureProvider =
+            JsonCodecProvider.forDatapackRegistry(generator, MODID, ops, Registry.PLACED_FEATURE_REGISTRY,
+                Map.of(BASALT_PILLARS_RL, placedFeature));
+        generator.addProvider(event.includeServer(), placedFeatureProvider);
+        
+        final DataProvider biomeModifierProvider =
+            JsonCodecProvider.forDatapackRegistry(generator, MODID, ops, ForgeRegistries.Keys.BIOME_MODIFIERS,
+                Map.of(MODIFY_BADLANDS_RL, biomeModifier));
+        generator.addProvider(event.includeServer(), biomeModifierProvider);
     }
 
     public record TestModifier(HolderSet<Biome> biomes, Decoration generationStage, HolderSet<PlacedFeature> features, SpawnerData spawn, Precipitation precipitation, int waterColor)
