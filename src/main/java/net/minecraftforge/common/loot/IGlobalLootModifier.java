@@ -24,7 +24,8 @@ import java.util.function.Function;
 /**
  * Implementation that defines what a global loot modifier must implement in order to be functional.
  * {@link LootModifier} Supplies base functionality; most modders should only need to extend that.<br/>
- * Requires an {@link GlobalLootModifierSerializer} to be registered via json (see forge:loot_modifiers/global_loot_modifiers).
+ * Requires a {@link Codec} to be registered: {@link ForgeRegistries#LOOT_MODIFIER_SERIALIZERS}, and returned in {@link #codec()}
+ * Individual instances of modifiers must be registered via json, see forge:loot_modifiers/global_loot_modifiers
  */
 public interface IGlobalLootModifier {
     Codec<IGlobalLootModifier> DIRECT_CODEC = ExtraCodecs.lazyInitializedCodec(() -> ForgeRegistries.LOOT_MODIFIER_SERIALIZERS.get().getCodec())
@@ -35,7 +36,7 @@ public interface IGlobalLootModifier {
             {
                 try
                 {
-                    LootItemCondition[] conditions = LootModifierManager.GSON_INSTANCE.get().fromJson(getJson(d), LootItemCondition[].class);
+                    LootItemCondition[] conditions = LootModifierManager.GSON_INSTANCE.fromJson(getJson(d), LootItemCondition[].class);
                     return DataResult.success(conditions);
                 }
                 catch (JsonSyntaxException e)
@@ -48,7 +49,7 @@ public interface IGlobalLootModifier {
             {
                 try
                 {
-                    JsonElement element = LootModifierManager.GSON_INSTANCE.get().toJsonTree(conditions);
+                    JsonElement element = LootModifierManager.GSON_INSTANCE.toJsonTree(conditions);
                     return DataResult.success(new Dynamic<>(JsonOps.INSTANCE, element));
                 }
                 catch (JsonSyntaxException e)

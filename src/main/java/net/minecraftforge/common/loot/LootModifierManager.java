@@ -6,22 +6,17 @@
 package net.minecraftforge.common.loot;
 
 import java.io.BufferedReader;
-import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
-import java.util.function.Supplier;
 
-import com.google.common.base.Suppliers;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.JsonOps;
 import net.minecraft.world.level.storage.loot.Deserializers;
-import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
-import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -42,13 +37,13 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 public class LootModifierManager extends SimpleJsonResourceReloadListener {
     public static final Logger LOGGER = LogManager.getLogger();
-    public static final Supplier<Gson> GSON_INSTANCE = Suppliers.memoize(() -> Deserializers.createFunctionSerializer().create());
+    public static final Gson GSON_INSTANCE = Deserializers.createFunctionSerializer().create();
 
     private Map<ResourceLocation, IGlobalLootModifier> registeredLootModifiers = ImmutableMap.of();
     private static final String folder = "loot_modifiers";
     
     public LootModifierManager() {
-        super(GSON_INSTANCE.get(), folder);
+        super(GSON_INSTANCE, folder);
     }
 
     @Override
@@ -61,7 +56,7 @@ public class LootModifierManager extends SimpleJsonResourceReloadListener {
             try (   InputStream inputstream = iresource.open();
                     Reader reader = new BufferedReader(new InputStreamReader(inputstream, StandardCharsets.UTF_8));
                     ) {
-                JsonObject jsonobject = GsonHelper.fromJson(GSON_INSTANCE.get(), reader, JsonObject.class);
+                JsonObject jsonobject = GsonHelper.fromJson(GSON_INSTANCE, reader, JsonObject.class);
                 boolean replace = jsonobject.get("replace").getAsBoolean();
                 if(replace)
                     finalLocations.clear();

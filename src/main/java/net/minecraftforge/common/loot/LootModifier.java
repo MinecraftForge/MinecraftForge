@@ -19,8 +19,7 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * A base implementation of a Global Loot Modifier for modders to extend.
- * Takes care of ILootCondition matching and comes with a base serializer
- * implementation that takes care of Forge registry things.
+ * Takes care of ILootCondition matching and comes with the base codec to extend.
  */
 public abstract class LootModifier implements IGlobalLootModifier
 {
@@ -28,10 +27,10 @@ public abstract class LootModifier implements IGlobalLootModifier
     private final Predicate<LootContext> combinedConditions;
 
     /**
-     * Can simplify codec creation a bit, especially if no other fields are added:
+     * Simplifies codec creation, especially if no other fields are added:
      * <p>
      * {@code
-     * public static final Codec<MyLootModifier> CODEC = RecordCodecBuilder.create(inst -> codecStart(inst).apply(inst, MyLootModifier::new))
+     * public static final Codec<MyLootModifier> CODEC = RecordCodecBuilder.create(inst -> codecStart(inst).apply(inst, MyLootModifier::new));
      * }
      * </p>
      * Otherwise can follow this with #and() to add more fields.
