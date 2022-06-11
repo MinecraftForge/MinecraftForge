@@ -54,7 +54,7 @@ public record JsonCodecProvider<T>(DataGenerator dataGenerator, String modid, Dy
      * @param modid namespace of the mod adding this DataProvider, for logging purposes.
      * @param registryOps RegistryOps to encode values to json with.
      * @param registryKey ResourceKey identifying the registry and its directory.
-     * @param entries Map of entries to encode and their ResourceKeys.
+     * @param entries Map of entries to encode and their ResourceLocations. Paths for values are derived from the ResourceLocation's entryid:entrypath.
      */
     public static <T> JsonCodecProvider<T> forDatapackRegistry(DataGenerator dataGenerator, String modid, RegistryOps<JsonElement> registryOps, ResourceKey<Registry<T>> registryKey, Map<ResourceLocation, T> entries)
     {
