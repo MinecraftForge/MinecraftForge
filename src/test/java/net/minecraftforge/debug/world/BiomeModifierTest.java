@@ -17,6 +17,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
+import cpw.mods.util.LambdaExceptionUtils;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.Registry;
@@ -146,59 +147,19 @@ public class BiomeModifierTest
             {
                 PlacedFeature.DIRECT_CODEC.encodeStart(ops, feature)
                     .resultOrPartial(msg -> LOGGER.error("Failed to encode {}: {}", featurePathString, msg)) // Log error on encode failure.
-                    .ifPresent(json -> // Output to file on encode success.
-                    {
-                        try
-                        {
-                            DataProvider.saveStable(cache, json, featurePath);
-                        }
-                        catch (IOException e) // The throws can't deal with this exception, because we're inside the ifPresent.
-                        {
-                            LOGGER.error("Failed to save " + featurePathString, e);
-                        }
-                    });
+                    .ifPresent(LambdaExceptionUtils.rethrowConsumer(json -> DataProvider.saveStable(cache, json, featurePath))); // Output to file on encode success.
 
                 BiomeModifier.DIRECT_CODEC.encodeStart(ops, addFeature)
                     .resultOrPartial(msg -> LOGGER.error("Failed to encode {}: {}", addFeaturePathString, msg)) // Log error on encode failure.
-                    .ifPresent(json -> // Output to file on encode success.
-                    {
-                        try
-                        {
-                            DataProvider.saveStable(cache, json, addFeaturePath);
-                        }
-                        catch (IOException e) // The throws can't deal with this exception, because we're inside the ifPresent.
-                        {
-                            LOGGER.error("Failed to save " + addFeaturePathString, e);
-                        }
-                    });
+                    .ifPresent(LambdaExceptionUtils.rethrowConsumer(json -> DataProvider.saveStable(cache, json, addFeaturePath)));
 
                 BiomeModifier.DIRECT_CODEC.encodeStart(ops, addSpawn)
                     .resultOrPartial(msg -> LOGGER.error("Failed to encode {}: {}", addSpawnPathString, msg)) // Log error on encode failure.
-                    .ifPresent(json -> // Output to file on encode success.
-                    {
-                        try
-                        {
-                            DataProvider.saveStable(cache, json, addSpawnPath);
-                        }
-                        catch (IOException e) // The throws can't deal with this exception, because we're inside the ifPresent.
-                        {
-                            LOGGER.error("Failed to save " + addSpawnPathString, e);
-                        }
-                    });
+                    .ifPresent(LambdaExceptionUtils.rethrowConsumer(json -> DataProvider.saveStable(cache, json, addSpawnPath)));
 
                 BiomeModifier.DIRECT_CODEC.encodeStart(ops, biomeModifier)
                     .resultOrPartial(msg -> LOGGER.error("Failed to encode {}: {}", biomeModifierPathString, msg)) // Log error on encode failure.
-                    .ifPresent(json -> // Output to file on encode success.
-                    {
-                        try
-                        {
-                            DataProvider.saveStable(cache, json, biomeModifierPath);
-                        }
-                        catch (IOException e) // The throws can't deal with this exception, because we're inside the ifPresent.
-                        {
-                            LOGGER.error("Failed to save " + biomeModifierPathString, e);
-                        }
-                    });
+                    .ifPresent(LambdaExceptionUtils.rethrowConsumer(json -> DataProvider.saveStable(cache, json, biomeModifierPath)));
             }
 
             @Override
