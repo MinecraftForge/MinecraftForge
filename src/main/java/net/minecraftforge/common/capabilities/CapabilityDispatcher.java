@@ -24,24 +24,21 @@ import net.minecraftforge.common.util.LazyOptional;
 
 /**
  * A high-speed implementation of a capability delegator. This is used to wrap
- * the results of the AttachCapabilitiesEvent. It is HIGHLY recommended that you
- * DO NOT use this approach unless you MUST delegate to multiple providers
- * instead just implement y our handlers using normal if statements.
- *
- * Internally the handlers are baked into arrays for fast iteration. The
- * ResourceLocations will be used for the NBT Key when serializing.
+ * the results of the AttachCapabilitiesEvent.<br>
+ * The caps are kept in a 2-D array for fast accesses, and are serialized and compared as needed.<br>
+ * Only capabilities marked as serializable or comparable will be used for such purposes.
  */
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
 public final class CapabilityDispatcher implements INBTSerializable<CompoundTag>, ICapabilityProvider {
 
-	protected final AttachedCapability<?>[][] caps;
+	private final AttachedCapability<?>[][] caps;
 	private final Map<ResourceLocation, AttachedCapability<?>> uniqueCaps;
 	private final List<AttachedCapability<?>> serializable;
 	private final List<AttachedCapability<?>> comparable;
 	private final ICapabilityProvider owner;
 
-	public CapabilityDispatcher(AttachCapabilitiesEvent<?> event, ICapabilityProvider owner) {
+	CapabilityDispatcher(AttachCapabilitiesEvent<?> event, ICapabilityProvider owner) {
 		this.caps = event.getCapabilities();
 		this.uniqueCaps = new HashMap<>();
 		for(int i = 0; i < caps.length; i++) {
@@ -60,12 +57,15 @@ public final class CapabilityDispatcher implements INBTSerializable<CompoundTag>
         if (other == null) return this.comparable.size() == 0;
         if (this.comparable.size() != other.comparable.size()) return false;
         for(AttachedCapability<?> c : this.comparable) {
-        	Object ob1 = c.getInst().orElse(null);
+        	Object ob1 = c.getInst().orElse(null);  //TODO: FIXME, not actually lazy!  orElse tries to resolve the value.
         	Object ob2 = other.uniqueCaps.getOrDefault(c.getId(), AttachedCapability.EMPTY).getInst().orElse(null);
-        	if(ob1 instanceof Comparable cmp && cmp.compareTo(ob2) != 0) return false;
+        	if(ob1 instanceof Comparable cmp && (ob2 == null || cmp.compareTo(ob2) != 0)) return false;
         }
         return true;
     }
+    
+    //TODO: Copy function.  Requires AttachedCapability instances be copyable.
+    //Useful because copied objects would not need to re-gather caps.
 
 	@Override
 	public <T> LazyOptional<T> getCapability(Capability<T> cap, @Nullable Direction side) {

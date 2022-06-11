@@ -503,11 +503,10 @@ public class ForgeEventFactory
         MinecraftForge.EVENT_BUS.post(new PlayerBrewedPotionEvent(player, stack));
     }
 
-    @Nullable
-	public static CapabilityDispatcher gatherCapabilities(AttachCapabilitiesEvent<?> event, ICapabilityProvider owner)
+	public static AttachCapabilitiesEvent<?> gatherCapabilities(AttachCapabilitiesEvent<?> event)
     {
         MinecraftForge.EVENT_BUS.post(event);
-        return event.getSize() > 0 ? new CapabilityDispatcher(event, owner) : null;
+        return event;
     }
 
     public static boolean fireSleepingLocationCheck(LivingEntity player, BlockPos sleepingLocation)

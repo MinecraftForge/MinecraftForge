@@ -33,7 +33,8 @@ public abstract class CapabilityProvider implements ICapabilityProvider
     private void doGatherCapabilities()
     {
         this.initialized = true;
-        this.attachedCaps = ForgeEventFactory.gatherCapabilities(getEvent(), this);
+        AttachCapabilitiesEvent<?> event = ForgeEventFactory.gatherCapabilities(this.getEvent());
+        this.attachedCaps = event.getSize() > 0 ? new CapabilityDispatcher(event, this) : null;
     }
     
     protected abstract AttachCapabilitiesEvent<?> getEvent();

@@ -9,25 +9,30 @@ import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.util.LazyOptional;
 
-public class AttachedCapability<T> {
+public final class AttachedCapability<T> {
 
-    public static final AttachedCapability<?> EMPTY = new AttachedCapability<Object>(new ResourceLocation("empty"), null, LazyOptional.empty(), new Direction[0]);
+    public static final AttachedCapability<?> EMPTY = new AttachedCapability<Object>(new ResourceLocation("empty"), null, LazyOptional.empty());
 
     private final ResourceLocation id;
     private final Capability<T> cap;
     private final LazyOptional<T> inst;
-    private final Direction[] sides;
-
+    
+    private Direction[] sides;
     private boolean serializable;
     private boolean comparable;
 
-    public AttachedCapability(ResourceLocation id, Capability<T> cap, LazyOptional<T> inst, Direction... sides)
+    public AttachedCapability(ResourceLocation id, Capability<T> cap, LazyOptional<T> inst)
     {
         this.id = id;
         this.cap = cap;
         this.inst = inst;
-        this.sides = sides;
     }
+    
+	public AttachedCapability<T> setSides(Direction[] sides)
+	{
+		if (sides == null) this.sides = sides;
+		return this;
+	}
 
     public AttachedCapability<T> setSerializable()
     {
