@@ -49,7 +49,7 @@ public class LootModifierManager extends SimpleJsonResourceReloadListener {
     @Override
     protected void apply(Map<ResourceLocation, JsonElement> resourceList, ResourceManager resourceManagerIn, ProfilerFiller profilerIn) {
         Builder<ResourceLocation, IGlobalLootModifier> builder = ImmutableMap.builder();
-        Set<ResourceLocation> finalLocations = new HashSet<>();
+        List<ResourceLocation> finalLocations = new ArrayList<>();
         ResourceLocation resourcelocation = new ResourceLocation("forge","loot_modifiers/global_loot_modifiers.json");
         //read in all data files from forge:loot_modifiers/global_loot_modifiers in order to do layering
         for(Resource iresource : resourceManagerIn.getResourceStack(resourcelocation)) {
@@ -58,12 +58,14 @@ public class LootModifierManager extends SimpleJsonResourceReloadListener {
                     ) {
                 JsonObject jsonobject = GsonHelper.fromJson(GSON_INSTANCE, reader, JsonObject.class);
                 boolean replace = jsonobject.get("replace").getAsBoolean();
-                if(replace)
+                if (replace)
                     finalLocations.clear();
                 JsonArray entryList = jsonobject.get("entries").getAsJsonArray();
-
-                for(JsonElement entry : entryList)
-                    finalLocations.add(new ResourceLocation(entry.getAsString()));
+                for(JsonElement entry : entryList) {
+                    ResourceLocation loc = new ResourceLocation(entry.getAsString());
+                    finalLocations.remove(loc); //remove and re-add if needed, to update the ordering.
+                    finalLocations.add(loc);
+                }
             }
 
             catch (RuntimeException | IOException ioexception) {
