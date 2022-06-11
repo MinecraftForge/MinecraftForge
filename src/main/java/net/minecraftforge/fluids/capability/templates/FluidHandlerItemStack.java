@@ -248,7 +248,7 @@ public class FluidHandlerItemStack implements IFluidHandlerItem
         }
     }
 
-    public static void addBuiltin(AttachCapabilitiesEvent.Items event, int capacity)
+    public static void addBuiltin(AttachCapabilitiesEvent.ItemStacks event, int capacity)
     {
         event.addCapability(
             new ResourceLocation("forge", "fh_itemstack"), 

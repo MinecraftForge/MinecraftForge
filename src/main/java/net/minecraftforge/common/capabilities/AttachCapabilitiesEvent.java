@@ -74,9 +74,9 @@ public abstract class AttachCapabilitiesEvent<T extends ICapabilityProvider> ext
 		return this.caps;
 	}
 
-	public static final class Items extends AttachCapabilitiesEvent<ItemStack> {
+	public static final class ItemStacks extends AttachCapabilitiesEvent<ItemStack> {
 
-		public Items(ItemStack obj) {
+		public ItemStacks(ItemStack obj) {
 			super(obj);
 		}
 

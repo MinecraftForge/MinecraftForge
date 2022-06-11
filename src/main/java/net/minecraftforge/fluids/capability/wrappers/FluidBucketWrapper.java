@@ -165,7 +165,7 @@ public class FluidBucketWrapper implements IFluidHandlerItem
         return FluidStack.EMPTY;
     }
     
-    public static void addToBucket(AttachCapabilitiesEvent.Items event)
+    public static void addToBucket(AttachCapabilitiesEvent.ItemStacks event)
     {
         event.addCapability(
             new ResourceLocation("forge", "bucket"), 

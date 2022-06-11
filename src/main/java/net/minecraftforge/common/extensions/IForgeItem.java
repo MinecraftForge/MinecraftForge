@@ -615,7 +615,7 @@ public interface IForgeItem
     }
 
     @Nullable
-    default void attachBuiltinCaps(AttachCapabilitiesEvent.Items event)
+    default void attachBuiltinCaps(AttachCapabilitiesEvent.ItemStacks event)
     {
     }
 
