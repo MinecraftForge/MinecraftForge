@@ -1,5 +1,33 @@
 --- a/net/minecraft/world/item/enchantment/EnchantmentHelper.java
 +++ b/net/minecraft/world/item/enchantment/EnchantmentHelper.java
+@@ -59,7 +_,13 @@
+       return Registry.f_122825_.m_7981_(p_182433_);
+    }
+ 
++   /** @deprecated forge: use {@link #getTagEnchantmentLevel(Enchantment, ItemStack)} or {@link ItemStack#getEnchantmentLevel(Enchantment)} */
++   @Deprecated
+    public static int m_44843_(Enchantment p_44844_, ItemStack p_44845_) {
++      return p_44845_.getEnchantmentLevel(p_44844_);
++   }
++
++   public static int getTagEnchantmentLevel(Enchantment p_44844_, ItemStack p_44845_) {
+       if (p_44845_.m_41619_()) {
+          return 0;
+       } else {
+@@ -120,6 +_,13 @@
+ 
+    private static void m_44850_(EnchantmentHelper.EnchantmentVisitor p_44851_, ItemStack p_44852_) {
+       if (!p_44852_.m_41619_()) {
++         if (true) { // forge: redirect enchantment logic to allow non-NBT enchants
++            for (Map.Entry<Enchantment, Integer> entry : p_44852_.getAllEnchantments().entrySet()) {
++               p_44851_.m_44944_(entry.getKey(), entry.getValue());
++            }
++            return;
++         }
++
+          ListTag listtag = p_44852_.m_41785_();
+ 
+          for(int i = 0; i < listtag.size(); ++i) {
 @@ -150,7 +_,7 @@
     public static float m_44833_(ItemStack p_44834_, MobType p_44835_) {
        MutableFloat mutablefloat = new MutableFloat();

@@ -54,6 +54,7 @@ net/minecraft/world/item/ItemStack.onItemUse(Lnet/minecraft/world/item/context/U
 net/minecraft/world/item/ItemStack.onItemUseFirst(Lnet/minecraft/world/item/context/UseOnContext;)Lnet/minecraft/world/InteractionResult;=|p_41662_
 net/minecraft/world/item/MapItem.getCustomMapData(Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/level/Level;)Lnet/minecraft/world/level/saveddata/maps/MapItemSavedData;=|p_42910_,p_42911_
 net/minecraft/world/item/alchemy/PotionBrewing$Mix.<init>(Lnet/minecraftforge/registries/IForgeRegistry;Ljava/lang/Object;Lnet/minecraft/world/item/crafting/Ingredient;Ljava/lang/Object;)V=|registry,p_43536_,p_43537_,p_43538_
+net/minecraft/world/item/enchantment/EnchantmentHelper.getTagEnchantmentLevel(Lnet/minecraft/world/item/enchantment/Enchantment;Lnet/minecraft/world/item/ItemStack;)I=|p_44844_,p_44845_
 net/minecraft/world/item/crafting/RecipeManager.<init>(Lnet/minecraftforge/common/crafting/conditions/ICondition$IContext;)V=|context
 net/minecraft/world/item/crafting/RecipeManager.fromJson(Lnet/minecraft/resources/ResourceLocation;Lcom/google/gson/JsonObject;Lnet/minecraftforge/common/crafting/conditions/ICondition$IContext;)Lnet/minecraft/world/item/crafting/Recipe;=|p_44046_,p_44047_,context
 net/minecraft/world/level/Level.markAndNotifyBlock(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/chunk/LevelChunk;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/block/state/BlockState;II)V=|p_46605_,levelchunk,blockstate,p_46606_,p_46607_,p_46608_
