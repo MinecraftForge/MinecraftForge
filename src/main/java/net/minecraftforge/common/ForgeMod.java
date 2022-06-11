@@ -184,6 +184,7 @@ public class ForgeMod
         ATTRIBUTES.register(modEventBus);
         COMMAND_ARGUMENT_TYPES.register(modEventBus);
         BIOME_MODIFIER_SERIALIZERS.register(modEventBus);
+        STRUCTURE_MODIFIER_SERIALIZERS.register(modEventBus);
         MinecraftForge.EVENT_BUS.addListener(this::serverStopping);
         MinecraftForge.EVENT_BUS.addListener(this::missingSoundMapping);
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, ForgeConfig.clientSpec);

@@ -9,7 +9,7 @@ import com.google.gson.JsonElement;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import cpw.mods.util.LambdaExceptionUtils;
+import cpw.mods.modlauncher.api.LamdbaExceptionUtils;
 import java.io.IOException;
 import java.nio.file.Path;
 import net.minecraft.core.Holder;
@@ -64,7 +64,6 @@ public class StructureModifierTest
     {
         if (!ENABLED)
             return;
-        //TODO: Implement
 
         IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();
 
@@ -81,7 +80,6 @@ public class StructureModifierTest
     private void onGatherData(GatherDataEvent event)
     {
         // Example of how to datagen datapack registry objects.
-        // Datapack registry objects referred to by other datapack registry objects must be registered first.
         DataGenerator generator = event.getGenerator();
         final Path outputFolder = generator.getOutputFolder();
         final RegistryOps<JsonElement> ops = RegistryOps.create(JsonOps.INSTANCE, RegistryAccess.BUILTIN.get());
@@ -105,7 +103,7 @@ public class StructureModifierTest
                 StructureModifier.DIRECT_CODEC.encodeStart(ops, structureModifier)
                     .resultOrPartial(msg -> LOGGER.error("Failed to encode {}: {}", structureModifierPathString, msg)) // Log error on encode failure.
                       // Output to file on encode success.
-                    .ifPresent(LambdaExceptionUtils.rethrowConsumer(json -> DataProvider.saveStable(cache, json, structureModifierPath)));
+                    .ifPresent(LamdbaExceptionUtils.rethrowConsumer(json -> DataProvider.saveStable(cache, json, structureModifierPath)));
             }
 
             @Override

@@ -5,12 +5,8 @@
 
 package net.minecraftforge.common.world;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMap.Builder;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.EnumMap;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -19,18 +15,16 @@ import net.minecraft.util.random.WeightedRandomList;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.MobSpawnSettings;
-import net.minecraft.world.level.biome.MobSpawnSettings.SpawnerData;
 import net.minecraft.world.level.levelgen.GenerationStep;
 import net.minecraft.world.level.levelgen.structure.Structure.StructureSettings;
 import net.minecraft.world.level.levelgen.structure.StructureSpawnOverride;
-import net.minecraft.world.level.levelgen.structure.StructureSpawnOverride.BoundingBoxType;
 import net.minecraft.world.level.levelgen.structure.TerrainAdjustment;
 import org.jetbrains.annotations.Nullable;
 
 public class StructureSettingsBuilder
 {
     private HolderSet<Biome> biomes;
-    private Map<MobCategory, StructureSpawnOverrideBuilder> spawnOverrides;
+    private final Map<MobCategory, StructureSpawnOverrideBuilder> spawnOverrides;
     private GenerationStep.Decoration step;
     private TerrainAdjustment terrainAdaptation;
 
@@ -40,12 +34,7 @@ public class StructureSettingsBuilder
      */
     public static StructureSettingsBuilder copyOf(StructureSettings settings)
     {
-        return create(settings.biomes(), settings.spawnOverrides(), settings.step(), settings.terrainAdaptation());
-    }
-
-    public static StructureSettingsBuilder create(HolderSet<Biome> biomes, Map<MobCategory, StructureSpawnOverride> spawnOverrides, GenerationStep.Decoration step, TerrainAdjustment terrainAdaptation)
-    {
-        return new StructureSettingsBuilder(biomes, spawnOverrides, step, terrainAdaptation);
+        return new StructureSettingsBuilder(settings.biomes(), settings.spawnOverrides(), settings.step(), settings.terrainAdaptation());
     }
 
     private StructureSettingsBuilder(HolderSet<Biome> biomes, Map<MobCategory, StructureSpawnOverride> spawnOverrides, GenerationStep.Decoration step, TerrainAdjustment terrainAdaptation)
@@ -77,37 +66,62 @@ public class StructureSettingsBuilder
         this.biomes = biomes;
     }
 
+    /**
+     * Gets a mutable builder for the spawn overrides of a given mob category or {@code null} if no overrides are defined for that category.
+     * @param category Mob category
+     */
     @Nullable
     public StructureSpawnOverrideBuilder getSpawnOverrides(MobCategory category)
     {
         return spawnOverrides.get(category);
     }
 
+    /**
+     * Gets or creates a mutable builder for the spawn overrides of a given mob category.
+     * @param category Mob category
+     */
     public StructureSpawnOverrideBuilder getOrAddSpawnOverrides(MobCategory category)
     {
         return spawnOverrides.computeIfAbsent(category, c -> new StructureSpawnOverrideBuilder(StructureSpawnOverride.BoundingBoxType.PIECE, Collections.emptyList()));
     }
 
+    /**
+     * Removes the spawn overrides for the given mob category.
+     * @param category Mob category
+     */
     public void removeSpawnOverrides(MobCategory category)
     {
         this.spawnOverrides.remove(category);
     }
 
+    /**
+     * Gets the world generation decoration step the structure spawns during.
+     */
     public GenerationStep.Decoration getDecorationStep()
     {
         return step;
     }
 
+    /**
+     * Sets the world generation decoration step the structure spawns during.
+     */
     public void setDecorationStep(GenerationStep.Decoration step)
     {
         this.step = step;
     }
 
+    /**
+     * Gets the way the structure adapts to the terrain during generation.
+     */
     public TerrainAdjustment getTerrainAdaptation()
     {
         return terrainAdaptation;
     }
 
+    /**
+     * Sets the way the structure adapts to the terrain during generation.
+     * @param terrainAdaptation New terrain adjustment
+     */
     public void setTerrainAdaptation(TerrainAdjustment terrainAdaptation)
     {
         this.terrainAdaptation = terrainAdaptation;
@@ -116,17 +130,16 @@ public class StructureSettingsBuilder
     public static class StructureSpawnOverrideBuilder
     {
         private StructureSpawnOverride.BoundingBoxType boundingBox;
-        private List<MobSpawnSettings.SpawnerData> spawns;
+        private final List<MobSpawnSettings.SpawnerData> spawns;
         private final List<MobSpawnSettings.SpawnerData> spawnsView;
 
+        /**
+         * @param override Existing spawn override data.
+         * @return A new builder with a copy of that StructureSpawnOverride's values.
+         */
         public static StructureSpawnOverrideBuilder copyOf(StructureSpawnOverride override)
         {
-            return create(override.boundingBox(), override.spawns());
-        }
-
-        public static StructureSpawnOverrideBuilder create(BoundingBoxType boundingBox, WeightedRandomList<MobSpawnSettings.SpawnerData> spawns)
-        {
-            return new StructureSpawnOverrideBuilder(boundingBox, spawns.unwrap());
+            return new StructureSpawnOverrideBuilder(override.boundingBox(), override.spawns().unwrap());
         }
 
         private StructureSpawnOverrideBuilder(StructureSpawnOverride.BoundingBoxType boundingBox, List<MobSpawnSettings.SpawnerData> spawns)
@@ -136,11 +149,17 @@ public class StructureSettingsBuilder
             this.spawnsView = Collections.unmodifiableList(this.spawns);
         }
 
+        /**
+         * Gets the type of bounding box for this structures spawn overrides.
+         */
         public StructureSpawnOverride.BoundingBoxType getBoundingBox()
         {
             return boundingBox;
         }
 
+        /**
+         * Sets the way the structure checks for spawn overrides. Whether it is on a piece by piece basis or within the bounds of the overall structure.
+         */
         public void setBoundingBox(StructureSpawnOverride.BoundingBoxType boundingBox)
         {
             this.boundingBox = boundingBox;
@@ -154,11 +173,17 @@ public class StructureSettingsBuilder
             return spawnsView;
         }
 
+        /**
+         * Adds a spawn to the overrides.
+         */
         public void addSpawn(MobSpawnSettings.SpawnerData spawn)
         {
             this.spawns.add(spawn);
         }
 
+        /**
+         * Removes a given spawn from the list of overrides. Use {@link #getSpawns()} to get instances of spawn data to remove.
+         */
         public void removeSpawn(MobSpawnSettings.SpawnerData spawn)
         {
             this.spawns.remove(spawn);
