@@ -1,0 +1,11 @@
+{
+  "type": "structure_modifiers_test:test",
+  "category": "monster",
+  "spawn": {
+    "type": "minecraft:wither_skeleton",
+    "maxCount": 15,
+    "minCount": 5,
+    "weight": 100
+  },
+  "structures": "minecraft:stronghold"
+}

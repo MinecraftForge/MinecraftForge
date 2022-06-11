@@ -90,7 +90,7 @@ public class StructureModifierTest
         final String structureModifierPathString = String.join("/", directory, MODID, structureModifiersRegistryID.getNamespace(), structureModifiersRegistryID.getPath(), MODIFY_STRONGHOLD + ".json");
         final Path structureModifierPath = outputFolder.resolve(structureModifierPathString);
         final StructureModifier structureModifier = new TestModifier(
-              HolderSet.direct(ops.registry(Registry.STRUCTURE_REGISTRY).get().getHolder(BuiltinStructures.FORTRESS).orElseThrow()),
+              HolderSet.direct(ops.registry(Registry.STRUCTURE_REGISTRY).get().getHolder(BuiltinStructures.STRONGHOLD).orElseThrow()),
               MobCategory.MONSTER,
               new MobSpawnSettings.SpawnerData(EntityType.WITHER_SKELETON, 100, 5, 15)
         );

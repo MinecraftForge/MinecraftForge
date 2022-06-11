@@ -77,7 +77,7 @@ public class StructureSettingsBuilder
     }
 
     /**
-     * Gets or creates a mutable builder for the spawn overrides of a given mob category.
+     * Gets or creates a mutable builder for the spawn overrides of a given mob category. If the override needed to be created it will default to piece bounding.
      * @param category Mob category
      */
     public StructureSpawnOverrideBuilder getOrAddSpawnOverrides(MobCategory category)
