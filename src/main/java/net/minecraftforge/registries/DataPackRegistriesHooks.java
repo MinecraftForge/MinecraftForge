@@ -11,6 +11,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
@@ -56,5 +57,14 @@ public final class DataPackRegistriesHooks
     public static Set<ResourceKey<? extends Registry<?>>> getSyncedCustomRegistries()
     {
         return SYNCED_CUSTOM_REGISTRIES_VIEW;
+    }
+
+    /**
+     *  FORGE: add non-vanilla registry namespace to loader directory, same format as tag directory (see net.minecraft.tags.TagManager#getTagDir(ResourceKey))
+     * @param registryKey original registry key
+     * @return path of the registry key. Prefixed with the modid if it wasn't minecraft
+     */
+    public static String prefixNamespace(ResourceLocation registryKey) {
+        return registryKey.getNamespace().equals("minecraft") ? registryKey.getPath() : registryKey.getNamespace() +  "/"  + registryKey.getPath();
     }
 }
