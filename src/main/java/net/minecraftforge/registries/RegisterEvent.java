@@ -9,11 +9,15 @@ import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.fml.ModList;
+import net.minecraftforge.fml.ModLoader;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.event.IModBusEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -33,6 +37,7 @@ public class RegisterEvent extends Event implements IModBusEvent
     final ForgeRegistry<?> forgeRegistry;
     @Nullable
     private final Registry<?> vanillaRegistry;
+    private final Set<ResourceLocation> protectedEntries = new HashSet<>();
 
     RegisterEvent(@NotNull ResourceKey<? extends Registry<?>> registryKey, @Nullable ForgeRegistry<?> forgeRegistry, @Nullable Registry<?> vanillaRegistry)
     {
@@ -55,10 +60,21 @@ public class RegisterEvent extends Event implements IModBusEvent
     {
         if (this.registryKey.equals(registryKey))
         {
-            if (this.forgeRegistry != null)
-                ((IForgeRegistry) this.forgeRegistry).register(name, valueSupplier.get());
-            else if (this.vanillaRegistry != null)
-                Registry.register((Registry) this.vanillaRegistry, name, valueSupplier.get());
+            if (!protectedEntries.contains(name)) {
+                protectedEntries.add(name);
+                if (this.forgeRegistry != null)
+                    ((IForgeRegistry) this.forgeRegistry).register(name, valueSupplier.get());
+                else if (this.vanillaRegistry != null)
+                    Registry.register((Registry) this.vanillaRegistry, name, valueSupplier.get());
+                ObjectRegisteredEvent objectRegisteredEvent = new ObjectRegisteredEvent(this, name);
+                ModLoader.get().postEventWithWrap(objectRegisteredEvent, (mc, e) -> ModLoadingContext.get().setActiveContainer(mc), (mc, e)-> ModLoadingContext.get().setActiveContainer(null));
+                protectedEntries.remove(name);
+            } else
+            {
+                /* TODO: throw an error here? Or log a warning? Basically, you can't reg-replace a protected entry. This
+                *   is necessary as otherwise you'd get the possibility for loops. Disallowing replacement of protected
+                *   entries, however, should eliminate the possibility of loops. */
+            }
         }
     }
 
