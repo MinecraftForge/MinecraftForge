@@ -37,6 +37,7 @@ import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 import net.minecraft.world.level.levelgen.placement.BiomeFilter;
 import net.minecraft.world.level.levelgen.placement.CountOnEveryLayerPlacement;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
+import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.common.data.JsonCodecProvider;
 import net.minecraftforge.common.world.BiomeGenerationSettingsBuilder;
 import net.minecraftforge.common.world.BiomeModifier;
@@ -73,8 +74,8 @@ public class BiomeModifierTest
     public static final ResourceLocation ADD_FEATURES_TO_BIOMES_RL = new ResourceLocation(MODID, TEST);
     public static final String MODIFY_BADLANDS = "modify_badlands";
     public static final ResourceLocation MODIFY_BADLANDS_RL = new ResourceLocation(MODID, MODIFY_BADLANDS);
+    public static final ResourceKey<BiomeModifier> MODIFY_BADLANDS_KEY = ResourceKey.create(ForgeRegistries.Keys.BIOME_MODIFIERS, MODIFY_BADLANDS_RL);
 
-    @SuppressWarnings("unchecked")
     public BiomeModifierTest()
     {
         if (!ENABLED)
@@ -94,24 +95,23 @@ public class BiomeModifierTest
     {
         // Example of how to datagen datapack registry objects.
         final DataGenerator generator = event.getGenerator();
-        // Using builtinCopy() averts the need to register json-only objects before we datagen them.
+        final ExistingFileHelper existingFileHelper = event.getExistingFileHelper();
+        
         // Any reference holders our objects have must come from this same RegistryAccess instance,
         // or encoding our objects will fail.
         final RegistryAccess registries = RegistryAccess.builtinCopy();
         final RegistryOps<JsonElement> ops = RegistryOps.create(JsonOps.INSTANCE, registries);
+        final Registry<ConfiguredFeature<?,?>> configuredFeatures = ops.registry(Registry.CONFIGURED_FEATURE_REGISTRY).get();
+        final Registry<PlacedFeature> placedFeatures = ops.registry(Registry.PLACED_FEATURE_REGISTRY).get();
 
         // Create our PlacedFeature so we can generate it.
         final ResourceKey<ConfiguredFeature<?,?>> configuredFeatureKey = NetherFeatures.LARGE_BASALT_COLUMNS.unwrapKey().get().cast(Registry.CONFIGURED_FEATURE_REGISTRY).get();
-        final Registry<ConfiguredFeature<?,?>> configuredFeatures = ops.registry(Registry.CONFIGURED_FEATURE_REGISTRY).get();
         final Holder<ConfiguredFeature<?,?>> configuredFeatureHolder = configuredFeatures.getOrCreateHolderOrThrow(configuredFeatureKey);
         final PlacedFeature placedFeature = new PlacedFeature(configuredFeatureHolder, List.of(CountOnEveryLayerPlacement.of(1), BiomeFilter.biome()));
-        
-        // Our BiomeModifier needs a holder for our PlacedFeature.
-        final Registry<PlacedFeature> placedFeatures = ops.registry(Registry.PLACED_FEATURE_REGISTRY).get();
-        final HolderSet<PlacedFeature> placedFeatureHolderSet =
-            HolderSet.direct(placedFeatures.getOrCreateHolderOrThrow(BASALT_PILLARS_KEY));
 
         // Create our BiomeModifier so we can generate it.
+        final HolderSet<PlacedFeature> placedFeatureHolderSet =
+            HolderSet.direct(placedFeatures.getOrCreateHolderOrThrow(BASALT_PILLARS_KEY));
         final BiomeModifier biomeModifier = new TestModifier(
             new HolderSet.Named<>(ops.registry(Registry.BIOME_REGISTRY).get(), BiomeTags.IS_BADLANDS),
             Decoration.TOP_LAYER_MODIFICATION,
@@ -123,12 +123,12 @@ public class BiomeModifierTest
 
         // Create and add our data providers.
         final DataProvider placedFeatureProvider =
-            JsonCodecProvider.forDatapackRegistry(generator, MODID, ops, Registry.PLACED_FEATURE_REGISTRY,
+            JsonCodecProvider.forDatapackRegistry(generator, existingFileHelper, MODID, ops, Registry.PLACED_FEATURE_REGISTRY,
                 Map.of(BASALT_PILLARS_RL, placedFeature));
         generator.addProvider(event.includeServer(), placedFeatureProvider);
         
         final DataProvider biomeModifierProvider =
-            JsonCodecProvider.forDatapackRegistry(generator, MODID, ops, ForgeRegistries.Keys.BIOME_MODIFIERS,
+            JsonCodecProvider.forDatapackRegistry(generator, existingFileHelper, MODID, ops, ForgeRegistries.Keys.BIOME_MODIFIERS,
                 Map.of(MODIFY_BADLANDS_RL, biomeModifier));
         generator.addProvider(event.includeServer(), biomeModifierProvider);
     }

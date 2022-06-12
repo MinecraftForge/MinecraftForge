@@ -22,6 +22,7 @@ import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
+import net.minecraftforge.common.data.ExistingFileHelper.ResourceType;
 import net.minecraftforge.forge.event.lifecycle.GatherDataEvent;
 
 /**
@@ -35,13 +36,23 @@ import net.minecraftforge.forge.event.lifecycle.GatherDataEvent;
  * @param dataGenerator DataGenerator provided by {@link GatherDataEvent}.
  * @param dynamicOps DynamicOps to encode values to jsons with using the provided Codec, e.g. {@link JsonOps.INSTANCE}.
  * @param packType PackType specifying whether to generate entries in assets or data.
- * @param registryFolder String representing the registry folder, e.g. "dimension" or "cheesemod/cheese".
+ * @param directory String representing the directory to generate jsons in, e.g. "dimension" or "cheesemod/cheese".
  * @param codec Codec to encode values to jsons with using the provided DynamicOps.
  * @param entries Map of named entries to serialize to jsons. Paths for values are derived from the ResourceLocation's entryid:entrypath as specified above.
  */
-public record JsonCodecProvider<T>(DataGenerator dataGenerator, String modid, DynamicOps<JsonElement> dynamicOps, PackType packType, String registryFolder, Codec<T> codec, Map<ResourceLocation, T> entries) implements DataProvider
+public record JsonCodecProvider<T>(DataGenerator dataGenerator, ExistingFileHelper existingFileHelper, String modid, DynamicOps<JsonElement> dynamicOps, PackType packType, String directory, Codec<T> codec, Map<ResourceLocation, T> entries) implements DataProvider
 {
     private static final Logger LOGGER = LogManager.getLogger();
+    
+    public JsonCodecProvider
+    {
+        // Track generated data so other dataproviders can validate if needed.
+        final ResourceType resourceType = new ResourceType(packType, ".json", directory);
+        for (ResourceLocation id : entries.keySet())
+        {
+            existingFileHelper.trackGenerated(id, resourceType);
+        }
+    }
     
     /**
      * {@return DatapackRegistryProvider that encodes using the registered loading codec for the provided registry key}
@@ -56,7 +67,7 @@ public record JsonCodecProvider<T>(DataGenerator dataGenerator, String modid, Dy
      * @param registryKey ResourceKey identifying the registry and its directory.
      * @param entries Map of entries to encode and their ResourceLocations. Paths for values are derived from the ResourceLocation's entryid:entrypath.
      */
-    public static <T> JsonCodecProvider<T> forDatapackRegistry(DataGenerator dataGenerator, String modid, RegistryOps<JsonElement> registryOps, ResourceKey<Registry<T>> registryKey, Map<ResourceLocation, T> entries)
+    public static <T> JsonCodecProvider<T> forDatapackRegistry(DataGenerator dataGenerator, ExistingFileHelper existingFileHelper, String modid, RegistryOps<JsonElement> registryOps, ResourceKey<Registry<T>> registryKey, Map<ResourceLocation, T> entries)
     {
         final ResourceLocation registryId = registryKey.location();
         // Minecraft datapack registry folders are in data/json-namespace/registry-name/
@@ -65,7 +76,7 @@ public record JsonCodecProvider<T>(DataGenerator dataGenerator, String modid, Dy
             ? registryId.getPath()
             : registryId.getNamespace() + "/" + registryId.getPath();
         final Codec<T> codec = (Codec<T>)RegistryAccess.REGISTRIES.get(registryKey).codec();
-        return new JsonCodecProvider<>(dataGenerator, modid, registryOps, PackType.SERVER_DATA, registryFolder, codec, entries);
+        return new JsonCodecProvider<>(dataGenerator, existingFileHelper, modid, registryOps, PackType.SERVER_DATA, registryFolder, codec, entries);
     }
 
     @Override
@@ -77,16 +88,16 @@ public record JsonCodecProvider<T>(DataGenerator dataGenerator, String modid, Dy
         {
             final ResourceLocation id = entry.getKey();
             final T value = entry.getValue();
-            final Path path = outputFolder.resolve(String.join("/", dataFolder, id.getNamespace(), this.registryFolder(), id.getPath()+".json"));
+            final Path path = outputFolder.resolve(String.join("/", dataFolder, id.getNamespace(), this.directory(), id.getPath()+".json"));
             this.codec().encodeStart(this.dynamicOps(), value)
-                .resultOrPartial(msg -> LOGGER.error("Failed to encode {}: {}", path, msg)) // log error on encode failure
-                .ifPresent(LamdbaExceptionUtils.rethrowConsumer(json -> DataProvider.saveStable(cache, json, path)));// output to file on encode success
+                .resultOrPartial(msg -> LOGGER.error("Failed to encode {}: {}", path, msg)) // Log error on encode failure.
+                .ifPresent(LamdbaExceptionUtils.rethrowConsumer(json -> DataProvider.saveStable(cache, json, path)));// Output to file on encode success.
         }
     }
 
     @Override
     public String getName()
     {
-        return String.format("%s generator for %s", this.registryFolder(), this.modid());
+        return String.format("%s generator for %s", this.directory(), this.modid());
     }
 }
