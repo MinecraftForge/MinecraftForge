@@ -62,11 +62,15 @@ public class RegisterEvent extends Event implements IModBusEvent
         {
             if (!protectedEntries.contains(name)) {
                 protectedEntries.add(name);
-                if (this.forgeRegistry != null)
-                    ((IForgeRegistry) this.forgeRegistry).register(name, valueSupplier.get());
-                else if (this.vanillaRegistry != null)
-                    Registry.register((Registry) this.vanillaRegistry, name, valueSupplier.get());
-                ObjectRegisteredEvent objectRegisteredEvent = new ObjectRegisteredEvent(this, name);
+                T value = null;
+                if (this.forgeRegistry != null) {
+                    value = valueSupplier.get();
+                    ((IForgeRegistry) this.forgeRegistry).register(name, value);
+                } else if (this.vanillaRegistry != null) {
+                    value = valueSupplier.get();
+                    Registry.register((Registry) this.vanillaRegistry, name, value);
+                }
+                ObjectRegisteredEvent objectRegisteredEvent = new ObjectRegisteredEvent(this, name, value);
                 ModLoader.get().postEventWithWrap(objectRegisteredEvent, (mc, e) -> ModLoadingContext.get().setActiveContainer(mc), (mc, e)-> ModLoadingContext.get().setActiveContainer(null));
                 protectedEntries.remove(name);
             } else
