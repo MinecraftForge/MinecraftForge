@@ -94,7 +94,7 @@ public class GlobalLootModifiersTest {
         @Override
         protected void start()
         {
-            add("smelting", SMELTING.get(), new SmeltingEnchantmentModifier(
+            add("smelting", new SmeltingEnchantmentModifier(
                     new LootItemCondition[]{
                             MatchTool.toolMatches(
                                     ItemPredicate.Builder.item().hasEnchantment(
@@ -103,7 +103,7 @@ public class GlobalLootModifiersTest {
                     })
             );
 
-            add("wheat_harvest", WHEATSEEDS.get(), new WheatSeedsConverterModifier(
+            add("wheat_harvest", new WheatSeedsConverterModifier(
                     new LootItemCondition[] {
                             MatchTool.toolMatches(ItemPredicate.Builder.item().of(Items.SHEARS)).build(),
                             LootItemBlockStatePropertyCondition.hasBlockStateProperties(Blocks.WHEAT).build()
@@ -111,7 +111,7 @@ public class GlobalLootModifiersTest {
                     3, Items.WHEAT_SEEDS, Items.WHEAT)
             );
 
-            add("dungeon_loot", DUNGEON_LOOT.get(), new DungeonLootEnhancerModifier(
+            add("dungeon_loot", new DungeonLootEnhancerModifier(
                     new LootItemCondition[] { LootTableIdCondition.builder(new ResourceLocation("chests/simple_dungeon")).build() },
                     2)
             );
