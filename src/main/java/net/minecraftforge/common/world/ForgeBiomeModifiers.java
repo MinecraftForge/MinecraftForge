@@ -5,7 +5,9 @@
 
 package net.minecraftforge.common.world;
 
+import java.util.EnumSet;
 import java.util.List;
+import java.util.Set;
 
 import com.mojang.serialization.Codec;
 
@@ -66,23 +68,35 @@ public final class ForgeBiomeModifiers
      * <pre>
      * {
      *   "type": "forge:removefeatures", // required
-     *   "biomes": "#namespace:your_biome_tag" // accepts a biome id, [list of biome ids], or #namespace:biome_tag
-     *   "features": "namespace:your_feature" // accepts a placed feature id, [list of placed feature ids], or #namespace:feature_tag
+     *   "biomes": "#namespace:your_biome_tag", // accepts a biome id, [list of biome ids], or #namespace:biome_tag
+     *   "features": "namespace:your_feature", // accepts a placed feature id, [list of placed feature ids], or #namespace:feature_tag
+     *   "steps": "underground_ores" OR ["underground_ores", "vegetal_decoration"] // one or more decoration steps; optional field, defaults to all steps if not specified
      * }
      * </pre>
      * 
      * @param biomes Biomes to remove features from.
-     * @param features PlacedFeatures to remove from biomes..
+     * @param features PlacedFeatures to remove from biomes.
+     * @param steps Decoration steps to remove features from.
      */
-    public static record RemoveFeaturesBiomeModifier(HolderSet<Biome> biomes, HolderSet<PlacedFeature> features) implements BiomeModifier
+    public static record RemoveFeaturesBiomeModifier(HolderSet<Biome> biomes, HolderSet<PlacedFeature> features, Set<Decoration> steps) implements BiomeModifier
     {
+        /**
+         * Creates a modifier that removes the given features from all decoration steps in the given biomes.
+         * @param biomes Biomes to remove features from.
+         * @param features PlacedFeatures to remove from biomes.
+         */
+        public static RemoveFeaturesBiomeModifier allSteps(HolderSet<Biome> biomes, HolderSet<PlacedFeature> features)
+        {
+            return new RemoveFeaturesBiomeModifier(biomes, features, EnumSet.allOf(Decoration.class));
+        }
+        
         @Override
         public void modify(Holder<Biome> biome, Phase phase, Builder builder)
         {
             if (phase == Phase.REMOVE && this.biomes.contains(biome))
             {
                 BiomeGenerationSettingsBuilder generationSettings = builder.getGenerationSettings();
-                for (Decoration step : Decoration.values())
+                for (Decoration step : this.steps())
                 {
                     generationSettings.getFeatures(step).removeIf(this.features()::contains);
                 }

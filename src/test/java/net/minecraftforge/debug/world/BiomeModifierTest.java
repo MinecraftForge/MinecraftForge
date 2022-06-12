@@ -150,7 +150,7 @@ public class BiomeModifierTest
         // Prepare to datagenerate our remove-features biome modifier.
         final String removeFeaturePathString = String.join("/", directory, MODID, biomeModifiersNamespace, biomeModifiersPath, REMOVE_FOREST_TREES + ".json");
         final Path removeFeaturePath = outputFolder.resolve(removeFeaturePathString);
-        final BiomeModifier removeFeature = new RemoveFeaturesBiomeModifier(
+        final BiomeModifier removeFeature = RemoveFeaturesBiomeModifier.allSteps(
             forestsTag,
             HolderSet.direct(ops.registry(Registry.PLACED_FEATURE_REGISTRY).get().getOrCreateHolderOrThrow(ResourceKey.create(Registry.PLACED_FEATURE_REGISTRY, new ResourceLocation("trees_birch_and_oak"))))
             );
