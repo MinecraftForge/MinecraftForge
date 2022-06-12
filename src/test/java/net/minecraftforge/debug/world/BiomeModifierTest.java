@@ -16,6 +16,7 @@ import com.google.gson.JsonElement;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+
 import cpw.mods.modlauncher.api.LamdbaExceptionUtils;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
@@ -30,6 +31,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.tags.BiomeTags;
+import net.minecraft.tags.EntityTypeTags;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.Biome.Precipitation;
@@ -39,9 +41,11 @@ import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 import net.minecraft.world.level.levelgen.placement.BiomeFilter;
 import net.minecraft.world.level.levelgen.placement.CountOnEveryLayerPlacement;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
-import net.minecraftforge.common.world.AddFeaturesBiomeModifier;
-import net.minecraftforge.common.world.AddSpawnsBiomeModifier;
 import net.minecraftforge.common.world.BiomeModifier;
+import net.minecraftforge.common.world.ForgeBiomeModifiers.AddFeaturesBiomeModifier;
+import net.minecraftforge.common.world.ForgeBiomeModifiers.AddSpawnsBiomeModifier;
+import net.minecraftforge.common.world.ForgeBiomeModifiers.RemoveFeaturesBiomeModifier;
+import net.minecraftforge.common.world.ForgeBiomeModifiers.RemoveSpawnsBiomeModifier;
 import net.minecraftforge.common.world.ModifiableBiomeInfo.BiomeInfo.Builder;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
@@ -60,7 +64,8 @@ import net.minecraftforge.registries.RegistryObject;
  * <li>Biome modifiers add a json feature to modified biomes, to ensure json features are usable in biome modifiers.</li>
  * </ul>
  * <p>If the biome modifiers are applied correctly, then badlands biomes should generate large basalt columns,
- * spawn magma cubes, have red-colored water, and be snowy.</p>
+ * spawn magma cubes, have red-colored water, and be snowy. Additionally, biomes in the is_forest tag are missing
+ * oak trees, pine trees, and skeletons.</p>
  */
 @Mod(BiomeModifierTest.MODID)
 public class BiomeModifierTest
@@ -75,6 +80,8 @@ public class BiomeModifierTest
     public static final String ADD_BASALT = "add_basalt";
     public static final String ADD_MAGMA_CUBES = "add_magma_cubes";
     public static final String MODIFY_BADLANDS = "modify_badlands";
+    public static final String REMOVE_FOREST_TREES = "remove_forest_trees";
+    public static final String REMOVE_FOREST_SKELETONS = "remove_forest_skeletons";
 
     public BiomeModifierTest()
     {
@@ -114,6 +121,7 @@ public class BiomeModifierTest
         final String biomeModifiersNamespace = biomeModifiersRegistryID.getNamespace();
         final String biomeModifiersPath = biomeModifiersRegistryID.getPath();
         final HolderSet.Named<Biome> badlandsTag = new HolderSet.Named<>(ops.registry(Registry.BIOME_REGISTRY).get(), BiomeTags.IS_BADLANDS);
+        final HolderSet.Named<Biome> forestsTag = new HolderSet.Named<>(ops.registry(Registry.BIOME_REGISTRY).get(), BiomeTags.IS_FOREST);
         
         // Prepare to datagenerate our add-feature biome modifier.
         final String addFeaturePathString = String.join("/", directory, MODID, biomeModifiersNamespace, biomeModifiersPath, ADD_BASALT + ".json");
@@ -131,12 +139,28 @@ public class BiomeModifierTest
             new SpawnerData(EntityType.MAGMA_CUBE, 100, 1, 4));
 
         // Prepare to datagenerate our climate and render effects biome modifier.
-        final String biomeModifierPathString = String.join("/", directory, MODID, biomeModifiersRegistryID.getNamespace(), biomeModifiersRegistryID.getPath(), MODIFY_BADLANDS + ".json");
+        final String biomeModifierPathString = String.join("/", directory, MODID, biomeModifiersNamespace, biomeModifiersPath, MODIFY_BADLANDS + ".json");
         final Path biomeModifierPath = outputFolder.resolve(biomeModifierPathString);
         final BiomeModifier biomeModifier = new TestModifier(
             new HolderSet.Named<>(ops.registry(Registry.BIOME_REGISTRY).get(), BiomeTags.IS_BADLANDS),
             Precipitation.SNOW,
             0xFF0000
+            );
+        
+        // Prepare to datagenerate our remove-features biome modifier.
+        final String removeFeaturePathString = String.join("/", directory, MODID, biomeModifiersNamespace, biomeModifiersPath, REMOVE_FOREST_TREES + ".json");
+        final Path removeFeaturePath = outputFolder.resolve(removeFeaturePathString);
+        final BiomeModifier removeFeature = new RemoveFeaturesBiomeModifier(
+            forestsTag,
+            HolderSet.direct(ops.registry(Registry.PLACED_FEATURE_REGISTRY).get().getOrCreateHolderOrThrow(ResourceKey.create(Registry.PLACED_FEATURE_REGISTRY, new ResourceLocation("trees_birch_and_oak"))))
+            );
+        
+        // Prepare to datagenerate our remove-spawns biome modifier.
+        final String removeSpawnPathString = String.join("/", directory, MODID, biomeModifiersNamespace, biomeModifiersPath, REMOVE_FOREST_SKELETONS + ".json");
+        final Path removeSpawnPath = outputFolder.resolve(removeSpawnPathString);
+        final BiomeModifier removeSpawn = new RemoveSpawnsBiomeModifier(
+            forestsTag,
+            new HolderSet.Named<>(ops.registry(Registry.ENTITY_TYPE_REGISTRY).get(), EntityTypeTags.SKELETONS)
             );
 
         generator.addProvider(event.includeServer(), new DataProvider()
@@ -159,6 +183,14 @@ public class BiomeModifierTest
                 BiomeModifier.DIRECT_CODEC.encodeStart(ops, biomeModifier)
                     .resultOrPartial(msg -> LOGGER.error("Failed to encode {}: {}", biomeModifierPathString, msg)) // Log error on encode failure.
                     .ifPresent(LamdbaExceptionUtils.rethrowConsumer(json -> DataProvider.saveStable(cache, json, biomeModifierPath)));
+                
+                BiomeModifier.DIRECT_CODEC.encodeStart(ops, removeFeature)
+                    .resultOrPartial(msg -> LOGGER.error("Failed to encode {}: {}", removeFeaturePathString, msg)) // Log error on encode failure.
+                    .ifPresent(LamdbaExceptionUtils.rethrowConsumer(json -> DataProvider.saveStable(cache, json, removeFeaturePath)));
+                
+                BiomeModifier.DIRECT_CODEC.encodeStart(ops, removeSpawn)
+                    .resultOrPartial(msg -> LOGGER.error("Failed to encode {}: {}", removeSpawnPathString, msg)) // Log error on encode failure.
+                    .ifPresent(LamdbaExceptionUtils.rethrowConsumer(json -> DataProvider.saveStable(cache, json, removeSpawnPath)));
             }
 
             @Override
