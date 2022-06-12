@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -38,7 +39,7 @@ public abstract class GlobalLootModifierProvider implements DataProvider
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private final DataGenerator gen;
     private final String modid;
-    private final Map<String, JsonObject> toSerialize = new HashMap<>();
+    private final Map<String, JsonElement> toSerialize = new HashMap<>();
     private boolean replace = false;
 
     public GlobalLootModifierProvider(DataGenerator gen, String modid)
@@ -87,17 +88,12 @@ public abstract class GlobalLootModifierProvider implements DataProvider
      * Passes in the data needed to create the file without any extra objects.
      *
      * @param modifier      The name of the modifier, which will be the file name.
-     * @param serializer    The registered serializer of this modifier.
      * @param instance      The instance to serialize
      */
-    public <T extends IGlobalLootModifier> void add(String modifier, Codec<T> serializer, T instance)
+    public <T extends IGlobalLootModifier> void add(String modifier, T instance)
     {
-        JsonElement element = serializer.encodeStart(JsonOps.INSTANCE, instance).getOrThrow(false, s -> {});
-        if (!(element instanceof JsonObject obj))
-            throw new RuntimeException("Expecting loot modifier to be a Json Object!");
-        String serializerName = ForgeRegistries.LOOT_MODIFIER_SERIALIZERS.get().getKey(serializer).toString();
-        obj.addProperty("type", serializerName);
-        this.toSerialize.put(modifier, obj);
+        JsonElement json = IGlobalLootModifier.DIRECT_CODEC.encodeStart(JsonOps.INSTANCE, instance).getOrThrow(false, s -> {});
+        this.toSerialize.put(modifier, json);
     }
 
     @Override
