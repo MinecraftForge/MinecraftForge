@@ -42,18 +42,18 @@ public class EnumArgument<T extends Enum<T>> implements ArgumentType<T> {
         try {
             return Enum.valueOf(enumClass, name);
         } catch (IllegalArgumentException e) {
-            throw INVALID_ENUM.createWithContext(reader, name, Arrays.toString(enumClass.getEnumConstants()));
+            throw INVALID_ENUM.createWithContext(reader, name, Arrays.toString(Arrays.stream(enumClass.getEnumConstants()).map(Enum::name).toArray()));
         }
     }
 
     @Override
     public <S> CompletableFuture<Suggestions> listSuggestions(final CommandContext<S> context, final SuggestionsBuilder builder) {
-        return SharedSuggestionProvider.suggest(Stream.of(enumClass.getEnumConstants()).map(Object::toString), builder);
+        return SharedSuggestionProvider.suggest(Stream.of(enumClass.getEnumConstants()).map(Enum::name), builder);
     }
 
     @Override
     public Collection<String> getExamples() {
-        return Stream.of(enumClass.getEnumConstants()).map(Object::toString).collect(Collectors.toList());
+        return Stream.of(enumClass.getEnumConstants()).map(Enum::name).collect(Collectors.toList());
     }
 
     public static class Serializer implements ArgumentSerializer<EnumArgument<?>>
