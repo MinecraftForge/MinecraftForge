@@ -88,7 +88,7 @@ public final class ForgeBiomeTagsProvider extends BiomeTagsProvider
         tag(Biomes.BASALT_DELTAS, Tags.Biomes.IS_HOT, Tags.Biomes.IS_HOT_NETHER, Tags.Biomes.IS_DRY, Tags.Biomes.IS_DRY_NETHER);
 
         tag(Tags.Biomes.IS_WATER).addTag(BiomeTags.IS_OCEAN).addTag(BiomeTags.IS_RIVER);
-        tag(BiomeTags.IS_MOUNTAIN).addTag(Tags.Biomes.IS_PEAK).addTag(Tags.Biomes.IS_SLOPE);
+        tag(Tags.Biomes.IS_MOUNTAIN).addTag(Tags.Biomes.IS_PEAK).addTag(Tags.Biomes.IS_SLOPE);
     }
 
     @SafeVarargs
