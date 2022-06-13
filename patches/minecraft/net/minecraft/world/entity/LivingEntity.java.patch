@@ -53,7 +53,7 @@
              if (flag1) {
                 this.m_20301_(this.m_7302_(this.m_20146_()));
                 if (this.m_20146_() == -20) {
-@@ -356,10 +_,10 @@
+@@ -356,10 +_,11 @@
                 }
              }
  
@@ -62,7 +62,8 @@
                 this.m_8127_();
              }
 -         } else if (this.m_20146_() < this.m_6062_()) {
-+         } if ((!this.canDrownInFluidType(this.getEyeInFluidType()) || this.f_19853_.m_8055_(new BlockPos(this.m_20185_(), this.m_20188_(), this.m_20189_())).m_60713_(Blocks.f_50628_)) && this.m_20146_() < this.m_6062_()) { // Forge: If since we need to increase the air supply if in bubble column or can't drown
++         } // Forge: Move to if statement since we need to increase the air supply if in bubble column or can't drown
++         if (this.m_20146_() < this.m_6062_() && (!this.canDrownInFluidType(this.getEyeInFluidType()) || this.f_19853_.m_8055_(new BlockPos(this.m_20185_(), this.m_20188_(), this.m_20189_())).m_60713_(Blocks.f_50628_))) {
              this.m_20301_(this.m_7305_(this.m_20146_()));
           }
  
