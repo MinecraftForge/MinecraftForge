@@ -151,6 +151,7 @@ public class ForgeMod
                     .motionScale(1D)
                     .canPushEntity(false)
                     .canSwim(false)
+                    .canDrown(false)
                     .fallDistanceModifier(1F)
                     .pathType(null)
                     .adjacentPathType(null)
