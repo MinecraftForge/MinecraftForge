@@ -1192,6 +1192,7 @@ project(':forge') {
 
     def baseForgeVersion = System.getProperty("forge.compatibility_check_version")
     if (baseForgeVersion == null)
+        // FIXME: Restore commented out portion when next tagged (41.1 or 42.0), assuming that a .0 build is published
         baseForgeVersion = "1.19-41.0.1" // "${MC_VERSION}-${GIT_INFO.tag}.0"
     if (baseForgeVersion == "null")
         baseForgeVersion = null // Allow disabling from system property if not wanted
