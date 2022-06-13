@@ -42,15 +42,14 @@
     public boolean m_6040_() {
        return this.m_6336_() == MobType.f_21641_;
     }
-@@ -337,8 +_,9 @@
+@@ -337,8 +_,8 @@
              }
           }
  
 -         if (this.m_204029_(FluidTags.f_13131_) && !this.f_19853_.m_8055_(new BlockPos(this.m_20185_(), this.m_20188_(), this.m_20189_())).m_60713_(Blocks.f_50628_)) {
 -            boolean flag1 = !this.m_6040_() && !MobEffectUtil.m_19588_(this) && (!flag || !((Player)this).m_150110_().f_35934_);
-+         boolean canDrown = this.canDrownInFluidType(this.getEyeInFluidType());
-+         if (!this.getEyeInFluidType().isAir() && canDrown && !this.f_19853_.m_8055_(new BlockPos(this.m_20185_(), this.m_20188_(), this.m_20189_())).m_60713_(Blocks.f_50628_)) {
-+            boolean flag1 = canDrown && !MobEffectUtil.m_19588_(this) && (!flag || !((Player)this).m_150110_().f_35934_);
++         if (!this.getEyeInFluidType().isAir() && !this.f_19853_.m_8055_(new BlockPos(this.m_20185_(), this.m_20188_(), this.m_20189_())).m_60713_(Blocks.f_50628_)) {
++            boolean flag1 = this.canDrownInFluidType(this.getEyeInFluidType()) && !MobEffectUtil.m_19588_(this) && (!flag || !((Player)this).m_150110_().f_35934_);
              if (flag1) {
                 this.m_20301_(this.m_7302_(this.m_20146_()));
                 if (this.m_20146_() == -20) {
@@ -59,7 +58,7 @@
              }
  
 -            if (!this.f_19853_.f_46443_ && this.m_20159_() && this.m_20202_() != null && !this.m_20202_().m_6146_()) {
-+            if (!this.f_19853_.f_46443_ && this.m_20159_() && this.m_20202_() != null && !this.m_20202_().canBeRiddenInWater(this)) {
++            if (!this.f_19853_.f_46443_ && this.m_20159_() && this.m_20202_() != null && !this.m_20202_().canBeRiddenUnderFluidType(this.getEyeInFluidType(), this)) {
                 this.m_8127_();
              }
           } else if (this.m_20146_() < this.m_6062_()) {

@@ -351,6 +351,20 @@ public class FluidType
     }
 
     /**
+     * Returns whether the entity can ride in this vehicle under the fluid.
+     *
+     * @param vehicle the vehicle being ridden in
+     * @param rider the entity riding the vehicle
+     * @return {@code true} if the vehicle can be ridden in under this fluid,
+     *         {@code false} otherwise
+     */
+    public boolean canRideVehicleUnder(Entity vehicle, Entity rider)
+    {
+        if (this == ForgeMod.WATER_TYPE.get()) return vehicle.rideableUnderWater();
+        return true;
+    }
+
+    /**
      * Returns whether the entity can be hydrated by this fluid.
      *
      * <p>Hydration is an arbitrary word which depends on the entity.

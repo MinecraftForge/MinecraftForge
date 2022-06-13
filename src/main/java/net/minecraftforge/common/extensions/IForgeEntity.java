@@ -106,14 +106,16 @@ public interface IForgeEntity extends ICapabilitySerializable<CompoundTag>
     }
 
     /**
-     * Checks if this entity can continue to be ridden while it is underwater.
+     * Returns whether the entity can ride in this vehicle under the fluid.
      *
-     * @param rider The entity that is riding this entity
-     * @return {@code true} if the entity can continue to ride underwater. {@code false} otherwise.
+     * @param type the type of the fluid
+     * @param rider the entity riding the vehicle
+     * @return {@code true} if the vehicle can be ridden in under this fluid,
+     *         {@code false} otherwise
      */
-    default boolean canBeRiddenInWater(Entity rider)
+    default boolean canBeRiddenUnderFluidType(FluidType type, Entity rider)
     {
-        return self().rideableUnderWater();
+        return type.canRideVehicleUnder(self(), rider);
     }
 
     /**

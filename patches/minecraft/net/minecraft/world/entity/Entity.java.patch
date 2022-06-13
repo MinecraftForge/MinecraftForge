@@ -307,7 +307,7 @@
        return !this.f_19823_.isEmpty();
     }
  
-+   /** @deprecated Forge: Use {@link #canBeRiddenInWater(Entity) rider sensitive version} */
++   /** @deprecated Forge: Use {@link #canBeRiddenUnderFluidType(net.minecraftforge.fluids.FluidType, Entity) rider sensitive version} */
 +   @Deprecated
     public boolean m_6146_() {
        return true;
