@@ -1,13 +1,5 @@
 --- a/net/minecraft/resources/RegistryResourceAccess.java
 +++ b/net/minecraft/resources/RegistryResourceAccess.java
-@@ -21,6 +_,7 @@
- import net.minecraft.core.Registry;
- import net.minecraft.core.RegistryAccess;
- import net.minecraft.server.packs.resources.ResourceManager;
-+import net.minecraftforge.registries.DataPackRegistriesHooks;
- import org.slf4j.Logger;
- 
- public interface RegistryResourceAccess {
 @@ -47,7 +_,7 @@
  
                       DataResult dataresult;
@@ -39,7 +31,7 @@
  
           private static String m_214239_(ResourceLocation p_214240_) {
 -            return p_214240_.m_135815_();
-+            return DataPackRegistriesHooks.prefixNamespace(p_214240_);// FORGE: add non-vanilla registry namespace to loader directory, same format as tag directory (see net.minecraft.tags.TagManager#getTagDir(ResourceKey))
++            return net.minecraftforge.registries.DataPackRegistriesHooks.prefixNamespace(p_214240_); // FORGE: add non-vanilla registry namespace to loader directory, same format as tag directory (see net.minecraft.tags.TagManager#getTagDir(ResourceKey))
           }
  
           private static <E> ResourceLocation m_214268_(ResourceKey<E> p_214269_) {
