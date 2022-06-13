@@ -17,6 +17,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandRuntimeException;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.SharedSuggestionProvider;
@@ -45,7 +46,7 @@ public class ClientCommandHandler
     private static void handleClientPlayerLogin(ClientPlayerNetworkEvent.LoggedInEvent event)
     {
         // some custom server implementations do not send ClientboundCommandsPacket, provide a fallback
-        var suggestionDispatcher = mergeServerCommands(new CommandDispatcher<>());
+        var suggestionDispatcher = mergeServerCommands(new CommandDispatcher<>(), new CommandBuildContext(event.getPlayer().connection.registryAccess()));
         if (event.getConnection().getPacketListener() instanceof ClientPacketListener listener)
         {
             // Must set this, so that suggestions for client-only commands work, if server never sends commands packet
@@ -59,10 +60,10 @@ public class ClientCommandHandler
      * Merges command dispatcher use for suggestions to the command dispatcher used for client commands so they can be sent to the server, and vice versa so client commands appear
      * with server commands in suggestions
      */
-    public static CommandDispatcher<SharedSuggestionProvider> mergeServerCommands(CommandDispatcher<SharedSuggestionProvider> serverCommands)
+    public static CommandDispatcher<SharedSuggestionProvider> mergeServerCommands(CommandDispatcher<SharedSuggestionProvider> serverCommands, CommandBuildContext buildContext)
     {
         CommandDispatcher<CommandSourceStack> commandsTemp = new CommandDispatcher<>();
-        MinecraftForge.EVENT_BUS.post(new RegisterClientCommandsEvent(commandsTemp));
+        MinecraftForge.EVENT_BUS.post(new RegisterClientCommandsEvent(commandsTemp, buildContext));
 
         // Copies the client commands into another RootCommandNode so that redirects can't be used with server commands
         commands = new CommandDispatcher<>();

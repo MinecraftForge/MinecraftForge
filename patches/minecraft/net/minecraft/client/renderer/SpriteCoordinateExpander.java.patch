@@ -1,0 +1,9 @@
+--- a/net/minecraft/client/renderer/SpriteCoordinateExpander.java
++++ b/net/minecraft/client/renderer/SpriteCoordinateExpander.java
+@@ -54,4 +_,6 @@
+    public void m_5954_(float p_110808_, float p_110809_, float p_110810_, float p_110811_, float p_110812_, float p_110813_, float p_110814_, float p_110815_, float p_110816_, int p_110817_, int p_110818_, float p_110819_, float p_110820_, float p_110821_) {
+       this.f_110795_.m_5954_(p_110808_, p_110809_, p_110810_, p_110811_, p_110812_, p_110813_, p_110814_, this.f_110796_.m_118367_((double)(p_110815_ * 16.0F)), this.f_110796_.m_118393_((double)(p_110816_ * 16.0F)), p_110817_, p_110818_, p_110819_, p_110820_, p_110821_);
+    }
++
++   public com.mojang.blaze3d.vertex.VertexFormat getVertexFormat() { return f_110795_.getVertexFormat(); }
+ }

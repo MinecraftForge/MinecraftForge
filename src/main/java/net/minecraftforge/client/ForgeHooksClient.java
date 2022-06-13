@@ -28,8 +28,6 @@ import net.minecraft.locale.Language;
 import net.minecraft.network.Connection;
 import net.minecraft.network.chat.*;
 import net.minecraft.network.protocol.status.ServerStatus;
-import net.minecraft.server.WorldStem;
-import net.minecraft.server.packs.repository.PackRepository;
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -78,8 +76,6 @@ import net.minecraft.client.player.Input;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.material.FogType;
-import net.minecraft.world.level.storage.LevelStorageSource;
-import net.minecraft.world.level.storage.PrimaryLevelData;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
@@ -1080,9 +1076,7 @@ public class ForgeHooksClient
         return ItemBlockRenderTypes.canRenderInLayer(state, RenderType.solid());
     }
 
-    public static void createWorldConfirmationScreen(
-            String worldName, LevelStorageSource.LevelStorageAccess levelStorageAccess,
-            PackRepository packRepository, WorldStem worldStem)
+    public static void createWorldConfirmationScreen(Runnable doConfirmedWorldLoad)
     {
         Component title = Component.translatable("selectWorld.backupQuestion.experimental");
         Component msg = Component.translatable("selectWorld.backupWarning.experimental")
@@ -1093,11 +1087,7 @@ public class ForgeHooksClient
         {
             if (confirmed)
             {
-                if (worldStem.worldData() instanceof PrimaryLevelData pld)
-                {
-                    pld.withConfirmedWarning(true);
-                }
-                Minecraft.getInstance().doWorldLoad(worldName, levelStorageAccess, packRepository, worldStem);
+                doConfirmedWorldLoad.run();
             }
             else
             {

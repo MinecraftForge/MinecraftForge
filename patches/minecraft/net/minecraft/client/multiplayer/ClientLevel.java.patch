@@ -53,7 +53,7 @@
     }
  
     public void m_213890_(@Nullable Player p_233631_, Entity p_233632_, SoundEvent p_233633_, SoundSource p_233634_, float p_233635_, float p_233636_, long p_233637_) {
-+      net.minecraftforge.event.PlayLevelSoundEvent.AtEntity event = net.minecraftforge.event.ForgeEventFactory.onPlaySoundAtEntity(p_233631_, p_233633_, p_233634_, p_233635_, p_233636_);
++      net.minecraftforge.event.PlayLevelSoundEvent.AtEntity event = net.minecraftforge.event.ForgeEventFactory.onPlaySoundAtEntity(p_233632_, p_233633_, p_233634_, p_233635_, p_233636_);
 +      if (event.isCanceled() || event.getSound() == null) return;
 +      p_233633_ = event.getSound();
 +      p_233634_ = event.getSource();

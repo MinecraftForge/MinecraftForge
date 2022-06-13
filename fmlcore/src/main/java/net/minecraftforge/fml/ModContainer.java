@@ -56,9 +56,24 @@ public abstract class ModContainer
         this.namespace = this.modId;
         this.modInfo = info;
         this.modLoadingStage = ModLoadingStage.CONSTRUCT;
-        // default displaytest extension checks for version string match
-        registerExtensionPoint(IExtensionPoint.DisplayTest.class, () -> new IExtensionPoint.DisplayTest(()->this.modInfo.getVersion().toString(),
-                (incoming, isNetwork)->Objects.equals(incoming, this.modInfo.getVersion().toString())));
+
+        final String displayTestString = info.getConfig().<String>getConfigElement("displayTest").orElse("MATCH_VERSION"); // missing defaults to DEFAULT type
+        Supplier<IExtensionPoint.DisplayTest> displayTestSupplier = switch (displayTestString) {
+            case "MATCH_VERSION" -> // default displaytest checks for version string match
+                    () -> new IExtensionPoint.DisplayTest(() -> this.modInfo.getVersion().toString(),
+                        (incoming, isNetwork) -> Objects.equals(incoming, this.modInfo.getVersion().toString()));
+            case "IGNORE_SERVER_VERSION" -> // Ignores any version information coming from the server - use for server only mods
+                    () -> new IExtensionPoint.DisplayTest(() -> IExtensionPoint.DisplayTest.IGNORESERVERONLY, (incoming, isNetwork) -> true);
+            case "IGNORE_ALL_VERSION" -> // Ignores all information and provides no information
+                    () -> new IExtensionPoint.DisplayTest(() -> "", (incoming, isNetwork) -> true);
+            case "NONE" -> null; // NO display test at all - use this if you're going to do your own display test
+            default -> // any other value throws an exception
+                    throw new IllegalArgumentException("Invalid displayTest value supplied in mods.toml");
+        };
+        if (displayTestSupplier != null)
+            registerExtensionPoint(IExtensionPoint.DisplayTest.class, displayTestSupplier);
+        else
+            extensionPoints.remove(IExtensionPoint.DisplayTest.class);
     }
 
     /**
