@@ -1,14 +1,5 @@
 --- a/net/minecraft/world/entity/ExperienceOrb.java
 +++ b/net/minecraft/world/entity/ExperienceOrb.java
-@@ -55,7 +_,7 @@
-       this.f_19854_ = this.m_20185_();
-       this.f_19855_ = this.m_20186_();
-       this.f_19856_ = this.m_20189_();
--      if (this.m_204029_(FluidTags.f_13131_)) {
-+      if (this.isEyeInFluidType(net.minecraftforge.common.ForgeMod.WATER_TYPE.get())) {
-          this.m_20803_();
-       } else if (!this.m_20068_()) {
-          this.m_20256_(this.m_20184_().m_82520_(0.0D, -0.03D, 0.0D));
 @@ -89,7 +_,8 @@
        this.m_6478_(MoverType.SELF, this.m_20184_());
        float f = 0.98F;

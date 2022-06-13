@@ -491,7 +491,7 @@ public interface IForgeBlock
      * @return the path type of this block
      */
     @Nullable
-    default BlockPathTypes getBlockPathType(BlockState state, BlockGetter level, BlockPos pos, @org.jetbrains.annotations.Nullable Mob mob)
+    default BlockPathTypes getBlockPathType(BlockState state, BlockGetter level, BlockPos pos, @Nullable Mob mob)
     {
         return state.getBlock() == Blocks.LAVA ? BlockPathTypes.LAVA : state.isBurning(level, pos) ? BlockPathTypes.DAMAGE_FIRE : null;
     }
@@ -510,7 +510,7 @@ public interface IForgeBlock
      * @return the path type of this block
      */
     @Nullable
-    default BlockPathTypes getAdjacentBlockPathType(BlockState state, BlockGetter level, BlockPos pos, @org.jetbrains.annotations.Nullable Mob mob, BlockPathTypes originalType)
+    default BlockPathTypes getAdjacentBlockPathType(BlockState state, BlockGetter level, BlockPos pos, @Nullable Mob mob, BlockPathTypes originalType)
     {
         if (state.is(Blocks.CACTUS)) return BlockPathTypes.DANGER_CACTUS;
         else if (state.is(Blocks.SWEET_BERRY_BUSH)) return BlockPathTypes.DANGER_OTHER;
@@ -849,6 +849,11 @@ public interface IForgeBlock
      * Returns whether the block can be hydrated by a fluid.
      *
      * <p>Hydration is an arbitrary word which depends on the block.
+     * <ul>
+     *     <li>A farmland has moisture</li>
+     *     <li>A sponge can soak up the liquid</li>
+     *     <li>A coral can live</li>
+     * </ul>
      *
      * @param state the state of the block being hydrated
      * @param getter the getter which can get the block

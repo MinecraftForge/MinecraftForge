@@ -448,13 +448,14 @@ public class FluidType
      * Returns a sound to play when a certain action is performed at a
      * position. If no sound is present, then the sound will be {@code null}.
      *
+     * @param player the player listening to the sound
      * @param getter the getter which can get the fluid
      * @param pos the position of the fluid
      * @param action the action being performed
      * @return the sound to play when performing the action
      */
     @Nullable
-    public SoundEvent getSound(BlockGetter getter, BlockPos pos, SoundAction action)
+    public SoundEvent getSound(@Nullable Player player, BlockGetter getter, BlockPos pos, SoundAction action)
     {
         return this.getSound(action);
     }
@@ -463,6 +464,11 @@ public class FluidType
      * Returns whether the block can be hydrated by a fluid.
      *
      * <p>Hydration is an arbitrary word which depends on the block.
+     * <ul>
+     *     <li>A farmland has moisture</li>
+     *     <li>A sponge can soak up the liquid</li>
+     *     <li>A coral can live</li>
+     * </ul>
      *
      * @param state the state of the fluid
      * @param getter the getter which can get the fluid
@@ -798,9 +804,12 @@ public class FluidType
      */
     public boolean isVaporizedOnPlacement(Level level, BlockPos pos, FluidStack stack)
     {
-        BlockState state = this.getBlockForFluidState(level, pos, this.getStateForPlacement(level, pos, stack));
-        if (state == null) return false;
-        else return level.dimensionType().ultraWarm() && state.getMaterial() == Material.WATER;
+        if (level.dimensionType().ultraWarm())
+        {
+            BlockState state = this.getBlockForFluidState(level, pos, this.getStateForPlacement(level, pos, stack));
+            return state != null && state.getMaterial() == Material.WATER;
+        }
+        return false;
     }
 
     /**
@@ -817,7 +826,7 @@ public class FluidType
      */
     public void onVaporize(@Nullable Player player, Level level, BlockPos pos, FluidStack stack)
     {
-        SoundEvent sound = this.getSound(level, pos, SoundActions.FLUID_VAPORIZE);
+        SoundEvent sound = this.getSound(player, level, pos, SoundActions.FLUID_VAPORIZE);
         level.playSound(player, pos, sound != null ? sound : SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 0.5F, 2.6F + (level.random.nextFloat() - level.random.nextFloat()) * 0.8F);
 
         for (int l = 0; l < 8; ++l)

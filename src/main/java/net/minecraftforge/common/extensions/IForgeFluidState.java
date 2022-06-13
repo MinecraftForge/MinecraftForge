@@ -126,6 +126,11 @@ public interface IForgeFluidState
      * Returns whether the block can be hydrated by a fluid.
      *
      * <p>Hydration is an arbitrary word which depends on the block.
+     * <ul>
+     *     <li>A farmland has moisture</li>
+     *     <li>A sponge can soak up the liquid</li>
+     *     <li>A coral can live</li>
+     * </ul>
      *
      * @param getter the getter which can get the fluid
      * @param pos the position of the fluid

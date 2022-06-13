@@ -15,21 +15,12 @@
                    BlockState blockstate = p_77608_.m_8055_(p_77609_);
 +                  BlockPathTypes blockPathType = blockstate.getAdjacentBlockPathType(p_77608_, p_77609_, null, p_77610_);
 +                  if (blockPathType != null) return blockPathType;
-+                  FluidState fluidState = p_77608_.m_6425_(p_77609_);
++                  FluidState fluidState = blockstate.m_60819_();
 +                  BlockPathTypes fluidPathType = fluidState.getAdjacentBlockPathType(p_77608_, p_77609_, null, p_77610_);
 +                  if (fluidPathType != null) return fluidPathType;
                    if (blockstate.m_60713_(Blocks.f_50128_)) {
                       return BlockPathTypes.DANGER_CACTUS;
                    }
-@@ -483,7 +_,7 @@
-                      return BlockPathTypes.DANGER_FIRE;
-                   }
- 
--                  if (p_77608_.m_6425_(p_77609_).m_205070_(FluidTags.f_13131_)) {
-+                  if (fluidState.m_205070_(FluidTags.f_13131_)) {
-                      return BlockPathTypes.WATER_BORDER;
-                   }
-                }
 @@ -496,6 +_,8 @@
  
     protected static BlockPathTypes m_77643_(BlockGetter p_77644_, BlockPos p_77645_) {

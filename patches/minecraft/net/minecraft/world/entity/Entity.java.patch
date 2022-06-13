@@ -101,12 +101,12 @@
  
 -            this.f_19853_.m_46473_().m_7238_();
 -         }
-+            if (this.f_146810_ && (this.f_146808_ || this.m_20071_() || this.isInFluidType((fluidType, aDouble) -> this.canFluidExtinguish(fluidType)))) {
++            if (this.f_146810_ && (this.f_146808_ || this.m_20071_() || this.isInFluidType((fluidType, height) -> this.canFluidExtinguish(fluidType)))) {
 +               this.m_146873_();
 +            }
 +         }
 +
-+         if (this.m_6060_() && (this.f_146808_ || this.m_20071_() || this.isInFluidType((fluidType, aDouble) -> this.canFluidExtinguish(fluidType)))) {
++         if (this.m_6060_() && (this.f_146808_ || this.m_20071_() || this.isInFluidType((fluidType, height) -> this.canFluidExtinguish(fluidType)))) {
 +            this.m_7311_(-this.m_6101_());
 +         }
 +
@@ -160,7 +160,7 @@
           this.m_5496_(soundtype.m_56776_(), soundtype.m_56773_() * 0.15F, soundtype.m_56774_());
        }
     }
-@@ -1068,19 +_,19 @@
+@@ -1068,19 +_,22 @@
  
     public void m_5844_() {
        if (this.m_6069_()) {
@@ -174,25 +174,24 @@
     }
  
     protected boolean m_20073_() {
--      this.f_19799_.clear();
+       this.f_19799_.clear();
 +      this.forgeFluidTypeHeight.clear();
        this.m_20074_();
 -      double d0 = this.f_19853_.m_6042_().f_63857_() ? 0.007D : 0.0023333333333333335D;
 -      boolean flag = this.m_204031_(FluidTags.f_13132_, d0);
 -      return this.m_20069_() || flag;
-+      this.f_19789_ *= this.forgeFluidTypeHeight.object2DoubleEntrySet().stream().filter(e -> !e.getKey().isAir() && !e.getKey().isVanilla()).map(e -> this.getFluidFallDistanceModifier(e.getKey())).min((f1, f2) -> Float.compare(f1, f2)).orElse(1F);
-+      if (this.isInFluidType((fluidType, height) -> !fluidType.isAir() && !fluidType.isVanilla() && this.canFluidExtinguish(fluidType))) this.m_20095_();
++      if (!(this.m_20202_() instanceof Boat)) {
++         this.f_19789_ *= this.forgeFluidTypeHeight.object2DoubleEntrySet().stream().filter(e -> !e.getKey().isAir() && !e.getKey().isVanilla()).map(e -> this.getFluidFallDistanceModifier(e.getKey())).min(Float::compare).orElse(1F);
++         if (this.isInFluidType((fluidType, height) -> !fluidType.isAir() && !fluidType.isVanilla() && this.canFluidExtinguish(fluidType))) this.m_20095_();
++      }
 +      return this.isInFluidType();
     }
  
     void m_20074_() {
-@@ -1101,8 +_,8 @@
-    }
- 
+@@ -1103,6 +_,7 @@
     private void m_20323_() {
--      this.f_19800_ = this.m_204029_(FluidTags.f_13131_);
--      this.f_19801_.clear();
-+      this.f_19800_ = this.isEyeInFluidType(net.minecraftforge.common.ForgeMod.WATER_TYPE.get());
+       this.f_19800_ = this.m_204029_(FluidTags.f_13131_);
+       this.f_19801_.clear();
 +      this.forgeFluidTypeOnEyes = net.minecraftforge.common.ForgeMod.EMPTY_TYPE.get();
        double d0 = this.m_20188_() - (double)0.11111111F;
        Entity entity = this.m_20202_();
@@ -215,7 +214,7 @@
     }
  
     protected void m_20076_() {
-@@ -1168,19 +_,21 @@
+@@ -1168,19 +_,23 @@
        int k = Mth.m_14107_(this.m_20189_());
        BlockPos blockpos = new BlockPos(i, j, k);
        BlockState blockstate = this.f_19853_.m_8055_(blockpos);
@@ -228,8 +227,10 @@
  
     }
  
-+   @Deprecated // FORGE: Use isEyeInFluidType instead
++   @Deprecated // Forge: Use isEyeInFluidType instead
     public boolean m_204029_(TagKey<Fluid> p_204030_) {
++      if (p_204030_ == FluidTags.f_13131_) return this.isEyeInFluidType(net.minecraftforge.common.ForgeMod.WATER_TYPE.get());
++      else if (p_204030_ == FluidTags.f_13132_) return this.isEyeInFluidType(net.minecraftforge.common.ForgeMod.LAVA_TYPE.get());
        return this.f_19801_.contains(p_204030_);
     }
  
@@ -386,7 +387,7 @@
        return this.f_19821_;
     }
  
-+   @Deprecated // FORGE: Use FluidType sensitive version
++   @Deprecated // Forge: Use FluidType sensitive version
     public boolean m_6063_() {
        return true;
     }
@@ -417,7 +418,7 @@
        this.f_19859_ = this.m_146908_();
     }
  
-+   @Deprecated // FORGE: Use no parameter version instead, only for vanilla Tags
++   @Deprecated // Forge: Use no parameter version instead, only for vanilla Tags
     public boolean m_204031_(TagKey<Fluid> p_204032_, double p_204033_) {
 +      this.updateFluidHeightAndDoFluidPushing();
 +      if(p_204032_ == FluidTags.f_13131_) return this.isInFluidType(net.minecraftforge.common.ForgeMod.WATER_TYPE.get());
@@ -436,7 +437,7 @@
           Vec3 vec3 = Vec3.f_82478_;
           int k1 = 0;
           BlockPos.MutableBlockPos blockpos$mutableblockpos = new BlockPos.MutableBlockPos();
-+         it.unimi.dsi.fastutil.objects.Object2ObjectMap<net.minecraftforge.fluids.FluidType, org.apache.commons.lang3.tuple.MutableTriple<Double, Vec3, Integer>> interimCalcs = new it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap<>(net.minecraftforge.fluids.FluidType.SIZE.get());
++         it.unimi.dsi.fastutil.objects.Object2ObjectMap<net.minecraftforge.fluids.FluidType, org.apache.commons.lang3.tuple.MutableTriple<Double, Vec3, Integer>> interimCalcs = new it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap<>(net.minecraftforge.fluids.FluidType.SIZE.get() - 1);
  
           for(int l1 = i; l1 < j; ++l1) {
              for(int i2 = k; i2 < l; ++i2) {
@@ -507,14 +508,17 @@
        }
     }
  
-@@ -2848,6 +_,7 @@
+@@ -2848,7 +_,10 @@
        return !this.f_19853_.m_151572_(i, k, j, l);
     }
  
-+   @Deprecated // FORGE: Use getFluidTypeHeight instead
++   @Deprecated // Forge: Use getFluidTypeHeight instead
     public double m_204036_(TagKey<Fluid> p_204037_) {
++      if (p_204037_ == FluidTags.f_13131_) return getFluidTypeHeight(net.minecraftforge.common.ForgeMod.WATER_TYPE.get());
++      else if (p_204037_ == FluidTags.f_13132_) return getFluidTypeHeight(net.minecraftforge.common.ForgeMod.LAVA_TYPE.get());
        return this.f_19799_.getDouble(p_204037_);
     }
+ 
 @@ -2974,6 +_,7 @@
  
           this.f_146801_.m_142044_();

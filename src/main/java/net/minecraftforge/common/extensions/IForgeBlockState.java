@@ -550,7 +550,7 @@ public interface IForgeBlockState
      * @return the path type of this block
      */
     @Nullable
-    default BlockPathTypes getBlockPathType(BlockGetter level, BlockPos pos, @org.jetbrains.annotations.Nullable Mob mob)
+    default BlockPathTypes getBlockPathType(BlockGetter level, BlockPos pos, @Nullable Mob mob)
     {
         return self().getBlock().getBlockPathType(self(), level, pos, mob);
     }
@@ -568,7 +568,7 @@ public interface IForgeBlockState
      * @return the path type of this block
      */
     @Nullable
-    default BlockPathTypes getAdjacentBlockPathType(BlockGetter level, BlockPos pos, @org.jetbrains.annotations.Nullable Mob mob, BlockPathTypes originalType)
+    default BlockPathTypes getAdjacentBlockPathType(BlockGetter level, BlockPos pos, @Nullable Mob mob, BlockPathTypes originalType)
     {
         return self().getBlock().getAdjacentBlockPathType(self(), level, pos, mob, originalType);
     }
@@ -692,6 +692,11 @@ public interface IForgeBlockState
      * Returns whether the block can be hydrated by a fluid.
      *
      * <p>Hydration is an arbitrary word which depends on the block.
+     * <ul>
+     *     <li>A farmland has moisture</li>
+     *     <li>A sponge can soak up the liquid</li>
+     *     <li>A coral can live</li>
+     * </ul>
      *
      * @param getter the getter which can get the block
      * @param pos the position of the block being hydrated

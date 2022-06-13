@@ -54,22 +54,6 @@
     }
  
     public boolean m_36341_() {
-@@ -294,13 +_,13 @@
-    }
- 
-    protected boolean m_7602_() {
--      this.f_36076_ = this.m_204029_(FluidTags.f_13131_);
-+      this.f_36076_ = this.isEyeInFluidType(net.minecraftforge.common.ForgeMod.WATER_TYPE.get());
-       return this.f_36076_;
-    }
- 
-    private void m_36372_() {
-       ItemStack itemstack = this.m_6844_(EquipmentSlot.HEAD);
--      if (itemstack.m_150930_(Items.f_42354_) && !this.m_204029_(FluidTags.f_13131_)) {
-+      if (itemstack.m_150930_(Items.f_42354_) && !this.isEyeInFluidType(net.minecraftforge.common.ForgeMod.WATER_TYPE.get())) {
-          this.m_7292_(new MobEffectInstance(MobEffects.f_19608_, 200, 0, false, false, true));
-       }
- 
 @@ -354,6 +_,10 @@
     }
  
@@ -111,15 +95,6 @@
        float f = this.f_36093_.m_36020_(p_36282_);
        if (f > 1.0F) {
           int i = EnchantmentHelper.m_44926_(this);
-@@ -706,7 +_,7 @@
-          f *= f1;
-       }
- 
--      if (this.m_204029_(FluidTags.f_13131_) && !EnchantmentHelper.m_44934_(this)) {
-+      if (this.isEyeInFluidType(net.minecraftforge.common.ForgeMod.WATER_TYPE.get()) && !EnchantmentHelper.m_44934_(this)) {
-          f /= 5.0F;
-       }
- 
 @@ -714,11 +_,12 @@
           f /= 5.0F;
        }
@@ -346,15 +321,6 @@
        } else {
           boolean flag = block.m_5568_();
           boolean flag1 = p_36131_.m_8055_(p_36132_.m_7494_()).m_60734_().m_5568_();
-@@ -1431,7 +_,7 @@
-                this.m_36222_(Stats.f_12924_, i);
-                this.m_36399_(0.01F * (float)i * 0.01F);
-             }
--         } else if (this.m_204029_(FluidTags.f_13131_)) {
-+         } else if (this.isEyeInFluidType(net.minecraftforge.common.ForgeMod.WATER_TYPE.get())) {
-             int j = Math.round((float)Math.sqrt(p_36379_ * p_36379_ + p_36380_ * p_36380_ + p_36381_ * p_36381_) * 100.0F);
-             if (j > 0) {
-                this.m_36222_(Stats.f_13001_, j);
 @@ -1497,6 +_,7 @@
  
     public boolean m_142535_(float p_150093_, float p_150094_, DamageSource p_150095_) {

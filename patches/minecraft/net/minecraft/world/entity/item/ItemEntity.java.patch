@@ -27,20 +27,15 @@
        if (this.m_32055_().m_41619_()) {
           this.m_146870_();
        } else {
-@@ -100,9 +_,11 @@
+@@ -100,6 +_,8 @@
           this.f_19856_ = this.m_20189_();
           Vec3 vec3 = this.m_20184_();
           float f = this.m_20192_() - 0.11111111F;
--         if (this.m_20069_() && this.m_204036_(FluidTags.f_13131_) > (double)f) {
 +         net.minecraftforge.fluids.FluidType fluidType = this.getMaxHeightFluidType();
 +         if (!fluidType.isAir() && !fluidType.isVanilla() && this.getFluidTypeHeight(fluidType) > (double)f) fluidType.setItemMovement(this);
-+         if (this.m_20069_() && this.getFluidTypeHeight(net.minecraftforge.common.ForgeMod.WATER_TYPE.get()) > (double)f) {
+          if (this.m_20069_() && this.m_204036_(FluidTags.f_13131_) > (double)f) {
              this.m_32067_();
--         } else if (this.m_20077_() && this.m_204036_(FluidTags.f_13132_) > (double)f) {
-+         } else if (this.m_20077_() && this.getFluidTypeHeight(net.minecraftforge.common.ForgeMod.LAVA_TYPE.get()) > (double)f) {
-             this.m_32068_();
-          } else if (!this.m_20068_()) {
-             this.m_20256_(this.m_20184_().m_82520_(0.0D, -0.04D, 0.0D));
+          } else if (this.m_20077_() && this.m_204036_(FluidTags.f_13132_) > (double)f) {
 @@ -121,7 +_,7 @@
              this.m_6478_(MoverType.SELF, this.m_20184_());
              float f1 = 0.98F;

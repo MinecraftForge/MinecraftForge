@@ -16,7 +16,7 @@ public interface IForgeLivingEntity extends IForgeEntity
     @Override
     default boolean canSwimInFluidType(FluidType type)
     {
-        if (self().isSensitiveToWater() && type == ForgeMod.WATER_TYPE.get()) return false;
+        if (type == ForgeMod.WATER_TYPE.get()) return !self().isSensitiveToWater();
         else return IForgeEntity.super.canSwimInFluidType(type);
     }
 
@@ -27,7 +27,7 @@ public interface IForgeLivingEntity extends IForgeEntity
      */
     default void jumpInFluid(FluidType type)
     {
-        self().setDeltaMovement(self().getDeltaMovement().add(0.0D, (double)0.04F * self().getAttribute(ForgeMod.SWIM_SPEED.get()).getValue(), 0.0D));
+        self().setDeltaMovement(self().getDeltaMovement().add(0.0D, (double)0.04F * self().getAttributeValue(ForgeMod.SWIM_SPEED.get()), 0.0D));
     }
 
     /**
@@ -37,7 +37,7 @@ public interface IForgeLivingEntity extends IForgeEntity
      */
     default void sinkInFluid(FluidType type)
     {
-        self().setDeltaMovement(self().getDeltaMovement().add(0.0D, (double)-0.04F * self().getAttribute(ForgeMod.SWIM_SPEED.get()).getValue(), 0.0D));
+        self().setDeltaMovement(self().getDeltaMovement().add(0.0D, (double)-0.04F * self().getAttributeValue(ForgeMod.SWIM_SPEED.get()), 0.0D));
     }
 
     /**
@@ -49,7 +49,7 @@ public interface IForgeLivingEntity extends IForgeEntity
     default boolean canDrownInFluidType(FluidType type)
     {
         if (type == ForgeMod.WATER_TYPE.get()) return !self().canBreatheUnderwater();
-        else return type.canDrownIn(self());
+        return type.canDrownIn(self());
     }
 
     /**

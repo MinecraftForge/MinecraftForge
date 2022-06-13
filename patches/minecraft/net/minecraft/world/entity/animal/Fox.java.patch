@@ -50,7 +50,7 @@
  
        public boolean m_8036_() {
 -         return Fox.this.m_20069_() && Fox.this.m_204036_(FluidTags.f_13131_) > 0.25D || Fox.this.m_20077_();
-+         return Fox.this.m_20069_() && Fox.this.getFluidTypeHeight(net.minecraftforge.common.ForgeMod.WATER_TYPE.get()) > 0.25D || Fox.this.m_20077_() || Fox.this.isInFluidType((fluidType, height) -> Fox.this.canSwimInFluidType(fluidType) && height > 0.25D);
++         return Fox.this.m_20069_() && Fox.this.m_204036_(FluidTags.f_13131_) > 0.25D || Fox.this.m_20077_() || Fox.this.isInFluidType((fluidType, height) -> Fox.this.canSwimInFluidType(fluidType) && height > 0.25D);
        }
     }
  

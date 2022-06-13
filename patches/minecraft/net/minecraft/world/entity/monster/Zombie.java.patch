@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/monster/Zombie.java
 +++ b/net/minecraft/world/entity/monster/Zombie.java
-@@ -191,11 +_,11 @@
+@@ -191,7 +_,7 @@
        if (!this.f_19853_.f_46443_ && this.m_6084_() && !this.m_21525_()) {
           if (this.m_34329_()) {
              --this.f_34266_;
@@ -9,11 +9,6 @@
                 this.m_7595_();
              }
           } else if (this.m_7593_()) {
--            if (this.m_204029_(FluidTags.f_13131_)) {
-+            if (this.isEyeInFluidType(net.minecraftforge.common.ForgeMod.WATER_TYPE.get())) {
-                ++this.f_34265_;
-                if (this.f_34265_ >= 600) {
-                   this.m_34278_(300);
 @@ -253,6 +_,7 @@
        if (zombie != null) {
           zombie.m_34339_(zombie.f_19853_.m_6436_(zombie.m_20183_()).m_19057_());

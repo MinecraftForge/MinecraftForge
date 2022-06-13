@@ -58,15 +58,6 @@
              RenderSystem.m_69461_();
           }
        }
-@@ -838,7 +_,7 @@
-          this.f_92986_.m_91307_().m_6182_("air");
-          int l5 = player.m_6062_();
-          int i6 = Math.min(player.m_20146_(), l5);
--         if (player.m_204029_(FluidTags.f_13131_) || i6 < l5) {
-+         if (player.isEyeInFluidType(net.minecraftforge.common.ForgeMod.WATER_TYPE.get()) || i6 < l5) {
-             int j6 = this.m_93012_(k5) - 1;
-             l2 -= j6 * 10;
-             int k6 = Mth.m_14165_((double)(i6 - 2) * 10.0D / (double)l5);
 @@ -1144,7 +_,7 @@
           ItemStack itemstack = this.f_92986_.f_91074_.m_150109_().m_36056_();
           if (itemstack.m_41619_()) {

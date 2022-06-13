@@ -51,6 +51,7 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.gameevent.GameEvent;
+import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.level.storage.WorldData;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.LootTable;
@@ -812,14 +813,13 @@ public class ForgeHooks
      */
     public static FluidType getVanillaFluidType(Fluid fluid)
     {
-        ResourceLocation name = ForgeRegistries.FLUIDS.getKey(fluid);
-        if (name.equals(new ResourceLocation("empty")))
+        if (fluid == Fluids.EMPTY)
             return ForgeMod.EMPTY_TYPE.get();
-        if (name.equals(new ResourceLocation("water")) || name.equals(new ResourceLocation("flowing_water")))
+        if (fluid == Fluids.WATER || fluid == Fluids.FLOWING_WATER)
             return ForgeMod.WATER_TYPE.get();
-        if (name.equals(new ResourceLocation("lava")) || name.equals(new ResourceLocation("flowing_lava")))
+        if (fluid == Fluids.LAVA || fluid == Fluids.FLOWING_LAVA)
             return ForgeMod.LAVA_TYPE.get();
-        if (name.equals(ForgeMod.MILK.getId()) || name.equals(ForgeMod.FLOWING_MILK.getId()))
+        if (ForgeMod.MILK.filter(milk -> milk == fluid).isPresent() || ForgeMod.FLOWING_MILK.filter(milk -> milk == fluid).isPresent())
             return ForgeMod.MILK_TYPE.get();
         throw new RuntimeException("Mod fluids must override getFluidType.");
     }

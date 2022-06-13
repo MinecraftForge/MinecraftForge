@@ -156,26 +156,12 @@ public class ForgeMod
                     .adjacentPathType(null)
                     .density(0)
                     .temperature(0)
-                    .lightLevel(0)
                     .viscosity(0))
             {
                 @Override
                 public void setItemMovement(ItemEntity entity)
                 {
                     if (!entity.isNoGravity()) entity.setDeltaMovement(entity.getDeltaMovement().add(0.0D, -0.04D, 0.0D));
-                }
-
-                @Override
-                public void initializeClient(Consumer<IFluidTypeRenderProperties> consumer)
-                {
-                    consumer.accept(new IFluidTypeRenderProperties()
-                    {
-                        @Override
-                        public int getColorTint()
-                        {
-                            return 0;
-                        }
-                    });
                 }
             });
     public static final RegistryObject<FluidType> WATER_TYPE = VANILLA_FLUID_TYPES.register("water", () ->
@@ -433,42 +419,40 @@ public class ForgeMod
     {
         if (enableMilkFluid)
         {
-            if (event.getRegistryKey().equals(ForgeRegistries.Keys.FLUID_TYPES))
+            // register fluid type
+            event.register(ForgeRegistries.Keys.FLUID_TYPES, helper -> helper.register(MILK_TYPE.getId(), new FluidType(FluidType.Properties.create().density(1024).viscosity(1024))
             {
-                // register fluid type
-                event.register(ForgeRegistries.Keys.FLUID_TYPES, MILK_TYPE.getId(), () -> new FluidType(FluidType.Properties.create().density(1024).viscosity(1024))
+                @Override
+                public void initializeClient(Consumer<IFluidTypeRenderProperties> consumer)
                 {
-                    @Override
-                    public void initializeClient(Consumer<IFluidTypeRenderProperties> consumer)
+                    consumer.accept(new IFluidTypeRenderProperties()
                     {
-                        consumer.accept(new IFluidTypeRenderProperties()
+                        private static final ResourceLocation MILK_STILL = new ResourceLocation("forge", "block/milk_still"),
+                                MILK_FLOW = new ResourceLocation("forge", "block/milk_flowing");
+
+                        @Override
+                        public ResourceLocation getStillTexture()
                         {
-                            private static final ResourceLocation MILK_STILL = new ResourceLocation("forge", "block/milk_still"),
-                                    MILK_FLOW = new ResourceLocation("forge", "block/milk_flowing");
+                            return MILK_STILL;
+                        }
 
-                            @Override
-                            public ResourceLocation getStillTexture()
-                            {
-                                return MILK_STILL;
-                            }
+                        @Override
+                        public ResourceLocation getFlowingTexture()
+                        {
+                            return MILK_FLOW;
+                        }
+                    });
+                }
+            }));
 
-                            @Override
-                            public ResourceLocation getFlowingTexture()
-                            {
-                                return MILK_FLOW;
-                            }
-                        });
-                    }
-                });
-            }
-            else if (event.getRegistryKey().equals(ForgeRegistries.Keys.FLUIDS))
-            {
+            // register fluids
+            event.register(ForgeRegistries.Keys.FLUIDS, helper -> {
                 // set up properties
                 ForgeFlowingFluid.Properties properties = new ForgeFlowingFluid.Properties(MILK_TYPE, MILK, FLOWING_MILK).bucket(() -> Items.MILK_BUCKET);
-                // register fluids
-                event.register(ForgeRegistries.Keys.FLUIDS, MILK.getId(), () -> new ForgeFlowingFluid.Source(properties));
-                event.register(ForgeRegistries.Keys.FLUIDS, FLOWING_MILK.getId(), () -> new ForgeFlowingFluid.Flowing(properties));
-            }
+
+                helper.register(MILK.getId(), new ForgeFlowingFluid.Source(properties));
+                helper.register(FLOWING_MILK.getId(), new ForgeFlowingFluid.Flowing(properties));
+            });
         }
     }
 
