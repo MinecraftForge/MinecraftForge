@@ -1192,7 +1192,7 @@ project(':forge') {
 
     def baseForgeVersion = System.getProperty("forge.compatibility_check_version")
     if (baseForgeVersion == null)
-        baseForgeVersion = "${MC_VERSION}-${GIT_INFO.tag}.0"
+        baseForgeVersion = "1.19-41.0.1" // "${MC_VERSION}-${GIT_INFO.tag}.0"
     if (baseForgeVersion == "null")
         baseForgeVersion = null // Allow disabling from system property if not wanted
     def baseForgeUniversal = null
@@ -1228,7 +1228,7 @@ project(':forge') {
             }.toArray(Dependency[]::new))
 
             baseJar = project.tasks.applyBaseCompatibilityJarBinPatches.output
-            baseLibraries.from(baseForgeUniversal)
+            baseLibraries.from(project.configurations.detachedConfiguration(baseForgeUniversal))
             baseLibraries.from(project.tasks.createJoinedSRG.output)
             baseLibraries.from(fmlLibs)
 
