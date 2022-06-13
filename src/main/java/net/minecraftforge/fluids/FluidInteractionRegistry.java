@@ -21,6 +21,11 @@ import java.util.function.Function;
  * A registry which defines the interactions a source fluid can have with its
  * surroundings. Each possible flow direction is checked for all interactions with
  * the source.
+ *
+ * <p>Fluid interactions mimic the behavior of {@code LiquidBlock#shouldSpreadLiquid}.
+ * As such, all directions, besides {@link Direction#DOWN} is tested and then replaced.
+ * Any fluids which cause a change in the down interaction must be handled in
+ * {@code FlowingFluid#spreadTo} and not by this interaction manager.
  */
 public final class FluidInteractionRegistry
 {
