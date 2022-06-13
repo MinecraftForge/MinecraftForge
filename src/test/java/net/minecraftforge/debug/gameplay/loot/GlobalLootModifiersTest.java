@@ -5,6 +5,7 @@
 
 package net.minecraftforge.debug.gameplay.loot;
 
+import com.google.common.base.Suppliers;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
@@ -49,6 +50,7 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 @Mod(GlobalLootModifiersTest.MODID)
@@ -68,10 +70,10 @@ public class GlobalLootModifiersTest {
     private static final DeferredRegister<Codec<? extends IGlobalLootModifier>> GLM = DeferredRegister.create(ForgeRegistries.Keys.LOOT_MODIFIER_SERIALIZERS, MODID);
     private static final DeferredRegister<Enchantment> ENCHANTS = DeferredRegister.create(ForgeRegistries.ENCHANTMENTS, MODID);
 
-    private static final RegistryObject<Codec<DungeonLootEnhancerModifier>> DUNGEON_LOOT = GLM.register("dungeon_loot", () -> DungeonLootEnhancerModifier.CODEC);
-    private static final RegistryObject<Codec<SmeltingEnchantmentModifier>> SMELTING = GLM.register("smelting", () -> SmeltingEnchantmentModifier.CODEC);
-    private static final RegistryObject<Codec<WheatSeedsConverterModifier>> WHEATSEEDS = GLM.register("wheat_harvest", () -> WheatSeedsConverterModifier.CODEC);
-    private static final RegistryObject<Codec<SilkTouchTestModifier>> SILKTOUCH = GLM.register("silk_touch_bamboo", () -> SilkTouchTestModifier.CODEC);
+    private static final RegistryObject<Codec<DungeonLootEnhancerModifier>> DUNGEON_LOOT = GLM.register("dungeon_loot", DungeonLootEnhancerModifier.CODEC);
+    private static final RegistryObject<Codec<SmeltingEnchantmentModifier>> SMELTING = GLM.register("smelting", SmeltingEnchantmentModifier.CODEC);
+    private static final RegistryObject<Codec<WheatSeedsConverterModifier>> WHEATSEEDS = GLM.register("wheat_harvest", WheatSeedsConverterModifier.CODEC);
+    private static final RegistryObject<Codec<SilkTouchTestModifier>> SILKTOUCH = GLM.register("silk_touch_bamboo", SilkTouchTestModifier.CODEC);
     private static final RegistryObject<Enchantment> SMELT = ENCHANTS.register("smelt", () -> new SmelterEnchantment(Rarity.UNCOMMON, EnchantmentCategory.DIGGER, EquipmentSlot.MAINHAND));
 
     @EventBusSubscriber(modid = MODID, bus = EventBusSubscriber.Bus.MOD)
@@ -129,7 +131,7 @@ public class GlobalLootModifiersTest {
      *
      */
     private static class SmeltingEnchantmentModifier extends LootModifier {
-        public static final Codec<SmeltingEnchantmentModifier> CODEC = RecordCodecBuilder.create(inst -> codecStart(inst).apply(inst, SmeltingEnchantmentModifier::new));
+        public static final Supplier<Codec<SmeltingEnchantmentModifier>> CODEC = Suppliers.memoize(() -> RecordCodecBuilder.create(inst -> codecStart(inst).apply(inst, SmeltingEnchantmentModifier::new)));
 
         public SmeltingEnchantmentModifier(LootItemCondition[] conditionsIn) {
             super(conditionsIn);
@@ -153,7 +155,7 @@ public class GlobalLootModifiersTest {
 
         @Override
         public Codec<? extends IGlobalLootModifier> codec() {
-            return CODEC;
+            return CODEC.get();
         }
     }
 
@@ -162,7 +164,7 @@ public class GlobalLootModifiersTest {
      *
      */
     private static class SilkTouchTestModifier extends LootModifier {
-        public static final Codec<SilkTouchTestModifier> CODEC = RecordCodecBuilder.create(inst -> codecStart(inst).apply(inst, SilkTouchTestModifier::new));
+        public static final Supplier<Codec<SilkTouchTestModifier>> CODEC = Suppliers.memoize(() -> RecordCodecBuilder.create(inst -> codecStart(inst).apply(inst, SilkTouchTestModifier::new)));
 
         public SilkTouchTestModifier(LootItemCondition[] conditionsIn) {
             super(conditionsIn);
@@ -185,7 +187,7 @@ public class GlobalLootModifiersTest {
 
         @Override
         public Codec<? extends IGlobalLootModifier> codec() {
-            return CODEC;
+            return CODEC.get();
         }
     }
 
@@ -195,13 +197,13 @@ public class GlobalLootModifiersTest {
      *
      */
     private static class WheatSeedsConverterModifier extends LootModifier {
-        public static final Codec<WheatSeedsConverterModifier> CODEC = RecordCodecBuilder.create(inst -> codecStart(inst).and(
+        public static final Supplier<Codec<WheatSeedsConverterModifier>> CODEC = Suppliers.memoize(() -> RecordCodecBuilder.create(inst -> codecStart(inst).and(
                 inst.group(
                         Codec.INT.fieldOf("numSeeds").forGetter(m -> m.numSeedsToConvert),
                         ForgeRegistries.ITEMS.getCodec().fieldOf("seedItem").forGetter(m -> m.itemToCheck),
                         ForgeRegistries.ITEMS.getCodec().fieldOf("replacement").forGetter(m -> m.itemReward)
                 )).apply(inst, WheatSeedsConverterModifier::new)
-        );
+        ));
 
         private final int numSeedsToConvert;
         private final Item itemToCheck;
@@ -237,15 +239,15 @@ public class GlobalLootModifiersTest {
 
         @Override
         public Codec<? extends IGlobalLootModifier> codec() {
-            return CODEC;
+            return CODEC.get();
         }
     }
 
     private static class DungeonLootEnhancerModifier extends LootModifier {
-        public static final Codec<DungeonLootEnhancerModifier> CODEC = RecordCodecBuilder.create(inst -> codecStart(inst)
+        public static final Supplier<Codec<DungeonLootEnhancerModifier>> CODEC = Suppliers.memoize(() -> RecordCodecBuilder.create(inst -> codecStart(inst)
                 .and(ExtraCodecs.POSITIVE_INT.optionalFieldOf("multiplication_factor", 2).forGetter(m -> m.multiplicationFactor))
                 .apply(inst, DungeonLootEnhancerModifier::new)
-        );
+        ));
 
         private final int multiplicationFactor;
 
@@ -264,7 +266,7 @@ public class GlobalLootModifiersTest {
 
         @Override
         public Codec<? extends IGlobalLootModifier> codec() {
-            return CODEC;
+            return CODEC.get();
         }
     }
 }
