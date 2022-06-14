@@ -51,7 +51,7 @@ public final class ForgeBiomeModifiers
             if (phase == Phase.ADD && this.biomes.contains(biome))
             {
                 BiomeGenerationSettingsBuilder generationSettings = builder.getGenerationSettings();
-                this.features().forEach(holder -> generationSettings.addFeature(this.step(), holder));
+                this.features.forEach(holder -> generationSettings.addFeature(this.step, holder));
             }
         }
 
@@ -96,9 +96,9 @@ public final class ForgeBiomeModifiers
             if (phase == Phase.REMOVE && this.biomes.contains(biome))
             {
                 BiomeGenerationSettingsBuilder generationSettings = builder.getGenerationSettings();
-                for (Decoration step : this.steps())
+                for (Decoration step : this.steps)
                 {
-                    generationSettings.getFeatures(step).removeIf(this.features()::contains);
+                    generationSettings.getFeatures(step).removeIf(this.features::contains);
                 }
             }
         }
@@ -164,7 +164,7 @@ public final class ForgeBiomeModifiers
         @Override
         public void modify(Holder<Biome> biome, Phase phase, Builder builder)
         {
-            if (phase == Phase.ADD && this.biomes().contains(biome))
+            if (phase == Phase.ADD && this.biomes.contains(biome))
             {
                 MobSpawnSettingsBuilder spawns = builder.getMobSpawnSettings();
                 for (SpawnerData spawner : this.spawners)
@@ -200,13 +200,13 @@ public final class ForgeBiomeModifiers
         @Override
         public void modify(Holder<Biome> biome, Phase phase, Builder builder)
         {
-            if (phase == Phase.REMOVE && this.biomes().contains(biome))
+            if (phase == Phase.REMOVE && this.biomes.contains(biome))
             {
                 MobSpawnSettingsBuilder spawnBuilder = builder.getMobSpawnSettings();
                 for (MobCategory category : MobCategory.values())
                 {
                     List<SpawnerData> spawns = spawnBuilder.getSpawner(category);
-                    spawns.removeIf(spawnerData -> entityTypes.contains(ForgeRegistries.ENTITIES.getHolder(spawnerData.type).get()));
+                    spawns.removeIf(spawnerData -> this.entityTypes.contains(ForgeRegistries.ENTITIES.getHolder(spawnerData.type).get()));
                 }
             }
         }
