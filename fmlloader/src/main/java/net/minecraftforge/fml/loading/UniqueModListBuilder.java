@@ -42,15 +42,12 @@ public class UniqueModListBuilder
         // Select the newest by artifact version sorting of non-unique files thus identified
         uniqueModList = modFilesByFirstId.entrySet().stream()
                 .map(this::selectNewestModInfo)
-                .map(Map.Entry::getValue)
                 .toList();
 
         // Select the newest by artifact version sorting of non-unique files thus identified
         uniqueLibListWithVersion = libFilesWithVersionByModuleName.entrySet().stream()
                 .map(this::selectNewestModInfo)
-                .map(Map.Entry::getValue)
                 .toList();
-
 
         // Transform to the full mod id list
         final Map<String, List<IModInfo>> modIds = uniqueModList.stream()
@@ -104,14 +101,14 @@ public class UniqueModListBuilder
         return new UniqueModListData(loadedList, uniqueModFilesByFirstId);
     }
 
-    private Map.Entry<String, ModFile> selectNewestModInfo(Map.Entry<String, List<ModFile>> fullList) {
+    private ModFile selectNewestModInfo(Map.Entry<String, List<ModFile>> fullList) {
         List<ModFile> modInfoList = fullList.getValue();
         if (modInfoList.size() > 1) {
             LOGGER.debug("Found {} mods for first modid {}, selecting most recent based on version data", modInfoList.size(), fullList.getKey());
             modInfoList.sort(Comparator.comparing(this::getVersion).reversed());
             LOGGER.debug("Selected file {} for modid {} with version {}", modInfoList.get(0).getFileName(), fullList.getKey(), modInfoList.get(0).getModInfos().get(0).getVersion());
         }
-        return Map.entry(fullList.getKey(), modInfoList.get(0));
+        return modInfoList.get(0);
     }
 
     private ArtifactVersion getVersion(final ModFile mf)
