@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/item/enchantment/EnchantmentHelper.java
 +++ b/net/minecraft/world/item/enchantment/EnchantmentHelper.java
-@@ -59,7 +_,13 @@
+@@ -59,7 +_,14 @@
        return Registry.f_122825_.m_7981_(p_182433_);
     }
  
@@ -10,6 +10,7 @@
 +      return p_44845_.getEnchantmentLevel(p_44844_);
 +   }
 +
++   /** Gets the enchantment level from NBT. Generally should use {@link ItemStack#getEnchantmentLevel(Enchantment)} for gameplay logic */
 +   public static int getTagEnchantmentLevel(Enchantment p_44844_, ItemStack p_44845_) {
        if (p_44845_.m_41619_()) {
           return 0;
