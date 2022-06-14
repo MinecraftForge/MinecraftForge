@@ -39,7 +39,7 @@ import org.slf4j.Logger;
  *
  * @param <T> the type of thing being generated.
  */
-public final class JsonCodecProvider<T> implements DataProvider
+public class JsonCodecProvider<T> implements DataProvider
 {
     private static final Logger LOGGER = LogUtils.getLogger();
     protected final DataGenerator dataGenerator;

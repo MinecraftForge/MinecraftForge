@@ -48,7 +48,6 @@ import net.minecraftforge.common.extensions.IForgePlayer;
 import net.minecraftforge.common.loot.CanToolPerformAction;
 import net.minecraftforge.common.loot.LootTableIdCondition;
 import net.minecraftforge.common.world.BiomeModifier;
-import net.minecraftforge.common.world.ForgeBiomeModifiers;
 import net.minecraftforge.common.world.ForgeBiomeModifiers.AddFeaturesBiomeModifier;
 import net.minecraftforge.common.world.ForgeBiomeModifiers.AddSpawnsBiomeModifier;
 import net.minecraftforge.common.world.ForgeBiomeModifiers.RemoveFeaturesBiomeModifier;
