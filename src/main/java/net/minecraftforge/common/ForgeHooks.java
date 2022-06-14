@@ -51,6 +51,7 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.gameevent.GameEvent;
+import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.level.storage.WorldData;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.LootTable;
@@ -139,7 +140,7 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.NoteBlockEvent;
 import net.minecraftforge.eventbus.api.Event.Result;
-import net.minecraftforge.fluids.FluidAttributes;
+import net.minecraftforge.fluids.FluidType;
 import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoader;
@@ -803,30 +804,24 @@ public class ForgeHooks
         return ret;
     }
 
-    public static FluidAttributes createVanillaFluidAttributes(Fluid fluid)
+    /**
+     * Returns a vanilla fluid type for the given fluid.
+     *
+     * @param fluid the fluid looking for its type
+     * @return the type of the fluid if vanilla
+     * @throws RuntimeException if the fluid is not a vanilla one
+     */
+    public static FluidType getVanillaFluidType(Fluid fluid)
     {
-        if (fluid instanceof EmptyFluid)
-            return net.minecraftforge.fluids.FluidAttributes.builder(null, null)
-                    .translationKey("block.minecraft.air")
-                    .color(0).density(0).temperature(0).luminosity(0).viscosity(0).build(fluid);
-        if (fluid instanceof WaterFluid)
-            return net.minecraftforge.fluids.FluidAttributes.Water.builder(
-                    new ResourceLocation("block/water_still"),
-                    new ResourceLocation("block/water_flow"))
-                    .overlay(new ResourceLocation("block/water_overlay"))
-                    .translationKey("block.minecraft.water")
-                    .color(0xFF3F76E4)
-                    .sound(SoundEvents.BUCKET_FILL, SoundEvents.BUCKET_EMPTY)
-                    .build(fluid);
-        if (fluid instanceof LavaFluid)
-            return net.minecraftforge.fluids.FluidAttributes.builder(
-                    new ResourceLocation("block/lava_still"),
-                    new ResourceLocation("block/lava_flow"))
-                    .translationKey("block.minecraft.lava")
-                    .luminosity(15).density(3000).viscosity(6000).temperature(1300)
-                    .sound(SoundEvents.BUCKET_FILL_LAVA, SoundEvents.BUCKET_EMPTY_LAVA)
-                    .build(fluid);
-        throw new RuntimeException("Mod fluids must override createAttributes.");
+        if (fluid == Fluids.EMPTY)
+            return ForgeMod.EMPTY_TYPE.get();
+        if (fluid == Fluids.WATER || fluid == Fluids.FLOWING_WATER)
+            return ForgeMod.WATER_TYPE.get();
+        if (fluid == Fluids.LAVA || fluid == Fluids.FLOWING_LAVA)
+            return ForgeMod.LAVA_TYPE.get();
+        if (ForgeMod.MILK.filter(milk -> milk == fluid).isPresent() || ForgeMod.FLOWING_MILK.filter(milk -> milk == fluid).isPresent())
+            return ForgeMod.MILK_TYPE.get();
+        throw new RuntimeException("Mod fluids must override getFluidType.");
     }
 
     public static String getDefaultWorldPreset()

@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/ScreenEffectRenderer.java
 +++ b/net/minecraft/client/renderer/ScreenEffectRenderer.java
-@@ -30,18 +_,21 @@
+@@ -30,18 +_,22 @@
     public static void m_110718_(Minecraft p_110719_, PoseStack p_110720_) {
        Player player = p_110719_.f_91074_;
        if (!player.f_19794_) {
@@ -19,6 +19,7 @@
 +            if (!net.minecraftforge.client.ForgeHooksClient.renderWaterOverlay(player, p_110720_))
              m_110725_(p_110719_, p_110720_);
           }
++         else if (!player.getEyeInFluidType().isAir()) net.minecraftforge.client.RenderProperties.get(player.getEyeInFluidType()).renderOverlay(p_110719_, p_110720_);
  
           if (p_110719_.f_91074_.m_6060_()) {
 +            if (!net.minecraftforge.client.ForgeHooksClient.renderFireOverlay(player, p_110720_))

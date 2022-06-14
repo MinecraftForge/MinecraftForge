@@ -541,25 +541,36 @@ public interface IForgeBlockState
     }
 
     /**
-     * Get the {@code BlockPathTypes} for this block. Return {@code null} for vanilla behavior.
+     * Gets the path type of this block when an entity is pathfinding. When
+     * {@code null}, uses vanilla behavior.
      *
-     * @return the PathNodeType
-     */
-    @Nullable
-    default BlockPathTypes getBlockPathType(BlockGetter level, BlockPos pos)
-    {
-        return getBlockPathType(level, pos, null);
-    }
-
-    /**
-     * Get the {@code PathNodeType} for this block. Return {@code null} for vanilla behavior.
-     *
-     * @return the PathNodeType
+     * @param level the level which contains this block
+     * @param pos the position of the block
+     * @param mob the mob currently pathfinding, may be {@code null}
+     * @return the path type of this block
      */
     @Nullable
     default BlockPathTypes getBlockPathType(BlockGetter level, BlockPos pos, @Nullable Mob mob)
     {
-        return self().getBlock().getAiPathNodeType(self(), level, pos, mob);
+        return self().getBlock().getBlockPathType(self(), level, pos, mob);
+    }
+
+    /**
+     * Gets the path type of the adjacent block to a pathfinding entity.
+     * Path types with a negative malus are not traversable for the entity.
+     * Pathfinding entities will favor paths consisting of a lower malus.
+     * When {@code null}, uses vanilla behavior.
+     *
+     * @param level the level which contains this block
+     * @param pos the position of the block
+     * @param mob the mob currently pathfinding, may be {@code null}
+     * @param originalType the path type of the source the entity is on
+     * @return the path type of this block
+     */
+    @Nullable
+    default BlockPathTypes getAdjacentBlockPathType(BlockGetter level, BlockPos pos, @Nullable Mob mob, BlockPathTypes originalType)
+    {
+        return self().getBlock().getAdjacentBlockPathType(self(), level, pos, mob, originalType);
     }
 
     /**
@@ -675,5 +686,26 @@ public interface IForgeBlockState
     default boolean supportsExternalFaceHiding()
     {
         return self().getBlock().supportsExternalFaceHiding(self());
+    }
+
+    /**
+     * Returns whether the block can be hydrated by a fluid.
+     *
+     * <p>Hydration is an arbitrary word which depends on the block.
+     * <ul>
+     *     <li>A farmland has moisture</li>
+     *     <li>A sponge can soak up the liquid</li>
+     *     <li>A coral can live</li>
+     * </ul>
+     *
+     * @param getter the getter which can get the block
+     * @param pos the position of the block being hydrated
+     * @param fluid the state of the fluid
+     * @param fluidPos the position of the fluid
+     * @return {@code true} if the block can be hydrated, {@code false} otherwise
+     */
+    default boolean canBeHydrated(BlockGetter getter, BlockPos pos, FluidState fluid, BlockPos fluidPos)
+    {
+        return self().getBlock().canBeHydrated(self(), getter, pos, fluid, fluidPos);
     }
 }

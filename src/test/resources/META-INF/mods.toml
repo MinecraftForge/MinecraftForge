@@ -10,5 +10,7 @@ license="LGPL v2.1"
     modId="biome_modifiers_test"
 [[mods]]
     modId="structure_modifiers_test"
+[[mods]]
+    modId="fluid_type_test"
 
 # ADD ABOVE THIS LINE
