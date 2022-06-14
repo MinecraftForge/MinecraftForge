@@ -10,6 +10,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import com.google.common.annotations.VisibleForTesting;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraftforge.common.util.LazyOptional;
@@ -21,7 +22,7 @@ import java.util.function.Supplier;
 
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
-public abstract class CapabilityProvider<B extends ICapabilityProviderImpl<B>> implements ICapabilityProviderImpl<B>
+public abstract class CapabilityProvider<B extends ICapabilityProviderImpl<B>> implements ICapabilityProviderImpl<B>, INetworkCapability
 {
     @VisibleForTesting
     static boolean SUPPORTS_LAZY_CAPABILITIES = true;
@@ -148,6 +149,36 @@ public abstract class CapabilityProvider<B extends ICapabilityProviderImpl<B>> i
         }
     }
 
+    @Override
+    public final void writeCapabilities(FriendlyByteBuf out, boolean writeAll)
+    {
+        final CapabilityDispatcher disp = getCapabilities();
+        if (disp != null)
+        {
+            disp.writeCapabilities(out, writeAll);
+        }
+    }
+
+    @Override
+    public final void readCapabilities(FriendlyByteBuf in)
+    {
+        final CapabilityDispatcher disp = getCapabilities();
+        if (disp != null)
+        {
+            disp.readCapabilities(in);
+        }
+    }
+
+    public final boolean requiresSync()
+    {
+        final CapabilityDispatcher disp = getCapabilities();
+        if (disp != null)
+        {
+            return disp.requiresSync();
+        }
+        return false;
+    }
+    
     /*
      * Invalidates all the contained caps, and prevents getCapability from returning a value.
      * This is usually called when the object in question is removed from the world.
