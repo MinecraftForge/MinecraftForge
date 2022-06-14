@@ -22,6 +22,7 @@ import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.ForgeHooksClient;
+import net.minecraftforge.client.RenderProperties;
 import net.minecraftforge.client.model.geometry.IModelGeometry;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -93,7 +94,7 @@ public final class DynamicBucketModel implements IModelGeometry<DynamicBucketMod
 
         ModelState transformsFromModel = owner.getCombinedTransform();
 
-        TextureAtlasSprite fluidSprite = fluid != Fluids.EMPTY ? spriteGetter.apply(ForgeHooksClient.getBlockMaterial(fluid.getAttributes().getStillTexture())) : null;
+        TextureAtlasSprite fluidSprite = fluid != Fluids.EMPTY ? spriteGetter.apply(ForgeHooksClient.getBlockMaterial(RenderProperties.get(fluid).getStillTexture())) : null;
         TextureAtlasSprite coverSprite = (coverLocation != null && (!coverIsMask || baseLocation != null)) ? spriteGetter.apply(coverLocation) : null;
 
         ImmutableMap<TransformType, Transformation> transformMap =
@@ -105,7 +106,7 @@ public final class DynamicBucketModel implements IModelGeometry<DynamicBucketMod
         if (particleSprite == null && !coverIsMask) particleSprite = coverSprite;
 
         // if the fluid is lighter than air, will manipulate the initial state to be rotated 180deg to turn it upside down
-        if (flipGas && fluid != Fluids.EMPTY && fluid.getAttributes().isLighterThanAir())
+        if (flipGas && fluid != Fluids.EMPTY && fluid.getFluidType().isLighterThanAir())
         {
             modelTransform = new SimpleModelState(
                     modelTransform.getRotation().blockCornerToCenter().compose(
@@ -128,8 +129,8 @@ public final class DynamicBucketModel implements IModelGeometry<DynamicBucketMod
             if (templateSprite != null)
             {
                 // build liquid layer (inside)
-                int luminosity = applyFluidLuminosity ? fluid.getAttributes().getLuminosity() : 0;
-                int color = tint ? fluid.getAttributes().getColor() : 0xFFFFFFFF;
+                int luminosity = applyFluidLuminosity ? fluid.getFluidType().getLightLevel() : 0;
+                int color = tint ? RenderProperties.get(fluid).getColorTint() : 0xFFFFFFFF;
                 builder.addQuads(ItemLayerModel.getLayerRenderType(luminosity > 0), ItemTextureQuadConverter.convertTexture(transform, templateSprite, fluidSprite, NORTH_Z_FLUID, Direction.NORTH, color, 1, luminosity));
                 builder.addQuads(ItemLayerModel.getLayerRenderType(luminosity > 0), ItemTextureQuadConverter.convertTexture(transform, templateSprite, fluidSprite, SOUTH_Z_FLUID, Direction.SOUTH, color, 1, luminosity));
             }

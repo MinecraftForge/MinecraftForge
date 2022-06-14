@@ -6,6 +6,7 @@
 package net.minecraftforge.event;
 
 import com.mojang.brigadier.CommandDispatcher;
+import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.server.ReloadableServerResources;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Event;
@@ -24,20 +25,36 @@ public class RegisterCommandsEvent extends Event
 {
     private final CommandDispatcher<CommandSourceStack> dispatcher;
     private final Commands.CommandSelection environment;
+    private final CommandBuildContext context;
     
-    public RegisterCommandsEvent(CommandDispatcher<CommandSourceStack> dispatcher, Commands.CommandSelection environment)
+    public RegisterCommandsEvent(CommandDispatcher<CommandSourceStack> dispatcher, Commands.CommandSelection environment, CommandBuildContext context)
     {
         this.dispatcher = dispatcher;
         this.environment = environment;
+        this.context = context;
     }
-    
+
+    /**
+     * {@return the command dispatcher for registering commands to be executed on the client}
+     */
     public CommandDispatcher<CommandSourceStack> getDispatcher()
     {
         return dispatcher;
     }
-    
+
+    /**
+     * {@return the environment the command is being registered for}
+     */
     public Commands.CommandSelection getEnvironment()
     {
         return environment;
+    }
+
+    /**
+     * {@return the context to build the commands for}
+     */
+    public CommandBuildContext getBuildContext()
+    {
+        return context;
     }
 }

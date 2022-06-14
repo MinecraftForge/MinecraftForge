@@ -16,7 +16,7 @@ import net.minecraftforge.forgespi.language.IModInfo;
 import net.minecraftforge.forgespi.language.IModLanguageProvider;
 import net.minecraftforge.forgespi.language.ModFileScanData;
 import net.minecraftforge.forgespi.locating.IModFile;
-import net.minecraftforge.forgespi.locating.IModLocator;
+import net.minecraftforge.forgespi.locating.IModProvider;
 import net.minecraftforge.forgespi.locating.ModFileFactory;
 import org.slf4j.Logger;
 
@@ -52,7 +52,7 @@ public class ModFile implements IModFile {
     private final SecureJar jar;
     private final Type modFileType;
     private final Manifest manifest;
-    private final IModLocator locator;
+    private final IModProvider provider;
     private IModFileInfo modFileInfo;
     private ModFileScanData fileModFileScanData;
     private CompletableFuture<ModFileScanData> futureScanResult;
@@ -62,8 +62,8 @@ public class ModFile implements IModFile {
     static final Attributes.Name TYPE = new Attributes.Name("FMLModType");
     private SecureJar.Status securityStatus;
 
-    public ModFile(final SecureJar jar, final IModLocator locator, final ModFileFactory.ModFileInfoParser parser) {
-        this.locator = locator;
+    public ModFile(final SecureJar jar, final IModProvider provider, final ModFileFactory.ModFileInfoParser parser) {
+        this.provider = provider;
         this.jar = jar;
         this.parser = parser;
 
@@ -123,7 +123,7 @@ public class ModFile implements IModFile {
     }
 
     public void scanFile(Consumer<Path> pathConsumer) {
-        locator.scanFile(this, pathConsumer);
+        provider.scanFile(this, pathConsumer);
     }
 
     public void setFutureScanResult(CompletableFuture<ModFileScanData> future) {
@@ -188,8 +188,8 @@ public class ModFile implements IModFile {
     }
 
     @Override
-    public IModLocator getLocator() {
-        return locator;
+    public IModProvider getProvider() {
+        return this.provider;
     }
 
     @Override

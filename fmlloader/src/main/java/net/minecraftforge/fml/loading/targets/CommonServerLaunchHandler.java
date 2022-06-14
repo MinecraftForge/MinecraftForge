@@ -6,6 +6,7 @@
 package net.minecraftforge.fml.loading.targets;
 
 import cpw.mods.jarhandling.SecureJar;
+import cpw.mods.modlauncher.api.ServiceRunner;
 import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.fml.loading.LibraryFinder;
 import net.minecraftforge.fml.loading.VersionInfo;
@@ -23,10 +24,9 @@ public abstract class CommonServerLaunchHandler extends CommonLaunchHandler {
     @Override public boolean isProduction() { return true; }
 
     @Override
-    public Callable<Void> launchService(String[] arguments, ModuleLayer layer) {
+    public ServiceRunner launchService(String[] arguments, ModuleLayer layer) {
         return () -> {
             Class.forName(layer.findModule("minecraft").orElseThrow(),"net.minecraft.server.Main").getMethod("main", String[].class).invoke(null, (Object)arguments);
-            return null;
         };
     }
 

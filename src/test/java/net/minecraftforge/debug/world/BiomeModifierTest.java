@@ -5,8 +5,6 @@
 
 package net.minecraftforge.debug.world;
 
-import java.io.IOException;
-import java.nio.file.Path;
 import java.util.List;
 import java.util.function.BiFunction;
 
@@ -30,7 +28,6 @@ import net.minecraft.data.worldgen.features.NetherFeatures;
 import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.packs.PackType;
 import net.minecraft.tags.BiomeTags;
 import net.minecraft.tags.EntityTypeTags;
 import net.minecraft.world.entity.EntityType;

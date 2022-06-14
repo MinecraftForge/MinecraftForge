@@ -1,5 +1,35 @@
 --- a/net/minecraft/client/gui/screens/worldselection/CreateWorldScreen.java
 +++ b/net/minecraft/client/gui/screens/worldselection/CreateWorldScreen.java
+@@ -112,7 +_,7 @@
+    public static void m_232896_(Minecraft p_232897_, @Nullable Screen p_232898_) {
+       m_232899_(p_232897_, f_232866_);
+       PackRepository packrepository = new PackRepository(PackType.SERVER_DATA, new ServerPacksSource());
+-      WorldLoader.InitConfig worldloader$initconfig = m_232872_(packrepository, DataPackConfig.f_45842_);
++      WorldLoader.InitConfig worldloader$initconfig = m_232872_(packrepository, new DataPackConfig(ImmutableList.of("vanilla"), ImmutableList.of())); // FORGE: Load vanilla fallback with vanilla datapacks.
+       CompletableFuture<WorldCreationContext> completablefuture = WorldLoader.m_214362_(worldloader$initconfig, (p_232935_, p_232936_) -> {
+          RegistryAccess.Frozen registryaccess$frozen = RegistryAccess.m_206197_().m_203557_();
+          WorldGenSettings worldgensettings = WorldPresets.m_226449_(registryaccess$frozen);
+@@ -122,7 +_,10 @@
+          return new WorldCreationContext(p_232884_, Lifecycle.stable(), p_232883_, p_232882_);
+       }, Util.m_183991_(), p_232897_);
+       p_232897_.m_18701_(completablefuture::isDone);
+-      p_232897_.m_91152_(new CreateWorldScreen(p_232898_, DataPackConfig.f_45842_, new WorldGenSettingsComponent(completablefuture.join(), Optional.of(WorldPresets.f_226437_), OptionalLong.empty())));
++      // FORGE: Force load mods' datapacks after setting screen and ensure datapack selection reverts to vanilla if invalid.
++      CreateWorldScreen createWorldScreen = new CreateWorldScreen(p_232898_, new DataPackConfig(ImmutableList.of("vanilla"), ImmutableList.of()), new WorldGenSettingsComponent(completablefuture.join(), Optional.of(WorldPresets.f_226437_), OptionalLong.empty()));
++      p_232897_.m_91152_(createWorldScreen);
++      createWorldScreen.m_100878_(packrepository);
+    }
+ 
+    public static CreateWorldScreen m_205426_(@Nullable Screen p_205427_, WorldStem p_205428_, @Nullable Path p_205429_) {
+@@ -478,7 +_,7 @@
+                      if (p_232949_) {
+                         this.m_100975_();
+                      } else {
+-                        this.f_100846_ = DataPackConfig.f_45842_;
++                        this.f_100846_ = new DataPackConfig(ImmutableList.of("vanilla"), ImmutableList.of()); // FORGE: Revert to *actual* vanilla data
+                         this.f_96541_.m_91152_(this);
+                      }
+ 
 @@ -653,6 +_,7 @@
           File file1 = path.toFile();
           if (this.f_100832_ == null) {

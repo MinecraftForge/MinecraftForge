@@ -28,8 +28,6 @@ import net.minecraft.locale.Language;
 import net.minecraft.network.Connection;
 import net.minecraft.network.chat.*;
 import net.minecraft.network.protocol.status.ServerStatus;
-import net.minecraft.server.WorldStem;
-import net.minecraft.server.packs.repository.PackRepository;
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -78,8 +76,6 @@ import net.minecraft.client.player.Input;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.material.FogType;
-import net.minecraft.world.level.storage.LevelStorageSource;
-import net.minecraft.world.level.storage.PrimaryLevelData;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
@@ -387,8 +383,28 @@ public class ForgeHooksClient
         MinecraftForge.EVENT_BUS.post(new ScreenEvent.DrawScreenEvent.Post(screen, poseStack, mouseX, mouseY, partialTick));
     }
 
-    public static void onFogRender(FogType type, Camera camera, float partialTick, float nearDistance, float farDistance, FogShape shape)
+    public static Vector3f getFogColor(Camera camera, float partialTick, ClientLevel level, int renderDistance, float darkenWorldAmount, float fogRed, float fogGreen, float fogBlue)
     {
+        // Modify fog color depending on the fluid
+        FluidState state = level.getFluidState(camera.getBlockPosition());
+        Vector3f fluidFogColor = new Vector3f(fogRed, fogGreen, fogBlue);
+        if (camera.getPosition().y < (double)((float)camera.getBlockPosition().getY() + state.getHeight(level, camera.getBlockPosition())))
+            fluidFogColor = RenderProperties.get(state).modifyFogColor(camera, partialTick, level, renderDistance, darkenWorldAmount, fluidFogColor);
+
+        EntityViewRenderEvent.FogColors event = new net.minecraftforge.client.event.EntityViewRenderEvent.FogColors(camera, partialTick, fluidFogColor.x(), fluidFogColor.y(), fluidFogColor.z());
+        MinecraftForge.EVENT_BUS.post(event);
+
+        fluidFogColor.set(event.getRed(), event.getGreen(), event.getBlue());
+        return fluidFogColor;
+    }
+
+    public static void onFogRender(FogRenderer.FogMode mode, FogType type, Camera camera, float partialTick, float renderDistance, float nearDistance, float farDistance, FogShape shape)
+    {
+        // Modify fog rendering depending on the fluid
+        FluidState state = camera.getEntity().level.getFluidState(camera.getBlockPosition());
+        if (camera.getPosition().y < (double)((float)camera.getBlockPosition().getY() + state.getHeight(camera.getEntity().level, camera.getBlockPosition())))
+            RenderProperties.get(state).modifyFogRender(camera, mode, renderDistance, partialTick, nearDistance, farDistance, shape);
+
         EntityViewRenderEvent.RenderFogEvent event = new EntityViewRenderEvent.RenderFogEvent(type, camera, partialTick, nearDistance, farDistance, shape);
         if (MinecraftForge.EVENT_BUS.post(event))
         {
@@ -445,10 +461,11 @@ public class ForgeHooksClient
     @SuppressWarnings("deprecation")
     public static TextureAtlasSprite[] getFluidSprites(BlockAndTintGetter level, BlockPos pos, FluidState fluidStateIn)
     {
-        ResourceLocation overlayTexture = fluidStateIn.getType().getAttributes().getOverlayTexture();
+        IFluidTypeRenderProperties props = RenderProperties.get(fluidStateIn);
+        ResourceLocation overlayTexture = props.getOverlayTexture(fluidStateIn, level, pos);
         return new TextureAtlasSprite[] {
-                Minecraft.getInstance().getTextureAtlas(TextureAtlas.LOCATION_BLOCKS).apply(fluidStateIn.getType().getAttributes().getStillTexture(level, pos)),
-                Minecraft.getInstance().getTextureAtlas(TextureAtlas.LOCATION_BLOCKS).apply(fluidStateIn.getType().getAttributes().getFlowingTexture(level, pos)),
+                Minecraft.getInstance().getTextureAtlas(TextureAtlas.LOCATION_BLOCKS).apply(props.getStillTexture(fluidStateIn, level, pos)),
+                Minecraft.getInstance().getTextureAtlas(TextureAtlas.LOCATION_BLOCKS).apply(props.getFlowingTexture(fluidStateIn, level, pos)),
                 overlayTexture == null ? null : Minecraft.getInstance().getTextureAtlas(TextureAtlas.LOCATION_BLOCKS).apply(overlayTexture),
         };
     }
@@ -462,7 +479,7 @@ public class ForgeHooksClient
 
     public static Stream<Material> getFluidMaterials(Fluid fluid)
     {
-        return fluid.getAttributes().getTextures()
+        return RenderProperties.get(fluid).getTextures()
                 .filter(Objects::nonNull)
                 .map(ForgeHooksClient::getBlockMaterial);
     }
@@ -1059,9 +1076,7 @@ public class ForgeHooksClient
         return ItemBlockRenderTypes.canRenderInLayer(state, RenderType.solid());
     }
 
-    public static void createWorldConfirmationScreen(
-            String worldName, LevelStorageSource.LevelStorageAccess levelStorageAccess,
-            PackRepository packRepository, WorldStem worldStem)
+    public static void createWorldConfirmationScreen(Runnable doConfirmedWorldLoad)
     {
         Component title = Component.translatable("selectWorld.backupQuestion.experimental");
         Component msg = Component.translatable("selectWorld.backupWarning.experimental")
@@ -1072,11 +1087,7 @@ public class ForgeHooksClient
         {
             if (confirmed)
             {
-                if (worldStem.worldData() instanceof PrimaryLevelData pld)
-                {
-                    pld.withConfirmedWarning(true);
-                }
-                Minecraft.getInstance().doWorldLoad(worldName, levelStorageAccess, packRepository, worldStem);
+                doConfirmedWorldLoad.run();
             }
             else
             {

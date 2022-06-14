@@ -1,5 +1,13 @@
 --- a/net/minecraft/data/HashCache.java
 +++ b/net/minecraft/data/HashCache.java
+@@ -92,6 +_,7 @@
+       MutableInt mutableint = new MutableInt();
+       this.f_236083_.forEach((p_236100_, p_236101_) -> {
+          Path path = this.m_236109_(p_236100_);
++         if (!p_236101_.f_236114_.equals(p_236101_.f_236113_) || !Files.exists(path))//Forge: Only rewrite the cache file if it changed or is missing
+          p_236101_.f_236114_.m_236142_(this.f_236079_, path, DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(LocalDateTime.now()) + "\t" + p_236100_.m_6055_());
+          mutableint.add(p_236101_.f_236115_);
+       });
 @@ -231,10 +_,10 @@
                 bufferedwriter.write(p_236145_);
                 bufferedwriter.newLine();

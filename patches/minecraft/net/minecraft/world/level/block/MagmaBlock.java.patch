@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/level/block/MagmaBlock.java
++++ b/net/minecraft/world/level/block/MagmaBlock.java
+@@ -47,7 +_,7 @@
+ 
+    public void m_213898_(BlockState p_221420_, ServerLevel p_221421_, BlockPos p_221422_, RandomSource p_221423_) {
+       BlockPos blockpos = p_221422_.m_7494_();
+-      if (p_221421_.m_6425_(p_221422_).m_205070_(FluidTags.f_13131_)) {
++      if (p_221421_.m_6425_(p_221422_).canExtinguish(p_221421_, p_221422_)) {
+          p_221421_.m_5594_((Player)null, p_221422_, SoundEvents.f_11937_, SoundSource.BLOCKS, 0.5F, 2.6F + (p_221421_.f_46441_.m_188501_() - p_221421_.f_46441_.m_188501_()) * 0.8F);
+          p_221421_.m_8767_(ParticleTypes.f_123755_, (double)blockpos.m_123341_() + 0.5D, (double)blockpos.m_123342_() + 0.25D, (double)blockpos.m_123343_() + 0.5D, 8, 0.5D, 0.25D, 0.5D, 0.0D);
+       }
