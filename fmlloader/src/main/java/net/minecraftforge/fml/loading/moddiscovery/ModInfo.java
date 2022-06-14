@@ -54,7 +54,7 @@ public class ModInfo implements IModInfo, IConfigurable
         this.owningFile = owningFile;
         this.config = config;
         this.modId = config.<String>getConfigElement("modId")
-                       .orElseThrow(() -> new InvalidModFileException("Missing modId", owningFile));
+                .orElseThrow(() -> new InvalidModFileException("Missing modId", owningFile));
         if (!VALID_MODID.matcher(this.modId).matches()) {
             LOGGER.error(LogUtils.FATAL_MARKER, "Invalid modId found in file {} - {} does not match the standard: {}", this.owningFile.getFile().getFilePath(), this.modId, VALID_MODID.pattern());
             throw new InvalidModFileException("Invalid modId found : " + this.modId, owningFile);
@@ -65,38 +65,38 @@ public class ModInfo implements IModInfo, IConfigurable
             throw new InvalidModFileException("Invalid override namespace found : " + this.namespace, owningFile);
         }
         this.version = config.<String>getConfigElement("version")
-                         .map(s -> StringSubstitutor.replace(s, ownFile.map(ModFileInfo::getFile).orElse(null)))
-                         .map(DefaultArtifactVersion::new).orElse(DEFAULT_VERSION);
+                .map(s -> StringSubstitutor.replace(s, ownFile.map(ModFileInfo::getFile).orElse(null)))
+                .map(DefaultArtifactVersion::new).orElse(DEFAULT_VERSION);
         this.displayName = config.<String>getConfigElement("displayName").orElse(this.modId);
         this.description = config.<String>getConfigElement("description").orElse("MISSING DESCRIPTION");
 
         this.logoFile = Optional.ofNullable(config.<String>getConfigElement("logoFile")
-                                              .orElseGet(() -> ownFile.flatMap(mf -> mf.<String>getConfigElement("logoFile")).orElse(null)));
+                .orElseGet(() -> ownFile.flatMap(mf -> mf.<String>getConfigElement("logoFile")).orElse(null)));
         this.logoBlur = config.<Boolean>getConfigElement("logoBlur")
-                          .orElseGet(() -> ownFile.flatMap(f -> f.<Boolean>getConfigElement("logoBlur"))
-                                             .orElse(true));
+                .orElseGet(() -> ownFile.flatMap(f -> f.<Boolean>getConfigElement("logoBlur"))
+                        .orElse(true));
 
         this.updateJSONURL = config.<String>getConfigElement("updateJSONURL")
-                               .map(StringUtils::toURL);
+                .map(StringUtils::toURL);
 
         this.dependencies = ownFile.map(mfi -> mfi.getConfigList("dependencies", this.modId)
-                                                 .stream()
-                                                 .map(dep -> new ModVersion(this, dep))
-                                                 .collect(Collectors.toList()))
-                              .orElse(Collections.emptyList());
+                .stream()
+                .map(dep -> new ModVersion(this, dep))
+                .collect(Collectors.toList()))
+                .orElse(Collections.emptyList());
 
         this.features = ownFile.map(mfi -> mfi.<Map<String, String>>getConfigElement("features", this.modId)
-                                             .stream()
-                                             .flatMap(m->m.entrySet().stream())
-                                             .map(e->new ForgeFeature.Bound(e.getKey(), e.getValue(), this))
-                                             .collect(Collectors.toList())).orElse(Collections.emptyList());
+                .stream()
+                .flatMap(m->m.entrySet().stream())
+                .map(e->new ForgeFeature.Bound(e.getKey(), e.getValue(), this))
+                .collect(Collectors.toList())).orElse(Collections.emptyList());
 
         this.properties = ownFile.map(mfi -> mfi.<Map<String, Object>>getConfigElement("modproperties", this.modId)
-                                               .orElse(Collections.emptyMap()))
-                            .orElse(Collections.emptyMap());
+                .orElse(Collections.emptyMap()))
+                .orElse(Collections.emptyMap());
 
         this.modUrl = config.<String>getConfigElement("modUrl")
-                        .map(StringUtils::toURL);
+                .map(StringUtils::toURL);
     }
 
     @Override
@@ -195,20 +195,20 @@ public class ModInfo implements IModInfo, IConfigurable
         public ModVersion(final IModInfo owner, final IConfigurable config) {
             this.owner = owner;
             this.modId = config.<String>getConfigElement("modId")
-                           .orElseThrow(()->new InvalidModFileException("Missing required field modid in dependency", getOwningFile()));
+                    .orElseThrow(()->new InvalidModFileException("Missing required field modid in dependency", getOwningFile()));
             this.mandatory = config.<Boolean>getConfigElement("mandatory")
-                               .orElseThrow(()->new InvalidModFileException("Missing required field mandatory in dependency", getOwningFile()));
+                    .orElseThrow(()->new InvalidModFileException("Missing required field mandatory in dependency", getOwningFile()));
             this.versionRange = config.<String>getConfigElement("versionRange")
-                                  .map(MavenVersionAdapter::createFromVersionSpec)
-                                  .orElse(UNBOUNDED);
+                    .map(MavenVersionAdapter::createFromVersionSpec)
+                    .orElse(UNBOUNDED);
             this.ordering = config.<String>getConfigElement("ordering")
-                              .map(Ordering::valueOf)
-                              .orElse(Ordering.NONE);
+                    .map(Ordering::valueOf)
+                    .orElse(Ordering.NONE);
             this.side = config.<String>getConfigElement("side")
-                          .map(DependencySide::valueOf)
-                          .orElse(DependencySide.BOTH);
+                    .map(DependencySide::valueOf)
+                    .orElse(DependencySide.BOTH);
             this.referralUrl = config.<String>getConfigElement("referralUrl")
-                                 .map(StringUtils::toURL);
+                    .map(StringUtils::toURL);
         }
 
 
