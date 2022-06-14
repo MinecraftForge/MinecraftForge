@@ -5,10 +5,10 @@
 
 package net.minecraftforge.fml.loading.moddiscovery;
 
+import com.mojang.logging.LogUtils;
 import net.minecraftforge.forgespi.locating.IDependencyLocator;
 import net.minecraftforge.forgespi.locating.IModFile;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
@@ -18,7 +18,7 @@ import java.util.Optional;
 
 public abstract class AbstractJarFileDependencyLocator extends AbstractJarFileModProvider implements IDependencyLocator
 {
-    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractJarFileDependencyLocator.class);
+    private static final Logger LOGGER = LogUtils.getLogger();
 
     protected Optional<InputStream> loadResourceFromModFile(final IModFile modFile, final Path path) {
         try {

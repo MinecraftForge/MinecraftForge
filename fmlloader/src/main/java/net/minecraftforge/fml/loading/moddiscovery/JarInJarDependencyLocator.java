@@ -5,28 +5,25 @@
 
 package net.minecraftforge.fml.loading.moddiscovery;
 
-import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Multimap;
-import com.google.common.collect.Multimaps;
+import com.mojang.logging.LogUtils;
 import net.minecraftforge.fml.loading.EarlyLoadingException;
 import net.minecraftforge.forgespi.language.IModInfo;
 import net.minecraftforge.forgespi.locating.IModFile;
-import net.minecraftforge.jarjar.metadata.ContainedJarIdentifier;
 import net.minecraftforge.jarjar.selection.JarSelector;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
-import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
 import org.apache.maven.artifact.versioning.VersionRange;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class JarInJarDependencyLocator extends AbstractJarFileDependencyLocator
 {
-    private static final Logger LOGGER = LoggerFactory.getLogger(JarInJarDependencyLocator.class);
+    private static final Logger LOGGER = LogUtils.getLogger();
 
     @Override
     public String name()

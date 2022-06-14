@@ -5,6 +5,7 @@
 
 package net.minecraftforge.fml.loading.moddiscovery;
 
+import com.mojang.logging.LogUtils;
 import cpw.mods.jarhandling.SecureJar;
 import net.minecraftforge.fml.loading.LogMarkers;
 import net.minecraftforge.forgespi.locating.IModFile;
@@ -24,8 +25,6 @@ import java.util.stream.Stream;
 
 public abstract class AbstractJarFileModLocator extends AbstractJarFileModProvider implements IModLocator
 {
-    private static final Logger LOGGER = LogManager.getLogger();
-
     @Override
     public List<IModFile> scanMods() {
         return scanCandidates()
