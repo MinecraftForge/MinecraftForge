@@ -1445,7 +1445,8 @@ public class ForgeHooks
      * @param registryKey key of the registry
      * @return path of the registry key. Prefixed with the namespace if it is not "minecraft"
      */
-    public static String prefixNamespace(ResourceLocation registryKey) {
+    public static String prefixNamespace(ResourceLocation registryKey)
+    {
         return registryKey.getNamespace().equals("minecraft") ? registryKey.getPath() : registryKey.getNamespace() +  "/"  + registryKey.getPath();
     }
 }
