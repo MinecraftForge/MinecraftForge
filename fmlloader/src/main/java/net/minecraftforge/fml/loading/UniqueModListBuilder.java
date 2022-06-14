@@ -32,73 +32,70 @@ public class UniqueModListBuilder
 
         // Collect mod files by module name. This will be used for deduping purposes
         final Map<String, List<ModFile>> modFilesByFirstId = modFiles.stream()
-                                                                .filter(mf -> mf.getModFileInfo() != null)
-                                                                .collect(groupingBy(UniqueModListBuilder::getModId));
+                .filter(mf -> mf.getModFileInfo() != null)
+                .collect(groupingBy(UniqueModListBuilder::getModId));
 
         final Map<String, List<ModFile>> libFilesWithVersionByModuleName = modFiles.stream()
-                                                                .filter(mf -> mf.getModFileInfo() == null)
-                                                                .collect(groupingBy(UniqueModListBuilder::getModId));
+                .filter(mf -> mf.getModFileInfo() == null)
+                .collect(groupingBy(UniqueModListBuilder::getModId));
 
         // Select the newest by artifact version sorting of non-unique files thus identified
         uniqueModList = modFilesByFirstId.entrySet().stream()
-                          .map(this::selectNewestModInfo)
-                          .map(Map.Entry::getValue)
-                          .collect(toList());
+                .map(this::selectNewestModInfo)
+                .map(Map.Entry::getValue)
+                .toList();
 
         // Select the newest by artifact version sorting of non-unique files thus identified
         uniqueLibListWithVersion = libFilesWithVersionByModuleName.entrySet().stream()
-                          .map(this::selectNewestModInfo)
-                          .map(Map.Entry::getValue)
-                          .collect(toList());
+                .map(this::selectNewestModInfo)
+                .map(Map.Entry::getValue)
+                .toList();
 
 
         // Transform to the full mod id list
         final Map<String, List<IModInfo>> modIds = uniqueModList.stream()
-                                                    .filter(mf -> mf.getModFileInfo() != null) //Filter out non-mod files, we don't care about those for now.....
-                                                    .map(ModFile::getModInfos)
-                                                    .flatMap(Collection::stream)
-                                                    .collect(groupingBy(IModInfo::getModId));
+                .filter(mf -> mf.getModFileInfo() != null) //Filter out non-mod files, we don't care about those for now.....
+                .map(ModFile::getModInfos)
+                .flatMap(Collection::stream)
+                .collect(groupingBy(IModInfo::getModId));
 
         // Transform to the full lib id list
         final Map<String, List<ModFile>> versionedLibIds = uniqueLibListWithVersion.stream()
-                                                              .map(UniqueModListBuilder::getModId)
-                                                              .collect(
-                                                                Collectors.toMap(
-                                                                  Function.identity(),
-                                                                  libFilesWithVersionByModuleName::get
-                                                                )
-                                                              );
+                .map(UniqueModListBuilder::getModId)
+                .collect(Collectors.toMap(
+                    Function.identity(),
+                    libFilesWithVersionByModuleName::get
+                ));
 
         // Its theoretically possible that some mod has somehow moved an id to a secondary place, thus causing a dupe.
         // We can't handle this
         final List<IModInfo> dupedMods = modIds.values().stream()
-                                          .filter(modInfos -> modInfos.size() > 1)
-                                          .map(modInfos -> modInfos.get(0))
-                                          .toList();
-
-        final List<ModFile> dupedLibs = versionedLibIds.values().stream()
-                                           .filter(modFiles -> modFiles.size() > 1)
-                                           .map(modFiles -> modFiles.get(0))
-                                           .toList();
+                .filter(modInfos -> modInfos.size() > 1)
+                .map(modInfos -> modInfos.get(0))
+                .toList();
 
         if (!dupedMods.isEmpty()) {
             final List<EarlyLoadingException.ExceptionData> duplicateModErrors = dupedMods.stream()
-                                                                                   .map(dm -> new EarlyLoadingException.ExceptionData("fml.modloading.dupedmod",
-                                                                                     dm, Objects.toString(dm))).toList();
+                                                                                   .map(dm -> new EarlyLoadingException.ExceptionData("fml.modloading.dupedmod", dm, Objects.toString(dm)))
+                                                                                   .toList();
             throw new EarlyLoadingException("Duplicate mods found", null,  duplicateModErrors);
         }
 
+        final List<ModFile> dupedLibs = versionedLibIds.values().stream()
+                .filter(modFiles -> modFiles.size() > 1)
+                .map(modFiles -> modFiles.get(0))
+                .toList();
+
         if (!dupedLibs.isEmpty()) {
             final List<EarlyLoadingException.ExceptionData> duplicateLibErrors = dupedLibs.stream()
-                                                                                   .map(dm -> new EarlyLoadingException.ExceptionData("fml.modloading.dupedlib.versioned",
-                                                                                     dm, Objects.toString(dm))).toList();
+                .map(dm -> new EarlyLoadingException.ExceptionData("fml.modloading.dupedlib.versioned", dm, Objects.toString(dm)))
+                .toList();
             throw new EarlyLoadingException("Duplicate plugins or libraries found", null,  duplicateLibErrors);
         }
 
-
         // Collect unique mod files by module name. This will be used for deduping purposes
         final Map<String, List<ModFile>> uniqueModFilesByFirstId = uniqueModList.stream()
-                                                                .collect(groupingBy(mf -> mf.getModFileInfo().moduleName()));
+                .collect(groupingBy(UniqueModListBuilder::getModId));
 
         final List<ModFile> loadedList = new ArrayList<>();
         loadedList.addAll(uniqueModList);
@@ -130,7 +127,7 @@ public class UniqueModListBuilder
             return modFile.getSecureJar().name();
         }
 
-        return modFile.getModInfos().get(0).getModId();
+        return modFile.getModFileInfo().moduleName();
     }
 
     public record UniqueModListData(List<ModFile> modFiles, Map<String, List<ModFile>> modFilesByFirstId) {}

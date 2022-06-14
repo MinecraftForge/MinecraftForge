@@ -8,7 +8,6 @@ package net.minecraftforge.fml.loading.moddiscovery;
 import com.mojang.logging.LogUtils;
 import cpw.mods.jarhandling.JarMetadata;
 import cpw.mods.jarhandling.SecureJar;
-import joptsimple.internal.Strings;
 import net.minecraftforge.fml.loading.LogMarkers;
 import net.minecraftforge.forgespi.language.IConfigurable;
 import net.minecraftforge.forgespi.language.IModFileInfo;
@@ -85,18 +84,7 @@ public abstract class AbstractModProvider implements IModProvider
         return null;
     }
 
-    private static final class DefaultModFileInfo implements IModFileInfo, IConfigurable {
-
-        private final IModFile mod;
-        private final String license;
-        private final IConfigurable configurable;
-
-        private DefaultModFileInfo(final IModFile mod, final String license, final IConfigurable configurable) {
-            this.mod = mod;
-            this.license = license;
-            this.configurable = configurable;
-        }
-
+    private record DefaultModFileInfo(IModFile mod, String license, IConfigurable configurable) implements IModFileInfo, IConfigurable {
         @Override
         public <T> Optional<T> getConfigElement(final String... strings)
         {
@@ -128,5 +116,5 @@ public abstract class AbstractModProvider implements IModProvider
         public String toString() {
             return "IModFileInfo(" + mod.getFilePath() + ")";
         }
-    };
+    }
 }

@@ -65,15 +65,7 @@ public class ModFile implements IModFile {
     private SecureJar.Status securityStatus;
 
     public ModFile(final SecureJar jar, final IModProvider provider, final ModFileFactory.ModFileInfoParser parser) {
-        this.provider = provider;
-        this.jar = jar;
-        this.parser = parser;
-
-        manifest = this.jar.getManifest();
-        final Optional<String> value = Optional.ofNullable(manifest.getMainAttributes().getValue(TYPE));
-        modFileType = Type.valueOf(value.orElse("MOD"));
-        jarVersion = Optional.ofNullable(manifest.getMainAttributes().getValue(Attributes.Name.IMPLEMENTATION_VERSION)).orElse("0.0NONE");
-        this.modFileInfo = ModFileParser.readModList(this, this.parser);
+        this(jar, provider, parser, parseType(jar));
     }
 
     public ModFile(final SecureJar jar, final IModProvider provider, final ModFileFactory.ModFileInfoParser parser, String type) {
@@ -168,14 +160,6 @@ public class ModFile implements IModFile {
         StartupMessageManager.modLoaderConsumer().ifPresent(c->c.accept("Completed deep scan of "+this.getFileName()));
     }
 
-    public Map<String, Object> getFileProperties()
-    {
-        if (this.fileProperties == null)
-            return ImmutableMap.of();
-
-        return ImmutableMap.copyOf(this.fileProperties);
-    }
-
     public void setFileProperties(Map<String, Object> fileProperties) {
         this.fileProperties = fileProperties;
     }
@@ -227,5 +211,11 @@ public class ModFile implements IModFile {
     public ArtifactVersion getJarVersion()
     {
         return new DefaultArtifactVersion(this.jarVersion);
+    }
+
+    private static String parseType(final SecureJar jar) {
+        final Manifest m = jar.getManifest();
+        final Optional<String> value = Optional.ofNullable(m.getMainAttributes().getValue(TYPE));
+        return value.orElse("MOD");
     }
 }

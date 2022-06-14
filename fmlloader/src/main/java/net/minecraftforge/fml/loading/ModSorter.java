@@ -118,7 +118,6 @@ public class ModSorter
                 .collect(toList());
         this.modFiles = sorted.stream()
                 .map(ModFileInfo::getFile)
-                .map(ModFile.class::cast)
                 .collect(toList());
     }
 
@@ -128,8 +127,7 @@ public class ModSorter
         final ModFileInfo self = (ModFileInfo)dep.getOwner().getOwningFile();
         final IModInfo targetModInfo = modIdNameLookup.get(dep.getModId());
         // soft dep that doesn't exist. Just return. No edge required.
-        if (targetModInfo == null) return;
-        final ModFileInfo target = (ModFileInfo) targetModInfo.getOwningFile();
+        if (targetModInfo == null || !(targetModInfo.getOwningFile() instanceof final ModFileInfo target)) return;
         if (self == target)
             return; // in case a jar has two mods that have dependencies between
         switch (dep.getOrdering()) {
@@ -147,13 +145,11 @@ public class ModSorter
         detectSystemMods(uniqueModListData.modFilesByFirstId());
 
         modIdNameLookup = uniqueModListData.modFilesByFirstId().entrySet().stream()
-                            .filter(e -> !e.getValue().get(0).getModInfos().isEmpty())
-                            .collect(
-                              Collectors.toMap(
-                                Map.Entry::getKey,
-                                e -> e.getValue().get(0).getModInfos().get(0)
-                              )
-                            );
+                .filter(e -> !e.getValue().get(0).getModInfos().isEmpty())
+                .collect(Collectors.toMap(
+                    Map.Entry::getKey,
+                    e -> e.getValue().get(0).getModInfos().get(0)
+                  ));
     }
 
     private void detectSystemMods(final Map<String, List<ModFile>> modFilesByFirstId)
@@ -184,16 +180,6 @@ public class ModSorter
                 throw new IllegalStateException("Failed to find system mod: " + systemMod);
             }
         }
-    }
-
-    private Map.Entry<String, ModFile> selectNewestModInfo(Map.Entry<String, List<ModFile>> fullList) {
-        List<ModFile> modInfoList = fullList.getValue();
-        if (modInfoList.size() > 1) {
-            LOGGER.debug("Found {} mods for first modid {}, selecting most recent based on version data", modInfoList.size(), fullList.getKey());
-            modInfoList.sort(Comparator.<ModFile, ArtifactVersion>comparing(mf -> mf.getModInfos().get(0).getVersion()).reversed());
-            LOGGER.debug("Selected file {} for modid {} with version {}", modInfoList.get(0).getFileName(), fullList.getKey(), modInfoList.get(0).getModInfos().get(0).getVersion());
-        }
-        return Map.entry(fullList.getKey(), modInfoList.get(0));
     }
 
     private List<EarlyLoadingException.ExceptionData> verifyDependencyVersions()
