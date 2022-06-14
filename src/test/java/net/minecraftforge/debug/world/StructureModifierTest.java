@@ -9,25 +9,22 @@ import com.google.gson.JsonElement;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import cpw.mods.modlauncher.api.LamdbaExceptionUtils;
-import java.io.IOException;
-import java.nio.file.Path;
+import java.util.Map;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.RegistryCodecs;
-import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DataProvider;
 import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.packs.PackType;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.level.biome.MobSpawnSettings;
 import net.minecraft.world.level.levelgen.structure.BuiltinStructures;
 import net.minecraft.world.level.levelgen.structure.Structure;
+import net.minecraftforge.common.data.JsonCodecProvider;
 import net.minecraftforge.common.world.ModifiableStructureInfo.StructureInfo.Builder;
 import net.minecraftforge.common.world.StructureModifier;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -59,6 +56,7 @@ public class StructureModifierTest
     public static final String TEST = "test";
     public static final ResourceLocation ADD_SPAWNS_TO_STRUCTURE_RL = new ResourceLocation(MODID, TEST);
     public static final String MODIFY_STRONGHOLD = "modify_stronghold";
+    public static final ResourceLocation MODIFY_STRONGHOLD_RL = new ResourceLocation(MODID, MODIFY_STRONGHOLD);
 
     public StructureModifierTest()
     {
@@ -81,37 +79,19 @@ public class StructureModifierTest
     {
         // Example of how to datagen datapack registry objects.
         DataGenerator generator = event.getGenerator();
-        final Path outputFolder = generator.getOutputFolder();
         final RegistryOps<JsonElement> ops = RegistryOps.create(JsonOps.INSTANCE, RegistryAccess.BUILTIN.get());
-        final String directory = PackType.SERVER_DATA.getDirectory();
 
         // prepare to datagenerate our structure modifier
-        final ResourceLocation structureModifiersRegistryID = ForgeRegistries.Keys.STRUCTURE_MODIFIERS.location();
-        final String structureModifierPathString = String.join("/", directory, MODID, structureModifiersRegistryID.getNamespace(), structureModifiersRegistryID.getPath(), MODIFY_STRONGHOLD + ".json");
-        final Path structureModifierPath = outputFolder.resolve(structureModifierPathString);
         final StructureModifier structureModifier = new TestModifier(
               HolderSet.direct(ops.registry(Registry.STRUCTURE_REGISTRY).get().getHolder(BuiltinStructures.STRONGHOLD).orElseThrow()),
               MobCategory.MONSTER,
               new MobSpawnSettings.SpawnerData(EntityType.WITHER_SKELETON, 100, 5, 15)
         );
 
-        generator.addProvider(event.includeServer(), new DataProvider()
-        {
-            @Override
-            public void run(final CachedOutput cache) throws IOException
-            {
-                StructureModifier.DIRECT_CODEC.encodeStart(ops, structureModifier)
-                    .resultOrPartial(msg -> LOGGER.error("Failed to encode {}: {}", structureModifierPathString, msg)) // Log error on encode failure.
-                      // Output to file on encode success.
-                    .ifPresent(LamdbaExceptionUtils.rethrowConsumer(json -> DataProvider.saveStable(cache, json, structureModifierPath)));
-            }
-
-            @Override
-            public String getName()
-            {
-                return MODID + " data provider";
-            }
-        });
+         DataProvider structureModifierProvider =
+              JsonCodecProvider.forDatapackRegistry(generator, event.getExistingFileHelper(), MODID, ops, ForgeRegistries.Keys.STRUCTURE_MODIFIERS,
+                    Map.of(MODIFY_STRONGHOLD_RL, structureModifier));
+        generator.addProvider(event.includeServer(), structureModifierProvider);
     }
 
     public record TestModifier(HolderSet<Structure> structures, MobCategory category, MobSpawnSettings.SpawnerData spawn)

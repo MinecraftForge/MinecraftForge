@@ -1048,6 +1048,16 @@ project(':forge') {
                     }
 
                     args '--flat', '--all', '--validate',
+                            '--mod', 'data_gen_test',
+                            '--mod', 'piston_event_test',
+                            '--mod', 'global_loot_test',
+                            '--mod', 'scaffolding_test',
+                            '--mod', 'custom_tag_types_test',
+                            '--mod', 'new_model_loader_test',
+                            '--mod', 'remove_tag_datagen_test',
+                            '--mod', 'tag_based_tool_types',
+                            '--mod', 'custom_transformtype_test',
+                            '--mod', 'data_pack_registries_test',
                             '--mod', 'biome_modifiers_test',
                             '--mod', 'structure_modifiers_test',
                             '--output', rootProject.file('src/generated_test/resources/'),
