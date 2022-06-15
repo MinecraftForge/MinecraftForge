@@ -128,6 +128,8 @@ public class ForgeConfig {
 
         public final BooleanValue forceSystemNanoTime;
 
+        public final BooleanValue compressLanIPv6Addresses;
+
         Client(ForgeConfigSpec.Builder builder) {
             builder.comment("Client only settings, mostly things related to rendering")
                    .push("client");
@@ -158,6 +160,11 @@ public class ForgeConfig {
                     .comment("Forces the use of System.nanoTime instead of glfwGetTime, as the main Util time provider")
                     .translation("forge.configgui.forceSystemNanoTime")
                     .define("forceSystemNanoTime", false);
+
+            compressLanIPv6Addresses = builder
+                    .comment("When enabled, Forge will convert discovered 'Open to LAN' IPv6 addresses to their more compact, compressed representation")
+                    .translation("forge.configgui.compressLanIPv6Addresses")
+                    .define("compressLanIPv6Addresses", true);
 
             builder.pop();
         }
