@@ -6,6 +6,7 @@
 package net.minecraftforge.registries;
 
 import com.mojang.serialization.Codec;
+import net.minecraft.commands.synchronization.ArgumentTypeInfo;
 import net.minecraft.network.syncher.EntityDataSerializer;
 import net.minecraft.world.entity.decoration.PaintingVariant;
 import net.minecraft.world.item.crafting.RecipeType;
@@ -75,6 +76,7 @@ public class ForgeRegistries
     public static final IForgeRegistry<RecipeSerializer<?>> RECIPE_SERIALIZERS = RegistryManager.ACTIVE.getRegistry(Keys.RECIPE_SERIALIZERS);
     public static final IForgeRegistry<Attribute> ATTRIBUTES = RegistryManager.ACTIVE.getRegistry(Keys.ATTRIBUTES);
     public static final IForgeRegistry<StatType<?>> STAT_TYPES = RegistryManager.ACTIVE.getRegistry(Keys.STAT_TYPES);
+    public static final IForgeRegistry<ArgumentTypeInfo<?, ?>> COMMAND_ARGUMENT_TYPES = RegistryManager.ACTIVE.getRegistry(Keys.COMMAND_ARGUMENT_TYPES);
 
     // Villages
     public static final IForgeRegistry<VillagerProfession> PROFESSIONS = RegistryManager.ACTIVE.getRegistry(Keys.VILLAGER_PROFESSIONS);
@@ -124,6 +126,7 @@ public class ForgeRegistries
         public static final ResourceKey<Registry<Potion>> POTIONS = key("potion");
         public static final ResourceKey<Registry<Attribute>> ATTRIBUTES = key("attribute");
         public static final ResourceKey<Registry<StatType<?>>> STAT_TYPES = key("stat_type");
+        public static final ResourceKey<Registry<ArgumentTypeInfo<?, ?>>> COMMAND_ARGUMENT_TYPES = key("command_argument_type");
         public static final ResourceKey<Registry<SoundEvent>> SOUND_EVENTS = key("sound_event");
         public static final ResourceKey<Registry<Enchantment>> ENCHANTMENTS = key("enchantment");
         public static final ResourceKey<Registry<EntityType<?>>> ENTITY_TYPES = key("entity_type");
