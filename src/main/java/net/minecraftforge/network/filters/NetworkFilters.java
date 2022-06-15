@@ -22,7 +22,8 @@ public class NetworkFilters
 
     private static final Map<String, Function<Connection, VanillaPacketFilter>> instances = ImmutableMap.of(
             "forge:vanilla_filter", manager -> new VanillaConnectionNetworkFilter(),
-            "forge:forge_fixes", ForgeConnectionNetworkFilter::new
+            "forge:forge_fixes", ForgeConnectionNetworkFilter::new,
+            "forge:gametest_filter", manager -> new ForgeConnectionGameTestNetworkFilter()
     );
 
     public static void injectIfNecessary(Connection manager)
