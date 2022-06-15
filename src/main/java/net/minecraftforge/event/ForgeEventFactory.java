@@ -13,6 +13,7 @@ import java.util.function.Consumer;
 import com.mojang.authlib.GameProfile;
 
 import com.mojang.brigadier.CommandDispatcher;
+import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.network.chat.ChatSender;
 import net.minecraft.server.ReloadableServerResources;
 import net.minecraft.server.players.PlayerList;
@@ -661,9 +662,9 @@ public class ForgeEventFactory
         return event.getListeners();
     }
 
-    public static void onCommandRegister(CommandDispatcher<CommandSourceStack> dispatcher, Commands.CommandSelection environment)
+    public static void onCommandRegister(CommandDispatcher<CommandSourceStack> dispatcher, Commands.CommandSelection environment, CommandBuildContext context)
     {
-        RegisterCommandsEvent event = new RegisterCommandsEvent(dispatcher, environment);
+        RegisterCommandsEvent event = new RegisterCommandsEvent(dispatcher, environment, context);
         MinecraftForge.EVENT_BUS.post(event);
     }
 

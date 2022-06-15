@@ -7,7 +7,7 @@
 -      TextureAtlasSprite[] atextureatlassprite = flag ? this.f_110940_ : this.f_110941_;
 -      int i = flag ? 16777215 : BiomeColors.m_108811_(p_234370_, p_234371_);
 +      TextureAtlasSprite[] atextureatlassprite = net.minecraftforge.client.ForgeHooksClient.getFluidSprites(p_234370_, p_234371_, p_234374_);
-+      int i = p_234374_.m_76152_().getAttributes().getColor(p_234370_, p_234371_);
++      int i = net.minecraftforge.client.RenderProperties.get(p_234374_).getColorTint(p_234374_, p_234370_, p_234371_);
 +      float alpha = (float)(i >> 24 & 255) / 255.0F;
        float f = (float)(i >> 16 & 255) / 255.0F;
        float f1 = (float)(i >> 8 & 255) / 255.0F;

@@ -28,6 +28,7 @@ import net.minecraft.world.level.pathfinder.BlockPathTypes;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.core.Direction;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.pathfinder.WalkNodeEvaluator;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.server.level.ServerLevel;
@@ -480,14 +481,41 @@ public interface IForgeBlock
     }
 
     /**
-     * Get the {@code PathNodeType} for this block. Return {@code null} for vanilla behavior.
+     * Gets the path type of this block when an entity is pathfinding. When
+     * {@code null}, uses vanilla behavior.
      *
-     * @return the PathNodeType
+     * @param state the state of the block
+     * @param level the level which contains this block
+     * @param pos the position of the block
+     * @param mob the mob currently pathfinding, may be {@code null}
+     * @return the path type of this block
      */
     @Nullable
-    default BlockPathTypes getAiPathNodeType(BlockState state, BlockGetter level, BlockPos pos, @Nullable Mob entity)
+    default BlockPathTypes getBlockPathType(BlockState state, BlockGetter level, BlockPos pos, @Nullable Mob mob)
     {
         return state.getBlock() == Blocks.LAVA ? BlockPathTypes.LAVA : state.isBurning(level, pos) ? BlockPathTypes.DAMAGE_FIRE : null;
+    }
+
+    /**
+     * Gets the path type of the adjacent block to a pathfinding entity.
+     * Path types with a negative malus are not traversable for the entity.
+     * Pathfinding entities will favor paths consisting of a lower malus.
+     * When {@code null}, uses vanilla behavior.
+     *
+     * @param state the state of the block
+     * @param level the level which contains this block
+     * @param pos the position of the block
+     * @param mob the mob currently pathfinding, may be {@code null}
+     * @param originalType the path type of the source the entity is on
+     * @return the path type of this block
+     */
+    @Nullable
+    default BlockPathTypes getAdjacentBlockPathType(BlockState state, BlockGetter level, BlockPos pos, @Nullable Mob mob, BlockPathTypes originalType)
+    {
+        if (state.is(Blocks.CACTUS)) return BlockPathTypes.DANGER_CACTUS;
+        else if (state.is(Blocks.SWEET_BERRY_BUSH)) return BlockPathTypes.DANGER_OTHER;
+        else if (WalkNodeEvaluator.isBurningBlock(state)) return BlockPathTypes.DANGER_FIRE;
+        else return null;
     }
 
     /**
@@ -815,5 +843,27 @@ public interface IForgeBlock
             return !ForgeHooksClient.isBlockInSolidLayer(state);
         }
         return true;
+    }
+
+    /**
+     * Returns whether the block can be hydrated by a fluid.
+     *
+     * <p>Hydration is an arbitrary word which depends on the block.
+     * <ul>
+     *     <li>A farmland has moisture</li>
+     *     <li>A sponge can soak up the liquid</li>
+     *     <li>A coral can live</li>
+     * </ul>
+     *
+     * @param state the state of the block being hydrated
+     * @param getter the getter which can get the block
+     * @param pos the position of the block being hydrated
+     * @param fluid the state of the fluid
+     * @param fluidPos the position of the fluid
+     * @return {@code true} if the block can be hydrated, {@code false} otherwise
+     */
+    default boolean canBeHydrated(BlockState state, BlockGetter getter, BlockPos pos, FluidState fluid, BlockPos fluidPos)
+    {
+        return fluid.canHydrate(getter, fluidPos, state, pos);
     }
 }

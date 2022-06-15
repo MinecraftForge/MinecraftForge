@@ -5,7 +5,7 @@
           FluidState fluidstate = blockstate.m_60819_();
           if (fluidstate.m_76152_().m_6212_(this) && this.m_76061_(direction, p_76036_, p_76037_, p_76038_, blockpos, blockstate)) {
 -            if (fluidstate.m_76170_()) {
-+            if (fluidstate.m_76170_() && net.minecraftforge.event.ForgeEventFactory.canCreateFluidSource(p_76036_, blockpos, blockstate, this.m_6760_())) {
++            if (fluidstate.m_76170_() && net.minecraftforge.event.ForgeEventFactory.canCreateFluidSource(p_76036_, blockpos, blockstate, fluidstate.canConvertToSource(p_76036_, blockpos))) {
                 ++j;
              }
  
@@ -18,3 +18,16 @@
           BlockState blockstate1 = p_76036_.m_8055_(p_76037_.m_7495_());
           FluidState fluidstate1 = blockstate1.m_60819_();
           if (blockstate1.m_60767_().m_76333_() || this.m_76096_(fluidstate1)) {
+@@ -230,6 +_,12 @@
+       return this.m_5613_().m_76145_().m_61124_(f_75947_, Boolean.valueOf(p_76069_));
+    }
+ 
++   @Override
++   public boolean canConvertToSource(FluidState state, LevelReader reader, BlockPos pos) {
++      return this.m_6760_();
++   }
++
++   @Deprecated //FORGE: Use state and level sensitive version instead
+    protected abstract boolean m_6760_();
+ 
+    protected void m_6364_(LevelAccessor p_76005_, BlockPos p_76006_, BlockState p_76007_, Direction p_76008_, FluidState p_76009_) {

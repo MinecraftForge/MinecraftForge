@@ -61,7 +61,7 @@
  
     protected void m_7718_(@Nullable Player p_40696_, LevelAccessor p_40697_, BlockPos p_40698_) {
 -      SoundEvent soundevent = this.f_40687_.m_205067_(FluidTags.f_13132_) ? SoundEvents.f_11780_ : SoundEvents.f_11778_;
-+      SoundEvent soundevent = this.f_40687_.getAttributes().getEmptySound();
++      SoundEvent soundevent = this.f_40687_.getFluidType().getSound(p_40696_, p_40697_, p_40698_, net.minecraftforge.common.SoundActions.BUCKET_EMPTY);
 +      if(soundevent == null) soundevent = this.f_40687_.m_205067_(FluidTags.f_13132_) ? SoundEvents.f_11780_ : SoundEvents.f_11778_;
        p_40697_.m_5594_(p_40696_, p_40698_, soundevent, SoundSource.BLOCKS, 1.0F, 1.0F);
        p_40697_.m_142346_(p_40696_, GameEvent.f_157769_, p_40698_);

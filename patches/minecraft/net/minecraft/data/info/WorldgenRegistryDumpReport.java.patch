@@ -1,0 +1,11 @@
+--- a/net/minecraft/data/info/WorldgenRegistryDumpReport.java
++++ b/net/minecraft/data/info/WorldgenRegistryDumpReport.java
+@@ -37,7 +_,7 @@
+    private <T> void m_236204_(CachedOutput p_236205_, RegistryAccess p_236206_, DynamicOps<JsonElement> p_236207_, RegistryAccess.RegistryData<T> p_236208_) {
+       ResourceKey<? extends Registry<T>> resourcekey = p_236208_.f_123101_();
+       Registry<T> registry = p_236206_.m_206191_(resourcekey);
+-      DataGenerator.PathProvider datagenerator$pathprovider = this.f_194676_.m_236036_(DataGenerator.Target.REPORTS, resourcekey.m_135782_().m_135815_());
++      DataGenerator.PathProvider datagenerator$pathprovider = this.f_194676_.m_236036_(DataGenerator.Target.REPORTS, net.minecraftforge.common.ForgeHooks.prefixNamespace(resourcekey.m_135782_())); // FORGE: Custom data-pack registries are prefixed with their namespace
+ 
+       for(Map.Entry<ResourceKey<T>, T> entry : registry.m_6579_()) {
+          m_236209_(datagenerator$pathprovider.m_236048_(entry.getKey().m_135782_()), p_236205_, p_236207_, p_236208_.f_123102_(), entry.getValue());

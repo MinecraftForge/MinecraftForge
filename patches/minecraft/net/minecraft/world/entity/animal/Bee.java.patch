@@ -9,3 +9,22 @@
        }
     }
  
+@@ -614,8 +_,18 @@
+       return MobType.f_21642_;
+    }
+ 
++   @Deprecated // FORGE: use jumpInFluid instead
+    protected void m_203347_(TagKey<Fluid> p_204061_) {
++      this.jumpInLiquidInternal();
++   }
++
++   private void jumpInLiquidInternal() {
+       this.m_20256_(this.m_20184_().m_82520_(0.0D, 0.01D, 0.0D));
++   }
++
++   @Override
++   public void jumpInFluid(net.minecraftforge.fluids.FluidType type) {
++      this.jumpInLiquidInternal();
+    }
+ 
+    public Vec3 m_7939_() {

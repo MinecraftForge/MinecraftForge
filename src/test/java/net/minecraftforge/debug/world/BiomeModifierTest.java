@@ -5,19 +5,11 @@
 
 package net.minecraftforge.debug.world;
 
-import java.io.IOException;
-import java.nio.file.Path;
 import java.util.List;
+import java.util.Map;
 
-import net.minecraft.data.CachedOutput;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.mojang.serialization.Codec;
-import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
@@ -26,13 +18,12 @@ import net.minecraft.core.HolderSet;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.data.DataProvider;
 import net.minecraft.data.worldgen.features.NetherFeatures;
 import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.packs.PackType;
 import net.minecraft.tags.BiomeTags;
+import net.minecraft.tags.EntityTypeTags;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.Biome.Precipitation;
@@ -42,8 +33,13 @@ import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 import net.minecraft.world.level.levelgen.placement.BiomeFilter;
 import net.minecraft.world.level.levelgen.placement.CountOnEveryLayerPlacement;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
-import net.minecraftforge.common.world.BiomeGenerationSettingsBuilder;
+import net.minecraftforge.common.data.ExistingFileHelper;
+import net.minecraftforge.common.data.JsonCodecProvider;
 import net.minecraftforge.common.world.BiomeModifier;
+import net.minecraftforge.common.world.ForgeBiomeModifiers.AddFeaturesBiomeModifier;
+import net.minecraftforge.common.world.ForgeBiomeModifiers.AddSpawnsBiomeModifier;
+import net.minecraftforge.common.world.ForgeBiomeModifiers.RemoveFeaturesBiomeModifier;
+import net.minecraftforge.common.world.ForgeBiomeModifiers.RemoveSpawnsBiomeModifier;
 import net.minecraftforge.common.world.ModifiableBiomeInfo.BiomeInfo.Builder;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
@@ -56,27 +52,43 @@ import net.minecraftforge.registries.RegistryObject;
 /**
  * <p>This tests the following features and requirements of biome modifier jsons::</p>
  * <ul>
- * <li>A biome modifier json is created via datagen.</li>
- * <li>The biome modifier modifies all four modifiable fields in biomes, to ensure patches and coremods apply correctly (generation, spawns, climate, and client effects).</li>
- * <li>The biome modifier uses a biome tag to determine which biomes to modify.</li>
- * <li>The biome modifier adds json feature to modified biomes, to ensure json features are usable in biome modifiers.</li>
+ * <li>Biome modifier jsons are created via datagen.</li>
+ * <li>Biome modifiers modify all four modifiable fields in biomes, to ensure patches and coremods apply correctly (generation, spawns, climate, and client effects).</li>
+ * <li>Biome modifiers use biome tags to determine which biomes to modify.</li>
+ * <li>Biome modifiers add a json feature to modified biomes, to ensure json features are usable in biome modifiers.</li>
  * </ul>
- * <p>If the biome modifier is applied correctly, then badlands biomes should generate large basalt columns,
- * spawn magma cubes, have red-colored water, and be snowy.</p>
+ * <p>If the biome modifiers are applied correctly, then badlands biomes should generate large basalt columns,
+ * spawn magma cubes, have red-colored water, and be snowy. Additionally, biomes in the is_forest tag are missing
+ * oak trees, pine trees, and skeletons.</p>
  */
 @Mod(BiomeModifierTest.MODID)
 public class BiomeModifierTest
 {
-    public static final Logger LOGGER = LogManager.getLogger();
     public static final String MODID = "biome_modifiers_test";
-    public static final boolean ENABLED = true;
-    public static final String BASALT_PILLARS = "large_basalt_columns";
-    public static final ResourceLocation BASALT_PILLARS_RL = new ResourceLocation(MODID, BASALT_PILLARS);
-    public static final String TEST = "test";
-    public static final ResourceLocation ADD_FEATURES_TO_BIOMES_RL = new ResourceLocation(MODID, TEST);
-    public static final String MODIFY_BADLANDS = "modify_badlands";
+    private static final boolean ENABLED = true;
 
-    @SuppressWarnings("unchecked")
+    private static final String LARGE_BASALT_COLUMNS = "large_basalt_columns";
+    private static final ResourceLocation LARGE_BASALT_COLUMNS_RL = new ResourceLocation(MODID, LARGE_BASALT_COLUMNS);
+    private static final ResourceKey<PlacedFeature> LARGE_BASALT_COLUMNS_KEY = ResourceKey.create(Registry.PLACED_FEATURE_REGISTRY, LARGE_BASALT_COLUMNS_RL);
+    
+    private static final String MODIFY_BIOMES = "modify_biomes";
+    private static final ResourceLocation MODIFY_BIOMES_RL = new ResourceLocation(MODID, MODIFY_BIOMES);
+
+    private static final String ADD_BASALT = "add_basalt";
+    private static final ResourceLocation ADD_BASALT_RL = new ResourceLocation(MODID, ADD_BASALT);
+
+    private static final String ADD_MAGMA_CUBES = "add_magma_cubes";
+    private static final ResourceLocation ADD_MAGMA_CUBES_RL = new ResourceLocation(MODID, ADD_MAGMA_CUBES);
+
+    private static final String MODIFY_BADLANDS = "modify_badlands";
+    private static final ResourceLocation MODIFY_BADLANDS_RL = new ResourceLocation(MODID, MODIFY_BADLANDS);
+
+    private static final String REMOVE_FOREST_TREES = "remove_forest_trees";
+    private static final ResourceLocation REMOVE_FOREST_TREES_RL = new ResourceLocation(MODID, REMOVE_FOREST_TREES);
+
+    private static final String REMOVE_FOREST_SKELETONS = "remove_forest_skeletons";
+    private static final ResourceLocation REMOVE_FOREST_SKELETONS_RL = new ResourceLocation(MODID, REMOVE_FOREST_SKELETONS);
+
     public BiomeModifierTest()
     {
         if (!ENABLED)
@@ -87,15 +99,7 @@ public class BiomeModifierTest
         // Serializer types can be registered via deferred register.
         final DeferredRegister<Codec<? extends BiomeModifier>> serializers = DeferredRegister.create(ForgeRegistries.Keys.BIOME_MODIFIER_SERIALIZERS, MODID);
         serializers.register(modBus);
-        serializers.register(TEST, TestModifier::makeCodec);
-
-        // Biome modifiers don't need to be registered when defined in json, but they do need to be registered if we are to datagenerate the jsons.
-        // We'll also datagenerate a placedfeature json (using our own placedfeature avoids feature cycle problems when we add it to biomes).
-        final DeferredRegister<PlacedFeature> placedFeatures = DeferredRegister.create(Registry.PLACED_FEATURE_REGISTRY, MODID);
-        placedFeatures.register(modBus);
-        placedFeatures.register(BASALT_PILLARS,
-            () -> new PlacedFeature((Holder<ConfiguredFeature<?,?>>) (Holder<? extends ConfiguredFeature<?,?>>)NetherFeatures.LARGE_BASALT_COLUMNS,
-                List.of(CountOnEveryLayerPlacement.of(1), BiomeFilter.biome())));
+        serializers.register(MODIFY_BIOMES, TestModifier::makeCodec);
 
         modBus.addListener(this::onGatherData);
     }
@@ -103,89 +107,68 @@ public class BiomeModifierTest
     private void onGatherData(GatherDataEvent event)
     {
         // Example of how to datagen datapack registry objects.
-        // Datapack registry objects referred to by other datapack registry objects must be registered first.
-        DataGenerator generator = event.getGenerator();
-        final Path outputFolder = generator.getOutputFolder();
-        final RegistryOps<JsonElement> ops = RegistryOps.create(JsonOps.INSTANCE, RegistryAccess.BUILTIN.get());
-        final Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        final String directory = PackType.SERVER_DATA.getDirectory();
-        Registry<PlacedFeature> placedFeatures = ops.registry(Registry.PLACED_FEATURE_REGISTRY).get();
+        final DataGenerator generator = event.getGenerator();
+        final ExistingFileHelper existingFileHelper = event.getExistingFileHelper();
+        final RegistryOps<JsonElement> ops = RegistryOps.create(JsonOps.INSTANCE, RegistryAccess.builtinCopy());
 
-        // prepare to datagenerate our placed feature
-        final String featurePathString = String.join("/", directory, MODID, Registry.PLACED_FEATURE_REGISTRY.location().getPath(), BASALT_PILLARS + ".json");
-        final Path featurePath = outputFolder.resolve(featurePathString);
-        final PlacedFeature feature = placedFeatures.get(BASALT_PILLARS_RL);
+        // Create our placed feature and biome modifiers.
+        final ResourceKey<ConfiguredFeature<?,?>> configuredFeatureKey = NetherFeatures.LARGE_BASALT_COLUMNS.unwrapKey().get().cast(Registry.CONFIGURED_FEATURE_REGISTRY).get();
+        // Make sure we're using the holder from the registryaccess/registryops, the static ones won't work.
+        final Holder<ConfiguredFeature<?,?>> configuredFeatureHolder = ops.registry(Registry.CONFIGURED_FEATURE_REGISTRY).get().getOrCreateHolderOrThrow(configuredFeatureKey); 
+        final PlacedFeature basaltFeature = new PlacedFeature(
+            configuredFeatureHolder,
+            List.of(CountOnEveryLayerPlacement.of(1), BiomeFilter.biome()));
+        
+        final HolderSet.Named<Biome> badlandsTag = new HolderSet.Named<>(ops.registry(Registry.BIOME_REGISTRY).get(), BiomeTags.IS_BADLANDS);
+        final HolderSet.Named<Biome> forestsTag = new HolderSet.Named<>(ops.registry(Registry.BIOME_REGISTRY).get(), BiomeTags.IS_FOREST);
+        
+        final BiomeModifier addBasaltFeature = new AddFeaturesBiomeModifier(
+            badlandsTag,
+            HolderSet.direct(ops.registry(Registry.PLACED_FEATURE_REGISTRY).get().getOrCreateHolderOrThrow(ResourceKey.create(Registry.PLACED_FEATURE_REGISTRY, LARGE_BASALT_COLUMNS_KEY.location()))),
+            Decoration.TOP_LAYER_MODIFICATION);
+        
+        final BiomeModifier addSpawn = AddSpawnsBiomeModifier.singleSpawn(
+            badlandsTag,
+            new SpawnerData(EntityType.MAGMA_CUBE, 100, 1, 4));
 
-        // prepare to datagenerate our biome modifier
-        final ResourceLocation biomeModifiersRegistryID = ForgeRegistries.Keys.BIOME_MODIFIERS.location();
-        final String biomeModifierPathString = String.join("/", directory, MODID, biomeModifiersRegistryID.getNamespace(), biomeModifiersRegistryID.getPath(), MODIFY_BADLANDS + ".json");
-        final Path biomeModifierPath = outputFolder.resolve(biomeModifierPathString);
         final BiomeModifier biomeModifier = new TestModifier(
             new HolderSet.Named<>(ops.registry(Registry.BIOME_REGISTRY).get(), BiomeTags.IS_BADLANDS),
-            Decoration.TOP_LAYER_MODIFICATION,
-            HolderSet.direct(placedFeatures.getOrCreateHolderOrThrow(ResourceKey.create(Registry.PLACED_FEATURE_REGISTRY, BASALT_PILLARS_RL))),
-            new SpawnerData(EntityType.MAGMA_CUBE, 100, 1, 4),
             Precipitation.SNOW,
             0xFF0000
             );
-
-        generator.addProvider(event.includeServer(), new DataProvider()
-        {
-            @Override
-            public void run(final CachedOutput cache) throws IOException
-            {
-                PlacedFeature.DIRECT_CODEC.encodeStart(ops, feature)
-                    .resultOrPartial(msg -> LOGGER.error("Failed to encode {}: {}", featurePathString, msg)) // Log error on encode failure.
-                    .ifPresent(json -> // Output to file on encode success.
-                    {
-                        try
-                        {
-                            DataProvider.saveStable(cache, json, featurePath);
-                        }
-                        catch (IOException e) // The throws can't deal with this exception, because we're inside the ifPresent.
-                        {
-                            LOGGER.error("Failed to save " + featurePathString, e);
-                        }
-                    });
-
-                BiomeModifier.DIRECT_CODEC.encodeStart(ops, biomeModifier)
-                    .resultOrPartial(msg -> LOGGER.error("Failed to encode {}: {}", biomeModifierPathString, msg)) // Log error on encode failure.
-                    .ifPresent(json -> // Output to file on encode success.
-                    {
-                        try
-                        {
-                            DataProvider.saveStable(cache, json, biomeModifierPath);
-                        }
-                        catch (IOException e) // The throws can't deal with this exception, because we're inside the ifPresent.
-                        {
-                            LOGGER.error("Failed to save " + biomeModifierPathString, e);
-                        }
-                    });
-            }
-
-            @Override
-            public String getName()
-            {
-                return MODID + " data provider";
-            }
-        });
+        
+        final BiomeModifier removeFeature = RemoveFeaturesBiomeModifier.allSteps(
+            forestsTag,
+            HolderSet.direct(ops.registry(Registry.PLACED_FEATURE_REGISTRY).get().getOrCreateHolderOrThrow(ResourceKey.create(Registry.PLACED_FEATURE_REGISTRY, new ResourceLocation("trees_birch_and_oak"))))
+            );
+        
+        final BiomeModifier removeSpawn = new RemoveSpawnsBiomeModifier(
+            forestsTag,
+            new HolderSet.Named<>(ops.registry(Registry.ENTITY_TYPE_REGISTRY).get(), EntityTypeTags.SKELETONS)
+            );
+        
+        // Create and add dataproviders.
+        generator.addProvider(event.includeServer(), JsonCodecProvider.forDatapackRegistry(
+            generator, existingFileHelper, MODID, ops, Registry.PLACED_FEATURE_REGISTRY, Map.of(
+                LARGE_BASALT_COLUMNS_RL, basaltFeature)));
+        
+        generator.addProvider(event.includeServer(), JsonCodecProvider.forDatapackRegistry(
+            generator, existingFileHelper, MODID, ops, ForgeRegistries.Keys.BIOME_MODIFIERS, Map.of(
+                MODIFY_BADLANDS_RL, biomeModifier,
+                ADD_BASALT_RL, addBasaltFeature,
+                ADD_MAGMA_CUBES_RL, addSpawn,
+                REMOVE_FOREST_TREES_RL, removeFeature,
+                REMOVE_FOREST_SKELETONS_RL, removeSpawn)));
     }
 
-    public record TestModifier(HolderSet<Biome> biomes, Decoration generationStage, HolderSet<PlacedFeature> features, SpawnerData spawn, Precipitation precipitation, int waterColor)
-            implements BiomeModifier
+    public record TestModifier(HolderSet<Biome> biomes, Precipitation precipitation, int waterColor) implements BiomeModifier
     {
-        private static final RegistryObject<Codec<? extends BiomeModifier>> SERIALIZER = RegistryObject.create(ADD_FEATURES_TO_BIOMES_RL, ForgeRegistries.Keys.BIOME_MODIFIER_SERIALIZERS, MODID);
+        private static final RegistryObject<Codec<? extends BiomeModifier>> SERIALIZER = RegistryObject.create(MODIFY_BIOMES_RL, ForgeRegistries.Keys.BIOME_MODIFIER_SERIALIZERS, MODID);
 
         @Override
         public void modify(Holder<Biome> biome, Phase phase, Builder builder)
         {
-            if (phase == Phase.ADD && this.biomes.contains(biome))
-            {
-                BiomeGenerationSettingsBuilder generation = builder.getGenerationSettings();
-                this.features.forEach(holder -> generation.addFeature(this.generationStage, holder));
-                builder.getMobSpawnSettings().addSpawn(this.spawn.type.getCategory(), this.spawn);
-            }
-            else if (phase == Phase.MODIFY && this.biomes.contains(biome))
+            if (phase == Phase.MODIFY && this.biomes.contains(biome))
             {
                 builder.getClimateSettings().setPrecipitation(this.precipitation);
                 builder.getEffects().waterColor(this.waterColor);
@@ -204,24 +187,9 @@ public class BiomeModifierTest
         {
             return RecordCodecBuilder.create(builder -> builder.group(
                     Biome.LIST_CODEC.fieldOf("biomes").forGetter(TestModifier::biomes),
-                    Codec.STRING.comapFlatMap(TestModifier::generationStageFromString, Decoration::toString).fieldOf("generation_stage").forGetter(TestModifier::generationStage),
-                    PlacedFeature.LIST_CODEC.fieldOf("features").forGetter(TestModifier::features),
-                    SpawnerData.CODEC.fieldOf("spawn").forGetter(TestModifier::spawn),
                     Precipitation.CODEC.fieldOf("precipitation").forGetter(TestModifier::precipitation),
                     Codec.INT.fieldOf("water_color").forGetter(TestModifier::waterColor)
             ).apply(builder, TestModifier::new));
-        }
-
-        private static DataResult<Decoration> generationStageFromString(String name)
-        {
-            try
-            {
-                return DataResult.success(Decoration.valueOf(name));
-            }
-            catch (Exception e)
-            {
-                return DataResult.error("Not a decoration stage: " + name);
-            }
         }
     }
 }

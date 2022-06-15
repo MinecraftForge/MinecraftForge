@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/entity/ai/behavior/Swim.java
++++ b/net/minecraft/world/entity/ai/behavior/Swim.java
+@@ -14,7 +_,7 @@
+    }
+ 
+    protected boolean m_6114_(ServerLevel p_24388_, Mob p_24389_) {
+-      return p_24389_.m_20069_() && p_24389_.m_204036_(FluidTags.f_13131_) > p_24389_.m_20204_() || p_24389_.m_20077_();
++      return p_24389_.m_20069_() && p_24389_.m_204036_(FluidTags.f_13131_) > p_24389_.m_20204_() || p_24389_.m_20077_() || p_24389_.isInFluidType((fluidType, height) -> p_24389_.canSwimInFluidType(fluidType) && height > p_24389_.m_20204_());
+    }
+ 
+    protected boolean m_6737_(ServerLevel p_24391_, Mob p_24392_, long p_24393_) {

@@ -177,7 +177,7 @@ public class GlobalLootModifiersTest {
         public ObjectArrayList<ItemStack> doApply(ObjectArrayList<ItemStack> generatedLoot, LootContext context) {
             ItemStack ctxTool = context.getParamOrNull(LootContextParams.TOOL);
             //return early if silk-touch is already applied (otherwise we'll get stuck in an infinite loop).
-            if(EnchantmentHelper.getEnchantments(ctxTool).containsKey(Enchantments.SILK_TOUCH)) return generatedLoot;
+            if(ctxTool == null || EnchantmentHelper.getItemEnchantmentLevel(Enchantments.SILK_TOUCH, ctxTool) > 0) return generatedLoot;
             ItemStack fakeTool = ctxTool.copy();
             fakeTool.enchant(Enchantments.SILK_TOUCH, 1);
             LootContext.Builder builder = new LootContext.Builder(context);

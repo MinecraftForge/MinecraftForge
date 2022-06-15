@@ -34,3 +34,28 @@
           if (entity != null) {
              double d0 = entity.m_20280_(this);
              int i = this.m_6095_().m_20674_().m_21611_();
+@@ -1374,13 +_,23 @@
+       return false;
+    }
+ 
++   @Deprecated // FORGE: use jumpInFluid instead
+    protected void m_203347_(TagKey<Fluid> p_204045_) {
++      this.jumpInLiquidInternal(() -> super.m_203347_(p_204045_));
++   }
++
++   private void jumpInLiquidInternal(Runnable onSuper) {
+       if (this.m_21573_().m_26576_()) {
+-         super.m_203347_(p_204045_);
++         onSuper.run();
+       } else {
+          this.m_20256_(this.m_20184_().m_82520_(0.0D, 0.3D, 0.0D));
+       }
+ 
++   }
++
++   @Override
++   public void jumpInFluid(net.minecraftforge.fluids.FluidType type) {
++      this.jumpInLiquidInternal(() -> super.jumpInFluid(type));
+    }
+ 
+    public void m_147272_() {

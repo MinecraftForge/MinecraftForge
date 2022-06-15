@@ -1,5 +1,14 @@
 --- a/net/minecraft/world/entity/projectile/AbstractArrow.java
 +++ b/net/minecraft/world/entity/projectile/AbstractArrow.java
+@@ -149,7 +_,7 @@
+          --this.f_36706_;
+       }
+ 
+-      if (this.m_20070_() || blockstate.m_60713_(Blocks.f_152499_)) {
++      if (this.m_20070_() || blockstate.m_60713_(Blocks.f_152499_) || this.isInFluidType((fluidType, height) -> this.canFluidExtinguish(fluidType))) {
+          this.m_20095_();
+       }
+ 
 @@ -185,7 +_,7 @@
                 }
              }
