@@ -216,18 +216,8 @@ public class NetworkHooks
     {
         ConnectionData oldData = mgr.channel().attr(NetworkConstants.FML_CONNECTION_DATA).get();
 
-        ConnectionData newData;
-        if (oldData != null)
-        {
-            newData = new ConnectionData(oldData.getModData().isEmpty() ? modData : oldData.getModData(),
-                    oldData.getChannels().isEmpty() ? channels : oldData.getChannels(),
-                    oldData.isGametestEnabled());
-        } else
-        {
-            newData = new ConnectionData(modData, channels, null);
-        }
-
-        mgr.channel().attr(NetworkConstants.FML_CONNECTION_DATA).set(newData);
+        oldData = oldData != null ? new ConnectionData(oldData.getModData().isEmpty() ? modData : oldData.getModData(), oldData.getChannels().isEmpty() ? channels : oldData.getChannels()) : new ConnectionData(modData, channels);
+        mgr.channel().attr(NetworkConstants.FML_CONNECTION_DATA).set(oldData);
     }
 
     @Nullable

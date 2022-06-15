@@ -22,15 +22,13 @@ import org.apache.commons.lang3.tuple.Pair;
 
 public class ConnectionData
 {
-    private final ImmutableMap<String, Pair<String, String>> modData;
-    private final ImmutableMap<ResourceLocation, String> channels;
-    private final Boolean gametestEnabled;
+    private ImmutableMap<String, Pair<String, String>> modData;
+    private ImmutableMap<ResourceLocation, String> channels;
 
-    /* package private */ ConnectionData(Map<String, Pair<String, String>> modData, Map<ResourceLocation, String> channels, Boolean gametestEnabled)
+    /* package private */ ConnectionData(Map<String, Pair<String, String>> modData, Map<ResourceLocation, String> channels)
     {
         this.modData = ImmutableMap.copyOf(modData);
         this.channels = ImmutableMap.copyOf(channels);
-        this.gametestEnabled = gametestEnabled;
     }
 
     /**
@@ -76,11 +74,6 @@ public class ConnectionData
     public ImmutableMap<ResourceLocation, String> getChannels()
     {
         return channels;
-    }
-
-    public Boolean isGametestEnabled()
-    {
-        return this.gametestEnabled;
     }
 
     /**

@@ -11,7 +11,6 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.forgespi.language.IModInfo;
-import net.minecraftforge.gametest.ForgeGameTestHooks;
 import net.minecraftforge.registries.DataPackRegistriesHooks;
 import net.minecraftforge.registries.ForgeRegistry;
 import net.minecraftforge.registries.RegistryManager;
@@ -53,9 +52,9 @@ public class HandshakeMessages
      */
     public static class S2CModList extends LoginIndexedMessage
     {
-        private final List<String> mods;
-        private final Map<ResourceLocation, String> channels;
-        private final List<ResourceLocation> registries;
+        private List<String> mods;
+        private Map<ResourceLocation, String> channels;
+        private List<ResourceLocation> registries;
         private final List<ResourceKey<? extends Registry<?>>> dataPackRegistries;
 
         public S2CModList()
@@ -173,25 +172,22 @@ public class HandshakeMessages
 
     public static class C2SModListReply extends LoginIndexedMessage
     {
-        private final List<String> mods;
-        private final Map<ResourceLocation, String> channels;
-        private final Map<ResourceLocation, String> registries;
-        private final boolean gametestEnabled;
+        private List<String> mods;
+        private Map<ResourceLocation, String> channels;
+        private Map<ResourceLocation, String> registries;
 
         public C2SModListReply()
         {
             this.mods = ModList.get().getMods().stream().map(IModInfo::getModId).collect(Collectors.toList());
             this.channels = NetworkRegistry.buildChannelVersions();
             this.registries = Maps.newHashMap(); //TODO: Fill with known hashes, which requires keeping a file cache
-            this.gametestEnabled = ForgeGameTestHooks.isGametestEnabled();
         }
 
-        private C2SModListReply(List<String> mods, Map<ResourceLocation, String> channels, Map<ResourceLocation, String> registries, boolean gametestEnabled)
+        private C2SModListReply(List<String> mods, Map<ResourceLocation, String> channels, Map<ResourceLocation, String> registries)
         {
             this.mods = mods;
             this.channels = channels;
             this.registries = registries;
-            this.gametestEnabled = gametestEnabled;
         }
 
         public static C2SModListReply decode(FriendlyByteBuf input)
@@ -211,10 +207,7 @@ public class HandshakeMessages
             for (int x = 0; x < len; x++)
                 registries.put(input.readResourceLocation(), input.readUtf(0x100));
 
-            // TODO 1.19.1 / TODO 1.20: Always read gametestEnabled boolean
-            boolean gametestEnabled = input.isReadable() && input.readBoolean();
-
-            return new C2SModListReply(mods, channels, registries, gametestEnabled);
+            return new C2SModListReply(mods, channels, registries);
         }
 
         public void encode(FriendlyByteBuf output)
@@ -233,8 +226,6 @@ public class HandshakeMessages
                 output.writeResourceLocation(k);
                 output.writeUtf(v, 0x100);
             });
-
-            output.writeBoolean(this.gametestEnabled);
         }
 
         public List<String> getModList() {
@@ -247,11 +238,6 @@ public class HandshakeMessages
 
         public Map<ResourceLocation, String> getChannels() {
             return this.channels;
-        }
-
-        public boolean isGametestEnabled()
-        {
-            return this.gametestEnabled;
         }
     }
 
