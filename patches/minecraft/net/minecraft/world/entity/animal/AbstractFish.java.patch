@@ -1,0 +1,12 @@
+--- a/net/minecraft/world/entity/animal/AbstractFish.java
++++ b/net/minecraft/world/entity/animal/AbstractFish.java
+@@ -156,7 +_,8 @@
+       }
+ 
+       public void m_8126_() {
+-         if (this.f_27499_.m_204029_(FluidTags.f_13131_)) {
++         net.minecraftforge.fluids.FluidType fluidType = this.f_27499_.getEyeInFluidType();
++         if (this.f_27499_.m_204029_(FluidTags.f_13131_) || (!fluidType.isAir() && this.f_27499_.canSwimInFluidType(fluidType))) {
+             this.f_27499_.m_20256_(this.f_27499_.m_20184_().m_82520_(0.0D, 0.005D, 0.0D));
+          }
+ 
