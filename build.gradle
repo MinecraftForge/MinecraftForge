@@ -31,6 +31,8 @@ plugins {
     id 'net.minecraftforge.gradleutils' version '2.+'
     id 'eclipse'
     id 'de.undercouch.download' version '4.1.2'
+    id 'net.minecraftforge.gradle.patcher' version '[5.1.39,)' apply false
+    id 'net.minecraftforge.gradle.mcp' version '[5.1.39,)' apply false
 }
 
 Util.init() //Init all our extension methods!
@@ -48,7 +50,7 @@ ext {
     MAPPING_VERSION = '1.18.2'
     MC_VERSION = '1.18.2'
     MCP_VERSION = '20220404.173914'
-    SPI_VERSION = '4.0.10'
+    SPI_VERSION = '5.0.0'
     ACCESSTRANSFORMERS_VERSION = '8.0.4'
     COREMODS_VERSION = '5.0.1'
     EVENTBUS_VERSION = '5.0.3'
@@ -58,6 +60,7 @@ ext {
     ASM_VERSION = '9.2'
     INSTALLER_VERSION = '2.1.+'
     MIXIN_VERSION = '0.8.5'
+    JARJAR_VERSION = '0.2.24'
 
     GIT_INFO = gradleutils.gitInfo
     VERSION = gradleutils.getFilteredMCTagOffsetBranchVersion(true, '[0-9]', MC_VERSION)
@@ -274,6 +277,7 @@ def sharedDeps = {
     installer 'org.jline:jline-terminal:3.12.+' //Dep of TerminaalConsoleeAppender
     installer "org.spongepowered:mixin:${MIXIN_VERSION}"
     installer 'org.openjdk.nashorn:nashorn-core:15.3'
+    installer "net.minecraftforge:JarJar:${JARJAR_VERSION}"
 
     /*
     installer 'org.lwjgl:lwjgl:3.2.2'
