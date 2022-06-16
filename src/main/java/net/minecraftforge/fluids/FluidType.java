@@ -188,11 +188,11 @@ public class FluidType
     }
 
     /**
-     * Returns the viscosity, or thickness, of the fluid.
+     * Returns the viscosity, or movement resistance, of the fluid.
      *
      * <p>Note: This is an arbitrary number. The value should never be negative.
-     * Higher viscosity values indicate that the fluid flows more slowly. If not
-     * specified, the viscosity is approximately equivalent to the real-life
+     * Higher viscosity values indicate that the entity moves more slowly through the fluid.
+     * If not specified, the viscosity is approximately equivalent to the real-life
      * viscosity of water in {@code m/s^2}.
      *
      * @return the viscosity of the fluid
@@ -547,11 +547,11 @@ public class FluidType
     }
 
     /**
-     * Returns the viscosity, or thickness, of the fluid.
+     * Returns the viscosity, or movement resistance, of the fluid.
      *
      * <p>Note: This is an arbitrary number. The value should never be negative.
-     * Higher viscosity values indicate that the fluid flows more slowly. If not
-     * specified, the viscosity is approximately equivalent to the real-life
+     * Higher viscosity values indicate that the entity moves more slowly through the fluid.
+     * If not specified, the viscosity is approximately equivalent to the real-life
      * viscosity of water in {@code m/s^2}.
      *
      * @param state the state of the fluid
@@ -673,11 +673,11 @@ public class FluidType
     }
 
     /**
-     * Returns the viscosity, or thickness, of the fluid.
+     * Returns the viscosity, or movement resistance, of the fluid.
      *
      * <p>Note: This is an arbitrary number. The value should never be negative.
-     * Higher viscosity values indicate that the fluid flows more slowly. If not
-     * specified, the viscosity is approximately equivalent to the real-life
+     * Higher viscosity values indicate that the entity moves more slowly through the fluid.
+     * If not specified, the viscosity is approximately equivalent to the real-life
      * viscosity of water in {@code m/s^2}.
      *
      * @param stack the stack holding the fluid
@@ -1122,7 +1122,7 @@ public class FluidType
         }
 
         /**
-         * Sets the viscosity, or thickness, of the fluid.
+         * Sets the viscosity, or movement resistance, of the fluid.
          *
          * @param viscosity the viscosity of the fluid
          * @return the property holder instance

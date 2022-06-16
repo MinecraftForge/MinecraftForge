@@ -1,0 +1,38 @@
+--- a/net/minecraft/world/entity/animal/Squid.java
++++ b/net/minecraft/world/entity/animal/Squid.java
+@@ -109,7 +_,7 @@
+          }
+       }
+ 
+-      if (this.m_20072_()) {
++      if (this.m_20072_() || this.isInFluidType((fluidType, height) -> this.canSwimInFluidType(fluidType))) {
+          if (this.f_29940_ < (float)Math.PI) {
+             float f = this.f_29940_ / (float)Math.PI;
+             this.f_29942_ = Mth.m_14031_(f * f * (float)Math.PI) * (float)Math.PI * 0.25F;
+@@ -217,7 +_,7 @@
+ 
+       public boolean m_8036_() {
+          LivingEntity livingentity = Squid.this.m_21188_();
+-         if (Squid.this.m_20069_() && livingentity != null) {
++         if ((Squid.this.m_20069_() || Squid.this.isInFluidType((fluidType, height) -> Squid.this.canSwimInFluidType(fluidType))) && livingentity != null) {
+             return Squid.this.m_20280_(livingentity) < 100.0D;
+          } else {
+             return false;
+@@ -239,7 +_,7 @@
+             Vec3 vec3 = new Vec3(Squid.this.m_20185_() - livingentity.m_20185_(), Squid.this.m_20186_() - livingentity.m_20186_(), Squid.this.m_20189_() - livingentity.m_20189_());
+             BlockState blockstate = Squid.this.f_19853_.m_8055_(new BlockPos(Squid.this.m_20185_() + vec3.f_82479_, Squid.this.m_20186_() + vec3.f_82480_, Squid.this.m_20189_() + vec3.f_82481_));
+             FluidState fluidstate = Squid.this.f_19853_.m_6425_(new BlockPos(Squid.this.m_20185_() + vec3.f_82479_, Squid.this.m_20186_() + vec3.f_82480_, Squid.this.m_20189_() + vec3.f_82481_));
+-            if (fluidstate.m_205070_(FluidTags.f_13131_) || blockstate.m_60795_()) {
++            if (Squid.this.canSwimInFluidType(fluidstate.getFluidType()) || blockstate.m_60795_()) {
+                double d0 = vec3.m_82553_();
+                if (d0 > 0.0D) {
+                   vec3.m_82541_();
+@@ -283,7 +_,7 @@
+          int i = this.f_30001_.m_21216_();
+          if (i > 100) {
+             this.f_30001_.m_29958_(0.0F, 0.0F, 0.0F);
+-         } else if (this.f_30001_.m_217043_().m_188503_(m_186073_(50)) == 0 || !this.f_30001_.f_19798_ || !this.f_30001_.m_29981_()) {
++         } else if (this.f_30001_.m_217043_().m_188503_(m_186073_(50)) == 0 || !(this.f_30001_.f_19798_ || this.f_30001_.isInFluidType((fluidType, height) -> this.f_30001_.canSwimInFluidType(fluidType))) || !this.f_30001_.m_29981_()) {
+             float f = this.f_30001_.m_217043_().m_188501_() * ((float)Math.PI * 2F);
+             float f1 = Mth.m_14089_(f) * 0.2F;
+             float f2 = -0.1F + this.f_30001_.m_217043_().m_188501_() * 0.2F;

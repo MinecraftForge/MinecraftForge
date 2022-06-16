@@ -8,16 +8,34 @@
           for(int j = 0; j < i * 8; ++j) {
              float f = this.f_19796_.m_188501_() * ((float)Math.PI * 2F);
              float f1 = this.f_19796_.m_188501_() * 0.5F + 0.5F;
-@@ -316,6 +_,12 @@
-    public EntityDimensions m_6972_(Pose p_33597_) {
+@@ -317,6 +_,12 @@
        return super.m_6972_(p_33597_).m_20388_(0.255F * (float)this.m_33632_());
     }
-+
+ 
 +   /**
 +    * Called when the slime spawns particles on landing, see onUpdate.
 +    * Return true to prevent the spawning of the default particles.
 +    */
 +   protected boolean spawnCustomParticles() { return false; }
- 
++
     static class SlimeAttackGoal extends Goal {
        private final Slime f_33645_;
+       private int f_33646_;
+@@ -375,7 +_,7 @@
+       }
+ 
+       public boolean m_8036_() {
+-         return (this.f_33653_.m_20069_() || this.f_33653_.m_20077_()) && this.f_33653_.m_21566_() instanceof Slime.SlimeMoveControl;
++         return (this.f_33653_.m_20069_() || this.f_33653_.m_20077_() || this.f_33653_.isInFluidType((fluidType, height) -> this.f_33653_.canSwimInFluidType(fluidType))) && this.f_33653_.m_21566_() instanceof Slime.SlimeMoveControl;
+       }
+ 
+       public boolean m_183429_() {
+@@ -474,7 +_,7 @@
+       }
+ 
+       public boolean m_8036_() {
+-         return this.f_33675_.m_5448_() == null && (this.f_33675_.f_19861_ || this.f_33675_.m_20069_() || this.f_33675_.m_20077_() || this.f_33675_.m_21023_(MobEffects.f_19620_)) && this.f_33675_.m_21566_() instanceof Slime.SlimeMoveControl;
++         return this.f_33675_.m_5448_() == null && (this.f_33675_.f_19861_ || this.f_33675_.m_20069_() || this.f_33675_.m_20077_() || this.f_33675_.isInFluidType((fluidType, height) -> this.f_33675_.canSwimInFluidType(fluidType)) || this.f_33675_.m_21023_(MobEffects.f_19620_)) && this.f_33675_.m_21566_() instanceof Slime.SlimeMoveControl;
+       }
+ 
+       public void m_8037_() {

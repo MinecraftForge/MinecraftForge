@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/entity/animal/WaterAnimal.java
++++ b/net/minecraft/world/entity/animal/WaterAnimal.java
+@@ -42,7 +_,7 @@
+    }
+ 
+    protected void m_6229_(int p_30344_) {
+-      if (this.m_6084_() && !this.m_20072_()) {
++      if (this.m_6084_() && !this.m_20072_() && this.isInFluidType((fluidType, height) -> this.canDrownInFluidType(fluidType))) {
+          this.m_20301_(p_30344_ - 1);
+          if (this.m_20146_() == -20) {
+             this.m_20301_(0);

@@ -79,7 +79,7 @@ public class FluidTypeTest
     }
 
     private static final RegistryObject<FluidType> TEST_FLUID_TYPE = FLUID_TYPES.register("test_fluid", () ->
-            new FluidType(FluidType.Properties.create().supportsBoating(true).canHydrate(true))
+            new FluidType(FluidType.Properties.create().canDrown(false).supportsBoating(true).canHydrate(true))
             {
                 @Override
                 public void initializeClient(Consumer<IFluidTypeRenderProperties> consumer)
