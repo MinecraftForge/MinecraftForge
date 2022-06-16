@@ -160,6 +160,16 @@
           this.m_5496_(soundtype.m_56776_(), soundtype.m_56773_() * 0.15F, soundtype.m_56774_());
        }
     }
+@@ -1055,7 +_,8 @@
+    }
+ 
+    public boolean m_20072_() {
+-      return this.m_20069_() || this.m_20305_();
++      net.minecraftforge.fluids.FluidType fluidType = this.getEyeInFluidType();
++      return this.m_20069_() || this.m_20305_() || (!fluidType.isAir() && this.canSwimInFluidType(fluidType));
+    }
+ 
+    public boolean m_5842_() {
 @@ -1068,19 +_,22 @@
  
     public void m_5844_() {
