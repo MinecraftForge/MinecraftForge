@@ -8,8 +8,10 @@ package net.minecraftforge.event.world;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Event;
+import org.apache.commons.lang3.mutable.MutableObject;
 
 /**
  * ChunkWatchEvent is fired when an event involving a chunk being watched occurs.<br>
@@ -55,8 +57,8 @@ public class ChunkWatchEvent extends Event
 
     /**
      * ChunkWatchEvent.Watch is fired when an EntityPlayer begins watching a chunk.<br>
-     * This event is fired when a chunk is added to the watched chunks of an EntityPlayer in
-     * {@code net.minecraft.server.level.ChunkMap#updateChunkTracking(ServerPlayer, ChunkPos, Packet[], boolean, boolean)}. <br>
+     * This event is fired when a chunk is added to the watched chunks of an EntityPlayer and sent to the player in
+     * {@code net.minecraft.server.level.ChunkMap#playerLoadedChunk(ServerPlayer, MutableObject, LevelChunk)}. <br>
      * <br>
      * This event is not {@link net.minecraftforge.eventbus.api.Cancelable}.<br>
      * <br>
@@ -66,7 +68,18 @@ public class ChunkWatchEvent extends Event
      **/
     public static class Watch extends ChunkWatchEvent
     {
-        public Watch(ServerPlayer player, ChunkPos pos, ServerLevel world) {super(player, pos, world);}
+        private final LevelChunk chunk;
+
+        public Watch(ServerPlayer player, LevelChunk chunk, ServerLevel world)
+        {
+            super(player, chunk.getPos(), world);
+            this.chunk = chunk;
+        }
+
+        public LevelChunk getChunk()
+        {
+            return this.chunk;
+        }
     }
 
     /**
