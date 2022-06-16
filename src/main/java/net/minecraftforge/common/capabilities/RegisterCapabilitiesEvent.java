@@ -7,6 +7,7 @@ package net.minecraftforge.common.capabilities;
 
 import java.util.Objects;
 
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.event.IModBusEvent;
 
@@ -18,8 +19,8 @@ public final class RegisterCapabilitiesEvent extends Event implements IModBusEve
 {
     /**
      * Registers a capability to be consumed by others.
-     * APIs who define the capability should call this.
-     * To retrieve the Capability instance, use the @CapabilityInject annotation.
+     * APIs that define the capability should call this.
+     * To retrieve a {@link CapabilityType}, use {@link CapabilityManager#get(ResourceLocation)}
      *
      * @param type The type to be registered
      */

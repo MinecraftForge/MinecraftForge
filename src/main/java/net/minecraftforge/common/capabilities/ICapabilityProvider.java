@@ -20,7 +20,7 @@ public interface ICapabilityProvider
      *
      * @param type The {@link CapabilityType} to check for.
      * @param direction The {@link Direction} to check from, which may be null.  Null represents "internal".<br>
-     * If this provider is not direction-sensitive, all sides are equivalent, and null is preferred.
+     * If this provider is not direction-sensitive, only null should be passed.
      * @return The requested an optional holding the requested capability.
      * 
      * @see {@link #isDirectionSensitive()}
@@ -39,7 +39,8 @@ public interface ICapabilityProvider
 
     /**
      * Checks if this capability provider is direction-sensitive.<br>
-     * The return of this method should be static, i.e. a provider should always or never be direction-sensitive.
+     * The return of this method should be static, i.e. a provider should always or never be direction-sensitive.<br>
+     * Of the default providers, {@link ItemStack} is not direction sensitive.
      * @return If directions have importance in {@link #getCapability(Capability, Direction)}
      */
     default boolean isDirectionSensitive()

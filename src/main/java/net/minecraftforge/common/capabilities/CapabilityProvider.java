@@ -18,37 +18,42 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraftforge.event.ForgeEventFactory;
 
+/**
+ * The default implementation of {@link ICapabilityProvider}.
+ *
+ * @param <T> The type of the owner object.
+ */
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
 public abstract class CapabilityProvider<T extends ICapabilityProvider> implements ICapabilityProvider
 {
 
-	@Nullable
-	private CapabilityDispatcher<T> attachedCaps = null;
+    @Nullable
+    private CapabilityDispatcher<T> attachedCaps = null;
     protected boolean capsValid = true;
     protected CompoundTag lazyCapNbt = new CompoundTag();
     protected boolean capsInitialized = false;
-    
+
     @SuppressWarnings("unchecked")
-	private void doGatherCapabilities()
+    private void doGatherCapabilities()
     {
         this.capsInitialized = true;
         this.attachedCaps = ForgeEventFactory.gatherCapabilities(this.getCapEvent(), (T) this);
     }
 
     @SuppressWarnings("unchecked")
-	protected <P extends CapabilityProvider<T>> void copyCapsFrom(P other)
+    protected <P extends CapabilityProvider<T>> void copyCapsFrom(P other)
     {
-    	if(other.capsInitialized)
-    	{
+        if(other.capsInitialized)
+        {
             this.capsInitialized = true;
             this.attachedCaps = other.getDispatcher().copy((T) this);
-    	}
-    	else this.lazyCapNbt = other.lazyCapNbt;
+        }
+        else this.lazyCapNbt = other.lazyCapNbt;
     }
-    
+
     protected abstract AttachCapabilitiesEvent<T> getCapEvent();
-    
+
     protected final @Nullable CapabilityDispatcher<T> getDispatcher()
     {
         if (!capsInitialized)
@@ -83,7 +88,7 @@ public abstract class CapabilityProvider<T extends ICapabilityProvider> implemen
     {
         if (!capsInitialized)
         {
-        	lazyCapNbt = tag;
+            lazyCapNbt = tag;
             return;
         }
 
@@ -129,11 +134,11 @@ public abstract class CapabilityProvider<T extends ICapabilityProvider> implemen
     public static class AsField<T extends ICapabilityProvider> extends CapabilityProvider<T>
     {
 
-    	private final Supplier<AttachCapabilitiesEvent<T>> eventSupplier;
-    	
-    	public AsField(Supplier<AttachCapabilitiesEvent<T>> eventSupplier) {
-    		this.eventSupplier = eventSupplier;
-    	}
+        private final Supplier<AttachCapabilitiesEvent<T>> eventSupplier;
+        
+        public AsField(Supplier<AttachCapabilitiesEvent<T>> eventSupplier) {
+            this.eventSupplier = eventSupplier;
+        }
 
         @Nullable
         public CompoundTag serializeInternal()
@@ -146,10 +151,10 @@ public abstract class CapabilityProvider<T extends ICapabilityProvider> implemen
             deserializeCaps(tag);
         }
 
-		@Override
-		protected AttachCapabilitiesEvent<T> getCapEvent() {
-			return eventSupplier.get();
-		}
+        @Override
+        protected AttachCapabilitiesEvent<T> getCapEvent() {
+            return eventSupplier.get();
+        }
     };
 
 }

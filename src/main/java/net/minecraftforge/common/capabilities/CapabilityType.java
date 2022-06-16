@@ -14,28 +14,42 @@ import java.util.List;
 import java.util.function.Consumer;
 
 /**
- * This is the core holder object Capabilities.
- * Each capability will have ONE instance of this class,
- * and it will the the one passed into the ICapabilityProvider functions.
+ * A Capability Type defines a type of Capability.<br>
+ * To retrieve one, use {@link CapabilityManager#get(ResourceLocation)}.
  *
- * The CapabilityManager is in charge of creating this class.
+ * @param <T> The supertype of all instances of this capability type.
  */
 public class CapabilityType<T>
 {
-    /**
-     * @return The unique name of this capability, typically this is
-     * the fully qualified class name for the target interface.
-     */
-    public ResourceLocation getId() { return this.id; }
+    private final ResourceLocation id;
+    private List<Consumer<CapabilityType<T>>> listeners = new ArrayList<>();
 
+    CapabilityType(ResourceLocation id)
+    {
+        this.id = id;
+    }
+
+    /**
+     * @return The unique identifier for this capability type.
+     */
+    public ResourceLocation getId()
+    {
+        return this.id;
+    }
+
+    /**
+     * Tests if the target capability type is this one before returning the instance, otherwise returns empty.
+     * @param toCheck {@link CapabilityType} being checked against.
+     * @param inst The {@link Capability} to return if the type matches.
+     * @return The passed {@link Capability} if the type matches, or {@link Capability#empty()}.
+     */
     public @NotNull <R> Capability<R> orEmpty(CapabilityType<R> toCheck, Capability<T> inst)
     {
         return this == toCheck ? inst.cast() : Capability.empty();
     }
 
     /**
-     * @return true if something has registered this capability to the Manager.
-     *   This is a marker that the class for this capability exists, and can be used.
+     * @return True if this {@link CapabilityType} has been registered via {@link RegisterCapabilitiesEvent}
      */
     public boolean isRegistered()
     {
@@ -47,7 +61,7 @@ public class CapabilityType<T>
      * May be called instantly if this is already registered.
      *
      * @param listener Function to fire when capability is registered.
-     * @return self, in case people want to use builder pattern.
+     * @return {@link this}
      */
     public synchronized CapabilityType<T> addListener(Consumer<CapabilityType<T>> listener)
     {
@@ -58,15 +72,9 @@ public class CapabilityType<T>
         return this;
     }
 
-    // INTERNAL
-    private final ResourceLocation id;
-    List<Consumer<CapabilityType<T>>> listeners = new ArrayList<>();
-
-    CapabilityType(ResourceLocation id)
-    {
-        this.id = id;
-    }
-
+    /**
+     * Internal method called when this {@link CapabilityType} is registered.
+     */
     void onRegister()
     {
         var listeners = this.listeners;

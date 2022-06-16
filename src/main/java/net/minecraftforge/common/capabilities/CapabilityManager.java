@@ -8,11 +8,16 @@ package net.minecraftforge.common.capabilities;
 import net.minecraft.resources.ResourceLocation;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.IdentityHashMap;
 
 import static net.minecraftforge.fml.Logging.CAPABILITIES;
 
+/**
+ * The Capability Manager is responsible for making and 
+ * providing {@link CapabilityType} instances.
+ */
 public enum CapabilityManager
 {
     INSTANCE;
@@ -20,13 +25,23 @@ public enum CapabilityManager
 	private static final Logger LOGGER = LogManager.getLogger();
     private static final IdentityHashMap<ResourceLocation, CapabilityType<?>> PROVIDERS = new IdentityHashMap<>();	
 
-    public static <T> CapabilityType<T> get(ResourceLocation id)
+    /**
+     * Retrieve a {@link CapabilityType}.  The returned type may not be registered.
+     * @param <T> The supertype of all instances of this capability type.
+     * @param id The ID of this capability type.
+     * @return A {@link CapabilityType} for the provided key.
+     */
+    public static <T> @NotNull CapabilityType<T> get(ResourceLocation id)
     {
         return INSTANCE.get(id, false);
     }
 
+    /**
+     * Internal API for registering capability types.
+     * @see {@link RegisterCapabilitiesEvent}
+     */
     @SuppressWarnings("unchecked")
-    <T> CapabilityType<T> get(ResourceLocation id, boolean registering)
+    <T> @NotNull CapabilityType<T> get(ResourceLocation id, boolean registering)
     {
         CapabilityType<T> cap;
 

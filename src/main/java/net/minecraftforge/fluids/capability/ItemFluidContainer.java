@@ -28,7 +28,8 @@ public class ItemFluidContainer extends Item
     }
 
     @Override
-    public void attachBuiltinCaps(ItemStacks event) {
-    	event.addCapability(new FluidHandlerItemStack(event.getObject(), capacity));
+    public void attachBuiltinCaps(ItemStacks event)
+    {
+        event.addCapability(new FluidHandlerItemStack(event.getObject(), capacity));
     }
 }

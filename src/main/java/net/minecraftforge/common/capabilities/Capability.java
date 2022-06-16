@@ -12,12 +12,6 @@ import java.util.Set;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
-import net.minecraft.MethodsReturnNonnullByDefault;
-import net.minecraftforge.common.util.NonNullConsumer;
-import net.minecraftforge.common.util.NonNullFunction;
-import net.minecraftforge.common.util.NonNullPredicate;
-import net.minecraftforge.common.util.NonNullSupplier;
-
 import org.apache.commons.lang3.mutable.Mutable;
 import org.apache.commons.lang3.mutable.MutableObject;
 import org.apache.logging.log4j.Level;
@@ -25,31 +19,45 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
 
+import net.minecraft.MethodsReturnNonnullByDefault;
+import net.minecraft.core.Direction;
+import net.minecraftforge.common.util.NonNullConsumer;
+import net.minecraftforge.common.util.NonNullFunction;
+import net.minecraftforge.common.util.NonNullPredicate;
+import net.minecraftforge.common.util.NonNullSupplier;
+
 /**
- * This object encapsulates a lazy value, with typical transformation operations
- * (map/ifPresent) available, much like {@link Optional}.
- * <p>
- * It also provides the ability to listen for invalidation, via
- * {@link #addListener(NonNullConsumer)}. This method is invoked when the provider of
- * this object calls {@link #invalidate()}.
- * <p>
- * To create an instance of this class, use {@link #of(NonNullSupplier)}. Note
- * that this accepts a {@link NonNullSupplier}, so the result of the supplier
- * must never be null.
- * <p>
+ * This object holds a lazily-resolved reference to an instance of a capability
+ * class.  The passed supplier will be executed once needed, and cached.<br>
+ * <br>
+ * Typical transformation operations such as {@link #map(NonNullFunction)} and
+ * {@link #ifPresent(NonNullConsumer)} are available.<br>
+ * <br>
+ * This class also the ability to listen for invalidation, via
+ * {@link #addListener(NonNullConsumer)}. This method is invoked when this
+ * Capability is invalidated via {@link #invalidate()}<br>
+ * <br>
+ * To create an instance of this class, use {@link #of(NonNullSupplier)}.
+ * The result of the supplier must never be null.
+ * <br>
  * The empty instance can be retrieved with {@link #empty()}.
  *
  * @param <T> The type of the optional value.
+ * 
+ * @see {@link ICapabilityProvider#getCapability(CapabilityType, Direction)} for retrieving capabilities.
  */
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-public class Capability<T>
+public final class Capability<T>
 {
     private final NonNullSupplier<T> supplier;
     private final Object lock = new Object();
-    // null -> not resolved yet
-    // non-null and contains non-null value -> resolved
-    // non-null and contains null -> resolved, but supplier returned null (contract violation)
+    /**
+     * Some state of this Capability is based on the value of this object.<br>
+     * If this field is null, it means the supplier has not been resolved.<br>
+     * If this {@link Mutable} does not contain a value, the supplier was invalid.<br>
+     * If this {@link Mutable} contains a value, the supplier has been resolved.<br>
+     */
     private Mutable<T> resolved;
     private Set<NonNullConsumer<Capability<T>>> listeners = new HashSet<>();
     private boolean isValid = true;
@@ -80,8 +88,8 @@ public class Capability<T>
 
     /**
      * This method hides an unchecked cast to the inferred type. Only use this if
-     * you are sure the type should match. For capabilities, generally
-     * {@link CapabilityType#orEmpty(CapabilityType, Capability)} should be used.
+     * you are sure the type should match. Prefer
+     * {@link CapabilityType#orEmpty(CapabilityType, Capability)} when possible.
      *
      * @return This {@link Capability}, cast to the inferred generic type
      */
@@ -128,7 +136,8 @@ public class Capability<T>
     }
 
     /**
-     * Check if this {@link Capability} is non-empty.
+     * Check if this {@link Capability} is non-empty.<br>
+     * This method will not resolve the supplier.
      *
      * @return {@code true} if this {@link Capability} is non-empty, i.e. holds a
      *         non-null supplier
@@ -139,8 +148,9 @@ public class Capability<T>
     }
 
     /**
-     * If non-empty, invoke the specified {@link NonNullConsumer} with the object,
-     * otherwise do nothing.
+     * If this capability {@link #isPresent()}, invoke the specified {@link NonNullConsumer} with the object,
+     * otherwise do nothing.<br>
+     * This method will resolve the supplier if it has not yet been resolved.
      *
      * @param consumer The {@link NonNullConsumer} to run if this optional is non-empty.
      * @throws NullPointerException if {@code consumer} is null and this {@link Capability} is non-empty
@@ -154,11 +164,12 @@ public class Capability<T>
     }
 
     /**
-     * If a this {@link Capability} is non-empty, return a new
+     * If this capability {@link #isPresent()} return a new
      * {@link Capability} encapsulating the mapping function. Otherwise, returns
      * {@link #empty()}.
      * <p>
-     * The supplier inside this object is <strong>NOT</strong> resolved.
+     * This method will not immediately resolve the supplier, but resolving
+     * the returned object will cause the supplier of this object to be resolved.
      *
      * @apiNote This method supports post-processing on optional values, without the
      *          need to explicitly check for a return status.
@@ -166,7 +177,7 @@ public class Capability<T>
      * @apiNote The returned value does not receive invalidation messages from the original {@link Capability}.
      *          If you need the invalidation, you will need to manage them yourself.
      *
-     * @param mapper A mapping function to apply to the mod object, if present
+     * @param mapper A mapping function to apply to the instance, if present
      * @return A {@link Capability} describing the result of applying a mapping
      *         function to the value of this {@link Capability}, if a value is
      *         present, otherwise an empty {@link Capability}
@@ -179,18 +190,19 @@ public class Capability<T>
     }
 
     /**
-     * If a this {@link Capability} is non-empty, return a new
+     * If a this capability {@link #isPresent()}, return a new
      * {@link Optional} encapsulating the mapped value. Otherwise, returns
      * {@link Optional#empty()}.
+     * <p> 
+     * This method explicitly resolves the value of the {@link Capability}.
      *
-     * @apiNote This method explicitly resolves the value of the {@link Capability}.
-     *          For a non-resolving mapper that will lazily run the mapping, use {@link #lazyMap(NonNullFunction)}.
-     *
-     * @param mapper A mapping function to apply to the mod object, if present
+     * @param mapper A mapping function to apply to the instance, if present
      * @return An {@link Optional} describing the result of applying a mapping
-     *         function to the value of this {@link Optional}, if a value is
+     *         function to the value of this {@link Capability}, if a value is
      *         present, otherwise an empty {@link Optional}
      * @throws NullPointerException if {@code mapper} is null.
+     * 
+     * @see {@link #lazyMap(NonNullFunction)} for the lazy variant.
      */
     public <U> Optional<U> map(NonNullFunction<? super T, ? extends U> mapper)
     {
@@ -199,18 +211,16 @@ public class Capability<T>
     }
 
     /**
-     * Resolve the contained supplier if non-empty, and filter it by the given
-     * {@link NonNullPredicate}, returning empty if false.
+     * If this capability {@link #isPresent()}, resolve it and filter it by the given
+     * {@link NonNullPredicate}.
      * <p>
-     * <em>It is important to note that this method is <strong>not</strong> lazy, as
-     * it must resolve the value of the supplier to validate it with the
-     * predicate.</em>
+     * This method explicitly resolves the value of the {@link Capability}.
      *
-     * @param predicate A {@link NonNullPredicate} to apply to the result of the
-     *                  contained supplier, if non-empty
-     * @return An {@link Optional} containing the result of the contained
-     *         supplier, if and only if the passed {@link NonNullPredicate} returns
-     *         true, otherwise an empty {@link Optional}
+     * @param predicate A {@link NonNullPredicate} to apply to the instance.
+     * 
+     * @return An {@link Optional} containing the underlying instance, 
+     *         if and only if the passed {@link NonNullPredicate} returns
+     *         true, otherwise {@link Optional#empty()}
      * @throws NullPointerException If {@code predicate} is null and this
      *                              {@link Optional} is non-empty
      */
@@ -222,8 +232,8 @@ public class Capability<T>
     }
 
     /**
-     * Resolves the value of this LazyOptional, turning it into a standard non-lazy {@link Optional<T>}
-     * @return The resolved optional.
+     * Immediately resolves this {@link Capability} into an {@link Optional}
+     * @return The resolved optional, or {@link Optional#empty()} if no value exists.
      */
     public Optional<T> resolve()
     {
@@ -231,8 +241,7 @@ public class Capability<T>
     }
 
     /**
-     * Resolve the contained supplier if non-empty and return the result, otherwise return
-     * {@code other}.
+     * Immediately resolves this {@link Capability} into an object or a default value.
      *
      * @param other the value to be returned if this {@link Capability} is empty
      * @return the result of the supplier, if non-empty, otherwise {@code other}
@@ -314,6 +323,8 @@ public class Capability<T>
      * the TE is removed or unloaded), or a world/chunk unloads, or a entity dies,
      * etc... This allows modders to keep a cache of capability objects instead of
      * re-checking them every tick.
+     * <p>
+     * Listeners are discarded once this capability becomes invalid.
      */
     public void invalidate()
     {
@@ -325,6 +336,12 @@ public class Capability<T>
         }
     }
 
+    /**
+     * Temporarily revives this {@link Capability} so that the instance may be retrieved.<br>
+     * This call MUST be followed by another call to {@link #invalidate()} as soon as
+     * all work requiring revival is complete.<br>
+     * Do not leave capability objects in the revived state.
+     */
 	public void revive()
 	{
         this.isValid = true;
