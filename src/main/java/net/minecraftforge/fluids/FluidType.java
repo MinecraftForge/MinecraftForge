@@ -459,6 +459,21 @@ public class FluidType
     }
 
     /**
+     * Returns whether an entity can path through the fluid during node
+     * evaluation.
+     *
+     * @param state the state of the fluid
+     * @param getter the getter which can grab this fluid
+     * @param pos the position of the fluid
+     * @param mob the entity pathing through the fluid, can be {@code null}
+     * @return {@code true} if the entity can path through the fluid, {@code false} otherwise
+     */
+    public boolean isPathfindable(FluidState state, BlockGetter getter, BlockPos pos, @Nullable Mob mob)
+    {
+        return this.canSwim;
+    }
+
+    /**
      * Returns a sound to play when a certain action is performed at a
      * position. If no sound is present, then the sound will be {@code null}.
      *

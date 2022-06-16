@@ -154,4 +154,18 @@ public interface IForgeFluidState
     {
         return self().getType().canExtinguish(self(), getter, pos);
     }
+
+    /**
+     * Returns whether entities can path through the fluid during node
+     * evaluation.
+     *
+     * @param getter the getter which can grab this fluid
+     * @param pos the position of the fluid
+     * @param mob the entity pathing through the fluid, can be {@code null}
+     * @return {@code true} if the entity can path through the fluid, {@code false} otherwise
+     */
+    default boolean isPathfindable(BlockGetter getter, BlockPos pos, @Nullable Mob mob)
+    {
+        return self().getType().isPathfindable(self(), getter, pos, mob);
+    }
 }

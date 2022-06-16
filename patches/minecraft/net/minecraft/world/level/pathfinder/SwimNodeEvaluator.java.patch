@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/level/pathfinder/SwimNodeEvaluator.java
++++ b/net/minecraft/world/level/pathfinder/SwimNodeEvaluator.java
+@@ -117,7 +_,7 @@
+                   return BlockPathTypes.BREACH;
+                }
+ 
+-               if (!fluidstate.m_205070_(FluidTags.f_13131_)) {
++               if (!fluidstate.isPathfindable(p_77472_, blockpos$mutableblockpos, this.f_77313_)) {
+                   return BlockPathTypes.BLOCKED;
+                }
+             }

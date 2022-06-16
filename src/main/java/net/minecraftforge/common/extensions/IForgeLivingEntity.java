@@ -1,6 +1,9 @@
 package net.minecraftforge.common.extensions;
 
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.animal.Dolphin;
+import net.minecraft.world.entity.animal.WaterAnimal;
+import net.minecraft.world.entity.monster.Guardian;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.ForgeMod;
@@ -49,6 +52,9 @@ public interface IForgeLivingEntity extends IForgeEntity
     default boolean canDrownInFluidType(FluidType type)
     {
         if (type == ForgeMod.WATER_TYPE.get()) return !self().canBreatheUnderwater();
+        else if (type == ForgeMod.EMPTY_TYPE.get()
+            && (self() instanceof WaterAnimal && !(self() instanceof Dolphin))) // Water animal that isn't dolphin drown in air
+            return true;
         return type.canDrownIn(self());
     }
 

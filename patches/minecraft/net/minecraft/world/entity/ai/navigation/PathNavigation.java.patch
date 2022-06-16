@@ -14,3 +14,12 @@
        if (flag || this.f_26494_.m_21481_(this.f_26496_.m_77401_().f_77282_) && this.m_26559_(vec3)) {
           this.f_26496_.m_77374_();
        }
+@@ -317,7 +_,7 @@
+    protected abstract boolean m_7632_();
+ 
+    protected boolean m_26574_() {
+-      return this.f_26494_.m_20072_() || this.f_26494_.m_20077_();
++      return this.f_26494_.m_20072_() || this.f_26494_.m_20077_() || this.f_26494_.isInFluidType((fluidType, height) -> this.f_26494_.canSwimInFluidType(fluidType));
+    }
+ 
+    protected void m_6804_() {

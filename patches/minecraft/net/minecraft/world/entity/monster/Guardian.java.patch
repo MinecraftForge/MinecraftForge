@@ -1,0 +1,55 @@
+--- a/net/minecraft/world/entity/monster/Guardian.java
++++ b/net/minecraft/world/entity/monster/Guardian.java
+@@ -180,14 +_,14 @@
+    }
+ 
+    public float m_5610_(BlockPos p_32831_, LevelReader p_32832_) {
+-      return p_32832_.m_6425_(p_32831_).m_205070_(FluidTags.f_13131_) ? 10.0F + p_32832_.m_220419_(p_32831_) : super.m_5610_(p_32831_, p_32832_);
++      return p_32832_.m_6425_(p_32831_).isPathfindable(p_32832_, p_32831_, this) ? 10.0F + p_32832_.m_220419_(p_32831_) : super.m_5610_(p_32831_, p_32832_);
+    }
+ 
+    public void m_8107_() {
+       if (this.m_6084_()) {
+          if (this.f_19853_.f_46443_) {
+             this.f_32799_ = this.f_32798_;
+-            if (!this.m_20069_()) {
++            if (!(this.m_20069_() || this.isInFluidType((fluidType, height) -> this.canSwimInFluidType(fluidType)))) {
+                this.f_32800_ = 2.0F;
+                Vec3 vec3 = this.m_20184_();
+                if (vec3.f_82480_ > 0.0D && this.f_32805_ && !this.m_20067_()) {
+@@ -207,7 +_,7 @@
+ 
+             this.f_32798_ += this.f_32800_;
+             this.f_32802_ = this.f_32801_;
+-            if (!this.m_20072_()) {
++            if (!(this.m_20072_() || this.isInFluidType((fluidType, height) -> this.canSwimInFluidType(fluidType)))) {
+                this.f_32801_ = this.f_19796_.m_188501_();
+             } else if (this.m_32854_()) {
+                this.f_32801_ += (0.0F - this.f_32801_) * 0.25F;
+@@ -215,7 +_,7 @@
+                this.f_32801_ += (1.0F - this.f_32801_) * 0.06F;
+             }
+ 
+-            if (this.m_32854_() && this.m_20069_()) {
++            if (this.m_32854_() && (this.m_20069_() || this.isInFluidType((fluidType, height) -> this.canSwimInFluidType(fluidType)))) {
+                Vec3 vec31 = this.m_20252_(0.0F);
+ 
+                for(int i = 0; i < 2; ++i) {
+@@ -250,7 +_,7 @@
+             }
+          }
+ 
+-         if (this.m_20072_()) {
++         if (this.m_20072_() || (this.isInFluidType() && !this.isInFluidType((fluidType, height) -> this.canDrownInFluidType(fluidType)))) {
+             this.m_20301_(300);
+          } else if (this.f_19861_) {
+             this.m_20256_(this.m_20184_().m_82520_((double)((this.f_19796_.m_188501_() * 2.0F - 1.0F) * 0.4F), 0.5D, (double)((this.f_19796_.m_188501_() * 2.0F - 1.0F) * 0.4F)));
+@@ -311,7 +_,7 @@
+    }
+ 
+    public void m_7023_(Vec3 p_32858_) {
+-      if (this.m_6142_() && this.m_20069_()) {
++      if (this.m_6142_() && (this.m_20069_() || this.isInFluidType((fluidType, height) -> this.canSwimInFluidType(fluidType)))) {
+          this.m_19920_(0.1F, p_32858_);
+          this.m_6478_(MoverType.SELF, this.m_20184_());
+          this.m_20256_(this.m_20184_().m_82490_(0.9D));

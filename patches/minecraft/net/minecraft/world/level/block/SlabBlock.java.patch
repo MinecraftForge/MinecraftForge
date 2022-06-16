@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/level/block/SlabBlock.java
++++ b/net/minecraft/world/level/block/SlabBlock.java
+@@ -113,7 +_,7 @@
+          case LAND:
+             return false;
+          case WATER:
+-            return p_56377_.m_6425_(p_56378_).m_205070_(FluidTags.f_13131_);
++            return p_56377_.m_6425_(p_56378_).isPathfindable(p_56377_, p_56378_, null);
+          case AIR:
+             return false;
+          default:

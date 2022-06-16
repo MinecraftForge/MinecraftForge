@@ -18,6 +18,15 @@
     }
  
     /** @deprecated */
+@@ -108,7 +_,7 @@
+          case LAND:
+             return !p_60475_.m_60838_(p_60476_, p_60477_);
+          case WATER:
+-            return p_60476_.m_6425_(p_60477_).m_205070_(FluidTags.f_13131_);
++            return p_60476_.m_6425_(p_60477_).isPathfindable(p_60476_, p_60477_, null);
+          case AIR:
+             return !p_60475_.m_60838_(p_60476_, p_60477_);
+          default:
 @@ -142,7 +_,7 @@
     /** @deprecated */
     @Deprecated
