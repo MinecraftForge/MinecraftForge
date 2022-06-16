@@ -12,6 +12,7 @@ import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.fml.loading.LogMarkers;
 import net.minecraftforge.forgespi.language.IModFileInfo;
 import net.minecraftforge.forgespi.locating.IModFile;
+import net.minecraftforge.forgespi.locating.IModLocator;
 import net.minecraftforge.forgespi.locating.ModFileFactory;
 import org.slf4j.Logger;
 
@@ -22,7 +23,8 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class MinecraftLocator extends AbstractModLocator {
+public class MinecraftLocator extends AbstractModProvider implements IModLocator
+{
     private static final Logger LOGGER = LogUtils.getLogger();
 
     @Override
