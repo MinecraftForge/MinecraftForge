@@ -68,11 +68,11 @@
 +   }
 +
 +   @Override
-+   public net.minecraftforge.common.capabilities.ICapabilityProvider initCapabilities(ItemStack stack, @Nullable net.minecraft.nbt.CompoundTag nbt) {
++   public void attachBuiltinCaps(net.minecraftforge.common.capabilities.AttachCapabilitiesEvent.ItemStacks event) {
 +      if (this.getClass() == BucketItem.class)
-+         return new net.minecraftforge.fluids.capability.wrappers.FluidBucketWrapper(stack);
++         event.addCapability(new net.minecraftforge.fluids.capability.wrappers.FluidBucketWrapper(event.getObject()));
 +      else
-+         return super.initCapabilities(stack, nbt);
++         super.attachBuiltinCaps(event);
 +   }
 +
 +   private final java.util.function.Supplier<? extends Fluid> fluidSupplier;

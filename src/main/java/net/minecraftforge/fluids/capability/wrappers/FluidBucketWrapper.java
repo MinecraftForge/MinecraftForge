@@ -7,16 +7,16 @@ package net.minecraftforge.fluids.capability.wrappers;
 
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.ForgeMod;
+import net.minecraftforge.common.capabilities.CapabilityType;
+import net.minecraftforge.common.capabilities.CapabilityTypes;
+import net.minecraftforge.common.capabilities.IAttachedCapabilityProvider;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidType;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
-
 import net.minecraft.world.item.BucketItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -29,9 +29,11 @@ import org.jetbrains.annotations.Nullable;
  * Wrapper for vanilla and forge buckets.
  * Swaps between empty bucket and filled bucket of the correct type.
  */
-public class FluidBucketWrapper implements IFluidHandlerItem, ICapabilityProvider
+public class FluidBucketWrapper implements IFluidHandlerItem, IAttachedCapabilityProvider<IFluidHandlerItem, ItemStack>
 {
-    private final LazyOptional<IFluidHandlerItem> holder = LazyOptional.of(() -> this);
+    public static final ResourceLocation ID = new ResourceLocation("forge", "bucket_wrapper");
+    
+    private final Capability<IFluidHandlerItem> holder = Capability.of(() -> this);
 
     @NotNull
     protected ItemStack container;
@@ -170,8 +172,28 @@ public class FluidBucketWrapper implements IFluidHandlerItem, ICapabilityProvide
 
     @Override
     @NotNull
-    public <T> LazyOptional<T> getCapability(@NotNull Capability<T> capability, @Nullable Direction facing)
+    public Capability<IFluidHandlerItem> getCapability(@Nullable Direction facing)
     {
-        return CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY.orEmpty(capability, holder);
+        return this.holder.cast();
     }
+
+	@Override
+	public CapabilityType<IFluidHandlerItem> getType() {
+		return CapabilityTypes.FLUID_ITEMS;
+	}
+
+	@Override
+	public ResourceLocation getId() {
+		return ID;
+	}
+
+	@Override
+	public void invalidateCaps() {
+		this.holder.invalidate();
+	}
+
+	@Override
+	public void reviveCaps() {
+		this.holder.revive();
+	}
 }

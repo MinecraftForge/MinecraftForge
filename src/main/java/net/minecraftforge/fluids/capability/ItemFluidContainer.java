@@ -6,12 +6,8 @@
 package net.minecraftforge.fluids.capability;
 
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.common.capabilities.AttachCapabilitiesEvent.ItemStacks;
 import net.minecraftforge.fluids.capability.templates.FluidHandlerItemStack;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * A simple fluid container, to replace the functionality of the old FluidContainerRegistry and IFluidContainerItem.
@@ -32,8 +28,7 @@ public class ItemFluidContainer extends Item
     }
 
     @Override
-    public ICapabilityProvider initCapabilities(@NotNull ItemStack stack, @Nullable CompoundTag nbt)
-    {
-        return new FluidHandlerItemStack(stack, capacity);
+    public void attachBuiltinCaps(ItemStacks event) {
+    	event.addCapability(new FluidHandlerItemStack(event.getObject(), capacity));
     }
 }

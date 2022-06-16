@@ -15,11 +15,11 @@
     protected abstract AbstractContainerMenu m_7402_(int p_38222_, Inventory p_38223_);
 +
 +   // Forge Start
-+   private net.minecraftforge.common.util.LazyOptional<?> itemHandler = net.minecraftforge.common.util.LazyOptional.of(() -> new net.minecraftforge.items.wrapper.InvWrapper(this));
++   private net.minecraftforge.common.capabilities.Capability<?> itemHandler = net.minecraftforge.common.capabilities.Capability.of(() -> new net.minecraftforge.items.wrapper.InvWrapper(this));
 +
 +   @Override
-+   public <T> net.minecraftforge.common.util.LazyOptional<T> getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, @Nullable net.minecraft.core.Direction facing) {
-+      if (this.m_6084_() && capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
++   public <T> net.minecraftforge.common.capabilities.Capability<T> getCapability(net.minecraftforge.common.capabilities.CapabilityType<T> capability, @Nullable net.minecraft.core.Direction facing) {
++      if (this.m_6084_() && capability == net.minecraftforge.common.capabilities.CapabilityTypes.ITEMS)
 +         return itemHandler.cast();
 +      return super.getCapability(capability, facing);
 +   }
@@ -33,7 +33,7 @@
 +   @Override
 +   public void reviveCaps() {
 +      super.reviveCaps();
-+      itemHandler = net.minecraftforge.common.util.LazyOptional.of(() -> new net.minecraftforge.items.wrapper.InvWrapper(this));
++      itemHandler = net.minecraftforge.common.capabilities.Capability.of(() -> new net.minecraftforge.items.wrapper.InvWrapper(this));
 +   }
  
     @Nullable

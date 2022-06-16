@@ -31,7 +31,9 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.ToolAction;
 import net.minecraftforge.common.ToolActions;
-import net.minecraftforge.common.capabilities.ICapabilitySerializable;
+import net.minecraftforge.common.capabilities.IComparableCapabilityProvider;
+import net.minecraftforge.common.util.INBTSerializable;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -40,7 +42,7 @@ import java.util.Map;
 /*
  * Extension added to ItemStack that bounces to ItemSack sensitive Item methods. Typically this is just for convince.
  */
-public interface IForgeItemStack extends ICapabilitySerializable<CompoundTag>
+public interface IForgeItemStack extends IComparableCapabilityProvider<ItemStack>, INBTSerializable<CompoundTag>
 {
     // Helpers for accessing Item data
     private ItemStack self()

@@ -5,26 +5,19 @@
 
 package net.minecraftforge.debug;
 
-import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Registry;
-import net.minecraft.nbt.IntTag;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.ChatType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.*;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.util.thread.EffectiveSide;
@@ -42,9 +35,9 @@ public class CapabilitiesTest
 
     private static final boolean ENABLED = false;
 
-    public static Capability<CapClass> INSTANCE = CapabilityManager.get(new CapabilityToken<>(){});
+    public static CapabilityType<CapClass> INSTANCE = CapabilityManager.get(new ResourceLocation(MODID, "test_cap"));
 
-    private static ResourceLocation TEST_CAP_ID = new ResourceLocation("capabilities_test:test");
+    private static ResourceLocation PROVIDER_ID = new ResourceLocation("capabilities_test:test");
 
     private static final ConcurrentLinkedQueue<String> messages = new ConcurrentLinkedQueue<>();
 
@@ -52,11 +45,11 @@ public class CapabilitiesTest
     {
         if (ENABLED)
         {
-            new AttachTest<>(BlockEntity.class);
-            new AttachTest<>(Entity.class);
-            new AttachTest<>(ItemStack.class);
-            new AttachTest<>(LevelChunk.class);
-            new AttachTest<>(Level.class);
+            new AttachTest<>(AttachCapabilitiesEvent.BlockEntities.class);
+            new AttachTest<>(AttachCapabilitiesEvent.ItemStacks.class);
+            new AttachTest<>(AttachCapabilitiesEvent.Entities.class);
+            new AttachTest<>(AttachCapabilitiesEvent.Levels.class);
+            new AttachTest<>(AttachCapabilitiesEvent.Chunks.class);
         }
     }
 
@@ -70,48 +63,60 @@ public class CapabilitiesTest
         }
     }
 
-    public static class AttachTest<T extends ICapabilityProviderImpl<T>>
+    public static class AttachTest<K extends ICapabilityProvider, T extends AttachCapabilitiesEvent<K>>
     {
-        private final Class<T> cls;
-
         public AttachTest(Class<T> cls)
         {
-            this.cls = cls;
-
-            MinecraftForge.EVENT_BUS.addGenericListener(cls, this::attach);
+            MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false, cls, this::attach);
         }
 
-        public void attach(AttachCapabilitiesEvent<T> event)
+        public void attach(T event)
         {
-            event.addCapability(TEST_CAP_ID, new ICapabilitySerializable<>()
+            event.addCapability(new IAttachedCapabilityProvider<CapClass, K>()
             {
-                final LazyOptional<CapClass> instance = LazyOptional.of(() -> new CapClass(this));
+                final Capability<CapClass> instance = Capability.of(() -> new CapClass(this));
 
                 @Override
-                public Tag serializeNBT()
+                public CompoundTag serializeNBT()
                 {
-                    return IntTag.valueOf(1);
+                	CompoundTag tag = new CompoundTag();
+                    tag.putInt("test", 1);
+                    return tag;
                 }
 
                 @Override
-                public void deserializeNBT(Tag nbt)
+                public void deserializeNBT(CompoundTag nbt)
                 {
-                    if (nbt.getId() != Tag.TAG_INT)
+                    if (!nbt.contains("test", Tag.TAG_INT))
                         throw new IllegalStateException("Unexpected tag type");
-                    if (!(nbt instanceof IntTag it))
-                        throw new IllegalStateException("Unexpected tag class");
-                    if(it.getAsInt() != 1)
-                        throw new IllegalStateException("Unexpected tag type");
+                    if(nbt.getInt("test") != 1)
+                        throw new IllegalStateException("Unexpected tag data");
                 }
 
-                @NotNull
-                @Override
-                public <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side)
-                {
-                    if (cap == INSTANCE)
-                        return instance.cast();
-                    return LazyOptional.empty();
-                }
+				@Override
+				public CapabilityType<CapClass> getType() {
+					return INSTANCE;
+				}
+
+				@Override
+				public ResourceLocation getId() {
+					return PROVIDER_ID;
+				}
+
+				@Override
+				public @NotNull Capability<CapClass> getCapability(@Nullable Direction direction) {
+					return this.instance.cast();
+				}
+
+				@Override
+				public void invalidateCaps() {
+					this.instance.invalidate();
+				}
+
+				@Override
+				public void reviveCaps() {
+					this.instance.revive();
+				}
             });
 
             messages.add(String.format(Locale.ENGLISH, "Attached capability to %s in %s", event.getObject().getClass(), EffectiveSide.get()));

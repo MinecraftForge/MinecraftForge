@@ -8,7 +8,7 @@ package net.minecraftforge.items.wrapper;
 import net.minecraft.world.WorldlyContainer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.core.Direction;
-import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemHandlerHelper;
 import org.jetbrains.annotations.NotNull;
@@ -21,11 +21,11 @@ public class SidedInvWrapper implements IItemHandlerModifiable
     protected final Direction side;
 
     @SuppressWarnings("unchecked")
-    public static LazyOptional<IItemHandlerModifiable>[] create(WorldlyContainer inv, Direction... sides) {
-        LazyOptional<IItemHandlerModifiable>[] ret = new LazyOptional[sides.length];
+    public static Capability<IItemHandlerModifiable>[] create(WorldlyContainer inv, Direction... sides) {
+        Capability<IItemHandlerModifiable>[] ret = new Capability[sides.length];
         for (int x = 0; x < sides.length; x++) {
             final Direction side = sides[x];
-            ret[x] = LazyOptional.of(() -> new SidedInvWrapper(inv, side));
+            ret[x] = Capability.of(() -> new SidedInvWrapper(inv, side));
         }
         return ret;
     }

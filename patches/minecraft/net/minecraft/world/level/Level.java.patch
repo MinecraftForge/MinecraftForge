@@ -9,7 +9,7 @@
     public static final Codec<ResourceKey<Level>> f_46427_ = ResourceKey.m_195966_(Registry.f_122819_);
     public static final ResourceKey<Level> f_46428_ = ResourceKey.m_135785_(Registry.f_122819_, new ResourceLocation("overworld"));
     public static final ResourceKey<Level> f_46429_ = ResourceKey.m_135785_(Registry.f_122819_, new ResourceLocation("the_nether"));
-@@ -104,8 +_,14 @@
+@@ -104,6 +_,11 @@
     private final BiomeManager f_46420_;
     private final ResourceKey<Level> f_46421_;
     private long f_186455_;
@@ -20,10 +20,7 @@
 +   private final java.util.ArrayList<BlockEntity> pendingFreshBlockEntities = new java.util.ArrayList<>();
  
     protected Level(WritableLevelData p_220352_, ResourceKey<Level> p_220353_, Holder<DimensionType> p_220354_, Supplier<ProfilerFiller> p_220355_, boolean p_220356_, boolean p_220357_, long p_220358_, int p_220359_) {
-+      super(Level.class);
        this.f_46446_ = p_220355_;
-       this.f_46442_ = p_220352_;
-       this.f_204147_ = p_220354_;
 @@ -190,17 +_,45 @@
        } else {
           LevelChunk levelchunk = this.m_46745_(p_46605_);
@@ -231,12 +228,10 @@
                    this.m_213960_(blockstate, blockpos, p_46719_, p_46718_, false);
                 }
              }
-@@ -863,6 +_,18 @@
- 
-    public BiomeManager m_7062_() {
+@@ -865,6 +_,18 @@
        return this.f_46420_;
-+   }
-+
+    }
+ 
 +   private double maxEntityRadius = 2.0D;
 +   @Override
 +   public double getMaxEntityRadius() {
@@ -247,6 +242,19 @@
 +      if (value > maxEntityRadius)
 +         maxEntityRadius = value;
 +      return maxEntityRadius;
-    }
- 
++   }
++
     public final boolean m_46659_() {
+       return this.f_46424_;
+    }
+@@ -873,5 +_,10 @@
+ 
+    public long m_183596_() {
+       return (long)(this.f_186455_++);
++   }
++
++   @Override
++   public net.minecraftforge.common.capabilities.AttachCapabilitiesEvent.Levels getCapEvent() {
++      return new net.minecraftforge.common.capabilities.AttachCapabilitiesEvent.Levels(this);
+    }
+ }

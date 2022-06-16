@@ -6,7 +6,9 @@
 package net.minecraftforge.test;
 
 import com.mojang.datafixers.util.Unit;
-import net.minecraftforge.common.util.LazyOptional;
+
+import net.minecraftforge.common.capabilities.Capability;
+
 import org.apache.commons.lang3.mutable.MutableInt;
 import org.junit.jupiter.api.Test;
 
@@ -21,7 +23,7 @@ public class LazyOptionalTest
     @Test
     public void testConcurrentResolve() throws InterruptedException {
         AtomicInteger supplierCalls = new AtomicInteger();
-        LazyOptional<Unit> slowLazy = LazyOptional.of(() -> {
+        Capability<Unit> slowLazy = Capability.of(() -> {
             supplierCalls.incrementAndGet();
             try
             {
@@ -56,7 +58,7 @@ public class LazyOptionalTest
     @Test
     public void testInvalidSupplier() {
         MutableInt supplierCalls = new MutableInt();
-        LazyOptional<Unit> badLazy = LazyOptional.of(() -> {
+        Capability<Unit> badLazy = Capability.of(() -> {
             supplierCalls.increment();
             return null;
         });

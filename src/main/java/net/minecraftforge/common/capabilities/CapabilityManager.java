@@ -5,39 +5,36 @@
 
 package net.minecraftforge.common.capabilities;
 
-import net.minecraftforge.fml.ModLoader;
-import net.minecraftforge.forgespi.language.ModFileScanData;
+import net.minecraft.resources.ResourceLocation;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.IdentityHashMap;
-import java.util.List;
 
 import static net.minecraftforge.fml.Logging.CAPABILITIES;
 
 public enum CapabilityManager
 {
     INSTANCE;
-    static final Logger LOGGER = LogManager.getLogger();
 
+	private static final Logger LOGGER = LogManager.getLogger();
+    private static final IdentityHashMap<ResourceLocation, CapabilityType<?>> PROVIDERS = new IdentityHashMap<>();	
 
-    public static <T> Capability<T> get(CapabilityToken<T> type)
+    public static <T> CapabilityType<T> get(ResourceLocation id)
     {
-        return INSTANCE.get(type.getType(), false);
+        return INSTANCE.get(id, false);
     }
 
     @SuppressWarnings("unchecked")
-    <T> Capability<T> get(String realName, boolean registering)
+    <T> CapabilityType<T> get(ResourceLocation id, boolean registering)
     {
-        Capability<T> cap;
+        CapabilityType<T> cap;
 
-        synchronized (providers)
+        synchronized (PROVIDERS)
         {
-            realName = realName.intern();
-            cap = (Capability<T>)providers.computeIfAbsent(realName, Capability::new);
+            cap = (CapabilityType<T>)PROVIDERS.computeIfAbsent(id, CapabilityType::new);
 
         }
-
 
         if (registering)
         {
@@ -45,8 +42,8 @@ public enum CapabilityManager
             {
                 if (cap.isRegistered())
                 {
-                    LOGGER.error(CAPABILITIES, "Cannot register capability implementation multiple times : {}", realName);
-                    throw new IllegalArgumentException("Cannot register a capability implementation multiple times : "+ realName);
+                    LOGGER.error(CAPABILITIES, "Cannot register capability implementation multiple times : {}", id);
+                    throw new IllegalArgumentException("Cannot register a capability implementation multiple times : "+ id);
                 }
                 else
                 {
@@ -56,13 +53,5 @@ public enum CapabilityManager
         }
 
         return cap;
-    }
-
-    // INTERNAL
-    private final IdentityHashMap<String, Capability<?>> providers = new IdentityHashMap<>();
-    public void injectCapabilities(List<ModFileScanData> data)
-    {
-        var event = new RegisterCapabilitiesEvent();
-        ModLoader.get().postEvent(event);
     }
 }

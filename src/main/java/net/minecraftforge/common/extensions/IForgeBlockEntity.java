@@ -23,10 +23,12 @@ import net.minecraft.world.level.Level;
 import net.minecraftforge.client.model.ModelDataManager;
 import net.minecraftforge.client.model.data.EmptyModelData;
 import net.minecraftforge.client.model.data.IModelData;
-import net.minecraftforge.common.capabilities.ICapabilitySerializable;
+import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.common.util.INBTSerializable;
+
 import org.jetbrains.annotations.NotNull;
 
-public interface IForgeBlockEntity extends ICapabilitySerializable<CompoundTag>
+public interface IForgeBlockEntity extends ICapabilityProvider, INBTSerializable<CompoundTag>
 {
     private BlockEntity self() { return (BlockEntity) this; }
 

@@ -9,7 +9,7 @@ import com.google.common.collect.ImmutableList;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemHandlerHelper;
@@ -179,13 +179,13 @@ public abstract class EntityEquipmentInvWrapper implements IItemHandlerModifiabl
         return slots.get(slot);
     }
 
-    public static LazyOptional<IItemHandlerModifiable>[] create(LivingEntity entity)
+    public static Capability<IItemHandlerModifiable>[] create(LivingEntity entity)
     {
         @SuppressWarnings("unchecked")
-        LazyOptional<IItemHandlerModifiable>[] ret = new LazyOptional[3];
-        ret[0] = LazyOptional.of(() -> new EntityHandsInvWrapper(entity));
-        ret[1] = LazyOptional.of(() -> new EntityArmorInvWrapper(entity));
-        ret[2] = LazyOptional.of(() -> new CombinedInvWrapper(ret[0].orElse(null), ret[1].orElse(null)));
+        Capability<IItemHandlerModifiable>[] ret = new Capability[3];
+        ret[0] = Capability.of(() -> new EntityHandsInvWrapper(entity));
+        ret[1] = Capability.of(() -> new EntityArmorInvWrapper(entity));
+        ret[2] = Capability.of(() -> new CombinedInvWrapper(ret[0].orElse(null), ret[1].orElse(null)));
         return ret;
     }
 }

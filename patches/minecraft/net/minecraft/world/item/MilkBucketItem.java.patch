@@ -26,7 +26,7 @@
 +   }
 +
 +   @Override
-+   public net.minecraftforge.common.capabilities.ICapabilityProvider initCapabilities(ItemStack stack, @org.jetbrains.annotations.Nullable net.minecraft.nbt.CompoundTag nbt) {
-+      return new net.minecraftforge.fluids.capability.wrappers.FluidBucketWrapper(stack);
++   public void attachBuiltinCaps(net.minecraftforge.common.capabilities.AttachCapabilitiesEvent.ItemStacks event) {
++      event.addCapability(new net.minecraftforge.fluids.capability.wrappers.FluidBucketWrapper(event.getObject()));
     }
  }

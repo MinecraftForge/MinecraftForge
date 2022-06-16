@@ -7,13 +7,15 @@ package net.minecraftforge.fluids.capability.templates;
 
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.core.Direction;
-import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.CapabilityType;
+import net.minecraftforge.common.capabilities.CapabilityTypes;
+import net.minecraftforge.common.capabilities.IAttachedCapabilityProvider;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -24,11 +26,12 @@ import org.jetbrains.annotations.Nullable;
  *
  * This implementation only allows item containers to be fully filled or emptied, similar to vanilla buckets.
  */
-public class FluidHandlerItemStackSimple implements IFluidHandlerItem, ICapabilityProvider
+public class FluidHandlerItemStackSimple implements IFluidHandlerItem, IAttachedCapabilityProvider<IFluidHandlerItem, ItemStack>
 {
     public static final String FLUID_NBT_KEY = "Fluid";
+    public static final ResourceLocation ID = new ResourceLocation("forge", "simple_fluid_handler");
 
-    private final LazyOptional<IFluidHandlerItem> holder = LazyOptional.of(() -> this);
+    private final Capability<IFluidHandlerItem> holder = Capability.of(() -> this);
 
     @NotNull
     protected ItemStack container;
@@ -187,9 +190,9 @@ public class FluidHandlerItemStackSimple implements IFluidHandlerItem, ICapabili
 
     @Override
     @NotNull
-    public <T> LazyOptional<T> getCapability(@NotNull Capability<T> capability, @Nullable Direction facing)
+    public Capability<IFluidHandlerItem> getCapability(@Nullable Direction facing)
     {
-        return CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY.orEmpty(capability, holder);
+        return this.holder.cast();
     }
 
     /**
@@ -230,4 +233,24 @@ public class FluidHandlerItemStackSimple implements IFluidHandlerItem, ICapabili
             container = emptyContainer;
         }
     }
+
+	@Override
+	public CapabilityType<IFluidHandlerItem> getType() {
+		return CapabilityTypes.FLUID_ITEMS;
+	}
+
+	@Override
+	public ResourceLocation getId() {
+		return ID;
+	}
+
+	@Override
+	public void invalidateCaps() {
+		this.holder.invalidate();
+	}
+
+	@Override
+	public void reviveCaps() {
+		this.holder.revive();
+	}
 }

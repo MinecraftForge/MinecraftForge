@@ -7,12 +7,14 @@ package net.minecraftforge.fluids.capability.templates;
 
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.core.Direction;
-import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.CapabilityType;
+import net.minecraftforge.common.capabilities.CapabilityTypes;
+import net.minecraftforge.common.capabilities.IAttachedCapabilityProvider;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.*;
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 
 import org.jetbrains.annotations.NotNull;
@@ -27,11 +29,12 @@ import org.jetbrains.annotations.Nullable;
  * Additional examples are provided to enable consumable fluid containers (see {@link Consumable}),
  * fluid containers with different empty and full items (see {@link SwapEmpty},
  */
-public class FluidHandlerItemStack implements IFluidHandlerItem, ICapabilityProvider
+public class FluidHandlerItemStack implements IFluidHandlerItem, IAttachedCapabilityProvider<IFluidHandlerItem, ItemStack>
 {
     public static final String FLUID_NBT_KEY = "Fluid";
+    public static final ResourceLocation ID = new ResourceLocation("forge", "item_fluid_handler");
 
-    private final LazyOptional<IFluidHandlerItem> holder = LazyOptional.of(() -> this);
+    private final Capability<IFluidHandlerItem> holder = Capability.of(() -> this);
 
     @NotNull
     protected ItemStack container;
@@ -208,13 +211,6 @@ public class FluidHandlerItemStack implements IFluidHandlerItem, ICapabilityProv
         container.removeTagKey(FLUID_NBT_KEY);
     }
 
-    @Override
-    @NotNull
-    public <T> LazyOptional<T> getCapability(@NotNull Capability<T> capability, @Nullable Direction facing)
-    {
-        return CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY.orEmpty(capability, holder);
-    }
-
     /**
      * Destroys the container item when it's emptied.
      */
@@ -253,4 +249,29 @@ public class FluidHandlerItemStack implements IFluidHandlerItem, ICapabilityProv
             container = emptyContainer;
         }
     }
+
+	@Override
+	public CapabilityType<IFluidHandlerItem> getType() {
+		return CapabilityTypes.FLUID_ITEMS;
+	}
+
+	@Override
+	public ResourceLocation getId() {
+		return ID;
+	}
+
+	@Override
+	public @NotNull Capability<IFluidHandlerItem> getCapability(@Nullable Direction direction) {
+		return this.holder.cast();
+	}
+
+	@Override
+	public void invalidateCaps() {
+		this.holder.invalidate();
+	}
+
+	@Override
+	public void reviveCaps() {
+		this.holder.revive();
+	}
 }

@@ -686,11 +686,11 @@
 +      return this instanceof net.minecraft.world.entity.animal.Pig;
 +   }
 +
-+   private net.minecraftforge.common.util.LazyOptional<?>[] handlers = net.minecraftforge.items.wrapper.EntityEquipmentInvWrapper.create(this);
++   private net.minecraftforge.common.capabilities.Capability<?>[] handlers = net.minecraftforge.items.wrapper.EntityEquipmentInvWrapper.create(this);
 +
 +   @Override
-+   public <T> net.minecraftforge.common.util.LazyOptional<T> getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, @Nullable Direction facing) {
-+      if (this.m_6084_() && capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
++   public <T> net.minecraftforge.common.capabilities.Capability<T> getCapability(net.minecraftforge.common.capabilities.CapabilityType<T> capability, @Nullable Direction facing) {
++      if (this.m_6084_() && capability == net.minecraftforge.common.capabilities.CapabilityTypes.ITEMS) {
 +         if (facing == null) return handlers[2].cast();
 +         else if (facing.m_122434_().m_122478_()) return handlers[0].cast();
 +         else if (facing.m_122434_().m_122479_()) return handlers[1].cast();

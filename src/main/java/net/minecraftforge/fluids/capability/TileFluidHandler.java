@@ -11,8 +11,9 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.core.Direction;
+import net.minecraftforge.common.capabilities.CapabilityType;
+import net.minecraftforge.common.capabilities.CapabilityTypes;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidType;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
 import org.jetbrains.annotations.NotNull;
@@ -22,7 +23,7 @@ public class TileFluidHandler extends BlockEntity
 {
     protected FluidTank tank = new FluidTank(FluidType.BUCKET_VOLUME);
 
-    private final LazyOptional<IFluidHandler> holder = LazyOptional.of(() -> tank);
+    private final Capability<IFluidHandler> holder = Capability.of(() -> tank);
 
     public TileFluidHandler(@NotNull BlockEntityType<?> blockEntityType, BlockPos pos, BlockState state)
     {
@@ -45,9 +46,9 @@ public class TileFluidHandler extends BlockEntity
 
     @Override
     @NotNull
-    public <T> LazyOptional<T> getCapability(@NotNull Capability<T> capability, @Nullable Direction facing)
+    public <T> Capability<T> getCapability(@NotNull CapabilityType<T> capability, @Nullable Direction facing)
     {
-        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY)
+        if (capability == CapabilityTypes.FLUIDS)
             return holder.cast();
         return super.getCapability(capability, facing);
     }

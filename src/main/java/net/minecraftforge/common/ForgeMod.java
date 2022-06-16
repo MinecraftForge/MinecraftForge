@@ -36,6 +36,7 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.IFluidTypeRenderProperties;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
+import net.minecraftforge.common.capabilities.CapabilityTypes;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.common.crafting.PartialNBTIngredient;
 import net.minecraftforge.common.crafting.DifferenceIngredient;
@@ -95,9 +96,6 @@ import net.minecraftforge.common.data.ForgeBlockTagsProvider;
 import net.minecraftforge.common.data.ForgeItemTagsProvider;
 import net.minecraftforge.common.data.ForgeLootTableProvider;
 import net.minecraftforge.common.data.ForgeRecipeProvider;
-import net.minecraftforge.energy.CapabilityEnergy;
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
-import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.fml.common.Mod;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
@@ -426,9 +424,7 @@ public class ForgeMod
 
     public void registerCapabilities(RegisterCapabilitiesEvent event)
     {
-        CapabilityItemHandler.register(event);
-        CapabilityFluidHandler.register(event);
-        CapabilityEnergy.register(event);
+        CapabilityTypes.register(event);
     }
 
     public void preInit(FMLCommonSetupEvent evt)

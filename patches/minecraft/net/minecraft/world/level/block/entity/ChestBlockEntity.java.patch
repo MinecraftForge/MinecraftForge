@@ -4,22 +4,22 @@
        return ChestMenu.m_39237_(p_59082_, p_59083_, this);
     }
  
-+   private net.minecraftforge.common.util.LazyOptional<net.minecraftforge.items.IItemHandlerModifiable> chestHandler;
++   private net.minecraftforge.common.capabilities.Capability<net.minecraftforge.items.IItemHandlerModifiable> chestHandler;
 +   @Override
 +   public void m_155250_(BlockState p_155251_) {
 +      super.m_155250_(p_155251_);
 +      if (this.chestHandler != null) {
-+         net.minecraftforge.common.util.LazyOptional<?> oldHandler = this.chestHandler;
++         net.minecraftforge.common.capabilities.Capability<?> oldHandler = this.chestHandler;
 +         this.chestHandler = null;
 +         oldHandler.invalidate();
 +      }
 +   }
 +
 +   @Override
-+   public <T> net.minecraftforge.common.util.LazyOptional<T> getCapability(net.minecraftforge.common.capabilities.Capability<T> cap, Direction side) {
-+       if (!this.f_58859_ && cap == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
++   public <T> net.minecraftforge.common.capabilities.Capability<T> getCapability(net.minecraftforge.common.capabilities.CapabilityType<T> cap, Direction side) {
++       if (!this.f_58859_ && cap == net.minecraftforge.common.capabilities.CapabilityTypes.ITEMS) {
 +          if (this.chestHandler == null)
-+             this.chestHandler = net.minecraftforge.common.util.LazyOptional.of(this::createHandler);
++             this.chestHandler = net.minecraftforge.common.capabilities.Capability.of(this::createHandler);
 +          return this.chestHandler.cast();
 +       }
 +       return super.getCapability(cap, side);

@@ -35,15 +35,7 @@
     private final Set<TagKey<Fluid>> f_19801_ = new HashSet<>();
     public int f_19802_;
     protected boolean f_19803_ = true;
-@@ -231,6 +_,7 @@
-    private BlockState f_185934_ = null;
- 
-    public Entity(EntityType<?> p_19870_, Level p_19871_) {
-+      super(Entity.class);
-       this.f_19847_ = p_19870_;
-       this.f_19853_ = p_19871_;
-       this.f_19815_ = p_19870_.m_20680_();
-@@ -248,7 +_,11 @@
+@@ -248,7 +_,10 @@
        this.f_19804_.m_135372_(f_146800_, 0);
        this.m_8097_();
        this.m_6034_(0.0D, 0.0D, 0.0D);
@@ -52,7 +44,6 @@
 +      this.f_19815_ = sizeEvent.getNewSize();
 +      this.f_19816_ = sizeEvent.getNewEyeHeight();
 +      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.EntityEvent.EntityConstructing(this));
-+      this.gatherCapabilities();
     }
  
     public boolean m_20039_(BlockPos p_20040_, BlockState p_20041_) {
@@ -527,7 +518,7 @@
  
     }
  
-@@ -3089,6 +_,103 @@
+@@ -3089,6 +_,108 @@
     public boolean m_142265_(Level p_146843_, BlockPos p_146844_) {
        return true;
     }
@@ -624,6 +615,11 @@
 +   @Override
 +   public net.minecraftforge.fluids.FluidType getMaxHeightFluidType() {
 +      return this.forgeFluidTypeHeight.object2DoubleEntrySet().stream().max(java.util.Comparator.comparingDouble(Object2DoubleMap.Entry::getDoubleValue)).map(Object2DoubleMap.Entry::getKey).orElseGet(net.minecraftforge.common.ForgeMod.EMPTY_TYPE);
++   }
++
++   @Override
++   public net.minecraftforge.common.capabilities.AttachCapabilitiesEvent.Entities getCapEvent() {
++      return new net.minecraftforge.common.capabilities.AttachCapabilitiesEvent.Entities(this);
 +   }
 +
 +   /* ================================== Forge End =====================================*/
