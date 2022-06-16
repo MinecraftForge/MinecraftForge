@@ -26,7 +26,7 @@
        m_235386_(p_235385_, "template_mirror", TemplateMirrorArgument.class, SingletonArgumentInfo.m_235451_(TemplateMirrorArgument::m_234343_));
        m_235386_(p_235385_, "template_rotation", TemplateRotationArgument.class, SingletonArgumentInfo.m_235451_(TemplateRotationArgument::m_234414_));
 -      if (SharedConstants.f_136183_) {
-+      if (net.minecraftforge.gametest.ForgeGameTestHooks.isGametestEnabled()) {
++      if (true) { // Forge: Always register gametest arguments to prevent issues when connecting from gametest-enabled client/server to non-gametest-enabled client/server
           m_235386_(p_235385_, "test_argument", TestFunctionArgument.class, SingletonArgumentInfo.m_235451_(TestFunctionArgument::m_128088_));
           m_235386_(p_235385_, "test_class", TestClassNameArgument.class, SingletonArgumentInfo.m_235451_(TestClassNameArgument::m_127917_));
        }
