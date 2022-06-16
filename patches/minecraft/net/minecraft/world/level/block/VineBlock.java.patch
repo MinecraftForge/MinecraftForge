@@ -1,14 +1,5 @@
 --- a/net/minecraft/world/level/block/VineBlock.java
 +++ b/net/minecraft/world/level/block/VineBlock.java
-@@ -22,7 +_,7 @@
- import net.minecraft.world.phys.shapes.Shapes;
- import net.minecraft.world.phys.shapes.VoxelShape;
- 
--public class VineBlock extends Block {
-+public class VineBlock extends Block implements net.minecraftforge.common.IForgeShearable {
-    public static final BooleanProperty f_57833_ = PipeBlock.f_55152_;
-    public static final BooleanProperty f_57834_ = PipeBlock.f_55148_;
-    public static final BooleanProperty f_57835_ = PipeBlock.f_55149_;
 @@ -156,7 +_,7 @@
     }
  
