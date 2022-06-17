@@ -1,0 +1,71 @@
+--- a/net/minecraft/world/entity/animal/Dolphin.java
++++ b/net/minecraft/world/entity/animal/Dolphin.java
+@@ -68,6 +_,7 @@
+    static final TargetingConditions f_28311_ = TargetingConditions.m_148353_().m_26883_(10.0D).m_148355_();
+    public static final int f_148892_ = 4800;
+    private static final int f_148893_ = 2400;
++   @Deprecated // FORGE: Use ForgeHooks#dolphinAllowedItems instead
+    public static final Predicate<ItemEntity> f_28309_ = (p_28369_) -> {
+       return !p_28369_.m_32063_() && p_28369_.m_6084_() && p_28369_.m_20069_();
+    };
+@@ -229,7 +_,7 @@
+       if (this.m_21525_()) {
+          this.m_20301_(this.m_6062_());
+       } else {
+-         if (this.m_20071_()) {
++         if (this.m_20071_() || this.isInFluidType((fluidType, height) -> this.canSwimInFluidType(fluidType))) {
+             this.m_28343_(2400);
+          } else {
+             this.m_28343_(this.m_28378_() - 1);
+@@ -245,7 +_,7 @@
+             }
+          }
+ 
+-         if (this.f_19853_.f_46443_ && this.m_20069_() && this.m_20184_().m_82556_() > 0.03D) {
++         if (this.f_19853_.f_46443_ && (this.m_20069_() || this.isInFluidType((fluidType, height) -> this.canSwimInFluidType(fluidType))) && this.m_20184_().m_82556_() > 0.03D) {
+             Vec3 vec3 = this.m_20252_(0.0F);
+             float f = Mth.m_14089_(this.m_146908_() * ((float)Math.PI / 180F)) * 0.3F;
+             float f1 = Mth.m_14031_(this.m_146908_() * ((float)Math.PI / 180F)) * 0.3F;
+@@ -325,7 +_,7 @@
+    }
+ 
+    public void m_7023_(Vec3 p_28383_) {
+-      if (this.m_6142_() && this.m_20069_()) {
++      if (this.m_6142_() && (this.m_20069_() || this.isInFluidType((fluidType, height) -> this.canSwimInFluidType(fluidType)))) {
+          this.m_19920_(this.m_6113_(), p_28383_);
+          this.m_6478_(MoverType.SELF, this.m_20184_());
+          this.m_20256_(this.m_20184_().m_82490_(0.9D));
+@@ -399,7 +_,7 @@
+ 
+             if (vec31 != null) {
+                BlockPos blockpos = new BlockPos(vec31);
+-               if (!level.m_6425_(blockpos).m_205070_(FluidTags.f_13131_) || !level.m_8055_(blockpos).m_60647_(level, blockpos, PathComputationType.WATER)) {
++               if (!this.f_28399_.canSwimInFluidType(level.m_6425_(blockpos).getFluidType()) || !level.m_8055_(blockpos).m_60647_(level, blockpos, PathComputationType.WATER)) {
+                   vec31 = DefaultRandomPos.m_148412_(this.f_28399_, 8, 5, vec3, (double)((float)Math.PI / 2F));
+                }
+             }
+@@ -475,13 +_,13 @@
+          if (this.f_28421_ > Dolphin.this.f_19797_) {
+             return false;
+          } else {
+-            List<ItemEntity> list = Dolphin.this.f_19853_.m_6443_(ItemEntity.class, Dolphin.this.m_20191_().m_82377_(8.0D, 8.0D, 8.0D), Dolphin.f_28309_);
++            List<ItemEntity> list = Dolphin.this.f_19853_.m_6443_(ItemEntity.class, Dolphin.this.m_20191_().m_82377_(8.0D, 8.0D, 8.0D), net.minecraftforge.common.ForgeHooks.dolphinAllowedItems(Dolphin.this));
+             return !list.isEmpty() || !Dolphin.this.m_6844_(EquipmentSlot.MAINHAND).m_41619_();
+          }
+       }
+ 
+       public void m_8056_() {
+-         List<ItemEntity> list = Dolphin.this.f_19853_.m_6443_(ItemEntity.class, Dolphin.this.m_20191_().m_82377_(8.0D, 8.0D, 8.0D), Dolphin.f_28309_);
++         List<ItemEntity> list = Dolphin.this.f_19853_.m_6443_(ItemEntity.class, Dolphin.this.m_20191_().m_82377_(8.0D, 8.0D, 8.0D), net.minecraftforge.common.ForgeHooks.dolphinAllowedItems(Dolphin.this));
+          if (!list.isEmpty()) {
+             Dolphin.this.m_21573_().m_5624_(list.get(0), (double)1.2F);
+             Dolphin.this.m_5496_(SoundEvents.f_11806_, 1.0F, 1.0F);
+@@ -501,7 +_,7 @@
+       }
+ 
+       public void m_8037_() {
+-         List<ItemEntity> list = Dolphin.this.f_19853_.m_6443_(ItemEntity.class, Dolphin.this.m_20191_().m_82377_(8.0D, 8.0D, 8.0D), Dolphin.f_28309_);
++         List<ItemEntity> list = Dolphin.this.f_19853_.m_6443_(ItemEntity.class, Dolphin.this.m_20191_().m_82377_(8.0D, 8.0D, 8.0D), net.minecraftforge.common.ForgeHooks.dolphinAllowedItems(Dolphin.this));
+          ItemStack itemstack = Dolphin.this.m_6844_(EquipmentSlot.MAINHAND);
+          if (!itemstack.m_41619_()) {
+             this.m_28428_(itemstack);

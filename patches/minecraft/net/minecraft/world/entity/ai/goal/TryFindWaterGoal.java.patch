@@ -1,0 +1,19 @@
+--- a/net/minecraft/world/entity/ai/goal/TryFindWaterGoal.java
++++ b/net/minecraft/world/entity/ai/goal/TryFindWaterGoal.java
+@@ -13,14 +_,14 @@
+    }
+ 
+    public boolean m_8036_() {
+-      return this.f_25962_.m_20096_() && !this.f_25962_.f_19853_.m_6425_(this.f_25962_.m_20183_()).m_205070_(FluidTags.f_13131_);
++      return this.f_25962_.m_20096_() && !this.f_25962_.canSwimInFluidType(this.f_25962_.f_19853_.m_6425_(this.f_25962_.m_20183_()).getFluidType());
+    }
+ 
+    public void m_8056_() {
+       BlockPos blockpos = null;
+ 
+       for(BlockPos blockpos1 : BlockPos.m_121976_(Mth.m_14107_(this.f_25962_.m_20185_() - 2.0D), Mth.m_14107_(this.f_25962_.m_20186_() - 2.0D), Mth.m_14107_(this.f_25962_.m_20189_() - 2.0D), Mth.m_14107_(this.f_25962_.m_20185_() + 2.0D), this.f_25962_.m_146904_(), Mth.m_14107_(this.f_25962_.m_20189_() + 2.0D))) {
+-         if (this.f_25962_.f_19853_.m_6425_(blockpos1).m_205070_(FluidTags.f_13131_)) {
++         if (this.f_25962_.canSwimInFluidType(this.f_25962_.f_19853_.m_6425_(blockpos1).getFluidType())) {
+             blockpos = blockpos1;
+             break;
+          }

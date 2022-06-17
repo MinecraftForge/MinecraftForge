@@ -1,0 +1,29 @@
+--- a/net/minecraft/world/entity/ai/goal/DolphinJumpGoal.java
++++ b/net/minecraft/world/entity/ai/goal/DolphinJumpGoal.java
+@@ -41,7 +_,7 @@
+ 
+    private boolean m_25172_(BlockPos p_25173_, int p_25174_, int p_25175_, int p_25176_) {
+       BlockPos blockpos = p_25173_.m_7918_(p_25174_ * p_25176_, 0, p_25175_ * p_25176_);
+-      return this.f_25163_.f_19853_.m_6425_(blockpos).m_205070_(FluidTags.f_13131_) && !this.f_25163_.f_19853_.m_8055_(blockpos).m_60767_().m_76334_();
++      return this.f_25163_.canSwimInFluidType(this.f_25163_.f_19853_.m_6425_(blockpos).getFluidType()) && !this.f_25163_.f_19853_.m_8055_(blockpos).m_60767_().m_76334_();
+    }
+ 
+    private boolean m_25178_(BlockPos p_25179_, int p_25180_, int p_25181_, int p_25182_) {
+@@ -50,7 +_,7 @@
+ 
+    public boolean m_8045_() {
+       double d0 = this.f_25163_.m_20184_().f_82480_;
+-      return (!(d0 * d0 < (double)0.03F) || this.f_25163_.m_146909_() == 0.0F || !(Math.abs(this.f_25163_.m_146909_()) < 10.0F) || !this.f_25163_.m_20069_()) && !this.f_25163_.m_20096_();
++      return (!(d0 * d0 < (double)0.03F) || this.f_25163_.m_146909_() == 0.0F || !(Math.abs(this.f_25163_.m_146909_()) < 10.0F) || !(this.f_25163_.m_20069_() || this.f_25163_.isInFluidType((fluidType, height) -> this.f_25163_.canSwimInFluidType(fluidType)))) && !this.f_25163_.m_20096_();
+    }
+ 
+    public boolean m_6767_() {
+@@ -71,7 +_,7 @@
+       boolean flag = this.f_25165_;
+       if (!flag) {
+          FluidState fluidstate = this.f_25163_.f_19853_.m_6425_(this.f_25163_.m_20183_());
+-         this.f_25165_ = fluidstate.m_205070_(FluidTags.f_13131_);
++         this.f_25165_ = this.f_25163_.canSwimInFluidType(fluidstate.getFluidType());
+       }
+ 
+       if (this.f_25165_ && !flag) {

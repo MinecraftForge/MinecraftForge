@@ -8,7 +8,9 @@ package net.minecraftforge.common;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.*;
+import java.util.function.BiPredicate;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -45,6 +47,7 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.DefaultAttributes;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.animal.Dolphin;
 import net.minecraft.world.entity.monster.EnderMan;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -1443,5 +1446,12 @@ public class ForgeHooks
     public static String prefixNamespace(ResourceLocation registryKey)
     {
         return registryKey.getNamespace().equals("minecraft") ? registryKey.getPath() : registryKey.getNamespace() +  "/"  + registryKey.getPath();
+    }
+
+    private static final BiPredicate<Dolphin, ItemEntity> DOLPHIN_ALLOWED_ITEMS = (dolphin, item) -> !item.hasPickUpDelay() && item.isAlive() && item.isInFluidType(((fluidType, height) -> dolphin.canSwimInFluidType(fluidType)));
+
+    public static Predicate<ItemEntity> dolphinAllowedItems(Dolphin dolphin)
+    {
+        return item -> DOLPHIN_ALLOWED_ITEMS.test(dolphin, item);
     }
 }
