@@ -224,6 +224,7 @@ public class ModList
     public void forEachModInOrder(Consumer<ModContainer> containerConsumer) {
         this.sortedContainers.forEach(containerConsumer);
     }
+
     public <T> Stream<T> applyForEachModContainer(Function<ModContainer, T> function) {
         return indexedMods.values().stream().map(function);
     }
