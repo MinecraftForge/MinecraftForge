@@ -102,7 +102,6 @@ import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.common.util.Lazy;
 import net.minecraftforge.common.util.MavenVersionStringHelper;
 import net.minecraftforge.common.world.BiomeGenerationSettingsBuilder;
-import net.minecraftforge.common.world.ForgeWorldPreset;
 import net.minecraftforge.common.world.MobSpawnSettingsBuilder;
 import net.minecraftforge.event.AnvilUpdateEvent;
 import net.minecraftforge.event.DifficultyChangeEvent;
@@ -822,14 +821,6 @@ public class ForgeHooks
         if (ForgeMod.MILK.filter(milk -> milk == fluid).isPresent() || ForgeMod.FLOWING_MILK.filter(milk -> milk == fluid).isPresent())
             return ForgeMod.MILK_TYPE.get();
         throw new RuntimeException("Mod fluids must override getFluidType.");
-    }
-
-    public static String getDefaultWorldPreset()
-    {
-        ForgeWorldPreset def = ForgeWorldPreset.getDefaultWorldPreset();
-        if (def != null)
-            return ForgeRegistries.WORLD_TYPES.get().getKey(def).toString();
-        return "default";
     }
 
     public static TagKey<Block> getTagFromVanillaTier(Tiers tier)
