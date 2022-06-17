@@ -1,0 +1,11 @@
+--- a/net/minecraft/client/model/TropicalFishModelB.java
++++ b/net/minecraft/client/model/TropicalFishModelB.java
+@@ -41,7 +_,7 @@
+ 
+    public void m_6973_(T p_103977_, float p_103978_, float p_103979_, float p_103980_, float p_103981_, float p_103982_) {
+       float f = 1.0F;
+-      if (!p_103977_.m_20069_()) {
++      if (!(p_103977_.m_20069_() || p_103977_.isInFluidType((fluidType, height) -> p_103977_.canSwimInFluidType(fluidType)))) {
+          f = 1.5F;
+       }
+ 

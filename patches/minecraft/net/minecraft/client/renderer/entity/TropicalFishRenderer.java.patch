@@ -1,0 +1,11 @@
+--- a/net/minecraft/client/renderer/entity/TropicalFishRenderer.java
++++ b/net/minecraft/client/renderer/entity/TropicalFishRenderer.java
+@@ -42,7 +_,7 @@
+       super.m_7523_(p_116226_, p_116227_, p_116228_, p_116229_, p_116230_);
+       float f = 4.3F * Mth.m_14031_(0.6F * p_116228_);
+       p_116227_.m_85845_(Vector3f.f_122225_.m_122240_(f));
+-      if (!p_116226_.m_20069_()) {
++      if (!(p_116226_.m_20069_() || p_116226_.isInFluidType((fluidType, height) -> p_116226_.canSwimInFluidType(fluidType)))) {
+          p_116227_.m_85837_((double)0.2F, (double)0.1F, 0.0D);
+          p_116227_.m_85845_(Vector3f.f_122227_.m_122240_(90.0F));
+       }

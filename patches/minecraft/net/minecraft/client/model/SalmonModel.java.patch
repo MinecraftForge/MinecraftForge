@@ -1,0 +1,11 @@
+--- a/net/minecraft/client/model/SalmonModel.java
++++ b/net/minecraft/client/model/SalmonModel.java
+@@ -45,7 +_,7 @@
+    public void m_6973_(T p_103640_, float p_103641_, float p_103642_, float p_103643_, float p_103644_, float p_103645_) {
+       float f = 1.0F;
+       float f1 = 1.0F;
+-      if (!p_103640_.m_20069_()) {
++      if (!(p_103640_.m_20069_() || p_103640_.isInFluidType((fluidType, height) -> p_103640_.canSwimInFluidType(fluidType)))) {
+          f = 1.3F;
+          f1 = 1.7F;
+       }

@@ -1,0 +1,20 @@
+--- a/net/minecraft/world/entity/ai/behavior/TryFindLand.java
++++ b/net/minecraft/world/entity/ai/behavior/TryFindLand.java
+@@ -29,7 +_,7 @@
+    }
+ 
+    protected boolean m_6114_(ServerLevel p_217428_, PathfinderMob p_217429_) {
+-      return p_217429_.f_19853_.m_6425_(p_217429_.m_20183_()).m_205070_(FluidTags.f_13131_);
++      return p_217429_.canSwimInFluidType(p_217429_.f_19853_.m_6425_(p_217429_.m_20183_()).getFluidType());
+    }
+ 
+    protected void m_6735_(ServerLevel p_217435_, PathfinderMob p_217436_, long p_217437_) {
+@@ -42,7 +_,7 @@
+             if (blockpos1.m_123341_() != blockpos.m_123341_() || blockpos1.m_123343_() != blockpos.m_123343_()) {
+                BlockState blockstate = p_217435_.m_8055_(blockpos1);
+                BlockState blockstate1 = p_217435_.m_8055_(blockpos$mutableblockpos.m_122159_(blockpos1, Direction.DOWN));
+-               if (!blockstate.m_60713_(Blocks.f_49990_) && p_217435_.m_6425_(blockpos1).m_76178_() && blockstate.m_60742_(p_217435_, blockpos1, collisioncontext).m_83281_() && blockstate1.m_60783_(p_217435_, blockpos$mutableblockpos, Direction.UP)) {
++               if (p_217435_.m_6425_(blockpos1).m_76178_() && blockstate.m_60742_(p_217435_, blockpos1, collisioncontext).m_83281_() && blockstate1.m_60783_(p_217435_, blockpos$mutableblockpos, Direction.UP)) {
+                   this.f_217416_ = p_217437_ + 60L;
+                   BehaviorUtils.m_22617_(p_217436_, blockpos1.m_7949_(), this.f_217415_, 1);
+                   return;

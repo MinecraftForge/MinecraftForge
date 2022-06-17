@@ -1,0 +1,11 @@
+--- a/net/minecraft/client/model/CodModel.java
++++ b/net/minecraft/client/model/CodModel.java
+@@ -41,7 +_,7 @@
+ 
+    public void m_6973_(T p_102409_, float p_102410_, float p_102411_, float p_102412_, float p_102413_, float p_102414_) {
+       float f = 1.0F;
+-      if (!p_102409_.m_20069_()) {
++      if (!(p_102409_.m_20069_() || p_102409_.isInFluidType((fluidType, height) -> p_102409_.canSwimInFluidType(fluidType)))) {
+          f = 1.5F;
+       }
+ 

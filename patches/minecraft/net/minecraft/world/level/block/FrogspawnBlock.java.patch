@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/level/block/FrogspawnBlock.java
++++ b/net/minecraft/world/level/block/FrogspawnBlock.java
+@@ -74,7 +_,7 @@
+    private static boolean m_221187_(BlockGetter p_221188_, BlockPos p_221189_) {
+       FluidState fluidstate = p_221188_.m_6425_(p_221189_);
+       FluidState fluidstate1 = p_221188_.m_6425_(p_221189_.m_7494_());
+-      return fluidstate.m_76152_() == Fluids.f_76193_ && fluidstate1.m_76152_() == Fluids.f_76191_;
++      return fluidstate.getFluidType().canSwim() && fluidstate1.m_76152_() == Fluids.f_76191_;
+    }
+ 
+    private void m_221181_(ServerLevel p_221182_, BlockPos p_221183_, RandomSource p_221184_) {

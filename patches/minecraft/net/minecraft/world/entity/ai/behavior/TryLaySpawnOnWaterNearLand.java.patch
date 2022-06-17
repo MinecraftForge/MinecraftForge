@@ -1,0 +1,20 @@
+--- a/net/minecraft/world/entity/ai/behavior/TryLaySpawnOnWaterNearLand.java
++++ b/net/minecraft/world/entity/ai/behavior/TryLaySpawnOnWaterNearLand.java
+@@ -24,7 +_,7 @@
+    }
+ 
+    protected boolean m_6114_(ServerLevel p_217483_, Frog p_217484_) {
+-      return !p_217484_.m_20069_() && p_217484_.m_20096_();
++      return !(p_217484_.m_20069_() || p_217484_.isInFluidType((fluidType, height) -> p_217484_.canSwimInFluidType(fluidType))) && p_217484_.m_20096_();
+    }
+ 
+    protected void m_6735_(ServerLevel p_217486_, Frog p_217487_, long p_217488_) {
+@@ -32,7 +_,7 @@
+ 
+       for(Direction direction : Direction.Plane.HORIZONTAL) {
+          BlockPos blockpos1 = blockpos.m_121945_(direction);
+-         if (p_217486_.m_8055_(blockpos1).m_60713_(Blocks.f_49990_)) {
++         if (p_217487_.canSwimInFluidType(p_217486_.m_8055_(blockpos1).m_60819_().getFluidType())) {
+             BlockPos blockpos2 = blockpos1.m_7494_();
+             if (p_217486_.m_8055_(blockpos2).m_60795_()) {
+                p_217486_.m_7731_(blockpos2, this.f_217470_.m_49966_(), 3);

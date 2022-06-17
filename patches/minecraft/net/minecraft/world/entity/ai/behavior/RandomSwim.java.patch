@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/entity/ai/behavior/RandomSwim.java
++++ b/net/minecraft/world/entity/ai/behavior/RandomSwim.java
+@@ -14,7 +_,7 @@
+    }
+ 
+    protected boolean m_6114_(ServerLevel p_147858_, PathfinderMob p_147859_) {
+-      return p_147859_.m_20072_();
++      return p_147859_.m_20072_() || p_147859_.isInFluidType((fluidType, height) -> p_147859_.canSwimInFluidType(fluidType));
+    }
+ 
+    @Nullable

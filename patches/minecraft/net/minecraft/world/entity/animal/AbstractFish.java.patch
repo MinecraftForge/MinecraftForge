@@ -1,0 +1,29 @@
+--- a/net/minecraft/world/entity/animal/AbstractFish.java
++++ b/net/minecraft/world/entity/animal/AbstractFish.java
+@@ -94,7 +_,7 @@
+    }
+ 
+    public void m_7023_(Vec3 p_27490_) {
+-      if (this.m_6142_() && this.m_20069_()) {
++      if (this.m_6142_() && (this.m_20069_() || this.isInFluidType((fluidType, height) -> this.canSwimInFluidType(fluidType)))) {
+          this.m_19920_(0.01F, p_27490_);
+          this.m_6478_(MoverType.SELF, this.m_20184_());
+          this.m_20256_(this.m_20184_().m_82490_(0.9D));
+@@ -108,7 +_,7 @@
+    }
+ 
+    public void m_8107_() {
+-      if (!this.m_20069_() && this.f_19861_ && this.f_19863_) {
++      if (!(this.m_20069_() || this.isInFluidType((fluidType, height) -> this.canSwimInFluidType(fluidType))) && this.f_19861_ && this.f_19863_) {
+          this.m_20256_(this.m_20184_().m_82520_((double)((this.f_19796_.m_188501_() * 2.0F - 1.0F) * 0.05F), (double)0.4F, (double)((this.f_19796_.m_188501_() * 2.0F - 1.0F) * 0.05F)));
+          this.f_19861_ = false;
+          this.f_19812_ = true;
+@@ -156,7 +_,7 @@
+       }
+ 
+       public void m_8126_() {
+-         if (this.f_27499_.m_204029_(FluidTags.f_13131_)) {
++         if (this.f_27499_.canSwimInFluidType(this.f_27499_.getEyeInFluidType())) {
+             this.f_27499_.m_20256_(this.f_27499_.m_20184_().m_82520_(0.0D, 0.005D, 0.0D));
+          }
+ 

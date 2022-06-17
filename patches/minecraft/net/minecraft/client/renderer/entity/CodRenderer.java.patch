@@ -1,0 +1,11 @@
+--- a/net/minecraft/client/renderer/entity/CodRenderer.java
++++ b/net/minecraft/client/renderer/entity/CodRenderer.java
+@@ -26,7 +_,7 @@
+       super.m_7523_(p_114017_, p_114018_, p_114019_, p_114020_, p_114021_);
+       float f = 4.3F * Mth.m_14031_(0.6F * p_114019_);
+       p_114018_.m_85845_(Vector3f.f_122225_.m_122240_(f));
+-      if (!p_114017_.m_20069_()) {
++      if (!(p_114017_.m_20069_() || p_114017_.isInFluidType((fluidType, height) -> p_114017_.canSwimInFluidType(fluidType)))) {
+          p_114018_.m_85837_((double)0.1F, (double)0.1F, (double)-0.1F);
+          p_114018_.m_85845_(Vector3f.f_122227_.m_122240_(90.0F));
+       }

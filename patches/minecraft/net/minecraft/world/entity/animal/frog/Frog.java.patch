@@ -1,0 +1,34 @@
+--- a/net/minecraft/world/entity/animal/frog/Frog.java
++++ b/net/minecraft/world/entity/animal/frog/Frog.java
+@@ -158,11 +_,11 @@
+    }
+ 
+    private boolean m_218526_() {
+-      return this.f_19861_ && this.m_20184_().m_165925_() > 1.0E-6D && !this.m_20072_();
++      return this.f_19861_ && this.m_20184_().m_165925_() > 1.0E-6D && !(this.m_20072_() || this.isInFluidType((fluidType, height) -> this.canSwimInFluidType(fluidType)));
+    }
+ 
+    private boolean m_218527_() {
+-      return this.m_20184_().m_165925_() > 1.0E-6D && this.m_20072_();
++      return this.m_20184_().m_165925_() > 1.0E-6D && (this.m_20072_() || this.isInFluidType((fluidType, height) -> this.canSwimInFluidType(fluidType)));
+    }
+ 
+    protected void m_8024_() {
+@@ -186,7 +_,7 @@
+          if (this.m_218527_()) {
+             this.f_218464_.m_216973_();
+             this.f_218463_.m_216982_(this.f_19797_);
+-         } else if (this.m_20072_()) {
++         } else if (this.m_20072_() || this.isInFluidType((fluidType, height) -> this.canSwimInFluidType(fluidType))) {
+             this.f_218463_.m_216973_();
+             this.f_218464_.m_216982_(this.f_19797_);
+          } else {
+@@ -314,7 +_,7 @@
+    }
+ 
+    public void m_7023_(Vec3 p_218530_) {
+-      if (this.m_6142_() && this.m_20069_()) {
++      if (this.m_6142_() && (this.m_20069_() || this.isInFluidType((fluidType, height) -> this.canSwimInFluidType(fluidType)))) {
+          this.m_19920_(this.m_6113_(), p_218530_);
+          this.m_6478_(MoverType.SELF, this.m_20184_());
+          this.m_20256_(this.m_20184_().m_82490_(0.9D));

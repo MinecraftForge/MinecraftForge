@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/entity/animal/frog/TadpoleAi.java
++++ b/net/minecraft/world/entity/animal/frog/TadpoleAi.java
+@@ -45,7 +_,7 @@
+    private static void m_218747_(Brain<Tadpole> p_218748_) {
+       p_218748_.m_21900_(Activity.f_37979_, ImmutableList.of(Pair.of(0, new RunSometimes<>(new SetEntityLookTarget(EntityType.f_20532_, 6.0F), UniformInt.m_146622_(30, 60))), Pair.of(1, new FollowTemptation((p_218740_) -> {
+          return 1.25F;
+-      })), Pair.of(2, new GateBehavior<>(ImmutableMap.of(MemoryModuleType.f_26370_, MemoryStatus.VALUE_ABSENT), ImmutableSet.of(), GateBehavior.OrderPolicy.ORDERED, GateBehavior.RunningPolicy.TRY_ALL, ImmutableList.of(Pair.of(new RandomSwim(0.5F), 2), Pair.of(new SetWalkTargetFromLookTarget(0.5F, 3), 3), Pair.of(new RunIf<>(Entity::m_20072_, new DoNothing(30, 60)), 5))))));
++      })), Pair.of(2, new GateBehavior<>(ImmutableMap.of(MemoryModuleType.f_26370_, MemoryStatus.VALUE_ABSENT), ImmutableSet.of(), GateBehavior.OrderPolicy.ORDERED, GateBehavior.RunningPolicy.TRY_ALL, ImmutableList.of(Pair.of(new RandomSwim(0.5F), 2), Pair.of(new SetWalkTargetFromLookTarget(0.5F, 3), 3), Pair.of(new RunIf<>(tadpole -> tadpole.m_20072_() || tadpole.isInFluidType((fluidType, height) -> tadpole.canSwimInFluidType(fluidType)), new DoNothing(30, 60)), 5))))));
+    }
+ 
+    public static void m_218743_(Tadpole p_218744_) {

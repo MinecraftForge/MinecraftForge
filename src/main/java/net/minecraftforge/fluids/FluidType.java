@@ -144,6 +144,16 @@ public class FluidType
     }
 
     /**
+     * Returns whether the fluid can be swum in.
+     *
+     * @return {@code true} if the fluid can be swum in, {@code false} otherwise
+     */
+    public boolean canSwim()
+    {
+        return this.canSwim;
+    }
+
+    /**
      * Returns the light level emitted by the fluid.
      *
      * <p>Note: This should be a value between {@code [0,15]}. If not specified, the
@@ -260,7 +270,7 @@ public class FluidType
      */
     public boolean canSwim(Entity entity)
     {
-        return this.canSwim;
+        return this.canSwim();
     }
 
     /**

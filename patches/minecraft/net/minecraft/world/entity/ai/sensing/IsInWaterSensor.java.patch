@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/entity/ai/sensing/IsInWaterSensor.java
++++ b/net/minecraft/world/entity/ai/sensing/IsInWaterSensor.java
+@@ -13,7 +_,7 @@
+    }
+ 
+    protected void m_5578_(ServerLevel p_217816_, LivingEntity p_217817_) {
+-      if (p_217817_.m_20069_()) {
++      if (p_217817_.m_20069_() || p_217817_.isInFluidType((fluidType, height) -> p_217817_.canSwimInFluidType(fluidType))) {
+          p_217817_.m_6274_().m_21879_(MemoryModuleType.f_217766_, Unit.INSTANCE);
+       } else {
+          p_217817_.m_6274_().m_21936_(MemoryModuleType.f_217766_);

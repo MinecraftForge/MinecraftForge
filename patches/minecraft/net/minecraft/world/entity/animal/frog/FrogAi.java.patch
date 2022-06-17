@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/entity/animal/frog/FrogAi.java
++++ b/net/minecraft/world/entity/animal/frog/FrogAi.java
+@@ -87,7 +_,7 @@
+          return 1.25F;
+       })), Pair.of(2, new StartAttacking<>(FrogAi::m_218588_, (p_218601_) -> {
+          return p_218601_.m_6274_().m_21952_(MemoryModuleType.f_148194_);
+-      })), Pair.of(3, new TryFindLand(8, 1.5F)), Pair.of(5, new GateBehavior<>(ImmutableMap.of(MemoryModuleType.f_26370_, MemoryStatus.VALUE_ABSENT), ImmutableSet.of(), GateBehavior.OrderPolicy.ORDERED, GateBehavior.RunningPolicy.TRY_ALL, ImmutableList.of(Pair.of(new RandomSwim(0.75F), 1), Pair.of(new RandomStroll(1.0F, true), 1), Pair.of(new SetWalkTargetFromLookTarget(1.0F, 3), 1), Pair.of(new RunIf<>(Entity::m_20072_, new DoNothing(30, 60)), 5))))), ImmutableSet.of(Pair.of(MemoryModuleType.f_148200_, MemoryStatus.VALUE_ABSENT), Pair.of(MemoryModuleType.f_217766_, MemoryStatus.VALUE_PRESENT)));
++      })), Pair.of(3, new TryFindLand(8, 1.5F)), Pair.of(5, new GateBehavior<>(ImmutableMap.of(MemoryModuleType.f_26370_, MemoryStatus.VALUE_ABSENT), ImmutableSet.of(), GateBehavior.OrderPolicy.ORDERED, GateBehavior.RunningPolicy.TRY_ALL, ImmutableList.of(Pair.of(new RandomSwim(0.75F), 1), Pair.of(new RandomStroll(1.0F, true), 1), Pair.of(new SetWalkTargetFromLookTarget(1.0F, 3), 1), Pair.of(new RunIf<>(frog -> frog.m_20072_() || frog.isInFluidType((fluidType, height) -> frog.canSwimInFluidType(fluidType)), new DoNothing(30, 60)), 5))))), ImmutableSet.of(Pair.of(MemoryModuleType.f_148200_, MemoryStatus.VALUE_ABSENT), Pair.of(MemoryModuleType.f_217766_, MemoryStatus.VALUE_PRESENT)));
+    }
+ 
+    private static void m_218598_(Brain<Frog> p_218599_) {

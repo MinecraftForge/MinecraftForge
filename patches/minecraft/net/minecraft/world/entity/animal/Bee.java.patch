@@ -1,5 +1,14 @@
 --- a/net/minecraft/world/entity/animal/Bee.java
 +++ b/net/minecraft/world/entity/animal/Bee.java
+@@ -340,7 +_,7 @@
+ 
+    protected void m_8024_() {
+       boolean flag = this.m_27857_();
+-      if (this.m_20072_()) {
++      if (this.m_20072_() || this.isInFluidType((fluidType, height) -> this.canDrownInFluidType(fluidType))) {
+          ++this.f_27702_;
+       } else {
+          this.f_27702_ = 0;
 @@ -472,7 +_,7 @@
           return false;
        } else {
