@@ -1,0 +1,80 @@
+--- a/net/minecraft/world/entity/monster/Drowned.java
++++ b/net/minecraft/world/entity/monster/Drowned.java
+@@ -174,7 +_,7 @@
+ 
+    public boolean m_32395_(@Nullable LivingEntity p_32396_) {
+       if (p_32396_ != null) {
+-         return !this.f_19853_.m_46461_() || p_32396_.m_20069_();
++         return !this.f_19853_.m_46461_() || (p_32396_.m_20069_() || p_32396_.isInFluidType((fluidType, height) -> p_32396_.canSwimInFluidType(fluidType)));
+       } else {
+          return false;
+       }
+@@ -189,12 +_,12 @@
+          return true;
+       } else {
+          LivingEntity livingentity = this.m_5448_();
+-         return livingentity != null && livingentity.m_20069_();
++         return livingentity != null && (livingentity.m_20069_() || livingentity.isInFluidType((fluidType, height) -> livingentity.canSwimInFluidType(fluidType)));
+       }
+    }
+ 
+    public void m_7023_(Vec3 p_32394_) {
+-      if (this.m_6142_() && this.m_20069_() && this.m_32392_()) {
++      if (this.m_6142_() && (this.m_20069_() || this.isInFluidType((fluidType, height) -> this.canSwimInFluidType(fluidType))) && this.m_32392_()) {
+          this.m_19920_(0.01F, p_32394_);
+          this.m_6478_(MoverType.SELF, this.m_20184_());
+          this.m_20256_(this.m_20184_().m_82490_(0.9D));
+@@ -206,7 +_,7 @@
+ 
+    public void m_5844_() {
+       if (!this.f_19853_.f_46443_) {
+-         if (this.m_6142_() && this.m_20069_() && this.m_32392_()) {
++         if (this.m_6142_() && (this.m_20069_() || this.isInFluidType((fluidType, height) -> this.canSwimInFluidType(fluidType))) && this.m_32392_()) {
+             this.f_21344_ = this.f_32340_;
+             this.m_20282_(true);
+          } else {
+@@ -273,7 +_,7 @@
+       }
+ 
+       public boolean m_8036_() {
+-         return super.m_8036_() && !this.f_32407_.f_19853_.m_46461_() && this.f_32407_.m_20069_() && this.f_32407_.m_20186_() >= (double)(this.f_32407_.f_19853_.m_5736_() - 3);
++         return super.m_8036_() && !this.f_32407_.f_19853_.m_46461_() && (this.f_32407_.m_20069_() || this.f_32407_.isInFluidType((fluidType, height) -> this.f_32407_.canSwimInFluidType(fluidType))) && this.f_32407_.m_20186_() >= (double)(this.f_32407_.f_19853_.m_5736_() - 3);
+       }
+ 
+       public boolean m_8045_() {
+@@ -314,7 +_,7 @@
+       public boolean m_8036_() {
+          if (!this.f_32423_.m_46461_()) {
+             return false;
+-         } else if (this.f_32418_.m_20069_()) {
++         } else if (this.f_32418_.m_20069_() || this.f_32418_.isInFluidType((fluidType, height) -> this.f_32418_.canSwimInFluidType(fluidType))) {
+             return false;
+          } else {
+             Vec3 vec3 = this.m_32430_();
+@@ -344,7 +_,7 @@
+ 
+          for(int i = 0; i < 10; ++i) {
+             BlockPos blockpos1 = blockpos.m_7918_(randomsource.m_188503_(20) - 10, 2 - randomsource.m_188503_(8), randomsource.m_188503_(20) - 10);
+-            if (this.f_32423_.m_8055_(blockpos1).m_60713_(Blocks.f_49990_)) {
++            if (this.f_32418_.canSwimInFluidType(this.f_32423_.m_8055_(blockpos1).m_60819_().getFluidType())) {
+                return Vec3.m_82539_(blockpos1);
+             }
+          }
+@@ -363,7 +_,7 @@
+ 
+       public void m_8126_() {
+          LivingEntity livingentity = this.f_32431_.m_5448_();
+-         if (this.f_32431_.m_32392_() && this.f_32431_.m_20069_()) {
++         if (this.f_32431_.m_32392_() && (this.f_32431_.m_20069_() || this.f_32431_.isInFluidType((fluidType, height) -> this.f_32431_.canSwimInFluidType(fluidType)))) {
+             if (livingentity != null && livingentity.m_20186_() > this.f_32431_.m_20186_() || this.f_32431_.f_32342_) {
+                this.f_32431_.m_20256_(this.f_32431_.m_20184_().m_82520_(0.0D, 0.002D, 0.0D));
+             }
+@@ -409,7 +_,7 @@
+       }
+ 
+       public boolean m_8036_() {
+-         return !this.f_32435_.f_19853_.m_46461_() && this.f_32435_.m_20069_() && this.f_32435_.m_20186_() < (double)(this.f_32437_ - 2);
++         return !this.f_32435_.f_19853_.m_46461_() && (this.f_32435_.m_20069_() || this.f_32435_.isInFluidType((fluidType, height) -> this.f_32435_.canSwimInFluidType(fluidType))) && this.f_32435_.m_20186_() < (double)(this.f_32437_ - 2);
+       }
+ 
+       public boolean m_8045_() {
