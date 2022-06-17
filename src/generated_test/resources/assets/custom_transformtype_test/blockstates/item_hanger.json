@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "custom_transformtype_test:block/item_hanger",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "custom_transformtype_test:block/item_hanger"
+    },
+    "facing=south": {
+      "model": "custom_transformtype_test:block/item_hanger",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "custom_transformtype_test:block/item_hanger",
+      "y": 270
+    }
+  }
+}

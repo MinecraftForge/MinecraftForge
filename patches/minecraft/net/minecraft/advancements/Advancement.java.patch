@@ -1,16 +1,15 @@
 --- a/net/minecraft/advancements/Advancement.java
 +++ b/net/minecraft/advancements/Advancement.java
-@@ -129,8 +_,8 @@
+@@ -127,7 +_,7 @@
        return this.f_138305_;
     }
  
 -   public static class Builder {
-       @Nullable
 +   public static class Builder implements net.minecraftforge.common.extensions.IForgeAdvancementBuilder {
+       @Nullable
        private ResourceLocation f_138332_;
        @Nullable
-       private Advancement f_138333_;
-@@ -320,7 +_,14 @@
+@@ -308,7 +_,14 @@
           return "Task Advancement{parentId=" + this.f_138332_ + ", display=" + this.f_138334_ + ", rewards=" + this.f_138335_ + ", criteria=" + this.f_138336_ + ", requirements=" + Arrays.deepToString(this.f_138337_) + "}";
        }
  

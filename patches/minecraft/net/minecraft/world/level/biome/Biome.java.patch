@@ -1,22 +1,75 @@
 --- a/net/minecraft/world/level/biome/Biome.java
 +++ b/net/minecraft/world/level/biome/Biome.java
-@@ -34,7 +_,7 @@
- import net.minecraft.world.level.material.FluidState;
- import net.minecraft.world.level.material.Fluids;
+@@ -34,9 +_,9 @@
+ public final class Biome {
+    public static final Codec<Biome> f_47429_ = RecordCodecBuilder.create((p_220544_) -> {
+       return p_220544_.group(Biome.ClimateSettings.f_47679_.forGetter((p_151717_) -> {
+-         return p_151717_.f_47437_;
++         return p_151717_.modifiableBiomeInfo().getOriginalBiomeInfo().climateSettings(); // FORGE: Patch codec to ignore field redirect coremods.
+       }), BiomeSpecialEffects.f_47926_.fieldOf("effects").forGetter((p_220550_) -> {
+-         return p_220550_.f_47443_;
++         return p_220550_.modifiableBiomeInfo().getOriginalBiomeInfo().effects(); // FORGE: Patch codec to ignore field redirect coremods.
+       }), BiomeGenerationSettings.f_47778_.forGetter((p_220548_) -> {
+          return p_220548_.f_47438_;
+       }), MobSpawnSettings.f_48327_.forGetter((p_220546_) -> {
+@@ -82,6 +_,7 @@
+       this.f_47438_ = p_220532_;
+       this.f_47439_ = p_220533_;
+       this.f_47443_ = p_220531_;
++      this.modifiableBiomeInfo = new net.minecraftforge.common.world.ModifiableBiomeInfo(new net.minecraftforge.common.world.ModifiableBiomeInfo.BiomeInfo(p_220530_, p_220531_, p_220532_, p_220533_)); // FORGE: cache original biome info on construction so we can bypass our field read coremods where necessary
+    }
  
--public final class Biome {
-+public final class Biome extends net.minecraftforge.registries.ForgeRegistryEntry.UncheckedRegistryEntry<Biome> {
-    public static final Codec<Biome> f_47429_ = RecordCodecBuilder.create((p_186636_) -> {
-       return p_186636_.group(Biome.ClimateSettings.f_47679_.forGetter((p_151717_) -> {
-          return p_151717_.f_47437_;
-@@ -46,7 +_,9 @@
-          return p_186642_.f_47438_;
-       }), MobSpawnSettings.f_48327_.forGetter((p_186640_) -> {
-          return p_186640_.f_47439_;
--      })).apply(p_186636_, Biome::new);
-+      }), net.minecraft.resources.ResourceLocation.f_135803_.optionalFieldOf("forge:registry_name").forGetter(b -> Optional.ofNullable(b.getRegistryName())))
-+      .apply(p_186636_, (climate, category, effects, gen, spawns, name) ->
-+          net.minecraftforge.common.ForgeHooks.enhanceBiome(name.orElse(null), climate, category, effects, gen, spawns, p_186636_, Biome::new));
-    });
-    public static final Codec<Biome> f_47430_ = RecordCodecBuilder.create((p_186632_) -> {
-       return p_186632_.group(Biome.ClimateSettings.f_47679_.forGetter((p_186638_) -> {
+    public int m_47463_() {
+@@ -89,7 +_,7 @@
+    }
+ 
+    public MobSpawnSettings m_47518_() {
+-      return this.f_47439_;
++      return this.modifiableBiomeInfo().get().mobSpawnSettings();
+    }
+ 
+    public Biome.Precipitation m_47530_() {
+@@ -188,7 +_,7 @@
+    }
+ 
+    public BiomeGenerationSettings m_47536_() {
+-      return this.f_47438_;
++      return this.modifiableBiomeInfo().get().generationSettings();
+    }
+ 
+    public int m_47539_() {
+@@ -393,4 +_,34 @@
+          return this.f_47738_;
+       }
+    }
++
++   // FORGE START
++
++   private final net.minecraftforge.common.world.ModifiableBiomeInfo modifiableBiomeInfo;
++
++   /**
++    * {@return Cache of original biome data and biome data modified by biome modifiers}
++    * Modified biome data is set by server after datapacks and serverconfigs load.
++    * Climate and effects field reads are coremodded to redirect to this.
++    **/
++   public net.minecraftforge.common.world.ModifiableBiomeInfo modifiableBiomeInfo()
++   {
++       return this.modifiableBiomeInfo;
++   }
++
++   /**
++    * {@return The biome's climate settings, with modifications if called after modifiers are applied in server init.}
++    */
++   public ClimateSettings getModifiedClimateSettings() {
++      return this.modifiableBiomeInfo().get().climateSettings();
++   }
++
++   /**
++    * {@return The biome's client effects, with modifications if called after modifiers are applied in server init.}
++    */
++   public BiomeSpecialEffects getModifiedSpecialEffects() {
++      return this.modifiableBiomeInfo().get().effects();
++   }
++
++   // FORGE END
+ }

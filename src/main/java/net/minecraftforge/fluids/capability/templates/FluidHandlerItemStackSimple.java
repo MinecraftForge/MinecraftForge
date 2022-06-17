@@ -1,12 +1,9 @@
 /*
- * Minecraft Forge - Forge Development LLC
+ * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
 package net.minecraftforge.fluids.capability.templates;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
@@ -18,7 +15,8 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 
-import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * FluidHandlerItemStackSimple is a template capability provider for ItemStacks.
@@ -32,7 +30,7 @@ public class FluidHandlerItemStackSimple implements IFluidHandlerItem, ICapabili
 
     private final LazyOptional<IFluidHandlerItem> holder = LazyOptional.of(() -> this);
 
-    @Nonnull
+    @NotNull
     protected ItemStack container;
     protected int capacity;
 
@@ -40,20 +38,20 @@ public class FluidHandlerItemStackSimple implements IFluidHandlerItem, ICapabili
      * @param container  The container itemStack, data is stored on it directly as NBT.
      * @param capacity   The maximum capacity of this fluid tank.
      */
-    public FluidHandlerItemStackSimple(@Nonnull ItemStack container, int capacity)
+    public FluidHandlerItemStackSimple(@NotNull ItemStack container, int capacity)
     {
         this.container = container;
         this.capacity = capacity;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public ItemStack getContainer()
     {
         return container;
     }
 
-    @Nonnull
+    @NotNull
     public FluidStack getFluid()
     {
         CompoundTag tagCompound = container.getTag();
@@ -82,7 +80,7 @@ public class FluidHandlerItemStackSimple implements IFluidHandlerItem, ICapabili
         return 1;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public FluidStack getFluidInTank(int tank) {
 
@@ -96,13 +94,13 @@ public class FluidHandlerItemStackSimple implements IFluidHandlerItem, ICapabili
     }
 
     @Override
-    public boolean isFluidValid(int tank, @Nonnull FluidStack stack) {
+    public boolean isFluidValid(int tank, @NotNull FluidStack stack) {
 
         return true;
     }
 
     @Override
-    public int fill(@Nonnull FluidStack resource, FluidAction action)
+    public int fill(@NotNull FluidStack resource, FluidAction action)
     {
         if (container.getCount() != 1 || resource.isEmpty() || !canFillFluidType(resource))
         {
@@ -127,7 +125,7 @@ public class FluidHandlerItemStackSimple implements IFluidHandlerItem, ICapabili
         return 0;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public FluidStack drain(FluidStack resource, FluidAction action)
     {
@@ -138,7 +136,7 @@ public class FluidHandlerItemStackSimple implements IFluidHandlerItem, ICapabili
         return drain(resource.getAmount(), action);
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public FluidStack drain(int maxDrain, FluidAction action)
     {
@@ -188,8 +186,8 @@ public class FluidHandlerItemStackSimple implements IFluidHandlerItem, ICapabili
     }
 
     @Override
-    @Nonnull
-    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> capability, @Nullable Direction facing)
+    @NotNull
+    public <T> LazyOptional<T> getCapability(@NotNull Capability<T> capability, @Nullable Direction facing)
     {
         return CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY.orEmpty(capability, holder);
     }

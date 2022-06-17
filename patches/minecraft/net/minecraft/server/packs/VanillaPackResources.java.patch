@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/packs/VanillaPackResources.java
 +++ b/net/minecraft/server/packs/VanillaPackResources.java
-@@ -203,7 +_,7 @@
+@@ -209,7 +_,7 @@
  
        try {
           URL url = VanillaPackResources.class.getResource(s);
@@ -9,7 +9,7 @@
        } catch (IOException ioexception) {
           return VanillaPackResources.class.getResourceAsStream(s);
        }
-@@ -219,7 +_,7 @@
+@@ -225,7 +_,7 @@
  
     @Nullable
     protected InputStream m_5539_(String p_10334_) {
@@ -18,7 +18,7 @@
     }
  
     public boolean m_7211_(PackType p_10355_, ResourceLocation p_10356_) {
-@@ -292,6 +_,20 @@
+@@ -298,6 +_,20 @@
     }
  
     public void close() {
@@ -38,4 +38,4 @@
 +      }
     }
  
-    public Resource m_142591_(final ResourceLocation p_143764_) throws IOException {
+    public ResourceProvider m_215363_() {

@@ -1,5 +1,5 @@
 /*
- * Minecraft Forge - Forge Development LLC
+ * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
@@ -11,6 +11,9 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.level.material.FluidState;
+import net.minecraftforge.fluids.FluidType;
 
 public class RenderProperties
 {
@@ -42,6 +45,21 @@ public class RenderProperties
     public static IBlockRenderProperties get(Block block)
     {
         return block.getRenderPropertiesInternal() instanceof IBlockRenderProperties props ? props : IBlockRenderProperties.DUMMY;
+    }
+
+    public static IFluidTypeRenderProperties get(FluidState state)
+    {
+        return get(state.getFluidType());
+    }
+
+    public static IFluidTypeRenderProperties get(Fluid fluid)
+    {
+        return get(fluid.getFluidType());
+    }
+
+    public static IFluidTypeRenderProperties get(FluidType type)
+    {
+        return type.getRenderPropertiesInternal() instanceof IFluidTypeRenderProperties props ? props : IFluidTypeRenderProperties.DUMMY;
     }
 
     private RenderProperties()

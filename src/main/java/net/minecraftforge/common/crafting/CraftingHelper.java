@@ -1,5 +1,5 @@
 /*
- * Minecraft Forge - Forge Development LLC
+ * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
@@ -9,8 +9,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-
-import javax.annotation.Nullable;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
@@ -40,6 +38,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
+import org.jetbrains.annotations.Nullable;
 
 public class CraftingHelper
 {
@@ -199,27 +198,9 @@ public class CraftingHelper
         return new ItemStack(item, GsonHelper.getAsInt(json, "count", 1));
     }
 
-    /**
-     * @deprecated Please use the {@linkplain #processConditions(JsonObject, String, ICondition.IContext) other more general overload}.
-     */
-    @Deprecated(forRemoval = true, since = "1.18.2")
-    public static boolean processConditions(JsonObject json, String memberName)
-    {
-        return processConditions(json, memberName, ICondition.IContext.EMPTY);
-    }
-
     public static boolean processConditions(JsonObject json, String memberName, ICondition.IContext context)
     {
         return !json.has(memberName) || processConditions(GsonHelper.getAsJsonArray(json, memberName), context);
-    }
-
-    /**
-     * @deprecated Please use the {@linkplain #processConditions(JsonArray, ICondition.IContext) other more general overload}.
-     */
-    @Deprecated(forRemoval = true, since = "1.18.2")
-    public static boolean processConditions(JsonArray conditions)
-    {
-        return processConditions(conditions, ICondition.IContext.EMPTY);
     }
 
     public static boolean processConditions(JsonArray conditions, ICondition.IContext context)

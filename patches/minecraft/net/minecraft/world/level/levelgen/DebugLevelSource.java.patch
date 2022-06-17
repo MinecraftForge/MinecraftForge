@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/levelgen/DebugLevelSource.java
 +++ b/net/minecraft/world/level/levelgen/DebugLevelSource.java
-@@ -117,6 +_,12 @@
+@@ -112,6 +_,12 @@
  
        return blockstate;
     }
@@ -11,5 +11,5 @@
 +      f_64116_ = Mth.m_14167_((float) (f_64114_.size() / f_64115_));
 +   }
  
-    public Climate.Sampler m_183403_() {
-       return Climate.m_207841_();
+    public void m_213679_(WorldGenRegion p_223970_, long p_223971_, RandomState p_223972_, BiomeManager p_223973_, StructureManager p_223974_, ChunkAccess p_223975_, GenerationStep.Carving p_223976_) {
+    }

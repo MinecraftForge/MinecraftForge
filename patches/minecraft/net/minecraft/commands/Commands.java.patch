@@ -1,6 +1,6 @@
 --- a/net/minecraft/commands/Commands.java
 +++ b/net/minecraft/commands/Commands.java
-@@ -177,7 +_,7 @@
+@@ -175,7 +_,7 @@
           JfrCommand.m_183645_(this.f_82090_);
        }
  
@@ -9,15 +9,15 @@
           TestCommand.m_127946_(this.f_82090_);
        }
  
-@@ -201,6 +_,7 @@
-       if (p_82093_.f_82144_) {
+@@ -199,6 +_,7 @@
+       if (p_230943_.f_82144_) {
           PublishCommand.m_138184_(this.f_82090_);
        }
-+      net.minecraftforge.event.ForgeEventFactory.onCommandRegister(this.f_82090_, p_82093_);
++      net.minecraftforge.event.ForgeEventFactory.onCommandRegister(this.f_82090_, p_230943_, p_230944_);
  
-       this.f_82090_.findAmbiguities((p_82108_, p_82109_, p_82110_, p_82111_) -> {
-          f_82089_.warn("Ambiguity between arguments {} and {} with inputs: {}", this.f_82090_.getPath(p_82109_), this.f_82090_.getPath(p_82110_), p_82111_);
-@@ -220,7 +_,15 @@
+       this.f_82090_.setConsumer((p_230954_, p_230955_, p_230956_) -> {
+          p_230954_.getSource().m_81342_(p_230954_, p_230955_, p_230956_);
+@@ -217,7 +_,17 @@
  
        try {
           try {
@@ -25,7 +25,9 @@
 +            ParseResults<CommandSourceStack> parse = this.f_82090_.parse(stringreader, p_82118_);
 +            net.minecraftforge.event.CommandEvent event = new net.minecraftforge.event.CommandEvent(parse);
 +            if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event)) {
-+               if (event.getException() != null) {
++               if (event.getException() instanceof Exception exception) {
++                  throw exception;
++               } else if (event.getException() != null) {
 +                  com.google.common.base.Throwables.throwIfUnchecked(event.getException());
 +               }
 +               return 1;
@@ -34,3 +36,13 @@
           } catch (CommandRuntimeException commandruntimeexception) {
              p_82118_.m_81352_(commandruntimeexception.m_79226_());
              return 0;
+@@ -273,7 +_,8 @@
+       Map<CommandNode<CommandSourceStack>, CommandNode<SharedSuggestionProvider>> map = Maps.newHashMap();
+       RootCommandNode<SharedSuggestionProvider> rootcommandnode = new RootCommandNode<>();
+       map.put(this.f_82090_.getRoot(), rootcommandnode);
+-      this.m_82112_(this.f_82090_.getRoot(), rootcommandnode, p_82096_.m_20203_(), map);
++      // FORGE: Use our own command node merging method to handle redirect nodes properly, see issue #7551
++      net.minecraftforge.server.command.CommandHelper.mergeCommandNode(this.f_82090_.getRoot(), rootcommandnode, map, p_82096_.m_20203_(), ctx -> 0, suggest -> SuggestionProviders.m_121664_((com.mojang.brigadier.suggestion.SuggestionProvider<SharedSuggestionProvider>) (com.mojang.brigadier.suggestion.SuggestionProvider<?>) suggest));
+       p_82096_.f_8906_.m_9829_(new ClientboundCommandsPacket(rootcommandnode));
+    }
+ 

@@ -1,11 +1,11 @@
 /*
- * Minecraft Forge - Forge Development LLC
+ * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
 package net.minecraftforge.client.model.data;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 public interface IModelData
 {
@@ -16,7 +16,7 @@ public interface IModelData
      * <p>
      * IMPORTANT: {@link #getData(ModelProperty)} <em>can</em> return {@code null}
      * even if this method returns {@code true}.
-     * 
+     *
      * @param prop The property to check for inclusion in this model data
      * @return {@code true} if this data has the given property, even if no value is present
      */
@@ -24,7 +24,7 @@ public interface IModelData
 
     @Nullable
     <T> T getData(ModelProperty<T> prop);
-    
+
     @Nullable
     <T> T setData(ModelProperty<T> prop, T data);
 }

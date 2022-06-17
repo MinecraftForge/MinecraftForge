@@ -1,5 +1,5 @@
 /*
- * Minecraft Forge - Forge Development LLC
+ * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
@@ -14,9 +14,8 @@ import java.util.function.Consumer;
 /**
  * This is the first of four commonly called events during mod initialization.
  *
- * Called before {@link FMLClientSetupEvent} or {@link FMLDedicatedServerSetupEvent} during mod startup.
- *
- * Called after {@link net.minecraftforge.event.RegistryEvent.Register} events have been fired.
+ * Called after {@link net.minecraftforge.registries.RegisterEvent} events have been fired and before 
+ * {@link FMLClientSetupEvent} or {@link FMLDedicatedServerSetupEvent} during mod startup.
  *
  * Either register your listener using {@link net.minecraftforge.fml.javafmlmod.AutomaticEventSubscriber} and
  * {@link net.minecraftforge.eventbus.api.SubscribeEvent} or

@@ -1,0 +1,25 @@
+{
+  "parent": "minecraft:item/generated",
+  "display": {
+    "custom_transformtype_test:hanging": {
+      "rotation": [
+        62,
+        147,
+        40
+      ],
+      "scale": [
+        0.48,
+        0.48,
+        0.48
+      ],
+      "translation": [
+        -2.25,
+        1.5,
+        -0.25
+      ]
+    }
+  },
+  "textures": {
+    "layer0": "minecraft:item/stick"
+  }
+}

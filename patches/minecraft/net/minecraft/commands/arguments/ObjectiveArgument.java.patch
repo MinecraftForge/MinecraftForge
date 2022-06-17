@@ -9,12 +9,12 @@
        Objective objective = scoreboard.m_83477_(s);
        if (objective == null) {
           throw f_101953_.create(s);
-@@ -57,7 +_,7 @@
+@@ -56,7 +_,7 @@
+    public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> p_101974_, SuggestionsBuilder p_101975_) {
        S s = p_101974_.getSource();
-       if (s instanceof CommandSourceStack) {
-          CommandSourceStack commandsourcestack = (CommandSourceStack)s;
+       if (s instanceof CommandSourceStack commandsourcestack) {
 -         return SharedSuggestionProvider.m_82970_(commandsourcestack.m_81377_().m_129896_().m_83474_(), p_101975_);
 +         return SharedSuggestionProvider.m_82970_(commandsourcestack.getScoreboard().m_83474_(), p_101975_);
-       } else if (s instanceof SharedSuggestionProvider) {
-          SharedSuggestionProvider sharedsuggestionprovider = (SharedSuggestionProvider)s;
+       } else if (s instanceof SharedSuggestionProvider sharedsuggestionprovider) {
           return sharedsuggestionprovider.m_212155_(p_101974_);
+       } else {

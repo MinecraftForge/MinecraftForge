@@ -1,20 +1,6 @@
 /*
- * Minecraft Forge
- * Copyright (c) 2016-2021.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation version 2.1
- * of the License.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Copyright (c) Forge Development LLC and contributors
+ * SPDX-License-Identifier: LGPL-2.1-only
  */
 
 package net.minecraftforge.fml.loading;
@@ -24,8 +10,8 @@ import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import com.electronwill.nightconfig.core.file.FileNotFoundAction;
 import com.electronwill.nightconfig.core.io.ParsingException;
 import com.electronwill.nightconfig.core.io.WritingMode;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import com.mojang.logging.LogUtils;
+import org.slf4j.Logger;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -35,7 +21,7 @@ import static net.minecraftforge.fml.loading.LogMarkers.CORE;
 
 public class FMLConfig
 {
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger LOGGER = LogUtils.getLogger();
     private static FMLConfig INSTANCE = new FMLConfig();
     private static ConfigSpec configSpec = new ConfigSpec();
     static {
@@ -74,11 +60,14 @@ public class FMLConfig
     {
         final Path configFile = FMLPaths.FMLCONFIG.get();
         INSTANCE.loadFrom(configFile);
-        LOGGER.trace(CORE, "Loaded FML config from {}", FMLPaths.FMLCONFIG.get());
-        LOGGER.trace(CORE, "Splash screen is {}", FMLConfig::splashScreenEnabled);
-        LOGGER.trace(CORE, "Max threads for mod loading computed at {}", FMLConfig::loadingThreadCount);
-        LOGGER.trace(CORE, "Version check is {}", FMLConfig::runVersionCheck);
-        LOGGER.trace(CORE, "Default config paths at {}", FMLConfig::defaultConfigPath);
+        if (LOGGER.isTraceEnabled(CORE))
+        {
+            LOGGER.trace(CORE, "Loaded FML config from {}", FMLPaths.FMLCONFIG.get());
+            LOGGER.trace(CORE, "Splash screen is {}", FMLConfig.splashScreenEnabled());
+            LOGGER.trace(CORE, "Max threads for mod loading computed at {}", FMLConfig.loadingThreadCount());
+            LOGGER.trace(CORE, "Version check is {}", FMLConfig.runVersionCheck());
+            LOGGER.trace(CORE, "Default config paths at {}", FMLConfig.defaultConfigPath());
+        }
         FMLPaths.getOrCreateGameRelativePath(Paths.get(FMLConfig.defaultConfigPath()), "default config directory");
     }
 

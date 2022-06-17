@@ -1,5 +1,5 @@
 /*
- * Minecraft Forge - Forge Development LLC
+ * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
@@ -10,6 +10,7 @@ import java.util.Random;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.client.renderer.block.ModelBlockRenderer;
@@ -37,46 +38,48 @@ public class ForgeBlockModelRenderer extends ModelBlockRenderer
     }
 
     @Override
-    public boolean tesselateWithoutAO(BlockAndTintGetter level, BakedModel model, BlockState state, BlockPos pos, PoseStack poseStack, VertexConsumer buffer, boolean checkSides, Random rand, long seed, int packedOverlay, IModelData modelData)
+    public void tesselateWithoutAO(BlockAndTintGetter level, BakedModel model, BlockState state, BlockPos pos, PoseStack poseStack, VertexConsumer buffer, boolean checkSides, RandomSource rand, long seed, int packedOverlay, IModelData modelData)
     {
         if(ForgeConfig.CLIENT.experimentalForgeLightPipelineEnabled.get())
         {
             VertexBufferConsumer consumer = consumerFlat.get();
             consumer.setBuffer(buffer);
+            consumer.setPackedOverlay(packedOverlay);
 
             VertexLighterFlat lighter = lighterFlat.get();
             lighter.setParent(consumer);
             lighter.setTransform(poseStack.last());
 
-            return render(lighter, level, model, state, pos, poseStack, checkSides, rand, seed, modelData);
+            render(lighter, level, model, state, pos, poseStack, checkSides, rand, seed, modelData);
         }
         else
         {
-            return super.tesselateWithoutAO(level, model, state, pos, poseStack, buffer, checkSides, rand, seed, packedOverlay, modelData);
+            super.tesselateWithoutAO(level, model, state, pos, poseStack, buffer, checkSides, rand, seed, packedOverlay, modelData);
         }
     }
 
     @Override
-    public boolean tesselateWithAO(BlockAndTintGetter level, BakedModel model, BlockState state, BlockPos pos, PoseStack poseStack, VertexConsumer buffer, boolean checkSides, Random rand, long seed, int packedOverlay, IModelData modelData)
+    public void tesselateWithAO(BlockAndTintGetter level, BakedModel model, BlockState state, BlockPos pos, PoseStack poseStack, VertexConsumer buffer, boolean checkSides, RandomSource rand, long seed, int packedOverlay, IModelData modelData)
     {
         if(ForgeConfig.CLIENT.experimentalForgeLightPipelineEnabled.get())
         {
             VertexBufferConsumer consumer = consumerSmooth.get();
             consumer.setBuffer(buffer);
+            consumer.setPackedOverlay(packedOverlay);
 
             VertexLighterSmoothAo lighter = lighterSmooth.get();
             lighter.setParent(consumer);
             lighter.setTransform(poseStack.last());
 
-            return render(lighter, level, model, state, pos, poseStack, checkSides, rand, seed, modelData);
+            render(lighter, level, model, state, pos, poseStack, checkSides, rand, seed, modelData);
         }
         else
         {
-            return super.tesselateWithAO(level, model, state, pos, poseStack, buffer, checkSides, rand, seed, packedOverlay, modelData);
+            super.tesselateWithAO(level, model, state, pos, poseStack, buffer, checkSides, rand, seed, packedOverlay, modelData);
         }
     }
 
-    public static boolean render(VertexLighterFlat lighter, BlockAndTintGetter level, BakedModel model, BlockState state, BlockPos pos, PoseStack poseStack, boolean checkSides, Random rand, long seed, IModelData modelData)
+    public static boolean render(VertexLighterFlat lighter, BlockAndTintGetter level, BakedModel model, BlockState state, BlockPos pos, PoseStack poseStack, boolean checkSides, RandomSource rand, long seed, IModelData modelData)
     {
         lighter.setWorld(level);
         lighter.setState(state);

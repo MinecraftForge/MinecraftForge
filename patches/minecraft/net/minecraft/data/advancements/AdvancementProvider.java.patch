@@ -1,25 +1,25 @@
 --- a/net/minecraft/data/advancements/AdvancementProvider.java
 +++ b/net/minecraft/data/advancements/AdvancementProvider.java
-@@ -22,11 +_,18 @@
-    private static final Gson f_123961_ = (new GsonBuilder()).setPrettyPrinting().create();
-    private final DataGenerator f_123962_;
+@@ -19,11 +_,18 @@
+    private static final Logger f_123960_ = LogUtils.getLogger();
+    private final DataGenerator.PathProvider f_236156_;
     private final List<Consumer<Consumer<Advancement>>> f_123963_ = ImmutableList.of(new TheEndAdvancements(), new HusbandryAdvancements(), new AdventureAdvancements(), new NetherAdvancements(), new StoryAdvancements());
 +   protected net.minecraftforge.common.data.ExistingFileHelper fileHelper;
  
 +   @Deprecated
     public AdvancementProvider(DataGenerator p_123966_) {
-       this.f_123962_ = p_123966_;
+       this.f_236156_ = p_123966_.m_236036_(DataGenerator.Target.DATA_PACK, "advancements");
     }
  
 +   public AdvancementProvider(DataGenerator generatorIn, net.minecraftforge.common.data.ExistingFileHelper fileHelperIn) {
-+      this.f_123962_ = generatorIn;
++      this.f_236156_ = generatorIn.m_236036_(DataGenerator.Target.DATA_PACK, "advancements");
 +      this.fileHelper = fileHelperIn;
 +   }
 +
-    public void m_6865_(HashCache p_123969_) {
-       Path path = this.f_123962_.m_123916_();
+    public void m_213708_(CachedOutput p_236158_) {
        Set<ResourceLocation> set = Sets.newHashSet();
-@@ -45,6 +_,16 @@
+       Consumer<Advancement> consumer = (p_236162_) -> {
+@@ -41,6 +_,18 @@
           }
        };
  
@@ -27,10 +27,12 @@
 +   }
 +
 +   /**
-+    * Override this method for registering and generating custom {@link Advancement}s. <br>
-+    * Just use {@link Advancement.Builder} to build your Advancements, you don't need an extra consumer like the vanilla classes.
-+    * @param consumer used for the register function from {@link Advancement.Builder}
-+    * @param fileHelper used for the register function from {@link Advancement.Builder}
++    * This method registers all {@link Advancement advancements}.
++    * Mods can override this method to register their own custom advancements.
++    *
++    * @param consumer a {@link Consumer} which saves any advancements provided
++    * @param fileHelper the existing file helper to check for the existence of files like parent advancements
++    * @see Advancement.Builder#save(Consumer, ResourceLocation, net.minecraftforge.common.data.ExistingFileHelper)
 +   */
 +   protected void registerAdvancements(Consumer<Advancement> consumer, net.minecraftforge.common.data.ExistingFileHelper fileHelper) {
        for(Consumer<Consumer<Advancement>> consumer1 : this.f_123963_) {

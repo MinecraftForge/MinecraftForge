@@ -1,11 +1,11 @@
 --- a/net/minecraft/world/level/LevelReader.java
 +++ b/net/minecraft/world/level/LevelReader.java
-@@ -176,6 +_,10 @@
+@@ -182,6 +_,10 @@
     }
  
     /** @deprecated */
 +   default boolean isAreaLoaded(BlockPos center, int range) {
-+      return this.m_46832_(center.m_142082_(-range, -range, -range), center.m_142082_(range, range, range));
++      return this.m_46832_(center.m_7918_(-range, -range, -range), center.m_7918_(range, range, range));
 +   }
 +
     @Deprecated

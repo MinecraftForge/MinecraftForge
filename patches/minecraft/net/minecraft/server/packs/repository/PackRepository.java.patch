@@ -18,7 +18,7 @@
     }
  
     public void m_10506_() {
-@@ -91,6 +_,10 @@
+@@ -90,6 +_,10 @@
     @Nullable
     public Pack m_10507_(String p_10508_) {
        return this.f_10498_.get(p_10508_);
@@ -28,4 +28,4 @@
 +      this.f_10497_.add(packFinder);
     }
  
-    public void close() {
+    public boolean m_10515_(String p_10516_) {

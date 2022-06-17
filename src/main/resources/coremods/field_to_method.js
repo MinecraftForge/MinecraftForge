@@ -2,6 +2,27 @@ var ASMAPI = Java.type('net.minecraftforge.coremod.api.ASMAPI')
 
 function initializeCoreMod() {
     return {
+        'biome': {
+            'target': {
+                'type': 'CLASS',
+                'name': 'net.minecraft.world.level.biome.Biome' 
+            },
+            'transformer': function(classNode) {
+                ASMAPI.redirectFieldToMethod(classNode, ASMAPI.mapField('f_47437_'), 'getModifiedClimateSettings')
+                ASMAPI.redirectFieldToMethod(classNode, ASMAPI.mapField('f_47443_'), 'getModifiedSpecialEffects')
+                return classNode;
+            }
+        },
+        'structure': {
+            'target': {
+                'type': 'CLASS',
+                'name': 'net.minecraft.world.level.levelgen.structure.Structure'
+            },
+            'transformer': function(classNode) {
+                ASMAPI.redirectFieldToMethod(classNode, ASMAPI.mapField('f_226555_'), 'getModifiedStructureSettings')
+                return classNode;
+            }
+        },
         'potion': {
             'target': {
                 'type': 'CLASS',

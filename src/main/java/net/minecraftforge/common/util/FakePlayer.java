@@ -1,5 +1,5 @@
 /*
- * Minecraft Forge - Forge Development LLC
+ * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
@@ -67,25 +67,23 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.server.ServerLifecycleHooks;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Set;
-import java.util.UUID;
 
 //Preliminary, simple Fake Player class
 public class FakePlayer extends ServerPlayer
 {
     public FakePlayer(ServerLevel level, GameProfile name)
     {
-        super(level.getServer(), level, name);
+        super(level.getServer(), level, name, null);
         this.connection = new FakePlayerNetHandler(level.getServer(), this);
     }
 
     @Override public Vec3 position(){ return new Vec3(0, 0, 0); }
     @Override public BlockPos blockPosition(){ return BlockPos.ZERO; }
     @Override public void displayClientMessage(Component chatComponent, boolean actionBar){}
-    @Override public void sendMessage(Component component, UUID senderUUID) {}
     @Override public void awardStat(Stat par1StatBase, int par2){}
     //@Override public void openGui(Object mod, int modGuiId, World world, int x, int y, int z){}
     @Override public boolean isInvulnerableTo(DamageSource source){ return true; }

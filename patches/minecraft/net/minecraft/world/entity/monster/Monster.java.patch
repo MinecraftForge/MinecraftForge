@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/monster/Monster.java
 +++ b/net/minecraft/world/entity/monster/Monster.java
-@@ -116,9 +_,9 @@
+@@ -121,9 +_,9 @@
        if (p_33038_.m_41720_() instanceof ProjectileWeaponItem) {
           Predicate<ItemStack> predicate = ((ProjectileWeaponItem)p_33038_.m_41720_()).m_6442_();
           ItemStack itemstack = ProjectileWeaponItem.m_43010_(this, predicate);

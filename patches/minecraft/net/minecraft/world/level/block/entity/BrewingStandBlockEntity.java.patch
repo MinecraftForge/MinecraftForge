@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/entity/BrewingStandBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/BrewingStandBlockEntity.java
-@@ -148,6 +_,7 @@
+@@ -147,6 +_,7 @@
  
     private static boolean m_155294_(NonNullList<ItemStack> p_155295_) {
        ItemStack itemstack = p_155295_.get(3);
@@ -8,7 +8,7 @@
        if (itemstack.m_41619_()) {
           return false;
        } else if (!PotionBrewing.m_43506_(itemstack)) {
-@@ -165,21 +_,21 @@
+@@ -164,21 +_,21 @@
     }
  
     private static void m_155290_(Level p_155291_, BlockPos p_155292_, NonNullList<ItemStack> p_155293_) {
@@ -37,7 +37,7 @@
  
        p_155293_.set(3, itemstack);
        p_155291_.m_46796_(1035, p_155292_, 0);
-@@ -229,11 +_,11 @@
+@@ -228,11 +_,11 @@
  
     public boolean m_7013_(int p_59017_, ItemStack p_59018_) {
        if (p_59017_ == 3) {
@@ -51,7 +51,7 @@
        }
     }
  
-@@ -259,5 +_,34 @@
+@@ -258,5 +_,34 @@
  
     protected AbstractContainerMenu m_6555_(int p_58990_, Inventory p_58991_) {
        return new BrewingStandMenu(p_58990_, p_58991_, this, this.f_58971_);

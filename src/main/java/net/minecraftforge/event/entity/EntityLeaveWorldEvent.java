@@ -1,5 +1,5 @@
 /*
- * Minecraft Forge - Forge Development LLC
+ * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
@@ -15,7 +15,7 @@ import net.minecraftforge.eventbus.api.Cancelable;
 /**
  * EntityLeaveWorldEvent is fired when an Entity leaves the world. <br>
  * This event is fired whenever an Entity is removed from the world in
- * {@link ClientLevel#removeEntity(int, Entity.RemovalReason)}, {@link ServerLevel#removeEntityComplete(Entity, boolean)}. <br>
+ * {@link ClientLevel#removeEntity(int, Entity.RemovalReason)}. <br>
  * <br>
  * {@link #world} contains the world from which the entity is removed. <br>
  * <br>

@@ -1,14 +1,13 @@
 /*
- * Minecraft Forge - Forge Development LLC
+ * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
 package net.minecraftforge.client.model.generators;
 
-import javax.annotation.Nonnull;
-
 import net.minecraft.data.DataGenerator;
 import net.minecraftforge.common.data.ExistingFileHelper;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Stub class to extend for block model data providers, eliminates some
@@ -20,7 +19,7 @@ public abstract class BlockModelProvider extends ModelProvider<BlockModelBuilder
         super(generator, modid, BLOCK_FOLDER, BlockModelBuilder::new, existingFileHelper);
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public String getName() {
         return "Block Models: " + modid;

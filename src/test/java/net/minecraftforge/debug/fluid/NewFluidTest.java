@@ -1,5 +1,5 @@
 /*
- * Minecraft Forge - Forge Development LLC
+ * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
@@ -12,7 +12,9 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.LevelAccessor;
+import net.minecraftforge.client.IFluidTypeRenderProperties;
 import net.minecraftforge.fluids.DispenseFluidContainer;
+import net.minecraftforge.fluids.FluidType;
 import org.apache.commons.lang3.Validate;
 
 import net.minecraft.world.level.material.FlowingFluid;
@@ -20,7 +22,6 @@ import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fluids.FluidAttributes;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.ForgeFlowingFluid;
 import net.minecraftforge.registries.RegistryObject;
@@ -44,6 +45,9 @@ import net.minecraft.world.level.block.DispenserBlock;
 import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.SimpleWaterloggedBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.function.Consumer;
 
 @Mod(NewFluidTest.MODID)
 public class NewFluidTest
@@ -57,14 +61,49 @@ public class NewFluidTest
 
     public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, MODID);
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MODID);
+    public static final DeferredRegister<FluidType> FLUID_TYPES = DeferredRegister.create(ForgeRegistries.Keys.FLUID_TYPES, MODID);
     public static final DeferredRegister<Fluid> FLUIDS = DeferredRegister.create(ForgeRegistries.FLUIDS, MODID);
 
     private static ForgeFlowingFluid.Properties makeProperties()
     {
-        return new ForgeFlowingFluid.Properties(test_fluid, test_fluid_flowing,
-                FluidAttributes.builder(FLUID_STILL, FLUID_FLOWING).overlay(FLUID_OVERLAY).color(0x3F1080FF))
+        return new ForgeFlowingFluid.Properties(test_fluid_type, test_fluid, test_fluid_flowing)
                 .bucket(test_fluid_bucket).block(test_fluid_block);
     }
+
+    public static RegistryObject<FluidType> test_fluid_type = FLUID_TYPES.register("test_fluid", () -> new FluidType(FluidType.Properties.create())
+    {
+        @Override
+        public void initializeClient(Consumer<IFluidTypeRenderProperties> consumer)
+        {
+            consumer.accept(new IFluidTypeRenderProperties()
+            {
+                @Override
+                public ResourceLocation getStillTexture()
+                {
+                    return FLUID_STILL;
+                }
+
+                @Override
+                public ResourceLocation getFlowingTexture()
+                {
+                    return FLUID_FLOWING;
+                }
+
+                @Nullable
+                @Override
+                public ResourceLocation getOverlayTexture()
+                {
+                    return FLUID_OVERLAY;
+                }
+
+                @Override
+                public int getColorTint()
+                {
+                    return 0x3F1080FF;
+                }
+            });
+        }
+    });
 
     public static RegistryObject<FlowingFluid> test_fluid = FLUIDS.register("test_fluid", () ->
             new ForgeFlowingFluid.Source(makeProperties())
@@ -74,7 +113,7 @@ public class NewFluidTest
     );
 
     public static RegistryObject<LiquidBlock> test_fluid_block = BLOCKS.register("test_fluid_block", () ->
-            new LiquidBlock(test_fluid, Properties.of(Material.WATER).noCollission().strength(100.0F).noDrops())
+            new LiquidBlock(test_fluid, Properties.of(Material.WATER).noCollission().strength(100.0F).noLootTable())
     );
     public static RegistryObject<Item> test_fluid_bucket = ITEMS.register("test_fluid_bucket", () ->
             new BucketItem(test_fluid, new Item.Properties().craftRemainder(Items.BUCKET).stacksTo(1).tab(CreativeModeTab.TAB_MISC))
@@ -82,7 +121,7 @@ public class NewFluidTest
 
     // WARNING: this doesn't allow "any fluid", only the fluid from this test mod!
     public static RegistryObject<Block> fluidloggable_block = BLOCKS.register("fluidloggable_block", () ->
-            new FluidloggableBlock(Properties.of(Material.WOOD).noCollission().strength(100.0F).noDrops())
+            new FluidloggableBlock(Properties.of(Material.WOOD).noCollission().strength(100.0F).noLootTable())
     );
     public static RegistryObject<Item> fluidloggable_blockitem = ITEMS.register("fluidloggable_block", () ->
             new BlockItem(fluidloggable_block.get(), new Item.Properties().tab(CreativeModeTab.TAB_MISC))
@@ -98,6 +137,7 @@ public class NewFluidTest
 
             BLOCKS.register(modEventBus);
             ITEMS.register(modEventBus);
+            FLUID_TYPES.register(modEventBus);
             FLUIDS.register(modEventBus);
         }
     }
@@ -106,9 +146,9 @@ public class NewFluidTest
     {
         // some sanity checks
         BlockState state = Fluids.WATER.defaultFluidState().createLegacyBlock();
-        BlockState state2 = Fluids.WATER.getAttributes().getBlock(null,null,Fluids.WATER.defaultFluidState());
+        BlockState state2 = Fluids.WATER.getFluidType().getBlockForFluidState(null,null,Fluids.WATER.defaultFluidState());
         Validate.isTrue(state.getBlock() == Blocks.WATER && state2 == state);
-        ItemStack stack = Fluids.WATER.getAttributes().getBucket(new FluidStack(Fluids.WATER, 1));
+        ItemStack stack = Fluids.WATER.getFluidType().getBucket(new FluidStack(Fluids.WATER, 1));
         Validate.isTrue(stack.getItem() == Fluids.WATER.getBucket());
         event.enqueueWork(() -> DispenserBlock.registerBehavior(test_fluid_bucket.get(), DispenseFluidContainer.getInstance()));
     }

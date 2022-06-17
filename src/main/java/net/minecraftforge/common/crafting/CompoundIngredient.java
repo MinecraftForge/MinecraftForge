@@ -1,5 +1,5 @@
 /*
- * Minecraft Forge - Forge Development LLC
+ * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
@@ -12,10 +12,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -28,6 +24,8 @@ import it.unimi.dsi.fastutil.ints.IntList;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.network.FriendlyByteBuf;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /** Ingredient that matches if any of the child ingredients match */
 public class CompoundIngredient extends AbstractIngredient
@@ -69,7 +67,7 @@ public class CompoundIngredient extends AbstractIngredient
     }
 
     @Override
-    @Nonnull
+    @NotNull
     public ItemStack[] getItems()
     {
         if (stacks == null)
@@ -84,7 +82,7 @@ public class CompoundIngredient extends AbstractIngredient
     }
 
     @Override
-    @Nonnull
+    @NotNull
     public IntList getStackingIds()
     {
         boolean childrenNeedInvalidation = false;
@@ -132,7 +130,7 @@ public class CompoundIngredient extends AbstractIngredient
         return Serializer.INSTANCE;
     }
 
-    @Nonnull
+    @NotNull
     public Collection<Ingredient> getChildren()
     {
         return this.children;
@@ -156,7 +154,7 @@ public class CompoundIngredient extends AbstractIngredient
     @Override
     public boolean isEmpty()
     {
-        return getItems().length == 0;
+        return children.stream().allMatch(Ingredient::isEmpty);
     }
 
     public static class Serializer implements IIngredientSerializer<CompoundIngredient>

@@ -1,0 +1,14 @@
+--- a/net/minecraft/network/chat/contents/TranslatableContents.java
++++ b/net/minecraft/network/chat/contents/TranslatableContents.java
+@@ -94,6 +_,11 @@
+             }
+          }
+ 
++         if (j == 0) {
++            // Forge has some special formatting handlers defined in ForgeI18n, use those if no %s replacements present.
++            j = net.minecraftforge.internal.TextComponentMessageFormatHandler.handle(this, p_237517_, this.f_237498_, p_237516_);
++         }
++
+          if (j < p_237516_.length()) {
+             String s3 = p_237516_.substring(j);
+             if (s3.indexOf(37) != -1) {

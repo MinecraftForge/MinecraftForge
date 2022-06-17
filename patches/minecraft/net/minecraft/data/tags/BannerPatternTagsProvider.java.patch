@@ -1,0 +1,16 @@
+--- a/net/minecraft/data/tags/BannerPatternTagsProvider.java
++++ b/net/minecraft/data/tags/BannerPatternTagsProvider.java
+@@ -7,8 +_,13 @@
+ import net.minecraft.world.level.block.entity.BannerPatterns;
+ 
+ public class BannerPatternTagsProvider extends TagsProvider<BannerPattern> {
++   /** @deprecated Forge: Use the {@link #BannerPatternTagsProvider(DataGenerator, String, net.minecraftforge.common.data.ExistingFileHelper) mod id variant} */
++   @Deprecated
+    public BannerPatternTagsProvider(DataGenerator p_236411_) {
+       super(p_236411_, Registry.f_235736_);
++   }
++   public BannerPatternTagsProvider(DataGenerator p_236411_, String modId, @org.jetbrains.annotations.Nullable net.minecraftforge.common.data.ExistingFileHelper existingFileHelper) {
++      super(p_236411_, Registry.f_235736_, modId, existingFileHelper);
+    }
+ 
+    protected void m_6577_() {

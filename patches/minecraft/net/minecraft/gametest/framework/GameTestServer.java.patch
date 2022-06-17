@@ -1,6 +1,6 @@
 --- a/net/minecraft/gametest/framework/GameTestServer.java
 +++ b/net/minecraft/gametest/framework/GameTestServer.java
-@@ -93,12 +_,13 @@
+@@ -98,13 +_,14 @@
     public boolean m_7038_() {
        this.m_129823_(new PlayerList(this, this.m_206579_(), this.f_129745_, 1) {
        });
@@ -10,6 +10,7 @@
        serverlevel.m_8733_(this.f_177588_, 0.0F);
        int i = 20000000;
        serverlevel.m_8606_(20000000, 20000000, false, false);
+       f_177585_.info("Started game test server");
 -      return true;
 +      return net.minecraftforge.server.ServerLifecycleHooks.handleServerStarting(this);
     }

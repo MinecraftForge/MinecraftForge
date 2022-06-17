@@ -1,5 +1,5 @@
 /*
- * Minecraft Forge - Forge Development LLC
+ * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
@@ -7,9 +7,9 @@ package net.minecraftforge.client.gui;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -23,7 +23,7 @@ public class OverlayRegistry
      * @param overlay An instance, lambda or method reference for the logic used in rendering the overlay.
      * @return The same object passed into the {@code overlay} parameter.
      */
-    public static synchronized IIngameOverlay registerOverlayBottom(@Nonnull String displayName, @Nonnull IIngameOverlay overlay)
+    public static synchronized IIngameOverlay registerOverlayBottom(@NotNull String displayName, @NotNull IIngameOverlay overlay)
     {
         return registerOverlay(-1, null, displayName, overlay);
     }
@@ -36,7 +36,7 @@ public class OverlayRegistry
      * @param overlay An instance, lambda or method reference for the logic used in rendering the overlay.
      * @return The same object passed into the {@code overlay} parameter.
      */
-    public static synchronized IIngameOverlay registerOverlayBelow(@Nonnull IIngameOverlay other, @Nonnull String displayName, @Nonnull IIngameOverlay overlay)
+    public static synchronized IIngameOverlay registerOverlayBelow(@NotNull IIngameOverlay other, @NotNull String displayName, @NotNull IIngameOverlay overlay)
     {
         return registerOverlay(-1, other, displayName, overlay);
     }
@@ -49,7 +49,7 @@ public class OverlayRegistry
      * @param overlay An instance, lambda or method reference for the logic used in rendering the overlay.
      * @return The same object passed into the {@code overlay} parameter.
      */
-    public static synchronized IIngameOverlay registerOverlayAbove(@Nonnull IIngameOverlay other, @Nonnull String displayName, @Nonnull IIngameOverlay overlay)
+    public static synchronized IIngameOverlay registerOverlayAbove(@NotNull IIngameOverlay other, @NotNull String displayName, @NotNull IIngameOverlay overlay)
     {
         return registerOverlay(1, other, displayName, overlay);
     }
@@ -61,12 +61,12 @@ public class OverlayRegistry
      * @param overlay An instance, lambda or method reference for the logic used in rendering the overlay.
      * @return The same object passed into the {@code overlay} parameter.
      */
-    public static synchronized IIngameOverlay registerOverlayTop(@Nonnull String displayName, @Nonnull IIngameOverlay overlay)
+    public static synchronized IIngameOverlay registerOverlayTop(@NotNull String displayName, @NotNull IIngameOverlay overlay)
     {
         return registerOverlay(1, null, displayName, overlay);
     }
 
-    private static IIngameOverlay registerOverlay(int sort, @Nullable IIngameOverlay other, @Nonnull String displayName, @Nonnull IIngameOverlay overlay)
+    private static IIngameOverlay registerOverlay(int sort, @Nullable IIngameOverlay other, @NotNull String displayName, @NotNull IIngameOverlay overlay)
     {
         OverlayEntry entry = overlays.get(overlay);
 
@@ -108,7 +108,7 @@ public class OverlayRegistry
      * @param overlay The overlay object to enable or disable
      * @param enable The new state
      */
-    public static synchronized void enableOverlay(@Nonnull IIngameOverlay overlay, boolean enable)
+    public static synchronized void enableOverlay(@NotNull IIngameOverlay overlay, boolean enable)
     {
         OverlayEntry entry = overlays.get(overlay);
         if (entry != null)
@@ -123,7 +123,7 @@ public class OverlayRegistry
      * @return The registration entry for this overlay.
      */
     @Nullable
-    public static synchronized OverlayEntry getEntry(@Nonnull IIngameOverlay overlay)
+    public static synchronized OverlayEntry getEntry(@NotNull IIngameOverlay overlay)
     {
         return overlays.get(overlay);
     }

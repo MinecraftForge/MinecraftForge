@@ -9,16 +9,18 @@
     private static final Comparator<Stitcher.Holder> f_118161_ = Comparator.<Stitcher.Holder, Integer>comparing((p_118201_) -> {
        return -p_118201_.f_118204_;
     }).thenComparing((p_118199_) -> {
-@@ -53,6 +_,12 @@
+@@ -53,6 +_,14 @@
  
        for(Stitcher.Holder stitcher$holder : list) {
           if (!this.m_118178_(stitcher$holder)) {
-+            LOGGER.info(new net.minecraftforge.fml.loading.AdvancedLogMessageAdapter(sb->{
++            if (LOGGER.isInfoEnabled()) {
++               StringBuilder sb = new StringBuilder();
 +               sb.append("Unable to fit: ").append(stitcher$holder.f_118202_.m_118431_());
 +               sb.append(" - size: ").append(stitcher$holder.f_118202_.m_118434_()).append("x").append(stitcher$holder.f_118202_.m_118437_());
 +               sb.append(" - Maybe try a lower resolution resourcepack?\n");
-+               list.forEach(h-> sb.append("\t").append(h).append("\n"));
-+            }));
++               list.forEach(h -> sb.append("\t").append(h).append("\n"));
++               LOGGER.info(sb.toString());
++            }
              throw new StitcherException(stitcher$holder.f_118202_, list.stream().map((p_118195_) -> {
                 return p_118195_.f_118202_;
              }).collect(ImmutableList.toImmutableList()));

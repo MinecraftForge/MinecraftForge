@@ -17,7 +17,7 @@
 +            if (nextFlightTick % 20 == 0) {
 +               stack.m_41622_(1, entity, e -> e.m_21166_(net.minecraft.world.entity.EquipmentSlot.CHEST));
 +            }
-+            entity.m_146850_(net.minecraft.world.level.gameevent.GameEvent.f_157807_);
++            entity.m_146850_(net.minecraft.world.level.gameevent.GameEvent.f_223705_);
 +         }
 +      }
 +      return true;

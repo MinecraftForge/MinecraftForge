@@ -1,5 +1,5 @@
 /*
- * Minecraft Forge - Forge Development LLC
+ * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
@@ -51,38 +51,6 @@ public class EntityEvent extends Event
         public EntityConstructing(Entity entity)
         {
             super(entity);
-        }
-    }
-
-    /**
-     * CanUpdate is fired when an Entity is being created. <br>
-     * This event is fired whenever vanilla Minecraft determines that an entity<br>
-     * cannot update in {@code World#updateEntityWithOptionalForce(net.minecraft.entity.Entity, boolean)} <br>
-     * <br>
-     * {@link CanUpdate#canUpdate} contains the boolean value of whether this entity can update.<br>
-     * If the modder decides that this Entity can be updated, they may change canUpdate to true, <br>
-     * and the entity with then be updated.<br>
-     * <br>
-     * This event is not {@link Cancelable}.<br>
-     * <br>
-     * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
-     **/
-    public static class CanUpdate extends EntityEvent
-    {
-        private boolean canUpdate = false;
-        public CanUpdate(Entity entity)
-        {
-            super(entity);
-        }
-
-        public boolean getCanUpdate()
-        {
-            return canUpdate;
-        }
-
-        public void setCanUpdate(boolean canUpdate)
-        {
-            this.canUpdate = canUpdate;
         }
     }
 

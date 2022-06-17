@@ -1,5 +1,5 @@
 /*
- * Minecraft Forge - Forge Development LLC
+ * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
@@ -7,7 +7,6 @@ package net.minecraftforge.debug.recipe.recipebook;
 
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.recipebook.ServerPlaceRecipe;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
@@ -59,7 +58,7 @@ public class RecipeBookTestMenu extends RecipeBookMenu<RecipeBookTestContainer>
             {
                 this.checkTakeAchievements(stack);
                 Container craftingContainer = RecipeBookTestMenu.this.container;
-                NonNullList<ItemStack> remainders = player.level.getRecipeManager().getRemainingItemsFor(RecipeBookTestRecipe.TYPE.get(), RecipeBookTestMenu.this.container, player.level);
+                NonNullList<ItemStack> remainders = player.level.getRecipeManager().getRemainingItemsFor(RecipeBookExtensionTest.RECIPE_BOOK_TEST_RECIPE_TYPE.get(), RecipeBookTestMenu.this.container, player.level);
                 for (int i = 0; i < remainders.size(); ++i)
                 {
                     ItemStack toRemove = craftingContainer.getItem(i);
@@ -163,7 +162,7 @@ public class RecipeBookTestMenu extends RecipeBookMenu<RecipeBookTestContainer>
             if (container == this.container)
             {
                 Optional<RecipeBookTestRecipe> recipe = level.getRecipeManager()
-                        .getRecipeFor(RecipeBookTestRecipe.TYPE.get(), this.container, level);
+                        .getRecipeFor(RecipeBookExtensionTest.RECIPE_BOOK_TEST_RECIPE_TYPE.get(), this.container, level);
                 if (recipe.isEmpty())
                     this.resultContainer.setItem(0, ItemStack.EMPTY);
                 else if (player instanceof ServerPlayer sp && this.resultContainer.setRecipeUsed(level, sp, recipe.get())) {

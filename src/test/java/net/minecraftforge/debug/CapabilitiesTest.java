@@ -1,5 +1,5 @@
 /*
- * Minecraft Forge - Forge Development LLC
+ * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
@@ -8,10 +8,11 @@ package net.minecraftforge.debug;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.Direction;
+import net.minecraft.core.Registry;
 import net.minecraft.nbt.IntTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.ChatType;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
@@ -31,6 +32,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Locale;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 @Mod(CapabilitiesTest.MODID)
@@ -122,11 +124,12 @@ public class CapabilitiesTest
         @SubscribeEvent
         public static void clientTick(TickEvent.ClientTickEvent event)
         {
-            if (event.phase == TickEvent.Phase.END)
+            if (event.phase == TickEvent.Phase.END && Minecraft.getInstance().level != null)
             {
                 while(messages.size() > 0)
                 {
-                    Minecraft.getInstance().gui.handleChat(ChatType.SYSTEM, new TextComponent(messages.poll()), Util.NIL_UUID);
+                    final ChatType system = Minecraft.getInstance().level.registryAccess().registryOrThrow(Registry.CHAT_TYPE_REGISTRY).getOrThrow(ChatType.SYSTEM);
+                    Minecraft.getInstance().gui.handleSystemChat(system, Component.literal(Objects.requireNonNull(messages.poll())));
                 }
             }
         }

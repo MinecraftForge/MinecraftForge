@@ -1,5 +1,5 @@
 /*
- * Minecraft Forge - Forge Development LLC
+ * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
@@ -13,6 +13,7 @@ import com.google.gson.JsonObject;
 
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient.Value;
+import net.minecraftforge.registries.ForgeRegistries;
 
 public class MultiItemValue implements Value
 {
@@ -44,7 +45,7 @@ public class MultiItemValue implements Value
     private JsonObject toJson(ItemStack stack)
     {
         JsonObject ret = new JsonObject();
-        ret.addProperty("item", stack.getItem().getRegistryName().toString());
+        ret.addProperty("item", ForgeRegistries.ITEMS.getKey(stack.getItem()).toString());
         if (stack.getCount() != 1)
             ret.addProperty("count", stack.getCount());
         if (stack.getTag() != null)

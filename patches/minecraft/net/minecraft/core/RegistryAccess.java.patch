@@ -1,0 +1,11 @@
+--- a/net/minecraft/core/RegistryAccess.java
++++ b/net/minecraft/core/RegistryAccess.java
+@@ -62,7 +_,7 @@
+       m_123057_(builder, Registry.f_235730_, ChatType.f_237005_, ChatType.f_237005_);
+       m_123053_(builder, Registry.f_235726_, WorldPreset.f_226414_);
+       m_123053_(builder, Registry.f_235727_, FlatLevelGeneratorPreset.f_226243_);
+-      return builder.build();
++      return net.minecraftforge.registries.DataPackRegistriesHooks.grabBuiltinRegistries(builder); // FORGE: Keep the map so custom registries can be added later
+    });
+    Codec<RegistryAccess> f_206151_ = m_206205_();
+    Supplier<RegistryAccess.Frozen> f_123049_ = Suppliers.memoize(() -> {

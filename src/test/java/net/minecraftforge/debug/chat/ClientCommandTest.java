@@ -1,5 +1,5 @@
 /*
- * Minecraft Forge - Forge Development LLC
+ * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
@@ -15,7 +15,7 @@ import net.minecraft.commands.arguments.ResourceLocationArgument;
 import net.minecraft.commands.arguments.TeamArgument;
 import net.minecraft.commands.arguments.coordinates.BlockPosArgument;
 import net.minecraft.commands.synchronization.SuggestionProviders;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraftforge.client.event.RegisterClientCommandsEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
@@ -49,21 +49,21 @@ public class ClientCommandTest
                         .then(Commands.literal("server")
                                 .executes((context) -> {
                                     context.getSource().getServer();
-                                    context.getSource().sendSuccess(new TextComponent("Successfully called getServer should have errored"), false);
+                                    context.getSource().sendSuccess(Component.literal("Successfully called getServer should have errored"), false);
                                     return 1;
                                 }))
                         // Used for checking if attempting to get the server level on the client side errors
                         .then(Commands.literal("level")
                                 .executes((context) -> {
                                     context.getSource().getLevel();
-                                    context.getSource().sendSuccess(new TextComponent("Successfully called getLevel should have errored"), false);
+                                    context.getSource().sendSuccess(Component.literal("Successfully called getLevel should have errored"), false);
                                     return 1;
                                 }))
                         // Used for checking if getting a known objective argument works on the client side
                         .then(Commands.literal("get_objective")
                                 .then(Commands.argument("objective", ObjectiveArgument.objective())
                                         .executes((context) -> {
-                                            context.getSource().sendSuccess(new TextComponent("Regular: ")
+                                            context.getSource().sendSuccess(Component.literal("Regular: ")
                                                     .append(ObjectiveArgument.getObjective(context, "objective").getFormattedDisplayName()), false);
                                             return 1;
                                         })))
@@ -95,14 +95,14 @@ public class ClientCommandTest
                                 .then(Commands.argument("blockpos", BlockPosArgument.blockPos())
                                         .executes((context) -> {
                                             context.getSource()
-                                                    .sendSuccess(new TextComponent(BlockPosArgument.getLoadedBlockPos(context, "blockpos").toString()), false);
+                                                    .sendSuccess(Component.literal(BlockPosArgument.getLoadedBlockPos(context, "blockpos").toString()), false);
                                             return 1;
                                         })))
                         // Used for checking if a command can have a requirement
                         .then(Commands.literal("requires")
                                 .requires((source) -> false)
                                 .executes((context) -> {
-                                    context.getSource().sendSuccess(new TextComponent("Executed command"), false);
+                                    context.getSource().sendSuccess(Component.literal("Executed command"), false);
                                     return 1;
                                 })));
 
@@ -110,7 +110,7 @@ public class ClientCommandTest
         LiteralArgumentBuilder<CommandSourceStack> fork = Commands.literal("clientcommandfork");
         fork.fork(event.getDispatcher().getRoot(), (context) -> List.of(context.getSource(), context.getSource()))
                 .executes((context) -> {
-                    context.getSource().sendSuccess(new TextComponent("Executing forked command"), false);
+                    context.getSource().sendSuccess(Component.literal("Executing forked command"), false);
                     return 1;
                 });
         event.getDispatcher().register(fork);
@@ -118,12 +118,12 @@ public class ClientCommandTest
 
     private int testCommand(CommandContext<CommandSourceStack> context)
     {
-        context.getSource().sendSuccess(new TextComponent("Input: " + ResourceLocationArgument.getId(context, "block")), false);
-        context.getSource().sendSuccess(new TextComponent("Teams: " + context.getSource().getAllTeams()), false);
-        context.getSource().sendSuccess(new TextComponent("Players: " + context.getSource().getOnlinePlayerNames()), false);
-        context.getSource().sendSuccess(new TextComponent("First recipe: " + context.getSource().getRecipeNames().findFirst().get()), false);
-        context.getSource().sendSuccess(new TextComponent("Levels: " + context.getSource().levels()), false);
-        context.getSource().sendSuccess(new TextComponent("Registry Access: " + context.getSource().registryAccess()), false);
+        context.getSource().sendSuccess(Component.literal("Input: " + ResourceLocationArgument.getId(context, "block")), false);
+        context.getSource().sendSuccess(Component.literal("Teams: " + context.getSource().getAllTeams()), false);
+        context.getSource().sendSuccess(Component.literal("Players: " + context.getSource().getOnlinePlayerNames()), false);
+        context.getSource().sendSuccess(Component.literal("First recipe: " + context.getSource().getRecipeNames().findFirst().get()), false);
+        context.getSource().sendSuccess(Component.literal("Levels: " + context.getSource().levels()), false);
+        context.getSource().sendSuccess(Component.literal("Registry Access: " + context.getSource().registryAccess()), false);
         return 0;
     }
 }

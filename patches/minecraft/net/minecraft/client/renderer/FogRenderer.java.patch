@@ -1,48 +1,23 @@
 --- a/net/minecraft/client/renderer/FogRenderer.java
 +++ b/net/minecraft/client/renderer/FogRenderer.java
-@@ -178,19 +_,36 @@
-          f_109012_ = f_109012_ * (1.0F - f6) + f_109012_ * f8 * f6;
+@@ -182,6 +_,12 @@
+          f_109012_ = f_109012_ * (1.0F - f7) + f_109012_ * f9 * f7;
        }
  
-+      net.minecraftforge.client.event.EntityViewRenderEvent.FogColors event = new net.minecraftforge.client.event.EntityViewRenderEvent.FogColors(p_109019_, p_109020_, f_109010_, f_109011_, f_109012_);
-+      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event);
++      Vector3f fogColor = net.minecraftforge.client.ForgeHooksClient.getFogColor(p_109019_, p_109020_, p_109021_, p_109022_, p_109023_, f_109010_, f_109011_, f_109012_);
 +
-+      f_109010_ = event.getRed();
-+      f_109011_ = event.getGreen();
-+      f_109012_ = event.getBlue();
++      f_109010_ = fogColor.m_122239_();
++      f_109011_ = fogColor.m_122260_();
++      f_109012_ = fogColor.m_122269_();
 +
        RenderSystem.m_69424_(f_109010_, f_109011_, f_109012_, 0.0F);
     }
  
-    public static void m_109017_() {
-       RenderSystem.m_157445_(Float.MAX_VALUE);
-    }
--
-+   @Deprecated // FORGE: Pass in partialTicks
-    public static void m_109024_(Camera p_109025_, FogRenderer.FogMode p_109026_, float p_109027_, boolean p_109028_) {
-+      setupFog(p_109025_, p_109026_, p_109027_, p_109028_, 0);
-+   }
-+
-+   public static void setupFog(Camera p_109025_, FogRenderer.FogMode p_109026_, float p_109027_, boolean p_109028_, float partialTicks) {
-       FogType fogtype = p_109025_.m_167685_();
-       Entity entity = p_109025_.m_90592_();
-       FogShape fogshape = FogShape.SPHERE;
-       float f;
-       float f1;
-+      // TODO: remove this hook in 1.19
-+      float hook = net.minecraftforge.client.ForgeHooksClient.getFogDensity(p_109026_, p_109025_, partialTicks, 0.1F);
-+      if (hook >= 0) {
-+         f = -8.0f;
-+         f1 = hook * 0.5F;
-+      } else
-       if (fogtype == FogType.LAVA) {
-          if (entity.m_5833_()) {
-             f = -8.0F;
-@@ -253,6 +_,7 @@
-       RenderSystem.m_157445_(f);
-       RenderSystem.m_157443_(f1);
-       RenderSystem.m_202160_(fogshape);
-+      net.minecraftforge.client.ForgeHooksClient.onFogRender(p_109026_, p_109025_, partialTicks, f, f1, fogshape);
+@@ -263,6 +_,7 @@
+       RenderSystem.m_157445_(fogrenderer$fogdata.f_234200_);
+       RenderSystem.m_157443_(fogrenderer$fogdata.f_234201_);
+       RenderSystem.m_202160_(fogrenderer$fogdata.f_234202_);
++      net.minecraftforge.client.ForgeHooksClient.onFogRender(p_234174_, fogtype, p_234173_, p_234177_, p_234175_, fogrenderer$fogdata.f_234200_, fogrenderer$fogdata.f_234201_, fogrenderer$fogdata.f_234202_);
     }
  
     public static void m_109036_() {

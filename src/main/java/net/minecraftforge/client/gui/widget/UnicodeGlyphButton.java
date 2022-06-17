@@ -1,5 +1,5 @@
 /*
- * Minecraft Forge - Forge Development LLC
+ * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
@@ -9,7 +9,6 @@ import com.mojang.blaze3d.vertex.PoseStack;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraftforge.client.gui.GuiUtils;
 
 /**
@@ -47,14 +46,14 @@ public class UnicodeGlyphButton extends ExtendedButton
             int totalWidth = strWidth + glyphWidth;
 
             if (totalWidth > width - 6 && totalWidth > ellipsisWidth)
-                buttonText = new TextComponent(mc.font.substrByWidth(buttonText, width - 6 - ellipsisWidth).getString().trim() + "...") ;
+                buttonText = Component.literal(mc.font.substrByWidth(buttonText, width - 6 - ellipsisWidth).getString().trim() + "...") ;
 
             strWidth = mc.font.width(buttonText);
             totalWidth = glyphWidth + strWidth;
 
             poseStack.pushPose();
             poseStack.scale(glyphScale, glyphScale, 1.0F);
-            this.drawCenteredString(poseStack, mc.font, new TextComponent(glyph),
+            this.drawCenteredString(poseStack, mc.font, Component.literal(glyph),
                     (int) (((this.x + (this.width / 2) - (strWidth / 2)) / glyphScale) - (glyphWidth / (2 * glyphScale)) + 2),
                     (int) (((this.y + ((this.height - 8) / glyphScale) / 2) - 1) / glyphScale), getFGColor());
             poseStack.popPose();

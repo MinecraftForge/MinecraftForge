@@ -2,20 +2,20 @@
   "type": "minecraft:block",
   "pools": [
     {
-      "rolls": 1.0,
       "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "action": "shears_dig",
+          "condition": "forge:can_tool_perform_action"
+        }
+      ],
       "entries": [
         {
           "type": "minecraft:item",
           "name": "minecraft:vine"
         }
       ],
-      "conditions": [
-        {
-          "condition": "forge:can_tool_perform_action",
-          "action": "shears_dig"
-        }
-      ]
+      "rolls": 1.0
     }
   ]
 }

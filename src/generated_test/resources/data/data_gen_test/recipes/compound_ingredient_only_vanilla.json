@@ -1,9 +1,5 @@
 {
   "type": "minecraft:crafting_shaped",
-  "pattern": [
-    "###",
-    " # "
-  ],
   "key": {
     "#": [
       {
@@ -17,6 +13,10 @@
       }
     ]
   },
+  "pattern": [
+    "###",
+    " # "
+  ],
   "result": {
     "item": "minecraft:dirt"
   }

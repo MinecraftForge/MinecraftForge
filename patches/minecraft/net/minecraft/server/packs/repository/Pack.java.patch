@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/packs/repository/Pack.java
 +++ b/net/minecraft/server/packs/repository/Pack.java
-@@ -27,6 +_,7 @@
+@@ -26,6 +_,7 @@
     private final Pack.Position f_10406_;
     private final boolean f_10407_;
     private final boolean f_10408_;
@@ -8,16 +8,16 @@
     private final PackSource f_10409_;
  
     @Nullable
-@@ -39,7 +_,7 @@
+@@ -38,7 +_,7 @@
              try {
                 PackMetadataSection packmetadatasection = packresources.m_5550_(PackMetadataSection.f_10366_);
                 if (packmetadatasection != null) {
--                  pack = p_10434_.m_143873_(p_10431_, new TextComponent(packresources.m_8017_()), p_10432_, p_10433_, packmetadatasection, p_10435_, p_10436_);
-+                  pack = p_10434_.create(p_10431_, new TextComponent(packresources.m_8017_()), p_10432_, p_10433_, packmetadatasection, p_10435_, p_10436_, packresources.isHidden());
+-                  pack = p_10434_.m_143873_(p_10431_, Component.m_237113_(packresources.m_8017_()), p_10432_, p_10433_, packmetadatasection, p_10435_, p_10436_);
++                  pack = p_10434_.create(p_10431_, Component.m_237113_(packresources.m_8017_()), p_10432_, p_10433_, packmetadatasection, p_10435_, p_10436_, packresources.isHidden());
                    break label54;
                 }
  
-@@ -74,7 +_,12 @@
+@@ -73,7 +_,12 @@
        }
     }
  
@@ -30,7 +30,7 @@
        this.f_10401_ = p_10420_;
        this.f_10402_ = p_10422_;
        this.f_10403_ = p_10423_;
-@@ -84,10 +_,16 @@
+@@ -83,10 +_,16 @@
        this.f_10406_ = p_10426_;
        this.f_10408_ = p_10427_;
        this.f_10409_ = p_10428_;
@@ -48,7 +48,7 @@
     }
  
     public Component m_10429_() {
-@@ -132,6 +_,8 @@
+@@ -131,6 +_,8 @@
        return this.f_10409_;
     }
  
@@ -57,7 +57,7 @@
     public boolean equals(Object p_10448_) {
        if (this == p_10448_) {
           return true;
-@@ -152,8 +_,15 @@
+@@ -148,8 +_,15 @@
  
     @FunctionalInterface
     public interface PackConstructor {

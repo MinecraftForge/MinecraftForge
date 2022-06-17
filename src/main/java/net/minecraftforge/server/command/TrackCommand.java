@@ -1,5 +1,5 @@
 /*
- * Minecraft Forge - Forge Development LLC
+ * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
@@ -21,7 +21,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.server.timings.ForgeTimings;
 import net.minecraftforge.server.timings.TimeTracker;
 
@@ -51,7 +51,7 @@ class TrackCommand
                             int duration = IntegerArgumentType.getInteger(ctx, "duration");
                             TimeTracker.BLOCK_ENTITY_UPDATE.reset();
                             TimeTracker.BLOCK_ENTITY_UPDATE.enable(duration);
-                            ctx.getSource().sendSuccess(new TranslatableComponent("commands.forge.tracking.be.enabled", duration), true);
+                            ctx.getSource().sendSuccess(Component.translatable("commands.forge.tracking.be.enabled", duration), true);
                             return 0;
                         })
                     )
@@ -62,7 +62,7 @@ class TrackCommand
                             int duration = IntegerArgumentType.getInteger(ctx, "duration");
                             TimeTracker.ENTITY_UPDATE.reset();
                             TimeTracker.ENTITY_UPDATE.enable(duration);
-                            ctx.getSource().sendSuccess(new TranslatableComponent("commands.forge.tracking.entity.enabled", duration), true);
+                            ctx.getSource().sendSuccess(Component.translatable("commands.forge.tracking.entity.enabled", duration), true);
                             return 0;
                         })
                     )
@@ -79,14 +79,14 @@ class TrackCommand
                 .then(Commands.literal("te")
                     .executes(ctx -> {
                         TimeTracker.BLOCK_ENTITY_UPDATE.reset();
-                        ctx.getSource().sendSuccess(new TranslatableComponent("commands.forge.tracking.be.reset"), true);
+                        ctx.getSource().sendSuccess(Component.translatable("commands.forge.tracking.be.reset"), true);
                         return 0;
                     })
                 )
                 .then(Commands.literal("entity")
                     .executes(ctx -> {
                         TimeTracker.ENTITY_UPDATE.reset();
-                        ctx.getSource().sendSuccess(new TranslatableComponent("commands.forge.tracking.entity.reset"), true);
+                        ctx.getSource().sendSuccess(Component.translatable("commands.forge.tracking.entity.reset"), true);
                         return 0;
                     })
                 );
@@ -116,7 +116,7 @@ class TrackCommand
             List<ForgeTimings<T>> timingsList = getSortedTimings(tracker);
             if (timingsList.isEmpty())
             {
-                source.sendSuccess(new TranslatableComponent("commands.forge.tracking.no_data"), true);
+                source.sendSuccess(Component.translatable("commands.forge.tracking.no_data"), true);
             }
             else
             {
@@ -137,13 +137,13 @@ class TrackCommand
                 {
                     Entity entity = data.getObject().get();
                     if (entity == null)
-                        return new TranslatableComponent("commands.forge.tracking.invalid");
+                        return Component.translatable("commands.forge.tracking.invalid");
 
                     BlockPos pos = entity.blockPosition();
                     double averageTimings = data.getAverageTimings();
                     String tickTime = (averageTimings > 1000 ? TIME_FORMAT.format(averageTimings / 1000) : TIME_FORMAT.format(averageTimings)) + (averageTimings < 1000 ? "\u03bcs" : "ms");
 
-                    return new TranslatableComponent("commands.forge.tracking.timing_entry", entity.getType().getRegistryName(), entity.level.dimension().location().toString(), pos.getX(), pos.getY(), pos.getZ(), tickTime);
+                    return Component.translatable("commands.forge.tracking.timing_entry", ForgeRegistries.ENTITIES.getKey(entity.getType()), entity.level.dimension().location().toString(), pos.getX(), pos.getY(), pos.getZ(), tickTime);
                 })
             );
         }
@@ -155,15 +155,15 @@ class TrackCommand
         {
             return Commands.literal("te").executes(ctx -> TrackResults.execute(ctx.getSource(), TimeTracker.BLOCK_ENTITY_UPDATE, data ->
                 {
-                    BlockEntity te = data.getObject().get();
-                    if (te == null)
-                        return new TranslatableComponent("commands.forge.tracking.invalid");
+                    BlockEntity be = data.getObject().get();
+                    if (be == null)
+                        return Component.translatable("commands.forge.tracking.invalid");
 
-                    BlockPos pos = te.getBlockPos();
+                    BlockPos pos = be.getBlockPos();
 
                     double averageTimings = data.getAverageTimings();
                     String tickTime = (averageTimings > 1000 ? TIME_FORMAT.format(averageTimings / 1000) : TIME_FORMAT.format(averageTimings)) + (averageTimings < 1000 ? "\u03bcs" : "ms");
-                    return new TranslatableComponent("commands.forge.tracking.timing_entry", te.getType().getRegistryName(), te.getLevel().dimension().location().toString(), pos.getX(), pos.getY(), pos.getZ(), tickTime);
+                    return Component.translatable("commands.forge.tracking.timing_entry", ForgeRegistries.BLOCK_ENTITIES.getKey(be.getType()), be.getLevel().dimension().location().toString(), pos.getX(), pos.getY(), pos.getZ(), tickTime);
                 })
             );
         }

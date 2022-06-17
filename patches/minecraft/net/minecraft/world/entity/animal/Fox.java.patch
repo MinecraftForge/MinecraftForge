@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/animal/Fox.java
 +++ b/net/minecraft/world/entity/animal/Fox.java
-@@ -649,13 +_,16 @@
+@@ -648,13 +_,16 @@
     }
  
     protected void m_6668_(DamageSource p_28536_) {
@@ -18,7 +18,7 @@
     }
  
     public static boolean m_28471_(Fox p_28472_, LivingEntity p_28473_) {
-@@ -805,6 +_,17 @@
+@@ -804,6 +_,17 @@
        protected void m_8026_() {
           ServerLevel serverlevel = (ServerLevel)this.f_25114_;
           Fox fox = (Fox)this.f_25113_.m_142606_(serverlevel, this.f_25115_);
@@ -36,7 +36,7 @@
           if (fox != null) {
              ServerPlayer serverplayer = this.f_25113_.m_27592_();
              ServerPlayer serverplayer1 = this.f_25115_.m_27592_();
-@@ -876,7 +_,7 @@
+@@ -875,7 +_,7 @@
        }
  
        protected void m_28686_() {
@@ -45,3 +45,12 @@
              BlockState blockstate = Fox.this.f_19853_.m_8055_(this.f_25602_);
              if (blockstate.m_60713_(Blocks.f_50685_)) {
                 this.m_148928_(blockstate);
+@@ -930,7 +_,7 @@
+       }
+ 
+       public boolean m_8036_() {
+-         return Fox.this.m_20069_() && Fox.this.m_204036_(FluidTags.f_13131_) > 0.25D || Fox.this.m_20077_();
++         return Fox.this.m_20069_() && Fox.this.m_204036_(FluidTags.f_13131_) > 0.25D || Fox.this.m_20077_() || Fox.this.isInFluidType((fluidType, height) -> Fox.this.canSwimInFluidType(fluidType) && height > 0.25D);
+       }
+    }
+ 

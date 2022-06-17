@@ -1,10 +1,11 @@
 /*
- * Minecraft Forge - Forge Development LLC
+ * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
 package net.minecraftforge.network;
 
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -14,10 +15,12 @@ import java.util.stream.Collectors;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraftforge.fml.util.thread.EffectiveSide;
 import net.minecraftforge.client.ConfigGuiHandler.ConfigGuiFactory;
+import net.minecraftforge.network.ConnectionData.ModMismatchData;
 import net.minecraftforge.network.filters.NetworkFilters;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -37,8 +40,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerContainerEvent;
 import net.minecraftforge.fml.config.ConfigTracker;
-
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 public class NetworkHooks
 {
@@ -77,7 +79,7 @@ public class NetworkHooks
 
     private static boolean validateSideForProcessing(final ICustomPacket<?> packet, final NetworkInstance ni, final Connection manager) {
         if (packet.getDirection().getReceptionSide() != EffectiveSide.get()) {
-            manager.disconnect(new TextComponent("Illegal packet received, terminating connection"));
+            manager.disconnect(Component.literal("Illegal packet received, terminating connection"));
             return false;
         }
         return true;
@@ -85,7 +87,7 @@ public class NetworkHooks
 
     public static void validatePacketDirection(final NetworkDirection packetDirection, final Optional<NetworkDirection> expectedDirection, final Connection connection) {
         if (packetDirection != expectedDirection.orElse(packetDirection)) {
-            connection.disconnect(new TextComponent("Illegal packet received, terminating connection"));
+            connection.disconnect(Component.literal("Illegal packet received, terminating connection"));
             throw new IllegalStateException("Invalid packet received, aborting connection");
         }
     }
@@ -206,9 +208,27 @@ public class NetworkHooks
         MinecraftForge.EVENT_BUS.post(new PlayerContainerEvent.Open(player, c));
     }
 
+    /**
+     * Updates the current ConnectionData instance with new mod or channel data if the old instance did not have either of these yet,
+     * or creates a new ConnectionData instance with the new data if the current ConnectionData instance doesn't exist yet.
+     */
+    static void appendConnectionData(Connection mgr, Map<String, Pair<String, String>> modData, Map<ResourceLocation, String> channels)
+    {
+        ConnectionData oldData = mgr.channel().attr(NetworkConstants.FML_CONNECTION_DATA).get();
+
+        oldData = oldData != null ? new ConnectionData(oldData.getModData().isEmpty() ? modData : oldData.getModData(), oldData.getChannels().isEmpty() ? channels : oldData.getChannels()) : new ConnectionData(modData, channels);
+        mgr.channel().attr(NetworkConstants.FML_CONNECTION_DATA).set(oldData);
+    }
+
     @Nullable
     public static ConnectionData getConnectionData(Connection mgr)
     {
         return mgr.channel().attr(NetworkConstants.FML_CONNECTION_DATA).get();
+    }
+
+    @Nullable
+    public static ModMismatchData getModMismatchData(Connection mgr)
+    {
+        return mgr.channel().attr(NetworkConstants.FML_MOD_MISMATCH_DATA).get();
     }
 }

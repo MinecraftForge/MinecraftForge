@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/gui/screens/inventory/EffectRenderingInventoryScreen.java
 +++ b/net/minecraft/client/gui/screens/inventory/EffectRenderingInventoryScreen.java
-@@ -44,12 +_,15 @@
+@@ -42,12 +_,15 @@
        if (!collection.isEmpty() && j >= 32) {
           RenderSystem.m_157429_(1.0F, 1.0F, 1.0F, 1.0F);
           boolean flag = j >= 120;
@@ -17,7 +17,7 @@
           this.m_194002_(p_194015_, i, k, iterable, flag);
           this.m_194008_(p_194015_, i, k, iterable, flag);
           if (flag) {
-@@ -110,6 +_,12 @@
+@@ -108,6 +_,12 @@
        int i = this.f_97736_;
  
        for(MobEffectInstance mobeffectinstance : p_98726_) {

@@ -1,5 +1,5 @@
 /*
- * Minecraft Forge - Forge Development LLC
+ * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
@@ -12,7 +12,6 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import com.mojang.datafixers.util.Either;
 import net.minecraft.client.gui.chat.NarratorChatListener;
-import net.minecraft.client.gui.components.toasts.SystemToast;
 import net.minecraft.client.gui.screens.ConfirmScreen;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.client.gui.screens.multiplayer.JoinMultiplayerScreen;
@@ -29,10 +28,12 @@ import net.minecraft.locale.Language;
 import net.minecraft.network.Connection;
 import net.minecraft.network.chat.*;
 import net.minecraft.network.protocol.status.ServerStatus;
-import net.minecraft.server.WorldStem;
+import net.minecraft.util.RandomSource;
+import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import com.mojang.blaze3d.platform.Window;
 import net.minecraft.client.Minecraft;
@@ -42,12 +43,10 @@ import net.minecraft.client.sounds.SoundEngine;
 import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.gui.components.LerpingBossEvent;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.screens.worldselection.WorldPreset;
 import net.minecraft.client.gui.screens.TitleScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.multiplayer.PlayerInfo;
 import net.minecraft.client.renderer.*;
-import net.minecraft.client.renderer.FogRenderer.FogMode;
 import net.minecraft.client.color.block.BlockColors;
 import net.minecraft.client.color.item.ItemColors;
 import net.minecraft.client.model.HumanoidModel;
@@ -76,8 +75,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.client.player.Input;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.storage.LevelStorageSource;
-import net.minecraft.world.level.storage.PrimaryLevelData;
+import net.minecraft.world.level.material.FogType;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
@@ -89,7 +87,6 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.levelgen.WorldGenSettings;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.*;
 import net.minecraftforge.client.event.sound.PlaySoundEvent;
@@ -114,8 +111,6 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -126,7 +121,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Random;
 import java.util.Set;
 import java.util.Stack;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -142,6 +136,8 @@ import static net.minecraftforge.fml.VersionChecker.Status.BETA_OUTDATED;
 import net.minecraft.client.Camera;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.entity.ItemRenderer;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class ForgeHooksClient
 {
@@ -213,11 +209,11 @@ public class ForgeHooksClient
     {
         switch (target.getType()) {
             case BLOCK:
-                if (!(target instanceof BlockHitResult)) return false;
-                return MinecraftForge.EVENT_BUS.post(new DrawSelectionEvent.HighlightBlock(context, camera, target, partialTick, poseStack, bufferSource));
+                if (!(target instanceof BlockHitResult blockTarget)) return false;
+                return MinecraftForge.EVENT_BUS.post(new DrawSelectionEvent.HighlightBlock(context, camera, blockTarget, partialTick, poseStack, bufferSource));
             case ENTITY:
-                if (!(target instanceof EntityHitResult)) return false;
-                return MinecraftForge.EVENT_BUS.post(new DrawSelectionEvent.HighlightEntity(context, camera, target, partialTick, poseStack, bufferSource));
+                if (!(target instanceof EntityHitResult entityTarget)) return false;
+                return MinecraftForge.EVENT_BUS.post(new DrawSelectionEvent.HighlightEntity(context, camera, entityTarget, partialTick, poseStack, bufferSource));
             default:
                 return MinecraftForge.EVENT_BUS.post(new DrawSelectionEvent(context, camera, target, partialTick, poseStack, bufferSource));
         }
@@ -315,7 +311,7 @@ public class ForgeHooksClient
     {
         FOVModifierEvent fovModifierEvent = new FOVModifierEvent(entity, fov);
         MinecraftForge.EVENT_BUS.post(fovModifierEvent);
-        return fovModifierEvent.getNewfov();
+        return fovModifierEvent.getNewFov();
     }
 
     public static double getFieldOfView(GameRenderer renderer, Camera camera, double partialTick, double fov) {
@@ -339,9 +335,9 @@ public class ForgeHooksClient
         if (status == BETA || status == BETA_OUTDATED)
         {
             // render a warning at the top of the screen,
-            Component line = new TranslatableComponent("forge.update.beta.1", ChatFormatting.RED, ChatFormatting.RESET).withStyle(ChatFormatting.RED);
+            Component line = Component.translatable("forge.update.beta.1", ChatFormatting.RED, ChatFormatting.RESET).withStyle(ChatFormatting.RED);
             GuiComponent.drawCenteredString(poseStack, font, line, width / 2, 4 + (0 * (font.lineHeight + 1)), 0xFFFFFF | alpha);
-            line = new TranslatableComponent("forge.update.beta.2");
+            line = Component.translatable("forge.update.beta.2");
             GuiComponent.drawCenteredString(poseStack, font, line, width / 2, 4 + (1 * (font.lineHeight + 1)), 0xFFFFFF | alpha);
         }
 
@@ -360,6 +356,7 @@ public class ForgeHooksClient
     }
 
     public static String forgeStatusLine;
+    @Nullable
     public static SoundInstance playSound(SoundEngine manager, SoundInstance sound)
     {
         PlaySoundEvent e = new PlaySoundEvent(manager, sound);
@@ -386,24 +383,28 @@ public class ForgeHooksClient
         MinecraftForge.EVENT_BUS.post(new ScreenEvent.DrawScreenEvent.Post(screen, poseStack, mouseX, mouseY, partialTick));
     }
 
-    public static float getFogDensity(FogMode type, Camera camera, float partialTick, float density)
+    public static Vector3f getFogColor(Camera camera, float partialTick, ClientLevel level, int renderDistance, float darkenWorldAmount, float fogRed, float fogGreen, float fogBlue)
     {
-        EntityViewRenderEvent.FogDensity event = new EntityViewRenderEvent.FogDensity(type, camera, partialTick, density);
-        if (MinecraftForge.EVENT_BUS.post(event)) return event.getDensity();
-        return -1;
+        // Modify fog color depending on the fluid
+        FluidState state = level.getFluidState(camera.getBlockPosition());
+        Vector3f fluidFogColor = new Vector3f(fogRed, fogGreen, fogBlue);
+        if (camera.getPosition().y < (double)((float)camera.getBlockPosition().getY() + state.getHeight(level, camera.getBlockPosition())))
+            fluidFogColor = RenderProperties.get(state).modifyFogColor(camera, partialTick, level, renderDistance, darkenWorldAmount, fluidFogColor);
+
+        EntityViewRenderEvent.FogColors event = new net.minecraftforge.client.event.EntityViewRenderEvent.FogColors(camera, partialTick, fluidFogColor.x(), fluidFogColor.y(), fluidFogColor.z());
+        MinecraftForge.EVENT_BUS.post(event);
+
+        fluidFogColor.set(event.getRed(), event.getGreen(), event.getBlue());
+        return fluidFogColor;
     }
 
-    /**
-     * @deprecated to be removed in 1.19, use other onFogRender hook with more params
-     */
-    @Deprecated(forRemoval = true, since = "1.18.2")
-    public static void onFogRender(FogMode type, Camera camera, float partialTick, float distance)
+    public static void onFogRender(FogRenderer.FogMode mode, FogType type, Camera camera, float partialTick, float renderDistance, float nearDistance, float farDistance, FogShape shape)
     {
-        MinecraftForge.EVENT_BUS.post(new EntityViewRenderEvent.RenderFogEvent(type, camera, partialTick, distance));
-    }
+        // Modify fog rendering depending on the fluid
+        FluidState state = camera.getEntity().level.getFluidState(camera.getBlockPosition());
+        if (camera.getPosition().y < (double)((float)camera.getBlockPosition().getY() + state.getHeight(camera.getEntity().level, camera.getBlockPosition())))
+            RenderProperties.get(state).modifyFogRender(camera, mode, renderDistance, partialTick, nearDistance, farDistance, shape);
 
-    public static void onFogRender(FogMode type, Camera camera, float partialTick, float nearDistance, float farDistance, FogShape shape)
-    {
         EntityViewRenderEvent.RenderFogEvent event = new EntityViewRenderEvent.RenderFogEvent(type, camera, partialTick, nearDistance, farDistance, shape);
         if (MinecraftForge.EVENT_BUS.post(event))
         {
@@ -460,10 +461,11 @@ public class ForgeHooksClient
     @SuppressWarnings("deprecation")
     public static TextureAtlasSprite[] getFluidSprites(BlockAndTintGetter level, BlockPos pos, FluidState fluidStateIn)
     {
-        ResourceLocation overlayTexture = fluidStateIn.getType().getAttributes().getOverlayTexture();
+        IFluidTypeRenderProperties props = RenderProperties.get(fluidStateIn);
+        ResourceLocation overlayTexture = props.getOverlayTexture(fluidStateIn, level, pos);
         return new TextureAtlasSprite[] {
-                Minecraft.getInstance().getTextureAtlas(TextureAtlas.LOCATION_BLOCKS).apply(fluidStateIn.getType().getAttributes().getStillTexture(level, pos)),
-                Minecraft.getInstance().getTextureAtlas(TextureAtlas.LOCATION_BLOCKS).apply(fluidStateIn.getType().getAttributes().getFlowingTexture(level, pos)),
+                Minecraft.getInstance().getTextureAtlas(TextureAtlas.LOCATION_BLOCKS).apply(props.getStillTexture(fluidStateIn, level, pos)),
+                Minecraft.getInstance().getTextureAtlas(TextureAtlas.LOCATION_BLOCKS).apply(props.getFlowingTexture(fluidStateIn, level, pos)),
                 overlayTexture == null ? null : Minecraft.getInstance().getTextureAtlas(TextureAtlas.LOCATION_BLOCKS).apply(overlayTexture),
         };
     }
@@ -477,7 +479,7 @@ public class ForgeHooksClient
 
     public static Stream<Material> getFluidMaterials(Fluid fluid)
     {
-        return fluid.getAttributes().getTextures()
+        return RenderProperties.get(fluid).getTextures()
                 .filter(Objects::nonNull)
                 .map(ForgeHooksClient::getBlockMaterial);
     }
@@ -540,7 +542,7 @@ public class ForgeHooksClient
 
     private static int slotMainHand = 0;
 
-    public static boolean shouldCauseReequipAnimation(@Nonnull ItemStack from, @Nonnull ItemStack to, int slot)
+    public static boolean shouldCauseReequipAnimation(@NotNull ItemStack from, @NotNull ItemStack to, int slot)
     {
         boolean fromInvalid = from.isEmpty();
         boolean toInvalid   = to.isEmpty();
@@ -764,34 +766,9 @@ public class ForgeHooksClient
                 {
                     setRenderType(rendertype);
                     VertexConsumer ivertexbuilder = bufferSource.getBuffer(rendertype == RenderType.translucent() ? RenderType.translucentMovingBlock() : rendertype);
-                    blockRenderer.getModelRenderer().tesselateBlock(level, blockRenderer.getBlockModel(state), state, pos, stack, ivertexbuilder, checkSides, new Random(), state.getSeed(pos), packedOverlay);
+                    blockRenderer.getModelRenderer().tesselateBlock(level, blockRenderer.getBlockModel(state), state, pos, stack, ivertexbuilder, checkSides, RandomSource.create(), state.getSeed(pos), packedOverlay);
                 });
         setRenderType(null);
-    }
-
-    public static void registerForgeWorldPresetScreens()
-    {
-        ForgeWorldPresetScreens.registerPresets();
-    }
-
-    public static WorldPreset.PresetEditor getPresetEditor(Optional<WorldPreset> generator, @Nullable WorldPreset.PresetEditor biomegeneratortypescreens$ifactory)
-    {
-        return ForgeWorldPresetScreens.getPresetEditor(generator, biomegeneratortypescreens$ifactory);
-    }
-
-    public static boolean hasPresetEditor(Optional<WorldPreset> generator)
-    {
-        return getPresetEditor(generator, null) != null;
-    }
-
-    public static Optional<WorldPreset> getWorldPresetFromGenerator(WorldGenSettings dimensionGeneratorSettings)
-    {
-        return WorldPreset.of(dimensionGeneratorSettings);
-    }
-
-    public static Optional<WorldPreset> getDefaultWorldPreset()
-    {
-        return Optional.of(ForgeWorldPresetScreens.getDefaultPreset());
     }
 
     public static boolean shouldRenderEffect(MobEffectInstance effectInstance)
@@ -807,7 +784,7 @@ public class ForgeHooksClient
             int atlasWidth, int atlasHeight,
             int spriteX, int spriteY, int mipmapLevel,
             NativeImage image
-    )
+    ) throws IOException
     {
         ForgeTextureMetadata metadata = ForgeTextureMetadata.forResource(resource);
         return metadata.getLoader() == null ? null : metadata.getLoader().load(textureAtlas, resourceManager, textureInfo, resource, atlasWidth, atlasHeight, spriteX, spriteY, mipmapLevel, image);
@@ -928,7 +905,7 @@ public class ForgeHooksClient
         if(relativeMouseX > width - 15 && relativeMouseX < width && relativeMouseY > 10 && relativeMouseY < 26) {
             //this is not the most proper way to do it,
             //but works best here and has the least maintenance overhead
-            gui.setToolTip(Arrays.stream(tooltip.split("\n")).map(TextComponent::new).collect(Collectors.toList()));
+            gui.setToolTip(Arrays.stream(tooltip.split("\n")).map(Component::literal).collect(Collectors.toList()));
         }
     }
 
@@ -951,7 +928,7 @@ public class ForgeHooksClient
         MinecraftForge.EVENT_BUS.post(new ClientPlayerNetworkEvent.LoggedInEvent(pc, player, networkManager));
     }
 
-    public static void firePlayerLogout(MultiPlayerGameMode pc, LocalPlayer player) {
+    public static void firePlayerLogout(@Nullable MultiPlayerGameMode pc, @Nullable LocalPlayer player) {
         MinecraftForge.EVENT_BUS.post(new ClientPlayerNetworkEvent.LoggedOutEvent(pc, player, player != null ? player.connection != null ? player.connection.getConnection() : null : null));
     }
 
@@ -980,7 +957,7 @@ public class ForgeHooksClient
         }
     }
 
-    public static Font getTooltipFont(@Nullable Font forcedFont, @Nonnull ItemStack stack, Font fallbackFont)
+    public static Font getTooltipFont(@Nullable Font forcedFont, @NotNull ItemStack stack, Font fallbackFont)
     {
         if (forcedFont != null)
         {
@@ -990,14 +967,14 @@ public class ForgeHooksClient
         return stackFont == null ? fallbackFont : stackFont;
     }
 
-    public static RenderTooltipEvent.Pre onRenderTooltipPre(@Nonnull ItemStack stack, PoseStack poseStack, int x, int y, int screenWidth, int screenHeight, @Nonnull List<ClientTooltipComponent> components, @Nullable Font forcedFont, @Nonnull Font fallbackFont)
+    public static RenderTooltipEvent.Pre onRenderTooltipPre(@NotNull ItemStack stack, PoseStack poseStack, int x, int y, int screenWidth, int screenHeight, @NotNull List<ClientTooltipComponent> components, @Nullable Font forcedFont, @NotNull Font fallbackFont)
     {
         var preEvent = new RenderTooltipEvent.Pre(stack, poseStack, x, y, screenWidth, screenHeight, getTooltipFont(forcedFont, stack, fallbackFont), components);
         MinecraftForge.EVENT_BUS.post(preEvent);
         return preEvent;
     }
 
-    public static RenderTooltipEvent.Color onRenderTooltipColor(@Nonnull ItemStack stack, PoseStack poseStack, int x, int y, @Nonnull Font font, @Nonnull List<ClientTooltipComponent> components)
+    public static RenderTooltipEvent.Color onRenderTooltipColor(@NotNull ItemStack stack, PoseStack poseStack, int x, int y, @NotNull Font font, @NotNull List<ClientTooltipComponent> components)
     {
         var colorEvent = new RenderTooltipEvent.Color(stack, poseStack, x, y, font, 0xf0100010, 0x505000FF, 0x5028007f, components);
         MinecraftForge.EVENT_BUS.post(colorEvent);
@@ -1099,45 +1076,48 @@ public class ForgeHooksClient
         return ItemBlockRenderTypes.canRenderInLayer(state, RenderType.solid());
     }
 
-    public static void createWorldConfirmationScreen(
-            LevelStorageSource save, String worldName, boolean creatingWorld,
-            Function<LevelStorageSource.LevelStorageAccess, WorldStem.WorldDataSupplier> worldData,
-            Function<Function<LevelStorageSource.LevelStorageAccess, WorldStem.WorldDataSupplier>, Runnable> runAfter)
+    public static void createWorldConfirmationScreen(Runnable doConfirmedWorldLoad)
     {
-        Component title = new TranslatableComponent("selectWorld.backupQuestion.experimental");
-        Component msg = new TranslatableComponent("selectWorld.backupWarning.experimental")
+        Component title = Component.translatable("selectWorld.backupQuestion.experimental");
+        Component msg = Component.translatable("selectWorld.backupWarning.experimental")
                 .append("\n\n")
-                .append(new TranslatableComponent("forge.selectWorld.backupWarning.experimental.additional"));
+                .append(Component.translatable("forge.selectWorld.backupWarning.experimental.additional"));
 
         Screen screen = new ConfirmScreen(confirmed ->
         {
             if (confirmed)
             {
-                //The WorldData is re-created when re-running the runnable,
-                // so make sure to be setting the field to true on the right instance.
-                runAfter.apply(worldData.andThen(wds -> (rm, dpc) ->
-                        wds.get(rm, dpc).mapFirst(wd -> wd instanceof PrimaryLevelData pld ? pld.withConfirmedWarning(true) : wd))
-                ).run();
+                doConfirmedWorldLoad.run();
             }
             else
             {
                 Minecraft.getInstance().setScreen(null);
-
-                if (creatingWorld) // delete save when cancelling creation.
-                {
-                    try (LevelStorageSource.LevelStorageAccess levelSave = save.createAccess(worldName))
-                    {
-                        levelSave.deleteLevel();
-                    }
-                    catch (IOException e)
-                    {
-                        SystemToast.onWorldDeleteFailure(Minecraft.getInstance(), worldName);
-                        LOGGER.error("Failed to delete world {}", worldName, e);
-                    }
-                }
             }
         }, title, msg, CommonComponents.GUI_PROCEED, CommonComponents.GUI_CANCEL);
 
         Minecraft.getInstance().setScreen(screen);
+    }
+
+    public static boolean renderFireOverlay(Player player, PoseStack mat)
+    {
+        return renderBlockOverlay(player, mat, RenderBlockOverlayEvent.OverlayType.FIRE, Blocks.FIRE.defaultBlockState(), player.blockPosition());
+    }
+
+    public static boolean renderWaterOverlay(Player player, PoseStack mat)
+    {
+        return renderBlockOverlay(player, mat, RenderBlockOverlayEvent.OverlayType.WATER, Blocks.WATER.defaultBlockState(), player.blockPosition());
+    }
+
+    public static boolean renderBlockOverlay(Player player, PoseStack mat, RenderBlockOverlayEvent.OverlayType type, BlockState block, BlockPos pos)
+    {
+        return MinecraftForge.EVENT_BUS.post(new RenderBlockOverlayEvent(player, mat, type, block, pos));
+    }
+
+    public static int getMaxMipmapLevel(int width, int height)
+    {
+        return Math.min(
+                Mth.log2(Math.max(1, width)),
+                Mth.log2(Math.max(1, height))
+        );
     }
 }

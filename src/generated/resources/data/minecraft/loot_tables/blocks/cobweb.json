@@ -2,7 +2,6 @@
   "type": "minecraft:block",
   "pools": [
     {
-      "rolls": 1.0,
       "bonus_rolls": 0.0,
       "entries": [
         {
@@ -15,8 +14,8 @@
                   "condition": "minecraft:alternative",
                   "terms": [
                     {
-                      "condition": "forge:can_tool_perform_action",
-                      "action": "shears_dig"
+                      "action": "shears_dig",
+                      "condition": "forge:can_tool_perform_action"
                     },
                     {
                       "condition": "minecraft:match_tool",
@@ -47,7 +46,8 @@
             }
           ]
         }
-      ]
+      ],
+      "rolls": 1.0
     }
   ]
 }

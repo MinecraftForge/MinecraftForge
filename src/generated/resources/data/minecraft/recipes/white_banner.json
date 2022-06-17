@@ -1,11 +1,6 @@
 {
   "type": "minecraft:crafting_shaped",
   "group": "banner",
-  "pattern": [
-    "###",
-    "###",
-    " | "
-  ],
   "key": {
     "#": {
       "item": "minecraft:white_wool"
@@ -14,6 +9,11 @@
       "tag": "forge:rods/wooden"
     }
   },
+  "pattern": [
+    "###",
+    "###",
+    " | "
+  ],
   "result": {
     "item": "minecraft:white_banner"
   }

@@ -1,5 +1,5 @@
 /*
- * Minecraft Forge - Forge Development LLC
+ * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
@@ -22,12 +22,12 @@ import net.minecraft.util.GsonHelper;
 import net.minecraft.resources.ResourceLocation;
 import com.mojang.math.Transformation;
 import net.minecraftforge.client.event.ModelRegistryEvent;
+import net.minecraftforge.client.event.RegisterClientReloadListenersEvent;
 import net.minecraftforge.client.model.geometry.IModelGeometry;
 import net.minecraftforge.client.model.geometry.ISimpleModelGeometry;
 import net.minecraftforge.client.model.obj.OBJLoader;
 import net.minecraftforge.common.model.TransformationHelper;
 
-import javax.annotation.Nullable;
 import java.lang.reflect.Type;
 import java.util.*;
 import java.util.function.Function;
@@ -48,6 +48,9 @@ import net.minecraft.client.resources.model.Material;
 import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.ModelState;
 import net.minecraft.client.resources.model.UnbakedModel;
+import org.jetbrains.annotations.Nullable;
+import net.minecraftforge.common.util.Lazy;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
 /**
  * Central hub for custom model loaders.
@@ -63,17 +66,24 @@ public class ModelLoaderRegistry
     // Forge built-in loaders
     public static void init()
     {
-        registerLoader(new ResourceLocation("minecraft","elements"), VanillaProxy.Loader.INSTANCE);
-        registerLoader(new ResourceLocation("forge","obj"), OBJLoader.INSTANCE);
-        registerLoader(new ResourceLocation("forge","bucket"), DynamicBucketModel.Loader.INSTANCE);
-        registerLoader(new ResourceLocation("forge","composite"), CompositeModel.Loader.INSTANCE);
-        registerLoader(new ResourceLocation("forge","multi-layer"), MultiLayerModel.Loader.INSTANCE);
-        registerLoader(new ResourceLocation("forge","item-layers"), ItemLayerModel.Loader.INSTANCE);
-        registerLoader(new ResourceLocation("forge", "separate-perspective"), SeparatePerspectiveModel.Loader.INSTANCE);
+    // avoid loading the loaders eagerly. This method gets called during datagen, which the loaders cannot deal with
+    var builtInLoaders = Lazy.of(() -> Map.of(
+            new ResourceLocation("minecraft", "elements"), VanillaProxy.Loader.INSTANCE,
+            new ResourceLocation("forge", "obj"), OBJLoader.INSTANCE,
+            new ResourceLocation("forge", "bucket"), DynamicBucketModel.Loader.INSTANCE,
+            new ResourceLocation("forge", "composite"), CompositeModel.Loader.INSTANCE,
+            new ResourceLocation("forge", "multi-layer"), MultiLayerModel.Loader.INSTANCE,
+            new ResourceLocation("forge", "item-layers"), ItemLayerModel.Loader.INSTANCE,
+            new ResourceLocation("forge", "separate-perspective"), SeparatePerspectiveModel.Loader.INSTANCE
+    ));
 
         // TODO: Implement as new model loaders
         //registerLoader(new ResourceLocation("forge:b3d"), new ModelLoaderAdapter(B3DLoader.INSTANCE));
         //registerLoader(new ResourceLocation("forge:fluid"), new ModelLoaderAdapter(ModelFluid.FluidLoader.INSTANCE));
+
+        var modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
+        modEventBus.<RegisterClientReloadListenersEvent>addListener(event -> builtInLoaders.get().values().forEach(event::registerReloadListener));
+        modEventBus.<ModelRegistryEvent>addListener(event -> builtInLoaders.get().forEach(ModelLoaderRegistry::registerLoader));
     }
 
     /**
@@ -90,8 +100,25 @@ public class ModelLoaderRegistry
     }
 
     /**
-     * Makes system aware of your loader.
+     * Internal method, only present for enabling legacy behavior of automatic registration of model loaders
+     * as resource reload listeners.
+     */
+    @Deprecated
+    public static void afterFirstReload()
+    {
+        for (IModelLoader<?> loader : loaders.values())
+        {
+            ((ReloadableResourceManager) Minecraft.getInstance().getResourceManager()).registerReloadListenerIfNotPresent(loader);
+        }
+    }
+
+    /**
+     * Makes system aware of your loader.<br>
      * <b>Must be called from within {@link ModelRegistryEvent}</b>
+     * <br><br>
+     * <b>Note:</b> This method currently registers the model loader as a resource reload listener automatically,
+     * if it is not already registered. This behavior is <i>deprecated</i> and will be removed in the future.
+     * If the model loader needs to be a resource reload listener as well, use {@link net.minecraftforge.client.event.RegisterClientReloadListenersEvent}.
      */
     public static void registerLoader(ResourceLocation id, IModelLoader<?> loader)
     {
@@ -101,7 +128,6 @@ public class ModelLoaderRegistry
         synchronized(loaders)
         {
             loaders.put(id, loader);
-            ((ReloadableResourceManager) Minecraft.getInstance().getResourceManager()).registerReloadListener(loader);
         }
     }
 
@@ -214,18 +240,18 @@ public class ModelLoaderRegistry
             JsonObject transform = transformData.getAsJsonObject();
             EnumMap<ItemTransforms.TransformType, Transformation> transforms = Maps.newEnumMap(ItemTransforms.TransformType.class);
 
-            deserializeTRSR(context, transforms, transform, "thirdperson", ItemTransforms.TransformType.THIRD_PERSON_RIGHT_HAND);
-            deserializeTRSR(context, transforms, transform, "thirdperson_righthand", ItemTransforms.TransformType.THIRD_PERSON_RIGHT_HAND);
-            deserializeTRSR(context, transforms, transform, "thirdperson_lefthand", ItemTransforms.TransformType.THIRD_PERSON_LEFT_HAND);
-
-            deserializeTRSR(context, transforms, transform, "firstperson", ItemTransforms.TransformType.FIRST_PERSON_RIGHT_HAND);
-            deserializeTRSR(context, transforms, transform, "firstperson_righthand", ItemTransforms.TransformType.FIRST_PERSON_RIGHT_HAND);
-            deserializeTRSR(context, transforms, transform, "firstperson_lefthand", ItemTransforms.TransformType.FIRST_PERSON_LEFT_HAND);
-
-            deserializeTRSR(context, transforms, transform, "head", ItemTransforms.TransformType.HEAD);
-            deserializeTRSR(context, transforms, transform, "gui", ItemTransforms.TransformType.GUI);
-            deserializeTRSR(context, transforms, transform, "ground", ItemTransforms.TransformType.GROUND);
-            deserializeTRSR(context, transforms, transform, "fixed", ItemTransforms.TransformType.FIXED);
+            for (var type : ItemTransforms.TransformType.values())
+            {
+                var fallbackType = type;
+                while (fallbackType.fallback() != null && !transform.has(fallbackType.getSerializeName())) {
+                    fallbackType = fallbackType.fallback();
+                }
+                if(transform.has(fallbackType.getSerializeName()))
+                {
+                    Transformation t = context.deserialize(transform.remove(fallbackType.getSerializeName()), Transformation.class);
+                    transforms.put(type, t.blockCenterToCorner());
+                }
+            }
 
             int k = transform.entrySet().size();
             if(transform.has("matrix")) k--;
@@ -236,7 +262,8 @@ public class ModelLoaderRegistry
             if(transform.has("origin")) k--;
             if(k > 0)
             {
-                throw new JsonParseException("transform: allowed keys: 'thirdperson', 'firstperson', 'gui', 'head', 'matrix', 'translation', 'rotation', 'scale', 'post-rotation', 'origin'");
+                throw new JsonParseException("transform: allowed keys: 'matrix', 'translation', 'rotation', 'scale', 'post-rotation', 'origin', "
+                        + Arrays.stream(ItemTransforms.TransformType.values()).map(v -> "'" + v.getSerializeName() + "'").collect(Collectors.joining(", ")));
             }
             Transformation base = Transformation.identity();
             if(!transform.entrySet().isEmpty())
@@ -245,15 +272,6 @@ public class ModelLoaderRegistry
             }
             ModelState state = new SimpleModelState(Maps.immutableEnumMap(transforms), base);
             return Optional.of(state);
-        }
-    }
-
-    private static void deserializeTRSR(JsonDeserializationContext context, EnumMap<ItemTransforms.TransformType, Transformation> transforms, JsonObject transform, String name, ItemTransforms.TransformType itemCameraTransform)
-    {
-        if(transform.has(name))
-        {
-            Transformation t = context.deserialize(transform.remove(name), Transformation.class);
-            transforms.put(itemCameraTransform, t.blockCenterToCorner());
         }
     }
 

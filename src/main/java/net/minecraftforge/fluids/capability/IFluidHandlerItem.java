@@ -1,13 +1,12 @@
 /*
- * Minecraft Forge - Forge Development LLC
+ * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
 package net.minecraftforge.fluids.capability;
 
-import javax.annotation.Nonnull;
-
 import net.minecraft.world.item.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * ItemStacks handled by an {@link IFluidHandler} may change, so this class allows
@@ -21,6 +20,6 @@ public interface IFluidHandlerItem extends IFluidHandler
      * for their filled and empty states.
      * May be an empty item if the container was drained and is consumable.
      */
-    @Nonnull
+    @NotNull
     ItemStack getContainer();
 }

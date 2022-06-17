@@ -1,11 +1,9 @@
 /*
- * Minecraft Forge - Forge Development LLC
+ * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
 package net.minecraftforge.client.textures;
-
-import javax.annotation.Nonnull;
 
 import com.mojang.blaze3d.platform.NativeImage;
 import net.minecraft.client.renderer.texture.TextureAtlas;
@@ -13,6 +11,7 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * A loader for custom TextureAtlasSprite implementations.<br>
@@ -32,7 +31,7 @@ public interface ITextureAtlasSpriteLoader
     /**
      * Load a TextureAtlasSprite for the given resource.
      */
-    @Nonnull
+    @NotNull
     TextureAtlasSprite load(
             TextureAtlas atlas,
             ResourceManager resourceManager, TextureAtlasSprite.Info textureInfo,

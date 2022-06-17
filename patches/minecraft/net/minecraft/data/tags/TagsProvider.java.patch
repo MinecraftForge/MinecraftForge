@@ -1,9 +1,9 @@
 --- a/net/minecraft/data/tags/TagsProvider.java
 +++ b/net/minecraft/data/tags/TagsProvider.java
-@@ -32,10 +_,24 @@
-    protected final DataGenerator f_126539_;
+@@ -29,10 +_,30 @@
+    protected final DataGenerator.PathProvider f_236439_;
     protected final Registry<T> f_126540_;
-    protected final Map<ResourceLocation, Tag.Builder> f_126543_ = Maps.newLinkedHashMap();
+    protected final Map<ResourceLocation, TagBuilder> f_126543_ = Maps.newLinkedHashMap();
 +   protected final String modId;
 +   protected final net.minecraftforge.common.data.ExistingFileHelper existingFileHelper;
 +   private final net.minecraftforge.common.data.ExistingFileHelper.IResourceType resourceType;
@@ -17,84 +17,94 @@
 +      this(p_126546_, p_126547_, "vanilla", null);
 +   }
 +   protected TagsProvider(DataGenerator p_126546_, Registry<T> p_126547_, String modId, @org.jetbrains.annotations.Nullable net.minecraftforge.common.data.ExistingFileHelper existingFileHelper) {
-       this.f_126539_ = p_126546_;
+       this.f_236439_ = p_126546_.m_236036_(DataGenerator.Target.DATA_PACK, TagManager.m_203918_(p_126547_.m_123023_()));
        this.f_126540_ = p_126547_;
 +      this.modId = modId;
 +      this.existingFileHelper = existingFileHelper;
 +      this.resourceType = new net.minecraftforge.common.data.ExistingFileHelper.ResourceType(net.minecraft.server.packs.PackType.SERVER_DATA, ".json", TagManager.m_203918_(p_126547_.m_123023_()));
++   }
++
++   // Forge: Allow customizing the path for a given tag or returning null
++   @org.jetbrains.annotations.Nullable
++   protected Path getPath(ResourceLocation id) {
++      return this.f_236439_.m_236048_(id);
     }
  
-    protected abstract void m_6577_();
-@@ -46,12 +_,13 @@
-       this.f_126543_.forEach((p_176835_, p_176836_) -> {
-          List<Tag.BuilderEntry> list = p_176836_.m_13330_().filter((p_176832_) -> {
-             return !p_176832_.f_13338_().m_142746_(this.f_126540_::m_7804_, this.f_126543_::containsKey);
+    public String m_6055_() {
+@@ -48,12 +_,13 @@
+          List<TagEntry> list = p_236450_.m_215904_();
+          List<TagEntry> list1 = list.stream().filter((p_236444_) -> {
+             return !p_236444_.m_215940_(this.f_126540_::m_7804_, this.f_126543_::containsKey);
 -         }).toList();
 +         }).filter(this::missing).collect(Collectors.toList()); // Forge: Add validation via existing resources
-          if (!list.isEmpty()) {
-             throw new IllegalArgumentException(String.format("Couldn't define tag %s as it is missing following references: %s", p_176835_, list.stream().map(Objects::toString).collect(Collectors.joining(","))));
+          if (!list1.isEmpty()) {
+             throw new IllegalArgumentException(String.format("Couldn't define tag %s as it is missing following references: %s", p_236449_, list1.stream().map(Objects::toString).collect(Collectors.joining(","))));
           } else {
-             JsonObject jsonobject = p_176836_.m_13334_();
-             Path path = this.m_6648_(p_176835_);
+             JsonElement jsonelement = TagFile.f_215958_.encodeStart(JsonOps.INSTANCE, new TagFile(list, false)).getOrThrow(false, f_126541_::error);
+-            Path path = this.f_236439_.m_236048_(p_236449_);
++            Path path = this.getPath(p_236449_);
 +            if (path == null) return; // Forge: Allow running this data provider without writing it. Recipe provider needs valid tags.
  
              try {
-                String s = f_126542_.toJson((JsonElement)jsonobject);
-@@ -88,6 +_,17 @@
+                DataProvider.m_236072_(p_236446_, jsonelement, path);
+@@ -65,24 +_,37 @@
        });
     }
  
-+   private boolean missing(Tag.BuilderEntry reference) {
-+      Tag.Entry entry = reference.f_13338_();
++   private boolean missing(TagEntry reference) {
 +      // We only care about non-optional tag entries, this is the only type that can reference a resource and needs validation
 +      // Optional tags should not be validated
 +
-+      if (entry instanceof Tag.TagEntry nonOptionalEntry) {
-+         return existingFileHelper == null || !existingFileHelper.exists(nonOptionalEntry.getId(), resourceType);
++      if (reference.isRequired()) {
++         return existingFileHelper == null || !existingFileHelper.exists(reference.getId(), resourceType);
 +      }
 +      return false;
 +   }
 +
-    protected Path m_6648_(ResourceLocation p_126561_) {
-       ResourceKey<? extends Registry<T>> resourcekey = this.f_126540_.m_123023_();
-       return this.f_126539_.m_123916_().resolve("data/" + p_126561_.m_135827_() + "/" + TagManager.m_203918_(resourcekey) + "/" + p_126561_.m_135815_() + ".json");
-@@ -95,16 +_,17 @@
- 
     protected TagsProvider.TagAppender<T> m_206424_(TagKey<T> p_206425_) {
-       Tag.Builder tag$builder = this.m_206426_(p_206425_);
--      return new TagsProvider.TagAppender<>(tag$builder, this.f_126540_, "vanilla");
-+      return new TagsProvider.TagAppender<>(tag$builder, this.f_126540_, modId);
+       TagBuilder tagbuilder = this.m_236451_(p_206425_);
+-      return new TagsProvider.TagAppender<>(tagbuilder, this.f_126540_);
++      return new TagsProvider.TagAppender<>(tagbuilder, this.f_126540_, modId);
     }
  
-    protected Tag.Builder m_206426_(TagKey<T> p_206427_) {
-       return this.f_126543_.computeIfAbsent(p_206427_.f_203868_(), (p_176838_) -> {
-+         existingFileHelper.trackGenerated(p_176838_, resourceType);
-          return new Tag.Builder();
+    protected TagBuilder m_236451_(TagKey<T> p_236452_) {
+       return this.f_126543_.computeIfAbsent(p_236452_.f_203868_(), (p_236442_) -> {
++         existingFileHelper.trackGenerated(p_236442_, resourceType);
+          return TagBuilder.m_215899_();
        });
     }
  
 -   protected static class TagAppender<T> {
 +   public static class TagAppender<T> implements net.minecraftforge.common.extensions.IForgeTagAppender<T> {
-       private final Tag.Builder f_126568_;
+       private final TagBuilder f_126568_;
        public final Registry<T> f_126569_;
-       private final String f_126570_;
-@@ -150,6 +_,19 @@
-             this.f_126568_.m_13327_(p_126587_, this.f_126570_);
++      private final String modId;
+ 
+-      TagAppender(TagBuilder p_236454_, Registry<T> p_236455_) {
++      TagAppender(TagBuilder p_236454_, Registry<T> p_236455_, String modId) {
+          this.f_126568_ = p_236454_;
+          this.f_126569_ = p_236455_;
++         this.modId = modId;
+       }
+ 
+       public TagsProvider.TagAppender<T> m_126582_(T p_126583_) {
+@@ -120,6 +_,19 @@
+             this.f_126568_.m_215900_(p_126587_);
           });
           return this;
 +      }
 +
-+      public TagsProvider.TagAppender<T> add(Tag.Entry tag) {
-+          f_126568_.m_13307_(tag, f_126570_);
++      public TagsProvider.TagAppender<T> add(TagEntry tag) {
++          f_126568_.m_215902_(tag);
 +          return this;
 +      }
 +
-+      public Tag.Builder getInternalBuilder() {
++      public TagBuilder getInternalBuilder() {
 +          return f_126568_;
 +      }
 +
 +      public String getModID() {
-+          return f_126570_;
++          return modId;
        }
     }
  }

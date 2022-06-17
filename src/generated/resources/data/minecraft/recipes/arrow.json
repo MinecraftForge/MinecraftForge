@@ -1,10 +1,5 @@
 {
   "type": "minecraft:crafting_shaped",
-  "pattern": [
-    "X",
-    "#",
-    "Y"
-  ],
   "key": {
     "#": {
       "tag": "forge:rods/wooden"
@@ -16,8 +11,13 @@
       "item": "minecraft:feather"
     }
   },
+  "pattern": [
+    "X",
+    "#",
+    "Y"
+  ],
   "result": {
-    "item": "minecraft:arrow",
-    "count": 4
+    "count": 4,
+    "item": "minecraft:arrow"
   }
 }

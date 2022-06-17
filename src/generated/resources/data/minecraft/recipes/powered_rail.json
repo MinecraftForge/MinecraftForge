@@ -1,23 +1,23 @@
 {
   "type": "minecraft:crafting_shaped",
-  "pattern": [
-    "X X",
-    "X#X",
-    "XRX"
-  ],
   "key": {
-    "R": {
-      "item": "minecraft:redstone"
-    },
     "#": {
       "tag": "forge:rods/wooden"
+    },
+    "R": {
+      "item": "minecraft:redstone"
     },
     "X": {
       "tag": "forge:ingots/gold"
     }
   },
+  "pattern": [
+    "X X",
+    "X#X",
+    "XRX"
+  ],
   "result": {
-    "item": "minecraft:powered_rail",
-    "count": 6
+    "count": 6,
+    "item": "minecraft:powered_rail"
   }
 }

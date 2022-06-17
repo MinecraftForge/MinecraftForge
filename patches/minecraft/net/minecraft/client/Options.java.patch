@@ -1,15 +1,15 @@
 --- a/net/minecraft/client/Options.java
 +++ b/net/minecraft/client/Options.java
-@@ -188,6 +_,7 @@
-    public boolean f_92076_;
+@@ -772,6 +_,7 @@
+    }
  
     public Options(Minecraft p_92138_, File p_92139_) {
 +      setForgeKeybindProperties();
        this.f_92060_ = p_92138_;
        this.f_92110_ = new File(p_92139_, "options.txt");
-       if (p_92138_.m_91103_() && Runtime.getRuntime().maxMemory() >= 1000000000L) {
-@@ -302,10 +_,14 @@
-       this.f_193762_ = p_168428_.m_142682_("allowServerListing", this.f_193762_);
+       boolean flag = p_92138_.m_91103_();
+@@ -887,10 +_,14 @@
+       p_168428_.m_213982_("onlyShowSecureChat", this.f_231798_);
  
        for(KeyMapping keymapping : this.f_92059_) {
 -         String s = keymapping.m_90865_();
@@ -25,7 +25,7 @@
           }
        }
  
-@@ -493,6 +_,7 @@
+@@ -1058,6 +_,7 @@
     }
  
     public void m_92169_() {
@@ -33,7 +33,7 @@
        try {
           final PrintWriter printwriter = new PrintWriter(new OutputStreamWriter(new FileOutputStream(this.f_92110_), StandardCharsets.UTF_8));
  
-@@ -641,6 +_,23 @@
+@@ -1205,6 +_,23 @@
        }
  
        p_92146_.m_10509_(set);

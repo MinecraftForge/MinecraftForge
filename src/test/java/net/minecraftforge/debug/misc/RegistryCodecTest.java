@@ -1,5 +1,5 @@
 /*
- * Minecraft Forge - Forge Development LLC
+ * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
@@ -25,12 +25,11 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.ForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistry;
-import net.minecraftforge.registries.IForgeRegistryEntry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /**
- * This test mod show a few example usages of {@link IForgeRegistry#getCodec()} to serialize and deserialize {@link IForgeRegistryEntry} to json or nbt.
+ * This test mod show a few example usages of {@link IForgeRegistry#getCodec()} to serialize and deserialize registry entries to JSON or NBT.
  * There are 4 tested cases :
  * 1. json -> Pair
  * 2. Pair -> nbt

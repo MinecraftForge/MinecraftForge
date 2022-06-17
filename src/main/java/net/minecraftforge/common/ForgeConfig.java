@@ -1,5 +1,5 @@
 /*
- * Minecraft Forge - Forge Development LLC
+ * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
@@ -21,12 +21,15 @@ public class ForgeConfig {
     public static class Server {
         public final BooleanValue removeErroringBlockEntities;
 
+        public final BooleanValue removeErroringEntities;
+
         public final BooleanValue fullBoundingBoxLadders;
 
         public final DoubleValue zombieBaseSummonChance;
         public final DoubleValue zombieBabyChance;
 
         public final BooleanValue treatEmptyTagsAsAir;
+        public final BooleanValue skipEmptyShapelessCheck;
 
         public final BooleanValue fixAdvancementLoading;
 
@@ -41,6 +44,12 @@ public class ForgeConfig {
                     .translation("forge.configgui.removeErroringBlockEntities")
                     .worldRestart()
                     .define("removeErroringBlockEntities", false);
+
+            removeErroringEntities = builder
+                    .comment("Set this to true to remove any Entity (Note: Does not include BlockEntities) that throws an error in its tick method instead of closing the server and reporting a crash log. BE WARNED THIS COULD SCREW UP EVERYTHING USE SPARINGLY WE ARE NOT RESPONSIBLE FOR DAMAGES.")
+                    .translation("forge.configgui.removeErroringEntities")
+                    .worldRestart()
+                    .define("removeErroringEntities", false);
 
             fullBoundingBoxLadders = builder
                     .comment("Set this to true to check the entire entity's collision bounding box for ladders instead of just the block they are in. Causes noticeable differences in mechanics so default is vanilla behavior. Default: false.")
@@ -64,6 +73,11 @@ public class ForgeConfig {
                     .comment("Vanilla will treat crafting recipes using empty tags as air, and allow you to craft with nothing in that slot. This changes empty tags to use BARRIER as the item. To prevent crafting with air.")
                     .translation("forge.configgui.treatEmptyTagsAsAir")
                     .define("treatEmptyTagsAsAir", false);
+
+            skipEmptyShapelessCheck = builder
+                  .comment("Skip checking if an ingredient is empty during shapeless recipe deserialization to prevent complex ingredients from caching tags too early.")
+                  .translation("forge.configgui.skipEmptyShapelessCheck")
+                  .define("skipEmptyShapelessCheck", true);
 
             fixAdvancementLoading = builder
                     .comment("Fix advancement loading to use a proper topological sort. This may have visibility side-effects and can thus be turned off if needed for data-pack compatibility.")

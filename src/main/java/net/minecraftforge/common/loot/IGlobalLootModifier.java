@@ -1,16 +1,14 @@
 /*
- * Minecraft Forge - Forge Development LLC
+ * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
 package net.minecraftforge.common.loot;
 
-import java.util.List;
-
-import javax.annotation.Nonnull;
-
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootContext;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Implementation that defines what a global loot modifier must implement in order to be functional.
@@ -25,6 +23,6 @@ public interface IGlobalLootModifier {
      * @param context the LootContext, identical to what is passed to loot tables
      * @return modified loot drops
      */
-    @Nonnull
-    List<ItemStack> apply(List<ItemStack> generatedLoot, LootContext context);
+    @NotNull
+    ObjectArrayList<ItemStack> apply(ObjectArrayList<ItemStack> generatedLoot, LootContext context);
 }

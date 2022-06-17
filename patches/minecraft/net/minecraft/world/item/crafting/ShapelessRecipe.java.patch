@@ -37,12 +37,10 @@
     }
  
     public ItemStack m_5874_(CraftingContainer p_44260_) {
-@@ -69,14 +_,15 @@
-       return p_44252_ * p_44253_ >= this.f_44244_.size();
+@@ -70,13 +_,14 @@
     }
  
--   public static class Serializer implements RecipeSerializer<ShapelessRecipe> {
-+   public static class Serializer extends net.minecraftforge.registries.ForgeRegistryEntry<RecipeSerializer<?>> implements RecipeSerializer<ShapelessRecipe> {
+    public static class Serializer implements RecipeSerializer<ShapelessRecipe> {
 +      private static final ResourceLocation NAME = new ResourceLocation("minecraft", "crafting_shapeless");
        public ShapelessRecipe m_6729_(ResourceLocation p_44290_, JsonObject p_44291_) {
           String s = GsonHelper.m_13851_(p_44291_, "group", "");
@@ -56,3 +54,12 @@
           } else {
              ItemStack itemstack = ShapedRecipe.m_151274_(GsonHelper.m_13930_(p_44291_, "result"));
              return new ShapelessRecipe(p_44290_, s, itemstack, nonnulllist);
+@@ -88,7 +_,7 @@
+ 
+          for(int i = 0; i < p_44276_.size(); ++i) {
+             Ingredient ingredient = Ingredient.m_43917_(p_44276_.get(i));
+-            if (!ingredient.m_43947_()) {
++            if (net.minecraftforge.common.ForgeConfig.SERVER.skipEmptyShapelessCheck.get() || !ingredient.m_43947_()) {
+                nonnulllist.add(ingredient);
+             }
+          }

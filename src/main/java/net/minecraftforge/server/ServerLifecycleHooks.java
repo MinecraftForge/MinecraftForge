@@ -1,5 +1,5 @@
 /*
- * Minecraft Forge - Forge Development LLC
+ * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
@@ -8,19 +8,28 @@ package net.minecraftforge.server;
 import static net.minecraftforge.fml.Logging.CORE;
 
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
+import net.minecraft.core.Holder;
+import net.minecraft.core.Registry;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.gametest.framework.GameTestServer;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.packs.repository.PackSource;
 import net.minecraft.server.packs.repository.RepositorySource;
 import net.minecraft.world.level.storage.LevelResource;
+import net.minecraftforge.common.world.StructureModifier;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.common.util.LogicalSidedProvider;
+import net.minecraftforge.common.world.BiomeModifier;
 import net.minecraftforge.fml.ModLoader;
 import net.minecraftforge.fml.ModLoadingStage;
 import net.minecraftforge.fml.ModLoadingWarning;
@@ -30,6 +39,7 @@ import net.minecraftforge.network.ServerStatusPing;
 import net.minecraftforge.network.NetworkHooks;
 import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.forgespi.locating.IModFile;
+import net.minecraftforge.registries.ForgeRegistries.Keys;
 import net.minecraftforge.resource.PathResourcePack;
 import net.minecraftforge.server.permission.PermissionAPI;
 import org.apache.logging.log4j.LogManager;
@@ -41,9 +51,9 @@ import net.minecraft.network.Connection;
 import net.minecraft.network.ConnectionProtocol;
 import net.minecraft.network.protocol.handshake.ClientIntentionPacket;
 import net.minecraft.network.protocol.login.ClientboundLoginDisconnectPacket;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.packs.repository.Pack;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.config.ConfigTracker;
@@ -55,6 +65,8 @@ import net.minecraftforge.event.server.ServerStoppedEvent;
 import net.minecraftforge.event.server.ServerStoppingEvent;
 import net.minecraftforge.fml.loading.FileUtils;
 import net.minecraftforge.forgespi.language.IModInfo;
+import net.minecraftforge.registries.DataPackRegistriesHooks;
+import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.GameData;
 
 public class ServerLifecycleHooks
@@ -79,6 +91,7 @@ public class ServerLifecycleHooks
         // on the dedi server we need to force the stuff to setup properly
         LogicalSidedProvider.setServer(()->server);
         ConfigTracker.INSTANCE.loadConfigs(ModConfig.Type.SERVER, getServerConfigPath(server));
+        runModifiers(server);
         return !MinecraftForge.EVENT_BUS.post(new ServerAboutToStartEvent(server));
     }
 
@@ -136,7 +149,7 @@ public class ServerLifecycleHooks
     public static boolean handleServerLogin(final ClientIntentionPacket packet, final Connection manager) {
         if (!allowLogins.get())
         {
-            TextComponent text = new TextComponent("Server is still starting! Please wait before reconnecting.");
+            MutableComponent text = Component.literal("Server is still starting! Please wait before reconnecting.");
             LOGGER.info(SERVERHOOKS,"Disconnecting Player (server is still starting): {}", text.getContents());
             manager.send(new ClientboundLoginDisconnectPacket(text));
             manager.disconnect(text);
@@ -148,7 +161,7 @@ public class ServerLifecycleHooks
             final int versionNumber = connectionType.getFMLVersionNumber(packet.getFMLVersion());
 
             if (connectionType == ConnectionType.MODDED && versionNumber != NetworkConstants.FMLNETVERSION) {
-                rejectConnection(manager, connectionType, "This modded server is not impl compatible with your modded client. Please verify your Forge version closely matches the server. Got net version "+ versionNumber + " this server is net version "+ NetworkConstants.FMLNETVERSION);
+                rejectConnection(manager, connectionType, "This modded server is not impl compatible with your modded client. Please verify your Forge version closely matches the server. Got net version " + versionNumber + " this server is net version " + NetworkConstants.FMLNETVERSION);
                 return false;
             }
 
@@ -168,7 +181,7 @@ public class ServerLifecycleHooks
     private static void rejectConnection(final Connection manager, ConnectionType type, String message) {
         manager.setProtocol(ConnectionProtocol.LOGIN);
         LOGGER.info(SERVERHOOKS, "Disconnecting {} connection attempt: {}", type, message);
-        TextComponent text = new TextComponent(message);
+        MutableComponent text = Component.literal(message);
         manager.send(new ClientboundLoginDisconnectPacket(text));
         manager.disconnect(text);
     }
@@ -198,5 +211,31 @@ public class ServerLifecycleHooks
             LOGGER.debug(CORE, "Generating PackInfo named {} for mod file {}", name, e.getKey().getFilePath());
             consumer.accept(packInfo);
         }
+    }
+    
+    private static void runModifiers(final MinecraftServer server)
+    {
+        final RegistryAccess registries = server.registryAccess();
+
+        // The order of holders() is the order modifiers were loaded in.
+        final List<BiomeModifier> biomeModifiers = registries.registryOrThrow(ForgeRegistries.Keys.BIOME_MODIFIERS)
+            .holders()
+            .map(Holder::value)
+            .toList();
+        final List<StructureModifier> structureModifiers = registries.registryOrThrow(Keys.STRUCTURE_MODIFIERS)
+              .holders()
+              .map(Holder::value)
+              .toList();
+        
+        // Apply sorted biome modifiers to each biome.
+        registries.registryOrThrow(Registry.BIOME_REGISTRY).holders().forEach(biomeHolder ->
+        {
+            biomeHolder.value().modifiableBiomeInfo().applyBiomeModifiers(biomeHolder, biomeModifiers);
+        });
+        // Apply sorted structure modifiers to each structure.
+        registries.registryOrThrow(Registry.STRUCTURE_REGISTRY).holders().forEach(structureHolder ->
+        {
+            structureHolder.value().modifiableStructureInfo().applyStructureModifiers(structureHolder, structureModifiers);
+        });
     }
 }

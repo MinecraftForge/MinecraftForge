@@ -1,26 +1,12 @@
 /*
- * Minecraft Forge
- * Copyright (c) 2016-2021.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation version 2.1
- * of the License.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Copyright (c) Forge Development LLC and contributors
+ * SPDX-License-Identifier: LGPL-2.1-only
  */
 
 package net.minecraftforge.fml.loading;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import com.mojang.logging.LogUtils;
+import org.slf4j.Logger;
 
 import java.io.IOException;
 import java.nio.file.FileAlreadyExistsException;
@@ -31,7 +17,7 @@ import static net.minecraftforge.fml.loading.LogMarkers.CORE;
 
 public class FileUtils
 {
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger LOGGER = LogUtils.getLogger();
 
     public static Path getOrCreateDirectory(Path dirPath, String dirLabel) {
         if (!Files.isDirectory(dirPath.getParent())) {
@@ -39,20 +25,20 @@ public class FileUtils
         }
         if (!Files.isDirectory(dirPath))
         {
-            LOGGER.debug(CORE,"Making {} directory : {}", dirLabel, dirPath);
+            LOGGER.debug(CORE, "Making {} directory : {}", dirLabel, dirPath);
             try {
                 Files.createDirectory(dirPath);
             } catch (IOException e) {
                 if (e instanceof FileAlreadyExistsException) {
-                    LOGGER.fatal(CORE,"Failed to create {} directory - there is a file in the way", dirLabel);
+                    LOGGER.error(CORE, "Failed to create {} directory - there is a file in the way", dirLabel);
                 } else {
-                    LOGGER.fatal(CORE,"Problem with creating {} directory (Permissions?)", dirLabel, e);
+                    LOGGER.error(CORE, "Problem with creating {} directory (Permissions?)", dirLabel, e);
                 }
                 throw new RuntimeException("Problem creating directory", e);
             }
-            LOGGER.debug(CORE,"Created {} directory : {}", dirLabel, dirPath);
+            LOGGER.debug(CORE, "Created {} directory : {}", dirLabel, dirPath);
         } else {
-            LOGGER.debug(CORE,"Found existing {} directory : {}", dirLabel, dirPath);
+            LOGGER.debug(CORE, "Found existing {} directory : {}", dirLabel, dirPath);
         }
         return dirPath;
     }

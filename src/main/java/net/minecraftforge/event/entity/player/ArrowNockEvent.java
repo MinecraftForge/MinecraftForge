@@ -1,5 +1,5 @@
 /*
- * Minecraft Forge - Forge Development LLC
+ * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
@@ -12,8 +12,7 @@ import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.MinecraftForge;
-
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * ArrowNockEvent is fired when a player begins using a bow.<br>
@@ -30,7 +29,7 @@ public class ArrowNockEvent extends PlayerEvent
     private final boolean hasAmmo;
     private InteractionResultHolder<ItemStack> action;
 
-    public ArrowNockEvent(Player player, @Nonnull ItemStack item, InteractionHand hand, Level world, boolean hasAmmo)
+    public ArrowNockEvent(Player player, @NotNull ItemStack item, InteractionHand hand, Level world, boolean hasAmmo)
     {
         super(player);
         this.bow = item;
@@ -39,7 +38,7 @@ public class ArrowNockEvent extends PlayerEvent
         this.hasAmmo = hasAmmo;
     }
 
-    @Nonnull
+    @NotNull
     public ItemStack getBow() { return this.bow; }
     public Level getWorld() { return this.world; }
     public InteractionHand getHand() { return this.hand; }

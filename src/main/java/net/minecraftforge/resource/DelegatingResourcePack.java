@@ -1,5 +1,5 @@
 /*
- * Minecraft Forge - Forge Development LLC
+ * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
@@ -74,10 +74,10 @@ public class DelegatingResourcePack extends AbstractPackResources
     }
 
     @Override
-    public Collection<ResourceLocation> getResources(PackType type, String pathIn, String pathIn2, int maxDepth, Predicate<String> filter)
+    public Collection<ResourceLocation> getResources(PackType type, String pathIn, String pathIn2, Predicate<ResourceLocation> filter)
     {
         return delegates.stream()
-                .flatMap(r -> r.getResources(type, pathIn, pathIn2, maxDepth, filter).stream())
+                .flatMap(r -> r.getResources(type, pathIn, pathIn2, filter).stream())
                 .collect(Collectors.toList());
     }
 

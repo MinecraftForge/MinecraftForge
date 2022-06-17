@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/KeyMapping.java
 +++ b/net/minecraft/client/KeyMapping.java
-@@ -14,9 +_,9 @@
+@@ -13,9 +_,9 @@
  import net.minecraftforge.api.distmarker.OnlyIn;
  
  @OnlyIn(Dist.CLIENT)
@@ -12,7 +12,7 @@
     private static final Set<String> f_90811_ = Sets.newHashSet();
     public static final String f_167805_ = "key.categories.movement";
     public static final String f_167806_ = "key.categories.misc";
-@@ -42,7 +_,7 @@
+@@ -41,7 +_,7 @@
     private int f_90818_;
  
     public static void m_90835_(InputConstants.Key p_90836_) {
@@ -21,7 +21,7 @@
        if (keymapping != null) {
           ++keymapping.f_90818_;
        }
-@@ -50,7 +_,7 @@
+@@ -49,7 +_,7 @@
     }
  
     public static void m_90837_(InputConstants.Key p_90838_, boolean p_90839_) {
@@ -30,7 +30,7 @@
        if (keymapping != null) {
           keymapping.m_7249_(p_90839_);
        }
-@@ -74,10 +_,10 @@
+@@ -73,10 +_,10 @@
     }
  
     public static void m_90854_() {
@@ -43,7 +43,7 @@
        }
  
     }
-@@ -92,12 +_,12 @@
+@@ -91,12 +_,12 @@
        this.f_90814_ = this.f_90816_;
        this.f_90815_ = p_90828_;
        f_90809_.put(p_90825_, this);
@@ -58,7 +58,7 @@
     }
  
     public String m_90858_() {
-@@ -131,7 +_,13 @@
+@@ -130,7 +_,13 @@
     }
  
     public int compareTo(KeyMapping p_90841_) {
@@ -73,7 +73,7 @@
     }
  
     public static Supplier<Component> m_90842_(String p_90843_) {
-@@ -142,6 +_,20 @@
+@@ -141,6 +_,20 @@
     }
  
     public boolean m_90850_(KeyMapping p_90851_) {
@@ -94,7 +94,7 @@
        return this.f_90816_.equals(p_90851_.f_90816_);
     }
  
-@@ -162,11 +_,13 @@
+@@ -161,11 +_,13 @@
     }
  
     public Component m_90863_() {
@@ -109,7 +109,7 @@
     }
  
     public String m_90865_() {
-@@ -176,4 +_,84 @@
+@@ -175,4 +_,84 @@
     public void m_7249_(boolean p_90846_) {
        this.f_90817_ = p_90846_;
     }

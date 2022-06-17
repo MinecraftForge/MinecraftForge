@@ -1,12 +1,12 @@
 --- a/net/minecraft/world/entity/vehicle/MinecartSpawner.java
 +++ b/net/minecraft/world/entity/vehicle/MinecartSpawner.java
-@@ -14,6 +_,12 @@
+@@ -16,6 +_,12 @@
        public void m_142523_(Level p_150342_, BlockPos p_150343_, int p_150344_) {
           p_150342_.m_7605_(MinecartSpawner.this, (byte)p_150344_);
        }
 +
 +      @Override
-+      @javax.annotation.Nullable
++      @org.jetbrains.annotations.Nullable
 +      public net.minecraft.world.entity.Entity getSpawnerEntity() {
 +         return MinecartSpawner.this;
 +      }

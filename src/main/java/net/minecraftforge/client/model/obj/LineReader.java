@@ -1,5 +1,5 @@
 /*
- * Minecraft Forge - Forge Development LLC
+ * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
@@ -8,8 +8,8 @@ package net.minecraftforge.client.model.obj;
 import com.google.common.base.Charsets;
 import joptsimple.internal.Strings;
 import net.minecraft.server.packs.resources.Resource;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -22,9 +22,8 @@ public class LineReader implements AutoCloseable
     InputStreamReader lineStream;
     BufferedReader lineReader;
 
-    public LineReader(Resource resource)
-    {
-        this.lineStream = new InputStreamReader(resource.getInputStream(), Charsets.UTF_8);
+    public LineReader(Resource resource) throws IOException {
+        this.lineStream = new InputStreamReader(resource.open(), Charsets.UTF_8);
         this.lineReader = new BufferedReader(lineStream);
     }
 

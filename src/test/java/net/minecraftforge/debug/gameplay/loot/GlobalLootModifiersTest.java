@@ -1,5 +1,5 @@
 /*
- * Minecraft Forge - Forge Development LLC
+ * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
@@ -7,6 +7,7 @@ package net.minecraftforge.debug.gameplay.loot;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.advancements.critereon.EnchantmentPredicate;
 import net.minecraft.advancements.critereon.ItemPredicate;
 import net.minecraft.advancements.critereon.MinMaxBounds;
@@ -46,8 +47,8 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -81,7 +82,7 @@ public class GlobalLootModifiersTest {
         public static void runData(GatherDataEvent event)
         {
             if(ENABLE)
-                event.getGenerator().addProvider(new DataProvider(event.getGenerator(), MODID));
+                event.getGenerator().addProvider(event.includeServer(), new DataProvider(event.getGenerator(), MODID));
         }
     }
 
@@ -133,10 +134,10 @@ public class GlobalLootModifiersTest {
             super(conditionsIn);
         }
 
-        @Nonnull
+        @NotNull
         @Override
-        public List<ItemStack> doApply(List<ItemStack> generatedLoot, LootContext context) {
-            ArrayList<ItemStack> ret = new ArrayList<ItemStack>();
+        public ObjectArrayList<ItemStack> doApply(ObjectArrayList<ItemStack> generatedLoot, LootContext context) {
+            ObjectArrayList<ItemStack> ret = new ObjectArrayList<ItemStack>();
             generatedLoot.forEach((stack) -> ret.add(smelt(stack, context)));
             return ret;
         }
@@ -171,12 +172,12 @@ public class GlobalLootModifiersTest {
             super(conditionsIn);
         }
 
-        @Nonnull
+        @NotNull
         @Override
-        public List<ItemStack> doApply(List<ItemStack> generatedLoot, LootContext context) {
+        public ObjectArrayList<ItemStack> doApply(ObjectArrayList<ItemStack> generatedLoot, LootContext context) {
             ItemStack ctxTool = context.getParamOrNull(LootContextParams.TOOL);
             //return early if silk-touch is already applied (otherwise we'll get stuck in an infinite loop).
-            if(EnchantmentHelper.getEnchantments(ctxTool).containsKey(Enchantments.SILK_TOUCH)) return generatedLoot;
+            if(ctxTool == null || EnchantmentHelper.getItemEnchantmentLevel(Enchantments.SILK_TOUCH, ctxTool) > 0) return generatedLoot;
             ItemStack fakeTool = ctxTool.copy();
             fakeTool.enchant(Enchantments.SILK_TOUCH, 1);
             LootContext.Builder builder = new LootContext.Builder(context);
@@ -215,9 +216,9 @@ public class GlobalLootModifiersTest {
             itemReward = reward;
         }
 
-        @Nonnull
+        @NotNull
         @Override
-        public List<ItemStack> doApply(List<ItemStack> generatedLoot, LootContext context) {
+        public ObjectArrayList<ItemStack> doApply(ObjectArrayList<ItemStack> generatedLoot, LootContext context) {
             //
             // Additional conditions can be checked, though as much as possible should be parameterized via JSON data.
             // It is better to write a new ILootCondition implementation than to do things here.
@@ -271,11 +272,11 @@ public class GlobalLootModifiersTest {
         }
 
         @Override
-        protected List<ItemStack> doApply(List<ItemStack> generatedLoot, LootContext context) {
+        protected ObjectArrayList<ItemStack> doApply(ObjectArrayList<ItemStack> generatedLoot, LootContext context) {
             return generatedLoot.stream()
                     .map(ItemStack::copy)
                     .peek(stack -> stack.setCount(Math.min(stack.getMaxStackSize(), stack.getCount() * this.multiplicationFactor)))
-                    .collect(Collectors.toList());
+                    .collect(Collectors.toCollection(ObjectArrayList::new));
         }
 
         private static class Serializer extends GlobalLootModifierSerializer<DungeonLootEnhancerModifier> {

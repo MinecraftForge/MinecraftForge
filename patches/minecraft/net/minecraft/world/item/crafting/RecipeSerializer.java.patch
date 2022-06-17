@@ -5,7 +5,7 @@
  import net.minecraft.resources.ResourceLocation;
  
 -public interface RecipeSerializer<T extends Recipe<?>> {
-+public interface RecipeSerializer<T extends Recipe<?>> extends net.minecraftforge.registries.IForgeRegistryEntry<RecipeSerializer<?>>, net.minecraftforge.common.extensions.IForgeRecipeSerializer<T> {
++public interface RecipeSerializer<T extends Recipe<?>> extends net.minecraftforge.common.extensions.IForgeRecipeSerializer<T> {
     RecipeSerializer<ShapedRecipe> f_44076_ = m_44098_("crafting_shaped", new ShapedRecipe.Serializer());
     RecipeSerializer<ShapelessRecipe> f_44077_ = m_44098_("crafting_shapeless", new ShapelessRecipe.Serializer());
     SimpleRecipeSerializer<ArmorDyeRecipe> f_44078_ = m_44098_("crafting_special_armordye", new SimpleRecipeSerializer<>(ArmorDyeRecipe::new));
@@ -16,7 +16,7 @@
 +   //Forge: use fromJson with IContext if you need the context
     T m_6729_(ResourceLocation p_44103_, JsonObject p_44104_);
  
-+   @javax.annotation.Nullable
++   @org.jetbrains.annotations.Nullable
     T m_8005_(ResourceLocation p_44105_, FriendlyByteBuf p_44106_);
  
     void m_6178_(FriendlyByteBuf p_44101_, T p_44102_);

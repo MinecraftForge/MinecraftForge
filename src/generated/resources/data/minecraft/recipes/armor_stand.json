@@ -1,10 +1,5 @@
 {
   "type": "minecraft:crafting_shaped",
-  "pattern": [
-    "///",
-    " / ",
-    "/_/"
-  ],
   "key": {
     "/": {
       "tag": "forge:rods/wooden"
@@ -13,6 +8,11 @@
       "item": "minecraft:smooth_stone_slab"
     }
   },
+  "pattern": [
+    "///",
+    " / ",
+    "/_/"
+  ],
   "result": {
     "item": "minecraft:armor_stand"
   }

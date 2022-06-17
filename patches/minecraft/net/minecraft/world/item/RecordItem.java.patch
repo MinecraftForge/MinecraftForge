@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/item/RecordItem.java
 +++ b/net/minecraft/world/item/RecordItem.java
-@@ -20,15 +_,38 @@
+@@ -19,15 +_,38 @@
  import net.minecraft.world.level.block.state.BlockState;
  
  public class RecordItem extends Item {
@@ -17,7 +17,7 @@
        this.f_43033_ = p_43037_;
        this.f_43034_ = p_43038_;
        f_43032_.put(this.f_43034_, this);
-+      this.soundSupplier = this.f_43034_.delegate;
++      this.soundSupplier = net.minecraftforge.registries.ForgeRegistries.SOUND_EVENTS.getDelegateOrThrow(this.f_43034_);
 +   }
 +
 +   /**
@@ -27,7 +27,7 @@
 +    * @param comparatorValue The value this music disc should output on the comparator. Must be between 0 and 15.
 +    * @param soundSupplier A supplier that provides the sound that should be played. Use a
 +    *                      {@link net.minecraftforge.registries.RegistryObject<SoundEvent>} or a
-+    *                      {@link net.minecraftforge.registries.IRegistryDelegate} for this parameter.
++    *                      {@link net.minecraft.core.Holder<SoundEvent>} for this parameter.
 +    * @param builder A set of {@link Item.Properties} that describe this item.
 +    */
 +   public RecordItem(int comparatorValue, java.util.function.Supplier<SoundEvent> soundSupplier, Item.Properties builder)
@@ -39,7 +39,7 @@
     }
  
     public InteractionResult m_6225_(UseOnContext p_43048_) {
-@@ -71,6 +_,6 @@
+@@ -70,6 +_,6 @@
     }
  
     public SoundEvent m_43051_() {

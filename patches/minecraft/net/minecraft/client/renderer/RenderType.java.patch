@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/RenderType.java
 +++ b/net/minecraft/client/renderer/RenderType.java
-@@ -288,27 +_,27 @@
+@@ -301,27 +_,27 @@
     }
  
     public static RenderType m_110497_(ResourceLocation p_110498_) {

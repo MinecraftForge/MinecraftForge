@@ -1,5 +1,5 @@
 /*
- * Minecraft Forge - Forge Development LLC
+ * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
@@ -62,7 +62,7 @@ public class AudioStreamTest
     {
         protected SineSound(Vec3 position)
         {
-            super(new ResourceLocation(MOD_ID, "sine_wave"), SoundSource.BLOCKS);
+            super(new ResourceLocation(MOD_ID, "sine_wave"), SoundSource.BLOCKS, SoundInstance.createUnseededRandom());
             x = position.x;
             y = position.y;
             z = position.z;

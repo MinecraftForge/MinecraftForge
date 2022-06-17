@@ -1,0 +1,16 @@
+--- a/net/minecraft/data/tags/PoiTypeTagsProvider.java
++++ b/net/minecraft/data/tags/PoiTypeTagsProvider.java
+@@ -7,8 +_,13 @@
+ import net.minecraft.world.entity.ai.village.poi.PoiTypes;
+ 
+ public class PoiTypeTagsProvider extends TagsProvider<PoiType> {
++   /** @deprecated Forge: Use the {@link #PoiTypeTagsProvider(DataGenerator, String, net.minecraftforge.common.data.ExistingFileHelper) mod id variant} */
++   @Deprecated
+    public PoiTypeTagsProvider(DataGenerator p_236434_) {
+       super(p_236434_, Registry.f_122870_);
++   }
++   public PoiTypeTagsProvider(DataGenerator p_236434_, String modId, @org.jetbrains.annotations.Nullable net.minecraftforge.common.data.ExistingFileHelper existingFileHelper) {
++      super(p_236434_, Registry.f_122870_, modId, existingFileHelper);
+    }
+ 
+    protected void m_6577_() {

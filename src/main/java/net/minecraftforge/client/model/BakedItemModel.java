@@ -1,18 +1,16 @@
 /*
- * Minecraft Forge - Forge Development LLC
+ * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
 package net.minecraftforge.client.model;
 
-import javax.annotation.Nullable;
-
 import java.util.List;
-import java.util.Random;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.state.BlockState;
 import com.mojang.math.Transformation;
 import net.minecraft.client.renderer.block.model.BakedQuad;
@@ -21,6 +19,7 @@ import net.minecraft.client.renderer.block.model.ItemTransforms.TransformType;
 import net.minecraft.client.renderer.block.model.ItemOverrides;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.Direction;
+import org.jetbrains.annotations.Nullable;
 
 public class BakedItemModel implements BakedModel
 {
@@ -55,7 +54,7 @@ public class BakedItemModel implements BakedModel
     @Override public ItemOverrides getOverrides() { return overrides; }
 
     @Override
-    public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, Random rand)
+    public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, RandomSource rand)
     {
         if (side == null)
         {
@@ -93,7 +92,7 @@ public class BakedItemModel implements BakedModel
         }
 
         @Override
-        public List<BakedQuad> getQuads (@Nullable BlockState state, @Nullable Direction side, Random rand)
+        public List<BakedQuad> getQuads (@Nullable BlockState state, @Nullable Direction side, RandomSource rand)
         {
             if(side == null)
             {

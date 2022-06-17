@@ -1,22 +1,31 @@
 /*
- * Minecraft Forge - Forge Development LLC
+ * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
 package net.minecraftforge.network;
 
 import com.google.common.collect.Multimap;
+import com.mojang.authlib.GameProfile;
+
+import net.minecraft.core.Registry;
 import net.minecraft.network.Connection;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.handshake.ClientIntentionPacket;
 import net.minecraft.network.protocol.login.ClientboundCustomQueryPacket;
 import net.minecraft.network.protocol.login.ServerboundCustomQueryPacket;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.server.network.ServerLoginPacketListenerImpl;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.LogMessageAdapter;
+import net.minecraftforge.event.entity.player.PlayerNegotiationEvent;
+import net.minecraftforge.network.ConnectionData.ModMismatchData;
 import net.minecraftforge.network.simple.SimpleChannel;
+import net.minecraftforge.registries.DataPackRegistriesHooks;
 import net.minecraftforge.registries.ForgeRegistry;
 import net.minecraftforge.registries.GameData;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
@@ -25,11 +34,17 @@ import org.apache.logging.log4j.MarkerManager;
 import com.google.common.collect.Maps;
 
 import java.util.*;
+import java.util.concurrent.CancellationException;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiConsumer;
+import java.util.function.Function;
 import java.util.function.IntSupplier;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import static net.minecraftforge.registries.ForgeRegistry.REGISTRIES;
 
@@ -99,6 +114,8 @@ public class HandshakeHandler
     private Map<ResourceLocation, ForgeRegistry.Snapshot> registrySnapshots;
     private Set<ResourceLocation> registriesToReceive;
     private Map<ResourceLocation, String> registryHashes;
+    private boolean negotiationStarted = false;
+    private final List<Future<Void>> pendingFutures = new ArrayList<>();
 
     private HandshakeHandler(Connection networkManager, NetworkDirection side)
     {
@@ -165,11 +182,32 @@ public class HandshakeHandler
     void handleServerModListOnClient(HandshakeMessages.S2CModList serverModList, Supplier<NetworkEvent.Context> c)
     {
         LOGGER.debug(FMLHSMARKER, "Logging into server with mod list [{}]", String.join(", ", serverModList.getModList()));
-        boolean accepted = NetworkRegistry.validateClientChannels(serverModList.getChannels());
+        Map<ResourceLocation, String> mismatchedChannels = NetworkRegistry.validateClientChannels(serverModList.getChannels());
         c.get().setPacketHandled(true);
-        if (!accepted) {
+        //The connection data needs to be modified before a new ModMismatchData instance could be constructed
+        NetworkHooks.appendConnectionData(c.get().getNetworkManager(), serverModList.getModList().stream().collect(Collectors.toMap(Function.identity(), s -> Pair.of("", ""))), serverModList.getChannels());
+        if (!mismatchedChannels.isEmpty()) {
             LOGGER.error(FMLHSMARKER, "Terminating connection with server, mismatched mod list");
-            c.get().getNetworkManager().disconnect(new TextComponent("Connection closed - mismatched mod channel list"));
+            //Populate the mod mismatch attribute with a new mismatch data instance to indicate that the disconnect happened due to a mod mismatch
+            c.get().getNetworkManager().channel().attr(NetworkConstants.FML_MOD_MISMATCH_DATA).set(ModMismatchData.channel(mismatchedChannels, NetworkHooks.getConnectionData(c.get().getNetworkManager()), true));
+            c.get().getNetworkManager().disconnect(Component.literal("Connection closed - mismatched mod channel list"));
+            return;
+        }
+        // Validate synced custom datapack registries, client cannot be missing any present on the server.
+        List<String> missingDataPackRegistries = new ArrayList<>();
+        Set<ResourceKey<? extends Registry<?>>> clientDataPackRegistries = DataPackRegistriesHooks.getSyncedCustomRegistries();
+        for (ResourceKey<? extends Registry<?>> key : serverModList.getCustomDataPackRegistries())
+        {
+            if (!clientDataPackRegistries.contains(key))
+            {
+                ResourceLocation location = key.location();
+                LOGGER.error(FMLHSMARKER, "Missing required datapack registry: {}", location);
+                missingDataPackRegistries.add(key.location().toString());
+            }
+        }
+        if (!missingDataPackRegistries.isEmpty())
+        {
+            c.get().getNetworkManager().disconnect(Component.translatable("fml.menu.multiplayer.missingdatapackregistries", String.join(", ", missingDataPackRegistries)));
             return;
         }
         NetworkConstants.handshakeChannel.reply(new HandshakeMessages.C2SModListReply(), c.get());
@@ -177,12 +215,16 @@ public class HandshakeHandler
         LOGGER.debug(FMLHSMARKER, "Accepted server connection");
         // Set the modded marker on the channel so we know we got packets
         c.get().getNetworkManager().channel().attr(NetworkConstants.FML_NETVERSION).set(NetworkConstants.NETVERSION);
-        c.get().getNetworkManager().channel().attr(NetworkConstants.FML_CONNECTION_DATA)
-                .set(new ConnectionData(serverModList.getModList(), serverModList.getChannels()));
 
         this.registriesToReceive = new HashSet<>(serverModList.getRegistries());
         this.registrySnapshots = Maps.newHashMap();
         LOGGER.debug(REGISTRIES, "Expecting {} registries: {}", ()->this.registriesToReceive.size(), ()->this.registriesToReceive);
+    }
+
+    void handleModData(HandshakeMessages.S2CModData serverModData, Supplier<NetworkEvent.Context> c)
+    {
+        c.get().getNetworkManager().channel().attr(NetworkConstants.FML_CONNECTION_DATA).set(new ConnectionData(serverModData.getMods(), new HashMap<>()));
+        c.get().setPacketHandled(true);
     }
 
     <MSG extends IntSupplier> void handleIndexedMessage(MSG message, Supplier<NetworkEvent.Context> c)
@@ -197,16 +239,31 @@ public class HandshakeHandler
     void handleClientModListOnServer(HandshakeMessages.C2SModListReply clientModList, Supplier<NetworkEvent.Context> c)
     {
         LOGGER.debug(FMLHSMARKER, "Received client connection with modlist [{}]",  String.join(", ", clientModList.getModList()));
-        boolean accepted = NetworkRegistry.validateServerChannels(clientModList.getChannels());
+        Map<ResourceLocation, String> mismatchedChannels = NetworkRegistry.validateServerChannels(clientModList.getChannels());
         c.get().getNetworkManager().channel().attr(NetworkConstants.FML_CONNECTION_DATA)
-                .set(new ConnectionData(clientModList.getModList(), clientModList.getChannels()));
+                .set(new ConnectionData(clientModList.getModList().stream().collect(Collectors.toMap(Function.identity(), s -> Pair.of("", ""))), clientModList.getChannels()));
         c.get().setPacketHandled(true);
-        if (!accepted) {
+        if (!mismatchedChannels.isEmpty()) {
             LOGGER.error(FMLHSMARKER, "Terminating connection with client, mismatched mod list");
-            c.get().getNetworkManager().disconnect(new TextComponent("Connection closed - mismatched mod channel list"));
+            NetworkConstants.handshakeChannel.reply(new HandshakeMessages.S2CChannelMismatchData(mismatchedChannels), c.get());
+            c.get().getNetworkManager().disconnect(Component.literal("Connection closed - mismatched mod channel list"));
             return;
         }
         LOGGER.debug(FMLHSMARKER, "Accepted client connection mod list");
+    }
+
+    void handleModMismatchData(HandshakeMessages.S2CChannelMismatchData modMismatchData, Supplier<NetworkEvent.Context> c)
+    {
+        if (!modMismatchData.getMismatchedChannelData().isEmpty())
+        {
+            LOGGER.error(FMLHSMARKER, "Channels [{}] rejected their client side version number",
+                    modMismatchData.getMismatchedChannelData().keySet().stream().map(Object::toString).collect(Collectors.joining(",")));
+            LOGGER.error(FMLHSMARKER, "Terminating connection with server, mismatched mod list");
+            c.get().setPacketHandled(true);
+            //Populate the mod mismatch attribute with a new mismatch data instance to indicate that the disconnect happened due to a mod mismatch
+            c.get().getNetworkManager().channel().attr(NetworkConstants.FML_MOD_MISMATCH_DATA).set(ModMismatchData.channel(modMismatchData.getMismatchedChannelData(), NetworkHooks.getConnectionData(c.get().getNetworkManager()), false));
+            c.get().getNetworkManager().disconnect(Component.literal("Connection closed - mismatched mod channel list"));
+        }
     }
 
     void handleRegistryMessage(final HandshakeMessages.S2CRegistry registryPacket, final Supplier<NetworkEvent.Context> contextSupplier){
@@ -230,6 +287,7 @@ public class HandshakeHandler
     private boolean handleRegistryLoading(final Supplier<NetworkEvent.Context> contextSupplier) {
         // We use a countdown latch to suspend the impl thread pending the client thread processing the registry data
         AtomicBoolean successfulConnection = new AtomicBoolean(false);
+        AtomicReference<Multimap<ResourceLocation, ResourceLocation>> registryMismatches = new AtomicReference<>();
         CountDownLatch block = new CountDownLatch(1);
         contextSupplier.get().enqueueWork(() -> {
             LOGGER.debug(FMLHSMARKER, "Injecting registry snapshot from server.");
@@ -240,6 +298,7 @@ public class HandshakeHandler
                         missingData.forEach((reg, entry)-> sb.append("\t").append(reg).append(": ").append(entry).append('\n'))));
             }
             successfulConnection.set(missingData.isEmpty());
+            registryMismatches.set(missingData);
             block.countDown();
         });
         LOGGER.debug(FMLHSMARKER, "Waiting for registries to load.");
@@ -252,7 +311,9 @@ public class HandshakeHandler
             LOGGER.debug(FMLHSMARKER, "Registry load complete, continuing handshake.");
         } else {
             LOGGER.error(FMLHSMARKER, "Failed to load registry, closing connection.");
-            this.manager.disconnect(new TextComponent("Failed to synchronize registry data from server, closing connection"));
+            //Populate the mod mismatch attribute with a new mismatch data instance to indicate that the disconnect happened due to a mod mismatch
+            this.manager.channel().attr(NetworkConstants.FML_MOD_MISMATCH_DATA).set(ModMismatchData.registry(registryMismatches.get(), NetworkHooks.getConnectionData(contextSupplier.get().getNetworkManager())));
+            this.manager.disconnect(Component.literal("Failed to synchronize registry data from server, closing connection"));
         }
         return successfulConnection.get();
     }
@@ -281,21 +342,61 @@ public class HandshakeHandler
      */
     public boolean tickServer()
     {
+        if (!negotiationStarted) {
+            GameProfile profile = ((ServerLoginPacketListenerImpl) manager.getPacketListener()).gameProfile;
+            PlayerNegotiationEvent event = new PlayerNegotiationEvent(manager, profile, pendingFutures);
+            MinecraftForge.EVENT_BUS.post(event);
+            negotiationStarted = true;
+        }
+
         if (packetPosition < messageList.size()) {
             NetworkRegistry.LoginPayload message = messageList.get(packetPosition);
 
             LOGGER.debug(FMLHSMARKER, "Sending ticking packet info '{}' to '{}' sequence {}", message.getMessageContext(), message.getChannelName(), packetPosition);
-            sentMessages.add(packetPosition);
+            if (message.needsResponse())
+                sentMessages.add(packetPosition);
             loginWrapper.sendServerToClientLoginPacket(message.getChannelName(), message.getData(), packetPosition, this.manager);
             packetPosition++;
         }
 
+        pendingFutures.removeIf(future -> {
+            if (!future.isDone()) {
+                return false;
+            }
+
+            try {
+                future.get();
+            } catch (ExecutionException ex) {
+                LOGGER.error("Error during negotiation", ex.getCause());
+            } catch (CancellationException | InterruptedException ex) {
+                // no-op
+            }
+
+            return true;
+        });
+
         // we're done when sentMessages is empty
-        if (sentMessages.isEmpty() && packetPosition >= messageList.size()-1) {
+        if (sentMessages.isEmpty() && packetPosition >= messageList.size()-1 && pendingFutures.isEmpty()) {
             // clear ourselves - we're done!
             this.manager.channel().attr(NetworkConstants.FML_HANDSHAKE_HANDLER).set(null);
             LOGGER.debug(FMLHSMARKER, "Handshake complete!");
             return true;
+        }
+        return false;
+    }
+
+    /**
+     * Helper method to determine if the S2C packet at the given packet position needs a response in form of a packet handled in {@link HandshakeHandler#handleIndexedMessage} for the handshake to progress.
+     * @param mgr The impl manager for this connection
+     * @param packetPosition The packet position of the packet that the status is queried of
+     * @return true if the packet at the given packet position needs a response and thus may stop the handshake from progressing
+     */
+    public static boolean packetNeedsResponse(Connection mgr, int packetPosition)
+    {
+        HandshakeHandler handler = mgr.channel().attr(NetworkConstants.FML_HANDSHAKE_HANDLER).get();
+        if (handler != null)
+        {
+            return handler.sentMessages.contains(packetPosition);
         }
         return false;
     }

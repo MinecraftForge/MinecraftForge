@@ -1,6 +1,6 @@
 --- a/net/minecraft/core/Registry.java
 +++ b/net/minecraft/core/Registry.java
-@@ -116,6 +_,10 @@
+@@ -131,6 +_,10 @@
  import org.apache.commons.lang3.Validate;
  import org.slf4j.Logger;
  
@@ -11,7 +11,7 @@
  public abstract class Registry<T> implements Keyable, IdMap<T> {
     private static final Logger f_122894_ = LogUtils.getLogger();
     private static final Map<ResourceLocation, Supplier<?>> f_122834_ = Maps.newLinkedHashMap();
-@@ -163,43 +_,43 @@
+@@ -179,41 +_,41 @@
     public static final DefaultedRegistry<GameEvent> f_175412_ = m_206031_(f_175423_, "step", GameEvent::m_204530_, (p_206044_) -> {
        return GameEvent.f_157785_;
     });
@@ -55,116 +55,126 @@
 +   @Deprecated public static final Registry<BlockEntityType<?>> f_122830_ = forge(f_122907_, (registry) -> {
        return BlockEntityType.f_58917_;
     });
--   public static final DefaultedRegistry<Motive> f_122831_ = m_206027_(f_122908_, "kebab", (p_205966_) -> {
-+   @Deprecated public static final DefaultedRegistry<Motive> f_122831_ = forge(f_122908_, "kebab", (registry) -> {
-       return Motive.f_31866_;
-    });
-    public static final Registry<ResourceLocation> f_122832_ = m_206008_(f_122909_, (p_205964_) -> {
+-   public static final DefaultedRegistry<PaintingVariant> f_235728_ = m_206027_(f_235743_, "kebab", PaintingVariants::m_218942_);
++   @Deprecated public static final DefaultedRegistry<PaintingVariant> f_235728_ = forge(f_235743_, "kebab", PaintingVariants::m_218942_);
+    public static final Registry<ResourceLocation> f_122832_ = m_206008_(f_122909_, (p_235777_) -> {
        return Stats.f_12926_;
     });
--   public static final DefaultedRegistry<ChunkStatus> f_122833_ = m_206027_(f_122910_, "empty", (p_205962_) -> {
+-   public static final DefaultedRegistry<ChunkStatus> f_122833_ = m_206027_(f_122910_, "empty", (p_235775_) -> {
 +   @Deprecated public static final DefaultedRegistry<ChunkStatus> f_122833_ = forge(f_122910_, "empty", (registry) -> {
        return ChunkStatus.f_62314_;
     });
-    public static final Registry<RuleTestType<?>> f_122861_ = m_206008_(f_122911_, (p_205960_) -> {
-@@ -208,43 +_,43 @@
-    public static final Registry<PosRuleTestType<?>> f_122862_ = m_206008_(f_122912_, (p_205958_) -> {
+    public static final Registry<RuleTestType<?>> f_122861_ = m_206008_(f_122911_, (p_235773_) -> {
+@@ -222,42 +_,42 @@
+    public static final Registry<PosRuleTestType<?>> f_122862_ = m_206008_(f_122912_, (p_235771_) -> {
        return PosRuleTestType.f_74205_;
     });
--   public static final Registry<MenuType<?>> f_122863_ = m_206008_(f_122913_, (p_205956_) -> {
+-   public static final Registry<MenuType<?>> f_122863_ = m_206008_(f_122913_, (p_235769_) -> {
 +   @Deprecated public static final Registry<MenuType<?>> f_122863_ = forge(f_122913_, (registry) -> {
        return MenuType.f_39964_;
     });
-    public static final Registry<RecipeType<?>> f_122864_ = m_206008_(f_122914_, (p_205954_) -> {
+-   public static final Registry<RecipeType<?>> f_122864_ = m_206008_(f_122914_, (p_235767_) -> {
++   @Deprecated public static final Registry<RecipeType<?>> f_122864_ = forge(f_122914_, (p_235767_) -> {
        return RecipeType.f_44107_;
     });
--   public static final Registry<RecipeSerializer<?>> f_122865_ = m_206008_(f_122915_, (p_205952_) -> {
+-   public static final Registry<RecipeSerializer<?>> f_122865_ = m_206008_(f_122915_, (p_235765_) -> {
 +   @Deprecated public static final Registry<RecipeSerializer<?>> f_122865_ = forge(f_122915_, (registry) -> {
        return RecipeSerializer.f_44077_;
     });
--   public static final Registry<Attribute> f_122866_ = m_206008_(f_122916_, (p_205950_) -> {
+-   public static final Registry<Attribute> f_122866_ = m_206008_(f_122916_, (p_235763_) -> {
 +   @Deprecated public static final Registry<Attribute> f_122866_ = forge(f_122916_, (registry) -> {
        return Attributes.f_22286_;
     });
-    public static final Registry<PositionSourceType<?>> f_175420_ = m_206008_(f_175408_, (p_205948_) -> {
+    public static final Registry<PositionSourceType<?>> f_175420_ = m_206008_(f_175408_, (p_235761_) -> {
        return PositionSourceType.f_157871_;
     });
--   public static final Registry<StatType<?>> f_122867_ = m_206008_(f_122917_, (p_205946_) -> {
+    public static final Registry<ArgumentTypeInfo<?, ?>> f_235729_ = m_206008_(f_235724_, (RegistryBootstrap)ArgumentTypeInfos::m_235384_);
+-   public static final Registry<StatType<?>> f_122867_ = m_206008_(f_122917_, (p_235759_) -> {
 +   @Deprecated public static final Registry<StatType<?>> f_122867_ = forge(f_122917_, (registry) -> {
        return Stats.f_12982_;
     });
-    public static final DefaultedRegistry<VillagerType> f_122868_ = m_206027_(f_122808_, "plains", (p_205944_) -> {
+    public static final DefaultedRegistry<VillagerType> f_122868_ = m_206027_(f_122808_, "plains", (p_235757_) -> {
        return VillagerType.f_35821_;
     });
--   public static final DefaultedRegistry<VillagerProfession> f_122869_ = m_206027_(f_122809_, "none", (p_205942_) -> {
+-   public static final DefaultedRegistry<VillagerProfession> f_122869_ = m_206027_(f_122809_, "none", (p_235755_) -> {
 +   @Deprecated public static final DefaultedRegistry<VillagerProfession> f_122869_ = forge(f_122809_, "none", (registry) -> {
        return VillagerProfession.f_35585_;
     });
--   public static final DefaultedRegistry<PoiType> f_122870_ = m_206027_(f_122810_, "unemployed", (p_205940_) -> {
-+   @Deprecated public static final DefaultedRegistry<PoiType> f_122870_ = forge(f_122810_, "unemployed", (registry) -> {
-       return PoiType.f_27331_;
-    });
--   public static final DefaultedRegistry<MemoryModuleType<?>> f_122871_ = m_206027_(f_122811_, "dummy", (p_205938_) -> {
+-   public static final Registry<PoiType> f_122870_ = m_206008_(f_122810_, PoiTypes::m_218082_);
+-   public static final DefaultedRegistry<MemoryModuleType<?>> f_122871_ = m_206027_(f_122811_, "dummy", (p_235753_) -> {
++   @Deprecated public static final Registry<PoiType> f_122870_ = forge(f_122810_, PoiTypes::m_218082_);
 +   @Deprecated public static final DefaultedRegistry<MemoryModuleType<?>> f_122871_ = forge(f_122811_, "dummy", (registry) -> {
        return MemoryModuleType.f_26349_;
     });
--   public static final DefaultedRegistry<SensorType<?>> f_122872_ = m_206027_(f_122812_, "dummy", (p_205936_) -> {
+-   public static final DefaultedRegistry<SensorType<?>> f_122872_ = m_206027_(f_122812_, "dummy", (p_235751_) -> {
 +   @Deprecated public static final DefaultedRegistry<SensorType<?>> f_122872_ = forge(f_122812_, "dummy", (registry) -> {
        return SensorType.f_26809_;
     });
--   public static final Registry<Schedule> f_122873_ = m_206008_(f_122813_, (p_205934_) -> {
+-   public static final Registry<Schedule> f_122873_ = m_206008_(f_122813_, (p_235749_) -> {
 +   @Deprecated public static final Registry<Schedule> f_122873_ = forge(f_122813_, (registry) -> {
        return Schedule.f_38012_;
     });
--   public static final Registry<Activity> f_122874_ = m_206008_(f_122814_, (p_205932_) -> {
+-   public static final Registry<Activity> f_122874_ = m_206008_(f_122814_, (p_235747_) -> {
 +   @Deprecated public static final Registry<Activity> f_122874_ = forge(f_122814_, (registry) -> {
        return Activity.f_37979_;
     });
-    public static final Registry<LootPoolEntryType> f_122875_ = m_206008_(f_122815_, (p_206133_) -> {
-@@ -293,15 +_,15 @@
-    public static final ResourceKey<Registry<NormalNoise.NoiseParameters>> f_194568_ = m_122978_("worldgen/noise");
-    public static final ResourceKey<Registry<DensityFunction>> f_211074_ = m_122978_("worldgen/density_function");
+    public static final Registry<LootPoolEntryType> f_122875_ = m_206008_(f_122815_, (p_235745_) -> {
+@@ -308,16 +_,16 @@
+    public static final ResourceKey<Registry<WorldPreset>> f_235726_ = m_122978_("worldgen/world_preset");
+    public static final ResourceKey<Registry<FlatLevelGeneratorPreset>> f_235727_ = m_122978_("worldgen/flat_level_generator_preset");
     public static final ResourceKey<Registry<WorldCarver<?>>> f_122836_ = m_122978_("worldgen/carver");
--   public static final Registry<WorldCarver<?>> f_122837_ = m_206008_(f_122836_, (p_206112_) -> {
+-   public static final Registry<WorldCarver<?>> f_122837_ = m_206008_(f_122836_, (p_235842_) -> {
 +   @Deprecated public static final Registry<WorldCarver<?>> f_122837_ = forge(f_122836_, (registry) -> {
        return WorldCarver.f_64974_;
     });
     public static final ResourceKey<Registry<Feature<?>>> f_122838_ = m_122978_("worldgen/feature");
--   public static final Registry<Feature<?>> f_122839_ = m_206008_(f_122838_, (p_206109_) -> {
+-   public static final Registry<Feature<?>> f_122839_ = m_206008_(f_122838_, (p_235840_) -> {
 +   @Deprecated public static final Registry<Feature<?>> f_122839_ = forge(f_122838_, (registry) -> {
        return Feature.f_65731_;
     });
-    public static final ResourceKey<Registry<StructureFeature<?>>> f_122840_ = m_122978_("worldgen/structure_feature");
--   public static final Registry<StructureFeature<?>> f_122841_ = m_206008_(f_122840_, (p_206107_) -> {
-+   @Deprecated public static final Registry<StructureFeature<?>> f_122841_ = forge(f_122840_, (registry) -> {
-       return StructureFeature.f_67014_;
-    });
     public static final ResourceKey<Registry<StructurePlacementType<?>>> f_205929_ = m_122978_("worldgen/structure_placement");
-@@ -328,16 +_,16 @@
+    public static final Registry<StructurePlacementType<?>> f_205930_ = m_206008_(f_205929_, (p_235838_) -> {
+-      return StructurePlacementType.f_205041_;
++         return StructurePlacementType.f_205041_;
+    });
+    public static final ResourceKey<Registry<StructurePieceType>> f_122842_ = m_122978_("worldgen/structure_piece");
+    public static final Registry<StructurePieceType> f_122843_ = m_206008_(f_122842_, (p_235836_) -> {
+@@ -344,10 +_,10 @@
     public static final ResourceKey<Registry<Codec<? extends DensityFunction>>> f_211075_ = m_122978_("worldgen/density_function_type");
     public static final ResourceKey<Registry<StructureProcessorType<?>>> f_122854_ = m_122978_("worldgen/structure_processor");
     public static final ResourceKey<Registry<StructurePoolElementType<?>>> f_122855_ = m_122978_("worldgen/structure_pool_element");
--   public static final Registry<BlockStateProviderType<?>> f_122856_ = m_206008_(f_122846_, (p_206098_) -> {
+-   public static final Registry<BlockStateProviderType<?>> f_122856_ = m_206008_(f_122846_, (p_235830_) -> {
 +   @Deprecated public static final Registry<BlockStateProviderType<?>> f_122856_ = forge(f_122846_, (registry) -> {
        return BlockStateProviderType.f_68752_;
     });
--   public static final Registry<FoliagePlacerType<?>> f_122858_ = m_206008_(f_122848_, (p_206092_) -> {
+-   public static final Registry<FoliagePlacerType<?>> f_122858_ = m_206008_(f_122848_, (p_235828_) -> {
 +   @Deprecated public static final Registry<FoliagePlacerType<?>> f_122858_ = forge(f_122848_, (registry) -> {
        return FoliagePlacerType.f_68591_;
     });
-    public static final Registry<TrunkPlacerType<?>> f_122859_ = m_206008_(f_122849_, (p_206086_) -> {
-       return TrunkPlacerType.f_70315_;
+    public static final Registry<TrunkPlacerType<?>> f_122859_ = m_206008_(f_122849_, (p_235822_) -> {
+@@ -356,7 +_,7 @@
+    public static final Registry<RootPlacerType<?>> f_235742_ = m_206008_(f_235741_, (p_235818_) -> {
+       return RootPlacerType.f_225898_;
     });
--   public static final Registry<TreeDecoratorType<?>> f_122860_ = m_206008_(f_122850_, (p_206078_) -> {
+-   public static final Registry<TreeDecoratorType<?>> f_122860_ = m_206008_(f_122850_, (p_235814_) -> {
 +   @Deprecated public static final Registry<TreeDecoratorType<?>> f_122860_ = forge(f_122850_, (registry) -> {
        return TreeDecoratorType.f_70043_;
     });
-    public static final Registry<FeatureSizeType<?>> f_122888_ = m_206008_(f_122851_, (p_206072_) -> {
-@@ -383,16 +_,32 @@
+    public static final Registry<FeatureSizeType<?>> f_122888_ = m_206008_(f_122851_, (p_235808_) -> {
+@@ -401,7 +_,7 @@
+ 
+          if (p_235790_ instanceof DefaultedRegistry) {
+             ResourceLocation resourcelocation = ((DefaultedRegistry)p_235790_).m_122315_();
+-            Validate.notNull(p_235790_.m_7745_(resourcelocation), "Missing default of DefaultedMappedRegistry: " + resourcelocation);
++            Validate.notNull(p_235790_.m_7745_(resourcelocation), "Missing default of DefaultedMappedRegistry: " + p_205993_.f_122887_ + ", Entry: " + resourcelocation);
+          }
+ 
+       });
+@@ -411,16 +_,32 @@
        return m_205999_(p_206009_, Lifecycle.experimental(), p_206010_);
     }
  
-+   private static <T extends net.minecraftforge.registries.IForgeRegistryEntry<T>> Registry<T> forge(ResourceKey<? extends Registry<T>> key, Registry.RegistryBootstrap<T> def) {
++   private static <T> Registry<T> forge(ResourceKey<? extends Registry<T>> key, Registry.RegistryBootstrap<T> def) {
 +      return forge(key, Lifecycle.experimental(), def);
 +   }
 +
@@ -172,7 +182,7 @@
        return m_206016_(p_206028_, p_206029_, Lifecycle.experimental(), p_206030_);
     }
  
-+   private static <T extends net.minecraftforge.registries.IForgeRegistryEntry<T>> DefaultedRegistry<T> forge(ResourceKey<? extends Registry<T>> key, String defKey, Registry.RegistryBootstrap<T> def) {
++   private static <T> DefaultedRegistry<T> forge(ResourceKey<? extends Registry<T>> key, String defKey, Registry.RegistryBootstrap<T> def) {
 +      return forge(key, defKey, Lifecycle.experimental(), def);
 +   }
 +
@@ -180,7 +190,7 @@
        return m_206021_(p_206032_, p_206033_, Lifecycle.experimental(), p_206034_, p_206035_);
     }
  
-+   private static <T extends net.minecraftforge.registries.IForgeRegistryEntry<T>> Registry<T> forge(ResourceKey<? extends Registry<T>> key, Lifecycle cycle, Registry.RegistryBootstrap<T> def) {
++   private static <T> Registry<T> forge(ResourceKey<? extends Registry<T>> key, Lifecycle cycle, Registry.RegistryBootstrap<T> def) {
 +      return m_206011_(key, net.minecraftforge.registries.GameData.getWrapper(key, cycle), def, cycle);
 +   }
 +
@@ -188,7 +198,7 @@
        return m_206011_(p_206000_, new MappedRegistry<>(p_206000_, p_206001_, (Function<T, Holder.Reference<T>>)null), p_206002_, p_206001_);
 +   }
 +
-+   private static <T extends net.minecraftforge.registries.IForgeRegistryEntry<T>> DefaultedRegistry<T> forge(ResourceKey<? extends Registry<T>> key, String defKey, Lifecycle cycle, Registry.RegistryBootstrap<T> def) {
++   private static <T> DefaultedRegistry<T> forge(ResourceKey<? extends Registry<T>> key, String defKey, Lifecycle cycle, Registry.RegistryBootstrap<T> def) {
 +      return m_206011_(key, net.minecraftforge.registries.GameData.getWrapper(key, cycle, defKey), def, cycle);
     }
  

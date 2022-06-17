@@ -1,16 +1,14 @@
 /*
- * Minecraft Forge - Forge Development LLC
+ * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
 package net.minecraftforge.common.extensions;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import net.minecraft.core.Registry;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.monster.EnderMan;
+import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.pattern.BlockInWorld;
@@ -34,6 +32,10 @@ import net.minecraft.world.level.Level;
 import net.minecraftforge.common.ToolAction;
 import net.minecraftforge.common.ToolActions;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.Map;
 
 /*
  * Extension added to ItemStack that bounces to ItemSack sensitive Item methods. Typically this is just for convince.
@@ -156,6 +158,38 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundTag>
     default boolean canApplyAtEnchantingTable(Enchantment enchantment)
     {
         return self().getItem().canApplyAtEnchantingTable(self(), enchantment);
+    }
+
+    /**
+     * Gets the level of the enchantment currently present on the stack. By default, returns the enchantment level present in NBT.
+     *
+     * Equivalent to calling {@link net.minecraft.world.item.enchantment.EnchantmentHelper#getItemEnchantmentLevel(Enchantment, ItemStack)}
+     * Use in place of {@link net.minecraft.world.item.enchantment.EnchantmentHelper#getTagEnchantmentLevel(Enchantment, ItemStack)} for checking presence of an enchantment in logic implementing the enchantment behavior.
+     * Use {@link net.minecraft.world.item.enchantment.EnchantmentHelper#getTagEnchantmentLevel(Enchantment, ItemStack)} instead when modifying an item's enchantments.
+     *
+     * @param enchantment  the enchantment being checked for
+     * @return  Level of the enchantment, or 0 if not present
+     * @see #getAllEnchantments()
+     * @see net.minecraft.world.item.enchantment.EnchantmentHelper#getTagEnchantmentLevel(Enchantment, ItemStack)
+     */
+    default int getEnchantmentLevel(Enchantment enchantment)
+    {
+        return self().getItem().getEnchantmentLevel(self(), enchantment);
+    }
+
+    /**
+     * Gets a map of all enchantments present on the stack. By default, returns the enchantments present in NBT, ignoring book enchantments.
+     *
+     * Use in place of {@link net.minecraft.world.item.enchantment.EnchantmentHelper#getEnchantments(ItemStack)} for checking presence of an enchantment in logic implementing the enchantment behavior.
+     * Use {@link net.minecraft.world.item.enchantment.EnchantmentHelper#getEnchantments(ItemStack)} instead when modifying an item's enchantments.
+     *
+     * @return  Map of all enchantments on the stack, empty if no enchantments are present
+     * @see #getEnchantmentLevel(Enchantment)
+     * @see net.minecraft.world.item.enchantment.EnchantmentHelper#getEnchantments(ItemStack)
+     */
+    default Map<Enchantment, Integer> getAllEnchantments()
+    {
+        return self().getItem().getAllEnchantments(self());
     }
 
     /**
@@ -482,16 +516,16 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundTag>
     {
         return self().getItem().canWalkOnPowderedSnow(self(), wearer);
     }
-    
+
     /**
      * Get a bounding box ({@link AABB}) of a sweep attack.
-     * 
+     *
      * @param player the performing the attack the attack.
      * @param target the entity targeted by the attack.
      * @return the bounding box.
      */
-    @Nonnull
-    default AABB getSweepHitBox(@Nonnull Player player, @Nonnull Entity target)
+    @NotNull
+    default AABB getSweepHitBox(@NotNull Player player, @NotNull Entity target)
     {
         return self().getItem().getSweepHitBox(self(), player, target);
     }
@@ -505,5 +539,21 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundTag>
     default void onDestroyed(ItemEntity itemEntity, DamageSource damageSource)
     {
         self().getItem().onDestroyed(itemEntity, damageSource);
+    }
+
+    /**
+     * Get the food properties for this item.
+     * This is a bouncer for easier use of {@link IForgeItem#getFoodProperties(ItemStack, LivingEntity)}
+     *
+     * The @Nullable annotation was only added, due to the default method, also being @Nullable.
+     * Use this with a grain of salt, as if you return null here and true at {@link Item#isEdible()}, NPEs will occur!
+     *
+     * @param entity The entity which wants to eat the food. Be aware that this can be null!
+     * @return The current FoodProperties for the item.
+     */
+    @Nullable // read javadoc to find a potential problem
+    default FoodProperties getFoodProperties(@Nullable LivingEntity entity)
+    {
+        return self().getItem().getFoodProperties(self(), entity);
     }
 }

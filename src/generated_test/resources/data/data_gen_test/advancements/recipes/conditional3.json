@@ -1,22 +1,10 @@
 {
   "advancements": [
     {
-      "conditions": [
-        {
-          "tag": "minecraft:planks",
-          "type": "forge:tag_empty"
-        }
-      ],
       "advancement": {
         "parent": "minecraft:recipes/root",
-        "rewards": {
-          "recipes": [
-            "minecraft:netherite_block"
-          ]
-        },
         "criteria": {
           "has_diamond_block": {
-            "trigger": "minecraft:inventory_changed",
             "conditions": {
               "items": [
                 {
@@ -25,13 +13,14 @@
                   ]
                 }
               ]
-            }
+            },
+            "trigger": "minecraft:inventory_changed"
           },
           "has_the_recipe": {
-            "trigger": "minecraft:recipe_unlocked",
             "conditions": {
               "recipe": "minecraft:netherite_block"
-            }
+            },
+            "trigger": "minecraft:recipe_unlocked"
           }
         },
         "requirements": [
@@ -39,29 +28,25 @@
             "has_diamond_block",
             "has_the_recipe"
           ]
-        ]
-      }
+        ],
+        "rewards": {
+          "recipes": [
+            "minecraft:netherite_block"
+          ]
+        }
+      },
+      "conditions": [
+        {
+          "type": "forge:tag_empty",
+          "tag": "minecraft:planks"
+        }
+      ]
     },
     {
-      "conditions": [
-        {
-          "value": {
-            "tag": "minecraft:planks",
-            "type": "forge:tag_empty"
-          },
-          "type": "forge:not"
-        }
-      ],
       "advancement": {
         "parent": "minecraft:recipes/root",
-        "rewards": {
-          "recipes": [
-            "minecraft:netherite_block"
-          ]
-        },
         "criteria": {
           "has_diamond_block": {
-            "trigger": "minecraft:inventory_changed",
             "conditions": {
               "items": [
                 {
@@ -70,13 +55,14 @@
                   ]
                 }
               ]
-            }
+            },
+            "trigger": "minecraft:inventory_changed"
           },
           "has_the_recipe": {
-            "trigger": "minecraft:recipe_unlocked",
             "conditions": {
               "recipe": "minecraft:netherite_block"
-            }
+            },
+            "trigger": "minecraft:recipe_unlocked"
           }
         },
         "requirements": [
@@ -84,8 +70,22 @@
             "has_diamond_block",
             "has_the_recipe"
           ]
-        ]
-      }
+        ],
+        "rewards": {
+          "recipes": [
+            "minecraft:netherite_block"
+          ]
+        }
+      },
+      "conditions": [
+        {
+          "type": "forge:not",
+          "value": {
+            "type": "forge:tag_empty",
+            "tag": "minecraft:planks"
+          }
+        }
+      ]
     }
   ]
 }

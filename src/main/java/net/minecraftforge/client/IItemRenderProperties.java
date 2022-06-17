@@ -1,5 +1,5 @@
 /*
- * Minecraft Forge - Forge Development LLC
+ * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
@@ -14,9 +14,8 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public interface IItemRenderProperties
 {
@@ -43,7 +42,7 @@ public interface IItemRenderProperties
      * @param itemStack    The itemStack to render the model of
      * @param armorSlot    The slot the armor is in
      * @param _default     Original armor model. Will have attributes set.
-     * @return A HumanoidModel to render instead of the default, will have the relevant properties copied in {@link #getBaseArmorModel(LivingEntity, ItemStack, EquipmentSlot, HumanoidModel).
+     * @return A HumanoidModel to render instead of the default, will have the relevant properties copied in {@link #getBaseArmorModel(LivingEntity, ItemStack, EquipmentSlot, HumanoidModel)}.
      *         Returning null will cause the default to render.
      * @see #getBaseArmorModel(LivingEntity, ItemStack, EquipmentSlot, HumanoidModel)
      */
@@ -65,7 +64,7 @@ public interface IItemRenderProperties
      * @return A Model to render instead of the default
      * @see #getArmorModel(LivingEntity, ItemStack, EquipmentSlot, HumanoidModel)
      */
-    @Nonnull
+    @NotNull
     default Model getBaseArmorModel(LivingEntity entityLiving, ItemStack itemStack, EquipmentSlot armorSlot, HumanoidModel<?> _default)
     {
         HumanoidModel<?> replacement = getArmorModel(entityLiving, itemStack, armorSlot, _default);

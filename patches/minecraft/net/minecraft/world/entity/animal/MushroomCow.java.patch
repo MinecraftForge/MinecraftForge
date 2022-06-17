@@ -23,7 +23,7 @@
     }
  
 +   @Override
-+   public java.util.List<ItemStack> onSheared(@javax.annotation.Nullable Player player, @javax.annotation.Nonnull ItemStack item, Level world, BlockPos pos, int fortune) {
++   public java.util.List<ItemStack> onSheared(@org.jetbrains.annotations.Nullable Player player, @org.jetbrains.annotations.NotNull ItemStack item, Level world, BlockPos pos, int fortune) {
 +      this.m_146852_(GameEvent.f_157781_, player);
 +      return shearInternal(player == null ? SoundSource.BLOCKS : SoundSource.PLAYERS);
 +   }
@@ -54,7 +54,7 @@
 @@ -182,6 +_,7 @@
        p_28944_.m_128359_("Type", this.m_28955_().f_28960_);
        if (this.f_28909_ != null) {
-          p_28944_.m_128344_("EffectId", (byte)MobEffect.m_19459_(this.f_28909_));
+          p_28944_.m_128405_("EffectId", MobEffect.m_19459_(this.f_28909_));
 +         net.minecraftforge.common.ForgeHooks.saveMobEffect(p_28944_, "forge:effect_id", this.f_28909_);
           p_28944_.m_128405_("EffectDuration", this.f_28910_);
        }
@@ -62,7 +62,7 @@
 @@ -192,6 +_,7 @@
        this.m_28928_(MushroomCow.MushroomType.m_28976_(p_28936_.m_128461_("Type")));
        if (p_28936_.m_128425_("EffectId", 1)) {
-          this.f_28909_ = MobEffect.m_19453_(p_28936_.m_128445_("EffectId"));
+          this.f_28909_ = MobEffect.m_19453_(p_28936_.m_128451_("EffectId"));
 +         this.f_28909_ = net.minecraftforge.common.ForgeHooks.loadMobEffect(p_28936_, "forge:effect_id", this.f_28909_);
        }
  
@@ -74,7 +74,7 @@
 +   }
 +
 +   @Override
-+   public boolean isShearable(@javax.annotation.Nonnull ItemStack item, Level world, BlockPos pos) {
++   public boolean isShearable(@org.jetbrains.annotations.NotNull ItemStack item, Level world, BlockPos pos) {
 +      return m_6220_();
     }
  

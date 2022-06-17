@@ -1,5 +1,5 @@
 /*
- * Minecraft Forge - Forge Development LLC
+ * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
@@ -25,11 +25,12 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
-import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.ObjectHolder;
+import net.minecraftforge.registries.RegisterEvent;
 
 import java.util.Collections;
 
@@ -38,14 +39,17 @@ import java.util.Collections;
 public class EntityRendererEventsTest
 {
     private static final ResourceLocation MY_ENTITY = new ResourceLocation("entity_renderer_events_test", "test_entity");
-    
-    @ObjectHolder("entity_renderer_events_test:test_entity")
+
+    @ObjectHolder(registryName = "entity_type", value = "entity_renderer_events_test:test_entity")
     public static EntityType<MyEntity> MY_ENTITY_TYPE;
 
     @SubscribeEvent
-    public static void entityRegistry(RegistryEvent.Register<EntityType<?>> event)
+    public static void entityRegistry(RegisterEvent event)
     {
-        event.getRegistry().register(EntityType.Builder.of(MyEntity::new, MobCategory.MONSTER).build("test_entity").setRegistryName("test_entity"));
+        if (event.getRegistryKey().equals(ForgeRegistries.Keys.ENTITY_TYPES))
+        {
+            event.register(ForgeRegistries.Keys.ENTITY_TYPES, MY_ENTITY, () -> EntityType.Builder.of(MyEntity::new, MobCategory.MONSTER).build("test_entity"));
+        }
     }
     
     @SubscribeEvent

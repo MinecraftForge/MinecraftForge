@@ -1,5 +1,5 @@
 /*
- * Minecraft Forge - Forge Development LLC
+ * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
@@ -42,9 +42,8 @@ public class SeparatePerspectiveModelBuilder<T extends ModelBuilder<T>> extends 
     public SeparatePerspectiveModelBuilder<T> perspective(ItemTransforms.TransformType perspective, T modelBuilder)
     {
         Preconditions.checkNotNull(perspective, "layer must not be null");
-        Preconditions.checkArgument(SeparatePerspectiveModel.Loader.PERSPECTIVES.containsValue(perspective), "perspective is not included in SeparatePerspectiveModel. New mc version?");
         Preconditions.checkNotNull(modelBuilder, "modelBuilder must not be null");
-        childModels.put(SeparatePerspectiveModel.Loader.PERSPECTIVES.inverse().get(perspective), modelBuilder);
+        childModels.put(perspective.getSerializeName(), modelBuilder);
         return this;
     }
 

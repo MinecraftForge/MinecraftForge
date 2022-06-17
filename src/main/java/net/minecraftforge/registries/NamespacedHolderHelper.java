@@ -1,5 +1,5 @@
 /*
- * Minecraft Forge - Forge Development LLC
+ * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
@@ -20,10 +20,9 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import javax.annotation.Nullable;
-
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
+import net.minecraft.util.RandomSource;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -39,8 +38,9 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-class NamespacedHolderHelper<T extends IForgeRegistryEntry<T>>
+class NamespacedHolderHelper<T>
 {
     private static final Logger LOGGER = LogManager.getLogger();
     private final ForgeRegistry<T> owner;
@@ -100,7 +100,7 @@ class NamespacedHolderHelper<T extends IForgeRegistryEntry<T>>
         });
     }
 
-    Optional<Holder<T>> getRandom(Random rand)
+    Optional<Holder<T>> getRandom(RandomSource rand)
     {
         Optional<Holder<T>> ret = Util.getRandomSafe(this.getSortedHolders(), rand).map(Holder::hackyErase);
         if (this.defaultKey != null)
@@ -236,13 +236,21 @@ class NamespacedHolderHelper<T extends IForgeRegistryEntry<T>>
         this.frozen = false;
     }
 
-    @Nullable
-    Holder<T> onAdded(RegistryManager stage, int id, T newValue, T oldValue)
+    boolean isFrozen()
     {
-        if (stage != RegistryManager.ACTIVE)
-            return null; // Only do holder shit on the active registries, not pending or snapshots.
+        return this.frozen;
+    }
 
-        ResourceKey<T> key = ResourceKey.create(this.self.key(), newValue.getRegistryName());
+    boolean isIntrusive()
+    {
+        return this.holderLookup != null;
+    }
+
+    @Nullable
+    Holder<T> onAdded(RegistryManager stage, int id, ResourceKey<T> key, T newValue, T oldValue)
+    {
+        if (stage != RegistryManager.ACTIVE && (this.holderLookup == null || !stage.isStaging()))  // Intrusive handlers need updating in staging.
+            return null; // Only do holder shit on the active registries, not pending or snapshots.
 
         //Holder.Reference<T> oldHolder = oldValue == null ? null : getHolder(key, oldValue);
         // Do we need to do anything with the old holder? We cant update its pointer unless its non-intrusive...
@@ -252,7 +260,7 @@ class NamespacedHolderHelper<T extends IForgeRegistryEntry<T>>
 
         this.holdersById.size(Math.max(this.holdersById.size(), id + 1));
         this.holdersById.set(id, newHolder);
-        this.holdersByName.put(newValue.getRegistryName(), newHolder);
+        this.holdersByName.put(key.location(), newHolder);
         this.holders.put(newValue, newHolder);
         newHolder.bind(key, newValue);
         this.holdersSorted = null;
@@ -275,7 +283,7 @@ class NamespacedHolderHelper<T extends IForgeRegistryEntry<T>>
         if (this.holderLookup != null)
             return this.holderLookup.apply(value);
 
-        return this.holdersByName.computeIfAbsent(value.getRegistryName(), k -> Holder.Reference.createStandAlone(this.self, key));
+        return this.holdersByName.computeIfAbsent(key.location(), k -> Holder.Reference.createStandAlone(this.self, key));
     }
 
     private List<Holder.Reference<T>> getSortedHolders()

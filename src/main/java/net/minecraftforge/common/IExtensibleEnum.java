@@ -1,5 +1,5 @@
 /*
- * Minecraft Forge - Forge Development LLC
+ * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
@@ -22,14 +22,14 @@ import java.util.function.Supplier;
  * <p>
  * For example, an enum with the constructor {@code MyEnum(Object foo)} would
  * require the method:
- * 
+ *
  * <pre>
  * public static MyEnum create(String name, Object foo)
  * {
  *     throw new IllegalStateException("Enum not extended");
  * }
  * </pre>
- * 
+ *
  * The method contents will be replaced with ASM at runtime. Multiple
  * {@code create} methods <strong>can</strong> be defined as long as each
  * matches a constructor.
@@ -44,7 +44,7 @@ public interface IExtensibleEnum
     default void init() {}
 
     /**
-     * Use this instead of {@link StringRepresentable#fromEnum(Supplier, Function)} for extensible enums because this not cache the enum values on construction
+     * Use this instead of {@link StringRepresentable#fromEnum(Supplier)} for extensible enums because this not cache the enum values on construction
      */
     static <E extends Enum<E> & StringRepresentable> Codec<E> createCodecForExtensibleEnum(Supplier<E[]> valuesSupplier, Function<? super String, ? extends E> enumValueFromNameFunction) {
         return Codec.either(Codec.STRING, Codec.INT).comapFlatMap(

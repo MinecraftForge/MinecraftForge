@@ -11,6 +11,6 @@
 -      }
 -
 +      int i = p_81967_.getLootingModifier();
-       return p_81967_.m_78933_().nextFloat() < this.f_81953_ + (float)i * this.f_81954_;
+       return p_81967_.m_230907_().m_188501_() < this.f_81953_ + (float)i * this.f_81954_;
     }
  

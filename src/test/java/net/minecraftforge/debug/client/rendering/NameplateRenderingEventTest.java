@@ -1,13 +1,13 @@
 /*
- * Minecraft Forge - Forge Development LLC
+ * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
 package net.minecraftforge.debug.client.rendering;
 
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.animal.Cow;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.ChatFormatting;
 import net.minecraftforge.client.event.RenderNameplateEvent;
 import net.minecraftforge.eventbus.api.Event;
@@ -34,7 +34,7 @@ public class NameplateRenderingEventTest
 
         if(event.getEntity() instanceof Cow)
         {
-            event.setContent(new TextComponent("Evil Cow").withStyle(ChatFormatting.RED));
+            event.setContent(Component.literal("Evil Cow").withStyle(ChatFormatting.RED));
             event.setResult(Event.Result.ALLOW);
         }
 

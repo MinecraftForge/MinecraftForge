@@ -1,5 +1,5 @@
 /*
- * Minecraft Forge - Forge Development LLC
+ * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
@@ -7,28 +7,24 @@ package net.minecraftforge.registries;
 
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executor;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import com.google.common.collect.Sets.SetView;
 
 import com.mojang.serialization.Lifecycle;
 import net.minecraft.core.WritableRegistry;
+import net.minecraft.data.BuiltinRegistries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.core.Registry;
-import net.minecraftforge.fml.IModStateTransition;
-import net.minecraftforge.fml.ModContainer;
+import net.minecraftforge.fml.ModLoader;
+import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.network.HandshakeMessages;
 import net.minecraftforge.registries.ForgeRegistry.Snapshot;
 import org.apache.commons.lang3.tuple.Pair;
@@ -43,12 +39,16 @@ public class RegistryManager
     public static final RegistryManager FROZEN = new RegistryManager("FROZEN");
     private static Set<ResourceLocation> vanillaRegistryKeys = Set.of();
 
-    BiMap<ResourceLocation, ForgeRegistry<? extends IForgeRegistryEntry<?>>> registries = HashBiMap.create();
-    private BiMap<Class<? extends IForgeRegistryEntry<?>>, ResourceLocation> superTypes = HashBiMap.create();
+    BiMap<ResourceLocation, ForgeRegistry<?>> registries = HashBiMap.create();
     private Set<ResourceLocation> persisted = Sets.newHashSet();
     private Set<ResourceLocation> synced = Sets.newHashSet();
     private Map<ResourceLocation, ResourceLocation> legacyNames = new HashMap<>();
     private final String name;
+
+    RegistryManager()
+    {
+        this("STAGING");
+    }
 
     public RegistryManager(String name)
     {
@@ -60,40 +60,28 @@ public class RegistryManager
         return this.name;
     }
 
-    @SuppressWarnings("unchecked")
-    public <V extends IForgeRegistryEntry<V>> Class<V> getSuperType(ResourceLocation key)
+    boolean isStaging()
     {
-        return (Class<V>)superTypes.inverse().get(key);
+        return "STAGING".equals(this.name);
     }
 
     @SuppressWarnings("unchecked")
-    public <V extends IForgeRegistryEntry<V>> ForgeRegistry<V> getRegistry(ResourceLocation key)
+    public <V> ForgeRegistry<V> getRegistry(ResourceLocation key)
     {
         return (ForgeRegistry<V>)this.registries.get(key);
     }
 
-    public <V extends IForgeRegistryEntry<V>> ForgeRegistry<V> getRegistry(ResourceKey<? extends Registry<V>> key)
+    public <V> ForgeRegistry<V> getRegistry(ResourceKey<? extends Registry<V>> key)
     {
         return getRegistry(key.location());
     }
 
-    /**
-     * @see #getRegistry(ResourceLocation)
-     * @see #getRegistry(ResourceKey)
-     * @deprecated The uniqueness of registry super types will not be guaranteed starting in 1.19.
-     */
-    @Deprecated(forRemoval = true, since = "1.18.2")
-    public <V extends IForgeRegistryEntry<V>> IForgeRegistry<V> getRegistry(Class<? super V> cls)
-    {
-        return getRegistry(superTypes.get(cls));
-    }
-
-    public <V extends IForgeRegistryEntry<V>> ResourceLocation getName(IForgeRegistry<V> reg)
+    public <V> ResourceLocation getName(IForgeRegistry<V> reg)
     {
         return this.registries.inverse().get(reg);
     }
 
-    public <V extends IForgeRegistryEntry<V>> ResourceLocation updateLegacyName(ResourceLocation legacyName)
+    public <V> ResourceLocation updateLegacyName(ResourceLocation legacyName)
     {
         ResourceLocation originalName = legacyName;
         while (getRegistry(legacyName) == null)
@@ -107,7 +95,7 @@ public class RegistryManager
         return legacyName;
     }
 
-    public <V extends IForgeRegistryEntry<V>> ForgeRegistry<V> getRegistry(ResourceLocation key, RegistryManager other)
+    public <V> ForgeRegistry<V> getRegistry(ResourceLocation key, RegistryManager other)
     {
         if (!this.registries.containsKey(key))
         {
@@ -115,7 +103,6 @@ public class RegistryManager
             if (ot == null)
                 return null;
             this.registries.put(key, ot.copy(this));
-            this.superTypes.put(ot.getRegistrySuperType(), key);
             if (other.persisted.contains(key))
                 this.persisted.add(key);
             if (other.synced.contains(key))
@@ -127,24 +114,12 @@ public class RegistryManager
         return getRegistry(key);
     }
 
-    <V extends IForgeRegistryEntry<V>> ForgeRegistry<V> createRegistry(ResourceLocation name, RegistryBuilder<V> builder)
+    <V> ForgeRegistry<V> createRegistry(ResourceLocation name, RegistryBuilder<V> builder)
     {
-        Set<Class<?>> parents = Sets.newHashSet();
-        findSuperTypes(builder.getType(), parents);
-        SetView<Class<?>> overlappedTypes = Sets.intersection(parents, superTypes.keySet());
-        if (!overlappedTypes.isEmpty())
-        {
-            Class<?> foundType = overlappedTypes.iterator().next();
-            LOGGER.error("Found existing registry of type {} named {}, you cannot create a new registry ({}) with type {}, as {} has a parent of that type",
-                    foundType, superTypes.get(foundType), name, builder.getType(), builder.getType());
-            throw new IllegalArgumentException("Duplicate registry parent type found - you can only have one registry for a particular super type");
-        }
         if (registries.containsKey(name))
-            throw new IllegalArgumentException("Attempted to register a registry for " + name + " with type "
-                    + builder.getType().getName() + " but it already exists as " + registries.get(name).getRegistrySuperType().getName());
+            throw new IllegalArgumentException("Attempted to register a registry for " + name + " but it already exists");
         ForgeRegistry<V> reg = new ForgeRegistry<V>(this, name, builder);
         registries.put(name, reg);
-        superTypes.put(builder.getType(), name);
         if (builder.getSaveToDisc())
             this.persisted.add(name);
         if (builder.getSync())
@@ -154,34 +129,33 @@ public class RegistryManager
         return getRegistry(name);
     }
 
-    @SuppressWarnings("unchecked")
-    static <V extends IForgeRegistryEntry<V>> void registerToRootRegistry(ForgeRegistry<V> forgeReg)
+    static <V> void registerToRootRegistry(ForgeRegistry<V> forgeReg)
     {
-        WritableRegistry<Registry<V>> registry = (WritableRegistry<Registry<V>>) Registry.REGISTRY;
+        injectForgeRegistry(forgeReg, Registry.REGISTRY);
+    }
+
+    static <V> void registerToBuiltinRegistry(ForgeRegistry<V> forgeReg)
+    {
+        injectForgeRegistry(forgeReg, BuiltinRegistries.REGISTRY);
+    }
+
+    @SuppressWarnings("unchecked")
+    private static <V> void injectForgeRegistry(ForgeRegistry<V> forgeReg, Registry<? extends Registry<?>> rootRegistry)
+    {
+        WritableRegistry<Registry<V>> registry = (WritableRegistry<Registry<V>>) rootRegistry;
         Registry<V> wrapper = forgeReg.getWrapper();
         if (wrapper != null)
             registry.register(forgeReg.getRegistryKey(), wrapper, Lifecycle.experimental());
     }
 
-    public static IModStateTransition.EventGenerator<NewRegistryEvent> newRegistryEventGenerator()
+    public static void postNewRegistryEvent()
     {
         NewRegistryEvent event = new NewRegistryEvent();
-        return mc -> event;
-    }
+        vanillaRegistryKeys = Set.copyOf(Registry.REGISTRY.keySet());
 
+        ModLoader.get().postEventWithWrap(event, (mc, e) -> ModLoadingContext.get().setActiveContainer(mc), (mc, e) -> ModLoadingContext.get().setActiveContainer(null));
 
-    public static CompletableFuture<List<Throwable>> preNewRegistryEvent(final Executor executor,
-            final IModStateTransition.EventGenerator<? extends NewRegistryEvent> eventGenerator)
-    {
-        return CompletableFuture.runAsync(() -> vanillaRegistryKeys = Set.copyOf(Registry.REGISTRY.keySet()), executor)
-                .handle((v, t) -> t != null ? Collections.singletonList(t) : Collections.emptyList());
-    }
-
-    public static CompletableFuture<List<Throwable>> postNewRegistryEvent(final Executor executor,
-            final IModStateTransition.EventGenerator<? extends NewRegistryEvent> eventGenerator)
-    {
-        return CompletableFuture.runAsync(() -> eventGenerator.apply(null).fill(), executor)
-                .handle((v, t) -> t != null ? Collections.singletonList(t) : Collections.emptyList());
+        event.fill();
     }
 
     private void addLegacyName(ResourceLocation legacyName, ResourceLocation name)
@@ -221,7 +195,6 @@ public class RegistryManager
         this.persisted.clear();
         this.synced.clear();
         this.registries.clear();
-        this.superTypes.clear();
     }
 
     public static List<Pair<String, HandshakeMessages.S2CRegistry>> generateRegistryPackets(boolean isLocal)

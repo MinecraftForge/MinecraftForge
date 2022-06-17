@@ -1,5 +1,5 @@
 /*
- * Minecraft Forge - Forge Development LLC
+ * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
@@ -7,7 +7,10 @@ package net.minecraftforge.network;
 
 import io.netty.util.AttributeKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.fml.IExtensionPoint;
 import net.minecraftforge.fml.IExtensionPoint.DisplayTest;
+import net.minecraftforge.network.ConnectionData.ModMismatchData;
+import net.minecraftforge.network.HandshakeMessages.S2CModList;
 import net.minecraftforge.network.event.EventNetworkChannel;
 import net.minecraftforge.network.simple.SimpleChannel;
 import org.apache.logging.log4j.Marker;
@@ -20,7 +23,10 @@ import java.util.List;
 public class NetworkConstants
 {
     public static final String FMLNETMARKER = "FML";
-    public static final int FMLNETVERSION = 2;
+    /**
+     * Netversion 3: {@link S2CModList} packet may include a list of non-vanilla synced datapack registry ids.
+     */
+    public static final int FMLNETVERSION = 3;
     public static final String NETVERSION = FMLNETMARKER + FMLNETVERSION;
     public static final String NOVERSION = "NONE";
 
@@ -29,6 +35,7 @@ public class NetworkConstants
     static final AttributeKey<HandshakeHandler> FML_HANDSHAKE_HANDLER = AttributeKey.valueOf("fml:handshake");
     static final AttributeKey<MCRegisterPacketHandler.ChannelList> FML_MC_REGISTRY = AttributeKey.valueOf("minecraft:netregistry");
     static final AttributeKey<ConnectionData> FML_CONNECTION_DATA = AttributeKey.valueOf("fml:conndata");
+    static final AttributeKey<ModMismatchData> FML_MOD_MISMATCH_DATA = AttributeKey.valueOf("fml:mismatchdata");
     static final ResourceLocation FML_HANDSHAKE_RESOURCE = new ResourceLocation("fml:handshake");
     static final ResourceLocation FML_PLAY_RESOURCE = new ResourceLocation("fml:play");
     static final ResourceLocation MC_REGISTER_RESOURCE = new ResourceLocation("minecraft:register");
@@ -39,7 +46,7 @@ public class NetworkConstants
     /**
      * Return this value in your {@link DisplayTest} function to be ignored.
      */
-    public static final String IGNORESERVERONLY = "OHNOES\uD83D\uDE31\uD83D\uDE31\uD83D\uDE31\uD83D\uDE31\uD83D\uDE31\uD83D\uDE31\uD83D\uDE31\uD83D\uDE31\uD83D\uDE31\uD83D\uDE31\uD83D\uDE31\uD83D\uDE31\uD83D\uDE31\uD83D\uDE31\uD83D\uDE31\uD83D\uDE31\uD83D\uDE31";
+    public static final String IGNORESERVERONLY = DisplayTest.IGNORESERVERONLY;
 
     public static String init() {
         return NetworkConstants.NETVERSION;

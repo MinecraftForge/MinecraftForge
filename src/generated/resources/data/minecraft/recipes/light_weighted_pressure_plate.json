@@ -1,13 +1,13 @@
 {
   "type": "minecraft:crafting_shaped",
-  "pattern": [
-    "##"
-  ],
   "key": {
     "#": {
       "tag": "forge:ingots/gold"
     }
   },
+  "pattern": [
+    "##"
+  ],
   "result": {
     "item": "minecraft:light_weighted_pressure_plate"
   }

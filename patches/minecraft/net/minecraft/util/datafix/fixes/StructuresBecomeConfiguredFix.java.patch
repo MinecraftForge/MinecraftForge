@@ -1,0 +1,13 @@
+--- a/net/minecraft/util/datafix/fixes/StructuresBecomeConfiguredFix.java
++++ b/net/minecraft/util/datafix/fixes/StructuresBecomeConfiguredFix.java
+@@ -92,7 +_,10 @@
+    private Dynamic<?> m_207723_(Pair<Dynamic<?>, Dynamic<?>> p_207724_, Dynamic<?> p_207725_) {
+       String s = p_207724_.getFirst().asString("UNKNOWN").toLowerCase(Locale.ROOT);
+       StructuresBecomeConfiguredFix.Conversion structuresbecomeconfiguredfix$conversion = f_207676_.get(s);
++      if (structuresbecomeconfiguredfix$conversion == null) structuresbecomeconfiguredfix$conversion = net.minecraftforge.common.ForgeHooks.getStructureConversion(s); // Forge: hook for mods to register conversions through RegisterStructureConversionsEvent
+       if (structuresbecomeconfiguredfix$conversion == null) {
++         if (net.minecraftforge.common.ForgeHooks.checkStructureNamespace(s)) return p_207724_.getSecond().createString(s); // Forge: pass-through structure IDs which have a non-"minecraft" namespace
++         if (true) return p_207724_.getSecond().createString("unknown." + s); // Forge: Pass-through with "unknown." prefix, so deserializer logs and ignores rather than fixer throwing an exception and dropping chunk data
+          throw new IllegalStateException("Found unknown structure: " + s);
+       } else {
+          Dynamic<?> dynamic = p_207724_.getSecond();

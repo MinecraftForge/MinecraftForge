@@ -1,23 +1,23 @@
 /*
- * Minecraft Forge - Forge Development LLC
+ * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
 package net.minecraftforge.common;
 
+import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.BiomeTags;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.material.Fluid;
-
-import javax.annotation.Nullable;
-import java.util.Set;
-import java.util.function.Supplier;
+import net.minecraftforge.registries.ForgeRegistries;
 
 public class Tags
 {
@@ -26,6 +26,7 @@ public class Tags
         Blocks.init();
         Items.init();
         Fluids.init();
+        Biomes.init();
     }
 
     public static class Blocks
@@ -404,11 +405,86 @@ public class Tags
     {
         private static void init() {}
 
+        /**
+         * Holds all fluids related to milk.
+         */
         public static final TagKey<Fluid> MILK = tag("milk");
+        /**
+         * Holds all fluids that are gaseous at room temperature.
+         */
+        public static final TagKey<Fluid> GASEOUS = tag("gaseous");
 
         private static TagKey<Fluid> tag(String name)
         {
             return FluidTags.create(new ResourceLocation("forge", name));
+        }
+    }
+
+    public static class Biomes
+    {
+        private static void init() {}
+
+        public static final TagKey<Biome> IS_HOT = tag("is_hot");
+        public static final TagKey<Biome> IS_HOT_OVERWORLD = tag("is_hot/overworld");
+        public static final TagKey<Biome> IS_HOT_NETHER = tag("is_hot/nether");
+        public static final TagKey<Biome> IS_HOT_END = tag("is_hot/end");
+
+        public static final TagKey<Biome> IS_COLD = tag("is_cold");
+        public static final TagKey<Biome> IS_COLD_OVERWORLD = tag("is_cold/overworld");
+        public static final TagKey<Biome> IS_COLD_NETHER = tag("is_cold/nether");
+        public static final TagKey<Biome> IS_COLD_END = tag("is_cold/end");
+
+        public static final TagKey<Biome> IS_SPARSE = tag("is_sparse");
+        public static final TagKey<Biome> IS_SPARSE_OVERWORLD = tag("is_sparse/overworld");
+        public static final TagKey<Biome> IS_SPARSE_NETHER = tag("is_sparse/nether");
+        public static final TagKey<Biome> IS_SPARSE_END = tag("is_sparse/end");
+        public static final TagKey<Biome> IS_DENSE = tag("is_dense");
+        public static final TagKey<Biome> IS_DENSE_OVERWORLD = tag("is_dense/overworld");
+        public static final TagKey<Biome> IS_DENSE_NETHER = tag("is_dense/nether");
+        public static final TagKey<Biome> IS_DENSE_END = tag("is_dense/end");
+
+        public static final TagKey<Biome> IS_WET = tag("is_wet");
+        public static final TagKey<Biome> IS_WET_OVERWORLD = tag("is_wet/overworld");
+        public static final TagKey<Biome> IS_WET_NETHER = tag("is_wet/nether");
+        public static final TagKey<Biome> IS_WET_END = tag("is_wet/end");
+        public static final TagKey<Biome> IS_DRY = tag("is_dry");
+        public static final TagKey<Biome> IS_DRY_OVERWORLD = tag("is_dry/overworld");
+        public static final TagKey<Biome> IS_DRY_NETHER = tag("is_dry/nether");
+        public static final TagKey<Biome> IS_DRY_END = tag("is_dry/end");
+
+        public static final TagKey<Biome> IS_SAVANNA = tag("is_savanna");
+        public static final TagKey<Biome> IS_CONIFEROUS = tag("is_coniferous");
+
+        public static final TagKey<Biome> IS_SPOOKY = tag("is_spooky");
+        public static final TagKey<Biome> IS_DEAD = tag("is_dead");
+        public static final TagKey<Biome> IS_LUSH = tag("is_lush");
+        public static final TagKey<Biome> IS_MUSHROOM = tag("is_mushroom");
+        public static final TagKey<Biome> IS_MAGICAL = tag("is_magical");
+        public static final TagKey<Biome> IS_RARE = tag("is_rare");
+        public static final TagKey<Biome> IS_PLATEAU = tag("is_plateau");
+        public static final TagKey<Biome> IS_MODIFIED = tag("is_modified");
+
+        public static final TagKey<Biome> IS_WATER = tag("is_water");
+
+        public static final TagKey<Biome> IS_PLAINS = tag("is_plains");
+        public static final TagKey<Biome> IS_SWAMP = tag("is_swamp");
+        public static final TagKey<Biome> IS_SANDY = tag("is_sandy");
+        public static final TagKey<Biome> IS_SNOWY = tag("is_snowy");
+        public static final TagKey<Biome> IS_WASTELAND = tag("is_wasteland");
+        public static final TagKey<Biome> IS_BEACH = tag("is_beach");
+        public static final TagKey<Biome> IS_VOID = tag("is_void");
+        public static final TagKey<Biome> IS_UNDERGROUND = tag("is_underground");
+
+        public static final TagKey<Biome> IS_PEAK = tag("is_peak");
+        public static final TagKey<Biome> IS_SLOPE = tag("is_slope");
+        public static final TagKey<Biome> IS_MOUNTAIN = tag("is_mountain");
+
+        public static final TagKey<Biome> IS_OVERWORLD = tag("is_overworld");
+        public static final TagKey<Biome> IS_END = tag("is_end");
+
+        private static TagKey<Biome> tag(String name)
+        {
+            return TagKey.create(Registry.BIOME_REGISTRY, new ResourceLocation("forge", name));
         }
     }
 }

@@ -57,7 +57,7 @@
 +    }
 +
 +    @Override
-+    public RailShape getRailDirection(BlockState state, BlockGetter world, BlockPos pos, @javax.annotation.Nullable net.minecraft.world.entity.vehicle.AbstractMinecart cart) {
++    public RailShape getRailDirection(BlockState state, BlockGetter world, BlockPos pos, @org.jetbrains.annotations.Nullable net.minecraft.world.entity.vehicle.AbstractMinecart cart) {
 +        return state.m_61143_(m_7978_());
 +    }
 +    /* ========================================= FORGE END ======================================*/

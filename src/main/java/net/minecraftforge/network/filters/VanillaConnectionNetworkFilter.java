@@ -1,5 +1,5 @@
 /*
- * Minecraft Forge - Forge Development LLC
+ * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
@@ -8,16 +8,14 @@ package net.minecraftforge.network.filters;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import javax.annotation.Nonnull;
 
 import io.netty.channel.ChannelHandler;
+import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.SharedSuggestionProvider;
-import net.minecraft.commands.synchronization.ArgumentTypes;
+import net.minecraft.commands.synchronization.ArgumentTypeInfo;
+import net.minecraft.commands.synchronization.ArgumentTypeInfos;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.protocol.Packet;
@@ -32,6 +30,7 @@ import net.minecraftforge.network.NetworkHooks;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import net.minecraftforge.registries.RegistryManager;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
 import com.google.common.collect.ImmutableMap;
@@ -68,7 +67,7 @@ public class VanillaConnectionNetworkFilter extends VanillaPacketFilter
      * Filter for SEntityPropertiesPacket. Filters out any entity attributes that are not in the "minecraft" namespace.
      * A vanilla client would ignore these with an error log.
      */
-    @Nonnull
+    @NotNull
     private static ClientboundUpdateAttributesPacket filterEntityProperties(ClientboundUpdateAttributesPacket msg)
     {
         ClientboundUpdateAttributesPacket newPacket = new ClientboundUpdateAttributesPacket(msg.getEntityId(), Collections.emptyList());
@@ -85,12 +84,15 @@ public class VanillaConnectionNetworkFilter extends VanillaPacketFilter
      * Filter for SCommandListPacket. Uses {@link CommandTreeCleaner} to filter out any ArgumentTypes that are not in the "minecraft" or "brigadier" namespace.
      * A vanilla client would fail to deserialize the packet and disconnect with an error message if these were sent.
      */
-    @Nonnull
+    @NotNull
     private static ClientboundCommandsPacket filterCommandList(ClientboundCommandsPacket packet)
     {
-        RootCommandNode<SharedSuggestionProvider> root = packet.getRoot();
+        CommandBuildContext commandBuildContext = new CommandBuildContext(RegistryAccess.BUILTIN.get());
+        commandBuildContext.missingTagAccessPolicy(CommandBuildContext.MissingTagAccessPolicy.RETURN_EMPTY);
+        RootCommandNode<SharedSuggestionProvider> root = packet.getRoot(commandBuildContext);
         RootCommandNode<SharedSuggestionProvider> newRoot = CommandTreeCleaner.cleanArgumentTypes(root, argType -> {
-            ResourceLocation id = ArgumentTypes.getId(argType);
+            ArgumentTypeInfo<?, ?> info = ArgumentTypeInfos.byClass(argType);
+            ResourceLocation id = Registry.COMMAND_ARGUMENT_TYPE.getKey(info);
             return id != null && (id.getNamespace().equals("minecraft") || id.getNamespace().equals("brigadier"));
         });
         return new ClientboundCommandsPacket(newRoot);

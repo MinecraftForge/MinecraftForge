@@ -8,7 +8,7 @@
         "minecraft:stone_pickaxe",
         "minecraft:wooden_pickaxe"
       ],
-      "nbt": "{display:{Name:\u0027{\"text\":\"Diamond Pickaxe\"}\u0027}}"
+      "nbt": "{display:{Name:'{\"text\":\"Diamond Pickaxe\"}'}}"
     }
   ],
   "result": {

@@ -1,13 +1,11 @@
 /*
- * Minecraft Forge - Forge Development LLC
+ * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
 package net.minecraftforge.debug.client;
 
 import java.util.Random;
-
-import javax.annotation.Nonnull;
 
 import com.mojang.blaze3d.platform.NativeImage;
 import net.minecraft.client.renderer.texture.TextureAtlas;
@@ -26,6 +24,7 @@ import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.registries.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
+import org.jetbrains.annotations.NotNull;
 
 @Mod(CustomTASTest.MOD_ID)
 public class CustomTASTest
@@ -55,7 +54,7 @@ public class CustomTASTest
     private static class TasLoader implements ITextureAtlasSpriteLoader
     {
         @Override
-        @Nonnull
+        @NotNull
         public TextureAtlasSprite load(TextureAtlas atlas, ResourceManager resourceManager, TextureAtlasSprite.Info textureInfo, Resource resource, int atlasWidth, int atlasHeight, int spriteX, int spriteY, int mipmapLevel, NativeImage image)
         {
             return new TextureAtlasSprite(

@@ -1,5 +1,5 @@
 /*
- * Minecraft Forge - Forge Development LLC
+ * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
@@ -8,22 +8,21 @@ package net.minecraftforge.event.entity.living;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.eventbus.api.Cancelable;
-
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class LivingEntityUseItemEvent extends LivingEvent
 {
     private final ItemStack item;
     private int duration;
 
-    private LivingEntityUseItemEvent(LivingEntity entity, @Nonnull ItemStack item, int duration)
+    private LivingEntityUseItemEvent(LivingEntity entity, @NotNull ItemStack item, int duration)
     {
         super(entity);
         this.item = item;
         this.setDuration(duration);
     }
 
-    @Nonnull
+    @NotNull
     public ItemStack getItem()
     {
         return item;
@@ -53,7 +52,7 @@ public class LivingEntityUseItemEvent extends LivingEvent
     @Cancelable
     public static class Start extends LivingEntityUseItemEvent
     {
-        public Start(LivingEntity entity, @Nonnull ItemStack item, int duration)
+        public Start(LivingEntity entity, @NotNull ItemStack item, int duration)
         {
             super(entity, item, duration);
         }
@@ -68,7 +67,7 @@ public class LivingEntityUseItemEvent extends LivingEvent
     @Cancelable
     public static class Tick extends LivingEntityUseItemEvent
     {
-        public Tick(LivingEntity entity, @Nonnull ItemStack item, int duration)
+        public Tick(LivingEntity entity, @NotNull ItemStack item, int duration)
         {
             super(entity, item, duration);
         }
@@ -89,7 +88,7 @@ public class LivingEntityUseItemEvent extends LivingEvent
     @Cancelable
     public static class Stop extends LivingEntityUseItemEvent
     {
-        public Stop(LivingEntity entity, @Nonnull ItemStack item, int duration)
+        public Stop(LivingEntity entity, @NotNull ItemStack item, int duration)
         {
             super(entity, item, duration);
         }
@@ -99,7 +98,7 @@ public class LivingEntityUseItemEvent extends LivingEvent
      * Fired after an item has fully finished being used.
      * The item has been notified that it was used, and the item/result stacks reflect after that state.
      * This means that when this is fired for a Potion, the potion effect has already been applied.
-     * 
+     *
      * {@link LivingEntityUseItemEvent#item} is a copy of the item BEFORE it was used.
      *
      * If you wish to cancel those effects, you should cancel one of the above events.
@@ -110,19 +109,19 @@ public class LivingEntityUseItemEvent extends LivingEvent
     public static class Finish extends LivingEntityUseItemEvent
     {
         private ItemStack result;
-        public Finish(LivingEntity entity, @Nonnull ItemStack item, int duration, @Nonnull ItemStack result)
+        public Finish(LivingEntity entity, @NotNull ItemStack item, int duration, @NotNull ItemStack result)
         {
             super(entity, item, duration);
             this.setResultStack(result);
         }
 
-        @Nonnull
+        @NotNull
         public ItemStack getResultStack()
         {
             return result;
         }
 
-        public void setResultStack(@Nonnull ItemStack result)
+        public void setResultStack(@NotNull ItemStack result)
         {
             this.result = result;
         }

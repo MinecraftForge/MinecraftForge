@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/vehicle/Minecart.java
 +++ b/net/minecraft/world/entity/vehicle/Minecart.java
-@@ -16,6 +_,8 @@
+@@ -18,6 +_,8 @@
     }
  
     public InteractionResult m_6096_(Player p_38483_, InteractionHand p_38484_) {

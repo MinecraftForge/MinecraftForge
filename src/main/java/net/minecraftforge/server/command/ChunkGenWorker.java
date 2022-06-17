@@ -1,5 +1,5 @@
 /*
- * Minecraft Forge - Forge Development LLC
+ * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
@@ -10,8 +10,8 @@ import java.util.Queue;
 
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.BaseComponent;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.chunk.ChunkStatus;
 import net.minecraft.world.level.chunk.ChunkAccess;
@@ -67,9 +67,9 @@ public class ChunkGenWorker implements IWorker
         return ret;
     }
 
-    public BaseComponent getStartMessage(CommandSourceStack sender)
+    public MutableComponent getStartMessage(CommandSourceStack sender)
     {
-        return new TranslatableComponent("commands.forge.gen.start", total, start.getX(), start.getZ(), dim);
+        return Component.translatable("commands.forge.gen.start", total, start.getX(), start.getZ(), dim);
     }
 
     @Override
@@ -107,7 +107,7 @@ public class ChunkGenWorker implements IWorker
 
             if (++lastNotification >= notificationFrequency || lastNotifcationTime < System.currentTimeMillis() - 60*1000)
             {
-                listener.sendSuccess(new TranslatableComponent("commands.forge.gen.progress", total - queue.size(), total), true);
+                listener.sendSuccess(Component.translatable("commands.forge.gen.progress", total - queue.size(), total), true);
                 lastNotification = 0;
                 lastNotifcationTime = System.currentTimeMillis();
             }
@@ -126,7 +126,7 @@ public class ChunkGenWorker implements IWorker
 
         if (queue.size() == 0)
         {
-            listener.sendSuccess(new TranslatableComponent("commands.forge.gen.complete", genned, total, dim.dimension().location()), true);
+            listener.sendSuccess(Component.translatable("commands.forge.gen.complete", genned, total, dim.dimension().location()), true);
             /* TODO: Readd if/when we introduce world unloading, or get Mojang to do it.
             if (keepingLoaded != null && !keepingLoaded)
                 DimensionManager.keepLoaded(dim, false);

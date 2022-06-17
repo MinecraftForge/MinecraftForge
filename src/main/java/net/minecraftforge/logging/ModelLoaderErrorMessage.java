@@ -1,5 +1,5 @@
 /*
- * Minecraft Forge - Forge Development LLC
+ * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
@@ -35,10 +35,10 @@ public class ModelLoaderErrorMessage extends SimpleMessage
         	.flatMap(block -> block.getStateDefinition().getPossibleStates().stream())
         	.forEach(state -> reverseBlockMap.put(BlockModelShaper.stateToModelLocation(state), state));
 
-        ForgeRegistries.ITEMS.forEach(item ->
+        ForgeRegistries.ITEMS.getKeys().forEach(key ->
         {
-        	ModelResourceLocation memory = getInventoryVariant(ForgeRegistries.ITEMS.getKey(item).toString());
-        	reverseItemMap.put(memory, item.getRegistryName().toString());
+        	ModelResourceLocation memory = getInventoryVariant(key.toString());
+        	reverseItemMap.put(memory, key.toString());
         });
 
     }

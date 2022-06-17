@@ -1,5 +1,5 @@
 /*
- * Minecraft Forge - Forge Development LLC
+ * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
@@ -101,7 +101,7 @@ public class PathResourcePack extends AbstractPackResources
     }
 
     @Override
-    public Collection<ResourceLocation> getResources(PackType type, String resourceNamespace, String pathIn, int maxDepth, Predicate<String> filter)
+    public Collection<ResourceLocation> getResources(PackType type, String resourceNamespace, String pathIn, Predicate<ResourceLocation> filter)
     {
         try
         {
@@ -110,11 +110,11 @@ public class PathResourcePack extends AbstractPackResources
 
             return Files.walk(root)
                     .map(root::relativize)
-                    .filter(path -> path.getNameCount() <= maxDepth && !path.toString().endsWith(".mcmeta") && path.startsWith(inputPath))
-                    .filter(path -> filter.test(path.getFileName().toString()))
+                    .filter(path -> !path.toString().endsWith(".mcmeta") && path.startsWith(inputPath))
                     // It is VERY IMPORTANT that we do not rely on Path.toString as this is inconsistent between operating systems
                     // Join the path names ourselves to force forward slashes
                     .map(path -> new ResourceLocation(resourceNamespace, Joiner.on('/').join(path)))
+                    .filter(filter)
                     .collect(Collectors.toList());
         }
         catch (IOException e)

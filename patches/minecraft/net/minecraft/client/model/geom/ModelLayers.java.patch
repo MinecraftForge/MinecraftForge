@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/model/geom/ModelLayers.java
 +++ b/net/minecraft/client/model/geom/ModelLayers.java
-@@ -199,7 +_,8 @@
+@@ -207,7 +_,8 @@
     }
  
     public static ModelLayerLocation m_171291_(WoodType p_171292_) {

@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/item/crafting/ShapedRecipe.java
 +++ b/net/minecraft/world/item/crafting/ShapedRecipe.java
-@@ -22,7 +_,20 @@
+@@ -21,7 +_,20 @@
  import net.minecraft.world.item.Items;
  import net.minecraft.world.level.Level;
  
@@ -22,7 +22,7 @@
     final int f_44146_;
     final int f_44147_;
     final NonNullList<Ingredient> f_44148_;
-@@ -110,10 +_,20 @@
+@@ -109,10 +_,20 @@
        return this.f_44146_;
     }
  
@@ -43,7 +43,7 @@
     static NonNullList<Ingredient> m_44202_(String[] p_44203_, Map<String, Ingredient> p_44204_, int p_44205_, int p_44206_) {
        NonNullList<Ingredient> nonnulllist = NonNullList.m_122780_(p_44205_ * p_44206_, Ingredient.f_43901_);
        Set<String> set = Sets.newHashSet(p_44204_.keySet());
-@@ -180,7 +_,7 @@
+@@ -179,7 +_,7 @@
        return nonnulllist.isEmpty() || nonnulllist.stream().filter((p_151277_) -> {
           return !p_151277_.m_43947_();
        }).anyMatch((p_151273_) -> {
@@ -52,7 +52,7 @@
        });
     }
  
-@@ -202,15 +_,15 @@
+@@ -201,15 +_,15 @@
  
     static String[] m_44196_(JsonArray p_44197_) {
        String[] astring = new String[p_44197_.size()];
@@ -72,7 +72,7 @@
              }
  
              if (i > 0 && astring[0].length() != s.length()) {
-@@ -244,17 +_,7 @@
+@@ -243,17 +_,7 @@
     }
  
     public static ItemStack m_151274_(JsonObject p_151275_) {
@@ -91,12 +91,10 @@
     }
  
     public static Item m_151278_(JsonObject p_151279_) {
-@@ -269,7 +_,8 @@
-       }
+@@ -269,6 +_,7 @@
     }
  
--   public static class Serializer implements RecipeSerializer<ShapedRecipe> {
-+   public static class Serializer extends net.minecraftforge.registries.ForgeRegistryEntry<RecipeSerializer<?>>  implements RecipeSerializer<ShapedRecipe> {
+    public static class Serializer implements RecipeSerializer<ShapedRecipe> {
 +      private static final ResourceLocation NAME = new ResourceLocation("minecraft", "crafting_shaped");
        public ShapedRecipe m_6729_(ResourceLocation p_44236_, JsonObject p_44237_) {
           String s = GsonHelper.m_13851_(p_44237_, "group", "");

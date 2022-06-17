@@ -9,6 +9,15 @@
     public static final ItemPredicate f_45028_ = new ItemPredicate();
     @Nullable
     private final TagKey<Item> f_45029_;
+@@ -80,7 +_,7 @@
+          return false;
+       } else {
+          if (this.f_45033_.length > 0) {
+-            Map<Enchantment, Integer> map = EnchantmentHelper.m_44882_(p_45050_.m_41785_());
++            Map<Enchantment, Integer> map = p_45050_.getAllEnchantments();
+ 
+             for(EnchantmentPredicate enchantmentpredicate : this.f_45033_) {
+                if (!enchantmentpredicate.m_30476_(map)) {
 @@ -107,6 +_,11 @@
     public static ItemPredicate m_45051_(@Nullable JsonElement p_45052_) {
        if (p_45052_ != null && !p_45052_.isJsonNull()) {

@@ -1,0 +1,11 @@
+--- a/net/minecraft/server/packs/repository/PackCompatibility.java
++++ b/net/minecraft/server/packs/repository/PackCompatibility.java
+@@ -33,7 +_,7 @@
+    }
+ 
+    public static PackCompatibility m_143885_(PackMetadataSection p_143886_, PackType p_143887_) {
+-      return m_143882_(p_143886_.m_10374_(), p_143887_);
++      return m_143882_(p_143886_.getPackFormat(p_143887_), p_143887_);
+    }
+ 
+    public Component m_10492_() {

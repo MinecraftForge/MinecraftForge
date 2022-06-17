@@ -76,7 +76,7 @@ If you're certain you've found an issue that is directly caused by Forge, you ha
 
  1. **Forge Forums:** There's a dedicated [Support & Bug Report](http://www.minecraftforge.net/forum/forum/18-support-bug-reports/) section on the Forge forums, which is led by team of moderators and volunteers who will try to deal with your reports as quickly as possible. *As a player you should probably report here first.*
    - For modders, there also is a separate [Modder Support](http://www.minecraftforge.net/forum/forum/70-modder-support/) section where you can ask all your development-related questions. *You should prefer this section for coding help.*
- 2. **Forge IRC Channel:** You can find a lot of help on the official [`#minecraftforge`](irc://irc.esper.net:6667/minecraftforge) channel on EsperNet. Especially smaller issues that you quickly need help with could be reported there. *Be aware that the channel is more suited towards development questions, so while you may get support there as a player, you should almost always prefer the forums.*
+ 2. **Forge Discord Server:** You can find a lot of help on the official [Discord Server](https://discord.gg/forge), especially smaller issues that you quickly need help with. *Be aware that the channel is more suited towards development questions, so while you may get support there as a player, you should almost always prefer the forums.*
  3. **Forge Issue Tracker:** If you're absolutely certain that you've found an issue in the Forge codebase (e.g. you're a modder yourself and have analyzed the stacktrace and relevant code), don't refrain from reporting it on this repository's [issue tracker](https://github.com/MinecraftForge/MinecraftForge/issues). *Please do not use the issues as a means of getting coding help. For developers, the IRC and the [official documentation](https://mcforge.readthedocs.io) are the best sources of information.*
 
 ### Mod Support
@@ -84,7 +84,8 @@ If you're certain you've found an issue that is directly caused by Forge, you ha
 A lot of mods also use GitHub or other source management systems and their integrated issue trackers. The following options will give you the best chances of reporting your issue in the right place:
 
  - **CurseForge:** Many mods are hosted on the [CurseForge platform](https://minecraft.curseforge.com) nowadays. Chances are you already downloaded them from there or as a part of a modpack hosted there. Projects may specify an issue reporting link on their own page, so simply look for it on the mod's project page and you should be directed to the preferred means of error reporting.
- - **Searching for a repository directly:** You may need to try and find a repository directly on source control sites. The most common ones are [GitHub](https://github.com) and [BitBucket](https://bitbucket.org). Both come with search capabilities, so simply try to search for the mod's name.
+ - **Modrinth:** Some modders use [Modrinth](https://modrinth.com/mods) to host their mods, but be mindful that not all mods on this platform are for the Forge modloader.
+ - **Searching for a repository directly:** You may need to try and find a repository directly on source control sites. The most common ones are [GitHub](https://github.com), [GitLab](https://gitlab.com), and [BitBucket](https://bitbucket.org). Both come with search capabilities, so simply try to search for the mod's name.
 
 ### Vanilla Support
 

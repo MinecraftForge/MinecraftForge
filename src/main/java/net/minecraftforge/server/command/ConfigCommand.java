@@ -1,5 +1,5 @@
 /*
- * Minecraft Forge - Forge Development LLC
+ * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
@@ -10,10 +10,9 @@ import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.ChatFormatting;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.network.chat.ClickEvent;
+import net.minecraft.network.chat.Component;
 import net.minecraftforge.fml.config.ConfigTracker;
 import net.minecraftforge.fml.config.ModConfig;
 
@@ -44,13 +43,13 @@ public class ConfigCommand {
             final String configFileName = ConfigTracker.INSTANCE.getConfigFileName(modId, type);
             if (configFileName != null) {
                 File f = new File(configFileName);
-                context.getSource().sendSuccess(new TranslatableComponent("commands.config.getwithtype",
+                context.getSource().sendSuccess(Component.translatable("commands.config.getwithtype",
                         modId, type,
-                        new TextComponent(f.getName()).withStyle(ChatFormatting.UNDERLINE).
-                        withStyle((style) -> style.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_FILE, f.getAbsolutePath())))
+                        Component.literal(f.getName()).withStyle(ChatFormatting.UNDERLINE).
+                                withStyle((style) -> style.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_FILE, f.getAbsolutePath())))
                 ), true);
             } else {
-                context.getSource().sendSuccess(new TranslatableComponent("commands.config.noconfig", modId, type),
+                context.getSource().sendSuccess(Component.translatable("commands.config.noconfig", modId, type),
                         true);
             }
             return 0;

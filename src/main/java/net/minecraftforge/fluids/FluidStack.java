@@ -1,5 +1,5 @@
 /*
- * Minecraft Forge - Forge Development LLC
+ * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
@@ -7,6 +7,7 @@ package net.minecraftforge.fluids;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.core.Holder;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
@@ -17,12 +18,10 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.core.Registry;
 import net.minecraft.network.chat.Component;
 import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.IRegistryDelegate;
-
-import javax.annotation.Nonnull;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
@@ -55,7 +54,7 @@ public class FluidStack
     private boolean isEmpty;
     private int amount;
     private CompoundTag tag;
-    private IRegistryDelegate<Fluid> fluidDelegate;
+    private Holder.Reference<Fluid> fluidDelegate;
 
     public FluidStack(Fluid fluid, int amount)
     {
@@ -66,10 +65,10 @@ public class FluidStack
         }
         else if (ForgeRegistries.FLUIDS.getKey(fluid) == null)
         {
-            LOGGER.fatal("Failed attempt to create a FluidStack for an unregistered Fluid {} (type {})", fluid.getRegistryName(), fluid.getClass().getName());
+            LOGGER.fatal("Failed attempt to create a FluidStack for an unregistered Fluid {} (type {})", ForgeRegistries.FLUIDS.getKey(fluid), fluid.getClass().getName());
             throw new IllegalArgumentException("Cannot create a fluidstack from an unregistered fluid");
         }
-        this.fluidDelegate = fluid.delegate;
+        this.fluidDelegate = ForgeRegistries.FLUIDS.getDelegateOrThrow(fluid);
         this.amount = amount;
 
         updateEmpty();
@@ -122,7 +121,7 @@ public class FluidStack
 
     public CompoundTag writeToNBT(CompoundTag nbt)
     {
-        nbt.putString("FluidName", getFluid().getRegistryName().toString());
+        nbt.putString("FluidName", ForgeRegistries.FLUIDS.getKey(getFluid()).toString());
         nbt.putInt("Amount", amount);
 
         if (tag != null)
@@ -134,7 +133,7 @@ public class FluidStack
 
     public void writeToPacket(FriendlyByteBuf buf)
     {
-        buf.writeRegistryId(getFluid());
+        buf.writeRegistryId(ForgeRegistries.FLUIDS, getFluid());
         buf.writeVarInt(getAmount());
         buf.writeNbt(tag);
     }
@@ -235,12 +234,12 @@ public class FluidStack
 
     public Component getDisplayName()
     {
-        return this.getFluid().getAttributes().getDisplayName(this);
+        return this.getFluid().getFluidType().getDescription(this);
     }
 
     public String getTranslationKey()
     {
-        return this.getFluid().getAttributes().getTranslationKey(this);
+        return this.getFluid().getFluidType().getDescriptionId(this);
     }
 
     /**
@@ -258,7 +257,7 @@ public class FluidStack
      *            The FluidStack for comparison
      * @return true if the Fluids (IDs and NBT Tags) are the same
      */
-    public boolean isFluidEqual(@Nonnull FluidStack other)
+    public boolean isFluidEqual(@NotNull FluidStack other)
     {
         return getFluid() == other.getFluid() && isFluidStackTagEqual(other);
     }
@@ -271,7 +270,7 @@ public class FluidStack
     /**
      * Determines if the NBT Tags are equal. Useful if the FluidIDs are known to be equal.
      */
-    public static boolean areFluidStackTagsEqual(@Nonnull FluidStack stack1, @Nonnull FluidStack stack2)
+    public static boolean areFluidStackTagsEqual(@NotNull FluidStack stack1, @NotNull FluidStack stack2)
     {
         return stack1.isFluidStackTagEqual(stack2);
     }
@@ -281,7 +280,7 @@ public class FluidStack
      *
      * @return true if this FluidStack contains the other FluidStack (same fluid and >= amount)
      */
-    public boolean containsFluid(@Nonnull FluidStack other)
+    public boolean containsFluid(@NotNull FluidStack other)
     {
         return isFluidEqual(other) && amount >= other.amount;
     }
@@ -306,7 +305,7 @@ public class FluidStack
      *            The ItemStack for comparison
      * @return true if the Fluids (IDs and NBT Tags) are the same
      */
-    public boolean isFluidEqual(@Nonnull ItemStack other)
+    public boolean isFluidEqual(@NotNull ItemStack other)
     {
         return FluidUtil.getFluidContained(other).map(this::isFluidEqual).orElse(false);
     }

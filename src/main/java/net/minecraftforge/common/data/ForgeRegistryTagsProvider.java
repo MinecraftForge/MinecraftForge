@@ -1,5 +1,5 @@
 /*
- * Minecraft Forge - Forge Development LLC
+ * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
@@ -11,12 +11,11 @@ import net.minecraft.data.DataGenerator;
 import net.minecraft.data.tags.TagsProvider;
 import net.minecraftforge.registries.GameData;
 import net.minecraftforge.registries.IForgeRegistry;
-import net.minecraftforge.registries.IForgeRegistryEntry;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class ForgeRegistryTagsProvider<T extends IForgeRegistryEntry<T>> extends TagsProvider<T>
+public abstract class ForgeRegistryTagsProvider<T> extends TagsProvider<T>
 {
-    private static <T extends IForgeRegistryEntry<T>> Registry<T> wrapRegistry(IForgeRegistry<T> forgeRegistry)
+    private static <T> Registry<T> wrapRegistry(IForgeRegistry<T> forgeRegistry)
     {
         if (forgeRegistry.tags() == null)
             throw new IllegalArgumentException("Forge registry " + forgeRegistry.getRegistryName() + " does not have support for tags");

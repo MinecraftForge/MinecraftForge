@@ -1,5 +1,5 @@
 /*
- * Minecraft Forge - Forge Development LLC
+ * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
@@ -20,6 +20,7 @@ import org.apache.logging.log4j.Logger;
 import java.util.Set;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Tests that the values for defaulted optional tags defined in multiple places are combined.
@@ -37,8 +38,12 @@ public class DuplicateOptionalTagTest
     static final String MODID = "duplicate_optional_tag_test";
     private static final ResourceLocation TAG_NAME = new ResourceLocation(MODID, "test_optional_tag");
 
-    private static final Set<Supplier<Block>> TAG_A_DEFAULTS = Set.of(Blocks.BEDROCK.delegate);
-    private static final Set<Supplier<Block>> TAG_B_DEFAULTS = Set.of(Blocks.WHITE_WOOL.delegate);
+    private static final Set<Supplier<Block>> TAG_A_DEFAULTS = Stream.of(Blocks.BEDROCK)
+            .map(ForgeRegistries.BLOCKS::getDelegateOrThrow)
+            .collect(Collectors.toUnmodifiableSet());
+    private static final Set<Supplier<Block>> TAG_B_DEFAULTS = Stream.of(Blocks.WHITE_WOOL)
+            .map(ForgeRegistries.BLOCKS::getDelegateOrThrow)
+            .collect(Collectors.toUnmodifiableSet());
 
     private static final TagKey<Block> TAG_A = ForgeRegistries.BLOCKS.tags().createOptionalTagKey(TAG_NAME, TAG_A_DEFAULTS);
     private static final TagKey<Block> TAG_B = ForgeRegistries.BLOCKS.tags().createOptionalTagKey(TAG_NAME, TAG_B_DEFAULTS);

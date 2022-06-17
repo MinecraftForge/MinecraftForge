@@ -49,24 +49,37 @@
              }
           }
        }
-@@ -212,15 +_,15 @@
-       f_43494_.add(new PotionBrewing.Mix<>(p_43514_, Ingredient.m_43929_(p_43515_), p_43516_));
+@@ -196,7 +_,7 @@
+       } else if (!(p_43505_ instanceof PotionItem)) {
+          throw new IllegalArgumentException("Expected a potion, got: " + Registry.f_122827_.m_7981_(p_43505_));
+       } else {
+-         f_43495_.add(new PotionBrewing.Mix<>(p_43503_, Ingredient.m_43929_(p_43504_), p_43505_));
++         f_43495_.add(new PotionBrewing.Mix<>(net.minecraftforge.registries.ForgeRegistries.ITEMS, p_43503_, Ingredient.m_43929_(p_43504_), p_43505_));
+       }
     }
  
--   public static class Mix<T> {
+@@ -209,18 +_,18 @@
+    }
+ 
+    private static void m_43513_(Potion p_43514_, Item p_43515_, Potion p_43516_) {
+-      f_43494_.add(new PotionBrewing.Mix<>(p_43514_, Ingredient.m_43929_(p_43515_), p_43516_));
++      f_43494_.add(new PotionBrewing.Mix<>(net.minecraftforge.registries.ForgeRegistries.POTIONS, p_43514_, Ingredient.m_43929_(p_43515_), p_43516_));
+    }
+ 
+    public static class Mix<T> {
 -      final T f_43532_;
-+   public static class Mix<T extends net.minecraftforge.registries.ForgeRegistryEntry<T>> {
-+      public final net.minecraftforge.registries.IRegistryDelegate<T> f_43532_;
++      public final net.minecraft.core.Holder.Reference<T> f_43532_;
        public final Ingredient f_43533_;
 -      final T f_43534_;
-+      public final net.minecraftforge.registries.IRegistryDelegate<T> f_43534_;
++      public final net.minecraft.core.Holder.Reference<T> f_43534_;
  
-       public Mix(T p_43536_, Ingredient p_43537_, T p_43538_) {
+-      public Mix(T p_43536_, Ingredient p_43537_, T p_43538_) {
 -         this.f_43532_ = p_43536_;
-+         this.f_43532_ = p_43536_.delegate;
++      public Mix(net.minecraftforge.registries.IForgeRegistry<T> registry, T p_43536_, Ingredient p_43537_, T p_43538_) {
++         this.f_43532_ = registry.getDelegateOrThrow(p_43536_);
           this.f_43533_ = p_43537_;
 -         this.f_43534_ = p_43538_;
-+         this.f_43534_ = p_43538_.delegate;
++         this.f_43534_ = registry.getDelegateOrThrow(p_43538_);
        }
     }
  }

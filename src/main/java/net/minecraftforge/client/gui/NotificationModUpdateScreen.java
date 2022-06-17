@@ -1,5 +1,5 @@
 /*
- * Minecraft Forge - Forge Development LLC
+ * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
@@ -11,8 +11,8 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.TitleScreen;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.loading.FMLConfig;
 import net.minecraftforge.versions.forge.ForgeVersion;
@@ -32,7 +32,7 @@ public class NotificationModUpdateScreen extends Screen
 
     public NotificationModUpdateScreen(Button modButton)
     {
-        super(new TranslatableComponent("forge.menu.updatescreen.title"));
+        super(Component.translatable("forge.menu.updatescreen.title"));
         this.modButton = modButton;
     }
 

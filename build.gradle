@@ -1,14 +1,3 @@
-buildscript {
-    repositories {
-        mavenLocal()
-        maven { url = 'https://maven.minecraftforge.net/' }
-        mavenCentral()
-    }
-    dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:[5.1.26,)'
-    }
-}
-
 import groovy.json.JsonBuilder
 
 import java.nio.file.Files
@@ -17,6 +6,7 @@ import java.util.LinkedHashMap
 import net.minecraftforge.forge.tasks.*
 import static net.minecraftforge.forge.tasks.Util.*
 import net.minecraftforge.gradle.common.tasks.ApplyBinPatches
+import net.minecraftforge.gradle.common.tasks.CheckJarCompatibility
 import net.minecraftforge.gradle.common.tasks.DownloadMavenArtifact
 import net.minecraftforge.gradle.common.tasks.ExtractInheritance
 import net.minecraftforge.gradle.common.tasks.SignJar
@@ -30,6 +20,8 @@ plugins {
     id 'net.minecraftforge.gradleutils' version '2.+'
     id 'eclipse'
     id 'de.undercouch.download' version '4.1.2'
+    id 'net.minecraftforge.gradle.patcher' version '[5.1.43,)' apply false
+    id 'net.minecraftforge.gradle.mcp' version '[5.1.43,)' apply false
 }
 
 Util.init() //Init all our extension methods!
@@ -44,31 +36,47 @@ ext {
         ]
     }
     MAPPING_CHANNEL = 'official'
-    MAPPING_VERSION = '1.18.2'
-    MC_VERSION = '1.18.2'
-    MCP_VERSION = '20220404.173914'
-    SPI_VERSION = '4.0.10'
+    MAPPING_VERSION = '1.19'
+    MC_VERSION = '1.19'
+    MCP_VERSION = '20220607.102129'
+    SPI_VERSION = '5.0.3'
     ACCESSTRANSFORMERS_VERSION = '8.0.4'
     COREMODS_VERSION = '5.0.1'
-    EVENTBUS_VERSION = '5.0.3'
-    MODLAUNCHER_VERSION = '9.1.3'
-    SECUREJARHANDLER_VERSION = '1.0.3'
-    BOOTSTRAPLAUNCHER_VERSION = '1.0.0'
-    ASM_VERSION = '9.2'
+    EVENTBUS_VERSION = '6.0.0'
+    MODLAUNCHER_VERSION = '10.0.1'
+    SECUREJARHANDLER_VERSION = '1.0.5'
+    BOOTSTRAPLAUNCHER_VERSION = '1.1.0'
+    ASM_VERSION = '9.3'
     INSTALLER_VERSION = '2.1.+'
     MIXIN_VERSION = '0.8.5'
+    TERMINALCONSOLEAPPENDER_VERSION = '1.2.0'
+    JLINE_VERSION = '3.12.+'
+    NIGHTCONFIG_VERSION = '3.6.4'
+    JETBRAINS_ANNOTATIONS_VERSION = '23.0.0'
+    SLF4J_API_VERSION = '1.8.0-beta4'
+    APACHE_MAVEN_ARTIFACT_VERSION = '3.8.5'
+
+    // These versions should be kept in sync with the version manifest JSON
+    // To use a version newer than the version manifest JSON, the dependency must be added to the installer configuration
+    MOJANG_LOGGING_VERSION = '1.0.0'
+    LOG4J_VERSION = '2.17.0'
+    GUAVA_VERSION = '31.0.1-jre'
+    GSON_VERSION = '2.8.9'
+    APACHE_COMMONS_LANG3_VERSION = '3.12.0'
+    JOPT_SIMPLE_VERSION = '5.0.4'
+    COMMONS_IO_VERSION = '2.11.0'
+    JARJAR_VERSION = '0.2.24'
 
     GIT_INFO = gradleutils.gitInfo
     VERSION = gradleutils.getFilteredMCTagOffsetBranchVersion(true, '[0-9]', MC_VERSION)
     // FML_VERSION = gradleutils.getFilteredMCTagOffsetBranchVersion(true, 'FML', MC_VERSION)
     FORGE_VERSION = VERSION.substring(MC_VERSION.length() + 1)
 
-    SPECIAL_SOURCE = 'net.md-5:SpecialSource:1.10.0'
-    BINPATCH_TOOL = 'net.minecraftforge:binarypatcher:1.0.12:fatjar'
-    INSTALLER_TOOLS = 'net.minecraftforge:installertools:1.2.10'
+    BINPATCH_TOOL = 'net.minecraftforge:binarypatcher:1.1.1:fatjar'
+    INSTALLER_TOOLS = 'net.minecraftforge:installertools:1.3.0'
     JAR_SPLITTER = 'net.minecraftforge:jarsplitter:1.1.4'
     FART = 'net.minecraftforge:ForgeAutoRenamingTool:0.1.22:all'
-    MIN_TAG_FOR_CHANGELOG = "39.0"
+    MIN_TAG_FOR_CHANGELOG = "41.0"
 }
 
 println('Version: ' + VERSION +
@@ -135,6 +143,10 @@ subprojects {
         maven {
             name = 'forge'
             url = 'https://maven.minecraftforge.net/'
+        }
+        maven {
+            name = 'minecraft'
+            url = 'https://libraries.minecraft.net/'
         }
     }
 
@@ -257,21 +269,22 @@ def sharedDeps = {
     installer "org.ow2.asm:asm-util:${ASM_VERSION}"
     installer "org.ow2.asm:asm-analysis:${ASM_VERSION}"
     installer "net.minecraftforge:accesstransformers:${ACCESSTRANSFORMERS_VERSION}"
-    installer 'org.antlr:antlr4-runtime:4.9.1' //Dep of AccessTransformer
+    installer 'org.antlr:antlr4-runtime:4.9.1' // Dep of AccessTransformer
     installer "net.minecraftforge:eventbus:${EVENTBUS_VERSION}"
     installer "net.minecraftforge:forgespi:${SPI_VERSION}"
     installer "net.minecraftforge:coremods:${COREMODS_VERSION}"
     installer "cpw.mods:modlauncher:${MODLAUNCHER_VERSION}"
     installer 'net.minecraftforge:unsafe:0.2.+'
-    installer 'com.electronwill.night-config:core:3.6.4'
-    installer 'com.electronwill.night-config:toml:3.6.4'
-    installer 'org.apache.maven:maven-artifact:3.6.3'
+    installer "com.electronwill.night-config:core:${NIGHTCONFIG_VERSION}"
+    installer "com.electronwill.night-config:toml:${NIGHTCONFIG_VERSION}"
+    installer "org.apache.maven:maven-artifact:${APACHE_MAVEN_ARTIFACT_VERSION}"
     installer 'net.jodah:typetools:0.8.3'
-    installer 'net.minecrell:terminalconsoleappender:1.2.0'
-    installer 'org.jline:jline-reader:3.12.+'   //Dep of TerminaalConsoleeAppender
-    installer 'org.jline:jline-terminal:3.12.+' //Dep of TerminaalConsoleeAppender
+    installer "net.minecrell:terminalconsoleappender:${TERMINALCONSOLEAPPENDER_VERSION}"
+    installer "org.jline:jline-reader:${JLINE_VERSION}"   // Dep of TerminalConsoleAppender
+    installer "org.jline:jline-terminal:${JLINE_VERSION}" // Dep of TerminalConsoleAppender
     installer "org.spongepowered:mixin:${MIXIN_VERSION}"
     installer 'org.openjdk.nashorn:nashorn-core:15.3'
+    installer "net.minecraftforge:JarJar:${JARJAR_VERSION}"
 
     /*
     installer 'org.lwjgl:lwjgl:3.2.2'
@@ -425,7 +438,7 @@ def sharedFmlonlyForge = { Project prj ->
         }
 
         // SecureJarHandler bootstrap values.
-        run.property 'ignoreList', prj.configurations.moduleonly.files.collect {it.name.replaceAll(/([-_]([.\d]*\d+)|\.jar$)/, '') }.join(',') + ",client-extra,fmlcore,javafmllanguage,mclanguage,${prj.name}-"
+        run.property 'ignoreList', prj.configurations.moduleonly.files.collect {it.name.replaceAll(/([-_]([.\d]*\d+)|\.jar$)/, '') }.join(',') + ",client-extra,fmlcore,javafmllanguage,lowcodelanguage,mclanguage,${prj.name}-"
         // FIXME: Without this jna doesn't work at runtime. Someone figure out why please?
         run.property 'mergeModules', 'jna-5.10.0.jar,jna-platform-5.10.0.jar,java-objc-bridge-1.0.0.jar'
         if (userdevRuns.contains(run)) {
@@ -486,7 +499,7 @@ def sharedFmlonlyForge = { Project prj ->
             IGNORE_LIST: Util.getArtifacts(prj, prj.configurations.moduleonly, false).values().collect{it.downloads.artifact.path.rsplit('/', 1)[1]}.join(','),
             MODULES: 'ALL-MODULE-PATH'
     ]
-    
+
     prj.task([dependsOn: rootProject.downloadServerRaw], 'makeClasspathFiles') {
         doLast {
             def CLASS_PATH = Util.getArtifacts(prj, prj.configurations.installer, false).values().collect{"libraries/${it.downloads.artifact.path}"} +
@@ -539,7 +552,7 @@ project(':fmlonly') {
 
     ext {
         MCP_ARTIFACT = project(':mcp').mcp.config.get()
-        PACKED_DEPS = [':fmlcore:jar', ':fmlloader:jar', ':javafmllanguage:jar', ':mclanguage:jar']
+        PACKED_DEPS = [':fmlcore:jar', ':fmlloader:jar', ':javafmllanguage:jar', ':lowcodelanguage:jar', ':mclanguage:jar']
         MAVEN_PATH = "${group.replace('.', '/')}/${project.name}/${VERSION}"
     }
 
@@ -568,6 +581,7 @@ project(':fmlonly') {
         implementation project(':fmlcore')
         implementation project(':fmlloader')
         implementation project(':javafmllanguage')
+        implementation project(':lowcodelanguage')
         implementation project(':mclanguage')
         runtimeOnly "cpw.mods:bootstraplauncher:${BOOTSTRAPLAUNCHER_VERSION}"
     }
@@ -845,7 +859,7 @@ project(':fmlonly') {
     }
 
     // Since we need the modules in the bootstrap, we need to make sure they are compiled before we do each run
-    afterEvaluate { prepareRuns.dependsOn(':fmlcore:jar', ':fmlloader:jar', ':javafmllanguage:jar', ':mclanguage:jar') }
+    afterEvaluate { prepareRuns.dependsOn(PACKED_DEPS) }
 }
 
 project(':forge') {
@@ -894,7 +908,7 @@ project(':forge') {
         // Essentially, the same as the old, except dropping the first number, and the builds are no longer unique.
         MCP_ARTIFACT = project(':mcp').mcp.config.get()
         VERSION_JSON = project(':mcp').file('build/mcp/downloadJson/version.json')
-        PACKED_DEPS = [':fmlcore:jar', ':fmlloader:jar', ':javafmllanguage:jar', ':mclanguage:jar']
+        PACKED_DEPS = [':fmlcore:jar', ':fmlloader:jar', ':javafmllanguage:jar', ':lowcodelanguage:jar', ':mclanguage:jar']
         MAVEN_PATH = "${group.replace('.', '/')}/${project.name}/${VERSION}"
     }
 
@@ -915,6 +929,7 @@ project(':forge') {
         implementation project(':fmlcore')
         implementation project(':fmlloader')
         implementation project(':javafmllanguage')
+        implementation project(':lowcodelanguage')
         implementation project(':mclanguage')
         runtimeOnly "cpw.mods:bootstraplauncher:${BOOTSTRAPLAUNCHER_VERSION}"
     }
@@ -1043,6 +1058,10 @@ project(':forge') {
                             '--mod', 'new_model_loader_test',
                             '--mod', 'remove_tag_datagen_test',
                             '--mod', 'tag_based_tool_types',
+                            '--mod', 'custom_transformtype_test',
+                            '--mod', 'data_pack_registries_test',
+                            '--mod', 'biome_modifiers_test',
+                            '--mod', 'structure_modifiers_test',
                             '--output', rootProject.file('src/generated_test/resources/'),
                             '--existing', sourceSets.main.resources.srcDirs[0],
                             '--existing', sourceSets.test.resources.srcDirs[0]
@@ -1116,6 +1135,7 @@ project(':forge') {
 
     task extractInheritance(type: ExtractInheritance, dependsOn: [genJoinedBinPatches, downloadLibraries]) {
         tool = INSTALLER_TOOLS + ':fatjar'
+        args.add '--annotations'
         input = genJoinedBinPatches.cleanJar
         libraries.addAll downloadLibraries.librariesOutput.map { rf -> Files.readAllLines(rf.asFile.toPath()).stream().map(File::new).collect(java.util.stream.Collectors.toList()) }
     }
@@ -1171,6 +1191,58 @@ project(':forge') {
         finalizedBy checkPatches
         autoHeader true
         lineEnding = '\n'
+    }
+
+    def baseForgeVersion = System.getProperty("forge.compatibility_check_version")
+    if (baseForgeVersion == null)
+        // FIXME: Restore commented out portion when next tagged (41.1 or 42.0), assuming that a .0 build is published
+        baseForgeVersion = "1.19-41.0.1" // "${MC_VERSION}-${GIT_INFO.tag}.0"
+    if (baseForgeVersion == "null")
+        baseForgeVersion = null // Allow disabling from system property if not wanted
+    def baseForgeUniversal = null
+    if (baseForgeVersion != null)
+        baseForgeUniversal = project.dependencies.create("net.minecraftforge:forge:${baseForgeVersion}:universal")
+    def jarCompatibilityTaskSetup = { task ->
+        task.group = 'jar compatibility'
+        task.onlyIf {
+            baseForgeVersion != null
+        }
+        task.inputs.property 'baseForgeVersion', baseForgeVersion
+    }
+
+    task downloadBaseCompatibilityBinPatches(type: DownloadBaseCompatibilityBinPatches) {
+        inputVersion = baseForgeVersion
+    }
+
+    task applyBaseCompatibilityJarBinPatches(type: ApplyBinPatches) {
+        jarCompatibilityTaskSetup(it)
+
+        clean = createJoinedSRG.output
+        patch = downloadBaseCompatibilityBinPatches.output
+        output = project.layout.buildDirectory.dir(name).map { it.file('output.jar') }
+    }
+
+    task checkJarCompatibility(type: CheckJarCompatibility) {
+        jarCompatibilityTaskSetup(it)
+
+        if (baseForgeVersion != null) {
+            def fmlLibs = project.configurations.detachedConfiguration(PACKED_DEPS.collect {
+                def artifactId = it.split(':')[1]
+                return project.dependencies.create("net.minecraftforge:${artifactId}:${baseForgeVersion}")
+            }.toArray(Dependency[]::new))
+
+            baseJar = project.tasks.applyBaseCompatibilityJarBinPatches.output
+            baseLibraries.from(project.configurations.detachedConfiguration(baseForgeUniversal))
+            baseLibraries.from(project.tasks.createJoinedSRG.output)
+            baseLibraries.from(fmlLibs)
+
+            inputJar = project.tasks.reobfJar.output
+            concreteLibraries.from(PACKED_DEPS.collect { rootProject.tasks.getByPath(it).archiveFile })
+
+            commonLibraries.from(project.configurations.minecraftImplementation)
+            commonLibraries.from(project.configurations.installer)
+            commonLibraries.from(project.configurations.moduleonly)
+        }
     }
 
     task launcherJson(type: LauncherJson) {
@@ -1493,12 +1565,6 @@ project(':forge') {
         header = file("$rootDir/LICENSE-header.txt")
 
         include 'net/minecraftforge/'
-        exclude 'net/minecraftforge/server/terminalconsole/'
-        exclude 'net/minecraftforge/api/' // exclude API here because it's validated in the SPI build
-        exclude 'net/minecraftforge/fml/common/versioning/ComparableVersion.java'
-        exclude 'net/minecraftforge/fml/common/versioning/InvalidVersionSpecificationException.java'
-        exclude 'net/minecraftforge/fml/common/versioning/Restriction.java'
-        exclude 'net/minecraftforge/fml/common/versioning/VersionRange.java'
         exclude 'net/minecraftforge/common/LenientUnboundedMapCodec.java'
 
         tasks {
@@ -1529,6 +1595,83 @@ project(':forge') {
         sourceSets.test.java.srcDirs.each { extractMappedNew.addTarget it }
     }
 
+    tasks.named('javadoc', Javadoc).configure {
+        description 'Generates the combined javadocs for the FML projects and the main Forge project'
+        var includedProjects = [ ':fmlcore', ':fmlloader', ':javafmllanguage', ':mclanguage' ]
+        source includedProjects.collect { project(it).sourceSets.main.allJava }
+        classpath = classpath + files(includedProjects.collect { project(it).sourceSets.main.compileClasspath })
+
+        var docsDir = rootProject.file('src/docs/')
+        inputs.dir(docsDir)
+            .withPropertyName('docs resources directory')
+            .withPathSensitivity(PathSensitivity.RELATIVE)
+            .optional()
+
+        failOnError = false
+
+        // Exclude the Minecraft classes if not enabled
+        if (!project.hasProperty('generateAllDocumentation')) {
+            exclude 'net/minecraft/**'
+            exclude 'com/mojang/**'
+        }
+        exclude 'mcp/**'
+
+        options.addStringOption('Xdoclint:all,-missing', '-public')
+        options {
+            stylesheetFile = new File(docsDir, 'stylesheet.css')
+
+            tags = [
+                'apiNote:a:<em>API Note:</em>',
+                'implSpec:a:<em>Implementation Requirements:</em>',
+                'implNote:a:<em>Implementation Note:</em>'
+            ]
+
+            groups = [
+                'Forge Mod Loader': [
+                    'net.minecraftforge.fml.common.asm*',
+                    'net.minecraftforge.fml.loading*',
+                    'net.minecraftforge.fml.server*'
+                ],
+                'FML Core':  [
+                    'net.minecraftforge.fml',
+                    'net.minecraftforge.fml.config*',
+                    'net.minecraftforge.fml.event*',
+                    'net.minecraftforge.fml.util*'
+                ],
+                'FML Common': [
+                    'net.minecraftforge.fml.core',
+                    'net.minecraftforge.fml.event.config',
+                    'net.minecraftforge.fml.event.lifecycle'
+                ],
+                'FML Java/MC Language Providers': [
+                    'net.minecraftforge.fml.common',
+                    'net.minecraftforge.fml.javafmlmod',
+                    'net.minecraftforge.fml.mclanguageprovider'
+                ],
+                'Minecraft Forge API': [
+                    'net.minecraftforge*'
+                ]
+            ]
+
+            author = false
+            noSince = true
+            noHelp = true
+
+            bottom = "Minecraft Forge is an open source modding API for Minecraft: Java Edition, licensed under the Lesser GNU General Public License, version 2.1."
+            windowTitle = "Minecraft Forge API ${VERSION}"
+            docTitle = "Minecraft Forge API - ${FORGE_VERSION} for Minecraft ${MC_VERSION}"
+            header = "<div style=\"margin-top: 9px;padding: 5px 6px;\"><strong>${FORGE_VERSION} for Minecraft ${MC_VERSION}</strong></div>"
+        }
+
+        doLast {
+            project.copy {
+                from docsDir
+                exclude '/stylesheet.css'
+                into destinationDir
+            }
+        }
+    }
+
     publishing {
         publications {
             mavenJava(MavenPublication) {
@@ -1542,7 +1685,7 @@ project(':forge') {
         }
     }
     // Since we need the modules in the bootstrap, we need to make sure they are compiled before we do each run
-    afterEvaluate { prepareRuns.dependsOn(':fmlcore:jar', ':fmlloader:jar', ':javafmllanguage:jar', ':mclanguage:jar') }
+    afterEvaluate { prepareRuns.dependsOn(PACKED_DEPS) }
 
     tasks.withType(JavaCompile).configureEach {
         options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation

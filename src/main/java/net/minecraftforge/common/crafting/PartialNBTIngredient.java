@@ -1,5 +1,5 @@
 /*
- * Minecraft Forge - Forge Development LLC
+ * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
@@ -92,13 +92,13 @@ public class PartialNBTIngredient extends AbstractIngredient
         json.addProperty("type", CraftingHelper.getID(Serializer.INSTANCE).toString());
         if (items.size() == 1)
         {
-            json.addProperty("item", items.iterator().next().getRegistryName().toString());
+            json.addProperty("item", ForgeRegistries.ITEMS.getKey(items.iterator().next()).toString());
         }
         else
         {
             JsonArray items = new JsonArray();
             // ensure the order of items in the set is deterministic when saved to JSON
-            this.items.stream().map(Item::getRegistryName).sorted().forEach(name -> items.add(name.toString()));
+            this.items.stream().map(ForgeRegistries.ITEMS::getKey).sorted().forEach(name -> items.add(name.toString()));
             json.add("items", items);
         }
         json.addProperty("nbt", nbt.toString());

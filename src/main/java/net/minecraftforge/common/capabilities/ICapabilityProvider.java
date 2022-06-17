@@ -1,15 +1,14 @@
 /*
- * Minecraft Forge - Forge Development LLC
+ * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
 package net.minecraftforge.common.capabilities;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import net.minecraft.core.Direction;
 import net.minecraftforge.common.util.LazyOptional;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public interface ICapabilityProvider
 {
@@ -24,13 +23,13 @@ public interface ICapabilityProvider
      *   <strong>CAN BE NULL</strong>. Null is defined to represent 'internal' or 'self'
      * @return The requested an optional holding the requested capability.
      */
-    @Nonnull <T> LazyOptional<T> getCapability(@Nonnull final Capability<T> cap, final @Nullable Direction side);
+    @NotNull <T> LazyOptional<T> getCapability(@NotNull final Capability<T> cap, final @Nullable Direction side);
 
     /*
      * Purely added as a bouncer to sided version, to make modders stop complaining about calling with a null value.
      * This should never be OVERRIDDEN, modders should only ever implement the sided version.
      */
-    @Nonnull default <T> LazyOptional<T> getCapability(@Nonnull final Capability<T> cap) {
+    @NotNull default <T> LazyOptional<T> getCapability(@NotNull final Capability<T> cap) {
         return getCapability(cap, null);
     }
 }

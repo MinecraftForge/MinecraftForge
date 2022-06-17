@@ -1,5 +1,5 @@
 /*
- * Minecraft Forge - Forge Development LLC
+ * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
@@ -9,15 +9,20 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.client.Camera;
 import net.minecraft.client.renderer.LevelRenderer;
+import net.minecraftforge.fml.LogicalSide;
 
 /**
- * An event called whenever the selection highlight around a block or entity is about to be rendered.
- * Canceling this event stops the selection highlight from being rendered.
+ * Fired before a selection highlight is rendered.
+ * See the two subclasses to listen for blocks or entities.
+ *
+ * @see DrawSelectionEvent.HighlightBlock
+ * @see DrawSelectionEvent.HighlightEntity
  */
 @Cancelable
 public class DrawSelectionEvent extends Event
@@ -25,38 +30,72 @@ public class DrawSelectionEvent extends Event
     private final LevelRenderer levelRenderer;
     private final Camera camera;
     private final HitResult target;
-    private final float partialTicks;
+    private final float partialTick;
     private final PoseStack poseStack;
     private final MultiBufferSource multiBufferSource;
 
-    public DrawSelectionEvent(LevelRenderer levelRenderer, Camera camera, HitResult target, float partialTicks, PoseStack poseStack, MultiBufferSource multiBufferSource)
+    /**
+     * @hidden
+     * @see net.minecraftforge.client.ForgeHooksClient#onDrawHighlight(LevelRenderer, Camera, HitResult, float, PoseStack, MultiBufferSource)
+     */
+    public DrawSelectionEvent(LevelRenderer levelRenderer, Camera camera, HitResult target, float partialTick, PoseStack poseStack, MultiBufferSource multiBufferSource)
     {
         this.levelRenderer = levelRenderer;
         this.camera = camera;
         this.target = target;
-        this.partialTicks = partialTicks;
+        this.partialTick = partialTick;
         this.poseStack = poseStack;
         this.multiBufferSource = multiBufferSource;
     }
 
+    /**
+     * {@return the level renderer}
+     */
     public LevelRenderer getLevelRenderer() { return levelRenderer; }
+    /**
+     * {@return the camera information}
+     */
     public Camera getCamera() { return camera; }
+    /**
+     * {@return the hit result which triggered the selection highlight}
+     */
     public HitResult getTarget() { return target; }
-    public float getPartialTicks() { return partialTicks; }
+    /**
+     * {@return the partial tick}
+     */
+    public float getPartialTick() { return partialTick; }
+    /**
+     * {@return the pose stack used for rendering}
+     */
     public PoseStack getPoseStack() { return poseStack; }
+    /**
+     * {@return the source of rendering buffers}
+     */
     public MultiBufferSource getMultiBufferSource() { return multiBufferSource; }
 
     /**
-     * A variant of the DrawSelectionEvent only called when a block is highlighted.
+     * Fired before a block's selection highlight is rendered.
+     *
+     * <p>This event is {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}.
+     * If the event is cancelled, then the selection highlight will not be rendered. </p>
+     *
+     * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
+     * only on the {@linkplain LogicalSide#CLIENT logical client}. </p>
      */
     @Cancelable
     public static class HighlightBlock extends DrawSelectionEvent
     {
-        public HighlightBlock(LevelRenderer levelRenderer, Camera camera, HitResult target, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource)
+        /**
+         * @hidden
+         */
+        public HighlightBlock(LevelRenderer levelRenderer, Camera camera, BlockHitResult target, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource)
         {
             super(levelRenderer, camera, target, partialTick, poseStack, bufferSource);
         }
 
+        /**
+         * {@return the block hit result}
+         */
         @Override
         public BlockHitResult getTarget()
         {
@@ -65,17 +104,26 @@ public class DrawSelectionEvent extends Event
     }
 
     /**
-     * A variant of the DrawSelectionEvent only called when an entity is highlighted.
-     * Canceling this event has no effect.
+     * Fired before a block's selection highlight is rendered.
+     *
+     * <p>This event is not {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}. </p>
+     *
+     * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
+     * only on the {@linkplain LogicalSide#CLIENT logical client}. </p>
      */
-    @Cancelable
     public static class HighlightEntity extends DrawSelectionEvent
     {
-        public HighlightEntity(LevelRenderer levelRenderer, Camera camera, HitResult target, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource)
+        /**
+         * @hidden
+         */
+        public HighlightEntity(LevelRenderer levelRenderer, Camera camera, EntityHitResult target, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource)
         {
             super(levelRenderer, camera, target, partialTick, poseStack, bufferSource);
         }
 
+        /**
+         * {@return the entity hit result}
+         */
         @Override
         public EntityHitResult getTarget()
         {

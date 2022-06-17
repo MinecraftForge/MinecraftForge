@@ -1,15 +1,14 @@
 /*
- * Minecraft Forge - Forge Development LLC
+ * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
 package net.minecraftforge.common.extensions;
 
 import java.util.Optional;
-import java.util.Set;
-import javax.annotation.Nullable;
 
 import net.minecraft.client.Camera;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.LivingEntity;
@@ -22,13 +21,14 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.FishingHook;
 import net.minecraft.world.entity.projectile.WitherSkull;
 import net.minecraft.world.item.*;
+import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.pathfinder.BlockPathTypes;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.pathfinder.WalkNodeEvaluator;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.server.level.ServerLevel;
@@ -46,6 +46,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.ToolAction;
 import net.minecraftforge.common.ToolActions;
 import net.minecraftforge.fml.loading.FMLEnvironment;
+import org.jetbrains.annotations.Nullable;
 
 @SuppressWarnings("deprecation")
 public interface IForgeBlock
@@ -374,12 +375,13 @@ public interface IForgeBlock
     *
     * @param state The current state
     * @param level The level
+    * @param randomSource Random source to use for experience randomness
     * @param pos Block position
     * @param fortuneLevel fortune enchantment level of tool being used
     * @param silkTouchLevel silk touch enchantment level of tool being used
     * @return Amount of XP from breaking this block.
     */
-    default int getExpDrop(BlockState state, LevelReader level, BlockPos pos, int fortuneLevel, int silkTouchLevel)
+    default int getExpDrop(BlockState state, LevelReader level, RandomSource randomSource, BlockPos pos, int fortuneLevel, int silkTouchLevel)
     {
        return 0;
     }
@@ -479,14 +481,41 @@ public interface IForgeBlock
     }
 
     /**
-     * Get the {@code PathNodeType} for this block. Return {@code null} for vanilla behavior.
+     * Gets the path type of this block when an entity is pathfinding. When
+     * {@code null}, uses vanilla behavior.
      *
-     * @return the PathNodeType
+     * @param state the state of the block
+     * @param level the level which contains this block
+     * @param pos the position of the block
+     * @param mob the mob currently pathfinding, may be {@code null}
+     * @return the path type of this block
      */
     @Nullable
-    default BlockPathTypes getAiPathNodeType(BlockState state, BlockGetter level, BlockPos pos, @Nullable Mob entity)
+    default BlockPathTypes getBlockPathType(BlockState state, BlockGetter level, BlockPos pos, @Nullable Mob mob)
     {
         return state.getBlock() == Blocks.LAVA ? BlockPathTypes.LAVA : state.isBurning(level, pos) ? BlockPathTypes.DAMAGE_FIRE : null;
+    }
+
+    /**
+     * Gets the path type of the adjacent block to a pathfinding entity.
+     * Path types with a negative malus are not traversable for the entity.
+     * Pathfinding entities will favor paths consisting of a lower malus.
+     * When {@code null}, uses vanilla behavior.
+     *
+     * @param state the state of the block
+     * @param level the level which contains this block
+     * @param pos the position of the block
+     * @param mob the mob currently pathfinding, may be {@code null}
+     * @param originalType the path type of the source the entity is on
+     * @return the path type of this block
+     */
+    @Nullable
+    default BlockPathTypes getAdjacentBlockPathType(BlockState state, BlockGetter level, BlockPos pos, @Nullable Mob mob, BlockPathTypes originalType)
+    {
+        if (state.is(Blocks.CACTUS)) return BlockPathTypes.DANGER_CACTUS;
+        else if (state.is(Blocks.SWEET_BERRY_BUSH)) return BlockPathTypes.DANGER_OTHER;
+        else if (WalkNodeEvaluator.isBurningBlock(state)) return BlockPathTypes.DANGER_FIRE;
+        else return null;
     }
 
     /**
@@ -532,7 +561,7 @@ public interface IForgeBlock
      */
     default int getFlammability(BlockState state, BlockGetter level, BlockPos pos, Direction direction)
     {
-        return ((FireBlock)Blocks.FIRE).getBurnOdd(state);
+        return ((FireBlock)Blocks.FIRE).getBurnOdds(state);
     }
 
     /**
@@ -573,7 +602,7 @@ public interface IForgeBlock
      */
     default int getFireSpreadSpeed(BlockState state, BlockGetter level, BlockPos pos, Direction direction)
     {
-        return ((FireBlock)Blocks.FIRE).getFlameOdds(state);
+        return ((FireBlock)Blocks.FIRE).getIgniteOdds(state);
     }
 
     /**
@@ -662,29 +691,54 @@ public interface IForgeBlock
     }
 
     /**
-     * Returns the state that this block should transform into when right clicked by a tool.
-     * For example: Used to determine if an axe can strip, a shovel can path, or a hoe can till.
-     * Return null if vanilla behavior should be disabled.
+     * Returns the state that this block should transform into when right-clicked by a tool.
+     * For example: Used to determine if {@link ToolActions#AXE_STRIP an axe can strip},
+     * {@link ToolActions#SHOVEL_FLATTEN a shovel can path}, or {@link ToolActions#HOE_TILL a hoe can till}.
+     * Returns {@code null} if nothing should happen.
      *
      * @param state The current state
-     * @param level The level
-     * @param pos The block position in level
-     * @param player The player clicking the block
-     * @param stack The stack being used by the player
+     * @param context The use on context that the action was performed in
      * @param toolAction The action being performed by the tool
+     * @param simulate If {@code true}, no actions that modify the world in any way should be performed. If {@code false}, the world may be modified.
      * @return The resulting state after the action has been performed
      */
     @Nullable
-    default BlockState getToolModifiedState(BlockState state, Level level, BlockPos pos, Player player, ItemStack stack, ToolAction toolAction)
+    default BlockState getToolModifiedState(BlockState state, UseOnContext context, ToolAction toolAction, boolean simulate)
     {
-        if (!stack.canPerformAction(toolAction)) return null;
-        if (ToolActions.AXE_STRIP.equals(toolAction)) return AxeItem.getAxeStrippingState(state);
-        else if(ToolActions.AXE_SCRAPE.equals(toolAction)) return WeatheringCopper.getPrevious(state).orElse(null);
-        else if(ToolActions.AXE_WAX_OFF.equals(toolAction)) return Optional.ofNullable(HoneycombItem.WAX_OFF_BY_BLOCK.get().get(state.getBlock())).map((p_150694_) -> {
-            return p_150694_.withPropertiesOf(state);
-        }).orElse(null);
-        //else if(ToolActions.HOE_TILL.equals(toolAction)) return HoeItem.getHoeTillingState(state); //TODO HoeItem bork
-        else if (ToolActions.SHOVEL_FLATTEN.equals(toolAction)) return ShovelItem.getShovelPathingState(state);
+        ItemStack itemStack = context.getItemInHand();
+        if (!itemStack.canPerformAction(toolAction))
+            return null;
+
+        if (ToolActions.AXE_STRIP == toolAction)
+        {
+            return AxeItem.getAxeStrippingState(state);
+        } else if (ToolActions.AXE_SCRAPE == toolAction)
+        {
+            return WeatheringCopper.getPrevious(state).orElse(null);
+        } else if (ToolActions.AXE_WAX_OFF == toolAction)
+        {
+            return Optional.ofNullable(HoneycombItem.WAX_OFF_BY_BLOCK.get().get(state.getBlock())).map(block -> block.withPropertiesOf(state)).orElse(null);
+        } else if (ToolActions.SHOVEL_FLATTEN == toolAction)
+        {
+            return ShovelItem.getShovelPathingState(state);
+        } else if (ToolActions.HOE_TILL == toolAction)
+        {
+            // Logic copied from HoeItem#TILLABLES; needs to be kept in sync during updating
+            Block block = state.getBlock();
+            if (block == Blocks.ROOTED_DIRT)
+            {
+                if (!simulate && !context.getLevel().isClientSide)
+                {
+                    Block.popResourceFromFace(context.getLevel(), context.getClickedPos(), context.getClickedFace(), new ItemStack(Items.HANGING_ROOTS));
+                }
+                return Blocks.DIRT.defaultBlockState();
+            } else if ((block == Blocks.GRASS_BLOCK || block == Blocks.DIRT_PATH || block == Blocks.DIRT || block == Blocks.COARSE_DIRT) &&
+                    context.getLevel().getBlockState(context.getClickedPos().above()).isAir())
+            {
+                return block == Blocks.COARSE_DIRT ? Blocks.DIRT.defaultBlockState() : Blocks.FARMLAND.defaultBlockState();
+            }
+        }
+
         return null;
     }
 
@@ -789,5 +843,27 @@ public interface IForgeBlock
             return !ForgeHooksClient.isBlockInSolidLayer(state);
         }
         return true;
+    }
+
+    /**
+     * Returns whether the block can be hydrated by a fluid.
+     *
+     * <p>Hydration is an arbitrary word which depends on the block.
+     * <ul>
+     *     <li>A farmland has moisture</li>
+     *     <li>A sponge can soak up the liquid</li>
+     *     <li>A coral can live</li>
+     * </ul>
+     *
+     * @param state the state of the block being hydrated
+     * @param getter the getter which can get the block
+     * @param pos the position of the block being hydrated
+     * @param fluid the state of the fluid
+     * @param fluidPos the position of the fluid
+     * @return {@code true} if the block can be hydrated, {@code false} otherwise
+     */
+    default boolean canBeHydrated(BlockState state, BlockGetter getter, BlockPos pos, FluidState fluid, BlockPos fluidPos)
+    {
+        return fluid.canHydrate(getter, fluidPos, state, pos);
     }
 }

@@ -12,13 +12,13 @@
 @@ -47,12 +_,14 @@
  
           if (i < 3) {
-             int j = p_57188_.m_61143_(f_57164_);
-+            if (net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_57189_, p_57190_, p_57188_, true)) {
+             int j = p_222548_.m_61143_(f_57164_);
++            if (net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_222549_, p_222550_, p_222548_, true)) {
              if (j == 15) {
-                p_57189_.m_46597_(p_57190_.m_7494_(), this.m_49966_());
-                p_57189_.m_7731_(p_57190_, p_57188_.m_61124_(f_57164_, Integer.valueOf(0)), 4);
+                p_222549_.m_46597_(p_222550_.m_7494_(), this.m_49966_());
+                p_222549_.m_7731_(p_222550_, p_222548_.m_61124_(f_57164_, Integer.valueOf(0)), 4);
              } else {
-                p_57189_.m_7731_(p_57190_, p_57188_.m_61124_(f_57164_, Integer.valueOf(j + 1)), 4);
+                p_222549_.m_7731_(p_222550_, p_222548_.m_61124_(f_57164_, Integer.valueOf(j + 1)), 4);
              }
 +            }
           }
@@ -33,6 +33,15 @@
        BlockState blockstate = p_57176_.m_8055_(p_57177_.m_7495_());
        if (blockstate.m_60713_(this)) {
           return true;
+@@ -77,7 +_,7 @@
+             for(Direction direction : Direction.Plane.HORIZONTAL) {
+                BlockState blockstate1 = p_57176_.m_8055_(blockpos.m_121945_(direction));
+                FluidState fluidstate = p_57176_.m_6425_(blockpos.m_121945_(direction));
+-               if (fluidstate.m_205070_(FluidTags.f_13131_) || blockstate1.m_60713_(Blocks.f_50449_)) {
++               if (p_57175_.canBeHydrated(p_57176_, p_57177_, fluidstate, blockpos.m_121945_(direction)) || blockstate1.m_60713_(Blocks.f_50449_)) {
+                   return true;
+                }
+             }
 @@ -89,5 +_,15 @@
  
     protected void m_7926_(StateDefinition.Builder<Block, BlockState> p_57186_) {

@@ -1,0 +1,18 @@
+--- a/net/minecraft/world/level/block/SculkSensorBlock.java
++++ b/net/minecraft/world/level/block/SculkSensorBlock.java
+@@ -275,9 +_,11 @@
+ 
+    public void m_213646_(BlockState p_222142_, ServerLevel p_222143_, BlockPos p_222144_, ItemStack p_222145_, boolean p_222146_) {
+       super.m_213646_(p_222142_, p_222143_, p_222144_, p_222145_, p_222146_);
+-      if (p_222146_) {
+-         this.m_220822_(p_222143_, p_222144_, p_222145_, ConstantInt.m_146483_(5));
+-      }
+-
++
++   }
++
++   @Override
++   public int getExpDrop(BlockState state, net.minecraft.world.level.LevelReader level, RandomSource randomSource, BlockPos pos, int fortuneLevel, int silkTouchLevel) {
++      return silkTouchLevel == 0 ? 5 : 0;
+    }
+ }

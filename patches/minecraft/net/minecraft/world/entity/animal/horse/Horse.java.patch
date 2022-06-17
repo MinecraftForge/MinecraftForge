@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/animal/horse/Horse.java
 +++ b/net/minecraft/world/entity/animal/horse/Horse.java
-@@ -139,6 +_,8 @@
+@@ -140,6 +_,8 @@
           this.m_5496_(SoundEvents.f_11974_, p_30709_.m_56773_() * 0.6F, p_30709_.m_56774_());
        }
  

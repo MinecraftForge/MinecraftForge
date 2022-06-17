@@ -1,11 +1,9 @@
 /*
- * Minecraft Forge - Forge Development LLC
+ * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
 package net.minecraftforge.network;
-
-import javax.annotation.Nullable;
 
 import io.netty.util.Attribute;
 import io.netty.util.AttributeKey;
@@ -20,6 +18,7 @@ import net.minecraft.util.thread.BlockableEventLoop;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.common.util.LogicalSidedProvider;
 import org.apache.commons.lang3.tuple.Pair;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -105,6 +104,11 @@ public class NetworkEvent extends Event
 
         public void add(FriendlyByteBuf buffer, ResourceLocation channelName, String context) {
             collected.add(new NetworkRegistry.LoginPayload(buffer, channelName, context));
+        }
+
+        public void add(FriendlyByteBuf buffer, ResourceLocation channelName, String context, boolean needsResponse)
+        {
+            collected.add(new NetworkRegistry.LoginPayload(buffer, channelName, context, needsResponse));
         }
 
         public boolean isLocal() {

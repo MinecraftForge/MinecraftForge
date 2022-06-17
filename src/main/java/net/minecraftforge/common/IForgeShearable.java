@@ -1,5 +1,5 @@
 /*
- * Minecraft Forge - Forge Development LLC
+ * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
@@ -12,9 +12,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  *
@@ -35,7 +34,7 @@ public interface IForgeShearable
      * @param pos Block's position in level.
      * @return If this is shearable, and onSheared should be called.
      */
-    default boolean isShearable(@Nonnull ItemStack item, Level level, BlockPos pos)
+    default boolean isShearable(@NotNull ItemStack item, Level level, BlockPos pos)
     {
         return true;
     }
@@ -58,8 +57,8 @@ public interface IForgeShearable
      * @param fortune The fortune level of the shears being used.
      * @return A List containing all items from this shearing. May be empty.
      */
-    @Nonnull
-    default List<ItemStack> onSheared(@Nullable Player player, @Nonnull ItemStack item, Level level, BlockPos pos, int fortune)
+    @NotNull
+    default List<ItemStack> onSheared(@Nullable Player player, @NotNull ItemStack item, Level level, BlockPos pos, int fortune)
     {
         return Collections.emptyList();
     }

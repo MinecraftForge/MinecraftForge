@@ -1,22 +1,20 @@
 /*
- * Minecraft Forge - Forge Development LLC
+ * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
 package net.minecraftforge.event.entity.living;
-
-import javax.annotation.Nullable;
 
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.BaseSpawner;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.world.level.Level;
 
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.ForgeEventFactory;
-import net.minecraftforge.eventbus.api.Event.HasResult;
+import net.minecraftforge.eventbus.api.Cancelable;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * LivingSpawnEvent is fired for any events associated with Living Entities spawn status. <br>
@@ -106,28 +104,19 @@ public class LivingSpawnEvent extends LivingEvent
      * <br>
      * This event is fired via the {@link ForgeEventFactory#doSpecialSpawn(Mob, LevelAccessor, float, float, float, BaseSpawner, MobSpawnType)}.<br>
      * <br>
-     * This event is {@link net.minecraftforge.eventbus.api.Cancelable}.<br>
+     * This event is {@link Cancelable}.<br>
      * If this event is canceled, the Entity is not spawned.<br>
      * <br>
      * This event does not have a result. {@link HasResult}<br>
      * <br>
      * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
      **/
-    @net.minecraftforge.eventbus.api.Cancelable
+    @Cancelable
     public static class SpecialSpawn extends LivingSpawnEvent
     {
         @Nullable
         private final BaseSpawner spawner;
         private final MobSpawnType spawnReason;
-
-        /**
-         * @param spawner the position of a tileentity or approximate position of an entity that initiated the spawn if any
-         */
-        @Deprecated(forRemoval = true, since = "1.18.1")
-        public SpecialSpawn(Mob entity, Level world, double x, double y, double z, @Nullable BaseSpawner spawner, MobSpawnType spawnReason)
-        {
-            this(entity, (LevelAccessor)world, x, y, z, spawner, spawnReason);
-        }
 
         public SpecialSpawn(Mob entity, LevelAccessor world, double x, double y, double z, @Nullable BaseSpawner spawner, MobSpawnType spawnReason)
         {

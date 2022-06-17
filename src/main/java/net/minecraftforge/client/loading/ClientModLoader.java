@@ -1,5 +1,5 @@
 /*
- * Minecraft Forge - Forge Development LLC
+ * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
@@ -14,6 +14,7 @@ import java.util.Map.Entry;
 import java.util.concurrent.*;
 import java.util.function.Consumer;
 
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.packs.repository.RepositorySource;
 import net.minecraft.server.packs.resources.PreparableReloadListener;
 import net.minecraft.server.packs.repository.PackSource;
@@ -40,7 +41,6 @@ import net.minecraft.client.resources.ClientPackSource;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.metadata.pack.PackMetadataSection;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
@@ -96,7 +96,6 @@ public class ClientModLoader
             DataPackConfig.DEFAULT.addModPacks(ResourcePackLoader.getPackNames());
             mcResourceManager.registerReloadListener(ClientModLoader::onResourceReload);
             mcResourceManager.registerReloadListener(BrandingControl.resourceManagerReloadListener());
-            ModelLoaderRegistry.init();
         }
     }
 
@@ -163,6 +162,8 @@ public class ClientModLoader
         if (error == null) {
             // We can finally start the forge eventbus up
             MinecraftForge.EVENT_BUS.start();
+            // allow the ModelLoaderRegistry to register loaders as reload listeners
+            ModelLoaderRegistry.afterFirstReload();
         } else {
             // Double check we have the langs loaded for forge
             LanguageHook.loadForgeAndMCLangs();
@@ -208,7 +209,7 @@ public class ClientModLoader
             }
         }
         final Pack packInfo = Pack.create("mod_resources", true, () -> new DelegatingResourcePack("mod_resources", "Mod Resources",
-                new PackMetadataSection(new TranslatableComponent("fml.resources.modresources", hiddenPacks.size()), PackType.CLIENT_RESOURCES.getVersion(SharedConstants.getCurrentVersion())),
+                new PackMetadataSection(Component.translatable("fml.resources.modresources", hiddenPacks.size()), PackType.CLIENT_RESOURCES.getVersion(SharedConstants.getCurrentVersion())),
                 hiddenPacks), factory, Pack.Position.BOTTOM, PackSource.DEFAULT);
         consumer.accept(packInfo);
     }

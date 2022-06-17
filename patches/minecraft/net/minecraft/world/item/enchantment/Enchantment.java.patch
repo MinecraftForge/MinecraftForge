@@ -1,15 +1,23 @@
 --- a/net/minecraft/world/item/enchantment/Enchantment.java
 +++ b/net/minecraft/world/item/enchantment/Enchantment.java
-@@ -16,7 +_,7 @@
+@@ -15,7 +_,7 @@
  import net.minecraft.world.entity.MobType;
  import net.minecraft.world.item.ItemStack;
  
 -public abstract class Enchantment {
-+public abstract class Enchantment extends net.minecraftforge.registries.ForgeRegistryEntry<Enchantment> {
++public abstract class Enchantment implements net.minecraftforge.common.extensions.IForgeEnchantment {
     private final EquipmentSlot[] f_44671_;
     private final Enchantment.Rarity f_44674_;
     public final EnchantmentCategory f_44672_;
-@@ -111,7 +_,7 @@
+@@ -70,6 +_,7 @@
+       return 0;
+    }
+ 
++   @Deprecated // Forge: Use ItemStack aware version in IForgeEnchantment
+    public float m_7335_(int p_44682_, MobType p_44683_) {
+       return 0.0F;
+    }
+@@ -110,7 +_,7 @@
     }
  
     public boolean m_6081_(ItemStack p_44689_) {
@@ -18,7 +26,7 @@
     }
  
     public void m_7677_(LivingEntity p_44686_, Entity p_44687_, int p_44688_) {
-@@ -133,6 +_,24 @@
+@@ -132,6 +_,24 @@
     }
  
     public boolean m_6592_() {

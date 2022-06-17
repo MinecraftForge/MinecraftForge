@@ -1,5 +1,5 @@
 /*
- * Minecraft Forge - Forge Development LLC
+ * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
@@ -13,7 +13,7 @@ import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.datafixers.util.Pair;
-import net.minecraft.util.profiling.ProfilerFiller;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.server.packs.resources.ResourceManager;
@@ -22,21 +22,18 @@ import net.minecraft.util.GsonHelper;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.model.geometry.IModelGeometry;
 
-import javax.annotation.Nullable;
 import java.util.*;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executor;
 import java.util.function.Function;
 
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.client.renderer.block.model.ItemOverrides;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
-import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.Material;
 import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.ModelState;
 import net.minecraft.client.resources.model.UnbakedModel;
+import org.jetbrains.annotations.Nullable;
 
 public class SeparatePerspectiveModel implements IModelGeometry<SeparatePerspectiveModel>
 {
@@ -94,7 +91,7 @@ public class SeparatePerspectiveModel implements IModelGeometry<SeparatePerspect
         }
 
         @Override
-        public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, Random rand)
+        public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, RandomSource rand)
         {
             return Collections.emptyList();
         }
@@ -163,6 +160,7 @@ public class SeparatePerspectiveModel implements IModelGeometry<SeparatePerspect
     {
         public static final Loader INSTANCE = new Loader();
 
+        @Deprecated(forRemoval = true, since = "1.18.2")
         public static final ImmutableBiMap<String, ItemTransforms.TransformType> PERSPECTIVES = ImmutableBiMap.<String, ItemTransforms.TransformType>builder()
                 .put("none", ItemTransforms.TransformType.NONE)
                 .put("third_person_left_hand", ItemTransforms.TransformType.THIRD_PERSON_LEFT_HAND)
@@ -173,6 +171,14 @@ public class SeparatePerspectiveModel implements IModelGeometry<SeparatePerspect
                 .put("gui", ItemTransforms.TransformType.GUI)
                 .put("ground", ItemTransforms.TransformType.GROUND)
                 .put("fixed", ItemTransforms.TransformType.FIXED)
+                .build();
+
+        @Deprecated(forRemoval = true, since = "1.18.2")
+        private static final ImmutableBiMap<String, ItemTransforms.TransformType> BACKWARD_COMPATIBILITY = ImmutableBiMap.<String, ItemTransforms.TransformType>builder()
+                .put("third_person_left_hand", ItemTransforms.TransformType.THIRD_PERSON_LEFT_HAND)
+                .put("third_person_right_hand", ItemTransforms.TransformType.THIRD_PERSON_RIGHT_HAND)
+                .put("first_person_left_hand", ItemTransforms.TransformType.FIRST_PERSON_LEFT_HAND)
+                .put("first_person_right_hand", ItemTransforms.TransformType.FIRST_PERSON_RIGHT_HAND)
                 .build();
 
         @Override
@@ -187,17 +193,25 @@ public class SeparatePerspectiveModel implements IModelGeometry<SeparatePerspect
 
             JsonObject perspectiveData = GsonHelper.getAsJsonObject(modelContents, "perspectives");
 
-            ImmutableMap.Builder<ItemTransforms.TransformType, BlockModel> perspectives = ImmutableMap.builder();
-            for(Map.Entry<String, ItemTransforms.TransformType> perspective : PERSPECTIVES.entrySet())
+            Map<ItemTransforms.TransformType, BlockModel> perspectives = new HashMap<>();
+            for(Map.Entry<String, ItemTransforms.TransformType> entry : BACKWARD_COMPATIBILITY.entrySet())
             {
-                if (perspectiveData.has(perspective.getKey()))
+                if (perspectiveData.has(entry.getKey()))
                 {
-                    BlockModel perspectiveModel = deserializationContext.deserialize(GsonHelper.getAsJsonObject(perspectiveData, perspective.getKey()), BlockModel.class);
-                    perspectives.put(perspective.getValue(), perspectiveModel);
+                    BlockModel perspectiveModel = deserializationContext.deserialize(GsonHelper.getAsJsonObject(perspectiveData, entry.getKey()), BlockModel.class);
+                    perspectives.put(entry.getValue(), perspectiveModel);
+                }
+            }
+            for(ItemTransforms.TransformType perspective : ItemTransforms.TransformType.values())
+            {
+                if (perspectiveData.has(perspective.getSerializeName()))
+                {
+                    BlockModel perspectiveModel = deserializationContext.deserialize(GsonHelper.getAsJsonObject(perspectiveData, perspective.getSerializeName()), BlockModel.class);
+                    perspectives.put(perspective, perspectiveModel);
                 }
             }
 
-            return new SeparatePerspectiveModel(baseModel, perspectives.build());
+            return new SeparatePerspectiveModel(baseModel, ImmutableMap.copyOf(perspectives));
         }
     }
 }

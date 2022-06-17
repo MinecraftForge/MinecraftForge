@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/biome/MobSpawnSettings.java
 +++ b/net/minecraft/world/level/biome/MobSpawnSettings.java
-@@ -39,20 +_,32 @@
+@@ -38,20 +_,32 @@
     private final float f_48328_;
     private final Map<MobCategory, WeightedRandomList<MobSpawnSettings.SpawnerData>> f_48329_;
     private final Map<EntityType<?>, MobSpawnSettings.MobSpawnCost> f_48330_;

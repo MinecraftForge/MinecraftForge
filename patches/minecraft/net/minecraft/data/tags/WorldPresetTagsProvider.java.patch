@@ -1,0 +1,16 @@
+--- a/net/minecraft/data/tags/WorldPresetTagsProvider.java
++++ b/net/minecraft/data/tags/WorldPresetTagsProvider.java
+@@ -7,8 +_,13 @@
+ import net.minecraft.world.level.levelgen.presets.WorldPresets;
+ 
+ public class WorldPresetTagsProvider extends TagsProvider<WorldPreset> {
++   /** @deprecated Forge: Use the {@link #WorldPresetTagsProvider(DataGenerator, String, net.minecraftforge.common.data.ExistingFileHelper) mod id variant} */
++   @Deprecated
+    public WorldPresetTagsProvider(DataGenerator p_236457_) {
+       super(p_236457_, BuiltinRegistries.f_235989_);
++   }
++   public WorldPresetTagsProvider(DataGenerator p_236457_, String modId, @org.jetbrains.annotations.Nullable net.minecraftforge.common.data.ExistingFileHelper existingFileHelper) {
++      super(p_236457_, BuiltinRegistries.f_235989_, modId, existingFileHelper);
+    }
+ 
+    protected void m_6577_() {

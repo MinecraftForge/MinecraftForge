@@ -1,0 +1,19 @@
+--- a/net/minecraft/world/food/FoodData.java
++++ b/net/minecraft/world/food/FoodData.java
+@@ -24,9 +_,15 @@
+       this.f_38697_ = Math.min(this.f_38697_ + (float)p_38708_ * p_38709_ * 2.0F, (float)this.f_38696_);
+    }
+ 
++   // Use the LivingEntity sensitive version in favour of this.
++   @Deprecated
+    public void m_38712_(Item p_38713_, ItemStack p_38714_) {
++      this.eat(p_38713_, p_38714_, null);
++   }
++
++   public void eat(Item p_38713_, ItemStack p_38714_, @org.jetbrains.annotations.Nullable net.minecraft.world.entity.LivingEntity entity) {
+       if (p_38713_.m_41472_()) {
+-         FoodProperties foodproperties = p_38713_.m_41473_();
++         FoodProperties foodproperties = p_38714_.getFoodProperties(entity);
+          this.m_38707_(foodproperties.m_38744_(), foodproperties.m_38745_());
+       }
+ 

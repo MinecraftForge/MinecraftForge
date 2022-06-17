@@ -1,0 +1,14 @@
+--- a/net/minecraft/world/level/block/CoralBlock.java
++++ b/net/minecraft/world/level/block/CoralBlock.java
+@@ -37,9 +_,10 @@
+    }
+ 
+    protected boolean m_52134_(BlockGetter p_52135_, BlockPos p_52136_) {
++      BlockState state = p_52135_.m_8055_(p_52136_);
+       for(Direction direction : Direction.values()) {
+          FluidState fluidstate = p_52135_.m_6425_(p_52136_.m_121945_(direction));
+-         if (fluidstate.m_205070_(FluidTags.f_13131_)) {
++         if (state.canBeHydrated(p_52135_, p_52136_, fluidstate, p_52136_.m_121945_(direction))) {
+             return true;
+          }
+       }

@@ -1,16 +1,16 @@
 --- a/net/minecraft/client/renderer/PostChain.java
 +++ b/net/minecraft/client/renderer/PostChain.java
-@@ -169,7 +_,8 @@
+@@ -173,7 +_,8 @@
                          throw new ChainedJsonException("Render target '" + s4 + "' can't be used as depth buffer");
                       }
  
 -                     ResourceLocation resourcelocation = new ResourceLocation("textures/effect/" + s4 + ".png");
 +                     ResourceLocation rl = ResourceLocation.m_135820_(s4);
 +                     ResourceLocation resourcelocation = new ResourceLocation(rl.m_135827_(), "textures/effect/" + rl.m_135815_() + ".png");
-                      Resource resource = null;
- 
-                      try {
-@@ -279,6 +_,7 @@
+                      this.f_110007_.m_213713_(resourcelocation).orElseThrow(() -> {
+                         return new ChainedJsonException("Render target or texture '" + s4 + "' does not exist");
+                      });
+@@ -276,6 +_,7 @@
     public void m_110038_(String p_110039_, int p_110040_, int p_110041_) {
        RenderTarget rendertarget = new TextureTarget(p_110040_, p_110041_, true, Minecraft.f_91002_);
        rendertarget.m_83931_(0.0F, 0.0F, 0.0F, 0.0F);

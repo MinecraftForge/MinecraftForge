@@ -1,40 +1,10 @@
 {
   "advancements": [
     {
-      "conditions": [
-        {
-          "value": {
-            "values": [
-              {
-                "value": {
-                  "modid": "minecraft",
-                  "type": "forge:mod_loaded"
-                },
-                "type": "forge:not"
-              },
-              {
-                "item": "minecraft:dirt",
-                "type": "forge:item_exists"
-              },
-              {
-                "type": "forge:false"
-              }
-            ],
-            "type": "forge:and"
-          },
-          "type": "forge:not"
-        }
-      ],
       "advancement": {
         "parent": "minecraft:recipes/root",
-        "rewards": {
-          "recipes": [
-            "minecraft:diamond_block"
-          ]
-        },
         "criteria": {
           "has_dirt": {
-            "trigger": "minecraft:inventory_changed",
             "conditions": {
               "items": [
                 {
@@ -43,13 +13,14 @@
                   ]
                 }
               ]
-            }
+            },
+            "trigger": "minecraft:inventory_changed"
           },
           "has_the_recipe": {
-            "trigger": "minecraft:recipe_unlocked",
             "conditions": {
               "recipe": "minecraft:diamond_block"
-            }
+            },
+            "trigger": "minecraft:recipe_unlocked"
           }
         },
         "requirements": [
@@ -57,8 +28,37 @@
             "has_dirt",
             "has_the_recipe"
           ]
-        ]
-      }
+        ],
+        "rewards": {
+          "recipes": [
+            "minecraft:diamond_block"
+          ]
+        }
+      },
+      "conditions": [
+        {
+          "type": "forge:not",
+          "value": {
+            "type": "forge:and",
+            "values": [
+              {
+                "type": "forge:not",
+                "value": {
+                  "type": "forge:mod_loaded",
+                  "modid": "minecraft"
+                }
+              },
+              {
+                "type": "forge:item_exists",
+                "item": "minecraft:dirt"
+              },
+              {
+                "type": "forge:false"
+              }
+            ]
+          }
+        }
+      ]
     }
   ]
 }

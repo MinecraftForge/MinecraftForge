@@ -1,27 +1,42 @@
 --- a/net/minecraft/world/entity/boss/enderdragon/EnderDragon.java
 +++ b/net/minecraft/world/entity/boss/enderdragon/EnderDragon.java
-@@ -150,7 +_,11 @@
+@@ -106,6 +_,14 @@
+       }
+ 
+       this.f_31074_ = new EnderDragonPhaseManager(this);
++      this.m_20234_(f_19843_.getAndAdd(this.f_31089_.length + 1) + 1); // Forge: Fix MC-158205: Make sure part ids are successors of parent mob id
++   }
++
++   @Override
++   public void m_20234_(int p_20235_) {
++      super.m_20234_(p_20235_);
++      for (int i = 0; i < this.f_31089_.length; i++) // Forge: Fix MC-158205: Set part ids to successors of parent mob id
++         this.f_31089_[i].m_20234_(p_20235_ + i + 1);
+    }
+ 
+    public static AttributeSupplier.Builder m_31167_() {
+@@ -149,7 +_,11 @@
        return adouble;
     }
  
-+   @javax.annotation.Nullable private Player unlimitedLastHurtByPlayer = null;
++   @org.jetbrains.annotations.Nullable private Player unlimitedLastHurtByPlayer = null;
     public void m_8107_() {
 +      // lastHurtByPlayer is cleared after 100 ticks, capture it indefinitely in unlimitedLastHurtByPlayer for LivingExperienceDropEvent
 +      if (this.f_20888_ != null) this.unlimitedLastHurtByPlayer = f_20888_;
-+      if (this.unlimitedLastHurtByPlayer != null && this.unlimitedLastHurtByPlayer.m_146910_()) this.unlimitedLastHurtByPlayer = null;
++      if (this.unlimitedLastHurtByPlayer != null && this.unlimitedLastHurtByPlayer.m_213877_()) this.unlimitedLastHurtByPlayer = null;
        this.m_146874_();
        if (this.f_19853_.f_46443_) {
           this.m_21153_(this.m_21223_());
-@@ -420,7 +_,7 @@
+@@ -419,7 +_,7 @@
                 BlockPos blockpos = new BlockPos(k1, l1, i2);
                 BlockState blockstate = this.f_19853_.m_8055_(blockpos);
-                if (!blockstate.m_60795_() && blockstate.m_60767_() != Material.f_76309_) {
+                if (!blockstate.m_60795_() && !blockstate.m_204336_(BlockTags.f_215822_)) {
 -                  if (this.f_19853_.m_46469_().m_46207_(GameRules.f_46132_) && !blockstate.m_204336_(BlockTags.f_13069_)) {
 +                  if (net.minecraftforge.common.ForgeHooks.canEntityDestroy(this.f_19853_, blockpos, this) && !blockstate.m_204336_(BlockTags.f_13069_)) {
                       flag1 = this.f_19853_.m_7471_(blockpos, false) || flag1;
                    } else {
                       flag = true;
-@@ -514,7 +_,8 @@
+@@ -510,7 +_,8 @@
  
        if (this.f_19853_ instanceof ServerLevel) {
           if (this.f_31084_ > 150 && this.f_31084_ % 5 == 0 && flag) {
@@ -31,7 +46,7 @@
           }
  
           if (this.f_31084_ == 1 && !this.m_20067_()) {
-@@ -527,7 +_,8 @@
+@@ -523,7 +_,8 @@
        this.f_20883_ = this.m_146908_();
        if (this.f_31084_ == 200 && this.f_19853_ instanceof ServerLevel) {
           if (flag) {
@@ -41,12 +56,10 @@
           }
  
           if (this.f_31073_ != null) {
-@@ -847,6 +_,16 @@
- 
-    public boolean m_6072_() {
+@@ -846,8 +_,19 @@
        return false;
-+   }
-+
+    }
+ 
 +   @Override
 +   public boolean isMultipartEntity() {
 +      return true;
@@ -55,6 +68,11 @@
 +   @Override
 +   public net.minecraftforge.entity.PartEntity<?>[] getParts() {
 +      return this.f_31089_;
-    }
++   }
++
+    public void m_141965_(ClientboundAddEntityPacket p_218825_) {
+       super.m_141965_(p_218825_);
++      if (true) return; // Forge: Fix MC-158205: Moved into setId()
+       EnderDragonPart[] aenderdragonpart = this.m_31156_();
  
-    public void m_142223_(ClientboundAddMobPacket p_149572_) {
+       for(int i = 0; i < aenderdragonpart.length; ++i) {

@@ -1,5 +1,5 @@
 /*
- * Minecraft Forge - Forge Development LLC
+ * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
@@ -7,58 +7,43 @@ package net.minecraftforge.registries;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.Collections;
-import java.util.LinkedList;
 import java.util.Locale;
-import java.util.Queue;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.ResourceLocationException;
 
-import javax.annotation.Nullable;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.Nullable;
 
 @SuppressWarnings("rawtypes")
 class ObjectHolderRef implements Consumer<Predicate<ResourceLocation>>
 {
     private static final Logger LOGGER  = LogManager.getLogger();
-    private Field field;
-    private ResourceLocation injectedObject;
-    private boolean isValid;
-    private ForgeRegistry<?> registry;
+    private final Field field;
+    private final ResourceLocation injectedObject;
+    private final ForgeRegistry<?> registry;
 
-    public ObjectHolderRef(Field field, ResourceLocation injectedObject)
+    @SuppressWarnings("unchecked")
+    @Nullable
+    static ObjectHolderRef create(ResourceLocation registryName, Field field, String injectedObject, boolean extractFromExistingValues)
     {
-        this(field, injectedObject.toString(), false);
-    }
+        ForgeRegistry<?> registry = RegistryManager.ACTIVE.getRegistry(registryName);
+        if (registry == null)
+            return null;
 
-    ObjectHolderRef(Field field, String injectedObject, boolean extractFromExistingValues)
-    {
-        this.registry = getRegistryForType(field);
-        this.field = field;
-        this.isValid = registry != null;
-
+        ResourceLocation injectedObjectName;
         if (extractFromExistingValues)
         {
             try
             {
                 Object existing = field.get(null);
-                // nothing is ever allowed to replace AIR
-                if (!isValid || (existing == null || existing == registry.getDefault()))
-                {
-                    this.injectedObject = null;
-                    this.field = null;
-                    this.isValid = false;
-                    return;
-                }
-                else
-                {
-                    this.injectedObject = ((IForgeRegistryEntry)existing).getRegistryName();
-                }
+                // Nothing is ever allowed to replace AIR
+                if (existing == null || existing == registry.getDefault())
+                    return null;
+                injectedObjectName = ((ForgeRegistry) registry).getKey(existing);
             }
             catch (IllegalAccessException e)
             {
@@ -69,7 +54,7 @@ class ObjectHolderRef implements Consumer<Predicate<ResourceLocation>>
         {
             try
             {
-                this.injectedObject = new ResourceLocation(injectedObject);
+                injectedObjectName = new ResourceLocation(injectedObject);
             }
             catch (ResourceLocationException e)
             {
@@ -77,10 +62,8 @@ class ObjectHolderRef implements Consumer<Predicate<ResourceLocation>>
             }
         }
 
-        if (this.injectedObject == null || !isValid())
-        {
-            throw new IllegalStateException(String.format(Locale.ENGLISH, "The ObjectHolder annotation cannot apply to a field that does not map to a registry. Ensure the registry was created during the RegistryEvent.NewRegistry event. (found : %s at %s.%s)", field.getType().getName(), field.getDeclaringClass().getName(), field.getName()));
-        }
+        if (injectedObjectName == null)
+            throw new IllegalStateException(String.format(Locale.ENGLISH, "The ObjectHolder annotation cannot apply to a field that does not map to a registry. Ensure the registry was created during NewRegistryEvent. (found : %s at %s.%s)", field.getType().getName(), field.getDeclaringClass().getName(), field.getName()));
 
         field.setAccessible(true);
 
@@ -88,36 +71,15 @@ class ObjectHolderRef implements Consumer<Predicate<ResourceLocation>>
         {
             throw new RuntimeException("@ObjectHolder on final field, our transformer did not run? " + field.getDeclaringClass().getName() + "/" + field.getName());
         }
+
+        return new ObjectHolderRef(registry, field, injectedObjectName);
     }
 
-    @SuppressWarnings("unchecked")
-    @Nullable
-    private ForgeRegistry<?> getRegistryForType(Field field)
+    private ObjectHolderRef(ForgeRegistry<?> registry, Field field, ResourceLocation injectedObject)
     {
-        Queue<Class<?>> typesToExamine = new LinkedList<Class<?>>();
-        typesToExamine.add(field.getType());
-
-        ForgeRegistry<?> registry = null;
-        while (!typesToExamine.isEmpty() && registry == null)
-        {
-            Class<?> type = typesToExamine.remove();
-            Collections.addAll(typesToExamine, type.getInterfaces());
-            if (IForgeRegistryEntry.class.isAssignableFrom(type))
-            {
-                registry = (ForgeRegistry<?>)RegistryManager.ACTIVE.getRegistry((Class<IForgeRegistryEntry>)type);
-                final Class<?> parentType = type.getSuperclass();
-                if (parentType != null)
-                {
-                    typesToExamine.add(parentType);
-                }
-            }
-        }
-        return registry;
-    }
-
-    public boolean isValid()
-    {
-        return isValid;
+        this.registry = registry;
+        this.field = field;
+        this.injectedObject = injectedObject;
     }
 
     @Override
@@ -127,7 +89,7 @@ class ObjectHolderRef implements Consumer<Predicate<ResourceLocation>>
             return;
 
         Object thing;
-        if (isValid && registry.containsKey(injectedObject) && !registry.isDummied(injectedObject))
+        if (registry.containsKey(injectedObject) && !registry.isDummied(injectedObject))
         {
             thing = registry.getValue(injectedObject);
         }

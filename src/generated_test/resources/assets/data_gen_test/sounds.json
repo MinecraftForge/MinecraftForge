@@ -24,13 +24,12 @@
     ]
   },
   "block.lava.ambient": {
-    "subtitle": "subtitles.block.lava.ambient",
     "sounds": [
       "liquid/lava"
-    ]
+    ],
+    "subtitle": "subtitles.block.lava.ambient"
   },
   "entity.dolphin.ambient_water": {
-    "subtitle": "subtitles.entity.dolphin.ambient_water",
     "sounds": [
       {
         "name": "mob/dolphin/idle_water1",
@@ -54,21 +53,21 @@
         "name": "mob/dolphin/idle_water10",
         "volume": 0.8
       }
-    ]
+    ],
+    "subtitle": "subtitles.entity.dolphin.ambient_water"
   },
   "entity.parrot.imitate.drowned": {
-    "subtitle": "subtitles.entity.parrot.imitate.drowned",
     "sounds": [
       {
-        "name": "entity.drowned.ambient",
         "type": "event",
-        "volume": 0.6,
-        "pitch": 1.8
+        "name": "entity.drowned.ambient",
+        "pitch": 1.8,
+        "volume": 0.6
       }
-    ]
+    ],
+    "subtitle": "subtitles.entity.parrot.imitate.drowned"
   },
   "item.trident.return": {
-    "subtitle": "subtitles.item.trident.return",
     "sounds": [
       {
         "name": "item/trident/return1",
@@ -80,18 +79,18 @@
       },
       {
         "name": "item/trident/return2",
-        "volume": 0.8,
-        "pitch": 0.8
+        "pitch": 0.8,
+        "volume": 0.8
       },
       {
         "name": "item/trident/return2",
-        "volume": 0.8,
-        "pitch": 1.2
+        "pitch": 1.2,
+        "volume": 0.8
       },
       {
         "name": "item/trident/return2",
-        "volume": 0.8,
-        "pitch": 1.2
+        "pitch": 1.2,
+        "volume": 0.8
       },
       {
         "name": "item/trident/return3",
@@ -99,20 +98,21 @@
       },
       {
         "name": "item/trident/return3",
-        "volume": 0.8,
-        "pitch": 0.8
+        "pitch": 0.8,
+        "volume": 0.8
       },
       {
         "name": "item/trident/return3",
-        "volume": 0.8,
-        "pitch": 0.8
+        "pitch": 0.8,
+        "volume": 0.8
       },
       {
         "name": "item/trident/return3",
-        "volume": 0.8,
-        "pitch": 1.2
+        "pitch": 1.2,
+        "volume": 0.8
       }
-    ]
+    ],
+    "subtitle": "subtitles.item.trident.return"
   },
   "music_disc.blocks": {
     "sounds": [

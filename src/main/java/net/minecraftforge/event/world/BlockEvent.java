@@ -1,5 +1,5 @@
 /*
- * Minecraft Forge - Forge Development LLC
+ * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
@@ -8,6 +8,7 @@ package net.minecraftforge.event.world;
 import java.util.EnumSet;
 import java.util.List;
 
+import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.portal.PortalShape;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
@@ -22,14 +23,14 @@ import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.ToolAction;
+import net.minecraftforge.common.ToolActions;
 import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
 
 import com.google.common.collect.ImmutableList;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class BlockEvent extends Event
 {
@@ -84,7 +85,7 @@ public class BlockEvent extends Event
             {
                 int fortuneLevel = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.BLOCK_FORTUNE, player.getMainHandItem());
                 int silkTouchLevel = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.SILK_TOUCH, player.getMainHandItem());
-                this.exp = state.getExpDrop(world, pos, fortuneLevel, silkTouchLevel);
+                this.exp = state.getExpDrop(world, world.random, pos, fortuneLevel, silkTouchLevel);
             }
         }
 
@@ -127,7 +128,7 @@ public class BlockEvent extends Event
         private final BlockState placedBlock;
         private final BlockState placedAgainst;
 
-        public EntityPlaceEvent(@Nonnull BlockSnapshot blockSnapshot, @Nonnull BlockState placedAgainst, @Nullable Entity entity)
+        public EntityPlaceEvent(@NotNull BlockSnapshot blockSnapshot, @NotNull BlockState placedAgainst, @Nullable Entity entity)
         {
             super(blockSnapshot.getLevel(), blockSnapshot.getPos(), !(entity instanceof Player) ? blockSnapshot.getReplacedBlock() : blockSnapshot.getCurrentBlock());
             this.entity = entity;
@@ -160,7 +161,7 @@ public class BlockEvent extends Event
     {
         private final List<BlockSnapshot> blockSnapshots;
 
-        public EntityMultiPlaceEvent(@Nonnull List<BlockSnapshot> blockSnapshots, @Nonnull BlockState placedAgainst, @Nullable Entity entity) {
+        public EntityMultiPlaceEvent(@NotNull List<BlockSnapshot> blockSnapshots, @NotNull BlockState placedAgainst, @Nullable Entity entity) {
             super(blockSnapshots.get(0), placedAgainst, entity);
             this.blockSnapshots = ImmutableList.copyOf(blockSnapshots);
             if (DEBUG)
@@ -415,65 +416,98 @@ public class BlockEvent extends Event
     }
 
     /**
-     * Fired when when this block is right clicked by a tool to change its state.
-     * For example: Used to determine if an axe can strip or a shovel can path.
-     * For hoes, see {@code net.minecraft.world.item.HoeItem#TILLABLES} and
-     * {@link net.minecraftforge.event.entity.player.UseHoeEvent}.
-     *
+     * Fired when a block is right-clicked by a tool to change its state.
+     * For example: Used to determine if {@link ToolActions#AXE_STRIP an axe can strip},
+     * {@link ToolActions#SHOVEL_FLATTEN a shovel can path}, or {@link ToolActions#HOE_TILL a hoe can till}.
+     * <p>
+     * Care must be taken to ensure world-modifying events are only performed if {@link #isSimulated()} returns {@code false}.
+     * <p>
      * This event is {@link Cancelable}. If canceled, this will prevent the tool
      * from changing the block's state.
      */
-    @Cancelable
-    public static class BlockToolInteractEvent extends BlockEvent
+    public static class BlockToolModificationEvent extends BlockEvent
     {
-
-        private final Player player;
-        private final ItemStack stack;
+        private final UseOnContext context;
         private final ToolAction toolAction;
+        private final boolean simulate;
         private BlockState state;
 
-        public BlockToolInteractEvent(LevelAccessor world, BlockPos pos, BlockState originalState, Player player, ItemStack stack, ToolAction toolAction)
+        public BlockToolModificationEvent(BlockState originalState, @NotNull UseOnContext context, ToolAction toolAction, boolean simulate)
         {
-            super(world, pos, originalState);
-            this.player = player;
-            this.stack = stack;
+            super(context.getLevel(), context.getClickedPos(), originalState);
+            this.context = context;
             this.state = originalState;
             this.toolAction = toolAction;
-        }
-
-        /**Gets the player using the tool.*/
-        public Player getPlayer()
-        {
-            return player;
-        }
-
-        /**Gets the tool being used.*/
-        public ItemStack getHeldItemStack()
-        {
-            return stack;
-        }
-
-        /**Gets the action being performed.*/
-        public ToolAction getToolAction()
-        {
-            return toolAction;
+            this.simulate = simulate;
         }
 
         /**
-         * Sets the transformed state after tool use.
-         * If not set, will return the original state.
-         * This will be bypassed if canceled returning null instead.
-         * */
-        public void setFinalState(BlockState finalState)
+         * @return the player using the tool.
+         * May be null based on what was provided by {@link #getContext() the use on context}.
+         */
+        @Nullable
+        public Player getPlayer()
+        {
+            return this.context.getPlayer();
+        }
+
+        /**
+         * @return the tool being used
+         */
+        public ItemStack getHeldItemStack()
+        {
+            return this.context.getItemInHand();
+        }
+
+        /**
+         * @return the action being performed
+         */
+        public ToolAction getToolAction()
+        {
+            return this.toolAction;
+        }
+
+        /**
+         * Returns {@code true} if this event should not perform any actions that modify the world.
+         * If {@code false}, then world-modifying actions can be performed.
+         *
+         * @return {@code true} if this event should not perform any actions that modify the world.
+         * If {@code false}, then world-modifying actions can be performed.
+         */
+        public boolean isSimulated()
+        {
+            return this.simulate;
+        }
+
+        /**
+         * Returns the nonnull use on context that this event was performed in.
+         *
+         * @return the nonnull use on context that this event was performed in
+         */
+        @NotNull
+        public UseOnContext getContext()
+        {
+            return context;
+        }
+
+        /**
+         * Sets the state to transform the block into after tool use.
+         *
+         * @param finalState the state to transform the block into after tool use
+         * @see #getFinalState()
+         */
+        public void setFinalState(@Nullable BlockState finalState)
         {
             this.state = finalState;
         }
 
         /**
-         * Gets the transformed state after tool use.
-         * If setFinalState not called, will return the original state.
-         * This will be bypassed if canceled returning null instead.
-         * */
+         * Returns the state to transform the block into after tool use.
+         * If {@link #setFinalState(BlockState)} is not called, this will return the original state.
+         * If {@link #isCanceled()} is {@code true}, this value will be ignored and the tool action will be canceled.
+         *
+         * @return the state to transform the block into after tool use
+         */
         public BlockState getFinalState()
         {
             return state;

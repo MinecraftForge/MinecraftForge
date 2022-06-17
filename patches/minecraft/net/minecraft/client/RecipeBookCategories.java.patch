@@ -19,12 +19,12 @@
  
     private RecipeBookCategories(ItemStack... p_92267_) {
 @@ -54,11 +_,17 @@
-       case SMOKER:
-          return f_92256_;
-       default:
+          case SMOKER:
+             return f_92256_;
+          default:
 +         if (net.minecraftforge.client.RecipeBookRegistry.TYPE_TO_CATEGORIES_VIEW.containsKey(p_92270_))
 +            return net.minecraftforge.client.RecipeBookRegistry.TYPE_TO_CATEGORIES_VIEW.get(p_92270_);
-          return ImmutableList.of();
+             return ImmutableList.of();
        }
     }
  

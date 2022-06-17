@@ -1,22 +1,24 @@
 --- a/net/minecraft/client/server/IntegratedServer.java
 +++ b/net/minecraft/client/server/IntegratedServer.java
-@@ -60,9 +_,10 @@
+@@ -58,11 +_,12 @@
        this.m_129997_(true);
        this.m_129999_(true);
        this.m_129793_();
 +      if (!net.minecraftforge.server.ServerLifecycleHooks.handleServerAboutToStart(this)) return false;
        this.m_130006_();
-       this.m_129989_(this.m_129791_() + " - " + this.m_129910_().m_5462_());
+       GameProfile gameprofile = this.m_236731_();
+       String s = this.m_129910_().m_5462_();
+       this.m_129989_(gameprofile != null ? gameprofile.getName() + " - " + s : s);
 -      return true;
 +      return net.minecraftforge.server.ServerLifecycleHooks.handleServerStarting(this);
     }
  
     public void m_5705_(BooleanSupplier p_120049_) {
-@@ -179,6 +_,7 @@
+@@ -178,6 +_,7 @@
     }
  
     public void m_7570_(boolean p_120053_) {
 +      if (m_130010_())
        this.m_18709_(() -> {
           for(ServerPlayer serverplayer : Lists.newArrayList(this.m_6846_().m_11314_())) {
-             if (!serverplayer.m_142081_().equals(this.f_120019_)) {
+             if (!serverplayer.m_20148_().equals(this.f_120019_)) {

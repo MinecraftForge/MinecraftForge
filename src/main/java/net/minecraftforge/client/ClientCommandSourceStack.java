@@ -1,5 +1,5 @@
 /*
- * Minecraft Forge - Forge Development LLC
+ * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
@@ -46,7 +46,7 @@ public class ClientCommandSourceStack extends CommandSourceStack
     @Override
     public void sendSuccess(Component message, boolean sendToAdmins)
     {
-        Minecraft.getInstance().player.sendMessage(message, Util.NIL_UUID);
+        Minecraft.getInstance().player.sendSystemMessage(message);
     }
 
     /**

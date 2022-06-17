@@ -1,5 +1,5 @@
 /*
- * Minecraft Forge - Forge Development LLC
+ * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
@@ -13,7 +13,6 @@ import net.minecraft.commands.arguments.selector.EntitySelectorParser;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraftforge.common.command.EntitySelectorManager;
 import net.minecraftforge.common.command.IEntitySelectorType;
 import net.minecraftforge.fml.common.Mod;
@@ -30,7 +29,7 @@ public class EntitySelectorTest
 
     public void setup(FMLCommonSetupEvent event)
     {
-        EntitySelectorOptions.register("health", this::healthArgument, parser -> true, new TextComponent("Selects entities based on their current health."));
+        EntitySelectorOptions.register("health", this::healthArgument, parser -> true, Component.literal("Selects entities based on their current health."));
         EntitySelectorManager.register("er", new ExampleCustomSelector());
     }
 
@@ -76,7 +75,7 @@ public class EntitySelectorTest
         @Override
         public Component getSuggestionTooltip()
         {
-            return new TextComponent("Example: Selects a random entity");
+            return Component.literal("Example: Selects a random entity");
         }
     }
 }

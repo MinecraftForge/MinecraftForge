@@ -1,31 +1,27 @@
 --- a/net/minecraft/server/level/ServerPlayerGameMode.java
 +++ b/net/minecraft/server/level/ServerPlayerGameMode.java
-@@ -125,7 +_,15 @@
-       double d1 = this.f_9245_.m_20186_() - ((double)p_9282_.m_123342_() + 0.5D) + 1.5D;
-       double d2 = this.f_9245_.m_20189_() - ((double)p_9282_.m_123343_() + 0.5D);
-       double d3 = d0 * d0 + d1 * d1 + d2 * d2;
--      if (d3 > 36.0D) {
-+      double dist = f_9245_.m_21051_(net.minecraftforge.common.ForgeMod.REACH_DISTANCE.get()).m_22135_() + 1;
-+      net.minecraftforge.event.entity.player.PlayerInteractEvent.LeftClickBlock event = net.minecraftforge.common.ForgeHooks.onLeftClickBlock(f_9245_, p_9282_, p_9284_);
-+      if (event.isCanceled() || (!this.m_9295_() && event.getUseItem() == net.minecraftforge.eventbus.api.Event.Result.DENY)) { // Restore block and te data
-+         f_9245_.f_8906_.m_141995_(new ClientboundBlockBreakAckPacket(p_9282_, f_9244_.m_8055_(p_9282_), p_9283_, false, "mod canceled"));
-+         f_9244_.m_7260_(p_9282_, f_9244_.m_8055_(p_9282_), f_9244_.m_8055_(p_9282_), 3);
+@@ -124,7 +_,11 @@
+    }
+ 
+    public void m_214168_(BlockPos p_215120_, ServerboundPlayerActionPacket.Action p_215121_, Direction p_215122_, int p_215123_, int p_215124_) {
+-      if (this.f_9245_.m_146892_().m_82557_(Vec3.m_82512_(p_215120_)) > ServerGamePacketListenerImpl.f_215198_) {
++      net.minecraftforge.event.entity.player.PlayerInteractEvent.LeftClickBlock event = net.minecraftforge.common.ForgeHooks.onLeftClickBlock(f_9245_, p_215120_, p_215122_);
++      if (event.isCanceled() || (!this.m_9295_() && event.getResult() == net.minecraftforge.eventbus.api.Event.Result.DENY)) {
 +         return;
 +      }
-+      dist *= dist;
-+      if (d3 > dist) {
-          BlockState blockstate1;
-          if (this.f_9245_.f_19853_.m_142572_() != null && this.f_9245_.m_146902_().m_45594_(new ChunkPos(p_9282_)) < this.f_9245_.f_19853_.m_142572_().m_6846_().m_11312_()) {
-             blockstate1 = this.f_9244_.m_8055_(p_9282_);
-@@ -157,6 +_,7 @@
++      if (!this.f_9245_.canInteractWith(p_215120_, 1)) {
+          this.m_215125_(p_215120_, false, p_215124_, "too far");
+       } else if (p_215120_.m_123342_() >= p_215123_) {
+          this.f_9245_.f_8906_.m_9829_(new ClientboundBlockUpdatePacket(p_215120_, this.f_9244_.m_8055_(p_215120_)));
+@@ -152,6 +_,7 @@
              float f = 1.0F;
-             BlockState blockstate = this.f_9244_.m_8055_(p_9282_);
+             BlockState blockstate = this.f_9244_.m_8055_(p_215120_);
              if (!blockstate.m_60795_()) {
 +               if (event.getUseBlock() != net.minecraftforge.eventbus.api.Event.Result.DENY)
-                blockstate.m_60686_(this.f_9244_, p_9282_, this.f_9245_);
-                f = blockstate.m_60625_(this.f_9245_, this.f_9245_.f_19853_, p_9282_);
+                blockstate.m_60686_(this.f_9244_, p_215120_, this.f_9245_);
+                f = blockstate.m_60625_(this.f_9245_, this.f_9245_.f_19853_, p_215120_);
              }
-@@ -224,7 +_,8 @@
+@@ -221,7 +_,8 @@
  
     public boolean m_9280_(BlockPos p_9281_) {
        BlockState blockstate = this.f_9244_.m_8055_(p_9281_);
@@ -35,7 +31,7 @@
           return false;
        } else {
           BlockEntity blockentity = this.f_9244_.m_7702_(p_9281_);
-@@ -232,30 +_,42 @@
+@@ -229,30 +_,42 @@
           if (block instanceof GameMasterBlock && !this.f_9245_.m_36337_()) {
              this.f_9244_.m_7260_(p_9281_, blockstate, blockstate, 3);
              return false;
@@ -85,7 +81,7 @@
     }
  
     public InteractionResult m_6261_(ServerPlayer p_9262_, Level p_9263_, ItemStack p_9264_, InteractionHand p_9265_) {
-@@ -264,6 +_,8 @@
+@@ -261,6 +_,8 @@
        } else if (p_9262_.m_36335_().m_41519_(p_9264_.m_41720_())) {
           return InteractionResult.PASS;
        } else {
@@ -120,7 +116,7 @@
 +         if (event.getUseBlock() == net.minecraftforge.eventbus.api.Event.Result.ALLOW || (event.getUseBlock() != net.minecraftforge.eventbus.api.Event.Result.DENY && !flag1)) {
              InteractionResult interactionresult = blockstate.m_60664_(p_9267_, p_9266_, p_9269_, p_9270_);
              if (interactionresult.m_19077_()) {
-                CriteriaTriggers.f_10562_.m_45482_(p_9266_, blockpos, itemstack);
+                CriteriaTriggers.f_10562_.m_220040_(p_9266_, blockpos, itemstack);
 @@ -317,8 +_,8 @@
              }
           }

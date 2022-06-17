@@ -1,14 +1,14 @@
 /*
- * Minecraft Forge - Forge Development LLC
+ * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
 package net.minecraftforge.common.extensions;
 
 import java.util.Optional;
-import javax.annotation.Nullable;
 
 import net.minecraft.client.Camera;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.LivingEntity;
@@ -17,6 +17,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.FishingHook;
+import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.pathfinder.BlockPathTypes;
@@ -37,6 +38,8 @@ import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.ToolAction;
+import net.minecraftforge.common.ToolActions;
+import org.jetbrains.annotations.Nullable;
 
 public interface IForgeBlockState
 {
@@ -314,14 +317,15 @@ public interface IForgeBlockState
     * Gathers how much experience this block drops when broken.
     *
     * @param level The level
+    * @param randomSource Random source to use for experience randomness
     * @param pos Block position
     * @param fortuneLevel fortune enchantment level of tool being used
     * @param silkTouchLevel silk touch enchantment level of tool being used
     * @return Amount of XP from breaking this block.
     */
-    default int getExpDrop(LevelReader level, BlockPos pos, int fortuneLevel, int silkTouchLevel)
+    default int getExpDrop(LevelReader level, RandomSource randomSource, BlockPos pos, int fortuneLevel, int silkTouchLevel)
     {
-        return self().getBlock().getExpDrop(self(), level, pos, fortuneLevel, silkTouchLevel);
+        return self().getBlock().getExpDrop(self(), level, randomSource, pos, fortuneLevel, silkTouchLevel);
     }
 
     default BlockState rotate(LevelAccessor level, BlockPos pos, Rotation direction)
@@ -537,25 +541,36 @@ public interface IForgeBlockState
     }
 
     /**
-     * Get the {@code BlockPathTypes} for this block. Return {@code null} for vanilla behavior.
+     * Gets the path type of this block when an entity is pathfinding. When
+     * {@code null}, uses vanilla behavior.
      *
-     * @return the PathNodeType
-     */
-    @Nullable
-    default BlockPathTypes getBlockPathType(BlockGetter level, BlockPos pos)
-    {
-        return getBlockPathType(level, pos, null);
-    }
-
-    /**
-     * Get the {@code PathNodeType} for this block. Return {@code null} for vanilla behavior.
-     *
-     * @return the PathNodeType
+     * @param level the level which contains this block
+     * @param pos the position of the block
+     * @param mob the mob currently pathfinding, may be {@code null}
+     * @return the path type of this block
      */
     @Nullable
     default BlockPathTypes getBlockPathType(BlockGetter level, BlockPos pos, @Nullable Mob mob)
     {
-        return self().getBlock().getAiPathNodeType(self(), level, pos, mob);
+        return self().getBlock().getBlockPathType(self(), level, pos, mob);
+    }
+
+    /**
+     * Gets the path type of the adjacent block to a pathfinding entity.
+     * Path types with a negative malus are not traversable for the entity.
+     * Pathfinding entities will favor paths consisting of a lower malus.
+     * When {@code null}, uses vanilla behavior.
+     *
+     * @param level the level which contains this block
+     * @param pos the position of the block
+     * @param mob the mob currently pathfinding, may be {@code null}
+     * @param originalType the path type of the source the entity is on
+     * @return the path type of this block
+     */
+    @Nullable
+    default BlockPathTypes getAdjacentBlockPathType(BlockGetter level, BlockPos pos, @Nullable Mob mob, BlockPathTypes originalType)
+    {
+        return self().getBlock().getAdjacentBlockPathType(self(), level, pos, mob, originalType);
     }
 
     /**
@@ -603,22 +618,21 @@ public interface IForgeBlockState
     }
 
     /**
-     * Returns the state that this block should transform into when right clicked by a tool.
-     * For example: Used to determine if an axe can strip, a shovel can path, or a hoe can till.
-     * Return null if vanilla behavior should be disabled.
+     * Returns the state that this block should transform into when right-clicked by a tool.
+     * For example: Used to determine if {@link ToolActions#AXE_STRIP an axe can strip},
+     * {@link ToolActions#SHOVEL_FLATTEN a shovel can path}, or {@link ToolActions#HOE_TILL a hoe can till}.
+     * Returns {@code null} if nothing should happen.
      *
-     * @param level The level
-     * @param pos The block position in level
-     * @param player The player clicking the block
-     * @param stack The stack being used by the player
-     * @param toolAction The tool type to be considered when performing the action
+     * @param context The use on context that the action was performed in
+     * @param toolAction The action being performed by the tool
+     * @param simulate If {@code true}, no actions that modify the world in any way should be performed. If {@code false}, the world may be modified.
      * @return The resulting state after the action has been performed
      */
     @Nullable
-    default BlockState getToolModifiedState(Level level, BlockPos pos, Player player, ItemStack stack, ToolAction toolAction)
+    default BlockState getToolModifiedState(UseOnContext context, ToolAction toolAction, boolean simulate)
     {
-        BlockState eventState = net.minecraftforge.event.ForgeEventFactory.onToolUse(self(), level, pos, player, stack, toolAction);
-        return eventState != self() ? eventState : self().getBlock().getToolModifiedState(self(), level, pos, player, stack, toolAction);
+        BlockState eventState = net.minecraftforge.event.ForgeEventFactory.onToolUse(self(), context, toolAction, simulate);
+        return eventState != self() ? eventState : self().getBlock().getToolModifiedState(self(), context, toolAction, simulate);
     }
 
     /**
@@ -672,5 +686,26 @@ public interface IForgeBlockState
     default boolean supportsExternalFaceHiding()
     {
         return self().getBlock().supportsExternalFaceHiding(self());
+    }
+
+    /**
+     * Returns whether the block can be hydrated by a fluid.
+     *
+     * <p>Hydration is an arbitrary word which depends on the block.
+     * <ul>
+     *     <li>A farmland has moisture</li>
+     *     <li>A sponge can soak up the liquid</li>
+     *     <li>A coral can live</li>
+     * </ul>
+     *
+     * @param getter the getter which can get the block
+     * @param pos the position of the block being hydrated
+     * @param fluid the state of the fluid
+     * @param fluidPos the position of the fluid
+     * @return {@code true} if the block can be hydrated, {@code false} otherwise
+     */
+    default boolean canBeHydrated(BlockGetter getter, BlockPos pos, FluidState fluid, BlockPos fluidPos)
+    {
+        return self().getBlock().canBeHydrated(self(), getter, pos, fluid, fluidPos);
     }
 }

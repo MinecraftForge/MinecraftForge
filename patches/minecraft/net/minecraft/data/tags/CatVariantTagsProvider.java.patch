@@ -1,0 +1,16 @@
+--- a/net/minecraft/data/tags/CatVariantTagsProvider.java
++++ b/net/minecraft/data/tags/CatVariantTagsProvider.java
+@@ -6,8 +_,13 @@
+ import net.minecraft.world.entity.animal.CatVariant;
+ 
+ public class CatVariantTagsProvider extends TagsProvider<CatVariant> {
++   /** @deprecated Forge: Use the {@link #CatVariantTagsProvider(DataGenerator, String, net.minecraftforge.common.data.ExistingFileHelper) mod id variant} */
++   @Deprecated
+    public CatVariantTagsProvider(DataGenerator p_236420_) {
+       super(p_236420_, Registry.f_235732_);
++   }
++   public CatVariantTagsProvider(DataGenerator p_236420_, String modId, @org.jetbrains.annotations.Nullable net.minecraftforge.common.data.ExistingFileHelper existingFileHelper) {
++      super(p_236420_, Registry.f_235732_, modId, existingFileHelper);
+    }
+ 
+    protected void m_6577_() {

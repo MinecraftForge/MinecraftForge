@@ -1,5 +1,5 @@
 /*
- * Minecraft Forge - Forge Development LLC
+ * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
@@ -14,6 +14,9 @@ import java.util.Objects;
 import java.util.TreeMap;
 import java.util.function.Supplier;
 
+import com.google.common.hash.Hashing;
+import com.google.gson.JsonObject;
+import net.minecraft.data.CachedOutput;
 import org.apache.commons.lang3.text.translate.JavaUnicodeEscaper;
 
 import com.google.gson.Gson;
@@ -31,7 +34,7 @@ import net.minecraft.world.effect.MobEffect;
 
 @SuppressWarnings("deprecation")
 public abstract class LanguageProvider implements DataProvider {
-    private static final Gson GSON = (new GsonBuilder()).setPrettyPrinting().disableHtmlEscaping().create();
+    private static final Gson GSON = (new GsonBuilder()).setPrettyPrinting().disableHtmlEscaping().setLenient().create();
     private final Map<String, String> data = new TreeMap<>();
     private final DataGenerator gen;
     private final String modid;
@@ -46,7 +49,7 @@ public abstract class LanguageProvider implements DataProvider {
     protected abstract void addTranslations();
 
     @Override
-    public void run(HashCache cache) throws IOException {
+    public void run(CachedOutput cache) throws IOException {
         addTranslations();
         if (!data.isEmpty())
             save(cache, data, this.gen.getOutputFolder().resolve("assets/" + modid + "/lang/" + locale + ".json"));
@@ -57,19 +60,14 @@ public abstract class LanguageProvider implements DataProvider {
         return "Languages: " + locale;
     }
 
-    private void save(HashCache cache, Object object, Path target) throws IOException {
-        String data = GSON.toJson(object);
-        data = JavaUnicodeEscaper.outsideOf(0, 0x7f).translate(data); // Escape unicode after the fact so that it's not double escaped by GSON
-        String hash = DataProvider.SHA1.hashUnencodedChars(data).toString();
-        if (!Objects.equals(cache.getHash(target), hash) || !Files.exists(target)) {
-           Files.createDirectories(target.getParent());
-
-           try (BufferedWriter bufferedwriter = Files.newBufferedWriter(target)) {
-              bufferedwriter.write(data);
-           }
+    private void save(CachedOutput cache, Object object, Path target) throws IOException {
+        // TODO: DataProvider.saveStable handles the caching and hashing already, but creating the JSON Object this way seems unreliable. -C
+        JsonObject json = new JsonObject();
+        for (Map.Entry<String, String> pair : data.entrySet()) {
+            json.addProperty(pair.getKey(), pair.getValue());
         }
 
-        cache.putNew(target, hash);
+        DataProvider.saveStable(cache, json, target);
     }
 
     public void addBlock(Supplier<? extends Block> key, String name) {

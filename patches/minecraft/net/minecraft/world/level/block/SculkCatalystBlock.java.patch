@@ -1,0 +1,18 @@
+--- a/net/minecraft/world/level/block/SculkCatalystBlock.java
++++ b/net/minecraft/world/level/block/SculkCatalystBlock.java
+@@ -72,9 +_,11 @@
+ 
+    public void m_213646_(BlockState p_222109_, ServerLevel p_222110_, BlockPos p_222111_, ItemStack p_222112_, boolean p_222113_) {
+       super.m_213646_(p_222109_, p_222110_, p_222111_, p_222112_, p_222113_);
+-      if (p_222113_) {
+-         this.m_220822_(p_222110_, p_222111_, p_222112_, this.f_222087_);
+-      }
+-
++
++   }
++
++   @Override
++   public int getExpDrop(BlockState state, net.minecraft.world.level.LevelReader level, RandomSource randomSource, BlockPos pos, int fortuneLevel, int silkTouchLevel) {
++      return silkTouchLevel == 0 ? this.f_222087_.m_214085_(randomSource) : 0;
+    }
+ }

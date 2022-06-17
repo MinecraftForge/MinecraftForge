@@ -1,5 +1,5 @@
 /*
- * Minecraft Forge - Forge Development LLC
+ * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
@@ -110,73 +110,67 @@ public class TagBasedToolTypesTest
         DataGenerator gen = event.getGenerator();
         ExistingFileHelper existing = event.getExistingFileHelper();
 
-        if (event.includeServer())
+        gen.addProvider(event.includeServer(), new BlockTagsProvider(gen, MODID, existing)
         {
-            gen.addProvider(new BlockTagsProvider(gen, MODID, existing)
+            @Override
+            protected void addTags()
             {
-                @Override
-                protected void addTags()
-                {
-                    this.tag(MINEABLE_TAG).add(STONE.get());
-                    this.tag(REQUIRES_TAG).add(STONE.get());
-                }
-            });
+                this.tag(MINEABLE_TAG).add(STONE.get());
+                this.tag(REQUIRES_TAG).add(STONE.get());
+            }
+        });
 
-            gen.addProvider(new LootTableProvider(gen)
+        gen.addProvider(event.includeServer(), new LootTableProvider(gen)
+        {
+            @Override
+            protected void validate(Map<ResourceLocation, LootTable> map, ValidationContext validationtracker)
             {
-                @Override
-                protected void validate(Map<ResourceLocation, LootTable> map, ValidationContext validationtracker)
-                {
-                   map.forEach((name, table) -> LootTables.validate(validationtracker, name, table));
-                }
+               map.forEach((name, table) -> LootTables.validate(validationtracker, name, table));
+            }
 
-                @Override
-                protected List<Pair<Supplier<Consumer<BiConsumer<ResourceLocation, LootTable.Builder>>>, LootContextParamSet>> getTables()
+            @Override
+            protected List<Pair<Supplier<Consumer<BiConsumer<ResourceLocation, LootTable.Builder>>>, LootContextParamSet>> getTables()
+            {
+                return ImmutableList.of(Pair.of(() ->
                 {
-                    return ImmutableList.of(Pair.of(() ->
+                    return new BlockLoot()
                     {
-                        return new BlockLoot()
+
+                        @Override
+                        protected Iterable<Block> getKnownBlocks()
                         {
+                            return BLOCKS.getEntries().stream().map(Supplier::get).collect(Collectors.toList());
+                        }
 
-                            @Override
-                            protected Iterable<Block> getKnownBlocks()
-                            {
-                                return BLOCKS.getEntries().stream().map(Supplier::get).collect(Collectors.toList());
-                            }
+                        @Override
+                        protected void addTables()
+                        {
+                            this.dropSelf(STONE.get());
+                        }
+                    };
+                }, LootContextParamSets.BLOCK));
+            }
+        });
 
-                            @Override
-                            protected void addTables()
-                            {
-                                this.dropSelf(STONE.get());
-                            }
-                        };
-                    }, LootContextParamSets.BLOCK));
-                }
-            });
-        }
-
-        if (event.includeClient())
+        gen.addProvider(event.includeClient(), new BlockStateProvider(gen, MODID, existing)
         {
-            gen.addProvider(new BlockStateProvider(gen, MODID, existing)
+            @Override
+            protected void registerStatesAndModels()
             {
-                @Override
-                protected void registerStatesAndModels()
-                {
-                    ModelFile model = models().cubeAll(STONE.get().getRegistryName().getPath(), mcLoc("block/debug"));
-                    simpleBlock(STONE.get(), model);
-                    simpleBlockItem(STONE.get(), model);
-                }
-            });
-            gen.addProvider(new ItemModelProvider(gen, MODID, existing)
+                ModelFile model = models().cubeAll(STONE.getId().getPath(), mcLoc("block/debug"));
+                simpleBlock(STONE.get(), model);
+                simpleBlockItem(STONE.get(), model);
+            }
+        });
+        gen.addProvider(event.includeClient(), new ItemModelProvider(gen, MODID, existing)
+        {
+            @Override
+            protected void registerModels()
             {
-                @Override
-                protected void registerModels()
-                {
-                    getBuilder(TOOL.get().getRegistryName().getPath())
-                        .parent(new UncheckedModelFile("item/generated"))
-                        .texture("layer0", mcLoc("item/wooden_pickaxe"));
-                }
-            });
-        }
+                getBuilder(TOOL.getId().getPath())
+                    .parent(new UncheckedModelFile("item/generated"))
+                    .texture("layer0", mcLoc("item/wooden_pickaxe"));
+            }
+        });
     }
 }

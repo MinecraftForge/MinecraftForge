@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/entity/ItemRenderer.java
 +++ b/net/minecraft/client/renderer/entity/ItemRenderer.java
-@@ -76,8 +_,8 @@
+@@ -77,8 +_,8 @@
  
     public ItemRenderer(TextureManager p_174225_, ModelManager p_174226_, ItemColors p_174227_, BlockEntityWithoutLevelRenderer p_174228_) {
        this.f_115096_ = p_174225_;
@@ -10,7 +10,7 @@
  
        for(Item item : Registry.f_122827_) {
           if (!f_115094_.contains(item)) {
-@@ -117,7 +_,7 @@
+@@ -118,7 +_,7 @@
              }
           }
  
@@ -19,7 +19,7 @@
           p_115147_.m_85837_(-0.5D, -0.5D, -0.5D);
           if (!p_115151_.m_7521_() && (!p_115144_.m_150930_(Items.f_42713_) || flag)) {
              boolean flag1;
-@@ -127,7 +_,8 @@
+@@ -128,7 +_,8 @@
              } else {
                 flag1 = true;
              }
@@ -28,8 +28,8 @@
 +            else {
              RenderType rendertype = ItemBlockRenderTypes.m_109279_(p_115144_, flag1);
              VertexConsumer vertexconsumer;
-             if (p_115144_.m_150930_(Items.f_42522_) && p_115144_.m_41790_()) {
-@@ -153,8 +_,9 @@
+             if (p_115144_.m_204117_(ItemTags.f_215866_) && p_115144_.m_41790_()) {
+@@ -154,8 +_,9 @@
              }
  
              this.m_115189_(p_115151_, p_115144_, p_115149_, p_115150_, p_115147_, vertexconsumer);
@@ -40,7 +40,7 @@
           }
  
           p_115147_.m_85849_();
-@@ -198,7 +_,7 @@
+@@ -199,7 +_,7 @@
           float f = (float)(i >> 16 & 255) / 255.0F;
           float f1 = (float)(i >> 8 & 255) / 255.0F;
           float f2 = (float)(i & 255) / 255.0F;
@@ -49,11 +49,11 @@
        }
  
     }
-@@ -301,6 +_,7 @@
+@@ -302,6 +_,7 @@
              crashreportcategory.m_128165_("Item Type", () -> {
                 return String.valueOf((Object)p_174237_.m_41720_());
              });
-+            crashreportcategory.m_128165_("Registry Name", () -> String.valueOf(p_174237_.m_41720_().getRegistryName()));
++            crashreportcategory.m_128165_("Registry Name", () -> String.valueOf(net.minecraftforge.registries.ForgeRegistries.ITEMS.getKey(p_174237_.m_41720_())));
              crashreportcategory.m_128165_("Item Damage", () -> {
                 return String.valueOf(p_174237_.m_41773_());
              });

@@ -1,5 +1,5 @@
 /*
- * Minecraft Forge - Forge Development LLC
+ * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
@@ -29,8 +29,6 @@ import net.minecraftforge.forgespi.language.IModFileInfo;
 import net.minecraftforge.forgespi.locating.IModFile;
 import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
-
 public class ResourcePackLoader {
     private static Map<IModFile, PathResourcePack> modResourcePacks;
 
@@ -57,9 +55,9 @@ public class ResourcePackLoader {
     {
         return new PathResourcePack(mf.getFile().getFileName(), mf.getFile().getFilePath()){
             final IModFile modFile = mf.getFile();
-            @Nonnull
+            @NotNull
             @Override
-            protected Path resolve(@Nonnull String... paths)
+            protected Path resolve(@NotNull String... paths)
             {
                 return modFile.findResource(paths);
             }

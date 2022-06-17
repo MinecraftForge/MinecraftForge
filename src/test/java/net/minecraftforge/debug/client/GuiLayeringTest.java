@@ -1,5 +1,5 @@
 /*
- * Minecraft Forge - Forge Development LLC
+ * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
@@ -11,7 +11,6 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ScreenEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -33,11 +32,11 @@ public class GuiLayeringTest
         {
             if (event.getScreen() instanceof AbstractContainerScreen)
             {
-                event.addListener(new Button(2, 2, 150, 20, new TextComponent("Test Gui Layering"), btn -> {
-                    Minecraft.getInstance().pushGuiLayer(new TestLayer(new TextComponent("LayerScreen")));
+                event.addListener(new Button(2, 2, 150, 20, Component.literal("Test Gui Layering"), btn -> {
+                    Minecraft.getInstance().pushGuiLayer(new TestLayer(Component.literal("LayerScreen")));
                 }));
-                event.addListener(new Button(2, 25, 150, 20, new TextComponent("Test Gui Normal"), btn -> {
-                    Minecraft.getInstance().setScreen(new TestLayer(new TextComponent("LayerScreen")));
+                event.addListener(new Button(2, 25, 150, 20, Component.literal("Test Gui Normal"), btn -> {
+                    Minecraft.getInstance().setScreen(new TestLayer(Component.literal("LayerScreen")));
                 }));
             }
         }
@@ -73,9 +72,9 @@ public class GuiLayeringTest
                 xoff = RANDOM.nextInt(xoff);
                 yoff = RANDOM.nextInt(yoff);
 
-                this.addRenderableWidget(new Button(xoff, yoff + buttonSpacing * (cnt++), buttonWidth, buttonHeight, new TextComponent("Push New Layer"), this::pushLayerButton));
-                this.addRenderableWidget(new Button(xoff, yoff + buttonSpacing * (cnt++), buttonWidth, buttonHeight, new TextComponent("Pop Current Layer"), this::popLayerButton));
-                this.addRenderableWidget(new Button(xoff, yoff + buttonSpacing * (cnt++), buttonWidth, buttonHeight, new TextComponent("Close entire stack"), this::closeStack));
+                this.addRenderableWidget(new Button(xoff, yoff + buttonSpacing * (cnt++), buttonWidth, buttonHeight, Component.literal("Push New Layer"), this::pushLayerButton));
+                this.addRenderableWidget(new Button(xoff, yoff + buttonSpacing * (cnt++), buttonWidth, buttonHeight, Component.literal("Pop Current Layer"), this::popLayerButton));
+                this.addRenderableWidget(new Button(xoff, yoff + buttonSpacing * (cnt++), buttonWidth, buttonHeight, Component.literal("Close entire stack"), this::closeStack));
             }
 
             private void closeStack(Button button)
@@ -90,7 +89,7 @@ public class GuiLayeringTest
 
             private void pushLayerButton(Button button)
             {
-                this.minecraft.pushGuiLayer(new TestLayer(new TextComponent("LayerScreen")));
+                this.minecraft.pushGuiLayer(new TestLayer(Component.literal("LayerScreen")));
             }
         }
     }

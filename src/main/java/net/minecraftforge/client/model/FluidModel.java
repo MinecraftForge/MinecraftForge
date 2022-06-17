@@ -1,5 +1,5 @@
 /*
- * Minecraft Forge - Forge Development LLC
+ * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
@@ -11,12 +11,10 @@ import java.util.Collection;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Optional;
-import java.util.Random;
 import java.util.Set;
 
-import javax.annotation.Nullable;
-
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.state.BlockState;
 import com.mojang.math.Transformation;
 import net.minecraft.client.renderer.block.model.ItemTransforms.TransformType;
@@ -30,12 +28,13 @@ import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraftforge.client.ForgeHooksClient;
+import net.minecraftforge.client.IFluidTypeRenderProperties;
+import net.minecraftforge.client.RenderProperties;
 import net.minecraftforge.client.model.data.IModelData;
 import net.minecraftforge.client.model.geometry.IModelGeometry;
 import net.minecraftforge.client.model.pipeline.BakedQuadBuilder;
 import net.minecraftforge.client.model.pipeline.IVertexConsumer;
 import net.minecraftforge.client.model.pipeline.TRSRTransformer;
-import net.minecraftforge.fluids.FluidAttributes;
 
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -51,6 +50,7 @@ import net.minecraft.client.resources.model.Material;
 import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.ModelState;
 import net.minecraft.client.resources.model.UnbakedModel;
+import org.jetbrains.annotations.Nullable;
 
 public final class FluidModel implements IModelGeometry<FluidModel>
 {
@@ -73,16 +73,16 @@ public final class FluidModel implements IModelGeometry<FluidModel>
     @Override
     public BakedModel bake(IModelConfiguration owner, ModelBakery bakery, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelTransform, ItemOverrides overrides, ResourceLocation modelLocation)
     {
-        FluidAttributes attrs = fluid.getAttributes();
+        IFluidTypeRenderProperties props = RenderProperties.get(fluid);
         return new CachingBakedFluid(
                 modelTransform.getRotation(),
                 PerspectiveMapWrapper.getTransforms(modelTransform),
                 modelLocation,
-                attrs.getColor(),
-                spriteGetter.apply(ForgeHooksClient.getBlockMaterial(attrs.getStillTexture())),
-                spriteGetter.apply(ForgeHooksClient.getBlockMaterial(attrs.getFlowingTexture())),
-                Optional.ofNullable(attrs.getOverlayTexture()).map(ForgeHooksClient::getBlockMaterial).map(spriteGetter),
-                attrs.isLighterThanAir(),
+                props.getColorTint(),
+                spriteGetter.apply(ForgeHooksClient.getBlockMaterial(props.getStillTexture())),
+                spriteGetter.apply(ForgeHooksClient.getBlockMaterial(props.getFlowingTexture())),
+                Optional.ofNullable(props.getOverlayTexture()).map(ForgeHooksClient::getBlockMaterial).map(spriteGetter),
+                fluid.getFluidType().isLighterThanAir(),
                 null
         );
     }
@@ -186,7 +186,7 @@ public final class FluidModel implements IModelGeometry<FluidModel>
         }
 
         @Override
-        public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, Random rand, IModelData modelData)
+        public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, RandomSource rand, IModelData modelData)
         {
             if (side != null)
             {
@@ -450,7 +450,7 @@ public final class FluidModel implements IModelGeometry<FluidModel>
         }
 
         @Override
-        public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, Random rand)
+        public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, RandomSource rand)
         {
             return side == null ? ImmutableList.of() : faceQuads.get(side);
         }

@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/entity/PersistentEntitySectionManager.java
 +++ b/net/minecraft/world/level/entity/PersistentEntitySectionManager.java
-@@ -72,7 +_,16 @@
+@@ -71,7 +_,16 @@
        return this.m_157538_(p_157534_, false);
     }
  
@@ -17,7 +17,7 @@
        if (!this.m_157557_(p_157539_)) {
           return false;
        } else {
-@@ -104,12 +_,14 @@
+@@ -103,12 +_,14 @@
     public void m_157552_(Stream<T> p_157553_) {
        p_157553_.forEach((p_157607_) -> {
           this.m_157538_(p_157607_, true);
@@ -32,7 +32,7 @@
        });
     }
  
-@@ -248,6 +_,7 @@
+@@ -247,6 +_,7 @@
        while((chunkentities = this.f_157500_.poll()) != null) {
           chunkentities.m_156792_().forEach((p_157593_) -> {
              this.m_157538_(p_157593_, true);
@@ -40,7 +40,7 @@
           });
           this.f_157498_.put(chunkentities.m_156791_().m_45588_(), PersistentEntitySectionManager.ChunkLoadStatus.LOADED);
        }
-@@ -350,11 +_,13 @@
+@@ -349,11 +_,13 @@
  
     class Callback implements EntityInLevelCallback {
        private final T f_157609_;
@@ -54,7 +54,7 @@
           this.f_157610_ = p_157615_;
           this.f_157611_ = p_157616_;
        }
-@@ -371,9 +_,11 @@
+@@ -370,9 +_,11 @@
              PersistentEntitySectionManager.this.m_157509_(this.f_157610_, this.f_157611_);
              EntitySection<T> entitysection = PersistentEntitySectionManager.this.f_157495_.m_156893_(i);
              entitysection.m_188346_(this.f_157609_);

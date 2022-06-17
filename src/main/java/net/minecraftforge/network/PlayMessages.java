@@ -1,5 +1,5 @@
 /*
- * Minecraft Forge - Forge Development LLC
+ * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
@@ -12,7 +12,6 @@ import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
-import net.minecraft.network.protocol.game.ClientboundAddMobPacket;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -36,7 +35,7 @@ public class PlayMessages
 {
     /**
      * Used to spawn a custom entity without the same restrictions as
-     * {@link ClientboundAddEntityPacket} or {@link ClientboundAddMobPacket}
+     * {@link ClientboundAddEntityPacket}
      *
      * To customize how your entity is created clientside (instead of using the default factory provided to the {@link EntityType})
      * see {@link EntityType.Builder#setCustomClientFactory}.
@@ -143,7 +142,11 @@ public class PlayMessages
                     return;
                 }
 
-                e.setPacketCoordinates(msg.posX, msg.posY, msg.posZ);
+                /*
+                 * Sets the postiion on the client, Mirrors what
+                 * Entity#recreateFromPacket and LivingEntity#recreateFromPacket does.
+                 */
+                e.syncPacketPositionCodec(msg.posX, msg.posY, msg.posZ);
                 e.absMoveTo(msg.posX, msg.posY, msg.posZ, (msg.yaw * 360) / 256.0F, (msg.pitch * 360) / 256.0F);
                 e.setYHeadRot((msg.headYaw * 360) / 256.0F);
                 e.setYBodyRot((msg.headYaw * 360) / 256.0F);

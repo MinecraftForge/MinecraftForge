@@ -1,5 +1,5 @@
 /*
- * Minecraft Forge - Forge Development LLC
+ * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
@@ -13,12 +13,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
-import javax.annotation.Nonnull;
-
+import net.minecraft.data.CachedOutput;
 import net.minecraft.world.level.block.ButtonBlock;
 import net.minecraft.world.level.block.PressurePlateBlock;
 import net.minecraft.world.level.block.StandingSignBlock;
 import net.minecraft.world.level.block.WallSignBlock;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -47,7 +47,6 @@ import net.minecraft.world.level.block.TrapDoorBlock;
 import net.minecraft.world.level.block.WallBlock;
 import net.minecraft.world.level.block.state.properties.WallSide;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.data.HashCache;
 import net.minecraft.data.DataProvider;
 import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.level.block.state.properties.AttachFace;
@@ -61,6 +60,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraft.resources.ResourceLocation;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Data provider for blockstate files. Extends {@link BlockModelProvider} so that
@@ -83,15 +83,19 @@ public abstract class BlockStateProvider implements DataProvider {
         this.generator = gen;
         this.modid = modid;
         this.blockModels = new BlockModelProvider(gen, modid, exFileHelper) {
+            @Override public void run(CachedOutput p_236071_) throws IOException {}
+
             @Override protected void registerModels() {}
         };
         this.itemModels = new ItemModelProvider(gen, modid, this.blockModels.existingFileHelper) {
             @Override protected void registerModels() {}
+
+            @Override public void run(CachedOutput p_236071_) throws IOException {}
         };
     }
 
     @Override
-    public void run(HashCache cache) throws IOException {
+    public void run(CachedOutput cache) throws IOException {
         models().clear();
         itemModels().clear();
         registeredBlocks.clear();
@@ -145,12 +149,16 @@ public abstract class BlockStateProvider implements DataProvider {
         return new ResourceLocation(name);
     }
 
+    private ResourceLocation key(Block block) {
+        return ForgeRegistries.BLOCKS.getKey(block);
+    }
+
     private String name(Block block) {
-        return block.getRegistryName().getPath();
+        return key(block).getPath();
     }
 
     public ResourceLocation blockTexture(Block block) {
-        ResourceLocation name = block.getRegistryName();
+        ResourceLocation name = key(block);
         return new ResourceLocation(name.getNamespace(), ModelProvider.BLOCK_FOLDER + "/" + name.getPath());
     }
 
@@ -175,7 +183,7 @@ public abstract class BlockStateProvider implements DataProvider {
     }
 
     public void simpleBlockItem(Block block, ModelFile model) {
-        itemModels().getBuilder(block.getRegistryName().getPath()).parent(model);
+        itemModels().getBuilder(key(block).getPath()).parent(model);
     }
 
     public void simpleBlock(Block block, ConfiguredModel... models) {
@@ -291,7 +299,7 @@ public abstract class BlockStateProvider implements DataProvider {
     }
 
     public void stairsBlock(StairBlock block, ResourceLocation side, ResourceLocation bottom, ResourceLocation top) {
-        stairsBlockInternal(block, block.getRegistryName().toString(), side, bottom, top);
+        stairsBlockInternal(block, key(block).toString(), side, bottom, top);
     }
 
     public void stairsBlock(StairBlock block, String name, ResourceLocation side, ResourceLocation bottom, ResourceLocation top) {
@@ -404,7 +412,7 @@ public abstract class BlockStateProvider implements DataProvider {
     }
 
     public void fenceBlock(FenceBlock block, ResourceLocation texture) {
-        String baseName = block.getRegistryName().toString();
+        String baseName = key(block).toString();
         fourWayBlock(block, models().fencePost(baseName + "_post", texture), models().fenceSide(baseName + "_side", texture));
     }
 
@@ -413,7 +421,7 @@ public abstract class BlockStateProvider implements DataProvider {
     }
 
     public void fenceGateBlock(FenceGateBlock block, ResourceLocation texture) {
-        fenceGateBlockInternal(block, block.getRegistryName().toString(), texture);
+        fenceGateBlockInternal(block, key(block).toString(), texture);
     }
 
     public void fenceGateBlock(FenceGateBlock block, String name, ResourceLocation texture) {
@@ -446,7 +454,7 @@ public abstract class BlockStateProvider implements DataProvider {
     }
 
     public void wallBlock(WallBlock block, ResourceLocation texture) {
-        wallBlockInternal(block, block.getRegistryName().toString(), texture);
+        wallBlockInternal(block, key(block).toString(), texture);
     }
 
     public void wallBlock(WallBlock block, String name, ResourceLocation texture) {
@@ -456,7 +464,7 @@ public abstract class BlockStateProvider implements DataProvider {
     private void wallBlockInternal(WallBlock block, String baseName, ResourceLocation texture) {
         wallBlock(block, models().wallPost(baseName + "_post", texture), models().wallSide(baseName + "_side", texture), models().wallSideTall(baseName + "_side_tall", texture));
     }
-    
+
     public static final ImmutableMap<Direction, Property<WallSide>> WALL_PROPS = ImmutableMap.<Direction, Property<WallSide>>builder()
     		.put(Direction.EAST,  BlockStateProperties.EAST_WALL)
     		.put(Direction.NORTH, BlockStateProperties.NORTH_WALL)
@@ -475,7 +483,7 @@ public abstract class BlockStateProvider implements DataProvider {
         		wallSidePart(builder, sideTall, e, WallSide.TALL);
         	});
     }
-    
+
     private void wallSidePart(MultiPartBlockStateBuilder builder, ModelFile model, Map.Entry<Direction, Property<WallSide>> entry, WallSide height) {
         builder.part()
         	.modelFile(model)
@@ -486,7 +494,7 @@ public abstract class BlockStateProvider implements DataProvider {
     }
 
     public void paneBlock(IronBarsBlock block, ResourceLocation pane, ResourceLocation edge) {
-        paneBlockInternal(block, block.getRegistryName().toString(), pane, edge);
+        paneBlockInternal(block, key(block).toString(), pane, edge);
     }
 
     public void paneBlock(IronBarsBlock block, String name, ResourceLocation pane, ResourceLocation edge) {
@@ -518,7 +526,7 @@ public abstract class BlockStateProvider implements DataProvider {
     }
 
     public void doorBlock(DoorBlock block, ResourceLocation bottom, ResourceLocation top) {
-        doorBlockInternal(block, block.getRegistryName().toString(), bottom, top);
+        doorBlockInternal(block, key(block).toString(), bottom, top);
     }
 
     public void doorBlock(DoorBlock block, String name, ResourceLocation bottom, ResourceLocation top) {
@@ -553,7 +561,7 @@ public abstract class BlockStateProvider implements DataProvider {
     }
 
     public void trapdoorBlock(TrapDoorBlock block, ResourceLocation texture, boolean orientable) {
-        trapdoorBlockInternal(block, block.getRegistryName().toString(), texture, orientable);
+        trapdoorBlockInternal(block, key(block).toString(), texture, orientable);
     }
 
     public void trapdoorBlock(TrapDoorBlock block, String name, ResourceLocation texture, boolean orientable) {
@@ -587,19 +595,19 @@ public abstract class BlockStateProvider implements DataProvider {
         }, TrapDoorBlock.POWERED, TrapDoorBlock.WATERLOGGED);
     }
 
-    private void saveBlockState(HashCache cache, JsonObject stateJson, Block owner) {
-        ResourceLocation blockName = Preconditions.checkNotNull(owner.getRegistryName());
+    private void saveBlockState(CachedOutput cache, JsonObject stateJson, Block owner) {
+        ResourceLocation blockName = Preconditions.checkNotNull(key(owner));
         Path mainOutput = generator.getOutputFolder();
         String pathSuffix = "assets/" + blockName.getNamespace() + "/blockstates/" + blockName.getPath() + ".json";
         Path outputPath = mainOutput.resolve(pathSuffix);
         try {
-            DataProvider.save(GSON, cache, stateJson, outputPath);
+            DataProvider.saveStable(cache, stateJson, outputPath);
         } catch (IOException e) {
             LOGGER.error("Couldn't save blockstate to {}", outputPath, e);
         }
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public String getName() {
         return "Block States: " + modid;

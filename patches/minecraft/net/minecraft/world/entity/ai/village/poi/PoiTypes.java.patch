@@ -1,0 +1,32 @@
+--- a/net/minecraft/world/entity/ai/village/poi/PoiTypes.java
++++ b/net/minecraft/world/entity/ai/village/poi/PoiTypes.java
+@@ -47,8 +_,9 @@
+    private static final Set<BlockState> f_218069_ = ImmutableList.of(Blocks.f_50256_, Blocks.f_152477_, Blocks.f_152476_, Blocks.f_152478_).stream().flatMap((p_218093_) -> {
+       return p_218093_.m_49965_().m_61056_().stream();
+    }).collect(ImmutableSet.toImmutableSet());
+-   private static final Map<BlockState, Holder<PoiType>> f_218070_ = Maps.newHashMap();
+-   protected static final Set<BlockState> f_218067_ = new ObjectOpenHashSet<>(f_218070_.keySet());
++   // Forge: We patch these 2 fields to support modded entries
++   private static final Map<BlockState, PoiType> f_218070_ = net.minecraftforge.registries.GameData.getBlockStatePointOfInterestTypeMap();
++   protected static final Set<BlockState> f_218067_ = f_218070_.keySet();
+ 
+    private static Set<BlockState> m_218073_(Block p_218074_) {
+       return ImmutableSet.copyOf(p_218074_.m_49965_().m_61056_());
+@@ -66,16 +_,10 @@
+    }
+ 
+    private static void m_218077_(Holder<PoiType> p_218078_) {
+-      p_218078_.m_203334_().f_27325_().forEach((p_218081_) -> {
+-         Holder<PoiType> holder = f_218070_.put(p_218081_, p_218078_);
+-         if (holder != null) {
+-            throw (IllegalStateException)Util.m_137570_(new IllegalStateException(String.format("%s is defined in more than one PoI type", p_218081_)));
+-         }
+-      });
+    }
+ 
+    public static Optional<Holder<PoiType>> m_218075_(BlockState p_218076_) {
+-      return Optional.ofNullable(f_218070_.get(p_218076_));
++      return Optional.ofNullable(f_218070_.get(p_218076_)).flatMap(net.minecraftforge.registries.ForgeRegistries.POI_TYPES::getHolder);
+    }
+ 
+    public static PoiType m_218082_(Registry<PoiType> p_218083_) {

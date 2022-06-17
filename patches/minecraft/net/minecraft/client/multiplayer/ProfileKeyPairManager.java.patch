@@ -1,0 +1,11 @@
+--- a/net/minecraft/client/multiplayer/ProfileKeyPairManager.java
++++ b/net/minecraft/client/multiplayer/ProfileKeyPairManager.java
+@@ -64,6 +_,8 @@
+                this.m_233776_(profilekeypair);
+                return Optional.of(profilekeypair);
+             } catch (CryptException | MinecraftClientException | IOException ioexception) {
++               // Forge: The offline user api service always returns a null profile key pair, so let's hide this useless exception if in dev
++               if (net.minecraftforge.fml.loading.FMLLoader.isProduction() || p_233781_ != UserApiService.OFFLINE)
+                f_233765_.error("Failed to retrieve profile key pair", (Throwable)ioexception);
+                this.m_233776_((ProfileKeyPair)null);
+                return optional;

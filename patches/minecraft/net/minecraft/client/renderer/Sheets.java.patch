@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/Sheets.java
 +++ b/net/minecraft/client/renderer/Sheets.java
-@@ -127,7 +_,8 @@
+@@ -129,7 +_,8 @@
     }
  
     private static Material m_173385_(WoodType p_173386_) {
@@ -10,9 +10,9 @@
     }
  
     public static Material m_173381_(WoodType p_173382_) {
-@@ -174,5 +_,12 @@
-       default:
-          return p_110773_;
+@@ -176,5 +_,12 @@
+          default:
+             return p_110773_;
        }
 +   }
 +

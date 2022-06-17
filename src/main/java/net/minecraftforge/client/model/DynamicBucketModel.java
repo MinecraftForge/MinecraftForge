@@ -1,5 +1,5 @@
 /*
- * Minecraft Forge - Forge Development LLC
+ * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
@@ -22,14 +22,13 @@ import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.ForgeHooksClient;
+import net.minecraftforge.client.RenderProperties;
 import net.minecraftforge.client.model.geometry.IModelGeometry;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.Function;
 
@@ -40,6 +39,8 @@ import net.minecraft.client.resources.model.Material;
 import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.ModelState;
 import net.minecraft.client.resources.model.UnbakedModel;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public final class DynamicBucketModel implements IModelGeometry<DynamicBucketModel>
 {
@@ -51,7 +52,7 @@ public final class DynamicBucketModel implements IModelGeometry<DynamicBucketMod
     private static final float NORTH_Z_FLUID = 7.498f / 16f;
     private static final float SOUTH_Z_FLUID = 8.502f / 16f;
 
-    @Nonnull
+    @NotNull
     private final Fluid fluid;
 
     private final boolean flipGas;
@@ -93,7 +94,7 @@ public final class DynamicBucketModel implements IModelGeometry<DynamicBucketMod
 
         ModelState transformsFromModel = owner.getCombinedTransform();
 
-        TextureAtlasSprite fluidSprite = fluid != Fluids.EMPTY ? spriteGetter.apply(ForgeHooksClient.getBlockMaterial(fluid.getAttributes().getStillTexture())) : null;
+        TextureAtlasSprite fluidSprite = fluid != Fluids.EMPTY ? spriteGetter.apply(ForgeHooksClient.getBlockMaterial(RenderProperties.get(fluid).getStillTexture())) : null;
         TextureAtlasSprite coverSprite = (coverLocation != null && (!coverIsMask || baseLocation != null)) ? spriteGetter.apply(coverLocation) : null;
 
         ImmutableMap<TransformType, Transformation> transformMap =
@@ -105,7 +106,7 @@ public final class DynamicBucketModel implements IModelGeometry<DynamicBucketMod
         if (particleSprite == null && !coverIsMask) particleSprite = coverSprite;
 
         // if the fluid is lighter than air, will manipulate the initial state to be rotated 180deg to turn it upside down
-        if (flipGas && fluid != Fluids.EMPTY && fluid.getAttributes().isLighterThanAir())
+        if (flipGas && fluid != Fluids.EMPTY && fluid.getFluidType().isLighterThanAir())
         {
             modelTransform = new SimpleModelState(
                     modelTransform.getRotation().blockCornerToCenter().compose(
@@ -128,8 +129,8 @@ public final class DynamicBucketModel implements IModelGeometry<DynamicBucketMod
             if (templateSprite != null)
             {
                 // build liquid layer (inside)
-                int luminosity = applyFluidLuminosity ? fluid.getAttributes().getLuminosity() : 0;
-                int color = tint ? fluid.getAttributes().getColor() : 0xFFFFFFFF;
+                int luminosity = applyFluidLuminosity ? fluid.getFluidType().getLightLevel() : 0;
+                int color = tint ? RenderProperties.get(fluid).getColorTint() : 0xFFFFFFFF;
                 builder.addQuads(ItemLayerModel.getLayerRenderType(luminosity > 0), ItemTextureQuadConverter.convertTexture(transform, templateSprite, fluidSprite, NORTH_Z_FLUID, Direction.NORTH, color, 1, luminosity));
                 builder.addQuads(ItemLayerModel.getLayerRenderType(luminosity > 0), ItemTextureQuadConverter.convertTexture(transform, templateSprite, fluidSprite, SOUTH_Z_FLUID, Direction.SOUTH, color, 1, luminosity));
             }
@@ -244,7 +245,7 @@ public final class DynamicBucketModel implements IModelGeometry<DynamicBucketMod
             return FluidUtil.getFluidContained(stack)
                     .map(fluidStack -> {
                         Fluid fluid = fluidStack.getFluid();
-                        String name = fluid.getRegistryName().toString();
+                        String name = ForgeRegistries.FLUIDS.getKey(fluid).toString();
 
                         if (!cache.containsKey(name))
                         {

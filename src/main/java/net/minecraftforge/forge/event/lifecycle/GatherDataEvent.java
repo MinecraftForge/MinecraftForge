@@ -1,11 +1,12 @@
 /*
- * Minecraft Forge - Forge Development LLC
+ * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
 package net.minecraftforge.forge.event.lifecycle;
 
 import cpw.mods.modlauncher.api.LamdbaExceptionUtils;
+import net.minecraft.DetectedVersion;
 import net.minecraft.data.DataGenerator;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.eventbus.api.Event;
@@ -82,7 +83,7 @@ public class GatherDataEvent extends Event implements IModBusEvent
         }
 
         public DataGenerator makeGenerator(final Function<Path,Path> pathEnhancer, final boolean shouldExecute) {
-            final DataGenerator generator = new DataGenerator(pathEnhancer.apply(path), inputs);
+            final DataGenerator generator = new DataGenerator(pathEnhancer.apply(path), inputs, DetectedVersion.tryDetectVersion(), shouldExecute);
             if (shouldExecute)
                 generators.add(generator);
             return generator;
@@ -94,7 +95,7 @@ public class GatherDataEvent extends Event implements IModBusEvent
             paths.values().forEach(LamdbaExceptionUtils.rethrowConsumer(lst -> {
                 DataGenerator parent = lst.get(0);
                 for (int x = 1; x < lst.size(); x++)
-                    lst.get(x).getProviders().forEach(parent::addProvider);
+                    lst.get(x).getProviders().forEach(i -> parent.addProvider(true, i));
                 parent.run();
             }));
         }

@@ -1,15 +1,13 @@
 /*
- * Minecraft Forge - Forge Development LLC
+ * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
 package net.minecraftforge.common.util;
 
-import javax.annotation.Nullable;
-
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.saveddata.SavedData;
-import net.minecraftforge.common.capabilities.CapabilityProvider;
+import org.jetbrains.annotations.Nullable;
 
 public class WorldCapabilityData extends SavedData
 {

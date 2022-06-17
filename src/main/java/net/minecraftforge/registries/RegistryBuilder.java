@@ -1,5 +1,5 @@
 /*
- * Minecraft Forge - Forge Development LLC
+ * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
@@ -9,21 +9,26 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
+import com.google.common.base.Suppliers;
 import com.google.common.collect.Lists;
+import com.mojang.serialization.Codec;
 
+import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.core.Holder;
+import net.minecraft.core.Registry;
+import net.minecraft.core.RegistryAccess;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.registries.IForgeRegistry.*;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
-
-public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
+public class RegistryBuilder<T>
 {
     private static final int MAX_ID = Integer.MAX_VALUE - 1;
 
     private ResourceLocation registryName;
-    private Class<T> registryType;
     private ResourceLocation optionalDefaultKey;
     private int minId = 0;
     private int maxId = MAX_ID;
@@ -38,6 +43,7 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
     private boolean allowOverrides = true;
     private boolean allowModifications = false;
     private boolean hasWrapper = false;
+    private Supplier<RegistryAccess.RegistryData<T>> dataPackRegistryData = () -> null; // If present, implies this is a datapack registry.
     private DummyFactory<T> dummyFactory;
     private MissingFactory<T> missingFactory;
     private Set<ResourceLocation> legacyNames = new HashSet<>();
@@ -45,12 +51,6 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
     public RegistryBuilder<T> setName(ResourceLocation name)
     {
         this.registryName = name;
-        return this;
-    }
-
-    public RegistryBuilder<T> setType(Class<T> type)
-    {
-        this.registryType = type;
         return this;
     }
 
@@ -175,6 +175,11 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
         return this;
     }
 
+    /**
+     * Prevents the registry from being synced to clients. Does *not* affect datapack registries, datapack registries are unsynced by default
+     * unless a non-null network codec is registered via {@link #dataPackRegistry(Codec, Codec)}
+     * @return this
+     */
     public RegistryBuilder<T> disableSync()
     {
         this.sync = false;
@@ -231,6 +236,66 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
     }
 
     /**
+     * <p>Register this registry as an unsynced datapack registry, which will cause data to be loaded from
+     * a datapack folder based on the registry's name. The mod that registers this registry does not need to exist
+     * on the client to connect to servers with the mod/registry.</p>
+     * <p>Data JSONs will be loaded from {@code data/<datapack_namespace>/modid/registryname/}, where modid is the mod that registered this registry.</p>
+     * 
+     * @param codec the codec to be used for loading data from datapacks on servers
+     * @return this builder
+     * 
+     * @see #dataPackRegistry(Codec, Codec)
+     */
+    public RegistryBuilder<T> dataPackRegistry(Codec<T> codec)
+    {
+        return this.dataPackRegistry(codec, null);
+    }
+
+    /**
+     * <p>Register this registry as a datapack registry, which will cause data to be loaded from
+     * a datapack folder based on the registry's name.</p>
+     * <p>Data JSONs will be loaded from {@code data/<datapack_namespace>/modid/registryname/}, where modid is the mod that registered this registry.</p>
+     * 
+     * @param codec the codec to be used for loading data from datapacks on servers
+     * @param networkCodec the codec to be used for syncing loaded data to clients.<br>
+     * If networkCodec is null, data will not be synced, and clients without the mod that registered this registry can
+     * connect to servers with the mod.<br>
+     * If networkCodec is not null, then data will be synced (accessible via {@link ClientPacketListener#registryAccess()}),
+     * and the mod must be present on a client to connect to servers with the mod.
+     * @return this builder
+     * 
+     * @see #dataPackRegistry(Codec)
+     */
+    public RegistryBuilder<T> dataPackRegistry(Codec<T> codec, @Nullable Codec<T> networkCodec)
+    {
+        this.hasWrapper(); // A wrapper is required for data pack registries.
+        this.disableSync(); // Datapack registries are synced using a different system than static registries.
+        // Supplier averts having to set the registry name before calling this.
+        this.dataPackRegistryData = Suppliers.memoize(() -> {
+            // Validate registry key.
+            if (this.registryName == null)
+                throw new IllegalStateException("Registry builder cannot build a datapack registry: registry name not set");
+                            
+            ResourceKey<Registry<T>> registryKey = ResourceKey.createRegistryKey(this.registryName);
+            return new RegistryAccess.RegistryData<>(registryKey, codec, networkCodec); 
+        });
+        return this;
+    }
+
+    /**
+     * Retrieves datapack registry information, if any.
+     * 
+     * @return RegistryData containing the registry's key and codec(s). If returned data is null, this has not been marked as a datapack registry.
+     * 
+     * @throws IllegalStateException if this has been marked as a datapack registry, but registry name has not been set.
+     */
+    @Nullable
+    RegistryAccess.RegistryData<T> getDataPackRegistryData()
+    {
+        return this.dataPackRegistryData.get();
+    }
+
+    /**
      * Modders: Use {@link NewRegistryEvent#create(RegistryBuilder)} instead
      */
     IForgeRegistry<T> create()
@@ -253,10 +318,10 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
         if (addCallback.size() == 1)
             return addCallback.get(0);
 
-        return (owner, stage, id, obj, old) ->
+        return (owner, stage, id, key, obj, old) ->
         {
             for (AddCallback<T> cb : this.addCallback)
-                cb.onAdd(owner, stage, id, obj, old);
+                cb.onAdd(owner, stage, id, key, obj, old);
         };
     }
 
@@ -318,11 +383,6 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
             for (BakeCallback<T> cb : this.bakeCallback)
                 cb.onBake(owner, stage);
         };
-    }
-
-    public Class<T> getType()
-    {
-        return registryType;
     }
 
     @Nullable

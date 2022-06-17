@@ -1,21 +1,21 @@
 {
   "type": "minecraft:crafting_shaped",
-  "pattern": [
-    " S ",
-    "SCS",
-    "LLL"
-  ],
   "key": {
+    "C": {
+      "tag": "minecraft:coals"
+    },
     "L": {
       "tag": "minecraft:logs"
     },
     "S": {
       "tag": "forge:rods/wooden"
-    },
-    "C": {
-      "tag": "minecraft:coals"
     }
   },
+  "pattern": [
+    " S ",
+    "SCS",
+    "LLL"
+  ],
   "result": {
     "item": "minecraft:campfire"
   }

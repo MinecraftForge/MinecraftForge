@@ -1,5 +1,5 @@
 /*
- * Minecraft Forge - Forge Development LLC
+ * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
@@ -24,12 +24,6 @@ public class NotCondition implements ICondition
     public ResourceLocation getID()
     {
         return NAME;
-    }
-
-    @Override
-    public boolean test()
-    {
-        return test(IContext.EMPTY);
     }
 
     @Override

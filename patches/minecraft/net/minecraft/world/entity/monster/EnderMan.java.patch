@@ -21,22 +21,23 @@
     boolean m_32534_(Player p_32535_) {
        ItemStack itemstack = p_32535_.m_150109_().f_35975_.get(3);
 -      if (itemstack.m_150930_(Blocks.f_50143_.m_5456_())) {
-+      if (itemstack.isEnderMask(p_32535_, this)) {
++      if (net.minecraftforge.common.ForgeHooks.shouldSuppressEnderManAnger(this, p_32535_, itemstack)) {
           return false;
        } else {
           Vec3 vec3 = p_32535_.m_20252_(1.0F).m_82541_();
-@@ -273,7 +_,9 @@
+@@ -273,8 +_,10 @@
        boolean flag = blockstate.m_60767_().m_76334_();
        boolean flag1 = blockstate.m_60819_().m_205070_(FluidTags.f_13131_);
        if (flag && !flag1) {
--         boolean flag2 = this.m_20984_(p_32544_, p_32545_, p_32546_, true);
 +         net.minecraftforge.event.entity.EntityTeleportEvent.EnderEntity event = net.minecraftforge.event.ForgeEventFactory.onEnderTeleport(this, p_32544_, p_32545_, p_32546_);
 +         if (event.isCanceled()) return false;
+          Vec3 vec3 = this.m_20182_();
+-         boolean flag2 = this.m_20984_(p_32544_, p_32545_, p_32546_, true);
 +         boolean flag2 = this.m_20984_(event.getTargetX(), event.getTargetY(), event.getTargetZ(), true);
-          if (flag2 && !this.m_20067_()) {
-             this.f_19853_.m_6263_((Player)null, this.f_19854_, this.f_19855_, this.f_19856_, SoundEvents.f_11852_, this.m_5720_(), 1.0F, 1.0F);
-             this.m_5496_(SoundEvents.f_11852_, 1.0F, 1.0F);
-@@ -407,7 +_,7 @@
+          if (flag2) {
+             this.f_19853_.m_214171_(GameEvent.f_238175_, vec3, GameEvent.Context.m_223717_(this));
+             if (!this.m_20067_()) {
+@@ -411,7 +_,7 @@
        public boolean m_8036_() {
           if (this.f_32554_.m_32530_() == null) {
              return false;
@@ -44,17 +45,17 @@
 +         } else if (!net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.f_32554_.f_19853_, this.f_32554_)) {
              return false;
           } else {
-             return this.f_32554_.m_21187_().nextInt(m_186073_(2000)) == 0;
-@@ -427,7 +_,7 @@
+             return this.f_32554_.m_217043_().m_188503_(m_186073_(2000)) == 0;
+@@ -431,7 +_,7 @@
           BlockState blockstate2 = this.f_32554_.m_32530_();
           if (blockstate2 != null) {
              blockstate2 = Block.m_49931_(blockstate2, this.f_32554_.f_19853_, blockpos);
 -            if (this.m_32558_(level, blockpos, blockstate2, blockstate, blockstate1, blockpos1)) {
 +            if (this.m_32558_(level, blockpos, blockstate2, blockstate, blockstate1, blockpos1) && !net.minecraftforge.event.ForgeEventFactory.onBlockPlace(f_32554_, net.minecraftforge.common.util.BlockSnapshot.create(level.m_46472_(), level, blockpos1), net.minecraft.core.Direction.UP)) {
                 level.m_7731_(blockpos, blockstate2, 3);
-                level.m_142346_(this.f_32554_, GameEvent.f_157797_, blockpos);
+                level.m_220407_(GameEvent.f_157797_, blockpos, GameEvent.Context.m_223719_(this.f_32554_, blockstate2));
                 this.f_32554_.m_32521_((BlockState)null);
-@@ -437,7 +_,7 @@
+@@ -441,7 +_,7 @@
        }
  
        private boolean m_32558_(Level p_32559_, BlockPos p_32560_, BlockState p_32561_, BlockState p_32562_, BlockState p_32563_, BlockPos p_32564_) {
@@ -63,7 +64,7 @@
        }
     }
  
-@@ -527,7 +_,7 @@
+@@ -531,7 +_,7 @@
        public boolean m_8036_() {
           if (this.f_32583_.m_32530_() != null) {
              return false;
@@ -71,4 +72,4 @@
 +         } else if (!net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.f_32583_.f_19853_, this.f_32583_)) {
              return false;
           } else {
-             return this.f_32583_.m_21187_().nextInt(m_186073_(20)) == 0;
+             return this.f_32583_.m_217043_().m_188503_(m_186073_(20)) == 0;

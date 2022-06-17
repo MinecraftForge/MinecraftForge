@@ -1,5 +1,5 @@
 /*
- * Minecraft Forge - Forge Development LLC
+ * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
@@ -11,9 +11,8 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Cancelable;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * This Event and its subevents gets fired from  {@link LivingEntity} on the  {@link MinecraftForge#EVENT_BUS}.<br>
@@ -22,7 +21,7 @@ public class PotionEvent extends LivingEvent
 {
     @Nullable
     protected final MobEffectInstance effect;
-    
+
     public PotionEvent(LivingEntity living, MobEffectInstance effect)
     {
         super(living);
@@ -36,7 +35,7 @@ public class PotionEvent extends LivingEvent
     {
         return effect;
     }
-    
+
     /**
      * This Event is fired when a Potion is about to get removed from an Entity.
      * This Event is {@link Cancelable}.
@@ -46,19 +45,19 @@ public class PotionEvent extends LivingEvent
     public static class PotionRemoveEvent extends PotionEvent
     {
         private final MobEffect potion;
-        
+
         public PotionRemoveEvent(LivingEntity living, MobEffect potion)
         {
             super(living, living.getEffect(potion));
             this.potion = potion;
         }
-        
+
         public PotionRemoveEvent(LivingEntity living, MobEffectInstance effect)
         {
             super(living, effect);
-            this.potion = effect.getEffect();            
+            this.potion = effect.getEffect();
         }
-        
+
         /**
          * @return the Potion which is tried to remove from the Entity.
          */
@@ -66,7 +65,7 @@ public class PotionEvent extends LivingEvent
         {
             return this.potion;
         }
-        
+
         /**
          * @return the PotionEffect. In the remove event this can be null if the Entity does not have a {@link MobEffect} of the right type active.
          */
@@ -77,7 +76,7 @@ public class PotionEvent extends LivingEvent
             return super.getPotionEffect();
         }
     }
-    
+
     /**
      * This Event is fired to check if a Potion can get applied to an Entity.
      * This Event is not {@link Cancelable}
@@ -93,18 +92,18 @@ public class PotionEvent extends LivingEvent
         {
             super(living, effect);
         }
-        
+
         /**
          * @return the PotionEffect.
          */
         @Override
-        @Nonnull
+        @NotNull
         public MobEffectInstance getPotionEffect()
         {
             return super.getPotionEffect();
         }
     }
-    
+
     /**
      * This Event is fired when a new Potion is added to the Entity. This is also fired if the Entity already has this effect but with different duration/level.
      * This Event is not {@link Cancelable}
@@ -121,17 +120,17 @@ public class PotionEvent extends LivingEvent
             this.oldEffect = oldEffect;
             this.source = source;
         }
-        
+
         /**
          * @return the added PotionEffect. This is the umerged PotionEffect if the old PotionEffect is not null.
          */
         @Override
-        @Nonnull
+        @NotNull
         public MobEffectInstance getPotionEffect()
         {
             return super.getPotionEffect();
         }
-        
+
         /**
          * @return the old PotionEffect. THis can be null if the entity did not have an effect of this kind before.
          */
@@ -152,7 +151,7 @@ public class PotionEvent extends LivingEvent
             return source;
         }
     }
-    
+
     /**
      * This Event is fired when a Potion effect expires on an Entity.
      * This Event is not {@link Cancelable}
@@ -165,4 +164,4 @@ public class PotionEvent extends LivingEvent
             super(living, effect);
         }
     }
-}    
+}

@@ -1,0 +1,16 @@
+--- a/net/minecraft/data/tags/PaintingVariantTagsProvider.java
++++ b/net/minecraft/data/tags/PaintingVariantTagsProvider.java
+@@ -7,8 +_,13 @@
+ import net.minecraft.world.entity.decoration.PaintingVariants;
+ 
+ public class PaintingVariantTagsProvider extends TagsProvider<PaintingVariant> {
++   /** @deprecated Forge: Use the {@link #PaintingVariantTagsProvider(DataGenerator, String, net.minecraftforge.common.data.ExistingFileHelper) mod id variant} */
++   @Deprecated
+    public PaintingVariantTagsProvider(DataGenerator p_236431_) {
+       super(p_236431_, Registry.f_235728_);
++   }
++   public PaintingVariantTagsProvider(DataGenerator p_236431_, String modId, @org.jetbrains.annotations.Nullable net.minecraftforge.common.data.ExistingFileHelper existingFileHelper) {
++      super(p_236431_, Registry.f_235728_, modId, existingFileHelper);
+    }
+ 
+    protected void m_6577_() {

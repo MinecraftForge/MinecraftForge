@@ -1,5 +1,5 @@
 /*
- * Minecraft Forge - Forge Development LLC
+ * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
@@ -10,7 +10,7 @@ import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class SlotItemHandler extends Slot
 {
@@ -26,7 +26,7 @@ public class SlotItemHandler extends Slot
     }
 
     @Override
-    public boolean mayPlace(@Nonnull ItemStack stack)
+    public boolean mayPlace(@NotNull ItemStack stack)
     {
         if (stack.isEmpty())
             return false;
@@ -34,7 +34,7 @@ public class SlotItemHandler extends Slot
     }
 
     @Override
-    @Nonnull
+    @NotNull
     public ItemStack getItem()
     {
         return this.getItemHandler().getStackInSlot(index);
@@ -42,14 +42,22 @@ public class SlotItemHandler extends Slot
 
     // Override if your IItemHandler does not implement IItemHandlerModifiable
     @Override
-    public void set(@Nonnull ItemStack stack)
+    public void set(@NotNull ItemStack stack)
+    {
+        ((IItemHandlerModifiable) this.getItemHandler()).setStackInSlot(index, stack);
+        this.setChanged();
+    }
+
+    // Override if your IItemHandler does not implement IItemHandlerModifiable
+    @Override
+    public void initialize(ItemStack stack)
     {
         ((IItemHandlerModifiable) this.getItemHandler()).setStackInSlot(index, stack);
         this.setChanged();
     }
 
     @Override
-    public void onQuickCraft(@Nonnull ItemStack oldStackIn, @Nonnull ItemStack newStackIn)
+    public void onQuickCraft(@NotNull ItemStack oldStackIn, @NotNull ItemStack newStackIn)
     {
 
     }
@@ -61,7 +69,7 @@ public class SlotItemHandler extends Slot
     }
 
     @Override
-    public int getMaxStackSize(@Nonnull ItemStack stack)
+    public int getMaxStackSize(@NotNull ItemStack stack)
     {
         ItemStack maxAdd = stack.copy();
         int maxInput = stack.getMaxStackSize();
@@ -97,7 +105,7 @@ public class SlotItemHandler extends Slot
     }
 
     @Override
-    @Nonnull
+    @NotNull
     public ItemStack remove(int amount)
     {
         return this.getItemHandler().extractItem(index, amount, false);

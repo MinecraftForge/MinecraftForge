@@ -1,10 +1,5 @@
 {
   "type": "minecraft:crafting_shaped",
-  "pattern": [
-    "###",
-    "###",
-    " # "
-  ],
   "key": {
     "#": {
       "type": "forge:intersection",
@@ -18,6 +13,11 @@
       ]
     }
   },
+  "pattern": [
+    "###",
+    "###",
+    " # "
+  ],
   "result": {
     "item": "minecraft:netherrack"
   }

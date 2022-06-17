@@ -1,5 +1,5 @@
 /*
- * Minecraft Forge - Forge Development LLC
+ * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
@@ -11,8 +11,7 @@ import net.minecraft.world.level.block.state.properties.RailShape;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 public interface IForgeBaseRailBlock
 {
@@ -72,4 +71,17 @@ public interface IForgeBaseRailBlock
       * @param pos Block's position in level
       */
     default void onMinecartPass(BlockState state, Level level, BlockPos pos, AbstractMinecart cart){}
+
+    /**
+     * Returns true if the given {@link RailShape} is valid for this rail block.
+     * This is called when the RailShape for the initial placement of this block is calculated or
+     * when another rail block tries to connect to this block and this block's RailState calculates
+     * the new RailShape for its current neigbors.
+     * @param shape The new RailShape
+     * @return True when the given RailShape is valid
+     */
+    default boolean isValidRailShape(RailShape shape)
+    {
+        return true;
+    }
 }

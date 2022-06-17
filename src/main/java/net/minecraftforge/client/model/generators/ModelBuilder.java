@@ -1,5 +1,5 @@
 /*
- * Minecraft Forge - Forge Development LLC
+ * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
@@ -15,8 +15,6 @@ import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
-import javax.annotation.Nullable;
-
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
 import com.google.gson.Gson;
@@ -28,7 +26,6 @@ import net.minecraft.client.renderer.block.model.BlockModel.GuiLight;
 import net.minecraft.client.renderer.block.model.BlockElement;
 import net.minecraft.client.renderer.block.model.BlockElementFace;
 import net.minecraft.client.renderer.block.model.BlockElementRotation;
-import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.block.model.ItemTransforms.TransformType;
 import net.minecraft.client.renderer.block.model.ItemTransform;
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
@@ -37,6 +34,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import com.mojang.math.Vector3f;
 import net.minecraftforge.common.data.ExistingFileHelper;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * General purpose model builder, contains all the commonalities between item
@@ -214,10 +212,10 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
             root.addProperty("gui_light", this.guiLight.getSerializedName());
         }
 
-        Map<Perspective, ItemTransform> transforms = this.transforms.build();
+        Map<TransformType, ItemTransform> transforms = this.transforms.build();
         if (!transforms.isEmpty()) {
             JsonObject display = new JsonObject();
-            for (Entry<Perspective, ItemTransform> e : transforms.entrySet()) {
+            for (Entry<TransformType, ItemTransform> e : transforms.entrySet()) {
                 JsonObject transform = new JsonObject();
                 ItemTransform vec = e.getValue();
                 if (vec.equals(ItemTransform.NO_TRANSFORM)) continue;
@@ -230,7 +228,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
                 if (!vec.scale.equals(ItemTransform.Deserializer.DEFAULT_SCALE)) {
                     transform.add("scale", serializeVector3f(e.getValue().scale));
                 }
-                display.add(e.getKey().name, transform);
+                display.add(e.getKey().getSerializeName(), transform);
             }
             root.add("display", display);
         }
@@ -599,6 +597,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
     }
 
     // Since vanilla doesn't keep the name in TransformType...
+    @Deprecated(forRemoval = true, since = "1.18.2")
     public enum Perspective {
 
         THIRDPERSON_RIGHT(TransformType.THIRD_PERSON_RIGHT_HAND, "thirdperson_righthand"),
@@ -622,7 +621,21 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
 
     public class TransformsBuilder {
 
-        private final Map<Perspective, TransformVecBuilder> transforms = new LinkedHashMap<>();
+        private final Map<TransformType, TransformVecBuilder> transforms = new LinkedHashMap<>();
+
+        /**
+         * Begin building a new transform for the given perspective.
+         *
+         * @param type the perspective to create or return the builder for
+         * @return the builder for the given perspective
+         * @throws NullPointerException if {@code type} is {@code null}
+         *
+         * @deprecated See {@link #transform(TransformType)}
+         */
+        @Deprecated(forRemoval = true, since = "1.18.2")
+        public TransformVecBuilder transform(Perspective type) {
+            return transform(type.vanillaType);
+        }
 
         /**
          * Begin building a new transform for the given perspective.
@@ -631,12 +644,12 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
          * @return the builder for the given perspective
          * @throws NullPointerException if {@code type} is {@code null}
          */
-        public TransformVecBuilder transform(Perspective type) {
+        public TransformVecBuilder transform(TransformType type) {
             Preconditions.checkNotNull(type, "Perspective cannot be null");
             return transforms.computeIfAbsent(type, TransformVecBuilder::new);
         }
 
-        Map<Perspective, ItemTransform> build() {
+        Map<TransformType, ItemTransform> build() {
             return this.transforms.entrySet().stream()
                     .collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue().build(), (k1, k2) -> { throw new IllegalArgumentException(); }, LinkedHashMap::new));
         }
@@ -649,7 +662,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
             private Vector3f translation = ItemTransform.Deserializer.DEFAULT_TRANSLATION.copy();
             private Vector3f scale = ItemTransform.Deserializer.DEFAULT_SCALE.copy();
 
-            TransformVecBuilder(Perspective type) {
+            TransformVecBuilder(TransformType type) {
                 // param unused for functional match
             }
 

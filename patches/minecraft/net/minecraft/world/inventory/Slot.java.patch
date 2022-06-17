@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/inventory/Slot.java
 +++ b/net/minecraft/world/inventory/Slot.java
-@@ -74,7 +_,7 @@
+@@ -79,7 +_,7 @@
  
     @Nullable
     public Pair<ResourceLocation, ResourceLocation> m_7543_() {
@@ -9,7 +9,7 @@
     }
  
     public ItemStack m_6201_(int p_40227_) {
-@@ -87,6 +_,38 @@
+@@ -92,6 +_,38 @@
  
     public boolean m_6659_() {
        return true;

@@ -1,5 +1,5 @@
 /*
- * Minecraft Forge - Forge Development LLC
+ * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
@@ -26,9 +26,6 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import net.minecraftforge.fml.config.IConfigSpec;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import org.apache.commons.lang3.tuple.Pair;
@@ -48,6 +45,8 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import com.google.common.collect.ObjectArrays;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /*
  * Like {@link com.electronwill.nightconfig.core.ConfigSpec} except in builder format, and extended to accept comments, language keys,
@@ -55,17 +54,27 @@ import com.google.common.collect.ObjectArrays;
  */
 public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfig> implements IConfigSpec<ForgeConfigSpec>//TODO: Remove extends and pipe everything through getSpec/getValues?
 {
-    private Map<List<String>, String> levelComments = new HashMap<>();
+    private Map<List<String>, String> levelComments;
+    private Map<List<String>, String> levelTranslationKeys;
 
     private UnmodifiableConfig values;
     private Config childConfig;
 
     private boolean isCorrecting = false;
 
-    private ForgeConfigSpec(UnmodifiableConfig storage, UnmodifiableConfig values, Map<List<String>, String> levelComments) {
+    private ForgeConfigSpec(UnmodifiableConfig storage, UnmodifiableConfig values, Map<List<String>, String> levelComments, Map<List<String>, String> levelTranslationKeys) {
         super(storage);
         this.values = values;
         this.levelComments = levelComments;
+        this.levelTranslationKeys = levelTranslationKeys;
+    }
+
+    public String getLevelComment(List<String> path) {
+        return levelComments.get(path);
+    }
+
+    public String getLevelTranslationKey(List<String> path) {
+        return levelTranslationKeys.get(path);
     }
 
     public void setConfig(CommentedConfig config) {
@@ -277,6 +286,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         private final Config storage = Config.of(LinkedHashMap::new, InMemoryFormat.withUniversalSupport()); // Use LinkedHashMap for consistent ordering
         private BuilderContext context = new BuilderContext();
         private Map<List<String>, String> levelComments = new HashMap<>();
+        private Map<List<String>, String> levelTranslationKeys = new HashMap<>();
         private List<String> currentPath = new ArrayList<>();
         private List<ConfigValue<?>> values = new ArrayList<>();
         private boolean hasInvalidComment = false;
@@ -580,6 +590,10 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
                 levelComments.put(new ArrayList<String>(currentPath), context.buildComment());
                 context.setComment(); // Set to empty
             }
+            if (context.getTranslationKey() != null) {
+                levelTranslationKeys.put(new ArrayList<String>(currentPath), context.getTranslationKey());
+                context.setTranslationKey(null);
+            }
             context.ensureEmpty();
             return this;
         }
@@ -607,7 +621,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
             Config valueCfg = Config.of(Config.getDefaultMapCreator(true, true), InMemoryFormat.withSupport(ConfigValue.class::isAssignableFrom));
             values.forEach(v -> valueCfg.set(v.getPath(), v));
 
-            ForgeConfigSpec ret = new ForgeConfigSpec(storage, valueCfg, levelComments);
+            ForgeConfigSpec ret = new ForgeConfigSpec(storage, valueCfg, levelComments, levelTranslationKeys);
             values.forEach(v -> v.spec = ret);
             return ret;
         }
@@ -632,7 +646,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
 
     private static class BuilderContext
     {
-        private @Nonnull String[] comment = new String[0];
+        private @NotNull String[] comment = new String[0];
         private String langKey;
         private Range<?> range;
         private boolean worldRestart = false;

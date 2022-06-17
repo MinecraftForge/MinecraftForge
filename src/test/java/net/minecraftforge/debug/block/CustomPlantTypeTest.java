@@ -1,5 +1,5 @@
 /*
- * Minecraft Forge - Forge Development LLC
+ * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
@@ -19,11 +19,12 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.LevelReader;
 import net.minecraftforge.common.IPlantable;
 import net.minecraftforge.common.PlantType;
-import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
+import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.ObjectHolder;
+import net.minecraftforge.registries.RegisterEvent;
 
 @Mod(CustomPlantTypeTest.MODID)
 @Mod.EventBusSubscriber(bus = Bus.MOD)
@@ -33,22 +34,29 @@ public class CustomPlantTypeTest
     private static final String CUSTOM_SOIL_BLOCK = "test_custom_block";
     private static final String CUSTOM_PLANT_BLOCK = "test_custom_plant";
 
-    @ObjectHolder(CUSTOM_SOIL_BLOCK)
+    @ObjectHolder(registryName = "block", value = CUSTOM_SOIL_BLOCK)
     public static Block CUSTOM_SOIL;
-    @ObjectHolder(CUSTOM_PLANT_BLOCK)
+    @ObjectHolder(registryName = "block", value = CUSTOM_PLANT_BLOCK)
     public static Block CUSTOM_PLANT;
 
     @SubscribeEvent
-    public static void registerBlocks(RegistryEvent.Register<Block> event)
+    public static void registerBlocks(RegisterEvent event)
     {
-        event.getRegistry().registerAll(new CustomBlock(), new CustomPlantBlock());
+        event.register(ForgeRegistries.Keys.BLOCKS, helper ->
+        {
+            helper.register(CUSTOM_SOIL_BLOCK, new CustomBlock());
+            helper.register(CUSTOM_PLANT_BLOCK, new CustomPlantBlock());
+        });
     }
 
     @SubscribeEvent
-    public static void registerItems(RegistryEvent.Register<Item> event)
+    public static void registerItems(RegisterEvent event)
     {
-        event.getRegistry().registerAll(new BlockItem(CUSTOM_SOIL, (new Item.Properties())).setRegistryName(MODID, CUSTOM_SOIL_BLOCK),
-                new BlockItem(CUSTOM_PLANT, (new Item.Properties())).setRegistryName(MODID, CUSTOM_PLANT_BLOCK));
+        event.register(ForgeRegistries.Keys.ITEMS, helper ->
+        {
+            helper.register(CUSTOM_SOIL_BLOCK, new BlockItem(CUSTOM_SOIL, new Item.Properties()));
+            helper.register(CUSTOM_PLANT_BLOCK, new BlockItem(CUSTOM_PLANT, new Item.Properties()));
+        });
     }
 
     public static class CustomBlock extends Block
@@ -56,7 +64,6 @@ public class CustomPlantTypeTest
         public CustomBlock()
         {
             super(Properties.of(Material.STONE));
-            this.setRegistryName(MODID, CUSTOM_SOIL_BLOCK);
         }
 
         @Override
@@ -78,7 +85,6 @@ public class CustomPlantTypeTest
         public CustomPlantBlock()
         {
             super(MobEffects.WEAKNESS, 9, Properties.of(Material.PLANT).noCollission().sound(SoundType.GRASS));
-            this.setRegistryName(MODID, CUSTOM_PLANT_BLOCK);
         }
 
         @Override
