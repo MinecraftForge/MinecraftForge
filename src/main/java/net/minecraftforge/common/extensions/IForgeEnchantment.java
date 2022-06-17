@@ -6,6 +6,8 @@
 package net.minecraftforge.common.extensions;
 
 import net.minecraft.world.entity.MobType;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
 
@@ -30,17 +32,24 @@ public interface IForgeEnchantment
     }
 
     /**
-     * Should the book for this enchantment appear in the creative tab
-     * @param book Items.ENCHANTED_BOOK normally, but modded items may also use this hook.
+     * Determines what creative tabs this enchantment's variant of an enchanted book or similar item should appear in.
+     * @param book The item being added to the creative tab
      * @param tab The creative tab that items are being added to
-     * @return true to put the item variant in the tab.
+     * @return whether the given Item's variant for this enchantment should appear in the respective creative tab
      */
-    default boolean allowedInCreativeTab(net.minecraft.world.item.Item book, net.minecraft.world.item.CreativeModeTab tab) {
-        if(!self().isAllowedOnBooks())
+    default boolean allowedInCreativeTab(Item book, CreativeModeTab tab)
+    {
+        if (!self().isAllowedOnBooks())
+        {
             return false;
-        else if(tab == net.minecraft.world.item.CreativeModeTab.TAB_SEARCH)
+        }
+        else if (tab == CreativeModeTab.TAB_SEARCH)
+        {
             return self().category != null;
+        }
         else
+        {
             return tab.hasEnchantmentCategory(self().category);
+        }
     }
 }
