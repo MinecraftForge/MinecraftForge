@@ -1,0 +1,109 @@
+--- a/net/minecraft/world/entity/animal/Turtle.java
++++ b/net/minecraft/world/entity/animal/Turtle.java
+@@ -68,7 +_,7 @@
+    public static final Ingredient f_149066_ = Ingredient.m_43929_(Blocks.f_50037_.m_5456_());
+    int f_30129_;
+    public static final Predicate<LivingEntity> f_30122_ = (p_30226_) -> {
+-      return p_30226_.m_6162_() && !p_30226_.m_20069_();
++      return p_30226_.m_6162_() && !(p_30226_.m_20069_() || p_30226_.isInFluidType((fluidType, height) -> p_30226_.canSwimInFluidType(fluidType)));
+    };
+ 
+    public Turtle(EntityType<? extends Turtle> p_30132_, Level p_30133_) {
+@@ -261,7 +_,7 @@
+    }
+ 
+    public float m_5610_(BlockPos p_30159_, LevelReader p_30160_) {
+-      if (!this.m_30211_() && p_30160_.m_6425_(p_30159_).m_205070_(FluidTags.f_13131_)) {
++      if (!this.m_30211_() && this.canSwimInFluidType(p_30160_.m_6425_(p_30159_).getFluidType())) {
+          return 10.0F;
+       } else {
+          return TurtleEggBlock.m_57762_(p_30160_, p_30159_) ? 10.0F : p_30160_.m_220419_(p_30159_);
+@@ -288,7 +_,7 @@
+    }
+ 
+    public void m_7023_(Vec3 p_30218_) {
+-      if (this.m_6142_() && this.m_20069_()) {
++      if (this.m_6142_() && (this.m_20069_() || this.isInFluidType((fluidType, height) -> this.canSwimInFluidType(fluidType)))) {
+          this.m_19920_(0.1F, p_30218_);
+          this.m_6478_(MoverType.SELF, this.m_20184_());
+          this.m_20256_(this.m_20184_().m_82490_(0.9D));
+@@ -395,7 +_,7 @@
+                vec31 = DefaultRandomPos.m_148412_(this.f_30248_, 8, 7, vec3, (double)((float)Math.PI / 2F));
+             }
+ 
+-            if (vec31 != null && !flag && !this.f_30248_.f_19853_.m_8055_(new BlockPos(vec31)).m_60713_(Blocks.f_49990_)) {
++            if (vec31 != null && !flag && !this.f_30248_.canSwimInFluidType(this.f_30248_.f_19853_.m_8055_(new BlockPos(vec31)).m_60819_().getFluidType())) {
+                vec31 = DefaultRandomPos.m_148412_(this.f_30248_, 16, 5, vec3, (double)((float)Math.PI / 2F));
+             }
+ 
+@@ -421,14 +_,14 @@
+       }
+ 
+       public boolean m_8045_() {
+-         return !this.f_30260_.m_20069_() && this.f_25601_ <= 1200 && this.m_6465_(this.f_30260_.f_19853_, this.f_25602_);
++         return !(this.f_30260_.m_20069_() || this.f_30260_.isInFluidType((fluidType, height) -> this.f_30260_.canSwimInFluidType(fluidType))) && this.f_25601_ <= 1200 && this.m_6465_(this.f_30260_.f_19853_, this.f_25602_);
+       }
+ 
+       public boolean m_8036_() {
+          if (this.f_30260_.m_6162_() && !this.f_30260_.m_20069_()) {
+             return super.m_8036_();
+          } else {
+-            return !this.f_30260_.m_30211_() && !this.f_30260_.m_20069_() && !this.f_30260_.m_30205_() ? super.m_8036_() : false;
++            return !this.f_30260_.m_30211_() && !(this.f_30260_.m_20069_() || this.f_30260_.isInFluidType((fluidType, height) -> this.f_30260_.canSwimInFluidType(fluidType))) && !this.f_30260_.m_30205_() ? super.m_8036_() : false;
+          }
+       }
+ 
+@@ -437,7 +_,7 @@
+       }
+ 
+       protected boolean m_6465_(LevelReader p_30270_, BlockPos p_30271_) {
+-         return p_30270_.m_8055_(p_30271_).m_60713_(Blocks.f_49990_);
++         return this.f_30260_.canSwimInFluidType(p_30270_.m_8055_(p_30271_).m_60819_().getFluidType());
+       }
+    }
+ 
+@@ -460,7 +_,7 @@
+       public void m_8037_() {
+          super.m_8037_();
+          BlockPos blockpos = this.f_30274_.m_20183_();
+-         if (!this.f_30274_.m_20069_() && this.m_25625_()) {
++         if (!(this.f_30274_.m_20069_() || this.f_30274_.isInFluidType((fluidType, height) -> this.f_30274_.canSwimInFluidType(fluidType))) && this.m_25625_()) {
+             if (this.f_30274_.f_30129_ < 1) {
+                this.f_30274_.m_30236_(true);
+             } else if (this.f_30274_.f_30129_ > this.m_183277_(200)) {
+@@ -493,7 +_,7 @@
+       }
+ 
+       private void m_30288_() {
+-         if (this.f_30284_.m_20069_()) {
++         if (this.f_30284_.m_20069_() || this.f_30284_.isInFluidType((fluidType, height) -> this.f_30284_.canSwimInFluidType(fluidType))) {
+             this.f_30284_.m_20256_(this.f_30284_.m_20184_().m_82520_(0.0D, 0.005D, 0.0D));
+             if (!this.f_30284_.m_30208_().m_203195_(this.f_30284_.m_20182_(), 16.0D)) {
+                this.f_30284_.m_7910_(Math.max(this.f_30284_.m_6113_() / 2.0F, 0.08F));
+@@ -559,7 +_,7 @@
+          Mob mob = this.f_26494_;
+          if (mob instanceof Turtle turtle) {
+             if (turtle.m_30212_()) {
+-               return this.f_26495_.m_8055_(p_30300_).m_60713_(Blocks.f_49990_);
++               return turtle.canSwimInFluidType(this.f_26495_.m_8055_(p_30300_).m_60819_().getFluidType());
+             }
+          }
+ 
+@@ -576,7 +_,7 @@
+       }
+ 
+       public boolean m_8036_() {
+-         return !this.f_25725_.m_20069_() && !this.f_30301_.m_30211_() && !this.f_30301_.m_30205_() ? super.m_8036_() : false;
++         return !(this.f_25725_.m_20069_() || this.f_25725_.isInFluidType((fluidType, height) -> this.f_25725_.canSwimInFluidType(fluidType))) && !this.f_30301_.m_30211_() && !this.f_30301_.m_30205_() ? super.m_8036_() : false;
+       }
+    }
+ 
+@@ -591,7 +_,7 @@
+       }
+ 
+       public boolean m_8036_() {
+-         return !this.f_30329_.m_30211_() && !this.f_30329_.m_30205_() && this.f_30329_.m_20069_();
++         return !this.f_30329_.m_30211_() && !this.f_30329_.m_30205_() && (this.f_30329_.m_20069_() || this.f_30329_.isInFluidType((fluidType, height) -> this.f_30329_.canSwimInFluidType(fluidType)));
+       }
+ 
+       public void m_8056_() {

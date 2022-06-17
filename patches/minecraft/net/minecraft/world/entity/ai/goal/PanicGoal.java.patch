@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/entity/ai/goal/PanicGoal.java
++++ b/net/minecraft/world/entity/ai/goal/PanicGoal.java
+@@ -80,7 +_,7 @@
+    protected BlockPos m_198172_(BlockGetter p_198173_, Entity p_198174_, int p_198175_) {
+       BlockPos blockpos = p_198174_.m_20183_();
+       return !p_198173_.m_8055_(blockpos).m_60812_(p_198173_, blockpos).m_83281_() ? null : BlockPos.m_121930_(p_198174_.m_20183_(), p_198175_, 1, (p_196649_) -> {
+-         return p_198173_.m_6425_(p_196649_).m_205070_(FluidTags.f_13131_);
++         return p_198174_.canSwimInFluidType(p_198173_.m_6425_(p_196649_).getFluidType());
+       }).orElse((BlockPos)null);
+    }
+ }

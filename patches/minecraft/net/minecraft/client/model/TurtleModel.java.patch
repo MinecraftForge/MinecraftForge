@@ -1,0 +1,11 @@
+--- a/net/minecraft/client/model/TurtleModel.java
++++ b/net/minecraft/client/model/TurtleModel.java
+@@ -55,7 +_,7 @@
+       this.f_170855_.f_104204_ = 0.0F;
+       this.f_170852_.f_104204_ = 0.0F;
+       this.f_170853_.f_104204_ = 0.0F;
+-      if (!p_103994_.m_20069_() && p_103994_.m_20096_()) {
++      if (!(p_103994_.m_20069_() || p_103994_.isInFluidType((fluidType, height) -> p_103994_.canSwimInFluidType(fluidType))) && p_103994_.m_20096_()) {
+          float f = p_103994_.m_30206_() ? 4.0F : 1.0F;
+          float f1 = p_103994_.m_30206_() ? 2.0F : 1.0F;
+          float f2 = 5.0F;
