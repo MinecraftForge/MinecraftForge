@@ -126,8 +126,6 @@ public class ForgeConfig {
 
         public final BooleanValue useCombinedDepthStencilAttachment;
 
-        public final BooleanValue forceSystemNanoTime;
-
         Client(ForgeConfigSpec.Builder builder) {
             builder.comment("Client only settings, mostly things related to rendering")
                    .push("client");
@@ -153,11 +151,6 @@ public class ForgeConfig {
                     .comment("Set to true to use a combined DEPTH_STENCIL attachment instead of two separate ones.")
                     .translation("forge.configgui.useCombinedDepthStencilAttachment")
                     .define("useCombinedDepthStencilAttachment", false);
-
-            forceSystemNanoTime = builder
-                    .comment("Forces the use of System.nanoTime instead of glfwGetTime, as the main Util time provider")
-                    .translation("forge.configgui.forceSystemNanoTime")
-                    .define("forceSystemNanoTime", false);
 
             builder.pop();
         }
