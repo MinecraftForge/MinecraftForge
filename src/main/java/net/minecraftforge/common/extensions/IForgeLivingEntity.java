@@ -27,7 +27,7 @@ public interface IForgeLivingEntity extends IForgeEntity
      */
     default void jumpInFluid(FluidType type)
     {
-        self().setDeltaMovement(self().getDeltaMovement().add(0.0D, (double)0.04F * self().getAttributeValue(ForgeMod.SWIM_SPEED.get()), 0.0D));
+        type.jumpInFluid(self());
     }
 
     /**
@@ -37,7 +37,7 @@ public interface IForgeLivingEntity extends IForgeEntity
      */
     default void sinkInFluid(FluidType type)
     {
-        self().setDeltaMovement(self().getDeltaMovement().add(0.0D, (double)-0.04F * self().getAttributeValue(ForgeMod.SWIM_SPEED.get()), 0.0D));
+        type.sinkInFluid(self());
     }
 
     /**
