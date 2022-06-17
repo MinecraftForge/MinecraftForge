@@ -17,15 +17,7 @@ import net.minecraftforge.forgespi.locating.IModFile;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.AbstractMap;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 import java.util.concurrent.CompletionStage;
@@ -156,7 +148,7 @@ public class ModList
     void setLoadedMods(final List<ModContainer> modContainers)
     {
         this.mods = modContainers;
-        this.sortedContainers = modContainers.stream().sorted((o1, o2) -> Integer.compare(sortedList.indexOf(o1.getModInfo()), sortedList.indexOf(o2.getModInfo()))).toList();
+        this.sortedContainers = modContainers.stream().sorted(Comparator.comparingInt(c->sortedList.indexOf(c.getModInfo()))).toList();
         this.indexedMods = modContainers.stream().collect(Collectors.toMap(ModContainer::getModId, Function.identity()));
     }
 
