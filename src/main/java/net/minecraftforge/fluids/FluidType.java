@@ -389,6 +389,26 @@ public class FluidType
     }
 
     /**
+     * Performs what to do when an entity attempts to go up or "jump" in a fluid.
+     *
+     * @param entity the entity in the fluid
+     */
+    public void entityJump(LivingEntity entity)
+    {
+        entity.setDeltaMovement(entity.getDeltaMovement().add(0.0D, (double)0.04F * entity.getAttributeValue(ForgeMod.SWIM_SPEED.get()), 0.0D));
+    }
+
+    /**
+     * Performs what to do when an entity attempts to go down or "sink" in a fluid.
+     *
+     * @param entity the entity in the fluid
+     */
+    public void entitySink(LivingEntity entity)
+    {
+        entity.setDeltaMovement(entity.getDeltaMovement().add(0.0D, (double)-0.04F * entity.getAttributeValue(ForgeMod.SWIM_SPEED.get()), 0.0D));
+    }
+
+    /**
      * Returns a sound to play when a certain action is performed by the
      * entity in the fluid. If no sound is present, then the sound will be
      * {@code null}.
