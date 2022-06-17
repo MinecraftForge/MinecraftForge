@@ -5,10 +5,10 @@
 
 package net.minecraftforge.common.capabilities;
 
-import java.util.HashSet;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
@@ -18,6 +18,8 @@ import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.common.capabilities.IAttachedCapabilityProvider.IItemStackCapabilityProvider;
 import net.minecraftforge.common.util.INBTSerializable;
 
 /**
@@ -44,16 +46,31 @@ public final class CapabilityDispatcher<T extends ICapabilityProvider> implement
         this.owner = owner;
     }
 
+    /*********************************
+          ItemStack-Specific Code
+           Warning: Generic Hell
+     *********************************/
+    
     /**
      * Internal copy constructor.
      * @see {@link #copy(ICapabilityProvider)}
-     * @see {@link IAttachedCapabilityProvider#copy(ICapabilityProvider)}
+     * @see {@link IItemStackCapabilityProvider#copy(ICapabilityProvider)}
      */
-    private CapabilityDispatcher(CapabilityDispatcher<T> other, T newOwner)
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+	private CapabilityDispatcher(CapabilityDispatcher<T> other, ItemStack newOwner)
     {
-        this.caps = other.caps.values().stream().map(old -> old.copy(newOwner)).collect(Collectors.toMap(IAttachedCapabilityProvider::getType, t -> t));
-        this.byName = this.caps.values().stream().collect(Collectors.toMap(IAttachedCapabilityProvider::getId, t -> t));
-        this.owner = newOwner;
+        Map<CapabilityType<?>, IAttachedCapabilityProvider<?, T>> caps = new HashMap<>(other.caps.size(), 1);
+        Map<ResourceLocation, IAttachedCapabilityProvider<?, T>> byName = new HashMap<>(other.byName.size(), 1);
+        for(Map.Entry<ResourceLocation, IAttachedCapabilityProvider<?, T>> entry : other.byName.entrySet())
+        {
+            IAttachedCapabilityProvider<?, T> copy = ((IItemStackCapabilityProvider) entry.getValue()).copy(newOwner);
+            // Ideally we would ensure the type and key don't change here, but it's an expensive check that we don't "need" to do.
+            caps.put(copy.getType(), copy);
+            byName.put(copy.getId(), copy);
+        }
+        this.caps = Collections.unmodifiableMap(caps);
+        this.byName = Collections.unmodifiableMap(byName);
+        this.owner = (T) newOwner;
     }
 
     /**
@@ -67,33 +84,54 @@ public final class CapabilityDispatcher<T extends ICapabilityProvider> implement
      * @param other The other dispatcher being checked against.
      * @return If this dispatcher is equivalent to the other dispatcher.
      * 
-     * @see {@link IAttachedCapabilityProvider#isEquivalentTo(IAttachedCapabilityProvider)}
+     * @see {@link IItemStackCapabilityProvider#isEquivalentTo(IAttachedCapabilityProvider)}
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    public boolean isEquivalentTo(@Nullable CapabilityDispatcher<T> other)
+    public boolean isEquivalentTo(@Nullable CapabilityDispatcher<ItemStack> other)
     {
-        Set<ResourceLocation> keys = new HashSet<>();
-        keys.addAll(byName.keySet());
-        if(other != null) keys.addAll(other.byName.keySet());
-        for(ResourceLocation id : keys) {
-            var ourProv = this.byName.get(id);
-            var theirProv = other == null ? null : other.byName.get(id);        
-            if(ourProv == null && !theirProv.isEquivalentTo(null)) return false;
-            else if(theirProv == null && !ourProv.isEquivalentTo(null)) return false;
-            else if(!ourProv.isEquivalentTo((IAttachedCapabilityProvider) theirProv)) return false;
+        if(other == null) {
+            for(IItemStackCapabilityProvider<?> prov : (Collection<IItemStackCapabilityProvider>) (Collection) this.byName.values()) 
+            {
+                if(!prov.isEquivalentTo(null)) return false;    // Would anyone ever want this behavior? / Do mods have caps that are ignored upon stacking?
+            }
+            return true;
         }
-        return true;
+        else
+        {
+            for(ResourceLocation id : this.byName.keySet())
+            {
+                var ourProv = (IItemStackCapabilityProvider) this.byName.get(id);
+                var theirProv = other == null ? null : (IItemStackCapabilityProvider) other.byName.get(id);        
+                if(ourProv == null && !theirProv.isEquivalentTo(null)) return false;
+                else if(theirProv == null && !ourProv.isEquivalentTo(null)) return false;
+                else if(!ourProv.isEquivalentTo((IItemStackCapabilityProvider) theirProv)) return false;
+            }
+            if(other != null)
+            {
+                for(ResourceLocation id : other.byName.keySet())
+                {
+                    if(this.byName.containsKey(id)) continue; // Skip any found in our provider, as we already checked above.
+                    var theirProv = (IItemStackCapabilityProvider) other.byName.get(id);        
+                    if(!theirProv.isEquivalentTo(null)) return false;
+                }
+            }
+            return true;
+        }
     }
 
-    public CapabilityDispatcher<T> copy(T newOwner)
+    public CapabilityDispatcher<T> copy(ItemStack newOwner)
     {
         return new CapabilityDispatcher<>(this, newOwner);
     }
 
+    /*********************************
+        End ItemStack-Specific Code
+     *********************************/
+
     @Override
     public <C> Capability<C> getCapability(CapabilityType<C> cap, @Nullable Direction side)
     {
-    	if(!isValid) return Capability.empty();
+        if(!isValid) return Capability.empty();
         IAttachedCapabilityProvider<?, T> provider = caps.get(cap);
         if(provider == null) return Capability.empty();
         return provider.getCapability(this.owner.isDirectionSensitive() ? side : null).cast();
@@ -102,14 +140,14 @@ public final class CapabilityDispatcher<T extends ICapabilityProvider> implement
     @Override
     public void invalidateCaps()
     {
-    	this.isValid = false;
+        this.isValid = false;
         caps.values().forEach(IAttachedCapabilityProvider::invalidateCaps);
     }
 
     @Override
     public void reviveCaps()
     {
-    	this.isValid = true;
+        this.isValid = true;
         caps.values().forEach(IAttachedCapabilityProvider::reviveCaps);
     }
 
@@ -130,9 +168,10 @@ public final class CapabilityDispatcher<T extends ICapabilityProvider> implement
     @Override
     public void deserializeNBT(CompoundTag tag)
     {
-    	if(!isValid) return;
-    	
-        for(String s : tag.getAllKeys()) {
+        if(!isValid) return;
+        
+        for(String s : tag.getAllKeys())
+        {
             ResourceLocation id = new ResourceLocation(s);
             var prov = this.byName.get(id);
             if(prov != null) prov.deserializeNBT(tag.getCompound(s));

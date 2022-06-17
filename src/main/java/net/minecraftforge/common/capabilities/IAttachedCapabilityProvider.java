@@ -6,6 +6,7 @@ import org.jetbrains.annotations.Nullable;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
 
 /**
  * An Attached Capability Provider is a simple capability provider that can be attached
@@ -64,44 +65,48 @@ public interface IAttachedCapabilityProvider<C, O extends ICapabilityProvider>
     }
 
     /**
-     * For {@link ItemStack}s to stack, it must be validated that they are equivalent.<br>
-     * This means validating that all attached capabilities are equivalent as well.<br>
-     * This method allows attached capabilities to define if they are equivalent or not.
-     * <p>
-     * Specifically, this method compares this provider to another instance of this provider
-     * on another object, or null (if it is not present on the other object).
-     * <p>
-     * The default implementation of this method always returns true, meaning this provider
-     * will be ignored during comparison.
-     * <p>
-     * If your capability must be equivalent for itemstacks to merge, you MUST override this method.
-     * 
-     * @param other Another instance of this provider from another object, or null, if it was not present.
-     * @return true if these providers are equivalent, otherwise false.
+     * Specialized subclass of {@link IAttachedCapabilityProvider} for use with {@link ItemStack}.
+     * Has special functions that allow for the complexity of merging and copying stacks.
+     *
+     * @param <C> The type of the capability.
      */
-    default boolean isEquivalentTo(@Nullable IAttachedCapabilityProvider<C, O> other)
+    public static interface IItemStackCapabilityProvider<C> extends IAttachedCapabilityProvider<C, ItemStack>
     {
-        return true;
-    }
+        /**
+         * <b>This method is performance-critical!  Try to make this as fast as possible while ensuring correctness.</b>
+         * <p>
+         * For {@link ItemStack}s to stack, it must be validated that they are equivalent.<br>
+         * This means validating that all attached capabilities are equivalent as well.<br>
+         * This method allows attached capabilities to define if they are equivalent or not.
+         * <p>
+         * Specifically, this method compares this provider to another instance of this provider
+         * on another object, or null (if it is not present on the other object).
+         * <p>
+         * If your capability must be equivalent for itemstacks to merge, you MUST override this method.
+         * 
+         * @param other Another instance of this provider from another object, or null, if it was not present.
+         * @return true if these providers are equivalent, otherwise false.
+         */
+        boolean isEquivalentTo(@Nullable IItemStackCapabilityProvider<C> other);
 
-    /**
-     * When {@link ItemStack}s are copied, it is inefficient to have all providers be serialized,
-     * re-attached, and deserialized.  Instead, this method allows you to copy your provider to the new stack.
-     * <p>
-     * Specifically, when a parent object is copied, this method will be called for all attached providers
-     * so that they can be copied over to the newly copied object.
-     * <p>
-     * The default implementation returns null, and returning null means this capability will NOT be attached
-     * to the newly copied object.  There will also be no way to attach to the copied object.
-     * <p>
-     * If you want to attach to copied itemstacks, you MUST override this method.
-     * 
-     * @param copiedParent The newly copied parent object.
-     * @return A deep copy of this {@link IAttachedCapabilityProvider}, or null, if it should not be copied.<br>
-     *         Note that copies will not fire {@link AttachCapabilitiesEvent}, so you must use this method.
-     */
-    default @Nullable IAttachedCapabilityProvider<C, O> copy(O copiedParent)
-    {
-        return null;
+        /**
+         * <b>This method is performance-critical!  Try to make this as fast as possible while ensuring correctness.</b>
+         * <p>
+         * When {@link ItemStack}s are copied, it is inefficient to have all providers be serialized,
+         * re-attached, and deserialized.  Instead, this method allows you to copy your provider to the new stack.
+         * <p>
+         * Specifically, when a parent object is copied, this method will be called for all attached providers
+         * so that they can be copied over to the newly copied object.
+         * <p>
+         * Returning null means this capability will NOT be attached to the newly copied object.
+         * <p>
+         * The returned object should have the same type and ID as this one.
+         * 
+         * @param copiedParent The newly copied parent object.
+         * @return A deep copy of this {@link IItemStackCapabilityProvider}, or null, if it should not be copied.<br>
+         *         Note that copies will not fire {@link AttachCapabilitiesEvent}, so you must use this method.
+         */
+        @Nullable IItemStackCapabilityProvider<C> copy(ItemStack copiedParent);
     }
+    
 }

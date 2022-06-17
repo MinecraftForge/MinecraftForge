@@ -8,7 +8,10 @@ package net.minecraftforge.common.capabilities;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.IdentityHashMap;
 import java.util.Map;
+
+import com.google.common.base.Preconditions;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
@@ -16,6 +19,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.chunk.LevelChunk;
+import net.minecraftforge.common.capabilities.IAttachedCapabilityProvider.IItemStackCapabilityProvider;
 import net.minecraftforge.eventbus.api.Event;
 
 /**
@@ -28,7 +32,7 @@ public abstract class AttachCapabilitiesEvent<T extends ICapabilityProvider> ext
 {
 
     protected final T obj;
-    protected final Map<CapabilityType<?>, IAttachedCapabilityProvider<?, T>> providers = new HashMap<>();
+    protected final Map<CapabilityType<?>, IAttachedCapabilityProvider<?, T>> providers = new IdentityHashMap<>(); // Type objects can be compared using ==
     protected final Map<CapabilityType<?>, IAttachedCapabilityProvider<?, T>> view = Collections.unmodifiableMap(providers);
     protected final Map<ResourceLocation, IAttachedCapabilityProvider<?, T>> byName = new HashMap<>();
     protected final Map<ResourceLocation, IAttachedCapabilityProvider<?, T>> byNameView = Collections.unmodifiableMap(byName);
@@ -61,12 +65,13 @@ public abstract class AttachCapabilitiesEvent<T extends ICapabilityProvider> ext
      * 
      * @param provider The provider being attached to this game object.
      * @return true, if this provider was successfully attached, otherwise false.
+     * @throws UnsupportedOperationException If a provider with the same ID already exists.
      */
-     public boolean addCapability(IAttachedCapabilityProvider<?, T> provider)
-     {
+    public boolean addCapability(IAttachedCapabilityProvider<?, T> provider)
+    {
         CapabilityType<?> type = provider.getType();
-        // Review Note : Potentially throw on duplicate name?  Would indicate major issues.
-        if(this.providers.containsKey(type) || this.byName.containsKey(provider.getId())) return false;
+        if(this.byName.containsKey(provider.getId())) throw new UnsupportedOperationException(String.format("Attempted to attach a provider to %s with ID %s, but that ID is already in use!", obj.toString(), provider.getId()));
+        if(this.providers.containsKey(type)) return false;
         this.providers.put(type, provider);
         this.byName.put(provider.getId(), provider);
         return true;
@@ -88,6 +93,11 @@ public abstract class AttachCapabilitiesEvent<T extends ICapabilityProvider> ext
         return this.byNameView;
     }
 
+    /**
+     * This subclass is abnormal because it requires {@link #addCapability} to take an
+     * {@link IItemStackCapabilityProvider} instead of an {@link IAttachedCapabilityProvider}.
+     *
+     */
     public static final class ItemStacks extends AttachCapabilitiesEvent<ItemStack>
     {
 
@@ -96,6 +106,23 @@ public abstract class AttachCapabilitiesEvent<T extends ICapabilityProvider> ext
             super(obj);
         }
 
+        /**
+         * Providers attached to {@link ItemStack} must implement {@link IItemStackCapabilityProvider}.
+         * @see {@link ItemStacks#addCapability(IItemStackCapabilityProvider)}
+         */
+        @Override
+        @Deprecated
+        public boolean addCapability(IAttachedCapabilityProvider<?, ItemStack> provider) {
+            Preconditions.checkArgument(provider instanceof IItemStackCapabilityProvider, "Providers attached to ItemStack must implement IItemStackCapabilityProvider!");
+            return addCapability((IItemStackCapabilityProvider<?>) provider);
+        }
+
+        /**
+         * @see {@link AttachCapabilitiesEvent#addCapability(IAttachedCapabilityProvider)}
+         */
+        public boolean addCapability(IItemStackCapabilityProvider<?> provider) {
+            return super.addCapability(provider);
+        }
     }
 
     public static final class BlockEntities extends AttachCapabilitiesEvent<BlockEntity>

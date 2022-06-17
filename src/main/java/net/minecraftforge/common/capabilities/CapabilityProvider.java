@@ -15,6 +15,7 @@ import org.jetbrains.annotations.Nullable;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraftforge.event.ForgeEventFactory;
 
@@ -31,7 +32,7 @@ public abstract class CapabilityProvider<T extends ICapabilityProvider> implemen
     @Nullable
     private CapabilityDispatcher<T> attachedCaps = null;
     protected boolean capsValid = true;
-    protected CompoundTag lazyCapNbt = new CompoundTag();
+    protected CompoundTag lazyCapNbt = null;
     protected boolean capsInitialized = false;
 
     @SuppressWarnings("unchecked")
@@ -41,13 +42,18 @@ public abstract class CapabilityProvider<T extends ICapabilityProvider> implemen
         this.attachedCaps = ForgeEventFactory.gatherCapabilities(this.getCapEvent(), (T) this);
     }
 
-    @SuppressWarnings("unchecked")
+    /**
+     * @Deprecated Do not call.<br>
+     * This method is called from {@link ItemStack#copy()} to clone the capabilities of the original.
+     * It is not designed for use elsewhere, and it does not cover all corner cases due to this nature.
+     */
+    @Deprecated(forRemoval = false)
     protected <P extends CapabilityProvider<T>> void copyCapsFrom(P other)
     {
         if(other.capsInitialized)
         {
             this.capsInitialized = true;
-            this.attachedCaps = other.getDispatcher().copy((T) this);
+            this.attachedCaps = other.getDispatcher().copy((ItemStack) this);
         }
         else this.lazyCapNbt = other.lazyCapNbt;
     }

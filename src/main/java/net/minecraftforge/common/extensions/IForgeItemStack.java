@@ -31,7 +31,9 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.ToolAction;
 import net.minecraftforge.common.ToolActions;
-import net.minecraftforge.common.capabilities.IComparableCapabilityProvider;
+import net.minecraftforge.common.capabilities.CapabilityDispatcher;
+import net.minecraftforge.common.capabilities.IAttachedCapabilityProvider;
+import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.INBTSerializable;
 
 import org.jetbrains.annotations.NotNull;
@@ -42,7 +44,7 @@ import java.util.Map;
 /*
  * Extension added to ItemStack that bounces to ItemSack sensitive Item methods. Typically this is just for convince.
  */
-public interface IForgeItemStack extends IComparableCapabilityProvider<ItemStack>, INBTSerializable<CompoundTag>
+public interface IForgeItemStack extends ICapabilityProvider, INBTSerializable<CompoundTag>
 {
     // Helpers for accessing Item data
     private ItemStack self()
@@ -558,4 +560,39 @@ public interface IForgeItemStack extends IComparableCapabilityProvider<ItemStack
     {
         return self().getItem().getFoodProperties(self(), entity);
     }
+
+    /**
+     * @see {@link #areCapsCompatible(CapabilityDispatcher)}
+     */
+    default boolean areCapsCompatible(ItemStack other)
+    {
+        return areCapsCompatible(other.getCapDispatcher());
+    }
+
+    /**
+     * Documentation for this method is available at these two references, and is not duplicated.
+     * @see {@link CapabilityDispatcher#isEquivalentTo(CapabilityDispatcher)}
+     * @see {@link IAttachedCapabilityProvider#isEquivalentTo(IAttachedCapabilityProvider)}
+     */
+    default boolean areCapsCompatible(@Nullable CapabilityDispatcher<ItemStack> other)
+    {
+        var disp = getCapDispatcher();
+        if (disp == null)
+        {
+            if (other == null)
+            {
+                return true;
+            }
+            else
+            {
+                return other.isEquivalentTo(null);
+            }
+        }
+        else
+        {
+            return disp.isEquivalentTo(other);
+        }
+    }
+
+    @Nullable CapabilityDispatcher<ItemStack> getCapDispatcher(); // Should be lazy
 }
