@@ -53,6 +53,7 @@ public class ModList
     private List<ModContainer> mods;
     private Map<String, ModContainer> indexedMods;
     private List<ModFileScanData> modFileScanData;
+    private List<ModContainer> sortedContainers;
 
     private ModList(final List<ModFile> modFiles, final List<ModInfo> sortedList)
     {
@@ -155,6 +156,7 @@ public class ModList
     void setLoadedMods(final List<ModContainer> modContainers)
     {
         this.mods = modContainers;
+        this.sortedContainers = modContainers.stream().sorted((o1, o2) -> Integer.compare(sortedList.indexOf(o1.getModInfo()), sortedList.indexOf(o2.getModInfo()))).toList();
         this.indexedMods = modContainers.stream().collect(Collectors.toMap(ModContainer::getModId, Function.identity()));
     }
 
@@ -218,6 +220,9 @@ public class ModList
         indexedMods.forEach(modContainerConsumer);
     }
 
+    public void forEachModInOrder(Consumer<ModContainer> containerConsumer) {
+        this.sortedContainers.forEach(containerConsumer);
+    }
     public <T> Stream<T> applyForEachModContainer(Function<ModContainer, T> function) {
         return indexedMods.values().stream().map(function);
     }

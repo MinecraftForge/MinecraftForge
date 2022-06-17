@@ -153,7 +153,7 @@ public class RegistryManager
         NewRegistryEvent event = new NewRegistryEvent();
         vanillaRegistryKeys = Set.copyOf(Registry.REGISTRY.keySet());
 
-        ModLoader.get().postEventWithWrap(event, (mc, e) -> ModLoadingContext.get().setActiveContainer(mc), (mc, e) -> ModLoadingContext.get().setActiveContainer(null));
+        ModLoader.get().postEventWithWrapInModOrder(event, (mc, e) -> ModLoadingContext.get().setActiveContainer(mc), (mc, e) -> ModLoadingContext.get().setActiveContainer(null));
 
         event.fill();
     }

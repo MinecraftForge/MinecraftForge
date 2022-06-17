@@ -289,7 +289,7 @@ public class ModLoader
             LOGGER.error("Cowardly refusing to send event generator to a broken mod state");
             return;
         }
-        ModList.get().forEachModContainer((id, mc) -> mc.acceptEvent(generator.apply(mc)));
+        ModList.get().forEachModInOrder(mc -> mc.acceptEvent(generator.apply(mc)));
     }
 
     public <T extends Event & IModBusEvent> void postEvent(T e) {
@@ -299,12 +299,12 @@ public class ModLoader
         }
         ModList.get().forEachModContainer((id, mc) -> mc.acceptEvent(e));
     }
-    public <T extends Event & IModBusEvent> void postEventWithWrap(T e, BiConsumer<ModContainer, T> pre, BiConsumer<ModContainer, T> post) {
+    public <T extends Event & IModBusEvent> void postEventWithWrapInModOrder(T e, BiConsumer<ModContainer, T> pre, BiConsumer<ModContainer, T> post) {
         if (!loadingStateValid) {
             LOGGER.error("Cowardly refusing to send event {} to a broken mod state", e.getClass().getName());
             return;
         }
-        ModList.get().forEachModContainer((id, mc) -> {
+        ModList.get().forEachModInOrder(mc -> {
             pre.accept(mc, e);
             mc.acceptEvent(e);
             post.accept(mc, e);
