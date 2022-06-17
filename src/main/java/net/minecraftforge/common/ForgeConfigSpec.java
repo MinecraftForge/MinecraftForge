@@ -846,7 +846,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         {
             Preconditions.checkNotNull(spec, "Cannot get config value before spec is built");
             // TODO: Remove this dev-time check so this errors out on both production and dev
-            // This is dev-time-only in 1.18.2, to avoid breaking already published mods while forcing devs to fix their errors
+            // This is dev-time-only in 1.19.x, to avoid breaking already published mods while forcing devs to fix their errors
             if (!FMLEnvironment.production)
             {
                 // When the above if-check is removed, change message to "Cannot get config value before config is loaded"
