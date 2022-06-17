@@ -1,0 +1,11 @@
+--- a/net/minecraft/client/model/AxolotlModel.java
++++ b/net/minecraft/client/model/AxolotlModel.java
+@@ -81,7 +_,7 @@
+          this.m_170388_(p_170395_);
+       } else {
+          boolean flag = p_170395_.m_20184_().m_165925_() > 1.0E-7D || p_170395_.m_146909_() != p_170395_.f_19860_ || p_170395_.m_146908_() != p_170395_.f_19859_ || p_170395_.f_19790_ != p_170395_.m_20185_() || p_170395_.f_19792_ != p_170395_.m_20189_();
+-         if (p_170395_.m_20072_()) {
++         if (p_170395_.m_20072_() || p_170395_.isInFluidType((fluidType, height) -> p_170395_.canSwimInFluidType(fluidType))) {
+             if (flag) {
+                this.m_170422_(p_170398_, p_170400_);
+             } else {

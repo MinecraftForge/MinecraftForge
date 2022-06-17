@@ -1,0 +1,20 @@
+--- a/net/minecraft/world/entity/ai/behavior/TryFindWater.java
++++ b/net/minecraft/world/entity/ai/behavior/TryFindWater.java
+@@ -26,7 +_,7 @@
+    }
+ 
+    protected boolean m_6114_(ServerLevel p_148012_, PathfinderMob p_148013_) {
+-      return !p_148013_.f_19853_.m_6425_(p_148013_.m_20183_()).m_205070_(FluidTags.f_13131_);
++      return !p_148013_.canSwimInFluidType(p_148013_.f_19853_.m_6425_(p_148013_.m_20183_()).getFluidType());
+    }
+ 
+    protected void m_6735_(ServerLevel p_148019_, PathfinderMob p_148020_, long p_148021_) {
+@@ -39,7 +_,7 @@
+             if (blockpos3.m_123341_() != blockpos2.m_123341_() || blockpos3.m_123343_() != blockpos2.m_123343_()) {
+                BlockState blockstate = p_148020_.f_19853_.m_8055_(blockpos3.m_7494_());
+                BlockState blockstate1 = p_148020_.f_19853_.m_8055_(blockpos3);
+-               if (blockstate1.m_60713_(Blocks.f_49990_)) {
++               if (p_148020_.canSwimInFluidType(blockstate1.m_60819_().getFluidType())) {
+                   if (blockstate.m_60795_()) {
+                      blockpos = blockpos3.m_7949_();
+                      break;

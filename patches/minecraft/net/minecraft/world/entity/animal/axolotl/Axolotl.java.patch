@@ -1,0 +1,29 @@
+--- a/net/minecraft/world/entity/animal/axolotl/Axolotl.java
++++ b/net/minecraft/world/entity/animal/axolotl/Axolotl.java
+@@ -155,7 +_,7 @@
+    }
+ 
+    protected void m_149193_(int p_149194_) {
+-      if (this.m_6084_() && !this.m_20071_()) {
++      if (this.m_6084_() && !this.m_20071_() && this.isInFluidType((fluidType, height) -> this.canDrownInFluidType(fluidType), true)) {
+          this.m_20301_(p_149194_ - 1);
+          if (this.m_20146_() == -20) {
+             this.m_20301_(0);
+@@ -284,7 +_,7 @@
+ 
+    public boolean m_6469_(DamageSource p_149115_, float p_149116_) {
+       float f = this.m_21223_();
+-      if (!this.f_19853_.f_46443_ && !this.m_21525_() && this.f_19853_.f_46441_.m_188503_(3) == 0 && ((float)this.f_19853_.f_46441_.m_188503_(3) < p_149116_ || f / this.m_21233_() < 0.5F) && p_149116_ < f && this.m_20069_() && (p_149115_.m_7639_() != null || p_149115_.m_7640_() != null) && !this.m_149175_()) {
++      if (!this.f_19853_.f_46443_ && !this.m_21525_() && this.f_19853_.f_46441_.m_188503_(3) == 0 && ((float)this.f_19853_.f_46441_.m_188503_(3) < p_149116_ || f / this.m_21233_() < 0.5F) && p_149116_ < f && (this.m_20069_() || this.isInFluidType((fluidType, height) -> this.canSwimInFluidType(fluidType))) && (p_149115_.m_7639_() != null || p_149115_.m_7640_() != null) && !this.m_149175_()) {
+          this.f_20939_.m_21879_(MemoryModuleType.f_148195_, 200);
+       }
+ 
+@@ -423,7 +_,7 @@
+    }
+ 
+    public void m_7023_(Vec3 p_149181_) {
+-      if (this.m_6142_() && this.m_20069_()) {
++      if (this.m_6142_() && (this.m_20069_() || this.isInFluidType((fluidType, height) -> this.canSwimInFluidType(fluidType)))) {
+          this.m_19920_(this.m_6113_(), p_149181_);
+          this.m_6478_(MoverType.SELF, this.m_20184_());
+          this.m_20256_(this.m_20184_().m_82490_(0.9D));

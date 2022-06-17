@@ -1,0 +1,11 @@
+--- a/net/minecraft/client/model/TadpoleModel.java
++++ b/net/minecraft/client/model/TadpoleModel.java
+@@ -43,7 +_,7 @@
+    }
+ 
+    public void m_6973_(T p_233453_, float p_233454_, float p_233455_, float p_233456_, float p_233457_, float p_233458_) {
+-      float f = p_233453_.m_20069_() ? 1.0F : 1.5F;
++      float f = p_233453_.m_20069_() || p_233453_.isInFluidType((fluidType, height) -> p_233453_.canSwimInFluidType(fluidType)) ? 1.0F : 1.5F;
+       this.f_233441_.f_104204_ = -f * 0.25F * Mth.m_14031_(0.3F * p_233456_);
+    }
+ }

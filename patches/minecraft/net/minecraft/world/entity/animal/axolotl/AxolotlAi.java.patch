@@ -1,0 +1,39 @@
+--- a/net/minecraft/world/entity/animal/axolotl/AxolotlAi.java
++++ b/net/minecraft/world/entity/animal/axolotl/AxolotlAi.java
+@@ -73,7 +_,7 @@
+    }
+ 
+    private static void m_149308_(Brain<Axolotl> p_149309_) {
+-      p_149309_.m_21900_(Activity.f_37979_, ImmutableList.of(Pair.of(0, new RunSometimes<>(new SetEntityLookTarget(EntityType.f_20532_, 6.0F), UniformInt.m_146622_(30, 60))), Pair.of(1, new AnimalMakeLove(EntityType.f_147039_, 0.2F)), Pair.of(2, new RunOne<>(ImmutableList.of(Pair.of(new FollowTemptation(AxolotlAi::m_149300_), 1), Pair.of(new BabyFollowAdult<>(f_149279_, AxolotlAi::m_149294_), 1)))), Pair.of(3, new StartAttacking<>(AxolotlAi::m_149298_)), Pair.of(3, new TryFindWater(6, 0.15F)), Pair.of(4, new GateBehavior<>(ImmutableMap.of(MemoryModuleType.f_26370_, MemoryStatus.VALUE_ABSENT), ImmutableSet.of(), GateBehavior.OrderPolicy.ORDERED, GateBehavior.RunningPolicy.TRY_ALL, ImmutableList.of(Pair.of(new RandomSwim(0.5F), 2), Pair.of(new RandomStroll(0.15F, false), 2), Pair.of(new SetWalkTargetFromLookTarget(AxolotlAi::m_182380_, AxolotlAi::m_149300_, 3), 3), Pair.of(new RunIf<>(Entity::m_20072_, new DoNothing(30, 60)), 5), Pair.of(new RunIf<>(Entity::m_20096_, new DoNothing(200, 400)), 5))))));
++      p_149309_.m_21900_(Activity.f_37979_, ImmutableList.of(Pair.of(0, new RunSometimes<>(new SetEntityLookTarget(EntityType.f_20532_, 6.0F), UniformInt.m_146622_(30, 60))), Pair.of(1, new AnimalMakeLove(EntityType.f_147039_, 0.2F)), Pair.of(2, new RunOne<>(ImmutableList.of(Pair.of(new FollowTemptation(AxolotlAi::m_149300_), 1), Pair.of(new BabyFollowAdult<>(f_149279_, AxolotlAi::m_149294_), 1)))), Pair.of(3, new StartAttacking<>(AxolotlAi::m_149298_)), Pair.of(3, new TryFindWater(6, 0.15F)), Pair.of(4, new GateBehavior<>(ImmutableMap.of(MemoryModuleType.f_26370_, MemoryStatus.VALUE_ABSENT), ImmutableSet.of(), GateBehavior.OrderPolicy.ORDERED, GateBehavior.RunningPolicy.TRY_ALL, ImmutableList.of(Pair.of(new RandomSwim(0.5F), 2), Pair.of(new RandomStroll(0.15F, false), 2), Pair.of(new SetWalkTargetFromLookTarget(AxolotlAi::m_182380_, AxolotlAi::m_149300_, 3), 3), Pair.of(new RunIf<>(axolotl -> axolotl.m_20072_() || axolotl.isInFluidType((fluidType, height) -> axolotl.canSwimInFluidType(fluidType)), new DoNothing(30, 60)), 5), Pair.of(new RunIf<>(Entity::m_20096_, new DoNothing(200, 400)), 5))))));
+    }
+ 
+    private static boolean m_182380_(LivingEntity p_182381_) {
+@@ -81,7 +_,7 @@
+       Optional<PositionTracker> optional = p_182381_.m_6274_().m_21952_(MemoryModuleType.f_26371_);
+       if (optional.isPresent()) {
+          BlockPos blockpos = optional.get().m_6675_();
+-         return level.m_46801_(blockpos) == p_182381_.m_20072_();
++         return level.m_46801_(blockpos) == p_182381_.m_20072_() || !level.m_6425_(blockpos).getFluidType().isAir() == p_182381_.canSwimInFluidType(level.m_6425_(blockpos).getFluidType());
+       } else {
+          return false;
+       }
+@@ -100,15 +_,15 @@
+    }
+ 
+    private static float m_149288_(LivingEntity p_149289_) {
+-      return p_149289_.m_20072_() ? 0.6F : 0.15F;
++      return p_149289_.m_20072_() || p_149289_.isInFluidType((fluidType, height) -> p_149289_.canSwimInFluidType(fluidType)) ? 0.6F : 0.15F;
+    }
+ 
+    private static float m_149294_(LivingEntity p_149295_) {
+-      return p_149295_.m_20072_() ? 0.6F : 0.15F;
++      return p_149295_.m_20072_() || p_149295_.isInFluidType((fluidType, height) -> p_149295_.canSwimInFluidType(fluidType)) ? 0.6F : 0.15F;
+    }
+ 
+    private static float m_149300_(LivingEntity p_149301_) {
+-      return p_149301_.m_20072_() ? 0.5F : 0.15F;
++      return p_149301_.m_20072_() || p_149301_.isInFluidType((fluidType, height) -> p_149301_.canSwimInFluidType(fluidType)) ? 0.5F : 0.15F;
+    }
+ 
+    private static Optional<? extends LivingEntity> m_149298_(Axolotl p_149299_) {
