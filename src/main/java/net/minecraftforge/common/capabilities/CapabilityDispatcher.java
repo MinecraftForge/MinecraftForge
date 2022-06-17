@@ -19,7 +19,8 @@ import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.common.capabilities.IAttachedCapabilityProvider.IItemStackCapabilityProvider;
+import net.minecraftforge.common.capabilities.IAttachedCapabilityProvider.ICopyableCapabilityProvider;
+import net.minecraftforge.common.capabilities.IAttachedCapabilityProvider.IComparableCapabilityProvider;
 import net.minecraftforge.common.util.INBTSerializable;
 
 /**
@@ -47,7 +48,7 @@ public final class CapabilityDispatcher<T extends ICapabilityProvider> implement
     }
 
     /*********************************
-          ItemStack-Specific Code
+             Compare/Copy Code
            Warning: Generic Hell
      *********************************/
     
@@ -57,13 +58,13 @@ public final class CapabilityDispatcher<T extends ICapabilityProvider> implement
      * @see {@link IItemStackCapabilityProvider#copy(ICapabilityProvider)}
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
-	private CapabilityDispatcher(CapabilityDispatcher<T> other, ItemStack newOwner)
+	private CapabilityDispatcher(CapabilityDispatcher<T> other, T newOwner)
     {
         Map<CapabilityType<?>, IAttachedCapabilityProvider<?, T>> caps = new HashMap<>(other.caps.size(), 1);
         Map<ResourceLocation, IAttachedCapabilityProvider<?, T>> byName = new HashMap<>(other.byName.size(), 1);
         for(Map.Entry<ResourceLocation, IAttachedCapabilityProvider<?, T>> entry : other.byName.entrySet())
         {
-            IAttachedCapabilityProvider<?, T> copy = ((IItemStackCapabilityProvider) entry.getValue()).copy(newOwner);
+            IAttachedCapabilityProvider<?, T> copy = ((ICopyableCapabilityProvider<?, T>) entry.getValue()).copy(newOwner);
             // Ideally we would ensure the type and key don't change here, but it's an expensive check that we don't "need" to do.
             caps.put(copy.getType(), copy);
             byName.put(copy.getId(), copy);
@@ -74,6 +75,55 @@ public final class CapabilityDispatcher<T extends ICapabilityProvider> implement
     }
 
     /**
+     * <b>Do not call unless you are CERTAIN that both dispatchers are comparable!</b>
+     * <p>
+     * Checks if another capability dispatcher is equivalent to this one.<br>
+     * Equivalence in this case means either dispatcher could replace the other one.<br>
+     * This is used in itemstack merging.<br>
+     * 
+     * Equivalence is checked by asking all attached providers to compare against their
+     * presence on the other dispatcher.  Equivalence must be unanimous.
+     * 
+     * @param other The other dispatcher being checked against.
+     * @return If this dispatcher is equivalent to the other dispatcher.
+     * 
+     * @see {@link IComparableCapabilityProvider#isEquivalentTo(IAttachedCapabilityProvider)}
+     */
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    public boolean isEquivalentTo(@Nullable CapabilityDispatcher<T> other)
+    {
+        if(other == null) {
+            for(IComparableCapabilityProvider<?, T> prov : (Collection<IComparableCapabilityProvider>) (Collection) this.byName.values()) 
+            {
+                if(!prov.isEquivalentTo(null)) return false;    // Would anyone ever want this behavior? / Do mods have caps that are ignored upon stacking?
+            }
+            return true;
+        }
+        else
+        {
+            for(ResourceLocation id : this.byName.keySet())
+            {
+                var ourProv = (IComparableCapabilityProvider) this.byName.get(id);
+                var theirProv = other == null ? null : (IComparableCapabilityProvider) other.byName.get(id);        
+                if(theirProv == null && !ourProv.isEquivalentTo(null)) return false;
+                else if(!ourProv.isEquivalentTo(theirProv)) return false;
+            }
+            if(other != null)
+            {
+                for(ResourceLocation id : other.byName.keySet())
+                {
+                    if(this.byName.containsKey(id)) continue; // Skip any found in our provider, as we already checked above.
+                    var theirProv = (IComparableCapabilityProvider) other.byName.get(id);        
+                    if(!theirProv.isEquivalentTo(null)) return false;
+                }
+            }
+            return true;
+        }
+    }
+
+    /**
+     * <b>Do not call unless you are CERTAIN that both dispatchers are comparable!</b>
+     * <p>
      * Checks if another capability dispatcher is equivalent to this one.<br>
      * Equivalence in this case means either dispatcher could replace the other one.<br>
      * This is used in itemstack merging.<br>
@@ -86,46 +136,13 @@ public final class CapabilityDispatcher<T extends ICapabilityProvider> implement
      * 
      * @see {@link IItemStackCapabilityProvider#isEquivalentTo(IAttachedCapabilityProvider)}
      */
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-    public boolean isEquivalentTo(@Nullable CapabilityDispatcher<ItemStack> other)
-    {
-        if(other == null) {
-            for(IItemStackCapabilityProvider<?> prov : (Collection<IItemStackCapabilityProvider>) (Collection) this.byName.values()) 
-            {
-                if(!prov.isEquivalentTo(null)) return false;    // Would anyone ever want this behavior? / Do mods have caps that are ignored upon stacking?
-            }
-            return true;
-        }
-        else
-        {
-            for(ResourceLocation id : this.byName.keySet())
-            {
-                var ourProv = (IItemStackCapabilityProvider) this.byName.get(id);
-                var theirProv = other == null ? null : (IItemStackCapabilityProvider) other.byName.get(id);        
-                if(ourProv == null && !theirProv.isEquivalentTo(null)) return false;
-                else if(theirProv == null && !ourProv.isEquivalentTo(null)) return false;
-                else if(!ourProv.isEquivalentTo((IItemStackCapabilityProvider) theirProv)) return false;
-            }
-            if(other != null)
-            {
-                for(ResourceLocation id : other.byName.keySet())
-                {
-                    if(this.byName.containsKey(id)) continue; // Skip any found in our provider, as we already checked above.
-                    var theirProv = (IItemStackCapabilityProvider) other.byName.get(id);        
-                    if(!theirProv.isEquivalentTo(null)) return false;
-                }
-            }
-            return true;
-        }
-    }
-
-    public CapabilityDispatcher<T> copy(ItemStack newOwner)
+    public CapabilityDispatcher<T> copy(T newOwner)
     {
         return new CapabilityDispatcher<>(this, newOwner);
     }
 
     /*********************************
-        End ItemStack-Specific Code
+           End Compare/Copy Code
      *********************************/
 
     @Override
@@ -134,7 +151,7 @@ public final class CapabilityDispatcher<T extends ICapabilityProvider> implement
         if(!isValid) return Capability.empty();
         IAttachedCapabilityProvider<?, T> provider = caps.get(cap);
         if(provider == null) return Capability.empty();
-        return provider.getCapability(this.owner.isDirectionSensitive() ? side : null).cast();
+        return provider.getCapability(side).cast();
     }
 
     @Override

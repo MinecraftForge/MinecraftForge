@@ -618,7 +618,7 @@
 +   }
 +
 +   @Override
-+   public net.minecraftforge.common.capabilities.AttachCapabilitiesEvent.Entities getCapEvent() {
++   public net.minecraftforge.common.capabilities.AttachCapabilitiesEvent<Entity> getCapEvent() {
 +      return new net.minecraftforge.common.capabilities.AttachCapabilitiesEvent.Entities(this);
 +   }
 +

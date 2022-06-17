@@ -11,7 +11,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.capabilities.CapabilityType;
 import net.minecraftforge.common.capabilities.CapabilityTypes;
-import net.minecraftforge.common.capabilities.IAttachedCapabilityProvider;
+import net.minecraftforge.common.capabilities.IAttachedCapabilityProvider.IItemStackCapabilityProvider;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidType;
@@ -29,7 +29,7 @@ import org.jetbrains.annotations.Nullable;
  * Wrapper for vanilla and forge buckets.
  * Swaps between empty bucket and filled bucket of the correct type.
  */
-public class FluidBucketWrapper implements IFluidHandlerItem, IAttachedCapabilityProvider<IFluidHandlerItem, ItemStack>
+public class FluidBucketWrapper implements IFluidHandlerItem, IItemStackCapabilityProvider<IFluidHandlerItem>
 {
     public static final ResourceLocation ID = new ResourceLocation("forge", "bucket_wrapper");
     
@@ -177,23 +177,35 @@ public class FluidBucketWrapper implements IFluidHandlerItem, IAttachedCapabilit
         return this.holder.cast();
     }
 
-	@Override
-	public CapabilityType<IFluidHandlerItem> getType() {
-		return CapabilityTypes.FLUID_ITEMS;
-	}
+    @Override
+    public CapabilityType<IFluidHandlerItem> getType() {
+        return CapabilityTypes.FLUID_ITEMS;
+    }
 
-	@Override
-	public ResourceLocation getId() {
-		return ID;
-	}
+    @Override
+    public ResourceLocation getId() {
+        return ID;
+    }
 
-	@Override
-	public void invalidateCaps() {
-		this.holder.invalidate();
-	}
+    @Override
+    public void invalidateCaps() {
+        this.holder.invalidate();
+    }
 
-	@Override
-	public void reviveCaps() {
-		this.holder.revive();
-	}
+    @Override
+    public void reviveCaps() {
+        this.holder.revive();
+    }
+
+    @Override
+    public boolean isEquivalentTo(@Nullable IComparableCapabilityProvider<IFluidHandlerItem, ItemStack> other) {
+        var casted = (FluidBucketWrapper) other;
+        // Note - could we just return true?  By the time this is checked, the item should have been checked, and as such the fluid should be the same.
+        return this.getFluid().isFluidStackIdentical(casted.getFluid());
+    }
+
+    @Override
+    public @Nullable ICopyableCapabilityProvider<IFluidHandlerItem, ItemStack> copy(ItemStack copiedParent) {
+        return new FluidBucketWrapper(copiedParent);
+    }
 }

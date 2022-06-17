@@ -411,7 +411,7 @@
        this.m_36246_(Stats.f_12982_.m_12902_(p_36186_.m_41720_()));
        p_36185_.m_6263_((Player)null, this.m_20185_(), this.m_20186_(), this.m_20189_(), SoundEvents.f_12321_, SoundSource.PLAYERS, 0.5F, p_36185_.f_46441_.m_188501_() * 0.1F + 0.9F);
        if (this instanceof ServerPlayer) {
-@@ -2023,5 +_,63 @@
+@@ -2023,5 +_,68 @@
        public Component m_36423_() {
           return this.f_36413_;
        }
@@ -473,5 +473,10 @@
 +   @Nullable
 +   public Pose getForcedPose() {
 +      return this.forcedPose;
++   }
++
++   @Override
++   public net.minecraftforge.common.capabilities.AttachCapabilitiesEvent getCapEvent() {
++      return new net.minecraftforge.common.capabilities.AttachCapabilitiesEvent.Players(this);
     }
  }

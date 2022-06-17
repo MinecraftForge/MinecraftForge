@@ -57,8 +57,11 @@ public final class Capability<T>
      * If this field is null, it means the supplier has not been resolved.<br>
      * If this {@link Mutable} does not contain a value, the supplier was invalid.<br>
      * If this {@link Mutable} contains a value, the supplier has been resolved.<br>
+     * <p>
+     * Volatile modifier is required to ensure double-checked lock in {@link #getValue()} works.<br>
+     * See https://www.cs.umd.edu/~pugh/java/memoryModel/DoubleCheckedLocking.html
      */
-    private Mutable<T> resolved;
+    private volatile Mutable<T> resolved;
     private Set<NonNullConsumer<Capability<T>>> listeners = new HashSet<>();
     private boolean isValid = true;
 

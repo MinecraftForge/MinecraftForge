@@ -238,7 +238,7 @@
              return p_220170_.m_131144_(new HoverEvent(HoverEvent.Action.f_130832_, new HoverEvent.ItemStackInfo(this)));
           });
        }
-@@ -958,12 +_,38 @@
+@@ -958,12 +_,33 @@
        this.m_41720_().m_5929_(p_41732_, p_41733_, this, p_41734_);
     }
  
@@ -269,11 +269,6 @@
 +   @Override
 +   public @Nullable net.minecraftforge.common.capabilities.CapabilityDispatcher<ItemStack> getCapDispatcher() {
 +      return this.capsInitialized ? this.getCapDispatcher() : null;
-+   }
-+
-+   @Override
-+   public boolean isDirectionSensitive() {
-+      return false;
     }
  
     public SoundEvent m_41615_() {

@@ -115,7 +115,7 @@
        this.f_36096_ = this.f_36095_;
     }
  
-@@ -1133,6 +_,13 @@
+@@ -1133,6 +_,14 @@
        this.m_36362_(p_9016_.m_36331_());
        this.m_36364_(p_9016_.m_36332_());
        this.m_219749_(p_9016_.m_219759_());
@@ -125,6 +125,7 @@
 +      CompoundTag old = p_9016_.getPersistentData();
 +      if (old.m_128441_(PERSISTED_NBT_TAG))
 +          getPersistentData().m_128365_(PERSISTED_NBT_TAG, old.m_128423_(PERSISTED_NBT_TAG));
++      this.copyCapsFrom(p_9016_);
 +      net.minecraftforge.event.ForgeEventFactory.onPlayerClone(this, p_9016_, !p_9017_);
     }
  

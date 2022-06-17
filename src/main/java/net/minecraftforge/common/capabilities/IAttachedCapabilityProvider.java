@@ -70,7 +70,7 @@ public interface IAttachedCapabilityProvider<C, O extends ICapabilityProvider>
      *
      * @param <C> The type of the capability.
      */
-    public static interface IItemStackCapabilityProvider<C> extends IAttachedCapabilityProvider<C, ItemStack>
+    public static interface IComparableCapabilityProvider<C, O extends ICapabilityProvider> extends IAttachedCapabilityProvider<C, O>
     {
         /**
          * <b>This method is performance-critical!  Try to make this as fast as possible while ensuring correctness.</b>
@@ -87,8 +87,17 @@ public interface IAttachedCapabilityProvider<C, O extends ICapabilityProvider>
          * @param other Another instance of this provider from another object, or null, if it was not present.
          * @return true if these providers are equivalent, otherwise false.
          */
-        boolean isEquivalentTo(@Nullable IItemStackCapabilityProvider<C> other);
+        boolean isEquivalentTo(@Nullable IComparableCapabilityProvider<C, O> other);
+    }
 
+    /**
+     * Specialized subclass of {@link IAttachedCapabilityProvider} for use with {@link ItemStack}.
+     * Has special functions that allow for the complexity of merging and copying stacks.
+     *
+     * @param <C> The type of the capability.
+     */
+    public static interface ICopyableCapabilityProvider<C, O extends ICapabilityProvider> extends IAttachedCapabilityProvider<C, O>
+    {
         /**
          * <b>This method is performance-critical!  Try to make this as fast as possible while ensuring correctness.</b>
          * <p>
@@ -106,7 +115,17 @@ public interface IAttachedCapabilityProvider<C, O extends ICapabilityProvider>
          * @return A deep copy of this {@link IItemStackCapabilityProvider}, or null, if it should not be copied.<br>
          *         Note that copies will not fire {@link AttachCapabilitiesEvent}, so you must use this method.
          */
-        @Nullable IItemStackCapabilityProvider<C> copy(ItemStack copiedParent);
+        @Nullable ICopyableCapabilityProvider<C, O> copy(O copiedParent);
+    }
+
+    /**
+     * Specialized subclass of {@link IAttachedCapabilityProvider} for use with {@link ItemStack}.
+     * Has special functions that allow for the complexity of merging and copying stacks.
+     *
+     * @param <C> The type of the capability.
+     */
+    public static interface IItemStackCapabilityProvider<C> extends IComparableCapabilityProvider<C, ItemStack>, ICopyableCapabilityProvider<C, ItemStack>
+    {
     }
     
 }

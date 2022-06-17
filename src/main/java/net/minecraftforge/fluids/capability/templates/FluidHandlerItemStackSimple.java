@@ -11,8 +11,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.core.Direction;
 import net.minecraftforge.common.capabilities.CapabilityType;
 import net.minecraftforge.common.capabilities.CapabilityTypes;
-import net.minecraftforge.common.capabilities.IAttachedCapabilityProvider;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.common.capabilities.IAttachedCapabilityProvider.IItemStackCapabilityProvider;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
@@ -26,7 +25,7 @@ import org.jetbrains.annotations.Nullable;
  *
  * This implementation only allows item containers to be fully filled or emptied, similar to vanilla buckets.
  */
-public class FluidHandlerItemStackSimple implements IFluidHandlerItem, IAttachedCapabilityProvider<IFluidHandlerItem, ItemStack>
+public class FluidHandlerItemStackSimple implements IFluidHandlerItem, IItemStackCapabilityProvider<IFluidHandlerItem>
 {
     public static final String FLUID_NBT_KEY = "Fluid";
     public static final ResourceLocation ID = new ResourceLocation("forge", "simple_fluid_handler");
@@ -234,23 +233,36 @@ public class FluidHandlerItemStackSimple implements IFluidHandlerItem, IAttached
         }
     }
 
-	@Override
-	public CapabilityType<IFluidHandlerItem> getType() {
-		return CapabilityTypes.FLUID_ITEMS;
-	}
+    @Override
+    public CapabilityType<IFluidHandlerItem> getType() {
+        return CapabilityTypes.FLUID_ITEMS;
+    }
 
-	@Override
-	public ResourceLocation getId() {
-		return ID;
-	}
+    @Override
+    public ResourceLocation getId() {
+        return ID;
+    }
 
-	@Override
-	public void invalidateCaps() {
-		this.holder.invalidate();
-	}
+    @Override
+    public void invalidateCaps() {
+        this.holder.invalidate();
+    }
 
-	@Override
-	public void reviveCaps() {
-		this.holder.revive();
-	}
+    @Override
+    public void reviveCaps() {
+        this.holder.revive();
+    }
+
+    @Override
+    public boolean isEquivalentTo(@Nullable IComparableCapabilityProvider<IFluidHandlerItem, ItemStack> other)
+    {
+        var casted = (FluidHandlerItemStackSimple) other;
+        return this.getFluid().isFluidStackIdentical(casted.getFluid());
+    }
+
+    @Override
+    public @Nullable ICopyableCapabilityProvider<IFluidHandlerItem, ItemStack> copy(ItemStack copiedParent)
+    {
+        return new FluidHandlerItemStackSimple(copiedParent, this.capacity);
+    }
 }

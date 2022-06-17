@@ -15,6 +15,7 @@ import org.jetbrains.annotations.Nullable;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraftforge.event.ForgeEventFactory;
@@ -39,26 +40,26 @@ public abstract class CapabilityProvider<T extends ICapabilityProvider> implemen
     private void doGatherCapabilities()
     {
         this.capsInitialized = true;
-        this.attachedCaps = ForgeEventFactory.gatherCapabilities(this.getCapEvent(), (T) this);
+        this.attachedCaps = ForgeEventFactory.gatherCapabilities((AttachCapabilitiesEvent<T>) this.getCapEvent(), (T) this);
     }
 
     /**
-     * @Deprecated Do not call.<br>
-     * This method is called from {@link ItemStack#copy()} to clone the capabilities of the original.
+     * This method is called from {@link ItemStack#copy()} and {@link ServerPlayer#restoreFrom(ServerPlayer, boolean)} to clone 
+     * the capabilities of the original.
      * It is not designed for use elsewhere, and it does not cover all corner cases due to this nature.
      */
-    @Deprecated(forRemoval = false)
+    @SuppressWarnings("unchecked")
     protected <P extends CapabilityProvider<T>> void copyCapsFrom(P other)
     {
         if(other.capsInitialized)
         {
             this.capsInitialized = true;
-            this.attachedCaps = other.getDispatcher().copy((ItemStack) this);
+            this.attachedCaps = other.getDispatcher().copy((T) this);
         }
         else this.lazyCapNbt = other.lazyCapNbt;
     }
 
-    protected abstract AttachCapabilitiesEvent<T> getCapEvent();
+    protected abstract AttachCapabilitiesEvent<? extends T> getCapEvent();
 
     protected final @Nullable CapabilityDispatcher<T> getDispatcher()
     {

@@ -15,10 +15,12 @@ import com.google.common.base.Preconditions;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.chunk.LevelChunk;
+import net.minecraftforge.common.capabilities.IAttachedCapabilityProvider.ICopyableCapabilityProvider;
 import net.minecraftforge.common.capabilities.IAttachedCapabilityProvider.IItemStackCapabilityProvider;
 import net.minecraftforge.eventbus.api.Event;
 
@@ -123,6 +125,7 @@ public abstract class AttachCapabilitiesEvent<T extends ICapabilityProvider> ext
         public boolean addCapability(IItemStackCapabilityProvider<?> provider) {
             return super.addCapability(provider);
         }
+
     }
 
     public static final class BlockEntities extends AttachCapabilitiesEvent<BlockEntity>
@@ -161,6 +164,39 @@ public abstract class AttachCapabilitiesEvent<T extends ICapabilityProvider> ext
         public Levels(Level obj)
         {
             super(obj);
+        }
+
+    }
+
+    /**
+     * This subclass is abnormal because it requires {@link #addCapability} to take an
+     * {@link ICopyableCapabilityProvider} instead of an {@link IAttachedCapabilityProvider}.
+     *
+     */
+    public static final class Players extends AttachCapabilitiesEvent<Player>
+    {
+
+        public Players(Player obj)
+        {
+            super(obj);
+        }
+
+        /**
+         * Providers attached to {@link Player} must implement {@link ICopyableCapabilityProvider}.
+         * @see {@link Players#addCapability(ICopyableCapabilityProvider)}
+         */
+        @Override
+        @Deprecated
+        public boolean addCapability(IAttachedCapabilityProvider<?, Player> provider) {
+            Preconditions.checkArgument(provider instanceof ICopyableCapabilityProvider, "Providers attached to Player must implement ICopyableCapabilityProvider!");
+            return addCapability((ICopyableCapabilityProvider<?, Player>) provider);
+        }
+
+        /**
+         * @see {@link AttachCapabilitiesEvent#addCapability(IAttachedCapabilityProvider)}
+         */
+        public boolean addCapability(ICopyableCapabilityProvider<?, Player> provider) {
+            return super.addCapability(provider);
         }
 
     }
