@@ -5,25 +5,18 @@
 
 package net.minecraftforge.fml.loading.moddiscovery;
 
-import net.minecraftforge.forgespi.locating.IModFile;
 import net.minecraftforge.forgespi.locating.IModLocator;
 
 import java.nio.file.Path;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public abstract class AbstractJarFileModLocator extends AbstractJarFileModProvider implements IModLocator
 {
     @Override
-    public List<IModFile> scanMods()
+    public List<IModLocator.ModFileOrException> scanMods()
     {
-        return scanCandidates()
-                .map(this::createMod)
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .collect(Collectors.toList());
+        return scanCandidates().map(this::createMod).toList();
     }
 
     public abstract Stream<Path> scanCandidates();

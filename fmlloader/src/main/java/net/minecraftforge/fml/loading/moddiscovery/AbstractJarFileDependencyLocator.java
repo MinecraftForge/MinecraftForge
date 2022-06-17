@@ -8,6 +8,7 @@ package net.minecraftforge.fml.loading.moddiscovery;
 import com.mojang.logging.LogUtils;
 import net.minecraftforge.forgespi.locating.IDependencyLocator;
 import net.minecraftforge.forgespi.locating.IModFile;
+import net.minecraftforge.forgespi.locating.ModFileLoadingException;
 import org.slf4j.Logger;
 
 import java.io.FileNotFoundException;
@@ -37,11 +38,11 @@ public abstract class AbstractJarFileDependencyLocator extends AbstractJarFileMo
     protected Optional<IModFile> loadModFileFrom(final IModFile file, final Path path) {
         try {
             final Path pathInModFile = file.findResource(path.toString());
-            return createMod(pathInModFile);
+            return Optional.of(createMod(pathInModFile).file());
         }
         catch (Exception e) {
             LOGGER.error("Failed to load mod file {} from {}", path, file.getFileName());
-            return Optional.empty();
+            throw new ModFileLoadingException("Failed to load mod file "+file.getFileName());
         }
     }
 
