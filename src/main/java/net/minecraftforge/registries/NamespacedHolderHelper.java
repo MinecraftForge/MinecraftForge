@@ -22,6 +22,7 @@ import java.util.stream.Stream;
 
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
+import com.mojang.serialization.DataResult;
 import net.minecraft.util.RandomSource;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -88,7 +89,24 @@ class NamespacedHolderHelper<T>
         return Optional.ofNullable(this.holders.get(value));
     }
 
-    Holder<T> getOrCreateHolder(ResourceKey<T> key)
+    DataResult<Holder<T>> getOrCreateHolder(ResourceKey<T> key)
+    {
+        Holder.Reference<T> ref = this.holdersByName.get(key);
+        if (ref == null)
+        {
+            if (this.holderLookup != null)
+                return DataResult.error("This registry can't create new holders without value");
+
+            if (this.frozen)
+                return DataResult.error("Registry is already frozen (trying to add key " + key + ")");
+
+            ref = Holder.Reference.createStandAlone(this.self, key);
+            this.holdersByName.put(key.location(), ref);
+        }
+        return DataResult.success(ref);
+    }
+
+    Holder<T> getOrCreateHolderOrThrow(ResourceKey<T> key)
     {
         return this.holdersByName.computeIfAbsent(key.location(), k ->
         {
