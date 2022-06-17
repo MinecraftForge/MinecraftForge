@@ -383,7 +383,7 @@ public class FluidType
      *
      * @param entity the entity in the fluid
      */
-    public void jumpInFluid(LivingEntity entity)
+    public void entityJump(LivingEntity entity)
     {
         entity.setDeltaMovement(entity.getDeltaMovement().add(0.0D, (double)0.04F * entity.getAttributeValue(ForgeMod.SWIM_SPEED.get()), 0.0D));
     }
@@ -393,7 +393,7 @@ public class FluidType
      *
      * @param entity the entity in the fluid
      */
-    public void sinkInFluid(LivingEntity entity)
+    public void entitySink(LivingEntity entity)
     {
         entity.setDeltaMovement(entity.getDeltaMovement().add(0.0D, (double)-0.04F * entity.getAttributeValue(ForgeMod.SWIM_SPEED.get()), 0.0D));
     }

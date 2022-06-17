@@ -27,7 +27,7 @@ public interface IForgeLivingEntity extends IForgeEntity
      */
     default void jumpInFluid(FluidType type)
     {
-        type.jumpInFluid(self());
+        type.entityJump(self());
     }
 
     /**
@@ -37,7 +37,7 @@ public interface IForgeLivingEntity extends IForgeEntity
      */
     default void sinkInFluid(FluidType type)
     {
-        type.sinkInFluid(self());
+        type.entitySink(self());
     }
 
     /**
