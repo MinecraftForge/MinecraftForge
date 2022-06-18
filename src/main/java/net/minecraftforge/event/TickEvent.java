@@ -56,7 +56,7 @@ public class TickEvent extends Event
         }
         
         /**
-         * @return Returns the {@link MinecraftServer} that is currently ticking.
+         * {@return the {@link MinecraftServer} instance}
          */
         public MinecraftServer getServer()
         {
