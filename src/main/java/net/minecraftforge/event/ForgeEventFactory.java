@@ -15,6 +15,7 @@ import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.CommandDispatcher;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.network.chat.ChatSender;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.ReloadableServerResources;
 import net.minecraft.server.players.PlayerList;
 import net.minecraft.util.RandomSource;
@@ -814,13 +815,13 @@ public class ForgeEventFactory
         MinecraftForge.EVENT_BUS.post(new TickEvent.ClientTickEvent(TickEvent.Phase.END));
     }
 
-    public static void onPreServerTick(BooleanSupplier haveTime)
+    public static void onPreServerTick(BooleanSupplier haveTime, MinecraftServer server)
     {
-        MinecraftForge.EVENT_BUS.post(new TickEvent.ServerTickEvent(TickEvent.Phase.START, haveTime));
+        MinecraftForge.EVENT_BUS.post(new TickEvent.ServerTickEvent(TickEvent.Phase.START, haveTime, server));
     }
 
-    public static void onPostServerTick(BooleanSupplier haveTime)
+    public static void onPostServerTick(BooleanSupplier haveTime, MinecraftServer server)
     {
-        MinecraftForge.EVENT_BUS.post(new TickEvent.ServerTickEvent(TickEvent.Phase.END, haveTime));
+        MinecraftForge.EVENT_BUS.post(new TickEvent.ServerTickEvent(TickEvent.Phase.END, haveTime, server));
     }
 }

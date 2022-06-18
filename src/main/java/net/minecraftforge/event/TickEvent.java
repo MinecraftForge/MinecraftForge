@@ -6,6 +6,7 @@
 package net.minecraftforge.event;
 
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.server.MinecraftServer;
 
 import java.util.function.BooleanSupplier;
 
@@ -35,11 +36,13 @@ public class TickEvent extends Event
 
     public static class ServerTickEvent extends TickEvent {
         private final BooleanSupplier haveTime;
+        private MinecraftServer server;
 
-        public ServerTickEvent(Phase phase, BooleanSupplier haveTime)
+        public ServerTickEvent(Phase phase, BooleanSupplier haveTime, MinecraftServer server)
         {
             super(Type.SERVER, LogicalSide.SERVER, phase);
             this.haveTime = haveTime;
+            this.server = server;
         }
 
         /**
@@ -51,6 +54,14 @@ public class TickEvent extends Event
         {
             return this.haveTime.getAsBoolean();
         }
+        
+        /**
+         * @return Returns the {@link MinecraftServer} that is currently ticking.
+         */
+        public MinecraftServer getServer()
+		{
+			return server;
+		}
     }
 
     public static class ClientTickEvent extends TickEvent {
