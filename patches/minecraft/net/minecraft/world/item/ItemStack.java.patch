@@ -36,15 +36,7 @@
           this.m_41721_(this.m_41773_());
        }
  
-@@ -145,19 +_,25 @@
-    }
- 
-    private void m_41617_() {
-+      boolean wasEmpty = this.f_41591_;
-       this.f_41591_ = false;
-       this.f_41591_ = this.m_41619_();
-+      if(wasEmpty && !this.f_41591_) this.reviveCaps();  // Stack is no longer empty -> revive
-+      else if(this.f_41591_ && !wasEmpty) this.invalidateCaps(); // Stack became empty -> invalidate
+@@ -150,14 +_,17 @@
     }
  
     private ItemStack(CompoundTag p_41608_) {
@@ -246,7 +238,7 @@
              return p_220170_.m_131144_(new HoverEvent(HoverEvent.Action.f_130832_, new HoverEvent.ItemStackInfo(this)));
           });
        }
-@@ -958,12 +_,33 @@
+@@ -958,12 +_,39 @@
        this.m_41720_().m_5929_(p_41732_, p_41733_, this, p_41734_);
     }
  
@@ -277,6 +269,12 @@
 +   @Override
 +   public @Nullable net.minecraftforge.common.capabilities.CapabilityDispatcher<ItemStack> getCapDispatcher() {
 +      return this.capsInitialized ? this.getCapDispatcher() : null;
++   }
++
++   @Override
++   public <C> net.minecraftforge.common.capabilities.Capability<C> getCapability(net.minecraftforge.common.capabilities.CapabilityType<C> cap, net.minecraft.core.Direction side) {
++      if(this.f_41591_) return net.minecraftforge.common.capabilities.Capability.empty();
++      return super.getCapability(cap, side);
     }
  
     public SoundEvent m_41615_() {

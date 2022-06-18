@@ -299,6 +299,10 @@ public final class Capability<T>
     /**
      * Register a {@link NonNullConsumer listener} that will be called when this {@link Capability} becomes invalid (via {@link #invalidate()}).
      * <p>
+     * Invalidation times are dependent on the underlying object - for example, Entities and BlockEntities become invalid when removed from the level.<br>
+     * Chunks and Levels become invalidated when they are unloaded.<br>
+     * ItemStacks are special, and are <b>never</b> invalidated.  Do not use the addListener pattern for itemstacks.
+     * <p>
      * If this {@link Capability} is empty, the listener will be called immediately.
      */
     public void addListener(NonNullConsumer<Capability<T>> listener)

@@ -17,6 +17,9 @@ public interface ICapabilityProvider
      * The return value may be the same for multiple faces.<br>
      * Callers should cache the returned instance and not make repeated calls to this method when possible.<br>
      * Contractually, unless invalidated, the returned instance will always be the same for the same arguments.<br>
+     * <p>
+     * The exception to this is {@link ItemStack}, where it makes no sense to cache returned capabilities,
+     * as they are not invalidated (there is no effective time point to invalidate stack caps which has meaning).
      *
      * @param type The {@link CapabilityType} to check for.
      * @param direction The {@link Direction} to check from, which may be null.  Null represents "internal".<br>
