@@ -1,5 +1,14 @@
 --- a/net/minecraft/client/Options.java
 +++ b/net/minecraft/client/Options.java
+@@ -515,7 +_,7 @@
+    }, new OptionInstance.LazyEnum<>(() -> {
+       return Stream.concat(Stream.of(""), Minecraft.m_91087_().m_91106_().m_194525_().stream()).toList();
+    }, (p_232011_) -> {
+-      return Minecraft.m_91087_().m_91396_() && p_232011_ != "" && !Minecraft.m_91087_().m_91106_().m_194525_().contains(p_232011_) ? Optional.empty() : Optional.of(p_232011_);
++      return Minecraft.m_91087_().m_91396_() && (p_232011_ == null || !p_232011_.isEmpty()) && !Minecraft.m_91087_().m_91106_().m_194525_().contains(p_232011_) ? Optional.empty() : Optional.of(p_232011_);
+    }, Codec.STRING), "", (p_231994_) -> {
+       SoundManager soundmanager = Minecraft.m_91087_().m_91106_();
+       soundmanager.m_194526_();
 @@ -772,6 +_,7 @@
     }
  
