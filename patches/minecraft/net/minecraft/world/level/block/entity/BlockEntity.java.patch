@@ -32,7 +32,7 @@
     }
  
     public final CompoundTag m_187480_() {
-@@ -163,6 +_,13 @@
+@@ -163,10 +_,18 @@
  
     public void m_7651_() {
        this.f_58859_ = true;
@@ -46,6 +46,11 @@
     }
  
     public void m_6339_() {
+       this.f_58859_ = false;
++      this.reviveCaps();
+    }
+ 
+    public boolean m_7531_(int p_58889_, int p_58890_) {
 @@ -191,9 +_,21 @@
        return this.f_58855_;
     }
