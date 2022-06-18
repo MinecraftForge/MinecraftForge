@@ -91,7 +91,7 @@ class NamespacedHolderHelper<T>
 
     DataResult<Holder<T>> getOrCreateHolder(ResourceKey<T> key)
     {
-        Holder.Reference<T> ref = this.holdersByName.get(key);
+        Holder.Reference<T> ref = this.holdersByName.get(key.location());
         if (ref == null)
         {
             if (this.holderLookup != null)
