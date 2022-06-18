@@ -167,6 +167,12 @@ class NamespacedDefaultedWrapper<T> extends DefaultedRegistry<T> implements ILoc
     }
 
     @Override
+    public Set<ResourceKey<T>> registryKeySet()
+    {
+        return this.delegate.getResourceKeys();
+    }
+
+    @Override
     public Set<Map.Entry<ResourceKey<T>, T>> entrySet()
     {
         return this.delegate.getEntries();

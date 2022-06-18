@@ -309,6 +309,13 @@ public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegist
 
     @NotNull
     @Override
+    public Set<ResourceKey<V>> getResourceKeys()
+    {
+        return Collections.unmodifiableSet(this.keys.keySet());
+    }
+
+    @NotNull
+    @Override
     public Collection<V> getValues()
     {
         return Collections.unmodifiableSet(this.names.values());

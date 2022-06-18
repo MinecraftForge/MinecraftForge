@@ -165,6 +165,12 @@ class NamespacedWrapper<T> extends MappedRegistry<T> implements ILockableRegistr
     }
 
     @Override
+    public Set<ResourceKey<T>> registryKeySet()
+    {
+        return this.delegate.getResourceKeys();
+    }
+
+    @Override
     public Set<Map.Entry<ResourceKey<T>, T>> entrySet()
     {
         return this.delegate.getEntries();
