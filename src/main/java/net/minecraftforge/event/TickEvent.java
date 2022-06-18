@@ -36,7 +36,7 @@ public class TickEvent extends Event
 
     public static class ServerTickEvent extends TickEvent {
         private final BooleanSupplier haveTime;
-        private MinecraftServer server;
+        private final MinecraftServer server;
 
         public ServerTickEvent(Phase phase, BooleanSupplier haveTime, MinecraftServer server)
         {
