@@ -40,13 +40,14 @@ public abstract class CapabilityProvider<T extends ICapabilityProvider> implemen
     private void doGatherCapabilities()
     {
         this.capsInitialized = true;
-        this.attachedCaps = ForgeEventFactory.gatherCapabilities((AttachCapabilitiesEvent<T>) this.getCapEvent(), (T) this);
+        this.attachedCaps = ForgeEventFactory.gatherCapabilities((AttachCapabilitiesEvent<T>) this.getCapEvent());
     }
 
     /**
      * This method is called from {@link ItemStack#copy()} and {@link ServerPlayer#restoreFrom(ServerPlayer, boolean)} to clone 
      * the capabilities of the original.
-     * It is not designed for use elsewhere, and it does not cover all corner cases due to this nature.
+     * <p>
+     * <b>It is not designed for use elsewhere, and may break or crash if used improperly.</b>
      */
     @SuppressWarnings("unchecked")
     protected <P extends CapabilityProvider<T>> void copyCapsFrom(P other)
@@ -119,6 +120,7 @@ public abstract class CapabilityProvider<T extends ICapabilityProvider> implemen
     @Override
     public void reviveCaps()
     {
+    	if(this.capsValid) return; // Guard against incorrect calls.
         this.capsValid = true;
         if(!capsInitialized) return;
         var disp = getDispatcher();

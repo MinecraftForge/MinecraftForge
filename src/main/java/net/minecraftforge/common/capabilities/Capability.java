@@ -338,15 +338,4 @@ public final class Capability<T>
             this.listeners.clear();
         }
     }
-
-    /**
-     * Temporarily revives this {@link Capability} so that the instance may be retrieved.<br>
-     * This call MUST be followed by another call to {@link #invalidate()} as soon as
-     * all work requiring revival is complete.<br>
-     * Do not leave capability objects in the revived state.
-     */
-	public void revive()
-	{
-        this.isValid = true;
-	}
 }

@@ -45,9 +45,10 @@ public interface ICapabilityProvider
     void invalidateCaps();
 
     /**
-     * This function will allow {@link #getCapability(Capability, Direction)} to return values again.<br>
-     * This can be used to copy caps from one removed provider to a new one.<br>
-     * It is expected that all calls to this method are closely followed by a call to {@link #invalidateCaps()}
+     * Certain objects, such as Entities and ItemStacks, can become live again after becoming invalid.<br>
+     * For these cases, it is necessary to revive the capabilities of the object.
+     * 
+     * A proper implementation of this method will refresh all stored {@link Capability} instances with new ones.
      */
     void reviveCaps();
 }

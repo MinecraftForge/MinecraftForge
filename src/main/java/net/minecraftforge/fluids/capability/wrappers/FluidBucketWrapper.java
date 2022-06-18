@@ -33,7 +33,7 @@ public class FluidBucketWrapper implements IFluidHandlerItem, IItemStackCapabili
 {
     public static final ResourceLocation ID = new ResourceLocation("forge", "bucket_wrapper");
     
-    private final Capability<IFluidHandlerItem> holder = Capability.of(() -> this);
+    private Capability<IFluidHandlerItem> holder = Capability.of(() -> this);
 
     @NotNull
     protected ItemStack container;
@@ -194,7 +194,7 @@ public class FluidBucketWrapper implements IFluidHandlerItem, IItemStackCapabili
 
     @Override
     public void reviveCaps() {
-        this.holder.revive();
+        this.holder = Capability.of(() -> this);
     }
 
     @Override

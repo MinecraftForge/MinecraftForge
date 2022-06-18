@@ -30,7 +30,7 @@ public class FluidHandlerItemStackSimple implements IFluidHandlerItem, IItemStac
     public static final String FLUID_NBT_KEY = "Fluid";
     public static final ResourceLocation ID = new ResourceLocation("forge", "simple_fluid_handler");
 
-    private final Capability<IFluidHandlerItem> holder = Capability.of(() -> this);
+    private Capability<IFluidHandlerItem> holder = Capability.of(() -> this);
 
     @NotNull
     protected ItemStack container;
@@ -250,7 +250,7 @@ public class FluidHandlerItemStackSimple implements IFluidHandlerItem, IItemStac
 
     @Override
     public void reviveCaps() {
-        this.holder.revive();
+        this.holder = Capability.of(() -> this);
     }
 
     @Override

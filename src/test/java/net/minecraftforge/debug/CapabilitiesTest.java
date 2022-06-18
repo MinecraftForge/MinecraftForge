@@ -75,7 +75,7 @@ public class CapabilitiesTest
         	//TODO: FIXME, will NOT work for ItemStacks or Players!
             event.addCapability(new IAttachedCapabilityProvider<CapClass, K>()
             {
-                final Capability<CapClass> instance = Capability.of(() -> new CapClass(this));
+                private Capability<CapClass> instance = Capability.of(() -> new CapClass(this));
 
                 @Override
                 public CompoundTag serializeNBT()
@@ -116,7 +116,7 @@ public class CapabilitiesTest
 
 				@Override
 				public void reviveCaps() {
-					this.instance.revive();
+					this.instance = Capability.of(() -> new CapClass(this));;
 				}
             });
 

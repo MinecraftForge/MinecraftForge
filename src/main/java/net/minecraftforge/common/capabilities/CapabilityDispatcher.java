@@ -18,7 +18,6 @@ import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.capabilities.IAttachedCapabilityProvider.ICopyableCapabilityProvider;
 import net.minecraftforge.common.capabilities.IAttachedCapabilityProvider.IComparableCapabilityProvider;
 import net.minecraftforge.common.util.INBTSerializable;
@@ -35,29 +34,26 @@ import net.minecraftforge.common.util.INBTSerializable;
 public final class CapabilityDispatcher<T extends ICapabilityProvider> implements INBTSerializable<CompoundTag>, ICapabilityProvider
 {
 
-    private final T owner;
     private final Map<CapabilityType<?>, IAttachedCapabilityProvider<?, T>> caps;
     private final Map<ResourceLocation, IAttachedCapabilityProvider<?, T>> byName;
     private boolean isValid = true;
 
-    public CapabilityDispatcher(AttachCapabilitiesEvent<T> event, T owner)
+    public CapabilityDispatcher(AttachCapabilitiesEvent<T> event)
     {
         this.caps = event.getCapabilities();
         this.byName = event.getCapabilitiesByName();
-        this.owner = owner;
     }
 
     /*********************************
              Compare/Copy Code
            Warning: Generic Hell
      *********************************/
-    
+
     /**
      * Internal copy constructor.
      * @see {@link #copy(ICapabilityProvider)}
      * @see {@link IItemStackCapabilityProvider#copy(ICapabilityProvider)}
      */
-    @SuppressWarnings({ "unchecked", "rawtypes" })
 	private CapabilityDispatcher(CapabilityDispatcher<T> other, T newOwner)
     {
         Map<CapabilityType<?>, IAttachedCapabilityProvider<?, T>> caps = new HashMap<>(other.caps.size(), 1);
@@ -71,7 +67,6 @@ public final class CapabilityDispatcher<T extends ICapabilityProvider> implement
         }
         this.caps = Collections.unmodifiableMap(caps);
         this.byName = Collections.unmodifiableMap(byName);
-        this.owner = (T) newOwner;
     }
 
     /**

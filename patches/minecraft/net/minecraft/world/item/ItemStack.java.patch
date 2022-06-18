@@ -36,7 +36,15 @@
           this.m_41721_(this.m_41773_());
        }
  
-@@ -150,14 +_,17 @@
+@@ -145,19 +_,25 @@
+    }
+ 
+    private void m_41617_() {
++      boolean wasEmpty = this.f_41591_;
+       this.f_41591_ = false;
+       this.f_41591_ = this.m_41619_();
++      if(wasEmpty && !this.f_41591_) this.reviveCaps();  // Stack is no longer empty -> revive
++      else if(this.f_41591_ && !wasEmpty) this.invalidateCaps(); // Stack became empty -> invalidate
     }
  
     private ItemStack(CompoundTag p_41608_) {

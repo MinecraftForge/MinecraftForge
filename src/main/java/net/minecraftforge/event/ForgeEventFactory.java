@@ -505,10 +505,10 @@ public class ForgeEventFactory
     }
 
     @Nullable
-    public static <T extends ICapabilityProvider> CapabilityDispatcher<T> gatherCapabilities(AttachCapabilitiesEvent<T> event, T owner)
+    public static <T extends ICapabilityProvider> CapabilityDispatcher<T> gatherCapabilities(AttachCapabilitiesEvent<T> event)
     {
         MinecraftForge.EVENT_BUS.post(event);
-        return event.getCapabilities().size() > 0 ? new CapabilityDispatcher<T>(event, owner) : null;
+        return event.getCapabilities().size() > 0 ? new CapabilityDispatcher<T>(event) : null;
     }
 
     public static boolean fireSleepingLocationCheck(LivingEntity player, BlockPos sleepingLocation)
