@@ -59,7 +59,7 @@
           for(int i = 0; i < p_44276_.size(); ++i) {
              Ingredient ingredient = Ingredient.m_43917_(p_44276_.get(i));
 -            if (!ingredient.m_43947_()) {
-+            if (net.minecraftforge.common.ForgeConfig.SERVER.skipEmptyShapelessCheck.get() || !ingredient.m_43947_()) {
++            if (true || !ingredient.m_43947_()) { // FORGE: Skip checking if an ingredient is empty during shapeless recipe deserialization to prevent complex ingredients from caching tags too early. Can not be done using a config value due to sync issues.
                 nonnulllist.add(ingredient);
              }
           }

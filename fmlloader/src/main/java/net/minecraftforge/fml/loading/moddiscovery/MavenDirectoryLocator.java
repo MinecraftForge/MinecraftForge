@@ -15,7 +15,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class MavenDirectoryLocator extends AbstractJarFileLocator {
+public class MavenDirectoryLocator extends AbstractJarFileModLocator
+{
     private List<Path> modCoords;
 
     @Override

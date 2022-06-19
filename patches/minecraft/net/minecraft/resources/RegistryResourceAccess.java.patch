@@ -18,7 +18,7 @@
                       } catch (Throwable throwable1) {
                          if (reader != null) {
                             try {
-@@ -107,12 +_,15 @@
+@@ -107,13 +_,14 @@
              });
           }
  
@@ -30,8 +30,8 @@
           }
  
           private static String m_214239_(ResourceLocation p_214240_) {
-+            if (net.minecraftforge.registries.RegistryManager.FROZEN.getRegistry(p_214240_) != null && !(p_214240_.m_135827_().equals("minecraft")))
-+               return p_214240_.m_135827_() + "/" + p_214240_.m_135815_(); // FORGE: add non-vanilla registry namespace to loader directory, same format as tag directory (see net.minecraft.tags.TagManager#getTagDir(ResourceKey))
-             return p_214240_.m_135815_();
+-            return p_214240_.m_135815_();
++            return net.minecraftforge.common.ForgeHooks.prefixNamespace(p_214240_); // FORGE: add non-vanilla registry namespace to loader directory, same format as tag directory (see net.minecraft.tags.TagManager#getTagDir(ResourceKey))
           }
  
+          private static <E> ResourceLocation m_214268_(ResourceKey<E> p_214269_) {

@@ -7,20 +7,19 @@ package net.minecraftforge.fml.loading.moddiscovery;
 
 import com.mojang.logging.LogUtils;
 import cpw.mods.jarhandling.SecureJar;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.List;
-import java.util.Optional;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import net.minecraftforge.fml.loading.LogMarkers;
 import net.minecraftforge.forgespi.locating.IModFile;
 import org.slf4j.Logger;
 
-public abstract class AbstractJarFileLocator extends AbstractModLocator {
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.stream.Stream;
+
+public abstract class AbstractJarFileModProvider extends AbstractModProvider
+{
     private static final Logger LOGGER = LogUtils.getLogger();
 
     @Override
@@ -34,15 +33,4 @@ public abstract class AbstractJarFileLocator extends AbstractModLocator {
         }
         LOGGER.debug(LogMarkers.SCAN,"Scan finished: {}", file);
     }
-
-    @Override
-    public List<IModFile> scanMods() {
-        return scanCandidates()
-                .map(this::createMod)
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .collect(Collectors.toList());
-    }
-
-    public abstract Stream<Path> scanCandidates();
 }
