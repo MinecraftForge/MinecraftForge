@@ -8,6 +8,7 @@ package net.minecraftforge.common.capabilities;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.IdentityHashMap;
 import java.util.Map;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -56,7 +57,7 @@ public final class CapabilityDispatcher<T extends ICapabilityProvider> implement
      */
 	private CapabilityDispatcher(CapabilityDispatcher<T> other, T newOwner)
     {
-        Map<CapabilityType<?>, IAttachedCapabilityProvider<?, T>> caps = new HashMap<>(other.caps.size(), 1);
+        Map<CapabilityType<?>, IAttachedCapabilityProvider<?, T>> caps = new IdentityHashMap<>(other.caps.size());
         Map<ResourceLocation, IAttachedCapabilityProvider<?, T>> byName = new HashMap<>(other.byName.size(), 1);
         for(Map.Entry<ResourceLocation, IAttachedCapabilityProvider<?, T>> entry : other.byName.entrySet())
         {

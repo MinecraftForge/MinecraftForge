@@ -27,6 +27,6 @@ public final class RegisterCapabilitiesEvent extends Event implements IModBusEve
     public <T> void register(CapabilityType<T> cap)
     {
         Objects.requireNonNull(cap,"Attempted to register a null capability!");
-        CapabilityManager.INSTANCE.get(cap.getId(), true);
+        CapabilityManager.get(cap.getId(), true);
     }
 }

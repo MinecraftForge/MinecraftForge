@@ -72,8 +72,10 @@ public interface IAttachedCapabilityProvider<C, O extends ICapabilityProvider>
     }
 
     /**
-     * Specialized subclass of {@link IAttachedCapabilityProvider} for use with {@link ItemStack}.
-     * Has special functions that allow for the complexity of merging and copying stacks.
+     * Specialized subclass of {@link IAttachedCapabilityProvider} that allows comparison.<br>
+     * This is required whenever the object being attached to could be merged with another,
+     * and equality must be checked.<br>
+     * By default, attachments to {@link ItemStack} require this functionality.
      *
      * @param <C> The type of the capability.
      */
@@ -102,8 +104,10 @@ public interface IAttachedCapabilityProvider<C, O extends ICapabilityProvider>
     }
 
     /**
-     * Specialized subclass of {@link IAttachedCapabilityProvider} for use with {@link ItemStack}.
-     * Has special functions that allow for the complexity of merging and copying stacks.
+     * Specialized subclass of {@link IAttachedCapabilityProvider} that allows copying.<br>
+     * This is required whenever the object being attached to can be cloned or copied.<br>
+     * In these cases, all attached caps will be copied, instead of being serialized, re-attached, and deserialized.<br>
+     * By default, attachments to {@link ItemStack} or {@link Player} require this functionality.
      *
      * @param <C> The type of the capability.
      */

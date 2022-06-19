@@ -10,20 +10,19 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.IdentityHashMap;
-
+import java.util.HashMap;
 import static net.minecraftforge.fml.Logging.CAPABILITIES;
 
 /**
  * The Capability Manager is responsible for making and 
  * providing {@link CapabilityType} instances.
  */
-public enum CapabilityManager
+public final class CapabilityManager
 {
-    INSTANCE;
+    private CapabilityManager() {};
 
-	private static final Logger LOGGER = LogManager.getLogger();
-    private static final IdentityHashMap<ResourceLocation, CapabilityType<?>> PROVIDERS = new IdentityHashMap<>();	
+    private static final Logger LOGGER = LogManager.getLogger();
+    private static final HashMap<ResourceLocation, CapabilityType<?>> PROVIDERS = new HashMap<>();    
 
     /**
      * Retrieve a {@link CapabilityType}.  The returned type may not be registered.
@@ -33,7 +32,7 @@ public enum CapabilityManager
      */
     public static <T> @NotNull CapabilityType<T> get(ResourceLocation id)
     {
-        return INSTANCE.get(id, false);
+        return get(id, false);
     }
 
     /**
@@ -41,7 +40,7 @@ public enum CapabilityManager
      * @see {@link RegisterCapabilitiesEvent}
      */
     @SuppressWarnings("unchecked")
-    <T> @NotNull CapabilityType<T> get(ResourceLocation id, boolean registering)
+    static <T> @NotNull CapabilityType<T> get(ResourceLocation id, boolean registering)
     {
         CapabilityType<T> cap;
 
