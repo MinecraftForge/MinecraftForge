@@ -154,7 +154,8 @@ public abstract class CapabilityProvider<T extends ICapabilityProvider> implemen
 
         private final Supplier<AttachCapabilitiesEvent<T>> eventSupplier;
         
-        public AsField(Supplier<AttachCapabilitiesEvent<T>> eventSupplier) {
+        public AsField(Supplier<AttachCapabilitiesEvent<T>> eventSupplier)
+        {
             this.eventSupplier = eventSupplier;
         }
 
@@ -170,7 +171,8 @@ public abstract class CapabilityProvider<T extends ICapabilityProvider> implemen
         }
 
         @Override
-        protected AttachCapabilitiesEvent<T> getCapEvent() {
+        protected AttachCapabilitiesEvent<T> getCapEvent()
+        {
             return eventSupplier.get();
         }
     };

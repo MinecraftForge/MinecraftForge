@@ -5,8 +5,6 @@
 
 package net.minecraftforge.common.capabilities;
 
-import org.jetbrains.annotations.NotNull;
-
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.ArrayList;
@@ -35,17 +33,6 @@ public class CapabilityType<T>
     public ResourceLocation getId()
     {
         return this.id;
-    }
-
-    /**
-     * Tests if the target capability type is this one before returning the instance, otherwise returns empty.
-     * @param toCheck {@link CapabilityType} being checked against.
-     * @param inst The {@link Capability} to return if the type matches.
-     * @return The passed {@link Capability} if the type matches, or {@link Capability#empty()}.
-     */
-    public @NotNull <R> Capability<R> orEmpty(CapabilityType<R> toCheck, Capability<T> inst)
-    {
-        return this == toCheck ? inst.cast() : Capability.empty();
     }
 
     /**
