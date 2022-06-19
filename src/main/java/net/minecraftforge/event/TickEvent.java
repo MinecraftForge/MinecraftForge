@@ -56,7 +56,7 @@ public class TickEvent extends Event
         }
         
         /**
-         * {@return the {@link MinecraftServer} instance}
+         * {@return the server instance}
          */
         public MinecraftServer getServer()
         {
