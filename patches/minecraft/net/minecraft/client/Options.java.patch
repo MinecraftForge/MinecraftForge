@@ -8,8 +8,22 @@
        this.f_92060_ = p_92138_;
        this.f_92110_ = new File(p_92139_, "options.txt");
        boolean flag = p_92138_.m_91103_();
-@@ -887,10 +_,14 @@
+@@ -807,6 +_,10 @@
+    }
+ 
+    private void m_168427_(Options.FieldAccess p_168428_) {
++      processOptions(p_168428_, false);
++   }
++   private void processOptions(Options.FieldAccess p_168428_, boolean onlyKeyBinds) {
++      if (!onlyKeyBinds) { //FORGE: prevent overwriting user's settings when reloading options after game startup
+       p_168428_.m_213982_("autoJump", this.f_92036_);
+       p_168428_.m_213982_("autoSuggestions", this.f_92037_);
+       p_168428_.m_213982_("chatColors", this.f_92038_);
+@@ -885,14 +_,20 @@
+       p_168428_.m_213982_("allowServerListing", this.f_193762_);
+       p_168428_.m_213982_("chatPreview", this.f_231796_);
        p_168428_.m_213982_("onlyShowSecureChat", this.f_231798_);
++      }
  
        for(KeyMapping keymapping : this.f_92059_) {
 -         String s = keymapping.m_90865_();
@@ -24,7 +38,28 @@
 +               keymapping.setKeyModifierAndCode(net.minecraftforge.client.settings.KeyModifier.NONE, InputConstants.m_84851_(s1));
           }
        }
++      if (onlyKeyBinds) return; //FORGE: prevent overwriting user's settings when reloading options after game startup
  
+       for(SoundSource soundsource : SoundSource.values()) {
+          this.f_92109_.computeFloat(soundsource, (p_231866_, p_231867_) -> {
+@@ -955,7 +_,7 @@
+             }
+          }
+ 
+-         this.m_168427_(new Options.FieldAccess() {
++         this.processOptions(new Options.FieldAccess() {
+             @Nullable
+             private String m_168458_(String p_168459_) {
+                return compoundtag1.m_128441_(p_168459_) ? compoundtag1.m_128461_(p_168459_) : null;
+@@ -1022,7 +_,7 @@
+                String s = this.m_168458_(p_168470_);
+                return (T)(s == null ? p_168471_ : p_168472_.apply(s));
+             }
+-         });
++         }, Minecraft.m_91087_().m_91396_()); //FORGE: prevent overwriting user's settings when reloading options after game startup
+          if (compoundtag1.m_128441_("fullscreenResolution")) {
+             this.f_92123_ = compoundtag1.m_128461_("fullscreenResolution");
+          }
 @@ -1058,6 +_,7 @@
     }
  
