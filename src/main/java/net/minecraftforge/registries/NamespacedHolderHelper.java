@@ -95,7 +95,7 @@ class NamespacedHolderHelper<T>
         if (ref == null)
         {
             if (this.holderLookup != null)
-                return DataResult.error("This registry can't create new holders without value");
+                return DataResult.error("This registry can't create new holders without value. (requested key" + key + ")");
 
             if (this.frozen)
                 return DataResult.error("Registry is already frozen (trying to add key " + key + ")");
@@ -111,7 +111,7 @@ class NamespacedHolderHelper<T>
         return this.holdersByName.computeIfAbsent(key.location(), k ->
         {
             if (this.holderLookup != null)
-                throw new IllegalStateException("This registry can't create new holders without value");
+                throw new IllegalStateException("This registry can't create new holders without value. (requested key" + key + ")");
             if (this.frozen)
                 throw new IllegalStateException("Registry is already frozen (trying to add key " + k + ")");
             return Holder.Reference.createStandAlone(this.self, key);

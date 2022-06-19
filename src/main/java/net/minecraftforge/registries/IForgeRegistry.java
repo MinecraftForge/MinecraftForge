@@ -46,7 +46,6 @@ public interface IForgeRegistry<V> extends Iterable<V>
     @NotNull Optional<ResourceKey<V>> getResourceKey(V value);
 
     @NotNull Set<ResourceLocation>         getKeys();
-    @NotNull Set<ResourceKey<V>>           getResourceKeys();
     @NotNull Collection<V>                 getValues();
     @NotNull Set<Entry<ResourceKey<V>, V>> getEntries();
 
