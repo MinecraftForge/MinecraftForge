@@ -62,6 +62,7 @@ public final class CapabilityDispatcher<T extends ICapabilityProvider> implement
         for(Map.Entry<ResourceLocation, IAttachedCapabilityProvider<?, T>> entry : other.byName.entrySet())
         {
             IAttachedCapabilityProvider<?, T> copy = ((ICopyableCapabilityProvider<?, T>) entry.getValue()).copy(newOwner);
+            if(copy == null) continue;
             // Ideally we would ensure the type and key don't change here, but it's an expensive check that we don't "need" to do.
             caps.put(copy.getType(), copy);
             byName.put(copy.getId(), copy);
