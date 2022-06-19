@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) Forge Development LLC and contributors
+ * SPDX-License-Identifier: LGPL-2.1-only
+ */
+
 package net.minecraftforge.common.capabilities;
 
 import org.jetbrains.annotations.NotNull;
@@ -48,6 +53,7 @@ public interface IAttachedCapabilityProvider<C, O extends ICapabilityProvider>
 
     /**
      * Serialize this provider to NBT, if applicable.<br>
+     * You should always serialize your state, even if {@link #invalidateCaps()} has been called.
      * @return A {@link CompoundTag} representing the serialized form of this provider, or null, if not serializable.
      */
     default @Nullable CompoundTag serializeNBT()
@@ -57,7 +63,8 @@ public interface IAttachedCapabilityProvider<C, O extends ICapabilityProvider>
 
     /**
      * Reads this provider from NBT.<br>
-     * This method will only be called if this provider was serialized via {@link #serializeNBT()}.
+     * This method will only be called if this provider was serialized via {@link #serializeNBT()}.<br>
+     * You should always deserialize your state, even if {@link #invalidateCaps()} has been called.
      * @param tag The serialized tag from {@link #serializeNBT()}.
      */
     default void deserializeNBT(CompoundTag tag)
@@ -83,6 +90,10 @@ public interface IAttachedCapabilityProvider<C, O extends ICapabilityProvider>
          * on another object, or null (if it is not present on the other object).
          * <p>
          * If your capability must be equivalent for itemstacks to merge, you MUST override this method.
+         * <p>
+         * It can be assumed that all other parts of the itemstack match by the time this is called.  As such, if your
+         * cap does not store unserialized data (outside of stack NBT), then you can either return <code>true</code> or 
+         * <code>other != null</code>.
          * 
          * @param other Another instance of this provider from another object, or null, if it was not present.
          * @return true if these providers are equivalent, otherwise false.

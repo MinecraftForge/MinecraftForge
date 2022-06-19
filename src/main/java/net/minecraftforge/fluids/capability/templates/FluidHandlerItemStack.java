@@ -79,27 +79,27 @@ public class FluidHandlerItemStack implements IFluidHandlerItem, IItemStackCapab
     }
 
     @Override
-    public int getTanks() {
-
+    public int getTanks()
+    {
         return 1;
     }
 
     @NotNull
     @Override
-    public FluidStack getFluidInTank(int tank) {
-
+    public FluidStack getFluidInTank(int tank)
+    {
         return getFluid();
     }
 
     @Override
-    public int getTankCapacity(int tank) {
-
+    public int getTankCapacity(int tank)
+    {
         return capacity;
     }
 
     @Override
-    public boolean isFluidValid(int tank, @NotNull FluidStack stack) {
-
+    public boolean isFluidValid(int tank, @NotNull FluidStack stack)
+    {
         return true;
     }
 
@@ -249,35 +249,39 @@ public class FluidHandlerItemStack implements IFluidHandlerItem, IItemStackCapab
     }
 
     @Override
-    public CapabilityType<IFluidHandlerItem> getType() {
+    public CapabilityType<IFluidHandlerItem> getType()
+    {
         return CapabilityTypes.FLUID_ITEMS;
     }
 
     @Override
-    public ResourceLocation getId() {
+    public ResourceLocation getId()
+    {
         return ID;
     }
 
     @Override
-    public @NotNull Capability<IFluidHandlerItem> getCapability(@Nullable Direction direction) {
+    public @NotNull Capability<IFluidHandlerItem> getCapability(@Nullable Direction direction)
+    {
         return this.holder.cast();
     }
 
     @Override
-    public void invalidateCaps() {
+    public void invalidateCaps()
+    {
         this.holder.invalidate();
     }
 
     @Override
-    public void reviveCaps() {
+    public void reviveCaps()
+    {
         this.holder = Capability.of(() -> this);
     }
 
     @Override
     public boolean isEquivalentTo(@Nullable IComparableCapabilityProvider<IFluidHandlerItem, ItemStack> other)
     {
-        var casted = (FluidHandlerItemStack) other;
-        return this.getFluid().isFluidStackIdentical(casted.getFluid());
+        return other != null && this.capacity == ((FluidHandlerItemStack) other).capacity; // Fluid is stored in NBT, which has already been checked.
     }
 
     @Override

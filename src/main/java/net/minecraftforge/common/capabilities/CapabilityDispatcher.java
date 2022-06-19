@@ -166,10 +166,7 @@ public final class CapabilityDispatcher<T extends ICapabilityProvider> implement
     @Override
     public CompoundTag serializeNBT()
     {
-        CompoundTag tag = new CompoundTag();
-        
-        if(!isValid) return tag;
-        
+        CompoundTag tag = new CompoundTag();        
         this.caps.values().forEach(prov -> {
             CompoundTag provTag = prov.serializeNBT();
             if(provTag != null) tag.put(prov.getId().toString(), provTag);
@@ -180,8 +177,6 @@ public final class CapabilityDispatcher<T extends ICapabilityProvider> implement
     @Override
     public void deserializeNBT(CompoundTag tag)
     {
-        if(!isValid) return;
-        
         for(String s : tag.getAllKeys())
         {
             ResourceLocation id = new ResourceLocation(s);

@@ -12,6 +12,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.util.thread.BlockableEventLoop;
 import net.minecraft.server.TickTask;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.loot.LootModifierManager;
 import net.minecraftforge.common.util.FakePlayerFactory;
 import net.minecraftforge.event.AddReloadListenerEvent;
@@ -61,6 +62,7 @@ public class ForgeInternalHandler
     {
         if (event.getWorld() instanceof ServerLevel)
             FakePlayerFactory.unloadLevel((ServerLevel) event.getWorld());
+        if(event.getWorld() instanceof ICapabilityProvider icp) icp.invalidateCaps();
     }
 
     @SubscribeEvent
@@ -81,6 +83,7 @@ public class ForgeInternalHandler
     {
         if (!event.getWorld().isClientSide())
             FarmlandWaterManager.removeTickets(event.getChunk());
+        if(event.getChunk() instanceof ICapabilityProvider icp) icp.invalidateCaps();
     }
 
     /*

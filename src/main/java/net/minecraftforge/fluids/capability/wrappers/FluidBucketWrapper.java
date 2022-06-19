@@ -86,27 +86,27 @@ public class FluidBucketWrapper implements IFluidHandlerItem, IItemStackCapabili
     }
 
     @Override
-    public int getTanks() {
-
+    public int getTanks()
+    {
         return 1;
     }
 
     @NotNull
     @Override
-    public FluidStack getFluidInTank(int tank) {
-
+    public FluidStack getFluidInTank(int tank)
+    {
         return getFluid();
     }
 
     @Override
-    public int getTankCapacity(int tank) {
-
+    public int getTankCapacity(int tank)
+    {
         return FluidType.BUCKET_VOLUME;
     }
 
     @Override
-    public boolean isFluidValid(int tank, @NotNull FluidStack stack) {
-
+    public boolean isFluidValid(int tank, @NotNull FluidStack stack)
+    {
         return true;
     }
 
@@ -178,34 +178,38 @@ public class FluidBucketWrapper implements IFluidHandlerItem, IItemStackCapabili
     }
 
     @Override
-    public CapabilityType<IFluidHandlerItem> getType() {
+    public CapabilityType<IFluidHandlerItem> getType()
+    {
         return CapabilityTypes.FLUID_ITEMS;
     }
 
     @Override
-    public ResourceLocation getId() {
+    public ResourceLocation getId()
+    {
         return ID;
     }
 
     @Override
-    public void invalidateCaps() {
+    public void invalidateCaps()
+    {
         this.holder.invalidate();
     }
 
     @Override
-    public void reviveCaps() {
+    public void reviveCaps()
+    {
         this.holder = Capability.of(() -> this);
     }
 
     @Override
-    public boolean isEquivalentTo(@Nullable IComparableCapabilityProvider<IFluidHandlerItem, ItemStack> other) {
-        var casted = (FluidBucketWrapper) other;
-        // Note - could we just return true?  By the time this is checked, the item should have been checked, and as such the fluid should be the same.
-        return this.getFluid().isFluidStackIdentical(casted.getFluid());
+    public boolean isEquivalentTo(@Nullable IComparableCapabilityProvider<IFluidHandlerItem, ItemStack> other)
+    {
+        return other != null; // Data is stored in NBT, which has already been checked.
     }
 
     @Override
-    public @Nullable ICopyableCapabilityProvider<IFluidHandlerItem, ItemStack> copy(ItemStack copiedParent) {
+    public @Nullable ICopyableCapabilityProvider<IFluidHandlerItem, ItemStack> copy(ItemStack copiedParent)
+    {
         return new FluidBucketWrapper(copiedParent);
     }
 }

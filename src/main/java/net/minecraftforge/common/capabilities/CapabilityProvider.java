@@ -77,11 +77,11 @@ public abstract class CapabilityProvider<T extends ICapabilityProvider> implemen
         return attachedCaps;
     }
 
-    protected final CompoundTag serializeCaps()
+    protected final @Nullable CompoundTag serializeCaps()
     {
         if (!capsInitialized)
         {
-            return lazyCapNbt;
+            return lazyCapNbt == null ? null : lazyCapNbt.copy();
         }
 
         final var disp = getDispatcher();
