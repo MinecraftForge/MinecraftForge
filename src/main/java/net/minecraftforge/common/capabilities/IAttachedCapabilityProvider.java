@@ -36,7 +36,7 @@ public interface IAttachedCapabilityProvider<C, O extends ICapabilityProvider>
 
     /**
      * Retrieves a capability from this provider.
-     * @param direction The side being queried. Will always be null if the underlying provider is not {@link ICapabilityProvider#isDirectionSensitive()}.
+     * @param direction The side being queried.
      * @return The provided {@link Capability}, or {@link Capability#empty()} if not available for the <code>direction</code>
      */
     @NotNull Capability<C> getCapability(@Nullable Direction direction);
