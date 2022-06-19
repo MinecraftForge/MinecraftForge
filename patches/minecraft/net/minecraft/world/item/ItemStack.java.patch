@@ -238,7 +238,7 @@
              return p_220170_.m_131144_(new HoverEvent(HoverEvent.Action.f_130832_, new HoverEvent.ItemStackInfo(this)));
           });
        }
-@@ -958,12 +_,39 @@
+@@ -958,12 +_,53 @@
        this.m_41720_().m_5929_(p_41732_, p_41733_, this, p_41734_);
     }
  
@@ -267,8 +267,22 @@
 +   }
 +
 +   @Override
-+   public @Nullable net.minecraftforge.common.capabilities.CapabilityDispatcher<ItemStack> getCapDispatcher() {
-+      return this.capsInitialized ? this.getCapDispatcher() : null;
++   public boolean areCapsCompatible(ItemStack other) {
++      if(other.capsInitialized ^ this.capsInitialized) { // If one has been initialized, make sure both are.
++         this.getDispatcher();
++         other.getDispatcher();
++      }
++
++      if(this.capsInitialized) { // If caps have been initialized, check dispatcher equality.
++         var disp = this.getDispatcher();
++         var otherDisp = other.getDispatcher();
++         if(disp == null) {
++            if(otherDisp == null) return true;
++            else return otherDisp.isEquivalentTo(null);
++         } else return disp.isEquivalentTo(otherDisp);
++      }
++      else if (!this.hasCapNbt()) return !other.hasCapNbt(); // Otherwise, fallback to NBT.
++      else return this.lazyCapNbt.equals(other.lazyCapNbt);
 +   }
 +
 +   @Override
