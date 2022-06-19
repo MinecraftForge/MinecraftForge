@@ -62,26 +62,30 @@ public abstract class CapabilityProvider<T extends ICapabilityProvider> implemen
 
     protected abstract AttachCapabilitiesEvent<? extends T> getCapEvent();
 
+    /**
+     * <b>This method will initialize capabilities when called.</b>
+     * @return The {@link CapabilityDispatcher}, or null, if nothing attached.
+     */
     protected final @Nullable CapabilityDispatcher<T> getDispatcher()
     {
-        if (!capsInitialized)
+        if (!this.capsInitialized)
         {
             doGatherCapabilities();
-            if (lazyCapNbt != null && !lazyCapNbt.isEmpty())
+            if (this.hasCapNbt())
             {
                 deserializeCaps(lazyCapNbt);
-                lazyCapNbt = null;
+                this.lazyCapNbt = null;
             }
         }
 
-        return attachedCaps;
+        return this.attachedCaps;
     }
 
     protected final @Nullable CompoundTag serializeCaps()
     {
         if (!capsInitialized)
         {
-            return lazyCapNbt == null ? null : lazyCapNbt.copy();
+            return hasCapNbt() ? lazyCapNbt.copy() : null;
         }
 
         final var disp = getDispatcher();
@@ -105,6 +109,11 @@ public abstract class CapabilityProvider<T extends ICapabilityProvider> implemen
         {
             disp.deserializeNBT(tag);
         }
+    }
+    
+    protected final boolean hasCapNbt()
+    {
+        return this.lazyCapNbt != null && !this.lazyCapNbt.isEmpty(); 
     }
 
     @Override

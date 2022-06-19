@@ -5,6 +5,13 @@
 
 package net.minecraftforge.debug;
 
+import java.util.Locale;
+import java.util.Objects;
+import java.util.concurrent.ConcurrentLinkedQueue;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Registry;
@@ -13,29 +20,32 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.ChatType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.inventory.DataSlot;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.capabilities.*;
+import net.minecraftforge.common.capabilities.AttachCapabilitiesEvent;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.CapabilityManager;
+import net.minecraftforge.common.capabilities.CapabilityType;
+import net.minecraftforge.common.capabilities.IAttachedCapabilityProvider.ICompleteCapabilityProvider;
+import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.entity.player.ItemTooltipEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent.RightClickBlock;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.util.thread.EffectiveSide;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.Locale;
-import java.util.Objects;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
 @Mod(CapabilitiesTest.MODID)
 public class CapabilitiesTest
 {
     public static final String MODID = "capabilities_test";
 
-    private static final boolean ENABLED = false;
+    private static final boolean ENABLED = true;
 
-    public static CapabilityType<CapClass> INSTANCE = CapabilityManager.get(new ResourceLocation(MODID, "test_cap"));
+    public static CapabilityType<DataSlot> INSTANCE = CapabilityManager.get(new ResourceLocation(MODID, "test_cap"));
 
     private static ResourceLocation PROVIDER_ID = new ResourceLocation("capabilities_test:test");
 
@@ -50,19 +60,76 @@ public class CapabilitiesTest
             new AttachTest<>(AttachCapabilitiesEvent.Entities.class);
             new AttachTest<>(AttachCapabilitiesEvent.Levels.class);
             new AttachTest<>(AttachCapabilitiesEvent.Chunks.class);
+            MinecraftForge.EVENT_BUS.<RightClickBlock>addListener(e -> {
+            	if(e.getHand() == InteractionHand.MAIN_HAND) e.getItemStack().getCapability(INSTANCE).ifPresent(t -> t.set(t.get() + 1));
+            });
         }
     }
 
-    public static class CapClass
+    static class Provider<O extends ICapabilityProvider> implements ICompleteCapabilityProvider<DataSlot, O>
     {
-        private final Object o;
+    	private DataSlot data = DataSlot.standalone();
+    	
+        private Capability<DataSlot> instance = Capability.of(() -> data);
 
-        public CapClass(Object o)
+        @Override
+        public CompoundTag serializeNBT()
         {
-            this.o = o;
+            CompoundTag tag = new CompoundTag();
+            tag.putInt("test", this.data.get());
+            return tag;
+        }
+
+        @Override
+        public void deserializeNBT(CompoundTag nbt)
+        {
+            if (!nbt.contains("test", Tag.TAG_INT))
+                throw new IllegalStateException("Unexpected tag type");
+            if(nbt.getInt("test") < 0)
+                throw new IllegalStateException("Unexpected tag data");
+            this.data.set(nbt.getInt("test"));
+        }
+
+        @Override
+        public CapabilityType<DataSlot> getType() {
+            return INSTANCE;
+        }
+
+        @Override
+        public ResourceLocation getId() {
+            return PROVIDER_ID;
+        }
+
+        @Override
+        public @NotNull Capability<DataSlot> getCapability(@Nullable Direction direction) {
+            return this.instance.cast();
+        }
+
+        @Override
+        public void invalidateCaps() {
+            this.instance.invalidate();
+        }
+
+        @Override
+        public void reviveCaps() {
+            this.instance = Capability.of(() -> data);
+        }
+
+        @Override
+        public boolean isEquivalentTo(@Nullable IComparableCapabilityProvider<DataSlot, O> other)
+        {
+            return other != null && ((Provider<?>) other).data.get() == this.data.get();
+        }
+
+        @Override
+        public @Nullable ICopyableCapabilityProvider<DataSlot, O> copy(O copiedParent)
+        {
+            Provider<O> p = new Provider<>();
+            p.data.set(this.data.get());
+            return p;
         }
     }
-
+    
     public static class AttachTest<K extends ICapabilityProvider, T extends AttachCapabilitiesEvent<K>>
     {
         public AttachTest(Class<T> cls)
@@ -72,53 +139,7 @@ public class CapabilitiesTest
 
         public void attach(T event)
         {
-        	//TODO: FIXME, will NOT work for ItemStacks or Players!
-            event.addCapability(new IAttachedCapabilityProvider<CapClass, K>()
-            {
-                private Capability<CapClass> instance = Capability.of(() -> new CapClass(this));
-
-                @Override
-                public CompoundTag serializeNBT()
-                {
-                	CompoundTag tag = new CompoundTag();
-                    tag.putInt("test", 1);
-                    return tag;
-                }
-
-                @Override
-                public void deserializeNBT(CompoundTag nbt)
-                {
-                    if (!nbt.contains("test", Tag.TAG_INT))
-                        throw new IllegalStateException("Unexpected tag type");
-                    if(nbt.getInt("test") != 1)
-                        throw new IllegalStateException("Unexpected tag data");
-                }
-
-				@Override
-				public CapabilityType<CapClass> getType() {
-					return INSTANCE;
-				}
-
-				@Override
-				public ResourceLocation getId() {
-					return PROVIDER_ID;
-				}
-
-				@Override
-				public @NotNull Capability<CapClass> getCapability(@Nullable Direction direction) {
-					return this.instance.cast();
-				}
-
-				@Override
-				public void invalidateCaps() {
-					this.instance.invalidate();
-				}
-
-				@Override
-				public void reviveCaps() {
-					this.instance = Capability.of(() -> new CapClass(this));;
-				}
-            });
+            event.addCapability(new Provider<>());
 
             messages.add(String.format(Locale.ENGLISH, "Attached capability to %s in %s", event.getObject().getClass(), EffectiveSide.get()));
         }
@@ -138,6 +159,13 @@ public class CapabilitiesTest
                     Minecraft.getInstance().gui.handleSystemChat(system, Component.literal(Objects.requireNonNull(messages.poll())));
                 }
             }
+        }
+
+        @SubscribeEvent
+        public static void tooltip(ItemTooltipEvent e) {
+        	e.getItemStack().getCapability(CapabilitiesTest.INSTANCE).ifPresent(t -> {
+        		e.getToolTip().add(Component.literal("Cap Data:" + t.get()));
+        	});
         }
     }
 }

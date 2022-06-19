@@ -11,7 +11,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.core.Direction;
 import net.minecraftforge.common.capabilities.CapabilityType;
 import net.minecraftforge.common.capabilities.CapabilityTypes;
-import net.minecraftforge.common.capabilities.IAttachedCapabilityProvider.IItemStackCapabilityProvider;
+import net.minecraftforge.common.capabilities.IAttachedCapabilityProvider.ICompleteCapabilityProvider;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
@@ -25,7 +25,7 @@ import org.jetbrains.annotations.Nullable;
  *
  * This implementation only allows item containers to be fully filled or emptied, similar to vanilla buckets.
  */
-public class FluidHandlerItemStackSimple implements IFluidHandlerItem, IItemStackCapabilityProvider<IFluidHandlerItem>
+public class FluidHandlerItemStackSimple implements IFluidHandlerItem, ICompleteCapabilityProvider<IFluidHandlerItem, ItemStack>
 {
     public static final String FLUID_NBT_KEY = "Fluid";
     public static final ResourceLocation ID = new ResourceLocation("forge", "simple_fluid_handler");

@@ -123,20 +123,15 @@ public interface IAttachedCapabilityProvider<C, O extends ICapabilityProvider>
          * The returned object should have the same type and ID as this one.
          * 
          * @param copiedParent The newly copied parent object.
-         * @return A deep copy of this {@link IItemStackCapabilityProvider}, or null, if it should not be copied.<br>
+         * @return A deep copy of this {@link ICopyableCapabilityProvider}, or null, if it should not be copied.<br>
          *         Note that copies will not fire {@link AttachCapabilitiesEvent}, so you must use this method.
          */
         @Nullable ICopyableCapabilityProvider<C, O> copy(O copiedParent);
     }
 
     /**
-     * Specialized subclass of {@link IAttachedCapabilityProvider} for use with {@link ItemStack}.
-     * Has special functions that allow for the complexity of merging and copying stacks.
-     *
-     * @param <C> The type of the capability.
+     * Subclass of {@link IAttachedCapabilityProvider} that implements all other extensions.
      */
-    public static interface IItemStackCapabilityProvider<C> extends IComparableCapabilityProvider<C, ItemStack>, ICopyableCapabilityProvider<C, ItemStack>
-    {
-    }
+    public static interface ICompleteCapabilityProvider<C, O extends ICapabilityProvider> extends IComparableCapabilityProvider<C, O>, ICopyableCapabilityProvider<C, O> {}
     
 }

@@ -562,37 +562,9 @@ public interface IForgeItemStack extends ICapabilityProvider, INBTSerializable<C
     }
 
     /**
-     * @see {@link #areCapsCompatible(CapabilityDispatcher)}
-     */
-    default boolean areCapsCompatible(ItemStack other)
-    {
-        return areCapsCompatible(other.getCapDispatcher());
-    }
-
-    /**
      * Documentation for this method is available at these two references, and is not duplicated.
      * @see {@link CapabilityDispatcher#isEquivalentTo(CapabilityDispatcher)}
      * @see {@link IAttachedCapabilityProvider#isEquivalentTo(IAttachedCapabilityProvider)}
      */
-    default boolean areCapsCompatible(@Nullable CapabilityDispatcher<ItemStack> other)
-    {
-        var disp = getCapDispatcher();
-        if (disp == null)
-        {
-            if (other == null)
-            {
-                return true;
-            }
-            else
-            {
-                return other.isEquivalentTo(null);
-            }
-        }
-        else
-        {
-            return disp.isEquivalentTo(other);
-        }
-    }
-
-    @Nullable CapabilityDispatcher<ItemStack> getCapDispatcher(); // Should be lazy
+    boolean areCapsCompatible(ItemStack other);
 }

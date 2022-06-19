@@ -11,7 +11,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.capabilities.CapabilityType;
 import net.minecraftforge.common.capabilities.CapabilityTypes;
-import net.minecraftforge.common.capabilities.IAttachedCapabilityProvider.IItemStackCapabilityProvider;
+import net.minecraftforge.common.capabilities.IAttachedCapabilityProvider.ICompleteCapabilityProvider;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidType;
@@ -29,7 +29,7 @@ import org.jetbrains.annotations.Nullable;
  * Wrapper for vanilla and forge buckets.
  * Swaps between empty bucket and filled bucket of the correct type.
  */
-public class FluidBucketWrapper implements IFluidHandlerItem, IItemStackCapabilityProvider<IFluidHandlerItem>
+public class FluidBucketWrapper implements IFluidHandlerItem, ICompleteCapabilityProvider<IFluidHandlerItem, ItemStack>
 {
     public static final ResourceLocation ID = new ResourceLocation("forge", "bucket_wrapper");
     

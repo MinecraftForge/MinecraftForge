@@ -21,7 +21,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraftforge.common.capabilities.IAttachedCapabilityProvider.ICopyableCapabilityProvider;
-import net.minecraftforge.common.capabilities.IAttachedCapabilityProvider.IItemStackCapabilityProvider;
+import net.minecraftforge.common.capabilities.IAttachedCapabilityProvider.ICompleteCapabilityProvider;
 import net.minecraftforge.eventbus.api.Event;
 
 /**
@@ -97,7 +97,7 @@ public abstract class AttachCapabilitiesEvent<T extends ICapabilityProvider> ext
 
     /**
      * This subclass is abnormal because it requires {@link #addCapability} to take an
-     * {@link IItemStackCapabilityProvider} instead of an {@link IAttachedCapabilityProvider}.
+     * {@link ICompleteCapabilityProvider} instead of an {@link IAttachedCapabilityProvider}.
      *
      */
     public static final class ItemStacks extends AttachCapabilitiesEvent<ItemStack>
@@ -109,20 +109,20 @@ public abstract class AttachCapabilitiesEvent<T extends ICapabilityProvider> ext
         }
 
         /**
-         * Providers attached to {@link ItemStack} must implement {@link IItemStackCapabilityProvider}.
-         * @see {@link ItemStacks#addCapability(IItemStackCapabilityProvider)}
+         * Providers attached to {@link ItemStack} must implement {@link ICompleteCapabilityProvider}.
+         * @see {@link ItemStacks#addCapability(ICompleteCapabilityProvider)}
          */
         @Override
         @Deprecated
         public boolean addCapability(IAttachedCapabilityProvider<?, ItemStack> provider) {
-            Preconditions.checkArgument(provider instanceof IItemStackCapabilityProvider, "Providers attached to ItemStack must implement IItemStackCapabilityProvider!");
-            return addCapability((IItemStackCapabilityProvider<?>) provider);
+            Preconditions.checkArgument(provider instanceof ICompleteCapabilityProvider, "Providers attached to ItemStack must implement ICompleteCapabilityProvider!");
+            return addCapability((ICompleteCapabilityProvider<?, ItemStack>) provider);
         }
 
         /**
          * @see {@link AttachCapabilitiesEvent#addCapability(IAttachedCapabilityProvider)}
          */
-        public boolean addCapability(IItemStackCapabilityProvider<?> provider) {
+        public boolean addCapability(ICompleteCapabilityProvider<?, ItemStack> provider) {
             return super.addCapability(provider);
         }
 
