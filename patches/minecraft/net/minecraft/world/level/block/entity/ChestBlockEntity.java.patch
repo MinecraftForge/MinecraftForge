@@ -17,7 +17,7 @@
 +
 +   @Override
 +   public <T> net.minecraftforge.common.capabilities.Capability<T> getCapability(net.minecraftforge.common.capabilities.CapabilityType<T> cap, Direction side) {
-+       if (!this.f_58859_ && cap == net.minecraftforge.common.capabilities.CapabilityTypes.ITEMS) {
++       if (cap == net.minecraftforge.common.capabilities.CapabilityTypes.ITEMS) {
 +          if (this.chestHandler == null)
 +             this.chestHandler = net.minecraftforge.common.capabilities.Capability.of(this::createHandler);
 +          return this.chestHandler.cast();

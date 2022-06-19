@@ -11,7 +11,7 @@
 +   }
 +
 +   public <T> net.minecraftforge.common.capabilities.Capability<T> getCapability(net.minecraftforge.common.capabilities.CapabilityType<T> cap, @org.jetbrains.annotations.Nullable net.minecraft.core.Direction side) {
-+      if (!this.f_58859_ && cap == net.minecraftforge.common.capabilities.CapabilityTypes.ITEMS )
++      if (cap == net.minecraftforge.common.capabilities.CapabilityTypes.ITEMS )
 +         return itemHandler.cast();
 +      return super.getCapability(cap, side);
 +   }

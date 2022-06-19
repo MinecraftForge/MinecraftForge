@@ -38,7 +38,7 @@
 +
 +   @Override
 +   public <T> net.minecraftforge.common.capabilities.Capability<T> getCapability(net.minecraftforge.common.capabilities.CapabilityType<T> capability, @Nullable net.minecraft.core.Direction facing) {
-+      if (this.m_6084_() && capability == net.minecraftforge.common.capabilities.CapabilityTypes.ITEMS && itemHandler != null)
++      if (capability == net.minecraftforge.common.capabilities.CapabilityTypes.ITEMS && itemHandler != null)
 +         return itemHandler.cast();
 +      return super.getCapability(capability, facing);
 +   }
