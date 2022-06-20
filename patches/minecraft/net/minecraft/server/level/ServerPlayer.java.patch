@@ -115,7 +115,7 @@
        this.f_36096_ = this.f_36095_;
     }
  
-@@ -1133,6 +_,13 @@
+@@ -1133,6 +_,15 @@
        this.m_36362_(p_9016_.m_36331_());
        this.m_36364_(p_9016_.m_36332_());
        this.m_219749_(p_9016_.m_219759_());
@@ -126,6 +126,8 @@
 +      if (old.m_128441_(PERSISTED_NBT_TAG))
 +          getPersistentData().m_128365_(PERSISTED_NBT_TAG, old.m_128423_(PERSISTED_NBT_TAG));
 +      net.minecraftforge.event.ForgeEventFactory.onPlayerClone(this, p_9016_, !p_9017_);
++      this.tabListHeader = p_9016_.tabListHeader;
++      this.tabListFooter = p_9016_.tabListFooter;
     }
  
     protected void m_142540_(MobEffectInstance p_143393_, @Nullable Entity p_143394_) {
@@ -210,7 +212,7 @@
           this.f_19853_.m_7967_(itementity);
           ItemStack itemstack = itementity.m_32055_();
           if (p_9087_) {
-@@ -1485,6 +_,29 @@
+@@ -1485,6 +_,76 @@
        }
     }
  
@@ -221,6 +223,53 @@
 +    */
 +   public String getLanguage() {
 +      return this.language;
++   }
++
++   private Component tabListHeader = Component.m_237119_();
++   private Component tabListFooter = Component.m_237119_();
++
++   public Component getTabListHeader() {
++       return this.tabListHeader;
++   }
++
++   /**
++    * Set the tab list header while preserving the footer.
++    *
++    * @param header the new header, or {@link Component#empty()} to clear
++    */
++   public void setTabListHeader(final Component header) {
++       this.setTabListHeaderFooter(header, this.tabListFooter);
++   }
++
++   public Component getTabListFooter() {
++       return this.tabListFooter;
++   }
++
++   /**
++    * Set the tab list footer while preserving the header.
++    *
++    * @param footer the new footer, or {@link Component#empty()} to clear
++    */
++   public void setTabListFooter(final Component footer) {
++       this.setTabListHeaderFooter(this.tabListHeader, footer);
++   }
++
++   /**
++    * Set the tab list header and footer at once.
++    *
++    * @param header the new header, or {@link Component#empty()} to clear
++    * @param footer the new footer, or {@link Component#empty()} to clear
++    */
++   public void setTabListHeaderFooter(final Component header, final Component footer) {
++       if (java.util.Objects.equals(header, this.tabListHeader)
++           && java.util.Objects.equals(footer, this.tabListFooter)) {
++           return;
++       }
++
++       this.tabListHeader = java.util.Objects.requireNonNull(header, "header");
++       this.tabListFooter = java.util.Objects.requireNonNull(footer, "footer");
++
++       this.f_8906_.m_9829_(new net.minecraft.network.protocol.game.ClientboundTabListPacket(header, footer));
 +   }
 +
 +   // We need this as tablistDisplayname may be null even if the the event was fired.
