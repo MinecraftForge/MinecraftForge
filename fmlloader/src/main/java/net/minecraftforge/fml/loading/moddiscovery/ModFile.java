@@ -73,7 +73,7 @@ public class ModFile implements IModFile {
         this.jar = jar;
         this.parser = parser;
 
-        manifest = this.jar.getManifest();
+        manifest = this.jar.moduleDataProvider().getManifest();
         modFileType = Type.valueOf(type);
         jarVersion = Optional.ofNullable(manifest.getMainAttributes().getValue(Attributes.Name.IMPLEMENTATION_VERSION)).orElse("0.0NONE");
         this.modFileInfo = ModFileParser.readModList(this, this.parser);
@@ -214,7 +214,7 @@ public class ModFile implements IModFile {
     }
 
     private static String parseType(final SecureJar jar) {
-        final Manifest m = jar.getManifest();
+        final Manifest m = jar.moduleDataProvider().getManifest();
         final Optional<String> value = Optional.ofNullable(m.getMainAttributes().getValue(TYPE));
         return value.orElse("MOD");
     }

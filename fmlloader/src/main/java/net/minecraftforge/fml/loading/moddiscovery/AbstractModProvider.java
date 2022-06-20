@@ -37,26 +37,24 @@ public abstract class AbstractModProvider implements IModProvider
         var mjm = new ModJarMetadata();
         var sj = SecureJar.from(
                 Manifest::new,
-                jar -> jar.findFile(MODS_TOML).isPresent() ? mjm : JarMetadata.from(jar, path),
+                jar -> jar.moduleDataProvider().findFile(MODS_TOML).isPresent() ? mjm : JarMetadata.from(jar, path),
                 (root, p) -> true,
                 path
         );
 
         IModFile mod;
-        var type = sj.getManifest().getMainAttributes().getValue(ModFile.TYPE);
+        var type = sj.moduleDataProvider().getManifest().getMainAttributes().getValue(ModFile.TYPE);
         if (type == null) {
             type = getDefaultJarModType();
         }
-        try {
-            if (sj.findFile(MODS_TOML).isPresent()) {
-                LOGGER.debug(LogMarkers.SCAN, "Found {} mod of type {}: {}", MODS_TOML, type, path);
-                mod = new ModFile(sj, this, ModFileParser::modsTomlParser);
-            } else if (type != null) {
-                LOGGER.debug(LogMarkers.SCAN, "Found {} mod of type {}: {}", MANIFEST, type, path);
-                mod = new ModFile(sj, this, this::manifestParser, type);
+        if (sj.moduleDataProvider().findFile(MODS_TOML).isPresent()) {
+            LOGGER.debug(LogMarkers.SCAN, "Found {} mod of type {}: {}", MODS_TOML, type, path);
+            mod = new ModFile(sj, this, ModFileParser::modsTomlParser);
+        } else if (type != null) {
+            LOGGER.debug(LogMarkers.SCAN, "Found {} mod of type {}: {}", MANIFEST, type, path);
+            mod = new ModFile(sj, this, this::manifestParser, type);
             } else {
                 return new IModLocator.ModFileOrException(null, new ModFileLoadingException("Invalid mod file found "+ Arrays.toString(path)));
-            }
         } catch (InvalidModFileException e) {
             return new IModLocator.ModFileOrException(null, e);
         }
@@ -66,7 +64,7 @@ public abstract class AbstractModProvider implements IModProvider
     }
 
     protected IModFileInfo manifestParser(final IModFile mod) {
-        Function<String, Optional<String>> cfg = name -> Optional.ofNullable(mod.getSecureJar().getManifest().getMainAttributes().getValue(name));
+        Function<String, Optional<String>> cfg = name -> Optional.ofNullable(mod.getSecureJar().moduleDataProvider().getManifest().getMainAttributes().getValue(name));
         var license = cfg.apply("LICENSE").orElse("");
         var dummy = new IConfigurable() {
             @Override
