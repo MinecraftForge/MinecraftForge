@@ -59,13 +59,12 @@ public final class CapabilityDispatcher<T extends ICapabilityProvider> implement
     {
         Map<CapabilityType<?>, IAttachedCapabilityProvider<T>> caps = new IdentityHashMap<>(other.caps.size());
         Map<ResourceLocation, IAttachedCapabilityProvider<T>> byName = new HashMap<>(other.byName.size(), 1);
-        for(Map.Entry<CapabilityType<?>, IAttachedCapabilityProvider<T>> entry : other.caps.entrySet())
+        other.caps.forEach((type, prov) ->
         {
-            IAttachedCapabilityProvider<T> copy = byName.computeIfAbsent(entry.getValue().getId(), key -> ((ICopyableCapabilityProvider<T>) entry.getValue()).copy(newOwner));
-            if(copy == null) continue;
+            IAttachedCapabilityProvider<T> copy = byName.computeIfAbsent(prov.getId(), key -> ((ICopyableCapabilityProvider<T>) prov).copy(newOwner));
             // Ideally we would ensure the type and key don't change here, but it's an expensive check that we don't "need" to do.
-            caps.put(entry.getKey(), copy);
-        }
+            if(copy != null) caps.put(type, copy);
+        });
         this.caps = Collections.unmodifiableMap(caps);
         this.byName = Collections.unmodifiableMap(byName);
     }
