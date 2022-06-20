@@ -809,7 +809,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         }
     }
 
-    public static class ConfigValue<T>
+    public static class ConfigValue<T> implements Supplier<T>
     {
         private static boolean USE_CACHES = true;
 
@@ -842,6 +842,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
          *                              not yet been built
          * @throws IllegalStateException if the associated config has not yet been loaded
          */
+        @Override
         public T get()
         {
             Preconditions.checkNotNull(spec, "Cannot get config value before spec is built");
