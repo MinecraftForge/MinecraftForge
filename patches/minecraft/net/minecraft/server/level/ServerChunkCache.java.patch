@@ -24,11 +24,11 @@
 +   }
 +
 +   public <T> void registerTickingTicket(TicketType<T> type, ChunkPos pos, int distance, T value) {
-+      this.f_8327_.registerTicking(type, pos, distance, value);
++      this.f_8327_.addRegionTicket(type, pos, distance, value, true);
 +   }
 +
 +   public <T> void releaseTickingTicket(TicketType<T> type, ChunkPos pos, int distance, T value) {
-+      this.f_8327_.releaseTicking(type, pos, distance, value);
++      this.f_8327_.removeRegionTicket(type, pos, distance, value, true);
     }
  
     public void m_6692_(ChunkPos p_8400_, boolean p_8401_) {
