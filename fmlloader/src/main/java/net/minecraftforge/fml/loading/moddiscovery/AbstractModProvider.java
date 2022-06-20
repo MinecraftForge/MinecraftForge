@@ -13,10 +13,13 @@ import net.minecraftforge.forgespi.language.IConfigurable;
 import net.minecraftforge.forgespi.language.IModFileInfo;
 import net.minecraftforge.forgespi.language.IModInfo;
 import net.minecraftforge.forgespi.locating.IModFile;
+import net.minecraftforge.forgespi.locating.IModLocator;
 import net.minecraftforge.forgespi.locating.IModProvider;
+import net.minecraftforge.forgespi.locating.ModFileLoadingException;
 import org.slf4j.Logger;
 
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -30,7 +33,7 @@ public abstract class AbstractModProvider implements IModProvider
     protected static final String MODS_TOML = "META-INF/mods.toml";
     protected static final String MANIFEST = "META-INF/MANIFEST.MF";
 
-    protected Optional<IModFile> createMod(Path... path) {
+    protected IModLocator.ModFileOrException createMod(Path... path) {
         var mjm = new ModJarMetadata();
         var sj = SecureJar.from(
                 Manifest::new,
@@ -44,18 +47,22 @@ public abstract class AbstractModProvider implements IModProvider
         if (type == null) {
             type = getDefaultJarModType();
         }
-        if (sj.findFile(MODS_TOML).isPresent()) {
-            LOGGER.debug(LogMarkers.SCAN, "Found {} mod of type {}: {}", MODS_TOML, type, path);
-            mod = new ModFile(sj, this, ModFileParser::modsTomlParser);
-        } else if (type != null) {
-            LOGGER.debug(LogMarkers.SCAN, "Found {} mod of type {}: {}", MANIFEST, type, path);
-            mod = new ModFile(sj, this, this::manifestParser, type);
-        } else {
-            return Optional.empty();
+        try {
+            if (sj.findFile(MODS_TOML).isPresent()) {
+                LOGGER.debug(LogMarkers.SCAN, "Found {} mod of type {}: {}", MODS_TOML, type, path);
+                mod = new ModFile(sj, this, ModFileParser::modsTomlParser);
+            } else if (type != null) {
+                LOGGER.debug(LogMarkers.SCAN, "Found {} mod of type {}: {}", MANIFEST, type, path);
+                mod = new ModFile(sj, this, this::manifestParser, type);
+            } else {
+                return new IModLocator.ModFileOrException(null, new ModFileLoadingException("Invalid mod file found "+ Arrays.toString(path)));
+            }
+        } catch (InvalidModFileException e) {
+            return new IModLocator.ModFileOrException(null, e);
         }
 
         mjm.setModFile(mod);
-        return Optional.of(mod);
+        return new IModLocator.ModFileOrException(mod, null);
     }
 
     protected IModFileInfo manifestParser(final IModFile mod) {
