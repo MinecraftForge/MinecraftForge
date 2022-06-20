@@ -53,10 +53,8 @@ public abstract class AbstractModProvider implements IModProvider
         } else if (type != null) {
             LOGGER.debug(LogMarkers.SCAN, "Found {} mod of type {}: {}", MANIFEST, type, path);
             mod = new ModFile(sj, this, this::manifestParser, type);
-            } else {
-                return new IModLocator.ModFileOrException(null, new ModFileLoadingException("Invalid mod file found "+ Arrays.toString(path)));
-        } catch (InvalidModFileException e) {
-            return new IModLocator.ModFileOrException(null, e);
+        } else {
+            return new IModLocator.ModFileOrException(null, new ModFileLoadingException("Invalid mod file found "+ Arrays.toString(path)));
         }
 
         mjm.setModFile(mod);

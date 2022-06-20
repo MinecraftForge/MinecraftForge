@@ -78,12 +78,12 @@ public class ModDiscoverer {
                     LOGGER.debug(LogMarkers.SCAN, "Locator {} found {} invalid mod files", locator, exceptions.size());
                     brokenFiles.addAll(exceptions.stream().map(e->e instanceof InvalidModFileException ime ? ime.getBrokenFile() : null).filter(Objects::nonNull).toList());
                 }
-                var locatedFiles = candidates.stream().map(IModLocator.ModFileOrException::file).filter(Objects::nonNull).toList();
+                var locatedFiles = candidates.stream().map(IModLocator.ModFileOrException::file).filter(Objects::nonNull).collect(Collectors.toList());
 
                 var badModFiles = locatedFiles.stream().filter(file -> !(file instanceof ModFile)).toList();
                 if (!badModFiles.isEmpty()) {
                     LOGGER.error(LogMarkers.SCAN, "Locator {} returned {} files which is are not ModFile instances! They will be skipped!", locator, badModFiles.size());
-                    brokenFiles.addAll(badModFiles.stream().map(mf->mf.getModFileInfo()).toList());
+                    brokenFiles.addAll(badModFiles.stream().map(IModFile::getModFileInfo).toList());
                 }
                 locatedFiles.removeAll(badModFiles);
                 LOGGER.debug(LogMarkers.SCAN, "Locator {} found {} valid mod files", locator, locatedFiles.size());
