@@ -16,6 +16,7 @@ import net.minecraftforge.fml.event.IModBusEvent;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -90,7 +91,7 @@ public class GatherDataEvent extends Event implements IModBusEvent
         }
 
         public void runAll() {
-            Map<Path, List<DataGenerator>> paths = generators.stream().collect(Collectors.groupingBy(DataGenerator::getOutputFolder));
+            Map<Path, List<DataGenerator>> paths = generators.stream().collect(Collectors.groupingBy(DataGenerator::getOutputFolder, LinkedHashMap::new, Collectors.toList()));
 
             paths.values().forEach(LamdbaExceptionUtils.rethrowConsumer(lst -> {
                 DataGenerator parent = lst.get(0);
