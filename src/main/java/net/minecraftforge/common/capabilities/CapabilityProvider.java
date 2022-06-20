@@ -55,7 +55,7 @@ public abstract class CapabilityProvider<T extends ICapabilityProvider> implemen
         if(other.capsInitialized)
         {
             this.capsInitialized = true;
-            this.attachedCaps = other.getDispatcher().copy((T) this);
+            this.attachedCaps = other.getCapDispatcher().copy((T) this);
         }
         else this.lazyCapNbt = other.lazyCapNbt;
     }
@@ -66,7 +66,7 @@ public abstract class CapabilityProvider<T extends ICapabilityProvider> implemen
      * <b>This method will initialize capabilities when called.</b>
      * @return The {@link CapabilityDispatcher}, or null, if nothing attached.
      */
-    protected final @Nullable CapabilityDispatcher<T> getDispatcher()
+    protected final @Nullable CapabilityDispatcher<T> getCapDispatcher()
     {
         if (!this.capsInitialized)
         {
@@ -88,7 +88,7 @@ public abstract class CapabilityProvider<T extends ICapabilityProvider> implemen
             return hasCapNbt() ? lazyCapNbt.copy() : null;
         }
 
-        final var disp = getDispatcher();
+        final var disp = getCapDispatcher();
         if (disp != null)
         {
             return disp.serializeNBT();
@@ -104,7 +104,7 @@ public abstract class CapabilityProvider<T extends ICapabilityProvider> implemen
             return;
         }
 
-        final var disp = getDispatcher();
+        final var disp = getCapDispatcher();
         if (disp != null)
         {
             disp.deserializeNBT(tag);
@@ -121,7 +121,7 @@ public abstract class CapabilityProvider<T extends ICapabilityProvider> implemen
     {
         this.capsValid = false;
         if(!capsInitialized) return;
-        var disp = getDispatcher();
+        var disp = getCapDispatcher();
         if (disp != null)
             disp.invalidateCaps();
     }
@@ -132,7 +132,7 @@ public abstract class CapabilityProvider<T extends ICapabilityProvider> implemen
     	if(this.capsValid) return; // Guard against incorrect calls.
         this.capsValid = true;
         if(!capsInitialized) return;
-        var disp = getDispatcher();
+        var disp = getCapDispatcher();
         if (disp != null)
             disp.reviveCaps();
     }
@@ -141,7 +141,7 @@ public abstract class CapabilityProvider<T extends ICapabilityProvider> implemen
     @NotNull
     public <C> Capability<C> getCapability(@NotNull CapabilityType<C> cap, @Nullable Direction side)
     {
-        final var disp = getDispatcher();
+        final var disp = getCapDispatcher();
         return !capsValid || disp == null ? Capability.empty() : disp.getCapability(cap, side);
     }
 

@@ -269,13 +269,13 @@
 +   @Override
 +   public boolean areCapsCompatible(ItemStack other) {
 +      if(other.capsInitialized ^ this.capsInitialized) { // If one has been initialized, make sure both are.
-+         this.getDispatcher();
-+         other.getDispatcher();
++         this.getCapDispatcher();
++         other.getCapDispatcher();
 +      }
 +
 +      if(this.capsInitialized) { // If caps have been initialized, check dispatcher equality.
-+         var disp = this.getDispatcher();
-+         var otherDisp = other.getDispatcher();
++         var disp = this.getCapDispatcher();
++         var otherDisp = other.getCapDispatcher();
 +         if(disp == null) {
 +            if(otherDisp == null) return true;
 +            else return otherDisp.isEquivalentTo(null);

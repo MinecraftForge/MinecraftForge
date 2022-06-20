@@ -192,8 +192,8 @@
     }
  
 +   protected void initCapabilities() {
-+      capabilityData = this.m_8895_().m_164861_(e -> net.minecraftforge.common.util.WorldCapabilityData.load(e, getDispatcher()), () -> new net.minecraftforge.common.util.WorldCapabilityData(getDispatcher()), net.minecraftforge.common.util.WorldCapabilityData.ID);
-+      capabilityData.setCapabilities(getDispatcher());
++      capabilityData = this.m_8895_().m_164861_(e -> net.minecraftforge.common.util.WorldCapabilityData.load(e, getCapDispatcher()), () -> new net.minecraftforge.common.util.WorldCapabilityData(getCapDispatcher()), net.minecraftforge.common.util.WorldCapabilityData.ID);
++      capabilityData.setCapabilities(getCapDispatcher());
 +   }
 +
     public LevelEntityGetter<Entity> m_142646_() {
