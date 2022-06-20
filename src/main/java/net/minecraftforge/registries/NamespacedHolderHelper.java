@@ -23,6 +23,7 @@ import java.util.stream.Stream;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
 import com.mojang.serialization.DataResult;
+import cpw.mods.modlauncher.api.LamdbaExceptionUtils;
 import net.minecraft.util.RandomSource;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -108,13 +109,12 @@ class NamespacedHolderHelper<T>
 
     Holder<T> getOrCreateHolderOrThrow(ResourceKey<T> key)
     {
-        return this.holdersByName.computeIfAbsent(key.location(), k ->
+        return LamdbaExceptionUtils.uncheck(() ->
         {
-            if (this.holderLookup != null)
-                throw new IllegalStateException("This registry can't create new holders without value (requested key: " + key + ")");
-            if (this.frozen)
-                throw new IllegalStateException("Registry is already frozen (trying to add key " + k + ")");
-            return Holder.Reference.createStandAlone(this.self, key);
+            DataResult<Holder<T>> dataResult = getOrCreateHolder(key);
+            if (dataResult.error().isPresent())
+                throw new IllegalStateException(dataResult.error().get().message());
+            return dataResult.result().get();
         });
     }
 
