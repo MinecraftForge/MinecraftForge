@@ -13,11 +13,16 @@ import net.minecraftforge.fml.loading.LoadingModList;
 import net.minecraftforge.fml.loading.LogMarkers;
 import net.minecraftforge.fml.loading.ModSorter;
 import net.minecraftforge.fml.loading.progress.StartupMessageManager;
+import net.minecraftforge.forgespi.language.IModFileInfo;
 import net.minecraftforge.forgespi.locating.IModFile;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class ModValidator {
     private static final Logger LOGGER = LogUtils.getLogger();
@@ -25,16 +30,17 @@ public class ModValidator {
     private final List<ModFile> candidatePlugins;
     private final List<ModFile> candidateMods;
     private LoadingModList loadingModList;
-    private List<ModFile> brokenFiles;
+    private List<IModFile> brokenFiles;
     private final List<EarlyLoadingException.ExceptionData> discoveryErrorData;
 
-    public ModValidator(final Map<IModFile.Type, List<ModFile>> modFiles, final List<EarlyLoadingException.ExceptionData> discoveryErrorData) {
+    public ModValidator(final Map<IModFile.Type, List<ModFile>> modFiles, final List<IModFileInfo> brokenFiles, final List<EarlyLoadingException.ExceptionData> discoveryErrorData) {
         this.modFiles = modFiles;
         this.candidateMods = lst(modFiles.get(IModFile.Type.MOD));
         this.candidateMods.addAll(lst(modFiles.get(IModFile.Type.GAMELIBRARY)));
         this.candidatePlugins = lst(modFiles.get(IModFile.Type.LANGPROVIDER));
         this.candidatePlugins.addAll(lst(modFiles.get(IModFile.Type.LIBRARY)));
         this.discoveryErrorData = discoveryErrorData;
+        this.brokenFiles = brokenFiles.stream().map(IModFileInfo::getFile).collect(Collectors.toList()); // mutable list
     }
 
     private static List<ModFile> lst(List<ModFile> files) {
@@ -42,7 +48,7 @@ public class ModValidator {
     }
 
     public void stage1Validation() {
-        brokenFiles = validateFiles(candidateMods);
+        brokenFiles.addAll(validateFiles(candidateMods));
         if (LOGGER.isDebugEnabled(LogMarkers.SCAN)) {
             LOGGER.debug(LogMarkers.SCAN, "Found {} mod files with {} mods", candidateMods.size(), candidateMods.stream().mapToInt(mf -> mf.getModInfos().size()).sum());
         }
