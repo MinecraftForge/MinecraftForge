@@ -35,8 +35,8 @@ import net.minecraftforge.common.util.INBTSerializable;
 public final class CapabilityDispatcher<T extends ICapabilityProvider> implements INBTSerializable<CompoundTag>, ICapabilityProvider
 {
 
-    private final Map<CapabilityType<?>, IAttachedCapabilityProvider<?, T>> caps;
-    private final Map<ResourceLocation, IAttachedCapabilityProvider<?, T>> byName;
+    private final Map<CapabilityType<?>, IAttachedCapabilityProvider<T>> caps;
+    private final Map<ResourceLocation, IAttachedCapabilityProvider<T>> byName;
     private boolean isValid = true;
 
     public CapabilityDispatcher(AttachCapabilitiesEvent<T> event)
@@ -57,15 +57,14 @@ public final class CapabilityDispatcher<T extends ICapabilityProvider> implement
      */
 	private CapabilityDispatcher(CapabilityDispatcher<T> other, T newOwner)
     {
-        Map<CapabilityType<?>, IAttachedCapabilityProvider<?, T>> caps = new IdentityHashMap<>(other.caps.size());
-        Map<ResourceLocation, IAttachedCapabilityProvider<?, T>> byName = new HashMap<>(other.byName.size(), 1);
-        for(Map.Entry<ResourceLocation, IAttachedCapabilityProvider<?, T>> entry : other.byName.entrySet())
+        Map<CapabilityType<?>, IAttachedCapabilityProvider<T>> caps = new IdentityHashMap<>(other.caps.size());
+        Map<ResourceLocation, IAttachedCapabilityProvider<T>> byName = new HashMap<>(other.byName.size(), 1);
+        for(Map.Entry<CapabilityType<?>, IAttachedCapabilityProvider<T>> entry : other.caps.entrySet())
         {
-            IAttachedCapabilityProvider<?, T> copy = ((ICopyableCapabilityProvider<?, T>) entry.getValue()).copy(newOwner);
+            IAttachedCapabilityProvider<T> copy = byName.computeIfAbsent(entry.getValue().getId(), key -> ((ICopyableCapabilityProvider<T>) entry.getValue()).copy(newOwner));
             if(copy == null) continue;
             // Ideally we would ensure the type and key don't change here, but it's an expensive check that we don't "need" to do.
-            caps.put(copy.getType(), copy);
-            byName.put(copy.getId(), copy);
+            caps.put(entry.getKey(), copy);
         }
         this.caps = Collections.unmodifiableMap(caps);
         this.byName = Collections.unmodifiableMap(byName);
@@ -90,7 +89,7 @@ public final class CapabilityDispatcher<T extends ICapabilityProvider> implement
     public boolean isEquivalentTo(@Nullable CapabilityDispatcher<T> other)
     {
         if(other == null) {
-            for(IComparableCapabilityProvider<?, T> prov : (Collection<IComparableCapabilityProvider>) (Collection) this.byName.values()) 
+            for(IComparableCapabilityProvider<T> prov : (Collection<IComparableCapabilityProvider>) (Collection) this.byName.values()) 
             {
                 if(!prov.isEquivalentTo(null)) return false;    // Would anyone ever want this behavior? / Do mods have caps that are ignored upon stacking?
             }
@@ -143,12 +142,12 @@ public final class CapabilityDispatcher<T extends ICapabilityProvider> implement
      *********************************/
 
     @Override
-    public <C> Capability<C> getCapability(CapabilityType<C> cap, @Nullable Direction side)
+    public <C> Capability<C> getCapability(CapabilityType<C> type, @Nullable Direction side)
     {
         if(!isValid) return Capability.empty();
-        IAttachedCapabilityProvider<?, T> provider = caps.get(cap);
+        IAttachedCapabilityProvider<T> provider = caps.get(type);
         if(provider == null) return Capability.empty();
-        return provider.getCapability(side).cast();
+        return provider.getCapability(type, side).cast();
     }
 
     @Override

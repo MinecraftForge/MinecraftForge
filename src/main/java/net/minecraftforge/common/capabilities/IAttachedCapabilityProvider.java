@@ -21,13 +21,8 @@ import net.minecraft.world.item.ItemStack;
  * @param <C> The type of the capability.
  * @param <O> The type of the provider being attached to.
  */
-public interface IAttachedCapabilityProvider<C, O extends ICapabilityProvider>
+public interface IAttachedCapabilityProvider<O extends ICapabilityProvider>
 {
-
-    /**
-     * @return The type of capability this provider can return.
-     */
-    CapabilityType<C> getType();
 
     /**
      * @return The ID of this provider.
@@ -36,10 +31,11 @@ public interface IAttachedCapabilityProvider<C, O extends ICapabilityProvider>
 
     /**
      * Retrieves a capability from this provider.
+     * @param type One of the capability types this provider was attached to.  If you only attached to one type, you may ignore this.
      * @param direction The side being queried.
      * @return The provided {@link Capability}, or {@link Capability#empty()} if not available for the <code>direction</code>
      */
-    @NotNull Capability<C> getCapability(@Nullable Direction direction);
+    @NotNull <C> Capability<C> getCapability(CapabilityType<C> type, @Nullable Direction direction);
 
     /**
      * @see {@link ICapabilityProvider#invalidateCaps()} for documentation.
@@ -79,7 +75,7 @@ public interface IAttachedCapabilityProvider<C, O extends ICapabilityProvider>
      *
      * @param <C> The type of the capability.
      */
-    public static interface IComparableCapabilityProvider<C, O extends ICapabilityProvider> extends IAttachedCapabilityProvider<C, O>
+    public static interface IComparableCapabilityProvider<O extends ICapabilityProvider> extends IAttachedCapabilityProvider<O>
     {
         /**
          * <b>This method is performance-critical!  Try to make this as fast as possible while ensuring correctness.</b>
@@ -100,7 +96,7 @@ public interface IAttachedCapabilityProvider<C, O extends ICapabilityProvider>
          * @param other Another instance of this provider from another object, or null, if it was not present.
          * @return true if these providers are equivalent, otherwise false.
          */
-        boolean isEquivalentTo(@Nullable IComparableCapabilityProvider<C, O> other);
+        boolean isEquivalentTo(@Nullable IComparableCapabilityProvider<O> other);
     }
 
     /**
@@ -111,7 +107,7 @@ public interface IAttachedCapabilityProvider<C, O extends ICapabilityProvider>
      *
      * @param <C> The type of the capability.
      */
-    public static interface ICopyableCapabilityProvider<C, O extends ICapabilityProvider> extends IAttachedCapabilityProvider<C, O>
+    public static interface ICopyableCapabilityProvider<O extends ICapabilityProvider> extends IAttachedCapabilityProvider<O>
     {
         /**
          * <b>This method is performance-critical!  Try to make this as fast as possible while ensuring correctness.</b>
@@ -130,12 +126,12 @@ public interface IAttachedCapabilityProvider<C, O extends ICapabilityProvider>
          * @return A deep copy of this {@link ICopyableCapabilityProvider}, or null, if it should not be copied.<br>
          *         Note that copies will not fire {@link AttachCapabilitiesEvent}, so you must use this method.
          */
-        @Nullable ICopyableCapabilityProvider<C, O> copy(O copiedParent);
+        @Nullable ICopyableCapabilityProvider<O> copy(O copiedParent);
     }
 
     /**
      * Subclass of {@link IAttachedCapabilityProvider} that implements all other extensions.
      */
-    public static interface ICompleteCapabilityProvider<C, O extends ICapabilityProvider> extends IComparableCapabilityProvider<C, O>, ICopyableCapabilityProvider<C, O> {}
+    public static interface ICompleteCapabilityProvider<O extends ICapabilityProvider> extends IComparableCapabilityProvider<O>, ICopyableCapabilityProvider<O> {}
     
 }

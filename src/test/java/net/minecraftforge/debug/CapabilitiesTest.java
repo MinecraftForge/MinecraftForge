@@ -61,15 +61,15 @@ public class CapabilitiesTest
             new AttachTest<>(AttachCapabilitiesEvent.Levels.class);
             new AttachTest<>(AttachCapabilitiesEvent.Chunks.class);
             MinecraftForge.EVENT_BUS.<RightClickBlock>addListener(e -> {
-            	if(e.getHand() == InteractionHand.MAIN_HAND) e.getItemStack().getCapability(INSTANCE).ifPresent(t -> t.set(t.get() + 1));
+                if(e.getHand() == InteractionHand.MAIN_HAND) e.getItemStack().getCapability(INSTANCE).ifPresent(t -> t.set(t.get() + 1));
             });
         }
     }
 
-    static class Provider<O extends ICapabilityProvider> implements ICompleteCapabilityProvider<DataSlot, O>
+    static class Provider<O extends ICapabilityProvider> implements ICompleteCapabilityProvider<O>
     {
-    	private DataSlot data = DataSlot.standalone();
-    	
+        private DataSlot data = DataSlot.standalone();
+        
         private Capability<DataSlot> instance = Capability.of(() -> data);
 
         @Override
@@ -91,17 +91,13 @@ public class CapabilitiesTest
         }
 
         @Override
-        public CapabilityType<DataSlot> getType() {
-            return INSTANCE;
-        }
-
-        @Override
         public ResourceLocation getId() {
             return PROVIDER_ID;
         }
 
+        @NotNull
         @Override
-        public @NotNull Capability<DataSlot> getCapability(@Nullable Direction direction) {
+        public <C> Capability<C> getCapability(CapabilityType<C> type, @Nullable Direction direction) {
             return this.instance.cast();
         }
 
@@ -116,13 +112,13 @@ public class CapabilitiesTest
         }
 
         @Override
-        public boolean isEquivalentTo(@Nullable IComparableCapabilityProvider<DataSlot, O> other)
+        public boolean isEquivalentTo(@Nullable IComparableCapabilityProvider<O> other)
         {
             return other != null && ((Provider<?>) other).data.get() == this.data.get();
         }
 
         @Override
-        public @Nullable ICopyableCapabilityProvider<DataSlot, O> copy(O copiedParent)
+        public @Nullable ICopyableCapabilityProvider<O> copy(O copiedParent)
         {
             Provider<O> p = new Provider<>();
             p.data.set(this.data.get());
@@ -139,7 +135,7 @@ public class CapabilitiesTest
 
         public void attach(T event)
         {
-            event.addCapability(new Provider<>());
+            event.addCapability(INSTANCE, new Provider<>());
 
             messages.add(String.format(Locale.ENGLISH, "Attached capability to %s in %s", event.getObject().getClass(), EffectiveSide.get()));
         }
@@ -162,10 +158,11 @@ public class CapabilitiesTest
         }
 
         @SubscribeEvent
-        public static void tooltip(ItemTooltipEvent e) {
-        	e.getItemStack().getCapability(CapabilitiesTest.INSTANCE).ifPresent(t -> {
-        		e.getToolTip().add(Component.literal("Cap Data:" + t.get()));
-        	});
+        public static void tooltip(ItemTooltipEvent e)
+        {
+            e.getItemStack().getCapability(CapabilitiesTest.INSTANCE).ifPresent(t -> {
+                e.getToolTip().add(Component.literal("Cap Data:" + t.get()));
+            });
         }
     }
 }

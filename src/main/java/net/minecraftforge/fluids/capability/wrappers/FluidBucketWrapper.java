@@ -10,7 +10,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.capabilities.CapabilityType;
-import net.minecraftforge.common.capabilities.CapabilityTypes;
 import net.minecraftforge.common.capabilities.IAttachedCapabilityProvider.ICompleteCapabilityProvider;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidStack;
@@ -29,7 +28,7 @@ import org.jetbrains.annotations.Nullable;
  * Wrapper for vanilla and forge buckets.
  * Swaps between empty bucket and filled bucket of the correct type.
  */
-public class FluidBucketWrapper implements IFluidHandlerItem, ICompleteCapabilityProvider<IFluidHandlerItem, ItemStack>
+public class FluidBucketWrapper implements IFluidHandlerItem, ICompleteCapabilityProvider<ItemStack>
 {
     public static final ResourceLocation ID = new ResourceLocation("forge", "bucket_wrapper");
     
@@ -172,15 +171,9 @@ public class FluidBucketWrapper implements IFluidHandlerItem, ICompleteCapabilit
 
     @Override
     @NotNull
-    public Capability<IFluidHandlerItem> getCapability(@Nullable Direction facing)
+    public <C> Capability<C> getCapability(CapabilityType<C> type, @Nullable Direction facing)
     {
         return this.holder.cast();
-    }
-
-    @Override
-    public CapabilityType<IFluidHandlerItem> getType()
-    {
-        return CapabilityTypes.FLUID_ITEMS;
     }
 
     @Override
@@ -202,13 +195,13 @@ public class FluidBucketWrapper implements IFluidHandlerItem, ICompleteCapabilit
     }
 
     @Override
-    public boolean isEquivalentTo(@Nullable IComparableCapabilityProvider<IFluidHandlerItem, ItemStack> other)
+    public boolean isEquivalentTo(@Nullable IComparableCapabilityProvider<ItemStack> other)
     {
         return other != null; // Data is stored in NBT, which has already been checked.
     }
 
     @Override
-    public @Nullable ICopyableCapabilityProvider<IFluidHandlerItem, ItemStack> copy(ItemStack copiedParent)
+    public @Nullable ICopyableCapabilityProvider<ItemStack> copy(ItemStack copiedParent)
     {
         return new FluidBucketWrapper(copiedParent);
     }

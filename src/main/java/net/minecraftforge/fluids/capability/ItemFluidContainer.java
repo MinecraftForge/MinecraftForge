@@ -7,6 +7,7 @@ package net.minecraftforge.fluids.capability;
 
 import net.minecraft.world.item.Item;
 import net.minecraftforge.common.capabilities.AttachCapabilitiesEvent.ItemStacks;
+import net.minecraftforge.common.capabilities.CapabilityTypes;
 import net.minecraftforge.fluids.capability.templates.FluidHandlerItemStack;
 
 /**
@@ -30,6 +31,6 @@ public class ItemFluidContainer extends Item
     @Override
     public void attachBuiltinCaps(ItemStacks event)
     {
-        event.addCapability(new FluidHandlerItemStack(event.getObject(), capacity));
+        event.addCapability(CapabilityTypes.FLUID_ITEMS, new FluidHandlerItemStack(event.getObject(), capacity));
     }
 }

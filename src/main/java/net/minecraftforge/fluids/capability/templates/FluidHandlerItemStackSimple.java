@@ -10,7 +10,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.core.Direction;
 import net.minecraftforge.common.capabilities.CapabilityType;
-import net.minecraftforge.common.capabilities.CapabilityTypes;
 import net.minecraftforge.common.capabilities.IAttachedCapabilityProvider.ICompleteCapabilityProvider;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidStack;
@@ -25,7 +24,7 @@ import org.jetbrains.annotations.Nullable;
  *
  * This implementation only allows item containers to be fully filled or emptied, similar to vanilla buckets.
  */
-public class FluidHandlerItemStackSimple implements IFluidHandlerItem, ICompleteCapabilityProvider<IFluidHandlerItem, ItemStack>
+public class FluidHandlerItemStackSimple implements IFluidHandlerItem, ICompleteCapabilityProvider<ItemStack>
 {
     public static final String FLUID_NBT_KEY = "Fluid";
     public static final ResourceLocation ID = new ResourceLocation("forge", "simple_fluid_handler");
@@ -189,7 +188,7 @@ public class FluidHandlerItemStackSimple implements IFluidHandlerItem, IComplete
 
     @Override
     @NotNull
-    public Capability<IFluidHandlerItem> getCapability(@Nullable Direction facing)
+    public <C> Capability<C> getCapability(CapabilityType<C> type, @Nullable Direction facing)
     {
         return this.holder.cast();
     }
@@ -234,12 +233,6 @@ public class FluidHandlerItemStackSimple implements IFluidHandlerItem, IComplete
     }
 
     @Override
-    public CapabilityType<IFluidHandlerItem> getType()
-    {
-        return CapabilityTypes.FLUID_ITEMS;
-    }
-
-    @Override
     public ResourceLocation getId()
     {
         return ID;
@@ -258,13 +251,13 @@ public class FluidHandlerItemStackSimple implements IFluidHandlerItem, IComplete
     }
 
     @Override
-    public boolean isEquivalentTo(@Nullable IComparableCapabilityProvider<IFluidHandlerItem, ItemStack> other)
+    public boolean isEquivalentTo(@Nullable IComparableCapabilityProvider<ItemStack> other)
     {
         return other != null && this.capacity == ((FluidHandlerItemStackSimple) other).capacity; // Fluid is stored in NBT, which has already been checked.
     }
 
     @Override
-    public @Nullable ICopyableCapabilityProvider<IFluidHandlerItem, ItemStack> copy(ItemStack copiedParent)
+    public @Nullable ICopyableCapabilityProvider<ItemStack> copy(ItemStack copiedParent)
     {
         return new FluidHandlerItemStackSimple(copiedParent, this.capacity);
     }

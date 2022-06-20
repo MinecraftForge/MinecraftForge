@@ -34,10 +34,10 @@ public abstract class AttachCapabilitiesEvent<T extends ICapabilityProvider> ext
 {
 
     protected final T obj;
-    protected final Map<CapabilityType<?>, IAttachedCapabilityProvider<?, T>> providers = new IdentityHashMap<>(); // Type objects can be compared using ==
-    protected final Map<CapabilityType<?>, IAttachedCapabilityProvider<?, T>> view = Collections.unmodifiableMap(providers);
-    protected final Map<ResourceLocation, IAttachedCapabilityProvider<?, T>> byName = new HashMap<>();
-    protected final Map<ResourceLocation, IAttachedCapabilityProvider<?, T>> byNameView = Collections.unmodifiableMap(byName);
+    protected final Map<CapabilityType<?>, IAttachedCapabilityProvider<T>> providers = new IdentityHashMap<>(); // Type objects can be compared using ==
+    protected final Map<CapabilityType<?>, IAttachedCapabilityProvider<T>> view = Collections.unmodifiableMap(providers);
+    protected final Map<ResourceLocation, IAttachedCapabilityProvider<T>> byName = new HashMap<>();
+    protected final Map<ResourceLocation, IAttachedCapabilityProvider<T>> byNameView = Collections.unmodifiableMap(byName);
 
     protected AttachCapabilitiesEvent(T obj)
     {
@@ -63,16 +63,18 @@ public abstract class AttachCapabilitiesEvent<T extends ICapabilityProvider> ext
     /**
      * Adds a {@link IAttachedCapabilityProvider} to this object.<br>
      * Only one provider may exist for any given {@link CapabilityType}, on a first-come-first-serve basis.<br>
-     * Additionally, the ID of all providers must be unique across the all {@link CapabilityType}s.
+     * The same provider object may be attached to multiple capability types.<br>
+     * Separate provider objects must have separate IDs.<br>
      * 
      * @param provider The provider being attached to this game object.
      * @return true, if this provider was successfully attached, otherwise false.
-     * @throws UnsupportedOperationException If a provider with the same ID already exists.
+     * @throws UnsupportedOperationException If a different provider with the same ID already exists.
      */
-    public boolean addCapability(IAttachedCapabilityProvider<?, T> provider)
+    public boolean addCapability(CapabilityType<?> type, IAttachedCapabilityProvider<T> provider)
     {
-        CapabilityType<?> type = provider.getType();
-        if(this.byName.containsKey(provider.getId())) throw new UnsupportedOperationException(String.format("Attempted to attach a provider to %s with ID %s, but that ID is already in use!", obj.toString(), provider.getId()));
+        if(type == null || provider == null) throw new UnsupportedOperationException("Attempted to attach with either a null provider or null type!");
+        var current = this.byName.get(provider.getId());
+        if(current != null && current != provider) throw new UnsupportedOperationException(String.format("Attempted to attach a provider to %s with ID %s, but that ID is already in use!", obj.toString(), provider.getId()));
         if(this.providers.containsKey(type)) return false;
         this.providers.put(type, provider);
         this.byName.put(provider.getId(), provider);
@@ -82,7 +84,7 @@ public abstract class AttachCapabilitiesEvent<T extends ICapabilityProvider> ext
     /**
      * A read-only view of the type -> provider map.
      */
-    public Map<CapabilityType<?>, IAttachedCapabilityProvider<?, T>> getCapabilities()
+    public Map<CapabilityType<?>, IAttachedCapabilityProvider<T>> getCapabilities()
     {
         return this.view;
     }
@@ -90,7 +92,7 @@ public abstract class AttachCapabilitiesEvent<T extends ICapabilityProvider> ext
     /**
      * A read-only view of the ID -> provider map.
      */
-    public Map<ResourceLocation, IAttachedCapabilityProvider<?, T>> getCapabilitiesByName()
+    public Map<ResourceLocation, IAttachedCapabilityProvider<T>> getCapabilitiesByName()
     {
         return this.byNameView;
     }
@@ -110,20 +112,20 @@ public abstract class AttachCapabilitiesEvent<T extends ICapabilityProvider> ext
 
         /**
          * Providers attached to {@link ItemStack} must implement {@link ICompleteCapabilityProvider}.
-         * @see {@link ItemStacks#addCapability(ICompleteCapabilityProvider)}
+         * @see {@link ItemStacks#addCapability(CapabilityType, ICompleteCapabilityProvider)}
          */
         @Override
         @Deprecated
-        public boolean addCapability(IAttachedCapabilityProvider<?, ItemStack> provider) {
+        public boolean addCapability(CapabilityType<?> type, IAttachedCapabilityProvider<ItemStack> provider) {
             Preconditions.checkArgument(provider instanceof ICompleteCapabilityProvider, "Providers attached to ItemStack must implement ICompleteCapabilityProvider!");
-            return addCapability((ICompleteCapabilityProvider<?, ItemStack>) provider);
+            return addCapability(type, (ICompleteCapabilityProvider<ItemStack>) provider);
         }
 
         /**
          * @see {@link AttachCapabilitiesEvent#addCapability(IAttachedCapabilityProvider)}
          */
-        public boolean addCapability(ICompleteCapabilityProvider<?, ItemStack> provider) {
-            return super.addCapability(provider);
+        public boolean addCapability(CapabilityType<?> type, ICompleteCapabilityProvider<ItemStack> provider) {
+            return super.addCapability(type, provider);
         }
 
     }
@@ -183,20 +185,20 @@ public abstract class AttachCapabilitiesEvent<T extends ICapabilityProvider> ext
 
         /**
          * Providers attached to {@link Player} must implement {@link ICopyableCapabilityProvider}.
-         * @see {@link Players#addCapability(ICopyableCapabilityProvider)}
+         * @see {@link Players#addCapability(CapabilityType, ICopyableCapabilityProvider)}
          */
         @Override
         @Deprecated
-        public boolean addCapability(IAttachedCapabilityProvider<?, Player> provider) {
+        public boolean addCapability(CapabilityType<?> type, IAttachedCapabilityProvider<Player> provider) {
             Preconditions.checkArgument(provider instanceof ICopyableCapabilityProvider, "Providers attached to Player must implement ICopyableCapabilityProvider!");
-            return addCapability((ICopyableCapabilityProvider<?, Player>) provider);
+            return addCapability(type, (ICopyableCapabilityProvider<Player>) provider);
         }
 
         /**
          * @see {@link AttachCapabilitiesEvent#addCapability(IAttachedCapabilityProvider)}
          */
-        public boolean addCapability(ICopyableCapabilityProvider<?, Player> provider) {
-            return super.addCapability(provider);
+        public boolean addCapability(CapabilityType<?> type, ICopyableCapabilityProvider<Player> provider) {
+            return super.addCapability(type, provider);
         }
 
     }

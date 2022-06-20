@@ -70,7 +70,7 @@
 +   @Override
 +   public void attachBuiltinCaps(net.minecraftforge.common.capabilities.AttachCapabilitiesEvent.ItemStacks event) {
 +      if (this.getClass() == BucketItem.class)
-+         event.addCapability(new net.minecraftforge.fluids.capability.wrappers.FluidBucketWrapper(event.getObject()));
++         event.addCapability(net.minecraftforge.common.capabilities.CapabilityTypes.FLUID_ITEMS, new net.minecraftforge.fluids.capability.wrappers.FluidBucketWrapper(event.getObject()));
 +      else
 +         super.attachBuiltinCaps(event);
 +   }
