@@ -10,11 +10,18 @@ import net.minecraftforge.fml.loading.moddiscovery.BackgroundScanHandler;
 import net.minecraftforge.fml.loading.moddiscovery.ModFile;
 import net.minecraftforge.fml.loading.moddiscovery.ModFileInfo;
 import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
+import net.minecraftforge.forgespi.locating.IModFile;
 
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 /**
@@ -28,7 +35,7 @@ public class LoadingModList
     private final List<ModInfo> sortedList;
     private final Map<String, ModFileInfo> fileById;
     private final List<EarlyLoadingException> preLoadErrors;
-    private List<ModFile> brokenFiles;
+    private List<IModFile> brokenFiles;
 
     private LoadingModList(final List<ModFile> modFiles, final List<ModInfo> sortedList)
     {
@@ -154,11 +161,11 @@ public class LoadingModList
         return preLoadErrors;
     }
 
-    public void setBrokenFiles(final List<ModFile> brokenFiles) {
+    public void setBrokenFiles(final List<IModFile> brokenFiles) {
         this.brokenFiles = brokenFiles;
     }
 
-    public List<ModFile> getBrokenFiles() {
+    public List<IModFile> getBrokenFiles() {
         return this.brokenFiles;
     }
 }

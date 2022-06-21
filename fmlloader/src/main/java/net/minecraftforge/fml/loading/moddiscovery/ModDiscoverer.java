@@ -16,6 +16,7 @@ import net.minecraftforge.fml.loading.LogMarkers;
 import net.minecraftforge.fml.loading.UniqueModListBuilder;
 import net.minecraftforge.fml.loading.progress.StartupMessageManager;
 import net.minecraftforge.forgespi.Environment;
+import net.minecraftforge.forgespi.language.IModFileInfo;
 import net.minecraftforge.forgespi.locating.IDependencyLocator;
 import net.minecraftforge.forgespi.locating.IModFile;
 import net.minecraftforge.forgespi.locating.IModLocator;
@@ -24,6 +25,7 @@ import org.slf4j.Logger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.ServiceLoader;
 import java.util.stream.Collectors;
 
@@ -63,18 +65,33 @@ public class ModDiscoverer {
         List<ModFile> loadedFiles = new ArrayList<>();
         List<EarlyLoadingException.ExceptionData> discoveryErrorData = new ArrayList<>();
         boolean successfullyLoadedMods = true;
+        List<IModFileInfo> brokenFiles = new ArrayList<>();
 
         //Loop all mod locators to get the prime mods to load from.
         for (IModLocator locator : modLocatorList) {
             try {
-                LOGGER.debug(LogMarkers.SCAN,"Trying locator {}", locator);
-                var locatedFiles = locator.scanMods();
-
-                if (locatedFiles.stream().anyMatch(file -> !(file instanceof ModFile))) {
-                    LOGGER.error(LogMarkers.SCAN, "A mod locator returned a file which is not a ModFile instance!. They will be skipped!");
+                LOGGER.debug(LogMarkers.SCAN, "Trying locator {}", locator);
+                var candidates = locator.scanMods();
+                LOGGER.debug(LogMarkers.SCAN, "Locator {} found {} candidates or errors", locator, candidates.size());
+                var exceptions = candidates.stream().map(IModLocator.ModFileOrException::ex).filter(Objects::nonNull).toList();
+                if (!exceptions.isEmpty()) {
+                    LOGGER.debug(LogMarkers.SCAN, "Locator {} found {} invalid mod files", locator, exceptions.size());
+                    brokenFiles.addAll(exceptions.stream().map(e->e instanceof InvalidModFileException ime ? ime.getBrokenFile() : null).filter(Objects::nonNull).toList());
                 }
+                var locatedFiles = candidates.stream().map(IModLocator.ModFileOrException::file).filter(Objects::nonNull).collect(Collectors.toList());
 
+                var badModFiles = locatedFiles.stream().filter(file -> !(file instanceof ModFile)).toList();
+                if (!badModFiles.isEmpty()) {
+                    LOGGER.error(LogMarkers.SCAN, "Locator {} returned {} files which is are not ModFile instances! They will be skipped!", locator, badModFiles.size());
+                    brokenFiles.addAll(badModFiles.stream().map(IModFile::getModFileInfo).toList());
+                }
+                locatedFiles.removeAll(badModFiles);
+                LOGGER.debug(LogMarkers.SCAN, "Locator {} found {} valid mod files", locator, locatedFiles.size());
                 handleLocatedFiles(loadedFiles, locatedFiles);
+            } catch (InvalidModFileException imfe) {
+                // We don't generally expect this exception, since it should come from the candidates stream above and be handled in the Locator, but just in case.
+                LOGGER.error(LogMarkers.SCAN, "Locator {} found an invalid mod file {}", locator, imfe.getBrokenFile(), imfe);
+                brokenFiles.add(imfe.getBrokenFile());
             } catch (EarlyLoadingException exception) {
                 LOGGER.error(LogMarkers.SCAN, "Failed to load mods with locator {}", locator, exception);
                 discoveryErrorData.addAll(exception.getAllData());
@@ -141,7 +158,7 @@ public class ModDiscoverer {
 
         //Validate the loading. With a deduplicated list, we can now successfully process the artifacts and load
         //transformer plugins.
-        var validator = new ModValidator(modFilesMap, discoveryErrorData);
+        var validator = new ModValidator(modFilesMap, brokenFiles, discoveryErrorData);
         validator.stage1Validation();
         return validator;
     }

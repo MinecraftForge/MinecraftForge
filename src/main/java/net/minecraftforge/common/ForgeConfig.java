@@ -97,7 +97,6 @@ public class ForgeConfig {
 
             builder.pop();
         }
-
     }
 
     /**

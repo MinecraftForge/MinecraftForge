@@ -31,6 +31,7 @@ public class ModInfo implements IModInfo, IConfigurable
     private static final DefaultArtifactVersion DEFAULT_VERSION = new DefaultArtifactVersion("1");
     private static final Pattern VALID_MODID = Pattern.compile("^[a-z][a-z0-9_]{1,63}$");
     private static final Pattern VALID_NAMESPACE = Pattern.compile("^[a-z][a-z0-9_.-]{1,63}$");
+    private static final Pattern VALID_VERSION = Pattern.compile("^\\d+.*");
 
     private final ModFileInfo owningFile;
     private final String modId;
@@ -97,6 +98,11 @@ public class ModInfo implements IModInfo, IConfigurable
 
         this.modUrl = config.<String>getConfigElement("modUrl")
                 .map(StringUtils::toURL);
+
+        // verify we have a valid mod version otherwise throw an exception
+        if (!VALID_VERSION.matcher(this.version.toString()).matches()) {
+            throw new InvalidModFileException("Illegal version number specified "+this.version, this.getOwningFile());
+        }
     }
 
     @Override

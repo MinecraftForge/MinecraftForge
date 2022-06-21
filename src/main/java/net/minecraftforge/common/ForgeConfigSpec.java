@@ -809,7 +809,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         }
     }
 
-    public static class ConfigValue<T>
+    public static class ConfigValue<T> implements Supplier<T>
     {
         private static boolean USE_CACHES = true;
 
@@ -834,9 +834,30 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
             return Lists.newArrayList(path);
         }
 
+        /**
+         * Returns the actual value for the configuration setting, throwing if the config has not yet been loaded.
+         *
+         * @return the actual value for the setting
+         * @throws NullPointerException if the {@link ForgeConfigSpec config spec} object that will contain this has
+         *                              not yet been built
+         * @throws IllegalStateException if the associated config has not yet been loaded
+         */
+        @Override
         public T get()
         {
             Preconditions.checkNotNull(spec, "Cannot get config value before spec is built");
+            // TODO: Remove this dev-time check so this errors out on both production and dev
+            // This is dev-time-only in 1.19.x, to avoid breaking already published mods while forcing devs to fix their errors
+            if (!FMLEnvironment.production)
+            {
+                // When the above if-check is removed, change message to "Cannot get config value before config is loaded"
+                Preconditions.checkState(spec.childConfig != null, """
+                        Cannot get config value before config is loaded.
+                        This error is currently only thrown in the development environment, to avoid breaking published mods.
+                        In a future version, this will also throw in the production environment.
+                        """);
+            }
+
             if (spec.childConfig == null)
                 return defaultSupplier.get();
 
@@ -851,6 +872,14 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         protected T getRaw(Config config, List<String> path, Supplier<T> defaultSupplier)
         {
             return config.getOrElse(path, defaultSupplier);
+        }
+
+        /**
+         * {@return the default value for the configuration setting}
+         */
+        public T getDefault()
+        {
+            return defaultSupplier.get();
         }
 
         public Builder next()

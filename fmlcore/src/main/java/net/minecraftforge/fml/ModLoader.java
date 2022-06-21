@@ -22,7 +22,13 @@ import net.minecraftforge.forgespi.locating.IModFile;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 import java.util.concurrent.Executor;
@@ -289,7 +295,7 @@ public class ModLoader
             LOGGER.error("Cowardly refusing to send event generator to a broken mod state");
             return;
         }
-        ModList.get().forEachModContainer((id, mc) -> mc.acceptEvent(generator.apply(mc)));
+        ModList.get().forEachModInOrder(mc -> mc.acceptEvent(generator.apply(mc)));
     }
 
     public <T extends Event & IModBusEvent> void postEvent(T e) {
@@ -297,14 +303,14 @@ public class ModLoader
             LOGGER.error("Cowardly refusing to send event {} to a broken mod state", e.getClass().getName());
             return;
         }
-        ModList.get().forEachModContainer((id, mc) -> mc.acceptEvent(e));
+        ModList.get().forEachModInOrder(mc -> mc.acceptEvent(e));
     }
-    public <T extends Event & IModBusEvent> void postEventWithWrap(T e, BiConsumer<ModContainer, T> pre, BiConsumer<ModContainer, T> post) {
+    public <T extends Event & IModBusEvent> void postEventWithWrapInModOrder(T e, BiConsumer<ModContainer, T> pre, BiConsumer<ModContainer, T> post) {
         if (!loadingStateValid) {
             LOGGER.error("Cowardly refusing to send event {} to a broken mod state", e.getClass().getName());
             return;
         }
-        ModList.get().forEachModContainer((id, mc) -> {
+        ModList.get().forEachModInOrder(mc -> {
             pre.accept(mc, e);
             mc.acceptEvent(e);
             post.accept(mc, e);
