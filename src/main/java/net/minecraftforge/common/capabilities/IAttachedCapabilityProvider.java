@@ -16,7 +16,8 @@ import net.minecraft.world.item.ItemStack;
 /**
  * An Attached Capability Provider is a simple capability provider that can be attached
  * to game objects.<br>
- * 
+ * If you only wish to attach a simple object, you may not need to implement this, and 
+ * instead should use {@link AttachCapabilitiesEvent#builder(CapabilityType...)}
  * 
  * @param <C> The type of the capability.
  * @param <O> The type of the provider being attached to.
