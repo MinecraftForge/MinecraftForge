@@ -147,9 +147,20 @@ public class ModifiableBiomeInfo
                 return climateSettings;
             }
 
-            public BiomeSpecialEffectsBuilder getEffects()
+            /**
+             * {@return Builder for client special effects}
+             * 
+             * @deprecated Use {@link #getSpecialEffects()} as it provides read access. TODO remove this by 1.20
+             */
+            @Deprecated(forRemoval=true)
+            public BiomeSpecialEffects.Builder getEffects()
             {
                 return effects;
+            }
+            
+            public BiomeSpecialEffectsBuilder getSpecialEffects()
+            {
+            	return effects;
             }
 
             public BiomeGenerationSettingsBuilder getGenerationSettings()
