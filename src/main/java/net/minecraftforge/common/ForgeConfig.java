@@ -29,7 +29,6 @@ public class ForgeConfig {
         public final DoubleValue zombieBabyChance;
 
         public final BooleanValue treatEmptyTagsAsAir;
-        public final BooleanValue skipEmptyShapelessCheck;
 
         public final BooleanValue fixAdvancementLoading;
 
@@ -74,11 +73,6 @@ public class ForgeConfig {
                     .translation("forge.configgui.treatEmptyTagsAsAir")
                     .define("treatEmptyTagsAsAir", false);
 
-            skipEmptyShapelessCheck = builder
-                  .comment("Skip checking if an ingredient is empty during shapeless recipe deserialization to prevent complex ingredients from caching tags too early.")
-                  .translation("forge.configgui.skipEmptyShapelessCheck")
-                  .define("skipEmptyShapelessCheck", true);
-
             fixAdvancementLoading = builder
                     .comment("Fix advancement loading to use a proper topological sort. This may have visibility side-effects and can thus be turned off if needed for data-pack compatibility.")
                     .translation("forge.configgui.fixAdvancementLoading")
@@ -97,17 +91,9 @@ public class ForgeConfig {
      * General configuration that doesn't need to be synchronized but needs to be available before server startup
      */
     public static class Common {
-        public final ForgeConfigSpec.ConfigValue<? extends String> defaultWorldType;
-
         Common(ForgeConfigSpec.Builder builder) {
             builder.comment("General configuration settings")
                     .push("general");
-
-            defaultWorldType = builder
-                    .comment("Defines a default world type to use. The vanilla default world type is represented by 'default'.",
-                             "The modded world types are registry names which should include the registry namespace, such as 'examplemod:example_world_type'.")
-                    .translation("forge.configgui.defaultWorldType")
-                    .define("defaultWorldType", "default");
 
             builder.pop();
         }
@@ -125,8 +111,6 @@ public class ForgeConfig {
         public final BooleanValue showLoadWarnings;
 
         public final BooleanValue useCombinedDepthStencilAttachment;
-
-        public final BooleanValue forceSystemNanoTime;
 
         public final BooleanValue compressLanIPv6Addresses;
 
@@ -155,11 +139,6 @@ public class ForgeConfig {
                     .comment("Set to true to use a combined DEPTH_STENCIL attachment instead of two separate ones.")
                     .translation("forge.configgui.useCombinedDepthStencilAttachment")
                     .define("useCombinedDepthStencilAttachment", false);
-
-            forceSystemNanoTime = builder
-                    .comment("Forces the use of System.nanoTime instead of glfwGetTime, as the main Util time provider")
-                    .translation("forge.configgui.forceSystemNanoTime")
-                    .define("forceSystemNanoTime", false);
 
             compressLanIPv6Addresses = builder
                     .comment("When enabled, Forge will convert discovered 'Open to LAN' IPv6 addresses to their more compact, compressed representation")
