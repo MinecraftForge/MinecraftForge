@@ -15,13 +15,12 @@ import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.google.common.base.Preconditions;
-import com.google.common.base.Supplier;
-import com.google.common.base.Suppliers;
 
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -36,6 +35,7 @@ import net.minecraftforge.common.capabilities.IAttachedCapabilityProvider.ICompl
 import net.minecraftforge.common.capabilities.IAttachedCapabilityProvider.ICopyableCapabilityProvider;
 import net.minecraftforge.common.capabilities.IAttachedCapabilityProvider.IComparableCapabilityProvider;
 import net.minecraftforge.common.util.INBTSerializable;
+import net.minecraftforge.common.util.Lazy;
 import net.minecraftforge.eventbus.api.Event;
 
 /**
@@ -125,26 +125,23 @@ public abstract class AttachCapabilitiesEvent<T extends ICapabilityProvider> ext
      * <p>
      * An example of attaching an ItemStackHandler to an ItemStack is shown below:<br>
      * <pre>
-     * event.<ItemStackHandler>builder(CapabilityTypes.ITEMS)
-     *     .supplies(() -> new ItemStackHandler())
-     *     .serializesWith(ItemStackHandler::serializeNBT, ItemStackHandler::deserializeNBT)
-     *     .comparesWith(MyClass::areHandlersEqual)
-     *     .copiesWith(MyClass::cloneHandler)
+     * event.builder(() -> new ItemStackHandler(), CapabilityTypes.ITEMS)
+     *     .withSerializer(ItemStackHandler::serializeNBT, ItemStackHandler::deserializeNBT)
+     *     .withComparator(MyClass::areHandlersEqual)
+     *     .withCopier(MyClass::cloneHandler)
      *     .attach(new ResourceLocation("test", "items"));
      * </pre>
-     * <code>serializesWith</code> may be omitted if you do not want your cap to save to disk.<br>
-     * <code>copiesWith</code> is required for ItemStacks and Players.<br>
-     * <code>comparesWith</code> is required for ItemStacks.
-     * <p>
-     * You must specify the generic type explicitly during this method call for it to work correctly.
+     * <code>withSerializer</code> may be omitted if you do not want your cap to save to disk.<br>
+     * <code>withCopier</code> is required for ItemStacks and Players.<br>
+     * <code>withComparator</code> is required for ItemStacks.
      * @param <D> The type of object being attached.
      * @param types The CapabilityTypes that the attached object provides.
      * @return A new {@link ProviderBuilder} of the specified type.
      */
     @SafeVarargs
-    public final <D> ProviderBuilder<D> builder(CapabilityType<? super D>... types)
+    public final <D> ProviderBuilder<D> builder(Supplier<D> supplier, CapabilityType<? super D>... types)
     {
-        return new ProviderBuilder<>(types);
+        return new ProviderBuilder<>(supplier, types);
     }
 
     /**
@@ -160,36 +157,25 @@ public abstract class AttachCapabilitiesEvent<T extends ICapabilityProvider> ext
         private BiConsumer<D, CompoundTag> deserializer;
         private BiFunction<D, T, D> copier;
         private BiPredicate<D, D> comparator;
-        
-        @SafeVarargs
-        private ProviderBuilder(CapabilityType<? super D>... types)
-        {
-            for(CapabilityType<? super D> t : types) this.types.add(t);
-        }
 
-        /**
-         * Specify a data supplier for this provider.
-         * The supplier may not return null, and will be resolved exactly once, when necessary.
-         * @param supplier The data supplier
-         * @return <code>this</code>
-         */
-        public final ProviderBuilder<D> supplies(Supplier<D> supplier)
+        @SafeVarargs
+        private ProviderBuilder(Supplier<D> supplier, CapabilityType<? super D>... types)
         {
-            this.memoizedData = Suppliers.memoize(supplier);
-            return this;
+            this.memoizedData = Lazy.concurrentOf(supplier);
+            for(CapabilityType<? super D> t : types) this.types.add(t);
         }
 
         /**
          * Specify a serializer and deserializer for this provider.<br>
          * If your object implements {@link INBTSerializable}, then you can use the following example:<br>
-         * <pre>.serializesWith(INBTSerializable::serializeNBT, INBTSerializable::deserializeNBT)</pre>
+         * <pre>withSerializer(INBTSerializable::serializeNBT, INBTSerializable::deserializeNBT)</pre>
          * @param serializer The object's serializer.
          * @param deserializer The object's deserializer.
          * @return <code>this</code>
          * @see {@link IAttachedCapabilityProvider#serializeNBT()}
          * @see {@link IAttachedCapabilityProvider#deserializeNBT(CompoundTag)}
          */
-        public ProviderBuilder<D> serializesWith(Function<D, CompoundTag> serializer, BiConsumer<D, CompoundTag> deserializer)
+        public ProviderBuilder<D> withSerializer(Function<D, CompoundTag> serializer, BiConsumer<D, CompoundTag> deserializer)
         {
             this.serializer = serializer;
             this.deserializer = deserializer;
@@ -204,7 +190,7 @@ public abstract class AttachCapabilitiesEvent<T extends ICapabilityProvider> ext
          * @return <code>this</code>
          * @see {@link ICopyableCapabilityProvider#copy(ICapabilityProvider)0}
          */
-        public ProviderBuilder<D> copiesWith(BiFunction<D, T, D> copier)
+        public ProviderBuilder<D> withCopier(BiFunction<D, T, D> copier)
         {
             this.copier = copier;
             return this;
@@ -219,7 +205,7 @@ public abstract class AttachCapabilitiesEvent<T extends ICapabilityProvider> ext
          * @return <code>this</code>
          * @see {@link IComparableCapabilityProvider#isEquivalentTo(IComparableCapabilityProvider)}
          */
-        public ProviderBuilder<D> comparesWith(BiPredicate<D, D> comparator)
+        public ProviderBuilder<D> withComparator(BiPredicate<D, D> comparator)
         {
             this.comparator = comparator;
             return this;
@@ -234,7 +220,7 @@ public abstract class AttachCapabilitiesEvent<T extends ICapabilityProvider> ext
          */
         public void attach(ResourceLocation id)
         {
-        	ICompleteCapabilityProvider<T> prov = build(id);
+            ICompleteCapabilityProvider<T> prov = build(id);
             types.forEach(t -> AttachCapabilitiesEvent.this.addCapability(t, prov));
         }
 
@@ -248,9 +234,9 @@ public abstract class AttachCapabilitiesEvent<T extends ICapabilityProvider> ext
          */
         public ICompleteCapabilityProvider<T> build(ResourceLocation id)
         {
-        	this.id = id;
-        	validate(this);
-        	return new BuiltProvider<>(this);
+            this.id = id;
+            validate(this);
+            return new BuiltProvider<>(this);
         }
     }
 
@@ -292,7 +278,7 @@ public abstract class AttachCapabilitiesEvent<T extends ICapabilityProvider> ext
             this.copier = other.copier;
             this.comparator = other.comparator;
             D copy = this.copier.apply(other.memoizedData.get(), copiedParent);
-            this.memoizedData = Suppliers.memoize(() -> copy); // Immediately copy to avoid capturing a reference to "other"
+            this.memoizedData = () -> copy; // Immediately copy to avoid capturing a reference to "other"
             this.cap = Capability.of(() -> this.memoizedData.get());
         }
 
