@@ -183,11 +183,11 @@ public class SimpleChannel
 
         /**
          * Set the message encoder, which writes this message to a {@link FriendlyByteBuf}.
-         *
-         * The encoder is called <em>immediately</em> {@link #send(PacketDistributor.PacketTarget, Object) when the
+         * <p>
+         * The encoder is called <em>immediately</em> {@linkplain #send(PacketDistributor.PacketTarget, Object) when the
          * packet is sent}. This means encoding typically occurs on the main server/client thread rather than on the
          * network thread.
-         *
+         * <p>
          * However, this behaviour should not be relied on, and the encoder should try to be thread-safe and not
          * interact with the current game state.
          *
@@ -201,10 +201,10 @@ public class SimpleChannel
 
         /**
          * Set the message decoder, which reads the message from a {@link FriendlyByteBuf}.
-         *
+         * <p>
          * The decoder is called when the message is received on the network thread. The decoder should not attempt to
-         * access or mutate any game state, deferring that until the {@link #consumer(ToBooleanBiFunction) the message
-         * is handled}.
+         * access or mutate any game state, deferring that until the {@linkplain #consumer(ToBooleanBiFunction) the
+         * message is handled}.
          *
          * @param decoder The message decoder.
          * @return The message builder, for chaining.
@@ -249,7 +249,7 @@ public class SimpleChannel
         /**
          * Set the message consumer, which is called once a message has been decoded. This accepts the decoded message
          * object and the message's context.
-         *
+         * <p>
          * The consumer is called on the network thread, and so should not interact with most game state by default.
          * {@link NetworkEvent.Context#enqueueWork(Runnable)} can be used to handle the message on the main server or
          * client thread.
