@@ -45,7 +45,7 @@ ext {
     EVENTBUS_VERSION = '6.0.0'
     MODLAUNCHER_VERSION = '10.0.1'
     SECUREJARHANDLER_VERSION = '2.0.3'
-    BOOTSTRAPLAUNCHER_VERSION = '1.1.0'
+    BOOTSTRAPLAUNCHER_VERSION = '1.1.1'
     ASM_VERSION = '9.3'
     INSTALLER_VERSION = '2.1.+'
     MIXIN_VERSION = '0.8.5'
@@ -440,7 +440,7 @@ def sharedFmlonlyForge = { Project prj ->
         // SecureJarHandler bootstrap values.
         run.property 'ignoreList', prj.configurations.moduleonly.files.collect {it.name.replaceAll(/([-_]([.\d]*\d+)|\.jar$)/, '') }.join(',') + ",client-extra,fmlcore,javafmllanguage,lowcodelanguage,mclanguage,${prj.name}-"
         // FIXME: Without this jna doesn't work at runtime. Someone figure out why please?
-        run.property 'mergeModules', 'jna-5.10.0.jar,jna-platform-5.10.0.jar,java-objc-bridge-1.0.0.jar;text2speech-1.13.9.jar,text2speech-1.13.9-natives-windows.jar,text2speech-1.13.9-natives-linux.jar'
+        run.property 'mergeModules', 'jna-5.10.0.jar,jna-platform-5.10.0.jar,java-objc-bridge-1.0.0.jar'
         if (userdevRuns.contains(run)) {
             run.property 'legacyClassPath.file', '{minecraft_classpath_file}'
             run.jvmArgs '-p', '{modules}'
