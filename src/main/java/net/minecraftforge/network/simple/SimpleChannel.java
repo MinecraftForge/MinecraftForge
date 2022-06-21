@@ -181,11 +181,34 @@ public class SimpleChannel
             return builder;
         }
 
+        /**
+         * Set the message encoder, which writes this message to a {@link FriendlyByteBuf}.
+         *
+         * The encoder is called <em>immediately</em> {@link #send(PacketDistributor.PacketTarget, Object) when the
+         * packet is sent}. This means encoding typically occurs on the main server/client thread rather than on the
+         * network thread.
+         *
+         * However, this behaviour should not be relied on, and the encoder should try to be thread-safe and not
+         * interact with the current game state.
+         *
+         * @param encoder The message encoder.
+         * @return This message builder, for chaining.
+         */
         public MessageBuilder<MSG> encoder(BiConsumer<MSG, FriendlyByteBuf> encoder) {
             this.encoder = encoder;
             return this;
         }
 
+        /**
+         * Set the message decoder, which reads the message from a {@link FriendlyByteBuf}.
+         *
+         * The decoder is called when the message is received on the network thread. The decoder should not attempt to
+         * access or mutate any game state, deferring that until the {@link #consumer(ToBooleanBiFunction) the message
+         * is handled}.
+         *
+         * @param decoder The message decoder.
+         * @return The message builder, for chaining.
+         */
         public MessageBuilder<MSG> decoder(Function<FriendlyByteBuf, MSG> decoder) {
             this.decoder = decoder;
             return this;
@@ -223,6 +246,17 @@ public class SimpleChannel
             return this;
         }
 
+        /**
+         * Set the message consumer, which is called once a message has been decoded. This accepts the decoded message
+         * object and the message's context.
+         *
+         * The consumer is called on the network thread, and so should not interact with most game state by default.
+         * {@link NetworkEvent.Context#enqueueWork(Runnable)} can be used to handle the message on the main server or
+         * client thread.
+         *
+         * @param consumer The message consumer.
+         * @return The message builder, for chaining.
+         */
         public MessageBuilder<MSG> consumer(BiConsumer<MSG, Supplier<NetworkEvent.Context>> consumer) {
             this.consumer = consumer;
             return this;
@@ -236,6 +270,7 @@ public class SimpleChannel
          * Function returning a boolean "packet handled" indication, for simpler channel building.
          * @param handler a handler
          * @return this
+         * @see #consumer(BiConsumer)
          */
         public MessageBuilder<MSG> consumer(ToBooleanBiFunction<MSG, Supplier<NetworkEvent.Context>> handler) {
             this.consumer = (msg, ctx) -> {
