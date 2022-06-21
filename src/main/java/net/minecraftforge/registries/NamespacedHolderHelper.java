@@ -109,12 +109,9 @@ class NamespacedHolderHelper<T>
 
     Holder<T> getOrCreateHolderOrThrow(ResourceKey<T> key)
     {
-        return LamdbaExceptionUtils.uncheck(() ->
+        return getOrCreateHolder(key).getOrThrow(false, msg ->
         {
-            DataResult<Holder<T>> dataResult = getOrCreateHolder(key);
-            if (dataResult.error().isPresent())
-                throw new IllegalStateException(dataResult.error().get().message());
-            return dataResult.result().get();
+            throw new IllegalStateException(msg);
         });
     }
 
