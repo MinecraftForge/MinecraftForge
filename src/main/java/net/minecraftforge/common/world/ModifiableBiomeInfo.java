@@ -106,7 +106,7 @@ public class ModifiableBiomeInfo
         public static class Builder
         {
             private ClimateSettingsBuilder climateSettings;
-            private BiomeSpecialEffects.Builder effects;
+            private BiomeSpecialEffectsBuilder effects;
             private BiomeGenerationSettingsBuilder generationSettings;
             private MobSpawnSettingsBuilder mobSpawnSettings;
             
@@ -117,7 +117,7 @@ public class ModifiableBiomeInfo
             public static Builder copyOf(final BiomeInfo original)
             {
                 final ClimateSettingsBuilder climateBuilder = ClimateSettingsBuilder.copyOf(original.climateSettings());
-                final BiomeSpecialEffects.Builder effectsBuilder = BiomeSpecialEffectsBuilder.copyOf(original.effects());
+                final BiomeSpecialEffectsBuilder effectsBuilder = BiomeSpecialEffectsBuilder.copyOf(original.effects());
                 final BiomeGenerationSettingsBuilder generationBuilder = new BiomeGenerationSettingsBuilder(original.generationSettings());
                 final MobSpawnSettingsBuilder mobSpawnBuilder = new MobSpawnSettingsBuilder(original.mobSpawnSettings());
                 
@@ -129,7 +129,7 @@ public class ModifiableBiomeInfo
                     );
             }
             
-            private Builder(final ClimateSettingsBuilder climateSettings, final BiomeSpecialEffects.Builder effects, final BiomeGenerationSettingsBuilder generationSettings, final MobSpawnSettingsBuilder mobSpawnSettings)
+            private Builder(final ClimateSettingsBuilder climateSettings, final BiomeSpecialEffectsBuilder effects, final BiomeGenerationSettingsBuilder generationSettings, final MobSpawnSettingsBuilder mobSpawnSettings)
             {
                 this.climateSettings = climateSettings;
                 this.effects = effects;
@@ -147,7 +147,7 @@ public class ModifiableBiomeInfo
                 return climateSettings;
             }
 
-            public BiomeSpecialEffects.Builder getEffects()
+            public BiomeSpecialEffectsBuilder getEffects()
             {
                 return effects;
             }
