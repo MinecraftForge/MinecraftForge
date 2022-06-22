@@ -55,7 +55,7 @@
        this.f_91036_.m_7217_(this.f_91047_);
        this.f_91036_.m_7217_(this.f_205120_);
 -      this.f_91065_ = new Gui(this, this.f_90995_);
-+      this.f_91065_ = new net.minecraftforge.client.gui.ForgeIngameGui(this);
++      this.f_91065_ = new net.minecraftforge.client.gui.overlay.ForgeGui(this);
 +      this.f_91067_.m_91524_(this.f_90990_.m_85439_()); //Forge: Moved below ingameGUI setting to prevent NPEs in handeler.
        this.f_91064_ = new DebugRenderer(this);
        RenderSystem.m_69900_(this::m_91113_);
