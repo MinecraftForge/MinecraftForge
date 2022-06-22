@@ -9,21 +9,19 @@ import com.mojang.blaze3d.platform.NativeImage;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.metadata.animation.AnimationMetadataSection;
-import net.minecraft.client.resources.model.Material;
 import net.minecraft.resources.ResourceLocation;
 
-import java.util.function.Function;
-
 /**
- * A helper that lets you bake quads that won't be used with an atlas.
+ * A helper sprite with UVs spanning the entire texture.
+ * <p>
+ * Useful for baking quads that won't be used with an atlas.
  */
-public class UnitSprite extends TextureAtlasSprite
+public class UnitTextureAtlasSprite extends TextureAtlasSprite
 {
-    public static final UnitSprite INSTANCE = new UnitSprite();
+    public static final UnitTextureAtlasSprite INSTANCE = new UnitTextureAtlasSprite();
     public static final ResourceLocation LOCATION = new ResourceLocation("forge", "unit");
-    public static final Function<Material, TextureAtlasSprite> GETTER = (x) -> INSTANCE;
 
-    private UnitSprite()
+    private UnitTextureAtlasSprite()
     {
         super(new TextureAtlas(LOCATION),
                 new Info(LOCATION, 1, 1, AnimationMetadataSection.EMPTY),

@@ -4,7 +4,7 @@
        if (p_169951_ instanceof BundleTooltip) {
           return new ClientBundleTooltip((BundleTooltip)p_169951_);
        } else {
-+         ClientTooltipComponent result = net.minecraftforge.client.MinecraftForgeClient.getClientTooltipComponent(p_169951_);
++         ClientTooltipComponent result = net.minecraftforge.client.gui.ClientTooltipComponentManager.createClientTooltipComponent(p_169951_);
 +         if (result != null) return result;
           throw new IllegalArgumentException("Unknown TooltipComponent");
        }

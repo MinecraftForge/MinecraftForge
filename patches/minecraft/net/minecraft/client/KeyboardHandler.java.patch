@@ -43,7 +43,7 @@
              }
           }
 -
-+         net.minecraftforge.client.ForgeHooksClient.fireKeyInput(p_90895_, p_90896_, p_90897_, p_90898_);
++         net.minecraftforge.client.ForgeHooksClient.onKeyInput(p_90895_, p_90896_, p_90897_, p_90898_);
        }
     }
  

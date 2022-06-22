@@ -8,48 +8,20 @@
 +public class KeyMapping implements Comparable<KeyMapping>, net.minecraftforge.client.extensions.IForgeKeyMapping {
     private static final Map<String, KeyMapping> f_90809_ = Maps.newHashMap();
 -   private static final Map<InputConstants.Key, KeyMapping> f_90810_ = Maps.newHashMap();
-+   private static final net.minecraftforge.client.settings.KeyBindingMap f_90810_ = new net.minecraftforge.client.settings.KeyBindingMap();
++   private static final net.minecraftforge.client.settings.KeyMappingLookup f_90810_ = new net.minecraftforge.client.settings.KeyMappingLookup();
     private static final Set<String> f_90811_ = Sets.newHashSet();
     public static final String f_167805_ = "key.categories.movement";
     public static final String f_167806_ = "key.categories.misc";
-@@ -41,7 +_,7 @@
-    private int f_90818_;
- 
-    public static void m_90835_(InputConstants.Key p_90836_) {
--      KeyMapping keymapping = f_90810_.get(p_90836_);
-+      KeyMapping keymapping = f_90810_.lookupActive(p_90836_);
-       if (keymapping != null) {
-          ++keymapping.f_90818_;
-       }
 @@ -49,7 +_,7 @@
     }
  
     public static void m_90837_(InputConstants.Key p_90838_, boolean p_90839_) {
 -      KeyMapping keymapping = f_90810_.get(p_90838_);
-+      for (KeyMapping keymapping : f_90810_.lookupAll(p_90838_))
++      for (KeyMapping keymapping : f_90810_.getAll(p_90838_))
        if (keymapping != null) {
           keymapping.m_7249_(p_90839_);
        }
-@@ -73,10 +_,10 @@
-    }
- 
-    public static void m_90854_() {
--      f_90810_.clear();
-+      f_90810_.clearMap();
- 
-       for(KeyMapping keymapping : f_90809_.values()) {
--         f_90810_.put(keymapping.f_90816_, keymapping);
-+         f_90810_.addKey(keymapping.f_90816_, keymapping);
-       }
- 
-    }
-@@ -91,12 +_,12 @@
-       this.f_90814_ = this.f_90816_;
-       this.f_90815_ = p_90828_;
-       f_90809_.put(p_90825_, this);
--      f_90810_.put(this.f_90816_, this);
-+      f_90810_.addKey(this.f_90816_, this);
-       f_90811_.add(p_90828_);
+@@ -96,7 +_,7 @@
     }
  
     public boolean m_90857_() {
@@ -154,7 +126,7 @@
 +      if (this.keyModifier.matches(keyCode))
 +         this.keyModifier = net.minecraftforge.client.settings.KeyModifier.NONE;
 +      f_90809_.put(description, this);
-+      f_90810_.addKey(keyCode, this);
++      f_90810_.put(keyCode, this);
 +      f_90811_.add(category);
 +   }
 +
@@ -188,9 +160,9 @@
 +       this.f_90816_ = keyCode;
 +       if (keyModifier.matches(keyCode))
 +           keyModifier = net.minecraftforge.client.settings.KeyModifier.NONE;
-+       f_90810_.removeKey(this);
++       f_90810_.remove(this);
 +       this.keyModifier = keyModifier;
-+       f_90810_.addKey(keyCode, this);
++       f_90810_.put(keyCode, this);
 +   }
 +   /****************** Forge End *****************************/
  }

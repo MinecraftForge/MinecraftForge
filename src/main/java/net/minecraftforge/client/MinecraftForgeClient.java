@@ -5,27 +5,10 @@
 
 package net.minecraftforge.client;
 
-import java.io.IOException;
-import java.util.BitSet;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Function;
-import java.util.function.Supplier;
-
-import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.world.inventory.tooltip.TooltipComponent;
-
 import net.minecraft.client.Minecraft;
-import com.mojang.blaze3d.platform.NativeImage;
-import net.minecraft.server.packs.resources.Resource;
-import net.minecraft.server.packs.resources.ResourceManager;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.client.textures.ITextureAtlasSpriteLoader;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
+import java.util.BitSet;
+import java.util.Locale;
 
 public class MinecraftForgeClient
 {
@@ -89,58 +72,4 @@ public class MinecraftForgeClient
             stencilBits.set(bit);
         }
     }
-
-    private static HashMap<ResourceLocation, Supplier<NativeImage>> bufferedImageSuppliers = new HashMap<ResourceLocation, Supplier<NativeImage>>();
-    public static void registerImageLayerSupplier(ResourceLocation resourceLocation, Supplier<NativeImage> supplier)
-    {
-        bufferedImageSuppliers.put(resourceLocation, supplier);
-    }
-
-    @NotNull
-    public static NativeImage getImageLayer(ResourceLocation resourceLocation, ResourceManager resourceManager) throws IOException
-    {
-        Supplier<NativeImage> supplier = bufferedImageSuppliers.get(resourceLocation);
-        if (supplier != null)
-            return supplier.get();
-
-        Resource iresource1 = resourceManager.getResource(resourceLocation).orElseThrow();
-        return NativeImage.read(iresource1.open());
-    }
-
-    private static final Map<ResourceLocation, ITextureAtlasSpriteLoader> textureAtlasSpriteLoaders = new ConcurrentHashMap<>();
-
-    /**
-     * Register a custom ITextureAtlasSprite loader. Call this method during {@link net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent}.
-     */
-    public static void registerTextureAtlasSpriteLoader(ResourceLocation name, ITextureAtlasSpriteLoader loader)
-    {
-        textureAtlasSpriteLoaders.put(name, loader);
-    }
-
-    @Nullable
-    public static ITextureAtlasSpriteLoader getTextureAtlasSpriteLoader(ResourceLocation name)
-    {
-        return textureAtlasSpriteLoaders.get(name);
-    }
-
-    private static final Map<Class<? extends TooltipComponent>, Function<TooltipComponent, ClientTooltipComponent>> tooltipComponentFactories = new ConcurrentHashMap<>();
-
-    /**
-     * Register a factory for ClientTooltipComponents.
-     * @param cls the class for the component
-     * @param factory the factory for the ClientTooltipComponent
-     */
-    @SuppressWarnings("unchecked")
-    public static <T extends TooltipComponent> void registerTooltipComponentFactory(Class<T> cls, Function<? super T, ? extends ClientTooltipComponent> factory)
-    {
-        tooltipComponentFactories.put(cls, (Function<TooltipComponent, ClientTooltipComponent>) factory);
-    }
-
-    @Nullable
-    public static ClientTooltipComponent getClientTooltipComponent(TooltipComponent component)
-    {
-        var factory = tooltipComponentFactories.get(component.getClass());
-        return factory == null ? null : factory.apply(component);
-    }
-
 }

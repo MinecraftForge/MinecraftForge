@@ -5,8 +5,8 @@
 
 package net.minecraftforge.client.settings;
 
-import net.minecraft.client.KeyMapping;
 import com.mojang.blaze3d.platform.InputConstants;
+import net.minecraft.client.KeyMapping;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -16,7 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class KeyBindingMap
+public class KeyMappingLookup
 {
     private static final EnumMap<KeyModifier, Map<InputConstants.Key, Collection<KeyMapping>>> map = new EnumMap<>(KeyModifier.class);
     static
@@ -28,22 +28,22 @@ public class KeyBindingMap
     }
 
     @Nullable
-    public KeyMapping lookupActive(InputConstants.Key keyCode)
+    public KeyMapping get(InputConstants.Key keyCode)
     {
         KeyModifier activeModifier = KeyModifier.getActiveModifier();
         if (!activeModifier.matches(keyCode))
         {
-            KeyMapping binding = getBinding(keyCode, activeModifier);
+            KeyMapping binding = get(keyCode, activeModifier);
             if (binding != null)
             {
                 return binding;
             }
         }
-        return getBinding(keyCode, KeyModifier.NONE);
+        return get(keyCode, KeyModifier.NONE);
     }
 
     @Nullable
-    private KeyMapping getBinding(InputConstants.Key keyCode, KeyModifier keyModifier)
+    private KeyMapping get(InputConstants.Key keyCode, KeyModifier keyModifier)
     {
         Collection<KeyMapping> bindings = map.get(keyModifier).get(keyCode);
         if (bindings != null)
@@ -59,7 +59,7 @@ public class KeyBindingMap
         return null;
     }
 
-    public List<KeyMapping> lookupAll(InputConstants.Key keyCode)
+    public List<KeyMapping> getAll(InputConstants.Key keyCode)
     {
         List<KeyMapping> matchingBindings = new ArrayList<KeyMapping>();
         for (Map<InputConstants.Key, Collection<KeyMapping>> bindingsMap : map.values())
@@ -73,7 +73,7 @@ public class KeyBindingMap
         return matchingBindings;
     }
 
-    public void addKey(InputConstants.Key keyCode, KeyMapping keyBinding)
+    public void put(InputConstants.Key keyCode, KeyMapping keyBinding)
     {
         KeyModifier keyModifier = keyBinding.getKeyModifier();
         Map<InputConstants.Key, Collection<KeyMapping>> bindingsMap = map.get(keyModifier);
@@ -86,7 +86,7 @@ public class KeyBindingMap
         bindingsForKey.add(keyBinding);
     }
 
-    public void removeKey(KeyMapping keyBinding)
+    public void remove(KeyMapping keyBinding)
     {
         KeyModifier keyModifier = keyBinding.getKeyModifier();
         InputConstants.Key keyCode = keyBinding.getKey();
@@ -102,7 +102,7 @@ public class KeyBindingMap
         }
     }
 
-    public void clearMap()
+    public void clear()
     {
         for (Map<InputConstants.Key, Collection<KeyMapping>> bindings : map.values())
         {
