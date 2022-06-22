@@ -152,7 +152,7 @@ public class ModifiableBiomeInfo
              * 
              * @deprecated Use {@link #getSpecialEffects()} as it provides read access. TODO remove this by 1.20
              */
-            @Deprecated(forRemoval=true)
+            @Deprecated(forRemoval=true, since="1.19")
             public BiomeSpecialEffects.Builder getEffects()
             {
                 return effects;
