@@ -13,7 +13,7 @@
  
     public void m_234125_(String p_234126_, @Nullable Component p_234127_) {
 +      // TODO-PATCHING: If the chat preview component is not null and the message is changed by this event, it looks like the signatures will de-sync and the server will skip the message. Fix? -SS
-+      p_234126_ = net.minecraftforge.event.ForgeEventFactory.onClientSendMessage(p_234126_);
++      p_234126_ = net.minecraftforge.client.ForgeHooksClient.onClientSendMessage(p_234126_);
 +      if (p_234126_.isEmpty()) return;
        MessageSigner messagesigner = MessageSigner.m_237183_(this.m_20148_());
        this.m_234141_(messagesigner, p_234126_, p_234127_);

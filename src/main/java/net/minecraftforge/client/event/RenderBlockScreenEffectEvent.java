@@ -11,7 +11,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.core.BlockPos;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.LogicalSide;
@@ -26,13 +25,13 @@ import net.minecraftforge.fml.LogicalSide;
  * only on the {@linkplain LogicalSide#CLIENT logical client}. </p>
  */
 @Cancelable
-public class RenderBlockOverlayEvent extends Event
+public class RenderBlockScreenEffectEvent extends Event
 {
 
     /**
      * The type of the block overlay to be rendered.
      *
-     * @see RenderBlockOverlayEvent
+     * @see RenderBlockScreenEffectEvent
      */
     public enum OverlayType {
         /**
@@ -58,7 +57,7 @@ public class RenderBlockOverlayEvent extends Event
     /**
      * @hidden
      */
-    public RenderBlockOverlayEvent(Player player, PoseStack poseStack, OverlayType type, BlockState block, BlockPos blockPos)
+    public RenderBlockScreenEffectEvent(Player player, PoseStack poseStack, OverlayType type, BlockState block, BlockPos blockPos)
     {
         this.player = player;
         this.poseStack = poseStack;

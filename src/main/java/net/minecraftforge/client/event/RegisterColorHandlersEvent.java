@@ -24,15 +24,15 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
  * <p>These events are fired on the {@linkplain FMLJavaModLoadingContext#getModEventBus() mod-specific event bus},
  * only on the {@linkplain LogicalSide#CLIENT logical client}. </p>
  *
- * @see ColorHandlerEvent.Block
- * @see ColorHandlerEvent.Item
+ * @see RegisterColorHandlersEvent.Block
+ * @see RegisterColorHandlersEvent.Item
  */
-public abstract class ColorHandlerEvent extends Event implements IModBusEvent
+public abstract class RegisterColorHandlersEvent extends Event implements IModBusEvent
 {
     /**
      * @hidden This should only be invoked by subclasses.
      */
-    public ColorHandlerEvent()
+    public RegisterColorHandlersEvent()
     {
     }
 
@@ -44,7 +44,7 @@ public abstract class ColorHandlerEvent extends Event implements IModBusEvent
      * <p>This event is fired on the {@linkplain FMLJavaModLoadingContext#getModEventBus() mod-specific event bus},
      * only on the {@linkplain LogicalSide#CLIENT logical client}. </p>
      */
-    public static class Block extends ColorHandlerEvent
+    public static class Block extends RegisterColorHandlersEvent
     {
         private final BlockColors blockColors;
 
@@ -59,11 +59,23 @@ public abstract class ColorHandlerEvent extends Event implements IModBusEvent
 
         /**
          * {@return the block colors registry}
+         *
          * @see BlockColors#register(BlockColor, net.minecraft.world.level.block.Block...)
          */
         public BlockColors getBlockColors()
         {
             return blockColors;
+        }
+
+        /**
+         * Registers a {@link BlockColor} instance for a set of blocks.
+         *
+         * @param blockColor The color provider
+         * @param blocks     The blocks
+         */
+        public void register(BlockColor blockColor, net.minecraft.world.level.block.Block... blocks)
+        {
+            blockColors.register(blockColor, blocks);
         }
     }
 
@@ -71,14 +83,14 @@ public abstract class ColorHandlerEvent extends Event implements IModBusEvent
      * Fired for registering item color handlers.
      *
      * <p>The block colors should only be used for referencing or delegating item colors to their respective block
-     * colors. Use {@link ColorHandlerEvent.Block} for registering your block color handlers. </p>
+     * colors. Use {@link RegisterColorHandlersEvent.Block} for registering your block color handlers. </p>
      *
      * <p>This event is not {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}. </p>
      *
      * <p>This event is fired on the {@linkplain FMLJavaModLoadingContext#getModEventBus() mod-specific event bus},
      * only on the {@linkplain LogicalSide#CLIENT logical client}. </p>
      */
-    public static class Item extends ColorHandlerEvent
+    public static class Item extends RegisterColorHandlersEvent
     {
         private final ItemColors itemColors;
         private final BlockColors blockColors;
@@ -95,6 +107,7 @@ public abstract class ColorHandlerEvent extends Event implements IModBusEvent
 
         /**
          * {@return the item colors registry}
+         *
          * @see ItemColors#register(ItemColor, ItemLike...)
          */
         public ItemColors getItemColors()
@@ -109,6 +122,17 @@ public abstract class ColorHandlerEvent extends Event implements IModBusEvent
         public BlockColors getBlockColors()
         {
             return blockColors;
+        }
+
+        /**
+         * Registers a {@link ItemColor} instance for a set of blocks.
+         *
+         * @param itemColor The color provider
+         * @param items     The items
+         */
+        public void register(ItemColor itemColor, ItemLike... items)
+        {
+            itemColors.register(itemColor, items);
         }
     }
 }

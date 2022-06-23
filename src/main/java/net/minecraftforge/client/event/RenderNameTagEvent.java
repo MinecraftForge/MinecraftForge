@@ -32,7 +32,7 @@ import net.minecraftforge.fml.LogicalSide;
  * @see EntityRenderer
  */
 @Event.HasResult
-public class RenderNameplateEvent extends EntityEvent
+public class RenderNameTagEvent extends EntityEvent
 {
 
     private Component nameplateContent;
@@ -46,7 +46,7 @@ public class RenderNameplateEvent extends EntityEvent
     /**
      * @hidden
      */
-    public RenderNameplateEvent(Entity entity, Component content, EntityRenderer<?> entityRenderer, PoseStack poseStack, MultiBufferSource multiBufferSource, int packedLight, float partialTick)
+    public RenderNameTagEvent(Entity entity, Component content, EntityRenderer<?> entityRenderer, PoseStack poseStack, MultiBufferSource multiBufferSource, int packedLight, float partialTick)
     {
         super(entity);
         this.originalContent = content;

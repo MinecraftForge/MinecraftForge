@@ -21,11 +21,11 @@ import net.minecraftforge.fml.LogicalSide;
  * Fired before a selection highlight is rendered.
  * See the two subclasses to listen for blocks or entities.
  *
- * @see DrawSelectionEvent.HighlightBlock
- * @see DrawSelectionEvent.HighlightEntity
+ * @see Block
+ * @see Entity
  */
 @Cancelable
-public class DrawSelectionEvent extends Event
+public class RenderHighlightEvent extends Event
 {
     private final LevelRenderer levelRenderer;
     private final Camera camera;
@@ -38,7 +38,7 @@ public class DrawSelectionEvent extends Event
      * @hidden
      * @see net.minecraftforge.client.ForgeHooksClient#onDrawHighlight(LevelRenderer, Camera, HitResult, float, PoseStack, MultiBufferSource)
      */
-    public DrawSelectionEvent(LevelRenderer levelRenderer, Camera camera, HitResult target, float partialTick, PoseStack poseStack, MultiBufferSource multiBufferSource)
+    public RenderHighlightEvent(LevelRenderer levelRenderer, Camera camera, HitResult target, float partialTick, PoseStack poseStack, MultiBufferSource multiBufferSource)
     {
         this.levelRenderer = levelRenderer;
         this.camera = camera;
@@ -83,12 +83,12 @@ public class DrawSelectionEvent extends Event
      * only on the {@linkplain LogicalSide#CLIENT logical client}. </p>
      */
     @Cancelable
-    public static class HighlightBlock extends DrawSelectionEvent
+    public static class Block extends RenderHighlightEvent
     {
         /**
          * @hidden
          */
-        public HighlightBlock(LevelRenderer levelRenderer, Camera camera, BlockHitResult target, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource)
+        public Block(LevelRenderer levelRenderer, Camera camera, BlockHitResult target, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource)
         {
             super(levelRenderer, camera, target, partialTick, poseStack, bufferSource);
         }
@@ -111,12 +111,12 @@ public class DrawSelectionEvent extends Event
      * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
      * only on the {@linkplain LogicalSide#CLIENT logical client}. </p>
      */
-    public static class HighlightEntity extends DrawSelectionEvent
+    public static class Entity extends RenderHighlightEvent
     {
         /**
          * @hidden
          */
-        public HighlightEntity(LevelRenderer levelRenderer, Camera camera, EntityHitResult target, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource)
+        public Entity(LevelRenderer levelRenderer, Camera camera, EntityHitResult target, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource)
         {
             super(levelRenderer, camera, target, partialTick, poseStack, bufferSource);
         }

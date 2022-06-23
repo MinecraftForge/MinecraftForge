@@ -7,6 +7,7 @@ package net.minecraftforge.client.event;
 
 import net.minecraft.client.particle.ParticleEngine;
 import net.minecraft.client.particle.ParticleProvider;
+import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
@@ -25,14 +26,26 @@ import net.minecraftforge.registries.RegisterEvent;
  *
  * <p>This event is fired on the {@linkplain FMLJavaModLoadingContext#getModEventBus() mod-specific event bus},
  * only on the {@linkplain LogicalSide#CLIENT logical client}. </p>
- *
- * @see ParticleEngine#register(ParticleType, ParticleProvider)
  */
-public class ParticleFactoryRegisterEvent extends Event implements IModBusEvent {
+public class RegisterParticleProvidersEvent extends Event implements IModBusEvent {
+
+    private final ParticleEngine particleEngine;
+
     /**
      * @hidden
      */
-    public ParticleFactoryRegisterEvent()
+    public RegisterParticleProvidersEvent(ParticleEngine particleEngine)
     {
+        this.particleEngine = particleEngine;
+    }
+
+    public <T extends ParticleOptions> void register(ParticleType<T> type, ParticleProvider<T> provider)
+    {
+        particleEngine.register(type, provider);
+    }
+
+    public <T extends ParticleOptions> void register(ParticleType<T> type, ParticleEngine.SpriteParticleRegistration<T> registration)
+    {
+        particleEngine.register(type, registration);
     }
 }

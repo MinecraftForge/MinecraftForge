@@ -6,8 +6,8 @@
 package net.minecraftforge.client.event;
 
 import com.google.common.base.Strings;
+import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.LogicalSide;
@@ -29,7 +29,7 @@ public class ClientChatEvent extends Event
 
     /**
      * @hidden
-     * @see ForgeEventFactory#onClientSendMessage(String)
+     * @see ForgeHooksClient#onClientSendMessage(String)
      */
     public ClientChatEvent(String message)
     {

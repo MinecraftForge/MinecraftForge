@@ -19,8 +19,8 @@ import net.minecraftforge.fml.LogicalSide;
  * <p>These events are fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
  * only on the {@linkplain LogicalSide#CLIENT logical client}. </p>
  *
- * @see ContainerScreenEvent.DrawForeground
- * @see ContainerScreenEvent.DrawBackground
+ * @see RenderForeground
+ * @see RenderBackground
  */
 public class ContainerScreenEvent extends Event
 {
@@ -55,7 +55,7 @@ public class ContainerScreenEvent extends Event
      * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
      * only on the {@linkplain LogicalSide#CLIENT logical client}. </p>
      */
-    public static class DrawForeground extends ContainerScreenEvent
+    public static class RenderForeground extends ContainerScreenEvent
     {
         private final PoseStack poseStack;
         private final int mouseX;
@@ -64,7 +64,7 @@ public class ContainerScreenEvent extends Event
         /**
          * @hidden
          */
-        public DrawForeground(AbstractContainerScreen<?> guiContainer, PoseStack poseStack, int mouseX, int mouseY)
+        public RenderForeground(AbstractContainerScreen<?> guiContainer, PoseStack poseStack, int mouseX, int mouseY)
         {
             super(guiContainer);
             this.poseStack = poseStack;
@@ -106,7 +106,7 @@ public class ContainerScreenEvent extends Event
      * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
      * only on the {@linkplain LogicalSide#CLIENT logical client}. </p>
      */
-    public static class DrawBackground extends ContainerScreenEvent
+    public static class RenderBackground extends ContainerScreenEvent
     {
         private final PoseStack poseStack;
         private final int mouseX;
@@ -115,7 +115,7 @@ public class ContainerScreenEvent extends Event
         /**
          * @hidden
          */
-        public DrawBackground(AbstractContainerScreen<?> guiContainer, PoseStack poseStack, int mouseX, int mouseY)
+        public RenderBackground(AbstractContainerScreen<?> guiContainer, PoseStack poseStack, int mouseX, int mouseY)
         {
             super(guiContainer);
             this.poseStack = poseStack;

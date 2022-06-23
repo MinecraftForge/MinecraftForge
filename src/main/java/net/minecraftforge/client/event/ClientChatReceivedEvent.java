@@ -9,8 +9,8 @@ import net.minecraft.network.chat.ChatSender;
 import net.minecraft.Util;
 import net.minecraft.network.chat.ChatType;
 import net.minecraft.network.chat.Component;
+import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.LogicalSide;
@@ -36,7 +36,7 @@ public class ClientChatReceivedEvent extends Event
 
     /**
      * @hidden
-     * @see ForgeEventFactory#onClientChat(ChatType, Component, ChatSender)
+     * @see ForgeHooksClient#onClientChat(ChatType, Component, ChatSender)
      */
     public ClientChatReceivedEvent(ChatType type, Component message, ChatSender chatSender)
     {

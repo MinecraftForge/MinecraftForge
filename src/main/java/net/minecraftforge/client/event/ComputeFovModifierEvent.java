@@ -6,8 +6,8 @@
 package net.minecraftforge.client.event;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Cancelable;
@@ -23,56 +23,52 @@ import net.minecraftforge.fml.LogicalSide;
  * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
  * only on the {@linkplain LogicalSide#CLIENT logical client}. </p>
  *
- * @see EntityViewRenderEvent.FieldOfView
+ * @see ViewportEvent.ComputeFov
  */
-public class FOVModifierEvent extends Event
-{
+public class ComputeFovModifierEvent extends Event {
+
     private final Player player;
-    private final float fov;
-    private float newFov;
+    private final float fovModifier;
+    private float newFovModifier;
 
     /**
      * @hidden
-     * @see ForgeHooksClient#getFieldOfView(Player, float)
+     * @see ForgeHooksClient#getFieldOfViewModifier(Player, float)
      */
-    public FOVModifierEvent(Player player, float fov)
-    {
+    public ComputeFovModifierEvent(Player player, float fovModifier) {
         this.player = player;
-        this.fov = fov;
-        this.setNewFov((float) Mth.lerp(Minecraft.getInstance().options.fovEffectScale().get(), 1.0F, fov));
+        this.fovModifier = fovModifier;
+        this.setNewFovModifier((float) Mth.lerp(Minecraft.getInstance().options.fovEffectScale().get(), 1.0F, fovModifier));
     }
 
     /**
      * {@return the player affected by this event}
      */
-    public Player getPlayer()
-    {
+    public Player getPlayer() {
         return player;
     }
 
     /**
      * {@return the original field of vision (FOV) of the player, before any modifications or interpolation}
      */
-    public float getFov()
-    {
-        return fov;
+    public float getFovModifier() {
+        return fovModifier;
     }
 
     /**
      * {@return the current field of vision (FOV) of the player}
      */
-    public float getNewFov()
-    {
-        return newFov;
+    public float getNewFovModifier() {
+        return newFovModifier;
     }
 
     /**
      * Sets the new field of vision (FOV) of the player.
      *
-     * @param newFov the new field of vision (FOV)
+     * @param newFovModifier the new field of vision (FOV)
      */
-    public void setNewFov(float newFov)
-    {
-        this.newFov = newFov;
+    public void setNewFovModifier(float newFovModifier) {
+        this.newFovModifier = newFovModifier;
     }
+
 }

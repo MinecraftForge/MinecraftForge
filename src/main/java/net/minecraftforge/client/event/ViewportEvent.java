@@ -14,6 +14,7 @@ import net.minecraft.client.renderer.FogRenderer;
 import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Cancelable;
+import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.LogicalSide;
 
 import com.mojang.blaze3d.shaders.FogShape;
@@ -26,12 +27,12 @@ import com.mojang.blaze3d.shaders.FogShape;
  * <p>These events are fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
  * only on the {@linkplain LogicalSide#CLIENT logical client}. </p>
  *
- * @see EntityViewRenderEvent.RenderFogEvent
- * @see EntityViewRenderEvent.FogColors
- * @see EntityViewRenderEvent.CameraSetup
- * @see EntityViewRenderEvent.FieldOfView
+ * @see RenderFog
+ * @see ComputeFogColor
+ * @see ComputeCameraAngles
+ * @see ComputeFov
  */
-public abstract class EntityViewRenderEvent extends net.minecraftforge.eventbus.api.Event
+public abstract class ViewportEvent extends Event
 {
     private final GameRenderer renderer;
     private final Camera camera;
@@ -40,7 +41,7 @@ public abstract class EntityViewRenderEvent extends net.minecraftforge.eventbus.
     /**
      * @hidden
      */
-    public EntityViewRenderEvent(GameRenderer renderer, Camera camera, double partialTick)
+    public ViewportEvent(GameRenderer renderer, Camera camera, double partialTick)
     {
         this.renderer = renderer;
         this.camera = camera;
@@ -72,8 +73,7 @@ public abstract class EntityViewRenderEvent extends net.minecraftforge.eventbus.
     }
 
     /**
-     * Fired for customizing the <b>rendering</b> of the fog visible to the player. The plane distances are based on
-     * the player's render distance.
+     * Fired for <b>rendering</b> custom fog. The plane distances are based on the player's render distance.
      *
      * <p>This event is {@linkplain Cancelable cancellable}, and {@linkplain HasResult has a result}. <br/>
      * The event must be cancelled for any changes to the plane distances to take effect.</p>
@@ -82,7 +82,7 @@ public abstract class EntityViewRenderEvent extends net.minecraftforge.eventbus.
      * only on the {@linkplain LogicalSide#CLIENT logical client}. </p>
      */
     @Cancelable
-    public static class RenderFogEvent extends EntityViewRenderEvent
+    public static class RenderFog extends ViewportEvent
     {
         private final FogType type;
         private float farPlaneDistance;
@@ -93,7 +93,7 @@ public abstract class EntityViewRenderEvent extends net.minecraftforge.eventbus.
          * @hidden
          * @see ForgeHooksClient#onFogRender(FogType, Camera, float, float, float, FogShape)
          */
-        public RenderFogEvent(FogType type, Camera camera, float partialTicks, float nearPlaneDistance, float farPlaneDistance, FogShape fogShape)
+        public RenderFog(FogType type, Camera camera, float partialTicks, float nearPlaneDistance, float farPlaneDistance, FogShape fogShape)
         {
             super(Minecraft.getInstance().gameRenderer, camera, partialTicks);
             this.type = type;
@@ -195,7 +195,7 @@ public abstract class EntityViewRenderEvent extends net.minecraftforge.eventbus.
      * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
      * only on the {@linkplain LogicalSide#CLIENT logical client}. </p>
      */
-    public static class FogColors extends EntityViewRenderEvent
+    public static class ComputeFogColor extends ViewportEvent
     {
         private float red;
         private float green;
@@ -205,7 +205,7 @@ public abstract class EntityViewRenderEvent extends net.minecraftforge.eventbus.
          * @hidden
          * @see FogRenderer#setupColor(Camera, float, ClientLevel, int, float)
          */
-        public FogColors(Camera camera, float partialTicks, float red, float green, float blue)
+        public ComputeFogColor(Camera camera, float partialTicks, float red, float green, float blue)
         {
             super(Minecraft.getInstance().gameRenderer, camera, partialTicks);
             this.setRed(red);
@@ -254,7 +254,7 @@ public abstract class EntityViewRenderEvent extends net.minecraftforge.eventbus.
      * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
      * only on the {@linkplain LogicalSide#CLIENT logical client}. </p>
      */
-    public static class CameraSetup extends EntityViewRenderEvent
+    public static class ComputeCameraAngles extends ViewportEvent
     {
         private float yaw;
         private float pitch;
@@ -264,7 +264,7 @@ public abstract class EntityViewRenderEvent extends net.minecraftforge.eventbus.
          * @hidden
          * @see ForgeHooksClient#onCameraSetup(GameRenderer, Camera, float)
          */
-        public CameraSetup(GameRenderer renderer, Camera camera, double renderPartialTicks, float yaw, float pitch, float roll)
+        public ComputeCameraAngles(GameRenderer renderer, Camera camera, double renderPartialTicks, float yaw, float pitch, float roll)
         {
             super(renderer, camera, renderPartialTicks);
             this.setYaw(yaw);
@@ -313,9 +313,9 @@ public abstract class EntityViewRenderEvent extends net.minecraftforge.eventbus.
      * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
      * only on the {@linkplain LogicalSide#CLIENT logical client}. </p>
      *
-     * @see FOVModifierEvent
+     * @see ComputeFovModifierEvent
      */
-    public static class FieldOfView extends EntityViewRenderEvent
+    public static class ComputeFov extends ViewportEvent
     {
         private double fov;
 
@@ -323,7 +323,7 @@ public abstract class EntityViewRenderEvent extends net.minecraftforge.eventbus.
          * @hidden
          * @see ForgeHooksClient#getFieldOfView(GameRenderer, Camera, double, double)
          */
-        public FieldOfView(GameRenderer renderer, Camera camera, double renderPartialTicks, double fov) {
+        public ComputeFov(GameRenderer renderer, Camera camera, double renderPartialTicks, double fov) {
             super(renderer, camera, renderPartialTicks);
             this.setFOV(fov);
         }
@@ -344,4 +344,5 @@ public abstract class EntityViewRenderEvent extends net.minecraftforge.eventbus.
             this.fov = fov;
         }
     }
+
 }

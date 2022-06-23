@@ -4,7 +4,7 @@
              this.f_91510_ = -1;
           }
  
-+         if (net.minecraftforge.client.ForgeHooksClient.onRawMouseClicked(p_91532_, p_91533_, p_91534_)) return;
++         if (net.minecraftforge.client.ForgeHooksClient.onMouseButtonPre(p_91532_, p_91533_, p_91534_)) return;
           boolean[] aboolean = new boolean[]{false};
           if (this.f_91503_.m_91265_() == null) {
              if (this.f_91503_.f_91080_ == null) {
@@ -35,7 +35,7 @@
              }
           }
 -
-+         net.minecraftforge.client.ForgeHooksClient.fireMouseInput(p_91532_, p_91533_, p_91534_);
++         net.minecraftforge.client.ForgeHooksClient.onMouseButtonPost(p_91532_, p_91533_, p_91534_);
        }
     }
  
