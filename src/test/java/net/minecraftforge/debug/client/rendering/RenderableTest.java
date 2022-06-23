@@ -17,20 +17,17 @@ import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.ModelRegistryEvent;
+import net.minecraftforge.client.event.ModelEvent;
 import net.minecraftforge.client.event.RegisterClientReloadListenersEvent;
 import net.minecraftforge.client.event.RenderLevelLastEvent;
-import net.minecraftforge.client.model.ForgeModelBakery;
-import net.minecraftforge.client.model.StandaloneModelConfiguration;
-import net.minecraftforge.client.model.data.EmptyModelData;
-import net.minecraftforge.client.model.data.IModelData;
-import net.minecraftforge.client.model.obj.OBJLoader;
-import net.minecraftforge.client.model.obj.OBJModel;
-import net.minecraftforge.client.model.renderable.BakedRenderable;
+import net.minecraftforge.client.model.geometry.StandaloneGeometryBakingContext;
+import net.minecraftforge.client.model.data.ModelData;
+import net.minecraftforge.client.model.obj.ObjLoader;
+import net.minecraftforge.client.model.obj.ObjModel;
+import net.minecraftforge.client.model.renderable.BakedModelRenderable;
+import net.minecraftforge.client.model.renderable.CompositeRenderable;
 import net.minecraftforge.client.model.renderable.IRenderable;
-import net.minecraftforge.client.model.renderable.MultipartTransforms;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLEnvironment;
@@ -59,8 +56,8 @@ public class RenderableTest
     {
         private static ResourceLocation MODEL_LOC = new ResourceLocation("minecraft:block/diamond_block");
 
-        private static IRenderable<MultipartTransforms> renderable;
-        private static IRenderable<IModelData> bakedRenderable;
+        private static IRenderable<CompositeRenderable.Transforms> renderable;
+        private static IRenderable<ModelData> bakedRenderable;
 
         public static void init()
         {
@@ -70,19 +67,19 @@ public class RenderableTest
             MinecraftForge.EVENT_BUS.addListener(Client::renderLast);
         }
 
-        private static void registerModels(ModelRegistryEvent t)
+        private static void registerModels(ModelEvent.RegisterAdditional event)
         {
-            ForgeModelBakery.addSpecialModel(MODEL_LOC);
+            event.register(MODEL_LOC);
         }
 
         public static void registerReloadListeners(RegisterClientReloadListenersEvent event)
         {
-            event.registerReloadListener(new SimplePreparableReloadListener<OBJModel>()
+            event.registerReloadListener(new SimplePreparableReloadListener<ObjModel>()
             {
                 @Override
-                protected OBJModel prepare(ResourceManager resourceManager, ProfilerFiller profilerFiller)
+                protected ObjModel prepare(ResourceManager resourceManager, ProfilerFiller profilerFiller)
                 {
-                    var settings = new OBJModel.ModelSettings(
+                    var settings = new ObjModel.ModelSettings(
                             new ResourceLocation("new_model_loader_test:models/item/sugar_glider.obj"),
                             false,
                             true,
@@ -90,13 +87,13 @@ public class RenderableTest
                             false,
                             null
                     );
-                    return OBJLoader.INSTANCE.loadModel(settings);
+                    return ObjLoader.INSTANCE.loadModel(settings);
                 }
 
                 @Override
-                protected void apply(OBJModel model, ResourceManager resourceManager, ProfilerFiller profilerFiller)
+                protected void apply(ObjModel model, ResourceManager resourceManager, ProfilerFiller profilerFiller)
                 {
-                    var config = StandaloneModelConfiguration.create(Map.of(
+                    var config = StandaloneGeometryBakingContext.create(Map.of(
                             "#qr", new ResourceLocation("minecraft:block/quartz_block_top")
                     ));
                     renderable = model.bakeRenderable(config);
@@ -110,7 +107,7 @@ public class RenderableTest
         {
             if (bakedRenderable == null)
             {
-                bakedRenderable = BakedRenderable.of(MODEL_LOC);
+                bakedRenderable = BakedModelRenderable.of(MODEL_LOC).withModelDataContext();
             }
 
             var poseStack = event.getPoseStack();
@@ -130,13 +127,13 @@ public class RenderableTest
             right.multiply(Quaternion.fromYXZ(0, 0, -(float)Math.sin(time * 0.05) * 0.1f));
             map.put("object_9", right);
 
-            var transforms = MultipartTransforms.of(map.build());
+            var transforms = CompositeRenderable.Transforms.of(map.build());
 
             renderable.render(poseStack, bufferSource, RenderType::entitySolid, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY, event.getPartialTick(), transforms);
 
             poseStack.pushPose();
             poseStack.translate(0,0.5f,0);
-            bakedRenderable.render(poseStack, bufferSource, RenderType::entitySolid, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY, event.getPartialTick(), EmptyModelData.INSTANCE);
+            bakedRenderable.render(poseStack, bufferSource, RenderType::entitySolid, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY, event.getPartialTick(), ModelData.EMPTY);
             poseStack.popPose();
 
             bufferSource.endBatch();

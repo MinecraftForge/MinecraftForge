@@ -18,6 +18,7 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.RegisterRecipeBookCategoriesEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.extensions.IForgeMenuType;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -87,8 +88,14 @@ public class RecipeBookExtensionTest
             event.enqueueWork(() ->
             {
                 MenuScreens.register(RECIPE_BOOK_TEST_MENU_TYPE.get(), RecipeBookTestScreen::new);
-                RecipeBookExtensionClientHelper.init();
             });
+        }
+        @SubscribeEvent
+        public static void onRegisterRecipeBookCategories(RegisterRecipeBookCategoriesEvent event)
+        {
+            if (!ENABLED)
+                return;
+            RecipeBookExtensionClientHelper.init(event);
         }
     }
 

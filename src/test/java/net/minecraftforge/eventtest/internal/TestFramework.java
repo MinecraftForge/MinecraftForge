@@ -6,7 +6,7 @@
 package net.minecraftforge.eventtest.internal;
 
 import net.minecraft.client.gui.screens.TitleScreen;
-import net.minecraftforge.client.event.ScreenOpenEvent;
+import net.minecraftforge.client.event.ScreenEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.GameShuttingDownEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -116,7 +116,7 @@ public class TestFramework {
      * the ScreenOpenEvent fired by TitleScreen is the last event fired without user interaction, so it is the
      *  end of the "automatic" bootstrap time.
      */
-    private void collectBootstrapTests(ScreenOpenEvent event) {
+    private void collectBootstrapTests(ScreenEvent.Opening event) {
         if(!(event.getScreen() instanceof TitleScreen) || bootstrapHandled)
             return;
 

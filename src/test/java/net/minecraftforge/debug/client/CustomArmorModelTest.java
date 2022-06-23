@@ -23,7 +23,7 @@ import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Item.Properties;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.client.IItemRenderProperties;
+import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 import net.minecraftforge.common.util.Lazy;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
@@ -62,12 +62,12 @@ public class CustomArmorModelTest
         }
 
         @Override
-        public void initializeClient(Consumer<IItemRenderProperties> consumer)
+        public void initializeClient(Consumer<IClientItemExtensions> consumer)
         {
-            consumer.accept(new IItemRenderProperties()
+            consumer.accept(new IClientItemExtensions()
             {
                 @Override @NotNull
-                public Model getBaseArmorModel(LivingEntity entityLiving, ItemStack itemStack, EquipmentSlot armorSlot, HumanoidModel<?> _default)
+                public Model getGenericArmorModel(LivingEntity entityLiving, ItemStack itemStack, EquipmentSlot armorSlot, HumanoidModel<?> _default)
                 {
                     TintedArmorModel.INSTANCE.base = _default;
                     return TintedArmorModel.INSTANCE;
@@ -91,12 +91,12 @@ public class CustomArmorModelTest
         }
 
         @Override
-        public void initializeClient(Consumer<IItemRenderProperties> consumer)
+        public void initializeClient(Consumer<IClientItemExtensions> consumer)
         {
-            consumer.accept(new IItemRenderProperties()
+            consumer.accept(new IClientItemExtensions()
             {
                 @Override
-                public HumanoidModel<?> getArmorModel(LivingEntity entityLiving, ItemStack itemStack, EquipmentSlot armorSlot, HumanoidModel<?> _default)
+                public HumanoidModel<?> getHumanoidArmorModel(LivingEntity entityLiving, ItemStack itemStack, EquipmentSlot armorSlot, HumanoidModel<?> _default)
                 {
                     return TintedArmorModel.ENDERMAN.get();
                 }
