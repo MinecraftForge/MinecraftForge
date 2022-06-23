@@ -38,15 +38,11 @@
     public static RenderType m_109284_(BlockState p_109285_, boolean p_109286_) {
 -      RenderType rendertype = m_109282_(p_109285_);
 -      if (rendertype == RenderType.m_110466_()) {
-+      if (canRenderInLayer(p_109285_, RenderType.m_110466_())) {
++      if (getRenderLayers(p_109285_).contains(RenderType.m_110466_())) {
           if (!Minecraft.m_91085_()) {
              return Sheets.m_110792_();
           } else {
-@@ -350,9 +_,68 @@
-       }
-    }
- 
-+   @Deprecated // FORGE: Use canRenderInLayer
+@@ -353,6 +_,66 @@
     public static RenderType m_109287_(FluidState p_109288_) {
        RenderType rendertype = f_109276_.get(p_109288_.m_76152_());
        return rendertype != null ? rendertype : RenderType.m_110451_();
@@ -54,48 +50,51 @@
 +
 +   // FORGE START
 +
-+   private static final java.util.function.Predicate<RenderType> SOLID_PREDICATE = type -> type == RenderType.m_110451_();
-+   private static final Map<net.minecraft.core.Holder.Reference<Block>, java.util.function.Predicate<RenderType>> blockRenderChecks = createRenderCheckMap(net.minecraftforge.registries.ForgeRegistries.BLOCKS, f_109275_);
-+   private static final Map<net.minecraft.core.Holder.Reference<Fluid>, java.util.function.Predicate<RenderType>> fluidRenderChecks = createRenderCheckMap(net.minecraftforge.registries.ForgeRegistries.FLUIDS, f_109276_);
++   private static final java.util.Set<RenderType> CUTOUT_MIPPED = java.util.Set.of(RenderType.m_110457_());
++   private static final java.util.Set<RenderType> SOLID = java.util.Set.of(RenderType.m_110451_());
++   private static final Map<net.minecraft.core.Holder.Reference<Block>, java.util.Set<RenderType>> BLOCK_RENDER_TYPES = createRenderTypeMap(net.minecraftforge.registries.ForgeRegistries.BLOCKS, f_109275_);
 +
-+   private static <T> Map<net.minecraft.core.Holder.Reference<T>, java.util.function.Predicate<RenderType>> createRenderCheckMap(net.minecraftforge.registries.IForgeRegistry<T> registry, Map<T, RenderType> vanillaMap) {
++   private static <T> Map<net.minecraft.core.Holder.Reference<T>, java.util.Set<RenderType>> createRenderTypeMap(net.minecraftforge.registries.IForgeRegistry<T> registry, Map<T, RenderType> vanillaMap) {
 +      return Util.m_137469_(new it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap<>(vanillaMap.size(), 0.5F), map -> {
-+         map.defaultReturnValue(SOLID_PREDICATE);
++         map.defaultReturnValue(SOLID);
 +         for(Map.Entry<T, RenderType> entry : vanillaMap.entrySet()) {
-+            map.put(registry.getDelegateOrThrow(entry.getKey()), createMatchingLayerPredicate(entry.getValue()));
++            map.put(registry.getDelegateOrThrow(entry.getKey()), java.util.Set.of(entry.getValue()));
 +         }
 +      });
 +   }
 +
-+   public static boolean canRenderInLayer(BlockState state, RenderType type) {
++   /**
++    * Deprecated. Use {@link net.minecraft.client.resources.model.BakedModel#getRenderTypes(BlockState, net.minecraft.util.RandomSource, net.minecraftforge.client.model.data.ModelData)}.
++    */
++   @Deprecated(forRemoval = true, since = "1.19")
++   public static java.util.Set<RenderType> getRenderLayers(BlockState state) {
 +      Block block = state.m_60734_();
 +      if (block instanceof LeavesBlock) {
-+         return f_109277_ ? type == RenderType.m_110457_() : type == RenderType.m_110451_();
++         return f_109277_ ? CUTOUT_MIPPED : SOLID;
 +      } else {
-+         return blockRenderChecks.get(net.minecraftforge.registries.ForgeRegistries.BLOCKS.getDelegateOrThrow(block)).test(type);
++         return BLOCK_RENDER_TYPES.get(net.minecraftforge.registries.ForgeRegistries.BLOCKS.getDelegateOrThrow(block));
 +      }
 +   }
 +
-+   public static boolean canRenderInLayer(FluidState fluid, RenderType type) {
-+      return fluidRenderChecks.get(net.minecraftforge.registries.ForgeRegistries.FLUIDS.getDelegateOrThrow(fluid.m_76152_())).test(type);
-+   }
-+
++   @Deprecated(forRemoval = true, since = "1.19")
 +   public static void setRenderLayer(Block block, RenderType type) {
-+      setRenderLayer(block, createMatchingLayerPredicate(type));
++      setRenderLayer(block, java.util.Set.of(type));
 +   }
 +
++   @Deprecated(forRemoval = true, since = "1.19")
 +   public static synchronized void setRenderLayer(Block block, java.util.function.Predicate<RenderType> predicate) {
++      setRenderLayer(block, createSetFromPredicate(predicate));
++   }
++
++   @Deprecated(forRemoval = true, since = "1.19")
++   public static synchronized void setRenderLayer(Block block, java.util.Set<RenderType> layers) {
 +      checkClientLoading();
-+      blockRenderChecks.put(net.minecraftforge.registries.ForgeRegistries.BLOCKS.getDelegateOrThrow(block), predicate);
++      BLOCK_RENDER_TYPES.put(net.minecraftforge.registries.ForgeRegistries.BLOCKS.getDelegateOrThrow(block), layers);
 +   }
 +
 +   public static void setRenderLayer(Fluid fluid, RenderType type) {
-+      setRenderLayer(fluid, createMatchingLayerPredicate(type));
-+   }
-+
-+   public static synchronized void setRenderLayer(Fluid fluid, java.util.function.Predicate<RenderType> predicate) {
 +      checkClientLoading();
-+      fluidRenderChecks.put(net.minecraftforge.registries.ForgeRegistries.FLUIDS.getDelegateOrThrow(fluid), predicate);
++      f_109276_.put(fluid, type);
 +   }
 +
 +   private static void checkClientLoading() {
@@ -105,9 +104,8 @@
 +      );
 +   }
 +
-+   private static java.util.function.Predicate<RenderType> createMatchingLayerPredicate(RenderType type) {
-+      java.util.Objects.requireNonNull(type);
-+      return type::equals;
++   private static java.util.Set<RenderType> createSetFromPredicate(java.util.function.Predicate<RenderType> predicate) {
++      return RenderType.m_110506_().stream().filter(predicate).collect(java.util.stream.Collectors.toSet());
     }
  
     public static void m_109291_(boolean p_109292_) {
