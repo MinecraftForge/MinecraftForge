@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.client;
+package net.minecraftforge.client.extensions.common;
 
 import com.mojang.math.Vector3d;
 import net.minecraft.client.particle.ParticleEngine;
@@ -14,15 +14,32 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.world.phys.HitResult;
+import net.minecraftforge.fml.LogicalSide;
 
-public interface IBlockRenderProperties
+import java.util.function.Consumer;
+
+/**
+ * {@link LogicalSide#CLIENT Client-only} extensions to {@link Block}.
+ *
+ * @see Block#initializeClient(Consumer)
+ */
+public interface IClientBlockExtensions
 {
-    IBlockRenderProperties DUMMY = new IBlockRenderProperties()
+    IClientBlockExtensions DEFAULT = new IClientBlockExtensions() { };
+
+    static IClientBlockExtensions of(BlockState state)
     {
-    };
+        return of(state.getBlock());
+    }
+
+    static IClientBlockExtensions of(Block block)
+    {
+        return block.getRenderPropertiesInternal() instanceof IClientBlockExtensions e ? e : DEFAULT;
+    }
 
     /**
      * Spawn a digging particle effect in the level, this is a wrapper

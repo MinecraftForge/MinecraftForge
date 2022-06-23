@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.client;
+package net.minecraftforge.client.extensions.common;
 
 import com.mojang.blaze3d.shaders.FogShape;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -20,41 +20,47 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.FogRenderer;
 import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.LightTexture;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.ScreenEffectRenderer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
-import net.minecraftforge.client.model.FluidModel;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidType;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+import net.minecraftforge.fml.LogicalSide;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
+import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 /**
- * An interface which defines properties relating to how a {@link FluidType}
- * should render.
+ * {@link LogicalSide#CLIENT Client-only} extensions to {@link FluidType}.
  *
- * <p>Note: This does not define any data regarding {@link RenderType}s as those
- * are specified by the Fluid via {@link ItemBlockRenderTypes#setRenderLayer(Fluid, RenderType)}
- * in the {@link FMLClientSetupEvent}.
+ * @see FluidType#initializeClient(Consumer)
  */
-public interface IFluidTypeRenderProperties
+public interface IClientFluidTypeExtensions
 {
-    /**
-     * A dummy instance returned when no render properties are specified.
-     */
-    IFluidTypeRenderProperties DUMMY = new IFluidTypeRenderProperties()
+    IClientFluidTypeExtensions DEFAULT = new IClientFluidTypeExtensions() { };
+
+    static IClientFluidTypeExtensions of(FluidState state)
     {
-    };
+        return of(state.getFluidType());
+    }
+
+    static IClientFluidTypeExtensions of(Fluid fluid)
+    {
+        return of(fluid.getFluidType());
+    }
+
+    static IClientFluidTypeExtensions of(FluidType type)
+    {
+        return type.getRenderPropertiesInternal() instanceof IClientFluidTypeExtensions props ? props : DEFAULT;
+    }
 
     /* Default Accessors */
 
@@ -66,7 +72,7 @@ public interface IFluidTypeRenderProperties
      *
      * @return the tint applied to the fluid's textures in ARGB format
      */
-    default int getColorTint()
+    default int getTintColor()
     {
         return 0xFFFFFFFF;
     }
@@ -127,7 +133,7 @@ public interface IFluidTypeRenderProperties
     /**
      * Returns a stream of textures applied to a fluid.
      *
-     * <p>This is used by the {@link FluidModel} to load in all textures that
+     * <p>This is used by the {@link net.minecraft.client.resources.model.ModelBakery} to load in all textures that
      * can be applied on reload.
      *
      * @return a stream of textures applied to a fluid
@@ -135,7 +141,7 @@ public interface IFluidTypeRenderProperties
     default Stream<ResourceLocation> getTextures()
     {
         return Stream.of(this.getStillTexture(), this.getFlowingTexture(), this.getOverlayTexture())
-                .filter(Objects::nonNull);
+                     .filter(Objects::nonNull);
     }
 
     /**
@@ -160,32 +166,14 @@ public interface IFluidTypeRenderProperties
      * Renders {@code #getRenderOverlayTexture} onto the camera when within
      * the fluid.
      *
-     * @param mc the client instance
-     * @param stack the transformations representing the current rendering position
+     * @param mc        the client instance
+     * @param poseStack the transformations representing the current rendering position
      */
-    default void renderOverlay(Minecraft mc, PoseStack stack)
+    default void renderOverlay(Minecraft mc, PoseStack poseStack)
     {
         ResourceLocation texture = this.getRenderOverlayTexture(mc);
-        if (texture == null) return;
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
-        RenderSystem.enableTexture();
-        RenderSystem.setShaderTexture(0, texture);
-        BufferBuilder buffer = Tesselator.getInstance().getBuilder();
-        BlockPos playerEyePos = new BlockPos(mc.player.getX(), mc.player.getEyeY(), mc.player.getZ());
-        float brightness = LightTexture.getBrightness(mc.player.level.dimensionType(), mc.player.level.getMaxLocalRawBrightness(playerEyePos));
-        RenderSystem.enableBlend();
-        RenderSystem.defaultBlendFunc();
-        RenderSystem.setShaderColor(brightness, brightness, brightness, 0.1F);
-        float uOffset = -mc.player.getYRot() / 64.0F;
-        float vOffset = mc.player.getXRot() / 64.0F;
-        Matrix4f pose = stack.last().pose();
-        buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
-        buffer.vertex(pose, -1.0F, -1.0F, -0.5F).uv(4.0F + uOffset, 4.0F + vOffset).endVertex();
-        buffer.vertex(pose, 1.0F, -1.0F, -0.5F).uv(uOffset, 4.0F + vOffset).endVertex();
-        buffer.vertex(pose, 1.0F, 1.0F, -0.5F).uv(uOffset, vOffset).endVertex();
-        buffer.vertex(pose, -1.0F, 1.0F, -0.5F).uv(4.0F + uOffset, vOffset).endVertex();
-        BufferUploader.drawWithShader(buffer.end());
-        RenderSystem.disableBlend();
+        if (texture != null)
+            ScreenEffectRenderer.renderFluid(mc, poseStack, texture);
     }
 
     /**
@@ -194,12 +182,12 @@ public interface IFluidTypeRenderProperties
      * <p>The result expects a three float vector representing the red, green,
      * and blue channels respectively. Each channel should be between [0,1].
      *
-     * @param camera the camera instance
-     * @param partialTick the delta time of where the current frame is within a tick
-     * @param level the level the camera is located in
-     * @param renderDistance the render distance of the client
+     * @param camera            the camera instance
+     * @param partialTick       the delta time of where the current frame is within a tick
+     * @param level             the level the camera is located in
+     * @param renderDistance    the render distance of the client
      * @param darkenWorldAmount the amount to darken the world by
-     * @param fluidFogColor the current color of the fog
+     * @param fluidFogColor     the current color of the fog
      * @return the color of the fog
      */
     @NotNull
@@ -212,13 +200,13 @@ public interface IFluidTypeRenderProperties
      * Modifies how the fog is currently being rendered when the camera is
      * within a fluid.
      *
-     * @param camera the camera instance
-     * @param mode the type of fog being rendered
+     * @param camera         the camera instance
+     * @param mode           the type of fog being rendered
      * @param renderDistance the render distance of the client
-     * @param partialTick the delta time of where the current frame is within a tick
-     * @param nearDistance the near plane of where the fog starts to render
-     * @param farDistance the far plane of where the fog ends rendering
-     * @param shape the shape of the fog being rendered
+     * @param partialTick    the delta time of where the current frame is within a tick
+     * @param nearDistance   the near plane of where the fog starts to render
+     * @param farDistance    the far plane of where the fog ends rendering
+     * @param shape          the shape of the fog being rendered
      */
     default void modifyFogRender(Camera camera, FogRenderer.FogMode mode, float renderDistance, float partialTick, float nearDistance, float farDistance, FogShape shape)
     {
@@ -236,9 +224,9 @@ public interface IFluidTypeRenderProperties
      * <p>Important: This method should only return {@code null} for {@link Fluids#EMPTY}.
      * All other implementations must define this property.
      *
-     * @param state the state of the fluid
+     * @param state  the state of the fluid
      * @param getter the getter the fluid can be obtained from
-     * @param pos the position of the fluid
+     * @param pos    the position of the fluid
      * @return the reference of the texture to apply to a source fluid
      */
     default ResourceLocation getStillTexture(FluidState state, BlockAndTintGetter getter, BlockPos pos)
@@ -256,9 +244,9 @@ public interface IFluidTypeRenderProperties
      * <p>Important: This method should only return {@code null} for {@link Fluids#EMPTY}.
      * All other implementations must define this property.
      *
-     * @param state the state of the fluid
+     * @param state  the state of the fluid
      * @param getter the getter the fluid can be obtained from
-     * @param pos the position of the fluid
+     * @param pos    the position of the fluid
      * @return the reference of the texture to apply to a flowing fluid
      */
     default ResourceLocation getFlowingTexture(FluidState state, BlockAndTintGetter getter, BlockPos pos)
@@ -276,9 +264,9 @@ public interface IFluidTypeRenderProperties
      * texture itself (e.g. {@code minecraft:block/water_overlay} will point to
      * {@code assets/minecraft/textures/block/water_overlay.png}).
      *
-     * @param state the state of the fluid
+     * @param state  the state of the fluid
      * @param getter the getter the fluid can be obtained from
-     * @param pos the position of the fluid
+     * @param pos    the position of the fluid
      * @return the reference of the texture to apply to a fluid directly touching
      *         a non-opaque block
      */
@@ -287,25 +275,23 @@ public interface IFluidTypeRenderProperties
         return this.getOverlayTexture();
     }
 
-
     /**
      * Returns the tint applied to the fluid's textures.
      *
      * <p>The result represents a 32-bit integer where each 8-bits represent
      * the alpha, red, green, and blue channel respectively.
      *
-     * @param state the state of the fluid
+     * @param state  the state of the fluid
      * @param getter the getter the fluid can be obtained from
-     * @param pos the position of the fluid
+     * @param pos    the position of the fluid
      * @return the tint applied to the fluid's textures in ARGB format
      */
-    default int getColorTint(FluidState state, BlockAndTintGetter getter, BlockPos pos)
+    default int getTintColor(FluidState state, BlockAndTintGetter getter, BlockPos pos)
     {
-        return this.getColorTint();
+        return this.getTintColor();
     }
 
     /* Stack-Based Accessors */
-
 
     /**
      * Returns the tint applied to the fluid's textures.
@@ -316,9 +302,9 @@ public interface IFluidTypeRenderProperties
      * @param stack the stack the fluid is in
      * @return the tint applied to the fluid's textures in ARGB format
      */
-    default int getColorTint(FluidStack stack)
+    default int getTintColor(FluidStack stack)
     {
-        return this.getColorTint();
+        return this.getTintColor();
     }
 
     /**
