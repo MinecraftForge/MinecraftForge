@@ -42,7 +42,7 @@
           if (!Minecraft.m_91085_()) {
              return Sheets.m_110792_();
           } else {
-@@ -353,6 +_,66 @@
+@@ -353,6 +_,67 @@
     public static RenderType m_109287_(FluidState p_109288_) {
        RenderType rendertype = f_109276_.get(p_109288_.m_76152_());
        return rendertype != null ? rendertype : RenderType.m_110451_();
@@ -63,9 +63,7 @@
 +      });
 +   }
 +
-+   /**
-+    * Deprecated. Use {@link net.minecraft.client.resources.model.BakedModel#getRenderTypes(BlockState, net.minecraft.util.RandomSource, net.minecraftforge.client.model.data.ModelData)}.
-+    */
++   /** @deprecated Use {@link net.minecraft.client.resources.model.BakedModel#getRenderTypes(BlockState, net.minecraft.util.RandomSource, net.minecraftforge.client.model.data.ModelData)}. */
 +   @Deprecated(forRemoval = true, since = "1.19")
 +   public static java.util.Set<RenderType> getRenderLayers(BlockState state) {
 +      Block block = state.m_60734_();
@@ -76,16 +74,19 @@
 +      }
 +   }
 +
++   /** @deprecated Set your render type in your model's JSON or override {@link net.minecraft.client.resources.model.BakedModel#getRenderTypes(BlockState, net.minecraft.util.RandomSource, net.minecraftforge.client.model.data.ModelData)} */
 +   @Deprecated(forRemoval = true, since = "1.19")
 +   public static void setRenderLayer(Block block, RenderType type) {
 +      setRenderLayer(block, java.util.Set.of(type));
 +   }
 +
++   /** @deprecated Set your render type in your model's JSON or override {@link net.minecraft.client.resources.model.BakedModel#getRenderTypes(BlockState, net.minecraft.util.RandomSource, net.minecraftforge.client.model.data.ModelData)} */
 +   @Deprecated(forRemoval = true, since = "1.19")
 +   public static synchronized void setRenderLayer(Block block, java.util.function.Predicate<RenderType> predicate) {
 +      setRenderLayer(block, createSetFromPredicate(predicate));
 +   }
 +
++   /** @deprecated Set your render type in your model's JSON or override {@link net.minecraft.client.resources.model.BakedModel#getRenderTypes(BlockState, net.minecraft.util.RandomSource, net.minecraftforge.client.model.data.ModelData)} */
 +   @Deprecated(forRemoval = true, since = "1.19")
 +   public static synchronized void setRenderLayer(Block block, java.util.Set<RenderType> layers) {
 +      checkClientLoading();

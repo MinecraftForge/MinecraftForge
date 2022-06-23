@@ -46,7 +46,7 @@ public class ItemLayersModelBuilder<T extends ModelBuilder<T>> extends CustomLoa
     {
         Preconditions.checkNotNull(layers, "Layers must not be null");
         Preconditions.checkArgument(layers.length > 0, "At least one layer must be specified");
-        Preconditions.checkArgument(Arrays.stream(layers).anyMatch(i -> i < 0), "All layers must be >= 0");
+        Preconditions.checkArgument(Arrays.stream(layers).allMatch(i -> i >= 0), "All layers must be >= 0");
         Arrays.stream(layers).forEach(emissiveLayers::add);
         return this;
     }
@@ -93,7 +93,7 @@ public class ItemLayersModelBuilder<T extends ModelBuilder<T>> extends CustomLoa
         Preconditions.checkNotNull(renderType, "Render type must not be null");
         Preconditions.checkNotNull(layers, "Layers must not be null");
         Preconditions.checkArgument(layers.length > 0, "At least one layer must be specified");
-        Preconditions.checkArgument(Arrays.stream(layers).anyMatch(i -> i < 0), "All layers must be >= 0");
+        Preconditions.checkArgument(Arrays.stream(layers).allMatch(i -> i >= 0), "All layers must be >= 0");
         var alreadyAssigned = Arrays.stream(layers).filter(layersWithRenderTypes::contains).toArray();
         Preconditions.checkArgument(alreadyAssigned.length == 0, "Attempted to re-assign layer render types: " + Arrays.toString(alreadyAssigned));
         var renderTypeLayers = renderTypes.computeIfAbsent(renderType, $ -> new IntOpenHashSet());

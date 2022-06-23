@@ -13,7 +13,7 @@ import net.minecraft.server.packs.resources.ResourceManager;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * A loader for custom {@link TextureAtlasSprite texture atlas sprites}.<br>
+ * A loader for custom {@linkplain  TextureAtlasSprite texture atlas sprites}.<br>
  * The loader can be specified in the corresponding .mcmeta file for a texture as follows:
  * <pre>
  * {

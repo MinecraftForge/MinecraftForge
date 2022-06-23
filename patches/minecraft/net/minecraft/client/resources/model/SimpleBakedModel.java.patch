@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/resources/model/SimpleBakedModel.java
 +++ b/net/minecraft/client/resources/model/SimpleBakedModel.java
-@@ -26,8 +_,16 @@
+@@ -26,8 +_,17 @@
     protected final TextureAtlasSprite f_119485_;
     protected final ItemTransforms f_119486_;
     protected final ItemOverrides f_119487_;
@@ -8,7 +8,8 @@
 +   protected final List<net.minecraft.client.renderer.RenderType> itemRenderTypes;
 +   protected final List<net.minecraft.client.renderer.RenderType> fabulousItemRenderTypes;
  
-+   @Deprecated // Forge: Use variant with RenderTypeGroup
++   /** @deprecated Forge: Use {@linkplain #SimpleBakedModel(List, Map, boolean, boolean, boolean, TextureAtlasSprite, ItemTransforms, ItemOverrides, net.minecraftforge.client.RenderTypeGroup) variant with RenderTypeGroup} **/
++   @Deprecated
     public SimpleBakedModel(List<BakedQuad> p_119489_, Map<Direction, List<BakedQuad>> p_119490_, boolean p_119491_, boolean p_119492_, boolean p_119493_, TextureAtlasSprite p_119494_, ItemTransforms p_119495_, ItemOverrides p_119496_) {
 +      this(p_119489_, p_119490_, p_119491_, p_119492_, p_119493_, p_119494_, p_119495_, p_119496_, net.minecraftforge.client.RenderTypeGroup.EMPTY);
 +   }
@@ -53,11 +54,12 @@
     @OnlyIn(Dist.CLIENT)
     public static class Builder {
        private final List<BakedQuad> f_119508_ = Lists.newArrayList();
-@@ -116,11 +_,16 @@
+@@ -116,11 +_,17 @@
           return this;
        }
  
-+      @Deprecated // Forge: Use variant with RenderType
++      /** @deprecated Forge: Use {@linkplain #build(net.minecraftforge.client.RenderTypeGroup) variant with RenderTypeGroup} **/
++      @Deprecated
        public BakedModel m_119533_() {
 +         return build(net.minecraftforge.client.RenderTypeGroup.EMPTY);
 +      }

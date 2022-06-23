@@ -48,7 +48,7 @@
           float f1 = (float)(i >> 8 & 255) / 255.0F;
           float f2 = (float)(i & 255) / 255.0F;
 -         p_115164_.m_85987_(posestack$pose, bakedquad, f, f1, f2, p_115167_, p_115168_);
-+         p_115164_.putBulkData(posestack$pose, bakedquad, f, f1, f2, p_115167_, p_115168_, true);
++         p_115164_.putBulkData(posestack$pose, bakedquad, f, f1, f2, 1.0F, p_115167_, p_115168_, true);
        }
  
     }

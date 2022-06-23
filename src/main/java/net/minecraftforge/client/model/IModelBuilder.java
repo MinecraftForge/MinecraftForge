@@ -23,6 +23,9 @@ import java.util.List;
  */
 public interface IModelBuilder<T extends IModelBuilder<T>>
 {
+    /**
+     * Creates a new model builder that uses the provided attributes in the final baked model.
+     */
     static IModelBuilder<?> of(boolean hasAmbientOcclusion, boolean usesBlockLight, boolean isGui3d,
                                ItemTransforms transforms, ItemOverrides overrides, TextureAtlasSprite particle,
                                RenderTypeGroup renderTypes)
@@ -30,6 +33,10 @@ public interface IModelBuilder<T extends IModelBuilder<T>>
         return new Simple(hasAmbientOcclusion, usesBlockLight, isGui3d, transforms, overrides, particle, renderTypes);
     }
 
+    /**
+     * Creates a new model builder that collects quads to the provided list, returning
+     * {@linkplain EmptyModel#BAKED an empty model} if you call {@link #build()}.
+     */
     static IModelBuilder<?> collecting(List<BakedQuad> quads)
     {
         return new Collecting(quads);
@@ -80,7 +87,7 @@ public interface IModelBuilder<T extends IModelBuilder<T>>
     {
         private final List<BakedQuad> quads;
 
-        public Collecting(List<BakedQuad> quads)
+        private Collecting(List<BakedQuad> quads)
         {
             this.quads = quads;
         }
