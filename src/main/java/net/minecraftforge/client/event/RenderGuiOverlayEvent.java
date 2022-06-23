@@ -12,6 +12,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.LogicalSide;
+import org.jetbrains.annotations.ApiStatus;
 
 /**
  * Fired when an overlay is rendered to the screen.
@@ -29,7 +30,8 @@ public abstract class RenderGuiOverlayEvent extends Event
     private final float partialTick;
     private final NamedGuiOverlay overlay;
 
-    public RenderGuiOverlayEvent(Window window, PoseStack poseStack, float partialTick, NamedGuiOverlay overlay)
+    @ApiStatus.Internal
+    protected RenderGuiOverlayEvent(Window window, PoseStack poseStack, float partialTick, NamedGuiOverlay overlay)
     {
         this.overlay = overlay;
         this.window = window;
@@ -72,9 +74,7 @@ public abstract class RenderGuiOverlayEvent extends Event
     @Cancelable
     public static class Pre extends RenderGuiOverlayEvent
     {
-        /**
-         * @hidden
-         */
+        @ApiStatus.Internal
         public Pre(Window window, PoseStack poseStack, float partialTick, NamedGuiOverlay overlay)
         {
             super(window, poseStack, partialTick, overlay);
@@ -91,9 +91,7 @@ public abstract class RenderGuiOverlayEvent extends Event
      */
     public static class Post extends RenderGuiOverlayEvent
     {
-        /**
-         * @hidden
-         */
+        @ApiStatus.Internal
         public Post(Window window, PoseStack poseStack, float partialTick, NamedGuiOverlay overlay)
         {
             super(window, poseStack, partialTick, overlay);

@@ -6,14 +6,14 @@
 package net.minecraftforge.client.event;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.LogicalSide;
+import org.jetbrains.annotations.ApiStatus;
 
 /**
  * Fired before a block texture will be overlaid on the player's view.
@@ -27,13 +27,13 @@ import net.minecraftforge.fml.LogicalSide;
 @Cancelable
 public class RenderBlockScreenEffectEvent extends Event
 {
-
     /**
      * The type of the block overlay to be rendered.
      *
      * @see RenderBlockScreenEffectEvent
      */
-    public enum OverlayType {
+    public enum OverlayType
+    {
         /**
          * The type of the overlay when the player is burning / on fire.
          */
@@ -54,9 +54,7 @@ public class RenderBlockScreenEffectEvent extends Event
     private final BlockState blockState;
     private final BlockPos blockPos;
 
-    /**
-     * @hidden
-     */
+    @ApiStatus.Internal
     public RenderBlockScreenEffectEvent(Player player, PoseStack poseStack, OverlayType type, BlockState block, BlockPos blockPos)
     {
         this.player = player;
@@ -64,27 +62,45 @@ public class RenderBlockScreenEffectEvent extends Event
         this.overlayType = type;
         this.blockState = block;
         this.blockPos = blockPos;
-
     }
 
     /**
      * {@return the player which the overlay will apply to}
      */
-    public Player getPlayer() { return player; }
+    public Player getPlayer()
+    {
+        return player;
+    }
+
     /**
      * {@return the pose stack used for rendering}
      */
-    public PoseStack getPoseStack() { return poseStack; }
+    public PoseStack getPoseStack()
+    {
+        return poseStack;
+    }
+
     /**
      * {@return the type of the overlay}
      */
-    public OverlayType getOverlayType() { return overlayType; }
+    public OverlayType getOverlayType()
+    {
+        return overlayType;
+    }
+
     /**
      * {@return the block which the overlay is gotten from}
      */
-    public BlockState getBlockState() { return blockState; }
+    public BlockState getBlockState()
+    {
+        return blockState;
+    }
+
     /**
      * {@return the position of the block which the overlay is gotten from}
      */
-    public BlockPos getBlockPos() { return blockPos; }
+    public BlockPos getBlockPos()
+    {
+        return blockPos;
+    }
 }

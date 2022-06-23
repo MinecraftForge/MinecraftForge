@@ -12,6 +12,7 @@ import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.event.IModBusEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.util.Map;
 import java.util.function.Function;
@@ -29,6 +30,7 @@ public class RegisterClientTooltipComponentFactoriesEvent extends Event implemen
 {
     private final Map<Class<? extends TooltipComponent>, Function<TooltipComponent, ClientTooltipComponent>> factories;
 
+    @ApiStatus.Internal
     public RegisterClientTooltipComponentFactoriesEvent(Map<Class<? extends TooltipComponent>, Function<TooltipComponent, ClientTooltipComponent>> factories)
     {
         this.factories = factories;

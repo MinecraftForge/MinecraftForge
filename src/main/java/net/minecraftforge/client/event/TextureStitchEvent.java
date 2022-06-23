@@ -5,17 +5,16 @@
 
 package net.minecraftforge.client.event;
 
+import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
-import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.event.IModBusEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.util.Set;
-
 
 /**
  * Fired before and after a texture atlas stitched together.
@@ -29,9 +28,7 @@ public class TextureStitchEvent extends Event implements IModBusEvent
 {
     private final TextureAtlas atlas;
 
-    /**
-     * @hidden
-     */
+    @ApiStatus.Internal
     public TextureStitchEvent(TextureAtlas atlas)
     {
         this.atlas = atlas;
@@ -58,10 +55,7 @@ public class TextureStitchEvent extends Event implements IModBusEvent
     {
         private final Set<ResourceLocation> sprites;
 
-        /**
-         * @hidden
-         * @see ForgeHooksClient#onTextureStitchedPre(TextureAtlas, Set)
-         */
+        @ApiStatus.Internal
         public Pre(TextureAtlas map, Set<ResourceLocation> sprites)
         {
             super(map);
@@ -76,7 +70,8 @@ public class TextureStitchEvent extends Event implements IModBusEvent
          *
          * @param sprite the location of the sprite
          */
-        public boolean addSprite(ResourceLocation sprite) {
+        public boolean addSprite(ResourceLocation sprite)
+        {
             return this.sprites.add(sprite);
         }
     }
@@ -91,10 +86,10 @@ public class TextureStitchEvent extends Event implements IModBusEvent
      */
     public static class Post extends TextureStitchEvent
     {
-        /**
-         * @hidden
-         * @see ForgeHooksClient#onTextureStitchedPost(TextureAtlas)
-         */
-        public Post(TextureAtlas map){ super(map); }
+        @ApiStatus.Internal
+        public Post(TextureAtlas map)
+        {
+            super(map);
+        }
     }
 }

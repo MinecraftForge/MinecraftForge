@@ -14,6 +14,7 @@ import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.event.IModBusEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.util.Map;
 
@@ -29,6 +30,7 @@ public class RegisterTextureAtlasSpriteLoadersEvent extends Event implements IMo
 {
     private final Map<ResourceLocation, ITextureAtlasSpriteLoader> loaders;
 
+    @ApiStatus.Internal
     public RegisterTextureAtlasSpriteLoadersEvent(Map<ResourceLocation, ITextureAtlasSpriteLoader> loaders)
     {
         this.loaders = loaders;

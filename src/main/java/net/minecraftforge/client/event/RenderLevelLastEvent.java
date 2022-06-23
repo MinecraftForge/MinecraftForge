@@ -6,14 +6,13 @@
 package net.minecraftforge.client.event;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-
+import com.mojang.math.Matrix4f;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.LevelRenderer;
-import com.mojang.math.Matrix4f;
-import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.fml.LogicalSide;
+import org.jetbrains.annotations.ApiStatus;
 
 /**
  * Fired after all level rendering.
@@ -35,10 +34,7 @@ public class RenderLevelLastEvent extends net.minecraftforge.eventbus.api.Event
     private final Matrix4f projectionMatrix;
     private final long startNanos;
 
-    /**
-     * @hidden
-     * @see ForgeHooksClient#dispatchRenderLast(LevelRenderer, PoseStack, float, Matrix4f, long)
-     */
+    @ApiStatus.Internal
     public RenderLevelLastEvent(LevelRenderer levelRenderer, PoseStack poseStack, float partialTick, Matrix4f projectionMatrix, long startNanos)
     {
         this.levelRenderer = levelRenderer;

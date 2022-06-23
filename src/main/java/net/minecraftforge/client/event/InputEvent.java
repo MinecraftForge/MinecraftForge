@@ -7,13 +7,12 @@ package net.minecraftforge.client.event;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
-import net.minecraft.client.MouseHandler;
 import net.minecraft.world.InteractionHand;
-import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.LogicalSide;
+import org.jetbrains.annotations.ApiStatus;
 import org.lwjgl.glfw.GLFW;
 
 /**
@@ -25,8 +24,13 @@ import org.lwjgl.glfw.GLFW;
  * @see Key
  * @see InteractionKeyMappingTriggered
  */
-public class InputEvent extends Event
+public abstract class InputEvent extends Event
 {
+    @ApiStatus.Internal
+    protected InputEvent()
+    {
+    }
+
     /**
      * Fired when a mouse button is pressed/released. Sub-events get fired {@link Pre before} and {@link Post after} this happens.
      *
@@ -37,17 +41,14 @@ public class InputEvent extends Event
      * @see Pre
      * @see Post
      */
-    public static class MouseButton extends InputEvent
+    public static abstract class MouseButton extends InputEvent
     {
         private final int button;
         private final int action;
         private final int modifiers;
 
-        /**
-         * @hidden
-         * @see ForgeHooksClient#onMouseButtonPre(int, int, int)
-         */
-        public MouseButton(int button, int action, int modifiers)
+        @ApiStatus.Internal
+        protected MouseButton(int button, int action, int modifiers)
         {
             this.button = button;
             this.action = action;
@@ -106,11 +107,9 @@ public class InputEvent extends Event
         @Cancelable
         public static class Pre extends MouseButton
         {
-            /**
-             * @hidden
-             * @see ForgeHooksClient#onMouseButtonPre(int, int, int)
-             */
-            public Pre(int button, int action, int modifiers) {
+            @ApiStatus.Internal
+            public Pre(int button, int action, int modifiers)
+            {
                 super(button, action, modifiers);
             }
         }
@@ -125,14 +124,11 @@ public class InputEvent extends Event
          *
          * @see <a href="https://www.glfw.org/docs/latest/input_guide.html#input_mouse_button" target="_top">the online GLFW documentation</a>
          */
-        @Cancelable
         public static class Post extends MouseButton
         {
-            /**
-             * @hidden
-             * @see ForgeHooksClient#onMouseButtonPre(int, int, int)
-             */
-            public Post(int button, int action, int modifiers) {
+            @ApiStatus.Internal
+            public Post(int button, int action, int modifiers)
+            {
                 super(button, action, modifiers);
             }
         }
@@ -160,10 +156,7 @@ public class InputEvent extends Event
         private final boolean middleDown;
         private final boolean rightDown;
 
-        /**
-         * @hidden
-         * @see ForgeHooksClient#onMouseScroll(MouseHandler, double)
-         */
+        @ApiStatus.Internal
         public MouseScrollingEvent(double scrollDelta, boolean leftDown, boolean middleDown, boolean rightDown, double mouseX, double mouseY)
         {
             this.scrollDelta = scrollDelta;
@@ -238,10 +231,7 @@ public class InputEvent extends Event
         private final int action;
         private final int modifiers;
 
-        /**
-         * @hidden
-         * @see ForgeHooksClient#onKeyInput(int, int, int, int)
-         */
+        @ApiStatus.Internal
         public Key(int key, int scanCode, int action, int modifiers)
         {
             this.key = key;
@@ -264,7 +254,7 @@ public class InputEvent extends Event
 
         /**
          * {@return the platform-specific scan code}
-         *
+         * <p>
          * The scan code is unique for every key, regardless of whether it has a key code.
          * Scan codes are platform-specific but consistent over time, so keys will have different scan codes depending
          * on the platform but they are safe to save to disk as custom key bindings.
@@ -330,10 +320,7 @@ public class InputEvent extends Event
         private final InteractionHand hand;
         private boolean handSwing = true;
 
-        /**
-         * @hidden
-         * @see ForgeHooksClient#onClickInput(int, KeyMapping, InteractionHand)
-         */
+        @ApiStatus.Internal
         public InteractionKeyMappingTriggered(int button, KeyMapping keyMapping, InteractionHand hand)
         {
             this.button = button;
@@ -361,7 +348,7 @@ public class InputEvent extends Event
 
         /**
          * {@return the hand that caused the input}
-         *
+         * <p>
          * The event will be called for both hands if this is a use item input regardless
          * of both event's cancellation.
          * Will always be {@link InteractionHand#MAIN_HAND} if this is an attack or pick block input.

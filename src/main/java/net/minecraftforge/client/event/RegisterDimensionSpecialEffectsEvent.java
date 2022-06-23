@@ -12,6 +12,7 @@ import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.event.IModBusEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.util.Map;
 
@@ -27,6 +28,7 @@ public class RegisterDimensionSpecialEffectsEvent extends Event implements IModB
 {
     private final Map<ResourceLocation, DimensionSpecialEffects> effects;
 
+    @ApiStatus.Internal
     public RegisterDimensionSpecialEffectsEvent(Map<ResourceLocation, DimensionSpecialEffects> effects)
     {
         this.effects = effects;

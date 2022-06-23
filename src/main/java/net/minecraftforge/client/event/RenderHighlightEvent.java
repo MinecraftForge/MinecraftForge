@@ -6,16 +6,17 @@
 package net.minecraftforge.client.event;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.Camera;
+import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.phys.HitResult;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
-import net.minecraft.world.phys.HitResult;
-import net.minecraft.client.Camera;
-import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraftforge.fml.LogicalSide;
+import org.jetbrains.annotations.ApiStatus;
 
 /**
  * Fired before a selection highlight is rendered.
@@ -25,7 +26,7 @@ import net.minecraftforge.fml.LogicalSide;
  * @see Entity
  */
 @Cancelable
-public class RenderHighlightEvent extends Event
+public abstract class RenderHighlightEvent extends Event
 {
     private final LevelRenderer levelRenderer;
     private final Camera camera;
@@ -34,11 +35,8 @@ public class RenderHighlightEvent extends Event
     private final PoseStack poseStack;
     private final MultiBufferSource multiBufferSource;
 
-    /**
-     * @hidden
-     * @see net.minecraftforge.client.ForgeHooksClient#onDrawHighlight(LevelRenderer, Camera, HitResult, float, PoseStack, MultiBufferSource)
-     */
-    public RenderHighlightEvent(LevelRenderer levelRenderer, Camera camera, HitResult target, float partialTick, PoseStack poseStack, MultiBufferSource multiBufferSource)
+    @ApiStatus.Internal
+    protected RenderHighlightEvent(LevelRenderer levelRenderer, Camera camera, HitResult target, float partialTick, PoseStack poseStack, MultiBufferSource multiBufferSource)
     {
         this.levelRenderer = levelRenderer;
         this.camera = camera;
@@ -51,27 +49,50 @@ public class RenderHighlightEvent extends Event
     /**
      * {@return the level renderer}
      */
-    public LevelRenderer getLevelRenderer() { return levelRenderer; }
+    public LevelRenderer getLevelRenderer()
+    {
+        return levelRenderer;
+    }
+
     /**
      * {@return the camera information}
      */
-    public Camera getCamera() { return camera; }
+    public Camera getCamera()
+    {
+        return camera;
+    }
+
     /**
      * {@return the hit result which triggered the selection highlight}
      */
-    public HitResult getTarget() { return target; }
+    public HitResult getTarget()
+    {
+        return target;
+    }
+
     /**
      * {@return the partial tick}
      */
-    public float getPartialTick() { return partialTick; }
+    public float getPartialTick()
+    {
+        return partialTick;
+    }
+
     /**
      * {@return the pose stack used for rendering}
      */
-    public PoseStack getPoseStack() { return poseStack; }
+    public PoseStack getPoseStack()
+    {
+        return poseStack;
+    }
+
     /**
      * {@return the source of rendering buffers}
      */
-    public MultiBufferSource getMultiBufferSource() { return multiBufferSource; }
+    public MultiBufferSource getMultiBufferSource()
+    {
+        return multiBufferSource;
+    }
 
     /**
      * Fired before a block's selection highlight is rendered.
@@ -85,9 +106,7 @@ public class RenderHighlightEvent extends Event
     @Cancelable
     public static class Block extends RenderHighlightEvent
     {
-        /**
-         * @hidden
-         */
+        @ApiStatus.Internal
         public Block(LevelRenderer levelRenderer, Camera camera, BlockHitResult target, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource)
         {
             super(levelRenderer, camera, target, partialTick, poseStack, bufferSource);
@@ -104,7 +123,7 @@ public class RenderHighlightEvent extends Event
     }
 
     /**
-     * Fired before a block's selection highlight is rendered.
+     * Fired before an entity's selection highlight is rendered.
      *
      * <p>This event is not {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}. </p>
      *
@@ -113,9 +132,7 @@ public class RenderHighlightEvent extends Event
      */
     public static class Entity extends RenderHighlightEvent
     {
-        /**
-         * @hidden
-         */
+        @ApiStatus.Internal
         public Entity(LevelRenderer levelRenderer, Camera camera, EntityHitResult target, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource)
         {
             super(levelRenderer, camera, target, partialTick, poseStack, bufferSource);

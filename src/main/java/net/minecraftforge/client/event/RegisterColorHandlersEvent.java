@@ -10,12 +10,12 @@ import net.minecraft.client.color.block.BlockColors;
 import net.minecraft.client.color.item.ItemColor;
 import net.minecraft.client.color.item.ItemColors;
 import net.minecraft.world.level.ItemLike;
-import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.event.IModBusEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import org.jetbrains.annotations.ApiStatus;
 
 /**
  * Fired for registering block and item color handlers at the appropriate time.
@@ -29,10 +29,8 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
  */
 public abstract class RegisterColorHandlersEvent extends Event implements IModBusEvent
 {
-    /**
-     * @hidden This should only be invoked by subclasses.
-     */
-    public RegisterColorHandlersEvent()
+    @ApiStatus.Internal
+    protected RegisterColorHandlersEvent()
     {
     }
 
@@ -48,10 +46,7 @@ public abstract class RegisterColorHandlersEvent extends Event implements IModBu
     {
         private final BlockColors blockColors;
 
-        /**
-         * @hidden This should only be invoked by the client hook.
-         * @see ForgeHooksClient#onBlockColorsInit(BlockColors)
-         */
+        @ApiStatus.Internal
         public Block(BlockColors blockColors)
         {
             this.blockColors = blockColors;
@@ -95,10 +90,7 @@ public abstract class RegisterColorHandlersEvent extends Event implements IModBu
         private final ItemColors itemColors;
         private final BlockColors blockColors;
 
-        /**
-         * @hidden
-         * @see ForgeHooksClient#onItemColorsInit(ItemColors, BlockColors)
-         */
+        @ApiStatus.Internal
         public Item(ItemColors itemColors, BlockColors blockColors)
         {
             this.itemColors = itemColors;

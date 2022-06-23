@@ -12,6 +12,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.LogicalSide;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.io.File;
 import java.io.IOException;
@@ -31,7 +32,6 @@ import java.io.IOException;
 @Cancelable
 public class ScreenshotEvent extends Event
 {
-
     public static final Component DEFAULT_CANCEL_REASON = Component.literal("Screenshot canceled");
 
     private final NativeImage image;
@@ -39,17 +39,17 @@ public class ScreenshotEvent extends Event
 
     private Component resultMessage = null;
 
-    /**
-     * @hidden
-     * @see net.minecraftforge.client.ForgeHooksClient#onScreenshot(NativeImage, File)
-     */
+    @ApiStatus.Internal
     public ScreenshotEvent(NativeImage image, File screenshotFile)
     {
         this.image = image;
         this.screenshotFile = screenshotFile;
-        try {
+        try
+        {
             this.screenshotFile = screenshotFile.getCanonicalFile(); // FORGE: Fix errors on Windows with paths that include \.\
-        } catch (IOException ignored) {}
+        } catch (IOException ignored)
+        {
+        }
     }
 
     /**
@@ -109,5 +109,4 @@ public class ScreenshotEvent extends Event
     {
         return getResultMessage() != null ? getResultMessage() : DEFAULT_CANCEL_REASON;
     }
-
 }

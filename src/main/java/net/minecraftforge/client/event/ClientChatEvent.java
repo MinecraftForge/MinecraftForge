@@ -6,11 +6,11 @@
 package net.minecraftforge.client.event;
 
 import com.google.common.base.Strings;
-import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.LogicalSide;
+import org.jetbrains.annotations.ApiStatus;
 
 /**
  * Fired when the client is about to send a chat message to the server.
@@ -27,10 +27,7 @@ public class ClientChatEvent extends Event
     private String message;
     private final String originalMessage;
 
-    /**
-     * @hidden
-     * @see ForgeHooksClient#onClientSendMessage(String)
-     */
+    @ApiStatus.Internal
     public ClientChatEvent(String message)
     {
         this.setMessage(message);

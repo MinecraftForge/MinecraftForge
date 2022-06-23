@@ -10,7 +10,6 @@ import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.ModelManager;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.model.geometry.IGeometryLoader;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
@@ -18,6 +17,7 @@ import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.event.IModBusEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.util.Map;
 import java.util.Set;
@@ -25,8 +25,13 @@ import java.util.Set;
 /**
  * Houses events related to models.
  */
-public class ModelEvent extends Event
+public abstract class ModelEvent extends Event
 {
+    @ApiStatus.Internal
+    protected ModelEvent()
+    {
+    }
+
     /**
      * Fired when the {@link ModelManager} is notified of the resource manager reloading.
      * Called after model registry is setup, but before it's passed to BlockModelShapes.
@@ -42,10 +47,7 @@ public class ModelEvent extends Event
         private final Map<ResourceLocation, BakedModel> models;
         private final ModelBakery modelBakery;
 
-        /**
-         * @hidden
-         * @see ForgeHooksClient#onModelBake(ModelManager, Map, ModelBakery)
-         */
+        @ApiStatus.Internal
         public BakingCompleted(ModelManager modelManager, Map<ResourceLocation, BakedModel> models, ModelBakery modelBakery)
         {
             this.modelManager = modelManager;
@@ -91,6 +93,7 @@ public class ModelEvent extends Event
     {
         private final Set<ResourceLocation> models;
 
+        @ApiStatus.Internal
         public RegisterAdditional(Set<ResourceLocation> models)
         {
             this.models = models;
@@ -117,6 +120,7 @@ public class ModelEvent extends Event
     {
         private final Map<ResourceLocation, IGeometryLoader<?>> loaders;
 
+        @ApiStatus.Internal
         public RegisterGeometryLoaders(Map<ResourceLocation, IGeometryLoader<?>> loaders)
         {
             this.loaders = loaders;

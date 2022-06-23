@@ -15,6 +15,7 @@ import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.event.IModBusEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.RegisterEvent;
+import org.jetbrains.annotations.ApiStatus;
 
 /**
  * Fired for registering particle providers at the appropriate time.
@@ -27,13 +28,11 @@ import net.minecraftforge.registries.RegisterEvent;
  * <p>This event is fired on the {@linkplain FMLJavaModLoadingContext#getModEventBus() mod-specific event bus},
  * only on the {@linkplain LogicalSide#CLIENT logical client}. </p>
  */
-public class RegisterParticleProvidersEvent extends Event implements IModBusEvent {
-
+public class RegisterParticleProvidersEvent extends Event implements IModBusEvent
+{
     private final ParticleEngine particleEngine;
 
-    /**
-     * @hidden
-     */
+    @ApiStatus.Internal
     public RegisterParticleProvidersEvent(ParticleEngine particleEngine)
     {
         this.particleEngine = particleEngine;

@@ -7,11 +7,11 @@ package net.minecraftforge.client.event;
 
 import net.minecraft.client.multiplayer.PlayerInfo;
 import net.minecraft.world.level.GameType;
-import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.LogicalSide;
+import org.jetbrains.annotations.ApiStatus;
 
 /**
  * Fired when the client player is notified of a change of {@link GameType} from the server.
@@ -27,10 +27,7 @@ public class ClientPlayerChangeGameTypeEvent extends Event
     private final GameType currentGameType;
     private final GameType newGameType;
 
-    /**
-     * @hidden
-     * @see ForgeHooksClient#onClientChangeGameType(PlayerInfo, GameType, GameType)
-     */
+    @ApiStatus.Internal
     public ClientPlayerChangeGameTypeEvent(PlayerInfo info, GameType currentGameType, GameType newGameType)
     {
         this.info = info;

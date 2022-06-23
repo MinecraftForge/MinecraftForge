@@ -5,19 +5,16 @@
 
 package net.minecraftforge.client.event;
 
-import net.minecraft.client.Minecraft;
+import com.mojang.blaze3d.shaders.FogShape;
 import net.minecraft.client.Camera;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.world.level.material.FogType;
-import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.renderer.FogRenderer;
-import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.LogicalSide;
-
-import com.mojang.blaze3d.shaders.FogShape;
+import org.jetbrains.annotations.ApiStatus;
 
 /**
  * Fired for hooking into the entity view rendering in {@link GameRenderer}.
@@ -38,9 +35,7 @@ public abstract class ViewportEvent extends Event
     private final Camera camera;
     private final double partialTick;
 
-    /**
-     * @hidden
-     */
+    @ApiStatus.Internal
     public ViewportEvent(GameRenderer renderer, Camera camera, double partialTick)
     {
         this.renderer = renderer;
@@ -89,10 +84,7 @@ public abstract class ViewportEvent extends Event
         private float nearPlaneDistance;
         private FogShape fogShape;
 
-        /**
-         * @hidden
-         * @see ForgeHooksClient#onFogRender(FogType, Camera, float, float, float, FogShape)
-         */
+        @ApiStatus.Internal
         public RenderFog(FogType type, Camera camera, float partialTicks, float nearPlaneDistance, float farPlaneDistance, FogShape fogShape)
         {
             super(Minecraft.getInstance().gameRenderer, camera, partialTicks);
@@ -201,10 +193,7 @@ public abstract class ViewportEvent extends Event
         private float green;
         private float blue;
 
-        /**
-         * @hidden
-         * @see FogRenderer#setupColor(Camera, float, ClientLevel, int, float)
-         */
+        @ApiStatus.Internal
         public ComputeFogColor(Camera camera, float partialTicks, float red, float green, float blue)
         {
             super(Minecraft.getInstance().gameRenderer, camera, partialTicks);
@@ -216,33 +205,56 @@ public abstract class ViewportEvent extends Event
         /**
          * {@return the red color value of the fog}
          */
-        public float getRed() { return red; }
+        public float getRed()
+        {
+            return red;
+        }
+
         /**
          * Sets the new red color value of the fog.
          *
          * @param red the new red color value
          */
-        public void setRed(float red) { this.red = red; }
+        public void setRed(float red)
+        {
+            this.red = red;
+        }
+
         /**
          * {@return the green color value of the fog}
          */
-        public float getGreen() { return green; }
+        public float getGreen()
+        {
+            return green;
+        }
+
         /**
          * Sets the new green color value of the fog.
          *
          * @param green the new blue color value
          */
-        public void setGreen(float green) { this.green = green; }
+        public void setGreen(float green)
+        {
+            this.green = green;
+        }
+
         /**
          * {@return the blue color value of the fog}
          */
-        public float getBlue() { return blue; }
+        public float getBlue()
+        {
+            return blue;
+        }
+
         /**
          * Sets the new blue color value of the fog.
          *
          * @param blue the new blue color value
          */
-        public void setBlue(float blue) { this.blue = blue; }
+        public void setBlue(float blue)
+        {
+            this.blue = blue;
+        }
     }
 
     /**
@@ -260,10 +272,7 @@ public abstract class ViewportEvent extends Event
         private float pitch;
         private float roll;
 
-        /**
-         * @hidden
-         * @see ForgeHooksClient#onCameraSetup(GameRenderer, Camera, float)
-         */
+        @ApiStatus.Internal
         public ComputeCameraAngles(GameRenderer renderer, Camera camera, double renderPartialTicks, float yaw, float pitch, float roll)
         {
             super(renderer, camera, renderPartialTicks);
@@ -275,33 +284,56 @@ public abstract class ViewportEvent extends Event
         /**
          * {@return the yaw of the player's camera}
          */
-        public float getYaw() { return yaw; }
+        public float getYaw()
+        {
+            return yaw;
+        }
+
         /**
          * Sets the yaw of the player's camera.
          *
          * @param yaw the new yaw
          */
-        public void setYaw(float yaw) { this.yaw = yaw; }
+        public void setYaw(float yaw)
+        {
+            this.yaw = yaw;
+        }
+
         /**
          * {@return the pitch of the player's camera}
          */
-        public float getPitch() { return pitch; }
+        public float getPitch()
+        {
+            return pitch;
+        }
+
         /**
          * Sets the pitch of the player's camera.
          *
          * @param pitch the new pitch
          */
-        public void setPitch(float pitch) { this.pitch = pitch; }
+        public void setPitch(float pitch)
+        {
+            this.pitch = pitch;
+        }
+
         /**
          * {@return the roll of the player's camera}
          */
-        public float getRoll() { return roll; }
+        public float getRoll()
+        {
+            return roll;
+        }
+
         /**
          * Sets the roll of the player's camera.
          *
          * @param roll the new roll
          */
-        public void setRoll(float roll) { this.roll = roll; }
+        public void setRoll(float roll)
+        {
+            this.roll = roll;
+        }
     }
 
     /**
@@ -319,11 +351,9 @@ public abstract class ViewportEvent extends Event
     {
         private double fov;
 
-        /**
-         * @hidden
-         * @see ForgeHooksClient#getFieldOfView(GameRenderer, Camera, double, double)
-         */
-        public ComputeFov(GameRenderer renderer, Camera camera, double renderPartialTicks, double fov) {
+        @ApiStatus.Internal
+        public ComputeFov(GameRenderer renderer, Camera camera, double renderPartialTicks, double fov)
+        {
             super(renderer, camera, renderPartialTicks);
             this.setFOV(fov);
         }
@@ -331,7 +361,8 @@ public abstract class ViewportEvent extends Event
         /**
          * {@return the raw field of view value}
          */
-        public double getFOV() {
+        public double getFOV()
+        {
             return fov;
         }
 
@@ -340,9 +371,9 @@ public abstract class ViewportEvent extends Event
          *
          * @param fov the new FOV value
          */
-        public void setFOV(double fov) {
+        public void setFOV(double fov)
+        {
             this.fov = fov;
         }
     }
-
 }

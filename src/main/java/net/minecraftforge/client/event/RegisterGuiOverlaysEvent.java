@@ -15,6 +15,7 @@ import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.event.IModBusEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -34,6 +35,7 @@ public class RegisterGuiOverlaysEvent extends Event implements IModBusEvent
     private final Map<ResourceLocation, IGuiOverlay> overlays;
     private final List<ResourceLocation> orderedOverlays;
 
+    @ApiStatus.Internal
     public RegisterGuiOverlaysEvent(Map<ResourceLocation, IGuiOverlay> overlays, List<ResourceLocation> orderedOverlays)
     {
         this.overlays = overlays;

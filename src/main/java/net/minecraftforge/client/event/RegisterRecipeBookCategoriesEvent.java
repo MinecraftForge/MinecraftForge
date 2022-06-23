@@ -15,6 +15,7 @@ import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.event.IModBusEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.util.List;
 import java.util.Map;
@@ -34,6 +35,7 @@ public class RegisterRecipeBookCategoriesEvent extends Event implements IModBusE
     private final Map<RecipeBookType, ImmutableList<RecipeBookCategories>> typeCategories;
     private final Map<RecipeType<?>, Function<Recipe<?>, RecipeBookCategories>> recipeCategoryLookups;
 
+    @ApiStatus.Internal
     public RegisterRecipeBookCategoriesEvent(
             Map<RecipeBookCategories, ImmutableList<RecipeBookCategories>> aggregateCategories,
             Map<RecipeBookType, ImmutableList<RecipeBookCategories>> typeCategories,
@@ -67,5 +69,4 @@ public class RegisterRecipeBookCategoriesEvent extends Event implements IModBusE
     {
         recipeCategoryLookups.put(type, lookup);
     }
-
 }

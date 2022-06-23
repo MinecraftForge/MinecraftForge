@@ -6,15 +6,16 @@
 package net.minecraftforge.client.event;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.entity.LivingEntityRenderer;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
-import net.minecraft.client.renderer.entity.LivingEntityRenderer;
-import net.minecraft.client.model.EntityModel;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.fml.LogicalSide;
+import org.jetbrains.annotations.ApiStatus;
 
 /**
  * Fired when a {@link LivingEntity} is rendered.
@@ -25,7 +26,6 @@ import net.minecraftforge.fml.LogicalSide;
  *
  * @param <T> the living entity that is being rendered
  * @param <M> the model for the living entity
- *
  * @see RenderLivingEvent.Pre
  * @see RenderLivingEvent.Post
  * @see RenderPlayerEvent
@@ -33,7 +33,6 @@ import net.minecraftforge.fml.LogicalSide;
  */
 public abstract class RenderLivingEvent<T extends LivingEntity, M extends EntityModel<T>> extends Event
 {
-
     private final LivingEntity entity;
     private final LivingEntityRenderer<T, M> renderer;
     private final float partialTick;
@@ -41,11 +40,9 @@ public abstract class RenderLivingEvent<T extends LivingEntity, M extends Entity
     private final MultiBufferSource multiBufferSource;
     private final int packedLight;
 
-    /**
-     * @hidden
-     */
-    public RenderLivingEvent(LivingEntity entity, LivingEntityRenderer<T, M> renderer, float partialTick, PoseStack poseStack,
-                             MultiBufferSource multiBufferSource, int packedLight)
+    @ApiStatus.Internal
+    protected RenderLivingEvent(LivingEntity entity, LivingEntityRenderer<T, M> renderer, float partialTick, PoseStack poseStack,
+                                MultiBufferSource multiBufferSource, int packedLight)
     {
         this.entity = entity;
         this.renderer = renderer;
@@ -58,29 +55,52 @@ public abstract class RenderLivingEvent<T extends LivingEntity, M extends Entity
     /**
      * @return the living entity being rendered
      */
-    public LivingEntity getEntity() { return entity; }
+    public LivingEntity getEntity()
+    {
+        return entity;
+    }
+
     /**
      * @return the renderer for the living entity
      */
-    public LivingEntityRenderer<T, M> getRenderer() { return renderer; }
+    public LivingEntityRenderer<T, M> getRenderer()
+    {
+        return renderer;
+    }
+
     /**
      * {@return the partial tick}
      */
-    public float getPartialTick() { return partialTick; }
+    public float getPartialTick()
+    {
+        return partialTick;
+    }
+
     /**
      * {@return the pose stack used for rendering}
      */
-    public PoseStack getPoseStack() { return poseStack; }
+    public PoseStack getPoseStack()
+    {
+        return poseStack;
+    }
+
     /**
      * {@return the source of rendering buffers}
      */
-    public MultiBufferSource getMultiBufferSource() { return multiBufferSource; }
+    public MultiBufferSource getMultiBufferSource()
+    {
+        return multiBufferSource;
+    }
+
     /**
      * {@return the amount of packed (sky and block) light for rendering}
      *
      * @see LightTexture
      */
-    public int getPackedLight() { return packedLight; }
+    public int getPackedLight()
+    {
+        return packedLight;
+    }
 
     /**
      * Fired <b>before</b> an entity is rendered.
@@ -99,10 +119,9 @@ public abstract class RenderLivingEvent<T extends LivingEntity, M extends Entity
     @Cancelable
     public static class Pre<T extends LivingEntity, M extends EntityModel<T>> extends RenderLivingEvent<T, M>
     {
-        /**
-         * @hidden
-         */
-        public Pre(LivingEntity entity, LivingEntityRenderer<T, M> renderer, float partialTick, PoseStack poseStack, MultiBufferSource multiBufferSource, int packedLight) {
+        @ApiStatus.Internal
+        public Pre(LivingEntity entity, LivingEntityRenderer<T, M> renderer, float partialTick, PoseStack poseStack, MultiBufferSource multiBufferSource, int packedLight)
+        {
             super(entity, renderer, partialTick, poseStack, multiBufferSource, packedLight);
         }
     }
@@ -120,10 +139,9 @@ public abstract class RenderLivingEvent<T extends LivingEntity, M extends Entity
      */
     public static class Post<T extends LivingEntity, M extends EntityModel<T>> extends RenderLivingEvent<T, M>
     {
-        /**
-         * @hidden
-         */
-        public Post(LivingEntity entity, LivingEntityRenderer<T, M> renderer, float partialTick, PoseStack poseStack, MultiBufferSource multiBufferSource, int packedLight) {
+        @ApiStatus.Internal
+        public Post(LivingEntity entity, LivingEntityRenderer<T, M> renderer, float partialTick, PoseStack poseStack, MultiBufferSource multiBufferSource, int packedLight)
+        {
             super(entity, renderer, partialTick, poseStack, multiBufferSource, packedLight);
         }
     }

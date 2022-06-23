@@ -10,6 +10,7 @@ import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.event.IModBusEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import org.jetbrains.annotations.ApiStatus;
 
 /**
  * Fired when the {@link SoundEngine} is constructed or (re)loaded, such as during game initialization or when the sound
@@ -22,9 +23,7 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
  */
 public class SoundEngineLoadEvent extends SoundEvent implements IModBusEvent
 {
-    /**
-     * @hidden
-     */
+    @ApiStatus.Internal
     public SoundEngineLoadEvent(SoundEngine manager)
     {
         super(manager);

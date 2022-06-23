@@ -11,6 +11,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.LogicalSide;
+import org.jetbrains.annotations.ApiStatus;
 
 /**
  * Fired when the HUD is rendered to the screen.
@@ -25,7 +26,8 @@ public abstract class RenderGuiEvent extends Event
     private final PoseStack poseStack;
     private final float partialTick;
 
-    public RenderGuiEvent(Window window, PoseStack poseStack, float partialTick)
+    @ApiStatus.Internal
+    protected RenderGuiEvent(Window window, PoseStack poseStack, float partialTick)
     {
         this.window = window;
         this.poseStack = poseStack;
@@ -62,9 +64,7 @@ public abstract class RenderGuiEvent extends Event
     @Cancelable
     public static class Pre extends RenderGuiEvent
     {
-        /**
-         * @hidden
-         */
+        @ApiStatus.Internal
         public Pre(Window window, PoseStack poseStack, float partialTick)
         {
             super(window, poseStack, partialTick);
@@ -81,9 +81,7 @@ public abstract class RenderGuiEvent extends Event
      */
     public static class Post extends RenderGuiEvent
     {
-        /**
-         * @hidden
-         */
+        @ApiStatus.Internal
         public Post(Window window, PoseStack poseStack, float partialTick)
         {
             super(window, poseStack, partialTick);

@@ -14,6 +14,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.LogicalSide;
+import org.jetbrains.annotations.ApiStatus;
 
 /**
  * Fired to allow mods to register client commands.
@@ -35,14 +36,10 @@ import net.minecraftforge.fml.LogicalSide;
  */
 public class RegisterClientCommandsEvent extends Event
 {
-
     private final CommandDispatcher<CommandSourceStack> dispatcher;
     private final CommandBuildContext context;
 
-    /**
-     * @hidden
-     * @see net.minecraftforge.client.ClientCommandHandler#mergeServerCommands(CommandDispatcher, CommandBuildContext)
-     */
+    @ApiStatus.Internal
     public RegisterClientCommandsEvent(CommandDispatcher<CommandSourceStack> dispatcher, CommandBuildContext context)
     {
         this.dispatcher = dispatcher;

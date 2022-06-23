@@ -14,6 +14,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.LogicalSide;
+import org.jetbrains.annotations.ApiStatus;
 
 /**
  * Fired before the player's arm is rendered in first person. This is a more targeted version of {@link RenderHandEvent},
@@ -35,10 +36,7 @@ public class RenderArmEvent extends Event
     private final AbstractClientPlayer player;
     private final HumanoidArm arm;
 
-    /**
-     * @hidden
-     * @see net.minecraftforge.client.ForgeHooksClient#renderSpecificFirstPersonArm(PoseStack, MultiBufferSource, int, AbstractClientPlayer, HumanoidArm)
-     */
+    @ApiStatus.Internal
     public RenderArmEvent(PoseStack poseStack, MultiBufferSource multiBufferSource, int packedLight, AbstractClientPlayer player, HumanoidArm arm)
     {
         this.poseStack = poseStack;

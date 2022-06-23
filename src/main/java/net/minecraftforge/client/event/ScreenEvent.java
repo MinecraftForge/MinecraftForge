@@ -5,27 +5,25 @@
 
 package net.minecraftforge.client.event;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.function.Consumer;
-
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.MouseHandler;
 import net.minecraft.client.gui.components.events.GuiEventListener;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.EffectRenderingInventoryScreen;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraft.client.gui.screens.Screen;
-
-import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.LogicalSide;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.function.Consumer;
 
 /**
  * Fired on different events/actions when a {@link Screen} is active and visible.
@@ -41,14 +39,12 @@ import org.lwjgl.glfw.GLFW;
  * @see KeyInput
  */
 @OnlyIn(Dist.CLIENT)
-public class ScreenEvent extends Event
+public abstract class ScreenEvent extends Event
 {
     private final Screen screen;
 
-    /**
-     * @hidden
-     */
-    public ScreenEvent(Screen screen)
+    @ApiStatus.Internal
+    protected ScreenEvent(Screen screen)
     {
         this.screen = Objects.requireNonNull(screen);
     }
@@ -72,23 +68,22 @@ public class ScreenEvent extends Event
      * @see Init.Pre
      * @see Init.Post
      */
-    public static class Init extends ScreenEvent
+    public static abstract class Init extends ScreenEvent
     {
         private final Consumer<GuiEventListener> add;
         private final Consumer<GuiEventListener> remove;
 
         private final List<GuiEventListener> listenerList;
 
-        /**
-         * @hidden
-         */
-        public Init(Screen screen, List<GuiEventListener> listenerList, Consumer<GuiEventListener> add, Consumer<GuiEventListener> remove)
+        @ApiStatus.Internal
+        protected Init(Screen screen, List<GuiEventListener> listenerList, Consumer<GuiEventListener> add, Consumer<GuiEventListener> remove)
         {
             super(screen);
             this.listenerList = Collections.unmodifiableList(listenerList);
             this.add = add;
             this.remove = remove;
         }
+
         /**
          * {@return unmodifiable view of list of event listeners on the screen}
          */
@@ -130,9 +125,7 @@ public class ScreenEvent extends Event
         @Cancelable
         public static class Pre extends Init
         {
-            /**
-             * @hidden
-             */
+            @ApiStatus.Internal
             public Pre(Screen screen, List<GuiEventListener> list, Consumer<GuiEventListener> add, Consumer<GuiEventListener> remove)
             {
                 super(screen, list, add, remove);
@@ -149,9 +142,7 @@ public class ScreenEvent extends Event
          */
         public static class Post extends Init
         {
-            /**
-             * @hidden
-             */
+            @ApiStatus.Internal
             public Post(Screen screen, List<GuiEventListener> list, Consumer<GuiEventListener> add, Consumer<GuiEventListener> remove)
             {
                 super(screen, list, add, remove);
@@ -166,18 +157,15 @@ public class ScreenEvent extends Event
      * @see Render.Pre
      * @see Render.Post
      */
-    public static class Render extends ScreenEvent
+    public static abstract class Render extends ScreenEvent
     {
         private final PoseStack poseStack;
         private final int mouseX;
         private final int mouseY;
         private final float partialTick;
 
-        /**
-         * @hidden
-         * @see net.minecraftforge.client.ForgeHooksClient#drawScreen(Screen, PoseStack, int, int, float)
-         */
-        public Render(Screen screen, PoseStack poseStack, int mouseX, int mouseY, float partialTick)
+        @ApiStatus.Internal
+        protected Render(Screen screen, PoseStack poseStack, int mouseX, int mouseY, float partialTick)
         {
             super(screen);
             this.poseStack = poseStack;
@@ -230,9 +218,7 @@ public class ScreenEvent extends Event
         @Cancelable
         public static class Pre extends Render
         {
-            /**
-             * @hidden
-             */
+            @ApiStatus.Internal
             public Pre(Screen screen, PoseStack poseStack, int mouseX, int mouseY, float partialTick)
             {
                 super(screen, poseStack, mouseX, mouseY, partialTick);
@@ -249,9 +235,7 @@ public class ScreenEvent extends Event
          */
         public static class Post extends Render
         {
-            /**
-             * @hidden
-             */
+            @ApiStatus.Internal
             public Post(Screen screen, PoseStack poseStack, int mouseX, int mouseY, float partialTick)
             {
                 super(screen, poseStack, mouseX, mouseY, partialTick);
@@ -272,9 +256,7 @@ public class ScreenEvent extends Event
     {
         private final PoseStack poseStack;
 
-        /**
-         * @hidden
-         */
+        @ApiStatus.Internal
         public BackgroundRendered(Screen screen, PoseStack poseStack)
         {
             super(screen);
@@ -306,9 +288,7 @@ public class ScreenEvent extends Event
         private final int availableSpace;
         private boolean compact;
 
-        /**
-         * @hidden For internal use only.
-         */
+        @ApiStatus.Internal
         public RenderInventoryMobEffects(Screen screen, int availableSpace, boolean compact)
         {
             super(screen);
@@ -350,15 +330,13 @@ public class ScreenEvent extends Event
      * @see MouseDragged
      * @see MouseScrolled
      */
-    public static abstract class MouseInput extends ScreenEvent
+    private static abstract class MouseInput extends ScreenEvent
     {
         private final double mouseX;
         private final double mouseY;
 
-        /**
-         * @hidden
-         */
-        public MouseInput(Screen screen, double mouseX, double mouseY)
+        @ApiStatus.Internal
+        protected MouseInput(Screen screen, double mouseX, double mouseY)
         {
             super(screen);
             this.mouseX = mouseX;
@@ -393,9 +371,7 @@ public class ScreenEvent extends Event
     {
         private final int button;
 
-        /**
-         * @hidden
-         */
+        @ApiStatus.Internal
         public MouseButtonPressed(Screen screen, double mouseX, double mouseY, int button)
         {
             super(screen, mouseX, mouseY);
@@ -426,10 +402,7 @@ public class ScreenEvent extends Event
         @Cancelable
         public static class Pre extends MouseButtonPressed
         {
-            /**
-             * @hidden
-             * @see ForgeHooksClient#onScreenMouseClickedPre(Screen, double, double, int)
-             */
+            @ApiStatus.Internal
             public Pre(Screen screen, double mouseX, double mouseY, int button)
             {
                 super(screen, mouseX, mouseY, button);
@@ -456,10 +429,7 @@ public class ScreenEvent extends Event
         {
             private final boolean handled;
 
-            /**
-             * @hidden
-             * @see ForgeHooksClient#onScreenMouseClickedPost(Screen, double, double, int, boolean)
-             */
+            @ApiStatus.Internal
             public Post(Screen screen, double mouseX, double mouseY, int button, boolean handled)
             {
                 super(screen, mouseX, mouseY, button);
@@ -487,9 +457,7 @@ public class ScreenEvent extends Event
     {
         private final int button;
 
-        /**
-         * @hidden
-         */
+        @ApiStatus.Internal
         public MouseButtonReleased(Screen screen, double mouseX, double mouseY, int button)
         {
             super(screen, mouseX, mouseY);
@@ -520,10 +488,7 @@ public class ScreenEvent extends Event
         @Cancelable
         public static class Pre extends MouseButtonReleased
         {
-            /**
-             * @hidden
-             * @see ForgeHooksClient#onScreenMouseReleasedPre(Screen, double, double, int)
-             */
+            @ApiStatus.Internal
             public Pre(Screen screen, double mouseX, double mouseY, int button)
             {
                 super(screen, mouseX, mouseY, button);
@@ -550,10 +515,7 @@ public class ScreenEvent extends Event
         {
             private final boolean handled;
 
-            /**
-             * @hidden
-             * @see ForgeHooksClient#onScreenMouseReleasedPost(Screen, double, double, int, boolean)
-             */
+            @ApiStatus.Internal
             public Post(Screen screen, double mouseX, double mouseY, int button, boolean handled)
             {
                 super(screen, mouseX, mouseY, button);
@@ -583,9 +545,7 @@ public class ScreenEvent extends Event
         private final double dragX;
         private final double dragY;
 
-        /**
-         * @hidden
-         */
+        @ApiStatus.Internal
         public MouseDragged(Screen screen, double mouseX, double mouseY, int mouseButton, double dragX, double dragY)
         {
             super(screen, mouseX, mouseY);
@@ -634,10 +594,7 @@ public class ScreenEvent extends Event
         @Cancelable
         public static class Pre extends MouseDragged
         {
-            /**
-             * @hidden
-             * @see ForgeHooksClient#onScreenMouseDragPre(Screen, double, double, int, double, double)
-             */
+            @ApiStatus.Internal
             public Pre(Screen screen, double mouseX, double mouseY, int mouseButton, double dragX, double dragY)
             {
                 super(screen, mouseX, mouseY, mouseButton, dragX, dragY);
@@ -648,19 +605,15 @@ public class ScreenEvent extends Event
          * Fired <b>after</b> the mouse drag is handled, if not handled by the screen
          * and the corresponding {@link MouseDragged.Pre} is not cancelled.
          *
-         * <p>This event is {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}.
+         * <p>This event is not {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}.
          * If the event is cancelled, the mouse drag will be set as handled. </p>
          *
          * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
          * only on the {@linkplain LogicalSide#CLIENT logical client}. </p>
          */
-        @Cancelable
         public static class Post extends MouseDragged
         {
-            /**
-             * @hidden
-             * @see ForgeHooksClient#onScreenMouseDragPost(Screen, double, double, int, double, double)
-             */
+            @ApiStatus.Internal
             public Post(Screen screen, double mouseX, double mouseY, int mouseButton, double dragX, double dragY)
             {
                 super(screen, mouseX, mouseY, mouseButton, dragX, dragY);
@@ -679,9 +632,7 @@ public class ScreenEvent extends Event
     {
         private final double scrollDelta;
 
-        /**
-         * @hidden
-         */
+        @ApiStatus.Internal
         public MouseScrolled(Screen screen, double mouseX, double mouseY, double scrollDelta)
         {
             super(screen, mouseX, mouseY);
@@ -709,10 +660,7 @@ public class ScreenEvent extends Event
         @Cancelable
         public static class Pre extends MouseScrolled
         {
-            /**
-             * @hidden
-             * @see ForgeHooksClient#onScreenMouseScrollPre(MouseHandler, Screen, double)
-             */
+            @ApiStatus.Internal
             public Pre(Screen screen, double mouseX, double mouseY, double scrollDelta)
             {
                 super(screen, mouseX, mouseY, scrollDelta);
@@ -723,19 +671,15 @@ public class ScreenEvent extends Event
          * Fired <b>after</b> the mouse scroll is handled, if not handled by the screen
          * and the corresponding {@link MouseScrolled.Pre} is not cancelled.
          *
-         * <p>This event is {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}.
+         * <p>This event is not {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}.
          * If the event is cancelled, the mouse scroll will be set as handled. </p>
          *
          * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
          * only on the {@linkplain LogicalSide#CLIENT logical client}. </p>
          */
-        @Cancelable
         public static class Post extends MouseScrolled
         {
-            /**
-             * @hidden
-             * @see ForgeHooksClient#onScreenMouseScrollPost(MouseHandler, Screen, double)
-             */
+            @ApiStatus.Internal
             public Post(Screen screen, double mouseX, double mouseY, double scrollDelta)
             {
                 super(screen, mouseX, mouseY, scrollDelta);
@@ -752,16 +696,14 @@ public class ScreenEvent extends Event
      * @see InputConstants
      * @see <a href="https://www.glfw.org/docs/latest/input_guide.html#input_key" target="_top">the online GLFW documentation</a>
      */
-    public static abstract class KeyInput extends ScreenEvent
+    private static abstract class KeyInput extends ScreenEvent
     {
         private final int keyCode;
         private final int scanCode;
         private final int modifiers;
 
-        /**
-         * @hidden
-         */
-        public KeyInput(Screen screen, int keyCode, int scanCode, int modifiers)
+        @ApiStatus.Internal
+        protected KeyInput(Screen screen, int keyCode, int scanCode, int modifiers)
         {
             super(screen);
             this.keyCode = keyCode;
@@ -783,7 +725,7 @@ public class ScreenEvent extends Event
 
         /**
          * {@return the platform-specific scan code}
-         *
+         * <p>
          * The scan code is unique for every key, regardless of whether it has a key code.
          * Scan codes are platform-specific but consistent over time, so keys will have different scan codes depending
          * on the platform but they are safe to save to disk as custom key bindings.
@@ -821,12 +763,10 @@ public class ScreenEvent extends Event
      */
     public static abstract class KeyPressed extends KeyInput
     {
-        /**
-         * @hidden
-         */
+        @ApiStatus.Internal
         public KeyPressed(Screen screen, int keyCode, int scanCode, int modifiers)
         {
-            super(screen,  keyCode, scanCode, modifiers);
+            super(screen, keyCode, scanCode, modifiers);
         }
 
         /**
@@ -842,10 +782,7 @@ public class ScreenEvent extends Event
         @Cancelable
         public static class Pre extends KeyPressed
         {
-            /**
-             * @hidden
-             * @see ForgeHooksClient#onScreenKeyPressedPre(Screen, int, int, int)
-             */
+            @ApiStatus.Internal
             public Pre(Screen screen, int keyCode, int scanCode, int modifiers)
             {
                 super(screen, keyCode, scanCode, modifiers);
@@ -865,10 +802,7 @@ public class ScreenEvent extends Event
         @Cancelable
         public static class Post extends KeyPressed
         {
-            /**
-             * @hidden
-             * @see ForgeHooksClient#onScreenKeyPressedPost(Screen, int, int, int)
-             */
+            @ApiStatus.Internal
             public Post(Screen screen, int keyCode, int scanCode, int modifiers)
             {
                 super(screen, keyCode, scanCode, modifiers);
@@ -885,9 +819,7 @@ public class ScreenEvent extends Event
      */
     public static abstract class KeyReleased extends KeyInput
     {
-        /**
-         * @hidden
-         */
+        @ApiStatus.Internal
         public KeyReleased(Screen screen, int keyCode, int scanCode, int modifiers)
         {
             super(screen, keyCode, scanCode, modifiers);
@@ -906,10 +838,7 @@ public class ScreenEvent extends Event
         @Cancelable
         public static class Pre extends KeyReleased
         {
-            /**
-             * @hidden
-             * @see ForgeHooksClient#onScreenKeyReleasedPre(Screen, int, int, int)
-             */
+            @ApiStatus.Internal
             public Pre(Screen screen, int keyCode, int scanCode, int modifiers)
             {
                 super(screen, keyCode, scanCode, modifiers);
@@ -929,10 +858,7 @@ public class ScreenEvent extends Event
         @Cancelable
         public static class Post extends KeyReleased
         {
-            /**
-             * @hidden
-             * @see ForgeHooksClient#onScreenKeyReleasedPost(Screen, int, int, int)
-             */
+            @ApiStatus.Internal
             public Post(Screen screen, int keyCode, int scanCode, int modifiers)
             {
                 super(screen, keyCode, scanCode, modifiers);
@@ -953,9 +879,7 @@ public class ScreenEvent extends Event
         private final char codePoint;
         private final int modifiers;
 
-        /**
-         * @hidden
-         */
+        @ApiStatus.Internal
         public CharacterTyped(Screen screen, char codePoint, int modifiers)
         {
             super(screen);
@@ -1000,10 +924,7 @@ public class ScreenEvent extends Event
         @Cancelable
         public static class Pre extends CharacterTyped
         {
-            /**
-             * @hidden
-             * @see ForgeHooksClient#onScreenCharTypedPre(Screen, char, int)
-             */
+            @ApiStatus.Internal
             public Pre(Screen screen, char codePoint, int modifiers)
             {
                 super(screen, codePoint, modifiers);
@@ -1020,13 +941,9 @@ public class ScreenEvent extends Event
          * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
          * only on the {@linkplain LogicalSide#CLIENT logical client}. </p>
          */
-        @Cancelable
         public static class Post extends CharacterTyped
         {
-            /**
-             * @hidden
-             * @see ForgeHooksClient#onScreenCharTypedPost(Screen, char, int)
-             */
+            @ApiStatus.Internal
             public Post(Screen screen, char codePoint, int modifiers)
             {
                 super(screen, codePoint, modifiers);
@@ -1053,9 +970,7 @@ public class ScreenEvent extends Event
         private final Screen currentScreen;
         private Screen newScreen;
 
-        /**
-         * @hidden
-         */
+        @ApiStatus.Internal
         public Opening(@Nullable Screen currentScreen, Screen screen)
         {
             super(screen);
@@ -1102,9 +1017,7 @@ public class ScreenEvent extends Event
      */
     public static class Closing extends ScreenEvent
     {
-        /**
-         * @hidden
-         */
+        @ApiStatus.Internal
         public Closing(Screen screen)
         {
             super(screen);

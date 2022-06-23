@@ -12,6 +12,7 @@ import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.event.IModBusEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.util.Map;
 
@@ -28,6 +29,7 @@ public class RegisterEntitySpectatorShadersEvent extends Event implements IModBu
 {
     private final Map<EntityType<?>, ResourceLocation> shaders;
 
+    @ApiStatus.Internal
     public RegisterEntitySpectatorShadersEvent(Map<EntityType<?>, ResourceLocation> shaders)
     {
         this.shaders = shaders;

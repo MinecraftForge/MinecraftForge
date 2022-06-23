@@ -14,6 +14,7 @@ import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.event.IModBusEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import org.jetbrains.annotations.ApiStatus;
 
 /**
  * Fired to allow mods to register their reload listeners on the client-side resource manager.
@@ -30,9 +31,7 @@ public class RegisterClientReloadListenersEvent extends Event implements IModBus
 {
     private final ReloadableResourceManager resourceManager;
 
-    /**
-     * @hidden
-     */
+    @ApiStatus.Internal
     public RegisterClientReloadListenersEvent(ReloadableResourceManager resourceManager)
     {
         this.resourceManager = resourceManager;

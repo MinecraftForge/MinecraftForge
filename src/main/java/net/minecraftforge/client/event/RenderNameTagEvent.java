@@ -8,13 +8,14 @@ package net.minecraftforge.client.event;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRenderer;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.Entity;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.LogicalSide;
+import org.jetbrains.annotations.ApiStatus;
 
 /**
  * Fired before an entity renderer renders the nameplate of an entity.
@@ -34,7 +35,6 @@ import net.minecraftforge.fml.LogicalSide;
 @Event.HasResult
 public class RenderNameTagEvent extends EntityEvent
 {
-
     private Component nameplateContent;
     private final Component originalContent;
     private final EntityRenderer<?> entityRenderer;
@@ -43,9 +43,7 @@ public class RenderNameTagEvent extends EntityEvent
     private final int packedLight;
     private final float partialTick;
 
-    /**
-     * @hidden
-     */
+    @ApiStatus.Internal
     public RenderNameTagEvent(Entity entity, Component content, EntityRenderer<?> entityRenderer, PoseStack poseStack, MultiBufferSource multiBufferSource, int packedLight, float partialTick)
     {
         super(entity);

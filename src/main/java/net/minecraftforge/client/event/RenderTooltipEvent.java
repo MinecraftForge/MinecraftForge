@@ -5,22 +5,23 @@
 
 package net.minecraftforge.client.event;
 
-import java.util.Collections;
-import java.util.List;
-
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.datafixers.util.Either;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
+import net.minecraft.network.chat.FormattedText;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.network.chat.FormattedText;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.LogicalSide;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Fired during tooltip rendering.
@@ -40,11 +41,8 @@ public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api
     protected Font font;
     protected final List<ClientTooltipComponent> components;
 
-
-    /**
-     * @hidden
-     */
-    public RenderTooltipEvent(@NotNull ItemStack itemStack, PoseStack poseStack, int x, int y, @NotNull Font font, @NotNull List<ClientTooltipComponent> components)
+    @ApiStatus.Internal
+    protected RenderTooltipEvent(@NotNull ItemStack itemStack, PoseStack poseStack, int x, int y, @NotNull Font font, @NotNull List<ClientTooltipComponent> components)
     {
         this.itemStack = itemStack;
         this.poseStack = poseStack;
@@ -64,11 +62,13 @@ public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api
         return itemStack;
     }
 
-
     /**
      * {@return the pose stack used for rendering}
      */
-    public PoseStack getPoseStack() { return poseStack; }
+    public PoseStack getPoseStack()
+    {
+        return poseStack;
+    }
 
     /**
      * {@return the unmodifiable list of tooltip components}
@@ -82,7 +82,7 @@ public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api
     }
 
     /**
-     *{@return the X position of the tooltip box} By default, this is the mouse X position.
+     * {@return the X position of the tooltip box} By default, this is the mouse X position.
      */
     public int getX()
     {
@@ -126,9 +126,7 @@ public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api
         private final List<Either<FormattedText, TooltipComponent>> tooltipElements;
         private int maxWidth;
 
-        /**
-         * @hidden
-         */
+        @ApiStatus.Internal
         public GatherComponents(ItemStack itemStack, int screenWidth, int screenHeight, List<Either<FormattedText, TooltipComponent>> tooltipElements, int maxWidth)
         {
             this.itemStack = itemStack;
@@ -214,9 +212,7 @@ public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api
         private final int screenWidth;
         private final int screenHeight;
 
-        /**
-         * @hidden
-         */
+        @ApiStatus.Internal
         public Pre(@NotNull ItemStack stack, PoseStack poseStack, int x, int y, int screenWidth, int screenHeight, @NotNull Font font, @NotNull List<ClientTooltipComponent> components)
         {
             super(stack, poseStack, x, y, font, components);
@@ -293,9 +289,7 @@ public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api
         private int borderStart;
         private int borderEnd;
 
-        /**
-         * @hidden
-         */
+        @ApiStatus.Internal
         public Color(@NotNull ItemStack stack, PoseStack poseStack, int x, int y, @NotNull Font fr, int background, int borderStart, int borderEnd, @NotNull List<ClientTooltipComponent> components)
         {
             super(stack, poseStack, x, y, fr, components);
@@ -323,7 +317,6 @@ public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api
         {
             return backgroundEnd;
         }
-
 
         /**
          * Sets the new color for the tooltip background. This sets both the gradient start and end color for the

@@ -11,6 +11,7 @@ import com.mojang.blaze3d.audio.Channel;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.LogicalSide;
+import org.jetbrains.annotations.ApiStatus;
 
 /**
  * Superclass for sound related events.
@@ -22,14 +23,12 @@ import net.minecraftforge.fml.LogicalSide;
  * @see PlaySoundEvent
  * @see SoundEngineLoadEvent
  */
-public class SoundEvent extends Event
+public abstract class SoundEvent extends Event
 {
     private final SoundEngine engine;
 
-    /**
-     * @hidden
-     */
-    public SoundEvent(SoundEngine engine)
+    @ApiStatus.Internal
+    protected SoundEvent(SoundEngine engine)
     {
         this.engine = engine;
     }
@@ -51,16 +50,14 @@ public class SoundEvent extends Event
      * @see PlaySoundSourceEvent
      * @see PlayStreamingSourceEvent
      */
-    public static class SoundSourceEvent extends SoundEvent
+    public static abstract class SoundSourceEvent extends SoundEvent
     {
         private final SoundInstance sound;
         private final Channel channel;
         private final String name;
 
-        /**
-         * @hidden
-         */
-        public SoundSourceEvent(SoundEngine engine, SoundInstance sound, Channel channel)
+        @ApiStatus.Internal
+        protected SoundSourceEvent(SoundEngine engine, SoundInstance sound, Channel channel)
         {
             super(engine);
             this.name = sound.getLocation().getPath();

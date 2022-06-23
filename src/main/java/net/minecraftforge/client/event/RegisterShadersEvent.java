@@ -13,6 +13,7 @@ import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.event.IModBusEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -31,9 +32,7 @@ public class RegisterShadersEvent extends Event implements IModBusEvent
     private final ResourceManager resourceManager;
     private final List<Pair<ShaderInstance, Consumer<ShaderInstance>>> shaderList;
 
-    /**
-     * @hidden
-     */
+    @ApiStatus.Internal
     public RegisterShadersEvent(ResourceManager resourceManager, List<Pair<ShaderInstance, Consumer<ShaderInstance>>> shaderList)
     {
         this.resourceManager = resourceManager;

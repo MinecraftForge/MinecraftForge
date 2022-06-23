@@ -6,11 +6,11 @@
 package net.minecraftforge.client.event;
 
 import net.minecraft.world.item.crafting.RecipeManager;
-import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.LogicalSide;
+import org.jetbrains.annotations.ApiStatus;
 
 /**
  * Fired when the {@link RecipeManager} has received and synced the recipes from the server to the client.
@@ -22,16 +22,12 @@ import net.minecraftforge.fml.LogicalSide;
  */
 public class RecipesUpdatedEvent extends Event
 {
+    private final RecipeManager recipeManager;
 
-    private final RecipeManager mgr;
-
-    /**
-     * @hidden
-     * @see ForgeHooksClient#onRecipesUpdated(RecipeManager)
-     */
-    public RecipesUpdatedEvent(RecipeManager mgr)
+    @ApiStatus.Internal
+    public RecipesUpdatedEvent(RecipeManager recipeManager)
     {
-        this.mgr = mgr;
+        this.recipeManager = recipeManager;
     }
 
     /**
@@ -39,6 +35,6 @@ public class RecipesUpdatedEvent extends Event
      */
     public RecipeManager getRecipeManager()
     {
-        return mgr;
+        return recipeManager;
     }
 }

@@ -10,6 +10,7 @@ import net.minecraft.client.sounds.SoundEngine;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.fml.LogicalSide;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -33,9 +34,7 @@ public class PlaySoundEvent extends SoundEvent
     @Nullable
     private SoundInstance sound;
 
-    /**
-     * @hidden
-     */
+    @ApiStatus.Internal
     public PlaySoundEvent(SoundEngine manager, SoundInstance sound)
     {
         super(manager);

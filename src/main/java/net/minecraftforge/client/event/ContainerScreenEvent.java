@@ -11,6 +11,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.LogicalSide;
+import org.jetbrains.annotations.ApiStatus;
 
 /**
  * Fired for hooking into {@link AbstractContainerScreen} rendering.
@@ -22,15 +23,12 @@ import net.minecraftforge.fml.LogicalSide;
  * @see RenderForeground
  * @see RenderBackground
  */
-public class ContainerScreenEvent extends Event
+public abstract class ContainerScreenEvent extends Event
 {
-
     private final AbstractContainerScreen<?> containerScreen;
 
-    /**
-     * @hidden
-     */
-    public ContainerScreenEvent(AbstractContainerScreen<?> containerScreen)
+    @ApiStatus.Internal
+    protected ContainerScreenEvent(AbstractContainerScreen<?> containerScreen)
     {
         this.containerScreen = containerScreen;
     }
@@ -61,9 +59,7 @@ public class ContainerScreenEvent extends Event
         private final int mouseX;
         private final int mouseY;
 
-        /**
-         * @hidden
-         */
+        @ApiStatus.Internal
         public RenderForeground(AbstractContainerScreen<?> guiContainer, PoseStack poseStack, int mouseX, int mouseY)
         {
             super(guiContainer);
@@ -112,9 +108,7 @@ public class ContainerScreenEvent extends Event
         private final int mouseX;
         private final int mouseY;
 
-        /**
-         * @hidden
-         */
+        @ApiStatus.Internal
         public RenderBackground(AbstractContainerScreen<?> guiContainer, PoseStack poseStack, int mouseX, int mouseY)
         {
             super(guiContainer);
