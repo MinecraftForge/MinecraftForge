@@ -73,16 +73,16 @@ public class DynamicBucketModelBuilder<T extends ModelBuilder<T>> extends Custom
         json.addProperty("fluid", fluid.toString());
 
         if (flipGas != null)
-            json.addProperty("flipGas", flipGas);
+            json.addProperty("flip_gas", flipGas);
 
         if (applyTint != null)
-            json.addProperty("applyTint", applyTint);
+            json.addProperty("apply_tint", applyTint);
 
         if (coverIsMask != null)
-            json.addProperty("coverIsMask", coverIsMask);
+            json.addProperty("cover_is_mask", coverIsMask);
 
         if (applyFluidLuminosity != null)
-            json.addProperty("applyFluidLuminosity", applyFluidLuminosity);
+            json.addProperty("apply_fluid_luminosity", applyFluidLuminosity);
 
         return json;
     }

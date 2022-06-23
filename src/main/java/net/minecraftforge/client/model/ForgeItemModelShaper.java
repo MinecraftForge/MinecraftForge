@@ -3,12 +3,9 @@
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.client;
-
-import java.util.Map;
+package net.minecraftforge.client.model;
 
 import com.google.common.collect.Maps;
-
 import net.minecraft.client.renderer.ItemModelShaper;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.ModelBakery;
@@ -21,15 +18,17 @@ import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * Wrapper around ItemModeMesher that cleans up the internal maps to respect ID remapping.
- */
-public class ItemModelMesherForge extends ItemModelShaper
-{
-    final Map<Holder.Reference<Item>, ModelResourceLocation> locations = Maps.newHashMap();
-    final Map<Holder.Reference<Item>, BakedModel> models = Maps.newHashMap();
+import java.util.Map;
 
-    public ItemModelMesherForge(ModelManager manager)
+/**
+ * Wrapper around {@link ItemModelShaper} that cleans up the internal maps to respect ID remapping.
+ */
+public class ForgeItemModelShaper extends ItemModelShaper
+{
+    private final Map<Holder.Reference<Item>, ModelResourceLocation> locations = Maps.newHashMap();
+    private final Map<Holder.Reference<Item>, BakedModel> models = Maps.newHashMap();
+
+    public ForgeItemModelShaper(ModelManager manager)
     {
         super(manager);
     }
@@ -55,19 +54,13 @@ public class ItemModelMesherForge extends ItemModelShaper
         final ModelManager manager = this.getModelManager();
         for (Map.Entry<Holder.Reference<Item>, ModelResourceLocation> e : locations.entrySet())
         {
-        	models.put(e.getKey(), manager.getModel(e.getValue()));
+            models.put(e.getKey(), manager.getModel(e.getValue()));
         }
     }
 
     public ModelResourceLocation getLocation(@NotNull ItemStack stack)
     {
         ModelResourceLocation location = locations.get(ForgeRegistries.ITEMS.getDelegateOrThrow(stack.getItem()));
-
-        if (location == null)
-        {
-            location = ModelBakery.MISSING_MODEL_LOCATION;
-        }
-
-        return location;
+        return location == null ? ModelBakery.MISSING_MODEL_LOCATION : location;
     }
 }

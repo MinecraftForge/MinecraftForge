@@ -9,7 +9,6 @@ import com.google.common.base.Preconditions;
 import com.google.gson.JsonObject;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.client.model.SeparatePerspectiveModel;
 import net.minecraftforge.client.model.generators.CustomLoaderBuilder;
 import net.minecraftforge.client.model.generators.ModelBuilder;
 import net.minecraftforge.common.data.ExistingFileHelper;
@@ -17,29 +16,29 @@ import net.minecraftforge.common.data.ExistingFileHelper;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class SeparatePerspectiveModelBuilder<T extends ModelBuilder<T>> extends CustomLoaderBuilder<T>
+public class SeparateTransformsModelBuilder<T extends ModelBuilder<T>> extends CustomLoaderBuilder<T>
 {
-    public static <T extends ModelBuilder<T>> SeparatePerspectiveModelBuilder<T> begin(T parent, ExistingFileHelper existingFileHelper)
+    public static <T extends ModelBuilder<T>> SeparateTransformsModelBuilder<T> begin(T parent, ExistingFileHelper existingFileHelper)
     {
-        return new SeparatePerspectiveModelBuilder<>(parent, existingFileHelper);
+        return new SeparateTransformsModelBuilder<>(parent, existingFileHelper);
     }
 
     private T base;
     private final Map<String, T> childModels = new LinkedHashMap<>();
 
-    protected SeparatePerspectiveModelBuilder(T parent, ExistingFileHelper existingFileHelper)
+    protected SeparateTransformsModelBuilder(T parent, ExistingFileHelper existingFileHelper)
     {
-        super(new ResourceLocation("forge:separate-perspective"), parent, existingFileHelper);
+        super(new ResourceLocation("forge:separate_transforms"), parent, existingFileHelper);
     }
 
-    public SeparatePerspectiveModelBuilder<T> base(T modelBuilder)
+    public SeparateTransformsModelBuilder<T> base(T modelBuilder)
     {
         Preconditions.checkNotNull(modelBuilder, "modelBuilder must not be null");
         base = modelBuilder;
         return this;
     }
 
-    public SeparatePerspectiveModelBuilder<T> perspective(ItemTransforms.TransformType perspective, T modelBuilder)
+    public SeparateTransformsModelBuilder<T> perspective(ItemTransforms.TransformType perspective, T modelBuilder)
     {
         Preconditions.checkNotNull(perspective, "layer must not be null");
         Preconditions.checkNotNull(modelBuilder, "modelBuilder must not be null");

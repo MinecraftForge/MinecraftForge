@@ -6,31 +6,34 @@
 package net.minecraftforge.client.model.obj;
 
 import com.google.common.collect.Maps;
-import joptsimple.internal.Strings;
 import com.mojang.math.Vector4f;
+import joptsimple.internal.Strings;
 
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
-public class MaterialLibrary
+/**
+ * An OBJ material library (MTL), composed of named {@link Material materials}.
+ */
+public class ObjMaterialLibrary
 {
-    public static final MaterialLibrary EMPTY = new MaterialLibrary();
+    public static final ObjMaterialLibrary EMPTY = new ObjMaterialLibrary();
     final Map<String, Material> materials = Maps.newHashMap();
 
-    private MaterialLibrary()
+    private ObjMaterialLibrary()
     {
     }
 
-    public MaterialLibrary(LineReader reader) throws IOException
+    public ObjMaterialLibrary(ObjTokenizer reader) throws IOException
     {
         Material currentMaterial = null;
 
         String[] line;
-        while((line = reader.readAndSplitLine(true)) != null)
+        while ((line = reader.readAndSplitLine(true)) != null)
         {
-            switch(line[0])
+            switch (line[0])
             {
                 case "newmtl":
                 {
@@ -41,16 +44,16 @@ public class MaterialLibrary
                 }
 
                 case "Ka":
-                    currentMaterial.ambientColor = OBJModel.parseVector4(line);
+                    currentMaterial.ambientColor = ObjModel.parseVector4(line);
                     break;
 
                 case "map_Ka":
                     // Ignores all options params
-                    currentMaterial.ambientColorMap = line[line.length-1];
+                    currentMaterial.ambientColorMap = line[line.length - 1];
                     break;
 
                 case "Kd":
-                    currentMaterial.diffuseColor = OBJModel.parseVector4(line);
+                    currentMaterial.diffuseColor = ObjModel.parseVector4(line);
                     break;
 
                 case "forge_TintIndex":
@@ -59,11 +62,11 @@ public class MaterialLibrary
 
                 case "map_Kd":
                     // Ignores all options params
-                    currentMaterial.diffuseColorMap = line[line.length-1];
+                    currentMaterial.diffuseColorMap = line[line.length - 1];
                     break;
 
                 case "Ks":
-                    currentMaterial.specularColor = OBJModel.parseVector4(line);
+                    currentMaterial.specularColor = ObjModel.parseVector4(line);
                     break;
 
                 case "Ns":
@@ -72,7 +75,7 @@ public class MaterialLibrary
 
                 case "map_Ks":
                     // Ignores all options params
-                    currentMaterial.specularColorMap = line[line.length-1];
+                    currentMaterial.specularColorMap = line[line.length - 1];
                     break;
 
                 case "d":
@@ -97,11 +100,11 @@ public class MaterialLibrary
     public static class Material
     {
         public final String name;
-        public Vector4f ambientColor = new Vector4f(0,0,0,1);
+        public Vector4f ambientColor = new Vector4f(0, 0, 0, 1);
         public String ambientColorMap;
-        public Vector4f diffuseColor = new Vector4f(1,1,1,1);
+        public Vector4f diffuseColor = new Vector4f(1, 1, 1, 1);
         public String diffuseColorMap;
-        public Vector4f specularColor = new Vector4f(0,0,0,1);
+        public Vector4f specularColor = new Vector4f(0, 0, 0, 1);
         public float specularHighlight = 0;
         public String specularColorMap;
 

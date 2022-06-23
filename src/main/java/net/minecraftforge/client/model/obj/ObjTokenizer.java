@@ -7,24 +7,27 @@ package net.minecraftforge.client.model.obj;
 
 import com.google.common.base.Charsets;
 import joptsimple.internal.Strings;
-import net.minecraft.server.packs.resources.Resource;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class LineReader implements AutoCloseable
+/**
+ * A tokenizer for OBJ and MTL files.<p/>
+ * Joins split lines and ignores comments.
+ */
+public class ObjTokenizer implements AutoCloseable
 {
-    InputStreamReader lineStream;
-    BufferedReader lineReader;
+    private final BufferedReader lineReader;
 
-    public LineReader(Resource resource) throws IOException {
-        this.lineStream = new InputStreamReader(resource.open(), Charsets.UTF_8);
-        this.lineReader = new BufferedReader(lineStream);
+    public ObjTokenizer(InputStream inputStream)
+    {
+        this.lineReader = new BufferedReader(new InputStreamReader(inputStream, Charsets.UTF_8));
     }
 
     @Nullable
@@ -74,9 +77,8 @@ public class LineReader implements AutoCloseable
     }
 
     @Override
-    public void close() throws Exception
+    public void close() throws IOException
     {
         lineReader.close();
-        lineStream.close();
     }
 }

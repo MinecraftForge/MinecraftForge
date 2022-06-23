@@ -72,7 +72,7 @@ public abstract class BlockStateProvider implements DataProvider {
     private static final Gson GSON = (new GsonBuilder()).setPrettyPrinting().disableHtmlEscaping().create();
 
     @VisibleForTesting
-    protected final Map<Block, IGeneratedBlockstate> registeredBlocks = new LinkedHashMap<>();
+    protected final Map<Block, IGeneratedBlockState> registeredBlocks = new LinkedHashMap<>();
 
     private final DataGenerator generator;
     private final String modid;
@@ -102,7 +102,7 @@ public abstract class BlockStateProvider implements DataProvider {
         registerStatesAndModels();
         models().generateAll(cache);
         itemModels().generateAll(cache);
-        for (Map.Entry<Block, IGeneratedBlockstate> entry : registeredBlocks.entrySet()) {
+        for (Map.Entry<Block, IGeneratedBlockState> entry : registeredBlocks.entrySet()) {
             saveBlockState(cache, entry.getValue().toJson(), entry.getKey());
         }
     }
@@ -111,7 +111,7 @@ public abstract class BlockStateProvider implements DataProvider {
 
     public VariantBlockStateBuilder getVariantBuilder(Block b) {
         if (registeredBlocks.containsKey(b)) {
-            IGeneratedBlockstate old = registeredBlocks.get(b);
+            IGeneratedBlockState old = registeredBlocks.get(b);
             Preconditions.checkState(old instanceof VariantBlockStateBuilder);
             return (VariantBlockStateBuilder) old;
         } else {
@@ -123,7 +123,7 @@ public abstract class BlockStateProvider implements DataProvider {
 
     public MultiPartBlockStateBuilder getMultipartBuilder(Block b) {
         if (registeredBlocks.containsKey(b)) {
-            IGeneratedBlockstate old = registeredBlocks.get(b);
+            IGeneratedBlockState old = registeredBlocks.get(b);
             Preconditions.checkState(old instanceof MultiPartBlockStateBuilder);
             return (MultiPartBlockStateBuilder) old;
         } else {
