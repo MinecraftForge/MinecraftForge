@@ -14,7 +14,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
  */
 public abstract class VertexConsumerWrapper implements VertexConsumer
 {
-    private final VertexConsumer parent;
+    protected final VertexConsumer parent;
 
     public VertexConsumerWrapper(VertexConsumer parent)
     {
@@ -24,37 +24,43 @@ public abstract class VertexConsumerWrapper implements VertexConsumer
     @Override
     public VertexConsumer vertex(double x, double y, double z)
     {
-        return parent.vertex(x, y, z);
+        parent.vertex(x, y, z);
+        return this;
     }
 
     @Override
     public VertexConsumer color(int r, int g, int b, int a)
     {
-        return parent.color(r, g, b, a);
+        parent.color(r, g, b, a);
+        return this;
     }
 
     @Override
     public VertexConsumer uv(float u, float v)
     {
-        return parent.uv(u, v);
+        parent.uv(u, v);
+        return this;
     }
 
     @Override
     public VertexConsumer overlayCoords(int u, int v)
     {
-        return parent.overlayCoords(u, v);
+        parent.overlayCoords(u, v);
+        return this;
     }
 
     @Override
     public VertexConsumer uv2(int u, int v)
     {
-        return parent.uv2(u, v);
+        parent.uv2(u, v);
+        return this;
     }
 
     @Override
     public VertexConsumer normal(float x, float y, float z)
     {
-        return parent.normal(x, y, z);
+        parent.normal(x, y, z);
+        return this;
     }
 
     @Override
