@@ -27,6 +27,10 @@ net/minecraft/gametest/framework/GameTestRegistry.register(Ljava/lang/reflect/Me
 net/minecraft/network/FriendlyByteBuf.writeItemStack(Lnet/minecraft/world/item/ItemStack;Z)Lnet/minecraft/network/FriendlyByteBuf;=|p_130056_,limitedTag
 net/minecraft/server/ServerAdvancementManager.<init>(Lnet/minecraft/world/level/storage/loot/PredicateManager;Lnet/minecraftforge/common/crafting/conditions/ICondition$IContext;)V=|p_136027_,context
 net/minecraft/server/dedicated/DedicatedServer.sendMessage(Lnet/minecraft/network/chat/Component;Ljava/util/UUID;)V=|message,p_108776_
+net/minecraft/server/level/DistanceManager.addRegionTicket(Lnet/minecraft/server/level/TicketType;Lnet/minecraft/world/level/ChunkPos;ILjava/lang/Object;Z)V=|p_140841_,p_140842_,p_140843_,p_140844_,forceTicks
+net/minecraft/server/level/DistanceManager.removeRegionTicket(Lnet/minecraft/server/level/TicketType;Lnet/minecraft/world/level/ChunkPos;ILjava/lang/Object;Z)V=|p_140850_,p_140851_,p_140852_,p_140853_,forceTicks
+net/minecraft/server/level/ServerChunkCache.addRegionTicket(Lnet/minecraft/server/level/TicketType;Lnet/minecraft/world/level/ChunkPos;ILjava/lang/Object;Z)V=|p_8388_,p_8389_,p_8390_,p_8391_,forceTicks
+net/minecraft/server/level/ServerChunkCache.removeRegionTicket(Lnet/minecraft/server/level/TicketType;Lnet/minecraft/world/level/ChunkPos;ILjava/lang/Object;Z)V=|p_8439_,p_8440_,p_8441_,p_8442_,forceTicks
 net/minecraft/server/level/ServerLevel.removeEntity(Lnet/minecraft/world/entity/Entity;Z)V=|p_8868_,keepData
 net/minecraft/server/level/ServerLevel.removeEntityComplete(Lnet/minecraft/world/entity/Entity;Z)V=|p_8865_,keepData
 net/minecraft/server/level/ServerLevel.removePlayer(Lnet/minecraft/server/level/ServerPlayer;Z)V=|p_8850_,keepData

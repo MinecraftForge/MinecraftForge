@@ -17,18 +17,35 @@
                 levelchunk1.m_187632_(j);
                 if (flag2 && (this.f_8335_ || this.f_8336_) && this.f_8329_.m_6857_().m_61927_(chunkpos)) {
                    NaturalSpawner.m_47029_(this.f_8329_, levelchunk1, naturalspawner$spawnstate, this.f_8336_, this.f_8335_, flag1);
-@@ -426,6 +_,14 @@
+@@ -421,11 +_,29 @@
+    }
+ 
+    public <T> void m_8387_(TicketType<T> p_8388_, ChunkPos p_8389_, int p_8390_, T p_8391_) {
+-      this.f_8327_.m_140840_(p_8388_, p_8389_, p_8390_, p_8391_);
++      addRegionTicket(p_8388_, p_8389_, p_8390_, p_8391_, false);
++   }
++
++   public <T> void addRegionTicket(TicketType<T> p_8388_, ChunkPos p_8389_, int p_8390_, T p_8391_, boolean forceTicks) {
++      this.f_8327_.addRegionTicket(p_8388_, p_8389_, p_8390_, p_8391_, forceTicks);
+    }
  
     public <T> void m_8438_(TicketType<T> p_8439_, ChunkPos p_8440_, int p_8441_, T p_8442_) {
-       this.f_8327_.m_140849_(p_8439_, p_8440_, p_8441_, p_8442_);
+-      this.f_8327_.m_140849_(p_8439_, p_8440_, p_8441_, p_8442_);
++      removeRegionTicket(p_8439_, p_8440_, p_8441_, p_8442_, false);
 +   }
 +
++   public <T> void removeRegionTicket(TicketType<T> p_8439_, ChunkPos p_8440_, int p_8441_, T p_8442_, boolean forceTicks) {
++      this.f_8327_.removeRegionTicket(p_8439_, p_8440_, p_8441_, p_8442_, forceTicks);
++   }
++
++   @Deprecated(forRemoval = true, since = "1.18.2") // Use addRegionTicket overload
 +   public <T> void registerTickingTicket(TicketType<T> type, ChunkPos pos, int distance, T value) {
-+      this.f_8327_.registerTicking(type, pos, distance, value);
++      addRegionTicket(type, pos, distance, value, true);
 +   }
 +
++   @Deprecated(forRemoval = true, since = "1.18.2") // Use removeRegionTicket overload
 +   public <T> void releaseTickingTicket(TicketType<T> type, ChunkPos pos, int distance, T value) {
-+      this.f_8327_.releaseTicking(type, pos, distance, value);
++      removeRegionTicket(type, pos, distance, value, true);
     }
  
     public void m_6692_(ChunkPos p_8400_, boolean p_8401_) {
