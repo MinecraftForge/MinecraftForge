@@ -7,33 +7,22 @@ package net.minecraftforge.client.gui;
 
 import com.mojang.blaze3d.vertex.VertexFormat;
 import net.minecraft.client.gui.GuiComponent;
-import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.client.renderer.MultiBufferSource;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.resources.ResourceLocation;
 import com.mojang.math.Matrix4f;
-import net.minecraft.network.chat.FormattedText;
-import net.minecraft.locale.Language;
-import net.minecraft.network.chat.Style;
-import net.minecraftforge.client.event.RenderTooltipEvent;
-import net.minecraftforge.common.MinecraftForge;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.systems.RenderSystem;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This class provides several methods and constants used by the Config GUI classes.
  *
  * @author bspkrs
  */
-public class GuiUtils
+public class ScreenUtils
 {
     public static final int DEFAULT_BACKGROUND_COLOR = 0xF0100010;
     public static final int DEFAULT_BORDER_COLOR_START = 0x505000FF;
@@ -43,12 +32,12 @@ public class GuiUtils
     public static final String VALID      = "\u2714";
     public static final String INVALID    = "\u2715";
 
-    public static int[] colorCodes = new int[] { 0, 170, 43520, 43690, 11141120, 11141290, 16755200, 11184810, 5592405, 5592575, 5635925, 5636095, 16733525, 16733695, 16777045, 16777215,
+    public static int[] TEXT_COLOR_CODES = new int[] { 0, 170, 43520, 43690, 11141120, 11141290, 16755200, 11184810, 5592405, 5592575, 5635925, 5636095, 16733525, 16733695, 16777045, 16777215,
         0, 42, 10752, 10794, 2752512, 2752554, 2763264, 2763306, 1381653, 1381695, 1392405, 1392447, 4134165, 4134207, 4144917, 4144959 };
 
-    public static int getColorCode(char c, boolean isLighter)
+    public static int getColorFromFormattingCharacter(char c, boolean isLighter)
     {
-        return colorCodes[isLighter ? "0123456789abcdef".indexOf(c) : "0123456789abcdef".indexOf(c) + 16];
+        return TEXT_COLOR_CODES[isLighter ? "0123456789abcdef".indexOf(c) : "0123456789abcdef".indexOf(c) + 16];
     }
 
     /**
@@ -68,10 +57,10 @@ public class GuiUtils
      * @param borderSize the size of the box's borders
      * @param zLevel the zLevel to draw at
      */
-    public static void drawContinuousTexturedBox(PoseStack poseStack, int x, int y, int u, int v, int width, int height, int textureWidth, int textureHeight,
-                                                 int borderSize, float zLevel)
+    public static void blitWithBorder(PoseStack poseStack, int x, int y, int u, int v, int width, int height, int textureWidth, int textureHeight,
+                                      int borderSize, float zLevel)
     {
-        drawContinuousTexturedBox(poseStack, x, y, u, v, width, height, textureWidth, textureHeight, borderSize, borderSize, borderSize, borderSize, zLevel);
+        blitWithBorder(poseStack, x, y, u, v, width, height, textureWidth, textureHeight, borderSize, borderSize, borderSize, borderSize, zLevel);
     }
 
     /**
@@ -92,10 +81,10 @@ public class GuiUtils
      * @param borderSize the size of the box's borders
      * @param zLevel the zLevel to draw at
      */
-    public static void drawContinuousTexturedBox(PoseStack poseStack, ResourceLocation res, int x, int y, int u, int v, int width, int height, int textureWidth, int textureHeight,
-                                                 int borderSize, float zLevel)
+    public static void blitWithBorder(PoseStack poseStack, ResourceLocation res, int x, int y, int u, int v, int width, int height, int textureWidth, int textureHeight,
+                                      int borderSize, float zLevel)
     {
-        drawContinuousTexturedBox(poseStack, res, x, y, u, v, width, height, textureWidth, textureHeight, borderSize, borderSize, borderSize, borderSize, zLevel);
+        blitWithBorder(poseStack, res, x, y, u, v, width, height, textureWidth, textureHeight, borderSize, borderSize, borderSize, borderSize, zLevel);
     }
 
     /**
@@ -119,12 +108,12 @@ public class GuiUtils
      * @param rightBorder the size of the box's right border
      * @param zLevel the zLevel to draw at
      */
-    public static void drawContinuousTexturedBox(PoseStack poseStack, ResourceLocation res, int x, int y, int u, int v, int width, int height, int textureWidth, int textureHeight,
-                                                 int topBorder, int bottomBorder, int leftBorder, int rightBorder, float zLevel)
+    public static void blitWithBorder(PoseStack poseStack, ResourceLocation res, int x, int y, int u, int v, int width, int height, int textureWidth, int textureHeight,
+                                      int topBorder, int bottomBorder, int leftBorder, int rightBorder, float zLevel)
     {
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderTexture(0, res);
-        drawContinuousTexturedBox(poseStack, x, y, u, v, width, height, textureWidth, textureHeight, topBorder, bottomBorder, leftBorder, rightBorder, zLevel);
+        blitWithBorder(poseStack, x, y, u, v, width, height, textureWidth, textureHeight, topBorder, bottomBorder, leftBorder, rightBorder, zLevel);
     }
 
     /**
@@ -147,8 +136,8 @@ public class GuiUtils
      * @param rightBorder the size of the box's right border
      * @param zLevel the zLevel to draw at
      */
-    public static void drawContinuousTexturedBox(PoseStack poseStack, int x, int y, int u, int v, int width, int height, int textureWidth, int textureHeight,
-                                                 int topBorder, int bottomBorder, int leftBorder, int rightBorder, float zLevel)
+    public static void blitWithBorder(PoseStack poseStack, int x, int y, int u, int v, int width, int height, int textureWidth, int textureHeight,
+                                      int topBorder, int bottomBorder, int leftBorder, int rightBorder, float zLevel)
     {
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.enableBlend();
@@ -241,12 +230,12 @@ public class GuiUtils
         RenderSystem.enableTexture();
     }
 
-    public static void drawInscribedRect(PoseStack poseStack, int x, int y, int boundsWidth, int boundsHeight, int rectWidth, int rectHeight)
+    public static void blitInscribed(PoseStack poseStack, int x, int y, int boundsWidth, int boundsHeight, int rectWidth, int rectHeight)
     {
-        drawInscribedRect(poseStack, x, y, boundsWidth, boundsHeight, rectWidth, rectHeight, true, true);
+        blitInscribed(poseStack, x, y, boundsWidth, boundsHeight, rectWidth, rectHeight, true, true);
     }
 
-    public static void drawInscribedRect(PoseStack poseStack, int x, int y, int boundsWidth, int boundsHeight, int rectWidth, int rectHeight, boolean centerX, boolean centerY)
+    public static void blitInscribed(PoseStack poseStack, int x, int y, int boundsWidth, int boundsHeight, int rectWidth, int rectHeight, boolean centerX, boolean centerY)
     {
         if (rectWidth * boundsHeight > rectHeight * boundsWidth) {
             int h = boundsHeight;

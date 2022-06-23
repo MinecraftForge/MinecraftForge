@@ -21,7 +21,7 @@ import net.minecraftforge.client.loading.ClientModLoader;
 import net.minecraftforge.api.distmarker.Dist;
 
 @OnlyIn(Dist.CLIENT)
-public class NotificationModUpdateScreen extends Screen
+public class TitleScreenModUpdateIndicator extends Screen
 {
 
     private static final ResourceLocation VERSION_CHECK_ICONS = new ResourceLocation(ForgeVersion.MOD_ID, "textures/gui/version_check_icons.png");
@@ -30,7 +30,7 @@ public class NotificationModUpdateScreen extends Screen
     private VersionChecker.Status showNotification = null;
     private boolean hasCheckedForUpdates = false;
 
-    public NotificationModUpdateScreen(Button modButton)
+    public TitleScreenModUpdateIndicator(Button modButton)
     {
         super(Component.translatable("forge.menu.updatescreen.title"));
         this.modButton = modButton;
@@ -67,12 +67,12 @@ public class NotificationModUpdateScreen extends Screen
         blit(poseStack, x + w - (h / 2 + 4), y + (h / 2 - 4), showNotification.getSheetOffset() * 8, (showNotification.isAnimated() && ((System.currentTimeMillis() / 800 & 1) == 1)) ? 8 : 0, 8, 8, 64, 16);
     }
 
-    public static NotificationModUpdateScreen init(TitleScreen guiMainMenu, Button modButton)
+    public static TitleScreenModUpdateIndicator init(TitleScreen guiMainMenu, Button modButton)
     {
-        NotificationModUpdateScreen notificationModUpdateScreen = new NotificationModUpdateScreen(modButton);
-        notificationModUpdateScreen.resize(guiMainMenu.getMinecraft(), guiMainMenu.width, guiMainMenu.height);
-        notificationModUpdateScreen.init();
-        return notificationModUpdateScreen;
+        TitleScreenModUpdateIndicator titleScreenModUpdateIndicator = new TitleScreenModUpdateIndicator(modButton);
+        titleScreenModUpdateIndicator.resize(guiMainMenu.getMinecraft(), guiMainMenu.width, guiMainMenu.height);
+        titleScreenModUpdateIndicator.init();
+        return titleScreenModUpdateIndicator;
     }
 
 }
