@@ -3,46 +3,49 @@
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.client.model;
+package net.minecraftforge.client.model.geometry;
 
 import com.mojang.datafixers.util.Pair;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.client.model.geometry.IModelGeometry;
-import net.minecraftforge.client.model.geometry.IModelGeometryPart;
-
-import java.util.*;
-import java.util.function.Function;
-
+import com.mojang.math.Transformation;
 import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.client.renderer.block.model.ItemOverrides;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.Material;
 import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.ModelState;
 import net.minecraft.client.resources.model.UnbakedModel;
+import net.minecraft.resources.ResourceLocation;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
-public class BlockModelConfiguration implements IModelConfiguration
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Function;
+
+/**
+ * A {@link IGeometryBakingContext geometry baking context} that is bound to a {@link BlockModel}.<p/>
+ * Users should not be instantiating this themselves.
+ */
+public class BlockGeometryBakingContext implements IGeometryBakingContext
 {
     public final BlockModel owner;
     public final VisibilityData visibilityData = new VisibilityData();
     @Nullable
-    private IModelGeometry<?> customGeometry;
+    private IUnbakedGeometry<?> customGeometry;
     @Nullable
-    private ModelState customModelState;
+    private Transformation rootTransform;
+    @Nullable
+    private ResourceLocation renderTypeHint;
 
-    public BlockModelConfiguration(BlockModel owner)
+    @ApiStatus.Internal
+    public BlockGeometryBakingContext(BlockModel owner)
     {
         this.owner = owner;
-    }
-
-    @Nullable
-    @Override
-    public UnbakedModel getOwnerModel()
-    {
-        return owner;
     }
 
     @Override
@@ -57,97 +60,104 @@ public class BlockModelConfiguration implements IModelConfiguration
     }
 
     @Nullable
-    public IModelGeometry<?> getCustomGeometry()
+    public IUnbakedGeometry<?> getCustomGeometry()
     {
         return owner.parent != null && customGeometry == null ? owner.parent.customData.getCustomGeometry() : customGeometry;
     }
 
-    public void setCustomGeometry(IModelGeometry<?> geometry)
+    public void setCustomGeometry(IUnbakedGeometry<?> geometry)
     {
         this.customGeometry = geometry;
     }
 
-    @Nullable
-    public ModelState getCustomModelState()
-    {
-        return owner.parent != null && customModelState == null ? owner.parent.customData.getCustomModelState() : customModelState;
-    }
-
-    public void setCustomModelState(ModelState modelState)
-    {
-        this.customModelState = modelState;
-    }
-
     @Override
-    public boolean getPartVisibility(IModelGeometryPart part, boolean fallback)
+    public boolean isComponentVisible(String part, boolean fallback)
     {
         return owner.parent != null && !visibilityData.hasCustomVisibility(part) ?
-                owner.parent.customData.getPartVisibility(part, fallback):
+                owner.parent.customData.isComponentVisible(part, fallback) :
                 visibilityData.isVisible(part, fallback);
     }
 
     @Override
-    public boolean isTexturePresent(String name)
+    public boolean hasMaterial(String name)
     {
         return owner.hasTexture(name);
     }
 
     @Override
-    public Material resolveTexture(String name)
+    public Material getMaterial(String name)
     {
         return owner.getMaterial(name);
     }
 
     @Override
-    public boolean isShadedInGui() {
+    public boolean isGui3d()
+    {
         return true;
     }
 
     @Override
-    public boolean isSideLit()
+    public boolean useBlockLight()
     {
         return owner.getGuiLight().lightLikeBlock();
     }
 
     @Override
-    public boolean useSmoothLighting()
+    public boolean useAmbientOcclusion()
     {
         return owner.hasAmbientOcclusion();
     }
 
     @Override
-    public ItemTransforms getCameraTransforms()
+    public ItemTransforms getTransforms()
     {
         return owner.getTransforms();
     }
 
     @Override
-    public ModelState getCombinedTransform()
+    public Transformation getRootTransform()
     {
-        ModelState state = getCustomModelState();
-
-        return state != null
-                ? new SimpleModelState(PerspectiveMapWrapper.getTransformsWithFallback(state, getCameraTransforms()), state.getRotation())
-                : new SimpleModelState(PerspectiveMapWrapper.getTransforms(getCameraTransforms()));
+        if (rootTransform != null)
+            return rootTransform;
+        return owner.parent != null ? owner.parent.customData.getRootTransform() : Transformation.identity();
     }
 
-    public void copyFrom(BlockModelConfiguration other)
+    public void setRootTransform(Transformation rootTransform)
+    {
+        this.rootTransform = rootTransform;
+    }
+
+    @Nullable
+    @Override
+    public ResourceLocation getRenderTypeHint()
+    {
+        if (renderTypeHint != null)
+            return renderTypeHint;
+        return owner.parent != null ? owner.parent.customData.getRenderTypeHint() : null;
+    }
+
+    public void setRenderTypeHint(ResourceLocation renderTypeHint)
+    {
+        this.renderTypeHint = renderTypeHint;
+    }
+
+    public void copyFrom(BlockGeometryBakingContext other)
     {
         this.customGeometry = other.customGeometry;
-        this.customModelState = other.customModelState;
+        this.rootTransform = other.rootTransform;
         this.visibilityData.copyFrom(other.visibilityData);
     }
 
     public Collection<Material> getTextureDependencies(Function<ResourceLocation, UnbakedModel> modelGetter, Set<Pair<String, String>> missingTextureErrors)
     {
-        IModelGeometry<?> geometry = getCustomGeometry();
+        IUnbakedGeometry<?> geometry = getCustomGeometry();
         return geometry == null ? Collections.emptySet() :
-                geometry.getTextures(this, modelGetter, missingTextureErrors);
+                geometry.getMaterials(this, modelGetter, missingTextureErrors);
     }
 
     public BakedModel bake(ModelBakery bakery, Function<Material, TextureAtlasSprite> bakedTextureGetter, ModelState modelTransform, ItemOverrides overrides, ResourceLocation modelLocation)
     {
-        IModelGeometry<?> geometry = getCustomGeometry();
+        IUnbakedGeometry<?> geometry = getCustomGeometry();
         if (geometry == null)
             throw new IllegalStateException("Can not use custom baking without custom geometry");
         return geometry.bake(this, bakery, bakedTextureGetter, modelTransform, overrides, modelLocation);
@@ -157,14 +167,14 @@ public class BlockModelConfiguration implements IModelConfiguration
     {
         private final Map<String, Boolean> data = new HashMap<>();
 
-        public boolean hasCustomVisibility(IModelGeometryPart part)
+        public boolean hasCustomVisibility(String part)
         {
-            return data.containsKey(part.name());
+            return data.containsKey(part);
         }
 
-        public boolean isVisible(IModelGeometryPart part, boolean fallback)
+        public boolean isVisible(String part, boolean fallback)
         {
-            return data.getOrDefault(part.name(), fallback);
+            return data.getOrDefault(part, fallback);
         }
 
         public void setVisibilityState(String partName, boolean type)

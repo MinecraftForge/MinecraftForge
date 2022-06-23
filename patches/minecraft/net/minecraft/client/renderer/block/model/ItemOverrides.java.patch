@@ -6,7 +6,7 @@
  
 +   @Deprecated //Forge: Use IUnbakedModel, add texture getter
     public ItemOverrides(ModelBakery p_111740_, BlockModel p_111741_, Function<ResourceLocation, UnbakedModel> p_111742_, List<ItemOverride> p_111743_) {
-+      this(p_111740_, p_111741_, p_111742_, p_111740_.getSpriteMap()::m_117971_, p_111743_);
++      this(p_111740_, p_111741_, p_111742_, p_111740_.getAtlasSet()::m_117971_, p_111743_);
 +   }
 +   public ItemOverrides(ModelBakery p_111740_, UnbakedModel p_111741_, Function<ResourceLocation, UnbakedModel> p_111742_, Function<net.minecraft.client.resources.model.Material, net.minecraft.client.renderer.texture.TextureAtlasSprite> textureGetter, List<ItemOverride> p_111743_) {
        this.f_173461_ = p_111743_.stream().flatMap(ItemOverride::m_173449_).map(ItemOverride.Predicate::m_173459_).distinct().toArray((p_173479_) -> {

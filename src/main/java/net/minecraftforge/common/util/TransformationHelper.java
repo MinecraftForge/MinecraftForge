@@ -3,17 +3,15 @@
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.common.model;
+package net.minecraftforge.common.util;
 
 import java.lang.reflect.Type;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import com.google.gson.*;
 import net.minecraft.util.Mth;
-
-import net.minecraft.client.renderer.block.model.ItemTransform;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
 import com.mojang.math.Matrix4f;
 import com.mojang.math.Quaternion;
@@ -23,16 +21,6 @@ import com.mojang.math.Vector4f;
 
 public final class TransformationHelper
 {
-    @Deprecated
-    @OnlyIn(Dist.CLIENT)
-    // TODO: this is used in 3 places, not a trivial refactor. Needs investigating. -C
-    public static Transformation toTransformation(ItemTransform transform)
-    {
-        if (transform.equals(ItemTransform.NO_TRANSFORM)) return Transformation.identity();
-
-        return new Transformation(transform.translation, quatFromXYZ(transform.rotation, true), transform.scale, null);
-    }
-
     public static Quaternion quatFromXYZ(Vector3f xyz, boolean degrees)
     {
         return new Quaternion(xyz.x(), xyz.y(), xyz.z(), degrees);
@@ -151,8 +139,7 @@ public final class TransformationHelper
             {
                 // matrix as a sole key
                 ret = new Transformation(parseMatrix(obj.get("matrix")));
-                obj.remove("matrix");
-                if (obj.entrySet().size() != 0)
+                if (obj.entrySet().size() > 1)
                 {
                     throw new JsonParseException("TRSR: can't combine matrix and other keys");
                 }
@@ -165,15 +152,21 @@ public final class TransformationHelper
             // TODO: Default origin is opposing corner, due to a mistake.
             // This should probably be replaced with center in future versions.
             Vector3f origin = ORIGIN_OPPOSING_CORNER; // TODO: Changing this to ORIGIN_CENTER breaks models, function content needs changing too -C
+            Set<String> elements = new HashSet<>(obj.keySet());
             if (obj.has("translation"))
             {
                 translation = new Vector3f(parseFloatArray(obj.get("translation"), 3, "Translation"));
-                obj.remove("translation");
+                elements.remove("translation");
             }
             if (obj.has("rotation"))
             {
                 leftRot = parseRotation(obj.get("rotation"));
-                obj.remove("rotation");
+                elements.remove("rotation");
+            }
+            else if (obj.has("left_rotation"))
+            {
+                leftRot = parseRotation(obj.get("left_rotation"));
+                elements.remove("left_rotation");
             }
             if (obj.has("scale"))
             {
@@ -193,19 +186,24 @@ public final class TransformationHelper
                 {
                     scale = new Vector3f(parseFloatArray(obj.get("scale"), 3, "Scale"));
                 }
-                obj.remove("scale");
+                elements.remove("scale");
             }
-            if (obj.has("post-rotation"))
+            if (obj.has("right_rotation"))
+            {
+                rightRot = parseRotation(obj.get("right_rotation"));
+                elements.remove("right_rotation");
+            }
+            else if (obj.has("post-rotation"))
             {
                 rightRot = parseRotation(obj.get("post-rotation"));
-                obj.remove("post-rotation");
+                elements.remove("post-rotation");
             }
             if (obj.has("origin"))
             {
                 origin = parseOrigin(obj);
-                obj.remove("origin");
+                elements.remove("origin");
             }
-            if (!obj.entrySet().isEmpty()) throw new JsonParseException("TRSR: can either have single 'matrix' key, or a combination of 'translation', 'rotation', 'scale', 'post-rotation', 'origin'");
+            if (!elements.isEmpty()) throw new JsonParseException("TRSR: can either have single 'matrix' key, or a combination of 'translation', 'rotation' OR 'left_rotation', 'scale', 'post-rotation' (legacy) OR 'right_rotation', 'origin'. Found: " + String.join(", ", elements));
             Transformation matrix = new Transformation(translation, leftRot, scale, rightRot);
 
             // Use a different origin if needed.
