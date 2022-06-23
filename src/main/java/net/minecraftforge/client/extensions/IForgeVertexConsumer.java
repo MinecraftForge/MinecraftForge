@@ -8,11 +8,8 @@ package net.minecraftforge.client.extensions;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.blaze3d.vertex.VertexFormat;
 import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraftforge.client.model.pipeline.LightUtil;
 
-import org.jetbrains.annotations.Nullable;
 import org.lwjgl.system.MemoryStack;
 
 import java.nio.Buffer;
@@ -34,8 +31,6 @@ public interface IForgeVertexConsumer
     {
         return (VertexConsumer) this;
     }
-
-    VertexFormat getVertexFormat();
 
     // Copy of putBulkData, but enables tinting and per-vertex alpha
     default void putBulkData(PoseStack.Pose poseStack, BakedQuad bakedQuad, float red, float green, float blue, int packedLight, int packedOverlay, boolean readExistingColor) {
@@ -59,14 +54,12 @@ public interface IForgeVertexConsumer
         Vector3f normal = new Vector3f((float)faceNormal.getX(), (float)faceNormal.getY(), (float)faceNormal.getZ());
         Matrix4f matrix4f = pose.pose();
         normal.transform(pose.normal());
-        int intSize = DefaultVertexFormat.BLOCK.getIntegerSize();
-        int vertexCount = aint.length / intSize;
 
         try (MemoryStack memorystack = MemoryStack.stackPush()) {
             ByteBuffer bytebuffer = memorystack.malloc(DefaultVertexFormat.BLOCK.getVertexSize());
             IntBuffer intbuffer = bytebuffer.asIntBuffer();
 
-            for(int v = 0; v < vertexCount; ++v) {
+            for(int v = 0; v < 4; ++v) {
                 ((Buffer)intbuffer).clear();
                 intbuffer.put(aint, v * 8, 8);
                 float f = bytebuffer.getFloat(0);
@@ -106,7 +99,7 @@ public interface IForgeVertexConsumer
     default int applyBakedLighting(int packedLight, ByteBuffer data) {
         int bl = packedLight&0xFFFF;
         int sl = (packedLight>>16)&0xFFFF;
-        int offset = LightUtil.getLightOffset(0) * 4; // int offset for vertex 0 * 4 bytes per int
+        int offset = 6 * 4; // int offset for vertex 0 * 4 bytes per int
         int blBaked = Short.toUnsignedInt(data.getShort(offset));
         int slBaked = Short.toUnsignedInt(data.getShort(offset + 2));
         bl = Math.max(bl, blBaked);

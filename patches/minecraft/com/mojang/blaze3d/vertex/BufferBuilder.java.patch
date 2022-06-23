@@ -1,6 +1,6 @@
 --- a/com/mojang/blaze3d/vertex/BufferBuilder.java
 +++ b/com/mojang/blaze3d/vertex/BufferBuilder.java
-@@ -486,4 +_,16 @@
+@@ -486,4 +_,13 @@
           this.f_166822_ = p_166829_;
        }
     }
@@ -13,7 +13,4 @@
 +      this.f_85654_ += buffer.limit() / this.f_85658_.m_86020_();
 +      this.f_85652_ += buffer.limit();
 +   }
-+
-+   @Override
-+   public VertexFormat getVertexFormat() { return this.f_85658_; }
  }
