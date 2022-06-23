@@ -57,7 +57,7 @@
 +      // Optional tags should not be validated
 +
 +      if (reference.isRequired()) {
-+         return existingFileHelper == null || !existingFileHelper.exists(reference.getId(), reference.f_215914_ ? resourceType : elementResourceType);
++         return existingFileHelper == null || !existingFileHelper.exists(reference.getId(), reference.isTag() ? resourceType : elementResourceType);
 +      }
 +      return false;
 +   }
