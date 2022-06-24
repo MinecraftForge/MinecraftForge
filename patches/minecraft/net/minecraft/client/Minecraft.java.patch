@@ -68,6 +68,15 @@
        this.f_90990_.m_85409_(this.f_91066_.m_231817_().m_231551_());
        this.f_90990_.m_85424_(this.f_91066_.m_232123_().m_231551_());
        this.f_90990_.m_85426_();
+@@ -554,7 +_,7 @@
+       this.f_167847_.m_168557_(ResourceLoadStateTracker.ReloadReason.INITIAL, list);
+       ReloadInstance reloadinstance = this.f_91036_.m_142463_(Util.m_183991_(), this, f_90983_, list);
+       GameLoadTimesEvent.f_285635_.m_285833_(TelemetryProperty.f_285629_);
+-      this.m_91150_(new LoadingOverlay(this, reloadinstance, (p_210745_) -> {
++      this.m_91150_(net.minecraftforge.fml.loading.ImmediateWindowHandler.<LoadingOverlay>loadingOverlay(()->this, ()->reloadinstance, (p_210745_) -> {
+          Util.m_137521_(p_210745_, this::m_91239_, () -> {
+             if (SharedConstants.f_136183_) {
+                this.m_91273_();
 @@ -562,20 +_,23 @@
  
              this.f_167847_.m_168556_();
@@ -87,7 +96,8 @@
 +               this.m_278684_(realmsclient, reloadinstance, p_91084_.f_278410_);
 +            }
           });
-       }, false));
+-      }, false));
++      }, false).get());
        this.f_278504_ = QuickPlayLog.m_278648_(p_91084_.f_278410_.f_278493_());
 -      if (this.m_239929_()) {
 -         this.m_91152_(BanNoticeScreen.m_239967_((p_278873_) -> {

@@ -9,6 +9,7 @@ import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.config.IConfigEvent;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.IModBusEvent;
+import net.minecraftforge.fml.loading.progress.ProgressMeter;
 import net.minecraftforge.forgespi.language.IModInfo;
 
 import java.util.EnumMap;
@@ -113,6 +114,7 @@ public abstract class ModContainer
     public static <T extends Event & IModBusEvent> CompletableFuture<Void> buildTransitionHandler(
             final ModContainer target,
             final IModStateTransition.EventGenerator<T> eventGenerator,
+            final ProgressMeter progressBar,
             final BiFunction<ModLoadingStage, Throwable, ModLoadingStage> stateChangeHandler,
             final Executor executor) {
         return CompletableFuture
@@ -123,6 +125,7 @@ public abstract class ModContainer
                 }, executor)
                 .whenComplete((mc, exception) -> {
                     target.modLoadingStage = stateChangeHandler.apply(target.modLoadingStage, exception);
+                    progressBar.increment();
                     ModLoadingContext.get().setActiveContainer(null);
                 });
     }

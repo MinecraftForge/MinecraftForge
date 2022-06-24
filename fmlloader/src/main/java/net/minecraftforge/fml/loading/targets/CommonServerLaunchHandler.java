@@ -23,12 +23,8 @@ public abstract class CommonServerLaunchHandler extends CommonLaunchHandler {
     @Override public boolean isProduction() { return true; }
 
     @Override
-    public ServiceRunner launchService(String[] arguments, ModuleLayer layer) {
-        return () -> {
-            var args = preLaunch(arguments, layer);
-
-            Class.forName(layer.findModule("minecraft").orElseThrow(),"net.minecraft.server.Main").getMethod("main", String[].class).invoke(null, (Object)args);
-        };
+    protected ServiceRunner makeService(String[] arguments, ModuleLayer layer) {
+        return () -> serverService(arguments, layer);
     }
 
     @Override

@@ -7,6 +7,7 @@ package net.minecraftforge.fml.loading;
 
 import com.mojang.logging.LogUtils;
 import cpw.mods.jarhandling.SecureJar;
+import cpw.mods.modlauncher.Launcher;
 import cpw.mods.modlauncher.api.LamdbaExceptionUtils;
 import cpw.mods.modlauncher.api.NamedPath;
 import cpw.mods.modlauncher.serviceapi.ITransformerDiscoveryService;
@@ -18,6 +19,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ServiceLoader;
+import java.util.zip.ZipFile;
 import java.util.Set;
 
 public class ModDirTransformerDiscoverer implements ITransformerDiscoveryService {
@@ -27,6 +30,18 @@ public class ModDirTransformerDiscoverer implements ITransformerDiscoveryService
         "net.minecraftforge.forgespi.locating.IModLocator",
         "net.minecraftforge.forgespi.locating.IDependencyLocator"
     );
+
+    @Override
+    public List<NamedPath> candidates(final Path gameDirectory, final String launchTarget) {
+        FMLPaths.loadAbsolutePaths(gameDirectory);
+        FMLConfig.load();
+        return candidates(gameDirectory);
+    }
+
+    @Override
+    public void earlyInitialization(final String launchTarget, final String[] arguments) {
+        ImmediateWindowHandler.load(launchTarget, arguments);
+    }
 
     @Override
     public List<NamedPath> candidates(final Path gameDirectory) {

@@ -5,19 +5,26 @@
 
 package net.minecraftforge.fml;
 
+import net.minecraftforge.fml.loading.progress.ProgressMeter;
+import net.minecraftforge.fml.loading.progress.StartupNotificationManager;
+
 import java.util.Optional;
 import java.util.function.Consumer;
 
 public class StartupMessageManager {
     public static void addModMessage(final String message) {
-        net.minecraftforge.fml.loading.progress.StartupMessageManager.addModMessage(message);
+        StartupNotificationManager.addModMessage(message);
     }
 
     public static Optional<Consumer<String>> modLoaderConsumer() {
-        return net.minecraftforge.fml.loading.progress.StartupMessageManager.modLoaderConsumer();
+        return StartupNotificationManager.modLoaderConsumer();
     }
 
     public static Optional<Consumer<String>> mcLoaderConsumer() {
-        return net.minecraftforge.fml.loading.progress.StartupMessageManager.mcLoaderConsumer();
+        return StartupNotificationManager.mcLoaderConsumer();
+    }
+
+    public static ProgressMeter addProgressBar(final String barName, final int count) {
+        return StartupNotificationManager.addProgressBar(barName, count);
     }
 }

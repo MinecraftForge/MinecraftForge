@@ -16,8 +16,7 @@ import net.minecraftforge.fml.loading.moddiscovery.ModFile;
 import net.minecraftforge.fml.loading.moddiscovery.ModValidator;
 import net.minecraftforge.accesstransformer.service.AccessTransformerService;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.fml.loading.progress.EarlyProgressVisualization;
-import net.minecraftforge.fml.loading.progress.StartupMessageManager;
+import net.minecraftforge.fml.loading.progress.StartupNotificationManager;
 import net.minecraftforge.fml.loading.targets.CommonLaunchHandler;
 import net.minecraftforge.forgespi.Environment;
 import net.minecraftforge.forgespi.coremod.ICoreModProvider;
@@ -152,7 +151,6 @@ public class FMLLoader
 
         versionInfo = new VersionInfo(arguments);
 
-        StartupMessageManager.modLoaderConsumer().ifPresent(c->c.accept("Early Loading!"));
         accessTransformer.getExtension().accept(Pair.of(naming, "srg"));
 
         LOGGER.debug(CORE,"Received command line version data  : {}", versionInfo);
@@ -169,7 +167,6 @@ public class FMLLoader
     }
 
     public static List<ITransformationService.Resource> completeScan(IModuleLayerManager layerManager) {
-        progressWindowTick = EarlyProgressVisualization.INSTANCE.accept(dist, commonLaunchHandler.isData(), versionInfo.mcVersion());
         moduleLayerManager = layerManager;
         languageLoadingProvider = new LanguageLoadingProvider();
         backgroundScanHandler = modValidator.stage2Validation();
@@ -205,9 +202,10 @@ public class FMLLoader
         return dist;
     }
 
-    public static void beforeStart(ClassLoader launchClassLoader)
+    public static void beforeStart(ModuleLayer gameLayer)
     {
-        StartupMessageManager.modLoaderConsumer().ifPresent(c->c.accept("Launching minecraft"));
+        ImmediateWindowHandler.acceptGameLayer(gameLayer);
+        ImmediateWindowHandler.updateProgress("Launching minecraft");
         progressWindowTick.run();
     }
 

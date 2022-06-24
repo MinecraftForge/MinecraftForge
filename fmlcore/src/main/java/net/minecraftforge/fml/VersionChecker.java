@@ -104,7 +104,7 @@ public class VersionChecker
             @Override
             public void run()
             {
-                if (!FMLConfig.runVersionCheck())
+                if (!FMLConfig.getBoolConfigValue(FMLConfig.ConfigValue.VERSION_CHECK))
                 {
                     LOGGER.info("Global Forge version check system disabled, no further processing.");
                     return;
