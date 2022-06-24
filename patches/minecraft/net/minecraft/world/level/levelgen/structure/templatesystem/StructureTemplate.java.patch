@@ -93,8 +93,8 @@
              m_74543_(p_74524_, compoundtag).ifPresent((p_205061_) -> {
 -               float f = p_205061_.m_7890_(p_74527_);
 -               f += p_205061_.m_6961_(p_74526_) - p_205061_.m_146908_();
-+               float f = p_205061_.m_6961_(placementIn.m_74401_());
-+               f = f + (p_205061_.m_146908_() - p_205061_.m_7890_(placementIn.m_74404_()));
++               float f = p_205061_.m_7890_(placementIn.m_74404_());
++               f += p_205061_.m_6961_(placementIn.m_74401_()) - p_205061_.m_146908_();
                 p_205061_.m_7678_(vec31.f_82479_, vec31.f_82480_, vec31.f_82481_, f, p_205061_.m_146909_());
 -               if (p_74530_ && p_205061_ instanceof Mob) {
 +               if (placementIn.m_74414_() && p_205061_ instanceof Mob) {
