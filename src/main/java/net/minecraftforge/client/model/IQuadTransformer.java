@@ -27,6 +27,7 @@ public interface IQuadTransformer
     int POSITION = findOffset(DefaultVertexFormat.ELEMENT_POSITION);
     int COLOR = findOffset(DefaultVertexFormat.ELEMENT_COLOR);
     int UV0 = findOffset(DefaultVertexFormat.ELEMENT_UV0);
+    int UV1 = findOffset(DefaultVertexFormat.ELEMENT_UV1);
     int UV2 = findOffset(DefaultVertexFormat.ELEMENT_UV2);
     int NORMAL = findOffset(DefaultVertexFormat.ELEMENT_NORMAL);
 
@@ -135,6 +136,7 @@ public interface IQuadTransformer
     private static int findOffset(VertexFormatElement element)
     {
         // Divide by 4 because we want the int offset
-        return DefaultVertexFormat.BLOCK.getOffset(DefaultVertexFormat.BLOCK.getElements().indexOf(element)) / 4;
+        var index = DefaultVertexFormat.BLOCK.getElements().indexOf(element);
+        return index < 0 ? -1 : DefaultVertexFormat.BLOCK.getOffset(index) / 4;
     }
 }

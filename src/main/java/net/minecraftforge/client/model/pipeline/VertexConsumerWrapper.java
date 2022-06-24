@@ -6,6 +6,7 @@
 package net.minecraftforge.client.model.pipeline;
 
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.blaze3d.vertex.VertexFormatElement;
 
 /**
  * Wrapper for {@link VertexConsumer} which delegates all operations to its parent.
@@ -60,6 +61,13 @@ public abstract class VertexConsumerWrapper implements VertexConsumer
     public VertexConsumer normal(float x, float y, float z)
     {
         parent.normal(x, y, z);
+        return this;
+    }
+
+    @Override
+    public VertexConsumer misc(VertexFormatElement element, int... values)
+    {
+        parent.misc(element, values);
         return this;
     }
 

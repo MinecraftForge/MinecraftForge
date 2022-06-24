@@ -6,6 +6,7 @@
 package net.minecraftforge.client;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
 import net.minecraft.client.renderer.RenderType;
 import org.jetbrains.annotations.NotNull;
 
@@ -21,6 +22,7 @@ import java.util.Set;
  * An immutable ordered set (not implementing {@link java.util.Set}) of chunk {@linkplain RenderType render types}.
  * <p>
  * Considerably speeds up lookups and merges of sets of chunk {@linkplain RenderType render types}.
+ * Users should cache their instances of this class whenever possible, as instantiating it is cheap, but not free.
  */
 public sealed class ChunkRenderTypeSet implements Iterable<RenderType>
 {
@@ -130,7 +132,7 @@ public sealed class ChunkRenderTypeSet implements Iterable<RenderType>
 
     public List<RenderType> asList()
     {
-        return bits.stream().mapToObj(CHUNK_RENDER_TYPES_LIST::get).toList();
+        return ImmutableList.copyOf(this);
     }
 
     private final class IteratorImpl implements Iterator<RenderType>

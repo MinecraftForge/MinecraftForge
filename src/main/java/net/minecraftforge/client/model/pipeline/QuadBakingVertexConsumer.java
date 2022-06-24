@@ -5,14 +5,20 @@
 
 package net.minecraftforge.client.model.pipeline;
 
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.blaze3d.vertex.VertexFormatElement;
+import net.minecraft.Util;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.Direction;
-import net.minecraftforge.client.model.IQuadTransformer;
 import net.minecraftforge.client.textures.UnitTextureAtlasSprite;
 
+import java.util.IdentityHashMap;
+import java.util.Map;
 import java.util.function.Consumer;
+
+import static net.minecraftforge.client.model.IQuadTransformer.*;
 
 /**
  * Vertex consumer that outputs {@link BakedQuad baked quads}.
@@ -22,12 +28,11 @@ import java.util.function.Consumer;
  */
 public class QuadBakingVertexConsumer implements VertexConsumer
 {
-    private static final int STRIDE = IQuadTransformer.STRIDE;
-    private static final int POSITION = IQuadTransformer.POSITION;
-    private static final int COLOR = IQuadTransformer.COLOR;
-    private static final int UV0 = IQuadTransformer.UV0;
-    private static final int UV2 = IQuadTransformer.UV2;
-    private static final int NORMAL = IQuadTransformer.NORMAL;
+    private final Map<VertexFormatElement, Integer> ELEMENT_OFFSETS = Util.make(new IdentityHashMap<>(), map -> {
+        int i = 0;
+        for (var element : DefaultVertexFormat.BLOCK.getElements())
+            map.put(element, DefaultVertexFormat.BLOCK.getOffset(i++) / 4); // Int offset
+    });
     private static final int QUAD_DATA_SIZE = STRIDE * 4;
 
     private final Consumer<BakedQuad> quadConsumer;
@@ -88,7 +93,12 @@ public class QuadBakingVertexConsumer implements VertexConsumer
     @Override
     public VertexConsumer overlayCoords(int u, int v)
     {
-        return this; // NO-OP, not part of the BLOCK format
+        if (UV1 >= 0) // Vanilla doesn't support this, but it may be added by a 3rd party
+        {
+            int offset = vertexIndex * STRIDE + UV1;
+            quadData[offset] = (u & 0xFFFF) | ((v & 0xFFFF) << 16);
+        }
+        return this;
     }
 
     @Override
@@ -100,12 +110,22 @@ public class QuadBakingVertexConsumer implements VertexConsumer
     }
 
     @Override
+    public VertexConsumer misc(VertexFormatElement element, int... rawData)
+    {
+        Integer baseOffset = ELEMENT_OFFSETS.get(element);
+        if (baseOffset != null)
+        {
+            int offset = vertexIndex * STRIDE + baseOffset;
+            System.arraycopy(rawData, 0, quadData, offset, rawData.length);
+        }
+        return this;
+    }
+
+    @Override
     public void endVertex()
     {
         if (++vertexIndex != 4)
-        {
             return;
-        }
         // We have a full quad, pass it to the consumer and reset
         quadConsumer.accept(new BakedQuad(quadData, tintIndex, direction, sprite, shade));
         vertexIndex = 0;

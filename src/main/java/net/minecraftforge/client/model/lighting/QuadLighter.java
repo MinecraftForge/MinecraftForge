@@ -13,9 +13,10 @@ import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.client.model.IQuadTransformer;
 
 import java.util.Objects;
+
+import static net.minecraftforge.client.model.IQuadTransformer.*;
 
 /**
  * Base class for all quad lighting providers.<p/>
@@ -27,10 +28,6 @@ import java.util.Objects;
 public abstract class QuadLighter
 {
     private static final float[] WHITE = new float[] { 1.0f, 1.0f, 1.0f };
-    private static final int STRIDE = IQuadTransformer.STRIDE;
-    private static final int POSITION = IQuadTransformer.POSITION;
-    private static final int LIGHTMAP = IQuadTransformer.UV2;
-    private static final int NORMAL = IQuadTransformer.NORMAL;
 
     private final BlockColors colors;
 
@@ -40,6 +37,13 @@ public abstract class QuadLighter
     private BlockState state;
     private int cachedTintIndex = -1;
     private final float[] cachedTintColor = new float[3];
+
+    // Arrays used for quad processing, initialized once and then used repeatedly to avoid GC pressure
+    private final float[] brightness = new float[4];
+    private final int[] lightmap = new int[4];
+    private final float[][] positions = new float[4][3];
+    private final byte[][] normals = new byte[4][3];
+    private final int[] packedLightmaps = new int[4];
 
     protected QuadLighter(BlockColors colors)
     {
@@ -74,12 +78,6 @@ public abstract class QuadLighter
 
     public final void process(VertexConsumer consumer, PoseStack.Pose pose, BakedQuad quad, int overlay)
     {
-        var brightness = new float[4];
-        var lightmap = new int[4];
-
-        var positions = new float[4][3];
-        var normals = new byte[4][3];
-        var packedLightmaps = new int[4];
         var vertices = quad.getVertices();
         for (int i = 0; i < 4; i++)
         {
@@ -91,7 +89,7 @@ public abstract class QuadLighter
             normals[i][0] = (byte) (packedNormal & 0xFF);
             normals[i][1] = (byte) ((packedNormal >> 8) & 0xFF);
             normals[i][2] = (byte) ((packedNormal >> 16) & 0xFF);
-            packedLightmaps[i] = vertices[offset + LIGHTMAP];
+            packedLightmaps[i] = vertices[offset + UV2];
         }
         if (normals[0][0] == 0 && normals[0][1] == 0 && normals[0][2] == 0)
         {

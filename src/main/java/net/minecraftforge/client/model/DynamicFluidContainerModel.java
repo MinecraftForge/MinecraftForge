@@ -133,8 +133,8 @@ public final class DynamicFluidContainerModel implements IUnbakedGeometry<Dynami
         if (flipGas && fluid != Fluids.EMPTY && fluid.getFluidType().isLighterThanAir())
         {
             modelState = new SimpleModelState(
-                    modelState.getRotation().blockCornerToCenter().compose(
-                            new Transformation(null, new Quaternion(0, 0, 1, 0), null, null)).blockCenterToCorner());
+                    modelState.getRotation().compose(
+                            new Transformation(null, new Quaternion(0, 0, 1, 0), null, null)));
         }
 
         // We need to disable GUI 3D and block lighting for this to render properly

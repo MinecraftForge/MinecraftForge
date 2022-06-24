@@ -172,14 +172,14 @@
        RenderSystem.m_69481_();
        this.f_91026_.m_7238_();
        if (!this.f_91079_) {
-+         net.minecraftforge.client.ForgeHooksClient.setPartialTick(this.f_91012_ ? this.f_91013_ : this.f_90991_.f_92518_);
-+         net.minecraftforge.event.ForgeEventFactory.onRenderTickStart(this.f_91012_ ? this.f_91013_ : this.f_90991_.f_92518_);
++         this.realPartialTick = this.f_91012_ ? this.f_91013_ : this.f_90991_.f_92518_; // Cache this since pause is volatile
++         net.minecraftforge.event.ForgeEventFactory.onRenderTickStart(this.realPartialTick);
           this.f_91026_.m_6182_("gameRenderer");
           this.f_91063_.m_109093_(this.f_91012_ ? this.f_91013_ : this.f_90991_.f_92518_, i, p_91384_);
           this.f_91026_.m_6182_("toasts");
           this.f_91003_.m_94920_(new PoseStack());
           this.f_91026_.m_7238_();
-+         net.minecraftforge.event.ForgeEventFactory.onRenderTickEnd(this.f_91012_ ? this.f_91013_ : this.f_90991_.f_92518_);
++         net.minecraftforge.event.ForgeEventFactory.onRenderTickEnd(this.realPartialTick);
        }
  
        if (this.f_91056_ != null) {
@@ -454,18 +454,30 @@
     }
  
     private static Supplier<PackResources> m_91330_(Supplier<PackResources> p_91331_) {
-@@ -2660,6 +_,14 @@
- 
-    public void m_91312_(int p_91313_) {
+@@ -2662,6 +_,14 @@
        this.f_91051_.m_119410_(p_91313_);
-+   }
-+
+    }
+ 
 +   public ItemColors getItemColors() {
 +      return this.f_91041_;
 +   }
 +
 +   public SearchRegistry getSearchTreeManager() {
 +      return this.f_90997_;
-    }
- 
++   }
++
     public EntityModelSet m_167973_() {
+       return this.f_167844_;
+    }
+@@ -2719,4 +_,11 @@
+ 
+       public abstract boolean m_142594_(boolean p_168035_);
+    }
++
++   // FORGE START
++   private float realPartialTick;
++   public float getPartialTick() {
++      return realPartialTick;
++   }
++   // FORGE END
+ }

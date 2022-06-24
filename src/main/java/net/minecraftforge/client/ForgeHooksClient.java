@@ -297,13 +297,6 @@ public class ForgeHooksClient
         ModLoader.get().postEvent(new RegisterColorHandlersEvent.Item(itemColors, blockColors));
     }
 
-    static float partialTick;
-
-    public static void setPartialTick(float partialTick)
-    {
-        ForgeHooksClient.partialTick = partialTick;
-    }
-
     public static Model getArmorModel(LivingEntity entityLiving, ItemStack itemStack, EquipmentSlot slot, HumanoidModel<?> _default)
     {
         return IClientItemExtensions.of(itemStack).getGenericArmorModel(entityLiving, itemStack, slot, _default);
@@ -576,7 +569,7 @@ public class ForgeHooksClient
     public static CustomizeGuiOverlayEvent.BossEventProgress onCustomizeBossEventProgress(PoseStack poseStack, Window window, LerpingBossEvent bossInfo, int x, int y, int increment)
     {
         CustomizeGuiOverlayEvent.BossEventProgress evt = new CustomizeGuiOverlayEvent.BossEventProgress(window, poseStack,
-                MinecraftForgeClient.getPartialTick(), bossInfo, x, y, increment);
+                Minecraft.getInstance().getPartialTick(), bossInfo, x, y, increment);
         MinecraftForge.EVENT_BUS.post(evt);
         return evt;
     }

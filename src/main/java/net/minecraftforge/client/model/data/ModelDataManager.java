@@ -27,7 +27,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * A manager for the lifecycle of all the {@link ModelData} instances in a {@link Level}.<p/>
- * Users should not be instantiating or using this themselves.
+ * Users should not be instantiating or using this themselves unless they know what they're doing.
  */
 @ApiStatus.Internal
 @EventBusSubscriber(modid = "forge", bus = Bus.FORGE, value = Dist.CLIENT)

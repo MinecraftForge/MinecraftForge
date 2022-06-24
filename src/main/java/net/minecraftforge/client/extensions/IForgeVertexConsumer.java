@@ -7,6 +7,7 @@ package net.minecraftforge.client.extensions;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.blaze3d.vertex.VertexFormatElement;
 import com.mojang.math.Matrix3f;
 import com.mojang.math.Vector3f;
 import net.minecraft.client.renderer.block.model.BakedQuad;
@@ -22,6 +23,16 @@ public interface IForgeVertexConsumer
     private VertexConsumer self()
     {
         return (VertexConsumer) this;
+    }
+
+    /**
+     * Consumes an unknown {@link VertexFormatElement} as a raw int data array.<p/>
+     * The passed in array must be treated as read-only by the consumer, as it may not be a throw-away object.
+     * The caller must also not modify the array once it has been passed in, as it may be stored for later processing.
+     */
+    default VertexConsumer misc(VertexFormatElement element, int... rawData)
+    {
+        return self();
     }
 
     /**
