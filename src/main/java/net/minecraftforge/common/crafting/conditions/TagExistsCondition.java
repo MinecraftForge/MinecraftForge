@@ -42,7 +42,7 @@ public class TagExistsCondition implements ICondition
     @Override
     public boolean test(ICondition.IContext context)
     {
-        return !context.getTag(tag).isEmpty();
+        return !context.getTag(tag).getValues().isEmpty();
     }
 
     @Override
