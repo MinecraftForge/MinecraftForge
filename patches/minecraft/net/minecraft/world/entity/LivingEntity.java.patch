@@ -115,11 +115,13 @@
        float f = this.m_21223_();
        if (f > 0.0F) {
           this.m_21153_(f + p_21116_);
-@@ -984,6 +_,7 @@
+@@ -984,6 +_,9 @@
     }
  
     public boolean m_6469_(DamageSource p_21016_, float p_21017_) {
 +      if (!net.minecraftforge.common.ForgeHooks.onLivingAttack(this, p_21016_, p_21017_)) return false;
++      p_21016_ = net.minecraftforge.common.ForgeHooks.onLivingDamageSource(this, p_21016_, p_21017_);
++      if (p_21016_ == null) return false;
        if (this.m_6673_(p_21016_)) {
           return false;
        } else if (this.f_19853_.f_46443_) {

@@ -109,11 +109,13 @@
     }
  
     public void m_7378_(CompoundTag p_36215_) {
-@@ -786,6 +_,7 @@
+@@ -786,6 +_,9 @@
     }
  
     public boolean m_6469_(DamageSource p_36154_, float p_36155_) {
 +      if (!net.minecraftforge.common.ForgeHooks.onPlayerAttack(this, p_36154_, p_36155_)) return false;
++      p_36154_ = net.minecraftforge.common.ForgeHooks.onPlayerDamageSource(this, p_36154_, p_36155_);
++      if (p_36154_ == null) return false;
        if (this.m_6673_(p_36154_)) {
           return false;
        } else if (this.f_36077_.f_35934_ && !p_36154_.m_19378_()) {
