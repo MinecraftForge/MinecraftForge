@@ -541,6 +541,7 @@ public class ForgeMod
             CraftingHelper.register(OrCondition.Serializer.INSTANCE);
             CraftingHelper.register(TrueCondition.Serializer.INSTANCE);
             CraftingHelper.register(TagEmptyCondition.Serializer.INSTANCE);
+            CraftingHelper.register(TagExistsCondition.Serializer.INSTANCE);
 
             CraftingHelper.register(new ResourceLocation("forge", "compound"), CompoundIngredient.Serializer.INSTANCE);
             CraftingHelper.register(new ResourceLocation("forge", "nbt"), NBTIngredient.Serializer.INSTANCE);
