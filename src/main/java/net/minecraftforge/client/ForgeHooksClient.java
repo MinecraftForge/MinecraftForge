@@ -135,6 +135,8 @@ import net.minecraftforge.client.textures.ForgeTextureMetadata;
 import net.minecraftforge.common.ForgeI18n;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.IExtensionPoint;
@@ -143,6 +145,8 @@ import net.minecraftforge.fml.ModLoader;
 import net.minecraftforge.fml.StartupMessageManager;
 import net.minecraftforge.fml.VersionChecker;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.items.CapabilityItemDecoratorHandler;
+import net.minecraftforge.items.IItemDecoratorHandler;
 import net.minecraftforge.network.NetworkConstants;
 import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -1114,6 +1118,22 @@ public class ForgeHooksClient
         return Math.min(
                 Mth.log2(Math.max(1, width)),
                 Mth.log2(Math.max(1, height))
+        );
+    }
+
+    public static void attachItemDecorator(AttachCapabilitiesEvent<ItemStack> event, IItemDecorator itemDecorator)
+    {
+        Optional<LazyOptional<IItemDecoratorHandler>> optionalDecoratorHandler = event.getCapabilities().values()
+                .stream()
+                .map(prov -> prov.getCapability(CapabilityItemDecoratorHandler.ITEM_DECORATOR_HANDLER_CAPABILITY))
+                .filter(LazyOptional::isPresent)
+                .findFirst();
+        if (optionalDecoratorHandler.isEmpty())
+        {
+            optionalDecoratorHandler = Optional.of(CapabilityItemDecoratorHandler.attach(event));
+        }
+        optionalDecoratorHandler.get().ifPresent(decoratorHandler ->
+            decoratorHandler.addDecorator(itemDecorator)
         );
     }
 }

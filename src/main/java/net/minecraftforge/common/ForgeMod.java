@@ -60,6 +60,7 @@ import net.minecraftforge.fml.*;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.*;
 import net.minecraftforge.registries.*;
+import net.minecraftforge.items.CapabilityItemDecoratorHandler;
 import net.minecraftforge.network.NetworkConstants;
 import net.minecraftforge.event.server.ServerStoppingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -167,7 +168,7 @@ public class ForgeMod
                 Decoration.CODEC.fieldOf("step").forGetter(AddFeaturesBiomeModifier::step)
             ).apply(builder, AddFeaturesBiomeModifier::new))
         );
-    
+
     /**
      * Stock biome modifier for removing features from biomes.
      */
@@ -181,7 +182,7 @@ public class ForgeMod
                     ).optionalFieldOf("steps", EnumSet.allOf(Decoration.class)).forGetter(RemoveFeaturesBiomeModifier::steps)
             ).apply(builder, RemoveFeaturesBiomeModifier::new))
         );
-    
+
     /**
      * Stock biome modifier for adding mob spawns to biomes.
      */
@@ -196,7 +197,7 @@ public class ForgeMod
                     ).fieldOf("spawners").forGetter(AddSpawnsBiomeModifier::spawners)
             ).apply(builder, AddSpawnsBiomeModifier::new))
         );
-    
+
     /**
      * Stock biome modifier for removing mob spawns from biomes.
      */
@@ -421,6 +422,7 @@ public class ForgeMod
         CapabilityItemHandler.register(event);
         CapabilityFluidHandler.register(event);
         CapabilityEnergy.register(event);
+        CapabilityItemDecoratorHandler.register(event);
     }
 
     public void preInit(FMLCommonSetupEvent evt)
