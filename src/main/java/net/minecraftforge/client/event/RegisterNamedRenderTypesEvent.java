@@ -7,7 +7,6 @@ package net.minecraftforge.client.event;
 
 import com.google.common.base.Preconditions;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-import net.minecraft.Util;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.RenderTypeGroup;
@@ -19,10 +18,7 @@ import net.minecraftforge.fml.event.IModBusEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.jetbrains.annotations.ApiStatus;
 
-import java.util.Collections;
-import java.util.IdentityHashMap;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Allows users to register custom named {@link RenderType render types}.
@@ -34,10 +30,6 @@ import java.util.Set;
  */
 public class RegisterNamedRenderTypesEvent extends Event implements IModBusEvent
 {
-    private static final Set<RenderType> SUPPORTED_BLOCK_RENDER_TYPES = Util.make(Collections.newSetFromMap(new IdentityHashMap<>()), set -> {
-        set.addAll(RenderType.chunkBufferLayers());
-    });
-
     private final Map<ResourceLocation, RenderTypeGroup> renderTypes;
 
     @ApiStatus.Internal
@@ -70,7 +62,7 @@ public class RegisterNamedRenderTypesEvent extends Event implements IModBusEvent
         var key = new ResourceLocation(ModLoadingContext.get().getActiveNamespace(), name);
         Preconditions.checkArgument(!renderTypes.containsKey(key), "Render type already registered: " + key);
         Preconditions.checkArgument(blockRenderType.format() == DefaultVertexFormat.BLOCK, "The block render type must use the BLOCK vertex format.");
-        Preconditions.checkArgument(SUPPORTED_BLOCK_RENDER_TYPES.contains(blockRenderType), "Only Minecraft's built-in block render types are supported at this time.");
+        Preconditions.checkArgument(blockRenderType.getChunkLayerId() >= 0, "Only chunk render types can be used for block rendering. Query RenderType#chunkBufferLayers() for a list.");
         Preconditions.checkArgument(entityRenderType.format() == DefaultVertexFormat.NEW_ENTITY, "The entity render type must use the NEW_ENTITY vertex format.");
         Preconditions.checkArgument(fabulousEntityRenderType.format() == DefaultVertexFormat.NEW_ENTITY, "The fabulous entity render type must use the NEW_ENTITY vertex format.");
         renderTypes.put(key, new RenderTypeGroup(blockRenderType, entityRenderType, fabulousEntityRenderType));

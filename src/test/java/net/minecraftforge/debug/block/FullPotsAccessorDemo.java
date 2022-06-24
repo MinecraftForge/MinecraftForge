@@ -37,6 +37,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.ChunkRenderTypeSet;
 import net.minecraftforge.client.event.ModelEvent;
 import net.minecraftforge.client.model.*;
 import net.minecraftforge.client.model.data.*;
@@ -269,7 +270,7 @@ public class FullPotsAccessorDemo
 
         private static class DioritePotModel extends BakedModelWrapper<BakedModel>
         {
-            private static final Set<RenderType> CUTOUT = Set.of(RenderType.cutout());
+            private static final ChunkRenderTypeSet CUTOUT = ChunkRenderTypeSet.of(RenderType.cutout());
             private static final ResourceLocation POT_TEXTURE = new ResourceLocation("minecraft:block/flower_pot");
             private static final ResourceLocation DIRT_TEXTURE = new ResourceLocation("minecraft:block/dirt");
 
@@ -304,7 +305,7 @@ public class FullPotsAccessorDemo
             }
 
             @Override
-            public Set<RenderType> getRenderTypes(@NotNull BlockState state, @NotNull RandomSource rand, @NotNull ModelData data)
+            public ChunkRenderTypeSet getRenderTypes(@NotNull BlockState state, @NotNull RandomSource rand, @NotNull ModelData data)
             {
                 return CUTOUT;
             }

@@ -4,7 +4,7 @@
     protected final TextureAtlasSprite f_119485_;
     protected final ItemTransforms f_119486_;
     protected final ItemOverrides f_119487_;
-+   protected final java.util.Set<net.minecraft.client.renderer.RenderType> blockRenderTypes;
++   protected final net.minecraftforge.client.ChunkRenderTypeSet blockRenderTypes;
 +   protected final List<net.minecraft.client.renderer.RenderType> itemRenderTypes;
 +   protected final List<net.minecraft.client.renderer.RenderType> fabulousItemRenderTypes;
  
@@ -22,7 +22,7 @@
        this.f_119485_ = p_119494_;
        this.f_119486_ = p_119495_;
        this.f_119487_ = p_119496_;
-+      this.blockRenderTypes = !renderTypes.isEmpty() ? java.util.Set.of(renderTypes.block()) : null;
++      this.blockRenderTypes = !renderTypes.isEmpty() ? net.minecraftforge.client.ChunkRenderTypeSet.of(renderTypes.block()) : null;
 +      this.itemRenderTypes = !renderTypes.isEmpty() ? List.of(renderTypes.entity()) : null;
 +      this.fabulousItemRenderTypes = !renderTypes.isEmpty() ? List.of(renderTypes.entityFabulous()) : null;
     }
@@ -33,7 +33,7 @@
     }
  
 +   @Override
-+   public java.util.Set<net.minecraft.client.renderer.RenderType> getRenderTypes(@org.jetbrains.annotations.NotNull BlockState state, @org.jetbrains.annotations.NotNull RandomSource rand, @org.jetbrains.annotations.NotNull net.minecraftforge.client.model.data.ModelData data) {
++   public net.minecraftforge.client.ChunkRenderTypeSet getRenderTypes(@org.jetbrains.annotations.NotNull BlockState state, @org.jetbrains.annotations.NotNull RandomSource rand, @org.jetbrains.annotations.NotNull net.minecraftforge.client.model.data.ModelData data) {
 +      if (blockRenderTypes != null)
 +         return blockRenderTypes;
 +      return BakedModel.super.getRenderTypes(state, rand, data);

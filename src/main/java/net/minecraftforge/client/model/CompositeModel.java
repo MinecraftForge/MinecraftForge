@@ -28,6 +28,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.client.ChunkRenderTypeSet;
 import net.minecraftforge.client.RenderTypeGroup;
 import net.minecraftforge.client.model.data.ModelData;
 import net.minecraftforge.client.model.data.ModelProperty;
@@ -204,12 +205,12 @@ public class CompositeModel implements IUnbakedGeometry<CompositeModel>
         }
 
         @Override
-        public Set<RenderType> getRenderTypes(@NotNull BlockState state, @NotNull RandomSource rand, @NotNull ModelData data)
+        public ChunkRenderTypeSet getRenderTypes(@NotNull BlockState state, @NotNull RandomSource rand, @NotNull ModelData data)
         {
-            var set = new HashSet<RenderType>();
+            var sets = new ArrayList<ChunkRenderTypeSet>();
             for (Map.Entry<String, BakedModel> entry : children.entrySet())
-                set.addAll(entry.getValue().getRenderTypes(state, rand, CompositeModel.Data.resolve(data, entry.getKey())));
-            return set;
+                sets.add(entry.getValue().getRenderTypes(state, rand, CompositeModel.Data.resolve(data, entry.getKey())));
+            return ChunkRenderTypeSet.union(sets);
         }
 
         @Override

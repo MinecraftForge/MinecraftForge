@@ -18,12 +18,12 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.client.ChunkRenderTypeSet;
 import net.minecraftforge.client.model.data.ModelData;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.Set;
 
 /**
  * Extension interface for {@link IForgeBakedModel}.
@@ -71,7 +71,7 @@ public interface IForgeBakedModel
      * Supported types are those returned by {@link RenderType#chunkBufferLayers()}.<p/>
      * By default, defers query to {@link ItemBlockRenderTypes}.
      */
-    default Set<RenderType> getRenderTypes(@NotNull BlockState state, @NotNull RandomSource rand, @NotNull ModelData data)
+    default ChunkRenderTypeSet getRenderTypes(@NotNull BlockState state, @NotNull RandomSource rand, @NotNull ModelData data)
     {
         return ItemBlockRenderTypes.getRenderLayers(state);
     }
