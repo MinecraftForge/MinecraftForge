@@ -40,7 +40,6 @@ public class ModInfo implements IModInfo, IConfigurable
     private final Optional<String> logoFile;
     private final boolean logoBlur;
     private final Optional<URL> updateJSONURL;
-    private final Optional<URL> modURL;
     private final List<? extends IModInfo.ModVersion> dependencies;
     private final Map<String,Object> properties;
     private final IConfigurable config;
@@ -85,9 +84,6 @@ public class ModInfo implements IModInfo, IConfigurable
         this.properties = ownFile.map(mfi -> mfi.<Map<String, Object>>getConfigElement("modproperties", this.modId)
                 .orElse(Collections.emptyMap()))
                 .orElse(Collections.emptyMap());
-
-        this.modURL = config.<String>getConfigElement("modUrl")
-                .map(StringUtils::toURL);
     }
 
     @Override
@@ -138,11 +134,6 @@ public class ModInfo implements IModInfo, IConfigurable
     }
 
     @Override
-    public Optional<URL> getModURL() {
-        return this.modURL;
-    }
-
-    @Override
     public Optional<String> getLogoFile()
     {
         return this.logoFile;
@@ -176,7 +167,6 @@ public class ModInfo implements IModInfo, IConfigurable
         private final boolean mandatory;
         private final Ordering ordering;
         private final DependencySide side;
-        private Optional<URL> referralUrl;
 
         public ModVersion(final IModInfo owner, final IConfigurable config) {
             this.owner = owner;
@@ -193,8 +183,6 @@ public class ModInfo implements IModInfo, IConfigurable
             this.side = config.<String>getConfigElement("side")
                     .map(DependencySide::valueOf)
                     .orElse(DependencySide.BOTH);
-            this.referralUrl = config.<String>getConfigElement("referralUrl")
-                    .map(StringUtils::toURL);
         }
 
         @Override
@@ -237,12 +225,6 @@ public class ModInfo implements IModInfo, IConfigurable
         public IModInfo getOwner()
         {
             return owner;
-        }
-
-
-        @Override
-        public Optional<URL> getReferralURL() {
-            return referralUrl;
         }
     }
 

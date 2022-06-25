@@ -53,7 +53,7 @@ public class ModValidator {
         for (Iterator<ModFile> iterator = mods.iterator(); iterator.hasNext(); )
         {
             ModFile modFile = iterator.next();
-            if (!modFile.getProvider().isValid(modFile) || !modFile.identifyMods()) {
+            if (!modFile.getLocator().isValid(modFile) || !modFile.identifyMods()) {
                 LOGGER.warn(LogMarkers.SCAN, "File {} has been ignored - it is invalid", modFile.getFilePath());
                 iterator.remove();
                 brokenFiles.add(modFile);

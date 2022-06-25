@@ -5,7 +5,6 @@
 
 package net.minecraftforge.fml.loading.moddiscovery;
 
-import net.minecraftforge.forgespi.locating.IDependencyLocator;
 import net.minecraftforge.forgespi.locating.IModFile;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -16,7 +15,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Optional;
 
-public abstract class AbstractJarFileDependencyLocator extends AbstractJarFileModProvider implements IDependencyLocator
+public abstract class AbstractJarFileDependencyLocator extends AbstractJarFileModProvider
 {
     private static final Logger LOGGER = LogManager.getLogger();
 

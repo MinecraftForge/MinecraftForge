@@ -13,7 +13,6 @@ import net.minecraftforge.forgespi.language.IModFileInfo;
 import net.minecraftforge.forgespi.language.IModInfo;
 import net.minecraftforge.forgespi.locating.IModFile;
 import net.minecraftforge.forgespi.locating.IModLocator;
-import net.minecraftforge.forgespi.locating.IModProvider;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -25,7 +24,7 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.jar.Manifest;
 
-public abstract class AbstractModProvider implements IModProvider
+public abstract class AbstractModProvider implements IModLocator
 {
     private static final   Logger LOGGER    = LogManager.getLogger();
     protected static final String MODS_TOML = "META-INF/mods.toml";

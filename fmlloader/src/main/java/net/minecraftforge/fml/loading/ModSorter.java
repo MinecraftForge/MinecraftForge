@@ -9,7 +9,6 @@ import com.google.common.graph.GraphBuilder;
 import com.google.common.graph.MutableGraph;
 import cpw.mods.jarhandling.SecureJar;
 import net.minecraftforge.fml.loading.moddiscovery.MinecraftLocator;
-import net.minecraftforge.forgespi.language.IModFileInfo;
 import net.minecraftforge.forgespi.language.IModInfo;
 import net.minecraftforge.fml.loading.EarlyLoadingException.ExceptionData;
 import net.minecraftforge.fml.loading.moddiscovery.ModFile;
@@ -17,7 +16,6 @@ import net.minecraftforge.fml.loading.moddiscovery.ModFileInfo;
 import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
 import net.minecraftforge.fml.loading.toposort.CyclePresentException;
 import net.minecraftforge.fml.loading.toposort.TopologicalSort;
-import net.minecraftforge.forgespi.locating.IModFile;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
@@ -162,7 +160,7 @@ public class ModSorter
         systemMods.add("minecraft");
         // Find mod file from MinecraftLocator to define the system mods
         modFiles.stream()
-                .filter(modFile -> modFile.getProvider().getClass() == MinecraftLocator.class)
+                .filter(modFile -> modFile.getLocator().getClass() == MinecraftLocator.class)
                 .map(ModFile::getSecureJar)
                 .map(SecureJar::getManifest)
                 .map(Manifest::getMainAttributes)

@@ -16,7 +16,6 @@ import net.minecraftforge.forgespi.language.IModLanguageProvider;
 import net.minecraftforge.forgespi.language.ModFileScanData;
 import net.minecraftforge.forgespi.locating.IModFile;
 import net.minecraftforge.forgespi.locating.IModLocator;
-import net.minecraftforge.forgespi.locating.IModProvider;
 import net.minecraftforge.forgespi.locating.ModFileFactory;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -55,7 +54,7 @@ public class ModFile implements IModFile {
     private final SecureJar jar;
     private final Type modFileType;
     private final Manifest     manifest;
-    private final IModProvider provider;
+    private final IModLocator locator;
     private       IModFileInfo modFileInfo;
     private ModFileScanData fileModFileScanData;
     private CompletableFuture<ModFileScanData> futureScanResult;
@@ -65,12 +64,12 @@ public class ModFile implements IModFile {
     static final Attributes.Name TYPE = new Attributes.Name("FMLModType");
     private SecureJar.Status securityStatus;
 
-    public ModFile(final SecureJar jar, final IModProvider provider, final ModFileFactory.ModFileInfoParser parser) {
-        this(jar, provider, parser, parseType(jar));
+    public ModFile(final SecureJar jar, final IModLocator locator, final ModFileFactory.ModFileInfoParser parser) {
+        this(jar, locator, parser, parseType(jar));
     }
 
-    public ModFile(final SecureJar jar, final IModProvider provider, final ModFileFactory.ModFileInfoParser parser, String type) {
-        this.provider = provider;
+    public ModFile(final SecureJar jar, final IModLocator locator, final ModFileFactory.ModFileInfoParser parser, String type) {
+        this.locator = locator;
         this.jar = jar;
         this.parser = parser;
 
@@ -130,7 +129,7 @@ public class ModFile implements IModFile {
     }
 
     public void scanFile(Consumer<Path> pathConsumer) {
-        provider.scanFile(this, pathConsumer);
+        locator.scanFile(this, pathConsumer);
     }
 
     public void setFutureScanResult(CompletableFuture<ModFileScanData> future) {
@@ -195,8 +194,8 @@ public class ModFile implements IModFile {
     }
 
     @Override
-    public IModProvider getProvider() {
-        return provider;
+    public IModLocator getLocator() {
+        return locator;
     }
 
     @Override

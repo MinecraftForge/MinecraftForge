@@ -15,7 +15,6 @@ import net.minecraftforge.fml.loading.LogMarkers;
 import net.minecraftforge.fml.loading.UniqueModListBuilder;
 import net.minecraftforge.fml.loading.progress.StartupMessageManager;
 import net.minecraftforge.forgespi.Environment;
-import net.minecraftforge.forgespi.locating.IDependencyLocator;
 import net.minecraftforge.forgespi.locating.IModFile;
 import net.minecraftforge.forgespi.locating.IModLocator;
 import org.apache.logging.log4j.LogManager;
@@ -30,31 +29,20 @@ import java.util.stream.Collectors;
 public class ModDiscoverer {
     private static final Logger LOGGER = LogManager.getLogger();
     private final ServiceLoader<IModLocator> modLocators;
-    private final ServiceLoader<IDependencyLocator> dependencyLocators;
     private final List<IModLocator>          modLocatorList;
-    private final List<IDependencyLocator>   dependencyLocatorList;
 
     public ModDiscoverer(Map<String, ?> arguments) {
         Launcher.INSTANCE.environment().computePropertyIfAbsent(Environment.Keys.MODDIRECTORYFACTORY.get(), v->ModsFolderLocator::new);
         Launcher.INSTANCE.environment().computePropertyIfAbsent(Environment.Keys.PROGRESSMESSAGE.get(), v-> StartupMessageManager.locatorConsumer().orElseGet(()-> s->{}));
         final var moduleLayerManager = Launcher.INSTANCE.environment().findModuleLayerManager().orElseThrow();
         modLocators = ServiceLoader.load(moduleLayerManager.getLayer(IModuleLayerManager.Layer.SERVICE).orElseThrow(), IModLocator.class);
-        dependencyLocators = ServiceLoader.load(moduleLayerManager.getLayer(IModuleLayerManager.Layer.SERVICE).orElseThrow(), IDependencyLocator.class);
         modLocatorList = ServiceLoaderUtils.streamServiceLoader(()-> modLocators, sce->LOGGER.error("Failed to load mod locator list", sce)).collect(Collectors.toList());
         modLocatorList.forEach(l->l.initArguments(arguments));
-        dependencyLocatorList = ServiceLoaderUtils.streamServiceLoader(()-> dependencyLocators, sce->LOGGER.error("Failed to load dependency locator list", sce)).collect(Collectors.toList());
-        dependencyLocatorList.forEach(l->l.initArguments(arguments));
         if (LOGGER.isDebugEnabled(LogMarkers.CORE))
         {
             LOGGER.debug(LogMarkers.CORE, "Found Mod Locators : {}", modLocatorList.stream()
                                                                        .map(modLocator -> "(%s:%s)".formatted(modLocator.name(),
                                                                          modLocator.getClass().getPackage().getImplementationVersion())).collect(Collectors.joining(",")));
-        }
-        if (LOGGER.isDebugEnabled(LogMarkers.CORE))
-        {
-            LOGGER.debug(LogMarkers.CORE, "Found Dependency Locators : {}", dependencyLocatorList.stream()
-                                                                       .map(dependencyLocator -> "(%s:%s)".formatted(dependencyLocator.name(),
-                                                                         dependencyLocator.getClass().getPackage().getImplementationVersion())).collect(Collectors.joining(",")));
         }
     }
 
@@ -102,7 +90,7 @@ public class ModDiscoverer {
         //We can continue loading if prime mods loaded successfully.
         if (successfullyLoadedMods) {
             LOGGER.debug(LogMarkers.SCAN, "Successfully Loaded {} mods. Attempting to load dependencies...", loadedFiles.size());
-            for (IDependencyLocator locator : dependencyLocatorList) {
+            for (IModLocator locator : modLocatorList) {
                 try {
                     LOGGER.debug(LogMarkers.SCAN,"Trying locator {}", locator);
                     final List<IModFile> locatedMods = ImmutableList.copyOf(loadedFiles);
@@ -150,7 +138,7 @@ public class ModDiscoverer {
     {
         var locatedModFiles = locatedFiles.stream().filter(ModFile.class::isInstance).map(ModFile.class::cast).toList();
         for (IModFile mf : locatedModFiles) {
-            LOGGER.info(LogMarkers.SCAN, "Found mod file {} of type {} with provider {}", mf.getFileName(), mf.getType(), mf.getProvider());
+            LOGGER.info(LogMarkers.SCAN, "Found mod file {} of type {} with provider {}", mf.getFileName(), mf.getType(), mf.getLocator());
             StartupMessageManager.modLoaderConsumer().ifPresent(c->c.accept("Found mod file "+mf.getFileName()+" of type "+mf.getType()));
         }
         loadedFiles.addAll(locatedModFiles);
