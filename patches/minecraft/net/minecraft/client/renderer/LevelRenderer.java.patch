@@ -105,7 +105,7 @@
        p_202429_.run();
 +      net.minecraftforge.client.ISkyRenderHandler renderHandler = f_109465_.m_104583_().getSkyRenderHandler();
 +      if (renderHandler != null) {
-+         renderHandler.render(f_109477_, p_202426_, p_202424_, f_109465_, f_109461_);
++         renderHandler.render(f_109477_, p_202426_, p_202424_, p_202425_, p_202427_, p_202428_, p_202429_, f_109465_, f_109461_);
 +         return;
 +      }
        if (!p_202428_) {
@@ -117,7 +117,7 @@
     public void m_172954_(PoseStack p_172955_, Matrix4f p_172956_, float p_172957_, double p_172958_, double p_172959_, double p_172960_) {
 +      net.minecraftforge.client.ICloudRenderHandler renderHandler = f_109465_.m_104583_().getCloudRenderHandler();
 +      if (renderHandler != null) {
-+         renderHandler.render(f_109477_, p_172957_, p_172955_, f_109465_, f_109461_, p_172958_, p_172959_, p_172960_);
++         renderHandler.render(f_109477_, p_172957_, p_172955_, p_172956_, f_109465_, f_109461_, p_172958_, p_172959_, p_172960_);
 +         return;
 +      }
        float f = this.f_109465_.m_104583_().m_108871_();

@@ -6,6 +6,8 @@
 package net.minecraftforge.client;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Matrix4f;
+import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 
@@ -16,5 +18,5 @@ import net.minecraft.client.multiplayer.ClientLevel;
  */
 @FunctionalInterface
 public interface ISkyRenderHandler {
-    void render(int ticks, float partialTick, PoseStack poseStack, ClientLevel level, Minecraft minecraft);
+    void render(int ticks, float partialTick, PoseStack poseStack, Matrix4f matrix4f, Camera camera, boolean isFoggy, Runnable runnable, ClientLevel level, Minecraft minecraft);
 }

@@ -6,6 +6,7 @@
 package net.minecraftforge.client;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Matrix4f;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 
@@ -16,5 +17,5 @@ import net.minecraft.client.multiplayer.ClientLevel;
  */
 @FunctionalInterface
 public interface ICloudRenderHandler {
-    void render(int ticks, float partialTick, PoseStack poseStack, ClientLevel level, Minecraft minecraft, double camX, double camY, double camZ);
+    void render(int ticks, float partialTick, PoseStack poseStack, Matrix4f matrix4f, ClientLevel level, Minecraft minecraft, double camX, double camY, double camZ);
 }
