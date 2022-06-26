@@ -157,10 +157,10 @@ public class ModifiableBiomeInfo
             {
                 return effects;
             }
-            
+
             public BiomeSpecialEffectsBuilder getSpecialEffects()
             {
-            	return effects;
+                return effects;
             }
 
             public BiomeGenerationSettingsBuilder getGenerationSettings()
