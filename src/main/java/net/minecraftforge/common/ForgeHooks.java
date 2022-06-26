@@ -1048,7 +1048,7 @@ public class ForgeHooks
     {
         ItemStack[] items = ingredient.getItems();
         if (items.length == 0) return true;
-        if (items.length == 1 && !ForgeConfig.SERVER.treatEmptyTagsAsAir.get())
+        if (items.length == 1)
         {
             //If we potentially added a barrier due to the ingredient being an empty tag, try and check if it is the stack we added
             ItemStack item = items[0];
