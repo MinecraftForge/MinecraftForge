@@ -472,6 +472,8 @@ public class ForgeHooksClient
 
     public static void gatherFluidTextures(Set<Material> textures)
     {
+        if (!ModLoader.isLoadingStateValid()) return;
+
         ForgeRegistries.FLUIDS.getValues().stream()
                 .flatMap(ForgeHooksClient::getFluidMaterials)
                 .forEach(textures::add);

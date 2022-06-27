@@ -147,7 +147,7 @@ public class ClientModLoader
         boolean showWarnings = true;
         try {
             showWarnings = ForgeConfig.CLIENT.showLoadWarnings.get();
-        } catch (NullPointerException e) {
+        } catch (NullPointerException | IllegalStateException e) {
             // We're in an early error state, config is not available. Assume true.
         }
         if (!showWarnings) {
