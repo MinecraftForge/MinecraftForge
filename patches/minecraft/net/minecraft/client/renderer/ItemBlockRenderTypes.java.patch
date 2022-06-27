@@ -42,7 +42,7 @@
           if (!Minecraft.m_91085_()) {
              return Sheets.m_110792_();
           } else {
-@@ -340,9 +_,106 @@
+@@ -340,9 +_,111 @@
        }
     }
  
@@ -55,7 +55,6 @@
 +   // FORGE START
 +
 +   private static final java.util.function.Predicate<RenderType> SOLID_PREDICATE = type -> type == RenderType.m_110451_();
-+   private static final Object LOCK = new Object();
 +   // Access to the two following editable maps is guarded by synchronization and they are lazily copied to the "readonly" maps on first read after modification
 +   private static final Map<net.minecraftforge.registries.IRegistryDelegate<Block>, java.util.function.Predicate<RenderType>> blockRenderChecks = createRenderCheckMap(f_109275_);
 +   private static final Map<net.minecraftforge.registries.IRegistryDelegate<Fluid>, java.util.function.Predicate<RenderType>> fluidRenderChecks = createRenderCheckMap(f_109276_);
@@ -91,7 +90,7 @@
 +   }
 +
 +   public static void setRenderLayer(Block block, java.util.function.Predicate<RenderType> predicate) {
-+      synchronized (LOCK) {
++      synchronized (blockRenderChecks) {
 +         blockRenderChecks.put(block.delegate, predicate);
 +         blockRenderChecksReadOnly = null;
 +      }
@@ -102,7 +101,7 @@
 +   }
 +
 +   public static void setRenderLayer(Fluid fluid, java.util.function.Predicate<RenderType> predicate) {
-+      synchronized (LOCK) {
++      synchronized (fluidRenderChecks) {
 +         fluidRenderChecks.put(fluid.delegate, predicate);
 +         fluidRenderChecksReadOnly = null;
 +      }
@@ -115,8 +114,11 @@
 +   private static Map<net.minecraftforge.registries.IRegistryDelegate<Block>, java.util.function.Predicate<RenderType>> getBlockLayerPredicates() {
 +      Map<net.minecraftforge.registries.IRegistryDelegate<Block>, java.util.function.Predicate<RenderType>> map = blockRenderChecksReadOnly;
 +      if (map == null) {
-+         synchronized (LOCK) {
-+            blockRenderChecksReadOnly = map = copy(blockRenderChecks);
++         synchronized (blockRenderChecks) {
++            map = blockRenderChecksReadOnly;
++            if (map == null) {
++               blockRenderChecksReadOnly = map = copy(blockRenderChecks);
++            }
 +         }
 +      }
 +      return map;
@@ -130,8 +132,11 @@
 +   private static Map<net.minecraftforge.registries.IRegistryDelegate<Fluid>, java.util.function.Predicate<RenderType>> getFluidLayerPredicates() {
 +      Map<net.minecraftforge.registries.IRegistryDelegate<Fluid>, java.util.function.Predicate<RenderType>> map = fluidRenderChecksReadOnly;
 +      if (map == null) {
-+         synchronized (LOCK) {
-+            fluidRenderChecksReadOnly = map = copy(fluidRenderChecks);
++         synchronized (fluidRenderChecks) {
++            map = fluidRenderChecksReadOnly;
++            if (map == null) {
++               fluidRenderChecksReadOnly = map = copy(fluidRenderChecks);
++            }
 +         }
 +      }
 +      return map;
