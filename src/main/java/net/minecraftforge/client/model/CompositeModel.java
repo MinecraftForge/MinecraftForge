@@ -118,10 +118,10 @@ public class CompositeModel implements IUnbakedGeometry<CompositeModel>
     public Collection<Material> getMaterials(IGeometryBakingContext context, Function<ResourceLocation, UnbakedModel> modelGetter, Set<Pair<String, String>> missingTextureErrors)
     {
         Set<Material> textures = new HashSet<>();
+        if (context.hasMaterial("particle"))
+            textures.add(context.getMaterial("particle"));
         for (BlockModel part : children.values())
-        {
             textures.addAll(part.getMaterials(modelGetter, missingTextureErrors));
-        }
         return textures;
     }
 

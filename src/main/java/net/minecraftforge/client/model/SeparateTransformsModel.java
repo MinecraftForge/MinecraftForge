@@ -88,6 +88,8 @@ public class SeparateTransformsModel implements IUnbakedGeometry<SeparateTransfo
     public Collection<Material> getMaterials(IGeometryBakingContext context, Function<ResourceLocation, UnbakedModel> modelGetter, Set<Pair<String, String>> missingTextureErrors)
     {
         Set<Material> textures = Sets.newHashSet();
+        if (context.hasMaterial("particle"))
+            textures.add(context.getMaterial("particle"));
         textures.addAll(baseModel.getMaterials(modelGetter, missingTextureErrors));
         for (BlockModel model : perspectives.values())
             textures.addAll(model.getMaterials(modelGetter, missingTextureErrors));

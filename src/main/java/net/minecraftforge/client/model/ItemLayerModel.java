@@ -114,6 +114,8 @@ public class ItemLayerModel implements IUnbakedGeometry<ItemLayerModel>
             return textures;
 
         ImmutableList.Builder<Material> builder = ImmutableList.builder();
+        if (context.hasMaterial("particle"))
+            builder.add(context.getMaterial("particle"));
         for (int i = 0; context.hasMaterial("layer" + i); i++)
         {
             builder.add(context.getMaterial("layer" + i));

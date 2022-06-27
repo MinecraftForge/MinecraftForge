@@ -86,6 +86,8 @@ public class ElementsModel extends SimpleUnbakedGeometry<ElementsModel>
     public Collection<Material> getMaterials(IGeometryBakingContext context, Function<ResourceLocation, UnbakedModel> modelGetter, Set<Pair<String, String>> missingTextureErrors)
     {
         Set<Material> textures = Sets.newHashSet();
+        if (context.hasMaterial("particle"))
+            textures.add(context.getMaterial("particle"));
         for (BlockElement part : elements)
         {
             for (BlockElementFace face : part.faces.values())
