@@ -20,10 +20,10 @@ import org.jetbrains.annotations.ApiStatus;
  * Fired before a hand is rendered in the first person view.
  *
  * <p>This event is {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}.
- * If this event is cancelled, then the hand will not be rendered. </p>
+ * If this event is cancelled, then the hand will not be rendered.</p>
  *
  * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
- * only on the {@linkplain LogicalSide#CLIENT logical client}. </p>
+ * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
  *
  * @see RenderArmEvent
  */

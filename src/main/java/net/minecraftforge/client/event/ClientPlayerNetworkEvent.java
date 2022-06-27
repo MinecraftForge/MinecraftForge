@@ -20,7 +20,7 @@ import org.jetbrains.annotations.Nullable;
  * See the various subclasses to listen for specific events.
  *
  * <p>These events are fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
- * only on the {@linkplain LogicalSide#CLIENT logical client}. </p>
+ * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
  *
  * @see LoggingIn
  * @see LoggingOut
@@ -67,10 +67,10 @@ public abstract class ClientPlayerNetworkEvent extends Event
     /**
      * Fired when the client player logs in to the server. The player should be initialized.
      *
-     * <p>This event is not {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}. </p>
+     * <p>This event is not {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}.</p>
      *
      * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
-     * only on the {@linkplain LogicalSide#CLIENT logical client}. </p>
+     * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
     public static class LoggingIn extends ClientPlayerNetworkEvent
     {
@@ -84,10 +84,10 @@ public abstract class ClientPlayerNetworkEvent extends Event
     /**
      * Fired when the client player logs out. This event may also fire when a new integrated server is being created.
      *
-     * <p>This event is not {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}. </p>
+     * <p>This event is not {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}.</p>
      *
      * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
-     * only on the {@linkplain LogicalSide#CLIENT logical client}. </p>
+     * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
     @SuppressWarnings("NullableProblems")
     // Shush IntelliJ, we override non-nullables as nullables in this specific event; see later comment
@@ -140,10 +140,10 @@ public abstract class ClientPlayerNetworkEvent extends Event
     /**
      * Fired when the client player respawns, creating a new player instance to replace the old player instance.
      *
-     * <p>This event is not {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}. </p>
+     * <p>This event is not {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}.</p>
      *
      * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
-     * only on the {@linkplain LogicalSide#CLIENT logical client}. </p>
+     * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
     public static class Clone extends ClientPlayerNetworkEvent
     {

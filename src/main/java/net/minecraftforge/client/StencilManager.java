@@ -7,7 +7,7 @@ package net.minecraftforge.client;
 
 import java.util.BitSet;
 
-public class StencilManager
+public final class StencilManager
 {
     private static final BitSet BITS = new BitSet(8);
 
@@ -36,5 +36,9 @@ public class StencilManager
     {
         if (bit >= 0 && bit < BITS.length())
             BITS.clear(bit);
+    }
+
+    private StencilManager()
+    {
     }
 }

@@ -44,12 +44,12 @@ public class TextureStitchEvent extends Event implements IModBusEvent
 
     /**
      * <p>Fired <b>before</b> a texture atlas is stitched together.
-     * This can be used to add custom sprites to be stitched into the atlas. </p>
+     * This can be used to add custom sprites to be stitched into the atlas.</p>
      *
-     * <p>This event is not {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}. </p>
+     * <p>This event is not {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}.</p>
      *
      * <p>This event is fired on the {@linkplain FMLJavaModLoadingContext#getModEventBus()} mod-specific event bus},
-     * only on the {@linkplain LogicalSide#CLIENT logical client}. </p>
+     * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
     public static class Pre extends TextureStitchEvent
     {
@@ -79,10 +79,10 @@ public class TextureStitchEvent extends Event implements IModBusEvent
     /**
      * Fired <b>after</b> a texture atlas is stitched together and all textures therein has been loaded.
      *
-     * <p>This event is not {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}. </p>
+     * <p>This event is not {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}.</p>
      *
      * <p>This event is fired on the {@linkplain FMLJavaModLoadingContext#getModEventBus()} mod-specific event bus},
-     * only on the {@linkplain LogicalSide#CLIENT logical client}. </p>
+     * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
     public static class Post extends TextureStitchEvent
     {

@@ -21,7 +21,7 @@ import java.util.function.Consumer;
 import static net.minecraftforge.client.model.IQuadTransformer.*;
 
 /**
- * Vertex consumer that outputs {@link BakedQuad baked quads}.
+ * Vertex consumer that outputs {@linkplain BakedQuad baked quads}.
  * <p>
  * This consumer accepts data in {@link com.mojang.blaze3d.vertex.DefaultVertexFormat#BLOCK} and is not picky about
  * ordering or missing elements, but will not automatically populate missing data (color will be black, for example).

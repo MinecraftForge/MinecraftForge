@@ -67,7 +67,7 @@ public abstract class RenderGuiOverlayEvent extends Event
      * not be fired.</p>
      *
      * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
-     * only on the {@linkplain LogicalSide#CLIENT logical client}. </p>
+     * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      *
      * @see Post
      */
@@ -84,10 +84,10 @@ public abstract class RenderGuiOverlayEvent extends Event
     /**
      * Fired <b>after</b> an GUI overlay is rendered to the screen, if the corresponding {@link Pre} is not cancelled.
      *
-     * <p>This event is not {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}. </p>
+     * <p>This event is not {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}.</p>
      *
      * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
-     * only on the {@linkplain LogicalSide#CLIENT logical client}. </p>
+     * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
     public static class Post extends RenderGuiOverlayEvent
     {

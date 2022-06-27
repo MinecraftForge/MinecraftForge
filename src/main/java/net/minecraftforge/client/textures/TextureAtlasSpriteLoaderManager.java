@@ -13,14 +13,14 @@ import net.minecraftforge.fml.ModLoadingContext;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.HashMap;
 
 /**
  * Manager for {@link ITextureAtlasSpriteLoader} instances.
  * <p>
  * Provides a lookup.
  */
-public class TextureAtlasSpriteLoaderManager
+public final class TextureAtlasSpriteLoaderManager
 {
     private static ImmutableMap<ResourceLocation, ITextureAtlasSpriteLoader> LOADERS;
 
@@ -36,9 +36,13 @@ public class TextureAtlasSpriteLoaderManager
     @ApiStatus.Internal
     public static void init()
     {
-        var loaders = new ConcurrentHashMap<ResourceLocation, ITextureAtlasSpriteLoader>();
+        var loaders = new HashMap<ResourceLocation, ITextureAtlasSpriteLoader>();
         var event = new RegisterTextureAtlasSpriteLoadersEvent(loaders);
         ModLoader.get().postEventWithWrapInModOrder(event, (mc, e) -> ModLoadingContext.get().setActiveContainer(mc), (mc, e) -> ModLoadingContext.get().setActiveContainer(null));
         LOADERS = ImmutableMap.copyOf(loaders);
+    }
+
+    private TextureAtlasSpriteLoaderManager()
+    {
     }
 }

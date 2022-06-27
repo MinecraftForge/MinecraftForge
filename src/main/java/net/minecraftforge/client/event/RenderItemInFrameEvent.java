@@ -25,7 +25,7 @@ import org.jetbrains.annotations.ApiStatus;
  * If the event is cancelled, then the item stack will not be rendered</p>
  *
  * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
- * only on the {@linkplain LogicalSide#CLIENT logical client}. </p>
+ * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
  *
  * @see ItemFrameRenderer
  */

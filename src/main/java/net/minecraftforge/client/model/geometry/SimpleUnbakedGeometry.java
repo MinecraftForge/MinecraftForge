@@ -24,7 +24,7 @@ import java.util.function.Function;
 
 /**
  * Base class for implementations of {@link IUnbakedGeometry} which do not wish to handle model creation themselves,
- * instead supplying {@link BakedQuad baked quads} through a builder.
+ * instead supplying {@linkplain BakedQuad baked quads} through a builder.
  */
 public abstract class SimpleUnbakedGeometry<T extends SimpleUnbakedGeometry<T>> implements IUnbakedGeometry<T>
 {

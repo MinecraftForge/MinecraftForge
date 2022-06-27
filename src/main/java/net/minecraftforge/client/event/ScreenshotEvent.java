@@ -25,7 +25,7 @@ import java.io.IOException;
  * to the player's chat.</p>
  *
  * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
- * only on the {@linkplain LogicalSide#CLIENT logical client}. </p>
+ * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
  *
  * @see Screenshot
  */

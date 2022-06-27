@@ -9,7 +9,7 @@ import net.minecraft.client.renderer.RenderType;
 
 /**
  * A set of functionally equivalent shaders. One using {@link com.mojang.blaze3d.vertex.DefaultVertexFormat#BLOCK},
- * and the other two using {@link com.mojang.blaze3d.vertex.DefaultVertexFormat#NEW_ENTITY}.<p/>
+ * and the other two using {@link com.mojang.blaze3d.vertex.DefaultVertexFormat#NEW_ENTITY}.
  * {@code entityFabulous} may support custom render targets and other aspects of the fabulous pipeline, or can otherwise
  * be the same as {@code entity}.
  */
@@ -29,7 +29,7 @@ public record RenderTypeGroup(RenderType block, RenderType entity, RenderType en
     }
 
     /**
-     * Checks whether this group has render types or not. It either has all, or none.
+     * {@return true if this group has render types or not. It either has all, or none}
      */
     public boolean isEmpty()
     {

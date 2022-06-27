@@ -44,7 +44,10 @@ public interface IForgeBakedModel
         return self().getQuads(state, side, rand);
     }
 
-    default boolean useAmbientOcclusion(BlockState state) { return self().useAmbientOcclusion(); }
+    default boolean useAmbientOcclusion(BlockState state)
+    {
+        return self().useAmbientOcclusion();
+    }
 
     /**
      * Applies a transform for the given {@link ItemTransforms.TransformType} and {@code applyLeftHandTransform}, and
@@ -67,8 +70,9 @@ public interface IForgeBakedModel
     }
 
     /**
-     * Gets the set of {@link RenderType render types} to use when drawing this block in the level.<p/>
-     * Supported types are those returned by {@link RenderType#chunkBufferLayers()}.<p/>
+     * Gets the set of {@link RenderType render types} to use when drawing this block in the level.
+     * Supported types are those returned by {@link RenderType#chunkBufferLayers()}.
+     * <p>
      * By default, defers query to {@link ItemBlockRenderTypes}.
      */
     default ChunkRenderTypeSet getRenderTypes(@NotNull BlockState state, @NotNull RandomSource rand, @NotNull ModelData data)
@@ -77,9 +81,12 @@ public interface IForgeBakedModel
     }
 
     /**
-     * Gets an ordered list of {@link RenderType render types} to use when drawing this item.<p/>
-     * All render types using the {@link com.mojang.blaze3d.vertex.DefaultVertexFormat#NEW_ENTITY} format are supported.<p/>
+     * Gets an ordered list of {@link RenderType render types} to use when drawing this item.
+     * All render types using the {@link com.mojang.blaze3d.vertex.DefaultVertexFormat#NEW_ENTITY} format are supported.
+     * <p>
      * This method will only be called on the models returned by {@link #getRenderPasses(ItemStack, boolean)}.
+     * <p>
+     * By default, defers query to {@link ItemBlockRenderTypes}.
      *
      * @see #getRenderPasses(ItemStack, boolean)
      */
@@ -91,6 +98,8 @@ public interface IForgeBakedModel
     /**
      * Gets an ordered list of baked models used to render this model as an item.
      * Each of those models' render types will be queried via {@link #getRenderTypes(ItemStack, boolean)}.
+     * <p>
+     * By default, returns the model itself.
      *
      * @see #getRenderTypes(ItemStack, boolean)
      */

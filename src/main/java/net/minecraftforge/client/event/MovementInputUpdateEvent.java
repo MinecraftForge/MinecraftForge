@@ -16,10 +16,10 @@ import org.jetbrains.annotations.ApiStatus;
 /**
  * <p>Fired after the player's movement inputs are updated.</p>
  *
- * <p>This event is not {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}. </p>
+ * <p>This event is not {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}.</p>
  *
  * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
- * only on the {@linkplain LogicalSide#CLIENT logical client}. </p>
+ * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
  */
 public class MovementInputUpdateEvent extends PlayerEvent
 {

@@ -14,15 +14,15 @@ import net.minecraftforge.fml.ModLoadingContext;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.HashMap;
 import java.util.stream.Collectors;
 
 /**
- * Manager for {@link IGeometryLoader geometry loaders}.
+ * Manager for {@linkplain IGeometryLoader geometry loaders}.
  * <p>
  * Provides a lookup.
  */
-public class GeometryLoaderManager
+public final class GeometryLoaderManager
 {
     private static ImmutableMap<ResourceLocation, IGeometryLoader<?>> LOADERS;
     private static String LOADER_LIST;
@@ -47,11 +47,15 @@ public class GeometryLoaderManager
     @ApiStatus.Internal
     public static void init()
     {
-        var loaders = new ConcurrentHashMap<ResourceLocation, IGeometryLoader<?>>();
+        var loaders = new HashMap<ResourceLocation, IGeometryLoader<?>>();
         loaders.put(new ResourceLocation("minecraft:elements"), ElementsModel.Loader.INSTANCE_DEPRECATED); // TODO: Deprecated. To be removed in 1.20
         var event = new ModelEvent.RegisterGeometryLoaders(loaders);
         ModLoader.get().postEventWithWrapInModOrder(event, (mc, e) -> ModLoadingContext.get().setActiveContainer(mc), (mc, e) -> ModLoadingContext.get().setActiveContainer(null));
         LOADERS = ImmutableMap.copyOf(loaders);
         LOADER_LIST = loaders.keySet().stream().map(ResourceLocation::toString).collect(Collectors.joining(", "));
+    }
+
+    private GeometryLoaderManager()
+    {
     }
 }

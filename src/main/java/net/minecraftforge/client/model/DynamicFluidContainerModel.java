@@ -53,15 +53,16 @@ import java.util.Set;
 import java.util.function.Function;
 
 /**
- * A dynamic fluid container model, capable of re-texturing itself at runtime to match the contained fluid.<p/>
- * Composed of a base layer, a fluid layer (applied with a mask) and a cover layer (optionally applied with a mask).<p/>
+ * A dynamic fluid container model, capable of re-texturing itself at runtime to match the contained fluid.
+ * <p>
+ * Composed of a base layer, a fluid layer (applied with a mask) and a cover layer (optionally applied with a mask).
  * The entire model may optionally be flipped if the fluid is gaseous, and the fluid layer may glow if light-emitting.
  * <p>
  * Fluid tinting requires registering a separate {@link ItemColor}. An implementation is provided in {@link Colors}.
  *
  * @see Colors
  */
-public final class DynamicFluidContainerModel implements IUnbakedGeometry<DynamicFluidContainerModel>
+public class DynamicFluidContainerModel implements IUnbakedGeometry<DynamicFluidContainerModel>
 {
     private static final Logger LOGGER = LogManager.getLogger();
 

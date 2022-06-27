@@ -21,12 +21,12 @@ import org.jetbrains.annotations.ApiStatus;
  * Fired for registering particle providers at the appropriate time.
  *
  * <p>{@link ParticleType}s must be registered during {@link RegisterEvent} as usual;
- * this event is only for the {@link ParticleProvider}s. </p>
+ * this event is only for the {@link ParticleProvider}s.</p>
  *
- * <p>This event is not {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}. </p>
+ * <p>This event is not {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}.</p>
  *
  * <p>This event is fired on the {@linkplain FMLJavaModLoadingContext#getModEventBus() mod-specific event bus},
- * only on the {@linkplain LogicalSide#CLIENT logical client}. </p>
+ * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
  */
 public class RegisterParticleProvidersEvent extends Event implements IModBusEvent
 {

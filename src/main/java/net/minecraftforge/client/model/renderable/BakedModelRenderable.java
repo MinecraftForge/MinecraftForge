@@ -23,7 +23,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Arrays;
 
 /**
- * {@link IRenderable Renderable } wrapper for {@link BakedModel baked models}.<p/>
+ * {@linkplain IRenderable Renderable} wrapper for {@linkplain BakedModel baked models}.
+ * <p>
  * The context can provide the {@link BlockState}, faces to be rendered, a {@link RandomSource} and seed,
  * a {@link ModelData} instance, and a {@link Vector4f tint}.
  *

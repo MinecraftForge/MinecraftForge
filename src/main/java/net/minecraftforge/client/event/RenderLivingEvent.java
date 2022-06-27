@@ -108,10 +108,10 @@ public abstract class RenderLivingEvent<T extends LivingEntity, M extends Entity
      *
      * <p>This event is {@linkplain Cancelable cancelable}, and does not {@linkplain HasResult have a result}.
      * If this event is cancelled, then the entity will not be rendered and the corresponding
-     * {@link RenderLivingEvent.Post} will not be fired. </p>
+     * {@link RenderLivingEvent.Post} will not be fired.</p>
      *
      * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
-     * only on the {@linkplain LogicalSide#CLIENT logical client}. </p>
+     * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      *
      * @param <T> the living entity that is being rendered
      * @param <M> the model for the living entity
@@ -129,10 +129,10 @@ public abstract class RenderLivingEvent<T extends LivingEntity, M extends Entity
     /**
      * Fired <b>after</b> an entity is rendered, if the corresponding {@link RenderLivingEvent.Post} is not cancelled.
      *
-     * <p>This event is not {@linkplain Cancelable cancelable}, and does not {@linkplain HasResult have a result}. </p>
+     * <p>This event is not {@linkplain Cancelable cancelable}, and does not {@linkplain HasResult have a result}.</p>
      *
      * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
-     * only on the {@linkplain LogicalSide#CLIENT logical client}. </p>
+     * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      *
      * @param <T> the living entity that was rendered
      * @param <M> the model for the living entity

@@ -356,7 +356,7 @@ public abstract class ModelProvider<T extends ModelBuilder<T>> implements DataPr
     }
 
     /**
-     * Gets a model builder that's not directly saved to disk. Meant for use in custom model loaders.
+     * {@return a model builder that's not directly saved to disk. Meant for use in custom model loaders.}
      */
     public T nested()
     {

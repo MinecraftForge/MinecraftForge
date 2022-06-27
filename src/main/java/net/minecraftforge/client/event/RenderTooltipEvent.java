@@ -73,7 +73,7 @@ public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api
     /**
      * {@return the unmodifiable list of tooltip components}
      *
-     * <p>Use {@link ItemTooltipEvent} or {@link GatherComponents} to modify tooltip contents or components. </p>
+     * <p>Use {@link ItemTooltipEvent} or {@link GatherComponents} to modify tooltip contents or components.</p>
      */
     @NotNull
     public List<ClientTooltipComponent> getComponents()
@@ -112,10 +112,10 @@ public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api
      *
      * <p>This event is {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}.
      * If this event is cancelled, then the list of components will be empty, causing the tooltip to not be rendered and
-     * the corresponding {@link RenderTooltipEvent.Pre} and {@link RenderTooltipEvent.Color} to not be fired. </p>
+     * the corresponding {@link RenderTooltipEvent.Pre} and {@link RenderTooltipEvent.Color} to not be fired.</p>
      *
      * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
-     * only on the {@linkplain LogicalSide#CLIENT logical client}. </p>
+     * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
     @Cancelable
     public static class GatherComponents extends Event
@@ -201,10 +201,10 @@ public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api
      *
      * <p>This event is {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}.
      * If this event is cancelled, then the tooltip will not be rendered and the corresponding
-     * {@link RenderTooltipEvent.Color} will not be fired. </p>
+     * {@link RenderTooltipEvent.Color} will not be fired.</p>
      *
      * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
-     * only on the {@linkplain LogicalSide#CLIENT logical client}. </p>
+     * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
     @Cancelable
     public static class Pre extends RenderTooltipEvent
@@ -274,10 +274,10 @@ public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api
      * Fired when the colours for the tooltip background are determined.
      * This can be used to modify the background color and the border's gradient colors.
      *
-     * <p>This event is not {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}. </p>
+     * <p>This event is not {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}.</p>
      *
      * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
-     * only on the {@linkplain LogicalSide#CLIENT logical client}. </p>
+     * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
     public static class Color extends RenderTooltipEvent
     {

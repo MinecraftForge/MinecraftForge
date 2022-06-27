@@ -13,7 +13,8 @@ import net.minecraftforge.client.event.ModelEvent.RegisterGeometryLoaders;
 import net.minecraftforge.client.event.RegisterClientReloadListenersEvent;
 
 /**
- * A loader for custom {@link IUnbakedGeometry model geometries}.<p/>
+ * A loader for custom {@linkplain IUnbakedGeometry model geometries}.
+ * <p>
  * If you do any caching, you should implement {@link ResourceManagerReloadListener} and register it with
  * {@link RegisterClientReloadListenersEvent}.
  *

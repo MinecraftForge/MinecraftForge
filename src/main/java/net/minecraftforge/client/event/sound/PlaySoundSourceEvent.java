@@ -19,10 +19,10 @@ import org.jetbrains.annotations.ApiStatus;
  * in a buffer before being played, and used for most sounds of short length such as sound effects for clicking
  * buttons.
  *
- * <p>This event is not {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}. </p>
+ * <p>This event is not {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}.</p>
  *
  * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
- * only on the {@linkplain LogicalSide#CLIENT logical client}. </p>
+ * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
  *
  * @see PlayStreamingSourceEvent
  */

@@ -28,7 +28,8 @@ import java.util.Set;
 import java.util.function.Function;
 
 /**
- * A {@link IGeometryBakingContext geometry baking context} that is bound to a {@link BlockModel}.<p/>
+ * A {@linkplain IGeometryBakingContext geometry baking context} that is bound to a {@link BlockModel}.
+ * <p>
  * Users should not be instantiating this themselves.
  */
 public class BlockGeometryBakingContext implements IGeometryBakingContext

@@ -19,10 +19,10 @@ import org.jetbrains.annotations.ApiStatus;
  * Fired before a block texture will be overlaid on the player's view.
  *
  * <p>This event is {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}.
- * If this event is cancelled, then the overlay will not be rendered. </p>
+ * If this event is cancelled, then the overlay will not be rendered.</p>
  *
  * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
- * only on the {@linkplain LogicalSide#CLIENT logical client}. </p>
+ * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
  */
 @Cancelable
 public class RenderBlockScreenEffectEvent extends Event

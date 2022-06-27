@@ -14,15 +14,15 @@ import net.minecraftforge.fml.ModLoadingContext;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.HashMap;
 import java.util.function.Function;
 
 /**
- * Manager for {@link net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent} factories.
+ * Manager for {@link ClientTooltipComponent} factories.
  * <p>
  * Provides a lookup.
  */
-public class ClientTooltipComponentManager
+public final class ClientTooltipComponentManager
 {
     private static ImmutableMap<Class<? extends TooltipComponent>, Function<TooltipComponent, ClientTooltipComponent>> FACTORIES;
 
@@ -39,9 +39,13 @@ public class ClientTooltipComponentManager
     @ApiStatus.Internal
     public static void init()
     {
-        var factories = new ConcurrentHashMap<Class<? extends TooltipComponent>, Function<TooltipComponent, ClientTooltipComponent>>();
+        var factories = new HashMap<Class<? extends TooltipComponent>, Function<TooltipComponent, ClientTooltipComponent>>();
         var event = new RegisterClientTooltipComponentFactoriesEvent(factories);
         ModLoader.get().postEventWithWrapInModOrder(event, (mc, e) -> ModLoadingContext.get().setActiveContainer(mc), (mc, e) -> ModLoadingContext.get().setActiveContainer(null));
         FACTORIES = ImmutableMap.copyOf(factories);
+    }
+
+    private ClientTooltipComponentManager()
+    {
     }
 }

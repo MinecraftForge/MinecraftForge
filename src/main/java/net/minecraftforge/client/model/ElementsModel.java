@@ -36,8 +36,7 @@ import java.util.Set;
 import java.util.function.Function;
 
 /**
- * A model composed of vanilla {@link BlockElement block elements}.<p/>
- * Useful for nested loaders, where you otherwise wouldn't be able to define vanilla-style elements.
+ * A model composed of vanilla {@linkplain BlockElement block elements}.
  */
 public class ElementsModel extends SimpleUnbakedGeometry<ElementsModel>
 {

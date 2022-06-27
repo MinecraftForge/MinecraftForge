@@ -51,8 +51,6 @@ public sealed class ChunkRenderTypeSet implements Iterable<RenderType>
     {
         if (renderTypes.isEmpty())
             return none();
-        if (renderTypes instanceof Set && renderTypes.size() == CHUNK_RENDER_TYPES.length)
-            return all();
         return of((Iterable<RenderType>) renderTypes);
     }
 

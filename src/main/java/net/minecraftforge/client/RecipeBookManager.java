@@ -21,7 +21,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
 import static net.minecraft.client.RecipeBookCategories.*;
@@ -31,16 +30,13 @@ import static net.minecraft.client.RecipeBookCategories.*;
  * <p>
  * Provides a recipe category lookup.
  */
-public class RecipeBookManager
+public final class RecipeBookManager
 {
     // Not using ConcurrentHashMap here because it's slower for lookups, so we only use it during init
     private static final Map<RecipeBookCategories, List<RecipeBookCategories>> AGGREGATE_CATEGORIES = new HashMap<>();
     private static final Map<RecipeBookType, List<RecipeBookCategories>> TYPE_CATEGORIES = new HashMap<>();
     private static final Map<RecipeType<?>, Function<Recipe<?>, RecipeBookCategories>> RECIPE_CATEGORY_LOOKUPS = new HashMap<>();
-
-    //Unmodifiable view, the nested lists are immutable
-    public static final Map<RecipeBookCategories, List<RecipeBookCategories>> AGGREGATE_CATEGORIES_VIEW = Collections.unmodifiableMap(AGGREGATE_CATEGORIES);
-    public static final Map<RecipeBookType, List<RecipeBookCategories>> TYPE_CATEGORIES_VIEW = Collections.unmodifiableMap(TYPE_CATEGORIES);
+    private static final Map<RecipeBookCategories, List<RecipeBookCategories>> AGGREGATE_CATEGORIES_VIEW = Collections.unmodifiableMap(AGGREGATE_CATEGORIES);
 
     /**
      * Finds the category the specified recipe should display in, or null if none.
@@ -53,12 +49,24 @@ public class RecipeBookManager
     }
 
     @ApiStatus.Internal
+    public static Map<RecipeBookCategories, List<RecipeBookCategories>> getAggregateCategories()
+    {
+        return AGGREGATE_CATEGORIES_VIEW;
+    }
+
+    @ApiStatus.Internal
+    public static List<RecipeBookCategories> getCustomCategoriesOrEmpty(RecipeBookType recipeBookType)
+    {
+        return TYPE_CATEGORIES.getOrDefault(recipeBookType, List.of());
+    }
+
+    @ApiStatus.Internal
     public static void init()
     {
         // The ImmutableMap is the patched out value of AGGREGATE_CATEGORIES
-        var aggregateCategories = new ConcurrentHashMap<>(ImmutableMap.of(CRAFTING_SEARCH, ImmutableList.of(CRAFTING_EQUIPMENT, CRAFTING_BUILDING_BLOCKS, CRAFTING_MISC, CRAFTING_REDSTONE), FURNACE_SEARCH, ImmutableList.of(FURNACE_FOOD, FURNACE_BLOCKS, FURNACE_MISC), BLAST_FURNACE_SEARCH, ImmutableList.of(BLAST_FURNACE_BLOCKS, BLAST_FURNACE_MISC), SMOKER_SEARCH, ImmutableList.of(SMOKER_FOOD)));
-        var typeCategories = new ConcurrentHashMap<RecipeBookType, ImmutableList<RecipeBookCategories>>();
-        var recipeCategoryLookups = new ConcurrentHashMap<RecipeType<?>, Function<Recipe<?>, RecipeBookCategories>>();
+        var aggregateCategories = new HashMap<>(ImmutableMap.of(CRAFTING_SEARCH, ImmutableList.of(CRAFTING_EQUIPMENT, CRAFTING_BUILDING_BLOCKS, CRAFTING_MISC, CRAFTING_REDSTONE), FURNACE_SEARCH, ImmutableList.of(FURNACE_FOOD, FURNACE_BLOCKS, FURNACE_MISC), BLAST_FURNACE_SEARCH, ImmutableList.of(BLAST_FURNACE_BLOCKS, BLAST_FURNACE_MISC), SMOKER_SEARCH, ImmutableList.of(SMOKER_FOOD)));
+        var typeCategories = new HashMap<RecipeBookType, ImmutableList<RecipeBookCategories>>();
+        var recipeCategoryLookups = new HashMap<RecipeType<?>, Function<Recipe<?>, RecipeBookCategories>>();
         var event = new RegisterRecipeBookCategoriesEvent(aggregateCategories, typeCategories, recipeCategoryLookups);
         ModLoader.get().postEventWithWrapInModOrder(event, (mc, e) -> ModLoadingContext.get().setActiveContainer(mc), (mc, e) -> ModLoadingContext.get().setActiveContainer(null));
         AGGREGATE_CATEGORIES.putAll(aggregateCategories);

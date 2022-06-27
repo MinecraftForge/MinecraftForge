@@ -20,10 +20,10 @@ import org.jetbrains.annotations.ApiStatus;
  * This can be used for filtering and detecting messages with specific words or phrases, and suppressing them.
  *
  * <p>This event is {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}.
- * If the event is cancelled, the message is not displayed in the chat message window. </p>
+ * If the event is cancelled, the message is not displayed in the chat message window.</p>
  *
  * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
- * only on the {@linkplain LogicalSide#CLIENT logical client}. </p>
+ * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
  *
  * @see ChatType
  */

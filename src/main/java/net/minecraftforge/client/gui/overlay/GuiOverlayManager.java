@@ -19,11 +19,11 @@ import java.util.HashMap;
 import java.util.function.Function;
 
 /**
- * Manager for {@link IGuiOverlay HUD overlays}.
+ * Manager for {@linkplain IGuiOverlay HUD overlays}.
  * <p>
  * Provides a lookup by ID, as well as all registered {@link IGuiOverlay overlays}.
  */
-public class GuiOverlayManager
+public final class GuiOverlayManager
 {
     private static ImmutableList<NamedGuiOverlay> OVERLAYS;
     private static ImmutableMap<ResourceLocation, NamedGuiOverlay> OVERLAYS_BY_NAME;
@@ -71,5 +71,9 @@ public class GuiOverlayManager
             overlays.put(entry.id(), entry.overlay);
             orderedOverlays.add(entry.id());
         }
+    }
+
+    private GuiOverlayManager()
+    {
     }
 }

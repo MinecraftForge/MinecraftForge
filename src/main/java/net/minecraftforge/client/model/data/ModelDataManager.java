@@ -26,7 +26,8 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * A manager for the lifecycle of all the {@link ModelData} instances in a {@link Level}.<p/>
+ * A manager for the lifecycle of all the {@link ModelData} instances in a {@link Level}.
+ * <p>
  * Users should not be instantiating or using this themselves unless they know what they're doing.
  */
 @ApiStatus.Internal

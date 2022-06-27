@@ -13,15 +13,15 @@ import net.minecraftforge.fml.ModLoader;
 import net.minecraftforge.fml.ModLoadingContext;
 import org.jetbrains.annotations.ApiStatus;
 
+import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Manager for named {@link RenderType render types}.
  * <p>
  * Provides a lookup.
  */
-public class NamedRenderTypeManager
+public final class NamedRenderTypeManager
 {
     private static ImmutableMap<ResourceLocation, RenderTypeGroup> RENDER_TYPES;
 
@@ -36,7 +36,7 @@ public class NamedRenderTypeManager
     @ApiStatus.Internal
     public static void init()
     {
-        var renderTypes = new ConcurrentHashMap<ResourceLocation, RenderTypeGroup>();
+        var renderTypes = new HashMap<ResourceLocation, RenderTypeGroup>();
         preRegisterVanillaRenderTypes(renderTypes);
         var event = new RegisterNamedRenderTypesEvent(renderTypes);
         ModLoader.get().postEventWithWrapInModOrder(event, (mc, e) -> ModLoadingContext.get().setActiveContainer(mc), (mc, e) -> ModLoadingContext.get().setActiveContainer(null));
@@ -55,4 +55,7 @@ public class NamedRenderTypeManager
         blockRenderTypes.put(new ResourceLocation("tripwire"), new RenderTypeGroup(RenderType.tripwire(), ForgeRenderTypes.ITEM_LAYERED_TRANSLUCENT.get()));
     }
 
+    private NamedRenderTypeManager()
+    {
+    }
 }

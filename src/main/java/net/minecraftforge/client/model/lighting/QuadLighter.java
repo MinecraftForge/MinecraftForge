@@ -19,7 +19,8 @@ import java.util.Objects;
 import static net.minecraftforge.client.model.IQuadTransformer.*;
 
 /**
- * Base class for all quad lighting providers.<p/>
+ * Base class for all quad lighting providers.
+ * <p>
  * Contains all the shared elements needed for {@link BakedQuad} processing and defers lighting logic to inheritors.
  *
  * @see FlatQuadLighter

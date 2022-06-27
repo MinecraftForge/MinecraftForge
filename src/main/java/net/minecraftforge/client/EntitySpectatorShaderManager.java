@@ -14,15 +14,15 @@ import net.minecraftforge.fml.ModLoadingContext;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Manager for entity spectator mode shaders.
  * <p>
  * Provides a lookup.
  */
-public class EntitySpectatorShaderManager
+public final class EntitySpectatorShaderManager
 {
     private static Map<EntityType<?>, ResourceLocation> SHADERS;
 
@@ -38,9 +38,13 @@ public class EntitySpectatorShaderManager
     @ApiStatus.Internal
     public static void init()
     {
-        var shaders = new ConcurrentHashMap<EntityType<?>, ResourceLocation>();
+        var shaders = new HashMap<EntityType<?>, ResourceLocation>();
         var event = new RegisterEntitySpectatorShadersEvent(shaders);
         ModLoader.get().postEventWithWrapInModOrder(event, (mc, e) -> ModLoadingContext.get().setActiveContainer(mc), (mc, e) -> ModLoadingContext.get().setActiveContainer(null));
         SHADERS = ImmutableMap.copyOf(shaders);
+    }
+
+    private EntitySpectatorShaderManager()
+    {
     }
 }

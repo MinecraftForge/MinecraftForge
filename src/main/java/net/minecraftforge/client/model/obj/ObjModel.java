@@ -49,7 +49,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
- * A model loaded from an OBJ file.<p/>
+ * A model loaded from an OBJ file.
+ * <p>
  * Supports positions, texture coordinates, normals and colors. The {@link ObjMaterialLibrary material library}
  * has support for numerous features, including support for {@link ResourceLocation} textures (non-standard).
  */

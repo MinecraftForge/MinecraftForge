@@ -46,7 +46,8 @@ public class UnbakedGeometryHelper
     private static final ItemModelGenerator ITEM_MODEL_GENERATOR = new ItemModelGenerator();
     private static final FaceBakery FACE_BAKERY = new FaceBakery();
 
-    /* Explanation:
+    /**
+     * Explanation:
      * This takes anything that looks like a valid resourcepack texture location, and tries to extract a resourcelocation out of it.
      *  1. it will ignore anything up to and including an /assets/ folder,
      *  2. it will take the next path component as a namespace,
@@ -63,7 +64,8 @@ public class UnbakedGeometryHelper
             Pattern.compile("(?:.*[\\\\/]assets[\\\\/](?<namespace>[a-z_-]+)[\\\\/]textures[\\\\/])?(?<path>[a-z_\\\\/-]+)\\.png");
 
     /**
-     * Resolves a material that may have been defined with a filesystem path instead of a proper {@link ResourceLocation}.<p/>
+     * Resolves a material that may have been defined with a filesystem path instead of a proper {@link ResourceLocation}.
+     * <p>
      * The target atlas will always be {@link TextureAtlas#LOCATION_BLOCKS}.
      */
     public static Material resolveDirtyMaterial(@Nullable String tex, IGeometryBakingContext owner)
@@ -110,7 +112,7 @@ public class UnbakedGeometryHelper
     }
 
     /**
-     * Creates a list of {@link BlockElement block elements} in the shape of the specified sprite.
+     * Creates a list of {@linkplain BlockElement block elements} in the shape of the specified sprite.
      * These can later be baked using the same, or another texture.
      * <p>
      * The {@link Direction#NORTH} and {@link Direction#SOUTH} faces take up the whole surface.
@@ -121,7 +123,7 @@ public class UnbakedGeometryHelper
     }
 
     /**
-     * Creates a list of {@link BlockElement block elements} in the shape of the specified sprite.
+     * Creates a list of {@linkplain BlockElement block elements} in the shape of the specified sprite.
      * These can later be baked using the same, or another texture.
      * <p>
      * The {@link Direction#NORTH} and {@link Direction#SOUTH} faces take up only the pixels the texture uses.
@@ -192,7 +194,7 @@ public class UnbakedGeometryHelper
     }
 
     /**
-     * Bakes a list of {@link BlockElement block elements} and feeds the baked quads to a {@link IModelBuilder model builder}.
+     * Bakes a list of {@linkplain BlockElement block elements} and feeds the baked quads to a {@linkplain IModelBuilder model builder}.
      */
     public static void bakeElements(IModelBuilder<?> builder, List<BlockElement> elements, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelState, ResourceLocation modelLocation)
     {
@@ -210,7 +212,7 @@ public class UnbakedGeometryHelper
     }
 
     /**
-     * Bakes a list of {@link BlockElement block elements} and returns the list of baked quads.
+     * Bakes a list of {@linkplain BlockElement block elements} and returns the list of baked quads.
      */
     public static List<BakedQuad> bakeElements(List<BlockElement> elements, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelState, ResourceLocation modelLocation)
     {

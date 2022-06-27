@@ -39,7 +39,7 @@ import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 /**
- * {@link LogicalSide#CLIENT Client-only} extensions to {@link FluidType}.
+ * {@linkplain LogicalSide#CLIENT Client-only} extensions to {@link FluidType}.
  *
  * @see FluidType#initializeClient(Consumer)
  */

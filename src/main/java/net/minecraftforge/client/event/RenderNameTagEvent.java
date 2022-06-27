@@ -20,7 +20,7 @@ import org.jetbrains.annotations.ApiStatus;
 /**
  * Fired before an entity renderer renders the nameplate of an entity.
  *
- * <p>This event is not {@linkplain Cancelable cancellable}, and  {@linkplain HasResult has a result}. </p>
+ * <p>This event is not {@linkplain Cancelable cancellable}, and  {@linkplain HasResult has a result}.</p>
  * <ul>
  *     <li>{@link Result#ALLOW} - the nameplate will be forcibly rendered.</li>
  *     <li>{@link Result#DEFAULT} - the vanilla logic will be used.</li>
@@ -28,7 +28,7 @@ import org.jetbrains.annotations.ApiStatus;
  * </ul>
  *
  * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
- * only on the {@linkplain LogicalSide#CLIENT logical client}. </p>
+ * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
  *
  * @see EntityRenderer
  */

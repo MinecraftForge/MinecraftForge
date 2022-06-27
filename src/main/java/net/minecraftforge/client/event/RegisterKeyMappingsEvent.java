@@ -21,7 +21,7 @@ import org.jetbrains.annotations.ApiStatus;
  * <p>This event is not {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}.
  *
  * <p>This event is fired on the {@linkplain FMLJavaModLoadingContext#getModEventBus() mod-specific event bus},
- * only on the {@linkplain LogicalSide#CLIENT logical client}. </p>
+ * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
  */
 public class RegisterKeyMappingsEvent extends Event implements IModBusEvent
 {

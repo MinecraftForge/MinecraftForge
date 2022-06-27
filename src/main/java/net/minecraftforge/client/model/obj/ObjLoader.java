@@ -22,7 +22,8 @@ import java.io.FileNotFoundException;
 import java.util.Map;
 
 /**
- * A loader for {@link ObjModel OBJ models}.<p/>
+ * A loader for {@link ObjModel OBJ models}.
+ * <p>
  * Allows the user to enable automatic face culling, toggle quad shading, flip UVs, render emissively and specify a
  * {@link ObjMaterialLibrary material library} override.
  */

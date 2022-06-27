@@ -18,10 +18,10 @@ import org.jetbrains.annotations.ApiStatus;
  * Fired after all level rendering.
  * This can be used for custom rendering outside of e.g. a block entity or entity renderer.
  *
- * <p>This event is not {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}. </p>
+ * <p>This event is not {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}.</p>
  *
  * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
- * only on the {@linkplain LogicalSide#CLIENT logical client}. </p>
+ * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
  *
  * @see GameRenderer
  * @see LevelRenderer

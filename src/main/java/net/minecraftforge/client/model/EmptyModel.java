@@ -32,7 +32,8 @@ import java.util.Set;
 import java.util.function.Function;
 
 /**
- * A completely empty model with no quads or texture dependencies.<p/>
+ * A completely empty model with no quads or texture dependencies.
+ * <p>
  * You can access it as a {@link BakedModel}, an {@link IUnbakedGeometry} or an {@link IGeometryLoader}.
  */
 public class EmptyModel extends SimpleUnbakedGeometry<EmptyModel>
@@ -41,7 +42,9 @@ public class EmptyModel extends SimpleUnbakedGeometry<EmptyModel>
     public static final EmptyModel INSTANCE = new EmptyModel();
     public static final IGeometryLoader<EmptyModel> LOADER = (json, ctx) -> INSTANCE;
 
-    private EmptyModel() { }
+    private EmptyModel()
+    {
+    }
 
     @Override
     protected void addQuads(IGeometryBakingContext owner, IModelBuilder<?> modelBuilder, ModelBakery bakery, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelTransform, ResourceLocation modelLocation)

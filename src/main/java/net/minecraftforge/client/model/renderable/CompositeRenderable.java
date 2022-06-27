@@ -17,7 +17,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A renderable object composed of a hierarchy of parts, each made up of a number of meshes.<p/>
+ * A renderable object composed of a hierarchy of parts, each made up of a number of meshes.
+ * <p>
  * Each mesh renders a set of quads using a different texture.
  *
  * @see Builder

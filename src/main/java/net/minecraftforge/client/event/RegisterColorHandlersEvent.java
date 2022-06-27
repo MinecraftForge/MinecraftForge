@@ -22,7 +22,7 @@ import org.jetbrains.annotations.ApiStatus;
  * See the two subclasses for registering block or item color handlers.
  *
  * <p>These events are fired on the {@linkplain FMLJavaModLoadingContext#getModEventBus() mod-specific event bus},
- * only on the {@linkplain LogicalSide#CLIENT logical client}. </p>
+ * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
  *
  * @see RegisterColorHandlersEvent.Block
  * @see RegisterColorHandlersEvent.Item
@@ -37,10 +37,10 @@ public abstract class RegisterColorHandlersEvent extends Event implements IModBu
     /**
      * Fired for registering block color handlers.
      *
-     * <p>This event is not {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}. </p>
+     * <p>This event is not {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}.</p>
      *
      * <p>This event is fired on the {@linkplain FMLJavaModLoadingContext#getModEventBus() mod-specific event bus},
-     * only on the {@linkplain LogicalSide#CLIENT logical client}. </p>
+     * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
     public static class Block extends RegisterColorHandlersEvent
     {
@@ -78,12 +78,12 @@ public abstract class RegisterColorHandlersEvent extends Event implements IModBu
      * Fired for registering item color handlers.
      *
      * <p>The block colors should only be used for referencing or delegating item colors to their respective block
-     * colors. Use {@link RegisterColorHandlersEvent.Block} for registering your block color handlers. </p>
+     * colors. Use {@link RegisterColorHandlersEvent.Block} for registering your block color handlers.</p>
      *
-     * <p>This event is not {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}. </p>
+     * <p>This event is not {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}.</p>
      *
      * <p>This event is fired on the {@linkplain FMLJavaModLoadingContext#getModEventBus() mod-specific event bus},
-     * only on the {@linkplain LogicalSide#CLIENT logical client}. </p>
+     * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
     public static class Item extends RegisterColorHandlersEvent
     {

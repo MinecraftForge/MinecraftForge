@@ -18,7 +18,8 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * A tokenizer for OBJ and MTL files.<p/>
+ * A tokenizer for OBJ and MTL files.
+ * <p>
  * Joins split lines and ignores comments.
  */
 public class ObjTokenizer implements AutoCloseable

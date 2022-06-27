@@ -15,10 +15,10 @@ import org.jetbrains.annotations.ApiStatus;
 /**
  * Fired when the {@link RecipeManager} has received and synced the recipes from the server to the client.
  *
- * <p>This event is not {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}. </p>
+ * <p>This event is not {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}.</p>
  *
  * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
- * only on the {@linkplain LogicalSide#CLIENT logical client}. </p>
+ * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
  */
 public class RecipesUpdatedEvent extends Event
 {

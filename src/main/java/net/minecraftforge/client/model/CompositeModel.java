@@ -53,7 +53,8 @@ import java.util.Set;
 import java.util.function.Function;
 
 /**
- * A model composed of several named children.<p/>
+ * A model composed of several named children.
+ * <p>
  * These respect component visibility as specified in {@link IGeometryBakingContext} and can additionally be provided
  * with an item-specific render ordering, for multi-pass arrangements.
  */

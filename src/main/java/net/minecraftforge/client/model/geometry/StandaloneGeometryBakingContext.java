@@ -21,7 +21,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 /**
- * A {@link IGeometryBakingContext geometry baking context} that is not bound to block/item model loading.
+ * A {@linkplain IGeometryBakingContext geometry baking context} that is not bound to block/item model loading.
  */
 public class StandaloneGeometryBakingContext implements IGeometryBakingContext
 {

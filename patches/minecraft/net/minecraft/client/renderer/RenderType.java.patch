@@ -34,13 +34,14 @@
     }
  
     public static RenderType m_110502_() {
-@@ -608,4 +_,16 @@
+@@ -608,4 +_,17 @@
           return this.f_110696_;
        }
     }
 +
 +   // FORGE START
 +   private int chunkLayerId = -1;
++   /** {@return the unique ID of this {@link RenderType} for chunk rendering purposes, or {@literal -1} if this is not a chunk {@link RenderType}} */
 +   public final int getChunkLayerId() {
 +      return chunkLayerId;
 +   }

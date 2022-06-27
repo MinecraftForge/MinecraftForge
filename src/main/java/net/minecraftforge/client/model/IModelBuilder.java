@@ -17,7 +17,8 @@ import net.minecraftforge.client.RenderTypeGroup;
 import java.util.List;
 
 /**
- * Base interface for any object that may collect culled and unculled faces and bake them into a model.<p/>
+ * Base interface for any object that collects culled and unculled faces and bakes them into a model.
+ * <p>
  * Provides a generic base implementation via {@link #of(boolean, boolean, boolean, ItemTransforms, ItemOverrides, TextureAtlasSprite, RenderTypeGroup)}
  * and a quad-collecting alternative via {@link #collecting(List)}.
  */

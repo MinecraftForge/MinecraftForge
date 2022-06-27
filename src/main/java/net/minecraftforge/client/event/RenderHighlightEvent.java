@@ -98,10 +98,10 @@ public abstract class RenderHighlightEvent extends Event
      * Fired before a block's selection highlight is rendered.
      *
      * <p>This event is {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}.
-     * If the event is cancelled, then the selection highlight will not be rendered. </p>
+     * If the event is cancelled, then the selection highlight will not be rendered.</p>
      *
      * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
-     * only on the {@linkplain LogicalSide#CLIENT logical client}. </p>
+     * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
     @Cancelable
     public static class Block extends RenderHighlightEvent
@@ -125,10 +125,10 @@ public abstract class RenderHighlightEvent extends Event
     /**
      * Fired before an entity's selection highlight is rendered.
      *
-     * <p>This event is not {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}. </p>
+     * <p>This event is not {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}.</p>
      *
      * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
-     * only on the {@linkplain LogicalSide#CLIENT logical client}. </p>
+     * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
     public static class Entity extends RenderHighlightEvent
     {

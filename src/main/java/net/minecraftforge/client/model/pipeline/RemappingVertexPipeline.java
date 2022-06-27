@@ -108,7 +108,7 @@ public class RemappingVertexPipeline implements VertexConsumer
     {
         Integer id = miscElementIds.get(element);
         if (id != null)
-            misc[id] = values;
+            misc[id] = Arrays.copyOf(values, values.length);
         return this;
     }
 

@@ -20,12 +20,12 @@ import org.jetbrains.annotations.ApiStatus;
  * Fired to allow mods to register their reload listeners on the client-side resource manager.
  * This event is fired once during the construction of the {@link Minecraft} instance.
  *
- * <p>For registering reload listeners on the server-side resource manager, see {@link AddReloadListenerEvent}. </p>
+ * <p>For registering reload listeners on the server-side resource manager, see {@link AddReloadListenerEvent}.</p>
  *
- * <p>This event is not {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}. </p>
+ * <p>This event is not {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}.</p>
  *
  * <p>This event is fired on the {@linkplain FMLJavaModLoadingContext#getModEventBus() mod-specific event bus},
- * only on the {@linkplain LogicalSide#CLIENT logical client}. </p>
+ * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
  */
 public class RegisterClientReloadListenersEvent extends Event implements IModBusEvent
 {

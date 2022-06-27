@@ -14,15 +14,15 @@ import net.minecraftforge.fml.ModLoader;
 import net.minecraftforge.fml.ModLoadingContext;
 import org.jetbrains.annotations.ApiStatus;
 
+import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Manager for {@link DimensionSpecialEffects} instances.
  * <p>
  * Provides a lookup by dimension type.
  */
-public class DimensionSpecialEffectsManager
+public final class DimensionSpecialEffectsManager
 {
     private static ImmutableMap<ResourceLocation, DimensionSpecialEffects> EFFECTS;
     private static DimensionSpecialEffects DEFAULT_EFFECTS;
@@ -38,7 +38,7 @@ public class DimensionSpecialEffectsManager
     @ApiStatus.Internal
     public static void init()
     {
-        var effects = new ConcurrentHashMap<ResourceLocation, DimensionSpecialEffects>();
+        var effects = new HashMap<ResourceLocation, DimensionSpecialEffects>();
         DEFAULT_EFFECTS = preRegisterVanillaEffects(effects);
         var event = new RegisterDimensionSpecialEffectsEvent(effects);
         ModLoader.get().postEventWithWrapInModOrder(event, (mc, e) -> ModLoadingContext.get().setActiveContainer(mc), (mc, e) -> ModLoadingContext.get().setActiveContainer(null));
@@ -46,8 +46,9 @@ public class DimensionSpecialEffectsManager
     }
 
     /**
-     * Pre-registers vanilla dimension effects.<p/>
-     * Returns the default fallback effect.
+     * Pre-registers vanilla dimension effects and returns the default fallback effects instance.
+     * <p>
+     * Borrowed from {@link DimensionSpecialEffects#EFFECTS}.
      */
     private static DimensionSpecialEffects preRegisterVanillaEffects(Map<ResourceLocation, DimensionSpecialEffects> effects)
     {
@@ -56,5 +57,9 @@ public class DimensionSpecialEffectsManager
         effects.put(BuiltinDimensionTypes.NETHER_EFFECTS, new DimensionSpecialEffects.NetherEffects());
         effects.put(BuiltinDimensionTypes.END_EFFECTS, new DimensionSpecialEffects.EndEffects());
         return overworldEffects;
+    }
+
+    private DimensionSpecialEffectsManager()
+    {
     }
 }

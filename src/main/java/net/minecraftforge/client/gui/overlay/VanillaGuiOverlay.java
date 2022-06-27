@@ -18,7 +18,7 @@ import org.jetbrains.annotations.NotNull;
 import org.lwjgl.opengl.GL11;
 
 /**
- * All the vanilla {@link IGuiOverlay HUD overlays} in the order that they render.
+ * All the vanilla {@linkplain IGuiOverlay HUD overlays} in the order that they render.
  */
 public enum VanillaGuiOverlay
 {

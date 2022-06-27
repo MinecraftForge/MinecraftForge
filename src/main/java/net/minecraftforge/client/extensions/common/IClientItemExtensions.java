@@ -25,7 +25,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.function.Consumer;
 
 /**
- * {@link LogicalSide#CLIENT Client-only} extensions to {@link Item}.
+ * {@linkplain LogicalSide#CLIENT Client-only} extensions to {@link Item}.
  *
  * @see Item#initializeClient(Consumer)
  */
@@ -76,7 +76,7 @@ public interface IClientItemExtensions
     /**
      * Queries the armor model for this item when it's equipped. Useful in place of
      * {@link #getHumanoidArmorModel(LivingEntity, ItemStack, EquipmentSlot, HumanoidModel)} for wrapping the original
-     * model or returning anything non-standard.<p/>
+     * model or returning anything non-standard.
      * <p>
      * If you override this method you are responsible for copying any properties you care about from the original model.
      *
@@ -100,7 +100,7 @@ public interface IClientItemExtensions
     }
 
     /**
-     * Called when the client starts rendering the HUD, and is wearing this item in the helmet slot.<p/>
+     * Called when the client starts rendering the HUD, and is wearing this item in the helmet slot.
      * <p>
      * This is where pumpkins would render their overlay.
      *
@@ -115,9 +115,11 @@ public interface IClientItemExtensions
     }
 
     /**
-     * Queries this item's renderer.<p/>
+     * Queries this item's renderer.
+     * <p>
      * Only used if {@link BakedModel#isCustomRenderer()} returns {@code true} or {@link BlockState#getRenderShape()}
-     * returns {@link net.minecraft.world.level.block.RenderShape#ENTITYBLOCK_ANIMATED}.<p/>
+     * returns {@link net.minecraft.world.level.block.RenderShape#ENTITYBLOCK_ANIMATED}.
+     * <p>
      * By default, returns vanilla's block entity renderer.
      */
     default BlockEntityWithoutLevelRenderer getCustomRenderer()

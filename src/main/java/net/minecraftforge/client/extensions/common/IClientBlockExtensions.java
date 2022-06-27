@@ -23,7 +23,7 @@ import net.minecraftforge.fml.LogicalSide;
 import java.util.function.Consumer;
 
 /**
- * {@link LogicalSide#CLIENT Client-only} extensions to {@link Block}.
+ * {@linkplain LogicalSide#CLIENT Client-only} extensions to {@link Block}.
  *
  * @see Block#initializeClient(Consumer)
  */

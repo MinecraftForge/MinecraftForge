@@ -28,7 +28,7 @@ import java.util.Map;
  * <p>This event is not {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}.
  *
  * <p>This event is fired on the {@linkplain FMLJavaModLoadingContext#getModEventBus() mod-specific event bus},
- * only on the {@linkplain LogicalSide#CLIENT logical client}. </p>
+ * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
  */
 public class RegisterGuiOverlaysEvent extends Event implements IModBusEvent
 {
@@ -90,8 +90,7 @@ public class RegisterGuiOverlaysEvent extends Event implements IModBusEvent
         register(Ordering.AFTER, null, id, overlay);
     }
 
-    // Synchronized to prevent multiple mods from registering at once
-    private synchronized void register(@NotNull Ordering ordering, @Nullable ResourceLocation other, @NotNull String id, @NotNull IGuiOverlay overlay)
+    private void register(@NotNull Ordering ordering, @Nullable ResourceLocation other, @NotNull String id, @NotNull IGuiOverlay overlay)
     {
         var key = new ResourceLocation(ModLoadingContext.get().getActiveNamespace(), id);
         Preconditions.checkArgument(!overlays.containsKey(key), "Overlay already registered: " + key);

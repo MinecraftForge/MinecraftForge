@@ -27,7 +27,7 @@ import java.util.function.Function;
  * <p>This event is not {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}.
  *
  * <p>This event is fired on the {@linkplain FMLJavaModLoadingContext#getModEventBus() mod-specific event bus},
- * only on the {@linkplain LogicalSide#CLIENT logical client}. </p>
+ * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
  */
 public class RegisterRecipeBookCategoriesEvent extends Event implements IModBusEvent
 {
@@ -51,7 +51,7 @@ public class RegisterRecipeBookCategoriesEvent extends Event implements IModBusE
      */
     public void registerAggregateCategory(RecipeBookCategories category, List<RecipeBookCategories> others)
     {
-        aggregateCategories.put(category, others instanceof ImmutableList il ? il : ImmutableList.copyOf(others));
+        aggregateCategories.put(category, ImmutableList.copyOf(others));
     }
 
     /**
@@ -59,7 +59,7 @@ public class RegisterRecipeBookCategoriesEvent extends Event implements IModBusE
      */
     public void registerBookCategories(RecipeBookType type, List<RecipeBookCategories> categories)
     {
-        typeCategories.put(type, categories instanceof ImmutableList il ? il : ImmutableList.copyOf(categories));
+        typeCategories.put(type, ImmutableList.copyOf(categories));
     }
 
     /**

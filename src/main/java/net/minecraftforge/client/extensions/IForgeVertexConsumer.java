@@ -26,9 +26,9 @@ public interface IForgeVertexConsumer
     }
 
     /**
-     * Consumes an unknown {@link VertexFormatElement} as a raw int data array.<p/>
-     * The passed in array must be treated as read-only by the consumer, as it may not be a throw-away object.
-     * The caller must also not modify the array once it has been passed in, as it may be stored for later processing.
+     * Consumes an unknown {@link VertexFormatElement} as a raw int data array.
+     * <p>
+     * If the consumer needs to store the data for later use, it must copy it. There are no guarantees on immutability.
      */
     default VertexConsumer misc(VertexFormatElement element, int... rawData)
     {

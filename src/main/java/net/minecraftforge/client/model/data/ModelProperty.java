@@ -10,7 +10,8 @@ import com.google.common.base.Predicates;
 import java.util.function.Predicate;
 
 /**
- * A property to be used in {@link ModelData}.<p/>
+ * A property to be used in {@link ModelData}.
+ * <p>
  * May optionally validate incoming values.
  *
  * @see ModelData

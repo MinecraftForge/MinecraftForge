@@ -9,7 +9,14 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Spliterator;
 import java.util.function.Supplier;
 
 /**
@@ -128,6 +135,9 @@ public class ConcatenatedListView<T> implements List<T>
     @NotNull @Override public Object[] toArray() { return concatenate(ArrayList::new).toArray(); }
     @NotNull @Override public <T1> T1[] toArray(@NotNull T1[] a) { return concatenate(ArrayList::new).toArray(a); }
     @Override public boolean containsAll(@NotNull Collection<?> c) { return concatenate(HashSet::new).containsAll(c); }
+    @NotNull @Override public ListIterator<T> listIterator() { return concatenate(ArrayList::new).listIterator(); }
+    @NotNull @Override public ListIterator<T> listIterator(int index) { return concatenate(ArrayList::new).listIterator(index); }
+    @NotNull @Override public List<T> subList(int fromIndex, int toIndex) { return Collections.unmodifiableList(concatenate(ArrayList::new).subList(fromIndex, toIndex)); }
 
     // No mutations allowed
     @Override public boolean add(T t) { throw new UnsupportedOperationException(); }
@@ -140,9 +150,4 @@ public class ConcatenatedListView<T> implements List<T>
     @Override public boolean removeAll(@NotNull Collection<?> c) { throw new UnsupportedOperationException(); }
     @Override public boolean retainAll(@NotNull Collection<?> c) { throw new UnsupportedOperationException(); }
     @Override public void clear() { throw new UnsupportedOperationException(); }
-
-    // Other unsupported operations - we could support these, but effort
-    @NotNull @Override public ListIterator<T> listIterator() { throw new UnsupportedOperationException(); }
-    @NotNull @Override public ListIterator<T> listIterator(int index) { throw new UnsupportedOperationException(); }
-    @NotNull @Override public List<T> subList(int fromIndex, int toIndex) { throw new UnsupportedOperationException(); }
 }

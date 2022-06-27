@@ -70,7 +70,7 @@ public class ForgeGui extends Gui
         debugOverlay = new ForgeDebugScreenOverlay(mc);
     }
 
-    public final Minecraft getMinecraft()
+    public Minecraft getMinecraft()
     {
         return minecraft;
     }

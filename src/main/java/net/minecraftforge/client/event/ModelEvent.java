@@ -34,12 +34,12 @@ public abstract class ModelEvent extends Event
 
     /**
      * Fired when the {@link ModelManager} is notified of the resource manager reloading.
-     * Called after model registry is setup, but before it's passed to BlockModelShapes.
+     * Called after model registry is set up, but before it's passed to {@link net.minecraft.client.renderer.block.BlockModelShaper}.
      *
-     * <p>This event is not {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}. </p>
+     * <p>This event is not {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}.</p>
      *
      * <p>This event is fired on the {@linkplain FMLJavaModLoadingContext#getModEventBus() mod-specific event bus},
-     * only on the {@linkplain LogicalSide#CLIENT logical client}. </p>
+     * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
     public static class BakingCompleted extends ModelEvent implements IModBusEvent
     {
@@ -84,10 +84,10 @@ public abstract class ModelEvent extends Event
      * Fired when the {@link net.minecraft.client.resources.model.ModelBakery} is notified of the resource manager reloading.
      * Allows developers to register models to be loaded, along with their dependencies.
      *
-     * <p>This event is not {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}. </p>
+     * <p>This event is not {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}.</p>
      *
      * <p>This event is fired on the {@linkplain FMLJavaModLoadingContext#getModEventBus() mod-specific event bus},
-     * only on the {@linkplain LogicalSide#CLIENT logical client}. </p>
+     * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
     public static class RegisterAdditional extends ModelEvent implements IModBusEvent
     {
@@ -111,10 +111,10 @@ public abstract class ModelEvent extends Event
     /**
      * Allows users to register their own {@link IGeometryLoader geometry loaders} for use in block/item models.
      *
-     * <p>This event is not {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}. </p>
+     * <p>This event is not {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}.</p>
      *
      * <p>This event is fired on the {@linkplain FMLJavaModLoadingContext#getModEventBus() mod-specific event bus},
-     * only on the {@linkplain LogicalSide#CLIENT logical client}. </p>
+     * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
     public static class RegisterGeometryLoaders extends ModelEvent implements IModBusEvent
     {

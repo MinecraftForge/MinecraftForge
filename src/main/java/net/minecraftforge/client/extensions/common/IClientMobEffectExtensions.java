@@ -15,7 +15,7 @@ import net.minecraftforge.fml.LogicalSide;
 import java.util.function.Consumer;
 
 /**
- * {@link LogicalSide#CLIENT Client-only} extensions to {@link MobEffect}.
+ * {@linkplain LogicalSide#CLIENT Client-only} extensions to {@link MobEffect}.
  *
  * @see MobEffect#initializeClient(Consumer)
  */
@@ -34,7 +34,8 @@ public interface IClientMobEffectExtensions
     }
 
     /**
-     * Queries whether the given effect should be shown in the player's inventory.<p/>
+     * Queries whether the given effect should be shown in the player's inventory.
+     * <p>
      * By default, this returns {@code true}.
      */
     default boolean isVisibleInInventory(MobEffectInstance instance)
@@ -43,7 +44,8 @@ public interface IClientMobEffectExtensions
     }
 
     /**
-     * Queries whether the given effect should be shown in the HUD.<p/>
+     * Queries whether the given effect should be shown in the HUD.
+     * <p>
      * By default, this returns {@code true}.
      */
     default boolean isVisibleInGui(MobEffectInstance instance)
@@ -52,7 +54,7 @@ public interface IClientMobEffectExtensions
     }
 
     /**
-     * Renders the icon of the specified effect in the player's inventory.<p/>
+     * Renders the icon of the specified effect in the player's inventory.
      * This can be used to render icons from your own texture sheet.
      *
      * @param instance   The effect instance
@@ -85,7 +87,7 @@ public interface IClientMobEffectExtensions
     }
 
     /**
-     * Renders the icon of the specified effect on the player's HUD.<p/>
+     * Renders the icon of the specified effect on the player's HUD.
      * This can be used to render icons from your own texture sheet.
      *
      * @param instance  The effect instance

@@ -26,7 +26,7 @@ import java.util.Map;
  * <p>This event is not {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}.
  *
  * <p>This event is fired on the {@linkplain FMLJavaModLoadingContext#getModEventBus() mod-specific event bus},
- * only on the {@linkplain LogicalSide#CLIENT logical client}. </p>
+ * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
  */
 public class RegisterNamedRenderTypesEvent extends Event implements IModBusEvent
 {
@@ -39,11 +39,11 @@ public class RegisterNamedRenderTypesEvent extends Event implements IModBusEvent
     }
 
     /**
-     * Registers a named render type.<p/>
-     * {@code blockRenderType} must use {@link DefaultVertexFormat#BLOCK} and
-     * {@code entityRenderType} must use {@link DefaultVertexFormat#NEW_ENTITY}.<p/>
-     * Note: The only render types currently supported for block rendering are the ones returned by
-     * {@link RenderType#chunkBufferLayers()}. Any other types will cause an exception.
+     * Registers a named {@link RenderTypeGroup}.
+     *
+     * @param name             The name
+     * @param blockRenderType  One of the values returned by {@link RenderType#chunkBufferLayers()}
+     * @param entityRenderType A {@link RenderType} using {@link DefaultVertexFormat#NEW_ENTITY}
      */
     public void register(String name, RenderType blockRenderType, RenderType entityRenderType)
     {
@@ -51,11 +51,13 @@ public class RegisterNamedRenderTypesEvent extends Event implements IModBusEvent
     }
 
     /**
-     * Registers a named render type.<p/>
-     * {@code blockRenderType} must use {@link DefaultVertexFormat#BLOCK} and {@code entityRenderType} and
-     * {@code fabulousEntityRenderType} must use {@link DefaultVertexFormat#NEW_ENTITY}.<p/>
-     * Note: The only render types currently supported for block rendering are the ones returned by
-     * {@link RenderType#chunkBufferLayers()}. Any other types will cause an exception.
+     * Registers a named {@link RenderTypeGroup}.
+     *
+     * @param name                     The name
+     * @param blockRenderType          One of the values returned by {@link RenderType#chunkBufferLayers()}
+     * @param entityRenderType         A {@link RenderType} using {@link DefaultVertexFormat#NEW_ENTITY}
+     * @param fabulousEntityRenderType A {@link RenderType} using {@link DefaultVertexFormat#NEW_ENTITY} for use when
+     *                                 "fabulous" rendering is enabled
      */
     public void register(String name, RenderType blockRenderType, RenderType entityRenderType, RenderType fabulousEntityRenderType)
     {
