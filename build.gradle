@@ -59,7 +59,7 @@ ext {
     // These versions should be kept in sync with the version manifest JSON
     // To use a version newer than the version manifest JSON, the dependency must be added to the installer configuration
     MOJANG_LOGGING_VERSION = '1.0.0'
-    LOG4J_VERSION = '2.17.0'
+    LOG4J_VERSION = '2.17.2'
     GUAVA_VERSION = '31.0.1-jre'
     GSON_VERSION = '2.8.9'
     APACHE_COMMONS_LANG3_VERSION = '3.12.0'
