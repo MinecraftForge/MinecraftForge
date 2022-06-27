@@ -127,7 +127,7 @@ public class ClientModLoader
         loading = false;
         loadingComplete = true;
         // reload game settings on main thread
-        syncExecutor.execute(()->mc.options.load());
+        syncExecutor.execute(()->mc.options.load(true));
     }
 
     public static VersionChecker.Status checkForUpdates()
