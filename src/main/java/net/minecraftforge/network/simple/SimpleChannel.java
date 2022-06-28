@@ -252,13 +252,35 @@ public class SimpleChannel
          * <p>
          * The consumer is called on the network thread, and so should not interact with most game state by default.
          * {@link NetworkEvent.Context#enqueueWork(Runnable)} can be used to handle the message on the main server or
-         * client thread.
+         * client thread. Alternatively one can use {@link #consumerMainThread(BiConsumer)} to run the handler on the
+         * main thread.
          *
          * @param consumer The message consumer.
          * @return The message builder, for chaining.
+         * @see #consumerMainThread(BiConsumer)
          */
-        public MessageBuilder<MSG> consumer(BiConsumer<MSG, Supplier<NetworkEvent.Context>> consumer) {
+        public MessageBuilder<MSG> consumerNetworkThread(BiConsumer<MSG, Supplier<NetworkEvent.Context>> consumer) {
             this.consumer = consumer;
+            return this;
+        }
+
+        /**
+         * Set the message consumer, which is called once a message has been decoded. This accepts the decoded message
+         * object and the message's context.
+         * <p>
+         * Unlike {@link #consumerNetworkThread(BiConsumer)}, the consumer is called on the main thread, and so can
+         * interact with most game state by default.
+         *
+         * @param consumer The message consumer.
+         * @return The message builder, for chaining.
+         * @see #consumerNetworkThread(BiConsumer)
+         */
+        public MessageBuilder<MSG> consumerMainThread(BiConsumer<MSG, Supplier<NetworkEvent.Context>> consumer) {
+            this.consumer = (msg, context) -> {
+                var ctx = context.get();
+                ctx.enqueueWork(() -> consumer.accept(msg, context));
+                ctx.setPacketHandled(true);
+            };
             return this;
         }
 
@@ -270,9 +292,9 @@ public class SimpleChannel
          * Function returning a boolean "packet handled" indication, for simpler channel building.
          * @param handler a handler
          * @return this
-         * @see #consumer(BiConsumer)
+         * @see #consumerNetworkThread(BiConsumer)
          */
-        public MessageBuilder<MSG> consumer(ToBooleanBiFunction<MSG, Supplier<NetworkEvent.Context>> handler) {
+        public MessageBuilder<MSG> consumerNetworkThread(ToBooleanBiFunction<MSG, Supplier<NetworkEvent.Context>> handler) {
             this.consumer = (msg, ctx) -> {
                 boolean handled = handler.applyAsBool(msg, ctx);
                 ctx.get().setPacketHandled(handled);
