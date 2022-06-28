@@ -18,9 +18,15 @@
        this.f_92060_ = p_92138_;
        this.f_92110_ = new File(p_92139_, "options.txt");
        boolean flag = p_92138_.m_91103_();
-@@ -887,10 +_,14 @@
+@@ -886,11 +_,20 @@
+       p_168428_.m_213982_("chatPreview", this.f_231796_);
        p_168428_.m_213982_("onlyShowSecureChat", this.f_231798_);
  
++      processOptionsForge(p_168428_);
++   }
++   // FORGE: split off to allow reloading options after mod loading is done
++   private void processOptionsForge(Options.FieldAccess p_168428_)
++   {
        for(KeyMapping keymapping : this.f_92059_) {
 -         String s = keymapping.m_90865_();
 +         String s = keymapping.m_90865_() + (keymapping.getKeyModifier() != net.minecraftforge.client.settings.KeyModifier.NONE ? ":" + keymapping.getKeyModifier() : "");
@@ -35,6 +41,26 @@
           }
        }
  
+@@ -911,6 +_,9 @@
+    }
+ 
+    public void m_92140_() {
++      this.load(false);
++   }
++   public void load(boolean limited) {
+       try {
+          if (!this.f_92110_.exists()) {
+             return;
+@@ -955,7 +_,8 @@
+             }
+          }
+ 
+-         this.m_168427_(new Options.FieldAccess() {
++         java.util.function.Consumer<FieldAccess> processor = limited ? this::processOptionsForge : this::m_168427_;
++         processor.accept(new Options.FieldAccess() {
+             @Nullable
+             private String m_168458_(String p_168459_) {
+                return compoundtag1.m_128441_(p_168459_) ? compoundtag1.m_128461_(p_168459_) : null;
 @@ -1058,6 +_,7 @@
     }
  
