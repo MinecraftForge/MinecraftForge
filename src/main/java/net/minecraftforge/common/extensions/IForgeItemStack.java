@@ -35,6 +35,8 @@ import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Map;
+
 /*
  * Extension added to ItemStack that bounces to ItemSack sensitive Item methods. Typically this is just for convince.
  */
@@ -156,6 +158,38 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundTag>
     default boolean canApplyAtEnchantingTable(Enchantment enchantment)
     {
         return self().getItem().canApplyAtEnchantingTable(self(), enchantment);
+    }
+
+    /**
+     * Gets the level of the enchantment currently present on the stack. By default, returns the enchantment level present in NBT.
+     *
+     * Equivalent to calling {@link net.minecraft.world.item.enchantment.EnchantmentHelper#getItemEnchantmentLevel(Enchantment, ItemStack)}
+     * Use in place of {@link net.minecraft.world.item.enchantment.EnchantmentHelper#getTagEnchantmentLevel(Enchantment, ItemStack)} for checking presence of an enchantment in logic implementing the enchantment behavior.
+     * Use {@link net.minecraft.world.item.enchantment.EnchantmentHelper#getTagEnchantmentLevel(Enchantment, ItemStack)} instead when modifying an item's enchantments.
+     *
+     * @param enchantment  the enchantment being checked for
+     * @return  Level of the enchantment, or 0 if not present
+     * @see #getAllEnchantments()
+     * @see net.minecraft.world.item.enchantment.EnchantmentHelper#getTagEnchantmentLevel(Enchantment, ItemStack)
+     */
+    default int getEnchantmentLevel(Enchantment enchantment)
+    {
+        return self().getItem().getEnchantmentLevel(self(), enchantment);
+    }
+
+    /**
+     * Gets a map of all enchantments present on the stack. By default, returns the enchantments present in NBT, ignoring book enchantments.
+     *
+     * Use in place of {@link net.minecraft.world.item.enchantment.EnchantmentHelper#getEnchantments(ItemStack)} for checking presence of an enchantment in logic implementing the enchantment behavior.
+     * Use {@link net.minecraft.world.item.enchantment.EnchantmentHelper#getEnchantments(ItemStack)} instead when modifying an item's enchantments.
+     *
+     * @return  Map of all enchantments on the stack, empty if no enchantments are present
+     * @see #getEnchantmentLevel(Enchantment)
+     * @see net.minecraft.world.item.enchantment.EnchantmentHelper#getEnchantments(ItemStack)
+     */
+    default Map<Enchantment, Integer> getAllEnchantments()
+    {
+        return self().getItem().getAllEnchantments(self());
     }
 
     /**

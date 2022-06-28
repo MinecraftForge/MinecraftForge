@@ -49,7 +49,35 @@
        this.f_108619_.m_91301_().m_120586_(this.f_108618_);
        if (this.m_6117_() && !this.m_20159_()) {
           this.f_108618_.f_108566_ *= 0.2F;
-@@ -772,7 +_,7 @@
+@@ -726,7 +_,7 @@
+       }
+ 
+       boolean flag4 = (float)this.m_36324_().m_38702_() > 6.0F || this.m_150110_().f_35936_;
+-      if ((this.f_19861_ || this.m_5842_()) && !flag1 && !flag2 && this.m_108733_() && !this.m_20142_() && flag4 && !this.m_6117_() && !this.m_21023_(MobEffects.f_19610_)) {
++      if ((this.f_19861_ || this.m_5842_() || this.canStartSwimming()) && !flag1 && !flag2 && this.m_108733_() && !this.m_20142_() && flag4 && !this.m_6117_() && !this.m_21023_(MobEffects.f_19610_)) {
+          if (this.f_108583_ <= 0 && !this.f_108619_.f_91066_.f_92091_.m_90857_()) {
+             this.f_108583_ = 7;
+          } else {
+@@ -734,15 +_,15 @@
+          }
+       }
+ 
+-      if (!this.m_20142_() && (!this.m_20069_() || this.m_5842_()) && this.m_108733_() && flag4 && !this.m_6117_() && !this.m_21023_(MobEffects.f_19610_) && this.f_108619_.f_91066_.f_92091_.m_90857_()) {
++      if (!this.m_20142_() && (!(this.m_20069_() || this.isInFluidType((fluidType, height) -> this.canSwimInFluidType(fluidType))) || (this.m_5842_() || this.canStartSwimming())) && this.m_108733_() && flag4 && !this.m_6117_() && !this.m_21023_(MobEffects.f_19610_) && this.f_108619_.f_91066_.f_92091_.m_90857_()) {
+          this.m_6858_(true);
+       }
+ 
+       if (this.m_20142_()) {
+          boolean flag5 = !this.f_108618_.m_108577_() || !flag4;
+-         boolean flag6 = flag5 || this.f_19862_ && !this.f_185931_ || this.m_20069_() && !this.m_5842_();
++         boolean flag6 = flag5 || this.f_19862_ && !this.f_185931_ || (this.m_20069_() && !this.m_5842_()) || (this.isInFluidType((fluidType, height) -> this.canSwimInFluidType(fluidType)) && !this.canStartSwimming());
+          if (this.m_6069_()) {
+-            if (!this.f_19861_ && !this.f_108618_.f_108573_ && flag5 || !this.m_20069_()) {
++            if (!this.f_19861_ && !this.f_108618_.f_108573_ && flag5 || !(this.m_20069_() || this.isInFluidType((fluidType, height) -> this.canSwimInFluidType(fluidType)))) {
+                this.m_6858_(false);
+             }
+          } else if (flag6) {
+@@ -772,14 +_,15 @@
  
        if (this.f_108618_.f_108572_ && !flag7 && !flag && !this.m_150110_().f_35935_ && !this.m_20159_() && !this.m_6147_()) {
           ItemStack itemstack = this.m_6844_(EquipmentSlot.CHEST);
@@ -58,6 +86,16 @@
              this.f_108617_.m_104955_(new ServerboundPlayerCommandPacket(this, ServerboundPlayerCommandPacket.Action.START_FALL_FLYING));
           }
        }
+ 
+       this.f_108614_ = this.m_21255_();
+-      if (this.m_20069_() && this.f_108618_.f_108573_ && this.m_6129_()) {
+-         this.m_21208_();
++      net.minecraftforge.fluids.FluidType fluidType = this.getMaxHeightFluidType();
++      if ((this.m_20069_() || (!fluidType.isAir() && this.canSwimInFluidType(fluidType))) && this.f_108618_.f_108573_ && this.m_6129_()) {
++         this.sinkInFluid(this.m_20069_() ? net.minecraftforge.common.ForgeMod.WATER_TYPE.get() : fluidType);
+       }
+ 
+       if (this.m_204029_(FluidTags.f_13131_)) {
 @@ -890,6 +_,7 @@
  
     public void m_6083_() {

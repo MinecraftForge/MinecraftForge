@@ -1,9 +1,18 @@
 --- a/net/minecraft/world/level/pathfinder/BlockPathTypes.java
 +++ b/net/minecraft/world/level/pathfinder/BlockPathTypes.java
-@@ -37,4 +_,13 @@
+@@ -1,6 +_,6 @@
+ package net.minecraft.world.level.pathfinder;
+ 
+-public enum BlockPathTypes {
++public enum BlockPathTypes implements net.minecraftforge.common.IExtensibleEnum {
+    BLOCKED(-1.0F),
+    OPEN(0.0F),
+    WALKABLE(0.0F),
+@@ -36,5 +_,18 @@
+ 
     public float m_77124_() {
        return this.f_77117_;
-    }
++   }
 +
 +   @org.jetbrains.annotations.Nullable
 +   public BlockPathTypes getDanger() {
@@ -13,4 +22,8 @@
 +            (this == LAVA) ? DAMAGE_FIRE :
 +            null;
 +   }
++
++   public static BlockPathTypes create(String name, float malus) {
++      throw new IllegalArgumentException("Enum not extended");
+    }
  }

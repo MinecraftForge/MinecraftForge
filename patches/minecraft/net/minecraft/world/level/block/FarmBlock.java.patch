@@ -9,7 +9,7 @@
           m_53296_(p_153228_, p_153227_, p_153229_);
        }
  
-@@ -93,8 +_,9 @@
+@@ -93,18 +_,20 @@
     }
  
     private static boolean m_53250_(BlockGetter p_53251_, BlockPos p_53252_) {
@@ -21,7 +21,11 @@
     }
  
     private static boolean m_53258_(LevelReader p_53259_, BlockPos p_53260_) {
-@@ -104,7 +_,7 @@
++      BlockState state = p_53259_.m_8055_(p_53260_);
+       for(BlockPos blockpos : BlockPos.m_121940_(p_53260_.m_7918_(-4, 0, -4), p_53260_.m_7918_(4, 1, 4))) {
+-         if (p_53259_.m_6425_(blockpos).m_205070_(FluidTags.f_13131_)) {
++         if (state.canBeHydrated(p_53259_, p_53260_, p_53259_.m_6425_(blockpos), blockpos)) {
+             return true;
           }
        }
  

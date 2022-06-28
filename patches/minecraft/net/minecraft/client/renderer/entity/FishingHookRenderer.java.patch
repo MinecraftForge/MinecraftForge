@@ -1,0 +1,11 @@
+--- a/net/minecraft/client/renderer/entity/FishingHookRenderer.java
++++ b/net/minecraft/client/renderer/entity/FishingHookRenderer.java
+@@ -49,7 +_,7 @@
+          p_114708_.m_85849_();
+          int i = player.m_5737_() == HumanoidArm.RIGHT ? 1 : -1;
+          ItemStack itemstack = player.m_21205_();
+-         if (!itemstack.m_150930_(Items.f_42523_)) {
++         if (!itemstack.canPerformAction(net.minecraftforge.common.ToolActions.FISHING_ROD_CAST)) {
+             i = -i;
+          }
+ 

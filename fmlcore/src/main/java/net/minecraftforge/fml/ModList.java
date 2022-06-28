@@ -21,6 +21,7 @@ import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -53,6 +54,7 @@ public class ModList
     private List<ModContainer> mods;
     private Map<String, ModContainer> indexedMods;
     private List<ModFileScanData> modFileScanData;
+    private List<ModContainer> sortedContainers;
 
     private ModList(final List<ModFile> modFiles, final List<ModInfo> sortedList)
     {
@@ -155,6 +157,7 @@ public class ModList
     void setLoadedMods(final List<ModContainer> modContainers)
     {
         this.mods = modContainers;
+        this.sortedContainers = modContainers.stream().sorted(Comparator.comparingInt(c->sortedList.indexOf(c.getModInfo()))).toList();
         this.indexedMods = modContainers.stream().collect(Collectors.toMap(ModContainer::getModId, Function.identity()));
     }
 
@@ -216,6 +219,10 @@ public class ModList
 
     public void forEachModContainer(BiConsumer<String, ModContainer> modContainerConsumer) {
         indexedMods.forEach(modContainerConsumer);
+    }
+
+    public void forEachModInOrder(Consumer<ModContainer> containerConsumer) {
+        this.sortedContainers.forEach(containerConsumer);
     }
 
     public <T> Stream<T> applyForEachModContainer(Function<ModContainer, T> function) {

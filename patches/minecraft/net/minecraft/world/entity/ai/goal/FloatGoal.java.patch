@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/entity/ai/goal/FloatGoal.java
++++ b/net/minecraft/world/entity/ai/goal/FloatGoal.java
+@@ -14,7 +_,7 @@
+    }
+ 
+    public boolean m_8036_() {
+-      return this.f_25228_.m_20069_() && this.f_25228_.m_204036_(FluidTags.f_13131_) > this.f_25228_.m_20204_() || this.f_25228_.m_20077_();
++      return this.f_25228_.m_20069_() && this.f_25228_.m_204036_(FluidTags.f_13131_) > this.f_25228_.m_20204_() || this.f_25228_.m_20077_() || this.f_25228_.isInFluidType((fluidType, height) -> this.f_25228_.canSwimInFluidType(fluidType) && height > this.f_25228_.m_20204_());
+    }
+ 
+    public boolean m_183429_() {

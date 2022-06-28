@@ -1,0 +1,17 @@
+--- a/net/minecraft/world/item/crafting/RecipeType.java
++++ b/net/minecraft/world/item/crafting/RecipeType.java
+@@ -19,4 +_,14 @@
+          }
+       });
+    }
++
++   public static <T extends Recipe<?>> RecipeType<T> simple(final ResourceLocation name) {
++      final String toString = name.toString();
++      return new RecipeType<T>() {
++         @Override
++         public String toString() {
++            return toString;
++         }
++      };
++   }
+ }

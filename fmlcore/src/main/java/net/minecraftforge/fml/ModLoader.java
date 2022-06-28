@@ -8,18 +8,22 @@ package net.minecraftforge.fml;
 import com.google.common.collect.ImmutableList;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.event.IModBusEvent;
+import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.fml.loading.LoadingModList;
 import net.minecraftforge.fml.loading.moddiscovery.InvalidModIdentifier;
-import net.minecraftforge.fml.loading.moddiscovery.ModFile;
 import net.minecraftforge.fml.loading.moddiscovery.ModFileInfo;
+import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
 import net.minecraftforge.fml.loading.progress.StartupMessageManager;
 import net.minecraftforge.forgespi.language.IModInfo;
 import net.minecraftforge.forgespi.language.IModLanguageProvider;
+import net.minecraftforge.forgespi.locating.ForgeFeature;
+import net.minecraftforge.forgespi.locating.IModFile;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -29,7 +33,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 import java.util.concurrent.Executor;
 import java.util.function.BiConsumer;
-import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -98,7 +101,7 @@ public class ModLoader
                 .map(file -> new ModLoadingWarning(null, ModLoadingStage.VALIDATE, InvalidModIdentifier.identifyJarProblem(file.getFilePath()).orElse("fml.modloading.brokenfile"), file.getFileName()))
                 .collect(Collectors.toList());
         FMLLoader.getLoadingModList().getModFiles().stream()
-                .filter(ModFileInfo::missingLicense) //Search for files with missing licenses
+                .filter(ModFileInfo::missingLicense)
                 .filter(modFileInfo -> modFileInfo.getMods().stream().noneMatch(thisModInfo -> this.loadingExceptions.stream().map(ModLoadingException::getModInfo).anyMatch(otherInfo -> otherInfo == thisModInfo))) //Ignore files where any other mod already encountered an error
                 .map(modFileInfo -> new ModLoadingException(null, ModLoadingStage.VALIDATE, "fml.modloading.missinglicense", null, modFileInfo.getFile()))
                 .forEach(this.loadingExceptions::add);
@@ -135,6 +138,7 @@ public class ModLoader
      * @param periodicTask Optional periodic task to perform on the main thread while other activities run
      */
     public void gatherAndInitializeMods(final ModWorkManager.DrivenExecutor syncExecutor, final Executor parallelExecutor, final Runnable periodicTask) {
+        ForgeFeature.registerFeature("java_version", ForgeFeature.VersionFeatureTest.forVersionString(IModInfo.DependencySide.SERVER, System.getProperty("java.version")));
         loadingStateValid = true;
         statusConsumer.ifPresent(c->c.accept("Waiting for scan to complete"));
         FMLLoader.backgroundScanHandler.waitForScanToComplete(periodicTask);
@@ -147,6 +151,22 @@ public class ModLoader
             loadingStateValid = false;
             throw new LoadingFailedException(loadingExceptions);
         }
+        statusConsumer.ifPresent(c->c.accept("Validating features"));
+        List<? extends ForgeFeature.Bound> failedBounds = loadingModList.getMods().stream()
+                .map(ModInfo::getForgeFeatures)
+                .flatMap(Collection::stream)
+                .filter(bound -> !ForgeFeature.testFeature(FMLEnvironment.dist, bound))
+                .toList();
+
+        if (!failedBounds.isEmpty()) {
+            LOGGER.fatal(CORE, "Failed to validate feature bounds for mods");
+            modList.setLoadedMods(Collections.emptyList());
+            loadingStateValid = false;
+            throw new LoadingFailedException(failedBounds.stream()
+                    .map(fb -> new ModLoadingException(fb.modInfo(), ModLoadingStage.CONSTRUCT, "fml.modloading.feature.missing", null, fb.featureName(), fb.featureBound(), ForgeFeature.featureValue(fb)))
+                    .toList());
+        }
+
         statusConsumer.ifPresent(c->c.accept("Building Mod List"));
         final List<ModContainer> modContainers = loadingModList.getModFiles().stream()
                 .map(ModFileInfo::getFile)
@@ -224,7 +244,7 @@ public class ModLoader
         }
     }
 
-    private List<ModContainer> buildMods(final ModFile modFile)
+    private List<ModContainer> buildMods(final IModFile modFile)
     {
         final Map<String, IModInfo> modInfoMap = modFile.getModFileInfo().getMods().stream().collect(Collectors.toMap(IModInfo::getModId, Function.identity()));
 
@@ -246,7 +266,7 @@ public class ModLoader
         return containers.stream().filter(mc -> mc.modLoadingStage != ModLoadingStage.ERROR).collect(Collectors.toList());
     }
 
-    private ModContainer buildModContainerFromTOML(final ModFile modFile, final Map<String, IModInfo> modInfoMap, final Map.Entry<String, ? extends IModLanguageProvider.IModLanguageLoader> idToProviderEntry) {
+    private ModContainer buildModContainerFromTOML(final IModFile modFile, final Map<String, IModInfo> modInfoMap, final Map.Entry<String, ? extends IModLanguageProvider.IModLanguageLoader> idToProviderEntry) {
         try {
             final String modId = idToProviderEntry.getKey();
             final IModLanguageProvider.IModLanguageLoader languageLoader = idToProviderEntry.getValue();
@@ -275,7 +295,7 @@ public class ModLoader
             LOGGER.error("Cowardly refusing to send event generator to a broken mod state");
             return;
         }
-        ModList.get().forEachModContainer((id, mc) -> mc.acceptEvent(generator.apply(mc)));
+        ModList.get().forEachModInOrder(mc -> mc.acceptEvent(generator.apply(mc)));
     }
 
     public <T extends Event & IModBusEvent> void postEvent(T e) {
@@ -283,14 +303,14 @@ public class ModLoader
             LOGGER.error("Cowardly refusing to send event {} to a broken mod state", e.getClass().getName());
             return;
         }
-        ModList.get().forEachModContainer((id, mc) -> mc.acceptEvent(e));
+        ModList.get().forEachModInOrder(mc -> mc.acceptEvent(e));
     }
-    public <T extends Event & IModBusEvent> void postEventWithWrap(T e, BiConsumer<ModContainer, T> pre, BiConsumer<ModContainer, T> post) {
+    public <T extends Event & IModBusEvent> void postEventWithWrapInModOrder(T e, BiConsumer<ModContainer, T> pre, BiConsumer<ModContainer, T> post) {
         if (!loadingStateValid) {
             LOGGER.error("Cowardly refusing to send event {} to a broken mod state", e.getClass().getName());
             return;
         }
-        ModList.get().forEachModContainer((id, mc) -> {
+        ModList.get().forEachModInOrder(mc -> {
             pre.accept(mc, e);
             mc.acceptEvent(e);
             post.accept(mc, e);

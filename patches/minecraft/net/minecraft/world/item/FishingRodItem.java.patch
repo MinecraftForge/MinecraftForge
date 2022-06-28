@@ -1,0 +1,14 @@
+--- a/net/minecraft/world/item/FishingRodItem.java
++++ b/net/minecraft/world/item/FishingRodItem.java
+@@ -46,4 +_,11 @@
+    public int m_6473_() {
+       return 1;
+    }
++
++    /* ******************** FORGE START ******************** */
++
++    @Override
++   public boolean canPerformAction(ItemStack stack, net.minecraftforge.common.ToolAction toolAction) {
++      return net.minecraftforge.common.ToolActions.DEFAULT_FISHING_ROD_ACTIONS.contains(toolAction);
++   }
+ }

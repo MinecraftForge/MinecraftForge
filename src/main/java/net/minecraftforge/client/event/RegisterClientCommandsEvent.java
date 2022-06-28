@@ -6,6 +6,7 @@
 package net.minecraftforge.client.event;
 
 import com.mojang.brigadier.CommandDispatcher;
+import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.arguments.ObjectiveArgument;
 import net.minecraft.commands.arguments.ResourceLocationArgument;
@@ -36,14 +37,16 @@ public class RegisterClientCommandsEvent extends Event
 {
 
     private final CommandDispatcher<CommandSourceStack> dispatcher;
+    private final CommandBuildContext context;
 
     /**
      * @hidden
-     * @see net.minecraftforge.client.ClientCommandHandler#mergeServerCommands(CommandDispatcher)
+     * @see net.minecraftforge.client.ClientCommandHandler#mergeServerCommands(CommandDispatcher, CommandBuildContext)
      */
-    public RegisterClientCommandsEvent(CommandDispatcher<CommandSourceStack> dispatcher)
+    public RegisterClientCommandsEvent(CommandDispatcher<CommandSourceStack> dispatcher, CommandBuildContext context)
     {
         this.dispatcher = dispatcher;
+        this.context = context;
     }
 
     /**
@@ -52,5 +55,13 @@ public class RegisterClientCommandsEvent extends Event
     public CommandDispatcher<CommandSourceStack> getDispatcher()
     {
         return dispatcher;
+    }
+
+    /**
+     * {@return the context to build the commands for}
+     */
+    public CommandBuildContext getBuildContext()
+    {
+        return context;
     }
 }
