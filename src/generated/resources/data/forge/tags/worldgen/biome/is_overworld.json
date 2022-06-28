@@ -49,6 +49,8 @@
     "minecraft:eroded_badlands",
     "minecraft:bamboo_jungle",
     "minecraft:lush_caves",
-    "minecraft:dripstone_caves"
+    "minecraft:dripstone_caves",
+    "minecraft:mangrove_swamp",
+    "minecraft:deep_dark"
   ]
 }
