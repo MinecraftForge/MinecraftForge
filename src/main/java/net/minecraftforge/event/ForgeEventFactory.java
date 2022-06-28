@@ -22,6 +22,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.entity.projectile.ThrownEnderpearl;
+import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.portal.PortalShape;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.item.TooltipFlag;
@@ -625,18 +626,14 @@ public class ForgeEventFactory
         return event.getResult() != Result.DENY;
     }
 
-    public static void fireChunkWatch(boolean watch, ServerPlayer entity, ChunkPos chunkpos, ServerLevel level)
+    public static void fireChunkWatch(ServerPlayer entity, LevelChunk chunk, ServerLevel level)
     {
-        if (watch)
-            MinecraftForge.EVENT_BUS.post(new ChunkWatchEvent.Watch(entity, chunkpos, level));
-        else
-            MinecraftForge.EVENT_BUS.post(new ChunkWatchEvent.UnWatch(entity, chunkpos, level));
+        MinecraftForge.EVENT_BUS.post(new ChunkWatchEvent.Watch(entity, chunk, level));
     }
 
-    public static void fireChunkWatch(boolean wasLoaded, boolean load, ServerPlayer entity, ChunkPos chunkpos, ServerLevel level)
+    public static void fireChunkUnWatch(ServerPlayer entity, ChunkPos chunkpos, ServerLevel level)
     {
-        if (wasLoaded != load)
-            fireChunkWatch(load, entity, chunkpos, level);
+        MinecraftForge.EVENT_BUS.post(new ChunkWatchEvent.UnWatch(entity, chunkpos, level));
     }
 
     public static boolean onPistonMovePre(Level level, BlockPos pos, Direction direction, boolean extending)
