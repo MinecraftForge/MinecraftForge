@@ -5,6 +5,7 @@
 
 package net.minecraftforge.common.util;
 
+import java.lang.ref.WeakReference;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Optional;
@@ -282,9 +283,16 @@ public class LazyOptional<T>
     }
 
     /**
-     * Register a {@link NonNullConsumer listener} that will be called when this {@link LazyOptional} becomes invalid (via {@link #invalidate()}).
+     * Register a {@link NonNullConsumer listener} that will be called when this
+     * {@link LazyOptional} becomes invalid (via {@link #invalidate()}).
+     * <p>
+     * This variant of the method registers the listener directly. Any references it captures
+     * will be kept in memory until this {@link LazyOptional} is {@linkplain #invalidate() invalidated}
+     * or evicted from memory by the garbage collector.
      * <p>
      * If this {@link LazyOptional} is empty, the listener will be called immediately.
+     *
+     * @see #addListener(Object, NonNullBiConsumer) Variant using {@link WeakReference}
      */
     public void addListener(NonNullConsumer<LazyOptional<T>> listener)
     {
@@ -295,6 +303,36 @@ public class LazyOptional<T>
         else
         {
             listener.accept(this);
+        }
+    }
+
+    /**
+     * Register a {@link NonNullBiConsumer listener} that will be called on the given object
+     * when this {@link LazyOptional} becomes invalid (via {@link #invalidate()}).
+     * <p>
+     * This variant of the method wraps the specified object in a {@link WeakReference},
+     * allowing the garbage collector to deallocate it if necessary.
+     * If it has been evicted, the listener will of course not be fired. Useful when
+     * combined with lambdas: {@code myLazyOptional.addListener(myObject, MyObjectType::callback)}.
+     * <p>
+     * If this {@link LazyOptional} is empty, the listener will be called immediately.
+     *
+     * @see #addListener(NonNullConsumer) Variant wihtout {@link WeakReference}
+     */
+    public <O> void addListener(O object, NonNullBiConsumer<O, LazyOptional<T>> listener)
+    {
+        if (isPresent())
+        {
+            var weak = new WeakReference<>(object);
+            this.listeners.add(lazyOptional -> {
+                O currentObject = weak.get();
+                if (currentObject != null)
+                    listener.accept(currentObject, lazyOptional);
+            });
+        }
+        else
+        {
+            listener.accept(object, this);
         }
     }
 
@@ -318,6 +356,7 @@ public class LazyOptional<T>
         {
             this.isValid = false;
             this.listeners.forEach(e -> e.accept(this));
+            this.listeners.clear();
         }
     }
 }
