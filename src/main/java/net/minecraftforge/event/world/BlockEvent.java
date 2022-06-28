@@ -425,6 +425,7 @@ public class BlockEvent extends Event
      * This event is {@link Cancelable}. If canceled, this will prevent the tool
      * from changing the block's state.
      */
+    @Cancelable
     public static class BlockToolModificationEvent extends BlockEvent
     {
         private final UseOnContext context;
