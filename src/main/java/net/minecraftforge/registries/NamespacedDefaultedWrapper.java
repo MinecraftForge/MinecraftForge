@@ -167,6 +167,12 @@ class NamespacedDefaultedWrapper<T> extends DefaultedRegistry<T> implements ILoc
     }
 
     @Override
+    public Set<ResourceKey<T>> registryKeySet()
+    {
+        return this.delegate.getResourceKeys();
+    }
+
+    @Override
     public Set<Map.Entry<ResourceKey<T>, T>> entrySet()
     {
         return this.delegate.getEntries();
@@ -192,7 +198,8 @@ class NamespacedDefaultedWrapper<T> extends DefaultedRegistry<T> implements ILoc
 
     @Override public Optional<Holder<T>> getHolder(int id) { return this.holders.getHolder(id); }
     @Override public Optional<Holder<T>> getHolder(ResourceKey<T> key) { return this.holders.getHolder(key); }
-    @Override public DataResult<Holder<T>> getOrCreateHolder(ResourceKey<T> key) { return DataResult.success(this.holders.getOrCreateHolder(key)); }
+    @Override public DataResult<Holder<T>> getOrCreateHolder(ResourceKey<T> key) { return this.holders.getOrCreateHolder(key); }
+    @Override public Holder<T> getOrCreateHolderOrThrow(ResourceKey<T> key) { return this.holders.getOrCreateHolderOrThrow(key); }
     @Override public Optional<Holder<T>> getRandom(RandomSource rand) { return this.holders.getRandom(rand); }
     @Override public Stream<Holder.Reference<T>> holders() { return this.holders.holders();  }
     @Override public boolean isKnownTagName(TagKey<T> name) { return this.holders.isKnownTagName(name); }
