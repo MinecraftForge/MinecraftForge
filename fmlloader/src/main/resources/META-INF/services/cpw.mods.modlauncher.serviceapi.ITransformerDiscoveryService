@@ -1,1 +1,2 @@
 net.minecraftforge.fml.loading.ModDirTransformerDiscoverer
+net.minecraftforge.fml.loading.ClasspathTransformerDiscoverer
