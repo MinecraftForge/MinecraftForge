@@ -5,39 +5,50 @@
 
 package net.minecraftforge.common.capabilities;
 
-import net.minecraftforge.fml.ModLoader;
-import net.minecraftforge.forgespi.language.ModFileScanData;
+import net.minecraft.resources.ResourceLocation;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.IdentityHashMap;
-import java.util.List;
-
+import java.util.HashMap;
 import static net.minecraftforge.fml.Logging.CAPABILITIES;
 
-public enum CapabilityManager
+/**
+ * The Capability Manager is responsible for making and 
+ * providing {@link CapabilityType} instances.
+ */
+public final class CapabilityManager
 {
-    INSTANCE;
-    static final Logger LOGGER = LogManager.getLogger();
+    private CapabilityManager() {};
 
+    private static final Logger LOGGER = LogManager.getLogger();
+    private static final HashMap<ResourceLocation, CapabilityType<?>> PROVIDERS = new HashMap<>();    
 
-    public static <T> Capability<T> get(CapabilityToken<T> type)
+    /**
+     * Retrieve a {@link CapabilityType}.  The returned type may not be registered.
+     * @param <T> The supertype of all instances of this capability type.
+     * @param id The ID of this capability type.
+     * @return A {@link CapabilityType} for the provided key.
+     */
+    public static <T> @NotNull CapabilityType<T> get(ResourceLocation id)
     {
-        return INSTANCE.get(type.getType(), false);
+        return get(id, false);
     }
 
+    /**
+     * Internal API for registering capability types.
+     * @see {@link RegisterCapabilitiesEvent}
+     */
     @SuppressWarnings("unchecked")
-    <T> Capability<T> get(String realName, boolean registering)
+    static <T> @NotNull CapabilityType<T> get(ResourceLocation id, boolean registering)
     {
-        Capability<T> cap;
+        CapabilityType<T> cap;
 
-        synchronized (providers)
+        synchronized (PROVIDERS)
         {
-            realName = realName.intern();
-            cap = (Capability<T>)providers.computeIfAbsent(realName, Capability::new);
+            cap = (CapabilityType<T>)PROVIDERS.computeIfAbsent(id, CapabilityType::new);
 
         }
-
 
         if (registering)
         {
@@ -45,8 +56,8 @@ public enum CapabilityManager
             {
                 if (cap.isRegistered())
                 {
-                    LOGGER.error(CAPABILITIES, "Cannot register capability implementation multiple times : {}", realName);
-                    throw new IllegalArgumentException("Cannot register a capability implementation multiple times : "+ realName);
+                    LOGGER.error(CAPABILITIES, "Cannot register capability implementation multiple times : {}", id);
+                    throw new IllegalArgumentException("Cannot register a capability implementation multiple times : "+ id);
                 }
                 else
                 {
@@ -56,13 +67,5 @@ public enum CapabilityManager
         }
 
         return cap;
-    }
-
-    // INTERNAL
-    private final IdentityHashMap<String, Capability<?>> providers = new IdentityHashMap<>();
-    public void injectCapabilities(List<ModFileScanData> data)
-    {
-        var event = new RegisterCapabilitiesEvent();
-        ModLoader.get().postEvent(event);
     }
 }

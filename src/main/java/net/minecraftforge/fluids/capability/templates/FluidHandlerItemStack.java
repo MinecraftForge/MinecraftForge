@@ -7,14 +7,13 @@ package net.minecraftforge.fluids.capability.templates;
 
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.core.Direction;
+import net.minecraftforge.common.capabilities.CapabilityType;
+import net.minecraftforge.common.capabilities.IAttachedCapabilityProvider.ICompleteCapabilityProvider;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.*;
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -27,11 +26,12 @@ import org.jetbrains.annotations.Nullable;
  * Additional examples are provided to enable consumable fluid containers (see {@link Consumable}),
  * fluid containers with different empty and full items (see {@link SwapEmpty},
  */
-public class FluidHandlerItemStack implements IFluidHandlerItem, ICapabilityProvider
+public class FluidHandlerItemStack implements IFluidHandlerItem, ICompleteCapabilityProvider<ItemStack>
 {
     public static final String FLUID_NBT_KEY = "Fluid";
+    public static final ResourceLocation ID = new ResourceLocation("forge", "item_fluid_handler");
 
-    private final LazyOptional<IFluidHandlerItem> holder = LazyOptional.of(() -> this);
+    private Capability<IFluidHandlerItem> holder = Capability.of(() -> this);
 
     @NotNull
     protected ItemStack container;
@@ -78,27 +78,27 @@ public class FluidHandlerItemStack implements IFluidHandlerItem, ICapabilityProv
     }
 
     @Override
-    public int getTanks() {
-
+    public int getTanks()
+    {
         return 1;
     }
 
     @NotNull
     @Override
-    public FluidStack getFluidInTank(int tank) {
-
+    public FluidStack getFluidInTank(int tank)
+    {
         return getFluid();
     }
 
     @Override
-    public int getTankCapacity(int tank) {
-
+    public int getTankCapacity(int tank)
+    {
         return capacity;
     }
 
     @Override
-    public boolean isFluidValid(int tank, @NotNull FluidStack stack) {
-
+    public boolean isFluidValid(int tank, @NotNull FluidStack stack)
+    {
         return true;
     }
 
@@ -208,13 +208,6 @@ public class FluidHandlerItemStack implements IFluidHandlerItem, ICapabilityProv
         container.removeTagKey(FLUID_NBT_KEY);
     }
 
-    @Override
-    @NotNull
-    public <T> LazyOptional<T> getCapability(@NotNull Capability<T> capability, @Nullable Direction facing)
-    {
-        return CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY.orEmpty(capability, holder);
-    }
-
     /**
      * Destroys the container item when it's emptied.
      */
@@ -252,5 +245,42 @@ public class FluidHandlerItemStack implements IFluidHandlerItem, ICapabilityProv
             super.setContainerToEmpty();
             container = emptyContainer;
         }
+    }
+
+    @Override
+    public ResourceLocation getId()
+    {
+        return ID;
+    }
+
+    @NotNull
+    @Override
+    public <C> Capability<C> getCapability(CapabilityType<C> type, @Nullable Direction direction)
+    {
+        return this.holder.cast();
+    }
+
+    @Override
+    public void invalidateCaps()
+    {
+        this.holder.invalidate();
+    }
+
+    @Override
+    public void reviveCaps()
+    {
+        this.holder = Capability.of(() -> this);
+    }
+
+    @Override
+    public boolean isEquivalentTo(@Nullable IComparableCapabilityProvider<ItemStack> other)
+    {
+        return other != null && this.capacity == ((FluidHandlerItemStack) other).capacity; // Fluid is stored in NBT, which has already been checked.
+    }
+
+    @Override
+    public @Nullable ICopyableCapabilityProvider<ItemStack> copy(ItemStack copiedParent)
+    {
+        return new FluidHandlerItemStack(copiedParent, this.capacity); // Fluid is stored in stack NBT, which will already have been copied over.
     }
 }

@@ -9,36 +9,30 @@
     private static final Logger f_58854_ = LogUtils.getLogger();
     private final BlockEntityType<?> f_58855_;
     @Nullable
-@@ -23,11 +_,14 @@
+@@ -23,6 +_,7 @@
     protected final BlockPos f_58858_;
     protected boolean f_58859_;
     private BlockState f_58856_;
 +   private CompoundTag customTileData;
  
     public BlockEntity(BlockEntityType<?> p_155228_, BlockPos p_155229_, BlockState p_155230_) {
-+      super(BlockEntity.class);
        this.f_58855_ = p_155228_;
-       this.f_58858_ = p_155229_.m_7949_();
-       this.f_58856_ = p_155230_;
-+      this.gatherCapabilities();
-    }
- 
-    public static BlockPos m_187472_(CompoundTag p_187473_) {
-@@ -48,9 +_,13 @@
+@@ -48,9 +_,14 @@
     }
  
     public void m_142466_(CompoundTag p_155245_) {
 +      if (p_155245_.m_128441_("ForgeData")) this.customTileData = p_155245_.m_128469_("ForgeData");
-+      if (getCapabilities() != null && p_155245_.m_128441_("ForgeCaps")) deserializeCaps(p_155245_.m_128469_("ForgeCaps"));
++      deserializeCaps(p_155245_.m_128469_("ForgeCaps"));
     }
  
     protected void m_183515_(CompoundTag p_187471_) {
 +      if (this.customTileData != null) p_187471_.m_128365_("ForgeData", this.customTileData.m_6426_());
-+      if (getCapabilities() != null) p_187471_.m_128365_("ForgeCaps", serializeCaps());
++      var capData = serializeCaps();
++      if (capData != null) p_187471_.m_128365_("ForgeCaps", capData);
     }
  
     public final CompoundTag m_187480_() {
-@@ -163,6 +_,13 @@
+@@ -163,10 +_,18 @@
  
     public void m_7651_() {
        this.f_58859_ = true;
@@ -52,17 +46,30 @@
     }
  
     public void m_6339_() {
-@@ -189,6 +_,13 @@
+       this.f_58859_ = false;
++      this.reviveCaps();
+    }
  
-    public BlockEntityType<?> m_58903_() {
+    public boolean m_7531_(int p_58889_, int p_58890_) {
+@@ -191,9 +_,21 @@
        return this.f_58855_;
-+   }
-+
+    }
+ 
 +   @Override
 +   public CompoundTag getTileData() {
 +      if (this.customTileData == null)
 +         this.customTileData = new CompoundTag();
 +      return this.customTileData;
-    }
- 
++   }
++
     /** @deprecated */
+    @Deprecated
+    public void m_155250_(BlockState p_155251_) {
+       this.f_58856_ = p_155251_;
++   }
++
++   @Override
++   public net.minecraftforge.common.capabilities.AttachCapabilitiesEvent.BlockEntities getCapEvent() {
++      return new net.minecraftforge.common.capabilities.AttachCapabilitiesEvent.BlockEntities(this);
+    }
+ }

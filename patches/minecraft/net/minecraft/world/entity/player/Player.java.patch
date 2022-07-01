@@ -411,7 +411,7 @@
        this.m_36246_(Stats.f_12982_.m_12902_(p_36186_.m_41720_()));
        p_36185_.m_6263_((Player)null, this.m_20185_(), this.m_20186_(), this.m_20189_(), SoundEvents.f_12321_, SoundSource.PLAYERS, 0.5F, p_36185_.f_46441_.m_188501_() * 0.1F + 0.9F);
        if (this instanceof ServerPlayer) {
-@@ -2023,5 +_,63 @@
+@@ -2023,5 +_,68 @@
        public Component m_36423_() {
           return this.f_36413_;
        }
@@ -434,23 +434,23 @@
 +      this.displayname = net.minecraftforge.event.ForgeEventFactory.getPlayerDisplayName(this, this.m_7755_());
 +   }
 +
-+   private final net.minecraftforge.common.util.LazyOptional<net.minecraftforge.items.IItemHandler>
-+         playerMainHandler = net.minecraftforge.common.util.LazyOptional.of(
++   private final net.minecraftforge.common.capabilities.Capability<net.minecraftforge.items.IItemHandler>
++         playerMainHandler = net.minecraftforge.common.capabilities.Capability.of(
 +               () -> new net.minecraftforge.items.wrapper.PlayerMainInvWrapper(f_36093_));
 +
-+   private final net.minecraftforge.common.util.LazyOptional<net.minecraftforge.items.IItemHandler>
-+         playerEquipmentHandler = net.minecraftforge.common.util.LazyOptional.of(
++   private final net.minecraftforge.common.capabilities.Capability<net.minecraftforge.items.IItemHandler>
++         playerEquipmentHandler = net.minecraftforge.common.capabilities.Capability.of(
 +               () -> new net.minecraftforge.items.wrapper.CombinedInvWrapper(
 +                     new net.minecraftforge.items.wrapper.PlayerArmorInvWrapper(f_36093_),
 +                     new net.minecraftforge.items.wrapper.PlayerOffhandInvWrapper(f_36093_)));
 +
-+   private final net.minecraftforge.common.util.LazyOptional<net.minecraftforge.items.IItemHandler>
-+         playerJoinedHandler = net.minecraftforge.common.util.LazyOptional.of(
++   private final net.minecraftforge.common.capabilities.Capability<net.minecraftforge.items.IItemHandler>
++         playerJoinedHandler = net.minecraftforge.common.capabilities.Capability.of(
 +               () -> new net.minecraftforge.items.wrapper.PlayerInvWrapper(f_36093_));
 +
 +   @Override
-+   public <T> net.minecraftforge.common.util.LazyOptional<T> getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, @Nullable Direction facing) {
-+      if (this.m_6084_() && capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
++   public <T> net.minecraftforge.common.capabilities.Capability<T> getCapability(net.minecraftforge.common.capabilities.CapabilityType<T> capability, @Nullable Direction facing) {
++      if (capability == net.minecraftforge.common.capabilities.CapabilityTypes.ITEMS) {
 +         if (facing == null) return playerJoinedHandler.cast();
 +         else if (facing.m_122434_().m_122478_()) return playerMainHandler.cast();
 +         else if (facing.m_122434_().m_122479_()) return playerEquipmentHandler.cast();
@@ -473,5 +473,10 @@
 +   @Nullable
 +   public Pose getForcedPose() {
 +      return this.forcedPose;
++   }
++
++   @Override
++   public net.minecraftforge.common.capabilities.AttachCapabilitiesEvent getCapEvent() {
++      return new net.minecraftforge.common.capabilities.AttachCapabilitiesEvent.Players(this);
     }
  }

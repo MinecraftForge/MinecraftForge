@@ -24,14 +24,13 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.SoundActions;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.CapabilityTypes;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import net.minecraftforge.fluids.capability.wrappers.BlockWrapper;
 import net.minecraftforge.fluids.capability.wrappers.BucketPickupHandlerWrapper;
 import net.minecraftforge.fluids.capability.wrappers.FluidBlockWrapper;
-import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 
@@ -91,7 +90,7 @@ public class FluidUtil
         ItemStack heldItem = player.getItemInHand(hand);
         if (!heldItem.isEmpty())
         {
-            return player.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
+            return player.getCapability(CapabilityTypes.ITEMS)
                 .map(playerInventory -> {
 
                     FluidActionResult fluidActionResult = tryFillContainerAndStow(heldItem, handler, playerInventory, Integer.MAX_VALUE, player, true);
@@ -416,9 +415,9 @@ public class FluidUtil
      *
      * Vanilla buckets will be converted to universal buckets if they are enabled.
      */
-    public static LazyOptional<IFluidHandlerItem> getFluidHandler(@NotNull ItemStack itemStack)
+    public static Capability<IFluidHandlerItem> getFluidHandler(@NotNull ItemStack itemStack)
     {
-        return itemStack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY);
+        return itemStack.getCapability(CapabilityTypes.FLUID_ITEMS);
     }
 
     /**
@@ -442,7 +441,7 @@ public class FluidUtil
     /**
      * Helper method to get an IFluidHandler for at a block position.
      */
-    public static LazyOptional<IFluidHandler> getFluidHandler(Level level, BlockPos blockPos, @Nullable Direction side)
+    public static Capability<IFluidHandler> getFluidHandler(Level level, BlockPos blockPos, @Nullable Direction side)
     {
         BlockState state = level.getBlockState(blockPos);
         Block block = state.getBlock();
@@ -452,10 +451,10 @@ public class FluidUtil
             BlockEntity blockEntity = level.getBlockEntity(blockPos);
             if (blockEntity != null)
             {
-                return blockEntity.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, side);
+                return blockEntity.getCapability(CapabilityTypes.FLUIDS, side);
             }
         }
-        return LazyOptional.empty();
+        return Capability.empty();
     }
 
     /**

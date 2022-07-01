@@ -9,17 +9,16 @@
     public static final Codec<ItemStack> f_41582_ = RecordCodecBuilder.create((p_41697_) -> {
        return p_41697_.group(Registry.f_122827_.m_194605_().fieldOf("id").forGetter((p_150946_) -> {
           return p_150946_.f_41589_;
-@@ -80,6 +_,9 @@
+@@ -80,6 +_,8 @@
           return Optional.ofNullable(p_150939_.f_41590_);
        })).apply(p_41697_, ItemStack::new);
     });
 +   private final net.minecraft.core.Holder.Reference<Item> delegate;
-+   private CompoundTag capNBT;
 +
     private static final Logger f_41585_ = LogUtils.getLogger();
     public static final ItemStack f_41583_ = new ItemStack((Item)null);
     public static final DecimalFormat f_41584_ = Util.m_137469_(new DecimalFormat("#.##"), (p_41704_) -> {
-@@ -134,10 +_,15 @@
+@@ -134,10 +_,13 @@
        this(p_220155_.m_203334_(), p_220156_);
     }
  
@@ -29,22 +28,19 @@
 -      if (this.f_41589_ != null && this.f_41589_.m_41465_()) {
 +   public ItemStack(ItemLike p_41601_, int p_41602_) { this(p_41601_, p_41602_, (CompoundTag) null); }
 +   public ItemStack(ItemLike p_41604_, int p_41605_, @Nullable CompoundTag p_41606_) {
-+      super(ItemStack.class, true);
-+      this.capNBT = p_41606_;
++      this.lazyCapNbt = p_41606_;
 +      this.f_41589_ = p_41604_ == null ? null : p_41604_.m_5456_();
 +      this.delegate = p_41604_ == null ? null : net.minecraftforge.registries.ForgeRegistries.ITEMS.getDelegateOrThrow(p_41604_.m_5456_());
 +      this.f_41587_ = p_41605_;
-+      this.forgeInit();
 +      if (this.f_41589_ != null && this.f_41589_.isDamageable(this)) {
           this.m_41721_(this.m_41773_());
        }
  
-@@ -150,14 +_,19 @@
+@@ -150,14 +_,17 @@
     }
  
     private ItemStack(CompoundTag p_41608_) {
-+      super(ItemStack.class, true);
-+      this.capNBT = p_41608_.m_128441_("ForgeCaps") ? p_41608_.m_128469_("ForgeCaps") : null;
++      this.lazyCapNbt = p_41608_.m_128441_("ForgeCaps") ? p_41608_.m_128469_("ForgeCaps") : null;
 +      Item rawItem =
        this.f_41589_ = Registry.f_122827_.m_7745_(new ResourceLocation(p_41608_.m_128461_("id")));
 +      this.delegate = net.minecraftforge.registries.ForgeRegistries.ITEMS.getDelegateOrThrow(rawItem);
@@ -53,7 +49,6 @@
           this.f_41590_ = p_41608_.m_128469_("tag");
           this.m_41720_().m_142312_(this.f_41590_);
        }
-+      this.forgeInit();
  
 -      if (this.m_41720_().m_41465_()) {
 +      if (this.m_41720_().isDamageable(this)) {
@@ -161,12 +156,11 @@
     }
  
     public InteractionResult m_41647_(Player p_41648_, LivingEntity p_41649_, InteractionHand p_41650_) {
-@@ -388,7 +_,7 @@
-       if (this.m_41619_()) {
+@@ -389,6 +_,7 @@
           return f_41583_;
        } else {
--         ItemStack itemstack = new ItemStack(this.m_41720_(), this.f_41587_);
-+         ItemStack itemstack = new ItemStack(this.m_41720_(), this.f_41587_, this.serializeCaps());
+          ItemStack itemstack = new ItemStack(this.m_41720_(), this.f_41587_);
++         itemstack.copyCapsFrom(this);
           itemstack.m_41754_(this.m_41612_());
           if (this.f_41590_ != null) {
              itemstack.f_41590_ = this.f_41590_.m_6426_();
@@ -244,7 +238,7 @@
              return p_220170_.m_131144_(new HoverEvent(HoverEvent.Action.f_130832_, new HoverEvent.ItemStackInfo(this)));
           });
        }
-@@ -958,12 +_,31 @@
+@@ -958,12 +_,53 @@
        this.m_41720_().m_5929_(p_41732_, p_41733_, this, p_41734_);
     }
  
@@ -262,17 +256,39 @@
 +   public void deserializeNBT(CompoundTag nbt) {
 +      final ItemStack itemStack = ItemStack.m_41712_(nbt);
 +      this.m_41751_(itemStack.m_41783_());
-+      if (itemStack.capNBT != null) deserializeCaps(itemStack.capNBT);
++      deserializeCaps(itemStack.lazyCapNbt);
 +   }
 +
-+   /**
-+    * Set up forge's ItemStack additions.
-+    */
-+   private void forgeInit() {
-+      if (this.delegate != null) {
-+         this.gatherCapabilities(() -> f_41589_.initCapabilities(this, this.capNBT));
-+         if (this.capNBT != null) deserializeCaps(this.capNBT);
++   @Override
++   public net.minecraftforge.common.capabilities.AttachCapabilitiesEvent.ItemStacks getCapEvent() {
++      var ev = new net.minecraftforge.common.capabilities.AttachCapabilitiesEvent.ItemStacks(this);
++      this.m_41720_().attachBuiltinCaps(ev);
++      return ev;
++   }
++
++   @Override
++   public boolean areCapsCompatible(ItemStack other) {
++      if(other.capsInitialized ^ this.capsInitialized) { // If one has been initialized, make sure both are.
++         this.getCapDispatcher();
++         other.getCapDispatcher();
 +      }
++
++      if(this.capsInitialized) { // If caps have been initialized, check dispatcher equality.
++         var disp = this.getCapDispatcher();
++         var otherDisp = other.getCapDispatcher();
++         if(disp == null) {
++            if(otherDisp == null) return true;
++            else return otherDisp.isEquivalentTo(null);
++         } else return disp.isEquivalentTo(otherDisp);
++      }
++      else if (!this.hasCapNbt()) return !other.hasCapNbt(); // Otherwise, fallback to NBT.
++      else return this.lazyCapNbt.equals(other.lazyCapNbt);
++   }
++
++   @Override
++   public <C> net.minecraftforge.common.capabilities.Capability<C> getCapability(net.minecraftforge.common.capabilities.CapabilityType<C> cap, net.minecraft.core.Direction side) {
++      if(this.f_41591_) return net.minecraftforge.common.capabilities.Capability.empty(); // Exception - this checks !isEmpty because stacks are never invalidated.
++      return super.getCapability(cap, side);
     }
  
     public SoundEvent m_41615_() {

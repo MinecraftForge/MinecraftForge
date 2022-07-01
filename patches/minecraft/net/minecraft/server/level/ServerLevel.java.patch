@@ -187,14 +187,13 @@
        explosion.m_46061_();
        explosion.m_46075_(false);
        if (p_8661_ == Explosion.BlockInteraction.NONE) {
-@@ -1461,6 +_,12 @@
+@@ -1461,6 +_,11 @@
        });
     }
  
 +   protected void initCapabilities() {
-+      this.gatherCapabilities();
-+      capabilityData = this.m_8895_().m_164861_(e -> net.minecraftforge.common.util.WorldCapabilityData.load(e, getCapabilities()), () -> new net.minecraftforge.common.util.WorldCapabilityData(getCapabilities()), net.minecraftforge.common.util.WorldCapabilityData.ID);
-+      capabilityData.setCapabilities(getCapabilities());
++      capabilityData = this.m_8895_().m_164861_(e -> net.minecraftforge.common.util.WorldCapabilityData.load(e, getCapDispatcher()), () -> new net.minecraftforge.common.util.WorldCapabilityData(getCapDispatcher()), net.minecraftforge.common.util.WorldCapabilityData.ID);
++      capabilityData.setCapabilities(getCapDispatcher());
 +   }
 +
     public LevelEntityGetter<Entity> m_142646_() {

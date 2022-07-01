@@ -5,13 +5,13 @@
  
     protected abstract AbstractContainerMenu m_6555_(int p_58627_, Inventory p_58628_);
 +
-+   private net.minecraftforge.common.util.LazyOptional<?> itemHandler = net.minecraftforge.common.util.LazyOptional.of(() -> createUnSidedHandler());
++   private net.minecraftforge.common.capabilities.Capability<?> itemHandler = net.minecraftforge.common.capabilities.Capability.of(() -> createUnSidedHandler());
 +   protected net.minecraftforge.items.IItemHandler createUnSidedHandler() {
 +      return new net.minecraftforge.items.wrapper.InvWrapper(this);
 +   }
 +
-+   public <T> net.minecraftforge.common.util.LazyOptional<T> getCapability(net.minecraftforge.common.capabilities.Capability<T> cap, @org.jetbrains.annotations.Nullable net.minecraft.core.Direction side) {
-+      if (!this.f_58859_ && cap == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY )
++   public <T> net.minecraftforge.common.capabilities.Capability<T> getCapability(net.minecraftforge.common.capabilities.CapabilityType<T> cap, @org.jetbrains.annotations.Nullable net.minecraft.core.Direction side) {
++      if (cap == net.minecraftforge.common.capabilities.CapabilityTypes.ITEMS )
 +         return itemHandler.cast();
 +      return super.getCapability(cap, side);
 +   }
@@ -25,6 +25,6 @@
 +   @Override
 +   public void reviveCaps() {
 +      super.reviveCaps();
-+      itemHandler = net.minecraftforge.common.util.LazyOptional.of(() -> createUnSidedHandler());
++      itemHandler = net.minecraftforge.common.capabilities.Capability.of(() -> createUnSidedHandler());
 +   }
  }

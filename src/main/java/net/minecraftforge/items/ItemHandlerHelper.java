@@ -38,32 +38,7 @@ public class ItemHandlerHelper
 
     public static boolean canItemStacksStack(@NotNull ItemStack a, @NotNull ItemStack b)
     {
-        if (a.isEmpty() || !a.sameItem(b) || a.hasTag() != b.hasTag())
-            return false;
-
-        return (!a.hasTag() || a.getTag().equals(b.getTag())) && a.areCapsCompatible(b);
-    }
-
-    /**
-     * A relaxed version of canItemStacksStack that stacks itemstacks with different metadata if they don't have subtypes.
-     * This usually only applies when players pick up items.
-     */
-    public static boolean canItemStacksStackRelaxed(@NotNull ItemStack a, @NotNull ItemStack b)
-    {
-        if (a.isEmpty() || b.isEmpty() || a.getItem() != b.getItem())
-            return false;
-
-        if (!a.isStackable())
-            return false;
-
-        // Metadata value only matters when the item has subtypes
-        // Vanilla stacks non-subtype items with different metadata together
-        // TODO Item subtypes, is this still necessary?
-        /* e.g. a stick with metadata 0 and a stick with metadata 1 stack
-        if (a.getHasSubtypes() && a.getMetadata() != b.getMetadata())
-            return false;
-*/
-        if (a.hasTag() != b.hasTag())
+        if (a.isEmpty() || !a.sameItem(b) || a.hasTag() != b.hasTag()) // Note: Potentially check isStackable?
             return false;
 
         return (!a.hasTag() || a.getTag().equals(b.getTag())) && a.areCapsCompatible(b);
@@ -102,7 +77,7 @@ public class ItemHandlerHelper
         for (int i = 0; i < sizeInventory; i++)
         {
             ItemStack slot = inventory.getStackInSlot(i);
-            if (canItemStacksStackRelaxed(slot, stack))
+            if (canItemStacksStack(slot, stack))
             {
                 stack = inventory.insertItem(i, stack, simulate);
 

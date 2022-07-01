@@ -6,30 +6,52 @@
 package net.minecraftforge.common.capabilities;
 
 import net.minecraft.core.Direction;
-import net.minecraftforge.common.util.LazyOptional;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public interface ICapabilityProvider
 {
     /**
-     * Retrieves the Optional handler for the capability requested on the specific side.
-     * The return value <strong>CAN</strong> be the same for multiple faces.
-     * Modders are encouraged to cache this value, using the listener capabilities of the Optional to
-     * be notified if the requested capability get lost.
+     * Retrieves the {@link Capability} for the capability requested on the specific side.<br>
+     * The return value may be the same for multiple faces.<br>
+     * Callers should cache the returned instance and not make repeated calls to this method when possible.<br>
+     * Contractually, unless invalidated, the returned instance will always be the same for the same arguments.<br>
+     * <p>
+     * The exception to this is {@link ItemStack}, where it makes no sense to cache returned capabilities,
+     * as they are not invalidated (there is no effective time point to invalidate stack caps which has meaning).
      *
-     * @param cap The capability to check
-     * @param side The Side to check from,
-     *   <strong>CAN BE NULL</strong>. Null is defined to represent 'internal' or 'self'
+     * @param type The {@link CapabilityType} to check for.
+     * @param direction The {@link Direction} to check from, which may be null.  Null represents "internal".<br>
      * @return The requested an optional holding the requested capability.
+     * 
      */
-    @NotNull <T> LazyOptional<T> getCapability(@NotNull final Capability<T> cap, final @Nullable Direction side);
+    @NotNull <T> Capability<T> getCapability(@NotNull final CapabilityType<T> type, final @Nullable Direction direction);
 
-    /*
-     * Purely added as a bouncer to sided version, to make modders stop complaining about calling with a null value.
-     * This should never be OVERRIDDEN, modders should only ever implement the sided version.
+    /**
+     * Utility for {@link #getCapability(Capability, Direction)} that calls with a null direction.<br>
+     * Do not override this method - only override the contextual variant!
+     * 
+     * @see {@link #getCapability(Capability, Direction)}
      */
-    @NotNull default <T> LazyOptional<T> getCapability(@NotNull final Capability<T> cap) {
-        return getCapability(cap, null);
+    @NotNull default <T> Capability<T> getCapability(@NotNull final CapabilityType<T> type) {
+        return getCapability(type, null);
     }
+
+    /**
+     * Invalidates all contained caps, and prevents {@link #getCapability(Capability, Direction)} from returning a value.<br>
+     * This is usually called when the object in question is removed/terminated.<br>
+     * However there are be cases these 'invalid' caps need to be retrieved/copied.<br>
+     * In that case, call {@link #reviveCaps()}, perform the needed operations, and then call {@link #invalidateCaps()} again.<br>
+     * Be sure to make your invalidate callbacks recursion safe.
+     */
+    void invalidateCaps();
+
+    /**
+     * Certain objects, such as Entities and ItemStacks, can become live again after becoming invalid.<br>
+     * For these cases, it is necessary to revive the capabilities of the object.
+     * 
+     * A proper implementation of this method will refresh all stored {@link Capability} instances with new ones.
+     */
+    void reviveCaps();
 }

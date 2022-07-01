@@ -26,9 +26,9 @@ import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.material.MaterialColor;
+import net.minecraftforge.common.capabilities.CapabilityType;
+import net.minecraftforge.common.capabilities.CapabilityTypes;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.EnergyStorage;
 import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.event.RegisterGameTestsEvent;
@@ -167,7 +167,7 @@ public class GameTestTest
         helper.setBlock(energyPos, ENERGY_BLOCK.get());
 
         // Queries the energy capability
-        LazyOptional<IEnergyStorage> energyHolder = helper.getBlockEntity(energyPos).getCapability(CapabilityEnergy.ENERGY);
+        Capability<IEnergyStorage> energyHolder = helper.getBlockEntity(energyPos).getCapability(CapabilityTypes.ENERGY);
 
         // Adds 2000 FE, but our energy storage can only hold 1000 FE
         energyHolder.ifPresent(energyStorage -> energyStorage.receiveEnergy(2000, false));
@@ -201,7 +201,7 @@ public class GameTestTest
     private static class EnergyBlockEntity extends BlockEntity
     {
         private final EnergyStorage energyStorage = new EnergyStorage(1000);
-        private final LazyOptional<IEnergyStorage> energyHolder = LazyOptional.of(() -> energyStorage);
+        private final Capability<IEnergyStorage> energyHolder = Capability.of(() -> energyStorage);
 
         public EnergyBlockEntity(BlockPos pos, BlockState state)
         {
@@ -210,9 +210,9 @@ public class GameTestTest
 
         @NotNull
         @Override
-        public <T> LazyOptional<T> getCapability(@NotNull Capability<T> capability, @Nullable Direction facing)
+        public <T> Capability<T> getCapability(@NotNull CapabilityType<T> capability, @Nullable Direction facing)
         {
-            if (capability == CapabilityEnergy.ENERGY)
+            if (capability == CapabilityTypes.ENERGY)
                 return energyHolder.cast();
 
             return super.getCapability(capability, facing);

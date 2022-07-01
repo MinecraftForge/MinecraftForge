@@ -5,127 +5,90 @@
 
 package net.minecraftforge.common.capabilities;
 
+import java.util.function.Supplier;
+
 import javax.annotation.ParametersAreNonnullByDefault;
 
-import com.google.common.annotations.VisibleForTesting;
-import net.minecraft.MethodsReturnNonnullByDefault;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.core.Direction;
-import net.minecraft.world.level.chunk.LevelChunk;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.event.ForgeEventFactory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.function.Supplier;
+import net.minecraft.MethodsReturnNonnullByDefault;
+import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.chunk.LevelChunk;
+import net.minecraftforge.event.ForgeEventFactory;
 
+/**
+ * The default implementation of {@link ICapabilityProvider}.
+ *
+ * @param <T> The type of the owner object.
+ */
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
-public abstract class CapabilityProvider<B extends ICapabilityProviderImpl<B>> implements ICapabilityProviderImpl<B>
+public abstract class CapabilityProvider<T extends ICapabilityProvider> implements ICapabilityProvider
 {
-    @VisibleForTesting
-    static boolean SUPPORTS_LAZY_CAPABILITIES = true;
 
-    private final @NotNull Class<B> baseClass;
-    private @Nullable CapabilityDispatcher capabilities;
-    private boolean valid = true;
+    @Nullable
+    private CapabilityDispatcher<T> attachedCaps = null;
+    protected boolean capsValid = true;
+    protected CompoundTag lazyCapNbt = null;
+    protected boolean capsInitialized = false;
 
-    private boolean                       isLazy             = false;
-    private Supplier<ICapabilityProvider> lazyParentSupplier = null;
-    private CompoundTag                   lazyData           = null;
-    private boolean initialized = false;
-
-    protected CapabilityProvider(Class<B> baseClass)
+    @SuppressWarnings("unchecked")
+    private void doGatherCapabilities()
     {
-        this(baseClass, false);
+        this.capsInitialized = true;
+        this.attachedCaps = ForgeEventFactory.gatherCapabilities((AttachCapabilitiesEvent<T>) this.getCapEvent());
     }
 
-    protected CapabilityProvider(final Class<B> baseClass, final boolean isLazy)
+    /**
+     * This method is called from {@link ItemStack#copy()} and {@link ServerPlayer#restoreFrom(ServerPlayer, boolean)} to clone 
+     * the capabilities of the original.
+     * <p>
+     * <b>It is not designed for use elsewhere, and may break or crash if used improperly.</b>
+     */
+    @SuppressWarnings("unchecked")
+    protected <P extends CapabilityProvider<T>> void copyCapsFrom(P other)
     {
-        this.baseClass = baseClass;
-        this.isLazy = SUPPORTS_LAZY_CAPABILITIES && isLazy;
-    }
-
-    protected final void gatherCapabilities()
-    {
-        gatherCapabilities(() -> null);
-    }
-
-    protected final void gatherCapabilities(@Nullable ICapabilityProvider parent)
-    {
-        gatherCapabilities(() -> parent);
-    }
-
-    protected final void gatherCapabilities(@Nullable Supplier<ICapabilityProvider> parent)
-    {
-        if (isLazy && !initialized)
+        if(other.capsInitialized)
         {
-            lazyParentSupplier = parent == null ? () -> null : parent;
-            return;
+            this.capsInitialized = true;
+            this.attachedCaps = other.getCapDispatcher().copy((T) this);
         }
-
-        doGatherCapabilities(parent == null ? null : parent.get());
+        else this.lazyCapNbt = other.lazyCapNbt;
     }
 
-    private void doGatherCapabilities(@Nullable ICapabilityProvider parent)
-    {
-        this.capabilities = ForgeEventFactory.gatherCapabilities(baseClass, getProvider(), parent);
-        this.initialized = true;
-    }
+    protected abstract AttachCapabilitiesEvent<? extends T> getCapEvent();
 
-    @NotNull
-    B getProvider()
+    /**
+     * <b>This method will initialize capabilities when called.</b>
+     * @return The {@link CapabilityDispatcher}, or null, if nothing attached.
+     */
+    protected final @Nullable CapabilityDispatcher<T> getCapDispatcher()
     {
-        return (B)this;
-    }
-
-    protected final @Nullable CapabilityDispatcher getCapabilities()
-    {
-        if (isLazy && !initialized)
+        if (!this.capsInitialized)
         {
-            doGatherCapabilities(lazyParentSupplier == null ? null : lazyParentSupplier.get());
-            if (lazyData != null)
+            doGatherCapabilities();
+            if (this.hasCapNbt())
             {
-                deserializeCaps(lazyData);
+                deserializeCaps(lazyCapNbt);
+                this.lazyCapNbt = null;
             }
         }
 
-        return capabilities;
-    }
-
-    public final boolean areCapsCompatible(CapabilityProvider<B> other)
-    {
-        return areCapsCompatible(other.getCapabilities());
-    }
-
-    public final boolean areCapsCompatible(@Nullable CapabilityDispatcher other)
-    {
-        final CapabilityDispatcher disp = getCapabilities();
-        if (disp == null)
-        {
-            if (other == null)
-            {
-                return true;
-            }
-            else
-            {
-                return other.areCompatible(null);
-            }
-        }
-        else
-        {
-            return disp.areCompatible(other);
-        }
+        return this.attachedCaps;
     }
 
     protected final @Nullable CompoundTag serializeCaps()
     {
-        if (isLazy && !initialized)
+        if (!capsInitialized)
         {
-            return lazyData;
+            return hasCapNbt() ? lazyCapNbt.copy() : null;
         }
 
-        final CapabilityDispatcher disp = getCapabilities();
+        final var disp = getCapDispatcher();
         if (disp != null)
         {
             return disp.serializeNBT();
@@ -133,78 +96,67 @@ public abstract class CapabilityProvider<B extends ICapabilityProviderImpl<B>> i
         return null;
     }
 
-    protected final void deserializeCaps(CompoundTag tag)
+    protected final void deserializeCaps(@Nullable CompoundTag tag)
     {
-        if (isLazy && !initialized)
+        if (!capsInitialized)
         {
-            lazyData = tag;
+            lazyCapNbt = tag;
             return;
         }
 
-        final CapabilityDispatcher disp = getCapabilities();
+        final var disp = getCapDispatcher();
         if (disp != null)
         {
             disp.deserializeNBT(tag);
         }
     }
-
-    /*
-     * Invalidates all the contained caps, and prevents getCapability from returning a value.
-     * This is usually called when the object in question is removed from the world.
-     * However there may be cases where modders want to copy these 'invalid' caps.
-     * They should call reviveCaps while they are doing their work, and then call invalidateCaps again
-     * when they are finished.
-     * Be sure to make your invalidate callbaks recursion safe.
-     */
-    public void invalidateCaps()
+    
+    protected final boolean hasCapNbt()
     {
-        this.valid = false;
-        final CapabilityDispatcher disp = getCapabilities();
-        if (disp != null)
-            disp.invalidate();
+        return this.lazyCapNbt != null && !this.lazyCapNbt.isEmpty(); 
     }
 
-    /*
-     * This function will allow getCability to return values again.
-     * Modders can use this if they need to copy caps from one removed provider to a new one.
-     * It is expected the modders who call this function, then call invalidateCaps() to invalidate the provider again.
-     */
+    @Override
+    public void invalidateCaps()
+    {
+        this.capsValid = false;
+        if(!capsInitialized) return;
+        var disp = getCapDispatcher();
+        if (disp != null)
+            disp.invalidateCaps();
+    }
+
+    @Override
     public void reviveCaps()
     {
-        this.valid = true; //Stupid players don't copy the entity when transporting across worlds.
+    	if(this.capsValid) return; // Guard against incorrect calls.
+        this.capsValid = true;
+        if(!capsInitialized) return;
+        var disp = getCapDispatcher();
+        if (disp != null)
+            disp.reviveCaps();
     }
 
     @Override
     @NotNull
-    public <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side)
+    public <C> Capability<C> getCapability(@NotNull CapabilityType<C> cap, @Nullable Direction side)
     {
-        final CapabilityDispatcher disp = getCapabilities();
-        return !valid || disp == null ? LazyOptional.empty() : disp.getCapability(cap, side);
+        final var disp = getCapDispatcher();
+        return !capsValid || disp == null ? Capability.empty() : disp.getCapability(cap, side);
     }
 
     /**
      * Special implementation for cases which have a superclass and can't extend CapabilityProvider directly.
      * See {@link LevelChunk}
      */
-    public static class AsField<B extends ICapabilityProviderImpl<B>> extends CapabilityProvider<B>
+    public static class AsField<T extends ICapabilityProvider> extends CapabilityProvider<T>
     {
-        private final B owner;
 
-        public AsField(Class<B> baseClass, B owner)
+        private final Supplier<AttachCapabilitiesEvent<T>> eventSupplier;
+        
+        public AsField(Supplier<AttachCapabilitiesEvent<T>> eventSupplier)
         {
-            super(baseClass);
-            this.owner = owner;
-        }
-
-        public AsField(Class<B> baseClass, B owner, boolean isLazy)
-        {
-            super(baseClass, isLazy);
-            this.owner = owner;
-        }
-
-        public void initInternal()
-        {
-            gatherCapabilities();
+            this.eventSupplier = eventSupplier;
         }
 
         @Nullable
@@ -219,10 +171,9 @@ public abstract class CapabilityProvider<B extends ICapabilityProviderImpl<B>> i
         }
 
         @Override
-        @NotNull
-        B getProvider()
+        protected AttachCapabilitiesEvent<T> getCapEvent()
         {
-            return owner;
+            return eventSupplier.get();
         }
     };
 

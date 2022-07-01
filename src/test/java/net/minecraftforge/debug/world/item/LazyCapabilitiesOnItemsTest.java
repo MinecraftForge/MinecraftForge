@@ -7,13 +7,11 @@ package net.minecraftforge.debug.world.item;
 
 import com.google.common.base.Stopwatch;
 import com.google.common.collect.Lists;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.capabilities.CapabilityProvider;
+import net.minecraftforge.common.capabilities.AttachCapabilitiesEvent;
 import net.minecraftforge.common.util.TextTable;
-import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fluids.capability.templates.FluidHandlerItemStackSimple;
 import net.minecraftforge.fml.common.Mod;
@@ -22,7 +20,6 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -59,17 +56,16 @@ public class LazyCapabilitiesOnItemsTest
     {
         try
         {
-            final Field supportsFlagField = CapabilityProvider.class.getDeclaredField("SUPPORTS_LAZY_CAPABILITIES");
-            supportsFlagField.setAccessible(true);
-            supportsFlagField.set(null, false);
+            //final Field supportsFlagField = CapabilityProvider.class.getDeclaredField("SUPPORTS_LAZY_CAPABILITIES");
+            //supportsFlagField.setAccessible(true);
+            //supportsFlagField.set(null, false);
 
             final Stopwatch timer = Stopwatch.createUnstarted();
             final IEventBus bus = MinecraftForge.EVENT_BUS;
 
-            final ResourceLocation testCapId = new ResourceLocation(MOD_ID, "test");
-            final Consumer<AttachCapabilitiesEvent<ItemStack>> capAttachmentHandler = e -> {
+            final Consumer<AttachCapabilitiesEvent.ItemStacks> capAttachmentHandler = e -> {
                 //Example capability we make everything a bucket :D
-                e.addCapability(testCapId, new FluidHandlerItemStackSimple(e.getObject(), SAMPLE_SIZE));
+                e.addCapability(new FluidHandlerItemStackSimple(e.getObject(), SAMPLE_SIZE));
             };
 
             //Warmup:
@@ -90,7 +86,7 @@ public class LazyCapabilitiesOnItemsTest
             timer.reset();
 
             ///Second test: SAMPLE_SIZE itemstacks with a capability attached.
-            bus.addGenericListener(ItemStack.class, capAttachmentHandler);
+            bus.addListener(capAttachmentHandler);
             //Warmup:
             for (int i = 0; i < (SAMPLE_SIZE); i++)
             {
@@ -109,7 +105,7 @@ public class LazyCapabilitiesOnItemsTest
             bus.unregister(capAttachmentHandler);
 
             ///Third test: SAMPLE_SIZE itemstacks which do not have a capability attached.
-            supportsFlagField.set(null, true);
+            //supportsFlagField.set(null, true);
             //Warmup:
             for (int i = 0; i < (SAMPLE_SIZE); i++)
             {
@@ -127,7 +123,7 @@ public class LazyCapabilitiesOnItemsTest
             timer.reset();
 
             ///Fourth test: SAMPLE_SIZE itemstacks with a capability attached.
-            bus.addGenericListener(ItemStack.class, capAttachmentHandler);
+            bus.addListener(capAttachmentHandler);
             //Warmup:
             for (int i = 0; i < (SAMPLE_SIZE); i++)
             {
@@ -161,7 +157,7 @@ public class LazyCapabilitiesOnItemsTest
                 LOGGER.warn(line);
             }
         }
-        catch (NoSuchFieldException | IllegalAccessException e)
+        catch (Exception e)
         {
             LOGGER.error("Failed to run capabilities on items test!");
             throw new IllegalStateException(e);

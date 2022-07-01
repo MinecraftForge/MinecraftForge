@@ -7,13 +7,13 @@ package net.minecraftforge.fluids.capability.templates;
 
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.core.Direction;
+import net.minecraftforge.common.capabilities.CapabilityType;
+import net.minecraftforge.common.capabilities.IAttachedCapabilityProvider.ICompleteCapabilityProvider;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -24,11 +24,12 @@ import org.jetbrains.annotations.Nullable;
  *
  * This implementation only allows item containers to be fully filled or emptied, similar to vanilla buckets.
  */
-public class FluidHandlerItemStackSimple implements IFluidHandlerItem, ICapabilityProvider
+public class FluidHandlerItemStackSimple implements IFluidHandlerItem, ICompleteCapabilityProvider<ItemStack>
 {
     public static final String FLUID_NBT_KEY = "Fluid";
+    public static final ResourceLocation ID = new ResourceLocation("forge", "simple_fluid_handler");
 
-    private final LazyOptional<IFluidHandlerItem> holder = LazyOptional.of(() -> this);
+    private Capability<IFluidHandlerItem> holder = Capability.of(() -> this);
 
     @NotNull
     protected ItemStack container;
@@ -75,27 +76,27 @@ public class FluidHandlerItemStackSimple implements IFluidHandlerItem, ICapabili
     }
 
     @Override
-    public int getTanks() {
-
+    public int getTanks()
+    {
         return 1;
     }
 
     @NotNull
     @Override
-    public FluidStack getFluidInTank(int tank) {
-
+    public FluidStack getFluidInTank(int tank)
+    {
         return getFluid();
     }
 
     @Override
-    public int getTankCapacity(int tank) {
-
+    public int getTankCapacity(int tank)
+    {
         return capacity;
     }
 
     @Override
-    public boolean isFluidValid(int tank, @NotNull FluidStack stack) {
-
+    public boolean isFluidValid(int tank, @NotNull FluidStack stack)
+    {
         return true;
     }
 
@@ -187,9 +188,9 @@ public class FluidHandlerItemStackSimple implements IFluidHandlerItem, ICapabili
 
     @Override
     @NotNull
-    public <T> LazyOptional<T> getCapability(@NotNull Capability<T> capability, @Nullable Direction facing)
+    public <C> Capability<C> getCapability(CapabilityType<C> type, @Nullable Direction facing)
     {
-        return CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY.orEmpty(capability, holder);
+        return this.holder.cast();
     }
 
     /**
@@ -229,5 +230,35 @@ public class FluidHandlerItemStackSimple implements IFluidHandlerItem, ICapabili
             super.setContainerToEmpty();
             container = emptyContainer;
         }
+    }
+
+    @Override
+    public ResourceLocation getId()
+    {
+        return ID;
+    }
+
+    @Override
+    public void invalidateCaps()
+    {
+        this.holder.invalidate();
+    }
+
+    @Override
+    public void reviveCaps()
+    {
+        this.holder = Capability.of(() -> this);
+    }
+
+    @Override
+    public boolean isEquivalentTo(@Nullable IComparableCapabilityProvider<ItemStack> other)
+    {
+        return other != null && this.capacity == ((FluidHandlerItemStackSimple) other).capacity; // Fluid is stored in NBT, which has already been checked.
+    }
+
+    @Override
+    public @Nullable ICopyableCapabilityProvider<ItemStack> copy(ItemStack copiedParent)
+    {
+        return new FluidHandlerItemStackSimple(copiedParent, this.capacity);
     }
 }
