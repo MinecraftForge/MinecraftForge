@@ -23,6 +23,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
+import net.minecraftforge.common.SoundActions;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -30,14 +31,13 @@ import java.util.function.Supplier;
 
 public abstract class ForgeFlowingFluid extends FlowingFluid
 {
+    private final Supplier<? extends FluidType> fluidType;
     private final Supplier<? extends Fluid> flowing;
     private final Supplier<? extends Fluid> still;
     @Nullable
     private final Supplier<? extends Item> bucket;
     @Nullable
     private final Supplier<? extends LiquidBlock> block;
-    private final FluidAttributes.Builder builder;
-    private final boolean canMultiply;
     private final int slopeFindDistance;
     private final int levelDecreasePerBlock;
     private final float explosionResistance;
@@ -45,16 +45,21 @@ public abstract class ForgeFlowingFluid extends FlowingFluid
 
     protected ForgeFlowingFluid(Properties properties)
     {
+        this.fluidType = properties.fluidType;
         this.flowing = properties.flowing;
         this.still = properties.still;
-        this.builder = properties.attributes;
-        this.canMultiply = properties.canMultiply;
         this.bucket = properties.bucket;
         this.block = properties.block;
         this.slopeFindDistance = properties.slopeFindDistance;
         this.levelDecreasePerBlock = properties.levelDecreasePerBlock;
         this.explosionResistance = properties.explosionResistance;
         this.tickRate = properties.tickRate;
+    }
+
+    @Override
+    public FluidType getFluidType()
+    {
+        return this.fluidType.get();
     }
 
     @Override
@@ -72,7 +77,13 @@ public abstract class ForgeFlowingFluid extends FlowingFluid
     @Override
     protected boolean canConvertToSource()
     {
-        return canMultiply;
+        return false;
+    }
+
+    @Override
+    public boolean canConvertToSource(FluidState state, LevelReader reader, BlockPos pos)
+    {
+        return this.getFluidType().canConvertToSource(state, reader, pos);
     }
 
     @Override
@@ -136,13 +147,7 @@ public abstract class ForgeFlowingFluid extends FlowingFluid
     @Override
     public Optional<SoundEvent> getPickupSound()
     {
-        return Optional.ofNullable(getAttributes().getFillSound());
-    }
-
-    @Override
-    protected FluidAttributes createAttributes()
-    {
-        return builder.build(this);
+        return Optional.ofNullable(getFluidType().getSound(SoundActions.BUCKET_FILL));
     }
 
     public static class Flowing extends ForgeFlowingFluid
@@ -185,10 +190,9 @@ public abstract class ForgeFlowingFluid extends FlowingFluid
 
     public static class Properties
     {
+        private Supplier<? extends FluidType> fluidType;
         private Supplier<? extends Fluid> still;
         private Supplier<? extends Fluid> flowing;
-        private FluidAttributes.Builder attributes;
-        private boolean canMultiply;
         private Supplier<? extends Item> bucket;
         private Supplier<? extends LiquidBlock> block;
         private int slopeFindDistance = 4;
@@ -196,17 +200,11 @@ public abstract class ForgeFlowingFluid extends FlowingFluid
         private float explosionResistance = 1;
         private int tickRate = 5;
 
-        public Properties(Supplier<? extends Fluid> still, Supplier<? extends Fluid> flowing, FluidAttributes.Builder attributes)
+        public Properties(Supplier<? extends FluidType> fluidType, Supplier<? extends Fluid> still, Supplier<? extends Fluid> flowing)
         {
+            this.fluidType = fluidType;
             this.still = still;
             this.flowing = flowing;
-            this.attributes = attributes;
-        }
-
-        public Properties canMultiply()
-        {
-            canMultiply = true;
-            return this;
         }
 
         public Properties bucket(Supplier<? extends Item> bucket)

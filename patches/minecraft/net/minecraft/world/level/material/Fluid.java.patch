@@ -9,25 +9,16 @@
     public static final IdMapper<FluidState> f_76104_ = new IdMapper<>();
     protected final StateDefinition<Fluid, FluidState> f_76105_;
     private FluidState f_76103_;
-@@ -101,6 +_,22 @@
+@@ -101,6 +_,13 @@
     }
  
     public abstract VoxelShape m_7999_(FluidState p_76137_, BlockGetter p_76138_, BlockPos p_76139_);
 +
-+   /**
-+    * Creates the fluid attributes object, which wilAl contain all the extended values for the fluid that aren't part of the vanilla system.
-+    * Do not call this from outside. To retrieve the values use {@link Fluid#getAttributes()}
-+    */
-+   protected net.minecraftforge.fluids.FluidAttributes createAttributes()
-+   {
-+      return net.minecraftforge.common.ForgeHooks.createVanillaFluidAttributes(this);
-+   }
-+
-+   private net.minecraftforge.fluids.FluidAttributes forgeFluidAttributes;
-+   public final net.minecraftforge.fluids.FluidAttributes getAttributes() {
-+      if (forgeFluidAttributes == null)
-+         forgeFluidAttributes = createAttributes();
-+      return forgeFluidAttributes;
++   private net.minecraftforge.fluids.FluidType forgeFluidType;
++   @Override
++   public net.minecraftforge.fluids.FluidType getFluidType() {
++      if (forgeFluidType == null) forgeFluidType = net.minecraftforge.common.ForgeHooks.getVanillaFluidType(this);
++      return forgeFluidType;
 +   }
  
     public Optional<SoundEvent> m_142520_() {

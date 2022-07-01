@@ -1,0 +1,29 @@
+--- a/net/minecraft/world/entity/vehicle/ChestBoat.java
++++ b/net/minecraft/world/entity/vehicle/ChestBoat.java
+@@ -187,4 +_,26 @@
+    public void m_213775_() {
+       this.f_219864_ = NonNullList.m_122780_(this.m_6643_(), ItemStack.f_41583_);
+    }
++
++   // Forge Start
++   private net.minecraftforge.common.util.LazyOptional<?> itemHandler = net.minecraftforge.common.util.LazyOptional.of(() -> new net.minecraftforge.items.wrapper.InvWrapper(this));
++
++   @Override
++   public <T> net.minecraftforge.common.util.LazyOptional<T> getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, @Nullable net.minecraft.core.Direction facing) {
++      if (this.m_6084_() && capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
++         return itemHandler.cast();
++      return super.getCapability(capability, facing);
++   }
++
++   @Override
++   public void invalidateCaps() {
++      super.invalidateCaps();
++      itemHandler.invalidate();
++   }
++
++   @Override
++   public void reviveCaps() {
++      super.reviveCaps();
++      itemHandler = net.minecraftforge.common.util.LazyOptional.of(() -> new net.minecraftforge.items.wrapper.InvWrapper(this));
++   }
+ }

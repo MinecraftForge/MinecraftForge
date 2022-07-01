@@ -7,8 +7,8 @@ package net.minecraftforge.fluids.capability.wrappers;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.fluids.FluidAttributes;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidType;
 import net.minecraftforge.fluids.IFluidBlock;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 
@@ -52,7 +52,7 @@ public class FluidBlockWrapper implements IFluidHandler
                 return (int) (stored.getAmount() / filledPercentage);
             }
         }
-        return FluidAttributes.BUCKET_VOLUME;
+        return FluidType.BUCKET_VOLUME;
     }
 
     @Override

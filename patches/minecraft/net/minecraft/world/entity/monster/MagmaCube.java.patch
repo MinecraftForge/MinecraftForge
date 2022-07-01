@@ -1,10 +1,33 @@
 --- a/net/minecraft/world/entity/monster/MagmaCube.java
 +++ b/net/minecraft/world/entity/monster/MagmaCube.java
-@@ -66,6 +_,7 @@
+@@ -66,17 +_,28 @@
        Vec3 vec3 = this.m_20184_();
        this.m_20334_(vec3.f_82479_, (double)(this.m_6118_() + (float)this.m_33632_() * 0.1F), vec3.f_82481_);
        this.f_19812_ = true;
 +      net.minecraftforge.common.ForgeHooks.onLivingJump(this);
     }
  
++   @Deprecated // FORGE: use jumpInFluid instead
     protected void m_203347_(TagKey<Fluid> p_204065_) {
+-      if (p_204065_ == FluidTags.f_13132_) {
++      this.jumpInLiquidInternal(() -> p_204065_ == FluidTags.f_13132_, () -> super.m_203347_(p_204065_));
++   }
++
++   private void jumpInLiquidInternal(java.util.function.BooleanSupplier isLava, Runnable onSuper) {
++      if (isLava.getAsBoolean()) {
+          Vec3 vec3 = this.m_20184_();
+          this.m_20334_(vec3.f_82479_, (double)(0.22F + (float)this.m_33632_() * 0.05F), vec3.f_82481_);
+          this.f_19812_ = true;
+       } else {
+-         super.m_203347_(p_204065_);
++         onSuper.run();
+       }
+ 
++   }
++
++   @Override
++   public void jumpInFluid(net.minecraftforge.fluids.FluidType type) {
++      this.jumpInLiquidInternal(() -> type == net.minecraftforge.common.ForgeMod.LAVA_TYPE.get(), () -> super.jumpInFluid(type));
+    }
+ 
+    public boolean m_142535_(float p_149717_, float p_149718_, DamageSource p_149719_) {

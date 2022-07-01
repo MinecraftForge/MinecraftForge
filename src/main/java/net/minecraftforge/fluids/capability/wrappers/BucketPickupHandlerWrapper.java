@@ -11,8 +11,8 @@ import net.minecraft.world.level.block.BucketPickup;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.fluids.FluidAttributes;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidType;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.logging.log4j.LogManager;
@@ -50,7 +50,7 @@ public class BucketPickupHandlerWrapper implements IFluidHandler
             FluidState fluidState = world.getFluidState(blockPos);
             if (!fluidState.isEmpty())
             {
-                return new FluidStack(fluidState.getType(), FluidAttributes.BUCKET_VOLUME);
+                return new FluidStack(fluidState.getType(), FluidType.BUCKET_VOLUME);
             }
         }
         return FluidStack.EMPTY;
@@ -59,7 +59,7 @@ public class BucketPickupHandlerWrapper implements IFluidHandler
     @Override
     public int getTankCapacity(int tank)
     {
-        return FluidAttributes.BUCKET_VOLUME;
+        return FluidType.BUCKET_VOLUME;
     }
 
     @Override
@@ -78,7 +78,7 @@ public class BucketPickupHandlerWrapper implements IFluidHandler
     @Override
     public FluidStack drain(FluidStack resource, FluidAction action)
     {
-        if (!resource.isEmpty() && FluidAttributes.BUCKET_VOLUME <= resource.getAmount())
+        if (!resource.isEmpty() && FluidType.BUCKET_VOLUME <= resource.getAmount())
         {
             FluidState fluidState = world.getFluidState(blockPos);
             if (!fluidState.isEmpty() && resource.getFluid() == fluidState.getType())
@@ -88,7 +88,7 @@ public class BucketPickupHandlerWrapper implements IFluidHandler
                     ItemStack itemStack = bucketPickupHandler.pickupBlock(world, blockPos, world.getBlockState(blockPos));
                     if (itemStack != ItemStack.EMPTY && itemStack.getItem() instanceof BucketItem bucket)
                     {
-                        FluidStack extracted = new FluidStack(bucket.getFluid(), FluidAttributes.BUCKET_VOLUME);
+                        FluidStack extracted = new FluidStack(bucket.getFluid(), FluidType.BUCKET_VOLUME);
                         if (!resource.isFluidEqual(extracted))
                         {
                             //Be loud if something went wrong
@@ -101,7 +101,7 @@ public class BucketPickupHandlerWrapper implements IFluidHandler
                 }
                 else
                 {
-                    FluidStack extracted = new FluidStack(fluidState.getType(), FluidAttributes.BUCKET_VOLUME);
+                    FluidStack extracted = new FluidStack(fluidState.getType(), FluidType.BUCKET_VOLUME);
                     if (resource.isFluidEqual(extracted))
                     {
                         //Validate NBT matches
@@ -117,19 +117,19 @@ public class BucketPickupHandlerWrapper implements IFluidHandler
     @Override
     public FluidStack drain(int maxDrain, FluidAction action)
     {
-        if (FluidAttributes.BUCKET_VOLUME <= maxDrain)
+        if (FluidType.BUCKET_VOLUME <= maxDrain)
         {
             FluidState fluidState = world.getFluidState(blockPos);
             if (!fluidState.isEmpty())
             {
                 if (action.simulate())
                 {
-                    return new FluidStack(fluidState.getType(), FluidAttributes.BUCKET_VOLUME);
+                    return new FluidStack(fluidState.getType(), FluidType.BUCKET_VOLUME);
                 }
                 ItemStack itemStack = bucketPickupHandler.pickupBlock(world, blockPos, world.getBlockState(blockPos));
                 if (itemStack != ItemStack.EMPTY && itemStack.getItem() instanceof BucketItem bucket)
                 {
-                    return new FluidStack(bucket.getFluid(), FluidAttributes.BUCKET_VOLUME);
+                    return new FluidStack(bucket.getFluid(), FluidType.BUCKET_VOLUME);
                 }
             }
         }

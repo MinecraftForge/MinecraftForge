@@ -405,7 +405,14 @@ public class Tags
     {
         private static void init() {}
 
+        /**
+         * Holds all fluids related to milk.
+         */
         public static final TagKey<Fluid> MILK = tag("milk");
+        /**
+         * Holds all fluids that are gaseous at room temperature.
+         */
+        public static final TagKey<Fluid> GASEOUS = tag("gaseous");
 
         private static TagKey<Fluid> tag(String name)
         {
@@ -468,6 +475,7 @@ public class Tags
 
         public static final TagKey<Biome> IS_PEAK = tag("is_peak");
         public static final TagKey<Biome> IS_SLOPE = tag("is_slope");
+        public static final TagKey<Biome> IS_MOUNTAIN = tag("is_mountain");
 
         private static TagKey<Biome> tag(String name)
         {

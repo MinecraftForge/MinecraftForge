@@ -1,6 +1,6 @@
 --- a/net/minecraft/tags/TagEntry.java
 +++ b/net/minecraft/tags/TagEntry.java
-@@ -113,6 +_,14 @@
+@@ -113,6 +_,18 @@
        return stringbuilder.toString();
     }
  
@@ -10,6 +10,10 @@
 +
 +   public boolean isRequired() {
 +      return f_215915_;
++   }
++
++   public boolean isTag() {
++      return f_215914_;
 +   }
 +
     public interface Lookup<T> {

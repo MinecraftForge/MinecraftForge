@@ -30,14 +30,14 @@ public class ExplodedDirectoryLocator implements IModLocator {
     private final Map<ExplodedMod, IModFile> mods = new HashMap<>();
 
     @Override
-    public List<IModFile> scanMods() {
+    public List<IModLocator.ModFileOrException> scanMods() {
         explodedMods.forEach(explodedMod ->
                 ModJarMetadata.buildFile(this,
-                        jar->jar.findFile("/META-INF/mods.toml").isPresent(),
+                        jar->jar.moduleDataProvider().findFile("/META-INF/mods.toml").isPresent(),
                         (a,b) -> true,
                         explodedMod.paths().toArray(Path[]::new))
                 .ifPresentOrElse(f->mods.put(explodedMod, f), () -> LOGGER.warn(LogMarkers.LOADING, "Failed to find exploded resource mods.toml in directory {}", explodedMod.paths().get(0).toString())));
-        return List.copyOf(mods.values());
+        return mods.values().stream().map(mf->new IModLocator.ModFileOrException(mf, null)).toList();
     }
 
     @Override

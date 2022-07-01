@@ -20,8 +20,8 @@ plugins {
     id 'net.minecraftforge.gradleutils' version '2.+'
     id 'eclipse'
     id 'de.undercouch.download' version '4.1.2'
-    id 'net.minecraftforge.gradle.patcher' version '[5.1.39,)' apply false
-    id 'net.minecraftforge.gradle.mcp' version '[5.1.39,)' apply false
+    id 'net.minecraftforge.gradle.patcher' version '[5.1.43,)' apply false
+    id 'net.minecraftforge.gradle.mcp' version '[5.1.43,)' apply false
 }
 
 Util.init() //Init all our extension methods!
@@ -39,13 +39,13 @@ ext {
     MAPPING_VERSION = '1.19'
     MC_VERSION = '1.19'
     MCP_VERSION = '20220607.102129'
-    SPI_VERSION = '5.0.3'
+    SPI_VERSION = '6.0.0'
     ACCESSTRANSFORMERS_VERSION = '8.0.4'
     COREMODS_VERSION = '5.0.1'
-    EVENTBUS_VERSION = '5.0.3'
-    MODLAUNCHER_VERSION = '9.1.6'
-    SECUREJARHANDLER_VERSION = '1.0.3'
-    BOOTSTRAPLAUNCHER_VERSION = '1.0.0'
+    EVENTBUS_VERSION = '6.0.0'
+    MODLAUNCHER_VERSION = '10.0.1'
+    SECUREJARHANDLER_VERSION = '2.0.3'
+    BOOTSTRAPLAUNCHER_VERSION = '1.1.1'
     ASM_VERSION = '9.3'
     INSTALLER_VERSION = '2.1.+'
     MIXIN_VERSION = '0.8.5'
@@ -65,6 +65,7 @@ ext {
     APACHE_COMMONS_LANG3_VERSION = '3.12.0'
     JOPT_SIMPLE_VERSION = '5.0.4'
     COMMONS_IO_VERSION = '2.11.0'
+    JARJAR_VERSION = '0.2.24'
 
     GIT_INFO = gradleutils.gitInfo
     VERSION = gradleutils.getFilteredMCTagOffsetBranchVersion(true, '[0-9]', MC_VERSION)
@@ -75,7 +76,7 @@ ext {
     INSTALLER_TOOLS = 'net.minecraftforge:installertools:1.3.0'
     JAR_SPLITTER = 'net.minecraftforge:jarsplitter:1.1.4'
     FART = 'net.minecraftforge:ForgeAutoRenamingTool:0.1.22:all'
-    MIN_TAG_FOR_CHANGELOG = "39.0"
+    MIN_TAG_FOR_CHANGELOG = "41.0"
 }
 
 println('Version: ' + VERSION +
@@ -283,6 +284,7 @@ def sharedDeps = {
     installer "org.jline:jline-terminal:${JLINE_VERSION}" // Dep of TerminalConsoleAppender
     installer "org.spongepowered:mixin:${MIXIN_VERSION}"
     installer 'org.openjdk.nashorn:nashorn-core:15.3'
+    installer "net.minecraftforge:JarJar:${JARJAR_VERSION}"
 
     /*
     installer 'org.lwjgl:lwjgl:3.2.2'
@@ -1059,6 +1061,7 @@ project(':forge') {
                             '--mod', 'custom_transformtype_test',
                             '--mod', 'data_pack_registries_test',
                             '--mod', 'biome_modifiers_test',
+                            '--mod', 'structure_modifiers_test',
                             '--output', rootProject.file('src/generated_test/resources/'),
                             '--existing', sourceSets.main.resources.srcDirs[0],
                             '--existing', sourceSets.test.resources.srcDirs[0]
@@ -1192,7 +1195,8 @@ project(':forge') {
 
     def baseForgeVersion = System.getProperty("forge.compatibility_check_version")
     if (baseForgeVersion == null)
-        baseForgeVersion = "${MC_VERSION}-${GIT_INFO.tag}.0"
+        // FIXME: Restore commented out portion when next tagged (41.1 or 42.0), assuming that a .0 build is published
+        baseForgeVersion = "1.19-41.0.1" // "${MC_VERSION}-${GIT_INFO.tag}.0"
     if (baseForgeVersion == "null")
         baseForgeVersion = null // Allow disabling from system property if not wanted
     def baseForgeUniversal = null
@@ -1228,7 +1232,7 @@ project(':forge') {
             }.toArray(Dependency[]::new))
 
             baseJar = project.tasks.applyBaseCompatibilityJarBinPatches.output
-            baseLibraries.from(baseForgeUniversal)
+            baseLibraries.from(project.configurations.detachedConfiguration(baseForgeUniversal))
             baseLibraries.from(project.tasks.createJoinedSRG.output)
             baseLibraries.from(fmlLibs)
 

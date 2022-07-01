@@ -5,19 +5,36 @@
 
 package net.minecraftforge.common;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.BiomeColors;
 import net.minecraft.commands.synchronization.ArgumentTypeInfo;
 import net.minecraft.commands.synchronization.ArgumentTypeInfos;
 import net.minecraft.commands.synchronization.SingletonArgumentInfo;
 import net.minecraft.core.BlockPos;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.RangedAttribute;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.level.BlockAndTintGetter;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.biome.MobSpawnSettings.SpawnerData;
+import net.minecraft.world.level.levelgen.GenerationStep.Decoration;
+import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.item.Items;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.util.ExtraCodecs;
 import net.minecraft.core.Registry;
+import net.minecraft.core.RegistryCodecs;
+import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.level.pathfinder.BlockPathTypes;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.IFluidTypeRenderProperties;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.common.crafting.PartialNBTIngredient;
@@ -31,9 +48,15 @@ import net.minecraftforge.common.extensions.IForgePlayer;
 import net.minecraftforge.common.loot.CanToolPerformAction;
 import net.minecraftforge.common.loot.LootTableIdCondition;
 import net.minecraftforge.common.world.BiomeModifier;
+import net.minecraftforge.common.world.ForgeBiomeModifiers.AddFeaturesBiomeModifier;
+import net.minecraftforge.common.world.ForgeBiomeModifiers.AddSpawnsBiomeModifier;
+import net.minecraftforge.common.world.ForgeBiomeModifiers.RemoveFeaturesBiomeModifier;
+import net.minecraftforge.common.world.ForgeBiomeModifiers.RemoveSpawnsBiomeModifier;
 import net.minecraftforge.common.world.NoneBiomeModifier;
+import net.minecraftforge.common.world.NoneStructureModifier;
+import net.minecraftforge.common.world.StructureModifier;
 import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fluids.FluidAttributes;
+import net.minecraftforge.fluids.FluidType;
 import net.minecraftforge.fluids.ForgeFlowingFluid;
 import net.minecraftforge.fml.*;
 import net.minecraftforge.fml.config.ModConfig;
@@ -79,9 +102,14 @@ import net.minecraftforge.fml.common.Mod;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
+import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 @Mod("forge")
 public class ForgeMod
@@ -93,6 +121,7 @@ public class ForgeMod
     private static final DeferredRegister<Attribute> ATTRIBUTES = DeferredRegister.create(ForgeRegistries.Keys.ATTRIBUTES, "forge");
     private static final DeferredRegister<ArgumentTypeInfo<?, ?>> COMMAND_ARGUMENT_TYPES = DeferredRegister.create(Registry.COMMAND_ARGUMENT_TYPE_REGISTRY, "forge");
     private static final DeferredRegister<Codec<? extends BiomeModifier>> BIOME_MODIFIER_SERIALIZERS = DeferredRegister.create(ForgeRegistries.Keys.BIOME_MODIFIER_SERIALIZERS, "forge");
+    private static final DeferredRegister<Codec<? extends StructureModifier>> STRUCTURE_MODIFIER_SERIALIZERS = DeferredRegister.create(ForgeRegistries.Keys.STRUCTURE_MODIFIER_SERIALIZERS, "forge");
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
     private static final RegistryObject<EnumArgument.Info> ENUM_COMMAND_ARGUMENT_TYPE = COMMAND_ARGUMENT_TYPES.register("enum", () ->
@@ -131,8 +160,201 @@ public class ForgeMod
      */
     public static final RegistryObject<Codec<NoneBiomeModifier>> NONE_BIOME_MODIFIER_TYPE = BIOME_MODIFIER_SERIALIZERS.register("none", () -> Codec.unit(NoneBiomeModifier.INSTANCE));
 
+    /**
+     * Stock biome modifier for adding features to biomes.
+     */
+    public static final RegistryObject<Codec<AddFeaturesBiomeModifier>> ADD_FEATURES_BIOME_MODIFIER_TYPE = BIOME_MODIFIER_SERIALIZERS.register("add_features", () ->
+        RecordCodecBuilder.create(builder -> builder.group(
+                Biome.LIST_CODEC.fieldOf("biomes").forGetter(AddFeaturesBiomeModifier::biomes),
+                PlacedFeature.LIST_CODEC.fieldOf("features").forGetter(AddFeaturesBiomeModifier::features),
+                Decoration.CODEC.fieldOf("step").forGetter(AddFeaturesBiomeModifier::step)
+            ).apply(builder, AddFeaturesBiomeModifier::new))
+        );
+    
+    /**
+     * Stock biome modifier for removing features from biomes.
+     */
+    public static final RegistryObject<Codec<RemoveFeaturesBiomeModifier>> REMOVE_FEATURES_BIOME_MODIFIER_TYPE = BIOME_MODIFIER_SERIALIZERS.register("remove_features", () ->
+        RecordCodecBuilder.create(builder -> builder.group(
+                Biome.LIST_CODEC.fieldOf("biomes").forGetter(RemoveFeaturesBiomeModifier::biomes),
+                PlacedFeature.LIST_CODEC.fieldOf("features").forGetter(RemoveFeaturesBiomeModifier::features),
+                new ExtraCodecs.EitherCodec<List<Decoration>, Decoration>(Decoration.CODEC.listOf(), Decoration.CODEC).<Set<Decoration>>xmap(
+                        either -> either.map(Set::copyOf, Set::of), // convert list/singleton to set when decoding
+                        set -> set.size() == 1 ? Either.right(set.toArray(Decoration[]::new)[0]) : Either.left(List.copyOf(set))
+                    ).optionalFieldOf("steps", EnumSet.allOf(Decoration.class)).forGetter(RemoveFeaturesBiomeModifier::steps)
+            ).apply(builder, RemoveFeaturesBiomeModifier::new))
+        );
+    
+    /**
+     * Stock biome modifier for adding mob spawns to biomes.
+     */
+    public static final RegistryObject<Codec<AddSpawnsBiomeModifier>> ADD_SPAWNS_BIOME_MODIFIER_TYPE = BIOME_MODIFIER_SERIALIZERS.register("add_spawns", () ->
+        RecordCodecBuilder.create(builder -> builder.group(
+                Biome.LIST_CODEC.fieldOf("biomes").forGetter(AddSpawnsBiomeModifier::biomes),
+                // Allow either a list or single spawner, attempting to decode the list format first.
+                // Uses the better EitherCodec that logs both errors if both formats fail to parse.
+                new ExtraCodecs.EitherCodec<>(SpawnerData.CODEC.listOf(), SpawnerData.CODEC).xmap(
+                        either -> either.map(Function.identity(), List::of), // convert list/singleton to list when decoding
+                        list -> list.size() == 1 ? Either.right(list.get(0)) : Either.left(list) // convert list to singleton/list when encoding
+                    ).fieldOf("spawners").forGetter(AddSpawnsBiomeModifier::spawners)
+            ).apply(builder, AddSpawnsBiomeModifier::new))
+        );
+    
+    /**
+     * Stock biome modifier for removing mob spawns from biomes.
+     */
+    public static final RegistryObject<Codec<RemoveSpawnsBiomeModifier>> REMOVE_SPAWNS_BIOME_MODIFIER_TYPE = BIOME_MODIFIER_SERIALIZERS.register("remove_spawns", () ->
+        RecordCodecBuilder.create(builder -> builder.group(
+                Biome.LIST_CODEC.fieldOf("biomes").forGetter(RemoveSpawnsBiomeModifier::biomes),
+                RegistryCodecs.homogeneousList(ForgeRegistries.Keys.ENTITY_TYPES).fieldOf("entity_types").forGetter(RemoveSpawnsBiomeModifier::entityTypes)
+            ).apply(builder, RemoveSpawnsBiomeModifier::new))
+        );
+    /**
+     * Noop structure modifier. Can be used in a structure modifier json with "type": "forge:none".
+     */
+    public static final RegistryObject<Codec<NoneStructureModifier>> NONE_STRUCTURE_MODIFIER_TYPE = STRUCTURE_MODIFIER_SERIALIZERS.register("none", () -> Codec.unit(NoneStructureModifier.INSTANCE));
+
+    private static final DeferredRegister<FluidType> VANILLA_FLUID_TYPES = DeferredRegister.create(ForgeRegistries.Keys.FLUID_TYPES, "minecraft");
+
+    public static final RegistryObject<FluidType> EMPTY_TYPE = VANILLA_FLUID_TYPES.register("empty", () ->
+            new FluidType(FluidType.Properties.create()
+                    .descriptionId("block.minecraft.air")
+                    .motionScale(1D)
+                    .canPushEntity(false)
+                    .canSwim(false)
+                    .canDrown(false)
+                    .fallDistanceModifier(1F)
+                    .pathType(null)
+                    .adjacentPathType(null)
+                    .density(0)
+                    .temperature(0)
+                    .viscosity(0))
+            {
+                @Override
+                public void setItemMovement(ItemEntity entity)
+                {
+                    if (!entity.isNoGravity()) entity.setDeltaMovement(entity.getDeltaMovement().add(0.0D, -0.04D, 0.0D));
+                }
+            });
+    public static final RegistryObject<FluidType> WATER_TYPE = VANILLA_FLUID_TYPES.register("water", () ->
+            new FluidType(FluidType.Properties.create()
+                    .descriptionId("block.minecraft.water")
+                    .fallDistanceModifier(0F)
+                    .canExtinguish(true)
+                    .canConvertToSource(true)
+                    .supportsBoating(true)
+                    .sound(SoundActions.BUCKET_FILL, SoundEvents.BUCKET_FILL)
+                    .sound(SoundActions.BUCKET_EMPTY, SoundEvents.BUCKET_EMPTY)
+                    .sound(SoundActions.FLUID_VAPORIZE, SoundEvents.FIRE_EXTINGUISH)
+                    .canHydrate(true))
+            {
+                @Override
+                public @Nullable BlockPathTypes getBlockPathType(FluidState state, BlockGetter level, BlockPos pos, @Nullable Mob mob, boolean canFluidLog)
+                {
+                    return canFluidLog ? super.getBlockPathType(state, level, pos, mob, true) : null;
+                }
+
+                @Override
+                public void initializeClient(Consumer<IFluidTypeRenderProperties> consumer)
+                {
+                    consumer.accept(new IFluidTypeRenderProperties()
+                    {
+                        private static final ResourceLocation UNDERWATER_LOCATION = new ResourceLocation("textures/misc/underwater.png"),
+                                WATER_STILL = new ResourceLocation("block/water_still"),
+                                WATER_FLOW = new ResourceLocation("block/water_flow"),
+                                WATER_OVERLAY = new ResourceLocation("block/water_overlay");
+
+                        @Override
+                        public ResourceLocation getStillTexture()
+                        {
+                            return WATER_STILL;
+                        }
+
+                        @Override
+                        public ResourceLocation getFlowingTexture()
+                        {
+                            return WATER_FLOW;
+                        }
+
+                        @Nullable
+                        @Override
+                        public ResourceLocation getOverlayTexture()
+                        {
+                            return WATER_OVERLAY;
+                        }
+
+                        @Override
+                        public ResourceLocation getRenderOverlayTexture(Minecraft mc)
+                        {
+                            return UNDERWATER_LOCATION;
+                        }
+
+                        @Override
+                        public int getColorTint()
+                        {
+                            return 0xFF3F76E4;
+                        }
+
+                        @Override
+                        public int getColorTint(FluidState state, BlockAndTintGetter getter, BlockPos pos)
+                        {
+                            return BiomeColors.getAverageWaterColor(getter, pos) | 0xFF000000;
+                        }
+                    });
+                }
+            });
+    public static final RegistryObject<FluidType> LAVA_TYPE = VANILLA_FLUID_TYPES.register("lava", () ->
+            new FluidType(FluidType.Properties.create()
+                    .descriptionId("block.minecraft.lava")
+                    .canSwim(false)
+                    .canDrown(false)
+                    .pathType(BlockPathTypes.LAVA)
+                    .adjacentPathType(null)
+                    .sound(SoundActions.BUCKET_FILL, SoundEvents.BUCKET_FILL_LAVA)
+                    .sound(SoundActions.BUCKET_EMPTY, SoundEvents.BUCKET_EMPTY_LAVA)
+                    .lightLevel(15)
+                    .density(3000)
+                    .viscosity(6000)
+                    .temperature(1300))
+            {
+                @Override
+                public double motionScale(Entity entity)
+                {
+                    return entity.level.dimensionType().ultraWarm() ? 0.007D : 0.0023333333333333335D;
+                }
+
+                @Override
+                public void setItemMovement(ItemEntity entity)
+                {
+                    Vec3 vec3 = entity.getDeltaMovement();
+                    entity.setDeltaMovement(vec3.x * (double)0.95F, vec3.y + (double)(vec3.y < (double)0.06F ? 5.0E-4F : 0.0F), vec3.z * (double)0.95F);
+                }
+
+                @Override
+                public void initializeClient(Consumer<IFluidTypeRenderProperties> consumer)
+                {
+                    consumer.accept(new IFluidTypeRenderProperties()
+                    {
+                        private static final ResourceLocation LAVA_STILL = new ResourceLocation("block/lava_still"),
+                                LAVA_FLOW = new ResourceLocation("block/lava_flow");
+
+                        @Override
+                        public ResourceLocation getStillTexture()
+                        {
+                            return LAVA_STILL;
+                        }
+
+                        @Override
+                        public ResourceLocation getFlowingTexture()
+                        {
+                            return LAVA_FLOW;
+                        }
+                    });
+                }
+            });
 
     private static boolean enableMilkFluid = false;
+    public static final RegistryObject<FluidType> MILK_TYPE = RegistryObject.createOptional(new ResourceLocation("milk"), ForgeRegistries.Keys.FLUID_TYPES.location(), "minecraft");
     public static final RegistryObject<Fluid> MILK = RegistryObject.create(new ResourceLocation("milk"), ForgeRegistries.FLUIDS);
     public static final RegistryObject<Fluid> FLOWING_MILK = RegistryObject.create(new ResourceLocation("flowing_milk"), ForgeRegistries.FLUIDS);
 
@@ -177,6 +399,8 @@ public class ForgeMod
         ATTRIBUTES.register(modEventBus);
         COMMAND_ARGUMENT_TYPES.register(modEventBus);
         BIOME_MODIFIER_SERIALIZERS.register(modEventBus);
+        STRUCTURE_MODIFIER_SERIALIZERS.register(modEventBus);
+        VANILLA_FLUID_TYPES.register(modEventBus);
         MinecraftForge.EVENT_BUS.addListener(this::serverStopping);
         MinecraftForge.EVENT_BUS.addListener(this::missingSoundMapping);
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, ForgeConfig.clientSpec);
@@ -266,14 +490,42 @@ public class ForgeMod
     // done in an event instead of deferred to only enable if a mod requests it
     public void registerFluids(RegisterEvent event)
     {
-        if (enableMilkFluid && event.getRegistryKey().equals(ForgeRegistries.Keys.FLUIDS))
+        if (enableMilkFluid)
         {
-            // set up attributes
-            FluidAttributes.Builder attributesBuilder = FluidAttributes.builder(new ResourceLocation("forge", "block/milk_still"), new ResourceLocation("forge", "block/milk_flowing")).density(1024).viscosity(1024);
-            ForgeFlowingFluid.Properties properties = new ForgeFlowingFluid.Properties(MILK, FLOWING_MILK, attributesBuilder).bucket(() -> Items.MILK_BUCKET);
+            // register fluid type
+            event.register(ForgeRegistries.Keys.FLUID_TYPES, helper -> helper.register(MILK_TYPE.getId(), new FluidType(FluidType.Properties.create().density(1024).viscosity(1024))
+            {
+                @Override
+                public void initializeClient(Consumer<IFluidTypeRenderProperties> consumer)
+                {
+                    consumer.accept(new IFluidTypeRenderProperties()
+                    {
+                        private static final ResourceLocation MILK_STILL = new ResourceLocation("forge", "block/milk_still"),
+                                MILK_FLOW = new ResourceLocation("forge", "block/milk_flowing");
+
+                        @Override
+                        public ResourceLocation getStillTexture()
+                        {
+                            return MILK_STILL;
+                        }
+
+                        @Override
+                        public ResourceLocation getFlowingTexture()
+                        {
+                            return MILK_FLOW;
+                        }
+                    });
+                }
+            }));
+
             // register fluids
-            event.register(ForgeRegistries.Keys.FLUIDS, MILK.getId(), () -> new ForgeFlowingFluid.Source(properties));
-            event.register(ForgeRegistries.Keys.FLUIDS, FLOWING_MILK.getId(), () -> new ForgeFlowingFluid.Flowing(properties));
+            event.register(ForgeRegistries.Keys.FLUIDS, helper -> {
+                // set up properties
+                ForgeFlowingFluid.Properties properties = new ForgeFlowingFluid.Properties(MILK_TYPE, MILK, FLOWING_MILK).bucket(() -> Items.MILK_BUCKET);
+
+                helper.register(MILK.getId(), new ForgeFlowingFluid.Source(properties));
+                helper.register(FLOWING_MILK.getId(), new ForgeFlowingFluid.Flowing(properties));
+            });
         }
     }
 

@@ -41,6 +41,7 @@ import net.minecraft.world.level.GameType;
 import net.minecraftforge.client.RenderProperties;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
+import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.MinecraftForge;
 
 import org.apache.logging.log4j.LogManager;
@@ -469,7 +470,7 @@ public class ForgeIngameGui extends Gui
         int top = height - right_height;
 
         int air = player.getAirSupply();
-        if (player.isEyeInFluid(FluidTags.WATER) || air < 300)
+        if (player.isEyeInFluidType(ForgeMod.WATER_TYPE.get()) || air < 300)
         {
             int full = Mth.ceil((double)(air - 2) * 10.0D / 300.0D);
             int partial = Mth.ceil((double)air * 10.0D / 300.0D) - full;

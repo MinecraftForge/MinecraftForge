@@ -1,13 +1,29 @@
 --- a/net/minecraft/client/gui/screens/worldselection/WorldOpenFlows.java
 +++ b/net/minecraft/client/gui/screens/worldselection/WorldOpenFlows.java
-@@ -138,6 +_,7 @@
+@@ -132,13 +_,23 @@
+    }
+ 
+    private void m_233145_(Screen p_233146_, String p_233147_, boolean p_233148_, boolean p_233149_) {
++      // FORGE: Patch in overload to reduce further patching
++      this.doLoadLevel(p_233146_, p_233147_, p_233148_, p_233149_, false);
++   }
++
++   // FORGE: Patch in confirmExperimentalWarning which confirms the experimental warning when true
++   private void doLoadLevel(Screen p_233146_, String p_233147_, boolean p_233148_, boolean p_233149_, boolean confirmExperimentalWarning) {
+       LevelStorageSource.LevelStorageAccess levelstoragesource$levelstorageaccess = this.m_233155_(p_233147_);
+       if (levelstoragesource$levelstorageaccess != null) {
+          PackRepository packrepository = m_233105_(levelstoragesource$levelstorageaccess);
  
           WorldStem worldstem;
           try {
 +            levelstoragesource$levelstorageaccess.readAdditionalLevelSaveData(); // Read extra (e.g. modded) data from the world before creating it
              worldstem = this.m_233122_(levelstoragesource$levelstorageaccess, p_233148_, packrepository);
++            if (confirmExperimentalWarning && worldstem.f_206895_() instanceof PrimaryLevelData pld) {
++               pld.withConfirmedWarning(true);
++            }
           } catch (Exception exception) {
              f_233088_.warn("Failed to load datapacks, can't proceed with server load", (Throwable)exception);
+             this.f_233089_.m_91152_(new DatapackLoadFailureScreen(() -> {
 @@ -151,7 +_,9 @@
           WorldData worlddata = worldstem.f_206895_();
           boolean flag = worlddata.m_5961_().m_64670_();
@@ -27,7 +43,7 @@
              this.m_233140_(p_233146_, p_233147_, flag, () -> {
                 this.m_233145_(p_233146_, p_233147_, p_233148_, false);
              });
-+            else net.minecraftforge.client.ForgeHooksClient.createWorldConfirmationScreen(p_233147_, levelstoragesource$levelstorageaccess, packrepository, worldstem);
++            else net.minecraftforge.client.ForgeHooksClient.createWorldConfirmationScreen(() -> this.doLoadLevel(p_233146_, p_233147_, p_233148_, false, true));
              worldstem.close();
              m_233116_(levelstoragesource$levelstorageaccess, p_233147_);
           }

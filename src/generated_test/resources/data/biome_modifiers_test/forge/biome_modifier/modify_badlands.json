@@ -1,14 +1,6 @@
 {
-  "type": "biome_modifiers_test:test",
+  "type": "biome_modifiers_test:modify_biomes",
   "biomes": "#minecraft:is_badlands",
-  "features": "biome_modifiers_test:large_basalt_columns",
-  "generation_stage": "TOP_LAYER_MODIFICATION",
   "precipitation": "snow",
-  "spawn": {
-    "type": "minecraft:magma_cube",
-    "maxCount": 4,
-    "minCount": 1,
-    "weight": 100
-  },
   "water_color": 16711680
 }
