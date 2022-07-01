@@ -5,8 +5,8 @@
 
 package net.minecraftforge.fml.loading;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import com.mojang.logging.LogUtils;
+import org.slf4j.Logger;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -16,7 +16,7 @@ import java.nio.file.Paths;
 
 public class ClasspathLocatorUtils {
     
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger LOGGER = LogUtils.getLogger();
 
     public static Path findJarPathFor(final String resourceName, final String jarName, final URL resource) {
         try {
@@ -31,7 +31,7 @@ public class ClasspathLocatorUtils {
             //LOGGER.debug(CORE, "Found JAR {} at path {}", jarName, path.toString());
             return path;
         } catch (NullPointerException | URISyntaxException e) {
-            LOGGER.fatal(LogMarkers.SCAN, "Failed to find JAR for class {} - {}", resourceName, jarName);
+            LOGGER.error(LogMarkers.SCAN, "Failed to find JAR for class {} - {}", resourceName, jarName);
             throw new RuntimeException("Unable to locate "+resourceName+" - "+jarName, e);
         }
     }
