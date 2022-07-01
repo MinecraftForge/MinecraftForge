@@ -103,6 +103,8 @@ public class ForgeConfig {
 
         public final BooleanValue useCombinedDepthStencilAttachment;
 
+        public final BooleanValue compressLanIPv6Addresses;
+
         Client(ForgeConfigSpec.Builder builder) {
             builder.comment("Client only settings, mostly things related to rendering")
                    .push("client");
@@ -128,6 +130,11 @@ public class ForgeConfig {
                     .comment("Set to true to use a combined DEPTH_STENCIL attachment instead of two separate ones.")
                     .translation("forge.configgui.useCombinedDepthStencilAttachment")
                     .define("useCombinedDepthStencilAttachment", false);
+
+            compressLanIPv6Addresses = builder
+                    .comment("When enabled, Forge will convert discovered 'Open to LAN' IPv6 addresses to their more compact, compressed representation")
+                    .translation("forge.configgui.compressLanIPv6Addresses")
+                    .define("compressLanIPv6Addresses", true);
 
             builder.pop();
         }

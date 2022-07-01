@@ -3,6 +3,7 @@
 --add-opens java.base/java.util.jar=cpw.mods.securejarhandler
 --add-exports java.base/sun.security.util=cpw.mods.securejarhandler
 --add-exports jdk.naming.dns/com.sun.jndi.dns=java.naming
+-Djava.net.preferIPv6Addresses=system
 -DignoreList=@IGNORE_LIST@
 -DlibraryDirectory=libraries
 -DlegacyClassPath=@CLASS_PATH@
