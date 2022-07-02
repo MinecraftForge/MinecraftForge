@@ -29,7 +29,10 @@ public class FileUtils
             try {
                 Files.createDirectory(dirPath);
             } catch (IOException e) {
-                if (e instanceof FileAlreadyExistsException) {
+                if (e instanceof FileAlreadyExistsException && Files.isDirectory(dirPath)) {
+                    LOGGER.warn(CORE, "Failed to create {} directory, found existing directory : {}", dirLabel, dirPath);
+                    return dirPath;
+                } else if (e instanceof FileAlreadyExistsException) {
                     LOGGER.error(CORE, "Failed to create {} directory - there is a file in the way", dirLabel);
                 } else {
                     LOGGER.error(CORE, "Problem with creating {} directory (Permissions?)", dirLabel, e);
