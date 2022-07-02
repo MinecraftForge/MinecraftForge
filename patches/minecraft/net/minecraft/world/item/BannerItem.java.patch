@@ -1,0 +1,12 @@
+--- a/net/minecraft/world/item/BannerItem.java
++++ b/net/minecraft/world/item/BannerItem.java
+@@ -32,7 +_,8 @@
+             DyeColor dyecolor = DyeColor.m_41053_(compoundtag1.m_128451_("Color"));
+             BannerPattern bannerpattern = BannerPattern.m_58575_(compoundtag1.m_128461_("Pattern"));
+             if (bannerpattern != null) {
+-               p_40544_.add((new TranslatableComponent("block.minecraft.banner." + bannerpattern.m_58572_() + "." + dyecolor.m_41065_())).m_130940_(ChatFormatting.GRAY));
++               net.minecraft.resources.ResourceLocation fileLoc = new net.minecraft.resources.ResourceLocation(bannerpattern.m_58572_());
++               p_40544_.add((new TranslatableComponent("block." + fileLoc.m_135827_() + ".banner." + fileLoc.m_135815_() + "." + dyecolor.m_41065_())).m_130940_(ChatFormatting.GRAY));
+             }
+          }
+ 

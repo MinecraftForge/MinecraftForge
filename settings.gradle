@@ -11,6 +11,7 @@ include 'fmlloader'
 include 'fmlcore'
 include 'mclanguage'
 include 'javafmllanguage'
+include 'lowcodelanguage'
 
 include ':mcp'
 include ':clean'

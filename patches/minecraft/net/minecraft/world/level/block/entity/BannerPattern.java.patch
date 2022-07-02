@@ -9,7 +9,34 @@
     BASE("base", "b", false),
     SQUARE_BOTTOM_LEFT("square_bottom_left", "bl"),
     SQUARE_BOTTOM_RIGHT("square_bottom_right", "br"),
-@@ -106,6 +_,14 @@
+@@ -54,10 +_,16 @@
+    PIGLIN("piglin", "pig", true);
+ 
+    private static final BannerPattern[] f_58529_ = values();
++   /** @deprecated Use {@link BannerPattern#values()} and get the length from the array **/
++   @Deprecated
+    public static final int f_58526_ = f_58529_.length;
++   /** @deprecated Subtract {@link net.minecraftforge.common.ForgeHooks#getNonPatternItemCount()} from {@link BannerPattern#values()} **/
++   @Deprecated
+    public static final int f_58527_ = (int)Arrays.stream(f_58529_).filter((p_58581_) -> {
+       return p_58581_.f_58530_;
+    }).count();
++   /** @deprecated Subtract 1 from {@link net.minecraftforge.common.ForgeHooks#getNonPatternItemCount()} to get the maximum non-pattern item index**/
++   @Deprecated
+    public static final int f_58528_ = f_58526_ - f_58527_ - 1;
+    public final boolean f_58530_;
+    private final String f_58531_;
+@@ -75,7 +_,8 @@
+ 
+    public ResourceLocation m_58577_(boolean p_58578_) {
+       String s = p_58578_ ? "banner" : "shield";
+-      return new ResourceLocation("entity/" + s + "/" + this.m_58572_());
++      ResourceLocation fileLoc = new ResourceLocation(this.m_58572_());
++      return new ResourceLocation(fileLoc.m_135827_(), "entity/" + s + "/" + fileLoc.m_135815_());
+    }
+ 
+    public String m_58572_() {
+@@ -106,6 +_,19 @@
        }
  
        return null;
@@ -21,6 +48,11 @@
 +
 +   public static BannerPattern create(String enumName, String fileNameIn, String hashNameIn, boolean hasPatternItem) {
 +      throw new IllegalStateException("Enum not extended");
++   }
++
++   @Override
++   public void init() {
++      net.minecraftforge.common.ForgeHooks.refreshBannerPatternData();
     }
  
     public static class Builder {

@@ -39,16 +39,16 @@
  
        for(int i = 0; i < s.length(); ++i) {
           if (!SharedConstants.m_136188_(s.charAt(i))) {
-@@ -1129,8 +_,11 @@
+@@ -1129,8 +_,10 @@
              String s1 = p_143629_.m_143722_();
              Component component = s1.isEmpty() ? null : new TranslatableComponent("chat.type.text", this.f_9743_.m_5446_(), s1);
              Component component1 = new TranslatableComponent("chat.type.text", this.f_9743_.m_5446_(), s);
-+            component1 = net.minecraftforge.common.ForgeHooks.onServerChatEvent(this, s, component1);
-+            Component finalComponent = component1;
-+            if (finalComponent != null) 
-             this.f_9745_.m_6846_().m_143991_(component1, (p_184197_) -> {
+-            this.f_9745_.m_6846_().m_143991_(component1, (p_184197_) -> {
 -               return this.f_9743_.m_143421_(p_184197_) ? component : component1;
-+               return this.f_9743_.m_143421_(p_184197_) ? component : finalComponent;
++            var event = net.minecraftforge.common.ForgeHooks.onServerChatEvent(this, s, component1, s1, component);
++            if (event != null && event.getComponent() != null)
++            this.f_9745_.m_6846_().m_143991_(event.getComponent(), (p_184197_) -> {
++               return this.f_9743_.m_143421_(p_184197_) ? event.getFilteredComponent() : event.getComponent();
              }, ChatType.CHAT, this.f_9743_.m_142081_());
           }
  

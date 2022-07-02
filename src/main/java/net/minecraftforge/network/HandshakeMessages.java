@@ -5,11 +5,14 @@
 
 package net.minecraftforge.network;
 
+import net.minecraft.core.Registry;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.forgespi.language.IModInfo;
 import net.minecraftforge.network.NetworkRegistry;
+import net.minecraftforge.registries.DataPackRegistriesHooks;
 import net.minecraftforge.registries.ForgeRegistry;
 import net.minecraftforge.registries.RegistryManager;
 
@@ -17,10 +20,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.IntSupplier;
 import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
+
+import org.apache.commons.lang3.tuple.Pair;
 
 import com.google.common.collect.Maps;
 
@@ -44,26 +50,29 @@ public class HandshakeMessages
         }
     }
     /**
-     * Server to client "list of mods". Always first handshake message.
+     * Server to client "list of mods". Always first handshake message after the data sent by S2CModData.
      */
     public static class S2CModList extends LoginIndexedMessage
     {
         private List<String> mods;
         private Map<ResourceLocation, String> channels;
         private List<ResourceLocation> registries;
+        private final List<ResourceKey<? extends Registry<?>>> dataPackRegistries;
 
         public S2CModList()
         {
             this.mods = ModList.get().getMods().stream().map(IModInfo::getModId).collect(Collectors.toList());
             this.channels = NetworkRegistry.buildChannelVersions();
             this.registries = RegistryManager.getRegistryNamesForSyncToClient();
+            this.dataPackRegistries = List.copyOf(DataPackRegistriesHooks.getSyncedCustomRegistries());
         }
 
-        private S2CModList(List<String> mods, Map<ResourceLocation, String> channels, List<ResourceLocation> registries)
+        private S2CModList(List<String> mods, Map<ResourceLocation, String> channels, List<ResourceLocation> registries, List<ResourceKey<? extends Registry<?>>> dataPackRegistries)
         {
             this.mods = mods;
             this.channels = channels;
             this.registries = registries;
+            this.dataPackRegistries = dataPackRegistries;
         }
 
         public static S2CModList decode(FriendlyByteBuf input)
@@ -83,7 +92,12 @@ public class HandshakeMessages
             for (int x = 0; x < len; x++)
                 registries.add(input.readResourceLocation());
 
-            return new S2CModList(mods, channels, registries);
+            // Datapack Registries may or may not be sent in 1.18.2 due to netcode changes.
+            // TODO 1.19: Remove optionalness of datapack registry list in the mod list packet.
+            List<ResourceKey<? extends Registry<?>>> dataPackRegistries = input.isReadable()
+                ? input.readCollection(ArrayList::new, buf -> ResourceKey.createRegistryKey(buf.readResourceLocation()))
+                : List.of();
+            return new S2CModList(mods, channels, registries, dataPackRegistries);
         }
 
         public void encode(FriendlyByteBuf output)
@@ -99,6 +113,14 @@ public class HandshakeMessages
 
             output.writeVarInt(registries.size());
             registries.forEach(output::writeResourceLocation);
+            
+            // The list of synced datapack registry names is not sent in 1.18.2 if the list is empty.
+            // TODO 1.19: should send an empty list if the list is empty.
+            Set<ResourceKey<? extends Registry<?>>> dataPackRegistries = DataPackRegistriesHooks.getSyncedCustomRegistries();
+            if (!dataPackRegistries.isEmpty())
+            {
+                output.writeCollection(dataPackRegistries, (buf,key) -> buf.writeResourceLocation(key.location()));
+            }
         }
 
         public List<String> getModList() {
@@ -111,6 +133,51 @@ public class HandshakeMessages
 
         public Map<ResourceLocation, String> getChannels() {
             return this.channels;
+        }
+        
+        /**
+         * @return list of ids of non-vanilla syncable datapack registries on the server.
+         */
+        public List<ResourceKey<? extends Registry<?>>> getCustomDataPackRegistries() {
+            return this.dataPackRegistries;
+        }
+    }
+
+    /**
+     * Prefixes S2CModList by sending additional data about the mods installed on the server to the client
+     * The mod data is stored as follows: [modId -> [modName, modVersion]]
+     */
+    public static class S2CModData extends LoginIndexedMessage
+    {
+        private final Map<String, Pair<String, String>> mods;
+
+        public S2CModData()
+        {
+            this.mods = ModList.get().getMods().stream().collect(Collectors.toMap(IModInfo::getModId, info -> Pair.of(info.getDisplayName(), info.getVersion().toString())));
+        }
+
+        private S2CModData(Map<String, Pair<String, String>> mods)
+        {
+            this.mods = mods;
+        }
+
+        public static S2CModData decode(FriendlyByteBuf input)
+        {
+            Map<String, Pair<String, String>> mods = input.readMap(o -> o.readUtf(0x100), o -> Pair.of(o.readUtf(0x100), o.readUtf(0x100)));
+            return new S2CModData(mods);
+        }
+
+        public void encode(FriendlyByteBuf output)
+        {
+            output.writeMap(mods, (o, s) -> o.writeUtf(s, 0x100), (o, p) -> {
+                o.writeUtf(p.getLeft(), 0x100);
+                o.writeUtf(p.getRight(), 0x100);
+            });
+        }
+
+        public Map<String, Pair<String, String>> getMods()
+        {
+            return mods;
         }
     }
 
@@ -259,6 +326,37 @@ public class HandshakeMessages
 
         public byte[] getBytes() {
             return fileData;
+        }
+    }
+
+    /**
+     * Notifies the client of a channel mismatch on the server, so a {@link net.minecraftforge.client.gui.ModMismatchDisconnectedScreen} is used to notify the user of the disconnection.
+     * This packet also sends the data of a channel mismatch (currently, the ids and versions of the mismatched channels) to the client for it to display the correct information in said screen.
+     */
+    public static class S2CChannelMismatchData extends LoginIndexedMessage
+    {
+        private final Map<ResourceLocation, String> mismatchedChannelData;
+
+        public S2CChannelMismatchData(Map<ResourceLocation, String> mismatchedChannelData)
+        {
+            this.mismatchedChannelData = mismatchedChannelData;
+        }
+
+        public static S2CChannelMismatchData decode(FriendlyByteBuf input)
+        {
+            Map<ResourceLocation, String> mismatchedMods = input.readMap(i -> new ResourceLocation(i.readUtf(0x100)), i -> i.readUtf(0x100));
+
+            return new S2CChannelMismatchData(mismatchedMods);
+        }
+
+        public void encode(FriendlyByteBuf output)
+        {
+            output.writeMap(mismatchedChannelData, (o, r) -> o.writeUtf(r.toString(), 0x100), (o, v) -> o.writeUtf(v, 0x100));
+        }
+
+        public Map<ResourceLocation, String> getMismatchedChannelData()
+        {
+            return mismatchedChannelData;
         }
     }
 }
