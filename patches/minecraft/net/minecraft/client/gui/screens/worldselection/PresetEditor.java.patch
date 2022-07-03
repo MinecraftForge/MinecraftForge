@@ -1,0 +1,29 @@
+--- a/net/minecraft/client/gui/screens/worldselection/PresetEditor.java
++++ b/net/minecraft/client/gui/screens/worldselection/PresetEditor.java
+@@ -27,7 +_,9 @@
+ 
+ @OnlyIn(Dist.CLIENT)
+ public interface PresetEditor {
+-   Map<Optional<ResourceKey<WorldPreset>>, PresetEditor> f_232950_ = Map.of(Optional.of(WorldPresets.f_226438_), (p_232974_, p_232975_) -> {
++   Map<Optional<ResourceKey<WorldPreset>>, PresetEditor> f_232950_ = net.minecraft.Util.m_137537_(() -> {
++      com.google.common.collect.ImmutableMap.Builder<Optional<ResourceKey<WorldPreset>>, PresetEditor> builder = com.google.common.collect.ImmutableMap.builder();
++      builder.put(Optional.of(WorldPresets.f_226438_), (p_232974_, p_232975_) -> {
+       ChunkGenerator chunkgenerator = p_232975_.f_232987_().m_64666_();
+       RegistryAccess registryaccess = p_232975_.f_232989_();
+       Registry<Biome> registry = registryaccess.m_175515_(Registry.f_122885_);
+@@ -35,10 +_,14 @@
+       return new CreateFlatWorldScreen(p_232974_, (p_232960_) -> {
+          p_232974_.f_100847_.m_233040_(m_232952_(p_232960_));
+       }, chunkgenerator instanceof FlatLevelSource ? ((FlatLevelSource)chunkgenerator).m_64191_() : FlatLevelGeneratorSettings.m_211734_(registry, registry1));
+-   }, Optional.of(WorldPresets.f_226441_), (p_232962_, p_232963_) -> {
++   });
++      builder.put(Optional.of(WorldPresets.f_226441_), (p_232962_, p_232963_) -> {
+       return new CreateBuffetWorldScreen(p_232962_, p_232963_, (p_232966_) -> {
+          p_232962_.f_100847_.m_233040_(m_232967_(p_232966_));
+       });
++   });
++      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.RegisterPresetEditorEvent(builder));
++      return builder.build();
+    });
+ 
+    Screen m_232976_(CreateWorldScreen p_232977_, WorldCreationContext p_232978_);
