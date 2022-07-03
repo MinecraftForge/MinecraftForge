@@ -22,7 +22,7 @@
           p_232962_.f_100847_.m_233040_(m_232967_(p_232966_));
        });
 +   });
-+      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.RegisterPresetEditorEvent(builder));
++      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.RegisterPresetEditorEvent(builder));
 +      return builder.build();
     });
  
