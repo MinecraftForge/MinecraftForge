@@ -9,14 +9,7 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Spliterator;
+import java.util.*;
 import java.util.function.Supplier;
 
 /**
@@ -27,7 +20,7 @@ import java.util.function.Supplier;
  */
 public class ConcatenatedListView<T> implements List<T>
 {
-    public static <T> List<T> of(List<List<T>> members)
+    public static <T> List<T> of(List<? extends List<? extends T>> members)
     {
         return switch (members.size()) {
             case 0 -> List.of();
@@ -36,9 +29,9 @@ public class ConcatenatedListView<T> implements List<T>
         };
     }
 
-    private final List<List<T>> lists;
+    private final List<? extends List<? extends T>> lists;
 
-    private ConcatenatedListView(List<List<T>> lists)
+    private ConcatenatedListView(List<? extends List<? extends T>> lists)
     {
         this.lists = lists;
     }
@@ -47,7 +40,7 @@ public class ConcatenatedListView<T> implements List<T>
     public int size()
     {
         int size = 0;
-        for (List<T> list : lists)
+        for (var list : lists)
             size += list.size();
         return size;
     }
@@ -55,7 +48,7 @@ public class ConcatenatedListView<T> implements List<T>
     @Override
     public boolean isEmpty()
     {
-        for (List<T> list : lists)
+        for (List<? extends T> list : lists)
             if (!list.isEmpty())
                 return false;
         return true;
@@ -64,7 +57,7 @@ public class ConcatenatedListView<T> implements List<T>
     @Override
     public boolean contains(Object o)
     {
-        for (List<T> list : lists)
+        for (var list : lists)
             if (list.contains(o))
                 return true;
         return false;
@@ -73,7 +66,7 @@ public class ConcatenatedListView<T> implements List<T>
     @Override
     public T get(int index)
     {
-        for (List<T> list : lists)
+        for (var list : lists)
         {
             int size = list.size();
             if (index < size)
@@ -87,7 +80,7 @@ public class ConcatenatedListView<T> implements List<T>
     public int indexOf(Object o)
     {
         int offset = 0;
-        for (List<T> list : lists)
+        for (var list : lists)
         {
             int foundIndex = list.indexOf(o);
             if (foundIndex >= 0)
@@ -101,7 +94,7 @@ public class ConcatenatedListView<T> implements List<T>
     public int lastIndexOf(Object o)
     {
         int offset = 0;
-        for (List<T> list : Lists.reverse(lists))
+        for (var list : Lists.reverse(lists))
         {
             int foundIndex = list.lastIndexOf(o);
             if (foundIndex >= 0)
@@ -128,16 +121,13 @@ public class ConcatenatedListView<T> implements List<T>
     private <C extends Collection<T>> C concatenate(Supplier<C> collectionFactory)
     {
         var concat = collectionFactory.get();
-        for (List<T> list : lists)
+        for (var list : lists)
             concat.addAll(list);
         return concat;
     }
     @NotNull @Override public Object[] toArray() { return concatenate(ArrayList::new).toArray(); }
     @NotNull @Override public <T1> T1[] toArray(@NotNull T1[] a) { return concatenate(ArrayList::new).toArray(a); }
     @Override public boolean containsAll(@NotNull Collection<?> c) { return concatenate(HashSet::new).containsAll(c); }
-    @NotNull @Override public ListIterator<T> listIterator() { return concatenate(ArrayList::new).listIterator(); }
-    @NotNull @Override public ListIterator<T> listIterator(int index) { return concatenate(ArrayList::new).listIterator(index); }
-    @NotNull @Override public List<T> subList(int fromIndex, int toIndex) { return Collections.unmodifiableList(concatenate(ArrayList::new).subList(fromIndex, toIndex)); }
 
     // No mutations allowed
     @Override public boolean add(T t) { throw new UnsupportedOperationException(); }
@@ -150,4 +140,9 @@ public class ConcatenatedListView<T> implements List<T>
     @Override public boolean removeAll(@NotNull Collection<?> c) { throw new UnsupportedOperationException(); }
     @Override public boolean retainAll(@NotNull Collection<?> c) { throw new UnsupportedOperationException(); }
     @Override public void clear() { throw new UnsupportedOperationException(); }
+
+    // Other unsupported operations - we could support these, but effort
+    @NotNull @Override public ListIterator<T> listIterator() { throw new UnsupportedOperationException(); }
+    @NotNull @Override public ListIterator<T> listIterator(int index) { throw new UnsupportedOperationException(); }
+    @NotNull @Override public List<T> subList(int fromIndex, int toIndex) { throw new UnsupportedOperationException(); }
 }
