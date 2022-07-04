@@ -10,6 +10,7 @@
 +      m_85722_(buffer.limit() + this.f_85658_.m_86020_());
 +      this.f_85648_.position(this.f_85654_ * this.f_85658_.m_86020_());
 +      this.f_85648_.put(buffer);
++      this.f_85648_.position(0);
 +      this.f_85654_ += buffer.limit() / this.f_85658_.m_86020_();
 +      this.f_85652_ += buffer.limit();
 +   }
