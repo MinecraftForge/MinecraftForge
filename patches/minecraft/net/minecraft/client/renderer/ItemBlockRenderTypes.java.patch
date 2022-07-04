@@ -42,9 +42,12 @@
           if (!Minecraft.m_91085_()) {
              return Sheets.m_110792_();
           } else {
-@@ -353,6 +_,67 @@
+@@ -351,8 +_,71 @@
+    }
+ 
     public static RenderType m_109287_(FluidState p_109288_) {
-       RenderType rendertype = f_109276_.get(p_109288_.m_76152_());
+-      RenderType rendertype = f_109276_.get(p_109288_.m_76152_());
++      RenderType rendertype = FLUID_RENDER_TYPES.get(net.minecraftforge.registries.ForgeRegistries.FLUIDS.getDelegateOrThrow(p_109288_.m_76152_()));
        return rendertype != null ? rendertype : RenderType.m_110451_();
 +   }
 +
@@ -52,16 +55,18 @@
 +
 +   private static final net.minecraftforge.client.ChunkRenderTypeSet CUTOUT_MIPPED = net.minecraftforge.client.ChunkRenderTypeSet.of(RenderType.m_110457_());
 +   private static final net.minecraftforge.client.ChunkRenderTypeSet SOLID = net.minecraftforge.client.ChunkRenderTypeSet.of(RenderType.m_110451_());
-+   private static final Map<net.minecraft.core.Holder.Reference<Block>, net.minecraftforge.client.ChunkRenderTypeSet> BLOCK_RENDER_TYPES = createRenderTypeMap(net.minecraftforge.registries.ForgeRegistries.BLOCKS, f_109275_);
-+
-+   private static <T> Map<net.minecraft.core.Holder.Reference<T>, net.minecraftforge.client.ChunkRenderTypeSet> createRenderTypeMap(net.minecraftforge.registries.IForgeRegistry<T> registry, Map<T, RenderType> vanillaMap) {
-+      return Util.m_137469_(new it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap<>(vanillaMap.size(), 0.5F), map -> {
-+         map.defaultReturnValue(SOLID);
-+         for(Map.Entry<T, RenderType> entry : vanillaMap.entrySet()) {
-+            map.put(registry.getDelegateOrThrow(entry.getKey()), net.minecraftforge.client.ChunkRenderTypeSet.of(entry.getValue()));
-+         }
-+      });
-+   }
++   private static final Map<net.minecraft.core.Holder.Reference<Block>, net.minecraftforge.client.ChunkRenderTypeSet> BLOCK_RENDER_TYPES = Util.m_137469_(new it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap<>(f_109275_.size(), 0.5F), map -> {
++      map.defaultReturnValue(SOLID);
++      for(Map.Entry<Block, RenderType> entry : f_109275_.entrySet()) {
++         map.put(net.minecraftforge.registries.ForgeRegistries.BLOCKS.getDelegateOrThrow(entry.getKey()), net.minecraftforge.client.ChunkRenderTypeSet.of(entry.getValue()));
++      }
++   });
++   private static final Map<net.minecraft.core.Holder.Reference<Fluid>, RenderType> FLUID_RENDER_TYPES = Util.m_137469_(new it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap<>(f_109276_.size(), 0.5F), map -> {
++      map.defaultReturnValue(RenderType.m_110451_());
++      for(Map.Entry<Fluid, RenderType> entry : f_109276_.entrySet()) {
++         map.put(net.minecraftforge.registries.ForgeRegistries.FLUIDS.getDelegateOrThrow(entry.getKey()), entry.getValue());
++      }
++   });
 +
 +   /** @deprecated Use {@link net.minecraft.client.resources.model.BakedModel#getRenderTypes(BlockState, net.minecraft.util.RandomSource, net.minecraftforge.client.model.data.ModelData)}. */
 +   @Deprecated(forRemoval = true, since = "1.19")
@@ -95,7 +100,7 @@
 +
 +   public static void setRenderLayer(Fluid fluid, RenderType type) {
 +      checkClientLoading();
-+      f_109276_.put(fluid, type);
++      FLUID_RENDER_TYPES.put(net.minecraftforge.registries.ForgeRegistries.FLUIDS.getDelegateOrThrow(fluid), type);
 +   }
 +
 +   private static void checkClientLoading() {
