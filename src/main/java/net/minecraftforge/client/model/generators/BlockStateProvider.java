@@ -545,7 +545,7 @@ public abstract class BlockStateProvider implements DataProvider {
         doorBlock(block, bottomLeft, bottomLeftOpen, bottomRight, bottomRightOpen, topLeft, topLeftOpen, topRight, topRightOpen);
     }
 
-    public void doorBlock(DoorBlock block, ModelFile bottomLeft, ModelFile bottomLeftOpen , ModelFile bottomRight, ModelFile bottomRightOpen, ModelFile topLeft, ModelFile topLeftOpen, ModelFile topRight, ModelFile topRightOpen) {
+    public void doorBlock(DoorBlock block, ModelFile bottomLeft, ModelFile bottomLeftOpen, ModelFile bottomRight, ModelFile bottomRightOpen, ModelFile topLeft, ModelFile topLeftOpen, ModelFile topRight, ModelFile topRightOpen) {
         getVariantBuilder(block).forAllStatesExcept(state -> {
             int yRot = ((int) state.getValue(DoorBlock.FACING).toYRot()) + 90;
             boolean right = state.getValue(DoorBlock.HINGE) == DoorHingeSide.RIGHT;
