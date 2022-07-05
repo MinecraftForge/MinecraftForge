@@ -7,6 +7,7 @@ package net.minecraftforge.client;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
+import net.minecraft.Util;
 import net.minecraft.client.renderer.RenderType;
 import org.jetbrains.annotations.NotNull;
 
@@ -16,7 +17,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 /**
  * An immutable ordered set (not implementing {@link java.util.Set}) of chunk {@linkplain RenderType render types}.
@@ -107,12 +107,16 @@ public sealed class ChunkRenderTypeSet implements Iterable<RenderType>
         return new ChunkRenderTypeSet(bits);
     }
 
-    // IMPORTANT: This will be null for subclasses None and All. All methods that use it must be overridden there.
     private final BitSet bits;
 
     private ChunkRenderTypeSet(BitSet bits)
     {
         this.bits = bits;
+    }
+
+    public boolean isEmpty()
+    {
+        return bits.isEmpty();
     }
 
     public boolean contains(RenderType renderType)
@@ -156,7 +160,13 @@ public sealed class ChunkRenderTypeSet implements Iterable<RenderType>
     {
         private None()
         {
-            super(null); // We ignore this, so it's fine to make it null
+            super(new BitSet());
+        }
+
+        @Override
+        public boolean isEmpty()
+        {
+            return true;
         }
 
         @Override
@@ -183,7 +193,12 @@ public sealed class ChunkRenderTypeSet implements Iterable<RenderType>
     {
         private All()
         {
-            super(null); // We ignore this, so it's fine to make it null
+            super(Util.make(new BitSet(), bits -> bits.set(0, CHUNK_RENDER_TYPES.length)));
+        }
+
+        @Override
+        public boolean isEmpty(){
+            return false;
         }
 
         @Override
