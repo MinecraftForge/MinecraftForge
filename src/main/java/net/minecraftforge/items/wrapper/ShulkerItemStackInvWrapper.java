@@ -10,13 +10,13 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Predicate;
 
-public class ItemStackInvWrapper implements IItemHandler
+public class ShulkerItemStackInvWrapper implements IItemHandler
 {
     private final int size;
     private final ItemStack stack;
     private final Predicate<ItemStack> canHold;
 
-    public ItemStackInvWrapper(ItemStack stack, int size, Predicate<ItemStack> canHold)
+    public ShulkerItemStackInvWrapper(ItemStack stack, int size, Predicate<ItemStack> canHold)
     {
         this.size = size;
         this.stack = stack;
