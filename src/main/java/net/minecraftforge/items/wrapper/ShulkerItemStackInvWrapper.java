@@ -9,13 +9,12 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.BlockTags;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.level.block.ShulkerBoxBlock;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.LazyOptional;
@@ -198,7 +197,7 @@ public class ShulkerItemStackInvWrapper implements IItemHandler, ICapabilityProv
     public NonNullList<ItemStack> getItemList()
     {
         NonNullList<ItemStack> itemStacks = NonNullList.withSize(getSlots(), ItemStack.EMPTY);
-        CompoundTag rootTag = this.stack.getTag();
+        CompoundTag rootTag = BlockItem.getBlockEntityData(this.stack);
         if (rootTag != null && rootTag.contains("Items", 9)) {
             ContainerHelper.loadAllItems(rootTag, itemStacks);
         }
@@ -207,7 +206,9 @@ public class ShulkerItemStackInvWrapper implements IItemHandler, ICapabilityProv
 
     public void setItemList(NonNullList<ItemStack> itemStacks)
     {
-        ContainerHelper.saveAllItems(this.stack.getOrCreateTag(), itemStacks);
+        CompoundTag existing = BlockItem.getBlockEntityData(this.stack);
+        BlockItem.setBlockEntityData(this.stack, BlockEntityType.SHULKER_BOX,
+                ContainerHelper.saveAllItems(existing == null ? new CompoundTag() : existing, itemStacks));
     }
 
     @Override
