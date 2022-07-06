@@ -28,7 +28,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
-import java.util.function.Predicate;
 
 @Mod.EventBusSubscriber(modid = "forge")
 public class ShulkerItemStackInvWrapper implements IItemHandler, ICapabilityProvider
@@ -51,7 +50,8 @@ public class ShulkerItemStackInvWrapper implements IItemHandler, ICapabilityProv
     @NotNull
     public ItemStack getStackInSlot(int slot)
     {
-        if (slot < getSlots()) {
+        if (slot < getSlots())
+        {
             return getItemList().get(slot);
         }
         return ItemStack.EMPTY;
@@ -237,8 +237,10 @@ public class ShulkerItemStackInvWrapper implements IItemHandler, ICapabilityProv
             Items.YELLOW_SHULKER_BOX);
 
     @SubscribeEvent
-    public static void listenCapabilitiesAttachment(AttachCapabilitiesEvent<ItemStack> event) {
-        if (SHULKER_ITEMS.contains(event.getObject().getItem())) {
+    public static void listenCapabilitiesAttachment(AttachCapabilitiesEvent<ItemStack> event)
+    {
+        if (SHULKER_ITEMS.contains(event.getObject().getItem()))
+        {
             event.addCapability(new ResourceLocation("forge","shulker_box"), new ShulkerItemStackInvWrapper(event.getObject()));
         }
     }
