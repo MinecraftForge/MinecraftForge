@@ -5,6 +5,7 @@
 
 package net.minecraftforge.fml.loading.targets;
 
+import cpw.mods.modlauncher.api.ServiceRunner;
 import net.minecraftforge.api.distmarker.Dist;
 
 import java.util.concurrent.Callable;
@@ -20,12 +21,11 @@ public class ForgeDataUserdevLaunchHandler extends ForgeUserdevLaunchHandler {
     public boolean isData() { return true; }
 
     @Override
-    public Callable<Void> launchService(String[] arguments, ModuleLayer layer) {
+    public ServiceRunner launchService(String[] arguments, ModuleLayer layer) {
         return () -> {
             var args = preLaunch(arguments, layer);
 
             Class.forName(layer.findModule("minecraft").orElseThrow(), "net.minecraft.data.Main").getMethod("main", String[].class).invoke(null, (Object) args);
-            return null;
         };
     }
 }

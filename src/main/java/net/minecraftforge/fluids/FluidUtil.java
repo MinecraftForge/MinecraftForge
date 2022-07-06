@@ -23,6 +23,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.common.SoundActions;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
@@ -137,7 +138,7 @@ public class FluidUtil
                             tryFluidTransfer(containerFluidHandler, fluidSource, maxAmount, true);
                             if (player != null)
                             {
-                                SoundEvent soundevent = simulatedTransfer.getFluid().getAttributes().getFillSound(simulatedTransfer);
+                                SoundEvent soundevent = simulatedTransfer.getFluid().getFluidType().getSound(simulatedTransfer, SoundActions.BUCKET_FILL);
                                 player.level.playSound(null, player.getX(), player.getY() + 0.5, player.getZ(), soundevent, SoundSource.BLOCKS, 1.0F, 1.0F);
                             }
                         }
@@ -181,7 +182,7 @@ public class FluidUtil
 
                     if (doDrain && player != null)
                     {
-                        SoundEvent soundevent = transfer.getFluid().getAttributes().getEmptySound(transfer);
+                        SoundEvent soundevent = transfer.getFluid().getFluidType().getSound(transfer, SoundActions.BUCKET_EMPTY);
                         player.level.playSound(null, player.getX(), player.getY() + 0.5, player.getZ(), soundevent, SoundSource.BLOCKS, 1.0F, 1.0F);
                     }
 
@@ -546,7 +547,7 @@ public class FluidUtil
         }
 
         Fluid fluid = resource.getFluid();
-        if (fluid == Fluids.EMPTY || !fluid.getAttributes().canBePlacedInWorld(level, pos, resource))
+        if (fluid == Fluids.EMPTY || !fluid.getFluidType().canBePlacedInLevel(level, pos, resource))
         {
             return false;
         }
@@ -569,12 +570,12 @@ public class FluidUtil
             return false; // Non-air, solid, unreplacable block. We can't put fluid here.
         }
 
-        if (level.dimensionType().ultraWarm() && fluid.getAttributes().doesVaporize(level, pos, resource))
+        if (fluid.getFluidType().isVaporizedOnPlacement(level, pos, resource))
         {
             FluidStack result = fluidSource.drain(resource, IFluidHandler.FluidAction.EXECUTE);
             if (!result.isEmpty())
             {
-                result.getFluid().getAttributes().vaporize(player, level, pos, result);
+                result.getFluid().getFluidType().onVaporize(player, level, pos, result);
                 return true;
             }
         }
@@ -593,7 +594,7 @@ public class FluidUtil
             FluidStack result = tryFluidTransfer(handler, fluidSource, resource, true);
             if (!result.isEmpty())
             {
-                SoundEvent soundevent = resource.getFluid().getAttributes().getEmptySound(resource);
+                SoundEvent soundevent = resource.getFluid().getFluidType().getSound(resource, SoundActions.BUCKET_EMPTY);
                 level.playSound(player, pos, soundevent, SoundSource.BLOCKS, 1.0F, 1.0F);
                 return true;
             }
@@ -609,7 +610,7 @@ public class FluidUtil
      */
     private static IFluidHandler getFluidBlockHandler(Fluid fluid, Level level, BlockPos pos)
     {
-        BlockState state = fluid.getAttributes().getBlock(level, pos, fluid.defaultFluidState());
+        BlockState state = fluid.getFluidType().getBlockForFluidState(level, pos, fluid.defaultFluidState());
         return new BlockWrapper(state, level, pos);
     }
 
@@ -660,6 +661,6 @@ public class FluidUtil
             }
         }
 
-        return fluid.getAttributes().getBucket(fluidStack);
+        return fluid.getFluidType().getBucket(fluidStack);
     }
 }

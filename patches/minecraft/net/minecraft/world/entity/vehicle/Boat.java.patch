@@ -1,5 +1,23 @@
 --- a/net/minecraft/world/entity/vehicle/Boat.java
 +++ b/net/minecraft/world/entity/vehicle/Boat.java
+@@ -48,7 +_,7 @@
+ import net.minecraft.world.phys.shapes.Shapes;
+ import net.minecraft.world.phys.shapes.VoxelShape;
+ 
+-public class Boat extends Entity {
++public class Boat extends Entity implements net.minecraftforge.common.extensions.IForgeBoat {
+    private static final EntityDataAccessor<Integer> f_38282_ = SynchedEntityData.m_135353_(Boat.class, EntityDataSerializers.f_135028_);
+    private static final EntityDataAccessor<Integer> f_38283_ = SynchedEntityData.m_135353_(Boat.class, EntityDataSerializers.f_135028_);
+    private static final EntityDataAccessor<Float> f_38284_ = SynchedEntityData.m_135353_(Boat.class, EntityDataSerializers.f_135029_);
+@@ -439,7 +_,7 @@
+             for(int i2 = i1; i2 < j1; ++i2) {
+                blockpos$mutableblockpos.m_122178_(l1, k1, i2);
+                FluidState fluidstate = this.f_19853_.m_6425_(blockpos$mutableblockpos);
+-               if (fluidstate.m_205070_(FluidTags.f_13131_)) {
++               if (this.canBoatInFluid(fluidstate)) {
+                   f = Math.max(f, fluidstate.m_76155_(this.f_19853_, blockpos$mutableblockpos));
+                }
+ 
 @@ -480,7 +_,7 @@
                       blockpos$mutableblockpos.m_122178_(l1, k2, i2);
                       BlockState blockstate = this.f_19853_.m_8055_(blockpos$mutableblockpos);
@@ -9,6 +27,42 @@
                          ++k1;
                       }
                    }
+@@ -509,7 +_,7 @@
+             for(int i2 = i1; i2 < j1; ++i2) {
+                blockpos$mutableblockpos.m_122178_(k1, l1, i2);
+                FluidState fluidstate = this.f_19853_.m_6425_(blockpos$mutableblockpos);
+-               if (fluidstate.m_205070_(FluidTags.f_13131_)) {
++               if (this.canBoatInFluid(fluidstate)) {
+                   float f = (float)l1 + fluidstate.m_76155_(this.f_19853_, blockpos$mutableblockpos);
+                   this.f_38277_ = Math.max((double)f, this.f_38277_);
+                   flag |= aabb.f_82289_ < (double)f;
+@@ -539,7 +_,7 @@
+             for(int i2 = i1; i2 < j1; ++i2) {
+                blockpos$mutableblockpos.m_122178_(k1, l1, i2);
+                FluidState fluidstate = this.f_19853_.m_6425_(blockpos$mutableblockpos);
+-               if (fluidstate.m_205070_(FluidTags.f_13131_) && d0 < (double)((float)blockpos$mutableblockpos.m_123342_() + fluidstate.m_76155_(this.f_19853_, blockpos$mutableblockpos))) {
++               if (this.canBoatInFluid(fluidstate) && d0 < (double)((float)blockpos$mutableblockpos.m_123342_() + fluidstate.m_76155_(this.f_19853_, blockpos$mutableblockpos))) {
+                   if (!fluidstate.m_76170_()) {
+                      return Boat.Status.UNDER_FLOWING_WATER;
+                   }
+@@ -753,7 +_,7 @@
+             }
+ 
+             this.m_183634_();
+-         } else if (!this.f_19853_.m_6425_(this.m_20183_().m_7495_()).m_205070_(FluidTags.f_13131_) && p_38307_ < 0.0D) {
++         } else if (!this.canBoatInFluid(this.f_19853_.m_6425_(this.m_20183_().m_7495_())) && p_38307_ < 0.0D) {
+             this.f_19789_ -= (float)p_38307_;
+          }
+ 
+@@ -809,7 +_,7 @@
+    }
+ 
+    protected boolean m_7310_(Entity p_38390_) {
+-      return this.m_20197_().size() < this.m_213801_() && !this.m_204029_(FluidTags.f_13131_);
++      return this.m_20197_().size() < this.m_213801_() && !this.canBoatInFluid(this.getEyeInFluidType());
+    }
+ 
+    protected int m_213801_() {
 @@ -834,6 +_,16 @@
  
     public boolean m_5842_() {

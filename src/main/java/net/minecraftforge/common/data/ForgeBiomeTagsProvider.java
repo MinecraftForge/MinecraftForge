@@ -1,5 +1,5 @@
 /*
- * Minecraft Forge - Forge Development LLC
+ * Copyright (c) Forge Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
@@ -86,9 +86,11 @@ public final class ForgeBiomeTagsProvider extends BiomeTagsProvider
         tag(Biomes.CRIMSON_FOREST, Tags.Biomes.IS_HOT, Tags.Biomes.IS_HOT_NETHER, Tags.Biomes.IS_DRY, Tags.Biomes.IS_DRY_NETHER);
         tag(Biomes.WARPED_FOREST, Tags.Biomes.IS_HOT, Tags.Biomes.IS_HOT_NETHER, Tags.Biomes.IS_DRY, Tags.Biomes.IS_DRY_NETHER);
         tag(Biomes.BASALT_DELTAS, Tags.Biomes.IS_HOT, Tags.Biomes.IS_HOT_NETHER, Tags.Biomes.IS_DRY, Tags.Biomes.IS_DRY_NETHER);
+        tag(Biomes.MANGROVE_SWAMP, Tags.Biomes.IS_WET, Tags.Biomes.IS_WET_OVERWORLD, Tags.Biomes.IS_HOT, Tags.Biomes.IS_HOT_OVERWORLD, Tags.Biomes.IS_SWAMP, Tags.Biomes.IS_OVERWORLD);
+        tag(Biomes.DEEP_DARK, Tags.Biomes.IS_UNDERGROUND, Tags.Biomes.IS_RARE, Tags.Biomes.IS_SPOOKY, Tags.Biomes.IS_OVERWORLD);
 
         tag(Tags.Biomes.IS_WATER).addTag(BiomeTags.IS_OCEAN).addTag(BiomeTags.IS_RIVER);
-        tag(BiomeTags.IS_MOUNTAIN).addTag(Tags.Biomes.IS_PEAK).addTag(Tags.Biomes.IS_SLOPE);
+        tag(Tags.Biomes.IS_MOUNTAIN).addTag(Tags.Biomes.IS_PEAK).addTag(Tags.Biomes.IS_SLOPE);
     }
 
     @SafeVarargs

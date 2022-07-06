@@ -1,12 +1,13 @@
 --- a/net/minecraft/data/tags/TagsProvider.java
 +++ b/net/minecraft/data/tags/TagsProvider.java
-@@ -29,10 +_,30 @@
+@@ -29,10 +_,32 @@
     protected final DataGenerator.PathProvider f_236439_;
     protected final Registry<T> f_126540_;
     protected final Map<ResourceLocation, TagBuilder> f_126543_ = Maps.newLinkedHashMap();
 +   protected final String modId;
 +   protected final net.minecraftforge.common.data.ExistingFileHelper existingFileHelper;
 +   private final net.minecraftforge.common.data.ExistingFileHelper.IResourceType resourceType;
++   private final net.minecraftforge.common.data.ExistingFileHelper.IResourceType elementResourceType; // FORGE: Resource type for validating required references to datapack registry elements.
  
 +   /**
 +    * @see #TagsProvider(DataGenerator, Registry, String, net.minecraftforge.common.data.ExistingFileHelper)
@@ -22,6 +23,7 @@
 +      this.modId = modId;
 +      this.existingFileHelper = existingFileHelper;
 +      this.resourceType = new net.minecraftforge.common.data.ExistingFileHelper.ResourceType(net.minecraft.server.packs.PackType.SERVER_DATA, ".json", TagManager.m_203918_(p_126547_.m_123023_()));
++      this.elementResourceType = new net.minecraftforge.common.data.ExistingFileHelper.ResourceType(net.minecraft.server.packs.PackType.SERVER_DATA, ".json", net.minecraftforge.common.ForgeHooks.prefixNamespace(p_126547_.m_123023_().m_135782_()));
 +   }
 +
 +   // Forge: Allow customizing the path for a given tag or returning null
@@ -47,16 +49,15 @@
  
              try {
                 DataProvider.m_236072_(p_236446_, jsonelement, path);
-@@ -65,24 +_,37 @@
+@@ -65,24 +_,36 @@
        });
     }
  
 +   private boolean missing(TagEntry reference) {
-+      // We only care about non-optional tag entries, this is the only type that can reference a resource and needs validation
 +      // Optional tags should not be validated
 +
 +      if (reference.isRequired()) {
-+         return existingFileHelper == null || !existingFileHelper.exists(reference.getId(), resourceType);
++         return existingFileHelper == null || !existingFileHelper.exists(reference.getId(), reference.isTag() ? resourceType : elementResourceType);
 +      }
 +      return false;
 +   }

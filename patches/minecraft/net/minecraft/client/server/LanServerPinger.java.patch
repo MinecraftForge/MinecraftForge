@@ -1,0 +1,20 @@
+--- a/net/minecraft/client/server/LanServerPinger.java
++++ b/net/minecraft/client/server/LanServerPinger.java
+@@ -16,7 +_,7 @@
+ public class LanServerPinger extends Thread {
+    private static final AtomicInteger f_120101_ = new AtomicInteger(0);
+    private static final Logger f_120102_ = LogUtils.getLogger();
+-   public static final String f_174974_ = "224.0.2.60";
++   public static final String f_174974_ = net.minecraftforge.network.DualStackUtils.getMulticastGroup();
+    public static final int f_174975_ = 4445;
+    private static final long f_174976_ = 1500L;
+    private final String f_120103_;
+@@ -39,7 +_,7 @@
+ 
+       while(!this.isInterrupted() && this.f_120105_) {
+          try {
+-            InetAddress inetaddress = InetAddress.getByName("224.0.2.60");
++            InetAddress inetaddress = InetAddress.getByName(f_174974_);
+             DatagramPacket datagrampacket = new DatagramPacket(abyte, abyte.length, inetaddress, 4445);
+             this.f_120104_.send(datagrampacket);
+          } catch (IOException ioexception) {

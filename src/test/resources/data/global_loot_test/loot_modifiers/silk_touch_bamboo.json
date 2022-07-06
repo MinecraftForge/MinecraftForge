@@ -4,7 +4,7 @@
     {
       "condition": "minecraft:match_tool",
       "predicate": {
-        "item": "minecraft:bamboo"
+        "items": [ "minecraft:bamboo" ]
       }
     }
   ]

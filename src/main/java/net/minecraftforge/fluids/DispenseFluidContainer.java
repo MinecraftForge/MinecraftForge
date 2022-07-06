@@ -94,7 +94,7 @@ public class DispenseFluidContainer extends DefaultDispenseItemBehavior
             return super.execute(source, stack);
         }
 
-        FluidStack fluidStack = fluidHandler.drain(FluidAttributes.BUCKET_VOLUME, IFluidHandler.FluidAction.EXECUTE);
+        FluidStack fluidStack = fluidHandler.drain(FluidType.BUCKET_VOLUME, IFluidHandler.FluidAction.EXECUTE);
         Direction dispenserFacing = source.getBlockState().getValue(DispenserBlock.FACING);
         BlockPos blockpos = source.getPos().relative(dispenserFacing);
         FluidActionResult result = FluidUtil.tryPlaceFluid(null, source.getLevel(), InteractionHand.MAIN_HAND, blockpos, stack, fluidStack);

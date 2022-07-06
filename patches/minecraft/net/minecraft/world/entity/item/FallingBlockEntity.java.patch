@@ -1,0 +1,16 @@
+--- a/net/minecraft/world/entity/item/FallingBlockEntity.java
++++ b/net/minecraft/world/entity/item/FallingBlockEntity.java
+@@ -117,11 +_,11 @@
+          if (!this.f_19853_.f_46443_) {
+             BlockPos blockpos = this.m_20183_();
+             boolean flag = this.f_31946_.m_60734_() instanceof ConcretePowderBlock;
+-            boolean flag1 = flag && this.f_19853_.m_6425_(blockpos).m_205070_(FluidTags.f_13131_);
++            boolean flag1 = flag && this.f_31946_.canBeHydrated(this.f_19853_, blockpos, this.f_19853_.m_6425_(blockpos), blockpos);
+             double d0 = this.m_20184_().m_82556_();
+             if (flag && d0 > 1.0D) {
+                BlockHitResult blockhitresult = this.f_19853_.m_45547_(new ClipContext(new Vec3(this.f_19854_, this.f_19855_, this.f_19856_), this.m_20182_(), ClipContext.Block.COLLIDER, ClipContext.Fluid.SOURCE_ONLY, this));
+-               if (blockhitresult.m_6662_() != HitResult.Type.MISS && this.f_19853_.m_6425_(blockhitresult.m_82425_()).m_205070_(FluidTags.f_13131_)) {
++               if (blockhitresult.m_6662_() != HitResult.Type.MISS && this.f_31946_.canBeHydrated(this.f_19853_, blockpos, this.f_19853_.m_6425_(blockhitresult.m_82425_()), blockhitresult.m_82425_())) {
+                   blockpos = blockhitresult.m_82425_();
+                   flag1 = true;
+                }

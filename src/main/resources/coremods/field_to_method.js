@@ -13,6 +13,16 @@ function initializeCoreMod() {
                 return classNode;
             }
         },
+        'structure': {
+            'target': {
+                'type': 'CLASS',
+                'name': 'net.minecraft.world.level.levelgen.structure.Structure'
+            },
+            'transformer': function(classNode) {
+                ASMAPI.redirectFieldToMethod(classNode, ASMAPI.mapField('f_226555_'), 'getModifiedStructureSettings')
+                return classNode;
+            }
+        },
         'potion': {
             'target': {
                 'type': 'CLASS',

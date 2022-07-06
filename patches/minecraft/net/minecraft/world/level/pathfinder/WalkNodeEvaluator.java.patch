@@ -9,12 +9,42 @@
        }
  
        double d0 = this.m_142213_(new BlockPos(p_77641_.f_77271_, p_77641_.f_77272_, p_77641_.f_77273_));
+@@ -471,6 +_,11 @@
+                if (l != 0 || j1 != 0) {
+                   p_77609_.m_122178_(i + l, j + i1, k + j1);
+                   BlockState blockstate = p_77608_.m_8055_(p_77609_);
++                  BlockPathTypes blockPathType = blockstate.getAdjacentBlockPathType(p_77608_, p_77609_, null, p_77610_);
++                  if (blockPathType != null) return blockPathType;
++                  FluidState fluidState = blockstate.m_60819_();
++                  BlockPathTypes fluidPathType = fluidState.getAdjacentBlockPathType(p_77608_, p_77609_, null, p_77610_);
++                  if (fluidPathType != null) return fluidPathType;
+                   if (blockstate.m_60713_(Blocks.f_50128_)) {
+                      return BlockPathTypes.DANGER_CACTUS;
+                   }
 @@ -496,6 +_,8 @@
  
     protected static BlockPathTypes m_77643_(BlockGetter p_77644_, BlockPos p_77645_) {
        BlockState blockstate = p_77644_.m_8055_(p_77645_);
-+      BlockPathTypes type = blockstate.getBlockPathType(p_77644_, p_77645_);
++      BlockPathTypes type = blockstate.getBlockPathType(p_77644_, p_77645_, null);
 +      if (type != null) return type;
        Block block = blockstate.m_60734_();
        Material material = blockstate.m_60767_();
        if (blockstate.m_60795_()) {
+@@ -513,6 +_,8 @@
+             return BlockPathTypes.COCOA;
+          } else {
+             FluidState fluidstate = p_77644_.m_6425_(p_77645_);
++            BlockPathTypes nonLoggableFluidPathType = fluidstate.getBlockPathType(p_77644_, p_77645_, null, false);
++            if (nonLoggableFluidPathType != null) return nonLoggableFluidPathType;
+             if (fluidstate.m_205070_(FluidTags.f_13132_)) {
+                return BlockPathTypes.LAVA;
+             } else if (m_77622_(blockstate)) {
+@@ -531,6 +_,8 @@
+                if (!blockstate.m_60647_(p_77644_, p_77645_, PathComputationType.LAND)) {
+                   return BlockPathTypes.BLOCKED;
+                } else {
++                  BlockPathTypes loggableFluidPathType = fluidstate.getBlockPathType(p_77644_, p_77645_, null, true);
++                  if (loggableFluidPathType != null) return loggableFluidPathType;
+                   return fluidstate.m_205070_(FluidTags.f_13131_) ? BlockPathTypes.WATER : BlockPathTypes.OPEN;
+                }
+             } else {

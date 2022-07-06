@@ -26,6 +26,7 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.packs.repository.PackSource;
 import net.minecraft.server.packs.repository.RepositorySource;
 import net.minecraft.world.level.storage.LevelResource;
+import net.minecraftforge.common.world.StructureModifier;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.common.util.LogicalSidedProvider;
 import net.minecraftforge.common.world.BiomeModifier;
@@ -38,6 +39,7 @@ import net.minecraftforge.network.ServerStatusPing;
 import net.minecraftforge.network.NetworkHooks;
 import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.forgespi.locating.IModFile;
+import net.minecraftforge.registries.ForgeRegistries.Keys;
 import net.minecraftforge.resource.PathResourcePack;
 import net.minecraftforge.server.permission.PermissionAPI;
 import org.apache.logging.log4j.LogManager;
@@ -89,7 +91,7 @@ public class ServerLifecycleHooks
         // on the dedi server we need to force the stuff to setup properly
         LogicalSidedProvider.setServer(()->server);
         ConfigTracker.INSTANCE.loadConfigs(ModConfig.Type.SERVER, getServerConfigPath(server));
-        runBiomeModifiers(server);
+        runModifiers(server);
         return !MinecraftForge.EVENT_BUS.post(new ServerAboutToStartEvent(server));
     }
 
@@ -211,20 +213,29 @@ public class ServerLifecycleHooks
         }
     }
     
-    private static void runBiomeModifiers(final MinecraftServer server)
+    private static void runModifiers(final MinecraftServer server)
     {
         final RegistryAccess registries = server.registryAccess();
-        
+
         // The order of holders() is the order modifiers were loaded in.
-        final List<BiomeModifier> modifiers = registries.registryOrThrow(ForgeRegistries.Keys.BIOME_MODIFIERS)
+        final List<BiomeModifier> biomeModifiers = registries.registryOrThrow(ForgeRegistries.Keys.BIOME_MODIFIERS)
             .holders()
             .map(Holder::value)
             .toList();
+        final List<StructureModifier> structureModifiers = registries.registryOrThrow(Keys.STRUCTURE_MODIFIERS)
+              .holders()
+              .map(Holder::value)
+              .toList();
         
         // Apply sorted biome modifiers to each biome.
         registries.registryOrThrow(Registry.BIOME_REGISTRY).holders().forEach(biomeHolder ->
         {
-            biomeHolder.value().modifiableBiomeInfo().applyBiomeModifiers(biomeHolder, modifiers);
+            biomeHolder.value().modifiableBiomeInfo().applyBiomeModifiers(biomeHolder, biomeModifiers);
+        });
+        // Apply sorted structure modifiers to each structure.
+        registries.registryOrThrow(Registry.STRUCTURE_REGISTRY).holders().forEach(structureHolder ->
+        {
+            structureHolder.value().modifiableStructureInfo().applyStructureModifiers(structureHolder, structureModifiers);
         });
     }
 }

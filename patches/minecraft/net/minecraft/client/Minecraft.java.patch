@@ -26,14 +26,6 @@
        this.f_91033_ = p_91084_.f_101908_.f_101926_;
        this.f_91034_ = !p_91084_.f_101908_.f_101929_;
        this.f_91035_ = !p_91084_.f_101908_.f_101930_;
-@@ -426,6 +_,7 @@
-       }
- 
-       Util.f_137440_ = RenderSystem.m_69576_();
-+      if (net.minecraftforge.common.ForgeConfig.CLIENT.forceSystemNanoTime.get()) Util.f_137440_ = System::nanoTime;
-       this.f_90989_ = new VirtualScreen(this);
-       this.f_90990_ = this.f_90989_.m_110872_(displaydata, this.f_91066_.f_92123_, this.m_91270_());
-       this.m_7440_(true);
 @@ -445,7 +_,6 @@
  
        this.f_90990_.m_85380_(this.f_91066_.m_232035_().m_231551_());

@@ -100,6 +100,11 @@ public class ToolActions
      */
     public static final ToolAction SHIELD_BLOCK = ToolAction.get("shield_block");
 
+    /**
+     * This action corresponds to right-clicking the fishing rod.
+     */
+    public static final ToolAction FISHING_ROD_CAST = ToolAction.get("fishing_rod_cast");
+
     // Default actions supported by each tool type
     public static final Set<ToolAction> DEFAULT_AXE_ACTIONS = of(AXE_DIG, AXE_STRIP, AXE_SCRAPE, AXE_WAX_OFF);
     public static final Set<ToolAction> DEFAULT_HOE_ACTIONS = of(HOE_DIG, HOE_TILL);
@@ -108,6 +113,7 @@ public class ToolActions
     public static final Set<ToolAction> DEFAULT_SWORD_ACTIONS = of(SWORD_DIG, SWORD_SWEEP);
     public static final Set<ToolAction> DEFAULT_SHEARS_ACTIONS = of(SHEARS_DIG, SHEARS_HARVEST, SHEARS_CARVE, SHEARS_DISARM);
     public static final Set<ToolAction> DEFAULT_SHIELD_ACTIONS = of(SHIELD_BLOCK);
+    public static final Set<ToolAction> DEFAULT_FISHING_ROD_ACTIONS = of(FISHING_ROD_CAST);
 
     private static Set<ToolAction> of(ToolAction... actions) {
         return Stream.of(actions).collect(Collectors.toCollection(Sets::newIdentityHashSet));

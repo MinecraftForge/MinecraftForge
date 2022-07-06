@@ -48,11 +48,14 @@
  
           if (p_205557_ instanceof CommandBlockEntity && this.f_104888_.f_91080_ instanceof CommandBlockEditScreen) {
              ((CommandBlockEditScreen)this.f_104888_.f_91080_).m_98398_();
-@@ -1185,6 +_,7 @@
+@@ -1184,7 +_,9 @@
+ 
     public void m_7443_(ClientboundCommandsPacket p_104990_) {
        PacketUtils.m_131363_(p_104990_, this, this.f_104888_);
-       this.f_104899_ = new CommandDispatcher<>(p_104990_.m_237624_(new CommandBuildContext(this.f_104903_)));
-+      this.f_104899_ = net.minecraftforge.client.ClientCommandHandler.mergeServerCommands(this.f_104899_);
+-      this.f_104899_ = new CommandDispatcher<>(p_104990_.m_237624_(new CommandBuildContext(this.f_104903_)));
++      var context = new CommandBuildContext(this.f_104903_);
++      this.f_104899_ = new CommandDispatcher<>(p_104990_.m_237624_(context));
++      this.f_104899_ = net.minecraftforge.client.ClientCommandHandler.mergeServerCommands(this.f_104899_, context);
     }
  
     public void m_7183_(ClientboundStopSoundPacket p_105116_) {

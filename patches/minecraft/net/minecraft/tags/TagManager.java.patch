@@ -1,12 +1,11 @@
 --- a/net/minecraft/tags/TagManager.java
 +++ b/net/minecraft/tags/TagManager.java
-@@ -30,7 +_,8 @@
+@@ -30,7 +_,7 @@
  
     public static String m_203918_(ResourceKey<? extends Registry<?>> p_203919_) {
        String s = f_203902_.get(p_203919_);
 -      return s != null ? s : "tags/" + p_203919_.m_135782_().m_135815_();
-+      ResourceLocation registryName = p_203919_.m_135782_();
-+      return s != null ? s : "tags/" + (registryName.m_135827_().equals("minecraft") ? "" : registryName.m_135827_() + "/") + registryName.m_135815_();
++      return s != null ? s : "tags/" + net.minecraftforge.common.ForgeHooks.prefixNamespace(p_203919_.m_135782_());
     }
  
     public CompletableFuture<Void> m_5540_(PreparableReloadListener.PreparationBarrier p_13482_, ResourceManager p_13483_, ProfilerFiller p_13484_, ProfilerFiller p_13485_, Executor p_13486_, Executor p_13487_) {

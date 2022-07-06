@@ -28,12 +28,13 @@ import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraftforge.client.ForgeHooksClient;
+import net.minecraftforge.client.IFluidTypeRenderProperties;
+import net.minecraftforge.client.RenderProperties;
 import net.minecraftforge.client.model.data.IModelData;
 import net.minecraftforge.client.model.geometry.IModelGeometry;
 import net.minecraftforge.client.model.pipeline.BakedQuadBuilder;
 import net.minecraftforge.client.model.pipeline.IVertexConsumer;
 import net.minecraftforge.client.model.pipeline.TRSRTransformer;
-import net.minecraftforge.fluids.FluidAttributes;
 
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -72,16 +73,16 @@ public final class FluidModel implements IModelGeometry<FluidModel>
     @Override
     public BakedModel bake(IModelConfiguration owner, ModelBakery bakery, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelTransform, ItemOverrides overrides, ResourceLocation modelLocation)
     {
-        FluidAttributes attrs = fluid.getAttributes();
+        IFluidTypeRenderProperties props = RenderProperties.get(fluid);
         return new CachingBakedFluid(
                 modelTransform.getRotation(),
                 PerspectiveMapWrapper.getTransforms(modelTransform),
                 modelLocation,
-                attrs.getColor(),
-                spriteGetter.apply(ForgeHooksClient.getBlockMaterial(attrs.getStillTexture())),
-                spriteGetter.apply(ForgeHooksClient.getBlockMaterial(attrs.getFlowingTexture())),
-                Optional.ofNullable(attrs.getOverlayTexture()).map(ForgeHooksClient::getBlockMaterial).map(spriteGetter),
-                attrs.isLighterThanAir(),
+                props.getColorTint(),
+                spriteGetter.apply(ForgeHooksClient.getBlockMaterial(props.getStillTexture())),
+                spriteGetter.apply(ForgeHooksClient.getBlockMaterial(props.getFlowingTexture())),
+                Optional.ofNullable(props.getOverlayTexture()).map(ForgeHooksClient::getBlockMaterial).map(spriteGetter),
+                fluid.getFluidType().isLighterThanAir(),
                 null
         );
     }
