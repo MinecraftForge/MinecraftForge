@@ -20,6 +20,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BiFunction;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -34,11 +35,11 @@ public class ResourceCacheManager {
      * Indicates if the underlying namespaced managers need to support reloading.
      * Disabled for the (in-jar / downloaded) default vanilla pack.
      */
-    private final boolean supportsReloading;
+    private final Supplier<Boolean> supportsReloading;
     /**
      * Indicates if the indexing of the file-tree should happen off-thread or on-thread and block the process accordingly.
      */
-    private final boolean indexOffThread;
+    private final Supplier<Boolean> indexOffThread;
     /**
      * The path builder (different users have different requirements for how they want to handle this)
      */
@@ -55,7 +56,7 @@ public class ResourceCacheManager {
      * @param indexOffThread    True to index the file-tree off-thread.
      * @param pathBuilder       The path builder to use.
      */
-    public ResourceCacheManager(final boolean supportsReloading, final boolean indexOffThread, final BiFunction<PackType, String, Path> pathBuilder) {
+    public ResourceCacheManager(final Supplier<Boolean> supportsReloading, final Supplier<Boolean> indexOffThread, final BiFunction<PackType, String, Path> pathBuilder) {
         this.supportsReloading = supportsReloading;
         this.indexOffThread = indexOffThread;
         this.pathBuilder = pathBuilder;
@@ -69,12 +70,12 @@ public class ResourceCacheManager {
     public void index(final String namespace) {
         for (final PackType packType : PackType.values()) {
             final PackTypeAndNamespace key = new PackTypeAndNamespace(packType, namespace); //Make a key.
-            if (managersByNamespace.containsKey(key) && !supportsReloading) { //If we do not support reloading we just skip this.
+            if (managersByNamespace.containsKey(key) && !supportsReloading.get()) { //If we do not support reloading we just skip this.
                 return;
             }
 
             //Create a new manager, overriding the previous one if it exists.
-            this.managersByNamespace.put(key, new NamespacedResourceCacheManager(packType, namespace, indexOffThread, pathBuilder, this::createWalkingStream));
+            this.managersByNamespace.put(key, new NamespacedResourceCacheManager(packType, namespace, indexOffThread.get(), pathBuilder, this::createWalkingStream));
 
             //Index the inner manager (which will for sure exist, and will know the pack type and namespace already)
             this.managersByNamespace.get(key).index();

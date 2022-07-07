@@ -1,10 +1,28 @@
 --- a/net/minecraft/server/packs/VanillaPackResources.java
 +++ b/net/minecraft/server/packs/VanillaPackResources.java
-@@ -40,6 +_,8 @@
+@@ -40,6 +_,26 @@
     public static Path f_10312_;
     private static final Logger f_10315_ = LogUtils.getLogger();
     public static Class<?> f_10313_;
-+   private final net.minecraftforge.resource.ResourceCacheManager cacheManager = new net.minecraftforge.resource.ResourceCacheManager(false, !net.minecraftforge.common.ForgeConfig.COMMON.indexVanillaPackCachesOnThread.get(), (packType, namespace) -> f_182296_.get(packType).resolve(namespace));
++   private final net.minecraftforge.resource.ResourceCacheManager cacheManager = new net.minecraftforge.resource.ResourceCacheManager(() -> false, VanillaPackResources::shouldIndexOffThread, (packType, namespace) -> f_182296_.get(packType).resolve(namespace));
++
++   private static boolean shouldIndexOffThread() {
++      return !getConfigValue(net.minecraftforge.common.ForgeConfig.COMMON.indexVanillaPackCachesOnThread);
++   }
++
++   private static boolean shouldUseCache() {
++      return getConfigValue(net.minecraftforge.common.ForgeConfig.COMMON.cachePackAccess);
++   }
++
++   private static boolean getConfigValue(java.util.function.Supplier<Boolean> configValue) {
++      //Yes we catch the early loading error on purpose. This feature needs to be configurable but Mojang loads resources really early.
++      //So when they are loaded early we preserve the default behaviour which is to process it on the main thread.
++      try {
++         return configValue.get();
++      } catch (IllegalStateException e) {
++         return false;
++      }
++   }
 +
     private static final Map<PackType, Path> f_182296_ = Util.m_137537_(() -> {
        synchronized(VanillaPackResources.class) {
@@ -15,7 +33,7 @@
  
 +   @Override
 +   public void initForNamespace(final String nameSpace) {
-+      if (!net.minecraftforge.common.ForgeConfig.COMMON.cachePackAccess.get()) return;
++      if (!shouldUseCache()) return;
 +
 +      this.cacheManager.index(nameSpace);
 +   }
@@ -34,7 +52,7 @@
        try {
           Path path = f_182296_.get(p_215346_);
 -         if (path != null) {
-+         if (net.minecraftforge.common.ForgeConfig.COMMON.cachePackAccess.get() && path != null && this.cacheManager.hasCached(p_215346_, p_215347_)) {
++         if (shouldUseCache() && path != null && this.cacheManager.hasCached(p_215346_, p_215347_)) {
 +            set.addAll(this.cacheManager.getResources(p_215346_, p_215347_, path.getFileSystem().getPath(p_215348_), p_215349_));
 +         } else if (path != null) {
              m_215357_(set, p_215347_, path, p_215348_, p_215349_);
