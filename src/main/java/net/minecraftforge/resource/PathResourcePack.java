@@ -35,26 +35,7 @@ public class PathResourcePack extends AbstractPackResources
     private final Path source;
     private final String packName;
 
-    private final ResourceCacheManager cacheManager = new ResourceCacheManager(() -> true, PathResourcePack::shouldIndexOffThread, (packType, namespace) -> resolve(packType.getDirectory(), namespace).toAbsolutePath());
-
-
-    private static boolean shouldIndexOffThread() {
-        return !getConfigValue(ForgeConfig.COMMON.indexModPackCachesOnThread);
-    }
-
-    private static boolean shouldUseCache() {
-        return getConfigValue(net.minecraftforge.common.ForgeConfig.COMMON.cachePackAccess);
-    }
-
-    private static boolean getConfigValue(java.util.function.Supplier<Boolean> configValue) {
-        //Yes we catch the early loading error on purpose. This feature needs to be configurable but Mojang loads resources really early.
-        //So when they are loaded early we preserve the default behaviour which is to process it on the main thread.
-        try {
-            return configValue.get();
-        } catch (IllegalStateException e) {
-            return false;
-        }
-    }
+    private final ResourceCacheManager cacheManager = new ResourceCacheManager(true, ForgeConfig.COMMON.indexModPackCachesOnThread, (packType, namespace) -> resolve(packType.getDirectory(), namespace).toAbsolutePath());
 
     private record ResourceCacheEntry(PackType packType, String namespace, Path path, ResourceLocation resourceLocation) {}
 
@@ -74,9 +55,9 @@ public class PathResourcePack extends AbstractPackResources
 
     @Override
     public void initForNamespace(final String namespace) {
-        if (!shouldUseCache()) return;
-
-        this.cacheManager.index(namespace);
+        if (ResourceCacheManager.shouldUseCache()) {
+            this.cacheManager.index(namespace);
+        }
     }
 
     @Override
@@ -142,7 +123,7 @@ public class PathResourcePack extends AbstractPackResources
             Path root = resolve(type.getDirectory(), resourceNamespace).toAbsolutePath();
             Path inputPath = root.getFileSystem().getPath(pathIn);
 
-            if (shouldUseCache() && this.cacheManager.hasCached(type, resourceNamespace)) {
+            if (ResourceCacheManager.shouldUseCache() && this.cacheManager.hasCached(type, resourceNamespace)) {
                 return this.cacheManager.getResources(type, resourceNamespace, inputPath, filter);
             }
 
@@ -164,7 +145,7 @@ public class PathResourcePack extends AbstractPackResources
     @Override
     public Set<String> getNamespaces(PackType type)
     {
-        if (shouldUseCache()) {
+        if (ResourceCacheManager.shouldUseCache()) {
             return this.cacheManager.getNamespaces(type);
         }
 
