@@ -1,0 +1,11 @@
+--- a/net/minecraft/client/renderer/ViewArea.java
++++ b/net/minecraft/client/renderer/ViewArea.java
+@@ -9,6 +_,8 @@
+ import net.minecraftforge.api.distmarker.Dist;
+ import net.minecraftforge.api.distmarker.OnlyIn;
+ 
++import net.minecraft.client.renderer.chunk.ChunkRenderDispatcher.RenderChunk;
++
+ @OnlyIn(Dist.CLIENT)
+ public class ViewArea {
+    protected final LevelRenderer f_110838_;

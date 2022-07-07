@@ -13,3 +13,12 @@
     public String m_179910_() {
        return this.toString().replace('/', '_').replace(':', '_');
     }
+@@ -162,7 +_,7 @@
+       return p_135817_ >= '0' && p_135817_ <= '9' || p_135817_ >= 'a' && p_135817_ <= 'z' || p_135817_ == '_' || p_135817_ == ':' || p_135817_ == '/' || p_135817_ == '.' || p_135817_ == '-';
+    }
+ 
+-   private static boolean m_135841_(String p_135842_) {
++   public static boolean m_135841_(String p_135842_) {
+       for(int i = 0; i < p_135842_.length(); ++i) {
+          if (!m_135828_(p_135842_.charAt(i))) {
+             return false;

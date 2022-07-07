@@ -9,6 +9,7 @@ import com.google.common.base.Joiner;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.AbstractPackResources;
 import net.minecraft.server.packs.PackType;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -17,10 +18,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Locale;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -33,8 +31,14 @@ import java.util.stream.Collectors;
  */
 public class PathResourcePack extends AbstractPackResources
 {
+    private static final boolean ENABLE_CACHE = true;
+
     private final Path source;
     private final String packName;
+
+    private final ResourceCacheManager cacheManager = new ResourceCacheManager(true, false, (packType, namespace) -> resolve(packType.getDirectory(), namespace).toAbsolutePath());
+
+    private record ResourceCacheEntry(PackType packType, String namespace, Path path, ResourceLocation resourceLocation) {}
 
     /**
      * Constructs a java.nio.Path-based resource pack.
@@ -50,13 +54,25 @@ public class PathResourcePack extends AbstractPackResources
         this.packName = packName;
     }
 
+    @Override
+    public void initForNamespace(final String namespace) {
+        if (!ENABLE_CACHE) return;
+
+        this.cacheManager.index(namespace);
+    }
+
+    @Override
+    public void init(final PackType packType) {
+        getNamespacesFromDisk(packType).forEach(this::initForNamespace);
+    }
+
     /**
      * Returns the source path containing the resource pack.
      * This is used for error display.
      *
      * @return the root path of the resources.
-     */
-    public Path getSource() {
+                */
+        public Path getSource() {
         return this.source;
     }
 
@@ -108,6 +124,10 @@ public class PathResourcePack extends AbstractPackResources
             Path root = resolve(type.getDirectory(), resourceNamespace).toAbsolutePath();
             Path inputPath = root.getFileSystem().getPath(pathIn);
 
+            if (ENABLE_CACHE && this.cacheManager.hasCached(type, resourceNamespace)) {
+                return this.cacheManager.getResources(type, resourceNamespace, inputPath, filter);
+            }
+
             return Files.walk(root)
                     .map(root::relativize)
                     .filter(path -> !path.toString().endsWith(".mcmeta") && path.startsWith(inputPath))
@@ -126,12 +146,21 @@ public class PathResourcePack extends AbstractPackResources
     @Override
     public Set<String> getNamespaces(PackType type)
     {
+        if (ENABLE_CACHE) {
+            return this.cacheManager.getNamespaces(type);
+        }
+
+        return getNamespacesFromDisk(type);
+    }
+
+    @NotNull
+    private Set<String> getNamespacesFromDisk(final PackType type) {
         try {
             Path root = resolve(type.getDirectory());
-            return Files.walk(root,1)
+            return Files.walk(root, 1)
                     .map(path -> root.relativize(path))
                     .filter(path -> path.getNameCount() > 0) // skip the root entry
-                    .map(p->p.toString().replaceAll("/$","")) // remove the trailing slash, if present
+                    .map(p -> p.toString().replaceAll("/$", "")) // remove the trailing slash, if present
                     .filter(s -> !s.isEmpty()) //filter empty strings, otherwise empty strings default to minecraft in ResourceLocations
                     .collect(Collectors.toSet());
         }
