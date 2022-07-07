@@ -55,11 +55,8 @@ public class ShulkerItemStackInvWrapper implements IItemHandlerModifiable, ICapa
     @NotNull
     public ItemStack getStackInSlot(int slot)
     {
-        if (slot < getSlots())
-        {
-            return getItemList().get(slot);
-        }
-        return ItemStack.EMPTY;
+        validateSlotIndex(slot);
+        return getItemList().get(slot);
     }
 
     @Override
