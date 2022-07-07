@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) Forge Development LLC and contributors
+ * SPDX-License-Identifier: LGPL-2.1-only
+ */
+
 package net.minecraftforge.resource;
 
 import com.google.common.base.Joiner;
@@ -271,9 +276,9 @@ public class ResourceCacheManager {
             try (final Stream<Path> paths = pathFinder.createWalkingStream(rootPath)) {
                 paths
                     .parallel() //Run the stream in parallel
-                    .map(rootPath::relativize) //Relative to the given root.
-                    .filter(path -> ResourceLocation.isValidPath(Joiner.on('/').join(path))) //Only process valid paths
-                    .map(path -> new ResourceCacheEntry(packType, namespace, path, new ResourceLocation(namespace, Joiner.on('/').join(path)))) //Create a cache entry.
+                    .map(path -> new PathWithLocationPath(rootPath.relativize(path), Joiner.on('/').join(path))) //Relative to the given root.
+                    .filter(path -> ResourceLocation.isValidPath(path.locationPath())) //Only process valid paths
+                    .map(path -> new ResourceCacheEntry(packType, namespace, path.path(), new ResourceLocation(namespace, path.locationPath()))) //Create a cache entry.
                     .forEach(this::injectIntoCache); //Inject the entry into the cache.
             } catch (NoSuchFileException noSuchFileException) {
                 LOGGER.debug("Failed to cache resources, the directory does not exist!", noSuchFileException);
@@ -352,6 +357,11 @@ public class ResourceCacheManager {
         public boolean cacheLoaded() {
             return cacheLoaded.get();
         }
+
+        /**
+         * Stream element resource that combines a normalized path and a joined path using the "/" as separator.
+         */
+        private record PathWithLocationPath(Path path, String locationPath) { }
     }
 
     /**
