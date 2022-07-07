@@ -9,6 +9,7 @@ import com.google.common.base.Joiner;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.AbstractPackResources;
 import net.minecraft.server.packs.PackType;
+import net.minecraftforge.common.ForgeConfig;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -31,8 +32,6 @@ import java.util.stream.Collectors;
  */
 public class PathResourcePack extends AbstractPackResources
 {
-    private static final boolean ENABLE_CACHE = true;
-
     private final Path source;
     private final String packName;
 
@@ -56,7 +55,7 @@ public class PathResourcePack extends AbstractPackResources
 
     @Override
     public void initForNamespace(final String namespace) {
-        if (!ENABLE_CACHE) return;
+        if (!ForgeConfig.COMMON.cachePackAccess.get()) return;
 
         this.cacheManager.index(namespace);
     }
@@ -124,7 +123,7 @@ public class PathResourcePack extends AbstractPackResources
             Path root = resolve(type.getDirectory(), resourceNamespace).toAbsolutePath();
             Path inputPath = root.getFileSystem().getPath(pathIn);
 
-            if (ENABLE_CACHE && this.cacheManager.hasCached(type, resourceNamespace)) {
+            if (ForgeConfig.COMMON.cachePackAccess.get() && this.cacheManager.hasCached(type, resourceNamespace)) {
                 return this.cacheManager.getResources(type, resourceNamespace, inputPath, filter);
             }
 
@@ -146,7 +145,7 @@ public class PathResourcePack extends AbstractPackResources
     @Override
     public Set<String> getNamespaces(PackType type)
     {
-        if (ENABLE_CACHE) {
+        if (ForgeConfig.COMMON.cachePackAccess.get()) {
             return this.cacheManager.getNamespaces(type);
         }
 

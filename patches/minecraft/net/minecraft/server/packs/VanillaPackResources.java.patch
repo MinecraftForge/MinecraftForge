@@ -1,33 +1,10 @@
 --- a/net/minecraft/server/packs/VanillaPackResources.java
 +++ b/net/minecraft/server/packs/VanillaPackResources.java
-@@ -18,12 +_,7 @@
- import java.nio.file.NoSuchFileException;
- import java.nio.file.Path;
- import java.nio.file.Paths;
--import java.util.Collection;
--import java.util.Collections;
--import java.util.Enumeration;
--import java.util.Map;
--import java.util.Optional;
--import java.util.Set;
-+import java.util.*;
- import java.util.function.Predicate;
- import java.util.stream.Stream;
- import javax.annotation.Nullable;
-@@ -33,13 +_,17 @@
- import net.minecraft.server.packs.metadata.pack.PackMetadataSection;
- import net.minecraft.server.packs.resources.Resource;
- import net.minecraft.server.packs.resources.ResourceProvider;
-+import net.minecraftforge.resource.ResourceCacheManager;
- import org.slf4j.Logger;
- 
- public class VanillaPackResources implements PackResources {
-+   private static final boolean ENABLE_CACHE = true;
-    @Nullable
+@@ -40,6 +_,8 @@
     public static Path f_10312_;
     private static final Logger f_10315_ = LogUtils.getLogger();
     public static Class<?> f_10313_;
-+   private final ResourceCacheManager cacheManager = new ResourceCacheManager(false, true, (packType, namespace) -> f_182296_.get(packType).resolve(namespace));
++   private final net.minecraftforge.resource.ResourceCacheManager cacheManager = new net.minecraftforge.resource.ResourceCacheManager(false, true, (packType, namespace) -> f_182296_.get(packType).resolve(namespace));
 +
     private static final Map<PackType, Path> f_182296_ = Util.m_137537_(() -> {
        synchronized(VanillaPackResources.class) {
@@ -38,7 +15,7 @@
  
 +   @Override
 +   public void initForNamespace(final String nameSpace) {
-+      if (!ENABLE_CACHE) return;
++      if (!net.minecraftforge.common.ForgeConfig.COMMON.cachePackAccess.get()) return;
 +
 +      this.cacheManager.index(nameSpace);
 +   }
@@ -57,7 +34,7 @@
        try {
           Path path = f_182296_.get(p_215346_);
 -         if (path != null) {
-+         if (ENABLE_CACHE && path != null && this.cacheManager.hasCached(p_215346_, p_215347_)) {
++         if (net.minecraftforge.common.ForgeConfig.COMMON.cachePackAccess.get() && path != null && this.cacheManager.hasCached(p_215346_, p_215347_)) {
 +            set.addAll(this.cacheManager.getResources(p_215346_, p_215347_, path.getFileSystem().getPath(p_215348_), p_215349_));
 +         } else if (path != null) {
              m_215357_(set, p_215347_, path, p_215348_, p_215349_);

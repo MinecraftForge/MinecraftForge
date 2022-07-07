@@ -83,9 +83,17 @@ public class ForgeConfig {
      * General configuration that doesn't need to be synchronized but needs to be available before server startup
      */
     public static class Common {
+        public final BooleanValue cachePackAccess;
+
         Common(ForgeConfigSpec.Builder builder) {
             builder.comment("General configuration settings")
                     .push("general");
+
+            cachePackAccess = builder
+                    .comment("Set this to true to cache resource listings in resource and data packs")
+                    .translation("forge.configgui.cachePackAccess")
+                    .worldRestart()
+                    .define("cachePackAccess", true);
 
             builder.pop();
         }
