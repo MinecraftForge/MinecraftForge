@@ -24,7 +24,7 @@ public interface IForgeKeyMapping
     @NotNull InputConstants.Key getKey();
 
     /**
-     * Checks that the key conflict context and modifier are active, and that the keyCode matches this binding.
+     * {@return true if the key conflict context and modifier are active and the keyCode matches this binding, false otherwise}
      */
     default boolean isActiveAndMatches(InputConstants.Key keyCode)
     {

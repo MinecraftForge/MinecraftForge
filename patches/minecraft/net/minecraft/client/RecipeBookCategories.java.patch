@@ -14,17 +14,16 @@
     public static final List<RecipeBookCategories> f_92258_ = ImmutableList.of(FURNACE_SEARCH, FURNACE_FOOD, FURNACE_BLOCKS, FURNACE_MISC);
     public static final List<RecipeBookCategories> f_92259_ = ImmutableList.of(CRAFTING_SEARCH, CRAFTING_EQUIPMENT, CRAFTING_BUILDING_BLOCKS, CRAFTING_MISC, CRAFTING_REDSTONE);
 -   public static final Map<RecipeBookCategories, List<RecipeBookCategories>> f_92260_ = ImmutableMap.of(CRAFTING_SEARCH, ImmutableList.of(CRAFTING_EQUIPMENT, CRAFTING_BUILDING_BLOCKS, CRAFTING_MISC, CRAFTING_REDSTONE), FURNACE_SEARCH, ImmutableList.of(FURNACE_FOOD, FURNACE_BLOCKS, FURNACE_MISC), BLAST_FURNACE_SEARCH, ImmutableList.of(BLAST_FURNACE_BLOCKS, BLAST_FURNACE_MISC), SMOKER_SEARCH, ImmutableList.of(SMOKER_FOOD));
-+   public static final Map<RecipeBookCategories, List<RecipeBookCategories>> f_92260_ = net.minecraftforge.client.RecipeBookRegistry.AGGREGATE_CATEGORIES_VIEW;
++   public static final Map<RecipeBookCategories, List<RecipeBookCategories>> f_92260_ = net.minecraftforge.client.RecipeBookManager.getAggregateCategories();
     private final List<ItemStack> f_92261_;
  
     private RecipeBookCategories(ItemStack... p_92267_) {
-@@ -54,11 +_,17 @@
+@@ -54,11 +_,15 @@
           case SMOKER:
              return f_92256_;
           default:
-+         if (net.minecraftforge.client.RecipeBookRegistry.TYPE_TO_CATEGORIES_VIEW.containsKey(p_92270_))
-+            return net.minecraftforge.client.RecipeBookRegistry.TYPE_TO_CATEGORIES_VIEW.get(p_92270_);
-             return ImmutableList.of();
+-            return ImmutableList.of();
++            return net.minecraftforge.client.RecipeBookManager.getCustomCategoriesOrEmpty(p_92270_);
        }
     }
  

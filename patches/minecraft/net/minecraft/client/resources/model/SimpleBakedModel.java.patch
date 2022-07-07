@@ -1,13 +1,75 @@
 --- a/net/minecraft/client/resources/model/SimpleBakedModel.java
 +++ b/net/minecraft/client/resources/model/SimpleBakedModel.java
-@@ -81,6 +_,10 @@
-       private final boolean f_119514_;
-       private final ItemTransforms f_119515_;
+@@ -26,8 +_,17 @@
+    protected final TextureAtlasSprite f_119485_;
+    protected final ItemTransforms f_119486_;
+    protected final ItemOverrides f_119487_;
++   protected final net.minecraftforge.client.ChunkRenderTypeSet blockRenderTypes;
++   protected final List<net.minecraft.client.renderer.RenderType> itemRenderTypes;
++   protected final List<net.minecraft.client.renderer.RenderType> fabulousItemRenderTypes;
  
-+      public Builder(net.minecraftforge.client.model.IModelConfiguration model, ItemOverrides overrides) {
-+         this(model.useSmoothLighting(), model.isSideLit(), model.isShadedInGui(), model.getCameraTransforms(), overrides);
++   /** @deprecated Forge: Use {@linkplain #SimpleBakedModel(List, Map, boolean, boolean, boolean, TextureAtlasSprite, ItemTransforms, ItemOverrides, net.minecraftforge.client.RenderTypeGroup) variant with RenderTypeGroup} **/
++   @Deprecated
+    public SimpleBakedModel(List<BakedQuad> p_119489_, Map<Direction, List<BakedQuad>> p_119490_, boolean p_119491_, boolean p_119492_, boolean p_119493_, TextureAtlasSprite p_119494_, ItemTransforms p_119495_, ItemOverrides p_119496_) {
++      this(p_119489_, p_119490_, p_119491_, p_119492_, p_119493_, p_119494_, p_119495_, p_119496_, net.minecraftforge.client.RenderTypeGroup.EMPTY);
++   }
++
++   public SimpleBakedModel(List<BakedQuad> p_119489_, Map<Direction, List<BakedQuad>> p_119490_, boolean p_119491_, boolean p_119492_, boolean p_119493_, TextureAtlasSprite p_119494_, ItemTransforms p_119495_, ItemOverrides p_119496_, net.minecraftforge.client.RenderTypeGroup renderTypes) {
+       this.f_119480_ = p_119489_;
+       this.f_119481_ = p_119490_;
+       this.f_119482_ = p_119491_;
+@@ -36,6 +_,9 @@
+       this.f_119485_ = p_119494_;
+       this.f_119486_ = p_119495_;
+       this.f_119487_ = p_119496_;
++      this.blockRenderTypes = !renderTypes.isEmpty() ? net.minecraftforge.client.ChunkRenderTypeSet.of(renderTypes.block()) : null;
++      this.itemRenderTypes = !renderTypes.isEmpty() ? List.of(renderTypes.entity()) : null;
++      this.fabulousItemRenderTypes = !renderTypes.isEmpty() ? List.of(renderTypes.entityFabulous()) : null;
+    }
+ 
+    public List<BakedQuad> m_213637_(@Nullable BlockState p_235054_, @Nullable Direction p_235055_, RandomSource p_235056_) {
+@@ -70,6 +_,25 @@
+       return this.f_119487_;
+    }
+ 
++   @Override
++   public net.minecraftforge.client.ChunkRenderTypeSet getRenderTypes(@org.jetbrains.annotations.NotNull BlockState state, @org.jetbrains.annotations.NotNull RandomSource rand, @org.jetbrains.annotations.NotNull net.minecraftforge.client.model.data.ModelData data) {
++      if (blockRenderTypes != null)
++         return blockRenderTypes;
++      return BakedModel.super.getRenderTypes(state, rand, data);
++   }
++
++   @Override
++   public List<net.minecraft.client.renderer.RenderType> getRenderTypes(net.minecraft.world.item.ItemStack itemStack, boolean fabulous) {
++      if (fabulous) {
++         if (itemRenderTypes != null)
++             return itemRenderTypes;
++      } else {
++         if (fabulousItemRenderTypes != null)
++             return fabulousItemRenderTypes;
++      }
++      return BakedModel.super.getRenderTypes(itemStack, fabulous);
++   }
++
+    @OnlyIn(Dist.CLIENT)
+    public static class Builder {
+       private final List<BakedQuad> f_119508_ = Lists.newArrayList();
+@@ -116,11 +_,17 @@
+          return this;
+       }
+ 
++      /** @deprecated Forge: Use {@linkplain #build(net.minecraftforge.client.RenderTypeGroup) variant with RenderTypeGroup} **/
++      @Deprecated
+       public BakedModel m_119533_() {
++         return build(net.minecraftforge.client.RenderTypeGroup.EMPTY);
 +      }
 +
-       public Builder(BlockModel p_119517_, ItemOverrides p_119518_, boolean p_119519_) {
-          this(p_119517_.m_111476_(), p_119517_.m_111479_().m_111526_(), p_119519_, p_119517_.m_111491_(), p_119518_);
++      public BakedModel build(net.minecraftforge.client.RenderTypeGroup renderTypes) {
+          if (this.f_119512_ == null) {
+             throw new RuntimeException("Missing particle!");
+          } else {
+-            return new SimpleBakedModel(this.f_119508_, this.f_119509_, this.f_119511_, this.f_119513_, this.f_119514_, this.f_119512_, this.f_119515_, this.f_119510_);
++            return new SimpleBakedModel(this.f_119508_, this.f_119509_, this.f_119511_, this.f_119513_, this.f_119514_, this.f_119512_, this.f_119515_, this.f_119510_, renderTypes);
+          }
        }
+    }

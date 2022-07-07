@@ -1,10 +1,11 @@
 --- a/net/minecraft/client/multiplayer/ClientLevel.java
 +++ b/net/minecraft/client/multiplayer/ClientLevel.java
-@@ -121,6 +_,7 @@
+@@ -121,6 +_,8 @@
     private int f_194123_;
     private final BlockStatePredictionHandler f_233599_ = new BlockStatePredictionHandler();
     private static final Set<Item> f_194124_ = Set.of(Items.f_42127_, Items.f_151033_);
 +   private final it.unimi.dsi.fastutil.ints.Int2ObjectMap<net.minecraftforge.entity.PartEntity<?>> partEntities = new it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap<>();
++   private final net.minecraftforge.client.model.data.ModelDataManager modelDataManager = new net.minecraftforge.client.model.data.ModelDataManager(this);
  
     public void m_233651_(int p_233652_) {
        this.f_233599_.m_233856_(p_233652_, this);
@@ -70,7 +71,7 @@
           this.f_104840_ = p_104852_;
        }
  
-@@ -939,14 +_,33 @@
+@@ -939,14 +_,46 @@
              ClientLevel.this.f_104566_.add((AbstractClientPlayer)p_171712_);
           }
  
@@ -102,5 +103,18 @@
 +   @Override
 +   public java.util.Collection<net.minecraftforge.entity.PartEntity<?>> getPartEntities() {
 +      return this.partEntities.values();
++   }
++
++   @Override
++   public net.minecraftforge.client.model.data.ModelDataManager getModelDataManager() {
++      return modelDataManager;
++   }
++
++   @Override
++   public float getShade(float normalX, float normalY, float normalZ, boolean shade) {
++      boolean constantAmbientLight = this.m_104583_().m_108885_();
++      if (!shade)
++         return constantAmbientLight ? 0.9F : 1.0F;
++      return net.minecraftforge.client.model.lighting.QuadLighter.calculateShade(normalX, normalY, normalZ, constantAmbientLight);
     }
  }

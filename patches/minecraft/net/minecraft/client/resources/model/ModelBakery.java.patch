@@ -1,29 +1,24 @@
 --- a/net/minecraft/client/resources/model/ModelBakery.java
 +++ b/net/minecraft/client/resources/model/ModelBakery.java
-@@ -149,8 +_,17 @@
-    });
- 
+@@ -151,6 +_,8 @@
     public ModelBakery(ResourceManager p_119247_, BlockColors p_119248_, ProfilerFiller p_119249_, int p_119250_) {
-+      this(p_119247_, p_119248_, true);
-+      processLoading(p_119249_, p_119250_);
-+   }
-+
-+   protected ModelBakery(ResourceManager p_119247_, BlockColors p_119248_, boolean vanillaBakery) {
        this.f_119243_ = p_119247_;
        this.f_119209_ = p_119248_;
-+   }
 +
-+   protected void processLoading(ProfilerFiller p_119249_, int p_119250_) {
-+      net.minecraftforge.client.model.ModelLoaderRegistry.onModelLoadingStart();
++      net.minecraftforge.client.model.geometry.GeometryLoaderManager.init();
        p_119249_.m_6180_("missing_model");
  
        try {
-@@ -184,12 +_,16 @@
+@@ -184,12 +_,20 @@
        p_119249_.m_6182_("special");
        this.m_119306_(new ModelResourceLocation("minecraft:trident_in_hand#inventory"));
        this.m_119306_(new ModelResourceLocation("minecraft:spyglass_in_hand#inventory"));
-+      for (ResourceLocation rl : getSpecialModels()) {
-+         addModelToCache(rl);
++      Set<ResourceLocation> additionalModels = Sets.newHashSet();
++      net.minecraftforge.client.ForgeHooksClient.onRegisterAdditionalModels(additionalModels);
++      for (ResourceLocation rl : additionalModels) {
++         UnbakedModel unbakedmodel = this.m_119341_(rl); // loadTopLevel(...), but w/o ModelResourceLocation limitation
++         this.f_119212_.put(rl, unbakedmodel);
++         this.f_119214_.put(rl, unbakedmodel);
 +      }
        p_119249_.m_6182_("textures");
        Set<Pair<String, String>> set = Sets.newLinkedHashSet();
@@ -43,20 +38,6 @@
              f_119235_.warn("Unable to bake model: '{}': {}", p_119369_, exception);
           }
  
-@@ -458,6 +_,13 @@
-       this.f_119210_.addAll(p_119354_.m_7970_());
-    }
- 
-+   // Same as loadTopLevel but without restricting to MRL's
-+   private void addModelToCache(ResourceLocation p_217843_1_) {
-+      UnbakedModel unbakedmodel = this.m_119341_(p_217843_1_);
-+      this.f_119212_.put(p_217843_1_, unbakedmodel);
-+      this.f_119214_.put(p_217843_1_, unbakedmodel);
-+   }
-+
-    private void m_119306_(ModelResourceLocation p_119307_) {
-       UnbakedModel unbakedmodel = this.m_119341_(p_119307_);
-       this.f_119212_.put(p_119307_, unbakedmodel);
 @@ -472,7 +_,13 @@
     }
  
@@ -85,22 +66,13 @@
           this.f_119213_.put(triple, bakedmodel);
           return bakedmodel;
        }
-@@ -537,11 +_,19 @@
-       return this.f_119218_;
-    }
- 
-+   public Set<ResourceLocation> getSpecialModels() {
-+      return java.util.Collections.emptySet();
-+   }
-+
-    @OnlyIn(Dist.CLIENT)
-    static class BlockStateDefinitionException extends RuntimeException {
+@@ -542,6 +_,10 @@
        public BlockStateDefinitionException(String p_119373_) {
           super(p_119373_);
        }
 +   }
 +
-+   public AtlasSet getSpriteMap() {
++   public AtlasSet getAtlasSet() {
 +      return this.f_119244_;
     }
  

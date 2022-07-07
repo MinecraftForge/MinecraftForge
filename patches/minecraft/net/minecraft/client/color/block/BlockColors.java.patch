@@ -24,7 +24,7 @@
        if (blockcolor != null) {
           return blockcolor.m_92566_(p_92583_, (BlockAndTintGetter)null, (BlockPos)null, 0);
        } else {
-@@ -87,13 +_,13 @@
+@@ -87,13 +_,15 @@
     }
  
     public int m_92577_(BlockState p_92578_, @Nullable BlockAndTintGetter p_92579_, @Nullable BlockPos p_92580_, int p_92581_) {
@@ -33,6 +33,8 @@
        return blockcolor == null ? -1 : blockcolor.m_92566_(p_92578_, p_92579_, p_92580_, p_92581_);
     }
  
++   /** @deprecated Register via {@link net.minecraftforge.client.event.RegisterColorHandlersEvent.Block} */
++   @Deprecated
     public void m_92589_(BlockColor p_92590_, Block... p_92591_) {
        for(Block block : p_92591_) {
 -         this.f_92571_.m_122664_(p_92590_, Registry.f_122824_.m_7447_(block));

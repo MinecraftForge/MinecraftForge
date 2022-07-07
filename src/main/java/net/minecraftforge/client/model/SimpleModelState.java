@@ -5,46 +5,37 @@
 
 package net.minecraftforge.client.model;
 
+import com.mojang.math.Transformation;
 import net.minecraft.client.resources.model.ModelState;
 
-import com.google.common.collect.ImmutableMap;
-import com.mojang.math.Transformation;
-
 /**
- * Simple implementation of IModelState via a map and a default value.
+ * Simple implementation of {@link ModelState}.
  */
 public final class SimpleModelState implements ModelState
 {
-    public static final SimpleModelState IDENTITY = new SimpleModelState(Transformation.identity());
+    private final Transformation transformation;
+    private final boolean uvLocked;
 
-    private final ImmutableMap<?, Transformation> map;
-    private final Transformation base;
-
-    public SimpleModelState(ImmutableMap<?, Transformation> map)
+    public SimpleModelState(Transformation transformation, boolean uvLocked)
     {
-        this(map, Transformation.identity());
+        this.transformation = transformation;
+        this.uvLocked = uvLocked;
     }
 
-    public SimpleModelState(Transformation base)
+    public SimpleModelState(Transformation transformation)
     {
-        this(ImmutableMap.of(), base);
-    }
-
-    public SimpleModelState(ImmutableMap<?, Transformation> map, Transformation base)
-    {
-        this.map = map;
-        this.base = base;
+        this(transformation, false);
     }
 
     @Override
     public Transformation getRotation()
     {
-        return base;
+        return transformation;
     }
 
     @Override
-    public Transformation getPartTransformation(Object part)
+    public boolean isUvLocked()
     {
-        return map.getOrDefault(part, Transformation.identity());
+        return uvLocked;
     }
 }

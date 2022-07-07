@@ -1,11 +1,9 @@
 --- a/net/minecraft/client/renderer/ItemBlockRenderTypes.java
 +++ b/net/minecraft/client/renderer/ItemBlockRenderTypes.java
-@@ -18,7 +_,8 @@
- import net.minecraftforge.api.distmarker.OnlyIn;
+@@ -19,6 +_,7 @@
  
  @OnlyIn(Dist.CLIENT)
--public class ItemBlockRenderTypes {
-+public class ItemBlockRenderTypes extends net.minecraftforge.client.extensions.ForgeItemBlockRenderTypes {
+ public class ItemBlockRenderTypes {
 +   @Deprecated
     private static final Map<Block, RenderType> f_109275_ = Util.m_137469_(Maps.newHashMap(), (p_109296_) -> {
        RenderType rendertype = RenderType.m_110503_();
@@ -40,76 +38,82 @@
     public static RenderType m_109284_(BlockState p_109285_, boolean p_109286_) {
 -      RenderType rendertype = m_109282_(p_109285_);
 -      if (rendertype == RenderType.m_110466_()) {
-+      if (canRenderInLayer(p_109285_, RenderType.m_110466_())) {
++      if (getRenderLayers(p_109285_).contains(RenderType.m_110466_())) {
           if (!Minecraft.m_91085_()) {
              return Sheets.m_110792_();
           } else {
-@@ -350,10 +_,68 @@
-       }
+@@ -351,8 +_,73 @@
     }
  
-+   @Deprecated // FORGE: Use canRenderInLayer
     public static RenderType m_109287_(FluidState p_109288_) {
-       RenderType rendertype = f_109276_.get(p_109288_.m_76152_());
+-      RenderType rendertype = f_109276_.get(p_109288_.m_76152_());
++      RenderType rendertype = FLUID_RENDER_TYPES.get(net.minecraftforge.registries.ForgeRegistries.FLUIDS.getDelegateOrThrow(p_109288_.m_76152_()));
        return rendertype != null ? rendertype : RenderType.m_110451_();
-    }
++   }
 +
 +   // FORGE START
 +
-+   public static boolean canRenderInLayer(BlockState state, RenderType type) {
++   private static final net.minecraftforge.client.ChunkRenderTypeSet CUTOUT_MIPPED = net.minecraftforge.client.ChunkRenderTypeSet.of(RenderType.m_110457_());
++   private static final net.minecraftforge.client.ChunkRenderTypeSet SOLID = net.minecraftforge.client.ChunkRenderTypeSet.of(RenderType.m_110451_());
++   private static final Map<net.minecraft.core.Holder.Reference<Block>, net.minecraftforge.client.ChunkRenderTypeSet> BLOCK_RENDER_TYPES = Util.m_137469_(new it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap<>(f_109275_.size(), 0.5F), map -> {
++      map.defaultReturnValue(SOLID);
++      for(Map.Entry<Block, RenderType> entry : f_109275_.entrySet()) {
++         map.put(net.minecraftforge.registries.ForgeRegistries.BLOCKS.getDelegateOrThrow(entry.getKey()), net.minecraftforge.client.ChunkRenderTypeSet.of(entry.getValue()));
++      }
++   });
++   private static final Map<net.minecraft.core.Holder.Reference<Fluid>, RenderType> FLUID_RENDER_TYPES = Util.m_137469_(new it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap<>(f_109276_.size(), 0.5F), map -> {
++      map.defaultReturnValue(RenderType.m_110451_());
++      for(Map.Entry<Fluid, RenderType> entry : f_109276_.entrySet()) {
++         map.put(net.minecraftforge.registries.ForgeRegistries.FLUIDS.getDelegateOrThrow(entry.getKey()), entry.getValue());
++      }
++   });
++
++   /** @deprecated Use {@link net.minecraft.client.resources.model.BakedModel#getRenderTypes(BlockState, net.minecraft.util.RandomSource, net.minecraftforge.client.model.data.ModelData)}. */
++   @Deprecated(forRemoval = true, since = "1.19")
++   public static net.minecraftforge.client.ChunkRenderTypeSet getRenderLayers(BlockState state) {
 +      Block block = state.m_60734_();
 +      if (block instanceof LeavesBlock) {
-+         return f_109277_ ? type == RenderType.m_110457_() : type == RenderType.m_110451_();
++         return f_109277_ ? CUTOUT_MIPPED : SOLID;
 +      } else {
-+         return getBlockLayerPredicates().get(net.minecraftforge.registries.ForgeRegistries.BLOCKS.getDelegateOrThrow(block)).test(type);
++         return BLOCK_RENDER_TYPES.get(net.minecraftforge.registries.ForgeRegistries.BLOCKS.getDelegateOrThrow(block));
 +      }
 +   }
 +
-+   public static boolean canRenderInLayer(FluidState fluid, RenderType type) {
-+      return getFluidLayerPredicates().get(net.minecraftforge.registries.ForgeRegistries.FLUIDS.getDelegateOrThrow(fluid.m_76152_())).test(type);
-+   }
-+
++   /** @deprecated Set your render type in your model's JSON or override {@link net.minecraft.client.resources.model.BakedModel#getRenderTypes(BlockState, net.minecraft.util.RandomSource, net.minecraftforge.client.model.data.ModelData)} */
++   @Deprecated(forRemoval = true, since = "1.19")
 +   public static void setRenderLayer(Block block, RenderType type) {
-+      java.util.Objects.requireNonNull(type);
-+      setRenderLayer(block, t -> t == type);
++      com.google.common.base.Preconditions.checkArgument(type.getChunkLayerId() >= 0, "The argument must be a valid chunk render type returned by RenderType#chunkBufferLayers().");
++      setRenderLayer(block, net.minecraftforge.client.ChunkRenderTypeSet.of(type));
 +   }
 +
-+   public static void setRenderLayer(Block block, java.util.function.Predicate<RenderType> predicate) {
-+      net.minecraftforge.client.extensions.ForgeItemBlockRenderTypes.setRenderLayer(block, predicate);
++   /** @deprecated Set your render type in your model's JSON or override {@link net.minecraft.client.resources.model.BakedModel#getRenderTypes(BlockState, net.minecraft.util.RandomSource, net.minecraftforge.client.model.data.ModelData)} */
++   @Deprecated(forRemoval = true, since = "1.19")
++   public static synchronized void setRenderLayer(Block block, java.util.function.Predicate<RenderType> predicate) {
++      setRenderLayer(block, createSetFromPredicate(predicate));
++   }
++
++   /** @deprecated Set your render type in your model's JSON or override {@link net.minecraft.client.resources.model.BakedModel#getRenderTypes(BlockState, net.minecraft.util.RandomSource, net.minecraftforge.client.model.data.ModelData)} */
++   @Deprecated(forRemoval = true, since = "1.19")
++   public static synchronized void setRenderLayer(Block block, net.minecraftforge.client.ChunkRenderTypeSet layers) {
++      checkClientLoading();
++      BLOCK_RENDER_TYPES.put(net.minecraftforge.registries.ForgeRegistries.BLOCKS.getDelegateOrThrow(block), layers);
 +   }
 +
 +   public static void setRenderLayer(Fluid fluid, RenderType type) {
-+      java.util.Objects.requireNonNull(type);
-+      setRenderLayer(fluid, t -> t == type);
++      com.google.common.base.Preconditions.checkArgument(type.getChunkLayerId() >= 0, "The argument must be a valid chunk render type returned by RenderType#chunkBufferLayers().");
++      checkClientLoading();
++      FLUID_RENDER_TYPES.put(net.minecraftforge.registries.ForgeRegistries.FLUIDS.getDelegateOrThrow(fluid), type);
 +   }
 +
-+   public static void setRenderLayer(Fluid fluid, java.util.function.Predicate<RenderType> predicate) {
-+      net.minecraftforge.client.extensions.ForgeItemBlockRenderTypes.setRenderLayer(fluid, predicate);
++   private static void checkClientLoading() {
++      com.google.common.base.Preconditions.checkState(net.minecraftforge.client.loading.ClientModLoader.isLoading(),
++              "Render layers can only be set during client loading! " +
++                      "This might ideally be done from `FMLClientSetupEvent`."
++      );
 +   }
 +
-+   /**
-+    * Returns an unmodifiable view of the current block -> render type predicate map.
-+    * The returned view should not be cached, as its backing map will become outdated as soon as
-+    * something registers a new render type predicate
-+    */
-+   public static Map<net.minecraft.core.Holder.Reference<Block>, java.util.function.Predicate<RenderType>> getBlockLayerPredicatesView() {
-+      return java.util.Collections.unmodifiableMap(getBlockLayerPredicates());
-+   }
-+
-+   /**
-+    * Returns an unmodifiable view of the current fluid -> render type predicate map.
-+    * The returned view should not be cached, as its backing map will become outdated as soon as
-+    * something registers a new render type predicate
-+    */
-+   public static Map<net.minecraft.core.Holder.Reference<Fluid>, java.util.function.Predicate<RenderType>> getFluidLayerPredicatesView() {
-+      return java.util.Collections.unmodifiableMap(getFluidLayerPredicates());
-+   }
-+
-+   static {
-+      net.minecraftforge.client.extensions.ForgeItemBlockRenderTypes.initFromVanillaMaps(f_109275_, f_109276_);
-+   }
-+
-+   // FORGE END
++   private static net.minecraftforge.client.ChunkRenderTypeSet createSetFromPredicate(java.util.function.Predicate<RenderType> predicate) {
++      return net.minecraftforge.client.ChunkRenderTypeSet.of(RenderType.m_110506_().stream().filter(predicate).toArray(RenderType[]::new));
+    }
  
     public static void m_109291_(boolean p_109292_) {
-       f_109277_ = p_109292_;

@@ -5,23 +5,31 @@
 
 package net.minecraftforge.client.model;
 
-import java.util.List;
-
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.util.RandomSource;
-import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.resources.model.BakedModel;
-import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.block.model.ItemOverrides;
+import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.core.Direction;
+import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockAndTintGetter;
-import net.minecraftforge.client.model.data.IModelData;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.client.ChunkRenderTypeSet;
+import net.minecraftforge.client.model.data.ModelData;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
+
+/**
+ * Wrapper for {@link BakedModel} which delegates all operations to its parent.
+ * <p>
+ * Useful for creating wrapper baked models which only override certain properties.
+ */
 public abstract class BakedModelWrapper<T extends BakedModel> implements BakedModel
 {
     protected final T originalModel;
@@ -86,34 +94,46 @@ public abstract class BakedModelWrapper<T extends BakedModel> implements BakedMo
     }
 
     @Override
-    public boolean doesHandlePerspectives()
+    public BakedModel applyTransform(ItemTransforms.TransformType cameraTransformType, PoseStack poseStack, boolean applyLeftHandTransform)
     {
-        return originalModel.doesHandlePerspectives();
+        return originalModel.applyTransform(cameraTransformType, poseStack, applyLeftHandTransform);
     }
 
     @Override
-    public BakedModel handlePerspective(ItemTransforms.TransformType cameraTransformType, PoseStack poseStack)
-    {
-        return originalModel.handlePerspective(cameraTransformType, poseStack);
-    }
-
-    @Override
-    public TextureAtlasSprite getParticleIcon(@NotNull IModelData data)
+    public TextureAtlasSprite getParticleIcon(@NotNull ModelData data)
     {
         return originalModel.getParticleIcon(data);
     }
 
     @NotNull
     @Override
-    public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, @NotNull RandomSource rand, @NotNull IModelData extraData)
+    public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, @NotNull RandomSource rand, @NotNull ModelData extraData, @Nullable RenderType renderType)
     {
-        return originalModel.getQuads(state, side, rand, extraData);
+        return originalModel.getQuads(state, side, rand, extraData, renderType);
     }
 
     @NotNull
     @Override
-    public IModelData getModelData(@NotNull BlockAndTintGetter level, @NotNull BlockPos pos, @NotNull BlockState state, @NotNull IModelData modelData)
+    public ModelData getModelData(@NotNull BlockAndTintGetter level, @NotNull BlockPos pos, @NotNull BlockState state, @NotNull ModelData modelData)
     {
         return originalModel.getModelData(level, pos, state, modelData);
+    }
+
+    @Override
+    public ChunkRenderTypeSet getRenderTypes(@NotNull BlockState state, @NotNull RandomSource rand, @NotNull ModelData data)
+    {
+        return originalModel.getRenderTypes(state, rand, data);
+    }
+
+    @Override
+    public List<RenderType> getRenderTypes(ItemStack itemStack, boolean fabulous)
+    {
+        return originalModel.getRenderTypes(itemStack, fabulous);
+    }
+
+    @Override
+    public List<BakedModel> getRenderPasses(ItemStack itemStack, boolean fabulous)
+    {
+        return originalModel.getRenderPasses(itemStack, fabulous);
     }
 }

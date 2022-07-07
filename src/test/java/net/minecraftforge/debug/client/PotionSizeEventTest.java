@@ -18,7 +18,7 @@ import net.minecraftforge.fml.loading.FMLEnvironment;
 import java.util.Objects;
 
 /**
- * Test mod for {@link net.minecraftforge.client.event.ScreenEvent.PotionSizeEvent}. When enabled, this mod forces the
+ * Test mod for {@link ScreenEvent.RenderInventoryMobEffects}. When enabled, this mod forces the
  * potion indicators in the {@linkplain net.minecraft.client.gui.screens.inventory.EffectRenderingInventoryScreen
  * inventory screen} to either render in compact mode when there are less than or equal to three active effects on the player,
  * or render in classic mode if there are more than three active effects.
@@ -40,7 +40,7 @@ public class PotionSizeEventTest
     static final class ClientEventHandler
     {
         @SubscribeEvent
-        public static void onPotionSize(ScreenEvent.PotionSizeEvent event)
+        public static void onPotionSize(ScreenEvent.RenderInventoryMobEffects event)
         {
             if (!ENABLED) return;
 
@@ -48,10 +48,10 @@ public class PotionSizeEventTest
 
             if (player.getActiveEffects().size() <= 3)
             {
-                event.setResult(Event.Result.ALLOW); // Force compact mode for 3 or less active effects
+                event.setCompact(true); // Force compact mode for 3 or less active effects
             } else
             {
-                event.setResult(Event.Result.DENY); // Force classic mode for 4 or more active effects
+                event.setCompact(false); // Force classic mode for 4 or more active effects
             }
         }
     }

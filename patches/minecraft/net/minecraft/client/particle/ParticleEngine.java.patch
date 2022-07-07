@@ -14,14 +14,19 @@
     private final Queue<Particle> f_107294_ = Queues.newArrayDeque();
     private final Map<ResourceLocation, ParticleEngine.MutableSpriteSet> f_107295_ = Maps.newHashMap();
     private final TextureAtlas f_107296_;
-@@ -178,13 +_,13 @@
+@@ -177,14 +_,18 @@
+       this.m_107378_(ParticleTypes.f_235901_, ShriekParticle.Provider::new);
     }
  
++   /** @deprecated Register via {@link net.minecraftforge.client.event.RegisterParticleProvidersEvent} */
++   @Deprecated
     public <T extends ParticleOptions> void m_107381_(ParticleType<T> p_107382_, ParticleProvider<T> p_107383_) {
 -      this.f_107293_.put(Registry.f_122829_.m_7447_(p_107382_), p_107383_);
 +      this.f_107293_.put(Registry.f_122829_.m_7981_(p_107382_), p_107383_);
     }
  
++   /** @deprecated Register via {@link net.minecraftforge.client.event.RegisterParticleProvidersEvent} */
++   @Deprecated
     public <T extends ParticleOptions> void m_107378_(ParticleType<T> p_107379_, ParticleEngine.SpriteParticleRegistration<T> p_107380_) {
        ParticleEngine.MutableSpriteSet particleengine$mutablespriteset = new ParticleEngine.MutableSpriteSet();
        this.f_107295_.put(Registry.f_122829_.m_7981_(p_107379_), particleengine$mutablespriteset);
@@ -79,7 +84,7 @@
  
     public void m_107355_(BlockPos p_107356_, BlockState p_107357_) {
 -      if (!p_107357_.m_60795_()) {
-+      if (!p_107357_.m_60795_() && !net.minecraftforge.client.RenderProperties.get(p_107357_).addDestroyEffects(p_107357_, this.f_107287_, p_107356_, this)) {
++      if (!p_107357_.m_60795_() && !net.minecraftforge.client.extensions.common.IClientBlockExtensions.of(p_107357_).addDestroyEffects(p_107357_, this.f_107287_, p_107356_, this)) {
           VoxelShape voxelshape = p_107357_.m_60808_(this.f_107287_, p_107356_);
           double d0 = 0.25D;
           voxelshape.m_83286_((p_172273_, p_172274_, p_172275_, p_172276_, p_172277_, p_172278_) -> {
@@ -107,7 +112,7 @@
 +
 +   public void addBlockHitEffects(BlockPos pos, net.minecraft.world.phys.BlockHitResult target) {
 +      BlockState state = f_107287_.m_8055_(pos);
-+      if (!net.minecraftforge.client.RenderProperties.get(state).addHitEffects(state, f_107287_, target, this))
++      if (!net.minecraftforge.client.extensions.common.IClientBlockExtensions.of(state).addHitEffects(state, f_107287_, target, this))
 +         m_107367_(pos, target.m_82434_());
     }
  

@@ -1,26 +1,20 @@
 --- a/net/minecraft/client/renderer/LevelRenderer.java
 +++ b/net/minecraft/client/renderer/LevelRenderer.java
-@@ -263,6 +_,11 @@
+@@ -263,6 +_,8 @@
     }
  
     private void m_109703_(LightTexture p_109704_, float p_109705_, double p_109706_, double p_109707_, double p_109708_) {
-+      net.minecraftforge.client.IWeatherRenderHandler renderHandler = f_109465_.m_104583_().getWeatherRenderHandler();
-+      if (renderHandler != null) {
-+         renderHandler.render(f_109477_, p_109705_, f_109465_, f_109461_, p_109704_, p_109706_, p_109707_, p_109708_);
++      if (f_109465_.m_104583_().renderSnowAndRain(f_109465_, f_109477_, p_109705_, p_109704_, p_109706_, p_109707_, p_109708_))
 +         return;
-+      }
        float f = this.f_109461_.f_91073_.m_46722_(p_109705_);
        if (!(f <= 0.0F)) {
           p_109704_.m_109896_();
-@@ -383,6 +_,11 @@
+@@ -383,6 +_,8 @@
     }
  
     public void m_109693_(Camera p_109694_) {
-+      net.minecraftforge.client.IWeatherParticleRenderHandler renderHandler = f_109465_.m_104583_().getWeatherParticleRenderHandler();
-+      if (renderHandler != null) {
-+         renderHandler.render(f_109477_, f_109465_, f_109461_, p_109694_);
++      if (f_109465_.m_104583_().tickRain(f_109465_, f_109477_, p_109694_))
 +         return;
-+      }
        float f = this.f_109461_.f_91073_.m_46722_(1.0F) / (Minecraft.m_91405_() ? 1.0F : 2.0F);
        if (!(f <= 0.0F)) {
           RandomSource randomsource = RandomSource.m_216335_((long)this.f_109477_ * 312987231L);
@@ -99,27 +93,21 @@
        }
  
        posestack.m_85836_();
-@@ -1781,6 +_,11 @@
+@@ -1780,6 +_,8 @@
+    }
  
     public void m_202423_(PoseStack p_202424_, Matrix4f p_202425_, float p_202426_, Camera p_202427_, boolean p_202428_, Runnable p_202429_) {
-       p_202429_.run();
-+      net.minecraftforge.client.ISkyRenderHandler renderHandler = f_109465_.m_104583_().getSkyRenderHandler();
-+      if (renderHandler != null) {
-+         renderHandler.render(f_109477_, p_202426_, p_202424_, f_109465_, f_109461_);
++      if (f_109465_.m_104583_().renderSky(f_109465_, f_109477_, p_202426_, p_202424_, p_202427_, p_202425_, p_202428_, p_202429_))
 +         return;
-+      }
+       p_202429_.run();
        if (!p_202428_) {
           FogType fogtype = p_202427_.m_167685_();
-          if (fogtype != FogType.POWDER_SNOW && fogtype != FogType.LAVA && !this.m_234310_(p_202427_)) {
-@@ -1912,6 +_,11 @@
+@@ -1912,6 +_,8 @@
     }
  
     public void m_172954_(PoseStack p_172955_, Matrix4f p_172956_, float p_172957_, double p_172958_, double p_172959_, double p_172960_) {
-+      net.minecraftforge.client.ICloudRenderHandler renderHandler = f_109465_.m_104583_().getCloudRenderHandler();
-+      if (renderHandler != null) {
-+         renderHandler.render(f_109477_, p_172957_, p_172955_, f_109465_, f_109461_, p_172958_, p_172959_, p_172960_);
++      if (f_109465_.m_104583_().renderClouds(f_109465_, f_109477_, p_172957_, p_172955_, p_172958_, p_172959_, p_172960_, p_172956_))
 +         return;
-+      }
        float f = this.f_109465_.m_104583_().m_108871_();
        if (!Float.isNaN(f)) {
           RenderSystem.m_69464_();

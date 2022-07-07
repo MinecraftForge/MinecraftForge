@@ -31,17 +31,14 @@
        this.f_111787_ = p_111798_;
        this.f_111788_ = p_111799_;
        this.f_111789_ = p_111800_;
-@@ -45,8 +_,10 @@
+@@ -45,6 +_,7 @@
        this.f_111792_ = p_111803_;
        this.f_111793_ = p_111804_;
        this.f_111794_ = p_111805_;
 +      this.moddedTransforms = moddedTransforms;
     }
  
-+   @Deprecated
     public ItemTransform m_111808_(ItemTransforms.TransformType p_111809_) {
-       switch (p_111809_) {
-          case THIRD_PERSON_LEFT_HAND:
 @@ -66,7 +_,7 @@
           case FIXED:
              return this.f_111794_;

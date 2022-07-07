@@ -20,9 +20,7 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.client.model.ModelDataManager;
-import net.minecraftforge.client.model.data.EmptyModelData;
-import net.minecraftforge.client.model.data.IModelData;
+import net.minecraftforge.client.model.data.ModelData;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import org.jetbrains.annotations.NotNull;
 
@@ -157,7 +155,11 @@ public interface IForgeBlockEntity extends ICapabilitySerializable<CompoundTag>
          Level level = te.getLevel();
          if (level != null && level.isClientSide)
          {
-             ModelDataManager.requestModelDataRefresh(te);
+             var modelDataManager = level.getModelDataManager();
+             if (modelDataManager != null)
+             {
+                 modelDataManager.requestRefresh(te);
+             }
          }
      }
 
@@ -168,8 +170,8 @@ public interface IForgeBlockEntity extends ICapabilitySerializable<CompoundTag>
      * <b>Note that this method may be called on a chunk render thread instead of the main client thread</b>
      * @return Your model data
      */
-     default @NotNull IModelData getModelData()
+     default @NotNull ModelData getModelData()
      {
-         return EmptyModelData.INSTANCE;
+         return ModelData.EMPTY;
      }
 }

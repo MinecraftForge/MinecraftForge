@@ -20,7 +20,7 @@
        }
  
        Component component = flag ? p_233693_.f_237213_() : p_233693_.m_237220_();
-+      component = net.minecraftforge.event.ForgeEventFactory.onClientChat(p_233692_, component, p_233694_);
++      component = net.minecraftforge.client.ForgeHooksClient.onClientChat(p_233692_, component, p_233694_);
 +      if (component == null) return;
        this.f_104888_.f_91065_.m_232360_(p_233692_, component, p_233694_);
     }

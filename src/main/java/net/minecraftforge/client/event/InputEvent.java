@@ -7,117 +7,48 @@ package net.minecraftforge.client.event;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
-import net.minecraft.client.MouseHandler;
 import net.minecraft.world.InteractionHand;
-import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.LogicalSide;
+import org.jetbrains.annotations.ApiStatus;
 import org.lwjgl.glfw.GLFW;
 
 /**
  * Fired when an input is detected from the user's input devices.
  * See the various subclasses to listen for specific devices and inputs.
  *
- * @see InputEvent.RawMouseEvent
- * @see InputEvent.MouseInputEvent
- * @see InputEvent.MouseScrollEvent
- * @see InputEvent.KeyInputEvent
- * @see InputEvent.ClickInputEvent
+ * @see InputEvent.MouseButton
+ * @see MouseScrollingEvent
+ * @see Key
+ * @see InteractionKeyMappingTriggered
  */
-public class InputEvent extends Event
+public abstract class InputEvent extends Event
 {
-    /**
-     * Fired when a mouse button is clicked, <b>before</b> being processed by vanilla.
-     *
-     * <p>This event is {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}.
-     * If the event is cancelled, then the mouse event will not be processed by vanilla (e.g. keymappings and screens) </p>
-     *
-     * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
-     * only on the {@linkplain LogicalSide#CLIENT logical client}. </p>
-     *
-     * @see <a href="https://www.glfw.org/docs/latest/input_guide.html#input_mouse_button" target="_top">the online GLFW documentation</a>
-     */
-    @Cancelable
-    public static class RawMouseEvent extends InputEvent
+    @ApiStatus.Internal
+    protected InputEvent()
     {
-        private final int button;
-        private final int action;
-        private final int modifiers;
-
-        /**
-         * @hidden
-         * @see ForgeHooksClient#onRawMouseClicked(int, int, int)
-         */
-        public RawMouseEvent(int button, int action, int modifiers)
-        {
-            this.button = button;
-            this.action = action;
-            this.modifiers = modifiers;
-        }
-
-        /**
-         * {@return the mouse button's input code}
-         *
-         * @see InputConstants input constants starting with {@code MOUSE_BUTTON_}
-         * @see GLFW mouse constants starting with {@code GLFW_MOUSE_BUTTON_}
-         * @see <a href="https://www.glfw.org/docs/latest/group__buttons.html" target="_top">the online GLFW documentation</a>
-         */
-        public int getButton()
-        {
-            return this.button;
-        }
-
-        /**
-         * {@return the mouse button's action}
-         *
-         * @see InputConstants#PRESS
-         * @see InputConstants#RELEASE
-         */
-        public int getAction()
-        {
-            return this.action;
-        }
-
-        /**
-         * {@return a bit field representing the active modifier keys}
-         *
-         * @see InputConstants#MOD_CONTROL CTRL modifier key bit
-         * @see GLFW#GLFW_MOD_SHIFT SHIFT modifier key bit
-         * @see GLFW#GLFW_MOD_ALT ALT modifier key bit
-         * @see GLFW#GLFW_MOD_SUPER SUPER modifier key bit
-         * @see GLFW#GLFW_KEY_CAPS_LOCK CAPS LOCK modifier key bit
-         * @see GLFW#GLFW_KEY_NUM_LOCK NUM LOCK modifier key bit
-         * @see <a href="https://www.glfw.org/docs/latest/group__mods.html" target="_top">the online GLFW documentation</a>
-         */
-        public int getModifiers()
-        {
-            return this.modifiers;
-        }
     }
 
     /**
-     * Fired when a mouse button is clicked, <b>after</b> processing.
+     * Fired when a mouse button is pressed/released. Sub-events get fired {@link Pre before} and {@link Post after} this happens.
      *
-     * <p>This event is not {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}. </p>
-     *
-     * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
-     * only on the {@linkplain LogicalSide#CLIENT logical client}. </p>
+     * <p>These events are fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
+     * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      *
      * @see <a href="https://www.glfw.org/docs/latest/input_guide.html#input_mouse_button" target="_top">the online GLFW documentation</a>
+     * @see Pre
+     * @see Post
      */
-    public static class MouseInputEvent extends InputEvent
+    public static abstract class MouseButton extends InputEvent
     {
         private final int button;
         private final int action;
         private final int modifiers;
 
-        /**
-         * @hidden
-         * @see ForgeHooksClient#onRawMouseClicked(int, int, int)
-         */
-        public MouseInputEvent(int button, int action, int modifiers)
+        @ApiStatus.Internal
+        protected MouseButton(int button, int action, int modifiers)
         {
             this.button = button;
             this.action = action;
@@ -161,6 +92,46 @@ public class InputEvent extends Event
         {
             return this.modifiers;
         }
+
+        /**
+         * Fired when a mouse button is pressed/released, <b>before</b> being processed by vanilla.
+         *
+         * <p>This event is {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}.
+         * If the event is cancelled, then the mouse event will not be processed by vanilla (e.g. keymappings and screens) </p>
+         *
+         * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
+         * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
+         *
+         * @see <a href="https://www.glfw.org/docs/latest/input_guide.html#input_mouse_button" target="_top">the online GLFW documentation</a>
+         */
+        @Cancelable
+        public static class Pre extends MouseButton
+        {
+            @ApiStatus.Internal
+            public Pre(int button, int action, int modifiers)
+            {
+                super(button, action, modifiers);
+            }
+        }
+
+        /**
+         * Fired when a mouse button is pressed/released, <b>after</b> processing.
+         *
+         * <p>This event is not {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}.</p>
+         *
+         * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
+         * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
+         *
+         * @see <a href="https://www.glfw.org/docs/latest/input_guide.html#input_mouse_button" target="_top">the online GLFW documentation</a>
+         */
+        public static class Post extends MouseButton
+        {
+            @ApiStatus.Internal
+            public Post(int button, int action, int modifiers)
+            {
+                super(button, action, modifiers);
+            }
+        }
     }
 
     /**
@@ -168,15 +139,15 @@ public class InputEvent extends Event
      * processed by vanilla.
      *
      * <p>This event is {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}.
-     * If the event is cancelled, then the mouse scroll event will not be processed further. </p>
+     * If the event is cancelled, then the mouse scroll event will not be processed further.</p>
      *
      * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
-     * only on the {@linkplain LogicalSide#CLIENT logical client}. </p>
+     * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      *
      * @see <a href="https://www.glfw.org/docs/latest/input_guide.html#input_mouse_button" target="_top">the online GLFW documentation</a>
      */
     @Cancelable
-    public static class MouseScrollEvent extends InputEvent
+    public static class MouseScrollingEvent extends InputEvent
     {
         private final double scrollDelta;
         private final double mouseX;
@@ -185,11 +156,8 @@ public class InputEvent extends Event
         private final boolean middleDown;
         private final boolean rightDown;
 
-        /**
-         * @hidden
-         * @see ForgeHooksClient#onMouseScroll(MouseHandler, double)
-         */
-        public MouseScrollEvent(double scrollDelta, boolean leftDown, boolean middleDown, boolean rightDown, double mouseX, double mouseY)
+        @ApiStatus.Internal
+        public MouseScrollingEvent(double scrollDelta, boolean leftDown, boolean middleDown, boolean rightDown, double mouseX, double mouseY)
         {
             this.scrollDelta = scrollDelta;
             this.leftDown = leftDown;
@@ -251,23 +219,20 @@ public class InputEvent extends Event
     /**
      * Fired when a keyboard key input occurs, such as pressing, releasing, or repeating a key.
      *
-     * <p>This event is not {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}. </p>
+     * <p>This event is not {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}.</p>
      *
      * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
-     * only on the {@linkplain LogicalSide#CLIENT logical client}. </p>
+     * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
-    public static class KeyInputEvent extends InputEvent
+    public static class Key extends InputEvent
     {
         private final int key;
         private final int scanCode;
         private final int action;
         private final int modifiers;
 
-        /**
-         * @hidden
-         * @see ForgeHooksClient#fireKeyInput(int, int, int, int)
-         */
-        public KeyInputEvent(int key, int scanCode, int action, int modifiers)
+        @ApiStatus.Internal
+        public Key(int key, int scanCode, int action, int modifiers)
         {
             this.key = key;
             this.scanCode = scanCode;
@@ -289,7 +254,7 @@ public class InputEvent extends Event
 
         /**
          * {@return the platform-specific scan code}
-         *
+         * <p>
          * The scan code is unique for every key, regardless of whether it has a key code.
          * Scan codes are platform-specific but consistent over time, so keys will have different scan codes depending
          * on the platform but they are safe to save to disk as custom key bindings.
@@ -342,24 +307,21 @@ public class InputEvent extends Event
      *
      * <p>This event is {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}.
      * If this event is cancelled, then the keymapping's action is not processed further, and the hand will be swung
-     * according to {@link #shouldSwingHand()}. </p>
+     * according to {@link #shouldSwingHand()}.</p>
      *
      * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
-     * only on the {@linkplain LogicalSide#CLIENT logical client}. </p>
+     * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
     @Cancelable
-    public static class ClickInputEvent extends InputEvent
+    public static class InteractionKeyMappingTriggered extends InputEvent
     {
         private final int button;
         private final KeyMapping keyMapping;
         private final InteractionHand hand;
         private boolean handSwing = true;
 
-        /**
-         * @hidden
-         * @see ForgeHooksClient#onClickInput(int, KeyMapping, InteractionHand)
-         */
-        public ClickInputEvent(int button, KeyMapping keyMapping, InteractionHand hand)
+        @ApiStatus.Internal
+        public InteractionKeyMappingTriggered(int button, KeyMapping keyMapping, InteractionHand hand)
         {
             this.button = button;
             this.keyMapping = keyMapping;
@@ -386,7 +348,7 @@ public class InputEvent extends Event
 
         /**
          * {@return the hand that caused the input}
-         *
+         * <p>
          * The event will be called for both hands if this is a use item input regardless
          * of both event's cancellation.
          * Will always be {@link InteractionHand#MAIN_HAND} if this is an attack or pick block input.

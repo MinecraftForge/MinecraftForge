@@ -6,23 +6,22 @@
 package net.minecraftforge.client.event;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-
+import com.mojang.math.Matrix4f;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.LevelRenderer;
-import com.mojang.math.Matrix4f;
-import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.fml.LogicalSide;
+import org.jetbrains.annotations.ApiStatus;
 
 /**
  * Fired after all level rendering.
  * This can be used for custom rendering outside of e.g. a block entity or entity renderer.
  *
- * <p>This event is not {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}. </p>
+ * <p>This event is not {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}.</p>
  *
  * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
- * only on the {@linkplain LogicalSide#CLIENT logical client}. </p>
+ * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
  *
  * @see GameRenderer
  * @see LevelRenderer
@@ -35,10 +34,7 @@ public class RenderLevelLastEvent extends net.minecraftforge.eventbus.api.Event
     private final Matrix4f projectionMatrix;
     private final long startNanos;
 
-    /**
-     * @hidden
-     * @see ForgeHooksClient#dispatchRenderLast(LevelRenderer, PoseStack, float, Matrix4f, long)
-     */
+    @ApiStatus.Internal
     public RenderLevelLastEvent(LevelRenderer levelRenderer, PoseStack poseStack, float partialTick, Matrix4f projectionMatrix, long startNanos)
     {
         this.levelRenderer = levelRenderer;

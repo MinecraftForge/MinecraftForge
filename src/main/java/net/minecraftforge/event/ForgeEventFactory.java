@@ -14,7 +14,6 @@ import com.mojang.authlib.GameProfile;
 
 import com.mojang.brigadier.CommandDispatcher;
 import net.minecraft.commands.CommandBuildContext;
-import net.minecraft.network.chat.ChatSender;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.ReloadableServerResources;
 import net.minecraft.server.players.PlayerList;
@@ -60,7 +59,6 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.phys.HitResult;
-import net.minecraft.network.chat.ChatType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.GameRules;
@@ -71,9 +69,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.storage.ServerLevelData;
 import net.minecraft.world.level.storage.PlayerDataStorage;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.client.MinecraftForgeClient;
-import net.minecraftforge.client.event.ClientChatEvent;
-import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.ToolAction;
 import net.minecraftforge.common.capabilities.CapabilityDispatcher;
@@ -307,20 +302,6 @@ public class ForgeEventFactory
     public static void firePlayerLoadingEvent(Player player, PlayerDataStorage playerFileData, String uuidString)
     {
         MinecraftForge.EVENT_BUS.post(new PlayerEvent.LoadFromFile(player, playerFileData.getPlayerDataFolder(), uuidString));
-    }
-
-    @Nullable
-    public static Component onClientChat(ChatType type, Component message, ChatSender chatSender)
-    {
-        ClientChatReceivedEvent event = new ClientChatReceivedEvent(type, message, chatSender);
-        return MinecraftForge.EVENT_BUS.post(event) ? null : event.getMessage();
-    }
-
-    @NotNull
-    public static String onClientSendMessage(String message)
-    {
-        ClientChatEvent event = new ClientChatEvent(message);
-        return MinecraftForge.EVENT_BUS.post(event) ? "" : event.getMessage();
     }
 
     @Nullable
@@ -773,7 +754,6 @@ public class ForgeEventFactory
 
     public static void onRenderTickStart(float timer)
     {
-        MinecraftForgeClient.setPartialTick(timer);
         MinecraftForge.EVENT_BUS.post(new TickEvent.RenderTickEvent(TickEvent.Phase.START, timer));
     }
 
