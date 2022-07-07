@@ -23,6 +23,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemHandlerHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -30,10 +31,12 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Set;
 
 @Mod.EventBusSubscriber(modid = "forge")
-public class ShulkerItemStackInvWrapper implements IItemHandler, ICapabilityProvider
+public class ShulkerItemStackInvWrapper implements IItemHandlerModifiable, ICapabilityProvider
 {
     private final ItemStack stack;
     private final LazyOptional<IItemHandler> holder = LazyOptional.of(() -> this);
+
+    private NonNullList<ItemStack> itemStacks = refreshItemList();
 
     public ShulkerItemStackInvWrapper(ItemStack stack)
     {
@@ -62,88 +65,46 @@ public class ShulkerItemStackInvWrapper implements IItemHandler, ICapabilityProv
     public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate)
     {
         NonNullList<ItemStack> itemStacks = getItemList();
+
         if (stack.isEmpty())
             return ItemStack.EMPTY;
 
-        ItemStack stackInSlot = itemStacks.get(slot);
+        if (!isItemValid(slot, stack))
+            return stack;
 
-        int m;
-        if (!stackInSlot.isEmpty())
+        validateSlotIndex(slot);
+
+        ItemStack existing = itemStacks.get(slot);
+
+        int limit = Math.min(getSlotLimit(slot), stack.getMaxStackSize());
+
+        if (!existing.isEmpty())
         {
-            if (stackInSlot.getCount() >= Math.min(stackInSlot.getMaxStackSize(), getSlotLimit(slot)))
+            if (!ItemHandlerHelper.canItemStacksStack(stack, existing))
                 return stack;
 
-            if (!ItemHandlerHelper.canItemStacksStack(stack, stackInSlot))
-                return stack;
+            limit -= existing.getCount();
+        }
 
-            if (!this.isItemValid(slot, stack))
-                return stack;
+        if (limit <= 0)
+            return stack;
 
-            m = Math.min(stack.getMaxStackSize(), getSlotLimit(slot)) - stackInSlot.getCount();
+        boolean reachedLimit = stack.getCount() > limit;
 
-            if (stack.getCount() <= m)
+        if (!simulate)
+        {
+            if (existing.isEmpty())
             {
-                if (!simulate)
-                {
-                    ItemStack copy = stack.copy();
-                    copy.grow(stackInSlot.getCount());
-                    itemStacks.set(slot, copy);
-                    this.setItemList(itemStacks);
-                }
-
-                return ItemStack.EMPTY;
+                itemStacks.set(slot, reachedLimit ? ItemHandlerHelper.copyStackWithSize(stack, limit) : stack);
             }
             else
             {
-                // copy the stack to not modify the original one
-                stack = stack.copy();
-                if (!simulate)
-                {
-                    ItemStack copy = stack.split(m);
-                    copy.grow(stackInSlot.getCount());
-                    itemStacks.set(slot, copy);
-                    this.setItemList(itemStacks);
-                    return stack;
-                }
-                else
-                {
-                    stack.shrink(m);
-                    return stack;
-                }
+                existing.grow(reachedLimit ? limit : stack.getCount());
             }
+            setItemList(itemStacks);
         }
-        else
-        {
-            if (!this.isItemValid(slot, stack))
-                return stack;
 
-            m = Math.min(stack.getMaxStackSize(), getSlotLimit(slot));
-            if (m < stack.getCount())
-            {
-                // copy the stack to not modify the original one
-                stack = stack.copy();
-                if (!simulate)
-                {
-                    itemStacks.set(slot, stack.split(m));
-                    this.setItemList(itemStacks);
-                    return stack;
-                }
-                else
-                {
-                    stack.shrink(m);
-                    return stack;
-                }
-            }
-            else
-            {
-                if (!simulate)
-                {
-                    itemStacks.set(slot, stack);
-                    this.setItemList(itemStacks);
-                }
-                return ItemStack.EMPTY;
-            }
-        }
+        return reachedLimit ? ItemHandlerHelper.copyStackWithSize(stack, stack.getCount()- limit) : ItemStack.EMPTY;
     }
 
     @Override
@@ -154,32 +115,44 @@ public class ShulkerItemStackInvWrapper implements IItemHandler, ICapabilityProv
         if (amount == 0)
             return ItemStack.EMPTY;
 
-        ItemStack stackInSlot = itemStacks.get(slot);
+        validateSlotIndex(slot);
 
-        if (stackInSlot.isEmpty())
+        ItemStack existing = itemStacks.get(slot);
+
+        if (existing.isEmpty())
             return ItemStack.EMPTY;
 
-        if (simulate)
+        int toExtract = Math.min(amount, existing.getMaxStackSize());
+
+        if (existing.getCount() <= toExtract)
         {
-            if (stackInSlot.getCount() < amount)
+            if (!simulate)
             {
-                return stackInSlot.copy();
+                itemStacks.set(slot, ItemStack.EMPTY);
+                setItemList(itemStacks);
+                return existing;
             }
             else
             {
-                ItemStack copy = stackInSlot.copy();
-                copy.setCount(amount);
-                return copy;
+                return existing.copy();
             }
         }
         else
         {
-            int m = Math.min(stackInSlot.getCount(), amount);
+            if (!simulate)
+            {
+                itemStacks.set(slot, ItemHandlerHelper.copyStackWithSize(existing, existing.getCount() - toExtract));
+                setItemList(itemStacks);
+            }
 
-            ItemStack decrStackSize = ContainerHelper.removeItem(itemStacks, slot, m);
-            this.setItemList(itemStacks);
-            return decrStackSize;
+            return ItemHandlerHelper.copyStackWithSize(existing, toExtract);
         }
+    }
+
+    protected void validateSlotIndex(int slot)
+    {
+        if (slot < 0 || slot >= getSlots())
+            throw new RuntimeException("Slot " + slot + " not in valid range - [0," + getSlots() + ")");
     }
 
     @Override
@@ -194,7 +167,21 @@ public class ShulkerItemStackInvWrapper implements IItemHandler, ICapabilityProv
         return stack.getItem().canFitInsideContainerItems();
     }
 
-    public NonNullList<ItemStack> getItemList()
+    @Override
+    public void setStackInSlot(int slot, @NotNull ItemStack stack) {
+        validateSlotIndex(slot);
+        if (!isItemValid(slot, stack)) throw new RuntimeException("Invalid stack " + stack + " for slot " + slot + ")");
+        NonNullList<ItemStack> itemStacks = getItemList();
+        itemStacks.set(slot, stack);
+        setItemList(itemStacks);
+    }
+
+    protected NonNullList<ItemStack> getItemList()
+    {
+        
+    }
+
+    protected NonNullList<ItemStack> refreshItemList()
     {
         NonNullList<ItemStack> itemStacks = NonNullList.withSize(getSlots(), ItemStack.EMPTY);
         CompoundTag rootTag = BlockItem.getBlockEntityData(this.stack);
@@ -204,7 +191,7 @@ public class ShulkerItemStackInvWrapper implements IItemHandler, ICapabilityProv
         return itemStacks;
     }
 
-    public void setItemList(NonNullList<ItemStack> itemStacks)
+    protected void setItemList(NonNullList<ItemStack> itemStacks)
     {
         CompoundTag existing = BlockItem.getBlockEntityData(this.stack);
         BlockItem.setBlockEntityData(this.stack, BlockEntityType.SHULKER_BOX,
@@ -237,7 +224,7 @@ public class ShulkerItemStackInvWrapper implements IItemHandler, ICapabilityProv
             Items.YELLOW_SHULKER_BOX);
 
     @SubscribeEvent
-    public static void listenCapabilitiesAttachment(AttachCapabilitiesEvent<ItemStack> event)
+    protected static void listenCapabilitiesAttachment(AttachCapabilitiesEvent<ItemStack> event)
     {
         if (SHULKER_ITEMS.contains(event.getObject().getItem()))
         {
