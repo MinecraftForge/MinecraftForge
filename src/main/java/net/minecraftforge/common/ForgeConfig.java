@@ -84,6 +84,8 @@ public class ForgeConfig {
      */
     public static class Common {
         public final BooleanValue cachePackAccess;
+        public final BooleanValue indexVanillaPackCachesOnThread;
+        public final BooleanValue indexModPackCachesOnThread;
 
         Common(ForgeConfigSpec.Builder builder) {
             builder.comment("General configuration settings")
@@ -94,6 +96,19 @@ public class ForgeConfig {
                     .translation("forge.configgui.cachePackAccess")
                     .worldRestart()
                     .define("cachePackAccess", true);
+
+            indexVanillaPackCachesOnThread = builder
+                    .comment("Set this to true to index vanilla resource and data packs on thread")
+                    .translation("forge.configgui.indexVanillaPackCachesOnThread")
+                    .worldRestart()
+                    .define("indexVanillaPackCachesOnThread", false);
+
+            indexModPackCachesOnThread = builder
+                    .comment("Set this to true to index mod resource and data packs on thread")
+                    .translation("forge.configgui.indexModPackCachesOnThread")
+                    .worldRestart()
+                    .define("indexModPackCachesOnThread", false);
+
 
             builder.pop();
         }

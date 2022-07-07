@@ -4,7 +4,7 @@
     public static Path f_10312_;
     private static final Logger f_10315_ = LogUtils.getLogger();
     public static Class<?> f_10313_;
-+   private final net.minecraftforge.resource.ResourceCacheManager cacheManager = new net.minecraftforge.resource.ResourceCacheManager(false, true, (packType, namespace) -> f_182296_.get(packType).resolve(namespace));
++   private final net.minecraftforge.resource.ResourceCacheManager cacheManager = new net.minecraftforge.resource.ResourceCacheManager(false, !net.minecraftforge.common.ForgeConfig.COMMON.indexVanillaPackCachesOnThread.get(), (packType, namespace) -> f_182296_.get(packType).resolve(namespace));
 +
     private static final Map<PackType, Path> f_182296_ = Util.m_137537_(() -> {
        synchronized(VanillaPackResources.class) {

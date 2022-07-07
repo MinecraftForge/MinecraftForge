@@ -35,7 +35,7 @@ public class PathResourcePack extends AbstractPackResources
     private final Path source;
     private final String packName;
 
-    private final ResourceCacheManager cacheManager = new ResourceCacheManager(true, false, (packType, namespace) -> resolve(packType.getDirectory(), namespace).toAbsolutePath());
+    private final ResourceCacheManager cacheManager = new ResourceCacheManager(true, !ForgeConfig.COMMON.indexModPackCachesOnThread.get(), (packType, namespace) -> resolve(packType.getDirectory(), namespace).toAbsolutePath());
 
     private record ResourceCacheEntry(PackType packType, String namespace, Path path, ResourceLocation resourceLocation) {}
 

@@ -191,6 +191,10 @@
 
   "forge.configgui.cachePackAccess.tooltip": "Set this to true to cache resource listings in resource and data packs",
   "forge.configgui.cachePackAccess": "Cache Pack Access",
+  "forge.configgui.indexVanillaPackCachesOnThread.tooltip": "Set this to true to index vanilla resource and data packs on thread",
+  "forge.configgui.indexVanillaPackCachesOnThread": "Index vanilla resource packs on thread",
+  "forge.configgui.indexModPackCachesOnThread.tooltip": "Set this to true to index mod resource and data packs on thread",
+  "forge.configgui.indexModPackCachesOnThread": "Index mod resource packs on thread",
 
   "forge.controlsgui.shift": "SHIFT + %s",
   "forge.controlsgui.control": "CTRL + %s",
