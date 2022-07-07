@@ -36,11 +36,13 @@ public class ShulkerItemStackInvWrapper implements IItemHandlerModifiable, ICapa
     private final ItemStack stack;
     private final LazyOptional<IItemHandler> holder = LazyOptional.of(() -> this);
 
-    private NonNullList<ItemStack> itemStacks = refreshItemList();
+    private CompoundTag cachedTag;
+    private NonNullList<ItemStack> itemStacksCache;
 
     public ShulkerItemStackInvWrapper(ItemStack stack)
     {
         this.stack = stack;
+        this.itemStacksCache = refreshItemList(BlockItem.getBlockEntityData(this.stack));
     }
 
     @Override
@@ -178,24 +180,29 @@ public class ShulkerItemStackInvWrapper implements IItemHandlerModifiable, ICapa
 
     protected NonNullList<ItemStack> getItemList()
     {
-        
+        CompoundTag rootTag = BlockItem.getBlockEntityData(this.stack);
+        if ((cachedTag != null && !cachedTag.equals(rootTag)) || rootTag == null)
+            itemStacksCache = refreshItemList(rootTag);
+        return itemStacksCache;
     }
 
-    protected NonNullList<ItemStack> refreshItemList()
+    protected NonNullList<ItemStack> refreshItemList(CompoundTag rootTag)
     {
         NonNullList<ItemStack> itemStacks = NonNullList.withSize(getSlots(), ItemStack.EMPTY);
-        CompoundTag rootTag = BlockItem.getBlockEntityData(this.stack);
         if (rootTag != null && rootTag.contains("Items", 9)) {
             ContainerHelper.loadAllItems(rootTag, itemStacks);
         }
+        cachedTag = rootTag;
         return itemStacks;
     }
 
     protected void setItemList(NonNullList<ItemStack> itemStacks)
     {
         CompoundTag existing = BlockItem.getBlockEntityData(this.stack);
+        CompoundTag rootTag = ContainerHelper.saveAllItems(existing == null ? new CompoundTag() : existing, itemStacks);
         BlockItem.setBlockEntityData(this.stack, BlockEntityType.SHULKER_BOX,
-                ContainerHelper.saveAllItems(existing == null ? new CompoundTag() : existing, itemStacks));
+                rootTag);
+        cachedTag = rootTag;
     }
 
     @Override
