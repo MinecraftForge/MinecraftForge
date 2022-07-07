@@ -8,6 +8,7 @@ package net.minecraftforge.client.event;
 import com.mojang.blaze3d.shaders.FogShape;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.FogRenderer.FogMode;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.world.level.material.FogType;
 import net.minecraftforge.common.MinecraftForge;
@@ -79,15 +80,17 @@ public abstract class ViewportEvent extends Event
     @Cancelable
     public static class RenderFog extends ViewportEvent
     {
+        private final FogMode mode;
         private final FogType type;
         private float farPlaneDistance;
         private float nearPlaneDistance;
         private FogShape fogShape;
 
         @ApiStatus.Internal
-        public RenderFog(FogType type, Camera camera, float partialTicks, float nearPlaneDistance, float farPlaneDistance, FogShape fogShape)
+        public RenderFog(FogMode mode, FogType type, Camera camera, float partialTicks, float nearPlaneDistance, float farPlaneDistance, FogShape fogShape)
         {
             super(Minecraft.getInstance().gameRenderer, camera, partialTicks);
+            this.mode = mode;
             this.type = type;
             setFarPlaneDistance(farPlaneDistance);
             setNearPlaneDistance(nearPlaneDistance);
@@ -95,9 +98,17 @@ public abstract class ViewportEvent extends Event
         }
 
         /**
+         * {@return the mode of fog being rendered}
+         */
+        public FogMode getMode()
+        {
+            return mode;
+        }
+
+        /**
          * {@return the type of fog being rendered}
          */
-        public FogType getMode()
+        public FogType getType()
         {
             return type;
         }

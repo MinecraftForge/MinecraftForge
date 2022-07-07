@@ -438,7 +438,7 @@ public class ForgeHooksClient
         if (camera.getPosition().y < (double)((float)camera.getBlockPosition().getY() + state.getHeight(camera.getEntity().level, camera.getBlockPosition())))
             IClientFluidTypeExtensions.of(state).modifyFogRender(camera, mode, renderDistance, partialTick, nearDistance, farDistance, shape);
 
-        ViewportEvent.RenderFog event = new ViewportEvent.RenderFog(type, camera, partialTick, nearDistance, farDistance, shape);
+        ViewportEvent.RenderFog event = new ViewportEvent.RenderFog(mode, type, camera, partialTick, nearDistance, farDistance, shape);
         if (MinecraftForge.EVENT_BUS.post(event))
         {
             RenderSystem.setShaderFogStart(event.getNearPlaneDistance());
