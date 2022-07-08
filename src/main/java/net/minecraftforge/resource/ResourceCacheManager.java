@@ -359,7 +359,7 @@ public class ResourceCacheManager
             }
 
             // Inject into the cache, we can use a normal array list here since we have guarded against cache access later on.
-            this.entriesByPathPrefix.computeIfAbsent(pathEntry, e -> new ArrayList<>()).add(entry.resourceLocation());
+            this.entriesByPathPrefix.computeIfAbsent(pathEntry, e -> new CopyOnWriteArrayList<>()).add(entry.resourceLocation());
 
             // Recursively walk to the top, while preventing duplicate entries.
             if (parentPath != null && !pathEntry.isEmpty())
