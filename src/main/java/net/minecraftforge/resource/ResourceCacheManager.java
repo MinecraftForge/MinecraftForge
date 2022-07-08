@@ -13,9 +13,9 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
 import net.minecraftforge.common.ForgeConfig;
 import net.minecraftforge.common.ForgeConfigSpec;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
-import javax.annotation.Nullable;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
@@ -295,11 +295,15 @@ public class ResourceCacheManager
             // Get the path to the root of the namespace in the current pack.
             final Path rootPath = pathBuilder.apply(packType, namespace);
 
+            // Stream element resource that combines a normalized path and a joined path using the "/" as separator.
+            record PathWithLocationPath(Path path, String locationPath)
+            {
+            }
+
             // Build a walkable stream, process it
             try (final Stream<Path> paths = pathFinder.createWalkingStream(rootPath))
             {
-                paths
-                        .parallel() // Run the stream in parallel
+                paths.parallel() // Run the stream in parallel
                         .map(path -> new PathWithLocationPath(rootPath.relativize(path), Joiner.on('/').join(path))) // Relative to the given root.
                         .filter(path -> ResourceLocation.isValidPath(path.locationPath())) // Only process valid paths
                         .map(path -> new ResourceCacheEntry(packType, namespace, path.path(), new ResourceLocation(namespace, path.locationPath()))) // Create a cache entry.
@@ -350,8 +354,7 @@ public class ResourceCacheManager
             }
 
             // Inject into the cache.
-            this.entriesByPathPrefix.putIfAbsent(pathEntry, new CopyOnWriteArrayList<>());
-            this.entriesByPathPrefix.get(pathEntry).add(entry);
+            this.entriesByPathPrefix.computeIfAbsent(pathEntry, e -> new CopyOnWriteArrayList<>()).add(entry);
 
             // Recursively walk to the top, while preventing duplicate entries.
             if (parentPath != null && !pathEntry.isEmpty())
@@ -371,14 +374,10 @@ public class ResourceCacheManager
         {
             // Use the input path prefix, we can not depend on a toString call here, since we need the / as separator.
             final String pathEntry = Joiner.on('/').join(inputPath);
-            if (!entriesByPathPrefix.containsKey(pathEntry))
-            {
-                // No cache entry found.
-                return Collections.emptyList();
-            }
 
             // Since we inject into the cache recursively we can now just grab the map entry that is the prefix and loop over its values.
-            return entriesByPathPrefix.get(pathEntry).stream()
+            // We use getOrDefault with a stream combination since the returned list needs to be mutable.
+            return entriesByPathPrefix.getOrDefault(pathEntry, Collections.emptyList()).stream()
                     .map(ResourceCacheEntry::resourceLocation)
                     .filter(filter)
                     .collect(Collectors.toList());
@@ -392,13 +391,6 @@ public class ResourceCacheManager
         public boolean cacheLoaded()
         {
             return cacheLoaded.get();
-        }
-
-        /**
-         * Stream element resource that combines a normalized path and a joined path using the "/" as separator.
-         */
-        private record PathWithLocationPath(Path path, String locationPath)
-        {
         }
     }
 
