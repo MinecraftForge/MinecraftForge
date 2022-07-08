@@ -248,7 +248,7 @@ public class ResourceCacheManager
         /**
          * The cache entries for this manager.
          */
-        private final Map<String, List<ResourceLocation>> entriesByPathPrefix = Maps.newConcurrentMap();
+        private final Map<String, List<ResourceCacheEntry>> entriesByPathPrefix = Maps.newConcurrentMap();
         /**
          * Indicates if the cache has been loaded successfully.
          */
@@ -309,7 +309,8 @@ public class ResourceCacheManager
             try (final Stream<Path> paths = pathFinder.createWalkingStream(rootPath))
             {
                 paths.parallel() // Run the stream in parallel
-                        .map(path -> new PathWithLocationPath(rootPath.relativize(path), Joiner.on('/').join(path))) // Relative to the given root.
+                        .map(rootPath::relativize) // Relative to the given root.
+                        .map(path -> new PathWithLocationPath(path, Joiner.on('/').join(path))) // Create a common hierarchy.
                         .filter(path -> ResourceLocation.isValidPath(path.locationPath())) // Only process valid paths
                         .map(path -> new ResourceCacheEntry(packType, namespace, path.path(), new ResourceLocation(namespace, path.locationPath()))) // Create a cache entry.
                         .forEach(this::injectIntoCache); // Inject the entry into the cache.
@@ -359,7 +360,7 @@ public class ResourceCacheManager
             }
 
             // Inject into the cache, we can use a normal array list here since we have guarded against cache access later on.
-            this.entriesByPathPrefix.computeIfAbsent(pathEntry, e -> new CopyOnWriteArrayList<>()).add(entry.resourceLocation());
+            this.entriesByPathPrefix.computeIfAbsent(pathEntry, e -> new CopyOnWriteArrayList<>()).add(entry);
 
             // Recursively walk to the top, while preventing duplicate entries.
             if (parentPath != null && !pathEntry.isEmpty())
@@ -389,6 +390,7 @@ public class ResourceCacheManager
             // Since we inject into the cache recursively we can now just grab the map entry that is the prefix and loop over its values.
             // We use getOrDefault with a stream combination since the returned list needs to be mutable.
             return entriesByPathPrefix.getOrDefault(pathEntry, Collections.emptyList()).stream()
+                    .map(ResourceCacheEntry::resourceLocation)
                     .filter(filter)
                     .collect(Collectors.toList());
         }
