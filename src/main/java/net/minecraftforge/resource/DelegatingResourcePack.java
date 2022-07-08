@@ -42,12 +42,14 @@ public class DelegatingResourcePack extends AbstractPackResources
     }
 
     @Override
-    public void initForNamespace(final String nameSpace) {
+    public void initForNamespace(final String nameSpace)
+    {
         this.delegates.forEach(delegate -> delegate.initForNamespace(nameSpace));
     }
 
     @Override
-    public void init(final PackType packType) {
+    public void init(final PackType packType)
+    {
         this.delegates.forEach(packResources -> packResources.init(packType));
 
         this.namespacesAssets = buildNamespaceMap(PackType.CLIENT_RESOURCES, delegates);
