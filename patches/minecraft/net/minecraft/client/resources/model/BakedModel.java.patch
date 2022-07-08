@@ -6,7 +6,7 @@
  @OnlyIn(Dist.CLIENT)
 -public interface BakedModel {
 +public interface BakedModel extends net.minecraftforge.client.extensions.IForgeBakedModel {
-+   /**@deprecated Forge: Use {@link net.minecraftforge.client.extensions.IForgeBakedModel#getQuads(BlockState, Direction, Random, net.minecraftforge.client.model.data.IModelData)}*/
++   /**@deprecated Forge: Use {@link net.minecraftforge.client.extensions.IForgeBakedModel#getQuads(BlockState, Direction, RandomSource, net.minecraftforge.client.model.data.ModelData, net.minecraft.client.renderer.RenderType)}*/
 +   @Deprecated
     List<BakedQuad> m_213637_(@Nullable BlockState p_235039_, @Nullable Direction p_235040_, RandomSource p_235041_);
  
@@ -15,12 +15,12 @@
  
     boolean m_7521_();
  
-+   /**@deprecated Forge: Use {@link net.minecraftforge.client.extensions.IForgeBakedModel#getParticleIcon(net.minecraftforge.client.model.data.IModelData)}*/
++   /**@deprecated Forge: Use {@link net.minecraftforge.client.extensions.IForgeBakedModel#getParticleIcon(net.minecraftforge.client.model.data.ModelData)}*/
 +   @Deprecated
     TextureAtlasSprite m_6160_();
  
 -   ItemTransforms m_7442_();
-+   /**@deprecated Forge: Use {@link net.minecraftforge.client.extensions.IForgeBakedModel#handlePerspective(ItemTransforms.TransformType, com.mojang.blaze3d.vertex.PoseStack)} instead */
++   /**@deprecated Forge: Use {@link net.minecraftforge.client.extensions.IForgeBakedModel#applyTransform(ItemTransforms.TransformType, com.mojang.blaze3d.vertex.PoseStack, boolean)} instead */
 +   @Deprecated
 +   default ItemTransforms m_7442_() { return ItemTransforms.f_111786_; }
  

@@ -35,6 +35,7 @@ import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.event.IModBusEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
@@ -46,34 +47,30 @@ import java.util.function.Supplier;
  * See the various subclasses for listening to different events.
  *
  * <p>These events are fired on the {@linkplain FMLJavaModLoadingContext#getModEventBus() mod-specific event bus},
- * only on the {@linkplain LogicalSide#CLIENT logical client}. </p>
+ * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
  *
  * @see EntityRenderersEvent.RegisterLayerDefinitions
  * @see EntityRenderersEvent.RegisterRenderers
  * @see EntityRenderersEvent.AddLayers
  */
-public class EntityRenderersEvent extends Event implements IModBusEvent
+public abstract class EntityRenderersEvent extends Event implements IModBusEvent
 {
-    /**
-     * @hidden
-     */
-    public EntityRenderersEvent()
+    @ApiStatus.Internal
+    protected EntityRenderersEvent()
     {
     }
 
     /**
      * Fired for registering layer definitions at the appropriate time.
      *
-     * <p>This event is not {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}. </p>
+     * <p>This event is not {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}.</p>
      *
      * <p>This event is fired on the {@linkplain FMLJavaModLoadingContext#getModEventBus() mod-specific event bus},
-     * only on the {@linkplain LogicalSide#CLIENT logical client}. </p>
+     * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
     public static class RegisterLayerDefinitions extends EntityRenderersEvent
     {
-        /**
-         * @hidden
-         */
+        @ApiStatus.Internal
         public RegisterLayerDefinitions()
         {
         }
@@ -98,16 +95,14 @@ public class EntityRenderersEvent extends Event implements IModBusEvent
      * For registering entity renderer layers to existing entity renderers (whether vanilla or registered through this
      * event), listen for the {@link AddLayers} event instead.
      *
-     * <p>This event is not {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}. </p>
+     * <p>This event is not {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}.</p>
      *
      * <p>This event is fired on the {@linkplain FMLJavaModLoadingContext#getModEventBus() mod-specific event bus},
-     * only on the {@linkplain LogicalSide#CLIENT logical client}. </p>
+     * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
     public static class RegisterRenderers extends EntityRenderersEvent
     {
-        /**
-         * @hidden
-         */
+        @ApiStatus.Internal
         public RegisterRenderers()
         {
         }
@@ -139,10 +134,10 @@ public class EntityRenderersEvent extends Event implements IModBusEvent
      * Fired for registering entity renderer layers at the appropriate time, after the entity and player renderers maps
      * have been created.
      *
-     * <p>This event is not {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}. </p>
+     * <p>This event is not {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}.</p>
      *
      * <p>This event is fired on the {@linkplain FMLJavaModLoadingContext#getModEventBus() mod-specific event bus},
-     * only on the {@linkplain LogicalSide#CLIENT logical client}. </p>
+     * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
     public static class AddLayers extends EntityRenderersEvent
     {
@@ -150,9 +145,7 @@ public class EntityRenderersEvent extends Event implements IModBusEvent
         private final Map<String, EntityRenderer<? extends Player>> skinMap;
         private final EntityModelSet entityModels = Minecraft.getInstance().getEntityModels();
 
-        /**
-         * @hidden
-         */
+        @ApiStatus.Internal
         public AddLayers(Map<EntityType<?>, EntityRenderer<?>> renderers, Map<String, EntityRenderer<? extends Player>> playerRenderers)
         {
             this.renderers = renderers;
@@ -161,7 +154,7 @@ public class EntityRenderersEvent extends Event implements IModBusEvent
 
         /**
          * {@return the set of player skin names which have a renderer}
-         *
+         * <p>
          * Minecraft provides two default skin names: {@code default} for the
          * {@linkplain ModelLayers#PLAYER regular player model} and {@code slim} for the
          * {@linkplain ModelLayers#PLAYER_SLIM slim player model}.
@@ -196,7 +189,8 @@ public class EntityRenderersEvent extends Event implements IModBusEvent
          */
         @Nullable
         @SuppressWarnings("unchecked")
-        public <T extends LivingEntity, R extends LivingEntityRenderer<T, ? extends EntityModel<T>>> R getRenderer(EntityType<? extends T> entityType) {
+        public <T extends LivingEntity, R extends LivingEntityRenderer<T, ? extends EntityModel<T>>> R getRenderer(EntityType<? extends T> entityType)
+        {
             return (R) renderers.get(entityType);
         }
 
@@ -212,16 +206,17 @@ public class EntityRenderersEvent extends Event implements IModBusEvent
     /**
      * Fired for registering additional {@linkplain net.minecraft.client.model.SkullModelBase skull models} at the appropriate time.
      *
-     * <p>This event is not {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}. </p>
+     * <p>This event is not {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}.</p>
      *
      * <p>This event is fired on the {@linkplain FMLJavaModLoadingContext#getModEventBus() mod-specific event bus},
-     * only on the {@linkplain LogicalSide#CLIENT logical client}. </p>
+     * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
     public static class CreateSkullModels extends EntityRenderersEvent
     {
         private final ImmutableMap.Builder<Type, SkullModelBase> builder;
         private final EntityModelSet entityModelSet;
 
+        @ApiStatus.Internal
         public CreateSkullModels(ImmutableMap.Builder<Type, SkullModelBase> builder, EntityModelSet entityModelSet)
         {
             this.builder = builder;

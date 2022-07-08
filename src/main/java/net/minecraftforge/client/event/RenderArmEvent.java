@@ -14,6 +14,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.LogicalSide;
+import org.jetbrains.annotations.ApiStatus;
 
 /**
  * Fired before the player's arm is rendered in first person. This is a more targeted version of {@link RenderHandEvent},
@@ -21,10 +22,10 @@ import net.minecraftforge.fml.LogicalSide;
  * replacing the arm with armor.
  *
  * <p>This event is {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}.
- * If this event is cancelled, then the arm will not be rendered. </p>
+ * If this event is cancelled, then the arm will not be rendered.</p>
  *
  * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
- * only on the {@linkplain LogicalSide#CLIENT logical client}. </p>
+ * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
  */
 @Cancelable
 public class RenderArmEvent extends Event
@@ -35,10 +36,7 @@ public class RenderArmEvent extends Event
     private final AbstractClientPlayer player;
     private final HumanoidArm arm;
 
-    /**
-     * @hidden
-     * @see net.minecraftforge.client.ForgeHooksClient#renderSpecificFirstPersonArm(PoseStack, MultiBufferSource, int, AbstractClientPlayer, HumanoidArm)
-     */
+    @ApiStatus.Internal
     public RenderArmEvent(PoseStack poseStack, MultiBufferSource multiBufferSource, int packedLight, AbstractClientPlayer player, HumanoidArm arm)
     {
         this.poseStack = poseStack;

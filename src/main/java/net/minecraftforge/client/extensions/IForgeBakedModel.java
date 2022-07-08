@@ -5,27 +5,25 @@
 
 package net.minecraftforge.client.extensions;
 
-import java.util.Collections;
-import java.util.List;
-
 import com.mojang.blaze3d.vertex.PoseStack;
-
-import com.mojang.datafixers.util.Pair;
-import net.minecraft.util.RandomSource;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.core.Direction;
+import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockAndTintGetter;
-import net.minecraftforge.client.model.data.IModelData;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.client.ChunkRenderTypeSet;
+import net.minecraftforge.client.model.data.ModelData;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 /**
  * Extension interface for {@link IForgeBakedModel}.
@@ -37,51 +35,76 @@ public interface IForgeBakedModel
         return (BakedModel) this;
     }
 
+    /**
+     * A null {@link RenderType} is used for the breaking overlay as well as non-standard rendering, so models should return all their quads.
+     */
     @NotNull
-    default List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, @NotNull RandomSource rand, @NotNull IModelData extraData)
+    default List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, @NotNull RandomSource rand, @NotNull ModelData data, @Nullable RenderType renderType)
     {
         return self().getQuads(state, side, rand);
     }
 
-    default boolean useAmbientOcclusion(BlockState state) { return self().useAmbientOcclusion(); }
-
-    /**
-     * Override to tell the new model loader that it shouldn't wrap this model
-     */
-    default boolean doesHandlePerspectives() { return false; }
-
-    /*
-     * Returns the pair of the model for the given perspective, and the matrix that
-     * should be applied to the GL state before rendering it (matrix may be null).
-     */
-    default BakedModel handlePerspective(ItemTransforms.TransformType cameraTransformType, PoseStack poseStack)
+    default boolean useAmbientOcclusion(BlockState state)
     {
-        return net.minecraftforge.client.ForgeHooksClient.handlePerspective(self(), cameraTransformType, poseStack);
+        return self().useAmbientOcclusion();
     }
 
-    default @NotNull IModelData getModelData(@NotNull BlockAndTintGetter level, @NotNull BlockPos pos, @NotNull BlockState state, @NotNull IModelData modelData)
+    /**
+     * Applies a transform for the given {@link ItemTransforms.TransformType} and {@code applyLeftHandTransform}, and
+     * returns the model to be rendered.
+     */
+    default BakedModel applyTransform(ItemTransforms.TransformType transformType, PoseStack poseStack, boolean applyLeftHandTransform)
+    {
+        self().getTransforms().getTransform(transformType).apply(applyLeftHandTransform, poseStack);
+        return self();
+    }
+
+    default @NotNull ModelData getModelData(@NotNull BlockAndTintGetter level, @NotNull BlockPos pos, @NotNull BlockState state, @NotNull ModelData modelData)
     {
         return modelData;
     }
 
-    default TextureAtlasSprite getParticleIcon(@NotNull IModelData data)
+    default TextureAtlasSprite getParticleIcon(@NotNull ModelData data)
     {
         return self().getParticleIcon();
     }
 
     /**
-     * Override to true, to tell forge to call the getLayerModels method below.
+     * Gets the set of {@link RenderType render types} to use when drawing this block in the level.
+     * Supported types are those returned by {@link RenderType#chunkBufferLayers()}.
+     * <p>
+     * By default, defers query to {@link ItemBlockRenderTypes}.
      */
-    default boolean isLayered()
+    default ChunkRenderTypeSet getRenderTypes(@NotNull BlockState state, @NotNull RandomSource rand, @NotNull ModelData data)
     {
-        return false;
+        return ItemBlockRenderTypes.getRenderLayers(state);
     }
 
     /**
-     * If {@see isLayered()} returns true, this is called to get the list of layers to draw.
+     * Gets an ordered list of {@link RenderType render types} to use when drawing this item.
+     * All render types using the {@link com.mojang.blaze3d.vertex.DefaultVertexFormat#NEW_ENTITY} format are supported.
+     * <p>
+     * This method will only be called on the models returned by {@link #getRenderPasses(ItemStack, boolean)}.
+     * <p>
+     * By default, defers query to {@link ItemBlockRenderTypes}.
+     *
+     * @see #getRenderPasses(ItemStack, boolean)
      */
-    default List<Pair<BakedModel, RenderType>> getLayerModels(ItemStack itemStack, boolean fabulous)
+    default List<RenderType> getRenderTypes(ItemStack itemStack, boolean fabulous)
     {
-        return Collections.singletonList(Pair.of(self(), ItemBlockRenderTypes.getRenderType(itemStack, fabulous)));
+        return List.of(ItemBlockRenderTypes.getRenderType(itemStack, fabulous));
+    }
+
+    /**
+     * Gets an ordered list of baked models used to render this model as an item.
+     * Each of those models' render types will be queried via {@link #getRenderTypes(ItemStack, boolean)}.
+     * <p>
+     * By default, returns the model itself.
+     *
+     * @see #getRenderTypes(ItemStack, boolean)
+     */
+    default List<BakedModel> getRenderPasses(ItemStack itemStack, boolean fabulous)
+    {
+        return List.of(self());
     }
 }

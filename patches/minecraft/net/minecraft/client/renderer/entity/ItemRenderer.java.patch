@@ -1,15 +1,14 @@
 --- a/net/minecraft/client/renderer/entity/ItemRenderer.java
 +++ b/net/minecraft/client/renderer/entity/ItemRenderer.java
-@@ -77,8 +_,8 @@
+@@ -77,7 +_,7 @@
  
     public ItemRenderer(TextureManager p_174225_, ModelManager p_174226_, ItemColors p_174227_, BlockEntityWithoutLevelRenderer p_174228_) {
        this.f_115096_ = p_174225_;
 -      this.f_115095_ = new ItemModelShaper(p_174226_);
++      this.f_115095_ = new net.minecraftforge.client.model.ForgeItemModelShaper(p_174226_);
        this.f_174223_ = p_174228_;
-+      this.f_115095_ = new net.minecraftforge.client.ItemModelMesherForge(p_174226_);
  
        for(Item item : Registry.f_122827_) {
-          if (!f_115094_.contains(item)) {
 @@ -118,7 +_,7 @@
              }
           }
@@ -19,24 +18,28 @@
           p_115147_.m_85837_(-0.5D, -0.5D, -0.5D);
           if (!p_115151_.m_7521_() && (!p_115144_.m_150930_(Items.f_42713_) || flag)) {
              boolean flag1;
-@@ -128,7 +_,8 @@
+@@ -128,8 +_,8 @@
              } else {
                 flag1 = true;
              }
 -
-+            if (p_115151_.isLayered()) { net.minecraftforge.client.ForgeHooksClient.drawItemLayered(this, p_115151_, p_115144_, p_115147_, p_115148_, p_115149_, p_115150_, flag1); }
-+            else {
-             RenderType rendertype = ItemBlockRenderTypes.m_109279_(p_115144_, flag1);
+-            RenderType rendertype = ItemBlockRenderTypes.m_109279_(p_115144_, flag1);
++            for (var model : p_115151_.getRenderPasses(p_115144_, flag1)) {
++            for (var rendertype : model.getRenderTypes(p_115144_, flag1)) {
              VertexConsumer vertexconsumer;
              if (p_115144_.m_204117_(ItemTags.f_215866_) && p_115144_.m_41790_()) {
-@@ -154,8 +_,9 @@
+                p_115147_.m_85836_();
+@@ -153,9 +_,11 @@
+                vertexconsumer = m_115211_(p_115148_, rendertype, true, p_115144_.m_41790_());
              }
  
-             this.m_115189_(p_115151_, p_115144_, p_115149_, p_115150_, p_115147_, vertexconsumer);
+-            this.m_115189_(p_115151_, p_115144_, p_115149_, p_115150_, p_115147_, vertexconsumer);
++            this.m_115189_(model, p_115144_, p_115149_, p_115150_, p_115147_, vertexconsumer);
++            }
 +            }
           } else {
 -            this.f_174223_.m_108829_(p_115144_, p_115145_, p_115147_, p_115148_, p_115149_, p_115150_);
-+            net.minecraftforge.client.RenderProperties.get(p_115144_).getItemStackRenderer().m_108829_(p_115144_, p_115145_, p_115147_, p_115148_, p_115149_, p_115150_);
++            net.minecraftforge.client.extensions.common.IClientItemExtensions.of(p_115144_).getCustomRenderer().m_108829_(p_115144_, p_115145_, p_115147_, p_115148_, p_115149_, p_115150_);
           }
  
           p_115147_.m_85849_();
@@ -45,7 +48,7 @@
           float f1 = (float)(i >> 8 & 255) / 255.0F;
           float f2 = (float)(i & 255) / 255.0F;
 -         p_115164_.m_85987_(posestack$pose, bakedquad, f, f1, f2, p_115167_, p_115168_);
-+         p_115164_.putBulkData(posestack$pose, bakedquad, f, f1, f2, p_115167_, p_115168_, true);
++         p_115164_.putBulkData(posestack$pose, bakedquad, f, f1, f2, 1.0F, p_115167_, p_115168_, true);
        }
  
     }

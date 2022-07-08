@@ -389,7 +389,7 @@ public class TierSortingRegistry
             MinecraftForge.EVENT_BUS.addListener(ClientEvents::clientLogInToServer);
         }
 
-        private static void clientLogInToServer(ClientPlayerNetworkEvent.LoggedInEvent event)
+        private static void clientLogInToServer(ClientPlayerNetworkEvent.LoggingIn event)
         {
             if (event.getConnection() == null || !event.getConnection().isMemoryConnection())
                 recalculateItemTiers();

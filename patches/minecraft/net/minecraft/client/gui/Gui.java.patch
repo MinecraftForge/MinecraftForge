@@ -12,21 +12,21 @@
  
           for(MobEffectInstance mobeffectinstance : Ordering.natural().reverse().sortedCopy(collection)) {
              MobEffect mobeffect = mobeffectinstance.m_19544_();
-+            net.minecraftforge.client.EffectRenderer renderer = net.minecraftforge.client.RenderProperties.getEffectRenderer(mobeffectinstance);
-+            if (!renderer.shouldRenderHUD(mobeffectinstance)) continue;
++            var renderer = net.minecraftforge.client.extensions.common.IClientMobEffectExtensions.of(mobeffectinstance);
++            if (!renderer.isVisibleInGui(mobeffectinstance)) continue;
 +            // Rebind in case previous renderHUDEffect changed texture
 +            RenderSystem.m_157456_(0, AbstractContainerScreen.f_97725_);
              if (mobeffectinstance.m_19575_()) {
                 int i = this.f_92977_;
                 int j = 1;
-@@ -489,6 +_,7 @@
-                   RenderSystem.m_157429_(1.0F, 1.0F, 1.0F, f1);
-                   m_93200_(p_93029_, l + 3, i1 + 3, this.m_93252_(), 18, 18, textureatlassprite);
-                });
-+               renderer.renderHUDEffect(mobeffectinstance,this, p_93029_, i, j, this.m_93252_(), f);
-             }
-          }
+@@ -480,6 +_,7 @@
+                   }
+                }
  
++               if (renderer.renderGuiIcon(mobeffectinstance, this, p_93029_, i, j, this.m_93252_(), f)) continue;
+                TextureAtlasSprite textureatlassprite = mobeffecttexturemanager.m_118732_(mobeffect);
+                int l = i;
+                int i1 = j;
 @@ -609,12 +_,13 @@
     public void m_93069_(PoseStack p_93070_) {
        this.f_92986_.m_91307_().m_6180_("selectedItemName");
@@ -48,7 +48,7 @@
              RenderSystem.m_69453_();
              m_93172_(p_93070_, j - 2, k - 2, j + i + 2, k + 9 + 2, this.f_92986_.f_91066_.m_92143_(0));
 -            this.m_93082_().m_92763_(p_93070_, mutablecomponent, (float)j, (float)k, 16777215 + (l << 24));
-+            Font font = net.minecraftforge.client.RenderProperties.get(f_92994_).getFont(f_92994_);
++            Font font = net.minecraftforge.client.extensions.common.IClientItemExtensions.of(f_92994_).getFont(f_92994_, net.minecraftforge.client.extensions.common.IClientItemExtensions.FontContext.SELECTED_ITEM_NAME);
 +            if (font == null) {
 +               this.m_93082_().m_92763_(p_93070_, highlightTip, (float)j, (float)k, 16777215 + (l << 24));
 +            } else {

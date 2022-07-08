@@ -5,7 +5,7 @@
  
  @OnlyIn(Dist.CLIENT)
 -public class MultiPartBakedModel implements BakedModel {
-+public class MultiPartBakedModel implements net.minecraftforge.client.model.data.IDynamicBakedModel {
++public class MultiPartBakedModel implements net.minecraftforge.client.model.IDynamicBakedModel {
     private final List<Pair<Predicate<BlockState>, BakedModel>> f_119459_;
     protected final boolean f_119453_;
     protected final boolean f_119454_;
@@ -28,18 +28,30 @@
  
 -   public List<BakedQuad> m_213637_(@Nullable BlockState p_235050_, @Nullable Direction p_235051_, RandomSource p_235052_) {
 +   // FORGE: Implement our overloads (here and below) so child models can have custom logic
-+   public List<BakedQuad> getQuads(@Nullable BlockState p_235050_, @Nullable Direction p_235051_, RandomSource p_235052_, net.minecraftforge.client.model.data.IModelData modelData) {
++   public List<BakedQuad> getQuads(@Nullable BlockState p_235050_, @Nullable Direction p_235051_, RandomSource p_235052_, net.minecraftforge.client.model.data.ModelData modelData, @org.jetbrains.annotations.Nullable net.minecraft.client.renderer.RenderType renderType) {
        if (p_235050_ == null) {
           return Collections.emptyList();
        } else {
-@@ -65,7 +_,7 @@
+@@ -60,16 +_,17 @@
+             this.f_119460_.put(p_235050_, bitset);
+          }
+ 
+-         List<BakedQuad> list = Lists.newArrayList();
++         List<List<BakedQuad>> list = Lists.newArrayList();
+          long k = p_235052_.m_188505_();
  
           for(int j = 0; j < bitset.length(); ++j) {
              if (bitset.get(j)) {
 -               list.addAll(this.f_119459_.get(j).getRight().m_213637_(p_235050_, p_235051_, RandomSource.m_216335_(k)));
-+               list.addAll(this.f_119459_.get(j).getRight().getQuads(p_235050_, p_235051_, RandomSource.m_216335_(k), net.minecraftforge.client.model.data.MultipartModelData.resolve(this.f_119459_.get(j).getRight(), modelData)));
++               var model = this.f_119459_.get(j).getRight();
++               list.add(model.getQuads(p_235050_, p_235051_, RandomSource.m_216335_(k), net.minecraftforge.client.model.data.MultipartModelData.resolve(modelData, model), renderType));
              }
           }
+ 
+-         return list;
++         return net.minecraftforge.common.util.ConcatenatedListView.of(list);
+       }
+    }
  
 @@ -77,6 +_,10 @@
        return this.f_119453_;
@@ -52,7 +64,7 @@
     public boolean m_7539_() {
        return this.f_119454_;
     }
-@@ -89,16 +_,31 @@
+@@ -89,12 +_,22 @@
        return false;
     }
  
@@ -61,26 +73,17 @@
        return this.f_119456_;
     }
  
-+   public TextureAtlasSprite getParticleIcon(net.minecraftforge.client.model.data.IModelData modelData) {
++   public TextureAtlasSprite getParticleIcon(net.minecraftforge.client.model.data.ModelData modelData) {
 +      return this.defaultModel.getParticleIcon(modelData);
 +   }
 +
 +   @Deprecated
     public ItemTransforms m_7442_() {
        return this.f_119457_;
-    }
- 
-+   public BakedModel handlePerspective(net.minecraft.client.renderer.block.model.ItemTransforms.TransformType transformType, com.mojang.blaze3d.vertex.PoseStack poseStack) {
-+      return this.defaultModel.handlePerspective(transformType, poseStack);
 +   }
 +
++   public BakedModel applyTransform(net.minecraft.client.renderer.block.model.ItemTransforms.TransformType transformType, com.mojang.blaze3d.vertex.PoseStack poseStack, boolean applyLeftHandTransform) {
++      return this.defaultModel.applyTransform(transformType, poseStack, applyLeftHandTransform);
+    }
+ 
     public ItemOverrides m_7343_() {
-       return this.f_119458_;
-+   }
-+
-+   @Override
-+   public net.minecraftforge.client.model.data.IModelData getModelData(net.minecraft.world.level.BlockAndTintGetter world, net.minecraft.core.BlockPos pos, BlockState state, net.minecraftforge.client.model.data.IModelData tileData) {
-+      return net.minecraftforge.client.model.data.MultipartModelData.create(f_119459_, world, pos, state, tileData);
-    }
- 
-    @OnlyIn(Dist.CLIENT)

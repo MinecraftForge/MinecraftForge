@@ -54,6 +54,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
     protected final TransformsBuilder transforms = new TransformsBuilder();
     protected final ExistingFileHelper existingFileHelper;
 
+    protected String renderType = null;
     protected boolean ambientOcclusion = true;
     protected GuiLight guiLight = null;
 
@@ -139,6 +140,39 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
         return self();
     }
 
+    /**
+     * Set the render type for this model.
+     *
+     * @param renderType the render type. Must be registered via
+     *                   {@link net.minecraftforge.client.event.RegisterNamedRenderTypesEvent}
+     * @return this builder
+     * @throws NullPointerException  if {@code renderType} is {@code null}
+     */
+    public T renderType(String renderType) {
+        Preconditions.checkNotNull(renderType, "Render type must not be null");
+        ResourceLocation asLoc;
+        if (renderType.contains(":")) {
+            asLoc = new ResourceLocation(renderType);
+        } else {
+            asLoc = new ResourceLocation(getLocation().getNamespace(), renderType);
+        }
+        return renderType(asLoc);
+    }
+
+    /**
+     * Set the render type for this model.
+     *
+     * @param renderType the render type. Must be registered via
+     *                   {@link net.minecraftforge.client.event.RegisterNamedRenderTypesEvent}
+     * @return this builder
+     * @throws NullPointerException  if {@code renderType} is {@code null}
+     */
+    public T renderType(ResourceLocation renderType) {
+        Preconditions.checkNotNull(renderType, "Render type must not be null");
+        this.renderType = renderType.toString();
+        return self();
+    }
+
     public TransformsBuilder transforms() {
         return transforms;
     }
@@ -174,8 +208,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
     }
 
     /**
-     * Gets the number of elements in this model builder
-     * @return the number of elements in this model builder
+     * {@return the number of elements in this model builder}
      */
     public int getElementCount()
     {
@@ -212,6 +245,10 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
             root.addProperty("gui_light", this.guiLight.getSerializedName());
         }
 
+        if (this.renderType != null) {
+            root.addProperty("render_type", this.renderType);
+        }
+
         Map<TransformType, ItemTransform> transforms = this.transforms.build();
         if (!transforms.isEmpty()) {
             JsonObject display = new JsonObject();
@@ -219,14 +256,18 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
                 JsonObject transform = new JsonObject();
                 ItemTransform vec = e.getValue();
                 if (vec.equals(ItemTransform.NO_TRANSFORM)) continue;
-                if (!vec.rotation.equals(ItemTransform.Deserializer.DEFAULT_ROTATION)) {
-                    transform.add("rotation", serializeVector3f(vec.rotation));
-                }
+                var hasRightRotation = !vec.rightRotation.equals(ItemTransform.Deserializer.DEFAULT_ROTATION);
                 if (!vec.translation.equals(ItemTransform.Deserializer.DEFAULT_TRANSLATION)) {
                     transform.add("translation", serializeVector3f(e.getValue().translation));
                 }
+                if (!vec.rotation.equals(ItemTransform.Deserializer.DEFAULT_ROTATION)) {
+                    transform.add(hasRightRotation ? "left_rotation" : "rotation", serializeVector3f(vec.rotation));
+                }
                 if (!vec.scale.equals(ItemTransform.Deserializer.DEFAULT_SCALE)) {
                     transform.add("scale", serializeVector3f(e.getValue().scale));
+                }
+                if (hasRightRotation) {
+                    transform.add("right_rotation", serializeVector3f(vec.rightRotation));
                 }
                 display.add(e.getKey().getSerializeName(), transform);
             }
@@ -596,46 +637,9 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
         }
     }
 
-    // Since vanilla doesn't keep the name in TransformType...
-    @Deprecated(forRemoval = true, since = "1.18.2")
-    public enum Perspective {
-
-        THIRDPERSON_RIGHT(TransformType.THIRD_PERSON_RIGHT_HAND, "thirdperson_righthand"),
-        THIRDPERSON_LEFT(TransformType.THIRD_PERSON_LEFT_HAND, "thirdperson_lefthand"),
-        FIRSTPERSON_RIGHT(TransformType.FIRST_PERSON_RIGHT_HAND, "firstperson_righthand"),
-        FIRSTPERSON_LEFT(TransformType.FIRST_PERSON_LEFT_HAND, "firstperson_lefthand"),
-        HEAD(TransformType.HEAD, "head"),
-        GUI(TransformType.GUI, "gui"),
-        GROUND(TransformType.GROUND, "ground"),
-        FIXED(TransformType.FIXED, "fixed"),
-        ;
-
-        public final TransformType vanillaType;
-        final String name;
-
-        private Perspective(TransformType vanillaType, String name) {
-            this.vanillaType = vanillaType;
-            this.name = name;
-        }
-    }
-
     public class TransformsBuilder {
 
         private final Map<TransformType, TransformVecBuilder> transforms = new LinkedHashMap<>();
-
-        /**
-         * Begin building a new transform for the given perspective.
-         *
-         * @param type the perspective to create or return the builder for
-         * @return the builder for the given perspective
-         * @throws NullPointerException if {@code type} is {@code null}
-         *
-         * @deprecated See {@link #transform(TransformType)}
-         */
-        @Deprecated(forRemoval = true, since = "1.18.2")
-        public TransformVecBuilder transform(Perspective type) {
-            return transform(type.vanillaType);
-        }
 
         /**
          * Begin building a new transform for the given perspective.
@@ -661,6 +665,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
             private Vector3f rotation = ItemTransform.Deserializer.DEFAULT_ROTATION.copy();
             private Vector3f translation = ItemTransform.Deserializer.DEFAULT_TRANSLATION.copy();
             private Vector3f scale = ItemTransform.Deserializer.DEFAULT_SCALE.copy();
+            private Vector3f rightRotation = ItemTransform.Deserializer.DEFAULT_ROTATION.copy();
 
             TransformVecBuilder(TransformType type) {
                 // param unused for functional match
@@ -669,6 +674,10 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
             public TransformVecBuilder rotation(float x, float y, float z) {
                 this.rotation = new Vector3f(x, y, z);
                 return this;
+            }
+
+            public TransformVecBuilder leftRotation(float x, float y, float z) {
+                return rotation(x, y, z);
             }
 
             public TransformVecBuilder translation(float x, float y, float z) {
@@ -685,8 +694,13 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
                 return this;
             }
 
+            public TransformVecBuilder rightRotation(float x, float y, float z) {
+                this.rightRotation = new Vector3f(x, y, z);
+                return this;
+            }
+
             ItemTransform build() {
-                return new ItemTransform(rotation, translation, scale);
+                return new ItemTransform(rotation, translation, scale, rightRotation);
             }
 
             public TransformsBuilder end() { return TransformsBuilder.this; }
