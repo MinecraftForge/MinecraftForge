@@ -444,7 +444,7 @@ public interface IForgeBlockState
      */
     default boolean canStickTo(@NotNull BlockState other)
     {
-        return self().getBlock().canStickTo(self(), other) && other.getBlock().canStickTo(other, self());
+        return self().getBlock().canStickTo(self(), other);
     }
 
     /**
