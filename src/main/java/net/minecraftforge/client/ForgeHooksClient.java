@@ -122,6 +122,7 @@ import net.minecraftforge.client.event.RenderBlockScreenEffectEvent;
 import net.minecraftforge.client.event.RenderHandEvent;
 import net.minecraftforge.client.event.RenderHighlightEvent;
 import net.minecraftforge.client.event.RenderLevelLastEvent;
+import net.minecraftforge.client.event.RenderLevelStageEvent;
 import net.minecraftforge.client.event.RenderTooltipEvent;
 import net.minecraftforge.client.event.ScreenEvent;
 import net.minecraftforge.client.event.ScreenshotEvent;
@@ -268,9 +269,10 @@ public class ForgeHooksClient
 
     public static void dispatchRenderStage(RenderLevelStageEvent.Stage stage, LevelRenderer levelRenderer, PoseStack poseStack, Matrix4f projectionMatrix, int renderTick, Camera camera, Frustum frustum)
     {
-        var profiler = Minecraft.getInstance().getProfiler();
+        var mc = Minecraft.getInstance();
+        var profiler = mc.getProfiler();
         profiler.push(stage.toString());
-        MinecraftForge.EVENT_BUS.post(new RenderLevelStageEvent(stage, levelRenderer, poseStack, projectionMatrix, renderTick, MinecraftForgeClient.getPartialTick(), camera, frustum));
+        MinecraftForge.EVENT_BUS.post(new RenderLevelStageEvent(stage, levelRenderer, poseStack, projectionMatrix, renderTick, mc.getPartialTick(), camera, frustum));
         profiler.pop();
     }
 

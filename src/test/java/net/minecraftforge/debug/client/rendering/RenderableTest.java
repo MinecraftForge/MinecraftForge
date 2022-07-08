@@ -26,9 +26,12 @@ import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.ForgeRenderTypes;
 import net.minecraftforge.client.event.ModelEvent;
 import net.minecraftforge.client.event.RegisterClientReloadListenersEvent;
 import net.minecraftforge.client.event.RenderLevelLastEvent;
+import net.minecraftforge.client.event.RenderLevelStageEvent;
+import net.minecraftforge.client.event.RenderLevelStageEvent.Stage;
 import net.minecraftforge.client.model.geometry.StandaloneGeometryBakingContext;
 import net.minecraftforge.client.model.data.ModelData;
 import net.minecraftforge.client.model.obj.ObjLoader;
@@ -77,7 +80,7 @@ public class RenderableTest
         private static ResourceLocation MODEL_LOC = new ResourceLocation("minecraft:block/blue_stained_glass");
 
         private static IRenderable<CompositeRenderable.Transforms> renderable;
-        private static IRenderable<IModelData> bakedRenderable;
+        private static IRenderable<ModelData> bakedRenderable;
 
         public static void init()
         {
@@ -191,14 +194,14 @@ public class RenderableTest
             right.multiply(Quaternion.fromYXZ(0, 0, -(float)Math.sin(time * 0.4) * 0.1f));
             map.put("object_9", right);
 
-            var transforms = MultipartTransforms.of(map.build());
+            var transforms = CompositeRenderable.Transforms.of(map.build());
 
             poseStack.pushPose();
             poseStack.translate(0 - x + xOffset, 120 - y, 0 - z);
             renderable.render(poseStack, bufferSource, RenderType::entitySolid, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY, partialTick, transforms);
 
             poseStack.translate(0, -1, 0);
-            bakedRenderable.render(poseStack, bufferSource, texture -> getRenderType(stage, texture), LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY, partialTick, EmptyModelData.INSTANCE);
+            bakedRenderable.render(poseStack, bufferSource, texture -> getRenderType(stage, texture), LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY, partialTick, ModelData.EMPTY);
             poseStack.popPose();
 
             bufferSource.endBatch();
