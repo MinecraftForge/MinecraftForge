@@ -347,8 +347,9 @@ public class ForgeHooksClient
         return fovModifierEvent.getNewFovModifier();
     }
 
-    public static double getFieldOfView(GameRenderer renderer, Camera camera, double partialTick, double fov) {
-        ViewportEvent.ComputeFov event = new ViewportEvent.ComputeFov(renderer, camera, partialTick, fov);
+    public static double getFieldOfView(GameRenderer renderer, Camera camera, double partialTick, double fov, boolean usedConfiguredFov)
+    {
+        ViewportEvent.ComputeFov event = new ViewportEvent.ComputeFov(renderer, camera, partialTick, fov, usedConfiguredFov);
         MinecraftForge.EVENT_BUS.post(event);
         return event.getFOV();
     }
