@@ -58,6 +58,12 @@ public abstract class BakedModelWrapper<T extends BakedModel> implements BakedMo
     }
 
     @Override
+    public boolean useAmbientOcclusion(BlockState state, RenderType renderType)
+    {
+        return originalModel.useAmbientOcclusion(state, renderType);
+    }
+
+    @Override
     public boolean isGui3d()
     {
         return originalModel.isGui3d();
