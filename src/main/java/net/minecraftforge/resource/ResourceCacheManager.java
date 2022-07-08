@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -115,10 +116,11 @@ public class ResourceCacheManager
             }
 
             // Create a new manager, overriding the previous one if it exists.
-            this.managersByNamespace.put(key, new NamespacedResourceCacheManager(packType, namespace, this.shouldIndexOffThread(), pathBuilder, this::createWalkingStream));
+            final NamespacedResourceCacheManager newManager = new NamespacedResourceCacheManager(packType, namespace, this.shouldIndexOffThread(), pathBuilder, this::createWalkingStream);
+            this.managersByNamespace.put(key, newManager);
 
             // Index the inner manager (which will for sure exist, and will know the pack type and namespace already)
-            this.managersByNamespace.get(key).index();
+            newManager.index();
         }
     }
 
@@ -150,14 +152,16 @@ public class ResourceCacheManager
     public Collection<ResourceLocation> getResources(final PackType type, final String resourceNamespace, final Path inputPath, final Predicate<ResourceLocation> filter)
     {
         final PackTypeAndNamespace key = new PackTypeAndNamespace(type, resourceNamespace);
+        final NamespacedResourceCacheManager manager = managersByNamespace.get(key);
+
         // Check if we even have a cached manager with the given namespace, else return an empty collection.
-        if (!managersByNamespace.containsKey(key))
+        if (manager == null)
         {
             return Collections.emptyList();
         }
 
         // Request the data from the manager.
-        return managersByNamespace.get(key).getResources(inputPath, filter);
+        return manager.getResources(inputPath, filter);
     }
 
     /**
@@ -186,7 +190,8 @@ public class ResourceCacheManager
     public boolean hasCached(final PackType packType, final String namespace)
     {
         final PackTypeAndNamespace key = new PackTypeAndNamespace(packType, namespace);
-        return managersByNamespace.containsKey(key) && managersByNamespace.get(key).cacheLoaded();
+        final NamespacedResourceCacheManager manager = managersByNamespace.get(key);
+        return manager != null && manager.cacheLoaded();
     }
 
     /**
@@ -243,7 +248,7 @@ public class ResourceCacheManager
         /**
          * The cache entries for this manager.
          */
-        private final Map<String, List<ResourceCacheEntry>> entriesByPathPrefix = Maps.newConcurrentMap();
+        private final Map<String, List<ResourceLocation>> entriesByPathPrefix = Maps.newConcurrentMap();
         /**
          * Indicates if the cache has been loaded successfully.
          */
@@ -353,8 +358,8 @@ public class ResourceCacheManager
                 pathEntry = Joiner.on("/").join(parentPath);
             }
 
-            // Inject into the cache.
-            this.entriesByPathPrefix.computeIfAbsent(pathEntry, e -> new CopyOnWriteArrayList<>()).add(entry);
+            // Inject into the cache, we can use a normal array list here since we have guarded against cache access later on.
+            this.entriesByPathPrefix.computeIfAbsent(pathEntry, e -> new ArrayList<>()).add(entry.resourceLocation());
 
             // Recursively walk to the top, while preventing duplicate entries.
             if (parentPath != null && !pathEntry.isEmpty())
@@ -372,13 +377,18 @@ public class ResourceCacheManager
          */
         public Collection<ResourceLocation> getResources(final Path inputPath, final Predicate<ResourceLocation> filter)
         {
+            // We only have a cache once the atomic flag has been set.
+            if (!cacheLoaded()) {
+                // We need to return a mutable object here because the callers actually mutate the collection.
+                return new ArrayList<>();
+            }
+
             // Use the input path prefix, we can not depend on a toString call here, since we need the / as separator.
             final String pathEntry = Joiner.on('/').join(inputPath);
 
             // Since we inject into the cache recursively we can now just grab the map entry that is the prefix and loop over its values.
             // We use getOrDefault with a stream combination since the returned list needs to be mutable.
             return entriesByPathPrefix.getOrDefault(pathEntry, Collections.emptyList()).stream()
-                    .map(ResourceCacheEntry::resourceLocation)
                     .filter(filter)
                     .collect(Collectors.toList());
         }
