@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 
 /**
  * Defines a resource pack from an arbitrary Path.
- *
+ * <p>
  * This is primarily intended to support including optional resource packs inside a mod,
  * such as to have alternative textures to use along with Programmer Art, or optional
  * alternative recipes for compatibility ot to replace vanilla recipes.
@@ -40,14 +40,16 @@ public class PathResourcePack extends AbstractPackResources
 
     private final ResourceCacheManager cacheManager = new ResourceCacheManager(true, ForgeConfig.COMMON.indexModPackCachesOnThread, (packType, namespace) -> resolve(packType.getDirectory(), namespace).toAbsolutePath());
 
-    private record ResourceCacheEntry(PackType packType, String namespace, Path path, ResourceLocation resourceLocation) {}
+    private record ResourceCacheEntry(PackType packType, String namespace, Path path, ResourceLocation resourceLocation)
+    {
+    }
 
     /**
      * Constructs a java.nio.Path-based resource pack.
      *
      * @param packName the identifying name of the pack.
      *                 This name should be unique within the pack finder, preferably the name of the file or folder containing the resources.
-     * @param source the root path of the pack. This needs to point to the folder that contains "assets" and/or "data", not the asset folder itself!
+     * @param source   the root path of the pack. This needs to point to the folder that contains "assets" and/or "data", not the asset folder itself!
      */
     public PathResourcePack(String packName, final Path source)
     {
@@ -57,14 +59,17 @@ public class PathResourcePack extends AbstractPackResources
     }
 
     @Override
-    public void initForNamespace(final String namespace) {
-        if (ResourceCacheManager.shouldUseCache()) {
+    public void initForNamespace(final String namespace)
+    {
+        if (ResourceCacheManager.shouldUseCache())
+        {
             this.cacheManager.index(namespace);
         }
     }
 
     @Override
-    public void init(final PackType packType) {
+    public void init(final PackType packType)
+    {
         getNamespacesFromDisk(packType).forEach(this::initForNamespace);
     }
 
@@ -74,7 +79,8 @@ public class PathResourcePack extends AbstractPackResources
      *
      * @return the root path of the resources.
      */
-     public Path getSource() {
+    public Path getSource()
+    {
         return this.source;
     }
 
@@ -91,13 +97,14 @@ public class PathResourcePack extends AbstractPackResources
 
     /**
      * Implement to return a file or folder path for the given set of path components.
+     *
      * @param paths One or more path strings to resolve. Can include slash-separated paths.
      * @return the resulting path, which may not exist.
      */
     protected Path resolve(String... paths)
     {
         Path path = getSource();
-        for(String name : paths)
+        for (String name : paths)
             path = path.resolve(name);
         return path;
     }
@@ -106,7 +113,7 @@ public class PathResourcePack extends AbstractPackResources
     protected InputStream getResource(String name) throws IOException
     {
         final Path path = resolve(name);
-        if(!Files.exists(path))
+        if (!Files.exists(path))
             throw new FileNotFoundException("Can't find resource " + name + " at " + getSource());
         return Files.newInputStream(path, StandardOpenOption.READ);
     }
@@ -126,7 +133,8 @@ public class PathResourcePack extends AbstractPackResources
             Path root = resolve(type.getDirectory(), resourceNamespace).toAbsolutePath();
             Path inputPath = root.getFileSystem().getPath(pathIn);
 
-            if (ResourceCacheManager.shouldUseCache() && this.cacheManager.hasCached(type, resourceNamespace)) {
+            if (ResourceCacheManager.shouldUseCache() && this.cacheManager.hasCached(type, resourceNamespace))
+            {
                 return this.cacheManager.getResources(type, resourceNamespace, inputPath, filter);
             }
 
@@ -138,8 +146,7 @@ public class PathResourcePack extends AbstractPackResources
                     .map(path -> new ResourceLocation(resourceNamespace, Joiner.on('/').join(path)))
                     .filter(filter)
                     .collect(Collectors.toList());
-        }
-        catch (IOException e)
+        } catch (IOException e)
         {
             return Collections.emptyList();
         }
@@ -148,7 +155,8 @@ public class PathResourcePack extends AbstractPackResources
     @Override
     public Set<String> getNamespaces(PackType type)
     {
-        if (ResourceCacheManager.shouldUseCache()) {
+        if (ResourceCacheManager.shouldUseCache())
+        {
             return this.cacheManager.getNamespaces(type);
         }
 
@@ -156,8 +164,10 @@ public class PathResourcePack extends AbstractPackResources
     }
 
     @NotNull
-    private Set<String> getNamespacesFromDisk(final PackType type) {
-        try {
+    private Set<String> getNamespacesFromDisk(final PackType type)
+    {
+        try
+        {
             Path root = resolve(type.getDirectory());
             return Files.walk(root, 1)
                     .map(path -> root.relativize(path))
@@ -165,14 +175,12 @@ public class PathResourcePack extends AbstractPackResources
                     .map(p -> p.toString().replaceAll("/$", "")) // remove the trailing slash, if present
                     .filter(s -> !s.isEmpty()) //filter empty strings, otherwise empty strings default to minecraft in ResourceLocations
                     .collect(Collectors.toSet());
-        }
-        catch (IOException e)
+        } catch (IOException e)
         {
             if (type == PackType.SERVER_DATA) //We still have to add the resource namespace if client resources exist, as we load langs (which are in assets) on server
             {
                 return this.getNamespaces(PackType.CLIENT_RESOURCES);
-            }
-            else
+            } else
             {
                 return Collections.emptySet();
             }
@@ -180,19 +188,25 @@ public class PathResourcePack extends AbstractPackResources
     }
 
     @Override
-    public InputStream getResource(PackType type, ResourceLocation location) throws IOException {
-        if (location.getPath().startsWith("lang/")) {
+    public InputStream getResource(PackType type, ResourceLocation location) throws IOException
+    {
+        if (location.getPath().startsWith("lang/"))
+        {
             return super.getResource(PackType.CLIENT_RESOURCES, location);
-        } else {
+        } else
+        {
             return super.getResource(type, location);
         }
     }
 
     @Override
-    public boolean hasResource(PackType type, ResourceLocation location) {
-        if (location.getPath().startsWith("lang/")) {
+    public boolean hasResource(PackType type, ResourceLocation location)
+    {
+        if (location.getPath().startsWith("lang/"))
+        {
             return super.hasResource(PackType.CLIENT_RESOURCES, location);
-        } else {
+        } else
+        {
             return super.hasResource(type, location);
         }
     }

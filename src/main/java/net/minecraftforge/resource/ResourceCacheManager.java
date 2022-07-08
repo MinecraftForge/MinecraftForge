@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BiFunction;
@@ -40,7 +39,8 @@ import java.util.stream.Stream;
  * <p>
  * This class handles caching the resource listing calls on a pack, pack type and namespace level.
  */
-public class ResourceCacheManager {
+public class ResourceCacheManager
+{
 
     /**
      * Indicates if the underlying namespaced managers need to support reloading.
@@ -59,35 +59,42 @@ public class ResourceCacheManager {
     /**
      * The individual sub managers by pack type and namespace
      */
-    private final Map<PackTypeAndNamespace, NamespacedResourceCacheManager> managersByNamespace = new ConcurrentHashMap<>();
+    private final Map<PackTypeAndNamespace, NamespacedResourceCacheManager> managersByNamespace = Maps.newConcurrentMap();
 
     /**
      * Creates a new instance of a resource cache manager.
      *
-     * @param supportsReloading True to make the namespace specific managers support reloading the cache.
-     * @param indexOffThreadConfig    True to index the file-tree off-thread.
-     * @param pathBuilder       The path builder to use.
+     * @param supportsReloading    True to make the namespace specific managers support reloading the cache.
+     * @param indexOffThreadConfig True to index the file-tree off-thread.
+     * @param pathBuilder          The path builder to use.
      */
-    public ResourceCacheManager(final boolean supportsReloading, final ForgeConfigSpec.BooleanValue indexOffThreadConfig, final BiFunction<PackType, String, Path> pathBuilder) {
+    public ResourceCacheManager(final boolean supportsReloading, final ForgeConfigSpec.BooleanValue indexOffThreadConfig, final BiFunction<PackType, String, Path> pathBuilder)
+    {
         this.supportsReloading = supportsReloading;
         this.indexOffThreadConfigOption = indexOffThreadConfig;
         this.pathBuilder = pathBuilder;
     }
 
-    public boolean shouldIndexOffThread() {
+    public boolean shouldIndexOffThread()
+    {
         return !getConfigValue(this.indexOffThreadConfigOption);
     }
 
-    public static boolean shouldUseCache() {
+    public static boolean shouldUseCache()
+    {
         return getConfigValue(ForgeConfig.COMMON.cachePackAccess);
     }
 
-    private static boolean getConfigValue(Supplier<Boolean> configValue) {
-        //Yes we catch the early loading error on purpose. This feature needs to be configurable but Mojang loads resources really early.
-        //So when they are loaded early we preserve the default behaviour which is to process it on the main thread.
-        try {
+    private static boolean getConfigValue(Supplier<Boolean> configValue)
+    {
+        // Yes we catch the early loading error on purpose.
+        // Both the indexing off-thread and if caching is enabled are configurable, so we need to catch the error.
+        // So when they are loaded early we preserve the default behaviour which is to not cache or index on thread.
+        try
+        {
             return configValue.get();
-        } catch (IllegalStateException e) {
+        } catch (IllegalStateException e)
+        {
             return false;
         }
     }
@@ -97,17 +104,20 @@ public class ResourceCacheManager {
      *
      * @param namespace The namespace to index.
      */
-    public void index(final String namespace) {
-        for (final PackType packType : PackType.values()) {
-            final PackTypeAndNamespace key = new PackTypeAndNamespace(packType, namespace); //Make a key.
-            if (managersByNamespace.containsKey(key) && !supportsReloading) { //If we do not support reloading we just skip this.
+    public void index(final String namespace)
+    {
+        for (final PackType packType : PackType.values())
+        {
+            final PackTypeAndNamespace key = new PackTypeAndNamespace(packType, namespace); // Make a key.
+            if (managersByNamespace.containsKey(key) && !supportsReloading)
+            { // If we do not support reloading we just skip this.
                 return;
             }
 
-            //Create a new manager, overriding the previous one if it exists.
+            // Create a new manager, overriding the previous one if it exists.
             this.managersByNamespace.put(key, new NamespacedResourceCacheManager(packType, namespace, this.shouldIndexOffThread(), pathBuilder, this::createWalkingStream));
 
-            //Index the inner manager (which will for sure exist, and will know the pack type and namespace already)
+            // Index the inner manager (which will for sure exist, and will know the pack type and namespace already)
             this.managersByNamespace.get(key).index();
         }
     }
@@ -121,8 +131,9 @@ public class ResourceCacheManager {
      * @throws IOException Thrown when the path does not exist or reading of path information failed.
      */
     @SuppressWarnings("resource")
-    //We close this automatically later on when the result is actually used. This is just a factory.
-    private Stream<Path> createWalkingStream(final Path path) throws IOException {
+    // We close this automatically later on when the result is actually used. This is just a factory.
+    private Stream<Path> createWalkingStream(final Path path) throws IOException
+    {
         return Files.walk(path)
                 .filter(resourcePath -> !resourcePath.toString().endsWith(".mcmeta"));
     }
@@ -136,14 +147,16 @@ public class ResourceCacheManager {
      * @param filter            The ternary filter to apply.
      * @return A collection of resource locations which match the given filter, have the input path as prefix, are in the right pack type and have the given namespace as namespace.
      */
-    public Collection<ResourceLocation> getResources(final PackType type, final String resourceNamespace, final Path inputPath, final Predicate<ResourceLocation> filter) {
+    public Collection<ResourceLocation> getResources(final PackType type, final String resourceNamespace, final Path inputPath, final Predicate<ResourceLocation> filter)
+    {
         final PackTypeAndNamespace key = new PackTypeAndNamespace(type, resourceNamespace);
-        //Check if we even have a cached manager with the given namespace, else return an empty collection.
-        if (!managersByNamespace.containsKey(key)) {
+        // Check if we even have a cached manager with the given namespace, else return an empty collection.
+        if (!managersByNamespace.containsKey(key))
+        {
             return Collections.emptyList();
         }
 
-        //Request the data from the manager.
+        // Request the data from the manager.
         return managersByNamespace.get(key).getResources(inputPath, filter);
     }
 
@@ -155,7 +168,8 @@ public class ResourceCacheManager {
      * @param type The type of the pack to get the namespaces for.
      * @return The namespaces which are known for the given pack type.
      */
-    public Set<String> getNamespaces(final PackType type) {
+    public Set<String> getNamespaces(final PackType type)
+    {
         return managersByNamespace.keySet().stream()
                 .filter(key -> key.packType() == type)
                 .map(PackTypeAndNamespace::namespace)
@@ -169,7 +183,8 @@ public class ResourceCacheManager {
      * @param namespace The namespace to check.
      * @return True if the namespace is completely cached for the given pack type.
      */
-    public boolean hasCached(final PackType packType, final String namespace) {
+    public boolean hasCached(final PackType packType, final String namespace)
+    {
         final PackTypeAndNamespace key = new PackTypeAndNamespace(packType, namespace);
         return managersByNamespace.containsKey(key) && managersByNamespace.get(key).cacheLoaded();
     }
@@ -180,7 +195,8 @@ public class ResourceCacheManager {
      * @param packType  The pack type.
      * @param namespace The namespace.
      */
-    private record PackTypeAndNamespace(PackType packType, String namespace) {
+    private record PackTypeAndNamespace(PackType packType, String namespace)
+    {
     }
 
     /**
@@ -192,13 +208,15 @@ public class ResourceCacheManager {
      * @param resourceLocation The resource location for the resource.
      */
     private record ResourceCacheEntry(PackType packType, String namespace, Path path,
-                                      ResourceLocation resourceLocation) {
+                                      ResourceLocation resourceLocation)
+    {
     }
 
     /**
      * A namespaced and pack type specific cache which the {@link ResourceCacheManager} can delegate the handling to.
      */
-    private static class NamespacedResourceCacheManager {
+    private static class NamespacedResourceCacheManager
+    {
         private static final Logger LOGGER = LogUtils.getLogger();
 
         /**
@@ -240,7 +258,8 @@ public class ResourceCacheManager {
          * @param pathBuilder    The path builder to use.
          * @param pathFinder     The path walker stream factory to use.
          */
-        private NamespacedResourceCacheManager(final PackType packType, final String namespace, final boolean indexOffThread, BiFunction<PackType, String, Path> pathBuilder, final PathWalkerFactory pathFinder) {
+        private NamespacedResourceCacheManager(final PackType packType, final String namespace, final boolean indexOffThread, BiFunction<PackType, String, Path> pathBuilder, final PathWalkerFactory pathFinder)
+        {
             this.packType = packType;
             this.namespace = namespace;
             this.indexOffThread = indexOffThread;
@@ -251,15 +270,18 @@ public class ResourceCacheManager {
         /**
          * Triggers indexing of this manager.
          */
-        public void index() {
-            if (indexOffThread) {
-                //Run off-thread.
+        public void index()
+        {
+            if (indexOffThread)
+            {
+                // Run off-thread.
                 CompletableFuture.runAsync(
                         this::doIndex,
                         Util.backgroundExecutor()
                 );
-            } else {
-                //Run on-thread
+            } else
+            {
+                // Run on-thread
                 doIndex();
             }
         }
@@ -268,25 +290,31 @@ public class ResourceCacheManager {
          * Performs the actual indexing of this manager.
          * Can be invoked on- or off-thread.
          */
-        private void doIndex() {
-            //Get the path to the root of the namespace in the current pack.
+        private void doIndex()
+        {
+            // Get the path to the root of the namespace in the current pack.
             final Path rootPath = pathBuilder.apply(packType, namespace);
 
-            //Build a walkable stream, process it
-            try (final Stream<Path> paths = pathFinder.createWalkingStream(rootPath)) {
+            // Build a walkable stream, process it
+            try (final Stream<Path> paths = pathFinder.createWalkingStream(rootPath))
+            {
                 paths
-                    .parallel() //Run the stream in parallel
-                    .map(path -> new PathWithLocationPath(rootPath.relativize(path), Joiner.on('/').join(path))) //Relative to the given root.
-                    .filter(path -> ResourceLocation.isValidPath(path.locationPath())) //Only process valid paths
-                    .map(path -> new ResourceCacheEntry(packType, namespace, path.path(), new ResourceLocation(namespace, path.locationPath()))) //Create a cache entry.
-                    .forEach(this::injectIntoCache); //Inject the entry into the cache.
-            } catch (NoSuchFileException noSuchFileException) {
+                        .parallel() // Run the stream in parallel
+                        .map(path -> new PathWithLocationPath(rootPath.relativize(path), Joiner.on('/').join(path))) // Relative to the given root.
+                        .filter(path -> ResourceLocation.isValidPath(path.locationPath())) // Only process valid paths
+                        .map(path -> new ResourceCacheEntry(packType, namespace, path.path(), new ResourceLocation(namespace, path.locationPath()))) // Create a cache entry.
+                        .forEach(this::injectIntoCache); // Inject the entry into the cache.
+            } catch (NoSuchFileException noSuchFileException)
+            {
                 LOGGER.debug("Failed to cache resources, the directory does not exist!", noSuchFileException);
-            } catch (IOException ioException) {
+            } catch (IOException ioException)
+            {
                 LOGGER.error("Failed to cache resources, some stuff might be missing!", ioException);
-            } catch (Exception exception) {
+            } catch (Exception exception)
+            {
                 LOGGER.error("Failed to cache resources, some stuff might be missing! Unknown exception!", exception);
-            } finally {
+            } finally
+            {
                 cacheLoaded.set(true);
             }
         }
@@ -297,7 +325,8 @@ public class ResourceCacheManager {
          *
          * @param entry The entry to inject into the cache, must not be null.
          */
-        private void injectIntoCache(final ResourceCacheEntry entry) {
+        private void injectIntoCache(final ResourceCacheEntry entry)
+        {
             injectIntoCache(entry.path().getParent(), entry);
         }
 
@@ -305,24 +334,28 @@ public class ResourceCacheManager {
          * Injects the given cache entry into the cache, recursively into all of its parent paths.
          *
          * @param parentPath The parent path to inject into the cache, can be null. Null will be treated as the root path.
-         * @param entry The entry to inject into the cache, must not be null.
+         * @param entry      The entry to inject into the cache, must not be null.
          */
-        private void injectIntoCache(@Nullable final Path parentPath, final ResourceCacheEntry entry) {
+        private void injectIntoCache(@Nullable final Path parentPath, final ResourceCacheEntry entry)
+        {
             String pathEntry;
-            if (parentPath == null) {
-                //We have null, generally this only happens on the root directory.
+            if (parentPath == null)
+            {
+                // We have null, generally this only happens on the root directory.
                 pathEntry = "";
-            } else {
-                //Use the parent paths, we can not depend on a toString call here, since we need the / as separator.
+            } else
+            {
+                // Use the parent paths, we can not depend on a toString call here, since we need the / as separator.
                 pathEntry = Joiner.on("/").join(parentPath);
             }
 
-            //Inject into the cache.
+            // Inject into the cache.
             this.entriesByPathPrefix.putIfAbsent(pathEntry, new CopyOnWriteArrayList<>());
             this.entriesByPathPrefix.get(pathEntry).add(entry);
 
-            //Recursively walk to the top, while preventing duplicate entries.
-            if (parentPath != null && !pathEntry.isEmpty()) {
+            // Recursively walk to the top, while preventing duplicate entries.
+            if (parentPath != null && !pathEntry.isEmpty())
+            {
                 this.injectIntoCache(parentPath.getParent(), entry);
             }
         }
@@ -331,18 +364,20 @@ public class ResourceCacheManager {
          * Looks up resources in the given input path prefix as well as those that match the filter.
          *
          * @param inputPath The input path prefix to look in.
-         * @param filter The filter which the resources must match.
+         * @param filter    The filter which the resources must match.
          * @return A collection of resource location which match the given path prefix and who match the filter.
          */
-        public Collection<ResourceLocation> getResources(final Path inputPath, final Predicate<ResourceLocation> filter) {
-            //Use the input path prefix, we can not depend on a toString call here, since we need the / as separator.
+        public Collection<ResourceLocation> getResources(final Path inputPath, final Predicate<ResourceLocation> filter)
+        {
+            // Use the input path prefix, we can not depend on a toString call here, since we need the / as separator.
             final String pathEntry = Joiner.on('/').join(inputPath);
-            if (!entriesByPathPrefix.containsKey(pathEntry)) {
-                //No cache entry found.
+            if (!entriesByPathPrefix.containsKey(pathEntry))
+            {
+                // No cache entry found.
                 return Collections.emptyList();
             }
 
-            //Since we inject into the cache recursively we can now just grab the map entry that is the prefix and loop over its values.
+            // Since we inject into the cache recursively we can now just grab the map entry that is the prefix and loop over its values.
             return entriesByPathPrefix.get(pathEntry).stream()
                     .map(ResourceCacheEntry::resourceLocation)
                     .filter(filter)
@@ -354,14 +389,17 @@ public class ResourceCacheManager {
          *
          * @return True if the cache has been loaded, false otherwise.
          */
-        public boolean cacheLoaded() {
+        public boolean cacheLoaded()
+        {
             return cacheLoaded.get();
         }
 
         /**
          * Stream element resource that combines a normalized path and a joined path using the "/" as separator.
          */
-        private record PathWithLocationPath(Path path, String locationPath) { }
+        private record PathWithLocationPath(Path path, String locationPath)
+        {
+        }
     }
 
     /**
@@ -369,7 +407,8 @@ public class ResourceCacheManager {
      * Supports throwing {@link IOException} if the stream can not be created.
      */
     @FunctionalInterface
-    private interface PathWalkerFactory {
+    private interface PathWalkerFactory
+    {
         Stream<Path> createWalkingStream(Path path) throws IOException;
     }
 }
