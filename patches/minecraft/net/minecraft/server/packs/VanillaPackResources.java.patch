@@ -1,33 +1,5 @@
 --- a/net/minecraft/server/packs/VanillaPackResources.java
 +++ b/net/minecraft/server/packs/VanillaPackResources.java
-@@ -40,6 +_,8 @@
-    public static Path f_10312_;
-    private static final Logger f_10315_ = LogUtils.getLogger();
-    public static Class<?> f_10313_;
-+   private final net.minecraftforge.resource.ResourceCacheManager cacheManager = new net.minecraftforge.resource.ResourceCacheManager(false, net.minecraftforge.common.ForgeConfig.COMMON.indexVanillaPackCachesOnThread, (packType, namespace) -> f_182296_.get(packType).resolve(namespace));
-+
-    private static final Map<PackType, Path> f_182296_ = Util.m_137537_(() -> {
-       synchronized(VanillaPackResources.class) {
-          ImmutableMap.Builder<PackType, Path> builder = ImmutableMap.builder();
-@@ -92,6 +_,18 @@
-       this.f_10314_ = ImmutableSet.copyOf(p_143762_);
-    }
- 
-+   @Override
-+   public void initForNamespace(final String nameSpace) {
-+      if (net.minecraftforge.resource.ResourceCacheManager.shouldUseCache())
-+         this.cacheManager.index(nameSpace);
-+   }
-+
-+   @Override
-+   public void init(final PackType packType) {
-+      initForNamespace("minecraft"); //Default namespaces.
-+      initForNamespace("realms");
-+   }
-+
-    public InputStream m_5542_(String p_10358_) throws IOException {
-       if (!p_10358_.contains("/") && !p_10358_.contains("\\")) {
-          if (f_10312_ != null) {
 @@ -147,6 +_,9 @@
        try {
           Path path = f_182296_.get(p_215346_);
@@ -56,12 +28,10 @@
     }
  
     public boolean m_7211_(PackType p_10355_, ResourceLocation p_10356_) {
-@@ -298,6 +_,20 @@
+@@ -300,11 +_,39 @@
+    public void close() {
     }
  
-    public void close() {
-+   }
-+
 +   //Vanilla used to just grab from the classpath, this breaks dev environments, and Forge runtime
 +   //as forge ships vanilla assets in an 'extra' jar with no classes.
 +   //So find that extra jar using the .mcassetsroot marker.
@@ -74,6 +44,27 @@
 +      } catch (IOException e) {
 +         return VanillaPackResources.class.getResourceAsStream(resource);
 +      }
-    }
- 
++   }
++
     public ResourceProvider m_215363_() {
+       return (p_215344_) -> {
+          return Optional.of(new Resource(this.m_8017_(), () -> {
+             return this.m_8031_(PackType.CLIENT_RESOURCES, p_215344_);
+          }));
+       };
++   }
++
++   private final net.minecraftforge.resource.ResourceCacheManager cacheManager = new net.minecraftforge.resource.ResourceCacheManager(false, net.minecraftforge.common.ForgeConfig.COMMON.indexVanillaPackCachesOnThread, (packType, namespace) -> f_182296_.get(packType).resolve(namespace));
++
++   @Override
++   public void initForNamespace(final String nameSpace) {
++      if (net.minecraftforge.resource.ResourceCacheManager.shouldUseCache())
++         this.cacheManager.index(nameSpace);
++   }
++
++   @Override
++   public void init(final PackType packType) {
++      initForNamespace("minecraft"); //Default namespaces.
++      initForNamespace("realms");
+    }
+ }
