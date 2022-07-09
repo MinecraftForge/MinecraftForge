@@ -7,8 +7,7 @@ package net.minecraftforge.debug.client.model;
 
 import java.util.List;
 
-import com.google.common.collect.ImmutableList;
-
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -26,12 +25,11 @@ import com.mojang.math.Quaternion;
 import com.mojang.math.Transformation;
 import com.mojang.math.Vector3f;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.ModelBakeEvent;
-import net.minecraftforge.client.model.data.IDynamicBakedModel;
-import net.minecraftforge.client.model.data.IModelData;
-import net.minecraftforge.client.model.pipeline.BakedQuadBuilder;
-import net.minecraftforge.client.model.pipeline.TRSRTransformer;
-import net.minecraftforge.common.model.TransformationHelper;
+import net.minecraftforge.client.event.ModelEvent;
+import net.minecraftforge.client.model.IQuadTransformer;
+import net.minecraftforge.client.model.IDynamicBakedModel;
+import net.minecraftforge.client.model.data.ModelData;
+import net.minecraftforge.common.util.TransformationHelper;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.registries.RegistryObject;
@@ -58,10 +56,10 @@ public class TRSRTransformerTest {
         ITEMS.register(mod);
     }
 
-    public void onModelBake(ModelBakeEvent e) {
-        for (ResourceLocation id : e.getModelRegistry().keySet()) {
+    public void onModelBake(ModelEvent.BakingCompleted e) {
+        for (ResourceLocation id : e.getModels().keySet()) {
             if (MODID.equals(id.getNamespace()) && "test".equals(id.getPath())) {
-                e.getModelRegistry().put(id, new MyBakedModel(e.getModelRegistry().get(id)));
+                e.getModels().put(id, new MyBakedModel(e.getModels().get(id)));
             }
         }
     }
@@ -74,32 +72,14 @@ public class TRSRTransformerTest {
         }
 
         @Override
-        public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, RandomSource rand, IModelData data) {
-            ImmutableList.Builder<BakedQuad> quads = new ImmutableList.Builder<>();
-
+        public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, RandomSource rand, ModelData data, @Nullable RenderType renderType) {
             Quaternion rot = TransformationHelper.quatFromXYZ(new Vector3f(0, 45, 0), true);
             Vector3f translation = new Vector3f(0, 0.33f, 0);
 
             Transformation trans = new Transformation(translation, rot, null, null).blockCenterToCorner();
+            var transformer = IQuadTransformer.applying(trans);
 
-            for (BakedQuad quad : base.getQuads(state, side, rand, data)) {
-
-                if (true)
-                {
-                    BakedQuadBuilder builder = new BakedQuadBuilder();
-
-                    TRSRTransformer transformer = new TRSRTransformer(builder, trans);
-
-                    quad.pipe(transformer);
-
-                    quads.add(builder.build());
-                } /* else {
-                    QuadTransformer qt = new QuadTransformer(trans);
-                    quads.add(qt.processOne(quad));
-                }*/
-            }
-
-            return quads.build();
+            return transformer.process(base.getQuads(state, side, rand, data, renderType));
         }
 
         @Override

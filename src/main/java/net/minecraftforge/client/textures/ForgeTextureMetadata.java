@@ -9,7 +9,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.metadata.MetadataSectionSerializer;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.util.GsonHelper;
-import net.minecraftforge.client.MinecraftForgeClient;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
@@ -68,7 +67,7 @@ public final class ForgeTextureMetadata
             if (json.has("loader"))
             {
                 ResourceLocation loaderName = new ResourceLocation(GsonHelper.getAsString(json, "loader"));
-                loader = MinecraftForgeClient.getTextureAtlasSpriteLoader(loaderName);
+                loader = TextureAtlasSpriteLoaderManager.get(loaderName);
                 if (loader == null)
                 {
                     throw new JsonSyntaxException("Unknown TextureAtlasSpriteLoader " + loaderName);

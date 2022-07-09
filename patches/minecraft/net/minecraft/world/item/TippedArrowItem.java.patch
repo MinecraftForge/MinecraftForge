@@ -1,0 +1,13 @@
+--- a/net/minecraft/world/item/TippedArrowItem.java
++++ b/net/minecraft/world/item/TippedArrowItem.java
+@@ -20,8 +_,8 @@
+    }
+ 
+    public void m_6787_(CreativeModeTab p_43356_, NonNullList<ItemStack> p_43357_) {
+-      if (this.m_220152_(p_43356_)) {
+-         for(Potion potion : Registry.f_122828_) {
++      for (Potion potion : Registry.f_122828_) {
++         if (potion.allowedInCreativeTab(this, p_43356_, this.m_220152_(p_43356_))) {
+             if (!potion.m_43488_().isEmpty()) {
+                p_43357_.add(PotionUtils.m_43549_(new ItemStack(this), potion));
+             }

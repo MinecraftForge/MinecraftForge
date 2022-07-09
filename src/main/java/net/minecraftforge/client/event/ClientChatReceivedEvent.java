@@ -5,25 +5,25 @@
 
 package net.minecraftforge.client.event;
 
-import net.minecraft.network.chat.ChatSender;
 import net.minecraft.Util;
+import net.minecraft.network.chat.ChatSender;
 import net.minecraft.network.chat.ChatType;
 import net.minecraft.network.chat.Component;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.LogicalSide;
+import org.jetbrains.annotations.ApiStatus;
 
 /**
  * Fired when a chat message is received on the client.
  * This can be used for filtering and detecting messages with specific words or phrases, and suppressing them.
  *
  * <p>This event is {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}.
- * If the event is cancelled, the message is not displayed in the chat message window. </p>
+ * If the event is cancelled, the message is not displayed in the chat message window.</p>
  *
  * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
- * only on the {@linkplain LogicalSide#CLIENT logical client}. </p>
+ * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
  *
  * @see ChatType
  */
@@ -34,10 +34,7 @@ public class ClientChatReceivedEvent extends Event
     private final ChatType type;
     private final ChatSender chatSender;
 
-    /**
-     * @hidden
-     * @see ForgeEventFactory#onClientChat(ChatType, Component, ChatSender)
-     */
+    @ApiStatus.Internal
     public ClientChatReceivedEvent(ChatType type, Component message, ChatSender chatSender)
     {
         this.type = type;

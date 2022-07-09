@@ -1,0 +1,94 @@
+{
+  "loader": "forge:separate_transforms",
+  "base": {
+    "parent": "block/block",
+    "loader": "forge:composite",
+    "__CHANGE_WHEN_UPDATING_TO_1.20": "REPLACE 'parts' WITH 'children' IN 1.20 OR THIS WILL NOT LOAD",
+    "parts": {
+      "first": {
+        "__CHANGE_WHEN_UPDATING_TO_1": "REPLACE 'minecraft:elements' WITH 'forge:elements' IN 1.20 OR THIS WILL NOT LOAD",
+        "loader": "minecraft:elements",
+        "textures": {
+          "tex": "minecraft:block/smooth_stone"
+        },
+        "elements": [
+          {
+            "from": [  0,  0,  0 ],
+            "to":   [ 16,  2, 16 ],
+            "faces": {
+              "down":  { "texture": "#tex" },
+              "up":    { "texture": "#tex" },
+              "north": { "texture": "#tex" },
+              "south": { "texture": "#tex" },
+              "west":  { "texture": "#tex" },
+              "east":  { "texture": "#tex" }
+            }
+          }
+        ]
+      },
+      "second": {
+        "loader": "forge:elements",
+        "render_type": "cutout",
+        "textures": {
+          "tex": "minecraft:block/oak_leaves"
+        },
+        "elements": [
+          {
+            "from": [  2,  2,  2 ],
+            "to":   [ 14,  6, 14 ],
+            "faces": {
+              "down":  { "texture": "#tex" },
+              "up":    { "texture": "#tex" },
+              "north": { "texture": "#tex" },
+              "south": { "texture": "#tex" },
+              "west":  { "texture": "#tex" },
+              "east":  { "texture": "#tex" }
+            }
+          }
+        ]
+      },
+      "third": {
+        "loader": "forge:elements",
+        "render_type": "translucent",
+        "textures": {
+          "tex": "minecraft:block/slime_block"
+        },
+        "elements": [
+          {
+            "from": [  4,  6,  4 ],
+            "to":   [ 12, 14, 12 ],
+            "faces": {
+              "down":  { "texture": "#tex" },
+              "up":    { "texture": "#tex" },
+              "north": { "texture": "#tex" },
+              "south": { "texture": "#tex" },
+              "west":  { "texture": "#tex" },
+              "east":  { "texture": "#tex" }
+            }
+          }
+        ]
+      }
+    }
+  },
+  "perspectives": {
+    "firstperson_lefthand": {
+      "parent": "forge:item/default",
+      "loader": "forge:item_layers",
+      "textures": {
+        "layer0": "minecraft:item/chainmail_chestplate",
+        "layer1": "minecraft:item/bow"
+      },
+      "emissive_layers": [ 1 ]
+    },
+    "firstperson_righthand": {
+      "parent": "forge:item/default",
+      "loader": "forge:fluid_container",
+      "fluid": "minecraft:lava",
+      "gui_light": "front",
+      "textures": {
+        "base": "minecraft:item/bucket",
+        "fluid": "forge:item/mask/bucket_fluid"
+      }
+    }
+  }
+}

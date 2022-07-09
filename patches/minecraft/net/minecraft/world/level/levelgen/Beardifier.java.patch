@@ -1,0 +1,14 @@
+--- a/net/minecraft/world/level/levelgen/Beardifier.java
++++ b/net/minecraft/world/level/levelgen/Beardifier.java
+@@ -43,6 +_,11 @@
+ 
+          for(StructurePiece structurepiece : p_223936_.m_73602_()) {
+             if (structurepiece.m_73411_(p_223939_, 12)) {
++               if (structurepiece instanceof net.minecraftforge.common.world.PieceBeardifierModifier pieceBeardifierModifier) {
++                  if (pieceBeardifierModifier.getTerrainAdjustment() != TerrainAdjustment.NONE) {
++                     objectlist.add(new Beardifier.Rigid(pieceBeardifierModifier.getBeardifierBox(), pieceBeardifierModifier.getTerrainAdjustment(), pieceBeardifierModifier.getGroundLevelDelta()));
++                  }
++               } else
+                if (structurepiece instanceof PoolElementStructurePiece) {
+                   PoolElementStructurePiece poolelementstructurepiece = (PoolElementStructurePiece)structurepiece;
+                   StructureTemplatePool.Projection structuretemplatepool$projection = poolelementstructurepiece.m_209918_().m_210539_();

@@ -11,14 +11,12 @@ import com.mojang.blaze3d.platform.NativeImage;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.Tickable;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.world.item.Item;
-import net.minecraftforge.client.MinecraftForgeClient;
+import net.minecraftforge.client.event.RegisterTextureAtlasSpriteLoadersEvent;
 import net.minecraftforge.client.textures.ITextureAtlasSpriteLoader;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.registries.RegistryObject;
@@ -40,15 +38,15 @@ public class CustomTASTest
         {
             if (FMLLoader.getDist().isClient())
             {
-                FMLJavaModLoadingContext.get().getModEventBus().addListener(this::clientSetup);
+                FMLJavaModLoadingContext.get().getModEventBus().addListener(this::registerTextureAtlasSpriteLoaders);
             }
             ITEMS.register(FMLJavaModLoadingContext.get().getModEventBus());
         }
     }
 
-    private void clientSetup(FMLClientSetupEvent event)
+    private void registerTextureAtlasSpriteLoaders(RegisterTextureAtlasSpriteLoadersEvent event)
     {
-        MinecraftForgeClient.registerTextureAtlasSpriteLoader(new ResourceLocation(MOD_ID, "tas_loader"), new TasLoader());
+        event.register("tas_loader", new TasLoader());
     }
 
     private static class TasLoader implements ITextureAtlasSpriteLoader

@@ -28,9 +28,8 @@ import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Material;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.IFluidTypeRenderProperties;
-import net.minecraftforge.client.RenderProperties;
-import net.minecraftforge.client.event.ColorHandlerEvent;
+import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions;
+import net.minecraftforge.client.event.RegisterColorHandlersEvent;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fluids.FluidInteractionRegistry;
@@ -87,9 +86,9 @@ public class FluidTypeTest
             new FluidType(FluidType.Properties.create().supportsBoating(true).canHydrate(true))
             {
                 @Override
-                public void initializeClient(Consumer<IFluidTypeRenderProperties> consumer)
+                public void initializeClient(Consumer<IClientFluidTypeExtensions> consumer)
                 {
-                    consumer.accept(new IFluidTypeRenderProperties()
+                    consumer.accept(new IClientFluidTypeExtensions()
                     {
                         private static final ResourceLocation STILL = new ResourceLocation("block/water_still"),
                                 FLOW = new ResourceLocation("block/water_flow"),
@@ -121,7 +120,7 @@ public class FluidTypeTest
                         }
 
                         @Override
-                        public int getColorTint()
+                        public int getTintColor()
                         {
                             return 0xAF7FFFD4;
                         }
@@ -129,7 +128,7 @@ public class FluidTypeTest
                         @Override
                         public @NotNull Vector3f modifyFogColor(Camera camera, float partialTick, ClientLevel level, int renderDistance, float darkenWorldAmount, Vector3f fluidFogColor)
                         {
-                            int color = this.getColorTint();
+                            int color = this.getTintColor();
                             return new Vector3f((color >> 16 & 0xFF) / 255F, (color >> 8 & 0xFF) / 255F, (color & 0xFF) / 255F);
                         }
 
@@ -208,14 +207,14 @@ public class FluidTypeTest
                     .forEach(fluid -> ItemBlockRenderTypes.setRenderLayer(fluid, RenderType.translucent()));
         }
 
-        private void registerBlockColors(ColorHandlerEvent.Block event)
+        private void registerBlockColors(RegisterColorHandlersEvent.Block event)
         {
             event.getBlockColors().register((state, getter, pos, index) ->
             {
                 if (getter != null && pos != null)
                 {
                     FluidState fluidState = getter.getFluidState(pos);
-                    return RenderProperties.get(fluidState).getColorTint(fluidState, getter, pos);
+                    return IClientFluidTypeExtensions.of(fluidState).getTintColor(fluidState, getter, pos);
                 } else return 0xAF7FFFD4;
             }, TEST_FLUID_BLOCK.get());
         }

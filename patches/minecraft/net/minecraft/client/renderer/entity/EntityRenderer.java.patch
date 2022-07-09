@@ -6,10 +6,10 @@
     public void m_7392_(T p_114485_, float p_114486_, float p_114487_, PoseStack p_114488_, MultiBufferSource p_114489_, int p_114490_) {
 -      if (this.m_6512_(p_114485_)) {
 -         this.m_7649_(p_114485_, p_114485_.m_5446_(), p_114488_, p_114489_, p_114490_);
-+      net.minecraftforge.client.event.RenderNameplateEvent renderNameplateEvent = new net.minecraftforge.client.event.RenderNameplateEvent(p_114485_, p_114485_.m_5446_(), this, p_114488_, p_114489_, p_114490_, p_114487_);
-+      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(renderNameplateEvent);
-+      if (renderNameplateEvent.getResult() != net.minecraftforge.eventbus.api.Event.Result.DENY && (renderNameplateEvent.getResult() == net.minecraftforge.eventbus.api.Event.Result.ALLOW || this.m_6512_(p_114485_))) {
-+         this.m_7649_(p_114485_, renderNameplateEvent.getContent(), p_114488_, p_114489_, p_114490_);
++      var renderNameTagEvent = new net.minecraftforge.client.event.RenderNameTagEvent(p_114485_, p_114485_.m_5446_(), this, p_114488_, p_114489_, p_114490_, p_114487_);
++      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(renderNameTagEvent);
++      if (renderNameTagEvent.getResult() != net.minecraftforge.eventbus.api.Event.Result.DENY && (renderNameTagEvent.getResult() == net.minecraftforge.eventbus.api.Event.Result.ALLOW || this.m_6512_(p_114485_))) {
++         this.m_7649_(p_114485_, renderNameTagEvent.getContent(), p_114488_, p_114489_, p_114490_);
        }
     }
  

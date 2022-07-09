@@ -240,6 +240,8 @@ modId="data_pack_registries_test"
 modId="mod_mismatch_test"
 [[mods]]
 modId="custom_transformtype_test"
+[[mods]]
+modId="mega_model_test"
 
 
 

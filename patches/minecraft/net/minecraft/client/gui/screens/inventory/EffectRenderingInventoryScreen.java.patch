@@ -1,11 +1,12 @@
 --- a/net/minecraft/client/gui/screens/inventory/EffectRenderingInventoryScreen.java
 +++ b/net/minecraft/client/gui/screens/inventory/EffectRenderingInventoryScreen.java
-@@ -42,12 +_,15 @@
+@@ -42,12 +_,16 @@
        if (!collection.isEmpty() && j >= 32) {
           RenderSystem.m_157429_(1.0F, 1.0F, 1.0F, 1.0F);
           boolean flag = j >= 120;
-+         var event = net.minecraftforge.client.ForgeHooksClient.onScreenPotionSize(this);
-+         if (event != net.minecraftforge.eventbus.api.Event.Result.DEFAULT) flag = event == net.minecraftforge.eventbus.api.Event.Result.DENY; // true means classic mode
++         var event = net.minecraftforge.client.ForgeHooksClient.onScreenPotionSize(this, j, !flag);
++         if (event == 0) return; // 0 = cancel rendering
++         flag = event == 2; // 2 = full-size / 1 = compact
           int k = 33;
           if (collection.size() > 5) {
              k = 132 / (collection.size() - 1);
@@ -17,13 +18,24 @@
           this.m_194002_(p_194015_, i, k, iterable, flag);
           this.m_194008_(p_194015_, i, k, iterable, flag);
           if (flag) {
-@@ -108,6 +_,12 @@
+@@ -95,6 +_,11 @@
+       int i = this.f_97736_;
+ 
+       for(MobEffectInstance mobeffectinstance : p_194012_) {
++         var renderer = net.minecraftforge.client.extensions.common.IClientMobEffectExtensions.of(mobeffectinstance);
++         if (renderer.renderInventoryIcon(mobeffectinstance, this, p_194009_, p_194010_ + (p_194013_ ? 6 : 7), i, this.m_93252_())) {
++            i += p_194011_;
++            continue;
++         }
+          MobEffect mobeffect = mobeffectinstance.m_19544_();
+          TextureAtlasSprite textureatlassprite = mobeffecttexturemanager.m_118732_(mobeffect);
+          RenderSystem.m_157456_(0, textureatlassprite.m_118414_().m_118330_());
+@@ -108,6 +_,11 @@
        int i = this.f_97736_;
  
        for(MobEffectInstance mobeffectinstance : p_98726_) {
-+         net.minecraftforge.client.EffectRenderer renderer = net.minecraftforge.client.RenderProperties.getEffectRenderer(mobeffectinstance);
-+         renderer.renderInventoryEffect(mobeffectinstance, this, p_98723_, p_98724_, i, this.m_93252_());
-+         if (!renderer.shouldRenderInvText(mobeffectinstance)) {
++         var renderer = net.minecraftforge.client.extensions.common.IClientMobEffectExtensions.of(mobeffectinstance);
++         if (renderer.renderInventoryText(mobeffectinstance, this, p_98723_, p_98724_, i, this.m_93252_())) {
 +            i += p_98725_;
 +            continue;
 +         }

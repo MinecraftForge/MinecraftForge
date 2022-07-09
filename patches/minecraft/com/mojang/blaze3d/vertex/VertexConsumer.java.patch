@@ -9,7 +9,18 @@
     VertexConsumer m_5483_(double p_85945_, double p_85946_, double p_85947_);
  
     VertexConsumer m_6122_(int p_85973_, int p_85974_, int p_85975_, int p_85976_);
-@@ -101,11 +_,12 @@
+@@ -64,6 +_,10 @@
+    }
+ 
+    default void m_85995_(PoseStack.Pose p_85996_, BakedQuad p_85997_, float[] p_85998_, float p_85999_, float p_86000_, float p_86001_, int[] p_86002_, int p_86003_, boolean p_86004_) {
++      putBulkData(p_85996_, p_85997_, p_85998_, p_85999_, p_86000_, p_86001_, 1, p_86002_, p_86003_, p_86004_);
++   }
++
++   default void putBulkData(PoseStack.Pose p_85996_, BakedQuad p_85997_, float[] p_85998_, float p_85999_, float p_86000_, float p_86001_, float alpha, int[] p_86002_, int p_86003_, boolean p_86004_) {
+       float[] afloat = new float[]{p_85998_[0], p_85998_[1], p_85998_[2], p_85998_[3]};
+       int[] aint = new int[]{p_86002_[0], p_86002_[1], p_86002_[2], p_86002_[3]};
+       int[] aint1 = p_85997_.m_111303_();
+@@ -101,12 +_,14 @@
                 f5 = afloat[k] * p_86001_;
              }
  
@@ -19,7 +30,10 @@
              float f10 = bytebuffer.getFloat(20);
              Vector4f vector4f = new Vector4f(f, f1, f2, 1.0F);
              vector4f.m_123607_(matrix4f);
+-            this.m_5954_(vector4f.m_123601_(), vector4f.m_123615_(), vector4f.m_123616_(), f3, f4, f5, 1.0F, f9, f10, p_86003_, l, vector3f.m_122239_(), vector3f.m_122260_(), vector3f.m_122269_());
 +            applyBakedNormals(vector3f, bytebuffer, p_85996_.m_85864_());
-             this.m_5954_(vector4f.m_123601_(), vector4f.m_123615_(), vector4f.m_123616_(), f3, f4, f5, 1.0F, f9, f10, p_86003_, l, vector3f.m_122239_(), vector3f.m_122260_(), vector3f.m_122269_());
++            float vertexAlpha = p_86004_ ? alpha * (float) (bytebuffer.get(15) & 255) / 255.0F : alpha;
++            this.m_5954_(vector4f.m_123601_(), vector4f.m_123615_(), vector4f.m_123616_(), f3, f4, f5, vertexAlpha, f9, f10, p_86003_, l, vector3f.m_122239_(), vector3f.m_122260_(), vector3f.m_122269_());
           }
        } catch (Throwable throwable1) {
+          if (memorystack != null) {

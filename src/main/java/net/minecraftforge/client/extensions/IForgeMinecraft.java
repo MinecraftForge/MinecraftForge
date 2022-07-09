@@ -9,6 +9,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraftforge.client.ForgeHooksClient;
 
+import java.util.Locale;
+
 /**
  * Extension interface for {@link IForgeMinecraft}.
  */
@@ -35,5 +37,14 @@ public interface IForgeMinecraft
     default void popGuiLayer()
     {
         ForgeHooksClient.popGuiLayer(self());
+    }
+
+    /**
+     * Retrieves the {@link Locale} set by the player.
+     * Useful for creating string and number formatters.
+     */
+    default Locale getLocale()
+    {
+        return self().getLanguageManager().getSelected().getJavaLocale();
     }
 }

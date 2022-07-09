@@ -9,7 +9,7 @@
 -            m_173296_(p_110719_.m_91289_().m_110907_().m_110882_(blockstate), p_110720_);
 +         org.apache.commons.lang3.tuple.Pair<BlockState, BlockPos> overlay = getOverlayBlock(player);
 +         if (overlay != null) {
-+            if (!net.minecraftforge.client.ForgeHooksClient.renderBlockOverlay(player, p_110720_, net.minecraftforge.client.event.RenderBlockOverlayEvent.OverlayType.BLOCK, overlay.getLeft(), overlay.getRight()))
++            if (!net.minecraftforge.client.ForgeHooksClient.renderBlockOverlay(player, p_110720_, net.minecraftforge.client.event.RenderBlockScreenEffectEvent.OverlayType.BLOCK, overlay.getLeft(), overlay.getRight()))
 +               m_173296_(p_110719_.m_91289_().m_110907_().getTexture(overlay.getLeft(), p_110719_.f_91073_, overlay.getRight()), p_110720_);
           }
        }
@@ -19,7 +19,7 @@
 +            if (!net.minecraftforge.client.ForgeHooksClient.renderWaterOverlay(player, p_110720_))
              m_110725_(p_110719_, p_110720_);
           }
-+         else if (!player.getEyeInFluidType().isAir()) net.minecraftforge.client.RenderProperties.get(player.getEyeInFluidType()).renderOverlay(p_110719_, p_110720_);
++         else if (!player.getEyeInFluidType().isAir()) net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions.of(player.getEyeInFluidType()).renderOverlay(p_110719_, p_110720_);
  
           if (p_110719_.f_91074_.m_6060_()) {
 +            if (!net.minecraftforge.client.ForgeHooksClient.renderFireOverlay(player, p_110720_))
@@ -47,3 +47,18 @@
           }
        }
  
+@@ -90,9 +_,13 @@
+    }
+ 
+    private static void m_110725_(Minecraft p_110726_, PoseStack p_110727_) {
++      renderFluid(p_110726_, p_110727_, f_110714_);
++   }
++
++   public static void renderFluid(Minecraft p_110726_, PoseStack p_110727_, ResourceLocation texture) {
+       RenderSystem.m_157427_(GameRenderer::m_172817_);
+       RenderSystem.m_69493_();
+-      RenderSystem.m_157456_(0, f_110714_);
++      RenderSystem.m_157456_(0, texture);
+       BufferBuilder bufferbuilder = Tesselator.m_85913_().m_85915_();
+       BlockPos blockpos = new BlockPos(p_110726_.f_91074_.m_20185_(), p_110726_.f_91074_.m_20188_(), p_110726_.f_91074_.m_20189_());
+       float f = LightTexture.m_234316_(p_110726_.f_91074_.f_19853_.m_6042_(), p_110726_.f_91074_.f_19853_.m_46803_(blockpos));

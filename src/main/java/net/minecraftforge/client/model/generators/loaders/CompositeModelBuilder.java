@@ -6,14 +6,14 @@
 package net.minecraftforge.client.model.generators.loaders;
 
 import com.google.common.base.Preconditions;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.model.generators.CustomLoaderBuilder;
 import net.minecraftforge.client.model.generators.ModelBuilder;
 import net.minecraftforge.common.data.ExistingFileHelper;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 
 public class CompositeModelBuilder<T extends ModelBuilder<T>> extends CustomLoaderBuilder<T>
 {
@@ -23,17 +23,31 @@ public class CompositeModelBuilder<T extends ModelBuilder<T>> extends CustomLoad
     }
 
     private final Map<String, T> childModels = new LinkedHashMap<>();
+    private final List<String> itemRenderOrder = new ArrayList<>();
 
     protected CompositeModelBuilder(T parent, ExistingFileHelper existingFileHelper)
     {
         super(new ResourceLocation("forge:composite"), parent, existingFileHelper);
     }
 
-    public CompositeModelBuilder<T> submodel(String name, T modelBuilder)
+    public CompositeModelBuilder<T> child(String name, T modelBuilder)
     {
         Preconditions.checkNotNull(name, "name must not be null");
         Preconditions.checkNotNull(modelBuilder, "modelBuilder must not be null");
         childModels.put(name, modelBuilder);
+        itemRenderOrder.add(name);
+        return this;
+    }
+
+    public CompositeModelBuilder<T> itemRenderOrder(String... names)
+    {
+        Preconditions.checkNotNull(names, "names must not be null");
+        Preconditions.checkArgument(names.length > 0, "names must contain at least one element");
+        for (String name : names)
+            if (!childModels.containsKey(name))
+                throw new IllegalArgumentException("names contains \"" + name + "\", which is not a child of this model");
+        itemRenderOrder.clear();
+        itemRenderOrder.addAll(Arrays.asList(names));
         return this;
     }
 
@@ -42,12 +56,18 @@ public class CompositeModelBuilder<T extends ModelBuilder<T>> extends CustomLoad
     {
         json = super.toJson(json);
 
-        JsonObject parts = new JsonObject();
+        JsonObject children = new JsonObject();
         for(Map.Entry<String, T> entry : childModels.entrySet())
         {
-            parts.add(entry.getKey(), entry.getValue().toJson());
+            children.add(entry.getKey(), entry.getValue().toJson());
         }
-        json.add("parts", parts);
+        json.add("children", children);
+
+        JsonArray itemRenderOrder = new JsonArray();
+        for (String name : this.itemRenderOrder) {
+            itemRenderOrder.add(name);
+        }
+        json.add("item_render_order", itemRenderOrder);
 
         return json;
     }

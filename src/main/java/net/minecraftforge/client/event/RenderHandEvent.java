@@ -6,24 +6,24 @@
 package net.minecraftforge.client.event;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.LogicalSide;
+import org.jetbrains.annotations.ApiStatus;
 
 /**
  * Fired before a hand is rendered in the first person view.
  *
  * <p>This event is {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}.
- * If this event is cancelled, then the hand will not be rendered. </p>
+ * If this event is cancelled, then the hand will not be rendered.</p>
  *
  * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
- * only on the {@linkplain LogicalSide#CLIENT logical client}. </p>
+ * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
  *
  * @see RenderArmEvent
  */
@@ -40,10 +40,7 @@ public class RenderHandEvent extends Event
     private final float equipProgress;
     private final ItemStack stack;
 
-    /**
-     * @hidden
-     * @see net.minecraftforge.client.ForgeHooksClient#renderSpecificFirstPersonHand(InteractionHand, PoseStack, MultiBufferSource, int, float, float, float, float, ItemStack)
-     */
+    @ApiStatus.Internal
     public RenderHandEvent(InteractionHand hand, PoseStack poseStack, MultiBufferSource multiBufferSource, int packedLight,
                            float partialTick, float interpolatedPitch,
                            float swingProgress, float equipProgress, ItemStack stack)
@@ -78,7 +75,8 @@ public class RenderHandEvent extends Event
     /**
      * {@return the source of rendering buffers}
      */
-    public MultiBufferSource getMultiBufferSource() {
+    public MultiBufferSource getMultiBufferSource()
+    {
         return multiBufferSource;
     }
 
@@ -87,7 +85,8 @@ public class RenderHandEvent extends Event
      *
      * @see LightTexture
      */
-    public int getPackedLight() {
+    public int getPackedLight()
+    {
         return packedLight;
     }
 

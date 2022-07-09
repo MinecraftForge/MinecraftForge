@@ -6,7 +6,7 @@
        super(p_105665_, p_105666_, p_105667_, p_105668_, 0.0D, 0.0D, 0.0D);
 -      this.m_108337_(Minecraft.m_91087_().m_91291_().m_174264_(p_105669_, p_105665_, (LivingEntity)null, 0).m_6160_());
 +      var model = Minecraft.m_91087_().m_91291_().m_174264_(p_105669_, p_105665_, (LivingEntity)null, 0);
-+      this.m_108337_(model.m_7343_().m_173464_(model, p_105669_, p_105665_, null, 0).getParticleIcon(net.minecraftforge.client.model.data.EmptyModelData.INSTANCE));
++      this.m_108337_(model.m_7343_().m_173464_(model, p_105669_, p_105665_, null, 0).getParticleIcon(net.minecraftforge.client.model.data.ModelData.EMPTY));
        this.f_107226_ = 1.0F;
        this.f_107663_ /= 2.0F;
        this.f_105643_ = this.f_107223_.m_188501_() * 3.0F;
