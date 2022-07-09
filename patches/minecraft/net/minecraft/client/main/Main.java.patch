@@ -1,5 +1,32 @@
 --- a/net/minecraft/client/main/Main.java
 +++ b/net/minecraft/client/main/Main.java
+@@ -49,7 +_,6 @@
+    @DontObfuscate
+    public static void main(String[] p_129642_) {
+       SharedConstants.m_142977_();
+-      SharedConstants.m_214358_();
+       OptionParser optionparser = new OptionParser();
+       optionparser.allowsUnrecognizedOptions();
+       optionparser.accepts("demo");
+@@ -82,6 +_,7 @@
+       OptionSpec<String> optionspec22 = optionparser.accepts("assetIndex").withRequiredArg();
+       OptionSpec<String> optionspec23 = optionparser.accepts("userType").withRequiredArg().defaultsTo(User.Type.LEGACY.m_193808_());
+       OptionSpec<String> optionspec24 = optionparser.accepts("versionType").withRequiredArg().defaultsTo("release");
++      OptionSpec<Void> disableDFUOptimizations = optionparser.accepts("disable-dfu-optimizations");
+       OptionSpec<String> optionspec25 = optionparser.nonOptions();
+       OptionSet optionset = optionparser.parse(p_129642_);
+       List<String> list = optionset.valuesOf(optionspec25);
+@@ -89,6 +_,10 @@
+          System.out.println("Completely ignored arguments: " + list);
+       }
+ 
++      if (!optionset.has(disableDFUOptimizations)) {
++         SharedConstants.m_214358_();
++      }
++
+       String s = m_129638_(optionset, optionspec6);
+       Proxy proxy = Proxy.NO_PROXY;
+       if (s != null) {
 @@ -135,7 +_,7 @@
        }
  

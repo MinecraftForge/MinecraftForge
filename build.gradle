@@ -380,6 +380,7 @@ def sharedFmlonlyForge = { Project prj ->
                 property 'nativesDirectory', '{natives}'
                 if (prj.name == 'forge') {
                     property 'forge.enableGameTest', 'true'
+                    args '--disable-dfu-optimizations'
                 }
 
                 args '--launchTarget', "${launchPrefix}clientuserdev"
@@ -953,6 +954,7 @@ project(':forge') {
             forge_client {
                 property 'eventbus.checkTypesOnDispatch', 'true'
                 args '--launchTarget', 'forgeclientdev'
+                args '--disable-dfu-optimizations'
                 ideaModule "${rootProject.name}.${project.name}.main"
                 mods {
                     minecraft { source sourceSets.main }
@@ -963,6 +965,7 @@ project(':forge') {
                 parent runs.forge_client
                 taskName 'forge_test_client'
 
+                args '--disable-dfu-optimizations'
                 property 'forge.enableGameTest', 'true'
                 environment 'MOD_CLASSES', 'dummy' // Needed to work around FG limitation, FG will replace this!
 
