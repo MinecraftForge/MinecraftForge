@@ -10,9 +10,9 @@ import com.mojang.math.Transformation;
 import it.unimi.dsi.fastutil.objects.Object2BooleanMap;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
+import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.resources.model.Material;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.client.textures.UnitTextureAtlasSprite;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
@@ -45,8 +45,8 @@ public class StandaloneGeometryBakingContext implements IGeometryBakingContext
     }
 
     private final ResourceLocation modelName;
-    private final Predicate<String> textureCheck;
-    private final Function<String, ResourceLocation> textureLookup;
+    private final Predicate<String> materialCheck;
+    private final Function<String, Material> materialLookup;
     private final boolean isGui3d;
     private final boolean useBlockLight;
     private final boolean useAmbientOcclusion;
@@ -56,16 +56,16 @@ public class StandaloneGeometryBakingContext implements IGeometryBakingContext
     private final ResourceLocation renderTypeHint;
     private final BiPredicate<String, Boolean> visibilityTest;
 
-    private StandaloneGeometryBakingContext(ResourceLocation modelName, Predicate<String> textureCheck,
-                                            Function<String, ResourceLocation> textureLookup, boolean isGui3d,
+    private StandaloneGeometryBakingContext(ResourceLocation modelName, Predicate<String> materialCheck,
+                                            Function<String, Material> materialLookup, boolean isGui3d,
                                             boolean useBlockLight, boolean useAmbientOcclusion,
                                             ItemTransforms transforms, Transformation rootTransform,
                                             @Nullable ResourceLocation renderTypeHint,
                                             BiPredicate<String, Boolean> visibilityTest)
     {
         this.modelName = modelName;
-        this.textureCheck = textureCheck;
-        this.textureLookup = textureLookup;
+        this.materialCheck = materialCheck;
+        this.materialLookup = materialLookup;
         this.isGui3d = isGui3d;
         this.useBlockLight = useBlockLight;
         this.useAmbientOcclusion = useAmbientOcclusion;
@@ -84,13 +84,13 @@ public class StandaloneGeometryBakingContext implements IGeometryBakingContext
     @Override
     public boolean hasMaterial(String name)
     {
-        return textureCheck.test(name);
+        return materialCheck.test(name);
     }
 
     @Override
     public Material getMaterial(String name)
     {
-        return new Material(UnitTextureAtlasSprite.LOCATION, textureLookup.apply(name));
+        return materialLookup.apply(name);
     }
 
     @Override
@@ -148,8 +148,9 @@ public class StandaloneGeometryBakingContext implements IGeometryBakingContext
 
     public static final class Builder
     {
-        private Predicate<String> textureCheck = Predicates.alwaysFalse();
-        private Function<String, ResourceLocation> textureLookup = $ -> MissingTextureAtlasSprite.getLocation();
+        private static final Material NO_MATERIAL = new Material(TextureAtlas.LOCATION_BLOCKS, MissingTextureAtlasSprite.getLocation());
+        private Predicate<String> materialCheck = Predicates.alwaysFalse();
+        private Function<String, Material> materialLookup = $ -> NO_MATERIAL;
         private boolean isGui3d = true;
         private boolean useBlockLight = true;
         private boolean useAmbientOcclusion = true;
@@ -165,8 +166,8 @@ public class StandaloneGeometryBakingContext implements IGeometryBakingContext
 
         private Builder(IGeometryBakingContext parent)
         {
-            this.textureCheck = parent::hasMaterial;
-            this.textureLookup = name -> parent.getMaterial(name).texture();
+            this.materialCheck = parent::hasMaterial;
+            this.materialLookup = parent::getMaterial;
             this.isGui3d = parent.isGui3d();
             this.useBlockLight = parent.useBlockLight();
             this.useAmbientOcclusion = parent.useAmbientOcclusion();
@@ -178,8 +179,20 @@ public class StandaloneGeometryBakingContext implements IGeometryBakingContext
 
         public Builder withTextures(Map<String, ResourceLocation> textures, ResourceLocation defaultTexture)
         {
-            this.textureCheck = textures::containsKey;
-            this.textureLookup = name -> textures.getOrDefault(name, defaultTexture);
+            return withTextures(TextureAtlas.LOCATION_BLOCKS, textures, defaultTexture);
+        }
+
+        public Builder withTextures(ResourceLocation atlasLocation, Map<String, ResourceLocation> textures, ResourceLocation defaultTexture)
+        {
+            this.materialCheck = textures::containsKey;
+            this.materialLookup = name -> new Material(atlasLocation, textures.getOrDefault(name, defaultTexture));
+            return this;
+        }
+
+        public Builder withMaterials(Map<String, Material> materials, Material defaultMaterial)
+        {
+            this.materialCheck = materials::containsKey;
+            this.materialLookup = name -> materials.getOrDefault(name, defaultMaterial);
             return this;
         }
 
@@ -227,7 +240,7 @@ public class StandaloneGeometryBakingContext implements IGeometryBakingContext
 
         public StandaloneGeometryBakingContext build(ResourceLocation modelName)
         {
-            return new StandaloneGeometryBakingContext(modelName, textureCheck, textureLookup, isGui3d, useBlockLight, useAmbientOcclusion, transforms, rootTransform, renderTypeHint, visibilityTest);
+            return new StandaloneGeometryBakingContext(modelName, materialCheck, materialLookup, isGui3d, useBlockLight, useAmbientOcclusion, transforms, rootTransform, renderTypeHint, visibilityTest);
         }
     }
 }

@@ -209,6 +209,7 @@ public enum VanillaGuiOverlay
 
     private final ResourceLocation id;
     final IGuiOverlay overlay;
+    NamedGuiOverlay type;
 
     VanillaGuiOverlay(String id, IGuiOverlay overlay)
     {
@@ -220,5 +221,10 @@ public enum VanillaGuiOverlay
     public ResourceLocation id()
     {
         return id;
+    }
+
+    public NamedGuiOverlay type()
+    {
+        return type;
     }
 }

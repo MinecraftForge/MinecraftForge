@@ -211,7 +211,7 @@
                 ServerLevel.this.f_143247_.put(enderdragonpart.m_19879_(), enderdragonpart);
              }
           }
-@@ -1569,17 +_,24 @@
+@@ -1569,17 +_,26 @@
              ServerLevel.this.f_143246_.remove(mob);
           }
  
@@ -224,10 +224,12 @@
           }
  
           p_143375_.m_213651_(DynamicGameEventListener::m_223634_);
++
 +         p_143375_.onRemovedFromWorld();
-+         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.EntityLeaveLevelEvent(p_143375_, ServerLevel.this));
++         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.EntityLeaveWorldEvent(p_143375_, ServerLevel.this));
        }
  
++      @Override
        public void m_214006_(Entity p_215086_) {
           p_215086_.m_213651_(DynamicGameEventListener::m_223641_);
        }

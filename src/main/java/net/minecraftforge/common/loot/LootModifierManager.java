@@ -6,19 +6,17 @@
 package net.minecraftforge.common.loot;
 
 import java.io.BufferedReader;
-import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Map;
+import java.util.*;
 
+import com.mojang.datafixers.util.Pair;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.JsonOps;
 import net.minecraft.world.level.storage.loot.Deserializers;
-import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
-import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -39,11 +37,11 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 public class LootModifierManager extends SimpleJsonResourceReloadListener {
     public static final Logger LOGGER = LogManager.getLogger();
-    private static final Gson GSON_INSTANCE = Deserializers.createFunctionSerializer().create();
+    public static final Gson GSON_INSTANCE = Deserializers.createFunctionSerializer().create();
 
     private Map<ResourceLocation, IGlobalLootModifier> registeredLootModifiers = ImmutableMap.of();
     private static final String folder = "loot_modifiers";
-    
+
     public LootModifierManager() {
         super(GSON_INSTANCE, folder);
     }
@@ -51,22 +49,7 @@ public class LootModifierManager extends SimpleJsonResourceReloadListener {
     @Override
     protected void apply(Map<ResourceLocation, JsonElement> resourceList, ResourceManager resourceManagerIn, ProfilerFiller profilerIn) {
         Builder<ResourceLocation, IGlobalLootModifier> builder = ImmutableMap.builder();
-        //old way (for reference)
-        /*Map<IGlobalLootModifier, ResourceLocation> toLocation = new HashMap<IGlobalLootModifier, ResourceLocation>();
-        resourceList.forEach((location, object) -> {
-            try {
-                IGlobalLootModifier modifier = deserializeModifier(location, object);
-                builder.put(location, modifier);
-                toLocation.put(modifier, location);
-            } catch (Exception exception) {
-                LOGGER.error("Couldn't parse loot modifier {}", location, exception);
-            }
-        });
-        builder.orderEntriesByValue((x,y) -> {
-            return toLocation.get(x).compareTo(toLocation.get(y));
-        });*/
-        //new way
-        ArrayList<ResourceLocation> finalLocations = new ArrayList<ResourceLocation>();
+        List<ResourceLocation> finalLocations = new ArrayList<>();
         ResourceLocation resourcelocation = new ResourceLocation("forge","loot_modifiers/global_loot_modifiers.json");
         //read in all data files from forge:loot_modifiers/global_loot_modifiers in order to do layering
         for(Resource iresource : resourceManagerIn.getResourceStack(resourcelocation)) {
@@ -75,13 +58,13 @@ public class LootModifierManager extends SimpleJsonResourceReloadListener {
                     ) {
                 JsonObject jsonobject = GsonHelper.fromJson(GSON_INSTANCE, reader, JsonObject.class);
                 boolean replace = jsonobject.get("replace").getAsBoolean();
-                if(replace) finalLocations.clear();
+                if (replace)
+                    finalLocations.clear();
                 JsonArray entryList = jsonobject.get("entries").getAsJsonArray();
                 for(JsonElement entry : entryList) {
-                    String loc = entry.getAsString();
-                    ResourceLocation res = new ResourceLocation(loc);
-                    if(finalLocations.contains(res)) finalLocations.remove(res);
-                    finalLocations.add(res);
+                    ResourceLocation loc = new ResourceLocation(entry.getAsString());
+                    finalLocations.remove(loc); //remove and re-add if needed, to update the ordering.
+                    finalLocations.add(loc);
                 }
             }
 
@@ -90,31 +73,25 @@ public class LootModifierManager extends SimpleJsonResourceReloadListener {
             }
         }
         //use layered config to fetch modifier data files (modifiers missing from config are disabled)
-        finalLocations.forEach(location -> {
-            try {
-                IGlobalLootModifier modifier = deserializeModifier(location, resourceList.get(location));
-                if(modifier != null)
-                    builder.put(location, modifier);
-            } catch (Exception exception) {
-                LOGGER.error("Couldn't parse loot modifier {}", location, exception);
+        for (ResourceLocation location : finalLocations)
+        {
+            Codec<? extends IGlobalLootModifier> codec = ForgeRegistries.LOOT_MODIFIER_SERIALIZERS.get().getValue(location);
+            if (codec == null)
+            {
+                LOGGER.warn("Unknown or unregistered codec for GlobalLootModifier: {}", location);
+                continue;
             }
-        });
-        ImmutableMap<ResourceLocation, IGlobalLootModifier> immutablemap = builder.build();
-        this.registeredLootModifiers = immutablemap;
-    }
-
-    private IGlobalLootModifier deserializeModifier(ResourceLocation location, JsonElement element) {
-        if (!element.isJsonObject()) return null;
-        JsonObject object = element.getAsJsonObject();
-        LootItemCondition[] lootConditions = GSON_INSTANCE.fromJson(object.get("conditions"), LootItemCondition[].class);
-
-        ResourceLocation serializer = new ResourceLocation(GsonHelper.getAsString(object, "type"));
-
-        return ForgeRegistries.GLOBAL_LOOT_MODIFIER_SERIALIZERS.get().getValue(serializer).read(location, object, lootConditions);
-    }
-
-    public static GlobalLootModifierSerializer<?> getSerializerForName(ResourceLocation resourcelocation) {
-        return ForgeRegistries.GLOBAL_LOOT_MODIFIER_SERIALIZERS.get().getValue(resourcelocation);
+            JsonElement json = resourceList.get(location);
+            IGlobalLootModifier modifier = codec.decode(JsonOps.INSTANCE, json).get()
+                    .map(Pair::getFirst, partial ->
+                    {
+                        LOGGER.warn("Could not decode GlobalLootModifier with serializer: {} - error: {}", location, partial.message());
+                        return null;
+                    });
+            if(modifier != null)
+                builder.put(location, modifier);
+        }
+        this.registeredLootModifiers = builder.build();
     }
 
     /**

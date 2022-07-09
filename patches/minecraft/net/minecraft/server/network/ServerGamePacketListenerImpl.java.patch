@@ -76,11 +76,10 @@
                    } else {
                       ServerGamePacketListenerImpl.this.m_9942_(Component.m_237115_("multiplayer.disconnect.invalid_entity_attacked"));
                       ServerGamePacketListenerImpl.f_9744_.warn("Player {} tried to attack an invalid entity", (Object)ServerGamePacketListenerImpl.this.f_9743_.m_7755_().getString());
-@@ -1596,6 +_,8 @@
+@@ -1596,6 +_,7 @@
     }
  
     public void m_7423_(ServerboundCustomPayloadPacket p_9860_) {
-+      PacketUtils.m_131359_(p_9860_, this, this.f_9743_.m_9236_());
 +      net.minecraftforge.network.NetworkHooks.onCustomPayload(p_9860_, this.f_9742_);
     }
  

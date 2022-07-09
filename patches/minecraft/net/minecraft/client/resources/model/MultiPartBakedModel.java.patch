@@ -53,12 +53,16 @@
        }
     }
  
-@@ -77,6 +_,10 @@
+@@ -77,6 +_,14 @@
        return this.f_119453_;
     }
  
 +   public boolean useAmbientOcclusion(BlockState state) {
 +      return this.defaultModel.useAmbientOcclusion(state);
++   }
++
++   public boolean useAmbientOcclusion(BlockState state, net.minecraft.client.renderer.RenderType renderType) {
++      return this.defaultModel.useAmbientOcclusion(state, renderType);
 +   }
 +
     public boolean m_7539_() {

@@ -42,7 +42,12 @@
        this.f_91038_.m_10506_();
        this.f_91066_.m_92145_(this.f_91038_);
        this.f_91039_ = new LanguageManager(this.f_91066_.f_92075_);
-@@ -500,6 +_,7 @@
+@@ -496,10 +_,12 @@
+       this.f_91063_ = new GameRenderer(this, this.f_90994_.m_234586_(), this.f_91036_, this.f_90993_);
+       this.f_91036_.m_7217_(this.f_91063_);
+       this.f_91060_ = new LevelRenderer(this, this.f_90994_, this.f_167845_, this.f_90993_);
++      net.minecraftforge.fml.ModLoader.get().postEvent(new net.minecraftforge.client.event.RenderLevelStageEvent.RegisterStageEvent());
+       this.f_91036_.m_7217_(this.f_91060_);
        this.m_91271_();
        this.f_91036_.m_7217_(this.f_90997_);
        this.f_91061_ = new ParticleEngine(this.f_91073_, this.f_90987_);
@@ -157,7 +162,7 @@
 +      if (p_91153_ != null) {
 +         var event = new net.minecraftforge.client.event.ScreenEvent.Opening(old, p_91153_);
 +         if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event)) return;
-+         p_91153_ = event.getScreen();
++         p_91153_ = event.getNewScreen();
 +      }
 +
 +      if (old != null && p_91153_ != old) {
