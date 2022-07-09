@@ -20,8 +20,6 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraftforge.client.gui.widget.ModListWidget;
-import net.minecraftforge.fml.loading.moddiscovery.ModFile;
-import net.minecraftforge.fml.loading.moddiscovery.ModFileInfo;
 import net.minecraftforge.resource.PathResourcePack;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
