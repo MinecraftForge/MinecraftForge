@@ -9,7 +9,6 @@ import com.google.common.graph.GraphBuilder;
 import com.google.common.graph.MutableGraph;
 import cpw.mods.jarhandling.SecureJar;
 import net.minecraftforge.fml.loading.moddiscovery.MinecraftLocator;
-import net.minecraftforge.forgespi.language.IModFileInfo;
 import net.minecraftforge.forgespi.language.IModInfo;
 import net.minecraftforge.fml.loading.EarlyLoadingException.ExceptionData;
 import net.minecraftforge.fml.loading.moddiscovery.ModFile;
@@ -17,7 +16,6 @@ import net.minecraftforge.fml.loading.moddiscovery.ModFileInfo;
 import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
 import net.minecraftforge.fml.loading.toposort.CyclePresentException;
 import net.minecraftforge.fml.loading.toposort.TopologicalSort;
-import net.minecraftforge.forgespi.locating.IModFile;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
@@ -36,14 +34,15 @@ import static net.minecraftforge.fml.loading.LogMarkers.LOADING;
 public class ModSorter
 {
     private static final Logger LOGGER = LogManager.getLogger();
+    private final UniqueModListBuilder uniqueModListBuilder;
     private List<ModFile> modFiles;
     private List<ModInfo> sortedList;
-    private Map<String, ModInfo> modIdNameLookup;
+    private Map<String, IModInfo> modIdNameLookup;
     private List<ModFile> systemMods;
 
     private ModSorter(final List<ModFile> modFiles)
     {
-        this.modFiles = modFiles;
+        this.uniqueModListBuilder = new UniqueModListBuilder(modFiles);
     }
 
     public static LoadingModList sort(List<ModFile> mods, final List<ExceptionData> errors)
@@ -78,11 +77,12 @@ public class ModSorter
         // lambdas are identity based, so sorting them is impossible unless you hold reference to them
         final MutableGraph<ModFileInfo> graph = GraphBuilder.directed().build();
         AtomicInteger counter = new AtomicInteger();
-        Map<IModFileInfo, Integer> infos = modFiles.stream()
+        Map<ModFileInfo, Integer> infos = modFiles.stream()
                 .map(ModFile::getModFileInfo)
                 .filter(ModFileInfo.class::isInstance)
+                .map(ModFileInfo.class::cast)
                 .collect(toMap(Function.identity(), e -> counter.incrementAndGet()));
-        infos.keySet().forEach(i -> graph.addNode((ModFileInfo) i));
+        infos.keySet().forEach(graph::addNode);
         modFiles.stream()
                 .map(ModFile::getModInfos)
                 .<IModInfo>mapMulti(Iterable::forEach)
@@ -125,10 +125,9 @@ public class ModSorter
     private void addDependency(MutableGraph<ModFileInfo> topoGraph, IModInfo.ModVersion dep)
     {
         final ModFileInfo self = (ModFileInfo)dep.getOwner().getOwningFile();
-        final ModInfo targetModInfo = modIdNameLookup.get(dep.getModId());
+        final IModInfo targetModInfo = modIdNameLookup.get(dep.getModId());
         // soft dep that doesn't exist. Just return. No edge required.
-        if (targetModInfo == null) return;
-        final ModFileInfo target = targetModInfo.getOwningFile();
+        if (targetModInfo == null || !(targetModInfo.getOwningFile() instanceof final ModFileInfo target)) return;
         if (self == target)
             return; // in case a jar has two mods that have dependencies between
         switch (dep.getOrdering()) {
@@ -139,10 +138,22 @@ public class ModSorter
 
     private void buildUniqueList()
     {
-        // Collect mod files by module name. This will be used for deduping purposes
-        final Map<String, List<IModFile>> modFilesByFirstId = modFiles.stream()
-                .collect(groupingBy(mf -> mf.getModFileInfo().moduleName()));
+        final UniqueModListBuilder.UniqueModListData uniqueModListData = uniqueModListBuilder.buildUniqueList();
 
+        this.modFiles = uniqueModListData.modFiles();
+
+        detectSystemMods(uniqueModListData.modFilesByFirstId());
+
+        modIdNameLookup = uniqueModListData.modFilesByFirstId().entrySet().stream()
+                .filter(e -> !e.getValue().get(0).getModInfos().isEmpty())
+                .collect(Collectors.toMap(
+                    Map.Entry::getKey,
+                    e -> e.getValue().get(0).getModInfos().get(0)
+                  ));
+    }
+
+    private void detectSystemMods(final Map<String, List<ModFile>> modFilesByFirstId)
+    {
         // Capture system mods (ex. MC, Forge) here, so we can keep them for later
         final Set<String> systemMods = new HashSet<>();
         // The minecraft mod is always a system mod
@@ -169,47 +180,6 @@ public class ModSorter
                 throw new IllegalStateException("Failed to find system mod: " + systemMod);
             }
         }
-
-        // Select the newest by artifact version sorting of non-unique files thus identified
-        this.modFiles = modFilesByFirstId.entrySet().stream()
-                .map(this::selectNewestModInfo)
-                .map(Map.Entry::getValue)
-                .map(ModFile.class::cast)
-                .collect(toList());
-
-        // Transform to the full mod id list
-        final Map<String, List<ModInfo>> modIds = modFiles.stream()
-                .map(ModFile::getModInfos)
-                .flatMap(Collection::stream)
-                .map(ModInfo.class::cast)
-                .collect(groupingBy(IModInfo::getModId));
-
-        // Its theoretically possible that some mod has somehow moved an id to a secondary place, thus causing a dupe.
-        // We can't handle this
-        final List<ModInfo> dupedMods = modIds.values().stream()
-                .filter(modInfos -> modInfos.size() > 1)
-                .map(modInfos -> modInfos.get(0))
-                .toList();
-
-        if (!dupedMods.isEmpty()) {
-            final List<EarlyLoadingException.ExceptionData> duplicateModErrors = dupedMods.stream()
-                    .map(dm -> new EarlyLoadingException.ExceptionData("fml.modloading.dupedmod",
-                            dm, Objects.toString(dm))).toList();
-            throw new EarlyLoadingException("Duplicate mods found", null,  duplicateModErrors);
-        }
-
-        modIdNameLookup = modIds.entrySet().stream()
-                .collect(toMap(Map.Entry::getKey, e -> e.getValue().get(0)));
-    }
-
-    private Map.Entry<String, IModFile> selectNewestModInfo(Map.Entry<String, List<IModFile>> fullList) {
-        List<IModFile> modInfoList = fullList.getValue();
-        if (modInfoList.size() > 1) {
-            LOGGER.debug("Found {} mods for first modid {}, selecting most recent based on version data", modInfoList.size(), fullList.getKey());
-            modInfoList.sort(Comparator.<IModFile, ArtifactVersion>comparing(mf -> mf.getModInfos().get(0).getVersion()).reversed());
-            LOGGER.debug("Selected file {} for modid {} with version {}", modInfoList.get(0).getFileName(), fullList.getKey(), modInfoList.get(0).getModInfos().get(0).getVersion());
-        }
-        return Map.entry(fullList.getKey(), modInfoList.get(0));
     }
 
     private List<EarlyLoadingException.ExceptionData> verifyDependencyVersions()

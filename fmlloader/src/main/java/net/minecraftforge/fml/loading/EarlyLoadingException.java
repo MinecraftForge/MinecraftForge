@@ -47,7 +47,7 @@ public class EarlyLoadingException extends RuntimeException {
         return errorMessages;
     }
 
-    EarlyLoadingException(final String message, final Throwable originalException, List<ExceptionData> errorMessages) {
+    public EarlyLoadingException(final String message, final Throwable originalException, List<ExceptionData> errorMessages) {
         super(message, originalException);
         this.errorMessages = errorMessages;
     }

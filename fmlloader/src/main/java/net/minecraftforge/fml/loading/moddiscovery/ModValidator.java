@@ -26,13 +26,15 @@ public class ModValidator {
     private final List<ModFile> candidateMods;
     private LoadingModList loadingModList;
     private List<ModFile> brokenFiles;
+    private final List<EarlyLoadingException.ExceptionData> discoveryErrorData;
 
-    public ModValidator(final Map<IModFile.Type, List<ModFile>> modFiles) {
+    public ModValidator(final Map<IModFile.Type, List<ModFile>> modFiles, final List<EarlyLoadingException.ExceptionData> discoveryErrorData) {
         this.modFiles = modFiles;
         this.candidateMods = lst(modFiles.get(IModFile.Type.MOD));
         this.candidateMods.addAll(lst(modFiles.get(IModFile.Type.GAMELIBRARY)));
         this.candidatePlugins = lst(modFiles.get(IModFile.Type.LANGPROVIDER));
         this.candidatePlugins.addAll(lst(modFiles.get(IModFile.Type.LIBRARY)));
+        this.discoveryErrorData = discoveryErrorData;
     }
 
     private static List<ModFile> lst(List<ModFile> files) {
@@ -50,22 +52,22 @@ public class ModValidator {
         final List<ModFile> brokenFiles = new ArrayList<>();
         for (Iterator<ModFile> iterator = mods.iterator(); iterator.hasNext(); )
         {
-            ModFile mod = iterator.next();
-            if (!mod.getLocator().isValid(mod) || !mod.identifyMods()) {
-                LOGGER.warn(LogMarkers.SCAN, "File {} has been ignored - it is invalid", mod.getFilePath());
+            ModFile modFile = iterator.next();
+            if (!modFile.getLocator().isValid(modFile) || !modFile.identifyMods()) {
+                LOGGER.warn(LogMarkers.SCAN, "File {} has been ignored - it is invalid", modFile.getFilePath());
                 iterator.remove();
-                brokenFiles.add(mod);
+                brokenFiles.add(modFile);
             }
         }
         return brokenFiles;
     }
 
     public ITransformationService.Resource getPluginResources() {
-        return new ITransformationService.Resource(IModuleLayerManager.Layer.PLUGIN, this.candidatePlugins.stream().map(ModFile::getSecureJar).toList());
+        return new ITransformationService.Resource(IModuleLayerManager.Layer.PLUGIN, this.candidatePlugins.stream().map(IModFile::getSecureJar).toList());
     }
 
     public ITransformationService.Resource getModResources() {
-        return new ITransformationService.Resource(IModuleLayerManager.Layer.GAME, this.candidateMods.stream().map(ModFile::getSecureJar).toList());
+        return new ITransformationService.Resource(IModuleLayerManager.Layer.GAME, this.candidateMods.stream().map(IModFile::getSecureJar).toList());
     }
 
     private List<EarlyLoadingException.ExceptionData> validateLanguages() {
@@ -84,7 +86,11 @@ public class ModValidator {
 
     public BackgroundScanHandler stage2Validation() {
         var errors = validateLanguages();
-        loadingModList = ModSorter.sort(candidateMods, errors);
+
+        var allErrors = new ArrayList<>(errors);
+        allErrors.addAll(this.discoveryErrorData);
+
+        loadingModList = ModSorter.sort(candidateMods, allErrors);
         loadingModList.addCoreMods();
         loadingModList.addAccessTransformers();
         loadingModList.setBrokenFiles(brokenFiles);
