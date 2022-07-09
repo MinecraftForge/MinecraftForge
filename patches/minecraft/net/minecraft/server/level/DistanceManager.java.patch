@@ -34,16 +34,41 @@
     }
  
     public <T> void m_140792_(TicketType<T> p_140793_, ChunkPos p_140794_, int p_140795_, T p_140796_) {
-@@ -201,6 +_,14 @@
+@@ -188,19 +_,37 @@
+    }
+ 
+    public <T> void m_140840_(TicketType<T> p_140841_, ChunkPos p_140842_, int p_140843_, T p_140844_) {
+-      Ticket<T> ticket = new Ticket<>(p_140841_, 33 - p_140843_, p_140844_);
++       addRegionTicket(p_140841_, p_140842_, p_140843_, p_140844_, false);
++   }
++
++   public <T> void addRegionTicket(TicketType<T> p_140841_, ChunkPos p_140842_, int p_140843_, T p_140844_, boolean forceTicks) {
++      Ticket<T> ticket = new Ticket<>(p_140841_, 33 - p_140843_, p_140844_, forceTicks);
+       long i = p_140842_.m_45588_();
+       this.m_140784_(i, ticket);
+       this.f_183901_.m_184151_(i, ticket);
+    }
+ 
+    public <T> void m_140849_(TicketType<T> p_140850_, ChunkPos p_140851_, int p_140852_, T p_140853_) {
+-      Ticket<T> ticket = new Ticket<>(p_140850_, 33 - p_140852_, p_140853_);
++      removeRegionTicket(p_140850_, p_140851_, p_140852_, p_140853_, false);
++   }
++
++   public <T> void removeRegionTicket(TicketType<T> p_140850_, ChunkPos p_140851_, int p_140852_, T p_140853_, boolean forceTicks) {
++      Ticket<T> ticket = new Ticket<>(p_140850_, 33 - p_140852_, p_140853_, forceTicks);
+       long i = p_140851_.m_45588_();
+       this.m_140818_(i, ticket);
        this.f_183901_.m_184165_(i, ticket);
     }
  
++   @Deprecated(forRemoval = true, since = "1.18.2") // Use addRegionTicket overload
 +   public <T> void registerTicking(TicketType<T> type, ChunkPos pos, int distance, T value) {
-+      this.m_140784_(pos.m_45588_(), new Ticket<>(type, 33 - distance, value, true));
++      addRegionTicket(type, pos, distance, value, true);
 +   }
 +
++   @Deprecated(forRemoval = true, since = "1.18.2") // Use removeRegionTicket overload
 +   public <T> void releaseTicking(TicketType<T> type, ChunkPos pos, int distance, T value) {
-+      this.m_140818_(pos.m_45588_(), new Ticket<>(type, 33 - distance, value, true));
++      removeRegionTicket(type, pos, distance, value, true);
 +   }
 +
     private SortedArraySet<Ticket<?>> m_140857_(long p_140858_) {

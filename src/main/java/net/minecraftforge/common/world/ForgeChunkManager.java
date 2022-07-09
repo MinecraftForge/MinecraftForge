@@ -152,16 +152,9 @@ public class ForgeChunkManager
           boolean ticking)
     {
         if (add)
-        {
-            if (ticking)
-                level.getChunkSource().registerTickingTicket(type, pos, 2, owner);
-            else
-                level.getChunkSource().addRegionTicket(type, pos, 2, owner);
-        }
-        else if (ticking)
-            level.getChunkSource().releaseTickingTicket(type, pos, 2, owner);
+            level.getChunkSource().addRegionTicket(type, pos, 2, owner, ticking);
         else
-            level.getChunkSource().removeRegionTicket(type, pos, 2, owner);
+            level.getChunkSource().removeRegionTicket(type, pos, 2, owner, ticking);
     }
 
     /**
