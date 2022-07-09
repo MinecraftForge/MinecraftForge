@@ -452,7 +452,6 @@ public class Tags
         public static final TagKey<Biome> IS_DRY_NETHER = tag("is_dry/nether");
         public static final TagKey<Biome> IS_DRY_END = tag("is_dry/end");
 
-        public static final TagKey<Biome> IS_SAVANNA = tag("is_savanna");
         public static final TagKey<Biome> IS_CONIFEROUS = tag("is_coniferous");
 
         public static final TagKey<Biome> IS_SPOOKY = tag("is_spooky");
@@ -471,16 +470,12 @@ public class Tags
         public static final TagKey<Biome> IS_SANDY = tag("is_sandy");
         public static final TagKey<Biome> IS_SNOWY = tag("is_snowy");
         public static final TagKey<Biome> IS_WASTELAND = tag("is_wasteland");
-        public static final TagKey<Biome> IS_BEACH = tag("is_beach");
         public static final TagKey<Biome> IS_VOID = tag("is_void");
         public static final TagKey<Biome> IS_UNDERGROUND = tag("is_underground");
 
         public static final TagKey<Biome> IS_PEAK = tag("is_peak");
         public static final TagKey<Biome> IS_SLOPE = tag("is_slope");
         public static final TagKey<Biome> IS_MOUNTAIN = tag("is_mountain");
-
-        public static final TagKey<Biome> IS_OVERWORLD = tag("is_overworld");
-        public static final TagKey<Biome> IS_END = tag("is_end");
 
         private static TagKey<Biome> tag(String name)
         {
