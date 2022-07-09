@@ -19,8 +19,8 @@ import java.util.function.Function;
  */
 public class UnitSprite extends TextureAtlasSprite
 {
-    public static final UnitSprite INSTANCE = new UnitSprite();
     public static final ResourceLocation LOCATION = new ResourceLocation("forge", "unit");
+    public static final UnitSprite INSTANCE = new UnitSprite();
     public static final Function<Material, TextureAtlasSprite> GETTER = (x) -> INSTANCE;
 
     private UnitSprite()
