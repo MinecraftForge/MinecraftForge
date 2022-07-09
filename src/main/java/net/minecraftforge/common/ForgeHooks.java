@@ -687,11 +687,11 @@ public class ForgeHooks
         return stack.isEmpty() || !stack.getItem().onLeftClickEntity(stack, player, target);
     }
 
-    public static void onPlayerDamageTarget(Player player, Entity target, float strength)
+    public static void onPlayerDamageTarget(Player player, Entity target, float amount, float strength)
     {
-        MinecraftForge.EVENT_BUS.post(new DamageEntityEvent(player, target, strength));
+        MinecraftForge.EVENT_BUS.post(new DamageEntityEvent(player, target, amount, strength));
         ItemStack stack = player.getMainHandItem();
-        if (!stack.isEmpty()) stack.getItem().onDamageEntity(stack, player, target, strength);
+        if (!stack.isEmpty()) stack.getItem().onDamageEntity(stack, player, target, amount, strength);
     }
 
     public static boolean onTravelToDimension(Entity entity, ResourceKey<Level> dimension)

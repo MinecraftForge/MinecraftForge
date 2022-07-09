@@ -295,15 +295,15 @@
                          this.m_21008_(InteractionHand.MAIN_HAND, ItemStack.f_41583_);
                       }
                    }
-@@ -1204,6 +_,8 @@
+@@ -1201,6 +_,8 @@
+                         int k = (int)((double)f5 * 0.5D);
+                         ((ServerLevel)this.f_19853_).m_8767_(ParticleTypes.f_123798_, p_36347_.m_20185_(), p_36347_.m_20227_(0.5D), p_36347_.m_20189_(), k, 0.1D, 0.0D, 0.1D, 0.2D);
+                      }
++
++                     net.minecraftforge.common.ForgeHooks.onPlayerDamageTarget(this, p_36347_, f5, f2);
                    }
  
                    this.m_36399_(0.1F);
-+
-+                  net.minecraftforge.common.ForgeHooks.onPlayerDamageTarget(this, p_36347_, f2);
-                } else {
-                   this.f_19853_.m_6263_((Player)null, this.m_20185_(), this.m_20186_(), this.m_20189_(), SoundEvents.f_12315_, this.m_5720_(), 1.0F, 1.0F);
-                   if (flag4) {
 @@ -1227,7 +_,7 @@
        }
  

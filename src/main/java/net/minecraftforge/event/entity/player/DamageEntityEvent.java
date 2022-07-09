@@ -11,6 +11,8 @@ import net.minecraftforge.common.MinecraftForge;
  * <br>
  * {@link #target} contains the Entity that was damaged by the player. <br>
  * <br>
+ * {@link #amount} contains the final amount of damage that will be dealt by the player. <br>
+ * <br>
  * {@link #strength} contains the attack strength of the player. <br>
  * <br>
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
@@ -18,17 +20,24 @@ import net.minecraftforge.common.MinecraftForge;
 public class DamageEntityEvent extends PlayerEvent
 {
     private final Entity target;
+    private final float amount;
     private final float strength;
-    public DamageEntityEvent(Player player, Entity target, float strength)
+    public DamageEntityEvent(Player player, Entity target, float amount, float strength)
     {
         super(player);
         this.target = target;
+        this.amount = amount;
         this.strength = strength;
     }
 
     public Entity getTarget()
     {
         return target;
+    }
+
+    public float getAmount()
+    {
+        return amount;
     }
 
     public float getStrength() {

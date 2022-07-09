@@ -221,9 +221,10 @@ public interface IForgeItem
      * @param stack  The Item being used
      * @param player The player that is attacking
      * @param entity The entity being attacked
+     * @param amount The final damage dealt by the player's attack
      * @param strength The strength of the player's attack
      */
-    default void onDamageEntity(ItemStack stack, Player player, Entity entity, float strength)
+    default void onDamageEntity(ItemStack stack, Player player, Entity entity, float amount, float strength)
     {
     }
 
