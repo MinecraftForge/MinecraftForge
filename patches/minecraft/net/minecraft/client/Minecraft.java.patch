@@ -157,7 +157,7 @@
 +      if (p_91153_ != null) {
 +         var event = new net.minecraftforge.client.event.ScreenEvent.Opening(old, p_91153_);
 +         if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event)) return;
-+         p_91153_ = event.getScreen();
++         p_91153_ = event.getNewScreen();
 +      }
 +
 +      if (old != null && p_91153_ != old) {
