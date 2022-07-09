@@ -138,7 +138,8 @@ public class PathResourcePack extends AbstractPackResources
                     .map(root::relativize)
                     .filter(path -> !path.toString().endsWith(".mcmeta") && path.startsWith(inputPath))
                     // It is VERY IMPORTANT that we do not rely on Path.toString as this is inconsistent between operating systems
-                    // Join the path names ourselves to force forward slashes
+                    // Join the path names ourselves to force forward slashes #8813
+                    .filter(path -> ResourceLocation.isValidPath(Joiner.on('/').join(path))) // Only process valid paths Fixes the case where people put invalid resources in their jar.
                     .map(path -> new ResourceLocation(resourceNamespace, Joiner.on('/').join(path)))
                     .filter(filter)
                     .collect(Collectors.toList());
