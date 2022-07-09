@@ -4,3 +4,5 @@ splashscreen = true
 maxThreads = -1
 # Enable forge global version checking
 versionCheck = true
+# Disables Optimized DFU client-side.
+disableOptimizedDFU = true
