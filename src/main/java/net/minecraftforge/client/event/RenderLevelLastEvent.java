@@ -23,9 +23,12 @@ import org.jetbrains.annotations.ApiStatus;
  * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
  * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
  *
+ * @deprecated Use {@link RenderLevelStageEvent} instead for more flexibility and improved compatibility with translucent objects.
+ * There is no {@link RenderLevelStageEvent.Stage} that directly replaces this event, instead you must decide which Stage best fits your use case.
  * @see GameRenderer
  * @see LevelRenderer
  */
+@Deprecated(forRemoval = true, since = "1.19")
 public class RenderLevelLastEvent extends net.minecraftforge.eventbus.api.Event
 {
     private final LevelRenderer levelRenderer;
