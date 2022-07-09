@@ -22,13 +22,18 @@
        }).orElse(Collections.emptyList());
     }
  
-@@ -38,6 +_,11 @@
+@@ -38,6 +_,16 @@
        return this.f_119542_.m_7541_();
     }
  
 +   @Override
 +   public boolean useAmbientOcclusion(BlockState state) {
 +      return this.f_119542_.useAmbientOcclusion(state);
++   }
++
++   @Override
++   public boolean useAmbientOcclusion(BlockState state, net.minecraft.client.renderer.RenderType renderType) {
++      return this.f_119542_.useAmbientOcclusion(state, renderType);
 +   }
 +
     public boolean m_7539_() {

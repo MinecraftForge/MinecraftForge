@@ -49,6 +49,11 @@ public interface IForgeBakedModel
         return self().useAmbientOcclusion();
     }
 
+    default boolean useAmbientOcclusion(BlockState state, RenderType renderType)
+    {
+        return self().useAmbientOcclusion(state);
+    }
+
     /**
      * Applies a transform for the given {@link ItemTransforms.TransformType} and {@code applyLeftHandTransform}, and
      * returns the model to be rendered.
