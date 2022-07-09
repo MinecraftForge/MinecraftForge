@@ -230,5 +230,7 @@ license="LGPL v2.1"
     modId="banner_pattern_test"
 [[mods]]
     modId="mod_mismatch_test"
+[[mods]]
+    modId="blockstate_change_test"
 
 # ADD ABOVE THIS LINE
