@@ -247,6 +247,18 @@ public class SimpleChannel
         }
 
         /**
+         * Set the message consumer, which is called once a message has been decoded.
+         * @param consumer The message consumer.
+         * @return The message builder, for chaining.
+         * @deprecated Use {@link #consumerMainThread(BiConsumer)} or {@link #consumerNetworkThread(BiConsumer)}.
+         */
+        @Deprecated(forRemoval = true)
+        public MessageBuilder<MSG> consumer(BiConsumer<MSG, Supplier<NetworkEvent.Context>> consumer) {
+            consumerMainThread(consumer);
+            return this;
+        }
+
+        /**
          * Set the message consumer, which is called once a message has been decoded. This accepts the decoded message
          * object and the message's context.
          * <p>
@@ -299,6 +311,17 @@ public class SimpleChannel
                 boolean handled = handler.applyAsBool(msg, ctx);
                 ctx.get().setPacketHandled(handled);
             };
+            return this;
+        }
+
+        /**
+         * Set the message consumer, which is called once a message has been decoded.
+         * @param handler The message consumer.
+         * @return The message builder, for chaining.
+         * @deprecated Use {@link #consumerMainThread(BiConsumer)} or {@link #consumerNetworkThread(BiConsumer)}.
+         */
+        public MessageBuilder<MSG> consumer(ToBooleanBiFunction<MSG, Supplier<NetworkEvent.Context>> handler) {
+            consumerMainThread(handler::applyAsBool);
             return this;
         }
 
