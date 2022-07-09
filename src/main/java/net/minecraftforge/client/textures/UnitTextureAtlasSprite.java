@@ -18,8 +18,8 @@ import net.minecraft.resources.ResourceLocation;
  */
 public class UnitTextureAtlasSprite extends TextureAtlasSprite
 {
-    public static final UnitTextureAtlasSprite INSTANCE = new UnitTextureAtlasSprite();
     public static final ResourceLocation LOCATION = new ResourceLocation("forge", "unit");
+    public static final UnitTextureAtlasSprite INSTANCE = new UnitTextureAtlasSprite();
 
     private UnitTextureAtlasSprite()
     {
