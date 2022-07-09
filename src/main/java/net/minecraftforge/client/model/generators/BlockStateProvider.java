@@ -534,29 +534,56 @@ public abstract class BlockStateProvider implements DataProvider {
     }
 
     private void doorBlockInternal(DoorBlock block, String baseName, ResourceLocation bottom, ResourceLocation top) {
-        ModelFile bottomLeft = models().doorBottomLeft(baseName + "_bottom", bottom, top);
-        ModelFile bottomRight = models().doorBottomRight(baseName + "_bottom_hinge", bottom, top);
-        ModelFile topLeft = models().doorTopLeft(baseName + "_top", bottom, top);
-        ModelFile topRight = models().doorTopRight(baseName + "_top_hinge", bottom, top);
-        doorBlock(block, bottomLeft, bottomRight, topLeft, topRight);
+        ModelFile bottomLeft = models().doorBottomLeft(baseName + "_bottom_left", bottom, top);
+        ModelFile bottomLeftOpen = models().doorBottomLeftOpen(baseName + "_bottom_left_open", bottom, top);
+        ModelFile bottomRight = models().doorBottomRight(baseName + "_bottom_right", bottom, top);
+        ModelFile bottomRightOpen = models().doorBottomRightOpen(baseName + "_bottom_right_open", bottom, top);
+        ModelFile topLeft = models().doorTopLeft(baseName + "_top_left", bottom, top);
+        ModelFile topLeftOpen = models().doorTopLeftOpen(baseName + "_top_left_open", bottom, top);
+        ModelFile topRight = models().doorTopRight(baseName + "_top_right", bottom, top);
+        ModelFile topRightOpen = models().doorTopRightOpen(baseName + "_top_right_open", bottom, top);
+        doorBlock(block, bottomLeft, bottomLeftOpen, bottomRight, bottomRightOpen, topLeft, topLeftOpen, topRight, topRightOpen);
     }
 
-    public void doorBlock(DoorBlock block, ModelFile bottomLeft, ModelFile bottomRight, ModelFile topLeft, ModelFile topRight) {
+    public void doorBlock(DoorBlock block, ModelFile bottomLeft, ModelFile bottomLeftOpen, ModelFile bottomRight, ModelFile bottomRightOpen, ModelFile topLeft, ModelFile topLeftOpen, ModelFile topRight, ModelFile topRightOpen) {
         getVariantBuilder(block).forAllStatesExcept(state -> {
             int yRot = ((int) state.getValue(DoorBlock.FACING).toYRot()) + 90;
-            boolean rh = state.getValue(DoorBlock.HINGE) == DoorHingeSide.RIGHT;
+            boolean right = state.getValue(DoorBlock.HINGE) == DoorHingeSide.RIGHT;
             boolean open = state.getValue(DoorBlock.OPEN);
-            boolean right = rh ^ open;
+            boolean lower = state.getValue(DoorBlock.HALF) == DoubleBlockHalf.LOWER;
             if (open) {
                 yRot += 90;
             }
-            if (rh && open) {
+            if (right && open) {
                 yRot += 180;
             }
             yRot %= 360;
-            return ConfiguredModel.builder().modelFile(state.getValue(DoorBlock.HALF) == DoubleBlockHalf.LOWER ? (right ? bottomRight : bottomLeft) : (right ? topRight : topLeft))
-                    .rotationY(yRot)
-                    .build();
+
+            ModelFile model = null;
+            if (lower && right && open) {
+                model = bottomRightOpen;
+            } else if (lower && !right && open) {
+                model = bottomLeftOpen;
+            }
+            if (lower && right && !open) {
+                model = bottomRight;
+            } else if (lower && !right && !open) {
+                model = bottomLeft;
+            }
+            if (!lower && right && open) {
+                model = topRightOpen;
+            } else if (!lower && !right && open) {
+                model = topLeftOpen;
+            }
+            if (!lower && right && !open) {
+                model = topRight;
+            } else if (!lower && !right && !open) {
+                model = topLeft;
+            }
+
+            return ConfiguredModel.builder().modelFile(model)
+                .rotationY(yRot)
+                .build();
         }, DoorBlock.POWERED);
     }
 
