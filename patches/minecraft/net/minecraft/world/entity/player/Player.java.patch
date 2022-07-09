@@ -295,6 +295,15 @@
                          this.m_21008_(InteractionHand.MAIN_HAND, ItemStack.f_41583_);
                       }
                    }
+@@ -1204,6 +_,8 @@
+                   }
+ 
+                   this.m_36399_(0.1F);
++
++                  net.minecraftforge.common.ForgeHooks.onPlayerDamageTarget(this, p_36347_, f2);
+                } else {
+                   this.f_19853_.m_6263_((Player)null, this.m_20185_(), this.m_20186_(), this.m_20189_(), SoundEvents.f_12315_, this.m_5720_(), 1.0F, 1.0F);
+                   if (flag4) {
 @@ -1227,7 +_,7 @@
        }
  

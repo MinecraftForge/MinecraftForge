@@ -215,6 +215,19 @@ public interface IForgeItem
     }
 
     /**
+     * Called when the player Left Clicks (attacks) an entity. Processed after
+     * damage is done.
+     *
+     * @param stack  The Item being used
+     * @param player The player that is attacking
+     * @param entity The entity being attacked
+     * @param strength The strength of the player's attack
+     */
+    default void onDamageEntity(ItemStack stack, Player player, Entity entity, float strength)
+    {
+    }
+
+    /**
      * ItemStack sensitive version of getContainerItem. Returns a full ItemStack
      * instance of the result.
      *

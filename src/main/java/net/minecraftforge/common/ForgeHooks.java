@@ -133,6 +133,7 @@ import net.minecraftforge.event.entity.player.AdvancementEvent;
 import net.minecraftforge.event.entity.player.AnvilRepairEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.event.entity.player.CriticalHitEvent;
+import net.minecraftforge.event.entity.player.DamageEntityEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.living.LivingGetProjectileEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -684,6 +685,13 @@ public class ForgeHooks
         if (MinecraftForge.EVENT_BUS.post(new AttackEntityEvent(player, target))) return false;
         ItemStack stack = player.getMainHandItem();
         return stack.isEmpty() || !stack.getItem().onLeftClickEntity(stack, player, target);
+    }
+
+    public static void onPlayerDamageTarget(Player player, Entity target, float strength)
+    {
+        MinecraftForge.EVENT_BUS.post(new DamageEntityEvent(player, target, strength));
+        ItemStack stack = player.getMainHandItem();
+        if (!stack.isEmpty()) stack.getItem().onDamageEntity(stack, player, target, strength);
     }
 
     public static boolean onTravelToDimension(Entity entity, ResourceKey<Level> dimension)
