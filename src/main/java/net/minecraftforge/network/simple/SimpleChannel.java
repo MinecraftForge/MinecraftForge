@@ -8,25 +8,16 @@ package net.minecraftforge.network.simple;
 import io.netty.buffer.Unpooled;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.Connection;
-import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.protocol.Packet;
 import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkEvent;
 import net.minecraftforge.network.NetworkInstance;
 import net.minecraftforge.network.PacketDistributor;
 import org.apache.commons.lang3.tuple.Pair;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.IntSupplier;
-import java.util.function.Supplier;
+import java.util.*;
+import java.util.function.*;
 
 @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 public class SimpleChannel
@@ -252,7 +243,7 @@ public class SimpleChannel
          * @return The message builder, for chaining.
          * @deprecated Use {@link #consumerMainThread(BiConsumer)} or {@link #consumerNetworkThread(BiConsumer)}.
          */
-        @Deprecated(forRemoval = true)
+        @Deprecated(forRemoval = true, since = "1.19")
         public MessageBuilder<MSG> consumer(BiConsumer<MSG, Supplier<NetworkEvent.Context>> consumer) {
             consumerMainThread(consumer);
             return this;
@@ -320,6 +311,7 @@ public class SimpleChannel
          * @return The message builder, for chaining.
          * @deprecated Use {@link #consumerMainThread(BiConsumer)} or {@link #consumerNetworkThread(BiConsumer)}.
          */
+        @Deprecated(forRemoval = true, since = "1.19")
         public MessageBuilder<MSG> consumer(ToBooleanBiFunction<MSG, Supplier<NetworkEvent.Context>> handler) {
             consumerMainThread(handler::applyAsBool);
             return this;
