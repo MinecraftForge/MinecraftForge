@@ -41,7 +41,7 @@
 +
 +   @Override
 +   public List<net.minecraft.client.renderer.RenderType> getRenderTypes(net.minecraft.world.item.ItemStack itemStack, boolean fabulous) {
-+      if (fabulous) {
++      if (!fabulous) {
 +         if (itemRenderTypes != null)
 +             return itemRenderTypes;
 +      } else {
