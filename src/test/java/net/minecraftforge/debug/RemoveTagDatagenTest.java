@@ -16,7 +16,7 @@ import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.forge.event.lifecycle.GatherDataEvent;
+import net.minecraftforge.data.event.GatherDataEvent;
 import net.minecraftforge.registries.ForgeRegistries;
 
 @Mod(RemoveTagDatagenTest.MODID)
@@ -24,18 +24,18 @@ public class RemoveTagDatagenTest
 {
     public static final String MODID = "remove_tag_datagen_test";
     public static final TagKey<Block> TEST_TAG = BlockTags.create(new ResourceLocation("test_tag"));
-    
+
     public RemoveTagDatagenTest()
     {
         IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();
         modBus.addListener(this::onGatherData);
     }
-    
+
     private void onGatherData(GatherDataEvent event)
     {
         DataGenerator generator = event.getGenerator();
         ExistingFileHelper helper = event.getExistingFileHelper();
-        
+
         generator.addProvider(true, new BlockTagsProvider(generator, MODID, helper)
         {
             @SuppressWarnings("unchecked")

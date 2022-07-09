@@ -110,11 +110,11 @@ public class LootModifierManager extends SimpleJsonResourceReloadListener {
 
         ResourceLocation serializer = new ResourceLocation(GsonHelper.getAsString(object, "type"));
 
-        return ForgeRegistries.LOOT_MODIFIER_SERIALIZERS.get().getValue(serializer).read(location, object, lootConditions);
+        return ForgeRegistries.GLOBAL_LOOT_MODIFIER_SERIALIZERS.get().getValue(serializer).read(location, object, lootConditions);
     }
 
     public static GlobalLootModifierSerializer<?> getSerializerForName(ResourceLocation resourcelocation) {
-        return ForgeRegistries.LOOT_MODIFIER_SERIALIZERS.get().getValue(resourcelocation);
+        return ForgeRegistries.GLOBAL_LOOT_MODIFIER_SERIALIZERS.get().getValue(resourcelocation);
     }
 
     /**

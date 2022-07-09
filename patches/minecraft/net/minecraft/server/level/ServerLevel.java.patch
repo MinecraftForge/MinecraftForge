@@ -9,7 +9,7 @@
     private final StructureManager f_214997_;
     private final StructureCheck f_196556_;
     private final boolean f_8561_;
-+   private net.minecraftforge.common.util.WorldCapabilityData capabilityData;
++   private net.minecraftforge.common.util.LevelCapabilityData capabilityData;
  
     public ServerLevel(MinecraftServer p_214999_, Executor p_215000_, LevelStorageSource.LevelStorageAccess p_215001_, ServerLevelData p_215002_, ResourceKey<Level> p_215003_, LevelStem p_215004_, ChunkProgressListener p_215005_, boolean p_215006_, long p_215007_, List<CustomSpawner> p_215008_, boolean p_215009_) {
        super(p_215002_, p_215003_, p_215004_.m_204521_(), p_214999_::m_129905_, false, p_215006_, p_215007_, p_214999_.m_213994_());
@@ -96,7 +96,7 @@
              this.f_143244_.m_157554_();
           }
  
-+         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.WorldEvent.Save(this));
++         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.level.LevelEvent.Save(this));
        }
     }
  
@@ -104,7 +104,7 @@
     }
  
     private void m_8853_(ServerPlayer p_8854_) {
-+      if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.EntityJoinWorldEvent(p_8854_, this))) return;
++      if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.EntityJoinLevelEvent(p_8854_, this))) return;
        Entity entity = this.m_142646_().m_142694_(p_8854_.m_20148_());
        if (entity != null) {
           f_8566_.warn("Force-added player with duplicate UUID {}", (Object)p_8854_.m_20148_().toString());
@@ -193,7 +193,7 @@
  
 +   protected void initCapabilities() {
 +      this.gatherCapabilities();
-+      capabilityData = this.m_8895_().m_164861_(e -> net.minecraftforge.common.util.WorldCapabilityData.load(e, getCapabilities()), () -> new net.minecraftforge.common.util.WorldCapabilityData(getCapabilities()), net.minecraftforge.common.util.WorldCapabilityData.ID);
++      capabilityData = this.m_8895_().m_164861_(e -> net.minecraftforge.common.util.LevelCapabilityData.load(e, getCapabilities()), () -> new net.minecraftforge.common.util.LevelCapabilityData(getCapabilities()), net.minecraftforge.common.util.LevelCapabilityData.ID);
 +      capabilityData.setCapabilities(getCapabilities());
 +   }
 +
@@ -211,7 +211,7 @@
                 ServerLevel.this.f_143247_.put(enderdragonpart.m_19879_(), enderdragonpart);
              }
           }
-@@ -1569,17 +_,23 @@
+@@ -1569,17 +_,24 @@
              ServerLevel.this.f_143246_.remove(mob);
           }
  
@@ -223,11 +223,11 @@
              }
           }
  
--         p_143375_.m_213651_(DynamicGameEventListener::m_223634_);
-+         p_143375_.m_213651_(DynamicGameEventListener::m_223641_);
+          p_143375_.m_213651_(DynamicGameEventListener::m_223634_);
++         p_143375_.onRemovedFromWorld();
++         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.EntityLeaveLevelEvent(p_143375_, ServerLevel.this));
        }
  
-+      @Override
        public void m_214006_(Entity p_215086_) {
           p_215086_.m_213651_(DynamicGameEventListener::m_223641_);
        }

@@ -206,7 +206,7 @@ public final class ForgeBiomeModifiers
                 for (MobCategory category : MobCategory.values())
                 {
                     List<SpawnerData> spawns = spawnBuilder.getSpawner(category);
-                    spawns.removeIf(spawnerData -> this.entityTypes.contains(ForgeRegistries.ENTITIES.getHolder(spawnerData.type).get()));
+                    spawns.removeIf(spawnerData -> this.entityTypes.contains(ForgeRegistries.ENTITY_TYPES.getHolder(spawnerData.type).get()));
                 }
             }
         }

@@ -10,7 +10,7 @@ import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.world.ChunkWatchEvent;
+import net.minecraftforge.event.level.ChunkWatchEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.apache.logging.log4j.LogManager;
@@ -45,7 +45,7 @@ public class ChunkWatchEventTest
         --watched;
         watchedByPlayer.put(event.getPlayer().getUUID(), watched);
         logger.info("Unwatching chunk {} in dimension {}. Player's dimension: {}, total chunks watched by player {}",
-                event.getPos(), getDimensionName(event.getWorld()), getDimensionName(event.getPlayer().getCommandSenderWorld()),
+                event.getPos(), getDimensionName(event.getLevel()), getDimensionName(event.getPlayer().getCommandSenderWorld()),
                 watched);
     }
 
@@ -56,7 +56,7 @@ public class ChunkWatchEventTest
         ++watched;
         watchedByPlayer.put(event.getPlayer().getUUID(), watched);
         logger.info("Watching chunk {} in dimension {}. Player's dimension: {}, total chunks watched by player {}",
-                event.getPos(), getDimensionName(event.getWorld()), getDimensionName(event.getPlayer().getCommandSenderWorld()),
+                event.getPos(), getDimensionName(event.getLevel()), getDimensionName(event.getPlayer().getCommandSenderWorld()),
                 watched);
     }
 

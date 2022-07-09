@@ -19,8 +19,8 @@ public class ForgeDeferredRegistriesSetup
         if (setup)
             throw new IllegalStateException("Setup has already been called!");
 
-        ForgeRegistries.DEFERRED_DATA_SERIALIZERS.register(modEventBus);
-        ForgeRegistries.DEFERRED_LOOT_MODIFIER_SERIALIZERS.register(modEventBus);
+        ForgeRegistries.DEFERRED_ENTITY_DATA_SERIALIZERS.register(modEventBus);
+        ForgeRegistries.DEFERRED_GLOBAL_LOOT_MODIFIER_SERIALIZERS.register(modEventBus);
         ForgeRegistries.DEFERRED_BIOME_MODIFIER_SERIALIZERS.register(modEventBus);
         ForgeRegistries.DEFERRED_FLUID_TYPES.register(modEventBus);
         ForgeRegistries.DEFERRED_BIOME_MODIFIERS.register(modEventBus);

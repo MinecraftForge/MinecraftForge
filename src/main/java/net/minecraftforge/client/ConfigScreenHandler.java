@@ -14,12 +14,12 @@ import net.minecraftforge.forgespi.language.IModInfo;
 import java.util.Optional;
 import java.util.function.BiFunction;
 
-public class ConfigGuiHandler
+public class ConfigScreenHandler
 {
-    public record ConfigGuiFactory(BiFunction<Minecraft, Screen, Screen> screenFunction) implements IExtensionPoint<ConfigGuiFactory> {}
-    public static Optional<BiFunction<Minecraft, Screen, Screen>> getGuiFactoryFor(IModInfo selectedMod)
+    public record ConfigScreenFactory(BiFunction<Minecraft, Screen, Screen> screenFunction) implements IExtensionPoint<ConfigScreenFactory> {}
+    public static Optional<BiFunction<Minecraft, Screen, Screen>> getScreenFactoryFor(IModInfo selectedMod)
     {
         return ModList.get().getModContainerById(selectedMod.getModId()).
-                flatMap(mc -> mc.getCustomExtension(ConfigGuiFactory.class).map(ConfigGuiFactory::screenFunction));
+                flatMap(mc -> mc.getCustomExtension(ConfigScreenFactory.class).map(ConfigScreenFactory::screenFunction));
     }
 }

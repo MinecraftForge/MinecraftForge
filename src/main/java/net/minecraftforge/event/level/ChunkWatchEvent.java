@@ -3,15 +3,15 @@
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.event.world;
+package net.minecraftforge.event.level;
 
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
-import org.apache.commons.lang3.mutable.MutableObject;
 
 /**
  * ChunkWatchEvent is fired when an event involving a chunk being watched occurs.
@@ -19,26 +19,26 @@ import org.apache.commons.lang3.mutable.MutableObject;
  * If a method utilizes this {@link Event} as its parameter, the method will
  * receive every child event of this class.
  * <p>
- * {@link #pos} contains the ChunkPos of the Chunk this event is affecting.<br>
- * {@link #world} contains the World of the Chunk this event is affecting.<br>
- * {@link #player} contains the {@link ServerPlayer} that is involved with this chunk being watched.
+ * {@link #getPos()} contains the {@link ChunkPos} of the Chunk this event is affecting.<br>
+ * {@link #getLevel()} contains the {@link ServerLevel} of the Chunk this event is affecting.<br>
+ * {@link #getPlayer()} contains the {@link ServerPlayer} that is involved with this chunk being watched.
  * <p>
- * The {@link #player}'s world may not be the same as the world of the chunk
+ * The {@link #getPlayer() player}'s level may not be the same as the level of the chunk
  * when the player is teleporting to another dimension.
  * <p>
  * All children of this event are fired on the {@link MinecraftForge#EVENT_BUS}.
  **/
 public class ChunkWatchEvent extends Event
 {
-    private final ServerLevel world;
+    private final ServerLevel level;
     private final ServerPlayer player;
     private final ChunkPos pos;
 
-    public ChunkWatchEvent(ServerPlayer player, ChunkPos pos, ServerLevel world)
+    public ChunkWatchEvent(ServerPlayer player, ChunkPos pos, ServerLevel level)
     {
         this.player = player;
         this.pos = pos;
-        this.world = world;
+        this.level = level;
     }
 
     public ServerPlayer getPlayer()
@@ -51,9 +51,9 @@ public class ChunkWatchEvent extends Event
         return this.pos;
     }
 
-    public ServerLevel getWorld()
+    public ServerLevel getLevel()
     {
-        return this.world;
+        return this.level;
     }
 
     /**
@@ -72,9 +72,9 @@ public class ChunkWatchEvent extends Event
     {
         private final LevelChunk chunk;
 
-        public Watch(ServerPlayer player, LevelChunk chunk, ServerLevel world)
+        public Watch(ServerPlayer player, LevelChunk chunk, ServerLevel level)
         {
-            super(player, chunk.getPos(), world);
+            super(player, chunk.getPos(), level);
             this.chunk = chunk;
         }
 
@@ -90,11 +90,11 @@ public class ChunkWatchEvent extends Event
      * This event is fired when a chunk is removed from the watched chunks of an {@link ServerPlayer}
      * in {@code net.minecraft.server.level.ChunkMap#updateChunkTracking(ServerPlayer, ChunkPos, Packet[], boolean, boolean)}.
      * <p>
-     * This event is not {@link net.minecraftforge.eventbus.api.Cancelable} and
+     * This event is not {@link Cancelable} and
      * {@link HasResult does not have a result}.
      **/
     public static class UnWatch extends ChunkWatchEvent
     {
-        public UnWatch(ServerPlayer player, ChunkPos pos, ServerLevel world) {super(player, pos, world);}
+        public UnWatch(ServerPlayer player, ChunkPos pos, ServerLevel level) {super(player, pos, level);}
     }
 }

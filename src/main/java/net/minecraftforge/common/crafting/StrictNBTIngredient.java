@@ -17,19 +17,19 @@ import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.Nullable;
 
 /** Ingredient that matches the given stack, performing an exact NBT match. Use {@link PartialNBTIngredient} if you need partial match. */
-public class NBTIngredient extends AbstractIngredient
+public class StrictNBTIngredient extends AbstractIngredient
 {
     private final ItemStack stack;
-    protected NBTIngredient(ItemStack stack)
+    protected StrictNBTIngredient(ItemStack stack)
     {
         super(Stream.of(new Ingredient.ItemValue(stack)));
         this.stack = stack;
     }
 
     /** Creates a new ingredient matching the given stack and tag */
-    public static NBTIngredient of(ItemStack stack)
+    public static StrictNBTIngredient of(ItemStack stack)
     {
-        return new NBTIngredient(stack);
+        return new StrictNBTIngredient(stack);
     }
 
     @Override
@@ -65,22 +65,22 @@ public class NBTIngredient extends AbstractIngredient
         return json;
     }
 
-    public static class Serializer implements IIngredientSerializer<NBTIngredient>
+    public static class Serializer implements IIngredientSerializer<StrictNBTIngredient>
     {
         public static final Serializer INSTANCE = new Serializer();
 
         @Override
-        public NBTIngredient parse(FriendlyByteBuf buffer) {
-            return new NBTIngredient(buffer.readItem());
+        public StrictNBTIngredient parse(FriendlyByteBuf buffer) {
+            return new StrictNBTIngredient(buffer.readItem());
         }
 
         @Override
-        public NBTIngredient parse(JsonObject json) {
-            return new NBTIngredient(CraftingHelper.getItemStack(json, true));
+        public StrictNBTIngredient parse(JsonObject json) {
+            return new StrictNBTIngredient(CraftingHelper.getItemStack(json, true));
         }
 
         @Override
-        public void write(FriendlyByteBuf buffer, NBTIngredient ingredient) {
+        public void write(FriendlyByteBuf buffer, StrictNBTIngredient ingredient) {
             buffer.writeItem(ingredient.stack);
         }
     }

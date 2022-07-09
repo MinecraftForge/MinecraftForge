@@ -21,7 +21,7 @@ public class PermissionsChangedEventTest
     public static void onPermissionChanged(PermissionsChangedEvent event)
     {
         LOGGER.info("{} permission level changed to {} from {}",
-                event.getPlayer().getName().getString(),
+                event.getEntity().getName().getString(),
                 event.getNewLevel(),
                 event.getOldLevel());
     }

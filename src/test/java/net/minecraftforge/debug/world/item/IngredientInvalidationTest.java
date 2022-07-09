@@ -11,7 +11,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.world.WorldEvent;
+import net.minecraftforge.event.level.LevelEvent;
 import net.minecraftforge.fml.common.Mod;
 
 import java.util.stream.Stream;
@@ -49,9 +49,9 @@ public class IngredientInvalidationTest
         MinecraftForge.EVENT_BUS.addListener(IngredientInvalidationTest::worldLoad);
     }
 
-    private static void worldLoad(WorldEvent.Load event)
+    private static void worldLoad(LevelEvent.Load event)
     {
-        if (event.getWorld() instanceof ServerLevel level && level.dimension().equals(Level.OVERWORLD))
+        if (event.getLevel() instanceof ServerLevel level && level.dimension().equals(Level.OVERWORLD))
         {
             TEST_INGREDIENT.getStackingIds(); // force invalidation if necessary
             if (!invalidateExpected)

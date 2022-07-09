@@ -339,7 +339,7 @@
     }
  
     public void m_91156_(ClientLevel p_91157_) {
-+      if (f_91073_ != null) net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.WorldEvent.Unload(f_91073_));
++      if (f_91073_ != null) net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.level.LevelEvent.Unload(f_91073_));
        ProgressScreen progressscreen = new ProgressScreen(true);
        progressscreen.m_6309_(Component.m_237115_("connect.joining"));
        this.m_91362_(progressscreen);
@@ -352,7 +352,7 @@
        NarratorChatListener.f_93311_.m_93328_();
        this.m_91362_(p_91321_);
        if (this.f_91073_ != null) {
-+         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.WorldEvent.Unload(f_91073_));
++         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.level.LevelEvent.Unload(f_91073_));
           if (integratedserver != null) {
              this.f_91026_.m_6180_("waitForServer");
  

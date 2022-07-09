@@ -21,30 +21,30 @@ import org.jetbrains.annotations.Nullable;
  * If a method utilizes this event as its parameter, the method will
  * receive every child event of this class.<br>
  * <br>
- * {@link #world} contains the world in which this living Entity is being spawned.<br>
- * {@link #x} contains the x-coordinate this entity is being spawned at.<br>
- * {@link #y} contains the y-coordinate this entity is being spawned at.<br>
- * {@link #z} contains the z-coordinate this entity is being spawned at.<br>
+ * {@link #getLevel()} contains the level in which this living Entity is being spawned.<br>
+ * {@link #getX()} contains the x-coordinate this entity is being spawned at.<br>
+ * {@link #getY()} contains the y-coordinate this entity is being spawned at.<br>
+ * {@link #getZ()} contains the z-coordinate this entity is being spawned at.<br>
  * <br>
  * All children of this event are fired on the {@link MinecraftForge#EVENT_BUS}.
  **/
 public class LivingSpawnEvent extends LivingEvent
 {
-    private final LevelAccessor world;
+    private final LevelAccessor level;
     private final double x;
     private final double y;
     private final double z;
 
-    public LivingSpawnEvent(Mob entity, LevelAccessor world, double x, double y, double z)
+    public LivingSpawnEvent(Mob entity, LevelAccessor level, double x, double y, double z)
     {
         super(entity);
-        this.world = world;
+        this.level = level;
         this.x = x;
         this.y = y;
         this.z = z;
     }
 
-    public LevelAccessor getWorld() { return world; }
+    public LevelAccessor getLevel() { return level; }
     public double getX() { return x; }
     public double getY() { return y; }
     public double getZ() { return z; }
@@ -67,16 +67,16 @@ public class LivingSpawnEvent extends LivingEvent
         /**
          * CheckSpawn is fired when an Entity is about to be spawned.
          * @param entity the spawning entity
-         * @param world the world to spawn in
+         * @param level the level to spawn in
          * @param x x coordinate
          * @param y y coordinate
          * @param z z coordinate
          * @param spawner position of the MobSpawner
          *                  null if it this spawn is coming from a WorldSpawner
          */
-        public CheckSpawn(Mob entity, LevelAccessor world, double x, double y, double z, @Nullable BaseSpawner spawner, MobSpawnType spawnReason)
+        public CheckSpawn(Mob entity, LevelAccessor level, double x, double y, double z, @Nullable BaseSpawner spawner, MobSpawnType spawnReason)
         {
-            super(entity, world, x, y, z);
+            super(entity, level, x, y, z);
             this.spawner = spawner;
             this.spawnReason = spawnReason;
         }
@@ -118,9 +118,9 @@ public class LivingSpawnEvent extends LivingEvent
         private final BaseSpawner spawner;
         private final MobSpawnType spawnReason;
 
-        public SpecialSpawn(Mob entity, LevelAccessor world, double x, double y, double z, @Nullable BaseSpawner spawner, MobSpawnType spawnReason)
+        public SpecialSpawn(Mob entity, LevelAccessor level, double x, double y, double z, @Nullable BaseSpawner spawner, MobSpawnType spawnReason)
         {
-            super(entity, world, x, y, z);
+            super(entity, level, x, y, z);
             this.spawner = spawner;
             this.spawnReason = spawnReason;
         }

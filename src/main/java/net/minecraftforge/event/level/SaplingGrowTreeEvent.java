@@ -3,9 +3,7 @@
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.event.world;
-
-import java.util.Random;
+package net.minecraftforge.event.level;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -22,8 +20,8 @@ import net.minecraftforge.eventbus.api.Event.HasResult;
  * This event is fired during sapling growth in
  * {@link SaplingBlock#advanceTree(ServerLevel, BlockPos, BlockState, RandomSource)} .<br>
  * <br>
- * {@link #pos} contains the coordinates of the growing sapling. <br>
- * {@link #rand} contains an instance of Random for use. <br>
+ * {@link #getPos()} contains the coordinates of the growing sapling. <br>
+ * {@link #getRand()} contains an instance of {@link RandomSource} for use. <br>
  * <br>
  * This event is not {@link Cancelable}.<br>
  * <br>
@@ -33,14 +31,14 @@ import net.minecraftforge.eventbus.api.Event.HasResult;
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
  **/
 @HasResult
-public class SaplingGrowTreeEvent extends WorldEvent
+public class SaplingGrowTreeEvent extends LevelEvent
 {
     private final BlockPos pos;
     private final RandomSource rand;
 
-    public SaplingGrowTreeEvent(LevelAccessor world, RandomSource rand, BlockPos pos)
+    public SaplingGrowTreeEvent(LevelAccessor level, RandomSource rand, BlockPos pos)
     {
-        super(world);
+        super(level);
         this.rand = rand;
         this.pos = pos;
     }

@@ -30,16 +30,16 @@ public class EntityMountEvent extends EntityEvent
 
     private final Entity entityMounting;
     private final Entity entityBeingMounted;
-    private final Level worldObj;
+    private final Level level;
 
     private final boolean isMounting;
 
-    public EntityMountEvent(Entity entityMounting, Entity entityBeingMounted, Level entityWorld, boolean isMounting)
+    public EntityMountEvent(Entity entityMounting, Entity entityBeingMounted, Level level, boolean isMounting)
     {
         super(entityMounting);
         this.entityMounting = entityMounting;
         this.entityBeingMounted = entityBeingMounted;
-        this.worldObj = entityWorld;
+        this.level = level;
         this.isMounting = isMounting;
     }
 
@@ -63,8 +63,8 @@ public class EntityMountEvent extends EntityEvent
         return entityBeingMounted;
     }
 
-    public Level getWorldObj()
+    public Level getLevel()
     {
-        return worldObj;
+        return level;
     }
 }
