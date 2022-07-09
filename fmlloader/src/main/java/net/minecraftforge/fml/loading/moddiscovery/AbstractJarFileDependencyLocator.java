@@ -15,7 +15,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Optional;
 
-public abstract class AbstractJarFileDependencyLocator extends AbstractJarFileModProvider
+public abstract class AbstractJarFileDependencyLocator extends AbstractJarFileLocator
 {
     private static final Logger LOGGER = LogManager.getLogger();
 

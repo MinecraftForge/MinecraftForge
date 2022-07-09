@@ -14,7 +14,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public abstract class AbstractJarFileModLocator extends AbstractJarFileModProvider implements IModLocator
+public abstract class AbstractJarFileModLocator extends AbstractJarFileLocator implements IModLocator
 {
     @Override
     public List<IModFile> scanMods()

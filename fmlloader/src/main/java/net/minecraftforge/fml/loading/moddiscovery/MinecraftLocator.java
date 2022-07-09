@@ -23,8 +23,7 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class MinecraftLocator extends AbstractModProvider implements IModLocator
-{
+public class MinecraftLocator extends AbstractModLocator implements IModLocator {
     private static final Logger LOGGER = LogManager.getLogger();
 
     @Override

@@ -185,6 +185,7 @@ public class ModInfo implements IModInfo, IConfigurable
                     .orElse(DependencySide.BOTH);
         }
 
+
         @Override
         public String getModId()
         {

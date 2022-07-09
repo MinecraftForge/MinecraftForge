@@ -18,7 +18,8 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
-public abstract class AbstractJarFileModProvider extends AbstractModProvider {
+public abstract class AbstractJarFileLocator extends AbstractModLocator
+{
     private static final Logger LOGGER = LogManager.getLogger();
 
     @Override
