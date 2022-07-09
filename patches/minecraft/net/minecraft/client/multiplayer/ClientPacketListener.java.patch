@@ -75,12 +75,19 @@
     }
  
     private <T> void m_205560_(ResourceKey<? extends Registry<? extends T>> p_205561_, TagNetworkSerialization.NetworkPayload p_205562_) {
-@@ -1843,7 +_,8 @@
+@@ -1646,6 +_,7 @@
+    }
+ 
+    public void m_7413_(ClientboundCustomPayloadPacket p_105004_) {
++      if (!f_104888_.m_18695_() && net.minecraftforge.network.NetworkHooks.onCustomPayload(p_105004_, this.f_104885_)) return;
+       PacketUtils.m_131363_(p_105004_, this, this.f_104888_);
+       ResourceLocation resourcelocation = p_105004_.m_132042_();
+       FriendlyByteBuf friendlybytebuf = null;
+@@ -1843,7 +_,7 @@
              int j5 = friendlybytebuf.m_130242_();
              this.f_104888_.f_91064_.f_173815_.m_173830_(positionsource, j5);
           } else {
 -            f_104883_.warn("Unknown custom packed identifier: {}", (Object)resourcelocation);
-+            if (!net.minecraftforge.network.NetworkHooks.onCustomPayload(p_105004_, this.f_104885_))
 +            f_104883_.warn("Unknown custom packet identifier: {}", (Object)resourcelocation);
           }
        } finally {
