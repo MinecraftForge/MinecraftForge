@@ -318,7 +318,7 @@ public class CompositeModel implements IUnbakedGeometry<CompositeModel>
                     childrenBuilder.put("model_" + (i++), model);
                     itemPassesBuilder.add(model);
                 }
-                return new Baked(isAmbientOcclusion, isGui3d, isSideLit, particle, transforms, overrides, childrenBuilder.build(), itemPassesBuilder.build());
+                return new Baked(isGui3d, isSideLit, isAmbientOcclusion, particle, transforms, overrides, childrenBuilder.build(), itemPassesBuilder.build());
             }
         }
 
