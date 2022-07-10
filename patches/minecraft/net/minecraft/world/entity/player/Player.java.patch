@@ -122,7 +122,7 @@
     protected void m_6728_(LivingEntity p_36295_) {
        super.m_6728_(p_36295_);
 -      if (p_36295_.m_213824_()) {
-+      if (p_36295_.m_21205_().canDisableShield(this.f_20935_, this, p_36295_)) {
++      if (p_36295_.canDisableShield(this)) {
           this.m_36384_(true);
        }
  
