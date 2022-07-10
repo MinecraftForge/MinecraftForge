@@ -96,7 +96,9 @@ public class JarInJarDependencyLocator extends AbstractJarFileDependencyLocator
     @NotNull
     private Stream<ModWithVersionRange> getModWithVersionRangeStream(final JarSelector.SourceWithRequestedVersionRange<IModFile> file)
     {
-        return file.source().getModFileInfo().getMods().stream().map(modInfo -> new ModWithVersionRange(modInfo, file.requestedVersionRange(), file.includedVersion()));
+        return file.sources().stream().map(IModFile::getModFileInfo)
+                .flatMap(modFileInfo -> modFileInfo.getMods().stream())
+                .map(modInfo -> new ModWithVersionRange(modInfo, file.requestedVersionRange(), file.includedVersion()));
     }
 
     @NotNull

@@ -58,7 +58,7 @@ ext {
     ASM_VERSION = '9.2'
     INSTALLER_VERSION = '2.1.+'
     MIXIN_VERSION = '0.8.5'
-    JARJAR_VERSION = '0.2.26'
+    JARJAR_VERSION = '0.3.0'
 
     GIT_INFO = gradleutils.gitInfo
     VERSION = gradleutils.getFilteredMCTagOffsetBranchVersion(true, '[0-9]', MC_VERSION)
