@@ -30,7 +30,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
 
-@Mod.EventBusSubscriber(modid = "forge")
 public class ShulkerItemStackInvWrapper implements IItemHandlerModifiable, ICapabilityProvider
 {
     private final ItemStack stack;
@@ -209,30 +208,32 @@ public class ShulkerItemStackInvWrapper implements IItemHandlerModifiable, ICapa
         return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.orEmpty(cap, this.holder);
     }
 
-    private static final Set<Item> SHULKER_ITEMS = Set.of(Items.SHULKER_BOX,
-            Items.BLACK_SHULKER_BOX,
-            Items.BLUE_SHULKER_BOX,
-            Items.BROWN_SHULKER_BOX,
-            Items.CYAN_SHULKER_BOX,
-            Items.GRAY_SHULKER_BOX,
-            Items.GREEN_SHULKER_BOX,
-            Items.LIGHT_BLUE_SHULKER_BOX,
-            Items.LIGHT_GRAY_SHULKER_BOX,
-            Items.LIME_SHULKER_BOX,
-            Items.MAGENTA_SHULKER_BOX,
-            Items.ORANGE_SHULKER_BOX,
-            Items.PINK_SHULKER_BOX,
-            Items.PURPLE_SHULKER_BOX,
-            Items.RED_SHULKER_BOX,
-            Items.WHITE_SHULKER_BOX,
-            Items.YELLOW_SHULKER_BOX);
-
-    @SubscribeEvent
-    protected static void listenCapabilitiesAttachment(AttachCapabilitiesEvent<ItemStack> event)
+    @Mod.EventBusSubscriber(modid = "forge")
+    private static class AttachmentHandler
     {
-        if (SHULKER_ITEMS.contains(event.getObject().getItem()))
-        {
-            event.addCapability(new ResourceLocation("forge","shulker_box"), new ShulkerItemStackInvWrapper(event.getObject()));
+        private static final Set<Item> SHULKER_ITEMS = Set.of(Items.SHULKER_BOX,
+                Items.BLACK_SHULKER_BOX,
+                Items.BLUE_SHULKER_BOX,
+                Items.BROWN_SHULKER_BOX,
+                Items.CYAN_SHULKER_BOX,
+                Items.GRAY_SHULKER_BOX,
+                Items.GREEN_SHULKER_BOX,
+                Items.LIGHT_BLUE_SHULKER_BOX,
+                Items.LIGHT_GRAY_SHULKER_BOX,
+                Items.LIME_SHULKER_BOX,
+                Items.MAGENTA_SHULKER_BOX,
+                Items.ORANGE_SHULKER_BOX,
+                Items.PINK_SHULKER_BOX,
+                Items.PURPLE_SHULKER_BOX,
+                Items.RED_SHULKER_BOX,
+                Items.WHITE_SHULKER_BOX,
+                Items.YELLOW_SHULKER_BOX);
+
+        @SubscribeEvent
+        public static void listenCapabilitiesAttachment(AttachCapabilitiesEvent<ItemStack> event) {
+            if (SHULKER_ITEMS.contains(event.getObject().getItem())) {
+                event.addCapability(new ResourceLocation("forge", "shulker_box"), new ShulkerItemStackInvWrapper(event.getObject()));
+            }
         }
     }
 }
