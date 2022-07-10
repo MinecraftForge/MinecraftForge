@@ -226,7 +226,7 @@
           p_143375_.m_213651_(DynamicGameEventListener::m_223634_);
 +
 +         p_143375_.onRemovedFromWorld();
-+         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.EntityLeaveWorldEvent(p_143375_, ServerLevel.this));
++         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.EntityLeaveLevelEvent(p_143375_, ServerLevel.this));
        }
  
 +      @Override
