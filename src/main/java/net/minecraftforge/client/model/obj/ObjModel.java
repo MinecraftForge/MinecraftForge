@@ -367,14 +367,14 @@ public class ObjModel extends SimpleUnbakedGeometry<ObjModel>
     @Override
     public Set<String> getComponentNames(boolean recursive)
     {
-        if (!recursive) return rootComponentNames;
-        if (allComponentNames == null)
-        {
-            allComponentNames = new HashSet<>();
-            for (var group : parts.values())
-                group.addNamesRecursively(allComponentNames);
-        }
-        return allComponentNames;
+        if (!recursive)
+            return rootComponentNames;
+        if (allComponentNames != null)
+            return allComponentNames;
+        var names = new HashSet<String>();
+        for (var group : parts.values())
+            group.addNamesRecursively(names);
+        return allComponentNames = Collections.unmodifiableSet(names);
     }
 
     private Pair<BakedQuad, Direction> makeQuad(int[][] indices, int tintIndex, Vector4f colorTint, Vector4f ambientColor, TextureAtlasSprite texture, Transformation transform)
@@ -571,7 +571,7 @@ public class ObjModel extends SimpleUnbakedGeometry<ObjModel>
                          .collect(Collectors.toSet());
         }
 
-        public void addNamesRecursively(Set<String> names)
+        protected void addNamesRecursively(Set<String> names)
         {
             names.add(name());
         }
@@ -619,7 +619,7 @@ public class ObjModel extends SimpleUnbakedGeometry<ObjModel>
         }
 
         @Override
-        public void addNamesRecursively(Set<String> names)
+        protected void addNamesRecursively(Set<String> names)
         {
             super.addNamesRecursively(names);
             for (ModelObject object : parts.values())
