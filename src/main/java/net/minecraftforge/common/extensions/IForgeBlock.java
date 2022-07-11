@@ -24,7 +24,9 @@ import net.minecraft.world.entity.projectile.WitherSkull;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.block.*;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.level.material.MaterialColor;
 import net.minecraft.world.level.pathfinder.BlockPathTypes;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.core.Direction;
@@ -845,4 +847,17 @@ public interface IForgeBlock
      * @param newState The new state of the block at the given position
      */
     default void onBlockStateChange(LevelReader level, BlockPos pos, BlockState oldState, BlockState newState) { }
+
+    /**
+     * Returns the {@link MaterialColor} shown on the map.
+     *
+     * @param state The state of this block
+     * @param level The level this block is in
+     * @param pos The blocks position in the level
+     * @param defaultColor The {@code MaterialColor} configured for the given {@code BlockState} in the {@link BlockBehaviour.Properties}
+     */
+    default MaterialColor getMapColor(BlockState state, BlockGetter level, BlockPos pos, MaterialColor defaultColor)
+    {
+        return defaultColor;
+    }
 }
