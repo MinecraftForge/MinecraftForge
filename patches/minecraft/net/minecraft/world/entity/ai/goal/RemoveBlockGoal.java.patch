@@ -1,11 +1,24 @@
 --- a/net/minecraft/world/entity/ai/goal/RemoveBlockGoal.java
 +++ b/net/minecraft/world/entity/ai/goal/RemoveBlockGoal.java
-@@ -34,7 +_,7 @@
+@@ -31,10 +_,11 @@
+       super(p_25841_, p_25842_, 24, p_25843_);
+       this.f_25836_ = p_25840_;
+       this.f_25837_ = p_25841_;
++      this.f_25602_ = null; // Forge: We explicitly set this to null, it gets initialized in the onUse call.
     }
  
     public boolean m_8036_() {
 -      if (!this.f_25837_.f_19853_.m_46469_().m_46207_(GameRules.f_46132_)) {
-+      if (!net.minecraftforge.common.ForgeHooks.canEntityDestroy(this.f_25837_.f_19853_, this.f_25602_, this.f_25837_)) {
++      if (this.f_25602_ != null && !net.minecraftforge.common.ForgeHooks.canEntityDestroy(this.f_25837_.f_19853_, this.f_25602_, this.f_25837_)) {
           return false;
        } else if (this.f_25600_ > 0) {
           --this.f_25600_;
+@@ -133,7 +_,7 @@
+       if (chunkaccess == null) {
+          return false;
+       } else {
+-         return chunkaccess.m_8055_(p_25851_).m_60713_(this.f_25836_) && chunkaccess.m_8055_(p_25851_.m_7494_()).m_60795_() && chunkaccess.m_8055_(p_25851_.m_6630_(2)).m_60795_();
++         return chunkaccess.m_8055_(p_25851_).m_60713_(this.f_25836_) && chunkaccess.m_8055_(p_25851_.m_7494_()).m_60795_() && chunkaccess.m_8055_(p_25851_.m_6630_(2)).m_60795_() && net.minecraftforge.common.ForgeHooks.canEntityDestroy(this.f_25837_.f_19853_, p_25851_, this.f_25837_);
+       }
+    }
+ }
