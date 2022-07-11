@@ -153,7 +153,7 @@
     @Nullable
     public FoodProperties m_41473_() {
        return this.f_41380_;
-@@ -381,6 +_,32 @@
+@@ -381,6 +_,33 @@
        return true;
     }
  
@@ -180,6 +180,7 @@
 +   }
 +
 +   public void initializeClient(java.util.function.Consumer<net.minecraftforge.client.extensions.common.IClientItemExtensions> consumer) {
++      consumer.accept(net.minecraftforge.client.extensions.common.IClientItemExtensions.DEFAULT_FACTORY.get());
 +   }
 +   // END FORGE
 +
