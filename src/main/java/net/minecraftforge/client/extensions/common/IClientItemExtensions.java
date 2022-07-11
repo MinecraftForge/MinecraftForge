@@ -18,11 +18,14 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.client.ForgeHooksClient;
+import net.minecraftforge.client.IItemDecorator;
 import net.minecraftforge.fml.LogicalSide;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 /**
  * {@linkplain LogicalSide#CLIENT Client-only} extensions to {@link Item}.
@@ -31,7 +34,8 @@ import java.util.function.Consumer;
  */
 public interface IClientItemExtensions
 {
-    IClientItemExtensions DEFAULT = new IClientItemExtensions() { };
+    IClientItemExtensions DEFAULT = new ClientItemExtensionsImpl();
+    Supplier<IClientItemExtensions> DEFAULT_FACTORY = ClientItemExtensionsImpl::new;
 
     static IClientItemExtensions of(ItemStack stack)
     {
@@ -126,6 +130,12 @@ public interface IClientItemExtensions
     {
         return Minecraft.getInstance().getItemRenderer().getBlockEntityRenderer();
     }
+
+    /**
+     * @return a List of IItemDecorators used for Decorating this item.
+     * Add to this list during {@link net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent} with {@link net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent#enqueueWork(Runnable)}.
+     */
+    List<IItemDecorator> getItemDecorators();
 
     enum FontContext
     {

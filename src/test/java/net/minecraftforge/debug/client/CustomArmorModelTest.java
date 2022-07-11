@@ -23,6 +23,7 @@ import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Item.Properties;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.client.extensions.common.ClientItemExtensionsImpl;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 import net.minecraftforge.common.util.Lazy;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -64,7 +65,7 @@ public class CustomArmorModelTest
         @Override
         public void initializeClient(Consumer<IClientItemExtensions> consumer)
         {
-            consumer.accept(new IClientItemExtensions()
+            consumer.accept(new ClientItemExtensionsImpl()
             {
                 @Override @NotNull
                 public Model getGenericArmorModel(LivingEntity entityLiving, ItemStack itemStack, EquipmentSlot armorSlot, HumanoidModel<?> _default)
@@ -93,7 +94,7 @@ public class CustomArmorModelTest
         @Override
         public void initializeClient(Consumer<IClientItemExtensions> consumer)
         {
-            consumer.accept(new IClientItemExtensions()
+            consumer.accept(new ClientItemExtensionsImpl()
             {
                 @Override
                 public HumanoidModel<?> getHumanoidArmorModel(LivingEntity entityLiving, ItemStack itemStack, EquipmentSlot armorSlot, HumanoidModel<?> _default)

@@ -60,7 +60,6 @@ import net.minecraftforge.fml.*;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.*;
 import net.minecraftforge.registries.*;
-import net.minecraftforge.items.CapabilityItemDecoratorHandler;
 import net.minecraftforge.network.NetworkConstants;
 import net.minecraftforge.event.server.ServerStoppingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -422,7 +421,6 @@ public class ForgeMod
         CapabilityItemHandler.register(event);
         CapabilityFluidHandler.register(event);
         CapabilityEnergy.register(event);
-        CapabilityItemDecoratorHandler.register(event);
     }
 
     public void preInit(FMLCommonSetupEvent evt)

@@ -15,13 +15,16 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.IItemDecorator;
+import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 
 @Mod(CustomItemDecorationsTest.MOD_ID)
 public class CustomItemDecorationsTest
@@ -31,15 +34,15 @@ public class CustomItemDecorationsTest
 
     public CustomItemDecorationsTest() { }
 
-    @Mod.EventBusSubscriber(modid = CustomItemDecorationsTest.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
+    @Mod.EventBusSubscriber(modid = CustomItemDecorationsTest.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
     public static class ClientEvents {
 
         private static final IItemDecorator decorator = new StackSizeDurabilityBar();
         @SubscribeEvent
-        public static void onAttachCapabilities(final AttachCapabilitiesEvent<ItemStack> event)
+        public static void onFMLClientSetup(final FMLClientSetupEvent event)
         {
-            if (ENABLED && event.getObject().is(Tags.Items.EGGS))
-                ForgeHooksClient.attachItemDecorator(event, decorator);
+            if (ENABLED)
+                event.enqueueWork(() -> IClientItemExtensions.of(Items.EGG).getItemDecorators().add(decorator));
         }
     }
 
