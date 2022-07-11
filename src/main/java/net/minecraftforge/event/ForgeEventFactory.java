@@ -600,9 +600,9 @@ public class ForgeEventFactory
         return result == Result.DEFAULT ? level.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING) : result == Result.ALLOW;
     }
 
-    public static boolean saplingGrowTree(LevelAccessor level, RandomSource rand, BlockPos pos)
+    public static boolean saplingGrowTree(LevelAccessor level, RandomSource randomSource, BlockPos pos)
     {
-        SaplingGrowTreeEvent event = new SaplingGrowTreeEvent(level, rand, pos);
+        SaplingGrowTreeEvent event = new SaplingGrowTreeEvent(level, randomSource, pos);
         MinecraftForge.EVENT_BUS.post(event);
         return event.getResult() != Result.DENY;
     }

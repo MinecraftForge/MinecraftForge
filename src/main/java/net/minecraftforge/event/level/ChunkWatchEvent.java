@@ -12,21 +12,18 @@ import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.fml.LogicalSide;
 
 /**
- * ChunkWatchEvent is fired when an event involving a chunk being watched occurs.
+ * This event is fired whenever a chunk has a watch-related action.
  * <p>
- * If a method utilizes this {@link Event} as its parameter, the method will
- * receive every child event of this class.
- * <p>
- * {@link #getPos()} contains the {@link ChunkPos} of the Chunk this event is affecting.<br>
- * {@link #getLevel()} contains the {@link ServerLevel} of the Chunk this event is affecting.<br>
- * {@link #getPlayer()} contains the {@link ServerPlayer} that is involved with this chunk being watched.
- * <p>
- * The {@link #getPlayer() player}'s level may not be the same as the level of the chunk
+ * The {@linkplain #getPlayer() player}'s level may not be the same as the {@linkplain #getLevel() level of the chunk}
  * when the player is teleporting to another dimension.
  * <p>
- * All children of this event are fired on the {@link MinecraftForge#EVENT_BUS}.
+ * This event is not {@linkplain Cancelable cancellable} and does not {@linkplain HasResult have a result}.
+ * <p>
+ * This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus}
+ * only on the {@linkplain LogicalSide#SERVER logical server}.
  **/
 public class ChunkWatchEvent extends Event
 {
@@ -41,23 +38,32 @@ public class ChunkWatchEvent extends Event
         this.level = level;
     }
 
+    /**
+     * {@return the server player involved with the watch action}
+     */
     public ServerPlayer getPlayer()
     {
         return this.player;
     }
 
+    /**
+     * {@return the chunk position this watch event is affecting}
+     */
     public ChunkPos getPos()
     {
         return this.pos;
     }
 
+    /**
+     * {@return the server level containing the chunk}
+     */
     public ServerLevel getLevel()
     {
         return this.level;
     }
 
     /**
-     * ChunkWatchEvent.Watch is fired when a {@link ServerPlayer} begins watching a chunk.
+     * This event is fired whenever a {@link ServerPlayer} begins watching a chunk.
      * <p>
      * This event is fired when a chunk is added to the watched chunks of a {@link ServerPlayer}
      * and the chunk's data is sent to the client (see
@@ -65,8 +71,10 @@ public class ChunkWatchEvent extends Event
      * <p>
      * This event may be used to send additional chunk-related data to the client.
      * <p>
-     * This event is not {@link net.minecraftforge.eventbus.api.Cancelable} and
-     * {@link HasResult does not have a result}.
+     * This event is not {@linkplain Cancelable cancellable} and does not {@linkplain HasResult have a result}.
+     * <p>
+     * This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus}
+     * only on the {@linkplain LogicalSide#SERVER logical server}.
      **/
     public static class Watch extends ChunkWatchEvent
     {
@@ -85,13 +93,15 @@ public class ChunkWatchEvent extends Event
     }
 
     /**
-     * ChunkWatchEvent.UnWatch is fired when a {@link ServerPlayer} stops watching a chunk.
+     * This event is fired whenever a {@link ServerPlayer} stops watching a chunk.
      * <p>
      * This event is fired when a chunk is removed from the watched chunks of an {@link ServerPlayer}
      * in {@code net.minecraft.server.level.ChunkMap#updateChunkTracking(ServerPlayer, ChunkPos, Packet[], boolean, boolean)}.
      * <p>
-     * This event is not {@link Cancelable} and
-     * {@link HasResult does not have a result}.
+     * This event is not {@linkplain Cancelable cancellable} and does not {@linkplain HasResult have a result}.
+     * <p>
+     * This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus}
+     * only on the {@linkplain LogicalSide#SERVER logical server}.
      **/
     public static class UnWatch extends ChunkWatchEvent
     {

@@ -11,23 +11,19 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.ProgressListener;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.storage.ServerLevelData;
 import net.minecraftforge.common.ForgeInternalHandler;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.fml.LogicalSide;
 
 /**
- * LevelEvent is fired when an event involving the level occurs.<br>
- * If a method utilizes this {@link Event} as its parameter, the method will
- * receive every child event of this class.<br>
- * <br>
- * {@link #getLevel()} contains the {@link Level} this event is occurring in.<br>
- * <br>
- * All children of this event are fired on the {@link MinecraftForge#EVENT_BUS}.<br>
- **/
+ * This event is fired whenever an event involving a {@link LevelAccessor} occurs.
+ * <p>
+ * All children of this event are fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus}.
+ */
 public class LevelEvent extends Event
 {
     private final LevelAccessor level;
@@ -37,22 +33,23 @@ public class LevelEvent extends Event
         this.level = level;
     }
 
+    /**
+     * {@return the level this event is affecting}
+     */
     public LevelAccessor getLevel()
     {
         return level;
     }
 
     /**
-     * LevelEvent.Load is fired when Minecraft loads a level.<br>
-     * This event is fired when a level is loaded in
-     * {@code ClientLevel#ClientLevel(ClientPacketListener, ClientLevel.ClientLevelData, ResourceKey, DimensionType, int, int, Supplier, LevelRenderer, boolean, long)},
-     * {@code MinecraftServer#createLevels(ChunkProgressListener)}. <br>
-     * <br>
-     * This event is not {@link Cancelable}.<br>
-     * <br>
-     * This event does not have a result. {@link HasResult} <br>
-     * <br>
-     * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
+     * This event is fired whenever a level loads.
+     * This event is fired whenever a level loads in ClientLevel's constructor and
+     * {@literal MinecraftServer#createLevels(ChunkProgressListener)}.
+     * <p>
+     * This event is not {@linkplain Cancelable cancellable} and does not {@linkplain HasResult have a result}.
+     * <p>
+     * This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus}
+     * on both logical sides.
      **/
     public static class Load extends LevelEvent
     {
@@ -60,18 +57,17 @@ public class LevelEvent extends Event
     }
 
     /**
-     * LevelEvent.Unload is fired when Minecraft unloads a level.<br>
-     * This event is fired when a level is unloaded in
+     * This event is fired whenever a level unloads.
+     * This event is fired whenever a level unloads in
      * {@link Minecraft#setLevel(ClientLevel)},
      * {@link MinecraftServer#stopServer()},
      * {@link Minecraft#clearLevel(Screen)}, and
-     * {@link ForgeInternalHandler#onDimensionUnload(Unload)}. <br>
-     * <br>
-     * This event is not {@link Cancelable}.<br>
-     * <br>
-     * This event does not have a result. {@link HasResult} <br>
-     * <br>
-     * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
+     * {@link ForgeInternalHandler#onDimensionUnload(Unload)}.
+     * <p>
+     * This event is not {@linkplain Cancelable cancellable} and does not {@linkplain HasResult have a result}.
+     * <p>
+     * This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus}
+     * on both logical sides.
      **/
     public static class Unload extends LevelEvent
     {
@@ -79,15 +75,14 @@ public class LevelEvent extends Event
     }
 
     /**
-     * LevelEvent.Save is fired when Minecraft saves a level.<br>
+     * This event fires whenever a level is saved.
      * This event is fired when a level is saved in
-     * {@link ServerLevel#save(ProgressListener, boolean, boolean)}. <br>
-     * <br>
-     * This event is not {@link Cancelable}.<br>
-     * <br>
-     * This event does not have a result. {@link HasResult} <br>
-     * <br>
-     * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
+     * {@link ServerLevel#save(ProgressListener, boolean, boolean)}.
+     * <p>
+     * This event is not {@linkplain Cancelable cancellable} and does not {@linkplain HasResult have a result}.
+     * <p>
+     * This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus}
+     * only on the {@linkplain LogicalSide#SERVER logical server}.
      **/
     public static class Save extends LevelEvent
     {
@@ -95,13 +90,22 @@ public class LevelEvent extends Event
     }
 
     /**
-     * Called by ServerLevel when it attempts to create a spawnpoint for a dimension.
-     * Canceling the event will prevent the vanilla code from running.
+     * This event fires whenever a {@link ServerLevel} is initialized for the first time
+     * and a spawn position needs to be chosen.
+     * <p>
+     * This event is {@linkplain Cancelable cancellable} and does not {@linkplain HasResult have a result}.
+     * If the event is canceled, the vanilla logic to choose a spawn position will be skipped.
+     * <p>
+     * This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus}
+     * only on the {@linkplain LogicalSide#SERVER logical server}.
+     *
+     * @see ServerLevelData#isInitialized()
      */
     @Cancelable
     public static class CreateSpawnPosition extends LevelEvent
     {
         private final ServerLevelData settings;
+
         public CreateSpawnPosition(LevelAccessor level, ServerLevelData settings)
         {
             super(level);

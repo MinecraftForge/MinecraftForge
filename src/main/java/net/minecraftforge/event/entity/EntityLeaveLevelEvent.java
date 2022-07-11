@@ -12,20 +12,16 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Cancelable;
 
 /**
- * This event is fired when an Entity leaves the level. <br>
- * This event is fired whenever an Entity is removed from the level in {@link LevelCallback#onTrackingEnd(Object)}. <br>
- * <br>
- * {@link #getLevel()} contains the level from which the entity is removed. <br>
- * <br>
- * This event is not {@link Cancelable}.<br>
- * <br>
- * This event does not have a result. {@link HasResult}<br>
- * <br>
- * This event is fired on the {@link MinecraftForge#EVENT_BUS}
- */
+ * This event is fired whenever an {@link Entity} leaves a {@link Level}.
+ * This event is fired whenever an entity is removed from the level in {@link LevelCallback#onTrackingEnd(Object)}.
+ * <p>
+ * This event is not {@linkplain Cancelable cancellable} and does not {@linkplain net.minecraftforge.eventbus.api.Event.HasResult have a result}.
+ * <p>
+ * This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus}
+ * on both logical sides.
+ **/
 public class EntityLeaveLevelEvent extends EntityEvent
 {
-
     private final Level level;
 
     public EntityLeaveLevelEvent(Entity entity, Level level)
@@ -34,6 +30,9 @@ public class EntityLeaveLevelEvent extends EntityEvent
         this.level = level;
     }
 
+    /**
+     * {@return the level the entity is set to leave}
+     */
     public Level getLevel()
     {
         return level;

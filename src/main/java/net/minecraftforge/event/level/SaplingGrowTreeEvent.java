@@ -16,40 +16,43 @@ import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event.HasResult;
 
 /**
- * SaplingGrowTreeEvent is fired when a sapling grows into a tree.<br>
+ * This event is fired whenever a sapling grows into a tree.
  * This event is fired during sapling growth in
- * {@link SaplingBlock#advanceTree(ServerLevel, BlockPos, BlockState, RandomSource)} .<br>
- * <br>
- * {@link #getPos()} contains the coordinates of the growing sapling. <br>
- * {@link #getRand()} contains an instance of {@link RandomSource} for use. <br>
- * <br>
- * This event is not {@link Cancelable}.<br>
- * <br>
- * This event has a result. {@link HasResult} <br>
- * This result determines if the sapling is allowed to grow. <br>
- * <br>
- * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
- **/
+ * {@link SaplingBlock#advanceTree(ServerLevel, BlockPos, BlockState, RandomSource)}.
+ * <p>
+ * This event is not {@linkplain Cancelable cancellable} but does {@linkplain HasResult have a result}.
+ * {@linkplain Result#ALLOW ALLOW} and {@linkplain Result#DEFAULT DEFAULT} will allow the sapling to grow.
+ * {@linkplain Result#DENY DENY} will prevent the sapling from growing.
+ * <p>
+ * This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus}
+ * only on the {@linkplain net.minecraftforge.fml.LogicalSide#SERVER logical server}.
+ */
 @HasResult
 public class SaplingGrowTreeEvent extends LevelEvent
 {
     private final BlockPos pos;
-    private final RandomSource rand;
+    private final RandomSource randomSource;
 
-    public SaplingGrowTreeEvent(LevelAccessor level, RandomSource rand, BlockPos pos)
+    public SaplingGrowTreeEvent(LevelAccessor level, RandomSource randomSource, BlockPos pos)
     {
         super(level);
-        this.rand = rand;
+        this.randomSource = randomSource;
         this.pos = pos;
     }
 
+    /**
+     * {@return the coordinates of the sapling attempting to grow}
+     */
     public BlockPos getPos()
     {
         return pos;
     }
 
-    public RandomSource getRand()
+    /**
+     * {@return the random source which initiated the sapling growth}
+     */
+    public RandomSource getRandomSource()
     {
-        return rand;
+        return this.randomSource;
     }
 }
