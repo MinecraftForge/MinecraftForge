@@ -36,7 +36,7 @@ public interface IUnbakedGeometry<T extends IUnbakedGeometry<T>>
     /**
      * {@return a set of all the components whose visibility may be configured via {@link IGeometryBakingContext}}
      */
-    default Set<String> getComponentNames(boolean recursive)
+    default Set<String> getConfigurableComponentNames()
     {
         return Set.of();
     }

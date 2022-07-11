@@ -126,7 +126,7 @@ public class CompositeModel implements IUnbakedGeometry<CompositeModel>
     }
 
     @Override
-    public Set<String> getComponentNames(boolean recursive)
+    public Set<String> getConfigurableComponentNames()
     {
         return children.keySet();
     }

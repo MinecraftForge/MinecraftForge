@@ -364,11 +364,14 @@ public class ObjModel extends SimpleUnbakedGeometry<ObjModel>
         return combined;
     }
 
-    @Override
-    public Set<String> getComponentNames(boolean recursive)
+    public Set<String> getRootComponentNames()
     {
-        if (!recursive)
-            return rootComponentNames;
+        return rootComponentNames;
+    }
+
+    @Override
+    public Set<String> getConfigurableComponentNames()
+    {
         if (allComponentNames != null)
             return allComponentNames;
         var names = new HashSet<String>();
