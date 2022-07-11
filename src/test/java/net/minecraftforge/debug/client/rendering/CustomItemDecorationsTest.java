@@ -19,6 +19,7 @@ import net.minecraft.world.item.Items;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.IItemDecorator;
+import net.minecraftforge.client.ItemDecoratorHandler;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
@@ -42,7 +43,7 @@ public class CustomItemDecorationsTest
         public static void onFMLClientSetup(final FMLClientSetupEvent event)
         {
             if (ENABLED)
-                event.enqueueWork(() -> IClientItemExtensions.of(Items.EGG).getItemDecorators().add(decorator));
+                event.enqueueWork(() -> ItemDecoratorHandler.of(Items.EGG).addDecorator(decorator));
         }
     }
 

@@ -64,7 +64,7 @@
              RenderSystem.m_69482_();
           }
  
-+         net.minecraftforge.client.extensions.common.IClientItemExtensions.of(p_115176_).getItemDecorators().forEach(itemDecorator -> itemDecorator.render(p_115175_, p_115176_, p_115177_, p_115178_, f_115093_));
++         net.minecraftforge.client.ItemDecoratorHandler.of(p_115176_).render(p_115175_, p_115176_, p_115177_, p_115178_, f_115093_);
        }
     }
  
