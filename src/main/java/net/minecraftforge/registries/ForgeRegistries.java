@@ -65,10 +65,10 @@ public class ForgeRegistries
     public static final IForgeRegistry<SoundEvent> SOUND_EVENTS = RegistryManager.ACTIVE.getRegistry(Keys.SOUND_EVENTS);
     public static final IForgeRegistry<Potion> POTIONS = RegistryManager.ACTIVE.getRegistry(Keys.POTIONS);
     public static final IForgeRegistry<Enchantment> ENCHANTMENTS = RegistryManager.ACTIVE.getRegistry(Keys.ENCHANTMENTS);
-    public static final IForgeRegistry<EntityType<?>> ENTITIES = RegistryManager.ACTIVE.getRegistry(Keys.ENTITY_TYPES);
-    public static final IForgeRegistry<BlockEntityType<?>> BLOCK_ENTITIES = RegistryManager.ACTIVE.getRegistry(Keys.BLOCK_ENTITY_TYPES);
+    public static final IForgeRegistry<EntityType<?>> ENTITY_TYPES = RegistryManager.ACTIVE.getRegistry(Keys.ENTITY_TYPES);
+    public static final IForgeRegistry<BlockEntityType<?>> BLOCK_ENTITY_TYPES = RegistryManager.ACTIVE.getRegistry(Keys.BLOCK_ENTITY_TYPES);
     public static final IForgeRegistry<ParticleType<?>> PARTICLE_TYPES = RegistryManager.ACTIVE.getRegistry(Keys.PARTICLE_TYPES);
-    public static final IForgeRegistry<MenuType<?>> CONTAINERS = RegistryManager.ACTIVE.getRegistry(Keys.CONTAINER_TYPES);
+    public static final IForgeRegistry<MenuType<?>> MENU_TYPES = RegistryManager.ACTIVE.getRegistry(Keys.MENU_TYPES);
     public static final IForgeRegistry<PaintingVariant> PAINTING_VARIANTS = RegistryManager.ACTIVE.getRegistry(Keys.PAINTING_VARIANTS);
     public static final IForgeRegistry<RecipeType<?>> RECIPE_TYPES = RegistryManager.ACTIVE.getRegistry(Keys.RECIPE_TYPES);
     public static final IForgeRegistry<RecipeSerializer<?>> RECIPE_SERIALIZERS = RegistryManager.ACTIVE.getRegistry(Keys.RECIPE_SERIALIZERS);
@@ -76,7 +76,7 @@ public class ForgeRegistries
     public static final IForgeRegistry<StatType<?>> STAT_TYPES = RegistryManager.ACTIVE.getRegistry(Keys.STAT_TYPES);
 
     // Villages
-    public static final IForgeRegistry<VillagerProfession> PROFESSIONS = RegistryManager.ACTIVE.getRegistry(Keys.VILLAGER_PROFESSIONS);
+    public static final IForgeRegistry<VillagerProfession> VILLAGER_PROFESSIONS = RegistryManager.ACTIVE.getRegistry(Keys.VILLAGER_PROFESSIONS);
     public static final IForgeRegistry<PoiType> POI_TYPES = RegistryManager.ACTIVE.getRegistry(Keys.POI_TYPES);
     public static final IForgeRegistry<MemoryModuleType<?>> MEMORY_MODULE_TYPES = RegistryManager.ACTIVE.getRegistry(Keys.MEMORY_MODULE_TYPES);
     public static final IForgeRegistry<SensorType<?>> SENSOR_TYPES = RegistryManager.ACTIVE.getRegistry(Keys.SENSOR_TYPES);
@@ -95,15 +95,35 @@ public class ForgeRegistries
     public static final IForgeRegistry<Biome> BIOMES = RegistryManager.ACTIVE.getRegistry(Keys.BIOMES);
 
     // Custom forge registries
-    static final DeferredRegister<EntityDataSerializer<?>> DEFERRED_DATA_SERIALIZERS = DeferredRegister.create(Keys.DATA_SERIALIZERS, Keys.DATA_SERIALIZERS.location().getNamespace());
-    public static final Supplier<IForgeRegistry<EntityDataSerializer<?>>> DATA_SERIALIZERS = DEFERRED_DATA_SERIALIZERS.makeRegistry(GameData::getDataSerializersRegistryBuilder);
-    static final DeferredRegister<Codec<? extends IGlobalLootModifier>> DEFERRED_LOOT_MODIFIER_SERIALIZERS = DeferredRegister.create(Keys.LOOT_MODIFIER_SERIALIZERS, Keys.LOOT_MODIFIER_SERIALIZERS.location().getNamespace());
-    public static final Supplier<IForgeRegistry<Codec<? extends IGlobalLootModifier>>> LOOT_MODIFIER_SERIALIZERS = DEFERRED_LOOT_MODIFIER_SERIALIZERS.makeRegistry(GameData::getGLMSerializersRegistryBuilder);
+    static final DeferredRegister<EntityDataSerializer<?>> DEFERRED_ENTITY_DATA_SERIALIZERS = DeferredRegister.create(Keys.ENTITY_DATA_SERIALIZERS, Keys.ENTITY_DATA_SERIALIZERS.location().getNamespace());
+    /**
+     * Calling {@link Supplier#get()} before {@link NewRegistryEvent} is fired will result in a null registry returned.
+     * Use {@link Keys#ENTITY_DATA_SERIALIZERS} to create a {@link DeferredRegister}.
+     */
+    public static final Supplier<IForgeRegistry<EntityDataSerializer<?>>> ENTITY_DATA_SERIALIZERS = DEFERRED_ENTITY_DATA_SERIALIZERS.makeRegistry(GameData::getDataSerializersRegistryBuilder);
+    static final DeferredRegister<Codec<? extends IGlobalLootModifier>> DEFERRED_GLOBAL_LOOT_MODIFIER_SERIALIZERS = DeferredRegister.create(Keys.GLOBAL_LOOT_MODIFIER_SERIALIZERS, Keys.GLOBAL_LOOT_MODIFIER_SERIALIZERS.location().getNamespace());
+    /**
+     * Calling {@link Supplier#get()} before {@link NewRegistryEvent} is fired will result in a null registry returned.
+     * Use {@link Keys#GLOBAL_LOOT_MODIFIER_SERIALIZERS} to create a {@link DeferredRegister}.
+     */
+    public static final Supplier<IForgeRegistry<Codec<? extends IGlobalLootModifier>>> GLOBAL_LOOT_MODIFIER_SERIALIZERS = DEFERRED_GLOBAL_LOOT_MODIFIER_SERIALIZERS.makeRegistry(GameData::getGLMSerializersRegistryBuilder);
     static final DeferredRegister<Codec<? extends BiomeModifier>> DEFERRED_BIOME_MODIFIER_SERIALIZERS = DeferredRegister.create(Keys.BIOME_MODIFIER_SERIALIZERS, Keys.BIOME_MODIFIER_SERIALIZERS.location().getNamespace());
+    /**
+     * Calling {@link Supplier#get()} before {@link NewRegistryEvent} is fired will result in a null registry returned.
+     * Use {@link Keys#BIOME_MODIFIER_SERIALIZERS} to create a {@link DeferredRegister}.
+     */
     public static final Supplier<IForgeRegistry<Codec<? extends BiomeModifier>>> BIOME_MODIFIER_SERIALIZERS = DEFERRED_BIOME_MODIFIER_SERIALIZERS.makeRegistry(() -> new RegistryBuilder<Codec<? extends BiomeModifier>>().disableSaving().disableSync());
     static final DeferredRegister<Codec<? extends StructureModifier>> DEFERRED_STRUCTURE_MODIFIER_SERIALIZERS = DeferredRegister.create(Keys.STRUCTURE_MODIFIER_SERIALIZERS, Keys.STRUCTURE_MODIFIER_SERIALIZERS.location().getNamespace());
+    /**
+     * Calling {@link Supplier#get()} before {@link NewRegistryEvent} is fired will result in a null registry returned.
+     * Use {@link Keys#STRUCTURE_MODIFIER_SERIALIZERS} to create a {@link DeferredRegister}.
+     */
     public static final Supplier<IForgeRegistry<Codec<? extends StructureModifier>>> STRUCTURE_MODIFIER_SERIALIZERS = DEFERRED_STRUCTURE_MODIFIER_SERIALIZERS.makeRegistry(() -> new RegistryBuilder<Codec<? extends StructureModifier>>().disableSaving().disableSync());
     static final DeferredRegister<FluidType> DEFERRED_FLUID_TYPES = DeferredRegister.create(Keys.FLUID_TYPES, Keys.FLUID_TYPES.location().getNamespace());
+    /**
+     * Calling {@link Supplier#get()} before {@link NewRegistryEvent} is fired will result in a null registry returned.
+     * Use {@link Keys#FLUID_TYPES} to create a {@link DeferredRegister}.
+     */
     public static final Supplier<IForgeRegistry<FluidType>> FLUID_TYPES = DEFERRED_FLUID_TYPES.makeRegistry(GameData::getFluidTypeRegistryBuilder);
 
     // Custom forge datapack registries
@@ -126,7 +146,7 @@ public class ForgeRegistries
         public static final ResourceKey<Registry<EntityType<?>>> ENTITY_TYPES = key("entity_type");
         public static final ResourceKey<Registry<PaintingVariant>> PAINTING_VARIANTS = key("painting_variant");
         public static final ResourceKey<Registry<ParticleType<?>>> PARTICLE_TYPES = key("particle_type");
-        public static final ResourceKey<Registry<MenuType<?>>> CONTAINER_TYPES = key("menu");
+        public static final ResourceKey<Registry<MenuType<?>>> MENU_TYPES = key("menu");
         public static final ResourceKey<Registry<BlockEntityType<?>>> BLOCK_ENTITY_TYPES = key("block_entity_type");
         public static final ResourceKey<Registry<RecipeType<?>>> RECIPE_TYPES = key("recipe_type");
         public static final ResourceKey<Registry<RecipeSerializer<?>>> RECIPE_SERIALIZERS = key("recipe_serializer");
@@ -147,8 +167,8 @@ public class ForgeRegistries
         public static final ResourceKey<Registry<Biome>> BIOMES = key("worldgen/biome");
 
         // Forge
-        public static final ResourceKey<Registry<EntityDataSerializer<?>>> DATA_SERIALIZERS = key("forge:data_serializers");
-        public static final ResourceKey<Registry<Codec<? extends IGlobalLootModifier>>> LOOT_MODIFIER_SERIALIZERS = key("forge:loot_modifier_serializers");
+        public static final ResourceKey<Registry<EntityDataSerializer<?>>> ENTITY_DATA_SERIALIZERS = key("forge:data_serializers");
+        public static final ResourceKey<Registry<Codec<? extends IGlobalLootModifier>>> GLOBAL_LOOT_MODIFIER_SERIALIZERS = key("forge:loot_modifier_serializers");
         public static final ResourceKey<Registry<Codec<? extends BiomeModifier>>> BIOME_MODIFIER_SERIALIZERS = key("forge:biome_modifier_serializers");
         public static final ResourceKey<Registry<Codec<? extends StructureModifier>>> STRUCTURE_MODIFIER_SERIALIZERS = key("forge:structure_modifier_serializers");
         public static final ResourceKey<Registry<FluidType>> FLUID_TYPES = key("forge:fluid_type");

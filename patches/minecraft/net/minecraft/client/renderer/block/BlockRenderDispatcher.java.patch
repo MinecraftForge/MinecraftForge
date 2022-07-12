@@ -51,12 +51,13 @@
        RenderShape rendershape = p_110913_.m_60799_();
        if (rendershape != RenderShape.INVISIBLE) {
           switch (rendershape) {
-@@ -97,10 +_,11 @@
+@@ -97,10 +_,12 @@
                 float f = (float)(i >> 16 & 255) / 255.0F;
                 float f1 = (float)(i >> 8 & 255) / 255.0F;
                 float f2 = (float)(i & 255) / 255.0F;
 -               this.f_110900_.m_111067_(p_110914_.m_85850_(), p_110915_.m_6299_(ItemBlockRenderTypes.m_109284_(p_110913_, false)), p_110913_, bakedmodel, f, f1, f2, p_110916_, p_110917_);
-+            this.f_110900_.renderModel(p_110914_.m_85850_(), p_110915_.m_6299_(ItemBlockRenderTypes.m_109284_(p_110913_, false)), p_110913_, bakedmodel, f, f1, f2, p_110916_, p_110917_, modelData, renderType);
++               for (net.minecraft.client.renderer.RenderType rt : bakedmodel.getRenderTypes(p_110913_, RandomSource.m_216335_(42), modelData))
++                  this.f_110900_.renderModel(p_110914_.m_85850_(), p_110915_.m_6299_(renderType != null ? renderType : net.minecraftforge.client.ForgeHooksClient.getEntityRenderType(rt, false)), p_110913_, bakedmodel, f, f1, f2, p_110916_, p_110917_, modelData, rt);
                 break;
              case ENTITYBLOCK_ANIMATED:
 -               this.f_173397_.m_108829_(new ItemStack(p_110913_.m_60734_()), ItemTransforms.TransformType.NONE, p_110914_, p_110915_, p_110916_, p_110917_);

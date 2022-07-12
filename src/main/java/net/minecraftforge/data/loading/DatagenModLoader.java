@@ -5,12 +5,11 @@
 
 package net.minecraftforge.data.loading;
 
-import java.util.Collections;
 import net.minecraft.server.Bootstrap;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.fml.ModLoader;
 import net.minecraftforge.fml.ModWorkManager;
-import net.minecraftforge.forge.event.lifecycle.GatherDataEvent;
+import net.minecraftforge.data.event.GatherDataEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

@@ -22,7 +22,7 @@ import net.minecraft.server.packs.metadata.MetadataSectionSerializer;
 import net.minecraft.server.packs.metadata.pack.PackMetadataSection;
 import net.minecraft.resources.ResourceLocation;
 
-public class DelegatingResourcePack extends AbstractPackResources
+public class DelegatingPackResources extends AbstractPackResources
 {
     private final List<PackResources> delegates;
     private Map<String, List<PackResources>> namespacesAssets;
@@ -31,7 +31,7 @@ public class DelegatingResourcePack extends AbstractPackResources
     private final String name;
     private final PackMetadataSection packInfo;
 
-    public DelegatingResourcePack(String id, String name, PackMetadataSection packInfo, List<? extends PackResources> packs)
+    public DelegatingPackResources(String id, String name, PackMetadataSection packInfo, List<? extends PackResources> packs)
     {
         super(new File(id));
         this.name = name;
@@ -75,7 +75,7 @@ public class DelegatingResourcePack extends AbstractPackResources
     {
         return name;
     }
-    
+
     @SuppressWarnings("unchecked")
     @Override
     public <T> T getMetadataSection(MetadataSectionSerializer<T> deserializer) throws IOException

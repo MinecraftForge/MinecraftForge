@@ -3,11 +3,8 @@
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.event.world;
+package net.minecraftforge.event.level;
 
-import net.minecraft.client.multiplayer.ClientChunkCache;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.ChunkStatus;
@@ -15,8 +12,6 @@ import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
-
-import java.util.BitSet;
 
 /**
  * ChunkEvent is fired when an event involving a chunk occurs.<br>
@@ -27,7 +22,7 @@ import java.util.BitSet;
  * <br>
  * All children of this event are fired on the {@link MinecraftForge#EVENT_BUS}.<br>
  **/
-public class ChunkEvent extends WorldEvent
+public class ChunkEvent extends LevelEvent
 {
     private final ChunkAccess chunk;
 
@@ -37,9 +32,9 @@ public class ChunkEvent extends WorldEvent
         this.chunk = chunk;
     }
 
-    public ChunkEvent(ChunkAccess chunk, LevelAccessor world)
+    public ChunkEvent(ChunkAccess chunk, LevelAccessor level)
     {
-        super(world);
+        super(level);
         this.chunk = chunk;
     }
 
@@ -49,11 +44,11 @@ public class ChunkEvent extends WorldEvent
     }
 
     /**
-     * ChunkEvent.Load is fired when vanilla Minecraft attempts to load a Chunk into the world.<br>
+     * ChunkEvent.Load is fired when vanilla Minecraft attempts to load a Chunk into the level.<br>
      * This event is fired during chunk loading in <br>
-     * 
+     *
      * Chunk.onChunkLoad(). <br>
-     * <strong>Note:</strong> This event may be called before the underlying {@link LevelChunk} is promoted to {@link ChunkStatus#FULL}. You will cause chunk loading deadlocks if you don't delay your world interactions.<br>
+     * <strong>Note:</strong> This event may be called before the underlying {@link LevelChunk} is promoted to {@link ChunkStatus#FULL}. You will cause chunk loading deadlocks if you don't delay your level interactions.<br>
      * <br>
      * This event is not {@link Cancelable}.<br>
      * <br>
@@ -70,7 +65,7 @@ public class ChunkEvent extends WorldEvent
     }
 
     /**
-     * ChunkEvent.Unload is fired when vanilla Minecraft attempts to unload a Chunk from the world.<br>
+     * ChunkEvent.Unload is fired when vanilla Minecraft attempts to unload a Chunk from the level.<br>
      * This event is fired during chunk unloading in <br>
      * Chunk.onChunkUnload(). <br>
      * <br>

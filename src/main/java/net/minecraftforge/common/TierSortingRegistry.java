@@ -343,7 +343,7 @@ public class TierSortingRegistry
 
     private static void playerLoggedIn(PlayerEvent.PlayerLoggedInEvent event)
     {
-        if (event.getPlayer() instanceof ServerPlayer serverPlayer)
+        if (event.getEntity() instanceof ServerPlayer serverPlayer)
         {
             syncToPlayer(serverPlayer);
         }

@@ -52,7 +52,7 @@ public class GameTestTest
     public static final boolean ENABLED = true;
     private static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, MODID);
     private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MODID);
-    private static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITIES, MODID);
+    private static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, MODID);
     private static final RegistryObject<Block> ENERGY_BLOCK = BLOCKS.register("energy_block",
             () -> new EnergyBlock(Properties.of(Material.STONE, MaterialColor.STONE)));
     private static final RegistryObject<Item> ENERGY_BLOCK_ITEM = ITEMS.register("energy_block",

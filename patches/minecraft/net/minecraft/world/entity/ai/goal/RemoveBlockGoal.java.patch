@@ -5,7 +5,15 @@
  
     public boolean m_8036_() {
 -      if (!this.f_25837_.f_19853_.m_46469_().m_46207_(GameRules.f_46132_)) {
-+      if (!net.minecraftforge.common.ForgeHooks.canEntityDestroy(this.f_25837_.f_19853_, this.f_25602_, this.f_25837_)) {
++      if (!net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.f_25837_.f_19853_, this.f_25837_)) {
           return false;
        } else if (this.f_25600_ > 0) {
           --this.f_25600_;
+@@ -133,6 +_,7 @@
+       if (chunkaccess == null) {
+          return false;
+       } else {
++         if (!chunkaccess.m_8055_(p_25851_).canEntityDestroy(p_25850_, p_25851_, this.f_25837_)) return false;
+          return chunkaccess.m_8055_(p_25851_).m_60713_(this.f_25836_) && chunkaccess.m_8055_(p_25851_.m_7494_()).m_60795_() && chunkaccess.m_8055_(p_25851_.m_6630_(2)).m_60795_();
+       }
+    }

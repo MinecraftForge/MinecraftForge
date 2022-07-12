@@ -49,24 +49,24 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundTag>
     }
 
     /**
-     * ItemStack sensitive version of getContainerItem. Returns a full ItemStack
-     * instance of the result.
+     * ItemStack sensitive version of {@link Item#getCraftingRemainingItem()}.
+     * Returns a full ItemStack instance of the result.
      *
      * @return The resulting ItemStack
      */
-    default ItemStack getContainerItem()
+    default ItemStack getCraftingRemainingItem()
     {
-        return self().getItem().getContainerItem(self());
+        return self().getItem().getCraftingRemainingItem(self());
     }
 
     /**
-     * ItemStack sensitive version of hasContainerItem
+     * ItemStack sensitive version of {@link Item#hasCraftingRemainingItem()}.
      *
-     * @return True if this item has a 'container'
+     * @return True if this item has a crafting remaining item
      */
-    default boolean hasContainerItem()
+    default boolean hasCraftingRemainingItem()
     {
-        return self().getItem().hasContainerItem(self());
+        return self().getItem().hasCraftingRemainingItem(self());
     }
 
     /**
@@ -193,13 +193,13 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundTag>
     }
 
     /**
-     * ItemStack sensitive version of getItemEnchantability
+     * ItemStack sensitive version of {@link Item#getEnchantmentValue()}.
      *
-     * @return the item echantability value
+     * @return the enchantment value of this ItemStack
      */
-    default int getItemEnchantability()
+    default int getEnchantmentValue()
     {
-        return self().getItem().getItemEnchantability(self());
+        return self().getItem().getEnchantmentValue(self());
     }
 
     /**

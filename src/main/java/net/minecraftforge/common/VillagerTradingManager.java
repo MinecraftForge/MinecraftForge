@@ -63,7 +63,7 @@ public class VillagerTradingManager
      */
     private static void postVillagerEvents()
     {
-        for (VillagerProfession prof : ForgeRegistries.PROFESSIONS)
+        for (VillagerProfession prof : ForgeRegistries.VILLAGER_PROFESSIONS)
         {
             Int2ObjectMap<ItemListing[]> trades = VANILLA_TRADES.getOrDefault(prof, new Int2ObjectOpenHashMap<>());
             Int2ObjectMap<List<ItemListing>> mutableTrades = new Int2ObjectOpenHashMap<>();

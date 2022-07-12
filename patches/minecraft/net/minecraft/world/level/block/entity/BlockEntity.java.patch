@@ -13,7 +13,7 @@
     protected final BlockPos f_58858_;
     protected boolean f_58859_;
     private BlockState f_58856_;
-+   private CompoundTag customTileData;
++   private CompoundTag customPersistentData;
  
     public BlockEntity(BlockEntityType<?> p_155228_, BlockPos p_155229_, BlockState p_155230_) {
 +      super(BlockEntity.class);
@@ -28,12 +28,12 @@
     }
  
     public void m_142466_(CompoundTag p_155245_) {
-+      if (p_155245_.m_128441_("ForgeData")) this.customTileData = p_155245_.m_128469_("ForgeData");
++      if (p_155245_.m_128441_("ForgeData")) this.customPersistentData = p_155245_.m_128469_("ForgeData");
 +      if (getCapabilities() != null && p_155245_.m_128441_("ForgeCaps")) deserializeCaps(p_155245_.m_128469_("ForgeCaps"));
     }
  
     protected void m_183515_(CompoundTag p_187471_) {
-+      if (this.customTileData != null) p_187471_.m_128365_("ForgeData", this.customTileData.m_6426_());
++      if (this.customPersistentData != null) p_187471_.m_128365_("ForgeData", this.customPersistentData.m_6426_());
 +      if (getCapabilities() != null) p_187471_.m_128365_("ForgeCaps", serializeCaps());
     }
  
@@ -59,10 +59,10 @@
 +   }
 +
 +   @Override
-+   public CompoundTag getTileData() {
-+      if (this.customTileData == null)
-+         this.customTileData = new CompoundTag();
-+      return this.customTileData;
++   public CompoundTag getPersistentData() {
++      if (this.customPersistentData == null)
++         this.customPersistentData = new CompoundTag();
++      return this.customPersistentData;
     }
  
     /** @deprecated */

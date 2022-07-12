@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.event.world;
+package net.minecraftforge.event.level;
 
 import java.util.List;
 
@@ -15,7 +15,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
 
-/** ExplosionEvent triggers when an explosion happens in the world.<br>
+/** ExplosionEvent triggers when an explosion happens in the level.<br>
  * <br>
  * ExplosionEvent.Start is fired before the explosion actually occurs.<br>
  * ExplosionEvent.Detonate is fired once the explosion has a list of affected blocks and entities.<br>
@@ -27,18 +27,18 @@ import net.minecraft.world.level.Level;
  */
 public class ExplosionEvent extends Event
 {
-    private final Level world;
+    private final Level level;
     private final Explosion explosion;
 
-    public ExplosionEvent(Level world, Explosion explosion)
+    public ExplosionEvent(Level level, Explosion explosion)
     {
-        this.world = world;
+        this.level = level;
         this.explosion = explosion;
     }
 
-    public Level getWorld()
+    public Level getLevel()
     {
-        return world;
+        return level;
     }
 
     public Explosion getExplosion()
@@ -48,16 +48,16 @@ public class ExplosionEvent extends Event
 
     /** ExplosionEvent.Start is fired before the explosion actually occurs.  Canceling this event will stop the explosion.<br>
      * <br>
-     * This event is {@link net.minecraftforge.eventbus.api.Cancelable}.<br>
+     * This event is {@link Cancelable}.<br>
      * This event does not use {@link HasResult}.<br>
      * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
      */
     @Cancelable
     public static class Start extends ExplosionEvent
     {
-        public Start(Level world, Explosion explosion)
+        public Start(Level level, Explosion explosion)
         {
-            super(world, explosion);
+            super(level, explosion);
         }
     }
 
@@ -71,9 +71,9 @@ public class ExplosionEvent extends Event
     {
         private final List<Entity> entityList;
 
-        public Detonate(Level world, Explosion explosion, List<Entity> entityList)
+        public Detonate(Level level, Explosion explosion, List<Entity> entityList)
         {
-            super(world, explosion);
+            super(level, explosion);
             this.entityList = entityList;
         }
 

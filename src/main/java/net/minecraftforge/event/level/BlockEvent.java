@@ -3,12 +3,13 @@
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.event.world;
+package net.minecraftforge.event.level;
 
 import java.util.EnumSet;
 import java.util.List;
 
 import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.level.block.BaseFireBlock;
 import net.minecraft.world.level.portal.PortalShape;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
@@ -36,19 +37,19 @@ public class BlockEvent extends Event
 {
     private static final boolean DEBUG = Boolean.parseBoolean(System.getProperty("forge.debugBlockEvent", "false"));
 
-    private final LevelAccessor world;
+    private final LevelAccessor level;
     private final BlockPos pos;
     private final BlockState state;
-    public BlockEvent(LevelAccessor world, BlockPos pos, BlockState state)
+    public BlockEvent(LevelAccessor level, BlockPos pos, BlockState state)
     {
         this.pos = pos;
-        this.world = world;
+        this.level = level;
         this.state = state;
     }
 
-    public LevelAccessor getWorld()
+    public LevelAccessor getLevel()
     {
-        return world;
+        return level;
     }
 
     public BlockPos getPos()
@@ -72,9 +73,9 @@ public class BlockEvent extends Event
         private final Player player;
         private int exp;
 
-        public BreakEvent(Level world, BlockPos pos, BlockState state, Player player)
+        public BreakEvent(Level level, BlockPos pos, BlockState state, Player player)
         {
-            super(world, pos, state);
+            super(level, pos, state);
             this.player = player;
 
             if (state == null || !ForgeHooks.isCorrectToolForDrops(state, player)) // Handle empty block or player unable to break block scenario
@@ -85,7 +86,7 @@ public class BlockEvent extends Event
             {
                 int fortuneLevel = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.BLOCK_FORTUNE, player.getMainHandItem());
                 int silkTouchLevel = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.SILK_TOUCH, player.getMainHandItem());
-                this.exp = state.getExpDrop(world, world.random, pos, fortuneLevel, silkTouchLevel);
+                this.exp = state.getExpDrop(level, level.random, pos, fortuneLevel, silkTouchLevel);
             }
         }
 
@@ -193,9 +194,9 @@ public class BlockEvent extends Event
         private final EnumSet<Direction> notifiedSides;
         private final boolean forceRedstoneUpdate;
 
-        public NeighborNotifyEvent(Level world, BlockPos pos, BlockState state, EnumSet<Direction> notifiedSides, boolean forceRedstoneUpdate)
+        public NeighborNotifyEvent(Level level, BlockPos pos, BlockState state, EnumSet<Direction> notifiedSides, boolean forceRedstoneUpdate)
         {
-            super(world, pos, state);
+            super(level, pos, state);
             this.notifiedSides = notifiedSides;
             this.forceRedstoneUpdate = forceRedstoneUpdate;
         }
@@ -229,20 +230,20 @@ public class BlockEvent extends Event
     @HasResult
     public static class CreateFluidSourceEvent extends Event
     {
-        private final LevelReader world;
+        private final LevelReader level;
         private final BlockPos pos;
         private final BlockState state;
 
-        public CreateFluidSourceEvent(LevelReader world, BlockPos pos, BlockState state)
+        public CreateFluidSourceEvent(LevelReader level, BlockPos pos, BlockState state)
         {
-            this.world = world;
+            this.level = level;
             this.pos = pos;
             this.state = state;
         }
 
-        public LevelReader getWorld()
+        public LevelReader getLevel()
         {
-            return world;
+            return level;
         }
 
         public BlockPos getPos()
@@ -271,12 +272,12 @@ public class BlockEvent extends Event
         private BlockState newState;
         private BlockState origState;
 
-        public FluidPlaceBlockEvent(LevelAccessor world, BlockPos pos, BlockPos liquidPos, BlockState state)
+        public FluidPlaceBlockEvent(LevelAccessor level, BlockPos pos, BlockPos liquidPos, BlockState state)
         {
-            super(world, pos, state);
+            super(level, pos, state);
             this.liquidPos = liquidPos;
             this.newState = state;
-            this.origState = world.getBlockState(pos);
+            this.origState = level.getBlockState(pos);
         }
 
         /**
@@ -315,9 +316,9 @@ public class BlockEvent extends Event
      */
     public static class CropGrowEvent extends BlockEvent
     {
-        public CropGrowEvent(Level world, BlockPos pos, BlockState state)
+        public CropGrowEvent(Level level, BlockPos pos, BlockState state)
         {
-            super(world, pos, state);
+            super(level, pos, state);
         }
 
         /**
@@ -334,9 +335,9 @@ public class BlockEvent extends Event
         @HasResult
         public static class Pre extends CropGrowEvent
         {
-            public Pre(Level world, BlockPos pos, BlockState state)
+            public Pre(Level level, BlockPos pos, BlockState state)
             {
-                super(world, pos, state);
+                super(level, pos, state);
             }
         }
 
@@ -352,9 +353,9 @@ public class BlockEvent extends Event
         public static class Post extends CropGrowEvent
         {
             private final BlockState originalState;
-            public Post(Level world, BlockPos pos, BlockState original, BlockState state)
+            public Post(Level level, BlockPos pos, BlockState original, BlockState state)
             {
-                super(world, pos, state);
+                super(level, pos, state);
                 originalState = original;
             }
 
@@ -376,9 +377,9 @@ public class BlockEvent extends Event
         private final Entity entity;
         private final float fallDistance;
 
-        public FarmlandTrampleEvent(Level world, BlockPos pos, BlockState state, float fallDistance, Entity entity)
+        public FarmlandTrampleEvent(Level level, BlockPos pos, BlockState state, float fallDistance, Entity entity)
         {
-            super(world, pos, state);
+            super(level, pos, state);
             this.entity = entity;
             this.fallDistance = fallDistance;
         }
@@ -393,8 +394,8 @@ public class BlockEvent extends Event
 
     }
 
-    /* Fired when an attempt is made to spawn a nether portal from
-     * {@link net.minecraft.block.BlockPortal#trySpawnPortal(World, BlockPos)}.
+    /** Fired when an attempt is made to spawn a nether portal from
+     * {@link BaseFireBlock#onPlace(BlockState, Level, BlockPos, BlockState, boolean)}.
      *
      * If cancelled, the portal will not be spawned.
      */
@@ -403,9 +404,9 @@ public class BlockEvent extends Event
     {
         private final PortalShape size;
 
-        public PortalSpawnEvent(LevelAccessor world, BlockPos pos, BlockState state, PortalShape size)
+        public PortalSpawnEvent(LevelAccessor level, BlockPos pos, BlockState state, PortalShape size)
         {
-            super(world, pos, state);
+            super(level, pos, state);
             this.size = size;
         }
 
@@ -420,7 +421,7 @@ public class BlockEvent extends Event
      * For example: Used to determine if {@link ToolActions#AXE_STRIP an axe can strip},
      * {@link ToolActions#SHOVEL_FLATTEN a shovel can path}, or {@link ToolActions#HOE_TILL a hoe can till}.
      * <p>
-     * Care must be taken to ensure world-modifying events are only performed if {@link #isSimulated()} returns {@code false}.
+     * Care must be taken to ensure level-modifying events are only performed if {@link #isSimulated()} returns {@code false}.
      * <p>
      * This event is {@link Cancelable}. If canceled, this will prevent the tool
      * from changing the block's state.
@@ -469,11 +470,11 @@ public class BlockEvent extends Event
         }
 
         /**
-         * Returns {@code true} if this event should not perform any actions that modify the world.
-         * If {@code false}, then world-modifying actions can be performed.
+         * Returns {@code true} if this event should not perform any actions that modify the level.
+         * If {@code false}, then level-modifying actions can be performed.
          *
-         * @return {@code true} if this event should not perform any actions that modify the world.
-         * If {@code false}, then world-modifying actions can be performed.
+         * @return {@code true} if this event should not perform any actions that modify the level.
+         * If {@code false}, then level-modifying actions can be performed.
          */
         public boolean isSimulated()
         {

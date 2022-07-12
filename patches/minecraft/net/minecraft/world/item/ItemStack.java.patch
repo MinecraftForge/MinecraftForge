@@ -107,7 +107,7 @@
  
     public int m_41741_() {
 -      return this.m_41720_().m_41459_();
-+      return this.m_41720_().getItemStackLimit(this);
++      return this.m_41720_().getMaxStackSize(this);
     }
  
     public boolean m_41753_() {
