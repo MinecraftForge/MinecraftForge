@@ -150,13 +150,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
      */
     public T renderType(String renderType) {
         Preconditions.checkNotNull(renderType, "Render type must not be null");
-        ResourceLocation asLoc;
-        if (renderType.contains(":")) {
-            asLoc = new ResourceLocation(renderType);
-        } else {
-            asLoc = new ResourceLocation(getLocation().getNamespace(), renderType);
-        }
-        return renderType(asLoc);
+        return renderType(new ResourceLocation(renderType));
     }
 
     /**

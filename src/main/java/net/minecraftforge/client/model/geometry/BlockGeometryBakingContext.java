@@ -147,6 +147,7 @@ public class BlockGeometryBakingContext implements IGeometryBakingContext
         this.customGeometry = other.customGeometry;
         this.rootTransform = other.rootTransform;
         this.visibilityData.copyFrom(other.visibilityData);
+        this.renderTypeHint = other.renderTypeHint;
     }
 
     public Collection<Material> getTextureDependencies(Function<ResourceLocation, UnbakedModel> modelGetter, Set<Pair<String, String>> missingTextureErrors)

@@ -70,12 +70,12 @@ public interface IForgeBlockEntity extends ICapabilitySerializable<CompoundTag>
      }
 
     /**
-     * Gets a {@link CompoundTag} that can be used to store custom data for this tile entity.
+     * Gets a {@link CompoundTag} that can be used to store custom data for this block entity.
      * It will be written, and read from disc, so it persists over world saves.
      *
-     * @return A compound tag for custom data
+     * @return A compound tag for custom persistent data
      */
-     CompoundTag getTileData();
+     CompoundTag getPersistentData();
 
      default void onChunkUnloaded(){}
 

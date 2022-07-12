@@ -1,0 +1,16 @@
+--- a/net/minecraft/client/gui/screens/inventory/MerchantScreen.java
++++ b/net/minecraft/client/gui/screens/inventory/MerchantScreen.java
+@@ -240,7 +_,12 @@
+          this.f_96542_.m_115169_(this.f_96547_, p_99164_, p_99166_, p_99167_);
+       } else {
+          this.f_96542_.m_115174_(this.f_96547_, p_99165_, p_99166_, p_99167_, p_99165_.m_41613_() == 1 ? "1" : null);
+-         this.f_96542_.m_115174_(this.f_96547_, p_99164_, p_99166_ + 14, p_99167_, p_99164_.m_41613_() == 1 ? "1" : null);
++         // Forge: fixes Forge-8806, code for count rendering taken from ItemRenderer#renderGuiItemDecorations
++         PoseStack posestack = new PoseStack();
++         posestack.m_85837_(0.0D, 0.0D, (f_96542_.f_115093_ + 200.0F));
++         net.minecraft.client.renderer.MultiBufferSource.BufferSource bufferSource = net.minecraft.client.renderer.MultiBufferSource.m_109898_(com.mojang.blaze3d.vertex.Tesselator.m_85913_().m_85915_());
++         f_96547_.m_92811_(String.valueOf(p_99164_.m_41613_()), (p_99166_ + 14) + 19 - 2 - f_96547_.m_92895_(String.valueOf(p_99164_.m_41613_())), p_99167_ + 6 + 3, 0xFFFFFF, true, posestack.m_85850_().m_85861_(), bufferSource, false, 0, 15728880);
++         bufferSource.m_109911_();
+          RenderSystem.m_157427_(GameRenderer::m_172817_);
+          RenderSystem.m_157456_(0, f_99113_);
+          this.m_93250_(this.m_93252_() + 300);

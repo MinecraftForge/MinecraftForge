@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/item/alchemy/Potion.java
++++ b/net/minecraft/world/item/alchemy/Potion.java
+@@ -7,7 +_,7 @@
+ import net.minecraft.resources.ResourceLocation;
+ import net.minecraft.world.effect.MobEffectInstance;
+ 
+-public class Potion {
++public class Potion implements net.minecraftforge.common.extensions.IForgePotion {
+    @Nullable
+    private final String f_43481_;
+    private final ImmutableList<MobEffectInstance> f_43482_;

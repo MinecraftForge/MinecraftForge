@@ -43,7 +43,7 @@
     public static int m_220287_(RandomSource p_220288_, int p_220289_, int p_220290_, ItemStack p_220291_) {
        Item item = p_220291_.m_41720_();
 -      int i = item.m_6473_();
-+      int i = p_220291_.getItemEnchantability();
++      int i = p_220291_.getEnchantmentValue();
        if (i <= 0) {
           return 0;
        } else {
@@ -52,7 +52,7 @@
        List<EnchantmentInstance> list = Lists.newArrayList();
        Item item = p_220299_.m_41720_();
 -      int i = item.m_6473_();
-+      int i = p_220299_.getItemEnchantability();
++      int i = p_220299_.getEnchantmentValue();
        if (i <= 0) {
           return list;
        } else {

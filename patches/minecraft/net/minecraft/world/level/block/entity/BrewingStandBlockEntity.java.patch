@@ -24,8 +24,8 @@
 -         ItemStack itemstack1 = new ItemStack(itemstack.m_41720_().m_41469_());
 +      net.minecraftforge.common.brewing.BrewingRecipeRegistry.brewPotions(p_155293_, itemstack, f_58974_);
 +      net.minecraftforge.event.ForgeEventFactory.onPotionBrewed(p_155293_);
-+      if (itemstack.hasContainerItem()) {
-+         ItemStack itemstack1 = itemstack.getContainerItem();
++      if (itemstack.hasCraftingRemainingItem()) {
++         ItemStack itemstack1 = itemstack.getCraftingRemainingItem();
 +         itemstack.m_41774_(1);
           if (itemstack.m_41619_()) {
              itemstack = itemstack1;

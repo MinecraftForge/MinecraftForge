@@ -12,7 +12,7 @@
 +      tesselateBlock(p_234380_, p_234381_, p_234382_, p_234383_, p_234384_, p_234385_, p_234386_, p_234387_, p_234388_, p_234389_, net.minecraftforge.client.model.data.ModelData.EMPTY, null);
 +   }
 +   public void tesselateBlock(BlockAndTintGetter p_111048_, BakedModel p_111049_, BlockState p_111050_, BlockPos p_111051_, PoseStack p_111052_, VertexConsumer p_111053_, boolean p_111054_, RandomSource p_111055_, long p_111056_, int p_111057_, net.minecraftforge.client.model.data.ModelData modelData, net.minecraft.client.renderer.RenderType renderType) {
-+      boolean flag = Minecraft.m_91086_() && p_111050_.getLightEmission(p_111048_, p_111051_) == 0 && p_111049_.m_7541_();
++      boolean flag = Minecraft.m_91086_() && p_111050_.getLightEmission(p_111048_, p_111051_) == 0 && p_111049_.useAmbientOcclusion(p_111050_, renderType);
 +      Vec3 vec3 = p_111050_.m_60824_(p_111048_, p_111051_);
 +      p_111052_.m_85837_(vec3.f_82479_, vec3.f_82480_, vec3.f_82481_);
 +      modelData = p_111049_.getModelData(p_111048_, p_111051_, p_111050_, modelData);

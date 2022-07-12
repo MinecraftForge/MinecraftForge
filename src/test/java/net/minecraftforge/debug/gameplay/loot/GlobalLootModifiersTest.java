@@ -5,12 +5,14 @@
 
 package net.minecraftforge.debug.gameplay.loot;
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
+import com.google.common.base.Suppliers;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.advancements.critereon.EnchantmentPredicate;
 import net.minecraft.advancements.critereon.ItemPredicate;
 import net.minecraft.advancements.critereon.MinMaxBounds;
+import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.world.item.enchantment.Enchantment;
@@ -32,25 +34,23 @@ import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.predicates.LootItemBlockStatePropertyCondition;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.world.level.storage.loot.predicates.MatchTool;
-import net.minecraft.util.GsonHelper;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.data.GlobalLootModifierProvider;
-import net.minecraftforge.common.loot.GlobalLootModifierSerializer;
+import net.minecraftforge.common.loot.IGlobalLootModifier;
 import net.minecraftforge.common.loot.LootModifier;
 import net.minecraftforge.common.loot.LootTableIdCondition;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.registries.RegistryObject;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.minecraftforge.forge.event.lifecycle.GatherDataEvent;
+import net.minecraftforge.data.event.GatherDataEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 @Mod(GlobalLootModifiersTest.MODID)
@@ -67,13 +67,13 @@ public class GlobalLootModifiersTest {
         }
     }
 
-    private static final DeferredRegister<GlobalLootModifierSerializer<?>> GLM = DeferredRegister.create(ForgeRegistries.Keys.LOOT_MODIFIER_SERIALIZERS, MODID);
+    private static final DeferredRegister<Codec<? extends IGlobalLootModifier>> GLM = DeferredRegister.create(ForgeRegistries.Keys.GLOBAL_LOOT_MODIFIER_SERIALIZERS, MODID);
     private static final DeferredRegister<Enchantment> ENCHANTS = DeferredRegister.create(ForgeRegistries.ENCHANTMENTS, MODID);
 
-    private static final RegistryObject<DungeonLootEnhancerModifier.Serializer> DUNGEON_LOOT = GLM.register("dungeon_loot", DungeonLootEnhancerModifier.Serializer::new);
-    private static final RegistryObject<SmeltingEnchantmentModifier.Serializer> SMELTING = GLM.register("smelting", SmeltingEnchantmentModifier.Serializer::new);
-    private static final RegistryObject<WheatSeedsConverterModifier.Serializer> WHEATSEEDS = GLM.register("wheat_harvest", WheatSeedsConverterModifier.Serializer::new);
-    private static final RegistryObject<SilkTouchTestModifier.Serializer> SILKTOUCH = GLM.register("silk_touch_bamboo", SilkTouchTestModifier.Serializer::new);
+    private static final RegistryObject<Codec<DungeonLootEnhancerModifier>> DUNGEON_LOOT = GLM.register("dungeon_loot", DungeonLootEnhancerModifier.CODEC);
+    private static final RegistryObject<Codec<SmeltingEnchantmentModifier>> SMELTING = GLM.register("smelting", SmeltingEnchantmentModifier.CODEC);
+    private static final RegistryObject<Codec<WheatSeedsConverterModifier>> WHEATSEEDS = GLM.register("wheat_harvest", WheatSeedsConverterModifier.CODEC);
+    private static final RegistryObject<Codec<SilkTouchTestModifier>> SILKTOUCH = GLM.register("silk_touch_bamboo", SilkTouchTestModifier.CODEC);
     private static final RegistryObject<Enchantment> SMELT = ENCHANTS.register("smelt", () -> new SmelterEnchantment(Rarity.UNCOMMON, EnchantmentCategory.DIGGER, EquipmentSlot.MAINHAND));
 
     @EventBusSubscriber(modid = MODID, bus = EventBusSubscriber.Bus.MOD)
@@ -96,7 +96,7 @@ public class GlobalLootModifiersTest {
         @Override
         protected void start()
         {
-            add("smelting", SMELTING.get(), new SmeltingEnchantmentModifier(
+            add("smelting", new SmeltingEnchantmentModifier(
                     new LootItemCondition[]{
                             MatchTool.toolMatches(
                                     ItemPredicate.Builder.item().hasEnchantment(
@@ -105,7 +105,7 @@ public class GlobalLootModifiersTest {
                     })
             );
 
-            add("wheat_harvest", WHEATSEEDS.get(), new WheatSeedsConverterModifier(
+            add("wheat_harvest", new WheatSeedsConverterModifier(
                     new LootItemCondition[] {
                             MatchTool.toolMatches(ItemPredicate.Builder.item().of(Items.SHEARS)).build(),
                             LootItemBlockStatePropertyCondition.hasBlockStateProperties(Blocks.WHEAT).build()
@@ -113,8 +113,9 @@ public class GlobalLootModifiersTest {
                     3, Items.WHEAT_SEEDS, Items.WHEAT)
             );
 
-            add("dungeon_loot", DUNGEON_LOOT.get(), new DungeonLootEnhancerModifier(
-                    new LootItemCondition[] { LootTableIdCondition.builder(new ResourceLocation("chests/simple_dungeon")).build() })
+            add("dungeon_loot", new DungeonLootEnhancerModifier(
+                    new LootItemCondition[] { LootTableIdCondition.builder(new ResourceLocation("chests/simple_dungeon")).build() },
+                    2)
             );
         }
     }
@@ -130,6 +131,8 @@ public class GlobalLootModifiersTest {
      *
      */
     private static class SmeltingEnchantmentModifier extends LootModifier {
+        public static final Supplier<Codec<SmeltingEnchantmentModifier>> CODEC = Suppliers.memoize(() -> RecordCodecBuilder.create(inst -> codecStart(inst).apply(inst, SmeltingEnchantmentModifier::new)));
+
         public SmeltingEnchantmentModifier(LootItemCondition[] conditionsIn) {
             super(conditionsIn);
         }
@@ -150,16 +153,9 @@ public class GlobalLootModifiersTest {
                     .orElse(stack);
         }
 
-        private static class Serializer extends GlobalLootModifierSerializer<SmeltingEnchantmentModifier> {
-            @Override
-            public SmeltingEnchantmentModifier read(ResourceLocation name, JsonObject json, LootItemCondition[] conditionsIn) {
-                return new SmeltingEnchantmentModifier(conditionsIn);
-            }
-
-            @Override
-            public JsonObject write(SmeltingEnchantmentModifier instance) {
-                return makeConditions(instance.conditions);
-            }
+        @Override
+        public Codec<? extends IGlobalLootModifier> codec() {
+            return CODEC.get();
         }
     }
 
@@ -168,6 +164,8 @@ public class GlobalLootModifiersTest {
      *
      */
     private static class SilkTouchTestModifier extends LootModifier {
+        public static final Supplier<Codec<SilkTouchTestModifier>> CODEC = Suppliers.memoize(() -> RecordCodecBuilder.create(inst -> codecStart(inst).apply(inst, SilkTouchTestModifier::new)));
+
         public SilkTouchTestModifier(LootItemCondition[] conditionsIn) {
             super(conditionsIn);
         }
@@ -187,16 +185,9 @@ public class GlobalLootModifiersTest {
             return loottable.getRandomItems(ctx);
         }
 
-        private static class Serializer extends GlobalLootModifierSerializer<SilkTouchTestModifier> {
-            @Override
-            public SilkTouchTestModifier read(ResourceLocation name, JsonObject json, LootItemCondition[] conditionsIn) {
-                return new SilkTouchTestModifier(conditionsIn);
-            }
-
-            @Override
-            public JsonObject write(SilkTouchTestModifier instance) {
-                return makeConditions(instance.conditions);
-            }
+        @Override
+        public Codec<? extends IGlobalLootModifier> codec() {
+            return CODEC.get();
         }
     }
 
@@ -206,6 +197,14 @@ public class GlobalLootModifiersTest {
      *
      */
     private static class WheatSeedsConverterModifier extends LootModifier {
+        public static final Supplier<Codec<WheatSeedsConverterModifier>> CODEC = Suppliers.memoize(() -> RecordCodecBuilder.create(inst -> codecStart(inst).and(
+                inst.group(
+                        Codec.INT.fieldOf("numSeeds").forGetter(m -> m.numSeedsToConvert),
+                        ForgeRegistries.ITEMS.getCodec().fieldOf("seedItem").forGetter(m -> m.itemToCheck),
+                        ForgeRegistries.ITEMS.getCodec().fieldOf("replacement").forGetter(m -> m.itemReward)
+                )).apply(inst, WheatSeedsConverterModifier::new)
+        ));
+
         private final int numSeedsToConvert;
         private final Item itemToCheck;
         private final Item itemReward;
@@ -238,37 +237,23 @@ public class GlobalLootModifiersTest {
             return generatedLoot;
         }
 
-        private static class Serializer extends GlobalLootModifierSerializer<WheatSeedsConverterModifier> {
-
-            @Override
-            public WheatSeedsConverterModifier read(ResourceLocation name, JsonObject object, LootItemCondition[] conditionsIn) {
-                int numSeeds = GsonHelper.getAsInt(object, "numSeeds");
-                Item seed = ForgeRegistries.ITEMS.getValue(new ResourceLocation((GsonHelper.getAsString(object, "seedItem"))));
-                Item wheat = ForgeRegistries.ITEMS.getValue(new ResourceLocation(GsonHelper.getAsString(object, "replacement")));
-                return new WheatSeedsConverterModifier(conditionsIn, numSeeds, seed, wheat);
-            }
-
-            @Override
-            public JsonObject write(WheatSeedsConverterModifier instance) {
-                JsonObject json = makeConditions(instance.conditions);
-                json.addProperty("numSeeds", instance.numSeedsToConvert);
-                json.addProperty("seedItem", ForgeRegistries.ITEMS.getKey(instance.itemToCheck).toString());
-                json.addProperty("replacement", ForgeRegistries.ITEMS.getKey(instance.itemReward).toString());
-                return json;
-            }
+        @Override
+        public Codec<? extends IGlobalLootModifier> codec() {
+            return CODEC.get();
         }
     }
 
     private static class DungeonLootEnhancerModifier extends LootModifier {
+        public static final Supplier<Codec<DungeonLootEnhancerModifier>> CODEC = Suppliers.memoize(() -> RecordCodecBuilder.create(inst -> codecStart(inst)
+                .and(ExtraCodecs.POSITIVE_INT.optionalFieldOf("multiplication_factor", 2).forGetter(m -> m.multiplicationFactor))
+                .apply(inst, DungeonLootEnhancerModifier::new)
+        ));
+
         private final int multiplicationFactor;
 
         public DungeonLootEnhancerModifier(final LootItemCondition[] conditionsIn, final int multiplicationFactor) {
             super(conditionsIn);
             this.multiplicationFactor = multiplicationFactor;
-        }
-
-        public DungeonLootEnhancerModifier(final LootItemCondition[] conditionsIn) {
-            this(conditionsIn, 2);
         }
 
         @Override
@@ -279,20 +264,9 @@ public class GlobalLootModifiersTest {
                     .collect(Collectors.toCollection(ObjectArrayList::new));
         }
 
-        private static class Serializer extends GlobalLootModifierSerializer<DungeonLootEnhancerModifier> {
-            @Override
-            public DungeonLootEnhancerModifier read(ResourceLocation location, JsonObject object, LootItemCondition[] conditions) {
-                final int multiplicationFactor = GsonHelper.getAsInt(object, "multiplication_factor", 2);
-                if (multiplicationFactor <= 0) throw new JsonParseException("Unable to set a multiplication factor to a number lower than 1");
-                return new DungeonLootEnhancerModifier(conditions, multiplicationFactor);
-            }
-
-            @Override
-            public JsonObject write(DungeonLootEnhancerModifier instance) {
-                final JsonObject obj = this.makeConditions(instance.conditions);
-                obj.addProperty("multiplication_factor", instance.multiplicationFactor);
-                return obj;
-            }
+        @Override
+        public Codec<? extends IGlobalLootModifier> codec() {
+            return CODEC.get();
         }
     }
 }

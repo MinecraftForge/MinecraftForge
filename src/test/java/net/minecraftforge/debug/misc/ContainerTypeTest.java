@@ -93,7 +93,7 @@ public class ContainerTypeTest
 
     private void registerContainers(final RegisterEvent event)
     {
-        event.register(ForgeRegistries.Keys.CONTAINER_TYPES, helper -> helper.register("container", IForgeMenuType.create(TestContainer::new)));
+        event.register(ForgeRegistries.Keys.MENU_TYPES, helper -> helper.register("container", IForgeMenuType.create(TestContainer::new)));
     }
 
     private void setup(FMLClientSetupEvent event)
@@ -103,12 +103,12 @@ public class ContainerTypeTest
 
     private void onRightClick(PlayerInteractEvent.RightClickBlock event)
     {
-        if (!event.getWorld().isClientSide && event.getHand() == InteractionHand.MAIN_HAND)
+        if (!event.getLevel().isClientSide && event.getHand() == InteractionHand.MAIN_HAND)
         {
-            if (event.getWorld().getBlockState(event.getPos()).getBlock() == Blocks.SPONGE)
+            if (event.getLevel().getBlockState(event.getPos()).getBlock() == Blocks.SPONGE)
             {
                 String text = "Hello World!";
-                NetworkHooks.openGui((ServerPlayer) event.getPlayer(), new MenuProvider()
+                NetworkHooks.openScreen((ServerPlayer) event.getEntity(), new MenuProvider()
                 {
                     @Override
                     public AbstractContainerMenu createMenu(int p_createMenu_1_, Inventory p_createMenu_2_, Player p_createMenu_3_)

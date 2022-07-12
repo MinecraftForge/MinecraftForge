@@ -246,13 +246,13 @@ public interface IForgeItem
     }
 
     /**
-     * ItemStack sensitive version of hasContainerItem
+     * ItemStack sensitive version of {@link Item#hasCraftingRemainingItem()}.
      *
      * @param stack The current item stack
-     * @return True if this item has a 'container'
+     * @return True if this item has a crafting remaining item
      */
     @SuppressWarnings("deprecation")
-    default boolean hasContainerItem(ItemStack stack)
+    default boolean hasCraftingRemainingItem(ItemStack stack)
     {
         return self().hasCraftingRemainingItem();
     }
@@ -495,24 +495,24 @@ public interface IForgeItem
 
     /**
      * Gets the maximum number of items that this stack should be able to hold. This
-     * is a ItemStack (and thus NBT) sensitive version of Item.getItemStackLimit()
+     * is a ItemStack (and thus NBT) sensitive version of {@link Item#getMaxStackSize()}.
      *
      * @param stack The ItemStack
-     * @return The maximum number this item can be stacked to
+     * @return The maximum size this item can be stacked to
      */
     @SuppressWarnings("deprecation")
-    default int getItemStackLimit(ItemStack stack)
+    default int getMaxStackSize(ItemStack stack)
     {
         return self().getMaxStackSize();
     }
 
     /**
-     * ItemStack sensitive version of getItemEnchantability
+     * ItemStack sensitive version of {@link Item#getEnchantmentValue()}.
      *
      * @param stack The ItemStack
-     * @return the item echantability value
+     * @return the enchantment value
      */
-    default int getItemEnchantability(ItemStack stack)
+    default int getEnchantmentValue(ItemStack stack)
     {
         return self().getEnchantmentValue();
     }

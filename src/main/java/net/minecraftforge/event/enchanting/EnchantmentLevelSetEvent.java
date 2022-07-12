@@ -20,24 +20,24 @@ import org.jetbrains.annotations.NotNull;
  */
 public class EnchantmentLevelSetEvent extends net.minecraftforge.eventbus.api.Event
 {
-    private final Level world;
+    private final Level level;
     private final BlockPos pos;
     private final int enchantRow;
     private final int power;
     @NotNull
     private final ItemStack itemStack;
     private final int originalLevel;
-    private int level;
+    private int enchantLevel;
 
-    public EnchantmentLevelSetEvent(Level world, BlockPos pos, int enchantRow, int power, @NotNull ItemStack itemStack, int level)
+    public EnchantmentLevelSetEvent(Level level, BlockPos pos, int enchantRow, int power, @NotNull ItemStack itemStack, int enchantLevel)
     {
-        this.world = world;
+        this.level = level;
         this.pos = pos;
         this.enchantRow = enchantRow;
         this.power = power;
         this.itemStack = itemStack;
-        this.originalLevel = level;
-        this.level = level;
+        this.originalLevel = enchantLevel;
+        this.enchantLevel = enchantLevel;
     }
 
     /**
@@ -45,9 +45,9 @@ public class EnchantmentLevelSetEvent extends net.minecraftforge.eventbus.api.Ev
      *
      * @return the world object
      */
-    public Level getWorld()
+    public Level getLevel()
     {
-        return world;
+        return level;
     }
 
     /**
@@ -106,9 +106,9 @@ public class EnchantmentLevelSetEvent extends net.minecraftforge.eventbus.api.Ev
      *
      * @return the level of the enchantment for this row (0-30)
      */
-    public int getLevel()
+    public int getEnchantLevel()
     {
-        return level;
+        return enchantLevel;
     }
 
     /**
@@ -116,8 +116,8 @@ public class EnchantmentLevelSetEvent extends net.minecraftforge.eventbus.api.Ev
      *
      * @param level the new level of the enchantment (0-30)
      */
-    public void setLevel(int level)
+    public void setEnchantLevel(int level)
     {
-        this.level = level;
+        this.enchantLevel = level;
     }
 }

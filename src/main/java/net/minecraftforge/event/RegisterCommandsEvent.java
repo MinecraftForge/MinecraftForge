@@ -45,7 +45,7 @@ public class RegisterCommandsEvent extends Event
     /**
      * {@return the environment the command is being registered for}
      */
-    public Commands.CommandSelection getEnvironment()
+    public Commands.CommandSelection getCommandSelection()
     {
         return environment;
     }

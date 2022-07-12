@@ -1,20 +1,10 @@
 {
   "values": [
-    "minecraft:desert",
-    "minecraft:nether_wastes",
-    "minecraft:jungle",
-    "minecraft:sparse_jungle",
-    "minecraft:savanna",
-    "minecraft:savanna_plateau",
-    "minecraft:stony_peaks",
-    "minecraft:warm_ocean",
-    "minecraft:windswept_savanna",
-    "minecraft:eroded_badlands",
-    "minecraft:bamboo_jungle",
-    "minecraft:soul_sand_valley",
-    "minecraft:crimson_forest",
-    "minecraft:warped_forest",
-    "minecraft:basalt_deltas",
-    "minecraft:mangrove_swamp"
+    "#forge:is_hot/overworld",
+    "#forge:is_hot/nether",
+    {
+      "id": "#forge:is_hot/end",
+      "required": false
+    }
   ]
 }

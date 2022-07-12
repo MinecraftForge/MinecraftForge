@@ -55,11 +55,13 @@ public abstract class CustomizeGuiOverlayEvent extends Event
     /**
      * Fired <b>before</b> a boss health bar is rendered to the screen.
      *
-     * <p>This event is not {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}.
+     * <p>This event is {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}.
+     * Cancelling this event will prevent the given bar from rendering.</p>
      *
      * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
      * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
+    @Cancelable
     public static class BossEventProgress extends CustomizeGuiOverlayEvent
     {
         private final LerpingBossEvent bossEvent;
@@ -124,7 +126,7 @@ public abstract class CustomizeGuiOverlayEvent extends Event
      * Fired <b>before</b> textual information is rendered to the debug screen.
      * This can be used to add or remove text information.
      *
-     * <p>This event is not {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}.
+     * <p>This event is not {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}.</p>
      *
      * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
      * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
@@ -162,7 +164,7 @@ public abstract class CustomizeGuiOverlayEvent extends Event
     /**
      * Fired <b>before</b> the chat messages overlay is rendered to the screen.
      *
-     * <p>This event is not {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}.
+     * <p>This event is not {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}.<p/>
      *
      * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
      * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>

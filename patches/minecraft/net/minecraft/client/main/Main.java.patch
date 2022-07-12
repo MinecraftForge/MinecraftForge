@@ -1,5 +1,13 @@
 --- a/net/minecraft/client/main/Main.java
 +++ b/net/minecraft/client/main/Main.java
+@@ -49,6 +_,7 @@
+    @DontObfuscate
+    public static void main(String[] p_129642_) {
+       SharedConstants.m_142977_();
++      if (!net.minecraftforge.fml.loading.FMLConfig.isOptimizedDFUDisabled())
+       SharedConstants.m_214358_();
+       OptionParser optionparser = new OptionParser();
+       optionparser.allowsUnrecognizedOptions();
 @@ -135,7 +_,7 @@
        }
  
