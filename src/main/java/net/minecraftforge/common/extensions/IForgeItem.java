@@ -229,16 +229,16 @@ public interface IForgeItem
     }
 
     /**
-     * ItemStack sensitive version of getContainerItem. Returns a full ItemStack
-     * instance of the result.
+     * ItemStack sensitive version of {@link Item#getCraftingRemainingItem()}.
+     * Returns a full ItemStack instance of the result.
      *
      * @param itemStack The current ItemStack
      * @return The resulting ItemStack
      */
     @SuppressWarnings("deprecation")
-    default ItemStack getContainerItem(ItemStack itemStack)
+    default ItemStack getCraftingRemainingItem(ItemStack itemStack)
     {
-        if (!hasContainerItem(itemStack))
+        if (!hasCraftingRemainingItem(itemStack))
         {
             return ItemStack.EMPTY;
         }
