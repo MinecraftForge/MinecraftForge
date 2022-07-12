@@ -953,6 +953,20 @@ public class ForgeHooksClient
         return MinecraftForge.EVENT_BUS.post(event) ? "" : event.getMessage();
     }
 
+    /**
+     * Mimics the behavior of {@link net.minecraft.client.renderer.ItemBlockRenderTypes#getRenderType(BlockState, boolean)}
+     * for the input {@link RenderType}.
+     */
+    @NotNull
+    public static RenderType getEntityRenderType(RenderType chunkRenderType, boolean fabulous)
+    {
+        if (chunkRenderType != RenderType.translucent())
+            return Sheets.cutoutBlockSheet();
+        if (!Minecraft.useShaderTransparency())
+            return Sheets.translucentCullBlockSheet();
+        return fabulous ? Sheets.translucentCullBlockSheet() : Sheets.translucentItemSheet();
+    }
+
     @Mod.EventBusSubscriber(value = Dist.CLIENT, modid="forge", bus= Mod.EventBusSubscriber.Bus.MOD)
     public static class ClientEvents
     {

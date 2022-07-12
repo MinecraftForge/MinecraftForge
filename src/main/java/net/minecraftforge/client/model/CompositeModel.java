@@ -125,6 +125,12 @@ public class CompositeModel implements IUnbakedGeometry<CompositeModel>
         return textures;
     }
 
+    @Override
+    public Set<String> getConfigurableComponentNames()
+    {
+        return children.keySet();
+    }
+
     public static class Baked implements IDynamicBakedModel
     {
         private final boolean isAmbientOcclusion;
