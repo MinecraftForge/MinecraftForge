@@ -46,7 +46,7 @@
 +               oldState = blockstate;
                 blockstate = this.f_60409_.m_8055_(blockpos);
 -               if (blockstate.m_60795_() || !m_155939_(blockstate1, blockstate) || !PistonBaseBlock.m_60204_(blockstate, this.f_60409_, blockpos, this.f_60413_, false, this.f_60413_.m_122424_()) || blockpos.equals(this.f_60410_)) {
-+               if (blockstate.m_60795_() || (!oldState.canStickTo(blockstate) && !blockstate.canStickTo(oldState)) || !PistonBaseBlock.m_60204_(blockstate, this.f_60409_, blockpos, this.f_60413_, false, this.f_60413_.m_122424_()) || blockpos.equals(this.f_60410_)) {
++               if (blockstate.m_60795_() || !(oldState.canStickTo(blockstate) && blockstate.canStickTo(oldState)) || !PistonBaseBlock.m_60204_(blockstate, this.f_60409_, blockpos, this.f_60413_, false, this.f_60413_.m_122424_()) || blockpos.equals(this.f_60410_)) {
                    break;
                 }
  
