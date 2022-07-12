@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.forge.event.lifecycle;
+package net.minecraftforge.data.event;
 
 import cpw.mods.modlauncher.api.LamdbaExceptionUtils;
 import net.minecraft.DetectedVersion;

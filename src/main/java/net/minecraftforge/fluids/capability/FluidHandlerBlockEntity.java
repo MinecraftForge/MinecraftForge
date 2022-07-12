@@ -18,13 +18,13 @@ import net.minecraftforge.fluids.capability.templates.FluidTank;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class TileFluidHandler extends BlockEntity
+public class FluidHandlerBlockEntity extends BlockEntity
 {
     protected FluidTank tank = new FluidTank(FluidType.BUCKET_VOLUME);
 
     private final LazyOptional<IFluidHandler> holder = LazyOptional.of(() -> tank);
 
-    public TileFluidHandler(@NotNull BlockEntityType<?> blockEntityType, BlockPos pos, BlockState state)
+    public FluidHandlerBlockEntity(@NotNull BlockEntityType<?> blockEntityType, BlockPos pos, BlockState state)
     {
         super(blockEntityType, pos, state);
     }

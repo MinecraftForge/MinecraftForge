@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
  * such as to have alternative textures to use along with Programmer Art, or optional
  * alternative recipes for compatibility ot to replace vanilla recipes.
  */
-public class PathResourcePack extends AbstractPackResources
+public class PathPackResources extends AbstractPackResources
 {
     private final Path source;
     private final String packName;
@@ -47,7 +47,7 @@ public class PathResourcePack extends AbstractPackResources
      *                 This name should be unique within the pack finder, preferably the name of the file or folder containing the resources.
      * @param source   the root path of the pack. This needs to point to the folder that contains "assets" and/or "data", not the asset folder itself!
      */
-    public PathResourcePack(String packName, final Path source)
+    public PathPackResources(String packName, final Path source)
     {
         super(new File("dummy"));
         this.source = source;

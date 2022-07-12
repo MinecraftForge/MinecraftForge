@@ -27,7 +27,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * PlayerEvent is fired whenever an event involving Living entities occurs. <br>
+ * PlayerEvent is fired whenever an event involving a {@link Player} occurs. <br>
  * If a method utilizes this {@link net.minecraftforge.eventbus.api.Event} as its parameter, the method will
  * receive every child event of this class.<br>
  * <br>
@@ -35,17 +35,20 @@ import org.jetbrains.annotations.Nullable;
  **/
 public class PlayerEvent extends LivingEvent
 {
-    private final Player entityPlayer;
+    private final Player player;
+
     public PlayerEvent(Player player)
     {
         super(player);
-        entityPlayer = player;
+        this.player = player;
     }
 
-    /**
-     * @return Player
-     */
-    public Player getPlayer() { return entityPlayer; }
+    @Override
+    public Player getEntity()
+    {
+        return player;
+    }
+
     /**
      * HarvestCheck is fired when a player attempts to harvest a block.<br>
      * This event is fired whenever a player attempts to harvest a block in

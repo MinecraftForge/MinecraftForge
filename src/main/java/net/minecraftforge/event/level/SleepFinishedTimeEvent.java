@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.event.world;
+package net.minecraftforge.event.level;
 
 import net.minecraft.server.level.ServerLevel;
 
@@ -12,16 +12,16 @@ import net.minecraft.server.level.ServerLevel;
  *
  * setWakeUpTime(wakeUpTime) sets a new time that will be added to the dayTime.<br>
  */
-public class SleepFinishedTimeEvent extends WorldEvent
+public class SleepFinishedTimeEvent extends LevelEvent
 {
     private long newTime;
     private final long minTime;
 
-    public SleepFinishedTimeEvent(ServerLevel worldIn, long newTimeIn, long minTimeIn)
+    public SleepFinishedTimeEvent(ServerLevel level, long newTime, long minTime)
     {
-        super(worldIn);
-        this.newTime = newTimeIn;
-        this.minTime = minTimeIn;
+        super(level);
+        this.newTime = newTime;
+        this.minTime = minTime;
     }
 
     /**
