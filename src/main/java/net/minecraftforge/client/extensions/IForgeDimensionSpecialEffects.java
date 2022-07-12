@@ -67,12 +67,13 @@ public interface IForgeDimensionSpecialEffects
      * Allows for manipulating the coloring of the lightmap texture.
      * Will be called for each 16*16 combination of sky/block light values.
      *
-     * @param partialTicks  Progress between ticks.
-     * @param skyDarken     Current darkness of the sky.
-     * @param skyLight      Sky light brightness factor.
-     * @param blockLight    Block light brightness factor.
-     * @param colors        The color values that will be used: [r, g, b].
+     * @param level        The current level (client-side).
+     * @param partialTicks Progress between ticks.
+     * @param skyDarken    Current darkness of the sky.
+     * @param skyLight     Sky light brightness factor.
+     * @param blockLight   Block light brightness factor.
+     * @param colors       The color values that will be used: [r, g, b].
      * @see LightTexture#updateLightTexture(float)
      */
-    default void adjustLightmapColors(float partialTicks, float skyDarken, float skyLight, float blockLight, Vector3f colors) {}
+    default void adjustLightmapColors(ClientLevel level, float partialTicks, float skyDarken, float skyLight, float blockLight, Vector3f colors) {}
 }
