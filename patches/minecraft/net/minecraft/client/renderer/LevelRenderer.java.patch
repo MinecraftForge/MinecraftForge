@@ -67,6 +67,16 @@
              BlockPos blockpos3 = blockentity.m_58899_();
              p_109600_.m_85836_();
              p_109600_.m_85837_((double)blockpos3.m_123341_() - d0, (double)blockpos3.m_123342_() - d1, (double)blockpos3.m_123343_() - d2);
+@@ -1289,7 +_,8 @@
+                p_109600_.m_85837_((double)blockpos2.m_123341_() - d0, (double)blockpos2.m_123342_() - d1, (double)blockpos2.m_123343_() - d2);
+                PoseStack.Pose posestack$pose = p_109600_.m_85850_();
+                VertexConsumer vertexconsumer1 = new SheetedDecalTextureGenerator(this.f_109464_.m_110108_().m_6299_(ModelBakery.f_119229_.get(k1)), posestack$pose.m_85861_(), posestack$pose.m_85864_());
+-               this.f_109461_.m_91289_().m_110918_(this.f_109465_.m_8055_(blockpos2), blockpos2, this.f_109465_, p_109600_, vertexconsumer1);
++               net.minecraftforge.client.model.data.ModelData modelData = f_109465_.getModelDataManager().getAt(blockpos2);
++               this.f_109461_.m_91289_().renderBreakingTexture(this.f_109465_.m_8055_(blockpos2), blockpos2, this.f_109465_, p_109600_, vertexconsumer1, modelData == null ? net.minecraftforge.client.model.data.ModelData.EMPTY : modelData);
+                p_109600_.m_85849_();
+             }
+          }
 @@ -1301,10 +_,13 @@
           profilerfiller.m_6182_("outline");
           BlockPos blockpos1 = ((BlockHitResult)hitresult).m_82425_();
