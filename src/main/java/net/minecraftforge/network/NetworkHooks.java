@@ -16,8 +16,8 @@ import java.util.stream.Collectors;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import net.minecraft.network.chat.Component;
+import net.minecraftforge.client.ConfigScreenHandler;
 import net.minecraftforge.fml.util.thread.EffectiveSide;
-import net.minecraftforge.client.ConfigGuiHandler.ConfigGuiFactory;
 import net.minecraftforge.network.ConnectionData.ModMismatchData;
 import net.minecraftforge.network.filters.NetworkFilters;
 import org.apache.commons.lang3.tuple.Pair;
@@ -144,35 +144,35 @@ public class NetworkHooks
     /**
      * Request to open a GUI on the client, from the server
      *
-     * Refer to {@link ConfigGuiFactory} for how to provide a function to consume
+     * Refer to {@link ConfigScreenHandler.ConfigScreenFactory} for how to provide a function to consume
      * these GUI requests on the client.
      *
      * @param player The player to open the GUI for
      * @param containerSupplier A supplier of container properties including the registry name of the container
      */
-    public static void openGui(ServerPlayer player, MenuProvider containerSupplier)
+    public static void openScreen(ServerPlayer player, MenuProvider containerSupplier)
     {
-        openGui(player, containerSupplier, buf -> {});
+        openScreen(player, containerSupplier, buf -> {});
     }
 
     /**
      * Request to open a GUI on the client, from the server
      *
-     * Refer to {@link ConfigGuiFactory} for how to provide a function to consume
+     * Refer to {@link ConfigScreenHandler.ConfigScreenFactory} for how to provide a function to consume
      * these GUI requests on the client.
      *
      * @param player The player to open the GUI for
      * @param containerSupplier A supplier of container properties including the registry name of the container
      * @param pos A block pos, which will be encoded into the auxillary data for this request
      */
-    public static void openGui(ServerPlayer player, MenuProvider containerSupplier, BlockPos pos)
+    public static void openScreen(ServerPlayer player, MenuProvider containerSupplier, BlockPos pos)
     {
-        openGui(player, containerSupplier, buf -> buf.writeBlockPos(pos));
+        openScreen(player, containerSupplier, buf -> buf.writeBlockPos(pos));
     }
     /**
      * Request to open a GUI on the client, from the server
      *
-     * Refer to {@link ConfigGuiFactory} for how to provide a function to consume
+     * Refer to {@link ConfigScreenHandler.ConfigScreenFactory} for how to provide a function to consume
      * these GUI requests on the client.
      *
      * The maximum size for #extraDataWriter is 32600 bytes.
@@ -181,7 +181,7 @@ public class NetworkHooks
      * @param containerSupplier A supplier of container properties including the registry name of the container
      * @param extraDataWriter Consumer to write any additional data the GUI needs
      */
-    public static void openGui(ServerPlayer player, MenuProvider containerSupplier, Consumer<FriendlyByteBuf> extraDataWriter)
+    public static void openScreen(ServerPlayer player, MenuProvider containerSupplier, Consumer<FriendlyByteBuf> extraDataWriter)
     {
         if (player.level.isClientSide) return;
         player.doCloseContainer();

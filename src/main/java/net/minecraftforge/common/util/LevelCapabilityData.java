@@ -9,20 +9,20 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.saveddata.SavedData;
 import org.jetbrains.annotations.Nullable;
 
-public class WorldCapabilityData extends SavedData
+public class LevelCapabilityData extends SavedData
 {
     public static final String ID = "capabilities";
 
     private INBTSerializable<CompoundTag> serializable;
     private CompoundTag capNBT = null;
 
-    public WorldCapabilityData(@Nullable INBTSerializable<CompoundTag> serializable)
+    public LevelCapabilityData(@Nullable INBTSerializable<CompoundTag> serializable)
     {
         this.serializable = serializable;
     }
 
-    public static WorldCapabilityData load(CompoundTag tag, @Nullable INBTSerializable<CompoundTag> serializable) {
-        WorldCapabilityData data = new WorldCapabilityData(serializable);
+    public static LevelCapabilityData load(CompoundTag tag, @Nullable INBTSerializable<CompoundTag> serializable) {
+        LevelCapabilityData data = new LevelCapabilityData(serializable);
         data.read(tag);
         return data;
     }

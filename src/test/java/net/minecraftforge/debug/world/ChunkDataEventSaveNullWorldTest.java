@@ -5,7 +5,7 @@
 
 package net.minecraftforge.debug.world;
 
-import net.minecraftforge.event.world.ChunkDataEvent;
+import net.minecraftforge.event.level.ChunkDataEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.apache.logging.log4j.LogManager;
@@ -20,7 +20,7 @@ public class ChunkDataEventSaveNullWorldTest {
   @SubscribeEvent
   public static void onChunkSave(final ChunkDataEvent.Save event)
   {
-    if(event.getWorld() == null)
+    if(event.getLevel() == null)
     {
       LOGGER.info("Chunk at {} had null world", event.getChunk().getPos());
     }

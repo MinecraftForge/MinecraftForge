@@ -28,7 +28,7 @@ public class ShieldBlockTest
     @SubscribeEvent
     public static void shieldBlock(ShieldBlockEvent event)
     {
-        if (event.getDamageSource().getDirectEntity() instanceof AbstractArrow arrow && event.getEntityLiving() instanceof Player player)
+        if (event.getDamageSource().getDirectEntity() instanceof AbstractArrow arrow && event.getEntity() instanceof Player player)
         {
             player.getInventory().add(new ItemStack(Items.ARROW));
             event.setBlockedDamage(event.getOriginalBlockedDamage() / 2);

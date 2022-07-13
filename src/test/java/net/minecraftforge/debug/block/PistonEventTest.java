@@ -28,14 +28,14 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.model.generators.BlockStateProvider;
 import net.minecraftforge.client.model.generators.ModelFile;
 import net.minecraftforge.common.data.ExistingFileHelper;
-import net.minecraftforge.event.world.PistonEvent;
-import net.minecraftforge.event.world.PistonEvent.PistonMoveType;
+import net.minecraftforge.event.level.PistonEvent;
+import net.minecraftforge.event.level.PistonEvent.PistonMoveType;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.registries.RegistryObject;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.forge.event.lifecycle.GatherDataEvent;
+import net.minecraftforge.data.event.GatherDataEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -73,7 +73,7 @@ public class PistonEventTest
     {
         if (event.getPistonMoveType() == PistonMoveType.EXTEND)
         {
-            Level world = (Level) event.getWorld();
+            Level world = (Level) event.getLevel();
             PistonStructureResolver pistonHelper = event.getStructureHelper();
             Player player = DistExecutor.safeCallWhenOn(Dist.CLIENT, () -> () -> Minecraft.getInstance().player);
             if (world.isClientSide && player != null)
@@ -93,7 +93,7 @@ public class PistonEventTest
                 List<BlockPos> posList = pistonHelper.getToPush();
                 for (BlockPos newPos : posList)
                 {
-                    BlockState state = event.getWorld().getBlockState(newPos);
+                    BlockState state = event.getLevel().getBlockState(newPos);
                     if (state.getBlock() == Blocks.BLACK_WOOL)
                     {
                         Block.dropResources(state, world, newPos);
@@ -111,20 +111,20 @@ public class PistonEventTest
             }
 
             // Block pushing cobblestone (directly, indirectly works)
-            event.setCanceled(event.getWorld().getBlockState(event.getFaceOffsetPos()).getBlock() == Blocks.COBBLESTONE);
+            event.setCanceled(event.getLevel().getBlockState(event.getFaceOffsetPos()).getBlock() == Blocks.COBBLESTONE);
         }
         else
         {
-            boolean isSticky = event.getWorld().getBlockState(event.getPos()).getBlock() == Blocks.STICKY_PISTON;
+            boolean isSticky = event.getLevel().getBlockState(event.getPos()).getBlock() == Blocks.STICKY_PISTON;
 
             Player player = DistExecutor.safeCallWhenOn(Dist.CLIENT, () -> () -> Minecraft.getInstance().player);
-            if (event.getWorld().isClientSide() && player != null)
+            if (event.getLevel().isClientSide() && player != null)
             {
                 if (isSticky)
                 {
                     BlockPos targetPos = event.getFaceOffsetPos().relative(event.getDirection());
-                    boolean canPush = PistonBaseBlock.isPushable(event.getWorld().getBlockState(targetPos), (Level) event.getWorld(), event.getFaceOffsetPos(), event.getDirection().getOpposite(), false, event.getDirection());
-                    boolean isAir = event.getWorld().isEmptyBlock(targetPos);
+                    boolean canPush = PistonBaseBlock.isPushable(event.getLevel().getBlockState(targetPos), (Level) event.getLevel(), event.getFaceOffsetPos(), event.getDirection().getOpposite(), false, event.getDirection());
+                    boolean isAir = event.getLevel().isEmptyBlock(targetPos);
                     player.sendSystemMessage(Component.literal(String.format(Locale.ENGLISH, "Piston will retract moving %d blocks", !isAir && canPush ? 1 : 0)));
                 }
                 else
@@ -133,7 +133,7 @@ public class PistonEventTest
                 }
             }
             // Offset twice to see if retraction will pull cobblestone
-            event.setCanceled(event.getWorld().getBlockState(event.getFaceOffsetPos().relative(event.getDirection())).getBlock() == Blocks.COBBLESTONE && isSticky);
+            event.setCanceled(event.getLevel().getBlockState(event.getFaceOffsetPos().relative(event.getDirection())).getBlock() == Blocks.COBBLESTONE && isSticky);
         }
     }
 

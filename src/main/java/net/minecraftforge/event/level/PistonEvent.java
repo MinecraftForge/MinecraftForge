@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.event.world;
+package net.minecraftforge.event.level;
 
 import net.minecraft.world.level.block.piston.PistonStructureResolver;
 import net.minecraft.core.Direction;
@@ -62,8 +62,8 @@ public abstract class PistonEvent extends BlockEvent
     @Nullable
     public PistonStructureResolver getStructureHelper()
     {
-        if(this.getWorld() instanceof Level) {
-            return new PistonStructureResolver((Level) this.getWorld(), this.getPos(), this.getDirection(), this.getPistonMoveType().isExtend);
+        if(this.getLevel() instanceof Level) {
+            return new PistonStructureResolver((Level) this.getLevel(), this.getPos(), this.getDirection(), this.getPistonMoveType().isExtend);
         } else {
             return null;
         }

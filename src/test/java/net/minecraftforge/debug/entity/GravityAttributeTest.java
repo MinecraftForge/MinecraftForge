@@ -63,14 +63,14 @@ public class GravityAttributeTest
     }
 
     @SubscribeEvent
-    public void worldTick(TickEvent.WorldTickEvent event)
+    public void worldTick(TickEvent.LevelTickEvent event)
     {
-        if (!event.world.isClientSide)
+        if (!event.level.isClientSide)
         {
             if (ticks++ > 60)
             {
                 ticks = 0;
-                Level w = event.world;
+                Level w = event.level;
                 List<LivingEntity> list;
                 if(w.isClientSide)
                 {

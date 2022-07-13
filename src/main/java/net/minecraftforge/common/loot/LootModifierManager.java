@@ -41,7 +41,7 @@ public class LootModifierManager extends SimpleJsonResourceReloadListener {
 
     private Map<ResourceLocation, IGlobalLootModifier> registeredLootModifiers = ImmutableMap.of();
     private static final String folder = "loot_modifiers";
-    
+
     public LootModifierManager() {
         super(GSON_INSTANCE, folder);
     }
@@ -75,21 +75,12 @@ public class LootModifierManager extends SimpleJsonResourceReloadListener {
         //use layered config to fetch modifier data files (modifiers missing from config are disabled)
         for (ResourceLocation location : finalLocations)
         {
-            Codec<? extends IGlobalLootModifier> codec = ForgeRegistries.LOOT_MODIFIER_SERIALIZERS.get().getValue(location);
-            if (codec == null)
-            {
-                LOGGER.warn("Unknown or unregistered codec for GlobalLootModifier: {}", location);
-                continue;
-            }
             JsonElement json = resourceList.get(location);
-            IGlobalLootModifier modifier = codec.decode(JsonOps.INSTANCE, json).get()
-                    .map(Pair::getFirst, partial ->
-                    {
-                        LOGGER.warn("Could not decode GlobalLootModifier with serializer: {} - error: {}", location, partial.message());
-                        return null;
-                    });
-            if(modifier != null)
-                builder.put(location, modifier);
+            IGlobalLootModifier.DIRECT_CODEC.parse(JsonOps.INSTANCE, json)
+                // log error if parse fails
+                .resultOrPartial(errorMsg -> LOGGER.warn("Could not decode GlobalLootModifier with json id {} - error: {}", location, errorMsg))
+                // add loot modifier if parse succeeds
+                .ifPresent(modifier -> builder.put(location, modifier));
         }
         this.registeredLootModifiers = builder.build();
     }
