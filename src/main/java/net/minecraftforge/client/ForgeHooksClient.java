@@ -757,7 +757,7 @@ public class ForgeHooksClient
         var model = blockRenderer.getBlockModel(state);
         for (var renderType : model.getRenderTypes(state, RandomSource.create(state.getSeed(pos)), ModelData.EMPTY))
         {
-            VertexConsumer vertexConsumer = bufferSource.getBuffer(renderType == RenderType.translucent() ? RenderType.translucentMovingBlock() : renderType);
+            VertexConsumer vertexConsumer = bufferSource.getBuffer(RenderTypeHelper.getMovingBlockRenderType(renderType));
             blockRenderer.getModelRenderer().tesselateBlock(level, model, state, pos, stack, vertexConsumer, checkSides, RandomSource.create(), state.getSeed(pos), packedOverlay, ModelData.EMPTY, renderType);
         }
     }
@@ -951,20 +951,6 @@ public class ForgeHooksClient
     {
         ClientChatEvent event = new ClientChatEvent(message);
         return MinecraftForge.EVENT_BUS.post(event) ? "" : event.getMessage();
-    }
-
-    /**
-     * Mimics the behavior of {@link net.minecraft.client.renderer.ItemBlockRenderTypes#getRenderType(BlockState, boolean)}
-     * for the input {@link RenderType}.
-     */
-    @NotNull
-    public static RenderType getEntityRenderType(RenderType chunkRenderType, boolean fabulous)
-    {
-        if (chunkRenderType != RenderType.translucent())
-            return Sheets.cutoutBlockSheet();
-        if (!Minecraft.useShaderTransparency())
-            return Sheets.translucentCullBlockSheet();
-        return fabulous ? Sheets.translucentCullBlockSheet() : Sheets.translucentItemSheet();
     }
 
     @Mod.EventBusSubscriber(value = Dist.CLIENT, modid="forge", bus= Mod.EventBusSubscriber.Bus.MOD)
