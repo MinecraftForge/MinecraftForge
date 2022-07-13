@@ -14,18 +14,17 @@ import com.mojang.blaze3d.vertex.VertexFormat;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.util.Mth;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.IItemDecorator;
 import net.minecraftforge.client.ItemDecoratorHandler;
-import net.minecraftforge.client.extensions.common.IClientItemExtensions;
-import net.minecraftforge.common.Tags;
-import net.minecraftforge.event.AttachCapabilitiesEvent;
+import net.minecraftforge.client.event.RegisterItemDecorationsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+import net.minecraftforge.registries.ForgeRegistries;
 
 @Mod(CustomItemDecorationsTest.MOD_ID)
 public class CustomItemDecorationsTest
@@ -36,14 +35,14 @@ public class CustomItemDecorationsTest
     public CustomItemDecorationsTest() { }
 
     @Mod.EventBusSubscriber(modid = CustomItemDecorationsTest.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
-    public static class ClientEvents {
-
-        private static final IItemDecorator decorator = new StackSizeDurabilityBar();
+    public static class ClientEvents
+    {
         @SubscribeEvent
-        public static void onFMLClientSetup(final FMLClientSetupEvent event)
+        public static void onRegisterItemDecorations(final RegisterItemDecorationsEvent event)
         {
-            if (ENABLED)
-                event.enqueueWork(() -> ItemDecoratorHandler.of(Items.EGG).addDecorator(decorator));
+            if (ENABLED) {
+                event.register(Items.EGG, new StackSizeDurabilityBar());
+            }
         }
     }
 
@@ -51,7 +50,7 @@ public class CustomItemDecorationsTest
     {
 
         @Override
-        public void render(Font font, ItemStack stack, int xOffset, int yOffset, float blitOffset)
+        public boolean render(Font font, ItemStack stack, int xOffset, int yOffset, float blitOffset)
         {
             RenderSystem.disableTexture();
             RenderSystem.disableBlend();
@@ -64,6 +63,7 @@ public class CustomItemDecorationsTest
             fillRect(bufferbuilder, xOffset + 2, yOffset, blitOffset + 190, i, 1, j >> 16 & 255, j >> 8 & 255, j & 255);
             RenderSystem.enableBlend();
             RenderSystem.enableTexture();
+            return true;
         }
 
         private static void fillRect(BufferBuilder pRenderer, int pX, int pY, float pZ, int pWidth, int pHeight, int pRed, int pGreen, int pBlue)

@@ -60,7 +60,7 @@
        this.f_91064_ = new DebugRenderer(this);
        RenderSystem.m_69900_(this::m_91113_);
        if (this.f_91042_.f_83915_ == this.f_90990_.m_85441_() && this.f_91042_.f_83916_ == this.f_90990_.m_85442_()) {
-@@ -526,6 +_,19 @@
+@@ -526,6 +_,20 @@
           TinyFileDialogs.tinyfd_messageBox("Minecraft", stringbuilder.toString(), "ok", "error", false);
        }
  
@@ -69,6 +69,7 @@
 +      net.minecraftforge.fml.ModLoader.get().postEvent(new net.minecraftforge.client.event.EntityRenderersEvent.RegisterLayerDefinitions());
 +      net.minecraftforge.fml.ModLoader.get().postEvent(new net.minecraftforge.client.event.EntityRenderersEvent.RegisterRenderers());
 +      net.minecraftforge.client.textures.TextureAtlasSpriteLoaderManager.init();
++      net.minecraftforge.client.ItemDecoratorHandler.init();
 +      net.minecraftforge.client.gui.ClientTooltipComponentManager.init();
 +      net.minecraftforge.client.EntitySpectatorShaderManager.init();
 +      net.minecraftforge.client.ForgeHooksClient.onRegisterKeyMappings(f_91066_);

@@ -5,46 +5,68 @@
 
 package net.minecraftforge.client;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import com.mojang.blaze3d.systems.RenderSystem;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.client.gui.Font;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.client.event.RegisterItemDecorationsEvent;
+import net.minecraftforge.fml.ModLoader;
+import net.minecraftforge.fml.ModLoadingContext;
+import org.jetbrains.annotations.ApiStatus;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-public class ItemDecoratorHandler
+@ApiStatus.Internal
+public final class ItemDecoratorHandler
 {
-    private final List<IItemDecorator> itemDecorators = new ArrayList<>();
+    private final List<IItemDecorator> itemDecorators;
+
+    private static Map<Item, ItemDecoratorHandler> DECORATOR_LOOKUP = new Object2ObjectOpenHashMap<>();
+
+    private static final ItemDecoratorHandler EMPTY = new ItemDecoratorHandler();
+    private ItemDecoratorHandler()
+    {
+        this.itemDecorators = List.of();
+    }
+    private ItemDecoratorHandler(List<IItemDecorator> itemDecorators)
+    {
+        this.itemDecorators = ImmutableList.copyOf(itemDecorators);
+    }
+
+    public static void init()
+    {
+        var decorators = new HashMap<Item, List<IItemDecorator>>();
+        var event = new RegisterItemDecorationsEvent(decorators);
+        ModLoader.get().postEventWithWrapInModOrder(event, (mc, e) -> ModLoadingContext.get().setActiveContainer(mc), (mc, e) -> ModLoadingContext.get().setActiveContainer(null));
+        var decoratorLookUpMap = new HashMap<Item, ItemDecoratorHandler>();
+        decorators.forEach((item, itemDecorators) -> decoratorLookUpMap.put(item, new ItemDecoratorHandler(itemDecorators)));
+        DECORATOR_LOOKUP = ImmutableMap.copyOf(decoratorLookUpMap);
+    }
 
     public static ItemDecoratorHandler of(ItemStack stack)
     {
-        return of(stack.getItem());
-    }
-
-    public static ItemDecoratorHandler of(Item item)
-    {
-        if (item.getItemDecoratorHandler() instanceof ItemDecoratorHandler e)
-        {
-            return e;
-        }
-        throw new IllegalStateException("No ItemDecoratorHandler was added to: " + ForgeRegistries.ITEMS.getKey(item).toString());
-    }
-
-    /**
-     *
-     * Add a decorator during {@link net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent} with {@link net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent#enqueueWork(Runnable)}.
-     */
-    public void addDecorator(IItemDecorator itemDecorator)
-    {
-        itemDecorators.add(itemDecorator);
+        return DECORATOR_LOOKUP.getOrDefault(stack.getItem(), EMPTY);
     }
 
     public void render(Font font, ItemStack stack, int xOffset, int yOffset, float blitOffset)
     {
+        resetRenderState();
         for (IItemDecorator itemDecorator : itemDecorators)
         {
-            itemDecorator.render(font, stack, xOffset, yOffset, blitOffset);
+            if (itemDecorator.render(font, stack, xOffset, yOffset, blitOffset))
+                resetRenderState();
         }
+    }
+
+    private void resetRenderState() {
+        RenderSystem.enableTexture();
+        RenderSystem.enableDepthTest();
+        RenderSystem.enableBlend();
+        RenderSystem.defaultBlendFunc();
     }
 }

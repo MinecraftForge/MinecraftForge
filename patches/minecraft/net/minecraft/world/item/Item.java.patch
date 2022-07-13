@@ -153,13 +153,12 @@
     @Nullable
     public FoodProperties m_41473_() {
        return this.f_41380_;
-@@ -381,6 +_,37 @@
+@@ -381,6 +_,32 @@
        return true;
     }
  
 +   // FORGE START
 +   private Object renderProperties;
-+   private Object itemDecoratorHandler;
 +
 +   /*
 +      DO NOT CALL, IT WILL DISAPPEAR IN THE FUTURE
@@ -167,9 +166,6 @@
 +    */
 +   public Object getRenderPropertiesInternal() {
 +      return renderProperties;
-+   }
-+   public Object getItemDecoratorHandler() {
-+      return itemDecoratorHandler;
 +   }
 +
 +   private void initClient() {
@@ -180,7 +176,6 @@
 +               throw new IllegalStateException("Don't extend IItemRenderProperties in your item, use an anonymous class instead.");
 +            this.renderProperties = properties;
 +         });
-+         itemDecoratorHandler = new net.minecraftforge.client.ItemDecoratorHandler();
 +      }
 +   }
 +

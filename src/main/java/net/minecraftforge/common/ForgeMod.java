@@ -167,7 +167,7 @@ public class ForgeMod
                 Decoration.CODEC.fieldOf("step").forGetter(AddFeaturesBiomeModifier::step)
             ).apply(builder, AddFeaturesBiomeModifier::new))
         );
-
+    
     /**
      * Stock biome modifier for removing features from biomes.
      */
@@ -181,7 +181,7 @@ public class ForgeMod
                     ).optionalFieldOf("steps", EnumSet.allOf(Decoration.class)).forGetter(RemoveFeaturesBiomeModifier::steps)
             ).apply(builder, RemoveFeaturesBiomeModifier::new))
         );
-
+    
     /**
      * Stock biome modifier for adding mob spawns to biomes.
      */
@@ -196,7 +196,7 @@ public class ForgeMod
                     ).fieldOf("spawners").forGetter(AddSpawnsBiomeModifier::spawners)
             ).apply(builder, AddSpawnsBiomeModifier::new))
         );
-
+    
     /**
      * Stock biome modifier for removing mob spawns from biomes.
      */
