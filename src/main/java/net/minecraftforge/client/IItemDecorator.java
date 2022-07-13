@@ -15,7 +15,8 @@ import net.minecraftforge.client.event.RegisterItemDecorationsEvent;
  * An ItemDecorator that is used to render something on specific items, when the DurabilityBar and StackCount is rendered.
  * Add it to an item using {@linkplain RegisterItemDecorationsEvent#register(ItemLike, IItemDecorator)}.
  */
-public interface IItemDecorator {
+public interface IItemDecorator
+{
 
     /**
      * Is called after {@linkplain ItemRenderer#renderGuiItemDecorations(Font, ItemStack, int, int, String)} is done rendering.
