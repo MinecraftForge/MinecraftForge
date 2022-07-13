@@ -205,7 +205,7 @@
  
                 this.f_20918_ = (float)(Mth.m_14136_(d0, d1) * (double)(180F / (float)Math.PI) - (double)this.m_146908_());
 -               this.m_147240_((double)0.4F, d1, d0);
-+               this.knockback(net.minecraftforge.event.entity.living.LivingKnockBackEvent.Context.createHurtBy(p_21016_, p_21017_, this), (double)0.4F, d1, d0);
++               this.knockback(net.minecraftforge.event.entity.living.LivingKnockBackEvent.Context.createHurtBy(p_21016_, p_21017_, this), 0.4F, d1, d0);
              } else {
                 this.f_20918_ = (float)((int)(Math.random() * 2.0D) * 180);
              }
@@ -304,11 +304,12 @@
     }
  
     protected LootContext.Builder m_7771_(boolean p_21105_, DamageSource p_21106_) {
-@@ -1359,6 +_,7 @@
+@@ -1359,6 +_,8 @@
        return lootcontext$builder;
     }
  
-+   @Deprecated //by Forge, call forge method instead. overriding is fine
++   /** @deprecated by Forge, call {@link net.minecraftforge.common.extensions.IForgeLivingEntity#knockback IForgeLivingEntity#knockback(Context, double, double, double)} instead.<br> Overriding this method is allowed. */
++   @Deprecated
     public void m_147240_(double p_147241_, double p_147242_, double p_147243_) {
        p_147241_ *= 1.0D - this.m_21133_(Attributes.f_22278_);
        if (!(p_147241_ <= 0.0D)) {

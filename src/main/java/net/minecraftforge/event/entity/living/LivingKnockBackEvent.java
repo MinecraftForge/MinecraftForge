@@ -86,51 +86,52 @@ public class LivingKnockBackEvent extends LivingEvent
 
     public Context getContext() {return this.context;}
 
-    public static final class Context {
-        public static final Context EMPTY = new Builder().cause(KnockbackCause.UNKNOWN).createContext();
+    public static final class Context
+    {
+        public static final Context EMPTY = new Builder().setCause(KnockbackCause.UNKNOWN).createContext();
         private final KnockbackCause cause;
         @Nullable private final DamageSource damageSource;
-        @Nullable private final Float damageReceived;
-        @Nullable private final Entity attackSource;
-        private final ItemStack itemUsedForAttack;
+        @Nullable private final Float damage;
+        @Nullable private final Entity attacker;
+        private final ItemStack itemUsedByAttacker;
 
         private Context(Builder contextBuilder)
         {
             this.cause = contextBuilder.cause;
             this.damageSource = contextBuilder.damageSource;
-            this.damageReceived = contextBuilder.damageReceived;
-            this.attackSource = contextBuilder.attackSource;
-            this.itemUsedForAttack = contextBuilder.itemUsedForAttack;
+            this.damage = contextBuilder.damage;
+            this.attacker = contextBuilder.attacker;
+            this.itemUsedByAttacker = contextBuilder.itemUsedByAttacker;
         }
 
         public static Context createShieldBlockedAttackFrom(Entity attackSource)
         {
-            return new Builder().cause(KnockbackCause.SHIELD_BLOCKED_ATTACK_FROM_ENTITY).attackSource(attackSource).createContext();
+            return new Builder().setCause(KnockbackCause.SHIELD_BLOCKED_ATTACK_FROM_ENTITY).setAttacker(attackSource).createContext();
         }
 
-        public static Context createHurtBy(DamageSource damageSource, float damageReceived)
+        public static Context createHurtBy(DamageSource damageSource, float damage)
         {
-            return new Builder().cause(KnockbackCause.HURT_BY_DAMAGE_SOURCE).damageSource(damageSource).damageReceived(damageReceived).attackSource(damageSource.getDirectEntity()).createContext();
+            return new Builder().setCause(KnockbackCause.HURT_BY_DAMAGE_SOURCE).setDamageSource(damageSource).setDamage(damage).setAttacker(damageSource.getDirectEntity()).createContext();
         }
 
-        public static Context createHurtBy(DamageSource damageSource, float damageReceived, Entity attackSource)
+        public static Context createHurtBy(DamageSource damageSource, float damage, Entity attacker)
         {
-            return new Builder().cause(KnockbackCause.HURT_BY_DAMAGE_SOURCE).damageSource(damageSource).damageReceived(damageReceived).attackSource(attackSource).createContext();
+            return new Builder().setCause(KnockbackCause.HURT_BY_DAMAGE_SOURCE).setDamageSource(damageSource).setDamage(damage).setAttacker(attacker).createContext();
         }
 
-        public static Context createAttackedBy(Entity attackSource, ItemStack itemUsedForAttack, float damageReceived)
+        public static Context createAttackedBy(Entity attacker, ItemStack itemUsedForAttack, float damage)
         {
-            return new Builder().cause(KnockbackCause.ATTACKED_BY_ENTITY).damageReceived(damageReceived).attackSource(attackSource).itemUsedForAttack(itemUsedForAttack).createContext();
+            return new Builder().setCause(KnockbackCause.ATTACKED_BY_ENTITY).setDamage(damage).setAttacker(attacker).setItemUsedByAttacker(itemUsedForAttack).createContext();
         }
 
-        public static Context createSweepAttackedBy(Entity attackSource, ItemStack itemUsedForAttack, float damageReceived)
+        public static Context createSweepAttackedBy(Entity attacker, ItemStack itemUsedByAttacker, float damage)
         {
-            return new Builder().cause(KnockbackCause.SWEEP_ATTACKED_BY_ENTITY).damageReceived(damageReceived).attackSource(attackSource).itemUsedForAttack(itemUsedForAttack).createContext();
+            return new Builder().setCause(KnockbackCause.SWEEP_ATTACKED_BY_ENTITY).setDamage(damage).setAttacker(attacker).setItemUsedByAttacker(itemUsedByAttacker).createContext();
         }
 
-        public static Context createRammedBy(Entity attackSource)
+        public static Context createRammedBy(Entity attacker)
         {
-            return new Builder().cause(KnockbackCause.RAMMED_BY_ENTITY).attackSource(attackSource).createContext();
+            return new Builder().setCause(KnockbackCause.RAMMED_BY_ENTITY).setAttacker(attacker).createContext();
         }
 
         public KnockbackCause getCause()
@@ -139,7 +140,7 @@ public class LivingKnockBackEvent extends LivingEvent
         }
 
         /**
-         * @return an optional {@link DamageSource} that is responsible for the knockback
+         * @return {@link DamageSource} that is associated with the knockback or {@code null}
          */
         @Nullable
         public DamageSource getDamageSource()
@@ -148,31 +149,31 @@ public class LivingKnockBackEvent extends LivingEvent
         }
 
         /**
-         * @return an optional {@link Entity} that is the responsible for the knockback
+         * @return {@link Entity} that is associated with the knockback or {@code null}
          */
         @Nullable
         public Entity getAttacker()
         {
-            return attackSource;
+            return attacker;
         }
 
         /**
-         * @return damage that was received during to the knockback (e.g. {@link LivingEntity#hurt(DamageSource, float)}) or <br>
+         * @return damage that is associated with the knockback (e.g. {@link LivingEntity#hurt(DamageSource, float)}) or <br>
          * {@code null} if no damage was received.
          */
         @Nullable
-        public Float getDamageReceived()
+        public Float getDamage()
         {
-            return damageReceived;
+            return damage;
         }
 
         /**
-         * @return the {@link ItemStack} instance that was used for the knockback or
+         * @return the {@link ItemStack} instance that is associated with the knockback or
          * {@code ItemStack.EMPTY} if no ItemStack was used.
          */
-        public ItemStack getItemUsedForAttack()
+        public ItemStack getItemUsedByAttacker()
         {
-            return itemUsedForAttack;
+            return itemUsedByAttacker;
         }
 
         public enum KnockbackCause
@@ -182,7 +183,7 @@ public class LivingKnockBackEvent extends LivingEvent
              */
             UNKNOWN,
             /**
-             * knockback is caused by blocking an attack from an entity
+             * knockback is caused externally by blocking an attack from an entity
              * @see LivingEntity#blockedByShield(LivingEntity)
              */
             SHIELD_BLOCKED_ATTACK_FROM_ENTITY,
@@ -212,38 +213,38 @@ public class LivingKnockBackEvent extends LivingEvent
         public static class Builder
         {
             private KnockbackCause cause = KnockbackCause.UNKNOWN;
-            private @Nullable Float damageReceived = null;
-            private @Nullable Entity attackSource = null;
+            private @Nullable Float damage = null;
+            private @Nullable Entity attacker = null;
             private @Nullable DamageSource damageSource = null;
-            private ItemStack itemUsedForAttack = ItemStack.EMPTY;
+            private ItemStack itemUsedByAttacker = ItemStack.EMPTY;
 
-            public Builder cause(KnockbackCause cause)
+            public Builder setCause(KnockbackCause cause)
             {
                 this.cause = cause;
                 return this;
             }
 
-            public Builder damageReceived(float damageReceived)
+            public Builder setDamage(float damage)
             {
-                this.damageReceived = damageReceived;
+                this.damage = damage;
                 return this;
             }
 
-            public Builder damageSource(DamageSource damageSource)
+            public Builder setDamageSource(DamageSource damageSource)
             {
                 this.damageSource = damageSource;
                 return this;
             }
 
-            public Builder attackSource(Entity attackSource)
+            public Builder setAttacker(Entity entity)
             {
-                this.attackSource = attackSource;
+                this.attacker = entity;
                 return this;
             }
 
-            public Builder itemUsedForAttack(ItemStack itemUsedForAttack)
+            public Builder setItemUsedByAttacker(ItemStack stack)
             {
-                this.itemUsedForAttack = itemUsedForAttack;
+                this.itemUsedByAttacker = stack;
                 return this;
             }
 
