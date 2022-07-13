@@ -72,8 +72,10 @@ public interface IForgeDimensionSpecialEffects
      * @param skyDarken    Current darkness of the sky.
      * @param skyLight     Sky light brightness factor.
      * @param blockLight   Block light brightness factor.
+     * @param pixelX       X-coordinate of the lightmap texture.
+     * @param pixelY       Y-coordinate of the lightmap texture.
      * @param colors       The color values that will be used: [r, g, b].
      * @see LightTexture#updateLightTexture(float)
      */
-    default void adjustLightmapColors(ClientLevel level, float partialTicks, float skyDarken, float skyLight, float blockLight, Vector3f colors) {}
+    default void adjustLightmapColors(ClientLevel level, float partialTicks, float skyDarken, float skyLight, float blockLight, float pixelX, float pixelY, Vector3f colors) {}
 }
