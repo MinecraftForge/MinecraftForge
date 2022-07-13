@@ -282,9 +282,20 @@ public class ForgeHooks
         return !MinecraftForge.EVENT_BUS.post(new LivingAttackEvent(entity, src, amount));
     }
 
+    /**
+     * @deprecated call {@link ForgeHooks#onLivingKnockBack(LivingEntity, LivingKnockBackEvent.Context, float, double, double)}
+     */
+    @Deprecated(forRemoval = true)
     public static LivingKnockBackEvent onLivingKnockBack(LivingEntity target, float strength, double ratioX, double ratioZ)
     {
         LivingKnockBackEvent event = new LivingKnockBackEvent(target, strength, ratioX, ratioZ);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event;
+    }
+
+    public static LivingKnockBackEvent onLivingKnockBack(LivingEntity target, LivingKnockBackEvent.Context context, float strength, double ratioX, double ratioZ)
+    {
+        LivingKnockBackEvent event = new LivingKnockBackEvent(target, context, strength, ratioX, ratioZ);
         MinecraftForge.EVENT_BUS.post(event);
         return event;
     }
