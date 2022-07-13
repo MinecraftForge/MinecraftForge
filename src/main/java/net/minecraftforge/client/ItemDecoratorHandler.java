@@ -26,12 +26,12 @@ public final class ItemDecoratorHandler
 {
     private final List<IItemDecorator> itemDecorators;
 
-    private static Map<Item, ItemDecoratorHandler> DECORATOR_LOOKUP = new Object2ObjectOpenHashMap<>();
+    private static Map<Item, ItemDecoratorHandler> DECORATOR_LOOKUP = ImmutableMap.of();
 
     private static final ItemDecoratorHandler EMPTY = new ItemDecoratorHandler();
     private ItemDecoratorHandler()
     {
-        this.itemDecorators = List.of();
+        this.itemDecorators = ImmutableList.of();
     }
     private ItemDecoratorHandler(List<IItemDecorator> itemDecorators)
     {
@@ -43,9 +43,9 @@ public final class ItemDecoratorHandler
         var decorators = new HashMap<Item, List<IItemDecorator>>();
         var event = new RegisterItemDecorationsEvent(decorators);
         ModLoader.get().postEventWithWrapInModOrder(event, (mc, e) -> ModLoadingContext.get().setActiveContainer(mc), (mc, e) -> ModLoadingContext.get().setActiveContainer(null));
-        var decoratorLookUpMap = new HashMap<Item, ItemDecoratorHandler>();
-        decorators.forEach((item, itemDecorators) -> decoratorLookUpMap.put(item, new ItemDecoratorHandler(itemDecorators)));
-        DECORATOR_LOOKUP = ImmutableMap.copyOf(decoratorLookUpMap);
+        var builder = new ImmutableMap.Builder<Item, ItemDecoratorHandler>();
+        decorators.forEach((item, itemDecorators) -> builder.put(item, new ItemDecoratorHandler(itemDecorators)));
+        DECORATOR_LOOKUP = builder.build();
     }
 
     public static ItemDecoratorHandler of(ItemStack stack)
@@ -63,7 +63,8 @@ public final class ItemDecoratorHandler
         }
     }
 
-    private void resetRenderState() {
+    private void resetRenderState()
+    {
         RenderSystem.enableTexture();
         RenderSystem.enableDepthTest();
         RenderSystem.enableBlend();

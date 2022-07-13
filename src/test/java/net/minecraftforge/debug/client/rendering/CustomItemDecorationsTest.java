@@ -40,9 +40,8 @@ public class CustomItemDecorationsTest
         @SubscribeEvent
         public static void onRegisterItemDecorations(final RegisterItemDecorationsEvent event)
         {
-            if (ENABLED) {
+            if (ENABLED)
                 event.register(Items.EGG, new StackSizeDurabilityBar());
-            }
         }
     }
 
