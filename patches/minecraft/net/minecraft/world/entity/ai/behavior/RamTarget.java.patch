@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/entity/ai/behavior/RamTarget.java
++++ b/net/minecraft/world/entity/ai/behavior/RamTarget.java
+@@ -74,7 +_,7 @@
+          float f = 0.25F * (float)(i - j);
+          float f1 = Mth.m_14036_(p_217367_.m_6113_() * 1.65F, 0.2F, 3.0F) + f;
+          float f2 = livingentity.m_21275_(DamageSource.m_19370_(p_217367_)) ? 0.5F : 1.0F;
+-         livingentity.m_147240_((double)(f2 * f1) * this.f_147806_.applyAsDouble(p_217367_), this.f_147807_.m_7096_(), this.f_147807_.m_7094_());
++         livingentity.knockback(net.minecraftforge.event.entity.living.LivingKnockBackEvent.Context.createRammedBy(p_217367_), (double)(f2 * f1) * this.f_147806_.applyAsDouble(p_217367_), this.f_147807_.m_7096_(), this.f_147807_.m_7094_());
+          this.m_217355_(p_217366_, p_217367_);
+          p_217366_.m_6269_((Player)null, p_217367_, this.f_147808_.apply(p_217367_), SoundSource.HOSTILE, 1.0F, 1.0F);
+       } else if (this.m_217362_(p_217366_, p_217367_)) {

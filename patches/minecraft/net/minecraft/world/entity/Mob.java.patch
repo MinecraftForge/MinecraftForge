@@ -34,6 +34,15 @@
           if (entity != null) {
              double d0 = entity.m_20280_(this);
              int i = this.m_6095_().m_20674_().m_21611_();
+@@ -1334,7 +_,7 @@
+       boolean flag = p_21372_.m_6469_(DamageSource.m_19370_(this), f);
+       if (flag) {
+          if (f1 > 0.0F && p_21372_ instanceof LivingEntity) {
+-            ((LivingEntity)p_21372_).m_147240_((double)(f1 * 0.5F), (double)Mth.m_14031_(this.m_146908_() * ((float)Math.PI / 180F)), (double)(-Mth.m_14089_(this.m_146908_() * ((float)Math.PI / 180F))));
++            ((LivingEntity)p_21372_).knockback(net.minecraftforge.event.entity.living.LivingKnockBackEvent.Context.createAttackedBy(this, this.m_21205_(), f), (double)(f1 * 0.5F), (double)Mth.m_14031_(this.m_146908_() * ((float)Math.PI / 180F)), (double)(-Mth.m_14089_(this.m_146908_() * ((float)Math.PI / 180F))));
+             this.m_20256_(this.m_20184_().m_82542_(0.6D, 1.0D, 0.6D));
+          }
+ 
 @@ -1374,13 +_,23 @@
        return false;
     }
