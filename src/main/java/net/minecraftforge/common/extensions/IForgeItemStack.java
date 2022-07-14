@@ -556,4 +556,10 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundTag>
     {
         return self().getItem().getFoodProperties(self(), entity);
     }
+
+    default boolean shouldRemainInHotbarUponPick(Player player, int inventorySlot)
+    {
+        return self().getItem().shouldRemainInHotbarUponPick(self(), player, inventorySlot);
+    }
+
 }

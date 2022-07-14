@@ -828,4 +828,9 @@ public interface IForgeItem
         return self().getFoodProperties();
     }
 
+    default boolean shouldRemainInHotbarUponPick(ItemStack stack, Player player, int inventorySlot)
+    {
+        return stack.isEnchanted();
+    }
+
 }

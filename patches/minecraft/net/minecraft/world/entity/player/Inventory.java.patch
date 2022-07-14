@@ -1,5 +1,14 @@
 --- a/net/minecraft/world/entity/player/Inventory.java
 +++ b/net/minecraft/world/entity/player/Inventory.java
+@@ -129,7 +_,7 @@
+ 
+       for(int k = 0; k < 9; ++k) {
+          int l = (this.f_35977_ + k) % 9;
+-         if (!this.f_35974_.get(l).m_41793_()) {
++         if (!this.f_35974_.get(l).shouldRemainInHotbarUponPick(this.f_35978_, l)) {
+             return l;
+          }
+       }
 @@ -177,7 +_,8 @@
        int i = p_36049_.m_41613_();
        ItemStack itemstack = this.m_8020_(p_36048_);
