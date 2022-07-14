@@ -77,5 +77,5 @@ public interface IForgeDimensionSpecialEffects
      * @param colors       The color values that will be used: [r, g, b].
      * @see LightTexture#updateLightTexture(float)
      */
-    default void adjustLightmapColors(ClientLevel level, float partialTicks, float skyDarken, float skyLight, float blockLight, float pixelX, float pixelY, Vector3f colors) {}
+    default void adjustLightmapColors(ClientLevel level, float partialTicks, float skyDarken, float skyLight, float blockLight, int pixelX, int pixelY, Vector3f colors) {}
 }
