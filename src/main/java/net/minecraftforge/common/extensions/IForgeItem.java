@@ -830,7 +830,7 @@ public interface IForgeItem
     }
 
     /**
-     * Whether this stack should be excluded (if possible) when selecting the target hotbar slot of a "pick" action.
+     * Whether the given ItemStack should be excluded (if possible) when selecting the target hotbar slot of a "pick" action.
      * By default, this returns true for enchanted stacks.
      *
      * @see Inventory#getSuitableHotbarSlot()
