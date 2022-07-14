@@ -14,6 +14,7 @@ import java.util.function.Consumer;
 import com.google.common.collect.Multimap;
 
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.enchantment.Enchantment;
@@ -828,7 +829,16 @@ public interface IForgeItem
         return self().getFoodProperties();
     }
 
-    default boolean shouldRemainInHotbarUponPick(ItemStack stack, Player player, int inventorySlot)
+    /**
+     * Whether this stack should be excluded (if possible) when selecting the target hotbar slot of a "pick" action.
+     * By default, this returns true for enchanted stacks.
+     *
+     * @see Inventory#getSuitableHotbarSlot()
+     * @param player the player performing the picking
+     * @param inventorySlot the inventory slot of the item being up for replacement
+     * @return true to leave this stack in the hotbar if possible
+     */
+    default boolean isStickyInHotbar(ItemStack stack, Player player, int inventorySlot)
     {
         return stack.isEnchanted();
     }
