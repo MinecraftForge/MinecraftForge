@@ -1,0 +1,10 @@
+--- a/net/minecraft/server/packs/resources/FallbackResourceManager.java
++++ b/net/minecraft/server/packs/resources/FallbackResourceManager.java
+@@ -33,6 +_,7 @@
+ 
+    public void m_10608_(PackResources p_10609_) {
+       this.f_10599_.add(p_10609_);
++      p_10609_.initForNamespace(this.f_10602_);
+    }
+ 
+    public Set<String> m_7187_() {

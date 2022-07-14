@@ -188,6 +188,13 @@
   "forge.configgui.disableVersionCheck.tooltip": "Set to true to disable Forge version check mechanics. Forge queries a small json file on our server for version information. For more details see the ForgeVersion class in our github.",
   "forge.configgui.disableVersionCheck": "Disable Forge Version Check",
 
+  "forge.configgui.cachePackAccess.tooltip": "Set this to true to cache resource listings in resource and data packs",
+  "forge.configgui.cachePackAccess": "Cache Pack Access",
+  "forge.configgui.indexVanillaPackCachesOnThread.tooltip": "Set this to true to index vanilla resource and data packs on thread",
+  "forge.configgui.indexVanillaPackCachesOnThread": "Index vanilla resource packs on thread",
+  "forge.configgui.indexModPackCachesOnThread.tooltip": "Set this to true to index mod resource and data packs on thread",
+  "forge.configgui.indexModPackCachesOnThread": "Index mod resource packs on thread",
+
   "forge.controlsgui.shift": "SHIFT + %s",
   "forge.controlsgui.control": "CTRL + %s",
   "forge.controlsgui.control.mac": "CMD + %s",
