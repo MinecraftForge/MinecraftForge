@@ -65,7 +65,7 @@
        this.f_91064_ = new DebugRenderer(this);
        RenderSystem.m_69900_(this::m_91113_);
        if (this.f_91042_.f_83915_ == this.f_90990_.m_85441_() && this.f_91042_.f_83916_ == this.f_90990_.m_85442_()) {
-@@ -526,6 +_,19 @@
+@@ -526,6 +_,20 @@
           TinyFileDialogs.tinyfd_messageBox("Minecraft", stringbuilder.toString(), "ok", "error", false);
        }
  
@@ -81,6 +81,7 @@
 +      net.minecraftforge.client.gui.overlay.GuiOverlayManager.init();
 +      net.minecraftforge.client.DimensionSpecialEffectsManager.init();
 +      net.minecraftforge.client.NamedRenderTypeManager.init();
++      net.minecraftforge.client.ForgeHooksClient.registerColorResolvers();
 +
        this.f_90990_.m_85409_(this.f_91066_.m_231817_().m_231551_());
        this.f_90990_.m_85424_(this.f_91066_.m_232123_().m_231551_());

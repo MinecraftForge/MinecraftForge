@@ -1,6 +1,13 @@
 --- a/net/minecraft/client/multiplayer/ClientLevel.java
 +++ b/net/minecraft/client/multiplayer/ClientLevel.java
-@@ -121,6 +_,8 @@
+@@ -115,12 +_,15 @@
+       p_194170_.put(BiomeColors.f_108791_, new BlockTintCache((p_194168_) -> {
+          return this.m_104762_(p_194168_, BiomeColors.f_108791_);
+       }));
++      net.minecraftforge.client.ForgeHooksClient.putColorResolvers(ClientLevel.this, p_194170_);
+    });
+    private final ClientChunkCache f_104559_;
+    private final Deque<Runnable> f_194122_ = Queues.newArrayDeque();
     private int f_194123_;
     private final BlockStatePredictionHandler f_233599_ = new BlockStatePredictionHandler();
     private static final Set<Item> f_194124_ = Set.of(Items.f_42127_, Items.f_151033_);
