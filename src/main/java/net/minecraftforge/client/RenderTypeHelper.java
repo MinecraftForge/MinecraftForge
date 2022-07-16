@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) Forge Development LLC and contributors
+ * SPDX-License-Identifier: LGPL-2.1-only
+ */
+
 package net.minecraftforge.client;
 
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
@@ -48,7 +53,7 @@ public final class RenderTypeHelper
 
     /**
      * Provides a fallback {@link RenderType} for the given {@link ItemStack} in the case that none is explicitly specified.
-     * <p/>
+     * <p>
      * Mimics the behavior of vanilla's {@link ItemBlockRenderTypes#getRenderType(ItemStack, boolean)}
      * but removes the need to query the model again if the item is a {@link BlockItem}.
      */
