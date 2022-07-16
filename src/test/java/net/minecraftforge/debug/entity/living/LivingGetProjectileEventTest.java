@@ -8,6 +8,7 @@ package net.minecraftforge.debug.entity.living;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.ProjectileWeaponItem;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.living.LivingGetProjectileEvent;
 import net.minecraftforge.event.entity.player.ArrowLooseEvent;
@@ -33,6 +34,28 @@ public class LivingGetProjectileEventTest
     {
         LOGGER.info("{} about to fire {} with a {}", event.getEntity(), event.getProjectileItemStack(), event.getProjectileWeaponItemStack());
 
+        // allow players to shoot arrows from their enderchest
+        if (event.getEntity() instanceof Player player && event.getProjectileItemStack().isEmpty() && event.getProjectileWeaponItemStack().getItem() instanceof ProjectileWeaponItem pwi)
+        {
+            var filter = pwi.getAllSupportedProjectiles();
+            for (int i = 0; i < player.getEnderChestInventory().getContainerSize(); i++)
+            {
+                var stack = player.getEnderChestInventory().getItem(i);
+                if (filter.test(stack))
+                {
+                    var slot = i;
+                    event.setProjectileItemStack(stack, (entity, s, amount) -> {
+                        var result = s.split(amount);
+                        if (s.isEmpty())
+                        {
+                            player.getEnderChestInventory().setItem(slot, ItemStack.EMPTY);
+                        }
+                        return result;
+                    });
+                    return;
+                }
+            }
+        }
         // for this test, we're checking if the player has a spectral arrow itemstack in their offhand and if they're firing a normal arrow.
         // if they do, we're going to use that itemstack. if not, we will create a spectral arrow itemstack
         // this demonstrates the usage of specific itemstacks with this event. you can use specific itemstacks from the player's inventory in this similar style

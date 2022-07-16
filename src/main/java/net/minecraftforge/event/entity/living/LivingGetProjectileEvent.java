@@ -7,6 +7,11 @@ package net.minecraftforge.event.entity.living;
 
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.common.ForgeHooks;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.Objects;
 
 /**
  * This event is fired when a living entity attempts to get a projectile with the
@@ -24,12 +29,33 @@ public class LivingGetProjectileEvent extends LivingEvent
 {
     private final ItemStack projectileWeaponItemStack;
     private ItemStack projectileItemStack;
+    private ProjectileConsumer consumer;
 
+    @FunctionalInterface
+    public interface ProjectileConsumer
+    {
+
+        /**
+         * Called when the shooting entity actually consumes the projectile. Note that not all entities actually
+         * try to consume the projectile. In that case, this method will not be called.
+         * It is expected that this method shrinks the projectile by the requested amount and ensure it is consumed
+         * from wherever it came from (e.g. an inventory).
+         */
+        ItemStack consumeProjectile(LivingEntity entity, ItemStack projectile, int amount);
+    }
+
+    @Deprecated(forRemoval = true)
     public LivingGetProjectileEvent(LivingEntity livingEntity, ItemStack projectileWeaponItemStack, ItemStack ammo)
+    {
+        this(livingEntity, projectileWeaponItemStack, ammo, ForgeHooks::defaultProjectileConsumer);
+    }
+
+    public LivingGetProjectileEvent(LivingEntity livingEntity, ItemStack projectileWeaponItemStack, ItemStack ammo, LivingGetProjectileEvent.ProjectileConsumer defaultConsumer)
     {
         super(livingEntity);
         this.projectileWeaponItemStack = projectileWeaponItemStack;
         this.projectileItemStack = ammo;
+        this.consumer = defaultConsumer;
     }
 
     /**
@@ -53,6 +79,15 @@ public class LivingGetProjectileEvent extends LivingEvent
     }
 
     /**
+     * @return the projectile consumer for the current projectile
+     */
+    @Nonnull
+    public ProjectileConsumer getConsumer()
+    {
+        return this.consumer;
+    }
+
+    /**
      * Sets the projectile itemstack to be used.
      * <p>
      * If the entity is a player: whenever the projectile is fired/consumed the stack will be shrunk by
@@ -65,6 +100,13 @@ public class LivingGetProjectileEvent extends LivingEvent
      */
     public void setProjectileItemStack(ItemStack projectileItemStack)
     {
-        this.projectileItemStack = projectileItemStack;
+        this.setProjectileItemStack(projectileItemStack, ForgeHooks::defaultProjectileConsumer);
     }
+
+    public void setProjectileItemStack(ItemStack stack, @Nonnull ProjectileConsumer consumer)
+    {
+        this.projectileItemStack = stack;
+        this.consumer = Objects.requireNonNull(consumer);
+    }
+
 }

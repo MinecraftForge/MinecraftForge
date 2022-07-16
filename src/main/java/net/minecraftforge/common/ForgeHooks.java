@@ -957,14 +957,44 @@ public class ForgeHooks
         return event.getModifiers();
     }
 
+    private static ThreadLocal<LivingGetProjectileEvent.ProjectileConsumer> projectileConsumer = new ThreadLocal<>();
+
     /**
      * Hook to fire {@link LivingGetProjectileEvent}. Returns the ammo to be used.
      */
     public static ItemStack getProjectile(LivingEntity entity, ItemStack projectileWeaponItem, ItemStack projectile)
     {
-        LivingGetProjectileEvent event = new LivingGetProjectileEvent(entity, projectileWeaponItem, projectile);
+        return getProjectile(entity, projectileWeaponItem, projectile, ForgeHooks::defaultProjectileConsumer);
+    }
+
+    public static ItemStack getProjectile(LivingEntity entity, ItemStack projectileWeaponItem, ItemStack projectile, LivingGetProjectileEvent.ProjectileConsumer defaultConsumer)
+    {
+        LivingGetProjectileEvent event = new LivingGetProjectileEvent(entity, projectileWeaponItem, projectile, defaultConsumer);
         MinecraftForge.EVENT_BUS.post(event);
+        projectileConsumer.set(event.getConsumer());
         return event.getProjectileItemStack();
+    }
+
+    public static ItemStack consumeProjectile(LivingEntity entity, ItemStack stack, int amount)
+    {
+        var consumer = projectileConsumer.get();
+        if (consumer == null)
+        {
+            consumer = ForgeHooks::defaultProjectileConsumer;
+        }
+        projectileConsumer.set(null);
+        return consumer.consumeProjectile(entity, stack, amount);
+    }
+
+    @NotNull
+    public static ItemStack defaultProjectileConsumer(LivingEntity entity, ItemStack stack, int amount)
+    {
+        var projectile = stack.split(amount);
+        if (stack.isEmpty() && entity instanceof Player player)
+        {
+            player.getInventory().removeItem(stack);
+        }
+        return projectile;
     }
 
     /**
