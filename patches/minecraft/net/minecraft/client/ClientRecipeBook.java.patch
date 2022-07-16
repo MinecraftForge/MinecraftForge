@@ -1,36 +1,14 @@
 --- a/net/minecraft/client/ClientRecipeBook.java
 +++ b/net/minecraft/client/ClientRecipeBook.java
-@@ -51,23 +_,14 @@
+@@ -51,7 +_,7 @@
        for(Recipe<?> recipe : p_90643_) {
           if (!recipe.m_5598_() && !recipe.m_142505_()) {
              RecipeBookCategories recipebookcategories = m_90646_(recipe);
 -            String s = recipe.m_6076_();
--            if (s.isEmpty()) {
--               map.computeIfAbsent(recipebookcategories, (p_90645_) -> {
--                  return Lists.newArrayList();
--               }).add(ImmutableList.of(recipe));
--            } else {
--               List<Recipe<?>> list = table.get(recipebookcategories, s);
--               if (list == null) {
--                  list = Lists.newArrayList();
--                  table.put(recipebookcategories, s, list);
--                  map.computeIfAbsent(recipebookcategories, (p_90641_) -> {
--                     return Lists.newArrayList();
--                  }).add(list);
--               }
--
--               list.add(recipe);
 +            String s = recipe.m_6076_().isEmpty() ? recipe.m_6423_().toString() : recipe.m_6076_();
-+            List<Recipe<?>> list = table.get(recipebookcategories, s);
-+            if (list == null) {
-+               list = Lists.newArrayList();
-+               table.put(recipebookcategories, s, list);
-+               map.computeIfAbsent(recipebookcategories, (categories) -> Lists.newArrayList()).add(list);
-             }
-+            list.add(recipe);
-          }
-       }
- 
+             if (s.isEmpty()) {
+                map.computeIfAbsent(recipebookcategories, (p_90645_) -> {
+                   return Lists.newArrayList();
 @@ -103,6 +_,8 @@
        } else if (recipetype == RecipeType.f_44113_) {
           return RecipeBookCategories.SMITHING;
