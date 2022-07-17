@@ -1,14 +1,23 @@
 --- a/net/minecraft/world/level/block/entity/ShulkerBoxBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/ShulkerBoxBlockEntity.java
-@@ -236,6 +_,11 @@
-       return this.f_59647_ == ShulkerBoxBlockEntity.AnimationStatus.CLOSED;
+@@ -212,7 +_,7 @@
     }
  
+    public boolean m_7155_(int p_59663_, ItemStack p_59664_, @Nullable Direction p_59665_) {
+-      return !(Block.m_49814_(p_59664_.m_41720_()) instanceof ShulkerBoxBlock);
++      return !(Block.m_49814_(p_59664_.m_41720_()) instanceof ShulkerBoxBlock) && p_59664_.m_41720_().m_142095_(); // FORGE: Make shulker boxes respect Item#canFitInsideContainerItems
+    }
+ 
+    public boolean m_7157_(int p_59682_, ItemStack p_59683_, Direction p_59684_) {
+@@ -234,6 +_,11 @@
+ 
+    public boolean m_59702_() {
+       return this.f_59647_ == ShulkerBoxBlockEntity.AnimationStatus.CLOSED;
++   }
++
 +   @Override
 +   protected net.minecraftforge.items.IItemHandler createUnSidedHandler() {
 +      return new net.minecraftforge.items.wrapper.SidedInvWrapper(this, Direction.UP);
-+   }
-+
+    }
+ 
     public static enum AnimationStatus {
-       CLOSED,
-       OPENING,
