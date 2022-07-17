@@ -4,7 +4,7 @@
        p_194170_.put(BiomeColors.f_108791_, new BlockTintCache((p_194168_) -> {
           return this.m_104762_(p_194168_, BiomeColors.f_108791_);
        }));
-+      net.minecraftforge.client.ForgeHooksClient.putColorResolvers(ClientLevel.this, p_194170_);
++      net.minecraftforge.client.ColorResolverManager.registerBlockTintCaches(ClientLevel.this, p_194170_);
     });
     private final ClientChunkCache f_104559_;
     private final Deque<Runnable> f_194122_ = Queues.newArrayDeque();

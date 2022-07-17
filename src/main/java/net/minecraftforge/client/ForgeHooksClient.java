@@ -5,7 +5,6 @@
 
 package net.minecraftforge.client;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.platform.Window;
@@ -24,7 +23,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.MouseHandler;
 import net.minecraft.client.Options;
 import net.minecraft.client.color.block.BlockColors;
-import net.minecraft.client.color.block.BlockTintCache;
 import net.minecraft.client.color.item.ItemColors;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiComponent;
@@ -94,7 +92,6 @@ import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.level.BlockAndTintGetter;
-import net.minecraft.world.level.ColorResolver;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
@@ -319,23 +316,6 @@ public class ForgeHooksClient
     public static void onItemColorsInit(ItemColors itemColors, BlockColors blockColors)
     {
         ModLoader.get().postEvent(new RegisterColorHandlersEvent.Item(itemColors, blockColors));
-    }
-
-    private static ImmutableList<ColorResolver> colorResolvers;
-
-    public static void registerColorResolvers()
-    {
-        ImmutableList.Builder<ColorResolver> builder = ImmutableList.builder();
-        ModLoader.get().postEvent(new RegisterColorHandlersEvent.ColorResolvers(builder));
-        colorResolvers = builder.build();
-    }
-
-    public static void putColorResolvers(ClientLevel level, Map<ColorResolver, BlockTintCache> target)
-    {
-        for (var resolver : colorResolvers)
-        {
-            target.put(resolver, new BlockTintCache(pos -> level.calculateBlockTint(pos, resolver)));
-        }
     }
 
     public static Model getArmorModel(LivingEntity entityLiving, ItemStack itemStack, EquipmentSlot slot, HumanoidModel<?> _default)
