@@ -1,0 +1,10 @@
+--- a/net/minecraft/world/item/CrossbowItem.java
++++ b/net/minecraft/world/item/CrossbowItem.java
+@@ -117,6 +_,8 @@
+       if (p_40865_.m_41619_()) {
+          return false;
+       } else {
++         if (p_40863_ instanceof Player player && net.minecraftforge.event.ForgeEventFactory.onArrowLoose(p_40864_, p_40863_.f_19853_, player, 1, true) < 0) return false;
+          boolean flag = p_40867_ && p_40865_.m_41720_() instanceof ArrowItem;
+          ItemStack itemstack;
+          if (!flag && !p_40867_ && !p_40866_) {
