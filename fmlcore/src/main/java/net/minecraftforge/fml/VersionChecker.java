@@ -119,9 +119,9 @@ public class VersionChecker
              */
             private String openUrlString(URL url) throws IOException, URISyntaxException, InterruptedException {
                 URL currentUrl = url;
+                final String userAgent = String.format("MinecraftForge/%s Java/%s", FMLLoader.versionInfo().mcAndForgeVersion(), System.getProperty("java.version"));
                 for (int redirects = 0; redirects < MAX_HTTP_REDIRECTS; redirects++)
                 {
-                    final String userAgent = String.format("MinecraftForge/%s Java/%s", FMLLoader.versionInfo().mcAndForgeVersion(), System.getProperty("java.version"));
                     var request = HttpRequest.newBuilder()
                             .uri(currentUrl.toURI())
                             .timeout(Duration.ofSeconds(HTTP_TIMEOUT_SECS))
