@@ -12,7 +12,9 @@ import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.LeashKnotEntity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.Pose;
 import net.minecraft.entity.EntityClassification;
+import net.minecraft.entity.EntitySize;
 import net.minecraft.entity.item.ArmorStandEntity;
 import net.minecraft.entity.item.BoatEntity;
 import net.minecraft.entity.item.EnderCrystalEntity;
@@ -29,6 +31,8 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraftforge.common.ForgeSpawnEggItem;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.entity.PartEntity;
+import net.minecraftforge.event.ForgeEventFactory;
+import net.minecraftforge.event.entity.EntityEvent;
 
 public interface IForgeEntity extends ICapabilitySerializable<CompoundNBT>
 {
@@ -210,5 +214,20 @@ public interface IForgeEntity extends ICapabilitySerializable<CompoundNBT>
     default PartEntity<?>[] getParts()
     {
         return null;
+    }
+
+    default EntitySize getDimensionsForge(Pose pose)
+    {
+        EntitySize size = getEntity().getDimensions(pose);
+        float eyeHeight = getEntity().getEyeHeightAccess(pose, size);
+        EntityEvent.Size e = ForgeEventFactory.getEntitySizeForge(getEntity(), pose, size, eyeHeight);
+        return e.getNewSize();
+    }
+
+    default float getEyeHeightForge(Pose pose, EntitySize size)
+    {
+        float eyeHeight = getEntity().getEyeHeightAccess(pose, size);
+        EntityEvent.Size e = ForgeEventFactory.getEntitySizeForge(getEntity(), pose, size, eyeHeight);
+        return e.getNewEyeHeight();
     }
 }
