@@ -107,11 +107,11 @@ public class PlayMessages
             buf.writeShort(msg.velX);
             buf.writeShort(msg.velY);
             buf.writeShort(msg.velZ);
-            if (msg.entity instanceof IEntityAdditionalSpawnData)
+            if (msg.entity instanceof IEntityAdditionalSpawnData entityAdditionalSpawnData)
             {
                 final FriendlyByteBuf spawnDataBuffer = new FriendlyByteBuf(Unpooled.buffer());
 
-                ((IEntityAdditionalSpawnData) msg.entity).writeSpawnData(spawnDataBuffer);
+                entityAdditionalSpawnData.writeSpawnData(spawnDataBuffer);
 
                 buf.writeVarInt(spawnDataBuffer.readableBytes());
                 buf.writeBytes(spawnDataBuffer);
@@ -153,44 +153,47 @@ public class PlayMessages
         {
             ctx.get().enqueueWork(() ->
             {
-                EntityType<?> type = Registry.ENTITY_TYPE.byId(msg.typeId);
-                if (type == null)
+                try {
+                    EntityType<?> type = Registry.ENTITY_TYPE.byId(msg.typeId);
+                    if (type == null)
+                    {
+                        throw new RuntimeException(String.format(Locale.ENGLISH, "Could not spawn entity (id %d) with " +
+                                                                                 "unknown type at (%f, %f, %f)",
+                                msg.entityId, msg.posX, msg.posY, msg.posZ));
+                    }
+
+                    Optional<Level> world = LogicalSidedProvider.CLIENTWORLD.get(ctx.get()
+                                                                                    .getDirection()
+                                                                                    .getReceptionSide());
+                    Entity e = world.map(w -> type.customClientSpawn(msg, w)).orElse(null);
+                    if (e == null)
+                    {
+                        return;
+                    }
+
+                    /*
+                     * Sets the postiion on the client, Mirrors what
+                     * Entity#recreateFromPacket and LivingEntity#recreateFromPacket does.
+                     */
+                    e.syncPacketPositionCodec(msg.posX, msg.posY, msg.posZ);
+                    e.absMoveTo(msg.posX, msg.posY, msg.posZ, (msg.yaw * 360) / 256.0F, (msg.pitch * 360) / 256.0F);
+                    e.setYHeadRot((msg.headYaw * 360) / 256.0F);
+                    e.setYBodyRot((msg.headYaw * 360) / 256.0F);
+
+                    e.setId(msg.entityId);
+                    e.setUUID(msg.uuid);
+                    world.filter(ClientLevel.class::isInstance)
+                         .ifPresent(w -> ((ClientLevel) w).putNonPlayerEntity(msg.entityId, e));
+                    e.lerpMotion(msg.velX / 8000.0, msg.velY / 8000.0, msg.velZ / 8000.0);
+                    if (e instanceof IEntityAdditionalSpawnData entityAdditionalSpawnData)
+                    {
+                        entityAdditionalSpawnData.readSpawnData(msg.buf);
+                    }
+                }
+                finally
                 {
                     msg.buf.release();
-                    throw new RuntimeException(String.format(Locale.ENGLISH, "Could not spawn entity (id %d) with " +
-                                                                             "unknown type at (%f, %f, %f)",
-                            msg.entityId, msg.posX, msg.posY, msg.posZ));
                 }
-
-                Optional<Level> world = LogicalSidedProvider.CLIENTWORLD.get(ctx.get()
-                                                                                .getDirection()
-                                                                                .getReceptionSide());
-                Entity e = world.map(w -> type.customClientSpawn(msg, w)).orElse(null);
-                if (e == null)
-                {
-                    msg.buf.release();
-                    return;
-                }
-
-                /*
-                 * Sets the postiion on the client, Mirrors what
-                 * Entity#recreateFromPacket and LivingEntity#recreateFromPacket does.
-                 */
-                e.syncPacketPositionCodec(msg.posX, msg.posY, msg.posZ);
-                e.absMoveTo(msg.posX, msg.posY, msg.posZ, (msg.yaw * 360) / 256.0F, (msg.pitch * 360) / 256.0F);
-                e.setYHeadRot((msg.headYaw * 360) / 256.0F);
-                e.setYBodyRot((msg.headYaw * 360) / 256.0F);
-
-                e.setId(msg.entityId);
-                e.setUUID(msg.uuid);
-                world.filter(ClientLevel.class::isInstance)
-                     .ifPresent(w -> ((ClientLevel) w).putNonPlayerEntity(msg.entityId, e));
-                e.lerpMotion(msg.velX / 8000.0, msg.velY / 8000.0, msg.velZ / 8000.0);
-                if (e instanceof IEntityAdditionalSpawnData)
-                {
-                    ((IEntityAdditionalSpawnData) e).readSpawnData(msg.buf);
-                }
-                msg.buf.release();
             });
             ctx.get().setPacketHandled(true);
         }
@@ -304,20 +307,26 @@ public class PlayMessages
         {
             ctx.get().enqueueWork(() ->
             {
-                MenuScreens.getScreenFactory(msg.getType(), Minecraft.getInstance(), msg.getWindowId(), msg.getName())
-                           .ifPresent(f ->
-                           {
-                               AbstractContainerMenu c = msg.getType()
-                                                            .create(msg.getWindowId(),
-                                                                    Minecraft.getInstance().player.getInventory(),
-                                                                    msg.getAdditionalData());
-                               msg.getAdditionalData().release();
-                               @SuppressWarnings("unchecked")
-                               Screen s = ((MenuScreens.ScreenConstructor<AbstractContainerMenu, ?>) f).create(c,
-                                       Minecraft.getInstance().player.getInventory(), msg.getName());
-                               Minecraft.getInstance().player.containerMenu = ((MenuAccess<?>) s).getMenu();
-                               Minecraft.getInstance().setScreen(s);
-                           });
+                try {
+                    MenuScreens.getScreenFactory(msg.getType(), Minecraft.getInstance(), msg.getWindowId(), msg.getName())
+                               .ifPresent(f ->
+                               {
+                                   AbstractContainerMenu c = msg.getType()
+                                                                .create(msg.getWindowId(),
+                                                                        Minecraft.getInstance().player.getInventory(),
+                                                                        msg.getAdditionalData());
+                                   @SuppressWarnings("unchecked")
+                                   Screen s = ((MenuScreens.ScreenConstructor<AbstractContainerMenu, ?>) f).create(c,
+                                           Minecraft.getInstance().player.getInventory(), msg.getName());
+                                   Minecraft.getInstance().player.containerMenu = ((MenuAccess<?>) s).getMenu();
+                                   Minecraft.getInstance().setScreen(s);
+                               });
+                }
+                finally
+                {
+                    msg.getAdditionalData().release();
+                }
+
             });
             ctx.get().setPacketHandled(true);
         }
