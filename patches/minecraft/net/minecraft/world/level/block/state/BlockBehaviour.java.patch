@@ -89,7 +89,8 @@
        }
  
        public MaterialColor m_60780_(BlockGetter p_60781_, BlockPos p_60782_) {
-          return this.f_60598_;
+-         return this.f_60598_;
++         return m_60734_().getMapColor(this.m_7160_(), p_60781_, p_60782_, this.f_60598_);
        }
  
 +      /** @deprecated use {@link BlockState#rotate(LevelAccessor, BlockPos, Rotation)} */

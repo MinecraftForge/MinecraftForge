@@ -232,5 +232,7 @@ license="LGPL v2.1"
     modId="mod_mismatch_test"
 [[mods]]
     modId="blockstate_change_test"
+[[mods]]
+    modId="dyn_map_color_test"
 
 # ADD ABOVE THIS LINE
