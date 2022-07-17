@@ -15,11 +15,12 @@
     });
     final MinecraftServer f_9702_;
     public volatile boolean f_9700_;
-@@ -67,6 +_,7 @@
+@@ -67,6 +_,8 @@
     }
  
     public void m_9711_(@Nullable InetAddress p_9712_, int p_9713_) throws IOException {
-+      if (p_9712_ instanceof java.net.Inet6Address) System.setProperty("java.net.preferIPv4Stack", "false");
++      if (p_9712_ == null) p_9712_ = new java.net.InetSocketAddress(p_9713_).getAddress();
++      net.minecraftforge.network.DualStackUtils.checkIPv6(p_9712_);
        synchronized(this.f_9703_) {
           Class<? extends ServerSocketChannel> oclass;
           LazyLoadedValue<? extends EventLoopGroup> lazyloadedvalue;

@@ -1,0 +1,31 @@
+--- a/net/minecraft/client/server/LanServerDetection.java
++++ b/net/minecraft/client/server/LanServerDetection.java
+@@ -33,7 +_,7 @@
+          this.setDaemon(true);
+          this.setUncaughtExceptionHandler(new DefaultUncaughtExceptionHandler(LanServerDetection.f_120082_));
+          this.f_120088_ = new MulticastSocket(4445);
+-         this.f_120087_ = InetAddress.getByName("224.0.2.60");
++         this.f_120087_ = InetAddress.getByName(LanServerPinger.f_174974_);
+          this.f_120088_.setSoTimeout(5000);
+          this.f_120088_.joinGroup(this.f_120087_);
+       }
+@@ -88,7 +_,19 @@
+          String s = LanServerPinger.m_120111_(p_120097_);
+          String s1 = LanServerPinger.m_120116_(p_120097_);
+          if (s1 != null) {
++            if (net.minecraftforge.network.DualStackUtils.checkIPv6(p_120098_)) {
++               final String ip;
++
++               // compress to short form if enabled in config
++               if (net.minecraftforge.common.ForgeConfig.CLIENT.compressLanIPv6Addresses.get())
++                  ip = com.google.common.net.InetAddresses.toAddrString(p_120098_);
++               else
++                  ip = p_120098_.getHostAddress();
++
++               s1 = "[" + ip + "]:" + s1;
++            } else {
+             s1 = p_120098_.getHostAddress() + ":" + s1;
++            }
+             boolean flag = false;
+ 
+             for(LanServer lanserver : this.f_120092_) {
