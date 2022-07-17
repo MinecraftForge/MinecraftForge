@@ -121,10 +121,12 @@ public class VersionChecker
                 URL currentUrl = url;
                 for (int redirects = 0; redirects < MAX_HTTP_REDIRECTS; redirects++)
                 {
+                    final String userAgent = String.format("MinecraftForge/%s Java/%s", FMLLoader.versionInfo().mcAndForgeVersion(), System.getProperty("java.version"));
                     var request = HttpRequest.newBuilder()
                             .uri(currentUrl.toURI())
                             .timeout(Duration.ofSeconds(HTTP_TIMEOUT_SECS))
                             .setHeader("Accept-Encoding", "gzip")
+                            .setHeader("User-Agent", userAgent)
                             .GET()
                             .build();
 
