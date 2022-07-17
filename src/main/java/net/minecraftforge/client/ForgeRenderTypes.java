@@ -10,6 +10,7 @@ import com.mojang.datafixers.util.Pair;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderStateShard;
+import net.minecraft.client.renderer.RenderStateShard.OutputStateShard;
 import net.minecraft.client.renderer.RenderStateShard.TextureStateShard;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.ShaderInstance;
@@ -20,6 +21,7 @@ import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraftforge.client.event.RegisterShadersEvent;
+import net.minecraftforge.client.event.RenderLevelStageEvent;
 import net.minecraftforge.common.util.NonNullLazy;
 import net.minecraftforge.common.util.NonNullSupplier;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -42,7 +44,8 @@ public enum ForgeRenderTypes
     ITEM_LAYERED_TRANSLUCENT(()-> getItemLayeredTranslucent(TextureAtlas.LOCATION_BLOCKS)),
     ITEM_UNSORTED_TRANSLUCENT(()-> getUnsortedTranslucent(TextureAtlas.LOCATION_BLOCKS)),
     ITEM_UNLIT_TRANSLUCENT(()-> getUnlitTranslucent(TextureAtlas.LOCATION_BLOCKS)),
-    ITEM_UNSORTED_UNLIT_TRANSLUCENT(()-> getUnlitTranslucent(TextureAtlas.LOCATION_BLOCKS, false));
+    ITEM_UNSORTED_UNLIT_TRANSLUCENT(()-> getUnlitTranslucent(TextureAtlas.LOCATION_BLOCKS, false)),
+    TRANSLUCENT_ON_PARTICLES_TARGET(() -> getTranslucentParticlesTarget(TextureAtlas.LOCATION_BLOCKS));
 
     public static boolean enableTextTextureLinearFiltering = false;
 
@@ -159,6 +162,14 @@ public enum ForgeRenderTypes
     public static RenderType getTextIntensitySeeThrough(ResourceLocation locationIn)
     {
         return Internal.TEXT_INTENSITY_SEETHROUGH.apply(locationIn);
+    }
+
+    /**
+     * @return A variation of {@link RenderType#translucent()} that uses {@link OutputStateShard#PARTICLES_TARGET} to allow fabulous transparency sorting when using {@link RenderLevelStageEvent}
+     */
+    public static RenderType getTranslucentParticlesTarget(ResourceLocation locationIn)
+    {
+        return Internal.TRANSLUCENT_PARTICLES_TARGET.apply(locationIn);
     }
 
     // ----------------------------------------
@@ -349,6 +360,18 @@ public enum ForgeRenderTypes
                     .setWriteMaskState(COLOR_WRITE)
                     .createCompositeState(false);
             return create("forge_text_see_through", DefaultVertexFormat.POSITION_COLOR_TEX_LIGHTMAP, VertexFormat.Mode.QUADS, 256, false, true, rendertype$state);
+        }
+
+        public static Function<ResourceLocation, RenderType> TRANSLUCENT_PARTICLES_TARGET = Util.memoize(Internal::getTranslucentParticlesTarget);
+        private static RenderType getTranslucentParticlesTarget(ResourceLocation locationIn) {
+            RenderType.CompositeState rendertype$state = RenderType.CompositeState.builder()
+                    .setShaderState(RENDERTYPE_TRANSLUCENT_SHADER)
+                    .setTextureState(new RenderStateShard.TextureStateShard(locationIn, false, true))
+                    .setTransparencyState(TRANSLUCENT_TRANSPARENCY)
+                    .setLightmapState(LIGHTMAP)
+                    .setOutputState(PARTICLES_TARGET)
+                    .createCompositeState(true);
+            return create("forge_translucent_particles_target", DefaultVertexFormat.BLOCK, VertexFormat.Mode.QUADS, 2097152, true, true, rendertype$state);
         }
     }
 
