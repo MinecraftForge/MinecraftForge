@@ -5,29 +5,26 @@
 
 package net.minecraftforge.network;
 
-import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screens.inventory.MenuAccess;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.inventory.MenuAccess;
 import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.core.Registry;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.util.Mth;
-import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.util.LogicalSidedProvider;
-import net.minecraft.core.Registry;
-import net.minecraft.network.chat.Component;
 import net.minecraftforge.entity.IEntityAdditionalSpawnData;
-import net.minecraftforge.network.NetworkEvent;
 
-import java.nio.ByteBuffer;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.UUID;
@@ -38,8 +35,9 @@ public class PlayMessages
     /**
      * Used to spawn a custom entity without the same restrictions as
      * {@link ClientboundAddEntityPacket}
-     *
-     * To customize how your entity is created clientside (instead of using the default factory provided to the {@link EntityType})
+     * <p>
+     * To customize how your entity is created clientside (instead of using the default factory provided to the
+     * {@link EntityType})
      * see {@link EntityType.Builder#setCustomClientFactory}.
      */
     public static class SpawnEntity
@@ -69,14 +67,14 @@ public class PlayMessages
             double d1 = Mth.clamp(vec3d.x, -3.9D, 3.9D);
             double d2 = Mth.clamp(vec3d.y, -3.9D, 3.9D);
             double d3 = Mth.clamp(vec3d.z, -3.9D, 3.9D);
-            this.velX = (int)(d1 * 8000.0D);
-            this.velY = (int)(d2 * 8000.0D);
-            this.velZ = (int)(d3 * 8000.0D);
+            this.velX = (int) (d1 * 8000.0D);
+            this.velY = (int) (d2 * 8000.0D);
+            this.velZ = (int) (d3 * 8000.0D);
             this.buf = null;
         }
 
         private SpawnEntity(int typeId, int entityId, UUID uuid, double posX, double posY, double posZ,
-                byte pitch, byte yaw, byte headYaw, int velX, int velY, int velZ, FriendlyByteBuf buf)
+                            byte pitch, byte yaw, byte headYaw, int velX, int velY, int velZ, FriendlyByteBuf buf)
         {
             this.entity = null;
             this.typeId = typeId;
@@ -119,8 +117,8 @@ public class PlayMessages
                 buf.writeBytes(spawnDataBuffer);
 
                 spawnDataBuffer.release();
-            }
-            else {
+            } else
+            {
                 buf.writeVarInt(0);
             }
         }
@@ -135,12 +133,14 @@ public class PlayMessages
                     buf.readByte(), buf.readByte(), buf.readByte(),
                     buf.readShort(), buf.readShort(), buf.readShort(),
                     readSpawnDataPacket(buf)
-                    );
+            );
         }
 
-        private static FriendlyByteBuf readSpawnDataPacket(FriendlyByteBuf buf) {
+        private static FriendlyByteBuf readSpawnDataPacket(FriendlyByteBuf buf)
+        {
             final int count = buf.readVarInt();
-            if (count > 0) {
+            if (count > 0)
+            {
                 final FriendlyByteBuf spawnDataBuffer = new FriendlyByteBuf(Unpooled.buffer());
                 spawnDataBuffer.writeBytes(buf, count);
                 return spawnDataBuffer;
@@ -151,16 +151,21 @@ public class PlayMessages
 
         public static void handle(SpawnEntity msg, Supplier<NetworkEvent.Context> ctx)
         {
-            ctx.get().enqueueWork(() -> {
+            ctx.get().enqueueWork(() ->
+            {
                 EntityType<?> type = Registry.ENTITY_TYPE.byId(msg.typeId);
                 if (type == null)
                 {
                     msg.buf.release();
-                    throw new RuntimeException(String.format(Locale.ENGLISH, "Could not spawn entity (id %d) with unknown type at (%f, %f, %f)", msg.entityId, msg.posX, msg.posY, msg.posZ));
+                    throw new RuntimeException(String.format(Locale.ENGLISH, "Could not spawn entity (id %d) with " +
+                                                                             "unknown type at (%f, %f, %f)",
+                            msg.entityId, msg.posX, msg.posY, msg.posZ));
                 }
 
-                Optional<Level> world = LogicalSidedProvider.CLIENTWORLD.get(ctx.get().getDirection().getReceptionSide());
-                Entity e = world.map(w->type.customClientSpawn(msg, w)).orElse(null);
+                Optional<Level> world = LogicalSidedProvider.CLIENTWORLD.get(ctx.get()
+                                                                                .getDirection()
+                                                                                .getReceptionSide());
+                Entity e = world.map(w -> type.customClientSpawn(msg, w)).orElse(null);
                 if (e == null)
                 {
                     msg.buf.release();
@@ -178,7 +183,8 @@ public class PlayMessages
 
                 e.setId(msg.entityId);
                 e.setUUID(msg.uuid);
-                world.filter(ClientLevel.class::isInstance).ifPresent(w->((ClientLevel)w).putNonPlayerEntity(msg.entityId, e));
+                world.filter(ClientLevel.class::isInstance)
+                     .ifPresent(w -> ((ClientLevel) w).putNonPlayerEntity(msg.entityId, e));
                 e.lerpMotion(msg.velX / 8000.0, msg.velY / 8000.0, msg.velZ / 8000.0);
                 if (e instanceof IEntityAdditionalSpawnData)
                 {
@@ -290,38 +296,49 @@ public class PlayMessages
 
         public static OpenContainer decode(FriendlyByteBuf buf)
         {
-            return new OpenContainer(buf.readVarInt(), buf.readVarInt(), buf.readComponent(), new FriendlyByteBuf(Unpooled.wrappedBuffer(buf.readByteArray(32600))));
+            return new OpenContainer(buf.readVarInt(), buf.readVarInt(), buf.readComponent(),
+                    new FriendlyByteBuf(Unpooled.wrappedBuffer(buf.readByteArray(32600))));
         }
 
         public static void handle(OpenContainer msg, Supplier<NetworkEvent.Context> ctx)
         {
-            ctx.get().enqueueWork(() -> {
+            ctx.get().enqueueWork(() ->
+            {
                 MenuScreens.getScreenFactory(msg.getType(), Minecraft.getInstance(), msg.getWindowId(), msg.getName())
-                             .ifPresent(f -> {
-                                 AbstractContainerMenu c = msg.getType().create(msg.getWindowId(), Minecraft.getInstance().player.getInventory(), msg.getAdditionalData());
-                                 msg.getAdditionalData().release();
-                                 @SuppressWarnings("unchecked")
-                                 Screen s = ((MenuScreens.ScreenConstructor<AbstractContainerMenu, ?>)f).create(c, Minecraft.getInstance().player.getInventory(), msg.getName());
-                                 Minecraft.getInstance().player.containerMenu = ((MenuAccess<?>)s).getMenu();
-                                 Minecraft.getInstance().setScreen(s);
-                             });
+                           .ifPresent(f ->
+                           {
+                               AbstractContainerMenu c = msg.getType()
+                                                            .create(msg.getWindowId(),
+                                                                    Minecraft.getInstance().player.getInventory(),
+                                                                    msg.getAdditionalData());
+                               msg.getAdditionalData().release();
+                               @SuppressWarnings("unchecked")
+                               Screen s = ((MenuScreens.ScreenConstructor<AbstractContainerMenu, ?>) f).create(c,
+                                       Minecraft.getInstance().player.getInventory(), msg.getName());
+                               Minecraft.getInstance().player.containerMenu = ((MenuAccess<?>) s).getMenu();
+                               Minecraft.getInstance().setScreen(s);
+                           });
             });
             ctx.get().setPacketHandled(true);
         }
 
-        public final MenuType<?> getType() {
+        public final MenuType<?> getType()
+        {
             return Registry.MENU.byId(this.id);
         }
 
-        public int getWindowId() {
+        public int getWindowId()
+        {
             return windowId;
         }
 
-        public Component getName() {
+        public Component getName()
+        {
             return name;
         }
 
-        public FriendlyByteBuf getAdditionalData() {
+        public FriendlyByteBuf getAdditionalData()
+        {
             return additionalData;
         }
     }
