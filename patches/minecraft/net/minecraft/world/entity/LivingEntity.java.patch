@@ -421,7 +421,7 @@
 +         } else if (gravity.m_22109_(SLOW_FALLING)) {
 +            gravity.m_22130_(SLOW_FALLING);
           }
-+         d0 = gravity.m_22135_();
++         d0 = gravity.m_22135_() != d0 ? gravity.m_22135_() : net.minecraftforge.common.ForgeHooks.onLivingGravity(this, p_21280_, d0);
  
           FluidState fluidstate = this.f_19853_.m_6425_(this.m_20183_());
 -         if (this.m_20069_() && this.m_6129_() && !this.m_203441_(fluidstate)) {

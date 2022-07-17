@@ -8,6 +8,6 @@ public class TestEvent {
 
     @SubscribeEvent
     public static void livingGravity(LivingGravityEvent event) {
-        event.setGravity(0.04);
+        event.setGravity(0.04); //If gravity attribute not set to 0.08 this event get called
     }
 }

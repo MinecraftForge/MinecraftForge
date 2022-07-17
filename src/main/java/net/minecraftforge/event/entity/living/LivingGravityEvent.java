@@ -9,21 +9,16 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.Cancelable;
 
 /**
  * LivingGravityEvent is fired when a LivingEntity is ticked in {@link LivingEntity#travel(Vec3)}}. <br>
  * <br>
  * This event is fired via the {@link ForgeHooks#onLivingGravity(LivingEntity, Vec3, double)}.<br>
  * <br>
- * This event is {@link Cancelable}.<br>
- * If this event is canceled, the Entity does not update.<br>
- * <br>
  * This event does not have a result. {@link HasResult}<br>
  * <br>
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  **/
-@Cancelable
 public class LivingGravityEvent extends LivingEvent
 {
 
