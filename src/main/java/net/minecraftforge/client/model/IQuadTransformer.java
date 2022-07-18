@@ -10,6 +10,7 @@ import com.mojang.blaze3d.vertex.VertexFormatElement;
 import com.mojang.math.Transformation;
 import com.mojang.math.Vector3f;
 import com.mojang.math.Vector4f;
+import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 
 import java.util.Arrays;
@@ -30,6 +31,8 @@ public interface IQuadTransformer
     int UV1 = findOffset(DefaultVertexFormat.ELEMENT_UV1);
     int UV2 = findOffset(DefaultVertexFormat.ELEMENT_UV2);
     int NORMAL = findOffset(DefaultVertexFormat.ELEMENT_NORMAL);
+
+    IQuadTransformer EMISSIVE = IQuadTransformer.applyingLightmap(LightTexture.FULL_BRIGHT);
 
     void processInPlace(BakedQuad quad);
 
