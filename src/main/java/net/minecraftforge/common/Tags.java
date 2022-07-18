@@ -7,7 +7,6 @@ package net.minecraftforge.common;
 
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.BiomeTags;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.tags.ItemTags;
@@ -17,7 +16,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.material.Fluid;
-import net.minecraftforge.registries.ForgeRegistries;
 
 public class Tags
 {
@@ -472,9 +470,7 @@ public class Tags
         public static final TagKey<Biome> IS_WASTELAND = tag("is_wasteland");
         public static final TagKey<Biome> IS_VOID = tag("is_void");
         public static final TagKey<Biome> IS_UNDERGROUND = tag("is_underground");
-
-        public static final Tagkey<Biome> IS_CAVE = tag("is_cave");
-
+        public static final TagKey<Biome> IS_CAVE = tag("is_cave");
         public static final TagKey<Biome> IS_PEAK = tag("is_peak");
         public static final TagKey<Biome> IS_SLOPE = tag("is_slope");
         public static final TagKey<Biome> IS_MOUNTAIN = tag("is_mountain");
