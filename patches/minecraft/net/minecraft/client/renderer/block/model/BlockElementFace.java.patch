@@ -4,18 +4,18 @@
     public final int f_111355_;
     public final String f_111356_;
     public final BlockFaceUV f_111357_;
-+   public final boolean emissive;
++   public final int emissivity;
  
     public BlockElementFace(@Nullable Direction p_111359_, int p_111360_, String p_111361_, BlockFaceUV p_111362_) {
-+      this(p_111359_, p_111360_, p_111361_, p_111362_, false);
++      this(p_111359_, p_111360_, p_111361_, p_111362_, 0);
 +   }
 +
-+   public BlockElementFace(@Nullable Direction p_111359_, int p_111360_, String p_111361_, BlockFaceUV p_111362_, boolean emissive) {
++   public BlockElementFace(@Nullable Direction p_111359_, int p_111360_, String p_111361_, BlockFaceUV p_111362_, int emissivity) {
        this.f_111354_ = p_111359_;
        this.f_111355_ = p_111360_;
        this.f_111356_ = p_111361_;
        this.f_111357_ = p_111362_;
-+      this.emissive = emissive;
++      this.emissivity = emissivity;
     }
  
     @OnlyIn(Dist.CLIENT)
@@ -24,8 +24,8 @@
           String s = this.m_111370_(jsonobject);
           BlockFaceUV blockfaceuv = p_111367_.deserialize(jsonobject, BlockFaceUV.class);
 -         return new BlockElementFace(direction, i, s, blockfaceuv);
-+         boolean emissive = GsonHelper.m_13855_(jsonobject, "emissive", false);
-+         return new BlockElementFace(direction, i, s, blockfaceuv, emissive);
++         int emissivity = GsonHelper.m_13824_(jsonobject, "emissivity", 0);
++         return new BlockElementFace(direction, i, s, blockfaceuv, emissivity);
        }
  
        protected int m_111368_(JsonObject p_111369_) {
