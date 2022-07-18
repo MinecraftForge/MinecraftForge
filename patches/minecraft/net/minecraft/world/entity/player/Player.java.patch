@@ -221,7 +221,7 @@
              if (d0 < 0.05D && d0 >= -0.05D) {
                 d0 = 0.0D;
              } else if (d0 > 0.0D) {
-@@ -1064,10 +_,11 @@
+@@ -1064,10 +_,12 @@
     }
  
     private boolean m_36386_() {
@@ -230,11 +230,19 @@
     }
  
     public void m_5706_(Entity p_36347_) {
++      this.attackStrength = 0.0F;
 +      if (!net.minecraftforge.common.ForgeHooks.onPlayerAttackTarget(this, p_36347_)) return;
        if (p_36347_.m_6097_()) {
           if (!p_36347_.m_7313_(this)) {
              float f = (float)this.m_21133_(Attributes.f_22281_);
-@@ -1085,7 +_,7 @@
+@@ -1079,13 +_,14 @@
+             }
+ 
+             float f2 = this.m_36403_(0.5F);
++            this.attackStrength = f2;
+             f *= 0.2F + f2 * f2 * 0.8F;
+             f1 *= f2;
+             this.m_36334_();
              if (f > 0.0F || f1 > 0.0F) {
                 boolean flag = f2 > 0.9F;
                 boolean flag1 = false;

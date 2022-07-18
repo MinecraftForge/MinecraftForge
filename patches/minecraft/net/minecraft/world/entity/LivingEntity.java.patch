@@ -16,6 +16,14 @@
     public static final int f_147166_ = 2;
     public static final int f_147167_ = 4;
     public static final int f_147168_ = 98;
+@@ -170,6 +_,7 @@
+    public float f_20920_;
+    public float f_20921_;
+    protected int f_20922_;
++   public float attackStrength;
+    public float f_20923_;
+    public float f_20924_;
+    public float f_20925_;
 @@ -274,7 +_,7 @@
     }
  
