@@ -19,12 +19,14 @@
     }
  
     @OnlyIn(Dist.CLIENT)
-@@ -37,7 +_,8 @@
+@@ -37,7 +_,10 @@
           int i = this.m_111368_(jsonobject);
           String s = this.m_111370_(jsonobject);
           BlockFaceUV blockfaceuv = p_111367_.deserialize(jsonobject, BlockFaceUV.class);
 -         return new BlockElementFace(direction, i, s, blockfaceuv);
 +         int emissivity = GsonHelper.m_13824_(jsonobject, "emissivity", 0);
++         if (emissivity != net.minecraft.util.Mth.m_14045_(emissivity, 0, 15))
++            throw new JsonParseException("The emissivity value must be between 0 and 15. Found: " + emissivity);
 +         return new BlockElementFace(direction, i, s, blockfaceuv, emissivity);
        }
  
