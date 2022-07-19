@@ -119,20 +119,19 @@ public class VersionChecker
              */
             private String openUrlString(URL url, IModInfo mod) throws IOException, URISyntaxException, InterruptedException {
                 URL currentUrl = url;
-                final String userAgent = String.format(
-                        "Java-http-client/%s MinecraftForge/%s %s/%s",
-                        System.getProperty("java.version"),
-                        FMLLoader.versionInfo().mcAndForgeVersion(),
-                        mod.getModId(),
-                        mod.getVersion()
-                );
+
+                final StringBuilder userAgent = new StringBuilder();
+                userAgent.append("Java-http-client/").append(System.getProperty("java.version")).append(' ');
+                userAgent.append("MinecraftForge/").append(FMLLoader.versionInfo().mcAndForgeVersion()).append(' ');
+                userAgent.append(mod.getModId()).append('/').append(mod.getVersion());
+
                 for (int redirects = 0; redirects < MAX_HTTP_REDIRECTS; redirects++)
                 {
                     var request = HttpRequest.newBuilder()
                             .uri(currentUrl.toURI())
                             .timeout(Duration.ofSeconds(HTTP_TIMEOUT_SECS))
                             .setHeader("Accept-Encoding", "gzip")
-                            .setHeader("User-Agent", userAgent)
+                            .setHeader("User-Agent", userAgent.toString())
                             .GET()
                             .build();
 
