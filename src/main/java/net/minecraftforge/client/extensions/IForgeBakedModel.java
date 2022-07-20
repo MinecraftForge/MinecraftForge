@@ -19,6 +19,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.client.ChunkRenderTypeSet;
+import net.minecraftforge.client.RenderTypeHelper;
 import net.minecraftforge.client.model.data.ModelData;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -97,7 +98,7 @@ public interface IForgeBakedModel
      */
     default List<RenderType> getRenderTypes(ItemStack itemStack, boolean fabulous)
     {
-        return List.of(ItemBlockRenderTypes.getRenderType(itemStack, fabulous));
+        return List.of(RenderTypeHelper.getFallbackItemRenderType(itemStack, self(), fabulous));
     }
 
     /**

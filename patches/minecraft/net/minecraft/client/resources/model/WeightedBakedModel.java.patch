@@ -39,7 +39,7 @@
     public boolean m_7539_() {
        return this.f_119542_.m_7539_();
     }
-@@ -54,8 +_,16 @@
+@@ -54,8 +_,23 @@
        return this.f_119542_.m_6160_();
     }
  
@@ -53,6 +53,13 @@
 +
 +   public BakedModel applyTransform(net.minecraft.client.renderer.block.model.ItemTransforms.TransformType transformType, com.mojang.blaze3d.vertex.PoseStack poseStack, boolean applyLeftHandTransform) {
 +      return this.f_119542_.applyTransform(transformType, poseStack, applyLeftHandTransform);
++   }
++
++   @Override // FORGE: Get render types based on the active weighted model
++   public net.minecraftforge.client.ChunkRenderTypeSet getRenderTypes(@org.jetbrains.annotations.NotNull BlockState state, @org.jetbrains.annotations.NotNull RandomSource rand, @org.jetbrains.annotations.NotNull net.minecraftforge.client.model.data.ModelData data) {
++      return WeightedRandom.m_146314_(this.f_119541_, Math.abs((int)rand.m_188505_()) % this.f_119540_)
++              .map((p_235065_) -> p_235065_.m_146310_().getRenderTypes(state, rand, data))
++              .orElse(net.minecraftforge.client.ChunkRenderTypeSet.none());
     }
  
     public ItemOverrides m_7343_() {
