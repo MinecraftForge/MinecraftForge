@@ -5,7 +5,7 @@
        for(int k = 0; k < 9; ++k) {
           int l = (this.f_35977_ + k) % 9;
 -         if (!this.f_35974_.get(l).m_41793_()) {
-+         if (!this.f_35974_.get(l).isStickyInHotbar(this.f_35978_, l)) {
++         if (!this.f_35974_.get(l).isNotReplaceableByPickAction(this.f_35978_, l)) {
              return l;
           }
        }

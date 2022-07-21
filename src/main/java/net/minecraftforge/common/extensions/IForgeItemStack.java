@@ -567,9 +567,9 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundTag>
      * @param inventorySlot the inventory slot of the item being up for replacement
      * @return true to leave this stack in the hotbar if possible
      */
-    default boolean isStickyInHotbar(Player player, int inventorySlot)
+    default boolean isNotReplaceableByPickAction(Player player, int inventorySlot)
     {
-        return self().getItem().isStickyInHotbar(self(), player, inventorySlot);
+        return self().getItem().isNotReplaceableByPickAction(self(), player, inventorySlot);
     }
 
 }

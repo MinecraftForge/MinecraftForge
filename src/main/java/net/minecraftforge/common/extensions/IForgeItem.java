@@ -838,7 +838,7 @@ public interface IForgeItem
      * @param inventorySlot the inventory slot of the item being up for replacement
      * @return true to leave this stack in the hotbar if possible
      */
-    default boolean isStickyInHotbar(ItemStack stack, Player player, int inventorySlot)
+    default boolean isNotReplaceableByPickAction(ItemStack stack, Player player, int inventorySlot)
     {
         return stack.isEnchanted();
     }
