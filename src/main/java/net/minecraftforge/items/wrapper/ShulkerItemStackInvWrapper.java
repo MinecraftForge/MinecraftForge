@@ -166,7 +166,8 @@ class ShulkerItemStackInvWrapper implements IItemHandlerModifiable, ICapabilityP
     }
 
     @Override
-    public void setStackInSlot(int slot, @NotNull ItemStack stack) {
+    public void setStackInSlot(int slot, @NotNull ItemStack stack)
+    {
         validateSlotIndex(slot);
         if (!isItemValid(slot, stack)) throw new RuntimeException("Invalid stack " + stack + " for slot " + slot + ")");
         NonNullList<ItemStack> itemStacks = getItemList();
@@ -185,7 +186,8 @@ class ShulkerItemStackInvWrapper implements IItemHandlerModifiable, ICapabilityP
     protected NonNullList<ItemStack> refreshItemList(CompoundTag rootTag)
     {
         NonNullList<ItemStack> itemStacks = NonNullList.withSize(getSlots(), ItemStack.EMPTY);
-        if (rootTag != null && rootTag.contains("Items", CompoundTag.TAG_LIST)) {
+        if (rootTag != null && rootTag.contains("Items", CompoundTag.TAG_LIST))
+        {
             ContainerHelper.loadAllItems(rootTag, itemStacks);
         }
         cachedTag = rootTag;
@@ -230,8 +232,10 @@ class ShulkerItemStackInvWrapper implements IItemHandlerModifiable, ICapabilityP
                 Items.YELLOW_SHULKER_BOX);
 
         @SubscribeEvent
-        public static void listenCapabilitiesAttachment(AttachCapabilitiesEvent<ItemStack> event) {
-            if (SHULKER_ITEMS.contains(event.getObject().getItem())) {
+        public static void listenCapabilitiesAttachment(AttachCapabilitiesEvent<ItemStack> event)
+        {
+            if (SHULKER_ITEMS.contains(event.getObject().getItem()))
+            {
                 event.addCapability(new ResourceLocation("forge", "shulker_box"), new ShulkerItemStackInvWrapper(event.getObject()));
             }
         }
