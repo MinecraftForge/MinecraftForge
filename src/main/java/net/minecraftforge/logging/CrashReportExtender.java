@@ -64,7 +64,7 @@ public class CrashReportExtender
             }
             if (cause != null)
                 category.applyStackTrace(cause);
-            category.setDetail("Mod File", () -> modInfo.map(IModInfo::getOwningFile).map(t-> t.getFile().getFileName()).orElse("NO FILE INFO"));
+            category.setDetail("Mod File", () -> modInfo.map(IModInfo::getOwningFile).map(t-> t.getFile().getFilePath().toUri().getPath()).orElse("NO FILE INFO"));
             category.setDetail("Failure message", () -> mle.getCleanMessage().replace("\n", "\n\t\t"));
             category.setDetail("Mod Version", () -> modInfo.map(IModInfo::getVersion).map(Object::toString).orElse("NO MOD INFO AVAILABLE"));
             category.setDetail("Mod Issue URL", () -> modInfo.map(IModInfo::getOwningFile).map(IModFileInfo.class::cast).flatMap(mfi->mfi.getConfig().<String>getConfigElement("issueTrackerURL")).orElse("NOT PROVIDED"));
