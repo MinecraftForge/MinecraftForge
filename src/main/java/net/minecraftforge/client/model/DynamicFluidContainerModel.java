@@ -128,6 +128,7 @@ public class DynamicFluidContainerModel implements IUnbakedGeometry<DynamicFluid
         TextureAtlasSprite particleSprite = particleLocation != null ? spriteGetter.apply(particleLocation) : null;
 
         if (particleSprite == null) particleSprite = fluidSprite;
+        if (particleSprite == null) particleSprite = baseSprite;
         if (particleSprite == null && !coverIsMask) particleSprite = coverSprite;
 
         // If the fluid is lighter than air, rotate 180deg to turn it upside down
