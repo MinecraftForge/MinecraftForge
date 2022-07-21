@@ -27,6 +27,7 @@ public class Tags
         Items.init();
         Fluids.init();
         Biomes.init();
+        BiomeSpecific.init();
     }
 
     public static class Blocks
@@ -482,4 +483,65 @@ public class Tags
             return TagKey.create(Registry.BIOME_REGISTRY, new ResourceLocation("forge", name));
         }
     }
+
+    public static class BiomeSpecific
+    {
+        private static void init() {}
+
+        public static final TagKey<Biome> LUSH_CAVES = tag("lush_caves");
+        public static final TagKey<Biome> DRIPSTONE_CAVES = tag("dripsstone_caves");
+        public static final TagKey<Biome> DEEP_DARK = tag("deep_dark");
+
+        public static final TagKey<Biome> PLAINS = tag("plains");
+        public static final TagKey<Biome> SUNFLOWER_PLAINS = tag("sunflower_plains");
+        public static final TagKey<Biome> FOREST = tag("forest");
+        public static final TagKey<Biome> FLOWER_FOREST = tag("flower_forest");
+        public static final TagKey<Biome> BIRCH_FOREST = tag("birch_forest");
+        public static final TagKey<Biome> DARK_FOREST = tag("dark_forest");
+        public static final TagKey<Biome> SWAMP = tag("swamp");
+        public static final TagKey<Biome> MANGROVE_SWAMP = tag("mangrove_swamp");
+        public static final TagKey<Biome> JUNGLE = tag("jungle");
+        public static final TagKey<Biome> SPARSE_JUNGLE = tag("sparse_jungle");
+        public static final TagKey<Biome> BAMBOO_JUNGLE = tag("bamboo_jungle");
+        public static final TagKey<Biome> BEACH = tag("beach");
+        public static final TagKey<Biome> MUSHROOM_FIELDS = tag("mushroom_fields");
+        public static final TagKey<Biome> MEADOW = tag("meadow");
+        public static final TagKey<Biome> STONY_PEAKS = tag("stony_peaks");
+
+        public static final TagKey<Biome> SNOWY_PLAINS = tag("snowy_plains");
+        public static final TagKey<Biome> ICE_SPIKES = tag("ice_spikes");
+        public static final TagKey<Biome> SNOWY_TAIGA = tag("snowy_taiga");
+        public static final TagKey<Biome> SNOWY_BEACH = tag("snowy_beach");
+        public static final TagKey<Biome> GROVE = tag("grove");
+        public static final TagKey<Biome> SNOWY_SLOPES = tag("snowy_slopes");
+        public static final TagKey<Biome> JAGGED_PEAKS = tag("jagged_peaks");
+        public static final TagKey<Biome> FROZEN_PEAKS = tag("frozen_peaks");
+
+        public static final TagKey<Biome> DESERT = tag("desert");
+        public static final TagKey<Biome> SAVANNA = tag("savanna");
+        public static final TagKey<Biome> SAVANNA_PLATEAU = tag("savanna_plateau");
+        public static final TagKey<Biome> WINDSWEPT_SAVANNA = tag("windswept_savanna");
+        public static final TagKey<Biome> BADLANDS = tag("badlands");
+        public static final TagKey<Biome> WOODED_BADLANDS = tag("wooded_badlands");
+        public static final TagKey<Biome> ERODED_BADLANDS = tag("eroded_badlands");
+
+        public static final TagKey<Biome> RIVER = tag("river");
+        public static final TagKey<Biome> FROZEN_RIVER = tag("frozen_river");
+        public static final TagKey<Biome> OCEAN = tag("ocean");
+        public static final TagKey<Biome> WARM_OCEAN = tag("warm_ocean");
+        public static final TagKey<Biome> LUKEWARM_OCEAN = tag("lukewarm_ocean");
+        public static final TagKey<Biome> COLD_OCEAN = tag("cold_ocean");
+        public static final TagKey<Biome> DEEP_OCEAN = tag("deep_ocean");
+        public static final TagKey<Biome> DEEP_COLD_OCEAN = tag("deep_cold_ocean");
+        public static final TagKey<Biome> FROZEN_OCEAN = tag("frozen_ocean");
+        public static final TagKey<Biome> DEEP_FROZEN_OCEAN = tag("deep_frozen_ocean");
+
+
+
+        private static TagKey<Biome> tag(String name)
+        {
+            return TagKey.create(Registry.BIOME_REGISTRY, new ResourceLocation("forge", name));
+        }
+    }
+
 }
