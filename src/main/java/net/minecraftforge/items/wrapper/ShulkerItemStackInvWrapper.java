@@ -28,9 +28,10 @@ import net.minecraftforge.items.ItemHandlerHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Objects;
 import java.util.Set;
 
-public class ShulkerItemStackInvWrapper implements IItemHandlerModifiable, ICapabilityProvider
+class ShulkerItemStackInvWrapper implements IItemHandlerModifiable, ICapabilityProvider
 {
     private final ItemStack stack;
     private final LazyOptional<IItemHandler> holder = LazyOptional.of(() -> this);
@@ -41,7 +42,6 @@ public class ShulkerItemStackInvWrapper implements IItemHandlerModifiable, ICapa
     public ShulkerItemStackInvWrapper(ItemStack stack)
     {
         this.stack = stack;
-        this.itemStacksCache = refreshItemList(BlockItem.getBlockEntityData(this.stack));
     }
 
     @Override
@@ -177,7 +177,7 @@ public class ShulkerItemStackInvWrapper implements IItemHandlerModifiable, ICapa
     protected NonNullList<ItemStack> getItemList()
     {
         CompoundTag rootTag = BlockItem.getBlockEntityData(this.stack);
-        if ((cachedTag != null && !cachedTag.equals(rootTag)) || rootTag == null)
+        if (!Objects.equals(cachedTag,rootTag))
             itemStacksCache = refreshItemList(rootTag);
         return itemStacksCache;
     }
@@ -185,7 +185,7 @@ public class ShulkerItemStackInvWrapper implements IItemHandlerModifiable, ICapa
     protected NonNullList<ItemStack> refreshItemList(CompoundTag rootTag)
     {
         NonNullList<ItemStack> itemStacks = NonNullList.withSize(getSlots(), ItemStack.EMPTY);
-        if (rootTag != null && rootTag.contains("Items", 9)) {
+        if (rootTag != null && rootTag.contains("Items", CompoundTag.TAG_LIST)) {
             ContainerHelper.loadAllItems(rootTag, itemStacks);
         }
         cachedTag = rootTag;
@@ -196,8 +196,7 @@ public class ShulkerItemStackInvWrapper implements IItemHandlerModifiable, ICapa
     {
         CompoundTag existing = BlockItem.getBlockEntityData(this.stack);
         CompoundTag rootTag = ContainerHelper.saveAllItems(existing == null ? new CompoundTag() : existing, itemStacks);
-        BlockItem.setBlockEntityData(this.stack, BlockEntityType.SHULKER_BOX,
-                rootTag);
+        BlockItem.setBlockEntityData(this.stack, BlockEntityType.SHULKER_BOX, rootTag);
         cachedTag = rootTag;
     }
 
@@ -211,7 +210,8 @@ public class ShulkerItemStackInvWrapper implements IItemHandlerModifiable, ICapa
     @Mod.EventBusSubscriber(modid = "forge")
     private static class AttachmentHandler
     {
-        private static final Set<Item> SHULKER_ITEMS = Set.of(Items.SHULKER_BOX,
+        private static final Set<Item> SHULKER_ITEMS = Set.of(
+                Items.SHULKER_BOX,
                 Items.BLACK_SHULKER_BOX,
                 Items.BLUE_SHULKER_BOX,
                 Items.BROWN_SHULKER_BOX,
