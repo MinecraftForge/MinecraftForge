@@ -89,8 +89,6 @@ public class ShulkerItemStackInvWrapper implements IItemHandlerModifiable, ICapa
     @NotNull
     public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate)
     {
-        NonNullList<ItemStack> itemStacks = getItemList();
-
         if (stack.isEmpty())
             return ItemStack.EMPTY;
 
@@ -98,6 +96,8 @@ public class ShulkerItemStackInvWrapper implements IItemHandlerModifiable, ICapa
             return stack;
 
         validateSlotIndex(slot);
+
+        NonNullList<ItemStack> itemStacks = getItemList();
 
         ItemStack existing = itemStacks.get(slot);
 
