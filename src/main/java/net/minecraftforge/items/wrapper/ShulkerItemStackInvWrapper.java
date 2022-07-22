@@ -33,13 +33,40 @@ import java.util.Set;
 @ApiStatus.Internal
 public class ShulkerItemStackInvWrapper implements IItemHandlerModifiable, ICapabilityProvider
 {
+    @ApiStatus.Internal
+    @Nullable
+    public static ICapabilityProvider createDefaultProvider(ItemStack itemStack)
+    {
+        var item = itemStack.getItem();
+        if (item == Items.SHULKER_BOX ||
+            item == Items.BLACK_SHULKER_BOX ||
+            item == Items.BLUE_SHULKER_BOX ||
+            item == Items.BROWN_SHULKER_BOX ||
+            item == Items.CYAN_SHULKER_BOX ||
+            item == Items.GRAY_SHULKER_BOX ||
+            item == Items.GREEN_SHULKER_BOX ||
+            item == Items.LIGHT_BLUE_SHULKER_BOX ||
+            item == Items.LIGHT_GRAY_SHULKER_BOX ||
+            item == Items.LIME_SHULKER_BOX ||
+            item == Items.MAGENTA_SHULKER_BOX ||
+            item == Items.ORANGE_SHULKER_BOX ||
+            item == Items.PINK_SHULKER_BOX ||
+            item == Items.PURPLE_SHULKER_BOX ||
+            item == Items.RED_SHULKER_BOX ||
+            item == Items.WHITE_SHULKER_BOX ||
+            item == Items.YELLOW_SHULKER_BOX
+        )
+            return new ShulkerItemStackInvWrapper(itemStack);
+        return null;
+    }
+
     private final ItemStack stack;
     private final LazyOptional<IItemHandler> holder = LazyOptional.of(() -> this);
 
     private CompoundTag cachedTag;
     private NonNullList<ItemStack> itemStacksCache;
 
-    public ShulkerItemStackInvWrapper(ItemStack stack)
+    private ShulkerItemStackInvWrapper(ItemStack stack)
     {
         this.stack = stack;
     }
@@ -147,7 +174,7 @@ public class ShulkerItemStackInvWrapper implements IItemHandlerModifiable, ICapa
         }
     }
 
-    protected void validateSlotIndex(int slot)
+    private void validateSlotIndex(int slot)
     {
         if (slot < 0 || slot >= getSlots())
             throw new RuntimeException("Slot " + slot + " not in valid range - [0," + getSlots() + ")");
@@ -175,7 +202,7 @@ public class ShulkerItemStackInvWrapper implements IItemHandlerModifiable, ICapa
         setItemList(itemStacks);
     }
 
-    protected NonNullList<ItemStack> getItemList()
+    private NonNullList<ItemStack> getItemList()
     {
         CompoundTag rootTag = BlockItem.getBlockEntityData(this.stack);
         if (cachedTag == null || !cachedTag.equals(rootTag))
@@ -183,7 +210,7 @@ public class ShulkerItemStackInvWrapper implements IItemHandlerModifiable, ICapa
         return itemStacksCache;
     }
 
-    protected NonNullList<ItemStack> refreshItemList(CompoundTag rootTag)
+    private NonNullList<ItemStack> refreshItemList(CompoundTag rootTag)
     {
         NonNullList<ItemStack> itemStacks = NonNullList.withSize(getSlots(), ItemStack.EMPTY);
         if (rootTag != null && rootTag.contains("Items", CompoundTag.TAG_LIST))
@@ -194,7 +221,7 @@ public class ShulkerItemStackInvWrapper implements IItemHandlerModifiable, ICapa
         return itemStacks;
     }
 
-    protected void setItemList(NonNullList<ItemStack> itemStacks)
+    private void setItemList(NonNullList<ItemStack> itemStacks)
     {
         CompoundTag existing = BlockItem.getBlockEntityData(this.stack);
         CompoundTag rootTag = ContainerHelper.saveAllItems(existing == null ? new CompoundTag() : existing, itemStacks);
@@ -207,39 +234,5 @@ public class ShulkerItemStackInvWrapper implements IItemHandlerModifiable, ICapa
     public <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side)
     {
         return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.orEmpty(cap, this.holder);
-    }
-
-    @ApiStatus.Internal
-    public static class AttachmentHandler
-    {
-        private static final Set<ResourceLocation> SHULKER_ITEMS = Set.of(
-                new ResourceLocation("shulker_box"),
-                new ResourceLocation("black_shulker_box"),
-                new ResourceLocation("blue_shulker_box"),
-                new ResourceLocation("brown_shulker_box"),
-                new ResourceLocation("cyan_shulker_box"),
-                new ResourceLocation("gray_shulker_box"),
-                new ResourceLocation("green_shulker_box"),
-                new ResourceLocation("light_blue_shulker_box"),
-                new ResourceLocation("light_gray_shulker_box"),
-                new ResourceLocation("lime_shulker_box"),
-                new ResourceLocation("magenta_shulker_box"),
-                new ResourceLocation("orange_shulker_box"),
-                new ResourceLocation("pink_shulker_box"),
-                new ResourceLocation("purple_shulker_box"),
-                new ResourceLocation("red_shulker_box"),
-                new ResourceLocation("white_shulker_box"),
-                new ResourceLocation("yellow_shulker_box"));
-
-        @ApiStatus.Internal
-        @Nullable
-        public static ICapabilityProvider listenCapabilitiesAttachment(ItemStack itemStack)
-        {
-            if (SHULKER_ITEMS.contains(ForgeRegistries.ITEMS.getKey(itemStack.getItem())))
-            {
-                return new ShulkerItemStackInvWrapper(itemStack);
-            }
-            return null;
-        }
     }
 }
