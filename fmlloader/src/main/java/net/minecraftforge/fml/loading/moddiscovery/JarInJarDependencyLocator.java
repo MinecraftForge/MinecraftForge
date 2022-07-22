@@ -111,8 +111,7 @@ public class JarInJarDependencyLocator extends AbstractJarFileDependencyLocator
            .map(entry -> new EarlyLoadingException.ExceptionData(
                    getErrorTranslationKey(entry),
                    entry.identifier()
-                        .group() + ":" + entry.identifier()
-                                              .artifact(),
+                        .group() + ":" + entry.identifier().artifact(),
                    entry.sources()
                         .stream()
                         .flatMap(this::getModWithVersionRangeStream)
