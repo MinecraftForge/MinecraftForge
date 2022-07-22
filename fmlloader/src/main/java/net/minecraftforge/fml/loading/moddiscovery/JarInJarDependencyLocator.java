@@ -106,19 +106,19 @@ public class JarInJarDependencyLocator extends AbstractJarFileDependencyLocator
     {
 
         final List<EarlyLoadingException.ExceptionData> errors = failedDependencies.stream()
-                                                                                   .filter(entry -> !entry.sources()
-                                                                                                          .isEmpty()) //Should never be the case, but just to be sure
-                                                                                   .map(entry -> new EarlyLoadingException.ExceptionData(
-                                                                                           getErrorTranslationKey(entry),
-                                                                                           entry.identifier()
-                                                                                                .group() + ":" + entry.identifier()
-                                                                                                                      .artifact(),
-                                                                                           entry.sources()
-                                                                                                .stream()
-                                                                                                .flatMap(this::getModWithVersionRangeStream)
-                                                                                                .map(this::formatError)
-                                                                                                .collect(Collectors.joining(", "))))
-                                                                                   .toList();
+           .filter(entry -> !entry.sources()
+                                  .isEmpty()) //Should never be the case, but just to be sure
+           .map(entry -> new EarlyLoadingException.ExceptionData(
+                   getErrorTranslationKey(entry),
+                   entry.identifier()
+                        .group() + ":" + entry.identifier()
+                                              .artifact(),
+                   entry.sources()
+                        .stream()
+                        .flatMap(this::getModWithVersionRangeStream)
+                        .map(this::formatError)
+                        .collect(Collectors.joining(", "))))
+           .toList();
 
         return new EarlyLoadingException(failedDependencies.size() + " Dependency restrictions were not met.", null,
                 errors);
