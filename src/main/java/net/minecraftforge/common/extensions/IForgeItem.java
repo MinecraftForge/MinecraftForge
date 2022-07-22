@@ -655,11 +655,8 @@ public interface IForgeItem
     @Nullable
     default net.minecraftforge.common.capabilities.ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundTag nbt)
     {
-        net.minecraftforge.common.capabilities.ICapabilityProvider shulkerBoxCap =
-                ShulkerItemStackInvWrapper.AttachmentHandler.listenCapabilitiesAttachment(stack);
-        if (shulkerBoxCap != null)
-            return shulkerBoxCap;
-        return null;
+        var ret = ShulkerItemStackInvWrapper.createDefaultProvider(stack);
+        return ret;
     }
 
     /**
