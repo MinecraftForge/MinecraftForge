@@ -66,6 +66,14 @@
           this.f_129726_ = Util.m_137550_();
           this.f_129757_.m_134908_(Component.m_237113_(this.f_129709_));
           this.f_129757_.m_134912_(new ServerStatus.Version(SharedConstants.m_183709_().getName(), SharedConstants.m_183709_().getProtocolVersion()));
+@@ -633,6 +_,7 @@
+                f_129750_.warn("Can't keep up! Is the server overloaded? Running {}ms or {} ticks behind", i, j);
+                this.f_129726_ += j * 50L;
+                this.f_129718_ = this.f_129726_;
++               net.minecraftforge.server.ServerLifecycleHooks.handleServerOverloaded(this, i, j, this.f_129718_);
+             }
+ 
+             if (this.f_177877_) {
 @@ -653,6 +_,8 @@
              this.f_129717_ = true;
              JvmProfiler.f_185340_.m_183597_(this.f_129737_);
