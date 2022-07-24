@@ -189,7 +189,7 @@ public class ServerLifecycleHooks
         System.exit(retVal);
     }
 
-    public static void handleServerOverloaded(final MinecraftServer server, final long msBehind, final long ticksBehind, final long lastOverloadWarningMs)
+    public static void onServerOverloaded(final MinecraftServer server, final long msBehind, final long ticksBehind, final long lastOverloadWarningMs)
     {
         MinecraftForge.EVENT_BUS.post(new ServerOverloadedEvent(server, msBehind, ticksBehind, lastOverloadWarningMs));
     }

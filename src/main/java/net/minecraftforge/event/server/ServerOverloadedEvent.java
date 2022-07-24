@@ -3,10 +3,13 @@ package net.minecraftforge.event.server;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Cancelable;
+import net.minecraftforge.server.ServerLifecycleHooks;
 
 /**
  * ServerOverloadedEvent is fired when the server is running behind ticking schedule and can't keep up.<br>
- * This event is fired via (todo) <br>
+ * <br>
+ * This event is fired via {@link ServerLifecycleHooks#onServerOverloaded(MinecraftServer, long, long, long)},
+ * which is executed from {@link MinecraftServer#runServer()} <br>
  * <br>
  * {@link #msBehind} contains the amount of milliseconds the server is behind schedule.<br>
  * {@link #ticksBehind} contains the number of ticks the server is behind schedule.<br>
