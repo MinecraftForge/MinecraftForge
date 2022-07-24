@@ -61,6 +61,7 @@ import net.minecraftforge.event.server.ServerStartedEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.event.server.ServerStoppedEvent;
 import net.minecraftforge.event.server.ServerStoppingEvent;
+import net.minecraftforge.event.server.ServerOverloadedEvent;
 import net.minecraftforge.fml.loading.FileUtils;
 import net.minecraftforge.forgespi.language.IModInfo;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -186,6 +187,11 @@ public class ServerLifecycleHooks
     public static void handleExit(int retVal)
     {
         System.exit(retVal);
+    }
+
+    public static void handleServerOverloaded(final MinecraftServer server, final long msBehind, final long ticksBehind, final long lastOverloadWarningMs)
+    {
+        MinecraftForge.EVENT_BUS.post(new ServerOverloadedEvent(server, msBehind, ticksBehind, lastOverloadWarningMs));
     }
 
     //INTERNAL MODDERS DO NOT USE
