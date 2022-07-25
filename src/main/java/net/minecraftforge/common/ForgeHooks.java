@@ -190,6 +190,7 @@ public class ForgeHooks
      * Called when a player uses 'pick block', calls new Entity and Block hooks.
      */
     @SuppressWarnings("resource")
+    @Deprecated(forRemoval = true, since = "1.19")
     public static boolean onPickBlock(HitResult target, Player player, Level level)
     {
         ItemStack result = ItemStack.EMPTY;

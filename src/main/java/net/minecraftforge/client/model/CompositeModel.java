@@ -272,14 +272,14 @@ public class CompositeModel implements IUnbakedGeometry<CompositeModel>
 
             private void addLayer(RenderTypeGroup renderTypes, List<BakedQuad> quads)
             {
-                var modelBuilder = IModelBuilder.of(true, isSideLit, false, transforms, overrides, particle, renderTypes);
+                var modelBuilder = IModelBuilder.of(isAmbientOcclusion, isSideLit, isGui3d, transforms, overrides, particle, renderTypes);
                 quads.forEach(modelBuilder::addUnculledFace);
                 children.add(modelBuilder.build());
             }
 
             private void flushQuads(RenderTypeGroup renderTypes)
             {
-                if (Objects.equals(renderTypes, lastRenderTypes))
+                if (!Objects.equals(renderTypes, lastRenderTypes))
                 {
                     if (quads.size() > 0)
                     {
