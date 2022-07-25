@@ -238,7 +238,8 @@ modId="mod_mismatch_test"
 modId="custom_transformtype_test"
 [[mods]]
 modId="mega_model_test"
-
+[[mods]]
+modId="anvil_update_event_fix"
 
 
 # ADD ABOVE THIS LINE
