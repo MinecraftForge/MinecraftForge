@@ -221,7 +221,7 @@
              if (d0 < 0.05D && d0 >= -0.05D) {
                 d0 = 0.0D;
              } else if (d0 > 0.0D) {
-@@ -1064,10 +_,12 @@
+@@ -1064,10 +_,11 @@
     }
  
     private boolean m_36386_() {
@@ -230,7 +230,6 @@
     }
  
     public void m_5706_(Entity p_36347_) {
-+      this.attackStrength = 0.0F;
 +      if (!net.minecraftforge.common.ForgeHooks.onPlayerAttackTarget(this, p_36347_)) return;
        if (p_36347_.m_6097_()) {
           if (!p_36347_.m_7313_(this)) {
@@ -303,6 +302,14 @@
                          this.m_21008_(InteractionHand.MAIN_HAND, ItemStack.f_41583_);
                       }
                    }
+@@ -1214,6 +_,7 @@
+ 
+          }
+       }
++      this.attackStrength = 0.0F;
+    }
+ 
+    protected void m_6727_(LivingEntity p_36355_) {
 @@ -1227,7 +_,7 @@
        }
  
