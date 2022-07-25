@@ -39,6 +39,7 @@ import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.ToolAction;
 import net.minecraftforge.common.ToolActions;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public interface IForgeBlockState
@@ -441,7 +442,7 @@ public interface IForgeBlockState
      * @param other Other block
      * @return True to link blocks
      */
-    default boolean canStickTo(BlockState other)
+    default boolean canStickTo(@NotNull BlockState other)
     {
         return self().getBlock().canStickTo(self(), other);
     }

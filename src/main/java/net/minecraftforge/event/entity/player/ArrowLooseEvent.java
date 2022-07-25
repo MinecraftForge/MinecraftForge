@@ -24,6 +24,7 @@ import org.jetbrains.annotations.NotNull;
  * <br>
  * This event is {@link Cancelable}.<br>
  * If this event is canceled, the player does not stop using the bow.<br>
+ * For crossbows, the charge will always be 1; Set it to -1 in order to prevent firing the arrow. <br>
  * <br>
  * This event does not have a result. {@link HasResult}<br>
  * <br>
