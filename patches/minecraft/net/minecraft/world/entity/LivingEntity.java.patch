@@ -649,11 +649,14 @@
              if (!p_21065_.f_46443_ && pair.getFirst() != null && p_21065_.f_46441_.m_188501_() < pair.getSecond()) {
                 p_21066_.m_7292_(new MobEffectInstance(pair.getFirst()));
              }
-@@ -3231,6 +_,70 @@
+@@ -3231,6 +_,73 @@
        this.m_21166_(p_21191_ == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND);
     }
  
 +   /* ==== FORGE START ==== */
++   /**
++    * Tracks the attack strength of the player as set within {@link net.minecraft.world.entity.player.Player#attack(Entity)} for outside usage
++    */
 +   protected float attackStrength;
 +
 +   public float getAttackStrength() {
