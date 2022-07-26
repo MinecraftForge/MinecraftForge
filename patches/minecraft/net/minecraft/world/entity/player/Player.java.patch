@@ -238,7 +238,7 @@
              }
  
              float f2 = this.m_36403_(0.5F);
-+            this.attackStrength = f2; // Forge: Stores the player's attack strength for usage outside this method
++            this.cachedAttackStrength = f2; // Forge: Stores the player's attack strength for usage outside this method
              f *= 0.2F + f2 * f2 * 0.8F;
              f1 *= f2;
              this.m_36334_();
@@ -306,7 +306,7 @@
  
           }
        }
-+      this.attackStrength = 0.0F; // Forge: Resets the attackStrength field once the attack code is finished
++      this.cachedAttackStrength = 0.0F; // Forge: Resets the attackStrength field once the attack code is finished
     }
  
     protected void m_6727_(LivingEntity p_36355_) {

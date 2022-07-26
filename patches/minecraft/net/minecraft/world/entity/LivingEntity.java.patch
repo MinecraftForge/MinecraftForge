@@ -657,10 +657,10 @@
 +   /**
 +    * Tracks the attack strength of the player as set within {@link net.minecraft.world.entity.player.Player#attack(Entity)} for outside usage
 +    */
-+   protected float attackStrength;
++   protected float cachedAttackStrength;
 +
-+   public float getAttackStrength() {
-+      return this.attackStrength;
++   public float getCachedAttackStrength() {
++      return this.cachedAttackStrength;
 +   }
 +
 +   /***
