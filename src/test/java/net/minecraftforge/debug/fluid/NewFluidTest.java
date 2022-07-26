@@ -12,7 +12,7 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.LevelAccessor;
-import net.minecraftforge.client.IFluidTypeRenderProperties;
+import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.minecraftforge.fluids.DispenseFluidContainer;
 import net.minecraftforge.fluids.FluidType;
 import org.apache.commons.lang3.Validate;
@@ -73,9 +73,9 @@ public class NewFluidTest
     public static RegistryObject<FluidType> test_fluid_type = FLUID_TYPES.register("test_fluid", () -> new FluidType(FluidType.Properties.create())
     {
         @Override
-        public void initializeClient(Consumer<IFluidTypeRenderProperties> consumer)
+        public void initializeClient(Consumer<IClientFluidTypeExtensions> consumer)
         {
-            consumer.accept(new IFluidTypeRenderProperties()
+            consumer.accept(new IClientFluidTypeExtensions()
             {
                 @Override
                 public ResourceLocation getStillTexture()
@@ -97,7 +97,7 @@ public class NewFluidTest
                 }
 
                 @Override
-                public int getColorTint()
+                public int getTintColor()
                 {
                     return 0x3F1080FF;
                 }

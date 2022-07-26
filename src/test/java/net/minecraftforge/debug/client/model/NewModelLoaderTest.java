@@ -5,20 +5,17 @@
 
 package net.minecraftforge.debug.client.model;
 
-import com.google.common.collect.ImmutableList;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import com.mojang.datafixers.util.Pair;
+import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-import com.mojang.blaze3d.vertex.VertexFormatElement;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.core.Direction;
@@ -27,25 +24,24 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraft.world.level.BlockGetter;
-import net.minecraftforge.client.event.ModelRegistryEvent;
+import net.minecraftforge.client.event.ModelEvent;
 import net.minecraftforge.client.model.IModelBuilder;
-import net.minecraftforge.client.model.IModelConfiguration;
-import net.minecraftforge.client.model.IModelLoader;
-import net.minecraftforge.client.model.ModelLoaderRegistry;
+import net.minecraftforge.client.model.geometry.IGeometryBakingContext;
+import net.minecraftforge.client.model.geometry.IGeometryLoader;
 import net.minecraftforge.client.model.generators.BlockModelBuilder;
 import net.minecraftforge.client.model.generators.BlockStateProvider;
 import net.minecraftforge.client.model.generators.ConfiguredModel;
 import net.minecraftforge.client.model.generators.ItemModelProvider;
 import net.minecraftforge.client.model.generators.loaders.ItemLayersModelBuilder;
-import net.minecraftforge.client.model.generators.loaders.OBJLoaderBuilder;
-import net.minecraftforge.client.model.generators.loaders.SeparatePerspectiveModelBuilder;
-import net.minecraftforge.client.model.geometry.ISimpleModelGeometry;
-import net.minecraftforge.client.model.pipeline.BakedQuadBuilder;
+import net.minecraftforge.client.model.generators.loaders.ObjModelBuilder;
+import net.minecraftforge.client.model.generators.loaders.SeparateTransformsModelBuilder;
+import net.minecraftforge.client.model.geometry.SimpleUnbakedGeometry;
+import net.minecraftforge.client.model.pipeline.QuadBakingVertexConsumer;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.RegistryObject;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.forge.event.lifecycle.GatherDataEvent;
+import net.minecraftforge.data.event.GatherDataEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -139,75 +135,45 @@ public class NewModelLoaderTest
         modEventBus.addListener(this::datagen);
     }
 
-    public void modelRegistry(ModelRegistryEvent event)
+    public void modelRegistry(ModelEvent.RegisterGeometryLoaders event)
     {
-        ModelLoaderRegistry.registerLoader(new ResourceLocation(MODID, "custom_loader"), new TestLoader());
+        event.register("custom_loader", new TestLoader());
     }
 
-    static class TestLoader implements IModelLoader<TestModel>
+    static class TestLoader implements IGeometryLoader<TestModel>
     {
         @Override
-        public void onResourceManagerReload(ResourceManager resourceManager)
-        {
-        }
-
-        @Override
-        public TestModel read(JsonDeserializationContext deserializationContext, JsonObject modelContents)
+        public TestModel read(JsonObject jsonObject, JsonDeserializationContext deserializationContext)
         {
             return new TestModel();
         }
     }
 
-    static class TestModel implements ISimpleModelGeometry<TestModel>
+    static class TestModel extends SimpleUnbakedGeometry<TestModel>
     {
         @Override
-        public void addQuads(IModelConfiguration owner, IModelBuilder<?> modelBuilder, ModelBakery bakery, Function< net.minecraft.client.resources.model.Material, TextureAtlasSprite> spriteGetter, ModelState modelTransform, ResourceLocation modelLocation)
+        protected void addQuads(IGeometryBakingContext owner, IModelBuilder<?> modelBuilder, ModelBakery bakery, Function< net.minecraft.client.resources.model.Material, TextureAtlasSprite> spriteGetter, ModelState modelTransform, ResourceLocation modelLocation)
         {
-            TextureAtlasSprite texture = spriteGetter.apply(owner.resolveTexture("particle"));
+            TextureAtlasSprite texture = spriteGetter.apply(owner.getMaterial("particle"));
 
-            BakedQuadBuilder builder = new BakedQuadBuilder();
+            var quad = new BakedQuad[1];
+            var quadBaker = new QuadBakingVertexConsumer(q -> quad[0] = q);
 
-            builder.setTexture(texture);
-            builder.setQuadOrientation(Direction.UP);
+            quadBaker.setDirection(Direction.UP);
+            quadBaker.setSprite(texture);
 
-            putVertex(builder, 0,1,0.5f, texture.getU(0), texture.getV(0), 1, 1, 1);
-            putVertex(builder, 0,0,0.5f, texture.getU(0), texture.getV(16), 1, 1, 1);
-            putVertex(builder, 1,0,0.5f, texture.getU(16), texture.getV(16), 1, 1, 1);
-            putVertex(builder, 1,1,0.5f, texture.getU(16), texture.getV(0), 1, 1, 1);
+            quadBaker.vertex(0, 1, 0.5f).color(255, 255, 255, 255).uv(texture.getU(0), texture.getV(0)).uv2(0).normal(0, 0, 0).endVertex();
+            quadBaker.vertex(0, 0, 0.5f).color(255, 255, 255, 255).uv(texture.getU(0), texture.getV(16)).uv2(0).normal(0, 0, 0).endVertex();
+            quadBaker.vertex(1, 0, 0.5f).color(255, 255, 255, 255).uv(texture.getU(16), texture.getV(16)).uv2(0).normal(0, 0, 0).endVertex();
+            quadBaker.vertex(1, 1, 0.5f).color(255, 255, 255, 255).uv(texture.getU(16), texture.getV(0)).uv2(0).normal(0, 0, 0).endVertex();
 
-            modelBuilder.addGeneralQuad(builder.build());
-        }
-
-        private void putVertex(BakedQuadBuilder builder, int x, float y, float z, float u, float v, float red, float green, float blue)
-        {
-            ImmutableList<VertexFormatElement> elements = DefaultVertexFormat.BLOCK.getElements();
-            for(int i=0;i<elements.size();i++)
-            {
-                switch(elements.get(i).getUsage())
-                {
-                    case POSITION:
-                        builder.put(i, x, y, z);
-                        break;
-                    case UV:
-                        if (elements.get(i).getIndex() == 0)
-                            builder.put(i, u, v);
-                        else
-                            builder.put(i);
-                        break;
-                    case COLOR:
-                        builder.put(i, red, green, blue, 1.0f);
-                        break;
-                    default:
-                        builder.put(i);
-                        break;
-                }
-            }
+            modelBuilder.addUnculledFace(quad[0]);
         }
 
         @Override
-        public Collection< net.minecraft.client.resources.model.Material> getTextures(IModelConfiguration owner, Function<ResourceLocation, UnbakedModel> modelGetter, Set<Pair<String, String>> missingTextureErrors)
+        public Collection< net.minecraft.client.resources.model.Material> getMaterials(IGeometryBakingContext context, Function<ResourceLocation, UnbakedModel> modelGetter, Set<Pair<String, String>> missingTextureErrors)
         {
-            return Collections.singleton(owner.resolveTexture("particle"));
+            return Collections.singleton(context.getMaterial("particle"));
         }
     }
 
@@ -235,10 +201,10 @@ public class NewModelLoaderTest
                     .texture("layer0", "minecraft:item/coal")
                     .texture("layer1", "minecraft:item/stick")
                     .customLoader(ItemLayersModelBuilder::begin)
-                        .fullbright(1)
+                        .emissive(1)
                     .end();
             withExistingParent(NewModelLoaderTest.separate_perspective.getId().getPath(), "forge:item/default")
-                    .customLoader(SeparatePerspectiveModelBuilder::begin)
+                    .customLoader(SeparateTransformsModelBuilder::begin)
                         .base(nested().parent(getExistingFile(mcLoc("minecraft:item/coal"))))
                         .perspective(ItemTransforms.TransformType.GUI, nested().parent(getExistingFile(mcLoc("minecraft:item/snowball"))))
                         .perspective(ItemTransforms.TransformType.FIRST_PERSON_LEFT_HAND, nested().parent(getExistingFile(mcLoc("minecraft:item/bone"))))
@@ -258,7 +224,7 @@ public class NewModelLoaderTest
         {
             BlockModelBuilder model = models()
                     .getBuilder(NewModelLoaderTest.obj_block.getId().getPath())
-                    .customLoader(OBJLoaderBuilder::begin)
+                    .customLoader(ObjModelBuilder::begin)
                             .modelLocation(new ResourceLocation("new_model_loader_test:models/item/sugar_glider.obj"))
                             .flipV(true)
                     .end()

@@ -4,7 +4,7 @@
     private long f_96715_;
     @Nullable
     private TitleScreen.WarningLabel f_232768_;
-+   private net.minecraftforge.client.gui.NotificationModUpdateScreen modUpdateNotification;
++   private net.minecraftforge.client.gui.TitleScreenModUpdateIndicator modUpdateNotification;
  
     public TitleScreen() {
        this(false);
@@ -21,7 +21,7 @@
 +            this.f_96541_.m_91152_(new net.minecraftforge.client.gui.ModListScreen(this));
 +         }));
        }
-+      modUpdateNotification = net.minecraftforge.client.gui.NotificationModUpdateScreen.init(this, modButton);
++      modUpdateNotification = net.minecraftforge.client.gui.TitleScreenModUpdateIndicator.init(this, modButton);
  
        this.m_142416_(new ImageButton(this.f_96543_ / 2 - 124, l + 72 + 12, 20, 20, 0, 106, 20, Button.f_93617_, 256, 256, (p_96791_) -> {
           this.f_96541_.m_91152_(new LanguageSelectScreen(this, this.f_96541_.f_91066_, this.f_96541_.m_91102_()));

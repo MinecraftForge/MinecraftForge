@@ -1,10 +1,13 @@
 {
   "values": [
-    "minecraft:swamp",
-    "minecraft:jungle",
-    "minecraft:sparse_jungle",
-    "minecraft:sparse_jungle",
-    "minecraft:bamboo_jungle",
-    "minecraft:lush_caves"
+    "#forge:is_wet/overworld",
+    {
+      "id": "#forge:is_wet/nether",
+      "required": false
+    },
+    {
+      "id": "#forge:is_wet/end",
+      "required": false
+    }
   ]
 }

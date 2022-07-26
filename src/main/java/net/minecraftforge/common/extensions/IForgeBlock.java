@@ -23,7 +23,9 @@ import net.minecraft.world.entity.projectile.WitherSkull;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.block.*;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.level.material.MaterialColor;
 import net.minecraft.world.level.pathfinder.BlockPathTypes;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.core.Direction;
@@ -846,6 +848,19 @@ public interface IForgeBlock
     }
 
     /**
+     * Called after the {@link BlockState} at the given {@link BlockPos} was changed and neighbors were updated.
+     * This method is called on the server and client side.
+     * Modifying the level is disallowed in this method.
+     * Useful for calculating additional data based on the new state and the neighbor's reactions to the state change.
+     *
+     * @param level The level the state was modified in
+     * @param pos The blocks position in the level
+     * @param oldState The previous state of the block at the given position, may be a different block than this one
+     * @param newState The new state of the block at the given position
+     */
+    default void onBlockStateChange(LevelReader level, BlockPos pos, BlockState oldState, BlockState newState) { }
+
+    /**
      * Returns whether the block can be hydrated by a fluid.
      *
      * <p>Hydration is an arbitrary word which depends on the block.
@@ -865,5 +880,18 @@ public interface IForgeBlock
     default boolean canBeHydrated(BlockState state, BlockGetter getter, BlockPos pos, FluidState fluid, BlockPos fluidPos)
     {
         return fluid.canHydrate(getter, fluidPos, state, pos);
+    }
+
+    /**
+     * Returns the {@link MaterialColor} shown on the map.
+     *
+     * @param state The state of this block
+     * @param level The level this block is in
+     * @param pos The blocks position in the level
+     * @param defaultColor The {@code MaterialColor} configured for the given {@code BlockState} in the {@link BlockBehaviour.Properties}
+     */
+    default MaterialColor getMapColor(BlockState state, BlockGetter level, BlockPos pos, MaterialColor defaultColor)
+    {
+        return defaultColor;
     }
 }

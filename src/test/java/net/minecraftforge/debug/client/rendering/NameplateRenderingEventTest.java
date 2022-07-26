@@ -9,7 +9,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.animal.Cow;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.ChatFormatting;
-import net.minecraftforge.client.event.RenderNameplateEvent;
+import net.minecraftforge.client.event.RenderNameTagEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -24,7 +24,7 @@ public class NameplateRenderingEventTest
     static final boolean ENABLED = false;
 
     @SubscribeEvent
-    public static void onNameplateRender(RenderNameplateEvent event)
+    public static void onNameplateRender(RenderNameTagEvent event)
     {
 
         if(!ENABLED)

@@ -1,14 +1,38 @@
 --- a/net/minecraft/client/renderer/block/model/ItemTransform.java
 +++ b/net/minecraft/client/renderer/block/model/ItemTransform.java
-@@ -14,7 +_,11 @@
- import net.minecraftforge.api.distmarker.Dist;
- import net.minecraftforge.api.distmarker.OnlyIn;
- 
-+/**
-+ * @deprecated use {@link com.mojang.math.Transformation} through {@link net.minecraftforge.client.extensions.IForgeBakedModel#handlePerspective}
-+ */
- @OnlyIn(Dist.CLIENT)
-+@Deprecated
- public class ItemTransform {
-    public static final ItemTransform f_111754_ = new ItemTransform(new Vector3f(), new Vector3f(), new Vector3f(1.0F, 1.0F, 1.0F));
+@@ -20,11 +_,17 @@
     public final Vector3f f_111755_;
+    public final Vector3f f_111756_;
+    public final Vector3f f_111757_;
++   public final Vector3f rightRotation;
+ 
+    public ItemTransform(Vector3f p_111760_, Vector3f p_111761_, Vector3f p_111762_) {
++      this(p_111760_, p_111761_, p_111762_, Vector3f.f_176763_);
++   }
++
++   public ItemTransform(Vector3f p_111760_, Vector3f p_111761_, Vector3f p_111762_, Vector3f rightRotation) {
+       this.f_111755_ = p_111760_.m_122281_();
+       this.f_111756_ = p_111761_.m_122281_();
+       this.f_111757_ = p_111762_.m_122281_();
++      this.rightRotation = rightRotation.m_122281_();
+    }
+ 
+    public void m_111763_(boolean p_111764_, PoseStack p_111765_) {
+@@ -41,6 +_,7 @@
+          p_111765_.m_85837_((double)((float)i * this.f_111756_.m_122239_()), (double)this.f_111756_.m_122260_(), (double)this.f_111756_.m_122269_());
+          p_111765_.m_85845_(new Quaternion(f, f1, f2, true));
+          p_111765_.m_85841_(this.f_111757_.m_122239_(), this.f_111757_.m_122260_(), this.f_111757_.m_122269_());
++         p_111765_.m_85845_(new Quaternion(rightRotation.m_122239_(), rightRotation.m_122260_() * (p_111764_ ? -1 : 1), rightRotation.m_122269_() * (p_111764_ ? -1 : 1), true));
+       }
+    }
+ 
+@@ -77,7 +_,8 @@
+          vector3f1.m_122242_(-5.0F, 5.0F);
+          Vector3f vector3f2 = this.m_111778_(jsonobject, "scale", f_111771_);
+          vector3f2.m_122242_(-4.0F, 4.0F);
+-         return new ItemTransform(vector3f, vector3f1, vector3f2);
++         Vector3f rightRotation = this.m_111778_(jsonobject, "right_rotation", f_111769_);
++         return new ItemTransform(vector3f, vector3f1, vector3f2, rightRotation);
+       }
+ 
+       private Vector3f m_111778_(JsonObject p_111779_, String p_111780_, Vector3f p_111781_) {

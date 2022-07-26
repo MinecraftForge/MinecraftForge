@@ -99,11 +99,11 @@
  
     public boolean m_8120_(ItemStack p_41456_) {
 -      return this.m_41459_() == 1 && this.m_41465_();
-+      return this.getItemStackLimit(p_41456_) == 1 && this.isDamageable(p_41456_);
++      return this.getMaxStackSize(p_41456_) == 1 && this.isDamageable(p_41456_);
     }
  
     protected static BlockHitResult m_41435_(Level p_41436_, Player p_41437_, ClipContext.Fluid p_41438_) {
-@@ -305,8 +_,8 @@
+@@ -305,11 +_,13 @@
        float f5 = Mth.m_14031_(-f * ((float)Math.PI / 180F));
        float f6 = f3 * f4;
        float f7 = f2 * f4;
@@ -114,6 +114,11 @@
        return p_41436_.m_45547_(new ClipContext(vec3, vec31, ClipContext.Block.OUTLINE, p_41438_, p_41437_));
     }
  
++   /** Forge: Use ItemStack sensitive version. */
++   @Deprecated
+    public int m_6473_() {
+       return 0;
+    }
 @@ -322,6 +_,7 @@
     }
  
@@ -179,7 +184,7 @@
 +      }
 +   }
 +
-+   public void initializeClient(java.util.function.Consumer<net.minecraftforge.client.IItemRenderProperties> consumer) {
++   public void initializeClient(java.util.function.Consumer<net.minecraftforge.client.extensions.common.IClientItemExtensions> consumer) {
 +   }
 +   // END FORGE
 +

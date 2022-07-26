@@ -42,7 +42,7 @@
 +      }
 +   }
 +
-+   public void initializeClient(java.util.function.Consumer<net.minecraftforge.client.EffectRenderer> consumer) {
++   public void initializeClient(java.util.function.Consumer<net.minecraftforge.client.extensions.common.IClientMobEffectExtensions> consumer) {
 +   }
 +   // END FORGE
 +

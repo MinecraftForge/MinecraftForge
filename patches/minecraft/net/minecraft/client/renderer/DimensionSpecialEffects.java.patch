@@ -1,49 +1,20 @@
 --- a/net/minecraft/client/renderer/DimensionSpecialEffects.java
 +++ b/net/minecraft/client/renderer/DimensionSpecialEffects.java
-@@ -27,6 +_,10 @@
-    private final DimensionSpecialEffects.SkyType f_108861_;
-    private final boolean f_108862_;
-    private final boolean f_108863_;
-+   private net.minecraftforge.client.IWeatherRenderHandler weatherRenderHandler = null;
-+   private net.minecraftforge.client.IWeatherParticleRenderHandler weatherParticleRenderHandler = null;
-+   private net.minecraftforge.client.ISkyRenderHandler skyRenderHandler = null;
-+   private net.minecraftforge.client.ICloudRenderHandler cloudRenderHandler = null;
+@@ -13,7 +_,7 @@
+ import net.minecraftforge.api.distmarker.OnlyIn;
  
-    public DimensionSpecialEffects(float p_108866_, boolean p_108867_, DimensionSpecialEffects.SkyType p_108868_, boolean p_108869_, boolean p_108870_) {
-       this.f_108859_ = p_108866_;
-@@ -81,6 +_,35 @@
- 
-    public boolean m_108885_() {
-       return this.f_108863_;
-+   }
-+
-+   public void setWeatherRenderHandler(net.minecraftforge.client.IWeatherRenderHandler weatherRenderHandler) {
-+      this.weatherRenderHandler = weatherRenderHandler;
-+   }
-+   public void setWeatherParticleRenderHandler(net.minecraftforge.client.IWeatherParticleRenderHandler weatherParticleRenderHandler) {
-+      this.weatherParticleRenderHandler = weatherParticleRenderHandler;
-+   }
-+   public void setSkyRenderHandler(net.minecraftforge.client.ISkyRenderHandler skyRenderHandler) {
-+      this.skyRenderHandler = skyRenderHandler;
-+   }
-+   public void setCloudRenderHandler(net.minecraftforge.client.ICloudRenderHandler cloudRenderHandler) {
-+      this.cloudRenderHandler = cloudRenderHandler;
-+   }
-+   @Nullable
-+   public net.minecraftforge.client.ICloudRenderHandler getCloudRenderHandler() {
-+      return cloudRenderHandler;
-+   }
-+   @Nullable
-+   public net.minecraftforge.client.IWeatherRenderHandler getWeatherRenderHandler() {
-+      return weatherRenderHandler;
-+   }
-+   @Nullable
-+   public net.minecraftforge.client.IWeatherParticleRenderHandler getWeatherParticleRenderHandler() {
-+      return weatherParticleRenderHandler;
-+   }
-+   @Nullable
-+   public net.minecraftforge.client.ISkyRenderHandler getSkyRenderHandler() {
-+      return skyRenderHandler;
+ @OnlyIn(Dist.CLIENT)
+-public abstract class DimensionSpecialEffects {
++public abstract class DimensionSpecialEffects implements net.minecraftforge.client.extensions.IForgeDimensionSpecialEffects {
+    private static final Object2ObjectMap<ResourceLocation, DimensionSpecialEffects> f_108857_ = Util.m_137469_(new Object2ObjectArrayMap<>(), (p_108881_) -> {
+       DimensionSpecialEffects.OverworldEffects dimensionspecialeffects$overworldeffects = new DimensionSpecialEffects.OverworldEffects();
+       p_108881_.defaultReturnValue(dimensionspecialeffects$overworldeffects);
+@@ -37,7 +_,7 @@
     }
  
-    @OnlyIn(Dist.CLIENT)
+    public static DimensionSpecialEffects m_108876_(DimensionType p_108877_) {
+-      return f_108857_.get(p_108877_.f_63837_());
++      return net.minecraftforge.client.DimensionSpecialEffectsManager.getForType(p_108877_.f_63837_());
+    }
+ 
+    @Nullable

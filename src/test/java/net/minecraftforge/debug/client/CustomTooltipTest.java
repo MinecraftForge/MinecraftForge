@@ -17,7 +17,6 @@ import net.minecraft.client.gui.font.FontManager;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.client.renderer.entity.ItemRenderer;
-import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.packs.resources.ReloadableResourceManager;
 import net.minecraft.world.InteractionHand;
@@ -31,7 +30,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.MinecraftForgeClient;
+import net.minecraftforge.client.event.RegisterClientTooltipComponentFactoriesEvent;
 import net.minecraftforge.client.event.RenderTooltipEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -142,13 +141,18 @@ public class CustomTooltipTest
         @SubscribeEvent
         public static void clientSetup(FMLClientSetupEvent event)
         {
-            MinecraftForgeClient.registerTooltipComponentFactory(CustomTooltip.class, CustomClientTooltip::new);
             event.enqueueWork(() -> {
                 customFontManager = new FontManager(Minecraft.getInstance().textureManager);
                 customFont = customFontManager.createFont();
                 ((ReloadableResourceManager) Minecraft.getInstance().getResourceManager()).registerReloadListener(customFontManager.getReloadListener());
                 customFontManager.setRenames(ImmutableMap.of(Minecraft.DEFAULT_FONT, Minecraft.UNIFORM_FONT));
             });
+        }
+
+        @SubscribeEvent
+        public static void onRegisterClientTooltipComponentFactories(RegisterClientTooltipComponentFactoriesEvent event)
+        {
+            event.register(CustomTooltip.class, CustomClientTooltip::new);
         }
 
     }

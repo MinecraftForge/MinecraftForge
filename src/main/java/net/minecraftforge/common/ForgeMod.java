@@ -53,9 +53,7 @@ import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.pathfinder.BlockPathTypes;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.IFluidTypeRenderProperties;
-import net.minecraftforge.client.model.ModelLoaderRegistry;
+import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.common.crafting.CompoundIngredient;
 import net.minecraftforge.common.crafting.ConditionalRecipe;
@@ -105,13 +103,12 @@ import net.minecraftforge.fml.StartupMessageManager;
 import net.minecraftforge.fml.VersionChecker;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.fml.loading.FMLEnvironment;
-import net.minecraftforge.forge.event.lifecycle.GatherDataEvent;
-import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.fml.event.lifecycle.*;
+import net.minecraftforge.registries.*;
 import net.minecraftforge.network.NetworkConstants;
+import net.minecraftforge.event.server.ServerStoppingEvent;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.data.event.GatherDataEvent;
 import net.minecraftforge.network.filters.VanillaPacketSplitter;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeDeferredRegistriesSetup;
@@ -129,6 +126,44 @@ import net.minecraftforge.server.command.EnumArgument;
 import net.minecraftforge.server.command.ModIdArgument;
 import net.minecraftforge.versions.forge.ForgeVersion;
 import net.minecraftforge.versions.mcp.MCPVersion;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import net.minecraft.data.DataGenerator;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.common.crafting.CompoundIngredient;
+import net.minecraftforge.common.crafting.ConditionalRecipe;
+import net.minecraftforge.common.crafting.CraftingHelper;
+import net.minecraftforge.common.crafting.StrictNBTIngredient;
+import net.minecraftforge.common.crafting.VanillaIngredientSerializer;
+import net.minecraftforge.common.crafting.conditions.AndCondition;
+import net.minecraftforge.common.crafting.conditions.FalseCondition;
+import net.minecraftforge.common.crafting.conditions.ItemExistsCondition;
+import net.minecraftforge.common.crafting.conditions.ModLoadedCondition;
+import net.minecraftforge.common.crafting.conditions.NotCondition;
+import net.minecraftforge.common.crafting.conditions.OrCondition;
+import net.minecraftforge.common.crafting.conditions.TagEmptyCondition;
+import net.minecraftforge.common.crafting.conditions.TrueCondition;
+import net.minecraftforge.common.data.ForgeBlockTagsProvider;
+import net.minecraftforge.common.data.ForgeItemTagsProvider;
+import net.minecraftforge.common.data.ForgeLootTableProvider;
+import net.minecraftforge.common.data.ForgeRecipeProvider;
+import net.minecraftforge.energy.CapabilityEnergy;
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.fml.common.Mod;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
+
+import com.mojang.datafixers.util.Either;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.*;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 @Mod("forge")
 public class ForgeMod
@@ -189,7 +224,7 @@ public class ForgeMod
                 Decoration.CODEC.fieldOf("step").forGetter(AddFeaturesBiomeModifier::step)
             ).apply(builder, AddFeaturesBiomeModifier::new))
         );
-    
+
     /**
      * Stock biome modifier for removing features from biomes.
      */
@@ -203,7 +238,7 @@ public class ForgeMod
                     ).optionalFieldOf("steps", EnumSet.allOf(Decoration.class)).forGetter(RemoveFeaturesBiomeModifier::steps)
             ).apply(builder, RemoveFeaturesBiomeModifier::new))
         );
-    
+
     /**
      * Stock biome modifier for adding mob spawns to biomes.
      */
@@ -218,7 +253,7 @@ public class ForgeMod
                     ).fieldOf("spawners").forGetter(AddSpawnsBiomeModifier::spawners)
             ).apply(builder, AddSpawnsBiomeModifier::new))
         );
-    
+
     /**
      * Stock biome modifier for removing mob spawns from biomes.
      */
@@ -281,9 +316,9 @@ public class ForgeMod
                 }
 
                 @Override
-                public void initializeClient(Consumer<IFluidTypeRenderProperties> consumer)
+                public void initializeClient(Consumer<IClientFluidTypeExtensions> consumer)
                 {
-                    consumer.accept(new IFluidTypeRenderProperties()
+                    consumer.accept(new IClientFluidTypeExtensions()
                     {
                         private static final ResourceLocation UNDERWATER_LOCATION = new ResourceLocation("textures/misc/underwater.png"),
                                 WATER_STILL = new ResourceLocation("block/water_still"),
@@ -316,13 +351,13 @@ public class ForgeMod
                         }
 
                         @Override
-                        public int getColorTint()
+                        public int getTintColor()
                         {
                             return 0xFF3F76E4;
                         }
 
                         @Override
-                        public int getColorTint(FluidState state, BlockAndTintGetter getter, BlockPos pos)
+                        public int getTintColor(FluidState state, BlockAndTintGetter getter, BlockPos pos)
                         {
                             return BiomeColors.getAverageWaterColor(getter, pos) | 0xFF000000;
                         }
@@ -357,9 +392,9 @@ public class ForgeMod
                 }
 
                 @Override
-                public void initializeClient(Consumer<IFluidTypeRenderProperties> consumer)
+                public void initializeClient(Consumer<IClientFluidTypeExtensions> consumer)
                 {
-                    consumer.accept(new IFluidTypeRenderProperties()
+                    consumer.accept(new IClientFluidTypeExtensions()
                     {
                         private static final ResourceLocation LAVA_STILL = new ResourceLocation("block/lava_still"),
                                 LAVA_FLOW = new ResourceLocation("block/lava_flow");
@@ -443,11 +478,6 @@ public class ForgeMod
         MinecraftForge.EVENT_BUS.addListener(this::mappingChanged);
 
         ForgeRegistries.ITEMS.tags().addOptionalTagDefaults(Tags.Items.ENCHANTING_FUELS, Set.of(ForgeRegistries.ITEMS.getDelegateOrThrow(Items.LAPIS_LAZULI)));
-
-        if (FMLEnvironment.dist == Dist.CLIENT)
-        {
-            ModelLoaderRegistry.init();
-        }
     }
 
     public void registerCapabilities(RegisterCapabilitiesEvent event)
@@ -522,9 +552,9 @@ public class ForgeMod
             event.register(ForgeRegistries.Keys.FLUID_TYPES, helper -> helper.register(MILK_TYPE.getId(), new FluidType(FluidType.Properties.create().density(1024).viscosity(1024))
             {
                 @Override
-                public void initializeClient(Consumer<IFluidTypeRenderProperties> consumer)
+                public void initializeClient(Consumer<IClientFluidTypeExtensions> consumer)
                 {
-                    consumer.accept(new IFluidTypeRenderProperties()
+                    consumer.accept(new IClientFluidTypeExtensions()
                     {
                         private static final ResourceLocation MILK_STILL = new ResourceLocation("forge", "block/milk_still"),
                                 MILK_FLOW = new ResourceLocation("forge", "block/milk_flowing");
@@ -569,7 +599,7 @@ public class ForgeMod
             CraftingHelper.register(TagEmptyCondition.Serializer.INSTANCE);
 
             CraftingHelper.register(new ResourceLocation("forge", "compound"), CompoundIngredient.Serializer.INSTANCE);
-            CraftingHelper.register(new ResourceLocation("forge", "nbt"), NBTIngredient.Serializer.INSTANCE);
+            CraftingHelper.register(new ResourceLocation("forge", "nbt"), StrictNBTIngredient.Serializer.INSTANCE);
             CraftingHelper.register(new ResourceLocation("forge", "partial_nbt"), PartialNBTIngredient.Serializer.INSTANCE);
             CraftingHelper.register(new ResourceLocation("forge", "difference"), DifferenceIngredient.Serializer.INSTANCE);
             CraftingHelper.register(new ResourceLocation("forge", "intersection"), IntersectionIngredient.Serializer.INSTANCE);

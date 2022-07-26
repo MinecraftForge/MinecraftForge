@@ -21,7 +21,8 @@ import com.google.gson.JsonObject;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.properties.Property;
 
-public final class MultiPartBlockStateBuilder implements IGeneratedBlockstate {
+public final class MultiPartBlockStateBuilder implements IGeneratedBlockState
+{
 
     private final List<PartBuilder> parts = new ArrayList<>();
     private final Block owner;

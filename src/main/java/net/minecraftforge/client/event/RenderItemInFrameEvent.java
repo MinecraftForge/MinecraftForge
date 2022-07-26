@@ -15,7 +15,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.LogicalSide;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.ApiStatus;
 
 /**
  * Fired before an item stack is rendered in an item frame.
@@ -25,7 +25,7 @@ import org.jetbrains.annotations.NotNull;
  * If the event is cancelled, then the item stack will not be rendered</p>
  *
  * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
- * only on the {@linkplain LogicalSide#CLIENT logical client}. </p>
+ * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
  *
  * @see ItemFrameRenderer
  */
@@ -39,9 +39,7 @@ public class RenderItemInFrameEvent extends Event
     private final MultiBufferSource multiBufferSource;
     private final int packedLight;
 
-    /**
-     * @hidden
-     */
+    @ApiStatus.Internal
     public RenderItemInFrameEvent(ItemFrame itemFrame, ItemFrameRenderer<?> renderItemFrame, PoseStack poseStack,
                                   MultiBufferSource multiBufferSource, int packedLight)
     {
@@ -80,14 +78,16 @@ public class RenderItemInFrameEvent extends Event
     /**
      * {@return the pose stack used for rendering}
      */
-    public PoseStack getPoseStack() {
+    public PoseStack getPoseStack()
+    {
         return poseStack;
     }
 
     /**
      * {@return the source of rendering buffers}
      */
-    public MultiBufferSource getMultiBufferSource() {
+    public MultiBufferSource getMultiBufferSource()
+    {
         return multiBufferSource;
     }
 
@@ -96,7 +96,8 @@ public class RenderItemInFrameEvent extends Event
      *
      * @see LightTexture
      */
-    public int getPackedLight() {
+    public int getPackedLight()
+    {
         return packedLight;
     }
 }

@@ -11,6 +11,7 @@ import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
+import com.mojang.serialization.Codec;
 import com.mojang.serialization.Lifecycle;
 import java.util.LinkedHashSet;
 import net.minecraft.core.DefaultedRegistry;
@@ -37,7 +38,7 @@ import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Material;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.loot.GlobalLootModifierSerializer;
+import net.minecraftforge.common.loot.IGlobalLootModifier;
 import net.minecraftforge.common.util.LogMessageAdapter;
 import net.minecraftforge.fluids.FluidType;
 import net.minecraftforge.fml.ModLoader;
@@ -110,7 +111,7 @@ public class GameData
         makeRegistry(ENTITY_TYPES, "pig").legacyName("entities").vanillaHolder(EntityType::builtInRegistryHolder).create();
         makeRegistry(BLOCK_ENTITY_TYPES).disableSaving().legacyName("blockentities").create();
         makeRegistry(PARTICLE_TYPES).disableSaving().create();
-        makeRegistry(CONTAINER_TYPES).disableSaving().create();
+        makeRegistry(MENU_TYPES).disableSaving().create();
         makeRegistry(PAINTING_VARIANTS, "kebab").create();
         makeRegistry(RECIPE_TYPES).disableSaving().disableSync().create();
         makeRegistry(RECIPE_SERIALIZERS).disableSaving().create();
@@ -139,12 +140,12 @@ public class GameData
 
     static RegistryBuilder<EntityDataSerializer<?>> getDataSerializersRegistryBuilder()
     {
-        return makeRegistry(DATA_SERIALIZERS, 256 /*vanilla space*/, MAX_VARINT).disableSaving().disableOverrides();
+        return makeRegistry(ENTITY_DATA_SERIALIZERS, 256 /*vanilla space*/, MAX_VARINT).disableSaving().disableOverrides();
     }
 
-    static RegistryBuilder<GlobalLootModifierSerializer<?>> getGLMSerializersRegistryBuilder()
+    static RegistryBuilder<Codec<? extends IGlobalLootModifier>> getGLMSerializersRegistryBuilder()
     {
-        return makeRegistry(LOOT_MODIFIER_SERIALIZERS).disableSaving().disableSync();
+        return makeRegistry(GLOBAL_LOOT_MODIFIER_SERIALIZERS).disableSaving().disableSync();
     }
 
     static RegistryBuilder<FluidType> getFluidTypeRegistryBuilder()

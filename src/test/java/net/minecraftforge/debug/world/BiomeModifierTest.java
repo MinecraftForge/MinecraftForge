@@ -44,7 +44,7 @@ import net.minecraftforge.common.world.ModifiableBiomeInfo.BiomeInfo.Builder;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.forge.event.lifecycle.GatherDataEvent;
+import net.minecraftforge.data.event.GatherDataEvent;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
@@ -70,7 +70,7 @@ public class BiomeModifierTest
     private static final String LARGE_BASALT_COLUMNS = "large_basalt_columns";
     private static final ResourceLocation LARGE_BASALT_COLUMNS_RL = new ResourceLocation(MODID, LARGE_BASALT_COLUMNS);
     private static final ResourceKey<PlacedFeature> LARGE_BASALT_COLUMNS_KEY = ResourceKey.create(Registry.PLACED_FEATURE_REGISTRY, LARGE_BASALT_COLUMNS_RL);
-    
+
     private static final String MODIFY_BIOMES = "modify_biomes";
     private static final ResourceLocation MODIFY_BIOMES_RL = new ResourceLocation(MODID, MODIFY_BIOMES);
 
@@ -114,19 +114,19 @@ public class BiomeModifierTest
         // Create our placed feature and biome modifiers.
         final ResourceKey<ConfiguredFeature<?,?>> configuredFeatureKey = NetherFeatures.LARGE_BASALT_COLUMNS.unwrapKey().get().cast(Registry.CONFIGURED_FEATURE_REGISTRY).get();
         // Make sure we're using the holder from the registryaccess/registryops, the static ones won't work.
-        final Holder<ConfiguredFeature<?,?>> configuredFeatureHolder = ops.registry(Registry.CONFIGURED_FEATURE_REGISTRY).get().getOrCreateHolderOrThrow(configuredFeatureKey); 
+        final Holder<ConfiguredFeature<?,?>> configuredFeatureHolder = ops.registry(Registry.CONFIGURED_FEATURE_REGISTRY).get().getOrCreateHolderOrThrow(configuredFeatureKey);
         final PlacedFeature basaltFeature = new PlacedFeature(
             configuredFeatureHolder,
             List.of(CountOnEveryLayerPlacement.of(1), BiomeFilter.biome()));
-        
+
         final HolderSet.Named<Biome> badlandsTag = new HolderSet.Named<>(ops.registry(Registry.BIOME_REGISTRY).get(), BiomeTags.IS_BADLANDS);
         final HolderSet.Named<Biome> forestsTag = new HolderSet.Named<>(ops.registry(Registry.BIOME_REGISTRY).get(), BiomeTags.IS_FOREST);
-        
+
         final BiomeModifier addBasaltFeature = new AddFeaturesBiomeModifier(
             badlandsTag,
             HolderSet.direct(ops.registry(Registry.PLACED_FEATURE_REGISTRY).get().getOrCreateHolderOrThrow(ResourceKey.create(Registry.PLACED_FEATURE_REGISTRY, LARGE_BASALT_COLUMNS_KEY.location()))),
             Decoration.TOP_LAYER_MODIFICATION);
-        
+
         final BiomeModifier addSpawn = AddSpawnsBiomeModifier.singleSpawn(
             badlandsTag,
             new SpawnerData(EntityType.MAGMA_CUBE, 100, 1, 4));
@@ -136,22 +136,22 @@ public class BiomeModifierTest
             Precipitation.SNOW,
             0xFF0000
             );
-        
+
         final BiomeModifier removeFeature = RemoveFeaturesBiomeModifier.allSteps(
             forestsTag,
             HolderSet.direct(ops.registry(Registry.PLACED_FEATURE_REGISTRY).get().getOrCreateHolderOrThrow(ResourceKey.create(Registry.PLACED_FEATURE_REGISTRY, new ResourceLocation("trees_birch_and_oak"))))
             );
-        
+
         final BiomeModifier removeSpawn = new RemoveSpawnsBiomeModifier(
             forestsTag,
             new HolderSet.Named<>(ops.registry(Registry.ENTITY_TYPE_REGISTRY).get(), EntityTypeTags.SKELETONS)
             );
-        
+
         // Create and add dataproviders.
         generator.addProvider(event.includeServer(), JsonCodecProvider.forDatapackRegistry(
             generator, existingFileHelper, MODID, ops, Registry.PLACED_FEATURE_REGISTRY, Map.of(
                 LARGE_BASALT_COLUMNS_RL, basaltFeature)));
-        
+
         generator.addProvider(event.includeServer(), JsonCodecProvider.forDatapackRegistry(
             generator, existingFileHelper, MODID, ops, ForgeRegistries.Keys.BIOME_MODIFIERS, Map.of(
                 MODIFY_BADLANDS_RL, biomeModifier,

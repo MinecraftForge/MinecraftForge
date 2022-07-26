@@ -1,0 +1,10 @@
+--- a/net/minecraft/server/packs/resources/MultiPackResourceManager.java
++++ b/net/minecraft/server/packs/resources/MultiPackResourceManager.java
+@@ -24,6 +_,7 @@
+    public MultiPackResourceManager(PackType p_203797_, List<PackResources> p_203798_) {
+       this.f_203795_ = List.copyOf(p_203798_);
+       Map<String, FallbackResourceManager> map = new HashMap<>();
++      p_203798_.forEach(resourcePack -> resourcePack.init(p_203797_));
+       List<String> list = p_203798_.stream().flatMap((p_215471_) -> {
+          return p_215471_.m_5698_(p_203797_).stream();
+       }).toList();

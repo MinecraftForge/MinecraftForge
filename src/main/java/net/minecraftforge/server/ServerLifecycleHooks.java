@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
-import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
@@ -40,7 +39,7 @@ import net.minecraftforge.network.NetworkHooks;
 import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.forgespi.locating.IModFile;
 import net.minecraftforge.registries.ForgeRegistries.Keys;
-import net.minecraftforge.resource.PathResourcePack;
+import net.minecraftforge.resource.PathPackResources;
 import net.minecraftforge.server.permission.PermissionAPI;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -51,7 +50,6 @@ import net.minecraft.network.Connection;
 import net.minecraft.network.ConnectionProtocol;
 import net.minecraft.network.protocol.handshake.ClientIntentionPacket;
 import net.minecraft.network.protocol.login.ClientboundLoginDisconnectPacket;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.packs.repository.Pack;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.api.distmarker.Dist;
@@ -65,7 +63,6 @@ import net.minecraftforge.event.server.ServerStoppedEvent;
 import net.minecraftforge.event.server.ServerStoppingEvent;
 import net.minecraftforge.fml.loading.FileUtils;
 import net.minecraftforge.forgespi.language.IModInfo;
-import net.minecraftforge.registries.DataPackRegistriesHooks;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.GameData;
 
@@ -192,12 +189,12 @@ public class ServerLifecycleHooks
     }
 
     //INTERNAL MODDERS DO NOT USE
-    public static RepositorySource buildPackFinder(Map<IModFile, ? extends PathResourcePack> modResourcePacks) {
+    public static RepositorySource buildPackFinder(Map<IModFile, ? extends PathPackResources> modResourcePacks) {
         return (packList, factory) -> serverPackFinder(modResourcePacks, packList, factory);
     }
 
-    private static void serverPackFinder(Map<IModFile, ? extends PathResourcePack> modResourcePacks, Consumer<Pack> consumer, Pack.PackConstructor factory) {
-        for (Entry<IModFile, ? extends PathResourcePack> e : modResourcePacks.entrySet())
+    private static void serverPackFinder(Map<IModFile, ? extends PathPackResources> modResourcePacks, Consumer<Pack> consumer, Pack.PackConstructor factory) {
+        for (Entry<IModFile, ? extends PathPackResources> e : modResourcePacks.entrySet())
         {
             IModInfo mod = e.getKey().getModInfos().get(0);
             if (Objects.equals(mod.getModId(), "minecraft")) continue; // skip the minecraft "mod"
@@ -212,7 +209,7 @@ public class ServerLifecycleHooks
             consumer.accept(packInfo);
         }
     }
-    
+
     private static void runModifiers(final MinecraftServer server)
     {
         final RegistryAccess registries = server.registryAccess();
@@ -226,7 +223,7 @@ public class ServerLifecycleHooks
               .holders()
               .map(Holder::value)
               .toList();
-        
+
         // Apply sorted biome modifiers to each biome.
         registries.registryOrThrow(Registry.BIOME_REGISTRY).holders().forEach(biomeHolder ->
         {

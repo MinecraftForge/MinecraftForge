@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) Forge Development LLC and contributors
+ * SPDX-License-Identifier: LGPL-2.1-only
+ */
+
 package net.minecraftforge.fluids;
 
 import com.google.common.collect.ImmutableMap;
@@ -29,7 +34,7 @@ import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.pathfinder.BlockPathTypes;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.client.IFluidTypeRenderProperties;
+import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.SoundAction;
 import net.minecraftforge.common.SoundActions;
@@ -878,7 +883,7 @@ public class FluidType
         }
     }
 
-    public void initializeClient(Consumer<IFluidTypeRenderProperties> consumer)
+    public void initializeClient(Consumer<IClientFluidTypeExtensions> consumer)
     {
     }
 

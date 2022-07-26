@@ -9,6 +9,14 @@
     @Nullable
     private AtlasSet f_119398_;
     private final BlockModelShaper f_119399_;
+@@ -28,6 +_,7 @@
+    private int f_119402_;
+    private BakedModel f_119403_;
+    private Object2IntMap<BlockState> f_119404_;
++   private ModelBakery modelBakery;
+ 
+    public ModelManager(TextureManager p_119406_, BlockColors p_119407_, int p_119408_) {
+       this.f_119400_ = p_119406_;
 @@ -36,6 +_,10 @@
        this.f_119399_ = new BlockModelShaper(this);
     }
@@ -20,20 +28,12 @@
     public BakedModel m_119422_(ModelResourceLocation p_119423_) {
        return this.f_119397_.getOrDefault(p_119423_, this.f_119403_);
     }
-@@ -50,7 +_,7 @@
- 
-    protected ModelBakery m_5944_(ResourceManager p_119413_, ProfilerFiller p_119414_) {
-       p_119414_.m_7242_();
--      ModelBakery modelbakery = new ModelBakery(p_119413_, this.f_119401_, p_119414_, this.f_119402_);
-+      net.minecraftforge.client.model.ForgeModelBakery modelbakery = new net.minecraftforge.client.model.ForgeModelBakery(p_119413_, this.f_119401_, p_119414_, this.f_119402_);
-       p_119414_.m_7241_();
-       return modelbakery;
-    }
-@@ -66,6 +_,7 @@
+@@ -66,6 +_,8 @@
        this.f_119397_ = p_119419_.m_119251_();
        this.f_119404_ = p_119419_.m_119355_();
        this.f_119403_ = this.f_119397_.get(ModelBakery.f_119230_);
-+      net.minecraftforge.client.ForgeHooksClient.onModelBake(this, this.f_119397_, (net.minecraftforge.client.model.ForgeModelBakery) p_119419_);
++      this.modelBakery = p_119419_;
++      net.minecraftforge.client.ForgeHooksClient.onModelBake(this, this.f_119397_, p_119419_);
        p_119421_.m_6182_("cache");
        this.f_119399_.m_110892_();
        p_119421_.m_7238_();
@@ -45,3 +45,13 @@
        return this.f_119398_.m_117973_(p_119429_);
     }
  
+@@ -103,5 +_,9 @@
+ 
+    public void m_119410_(int p_119411_) {
+       this.f_119402_ = p_119411_;
++   }
++
++   public ModelBakery getModelBakery() {
++      return com.google.common.base.Preconditions.checkNotNull(modelBakery, "Attempted to query model bakery before it has been initialized.");
+    }
+ }

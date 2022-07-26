@@ -1,0 +1,18 @@
+--- a/net/minecraft/world/item/PotionItem.java
++++ b/net/minecraft/world/item/PotionItem.java
+@@ -127,12 +_,12 @@
+    }
+ 
+    public boolean m_5812_(ItemStack p_42999_) {
+-      return super.m_5812_(p_42999_) || !PotionUtils.m_43547_(p_42999_).isEmpty();
++      return super.m_5812_(p_42999_) || PotionUtils.m_43579_(p_42999_).isFoil(p_42999_);
+    }
+ 
+    public void m_6787_(CreativeModeTab p_42981_, NonNullList<ItemStack> p_42982_) {
+-      if (this.m_220152_(p_42981_)) {
+-         for(Potion potion : Registry.f_122828_) {
++      for(Potion potion : Registry.f_122828_) {
++         if (potion.allowedInCreativeTab(this, p_42981_, this.m_220152_(p_42981_))) {
+             if (potion != Potions.f_43598_) {
+                p_42982_.add(PotionUtils.m_43549_(new ItemStack(this), potion));
+             }

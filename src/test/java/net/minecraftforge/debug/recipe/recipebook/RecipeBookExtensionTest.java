@@ -18,6 +18,7 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.RegisterRecipeBookCategoriesEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.extensions.IForgeMenuType;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -43,7 +44,7 @@ public class RecipeBookExtensionTest
     public static final RegistryObject<RecipeSerializer<RecipeBookTestRecipe>> RECIPE_BOOK_TEST_RECIPE_SERIALIZER =
             RECIPE_SERIALIZER.register("test_recipe", RecipeBookTestRecipeSerializer::new);
 
-    public static final DeferredRegister<MenuType<?>> MENU_TYPE = DeferredRegister.create(ForgeRegistries.CONTAINERS, MOD_ID);
+    public static final DeferredRegister<MenuType<?>> MENU_TYPE = DeferredRegister.create(ForgeRegistries.MENU_TYPES, MOD_ID);
     public static final RegistryObject<MenuType<RecipeBookTestMenu>> RECIPE_BOOK_TEST_MENU_TYPE =
             MENU_TYPE.register("test_recipe_menu", () -> IForgeMenuType.create(RecipeBookTestMenu::new));
 
@@ -65,10 +66,10 @@ public class RecipeBookExtensionTest
 
     private void onRightClick(PlayerInteractEvent.RightClickBlock event)
     {
-        if (event.getWorld().isClientSide)
+        if (event.getLevel().isClientSide)
             return;
-        if (event.getWorld().getBlockState(event.getPos()).getBlock() == Blocks.GRASS_BLOCK)
-            NetworkHooks.openGui((ServerPlayer) event.getPlayer(), new SimpleMenuProvider((id, inv, p) -> new RecipeBookTestMenu(id, inv, ContainerLevelAccess.create(event.getWorld(), event.getPos())), Component.literal("Test")));
+        if (event.getLevel().getBlockState(event.getPos()).getBlock() == Blocks.GRASS_BLOCK)
+            NetworkHooks.openScreen((ServerPlayer) event.getEntity(), new SimpleMenuProvider((id, inv, p) -> new RecipeBookTestMenu(id, inv, ContainerLevelAccess.create(event.getLevel(), event.getPos())), Component.literal("Test")));
     }
 
     public static ResourceLocation getId(String name)
@@ -87,8 +88,14 @@ public class RecipeBookExtensionTest
             event.enqueueWork(() ->
             {
                 MenuScreens.register(RECIPE_BOOK_TEST_MENU_TYPE.get(), RecipeBookTestScreen::new);
-                RecipeBookExtensionClientHelper.init();
             });
+        }
+        @SubscribeEvent
+        public static void onRegisterRecipeBookCategories(RegisterRecipeBookCategoriesEvent event)
+        {
+            if (!ENABLED)
+                return;
+            RecipeBookExtensionClientHelper.init(event);
         }
     }
 

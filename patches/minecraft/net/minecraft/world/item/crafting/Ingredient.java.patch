@@ -114,7 +114,7 @@
              list.add(new ItemStack(holder));
           }
  
-+         if (list.size() == 0 && !net.minecraftforge.common.ForgeConfig.SERVER.treatEmptyTagsAsAir.get()) {
++         if (list.size() == 0) {
 +            list.add(new ItemStack(net.minecraft.world.level.block.Blocks.f_50375_).m_41714_(net.minecraft.network.chat.Component.m_237113_("Empty Tag: " + this.f_43959_.f_203868_())));
 +         }
           return list;

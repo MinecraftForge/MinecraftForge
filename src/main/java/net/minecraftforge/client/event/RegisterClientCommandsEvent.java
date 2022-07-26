@@ -14,6 +14,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.LogicalSide;
+import org.jetbrains.annotations.ApiStatus;
 
 /**
  * Fired to allow mods to register client commands.
@@ -26,23 +27,19 @@ import net.minecraftforge.fml.LogicalSide;
  * objectives that are displayed to the player.
  * </ul>
  *
- * <p>This event is not {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}. </p>
+ * <p>This event is not {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}.</p>
  *
  * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
- * only on the {@linkplain LogicalSide#CLIENT logical client}. </p>
+ * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
  *
  * @see net.minecraftforge.event.RegisterCommandsEvent
  */
 public class RegisterClientCommandsEvent extends Event
 {
-
     private final CommandDispatcher<CommandSourceStack> dispatcher;
     private final CommandBuildContext context;
 
-    /**
-     * @hidden
-     * @see net.minecraftforge.client.ClientCommandHandler#mergeServerCommands(CommandDispatcher, CommandBuildContext)
-     */
+    @ApiStatus.Internal
     public RegisterClientCommandsEvent(CommandDispatcher<CommandSourceStack> dispatcher, CommandBuildContext context)
     {
         this.dispatcher = dispatcher;

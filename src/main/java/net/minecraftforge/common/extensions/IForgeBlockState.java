@@ -39,6 +39,7 @@ import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.ToolAction;
 import net.minecraftforge.common.ToolActions;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public interface IForgeBlockState
@@ -441,7 +442,7 @@ public interface IForgeBlockState
      * @param other Other block
      * @return True to link blocks
      */
-    default boolean canStickTo(BlockState other)
+    default boolean canStickTo(@NotNull BlockState other)
     {
         return self().getBlock().canStickTo(self(), other);
     }
@@ -686,6 +687,21 @@ public interface IForgeBlockState
     default boolean supportsExternalFaceHiding()
     {
         return self().getBlock().supportsExternalFaceHiding(self());
+    }
+
+    /**
+     * Called after the {@link BlockState} at the given {@link BlockPos} was changed and neighbors were updated.
+     * This method is called on the server and client side.
+     * Modifying the level is disallowed in this method.
+     * Useful for calculating additional data based on the new state and the neighbor's reactions to the state change.
+     *
+     * @param level The level the state was modified in
+     * @param pos The blocks position in the level
+     * @param oldState The previous state of the block at the given position, may be a different block than this one
+     */
+    default void onBlockStateChange(LevelReader level, BlockPos pos, BlockState oldState)
+    {
+        self().getBlock().onBlockStateChange(level, pos, oldState, self());
     }
 
     /**

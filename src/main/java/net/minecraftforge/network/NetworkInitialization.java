@@ -26,7 +26,7 @@ class NetworkInitialization {
                 loginIndex(HandshakeMessages.LoginIndexedMessage::getLoginIndex, HandshakeMessages.LoginIndexedMessage::setLoginIndex).
                 decoder(HandshakeMessages.C2SAcknowledge::decode).
                 encoder(HandshakeMessages.C2SAcknowledge::encode).
-                consumer(HandshakeHandler.indexFirst(HandshakeHandler::handleClientAck)).
+                consumerNetworkThread(HandshakeHandler.indexFirst(HandshakeHandler::handleClientAck)).
                 add();
 
         handshakeChannel.messageBuilder(HandshakeMessages.S2CModData.class, 5, NetworkDirection.LOGIN_TO_CLIENT).
@@ -35,7 +35,7 @@ class NetworkInitialization {
                 encoder(HandshakeMessages.S2CModData::encode).
                 markAsLoginPacket().
                 noResponse().
-                consumer(HandshakeHandler.biConsumerFor(HandshakeHandler::handleModData)).
+                consumerNetworkThread(HandshakeHandler.biConsumerFor(HandshakeHandler::handleModData)).
                 add();
 
         handshakeChannel.messageBuilder(HandshakeMessages.S2CModList.class, 1, NetworkDirection.LOGIN_TO_CLIENT).
@@ -43,14 +43,14 @@ class NetworkInitialization {
                 decoder(HandshakeMessages.S2CModList::decode).
                 encoder(HandshakeMessages.S2CModList::encode).
                 markAsLoginPacket().
-                consumer(HandshakeHandler.biConsumerFor(HandshakeHandler::handleServerModListOnClient)).
+                consumerNetworkThread(HandshakeHandler.biConsumerFor(HandshakeHandler::handleServerModListOnClient)).
                 add();
 
         handshakeChannel.messageBuilder(HandshakeMessages.C2SModListReply.class, 2, NetworkDirection.LOGIN_TO_SERVER).
                 loginIndex(HandshakeMessages.LoginIndexedMessage::getLoginIndex, HandshakeMessages.LoginIndexedMessage::setLoginIndex).
                 decoder(HandshakeMessages.C2SModListReply::decode).
                 encoder(HandshakeMessages.C2SModListReply::encode).
-                consumer(HandshakeHandler.indexFirst(HandshakeHandler::handleClientModListOnServer)).
+                consumerNetworkThread(HandshakeHandler.indexFirst(HandshakeHandler::handleClientModListOnServer)).
                 add();
 
         handshakeChannel.messageBuilder(HandshakeMessages.S2CRegistry.class, 3, NetworkDirection.LOGIN_TO_CLIENT).
@@ -58,7 +58,7 @@ class NetworkInitialization {
                 decoder(HandshakeMessages.S2CRegistry::decode).
                 encoder(HandshakeMessages.S2CRegistry::encode).
                 buildLoginPacketList(RegistryManager::generateRegistryPackets). //TODO: Make this non-static, and store a cache on the client.
-                consumer(HandshakeHandler.biConsumerFor(HandshakeHandler::handleRegistryMessage)).
+                consumerNetworkThread(HandshakeHandler.biConsumerFor(HandshakeHandler::handleRegistryMessage)).
                 add();
 
         handshakeChannel.messageBuilder(HandshakeMessages.S2CConfigData.class, 4, NetworkDirection.LOGIN_TO_CLIENT).
@@ -66,14 +66,14 @@ class NetworkInitialization {
                 decoder(HandshakeMessages.S2CConfigData::decode).
                 encoder(HandshakeMessages.S2CConfigData::encode).
                 buildLoginPacketList(ConfigSync.INSTANCE::syncConfigs).
-                consumer(HandshakeHandler.biConsumerFor(HandshakeHandler::handleConfigSync)).
+                consumerNetworkThread(HandshakeHandler.biConsumerFor(HandshakeHandler::handleConfigSync)).
                 add();
 
         handshakeChannel.messageBuilder(HandshakeMessages.S2CChannelMismatchData.class, 6, NetworkDirection.LOGIN_TO_CLIENT).
                 loginIndex(HandshakeMessages.LoginIndexedMessage::getLoginIndex, HandshakeMessages.LoginIndexedMessage::setLoginIndex).
                 decoder(HandshakeMessages.S2CChannelMismatchData::decode).
                 encoder(HandshakeMessages.S2CChannelMismatchData::encode).
-                consumer(HandshakeHandler.biConsumerFor(HandshakeHandler::handleModMismatchData)).
+                consumerNetworkThread(HandshakeHandler.biConsumerFor(HandshakeHandler::handleModMismatchData)).
                 add();
 
         return handshakeChannel;
@@ -90,13 +90,13 @@ class NetworkInitialization {
         playChannel.messageBuilder(PlayMessages.SpawnEntity.class, 0).
                 decoder(PlayMessages.SpawnEntity::decode).
                 encoder(PlayMessages.SpawnEntity::encode).
-                consumer(PlayMessages.SpawnEntity::handle).
+                consumerNetworkThread(PlayMessages.SpawnEntity::handle).
                 add();
 
         playChannel.messageBuilder(PlayMessages.OpenContainer.class,1).
                 decoder(PlayMessages.OpenContainer::decode).
                 encoder(PlayMessages.OpenContainer::encode).
-                consumer(PlayMessages.OpenContainer::handle).
+                consumerNetworkThread(PlayMessages.OpenContainer::handle).
                 add();
 
         return playChannel;

@@ -28,7 +28,7 @@ public class GuiLayeringTest
     public static class ClientEvents
     {
         @SubscribeEvent
-        public static void guiOpen(ScreenEvent.InitScreenEvent event)
+        public static void guiOpen(ScreenEvent.Init event)
         {
             if (event.getScreen() instanceof AbstractContainerScreen)
             {

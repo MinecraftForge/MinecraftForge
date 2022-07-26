@@ -1,0 +1,20 @@
+--- a/net/minecraft/world/item/EnchantedBookItem.java
++++ b/net/minecraft/world/item/EnchantedBookItem.java
+@@ -72,7 +_,7 @@
+    public void m_6787_(CreativeModeTab p_41151_, NonNullList<ItemStack> p_41152_) {
+       if (p_41151_ == CreativeModeTab.f_40754_) {
+          for(Enchantment enchantment : Registry.f_122825_) {
+-            if (enchantment.f_44672_ != null) {
++            if (enchantment.allowedInCreativeTab(this, p_41151_)) {
+                for(int i = enchantment.m_44702_(); i <= enchantment.m_6586_(); ++i) {
+                   p_41152_.add(m_41161_(new EnchantmentInstance(enchantment, i)));
+                }
+@@ -80,7 +_,7 @@
+          }
+       } else if (p_41151_.m_40795_().length != 0) {
+          for(Enchantment enchantment1 : Registry.f_122825_) {
+-            if (p_41151_.m_40776_(enchantment1.f_44672_)) {
++            if (enchantment1.allowedInCreativeTab(this, p_41151_)) {
+                p_41152_.add(m_41161_(new EnchantmentInstance(enchantment1, enchantment1.m_6586_())));
+             }
+          }

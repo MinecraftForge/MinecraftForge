@@ -43,7 +43,7 @@ public class ClientCommandHandler
         MinecraftForge.EVENT_BUS.addListener(ClientCommandHandler::handleClientPlayerLogin);
     }
 
-    private static void handleClientPlayerLogin(ClientPlayerNetworkEvent.LoggedInEvent event)
+    private static void handleClientPlayerLogin(ClientPlayerNetworkEvent.LoggingIn event)
     {
         // some custom server implementations do not send ClientboundCommandsPacket, provide a fallback
         var suggestionDispatcher = mergeServerCommands(new CommandDispatcher<>(), new CommandBuildContext(event.getPlayer().connection.registryAccess()));
