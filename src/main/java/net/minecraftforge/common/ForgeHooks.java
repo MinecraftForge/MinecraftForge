@@ -24,6 +24,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.Lifecycle;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -147,6 +148,8 @@ import net.minecraftforge.resource.ResourcePackLoader;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.ForgeRegistry;
 import net.minecraftforge.registries.GameData;
+import net.minecraftforge.registries.HolderSetType;
+import net.minecraftforge.registries.ICustomHolderSet;
 import net.minecraftforge.registries.RegistryManager;
 
 import net.minecraftforge.server.ServerLifecycleHooks;
@@ -156,6 +159,7 @@ import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
 import net.minecraft.ChatFormatting;
+import net.minecraft.resources.HolderSetCodec;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.damagesource.DamageSource;
@@ -1434,5 +1438,23 @@ public class ForgeHooks
     public static String prefixNamespace(ResourceLocation registryKey)
     {
         return registryKey.getNamespace().equals("minecraft") ? registryKey.getPath() : registryKey.getNamespace() +  "/"  + registryKey.getPath();
+    }
+
+    public static <T> Codec<HolderSet<T>> expandHolderSetCodec(
+        ResourceKey<? extends Registry<T>> registryKey,
+        Codec<Holder<T>> holderCodec,
+        boolean forceList,
+        HolderSetCodec<T> vanillaCodec)
+    {
+        Codec<ICustomHolderSet<T>> dispatchCodec = ExtraCodecs.lazyInitializedCodec(() -> ForgeRegistries.HOLDER_SET_TYPES.get().getCodec())
+            .dispatch(ICustomHolderSet::type, type -> type.makeCodec(registryKey, holderCodec, forceList));
+        // We use the ExtraCodecs' EitherCodec, which is better than the DFU one
+        // because if both codecs fail to parse then it reports both errors instead of just one
+        return new net.minecraft.util.ExtraCodecs.EitherCodec<>(dispatchCodec, vanillaCodec).xmap(
+            // when decoding, try the custom holderset type dispatch first, then fall back to vanilla holderset codec
+            either -> either.map(Function.identity(), Function.identity()),
+            // when encoding, use the custom holderset dispatcher if possible, otherwise it's a vanilla one
+            holderSet -> holderSet instanceof ICustomHolderSet<T> custom ? Either.left(custom) : Either.right(holderSet)
+        );
     }
 }

@@ -1,4 +1,4 @@
-package net.minecraftforge.common.util;
+package net.minecraftforge.registries;
 
 import java.util.Iterator;
 import java.util.List;
@@ -8,23 +8,37 @@ import java.util.function.Function;
 import java.util.stream.Stream;
 
 import com.mojang.datafixers.util.Either;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.Registry;
+import net.minecraft.resources.HolderSetCodec;
+import net.minecraft.resources.RegistryOps;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.RandomSource;
+import net.minecraftforge.common.ForgeMod;
 
 public final class ForgeHolderSets
 {
 	private ForgeHolderSets() {} // Organizational class
 	
-	public static record AnyHolderSet<T>(Registry<T> registry) implements HolderSet<T>
+	public static record AnyHolderSet<T>(Registry<T> registry) implements ICustomHolderSet<T>
 	{
-		public static <T> AnyHolderSet<T> create(Registry<T> registry)
+	    public static <T> Codec<? extends ICustomHolderSet<T>> codec(ResourceKey<? extends Registry<T>> registryKey, Codec<Holder<T>> holderCodec, boolean forceList)
 		{
-			return new AnyHolderSet<>(registry);
+		    return RegistryOps.retrieveRegistry(registryKey)
+                .xmap(AnyHolderSet::new, AnyHolderSet::registry)
+                .codec();
 		}
+
+        @Override
+        public HolderSetType type()
+        {
+            return ForgeMod.ANY_HOLDER_SET.get();
+        }
 		
 		@Override
 		public Iterator<Holder<T>> iterator()
@@ -82,11 +96,21 @@ public final class ForgeHolderSets
 	}
 	
 	public static record AndHolderSet<T>(List<HolderSet<T>> values) implements CompositeHolderSet<T>
-	{		
-		public static <T> AndHolderSet<T> create(List<HolderSet<T>> values)
-		{
-			return new AndHolderSet<>(values);
-		}
+	{
+        public static <T> Codec<? extends ICustomHolderSet<T>> codec(ResourceKey<? extends Registry<T>> registryKey, Codec<Holder<T>> holderCodec, boolean forceList)
+        {
+            return HolderSetCodec.create(registryKey, holderCodec, forceList)
+                .listOf()
+                .xmap(AndHolderSet::new, AndHolderSet::values)
+                .fieldOf("values")
+                .codec();
+        }
+
+        @Override
+        public HolderSetType type()
+        {
+            return ForgeMod.AND_HOLDER_SET.get();
+        }
 
         @Override
         public Stream<Holder<T>> stream()
@@ -145,10 +169,20 @@ public final class ForgeHolderSets
 	
 	public static record OrHolderSet<T>(List<HolderSet<T>> values) implements CompositeHolderSet<T>
 	{
-	    public static <T> OrHolderSet<T> create(List<HolderSet<T>> values)
-	    {
-	        return new OrHolderSet<>(values);
-	    }
+        public static <T> Codec<? extends ICustomHolderSet<T>> codec(ResourceKey<? extends Registry<T>> registryKey, Codec<Holder<T>> holderCodec, boolean forceList)
+        {
+            return HolderSetCodec.create(registryKey, holderCodec, forceList)
+                .listOf()
+                .xmap(OrHolderSet::new, OrHolderSet::values)
+                .fieldOf("values")
+                .codec();
+        }
+
+        @Override
+        public HolderSetType type()
+        {
+            return ForgeMod.OR_HOLDER_SET.get();
+        }
 
         @Override
         public Stream<Holder<T>> stream()
@@ -191,10 +225,20 @@ public final class ForgeHolderSets
 	
 	public static record ExclusionHolderSet<T>(HolderSet<T> include, HolderSet<T> exclude) implements CompositeHolderSet<T>
 	{
-	    public static <T> ExclusionHolderSet<T> create(HolderSet<T> include, HolderSet<T> exclude)
-	    {
-	        return new ExclusionHolderSet<>(include, exclude);
-	    }
+        public static <T> Codec<? extends ICustomHolderSet<T>> codec(ResourceKey<? extends Registry<T>> registryKey, Codec<Holder<T>> holderCodec, boolean forceList)
+        {
+            Codec<HolderSet<T>> holderSetCodec = HolderSetCodec.create(registryKey, holderCodec, forceList);
+            return RecordCodecBuilder.<ExclusionHolderSet<T>>create(builder -> builder.group(
+                    holderSetCodec.fieldOf("include").forGetter(ExclusionHolderSet::include),
+                    holderSetCodec.fieldOf("exclude").forGetter(ExclusionHolderSet::exclude)
+                ).apply(builder, ExclusionHolderSet::new));
+        }
+        
+        @Override
+        public HolderSetType type()
+        {
+            return ForgeMod.EXCLUSION_HOLDER_SET.get();
+        }
 
         @Override
         public Stream<Holder<T>> stream()
@@ -227,7 +271,7 @@ public final class ForgeHolderSets
 	 * be tag-based holdersets, which are mutable and can change-in-place during runtime.
 	 * We cannot determine whether tags have changed, and so cannot cache our list of holders.
 	 */
-    public static interface CompositeHolderSet<T> extends HolderSet<T>
+    public static interface CompositeHolderSet<T> extends ICustomHolderSet<T>
     {
         @Override
         default Iterator<Holder<T>> iterator()
