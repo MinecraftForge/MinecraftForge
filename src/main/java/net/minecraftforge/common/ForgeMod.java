@@ -60,7 +60,6 @@ import net.minecraftforge.common.crafting.ConditionalRecipe;
 import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.common.crafting.DifferenceIngredient;
 import net.minecraftforge.common.crafting.IntersectionIngredient;
-import net.minecraftforge.common.crafting.NBTIngredient;
 import net.minecraftforge.common.crafting.PartialNBTIngredient;
 import net.minecraftforge.common.crafting.VanillaIngredientSerializer;
 import net.minecraftforge.common.crafting.conditions.AndCondition;
