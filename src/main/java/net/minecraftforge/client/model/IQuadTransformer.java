@@ -8,8 +8,6 @@ package net.minecraftforge.client.model;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormatElement;
 import com.mojang.math.Transformation;
-import com.mojang.math.Vector3f;
-import com.mojang.math.Vector4f;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 
 import java.util.Arrays;
@@ -18,8 +16,7 @@ import java.util.List;
 /**
  * Transformer for {@link BakedQuad baked quads}.
  *
- * @see #applying(Transformation)
- * @see #applyingLightmap(int)
+ * @see QuadTransformers
  */
 public interface IQuadTransformer
 {
@@ -61,70 +58,35 @@ public interface IQuadTransformer
 
     /**
      * Creates a {@link BakedQuad} transformer that does nothing.
+     *
+     * @deprecated Use {@link QuadTransformers#empty()}
      */
+    @Deprecated(forRemoval = true, since = "1.19")
     static IQuadTransformer empty()
     {
-        return quad -> {};
+        return QuadTransformers.empty();
     }
 
     /**
      * Creates a {@link BakedQuad} transformer that applies the specified {@link Transformation}.
+     *
+     * @deprecated Use {@link QuadTransformers#applying(Transformation)}
      */
+    @Deprecated(forRemoval = true, since = "1.19")
     static IQuadTransformer applying(Transformation transform)
     {
-        if (transform.isIdentity())
-            return empty();
-        return quad -> {
-            var vertices = quad.getVertices();
-            for (int i = 0; i < 4; i++)
-            {
-                int offset = i * STRIDE + POSITION;
-                float x = Float.intBitsToFloat(vertices[offset]);
-                float y = Float.intBitsToFloat(vertices[offset + 1]);
-                float z = Float.intBitsToFloat(vertices[offset + 2]);
-
-                Vector4f pos = new Vector4f(x, y, z, 1);
-                transform.transformPosition(pos);
-                pos.perspectiveDivide();
-
-                vertices[offset] = Float.floatToRawIntBits(pos.x());
-                vertices[offset + 1] = Float.floatToRawIntBits(pos.y());
-                vertices[offset + 2] = Float.floatToRawIntBits(pos.z());
-            }
-
-            for (int i = 0; i < 4; i++)
-            {
-                int offset = i * STRIDE + NORMAL;
-                int normalIn = vertices[offset];
-                if ((normalIn >> 8) != 0)
-                {
-                    float x = ((byte) (normalIn & 0xFF)) / 127.0f;
-                    float y = ((byte) ((normalIn >> 8) & 0xFF)) / 127.0f;
-                    float z = ((byte) ((normalIn >> 16) & 0xFF)) / 127.0f;
-
-                    Vector3f pos = new Vector3f(x, y, z);
-                    transform.transformNormal(pos);
-                    pos.normalize();
-
-                    vertices[offset] = (((byte) (x * 127.0f)) & 0xFF) |
-                                       ((((byte) (y * 127.0f)) & 0xFF) << 8) |
-                                       ((((byte) (z * 127.0f)) & 0xFF) << 16) |
-                                       (normalIn & 0xFF000000);
-                }
-            }
-        };
+        return QuadTransformers.applying(transform);
     }
 
     /**
      * Creates a {@link BakedQuad} transformer that applies the specified lightmap.
+     *
+     * @deprecated Use {@link QuadTransformers#applyingLightmap(int)}
      */
+    @Deprecated(forRemoval = true, since = "1.19")
     static IQuadTransformer applyingLightmap(int lightmap)
     {
-        return quad -> {
-            var vertices = quad.getVertices();
-            for (int i = 0; i < 4; i++)
-                vertices[i * STRIDE + UV2] = lightmap;
-        };
+        return QuadTransformers.applyingLightmap(lightmap);
     }
 
     private static BakedQuad copy(BakedQuad quad)
