@@ -7,9 +7,11 @@
       },
       "version": {
         "range": "[1.0,)",
-        "artifactVersion": "1.2"
+        "artifactVersion": "1.5"
       },
-      "path": "META-INF/jarjar/ForgeJiJTestMod-1.2.jar"
+      "_pathMixin_should_crash_on_startup": "META-INF/jarjar/ForgeJiJTestMod-1.5.jar",
+      "path": "META-INF/jarjar/ForgeJiJTestMod-1.2.jar",
+      "_path_crash_test": "META-INF/jarjar/jijroot-1.3.jar"
     }
   ]
 }

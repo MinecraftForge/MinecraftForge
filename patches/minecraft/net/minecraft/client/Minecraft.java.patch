@@ -370,76 +370,35 @@
           this.f_91004_.m_90740_();
        }
  
-@@ -2082,66 +_,9 @@
+@@ -2082,6 +_,7 @@
  
     private void m_91280_() {
        if (this.f_91077_ != null && this.f_91077_.m_6662_() != HitResult.Type.MISS) {
--         boolean flag = this.f_91074_.m_150110_().f_35937_;
--         BlockEntity blockentity = null;
--         HitResult.Type hitresult$type = this.f_91077_.m_6662_();
--         ItemStack itemstack;
--         if (hitresult$type == HitResult.Type.BLOCK) {
--            BlockPos blockpos = ((BlockHitResult)this.f_91077_).m_82425_();
--            BlockState blockstate = this.f_91073_.m_8055_(blockpos);
--            if (blockstate.m_60795_()) {
--               return;
--            }
--
--            Block block = blockstate.m_60734_();
++         if (net.minecraftforge.client.ForgeHooksClient.onClickInput(2, this.f_91066_.f_92097_, InteractionHand.MAIN_HAND).isCanceled()) return;
+          boolean flag = this.f_91074_.m_150110_().f_35937_;
+          BlockEntity blockentity = null;
+          HitResult.Type hitresult$type = this.f_91077_.m_6662_();
+@@ -2094,10 +_,7 @@
+             }
+ 
+             Block block = blockstate.m_60734_();
 -            itemstack = block.m_7397_(this.f_91073_, blockpos, blockstate);
 -            if (itemstack.m_41619_()) {
 -               return;
 -            }
--
--            if (flag && Screen.m_96637_() && blockstate.m_155947_()) {
--               blockentity = this.f_91073_.m_7702_(blockpos);
--            }
--         } else {
--            if (hitresult$type != HitResult.Type.ENTITY || !flag) {
--               return;
--            }
--
--            Entity entity = ((EntityHitResult)this.f_91077_).m_82443_();
--            itemstack = entity.m_142340_();
--            if (itemstack == null) {
--               return;
--            }
--         }
--
--         if (itemstack.m_41619_()) {
--            String s = "";
--            if (hitresult$type == HitResult.Type.BLOCK) {
--               s = Registry.f_122824_.m_7981_(this.f_91073_.m_8055_(((BlockHitResult)this.f_91077_).m_82425_()).m_60734_()).toString();
--            } else if (hitresult$type == HitResult.Type.ENTITY) {
--               s = Registry.f_122826_.m_7981_(((EntityHitResult)this.f_91077_).m_82443_().m_6095_()).toString();
--            }
--
--            f_90982_.warn("Picking on: [{}] {} gave null item", hitresult$type, s);
--         } else {
--            Inventory inventory = this.f_91074_.m_150109_();
--            if (blockentity != null) {
--               this.m_91122_(itemstack, blockentity);
--            }
--
--            int i = inventory.m_36030_(itemstack);
--            if (flag) {
--               inventory.m_36012_(itemstack);
--               this.f_91072_.m_105241_(this.f_91074_.m_21120_(InteractionHand.MAIN_HAND), 36 + inventory.f_35977_);
--            } else if (i != -1) {
--               if (Inventory.m_36045_(i)) {
--                  inventory.f_35977_ = i;
--               } else {
--                  this.f_91072_.m_105206_(i);
--               }
--            }
--
--         }
-+          if (!net.minecraftforge.client.ForgeHooksClient.onClickInput(2, this.f_91066_.f_92097_, InteractionHand.MAIN_HAND).isCanceled())
-+              net.minecraftforge.common.ForgeHooks.onPickBlock(this.f_91077_, this.f_91074_, this.f_91073_);
-+          // We delete this code wholly instead of commenting it out, to make sure we detect changes in it between MC versions
-       }
-    }
++            itemstack = blockstate.getCloneItemStack(this.f_91077_, this.f_91073_, blockpos, this.f_91074_);
  
+             if (flag && Screen.m_96637_() && blockstate.m_155947_()) {
+                blockentity = this.f_91073_.m_7702_(blockpos);
+@@ -2108,7 +_,7 @@
+             }
+ 
+             Entity entity = ((EntityHitResult)this.f_91077_).m_82443_();
+-            itemstack = entity.m_142340_();
++            itemstack = entity.getPickedResult(this.f_91077_);
+             if (itemstack == null) {
+                return;
+             }
 @@ -2632,8 +_,8 @@
        return this.f_90993_;
     }

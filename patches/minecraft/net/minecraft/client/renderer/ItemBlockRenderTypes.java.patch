@@ -16,32 +16,42 @@
     private static final Map<Fluid, RenderType> f_109276_ = Util.m_137469_(Maps.newHashMap(), (p_109290_) -> {
        RenderType rendertype = RenderType.m_110466_();
        p_109290_.put(Fluids.f_76192_, rendertype);
-@@ -303,6 +_,7 @@
+@@ -303,6 +_,8 @@
     });
     private static boolean f_109277_;
  
-+   @Deprecated // FORGE: Use canRenderInLayer
++   /** @deprecated Forge: Use {@link net.minecraft.client.resources.model.BakedModel#getRenderTypes(BlockState, net.minecraft.util.RandomSource, net.minecraftforge.client.model.data.ModelData)}. */
++   @Deprecated // Note: this method does NOT support model-based render types
     public static RenderType m_109282_(BlockState p_109283_) {
        Block block = p_109283_.m_60734_();
        if (block instanceof LeavesBlock) {
-@@ -313,6 +_,7 @@
+@@ -313,6 +_,8 @@
        }
     }
  
-+   @Deprecated // FORGE: Use canRenderInLayer
++   /** @deprecated Forge: Use {@link net.minecraftforge.client.RenderTypeHelper#getMovingBlockRenderType(RenderType)} while iterating through {@link net.minecraft.client.resources.model.BakedModel#getRenderTypes(BlockState, net.minecraft.util.RandomSource, net.minecraftforge.client.model.data.ModelData)}. */
++   @Deprecated // Note: this method does NOT support model-based render types
     public static RenderType m_109293_(BlockState p_109294_) {
        Block block = p_109294_.m_60734_();
        if (block instanceof LeavesBlock) {
-@@ -328,8 +_,7 @@
+@@ -327,6 +_,8 @@
+       }
     }
  
++   /** @deprecated Forge: Use {@link net.minecraftforge.client.RenderTypeHelper#getEntityRenderType(RenderType, boolean)} while iterating through {@link net.minecraft.client.resources.model.BakedModel#getRenderTypes(BlockState, net.minecraft.util.RandomSource, net.minecraftforge.client.model.data.ModelData)}. */
++   @Deprecated // Note: this method does NOT support model-based render types
     public static RenderType m_109284_(BlockState p_109285_, boolean p_109286_) {
--      RenderType rendertype = m_109282_(p_109285_);
--      if (rendertype == RenderType.m_110466_()) {
-+      if (getRenderLayers(p_109285_).contains(RenderType.m_110466_())) {
-          if (!Minecraft.m_91085_()) {
-             return Sheets.m_110792_();
-          } else {
+       RenderType rendertype = m_109282_(p_109285_);
+       if (rendertype == RenderType.m_110466_()) {
+@@ -340,6 +_,8 @@
+       }
+    }
+ 
++   /** @deprecated Forge: Use {@link net.minecraft.client.resources.model.BakedModel#getRenderPasses(ItemStack, boolean)} and {@link net.minecraft.client.resources.model.BakedModel#getRenderTypes(ItemStack, boolean)}. */
++   @Deprecated // Note: this method does NOT support model-based render types
+    public static RenderType m_109279_(ItemStack p_109280_, boolean p_109281_) {
+       Item item = p_109280_.m_41720_();
+       if (item instanceof BlockItem) {
 @@ -351,8 +_,73 @@
     }
  
@@ -79,20 +89,20 @@
 +      }
 +   }
 +
-+   /** @deprecated Set your render type in your model's JSON or override {@link net.minecraft.client.resources.model.BakedModel#getRenderTypes(BlockState, net.minecraft.util.RandomSource, net.minecraftforge.client.model.data.ModelData)} */
++   /** @deprecated Set your render type in your block model's JSON (eg. {@code "render_type": "cutout"}) or override {@link net.minecraft.client.resources.model.BakedModel#getRenderTypes(BlockState, net.minecraft.util.RandomSource, net.minecraftforge.client.model.data.ModelData)} */
 +   @Deprecated(forRemoval = true, since = "1.19")
 +   public static void setRenderLayer(Block block, RenderType type) {
 +      com.google.common.base.Preconditions.checkArgument(type.getChunkLayerId() >= 0, "The argument must be a valid chunk render type returned by RenderType#chunkBufferLayers().");
 +      setRenderLayer(block, net.minecraftforge.client.ChunkRenderTypeSet.of(type));
 +   }
 +
-+   /** @deprecated Set your render type in your model's JSON or override {@link net.minecraft.client.resources.model.BakedModel#getRenderTypes(BlockState, net.minecraft.util.RandomSource, net.minecraftforge.client.model.data.ModelData)} */
++   /** @deprecated Set your render type in your block model's JSON (eg. {@code "render_type": "cutout"}) or override {@link net.minecraft.client.resources.model.BakedModel#getRenderTypes(BlockState, net.minecraft.util.RandomSource, net.minecraftforge.client.model.data.ModelData)} */
 +   @Deprecated(forRemoval = true, since = "1.19")
 +   public static synchronized void setRenderLayer(Block block, java.util.function.Predicate<RenderType> predicate) {
 +      setRenderLayer(block, createSetFromPredicate(predicate));
 +   }
 +
-+   /** @deprecated Set your render type in your model's JSON or override {@link net.minecraft.client.resources.model.BakedModel#getRenderTypes(BlockState, net.minecraft.util.RandomSource, net.minecraftforge.client.model.data.ModelData)} */
++   /** @deprecated Set your render type in your block model's JSON (eg. {@code "render_type": "cutout"}) or override {@link net.minecraft.client.resources.model.BakedModel#getRenderTypes(BlockState, net.minecraft.util.RandomSource, net.minecraftforge.client.model.data.ModelData)} */
 +   @Deprecated(forRemoval = true, since = "1.19")
 +   public static synchronized void setRenderLayer(Block block, net.minecraftforge.client.ChunkRenderTypeSet layers) {
 +      checkClientLoading();
