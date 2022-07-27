@@ -266,17 +266,28 @@
                 }
  
                 float f4 = 0.0F;
-@@ -1137,8 +_,8 @@
+@@ -1125,7 +_,7 @@
+                if (flag5) {
+                   if (i > 0) {
+                      if (p_36347_ instanceof LivingEntity) {
+-                        ((LivingEntity)p_36347_).m_147240_((double)((float)i * 0.5F), (double)Mth.m_14031_(this.m_146908_() * ((float)Math.PI / 180F)), (double)(-Mth.m_14089_(this.m_146908_() * ((float)Math.PI / 180F))));
++                        ((LivingEntity)p_36347_).knockback(net.minecraftforge.event.entity.living.LivingKnockBackEvent.Context.createAttackedBy(this, this.m_21205_(), f), i * 0.5F, Mth.m_14031_(this.m_146908_() * Mth.f_144833_), -Mth.m_14089_(this.m_146908_() * Mth.f_144833_));
+                      } else {
+                         p_36347_.m_5997_((double)(-Mth.m_14031_(this.m_146908_() * ((float)Math.PI / 180F)) * (float)i * 0.5F), 0.1D, (double)(Mth.m_14089_(this.m_146908_() * ((float)Math.PI / 180F)) * (float)i * 0.5F));
+                      }
+@@ -1137,9 +_,9 @@
                    if (flag3) {
                       float f3 = 1.0F + EnchantmentHelper.m_44821_(this) * f;
  
 -                     for(LivingEntity livingentity : this.f_19853_.m_45976_(LivingEntity.class, p_36347_.m_20191_().m_82377_(1.0D, 0.25D, 1.0D))) {
 -                        if (livingentity != this && livingentity != p_36347_ && !this.m_7307_(livingentity) && (!(livingentity instanceof ArmorStand) || !((ArmorStand)livingentity).m_31677_()) && this.m_20280_(livingentity) < 9.0D) {
+-                           livingentity.m_147240_((double)0.4F, (double)Mth.m_14031_(this.m_146908_() * ((float)Math.PI / 180F)), (double)(-Mth.m_14089_(this.m_146908_() * ((float)Math.PI / 180F))));
 +                     for(LivingEntity livingentity : this.f_19853_.m_45976_(LivingEntity.class, this.m_21120_(InteractionHand.MAIN_HAND).getSweepHitBox(this, p_36347_))) {
 +                        if (livingentity != this && livingentity != p_36347_ && !this.m_7307_(livingentity) && (!(livingentity instanceof ArmorStand) || !((ArmorStand)livingentity).m_31677_()) && this.canHit(livingentity, 0)) { // Original check was dist < 3, range is 3, so vanilla used padding=0
-                            livingentity.m_147240_((double)0.4F, (double)Mth.m_14031_(this.m_146908_() * ((float)Math.PI / 180F)), (double)(-Mth.m_14089_(this.m_146908_() * ((float)Math.PI / 180F))));
++                           livingentity.knockback(net.minecraftforge.event.entity.living.LivingKnockBackEvent.Context.createSweepAttackedBy(this, this.m_21205_(), f3), 0.4F, Mth.m_14031_(this.m_146908_() * Mth.f_144833_), -Mth.m_14089_(this.m_146908_() * Mth.f_144833_));
                             livingentity.m_6469_(DamageSource.m_19344_(this), f3);
                          }
+                      }
 @@ -1179,13 +_,15 @@
                    EnchantmentHelper.m_44896_(this, p_36347_);
                    ItemStack itemstack1 = this.m_21205_();

@@ -8,7 +8,9 @@ package net.minecraftforge.common.extensions;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.ForgeMod;
+import net.minecraftforge.event.entity.living.LivingKnockBackEvent;
 import net.minecraftforge.fluids.FluidType;
 
 public interface IForgeLivingEntity extends IForgeEntity
@@ -70,5 +72,13 @@ public interface IForgeLivingEntity extends IForgeEntity
     default boolean moveInFluid(FluidState state, Vec3 movementVector, double gravity)
     {
         return state.move(self(), movementVector, gravity);
+    }
+
+    default void knockback(LivingKnockBackEvent.Context context, double strength, double ratioX, double ratioZ)
+    {
+        LivingKnockBackEvent event = ForgeHooks.onLivingKnockBack(self(), context, (float) strength, ratioX, ratioZ);
+        if(event.isCanceled()) return;
+
+        self().knockback(event.getStrength(), event.getRatioX(), event.getRatioZ());
     }
 }
