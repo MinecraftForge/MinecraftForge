@@ -395,6 +395,23 @@ public class Tags
         public static final TagKey<Item> STORAGE_BLOCKS_REDSTONE = tag("storage_blocks/redstone");
         public static final TagKey<Item> STRING                  = tag("string");
 
+        public static final TagKey<Item> TOOLS = tag("tools");
+        public static final TagKey<Item> TOOLS_SWORDS = tag("tools/swords");
+        public static final TagKey<Item> TOOLS_AXES = tag("tools/axes");
+        public static final TagKey<Item> TOOLS_PICKAXES = tag("tools/pickaxes");
+        public static final TagKey<Item> TOOLS_SHOVELS = tag("tools/shovels");
+        public static final TagKey<Item> TOOLS_HOES = tag("tools/hoes");
+        public static final TagKey<Item> TOOLS_SHIELDS = tag("tools/shields");
+        public static final TagKey<Item> TOOLS_BOWS = tag("tools/bows");
+        public static final TagKey<Item> TOOLS_CROSSBOWS = tag("tools/crossbows");
+        public static final TagKey<Item> TOOLS_FISHING_RODS = tag("tools/fishing_rods");
+        public static final TagKey<Item> TOOLS_TRIDENTS = tag("tools/tridents");
+        public static final TagKey<Item> ARMORS = tag("armors");
+        public static final TagKey<Item> ARMORS_HELMETS = tag("armors/helmets");
+        public static final TagKey<Item> ARMORS_CHESTPLATES = tag("armors/chestplates");
+        public static final TagKey<Item> ARMORS_LEGGINGS = tag("armors/leggings");
+        public static final TagKey<Item> ARMORS_BOOTS = tag("armors/boots");
+
         private static TagKey<Item> tag(String name)
         {
             return ItemTags.create(new ResourceLocation("forge", name));
