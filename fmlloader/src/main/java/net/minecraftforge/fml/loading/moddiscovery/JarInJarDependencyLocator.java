@@ -13,8 +13,8 @@ import net.minecraftforge.forgespi.language.IModInfo;
 import net.minecraftforge.forgespi.locating.IModFile;
 import net.minecraftforge.forgespi.locating.ModFileLoadingException;
 import net.minecraftforge.jarjar.selection.JarSelector;
-import org.apache.maven.artifact.versioning.ArtifactVersion;
-import org.apache.maven.artifact.versioning.VersionRange;
+import net.minecraftforge.jarjar.thedarkside.org.apache.maven.artifact.versioning.ArtifactVersion;
+import net.minecraftforge.jarjar.thedarkside.org.apache.maven.artifact.versioning.VersionRange;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 

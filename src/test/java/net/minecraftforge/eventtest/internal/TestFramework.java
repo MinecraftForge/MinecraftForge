@@ -58,7 +58,7 @@ public class TestFramework {
 
         //THIS IS DISABLED FOR NOW UNTILL IT ACTUALLY WORKS.
         //THIS CRASHES THE DEDICATED TEST SERVER.
-/*        LOGGER.info("Preparing all event tests.");
+        LOGGER.info("Preparing all event tests.");
 
         tests = gatherEvents();
         // Let each event set up
@@ -70,9 +70,7 @@ public class TestFramework {
 
         // Register the game shutting down listener.
         // If there are any unhandled tests after shutdown, notify of an event not fired.
-        MinecraftForge.EVENT_BUS.addListener(this::collectMissedTests);*/
-
-        tests = Collections.emptyList();
+        MinecraftForge.EVENT_BUS.addListener(this::collectMissedTests);
     }
 
     /**
