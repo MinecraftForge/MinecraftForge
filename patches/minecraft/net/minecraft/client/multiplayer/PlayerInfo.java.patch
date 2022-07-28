@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/multiplayer/PlayerInfo.java
 +++ b/net/minecraft/client/multiplayer/PlayerInfo.java
-@@ -77,6 +_,7 @@
+@@ -84,6 +_,7 @@
     }
  
     protected void m_105317_(GameType p_105318_) {

@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/FogRenderer.java
 +++ b/net/minecraft/client/renderer/FogRenderer.java
-@@ -182,6 +_,12 @@
+@@ -190,6 +_,12 @@
           f_109012_ = f_109012_ * (1.0F - f7) + f_109012_ * f9 * f7;
        }
  
@@ -13,7 +13,7 @@
        RenderSystem.m_69424_(f_109010_, f_109011_, f_109012_, 0.0F);
     }
  
-@@ -263,6 +_,7 @@
+@@ -271,6 +_,7 @@
        RenderSystem.m_157445_(fogrenderer$fogdata.f_234200_);
        RenderSystem.m_157443_(fogrenderer$fogdata.f_234201_);
        RenderSystem.m_202160_(fogrenderer$fogdata.f_234202_);

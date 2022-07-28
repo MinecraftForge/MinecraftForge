@@ -53,6 +53,7 @@ import net.minecraftforge.common.world.ForgeBiomeModifiers.RemoveSpawnsBiomeModi
 import net.minecraftforge.common.world.NoneBiomeModifier;
 import net.minecraftforge.common.world.NoneStructureModifier;
 import net.minecraftforge.common.world.StructureModifier;
+import net.minecraftforge.event.ServerChatEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fluids.FluidType;
 import net.minecraftforge.fluids.ForgeFlowingFluid;
@@ -351,6 +352,7 @@ public class ForgeMod
             });
 
     private static boolean enableMilkFluid = false;
+    private static boolean serverChatPreviewEnabled = false;
     public static final RegistryObject<FluidType> MILK_TYPE = RegistryObject.createOptional(new ResourceLocation("milk"), ForgeRegistries.Keys.FLUID_TYPES.location(), "minecraft");
     public static final RegistryObject<Fluid> MILK = RegistryObject.create(new ResourceLocation("milk"), ForgeRegistries.FLUIDS);
     public static final RegistryObject<Fluid> FLOWING_MILK = RegistryObject.create(new ResourceLocation("flowing_milk"), ForgeRegistries.FLUIDS);
@@ -367,6 +369,25 @@ public class ForgeMod
     public static void enableMilkFluid()
     {
         enableMilkFluid = true;
+    }
+
+    /**
+     * Run this method during mod constructor to enable chat previews for the server.
+     * Recommended for mods which modify the chat message in {@link ServerChatEvent}.
+     *
+     * @see ServerChatEvent
+     */
+    public static void enableServerChatPreview()
+    {
+        serverChatPreviewEnabled = true;
+    }
+
+    /**
+     * @return {@code true} if server chat previews are enabled
+     */
+    public static boolean isServerChatPreviewEnabled()
+    {
+        return serverChatPreviewEnabled;
     }
 
     public ForgeMod()

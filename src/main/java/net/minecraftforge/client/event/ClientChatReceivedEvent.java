@@ -6,9 +6,10 @@
 package net.minecraftforge.client.event;
 
 import net.minecraft.Util;
-import net.minecraft.network.chat.ChatSender;
 import net.minecraft.network.chat.ChatType;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MessageSigner;
+import net.minecraft.network.chat.PlayerChatMessage;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
@@ -31,15 +32,17 @@ import org.jetbrains.annotations.ApiStatus;
 public class ClientChatReceivedEvent extends Event
 {
     private Component message;
-    private final ChatType type;
-    private final ChatSender chatSender;
+    private final ChatType.Bound boundChatType;
+    private final PlayerChatMessage playerChatMessage;
+    private final MessageSigner messageSigner;
 
     @ApiStatus.Internal
-    public ClientChatReceivedEvent(ChatType type, Component message, ChatSender chatSender)
+    public ClientChatReceivedEvent(ChatType.Bound boundChatType, Component message, PlayerChatMessage playerChatMessage, MessageSigner messageSigner)
     {
-        this.type = type;
+        this.boundChatType = boundChatType;
         this.message = message;
-        this.chatSender = chatSender;
+        this.playerChatMessage = playerChatMessage;
+        this.messageSigner = messageSigner;
     }
 
     /**
@@ -53,7 +56,7 @@ public class ClientChatReceivedEvent extends Event
     /**
      * Sets the new message to be displayed in the chat message window, if the event is not cancelled.
      *
-     * @param message the new message to be sent
+     * @param message the new message to be displayed
      */
     public void setMessage(Component message)
     {
@@ -61,20 +64,38 @@ public class ClientChatReceivedEvent extends Event
     }
 
     /**
-     * {@return the type of the chat message}
+     * {@return the bound chat type of the chat message}.
+     * This contains the chat type, display name of the sender, and nullable target name depending on the chat type.
      */
-    public ChatType getType()
+    public ChatType.Bound getBoundChatType()
     {
-        return type;
+        return this.boundChatType;
     }
 
     /**
-     * {@return the sender of this chat message} This contains the UUID, name, and (optionally) the team name of the
-     * entity which sent the chat message. For system messages, {@link ChatSender#uuid()} will be equal to
-     * {@link Util#NIL_UUID}.
+     * {@return the full player chat message}.
+     * This contains the sender UUID, various signing data, and the optional unsigned contents.
      */
-    public ChatSender getChatSender()
+    public PlayerChatMessage getPlayerChatMessage()
     {
-        return chatSender;
+        return this.playerChatMessage;
+    }
+
+    /**
+     * {@return the message signer}.
+     * This contains the sender UUID, timestamp of message creation, and signature salt.
+     * The {@linkplain MessageSigner#profileId() sender UUID} will be {@link Util#NIL_UUID} if the message is a system message.
+     */
+    public MessageSigner getMessageSigner()
+    {
+        return this.messageSigner;
+    }
+
+    /**
+     * {@return {@code true} if the message was sent by the system, {@code false} otherwise}
+     */
+    public boolean isSystem()
+    {
+        return this.messageSigner.isSystem();
     }
 }

@@ -1,0 +1,21 @@
+--- a/net/minecraft/client/multiplayer/chat/ChatListener.java
++++ b/net/minecraft/client/multiplayer/chat/ChatListener.java
+@@ -175,12 +_,16 @@
+          MessageSignature messagesignature = p_242317_.f_240893_();
+          FilterMask filtermask = p_242317_.f_242992_();
+          if (filtermask.m_243095_()) {
+-            this.f_240348_.f_91065_.m_93076_().m_240964_(p_243337_, messagesignature, guimessagetag);
++            Component forgeComponent = net.minecraftforge.client.ForgeHooksClient.onClientChat(p_242290_, p_243337_, p_242317_, p_242317_.m_241067_());
++            if (forgeComponent == null) return false;
++            this.f_240348_.f_91065_.m_93076_().m_240964_(forgeComponent, messagesignature, guimessagetag);
+             this.m_241119_(p_242290_, p_242317_.m_237220_());
+          } else {
+             Component component = filtermask.m_243081_(p_242317_.m_241775_());
+             if (component != null) {
+-               this.f_240348_.f_91065_.m_93076_().m_240964_(p_242290_.m_240977_(component), messagesignature, guimessagetag);
++               Component forgeComponent = net.minecraftforge.client.ForgeHooksClient.onClientChat(p_242290_, p_242290_.m_240977_(component), p_242317_, p_242317_.m_241067_());
++               if (forgeComponent == null) return false;
++               this.f_240348_.f_91065_.m_93076_().m_240964_(forgeComponent, messagesignature, guimessagetag);
+                this.m_241119_(p_242290_, component);
+             }
+          }

@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/entity/animal/allay/Allay.java
++++ b/net/minecraft/world/entity/animal/allay/Allay.java
+@@ -326,7 +_,7 @@
+ 
+    public boolean m_7243_(ItemStack p_218387_) {
+       ItemStack itemstack = this.m_21120_(InteractionHand.MAIN_HAND);
+-      return !itemstack.m_41619_() && itemstack.m_41726_(p_218387_) && this.f_218303_.m_19183_(p_218387_) && this.f_19853_.m_46469_().m_46207_(GameRules.f_46132_);
++      return !itemstack.m_41619_() && itemstack.m_41726_(p_218387_) && this.f_218303_.m_19183_(p_218387_) && net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.f_19853_, this);
+    }
+ 
+    protected void m_7581_(ItemEntity p_218359_) {
