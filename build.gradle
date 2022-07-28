@@ -261,6 +261,9 @@ def sharedDeps = {
     moduleonly "org.ow2.asm:asm-util:${ASM_VERSION}"
     moduleonly "org.ow2.asm:asm-analysis:${ASM_VERSION}"
     moduleonly "cpw.mods:bootstraplauncher:${BOOTSTRAPLAUNCHER_VERSION}"
+    moduleonly ("net.minecraftforge:JarJar:${JARJAR_VERSION}") {
+        transitive = false
+    }
 
     installer "cpw.mods:securejarhandler:${SECUREJARHANDLER_VERSION}"
     installer "org.ow2.asm:asm:${ASM_VERSION}"
