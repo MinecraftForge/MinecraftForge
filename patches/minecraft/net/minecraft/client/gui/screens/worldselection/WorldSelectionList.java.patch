@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/gui/screens/worldselection/WorldSelectionList.java
 +++ b/net/minecraft/client/gui/screens/worldselection/WorldSelectionList.java
-@@ -68,6 +_,7 @@
+@@ -65,6 +_,7 @@
     static final DateFormat f_101646_ = new SimpleDateFormat();
     static final ResourceLocation f_101647_ = new ResourceLocation("textures/misc/unknown_server.png");
     static final ResourceLocation f_101648_ = new ResourceLocation("textures/gui/world_selection.png");
@@ -8,7 +8,7 @@
     static final Component f_101649_ = Component.m_237115_("selectWorld.tooltip.fromNewerVersion1").m_130940_(ChatFormatting.RED);
     static final Component f_101650_ = Component.m_237115_("selectWorld.tooltip.fromNewerVersion2").m_130940_(ChatFormatting.RED);
     static final Component f_101651_ = Component.m_237115_("selectWorld.tooltip.snapshot1").m_130940_(ChatFormatting.GOLD);
-@@ -326,6 +_,7 @@
+@@ -325,6 +_,7 @@
           RenderSystem.m_69478_();
           GuiComponent.m_93133_(p_101721_, p_101724_, p_101723_, 0.0F, 0.0F, 32, 32, 32, 32);
           RenderSystem.m_69461_();
@@ -16,17 +16,19 @@
           if (this.f_101693_.f_91066_.m_231828_().m_231551_() || p_101729_) {
              RenderSystem.m_157456_(0, WorldSelectionList.f_101648_);
              GuiComponent.m_93172_(p_101721_, p_101724_, p_101723_, p_101724_ + 32, p_101723_ + 32, -1601138544);
-@@ -647,6 +_,19 @@
+@@ -646,6 +_,21 @@
  
        public boolean m_214209_() {
           return !this.f_101695_.m_164916_();
 +      }
++
++      // FORGE: Patch in experimental warning icon for worlds in the world selection screen
 +      private void renderExperimentalWarning(PoseStack stack, int mouseX, int mouseY, int top, int left) {
 +         if (this.f_101695_.isExperimental()) {
 +            int leftStart = left + WorldSelectionList.this.m_5759_();
 +            RenderSystem.m_157456_(0, WorldSelectionList.FORGE_EXPERIMENTAL_WARNING_ICON);
 +            GuiComponent.m_93133_(stack, leftStart - 36, top, 0.0F, 0.0F, 32, 32, 32, 32);
-+            //Reset texture to what it was before
++            // Reset texture to what it was before
 +            RenderSystem.m_157456_(0, this.f_101698_ != null ? this.f_101696_ : WorldSelectionList.f_101647_);
 +            if (WorldSelectionList.this.m_93412_(mouseX, mouseY) == this && mouseX > leftStart - 36 && mouseX < leftStart) {
 +               List<net.minecraft.util.FormattedCharSequence> tooltip = Minecraft.m_91087_().f_91062_.m_92923_(Component.m_237115_("forge.experimentalsettings.tooltip"), 200);

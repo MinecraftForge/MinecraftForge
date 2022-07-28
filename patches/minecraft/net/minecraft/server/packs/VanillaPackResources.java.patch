@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/packs/VanillaPackResources.java
 +++ b/net/minecraft/server/packs/VanillaPackResources.java
-@@ -147,6 +_,9 @@
+@@ -148,6 +_,9 @@
        try {
           Path path = f_182296_.get(p_215346_);
           if (path != null) {
@@ -10,7 +10,7 @@
              m_215357_(set, p_215347_, path, p_215348_, p_215349_);
           } else {
              f_10315_.error("Can't access assets root for type: {}", (Object)p_215346_);
-@@ -209,7 +_,7 @@
+@@ -210,7 +_,7 @@
  
        try {
           URL url = VanillaPackResources.class.getResource(s);
@@ -19,7 +19,7 @@
        } catch (IOException ioexception) {
           return VanillaPackResources.class.getResourceAsStream(s);
        }
-@@ -225,7 +_,7 @@
+@@ -226,7 +_,7 @@
  
     @Nullable
     protected InputStream m_5539_(String p_10334_) {
@@ -28,7 +28,7 @@
     }
  
     public boolean m_7211_(PackType p_10355_, ResourceLocation p_10356_) {
-@@ -300,11 +_,39 @@
+@@ -301,11 +_,39 @@
     public void close() {
     }
  

@@ -5,7 +5,6 @@
 
 package net.minecraftforge.fml.loading.targets;
 
-import com.google.common.base.Strings;
 import cpw.mods.jarhandling.SecureJar;
 
 import java.io.File;
@@ -49,8 +48,6 @@ public abstract class CommonDevLaunchHandler extends CommonLaunchHandler {
     protected String[] preLaunch(String[] arguments, ModuleLayer layer) {
         if (getDist().isDedicatedServer())
             return arguments;
-
-        fixNatives();
 
         if (isData())
             return arguments;
@@ -118,19 +115,5 @@ public abstract class CommonDevLaunchHandler extends CommonLaunchHandler {
     private static String getRandomNumbers(int length) {
         // Generate a time-based random number, to mimic how n.m.client.Main works
         return Long.toString(System.nanoTime() % (int) Math.pow(10, length));
-    }
-
-    private static void fixNatives() {
-        String paths = System.getProperty("java.library.path");
-        String nativesDir = System.getProperty("nativesDirectory");
-        if (nativesDir == null)
-            return;
-
-        if (Strings.isNullOrEmpty(paths))
-            paths = nativesDir;
-        else
-            paths += File.pathSeparator + nativesDir;
-
-        System.setProperty("java.library.path", paths);
     }
 }

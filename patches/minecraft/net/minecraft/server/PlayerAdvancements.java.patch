@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/PlayerAdvancements.java
 +++ b/net/minecraft/server/PlayerAdvancements.java
-@@ -179,6 +_,10 @@
+@@ -178,6 +_,10 @@
        }
  
        this.m_136002_(p_136007_);
@@ -11,7 +11,7 @@
        this.m_136001_();
        this.m_135994_(p_136007_);
     }
-@@ -237,6 +_,8 @@
+@@ -236,6 +_,8 @@
     }
  
     public boolean m_135988_(Advancement p_135989_, String p_135990_) {
@@ -20,9 +20,9 @@
        boolean flag = false;
        AdvancementProgress advancementprogress = this.m_135996_(p_135989_);
        boolean flag1 = advancementprogress.m_8193_();
-@@ -249,6 +_,7 @@
+@@ -248,6 +_,7 @@
              if (p_135989_.m_138320_() != null && p_135989_.m_138320_().m_14996_() && this.f_135968_.f_19853_.m_46469_().m_46207_(GameRules.f_46153_)) {
-                this.f_135962_.m_215627_(Component.m_237110_("chat.type.advancement." + p_135989_.m_138320_().m_14992_().m_15548_(), this.f_135968_.m_5446_(), p_135989_.m_138330_()), ChatType.f_130599_);
+                this.f_135962_.m_240416_(Component.m_237110_("chat.type.advancement." + p_135989_.m_138320_().m_14992_().m_15548_(), this.f_135968_.m_5446_(), p_135989_.m_138330_()), false);
              }
 +            net.minecraftforge.common.ForgeHooks.onAdvancement(this.f_135968_, p_135989_);
           }
