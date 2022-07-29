@@ -5,6 +5,7 @@
 
 package net.minecraftforge.fml.loading.moddiscovery;
 
+import net.minecraftforge.fml.loading.ClasspathLocatorUtils;
 import com.mojang.logging.LogUtils;
 import net.minecraftforge.fml.loading.LogMarkers;
 import org.slf4j.Logger;
@@ -59,7 +60,7 @@ public class ClasspathLocator extends AbstractJarFileModLocator
         final Enumeration<URL> resources = ClassLoader.getSystemClassLoader().getResources(resource);
         while (resources.hasMoreElements()) {
             URL url = resources.nextElement();
-            Path path = findJarPathFor(resource, resource, url);
+            Path path = ClasspathLocatorUtils.findJarPathFor(resource, resource, url);
             if (claimed.stream().anyMatch(path::equals) || !Files.exists(path) || Files.isDirectory(path))
                 continue;
             ret.add(path);

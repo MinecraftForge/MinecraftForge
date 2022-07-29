@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/MinecraftServer.java
 +++ b/net/minecraft/server/MinecraftServer.java
-@@ -241,7 +_,7 @@
+@@ -240,7 +_,7 @@
  
     public static <S extends MinecraftServer> S m_129872_(Function<Thread, S> p_129873_) {
        AtomicReference<S> atomicreference = new AtomicReference<>();
@@ -9,23 +9,23 @@
           atomicreference.get().m_130011_();
        }, "Server thread");
        thread.setUncaughtExceptionHandler((p_177909_, p_177910_) -> {
-@@ -333,6 +_,7 @@
+@@ -332,6 +_,7 @@
        this.m_129841_(dimensiondatastorage);
        this.f_129732_ = new CommandStorage(dimensiondatastorage);
        WorldBorder worldborder = serverlevel.m_6857_();
-+      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.WorldEvent.Load(f_129762_.get(Level.f_46428_)));
++      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.level.LevelEvent.Load(f_129762_.get(Level.f_46428_)));
        if (!serverleveldata.m_6535_()) {
           try {
              m_177896_(serverlevel, serverleveldata, worldgensettings.m_64660_(), flag);
-@@ -367,6 +_,7 @@
+@@ -366,6 +_,7 @@
              ServerLevel serverlevel1 = new ServerLevel(this, this.f_129738_, this.f_129744_, derivedleveldata, resourcekey1, entry.getValue(), p_129816_, flag, j, ImmutableList.of(), false);
              worldborder.m_61929_(new BorderChangeListener.DelegateBorderChangeListener(serverlevel1.m_6857_()));
              this.f_129762_.put(resourcekey1, serverlevel1);
-+            net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.WorldEvent.Load(f_129762_.get(resourcekey)));
++            net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.level.LevelEvent.Load(f_129762_.get(resourcekey)));
           }
        }
  
-@@ -378,6 +_,7 @@
+@@ -377,6 +_,7 @@
           p_177898_.m_7250_(BlockPos.f_121853_.m_6630_(80), 0.0F);
        } else {
           ServerChunkCache serverchunkcache = p_177897_.m_7726_();
@@ -33,7 +33,7 @@
           ChunkPos chunkpos = new ChunkPos(serverchunkcache.m_214994_().m_224579_().m_183230_());
           int i = serverchunkcache.m_8481_().m_142051_(p_177897_);
           if (i < p_177897_.m_141937_()) {
-@@ -458,6 +_,7 @@
+@@ -457,6 +_,7 @@
                 ChunkPos chunkpos = new ChunkPos(i);
                 serverlevel1.m_7726_().m_6692_(chunkpos, true);
              }
@@ -41,7 +41,7 @@
           }
        }
  
-@@ -528,6 +_,8 @@
+@@ -527,6 +_,8 @@
     }
  
     public void m_7041_() {
@@ -50,15 +50,15 @@
        if (this.f_177872_.m_142763_()) {
           this.m_236737_();
        }
-@@ -572,6 +_,7 @@
+@@ -571,6 +_,7 @@
        for(ServerLevel serverlevel2 : this.m_129785_()) {
           if (serverlevel2 != null) {
              try {
-+               net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.WorldEvent.Unload(serverlevel2));
++               net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.level.LevelEvent.Unload(serverlevel2));
                 serverlevel2.close();
              } catch (IOException ioexception1) {
                 f_129750_.error("Exception closing the level", (Throwable)ioexception1);
-@@ -620,6 +_,7 @@
+@@ -619,6 +_,7 @@
              throw new IllegalStateException("Failed to initialize server");
           }
  
@@ -129,7 +129,7 @@
           }
  
           this.f_129754_.m_6180_("tick");
-+         net.minecraftforge.event.ForgeEventFactory.onPreWorldTick(serverlevel, p_129954_);
++         net.minecraftforge.event.ForgeEventFactory.onPreLevelTick(serverlevel, p_129954_);
  
           try {
              serverlevel.m_8793_(p_129954_);
@@ -137,7 +137,7 @@
              serverlevel.m_6026_(crashreport);
              throw new ReportedException(crashreport);
           }
-+         net.minecraftforge.event.ForgeEventFactory.onPostWorldTick(serverlevel, p_129954_);
++         net.minecraftforge.event.ForgeEventFactory.onPostLevelTick(serverlevel, p_129954_);
  
           this.f_129754_.m_7238_();
           this.f_129754_.m_7238_();
@@ -162,6 +162,15 @@
     }
  
     public SystemReport m_177935_(SystemReport p_177936_) {
+@@ -1121,7 +_,7 @@
+    }
+ 
+    public boolean m_214000_() {
+-      return false;
++      return net.minecraftforge.common.ForgeMod.isServerChatPreviewEnabled();
+    }
+ 
+    public boolean m_129918_() {
 @@ -1287,6 +_,7 @@
           this.m_6846_().m_11315_();
           this.f_129734_.m_136120_(this.f_129740_.f_206585_.m_206860_());

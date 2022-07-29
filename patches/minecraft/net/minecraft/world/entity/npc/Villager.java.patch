@@ -14,7 +14,7 @@
  
     protected Component m_5677_() {
 -      return Component.m_237115_(this.m_6095_().m_20675_() + "." + Registry.f_122869_.m_7981_(this.m_7141_().m_35571_()).m_135815_());
-+      net.minecraft.resources.ResourceLocation profName = net.minecraftforge.registries.ForgeRegistries.PROFESSIONS.getKey(this.m_7141_().m_35571_());
++      net.minecraft.resources.ResourceLocation profName = net.minecraftforge.registries.ForgeRegistries.VILLAGER_PROFESSIONS.getKey(this.m_7141_().m_35571_());
 +      return Component.m_237115_(this.m_6095_().m_20675_() + '.' + (!"minecraft".equals(profName.m_135827_()) ? profName.m_135827_() + '.' : "") + profName.m_135815_());
     }
  

@@ -29,6 +29,7 @@ public class FMLConfig
         configSpec.define("maxThreads", -1);
         configSpec.define("versionCheck", Boolean.TRUE);
         configSpec.define("defaultConfigPath",  "defaultconfigs");
+        configSpec.define("disableOptimizedDFU", Boolean.TRUE);
     }
 
     private CommentedFileConfig configData;
@@ -87,5 +88,9 @@ public class FMLConfig
 
     public static String defaultConfigPath() {
         return INSTANCE.configData.<String>getOptional("defaultConfigPath").orElse("defaultconfigs");
+    }
+
+    public static boolean isOptimizedDFUDisabled() {
+        return INSTANCE.configData.<Boolean>getOptional("disableOptimizedDFU").orElse(Boolean.TRUE);
     }
 }

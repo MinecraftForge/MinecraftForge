@@ -23,12 +23,12 @@ public class ItemTooltipEvent extends PlayerEvent
     private final List<Component> toolTip;
 
     /**
-     * This event is fired in {@link ItemStack#getTooltipLines(Player, TooltipFlag)}, which in turn is called from it's respective GUIContainer.
-     * Tooltips are also gathered with a null entityPlayer during startup by {@link Minecraft#createSearchTrees()}.
+     * This event is fired in {@link ItemStack#getTooltipLines(Player, TooltipFlag)}, which in turn is called from its respective GUIContainer.
+     * Tooltips are also gathered with a null player during startup by {@link Minecraft#createSearchTrees()}.
      */
-    public ItemTooltipEvent(@NotNull ItemStack itemStack, @Nullable Player entityPlayer, List<Component> list, TooltipFlag flags)
+    public ItemTooltipEvent(@NotNull ItemStack itemStack, @Nullable Player player, List<Component> list, TooltipFlag flags)
     {
-        super(entityPlayer);
+        super(player);
         this.itemStack = itemStack;
         this.toolTip = list;
         this.flags = flags;
@@ -64,8 +64,8 @@ public class ItemTooltipEvent extends PlayerEvent
      */
     @Override
     @Nullable
-    public Player getPlayer()
+    public Player getEntity()
     {
-        return super.getPlayer();
+        return super.getEntity();
     }
 }

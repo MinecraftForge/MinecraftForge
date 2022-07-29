@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/KeyboardHandler.java
 +++ b/net/minecraft/client/KeyboardHandler.java
-@@ -300,7 +_,9 @@
+@@ -299,7 +_,9 @@
           }
  
           Screen screen = this.f_90867_.f_91080_;
@@ -11,7 +11,7 @@
              if (this.f_90867_.f_91066_.f_92105_.m_90832_(p_90895_, p_90896_)) {
                 this.f_90867_.m_91268_().m_85438_();
                 this.f_90867_.f_91066_.m_231829_().m_231514_(this.f_90867_.m_91268_().m_85440_());
-@@ -318,6 +_,8 @@
+@@ -317,6 +_,8 @@
                 });
                 return;
              }
@@ -19,8 +19,8 @@
 +               ((KeyBindsScreen)this.f_90867_.f_91080_).f_193975_ = null; //Forge: Unset pure modifiers.
           }
  
-          if (NarratorChatListener.f_93311_.m_93316_()) {
-@@ -340,11 +_,15 @@
+          if (this.f_90867_.m_240477_().m_93316_()) {
+@@ -339,11 +_,15 @@
              Screen.m_96579_(() -> {
                 if (p_90897_ != 1 && (p_90897_ != 2 || !this.f_90868_)) {
                    if (p_90897_ == 0) {
@@ -38,7 +38,7 @@
                 }
  
              }, "keyPressed event handler", screen.getClass().getCanonicalName());
-@@ -397,22 +_,26 @@
+@@ -396,22 +_,26 @@
                 }
              }
           }

@@ -27,23 +27,23 @@ import org.jetbrains.annotations.NotNull;
 public class BonemealEvent extends PlayerEvent
 {
 
-    private final Level world;
+    private final Level level;
     private final BlockPos pos;
     private final BlockState block;
     private final ItemStack stack;
 
-    public BonemealEvent(@NotNull Player player, @NotNull Level world, @NotNull BlockPos pos, @NotNull BlockState block, @NotNull ItemStack stack)
+    public BonemealEvent(@NotNull Player player, @NotNull Level level, @NotNull BlockPos pos, @NotNull BlockState block, @NotNull ItemStack stack)
     {
         super(player);
-        this.world = world;
+        this.level = level;
         this.pos = pos;
         this.block = block;
         this.stack = stack;
     }
 
-    public Level getWorld()
+    public Level getLevel()
     {
-        return world;
+        return level;
     }
 
     public BlockPos getPos()

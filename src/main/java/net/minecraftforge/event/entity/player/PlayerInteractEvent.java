@@ -322,7 +322,7 @@ public class PlayerInteractEvent extends PlayerEvent
     @NotNull
     public ItemStack getItemStack()
     {
-        return getPlayer().getItemInHand(hand);
+        return getEntity().getItemInHand(hand);
     }
 
     /**
@@ -348,11 +348,11 @@ public class PlayerInteractEvent extends PlayerEvent
     }
 
     /**
-     * @return Convenience method to get the world of this interaction.
+     * @return Convenience method to get the level of this interaction.
      */
-    public Level getWorld()
+    public Level getLevel()
     {
-        return getPlayer().getCommandSenderWorld();
+        return getEntity().level;
     }
 
     /**
@@ -360,7 +360,7 @@ public class PlayerInteractEvent extends PlayerEvent
      */
     public LogicalSide getSide()
     {
-        return getWorld().isClientSide ? LogicalSide.CLIENT : LogicalSide.SERVER;
+        return getLevel().isClientSide ? LogicalSide.CLIENT : LogicalSide.SERVER;
     }
 
     /**

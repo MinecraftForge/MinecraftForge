@@ -117,8 +117,6 @@ modId="living_conversion_event_test"
 [[mods]]
 modId="player_game_mode_event_test"
 [[mods]]
-modId="structure_spawn_list_event_test"
-[[mods]]
 modId="forge_codecs_test"
 [[mods]]
 modId="render_local_player_test"
@@ -154,8 +152,6 @@ modId="custom_tas_test"
 modId="dimension_settings_test"
 [[mods]]
 modId="player_attack_knockback_test"
-[[mods]]
-modId="overlay_layers_test"
 [[mods]]
 modId="entity_renderer_events_test"
 [[mods]]
@@ -242,6 +238,8 @@ modId="mod_mismatch_test"
 modId="custom_transformtype_test"
 [[mods]]
 modId="mega_model_test"
+[[mods]]
+modId="emissive_elements_test"
 
 
 

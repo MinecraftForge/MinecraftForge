@@ -50,9 +50,6 @@ public class ItemLayerModel implements IUnbakedGeometry<ItemLayerModel>
 {
     private static final Logger LOGGER = LogManager.getLogger();
 
-    // Transformer to set quads to max brightness
-    private static final IQuadTransformer MAX_LIGHTMAP_TRANSFORMER = IQuadTransformer.applyingLightmap(0x00F000F0);
-
     @Nullable
     private ImmutableList<Material> textures;
     private final IntSet emissiveLayers;
@@ -98,7 +95,7 @@ public class ItemLayerModel implements IUnbakedGeometry<ItemLayerModel>
             TextureAtlasSprite sprite = spriteGetter.apply(textures.get(i));
             var unbaked = UnbakedGeometryHelper.createUnbakedItemElements(i, sprite);
             var quads = UnbakedGeometryHelper.bakeElements(unbaked, $ -> sprite, modelState, modelLocation);
-            if (emissiveLayers.contains(i)) MAX_LIGHTMAP_TRANSFORMER.processInPlace(quads);
+            if (emissiveLayers.contains(i)) QuadTransformers.settingMaxEmissivity().processInPlace(quads);
             var renderTypeName = renderTypeNames.get(i);
             var renderTypes = renderTypeName != null ? context.getRenderType(renderTypeName) : null;
             builder.addQuads(renderTypes != null ? renderTypes : normalRenderTypes, quads);

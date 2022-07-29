@@ -8,25 +8,16 @@ package net.minecraftforge.network.simple;
 import io.netty.buffer.Unpooled;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.Connection;
-import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.protocol.Packet;
 import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkEvent;
 import net.minecraftforge.network.NetworkInstance;
 import net.minecraftforge.network.PacketDistributor;
 import org.apache.commons.lang3.tuple.Pair;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.IntSupplier;
-import java.util.function.Supplier;
+import java.util.*;
+import java.util.function.*;
 
 @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 public class SimpleChannel
@@ -181,11 +172,34 @@ public class SimpleChannel
             return builder;
         }
 
+        /**
+         * Set the message encoder, which writes this message to a {@link FriendlyByteBuf}.
+         * <p>
+         * The encoder is called <em>immediately</em> {@linkplain #send(PacketDistributor.PacketTarget, Object) when the
+         * packet is sent}. This means encoding typically occurs on the main server/client thread rather than on the
+         * network thread.
+         * <p>
+         * However, this behaviour should not be relied on, and the encoder should try to be thread-safe and not
+         * interact with the current game state.
+         *
+         * @param encoder The message encoder.
+         * @return This message builder, for chaining.
+         */
         public MessageBuilder<MSG> encoder(BiConsumer<MSG, FriendlyByteBuf> encoder) {
             this.encoder = encoder;
             return this;
         }
 
+        /**
+         * Set the message decoder, which reads the message from a {@link FriendlyByteBuf}.
+         * <p>
+         * The decoder is called when the message is received on the network thread. The decoder should not attempt to
+         * access or mutate any game state, deferring that until the {@linkplain #consumer(ToBooleanBiFunction) the
+         * message is handled}.
+         *
+         * @param decoder The message decoder.
+         * @return The message builder, for chaining.
+         */
         public MessageBuilder<MSG> decoder(Function<FriendlyByteBuf, MSG> decoder) {
             this.decoder = decoder;
             return this;
@@ -223,8 +237,53 @@ public class SimpleChannel
             return this;
         }
 
+        /**
+         * Set the message consumer, which is called once a message has been decoded.
+         * @param consumer The message consumer.
+         * @return The message builder, for chaining.
+         * @deprecated Use {@link #consumerMainThread(BiConsumer)} or {@link #consumerNetworkThread(BiConsumer)}.
+         */
+        @Deprecated(forRemoval = true, since = "1.19")
         public MessageBuilder<MSG> consumer(BiConsumer<MSG, Supplier<NetworkEvent.Context>> consumer) {
+            consumerMainThread(consumer);
+            return this;
+        }
+
+        /**
+         * Set the message consumer, which is called once a message has been decoded. This accepts the decoded message
+         * object and the message's context.
+         * <p>
+         * The consumer is called on the network thread, and so should not interact with most game state by default.
+         * {@link NetworkEvent.Context#enqueueWork(Runnable)} can be used to handle the message on the main server or
+         * client thread. Alternatively one can use {@link #consumerMainThread(BiConsumer)} to run the handler on the
+         * main thread.
+         *
+         * @param consumer The message consumer.
+         * @return The message builder, for chaining.
+         * @see #consumerMainThread(BiConsumer)
+         */
+        public MessageBuilder<MSG> consumerNetworkThread(BiConsumer<MSG, Supplier<NetworkEvent.Context>> consumer) {
             this.consumer = consumer;
+            return this;
+        }
+
+        /**
+         * Set the message consumer, which is called once a message has been decoded. This accepts the decoded message
+         * object and the message's context.
+         * <p>
+         * Unlike {@link #consumerNetworkThread(BiConsumer)}, the consumer is called on the main thread, and so can
+         * interact with most game state by default.
+         *
+         * @param consumer The message consumer.
+         * @return The message builder, for chaining.
+         * @see #consumerNetworkThread(BiConsumer)
+         */
+        public MessageBuilder<MSG> consumerMainThread(BiConsumer<MSG, Supplier<NetworkEvent.Context>> consumer) {
+            this.consumer = (msg, context) -> {
+                var ctx = context.get();
+                ctx.enqueueWork(() -> consumer.accept(msg, context));
+                ctx.setPacketHandled(true);
+            };
             return this;
         }
 
@@ -236,12 +295,25 @@ public class SimpleChannel
          * Function returning a boolean "packet handled" indication, for simpler channel building.
          * @param handler a handler
          * @return this
+         * @see #consumerNetworkThread(BiConsumer)
          */
-        public MessageBuilder<MSG> consumer(ToBooleanBiFunction<MSG, Supplier<NetworkEvent.Context>> handler) {
+        public MessageBuilder<MSG> consumerNetworkThread(ToBooleanBiFunction<MSG, Supplier<NetworkEvent.Context>> handler) {
             this.consumer = (msg, ctx) -> {
                 boolean handled = handler.applyAsBool(msg, ctx);
                 ctx.get().setPacketHandled(handled);
             };
+            return this;
+        }
+
+        /**
+         * Set the message consumer, which is called once a message has been decoded.
+         * @param handler The message consumer.
+         * @return The message builder, for chaining.
+         * @deprecated Use {@link #consumerMainThread(BiConsumer)} or {@link #consumerNetworkThread(BiConsumer)}.
+         */
+        @Deprecated(forRemoval = true, since = "1.19")
+        public MessageBuilder<MSG> consumer(ToBooleanBiFunction<MSG, Supplier<NetworkEvent.Context>> handler) {
+            consumerMainThread(handler::applyAsBool);
             return this;
         }
 

@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/level/ServerLevel.java
 +++ b/net/minecraft/server/level/ServerLevel.java
-@@ -183,10 +_,11 @@
+@@ -184,10 +_,11 @@
     private final List<CustomSpawner> f_8558_;
     @Nullable
     private final EndDragonFight f_8559_;
@@ -9,11 +9,11 @@
     private final StructureManager f_214997_;
     private final StructureCheck f_196556_;
     private final boolean f_8561_;
-+   private net.minecraftforge.common.util.WorldCapabilityData capabilityData;
++   private net.minecraftforge.common.util.LevelCapabilityData capabilityData;
  
     public ServerLevel(MinecraftServer p_214999_, Executor p_215000_, LevelStorageSource.LevelStorageAccess p_215001_, ServerLevelData p_215002_, ResourceKey<Level> p_215003_, LevelStem p_215004_, ChunkProgressListener p_215005_, boolean p_215006_, long p_215007_, List<CustomSpawner> p_215008_, boolean p_215009_) {
        super(p_215002_, p_215003_, p_215004_.m_204521_(), p_214999_::m_129905_, false, p_215006_, p_215007_, p_214999_.m_213994_());
-@@ -226,6 +_,7 @@
+@@ -227,6 +_,7 @@
        }
  
        this.f_143245_ = new SleepStatus();
@@ -21,7 +21,7 @@
     }
  
     public void m_8606_(int p_8607_, int p_8608_, boolean p_8609_, boolean p_8610_) {
-@@ -254,8 +_,8 @@
+@@ -255,8 +_,8 @@
        int i = this.m_46469_().m_46215_(GameRules.f_151486_);
        if (this.f_143245_.m_144002_(i) && this.f_143245_.m_144004_(i, this.f_8546_)) {
           if (this.m_46469_().m_46207_(GameRules.f_46140_)) {
@@ -32,7 +32,7 @@
           }
  
           this.m_8804_();
-@@ -284,7 +_,7 @@
+@@ -285,7 +_,7 @@
        this.m_8807_();
        this.f_8557_ = false;
        profilerfiller.m_7238_();
@@ -41,7 +41,7 @@
        if (flag) {
           this.m_8886_();
        }
-@@ -316,7 +_,9 @@
+@@ -317,7 +_,9 @@
                       }
  
                       profilerfiller.m_6180_("tick");
@@ -52,7 +52,7 @@
                       profilerfiller.m_7238_();
                    }
                 }
-@@ -407,6 +_,7 @@
+@@ -408,6 +_,7 @@
           BlockPos blockpos2 = this.m_5452_(Heightmap.Types.MOTION_BLOCKING, this.m_46496_(i, 0, j, 15));
           BlockPos blockpos3 = blockpos2.m_7495_();
           Biome biome = this.m_204166_(blockpos2).m_203334_();
@@ -60,7 +60,7 @@
           if (biome.m_47477_(this, blockpos3)) {
              this.m_46597_(blockpos3, Blocks.f_50126_.m_49966_());
           }
-@@ -597,15 +_,19 @@
+@@ -598,15 +_,19 @@
           this.f_8548_.m_6846_().m_11270_(new ClientboundGameEventPacket(ClientboundGameEventPacket.f_132161_, this.f_46440_), this.m_46472_());
        }
  
@@ -84,7 +84,7 @@
        }
  
     }
-@@ -664,6 +_,7 @@
+@@ -665,6 +_,7 @@
                 return Registry.f_122826_.m_7981_(p_8664_.m_6095_()).toString();
              });
              profilerfiller.m_6174_("tickPassenger");
@@ -92,23 +92,23 @@
              p_8664_.m_6083_();
              profilerfiller.m_7238_();
  
-@@ -700,6 +_,7 @@
+@@ -701,6 +_,7 @@
              this.f_143244_.m_157554_();
           }
  
-+         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.WorldEvent.Save(this));
++         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.level.LevelEvent.Save(this));
        }
     }
  
-@@ -773,6 +_,7 @@
+@@ -774,6 +_,7 @@
     }
  
     private void m_8853_(ServerPlayer p_8854_) {
-+      if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.EntityJoinWorldEvent(p_8854_, this))) return;
++      if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.EntityJoinLevelEvent(p_8854_, this))) return;
        Entity entity = this.m_142646_().m_142694_(p_8854_.m_20148_());
        if (entity != null) {
           f_8566_.warn("Force-added player with duplicate UUID {}", (Object)p_8854_.m_20148_().toString());
-@@ -780,7 +_,8 @@
+@@ -781,7 +_,8 @@
           this.m_143261_((ServerPlayer)entity, Entity.RemovalReason.DISCARDED);
        }
  
@@ -118,7 +118,7 @@
     }
  
     private boolean m_8872_(Entity p_8873_) {
-@@ -788,7 +_,12 @@
+@@ -789,7 +_,12 @@
           f_8566_.warn("Tried to add entity {} but it was marked as removed already", (Object)EntityType.m_20613_(p_8873_.m_6095_()));
           return false;
        } else {
@@ -132,7 +132,7 @@
        }
     }
  
-@@ -825,10 +_,22 @@
+@@ -826,10 +_,22 @@
     }
  
     public void m_214150_(@Nullable Player p_215017_, double p_215018_, double p_215019_, double p_215020_, SoundEvent p_215021_, SoundSource p_215022_, float p_215023_, float p_215024_, long p_215025_) {
@@ -155,7 +155,7 @@
        this.f_8548_.m_6846_().m_11241_(p_215027_, p_215028_.m_20185_(), p_215028_.m_20186_(), p_215028_.m_20189_(), (double)p_215029_.m_215668_(p_215031_), this.m_46472_(), new ClientboundSoundEntityPacket(p_215029_, p_215030_, p_215028_, p_215031_, p_215032_, p_215033_));
     }
  
-@@ -845,6 +_,7 @@
+@@ -846,6 +_,7 @@
     }
  
     public void m_214171_(GameEvent p_215041_, Vec3 p_215042_, GameEvent.Context p_215043_) {
@@ -163,7 +163,7 @@
        int i = p_215041_.m_157827_();
        BlockPos blockpos = new BlockPos(p_215042_);
        int j = SectionPos.m_123171_(blockpos.m_123341_() - i);
-@@ -930,10 +_,15 @@
+@@ -931,10 +_,15 @@
     }
  
     public void m_46672_(BlockPos p_215045_, Block p_215046_) {
@@ -179,7 +179,7 @@
        this.f_220350_.m_214152_(p_215052_, p_215053_, p_215054_);
     }
  
-@@ -955,6 +_,7 @@
+@@ -956,6 +_,7 @@
  
     public Explosion m_7703_(@Nullable Entity p_8653_, @Nullable DamageSource p_8654_, @Nullable ExplosionDamageCalculator p_8655_, double p_8656_, double p_8657_, double p_8658_, float p_8659_, boolean p_8660_, Explosion.BlockInteraction p_8661_) {
        Explosion explosion = new Explosion(this, p_8653_, p_8654_, p_8655_, p_8656_, p_8657_, p_8658_, p_8659_, p_8660_, p_8661_);
@@ -187,20 +187,20 @@
        explosion.m_46061_();
        explosion.m_46075_(false);
        if (p_8661_ == Explosion.BlockInteraction.NONE) {
-@@ -1461,6 +_,12 @@
+@@ -1462,6 +_,12 @@
        });
     }
  
 +   protected void initCapabilities() {
 +      this.gatherCapabilities();
-+      capabilityData = this.m_8895_().m_164861_(e -> net.minecraftforge.common.util.WorldCapabilityData.load(e, getCapabilities()), () -> new net.minecraftforge.common.util.WorldCapabilityData(getCapabilities()), net.minecraftforge.common.util.WorldCapabilityData.ID);
++      capabilityData = this.m_8895_().m_164861_(e -> net.minecraftforge.common.util.LevelCapabilityData.load(e, getCapabilities()), () -> new net.minecraftforge.common.util.LevelCapabilityData(getCapabilities()), net.minecraftforge.common.util.LevelCapabilityData.ID);
 +      capabilityData.setCapabilities(getCapabilities());
 +   }
 +
     public LevelEntityGetter<Entity> m_142646_() {
        return this.f_143244_.m_157567_();
     }
-@@ -1544,8 +_,8 @@
+@@ -1545,8 +_,8 @@
              ServerLevel.this.f_143246_.add(mob);
           }
  
@@ -211,7 +211,7 @@
                 ServerLevel.this.f_143247_.put(enderdragonpart.m_19879_(), enderdragonpart);
              }
           }
-@@ -1569,17 +_,23 @@
+@@ -1570,17 +_,25 @@
              ServerLevel.this.f_143246_.remove(mob);
           }
  
@@ -223,11 +223,12 @@
              }
           }
  
--         p_143375_.m_213651_(DynamicGameEventListener::m_223634_);
-+         p_143375_.m_213651_(DynamicGameEventListener::m_223641_);
+          p_143375_.m_213651_(DynamicGameEventListener::m_223634_);
++
++         p_143375_.onRemovedFromWorld();
++         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.EntityLeaveLevelEvent(p_143375_, ServerLevel.this));
        }
  
-+      @Override
        public void m_214006_(Entity p_215086_) {
           p_215086_.m_213651_(DynamicGameEventListener::m_223641_);
        }

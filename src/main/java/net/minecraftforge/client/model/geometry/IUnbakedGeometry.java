@@ -32,4 +32,12 @@ public interface IUnbakedGeometry<T extends IUnbakedGeometry<T>>
     BakedModel bake(IGeometryBakingContext context, ModelBakery bakery, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelState, ItemOverrides overrides, ResourceLocation modelLocation);
 
     Collection<Material> getMaterials(IGeometryBakingContext context, Function<ResourceLocation, UnbakedModel> modelGetter, Set<Pair<String, String>> missingTextureErrors);
+
+    /**
+     * {@return a set of all the components whose visibility may be configured via {@link IGeometryBakingContext}}
+     */
+    default Set<String> getConfigurableComponentNames()
+    {
+        return Set.of();
+    }
 }

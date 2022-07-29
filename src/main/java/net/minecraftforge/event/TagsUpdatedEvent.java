@@ -6,31 +6,20 @@
 package net.minecraftforge.event;
 
 import net.minecraft.core.RegistryAccess;
-import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraftforge.eventbus.api.Event;
-import net.minecraftforge.server.ServerLifecycleHooks;
 
 /**
  * Fired when tags are updated on either server or client. This event can be used to refresh data that depends on tags.
  */
 public class TagsUpdatedEvent extends Event
 {
-    private final RegistryAccess registries;
+    private final RegistryAccess registryAccess;
     private final UpdateCause updateCause;
     private final boolean integratedServer;
 
-    @Deprecated(forRemoval = true, since = "1.18.2")
-    public TagsUpdatedEvent(RegistryAccess registries)
+    public TagsUpdatedEvent(RegistryAccess registryAccess, boolean fromClientPacket, boolean isIntegratedServerConnection)
     {
-        this.registries = registries;
-        this.updateCause = ClientGamePacketListener.class.isAssignableFrom(StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE).getCallerClass()) ? UpdateCause.CLIENT_PACKET_RECEIVED : UpdateCause.SERVER_DATA_LOAD;
-        var currentServer = ServerLifecycleHooks.getCurrentServer();
-        this.integratedServer = currentServer != null && !currentServer.isDedicatedServer();
-    }
-
-    public TagsUpdatedEvent(RegistryAccess registries, boolean fromClientPacket, boolean isIntegratedServerConnection)
-    {
-        this.registries = registries;
+        this.registryAccess = registryAccess;
         this.updateCause = fromClientPacket ? UpdateCause.CLIENT_PACKET_RECEIVED : UpdateCause.SERVER_DATA_LOAD;
         this.integratedServer = isIntegratedServerConnection;
     }
@@ -38,9 +27,9 @@ public class TagsUpdatedEvent extends Event
     /**
      * @return The dynamic registries that have had their tags rebound.
      */
-    public RegistryAccess getTagManager()
+    public RegistryAccess getRegistryAccess()
     {
-        return registries;
+        return registryAccess;
     }
 
     /**

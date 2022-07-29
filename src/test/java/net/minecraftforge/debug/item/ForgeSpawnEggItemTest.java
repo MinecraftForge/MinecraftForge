@@ -34,7 +34,7 @@ public class ForgeSpawnEggItemTest
     static final String MODID = "forge_spawnegg_test";
     static final boolean ENABLED = true;
 
-    private static final DeferredRegister<EntityType<?>> ENTITIES = DeferredRegister.create(ForgeRegistries.ENTITIES, MODID);
+    private static final DeferredRegister<EntityType<?>> ENTITIES = DeferredRegister.create(ForgeRegistries.ENTITY_TYPES, MODID);
     private static final RegistryObject<EntityType<Pig>> ENTITY = ENTITIES.register("test_entity", () ->
             EntityType.Builder.of(Pig::new, MobCategory.CREATURE).sized(1, 1).build("test_entity")
     );

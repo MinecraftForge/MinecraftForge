@@ -24,6 +24,7 @@ import org.jetbrains.annotations.NotNull;
  * <br>
  * This event is {@link Cancelable}.<br>
  * If this event is canceled, the player does not stop using the bow.<br>
+ * For crossbows, the charge will always be 1; Set it to -1 in order to prevent firing the arrow. <br>
  * <br>
  * This event does not have a result. {@link HasResult}<br>
  * <br>
@@ -33,22 +34,22 @@ import org.jetbrains.annotations.NotNull;
 public class ArrowLooseEvent extends PlayerEvent
 {
     private final ItemStack bow;
-    private final Level world;
+    private final Level level;
     private final boolean hasAmmo;
     private int charge;
 
-    public ArrowLooseEvent(Player player, @NotNull ItemStack bow, Level world, int charge, boolean hasAmmo)
+    public ArrowLooseEvent(Player player, @NotNull ItemStack bow, Level level, int charge, boolean hasAmmo)
     {
         super(player);
         this.bow = bow;
-        this.world = world;
+        this.level = level;
         this.charge = charge;
         this.hasAmmo = hasAmmo;
     }
 
     @NotNull
     public ItemStack getBow() { return this.bow; }
-    public Level getWorld() { return this.world; }
+    public Level getLevel() { return this.level; }
     public boolean hasAmmo() { return this.hasAmmo; }
     public int getCharge() { return this.charge; }
     public void setCharge(int charge) { this.charge = charge; }

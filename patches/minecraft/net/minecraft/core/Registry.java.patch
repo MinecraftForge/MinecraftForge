@@ -88,8 +88,9 @@
     public static final Registry<PositionSourceType<?>> f_175420_ = m_206008_(f_175408_, (p_235761_) -> {
        return PositionSourceType.f_157871_;
     });
-    public static final Registry<ArgumentTypeInfo<?, ?>> f_235729_ = m_206008_(f_235724_, (RegistryBootstrap)ArgumentTypeInfos::m_235384_);
+-   public static final Registry<ArgumentTypeInfo<?, ?>> f_235729_ = m_206008_(f_235724_, (RegistryBootstrap)ArgumentTypeInfos::m_235384_);
 -   public static final Registry<StatType<?>> f_122867_ = m_206008_(f_122917_, (p_235759_) -> {
++   @Deprecated public static final Registry<ArgumentTypeInfo<?, ?>> f_235729_ = forge(f_235724_, (RegistryBootstrap)ArgumentTypeInfos::m_235384_);
 +   @Deprecated public static final Registry<StatType<?>> f_122867_ = forge(f_122917_, (registry) -> {
        return Stats.f_12982_;
     });

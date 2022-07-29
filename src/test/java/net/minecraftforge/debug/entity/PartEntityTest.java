@@ -35,7 +35,7 @@ public class PartEntityTest
     static final String MOD_ID = "part_entity_test";
     static final boolean ENABLED = true;
 
-    private static final DeferredRegister<EntityType<?>> ENTITIES = DeferredRegister.create(ForgeRegistries.ENTITIES, MOD_ID);
+    private static final DeferredRegister<EntityType<?>> ENTITIES = DeferredRegister.create(ForgeRegistries.ENTITY_TYPES, MOD_ID);
     private static final RegistryObject<EntityType<TestEntity>> TEST_ENTITY = ENTITIES.register("test_entity", () -> EntityType.Builder.of(TestEntity::new, MobCategory.CREATURE).sized(16.0F, 8.0F).clientTrackingRange(10).build("test_entity"));
 
     public PartEntityTest()

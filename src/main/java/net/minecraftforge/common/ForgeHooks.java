@@ -8,6 +8,7 @@ package net.minecraftforge.common;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.regex.Matcher;
@@ -26,14 +27,13 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.Lifecycle;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.ResourceLocationException;
-import net.minecraft.Util;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.core.*;
 import net.minecraft.network.chat.*;
+import net.minecraft.network.chat.contents.LiteralContents;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagEntry;
@@ -86,7 +86,6 @@ import net.minecraft.world.*;
 import net.minecraft.world.level.BaseSpawner;
 import net.minecraft.world.level.block.entity.FurnaceBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.BlockHitResult;
@@ -101,8 +100,6 @@ import net.minecraftforge.common.loot.LootTableIdCondition;
 import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.common.util.Lazy;
 import net.minecraftforge.common.util.MavenVersionStringHelper;
-import net.minecraftforge.common.world.BiomeGenerationSettingsBuilder;
-import net.minecraftforge.common.world.MobSpawnSettingsBuilder;
 import net.minecraftforge.event.AnvilUpdateEvent;
 import net.minecraftforge.event.DifficultyChangeEvent;
 import net.minecraftforge.event.ForgeEventFactory;
@@ -122,7 +119,7 @@ import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingJumpEvent;
-import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
+import net.minecraftforge.event.entity.living.LivingEvent.LivingTickEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.living.LivingKnockBackEvent;
@@ -136,8 +133,8 @@ import net.minecraftforge.event.entity.player.CriticalHitEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.living.LivingGetProjectileEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.event.world.BlockEvent;
-import net.minecraftforge.event.world.NoteBlockEvent;
+import net.minecraftforge.event.level.BlockEvent;
+import net.minecraftforge.event.level.NoteBlockEvent;
 import net.minecraftforge.eventbus.api.Event.Result;
 import net.minecraftforge.fluids.FluidType;
 import net.minecraftforge.fml.ModContainer;
@@ -149,7 +146,6 @@ import net.minecraftforge.registries.ForgeRegistry;
 import net.minecraftforge.registries.GameData;
 import net.minecraftforge.registries.RegistryManager;
 
-import net.minecraftforge.server.ServerLifecycleHooks;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
@@ -164,10 +160,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.state.pattern.BlockInWorld;
 import net.minecraft.world.level.dimension.LevelStem;
-import net.minecraft.world.level.material.EmptyFluid;
 import net.minecraft.world.level.material.Fluid;
-import net.minecraft.world.level.material.LavaFluid;
-import net.minecraft.world.level.material.WaterFluid;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -199,6 +192,7 @@ public class ForgeHooks
      * Called when a player uses 'pick block', calls new Entity and Block hooks.
      */
     @SuppressWarnings("resource")
+    @Deprecated(forRemoval = true, since = "1.19")
     public static boolean onPickBlock(HitResult target, Player player, Level level)
     {
         ItemStack result = ItemStack.EMPTY;
@@ -227,7 +221,7 @@ public class ForgeHooks
             result = entity.getPickedResult(target);
 
             if (result.isEmpty())
-                LOGGER.warn("Picking on: [{}] {} gave null item", target.getType(), ForgeRegistries.ENTITIES.getKey(entity.getType()));
+                LOGGER.warn("Picking on: [{}] {} gave null item", target.getType(), ForgeRegistries.ENTITY_TYPES.getKey(entity.getType()));
         }
 
         if (result.isEmpty())
@@ -267,9 +261,9 @@ public class ForgeHooks
         MinecraftForge.EVENT_BUS.post(new LivingSetAttackTargetEvent(entity, target));
     }
 
-    public static boolean onLivingUpdate(LivingEntity entity)
+    public static boolean onLivingTick(LivingEntity entity)
     {
-        return MinecraftForge.EVENT_BUS.post(new LivingUpdateEvent(entity));
+        return MinecraftForge.EVENT_BUS.post(new LivingTickEvent(entity));
     }
 
     public static boolean onLivingAttack(LivingEntity entity, DamageSource src, float amount)
@@ -394,8 +388,8 @@ public class ForgeHooks
             return null;
 
         if (!player.level.isClientSide)
-            player.getCommandSenderWorld().addFreshEntity(event.getEntityItem());
-        return event.getEntityItem();
+            player.getCommandSenderWorld().addFreshEntity(event.getEntity());
+        return event.getEntity();
     }
 
     public static boolean onVanillaGameEvent(Level level, GameEvent vanillaEvent, Vec3 pos, GameEvent.Context context)
@@ -403,15 +397,74 @@ public class ForgeHooks
         return !MinecraftForge.EVENT_BUS.post(new VanillaGameEvent(level, vanillaEvent, pos, context));
     }
 
-    @Nullable
-    public static Component onServerChatEvent(@Nullable ServerPlayer player, String raw, Component comp)
+    private static String getRawText(Component message)
     {
-        ServerChatEvent event = new ServerChatEvent(player, raw, comp);
-        if (MinecraftForge.EVENT_BUS.post(event))
+        return message.getContents() instanceof LiteralContents literalContents ? literalContents.text() : "";
+    }
+
+    @Nullable
+    public static Component onServerChatSubmittedEvent(ServerPlayer player, String plain, Component decorated, boolean canChangeMessage)
+    {
+        ServerChatEvent.Submitted event = new ServerChatEvent.Submitted(player, plain, decorated, canChangeMessage);
+        return MinecraftForge.EVENT_BUS.post(event) ? null : event.getMessage();
+    }
+
+    private static final ChatDecorator SERVER_CHAT_SUBMITTED_DECORATOR = new ChatDecorator()
+    {
+        @NotNull
+        @Override
+        public CompletableFuture<Component> decorate(@Nullable ServerPlayer sender, Component message)
         {
-            return null;
+            return CompletableFuture.supplyAsync(() -> {
+                if (sender == null)
+                    return message; // Vanilla should never get here with the patches we use, but let's be safe with dumb mods
+
+                return onServerChatSubmittedEvent(sender, getRawText(message), message, true);
+            });
         }
-        return event.getComponent();
+
+        @NotNull
+        @Override
+        public CompletableFuture<PlayerChatMessage> decorate(@Nullable ServerPlayer sender, PlayerChatMessage message)
+        {
+            if (message.signedContent().isDecorated())
+            {
+                return CompletableFuture.supplyAsync(() -> {
+                    if (sender != null)
+                        return onServerChatSubmittedEvent(sender, message.signedContent().plain(), message.signedContent().decorated(), false) == null;
+
+                    return false;
+                }).thenApply(canceled -> canceled == Boolean.TRUE ? null : message);
+            }
+
+            return this.decorate(sender, message.serverContent()).thenApply(component -> component == null ? null : message.withUnsignedContent(component));
+        }
+    };
+
+    @NotNull
+    public static ChatDecorator getServerChatSubmittedDecorator()
+    {
+        return SERVER_CHAT_SUBMITTED_DECORATOR;
+    }
+
+    @Nullable
+    public static Component onServerChatPreviewEvent(@NotNull ServerPlayer player, @NotNull Component message)
+    {
+        ServerChatEvent.Preview event = new ServerChatEvent.Preview(player, getRawText(message), message);
+        return MinecraftForge.EVENT_BUS.post(event) ? null : event.getMessage();
+    }
+
+    @NotNull
+    public static ChatDecorator getServerChatPreviewDecorator()
+    {
+        return (player, message) -> CompletableFuture.supplyAsync(() -> {
+            if (player == null)
+                return message; // Vanilla should never get here with the patches we use, but let's be safe with dumb mods
+
+            Component preview = onServerChatPreviewEvent(player, message);
+            // Send the input message back to the client if the event was cancelled
+            return preview == null ? message : preview;
+        });
     }
 
 
@@ -664,11 +717,11 @@ public class ForgeHooks
         return craftingPlayer.get();
     }
     @NotNull
-    public static ItemStack getContainerItem(@NotNull ItemStack stack)
+    public static ItemStack getCraftingRemainingItem(@NotNull ItemStack stack)
     {
-        if (stack.getItem().hasContainerItem(stack))
+        if (stack.getItem().hasCraftingRemainingItem(stack))
         {
-            stack = stack.getItem().getContainerItem(stack);
+            stack = stack.getItem().getCraftingRemainingItem(stack);
             if (!stack.isEmpty() && stack.isDamageableItem() && stack.getDamageValue() > stack.getMaxDamage())
             {
                 ForgeEventFactory.onPlayerDestroyItem(craftingPlayer.get(), stack, null);
@@ -1011,7 +1064,7 @@ public class ForgeHooks
             }
             else if (item instanceof SpawnEggItem)
             {
-                ResourceLocation resourceLocation = ForgeRegistries.ENTITIES.getKey(((SpawnEggItem) item).getType(null));
+                ResourceLocation resourceLocation = ForgeRegistries.ENTITY_TYPES.getKey(((SpawnEggItem) item).getType(null));
                 if (resourceLocation != null)
                 {
                     return resourceLocation.getNamespace();
@@ -1081,7 +1134,7 @@ public class ForgeHooks
         if (serializer == null)
         {
             // ForgeRegistries.DATA_SERIALIZERS is a deferred register now, so if this method is called too early, the registry will be null
-            ForgeRegistry<EntityDataSerializer<?>> registry = (ForgeRegistry<EntityDataSerializer<?>>) ForgeRegistries.DATA_SERIALIZERS.get();
+            ForgeRegistry<EntityDataSerializer<?>> registry = (ForgeRegistry<EntityDataSerializer<?>>) ForgeRegistries.ENTITY_DATA_SERIALIZERS.get();
             if (registry != null)
                 serializer = registry.getValue(id);
         }
@@ -1094,7 +1147,7 @@ public class ForgeHooks
         if (id < 0)
         {
             // ForgeRegistries.DATA_SERIALIZERS is a deferred register now, so if this method is called too early, the registry will be null
-            ForgeRegistry<EntityDataSerializer<?>> registry = (ForgeRegistry<EntityDataSerializer<?>>) ForgeRegistries.DATA_SERIALIZERS.get();
+            ForgeRegistry<EntityDataSerializer<?>> registry = (ForgeRegistry<EntityDataSerializer<?>>) ForgeRegistries.ENTITY_DATA_SERIALIZERS.get();
             if (registry != null)
                 id = registry.getID(serializer);
         }

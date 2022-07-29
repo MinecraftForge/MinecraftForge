@@ -53,6 +53,7 @@ import net.minecraftforge.common.world.ForgeBiomeModifiers.RemoveSpawnsBiomeModi
 import net.minecraftforge.common.world.NoneBiomeModifier;
 import net.minecraftforge.common.world.NoneStructureModifier;
 import net.minecraftforge.common.world.StructureModifier;
+import net.minecraftforge.event.ServerChatEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fluids.FluidType;
 import net.minecraftforge.fluids.ForgeFlowingFluid;
@@ -63,7 +64,7 @@ import net.minecraftforge.registries.*;
 import net.minecraftforge.network.NetworkConstants;
 import net.minecraftforge.event.server.ServerStoppingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.forge.event.lifecycle.GatherDataEvent;
+import net.minecraftforge.data.event.GatherDataEvent;
 import net.minecraftforge.network.filters.VanillaPacketSplitter;
 import net.minecraftforge.server.command.EnumArgument;
 import net.minecraftforge.server.command.ModIdArgument;
@@ -78,7 +79,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.crafting.CompoundIngredient;
 import net.minecraftforge.common.crafting.ConditionalRecipe;
 import net.minecraftforge.common.crafting.CraftingHelper;
-import net.minecraftforge.common.crafting.NBTIngredient;
+import net.minecraftforge.common.crafting.StrictNBTIngredient;
 import net.minecraftforge.common.crafting.VanillaIngredientSerializer;
 import net.minecraftforge.common.crafting.conditions.AndCondition;
 import net.minecraftforge.common.crafting.conditions.FalseCondition;
@@ -167,7 +168,7 @@ public class ForgeMod
                 Decoration.CODEC.fieldOf("step").forGetter(AddFeaturesBiomeModifier::step)
             ).apply(builder, AddFeaturesBiomeModifier::new))
         );
-    
+
     /**
      * Stock biome modifier for removing features from biomes.
      */
@@ -181,7 +182,7 @@ public class ForgeMod
                     ).optionalFieldOf("steps", EnumSet.allOf(Decoration.class)).forGetter(RemoveFeaturesBiomeModifier::steps)
             ).apply(builder, RemoveFeaturesBiomeModifier::new))
         );
-    
+
     /**
      * Stock biome modifier for adding mob spawns to biomes.
      */
@@ -196,7 +197,7 @@ public class ForgeMod
                     ).fieldOf("spawners").forGetter(AddSpawnsBiomeModifier::spawners)
             ).apply(builder, AddSpawnsBiomeModifier::new))
         );
-    
+
     /**
      * Stock biome modifier for removing mob spawns from biomes.
      */
@@ -351,6 +352,7 @@ public class ForgeMod
             });
 
     private static boolean enableMilkFluid = false;
+    private static boolean serverChatPreviewEnabled = false;
     public static final RegistryObject<FluidType> MILK_TYPE = RegistryObject.createOptional(new ResourceLocation("milk"), ForgeRegistries.Keys.FLUID_TYPES.location(), "minecraft");
     public static final RegistryObject<Fluid> MILK = RegistryObject.create(new ResourceLocation("milk"), ForgeRegistries.FLUIDS);
     public static final RegistryObject<Fluid> FLOWING_MILK = RegistryObject.create(new ResourceLocation("flowing_milk"), ForgeRegistries.FLUIDS);
@@ -367,6 +369,25 @@ public class ForgeMod
     public static void enableMilkFluid()
     {
         enableMilkFluid = true;
+    }
+
+    /**
+     * Run this method during mod constructor to enable chat previews for the server.
+     * Recommended for mods which modify the chat message in {@link ServerChatEvent}.
+     *
+     * @see ServerChatEvent
+     */
+    public static void enableServerChatPreview()
+    {
+        serverChatPreviewEnabled = true;
+    }
+
+    /**
+     * @return {@code true} if server chat previews are enabled
+     */
+    public static boolean isServerChatPreviewEnabled()
+    {
+        return serverChatPreviewEnabled;
     }
 
     public ForgeMod()
@@ -535,7 +556,7 @@ public class ForgeMod
             CraftingHelper.register(TagEmptyCondition.Serializer.INSTANCE);
 
             CraftingHelper.register(new ResourceLocation("forge", "compound"), CompoundIngredient.Serializer.INSTANCE);
-            CraftingHelper.register(new ResourceLocation("forge", "nbt"), NBTIngredient.Serializer.INSTANCE);
+            CraftingHelper.register(new ResourceLocation("forge", "nbt"), StrictNBTIngredient.Serializer.INSTANCE);
             CraftingHelper.register(new ResourceLocation("forge", "partial_nbt"), PartialNBTIngredient.Serializer.INSTANCE);
             CraftingHelper.register(new ResourceLocation("forge", "difference"), DifferenceIngredient.Serializer.INSTANCE);
             CraftingHelper.register(new ResourceLocation("forge", "intersection"), IntersectionIngredient.Serializer.INSTANCE);

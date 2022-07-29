@@ -59,6 +59,7 @@ public final class GuiOverlayManager
                 .collect(ImmutableList.toImmutableList());
         OVERLAYS_BY_NAME = OVERLAYS.stream()
                 .collect(ImmutableMap.toImmutableMap(NamedGuiOverlay::id, Function.identity()));
+        assignVanillaOverlayTypes();
     }
 
     /**
@@ -71,6 +72,12 @@ public final class GuiOverlayManager
             overlays.put(entry.id(), entry.overlay);
             orderedOverlays.add(entry.id());
         }
+    }
+
+    private static void assignVanillaOverlayTypes()
+    {
+        for (var entry : VanillaGuiOverlay.values())
+            entry.type = OVERLAYS_BY_NAME.get(entry.id());
     }
 
     private GuiOverlayManager()
