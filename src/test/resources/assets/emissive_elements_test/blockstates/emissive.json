@@ -1,0 +1,5 @@
+{
+  "variants": {
+    "": { "model": "emissive_elements_test:block/emissive" }
+  }
+}

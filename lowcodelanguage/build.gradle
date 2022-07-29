@@ -12,7 +12,8 @@ dependencyUpdates.rejectVersionIf { isNonStable(it.candidate.version) }
 java.withSourcesJar()
 
 dependencies {
-    compileOnly('org.jetbrains:annotations:21.0.1')
+    compileOnly("org.jetbrains:annotations:${JETBRAINS_ANNOTATIONS_VERSION}")
+
     implementation(project(':fmlloader'))
     implementation(project(':fmlcore'))
 }

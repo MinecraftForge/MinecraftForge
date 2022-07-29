@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/ai/village/poi/PoiTypes.java
 +++ b/net/minecraft/world/entity/ai/village/poi/PoiTypes.java
-@@ -47,8 +_,9 @@
+@@ -48,8 +_,9 @@
     private static final Set<BlockState> f_218069_ = ImmutableList.of(Blocks.f_50256_, Blocks.f_152477_, Blocks.f_152476_, Blocks.f_152478_).stream().flatMap((p_218093_) -> {
        return p_218093_.m_49965_().m_61056_().stream();
     }).collect(ImmutableSet.toImmutableSet());
@@ -12,14 +12,14 @@
  
     private static Set<BlockState> m_218073_(Block p_218074_) {
        return ImmutableSet.copyOf(p_218074_.m_49965_().m_61056_());
-@@ -66,16 +_,10 @@
+@@ -67,16 +_,10 @@
     }
  
     private static void m_218077_(Holder<PoiType> p_218078_) {
 -      p_218078_.m_203334_().f_27325_().forEach((p_218081_) -> {
 -         Holder<PoiType> holder = f_218070_.put(p_218081_, p_218078_);
 -         if (holder != null) {
--            throw (IllegalStateException)Util.m_137570_(new IllegalStateException(String.format("%s is defined in more than one PoI type", p_218081_)));
+-            throw (IllegalStateException)Util.m_137570_(new IllegalStateException(String.format(Locale.ROOT, "%s is defined in more than one PoI type", p_218081_)));
 -         }
 -      });
     }
