@@ -1,6 +1,6 @@
 --- a/net/minecraft/commands/Commands.java
 +++ b/net/minecraft/commands/Commands.java
-@@ -175,7 +_,7 @@
+@@ -178,7 +_,7 @@
           JfrCommand.m_183645_(this.f_82090_);
        }
  
@@ -9,7 +9,7 @@
           TestCommand.m_127946_(this.f_82090_);
        }
  
-@@ -199,6 +_,7 @@
+@@ -202,6 +_,7 @@
        if (p_230943_.f_82144_) {
           PublishCommand.m_138184_(this.f_82090_);
        }
@@ -17,13 +17,12 @@
  
        this.f_82090_.setConsumer((p_230954_, p_230955_, p_230956_) -> {
           p_230954_.getSource().m_81342_(p_230954_, p_230955_, p_230956_);
-@@ -217,7 +_,17 @@
+@@ -227,7 +_,16 @@
  
        try {
           try {
--            return this.f_82090_.execute(stringreader, p_82118_);
-+            ParseResults<CommandSourceStack> parse = this.f_82090_.parse(stringreader, p_82118_);
-+            net.minecraftforge.event.CommandEvent event = new net.minecraftforge.event.CommandEvent(parse);
+-            return this.f_82090_.execute(p_242844_);
++            net.minecraftforge.event.CommandEvent event = new net.minecraftforge.event.CommandEvent(p_242844_);
 +            if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event)) {
 +               if (event.getException() instanceof Exception exception) {
 +                  throw exception;
@@ -34,9 +33,9 @@
 +            }
 +            return this.f_82090_.execute(event.getParseResults());
           } catch (CommandRuntimeException commandruntimeexception) {
-             p_82118_.m_81352_(commandruntimeexception.m_79226_());
+             commandsourcestack.m_81352_(commandruntimeexception.m_79226_());
              return 0;
-@@ -273,7 +_,8 @@
+@@ -283,7 +_,8 @@
        Map<CommandNode<CommandSourceStack>, CommandNode<SharedSuggestionProvider>> map = Maps.newHashMap();
        RootCommandNode<SharedSuggestionProvider> rootcommandnode = new RootCommandNode<>();
        map.put(this.f_82090_.getRoot(), rootcommandnode);

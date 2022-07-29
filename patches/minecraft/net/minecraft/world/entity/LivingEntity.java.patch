@@ -472,7 +472,7 @@
        super.m_8119_();
        this.m_21329_();
        this.m_21333_();
-@@ -2352,6 +_,7 @@
+@@ -2355,6 +_,7 @@
  
           ItemStack itemstack1 = this.m_6844_(equipmentslot);
           if (!ItemStack.m_41728_(itemstack1, itemstack)) {
@@ -480,7 +480,7 @@
              if (map == null) {
                 map = Maps.newEnumMap(EquipmentSlot.class);
              }
-@@ -2502,6 +_,8 @@
+@@ -2505,6 +_,8 @@
        this.f_19853_.m_46473_().m_6180_("jump");
        if (this.f_20899_ && this.m_6129_()) {
           double d7;
@@ -489,7 +489,7 @@
           if (this.m_20077_()) {
              d7 = this.m_204036_(FluidTags.f_13132_);
           } else {
-@@ -2512,15 +_,17 @@
+@@ -2515,15 +_,17 @@
           double d8 = this.m_20204_();
           if (!flag1 || this.f_19861_ && !(d7 > d8)) {
              if (!this.m_20077_() || this.f_19861_ && !(d7 > d8)) {
@@ -509,7 +509,7 @@
           }
        } else {
           this.f_20954_ = 0;
-@@ -2575,6 +_,8 @@
+@@ -2578,6 +_,8 @@
        boolean flag = this.m_20291_(7);
        if (flag && !this.f_19861_ && !this.m_20159_() && !this.m_21023_(MobEffects.f_19620_)) {
           ItemStack itemstack = this.m_6844_(EquipmentSlot.CHEST);
@@ -518,7 +518,7 @@
           if (itemstack.m_150930_(Items.f_42741_) && ElytraItem.m_41140_(itemstack)) {
              flag = true;
              int i = this.f_20937_ + 1;
-@@ -2806,8 +_,16 @@
+@@ -2809,8 +_,16 @@
  
     private void m_21329_() {
        if (this.m_6117_()) {
@@ -537,7 +537,7 @@
              this.m_142106_(this.f_20935_);
           } else {
              this.m_5810_();
-@@ -2830,7 +_,7 @@
+@@ -2833,7 +_,7 @@
  
     private boolean m_21332_() {
        int i = this.m_21212_();
@@ -546,7 +546,7 @@
        boolean flag = foodproperties != null && foodproperties.m_38748_();
        flag |= i <= this.f_20935_.m_41779_() - 7;
        return flag && i % 4 == 0;
-@@ -2860,8 +_,10 @@
+@@ -2863,8 +_,10 @@
     public void m_6672_(InteractionHand p_21159_) {
        ItemStack itemstack = this.m_21120_(p_21159_);
        if (!itemstack.m_41619_() && !this.m_6117_()) {
@@ -558,7 +558,7 @@
           if (!this.f_19853_.f_46443_) {
              this.m_21155_(1, true);
              this.m_21155_(2, p_21159_ == InteractionHand.OFF_HAND);
-@@ -2922,6 +_,9 @@
+@@ -2925,6 +_,9 @@
           vec31 = vec31.m_82496_(-this.m_146909_() * ((float)Math.PI / 180F));
           vec31 = vec31.m_82524_(-this.m_146908_() * ((float)Math.PI / 180F));
           vec31 = vec31.m_82520_(this.m_20185_(), this.m_20188_(), this.m_20189_());
@@ -568,7 +568,7 @@
           this.f_19853_.m_7106_(new ItemParticleOption(ParticleTypes.f_123752_, p_21061_), vec31.f_82479_, vec31.f_82480_, vec31.f_82481_, vec3.f_82479_, vec3.f_82480_ + 0.05D, vec3.f_82481_);
        }
  
-@@ -2935,7 +_,8 @@
+@@ -2938,7 +_,8 @@
           } else {
              if (!this.f_20935_.m_41619_() && this.m_6117_()) {
                 this.m_21137_(this.f_20935_, 16);
@@ -578,7 +578,7 @@
                 if (itemstack != this.f_20935_) {
                    this.m_21008_(interactionhand, itemstack);
                 }
-@@ -2961,7 +_,11 @@
+@@ -2964,7 +_,11 @@
  
     public void m_21253_() {
        if (!this.f_20935_.m_41619_()) {
@@ -590,7 +590,7 @@
           if (this.f_20935_.m_41781_()) {
              this.m_21329_();
           }
-@@ -3112,8 +_,8 @@
+@@ -3115,8 +_,8 @@
        }
  
        BlockState blockstate = this.f_19853_.m_8055_(p_21141_);
@@ -601,7 +601,7 @@
        }
  
        this.m_20124_(Pose.SLEEPING);
-@@ -3129,15 +_,15 @@
+@@ -3132,15 +_,15 @@
  
     private boolean m_21334_() {
        return this.m_21257_().map((p_147236_) -> {
@@ -620,7 +620,7 @@
              Vec3 vec31 = BedBlock.m_49458_(this.m_6095_(), this.f_19853_, p_147228_, this.m_146908_()).orElseGet(() -> {
                 BlockPos blockpos = p_147228_.m_7494_();
                 return new Vec3((double)blockpos.m_123341_() + 0.5D, (double)blockpos.m_123342_() + 0.1D, (double)blockpos.m_123343_() + 0.5D);
-@@ -3159,7 +_,9 @@
+@@ -3162,7 +_,9 @@
     @Nullable
     public Direction m_21259_() {
        BlockPos blockpos = this.m_21257_().orElse((BlockPos)null);
@@ -631,7 +631,7 @@
     }
  
     public boolean m_5830_() {
-@@ -3175,7 +_,7 @@
+@@ -3178,7 +_,7 @@
     }
  
     public ItemStack m_6298_(ItemStack p_21272_) {
@@ -640,7 +640,7 @@
     }
  
     public ItemStack m_5584_(Level p_21067_, ItemStack p_21068_) {
-@@ -3195,7 +_,7 @@
+@@ -3198,7 +_,7 @@
     private void m_21063_(ItemStack p_21064_, Level p_21065_, LivingEntity p_21066_) {
        Item item = p_21064_.m_41720_();
        if (item.m_41472_()) {
@@ -649,7 +649,7 @@
              if (!p_21065_.f_46443_ && pair.getFirst() != null && p_21065_.f_46441_.m_188501_() < pair.getSecond()) {
                 p_21066_.m_7292_(new MobEffectInstance(pair.getFirst()));
              }
-@@ -3231,6 +_,73 @@
+@@ -3234,6 +_,64 @@
        this.m_21166_(p_21191_ == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND);
     }
  
@@ -723,7 +723,7 @@
     public AABB m_6921_() {
        if (this.m_6844_(EquipmentSlot.HEAD).m_150930_(Items.f_42683_)) {
           float f = 0.5F;
-@@ -3241,6 +_,8 @@
+@@ -3244,6 +_,8 @@
     }
  
     public static EquipmentSlot m_147233_(ItemStack p_147234_) {
@@ -732,7 +732,7 @@
        Item item = p_147234_.m_41720_();
        if (!p_147234_.m_150930_(Items.f_42047_) && (!(item instanceof BlockItem) || !(((BlockItem)item).m_40614_() instanceof AbstractSkullBlock))) {
           if (item instanceof ArmorItem) {
-@@ -3248,7 +_,7 @@
+@@ -3251,7 +_,7 @@
           } else if (p_147234_.m_150930_(Items.f_42741_)) {
              return EquipmentSlot.CHEST;
           } else {

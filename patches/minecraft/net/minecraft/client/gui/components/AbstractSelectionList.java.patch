@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/gui/components/AbstractSelectionList.java
 +++ b/net/minecraft/client/gui/components/AbstractSelectionList.java
-@@ -532,6 +_,13 @@
+@@ -536,6 +_,13 @@
  
     }
  

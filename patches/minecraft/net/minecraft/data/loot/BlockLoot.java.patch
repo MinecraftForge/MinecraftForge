@@ -1,6 +1,6 @@
 --- a/net/minecraft/data/loot/BlockLoot.java
 +++ b/net/minecraft/data/loot/BlockLoot.java
-@@ -264,7 +_,7 @@
+@@ -265,7 +_,7 @@
        return LootTable.m_79147_();
     }
  
@@ -9,7 +9,7 @@
        this.m_124288_(Blocks.f_50122_);
        this.m_124288_(Blocks.f_50175_);
        this.m_124288_(Blocks.f_50228_);
-@@ -1311,9 +_,13 @@
+@@ -1312,9 +_,13 @@
        this.m_124165_(Blocks.f_152499_, m_124125_());
        this.m_124165_(Blocks.f_220862_, m_124125_());
        this.m_124165_(Blocks.f_220863_, m_124125_());
@@ -24,7 +24,7 @@
           ResourceLocation resourcelocation = block.m_60589_();
           if (resourcelocation != BuiltInLootTables.f_78712_ && set.add(resourcelocation)) {
              LootTable.Builder loottable$builder = this.f_124070_.remove(resourcelocation);
-@@ -1338,6 +_,10 @@
+@@ -1339,6 +_,10 @@
  
     public static LootTable.Builder m_124137_(Block p_124138_) {
        return m_124161_(p_124138_, DoorBlock.f_52730_, DoubleBlockHalf.LOWER);

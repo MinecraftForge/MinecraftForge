@@ -23,19 +23,10 @@
        this.f_92535_ = p_193799_;
        this.f_92536_ = p_193800_;
        this.f_92537_ = p_193801_;
-@@ -58,10 +_,22 @@
-    public GameProfile m_92548_() {
-       try {
-          UUID uuid = UUIDTypeAdapter.fromString(this.m_92545_());
--         return new GameProfile(uuid, this.m_92546_());
-+         GameProfile ret = new GameProfile(uuid, this.m_92546_());    //Forge: Adds cached GameProfile properties to returned GameProfile.
-+         if (properties != null) ret.getProperties().putAll(properties); // Helps to cut down on calls to the session service,
-+         return ret;                                                     // which helps to fix MC-52974.
-       } catch (IllegalArgumentException illegalargumentexception) {
-          return new GameProfile((UUID)null, this.m_92546_());
+@@ -64,8 +_,22 @@
        }
-+   }
-+
+    }
+ 
 +   //For internal use only. Modders should never need to use this.
 +   public void setProperties(com.mojang.authlib.properties.PropertyMap properties) {
 +       if (this.properties == null)
@@ -44,6 +35,15 @@
 +
 +   public boolean hasCachedProperties() {
 +       return properties != null;
++   }
++
+    public GameProfile m_92548_() {
+-      return new GameProfile(this.m_240411_(), this.m_92546_());
++      // FORGE: Add cached GameProfile properties to returned GameProfile. This helps to cut down on calls to the session service.
++      GameProfile ret = new GameProfile(this.m_240411_(), this.m_92546_());
++      if (this.properties != null)
++         ret.getProperties().putAll(this.properties);
++      return ret;
     }
  
     public User.Type m_168638_() {

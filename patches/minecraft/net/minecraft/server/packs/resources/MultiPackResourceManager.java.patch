@@ -7,4 +7,4 @@
 +      p_203798_.forEach(resourcePack -> resourcePack.init(p_203797_));
        List<String> list = p_203798_.stream().flatMap((p_215471_) -> {
           return p_215471_.m_5698_(p_203797_).stream();
-       }).toList();
+       }).distinct().toList();
