@@ -234,5 +234,6 @@ license="LGPL v2.1"
     modId="blockstate_change_test"
 [[mods]]
     modId="dyn_map_color_test"
-
+[[mods]]
+    modId="living_set_attack_target_event_test"
 # ADD ABOVE THIS LINE
