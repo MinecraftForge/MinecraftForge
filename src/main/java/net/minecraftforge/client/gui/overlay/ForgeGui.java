@@ -516,7 +516,7 @@ public class ForgeGui extends Gui
                 RenderSystem.defaultBlendFunc();
                 int color = (animateOverlayMessageColor ? Mth.hsvToRgb(hue / 50.0F, 0.7F, 0.6F) & WHITE : WHITE);
                 drawBackdrop(pStack, font, -4, font.width(overlayMessageString), 16777215 | (opacity << 24));
-                font.draw(pStack, overlayMessageString.getVisualOrderText(), -font.width(overlayMessageString) / 2, -4, color | (opacity << 24));
+                font.drawShadow(pStack, overlayMessageString.getVisualOrderText(), -font.width(overlayMessageString) / 2, -4, color | (opacity << 24));
                 RenderSystem.disableBlend();
                 pStack.popPose();
             }
