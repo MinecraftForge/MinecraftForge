@@ -291,6 +291,11 @@ public class ForgeHooks
     {
         MinecraftForge.EVENT_BUS.post(new LivingSetAttackTargetEvent(entity, target));
     }
+    
+    public static void onLivingSetAttackTarget(LivingEntity entity, LivingEntity target, boolean causedByBehavior)
+    {
+        MinecraftForge.EVENT_BUS.post(new LivingSetAttackTargetEvent(entity, target, causedByBehavior));
+    }
 
     public static boolean onLivingUpdate(LivingEntity entity)
     {

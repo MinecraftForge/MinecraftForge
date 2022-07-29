@@ -7,6 +7,7 @@ package net.minecraftforge.event.entity.living;
 
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.ai.behavior.StartAttacking;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.MinecraftForge;
 
@@ -29,14 +30,31 @@ public class LivingSetAttackTargetEvent extends LivingEvent
 {
 
     private final LivingEntity target;
+    private final boolean causedByBehavior;
     public LivingSetAttackTargetEvent(LivingEntity entity, LivingEntity target)
     {
         super(entity);
         this.target = target;
+        this.causedByBehavior = false;
+    }
+    
+    public LivingSetAttackTargetEvent(LivingEntity entity, LivingEntity target, boolean causedByBehavior)
+    {
+        super(entity);
+        this.target = target;
+        this.causedByBehavior = causedByBehavior;
     }
 
     public LivingEntity getTarget()
     {
         return target;
+    }
+    
+    /**
+     * {@return {@code true} when the event was caused by {@link StartAttacking}, otherwise returns {@code false}}
+     */
+    public boolean isCausedByBehavior()
+    {
+        return causedByBehavior;
     }
 }
