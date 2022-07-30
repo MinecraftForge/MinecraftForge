@@ -67,7 +67,7 @@
        this.f_91064_ = new DebugRenderer(this);
        this.f_238717_ = new RealmsDataFetcher(RealmsClient.m_239151_(this));
        RenderSystem.m_69900_(this::m_91113_);
-@@ -540,6 +_,19 @@
+@@ -540,6 +_,20 @@
           TinyFileDialogs.tinyfd_messageBox("Minecraft", stringbuilder.toString(), "ok", "error", false);
        }
  
