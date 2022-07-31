@@ -164,6 +164,11 @@ public class GameData
     {
         return makeRegistry(FLUID_TYPES).disableSaving();
     }
+    
+    static RegistryBuilder<HolderSetType> getHolderSetTypeRegistryBuilder()
+    {
+        return new RegistryBuilder<HolderSetType>().disableSaving().disableSync();
+    }
 
     private static <T> RegistryBuilder<T> makeRegistry(ResourceKey<? extends Registry<T>> key)
     {

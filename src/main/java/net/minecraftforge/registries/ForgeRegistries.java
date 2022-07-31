@@ -132,7 +132,7 @@ public class ForgeRegistries
      * Calling {@link Supplier#get()} before {@link NewRegistryEvent} is fired will result in a null registry returned.
      * Use {@link Keys#HOLDER_SET_TYPES} to create a {@link DeferredRegister}.
      */
-    public static final Supplier<IForgeRegistry<HolderSetType>> HOLDER_SET_TYPES = DEFERRED_HOLDER_SET_TYPES.makeRegistry(() -> new RegistryBuilder<HolderSetType>().disableSaving().disableSync());
+    public static final Supplier<IForgeRegistry<HolderSetType>> HOLDER_SET_TYPES = DEFERRED_HOLDER_SET_TYPES.makeRegistry(GameData::getHolderSetTypeRegistryBuilder);
 
     // Custom forge datapack registries
     static final DeferredRegister<BiomeModifier> DEFERRED_BIOME_MODIFIERS = DeferredRegister.create(Keys.BIOME_MODIFIERS, "forge");

@@ -33,87 +33,87 @@ import net.minecraftforge.common.ForgeMod;
 
 public final class ForgeHolderSets
 {
-	private ForgeHolderSets() {} // Organizational class
-	
-	/**
-	 * <p>Holderset that represents all elements of a registry. Json format:</p>
-	 * <pre>
-	 * {
-	 *   "type": "forge:any"
-	 * }
-	 * </pre>
-	 */
-	public static record AnyHolderSet<T>(Registry<T> registry) implements ICustomHolderSet<T>
-	{
-	    public static <T> Codec<? extends ICustomHolderSet<T>> codec(ResourceKey<? extends Registry<T>> registryKey, Codec<Holder<T>> holderCodec, boolean forceList)
-		{
-		    return RegistryOps.retrieveRegistry(registryKey)
+    private ForgeHolderSets() {} // Organizational class
+    
+    /**
+     * <p>Holderset that represents all elements of a registry. Json format:</p>
+     * <pre>
+     * {
+     *   "type": "forge:any"
+     * }
+     * </pre>
+     */
+    public static record AnyHolderSet<T>(Registry<T> registry) implements ICustomHolderSet<T>
+    {
+        public static <T> Codec<? extends ICustomHolderSet<T>> codec(ResourceKey<? extends Registry<T>> registryKey, Codec<Holder<T>> holderCodec, boolean forceList)
+        {
+            return RegistryOps.retrieveRegistry(registryKey)
                 .xmap(AnyHolderSet::new, AnyHolderSet::registry)
                 .codec();
-		}
+        }
 
         @Override
         public HolderSetType type()
         {
             return ForgeMod.ANY_HOLDER_SET.get();
         }
-		
-		@Override
-		public Iterator<Holder<T>> iterator()
+        
+        @Override
+        public Iterator<Holder<T>> iterator()
         {
             return this.stream().iterator();
         }
 
-		@Override
-		public Stream<Holder<T>> stream()
-		{
-			return registry.holders().map(Function.identity());
-		}
+        @Override
+        public Stream<Holder<T>> stream()
+        {
+            return registry.holders().map(Function.identity());
+        }
 
-		@Override
-		public int size()
-		{
-			return this.registry.size();
-		}
+        @Override
+        public int size()
+        {
+            return this.registry.size();
+        }
 
-		@Override
-		public Either<TagKey<T>, List<Holder<T>>> unwrap()
-		{
-			return Either.right(this.stream().toList());
-		}
+        @Override
+        public Either<TagKey<T>, List<Holder<T>>> unwrap()
+        {
+            return Either.right(this.stream().toList());
+        }
 
-		@Override
-		public Optional<Holder<T>> getRandomElement(RandomSource random)
-		{
-			return this.registry.getRandom(random);
-		}
+        @Override
+        public Optional<Holder<T>> getRandomElement(RandomSource random)
+        {
+            return this.registry.getRandom(random);
+        }
 
-		@Override
-		public Holder<T> get(int i)
-		{
-			return this.registry.getHolder(i).orElseThrow(() -> new NoSuchElementException("No element " + i + " in registry " + this.registry.key()));
-		}
+        @Override
+        public Holder<T> get(int i)
+        {
+            return this.registry.getHolder(i).orElseThrow(() -> new NoSuchElementException("No element " + i + " in registry " + this.registry.key()));
+        }
 
-		@Override
-		public boolean contains(Holder<T> holder)
-		{
-			return holder.unwrapKey().map(this.registry::containsKey).orElse(false);
-		}
+        @Override
+        public boolean contains(Holder<T> holder)
+        {
+            return holder.unwrapKey().map(this.registry::containsKey).orElse(false);
+        }
 
-		@Override
-		public boolean isValidInRegistry(Registry<T> registry)
-		{
-			return this.registry == registry;
-		}
+        @Override
+        public boolean isValidInRegistry(Registry<T> registry)
+        {
+            return this.registry == registry;
+        }
 
-		@Override
-		public String toString()
-		{
-			return "AnySet(" + this.registry.key() + ")";
-		}
-	}
-	
-	/**
+        @Override
+        public String toString()
+        {
+            return "AnySet(" + this.registry.key() + ")";
+        }
+    }
+    
+    /**
      * <p>Holderset that represents an intersection of other holdersets. Json format:</p>
      * <pre>
      * {
@@ -124,9 +124,9 @@ public final class ForgeHolderSets
      *   ]
      * }
      * </pre>
-	 */
-	public static class AndHolderSet<T> extends CompositeHolderSet<T>
-	{
+     */
+    public static class AndHolderSet<T> extends CompositeHolderSet<T>
+    {
         public static <T> Codec<? extends ICustomHolderSet<T>> codec(ResourceKey<? extends Registry<T>> registryKey, Codec<Holder<T>> holderCodec, boolean forceList)
         {
             return HolderSetCodec.create(registryKey, holderCodec, forceList)
@@ -167,12 +167,12 @@ public final class ForgeHolderSets
                 .collect(Collectors.toSet());
         }
 
-		@Override
-		public String toString()
-		{
-			return "AndSet[" + this.getComponents() + "]";
-		}
-	}
+        @Override
+        public String toString()
+        {
+            return "AndSet[" + this.getComponents() + "]";
+        }
+    }
 
     /**
      * <p>Holderset that represents a union of other holdersets. Json format:</p>
@@ -186,8 +186,8 @@ public final class ForgeHolderSets
      * }
      * </pre>
      */
-	public static class OrHolderSet<T> extends CompositeHolderSet<T>
-	{
+    public static class OrHolderSet<T> extends CompositeHolderSet<T>
+    {
         public static <T> Codec<? extends ICustomHolderSet<T>> codec(ResourceKey<? extends Registry<T>> registryKey, Codec<Holder<T>> holderCodec, boolean forceList)
         {
             return HolderSetCodec.create(registryKey, holderCodec, forceList)
@@ -219,7 +219,7 @@ public final class ForgeHolderSets
         {
             return "OrSet[" + this.getComponents() + "]";
         }
-	}
+    }
 
     /**
      * <p>Holderset that represents all elements that exist in one holderset but not another.
@@ -233,8 +233,8 @@ public final class ForgeHolderSets
      * }
      * </pre>
      */
-	public static class ExclusionHolderSet<T> extends CompositeHolderSet<T>
-	{
+    public static class ExclusionHolderSet<T> extends CompositeHolderSet<T>
+    {
         public static <T> Codec<? extends ICustomHolderSet<T>> codec(ResourceKey<? extends Registry<T>> registryKey, Codec<Holder<T>> holderCodec, boolean forceList)
         {
             Codec<HolderSet<T>> holderSetCodec = HolderSetCodec.create(registryKey, holderCodec, forceList);
@@ -274,7 +274,7 @@ public final class ForgeHolderSets
         {
             return "ExclusionSet{include=" + this.include + ", exclude=" + this.exclude + "}";
         }
-	}
+    }
     
     /**
      * <p>Holderset that represents all elements of a registry not present in another holderset.
@@ -287,7 +287,7 @@ public final class ForgeHolderSets
      * }
      * </pre>
      */
-	// this doesn't extend CompositeHolderSet because it doesn't need to cache a set
+    // this doesn't extend CompositeHolderSet because it doesn't need to cache a set
     public static class NotHolderSet<T> implements ICustomHolderSet<T>
     {
         public static <T> Codec<? extends ICustomHolderSet<T>> codec(ResourceKey<? extends Registry<T>> registryKey, Codec<Holder<T>> holderCodec, boolean forceList)
@@ -411,13 +411,13 @@ public final class ForgeHolderSets
             }
         }
     }
-	
-	/**
-	 * Composite holdersets have component holdersets and possibly owner holdersets
-	 * (which have this holderset as a component).
-	 * When their component holderset(s) invalidate, they clear any cached data and then
-	 * invalidate their owner holdersets.
-	 */
+    
+    /**
+     * Composite holdersets have component holdersets and possibly owner holdersets
+     * (which have this holderset as a component).
+     * When their component holderset(s) invalidate, they clear any cached data and then
+     * invalidate their owner holdersets.
+     */
     public static abstract class CompositeHolderSet<T> implements ICustomHolderSet<T>
     {
         private final List<Runnable> owners = new ArrayList<>();
