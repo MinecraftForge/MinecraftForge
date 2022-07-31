@@ -70,7 +70,7 @@
                 f_129750_.warn("Can't keep up! Is the server overloaded? Running {}ms or {} ticks behind", i, j);
                 this.f_129726_ += j * 50L;
                 this.f_129718_ = this.f_129726_;
-+               net.minecraftforge.server.ServerLifecycleHooks.handleServerOverloaded(this, i, j, this.f_129718_);
++               net.minecraftforge.server.ServerLifecycleHooks.onServerOverloaded(this, i, j, this.f_129718_);
              }
  
              if (this.f_177877_) {
