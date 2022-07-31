@@ -17,10 +17,6 @@ import net.minecraftforge.server.ServerLifecycleHooks;
  * This event is fired via {@link ServerLifecycleHooks#onServerOverloaded(MinecraftServer, long, long, long)},
  * which is executed from {@link MinecraftServer#runServer()} <br>
  * <br>
- * {@link #getMsBehind()} contains the amount of milliseconds the server is behind schedule.<br>
- * {@link #getTicksBehind()} contains the number of ticks the server is behind schedule.<br>
- * {@link #getLastOverloadWarningMs()} contains the last time the server warned about being behind schedule.<br>
- * <br>
  * This event is not {@link Cancelable}.<br>
  * <br>
  * This event does not have a result. {@link HasResult}<br>
@@ -41,7 +37,18 @@ public class ServerOverloadedEvent extends ServerLifecycleEvent
         this.lastOverloadWarningMs = lastOverloadWarningMs;
     }
 
+    /**
+     * @return The amount of milliseconds the server is behind schedule
+     */
     public long getMsBehind() { return msBehind; }
+
+    /**
+     * @return The number of ticks the server is behind schedule.
+     */
     public long getTicksBehind() { return ticksBehind; }
+
+    /**
+     * @return The last time the server warned about being behind schedule.
+     */
     public long getLastOverloadWarningMs() { return lastOverloadWarningMs; }
 }
