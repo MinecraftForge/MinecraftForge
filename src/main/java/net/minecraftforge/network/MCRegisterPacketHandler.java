@@ -37,7 +37,8 @@ public class MCRegisterPacketHandler
             byte[] data = new byte[Math.max(buffer.readableBytes(), 0)];
             buffer.readBytes(data);
             Set<ResourceLocation> oldLocations = this.locations;
-            this.locations = this.remoteLocations = bytesToResLocation(data);
+            this.locations = bytesToResLocation(data);
+            this.remoteLocations = Set.copyOf(this.locations);
             // ensure all locations receive updates, old and new.
             oldLocations.addAll(this.locations);
             oldLocations.stream()
