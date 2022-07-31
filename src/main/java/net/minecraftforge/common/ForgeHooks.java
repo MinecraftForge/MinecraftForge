@@ -145,7 +145,6 @@ import net.minecraftforge.resource.ResourcePackLoader;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.ForgeRegistry;
 import net.minecraftforge.registries.GameData;
-import net.minecraftforge.registries.HolderSetType;
 import net.minecraftforge.registries.ICustomHolderSet;
 import net.minecraftforge.registries.RegistryManager;
 
@@ -1505,7 +1504,7 @@ public class ForgeHooks
             .dispatch(ICustomHolderSet::type, type -> type.makeCodec(registryKey, holderCodec, forceList));
         // We use the ExtraCodecs' EitherCodec, which is better than the DFU one
         // because if both codecs fail to parse then it reports both errors instead of just one
-        return new net.minecraft.util.ExtraCodecs.EitherCodec<>(dispatchCodec, vanillaCodec).xmap(
+        return new ExtraCodecs.EitherCodec<>(dispatchCodec, vanillaCodec).xmap(
             // when decoding, try the custom holderset type dispatch first, then fall back to vanilla holderset codec
             either -> either.map(Function.identity(), Function.identity()),
             // when encoding, use the custom holderset dispatcher if possible, otherwise it's a vanilla one
