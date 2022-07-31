@@ -1,10 +1,13 @@
 package net.minecraftforge.registries;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.mojang.datafixers.util.Either;
@@ -25,6 +28,14 @@ public final class ForgeHolderSets
 {
 	private ForgeHolderSets() {} // Organizational class
 	
+	/**
+	 * <p>Holderset that represents all elements of a registry. Json format:</p>
+	 * <pre>
+	 * {
+	 *   "type": "forge:any"
+	 * }
+	 * </pre>
+	 */
 	public static record AnyHolderSet<T>(Registry<T> registry) implements ICustomHolderSet<T>
 	{
 	    public static <T> Codec<? extends ICustomHolderSet<T>> codec(ResourceKey<? extends Registry<T>> registryKey, Codec<Holder<T>> holderCodec, boolean forceList)
@@ -95,15 +106,32 @@ public final class ForgeHolderSets
 		}
 	}
 	
-	public static record AndHolderSet<T>(List<HolderSet<T>> values) implements CompositeHolderSet<T>
+	/**
+     * <p>Holderset that represents an intersection of other holdersets. Json format:</p>
+     * <pre>
+     * {
+     *   "type": "forge:and",
+     *   "values":
+     *   [
+     *      // list of sub-holdersets (strings, lists, or objects)
+     *   ]
+     * }
+     * </pre>
+	 */
+	public static class AndHolderSet<T> extends CompositeHolderSet<T>
 	{
         public static <T> Codec<? extends ICustomHolderSet<T>> codec(ResourceKey<? extends Registry<T>> registryKey, Codec<Holder<T>> holderCodec, boolean forceList)
         {
             return HolderSetCodec.create(registryKey, holderCodec, forceList)
                 .listOf()
-                .xmap(AndHolderSet::new, AndHolderSet::values)
+                .xmap(AndHolderSet::new, AndHolderSet::getComponents)
                 .fieldOf("values")
                 .codec();
+        }
+        
+        public AndHolderSet(List<HolderSet<T>> values)
+        {
+            super(values);
         }
 
         @Override
@@ -113,69 +141,58 @@ public final class ForgeHolderSets
         }
 
         @Override
-        public Stream<Holder<T>> stream()
+        protected Set<Holder<T>> createSet()
         {
-            final int subsetCount = this.values.size();
-            if (subsetCount <= 0)
+            List<HolderSet<T>> components = this.getComponents();
+            if (components.size() < 1)
             {
-                return Stream.empty();
+                return Set.of();
             }
-            return this.values.get(0).stream().filter(holder ->
+            if (components.size() == 1)
             {
-                final int size = this.values.size();
-                for (int i=1; i<size; i++)
-                {
-                    if (!this.values.get(i).contains(holder))
-                    {
-                        return false;
-                    }
-                }
-                return true;
-            });
+                return components.get(0).stream().collect(Collectors.toSet());
+            }
+
+            List<HolderSet<T>> remainingComponents = components.subList(1, components.size());
+            return components.get(0)
+                .stream()
+                .filter(holder -> remainingComponents.stream().allMatch(holderset -> holderset.contains(holder)))
+                .collect(Collectors.toSet());
         }
-
-		@Override
-		public boolean contains(Holder<T> holder)
-		{
-			for (final HolderSet<T> subset : this.values)
-			{
-				if (!subset.contains(holder))
-				{
-					return false;
-				}
-			}
-			return true;
-		}
-
-		@Override
-		public boolean isValidInRegistry(Registry<T> registry)
-		{
-			for (HolderSet<T> subset : this.values)
-			{
-				if (!subset.isValidInRegistry(registry))
-				{
-					return false;
-				}
-			}
-			return true;
-		}
 
 		@Override
 		public String toString()
 		{
-			return "AndHolderSet[" + this.values + "]";
+			return "AndHolderSet[" + this.getComponents() + "]";
 		}
 	}
-	
-	public static record OrHolderSet<T>(List<HolderSet<T>> values) implements CompositeHolderSet<T>
+
+    /**
+     * <p>Holderset that represents a union of other holdersets. Json format:</p>
+     * <pre>
+     * {
+     *   "type": "forge:or",
+     *   "values":
+     *   [
+     *      // list of sub-holdersets (strings, lists, or objects)
+     *   ]
+     * }
+     * </pre>
+     */
+	public static class OrHolderSet<T> extends CompositeHolderSet<T>
 	{
         public static <T> Codec<? extends ICustomHolderSet<T>> codec(ResourceKey<? extends Registry<T>> registryKey, Codec<Holder<T>> holderCodec, boolean forceList)
         {
             return HolderSetCodec.create(registryKey, holderCodec, forceList)
                 .listOf()
-                .xmap(OrHolderSet::new, OrHolderSet::values)
+                .xmap(OrHolderSet::new, OrHolderSet::getComponents)
                 .fieldOf("values")
                 .codec();
+        }
+        
+        public OrHolderSet(List<HolderSet<T>> values)
+        {
+            super(values);
         }
 
         @Override
@@ -185,45 +202,29 @@ public final class ForgeHolderSets
         }
 
         @Override
-        public Stream<Holder<T>> stream()
+        protected Set<Holder<T>> createSet()
         {
-            return this.values.stream().flatMap(HolderSet::stream).distinct();
-        }
-
-        @Override
-        public boolean contains(Holder<T> holder)
-        {
-            for (HolderSet<T> subset : this.values)
-            {
-                if (subset.contains(holder))
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        @Override
-        public boolean isValidInRegistry(Registry<T> registry)
-        {
-            for (HolderSet<T> subset : this.values)
-            {
-                if (!subset.isValidInRegistry(registry))
-                {
-                    return false;
-                }
-            }
-            return true;
+            return this.getComponents().stream().flatMap(HolderSet::stream).collect(Collectors.toSet());
         }
 
         @Override
         public String toString()
         {
-            return "OrHolderSet[" + this.values + "]";
+            return "OrHolderSet[" + this.getComponents() + "]";
         }
 	}
-	
-	public static record ExclusionHolderSet<T>(HolderSet<T> include, HolderSet<T> exclude) implements CompositeHolderSet<T>
+
+    /**
+     * <p>Holderset that represents all elements that exist in one holderset but not another. Json format:</p>
+     * <pre>
+     * {
+     *   "type": "forge:exclusion",
+     *   "include": "included_holderset", // string, list, or object
+     *   "exclude": "included_holderset" // string, list, or object
+     * }
+     * </pre>
+     */
+	public static class ExclusionHolderSet<T> extends CompositeHolderSet<T>
 	{
         public static <T> Codec<? extends ICustomHolderSet<T>> codec(ResourceKey<? extends Registry<T>> registryKey, Codec<Holder<T>> holderCodec, boolean forceList)
         {
@@ -234,6 +235,19 @@ public final class ForgeHolderSets
                 ).apply(builder, ExclusionHolderSet::new));
         }
         
+        private final HolderSet<T> include;
+        private final HolderSet<T> exclude;
+        
+        public HolderSet<T> include() { return this.include; }
+        public HolderSet<T> exclude() { return this.exclude; }
+        
+        public ExclusionHolderSet(HolderSet<T> include, HolderSet<T> exclude)
+        {
+            super(List.of(include, exclude));
+            this.include = include;
+            this.exclude = exclude;
+        }
+        
         @Override
         public HolderSetType type()
         {
@@ -241,67 +255,154 @@ public final class ForgeHolderSets
         }
 
         @Override
-        public Stream<Holder<T>> stream()
+        protected Set<Holder<T>> createSet()
         {
-            return this.include.stream().filter(holder -> !exclude.contains(holder));
+            return this.include.stream().filter(holder -> !this.exclude.contains(holder)).collect(Collectors.toSet());
         }
-
-        @Override
-        public boolean contains(Holder<T> holder)
-        {
-            return this.include.contains(holder) && !this.exclude.contains(holder);
-        }
-
-        @Override
-        public boolean isValidInRegistry(Registry<T> registry)
-        {
-            return this.include.isValidInRegistry(registry) && this.exclude.isValidInRegistry(registry);
-        }
-
+        
         @Override
         public String toString()
         {
             return "ExclusionHolderSet{include=" + this.include + ", exclude=" + this.exclude + "}";
         }
 	}
-    
+	
 	/**
-	 * Represents a HolderSet composed of other HolderSets and defines some default common method implementations.
-	 * This has some tricky requirements to fulfill as the sub-holdersets may
-	 * be tag-based holdersets, which are mutable and can change-in-place during runtime.
-	 * We cannot determine whether tags have changed, and so cannot cache our list of holders.
+	 * Composite holdersets have component holdersets and possibly owner holdersets
+	 * (which have this holderset as a component).
+	 * When their component holderset(s) invalidate, they clear any cached data and then
+	 * invalidate their owner holdersets.
 	 */
-    public static interface CompositeHolderSet<T> extends ICustomHolderSet<T>
+    public static abstract class CompositeHolderSet<T> implements ICustomHolderSet<T>
     {
-        @Override
-        default Iterator<Holder<T>> iterator()
+        private final List<Runnable> owners = new ArrayList<>();
+        private final List<HolderSet<T>> components;
+
+        private Set<Holder<T>> set = null;
+        private List<Holder<T>> list = null;
+        
+        public CompositeHolderSet(List<HolderSet<T>> components)
         {
-            return this.stream().iterator();
+            this.components = components;
+            for (HolderSet<T> holderset : components)
+            {
+                holderset.addInvalidationListener(this::invalidate);
+            }
+        }
+        
+        /**
+         * {@return immutable Set of Holders given this composite holderset's component holdersets}
+         */
+        protected abstract Set<Holder<T>> createSet();
+        
+        public List<HolderSet<T>> getComponents()
+        {
+            return this.components;
+        }
+        
+        public Set<Holder<T>> getSet()
+        {
+            if (this.set == null)
+            {
+                Set<Holder<T>> set = this.createSet();
+                this.set = set;
+                return set;
+            }
+            else
+            {
+                return this.set;
+            }
+        }
+        
+        public List<Holder<T>> getList()
+        {
+            if (this.list == null)
+            {
+                List<Holder<T>> list = List.copyOf(this.getSet());
+                this.list = list;
+                return list;
+            }
+            else
+            {
+                return this.list;
+            }
+        }
+        
+        @Override
+        public void addInvalidationListener(Runnable runnable)
+        {
+            this.owners.add(runnable);
+        }
+        
+        private void invalidate()
+        {
+            this.set = null;
+            this.list = null;
+            for (Runnable runnable : this.owners)
+            {
+                runnable.run();
+            }
         }
 
         @Override
-        default int size()
+        public Stream<Holder<T>> stream()
         {
-            return (int)this.stream().count();
+            return this.getList().stream();
         }
 
         @Override
-        default Either<TagKey<T>, List<Holder<T>>> unwrap()
+        public int size()
         {
-            return Either.right(this.stream().toList());
+            return this.getList().size();
         }
 
         @Override
-        default Optional<Holder<T>> getRandomElement(RandomSource random)
+        public Either<TagKey<T>, List<Holder<T>>> unwrap()
         {
-            final List<Holder<T>> list = this.stream().toList();
-            return list.isEmpty() ? Optional.empty() : Optional.of(list.get(random.nextInt(list.size())));
+            return Either.right(this.getList());
         }
 
         @Override
-        default Holder<T> get(int i)
+        public Optional<Holder<T>> getRandomElement(RandomSource rand)
         {
-            return this.stream().toList().get(i);
+            List<Holder<T>> list = this.getList();
+            int size = list.size();
+            return size > 0
+                ? Optional.of(list.get(rand.nextInt(size)))
+                : Optional.empty();
         }
+
+        @Override
+        public Holder<T> get(int i)
+        {
+            return this.getList().get(i);
+        }
+
+        @Override
+        public boolean contains(Holder<T> holder)
+        {
+            return this.getSet().contains(holder);
+        }
+
+        @Override
+        public boolean isValidInRegistry(Registry<T> registry)
+        {
+            for (HolderSet<T> component : this.components)
+            {
+                if (!component.isValidInRegistry(registry))
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        @Override
+        public Iterator<Holder<T>> iterator()
+        {
+            return this.getList().iterator();
+        }
+        
+        
     }
 }

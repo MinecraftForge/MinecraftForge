@@ -1,0 +1,12 @@
+--- a/net/minecraft/resources/HolderSetCodec.java
++++ b/net/minecraft/resources/HolderSetCodec.java
+@@ -34,7 +_,8 @@
+    }
+ 
+    public static <E> Codec<HolderSet<E>> m_206685_(ResourceKey<? extends Registry<E>> p_206686_, Codec<Holder<E>> p_206687_, boolean p_206688_) {
+-      return new HolderSetCodec<>(p_206686_, p_206687_, p_206688_);
++      // FORGE: Expand the vanilla codec to support custom holderset types
++      return net.minecraftforge.common.ForgeHooks.expandHolderSetCodec(p_206686_, p_206687_, p_206688_, new HolderSetCodec<>(p_206686_, p_206687_, p_206688_));
+    }
+ 
+    private HolderSetCodec(ResourceKey<? extends Registry<E>> p_206660_, Codec<Holder<E>> p_206661_, boolean p_206662_) {
