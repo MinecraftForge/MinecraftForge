@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/resources/model/ModelBakery.java
 +++ b/net/minecraft/client/resources/model/ModelBakery.java
-@@ -151,6 +_,8 @@
+@@ -152,6 +_,8 @@
     public ModelBakery(ResourceManager p_119247_, BlockColors p_119248_, ProfilerFiller p_119249_, int p_119250_) {
        this.f_119243_ = p_119247_;
        this.f_119209_ = p_119248_;
@@ -9,7 +9,7 @@
        p_119249_.m_6180_("missing_model");
  
        try {
-@@ -184,12 +_,20 @@
+@@ -185,12 +_,20 @@
        p_119249_.m_6182_("special");
        this.m_119306_(new ModelResourceLocation("minecraft:trident_in_hand#inventory"));
        this.m_119306_(new ModelResourceLocation("minecraft:spyglass_in_hand#inventory"));
@@ -30,7 +30,7 @@
        set.stream().filter((p_119357_) -> {
           return !p_119357_.getSecond().equals(f_119236_);
        }).forEach((p_119292_) -> {
-@@ -228,6 +_,7 @@
+@@ -229,6 +_,7 @@
           try {
              bakedmodel = this.m_119349_(p_119369_, BlockModelRotation.X0_Y0);
           } catch (Exception exception) {
@@ -38,7 +38,7 @@
              f_119235_.warn("Unable to bake model: '{}': {}", p_119369_, exception);
           }
  
-@@ -472,7 +_,13 @@
+@@ -473,7 +_,13 @@
     }
  
     @Nullable
@@ -52,7 +52,7 @@
        Triple<ResourceLocation, Transformation, Boolean> triple = Triple.of(p_119350_, p_119351_.m_6189_(), p_119351_.m_7538_());
        if (this.f_119213_.containsKey(triple)) {
           return this.f_119213_.get(triple);
-@@ -483,11 +_,11 @@
+@@ -484,11 +_,11 @@
           if (unbakedmodel instanceof BlockModel) {
              BlockModel blockmodel = (BlockModel)unbakedmodel;
              if (blockmodel.m_111490_() == f_119232_) {
@@ -66,7 +66,7 @@
           this.f_119213_.put(triple, bakedmodel);
           return bakedmodel;
        }
-@@ -542,6 +_,10 @@
+@@ -543,6 +_,10 @@
        public BlockStateDefinitionException(String p_119373_) {
           super(p_119373_);
        }

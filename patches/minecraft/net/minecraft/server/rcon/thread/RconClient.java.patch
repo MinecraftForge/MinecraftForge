@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/rcon/thread/RconClient.java
 +++ b/net/minecraft/server/rcon/thread/RconClient.java
-@@ -125,13 +_,14 @@
+@@ -126,13 +_,14 @@
     }
  
     private void m_11594_(int p_11595_, String p_11596_) throws IOException {

@@ -1,9 +1,9 @@
 --- a/net/minecraft/client/multiplayer/ServerData.java
 +++ b/net/minecraft/client/multiplayer/ServerData.java
-@@ -35,6 +_,7 @@
-    @Nullable
+@@ -36,6 +_,7 @@
     private ServerData.ChatPreview f_233800_;
     private boolean f_233801_ = true;
+    private boolean f_242950_;
 +   public net.minecraftforge.client.ExtendedServerListData forgeData = null;
  
     public ServerData(String p_105375_, String p_105376_, boolean p_105377_) {

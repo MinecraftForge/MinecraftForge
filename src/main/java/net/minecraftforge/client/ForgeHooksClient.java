@@ -26,7 +26,6 @@ import net.minecraft.client.color.block.BlockColors;
 import net.minecraft.client.color.item.ItemColors;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiComponent;
-import net.minecraft.client.gui.chat.NarratorChatListener;
 import net.minecraft.client.gui.components.LerpingBossEvent;
 import net.minecraft.client.gui.screens.ConfirmScreen;
 import net.minecraft.client.gui.screens.Screen;
@@ -74,6 +73,8 @@ import net.minecraft.network.chat.ChatType;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
+import net.minecraft.network.chat.MessageSigner;
+import net.minecraft.network.chat.PlayerChatMessage;
 import net.minecraft.network.protocol.status.ServerStatus;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
@@ -217,7 +218,7 @@ public class ForgeHooksClient
             guiLayers.push(minecraft.screen);
         minecraft.screen = Objects.requireNonNull(screen);
         screen.init(minecraft, minecraft.getWindow().getGuiScaledWidth(), minecraft.getWindow().getGuiScaledHeight());
-        NarratorChatListener.INSTANCE.sayNow(screen.getNarrationMessage());
+        minecraft.getNarrator().sayNow(screen.getNarrationMessage());
     }
 
     public static void popGuiLayer(Minecraft minecraft)
@@ -230,7 +231,7 @@ public class ForgeHooksClient
 
         popGuiLayerInternal(minecraft);
         if (minecraft.screen != null)
-            NarratorChatListener.INSTANCE.sayNow(minecraft.screen.getNarrationMessage());
+            minecraft.getNarrator().sayNow(minecraft.screen.getNarrationMessage());
     }
 
     public static float getGuiFarPlane()
@@ -940,9 +941,9 @@ public class ForgeHooksClient
     }
 
     @Nullable
-    public static Component onClientChat(ChatType type, Component message, ChatSender chatSender)
+    public static Component onClientChat(ChatType.Bound boundChatType, Component message, PlayerChatMessage playerChatMessage, MessageSigner messageSigner)
     {
-        ClientChatReceivedEvent event = new ClientChatReceivedEvent(type, message, chatSender);
+        ClientChatReceivedEvent event = new ClientChatReceivedEvent(boundChatType, message, playerChatMessage, messageSigner);
         return MinecraftForge.EVENT_BUS.post(event) ? null : event.getMessage();
     }
 

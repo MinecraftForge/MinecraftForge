@@ -69,8 +69,6 @@ public class DynamicFluidContainerModel implements IUnbakedGeometry<DynamicFluid
     // Depth offsets to prevent Z-fighting
     private static final Transformation FLUID_TRANSFORM = new Transformation(Vector3f.ZERO, Quaternion.ONE, new Vector3f(1, 1, 1.002f), Quaternion.ONE);
     private static final Transformation COVER_TRANSFORM = new Transformation(Vector3f.ZERO, Quaternion.ONE, new Vector3f(1, 1, 1.004f), Quaternion.ONE);
-    // Transformer to set quads to max brightness
-    private static final IQuadTransformer MAX_LIGHTMAP_TRANSFORMER = IQuadTransformer.applyingLightmap(0x00F000F0);
 
     private final Fluid fluid;
     private final boolean flipGas;
@@ -163,9 +161,9 @@ public class DynamicFluidContainerModel implements IUnbakedGeometry<DynamicFluid
                 var unbaked = UnbakedGeometryHelper.createUnbakedItemMaskElements(1, templateSprite); // Use template as mask
                 var quads = UnbakedGeometryHelper.bakeElements(unbaked, $ -> fluidSprite, transformedState, modelLocation); // Bake with fluid texture
 
-                var unlit = applyFluidLuminosity && fluid.getFluidType().getLightLevel() > 0;
-                var renderTypes = getLayerRenderTypes(unlit);
-                if (unlit) MAX_LIGHTMAP_TRANSFORMER.processInPlace(quads);
+                var emissive = applyFluidLuminosity && fluid.getFluidType().getLightLevel() > 0;
+                var renderTypes = getLayerRenderTypes(emissive);
+                if (emissive) QuadTransformers.settingMaxEmissivity().processInPlace(quads);
 
                 modelBuilder.addQuads(renderTypes, quads);
             }

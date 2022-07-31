@@ -18,7 +18,7 @@ public class ClientChatEventTest
     {
         if (event.getMessage().equals("Cancel"))
             event.setCanceled(true);
-        else if (event.getMessage().equals("Replace this text"))
-            event.setMessage("Text replaced.");
+        // else if (event.getMessage().equals("Replace this text"))
+        //     event.setMessage("Text replaced.");
     }
 }

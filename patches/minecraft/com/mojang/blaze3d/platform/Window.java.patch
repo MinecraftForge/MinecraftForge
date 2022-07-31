@@ -1,6 +1,6 @@
 --- a/com/mojang/blaze3d/platform/Window.java
 +++ b/com/mojang/blaze3d/platform/Window.java
-@@ -80,7 +_,7 @@
+@@ -82,7 +_,7 @@
        GLFW.glfwWindowHint(139267, 2);
        GLFW.glfwWindowHint(139272, 204801);
        GLFW.glfwWindowHint(139270, 1);
@@ -9,7 +9,7 @@
        if (monitor != null) {
           VideoMode videomode = monitor.m_84948_(this.f_85355_ ? this.f_85354_ : Optional.empty());
           this.f_85350_ = this.f_85357_ = monitor.m_84951_() + videomode.m_85332_() / 2 - this.f_85359_ / 2;
-@@ -298,6 +_,7 @@
+@@ -303,6 +_,7 @@
        GLFW.glfwGetFramebufferSize(this.f_85349_, aint, aint1);
        this.f_85361_ = aint[0] > 0 ? aint[0] : 1;
        this.f_85362_ = aint1[0] > 0 ? aint1[0] : 1;

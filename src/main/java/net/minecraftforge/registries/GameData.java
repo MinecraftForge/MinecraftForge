@@ -40,6 +40,8 @@ import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.loot.IGlobalLootModifier;
 import net.minecraftforge.common.util.LogMessageAdapter;
+import net.minecraftforge.common.world.BiomeModifier;
+import net.minecraftforge.common.world.StructureModifier;
 import net.minecraftforge.fluids.FluidType;
 import net.minecraftforge.fml.ModLoader;
 import net.minecraftforge.fml.ModLoadingContext;
@@ -104,7 +106,6 @@ public class GameData
         makeRegistry(FLUIDS, "empty").vanillaHolder(Fluid::builtInRegistryHolder).create();
         makeRegistry(ITEMS, "air").addCallback(ItemCallbacks.INSTANCE).legacyName("items").vanillaHolder(Item::builtInRegistryHolder).create();
         makeRegistry(MOB_EFFECTS).legacyName("potions").create();
-        //makeRegistry(BIOMES, Biome.class).legacyName("biomes").create();
         makeRegistry(SOUND_EVENTS).legacyName("soundevents").create();
         makeRegistry(POTIONS, "empty").legacyName("potiontypes").create();
         makeRegistry(ENCHANTMENTS).legacyName("enchantments").create();
@@ -117,6 +118,7 @@ public class GameData
         makeRegistry(RECIPE_SERIALIZERS).disableSaving().create();
         makeRegistry(ATTRIBUTES).onValidate(AttributeCallbacks.INSTANCE).disableSaving().disableSync().create();
         makeRegistry(STAT_TYPES).create();
+        makeRegistry(COMMAND_ARGUMENT_TYPES).disableSaving().create();
 
         // Villagers
         makeRegistry(VILLAGER_PROFESSIONS, "none").create();
@@ -146,6 +148,16 @@ public class GameData
     static RegistryBuilder<Codec<? extends IGlobalLootModifier>> getGLMSerializersRegistryBuilder()
     {
         return makeRegistry(GLOBAL_LOOT_MODIFIER_SERIALIZERS).disableSaving().disableSync();
+    }
+
+    static RegistryBuilder<Codec<? extends BiomeModifier>> getBiomeModifierSerializersRegistryBuilder()
+    {
+        return new RegistryBuilder<Codec<? extends BiomeModifier>>().disableSaving().disableSync();
+    }
+
+    static RegistryBuilder<Codec<? extends StructureModifier>> getStructureModifierSerializersRegistryBuilder()
+    {
+        return new RegistryBuilder<Codec<? extends StructureModifier>>().disableSaving().disableSync();
     }
 
     static RegistryBuilder<FluidType> getFluidTypeRegistryBuilder()
