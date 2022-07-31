@@ -115,6 +115,7 @@ import net.minecraftforge.registries.ForgeDeferredRegistriesSetup;
 import net.minecraftforge.registries.ForgeHolderSets.AndHolderSet;
 import net.minecraftforge.registries.ForgeHolderSets.AnyHolderSet;
 import net.minecraftforge.registries.ForgeHolderSets.ExclusionHolderSet;
+import net.minecraftforge.registries.ForgeHolderSets.NotHolderSet;
 import net.minecraftforge.registries.ForgeHolderSets.OrHolderSet;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.HolderSetType;
@@ -288,6 +289,11 @@ public class ForgeMod
      * Stock holder set type that represents values that exist in one holderset but not another. Can be used in a holderset object with { "type": "forge:exclusion", "include": holderset, "exclude": holderset }.
      */
     public static final RegistryObject<HolderSetType> EXCLUSION_HOLDER_SET = HOLDER_SET_TYPES.register("exclusion", () -> ExclusionHolderSet::codec);
+
+    /**
+     * Stock holder set type that represents all values in a registry except those in another given set. Can be used in a holderset object with { "type": "forge:not", "value": holderset }
+     */
+    public static final RegistryObject<HolderSetType> NOT_HOLDER_SET = HOLDER_SET_TYPES.register("not", () -> NotHolderSet::codec);
     
     private static final DeferredRegister<FluidType> VANILLA_FLUID_TYPES = DeferredRegister.create(ForgeRegistries.Keys.FLUID_TYPES, "minecraft");
 

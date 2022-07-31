@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) Forge Development LLC and contributors
+ * SPDX-License-Identifier: LGPL-2.1-only
+ */
+
 package net.minecraftforge.registries;
 
 import java.util.ArrayList;
@@ -9,6 +14,8 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import org.jetbrains.annotations.Nullable;
 
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
@@ -102,7 +109,7 @@ public final class ForgeHolderSets
 		@Override
 		public String toString()
 		{
-			return "AnyHolderSet(" + this.registry.key() + ")";
+			return "AnySet(" + this.registry.key() + ")";
 		}
 	}
 	
@@ -163,7 +170,7 @@ public final class ForgeHolderSets
 		@Override
 		public String toString()
 		{
-			return "AndHolderSet[" + this.getComponents() + "]";
+			return "AndSet[" + this.getComponents() + "]";
 		}
 	}
 
@@ -210,12 +217,14 @@ public final class ForgeHolderSets
         @Override
         public String toString()
         {
-            return "OrHolderSet[" + this.getComponents() + "]";
+            return "OrSet[" + this.getComponents() + "]";
         }
 	}
 
     /**
-     * <p>Holderset that represents all elements that exist in one holderset but not another. Json format:</p>
+     * <p>Holderset that represents all elements that exist in one holderset but not another.
+     * This is preferable over forge:not when the set of allowed elements is small relative to the size of the entire registry.
+     * Json format:</p>
      * <pre>
      * {
      *   "type": "forge:exclusion",
@@ -263,9 +272,145 @@ public final class ForgeHolderSets
         @Override
         public String toString()
         {
-            return "ExclusionHolderSet{include=" + this.include + ", exclude=" + this.exclude + "}";
+            return "ExclusionSet{include=" + this.include + ", exclude=" + this.exclude + "}";
         }
 	}
+    
+    /**
+     * <p>Holderset that represents all elements of a registry not present in another holderset.
+     * forge:exclusion is preferable when the number of allowed elements is small relative to the size of the registry.
+     * Json format:</p>
+     * <pre>
+     * {
+     *   "type": "forge:not",
+     *   "value": "not_this_holderset" // string, list, or object
+     * }
+     * </pre>
+     */
+	// this doesn't extend CompositeHolderSet because it doesn't need to cache a set
+    public static class NotHolderSet<T> implements ICustomHolderSet<T>
+    {
+        public static <T> Codec<? extends ICustomHolderSet<T>> codec(ResourceKey<? extends Registry<T>> registryKey, Codec<Holder<T>> holderCodec, boolean forceList)
+        {
+            return RecordCodecBuilder.<NotHolderSet<T>>create(builder -> builder.group(
+                    RegistryOps.retrieveRegistry(registryKey).forGetter(NotHolderSet::registry),
+                    HolderSetCodec.create(registryKey, holderCodec, forceList).fieldOf("value").forGetter(NotHolderSet::value)
+                ).apply(builder, NotHolderSet::new));
+        }
+
+        private final List<Runnable> owners = new ArrayList<>();
+        private final Registry<T> registry;
+        private final HolderSet<T> value;
+        @Nullable
+        private List<Holder<T>> list = null;
+        
+        public Registry<T> registry() { return this.registry; }
+        public HolderSet<T> value() { return this.value; }
+        
+        public NotHolderSet(Registry<T> registry, HolderSet<T> value)
+        {
+            this.registry = registry;
+            this.value = value;
+            this.value.addInvalidationListener(this::invalidate);
+        }
+
+        @Override
+        public HolderSetType type()
+        {
+            return ForgeMod.NOT_HOLDER_SET.get();
+        }
+        
+        @Override
+        public void addInvalidationListener(Runnable runnable)
+        {
+            this.owners.add(runnable);
+        }
+        
+        @Override
+        public Iterator<Holder<T>> iterator()
+        {
+            return this.getList().iterator();
+        }
+
+        @Override
+        public Stream<Holder<T>> stream()
+        {
+            return this.getList().stream();
+        }
+
+        @Override
+        public int size()
+        {
+            return this.getList().size();
+        }
+
+        @Override
+        public Either<TagKey<T>, List<Holder<T>>> unwrap()
+        {
+            return Either.right(this.getList());
+        }
+
+        @Override
+        public Optional<Holder<T>> getRandomElement(RandomSource random)
+        {
+            List<Holder<T>> list = this.getList();
+            int size = list.size();
+            return size > 0
+                ? Optional.of(list.get(random.nextInt(size)))
+                : Optional.empty();
+        }
+
+        @Override
+        public Holder<T> get(int i)
+        {
+            return this.getList().get(i);
+        }
+
+        @Override
+        public boolean contains(Holder<T> holder)
+        {
+            return !this.value.contains(holder);
+        }
+
+        @Override
+        public boolean isValidInRegistry(Registry<T> registry)
+        {
+            return this.registry == registry;
+        }
+
+        @Override
+        public String toString()
+        {
+            return "NotSet(" + this.value + ")";
+        }
+        
+        private List<Holder<T>> getList()
+        {
+            List<Holder<T>> thisList = this.list;
+            if (thisList == null)
+            {
+                List<Holder<T>> list = this.registry.holders()
+                    .filter(holder -> !this.value.contains(holder))
+                    .map(holder -> (Holder<T>)holder)
+                    .toList();
+                this.list = list;
+                return list;
+            }
+            else
+            {
+                return thisList;
+            }
+        }
+        
+        private void invalidate()
+        {
+            this.list = null;
+            for (Runnable runnable : this.owners)
+            {
+                runnable.run();
+            }
+        }
+    }
 	
 	/**
 	 * Composite holdersets have component holdersets and possibly owner holdersets
@@ -278,7 +423,9 @@ public final class ForgeHolderSets
         private final List<Runnable> owners = new ArrayList<>();
         private final List<HolderSet<T>> components;
 
+        @Nullable
         private Set<Holder<T>> set = null;
+        @Nullable
         private List<Holder<T>> list = null;
         
         public CompositeHolderSet(List<HolderSet<T>> components)
@@ -302,7 +449,8 @@ public final class ForgeHolderSets
         
         public Set<Holder<T>> getSet()
         {
-            if (this.set == null)
+            Set<Holder<T>> thisSet = this.set;
+            if (thisSet == null)
             {
                 Set<Holder<T>> set = this.createSet();
                 this.set = set;
@@ -310,13 +458,14 @@ public final class ForgeHolderSets
             }
             else
             {
-                return this.set;
+                return thisSet;
             }
         }
         
         public List<Holder<T>> getList()
         {
-            if (this.list == null)
+            List<Holder<T>> thisList = this.list;
+            if (thisList == null)
             {
                 List<Holder<T>> list = List.copyOf(this.getSet());
                 this.list = list;
@@ -324,7 +473,7 @@ public final class ForgeHolderSets
             }
             else
             {
-                return this.list;
+                return thisList;
             }
         }
         
@@ -402,7 +551,5 @@ public final class ForgeHolderSets
         {
             return this.getList().iterator();
         }
-        
-        
     }
 }
