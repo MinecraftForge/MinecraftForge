@@ -4,7 +4,7 @@
              this.f_107212_ = Mth.m_14139_(d0, this.f_107212_, vec3.m_7096_());
              this.f_107213_ = Mth.m_14139_(d0, this.f_107213_, vec3.m_7098_());
              this.f_107214_ = Mth.m_14139_(d0, this.f_107214_, vec3.m_7094_());
-+            this.m_107264_(this.f_107212_, this.f_107213_, this.f_107214_); //Forge: update the particle's bounding box
++            this.m_107264_(this.f_107212_, this.f_107213_, this.f_107214_); // FORGE: update the particle's bounding box
              this.f_172460_ = this.f_172462_;
              this.f_172462_ = (float)Mth.m_14136_(this.f_107212_ - vec3.m_7096_(), this.f_107214_ - vec3.m_7094_());
           }
