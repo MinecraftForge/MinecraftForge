@@ -25,7 +25,6 @@ import org.objectweb.asm.Type;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -56,8 +55,6 @@ public class TestFramework {
     public TestFramework() {
         prepareLogger();
 
-        //THIS IS DISABLED FOR NOW UNTILL IT ACTUALLY WORKS.
-        //THIS CRASHES THE DEDICATED TEST SERVER.
         LOGGER.info("Preparing all event tests.");
 
         tests = gatherEvents();
