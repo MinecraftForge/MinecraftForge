@@ -100,13 +100,7 @@ import net.minecraftforge.common.loot.LootTableIdCondition;
 import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.common.util.Lazy;
 import net.minecraftforge.common.util.MavenVersionStringHelper;
-import net.minecraftforge.event.AnvilUpdateEvent;
-import net.minecraftforge.event.DifficultyChangeEvent;
-import net.minecraftforge.event.ForgeEventFactory;
-import net.minecraftforge.event.ItemAttributeModifierEvent;
-import net.minecraftforge.event.ServerChatEvent;
-import net.minecraftforge.event.RegisterStructureConversionsEvent;
-import net.minecraftforge.event.VanillaGameEvent;
+import net.minecraftforge.event.*;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.event.entity.EntityAttributeModificationEvent;
 import net.minecraftforge.event.entity.EntityEvent;
@@ -705,6 +699,30 @@ public class ForgeHooks
         AnvilRepairEvent e = new AnvilRepairEvent(player, left, right, output);
         MinecraftForge.EVENT_BUS.post(e);
         return e.getBreakChance();
+    }
+
+    public static int onGrindstoneChange(@NotNull ItemStack top, @NotNull ItemStack bottom, Container outputSlot, int xp)
+    {
+        GrindstoneEvent.OnplaceItem e = new GrindstoneEvent.OnplaceItem(top, bottom, xp);
+        if (MinecraftForge.EVENT_BUS.post(e)) return e.getXp();
+        if (e.getOutput().isEmpty()) return Integer.MIN_VALUE;
+
+        outputSlot.setItem(0, e.getOutput());
+        return e.getXp();
+    }
+
+    public static int onGrindstoneTake(@NotNull ItemStack top, @NotNull ItemStack bottom, Container inputSlots, int xp) {
+        GrindstoneEvent.OnTakeItem e = new GrindstoneEvent.OnTakeItem(top, bottom, xp);
+        if (MinecraftForge.EVENT_BUS.post(e)) {
+            inputSlots.setItem(0, top);
+            inputSlots.setItem(1, bottom);
+            inputSlots.setChanged();
+            return e.getXp();
+        }
+        inputSlots.setItem(0, e.getNewTop());
+        inputSlots.setItem(1, e.getNewBottom());
+        inputSlots.setChanged();
+        return e.getXp();
     }
 
     private static ThreadLocal<Player> craftingPlayer = new ThreadLocal<Player>();
