@@ -13,8 +13,8 @@ import net.minecraftforge.forgespi.language.IModInfo;
 import net.minecraftforge.forgespi.locating.IModFile;
 import net.minecraftforge.forgespi.locating.ModFileLoadingException;
 import net.minecraftforge.jarjar.selection.JarSelector;
-import net.minecraftforge.jarjar.thedarkside.org.apache.maven.artifact.versioning.ArtifactVersion;
-import net.minecraftforge.jarjar.thedarkside.org.apache.maven.artifact.versioning.VersionRange;
+import org.apache.maven.artifact.versioning.ArtifactVersion;
+import org.apache.maven.artifact.versioning.VersionRange;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
@@ -45,7 +45,6 @@ public class JarInJarDependencyLocator extends AbstractJarFileDependencyLocator
     {
         final List<IModFile> sources = Lists.newArrayList();
         loadedMods.forEach(sources::add);
-
 
         final List<IModFile> dependenciesToLoad = JarSelector.detectAndSelect(sources, this::loadResourceFromModFile, this::loadModFileFrom, this::identifyMod, this::exception);
 

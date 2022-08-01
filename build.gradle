@@ -65,7 +65,7 @@ ext {
     APACHE_COMMONS_LANG3_VERSION = '3.12.0'
     JOPT_SIMPLE_VERSION = '5.0.4'
     COMMONS_IO_VERSION = '2.11.0'
-    JARJAR_VERSION = '0.3.15'
+    JARJAR_VERSION = '0.3.16'
 
     GIT_INFO = gradleutils.gitInfo
     VERSION = gradleutils.getFilteredMCTagOffsetBranchVersion(true, '[0-9]', MC_VERSION)
@@ -261,9 +261,7 @@ def sharedDeps = {
     moduleonly "org.ow2.asm:asm-util:${ASM_VERSION}"
     moduleonly "org.ow2.asm:asm-analysis:${ASM_VERSION}"
     moduleonly "cpw.mods:bootstraplauncher:${BOOTSTRAPLAUNCHER_VERSION}"
-    moduleonly ("net.minecraftforge:JarJar:${JARJAR_VERSION}:filesystems") {
-        transitive = false
-    }
+    moduleonly "net.minecraftforge:JarJarFileSystems:${JARJAR_VERSION}"
 
     installer "cpw.mods:securejarhandler:${SECUREJARHANDLER_VERSION}"
     installer "org.ow2.asm:asm:${ASM_VERSION}"
@@ -287,7 +285,8 @@ def sharedDeps = {
     installer "org.jline:jline-terminal:${JLINE_VERSION}" // Dep of TerminalConsoleAppender
     installer "org.spongepowered:mixin:${MIXIN_VERSION}"
     installer 'org.openjdk.nashorn:nashorn-core:15.3'
-    installer "net.minecraftforge:JarJar:${JARJAR_VERSION}:all"
+    installer "net.minecraftforge:JarJarSelector:${JARJAR_VERSION}"
+    installer "net.minecraftforge:JarJarMetadata:${JARJAR_VERSION}"
 
     /*
     installer 'org.lwjgl:lwjgl:3.2.2'
