@@ -32,7 +32,8 @@ public class MCRegisterPacketHandler
 
     public static class ChannelList {
         private Set<ResourceLocation> locations = new HashSet<>();
-        private Set<ResourceLocation> remoteLocations = new HashSet<>();
+        private Set<ResourceLocation> remoteLocations = Set.of();
+
         public void updateFrom(final Supplier<NetworkEvent.Context> source, FriendlyByteBuf buffer, final NetworkEvent.RegistrationChangeType changeType) {
             byte[] data = new byte[Math.max(buffer.readableBytes(), 0)];
             buffer.readBytes(data);
@@ -79,10 +80,8 @@ public class MCRegisterPacketHandler
         }
 
         /**
-         * Provides only the registered locations that the remote side has sent.
-         * This is useful for interacting with other modloaders via the network to inspect registered network ids.
-         *
-         * @return - The remote locations
+         * {@return the unmodifiable set of channel locations sent by the remote side}
+         * This is useful for interacting with other modloaders via the network to inspect registered network channel IDs.
          */
         public Set<ResourceLocation> getRemoteLocations() {
             return this.remoteLocations;
