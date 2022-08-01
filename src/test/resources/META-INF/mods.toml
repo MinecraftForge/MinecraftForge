@@ -240,7 +240,8 @@ modId="custom_transformtype_test"
 modId="mega_model_test"
 [[mods]]
 modId="emissive_elements_test"
-
+[[mods]]
+modId="item_use_animation_test"
 
 
 # ADD ABOVE THIS LINE

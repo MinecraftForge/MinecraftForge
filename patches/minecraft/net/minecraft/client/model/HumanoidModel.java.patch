@@ -1,0 +1,52 @@
+--- a/net/minecraft/client/model/HumanoidModel.java
++++ b/net/minecraft/client/model/HumanoidModel.java
+@@ -264,6 +_,8 @@
+          case TOOT_HORN:
+             this.f_102811_.f_104203_ = Mth.m_14036_(this.f_102808_.f_104203_, -1.2F, 1.2F) - 1.4835298F;
+             this.f_102811_.f_104204_ = this.f_102808_.f_104204_ - ((float)Math.PI / 6F);
++         default:
++            this.f_102816_.applyTransform(this, p_102876_, net.minecraft.world.entity.HumanoidArm.RIGHT);
+       }
+ 
+    }
+@@ -304,6 +_,8 @@
+          case TOOT_HORN:
+             this.f_102812_.f_104203_ = Mth.m_14036_(this.f_102808_.f_104203_, -1.2F, 1.2F) - 1.4835298F;
+             this.f_102812_.f_104204_ = this.f_102808_.f_104204_ + ((float)Math.PI / 6F);
++         default:
++            this.f_102815_.applyTransform(this, p_102879_, net.minecraft.world.entity.HumanoidArm.LEFT);
+       }
+ 
+    }
+@@ -396,7 +_,7 @@
+    }
+ 
+    @OnlyIn(Dist.CLIENT)
+-   public static enum ArmPose {
++   public static enum ArmPose implements net.minecraftforge.common.IExtensibleEnum {
+       EMPTY(false),
+       ITEM(false),
+       BLOCK(false),
+@@ -416,5 +_,22 @@
+       public boolean m_102897_() {
+          return this.f_102890_;
+       }
++      // FORGE START
++      private net.minecraftforge.client.IForgeArmPose forgeArmPose;
++
++      private ArmPose(boolean twoHanded, net.minecraftforge.client.IForgeArmPose forgeArmPose) {
++         this(twoHanded);
++         this.forgeArmPose = forgeArmPose;
++      }
++
++      public static ArmPose create(String name, boolean twoHanded, @javax.annotation.Nonnull net.minecraftforge.client.IForgeArmPose forgeArmPose) {
++         throw new IllegalStateException("Enum not extended");
++      }
++
++      public <T extends LivingEntity> void applyTransform(HumanoidModel<T> model, T entity, net.minecraft.world.entity.HumanoidArm arm) {
++         com.google.common.base.Preconditions.checkNotNull(this.forgeArmPose, "applyTransform() must not be called on a vanilla ArmPose!");
++         this.forgeArmPose.applyTransform(model, entity, arm);
++      }
++      // FORGE END
+    }
+ }

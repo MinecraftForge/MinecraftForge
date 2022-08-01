@@ -10,7 +10,7 @@
     }
  
     public Vec3 m_7860_(AbstractClientPlayer p_117785_, float p_117786_) {
-@@ -126,7 +_,7 @@
+@@ -126,10 +_,13 @@
              if (useanim == UseAnim.TOOT_HORN) {
                 return HumanoidModel.ArmPose.TOOT_HORN;
              }
@@ -19,6 +19,12 @@
              return HumanoidModel.ArmPose.CROSSBOW_HOLD;
           }
  
++         HumanoidModel.ArmPose forgeArmPose = net.minecraftforge.client.extensions.common.IClientItemExtensions.of(itemstack).getArmPose(p_117795_, p_117796_, itemstack);
++         if (forgeArmPose != null) return forgeArmPose;
++
+          return HumanoidModel.ArmPose.ITEM;
+       }
+    }
 @@ -161,10 +_,12 @@
     }
  

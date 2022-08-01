@@ -11,6 +11,7 @@ import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.Model;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -18,6 +19,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.client.ForgeHooksClient;
+import net.minecraftforge.client.IForgeArmPose;
 import net.minecraftforge.fml.LogicalSide;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -57,6 +59,20 @@ public interface IClientItemExtensions
         return null;
     }
 
+    /**
+      * This method returns an ArmPose that can be defined using the {@link net.minecraft.client.model.HumanoidModel.ArmPose#create(String, boolean, IForgeArmPose)} method.
+      * This allows for creating custom item use animations.
+      *
+      * @param entityLiving The entity holding the item
+      * @param hand         The hand the ArmPose will be applied to
+      * @param itemStack    The stack being held
+      * @return A custom ArmPose that can be used to define movement of the arm
+      */
+            @Nullable
+    default HumanoidModel.ArmPose getArmPose(LivingEntity entityLiving, InteractionHand hand, ItemStack itemStack)
+    {
+        return null;
+    }
     /**
      * Queries the humanoid armor model for this item when it's equipped.
      *
