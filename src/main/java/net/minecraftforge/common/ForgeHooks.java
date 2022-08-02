@@ -8,6 +8,7 @@ package net.minecraftforge.common;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.regex.Matcher;
@@ -32,6 +33,7 @@ import net.minecraft.ResourceLocationException;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.core.*;
 import net.minecraft.network.chat.*;
+import net.minecraft.network.chat.contents.LiteralContents;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagEntry;
@@ -190,6 +192,7 @@ public class ForgeHooks
      * Called when a player uses 'pick block', calls new Entity and Block hooks.
      */
     @SuppressWarnings("resource")
+    @Deprecated(forRemoval = true, since = "1.19")
     public static boolean onPickBlock(HitResult target, Player player, Level level)
     {
         ItemStack result = ItemStack.EMPTY;
@@ -394,15 +397,74 @@ public class ForgeHooks
         return !MinecraftForge.EVENT_BUS.post(new VanillaGameEvent(level, vanillaEvent, pos, context));
     }
 
-    @Nullable
-    public static Component onServerChatEvent(@Nullable ServerPlayer player, String raw, Component comp)
+    private static String getRawText(Component message)
     {
-        ServerChatEvent event = new ServerChatEvent(player, raw, comp);
-        if (MinecraftForge.EVENT_BUS.post(event))
+        return message.getContents() instanceof LiteralContents literalContents ? literalContents.text() : "";
+    }
+
+    @Nullable
+    public static Component onServerChatSubmittedEvent(ServerPlayer player, String plain, Component decorated, boolean canChangeMessage)
+    {
+        ServerChatEvent.Submitted event = new ServerChatEvent.Submitted(player, plain, decorated, canChangeMessage);
+        return MinecraftForge.EVENT_BUS.post(event) ? null : event.getMessage();
+    }
+
+    private static final ChatDecorator SERVER_CHAT_SUBMITTED_DECORATOR = new ChatDecorator()
+    {
+        @NotNull
+        @Override
+        public CompletableFuture<Component> decorate(@Nullable ServerPlayer sender, Component message)
         {
-            return null;
+            return CompletableFuture.supplyAsync(() -> {
+                if (sender == null)
+                    return message; // Vanilla should never get here with the patches we use, but let's be safe with dumb mods
+
+                return onServerChatSubmittedEvent(sender, getRawText(message), message, true);
+            });
         }
-        return event.getComponent();
+
+        @NotNull
+        @Override
+        public CompletableFuture<PlayerChatMessage> decorate(@Nullable ServerPlayer sender, PlayerChatMessage message)
+        {
+            if (message.signedContent().isDecorated())
+            {
+                return CompletableFuture.supplyAsync(() -> {
+                    if (sender != null)
+                        return onServerChatSubmittedEvent(sender, message.signedContent().plain(), message.signedContent().decorated(), false) == null;
+
+                    return false;
+                }).thenApply(canceled -> canceled == Boolean.TRUE ? null : message);
+            }
+
+            return this.decorate(sender, message.serverContent()).thenApply(component -> component == null ? null : message.withUnsignedContent(component));
+        }
+    };
+
+    @NotNull
+    public static ChatDecorator getServerChatSubmittedDecorator()
+    {
+        return SERVER_CHAT_SUBMITTED_DECORATOR;
+    }
+
+    @Nullable
+    public static Component onServerChatPreviewEvent(@NotNull ServerPlayer player, @NotNull Component message)
+    {
+        ServerChatEvent.Preview event = new ServerChatEvent.Preview(player, getRawText(message), message);
+        return MinecraftForge.EVENT_BUS.post(event) ? null : event.getMessage();
+    }
+
+    @NotNull
+    public static ChatDecorator getServerChatPreviewDecorator()
+    {
+        return (player, message) -> CompletableFuture.supplyAsync(() -> {
+            if (player == null)
+                return message; // Vanilla should never get here with the patches we use, but let's be safe with dumb mods
+
+            Component preview = onServerChatPreviewEvent(player, message);
+            // Send the input message back to the client if the event was cancelled
+            return preview == null ? message : preview;
+        });
     }
 
 

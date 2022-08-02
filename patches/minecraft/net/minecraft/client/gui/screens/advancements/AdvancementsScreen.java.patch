@@ -7,7 +7,7 @@
 +   private static int tabPage, maxPages;
  
     public AdvancementsScreen(ClientAdvancements p_97340_) {
-       super(NarratorChatListener.f_93310_);
+       super(GameNarrator.f_93310_);
 @@ -57,7 +_,13 @@
        } else {
           this.f_97334_.m_104401_(this.f_97336_ == null ? null : this.f_97336_.m_97182_(), true);

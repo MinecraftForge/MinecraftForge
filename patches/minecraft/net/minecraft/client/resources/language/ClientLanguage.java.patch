@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/resources/language/ClientLanguage.java
 +++ b/net/minecraft/client/resources/language/ClientLanguage.java
-@@ -94,4 +_,9 @@
+@@ -95,4 +_,9 @@
     public FormattedCharSequence m_5536_(FormattedText p_118925_) {
        return FormattedBidiReorder.m_118931_(p_118925_, this.f_118911_);
     }

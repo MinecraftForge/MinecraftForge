@@ -37,3 +37,12 @@
        }
     }
  
+@@ -318,7 +_,7 @@
+    }
+ 
+    public boolean m_214000_() {
+-      return this.m_7913_().f_214803_;
++      return super.m_214000_() || this.m_7913_().f_214803_;
+    }
+ 
+    public DedicatedPlayerList m_6846_() {
