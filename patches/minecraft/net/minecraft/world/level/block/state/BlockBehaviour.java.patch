@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/state/BlockBehaviour.java
 +++ b/net/minecraft/world/level/block/state/BlockBehaviour.java
-@@ -94,6 +_,17 @@
+@@ -95,6 +_,17 @@
        this.f_60449_ = p_60452_.f_60893_;
        this.f_60438_ = p_60452_.f_60903_;
        this.f_60439_ = p_60452_;
@@ -18,7 +18,7 @@
     }
  
     /** @deprecated */
-@@ -142,7 +_,7 @@
+@@ -143,7 +_,7 @@
     /** @deprecated */
     @Deprecated
     public void m_6810_(BlockState p_60515_, Level p_60516_, BlockPos p_60517_, BlockState p_60518_, boolean p_60519_) {
@@ -27,7 +27,7 @@
           p_60516_.m_46747_(p_60517_);
        }
  
-@@ -219,7 +_,7 @@
+@@ -220,7 +_,7 @@
     /** @deprecated */
     @Deprecated
     public boolean m_6864_(BlockState p_60470_, BlockPlaceContext p_60471_) {
@@ -36,7 +36,7 @@
     }
  
     /** @deprecated */
-@@ -349,8 +_,8 @@
+@@ -350,8 +_,8 @@
        if (f == -1.0F) {
           return 0.0F;
        } else {
@@ -47,7 +47,7 @@
        }
     }
  
-@@ -383,8 +_,7 @@
+@@ -384,8 +_,7 @@
  
     public final ResourceLocation m_60589_() {
        if (this.f_60440_ == null) {
@@ -57,7 +57,7 @@
        }
  
        return this.f_60440_;
-@@ -407,6 +_,14 @@
+@@ -408,6 +_,14 @@
        return this.f_60439_.f_60888_;
     }
  
@@ -72,7 +72,7 @@
     public abstract static class BlockStateBase extends StateHolder<Block, BlockState> {
        private final int f_60594_;
        private final boolean f_60595_;
-@@ -491,18 +_,22 @@
+@@ -492,18 +_,22 @@
           return this.f_60595_;
        }
  
@@ -97,7 +97,7 @@
        public BlockState m_60717_(Rotation p_60718_) {
           return this.m_60734_().m_6843_(this.m_7160_(), p_60718_);
        }
-@@ -885,8 +_,9 @@
+@@ -886,8 +_,9 @@
        ResourceLocation f_60894_;
        boolean f_60895_ = true;
        boolean f_60896_;
@@ -108,7 +108,7 @@
        };
        BlockBehaviour.StatePredicate f_60898_ = (p_60985_, p_60986_, p_60987_) -> {
           return p_60985_.m_60767_().m_76337_() && p_60985_.m_60838_(p_60986_, p_60987_);
-@@ -1017,9 +_,15 @@
+@@ -1018,9 +_,15 @@
           return this;
        }
  

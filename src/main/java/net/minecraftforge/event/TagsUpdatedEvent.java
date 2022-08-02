@@ -6,9 +6,7 @@
 package net.minecraftforge.event;
 
 import net.minecraft.core.RegistryAccess;
-import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraftforge.eventbus.api.Event;
-import net.minecraftforge.server.ServerLifecycleHooks;
 
 /**
  * Fired when tags are updated on either server or client. This event can be used to refresh data that depends on tags.

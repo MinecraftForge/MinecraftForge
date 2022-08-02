@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/Options.java
 +++ b/net/minecraft/client/Options.java
-@@ -515,7 +_,8 @@
+@@ -539,7 +_,8 @@
     }, new OptionInstance.LazyEnum<>(() -> {
        return Stream.concat(Stream.of(""), Minecraft.m_91087_().m_91106_().m_194525_().stream()).toList();
     }, (p_232011_) -> {
@@ -10,7 +10,7 @@
     }, Codec.STRING), "", (p_231994_) -> {
        SoundManager soundmanager = Minecraft.m_91087_().m_91106_();
        soundmanager.m_194526_();
-@@ -772,6 +_,7 @@
+@@ -796,6 +_,7 @@
     }
  
     public Options(Minecraft p_92138_, File p_92139_) {
@@ -18,7 +18,7 @@
        this.f_92060_ = p_92138_;
        this.f_92110_ = new File(p_92139_, "options.txt");
        boolean flag = p_92138_.m_91103_();
-@@ -886,11 +_,20 @@
+@@ -910,11 +_,20 @@
        p_168428_.m_213982_("chatPreview", this.f_231796_);
        p_168428_.m_213982_("onlyShowSecureChat", this.f_231798_);
  
@@ -41,7 +41,7 @@
           }
        }
  
-@@ -911,6 +_,9 @@
+@@ -935,6 +_,9 @@
     }
  
     public void m_92140_() {
@@ -51,7 +51,7 @@
        try {
           if (!this.f_92110_.exists()) {
              return;
-@@ -955,7 +_,8 @@
+@@ -979,7 +_,8 @@
              }
           }
  
@@ -61,7 +61,7 @@
              @Nullable
              private String m_168458_(String p_168459_) {
                 return compoundtag1.m_128441_(p_168459_) ? compoundtag1.m_128461_(p_168459_) : null;
-@@ -1058,6 +_,7 @@
+@@ -1082,6 +_,7 @@
     }
  
     public void m_92169_() {
@@ -69,7 +69,7 @@
        try {
           final PrintWriter printwriter = new PrintWriter(new OutputStreamWriter(new FileOutputStream(this.f_92110_), StandardCharsets.UTF_8));
  
-@@ -1205,6 +_,23 @@
+@@ -1229,6 +_,23 @@
        }
  
        p_92146_.m_10509_(set);

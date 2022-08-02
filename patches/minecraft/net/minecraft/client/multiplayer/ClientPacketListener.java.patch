@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/multiplayer/ClientPacketListener.java
 +++ b/net/minecraft/client/multiplayer/ClientPacketListener.java
-@@ -361,6 +_,7 @@
+@@ -375,6 +_,7 @@
  
        this.f_104888_.f_91064_.m_113434_();
        this.f_104888_.f_91074_.m_172530_();
@@ -8,7 +8,7 @@
        int i = p_105030_.f_132360_();
        this.f_104888_.f_91074_.m_20234_(i);
        this.f_104889_.m_104630_(i, this.f_104888_.f_91074_);
-@@ -373,6 +_,7 @@
+@@ -387,6 +_,7 @@
        this.f_104888_.f_91074_.m_219749_(p_105030_.f_238174_());
        this.f_104888_.f_91072_.m_171805_(p_105030_.f_132363_(), p_105030_.f_132364_());
        this.f_104888_.f_91066_.m_193770_(p_105030_.f_132370_());
@@ -16,16 +16,7 @@
        this.f_104888_.f_91066_.m_92172_();
        this.f_104885_.m_129512_(new ServerboundCustomPayloadPacket(ServerboundCustomPayloadPacket.f_133979_, (new FriendlyByteBuf(Unpooled.buffer())).m_130070_(ClientBrandRetriever.m_129629_())));
        this.f_104888_.m_91309_().m_90739_();
-@@ -768,6 +_,8 @@
-       }
- 
-       Component component = flag ? p_233693_.f_237213_() : p_233693_.m_237220_();
-+      component = net.minecraftforge.client.ForgeHooksClient.onClientChat(p_233692_, component, p_233694_);
-+      if (component == null) return;
-       this.f_104888_.f_91065_.m_232360_(p_233692_, component, p_233694_);
-    }
- 
-@@ -931,8 +_,10 @@
+@@ -941,8 +_,10 @@
           localplayer1.m_21204_().m_22159_(localplayer.m_21204_());
        }
  
@@ -36,7 +27,7 @@
        this.f_104889_.m_104630_(i, localplayer1);
        localplayer1.m_146922_(-180.0F);
        localplayer1.f_108618_ = new KeyboardInput(this.f_104888_.f_91066_);
-@@ -1036,10 +_,7 @@
+@@ -1046,10 +_,7 @@
        PacketUtils.m_131363_(p_104976_, this, this.f_104888_);
        BlockPos blockpos = p_104976_.m_131704_();
        this.f_104888_.f_91073_.m_141902_(blockpos, p_104976_.m_195645_()).ifPresent((p_205557_) -> {
@@ -48,7 +39,7 @@
  
           if (p_205557_ instanceof CommandBlockEntity && this.f_104888_.f_91080_ instanceof CommandBlockEditScreen) {
              ((CommandBlockEditScreen)this.f_104888_.f_91080_).m_98398_();
-@@ -1184,7 +_,9 @@
+@@ -1194,7 +_,9 @@
  
     public void m_7443_(ClientboundCommandsPacket p_104990_) {
        PacketUtils.m_131363_(p_104990_, this, this.f_104888_);
@@ -59,7 +50,7 @@
     }
  
     public void m_7183_(ClientboundStopSoundPacket p_105116_) {
-@@ -1203,6 +_,7 @@
+@@ -1213,6 +_,7 @@
        ClientRecipeBook clientrecipebook = this.f_104888_.f_91074_.m_108631_();
        clientrecipebook.m_90625_(this.f_104900_.m_44051_());
        this.f_104888_.m_231374_(SearchRegistry.f_119943_, clientrecipebook.m_90639_());
@@ -67,7 +58,7 @@
     }
  
     public void m_7244_(ClientboundPlayerLookAtPacket p_105054_) {
-@@ -1304,6 +_,7 @@
+@@ -1314,6 +_,7 @@
  
        this.f_104888_.m_231374_(SearchRegistry.f_119941_, nonnulllist);
        this.f_104888_.m_231374_(SearchRegistry.f_119942_, nonnulllist);
@@ -75,7 +66,7 @@
     }
  
     private <T> void m_205560_(ResourceKey<? extends Registry<? extends T>> p_205561_, TagNetworkSerialization.NetworkPayload p_205562_) {
-@@ -1646,6 +_,7 @@
+@@ -1666,6 +_,7 @@
     }
  
     public void m_7413_(ClientboundCustomPayloadPacket p_105004_) {
@@ -83,7 +74,7 @@
        PacketUtils.m_131363_(p_105004_, this, this.f_104888_);
        ResourceLocation resourcelocation = p_105004_.m_132042_();
        FriendlyByteBuf friendlybytebuf = null;
-@@ -1843,7 +_,7 @@
+@@ -1863,7 +_,7 @@
              int j5 = friendlybytebuf.m_130242_();
              this.f_104888_.f_91064_.f_173815_.m_173830_(positionsource, j5);
           } else {
