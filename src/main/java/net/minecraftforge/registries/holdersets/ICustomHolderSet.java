@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.registries;
+package net.minecraftforge.registries.holdersets;
 
 import net.minecraft.core.HolderSet;
 
@@ -15,5 +15,5 @@ public interface ICustomHolderSet<T> extends HolderSet<T>
     /**
      * {@return HolderSetType registered to {@link ForgeRegistries.HOLDER_SET_TYPES}}
      */
-    public abstract HolderSetType type();
+    HolderSetType type();
 }

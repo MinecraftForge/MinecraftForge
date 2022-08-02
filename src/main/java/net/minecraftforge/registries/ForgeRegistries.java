@@ -45,6 +45,7 @@ import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.loot.IGlobalLootModifier;
 import net.minecraftforge.common.world.BiomeModifier;
 import net.minecraftforge.fluids.FluidType;
+import net.minecraftforge.registries.holdersets.HolderSetType;
 
 import java.util.function.Supplier;
 import net.minecraftforge.common.world.StructureModifier;

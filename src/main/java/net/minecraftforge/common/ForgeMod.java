@@ -61,11 +61,12 @@ import net.minecraftforge.fml.*;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.*;
 import net.minecraftforge.registries.*;
-import net.minecraftforge.registries.ForgeHolderSets.AndHolderSet;
-import net.minecraftforge.registries.ForgeHolderSets.AnyHolderSet;
-import net.minecraftforge.registries.ForgeHolderSets.ExclusionHolderSet;
-import net.minecraftforge.registries.ForgeHolderSets.NotHolderSet;
-import net.minecraftforge.registries.ForgeHolderSets.OrHolderSet;
+import net.minecraftforge.registries.holdersets.AndHolderSet;
+import net.minecraftforge.registries.holdersets.AnyHolderSet;
+import net.minecraftforge.registries.holdersets.ExclusionHolderSet;
+import net.minecraftforge.registries.holdersets.HolderSetType;
+import net.minecraftforge.registries.holdersets.NotHolderSet;
+import net.minecraftforge.registries.holdersets.OrHolderSet;
 import net.minecraftforge.network.NetworkConstants;
 import net.minecraftforge.event.server.ServerStoppingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -219,27 +220,30 @@ public class ForgeMod
     public static final RegistryObject<Codec<NoneStructureModifier>> NONE_STRUCTURE_MODIFIER_TYPE = STRUCTURE_MODIFIER_SERIALIZERS.register("none", () -> Codec.unit(NoneStructureModifier.INSTANCE));
 
     /**
-     * Stock holder set type that represents any/all values in a registry. Can be used in a holderset object with { "type": "forge:any" }
+     * Stock holder set type that represents any/all values in a registry. Can be used in a holderset object with {@code { "type": "forge:any" }}
      */
     public static final RegistryObject<HolderSetType> ANY_HOLDER_SET = HOLDER_SET_TYPES.register("any", () -> AnyHolderSet::codec);
    
     /**
-     * Stock holder set type that represents an intersection of other holdersets. Can be used in a holderset object with { "type": "forge:and", "values": [list of holdersets] }
+     * Stock holder set type that represents an intersection of other holdersets. Can be used in a holderset object with {@code { "type": "forge:and", "values": [list of holdersets] }}
      */
     public static final RegistryObject<HolderSetType> AND_HOLDER_SET = HOLDER_SET_TYPES.register("and", () -> AndHolderSet::codec);
 
     /**
-     * Stock holder set type that represents an intersection of other holdersets. Can be used in a holderset object with { "type": "forge:or", "values": [list of holdersets] }
+     * Stock holder set type that represents a union of other holdersets. Can be used in a holderset object with {@code { "type": "forge:or", "values": [list of holdersets] }}
      */
     public static final RegistryObject<HolderSetType> OR_HOLDER_SET = HOLDER_SET_TYPES.register("or", () -> OrHolderSet::codec);
 
     /**
-     * Stock holder set type that represents values that exist in one holderset but not another. Can be used in a holderset object with { "type": "forge:exclusion", "include": holderset, "exclude": holderset }.
+     * Stock holder set type that represents values that exist in one holderset but not another. Can be used in a holderset object with {@code { "type": "forge:exclusion", "include": holderset, "exclude": holderset }}
      */
     public static final RegistryObject<HolderSetType> EXCLUSION_HOLDER_SET = HOLDER_SET_TYPES.register("exclusion", () -> ExclusionHolderSet::codec);
 
     /**
-     * Stock holder set type that represents all values in a registry except those in another given set. Can be used in a holderset object with { "type": "forge:not", "value": holderset }
+     * <p>Stock holder set type that represents all values in a registry except those in another given set.
+     * Can be used in a holderset object with {@code { "type": "forge:not", "value": holderset }}</p>
+     * 
+     * <p>Exclusion(x,y) is preferable over and(x, not(y)) as the exclusion type creates smaller caches.</p>
      */
     public static final RegistryObject<HolderSetType> NOT_HOLDER_SET = HOLDER_SET_TYPES.register("not", () -> NotHolderSet::codec);
     

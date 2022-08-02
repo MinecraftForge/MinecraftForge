@@ -9,14 +9,15 @@ import net.minecraft.core.HolderSet;
 
 public interface IForgeHolderSet<T>
 {
-    default public HolderSet<T> self()
+    private HolderSet<T> self()
     {
         return (HolderSet<T>) this;
     }
     
     /**
-     * <p>Adds a callback to run when this holderset's contents invalidate (i.e. because tags were rebound).
-     * The intended usage and use case is with composite holdersets that need to cache sets/list based on other
+     * <p>Adds a callback to run when this holderset's contents invalidate (i.e. because tags were rebound).</p>
+     * 
+     * <p>The intended usage and use case is with composite holdersets that need to cache sets/list based on other
      * holdersets, which may be mutable (because they are tag-based or themselves composite holdersets).
      * Composite holdersets should use this to add callbacks to each of their component holdersets when constructed.</p>
      * 

@@ -145,8 +145,8 @@ import net.minecraftforge.resource.ResourcePackLoader;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.ForgeRegistry;
 import net.minecraftforge.registries.GameData;
-import net.minecraftforge.registries.ICustomHolderSet;
 import net.minecraftforge.registries.RegistryManager;
+import net.minecraftforge.registries.holdersets.ICustomHolderSet;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
