@@ -51,6 +51,16 @@
                 ++this.f_109439_;
                 if (entity.f_19797_ == 0) {
                    entity.f_19790_ = entity.m_20185_();
+@@ -1206,6 +_,9 @@
+                   int i1 = i & 255;
+                   outlinebuffersource.m_109929_(k, l, i1, 255);
+                } else {
++                  if (this.m_109817_() && entity.hasCustomOutlineRendering(this.f_109461_.f_91074_)) {
++                     flag3 = true;
++                  }
+                   multibuffersource = multibuffersource$buffersource;
+                }
+ 
 @@ -1226,6 +_,7 @@
           List<BlockEntity> list = levelrenderer$renderchunkinfo.f_109839_.m_112835_().m_112773_();
           if (!list.isEmpty()) {
@@ -59,7 +69,17 @@
                 BlockPos blockpos4 = blockentity1.m_58899_();
                 MultiBufferSource multibuffersource1 = multibuffersource$buffersource;
                 p_109600_.m_85836_();
-@@ -1251,6 +_,7 @@
+@@ -1242,6 +_,9 @@
+                      };
+                   }
+                }
++               if (this.m_109817_() && blockentity1.hasCustomOutlineRendering(this.f_109461_.f_91074_)) {
++                  flag3 = true;
++               }
+ 
+                this.f_172946_.m_112267_(blockentity1, p_109601_, p_109600_, multibuffersource1);
+                p_109600_.m_85849_();
+@@ -1251,9 +_,13 @@
  
        synchronized(this.f_109468_) {
           for(BlockEntity blockentity : this.f_109468_) {
@@ -67,6 +87,12 @@
              BlockPos blockpos3 = blockentity.m_58899_();
              p_109600_.m_85836_();
              p_109600_.m_85837_((double)blockpos3.m_123341_() - d0, (double)blockpos3.m_123342_() - d1, (double)blockpos3.m_123343_() - d2);
++            if (this.m_109817_() && blockentity.hasCustomOutlineRendering(this.f_109461_.f_91074_)) {
++               flag3 = true;
++            }
+             this.f_172946_.m_112267_(blockentity, p_109601_, p_109600_, multibuffersource$buffersource);
+             p_109600_.m_85849_();
+          }
 @@ -1290,7 +_,8 @@
                 p_109600_.m_85837_((double)blockpos2.m_123341_() - d0, (double)blockpos2.m_123342_() - d1, (double)blockpos2.m_123343_() - d2);
                 PoseStack.Pose posestack$pose = p_109600_.m_85850_();
