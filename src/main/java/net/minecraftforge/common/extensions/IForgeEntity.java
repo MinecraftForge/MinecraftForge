@@ -413,11 +413,12 @@ public interface IForgeEntity extends ICapabilitySerializable<CompoundTag>
     }
 
     /**
-     * Returns whether this {@link Entity} has custom outline rendering behaviour which does
+     * Returns whether this {@link Entity} has custom outline rendering behavior which does
      * not use the existing automatic outline rendering based on {@link Entity#isCurrentlyGlowing()}
      * and the entity's team color.
-     * @param player The local player currently viewing this {@code Entity}
-     * @return true to enable outline processing
+     *
+     * @param player the local player currently viewing this {@code Entity}
+     * @return {@code true} to enable outline processing
      */
     default boolean hasCustomOutlineRendering(Player player)
     {

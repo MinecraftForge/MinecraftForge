@@ -177,9 +177,10 @@ public interface IForgeBlockEntity extends ICapabilitySerializable<CompoundTag>
      }
 
     /**
-     * Returns whether this {@link BlockEntity} has custom outline rendering behaviour
-     * @param player The local player currently viewing this {@code BlockEntity}
-     * @return true to enable outline processing
+     * Returns whether this {@link BlockEntity} has custom outline rendering behavior.
+     *
+     * @param player the local player currently viewing this {@code BlockEntity}
+     * @return {@code true} to enable outline processing
      */
     default boolean hasCustomOutlineRendering(Player player)
     {
