@@ -8,13 +8,12 @@
     NONE,
     EAT,
     DRINK,
-@@ -9,4 +_,9 @@
+@@ -9,4 +_,8 @@
     SPEAR,
     CROSSBOW,
     SPYGLASS;
-+
 +   public static UseAnim create(String name)
 +   {
-+       throw new IllegalStateException("Enum not extended");
++      throw new IllegalStateException("Enum not extended");
 +   }
  }

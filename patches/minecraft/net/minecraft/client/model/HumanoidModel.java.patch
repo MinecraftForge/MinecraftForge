@@ -1,14 +1,17 @@
 --- a/net/minecraft/client/model/HumanoidModel.java
 +++ b/net/minecraft/client/model/HumanoidModel.java
-@@ -258,6 +_,8 @@
+@@ -258,8 +_,10 @@
        case SPYGLASS:
           this.f_102811_.f_104203_ = Mth.m_14036_(this.f_102808_.f_104203_ - 1.9198622F - (p_102876_.m_6047_() ? 0.2617994F : 0.0F), -2.4F, 3.3F);
           this.f_102811_.f_104204_ = this.f_102808_.f_104204_ - 0.2617994F;
 +      default:
 +         this.f_102816_.applyTransform(this, p_102876_, net.minecraft.world.entity.HumanoidArm.RIGHT);
        }
- 
+-
++      
     }
+ 
+    private void m_102878_(T p_102879_) {
 @@ -294,6 +_,8 @@
        case SPYGLASS:
           this.f_102812_.f_104203_ = Mth.m_14036_(this.f_102808_.f_104203_ - 1.9198622F - (p_102879_.m_6047_() ? 0.2617994F : 0.0F), -2.4F, 3.3F);
