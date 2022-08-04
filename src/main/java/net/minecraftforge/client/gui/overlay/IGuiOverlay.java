@@ -16,5 +16,5 @@ import net.minecraftforge.client.event.RegisterGuiOverlaysEvent;
 @FunctionalInterface
 public interface IGuiOverlay
 {
-    void render(ForgeGui gui, PoseStack poseStack, float partialTick, int width, int height);
+    void render(ForgeGui gui, PoseStack poseStack, float partialTick, int screenWidth, int screenHeight);
 }

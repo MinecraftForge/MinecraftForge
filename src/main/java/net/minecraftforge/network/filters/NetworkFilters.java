@@ -8,6 +8,7 @@ package net.minecraftforge.network.filters;
 import java.util.Map;
 import java.util.function.Function;
 
+import io.netty.channel.ChannelPipeline;
 import net.minecraft.network.Connection;
 
 import org.apache.logging.log4j.LogManager;
@@ -27,11 +28,15 @@ public class NetworkFilters
 
     public static void injectIfNecessary(Connection manager)
     {
+        ChannelPipeline pipeline = manager.channel().pipeline();
+        if (pipeline.get("packet_handler") == null)
+            return; // Realistically this can only ever be null if the connection was prematurely closed due to an error. We return early here to reduce further log spam.
+
         instances.forEach((key, filterFactory) -> {
             VanillaPacketFilter filter = filterFactory.apply(manager);
             if (filter.isNecessary(manager))
             {
-                manager.channel().pipeline().addBefore("packet_handler", key, filter);
+                pipeline.addBefore("packet_handler", key, filter);
                 LOGGER.debug("Injected {} into {}", filter, manager);
             }
         });
