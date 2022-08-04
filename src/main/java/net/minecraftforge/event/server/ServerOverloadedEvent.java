@@ -19,8 +19,8 @@ import net.minecraftforge.server.ServerLifecycleHooks;
  * <br>
  * Here's a couple of examples of intended usage of this event:
  * <ol>
- *     <li> to log data that could be useful for diagnosing why the server is overloaded
- *     <li> for sending automated alerts to server staff outside of the game
+ *     <li>to log data that could be useful for diagnosing why the server is overloaded</li>
+ *     <li>for sending automated alerts to server staff outside of the game</li>
  * </ol>
  * <br>
  * This event is fired via {@link ServerLifecycleHooks#onServerOverloaded(MinecraftServer, long, long, long)},
