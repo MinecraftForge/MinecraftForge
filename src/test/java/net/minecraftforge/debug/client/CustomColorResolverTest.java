@@ -8,6 +8,7 @@ package net.minecraftforge.debug.client;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.ColorResolver;
+import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.Material;
@@ -21,6 +22,11 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
+/**
+ * This mod tests custom {@link ColorResolver ColorResolvers} using {@link RegisterColorHandlersEvent.ColorResolvers}.
+ * To test, place the registered test block, it should be tinted blue in biomes with precipitation and red in others.
+ * The color should blend according to the biome blend setting.
+ */
 @Mod(CustomColorResolverTest.MOD_ID)
 public class CustomColorResolverTest
 {
@@ -43,7 +49,7 @@ public class CustomColorResolverTest
     private static class ClientHandler
     {
 
-        private static final ColorResolver COLOR_RESOLVER = (biome, x, z) -> biome.getFogColor();
+        private static final ColorResolver COLOR_RESOLVER = (biome, x, z) -> biome.getPrecipitation() == Biome.Precipitation.NONE ? 0xFF0000 : 0x0000FF;
 
         @SubscribeEvent
         static void registerColorResolver(RegisterColorHandlersEvent.ColorResolvers event)
