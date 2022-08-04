@@ -68,7 +68,7 @@ public interface IClientItemExtensions
       * @param itemStack    The stack being held
       * @return A custom ArmPose that can be used to define movement of the arm
       */
-            @Nullable
+    @Nullable
     default HumanoidModel.ArmPose getArmPose(LivingEntity entityLiving, InteractionHand hand, ItemStack itemStack)
     {
         return null;
