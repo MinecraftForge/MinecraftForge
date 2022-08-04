@@ -31,7 +31,7 @@ public class ItemUseAnimationTest
 
     private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MOD_ID);
 
-    private static final RegistryObject<Item> THING = ITEMS.register("thing", () -> new ThingItem(new Item.Properties().tab(CreativeModeTab.TAB_TOOLS).food(new FoodProperties.Builder().nutrition(4).build())));
+    private static final RegistryObject<Item> THING = ITEMS.register("thing", () -> new ThingItem(new Item.Properties().tab(CreativeModeTab.TAB_TOOLS).food(new FoodProperties.Builder().nutrition(4).alwaysEat().build())));
 
     private static final UseAnim SWING = UseAnim.create("SWING");
 
