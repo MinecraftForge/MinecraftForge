@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/level/block/entity/BlockEntityType.java
++++ b/net/minecraft/world/level/block/entity/BlockEntityType.java
+@@ -69,7 +_,7 @@
+          f_58913_.warn("Block entity type {} requires at least one valid block to be defined!", (Object)p_58957_);
+       }
+ 
+-      Type<?> type = Util.m_137456_(References.f_16781_, p_58957_);
++      Type<?> type = null; //Util.fetchChoiceType(References.BLOCK_ENTITY, p_58957_);
+       return Registry.m_122961_(Registry.f_122830_, p_58957_, p_58958_.m_58966_(type));
+    }
+ 

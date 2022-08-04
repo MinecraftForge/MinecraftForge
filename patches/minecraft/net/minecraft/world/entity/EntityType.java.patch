@@ -119,7 +119,8 @@
 +      }
 +
        public EntityType<T> m_20712_(String p_20713_) {
-          if (this.f_20688_) {
+-         if (this.f_20688_) {
++         if (this.f_20688_ && false) {
              Util.m_137456_(References.f_16785_, p_20713_);
           }
  
