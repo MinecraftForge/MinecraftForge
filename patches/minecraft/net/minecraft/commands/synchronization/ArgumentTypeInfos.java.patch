@@ -1,6 +1,6 @@
 --- a/net/minecraft/commands/synchronization/ArgumentTypeInfos.java
 +++ b/net/minecraft/commands/synchronization/ArgumentTypeInfos.java
-@@ -63,6 +_,20 @@
+@@ -64,6 +_,20 @@
  public class ArgumentTypeInfos {
     private static final Map<Class<?>, ArgumentTypeInfo<?, ?>> f_235379_ = Maps.newHashMap();
  
@@ -21,12 +21,20 @@
     private static <A extends ArgumentType<?>, T extends ArgumentTypeInfo.Template<A>> ArgumentTypeInfo<A, T> m_235386_(Registry<ArgumentTypeInfo<?, ?>> p_235387_, String p_235388_, Class<? extends A> p_235389_, ArgumentTypeInfo<A, T> p_235390_) {
        f_235379_.put(p_235389_, p_235390_);
        return Registry.m_122961_(p_235387_, p_235388_, p_235390_);
-@@ -116,7 +_,7 @@
+@@ -117,12 +_,14 @@
        m_235386_(p_235385_, "resource", m_235395_(ResourceKeyArgument.class), new ResourceKeyArgument.Info<Object>());
        m_235386_(p_235385_, "template_mirror", TemplateMirrorArgument.class, SingletonArgumentInfo.m_235451_(TemplateMirrorArgument::m_234343_));
        m_235386_(p_235385_, "template_rotation", TemplateRotationArgument.class, SingletonArgumentInfo.m_235451_(TemplateRotationArgument::m_234414_));
 -      if (SharedConstants.f_136183_) {
-+      if (net.minecraftforge.gametest.ForgeGameTestHooks.isGametestEnabled()) {
++      // Forge: Register before gametest arguments to provide forge server <-> vanilla client interop and matching int ids
++      var uuidInfo = m_235386_(p_235385_, "uuid", UuidArgument.class, SingletonArgumentInfo.m_235451_(UuidArgument::m_113850_));
++      if (true) { // Forge: Always register gametest arguments to prevent issues when connecting from gametest-enabled client/server to non-gametest-enabled client/server
           m_235386_(p_235385_, "test_argument", TestFunctionArgument.class, SingletonArgumentInfo.m_235451_(TestFunctionArgument::m_128088_));
           m_235386_(p_235385_, "test_class", TestClassNameArgument.class, SingletonArgumentInfo.m_235451_(TestClassNameArgument::m_127917_));
        }
+ 
+-      return m_235386_(p_235385_, "uuid", UuidArgument.class, SingletonArgumentInfo.m_235451_(UuidArgument::m_113850_));
++      return uuidInfo;
+    }
+ 
+    private static <T extends ArgumentType<?>> Class<T> m_235395_(Class<? super T> p_235396_) {

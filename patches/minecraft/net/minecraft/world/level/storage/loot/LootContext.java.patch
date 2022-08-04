@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/storage/loot/LootContext.java
 +++ b/net/minecraft/world/level/storage/loot/LootContext.java
-@@ -107,17 +_,47 @@
+@@ -108,17 +_,47 @@
        return this.f_78909_;
     }
  
@@ -48,7 +48,7 @@
        public LootContext.Builder m_230911_(RandomSource p_230912_) {
           this.f_78958_ = p_230912_;
           return this;
-@@ -190,7 +_,7 @@
+@@ -191,7 +_,7 @@
  
        public LootContext m_78975_(LootContextParamSet p_78976_) {
           Set<LootContextParam<?>> set = Sets.difference(this.f_78956_.keySet(), p_78976_.m_81398_());
@@ -57,7 +57,7 @@
              throw new IllegalArgumentException("Parameters not allowed in this parameter set: " + set);
           } else {
              Set<LootContextParam<?>> set1 = Sets.difference(p_78976_.m_81394_(), this.f_78956_.keySet());
-@@ -203,7 +_,7 @@
+@@ -204,7 +_,7 @@
                 }
  
                 MinecraftServer minecraftserver = this.f_78955_.m_7654_();
@@ -66,7 +66,7 @@
              }
           }
        }
-@@ -230,6 +_,11 @@
+@@ -231,6 +_,11 @@
  
        public LootContextParam<? extends Entity> m_79003_() {
           return this.f_78995_;

@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/multiplayer/ClientHandshakePacketListenerImpl.java
 +++ b/net/minecraft/client/multiplayer/ClientHandshakePacketListenerImpl.java
-@@ -126,6 +_,7 @@
+@@ -130,6 +_,7 @@
        this.f_104521_.accept(Component.m_237115_("connect.joining"));
        this.f_104523_ = p_104547_.m_134774_();
        this.f_104522_.m_129498_(ConnectionProtocol.PLAY);
@@ -8,7 +8,7 @@
        this.f_104522_.m_129505_(new ClientPacketListener(this.f_104519_, this.f_104520_, this.f_104522_, this.f_104523_, this.f_104519_.m_193590_()));
     }
  
-@@ -133,7 +_,7 @@
+@@ -137,7 +_,7 @@
        if (this.f_104520_ != null && this.f_104520_ instanceof RealmsScreen) {
           this.f_104519_.m_91152_(new DisconnectedRealmsScreen(this.f_104520_, CommonComponents.f_130661_, p_104543_));
        } else {
@@ -17,7 +17,7 @@
        }
  
     }
-@@ -154,6 +_,7 @@
+@@ -158,6 +_,7 @@
     }
  
     public void m_7254_(ClientboundCustomQueryPacket p_104545_) {

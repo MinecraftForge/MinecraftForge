@@ -1,13 +1,17 @@
 --- a/net/minecraft/client/renderer/block/model/FaceBakery.java
 +++ b/net/minecraft/client/renderer/block/model/FaceBakery.java
-@@ -49,6 +_,7 @@
+@@ -49,7 +_,10 @@
           this.m_111630_(aint, direction);
        }
  
+-      return new BakedQuad(aint, p_111603_.f_111355_, direction, p_111604_, p_111608_);
 +      net.minecraftforge.client.ForgeHooksClient.fillNormal(aint, direction);
-       return new BakedQuad(aint, p_111603_.f_111355_, direction, p_111604_, p_111608_);
++      var quad = new BakedQuad(aint, p_111603_.f_111355_, direction, p_111604_, p_111608_);
++      net.minecraftforge.client.model.QuadTransformers.settingEmissivity(p_111603_.emissivity).processInPlace(quad);
++      return quad;
     }
  
+    public static BlockFaceUV m_111581_(BlockFaceUV p_111582_, Direction p_111583_, Transformation p_111584_, ResourceLocation p_111585_) {
 @@ -131,8 +_,8 @@
        p_111615_[i + 1] = Float.floatToRawIntBits(p_111617_.m_122260_());
        p_111615_[i + 2] = Float.floatToRawIntBits(p_111617_.m_122269_());

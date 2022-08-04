@@ -6,10 +6,11 @@
 package net.minecraftforge.common.util;
 
 import com.mojang.authlib.GameProfile;
-import io.netty.util.concurrent.Future;
-import io.netty.util.concurrent.GenericFutureListener;
+import java.util.Set;
+import javax.annotation.ParametersAreNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.Connection;
+import net.minecraft.network.PacketSendListener;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.PacketFlow;
@@ -69,10 +70,9 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.Set;
-
-//Preliminary, simple Fake Player class
+/**
+ * A basic fake server player implementation that can be used to simulate player actions.
+ */
 public class FakePlayer extends ServerPlayer
 {
     public FakePlayer(ServerLevel level, GameProfile name)
@@ -81,16 +81,15 @@ public class FakePlayer extends ServerPlayer
         this.connection = new FakePlayerNetHandler(level.getServer(), this);
     }
 
-    @Override public Vec3 position(){ return new Vec3(0, 0, 0); }
-    @Override public BlockPos blockPosition(){ return BlockPos.ZERO; }
-    @Override public void displayClientMessage(Component chatComponent, boolean actionBar){}
-    @Override public void awardStat(Stat par1StatBase, int par2){}
-    //@Override public void openGui(Object mod, int modGuiId, World world, int x, int y, int z){}
-    @Override public boolean isInvulnerableTo(DamageSource source){ return true; }
-    @Override public boolean canHarmPlayer(Player player){ return false; }
-    @Override public void die(DamageSource source){ return; }
-    @Override public void tick(){ return; }
-    @Override public void updateOptions(ServerboundClientInformationPacket pkt){ return; }
+    @Override public Vec3 position() { return new Vec3(0, 0, 0); }
+    @Override public BlockPos blockPosition() { return BlockPos.ZERO; }
+    @Override public void displayClientMessage(Component chatComponent, boolean actionBar) { }
+    @Override public void awardStat(Stat stat, int amount) { }
+    @Override public boolean isInvulnerableTo(DamageSource source) { return true; }
+    @Override public boolean canHarmPlayer(Player player) { return false; }
+    @Override public void die(DamageSource source) { }
+    @Override public void tick() { }
+    @Override public void updateOptions(ServerboundClientInformationPacket packet) { }
     @Override @Nullable public MinecraftServer getServer() { return ServerLifecycleHooks.getCurrentServer(); }
 
     @ParametersAreNonnullByDefault
@@ -134,7 +133,7 @@ public class FakePlayer extends ServerPlayer
         @Override public void handlePaddleBoat(ServerboundPaddleBoatPacket packet) { }
         @Override public void onDisconnect(Component message) { }
         @Override public void send(Packet<?> packet) { }
-        @Override public void send(Packet<?> packet, @Nullable GenericFutureListener<? extends Future<? super Void>> listener) { }
+        @Override public void send(Packet<?> packet, @Nullable PacketSendListener sendListener) { }
         @Override public void handleSetCarriedItem(ServerboundSetCarriedItemPacket packet) { }
         @Override public void handleChat(ServerboundChatPacket packet) { }
         @Override public void handleAnimate(ServerboundSwingPacket packet) { }

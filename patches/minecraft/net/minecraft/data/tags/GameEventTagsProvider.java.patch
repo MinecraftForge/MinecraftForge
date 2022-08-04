@@ -1,8 +1,8 @@
 --- a/net/minecraft/data/tags/GameEventTagsProvider.java
 +++ b/net/minecraft/data/tags/GameEventTagsProvider.java
-@@ -8,8 +_,13 @@
- public class GameEventTagsProvider extends TagsProvider<GameEvent> {
-    private static final GameEvent[] f_236425_ = new GameEvent[]{GameEvent.f_157791_, GameEvent.f_157792_, GameEvent.f_157793_, GameEvent.f_157794_, GameEvent.f_157795_, GameEvent.f_157796_, GameEvent.f_157797_, GameEvent.f_223702_, GameEvent.f_223703_, GameEvent.f_157802_, GameEvent.f_157803_, GameEvent.f_157804_, GameEvent.f_223704_, GameEvent.f_157806_, GameEvent.f_223705_, GameEvent.f_223706_, GameEvent.f_223707_, GameEvent.f_223708_, GameEvent.f_157810_, GameEvent.f_223709_, GameEvent.f_223710_, GameEvent.f_157811_, GameEvent.f_157812_, GameEvent.f_157816_, GameEvent.f_157769_, GameEvent.f_157770_, GameEvent.f_223696_, GameEvent.f_223697_, GameEvent.f_157772_, GameEvent.f_223699_, GameEvent.f_157774_, GameEvent.f_157775_, GameEvent.f_157776_, GameEvent.f_157777_, GameEvent.f_157778_, GameEvent.f_157781_, GameEvent.f_157784_, GameEvent.f_157785_, GameEvent.f_157786_, GameEvent.f_238175_};
+@@ -10,8 +_,13 @@
+    @VisibleForTesting
+    static final GameEvent[] f_236425_ = new GameEvent[]{GameEvent.f_157791_, GameEvent.f_157792_, GameEvent.f_157793_, GameEvent.f_157794_, GameEvent.f_157795_, GameEvent.f_157796_, GameEvent.f_157797_, GameEvent.f_223702_, GameEvent.f_223703_, GameEvent.f_157802_, GameEvent.f_157803_, GameEvent.f_157804_, GameEvent.f_223704_, GameEvent.f_157806_, GameEvent.f_223705_, GameEvent.f_223706_, GameEvent.f_223707_, GameEvent.f_223708_, GameEvent.f_157810_, GameEvent.f_223709_, GameEvent.f_223710_, GameEvent.f_157811_, GameEvent.f_157812_, GameEvent.f_157816_, GameEvent.f_157769_, GameEvent.f_157770_, GameEvent.f_223696_, GameEvent.f_223697_, GameEvent.f_157772_, GameEvent.f_223699_, GameEvent.f_157774_, GameEvent.f_157775_, GameEvent.f_157776_, GameEvent.f_157777_, GameEvent.f_157778_, GameEvent.f_157781_, GameEvent.f_157784_, GameEvent.f_157785_, GameEvent.f_157786_, GameEvent.f_238175_};
  
 +   /** @deprecated Forge: Use the {@link #GameEventTagsProvider(DataGenerator, String, net.minecraftforge.common.data.ExistingFileHelper) mod id variant} */
 +   @Deprecated

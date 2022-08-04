@@ -128,8 +128,7 @@ public class CapabilitiesTest
             {
                 while(messages.size() > 0)
                 {
-                    final ChatType system = Minecraft.getInstance().level.registryAccess().registryOrThrow(Registry.CHAT_TYPE_REGISTRY).getOrThrow(ChatType.SYSTEM);
-                    Minecraft.getInstance().gui.handleSystemChat(system, Component.literal(Objects.requireNonNull(messages.poll())));
+                    Minecraft.getInstance().getChatListener().handleSystemMessage(Component.literal(Objects.requireNonNull(messages.poll())), false);
                 }
             }
         }

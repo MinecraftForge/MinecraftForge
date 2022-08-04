@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/resources/language/LanguageInfo.java
 +++ b/net/minecraft/client/resources/language/LanguageInfo.java
-@@ -16,6 +_,12 @@
+@@ -17,6 +_,12 @@
        this.f_118944_ = p_118949_;
        this.f_118945_ = p_118950_;
        this.f_118946_ = p_118951_;
@@ -13,7 +13,7 @@
     }
  
     public String getCode() {
-@@ -53,4 +_,8 @@
+@@ -54,4 +_,8 @@
     public int compareTo(LanguageInfo p_118954_) {
        return this.f_118943_.compareTo(p_118954_.f_118943_);
     }
