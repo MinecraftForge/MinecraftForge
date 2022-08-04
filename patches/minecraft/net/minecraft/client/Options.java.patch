@@ -61,13 +61,12 @@
              @Nullable
              private String m_168458_(String p_168459_) {
                 return compoundtag1.m_128441_(p_168459_) ? compoundtag1.m_128461_(p_168459_) : null;
-@@ -1071,6 +_,9 @@
+@@ -1071,6 +_,8 @@
     }
  
     private CompoundTag m_92164_(CompoundTag p_92165_) {
-+      if (Minecraft.m_91087_().m_91295_() == null)
++      if (Minecraft.m_91087_().m_91295_() == null) // FORGE: Can be null when inited for the first time.
 +         return p_92165_;
-+
        int i = 0;
  
        try {

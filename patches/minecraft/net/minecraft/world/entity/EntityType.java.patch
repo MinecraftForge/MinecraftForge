@@ -90,7 +90,7 @@
        private Builder(EntityType.EntityFactory<T> p_20696_, MobCategory p_20697_) {
           this.f_20685_ = p_20696_;
           this.f_20686_ = p_20697_;
-@@ -641,12 +_,36 @@
+@@ -641,12 +_,37 @@
           return this;
        }
  
@@ -119,8 +119,8 @@
 +      }
 +
        public EntityType<T> m_20712_(String p_20713_) {
--         if (this.f_20688_) {
-+         if (this.f_20688_ && false) {
++         if(false) // FORGE: Do not preinitialize DFU via static init of Bootstrap, it is not needed in production.
+          if (this.f_20688_) {
              Util.m_137456_(References.f_16785_, p_20713_);
           }
  

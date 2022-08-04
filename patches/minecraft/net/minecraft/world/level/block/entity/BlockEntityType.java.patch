@@ -5,7 +5,7 @@
        }
  
 -      Type<?> type = Util.m_137456_(References.f_16781_, p_58957_);
-+      Type<?> type = null; //Util.fetchChoiceType(References.BLOCK_ENTITY, p_58957_);
++      Type<?> type = null; //Util.fetchChoiceType(References.BLOCK_ENTITY, p_58957_); FORGE: Do not preinitialize DFU via static init of Bootstrap, it is not needed in production.
        return Registry.m_122961_(Registry.f_122830_, p_58957_, p_58958_.m_58966_(type));
     }
  
