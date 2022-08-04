@@ -118,15 +118,21 @@
              iterator.remove();
           }
  
-@@ -904,6 +_,7 @@
-          return false;
-       } else {
-          MobEffectInstance mobeffectinstance = this.f_20945_.get(p_147208_.m_19544_());
-+         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.living.MobEffectEvent.Added(this, mobeffectinstance, p_147208_, p_147209_));
+@@ -907,17 +_,21 @@
           if (mobeffectinstance == null) {
              this.f_20945_.put(p_147208_.m_19544_(), p_147208_);
              this.m_142540_(p_147208_, p_147209_);
-@@ -918,6 +_,9 @@
+-            return true;
+          } else if (mobeffectinstance.m_19558_(p_147208_)) {
+             this.m_141973_(mobeffectinstance, true, p_147209_);
+-            return true;
+          } else {
+             return false;
+          }
++
++         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.living.MobEffectEvent.Added(this, mobeffectinstance, p_147208_, p_147209_));
++         return true;
+       }
     }
  
     public boolean m_7301_(MobEffectInstance p_21197_) {
