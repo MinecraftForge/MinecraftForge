@@ -10,7 +10,7 @@
     }
  
     public Vec3 m_7860_(AbstractClientPlayer p_117785_, float p_117786_) {
-@@ -123,7 +_,7 @@
+@@ -123,9 +_,11 @@
              if (useanim == UseAnim.SPYGLASS) {
                 return HumanoidModel.ArmPose.SPYGLASS;
              }
@@ -18,7 +18,11 @@
 +         } else if (!p_117795_.f_20911_ && itemstack.m_41720_() instanceof CrossbowItem && CrossbowItem.m_40932_(itemstack)) {
              return HumanoidModel.ArmPose.CROSSBOW_HOLD;
           }
++         HumanoidModel.ArmPose forgeArmPose = net.minecraftforge.client.RenderProperties.get(itemstack).getArmPose(p_117795_, p_117796_, itemstack);
++         if (forgeArmPose != null) return forgeArmPose;
  
+          return HumanoidModel.ArmPose.ITEM;
+       }
 @@ -158,10 +_,12 @@
     }
  
