@@ -1,5 +1,13 @@
 --- a/net/minecraft/server/level/ChunkMap.java
 +++ b/net/minecraft/server/level/ChunkMap.java
+@@ -385,6 +_,7 @@
+             this.f_140140_ = true;
+          }
+ 
++         net.minecraftforge.event.ForgeEventFactory.fireChunkTicketLevelUpdated(this.f_140133_, p_140177_, p_140180_, p_140178_, p_140179_);
+          return p_140179_;
+       }
+    }
 @@ -490,6 +_,7 @@
              if (this.f_140131_.remove(p_140182_, p_140183_) && p_203002_ != null) {
                 if (p_203002_ instanceof LevelChunk) {
