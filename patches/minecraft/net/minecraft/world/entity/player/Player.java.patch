@@ -302,14 +302,6 @@
                          this.m_21008_(InteractionHand.MAIN_HAND, ItemStack.f_41583_);
                       }
                    }
-@@ -1215,6 +_,7 @@
- 
-          }
-       }
-+      this.cachedAttackStrength = 0.0F; // Forge: Resets the attackStrength field once the attack code is finished
-    }
- 
-    protected void m_6727_(LivingEntity p_36355_) {
 @@ -1228,7 +_,7 @@
        }
  
