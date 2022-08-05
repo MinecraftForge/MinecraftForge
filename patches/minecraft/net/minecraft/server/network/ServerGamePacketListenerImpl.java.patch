@@ -67,7 +67,7 @@
                          this.m_243086_(playerchatmessage1);
                       }, this.f_9745_);
                    });
-@@ -1375,7 +_,7 @@
+@@ -1383,7 +_,7 @@
  
     private CompletableFuture<Component> m_215246_(String p_215247_) {
        Component component = Component.m_237113_(p_215247_);
@@ -76,7 +76,7 @@
           return !component.equals(p_238202_) ? p_238202_ : null;
        });
        completablefuture.thenAcceptAsync((p_242747_) -> {
-@@ -1524,11 +_,13 @@
+@@ -1532,11 +_,13 @@
              return;
           }
  
@@ -91,16 +91,16 @@
                    if (interactionresult.m_19077_()) {
                       CriteriaTriggers.f_10565_.m_61494_(ServerGamePacketListenerImpl.this.f_9743_, itemstack, entity);
                       if (interactionresult.m_19080_()) {
-@@ -1550,7 +_,7 @@
+@@ -1558,6 +_,8 @@
  
                 public void m_141994_() {
                    if (!(entity instanceof ItemEntity) && !(entity instanceof ExperienceOrb) && !(entity instanceof AbstractArrow) && entity != ServerGamePacketListenerImpl.this.f_9743_) {
--                     ServerGamePacketListenerImpl.this.f_9743_.m_5706_(entity);
-+                     if(ServerGamePacketListenerImpl.this.f_9743_.canHit(entity, 3)) ServerGamePacketListenerImpl.this.f_9743_.m_5706_(entity); //Forge: Perform attack range check. Original check was dist < 6, range is 3, so vanilla used padding=3
++                     //Forge: Perform attack range check. Original check was dist < 6, range is 3, so vanilla used padding=3
++                     if(ServerGamePacketListenerImpl.this.f_9743_.canHit(entity, 3))
+                      ServerGamePacketListenerImpl.this.f_9743_.m_5706_(entity);
                    } else {
                       ServerGamePacketListenerImpl.this.m_9942_(Component.m_237115_("multiplayer.disconnect.invalid_entity_attacked"));
-                      ServerGamePacketListenerImpl.f_9744_.warn("Player {} tried to attack an invalid entity", (Object)ServerGamePacketListenerImpl.this.f_9743_.m_7755_().getString());
-@@ -1749,6 +_,7 @@
+@@ -1757,6 +_,7 @@
     }
  
     public void m_7423_(ServerboundCustomPayloadPacket p_9860_) {
