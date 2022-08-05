@@ -394,6 +394,125 @@ public class Tags
         public static final TagKey<Item> STORAGE_BLOCKS_RAW_IRON = tag("storage_blocks/raw_iron");
         public static final TagKey<Item> STORAGE_BLOCKS_REDSTONE = tag("storage_blocks/redstone");
         public static final TagKey<Item> STRING                  = tag("string");
+        /**
+         * A tag containing all existing tools.
+         *
+         * Note: This tag is not an alternative or a substitute to {@link net.minecraftforge.common.ToolActions}.
+         *
+         * @see net.minecraftforge.common.ToolAction
+         * @see net.minecraftforge.common.ToolActions
+         */
+        public static final TagKey<Item> TOOLS = tag("tools");
+        /**
+         * A tag containing all existing swords.
+         *
+         * Note: This tag is not an alternative or a substitute to {@link net.minecraftforge.common.ToolActions}.
+         *
+         * @see net.minecraftforge.common.ToolAction
+         * @see net.minecraftforge.common.ToolActions
+         */
+        public static final TagKey<Item> TOOLS_SWORDS = tag("tools/swords");
+        /**
+         * A tag containing all existing axes.
+         *
+         * Note: This tag is not an alternative or a substitute to {@link net.minecraftforge.common.ToolActions}.
+         *
+         * @see net.minecraftforge.common.ToolAction
+         * @see net.minecraftforge.common.ToolActions
+         */
+        public static final TagKey<Item> TOOLS_AXES = tag("tools/axes");
+        /**
+         * A tag containing all existing pickaxes.
+         *
+         * Note: This tag is not an alternative or a substitute to {@link net.minecraftforge.common.ToolActions}.
+         *
+         * @see net.minecraftforge.common.ToolAction
+         * @see net.minecraftforge.common.ToolActions
+         */
+        public static final TagKey<Item> TOOLS_PICKAXES = tag("tools/pickaxes");
+        /**
+         * A tag containing all existing shovels.
+         *
+         * Note: This tag is not an alternative or a substitute to {@link net.minecraftforge.common.ToolActions}.
+         *
+         * @see net.minecraftforge.common.ToolAction
+         * @see net.minecraftforge.common.ToolActions
+         */
+        public static final TagKey<Item> TOOLS_SHOVELS = tag("tools/shovels");
+        /**
+         * A tag containing all existing hoes.
+         *
+         * Note: This tag is not an alternative or a substitute to {@link net.minecraftforge.common.ToolActions}.
+         *
+         * @see net.minecraftforge.common.ToolAction
+         * @see net.minecraftforge.common.ToolActions
+         */
+        public static final TagKey<Item> TOOLS_HOES = tag("tools/hoes");
+        /**
+         * A tag containing all existing shields.
+         *
+         * Note: This tag is not an alternative or a substitute to {@link net.minecraftforge.common.ToolActions}.
+         *
+         * @see net.minecraftforge.common.ToolAction
+         * @see net.minecraftforge.common.ToolActions
+         */
+        public static final TagKey<Item> TOOLS_SHIELDS = tag("tools/shields");
+        /**
+         * A tag containing all existing bows.
+         *
+         * Note: This tag is not an alternative or a substitute to {@link net.minecraftforge.common.ToolActions}.
+         *
+         * @see net.minecraftforge.common.ToolAction
+         * @see net.minecraftforge.common.ToolActions
+         */
+        public static final TagKey<Item> TOOLS_BOWS = tag("tools/bows");
+        /**
+         * A tag containing all existing crossbows.
+         *
+         * Note: This tag is not an alternative or a substitute to {@link net.minecraftforge.common.ToolActions}.
+         *
+         * @see net.minecraftforge.common.ToolAction
+         * @see net.minecraftforge.common.ToolActions
+         */
+        public static final TagKey<Item> TOOLS_CROSSBOWS = tag("tools/crossbows");
+        /**
+         * A tag containing all existing fishing rods.
+         *
+         * Note: This tag is not an alternative or a substitute to {@link net.minecraftforge.common.ToolActions}.
+         *
+         * @see net.minecraftforge.common.ToolAction
+         * @see net.minecraftforge.common.ToolActions
+         */
+        public static final TagKey<Item> TOOLS_FISHING_RODS = tag("tools/fishing_rods");
+        /**
+         * A tag containing all existing tridents.
+         *
+         * Note: This tag is not an alternative or a substitute to {@link net.minecraftforge.common.ToolActions}.
+         *
+         * @see net.minecraftforge.common.ToolAction
+         * @see net.minecraftforge.common.ToolActions
+         */
+        public static final TagKey<Item> TOOLS_TRIDENTS = tag("tools/tridents");
+        /**
+         * A tag containing all existing armors.
+         */
+        public static final TagKey<Item> ARMORS = tag("armors");
+        /**
+         * A tag containing all existing helmets.
+         */
+        public static final TagKey<Item> ARMORS_HELMETS = tag("armors/helmets");
+        /**
+         * A tag containing all chestplates.
+         */
+        public static final TagKey<Item> ARMORS_CHESTPLATES = tag("armors/chestplates");
+        /**
+         * A tag containing all existing leggings.
+         */
+        public static final TagKey<Item> ARMORS_LEGGINGS = tag("armors/leggings");
+        /**
+         * A tag containing all existing boots.
+         */
+        public static final TagKey<Item> ARMORS_BOOTS = tag("armors/boots");
 
         private static TagKey<Item> tag(String name)
         {
