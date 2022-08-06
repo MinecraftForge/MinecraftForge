@@ -95,6 +95,9 @@ public class NetworkInstance
 
     public boolean isRemotePresent(Connection manager) {
         ConnectionData connectionData = NetworkHooks.getConnectionData(manager);
-        return connectionData != null && connectionData.getChannels().containsKey(channelName);
+        MCRegisterPacketHandler.ChannelList channelList = NetworkHooks.getChannelList(manager);
+        return (connectionData != null && connectionData.getChannels().containsKey(channelName))
+                // if it's not in the fml connection data, let's check if it's sent by another modloader.
+                || (channelList != null && channelList.getRemoteLocations().contains(channelName));
     }
 }

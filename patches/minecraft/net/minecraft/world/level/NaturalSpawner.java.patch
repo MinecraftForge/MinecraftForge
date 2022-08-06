@@ -4,7 +4,7 @@
  import net.minecraft.world.phys.Vec3;
  import org.slf4j.Logger;
  
-+// TODO: ForgeEventFactory.getPotentialSpawns, ForgeHooks.canEntitySpawn
++// TODO: ForgeHooks.canEntitySpawn
  public final class NaturalSpawner {
     private static final Logger f_46977_ = LogUtils.getLogger();
     private static final int f_151589_ = 24;
@@ -35,12 +35,13 @@
                                return;
                             }
  
-@@ -266,7 +_,7 @@
+@@ -266,7 +_,8 @@
     }
  
     private static WeightedRandomList<MobSpawnSettings.SpawnerData> m_220443_(ServerLevel p_220444_, StructureManager p_220445_, ChunkGenerator p_220446_, MobCategory p_220447_, BlockPos p_220448_, @Nullable Holder<Biome> p_220449_) {
 -      return m_220455_(p_220448_, p_220444_, p_220447_, p_220445_) ? NetherFortressStructure.f_228517_ : p_220446_.m_223133_(p_220449_ != null ? p_220449_ : p_220444_.m_204166_(p_220448_), p_220445_, p_220447_, p_220448_);
-+      return m_220455_(p_220448_, p_220444_, p_220447_, p_220445_) ? p_220445_.m_220521_().m_175515_(Registry.f_235725_).m_123013_(BuiltinStructures.f_209859_).m_226612_().get(MobCategory.MONSTER).f_210044_() : p_220446_.m_223133_(p_220449_ != null ? p_220449_ : p_220444_.m_204166_(p_220448_), p_220445_, p_220447_, p_220448_);
++      // Forge: Add in potential spawns, and replace hardcoded nether fortress mob list
++      return net.minecraftforge.event.ForgeEventFactory.getPotentialSpawns(p_220444_, p_220447_, p_220448_, m_220455_(p_220448_, p_220444_, p_220447_, p_220445_) ? p_220445_.m_220521_().m_175515_(Registry.f_235725_).m_123013_(BuiltinStructures.f_209859_).m_226612_().get(MobCategory.MONSTER).f_210044_() : p_220446_.m_223133_(p_220449_ != null ? p_220449_ : p_220444_.m_204166_(p_220448_), p_220445_, p_220447_, p_220448_));
     }
  
     public static boolean m_220455_(BlockPos p_220456_, ServerLevel p_220457_, MobCategory p_220458_, StructureManager p_220459_) {
