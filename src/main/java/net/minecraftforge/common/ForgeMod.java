@@ -63,7 +63,6 @@ import net.minecraftforge.fml.event.lifecycle.*;
 import net.minecraftforge.registries.*;
 import net.minecraftforge.registries.holdersets.AndHolderSet;
 import net.minecraftforge.registries.holdersets.AnyHolderSet;
-import net.minecraftforge.registries.holdersets.ExclusionHolderSet;
 import net.minecraftforge.registries.holdersets.HolderSetType;
 import net.minecraftforge.registries.holdersets.NotHolderSet;
 import net.minecraftforge.registries.holdersets.OrHolderSet;
@@ -235,15 +234,8 @@ public class ForgeMod
     public static final RegistryObject<HolderSetType> OR_HOLDER_SET = HOLDER_SET_TYPES.register("or", () -> OrHolderSet::codec);
 
     /**
-     * Stock holder set type that represents values that exist in one holderset but not another. Can be used in a holderset object with {@code { "type": "forge:exclusion", "include": holderset, "exclude": holderset }}
-     */
-    public static final RegistryObject<HolderSetType> EXCLUSION_HOLDER_SET = HOLDER_SET_TYPES.register("exclusion", () -> ExclusionHolderSet::codec);
-
-    /**
      * <p>Stock holder set type that represents all values in a registry except those in another given set.
      * Can be used in a holderset object with {@code { "type": "forge:not", "value": holderset }}</p>
-     * 
-     * <p>Exclusion(x,y) is preferable over and(x, not(y)) as the exclusion type creates smaller caches.</p>
      */
     public static final RegistryObject<HolderSetType> NOT_HOLDER_SET = HOLDER_SET_TYPES.register("not", () -> NotHolderSet::codec);
     
