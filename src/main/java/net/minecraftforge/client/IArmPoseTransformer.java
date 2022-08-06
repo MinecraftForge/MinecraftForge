@@ -17,7 +17,8 @@ import net.minecraftforge.client.extensions.common.IClientItemExtensions;
  * Register one by creating a custom {@link net.minecraft.client.model.HumanoidModel.ArmPose}
  * and returning it in {@link IClientItemExtensions#getArmPose(LivingEntity, InteractionHand, ItemStack)}.
  */
-public interface IForgeArmPose
+@FunctionalInterface
+public interface IArmPoseTransformer
 {
 
     /**
