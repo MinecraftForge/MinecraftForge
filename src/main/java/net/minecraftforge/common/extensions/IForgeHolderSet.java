@@ -5,15 +5,8 @@
 
 package net.minecraftforge.common.extensions;
 
-import net.minecraft.core.HolderSet;
-
 public interface IForgeHolderSet<T>
 {
-    private HolderSet<T> self()
-    {
-        return (HolderSet<T>) this;
-    }
-    
     /**
      * <p>Adds a callback to run when this holderset's contents invalidate (i.e. because tags were rebound).</p>
      * 
