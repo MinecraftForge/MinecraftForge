@@ -23,6 +23,11 @@ import net.minecraftforge.registries.RegistryObject;
 
 import java.util.function.Consumer;
 
+/**
+ * Tests if item usage animation system works as intended. `item_use_animation_test:thing` is edible item with custom usage animation made with this system.
+ * In game, use `/give @s item_use_animation_test:thing 1` to obtain test item
+ * When you try to eat it, your arm should start swinging really fast.
+ */
 @Mod(ItemUseAnimationTest.MOD_ID)
 public class ItemUseAnimationTest
 {
