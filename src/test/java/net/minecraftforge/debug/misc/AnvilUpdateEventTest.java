@@ -19,7 +19,6 @@ import net.minecraftforge.fml.common.Mod;
  * "AnvilUpdateEvent is fired whenever the input stacks (left or right) or the name in an anvil changed."
  */
 @Mod(AnvilUpdateEventTest.MOD_ID)
-@Mod.EventBusSubscriber(modid = AnvilUpdateEventTest.MOD_ID)
 public class AnvilUpdateEventTest
 {
     private static final boolean ENABLED = false;
