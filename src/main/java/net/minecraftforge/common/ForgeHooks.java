@@ -1491,24 +1491,4 @@ public class ForgeHooks
     {
         return registryKey.getNamespace().equals("minecraft") ? registryKey.getPath() : registryKey.getNamespace() +  "/"  + registryKey.getPath();
     }
-
-    // Called from HolderSetCodec to wrap the vanilla codec in an expanded one.
-    public static <T> Codec<HolderSet<T>> expandHolderSetCodec(
-        ResourceKey<? extends Registry<T>> registryKey,
-        Codec<Holder<T>> holderCodec,
-        boolean forceList,
-        HolderSetCodec<T> vanillaCodec)
-    {
-        // We have to make this dispatch codec each time the holderset codec is made
-        Codec<ICustomHolderSet<T>> dispatchCodec = ExtraCodecs.lazyInitializedCodec(() -> ForgeRegistries.HOLDER_SET_TYPES.get().getCodec())
-            .dispatch(ICustomHolderSet::type, type -> type.makeCodec(registryKey, holderCodec, forceList));
-        // We use the ExtraCodecs' EitherCodec, which is better than the DFU one
-        // because if both codecs fail to parse then it reports both errors instead of just one
-        return new ExtraCodecs.EitherCodec<>(dispatchCodec, vanillaCodec).xmap(
-            // when decoding, try the custom holderset type dispatch first, then fall back to vanilla holderset codec
-            either -> either.map(Function.identity(), Function.identity()),
-            // when encoding, use the custom holderset dispatcher if possible, otherwise it's a vanilla one
-            holderSet -> holderSet instanceof ICustomHolderSet<T> custom ? Either.left(custom) : Either.right(holderSet)
-        );
-    }
 }
