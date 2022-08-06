@@ -39,10 +39,10 @@
        }
 +      // FORGE START
 +      @javax.annotation.Nullable
-+      private net.minecraftforge.client.IArmPoseTransformer forgeArmPose;
++      private final net.minecraftforge.client.IArmPoseTransformer forgeArmPose;
 +
 +      private ArmPose(boolean twoHanded, @javax.annotation.Nonnull net.minecraftforge.client.IArmPoseTransformer forgeArmPose) {
-+         this(twoHanded);
++         this.f_102890_ = twoHanded;
 +         com.google.common.base.Preconditions.checkNotNull(forgeArmPose, "Cannot create new ArmPose with null transformer!");
 +         this.forgeArmPose = forgeArmPose;
 +      }
