@@ -1,0 +1,14 @@
+{
+  "values": [
+    "#forge:tools/swords",
+    "#forge:tools/axes",
+    "#forge:tools/pickaxes",
+    "#forge:tools/shovels",
+    "#forge:tools/hoes",
+    "#forge:tools/shields",
+    "#forge:tools/bows",
+    "#forge:tools/crossbows",
+    "#forge:tools/fishing_rods",
+    "#forge:tools/tridents"
+  ]
+}
