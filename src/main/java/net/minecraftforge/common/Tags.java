@@ -589,6 +589,8 @@ public class Tags
         public static final TagKey<Biome> IS_WASTELAND = tag("is_wasteland");
         public static final TagKey<Biome> IS_VOID = tag("is_void");
         public static final TagKey<Biome> IS_UNDERGROUND = tag("is_underground");
+
+        public static final TagKey<Biome> IS_DEEP = tag("is_deep");
         public static final TagKey<Biome> IS_CAVE = tag("is_cave");
         public static final TagKey<Biome> IS_PEAK = tag("is_peak");
         public static final TagKey<Biome> IS_SLOPE = tag("is_slope");
