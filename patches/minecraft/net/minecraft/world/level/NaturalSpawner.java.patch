@@ -4,7 +4,7 @@
  import net.minecraft.world.phys.Vec3;
  import org.slf4j.Logger;
  
-+// TODO: ForgeEventFactory.getPotentialSpawns, ForgeHooks.canEntitySpawn
++// TODO: ForgeHooks.canEntitySpawn
  public final class NaturalSpawner {
     private static final Logger f_46977_ = LogUtils.getLogger();
     private static final int f_151589_ = 24;
@@ -35,6 +35,15 @@
                                return;
                             }
  
+@@ -265,7 +_,7 @@
+    }
+ 
+    private static WeightedRandomList<MobSpawnSettings.SpawnerData> m_204168_(ServerLevel p_204169_, StructureFeatureManager p_204170_, ChunkGenerator p_204171_, MobCategory p_204172_, BlockPos p_204173_, @Nullable Holder<Biome> p_204174_) {
+-      return m_186529_(p_204173_, p_204169_, p_204172_, p_204170_) ? NetherFortressFeature.f_66381_ : p_204171_.m_203315_(p_204174_ != null ? p_204174_ : p_204169_.m_204166_(p_204173_), p_204170_, p_204172_, p_204173_);
++      return net.minecraftforge.event.ForgeEventFactory.getPotentialSpawns(p_204169_, p_204172_, p_204173_, m_186529_(p_204173_, p_204169_, p_204172_, p_204170_) ? NetherFortressFeature.f_66381_ : p_204171_.m_203315_(p_204174_ != null ? p_204174_ : p_204169_.m_204166_(p_204173_), p_204170_, p_204172_, p_204173_));
+    }
+ 
+    public static boolean m_186529_(BlockPos p_186530_, ServerLevel p_186531_, MobCategory p_186532_, StructureFeatureManager p_186533_) {
 @@ -304,6 +_,13 @@
        if (p_47052_ == SpawnPlacements.Type.NO_RESTRICTIONS) {
           return true;

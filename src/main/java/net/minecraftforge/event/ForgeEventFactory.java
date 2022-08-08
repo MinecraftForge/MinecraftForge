@@ -19,10 +19,13 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.brigadier.CommandDispatcher;
 import net.minecraft.server.ReloadableServerResources;
 import net.minecraft.server.players.PlayerList;
+import net.minecraft.util.random.WeightedRandomList;
 import net.minecraft.world.Container;
+import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.projectile.FireworkRocketEntity;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.entity.projectile.ThrownEnderpearl;
+import net.minecraft.world.level.biome.MobSpawnSettings;
 import net.minecraft.world.level.portal.PortalShape;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.item.TooltipFlag;
@@ -938,4 +941,13 @@ public class ForgeEventFactory
     {
         MinecraftForge.EVENT_BUS.post(new TickEvent.ServerTickEvent(TickEvent.Phase.END, haveTime));
     }
+
+    public static WeightedRandomList<MobSpawnSettings.SpawnerData> getPotentialSpawns(LevelAccessor level, MobCategory category, BlockPos pos, WeightedRandomList<MobSpawnSettings.SpawnerData> oldList)
+    {
+        WorldEvent.PotentialSpawns event = new WorldEvent.PotentialSpawns(level, category, pos, oldList);
+        if (MinecraftForge.EVENT_BUS.post(event))
+            return WeightedRandomList.create();
+        return WeightedRandomList.create(event.getSpawnerDataList());
+    }
+
 }
