@@ -36,7 +36,7 @@ public class NetworkInstance
         this.networkProtocolVersion = networkProtocolVersion.get();
         this.clientAcceptedVersions = clientAcceptedVersions;
         this.serverAcceptedVersions = serverAcceptedVersions;
-        this.networkEventBus = BusBuilder.builder().setExceptionHandler(this::handleError).build();
+        this.networkEventBus = BusBuilder.builder().setExceptionHandler(this::handleError).useModLauncher().build();
     }
 
     private void handleError(IEventBus iEventBus, Event event, IEventListener[] iEventListeners, int i, Throwable throwable)
