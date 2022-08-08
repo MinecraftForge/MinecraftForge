@@ -26,8 +26,8 @@ public class DelegatingResourcePack extends AbstractPackResources
 {
 
     private final List<PackResources> delegates;
-    private final Map<String, List<PackResources>> namespacesAssets;
-    private final Map<String, List<PackResources>> namespacesData;
+    private Map<String, List<PackResources>> namespacesAssets;
+    private Map<String, List<PackResources>> namespacesData;
 
     private final String name;
     private final PackMetadataSection packInfo;
@@ -40,6 +40,21 @@ public class DelegatingResourcePack extends AbstractPackResources
         this.delegates = ImmutableList.copyOf(packs);
         this.namespacesAssets = this.buildNamespaceMap(PackType.CLIENT_RESOURCES, delegates);
         this.namespacesData = this.buildNamespaceMap(PackType.SERVER_DATA, delegates);
+    }
+
+    @Override
+    public void initForNamespace(final String nameSpace)
+    {
+        this.delegates.forEach(delegate -> delegate.initForNamespace(nameSpace));
+    }
+
+    @Override
+    public void init(final PackType packType)
+    {
+        this.delegates.forEach(packResources -> packResources.init(packType));
+
+        this.namespacesAssets = buildNamespaceMap(PackType.CLIENT_RESOURCES, delegates);
+        this.namespacesData = buildNamespaceMap(PackType.SERVER_DATA, delegates);
     }
 
     private Map<String, List<PackResources>> buildNamespaceMap(PackType type, List<PackResources> packList)

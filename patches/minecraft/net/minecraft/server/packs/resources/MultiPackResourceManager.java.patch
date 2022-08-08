@@ -1,0 +1,10 @@
+--- a/net/minecraft/server/packs/resources/MultiPackResourceManager.java
++++ b/net/minecraft/server/packs/resources/MultiPackResourceManager.java
+@@ -24,6 +_,7 @@
+       this.f_203795_ = List.copyOf(p_203798_);
+       Map<String, FallbackResourceManager> map = new HashMap<>();
+ 
++      p_203798_.forEach(resourcePack -> resourcePack.init(p_203797_));
+       for(PackResources packresources : p_203798_) {
+          for(String s : packresources.m_5698_(p_203797_)) {
+             map.computeIfAbsent(s, (p_203802_) -> {
