@@ -5,7 +5,9 @@
 
 package net.minecraftforge.debug.entity.player;
 
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.model.HumanoidModel;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
@@ -26,7 +28,8 @@ import java.util.function.Consumer;
 /**
  * Tests if item usage animation system works as intended. `item_use_animation_test:thing` is edible item with custom usage animation made with this system.
  * In game, use `/give @s item_use_animation_test:thing 1` to obtain test item
- * When you try to eat it, your arm should start swinging really fast.
+ * When you try to eat it, your arm in 3d person should start swinging really fast.
+ * And item in your hand will go down little.
  */
 @Mod(ItemUseAnimationTest.MOD_ID)
 public class ItemUseAnimationTest
@@ -37,8 +40,6 @@ public class ItemUseAnimationTest
     private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MOD_ID);
 
     private static final RegistryObject<Item> THING = ITEMS.register("thing", () -> new ThingItem(new Item.Properties().tab(CreativeModeTab.TAB_TOOLS).food(new FoodProperties.Builder().nutrition(4).alwaysEat().build())));
-
-    private static final UseAnim SWING = UseAnim.create("SWING");
 
     public ItemUseAnimationTest()
     {
@@ -56,7 +57,7 @@ public class ItemUseAnimationTest
         @Override
         public UseAnim getUseAnimation(ItemStack stack)
         {
-            return SWING;
+            return UseAnim.CUSTOM;
         }
 
         @Override
@@ -88,6 +89,19 @@ public class ItemUseAnimationTest
                     return HumanoidModel.ArmPose.EMPTY;
                 }
 
+                @Override
+                public boolean applyForgeHandTransform(PoseStack poseStack, LocalPlayer player, HumanoidArm arm, ItemStack itemInHand, float partialTicks, float equipProcess, float swingProcess) {
+                    applyItemArmTransform(poseStack, arm);
+                    if (player.isUsingItem()) {
+                        poseStack.translate(0.0, -0.05, 0.0);
+                    }
+                    return true;
+                }
+
+                private void applyItemArmTransform(PoseStack poseStack, HumanoidArm arm) {
+                    int i = arm == HumanoidArm.RIGHT ? 1 : -1;
+                    poseStack.translate(i * 0.56F, -0.52F, -0.72F);
+                }
             });
         }
     }
