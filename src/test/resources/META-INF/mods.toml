@@ -12,6 +12,8 @@ license="LGPL v2.1"
     modId="structure_modifiers_test"
 [[mods]]
     modId="fluid_type_test"
+[[mods]]
+    modId="potentialspawnsevent_test"
 
 
 # LEGACY TEST CASES

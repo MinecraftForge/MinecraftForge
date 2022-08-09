@@ -16,11 +16,15 @@ import com.mojang.brigadier.CommandDispatcher;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.ReloadableServerResources;
+import net.minecraft.server.level.ChunkHolder;
 import net.minecraft.server.players.PlayerList;
 import net.minecraft.util.RandomSource;
+import net.minecraft.util.random.WeightedRandomList;
 import net.minecraft.world.Container;
+import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.entity.projectile.ThrownEnderpearl;
+import net.minecraft.world.level.biome.MobSpawnSettings;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.portal.PortalShape;
 import net.minecraft.world.level.block.state.BlockState;
@@ -115,6 +119,7 @@ import net.minecraftforge.event.level.BlockEvent.CreateFluidSourceEvent;
 import net.minecraftforge.event.level.BlockEvent.EntityMultiPlaceEvent;
 import net.minecraftforge.event.level.BlockEvent.EntityPlaceEvent;
 import net.minecraftforge.event.level.BlockEvent.NeighborNotifyEvent;
+import net.minecraftforge.event.level.ChunkTicketLevelUpdatedEvent;
 import net.minecraftforge.event.level.ChunkWatchEvent;
 import net.minecraftforge.event.level.ExplosionEvent;
 import net.minecraftforge.event.level.PistonEvent;
@@ -607,6 +612,12 @@ public class ForgeEventFactory
         return event.getResult() != Result.DENY;
     }
 
+    public static void fireChunkTicketLevelUpdated(ServerLevel level, long chunkPos, int oldTicketLevel, int newTicketLevel, @Nullable ChunkHolder chunkHolder)
+    {
+        if (oldTicketLevel != newTicketLevel)
+            MinecraftForge.EVENT_BUS.post(new ChunkTicketLevelUpdatedEvent(level, chunkPos, oldTicketLevel, newTicketLevel, chunkHolder));
+    }
+
     public static void fireChunkWatch(ServerPlayer entity, LevelChunk chunk, ServerLevel level)
     {
         MinecraftForge.EVENT_BUS.post(new ChunkWatchEvent.Watch(entity, chunk, level));
@@ -800,5 +811,13 @@ public class ForgeEventFactory
     public static void onPostServerTick(BooleanSupplier haveTime, MinecraftServer server)
     {
         MinecraftForge.EVENT_BUS.post(new TickEvent.ServerTickEvent(TickEvent.Phase.END, haveTime, server));
+    }
+
+    public static WeightedRandomList<MobSpawnSettings.SpawnerData> getPotentialSpawns(LevelAccessor level, MobCategory category, BlockPos pos, WeightedRandomList<MobSpawnSettings.SpawnerData> oldList)
+    {
+        LevelEvent.PotentialSpawns event = new LevelEvent.PotentialSpawns(level, category, pos, oldList);
+        if (MinecraftForge.EVENT_BUS.post(event))
+            return WeightedRandomList.create();
+        return WeightedRandomList.create(event.getSpawnerDataList());
     }
 }

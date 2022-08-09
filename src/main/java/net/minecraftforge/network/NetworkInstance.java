@@ -36,7 +36,7 @@ public class NetworkInstance
         this.networkProtocolVersion = networkProtocolVersion.get();
         this.clientAcceptedVersions = clientAcceptedVersions;
         this.serverAcceptedVersions = serverAcceptedVersions;
-        this.networkEventBus = BusBuilder.builder().setExceptionHandler(this::handleError).build();
+        this.networkEventBus = BusBuilder.builder().setExceptionHandler(this::handleError).useModLauncher().build();
     }
 
     private void handleError(IEventBus iEventBus, Event event, IEventListener[] iEventListeners, int i, Throwable throwable)
@@ -95,6 +95,9 @@ public class NetworkInstance
 
     public boolean isRemotePresent(Connection manager) {
         ConnectionData connectionData = NetworkHooks.getConnectionData(manager);
-        return connectionData != null && connectionData.getChannels().containsKey(channelName);
+        MCRegisterPacketHandler.ChannelList channelList = NetworkHooks.getChannelList(manager);
+        return (connectionData != null && connectionData.getChannels().containsKey(channelName))
+                // if it's not in the fml connection data, let's check if it's sent by another modloader.
+                || (channelList != null && channelList.getRemoteLocations().contains(channelName));
     }
 }

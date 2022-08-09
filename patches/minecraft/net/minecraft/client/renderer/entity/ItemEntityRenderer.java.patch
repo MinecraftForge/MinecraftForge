@@ -1,11 +1,12 @@
 --- a/net/minecraft/client/renderer/entity/ItemEntityRenderer.java
 +++ b/net/minecraft/client/renderer/entity/ItemEntityRenderer.java
-@@ -62,17 +_,14 @@
+@@ -61,18 +_,15 @@
+       boolean flag = bakedmodel.m_7539_();
        int j = this.m_115042_(itemstack);
        float f = 0.25F;
-       float f1 = Mth.m_14031_(((float)p_115036_.m_32059_() + p_115038_) / 10.0F + p_115036_.f_31983_) * 0.1F + 0.1F;
--      float f2 = bakedmodel.m_7442_().m_111808_(ItemTransforms.TransformType.GROUND).f_111757_.m_122260_();
-+      float f2 = shouldBob() ? bakedmodel.m_7442_().m_111808_(ItemTransforms.TransformType.GROUND).f_111757_.m_122260_() : 0;
+-      float f1 = Mth.m_14031_(((float)p_115036_.m_32059_() + p_115038_) / 10.0F + p_115036_.f_31983_) * 0.1F + 0.1F;
++      float f1 = shouldBob() ? Mth.m_14031_(((float)p_115036_.m_32059_() + p_115038_) / 10.0F + p_115036_.f_31983_) * 0.1F + 0.1F : 0;
+       float f2 = bakedmodel.m_7442_().m_111808_(ItemTransforms.TransformType.GROUND).f_111757_.m_122260_();
        p_115039_.m_85837_(0.0D, (double)(f1 + 0.25F * f2), 0.0D);
        float f3 = p_115036_.m_32008_(p_115038_);
        p_115039_.m_85845_(Vector3f.f_122225_.m_122270_(f3));

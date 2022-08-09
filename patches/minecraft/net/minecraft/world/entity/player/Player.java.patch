@@ -194,33 +194,14 @@
                       this.m_21008_(p_36159_, ItemStack.f_41583_);
                    }
  
-@@ -1020,7 +_,7 @@
-          double d1 = p_36201_.f_82481_;
-          double d2 = 0.05D;
+@@ -1014,6 +_,7 @@
+       return !this.f_36077_.f_35935_;
+    }
  
--         while(d0 != 0.0D && this.f_19853_.m_45756_(this, this.m_20191_().m_82386_(d0, (double)(-this.f_19793_), 0.0D))) {
-+         while(d0 != 0.0D && this.f_19853_.m_45756_(this, this.m_20191_().m_82386_(d0, (double)(-this.getStepHeight()), 0.0D))) {
-             if (d0 < 0.05D && d0 >= -0.05D) {
-                d0 = 0.0D;
-             } else if (d0 > 0.0D) {
-@@ -1030,7 +_,7 @@
-             }
-          }
- 
--         while(d1 != 0.0D && this.f_19853_.m_45756_(this, this.m_20191_().m_82386_(0.0D, (double)(-this.f_19793_), d1))) {
-+         while(d1 != 0.0D && this.f_19853_.m_45756_(this, this.m_20191_().m_82386_(0.0D, (double)(-this.getStepHeight()), d1))) {
-             if (d1 < 0.05D && d1 >= -0.05D) {
-                d1 = 0.0D;
-             } else if (d1 > 0.0D) {
-@@ -1040,7 +_,7 @@
-             }
-          }
- 
--         while(d0 != 0.0D && d1 != 0.0D && this.f_19853_.m_45756_(this, this.m_20191_().m_82386_(d0, (double)(-this.f_19793_), d1))) {
-+         while(d0 != 0.0D && d1 != 0.0D && this.f_19853_.m_45756_(this, this.m_20191_().m_82386_(d0, (double)(-this.getStepHeight()), d1))) {
-             if (d0 < 0.05D && d0 >= -0.05D) {
-                d0 = 0.0D;
-             } else if (d0 > 0.0D) {
++   // Forge: Don't update this method to use IForgeEntity#getStepHeight() - https://github.com/MinecraftForge/MinecraftForge/issues/8922
+    protected Vec3 m_5763_(Vec3 p_36201_, MoverType p_36202_) {
+       if (!this.f_36077_.f_35935_ && p_36201_.f_82480_ <= 0.0D && (p_36202_ == MoverType.SELF || p_36202_ == MoverType.PLAYER) && this.m_36343_() && this.m_36386_()) {
+          double d0 = p_36201_.f_82479_;
 @@ -1065,10 +_,11 @@
     }
  
