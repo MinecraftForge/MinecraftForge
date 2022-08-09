@@ -67,7 +67,7 @@
        this.f_91064_ = new DebugRenderer(this);
        this.f_238717_ = new RealmsDataFetcher(RealmsClient.m_239151_(this));
        RenderSystem.m_69900_(this::m_91113_);
-@@ -541,6 +_,19 @@
+@@ -541,6 +_,20 @@
           TinyFileDialogs.tinyfd_messageBox("Minecraft", stringbuilder.toString(), "ok", "error", false);
        }
  
@@ -83,6 +83,7 @@
 +      net.minecraftforge.client.gui.overlay.GuiOverlayManager.init();
 +      net.minecraftforge.client.DimensionSpecialEffectsManager.init();
 +      net.minecraftforge.client.NamedRenderTypeManager.init();
++      net.minecraftforge.client.ColorResolverManager.init();
 +
        this.f_90990_.m_85409_(this.f_91066_.m_231817_().m_231551_());
        this.f_90990_.m_85424_(this.f_91066_.m_232123_().m_231551_());
@@ -428,7 +429,7 @@
  
     private static Supplier<PackResources> m_91330_(Supplier<PackResources> p_91331_) {
 @@ -2716,6 +_,19 @@
-
+ 
     public void m_91312_(int p_91313_) {
        this.f_91051_.m_119410_(p_91313_);
 +   }
@@ -445,5 +446,5 @@
 +   public float getPartialTick() {
 +      return realPartialTick;
     }
-
+ 
     public EntityModelSet m_167973_() {
