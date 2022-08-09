@@ -28,7 +28,8 @@ dependencies {
     api("cpw.mods:modlauncher:${MODLAUNCHER_VERSION}")
     api("net.minecraftforge:coremods:${COREMODS_VERSION}")
     api("com.mojang:logging:${MOJANG_LOGGING_VERSION}")
-    api "net.minecraftforge:JarJar:${JARJAR_VERSION}"
+    api "net.minecraftforge:JarJarSelector:${JARJAR_VERSION}"
+    api "net.minecraftforge:JarJarMetadata:${JARJAR_VERSION}"
 
     implementation("net.sf.jopt-simple:jopt-simple:${JOPT_SIMPLE_VERSION}")
     implementation("cpw.mods:securejarhandler:${SECUREJARHANDLER_VERSION}")

@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/network/ServerLoginPacketListenerImpl.java
 +++ b/net/minecraft/server/network/ServerLoginPacketListenerImpl.java
-@@ -69,7 +_,13 @@
+@@ -65,7 +_,13 @@
     }
  
     public void m_9933_() {
@@ -15,7 +15,7 @@
           this.m_10055_();
        } else if (this.f_10019_ == ServerLoginPacketListenerImpl.State.DELAY_ACCEPT) {
           ServerPlayer serverplayer = this.f_10018_.m_6846_().m_11259_(this.f_10021_.getId());
-@@ -194,14 +_,14 @@
+@@ -178,14 +_,14 @@
        GameProfile gameprofile = this.f_10018_.m_236731_();
        if (gameprofile != null && p_10047_.f_238040_().equalsIgnoreCase(gameprofile.getName())) {
           this.f_10021_ = gameprofile;
@@ -32,7 +32,7 @@
           }
  
        }
-@@ -238,7 +_,7 @@
+@@ -222,7 +_,7 @@
           throw new IllegalStateException("Protocol error", cryptexception);
        }
  
@@ -41,7 +41,7 @@
           public void run() {
              GameProfile gameprofile = ServerLoginPacketListenerImpl.this.f_10021_;
  
-@@ -246,11 +_,11 @@
+@@ -230,11 +_,11 @@
                 ServerLoginPacketListenerImpl.this.f_10021_ = ServerLoginPacketListenerImpl.this.f_10018_.m_129925_().hasJoinedServer(new GameProfile((UUID)null, gameprofile.getName()), s, this.m_10064_());
                 if (ServerLoginPacketListenerImpl.this.f_10021_ != null) {
                    ServerLoginPacketListenerImpl.f_10015_.info("UUID of player {} is {}", ServerLoginPacketListenerImpl.this.f_10021_.getName(), ServerLoginPacketListenerImpl.this.f_10021_.getId());
@@ -55,7 +55,7 @@
                 } else {
                    ServerLoginPacketListenerImpl.this.m_10053_(Component.m_237115_("multiplayer.disconnect.unverified_username"));
                    ServerLoginPacketListenerImpl.f_10015_.error("Username '{}' tried to join with an invalid session", (Object)gameprofile.getName());
-@@ -259,7 +_,7 @@
+@@ -243,7 +_,7 @@
                 if (ServerLoginPacketListenerImpl.this.f_10018_.m_129792_()) {
                    ServerLoginPacketListenerImpl.f_10015_.warn("Authentication servers are down but will let them in anyway!");
                    ServerLoginPacketListenerImpl.this.f_10021_ = gameprofile;
@@ -64,7 +64,7 @@
                 } else {
                    ServerLoginPacketListenerImpl.this.m_10053_(Component.m_237115_("multiplayer.disconnect.authservers_down"));
                    ServerLoginPacketListenerImpl.f_10015_.error("Couldn't verify username because servers are unavailable");
-@@ -279,6 +_,7 @@
+@@ -263,6 +_,7 @@
     }
  
     public void m_7223_(ServerboundCustomQueryPacket p_10045_) {

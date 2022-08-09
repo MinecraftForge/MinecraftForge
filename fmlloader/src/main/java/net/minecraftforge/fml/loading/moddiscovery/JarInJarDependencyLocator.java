@@ -46,7 +46,6 @@ public class JarInJarDependencyLocator extends AbstractJarFileDependencyLocator
         final List<IModFile> sources = Lists.newArrayList();
         loadedMods.forEach(sources::add);
 
-
         final List<IModFile> dependenciesToLoad = JarSelector.detectAndSelect(sources, this::loadResourceFromModFile, this::loadModFileFrom, this::identifyMod, this::exception);
 
         if (dependenciesToLoad.isEmpty())
