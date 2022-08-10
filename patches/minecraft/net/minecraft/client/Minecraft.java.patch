@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/Minecraft.java
 +++ b/net/minecraft/client/Minecraft.java
-@@ -243,7 +_,7 @@
+@@ -244,7 +_,7 @@
  import org.slf4j.Logger;
  
  @OnlyIn(Dist.CLIENT)
@@ -9,7 +9,7 @@
     static Minecraft f_90981_;
     private static final Logger f_90982_ = LogUtils.getLogger();
     public static final boolean f_91002_ = Util.m_137581_() == Util.OS.OSX;
-@@ -397,7 +_,7 @@
+@@ -398,7 +_,7 @@
        this.f_91029_ = p_91084_.f_101908_.f_101928_;
        this.f_90986_ = p_91084_.f_101905_.f_101944_;
        this.f_91037_ = new ClientPackSource(new File(this.f_91069_, "server-resource-packs"), p_91084_.f_101907_.m_101925_());
@@ -18,7 +18,7 @@
        this.f_91030_ = p_91084_.f_101905_.f_101945_;
        this.f_231338_ = new YggdrasilAuthenticationService(this.f_91030_);
        this.f_91048_ = this.f_231338_.createMinecraftSessionService();
-@@ -405,7 +_,6 @@
+@@ -406,7 +_,6 @@
        this.f_231339_ = SignatureValidator.m_216358_(this.f_231338_.getServicesKey());
        this.f_90998_ = p_91084_.f_101905_.f_101942_;
        f_90982_.info("Setting user: {}", (Object)this.f_90998_.m_92546_());
@@ -26,7 +26,7 @@
        this.f_91033_ = p_91084_.f_101908_.f_101926_;
        this.f_91034_ = !p_91084_.f_101908_.f_101929_;
        this.f_91035_ = !p_91084_.f_101908_.f_101930_;
-@@ -457,7 +_,7 @@
+@@ -458,7 +_,7 @@
  
        this.f_90990_.m_85380_(this.f_91066_.m_232035_().m_231551_());
        this.f_91067_ = new MouseHandler(this);
@@ -35,7 +35,7 @@
        this.f_91068_ = new KeyboardHandler(this);
        this.f_91068_.m_90887_(this.f_90990_.m_85439_());
        RenderSystem.m_69580_(this.f_91066_.f_92035_, false);
-@@ -465,6 +_,7 @@
+@@ -466,6 +_,7 @@
        this.f_91042_.m_83931_(0.0F, 0.0F, 0.0F, 0.0F);
        this.f_91042_.m_83954_(f_91002_);
        this.f_91036_ = new ReloadableResourceManager(PackType.CLIENT_RESOURCES);
@@ -43,7 +43,7 @@
        this.f_91038_.m_10506_();
        this.f_91066_.m_92145_(this.f_91038_);
        this.f_91039_ = new LanguageManager(this.f_91066_.f_92075_);
-@@ -509,10 +_,12 @@
+@@ -510,10 +_,12 @@
        this.f_91063_ = new GameRenderer(this, this.f_90994_.m_234586_(), this.f_91036_, this.f_90993_);
        this.f_91036_.m_7217_(this.f_91063_);
        this.f_91060_ = new LevelRenderer(this, this.f_90994_, this.f_167845_, this.f_90993_);
@@ -56,7 +56,7 @@
        this.f_91036_.m_7217_(this.f_91061_);
        this.f_91053_ = new PaintingTextureManager(this.f_90987_);
        this.f_91036_.m_7217_(this.f_91053_);
-@@ -521,7 +_,9 @@
+@@ -522,7 +_,9 @@
        this.f_91047_ = new GpuWarnlistManager();
        this.f_91036_.m_7217_(this.f_91047_);
        this.f_91036_.m_7217_(this.f_205120_);
@@ -67,7 +67,7 @@
        this.f_91064_ = new DebugRenderer(this);
        this.f_238717_ = new RealmsDataFetcher(RealmsClient.m_239151_(this));
        RenderSystem.m_69900_(this::m_91113_);
-@@ -540,6 +_,19 @@
+@@ -541,6 +_,19 @@
           TinyFileDialogs.tinyfd_messageBox("Minecraft", stringbuilder.toString(), "ok", "error", false);
        }
  
@@ -87,7 +87,7 @@
        this.f_90990_.m_85409_(this.f_91066_.m_231817_().m_231551_());
        this.f_90990_.m_85424_(this.f_91066_.m_232123_().m_231551_());
        this.f_90990_.m_85426_();
-@@ -562,23 +_,23 @@
+@@ -563,23 +_,23 @@
              }
  
              this.f_167847_.m_168556_();
@@ -126,7 +126,7 @@
  
     }
  
-@@ -621,6 +_,8 @@
+@@ -622,6 +_,8 @@
  
     private UserApiService m_193585_(YggdrasilAuthenticationService p_193586_, GameConfig p_193587_) {
        try {
@@ -135,7 +135,7 @@
           return p_193586_.createUserApiService(p_193587_.f_101905_.f_101942_.m_92547_());
        } catch (AuthenticationException authenticationexception) {
           f_90982_.error("Failed to verify authentication", (Throwable)authenticationexception);
-@@ -633,7 +_,7 @@
+@@ -634,7 +_,7 @@
     }
  
     private void m_91239_(Throwable p_91240_) {
@@ -144,7 +144,7 @@
           this.m_91241_(p_91240_, (Component)null);
        } else {
           Util.m_137559_(p_91240_);
-@@ -791,13 +_,13 @@
+@@ -792,13 +_,13 @@
        Bootstrap.m_135875_(p_91333_.m_127526_());
        if (p_91333_.m_127527_() != null) {
           Bootstrap.m_135875_("#@!@# Game crashed! Crash report saved to: #@!@# " + p_91333_.m_127527_());
@@ -161,7 +161,7 @@
        }
  
     }
-@@ -921,10 +_,6 @@
+@@ -922,10 +_,6 @@
           f_90982_.error("setScreen called from non-game thread");
        }
  
@@ -172,7 +172,7 @@
        if (p_91153_ == null && this.f_91073_ == null) {
           p_91153_ = new TitleScreen();
        } else if (p_91153_ == null && this.f_91074_.m_21224_()) {
-@@ -935,6 +_,19 @@
+@@ -936,6 +_,19 @@
           }
        }
  
@@ -192,7 +192,7 @@
        this.f_91080_ = p_91153_;
        BufferUploader.m_166835_();
        if (p_91153_ != null) {
-@@ -1078,11 +_,14 @@
+@@ -1079,11 +_,14 @@
        RenderSystem.m_69481_();
        this.f_91026_.m_7238_();
        if (!this.f_91079_) {
@@ -207,7 +207,7 @@
        }
  
        if (this.f_91056_ != null) {
-@@ -1209,10 +_,12 @@
+@@ -1210,10 +_,12 @@
        this.f_90990_.m_85378_((double)i);
        if (this.f_91080_ != null) {
           this.f_91080_.m_6574_(this, this.f_90990_.m_85445_(), this.f_90990_.m_85446_());
@@ -220,7 +220,7 @@
        this.f_91063_.m_109097_(this.f_90990_.m_85441_(), this.f_90990_.m_85442_());
        this.f_91067_.m_91599_();
     }
-@@ -1490,6 +_,7 @@
+@@ -1491,6 +_,7 @@
     }
  
     public void m_91395_() {
@@ -228,7 +228,7 @@
        this.f_91019_ = false;
     }
  
-@@ -1519,10 +_,18 @@
+@@ -1520,10 +_,18 @@
           if (p_91387_ && this.f_91077_ != null && this.f_91077_.m_6662_() == HitResult.Type.BLOCK) {
              BlockHitResult blockhitresult = (BlockHitResult)this.f_91077_;
              BlockPos blockpos = blockhitresult.m_82425_();
@@ -250,7 +250,7 @@
                    this.f_91074_.m_6674_(InteractionHand.MAIN_HAND);
                 }
              }
-@@ -1547,14 +_,20 @@
+@@ -1548,14 +_,20 @@
           return false;
        } else {
           boolean flag = false;
@@ -269,22 +269,22 @@
                 BlockHitResult blockhitresult = (BlockHitResult)this.f_91077_;
                 BlockPos blockpos = blockhitresult.m_82425_();
 -               if (!this.f_91073_.m_8055_(blockpos).m_60795_()) {
-+            if (!this.f_91073_.m_46859_(blockpos)) {
++               if (!this.f_91073_.m_46859_(blockpos)) {
                    this.f_91072_.m_105269_(blockpos, blockhitresult.m_82434_());
                    if (this.f_91073_.m_8055_(blockpos).m_60795_()) {
                       flag = true;
-@@ -1567,8 +_,10 @@
+@@ -1568,8 +_,10 @@
                 }
  
                 this.f_91074_.m_36334_();
-+            net.minecraftforge.common.ForgeHooks.onEmptyLeftClick(this.f_91074_);
++               net.minecraftforge.common.ForgeHooks.onEmptyLeftClick(this.f_91074_);
           }
  
 +         if (inputEvent.shouldSwingHand())
           this.f_91074_.m_6674_(InteractionHand.MAIN_HAND);
           return flag;
        }
-@@ -1583,6 +_,11 @@
+@@ -1584,6 +_,11 @@
              }
  
              for(InteractionHand interactionhand : InteractionHand.values()) {
@@ -296,31 +296,32 @@
                 ItemStack itemstack = this.f_91074_.m_21120_(interactionhand);
                 if (this.f_91077_ != null) {
                    switch (this.f_91077_.m_6662_()) {
-@@ -1593,6 +_,7 @@
+@@ -1594,13 +_,14 @@
                             return;
                          }
  
-+                     if(!this.f_91074_.canInteractWith(entityhitresult.m_82443_(), 0)) return; //Forge: Entity may be traced via attack range, but the player may not have sufficient reach.  No padding in client code.
++                        if(!this.f_91074_.canInteractWith(entityhitresult.m_82443_(), 0)) return; //Forge: Entity may be traced via attack range, but the player may not have sufficient reach.  No padding in client code.
                          InteractionResult interactionresult = this.f_91072_.m_105230_(this.f_91074_, entity, entityhitresult, interactionhand);
                          if (!interactionresult.m_19077_()) {
                             interactionresult = this.f_91072_.m_105226_(this.f_91074_, entity, interactionhand);
-@@ -1600,6 +_,7 @@
+                         }
  
                          if (interactionresult.m_19077_()) {
-                            if (interactionresult.m_19080_()) {
-+                           if (inputEvent.shouldSwingHand())
+-                           if (interactionresult.m_19080_()) {
++                           if (interactionresult.m_19080_() && inputEvent.shouldSwingHand()) {
                                this.f_91074_.m_6674_(interactionhand);
                             }
  
-@@ -1612,6 +_,7 @@
+@@ -1612,7 +_,7 @@
+                         int i = itemstack.m_41613_();
                          InteractionResult interactionresult1 = this.f_91072_.m_233732_(this.f_91074_, interactionhand, blockhitresult);
                          if (interactionresult1.m_19077_()) {
-                            if (interactionresult1.m_19080_()) {
-+                           if (inputEvent.shouldSwingHand())
+-                           if (interactionresult1.m_19080_()) {
++                           if (interactionresult1.m_19080_() && inputEvent.shouldSwingHand()) {
                                this.f_91074_.m_6674_(interactionhand);
                                if (!itemstack.m_41619_() && (itemstack.m_41613_() != i || this.f_91072_.m_105290_())) {
                                   this.f_91063_.f_109055_.m_109320_(interactionhand);
-@@ -1627,6 +_,9 @@
+@@ -1628,6 +_,9 @@
                    }
                 }
  
@@ -330,7 +331,7 @@
                 if (!itemstack.m_41619_()) {
                    InteractionResult interactionresult2 = this.f_91072_.m_233721_(this.f_91074_, interactionhand);
                    if (interactionresult2.m_19077_()) {
-@@ -1653,6 +_,8 @@
+@@ -1654,6 +_,8 @@
           --this.f_91011_;
        }
  
@@ -339,7 +340,7 @@
        this.f_91026_.m_6180_("gui");
        this.f_240378_.m_240688_();
        this.f_91065_.m_193832_(this.f_91012_);
-@@ -1782,6 +_,8 @@
+@@ -1783,6 +_,8 @@
        this.f_91026_.m_6182_("keyboard");
        this.f_91068_.m_90931_();
        this.f_91026_.m_7238_();
@@ -348,7 +349,7 @@
     }
  
     private boolean m_91278_() {
-@@ -1976,6 +_,7 @@
+@@ -1978,6 +_,7 @@
     }
  
     public void m_91156_(ClientLevel p_91157_) {
@@ -356,7 +357,7 @@
        ProgressScreen progressscreen = new ProgressScreen(true);
        progressscreen.m_6309_(Component.m_237115_("connect.joining"));
        this.m_91362_(progressscreen);
-@@ -2009,10 +_,12 @@
+@@ -2011,10 +_,12 @@
        IntegratedServer integratedserver = this.f_91007_;
        this.f_91007_ = null;
        this.f_91063_.m_109150_();
@@ -369,7 +370,7 @@
           if (integratedserver != null) {
              this.f_91026_.m_6180_("waitForServer");
  
-@@ -2027,6 +_,7 @@
+@@ -2029,6 +_,7 @@
           this.f_91065_.m_93089_();
           this.f_91008_ = null;
           this.f_91010_ = false;
@@ -377,7 +378,7 @@
           this.f_91004_.m_90740_();
        }
  
-@@ -2122,6 +_,7 @@
+@@ -2124,6 +_,7 @@
  
     private void m_91280_() {
        if (this.f_91077_ != null && this.f_91077_.m_6662_() != HitResult.Type.MISS) {
@@ -385,7 +386,7 @@
           boolean flag = this.f_91074_.m_150110_().f_35937_;
           BlockEntity blockentity = null;
           HitResult.Type hitresult$type = this.f_91077_.m_6662_();
-@@ -2134,10 +_,7 @@
+@@ -2136,10 +_,7 @@
              }
  
              Block block = blockstate.m_60734_();
@@ -397,7 +398,7 @@
  
              if (flag && Screen.m_96637_() && blockstate.m_155947_()) {
                 blockentity = this.f_91073_.m_7702_(blockpos);
-@@ -2148,7 +_,7 @@
+@@ -2150,7 +_,7 @@
              }
  
              Entity entity = ((EntityHitResult)this.f_91077_).m_82443_();
@@ -406,7 +407,7 @@
              if (itemstack == null) {
                 return;
              }
-@@ -2686,8 +_,8 @@
+@@ -2688,8 +_,8 @@
        return this.f_90993_;
     }
  
@@ -417,7 +418,7 @@
        Supplier<PackResources> supplier = p_167937_;
        if (i <= 3) {
           supplier = m_91330_(p_167937_);
-@@ -2697,7 +_,7 @@
+@@ -2699,7 +_,7 @@
           supplier = m_91352_(supplier);
        }
  
@@ -426,10 +427,12 @@
     }
  
     private static Supplier<PackResources> m_91330_(Supplier<PackResources> p_91331_) {
-@@ -2716,6 +_,14 @@
-       this.f_91051_.m_119410_(p_91313_);
-    }
+@@ -2716,6 +_,19 @@
  
+    public void m_91312_(int p_91313_) {
+       this.f_91051_.m_119410_(p_91313_);
++   }
++
 +   public ItemColors getItemColors() {
 +      return this.f_91041_;
 +   }
@@ -438,18 +441,9 @@
 +      return this.f_90997_;
 +   }
 +
-    public EntityModelSet m_167973_() {
-       return this.f_167844_;
-    }
-@@ -2789,4 +_,11 @@
- 
-       public abstract boolean m_142594_(boolean p_168035_);
-    }
-+
-+   // FORGE START
 +   private float realPartialTick;
 +   public float getPartialTick() {
 +      return realPartialTick;
-+   }
-+   // FORGE END
- }
+    }
+ 
+    public EntityModelSet m_167973_() {

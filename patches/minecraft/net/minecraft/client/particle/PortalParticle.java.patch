@@ -1,0 +1,10 @@
+--- a/net/minecraft/client/particle/PortalParticle.java
++++ b/net/minecraft/client/particle/PortalParticle.java
+@@ -75,6 +_,7 @@
+          this.f_107212_ = this.f_107548_ + this.f_107215_ * (double)f2;
+          this.f_107213_ = this.f_107549_ + this.f_107216_ * (double)f2 + (double)(1.0F - f);
+          this.f_107214_ = this.f_107547_ + this.f_107217_ * (double)f2;
++         this.m_107264_(this.f_107212_, this.f_107213_, this.f_107214_); // FORGE: update the particle's bounding box
+       }
+    }
+ 

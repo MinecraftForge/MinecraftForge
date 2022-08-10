@@ -26,7 +26,7 @@ public class MinecraftForge
      * ORE_GEN_BUS for ore gen events
      * EVENT_BUS for everything else
      */
-    public static final IEventBus EVENT_BUS = BusBuilder.builder().startShutdown().build();
+    public static final IEventBus EVENT_BUS = BusBuilder.builder().startShutdown().useModLauncher().build();
 
     static final ForgeInternalHandler INTERNAL_HANDLER = new ForgeInternalHandler();
     private static final Logger LOGGER = LogManager.getLogger();
