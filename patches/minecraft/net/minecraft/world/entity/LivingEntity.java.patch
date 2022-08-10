@@ -590,6 +590,15 @@
           if (this.f_20935_.m_41781_()) {
              this.m_21329_();
           }
+@@ -2989,7 +_,7 @@
+    public boolean m_21254_() {
+       if (this.m_6117_() && !this.f_20935_.m_41619_()) {
+          Item item = this.f_20935_.m_41720_();
+-         if (item.m_6164_(this.f_20935_) != UseAnim.BLOCK) {
++         if (item.m_6164_(this.f_20935_) != UseAnim.BLOCK && !this.f_20935_.canPerformAction(net.minecraftforge.common.ToolActions.SHIELD_BLOCK)) { // TODO 1.20 only use the tool action
+             return false;
+          } else {
+             return item.m_8105_(this.f_20935_) - this.f_20936_ >= 5;
 @@ -3115,8 +_,8 @@
        }
  

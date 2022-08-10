@@ -1,0 +1,33 @@
+--- a/net/minecraft/core/HolderSet.java
++++ b/net/minecraft/core/HolderSet.java
+@@ -14,7 +_,7 @@
+ import org.jetbrains.annotations.NotNull;
+ import org.jetbrains.annotations.Nullable;
+ 
+-public interface HolderSet<T> extends Iterable<Holder<T>> {
++public interface HolderSet<T> extends Iterable<Holder<T>>, net.minecraftforge.common.extensions.IForgeHolderSet<T> {
+    Stream<Holder<T>> m_203614_();
+ 
+    int m_203632_();
+@@ -120,6 +_,9 @@
+ 
+       public void m_205835_(List<Holder<T>> p_205836_) {
+          this.f_205830_ = List.copyOf(p_205836_);
++         for (Runnable runnable : this.invalidationCallbacks) {
++            runnable.run(); // FORGE: invalidate listeners when tags rebind
++         }
+       }
+ 
+       public TagKey<T> m_205839_() {
+@@ -144,6 +_,11 @@
+ 
+       public boolean m_207277_(Registry<T> p_211049_) {
+          return this.f_211044_ == p_211049_;
++      }
++      // FORGE: Keep a list of invalidation callbacks so they can be run when tags rebind 
++      private List<Runnable> invalidationCallbacks = new java.util.ArrayList<>();
++      public void addInvalidationListener(Runnable runnable) {
++         invalidationCallbacks.add(runnable);
+       }
+    }
+ }

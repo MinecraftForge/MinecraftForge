@@ -243,6 +243,8 @@ modId="mega_model_test"
 [[mods]]
 modId="emissive_elements_test"
 [[mods]]
+modId="anvil_update_event_fix"
+[[mods]]
 modId="custom_color_resolver_test"
 
 
