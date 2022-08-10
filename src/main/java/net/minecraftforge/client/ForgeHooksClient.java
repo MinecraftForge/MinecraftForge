@@ -1099,11 +1099,9 @@ public class ForgeHooksClient
         return MinecraftForge.EVENT_BUS.post(event) ? 0 : (event.isCompact() ? 1 : 2);
     }
 
-    public static ToastAddEvent onToastAdd(Toast toast)
+    public static boolean onToastAdd(Toast toast)
     {
-        ToastAddEvent event = new ToastAddEvent(toast);
-        MinecraftForge.EVENT_BUS.post(event);
-        return event;
+        return MinecraftForge.EVENT_BUS.post(new ToastAddEvent(toast));
     }
 
     public static boolean isBlockInSolidLayer(BlockState state)
