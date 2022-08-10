@@ -27,6 +27,7 @@ import net.minecraft.client.color.item.ItemColors;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.gui.components.LerpingBossEvent;
+import net.minecraft.client.gui.components.toasts.Toast;
 import net.minecraft.client.gui.screens.ConfirmScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.TitleScreen;
@@ -128,6 +129,7 @@ import net.minecraftforge.client.event.RenderTooltipEvent;
 import net.minecraftforge.client.event.ScreenEvent;
 import net.minecraftforge.client.event.ScreenshotEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
+import net.minecraftforge.client.event.ToastAddEvent;
 import net.minecraftforge.client.event.ViewportEvent;
 import net.minecraftforge.client.event.sound.PlaySoundEvent;
 import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions;
@@ -1095,6 +1097,13 @@ public class ForgeHooksClient
     {
         final ScreenEvent.RenderInventoryMobEffects event = new ScreenEvent.RenderInventoryMobEffects(screen, availableSpace, compact);
         return MinecraftForge.EVENT_BUS.post(event) ? 0 : (event.isCompact() ? 1 : 2);
+    }
+
+    public static ToastAddEvent onToastAdd(Toast toast)
+    {
+        ToastAddEvent event = new ToastAddEvent(toast);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event;
     }
 
     public static boolean isBlockInSolidLayer(BlockState state)

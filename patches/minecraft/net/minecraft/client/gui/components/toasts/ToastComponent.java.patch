@@ -5,8 +5,8 @@
  
     public void m_94922_(Toast p_94923_) {
 -      this.f_94916_.add(p_94923_);
-+      var event = new net.minecraftforge.client.event.ToastAddEvent(p_94923_);
-+      if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event)) return;
++      var event = net.minecraftforge.client.ForgeHooksClient.onToastAdd(p_94923_);
++      if (event.isCanceled()) return;
 +      this.f_94916_.add(event.getToast());
     }
  
