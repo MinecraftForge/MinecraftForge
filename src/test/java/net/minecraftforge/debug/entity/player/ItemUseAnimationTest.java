@@ -90,7 +90,7 @@ public class ItemUseAnimationTest
                 }
 
                 @Override
-                public boolean applyForgeHandTransform(PoseStack poseStack, LocalPlayer player, HumanoidArm arm, ItemStack itemInHand, float partialTicks, float equipProcess, float swingProcess) {
+                public boolean applyForgeHandTransform(PoseStack poseStack, LocalPlayer player, HumanoidArm arm, ItemStack itemInHand, float partialTick, float equipProcess, float swingProcess) {
                     applyItemArmTransform(poseStack, arm);
                     if (player.isUsingItem()) {
                         poseStack.translate(0.0, -0.05, 0.0);
