@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/grower/AbstractMegaTreeGrower.java
 +++ b/net/minecraft/world/level/block/grower/AbstractMegaTreeGrower.java
-@@ -26,10 +_,16 @@
+@@ -26,10 +_,17 @@
     }
  
     @Nullable
@@ -9,6 +9,7 @@
 +   }
 +
 +   /** @deprecated Forge: Use {@link #getConfiguredMegaFeature(ServerLevel, ChunkGenerator, BlockPos, BlockState, RandomSource)} instead */
++   @Deprecated
 +   @Nullable
     protected abstract Holder<? extends ConfiguredFeature<?, ?>> m_213566_(RandomSource p_222904_);
  

@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/grower/AbstractTreeGrower.java
 +++ b/net/minecraft/world/level/block/grower/AbstractTreeGrower.java
-@@ -13,10 +_,16 @@
+@@ -13,10 +_,17 @@
  
  public abstract class AbstractTreeGrower {
     @Nullable
@@ -9,6 +9,7 @@
 +   }
 +
 +   /** @deprecated Forge: Use {@link #getConfiguredFeature(ServerLevel, ChunkGenerator, BlockPos, BlockState, RandomSource, boolean)} instead */
++   @Deprecated
 +   @Nullable
     protected abstract Holder<? extends ConfiguredFeature<?, ?>> m_213888_(RandomSource p_222910_, boolean p_222911_);
  
