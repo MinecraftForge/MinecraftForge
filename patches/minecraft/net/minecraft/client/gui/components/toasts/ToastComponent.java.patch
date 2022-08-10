@@ -1,0 +1,13 @@
+--- a/net/minecraft/client/gui/components/toasts/ToastComponent.java
++++ b/net/minecraft/client/gui/components/toasts/ToastComponent.java
+@@ -103,7 +_,9 @@
+    }
+ 
+    public void m_94922_(Toast p_94923_) {
+-      this.f_94916_.add(p_94923_);
++      var event = new net.minecraftforge.client.event.ToastAddEvent(p_94923_);
++      if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event)) return;
++      this.f_94916_.add(event.getToast());
+    }
+ 
+    public Minecraft m_94929_() {
