@@ -28,7 +28,7 @@
              this.m_109322_(p_109372_, p_109377_, flag2 ? ItemTransforms.TransformType.FIRST_PERSON_RIGHT_HAND : ItemTransforms.TransformType.FIRST_PERSON_LEFT_HAND, !flag2, p_109379_, p_109380_, p_109381_);
           } else {
              boolean flag3 = humanoidarm == HumanoidArm.RIGHT;
-+            if (net.minecraftforge.client.extensions.common.IClientItemExtensions.of(p_109377_).applyForgeHandTransform(p_109379_, f_109299_.f_91074_, humanoidarm, p_109377_, p_109373_, p_109378_, p_109376_)) {} else
++            if (!net.minecraftforge.client.extensions.common.IClientItemExtensions.of(p_109377_).applyForgeHandTransform(p_109379_, f_109299_.f_91074_, humanoidarm, p_109377_, p_109373_, p_109378_, p_109376_)) // FORGE: Allow items to define custom arm animation
              if (p_109372_.m_6117_() && p_109372_.m_21212_() > 0 && p_109372_.m_7655_() == p_109375_) {
                 int k = flag3 ? 1 : -1;
                 switch (p_109377_.m_41780_()) {
