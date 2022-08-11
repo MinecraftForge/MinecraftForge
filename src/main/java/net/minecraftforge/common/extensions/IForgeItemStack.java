@@ -556,4 +556,27 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundTag>
     {
         return self().getItem().getFoodProperties(self(), entity);
     }
+
+    /**
+     * Check if this item stack is on cooldown for an entity
+     *
+     * @param entity the entity holding the item stack
+     * @return if this item stack is on cooldow
+     */
+    default boolean isOnCooldown(@NotNull Entity entity)
+    {
+        return self().getItem().isOnCooldown(entity, self());
+    }
+
+    /**
+     * get this item stack cooldown for an entity
+     *
+     * @param entity      the entity holding the item stack
+     * @param partialTick the partial render tick
+     * @return this item stack cooldow percent
+     */
+    default float getCooldownPercent(@NotNull Entity entity, float partialTick)
+    {
+        return self().getItem().getCooldownPercent(entity, self(), partialTick);
+    }
 }

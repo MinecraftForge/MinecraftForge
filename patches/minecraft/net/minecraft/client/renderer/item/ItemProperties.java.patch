@@ -27,8 +27,9 @@
           return p_174652_ != null && p_174652_.m_5737_() != HumanoidArm.RIGHT ? 1.0F : 0.0F;
        });
 -      m_174581_(new ResourceLocation("cooldown"), (p_174645_, p_174646_, p_174647_, p_174648_) -> {
+-         return p_174647_ instanceof Player ? ((Player)p_174647_).m_36335_().m_41521_(p_174645_.m_41720_(), 0.0F) : 0.0F;
 +      registerGeneric(new ResourceLocation("cooldown"), (p_174645_, p_174646_, p_174647_, p_174648_) -> {
-          return p_174647_ instanceof Player ? ((Player)p_174647_).m_36335_().m_41521_(p_174645_.m_41720_(), 0.0F) : 0.0F;
++         return p_174645_.getCooldownPercent(p_174647_, 0);
        });
        m_174579_((p_174640_, p_174641_, p_174642_, p_174643_) -> {
           return p_174640_.m_41782_() ? (float)p_174640_.m_41783_().m_128451_("CustomModelData") : 0.0F;

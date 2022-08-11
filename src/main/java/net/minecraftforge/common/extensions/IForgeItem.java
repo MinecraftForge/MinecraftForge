@@ -828,4 +828,29 @@ public interface IForgeItem
         return self().getFoodProperties();
     }
 
+    /**
+     * Check if this item is on cooldown for an entity
+     *
+     * @param entity the entity holding the item
+     * @param stack the ItemStack
+     * @return if this item is on cooldow
+     */
+    default boolean isOnCooldown(@NotNull Entity entity, @NotNull ItemStack stack)
+    {
+        return this.getCooldownPercent(entity, stack, 0) > 0;
+    }
+
+    /**
+     * get this item cooldown for an entity
+     *
+     * @param entity the entity holding the item
+     * @param stack the ItemStack
+     * @param partialTick the partial render tick
+     * @return this item cooldow  percent
+     */
+    default float getCooldownPercent(@NotNull Entity entity, @NotNull ItemStack stack, float partialTick)
+    {
+        return entity instanceof Player player ? player.getCooldowns().getCooldownPercent(self(), partialTick) : 0;
+    }
+
 }

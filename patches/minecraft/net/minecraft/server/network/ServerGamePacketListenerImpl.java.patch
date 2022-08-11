@@ -34,6 +34,15 @@
     }
  
     public void m_7376_(ServerboundAcceptTeleportationPacket p_9835_) {
+@@ -1026,7 +_,7 @@
+          return false;
+       } else {
+          Item item = p_9792_.m_41720_();
+-         return (item instanceof BlockItem || item instanceof BucketItem) && !p_9791_.m_36335_().m_41519_(item);
++         return (item instanceof BlockItem || item instanceof BucketItem) && !p_9792_.isOnCooldown(p_9791_);
+       }
+    }
+ 
 @@ -1040,7 +_,7 @@
        Vec3 vec3 = blockhitresult.m_82450_();
        BlockPos blockpos = blockhitresult.m_82425_();
