@@ -35,30 +35,44 @@ import net.minecraftforge.common.MinecraftForge;
  **/
 public class LivingSetAttackTargetEvent extends LivingEvent
 {
-    private ILivingTargetType targetType;
+    private final ILivingTargetType targetType;
+    private final LivingEntity originalTarget;
     
     public LivingSetAttackTargetEvent(LivingEntity entity, LivingEntity target)
     {
         super(entity);
-        this.targetType = LivingTargetType.GOAL_TARGET;
+        this.targetType = LivingTargetType.GOAL_TARGET;        
+        this.originalTarget = target;
         
         assertLivingIsValid();
     }
     
-    public LivingSetAttackTargetEvent(LivingEntity entity, ILivingTargetType targetType)
+    public LivingSetAttackTargetEvent(LivingEntity entity, LivingEntity target, ILivingTargetType targetType)
     {
         super(entity);
         this.targetType = targetType;
+        this.originalTarget = target;
         
         assertLivingIsValid();
     }
 
     /**
-     * {@return the current target this living entity has.}
+     * {@return the target this living entity had after changing its target to a new
+     * target, but before posting this event. The return value of this method cannot be
+     * affected by {@link LivingSetAttackTargetEvent#setTarget}}
      */
-    public @Nullable LivingEntity getTarget()
+    public LivingEntity getTarget()
     {
-        return targetType.getTarget(getEntity()).orElse(null);
+        return originalTarget;
+    }
+    
+    /**
+     * {@return the current target this living entity has. The return value of this
+     * method may be affected by {@link LivingSetAttackTargetEvent#setTarget}}
+     */
+    public Optional<LivingEntity> getCurrentTarget()
+    {
+        return targetType.getTarget(getEntity());
     }
 
     /**

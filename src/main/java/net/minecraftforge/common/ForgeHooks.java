@@ -265,9 +265,9 @@ public class ForgeHooks
         MinecraftForge.EVENT_BUS.post(new LivingSetAttackTargetEvent(entity, target));
     }
 
-    public static void onLivingSetAttackTarget(LivingEntity entity, ILivingTargetType targetType)
+    public static void onLivingSetAttackTarget(LivingEntity entity, LivingEntity target, ILivingTargetType targetType)
     {
-        MinecraftForge.EVENT_BUS.post(new LivingSetAttackTargetEvent(entity, targetType));
+        MinecraftForge.EVENT_BUS.post(new LivingSetAttackTargetEvent(entity, target, targetType));
     }
 
     public static boolean onLivingTick(LivingEntity entity)
