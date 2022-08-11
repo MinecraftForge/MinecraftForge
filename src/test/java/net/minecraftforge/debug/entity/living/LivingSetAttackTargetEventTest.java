@@ -1,7 +1,5 @@
 package net.minecraftforge.debug.entity.living;
 
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.monster.piglin.AbstractPiglin;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Items;
@@ -28,10 +26,10 @@ public class LivingSetAttackTargetEventTest
     {
         // Make piglins peaceful when the player holds a stick in their hands.
         // Exception: The player hit the piglin
-        if (event.isCausedByBehavior() && event.getTarget() instanceof Player player && event.getEntity() instanceof AbstractPiglin piglin
+        if (event.getTarget() instanceof Player player && event.getEntity() instanceof AbstractPiglin piglin
                 && player.getMainHandItem().getItem() == Items.STICK && event.getTarget() != event.getEntity().getLastHurtByMob())
         {
-            piglin.getBrain().setMemory(MemoryModuleType.ATTACK_TARGET, (LivingEntity)null);
+            event.setTarget(null);
         }
     }
 }

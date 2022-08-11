@@ -4,6 +4,6 @@
     public static <E extends Mob> void m_24213_(E p_24214_, LivingEntity p_24215_) {
        p_24214_.m_6274_().m_21879_(MemoryModuleType.f_26372_, p_24215_);
        p_24214_.m_6274_().m_21936_(MemoryModuleType.f_26326_);
-+      net.minecraftforge.common.ForgeHooks.onLivingSetAttackTarget(p_24214_, p_24215_, true);
++      net.minecraftforge.common.ForgeHooks.onLivingSetAttackTarget(p_24214_, net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent.LivingTargetType.BEHAVIOR_TARGET);
     }
  }

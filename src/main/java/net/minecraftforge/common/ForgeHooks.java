@@ -121,6 +121,7 @@ import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingJumpEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingTickEvent;
+import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent.ILivingTargetType;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.living.LivingKnockBackEvent;
@@ -264,9 +265,9 @@ public class ForgeHooks
         MinecraftForge.EVENT_BUS.post(new LivingSetAttackTargetEvent(entity, target));
     }
 
-    public static void onLivingSetAttackTarget(LivingEntity entity, LivingEntity target, boolean causedByBehavior)
+    public static void onLivingSetAttackTarget(LivingEntity entity, ILivingTargetType targetType)
     {
-        MinecraftForge.EVENT_BUS.post(new LivingSetAttackTargetEvent(entity, target, causedByBehavior));
+        MinecraftForge.EVENT_BUS.post(new LivingSetAttackTargetEvent(entity, targetType));
     }
 
     public static boolean onLivingTick(LivingEntity entity)
