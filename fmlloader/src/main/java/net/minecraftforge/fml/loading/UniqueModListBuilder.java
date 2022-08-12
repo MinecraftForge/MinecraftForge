@@ -116,6 +116,11 @@ public class UniqueModListBuilder
         if (mf.getModFileInfo() == null) {
             return mf.getJarVersion();
         }
+
+        if (mf.getModInfos().isEmpty()) {
+            return mf.getJarVersion();
+        }
+
         return mf.getModInfos().get(0).getVersion();
     }
 
