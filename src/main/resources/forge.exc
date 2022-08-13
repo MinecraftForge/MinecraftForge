@@ -2,7 +2,7 @@ com/mojang/blaze3d/vertex/VertexConsumer.putBulkData(Lcom/mojang/blaze3d/vertex/
 net/minecraft/advancements/Advancement$Builder.fromJson(Lcom/google/gson/JsonObject;Lnet/minecraft/advancements/critereon/DeserializationContext;Lnet/minecraftforge/common/crafting/conditions/ICondition$IContext;)Lnet/minecraft/advancements/Advancement$Builder;=|p_138381_,p_138382_,context
 net/minecraft/client/Options.processOptionsForge(Lnet/minecraft/client/Options$FieldAccess;)V=|p_168428_
 net/minecraft/client/gui/screens/MenuScreens.getScreenFactory(Lnet/minecraft/world/inventory/MenuType;Lnet/minecraft/client/Minecraft;ILnet/minecraft/network/chat/Component;)Ljava/util/Optional;=|p_96202_,p_96203_,p_96204_,p_96205_
-net/minecraft/client/gui/screens/inventory/InventoryScreen.renderEntityInInventoryRaw(IIIFFLnet/minecraft/world/entity/LivingEntity;)V=|p_98851_,p_98852_,p_98853_,f,f1,p_98856_
+net/minecraft/client/gui/screens/inventory/InventoryScreen.renderEntityInInventoryRaw(IIIFFLnet/minecraft/world/entity/LivingEntity;)V=|p_98851_,p_98852_,p_98853_,angleXComponent,angleYComponent,p_98856_
 net/minecraft/client/gui/screens/worldselection/WorldOpenFlows.doLoadLevel(Lnet/minecraft/client/gui/screens/Screen;Ljava/lang/String;ZZZ)V=|p_233146_,p_233147_,p_233148_,p_233149_,confirmExperimentalWarning
 net/minecraft/client/renderer/ScreenEffectRenderer.getOverlayBlock(Lnet/minecraft/world/entity/player/Player;)Lorg/apache/commons/lang3/tuple/Pair;=|p_110717_
 net/minecraft/client/renderer/ScreenEffectRenderer.renderFluid(Lnet/minecraft/client/Minecraft;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/resources/ResourceLocation;)V=|p_110726_,p_110727_,texture
