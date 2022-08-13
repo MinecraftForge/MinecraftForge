@@ -34,7 +34,7 @@ public class LivingSetAttackTargetEvent extends LivingEvent
     public LivingSetAttackTargetEvent(LivingEntity entity, LivingEntity target)
     {
         super(entity);
-        this.targetType = LivingTargetType.GOAL_TARGET;        
+        this.targetType = LivingTargetType.MOB_TARGET;        
         this.originalTarget = target;
     }
     
@@ -69,7 +69,7 @@ public class LivingSetAttackTargetEvent extends LivingEvent
     
     public static enum LivingTargetType implements ILivingTargetType
     {
-        GOAL_TARGET,
+        MOB_TARGET,
         BEHAVIOR_TARGET;
     }
 }
