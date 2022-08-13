@@ -38,24 +38,22 @@
        }, p_44834_);
        return mutablefloat.floatValue();
     }
-@@ -168,7 +_,7 @@
+@@ -168,6 +_,7 @@
           m_44853_(enchantmenthelper$enchantmentvisitor, p_44824_.m_20158_());
        }
  
--      if (p_44825_ instanceof Player) {
-+      if (false && p_44825_ instanceof Player) { // Forge: Fix MC-248272
++      if(false) // Forge: Fix MC-248272
+       if (p_44825_ instanceof Player) {
           m_44850_(enchantmenthelper$enchantmentvisitor, p_44824_.m_21205_());
        }
- 
-@@ -182,7 +_,7 @@
+@@ -182,6 +_,7 @@
           m_44853_(enchantmenthelper$enchantmentvisitor, p_44897_.m_20158_());
        }
  
--      if (p_44897_ instanceof Player) {
-+      if (false && p_44897_ instanceof Player) { // Forge: Fix MC-248272
++      if(false) // Forge: Fix MC-248272
+       if (p_44897_ instanceof Player) {
           m_44850_(enchantmenthelper$enchantmentvisitor, p_44897_.m_21205_());
        }
- 
 @@ -302,7 +_,7 @@
  
     public static int m_220287_(RandomSource p_220288_, int p_220289_, int p_220290_, ItemStack p_220291_) {
