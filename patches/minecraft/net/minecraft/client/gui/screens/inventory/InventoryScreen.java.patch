@@ -12,12 +12,3 @@
        PoseStack posestack = RenderSystem.m_157191_();
        posestack.m_85836_();
        posestack.m_85837_((double)p_98851_, (double)p_98852_, 1050.0D);
-@@ -129,7 +_,7 @@
-       entityrenderdispatcher.m_114468_(false);
-       MultiBufferSource.BufferSource multibuffersource$buffersource = Minecraft.m_91087_().m_91269_().m_110104_();
-       RenderSystem.m_69890_(() -> {
--         entityrenderdispatcher.m_114384_(p_98856_, 0.0D, 0.0D, 0.0D, 0.0F, 1.0F, posestack1, multibuffersource$buffersource, 15728880);
-+         entityrenderdispatcher.m_114384_(p_98856_, 0.0D, 0.0D, 0.0D, 0.0F, Minecraft.m_91087_().m_91296_(), posestack1, multibuffersource$buffersource, 15728880);
-       });
-       multibuffersource$buffersource.m_109911_();
-       entityrenderdispatcher.m_114468_(true);
