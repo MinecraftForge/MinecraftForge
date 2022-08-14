@@ -167,6 +167,7 @@ public class PathPackResources extends AbstractPackResources
         {
             Path root = resolve(type.getDirectory());
             return Files.walk(root, 1)
+                    .filter(Files::isDirectory)
                     .map(path -> root.relativize(path))
                     .filter(path -> path.getNameCount() > 0) // skip the root entry
                     .map(p -> p.toString().replaceAll("/$", "")) // remove the trailing slash, if present
