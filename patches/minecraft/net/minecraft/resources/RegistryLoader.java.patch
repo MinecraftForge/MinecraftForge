@@ -1,0 +1,16 @@
+--- a/net/minecraft/resources/RegistryLoader.java
++++ b/net/minecraft/resources/RegistryLoader.java
+@@ -48,7 +_,12 @@
+       if (dataresult != null) {
+          return dataresult;
+       } else {
+-         Holder<E> holder = p_214229_.m_214121_(p_214232_);
++         // Prevents an exception from disrupting codec decoding when calling this with prematurely frozen registries - see comment in LevelStorageSource
++         DataResult<Holder<E>> maybeHolder = p_214229_.m_214185_(p_214232_);
++         if (maybeHolder.error().isPresent()) {
++            return maybeHolder;
++         }
++         Holder<E> holder = maybeHolder.result().get();
+          readcache.f_206803_.put(p_214232_, DataResult.success(holder));
+          DataResult<Holder<E>> dataresult1;
+          if (p_214233_.isEmpty()) {
