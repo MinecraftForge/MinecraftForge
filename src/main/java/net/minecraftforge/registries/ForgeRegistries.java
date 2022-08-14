@@ -45,6 +45,7 @@ import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.loot.IGlobalLootModifier;
 import net.minecraftforge.common.world.BiomeModifier;
 import net.minecraftforge.fluids.FluidType;
+import net.minecraftforge.registries.holdersets.HolderSetType;
 
 import java.util.function.Supplier;
 import net.minecraftforge.common.world.StructureModifier;
@@ -127,6 +128,12 @@ public class ForgeRegistries
      * Use {@link Keys#FLUID_TYPES} to create a {@link DeferredRegister}.
      */
     public static final Supplier<IForgeRegistry<FluidType>> FLUID_TYPES = DEFERRED_FLUID_TYPES.makeRegistry(GameData::getFluidTypeRegistryBuilder);
+    static final DeferredRegister<HolderSetType> DEFERRED_HOLDER_SET_TYPES = DeferredRegister.create(Keys.HOLDER_SET_TYPES, "forge");
+    /**
+     * Calling {@link Supplier#get()} before {@link NewRegistryEvent} is fired will result in a null registry returned.
+     * Use {@link Keys#HOLDER_SET_TYPES} to create a {@link DeferredRegister}.
+     */
+    public static final Supplier<IForgeRegistry<HolderSetType>> HOLDER_SET_TYPES = DEFERRED_HOLDER_SET_TYPES.makeRegistry(GameData::getHolderSetTypeRegistryBuilder);
 
     // Custom forge datapack registries
     static final DeferredRegister<BiomeModifier> DEFERRED_BIOME_MODIFIERS = DeferredRegister.create(Keys.BIOME_MODIFIERS, "forge");
@@ -175,6 +182,7 @@ public class ForgeRegistries
         public static final ResourceKey<Registry<Codec<? extends BiomeModifier>>> BIOME_MODIFIER_SERIALIZERS = key("forge:biome_modifier_serializers");
         public static final ResourceKey<Registry<Codec<? extends StructureModifier>>> STRUCTURE_MODIFIER_SERIALIZERS = key("forge:structure_modifier_serializers");
         public static final ResourceKey<Registry<FluidType>> FLUID_TYPES = key("forge:fluid_type");
+        public static final ResourceKey<Registry<HolderSetType>> HOLDER_SET_TYPES = key("forge:holder_set_type");
 
         // Forge Dynamic
         public static final ResourceKey<Registry<BiomeModifier>> BIOME_MODIFIERS = key("forge:biome_modifier");
