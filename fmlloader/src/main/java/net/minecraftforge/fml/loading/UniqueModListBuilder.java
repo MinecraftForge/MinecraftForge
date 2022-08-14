@@ -113,11 +113,7 @@ public class UniqueModListBuilder
 
     private ArtifactVersion getVersion(final ModFile mf)
     {
-        if (mf.getModFileInfo() == null) {
-            return mf.getJarVersion();
-        }
-
-        if (mf.getModInfos().isEmpty()) {
+        if (mf.getModFileInfo() == null || mf.getModInfos() == null || mf.getModInfos().isEmpty()) {
             return mf.getJarVersion();
         }
 
