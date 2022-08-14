@@ -157,7 +157,8 @@ public class PathPackResources extends AbstractPackResources
             return this.cacheManager.getNamespaces(type);
         }
 
-        return getNamespacesFromDisk(type);
+        Set<String> s = getNamespacesFromDisk(type);s.remove(".DS_Store");
+        return s;
     }
 
     @NotNull
