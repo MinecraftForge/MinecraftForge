@@ -16,24 +16,14 @@ import net.minecraftforge.items.wrapper.PlayerMainInvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collections;
+
 public class ItemHandlerHelper
 {
     @NotNull
     public static ItemStack insertItem(IItemHandler dest, @NotNull ItemStack stack, boolean simulate)
     {
-        if (dest == null || stack.isEmpty())
-            return stack;
-
-        for (int i = 0; i < dest.getSlots(); i++)
-        {
-            stack = dest.insertItem(i, stack, simulate);
-            if (stack.isEmpty())
-            {
-                return ItemStack.EMPTY;
-            }
-        }
-
-        return stack;
+        return dest.insertItems(Collections.singletonList(stack), simulate)[0];
     }
 
     public static boolean canItemStacksStack(@NotNull ItemStack a, @NotNull ItemStack b)
@@ -85,52 +75,9 @@ public class ItemHandlerHelper
      * Note: This function stacks items without subtypes with different metadata together.
      */
     @NotNull
-    public static ItemStack insertItemStacked(IItemHandler inventory, @NotNull ItemStack stack, boolean simulate)
+    public static ItemStack insertItemStacked(IItemHandler dest, @NotNull ItemStack stack, boolean simulate)
     {
-        if (inventory == null || stack.isEmpty())
-            return stack;
-
-        // not stackable -> just insert into a new slot
-        if (!stack.isStackable())
-        {
-            return insertItem(inventory, stack, simulate);
-        }
-
-        int sizeInventory = inventory.getSlots();
-
-        // go through the inventory and try to fill up already existing items
-        for (int i = 0; i < sizeInventory; i++)
-        {
-            ItemStack slot = inventory.getStackInSlot(i);
-            if (canItemStacksStackRelaxed(slot, stack))
-            {
-                stack = inventory.insertItem(i, stack, simulate);
-
-                if (stack.isEmpty())
-                {
-                    break;
-                }
-            }
-        }
-
-        // insert remainder into empty slots
-        if (!stack.isEmpty())
-        {
-            // find empty slot
-            for (int i = 0; i < sizeInventory; i++)
-            {
-                if (inventory.getStackInSlot(i).isEmpty())
-                {
-                    stack = inventory.insertItem(i, stack, simulate);
-                    if (stack.isEmpty())
-                    {
-                        break;
-                    }
-                }
-            }
-        }
-
-        return stack;
+        return dest.insertItemsStacked(Collections.singletonList(stack), simulate)[0];
     }
 
     /** giveItemToPlayer without preferred slot */
