@@ -5,7 +5,6 @@
 
 package net.minecraftforge.client;
 
-import net.minecraft.Util;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.client.Minecraft;
 import net.minecraft.commands.CommandSource;

@@ -5,7 +5,6 @@
 
 package net.minecraftforge.fml.loading.moddiscovery;
 
-import cpw.mods.modlauncher.api.LamdbaExceptionUtils.Supplier_WithExceptions;
 import net.minecraftforge.fml.loading.StringUtils;
 
 import java.nio.file.Path;

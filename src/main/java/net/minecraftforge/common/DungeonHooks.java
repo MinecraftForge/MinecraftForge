@@ -7,7 +7,6 @@ package net.minecraftforge.common;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.Random;
 
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.random.WeightedEntry;

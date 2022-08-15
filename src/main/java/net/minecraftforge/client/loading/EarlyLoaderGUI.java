@@ -5,21 +5,15 @@
 
 package net.minecraftforge.client.loading;
 
-import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 
 import com.mojang.blaze3d.platform.Window;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.Mth;
-import net.minecraftforge.fml.StartupMessageManager;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL14;
-import org.lwjgl.stb.STBEasyFont;
-import org.lwjgl.system.MemoryUtil;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryUsage;
-import java.nio.ByteBuffer;
 import java.util.Locale;
 
 public class EarlyLoaderGUI {

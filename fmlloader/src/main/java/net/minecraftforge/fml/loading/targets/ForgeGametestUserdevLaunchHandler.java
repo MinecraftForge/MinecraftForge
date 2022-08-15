@@ -8,8 +8,6 @@ package net.minecraftforge.fml.loading.targets;
 import cpw.mods.modlauncher.api.ServiceRunner;
 import net.minecraftforge.api.distmarker.Dist;
 
-import java.util.concurrent.Callable;
-
 public class ForgeGametestUserdevLaunchHandler extends ForgeUserdevLaunchHandler {
     @Override public String name() { return "forgegametestserveruserdev"; }
     @Override public Dist getDist() { return Dist.DEDICATED_SERVER; }

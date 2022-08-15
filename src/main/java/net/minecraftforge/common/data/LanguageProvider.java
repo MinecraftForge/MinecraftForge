@@ -5,26 +5,20 @@
 
 package net.minecraftforge.common.data;
 
-import java.io.BufferedWriter;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
-import java.util.Objects;
 import java.util.TreeMap;
 import java.util.function.Supplier;
 
-import com.google.common.hash.Hashing;
 import com.google.gson.JsonObject;
 import net.minecraft.data.CachedOutput;
-import org.apache.commons.lang3.text.translate.JavaUnicodeEscaper;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import net.minecraft.world.level.block.Block;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.data.HashCache;
 import net.minecraft.data.DataProvider;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.entity.EntityType;

@@ -14,7 +14,6 @@ import net.minecraftforge.server.permission.handler.IPermissionHandlerFactory;
 import net.minecraftforge.server.permission.nodes.PermissionNode;
 
 import java.util.*;
-import java.util.function.Function;
 
 /**
  * Fired to gather information for the permissions API, such as the {@link IPermissionHandler} and {@link PermissionNode}s.

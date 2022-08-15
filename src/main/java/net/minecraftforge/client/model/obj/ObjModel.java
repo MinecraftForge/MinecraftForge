@@ -140,9 +140,8 @@ public class ObjModel extends SimpleUnbakedGeometry<ObjModel>
         String[] line;
         while ((line = tokenizer.readAndSplitLine(true)) != null)
         {
-            switch (line[0])
-            {
-                case "mtllib": // Loads material library
+            switch (line[0]) {
+                case "mtllib" -> // Loads material library
                 {
                     if (materialLibraryOverrideLocation != null)
                         break;
@@ -154,53 +153,37 @@ public class ObjModel extends SimpleUnbakedGeometry<ObjModel>
                         mtllib = ObjLoader.INSTANCE.loadMaterialLibrary(new ResourceLocation(modelDomain, modelPath + lib));
                     break;
                 }
-
-                case "usemtl": // Sets the current material (starts new mesh)
+                case "usemtl" -> // Sets the current material (starts new mesh)
                 {
                     String mat = Strings.join(Arrays.copyOfRange(line, 1, line.length), " ");
                     ObjMaterialLibrary.Material newMat = mtllib.getMaterial(mat);
-                    if (!Objects.equals(newMat, currentMat))
-                    {
+                    if (!Objects.equals(newMat, currentMat)) {
                         currentMat = newMat;
-                        if (currentMesh != null && currentMesh.mat == null && currentMesh.faces.size() == 0)
-                        {
+                        if (currentMesh != null && currentMesh.mat == null && currentMesh.faces.size() == 0) {
                             currentMesh.mat = currentMat;
-                        }
-                        else
-                        {
+                        } else {
                             // Start new mesh
                             currentMesh = null;
                         }
                     }
                     break;
                 }
-
-                case "v": // Vertex
-                    model.positions.add(parseVector4To3(line));
-                    break;
-                case "vt": // Vertex texcoord
-                    model.texCoords.add(parseVector2(line));
-                    break;
-                case "vn": // Vertex normal
-                    model.normals.add(parseVector3(line));
-                    break;
-                case "vc": // Vertex color (non-standard)
-                    model.colors.add(parseVector4(line));
-                    break;
-
-                case "f": // Face
+                case "v" -> // Vertex
+                        model.positions.add(parseVector4To3(line));
+                case "vt" -> // Vertex texcoord
+                        model.texCoords.add(parseVector2(line));
+                case "vn" -> // Vertex normal
+                        model.normals.add(parseVector3(line));
+                case "vc" -> // Vertex color (non-standard)
+                        model.colors.add(parseVector4(line));
+                case "f" -> // Face
                 {
-                    if (currentMesh == null)
-                    {
+                    if (currentMesh == null) {
                         currentMesh = model.new ModelMesh(currentMat, currentSmoothingGroup);
-                        if (currentObject != null)
-                        {
+                        if (currentObject != null) {
                             currentObject.meshes.add(currentMesh);
-                        }
-                        else
-                        {
-                            if (currentGroup == null)
-                            {
+                        } else {
+                            if (currentGroup == null) {
                                 currentGroup = model.new ModelGroup("");
                                 model.parts.put("", currentGroup);
                             }
@@ -209,23 +192,19 @@ public class ObjModel extends SimpleUnbakedGeometry<ObjModel>
                     }
 
                     int[][] vertices = new int[line.length - 1][];
-                    for (int i = 0; i < vertices.length; i++)
-                    {
+                    for (int i = 0; i < vertices.length; i++) {
                         String vertexData = line[i + 1];
                         String[] vertexParts = vertexData.split("/");
                         int[] vertex = Arrays.stream(vertexParts).mapToInt(num -> Strings.isNullOrEmpty(num) ? 0 : Integer.parseInt(num)).toArray();
                         if (vertex[0] < 0) vertex[0] = model.positions.size() + vertex[0];
                         else vertex[0]--;
-                        if (vertex.length > 1)
-                        {
+                        if (vertex.length > 1) {
                             if (vertex[1] < 0) vertex[1] = model.texCoords.size() + vertex[1];
                             else vertex[1]--;
-                            if (vertex.length > 2)
-                            {
+                            if (vertex.length > 2) {
                                 if (vertex[2] < 0) vertex[2] = model.normals.size() + vertex[2];
                                 else vertex[2]--;
-                                if (vertex.length > 3)
-                                {
+                                if (vertex.length > 3) {
                                     if (vertex[3] < 0) vertex[3] = model.colors.size() + vertex[3];
                                     else vertex[3]--;
                                 }
@@ -238,36 +217,26 @@ public class ObjModel extends SimpleUnbakedGeometry<ObjModel>
 
                     break;
                 }
-
-                case "s": // Smoothing group (starts new mesh)
+                case "s" -> // Smoothing group (starts new mesh)
                 {
                     String smoothingGroup = "off".equals(line[1]) ? null : line[1];
-                    if (!Objects.equals(currentSmoothingGroup, smoothingGroup))
-                    {
+                    if (!Objects.equals(currentSmoothingGroup, smoothingGroup)) {
                         currentSmoothingGroup = smoothingGroup;
-                        if (currentMesh != null && currentMesh.smoothingGroup == null && currentMesh.faces.size() == 0)
-                        {
+                        if (currentMesh != null && currentMesh.smoothingGroup == null && currentMesh.faces.size() == 0) {
                             currentMesh.smoothingGroup = currentSmoothingGroup;
-                        }
-                        else
-                        {
+                        } else {
                             // Start new mesh
                             currentMesh = null;
                         }
                     }
                     break;
                 }
-
-                case "g":
-                {
+                case "g" -> {
                     String name = line[1];
-                    if (objAboveGroup)
-                    {
+                    if (objAboveGroup) {
                         currentObject = model.new ModelObject(currentGroup.name() + "/" + name);
                         currentGroup.parts.put(name, currentObject);
-                    }
-                    else
-                    {
+                    } else {
                         currentGroup = model.new ModelGroup(name);
                         model.parts.put(name, currentGroup);
                         currentObject = null;
@@ -276,20 +245,15 @@ public class ObjModel extends SimpleUnbakedGeometry<ObjModel>
                     currentMesh = null;
                     break;
                 }
-
-                case "o":
-                {
+                case "o" -> {
                     String name = line[1];
-                    if (objAboveGroup || currentGroup == null)
-                    {
+                    if (objAboveGroup || currentGroup == null) {
                         objAboveGroup = true;
 
                         currentGroup = model.new ModelGroup(name);
                         model.parts.put(name, currentGroup);
                         currentObject = null;
-                    }
-                    else
-                    {
+                    } else {
                         currentObject = model.new ModelObject(currentGroup.name() + "/" + name);
                         currentGroup.parts.put(name, currentObject);
                     }
