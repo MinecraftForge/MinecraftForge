@@ -93,9 +93,8 @@ public interface IClientBlockExtensions
         {
             float f12 = 0.0F;
 
-            if (entity instanceof LivingEntity)
+            if (entity instanceof LivingEntity ent)
             {
-                LivingEntity ent = (LivingEntity) entity;
                 f12 = (float) EnchantmentHelper.getRespiration(ent) * 0.2F;
 
                 if (ent.hasEffect(MobEffects.WATER_BREATHING))

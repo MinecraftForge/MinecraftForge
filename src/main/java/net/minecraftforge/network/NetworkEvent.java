@@ -221,9 +221,8 @@ public class NetworkEvent extends Event
         public ServerPlayer getSender()
         {
             PacketListener netHandler = networkManager.getPacketListener();
-            if (netHandler instanceof ServerGamePacketListenerImpl)
+            if (netHandler instanceof ServerGamePacketListenerImpl netHandlerPlayServer)
             {
-                ServerGamePacketListenerImpl netHandlerPlayServer = (ServerGamePacketListenerImpl) netHandler;
                 return netHandlerPlayServer.player;
             }
             return null;

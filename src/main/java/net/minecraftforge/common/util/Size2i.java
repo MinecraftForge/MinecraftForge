@@ -29,9 +29,8 @@ public final class Size2i
     @Override
     public boolean equals(Object obj)
     {
-        if (obj instanceof Size2i)
+        if (obj instanceof Size2i other)
         {
-            Size2i other = (Size2i)obj;
             return (width == other.width) && (height == other.height);
         }
         return false;

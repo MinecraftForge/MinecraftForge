@@ -35,9 +35,8 @@ public class TextComponentHelper
 
     private static boolean isVanillaClient(CommandSource sender)
     {
-        if (sender instanceof ServerPlayer)
+        if (sender instanceof ServerPlayer playerMP)
         {
-            ServerPlayer playerMP = (ServerPlayer) sender;
             ServerGamePacketListenerImpl channel = playerMP.connection;
             return NetworkHooks.getConnectionType(()->channel.connection) == ConnectionType.VANILLA;
         }
