@@ -1091,10 +1091,11 @@ public class ForgeHooksClient
         };
     }
 
-    public static int onScreenPotionSize(Screen screen, int availableSpace, boolean compact)
+    public static ScreenEvent.RenderInventoryMobEffects onScreenPotionSize(Screen screen, int availableSpace, boolean compact, int horizontalOffset)
     {
-        final ScreenEvent.RenderInventoryMobEffects event = new ScreenEvent.RenderInventoryMobEffects(screen, availableSpace, compact);
-        return MinecraftForge.EVENT_BUS.post(event) ? 0 : (event.isCompact() ? 1 : 2);
+        final ScreenEvent.RenderInventoryMobEffects event = new ScreenEvent.RenderInventoryMobEffects(screen, availableSpace, compact, horizontalOffset);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event;
     }
 
     public static boolean isBlockInSolidLayer(BlockState state)
