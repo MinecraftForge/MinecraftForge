@@ -27,7 +27,8 @@ dependencies {
     api('com.electronwill.night-config:toml:3.6.4')
     api('cpw.mods:modlauncher:9.0.+')
     api('net.minecraftforge:coremods:5.0.+')
-    api "net.minecraftforge:JarJar:${JARJAR_VERSION}"
+    api "net.minecraftforge:JarJarSelector:${JARJAR_VERSION}"
+    api "net.minecraftforge:JarJarMetadata:${JARJAR_VERSION}"
     implementation("cpw.mods:securejarhandler:${SECUREJARHANDLER_VERSION}")
     implementation('org.apache.logging.log4j:log4j-core:2.17.0')
     annotationProcessor('org.apache.logging.log4j:log4j-core:2.17.0')
