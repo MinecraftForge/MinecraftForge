@@ -15,7 +15,7 @@ import static net.minecraftforge.common.capabilities.CapabilityManager.get;
 /*
  * References to  Forge's built in capabilities.
  * Modders are recommended to use their own CapabilityTokens for 3rd party caps to maintain soft dependencies.
- * However, since nobody has a soft dependency on Forge, so we expose this as API.
+ * However, since nobody has a soft dependency on Forge, we expose this as API.
  */
 public class ForgeCapabilities
 {
