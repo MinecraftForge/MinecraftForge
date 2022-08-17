@@ -73,6 +73,7 @@ public abstract class CapabilityProvider<B extends ICapabilityProviderImpl<B>> i
         this.initialized = true;
     }
 
+    @SuppressWarnings("unchecked")
     @NotNull
     B getProvider()
     {
