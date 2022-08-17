@@ -129,13 +129,13 @@ public class SmoothQuadLighter extends QuadLighter
 
         float a = 0;
         a += ao[sx - 1][sy - 1][sz - 1] * (1 - x) * (1 - y) * (1 - z);
-        a += ao[sx - 1][sy - 1][sz - 0] * (1 - x) * (1 - y) * (0 + z);
-        a += ao[sx - 1][sy - 0][sz - 1] * (1 - x) * (0 + y) * (1 - z);
-        a += ao[sx - 1][sy - 0][sz - 0] * (1 - x) * (0 + y) * (0 + z);
-        a += ao[sx - 0][sy - 1][sz - 1] * (0 + x) * (1 - y) * (1 - z);
-        a += ao[sx - 0][sy - 1][sz - 0] * (0 + x) * (1 - y) * (0 + z);
-        a += ao[sx - 0][sy - 0][sz - 1] * (0 + x) * (0 + y) * (1 - z);
-        a += ao[sx - 0][sy - 0][sz - 0] * (0 + x) * (0 + y) * (0 + z);
+        a += ao[sx - 1][sy - 1][sz] * (1 - x) * (1 - y) * (0 + z);
+        a += ao[sx - 1][sy][sz - 1] * (1 - x) * (0 + y) * (1 - z);
+        a += ao[sx - 1][sy][sz] * (1 - x) * (0 + y) * (0 + z);
+        a += ao[sx][sy - 1][sz - 1] * (0 + x) * (1 - y) * (1 - z);
+        a += ao[sx][sy - 1][sz] * (0 + x) * (1 - y) * (0 + z);
+        a += ao[sx][sy][sz - 1] * (0 + x) * (0 + y) * (1 - z);
+        a += ao[sx][sy][sz] * (0 + x) * (0 + y) * (0 + z);
 
         a = Mth.clamp(a, 0, 1);
         return a;

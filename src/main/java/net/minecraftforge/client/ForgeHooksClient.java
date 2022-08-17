@@ -392,9 +392,9 @@ public class ForgeHooksClient
         {
             // render a warning at the top of the screen,
             Component line = Component.translatable("forge.update.beta.1", ChatFormatting.RED, ChatFormatting.RESET).withStyle(ChatFormatting.RED);
-            GuiComponent.drawCenteredString(poseStack, font, line, width / 2, 4 + (0 * (font.lineHeight + 1)), 0xFFFFFF | alpha);
+            GuiComponent.drawCenteredString(poseStack, font, line, width / 2, 4 + (0), 0xFFFFFF | alpha);
             line = Component.translatable("forge.update.beta.2");
-            GuiComponent.drawCenteredString(poseStack, font, line, width / 2, 4 + (1 * (font.lineHeight + 1)), 0xFFFFFF | alpha);
+            GuiComponent.drawCenteredString(poseStack, font, line, width / 2, 4 + ((font.lineHeight + 1)), 0xFFFFFF | alpha);
         }
 
         String line = null;
