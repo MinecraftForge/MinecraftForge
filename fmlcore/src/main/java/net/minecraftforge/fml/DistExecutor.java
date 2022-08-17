@@ -154,15 +154,11 @@ public final class DistExecutor
      * @return The returned instance
      */
     public static <T> T unsafeRunForDist(Supplier<Supplier<T>> clientTarget, Supplier<Supplier<T>> serverTarget) {
-        switch (FMLEnvironment.dist)
-        {
-            case CLIENT:
-                return clientTarget.get().get();
-            case DEDICATED_SERVER:
-                return serverTarget.get().get();
-            default:
-                throw new IllegalArgumentException("UNSIDED?");
-        }
+        return switch (FMLEnvironment.dist) {
+            case CLIENT -> clientTarget.get().get();
+            case DEDICATED_SERVER -> serverTarget.get().get();
+            default -> throw new IllegalArgumentException("UNSIDED?");
+        };
     }
     /**
      * Executes one of the two suppliers, based on which side is active.
@@ -181,15 +177,11 @@ public final class DistExecutor
     public static <T> T safeRunForDist(Supplier<SafeSupplier<T>> clientTarget, Supplier<SafeSupplier<T>> serverTarget) {
         validateSafeReferent(clientTarget);
         validateSafeReferent(serverTarget);
-        switch (FMLEnvironment.dist)
-        {
-            case CLIENT:
-                return clientTarget.get().get();
-            case DEDICATED_SERVER:
-                return serverTarget.get().get();
-            default:
-                throw new IllegalArgumentException("UNSIDED?");
-        }
+        return switch (FMLEnvironment.dist) {
+            case CLIENT -> clientTarget.get().get();
+            case DEDICATED_SERVER -> serverTarget.get().get();
+            default -> throw new IllegalArgumentException("UNSIDED?");
+        };
     }
 
     /**

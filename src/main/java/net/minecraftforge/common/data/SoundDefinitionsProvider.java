@@ -222,11 +222,10 @@ public abstract class SoundDefinitionsProvider implements DataProvider
 
     private boolean validate(final String name, final SoundDefinition.Sound sound)
     {
-        switch (sound.type())
-        {
-            case SOUND: return this.validateSound(name, sound.name());
-            case EVENT: return this.validateEvent(name, sound.name());
-        }
+        return switch (sound.type()) {
+            case SOUND -> this.validateSound(name, sound.name());
+            case EVENT -> this.validateEvent(name, sound.name());
+        };
         // Differently from all the other errors, this is not a 'missing sound' but rather something completely different
         // that has broken the invariants of this sound definitions provider. In fact, a sound may only be either of
         // SOUND or EVENT type. Any other values is somebody messing with the internals, reflectively adding something

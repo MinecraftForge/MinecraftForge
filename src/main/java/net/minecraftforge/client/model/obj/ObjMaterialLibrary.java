@@ -33,59 +33,33 @@ public class ObjMaterialLibrary
         String[] line;
         while ((line = reader.readAndSplitLine(true)) != null)
         {
-            switch (line[0])
-            {
-                case "newmtl":
-                {
+            switch (line[0]) {
+                case "newmtl" -> {
                     String name = Strings.join(Arrays.copyOfRange(line, 1, line.length), " ");
                     currentMaterial = new Material(name);
                     materials.put(name, currentMaterial);
                     break;
                 }
-
-                case "Ka":
-                    currentMaterial.ambientColor = ObjModel.parseVector4(line);
-                    break;
-
-                case "map_Ka":
+                case "Ka" -> currentMaterial.ambientColor = ObjModel.parseVector4(line);
+                case "map_Ka" ->
                     // Ignores all options params
-                    currentMaterial.ambientColorMap = line[line.length - 1];
-                    break;
-
-                case "Kd":
-                    currentMaterial.diffuseColor = ObjModel.parseVector4(line);
-                    break;
-
-                case "forge_TintIndex":
-                    currentMaterial.diffuseTintIndex = Integer.parseInt(line[1]);
-                    break;
-
-                case "map_Kd":
+                        currentMaterial.ambientColorMap = line[line.length - 1];
+                case "Kd" -> currentMaterial.diffuseColor = ObjModel.parseVector4(line);
+                case "forge_TintIndex" -> currentMaterial.diffuseTintIndex = Integer.parseInt(line[1]);
+                case "map_Kd" ->
                     // Ignores all options params
-                    currentMaterial.diffuseColorMap = line[line.length - 1];
-                    break;
-
-                case "Ks":
-                    currentMaterial.specularColor = ObjModel.parseVector4(line);
-                    break;
-
-                case "Ns":
-                    currentMaterial.specularHighlight = Float.parseFloat(line[1]);
-                    break;
-
-                case "map_Ks":
+                        currentMaterial.diffuseColorMap = line[line.length - 1];
+                case "Ks" -> currentMaterial.specularColor = ObjModel.parseVector4(line);
+                case "Ns" -> currentMaterial.specularHighlight = Float.parseFloat(line[1]);
+                case "map_Ks" ->
                     // Ignores all options params
-                    currentMaterial.specularColorMap = line[line.length - 1];
-                    break;
-
-                case "d":
+                        currentMaterial.specularColorMap = line[line.length - 1];
+                case "d" ->
                     // Ignores all options params
-                    currentMaterial.dissolve = Float.parseFloat(line[1]);
-                    break;
-                case "Tr":
+                        currentMaterial.dissolve = Float.parseFloat(line[1]);
+                case "Tr" ->
                     // Ignores all options params
-                    currentMaterial.transparency = Float.parseFloat(line[1]);
-                    break;
+                        currentMaterial.transparency = Float.parseFloat(line[1]);
             }
         }
     }

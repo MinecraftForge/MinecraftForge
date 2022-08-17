@@ -398,14 +398,13 @@ public class ForgeHooksClient
         }
 
         String line = null;
-        switch(status)
-        {
+        switch (status) {
             //case FAILED:        line = " Version check failed"; break;
             //case UP_TO_DATE:    line = "Forge up to date"}; break;
             //case AHEAD:         line = "Using non-recommended Forge build, issues may arise."}; break;
-            case OUTDATED:
-            case BETA_OUTDATED: line = I18n.get("forge.update.newversion", ForgeVersion.getTarget()); break;
-            default: break;
+            case OUTDATED, BETA_OUTDATED -> line = I18n.get("forge.update.newversion", ForgeVersion.getTarget());
+            default -> {
+            }
         }
 
         forgeStatusLine = line;

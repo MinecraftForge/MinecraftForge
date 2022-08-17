@@ -45,15 +45,11 @@ public class MCPNamingService implements INameMappingService {
     }
 
     private String findMapping(final Domain domain, final String srgName) {
-        switch (domain) {
-            case CLASS:
-                return srgName;
-            case FIELD:
-                return findFieldMapping(srgName);
-            case METHOD:
-                return findMethodMapping(srgName);
-        }
-        return srgName;
+        return switch (domain) {
+            case CLASS -> srgName;
+            case FIELD -> findFieldMapping(srgName);
+            case METHOD -> findMethodMapping(srgName);
+        };
     }
 
     private String findMethodMapping(final String origin) {
