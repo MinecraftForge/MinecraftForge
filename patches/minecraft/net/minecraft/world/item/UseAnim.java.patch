@@ -1,0 +1,14 @@
+--- a/net/minecraft/world/item/UseAnim.java
++++ b/net/minecraft/world/item/UseAnim.java
+@@ -9,5 +_,10 @@
+    SPEAR,
+    CROSSBOW,
+    SPYGLASS,
+-   TOOT_HORN;
++   TOOT_HORN,
++   /**
++    * Items with custom arm animation should return this in `Item#getUseAnimation`
++    * to prevent vanilla from also trying to animate same item
++    */
++   CUSTOM
+ }
