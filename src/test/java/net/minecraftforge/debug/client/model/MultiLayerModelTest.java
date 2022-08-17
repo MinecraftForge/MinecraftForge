@@ -56,9 +56,7 @@ public class MultiLayerModelTest
         {
             if (!ENABLED)
                 return;
-            ItemBlockRenderTypes.setRenderLayer(TEST_BLOCK, (layer) -> {
-                return layer == RenderType.solid() || layer == RenderType.translucent();
-            });
+            ItemBlockRenderTypes.setRenderLayer(TEST_BLOCK, (layer) -> layer == RenderType.solid() || layer == RenderType.translucent());
         }
     }
 }

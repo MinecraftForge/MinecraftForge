@@ -86,9 +86,7 @@ public class RecipeBookExtensionTest
             if (!ENABLED)
                 return;
             event.enqueueWork(() ->
-            {
-                MenuScreens.register(RECIPE_BOOK_TEST_MENU_TYPE.get(), RecipeBookTestScreen::new);
-            });
+                    MenuScreens.register(RECIPE_BOOK_TEST_MENU_TYPE.get(), RecipeBookTestScreen::new));
         }
         @SubscribeEvent
         public static void onRegisterRecipeBookCategories(RegisterRecipeBookCategoriesEvent event)

@@ -43,9 +43,9 @@ public class StringUtils {
 
     public static String binToHex(final byte[] bytes) {
         StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < bytes.length; i++) {
-            sb.append(Integer.toHexString((bytes[i]&0xf0) >>4));
-            sb.append(Integer.toHexString(bytes[i]&0x0f));
+        for (byte aByte : bytes) {
+            sb.append(Integer.toHexString((aByte & 0xf0) >> 4));
+            sb.append(Integer.toHexString(aByte & 0x0f));
         }
         return sb.toString();
     }

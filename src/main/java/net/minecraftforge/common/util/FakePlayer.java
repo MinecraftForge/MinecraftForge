@@ -8,7 +8,7 @@ package net.minecraftforge.common.util;
 import com.mojang.authlib.GameProfile;
 import java.util.Set;
 import javax.annotation.ParametersAreNonnullByDefault;
-import net.minecraft.core.BlockPos;
+
 import net.minecraft.network.Connection;
 import net.minecraft.network.PacketSendListener;
 import net.minecraft.network.chat.Component;
@@ -66,7 +66,6 @@ import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.stats.Stat;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.Nullable;
 

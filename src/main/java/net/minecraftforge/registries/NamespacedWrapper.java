@@ -223,7 +223,7 @@ class NamespacedWrapper<T> extends MappedRegistry<T> implements ILockableRegistr
         public void onCreate(IForgeRegistryInternal<V> owner, RegistryManager stage)
         {
             ForgeRegistry<V> fowner = (ForgeRegistry<V>)owner;
-            owner.setSlaveMap(ID, new NamespacedWrapper<V>(fowner, fowner.getBuilder().getVanillaHolder()));
+            owner.setSlaveMap(ID, new NamespacedWrapper<>(fowner, fowner.getBuilder().getVanillaHolder()));
         }
 
         @Override

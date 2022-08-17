@@ -56,7 +56,8 @@ public class JsonUtils
     @SuppressWarnings({ "serial", "unchecked" })
     private static <E> TypeToken<List<E>> listOf(final Type arg)
     {
-        return new TypeToken<List<E>>() {}.where(new TypeParameter<E>() {}, (TypeToken<E>) TypeToken.of(arg));
+        return new TypeToken<List<E>>() {}.where(new TypeParameter<>() {
+        }, (TypeToken<E>) TypeToken.of(arg));
     }
 
     public enum ImmutableMapTypeAdapter implements JsonDeserializer<ImmutableMap<String, ?>>, JsonSerializer<ImmutableMap<String, ?>>
@@ -102,6 +103,7 @@ public class JsonUtils
     @SuppressWarnings({ "serial", "unchecked" })
     private static <E> TypeToken<Map<String, E>> mapOf(final Type arg)
     {
-        return new TypeToken<Map<String, E>>() {}.where(new TypeParameter<E>() {}, (TypeToken<E>) TypeToken.of(arg));
+        return new TypeToken<Map<String, E>>() {}.where(new TypeParameter<>() {
+        }, (TypeToken<E>) TypeToken.of(arg));
     }
 }

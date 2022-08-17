@@ -21,7 +21,6 @@ import net.minecraft.client.resources.ClientPackSource;
 import net.minecraft.client.resources.AssetIndex;
 import net.minecraft.client.resources.DefaultClientPackResources;
 import net.minecraft.data.DataProvider;
-import net.minecraft.data.HashCache;
 import net.minecraft.server.packs.FilePackResources;
 import net.minecraft.server.packs.FolderPackResources;
 import net.minecraft.server.packs.repository.ServerPacksSource;

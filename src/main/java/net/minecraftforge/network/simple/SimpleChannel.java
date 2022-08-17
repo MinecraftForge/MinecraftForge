@@ -47,13 +47,11 @@ public class SimpleChannel
     }
 
     private void networkLoginGather(final NetworkEvent.GatherLoginPayloadsEvent gatherEvent) {
-        loginPackets.forEach(packetGenerator->{
-            packetGenerator.apply(gatherEvent.isLocal()).forEach(p->{
-                FriendlyByteBuf pb = new FriendlyByteBuf(Unpooled.buffer());
-                this.indexedCodec.build(p.getRight(), pb);
-                gatherEvent.add(pb, this.instance.getChannelName(), p.getLeft(), packetsNeedResponse.getOrDefault(p.getRight().getClass(), true));
-            });
-        });
+        loginPackets.forEach(packetGenerator-> packetGenerator.apply(gatherEvent.isLocal()).forEach(p->{
+            FriendlyByteBuf pb = new FriendlyByteBuf(Unpooled.buffer());
+            this.indexedCodec.build(p.getRight(), pb);
+            gatherEvent.add(pb, this.instance.getChannelName(), p.getLeft(), packetsNeedResponse.getOrDefault(p.getRight().getClass(), true));
+        }));
     }
     private void networkEventListener(final NetworkEvent networkEvent)
     {

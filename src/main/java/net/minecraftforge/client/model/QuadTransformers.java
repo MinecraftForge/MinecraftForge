@@ -23,9 +23,7 @@ import java.util.Arrays;
 public final class QuadTransformers {
 
     private static final IQuadTransformer EMPTY = quad -> {};
-    private static final IQuadTransformer[] EMISSIVE_TRANSFORMERS = Util.make(new IQuadTransformer[16], array -> {
-        Arrays.setAll(array, i -> applyingLightmap(LightTexture.pack(i, i)));
-    });
+    private static final IQuadTransformer[] EMISSIVE_TRANSFORMERS = Util.make(new IQuadTransformer[16], array -> Arrays.setAll(array, i -> applyingLightmap(LightTexture.pack(i, i))));
 
     /**
      * {@return a {@link BakedQuad} transformer that does nothing}

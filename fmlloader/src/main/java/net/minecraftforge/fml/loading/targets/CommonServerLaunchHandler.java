@@ -14,7 +14,6 @@ import net.minecraftforge.api.distmarker.Dist;
 
 import java.nio.file.Path;
 import java.util.List;
-import java.util.concurrent.Callable;
 import java.util.function.BiPredicate;
 import java.util.stream.Stream;
 
@@ -25,9 +24,7 @@ public abstract class CommonServerLaunchHandler extends CommonLaunchHandler {
 
     @Override
     public ServiceRunner launchService(String[] arguments, ModuleLayer layer) {
-        return () -> {
-            Class.forName(layer.findModule("minecraft").orElseThrow(),"net.minecraft.server.Main").getMethod("main", String[].class).invoke(null, (Object)arguments);
-        };
+        return () -> Class.forName(layer.findModule("minecraft").orElseThrow(),"net.minecraft.server.Main").getMethod("main", String[].class).invoke(null, (Object)arguments);
     }
 
     @Override
@@ -36,11 +33,9 @@ public abstract class CommonServerLaunchHandler extends CommonLaunchHandler {
         var mc = LibraryFinder.findPathForMaven("net.minecraft", "server", "", "srg", vers.mcAndMCPVersion());
         var mcextra = LibraryFinder.findPathForMaven("net.minecraft", "server", "", "extra", vers.mcAndMCPVersion());
         var mcextra_filtered = SecureJar.from( // We only want it for it's resources. So filter everything else out.
-            (path, base) -> {
-                return path.equals("META-INF/versions/") || // This is required because it bypasses our filter for the manifest, and it's a multi-release jar.
-                     (!path.endsWith(".class") &&
-                      !path.startsWith("META-INF/"));
-            }, mcextra
+            (path, base) -> path.equals("META-INF/versions/") || // This is required because it bypasses our filter for the manifest, and it's a multi-release jar.
+                 (!path.endsWith(".class") &&
+                  !path.startsWith("META-INF/")), mcextra
         );
         BiPredicate<String, String> filter = (path, base) -> true;
 

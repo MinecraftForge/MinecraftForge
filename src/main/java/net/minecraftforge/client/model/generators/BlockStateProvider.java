@@ -479,11 +479,10 @@ public abstract class BlockStateProvider implements DataProvider {
     }
 
     public void fourWayMultipart(MultiPartBlockStateBuilder builder, ModelFile side) {
-        PipeBlock.PROPERTY_BY_DIRECTION.entrySet().forEach(e -> {
-            Direction dir = e.getKey();
+        PipeBlock.PROPERTY_BY_DIRECTION.forEach((dir, value) -> {
             if (dir.getAxis().isHorizontal()) {
                 builder.part().modelFile(side).rotationY((((int) dir.toYRot()) + 180) % 360).uvLock(true).addModel()
-                    .condition(e.getValue(), true);
+                        .condition(value, true);
             }
         });
     }
@@ -693,14 +692,13 @@ public abstract class BlockStateProvider implements DataProvider {
     public void paneBlock(IronBarsBlock block, ModelFile post, ModelFile side, ModelFile sideAlt, ModelFile noSide, ModelFile noSideAlt) {
         MultiPartBlockStateBuilder builder = getMultipartBuilder(block)
             .part().modelFile(post).addModel().end();
-        PipeBlock.PROPERTY_BY_DIRECTION.entrySet().forEach(e -> {
-            Direction dir = e.getKey();
+        PipeBlock.PROPERTY_BY_DIRECTION.forEach((dir, value) -> {
             if (dir.getAxis().isHorizontal()) {
                 boolean alt = dir == Direction.SOUTH;
                 builder.part().modelFile(alt || dir == Direction.WEST ? sideAlt : side).rotationY(dir.getAxis() == Axis.X ? 90 : 0).addModel()
-                    .condition(e.getValue(), true).end()
-                    .part().modelFile(alt || dir == Direction.EAST ? noSideAlt : noSide).rotationY(dir == Direction.WEST ? 270 : dir == Direction.SOUTH ? 90 : 0).addModel()
-                    .condition(e.getValue(), false);
+                        .condition(value, true).end()
+                        .part().modelFile(alt || dir == Direction.EAST ? noSideAlt : noSide).rotationY(dir == Direction.WEST ? 270 : dir == Direction.SOUTH ? 90 : 0).addModel()
+                        .condition(value, false);
             }
         });
     }

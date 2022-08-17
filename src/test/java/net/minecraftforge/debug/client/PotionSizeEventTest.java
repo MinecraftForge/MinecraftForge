@@ -11,7 +11,6 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ScreenEvent;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.loading.FMLEnvironment;
@@ -47,14 +46,8 @@ public class PotionSizeEventTest
 
             final LocalPlayer player = Objects.requireNonNull(Minecraft.getInstance().player);
 
-            if (player.getActiveEffects().size() <= 3)
-            {
-                event.setCompact(true); // Force compact mode for 3 or less active effects
-            }
-            else
-            {
-                event.setCompact(false); // Force classic mode for 4 or more active effects
-            }
+            // Force classic mode for 4 or more active effects
+            event.setCompact(player.getActiveEffects().size() <= 3); // Force compact mode for 3 or less active effects
             if (player.hasEffect(MobEffects.MOVEMENT_SLOWDOWN))
             {
                 event.addHorizontalOffset(20); // Move the effect rendering to the right when slowness is enabled

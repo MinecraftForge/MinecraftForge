@@ -190,7 +190,7 @@ public class ObfuscationReflectionHelper
             }
             desc.append(joiner);
 
-            throw new UnknownConstructorException("Could not find constructor '" + desc.toString() + "' in " + clazz);
+            throw new UnknownConstructorException("Could not find constructor '" + desc + "' in " + clazz);
         }
     }
 

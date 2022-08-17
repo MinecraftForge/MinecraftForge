@@ -412,7 +412,7 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundTag>
         if (shareTagA == null)
             return shareTagB == null;
         else
-            return shareTagB != null && shareTagA.equals(shareTagB);
+            return shareTagA.equals(shareTagB);
     }
 
     /**

@@ -38,9 +38,9 @@ public class LibraryFinder {
         Path srgMcPath = findLibsPath().resolve(MavenCoordinateResolver.get("net.minecraft", type, "", "srg", mcVersion+"-"+mcpVersion));
         Path mcExtrasPath = findLibsPath().resolve(MavenCoordinateResolver.get("net.minecraft", type, "", "extra", mcVersion+"-"+mcpVersion));
         Path patchedBinariesPath = findLibsPath().resolve(MavenCoordinateResolver.get(forgeGroup, "forge", "", type, mcVersion+"-"+forgeVersion));
-        LOGGER.debug(LogMarkers.CORE,"SRG MC at {} is {}", srgMcPath.toString(), pathStatus(srgMcPath));
-        LOGGER.debug(LogMarkers.CORE,"MC Extras at {} is {}", mcExtrasPath.toString(), pathStatus(mcExtrasPath));
-        LOGGER.debug(LogMarkers.CORE,"Forge patches at {} is {}", patchedBinariesPath.toString(), pathStatus(patchedBinariesPath));
+        LOGGER.debug(LogMarkers.CORE,"SRG MC at {} is {}", srgMcPath, pathStatus(srgMcPath));
+        LOGGER.debug(LogMarkers.CORE,"MC Extras at {} is {}", mcExtrasPath, pathStatus(mcExtrasPath));
+        LOGGER.debug(LogMarkers.CORE,"Forge patches at {} is {}", patchedBinariesPath, pathStatus(patchedBinariesPath));
         return new Path[] { patchedBinariesPath, mcExtrasPath, srgMcPath };
     }
 

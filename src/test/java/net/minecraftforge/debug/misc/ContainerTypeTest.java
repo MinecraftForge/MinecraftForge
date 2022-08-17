@@ -126,9 +126,7 @@ public class ContainerTypeTest
                     {
                         return Component.literal("Test");
                     }
-                }, extraData -> {
-                    extraData.writeUtf(text);
-                });
+                }, extraData -> extraData.writeUtf(text));
             }
         }
     }

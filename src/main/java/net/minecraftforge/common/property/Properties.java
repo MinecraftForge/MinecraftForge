@@ -19,5 +19,5 @@ public class Properties
     /**
      * Property holding the IModelState used for animating the model in the TESR.
      */
-    public static final ModelProperty<ModelState> AnimationProperty = new ModelProperty<ModelState>();
+    public static final ModelProperty<ModelState> AnimationProperty = new ModelProperty<>();
 }

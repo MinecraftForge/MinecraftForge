@@ -77,7 +77,7 @@ public class RecipeMatcher
     // This is bad... need to think of a better cascade, recursion instead of stack?
     private static boolean claim(int[] ret, BitSet data, int claimed, int elements)
     {
-        Queue<Integer> pending = new LinkedList<Integer>();
+        Queue<Integer> pending = new LinkedList<>();
         pending.add(claimed);
 
         while (pending.peek() != null)

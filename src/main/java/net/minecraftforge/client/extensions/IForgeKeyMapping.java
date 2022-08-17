@@ -58,10 +58,7 @@ public interface IForgeKeyMapping
     {
         if (getKeyConflictContext().conflicts(other.getKeyConflictContext()) || other.getKeyConflictContext().conflicts(getKeyConflictContext()))
         {
-            if (getKeyModifier().matches(other.getKey()) || other.getKeyModifier().matches(getKey()))
-            {
-                return true;
-            }
+            return getKeyModifier().matches(other.getKey()) || other.getKeyModifier().matches(getKey());
         }
         return false;
     }

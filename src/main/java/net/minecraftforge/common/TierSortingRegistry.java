@@ -160,11 +160,7 @@ public class TierSortingRegistry
         {
             return false;
         }
-        else if (i < 1 && state.is(BlockTags.NEEDS_STONE_TOOL))
-        {
-            return false;
-        }
-        return true;
+        else return i >= 1 || !state.is(BlockTags.NEEDS_STONE_TOOL);
     }
 
     private static void processTier(Tier tier, ResourceLocation name, List<Object> afters, List<Object> befores)

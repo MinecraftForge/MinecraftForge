@@ -42,7 +42,7 @@ public final class RegistryObject<T> implements Supplier<T>
      */
     public static <T, U extends T> RegistryObject<U> create(final ResourceLocation name, IForgeRegistry<T> registry)
     {
-        return new RegistryObject<U>(name, registry);
+        return new RegistryObject<>(name, registry);
     }
 
     /**

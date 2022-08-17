@@ -8,7 +8,7 @@ import java.security.MessageDigest
 import java.text.SimpleDateFormat
 import java.util.Date
 
-public class Util {
+class Util {
 	static void init() {
 		File.metaClass.sha1 = { ->
 			MessageDigest md = MessageDigest.getInstance('SHA-1')
@@ -41,8 +41,8 @@ public class Util {
             return lst
         }
 	}
-	
-	public static String[] getClasspath(project, libs, artifact) {
+
+    static String[] getClasspath(project, libs, artifact) {
 		def ret = []
 		artifactTree(project, artifact).each { key, lib ->
 			libs[lib.name] = lib
@@ -51,8 +51,8 @@ public class Util {
 		}
 		return ret
 	}
-	
-	public static def getArtifacts(project, config, classifiers) {
+
+    static def getArtifacts(project, config, classifiers) {
 		def ret = [:]
 		config.resolvedConfiguration.resolvedArtifacts.each {
 			def art = [
@@ -96,21 +96,21 @@ public class Util {
 		}
 		return ret
 	}
-    
-    public static def getMavenPath(task) {        
+
+    static def getMavenPath(task) {
         def classifier = task.archiveClassifier.get()
         def dep = "${task.project.group}:${task.project.name}:${task.project.version}" + (classifier == '' ? '' : ':' + classifier)
         return "${task.project.group.replace('.', '/')}/${task.project.name}/${task.project.version}/${task.project.name}-${task.project.version}".toString() + (classifier == '' ? '' : '-' + classifier) + '.jar'
     }
-    
-    public static def getMavenDep(task) {        
+
+    static def getMavenDep(task) {
         def classifier = task.archiveClassifier.get()
         return "${task.project.group}:${task.project.name}:${task.project.version}" + (classifier == '' ? '' : ':' + classifier)
     }
 
-	public static def iso8601Now() { new Date().iso8601() }
+    static def iso8601Now() { new Date().iso8601() }
 
-	public static def sha1(file) {
+    static def sha1(file) {
 		MessageDigest md = MessageDigest.getInstance('SHA-1')
 		file.eachByte 4096, {bytes, size ->
 			md.update(bytes, 0, size)

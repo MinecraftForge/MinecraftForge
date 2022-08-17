@@ -77,8 +77,7 @@ public class SlotItemHandler extends Slot
 
         IItemHandler handler = this.getItemHandler();
         ItemStack currentStack = handler.getStackInSlot(index);
-        if (handler instanceof IItemHandlerModifiable) {
-            IItemHandlerModifiable handlerModifiable = (IItemHandlerModifiable) handler;
+        if (handler instanceof IItemHandlerModifiable handlerModifiable) {
 
             handlerModifiable.setStackInSlot(index, ItemStack.EMPTY);
 

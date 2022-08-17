@@ -15,7 +15,6 @@ import com.mojang.serialization.DynamicOps;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
 import net.minecraft.tags.TagKey;
-import net.minecraft.world.level.biome.Biome;
 import net.minecraftforge.common.util.LogMessageAdapter;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
@@ -131,21 +130,21 @@ public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegist
 
     @Override
     public Iterator<V> iterator() {
-        return new Iterator<V>()
-        {
+        return new Iterator<>() {
             int cur = -1;
             V next = null;
-            { next(); }
+
+            {
+                next();
+            }
 
             @Override
-            public boolean hasNext()
-            {
+            public boolean hasNext() {
                 return next != null;
             }
 
             @Override
-            public V next()
-            {
+            public V next() {
                 V ret = next;
                 do {
                     cur = availabilityMap.nextSetBit(cur + 1);
@@ -346,7 +345,7 @@ public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegist
         Integer ret = this.ids.inverse().get(value);
         if (ret == null && this.defaultValue != null)
             ret = this.ids.inverse().get(this.defaultValue);
-        return ret == null ? -1 : ret.intValue();
+        return ret == null ? -1 : ret;
     }
 
     public int getID(ResourceLocation name)
@@ -356,7 +355,7 @@ public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegist
     private int getIDRaw(V value)
     {
         Integer ret = this.ids.inverse().get(value);
-        return ret == null ? -1 : ret.intValue();
+        return ret == null ? -1 : ret;
     }
     private int getIDRaw(ResourceLocation name)
     {
@@ -449,7 +448,7 @@ public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegist
         this.keys.put(rkey, value);
         this.ids.put(idToUse, value);
         this.availabilityMap.set(idToUse);
-        this.owners.put(new OverrideOwner<V>(owner == null ? key.getNamespace() : owner, rkey), value);
+        this.owners.put(new OverrideOwner<>(owner == null ? key.getNamespace() : owner, rkey), value);
 
         if (hasWrapper)
         {
@@ -743,11 +742,11 @@ public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegist
         {
             ResourceKey<V> rkey = this.keys.inverse().remove(value);
             if (rkey == null)
-                throw new IllegalStateException("Removed a entry that did not have an associated RegistryKey: " + key + " " + value.toString() + " This should never happen unless hackery!");
+                throw new IllegalStateException("Removed a entry that did not have an associated RegistryKey: " + key + " " + value + " This should never happen unless hackery!");
 
             Integer id = this.ids.inverse().remove(value);
             if (id == null)
-                throw new IllegalStateException("Removed a entry that did not have an associated id: " + key + " " + value.toString() + " This should never happen unless hackery!");
+                throw new IllegalStateException("Removed a entry that did not have an associated id: " + key + " " + value + " This should never happen unless hackery!");
 
             LOGGER.trace(REGISTRIES,"Registry {} remove: {} {}", this.name, key, id);
         }
@@ -891,7 +890,7 @@ public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegist
             String current = this.owners.inverse().get(this.getRaw(itemName)).owner;
             if (!owner.equals(current))
             {
-                V _new = this.owners.get(new OverrideOwner<V>(owner, ResourceKey.create(this.key, itemName)));
+                V _new = this.owners.get(new OverrideOwner<>(owner, ResourceKey.create(this.key, itemName)));
                 if (_new == null)
                 {
                     LOGGER.warn(REGISTRIES,"Registry {}: Skipping override for {}, Unknown owner {}", this.name, itemName, owner);
@@ -950,11 +949,11 @@ public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegist
 
             ResourceKey<V> rkey = this.keys.inverse().remove(value); // Remove from the RegistryKey -> Value map
             if (rkey == null)
-                throw new IllegalStateException("Removed a entry that did not have an associated RegistryKey: " + key + " " + value.toString() + " This should never happen unless hackery!");
+                throw new IllegalStateException("Removed a entry that did not have an associated RegistryKey: " + key + " " + value + " This should never happen unless hackery!");
 
             Integer oldid = this.ids.inverse().remove(value);
             if (oldid == null)
-                throw new IllegalStateException("Removed a entry that did not have an associated id: " + key + " " + value.toString() + " This should never happen unless hackery!");
+                throw new IllegalStateException("Removed a entry that did not have an associated id: " + key + " " + value + " This should never happen unless hackery!");
 
             if (oldid != id)
                 LOGGER.debug(REGISTRIES,"Registry {}: Dummy ID mismatch {} {} -> {}", this.name, key, oldid, id);

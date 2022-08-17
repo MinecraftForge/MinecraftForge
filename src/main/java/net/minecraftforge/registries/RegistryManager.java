@@ -118,7 +118,7 @@ public class RegistryManager
     {
         if (registries.containsKey(name))
             throw new IllegalArgumentException("Attempted to register a registry for " + name + " but it already exists");
-        ForgeRegistry<V> reg = new ForgeRegistry<V>(this, name, builder);
+        ForgeRegistry<V> reg = new ForgeRegistry<>(this, name, builder);
         registries.put(name, reg);
         if (builder.getSaveToDisc())
             this.persisted.add(name);

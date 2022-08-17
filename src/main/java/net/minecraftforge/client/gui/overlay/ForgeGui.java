@@ -604,7 +604,7 @@ public class ForgeGui extends Gui
     {
         Player player = (Player) minecraft.getCameraEntity();
         Entity tmp = player.getVehicle();
-        if (!(tmp instanceof LivingEntity)) return;
+        if (!(tmp instanceof LivingEntity mount)) return;
 
         bind(GUI_ICONS_LOCATION);
 
@@ -613,7 +613,6 @@ public class ForgeGui extends Gui
 
         minecraft.getProfiler().popPush("mountHealth");
         RenderSystem.enableBlend();
-        LivingEntity mount = (LivingEntity) tmp;
         int health = (int) Math.ceil((double) mount.getHealth());
         float healthMax = mount.getMaxHealth();
         int hearts = (int) (healthMax + 0.5F) / 2;

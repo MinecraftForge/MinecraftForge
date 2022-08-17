@@ -160,7 +160,7 @@ public class ModFileInfo implements IModFileInfo, IConfigurable
                 .findFirst()
                 .map(X509Certificate.class::cast)
                 .map(c->{
-                    StringBuffer sb = new StringBuffer();
+                    StringBuilder sb = new StringBuilder();
                     sb.append(c.getSubjectX500Principal().getName(X500Principal.RFC2253).split(",")[0]);
                     boolean selfSigned = false;
                    try {

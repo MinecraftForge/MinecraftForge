@@ -25,20 +25,15 @@ public class StringSubstitutor
     }
 
     private static StrLookup<String> getStringLookup(final ModFile file) {
-        return new StrLookup<String>()
-        {
+        return new StrLookup<>() {
             @Override
-            public String lookup(String key)
-            {
+            public String lookup(String key) {
                 final String[] parts = key.split("\\.");
                 if (parts.length == 1) return key;
                 final String pfx = parts[0];
-                if ("global".equals(pfx))
-                {
+                if ("global".equals(pfx)) {
                     return globals.get(parts[1]);
-                }
-                else if ("file".equals(pfx) && file != null)
-                {
+                } else if ("file".equals(pfx) && file != null) {
                     return String.valueOf(file.getSubstitutionMap().get().get(parts[1]));
                 }
                 return key;

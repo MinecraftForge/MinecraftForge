@@ -65,9 +65,7 @@ public class LoadingErrorScreen extends ErrorScreen {
         this.addRenderableWidget(new ExtendedButton(50, this.height - yOffset, this.width / 2 - 55, 20, Component.literal(ForgeI18n.parseMessage("fml.button.open.mods.folder")), b -> Util.getPlatform().openFile(modsDir.toFile())));
         this.addRenderableWidget(new ExtendedButton(this.width / 2 + 5, this.height - yOffset, this.width / 2 - 55, 20, Component.literal(ForgeI18n.parseMessage("fml.button.open.file", logFile.getFileName())), b -> Util.getPlatform().openFile(logFile.toFile())));
         if (this.modLoadErrors.isEmpty()) {
-            this.addRenderableWidget(new ExtendedButton(this.width / 4, this.height - 24, this.width / 2, 20, Component.literal(ForgeI18n.parseMessage("fml.button.continue.launch")), b -> {
-                this.minecraft.setScreen(null);
-            }));
+            this.addRenderableWidget(new ExtendedButton(this.width / 4, this.height - 24, this.width / 2, 20, Component.literal(ForgeI18n.parseMessage("fml.button.continue.launch")), b -> this.minecraft.setScreen(null)));
         } else {
             this.addRenderableWidget(new ExtendedButton(this.width / 4, this.height - 24, this.width / 2, 20, Component.literal(ForgeI18n.parseMessage("fml.button.open.file", dumpedLocation.getFileName())), b -> Util.getPlatform().openFile(dumpedLocation.toFile())));
         }

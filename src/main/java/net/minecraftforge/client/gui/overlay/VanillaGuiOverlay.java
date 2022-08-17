@@ -146,18 +146,10 @@ public enum VanillaGuiOverlay
             }
         }
     }),
-    SLEEP_FADE("sleep_fade", (gui, poseStack, partialTick, screenWidth, screenHeight) -> {
-        gui.renderSleepFade(screenWidth, screenHeight, poseStack);
-    }),
-    DEBUG_TEXT("debug_text", (gui, poseStack, partialTick, screenWidth, screenHeight) -> {
-        gui.renderHUDText(screenWidth, screenHeight, poseStack);
-    }),
-    FPS_GRAPH("fps_graph", (gui, poseStack, partialTick, screenWidth, screenHeight) -> {
-        gui.renderFPSGraph(poseStack);
-    }),
-    POTION_ICONS("potion_icons", (gui, poseStack, partialTick, screenWidth, screenHeight) -> {
-        gui.renderEffects(poseStack);
-    }),
+    SLEEP_FADE("sleep_fade", (gui, poseStack, partialTick, screenWidth, screenHeight) -> gui.renderSleepFade(screenWidth, screenHeight, poseStack)),
+    DEBUG_TEXT("debug_text", (gui, poseStack, partialTick, screenWidth, screenHeight) -> gui.renderHUDText(screenWidth, screenHeight, poseStack)),
+    FPS_GRAPH("fps_graph", (gui, poseStack, partialTick, screenWidth, screenHeight) -> gui.renderFPSGraph(poseStack)),
+    POTION_ICONS("potion_icons", (gui, poseStack, partialTick, screenWidth, screenHeight) -> gui.renderEffects(poseStack)),
     RECORD_OVERLAY("record_overlay", (gui, poseStack, partialTick, screenWidth, screenHeight) -> {
         if (!gui.getMinecraft().options.hideGui)
         {

@@ -69,9 +69,7 @@ public class CustomSignsTest
     private void clientSetup(final FMLClientSetupEvent event)
     {
         BlockEntityRenderers.register(CUSTOM_SIGN.get(), SignRenderer::new);
-        event.enqueueWork(() -> {
-           Sheets.addWoodType(TEST_WOOD_TYPE);
-        });
+        event.enqueueWork(() -> Sheets.addWoodType(TEST_WOOD_TYPE));
     }
 
     private void commonSetup(final FMLCommonSetupEvent event)

@@ -98,13 +98,12 @@ public class InvWrapper implements IItemHandlerModifiable
                     copy.grow(stackInSlot.getCount());
                     getInv().setItem(slot, copy);
                     getInv().setChanged();
-                    return stack;
                 }
                 else
                 {
                     stack.shrink(m);
-                    return stack;
                 }
+                return stack;
             }
         }
         else
@@ -121,13 +120,12 @@ public class InvWrapper implements IItemHandlerModifiable
                 {
                     getInv().setItem(slot, stack.split(m));
                     getInv().setChanged();
-                    return stack;
                 }
                 else
                 {
                     stack.shrink(m);
-                    return stack;
                 }
+                return stack;
             }
             else
             {

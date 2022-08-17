@@ -145,7 +145,7 @@ public class ForgeConfigSpecTest
 
         final TestResult result = new TestResult(watchEnabled, watchDisabled);
 
-        System.out.printf("Test result for: %s (Disabled: %s vs. Enabled: %s)%n", testName, watchDisabled.toString(), watchEnabled.toString());
+        System.out.printf("Test result for: %s (Disabled: %s vs. Enabled: %s)%n", testName, watchDisabled, watchEnabled);
         return result;
     }
 

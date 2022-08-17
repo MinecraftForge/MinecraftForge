@@ -180,7 +180,7 @@ public final class ForgeItemTagsProvider extends ItemTagsProvider
             TagKey<Item> tag = getForgeItemTag(prefix + color.getName());
             Item item = ForgeRegistries.ITEMS.getValue(key);
             if (item == null || item  == Items.AIR)
-                throw new IllegalStateException("Unknown vanilla item: " + key.toString());
+                throw new IllegalStateException("Unknown vanilla item: " + key);
             tag(tag).add(item);
             consumer.accept(tag);
         }

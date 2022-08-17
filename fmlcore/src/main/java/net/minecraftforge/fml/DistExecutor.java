@@ -238,9 +238,8 @@ public final class DistExecutor
                 Method m = cl.getDeclaredMethod("writeReplace");
                 m.setAccessible(true);
                 Object replacement = m.invoke(setter);
-                if (!(replacement instanceof SerializedLambda))
+                if (!(replacement instanceof SerializedLambda l))
                     break;// custom interface implementation
-                SerializedLambda l = (SerializedLambda) replacement;
                 if (Objects.equals(l.getCapturingClass(), l.getImplClass())) {
                     LOGGER.fatal("Detected unsafe referent usage, please view the code at {}",Thread.currentThread().getStackTrace()[3]);
                     throw new RuntimeException("Unsafe Referent usage found in safe referent method");

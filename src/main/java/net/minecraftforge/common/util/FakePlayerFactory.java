@@ -28,7 +28,7 @@ public class FakePlayerFactory
         if (ret == null)
         {
             ret = FakePlayerFactory.get(level,  MINECRAFT);
-            MINECRAFT_PLAYER = new WeakReference<FakePlayer>(ret);
+            MINECRAFT_PLAYER = new WeakReference<>(ret);
         }
         return ret;
     }

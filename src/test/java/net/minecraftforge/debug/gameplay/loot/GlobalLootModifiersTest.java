@@ -140,7 +140,7 @@ public class GlobalLootModifiersTest {
         @NotNull
         @Override
         public ObjectArrayList<ItemStack> doApply(ObjectArrayList<ItemStack> generatedLoot, LootContext context) {
-            ObjectArrayList<ItemStack> ret = new ObjectArrayList<ItemStack>();
+            ObjectArrayList<ItemStack> ret = new ObjectArrayList<>();
             generatedLoot.forEach((stack) -> ret.add(smelt(stack, context)));
             return ret;
         }

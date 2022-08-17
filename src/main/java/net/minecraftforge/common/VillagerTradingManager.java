@@ -29,11 +29,10 @@ public class VillagerTradingManager
 
     static
     {
-        VillagerTrades.TRADES.entrySet().forEach(e ->
-        {
+        VillagerTrades.TRADES.forEach((key, value) -> {
             Int2ObjectMap<ItemListing[]> copy = new Int2ObjectOpenHashMap<>();
-            e.getValue().int2ObjectEntrySet().forEach(ent -> copy.put(ent.getIntKey(), Arrays.copyOf(ent.getValue(), ent.getValue().length)));
-            VANILLA_TRADES.put(e.getKey(), copy);
+            value.int2ObjectEntrySet().forEach(ent -> copy.put(ent.getIntKey(), Arrays.copyOf(ent.getValue(), ent.getValue().length)));
+            VANILLA_TRADES.put(key, copy);
         });
         VillagerTrades.WANDERING_TRADER_TRADES.int2ObjectEntrySet().forEach(e -> WANDERER_TRADES.put(e.getIntKey(), Arrays.copyOf(e.getValue(), e.getValue().length)));
     }
@@ -72,9 +71,7 @@ public class VillagerTradingManager
                 mutableTrades.put(i, NonNullList.create());
             }
             trades.int2ObjectEntrySet().forEach(e ->
-            {
-                Arrays.stream(e.getValue()).forEach(mutableTrades.get(e.getIntKey())::add);
-            });
+                    Arrays.stream(e.getValue()).forEach(mutableTrades.get(e.getIntKey())::add));
             MinecraftForge.EVENT_BUS.post(new VillagerTradesEvent(mutableTrades, prof));
             Int2ObjectMap<ItemListing[]> newTrades = new Int2ObjectOpenHashMap<>();
             mutableTrades.int2ObjectEntrySet().forEach(e -> newTrades.put(e.getIntKey(), e.getValue().toArray(new ItemListing[0])));

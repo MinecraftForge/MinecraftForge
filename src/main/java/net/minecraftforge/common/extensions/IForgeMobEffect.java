@@ -26,7 +26,7 @@ public interface IForgeMobEffect
      * @return A list of items that can cure this Potion
      */
     default List<ItemStack> getCurativeItems() {
-       ArrayList<ItemStack> ret = new ArrayList<ItemStack>();
+       ArrayList<ItemStack> ret = new ArrayList<>();
        ret.add(new ItemStack(Items.MILK_BUCKET));
        return ret;
     }

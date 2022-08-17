@@ -7,7 +7,6 @@ package net.minecraftforge.common;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.Random;
 
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.random.WeightedEntry;
@@ -16,7 +15,7 @@ import net.minecraft.world.entity.EntityType;
 
 public class DungeonHooks
 {
-    private static ArrayList<DungeonMob> dungeonMobs = new ArrayList<DungeonMob>();
+    private static ArrayList<DungeonMob> dungeonMobs = new ArrayList<>();
 
     /**
      * Adds a mob to the possible list of creatures the spawner will create.

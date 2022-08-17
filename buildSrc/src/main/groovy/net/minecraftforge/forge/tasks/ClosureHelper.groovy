@@ -2,10 +2,10 @@ package net.minecraftforge.forge.tasks
 
 import java.util.function.BiConsumer
 
-public class ClosureHelper {
+class ClosureHelper {
     BiConsumer<String, Closure> callback
-    
-    public ClosureHelper(Closure cl, BiConsumer<String, Closure> callback) {
+
+    ClosureHelper(Closure cl, BiConsumer<String, Closure> callback) {
         this.callback = callback
         apply(this, cl)
     }

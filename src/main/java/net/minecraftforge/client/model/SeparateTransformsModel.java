@@ -78,9 +78,7 @@ public class SeparateTransformsModel implements IUnbakedGeometry<SeparateTransfo
                 context.useAmbientOcclusion(), context.isGui3d(), context.useBlockLight(),
                 spriteGetter.apply(context.getMaterial("particle")), overrides,
                 baseModel.bake(bakery, baseModel, spriteGetter, modelState, modelLocation, context.useBlockLight()),
-                ImmutableMap.copyOf(Maps.transformValues(perspectives, value -> {
-                    return value.bake(bakery, value, spriteGetter, modelState, modelLocation, context.useBlockLight());
-                }))
+                ImmutableMap.copyOf(Maps.transformValues(perspectives, value -> value.bake(bakery, value, spriteGetter, modelState, modelLocation, context.useBlockLight())))
         );
     }
 

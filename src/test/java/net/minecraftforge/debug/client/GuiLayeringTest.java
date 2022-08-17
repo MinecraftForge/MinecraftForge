@@ -32,12 +32,8 @@ public class GuiLayeringTest
         {
             if (event.getScreen() instanceof AbstractContainerScreen)
             {
-                event.addListener(new Button(2, 2, 150, 20, Component.literal("Test Gui Layering"), btn -> {
-                    Minecraft.getInstance().pushGuiLayer(new TestLayer(Component.literal("LayerScreen")));
-                }));
-                event.addListener(new Button(2, 25, 150, 20, Component.literal("Test Gui Normal"), btn -> {
-                    Minecraft.getInstance().setScreen(new TestLayer(Component.literal("LayerScreen")));
-                }));
+                event.addListener(new Button(2, 2, 150, 20, Component.literal("Test Gui Layering"), btn -> Minecraft.getInstance().pushGuiLayer(new TestLayer(Component.literal("LayerScreen")))));
+                event.addListener(new Button(2, 25, 150, 20, Component.literal("Test Gui Normal"), btn -> Minecraft.getInstance().setScreen(new TestLayer(Component.literal("LayerScreen")))));
             }
         }
 

@@ -22,7 +22,7 @@ public class ForgeTimings<T>
 
     public ForgeTimings(T object, int[] rawTimingData)
     {
-        this.object = new WeakReference<T>(object);
+        this.object = new WeakReference<>(object);
         this.rawTimingData = rawTimingData;
     }
 

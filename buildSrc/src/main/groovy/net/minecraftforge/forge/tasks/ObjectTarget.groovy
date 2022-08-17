@@ -7,7 +7,7 @@ import org.gradle.api.tasks.Nested
 import org.gradle.api.tasks.Optional
 
 @EqualsAndHashCode
-public class ObjectTarget implements Comparable<ObjectTarget> {
+class ObjectTarget implements Comparable<ObjectTarget> {
     @Input
     String owner
     

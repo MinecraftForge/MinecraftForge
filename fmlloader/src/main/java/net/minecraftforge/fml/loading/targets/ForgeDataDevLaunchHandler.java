@@ -8,8 +8,6 @@ package net.minecraftforge.fml.loading.targets;
 import cpw.mods.modlauncher.api.ServiceRunner;
 import net.minecraftforge.api.distmarker.Dist;
 
-import java.util.concurrent.Callable;
-
 public class ForgeDataDevLaunchHandler extends CommonDevLaunchHandler {
     @Override public String name() { return "forgedatadev"; }
     @Override public Dist getDist() { return Dist.CLIENT; }

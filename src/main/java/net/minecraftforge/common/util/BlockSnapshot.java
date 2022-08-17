@@ -53,7 +53,7 @@ public class BlockSnapshot
         this.level = new WeakReference<>(level);
 
         if (DEBUG)
-            System.out.println("Created " + this.toString());
+            System.out.println("Created " + this);
     }
 
     public static BlockSnapshot create(ResourceKey<Level> dim, LevelAccessor world, BlockPos pos)
@@ -85,7 +85,7 @@ public class BlockSnapshot
         if (world == null)
         {
             world = ServerLifecycleHooks.getCurrentServer().getLevel(this.dim);
-            this.level = new WeakReference<LevelAccessor>(world);
+            this.level = new WeakReference<>(world);
         }
         return world;
     }
@@ -147,7 +147,7 @@ public class BlockSnapshot
         }
 
         if (DEBUG)
-            System.out.println("Restored " + this.toString());
+            System.out.println("Restored " + this);
         return true;
     }
 

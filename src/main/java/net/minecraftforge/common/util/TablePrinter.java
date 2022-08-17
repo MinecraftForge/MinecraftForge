@@ -90,8 +90,7 @@ public class TablePrinter<T>
                 count[x] = Math.max(count[x], this.headers.get(x).supplier.apply(row).length() + 2);
         }
 
-        for (int x = 0; x < count.length; x++)
-            width += count[x] + 3;
+        for (int i : count) width += i + 3;
 
         line(buf, width);
         // Add the headers

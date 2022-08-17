@@ -226,13 +226,9 @@ public class ServerLifecycleHooks
 
         // Apply sorted biome modifiers to each biome.
         registries.registryOrThrow(Registry.BIOME_REGISTRY).holders().forEach(biomeHolder ->
-        {
-            biomeHolder.value().modifiableBiomeInfo().applyBiomeModifiers(biomeHolder, biomeModifiers);
-        });
+                biomeHolder.value().modifiableBiomeInfo().applyBiomeModifiers(biomeHolder, biomeModifiers));
         // Apply sorted structure modifiers to each structure.
         registries.registryOrThrow(Registry.STRUCTURE_REGISTRY).holders().forEach(structureHolder ->
-        {
-            structureHolder.value().modifiableStructureInfo().applyStructureModifiers(structureHolder, structureModifiers);
-        });
+                structureHolder.value().modifiableStructureInfo().applyStructureModifiers(structureHolder, structureModifiers));
     }
 }

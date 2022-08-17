@@ -14,8 +14,6 @@ import net.minecraftforge.forgespi.language.IModInfo;
 import net.minecraftforge.forgespi.language.ModFileScanData;
 import org.slf4j.Logger;
 
-import java.util.Objects;
-
 import static net.minecraftforge.fml.loading.LogMarkers.LOADING;
 
 public class LowCodeModContainer extends ModContainer

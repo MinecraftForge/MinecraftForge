@@ -188,20 +188,20 @@ public class GameData
     public static <T> MappedRegistry<T> getWrapper(ResourceKey<? extends Registry<T>> key, Lifecycle lifecycle)
     {
         IForgeRegistry<T> reg = RegistryManager.ACTIVE.getRegistry(key);
-        Validate.notNull(reg, "Attempted to get vanilla wrapper for unknown registry: " + key.toString());
+        Validate.notNull(reg, "Attempted to get vanilla wrapper for unknown registry: " + key);
         @SuppressWarnings("unchecked")
         MappedRegistry<T> ret = reg.getSlaveMap(NamespacedWrapper.Factory.ID, NamespacedWrapper.class);
-        Validate.notNull(ret, "Attempted to get vanilla wrapper for registry created incorrectly: " + key.toString());
+        Validate.notNull(ret, "Attempted to get vanilla wrapper for registry created incorrectly: " + key);
         return ret;
     }
 
     public static <T> DefaultedRegistry<T> getWrapper(ResourceKey<? extends Registry<T>> key, Lifecycle lifecycle, String defKey)
     {
         IForgeRegistry<T> reg = RegistryManager.ACTIVE.getRegistry(key);
-        Validate.notNull(reg, "Attempted to get vanilla wrapper for unknown registry: " + key.toString());
+        Validate.notNull(reg, "Attempted to get vanilla wrapper for unknown registry: " + key);
         @SuppressWarnings("unchecked")
         DefaultedRegistry<T> ret = reg.getSlaveMap(NamespacedDefaultedWrapper.Factory.ID, NamespacedDefaultedWrapper.class);
-        Validate.notNull(ret, "Attempted to get vanilla wrapper for registry created incorrectly: " + key.toString());
+        Validate.notNull(ret, "Attempted to get vanilla wrapper for registry created incorrectly: " + key);
         return ret;
     }
 
@@ -426,17 +426,15 @@ public class GameData
         @Override
         public void onCreate(IForgeRegistryInternal<Block> owner, RegistryManager stage)
         {
-            final ClearableObjectIntIdentityMap<BlockState> idMap = new ClearableObjectIntIdentityMap<BlockState>()
-            {
+            final ClearableObjectIntIdentityMap<BlockState> idMap = new ClearableObjectIntIdentityMap<>() {
                 @Override
-                public int getId(BlockState key)
-                {
-                    Integer integer = (Integer)this.tToId.get(key);
+                public int getId(BlockState key) {
+                    Integer integer = (Integer) this.tToId.get(key);
                     // There are some cases where this map is queried to serialize a state that is valid,
                     //but somehow not in this list, so attempt to get real metadata. Doing this hear saves us 7 patches
                     //if (integer == null && key != null)
                     //    integer = this.identityMap.get(key.getBlock().getStateFromMeta(key.getBlock().getMetaFromState(key)));
-                    return integer == null ? -1 : integer.intValue();
+                    return integer == null ? -1 : integer;
                 }
             };
             owner.setSlaveMap(BLOCKSTATE_TO_ID, idMap);
@@ -670,32 +668,30 @@ public class GameData
         });
 
         snapshot.forEach((key, value) ->
-        {
-            value.dummied.forEach(dummy ->
-            {
-                Map<ResourceLocation, Integer> m = missing.get(key);
-                ForgeRegistry<?> reg = STAGING.getRegistry(key);
+                value.dummied.forEach(dummy ->
+                {
+                    Map<ResourceLocation, Integer> m = missing.get(key);
+                    ForgeRegistry<?> reg = STAGING.getRegistry(key);
 
-                // Currently missing locally, we just inject and carry on
-                if (m.containsKey(dummy))
-                {
-                    if (reg.markDummy(dummy, m.get(dummy)))
-                        m.remove(dummy);
-                }
-                else if (isLocalWorld)
-                {
-                   LOGGER.debug(REGISTRIES,"Registry {}: Resuscitating dummy entry {}", key, dummy);
-                }
-                else
-                {
-                    // The server believes this is a dummy block identity, but we seem to have one locally. This is likely a conflict
-                    // in mod setup - Mark this entry as a dummy
-                    int id = reg.getID(dummy);
-                    LOGGER.warn(REGISTRIES, "Registry {}: The ID {} @ {} is currently locally mapped - it will be replaced with a dummy for this session", dummy, key, id);
-                    reg.markDummy(dummy, id);
-                }
-            });
-        });
+                    // Currently missing locally, we just inject and carry on
+                    if (m.containsKey(dummy))
+                    {
+                        if (reg.markDummy(dummy, m.get(dummy)))
+                            m.remove(dummy);
+                    }
+                    else if (isLocalWorld)
+                    {
+                       LOGGER.debug(REGISTRIES,"Registry {}: Resuscitating dummy entry {}", key, dummy);
+                    }
+                    else
+                    {
+                        // The server believes this is a dummy block identity, but we seem to have one locally. This is likely a conflict
+                        // in mod setup - Mark this entry as a dummy
+                        int id = reg.getID(dummy);
+                        LOGGER.warn(REGISTRIES, "Registry {}: The ID {} @ {} is currently locally mapped - it will be replaced with a dummy for this session", dummy, key, id);
+                        reg.markDummy(dummy, id);
+                    }
+                }));
 
         int count = missing.values().stream().mapToInt(Map::size).sum();
         if (count > 0)
@@ -775,9 +771,7 @@ public class GameData
             // If we're loading up the world from disk, we want to add in the new data that might have been provisioned by mods
             // So we load it from the frozen persistent registry
             RegistryManager.ACTIVE.registries.forEach((name, reg) ->
-            {
-                loadFrozenDataToStagingRegistry(STAGING, name, remaps.get(name));
-            });
+                    loadFrozenDataToStagingRegistry(STAGING, name, remaps.get(name)));
         }
 
         // Validate that all the STAGING data is good
@@ -786,9 +780,7 @@ public class GameData
         // Load the STAGING registry into the ACTIVE registry
         //for (Map.Entry<ResourceLocation, IForgeRegistry<?>>> r : RegistryManager.ACTIVE.registries.entrySet())
         RegistryManager.ACTIVE.registries.forEach((key, value) ->
-        {
-            loadRegistry(key, STAGING, RegistryManager.ACTIVE, true);
-        });
+                loadRegistry(key, STAGING, RegistryManager.ACTIVE, true));
 
         RegistryManager.ACTIVE.registries.forEach((name, reg) -> {
             reg.bake();

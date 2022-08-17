@@ -42,8 +42,7 @@ public class HexDumper
     public static String dump(byte[] data, int marker)
     {
         Instance inst = new Instance(marker, data.length);
-        for (int x = 0; x < data.length; x++)
-            inst.add(data[x]);
+        for (byte datum : data) inst.add(datum);
         return inst.finish();
     }
 

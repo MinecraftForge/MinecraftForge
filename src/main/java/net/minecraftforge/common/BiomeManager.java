@@ -13,8 +13,6 @@ import java.util.List;
 
 import com.google.common.collect.ImmutableList;
 
-import net.minecraft.util.random.WeightedRandom;
-import net.minecraft.world.entity.ai.behavior.ShufflingList;
 import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.biome.Biome;
@@ -92,7 +90,7 @@ public class BiomeManager
     {
         int idx = type.ordinal();
         List<BiomeEntry> list = idx > biomes.length ? null : biomes[idx];
-        return list == null ? false : list.remove(entry);
+        return list != null && list.remove(entry);
     }
 
     /**
@@ -114,7 +112,7 @@ public class BiomeManager
     {
         int idx = type.ordinal();
         TrackedList<BiomeEntry> list = idx > biomes.length ? null : biomes[idx];
-        return list == null ? false : list.isModded();
+        return list != null && list.isModded();
     }
 
     public static enum BiomeType

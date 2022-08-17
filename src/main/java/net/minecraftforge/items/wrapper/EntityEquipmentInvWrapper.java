@@ -41,7 +41,7 @@ public abstract class EntityEquipmentInvWrapper implements IItemHandlerModifiabl
     {
         this.entity = entity;
 
-        final List<EquipmentSlot> slots = new ArrayList<EquipmentSlot>();
+        final List<EquipmentSlot> slots = new ArrayList<>();
 
         for (final EquipmentSlot slot : EquipmentSlot.values())
         {

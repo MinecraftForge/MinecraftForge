@@ -222,7 +222,7 @@ public class CraftingHelper
         ResourceLocation type = new ResourceLocation(GsonHelper.getAsString(json, "type"));
         IConditionSerializer<?> serializer = conditions.get(type);
         if (serializer == null)
-            throw new JsonSyntaxException("Unknown condition type: " + type.toString());
+            throw new JsonSyntaxException("Unknown condition type: " + type);
         return serializer.read(json);
     }
 

@@ -43,7 +43,7 @@ public class ChunkGenWorker implements IWorker
 
     protected Queue<BlockPos> buildQueue()
     {
-        Queue<BlockPos> ret = new ArrayDeque<BlockPos>();
+        Queue<BlockPos> ret = new ArrayDeque<>();
         ret.add(start);
 
         //This *should* spiral outwards, starting on right side, down, left, up, right, but hey we'll see!

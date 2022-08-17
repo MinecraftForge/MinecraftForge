@@ -333,21 +333,21 @@ public class ForgeEventFactory
     public static InteractionResultHolder<ItemStack> onBucketUse(@NotNull Player player, @NotNull Level level, @NotNull ItemStack stack, @Nullable HitResult target)
     {
         FillBucketEvent event = new FillBucketEvent(player, stack, level, target);
-        if (MinecraftForge.EVENT_BUS.post(event)) return new InteractionResultHolder<ItemStack>(InteractionResult.FAIL, stack);
+        if (MinecraftForge.EVENT_BUS.post(event)) return new InteractionResultHolder<>(InteractionResult.FAIL, stack);
 
         if (event.getResult() == Result.ALLOW)
         {
             if (player.getAbilities().instabuild)
-                return new InteractionResultHolder<ItemStack>(InteractionResult.SUCCESS, stack);
+                return new InteractionResultHolder<>(InteractionResult.SUCCESS, stack);
 
             stack.shrink(1);
             if (stack.isEmpty())
-                return new InteractionResultHolder<ItemStack>(InteractionResult.SUCCESS, event.getFilledBucket());
+                return new InteractionResultHolder<>(InteractionResult.SUCCESS, event.getFilledBucket());
 
             if (!player.getInventory().add(event.getFilledBucket()))
                 player.drop(event.getFilledBucket(), false);
 
-            return new InteractionResultHolder<ItemStack>(InteractionResult.SUCCESS, stack);
+            return new InteractionResultHolder<>(InteractionResult.SUCCESS, stack);
         }
         return null;
     }
@@ -501,7 +501,7 @@ public class ForgeEventFactory
     @Nullable
     public static <T extends ICapabilityProvider> CapabilityDispatcher gatherCapabilities(Class<? extends T> type, T provider, @Nullable ICapabilityProvider parent)
     {
-        return gatherCapabilities(new AttachCapabilitiesEvent<T>((Class<T>) type, provider), parent);
+        return gatherCapabilities(new AttachCapabilitiesEvent<>((Class<T>) type, provider), parent);
     }
 
     @Nullable
@@ -544,7 +544,7 @@ public class ForgeEventFactory
     {
         ArrowNockEvent event = new ArrowNockEvent(player, item, hand, level, hasAmmo);
         if (MinecraftForge.EVENT_BUS.post(event))
-            return new InteractionResultHolder<ItemStack>(InteractionResult.FAIL, item);
+            return new InteractionResultHolder<>(InteractionResult.FAIL, item);
         return event.getAction();
     }
 

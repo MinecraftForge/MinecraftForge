@@ -14,7 +14,7 @@ import net.minecraft.core.NonNullList;
 
 public class BrewingRecipeRegistry {
 
-    private static List<IBrewingRecipe> recipes = new ArrayList<IBrewingRecipe>();
+    private static List<IBrewingRecipe> recipes = new ArrayList<>();
 
     static
     {

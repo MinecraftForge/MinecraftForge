@@ -13,7 +13,6 @@ import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.locale.Language;
 import net.minecraftforge.network.ConnectionType;
 import net.minecraftforge.network.NetworkHooks;
-import org.spongepowered.asm.mixin.Mutable;
 
 import java.util.Locale;
 
@@ -36,9 +35,8 @@ public class TextComponentHelper
 
     private static boolean isVanillaClient(CommandSource sender)
     {
-        if (sender instanceof ServerPlayer)
+        if (sender instanceof ServerPlayer playerMP)
         {
-            ServerPlayer playerMP = (ServerPlayer) sender;
             ServerGamePacketListenerImpl channel = playerMP.connection;
             return NetworkHooks.getConnectionType(()->channel.connection) == ConnectionType.VANILLA;
         }

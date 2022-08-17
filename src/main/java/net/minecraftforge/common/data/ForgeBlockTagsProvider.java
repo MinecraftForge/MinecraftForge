@@ -112,7 +112,7 @@ public final class ForgeBlockTagsProvider extends BlockTagsProvider
             TagKey<Block> tag = getForgeTag(prefix + color.getName());
             Block block = ForgeRegistries.BLOCKS.getValue(key);
             if (block == null || block  == Blocks.AIR)
-                throw new IllegalStateException("Unknown vanilla block: " + key.toString());
+                throw new IllegalStateException("Unknown vanilla block: " + key);
             tag(tag).add(block);
             consumer.accept(block);
         }

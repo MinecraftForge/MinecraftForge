@@ -9,7 +9,6 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.util.RandomSource;
 
 import java.util.Optional;
-import java.util.Random;
 import java.util.stream.Stream;
 
 /**

@@ -61,7 +61,7 @@ public class KeyMappingLookup
 
     public List<KeyMapping> getAll(InputConstants.Key keyCode)
     {
-        List<KeyMapping> matchingBindings = new ArrayList<KeyMapping>();
+        List<KeyMapping> matchingBindings = new ArrayList<>();
         for (Map<InputConstants.Key, Collection<KeyMapping>> bindingsMap : map.values())
         {
             Collection<KeyMapping> bindings = bindingsMap.get(keyCode);
@@ -77,12 +77,7 @@ public class KeyMappingLookup
     {
         KeyModifier keyModifier = keyBinding.getKeyModifier();
         Map<InputConstants.Key, Collection<KeyMapping>> bindingsMap = map.get(keyModifier);
-        Collection<KeyMapping> bindingsForKey = bindingsMap.get(keyCode);
-        if (bindingsForKey == null)
-        {
-            bindingsForKey = new ArrayList<KeyMapping>();
-            bindingsMap.put(keyCode, bindingsForKey);
-        }
+        Collection<KeyMapping> bindingsForKey = bindingsMap.computeIfAbsent(keyCode, k -> new ArrayList<>());
         bindingsForKey.add(keyBinding);
     }
 

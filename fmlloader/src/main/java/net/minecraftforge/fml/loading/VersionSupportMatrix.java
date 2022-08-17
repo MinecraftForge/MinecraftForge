@@ -32,6 +32,6 @@ public class VersionSupportMatrix {
     public static <T> boolean testVersionSupportMatrix(VersionRange declaredRange, String lookupId, String type, BiPredicate<String, VersionRange> standardLookup) {
         if (standardLookup.test(lookupId, declaredRange)) return true;
         List<ArtifactVersion> custom = overrideVersions.get(type +"." +lookupId);
-        return custom == null ? false  : custom.stream().anyMatch(declaredRange::containsVersion);
+        return custom != null && custom.stream().anyMatch(declaredRange::containsVersion);
     }
 }

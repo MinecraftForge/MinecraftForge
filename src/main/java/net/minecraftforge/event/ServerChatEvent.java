@@ -17,7 +17,6 @@ import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.LogicalSide;
 import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * This event is fired whenever a {@link ServerboundChatPreviewPacket} or {@link ServerboundChatPacket} is received.

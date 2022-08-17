@@ -225,7 +225,7 @@ class NamespacedDefaultedWrapper<T> extends DefaultedRegistry<T> implements ILoc
         public void onCreate(IForgeRegistryInternal<V> owner, RegistryManager stage)
         {
             ForgeRegistry<V> fowner = (ForgeRegistry<V>)owner;
-            owner.setSlaveMap(ID, new NamespacedDefaultedWrapper<V>(fowner, fowner.getBuilder().getVanillaHolder()));
+            owner.setSlaveMap(ID, new NamespacedDefaultedWrapper<>(fowner, fowner.getBuilder().getVanillaHolder()));
         }
 
         @Override

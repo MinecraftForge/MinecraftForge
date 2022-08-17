@@ -70,7 +70,7 @@ abstract class FieldCompareFinder extends BytecodeFinder {
     }
     
     @EqualsAndHashCode(excludes = ['replacement', 'blacklist'])
-    public static class Search {
+    static class Search {
         @Input
         String cls
         

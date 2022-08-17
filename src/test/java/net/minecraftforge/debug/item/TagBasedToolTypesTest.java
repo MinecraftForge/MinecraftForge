@@ -71,30 +71,28 @@ public class TagBasedToolTypesTest
     @SuppressWarnings("unused")
     private static final RegistryObject<Item> ORE_ITEM = ITEMS.register(STONE.getId().getPath(), () -> new BlockItem(STONE.get(), (new Item.Properties()).tab(CreativeModeTab.TAB_BUILDING_BLOCKS)));
     private static final RegistryObject<Item> TOOL = ITEMS.register("test_tool", () ->
-    {
-        return new DiggerItem(1, 1, MY_TIER, MINEABLE_TAG, new Item.Properties().tab(CreativeModeTab.TAB_TOOLS))
-        {
-            @Override
-            public float getDestroySpeed(ItemStack stack, BlockState state)
+            new DiggerItem(1, 1, MY_TIER, MINEABLE_TAG, new Item.Properties().tab(CreativeModeTab.TAB_TOOLS))
             {
-                if (state.is(BlockTags.MINEABLE_WITH_AXE)) return speed;
-                if (state.is(BlockTags.MINEABLE_WITH_PICKAXE)) return speed;
-                return super.getDestroySpeed(stack, state);
-            }
+                @Override
+                public float getDestroySpeed(ItemStack stack, BlockState state)
+                {
+                    if (state.is(BlockTags.MINEABLE_WITH_AXE)) return speed;
+                    if (state.is(BlockTags.MINEABLE_WITH_PICKAXE)) return speed;
+                    return super.getDestroySpeed(stack, state);
+                }
 
-            @Override
-            public boolean isCorrectToolForDrops(ItemStack stack, BlockState state)
-            {
-                if (state.is(BlockTags.MINEABLE_WITH_PICKAXE))
-                    return TierSortingRegistry.isCorrectTierForDrops(Tiers.WOOD, state);
-                if (state.is(BlockTags.MINEABLE_WITH_AXE))
-                    return TierSortingRegistry.isCorrectTierForDrops(MY_TIER, state);
-                if (state.is(MINEABLE_TAG))
-                    return TierSortingRegistry.isCorrectTierForDrops(MY_TIER, state);
-                return false;
-            }
-        };
-    });
+                @Override
+                public boolean isCorrectToolForDrops(ItemStack stack, BlockState state)
+                {
+                    if (state.is(BlockTags.MINEABLE_WITH_PICKAXE))
+                        return TierSortingRegistry.isCorrectTierForDrops(Tiers.WOOD, state);
+                    if (state.is(BlockTags.MINEABLE_WITH_AXE))
+                        return TierSortingRegistry.isCorrectTierForDrops(MY_TIER, state);
+                    if (state.is(MINEABLE_TAG))
+                        return TierSortingRegistry.isCorrectTierForDrops(MY_TIER, state);
+                    return false;
+                }
+            });
 
     public TagBasedToolTypesTest()
     {
@@ -132,23 +130,21 @@ public class TagBasedToolTypesTest
             protected List<Pair<Supplier<Consumer<BiConsumer<ResourceLocation, LootTable.Builder>>>, LootContextParamSet>> getTables()
             {
                 return ImmutableList.of(Pair.of(() ->
-                {
-                    return new BlockLoot()
-                    {
-
-                        @Override
-                        protected Iterable<Block> getKnownBlocks()
+                        new BlockLoot()
                         {
-                            return BLOCKS.getEntries().stream().map(Supplier::get).collect(Collectors.toList());
-                        }
 
-                        @Override
-                        protected void addTables()
-                        {
-                            this.dropSelf(STONE.get());
-                        }
-                    };
-                }, LootContextParamSets.BLOCK));
+                            @Override
+                            protected Iterable<Block> getKnownBlocks()
+                            {
+                                return BLOCKS.getEntries().stream().map(Supplier::get).collect(Collectors.toList());
+                            }
+
+                            @Override
+                            protected void addTables()
+                            {
+                                this.dropSelf(STONE.get());
+                            }
+                        }, LootContextParamSets.BLOCK));
             }
         });
 

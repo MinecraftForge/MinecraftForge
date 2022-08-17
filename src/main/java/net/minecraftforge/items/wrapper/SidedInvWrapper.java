@@ -127,13 +127,12 @@ public class SidedInvWrapper implements IItemHandlerModifiable
                     ItemStack copy = stack.split(m);
                     copy.grow(stackInSlot.getCount());
                     setInventorySlotContents(slot1, copy);
-                    return stack;
                 }
                 else
                 {
                     stack.shrink(m);
-                    return stack;
                 }
+                return stack;
             }
         }
         else
@@ -149,13 +148,12 @@ public class SidedInvWrapper implements IItemHandlerModifiable
                 if (!simulate)
                 {
                     setInventorySlotContents(slot1, stack.split(m));
-                    return stack;
                 }
                 else
                 {
                     stack.shrink(m);
-                    return stack;
                 }
+                return stack;
             }
             else
             {
@@ -233,6 +231,6 @@ public class SidedInvWrapper implements IItemHandlerModifiable
     public boolean isItemValid(int slot, @NotNull ItemStack stack)
     {
         int slot1 = getSlot(inv, slot, side);
-        return slot1 == -1 ? false : inv.canPlaceItem(slot1, stack);
+        return slot1 != -1 && inv.canPlaceItem(slot1, stack);
     }
 }

@@ -122,11 +122,9 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
 
     private void resetCaches(final Iterable<Object> configValues) {
         configValues.forEach(value -> {
-            if (value instanceof ConfigValue) {
-                final ConfigValue<?> configValue = (ConfigValue<?>) value;
+            if (value instanceof final ConfigValue<?> configValue) {
                 configValue.clearCache();
-            } else if (value instanceof Config) {
-                final Config innerConfig = (Config) value;
+            } else if (value instanceof final Config innerConfig) {
                 this.resetCaches(innerConfig.valueMap().values());
             }
         });
@@ -265,10 +263,8 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
 
     private boolean stringsMatchIgnoringNewlines(@Nullable Object obj1, @Nullable Object obj2)
     {
-        if(obj1 instanceof String && obj2 instanceof String)
+        if(obj1 instanceof String string1 && obj2 instanceof String string2)
         {
-            String string1 = (String) obj1;
-            String string2 = (String) obj2;
 
             if(string1.length() > 0 && string2.length() > 0)
             {
@@ -339,7 +335,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         public <V extends Comparable<? super V>> ConfigValue<V> defineInRange(List<String> path, Supplier<V> defaultSupplier, V min, V max, Class<V> clazz) {
             Range<V> range = new Range<>(clazz, min, max);
             context.setRange(range);
-            context.setComment(ObjectArrays.concat(context.getComment(), "Range: " + range.toString()));
+            context.setComment(ObjectArrays.concat(context.getComment(), "Range: " + range));
             if (min.compareTo(max) > 0)
                 throw new IllegalArgumentException("Range min most be less then max.");
             return define(path, defaultSupplier, range);
@@ -483,7 +479,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
             context.setClazz(clazz);
             V[] allowedValues = clazz.getEnumConstants();
             context.setComment(ObjectArrays.concat(context.getComment(), "Allowed Values: " + Arrays.stream(allowedValues).filter(validator).map(Enum::name).collect(Collectors.joining(", "))));
-            return new EnumValue<V>(this, define(path, new ValueSpec(defaultSupplier, validator, context), defaultSupplier).getPath(), defaultSupplier, converter, clazz);
+            return new EnumValue<>(this, define(path, new ValueSpec(defaultSupplier, validator, context), defaultSupplier).getPath(), defaultSupplier, converter, clazz);
         }
 
         //boolean
@@ -587,11 +583,11 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
             currentPath.addAll(path);
             checkComment(currentPath);
             if (context.hasComment()) {
-                levelComments.put(new ArrayList<String>(currentPath), context.buildComment());
+                levelComments.put(new ArrayList<>(currentPath), context.buildComment());
                 context.setComment(); // Set to empty
             }
             if (context.getTranslationKey() != null) {
-                levelTranslationKeys.put(new ArrayList<String>(currentPath), context.getTranslationKey());
+                levelTranslationKeys.put(new ArrayList<>(currentPath), context.getTranslationKey());
                 context.setTranslationKey(null);
             }
             context.ensureEmpty();

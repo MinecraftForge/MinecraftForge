@@ -21,7 +21,7 @@ abstract class CheckPatches extends DefaultTask {
                 Paths.get("patches/minecraft/net/minecraft/data/models/blockstates/Variant.java.patch")
         ]
 
-        def verified = true;
+        def verified = true
         patchDir.get().asFileTree.each { patch ->
             def patchPath = project.rootDir.toPath().relativize(patch.toPath())
             verified &= verifyPatch(patch, autoFix, patchPath.toString(), hasS2SArtifact.contains(patchPath))
@@ -41,7 +41,7 @@ abstract class CheckPatches extends DefaultTask {
 
         def accessMap = [("private"):0, (null):1, ("protected"):2, ("public"):3]
 
-        def hasProblem = false;
+        def hasProblem = false
         def lines = patch.readLines()
 
         def hunksStart = 0
@@ -64,7 +64,7 @@ abstract class CheckPatches extends DefaultTask {
                 if (onlyWhiteSpace) {
                     if (fix || hasS2SArtifact) {
                         logger.lifecycle("Removing white space hunk starting at line {}, file: {}", hunksStart + 1, patchPath)
-                        def toRemove = i - hunksStart;
+                        def toRemove = i - hunksStart
                         while (toRemove-- > 0)
                             newLines.remove(newLines.size() - 1)
                         didFix = true
@@ -184,7 +184,7 @@ abstract class CheckPatches extends DefaultTask {
         if (onlyWhiteSpace) {
             if (fix || hasS2SArtifact) {
                 logger.lifecycle("Removing white space hunk starting at line {}, file: {}", hunksStart + 1, patchPath)
-                def toRemove = i - hunksStart;
+                def toRemove = i - hunksStart
                 while (toRemove-- > 0)
                     newLines.remove(newLines.size() - 1)
                 didFix = true

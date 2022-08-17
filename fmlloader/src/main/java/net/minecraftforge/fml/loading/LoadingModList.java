@@ -113,12 +113,13 @@ public class LoadingModList
         } else {
             resourceName = resName;
         }
-        return new Enumeration<URL>() {
+        return new Enumeration<>() {
             private final Iterator<ModFileInfo> modFileIterator = modFiles.iterator();
             private URL next;
+
             @Override
             public boolean hasMoreElements() {
-                if (next!=null) return true;
+                if (next != null) return true;
                 next = findNextURL();
                 return next != null;
             }
@@ -139,7 +140,7 @@ public class LoadingModList
                     final ModFileInfo next = modFileIterator.next();
                     final Path resource = next.getFile().findResource(resourceName);
                     if (Files.exists(resource)) {
-                        return LamdbaExceptionUtils.uncheck(()->new URL("modjar://" + next.getMods().get(0).getModId() + "/" + resourceName));
+                        return LamdbaExceptionUtils.uncheck(() -> new URL("modjar://" + next.getMods().get(0).getModId() + "/" + resourceName));
                     }
                 }
                 return null;

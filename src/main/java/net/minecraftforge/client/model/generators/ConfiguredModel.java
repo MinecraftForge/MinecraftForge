@@ -157,7 +157,7 @@ public final class ConfiguredModel {
     }
 
     static Builder<PartBuilder> builder(MultiPartBlockStateBuilder outer) {
-        return new Builder<PartBuilder>(models -> {
+        return new Builder<>(models -> {
             PartBuilder ret = outer.new PartBuilder(new BlockStateProvider.ConfiguredModelList(models));
             outer.addPart(ret);
             return ret;

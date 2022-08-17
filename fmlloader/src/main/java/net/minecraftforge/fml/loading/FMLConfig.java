@@ -47,7 +47,7 @@ public class FMLConfig
         }
         catch (ParsingException e)
         {
-            throw new RuntimeException("Failed to load FML config from " + configFile.toString(), e);
+            throw new RuntimeException("Failed to load FML config from " + configFile, e);
         }
         if (!configSpec.isCorrect(configData)) {
             LOGGER.warn(CORE, "Configuration file {} is not correct. Correcting", configFile);

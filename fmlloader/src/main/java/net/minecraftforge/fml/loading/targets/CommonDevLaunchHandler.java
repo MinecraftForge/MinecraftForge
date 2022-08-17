@@ -57,7 +57,7 @@ public abstract class CommonDevLaunchHandler extends CommonLaunchHandler {
         String username = args.get("username");
         if (username != null) { // Replace '#' placeholders with random numbers
             Matcher m = Pattern.compile("#+").matcher(username);
-            StringBuffer replaced = new StringBuffer();
+            StringBuilder replaced = new StringBuilder();
             while (m.find()) {
                 m.appendReplacement(replaced, getRandomNumbers(m.group().length()));
             }

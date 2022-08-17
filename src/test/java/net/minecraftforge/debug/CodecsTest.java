@@ -42,24 +42,16 @@ public class CodecsTest
         CompoundTag noTag_write = noTag.writeToNBT(new CompoundTag());
         CompoundTag withTag_write = withTag.writeToNBT(new CompoundTag());
 
-        CompoundTag noTag_encode = (CompoundTag)FluidStack.CODEC.encodeStart(NbtOps.INSTANCE, noTag).getOrThrow(false, error -> {
-            LOGGER.error("Error encoding noTag: {}", error);
-        });
-        CompoundTag withTag_encode = (CompoundTag)FluidStack.CODEC.encodeStart(NbtOps.INSTANCE, withTag).getOrThrow(false, error -> {
-            LOGGER.error("Error encoding withTag: {}", error);
-        });
+        CompoundTag noTag_encode = (CompoundTag)FluidStack.CODEC.encodeStart(NbtOps.INSTANCE, noTag).getOrThrow(false, error -> LOGGER.error("Error encoding noTag: {}", error));
+        CompoundTag withTag_encode = (CompoundTag)FluidStack.CODEC.encodeStart(NbtOps.INSTANCE, withTag).getOrThrow(false, error -> LOGGER.error("Error encoding withTag: {}", error));
 
         if (!noTag_write.equals(noTag_encode))
             throw new IllegalStateException("Encoded noTag does not match");
         if (!withTag_write.equals(withTag_encode))
             throw new IllegalStateException("Encoded withTag does not match");
 
-        FluidStack noTag_decode = FluidStack.CODEC.decode(NbtOps.INSTANCE, noTag_encode).getOrThrow(false, error -> {
-            LOGGER.error("Error decoding noTag: {}", error);
-        }).getFirst();
-        FluidStack withTag_decode = FluidStack.CODEC.decode(NbtOps.INSTANCE, withTag_encode).getOrThrow(false, error -> {
-            LOGGER.error("Error decoding withTag: {}", error);
-        }).getFirst();
+        FluidStack noTag_decode = FluidStack.CODEC.decode(NbtOps.INSTANCE, noTag_encode).getOrThrow(false, error -> LOGGER.error("Error decoding noTag: {}", error)).getFirst();
+        FluidStack withTag_decode = FluidStack.CODEC.decode(NbtOps.INSTANCE, withTag_encode).getOrThrow(false, error -> LOGGER.error("Error decoding withTag: {}", error)).getFirst();
 
         if (!noTag.equals(noTag_decode))
             throw new IllegalStateException("Decoded noTag does not match");
