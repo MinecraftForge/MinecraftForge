@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) Forge Development LLC and contributors
+ * SPDX-License-Identifier: LGPL-2.1-only
+ */
+
 package net.minecraftforge.common.capabilities;
 
 import net.minecraftforge.energy.IEnergyStorage;
@@ -10,7 +15,7 @@ import static net.minecraftforge.common.capabilities.CapabilityManager.get;
 /*
  * References to  Forge's built in capabilities.
  * Modders are recommended to use their own CapabilityTokens for 3rd party caps to maintain soft dependencies.
- * But, people complained so we expose this as API.
+ * However, since nobody has a soft dependency on Forge, so we expose this as API.
  */
 public class ForgeCapabilities
 {
