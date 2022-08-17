@@ -135,7 +135,7 @@ public class IndexedMessageCodec
     }
 
     void consume(FriendlyByteBuf payload, int payloadIndex, Supplier<NetworkEvent.Context> context) {
-        if (payload == null) {
+        if (payload == null || !payload.isReadable()) {
             LOGGER.error(SIMPLENET, "Received empty payload on channel {}", Optional.ofNullable(networkInstance).map(NetworkInstance::getChannelName).map(Objects::toString).orElse("MISSING CHANNEL"));
             if (!HandshakeHandler.packetNeedsResponse(context.get().getNetworkManager(), payloadIndex))
             {

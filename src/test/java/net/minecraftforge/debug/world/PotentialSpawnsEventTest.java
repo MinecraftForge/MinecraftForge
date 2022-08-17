@@ -14,7 +14,7 @@ import net.minecraftforge.event.level.LevelEvent;
 import net.minecraftforge.fml.common.Mod;
 
 /**
- * <p>This tests net.minecraftforge.event.world.World.WorldEvent.PotentialSpawns. If ENABLED is set to true,
+ * <p>This tests net.minecraftforge.event.world.World.LevelEvent.PotentialSpawns. If ENABLED is set to true,
  * this test mod uses the PotentialSpawns event to prevent mobs in the MONSTER mob category from spawning if the
  * game difficulty is set to anything other than hard.</p>
  */

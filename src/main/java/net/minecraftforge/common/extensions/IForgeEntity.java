@@ -12,6 +12,7 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.entity.Entity;
@@ -409,5 +410,18 @@ public interface IForgeEntity extends ICapabilitySerializable<CompoundTag>
     default SoundEvent getSoundFromFluidType(FluidType type, SoundAction action)
     {
         return type.getSound(self(), action);
+    }
+
+    /**
+     * Returns whether this {@link Entity} has custom outline rendering behavior which does
+     * not use the existing automatic outline rendering based on {@link Entity#isCurrentlyGlowing()}
+     * and the entity's team color.
+     *
+     * @param player the local player currently viewing this {@code Entity}
+     * @return {@code true} to enable outline processing
+     */
+    default boolean hasCustomOutlineRendering(Player player)
+    {
+        return false;
     }
 }

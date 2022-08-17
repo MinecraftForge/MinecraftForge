@@ -2,7 +2,7 @@
 +++ b/net/minecraft/client/Minecraft.java
 @@ -244,7 +_,7 @@
  import org.slf4j.Logger;
- 
+
  @OnlyIn(Dist.CLIENT)
 -public class Minecraft extends ReentrantBlockableEventLoop<Runnable> implements WindowEventHandler {
 +public class Minecraft extends ReentrantBlockableEventLoop<Runnable> implements WindowEventHandler, net.minecraftforge.client.extensions.IForgeMinecraft {
@@ -27,7 +27,7 @@
        this.f_91034_ = !p_91084_.f_101908_.f_101929_;
        this.f_91035_ = !p_91084_.f_101908_.f_101930_;
 @@ -458,7 +_,7 @@
- 
+
        this.f_90990_.m_85380_(this.f_91066_.m_232035_().m_231551_());
        this.f_91067_ = new MouseHandler(this);
 -      this.f_91067_.m_91524_(this.f_90990_.m_85439_());
@@ -70,7 +70,7 @@
 @@ -541,6 +_,20 @@
           TinyFileDialogs.tinyfd_messageBox("Minecraft", stringbuilder.toString(), "ok", "error", false);
        }
- 
+
 +      net.minecraftforge.gametest.ForgeGameTestHooks.registerGametests();
 +      net.minecraftforge.fml.ModLoader.get().postEvent(new net.minecraftforge.client.event.RegisterClientReloadListenersEvent(this.f_91036_));
 +      net.minecraftforge.fml.ModLoader.get().postEvent(new net.minecraftforge.client.event.EntityRenderersEvent.RegisterLayerDefinitions());
@@ -83,14 +83,14 @@
 +      net.minecraftforge.client.gui.overlay.GuiOverlayManager.init();
 +      net.minecraftforge.client.DimensionSpecialEffectsManager.init();
 +      net.minecraftforge.client.NamedRenderTypeManager.init();
-+      net.minecraftforge.client.ItemDecoratorHandler.init();
++      net.minecraftforge.client.ColorResolverManager.init();
 +
        this.f_90990_.m_85409_(this.f_91066_.m_231817_().m_231551_());
        this.f_90990_.m_85424_(this.f_91066_.m_232123_().m_231551_());
        this.f_90990_.m_85426_();
 @@ -563,23 +_,23 @@
              }
- 
+
              this.f_167847_.m_168556_();
 +            if (net.minecraftforge.client.loading.ClientModLoader.completeModLoading()) return; // Do not overwrite the error screen
 +            // FORGE: Move opening initial screen to after startup and events are enabled.
@@ -124,11 +124,11 @@
 -      } else {
 -         this.m_91152_(new TitleScreen(true));
 -      }
- 
+
     }
- 
+
 @@ -622,6 +_,8 @@
- 
+
     private UserApiService m_193585_(YggdrasilAuthenticationService p_193586_, GameConfig p_193587_) {
        try {
 +         if ("0".equals(p_193587_.f_101905_.f_101942_.m_92547_())) // Forge: We use "0" in dev. Short circuit to stop exception spam.
@@ -138,7 +138,7 @@
           f_90982_.error("Failed to verify authentication", (Throwable)authenticationexception);
 @@ -634,7 +_,7 @@
     }
- 
+
     private void m_91239_(Throwable p_91240_) {
 -      if (this.f_91038_.m_10523_().size() > 1) {
 +      if (this.f_91038_.m_10524_().stream().anyMatch(e -> !e.m_10449_())) { //Forge: This caused infinite loop if any resource packs are forced. Such as mod resources. So check if we can disable any.
@@ -160,12 +160,12 @@
 -         System.exit(-2);
 +         net.minecraftforge.server.ServerLifecycleHooks.handleExit(-2);
        }
- 
+
     }
 @@ -922,10 +_,6 @@
           f_90982_.error("setScreen called from non-game thread");
        }
- 
+
 -      if (this.f_91080_ != null) {
 -         this.f_91080_.m_7861_();
 -      }
@@ -176,7 +176,7 @@
 @@ -936,6 +_,19 @@
           }
        }
- 
+
 +      net.minecraftforge.client.ForgeHooksClient.clearGuiLayers(this);
 +      Screen old = this.f_91080_;
 +      if (p_91153_ != null) {
@@ -206,7 +206,7 @@
           this.f_91026_.m_7238_();
 +         net.minecraftforge.event.ForgeEventFactory.onRenderTickEnd(this.realPartialTick);
        }
- 
+
        if (this.f_91056_ != null) {
 @@ -1210,10 +_,12 @@
        this.f_90990_.m_85378_((double)i);
@@ -214,7 +214,7 @@
           this.f_91080_.m_6574_(this, this.f_90990_.m_85445_(), this.f_90990_.m_85446_());
 +         net.minecraftforge.client.ForgeHooksClient.resizeGuiLayers(this, this.f_90990_.m_85445_(), this.f_90990_.m_85446_());
        }
- 
+
        RenderTarget rendertarget = this.m_91385_();
        rendertarget.m_83941_(this.f_90990_.m_85441_(), this.f_90990_.m_85442_(), f_91002_);
 +      if (this.f_91063_ != null)
@@ -223,12 +223,12 @@
     }
 @@ -1491,6 +_,7 @@
     }
- 
+
     public void m_91395_() {
 +      if (this.m_91396_()) net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.GameShuttingDownEvent());
        this.f_91019_ = false;
     }
- 
+
 @@ -1520,10 +_,18 @@
           if (p_91387_ && this.f_91077_ != null && this.f_91077_.m_6662_() == HitResult.Type.BLOCK) {
              BlockHitResult blockhitresult = (BlockHitResult)this.f_91077_;
@@ -276,18 +276,18 @@
                       flag = true;
 @@ -1568,8 +_,10 @@
                 }
- 
+
                 this.f_91074_.m_36334_();
 +               net.minecraftforge.common.ForgeHooks.onEmptyLeftClick(this.f_91074_);
           }
- 
+
 +         if (inputEvent.shouldSwingHand())
           this.f_91074_.m_6674_(InteractionHand.MAIN_HAND);
           return flag;
        }
 @@ -1584,6 +_,11 @@
              }
- 
+
              for(InteractionHand interactionhand : InteractionHand.values()) {
 +               var inputEvent = net.minecraftforge.client.ForgeHooksClient.onClickInput(1, this.f_91066_.f_92095_, interactionhand);
 +               if (inputEvent.isCanceled()) {
@@ -300,19 +300,19 @@
 @@ -1594,13 +_,14 @@
                             return;
                          }
- 
+
 +                        if(!this.f_91074_.canInteractWith(entityhitresult.m_82443_(), 0)) return; //Forge: Entity may be traced via attack range, but the player may not have sufficient reach.  No padding in client code.
                          InteractionResult interactionresult = this.f_91072_.m_105230_(this.f_91074_, entity, entityhitresult, interactionhand);
                          if (!interactionresult.m_19077_()) {
                             interactionresult = this.f_91072_.m_105226_(this.f_91074_, entity, interactionhand);
                          }
- 
+
                          if (interactionresult.m_19077_()) {
 -                           if (interactionresult.m_19080_()) {
 +                           if (interactionresult.m_19080_() && inputEvent.shouldSwingHand()) {
                                this.f_91074_.m_6674_(interactionhand);
                             }
- 
+
 @@ -1612,7 +_,7 @@
                          int i = itemstack.m_41613_();
                          InteractionResult interactionresult1 = this.f_91072_.m_233732_(this.f_91074_, interactionhand, blockhitresult);
@@ -325,7 +325,7 @@
 @@ -1628,6 +_,9 @@
                    }
                 }
- 
+
 +               if (itemstack.m_41619_() && (this.f_91077_ == null || this.f_91077_.m_6662_() == HitResult.Type.MISS))
 +                  net.minecraftforge.common.ForgeHooks.onEmptyClick(this.f_91074_, interactionhand);
 +
@@ -335,7 +335,7 @@
 @@ -1654,6 +_,8 @@
           --this.f_91011_;
        }
- 
+
 +      net.minecraftforge.event.ForgeEventFactory.onPreClientTick();
 +
        this.f_91026_.m_6180_("gui");
@@ -348,11 +348,11 @@
 +
 +      net.minecraftforge.event.ForgeEventFactory.onPostClientTick();
     }
- 
+
     private boolean m_91278_() {
 @@ -1978,6 +_,7 @@
     }
- 
+
     public void m_91156_(ClientLevel p_91157_) {
 +      if (f_91073_ != null) net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.level.LevelEvent.Unload(f_91073_));
        ProgressScreen progressscreen = new ProgressScreen(true);
@@ -370,7 +370,7 @@
 +         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.level.LevelEvent.Unload(f_91073_));
           if (integratedserver != null) {
              this.f_91026_.m_6180_("waitForServer");
- 
+
 @@ -2029,6 +_,7 @@
           this.f_91065_.m_93089_();
           this.f_91008_ = null;
@@ -378,9 +378,9 @@
 +         net.minecraftforge.client.ForgeHooksClient.handleClientLevelClosing(f_91073_);
           this.f_91004_.m_90740_();
        }
- 
+
 @@ -2124,6 +_,7 @@
- 
+
     private void m_91280_() {
        if (this.f_91077_ != null && this.f_91077_.m_6662_() != HitResult.Type.MISS) {
 +         if (net.minecraftforge.client.ForgeHooksClient.onClickInput(2, this.f_91066_.f_92097_, InteractionHand.MAIN_HAND).isCanceled()) return;
@@ -389,19 +389,19 @@
           HitResult.Type hitresult$type = this.f_91077_.m_6662_();
 @@ -2136,10 +_,7 @@
              }
- 
+
              Block block = blockstate.m_60734_();
 -            itemstack = block.m_7397_(this.f_91073_, blockpos, blockstate);
 -            if (itemstack.m_41619_()) {
 -               return;
 -            }
 +            itemstack = blockstate.getCloneItemStack(this.f_91077_, this.f_91073_, blockpos, this.f_91074_);
- 
+
              if (flag && Screen.m_96637_() && blockstate.m_155947_()) {
                 blockentity = this.f_91073_.m_7702_(blockpos);
 @@ -2150,7 +_,7 @@
              }
- 
+
              Entity entity = ((EntityHitResult)this.f_91077_).m_82443_();
 -            itemstack = entity.m_142340_();
 +            itemstack = entity.getPickedResult(this.f_91077_);
@@ -411,7 +411,7 @@
 @@ -2688,8 +_,8 @@
        return this.f_90993_;
     }
- 
+
 -   private static Pack m_167933_(String p_167934_, Component p_167935_, boolean p_167936_, Supplier<PackResources> p_167937_, PackMetadataSection p_167938_, Pack.Position p_167939_, PackSource p_167940_) {
 -      int i = p_167938_.m_10374_();
 +   private static Pack createClientPackAdapter(String p_167934_, Component p_167935_, boolean p_167936_, Supplier<PackResources> p_167937_, PackMetadataSection p_167938_, Pack.Position p_167939_, PackSource p_167940_, boolean hidden) {
@@ -422,14 +422,14 @@
 @@ -2699,7 +_,7 @@
           supplier = m_91352_(supplier);
        }
- 
+
 -      return new Pack(p_167934_, p_167935_, p_167936_, supplier, p_167938_, PackType.CLIENT_RESOURCES, p_167939_, p_167940_);
 +      return new Pack(p_167934_, p_167935_, p_167936_, supplier, p_167938_, PackType.CLIENT_RESOURCES, p_167939_, p_167940_, hidden);
     }
- 
+
     private static Supplier<PackResources> m_91330_(Supplier<PackResources> p_91331_) {
 @@ -2716,6 +_,19 @@
- 
+
     public void m_91312_(int p_91313_) {
        this.f_91051_.m_119410_(p_91313_);
 +   }
@@ -446,5 +446,5 @@
 +   public float getPartialTick() {
 +      return realPartialTick;
     }
- 
+
     public EntityModelSet m_167973_() {

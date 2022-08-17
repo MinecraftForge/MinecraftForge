@@ -131,7 +131,7 @@ public class LevelEvent extends Event
      *
      * <p>If an entry is added to the list, it needs to be a globally unique instance.</p>
      *
-     * The event is called in {@link net.minecraft.world.level.NaturalSpawner#getRandomSpawnMobAt(ServerLevel,
+     * The event is called in {@link net.minecraft.world.level.NaturalSpawner#mobsAt(ServerLevel,
      * StructureManager, ChunkGenerator, MobCategory, RandomSource, BlockPos)}.</p>
      * 
      * <p>This event is {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}.

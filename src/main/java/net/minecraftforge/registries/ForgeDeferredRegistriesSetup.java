@@ -26,6 +26,7 @@ public class ForgeDeferredRegistriesSetup
         ForgeRegistries.DEFERRED_BIOME_MODIFIERS.register(modEventBus);
         ForgeRegistries.DEFERRED_STRUCTURE_MODIFIER_SERIALIZERS.register(modEventBus);
         ForgeRegistries.DEFERRED_STRUCTURE_MODIFIERS.register(modEventBus);
+        ForgeRegistries.DEFERRED_HOLDER_SET_TYPES.register(modEventBus);
 
         setup = true;
     }

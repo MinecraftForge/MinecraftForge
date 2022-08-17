@@ -25,12 +25,16 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.Lifecycle;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.ResourceLocationException;
 import net.minecraft.advancements.Advancement;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.Commands;
+import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.core.*;
 import net.minecraft.network.chat.*;
 import net.minecraft.network.chat.contents.LiteralContents;
@@ -145,6 +149,8 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.ForgeRegistry;
 import net.minecraftforge.registries.GameData;
 import net.minecraftforge.registries.RegistryManager;
+import net.minecraftforge.registries.holdersets.ICustomHolderSet;
+import net.minecraftforge.server.permission.PermissionAPI;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -152,6 +158,7 @@ import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
 import net.minecraft.ChatFormatting;
+import net.minecraft.resources.HolderSetCodec;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.damagesource.DamageSource;
@@ -1487,5 +1494,14 @@ public class ForgeHooks
     public static String prefixNamespace(ResourceLocation registryKey)
     {
         return registryKey.getNamespace().equals("minecraft") ? registryKey.getPath() : registryKey.getNamespace() +  "/"  + registryKey.getPath();
+    }
+
+    public static boolean canUseEntitySelectors(SharedSuggestionProvider provider)
+    {
+        if (provider instanceof CommandSourceStack source && source.getEntity() instanceof ServerPlayer player)
+        {
+            return PermissionAPI.getPermission(player, ForgeMod.USE_SELECTORS_PERMISSION);
+        }
+        return provider.hasPermission(Commands.LEVEL_GAMEMASTERS);
     }
 }
