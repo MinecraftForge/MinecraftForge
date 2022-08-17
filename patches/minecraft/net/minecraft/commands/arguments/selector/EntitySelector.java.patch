@@ -1,0 +1,11 @@
+--- a/net/minecraft/commands/arguments/selector/EntitySelector.java
++++ b/net/minecraft/commands/arguments/selector/EntitySelector.java
+@@ -87,7 +_,7 @@
+    }
+ 
+    private void m_121168_(CommandSourceStack p_121169_) throws CommandSyntaxException {
+-      if (this.f_121123_ && !p_121169_.m_6761_(2)) {
++      if (this.f_121123_ && !net.minecraftforge.common.ForgeHooks.canUseEntitySelectors(p_121169_)) {
+          throw EntityArgument.f_91441_.create();
+       }
+    }

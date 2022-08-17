@@ -1,0 +1,14 @@
+--- a/net/minecraft/client/gui/screens/inventory/InventoryScreen.java
++++ b/net/minecraft/client/gui/screens/inventory/InventoryScreen.java
+@@ -100,6 +_,11 @@
+    public static void m_98850_(int p_98851_, int p_98852_, int p_98853_, float p_98854_, float p_98855_, LivingEntity p_98856_) {
+       float f = (float)Math.atan((double)(p_98854_ / 40.0F));
+       float f1 = (float)Math.atan((double)(p_98855_ / 40.0F));
++      renderEntityInInventoryRaw(p_98851_, p_98852_, p_98853_, f, f1, p_98856_);
++   }
++   public static void renderEntityInInventoryRaw(int p_98851_, int p_98852_, int p_98853_, float angleXComponent, float angleYComponent, LivingEntity p_98856_) {
++      float f = angleXComponent;
++      float f1 = angleYComponent;
+       PoseStack posestack = RenderSystem.m_157191_();
+       posestack.m_85836_();
+       posestack.m_85837_((double)p_98851_, (double)p_98852_, 1050.0D);

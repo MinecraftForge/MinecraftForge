@@ -1,0 +1,11 @@
+--- a/net/minecraft/commands/arguments/MessageArgument.java
++++ b/net/minecraft/commands/arguments/MessageArgument.java
+@@ -134,7 +_,7 @@
+       }
+ 
+       Component m_232196_(CommandSourceStack p_232197_) throws CommandSyntaxException {
+-         return this.m_96849_(p_232197_, p_232197_.m_6761_(2));
++         return this.m_96849_(p_232197_, net.minecraftforge.common.ForgeHooks.canUseEntitySelectors(p_232197_));
+       }
+ 
+       public Component m_96849_(CommandSourceStack p_96850_, boolean p_96851_) throws CommandSyntaxException {

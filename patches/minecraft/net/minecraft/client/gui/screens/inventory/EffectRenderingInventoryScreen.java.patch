@@ -1,12 +1,13 @@
 --- a/net/minecraft/client/gui/screens/inventory/EffectRenderingInventoryScreen.java
 +++ b/net/minecraft/client/gui/screens/inventory/EffectRenderingInventoryScreen.java
-@@ -42,12 +_,16 @@
+@@ -42,12 +_,17 @@
        if (!collection.isEmpty() && j >= 32) {
           RenderSystem.m_157429_(1.0F, 1.0F, 1.0F, 1.0F);
           boolean flag = j >= 120;
-+         var event = net.minecraftforge.client.ForgeHooksClient.onScreenPotionSize(this, j, !flag);
-+         if (event == 0) return; // 0 = cancel rendering
-+         flag = event == 2; // 2 = full-size / 1 = compact
++         var event = net.minecraftforge.client.ForgeHooksClient.onScreenPotionSize(this, j, !flag, i);
++         if (event.isCanceled()) return;
++         flag = !event.isCompact();
++         i = event.getHorizontalOffset();
           int k = 33;
           if (collection.size() > 5) {
              k = 132 / (collection.size() - 1);
