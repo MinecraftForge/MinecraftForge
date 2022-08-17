@@ -106,16 +106,17 @@ public class UniqueModListBuilder
         if (modInfoList.size() > 1) {
             LOGGER.debug("Found {} mods for first modid {}, selecting most recent based on version data", modInfoList.size(), fullList.getKey());
             modInfoList.sort(Comparator.comparing(this::getVersion).reversed());
-            LOGGER.debug("Selected file {} for modid {} with version {}", modInfoList.get(0).getFileName(), fullList.getKey(), modInfoList.get(0).getModInfos().get(0).getVersion());
+            LOGGER.debug("Selected file {} for modid {} with version {}", modInfoList.get(0).getFileName(), fullList.getKey(), this.getVersion(modInfoList.get(0)));
         }
         return modInfoList.get(0);
     }
 
     private ArtifactVersion getVersion(final ModFile mf)
     {
-        if (mf.getModFileInfo() == null) {
+        if (mf.getModFileInfo() == null || mf.getModInfos() == null || mf.getModInfos().isEmpty()) {
             return mf.getJarVersion();
         }
+
         return mf.getModInfos().get(0).getVersion();
     }
 

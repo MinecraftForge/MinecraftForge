@@ -1,0 +1,20 @@
+--- a/net/minecraft/util/datafix/schemas/V2832.java
++++ b/net/minecraft/util/datafix/schemas/V2832.java
+@@ -19,7 +_,7 @@
+          return DSL.fields("Level", DSL.optionalFields("Entities", DSL.list(References.f_16785_.in(p_185234_)), "TileEntities", DSL.list(DSL.or(References.f_16781_.in(p_185234_), DSL.remainder())), "TileTicks", DSL.list(DSL.fields("i", References.f_16787_.in(p_185234_))), "Sections", DSL.list(DSL.optionalFields("biomes", DSL.optionalFields("palette", DSL.list(References.f_16794_.in(p_185234_))), "block_states", DSL.optionalFields("palette", DSL.list(References.f_16783_.in(p_185234_))))), "Structures", DSL.optionalFields("Starts", DSL.compoundList(References.f_16790_.in(p_185234_)))));
+       });
+       p_185234_.registerType(false, References.f_16795_, () -> {
+-         return DSL.fields("dimensions", DSL.compoundList(DSL.constType(m_17310_()), DSL.fields("generator", DSL.taggedChoiceLazy("type", DSL.string(), ImmutableMap.of("minecraft:debug", DSL::remainder, "minecraft:flat", () -> {
++         return DSL.fields("dimensions", DSL.compoundList(DSL.constType(m_17310_()), DSL.fields("generator", DSL.or(DSL.taggedChoiceLazy("type", DSL.string(), ImmutableMap.of("minecraft:debug", DSL::remainder, "minecraft:flat", () -> {
+             return DSL.optionalFields("settings", DSL.optionalFields("biome", References.f_16794_.in(p_185234_), "layers", DSL.list(DSL.optionalFields("block", References.f_16787_.in(p_185234_)))));
+          }, "minecraft:noise", () -> {
+             return DSL.optionalFields("biome_source", DSL.taggedChoiceLazy("type", DSL.string(), ImmutableMap.of("minecraft:fixed", () -> {
+@@ -29,7 +_,7 @@
+             }, "minecraft:checkerboard", () -> {
+                return DSL.fields("biomes", DSL.list(References.f_16794_.in(p_185234_)));
+             }, "minecraft:the_end", DSL::remainder)), "settings", DSL.or(DSL.constType(DSL.string()), DSL.optionalFields("default_block", References.f_16787_.in(p_185234_), "default_fluid", References.f_16787_.in(p_185234_))));
+-         })))));
++         })), DSL.remainder()))));
+       });
+    }
+ }

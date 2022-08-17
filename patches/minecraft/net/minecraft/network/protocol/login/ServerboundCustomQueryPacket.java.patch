@@ -10,3 +10,12 @@
     private static final int f_179821_ = 1048576;
     private final int f_134825_;
     @Nullable
+@@ -46,4 +_,8 @@
+    public FriendlyByteBuf m_179825_() {
+       return this.f_134826_;
+    }
++
++   @Override public int getIndex() { return m_179824_(); }
++   @Override public net.minecraft.resources.ResourceLocation getName() { return net.minecraftforge.network.LoginWrapper.WRAPPER; }
++   @org.jetbrains.annotations.Nullable @Override public FriendlyByteBuf getInternalData() { return m_179825_(); }
+ }

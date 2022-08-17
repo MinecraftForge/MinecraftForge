@@ -13,6 +13,7 @@ import net.minecraftforge.network.event.EventNetworkChannel;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.ApiStatus;
 
 /**
  * Wrapper for custom login packets. Transforms unnamed login channel messages into channels dispatched the same
@@ -21,7 +22,8 @@ import org.apache.logging.log4j.Logger;
 public class LoginWrapper
 {
     private static final Logger LOGGER = LogManager.getLogger();
-    static final ResourceLocation WRAPPER = new ResourceLocation("fml:loginwrapper");
+    @ApiStatus.Internal
+    public static final ResourceLocation WRAPPER = new ResourceLocation("fml:loginwrapper");
     private EventNetworkChannel wrapperChannel;
 
     LoginWrapper() {
