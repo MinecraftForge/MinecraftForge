@@ -27,7 +27,7 @@ public abstract class GrindstoneEvent extends Event
     /**
      * @return The item in the top input grindstone slot. <br>
      */
-    public ItemStack getTop()
+    public ItemStack getTopItem()
     {
         return top;
     }
@@ -35,7 +35,7 @@ public abstract class GrindstoneEvent extends Event
     /**
      * @return The item in the bottom input grindstone slot. <br>
      */
-    public ItemStack getBottom()
+    public ItemStack getBottomItem()
     {
         return bottom;
     }
@@ -62,6 +62,7 @@ public abstract class GrindstoneEvent extends Event
     }
 
     /**
+     * This event is {@link Cancelable} <br>
      * {@link OnplaceItem} is fired when the inputs to a grindstone are changed. <br>
      * It is called from {@link GrindstoneMenu#createResult()}. <br>
      * If the event is canceled, vanilla behavior will not run, and the output will be set to {@link ItemStack#EMPTY}. <br>
@@ -74,7 +75,8 @@ public abstract class GrindstoneEvent extends Event
     {
         private ItemStack output;
 
-        public OnplaceItem(ItemStack top, ItemStack bottom, int xp) {
+        public OnplaceItem(ItemStack top, ItemStack bottom, int xp)
+        {
             super(top, bottom, xp);
             this.output = ItemStack.EMPTY;
         }
@@ -102,6 +104,7 @@ public abstract class GrindstoneEvent extends Event
     }
 
     /**
+     * This event is {@link Cancelable} <br>
      * {@link OnTakeItem} is fired when the output in a grindstone are is taken. <br>
      * It is called from {@link GrindstoneMenu#GrindstoneMenu(int, Inventory)}. <br>
      * If the event is canceled, vanilla behavior will not run, and the input items will not be consumed. <br>
@@ -113,21 +116,24 @@ public abstract class GrindstoneEvent extends Event
         private ItemStack newTop = ItemStack.EMPTY;
         private ItemStack newBottom = ItemStack.EMPTY;
 
-        public OnTakeItem(ItemStack top, ItemStack bottom, int xp) {
+        public OnTakeItem(ItemStack top, ItemStack bottom, int xp)
+        {
             super(top, bottom, xp);
         }
 
         /**
          * @return The item in that will be in the top input grindstone slot after the event. <br>
          */
-        public ItemStack getNewTop() {
+        public ItemStack getNewTopItem()
+        {
             return newTop;
         }
 
         /**
          * @return The item in that will be in the bottom input grindstone slot after the event. <br>
          */
-        public ItemStack getNewBottom() {
+        public ItemStack getNewBottomItem()
+        {
             return newBottom;
         }
 
@@ -135,7 +141,8 @@ public abstract class GrindstoneEvent extends Event
          * Sets the itemstack in the top slot. <br>
          * @param newTop
          */
-        public void setNewTop(ItemStack newTop) {
+        public void setNewTopItem(ItemStack newTop)
+        {
             this.newTop = newTop;
         }
 
@@ -143,8 +150,18 @@ public abstract class GrindstoneEvent extends Event
          * Sets the itemstack in the bottom slot. <br>
          * @param newBottom
          */
-        public void setNewBottom(ItemStack newBottom) {
+        public void setNewBottomItem(ItemStack newBottom)
+        {
             this.newBottom = newBottom;
+        }
+
+        /**
+         * This is the experience amount that would be returned by the event. <br>
+         * @return The experience amount given to the player. <br>
+         */
+        public int getXp()
+        {
+            return super.getXp();
         }
     }
 }

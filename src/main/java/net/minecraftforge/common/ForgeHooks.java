@@ -9,6 +9,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.regex.Matcher;
@@ -34,18 +35,29 @@ import net.minecraft.advancements.Advancement;
 import net.minecraft.core.*;
 import net.minecraft.network.chat.*;
 import net.minecraft.network.chat.contents.LiteralContents;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagEntry;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.datafix.fixes.StructuresBecomeConfiguredFix;
+import net.minecraft.world.Difficulty;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.ExperienceOrb;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.DefaultAttributes;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.monster.EnderMan;
+import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeType;
@@ -61,11 +73,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.MobSpawnType;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.server.level.ServerPlayer;
@@ -82,7 +89,6 @@ import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.item.alchemy.PotionUtils;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.world.*;
 import net.minecraft.world.level.BaseSpawner;
 import net.minecraft.world.level.block.entity.FurnaceBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -100,7 +106,14 @@ import net.minecraftforge.common.loot.LootTableIdCondition;
 import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.common.util.Lazy;
 import net.minecraftforge.common.util.MavenVersionStringHelper;
-import net.minecraftforge.event.*;
+import net.minecraftforge.event.AnvilUpdateEvent;
+import net.minecraftforge.event.DifficultyChangeEvent;
+import net.minecraftforge.event.ForgeEventFactory;
+import net.minecraftforge.event.GrindstoneEvent;
+import net.minecraftforge.event.ItemAttributeModifierEvent;
+import net.minecraftforge.event.ServerChatEvent;
+import net.minecraftforge.event.RegisterStructureConversionsEvent;
+import net.minecraftforge.event.VanillaGameEvent;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.event.entity.EntityAttributeModificationEvent;
 import net.minecraftforge.event.entity.EntityEvent;
@@ -711,18 +724,25 @@ public class ForgeHooks
         return e.getXp();
     }
 
-    public static int onGrindstoneTake(@NotNull ItemStack top, @NotNull ItemStack bottom, Container inputSlots, int xp) {
-        GrindstoneEvent.OnTakeItem e = new GrindstoneEvent.OnTakeItem(top, bottom, xp);
+    public static boolean onGrindstoneTake(Container inputSlots, ContainerLevelAccess access, Function<Level, Integer> xpFunction)
+    {
+        AtomicInteger xp = new AtomicInteger(0);
+        access.execute((l,p) -> xp.set(xpFunction.apply(l)));
+        GrindstoneEvent.OnTakeItem e = new GrindstoneEvent.OnTakeItem(inputSlots.getItem(0), inputSlots.getItem(1), xp.get());
         if (MinecraftForge.EVENT_BUS.post(e)) {
-            inputSlots.setItem(0, top);
-            inputSlots.setItem(1, bottom);
-            inputSlots.setChanged();
-            return e.getXp();
+            return false;
         }
-        inputSlots.setItem(0, e.getNewTop());
-        inputSlots.setItem(1, e.getNewBottom());
+        access.execute((l, p) -> {
+            if (l instanceof ServerLevel) {
+                ExperienceOrb.award((ServerLevel)l, Vec3.atCenterOf(p), xp.get());
+            }
+
+            l.levelEvent(1042, p, 0);
+        });
+        inputSlots.setItem(0, e.getNewTopItem());
+        inputSlots.setItem(1, e.getNewBottomItem());
         inputSlots.setChanged();
-        return e.getXp();
+        return true;
     }
 
     private static ThreadLocal<Player> craftingPlayer = new ThreadLocal<Player>();

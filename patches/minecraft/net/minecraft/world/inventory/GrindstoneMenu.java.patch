@@ -13,13 +13,13 @@
        this.m_38897_(new Slot(this.f_39560_, 0, 49, 19) {
           public boolean m_5857_(ItemStack p_39607_) {
 -            return p_39607_.m_41763_() || p_39607_.m_150930_(Items.f_42690_) || p_39607_.m_41793_();
-+            return true;
++            return true; //Allow all items in the slot, not just repairable
           }
        });
        this.m_38897_(new Slot(this.f_39560_, 1, 49, 40) {
           public boolean m_5857_(ItemStack p_39616_) {
 -            return p_39616_.m_41763_() || p_39616_.m_150930_(Items.f_42690_) || p_39616_.m_41793_();
-+            return true;
++            return true; //Allow all items in the slot, not just repairable
           }
        });
        this.m_38897_(new Slot(this.f_39559_, 2, 129, 34) {
@@ -27,16 +27,11 @@
           }
  
           public void m_142406_(Player p_150574_, ItemStack p_150575_) {
-+            GrindstoneMenu.this.xp = net.minecraftforge.common.ForgeHooks.onGrindstoneTake(GrindstoneMenu.this.f_39560_.m_8020_(0), GrindstoneMenu.this.f_39560_.m_8020_(1), GrindstoneMenu.this.f_39560_, GrindstoneMenu.this.xp);
++            if (net.minecraftforge.common.ForgeHooks.onGrindstoneTake(GrindstoneMenu.this.f_39560_, p_39568_, this::m_39631_)) return;
              p_39568_.m_39292_((p_39634_, p_39635_) -> {
                 if (p_39634_ instanceof ServerLevel) {
                    ExperienceOrb.m_147082_((ServerLevel)p_39634_, Vec3.m_82512_(p_39635_), this.m_39631_(p_39634_));
-@@ -65,11 +_,10 @@
- 
-                p_39634_.m_46796_(1042, p_39635_, 0);
-             });
--            GrindstoneMenu.this.f_39560_.m_6836_(0, ItemStack.f_41583_);
--            GrindstoneMenu.this.f_39560_.m_6836_(1, ItemStack.f_41583_);
+@@ -70,6 +_,7 @@
           }
  
           private int m_39631_(Level p_39632_) {
