@@ -8,17 +8,24 @@ package net.minecraftforge.fluids.capability;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.capabilities.CapabilityToken;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 
+@Deprecated(forRemoval = true, since = "1.19.2")
 public class CapabilityFluidHandler
 {
-    public static Capability<IFluidHandler> FLUID_HANDLER_CAPABILITY = CapabilityManager.get(new CapabilityToken<>(){});
-    public static Capability<IFluidHandlerItem> FLUID_HANDLER_ITEM_CAPABILITY = CapabilityManager.get(new CapabilityToken<>(){});
+    /**
+     * @deprecated Create your own reference using {@link CapabilityManager#get(CapabilityToken)}, or use
+     * {@link ForgeCapabilities#FLUID_HANDLER}.
+     */
+    @Deprecated(forRemoval = true, since = "1.19.2")
+    public static Capability<IFluidHandler> FLUID_HANDLER_CAPABILITY = ForgeCapabilities.FLUID_HANDLER;
+    /**
+     * @deprecated Create your own reference using {@link CapabilityManager#get(CapabilityToken)}, or use
+     * {@link ForgeCapabilities#FLUID_HANDLER_ITEM}.
+     */
+    @Deprecated(forRemoval = true, since = "1.19.2")
+    public static Capability<IFluidHandlerItem> FLUID_HANDLER_ITEM_CAPABILITY = ForgeCapabilities.FLUID_HANDLER_ITEM;
 
-    public static void register(RegisterCapabilitiesEvent event)
-    {
-        event.register(IFluidHandler.class);
-
-        event.register(IFluidHandlerItem.class);
-    }
+    public static void register(RegisterCapabilitiesEvent event){}
 }
