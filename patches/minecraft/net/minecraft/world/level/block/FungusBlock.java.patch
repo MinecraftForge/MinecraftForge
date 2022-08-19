@@ -1,0 +1,10 @@
+--- a/net/minecraft/world/level/block/FungusBlock.java
++++ b/net/minecraft/world/level/block/FungusBlock.java
+@@ -44,6 +_,7 @@
+    }
+ 
+    public void m_214148_(ServerLevel p_221243_, RandomSource p_221244_, BlockPos p_221245_, BlockState p_221246_) {
++      if (!net.minecraftforge.event.ForgeEventFactory.fungusGrowHugeFungus(p_221243_, p_221244_, p_221245_)) return;
+       this.f_53597_.get().m_203334_().m_224953_(p_221243_, p_221243_.m_7726_().m_8481_(), p_221244_, p_221245_);
+    }
+ }
