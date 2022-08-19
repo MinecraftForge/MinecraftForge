@@ -567,11 +567,30 @@
              if (!p_21065_.f_46443_ && pair.getFirst() != null && p_21065_.f_46441_.nextFloat() < pair.getSecond()) {
                 p_21066_.m_7292_(new MobEffectInstance(pair.getFirst()));
              }
-@@ -3196,6 +_,64 @@
+@@ -3196,6 +_,83 @@
        this.m_21166_(p_21191_ == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND);
     }
  
 +   /* ==== FORGE START ==== */
++   /**
++    * Tracks the attack strength of the player as set within {@link net.minecraft.world.entity.player.Player#attack(Entity)} for outside usage<br>
++    * The value stored in this field is considered valid within the following events in the attack sequence:<br>
++    * {@link net.minecraftforge.event.entity.living.LivingAttackEvent}<br>
++    * {@link net.minecraftforge.event.entity.living.LivingHurtEvent}<br>
++    * {@link net.minecraftforge.event.entity.living.LivingDamageEvent}<br>
++    * {@link net.minecraftforge.event.entity.living.LivingDeathEvent}<br>
++    * {@link net.minecraftforge.event.entity.living.LivingDropsEvent}<br>
++    * Use {@link net.minecraft.world.entity.player.Player#getAttackStrengthScale(float)} instead of this field for {@link net.minecraftforge.event.entity.player.AttackEntityEvent}
++    */
++    protected float cachedAttackStrength = 1.0F;
++
++    /**
++    * @see #cachedAttackStrength
++    */
++    public float getCachedAttackStrength() {
++       return this.cachedAttackStrength;
++    }
++
 +   /***
 +    * Removes all potion effects that have curativeItem as a curative item for its effect
 +    * @param curativeItem The itemstack we are using to cure potion effects
