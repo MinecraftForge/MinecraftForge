@@ -582,14 +582,14 @@
 +    * {@link net.minecraftforge.event.entity.living.LivingDropsEvent}<br>
 +    * Use {@link net.minecraft.world.entity.player.Player#getAttackStrengthScale(float)} instead of this field for {@link net.minecraftforge.event.entity.player.AttackEntityEvent}
 +    */
-+    protected float cachedAttackStrength = 1.0F;
++   protected float cachedAttackStrength = 1.0F;
 +
-+    /**
++   /**
 +    * @see #cachedAttackStrength
 +    */
-+    public float getCachedAttackStrength() {
-+       return this.cachedAttackStrength;
-+    }
++   public float getCachedAttackStrength() {
++      return this.cachedAttackStrength;
++   }
 +
 +   /***
 +    * Removes all potion effects that have curativeItem as a curative item for its effect
