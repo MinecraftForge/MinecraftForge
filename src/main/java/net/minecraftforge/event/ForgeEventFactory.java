@@ -128,7 +128,6 @@ import net.minecraftforge.event.level.BlockEvent.NeighborNotifyEvent;
 import net.minecraftforge.event.level.ChunkTicketLevelUpdatedEvent;
 import net.minecraftforge.event.level.ChunkWatchEvent;
 import net.minecraftforge.event.level.ExplosionEvent;
-import net.minecraftforge.event.level.FungusGrowHugeFungusEvent;
 import net.minecraftforge.event.level.PistonEvent;
 import net.minecraftforge.event.level.SaplingGrowTreeEvent;
 import net.minecraftforge.event.level.SleepFinishedTimeEvent;
@@ -617,13 +616,6 @@ public class ForgeEventFactory
     public static boolean saplingGrowTree(LevelAccessor level, RandomSource randomSource, BlockPos pos)
     {
         SaplingGrowTreeEvent event = new SaplingGrowTreeEvent(level, randomSource, pos);
-        MinecraftForge.EVENT_BUS.post(event);
-        return event.getResult() != Result.DENY;
-    }
-
-    public static boolean fungusGrowHugeFungus(LevelAccessor level, RandomSource randomSource, BlockPos pos)
-    {
-        FungusGrowHugeFungusEvent event = new FungusGrowHugeFungusEvent(level, randomSource, pos);
         MinecraftForge.EVENT_BUS.post(event);
         return event.getResult() != Result.DENY;
     }
