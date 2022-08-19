@@ -553,6 +553,10 @@ public class Tags
         public static final TagKey<Biome> IS_COLD_NETHER = tag("is_cold/nether");
         public static final TagKey<Biome> IS_COLD_END = tag("is_cold/end");
 
+
+        public static final TagKey<Biome> IS_TEMPERATE = tag("is_temperate");
+
+
         public static final TagKey<Biome> IS_SPARSE = tag("is_sparse");
         public static final TagKey<Biome> IS_SPARSE_OVERWORLD = tag("is_sparse/overworld");
         public static final TagKey<Biome> IS_SPARSE_NETHER = tag("is_sparse/nether");

@@ -1,0 +1,20 @@
+{
+  "values": [
+    "minecraft:plains",
+    "minecraft:swamp",
+    "minecraft:mushroom_fields",
+    "minecraft:jungle",
+    "minecraft:sparse_jungle",
+    "minecraft:beach",
+    "minecraft:dark_forest",
+    "minecraft:meadow",
+    "minecraft:stony_peaks",
+    "minecraft:forest",
+    "minecraft:sunflower_plains",
+    "minecraft:flower_forest",
+    "minecraft:birch_forest",
+    "minecraft:old_growth_birch_forest",
+    "minecraft:bamboo_jungle",
+    "minecraft:mangrove_swamp"
+  ]
+}
