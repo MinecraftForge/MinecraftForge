@@ -585,6 +585,8 @@ public class Tags
         public static final TagKey<Biome> IS_WATER = tag("is_water");
 
         public static final TagKey<Biome> IS_PLAINS = tag("is_plains");
+
+        public static final TagKey<Biome> IS_BEACH = tag("is_beach");
         public static final TagKey<Biome> IS_SWAMP = tag("is_swamp");
         public static final TagKey<Biome> IS_SANDY = tag("is_sandy");
         public static final TagKey<Biome> IS_SNOWY = tag("is_snowy");
