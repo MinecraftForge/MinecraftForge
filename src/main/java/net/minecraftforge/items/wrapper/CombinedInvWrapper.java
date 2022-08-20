@@ -119,11 +119,29 @@ public class CombinedInvWrapper implements IItemHandlerModifiable
     }
 
     @Override
+    public int getMaxStackSize(int slot, @NotNull ItemStack stack)
+    {
+        int index = getIndexForSlot(slot);
+        IItemHandlerModifiable handler = getHandlerFromIndex(index);
+        int localSlot = getSlotFromIndex(slot, index);
+        return handler.getMaxStackSize(localSlot, stack);
+    }
+
+    @Override
     public boolean isItemValid(int slot, @NotNull ItemStack stack)
     {
         int index = getIndexForSlot(slot);
         IItemHandlerModifiable handler = getHandlerFromIndex(index);
         int localSlot = getSlotFromIndex(slot, index);
         return handler.isItemValid(localSlot, stack);
+    }
+
+    @Override
+    public IOGuarantees getIOGuarantees()
+    {
+        var guarantees = IOGuarantees.STRICT;
+        for (var handler : itemHandler)
+            guarantees = IOGuarantees.leastStrict(guarantees, handler.getIOGuarantees());
+        return guarantees;
     }
 }

@@ -58,4 +58,10 @@ public class EmptyHandler implements IItemHandlerModifiable
     {
         return false;
     }
+
+    @Override
+    public IOGuarantees getIOGuarantees()
+    {
+        return IOGuarantees.STRICT;
+    }
 }

@@ -206,7 +206,7 @@ public class ItemHandlerHelper
 
                 if (!itemstack.isEmpty())
                 {
-                    proportion += (float)itemstack.getCount() / (float)Math.min(inv.getSlotLimit(j), itemstack.getMaxStackSize());
+                    proportion += (float)itemstack.getCount() / (float)inv.getMaxStackSize(j, itemstack);
                     ++itemsFound;
                 }
             }

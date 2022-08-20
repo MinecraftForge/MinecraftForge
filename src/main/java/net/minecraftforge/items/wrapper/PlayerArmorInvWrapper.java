@@ -24,21 +24,22 @@ public class PlayerArmorInvWrapper extends RangedWrapper
     @NotNull
     public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate)
     {
-        EquipmentSlot equ = null;
+        if (stack.isEmpty() || !isItemValid(slot, stack))
+            return stack;
+        return super.insertItem(slot, stack, simulate);
+    }
+
+    @Override
+    public boolean isItemValid(int slot, @NotNull ItemStack stack)
+    {
+        if (slot >= inventoryPlayer.armor.size() || !super.isItemValid(slot, stack) || stack.isEmpty())
+            return false;
+
         for (EquipmentSlot s : EquipmentSlot.values())
-        {
             if (s.getType() == EquipmentSlot.Type.ARMOR && s.getIndex() == slot)
-            {
-                equ = s;
-                break;
-            }
-        }
-        // check if it's valid for the armor slot
-        if (equ != null && slot < 4 && !stack.isEmpty() && stack.canEquip(equ, getInventoryPlayer().player))
-        {
-            return super.insertItem(slot, stack, simulate);
-        }
-        return stack;
+                return stack.canEquip(s, inventoryPlayer.player);
+
+        return false;
     }
 
     public Inventory getInventoryPlayer()

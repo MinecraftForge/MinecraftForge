@@ -78,7 +78,7 @@ public abstract class EntityEquipmentInvWrapper implements IItemHandlerModifiabl
 
         final ItemStack existing = entity.getItemBySlot(equipmentSlot);
 
-        int limit = getStackLimit(slot, stack);
+        int limit = getMaxStackSize(slot, stack);
 
         if (!existing.isEmpty())
         {
@@ -151,6 +151,16 @@ public abstract class EntityEquipmentInvWrapper implements IItemHandlerModifiabl
         return equipmentSlot.getType() == EquipmentSlot.Type.ARMOR ? 1 : 64;
     }
 
+    @Override
+    public int getMaxStackSize(int slot, @NotNull ItemStack stack)
+    {
+        return getStackLimit(slot, stack);
+    }
+
+    /**
+     * @deprecated Use {@link #getMaxStackSize(int, ItemStack)}
+     */
+    @Deprecated(forRemoval = true, since = "1.19.2")
     protected int getStackLimit(final int slot, @NotNull final ItemStack stack)
     {
         return Math.min(getSlotLimit(slot), stack.getMaxStackSize());
