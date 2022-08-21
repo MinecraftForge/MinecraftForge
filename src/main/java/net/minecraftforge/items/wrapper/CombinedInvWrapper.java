@@ -12,13 +12,14 @@ import org.jetbrains.annotations.NotNull;
 // combines multiple IItemHandlerModifiable into one interface
 public class CombinedInvWrapper implements IItemHandlerModifiable
 {
-
+    protected final IOGuarantees ioGuarantees;
     protected final IItemHandlerModifiable[] itemHandler; // the handlers
     protected final int[] baseIndex; // index-offsets of the different handlers
     protected final int slotCount; // number of total slots
 
-    public CombinedInvWrapper(IItemHandlerModifiable... itemHandler)
+    public CombinedInvWrapper(IOGuarantees ioGuarantees, IItemHandlerModifiable... itemHandler)
     {
+        this.ioGuarantees = ioGuarantees;
         this.itemHandler = itemHandler;
         this.baseIndex = new int[itemHandler.length];
         int index = 0;
@@ -28,6 +29,11 @@ public class CombinedInvWrapper implements IItemHandlerModifiable
             baseIndex[i] = index;
         }
         this.slotCount = index;
+    }
+
+    public CombinedInvWrapper(IItemHandlerModifiable... itemHandler)
+    {
+        this(IOGuarantees.NONE, itemHandler);
     }
 
     // returns the handler index for the slot
@@ -139,9 +145,6 @@ public class CombinedInvWrapper implements IItemHandlerModifiable
     @Override
     public IOGuarantees getIOGuarantees()
     {
-        var guarantees = IOGuarantees.STRICT;
-        for (var handler : itemHandler)
-            guarantees = IOGuarantees.leastStrict(guarantees, handler.getIOGuarantees());
-        return guarantees;
+        return ioGuarantees;
     }
 }

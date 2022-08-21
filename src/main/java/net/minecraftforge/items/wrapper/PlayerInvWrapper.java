@@ -11,6 +11,6 @@ public class PlayerInvWrapper extends CombinedInvWrapper
 {
     public PlayerInvWrapper(Inventory inv)
     {
-        super(new PlayerMainInvWrapper(inv), new PlayerArmorInvWrapper(inv), new PlayerOffhandInvWrapper(inv));
+        super(IOGuarantees.STRICT, new PlayerMainInvWrapper(inv), new PlayerArmorInvWrapper(inv), new PlayerOffhandInvWrapper(inv));
     }
 }

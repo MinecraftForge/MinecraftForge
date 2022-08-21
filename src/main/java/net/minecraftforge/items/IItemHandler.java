@@ -170,7 +170,8 @@ public interface IItemHandler
          */
         NONE(false, false),
         /**
-         * The inventory is guaranteed to accurately reflect the outcome of insertion/extraction operations.
+         * The inventory is guaranteed to accurately reflect the outcome of insertion/extraction operations via
+         * {@link #getStackInSlot(int)}.
          * Additionally, all slots are guaranteed to be fully independent from each other, meaning changes to one of
          * them must not immediately affect the contents or behavior of any of the others. A delayed side effect
          * (for example, at the end of the tick or next tick) is considered valid behavior.
@@ -180,7 +181,8 @@ public interface IItemHandler
          */
         CONSISTENT(true, false),
         /**
-         * A stricter version of {@link #CONSISTENT}, providing additional guarantees on insertion and extraction.
+         * A stricter version of {@link #CONSISTENT} providing additional guarantees on insertion and extraction
+         * equivalent to an implementation of {@link Container}.
          * <p>
          * Insertion must adhere to the following:
          * <ul>
@@ -188,15 +190,15 @@ public interface IItemHandler
          *     be rejected.</li>
          *     <li>If the slot contains an item and {@link ItemHandlerHelper#canItemStacksStack(ItemStack, ItemStack)}
          *     returns false when comparing it with the provided stack, the stack must be rejected.</li>
-         *     <li>Any amount up to {@link #getMaxStackSize(int, ItemStack)} minus the current size of the stack in the
-         *     slot must be allowed to be inserted, and any additional items must be rejected.</li>
+         *     <li>Otherwise any amount up to {@link #getMaxStackSize(int, ItemStack)} minus the current size of the
+         *     stack in the slot must be allowed to be inserted, and any additional items must be rejected.</li>
          * </ul>
          * <p>
          * Extraction must adhere to the following:
          * <ul>
          *     <li>If {@link #isExtractionAllowed(int, ItemStack)} returns {@code false}, no action must be performed
          *     and an empty stack must be returned</li>
-         *     <li>Any amount up to the current size of the stack in the slot must be allowed to be extracted.</li>
+         *     <li>Otherwise any amount up to the current size of the stack in the slot must be allowed to be extracted.</li>
          * </ul>
          * <p>
          * This means that a third party may safely predict the outcome of multiple insertion/extraction operations on

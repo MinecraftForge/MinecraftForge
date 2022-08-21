@@ -392,7 +392,7 @@
        this.m_36246_(Stats.f_12982_.m_12902_(p_36186_.m_41720_()));
        p_36185_.m_6263_((Player)null, this.m_20185_(), this.m_20186_(), this.m_20189_(), SoundEvents.f_12321_, SoundSource.PLAYERS, 0.5F, p_36185_.f_46441_.m_188501_() * 0.1F + 0.9F);
        if (this instanceof ServerPlayer) {
-@@ -2032,5 +_,63 @@
+@@ -2032,5 +_,64 @@
        public Component m_36423_() {
           return this.f_36413_;
        }
@@ -422,6 +422,7 @@
 +   private final net.minecraftforge.common.util.LazyOptional<net.minecraftforge.items.IItemHandler>
 +         playerEquipmentHandler = net.minecraftforge.common.util.LazyOptional.of(
 +               () -> new net.minecraftforge.items.wrapper.CombinedInvWrapper(
++                     net.minecraftforge.items.IItemHandler.IOGuarantees.STRICT,
 +                     new net.minecraftforge.items.wrapper.PlayerArmorInvWrapper(f_36093_),
 +                     new net.minecraftforge.items.wrapper.PlayerOffhandInvWrapper(f_36093_)));
 +

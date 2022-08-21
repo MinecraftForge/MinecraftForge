@@ -195,7 +195,7 @@ public abstract class EntityEquipmentInvWrapper implements IItemHandlerModifiabl
         LazyOptional<IItemHandlerModifiable>[] ret = new LazyOptional[3];
         ret[0] = LazyOptional.of(() -> new EntityHandsInvWrapper(entity));
         ret[1] = LazyOptional.of(() -> new EntityArmorInvWrapper(entity));
-        ret[2] = LazyOptional.of(() -> new CombinedInvWrapper(ret[0].orElse(null), ret[1].orElse(null)));
+        ret[2] = LazyOptional.of(() -> new CombinedInvWrapper(IOGuarantees.STRICT, ret[0].orElse(null), ret[1].orElse(null)));
         return ret;
     }
 }
