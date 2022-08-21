@@ -56,6 +56,7 @@ import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.material.Fluids;
+import net.minecraft.world.level.storage.LevelStorageSource;
 import net.minecraft.world.level.storage.WorldData;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.LootTable;
@@ -108,6 +109,7 @@ import net.minecraftforge.event.AnvilUpdateEvent;
 import net.minecraftforge.event.DifficultyChangeEvent;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.ItemAttributeModifierEvent;
+import net.minecraftforge.event.ModVersionsMismatchEvent;
 import net.minecraftforge.event.ServerChatEvent;
 import net.minecraftforge.event.RegisterStructureConversionsEvent;
 import net.minecraftforge.event.VanillaGameEvent;
@@ -168,6 +170,8 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.state.pattern.BlockInWorld;
 import net.minecraft.world.level.dimension.LevelStem;
 import net.minecraft.world.level.material.Fluid;
+import org.apache.maven.artifact.versioning.ArtifactVersion;
+import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -1319,12 +1323,13 @@ public class ForgeHooks
         levelTag.put("fml", fmlData);
     }
 
-    public static void readAdditionalLevelSaveData(CompoundTag rootTag)
+    public static void readAdditionalLevelSaveData(LevelStorageSource.LevelDirectory levelDirectory, CompoundTag rootTag)
     {
         CompoundTag tag = rootTag.getCompound("fml");
         if (tag.contains("LoadingModList"))
         {
             ListTag modList = tag.getList("LoadingModList", net.minecraft.nbt.Tag.TAG_COMPOUND);
+            Map<String, ArtifactVersion> mismatchedVersions = new HashMap<>(modList.size());
             for (int i = 0; i < modList.size(); i++)
             {
                 CompoundTag mod = modList.getCompound(i);
@@ -1334,17 +1339,27 @@ public class ForgeHooks
                     continue;
                 }
                 String modVersion = mod.getString("ModVersion");
-                Optional<? extends ModContainer> container = ModList.get().getModContainerById(modId);
-                if (container.isEmpty())
-                {
-                    LOGGER.error(WORLDPERSISTENCE,"This world was saved with mod {} which appears to be missing, things may not work well", modId);
-                    continue;
-                }
-                if (!Objects.equals(modVersion, MavenVersionStringHelper.artifactVersionToString(container.get().getModInfo().getVersion())))
-                {
-                    LOGGER.warn(WORLDPERSISTENCE,"This world was saved with mod {} version {} and it is now at version {}, things may not work well", modId, modVersion, MavenVersionStringHelper.artifactVersionToString(container.get().getModInfo().getVersion()));
-                }
+                ModList.get().getModContainerById(modId).ifPresentOrElse(container -> {
+                    final var loadingVersion = container.getModInfo().getVersion();
+                    final var previousVersion = new DefaultArtifactVersion(modVersion);
+                    if (!loadingVersion.equals(previousVersion))
+                    {
+                        // Enqueue mismatched versions for bulk event
+                        mismatchedVersions.put(modId, previousVersion);
+                    }
+                }, () -> LOGGER.error(WORLDPERSISTENCE,"This world was saved with mod {} which appears to be missing, things may not work well", modId));
             }
+
+            final var mismatchEvent = new ModVersionsMismatchEvent(levelDirectory, mismatchedVersions);
+            ModLoader.get().postEvent(mismatchEvent);
+
+            // For mods that did not specify handling, show a warning to users that errors may occur
+            mismatchedVersions.keySet().stream()
+                    .filter(modId -> mismatchEvent.getModState(modId) == ModVersionsMismatchEvent.MismatchHandlingState.UNHANDLED)
+                    .forEach(modId -> {
+                        LOGGER.warn(WORLDPERSISTENCE, "This world was saved with mod {} version {} and it is now at version {}, things may not work well",
+                                modId, mismatchedVersions.get(modId), mismatchEvent.getCurrentVersion(modId));
+                    });
         }
 
         Multimap<ResourceLocation, ResourceLocation> failedElements = null;
