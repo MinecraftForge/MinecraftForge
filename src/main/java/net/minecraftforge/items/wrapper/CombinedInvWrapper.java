@@ -31,6 +31,7 @@ public class CombinedInvWrapper implements IItemHandlerModifiable
         this.slotCount = index;
     }
 
+    @Deprecated(forRemoval = true, since = "1.19.2")
     public CombinedInvWrapper(IItemHandlerModifiable... itemHandler)
     {
         this(IOGuarantees.NONE, itemHandler);
