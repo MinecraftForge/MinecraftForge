@@ -27,7 +27,7 @@
        EMPTY(false),
        ITEM(false),
        BLOCK(false),
-@@ -411,10 +_,30 @@
+@@ -411,10 +_,29 @@
  
        private ArmPose(boolean p_102896_) {
           this.f_102890_ = p_102896_;
@@ -52,8 +52,7 @@
 +      }
 +
 +      public <T extends LivingEntity> void applyTransform(HumanoidModel<T> model, T entity, net.minecraft.world.entity.HumanoidArm arm) {
-+         com.google.common.base.Preconditions.checkNotNull(this.forgeArmPose, "applyTransform() must not be called on a vanilla ArmPose!");
-+         this.forgeArmPose.applyTransform(model, entity, arm);
++         if (this.forgeArmPose != null) this.forgeArmPose.applyTransform(model, entity, arm);
 +      }
 +      // FORGE END
     }
