@@ -166,6 +166,11 @@ public interface IItemHandler
          * Insertion and extraction may affect other slots, and the results of these operations may not be reflected in
          * the stack in the queried slot.
          * <p>
+         * An I/O operation may raise the guarantees to a more restrictive level, but callers do not need to concern
+         * themselves with this, as they can still safely operate assuming they get no guarantees. A case like this may
+         * show up in a block with multiple input slots where setting the first item determines what can go into the
+         * other slots, and behavior becomes consistent/strict as long as that first item remains in the inventory.
+         * <p>
          * This is how item handlers have historically worked.
          */
         NONE(false, false),
