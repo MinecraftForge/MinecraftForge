@@ -5,14 +5,17 @@
 
 package net.minecraftforge.event;
 
-
 import net.minecraft.world.level.storage.LevelStorageSource;
+import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.event.IModBusEvent;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.forgespi.language.IModInfo;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -29,6 +32,10 @@ import java.util.Optional;
  * <b>Note that level and world information has not yet been fully loaded;</b> as such, it is
  * unsafe to access server or level information during handling of this event.
  * </p>
+ *
+ * <p>This event is not {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}.</p>
+ * <p>This event is fired on the {@linkplain FMLJavaModLoadingContext#getModEventBus() mod-specific event bus},
+ * on both {@linkplain LogicalSide logical sides}.</p>
  */
 public class ModVersionsMismatchEvent extends Event implements IModBusEvent
 {
@@ -48,12 +55,7 @@ public class ModVersionsMismatchEvent extends Event implements IModBusEvent
      */
     private final Map<String, MismatchHandlingState> states;
 
-    /**
-     * Create an event instance to handle mod version mismatches.
-     *
-     * @param levelDirectory The directory of the level being loaded.
-     * @param previousVersions Map of mismatched mod ids and their previously-loaded version.
-     */
+    @ApiStatus.Internal
     public ModVersionsMismatchEvent(LevelStorageSource.LevelDirectory levelDirectory, Map<String, ArtifactVersion> previousVersions)
     {
         this.levelDirectory = levelDirectory;
@@ -81,19 +83,6 @@ public class ModVersionsMismatchEvent extends Event implements IModBusEvent
     }
 
     /**
-     * Utility method to fetch current mod version information from the mod list.
-     * @param modId The mod to query.
-     * @return Current mod version information.
-     */
-    public ArtifactVersion getCurrentVersion(String modId)
-    {
-        return ModList.get().getModContainerById(modId)
-                .map(ModContainer::getModInfo)
-                .map(IModInfo::getVersion)
-                .orElseThrow();
-    }
-
-    /**
      * Marks the mod version mismatch as having been handled safely by a mod.
      */
     public void setModState(String modId, MismatchHandlingState handled)
@@ -114,8 +103,21 @@ public class ModVersionsMismatchEvent extends Event implements IModBusEvent
      */
     public enum MismatchHandlingState
     {
+        /**
+         * Default response; this mod mismatch has not been resolved.
+         */
         UNHANDLED,
+
+        /**
+         * States that a mod has done partial work in resolving the version mismatch,
+         * but more work needs done at a later point. Used for low-priority mod updaters
+         * to listen for changes after other mods have completed work.
+         */
         NEEDS_FURTHER_WORK,
+
+        /**
+         * States that a mod has fully handled the version mismatch.
+         */
         FULLY_HANDLED
     }
 }

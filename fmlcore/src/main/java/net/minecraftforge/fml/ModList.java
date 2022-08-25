@@ -16,6 +16,7 @@ import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
 import net.minecraftforge.forgespi.locating.IModFile;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.maven.artifact.versioning.ArtifactVersion;
 
 import java.util.AbstractMap;
 import java.util.ArrayList;
@@ -110,6 +111,18 @@ public class ModList
     public IModFileInfo getModFileById(String modid)
     {
         return this.fileById.get(modid);
+    }
+
+    /**
+     * Utility method to fetch current mod version information from the mod list.
+     * @param modid The mod to query.
+     * @return Current mod version information.
+     */
+    public ArtifactVersion getModVersion(String modid) {
+        return getModContainerById(modid)
+                .map(ModContainer::getModInfo)
+                .map(IModInfo::getVersion)
+                .orElseThrow();
     }
 
     <T extends Event & IModBusEvent> Function<Executor, CompletableFuture<Void>> futureVisitor(
