@@ -18,6 +18,8 @@ import com.mojang.math.Quaternion;
 import com.mojang.math.Transformation;
 import com.mojang.math.Vector3f;
 import com.mojang.math.Vector4f;
+import net.minecraftforge.client.model.generators.BlockModelBuilder;
+import net.minecraftforge.client.model.generators.BlockModelBuilder.RootTransformBuilder.Origin;
 
 public final class TransformationHelper
 {
@@ -108,9 +110,9 @@ public final class TransformationHelper
 
     public static class Deserializer implements JsonDeserializer<Transformation>
     {
-        private static final Vector3f ORIGIN_CORNER = new Vector3f();
-        private static final Vector3f ORIGIN_OPPOSING_CORNER = new Vector3f(1f, 1f, 1f);
-        private static final Vector3f ORIGIN_CENTER = new Vector3f(.5f, .5f, .5f);
+        private static final Vector3f ORIGIN_CORNER = Origin.Corner.vec();
+        private static final Vector3f ORIGIN_OPPOSING_CORNER = Origin.OpposingCorner.vec();
+        private static final Vector3f ORIGIN_CENTER = Origin.Center.vec();
 
         @Override
         public Transformation deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException
@@ -219,7 +221,7 @@ public final class TransformationHelper
         private static Vector3f parseOrigin(JsonObject obj) {
             Vector3f origin = null;
 
-            // Two types supported: string ("center", "corner") and array ([x, y, z])
+            // Two types supported: string ("center", "corner", "opposing-corner") and array ([x, y, z])
             JsonElement originElement = obj.get("origin");
             if (originElement.isJsonArray())
             {
@@ -228,23 +230,12 @@ public final class TransformationHelper
             else if (originElement.isJsonPrimitive())
             {
                 String originString = originElement.getAsString();
-                if ("center".equals(originString))
-                {
-                    origin = ORIGIN_CENTER;
-                }
-                else if ("corner".equals(originString))
-                {
-                    origin = ORIGIN_CORNER;
-                }
-                else if ("opposing-corner".equals(originString))
-                {
-                    // This option can be used to not break models that were written with this origin once the default is changed
-                    origin = ORIGIN_OPPOSING_CORNER;
-                }
-                else
+                Origin originEnum = Origin.fromString(originString);
+                if (originEnum == null)
                 {
                     throw new JsonParseException("Origin: expected one of 'center', 'corner', 'opposing-corner'");
                 }
+                origin = originEnum.vec();
             }
             else
             {
