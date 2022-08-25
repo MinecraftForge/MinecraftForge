@@ -1358,7 +1358,7 @@ public class ForgeHooks
                     .filter(modId -> mismatchEvent.getModState(modId) == ModVersionsMismatchEvent.MismatchHandlingState.UNHANDLED)
                     .forEach(modId -> {
                         LOGGER.warn(WORLDPERSISTENCE, "This world was saved with mod {} version {} and it is now at version {}, things may not work well",
-                                modId, mismatchedVersions.get(modId), mismatchEvent.getCurrentVersion(modId));
+                                modId, mismatchedVersions.get(modId), ModList.get().getModVersion(modId));
                     });
         }
 
