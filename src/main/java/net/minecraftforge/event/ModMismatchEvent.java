@@ -55,14 +55,14 @@ public class ModMismatchEvent extends Event implements IModBusEvent
     /**
      * State values of which mods have specified that they have handled version mismatches.
      */
-    private final HashSet<String> states;
+    private final HashSet<String> resolved;
 
     @ApiStatus.Internal
     public ModMismatchEvent(@Nullable LevelStorageSource.LevelDirectory levelDirectory, Map<String, ArtifactVersion> previousVersions)
     {
         this.levelDirectory = levelDirectory;
         this.previousVersions = previousVersions;
-        this.states = new HashSet<>(previousVersions.size());
+        this.resolved = new HashSet<>(previousVersions.size());
     }
 
     /**
@@ -86,29 +86,17 @@ public class ModMismatchEvent extends Event implements IModBusEvent
     }
 
     /**
-     * Utility method to fetch current mod version information from the mod list.
-     * @param modid The mod to query.
-     * @return Current mod version information.
-     */
-    public static ArtifactVersion getModVersion(String modid) {
-        return ModList.get().getModContainerById(modid)
-                .map(ModContainer::getModInfo)
-                .map(IModInfo::getVersion)
-                .orElseThrow();
-    }
-
-    /**
      * Marks the mod version mismatch as having been resolved safely by a mod.
      */
     public void setResolved(String modId, boolean resolved)
     {
-        if(!resolved && states.contains(modId))
+        if(!resolved && this.resolved.contains(modId))
         {
-            states.remove(modId);
+            this.resolved.remove(modId);
         }
         else
         {
-            this.states.add(modId);
+            this.resolved.add(modId);
         }
     }
 
@@ -117,16 +105,36 @@ public class ModMismatchEvent extends Event implements IModBusEvent
      */
     public boolean wasResolved(String modId)
     {
-        return this.states.contains(modId);
+        return this.resolved.contains(modId);
     }
 
+    /**
+     * Fired when there is a version difference between the last world version of a mod
+     * and the version currently loaded by the game.
+     */
     public static class VersionChanged extends ModMismatchEvent {
 
         public VersionChanged(LevelStorageSource.@Nullable LevelDirectory levelDirectory, Map<String, ArtifactVersion> previousVersions) {
             super(levelDirectory, previousVersions);
         }
+
+        /**
+         * Utility method to fetch current mod version information from the mod list.
+         * @param modid The mod to query.
+         * @return Current mod version information.
+         */
+        public static ArtifactVersion getModVersion(String modid) {
+            return ModList.get().getModContainerById(modid)
+                    .map(ModContainer::getModInfo)
+                    .map(IModInfo::getVersion)
+                    .orElseThrow();
+        }
     }
 
+    /**
+     * Fired when a world is being loaded with mods that have gone missing since the last
+     * save event.
+     */
     public static class Missing extends ModMismatchEvent {
 
         public Missing(LevelStorageSource.@Nullable LevelDirectory levelDirectory, Map<String, ArtifactVersion> previousVersions) {

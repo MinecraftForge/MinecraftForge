@@ -1374,13 +1374,13 @@ public class ForgeHooks
                 {
                     if(!mismatchEvent.wasResolved(modid))
                     {
-                        LOGGER.warn(WORLDPERSISTENCE, "This world was saved with mod {} version {} and it is now at version {}, things may not work well",
-                                modid, mismatchedVersions.get(modid), ModMismatchEvent.getModVersion(modid));
+                        LOGGER.warn(WORLDPERSISTENCE, "This world was saved with mod {} version {} and it is now at version {}, things may not work well.",
+                                modid, mismatchedVersions.get(modid), ModMismatchEvent.VersionChanged.getModVersion(modid));
                     }
                     else
                     {
                         LOGGER.debug(WORLDPERSISTENCE, "Version mismatch for mod {} ({} -> {}) was resolved by mod {}. Some issues may occur.",
-                                modid, mismatchedVersions.get(modid), ModMismatchEvent.getModVersion(modid), mc.getModId());
+                                modid, mismatchedVersions.get(modid), ModMismatchEvent.VersionChanged.getModVersion(modid), mc.getModId());
                     }
                 }
             });
@@ -1393,12 +1393,12 @@ public class ForgeHooks
                 {
                     if(!missingEvent.wasResolved(modid))
                     {
-                        LOGGER.warn(WORLDPERSISTENCE, "This world was saved with mod {} version {} and it is now at version {}, things may not work well",
-                                modid, missingVersions.get(modid), ModMismatchEvent.getModVersion(modid));
+                        LOGGER.warn(WORLDPERSISTENCE, "This world was saved with mod {} version {} which appears to be missing; things may not work well.",
+                                modid, missingVersions.get(modid));
                     }
                     else
                     {
-                        LOGGER.debug(WORLDPERSISTENCE, "This world was saved with mod {} ({}) which appears to be missing; this was marked resolved by mod {}. Some issues may occur.",
+                        LOGGER.debug(WORLDPERSISTENCE, "This world was saved with mod {} version {} which appears to be missing; this was marked resolved by mod {}. Some issues may occur.",
                                 modid, missingVersions.get(modid), mc.getModId());
                     }
                 }
