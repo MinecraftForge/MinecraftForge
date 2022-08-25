@@ -17,6 +17,7 @@ import java.util.regex.Pattern;
 import com.google.common.base.Strings;
 import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Queues;
@@ -1368,34 +1369,37 @@ public class ForgeHooks
             final var mismatchEvent = new ModMismatchEvent(levelDirectory, mismatchedVersions, missingVersions);
             ModLoader.get().postEvent(mismatchEvent);
 
-            // For mods that did not specify handling, show a warning to users that errors may occur
-            for(var modid : mismatchedVersions.keySet())
+            var problematicModIds = ImmutableSet.<String>builder()
+                    .addAll(mismatchedVersions.keySet())
+                    .addAll(missingVersions.keySet())
+                    .build();
+
+            for(var modid : problematicModIds)
             {
-                if(!mismatchEvent.wasResolved(modid))
-                {
-                    if(mismatchEvent.isMissing(modid))
+                if (mismatchEvent.wasResolved(modid)) {
+                    // For mods that were marked resolved, log the version resolution and the mod that resolved the mismatch
+                    if(mismatchEvent.isMissing(modid)) {
+                        LOGGER.debug(WORLDPERSISTENCE, "This world was saved with mod {} version {} which appears to be missing; this was marked resolved by mod {}. Some issues may occur.",
+                                modid, mismatchEvent.getPreviousVersion(modid), mismatchEvent.getResolver(modid).map(ModContainer::getModId));
+                    }
+                    else
                     {
-                        if(!mismatchEvent.wasResolved(modid))
-                        {
-                            LOGGER.warn(WORLDPERSISTENCE, "This world was saved with mod {} version {} which appears to be missing; things may not work well.",
-                                    modid, mismatchEvent.getPreviousVersion(modid));
-                        }
-                        else
-                        {
-                            LOGGER.debug(WORLDPERSISTENCE, "This world was saved with mod {} version {} which appears to be missing; this was marked resolved by mod {}. Some issues may occur.",
-                                    modid, mismatchEvent.getPreviousVersion(modid), mismatchEvent.getResolver(modid).map(ModContainer::getModId));
-                        }
+                        LOGGER.debug(WORLDPERSISTENCE, "Version mismatch for mod {} ({} -> {}) was resolved by mod {}. Some issues may occur.",
+                                modid, mismatchEvent.getCurrentVersion(modid), mismatchEvent.getCurrentVersion(modid), mismatchEvent.getResolver(modid).map(ModContainer::getModId));
+                    }
+                }
+                else
+                {
+                    // For mods that did not specify handling, show a warning to users that errors may occur
+                    if(mismatchEvent.isMissing(modid)) {
+                        LOGGER.warn(WORLDPERSISTENCE, "This world was saved with mod {} version {} which appears to be missing; things may not work well.",
+                                modid, mismatchEvent.getPreviousVersion(modid));
                     }
                     else
                     {
                         LOGGER.warn(WORLDPERSISTENCE, "This world was saved with mod {} version {} and it is now at version {}, things may not work well.",
                                 modid, mismatchEvent.getCurrentVersion(modid), mismatchEvent.getCurrentVersion(modid));
                     }
-                }
-                else
-                {
-                    LOGGER.debug(WORLDPERSISTENCE, "Version mismatch for mod {} ({} -> {}) was resolved by mod {}. Some issues may occur.",
-                            modid, mismatchEvent.getCurrentVersion(modid), mismatchEvent.getCurrentVersion(modid), mismatchEvent.getResolver(modid).map(ModContainer::getModId));
                 }
             }
         }
