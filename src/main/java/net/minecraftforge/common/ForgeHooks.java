@@ -9,6 +9,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.regex.Matcher;
@@ -109,7 +110,7 @@ import net.minecraftforge.event.AnvilUpdateEvent;
 import net.minecraftforge.event.DifficultyChangeEvent;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.ItemAttributeModifierEvent;
-import net.minecraftforge.event.ModVersionsMismatchEvent;
+import net.minecraftforge.event.ModMismatchEvent;
 import net.minecraftforge.event.ServerChatEvent;
 import net.minecraftforge.event.RegisterStructureConversionsEvent;
 import net.minecraftforge.event.VanillaGameEvent;
@@ -146,6 +147,7 @@ import net.minecraftforge.fluids.FluidType;
 import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoader;
+import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.resource.ResourcePackLoader;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.ForgeRegistry;
@@ -172,6 +174,7 @@ import net.minecraft.world.level.dimension.LevelStem;
 import net.minecraft.world.level.material.Fluid;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -1323,6 +1326,16 @@ public class ForgeHooks
         levelTag.put("fml", fmlData);
     }
 
+    /**
+     * @deprecated To be removed in 1.20.
+     * Use {@link #readAdditionalLevelSaveData(LevelStorageSource.LevelDirectory, CompoundTag)} instead.
+     */
+    @Deprecated(forRemoval = true, since = "1.19.2")
+    public static void readAdditionalLevelSaveData(CompoundTag rootTag) {
+        readAdditionalLevelSaveData(null, rootTag);
+    }
+
+    @ApiStatus.Internal
     public static void readAdditionalLevelSaveData(LevelStorageSource.LevelDirectory levelDirectory, CompoundTag rootTag)
     {
         CompoundTag tag = rootTag.getCompound("fml");
@@ -1330,6 +1343,7 @@ public class ForgeHooks
         {
             ListTag modList = tag.getList("LoadingModList", net.minecraft.nbt.Tag.TAG_COMPOUND);
             Map<String, ArtifactVersion> mismatchedVersions = new HashMap<>(modList.size());
+            Map<String, ArtifactVersion> missingVersions = new HashMap<>(modList.size());
             for (int i = 0; i < modList.size(); i++)
             {
                 CompoundTag mod = modList.getCompound(i);
@@ -1338,28 +1352,57 @@ public class ForgeHooks
                 {
                     continue;
                 }
+
                 String modVersion = mod.getString("ModVersion");
-                ModList.get().getModContainerById(modId).ifPresentOrElse(container -> {
+                final var previousVersion = new DefaultArtifactVersion(modVersion);
+                ModList.get().getModContainerById(modId).ifPresentOrElse(container ->
+                {
                     final var loadingVersion = container.getModInfo().getVersion();
-                    final var previousVersion = new DefaultArtifactVersion(modVersion);
                     if (!loadingVersion.equals(previousVersion))
                     {
                         // Enqueue mismatched versions for bulk event
                         mismatchedVersions.put(modId, previousVersion);
                     }
-                }, () -> LOGGER.error(WORLDPERSISTENCE,"This world was saved with mod {} which appears to be missing, things may not work well", modId));
+                }, () -> missingVersions.put(modId, previousVersion));
             }
 
-            final var mismatchEvent = new ModVersionsMismatchEvent(levelDirectory, mismatchedVersions);
-            ModLoader.get().postEvent(mismatchEvent);
-
-            // For mods that did not specify handling, show a warning to users that errors may occur
-            mismatchedVersions.keySet().stream()
-                    .filter(modId -> mismatchEvent.getModState(modId) == ModVersionsMismatchEvent.MismatchHandlingState.UNHANDLED)
-                    .forEach(modId -> {
+            final var mismatchEvent = new ModMismatchEvent.VersionChanged(levelDirectory, mismatchedVersions);
+            ModLoader.get().postEventWithWrapInModOrder(mismatchEvent, (mc, e) -> { }, (mc, e)->
+            {
+                // For mods that did not specify handling, show a warning to users that errors may occur
+                for(var modid : mismatchedVersions.keySet())
+                {
+                    if(!mismatchEvent.wasResolved(modid))
+                    {
                         LOGGER.warn(WORLDPERSISTENCE, "This world was saved with mod {} version {} and it is now at version {}, things may not work well",
-                                modId, mismatchedVersions.get(modId), ModList.get().getModVersion(modId));
-                    });
+                                modid, mismatchedVersions.get(modid), ModMismatchEvent.getModVersion(modid));
+                    }
+                    else
+                    {
+                        LOGGER.debug(WORLDPERSISTENCE, "Version mismatch for mod {} ({} -> {}) was resolved by mod {}. Some issues may occur.",
+                                modid, mismatchedVersions.get(modid), ModMismatchEvent.getModVersion(modid), mc.getModId());
+                    }
+                }
+            });
+
+            final var missingEvent = new ModMismatchEvent.Missing(levelDirectory, missingVersions);
+            ModLoader.get().postEventWithWrapInModOrder(missingEvent, (mc, e) -> { }, (mc, e) ->
+            {
+                // For mods that did not specify handling, show a warning to users that errors may occur
+                for(var modid : missingVersions.keySet())
+                {
+                    if(!missingEvent.wasResolved(modid))
+                    {
+                        LOGGER.warn(WORLDPERSISTENCE, "This world was saved with mod {} version {} and it is now at version {}, things may not work well",
+                                modid, missingVersions.get(modid), ModMismatchEvent.getModVersion(modid));
+                    }
+                    else
+                    {
+                        LOGGER.debug(WORLDPERSISTENCE, "This world was saved with mod {} ({}) which appears to be missing; this was marked resolved by mod {}. Some issues may occur.",
+                                modid, missingVersions.get(modid), mc.getModId());
+                    }
+                }
+            });
         }
 
         Multimap<ResourceLocation, ResourceLocation> failedElements = null;

@@ -16,8 +16,9 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.forgespi.language.IModInfo;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
 
@@ -37,12 +38,13 @@ import java.util.Optional;
  * <p>This event is fired on the {@linkplain FMLJavaModLoadingContext#getModEventBus() mod-specific event bus},
  * on both {@linkplain LogicalSide logical sides}.</p>
  */
-public class ModVersionsMismatchEvent extends Event implements IModBusEvent
+public class ModMismatchEvent extends Event implements IModBusEvent
 {
     /**
      * The level being loaded. Useful for things like {@link net.minecraft.world.level.storage.DimensionDataStorage}
      * to manage multiple files changing between mod versions.
      */
+    @Nullable
     private final LevelStorageSource.LevelDirectory levelDirectory;
 
     /**
@@ -53,20 +55,21 @@ public class ModVersionsMismatchEvent extends Event implements IModBusEvent
     /**
      * State values of which mods have specified that they have handled version mismatches.
      */
-    private final Map<String, MismatchHandlingState> states;
+    private final HashSet<String> states;
 
     @ApiStatus.Internal
-    public ModVersionsMismatchEvent(LevelStorageSource.LevelDirectory levelDirectory, Map<String, ArtifactVersion> previousVersions)
+    public ModMismatchEvent(@Nullable LevelStorageSource.LevelDirectory levelDirectory, Map<String, ArtifactVersion> previousVersions)
     {
         this.levelDirectory = levelDirectory;
         this.previousVersions = previousVersions;
-        this.states = new HashMap<>(previousVersions.size());
+        this.states = new HashSet<>(previousVersions.size());
     }
 
     /**
      * Gets the current level directory for the world being loaded.
      * Can be used for file operations and manual modification of mod files before world load.
      */
+    @Nullable
     public LevelStorageSource.LevelDirectory getLevelDirectory()
     {
         return this.levelDirectory;
@@ -83,41 +86,51 @@ public class ModVersionsMismatchEvent extends Event implements IModBusEvent
     }
 
     /**
-     * Marks the mod version mismatch as having been handled safely by a mod.
+     * Utility method to fetch current mod version information from the mod list.
+     * @param modid The mod to query.
+     * @return Current mod version information.
      */
-    public void setModState(String modId, MismatchHandlingState handled)
+    public static ArtifactVersion getModVersion(String modid) {
+        return ModList.get().getModContainerById(modid)
+                .map(ModContainer::getModInfo)
+                .map(IModInfo::getVersion)
+                .orElseThrow();
+    }
+
+    /**
+     * Marks the mod version mismatch as having been resolved safely by a mod.
+     */
+    public void setResolved(String modId, boolean resolved)
     {
-        this.states.put(modId, handled);
+        if(!resolved && states.contains(modId))
+        {
+            states.remove(modId);
+        }
+        else
+        {
+            this.states.add(modId);
+        }
     }
 
     /**
      * Fetches the status of a mod mismatch handling state.
      */
-    public MismatchHandlingState getModState(String modId)
+    public boolean wasResolved(String modId)
     {
-        return this.states.getOrDefault(modId, MismatchHandlingState.UNHANDLED);
+        return this.states.contains(modId);
     }
 
-    /**
-     * State values for mod version mismatches. Can be queried by any mod listening to the event.
-     */
-    public enum MismatchHandlingState
-    {
-        /**
-         * Default response; this mod mismatch has not been resolved.
-         */
-        UNHANDLED,
+    public static class VersionChanged extends ModMismatchEvent {
 
-        /**
-         * States that a mod has done partial work in resolving the version mismatch,
-         * but more work needs done at a later point. Used for low-priority mod updaters
-         * to listen for changes after other mods have completed work.
-         */
-        NEEDS_FURTHER_WORK,
+        public VersionChanged(LevelStorageSource.@Nullable LevelDirectory levelDirectory, Map<String, ArtifactVersion> previousVersions) {
+            super(levelDirectory, previousVersions);
+        }
+    }
 
-        /**
-         * States that a mod has fully handled the version mismatch.
-         */
-        FULLY_HANDLED
+    public static class Missing extends ModMismatchEvent {
+
+        public Missing(LevelStorageSource.@Nullable LevelDirectory levelDirectory, Map<String, ArtifactVersion> previousVersions) {
+            super(levelDirectory, previousVersions);
+        }
     }
 }

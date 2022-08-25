@@ -113,18 +113,6 @@ public class ModList
         return this.fileById.get(modid);
     }
 
-    /**
-     * Utility method to fetch current mod version information from the mod list.
-     * @param modid The mod to query.
-     * @return Current mod version information.
-     */
-    public ArtifactVersion getModVersion(String modid) {
-        return getModContainerById(modid)
-                .map(ModContainer::getModInfo)
-                .map(IModInfo::getVersion)
-                .orElseThrow();
-    }
-
     <T extends Event & IModBusEvent> Function<Executor, CompletableFuture<Void>> futureVisitor(
             final IModStateTransition.EventGenerator<T> eventGenerator,
             final BiFunction<ModLoadingStage, Throwable, ModLoadingStage> stateChange) {
