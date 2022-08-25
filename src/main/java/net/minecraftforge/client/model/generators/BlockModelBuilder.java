@@ -26,6 +26,8 @@ import javax.annotation.Nullable;
  */
 public class BlockModelBuilder extends ModelBuilder<BlockModelBuilder> {
 
+    private static final Vector3f ONE = new Vector3f(1, 1, 1);
+
     private final RootTransformBuilder rootTransform = new RootTransformBuilder();
 
     public BlockModelBuilder(ResourceLocation outputLocation, ExistingFileHelper existingFileHelper)
@@ -43,41 +45,8 @@ public class BlockModelBuilder extends ModelBuilder<BlockModelBuilder> {
     {
         JsonObject json = super.toJson();
 
-        // Write the transform to an object
-        JsonObject transform = new JsonObject();
-
-        if (!rootTransform.translation.equals(Vector3f.ZERO))
-        {
-            transform.add("translation", writeVec3(rootTransform.translation));
-        }
-
-        if (!rootTransform.scale.equals(new Vector3f(1, 1, 1)))
-        {
-            transform.add("scale", writeVec3(rootTransform.scale));
-        }
-
-        Quaternion leftRotation = rootTransform.leftRotation;
-        if (!leftRotation.equals(Quaternion.ONE))
-        {
-            transform.add("left_rotation", writeQuaternion(leftRotation));
-        }
-
-        Quaternion rightRotation = rootTransform.rightRotation;
-        if (!rightRotation.equals(Quaternion.ONE))
-        {
-            transform.add("right_rotation", writeQuaternion(rightRotation));
-        }
-
-        if (rootTransform.originName != null)
-        {
-            transform.addProperty("origin", rootTransform.originName);
-        }
-        else if (rootTransform.origin != null && rootTransform.origin != Vector3f.ZERO)
-        {
-            transform.add("origin", writeVec3(rootTransform.origin));
-        }
-
         // If there were any transform properties set, add them to the output.
+        JsonObject transform = rootTransform.toJson();
         if (transform.size() > 0)
         {
             json.add("transform", transform);
@@ -110,10 +79,15 @@ public class BlockModelBuilder extends ModelBuilder<BlockModelBuilder> {
         private Vector3f translation = Vector3f.ZERO;
         private Quaternion leftRotation = Quaternion.ONE.copy();
         private Quaternion rightRotation = Quaternion.ONE.copy();
-        private Vector3f scale = new Vector3f(1, 1, 1);
+        private Vector3f scale = ONE;
 
         private @Nullable String originName;
         private @Nullable Vector3f origin;
+
+        private RootTransformBuilder()
+        {
+
+        }
 
         /**
          * Sets the translation of the root transform.
@@ -124,8 +98,7 @@ public class BlockModelBuilder extends ModelBuilder<BlockModelBuilder> {
          */
         public RootTransformBuilder translation(Vector3f translation)
         {
-            Preconditions.checkNotNull(translation, "Translation must not be null");
-            this.translation = translation;
+            this.translation = Preconditions.checkNotNull(translation, "Translation must not be null");
             return this;
         }
 
@@ -138,8 +111,7 @@ public class BlockModelBuilder extends ModelBuilder<BlockModelBuilder> {
          */
         public RootTransformBuilder rotation(Quaternion rotation)
         {
-            Preconditions.checkNotNull(rotation, "Rotation must not be null");
-            this.leftRotation = rotation;
+            this.leftRotation = Preconditions.checkNotNull(rotation, "Rotation must not be null");
             return this;
         }
 
@@ -164,9 +136,12 @@ public class BlockModelBuilder extends ModelBuilder<BlockModelBuilder> {
          */
         public RootTransformBuilder rightRotation(Quaternion rightRotation)
         {
-            Preconditions.checkNotNull(rightRotation, "Rotation must not be null");
-            this.rightRotation = rightRotation;
+            this.rightRotation = Preconditions.checkNotNull(rightRotation, "Rotation must not be null");
             return this;
+        }
+
+        public RootTransformBuilder postRotation(Quaternion postRotation) {
+            return rightRotation(postRotation);
         }
 
         /**
@@ -190,8 +165,7 @@ public class BlockModelBuilder extends ModelBuilder<BlockModelBuilder> {
          */
         public RootTransformBuilder scale(Vector3f scale)
         {
-            Preconditions.checkNotNull(scale, "Scale must not be null");
-            this.scale = scale;
+            this.scale = Preconditions.checkNotNull(scale, "Scale must not be null");
             return this;
         }
 
@@ -221,8 +195,7 @@ public class BlockModelBuilder extends ModelBuilder<BlockModelBuilder> {
          */
         public RootTransformBuilder origin(Vector3f origin)
         {
-            Preconditions.checkNotNull(origin, "Origin must not be null");
-            this.origin = origin;
+            this.origin = Preconditions.checkNotNull(origin, "Origin must not be null");
             this.originName = null;
             return this;
         }
@@ -237,9 +210,8 @@ public class BlockModelBuilder extends ModelBuilder<BlockModelBuilder> {
          */
         public RootTransformBuilder origin(String origin)
         {
-            Preconditions.checkNotNull(origin, "Origin must not be null");
             Preconditions.checkArgument(origin.equals("center") || origin.equals("corner") || origin.equals("opposing-corner"), "Invalid value for origin name.");
-            this.originName = origin;
+            this.originName = Preconditions.checkNotNull(origin, "Origin must not be null");;
             this.origin = null;
             return this;
         }
@@ -251,6 +223,44 @@ public class BlockModelBuilder extends ModelBuilder<BlockModelBuilder> {
         public BlockModelBuilder end()
         {
             return BlockModelBuilder.this;
+        }
+
+        public JsonObject toJson() {
+            // Write the transform to an object
+            JsonObject transform = new JsonObject();
+
+            if (!rootTransform.translation.equals(Vector3f.ZERO))
+            {
+                transform.add("translation", writeVec3(rootTransform.translation));
+            }
+
+            if (!rootTransform.scale.equals(ONE))
+            {
+                transform.add("scale", writeVec3(rootTransform.scale));
+            }
+
+            Quaternion leftRotation = rootTransform.leftRotation;
+            if (!leftRotation.equals(Quaternion.ONE))
+            {
+                transform.add("rotation", writeQuaternion(leftRotation));
+            }
+
+            Quaternion rightRotation = rootTransform.rightRotation;
+            if (!rightRotation.equals(Quaternion.ONE))
+            {
+                transform.add("post_rotation", writeQuaternion(rightRotation));
+            }
+
+            if (rootTransform.originName != null)
+            {
+                transform.addProperty("origin", rootTransform.originName);
+            }
+            else if (rootTransform.origin != null && rootTransform.origin != Vector3f.ZERO)
+            {
+                transform.add("origin", writeVec3(rootTransform.origin));
+            }
+
+            return transform;
         }
     }
 }
