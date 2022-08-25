@@ -23,7 +23,7 @@
 +         LevelStorageSource.this.m_230817_(this.f_230867_, (path, dataFixer) -> {
 +            try {
 +               CompoundTag compoundTag = NbtIo.m_128937_(path.toFile());
-+               net.minecraftforge.common.ForgeHooks.readAdditionalLevelSaveData(this.f_230867_, compoundTag);
++               net.minecraftforge.common.ForgeHooks.readAdditionalLevelSaveData(compoundTag, this.f_230867_);
 +            } catch (Exception e) {
 +                f_78191_.error("Exception reading {}", path, e);
 +            }

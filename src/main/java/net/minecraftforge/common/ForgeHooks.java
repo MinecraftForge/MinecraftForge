@@ -9,7 +9,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
-import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.regex.Matcher;
@@ -26,7 +25,6 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
-import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.Lifecycle;
 
@@ -147,13 +145,11 @@ import net.minecraftforge.fluids.FluidType;
 import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoader;
-import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.resource.ResourcePackLoader;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.ForgeRegistry;
 import net.minecraftforge.registries.GameData;
 import net.minecraftforge.registries.RegistryManager;
-import net.minecraftforge.registries.holdersets.ICustomHolderSet;
 import net.minecraftforge.server.permission.PermissionAPI;
 
 import org.apache.logging.log4j.LogManager;
@@ -162,7 +158,6 @@ import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
 import net.minecraft.ChatFormatting;
-import net.minecraft.resources.HolderSetCodec;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.damagesource.DamageSource;
@@ -1332,11 +1327,15 @@ public class ForgeHooks
      */
     @Deprecated(forRemoval = true, since = "1.19.2")
     public static void readAdditionalLevelSaveData(CompoundTag rootTag) {
-        readAdditionalLevelSaveData(null, rootTag);
+        readAdditionalLevelSaveData(rootTag, null);
     }
 
+    /**
+     * @param rootTag Level data file contents.
+     * @param levelDirectory Level currently being loaded. TODO 1.20 - Remove nullable annotation
+     */
     @ApiStatus.Internal
-    public static void readAdditionalLevelSaveData(LevelStorageSource.LevelDirectory levelDirectory, CompoundTag rootTag)
+    public static void readAdditionalLevelSaveData(CompoundTag rootTag, @Nullable LevelStorageSource.LevelDirectory levelDirectory)
     {
         CompoundTag tag = rootTag.getCompound("fml");
         if (tag.contains("LoadingModList"))
@@ -1366,43 +1365,39 @@ public class ForgeHooks
                 }, () -> missingVersions.put(modId, previousVersion));
             }
 
-            final var mismatchEvent = new ModMismatchEvent.VersionChanged(levelDirectory, mismatchedVersions);
-            ModLoader.get().postEventWithWrapInModOrder(mismatchEvent, (mc, e) -> { }, (mc, e)->
+            final var mismatchEvent = new ModMismatchEvent(levelDirectory, mismatchedVersions, missingVersions);
+            ModLoader.get().postEvent(mismatchEvent);
+
+            // For mods that did not specify handling, show a warning to users that errors may occur
+            for(var modid : mismatchedVersions.keySet())
             {
-                // For mods that did not specify handling, show a warning to users that errors may occur
-                for(var modid : mismatchedVersions.keySet())
+                if(!mismatchEvent.wasResolved(modid))
                 {
-                    if(!mismatchEvent.wasResolved(modid))
+                    if(mismatchEvent.isMissing(modid))
+                    {
+                        if(!mismatchEvent.wasResolved(modid))
+                        {
+                            LOGGER.warn(WORLDPERSISTENCE, "This world was saved with mod {} version {} which appears to be missing; things may not work well.",
+                                    modid, mismatchEvent.getPreviousVersion(modid));
+                        }
+                        else
+                        {
+                            LOGGER.debug(WORLDPERSISTENCE, "This world was saved with mod {} version {} which appears to be missing; this was marked resolved by mod {}. Some issues may occur.",
+                                    modid, mismatchEvent.getPreviousVersion(modid), mismatchEvent.getResolver(modid).map(ModContainer::getModId));
+                        }
+                    }
+                    else
                     {
                         LOGGER.warn(WORLDPERSISTENCE, "This world was saved with mod {} version {} and it is now at version {}, things may not work well.",
-                                modid, mismatchedVersions.get(modid), ModMismatchEvent.VersionChanged.getModVersion(modid));
-                    }
-                    else
-                    {
-                        LOGGER.debug(WORLDPERSISTENCE, "Version mismatch for mod {} ({} -> {}) was resolved by mod {}. Some issues may occur.",
-                                modid, mismatchedVersions.get(modid), ModMismatchEvent.VersionChanged.getModVersion(modid), mc.getModId());
+                                modid, mismatchEvent.getCurrentVersion(modid), mismatchEvent.getCurrentVersion(modid));
                     }
                 }
-            });
-
-            final var missingEvent = new ModMismatchEvent.Missing(levelDirectory, missingVersions);
-            ModLoader.get().postEventWithWrapInModOrder(missingEvent, (mc, e) -> { }, (mc, e) ->
-            {
-                // For mods that did not specify handling, show a warning to users that errors may occur
-                for(var modid : missingVersions.keySet())
+                else
                 {
-                    if(!missingEvent.wasResolved(modid))
-                    {
-                        LOGGER.warn(WORLDPERSISTENCE, "This world was saved with mod {} version {} which appears to be missing; things may not work well.",
-                                modid, missingVersions.get(modid));
-                    }
-                    else
-                    {
-                        LOGGER.debug(WORLDPERSISTENCE, "This world was saved with mod {} version {} which appears to be missing; this was marked resolved by mod {}. Some issues may occur.",
-                                modid, missingVersions.get(modid), mc.getModId());
-                    }
+                    LOGGER.debug(WORLDPERSISTENCE, "Version mismatch for mod {} ({} -> {}) was resolved by mod {}. Some issues may occur.",
+                            modid, mismatchEvent.getCurrentVersion(modid), mismatchEvent.getCurrentVersion(modid), mismatchEvent.getResolver(modid).map(ModContainer::getModId));
                 }
-            });
+            }
         }
 
         Multimap<ResourceLocation, ResourceLocation> failedElements = null;

@@ -11,6 +11,7 @@ import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.ModList;
+import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.event.IModBusEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.forgespi.language.IModInfo;
@@ -18,7 +19,7 @@ import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -50,19 +51,26 @@ public class ModMismatchEvent extends Event implements IModBusEvent
     /**
      * A set of previously-known versions that have mismatched with the currently loaded versions.
      */
-    private final Map<String, ArtifactVersion> previousVersions;
+    private final HashMap<String, MismatchedVersionInfo> versionDifferences;
 
     /**
-     * State values of which mods have specified that they have handled version mismatches.
+     * Which mods have specified that they have handled version mismatches.
      */
-    private final HashSet<String> resolved;
+    private final HashMap<String, ModContainer> resolved;
 
     @ApiStatus.Internal
-    public ModMismatchEvent(@Nullable LevelStorageSource.LevelDirectory levelDirectory, Map<String, ArtifactVersion> previousVersions)
+    public ModMismatchEvent(@Nullable LevelStorageSource.LevelDirectory levelDirectory, Map<String, ArtifactVersion> previousVersions, Map<String, ArtifactVersion> missingVersions)
     {
         this.levelDirectory = levelDirectory;
-        this.previousVersions = previousVersions;
-        this.resolved = new HashSet<>(previousVersions.size());
+        this.resolved = new HashMap<>(previousVersions.size());
+        this.versionDifferences = new HashMap<>();
+        previousVersions.forEach((modId, version) -> versionDifferences.put(modId, new MismatchedVersionInfo(version, ModList.get()
+                .getModContainerById(modId)
+                .map(ModContainer::getModInfo)
+                .map(IModInfo::getVersion)
+                .orElse(null))));
+
+        missingVersions.forEach((modId, version) -> versionDifferences.put(modId, new MismatchedVersionInfo(version, null)));
     }
 
     /**
@@ -80,24 +88,30 @@ public class ModMismatchEvent extends Event implements IModBusEvent
      * @param modId The mod to fetch previous version for.
      * @return The previously known mod version, or {@link Optional#empty()} if unknown/not found.
      */
-    public Optional<ArtifactVersion> getPreviousVersion(String modId)
+    @Nullable
+    public ArtifactVersion getPreviousVersion(String modId)
     {
-        return Optional.ofNullable(this.previousVersions.get(modId));
+        if(this.versionDifferences.containsKey(modId))
+            return this.versionDifferences.get(modId).oldVersion();
+
+        return null;
+    }
+
+    @Nullable
+    public ArtifactVersion getCurrentVersion(String modid) {
+        if(this.versionDifferences.containsKey(modid))
+            return this.versionDifferences.get(modid).newVersion();
+
+        return null;
     }
 
     /**
-     * Marks the mod version mismatch as having been resolved safely by a mod.
+     * Marks the mod version mismatch as having been resolved safely by the current mod.
      */
-    public void setResolved(String modId, boolean resolved)
+    public void markResolved(String modId)
     {
-        if(!resolved && this.resolved.contains(modId))
-        {
-            this.resolved.remove(modId);
-        }
-        else
-        {
-            this.resolved.add(modId);
-        }
+        final var resolvedBy = ModLoadingContext.get().getActiveContainer();
+        resolved.putIfAbsent(modId, resolvedBy);
     }
 
     /**
@@ -105,40 +119,21 @@ public class ModMismatchEvent extends Event implements IModBusEvent
      */
     public boolean wasResolved(String modId)
     {
-        return this.resolved.contains(modId);
+        return this.resolved.containsKey(modId);
     }
 
-    /**
-     * Fired when there is a version difference between the last world version of a mod
-     * and the version currently loaded by the game.
-     */
-    public static class VersionChanged extends ModMismatchEvent {
-
-        public VersionChanged(LevelStorageSource.@Nullable LevelDirectory levelDirectory, Map<String, ArtifactVersion> previousVersions) {
-            super(levelDirectory, previousVersions);
-        }
-
-        /**
-         * Utility method to fetch current mod version information from the mod list.
-         * @param modid The mod to query.
-         * @return Current mod version information.
-         */
-        public static ArtifactVersion getModVersion(String modid) {
-            return ModList.get().getModContainerById(modid)
-                    .map(ModContainer::getModInfo)
-                    .map(IModInfo::getVersion)
-                    .orElseThrow();
-        }
+    public boolean isMissing(String modid) {
+        return this.versionDifferences.get(modid).newVersion() != null;
     }
 
-    /**
-     * Fired when a world is being loaded with mods that have gone missing since the last
-     * save event.
-     */
-    public static class Missing extends ModMismatchEvent {
+    public Optional<ModContainer> getResolver(String modid) {
+        return Optional.ofNullable(this.resolved.get(modid));
+    }
 
-        public Missing(LevelStorageSource.@Nullable LevelDirectory levelDirectory, Map<String, ArtifactVersion> previousVersions) {
-            super(levelDirectory, previousVersions);
+    public record MismatchedVersionInfo(ArtifactVersion oldVersion, @Nullable ArtifactVersion newVersion) {
+        public boolean wasUpgrade() {
+            if(newVersion == null) return false;
+            return newVersion.compareTo(oldVersion) > 0;
         }
     }
 }
