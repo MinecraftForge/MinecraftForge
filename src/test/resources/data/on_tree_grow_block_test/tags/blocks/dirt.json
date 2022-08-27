@@ -1,0 +1,7 @@
+{
+    "replace": false,
+    "values": [
+        "on_tree_grow_block_test:test_dirt",
+        "on_tree_grow_block_test:test_grass_block"
+    ]
+}
