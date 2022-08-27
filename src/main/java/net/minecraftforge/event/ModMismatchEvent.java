@@ -19,9 +19,11 @@ import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 /**
  * <p>
@@ -98,7 +100,8 @@ public class ModMismatchEvent extends Event implements IModBusEvent
     }
 
     @Nullable
-    public ArtifactVersion getCurrentVersion(String modid) {
+    public ArtifactVersion getCurrentVersion(String modid)
+    {
         if(this.versionDifferences.containsKey(modid))
             return this.versionDifferences.get(modid).newVersion();
 
@@ -122,16 +125,58 @@ public class ModMismatchEvent extends Event implements IModBusEvent
         return this.resolved.containsKey(modId);
     }
 
-    public boolean isMissing(String modid) {
-        return this.versionDifferences.get(modid).newVersion() != null;
+    public Optional<MismatchedVersionInfo> getVersionDifference(String modid)
+    {
+        return Optional.ofNullable(this.versionDifferences.get(modid));
     }
 
-    public Optional<ModContainer> getResolver(String modid) {
+    public Optional<ModContainer> getResolver(String modid)
+    {
         return Optional.ofNullable(this.resolved.get(modid));
     }
 
-    public record MismatchedVersionInfo(ArtifactVersion oldVersion, @Nullable ArtifactVersion newVersion) {
-        public boolean wasUpgrade() {
+    public boolean anyUnresolved()
+    {
+        return resolved.size() < versionDifferences.size();
+    }
+
+    public Stream<MismatchResolutionResult> getUnresolved()
+    {
+        return versionDifferences.keySet().stream()
+                .filter(modid -> !resolved.containsKey(modid))
+                .map(unresolved -> new MismatchResolutionResult(unresolved, versionDifferences.get(unresolved), null))
+                .sorted(Comparator.comparing(MismatchResolutionResult::modid));
+    }
+
+    public boolean anyResolved()
+    {
+        return !resolved.isEmpty();
+    }
+
+    public Stream<MismatchResolutionResult> getResolved()
+    {
+        return resolved.keySet().stream()
+                .map(modid -> new MismatchResolutionResult(modid, versionDifferences.get(modid), resolved.get(modid)))
+                .sorted(Comparator.comparing(MismatchResolutionResult::modid));
+    }
+
+    public record MismatchResolutionResult(String modid, MismatchedVersionInfo versionDifference, @Nullable ModContainer resolver) {
+        public boolean wasSelfResolved()
+        {
+            return resolver != null && resolver.getModId().equals(modid);
+        }
+
+    }
+
+    public record MismatchedVersionInfo(ArtifactVersion oldVersion, @Nullable ArtifactVersion newVersion)
+    {
+        public boolean isMissing()
+        {
+            return newVersion == null;
+        }
+
+        public boolean wasUpgrade()
+        {
             if(newVersion == null) return false;
             return newVersion.compareTo(oldVersion) > 0;
         }

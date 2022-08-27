@@ -17,7 +17,6 @@ import java.util.regex.Pattern;
 import com.google.common.base.Strings;
 import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Queues;
@@ -143,7 +142,6 @@ import net.minecraftforge.event.level.BlockEvent;
 import net.minecraftforge.event.level.NoteBlockEvent;
 import net.minecraftforge.eventbus.api.Event.Result;
 import net.minecraftforge.fluids.FluidType;
-import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoader;
 import net.minecraftforge.resource.ResourcePackLoader;
@@ -1369,38 +1367,54 @@ public class ForgeHooks
             final var mismatchEvent = new ModMismatchEvent(levelDirectory, mismatchedVersions, missingVersions);
             ModLoader.get().postEvent(mismatchEvent);
 
-            var problematicModIds = ImmutableSet.<String>builder()
-                    .addAll(mismatchedVersions.keySet())
-                    .addAll(missingVersions.keySet())
-                    .build();
+            StringBuilder resolved = new StringBuilder("The following mods have version differences that were marked resolved:");
+            StringBuilder unresolved = new StringBuilder("The following mods have version differences that were not resolved:");
 
-            for(var modid : problematicModIds)
+            // For mods that were marked resolved, log the version resolution and the mod that resolved the mismatch
+            mismatchEvent.getResolved().forEachOrdered((res) ->
             {
-                if (mismatchEvent.wasResolved(modid)) {
-                    // For mods that were marked resolved, log the version resolution and the mod that resolved the mismatch
-                    if(mismatchEvent.isMissing(modid)) {
-                        LOGGER.debug(WORLDPERSISTENCE, "This world was saved with mod {} version {} which appears to be missing; this was marked resolved by mod {}. Some issues may occur.",
-                                modid, mismatchEvent.getPreviousVersion(modid), mismatchEvent.getResolver(modid).map(ModContainer::getModId));
-                    }
-                    else
-                    {
-                        LOGGER.debug(WORLDPERSISTENCE, "Version mismatch for mod {} ({} -> {}) was resolved by mod {}. Some issues may occur.",
-                                modid, mismatchEvent.getCurrentVersion(modid), mismatchEvent.getCurrentVersion(modid), mismatchEvent.getResolver(modid).map(ModContainer::getModId));
-                    }
+                final var modid = res.modid();
+                final var diff = res.versionDifference();
+                if(res.wasSelfResolved()) {
+                    resolved.append(System.lineSeparator())
+                            .append(diff.isMissing() ?
+                                    "%s (version %s -> MISSING, self-resolved)".formatted(modid, diff.oldVersion()) :
+                                    "%s (version %s -> %s, self-resolved)".formatted(modid, diff.oldVersion(), diff.newVersion())
+                            );
                 }
                 else
                 {
-                    // For mods that did not specify handling, show a warning to users that errors may occur
-                    if(mismatchEvent.isMissing(modid)) {
-                        LOGGER.warn(WORLDPERSISTENCE, "This world was saved with mod {} version {} which appears to be missing; things may not work well.",
-                                modid, mismatchEvent.getPreviousVersion(modid));
-                    }
-                    else
-                    {
-                        LOGGER.warn(WORLDPERSISTENCE, "This world was saved with mod {} version {} and it is now at version {}, things may not work well.",
-                                modid, mismatchEvent.getCurrentVersion(modid), mismatchEvent.getCurrentVersion(modid));
-                    }
+                    final var resolver = res.resolver().getModId();
+                    resolved.append(System.lineSeparator())
+                            .append(diff.isMissing() ?
+                                    "%s (version %s -> MISSING, resolved by %s)".formatted(modid, diff.oldVersion(), resolver) :
+                                    "%s (version %s -> %s, resolved by %s)".formatted(modid, diff.oldVersion(), diff.newVersion(), resolver)
+                            );
                 }
+            });
+
+            // For mods that did not specify handling, show a warning to users that errors may occur
+            mismatchEvent.getUnresolved().forEachOrdered((unres) ->
+            {
+                final var modid = unres.modid();
+                final var diff = unres.versionDifference();
+                unresolved.append(System.lineSeparator())
+                        .append(diff.isMissing() ?
+                                "%s (version %s -> MISSING)".formatted(modid, diff.oldVersion()) :
+                                "%s (version %s -> %s)".formatted(modid, diff.oldVersion(), diff.newVersion())
+                        );
+            });
+
+            if(mismatchEvent.anyResolved())
+            {
+                resolved.append(System.lineSeparator()).append("Things may not work well.");
+                LOGGER.debug(WORLDPERSISTENCE, resolved.toString());
+            }
+
+            if(mismatchEvent.anyUnresolved())
+            {
+                unresolved.append(System.lineSeparator()).append("Things may not work well.");
+                LOGGER.warn(WORLDPERSISTENCE, unresolved.toString());
             }
         }
 
