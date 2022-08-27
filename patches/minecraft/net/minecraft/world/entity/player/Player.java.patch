@@ -280,15 +280,14 @@
                          this.m_21008_(InteractionHand.MAIN_HAND, ItemStack.f_41583_);
                       }
                    }
-@@ -1212,7 +_,7 @@
+@@ -1212,6 +_,7 @@
                    }
                 }
              }
--
-+            this.m_36334_();
++            this.m_36334_(); // FORGE: Moved from beginning of attack() so that getAttackStrengthScale() returns an accurate value during all attack events
+ 
           }
        }
-    }
 @@ -1228,7 +_,7 @@
        }
  
