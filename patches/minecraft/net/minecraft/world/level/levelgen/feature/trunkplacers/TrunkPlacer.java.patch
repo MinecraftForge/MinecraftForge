@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/level/levelgen/feature/trunkplacers/TrunkPlacer.java
++++ b/net/minecraft/world/level/levelgen/feature/trunkplacers/TrunkPlacer.java
+@@ -58,7 +_,7 @@
+    }
+ 
+    protected static void m_226169_(LevelSimulatedReader p_226170_, BiConsumer<BlockPos, BlockState> p_226171_, RandomSource p_226172_, BlockPos p_226173_, TreeConfiguration p_226174_) {
+-      if (p_226174_.f_161215_ || !m_70295_(p_226170_, p_226173_)) {
++      if (!(((net.minecraft.world.level.LevelReader) p_226170_).m_8055_(p_226173_).onTreeGrow((net.minecraft.world.level.LevelReader) p_226170_, p_226171_, p_226172_, p_226173_, p_226174_)) && (p_226174_.f_161215_ || !m_70295_(p_226170_, p_226173_))) {
+          p_226171_.accept(p_226173_, p_226174_.f_161212_.m_213972_(p_226172_, p_226173_));
+       }
+ 
