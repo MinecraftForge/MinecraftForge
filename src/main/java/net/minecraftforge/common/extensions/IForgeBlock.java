@@ -333,6 +333,8 @@ public interface IForgeBlock
      * An override that returns true is responsible for using the place function to
      * set blocks in the world properly during generation. A modded grass block might override this method
      * to ensure it turns into the corresponding modded dirt instead of regular dirt when a tree grows on it.
+     * For modded grass blocks, returning true from this method is NOT a substitute for adding your block
+     * to the #minecraft:dirt tag, rather for changing the behaviour to something other than setting to dirt.
      *
      * NOTE: This happens DURING world generation, the generation may be incomplete when this is called.
      * Use the placeFunction when modifying the level.
