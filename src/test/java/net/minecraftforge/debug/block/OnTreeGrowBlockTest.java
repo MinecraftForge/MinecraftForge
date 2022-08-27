@@ -33,6 +33,8 @@ import java.util.function.BiConsumer;
 @Mod(OnTreeGrowBlockTest.ID)
 public class OnTreeGrowBlockTest
 {
+    public static final boolean ENABLED = true;
+
     static final String ID = "on_tree_grow_block_test";
 
     public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.Keys.BLOCKS, ID);
@@ -74,8 +76,11 @@ public class OnTreeGrowBlockTest
 
     public OnTreeGrowBlockTest()
     {
-        IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();
-        BLOCKS.register(modBus);
-        ITEMS.register(modBus);
+        if (ENABLED)
+        {
+            IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();
+            BLOCKS.register(modBus);
+            ITEMS.register(modBus);
+        }
     }
 }
