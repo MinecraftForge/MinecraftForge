@@ -56,50 +56,6 @@ public class BlockModelBuilder extends ModelBuilder<BlockModelBuilder>
 
     public class RootTransformBuilder
     {
-        public enum TransformOrigin implements StringRepresentable
-        {
-            CENTER(new Vector3f(), "origin"),
-            CORNER(new Vector3f(1f, 1f, 1f), "corner"),
-            OPPOSING_CORNER(new Vector3f(.5f, .5f, .5f), "opposing_corner");
-
-            private final Vector3f vec;
-            private final String name;
-
-            TransformOrigin(Vector3f vec, String name)
-            {
-                this.vec = vec;
-                this.name = name;
-            }
-
-            public Vector3f getVector()
-            {
-                return vec;
-            }
-
-            @Override
-            public String getSerializedName()
-            {
-                return name;
-            }
-
-            public static @Nullable TransformOrigin fromString(String originName)
-            {
-                if (CENTER.getSerializedName().equals(originName))
-                {
-                    return CENTER;
-                }
-                if (CORNER.getSerializedName().equals(originName))
-                {
-                    return CORNER;
-                }
-                if (OPPOSING_CORNER.getSerializedName().equals(originName))
-                {
-                    return OPPOSING_CORNER;
-                }
-                return null;
-            }
-        }
-
         private static final Vector3f ONE = new Vector3f(1, 1, 1);
 
         private Vector3f translation = Vector3f.ZERO;
@@ -291,6 +247,50 @@ public class BlockModelBuilder extends ModelBuilder<BlockModelBuilder>
             }
 
             return transform;
+        }
+
+        public enum TransformOrigin implements StringRepresentable
+        {
+            CENTER(new Vector3f(), "origin"),
+            CORNER(new Vector3f(1f, 1f, 1f), "corner"),
+            OPPOSING_CORNER(new Vector3f(.5f, .5f, .5f), "opposing_corner");
+
+            private final Vector3f vec;
+            private final String name;
+
+            TransformOrigin(Vector3f vec, String name)
+            {
+                this.vec = vec;
+                this.name = name;
+            }
+
+            public Vector3f getVector()
+            {
+                return vec;
+            }
+
+            @Override
+            public String getSerializedName()
+            {
+                return name;
+            }
+
+            public static @Nullable TransformOrigin fromString(String originName)
+            {
+                if (CENTER.getSerializedName().equals(originName))
+                {
+                    return CENTER;
+                }
+                if (CORNER.getSerializedName().equals(originName))
+                {
+                    return CORNER;
+                }
+                if (OPPOSING_CORNER.getSerializedName().equals(originName))
+                {
+                    return OPPOSING_CORNER;
+                }
+                return null;
+            }
         }
 
         private JsonArray writeVec3(Vector3f vector)
