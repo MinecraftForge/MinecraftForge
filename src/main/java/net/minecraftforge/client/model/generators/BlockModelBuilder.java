@@ -25,10 +25,8 @@ import javax.annotation.Nullable;
  * @see ModelProvider
  * @see ModelBuilder
  */
-public class BlockModelBuilder extends ModelBuilder<BlockModelBuilder> {
-
-    private static final Vector3f ONE = new Vector3f(1, 1, 1);
-
+public class BlockModelBuilder extends ModelBuilder<BlockModelBuilder>
+{
     private final RootTransformBuilder rootTransform = new RootTransformBuilder();
 
     public BlockModelBuilder(ResourceLocation outputLocation, ExistingFileHelper existingFileHelper)
@@ -56,43 +54,24 @@ public class BlockModelBuilder extends ModelBuilder<BlockModelBuilder> {
         return json;
     }
 
-    private JsonArray writeVec3(Vector3f vector)
-    {
-        JsonArray array = new JsonArray();
-        array.add(vector.x());
-        array.add(vector.y());
-        array.add(vector.z());
-        return array;
-    }
-
-    private JsonArray writeQuaternion(Quaternion quaternion)
-    {
-        JsonArray array = new JsonArray();
-        array.add(quaternion.i());
-        array.add(quaternion.j());
-        array.add(quaternion.k());
-        array.add(quaternion.r());
-        return array;
-    }
-
     public class RootTransformBuilder
     {
-        public enum Origin implements StringRepresentable
+        public enum TransformOrigin implements StringRepresentable
         {
-            Center(new Vector3f(), "origin"),
-            Corner(new Vector3f(1f, 1f, 1f), "corner"),
-            OpposingCorner(new Vector3f(.5f, .5f, .5f), "opposing_corner");
+            CENTER(new Vector3f(), "origin"),
+            CORNER(new Vector3f(1f, 1f, 1f), "corner"),
+            OPPOSING_CORNER(new Vector3f(.5f, .5f, .5f), "opposing_corner");
 
             private final Vector3f vec;
             private final String name;
 
-            Origin(Vector3f vec, String name)
+            TransformOrigin(Vector3f vec, String name)
             {
                 this.vec = vec;
                 this.name = name;
             }
 
-            public Vector3f vec()
+            public Vector3f getVector()
             {
                 return vec;
             }
@@ -103,35 +82,36 @@ public class BlockModelBuilder extends ModelBuilder<BlockModelBuilder> {
                 return name;
             }
 
-            public static @Nullable Origin fromString(String originName)
+            public static @Nullable TransformOrigin fromString(String originName)
             {
-                if (Center.getSerializedName().equals(originName))
+                if (CENTER.getSerializedName().equals(originName))
                 {
-                    return Center;
+                    return CENTER;
                 }
-                if (Corner.getSerializedName().equals(originName))
+                if (CORNER.getSerializedName().equals(originName))
                 {
-                    return Corner;
+                    return CORNER;
                 }
-                if (OpposingCorner.getSerializedName().equals(originName))
+                if (OPPOSING_CORNER.getSerializedName().equals(originName))
                 {
-                    return OpposingCorner;
+                    return OPPOSING_CORNER;
                 }
                 return null;
             }
         }
+
+        private static final Vector3f ONE = new Vector3f(1, 1, 1);
 
         private Vector3f translation = Vector3f.ZERO;
         private Quaternion leftRotation = Quaternion.ONE.copy();
         private Quaternion rightRotation = Quaternion.ONE.copy();
         private Vector3f scale = ONE;
 
-        private @Nullable Origin origin;
+        private @Nullable TransformOrigin origin;
         private @Nullable Vector3f originVec;
 
         private RootTransformBuilder()
         {
-
         }
 
         /**
@@ -185,7 +165,15 @@ public class BlockModelBuilder extends ModelBuilder<BlockModelBuilder> {
             return this;
         }
 
-        public RootTransformBuilder postRotation(Quaternion postRotation) {
+        /**
+         * Sets the right rotation of the root transform.
+         *
+         * @param postRotation the right rotation
+         * @return this builder
+         * @throws NullPointerException if {@code rightRotation} is {@code null}
+         */
+        public RootTransformBuilder postRotation(Quaternion postRotation)
+        {
             return rightRotation(postRotation);
         }
 
@@ -253,7 +241,7 @@ public class BlockModelBuilder extends ModelBuilder<BlockModelBuilder> {
          * @throws NullPointerException if {@code origin} is {@code null}
          * @throws IllegalArgumentException if {@code origin} is not {@code center}, {@code corner} or {@code opposing-corner}
          */
-        public RootTransformBuilder origin(Origin origin)
+        public RootTransformBuilder origin(TransformOrigin origin)
         {
             this.origin = Preconditions.checkNotNull(origin, "Origin must not be null");;
             this.originVec = null;
@@ -297,12 +285,31 @@ public class BlockModelBuilder extends ModelBuilder<BlockModelBuilder> {
             {
                 transform.addProperty("origin", origin.getSerializedName());
             }
-            else if (originVec != null && originVec != Vector3f.ZERO)
+            else if (originVec != null && !originVec.equals(Vector3f.ZERO))
             {
                 transform.add("origin", writeVec3(originVec));
             }
 
             return transform;
+        }
+
+        private JsonArray writeVec3(Vector3f vector)
+        {
+            JsonArray array = new JsonArray();
+            array.add(vector.x());
+            array.add(vector.y());
+            array.add(vector.z());
+            return array;
+        }
+
+        private JsonArray writeQuaternion(Quaternion quaternion)
+        {
+            JsonArray array = new JsonArray();
+            array.add(quaternion.i());
+            array.add(quaternion.j());
+            array.add(quaternion.k());
+            array.add(quaternion.r());
+            return array;
         }
     }
 }

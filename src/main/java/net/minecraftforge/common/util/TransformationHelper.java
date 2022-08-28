@@ -18,8 +18,7 @@ import com.mojang.math.Quaternion;
 import com.mojang.math.Transformation;
 import com.mojang.math.Vector3f;
 import com.mojang.math.Vector4f;
-import net.minecraftforge.client.model.generators.BlockModelBuilder;
-import net.minecraftforge.client.model.generators.BlockModelBuilder.RootTransformBuilder.Origin;
+import net.minecraftforge.client.model.generators.BlockModelBuilder.RootTransformBuilder.TransformOrigin;
 
 public final class TransformationHelper
 {
@@ -110,10 +109,6 @@ public final class TransformationHelper
 
     public static class Deserializer implements JsonDeserializer<Transformation>
     {
-        private static final Vector3f ORIGIN_CORNER = Origin.Corner.vec();
-        private static final Vector3f ORIGIN_OPPOSING_CORNER = Origin.OpposingCorner.vec();
-        private static final Vector3f ORIGIN_CENTER = Origin.Center.vec();
-
         @Override
         public Transformation deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException
         {
@@ -153,7 +148,7 @@ public final class TransformationHelper
             Quaternion rightRot = null;
             // TODO: Default origin is opposing corner, due to a mistake.
             // This should probably be replaced with center in future versions.
-            Vector3f origin = ORIGIN_OPPOSING_CORNER; // TODO: Changing this to ORIGIN_CENTER breaks models, function content needs changing too -C
+            Vector3f origin = TransformOrigin.OPPOSING_CORNER.getVector(); // TODO: Changing this to ORIGIN_CENTER breaks models, function content needs changing too -C
             Set<String> elements = new HashSet<>(obj.keySet());
             if (obj.has("translation"))
             {
@@ -209,10 +204,10 @@ public final class TransformationHelper
             Transformation matrix = new Transformation(translation, leftRot, scale, rightRot);
 
             // Use a different origin if needed.
-            if (!ORIGIN_CENTER.equals(origin))
+            if (!TransformOrigin.CENTER.getVector().equals(origin))
             {
                 Vector3f originFromCenter = origin.copy();
-                originFromCenter.sub(ORIGIN_CENTER);
+                originFromCenter.sub(TransformOrigin.CENTER.getVector());
                 matrix = matrix.applyOrigin(originFromCenter);
             }
             return matrix;
@@ -230,12 +225,12 @@ public final class TransformationHelper
             else if (originElement.isJsonPrimitive())
             {
                 String originString = originElement.getAsString();
-                Origin originEnum = Origin.fromString(originString);
+                TransformOrigin originEnum = TransformOrigin.fromString(originString);
                 if (originEnum == null)
                 {
                     throw new JsonParseException("Origin: expected one of 'center', 'corner', 'opposing-corner'");
                 }
-                origin = originEnum.vec();
+                origin = originEnum.getVector();
             }
             else
             {
