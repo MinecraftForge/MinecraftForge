@@ -1,6 +1,7 @@
 package net.minecraftforge.event.entity.living;
 
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent.ILivingTargetType;
 import net.minecraftforge.eventbus.api.Cancelable;
@@ -10,7 +11,14 @@ import net.minecraftforge.eventbus.api.Event.HasResult;
  * This event allows you to change the target an entity has. <br>
  * This event is fired before {@link LivingSetAttackTargetEvent}. <br>
  * <br>
- * This event is fired via the {@link ForgeHooks#}
+ * This event is fired via the {@link ForgeHooks#onLivingChangeTarget(LivingEntity, LivingEntity, ILivingTargetType)}<br>
+ * <br>
+ * {@link #getOriginalTarget()} returns the target that should originally be set.
+ * The return value cannot be affected by calling {@link #setNewTarget(LivingEntity)}.<br>
+ * {@link #getNewTarget()} returns the new target that this entity will have.
+ * The return value can be affected by calling {@link #setNewTarget(LivingEntity)}.<br>
+ * {@link #getTargetType()} returns the target type that caused the change of targets.<br>
+ * <br>
  * This event is {@link net.minecraftforge.eventbus.api.Cancelable}.<br>
  * <br>
  * If you cancel this event, the target will not be changed and it will stay the same.

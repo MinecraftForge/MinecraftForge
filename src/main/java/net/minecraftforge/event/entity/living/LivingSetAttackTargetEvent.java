@@ -18,7 +18,8 @@ import net.minecraftforge.common.MinecraftForge;
  * <br>
  * This event is fired via the {@link ForgeHooks#onLivingSetAttackTarget(LivingEntity, LivingEntity)}.<br>
  * <br>
- * {@link #target} contains the newly targeted Entity.<br>
+ * {@link #getTarget} returns the newly targeted Entity.<br>
+ * {@link #getTargetType()} returns the target type that caused the change of targets.<br>
  * <br>
  * This event is not {@link net.minecraftforge.eventbus.api.Cancelable}.<br>
  * <br>
@@ -62,14 +63,28 @@ public class LivingSetAttackTargetEvent extends LivingEvent
         return targetType;
     }
     
+    /**
+     * A living target type indicates what kind of system caused a change of
+     * targets. For a list of default target types, take a look at
+     * {@link LivingTargetType}.
+     */
     public static interface ILivingTargetType
     {
         
     }
     
+    /**
+     * This enum contains two default living target types.
+     */
     public static enum LivingTargetType implements ILivingTargetType
     {
+        /**
+         * This target type indicates that the target has been set by calling {@link Mob#setTarget(LivingEntity)}.
+         */
         MOB_TARGET,
+        /**
+         * This target type indicates that the target has been set by the {@link StartAttacking} behavior.
+         */
         BEHAVIOR_TARGET;
     }
 }
