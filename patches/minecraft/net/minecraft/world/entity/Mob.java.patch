@@ -5,7 +5,7 @@
  
     public void m_6710_(@Nullable LivingEntity p_21544_) {
 -      this.f_21362_ = p_21544_;
-+      net.minecraftforge.event.entity.living.LivingChangeTargetEvent changeTargetEvent = net.minecraftforge.common.ForgeHooks.onLivingChangeTarget(this, p_21544_, net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent.LivingTargetType.MOB_TARGET);
++      net.minecraftforge.event.entity.living.LivingChangeTargetEvent changeTargetEvent = net.minecraftforge.common.ForgeHooks.onLivingChangeTarget(this, p_21544_, net.minecraftforge.event.entity.living.LivingChangeTargetEvent.LivingTargetType.MOB_TARGET);
 +      if(!changeTargetEvent.isCanceled()) {
 +          this.f_21362_ = changeTargetEvent.getNewTarget();
 +          net.minecraftforge.common.ForgeHooks.onLivingSetAttackTarget(this, this.f_21362_);

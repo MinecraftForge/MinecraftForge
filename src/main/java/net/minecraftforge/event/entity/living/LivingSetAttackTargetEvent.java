@@ -10,6 +10,8 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.behavior.StartAttacking;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.entity.living.LivingChangeTargetEvent.ILivingTargetType;
+import net.minecraftforge.event.entity.living.LivingChangeTargetEvent.LivingTargetType;
 
 /**
  * This event is deprecated. Use {@link LivingChangeTargetEvent} instead.<br>
@@ -64,30 +66,5 @@ public class LivingSetAttackTargetEvent extends LivingEvent
     public ILivingTargetType getTargetType()
     {
         return targetType;
-    }
-    
-    /**
-     * A living target type indicates what kind of system caused a change of
-     * targets. For a list of default target types, take a look at
-     * {@link LivingTargetType}.
-     */
-    public static interface ILivingTargetType
-    {
-        
-    }
-    
-    /**
-     * This enum contains two default living target types.
-     */
-    public static enum LivingTargetType implements ILivingTargetType
-    {
-        /**
-         * This target type indicates that the target has been set by calling {@link Mob#setTarget(LivingEntity)}.
-         */
-        MOB_TARGET,
-        /**
-         * This target type indicates that the target has been set by the {@link StartAttacking} behavior.
-         */
-        BEHAVIOR_TARGET;
     }
 }

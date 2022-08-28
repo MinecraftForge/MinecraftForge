@@ -6,11 +6,11 @@
     public static <E extends Mob> void m_24213_(E p_24214_, LivingEntity p_24215_) {
 -      p_24214_.m_6274_().m_21879_(MemoryModuleType.f_26372_, p_24215_);
 -      p_24214_.m_6274_().m_21936_(MemoryModuleType.f_26326_);
-+      net.minecraftforge.event.entity.living.LivingChangeTargetEvent changeTargetEvent = net.minecraftforge.common.ForgeHooks.onLivingChangeTarget(p_24214_, p_24215_, net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent.LivingTargetType.BEHAVIOR_TARGET);
++      net.minecraftforge.event.entity.living.LivingChangeTargetEvent changeTargetEvent = net.minecraftforge.common.ForgeHooks.onLivingChangeTarget(p_24214_, p_24215_, net.minecraftforge.event.entity.living.LivingChangeTargetEvent.LivingTargetType.BEHAVIOR_TARGET);
 +      if(!changeTargetEvent.isCanceled()) {
 +          p_24214_.m_6274_().m_21879_(MemoryModuleType.f_26372_, changeTargetEvent.getNewTarget());
 +          p_24214_.m_6274_().m_21936_(MemoryModuleType.f_26326_);
-+          net.minecraftforge.common.ForgeHooks.onLivingSetAttackTarget(p_24214_, changeTargetEvent.getNewTarget(), net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent.LivingTargetType.BEHAVIOR_TARGET);
++          net.minecraftforge.common.ForgeHooks.onLivingSetAttackTarget(p_24214_, changeTargetEvent.getNewTarget(), net.minecraftforge.event.entity.living.LivingChangeTargetEvent.LivingTargetType.BEHAVIOR_TARGET);
 +      }
     }
  }
