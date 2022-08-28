@@ -12,6 +12,8 @@ import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.MinecraftForge;
 
 /**
+ * This event is deprecated. Use {@link LivingChangeTargetEvent} instead.<br>
+ * <br>
  * LivingSetAttackTargetEvent is fired when an Entity sets a target to attack.<br>
  * This event is fired whenever an Entity sets a target to attack in
  * {@link Mob#setTarget(LivingEntity)} or {@link StartAttacking#setAttackTarget(Mob, LivingEntity)}<br>
@@ -27,6 +29,7 @@ import net.minecraftforge.common.MinecraftForge;
  * <br>
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  **/
+@Deprecated
 public class LivingSetAttackTargetEvent extends LivingEvent
 {
     private final ILivingTargetType targetType;
