@@ -3,6 +3,7 @@ package net.minecraftforge.event.entity.living;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent.ILivingTargetType;
+import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event.HasResult;
 
 /**
@@ -19,6 +20,7 @@ import net.minecraftforge.eventbus.api.Event.HasResult;
  * <br>
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  */
+@Cancelable
 public class LivingChangeTargetEvent extends LivingEvent
 {
     private final ILivingTargetType targetType;
@@ -64,11 +66,5 @@ public class LivingChangeTargetEvent extends LivingEvent
     public LivingEntity getOriginalTarget()
     {
         return originalTarget;
-    }
-    
-    @Override
-    public boolean isCancelable()
-    {
-        return true;
     }
 }
