@@ -726,22 +726,22 @@ public class ForgeHooks
 
     public static boolean onGrindstoneTake(Container inputSlots, ContainerLevelAccess access, Function<Level, Integer> xpFunction)
     {
-        AtomicInteger xp = new AtomicInteger(0);
-        access.execute((l,p) -> xp.set(xpFunction.apply(l)));
-        GrindstoneEvent.OnTakeItem e = new GrindstoneEvent.OnTakeItem(inputSlots.getItem(0), inputSlots.getItem(1), xp.get());
-        if (MinecraftForge.EVENT_BUS.post(e)) {
-            return false;
-        }
-        access.execute((l, p) -> {
-            if (l instanceof ServerLevel) {
-                ExperienceOrb.award((ServerLevel)l, Vec3.atCenterOf(p), xp.get());
+        access.execute((l,p) -> {
+            int xp = xpFunction.apply(l);
+            GrindstoneEvent.OnTakeItem e = new GrindstoneEvent.OnTakeItem(inputSlots.getItem(0), inputSlots.getItem(1), xp);
+            if (MinecraftForge.EVENT_BUS.post(e))
+            {
+                return;
             }
-
+            if (l instanceof ServerLevel)
+            {
+                ExperienceOrb.award((ServerLevel)l, Vec3.atCenterOf(p), e.getXp());
+            }
             l.levelEvent(1042, p, 0);
+            inputSlots.setItem(0, e.getNewTopItem());
+            inputSlots.setItem(1, e.getNewBottomItem());
+            inputSlots.setChanged();
         });
-        inputSlots.setItem(0, e.getNewTopItem());
-        inputSlots.setItem(1, e.getNewBottomItem());
-        inputSlots.setChanged();
         return true;
     }
 

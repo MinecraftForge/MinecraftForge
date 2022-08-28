@@ -107,7 +107,7 @@ public abstract class GrindstoneEvent extends Event
      * This event is {@link Cancelable} <br>
      * {@link OnTakeItem} is fired when the output in a grindstone are is taken. <br>
      * It is called from {@link GrindstoneMenu#GrindstoneMenu(int, Inventory)}. <br>
-     * If the event is canceled, vanilla behavior will run. <br>
+     * If the event is canceled, vanilla behavior will not run, and no inputs will be consumed. <br>
      * if the amount of experience is larger than or equal 0, the vanilla behavior for calculating experience will not run. <br>
      */
     @Cancelable
@@ -156,7 +156,7 @@ public abstract class GrindstoneEvent extends Event
         }
 
         /**
-         * This is the experience amount that would be returned by the event. <br>
+         * This is the experience amount that will be returned by the event. <br>
          * @return The experience amount given to the player. <br>
          */
         public int getXp()
