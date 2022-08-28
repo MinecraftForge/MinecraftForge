@@ -9,6 +9,7 @@ import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -174,4 +175,15 @@ public interface IForgeBlockEntity extends ICapabilitySerializable<CompoundTag>
      {
          return ModelData.EMPTY;
      }
+
+    /**
+     * Returns whether this {@link BlockEntity} has custom outline rendering behavior.
+     *
+     * @param player the local player currently viewing this {@code BlockEntity}
+     * @return {@code true} to enable outline processing
+     */
+    default boolean hasCustomOutlineRendering(Player player)
+    {
+        return false;
+    }
 }

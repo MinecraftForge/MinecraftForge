@@ -246,7 +246,12 @@ modId="emissive_elements_test"
 modId="anvil_update_event_fix"
 [[mods]]
 modId="living_set_attack_target_event_test"
-
+[[mods]]
+modId="item_use_animation_test"
+[[mods]]
+modId="custom_color_resolver_test"
+[[mods]]
+modId="custom_item_decorations_test"
 
 
 # ADD ABOVE THIS LINE

@@ -24,6 +24,14 @@
              boolean flag1 = CrossbowItem.m_40932_(p_109377_);
              boolean flag2 = humanoidarm == HumanoidArm.RIGHT;
              int i = flag2 ? 1 : -1;
+@@ -384,6 +_,7 @@
+             this.m_109322_(p_109372_, p_109377_, flag2 ? ItemTransforms.TransformType.FIRST_PERSON_RIGHT_HAND : ItemTransforms.TransformType.FIRST_PERSON_LEFT_HAND, !flag2, p_109379_, p_109380_, p_109381_);
+          } else {
+             boolean flag3 = humanoidarm == HumanoidArm.RIGHT;
++            if (!net.minecraftforge.client.extensions.common.IClientItemExtensions.of(p_109377_).applyForgeHandTransform(p_109379_, f_109299_.f_91074_, humanoidarm, p_109377_, p_109373_, p_109378_, p_109376_)) // FORGE: Allow items to define custom arm animation
+             if (p_109372_.m_6117_() && p_109372_.m_21212_() > 0 && p_109372_.m_7655_() == p_109375_) {
+                int k = flag3 ? 1 : -1;
+                switch (p_109377_.m_41780_()) {
 @@ -487,8 +_,16 @@
           this.f_109304_ = Mth.m_14036_(this.f_109304_ - 0.4F, 0.0F, 1.0F);
        } else {

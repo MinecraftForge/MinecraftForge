@@ -5,10 +5,13 @@
 
 package net.minecraftforge.client.event;
 
+import com.google.common.collect.ImmutableList;
 import net.minecraft.client.color.block.BlockColor;
 import net.minecraft.client.color.block.BlockColors;
 import net.minecraft.client.color.item.ItemColor;
 import net.minecraft.client.color.item.ItemColors;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.ColorResolver;
 import net.minecraft.world.level.ItemLike;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
@@ -127,4 +130,26 @@ public abstract class RegisterColorHandlersEvent extends Event implements IModBu
             itemColors.register(itemColor, items);
         }
     }
+
+    /**
+     * Allows registration of custom {@link ColorResolver} implementations to be used with
+     * {@link net.minecraft.world.level.BlockAndTintGetter#getBlockTint(BlockPos, ColorResolver)}.
+     */
+    public static class ColorResolvers extends RegisterColorHandlersEvent
+    {
+        private final ImmutableList.Builder<ColorResolver> builder;
+
+        @ApiStatus.Internal
+        public ColorResolvers(ImmutableList.Builder<ColorResolver> builder)
+        {
+            this.builder = builder;
+        }
+
+        public void register(ColorResolver resolver)
+        {
+            this.builder.add(resolver);
+        }
+
+    }
+
 }

@@ -5,6 +5,7 @@
 
 package net.minecraftforge.fluids.capability;
 
+import net.minecraftforge.common.capabilities.AutoRegisterCapability;
 import net.minecraftforge.fluids.*;
 import org.jetbrains.annotations.NotNull;
 
@@ -14,6 +15,7 @@ import org.jetbrains.annotations.NotNull;
  * <p>
  * A reference implementation is provided {@link TileFluidHandler}.
  */
+@AutoRegisterCapability
 public interface IFluidHandler
 {
     enum FluidAction {

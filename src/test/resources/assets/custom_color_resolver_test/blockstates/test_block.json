@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "custom_color_resolver_test:block/block"
+    }
+  }
+}
