@@ -35,7 +35,7 @@ import org.apache.logging.log4j.Logger;
 @Mod(AdvancementEventTest.MOD_ID)
 public class AdvancementEventTest
 {
-    public static final String MOD_ID = "advancement_event";
+    public static final String MOD_ID = "advancement_event_test";
     public static final boolean ENABLED = false;
     private static final Logger LOGGER = LogManager.getLogger();
 
@@ -51,13 +51,13 @@ public class AdvancementEventTest
     public void onAdvancementEarnEvent(AdvancementEarnEvent event)
     {
         Advancement advancement = event.getAdvancement();
-        Player player = event.getPlayer();
+        Player player = event.getEntity();
         LOGGER.info("Player {} earned advancement {} and was awarded {}", player, advancement.getId(), advancement.getRewards().toString());
     }
     public void onAdvancementProgressEvent(AdvancementProgressEvent event)
     {
         Advancement advancement = event.getAdvancement();
-        Player player = event.getPlayer();
+        Player player = event.getEntity();
         AdvancementProgress advancementProgress = event.getAdvancementProgress();
         String criterionName = event.getCriterionName();
         AdvancementEvent.AdvancementProgressEvent.ProgressType progressType = event.getProgressType();

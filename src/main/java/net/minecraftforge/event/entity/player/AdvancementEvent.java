@@ -18,6 +18,7 @@ import net.minecraftforge.common.MinecraftForge;
  * This event does not have a result. {@link HasResult}<br>
  * <br>
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
+ * @Deprecated Use {@link net.minecraftforge.event.entity.player.AdvancementEvent.AdvancementEarnEvent} and {@link net.minecraftforge.event.entity.player.AdvancementEvent.AdvancementProgressEvent} instead
  */
 public class AdvancementEvent extends PlayerEvent
 {
@@ -43,11 +44,24 @@ public class AdvancementEvent extends PlayerEvent
      * <br>
      * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
      */
-    public static class AdvancementEarnEvent extends AdvancementEvent
+    //todo: should extend AdvancementEvent in 1.20
+    public static class AdvancementEarnEvent extends PlayerEvent
     {
+        private final Advancement advancement;
+
         public AdvancementEarnEvent(Player player, Advancement earned)
         {
-            super(player, earned);
+            super(player);
+            this.advancement = earned;
+        }
+
+        /**
+         *
+         * @return The advancement that was earned.
+         */
+        public Advancement getAdvancement()
+        {
+            return advancement;
         }
     }
 
@@ -60,8 +74,10 @@ public class AdvancementEvent extends PlayerEvent
      * <br>
      * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
      */
-    public static class AdvancementProgressEvent extends AdvancementEvent
+    //todo: should extend AdvancementEvent in 1.20
+    public static class AdvancementProgressEvent extends PlayerEvent
     {
+        private final Advancement advancement;
         public enum ProgressType
         {
             GRANT, REVOKE
@@ -73,10 +89,20 @@ public class AdvancementEvent extends PlayerEvent
 
         public AdvancementProgressEvent(Player player, Advancement progressed, AdvancementProgress advancementProgress, String criterionName, AdvancementEvent.AdvancementProgressEvent.ProgressType progressType)
         {
-            super(player, progressed);
+            super(player);
+            this.advancement = progressed;
             this.advancementProgress = advancementProgress;
             this.criterionName = criterionName;
             this.progressType = progressType;
+        }
+
+        /**
+         *
+         * @return The advancement that was progressed.
+         */
+        public Advancement getAdvancement()
+        {
+            return advancement;
         }
 
         /**
