@@ -10,6 +10,7 @@ import net.minecraft.advancements.AdvancementProgress;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.MinecraftForge;
 
+
 /**
  * This event is fired when a player gets an advancement.
  * <br>
@@ -18,8 +19,9 @@ import net.minecraftforge.common.MinecraftForge;
  * This event does not have a result. {@link HasResult}<br>
  * <br>
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
- * @Deprecated Use {@link net.minecraftforge.event.entity.player.AdvancementEvent.AdvancementEarnEvent} and {@link net.minecraftforge.event.entity.player.AdvancementEvent.AdvancementProgressEvent} instead
+ * @deprecated Use {@link net.minecraftforge.event.entity.player.AdvancementEvent.AdvancementEarnEvent} and {@link net.minecraftforge.event.entity.player.AdvancementEvent.AdvancementProgressEvent} instead
  */
+@Deprecated(since = "1.19.2")
 public class AdvancementEvent extends PlayerEvent
 {
     private final Advancement advancement;
@@ -36,13 +38,17 @@ public class AdvancementEvent extends PlayerEvent
     }
 
     /**
-     * This event is fired when a player earns an advancement/recipe.
-     * <br>
-     * This event is not {@link net.minecraftforge.eventbus.api.Cancelable}.<br>
-     * <br>
-     * This event does not have a result. {@link HasResult}<br>
-     * <br>
-     * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
+     * Fired when the player earns an advancement. An advancement is earned once its requirements are complete.
+     *
+     * <p>Note that advancements may be hidden from the player or used in background mechanics, such as recipe
+     * advancements for unlocking recipes in the recipe book.</p>
+     *
+     * <p>This event is not {@linkplain net.minecraftforge.eventbus.api.Cancelable cancellable}, and does not {@linkplain HasResult have a result}.</p>
+     *
+     * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
+     * only on the {@linkplain net.minecraftforge.fml.LogicalSide#SERVER logical server}.</p>
+     *
+     * @see AdvancementProgress#isDone()
      */
     //todo: should extend AdvancementEvent in 1.20
     public static class AdvancementEarnEvent extends PlayerEvent
@@ -57,7 +63,7 @@ public class AdvancementEvent extends PlayerEvent
 
         /**
          *
-         * @return The advancement that was earned.
+         * {@return the advancement that was earned}
          */
         public Advancement getAdvancement()
         {
@@ -66,23 +72,21 @@ public class AdvancementEvent extends PlayerEvent
     }
 
     /**
-     * This event is fired when a player progresses on an advancement criterionName.
-     * <br>
-     * This event is not {@link net.minecraftforge.eventbus.api.Cancelable}.<br>
-     * <br>
-     * This event does not have a result. {@link HasResult}<br>
-     * <br>
-     * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
+     * Fired when the player's progress on an advancement criterion is granted or revoked.
+     *
+     * <p>This event is not {@linkplain net.minecraftforge.eventbus.api.Cancelable cancellable}, and does not {@linkplain HasResult have a result}.</p>
+     *
+     * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
+     * only on the {@linkplain net.minecraftforge.fml.LogicalSide#SERVER logical server}.</p>
+     *
+     * @see AdvancementEarnEvent
+     * @see net.minecraft.server.PlayerAdvancements#award(Advancement, String)
+     * @see net.minecraft.server.PlayerAdvancements#revoke(Advancement, String)
      */
     //todo: should extend AdvancementEvent in 1.20
     public static class AdvancementProgressEvent extends PlayerEvent
     {
         private final Advancement advancement;
-        public enum ProgressType
-        {
-            GRANT, REVOKE
-        }
-
         private final AdvancementProgress advancementProgress;
         private final String criterionName;
         private final AdvancementEvent.AdvancementProgressEvent.ProgressType progressType;
@@ -98,7 +102,7 @@ public class AdvancementEvent extends PlayerEvent
 
         /**
          *
-         * @return The advancement that was progressed.
+         * {@return The advancement that was progressed}
          */
         public Advancement getAdvancement()
         {
@@ -106,7 +110,7 @@ public class AdvancementEvent extends PlayerEvent
         }
 
         /**
-         * {@return The AdvancementProgress of the Advancement}
+         * {@return the progress of the advancement}
          */
         public AdvancementProgress getAdvancementProgress()
         {
@@ -114,7 +118,7 @@ public class AdvancementEvent extends PlayerEvent
         }
 
         /**
-         * {@return The Criterion's name that was progressed}
+         * {@return name of the criterion that was progressed}
          */
         public String getCriterionName()
         {
@@ -122,11 +126,16 @@ public class AdvancementEvent extends PlayerEvent
         }
 
         /**
-         * {@return The ProgressType of the progressed Advancement}
+         * {@return The type of progress for the criterion in this event}
          */
         public ProgressType getProgressType()
         {
             return progressType;
+        }
+
+        public enum ProgressType
+        {
+            GRANT, REVOKE
         }
     }
 }

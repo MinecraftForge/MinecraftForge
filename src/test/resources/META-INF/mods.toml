@@ -14,6 +14,7 @@ license="LGPL v2.1"
     modId="fluid_type_test"
 [[mods]]
     modId="potentialspawnsevent_test"
+
 [[mods]]
     modId="advancement_event_test"
 

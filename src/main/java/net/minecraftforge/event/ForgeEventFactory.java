@@ -135,6 +135,8 @@ import net.minecraftforge.event.level.LevelEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.Event.Result;
 import net.minecraftforge.fml.LogicalSide;
+
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -827,11 +829,13 @@ public class ForgeEventFactory
         return WeightedRandomList.create(event.getSpawnerDataList());
     }
 
+    @ApiStatus.Internal
     public static void onAdvancementEarnedEvent(Player player, Advancement earned)
     {
         MinecraftForge.EVENT_BUS.post(new AdvancementEarnEvent(player, earned));
     }
 
+    @ApiStatus.Internal
     public static void onAdvancementProgressedEvent(Player player, Advancement progressed, AdvancementProgress advancementProgress, String criterion, ProgressType progressType)
     {
         MinecraftForge.EVENT_BUS.post(new AdvancementProgressEvent(player, progressed, advancementProgress, criterion, progressType));
