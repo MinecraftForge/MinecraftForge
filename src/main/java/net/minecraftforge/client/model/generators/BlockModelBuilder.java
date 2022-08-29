@@ -90,7 +90,6 @@ public class BlockModelBuilder extends ModelBuilder<BlockModelBuilder>
          * @param y y translation
          * @param z z translation
          * @return this builder
-         * @throws NullPointerException if {@code translation} is {@code null}
          */
         public RootTransformBuilder translation(float x, float y, float z)
         {
