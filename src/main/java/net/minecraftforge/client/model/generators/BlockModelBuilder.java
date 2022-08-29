@@ -84,6 +84,20 @@ public class BlockModelBuilder extends ModelBuilder<BlockModelBuilder>
         }
 
         /**
+         * Sets the translation of the root transform.
+         *
+         * @param x x translation
+         * @param y y translation
+         * @param z z translation
+         * @return this builder
+         * @throws NullPointerException if {@code translation} is {@code null}
+         */
+        public RootTransformBuilder translation(float x, float y, float z)
+        {
+            return translation(new Vector3f(x, y, z));
+        }
+
+        /**
          * Sets the left rotation of the root transform.
          *
          * @param rotation the left rotation
@@ -99,6 +113,20 @@ public class BlockModelBuilder extends ModelBuilder<BlockModelBuilder>
         /**
          * Sets the left rotation of the root transform.
          *
+         * @param x x rotation
+         * @param y y rotation
+         * @param z z rotation
+         * @param isDegrees whether the rotation is in degrees or radians
+         * @return this builder
+         */
+        public RootTransformBuilder rotation(float x, float y, float z, boolean isDegrees)
+        {
+            return rotation(new Quaternion(x, y, z, isDegrees));
+        }
+
+        /**
+         * Sets the left rotation of the root transform.
+         *
          * @param leftRotation the left rotation
          * @return this builder
          * @throws NullPointerException if {@code leftRotation} is {@code null}
@@ -106,6 +134,20 @@ public class BlockModelBuilder extends ModelBuilder<BlockModelBuilder>
         public RootTransformBuilder leftRotation(Quaternion leftRotation)
         {
             return rotation(leftRotation);
+        }
+
+        /**
+         * Sets the left rotation of the root transform.
+         *
+         * @param x x rotation
+         * @param y y rotation
+         * @param z z rotation
+         * @param isDegrees whether the rotation is in degrees or radians
+         * @return this builder
+         */
+        public RootTransformBuilder leftRotation(float x, float y, float z, boolean isDegrees)
+        {
+            return leftRotation(new Quaternion(x, y, z, isDegrees));
         }
 
         /**
@@ -124,6 +166,20 @@ public class BlockModelBuilder extends ModelBuilder<BlockModelBuilder>
         /**
          * Sets the right rotation of the root transform.
          *
+         * @param x x rotation
+         * @param y y rotation
+         * @param z z rotation
+         * @param isDegrees whether the rotation is in degrees or radians
+         * @return this builder
+         */
+        public RootTransformBuilder rightRotation(float x, float y, float z, boolean isDegrees)
+        {
+            return rightRotation(new Quaternion(x, y, z, isDegrees));
+        }
+
+        /**
+         * Sets the right rotation of the root transform.
+         *
          * @param postRotation the right rotation
          * @return this builder
          * @throws NullPointerException if {@code rightRotation} is {@code null}
@@ -131,6 +187,20 @@ public class BlockModelBuilder extends ModelBuilder<BlockModelBuilder>
         public RootTransformBuilder postRotation(Quaternion postRotation)
         {
             return rightRotation(postRotation);
+        }
+
+        /**
+         * Sets the right rotation of the root transform.
+         *
+         * @param x x rotation
+         * @param y y rotation
+         * @param z z rotation
+         * @param isDegrees whether the rotation is in degrees or radians
+         * @return this builder
+         */
+        public RootTransformBuilder postRotation(float x, float y, float z, boolean isDegrees)
+        {
+            return postRotation(new Quaternion(x, y, z, isDegrees));
         }
 
         /**
@@ -143,6 +213,19 @@ public class BlockModelBuilder extends ModelBuilder<BlockModelBuilder>
         public RootTransformBuilder scale(float scale)
         {
             return scale(new Vector3f(scale, scale, scale));
+        }
+
+        /**
+         * Sets the scale of the root transform.
+         *
+         * @param xScale x scale
+         * @param yScale y scale
+         * @param zScale z scale
+         * @return this builder
+         */
+        public RootTransformBuilder scale(float xScale, float yScale, float zScale)
+        {
+            return scale(new Vector3f(xScale, yScale, zScale));
         }
 
         /**
