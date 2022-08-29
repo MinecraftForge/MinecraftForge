@@ -60,6 +60,15 @@
              crashreportcategory.m_128165_("Item Damage", () -> {
                 return String.valueOf(p_174237_.m_41773_());
              });
+@@ -349,7 +_,7 @@
+          }
+ 
+          LocalPlayer localplayer = Minecraft.m_91087_().f_91074_;
+-         float f = localplayer == null ? 0.0F : localplayer.m_36335_().m_41521_(p_115176_.m_41720_(), Minecraft.m_91087_().m_91296_());
++         float f = localplayer == null ? 0.0F : p_115176_.getCooldownPercent(localplayer, Minecraft.m_91087_().m_91296_());
+          if (f > 0.0F) {
+             RenderSystem.m_69465_();
+             RenderSystem.m_69472_();
 @@ -362,6 +_,7 @@
              RenderSystem.m_69482_();
           }

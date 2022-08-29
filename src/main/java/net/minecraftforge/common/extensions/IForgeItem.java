@@ -829,28 +829,29 @@ public interface IForgeItem
     }
 
     /**
-     * Check if this item is on cooldown for an entity
+     * Check if this item is on cooldown for a player
      *
-     * @param entity the entity holding the item
+     * @param player the player holding the item
      * @param stack the ItemStack
-     * @return if this item is on cooldow
+     * @return if this item is on cooldown
      */
-    default boolean isOnCooldown(@NotNull Entity entity, @NotNull ItemStack stack)
+    default boolean isOnCooldown(@NotNull Player player, @NotNull ItemStack stack)
     {
-        return this.getCooldownPercent(entity, stack, 0) > 0;
+        return this.getCooldownPercent(player, stack, 0) > 0;
     }
 
     /**
-     * get this item cooldown for an entity
+     * Get the cooldown of this item for a player.
+     * The percentage is a value between 0 and 1, where 0 is not in cooldown.
      *
-     * @param entity the entity holding the item
+     * @param player the player holding the item
      * @param stack the ItemStack
      * @param partialTick the partial render tick
-     * @return this item cooldow  percent
+     * @return a number between 0 and 1 representing the cooldown of this item.
      */
-    default float getCooldownPercent(@NotNull Entity entity, @NotNull ItemStack stack, float partialTick)
+    default float getCooldownPercent(@NotNull Player player, @NotNull ItemStack stack, float partialTick)
     {
-        return entity instanceof Player player ? player.getCooldowns().getCooldownPercent(self(), partialTick) : 0;
+        return player.getCooldowns().getCooldownPercent(self(), partialTick);
     }
 
 }
