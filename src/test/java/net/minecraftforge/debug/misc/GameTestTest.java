@@ -27,8 +27,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.material.MaterialColor;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.EnergyStorage;
 import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.event.RegisterGameTestsEvent;
@@ -55,6 +55,7 @@ public class GameTestTest
     private static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, MODID);
     private static final RegistryObject<Block> ENERGY_BLOCK = BLOCKS.register("energy_block",
             () -> new EnergyBlock(Properties.of(Material.STONE, MaterialColor.STONE)));
+    @SuppressWarnings("unused")
     private static final RegistryObject<Item> ENERGY_BLOCK_ITEM = ITEMS.register("energy_block",
             () -> new BlockItem(ENERGY_BLOCK.get(), new Item.Properties().tab(CreativeModeTab.TAB_MISC)));
     private static final RegistryObject<BlockEntityType<EnergyBlockEntity>> ENERGY_BLOCK_ENTITY = BLOCK_ENTITIES.register("energy",
@@ -167,7 +168,7 @@ public class GameTestTest
         helper.setBlock(energyPos, ENERGY_BLOCK.get());
 
         // Queries the energy capability
-        LazyOptional<IEnergyStorage> energyHolder = helper.getBlockEntity(energyPos).getCapability(CapabilityEnergy.ENERGY);
+        LazyOptional<IEnergyStorage> energyHolder = helper.getBlockEntity(energyPos).getCapability(ForgeCapabilities.ENERGY);
 
         // Adds 2000 FE, but our energy storage can only hold 1000 FE
         energyHolder.ifPresent(energyStorage -> energyStorage.receiveEnergy(2000, false));
@@ -212,7 +213,7 @@ public class GameTestTest
         @Override
         public <T> LazyOptional<T> getCapability(@NotNull Capability<T> capability, @Nullable Direction facing)
         {
-            if (capability == CapabilityEnergy.ENERGY)
+            if (capability == ForgeCapabilities.ENERGY)
                 return energyHolder.cast();
 
             return super.getCapability(capability, facing);

@@ -60,6 +60,14 @@
              crashreportcategory.m_128165_("Item Damage", () -> {
                 return String.valueOf(p_174237_.m_41773_());
              });
+@@ -362,6 +_,7 @@
+             RenderSystem.m_69482_();
+          }
+ 
++         net.minecraftforge.client.ItemDecoratorHandler.of(p_115176_).render(p_115175_, p_115176_, p_115177_, p_115178_, f_115093_);
+       }
+    }
+ 
 @@ -377,5 +_,9 @@
  
     public void m_6213_(ResourceManager p_115105_) {

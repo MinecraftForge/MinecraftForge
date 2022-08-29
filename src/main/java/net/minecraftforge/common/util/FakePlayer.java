@@ -81,8 +81,6 @@ public class FakePlayer extends ServerPlayer
         this.connection = new FakePlayerNetHandler(level.getServer(), this);
     }
 
-    @Override public Vec3 position() { return new Vec3(0, 0, 0); }
-    @Override public BlockPos blockPosition() { return BlockPos.ZERO; }
     @Override public void displayClientMessage(Component chatComponent, boolean actionBar) { }
     @Override public void awardStat(Stat stat, int amount) { }
     @Override public boolean isInvulnerableTo(DamageSource source) { return true; }

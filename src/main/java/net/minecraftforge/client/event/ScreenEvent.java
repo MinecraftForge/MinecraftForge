@@ -275,6 +275,7 @@ public abstract class ScreenEvent extends Event
     /**
      * Fired ahead of rendering any active mob effects in the {@link EffectRenderingInventoryScreen inventory screen}.
      * Can be used to select the size of the effects display (full or compact) or even hide or replace vanilla's rendering entirely.
+     * This event can also be used to modify the horizontal position of the stack of effects being rendered.
      *
      * <p>This event is {@linkplain Cancelable cancellable} and does not {@linkplain HasResult have a result}.
      * Cancelling this event will prevent vanilla rendering.</p>
@@ -287,13 +288,15 @@ public abstract class ScreenEvent extends Event
     {
         private final int availableSpace;
         private boolean compact;
+        private int horizontalOffset;
 
         @ApiStatus.Internal
-        public RenderInventoryMobEffects(Screen screen, int availableSpace, boolean compact)
+        public RenderInventoryMobEffects(Screen screen, int availableSpace, boolean compact, int horizontalOffset)
         {
             super(screen);
             this.availableSpace = availableSpace;
             this.compact = compact;
+            this.horizontalOffset = horizontalOffset;
         }
 
         /**
@@ -310,6 +313,30 @@ public abstract class ScreenEvent extends Event
         public boolean isCompact()
         {
             return compact;
+        }
+
+        /**
+         * The distance from the left side of the screen that the effect stack is rendered. Positive values shift this more to the right.
+         */
+        public int getHorizontalOffset()
+        {
+            return horizontalOffset;
+        }
+
+        /**
+         * Replaces the horizontal offset of the effect stack
+         */
+        public void setHorizontalOffset(int offset)
+        {
+            horizontalOffset = offset;
+        }
+
+        /**
+         * Adds to the horizontal offset of the effect stack. Negative values are acceptable.
+         */
+        public void addHorizontalOffset(int offset)
+        {
+            horizontalOffset += offset;
         }
 
         /**

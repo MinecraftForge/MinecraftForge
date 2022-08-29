@@ -32,6 +32,9 @@ import com.mojang.serialization.Lifecycle;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.ResourceLocationException;
 import net.minecraft.advancements.Advancement;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.Commands;
+import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.core.*;
 import net.minecraft.network.chat.*;
 import net.minecraft.network.chat.contents.LiteralContents;
@@ -147,6 +150,7 @@ import net.minecraftforge.registries.ForgeRegistry;
 import net.minecraftforge.registries.GameData;
 import net.minecraftforge.registries.RegistryManager;
 import net.minecraftforge.registries.holdersets.ICustomHolderSet;
+import net.minecraftforge.server.permission.PermissionAPI;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -1490,5 +1494,14 @@ public class ForgeHooks
     public static String prefixNamespace(ResourceLocation registryKey)
     {
         return registryKey.getNamespace().equals("minecraft") ? registryKey.getPath() : registryKey.getNamespace() +  "/"  + registryKey.getPath();
+    }
+
+    public static boolean canUseEntitySelectors(SharedSuggestionProvider provider)
+    {
+        if (provider instanceof CommandSourceStack source && source.source instanceof ServerPlayer player)
+        {
+            return PermissionAPI.getPermission(player, ForgeMod.USE_SELECTORS_PERMISSION);
+        }
+        return provider.hasPermission(Commands.LEVEL_GAMEMASTERS);
     }
 }
