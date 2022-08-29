@@ -176,7 +176,7 @@ public class BlockModelBuilder extends ModelBuilder<BlockModelBuilder>
         }
 
         /**
-         * Sets the origi of the root transform.
+         * Sets the origin of the root transform.
          *
          * @param origin the origin vector
          * @return this builder
@@ -199,7 +199,7 @@ public class BlockModelBuilder extends ModelBuilder<BlockModelBuilder>
          */
         public RootTransformBuilder origin(TransformOrigin origin)
         {
-            this.origin = Preconditions.checkNotNull(origin, "Origin must not be null");;
+            this.origin = Preconditions.checkNotNull(origin, "Origin must not be null");
             this.originVec = null;
             return this;
         }
@@ -270,6 +270,7 @@ public class BlockModelBuilder extends ModelBuilder<BlockModelBuilder>
             }
 
             @Override
+            @NotNull
             public String getSerializedName()
             {
                 return name;
