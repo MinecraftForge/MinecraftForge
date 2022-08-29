@@ -10,7 +10,6 @@ import net.minecraft.advancements.AdvancementProgress;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.MinecraftForge;
 
-
 /**
  * This event is fired when a player gets an advancement.
  * <br>
