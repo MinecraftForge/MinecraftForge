@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/Mob.java
 +++ b/net/minecraft/world/entity/Mob.java
-@@ -210,7 +_,11 @@
+@@ -210,7 +_,12 @@
     }
  
     public void m_6710_(@Nullable LivingEntity p_21544_) {
@@ -8,6 +8,7 @@
 +      net.minecraftforge.event.entity.living.LivingChangeTargetEvent changeTargetEvent = net.minecraftforge.common.ForgeHooks.onLivingChangeTarget(this, p_21544_, net.minecraftforge.event.entity.living.LivingChangeTargetEvent.LivingTargetType.MOB_TARGET);
 +      if(!changeTargetEvent.isCanceled()) {
 +          this.f_21362_ = changeTargetEvent.getNewTarget();
++          // TODO: Remove in 1.20
 +          net.minecraftforge.common.ForgeHooks.onLivingSetAttackTarget(this, this.f_21362_);
 +      }
     }

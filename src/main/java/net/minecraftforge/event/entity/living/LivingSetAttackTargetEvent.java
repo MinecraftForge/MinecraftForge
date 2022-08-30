@@ -31,7 +31,8 @@ import net.minecraftforge.event.entity.living.LivingChangeTargetEvent.LivingTarg
  * <br>
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  **/
-@Deprecated
+// TODO: Remove in 1.20
+@Deprecated(since = "1.19.2", forRemoval = true)
 public class LivingSetAttackTargetEvent extends LivingEvent
 {
     private final ILivingTargetType targetType;
