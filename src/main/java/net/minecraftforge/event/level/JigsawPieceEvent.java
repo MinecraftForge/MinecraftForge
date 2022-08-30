@@ -3,11 +3,12 @@
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.event.world;
+package net.minecraftforge.event.level;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.levelgen.structure.pools.StructurePoolElement;
 import net.minecraft.world.level.levelgen.structure.pools.StructureTemplatePool;
 import net.minecraftforge.eventbus.api.Cancelable;
@@ -15,7 +16,6 @@ import net.minecraftforge.eventbus.api.Event;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
 /**
  * Is fired from {@link net.minecraft.world.level.levelgen.structure.pools.JigsawPlacement.Placer#tryPlacingChildren}
@@ -39,7 +39,7 @@ public class JigsawPieceEvent extends Event
    private final BlockPos jigsawBlockPosition;
    private final Map<ResourceLocation, Object> jigsawPlacerSettings;
    private final Registry<StructureTemplatePool> patternRegistry;
-   private final Random random;
+   private final RandomSource random;
    private final int currentDepth;
 
    /**
@@ -53,10 +53,10 @@ public class JigsawPieceEvent extends Event
     *                                in modded ones to add specific settings or more or less randomness. If  {@code forge:force_piece_placement} is set
     *                                to {@code true}, all future pieces in that structure will always be placed, even if they overwrite existing pieces.
     * @param patternRegistry         The access to {@link Registry} instance for structure pools. Can be used to get pools of other structures and re-use them.
-    * @param random                  The access to {@link Random} instance of specific structure. Can be used to shuffle custom pieces after they are added.
+    * @param random                  The access to {@link RandomSource} instance of specific structure. Can be used to shuffle custom pieces after they are added.
     * @param currentDepth            The current depth of the piece that is going to be placed. It will be 0 for the jigsaw blocks contained in the starting piece.
     */
-   public JigsawPieceEvent(List<StructurePoolElement> pieces, ResourceLocation patternLocation, BlockPos jigsawBlockPosition, Map<ResourceLocation, Object> jigsawPlacerSettings, Registry<StructureTemplatePool> patternRegistry, Random random, int currentDepth)
+   public JigsawPieceEvent(List<StructurePoolElement> pieces, ResourceLocation patternLocation, BlockPos jigsawBlockPosition, Map<ResourceLocation, Object> jigsawPlacerSettings, Registry<StructureTemplatePool> patternRegistry, RandomSource random, int currentDepth)
    {
       this.pieces = pieces;
       this.patternLocation = patternLocation;
@@ -116,10 +116,10 @@ public class JigsawPieceEvent extends Event
    }
 
    /**
-    * Gets the {@link Random} instance of specific structure.
+    * Gets the {@link RandomSource} instance of specific structure.
     * Can be used to shuffle custom pieces after they are added.
     */
-   public Random getRandom() {
+   public RandomSource getRandom() {
       return random;
    }
 

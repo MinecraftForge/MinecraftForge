@@ -15,7 +15,7 @@ modId="fluid_type_test"
 [[mods]]
 modId="potentialspawnsevent_test"
 [[mods]]
-modId="jigsaw_event_test"
+modId="jigsaw_piece_event_test"
 
 
 # LEGACY TEST CASES
