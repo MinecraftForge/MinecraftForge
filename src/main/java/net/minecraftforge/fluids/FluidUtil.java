@@ -174,8 +174,13 @@ public class FluidUtil
         return getFluidHandler(containerCopy)
                 .map(containerFluidHandler -> {
 
-                    // We are acting on a COPY of the stack, so performing changes is acceptable even if we are simulating.
-                    FluidStack transfer = tryFluidTransfer(fluidDestination, containerFluidHandler, maxAmount, true);
+                    // We are acting on a COPY of the stack, so performing changes on the source is acceptable even if we are simulating.
+                    // However, we can't modify the destination when simulating, so we need a modified version of tryFluidTransfer.
+                    FluidStack transfer;
+                    if (doDrain)
+                        transfer = tryFluidTransfer(fluidDestination, containerFluidHandler, maxAmount, true);
+                    else
+                        transfer = tryFluidTransferSimulateTarget(fluidDestination, containerFluidHandler, maxAmount);
                     if (transfer.isEmpty())
                         return FluidActionResult.FAILURE;
 
@@ -189,6 +194,24 @@ public class FluidUtil
                     return new FluidActionResult(resultContainer);
                 })
                 .orElse(FluidActionResult.FAILURE);
+    }
+
+    /**
+     * Modified version of {@link #tryFluidTransfer} that will simulate on the destination but execute on the source,
+     * for use inside of {@link #tryEmptyContainer}.
+     */
+    private static FluidStack tryFluidTransferSimulateTarget(IFluidHandler fluidDestination, IFluidHandler fluidSource, int maxAmount)
+    {
+        FluidStack drainable = fluidSource.drain(maxAmount, IFluidHandler.FluidAction.SIMULATE);
+        if (drainable.isEmpty())
+            return FluidStack.EMPTY;
+
+        int fillableAmount = fluidDestination.fill(drainable, IFluidHandler.FluidAction.SIMULATE);
+        if (fillableAmount <= 0)
+            return FluidStack.EMPTY;
+
+        drainable.setAmount(fillableAmount);
+        return fluidSource.drain(drainable, IFluidHandler.FluidAction.EXECUTE);
     }
 
     /**
