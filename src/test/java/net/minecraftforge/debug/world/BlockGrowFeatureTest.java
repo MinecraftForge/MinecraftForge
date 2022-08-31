@@ -10,12 +10,16 @@ import org.apache.logging.log4j.LogManager;
 @Mod.EventBusSubscriber
 public class BlockGrowFeatureTest
 {
+    public static final boolean ENABLE = true;
+
     @SubscribeEvent
     public static void onGrowReplaceFeature(SaplingGrowTreeEvent event)
     {
-        event.setFeature(TreeFeatures.BIRCH_BEES_005);
-        if (event.getFeature().equals(TreeFeatures.BIRCH_BEES_005)) {
-            LogManager.getLogger().info("BlockGrowFeatureTest replaced feature");
+        if (ENABLE) {
+            event.setFeature(TreeFeatures.BIRCH_BEES_005);
+            if (event.getFeature().equals(TreeFeatures.BIRCH_BEES_005)) {
+                LogManager.getLogger().info("BlockGrowFeatureTest replaced feature");
+            }
         }
     }
 }

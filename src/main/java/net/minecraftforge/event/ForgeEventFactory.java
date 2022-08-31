@@ -78,6 +78,7 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.ToolAction;
 import net.minecraftforge.common.capabilities.CapabilityDispatcher;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.event.brewing.PlayerBrewedPotionEvent;
@@ -608,11 +609,12 @@ public class ForgeEventFactory
     }
 
     /**
-     * @deprecated(forRemoval = true, since = "1.20")
+     * @deprecated use {@link ForgeEventFactory#blockGrowFeature}
      */
+    @Deprecated(forRemoval = true, since = "1.19.2")
     public static boolean saplingGrowTree(LevelAccessor level, RandomSource randomSource, BlockPos pos)
     {
-        return blockGrowFeature(level, randomSource, pos, null).getResult().equals(Result.DENY);
+        return !blockGrowFeature(level, randomSource, pos, null).getResult().equals(Result.DENY);
     }
 
     public static SaplingGrowTreeEvent blockGrowFeature(LevelAccessor level, RandomSource randomSource, BlockPos pos, Holder<? extends ConfiguredFeature<?, ?>> holder)

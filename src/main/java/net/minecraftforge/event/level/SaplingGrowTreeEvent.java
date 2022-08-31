@@ -38,6 +38,11 @@ public class SaplingGrowTreeEvent extends LevelEvent
     private final BlockPos pos;
     private Holder<? extends ConfiguredFeature<?, ?>> feature;
 
+    public SaplingGrowTreeEvent(LevelAccessor level, RandomSource randomSource, BlockPos pos)
+    {
+        this(level, randomSource, pos, null);
+    }
+
     public SaplingGrowTreeEvent(LevelAccessor level, RandomSource randomSource, BlockPos pos, Holder<? extends ConfiguredFeature<?, ?>> feature)
     {
         super(level);
