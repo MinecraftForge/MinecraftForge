@@ -29,7 +29,7 @@ import net.minecraftforge.eventbus.api.Event.HasResult;
  * <p>
  * This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus}
  * only on the {@linkplain net.minecraftforge.fml.LogicalSide#SERVER logical server}.
- * TODO 1.20 Change to cancelable and rename event
+ * TODO 1.20 rename event
  */
 @HasResult
 public class SaplingGrowTreeEvent extends LevelEvent
