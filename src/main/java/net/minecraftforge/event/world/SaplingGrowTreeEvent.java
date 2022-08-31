@@ -8,10 +8,12 @@ package net.minecraftforge.event.world;
 import java.util.Random;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.SaplingBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event.HasResult;
@@ -36,12 +38,20 @@ public class SaplingGrowTreeEvent extends WorldEvent
 {
     private final BlockPos pos;
     private final Random rand;
+    private Holder<? extends ConfiguredFeature<?, ?>> feature;
 
+    @Deprecated(forRemoval = true, since = "1.18.2")
     public SaplingGrowTreeEvent(LevelAccessor world, Random rand, BlockPos pos)
+    {
+        this(world, rand, pos, null);
+    }
+
+    public SaplingGrowTreeEvent(LevelAccessor world, Random rand, BlockPos pos, Holder<? extends ConfiguredFeature<?, ?>> feature)
     {
         super(world);
         this.rand = rand;
         this.pos = pos;
+        this.feature = feature;
     }
 
     public BlockPos getPos()
@@ -52,5 +62,16 @@ public class SaplingGrowTreeEvent extends WorldEvent
     public Random getRand()
     {
         return rand;
+    }
+
+    /**
+     * {@return the holder of the feature which will be placed}
+     */
+    public Holder<? extends ConfiguredFeature<?, ?>> getFeature() {
+        return feature;
+    }
+
+    public void setFeature(Holder<? extends ConfiguredFeature<?, ?>> feature) {
+        this.feature = feature;
     }
 }

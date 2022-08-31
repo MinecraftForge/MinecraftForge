@@ -236,5 +236,7 @@ license="LGPL v2.1"
     modId="dyn_map_color_test"
 [[mods]]
     modId="potentialspawnsevent_test"
+[[mods]]
+    modId="block_grow_feature_test"
 
 # ADD ABOVE THIS LINE
