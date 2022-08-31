@@ -1,0 +1,12 @@
+--- a/net/minecraft/world/level/block/grower/AbstractMegaTreeGrower.java
++++ b/net/minecraft/world/level/block/grower/AbstractMegaTreeGrower.java
+@@ -30,7 +_,8 @@
+ 
+    public boolean m_222896_(ServerLevel p_222897_, ChunkGenerator p_222898_, BlockPos p_222899_, BlockState p_222900_, RandomSource p_222901_, int p_222902_, int p_222903_) {
+       Holder<? extends ConfiguredFeature<?, ?>> holder = this.m_213566_(p_222901_);
+-      if (holder == null) {
++      net.minecraftforge.event.level.SaplingGrowTreeEvent event = net.minecraftforge.event.ForgeEventFactory.blockGrowFeature(p_222897_, p_222901_, p_222899_, holder);
++      if (event.getResult().equals(net.minecraftforge.eventbus.api.Event.Result.DENY) || event.getFeature() == null) {
+          return false;
+       } else {
+          ConfiguredFeature<?, ?> configuredfeature = holder.m_203334_();

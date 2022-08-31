@@ -607,7 +607,15 @@ public class ForgeEventFactory
         return result == Result.DEFAULT ? level.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING) : result == Result.ALLOW;
     }
 
-    public static SaplingGrowTreeEvent saplingGrowTree(LevelAccessor level, RandomSource randomSource, BlockPos pos, Holder<? extends ConfiguredFeature<?, ?>> holder)
+    /**
+     * @deprecated(forRemoval = true, since = "1.20")
+     */
+    public static boolean saplingGrowTree(LevelAccessor level, RandomSource randomSource, BlockPos pos)
+    {
+        return blockGrowFeature(level, randomSource, pos, null).getResult().equals(Result.DENY);
+    }
+
+    public static SaplingGrowTreeEvent blockGrowFeature(LevelAccessor level, RandomSource randomSource, BlockPos pos, Holder<? extends ConfiguredFeature<?, ?>> holder)
     {
         SaplingGrowTreeEvent event = new SaplingGrowTreeEvent(level, randomSource, pos, holder);
         MinecraftForge.EVENT_BUS.post(event);
