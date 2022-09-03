@@ -41,6 +41,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.ToolAction;
 import net.minecraftforge.common.ToolActions;
+import net.minecraftforge.items.wrapper.ShulkerItemStackInvWrapper;
 import net.minecraftforge.registries.IForgeRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -655,7 +656,8 @@ public interface IForgeItem
     @Nullable
     default net.minecraftforge.common.capabilities.ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundTag nbt)
     {
-        return null;
+        var ret = ShulkerItemStackInvWrapper.createDefaultProvider(stack);
+        return ret;
     }
 
     /**
