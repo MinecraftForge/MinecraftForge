@@ -117,14 +117,22 @@ public class VersionChecker
             /**
              * Returns the response body as a String for the given URL while following redirects
              */
-            private String openUrlString(URL url) throws IOException, URISyntaxException, InterruptedException {
+            private String openUrlString(URL url, IModInfo mod) throws IOException, URISyntaxException, InterruptedException {
                 URL currentUrl = url;
+
+                final StringBuilder sb = new StringBuilder();
+                sb.append("Java-http-client/").append(System.getProperty("java.version")).append(' ');
+                sb.append("MinecraftForge/").append(FMLLoader.versionInfo().mcAndForgeVersion()).append(' ');
+                sb.append(mod.getModId()).append('/').append(mod.getVersion());
+                final String userAgent = sb.toString();
+
                 for (int redirects = 0; redirects < MAX_HTTP_REDIRECTS; redirects++)
                 {
                     var request = HttpRequest.newBuilder()
                             .uri(currentUrl.toURI())
                             .timeout(Duration.ofSeconds(HTTP_TIMEOUT_SECS))
                             .setHeader("Accept-Encoding", "gzip")
+                            .setHeader("User-Agent", userAgent)
                             .GET()
                             .build();
 
@@ -166,7 +174,7 @@ public class VersionChecker
                     URL url = mod.getUpdateURL().get();
                     LOGGER.info("[{}] Starting version check at {}", mod.getModId(), url.toString());
 
-                    String data = openUrlString(url);
+                    String data = openUrlString(url, mod);
 
                     LOGGER.debug("[{}] Received version check data:\n{}", mod.getModId(), data);
 
