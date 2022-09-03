@@ -23,6 +23,8 @@ license="LGPL v2.1"
 
 
 [[mods]]
+modId="on_tree_grow_block_test"
+[[mods]]
 modId="containertypetest"
 [[mods]]
 modId="potion_event_test"
