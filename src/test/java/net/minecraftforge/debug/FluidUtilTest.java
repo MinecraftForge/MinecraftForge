@@ -20,6 +20,11 @@ import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.logging.log4j.LogManager;
 
+/**
+ * Various tests for {@link FluidUtil}, that run when the mod is loaded.
+ * If one of the tests fails, an expection will be thrown, and mod loading will fail with an error.
+ * If all tests pass, the mod will load successfully.
+ */
 @Mod(FluidUtilTest.MODID)
 public class FluidUtilTest
 {
@@ -40,7 +45,7 @@ public class FluidUtilTest
 
 	/**
 	 * Ensures that tryEmptyContainer doesn't change the target fluid handler when simulating.
-	 * Regression test for the root cause of https://github.com/MinecraftForge/MinecraftForge/issues/6796.
+	 * Regression test for the root cause of <a href="https://github.com/MinecraftForge/MinecraftForge/issues/6796">issue #6796</a>.
 	 */
 	private static void test_tryEmptyContainer()
 	{
@@ -67,7 +72,7 @@ public class FluidUtilTest
 
 	/**
 	 * Ensures that tryEmptyContainerAndStow doesn't duplicate fluids in the target when the container is stackable.
-	 * Regression test for https://github.com/MinecraftForge/MinecraftForge/issues/6796.
+	 * Regression test for <a href="https://github.com/MinecraftForge/MinecraftForge/issues/6796">issue #6796</a>.
 	 */
 	private static void test_tryEmptyContainerAndStow_stackable()
 	{
