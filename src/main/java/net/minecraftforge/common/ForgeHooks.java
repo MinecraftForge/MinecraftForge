@@ -1030,6 +1030,10 @@ public class ForgeHooks
         return null;
     }
 
+    /**
+     * @deprecated See {@link ForgeEventFactory#onAdvancementEarnedEvent} and {@link ForgeEventFactory#onAdvancementProgressedEvent}
+     */
+    @Deprecated(forRemoval = true, since = "1.19.2")
     public static void onAdvancement(ServerPlayer player, Advancement advancement)
     {
         MinecraftForge.EVENT_BUS.post(new AdvancementEvent(player, advancement));
