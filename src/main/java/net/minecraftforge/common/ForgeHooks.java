@@ -25,7 +25,6 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
-import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.Lifecycle;
 
@@ -56,6 +55,7 @@ import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.material.Fluids;
+import net.minecraft.world.level.storage.LevelStorageSource;
 import net.minecraft.world.level.storage.WorldData;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.LootTable;
@@ -108,6 +108,7 @@ import net.minecraftforge.event.AnvilUpdateEvent;
 import net.minecraftforge.event.DifficultyChangeEvent;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.ItemAttributeModifierEvent;
+import net.minecraftforge.event.ModMismatchEvent;
 import net.minecraftforge.event.ServerChatEvent;
 import net.minecraftforge.event.RegisterStructureConversionsEvent;
 import net.minecraftforge.event.VanillaGameEvent;
@@ -143,7 +144,6 @@ import net.minecraftforge.event.level.BlockEvent;
 import net.minecraftforge.event.level.NoteBlockEvent;
 import net.minecraftforge.eventbus.api.Event.Result;
 import net.minecraftforge.fluids.FluidType;
-import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoader;
 import net.minecraftforge.resource.ResourcePackLoader;
@@ -151,7 +151,6 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.ForgeRegistry;
 import net.minecraftforge.registries.GameData;
 import net.minecraftforge.registries.RegistryManager;
-import net.minecraftforge.registries.holdersets.ICustomHolderSet;
 import net.minecraftforge.server.permission.PermissionAPI;
 
 import org.apache.logging.log4j.LogManager;
@@ -160,7 +159,6 @@ import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
 import net.minecraft.ChatFormatting;
-import net.minecraft.resources.HolderSetCodec;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.damagesource.DamageSource;
@@ -170,6 +168,9 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.state.pattern.BlockInWorld;
 import net.minecraft.world.level.dimension.LevelStem;
 import net.minecraft.world.level.material.Fluid;
+import org.apache.maven.artifact.versioning.ArtifactVersion;
+import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -1342,12 +1343,28 @@ public class ForgeHooks
         levelTag.put("fml", fmlData);
     }
 
-    public static void readAdditionalLevelSaveData(CompoundTag rootTag)
+    /**
+     * @deprecated To be removed in 1.20.
+     * Use {@link #readAdditionalLevelSaveData(CompoundTag, LevelStorageSource.LevelDirectory)} instead.
+     */
+    @Deprecated(forRemoval = true, since = "1.19.2")
+    public static void readAdditionalLevelSaveData(CompoundTag rootTag) {
+        readAdditionalLevelSaveData(rootTag, null);
+    }
+
+    /**
+     * @param rootTag Level data file contents.
+     * @param levelDirectory Level currently being loaded. TODO 1.20 - Remove nullable annotation
+     */
+    @ApiStatus.Internal
+    public static void readAdditionalLevelSaveData(CompoundTag rootTag, @Nullable LevelStorageSource.LevelDirectory levelDirectory)
     {
         CompoundTag tag = rootTag.getCompound("fml");
         if (tag.contains("LoadingModList"))
         {
             ListTag modList = tag.getList("LoadingModList", net.minecraft.nbt.Tag.TAG_COMPOUND);
+            Map<String, ArtifactVersion> mismatchedVersions = new HashMap<>(modList.size());
+            Map<String, ArtifactVersion> missingVersions = new HashMap<>(modList.size());
             for (int i = 0; i < modList.size(); i++)
             {
                 CompoundTag mod = modList.getCompound(i);
@@ -1356,17 +1373,72 @@ public class ForgeHooks
                 {
                     continue;
                 }
+
                 String modVersion = mod.getString("ModVersion");
-                Optional<? extends ModContainer> container = ModList.get().getModContainerById(modId);
-                if (container.isEmpty())
+                final var previousVersion = new DefaultArtifactVersion(modVersion);
+                ModList.get().getModContainerById(modId).ifPresentOrElse(container ->
                 {
-                    LOGGER.error(WORLDPERSISTENCE,"This world was saved with mod {} which appears to be missing, things may not work well", modId);
-                    continue;
-                }
-                if (!Objects.equals(modVersion, MavenVersionStringHelper.artifactVersionToString(container.get().getModInfo().getVersion())))
+                    final var loadingVersion = container.getModInfo().getVersion();
+                    if (!loadingVersion.equals(previousVersion))
+                    {
+                        // Enqueue mismatched versions for bulk event
+                        mismatchedVersions.put(modId, previousVersion);
+                    }
+                }, () -> missingVersions.put(modId, previousVersion));
+            }
+
+            final var mismatchEvent = new ModMismatchEvent(levelDirectory, mismatchedVersions, missingVersions);
+            ModLoader.get().postEvent(mismatchEvent);
+
+            StringBuilder resolved = new StringBuilder("The following mods have version differences that were marked resolved:");
+            StringBuilder unresolved = new StringBuilder("The following mods have version differences that were not resolved:");
+
+            // For mods that were marked resolved, log the version resolution and the mod that resolved the mismatch
+            mismatchEvent.getResolved().forEachOrdered((res) ->
+            {
+                final var modid = res.modid();
+                final var diff = res.versionDifference();
+                if (res.wasSelfResolved())
                 {
-                    LOGGER.warn(WORLDPERSISTENCE,"This world was saved with mod {} version {} and it is now at version {}, things may not work well", modId, modVersion, MavenVersionStringHelper.artifactVersionToString(container.get().getModInfo().getVersion()));
+                    resolved.append(System.lineSeparator())
+                            .append(diff.isMissing()
+                                    ? "%s (version %s -> MISSING, self-resolved)".formatted(modid, diff.oldVersion())
+                                    : "%s (version %s -> %s, self-resolved)".formatted(modid, diff.oldVersion(), diff.newVersion())
+                            );
                 }
+                else
+                {
+                    final var resolver = res.resolver().getModId();
+                    resolved.append(System.lineSeparator())
+                            .append(diff.isMissing()
+                                    ? "%s (version %s -> MISSING, resolved by %s)".formatted(modid, diff.oldVersion(), resolver)
+                                    : "%s (version %s -> %s, resolved by %s)".formatted(modid, diff.oldVersion(), diff.newVersion(), resolver)
+                            );
+                }
+            });
+
+            // For mods that did not specify handling, show a warning to users that errors may occur
+            mismatchEvent.getUnresolved().forEachOrdered((unres) ->
+            {
+                final var modid = unres.modid();
+                final var diff = unres.versionDifference();
+                unresolved.append(System.lineSeparator())
+                        .append(diff.isMissing()
+                                ? "%s (version %s -> MISSING)".formatted(modid, diff.oldVersion())
+                                : "%s (version %s -> %s)".formatted(modid, diff.oldVersion(), diff.newVersion())
+                        );
+            });
+
+            if (mismatchEvent.anyResolved())
+            {
+                resolved.append(System.lineSeparator()).append("Things may not work well.");
+                LOGGER.debug(WORLDPERSISTENCE, resolved.toString());
+            }
+
+            if (mismatchEvent.anyUnresolved())
+            {
+                unresolved.append(System.lineSeparator()).append("Things may not work well.");
+                LOGGER.warn(WORLDPERSISTENCE, unresolved.toString());
             }
         }
 
