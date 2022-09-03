@@ -26,11 +26,9 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 /**
- * <p>
  * Fires when the mod loader is in the process of loading a world that was last saved
  * with mod versions that differ from the currently-loaded versions. This can be used to
  * enqueue work to run at a later point, such as multi-file migration of data.
- * </p>
  *
  * <p>
  * <b>Note that level and world information has not yet been fully loaded;</b> as such, it is
@@ -93,7 +91,7 @@ public class ModMismatchEvent extends Event implements IModBusEvent
     @Nullable
     public ArtifactVersion getPreviousVersion(String modId)
     {
-        if(this.versionDifferences.containsKey(modId))
+        if (this.versionDifferences.containsKey(modId))
             return this.versionDifferences.get(modId).oldVersion();
 
         return null;
@@ -102,7 +100,7 @@ public class ModMismatchEvent extends Event implements IModBusEvent
     @Nullable
     public ArtifactVersion getCurrentVersion(String modid)
     {
-        if(this.versionDifferences.containsKey(modid))
+        if (this.versionDifferences.containsKey(modid))
             return this.versionDifferences.get(modid).newVersion();
 
         return null;
@@ -160,12 +158,12 @@ public class ModMismatchEvent extends Event implements IModBusEvent
                 .sorted(Comparator.comparing(MismatchResolutionResult::modid));
     }
 
-    public record MismatchResolutionResult(String modid, MismatchedVersionInfo versionDifference, @Nullable ModContainer resolver) {
+    public record MismatchResolutionResult(String modid, MismatchedVersionInfo versionDifference, @Nullable ModContainer resolver)
+    {
         public boolean wasSelfResolved()
         {
             return resolver != null && resolver.getModId().equals(modid);
         }
-
     }
 
     public record MismatchedVersionInfo(ArtifactVersion oldVersion, @Nullable ArtifactVersion newVersion)
@@ -177,7 +175,7 @@ public class ModMismatchEvent extends Event implements IModBusEvent
 
         public boolean wasUpgrade()
         {
-            if(newVersion == null) return false;
+            if (newVersion == null) return false;
             return newVersion.compareTo(oldVersion) > 0;
         }
     }

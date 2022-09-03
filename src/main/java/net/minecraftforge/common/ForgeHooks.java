@@ -1322,7 +1322,7 @@ public class ForgeHooks
 
     /**
      * @deprecated To be removed in 1.20.
-     * Use {@link #readAdditionalLevelSaveData(LevelStorageSource.LevelDirectory, CompoundTag)} instead.
+     * Use {@link #readAdditionalLevelSaveData(CompoundTag, LevelStorageSource.LevelDirectory)} instead.
      */
     @Deprecated(forRemoval = true, since = "1.19.2")
     public static void readAdditionalLevelSaveData(CompoundTag rootTag) {
@@ -1375,20 +1375,21 @@ public class ForgeHooks
             {
                 final var modid = res.modid();
                 final var diff = res.versionDifference();
-                if(res.wasSelfResolved()) {
+                if (res.wasSelfResolved())
+                {
                     resolved.append(System.lineSeparator())
-                            .append(diff.isMissing() ?
-                                    "%s (version %s -> MISSING, self-resolved)".formatted(modid, diff.oldVersion()) :
-                                    "%s (version %s -> %s, self-resolved)".formatted(modid, diff.oldVersion(), diff.newVersion())
+                            .append(diff.isMissing()
+                                    ? "%s (version %s -> MISSING, self-resolved)".formatted(modid, diff.oldVersion())
+                                    : "%s (version %s -> %s, self-resolved)".formatted(modid, diff.oldVersion(), diff.newVersion())
                             );
                 }
                 else
                 {
                     final var resolver = res.resolver().getModId();
                     resolved.append(System.lineSeparator())
-                            .append(diff.isMissing() ?
-                                    "%s (version %s -> MISSING, resolved by %s)".formatted(modid, diff.oldVersion(), resolver) :
-                                    "%s (version %s -> %s, resolved by %s)".formatted(modid, diff.oldVersion(), diff.newVersion(), resolver)
+                            .append(diff.isMissing()
+                                    ? "%s (version %s -> MISSING, resolved by %s)".formatted(modid, diff.oldVersion(), resolver)
+                                    : "%s (version %s -> %s, resolved by %s)".formatted(modid, diff.oldVersion(), diff.newVersion(), resolver)
                             );
                 }
             });
@@ -1399,19 +1400,19 @@ public class ForgeHooks
                 final var modid = unres.modid();
                 final var diff = unres.versionDifference();
                 unresolved.append(System.lineSeparator())
-                        .append(diff.isMissing() ?
-                                "%s (version %s -> MISSING)".formatted(modid, diff.oldVersion()) :
-                                "%s (version %s -> %s)".formatted(modid, diff.oldVersion(), diff.newVersion())
+                        .append(diff.isMissing()
+                                ? "%s (version %s -> MISSING)".formatted(modid, diff.oldVersion())
+                                : "%s (version %s -> %s)".formatted(modid, diff.oldVersion(), diff.newVersion())
                         );
             });
 
-            if(mismatchEvent.anyResolved())
+            if (mismatchEvent.anyResolved())
             {
                 resolved.append(System.lineSeparator()).append("Things may not work well.");
                 LOGGER.debug(WORLDPERSISTENCE, resolved.toString());
             }
 
-            if(mismatchEvent.anyUnresolved())
+            if (mismatchEvent.anyUnresolved())
             {
                 unresolved.append(System.lineSeparator()).append("Things may not work well.");
                 LOGGER.warn(WORLDPERSISTENCE, unresolved.toString());
