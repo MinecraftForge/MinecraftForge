@@ -302,7 +302,7 @@
                             return;
                          }
  
-+                        if(!this.f_91074_.canInteractWith(entityhitresult.m_82443_(), 0)) return; //Forge: Entity may be traced via attack range, but the player may not have sufficient reach.  No padding in client code.
++                        if(!this.f_91074_.canInteractWith(entityhitresult.m_82443_(), 0)) break; //Forge: Entity may be traced via attack range, but the player may not have sufficient reach.  No padding in client code.
                          InteractionResult interactionresult = this.f_91072_.m_105230_(this.f_91074_, entity, entityhitresult, interactionhand);
                          if (!interactionresult.m_19077_()) {
                             interactionresult = this.f_91072_.m_105226_(this.f_91074_, entity, interactionhand);
