@@ -5,11 +5,11 @@
 
 package net.minecraftforge.common.extensions;
 
-import java.util.Optional;
-
 import net.minecraft.core.BlockPos;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.ForgeMod;
 
@@ -74,9 +74,9 @@ public interface IForgePlayer
     default boolean isCloseEnough(Entity entity, double dist)
     {
         Vec3 eye = self().getEyePosition();
-        Vec3 targetCenter = entity.getPosition(1.0F).add(0, entity.getBbHeight() / 2, 0);
-        Optional<Vec3> hit = entity.getBoundingBox().clip(eye, targetCenter); //This hit should almost always be present, but we have a fallback just in case.  It likely indicates lag if it is not present.
-        return (hit.isPresent() ? eye.distanceToSqr(hit.get()) : self().distanceToSqr(entity)) < dist * dist;
+        AABB aabb = entity.getBoundingBox().inflate(entity.getPickRadius());
+        Vec3 target = new Vec3(Mth.clamp(eye.x, aabb.minX, aabb.maxX), Mth.clamp(eye.y, aabb.minY, aabb.maxY), Mth.clamp(eye.z, aabb.minZ, aabb.maxZ));
+        return eye.distanceToSqr(target) < dist * dist;
     }
 
     /**
@@ -89,7 +89,9 @@ public interface IForgePlayer
     default boolean canInteractWith(BlockPos pos, double padding)
     {
         double reach = getReachDistance() + padding;
-        return self().getEyePosition().distanceToSqr(pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D) < reach * reach;
+        Vec3 eye = self().getEyePosition();
+        Vec3 target = new Vec3(Mth.clamp(eye.x, pos.getX(), pos.getX() + 1.0D), Mth.clamp(eye.y, pos.getY(), pos.getY() + 1.0D), Mth.clamp(eye.z, pos.getZ(), pos.getZ() + 1.0D));
+        return eye.distanceToSqr(target) < reach * reach;
     }
 
 }
