@@ -1,0 +1,89 @@
+--- a/net/minecraft/world/level/levelgen/structure/pools/JigsawPlacement.java
++++ b/net/minecraft/world/level/levelgen/structure/pools/JigsawPlacement.java
+@@ -44,6 +_,10 @@
+    static final Logger f_210265_ = LogUtils.getLogger();
+ 
+    public static Optional<Structure.GenerationStub> m_227238_(Structure.GenerationContext p_227239_, Holder<StructureTemplatePool> p_227240_, Optional<ResourceLocation> p_227241_, int p_227242_, BlockPos p_227243_, boolean p_227244_, Optional<Heightmap.Types> p_227245_, int p_227246_) {
++      return addPieces(p_227239_, p_227240_, p_227241_, p_227242_, p_227243_, p_227244_, p_227245_, p_227246_, com.google.common.collect.Maps.newHashMap());
++   }
++
++   public static Optional<Structure.GenerationStub> addPieces(Structure.GenerationContext p_227239_, Holder<StructureTemplatePool> p_227240_, Optional<ResourceLocation> p_227241_, int p_227242_, BlockPos p_227243_, boolean p_227244_, Optional<Heightmap.Types> p_227245_, int p_227246_, java.util.Map<ResourceLocation, Object> placerSettings) {
+       RegistryAccess registryaccess = p_227239_.f_226621_();
+       ChunkGenerator chunkgenerator = p_227239_.f_226622_();
+       StructureTemplateManager structuretemplatemanager = p_227239_.f_226625_();
+@@ -92,7 +_,7 @@
+             if (p_227242_ > 0) {
+                AABB aabb = new AABB((double)(i - p_227246_), (double)(i1 - p_227246_), (double)(j - p_227246_), (double)(i + p_227246_ + 1), (double)(i1 + p_227246_ + 1), (double)(j + p_227246_ + 1));
+                VoxelShape voxelshape = Shapes.m_83113_(Shapes.m_83064_(aabb), Shapes.m_83064_(AABB.m_82321_(boundingbox)), BooleanOp.f_82685_);
+-               m_227210_(p_227239_.f_226624_(), p_227242_, p_227244_, chunkgenerator, structuretemplatemanager, levelheightaccessor, worldgenrandom, registry, poolelementstructurepiece, list, voxelshape);
++               addPieces(p_227239_.f_226624_(), p_227242_, p_227244_, chunkgenerator, structuretemplatemanager, levelheightaccessor, worldgenrandom, registry, poolelementstructurepiece, list, voxelshape, placerSettings);
+                list.forEach(p_227237_::m_142679_);
+             }
+          }));
+@@ -114,8 +_,8 @@
+       return optional;
+    }
+ 
+-   private static void m_227210_(RandomState p_227211_, int p_227212_, boolean p_227213_, ChunkGenerator p_227214_, StructureTemplateManager p_227215_, LevelHeightAccessor p_227216_, RandomSource p_227217_, Registry<StructureTemplatePool> p_227218_, PoolElementStructurePiece p_227219_, List<PoolElementStructurePiece> p_227220_, VoxelShape p_227221_) {
+-      JigsawPlacement.Placer jigsawplacement$placer = new JigsawPlacement.Placer(p_227218_, p_227212_, p_227214_, p_227215_, p_227220_, p_227217_);
++   private static void addPieces(RandomState p_227211_, int p_227212_, boolean p_227213_, ChunkGenerator p_227214_, StructureTemplateManager p_227215_, LevelHeightAccessor p_227216_, RandomSource p_227217_, Registry<StructureTemplatePool> p_227218_, PoolElementStructurePiece p_227219_, List<PoolElementStructurePiece> p_227220_, VoxelShape p_227221_, java.util.Map<ResourceLocation, Object> placerSettings) {
++      JigsawPlacement.Placer jigsawplacement$placer = new JigsawPlacement.Placer(p_227218_, p_227212_, p_227214_, p_227215_, p_227220_, p_227217_, placerSettings);
+       jigsawplacement$placer.f_210321_.addLast(new JigsawPlacement.PieceState(p_227219_, new MutableObject<>(p_227221_), 0));
+ 
+       while(!jigsawplacement$placer.f_210321_.isEmpty()) {
+@@ -126,6 +_,10 @@
+    }
+ 
+    public static boolean m_227203_(ServerLevel p_227204_, Holder<StructureTemplatePool> p_227205_, ResourceLocation p_227206_, int p_227207_, BlockPos p_227208_, boolean p_227209_) {
++        return generateJigsaw(p_227204_, p_227205_, p_227206_, p_227207_, p_227208_, p_227209_, com.google.common.collect.Maps.newHashMap());
++   }
++
++   public static boolean generateJigsaw(ServerLevel p_227204_, Holder<StructureTemplatePool> p_227205_, ResourceLocation p_227206_, int p_227207_, BlockPos p_227208_, boolean p_227209_, java.util.Map<ResourceLocation, Object> placerSettings) {
+       ChunkGenerator chunkgenerator = p_227204_.m_7726_().m_8481_();
+       StructureTemplateManager structuretemplatemanager = p_227204_.m_215082_();
+       StructureManager structuremanager = p_227204_.m_215010_();
+@@ -133,7 +_,7 @@
+       Structure.GenerationContext structure$generationcontext = new Structure.GenerationContext(p_227204_.m_5962_(), chunkgenerator, chunkgenerator.m_62218_(), p_227204_.m_7726_().m_214994_(), structuretemplatemanager, p_227204_.m_7328_(), new ChunkPos(p_227208_), p_227204_, (p_227255_) -> {
+          return true;
+       });
+-      Optional<Structure.GenerationStub> optional = m_227238_(structure$generationcontext, p_227205_, Optional.of(p_227206_), p_227207_, p_227208_, false, Optional.empty(), 128);
++      Optional<Structure.GenerationStub> optional = addPieces(structure$generationcontext, p_227205_, Optional.of(p_227206_), p_227207_, p_227208_, false, Optional.empty(), 128, placerSettings);
+       if (optional.isPresent()) {
+          StructurePiecesBuilder structurepiecesbuilder = optional.get().m_226677_();
+ 
+@@ -169,15 +_,17 @@
+       private final StructureTemplateManager f_227256_;
+       private final List<? super PoolElementStructurePiece> f_210319_;
+       private final RandomSource f_210320_;
++      private final java.util.Map<ResourceLocation, Object> placerSettings;
+       final Deque<JigsawPlacement.PieceState> f_210321_ = Queues.newArrayDeque();
+ 
+-      Placer(Registry<StructureTemplatePool> p_227258_, int p_227259_, ChunkGenerator p_227260_, StructureTemplateManager p_227261_, List<? super PoolElementStructurePiece> p_227262_, RandomSource p_227263_) {
++      Placer(Registry<StructureTemplatePool> p_227258_, int p_227259_, ChunkGenerator p_227260_, StructureTemplateManager p_227261_, List<? super PoolElementStructurePiece> p_227262_, RandomSource p_227263_, java.util.Map<ResourceLocation, Object> placerSettings) {
+          this.f_210314_ = p_227258_;
+          this.f_210315_ = p_227259_;
+          this.f_210317_ = p_227260_;
+          this.f_227256_ = p_227261_;
+          this.f_210319_ = p_227262_;
+          this.f_210320_ = p_227263_;
++         this.placerSettings = placerSettings;
+       }
+ 
+       void m_227264_(PoolElementStructurePiece p_227265_, MutableObject<VoxelShape> p_227266_, int p_227267_, boolean p_227268_, LevelHeightAccessor p_227269_, RandomState p_227270_) {
+@@ -217,6 +_,7 @@
+                   List<StructurePoolElement> list = Lists.newArrayList();
+                   if (p_227267_ != this.f_210315_) {
+                      list.addAll(optional.get().m_227362_(this.f_210320_));
++                     net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.level.JigsawPieceEvent(list, resourcelocation, blockpos1, this.placerSettings, this.f_210314_, this.f_210320_, p_227267_));
+                   }
+ 
+                   list.addAll(optional1.get().m_227362_(this.f_210320_));
+@@ -282,7 +_,7 @@
+                                  boundingbox3.m_162371_(new BlockPos(boundingbox3.m_162395_(), boundingbox3.m_162396_() + j2, boundingbox3.m_162398_()));
+                               }
+ 
+-                              if (!Shapes.m_83157_(mutableobject1.getValue(), Shapes.m_83064_(AABB.m_82321_(boundingbox3).m_82406_(0.25D)), BooleanOp.f_82683_)) {
++                              if ((boolean) placerSettings.getOrDefault(new ResourceLocation("forge:force_piece_placement"), false) || !Shapes.m_83157_(mutableobject1.getValue(), Shapes.m_83064_(AABB.m_82321_(boundingbox3).m_82406_(0.25D)), BooleanOp.f_82683_)) {
+                                  mutableobject1.setValue(Shapes.m_83148_(mutableobject1.getValue(), Shapes.m_83064_(AABB.m_82321_(boundingbox3)), BooleanOp.f_82685_));
+                                  int i3 = p_227265_.m_72647_();
+                                  int k2;
