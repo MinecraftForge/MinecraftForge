@@ -11,7 +11,7 @@ import net.minecraftforge.fml.Bindings;
 import java.util.function.Function;
 
 public interface IConfigEvent {
-    record ConfigConfig(Function<ModConfig, IConfigEvent> loading, Function<ModConfig, IConfigEvent> reloading) {}
+    record ConfigConfig(Function<ModConfig, IConfigEvent> loading, Function<ModConfig, IConfigEvent> reloading, Function<ModConfig, IConfigEvent> unloading) {}
     ConfigConfig CONFIGCONFIG = Bindings.getConfigConfiguration().get();
 
     static IConfigEvent reloading(ModConfig modConfig) {
@@ -19,6 +19,9 @@ public interface IConfigEvent {
     }
     static IConfigEvent loading(ModConfig modConfig) {
         return CONFIGCONFIG.loading().apply(modConfig);
+    }
+    static IConfigEvent unloading(ModConfig modConfig) {
+        return CONFIGCONFIG.unloading().apply(modConfig);
     }
     ModConfig getConfig();
 
