@@ -1,5 +1,15 @@
 --- a/net/minecraft/server/packs/VanillaPackResources.java
 +++ b/net/minecraft/server/packs/VanillaPackResources.java
+@@ -148,6 +_,9 @@
+       try {
+          Path path = f_182296_.get(p_10324_);
+          if (path != null) {
++            if (net.minecraftforge.resource.ResourceCacheManager.shouldUseCache() && this.cacheManager.hasCached(p_10324_, p_10325_)) {
++               set.addAll(this.cacheManager.getResources(p_10324_, p_10325_, path.getFileSystem().getPath(p_10326_), p_10328_));
++            } else
+             m_10342_(set, p_10327_, p_10325_, path, p_10326_, p_10328_);
+          } else {
+             f_10315_.error("Can't access assets root for type: {}", (Object)p_10324_);
 @@ -203,7 +_,7 @@
  
        try {
@@ -18,12 +28,10 @@
     }
  
     public boolean m_7211_(PackType p_10355_, ResourceLocation p_10356_) {
-@@ -292,6 +_,20 @@
+@@ -294,6 +_,20 @@
+    public void close() {
     }
  
-    public void close() {
-+   }
-+
 +   //Vanilla used to just grab from the classpath, this breaks dev environments, and Forge runtime
 +   //as forge ships vanilla assets in an 'extra' jar with no classes.
 +   //So find that extra jar using the .mcassetsroot marker.
@@ -36,6 +44,28 @@
 +      } catch (IOException e) {
 +         return VanillaPackResources.class.getResourceAsStream(resource);
 +      }
-    }
- 
++   }
++
     public Resource m_142591_(final ResourceLocation p_143764_) throws IOException {
+       return new Resource() {
+          @Nullable
+@@ -333,5 +_,19 @@
+             return p_143764_.toString();
+          }
+       };
++   }
++
++   private final net.minecraftforge.resource.ResourceCacheManager cacheManager = new net.minecraftforge.resource.ResourceCacheManager(false, net.minecraftforge.common.ForgeConfig.COMMON.indexVanillaPackCachesOnThread, (packType, namespace) -> f_182296_.get(packType).resolve(namespace));
++
++   @Override
++   public void initForNamespace(final String nameSpace) {
++      if (net.minecraftforge.resource.ResourceCacheManager.shouldUseCache())
++         this.cacheManager.index(nameSpace);
++   }
++
++   @Override
++   public void init(final PackType packType) {
++      initForNamespace("minecraft"); //Default namespaces.
++      initForNamespace("realms");
+    }
+ }

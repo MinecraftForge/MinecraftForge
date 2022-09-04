@@ -232,4 +232,10 @@ public class NetworkHooks
     {
         return mgr.channel().attr(NetworkConstants.FML_MOD_MISMATCH_DATA).get();
     }
+
+    @Nullable
+    public static MCRegisterPacketHandler.ChannelList getChannelList(Connection mgr)
+    {
+        return mgr.channel().attr(NetworkConstants.FML_MC_REGISTRY).get();
+    }
 }

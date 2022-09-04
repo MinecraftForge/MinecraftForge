@@ -7,16 +7,24 @@ package net.minecraftforge.event.world;
 
 import java.util.function.Supplier;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.client.renderer.LevelRenderer;
+import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.ProgressListener;
+import net.minecraft.util.random.WeightedRandomList;
+import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.biome.MobSpawnSettings;
 import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.storage.ServerLevelData;
 import net.minecraftforge.common.ForgeInternalHandler;
@@ -116,6 +124,85 @@ public class WorldEvent extends Event
         public ServerLevelData getSettings()
         {
             return settings;
+        }
+    }
+
+     /**
+     * Fired when building a list of all possible entities that can spawn at the specified location.
+     *
+     * <p>If an entry is added to the list, it needs to be a globally unique instance.</p>
+     *
+     * The event is called in {@link net.minecraft.world.level.NaturalSpawner#mobsAt(ServerLevel,
+     * StructureManager, ChunkGenerator, MobCategory, RandomSource, BlockPos)}.</p>
+     *
+     * <p>This event is {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}.
+     * Canceling the event will result in an empty list, meaning no entity will be spawned.</p>
+     */
+    @Cancelable
+    public static class PotentialSpawns extends WorldEvent
+    {
+        private final MobCategory mobcategory;
+        private final BlockPos pos;
+        private final List<MobSpawnSettings.SpawnerData> list;
+        private final List<MobSpawnSettings.SpawnerData> view;
+
+        public PotentialSpawns(LevelAccessor level, MobCategory category, BlockPos pos, WeightedRandomList<MobSpawnSettings.SpawnerData> oldList)
+        {
+            super(level);
+            this.pos = pos;
+            this.mobcategory = category;
+            if (!oldList.isEmpty())
+                this.list = new ArrayList<>(oldList.unwrap());
+            else
+                this.list = new ArrayList<>();
+
+            this.view = Collections.unmodifiableList(list);
+        }
+
+        /**
+         * {@return the category of the mobs in the spawn list.}
+         */
+        public MobCategory getMobCategory()
+        {
+            return mobcategory;
+        }
+
+        /**
+         * {@return the block position where the chosen mob will be spawned.}
+         */
+        public BlockPos getPos()
+        {
+            return pos;
+        }
+
+        /**
+         * {@return the list of mobs that can potentially be spawned.}
+         */
+        public List<MobSpawnSettings.SpawnerData> getSpawnerDataList()
+        {
+            return view;
+        }
+
+        /**
+         * Appends a SpawnerData entry to the spawn list.
+         *
+         * @param data SpawnerData entry to be appended to the spawn list.
+         */
+        public void addSpawnerData(MobSpawnSettings.SpawnerData data)
+        {
+            list.add(data);
+        }
+
+        /**
+         * Removes a SpawnerData entry from the spawn list.
+         *
+         * @param data SpawnerData entry to be removed from the spawn list.
+         *
+         * {@return {@code true} if the spawn list contained the specified element.}
+         */
+        public boolean removeSpawnerData(MobSpawnSettings.SpawnerData data)
+        {
+            return list.remove(data);
         }
     }
 }
