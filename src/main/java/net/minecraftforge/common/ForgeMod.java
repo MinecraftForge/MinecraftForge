@@ -99,6 +99,7 @@ import net.minecraftforge.common.crafting.conditions.OrCondition;
 import net.minecraftforge.common.crafting.conditions.TagEmptyCondition;
 import net.minecraftforge.common.crafting.conditions.TrueCondition;
 import net.minecraftforge.common.data.ForgeBlockTagsProvider;
+import net.minecraftforge.common.data.ForgeEntityTypeTagsProvider;
 import net.minecraftforge.common.data.ForgeItemTagsProvider;
 import net.minecraftforge.common.data.ForgeLootTableProvider;
 import net.minecraftforge.common.data.ForgeRecipeProvider;
@@ -497,6 +498,7 @@ public class ForgeMod
         ForgeBlockTagsProvider blockTags = new ForgeBlockTagsProvider(gen, existingFileHelper);
         gen.addProvider(event.includeServer(), blockTags);
         gen.addProvider(event.includeServer(), new ForgeItemTagsProvider(gen, blockTags, existingFileHelper));
+        gen.addProvider(event.includeServer(), new ForgeEntityTypeTagsProvider(gen, existingFileHelper));
         gen.addProvider(event.includeServer(), new ForgeFluidTagsProvider(gen, existingFileHelper));
         gen.addProvider(event.includeServer(), new ForgeRecipeProvider(gen));
         gen.addProvider(event.includeServer(), new ForgeLootTableProvider(gen));
