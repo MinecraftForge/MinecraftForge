@@ -333,9 +333,9 @@ public class BlockModelBuilder extends ModelBuilder<BlockModelBuilder>
 
         public enum TransformOrigin implements StringRepresentable
         {
-            CENTER(new Vector3f(.5f, .5f, .5f), "origin"),
+            CENTER(new Vector3f(.5f, .5f, .5f), "center"),
             CORNER(Vector3f.ZERO, "corner"),
-            OPPOSING_CORNER(ONE, "opposing_corner");
+            OPPOSING_CORNER(ONE, "opposing-corner");
 
             private final Vector3f vec;
             private final String name;
