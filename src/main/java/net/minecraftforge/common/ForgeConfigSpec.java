@@ -21,6 +21,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -48,6 +49,11 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import com.google.common.collect.ObjectArrays;
+
+import it.unimi.dsi.fastutil.booleans.BooleanConsumer;
+import it.unimi.dsi.fastutil.doubles.DoubleConsumer;
+import it.unimi.dsi.fastutil.ints.IntConsumer;
+import it.unimi.dsi.fastutil.longs.LongConsumer;
 
 /*
  * Like {@link com.electronwill.nightconfig.core.ConfigSpec} except in builder format, and extended to accept comments, language keys,
@@ -817,6 +823,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         private final Builder parent;
         private final List<String> path;
         private final Supplier<T> defaultSupplier;
+        private Consumer<T> onChanged = null;
 
         private T cachedValue = null;
 
@@ -842,9 +849,10 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
             if (spec.childConfig == null)
                 return defaultSupplier.get();
 
-            if (USE_CACHES && cachedValue == null)
+            if (USE_CACHES && cachedValue == null) {
                 cachedValue = getRaw(spec.childConfig, path, defaultSupplier);
-            else if (!USE_CACHES)
+                onChanged();
+            } else if (!USE_CACHES)
                 return getRaw(spec.childConfig, path, defaultSupplier);
 
             return cachedValue;
@@ -872,11 +880,25 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
             Preconditions.checkNotNull(spec, "Cannot set config value before spec is built");
             Preconditions.checkNotNull(spec.childConfig, "Cannot set config value without assigned Config object present");
             spec.childConfig.set(path, value);
+        	T old = this.cachedValue;
             this.cachedValue = value;
+            if (!Objects.equals(old, cachedValue)) onChanged();
         }
 
         public void clearCache() {
             this.cachedValue = null;
+        }
+        
+        private void onChanged() {
+        	if (onChanged != null) onChanged.accept(cachedValue);
+        }
+        
+        public void addListener(Consumer<T> listener) {
+            Preconditions.checkNotNull(listener, "Value listener cannot be null");
+        	if (onChanged == null)
+        		onChanged = listener;
+        	else
+        		onChanged = onChanged.andThen(listener);
         }
     }
 
@@ -885,6 +907,12 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         BooleanValue(Builder parent, List<String> path, Supplier<Boolean> defaultSupplier)
         {
             super(parent, path, defaultSupplier);
+        }
+        
+        public void addListener(BooleanConsumer listener) //this allows us to use primitive boolean consumers
+        {
+            Preconditions.checkNotNull(listener, "Value listener cannot be null");
+            super.addListener(listener);
         }
     }
 
@@ -900,6 +928,12 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         {
             return config.getIntOrElse(path, () -> defaultSupplier.get());
         }
+        
+        public void addListener(IntConsumer listener) //this allows us to use primitive integer consumers
+        {
+            Preconditions.checkNotNull(listener, "Value listener cannot be null");
+            super.addListener(listener);
+        }
     }
 
     public static class LongValue extends ConfigValue<Long>
@@ -913,6 +947,12 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         protected Long getRaw(Config config, List<String> path, Supplier<Long> defaultSupplier)
         {
             return config.getLongOrElse(path, () -> defaultSupplier.get());
+        }
+        
+        public void addListener(LongConsumer listener) //this allows us to use primitive long consumers
+        {
+            Preconditions.checkNotNull(listener, "Value listener cannot be null");
+            super.addListener(listener);
         }
     }
 
@@ -928,6 +968,12 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         {
             Number n = config.<Number>get(path);
             return n == null ? defaultSupplier.get() : n.doubleValue();
+        }
+        
+        public void addListener(DoubleConsumer listener) //this allows us to use primitive double consumers
+        {
+            Preconditions.checkNotNull(listener, "Value listener cannot be null");
+            super.addListener(listener);
         }
     }
 
