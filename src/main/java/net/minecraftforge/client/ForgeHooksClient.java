@@ -54,6 +54,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
+import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.client.renderer.texture.TextureAtlas;
@@ -558,6 +559,18 @@ public class ForgeHooksClient
         float z = Float.intBitsToFloat(data[idx + 2]);
 
         return new Vector3f(x, y, z);
+    }
+
+    public static boolean calculateFaceWithoutAO(BlockAndTintGetter getter, BlockState state, BlockPos pos, BakedQuad quad, boolean isFaceCubic, float[] brightness, int[] lightmap)
+    {
+        if (quad.hasAmbientOcclusion())
+            return false;
+
+        BlockPos lightmapPos = isFaceCubic ? pos.relative(quad.getDirection()) : pos;
+
+        brightness[0] = brightness[1] = brightness[2] = brightness[3] = getter.getShade(quad.getDirection(), quad.isShade());
+        lightmap[0] = lightmap[1] = lightmap[2] = lightmap[3] = LevelRenderer.getLightColor(getter, state, lightmapPos);
+        return true;
     }
 
     public static void loadEntityShader(Entity entity, GameRenderer entityRenderer)

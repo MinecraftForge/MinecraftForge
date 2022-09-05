@@ -1,25 +1,31 @@
 --- a/net/minecraft/client/renderer/block/model/BlockElementFace.java
 +++ b/net/minecraft/client/renderer/block/model/BlockElementFace.java
-@@ -19,12 +_,18 @@
+@@ -19,12 +_,24 @@
     public final int f_111355_;
     public final String f_111356_;
     public final BlockFaceUV f_111357_;
 +   public final int emissivity;
++   public final boolean hasAmbientOcclusion;
  
     public BlockElementFace(@Nullable Direction p_111359_, int p_111360_, String p_111361_, BlockFaceUV p_111362_) {
-+      this(p_111359_, p_111360_, p_111361_, p_111362_, 0);
++      this(p_111359_, p_111360_, p_111361_, p_111362_, 0, true);
 +   }
 +
 +   public BlockElementFace(@Nullable Direction p_111359_, int p_111360_, String p_111361_, BlockFaceUV p_111362_, int emissivity) {
++      this(p_111359_, p_111360_, p_111361_, p_111362_, emissivity, true);
++   }
++
++   public BlockElementFace(@Nullable Direction p_111359_, int p_111360_, String p_111361_, BlockFaceUV p_111362_, int emissivity, boolean hasAmbientOcclusion) {
        this.f_111354_ = p_111359_;
        this.f_111355_ = p_111360_;
        this.f_111356_ = p_111361_;
        this.f_111357_ = p_111362_;
 +      this.emissivity = emissivity;
++      this.hasAmbientOcclusion = hasAmbientOcclusion;
     }
  
     @OnlyIn(Dist.CLIENT)
-@@ -37,7 +_,10 @@
+@@ -37,7 +_,11 @@
           int i = this.m_111368_(jsonobject);
           String s = this.m_111370_(jsonobject);
           BlockFaceUV blockfaceuv = p_111367_.deserialize(jsonobject, BlockFaceUV.class);
@@ -27,7 +33,8 @@
 +         int emissivity = GsonHelper.m_13824_(jsonobject, "emissivity", 0);
 +         if (emissivity != net.minecraft.util.Mth.m_14045_(emissivity, 0, 15))
 +            throw new JsonParseException("The emissivity value must be between 0 and 15. Found: " + emissivity);
-+         return new BlockElementFace(direction, i, s, blockfaceuv, emissivity);
++         boolean hasAmbientOcclusion = GsonHelper.m_13855_(jsonobject, "ambientocclusion", true);
++         return new BlockElementFace(direction, i, s, blockfaceuv, emissivity, hasAmbientOcclusion);
        }
  
        protected int m_111368_(JsonObject p_111369_) {
