@@ -1,0 +1,23 @@
+--- a/net/minecraft/world/level/block/grower/AbstractMegaTreeGrower.java
++++ b/net/minecraft/world/level/block/grower/AbstractMegaTreeGrower.java
+@@ -25,11 +_,19 @@
+       return super.m_213817_(p_222891_, p_222892_, p_222893_, p_222894_, p_222895_);
+    }
+ 
++   // Forge: context-sensitive version to be able to use data pack provided features
++   @Nullable
++   protected Holder<? extends ConfiguredFeature<?, ?>> getConfiguredMegaFeature(ServerLevel level, ChunkGenerator chunkGenerator, BlockPos pos, BlockState state, RandomSource random) {
++      return m_213566_(random);
++   }
++
++   /** @deprecated Forge: Use {@link #getConfiguredMegaFeature(ServerLevel, ChunkGenerator, BlockPos, BlockState, RandomSource)} instead */
++   @Deprecated
+    @Nullable
+    protected abstract Holder<? extends ConfiguredFeature<?, ?>> m_213566_(RandomSource p_222904_);
+ 
+    public boolean m_222896_(ServerLevel p_222897_, ChunkGenerator p_222898_, BlockPos p_222899_, BlockState p_222900_, RandomSource p_222901_, int p_222902_, int p_222903_) {
+-      Holder<? extends ConfiguredFeature<?, ?>> holder = this.m_213566_(p_222901_);
++      Holder<? extends ConfiguredFeature<?, ?>> holder = this.getConfiguredMegaFeature(p_222897_, p_222898_, p_222899_, p_222900_, p_222901_);
+       if (holder == null) {
+          return false;
+       } else {

@@ -1,0 +1,23 @@
+--- a/net/minecraft/world/level/block/grower/AbstractTreeGrower.java
++++ b/net/minecraft/world/level/block/grower/AbstractTreeGrower.java
+@@ -12,11 +_,19 @@
+ import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
+ 
+ public abstract class AbstractTreeGrower {
++   // Forge: context-sensitive version to be able to use data pack provided features
++   @Nullable
++   protected Holder<? extends ConfiguredFeature<?, ?>> getConfiguredFeature(ServerLevel level, ChunkGenerator chunkGenerator, BlockPos pos, BlockState state, RandomSource random, boolean hasFlowers) {
++      return m_213888_(random, hasFlowers);
++   }
++
++   /** @deprecated Forge: Use {@link #getConfiguredFeature(ServerLevel, ChunkGenerator, BlockPos, BlockState, RandomSource, boolean)} instead */
++   @Deprecated
+    @Nullable
+    protected abstract Holder<? extends ConfiguredFeature<?, ?>> m_213888_(RandomSource p_222910_, boolean p_222911_);
+ 
+    public boolean m_213817_(ServerLevel p_222905_, ChunkGenerator p_222906_, BlockPos p_222907_, BlockState p_222908_, RandomSource p_222909_) {
+-      Holder<? extends ConfiguredFeature<?, ?>> holder = this.m_213888_(p_222909_, this.m_60011_(p_222905_, p_222907_));
++      Holder<? extends ConfiguredFeature<?, ?>> holder = this.getConfiguredFeature(p_222905_, p_222906_, p_222907_, p_222908_, p_222909_, this.m_60011_(p_222905_, p_222907_));
+       if (holder == null) {
+          return false;
+       } else {

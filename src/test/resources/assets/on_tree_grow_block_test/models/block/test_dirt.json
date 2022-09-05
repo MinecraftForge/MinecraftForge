@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/cube_all",
+  "textures": {
+    "all": "on_tree_grow_block_test:blocks/test_dirt"
+  }
+}

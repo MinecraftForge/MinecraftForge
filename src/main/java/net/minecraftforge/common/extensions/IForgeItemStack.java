@@ -8,6 +8,7 @@ package net.minecraftforge.common.extensions;
 import net.minecraft.core.Registry;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.monster.EnderMan;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.Block;
@@ -556,4 +557,19 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundTag>
     {
         return self().getItem().getFoodProperties(self(), entity);
     }
+
+    /**
+     * Whether this stack should be excluded (if possible) when selecting the target hotbar slot of a "pick" action.
+     * By default, this returns true for enchanted stacks.
+     *
+     * @see Inventory#getSuitableHotbarSlot()
+     * @param player the player performing the picking
+     * @param inventorySlot the inventory slot of the item being up for replacement
+     * @return true to leave this stack in the hotbar if possible
+     */
+    default boolean isNotReplaceableByPickAction(Player player, int inventorySlot)
+    {
+        return self().getItem().isNotReplaceableByPickAction(self(), player, inventorySlot);
+    }
+
 }
