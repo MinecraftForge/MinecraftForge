@@ -2,14 +2,13 @@
   "parent": "block/block",
   "render_type": "cutout",
   "textures": {
-    "all": "minecraft:block/white_concrete",
+    "all": "ambient_occlusion_elements_test:block/solid",
     "overlay": "minecraft:block/glass"
   },
   "elements": [
     {
       "from": [ 0, 0, 0 ],
       "to": [ 16, 16, 16 ],
-      "shade": false,
       "faces": {
         "down":  { "texture": "#all", "emissivity": 15, "cullface": "down", "ambientocclusion": false },
         "up":    { "texture": "#all", "emissivity": 15, "cullface": "up", "ambientocclusion": false },

@@ -28,8 +28,14 @@ public class AmbientOcclusionElementsTest
     private static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, MOD_ID);
     private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MOD_ID);
 
-    public static final RegistryObject<Block> TEST_BLOCK = BLOCKS.register("ambient_occlusion", () -> new Block(BlockBehaviour.Properties.of(Material.STONE)));
-    public static final RegistryObject<Item> TEST_BLOCK_ITEM = ITEMS.register("ambient_occlusion", () -> new BlockItem(TEST_BLOCK.get(), new Item.Properties().tab(CreativeModeTab.TAB_DECORATIONS)));
+    public static final RegistryObject<Block> AO_BLOCK_SHADE = BLOCKS.register("ambient_occlusion_shade", () -> new Block(BlockBehaviour.Properties.of(Material.STONE)));
+    public static final RegistryObject<Block> AO_BLOCK_NO_SHADE = BLOCKS.register("ambient_occlusion_no_shade", () -> new Block(BlockBehaviour.Properties.of(Material.STONE)));
+    public static final RegistryObject<Block> NO_AO_BLOCK_SHADE = BLOCKS.register("no_ambient_occlusion_shade", () -> new Block(BlockBehaviour.Properties.of(Material.STONE)));
+    public static final RegistryObject<Block> NO_AO_BLOCK_NO_SHADE = BLOCKS.register("no_ambient_occlusion_no_shade", () -> new Block(BlockBehaviour.Properties.of(Material.STONE)));
+    public static final RegistryObject<Item> AO_BLOCK_SHADE_ITEM = ITEMS.register("ambient_occlusion_shade", () -> new BlockItem(AO_BLOCK_SHADE.get(), new Item.Properties().tab(CreativeModeTab.TAB_DECORATIONS)));
+    public static final RegistryObject<Item> AO_BLOCK_NO_SHADE_ITEM = ITEMS.register("ambient_occlusion_no_shade", () -> new BlockItem(AO_BLOCK_NO_SHADE.get(), new Item.Properties().tab(CreativeModeTab.TAB_DECORATIONS)));
+    public static final RegistryObject<Item> NO_AO_BLOCK_SHADE_ITEM = ITEMS.register("no_ambient_occlusion_shade", () -> new BlockItem(NO_AO_BLOCK_SHADE.get(), new Item.Properties().tab(CreativeModeTab.TAB_DECORATIONS)));
+    public static final RegistryObject<Item> NO_AO_BLOCK_NO_SHADE_ITEM = ITEMS.register("no_ambient_occlusion_no_shade", () -> new BlockItem(NO_AO_BLOCK_NO_SHADE.get(), new Item.Properties().tab(CreativeModeTab.TAB_DECORATIONS)));
 
     public AmbientOcclusionElementsTest()
     {
