@@ -17,8 +17,10 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RegisterShadersEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fml.loading.FMLEnvironment;
 
 @Mod(ShaderResourcesTest.MODID)
 public class ShaderResourcesTest
@@ -26,41 +28,50 @@ public class ShaderResourcesTest
     private static Logger LOGGER;
 
     public static final String MODID = "shader_resources_test";
-    private static final boolean ENABLED = false;
+    private static final boolean ENABLE = false;
 
     public ShaderResourcesTest()
     {
-        if (ENABLED)
+        if (ENABLE)
         {
             LOGGER = LogUtils.getLogger();
 
-            final var modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
-            modEventBus.addListener(ShaderResourcesTest::registerShaders);
+            DistExecutor.unsafeRunWhenOn(Dist.CLIENT,() -> ClientInit::new);
         }
     }
 
-    public static void registerShaders(final RegisterShadersEvent event)
+    private class ClientInit
     {
-        if (!ENABLED)
-            return;
-
-        try
+        public ClientInit()
         {
-            event.registerShader(
-                    new ShaderInstance(
-                            event.getResourceManager(),
-                            new ResourceLocation(MODID, "vertex_cubemap"),
-                            DefaultVertexFormat.POSITION),
-                    shader ->
-                    {
-                        LOGGER.info("Completely loaded shader {} with no issues", shader.getName());
-                    });
+            final var modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 
-            LOGGER.info("Loaded registered shaders with no exceptions");
+            modEventBus.addListener(ClientInit::registerShaders);
         }
-        catch (IOException e)
+        
+        public static void registerShaders(final RegisterShadersEvent event)
         {
-            LOGGER.error("Failed to load shaders with exception", e);
+            if (!ENABLE)
+                return;
+    
+            try
+            {
+                event.registerShader(
+                        new ShaderInstance(
+                                event.getResourceManager(),
+                                new ResourceLocation(MODID, "vertex_cubemap"),
+                                DefaultVertexFormat.POSITION),
+                        shader ->
+                        {
+                            LOGGER.info("Completely loaded shader {} with no issues", shader.getName());
+                        });
+    
+                LOGGER.info("Loaded registered shaders with no exceptions");
+            }
+            catch (IOException e)
+            {
+                LOGGER.error("Failed to load shaders with exception", e);
+            }
         }
     }
 }
