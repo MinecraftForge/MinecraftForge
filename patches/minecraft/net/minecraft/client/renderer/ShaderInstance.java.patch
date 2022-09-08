@@ -30,3 +30,28 @@
           InputStream inputstream = resource.m_215507_();
  
           try {
+@@ -232,11 +_,11 @@
+                private final Set<String> f_173369_ = Sets.newHashSet();
+ 
+                public String m_142138_(boolean p_173374_, String p_173375_) {
+-                  p_173375_ = FileUtil.m_179924_((p_173374_ ? s1 : "shaders/include/") + p_173375_);
+-                  if (!this.f_173369_.add(p_173375_)) {
++                  // FORGE: use the mod's namespace to look up resources if specified
++                  ResourceLocation resourcelocation = net.minecraftforge.client.ForgeHooksClient.getShaderImportLocation(s1, p_173374_, p_173375_);
++                  if (!this.f_173369_.add(resourcelocation.toString())) {
+                      return null;
+                   } else {
+-                     ResourceLocation resourcelocation = new ResourceLocation(p_173375_);
+ 
+                      try {
+                         Reader reader = p_173341_.m_215597_(resourcelocation);
+@@ -262,7 +_,8 @@
+ 
+                         return s2;
+                      } catch (IOException ioexception) {
+-                        ShaderInstance.f_173323_.error("Could not open GLSL import {}: {}", p_173375_, ioexception.getMessage());
++                        // FORGE: specify the namespace of the failed import in case of duplicates from multiple mods
++                        ShaderInstance.f_173323_.error("Could not open GLSL import {}: {}", resourcelocation, ioexception.getMessage());
+                         return "#error " + ioexception.getMessage();
+                      }
+                   }

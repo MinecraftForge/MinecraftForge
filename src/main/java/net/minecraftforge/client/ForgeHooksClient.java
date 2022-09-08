@@ -17,6 +17,7 @@ import com.mojang.datafixers.util.Either;
 import com.mojang.math.Matrix4f;
 import com.mojang.math.Vector3f;
 import net.minecraft.ChatFormatting;
+import net.minecraft.FileUtil;
 import net.minecraft.client.Camera;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
@@ -1154,5 +1155,13 @@ public class ForgeHooksClient
                 Mth.log2(Math.max(1, width)),
                 Mth.log2(Math.max(1, height))
         );
+    }
+
+    public static ResourceLocation getShaderImportLocation(String basePath, boolean isRelative, String importPath)
+    {
+        final var loc = new ResourceLocation(importPath);
+        final var normalised = FileUtil.normalizeResourcePath(
+            (isRelative ? basePath : "shaders/include/") + loc.getPath());
+        return new ResourceLocation(loc.getNamespace(), normalised);
     }
 }
