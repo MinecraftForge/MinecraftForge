@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/MushroomBlock.java
 +++ b/net/minecraft/world/level/block/MushroomBlock.java
-@@ -70,7 +_,7 @@
+@@ -70,13 +_,15 @@
        if (blockstate.m_204336_(BlockTags.f_13057_)) {
           return true;
        } else {
@@ -9,3 +9,12 @@
        }
     }
  
+    public boolean m_54859_(ServerLevel p_54860_, BlockPos p_54861_, BlockState p_54862_, Random p_54863_) {
++      net.minecraftforge.event.world.SaplingGrowTreeEvent event = net.minecraftforge.event.ForgeEventFactory.blockGrowFeature(p_54860_, p_54863_, p_54861_, this.f_153981_.get());
++      if (event.getResult().equals(net.minecraftforge.eventbus.api.Event.Result.DENY)) return false;
+       p_54860_.m_7471_(p_54861_, false);
+-      if (this.f_153981_.get().m_203334_().m_65385_(p_54860_, p_54860_.m_7726_().m_8481_(), p_54863_, p_54861_)) {
++      if (event.getFeature().m_203334_().m_65385_(p_54860_, p_54860_.m_7726_().m_8481_(), p_54863_, p_54861_)) {
+          return true;
+       } else {
+          p_54860_.m_7731_(p_54861_, p_54862_, 3);

@@ -17,6 +17,7 @@ import com.mojang.authlib.GameProfile;
 import com.mojang.blaze3d.vertex.PoseStack;
 
 import com.mojang.brigadier.CommandDispatcher;
+import net.minecraft.core.Holder;
 import net.minecraft.server.ReloadableServerResources;
 import net.minecraft.server.players.PlayerList;
 import net.minecraft.util.random.WeightedRandomList;
@@ -26,6 +27,7 @@ import net.minecraft.world.entity.projectile.FireworkRocketEntity;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.entity.projectile.ThrownEnderpearl;
 import net.minecraft.world.level.biome.MobSpawnSettings;
+import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 import net.minecraft.world.level.portal.PortalShape;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.item.TooltipFlag;
@@ -691,11 +693,20 @@ public class ForgeEventFactory
         return result == Result.DEFAULT ? level.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING) : result == Result.ALLOW;
     }
 
+    /**
+     * @deprecated use {@link ForgeEventFactory#blockGrowFeature}
+     */
+    @Deprecated(forRemoval = true, since = "1.18.2")
     public static boolean saplingGrowTree(LevelAccessor level, Random rand, BlockPos pos)
     {
-        SaplingGrowTreeEvent event = new SaplingGrowTreeEvent(level, rand, pos);
+        return !blockGrowFeature(level, rand, pos, null).getResult().equals(Result.DENY);
+    }
+
+    public static SaplingGrowTreeEvent blockGrowFeature(LevelAccessor level, Random rand, BlockPos pos, Holder<? extends ConfiguredFeature<?, ?>> holder)
+    {
+        SaplingGrowTreeEvent event = new SaplingGrowTreeEvent(level, rand, pos, holder);
         MinecraftForge.EVENT_BUS.post(event);
-        return event.getResult() != Result.DENY;
+        return event;
     }
 
     public static void fireChunkWatch(boolean watch, ServerPlayer entity, ChunkPos chunkpos, ServerLevel level)
