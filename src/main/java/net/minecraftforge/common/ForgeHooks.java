@@ -1169,9 +1169,10 @@ public class ForgeHooks
         return res == Result.DEFAULT ? 0 : res == Result.DENY ? -1 : 1;
     }
 
-    public static <T extends Entity> SpawnPlacementRegisterEvent<T> onSpawnPlacementRegister(EntityType<T> entityType, SpawnPlacements.Type placementType, Heightmap.Types heightmap, SpawnPlacements.SpawnPredicate<T> predicate)
+    @SuppressWarnings("unchecked")
+    public static SpawnPlacementRegisterEvent onSpawnPlacementRegister(EntityType<?> entityType, SpawnPlacements.Type placementType, Heightmap.Types heightmap, SpawnPlacements.SpawnPredicate<? extends Entity> predicate)
     {
-        final SpawnPlacementRegisterEvent<T> event = new SpawnPlacementRegisterEvent<>(entityType, placementType, heightmap, predicate);
+        final SpawnPlacementRegisterEvent event = new SpawnPlacementRegisterEvent(entityType, placementType, heightmap, (SpawnPlacements.SpawnPredicate<Entity>) predicate);
         MinecraftForge.EVENT_BUS.post(event);
         return event;
     }

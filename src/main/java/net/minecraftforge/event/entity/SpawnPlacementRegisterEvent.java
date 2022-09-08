@@ -12,7 +12,6 @@ import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
-import net.minecraftforge.eventbus.api.GenericEvent;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.ParallelDispatchEvent;
@@ -34,25 +33,23 @@ import org.jetbrains.annotations.ApiStatus;
  * only on the {@linkplain LogicalSide#SERVER logical server}.
  */
 @Cancelable
-public class SpawnPlacementRegisterEvent<T extends Entity> extends GenericEvent<T>
+public class SpawnPlacementRegisterEvent extends Event
 {
-    private final EntityType<T> entityType;
+    private final EntityType<?> entityType;
     private SpawnPlacements.Type placementType;
     private Heightmap.Types heightmap;
-    private SpawnPlacements.SpawnPredicate<T> predicate;
+    private SpawnPlacements.SpawnPredicate<Entity> predicate;
 
     @ApiStatus.Internal
-    @SuppressWarnings("unchecked")
-    public SpawnPlacementRegisterEvent(EntityType<T> entityType, SpawnPlacements.Type placementType, Heightmap.Types heightmap, SpawnPlacements.SpawnPredicate<T> predicate)
+    public SpawnPlacementRegisterEvent(EntityType<?> entityType, SpawnPlacements.Type placementType, Heightmap.Types heightmap, SpawnPlacements.SpawnPredicate<Entity> predicate)
     {
-        super((Class<T>) entityType.getBaseClass());
         this.entityType = entityType;
-        this.setPlacementType(placementType);
-        this.setHeightmap(heightmap);
-        this.setPredicate(predicate);
+        this.placementType = placementType;
+        this.heightmap = heightmap;
+        this.predicate = predicate;
     }
 
-    public EntityType<T> getEntityType()
+    public EntityType<?> getEntityType()
     {
         return entityType;
     }
@@ -92,12 +89,12 @@ public class SpawnPlacementRegisterEvent<T extends Entity> extends GenericEvent<
     /**
      * @return The current spawn predicate being registered.
      */
-    public SpawnPlacements.SpawnPredicate<T> getPredicate()
+    public SpawnPlacements.SpawnPredicate<Entity> getPredicate()
     {
         return predicate;
     }
 
-    public void setPredicate(SpawnPlacements.SpawnPredicate<T> predicate)
+    public void setPredicate(SpawnPlacements.SpawnPredicate<Entity> predicate)
     {
         this.predicate = predicate;
     }
@@ -106,11 +103,12 @@ public class SpawnPlacementRegisterEvent<T extends Entity> extends GenericEvent<
      * Sets the {@link SpawnPlacements.SpawnPredicate} to require both the passed in predicate and the event's current predicate to pass.
      * @param predicate The second predicate to check
      */
-    public void requireSecondPredicate(SpawnPlacements.SpawnPredicate<T> predicate)
+    public void requireSecondPredicate(SpawnPlacements.SpawnPredicate<Entity> predicate)
     {
-        final SpawnPlacements.SpawnPredicate<T> newPredicate = (entityType, level, spawnType, pos, random) ->
-            predicate.test(entityType, level, spawnType, pos, random) && this.predicate.test(entityType, level, spawnType, pos, random
-        );
+        var originalPredicate = this.predicate;
+        final SpawnPlacements.SpawnPredicate<Entity> newPredicate = (entityType, level, spawnType, pos, random) -> {
+            return predicate.test(entityType, level, spawnType, pos, random) && originalPredicate.test(entityType, level, spawnType, pos, random);
+        };
         setPredicate(newPredicate);
     }
 

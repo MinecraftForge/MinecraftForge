@@ -1,6 +1,6 @@
 package net.minecraftforge.debug.entity;
 
-import net.minecraft.world.entity.monster.Zombie;
+import net.minecraft.world.entity.EntityType;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.SpawnPlacementRegisterEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -18,14 +18,17 @@ public class SpawnPlacementTest
     {
         if (ENABLED)
         {
-            MinecraftForge.EVENT_BUS.addGenericListener(Zombie.class, this::onZombieSpawnPlacement);
+            MinecraftForge.EVENT_BUS.addListener(this::onZombieSpawnPlacement);
         }
     }
 
-    private void onZombieSpawnPlacement(SpawnPlacementRegisterEvent<Zombie> event)
+    private void onZombieSpawnPlacement(SpawnPlacementRegisterEvent event)
     {
-        LOGGER.info("Intercepted zombie spawn placement register!");
-        event.requireSecondPredicate(((entityType, level, spawnType, pos, random) -> pos.getY() < 40));
-        event.setCanceled(true);
+        if (event.getEntityType() == EntityType.ZOMBIE)
+        {
+            LOGGER.info("Intercepted zombie spawn placement register!");
+            event.requireSecondPredicate(((entityType, level, spawnType, pos, random) -> pos.getY() < 40));
+            event.setCanceled(true);
+        }
     }
 }

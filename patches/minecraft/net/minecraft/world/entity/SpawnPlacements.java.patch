@@ -1,17 +1,12 @@
 --- a/net/minecraft/world/entity/SpawnPlacements.java
 +++ b/net/minecraft/world/entity/SpawnPlacements.java
-@@ -43,7 +_,13 @@
+@@ -43,7 +_,8 @@
     private static final Map<EntityType<?>, SpawnPlacements.Data> f_21750_ = Maps.newHashMap();
  
     public static <T extends Mob> void m_21754_(EntityType<T> p_21755_, SpawnPlacements.Type p_21756_, Heightmap.Types p_21757_, SpawnPlacements.SpawnPredicate<T> p_21758_) {
 -      SpawnPlacements.Data spawnplacements$data = f_21750_.put(p_21755_, new SpawnPlacements.Data(p_21757_, p_21756_, p_21758_));
 +      final var event = net.minecraftforge.common.ForgeHooks.onSpawnPlacementRegister(p_21755_, p_21756_, p_21757_, p_21758_);
-+      var data = new SpawnPlacements.Data(p_21757_, p_21756_, p_21758_);
-+      if (event.isCanceled())
-+      {
-+          data = new SpawnPlacements.Data(event.getHeightmap(), event.getPlacementType(), event.getPredicate());
-+      }
-+      SpawnPlacements.Data spawnplacements$data = f_21750_.put(p_21755_, data);
++      SpawnPlacements.Data spawnplacements$data = f_21750_.put(p_21755_, event.isCanceled() ? new SpawnPlacements.Data(event.getHeightmap(), event.getPlacementType(), event.getPredicate()) : new SpawnPlacements.Data(p_21757_, p_21756_, p_21758_));
        if (spawnplacements$data != null) {
           throw new IllegalStateException("Duplicate registration for type " + Registry.f_122826_.m_7981_(p_21755_));
        }
