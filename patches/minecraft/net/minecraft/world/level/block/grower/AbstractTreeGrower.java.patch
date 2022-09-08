@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/grower/AbstractTreeGrower.java
 +++ b/net/minecraft/world/level/block/grower/AbstractTreeGrower.java
-@@ -12,11 +_,19 @@
+@@ -12,15 +_,24 @@
  import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
  
  public abstract class AbstractTreeGrower {
@@ -17,7 +17,14 @@
  
     public boolean m_213817_(ServerLevel p_222905_, ChunkGenerator p_222906_, BlockPos p_222907_, BlockState p_222908_, RandomSource p_222909_) {
 -      Holder<? extends ConfiguredFeature<?, ?>> holder = this.m_213888_(p_222909_, this.m_60011_(p_222905_, p_222907_));
+-      if (holder == null) {
 +      Holder<? extends ConfiguredFeature<?, ?>> holder = this.getConfiguredFeature(p_222905_, p_222906_, p_222907_, p_222908_, p_222909_, this.m_60011_(p_222905_, p_222907_));
-       if (holder == null) {
++      net.minecraftforge.event.level.SaplingGrowTreeEvent event = net.minecraftforge.event.ForgeEventFactory.blockGrowFeature(p_222905_, p_222909_, p_222907_, holder);
++      if (event.getResult().equals(net.minecraftforge.eventbus.api.Event.Result.DENY) || event.getFeature() == null) {
           return false;
        } else {
+-         ConfiguredFeature<?, ?> configuredfeature = holder.m_203334_();
++         ConfiguredFeature<?, ?> configuredfeature = event.getFeature().m_203334_();
+          BlockState blockstate = p_222905_.m_6425_(p_222907_).m_76188_();
+          p_222905_.m_7731_(p_222907_, blockstate, 4);
+          if (configuredfeature.m_224953_(p_222905_, p_222906_, p_222909_, p_222907_)) {
