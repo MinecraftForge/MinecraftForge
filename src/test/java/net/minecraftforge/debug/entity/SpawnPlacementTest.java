@@ -11,7 +11,7 @@ import org.slf4j.Logger;
 @Mod("spawn_placement_test")
 public class SpawnPlacementTest
 {
-    public static final boolean ENABLED = true;
+    public static final boolean ENABLED = false;
     public static final Logger LOGGER = LogUtils.getLogger();
 
     public SpawnPlacementTest()
