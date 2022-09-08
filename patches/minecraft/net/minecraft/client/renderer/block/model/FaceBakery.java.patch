@@ -6,7 +6,7 @@
  
 -      return new BakedQuad(aint, p_111603_.f_111355_, direction, p_111604_, p_111608_);
 +      net.minecraftforge.client.ForgeHooksClient.fillNormal(aint, direction);
-+      var quad = new BakedQuad(aint, p_111603_.f_111355_, direction, p_111604_, p_111608_);
++      var quad = new BakedQuad(aint, p_111603_.f_111355_, direction, p_111604_, p_111608_, p_111603_.hasAmbientOcclusion);
 +      net.minecraftforge.client.model.QuadTransformers.settingEmissivity(p_111603_.emissivity).processInPlace(quad);
 +      return quad;
     }

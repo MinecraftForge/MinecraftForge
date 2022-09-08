@@ -111,6 +111,14 @@
        }
  
     }
+@@ -113,6 +_,7 @@
+    private void m_111012_(BlockAndTintGetter p_111013_, BlockState p_111014_, BlockPos p_111015_, PoseStack p_111016_, VertexConsumer p_111017_, List<BakedQuad> p_111018_, float[] p_111019_, BitSet p_111020_, ModelBlockRenderer.AmbientOcclusionFace p_111021_, int p_111022_) {
+       for(BakedQuad bakedquad : p_111018_) {
+          this.m_111039_(p_111013_, p_111014_, p_111015_, bakedquad.m_111303_(), bakedquad.m_111306_(), p_111019_, p_111020_);
++         if (!net.minecraftforge.client.ForgeHooksClient.calculateFaceWithoutAO(p_111013_, p_111014_, p_111015_, bakedquad, p_111020_.get(0), p_111021_.f_111149_, p_111021_.f_111150_))
+          p_111021_.m_111167_(p_111013_, p_111014_, p_111015_, bakedquad.m_111306_(), p_111019_, p_111020_, bakedquad.m_111307_());
+          this.m_111023_(p_111013_, p_111014_, p_111015_, p_111017_, p_111016_.m_85850_(), bakedquad, p_111021_.f_111149_[0], p_111021_.f_111149_[1], p_111021_.f_111149_[2], p_111021_.f_111149_[3], p_111021_.f_111150_[0], p_111021_.f_111150_[1], p_111021_.f_111150_[2], p_111021_.f_111150_[3], p_111022_);
+       }
 @@ -217,17 +_,21 @@
  
     }

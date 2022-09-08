@@ -262,6 +262,8 @@ modId="item_use_animation_test"
 modId="custom_color_resolver_test"
 [[mods]]
 modId="custom_item_decorations_test"
+[[mods]]
+modId="ambient_occlusion_elements_test"
 
 
 # ADD ABOVE THIS LINE

@@ -1,0 +1,32 @@
+--- a/net/minecraft/client/renderer/block/model/BakedQuad.java
++++ b/net/minecraft/client/renderer/block/model/BakedQuad.java
+@@ -12,13 +_,19 @@
+    protected final Direction f_111294_;
+    protected final TextureAtlasSprite f_111295_;
+    private final boolean f_111296_;
++   private final boolean hasAmbientOcclusion;
+ 
+    public BakedQuad(int[] p_111298_, int p_111299_, Direction p_111300_, TextureAtlasSprite p_111301_, boolean p_111302_) {
++      this(p_111298_, p_111299_, p_111300_, p_111301_, p_111302_, true);
++   }
++
++   public BakedQuad(int[] p_111298_, int p_111299_, Direction p_111300_, TextureAtlasSprite p_111301_, boolean p_111302_, boolean hasAmbientOcclusion) {
+       this.f_111292_ = p_111298_;
+       this.f_111293_ = p_111299_;
+       this.f_111294_ = p_111300_;
+       this.f_111295_ = p_111301_;
+       this.f_111296_ = p_111302_;
++      this.hasAmbientOcclusion = hasAmbientOcclusion;
+    }
+ 
+    public TextureAtlasSprite m_173410_() {
+@@ -43,5 +_,9 @@
+ 
+    public boolean m_111307_() {
+       return this.f_111296_;
++   }
++
++   public boolean hasAmbientOcclusion() {
++      return this.hasAmbientOcclusion;
+    }
+ }
