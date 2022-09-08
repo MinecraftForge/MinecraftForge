@@ -173,6 +173,8 @@ modId="tag_based_tool_types"
 [[mods]]
 modId="check_spawn_event_test"
 [[mods]]
+modId="spawn_placement_test"
+[[mods]]
 modId="redstone_sided_connectivity_test"
 [[mods]]
 modId="permissions_changed_event_test"
