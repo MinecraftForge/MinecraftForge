@@ -236,4 +236,7 @@ license="LGPL v2.1"
     modId="dyn_map_color_test"
 [[mods]]
     modId="living_set_attack_target_event_test"
+[[mods]]
+    modId="potentialspawnsevent_test"
+
 # ADD ABOVE THIS LINE
