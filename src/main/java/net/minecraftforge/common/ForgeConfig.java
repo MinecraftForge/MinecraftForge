@@ -98,9 +98,6 @@ public class ForgeConfig {
      */
     public static class Common {
         public final ForgeConfigSpec.ConfigValue<? extends String> defaultWorldType;
-        public final BooleanValue cachePackAccess;
-        public final BooleanValue indexVanillaPackCachesOnThread;
-        public final BooleanValue indexModPackCachesOnThread;
 
         Common(ForgeConfigSpec.Builder builder) {
             builder.comment("General configuration settings")
@@ -111,24 +108,6 @@ public class ForgeConfig {
                              "The modded world types are registry names which should include the registry namespace, such as 'examplemod:example_world_type'.")
                     .translation("forge.configgui.defaultWorldType")
                     .define("defaultWorldType", "default");
-
-            cachePackAccess = builder
-                    .comment("Set this to true to cache resource listings in resource and data packs")
-                    .translation("forge.configgui.cachePackAccess")
-                    .worldRestart()
-                    .define("cachePackAccess", true);
-
-            indexVanillaPackCachesOnThread = builder
-                    .comment("Set this to true to index vanilla resource and data packs on thread")
-                    .translation("forge.configgui.indexVanillaPackCachesOnThread")
-                    .worldRestart()
-                    .define("indexVanillaPackCachesOnThread", false);
-
-            indexModPackCachesOnThread = builder
-                    .comment("Set this to true to index mod resource and data packs on thread")
-                    .translation("forge.configgui.indexModPackCachesOnThread")
-                    .worldRestart()
-                    .define("indexModPackCachesOnThread", false);
 
             builder.pop();
         }
