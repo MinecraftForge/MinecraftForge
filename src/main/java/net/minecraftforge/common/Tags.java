@@ -598,7 +598,7 @@ public class Tags
         public static final TagKey<Biome> IS_MODIFIED = tag("is_modified");
 
         public static final TagKey<Biome> IS_WATER = tag("is_water");
-
+        public static final TagKey<Biome> IS_DESERT = tag("is_desert");
         public static final TagKey<Biome> IS_PLAINS = tag("is_plains");
         public static final TagKey<Biome> IS_SWAMP = tag("is_swamp");
         public static final TagKey<Biome> IS_SANDY = tag("is_sandy");
@@ -607,6 +607,7 @@ public class Tags
         public static final TagKey<Biome> IS_VOID = tag("is_void");
         public static final TagKey<Biome> IS_UNDERGROUND = tag("is_underground");
 
+        public static final TagKey<Biome> IS_CAVE = tag("is_cave");
         public static final TagKey<Biome> IS_PEAK = tag("is_peak");
         public static final TagKey<Biome> IS_SLOPE = tag("is_slope");
         public static final TagKey<Biome> IS_MOUNTAIN = tag("is_mountain");
