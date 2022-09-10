@@ -71,4 +71,15 @@ public interface IForgeLivingEntity extends IForgeEntity
     {
         return state.move(self(), movementVector, gravity);
     }
+
+    /**
+     * Decides if this entity can disable shields, when it is attacking the {@code target}.
+     * @param target the entity which is attacked
+     * @return if this entity can disable shields
+     */
+    default boolean canDisableShield(LivingEntity target)
+    {
+        //noinspection deprecation
+        return self().canDisableShield() || self().getMainHandItem().canDisableShield(target.getUseItem(), target, self());
+    }
 }
