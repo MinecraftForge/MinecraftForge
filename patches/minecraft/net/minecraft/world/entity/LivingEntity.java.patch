@@ -741,11 +741,3 @@
           }
        } else {
           return EquipmentSlot.HEAD;
-@@ -3317,6 +_,7 @@
-       this.m_20334_(p_217037_.m_131503_(), p_217037_.m_131504_(), p_217037_.m_131505_());
-    }
- 
-+   @Deprecated /** @deprecated Forge: use {@link #canDisableShield(LivingEntity) the attacker sensitive version} */
-    public boolean m_213824_() {
-       return this.m_21205_().m_41720_() instanceof AxeItem;
-    }
