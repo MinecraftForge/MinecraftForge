@@ -20,12 +20,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -316,7 +311,12 @@ public class ResourceCacheManager
                         .forEach(this::injectIntoCache); // Inject the entry into the cache.
             } catch (NoSuchFileException noSuchFileException)
             {
-                LOGGER.debug("Failed to cache resources, the directory does not exist!", noSuchFileException);
+                // This is expected if the namespace does not exist in the pack (so no resources in the mod add all), or when
+                // for example assets or data is missing in a resource pack.
+                // This is sufficient on 1.19 since UFS handles the crash efficiently, on 1.18.2 likely not much.
+                if (ForgeConfig.COMMON.logMissingDirectoriesToDebug.get()) {
+                    LOGGER.debug("Failed to cache resources, the directory does not exist!", noSuchFileException);
+                }
             } catch (IOException ioException)
             {
                 LOGGER.error("Failed to cache resources, some stuff might be missing!", ioException);
