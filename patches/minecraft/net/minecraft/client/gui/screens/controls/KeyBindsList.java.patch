@@ -1,6 +1,38 @@
 --- a/net/minecraft/client/gui/screens/controls/KeyBindsList.java
 +++ b/net/minecraft/client/gui/screens/controls/KeyBindsList.java
-@@ -51,7 +_,7 @@
+@@ -40,18 +_,37 @@
+          }
+ 
+          Component component = Component.m_237115_(keymapping.m_90860_());
+-         int i = p_193862_.f_91062_.m_92852_(component);
++
++         // FORGE: max width for the keybind descriptions to make all readable, clip any strings that are too long
++         String plainText = component.getString();
++         String clippedMessage = "";
++
++         int i = 0;
++
++         for (int j = 0; j <= plainText.length(); j++) {
++            String checkString = plainText.substring(0, j);
++            i = p_193862_.f_91062_.m_92895_(plainText.substring(0, j));
++            if(i <= 185) {
++               clippedMessage = checkString;
++            } else {
++               clippedMessage = clippedMessage.substring(0, Math.max(clippedMessage.length() - 3, 0));
++               clippedMessage += "...";
++               i = p_193862_.f_91062_.m_92895_(clippedMessage);
++               break;
++            }
++         }
++
+          if (i > this.f_193859_) {
+             this.f_193859_ = i;
+          }
+ 
+-         this.m_7085_(new KeyBindsList.KeyEntry(keymapping, component));
++         this.m_7085_(new KeyBindsList.KeyEntry(keymapping, Component.m_237113_(clippedMessage)));
+       }
+ 
     }
  
     protected int m_5756_() {
