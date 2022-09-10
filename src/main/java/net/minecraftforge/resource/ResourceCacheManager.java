@@ -314,7 +314,7 @@ public class ResourceCacheManager
                 // This is expected if the namespace does not exist in the pack (so no resources in the mod add all), or when
                 // for example assets or data is missing in a resource pack.
                 // This is sufficient on 1.19 since UFS handles the crash efficiently, on 1.18.2 likely not much.
-                if (ForgeConfig.COMMON.logMissingDirectoriesToDebug.get()) {
+                if (ForgeConfig.COMMON.logMissingDirectoriesToDebugDuringResourceCaching.get()) {
                     LOGGER.debug("Failed to cache resources, the directory does not exist!", noSuchFileException);
                 }
             } catch (IOException ioException)

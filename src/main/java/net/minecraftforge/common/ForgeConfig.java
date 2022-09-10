@@ -86,7 +86,7 @@ public class ForgeConfig {
         public final BooleanValue cachePackAccess;
         public final BooleanValue indexVanillaPackCachesOnThread;
         public final BooleanValue indexModPackCachesOnThread;
-        public final BooleanValue logMissingDirectoriesToDebug;
+        public final BooleanValue logMissingDirectoriesToDebugDuringResourceCaching;
 
         Common(ForgeConfigSpec.Builder builder) {
             builder.comment("General configuration settings")
@@ -110,11 +110,11 @@ public class ForgeConfig {
                     .worldRestart()
                     .define("indexModPackCachesOnThread", false);
 
-            logMissingDirectoriesToDebug = builder
-                    .comment("Set this to true to log missing directories to debug, instead of discarding the information. Note this can cause large log files in large mod packs.")
-                    .translation("forge.configgui.indexModPackCachesOnThread")
+            logMissingDirectoriesToDebugDuringResourceCaching = builder
+                    .comment("Set this to true to log missing directories (found during resource caching) to debug, instead of discarding the information. Note this can cause large log files in large mod packs.")
+                    .translation("forge.configgui.logMissingDirectoriesToDebugDuringResourceCaching")
                     .worldRestart()
-                    .define("logMissingDirectoriesToDebug", false);
+                    .define("logMissingDirectoriesToDebugDuringResourceCaching", false);
 
             builder.pop();
         }
