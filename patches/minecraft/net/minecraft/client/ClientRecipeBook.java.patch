@@ -13,7 +13,7 @@
  
     private static RecipeBookCategories m_90646_(Recipe<?> p_90647_) {
        RecipeType<?> recipetype = p_90647_.m_6671_();
-+      RecipeBookCategories category = net.minecraftforge.client.RecipeBookManager.getCategoryForItem(p_90647_.m_8043_().m_41720_()); // FORGE: Returns if item has been manually assigned to a specific category
++      RecipeBookCategories category = net.minecraftforge.client.RecipeBookManager.getCategoryForItem(recipetype, p_90647_.m_8043_().m_41720_()); // FORGE: Returns if item has been manually assigned to a specific category
 +      if (category != null) {
 +         return category;
 +      }
