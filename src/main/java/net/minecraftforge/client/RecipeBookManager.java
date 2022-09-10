@@ -5,8 +5,10 @@
 
 package net.minecraftforge.client;
 
+import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Table;
 import net.minecraft.client.RecipeBookCategories;
 import net.minecraft.world.inventory.RecipeBookType;
 import net.minecraft.world.item.Item;
@@ -38,7 +40,7 @@ public final class RecipeBookManager
     private static final Map<RecipeBookType, List<RecipeBookCategories>> TYPE_CATEGORIES = new HashMap<>();
     private static final Map<RecipeType<?>, Function<Recipe<?>, RecipeBookCategories>> RECIPE_CATEGORY_LOOKUPS = new HashMap<>();
     private static final Map<RecipeBookCategories, List<RecipeBookCategories>> AGGREGATE_CATEGORIES_VIEW = Collections.unmodifiableMap(AGGREGATE_CATEGORIES);
-    private static final Map<Item, RecipeBookCategories> ITEMS_CATEGORIES_STORAGE = new HashMap<>();
+    private static final Table<RecipeType<?>, Item, RecipeBookCategories> ITEMS_CATEGORIES_STORAGE = HashBasedTable.create();
 
     /**
      * Finds the category the specified recipe should display in, or null if none.
@@ -63,16 +65,19 @@ public final class RecipeBookManager
     }
 
     @Nullable
-    public static RecipeBookCategories getCategoryForItem(Item item)
+    public static RecipeBookCategories getCategoryForItem(RecipeType<?> type, Item item)
     {
-        return ITEMS_CATEGORIES_STORAGE.get(item);
+        return ITEMS_CATEGORIES_STORAGE.get(type, item);
     }
 
-    public static void addItemToCategory(RecipeBookCategories category, Item... items)
+    public static void addItemToCategory(RecipeType<?> type, RecipeBookCategories category, Item... items)
     {
         for (Item item : items)
         {
-            ITEMS_CATEGORIES_STORAGE.putIfAbsent(item, category);
+            if (!ITEMS_CATEGORIES_STORAGE.contains(type, item))
+            {
+                ITEMS_CATEGORIES_STORAGE.put(type, item, category);
+            }
         }
     }
 
