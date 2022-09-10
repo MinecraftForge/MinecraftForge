@@ -30,6 +30,7 @@ project {
     buildType(Build)
     buildType(BuildSecondaryBranches)
     buildType(PullRequests)
+    buildType(VerifyPullRequests)
 
     params {
         text("docker_jdk_version", "17", label = "Gradle version", description = "The version of the JDK to use during execution of tasks in a JDK.", display = ParameterDisplay.HIDDEN, allowEmpty = false)
@@ -123,6 +124,34 @@ object PullRequests : BuildType({
             description = "Determines the build task that is executed to build the project.",
             display = ParameterDisplay.HIDDEN,
             allowEmpty = false
+        )
+    }
+
+    vcs {
+        branchFilter = """
+            +:*
+            -:1.*
+            -:<default>
+        """.trimIndent()
+    }
+})
+
+object VerifyPullRequests : BuildType({
+    templates(AbsoluteId("MinecraftForge_BuildPullRequests"), AbsoluteId("MinecraftForge_SetupGradleUtilsCiEnvironmen"), AbsoluteId("MinecraftForge_BuildWithDiscordNotifications"), AbsoluteId("MinecraftForge_SetupProjectUsingGradle"), AbsoluteId("MinecraftForge_BuildUsingGradle"))
+    id("MinecraftForge_MinecraftForge__PullRequestVerification")
+    name = "Pull Request Verification"
+    description = "Verifies pull requests for the project"
+
+    params {
+        checkbox("should_execute_build", "true", label = "Should build", description = "Indicates if the build task should be executed.", display = ParameterDisplay.HIDDEN,
+                checked = "true", unchecked = "false")
+        text(
+                "gradle_build_task",
+                "checkATs checkExcs checkSAS findFieldInstanceChecks checkLicenses checkPatches checkJarCompatibility",
+                label = "Gradle build task to execute during build",
+                description = "Determines the build task that is executed to build the project.",
+                display = ParameterDisplay.HIDDEN,
+                allowEmpty = false
         )
     }
 
