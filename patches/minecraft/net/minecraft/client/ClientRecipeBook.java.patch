@@ -9,6 +9,17 @@
              if (s.isEmpty()) {
                 map.computeIfAbsent(recipebookcategories, (p_90645_) -> {
                    return Lists.newArrayList();
+@@ -76,6 +_,10 @@
+ 
+    private static RecipeBookCategories m_90646_(Recipe<?> p_90647_) {
+       RecipeType<?> recipetype = p_90647_.m_6671_();
++      RecipeBookCategories category = net.minecraftforge.client.RecipeBookManager.getCategoryForItem(p_90647_.m_8043_().m_41720_()); // FORGE: Returns if item has been manually assigned to a specific category
++      if (category != null) {
++         return category;
++      }
+       if (recipetype == RecipeType.f_44107_) {
+          ItemStack itemstack = p_90647_.m_8043_();
+          CreativeModeTab creativemodetab = itemstack.m_41720_().m_41471_();
 @@ -103,6 +_,8 @@
        } else if (recipetype == RecipeType.f_44113_) {
           return RecipeBookCategories.SMITHING;
