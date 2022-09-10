@@ -101,7 +101,7 @@
           if (j2 + i > this.f_96543_) {
              j2 -= 28 + i;
           }
-@@ -231,15 +_,16 @@
+@@ -227,15 +_,16 @@
           RenderSystem.m_157427_(GameRenderer::m_172811_);
           bufferbuilder.m_166779_(VertexFormat.Mode.QUADS, DefaultVertexFormat.f_85815_);
           Matrix4f matrix4f = p_169384_.m_85850_().m_85861_();
@@ -127,7 +127,7 @@
           RenderSystem.m_69482_();
           RenderSystem.m_69472_();
           RenderSystem.m_69478_();
-@@ -253,7 +_,7 @@
+@@ -249,7 +_,7 @@
  
           for(int i2 = 0; i2 < p_169385_.size(); ++i2) {
              ClientTooltipComponent clienttooltipcomponent1 = p_169385_.get(i2);
@@ -136,7 +136,7 @@
              l1 += clienttooltipcomponent1.m_142103_() + (i2 == 0 ? 2 : 0);
           }
  
-@@ -263,7 +_,7 @@
+@@ -259,7 +_,7 @@
  
           for(int l2 = 0; l2 < p_169385_.size(); ++l2) {
              ClientTooltipComponent clienttooltipcomponent2 = p_169385_.get(l2);
@@ -145,7 +145,7 @@
              l1 += clienttooltipcomponent2.m_142103_() + (l2 == 0 ? 2 : 0);
           }
  
-@@ -363,9 +_,19 @@
+@@ -361,9 +_,19 @@
        this.f_96547_ = p_96607_.f_91062_;
        this.f_96543_ = p_96608_;
        this.f_96544_ = p_96609_;
@@ -165,7 +165,7 @@
     }
  
     protected void m_232761_() {
-@@ -394,6 +_,7 @@
+@@ -392,6 +_,7 @@
     public void m_96558_(PoseStack p_96559_, int p_96560_) {
        if (this.f_96541_.f_91073_ != null) {
           this.m_93179_(p_96559_, 0, 0, this.f_96543_, this.f_96544_, -1072689136, -804253680);
@@ -173,7 +173,7 @@
        } else {
           this.m_96626_(p_96560_);
        }
-@@ -413,6 +_,7 @@
+@@ -411,6 +_,7 @@
        bufferbuilder.m_5483_((double)this.f_96543_, 0.0D, 0.0D).m_7421_((float)this.f_96543_ / 32.0F, (float)p_96627_).m_6122_(64, 64, 64, 255).m_5752_();
        bufferbuilder.m_5483_(0.0D, 0.0D, 0.0D).m_7421_(0.0F, (float)p_96627_).m_6122_(64, 64, 64, 255).m_5752_();
        tesselator.m_85914_();
@@ -181,7 +181,7 @@
     }
  
     public boolean m_7043_() {
-@@ -498,6 +_,10 @@
+@@ -496,6 +_,10 @@
     }
  
     public void m_7400_(List<Path> p_96591_) {

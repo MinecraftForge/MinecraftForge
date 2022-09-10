@@ -1,5 +1,6 @@
 {
   "values": [
+    "minecraft:mangrove_swamp",
     "#forge:is_hot/overworld",
     "#forge:is_hot/nether",
     {

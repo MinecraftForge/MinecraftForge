@@ -17,6 +17,7 @@ import com.mojang.datafixers.util.Either;
 import com.mojang.math.Matrix4f;
 import com.mojang.math.Vector3f;
 import net.minecraft.ChatFormatting;
+import net.minecraft.FileUtil;
 import net.minecraft.client.Camera;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
@@ -26,8 +27,8 @@ import net.minecraft.client.color.block.BlockColors;
 import net.minecraft.client.color.item.ItemColors;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiComponent;
-import net.minecraft.client.gui.chat.NarratorChatListener;
 import net.minecraft.client.gui.components.LerpingBossEvent;
+import net.minecraft.client.gui.components.toasts.Toast;
 import net.minecraft.client.gui.screens.ConfirmScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.TitleScreen;
@@ -54,6 +55,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
+import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.client.renderer.texture.TextureAtlas;
@@ -74,6 +76,8 @@ import net.minecraft.network.chat.ChatType;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
+import net.minecraft.network.chat.MessageSigner;
+import net.minecraft.network.chat.PlayerChatMessage;
 import net.minecraft.network.protocol.status.ServerStatus;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
@@ -127,6 +131,7 @@ import net.minecraftforge.client.event.RenderTooltipEvent;
 import net.minecraftforge.client.event.ScreenEvent;
 import net.minecraftforge.client.event.ScreenshotEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
+import net.minecraftforge.client.event.ToastAddEvent;
 import net.minecraftforge.client.event.ViewportEvent;
 import net.minecraftforge.client.event.sound.PlaySoundEvent;
 import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions;
@@ -217,7 +222,7 @@ public class ForgeHooksClient
             guiLayers.push(minecraft.screen);
         minecraft.screen = Objects.requireNonNull(screen);
         screen.init(minecraft, minecraft.getWindow().getGuiScaledWidth(), minecraft.getWindow().getGuiScaledHeight());
-        NarratorChatListener.INSTANCE.sayNow(screen.getNarrationMessage());
+        minecraft.getNarrator().sayNow(screen.getNarrationMessage());
     }
 
     public static void popGuiLayer(Minecraft minecraft)
@@ -230,7 +235,7 @@ public class ForgeHooksClient
 
         popGuiLayerInternal(minecraft);
         if (minecraft.screen != null)
-            NarratorChatListener.INSTANCE.sayNow(minecraft.screen.getNarrationMessage());
+            minecraft.getNarrator().sayNow(minecraft.screen.getNarrationMessage());
     }
 
     public static float getGuiFarPlane()
@@ -557,6 +562,18 @@ public class ForgeHooksClient
         return new Vector3f(x, y, z);
     }
 
+    public static boolean calculateFaceWithoutAO(BlockAndTintGetter getter, BlockState state, BlockPos pos, BakedQuad quad, boolean isFaceCubic, float[] brightness, int[] lightmap)
+    {
+        if (quad.hasAmbientOcclusion())
+            return false;
+
+        BlockPos lightmapPos = isFaceCubic ? pos.relative(quad.getDirection()) : pos;
+
+        brightness[0] = brightness[1] = brightness[2] = brightness[3] = getter.getShade(quad.getDirection(), quad.isShade());
+        lightmap[0] = lightmap[1] = lightmap[2] = lightmap[3] = LevelRenderer.getLightColor(getter, state, lightmapPos);
+        return true;
+    }
+
     public static void loadEntityShader(Entity entity, GameRenderer entityRenderer)
     {
         if (entity != null)
@@ -757,7 +774,7 @@ public class ForgeHooksClient
         var model = blockRenderer.getBlockModel(state);
         for (var renderType : model.getRenderTypes(state, RandomSource.create(state.getSeed(pos)), ModelData.EMPTY))
         {
-            VertexConsumer vertexConsumer = bufferSource.getBuffer(renderType == RenderType.translucent() ? RenderType.translucentMovingBlock() : renderType);
+            VertexConsumer vertexConsumer = bufferSource.getBuffer(RenderTypeHelper.getMovingBlockRenderType(renderType));
             blockRenderer.getModelRenderer().tesselateBlock(level, model, state, pos, stack, vertexConsumer, checkSides, RandomSource.create(), state.getSeed(pos), packedOverlay, ModelData.EMPTY, renderType);
         }
     }
@@ -940,9 +957,9 @@ public class ForgeHooksClient
     }
 
     @Nullable
-    public static Component onClientChat(ChatType type, Component message, ChatSender chatSender)
+    public static Component onClientChat(ChatType.Bound boundChatType, Component message, PlayerChatMessage playerChatMessage, MessageSigner messageSigner)
     {
-        ClientChatReceivedEvent event = new ClientChatReceivedEvent(type, message, chatSender);
+        ClientChatReceivedEvent event = new ClientChatReceivedEvent(boundChatType, message, playerChatMessage, messageSigner);
         return MinecraftForge.EVENT_BUS.post(event) ? null : event.getMessage();
     }
 
@@ -951,6 +968,16 @@ public class ForgeHooksClient
     {
         ClientChatEvent event = new ClientChatEvent(message);
         return MinecraftForge.EVENT_BUS.post(event) ? "" : event.getMessage();
+    }
+
+    /**
+     * Mimics the behavior of {@link net.minecraft.client.renderer.ItemBlockRenderTypes#getRenderType(BlockState, boolean)}
+     * for the input {@link RenderType}.
+     */
+    @NotNull
+    public static RenderType getEntityRenderType(RenderType chunkRenderType, boolean cull)
+    {
+        return RenderTypeHelper.getEntityRenderType(chunkRenderType, cull);
     }
 
     @Mod.EventBusSubscriber(value = Dist.CLIENT, modid="forge", bus= Mod.EventBusSubscriber.Bus.MOD)
@@ -1080,10 +1107,16 @@ public class ForgeHooksClient
         };
     }
 
-    public static int onScreenPotionSize(Screen screen, int availableSpace, boolean compact)
+    public static ScreenEvent.RenderInventoryMobEffects onScreenPotionSize(Screen screen, int availableSpace, boolean compact, int horizontalOffset)
     {
-        final ScreenEvent.RenderInventoryMobEffects event = new ScreenEvent.RenderInventoryMobEffects(screen, availableSpace, compact);
-        return MinecraftForge.EVENT_BUS.post(event) ? 0 : (event.isCompact() ? 1 : 2);
+        final ScreenEvent.RenderInventoryMobEffects event = new ScreenEvent.RenderInventoryMobEffects(screen, availableSpace, compact, horizontalOffset);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event;
+    }
+
+    public static boolean onToastAdd(Toast toast)
+    {
+        return MinecraftForge.EVENT_BUS.post(new ToastAddEvent(toast));
     }
 
     public static boolean isBlockInSolidLayer(BlockState state)
@@ -1135,5 +1168,13 @@ public class ForgeHooksClient
                 Mth.log2(Math.max(1, width)),
                 Mth.log2(Math.max(1, height))
         );
+    }
+
+    public static ResourceLocation getShaderImportLocation(String basePath, boolean isRelative, String importPath)
+    {
+        final var loc = new ResourceLocation(importPath);
+        final var normalised = FileUtil.normalizeResourcePath(
+            (isRelative ? basePath : "shaders/include/") + loc.getPath());
+        return new ResourceLocation(loc.getNamespace(), normalised);
     }
 }

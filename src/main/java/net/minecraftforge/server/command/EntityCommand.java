@@ -52,7 +52,7 @@ class EntityCommand
             return Commands.literal("list")
                 .requires(cs->cs.hasPermission(2)) //permission
                 .then(Commands.argument("filter", StringArgumentType.string())
-                    .suggests((ctx, builder) -> SharedSuggestionProvider.suggest(ForgeRegistries.ENTITIES.getKeys().stream().map(ResourceLocation::toString).map(StringArgumentType::escapeIfRequired), builder))
+                    .suggests((ctx, builder) -> SharedSuggestionProvider.suggest(ForgeRegistries.ENTITY_TYPES.getKeys().stream().map(ResourceLocation::toString).map(StringArgumentType::escapeIfRequired), builder))
                     .then(Commands.argument("dim", DimensionArgument.dimension())
                         .executes(ctx -> execute(ctx.getSource(), StringArgumentType.getString(ctx, "filter"), DimensionArgument.getDimension(ctx, "dim").dimension()))
                     )
@@ -65,7 +65,7 @@ class EntityCommand
         {
             final String cleanFilter = filter.replace("?", ".?").replace("*", ".*?");
 
-            Set<ResourceLocation> names = ForgeRegistries.ENTITIES.getKeys().stream().filter(n -> n.toString().matches(cleanFilter)).collect(Collectors.toSet());
+            Set<ResourceLocation> names = ForgeRegistries.ENTITY_TYPES.getKeys().stream().filter(n -> n.toString().matches(cleanFilter)).collect(Collectors.toSet());
 
             if (names.isEmpty())
                 throw INVALID_FILTER.create();
@@ -76,7 +76,7 @@ class EntityCommand
 
             Map<ResourceLocation, MutablePair<Integer, Map<ChunkPos, Integer>>> list = Maps.newHashMap();
             level.getEntities().getAll().forEach(e -> {
-                MutablePair<Integer, Map<ChunkPos, Integer>> info = list.computeIfAbsent(ForgeRegistries.ENTITIES.getKey(e.getType()), k -> MutablePair.of(0, Maps.newHashMap()));
+                MutablePair<Integer, Map<ChunkPos, Integer>> info = list.computeIfAbsent(ForgeRegistries.ENTITY_TYPES.getKey(e.getType()), k -> MutablePair.of(0, Maps.newHashMap()));
                 ChunkPos chunk = new ChunkPos(e.blockPosition());
                 info.left++;
                 info.right.put(chunk, info.right.getOrDefault(chunk, 0) + 1);

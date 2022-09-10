@@ -24,9 +24,9 @@
           this.f_39000_ = 0;
 +         boolean flag = false;
 +
++         if (!net.minecraftforge.common.ForgeHooks.onAnvilChange(this, itemstack, itemstack2, f_39768_, f_39001_, j, this.f_39771_)) return;
           if (!itemstack2.m_41619_()) {
 -            boolean flag = itemstack2.m_150930_(Items.f_42690_) && !EnchantedBookItem.m_41163_(itemstack2).isEmpty();
-+            if (!net.minecraftforge.common.ForgeHooks.onAnvilChange(this, itemstack, itemstack2, f_39768_, f_39001_, j, this.f_39771_)) return;
 +            flag = itemstack2.m_41720_() == Items.f_42690_ && !EnchantedBookItem.m_41163_(itemstack2).isEmpty();
              if (itemstack1.m_41763_() && itemstack1.m_41720_().m_6832_(itemstack, itemstack2)) {
                 int l2 = Math.min(itemstack1.m_41773_(), itemstack1.m_41776_() / 4);

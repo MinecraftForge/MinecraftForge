@@ -22,21 +22,32 @@
        this.f_119453_ = bakedmodel.m_7541_();
        this.f_119454_ = bakedmodel.m_7539_();
        this.f_119455_ = bakedmodel.m_7547_();
-@@ -42,7 +_,8 @@
+@@ -42,10 +_,7 @@
        this.f_119458_ = bakedmodel.m_7343_();
     }
  
 -   public List<BakedQuad> m_213637_(@Nullable BlockState p_235050_, @Nullable Direction p_235051_, RandomSource p_235052_) {
-+   // FORGE: Implement our overloads (here and below) so child models can have custom logic
-+   public List<BakedQuad> getQuads(@Nullable BlockState p_235050_, @Nullable Direction p_235051_, RandomSource p_235052_, net.minecraftforge.client.model.data.ModelData modelData, @org.jetbrains.annotations.Nullable net.minecraft.client.renderer.RenderType renderType) {
-       if (p_235050_ == null) {
-          return Collections.emptyList();
-       } else {
-@@ -60,16 +_,18 @@
+-      if (p_235050_ == null) {
+-         return Collections.emptyList();
+-      } else {
++   public BitSet getSelectors(@Nullable BlockState p_235050_) {
+          BitSet bitset = this.f_119460_.get(p_235050_);
+          if (bitset == null) {
+             bitset = new BitSet();
+@@ -59,17 +_,27 @@
+ 
              this.f_119460_.put(p_235050_, bitset);
           }
++         return bitset;
++   }
  
 -         List<BakedQuad> list = Lists.newArrayList();
++   // FORGE: Implement our overloads (here and below) so child models can have custom logic
++   public List<BakedQuad> getQuads(@Nullable BlockState p_235050_, @Nullable Direction p_235051_, RandomSource p_235052_, net.minecraftforge.client.model.data.ModelData modelData, @org.jetbrains.annotations.Nullable net.minecraft.client.renderer.RenderType renderType) {
++      if (p_235050_ == null) {
++         return Collections.emptyList();
++      } else {
++         BitSet bitset = getSelectors(p_235050_);
 +         List<List<BakedQuad>> list = Lists.newArrayList();
           long k = p_235052_.m_188505_();
  
@@ -44,7 +55,7 @@
              if (bitset.get(j)) {
 -               list.addAll(this.f_119459_.get(j).getRight().m_213637_(p_235050_, p_235051_, RandomSource.m_216335_(k)));
 +               var model = this.f_119459_.get(j).getRight();
-+               if (model.getRenderTypes(p_235050_, p_235052_, modelData).contains(renderType)) // FORGE: Only put quad data if the model is using the render type passed
++               if (renderType == null || model.getRenderTypes(p_235050_, p_235052_, modelData).contains(renderType)) // FORGE: Only put quad data if the model is using the render type passed
 +               list.add(model.getQuads(p_235050_, p_235051_, RandomSource.m_216335_(k), net.minecraftforge.client.model.data.MultipartModelData.resolve(modelData, model), renderType));
              }
           }
@@ -69,7 +80,7 @@
     public boolean m_7539_() {
        return this.f_119454_;
     }
-@@ -89,16 +_,38 @@
+@@ -89,12 +_,32 @@
        return false;
     }
  
@@ -85,26 +96,20 @@
 +   @Deprecated
     public ItemTransforms m_7442_() {
        return this.f_119457_;
-    }
- 
++   }
++
 +   public BakedModel applyTransform(net.minecraft.client.renderer.block.model.ItemTransforms.TransformType transformType, com.mojang.blaze3d.vertex.PoseStack poseStack, boolean applyLeftHandTransform) {
 +      return this.defaultModel.applyTransform(transformType, poseStack, applyLeftHandTransform);
 +   }
 +
-    public ItemOverrides m_7343_() {
-       return this.f_119458_;
-+   }
-+
-+   private final java.util.Map<BlockState, net.minecraftforge.client.ChunkRenderTypeSet> stateRenderTypeCache = new java.util.concurrent.ConcurrentHashMap<>();
-+
-+   @Override // FORGE: Get render types based on the models used for the block state passed, and cache those values for future use.
++   @Override // FORGE: Get render types based on the selectors matched by the given block state
 +   public net.minecraftforge.client.ChunkRenderTypeSet getRenderTypes(@org.jetbrains.annotations.NotNull BlockState state, @org.jetbrains.annotations.NotNull RandomSource rand, @org.jetbrains.annotations.NotNull net.minecraftforge.client.model.data.ModelData data) {
-+       return this.stateRenderTypeCache.computeIfAbsent(state, s -> net.minecraftforge.client.ChunkRenderTypeSet.union(this.f_119459_.stream().filter(p -> p.getLeft().test(s)).map(p -> p.getRight().getRenderTypes(s, rand, data)).toList()));
-+   }
-+
-+   @Override // FORGE: Get the render types for all selectors. Don't cache since itemStack could do custom things with NBT.
-+   public List<net.minecraft.client.renderer.RenderType> getRenderTypes(net.minecraft.world.item.ItemStack itemStack, boolean fabulous) {
-+       return this.f_119459_.stream().flatMap(p -> p.getRight().getRenderTypes(itemStack, fabulous).stream()).distinct().toList();
++      var renderTypeSets = new java.util.LinkedList<net.minecraftforge.client.ChunkRenderTypeSet>();
++      var selectors = getSelectors(state);
++      for (int i = 0; i < selectors.length(); i++)
++         if (selectors.get(i))
++            renderTypeSets.add(this.f_119459_.get(i).getRight().getRenderTypes(state, rand, data));
++      return net.minecraftforge.client.ChunkRenderTypeSet.union(renderTypeSets);
     }
  
-    @OnlyIn(Dist.CLIENT)
+    public ItemOverrides m_7343_() {

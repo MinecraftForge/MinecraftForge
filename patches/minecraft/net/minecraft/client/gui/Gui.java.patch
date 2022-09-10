@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/gui/Gui.java
 +++ b/net/minecraft/client/gui/Gui.java
-@@ -400,6 +_,7 @@
+@@ -389,6 +_,7 @@
                    if (this.f_92986_.f_91076_ != null && this.f_92986_.f_91076_ instanceof LivingEntity && f >= 1.0F) {
                       flag = this.f_92986_.f_91074_.m_36333_() > 5.0F;
                       flag &= this.f_92986_.f_91076_.m_6084_();
@@ -8,7 +8,7 @@
                    }
  
                    int j = this.f_92978_ / 2 - 7 + 16;
-@@ -452,6 +_,10 @@
+@@ -441,6 +_,10 @@
  
           for(MobEffectInstance mobeffectinstance : Ordering.natural().reverse().sortedCopy(collection)) {
              MobEffect mobeffect = mobeffectinstance.m_19544_();
@@ -19,7 +19,7 @@
              if (mobeffectinstance.m_19575_()) {
                 int i = this.f_92977_;
                 int j = 1;
-@@ -480,6 +_,7 @@
+@@ -469,6 +_,7 @@
                    }
                 }
  
@@ -27,7 +27,7 @@
                 TextureAtlasSprite textureatlassprite = mobeffecttexturemanager.m_118732_(mobeffect);
                 int l = i;
                 int i1 = j;
-@@ -609,12 +_,13 @@
+@@ -598,12 +_,13 @@
     public void m_93069_(PoseStack p_93070_) {
        this.f_92986_.m_91307_().m_6180_("selectedItemName");
        if (this.f_92993_ > 0 && !this.f_92994_.m_41619_()) {
@@ -43,7 +43,7 @@
           int j = (this.f_92977_ - i) / 2;
           int k = this.f_92978_ - 59;
           if (!this.f_92986_.f_91072_.m_105205_()) {
-@@ -630,7 +_,13 @@
+@@ -619,7 +_,13 @@
              RenderSystem.m_69478_();
              RenderSystem.m_69453_();
              m_93172_(p_93070_, j - 2, k - 2, j + i + 2, k + 9 + 2, this.f_92986_.f_91066_.m_92143_(0));
@@ -58,7 +58,7 @@
              RenderSystem.m_69461_();
           }
        }
-@@ -1144,7 +_,7 @@
+@@ -1133,7 +_,7 @@
           ItemStack itemstack = this.f_92986_.f_91074_.m_150109_().m_36056_();
           if (itemstack.m_41619_()) {
              this.f_92993_ = 0;

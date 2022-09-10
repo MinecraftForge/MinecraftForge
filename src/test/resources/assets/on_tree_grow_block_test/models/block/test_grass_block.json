@@ -1,0 +1,11 @@
+{
+  "parent": "minecraft:block/grass_block",
+  "textures": {
+    "particle": "on_tree_grow_block_test:blocks/test_dirt",
+    "bottom": "on_tree_grow_block_test:blocks/test_dirt",
+    "top": "on_tree_grow_block_test:blocks/test_grass_block_top",
+    "side": "on_tree_grow_block_test:blocks/test_grass_block_side",
+    "overlay": "on_tree_grow_block_test:blocks/test_grass_block_side_overlay"
+  },
+  "render_type": "cutout_mipped"
+}

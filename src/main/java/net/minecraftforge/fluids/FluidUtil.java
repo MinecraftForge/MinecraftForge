@@ -24,14 +24,13 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.SoundActions;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import net.minecraftforge.fluids.capability.wrappers.BlockWrapper;
 import net.minecraftforge.fluids.capability.wrappers.BucketPickupHandlerWrapper;
 import net.minecraftforge.fluids.capability.wrappers.FluidBlockWrapper;
-import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 
@@ -91,7 +90,7 @@ public class FluidUtil
         ItemStack heldItem = player.getItemInHand(hand);
         if (!heldItem.isEmpty())
         {
-            return player.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
+            return player.getCapability(ForgeCapabilities.ITEM_HANDLER)
                 .map(playerInventory -> {
 
                     FluidActionResult fluidActionResult = tryFillContainerAndStow(heldItem, handler, playerInventory, Integer.MAX_VALUE, player, true);
@@ -174,11 +173,15 @@ public class FluidUtil
         ItemStack containerCopy = ItemHandlerHelper.copyStackWithSize(container, 1); // do not modify the input
         return getFluidHandler(containerCopy)
                 .map(containerFluidHandler -> {
-
-                    // We are acting on a COPY of the stack, so performing changes is acceptable even if we are simulating.
-                    FluidStack transfer = tryFluidTransfer(fluidDestination, containerFluidHandler, maxAmount, true);
+                    FluidStack transfer = tryFluidTransfer(fluidDestination, containerFluidHandler, maxAmount, doDrain);
                     if (transfer.isEmpty())
                         return FluidActionResult.FAILURE;
+                    if (!doDrain)
+                    {
+                        // We are acting on a COPY of the stack, so performing changes on the source is acceptable even if we are simulating.
+                        // We need to perform the change otherwise the call to getContainer() will be incorrect.
+                        containerFluidHandler.drain(transfer, IFluidHandler.FluidAction.EXECUTE);
+                    }
 
                     if (doDrain && player != null)
                     {
@@ -418,7 +421,7 @@ public class FluidUtil
      */
     public static LazyOptional<IFluidHandlerItem> getFluidHandler(@NotNull ItemStack itemStack)
     {
-        return itemStack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY);
+        return itemStack.getCapability(ForgeCapabilities.FLUID_HANDLER_ITEM);
     }
 
     /**
@@ -445,14 +448,12 @@ public class FluidUtil
     public static LazyOptional<IFluidHandler> getFluidHandler(Level level, BlockPos blockPos, @Nullable Direction side)
     {
         BlockState state = level.getBlockState(blockPos);
-        Block block = state.getBlock();
-
         if (state.hasBlockEntity())
         {
             BlockEntity blockEntity = level.getBlockEntity(blockPos);
             if (blockEntity != null)
             {
-                return blockEntity.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, side);
+                return blockEntity.getCapability(ForgeCapabilities.FLUID_HANDLER, side);
             }
         }
         return LazyOptional.empty();

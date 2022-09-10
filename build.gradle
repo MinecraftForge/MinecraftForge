@@ -20,8 +20,8 @@ plugins {
     id 'net.minecraftforge.gradleutils' version '2.+'
     id 'eclipse'
     id 'de.undercouch.download' version '4.1.2'
-    id 'net.minecraftforge.gradle.patcher' version '[5.1.43,)' apply false
-    id 'net.minecraftforge.gradle.mcp' version '[5.1.43,)' apply false
+    id 'net.minecraftforge.gradle.patcher' version '[5.1.50,5.2.0)' apply false
+    id 'net.minecraftforge.gradle.mcp' version '[5.1.50,5.2.0)' apply false
 }
 
 Util.init() //Init all our extension methods!
@@ -36,13 +36,14 @@ ext {
         ]
     }
     MAPPING_CHANNEL = 'official'
-    MAPPING_VERSION = '1.19'
-    MC_VERSION = '1.19'
-    MCP_VERSION = '20220607.102129'
+    MAPPING_VERSION = '1.19.2'
+    MC_VERSION = '1.19.2'
+    MC_NEXT_VERSION = '1.20'
+    MCP_VERSION = '20220805.130853'
     SPI_VERSION = '6.0.0'
     ACCESSTRANSFORMERS_VERSION = '8.0.4'
     COREMODS_VERSION = '5.0.1'
-    EVENTBUS_VERSION = '6.0.0'
+    EVENTBUS_VERSION = '6.0.3'
     MODLAUNCHER_VERSION = '10.0.8'
     SECUREJARHANDLER_VERSION = '2.1.4'
     BOOTSTRAPLAUNCHER_VERSION = '1.1.2'
@@ -65,7 +66,7 @@ ext {
     APACHE_COMMONS_LANG3_VERSION = '3.12.0'
     JOPT_SIMPLE_VERSION = '5.0.4'
     COMMONS_IO_VERSION = '2.11.0'
-    JARJAR_VERSION = '0.3.0'
+    JARJAR_VERSION = '0.3.16'
 
     GIT_INFO = gradleutils.gitInfo
     VERSION = gradleutils.getFilteredMCTagOffsetBranchVersion(true, '[0-9]', MC_VERSION)
@@ -95,7 +96,7 @@ def extraTxts = [
 ]
 
 task downloadVersionManifest(type: Download) {
-    src 'https://launchermeta.mojang.com/mc/game/version_manifest_v2.json'
+    src 'https://piston-meta.mojang.com/mc/game/version_manifest_v2.json'
     dest file('build/versions/version_manifest.json')
     useETag 'all'
     onlyIfModified true
@@ -261,6 +262,7 @@ def sharedDeps = {
     moduleonly "org.ow2.asm:asm-util:${ASM_VERSION}"
     moduleonly "org.ow2.asm:asm-analysis:${ASM_VERSION}"
     moduleonly "cpw.mods:bootstraplauncher:${BOOTSTRAPLAUNCHER_VERSION}"
+    moduleonly "net.minecraftforge:JarJarFileSystems:${JARJAR_VERSION}"
 
     installer "cpw.mods:securejarhandler:${SECUREJARHANDLER_VERSION}"
     installer "org.ow2.asm:asm:${ASM_VERSION}"
@@ -284,7 +286,8 @@ def sharedDeps = {
     installer "org.jline:jline-terminal:${JLINE_VERSION}" // Dep of TerminalConsoleAppender
     installer "org.spongepowered:mixin:${MIXIN_VERSION}"
     installer 'org.openjdk.nashorn:nashorn-core:15.3'
-    installer "net.minecraftforge:JarJar:${JARJAR_VERSION}"
+    installer "net.minecraftforge:JarJarSelector:${JARJAR_VERSION}"
+    installer "net.minecraftforge:JarJarMetadata:${JARJAR_VERSION}"
 
     /*
     installer 'org.lwjgl:lwjgl:3.2.2'
@@ -377,7 +380,8 @@ def sharedFmlonlyForge = { Project prj ->
                 environment 'MOD_CLASSES', '{source_roots}'
                 environment 'MCP_MAPPINGS', '{mcp_mappings}'
 
-                property 'nativesDirectory', '{natives}'
+                // Natives are loaded from the classpath now in all cases
+                // property 'nativesDirectory', '{natives}'
                 if (prj.name == 'forge') {
                     property 'forge.enableGameTest', 'true'
                 }
@@ -442,7 +446,7 @@ def sharedFmlonlyForge = { Project prj ->
         // SecureJarHandler bootstrap values.
         run.property 'ignoreList', prj.configurations.moduleonly.files.collect {it.name.replaceAll(/([-_]([.\d]*\d+)|\.jar$)/, '') }.join(',') + ",client-extra,fmlcore,javafmllanguage,lowcodelanguage,mclanguage,${prj.name}-"
         // FIXME: Without this jna doesn't work at runtime. Someone figure out why please?
-        run.property 'mergeModules', 'jna-5.10.0.jar,jna-platform-5.10.0.jar,java-objc-bridge-1.0.0.jar'
+        run.property 'mergeModules', 'jna-5.10.0.jar,jna-platform-5.10.0.jar'
         if (userdevRuns.contains(run)) {
             run.property 'legacyClassPath.file', '{minecraft_classpath_file}'
             run.jvmArgs '-p', '{modules}'
@@ -462,7 +466,8 @@ def sharedFmlonlyForge = { Project prj ->
         run.workingDirectory prj.file('run')
 
         if (run.name.contains('client') || run.name.contains('data')) {
-            run.property 'nativesDirectory', prj.extractNatives.output.get().asFile
+            // Natives are loaded from the classpath now in all cases
+            // run.property 'nativesDirectory', prj.extractNatives.output.get().asFile
             run.args '--assetsDir', prj.downloadAssets.output
             run.args '--assetIndex', "{asset_index}"
         }
@@ -637,8 +642,7 @@ project(':fmlonly') {
                            '--fml.mcVersion', MC_VERSION,
                            '--fml.forgeGroup', project.group,
                            '--fml.mcpVersion', MCP_VERSION],
-                    jvm: ['-Djava.net.preferIPv6Addresses=system',
-                          "-DignoreList=${fmlonly_client.properties.ignoreList},\${version_name}.jar",
+                    jvm: ["-DignoreList=${fmlonly_client.properties.ignoreList},\${version_name}.jar",
                           "-DmergeModules=${fmlonly_client.properties.mergeModules}",
                           '-DlibraryDirectory=${library_directory}',
                           '-p', Util.getArtifacts(project, configurations.moduleonly, false).values().collect{"\${library_directory}/${it.downloads.artifact.path}"}.join('${classpath_separator}'),
@@ -1200,8 +1204,7 @@ project(':forge') {
 
     def baseForgeVersion = System.getProperty("forge.compatibility_check_version")
     if (baseForgeVersion == null)
-        // FIXME: Restore commented out portion when next tagged (41.1 or 42.0), assuming that a .0 build is published
-        baseForgeVersion = "1.19-41.0.1" // "${MC_VERSION}-${GIT_INFO.tag}.0"
+        baseForgeVersion = "${MC_VERSION}-${GIT_INFO.tag}.0"
     if (baseForgeVersion == "null")
         baseForgeVersion = null // Allow disabling from system property if not wanted
     def baseForgeUniversal = null
@@ -1561,7 +1564,7 @@ project(':forge') {
                 MAPPING_CHANNEL: MAPPING_CHANNEL,
                 MAPPING_VERSION: MAPPING_VERSION,
                 FORGE_SPEC_VERSION: SPEC_VERSION.split("\\.")[0],
-                MC_NEXT_VERSION: "1."+((MC_VERSION.split("[\\.-]")[1] as int)+1)
+                MC_NEXT_VERSION: MC_NEXT_VERSION
             ])
             rename 'gitignore\\.txt', '.gitignore'
             rename 'gitattributes\\.txt', '.gitattributes'

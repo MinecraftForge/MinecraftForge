@@ -160,7 +160,7 @@
           this.m_5496_(soundtype.m_56776_(), soundtype.m_56773_() * 0.15F, soundtype.m_56774_());
        }
     }
-@@ -1068,19 +_,22 @@
+@@ -1063,19 +_,22 @@
  
     public void m_5844_() {
        if (this.m_6069_()) {
@@ -188,7 +188,7 @@
     }
  
     void m_20074_() {
-@@ -1103,6 +_,7 @@
+@@ -1098,6 +_,7 @@
     private void m_20323_() {
        this.f_19800_ = this.m_204029_(FluidTags.f_13131_);
        this.f_19801_.clear();
@@ -196,7 +196,7 @@
        double d0 = this.m_20188_() - (double)0.11111111F;
        Entity entity = this.m_20202_();
        if (entity instanceof Boat boat) {
-@@ -1115,7 +_,7 @@
+@@ -1110,7 +_,7 @@
        FluidState fluidstate = this.f_19853_.m_6425_(blockpos);
        double d1 = (double)((float)blockpos.m_123342_() + fluidstate.m_76155_(this.f_19853_, blockpos));
        if (d1 > d0) {
@@ -205,7 +205,7 @@
        }
  
     }
-@@ -1159,7 +_,7 @@
+@@ -1154,7 +_,7 @@
     }
  
     public boolean m_5843_() {
@@ -214,7 +214,7 @@
     }
  
     protected void m_20076_() {
-@@ -1168,19 +_,23 @@
+@@ -1163,19 +_,23 @@
        int k = Mth.m_14107_(this.m_20189_());
        BlockPos blockpos = new BlockPos(i, j, k);
        BlockState blockstate = this.f_19853_.m_8055_(blockpos);
@@ -240,7 +240,7 @@
     }
  
     public void m_19920_(float p_19921_, Vec3 p_19922_) {
-@@ -1494,6 +_,8 @@
+@@ -1489,6 +_,8 @@
              p_20241_.m_128379_("HasVisualFire", this.f_146813_);
           }
  
@@ -249,7 +249,7 @@
           if (!this.f_19841_.isEmpty()) {
              ListTag listtag = new ListTag();
  
-@@ -1504,6 +_,10 @@
+@@ -1499,6 +_,10 @@
              p_20241_.m_128365_("Tags", listtag);
           }
  
@@ -260,7 +260,7 @@
           this.m_7380_(p_20241_);
           if (this.m_20160_()) {
              ListTag listtag1 = new ListTag();
-@@ -1578,6 +_,9 @@
+@@ -1574,6 +_,9 @@
                 this.m_146915_(p_20259_.m_128471_("Glowing"));
                 this.m_146917_(p_20259_.m_128451_("TicksFrozen"));
                 this.f_146813_ = p_20259_.m_128471_("HasVisualFire");
@@ -270,7 +270,7 @@
                 if (p_20259_.m_128425_("Tags", 9)) {
                    this.f_19841_.clear();
                    ListTag listtag3 = p_20259_.m_128437_("Tags", 8);
-@@ -1666,6 +_,8 @@
+@@ -1662,6 +_,8 @@
        } else {
           ItemEntity itementity = new ItemEntity(this.f_19853_, this.m_20185_(), this.m_20186_() + (double)p_19986_, this.m_20189_(), p_19985_);
           itementity.m_32060_();
@@ -279,7 +279,7 @@
           this.f_19853_.m_7967_(itementity);
           return itementity;
        }
-@@ -1702,6 +_,7 @@
+@@ -1698,6 +_,7 @@
  
     public void m_6083_() {
        this.m_20256_(Vec3.f_82478_);
@@ -287,7 +287,7 @@
        this.m_8119_();
        if (this.m_20159_()) {
           this.m_20202_().m_7332_(this);
-@@ -1748,6 +_,7 @@
+@@ -1744,6 +_,7 @@
              }
           }
  
@@ -295,7 +295,7 @@
           if (p_19967_ || this.m_7341_(p_19966_) && p_19966_.m_7310_(this)) {
              if (this.m_20159_()) {
                 this.m_8127_();
-@@ -1786,6 +_,7 @@
+@@ -1782,6 +_,7 @@
     public void m_6038_() {
        if (this.f_19824_ != null) {
           Entity entity = this.f_19824_;
@@ -303,7 +303,7 @@
           this.f_19824_ = null;
           entity.m_20351_(this);
        }
-@@ -1961,6 +_,8 @@
+@@ -1957,6 +_,8 @@
        return !this.f_19823_.isEmpty();
     }
  
@@ -312,7 +312,7 @@
     public boolean m_6146_() {
        return true;
     }
-@@ -2010,7 +_,7 @@
+@@ -2006,7 +_,7 @@
     }
  
     public boolean m_20143_() {
@@ -321,7 +321,7 @@
     }
  
     public void m_20282_(boolean p_20283_) {
-@@ -2116,7 +_,7 @@
+@@ -2112,7 +_,7 @@
           this.m_20254_(8);
        }
  
@@ -330,7 +330,7 @@
     }
  
     public void m_6845_(boolean p_20313_) {
-@@ -2205,7 +_,7 @@
+@@ -2201,7 +_,7 @@
     }
  
     protected Component m_5677_() {
@@ -339,7 +339,7 @@
     }
  
     public boolean m_7306_(Entity p_20356_) {
-@@ -2261,14 +_,20 @@
+@@ -2257,14 +_,20 @@
  
     @Nullable
     public Entity m_5489_(ServerLevel p_20118_) {
@@ -361,7 +361,7 @@
              this.f_19853_.m_46473_().m_6182_("reloading");
              Entity entity = this.m_6095_().m_20615_(p_20118_);
              if (entity != null) {
-@@ -2276,17 +_,19 @@
+@@ -2272,17 +_,19 @@
                 entity.m_7678_(portalinfo.f_77676_.f_82479_, portalinfo.f_77676_.f_82480_, portalinfo.f_77676_.f_82481_, portalinfo.f_77678_, entity.m_146909_());
                 entity.m_20256_(portalinfo.f_77677_);
                 p_20118_.m_143334_(entity);
@@ -383,7 +383,7 @@
           }
        } else {
           return null;
-@@ -2408,6 +_,7 @@
+@@ -2404,6 +_,7 @@
        return this.f_19821_;
     }
  
@@ -391,7 +391,7 @@
     public boolean m_6063_() {
        return true;
     }
-@@ -2487,8 +_,10 @@
+@@ -2483,8 +_,10 @@
        EntityDimensions entitydimensions = this.f_19815_;
        Pose pose = this.m_20089_();
        EntityDimensions entitydimensions1 = this.m_6972_(pose);
@@ -403,7 +403,7 @@
        this.m_20090_();
        boolean flag = (double)entitydimensions1.f_20377_ <= 4.0D && (double)entitydimensions1.f_20378_ <= 4.0D;
        if (!this.f_19853_.f_46443_ && !this.f_19803_ && !this.f_19794_ && flag && (entitydimensions1.f_20377_ > entitydimensions.f_20377_ || entitydimensions1.f_20378_ > entitydimensions.f_20378_) && !(this instanceof Player)) {
-@@ -2496,8 +_,9 @@
+@@ -2492,8 +_,9 @@
           double d0 = (double)Math.max(0.0F, entitydimensions1.f_20377_ - entitydimensions.f_20377_) + 1.0E-6D;
           double d1 = (double)Math.max(0.0F, entitydimensions1.f_20378_ - entitydimensions.f_20378_) + 1.0E-6D;
           VoxelShape voxelshape = Shapes.m_83064_(AABB.m_165882_(vec3, d0, d1, d0));
@@ -414,7 +414,7 @@
           });
        }
  
-@@ -2772,9 +_,17 @@
+@@ -2768,9 +_,17 @@
        this.f_19859_ = this.m_146908_();
     }
  
@@ -433,7 +433,7 @@
        } else {
           AABB aabb = this.m_20191_().m_82406_(0.001D);
           int i = Mth.m_14107_(aabb.f_82288_);
-@@ -2789,25 +_,28 @@
+@@ -2785,25 +_,28 @@
           Vec3 vec3 = Vec3.f_82478_;
           int k1 = 0;
           BlockPos.MutableBlockPos blockpos$mutableblockpos = new BlockPos.MutableBlockPos();
@@ -469,7 +469,7 @@
                          }
                       }
                    }
-@@ -2815,27 +_,28 @@
+@@ -2811,27 +_,28 @@
              }
           }
  
@@ -508,7 +508,7 @@
        }
     }
  
-@@ -2848,7 +_,10 @@
+@@ -2844,7 +_,10 @@
        return !this.f_19853_.m_151572_(i, k, j, l);
     }
  
@@ -519,7 +519,7 @@
        return this.f_19799_.getDouble(p_204037_);
     }
  
-@@ -2974,6 +_,7 @@
+@@ -2970,6 +_,7 @@
  
           this.f_146801_.m_142044_();
        }
@@ -527,7 +527,7 @@
  
     }
  
-@@ -3089,6 +_,103 @@
+@@ -3085,6 +_,103 @@
     public boolean m_142265_(Level p_146843_, BlockPos p_146844_) {
        return true;
     }

@@ -26,7 +26,7 @@ public class PlayerGameModeEventTest
     public static void onPlayerChangeGameModeEvent(PlayerEvent.PlayerChangeGameModeEvent event)
     {
         if (!ENABLE) return;
-        LOGGER.info("{} changed game mode. Current GameType: {}. New Game Type: {}", event.getPlayer(), event.getCurrentGameMode(), event.getNewGameMode());
+        LOGGER.info("{} changed game mode. Current GameType: {}. New Game Type: {}", event.getEntity(), event.getCurrentGameMode(), event.getNewGameMode());
         // prevent changing to SURVIVAL
         if (event.getNewGameMode() == GameType.SURVIVAL)
         {

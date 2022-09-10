@@ -9,6 +9,7 @@ import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -70,12 +71,12 @@ public interface IForgeBlockEntity extends ICapabilitySerializable<CompoundTag>
      }
 
     /**
-     * Gets a {@link CompoundTag} that can be used to store custom data for this tile entity.
+     * Gets a {@link CompoundTag} that can be used to store custom data for this block entity.
      * It will be written, and read from disc, so it persists over world saves.
      *
-     * @return A compound tag for custom data
+     * @return A compound tag for custom persistent data
      */
-     CompoundTag getTileData();
+     CompoundTag getPersistentData();
 
      default void onChunkUnloaded(){}
 
@@ -174,4 +175,15 @@ public interface IForgeBlockEntity extends ICapabilitySerializable<CompoundTag>
      {
          return ModelData.EMPTY;
      }
+
+    /**
+     * Returns whether this {@link BlockEntity} has custom outline rendering behavior.
+     *
+     * @param player the local player currently viewing this {@code BlockEntity}
+     * @return {@code true} to enable outline processing
+     */
+    default boolean hasCustomOutlineRendering(Player player)
+    {
+        return false;
+    }
 }

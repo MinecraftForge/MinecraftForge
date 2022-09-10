@@ -55,8 +55,8 @@
              p_155017_.f_58317_ = p_155017_.f_58316_;
              if (p_155017_.m_58425_()) {
                 flag1 = true;
-+               if (itemstack.hasContainerItem())
-+                  p_155017_.f_58310_.set(1, itemstack.getContainerItem());
++               if (itemstack.hasCraftingRemainingItem())
++                  p_155017_.f_58310_.set(1, itemstack.getCraftingRemainingItem());
 +               else
                 if (flag3) {
                    Item item = itemstack.m_41720_();
@@ -64,7 +64,7 @@
                    if (itemstack.m_41619_()) {
 -                     Item item1 = item.m_41469_();
 -                     p_155017_.f_58310_.set(1, item1 == null ? ItemStack.f_41583_ : new ItemStack(item1));
-+                     p_155017_.f_58310_.set(1, itemstack.getContainerItem());
++                     p_155017_.f_58310_.set(1, itemstack.getCraftingRemainingItem());
                    }
                 }
              }
@@ -164,7 +164,7 @@
 +
 +   @Override
 +   public <T> net.minecraftforge.common.util.LazyOptional<T> getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, @Nullable Direction facing) {
-+      if (!this.f_58859_ && facing != null && capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
++      if (!this.f_58859_ && facing != null && capability == net.minecraftforge.common.capabilities.ForgeCapabilities.ITEM_HANDLER) {
 +         if (facing == Direction.UP)
 +            return handlers[0].cast();
 +         else if (facing == Direction.DOWN)

@@ -13,6 +13,7 @@
       "level": "0"
     }
   },
+  "spawn_target" : [],
   "noise": {
     "min_y": -64,
     "height": 384,

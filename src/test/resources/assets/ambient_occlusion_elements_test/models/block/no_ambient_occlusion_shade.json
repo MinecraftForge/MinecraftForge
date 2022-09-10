@@ -1,0 +1,34 @@
+{
+  "parent": "block/block",
+  "render_type": "cutout",
+  "textures": {
+    "all": "ambient_occlusion_elements_test:block/solid",
+    "overlay": "minecraft:block/glass"
+  },
+  "elements": [
+    {
+      "from": [ 0, 0, 0 ],
+      "to": [ 16, 16, 16 ],
+      "faces": {
+        "down":  { "texture": "#all", "emissivity": 15, "cullface": "down", "ambientocclusion": false },
+        "up":    { "texture": "#all", "emissivity": 15, "cullface": "up", "ambientocclusion": false },
+        "north": { "texture": "#all", "emissivity": 15, "cullface": "north", "ambientocclusion": false },
+        "south": { "texture": "#all", "emissivity": 15, "cullface": "south", "ambientocclusion": false },
+        "west":  { "texture": "#all", "emissivity": 15, "cullface": "west", "ambientocclusion": false },
+        "east":  { "texture": "#all", "emissivity": 15, "cullface": "east", "ambientocclusion": false }
+      }
+    },
+    {
+      "from": [ 0, 0, 0 ],
+      "to": [ 16, 16, 16 ],
+      "faces": {
+        "down":  { "texture": "#overlay", "cullface": "down" },
+        "up":    { "texture": "#overlay", "cullface": "up" },
+        "north": { "texture": "#overlay", "cullface": "north" },
+        "south": { "texture": "#overlay", "cullface": "south" },
+        "west":  { "texture": "#overlay", "cullface": "west" },
+        "east":  { "texture": "#overlay", "cullface": "east" }
+      }
+    }
+  ]
+}

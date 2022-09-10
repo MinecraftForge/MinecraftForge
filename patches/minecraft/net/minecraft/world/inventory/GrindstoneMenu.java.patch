@@ -1,5 +1,53 @@
 --- a/net/minecraft/world/inventory/GrindstoneMenu.java
 +++ b/net/minecraft/world/inventory/GrindstoneMenu.java
+@@ -34,6 +_,7 @@
+       }
+    };
+    private final ContainerLevelAccess f_39561_;
++   private int xp = -1;
+ 
+    public GrindstoneMenu(int p_39563_, Inventory p_39564_) {
+       this(p_39563_, p_39564_, ContainerLevelAccess.f_39287_);
+@@ -44,12 +_,12 @@
+       this.f_39561_ = p_39568_;
+       this.m_38897_(new Slot(this.f_39560_, 0, 49, 19) {
+          public boolean m_5857_(ItemStack p_39607_) {
+-            return p_39607_.m_41763_() || p_39607_.m_150930_(Items.f_42690_) || p_39607_.m_41793_();
++            return true; //Allow all items in the slot, not just repairable
+          }
+       });
+       this.m_38897_(new Slot(this.f_39560_, 1, 49, 40) {
+          public boolean m_5857_(ItemStack p_39616_) {
+-            return p_39616_.m_41763_() || p_39616_.m_150930_(Items.f_42690_) || p_39616_.m_41793_();
++            return true; //Allow all items in the slot, not just repairable
+          }
+       });
+       this.m_38897_(new Slot(this.f_39559_, 2, 129, 34) {
+@@ -58,6 +_,7 @@
+          }
+ 
+          public void m_142406_(Player p_150574_, ItemStack p_150575_) {
++            if (net.minecraftforge.common.ForgeHooks.onGrindstoneTake(GrindstoneMenu.this.f_39560_, p_39568_, this::m_39631_)) return;
+             p_39568_.m_39292_((p_39634_, p_39635_) -> {
+                if (p_39634_ instanceof ServerLevel) {
+                   ExperienceOrb.m_147082_((ServerLevel)p_39634_, Vec3.m_82512_(p_39635_), this.m_39631_(p_39634_));
+@@ -70,6 +_,7 @@
+          }
+ 
+          private int m_39631_(Level p_39632_) {
++            if (xp > -1) return xp;
+             int l = 0;
+             l += this.m_39636_(GrindstoneMenu.this.f_39560_.m_8020_(0));
+             l += this.m_39636_(GrindstoneMenu.this.f_39560_.m_8020_(1));
+@@ -122,6 +_,8 @@
+       ItemStack itemstack1 = this.f_39560_.m_8020_(1);
+       boolean flag = !itemstack.m_41619_() || !itemstack1.m_41619_();
+       boolean flag1 = !itemstack.m_41619_() && !itemstack1.m_41619_();
++      this.xp = net.minecraftforge.common.ForgeHooks.onGrindstoneChange(itemstack, itemstack1, this.f_39559_, this.xp);
++      if (this.xp != Integer.MIN_VALUE) return;
+       if (!flag) {
+          this.f_39559_.m_6836_(0, ItemStack.f_41583_);
+       } else {
 @@ -143,12 +_,13 @@
              }
  

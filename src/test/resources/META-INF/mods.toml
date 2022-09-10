@@ -12,7 +12,15 @@ license="LGPL v2.1"
     modId="structure_modifiers_test"
 [[mods]]
     modId="fluid_type_test"
+[[mods]]
+    modId="potentialspawnsevent_test"
+[[mods]]
+    modId="block_grow_feature_test"
 
+[[mods]]
+    modId="advancement_event_test"
+[[mods]]
+    modId="shader_resources_test"
 
 # LEGACY TEST CASES
 ###### The mods below are from the old test framework and need to be yeeted later again.
@@ -20,6 +28,8 @@ license="LGPL v2.1"
 
 
 
+[[mods]]
+modId="on_tree_grow_block_test"
 [[mods]]
 modId="containertypetest"
 [[mods]]
@@ -117,8 +127,6 @@ modId="living_conversion_event_test"
 [[mods]]
 modId="player_game_mode_event_test"
 [[mods]]
-modId="structure_spawn_list_event_test"
-[[mods]]
 modId="forge_codecs_test"
 [[mods]]
 modId="render_local_player_test"
@@ -154,8 +162,6 @@ modId="custom_tas_test"
 modId="dimension_settings_test"
 [[mods]]
 modId="player_attack_knockback_test"
-[[mods]]
-modId="overlay_layers_test"
 [[mods]]
 modId="entity_renderer_events_test"
 [[mods]]
@@ -219,6 +225,8 @@ modId="gametest_test"
 [[mods]]
 modId="many_mob_effects_test"
 [[mods]]
+modId="fluid_util_test"
+[[mods]]
 modId="potion_size_event_test"
 [[mods]]
 modId="recipe_book_extension_test"
@@ -242,7 +250,20 @@ modId="mod_mismatch_test"
 modId="custom_transformtype_test"
 [[mods]]
 modId="mega_model_test"
-
+[[mods]]
+modId="emissive_elements_test"
+[[mods]]
+modId="anvil_update_event_fix"
+[[mods]]
+modId="living_set_attack_target_event_test"
+[[mods]]
+modId="item_use_animation_test"
+[[mods]]
+modId="custom_color_resolver_test"
+[[mods]]
+modId="custom_item_decorations_test"
+[[mods]]
+modId="ambient_occlusion_elements_test"
 
 
 # ADD ABOVE THIS LINE

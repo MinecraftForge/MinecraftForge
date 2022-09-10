@@ -1,5 +1,14 @@
 --- a/net/minecraft/client/renderer/LightTexture.java
 +++ b/net/minecraft/client/renderer/LightTexture.java
+@@ -138,6 +_,8 @@
+                      }
+                   }
+ 
++                  clientlevel.m_104583_().adjustLightmapColors(clientlevel, p_109882_, f, f7, f8, j, i, vector3f1);
++
+                   if (f5 > 0.0F) {
+                      float f13 = Math.max(vector3f1.m_122239_(), Math.max(vector3f1.m_122260_(), vector3f1.m_122269_()));
+                      if (f13 < 1.0F) {
 @@ -193,7 +_,7 @@
     }
  

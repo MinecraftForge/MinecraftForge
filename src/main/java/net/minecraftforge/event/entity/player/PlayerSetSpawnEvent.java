@@ -19,15 +19,15 @@ import org.jetbrains.annotations.Nullable;
 @Cancelable
 public class PlayerSetSpawnEvent extends PlayerEvent
 {
-    private final ResourceKey<Level> spawnWorld;
+    private final ResourceKey<Level> spawnLevel;
     private final boolean forced;
     @Nullable
     private final BlockPos newSpawn;
 
-    public PlayerSetSpawnEvent(Player player, ResourceKey<Level> spawnWorld, @Nullable BlockPos newSpawn, boolean forced)
+    public PlayerSetSpawnEvent(Player player, ResourceKey<Level> spawnLevel, @Nullable BlockPos newSpawn, boolean forced)
     {
         super(player);
-        this.spawnWorld = spawnWorld;
+        this.spawnLevel = spawnLevel;
         this.newSpawn = newSpawn;
         this.forced = forced;
     }
@@ -46,8 +46,8 @@ public class PlayerSetSpawnEvent extends PlayerEvent
         return newSpawn;
     }
 
-    public ResourceKey<Level> getSpawnWorld()
+    public ResourceKey<Level> getSpawnLevel()
     {
-        return spawnWorld;
+        return spawnLevel;
     }
 }

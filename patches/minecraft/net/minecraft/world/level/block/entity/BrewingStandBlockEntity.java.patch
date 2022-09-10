@@ -24,8 +24,8 @@
 -         ItemStack itemstack1 = new ItemStack(itemstack.m_41720_().m_41469_());
 +      net.minecraftforge.common.brewing.BrewingRecipeRegistry.brewPotions(p_155293_, itemstack, f_58974_);
 +      net.minecraftforge.event.ForgeEventFactory.onPotionBrewed(p_155293_);
-+      if (itemstack.hasContainerItem()) {
-+         ItemStack itemstack1 = itemstack.getContainerItem();
++      if (itemstack.hasCraftingRemainingItem()) {
++         ItemStack itemstack1 = itemstack.getCraftingRemainingItem();
 +         itemstack.m_41774_(1);
           if (itemstack.m_41619_()) {
              itemstack = itemstack1;
@@ -62,7 +62,7 @@
 +
 +   @Override
 +   public <T> net.minecraftforge.common.util.LazyOptional<T> getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, @Nullable Direction facing) {
-+      if (!this.f_58859_ && facing != null && capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
++      if (!this.f_58859_ && facing != null && capability == net.minecraftforge.common.capabilities.ForgeCapabilities.ITEM_HANDLER) {
 +         if (facing == Direction.UP)
 +            return handlers[0].cast();
 +         else if (facing == Direction.DOWN)

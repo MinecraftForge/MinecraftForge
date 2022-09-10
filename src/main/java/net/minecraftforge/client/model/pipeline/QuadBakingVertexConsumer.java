@@ -44,6 +44,7 @@ public class QuadBakingVertexConsumer implements VertexConsumer
     private Direction direction = Direction.DOWN;
     private TextureAtlasSprite sprite = UnitTextureAtlasSprite.INSTANCE;
     private boolean shade;
+    private boolean hasAmbientOcclusion;
 
     public QuadBakingVertexConsumer(Consumer<BakedQuad> quadConsumer)
     {
@@ -127,7 +128,7 @@ public class QuadBakingVertexConsumer implements VertexConsumer
         if (++vertexIndex != 4)
             return;
         // We have a full quad, pass it to the consumer and reset
-        quadConsumer.accept(new BakedQuad(quadData, tintIndex, direction, sprite, shade));
+        quadConsumer.accept(new BakedQuad(quadData, tintIndex, direction, sprite, shade, hasAmbientOcclusion));
         vertexIndex = 0;
         quadData = new int[QUAD_DATA_SIZE];
     }
@@ -160,5 +161,10 @@ public class QuadBakingVertexConsumer implements VertexConsumer
     public void setShade(boolean shade)
     {
         this.shade = shade;
+    }
+
+    public void setHasAmbientOcclusion(boolean hasAmbientOcclusion)
+    {
+        this.hasAmbientOcclusion = hasAmbientOcclusion;
     }
 }

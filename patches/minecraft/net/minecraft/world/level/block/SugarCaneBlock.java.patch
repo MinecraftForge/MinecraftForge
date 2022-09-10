@@ -9,13 +9,14 @@
     public static final IntegerProperty f_57164_ = BlockStateProperties.f_61410_;
     protected static final float f_154735_ = 6.0F;
     protected static final VoxelShape f_57165_ = Block.m_49796_(2.0D, 0.0D, 2.0D, 14.0D, 16.0D, 14.0D);
-@@ -47,12 +_,14 @@
+@@ -47,12 +_,15 @@
  
           if (i < 3) {
              int j = p_222548_.m_61143_(f_57164_);
 +            if (net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_222549_, p_222550_, p_222548_, true)) {
              if (j == 15) {
                 p_222549_.m_46597_(p_222550_.m_7494_(), this.m_49966_());
++               net.minecraftforge.common.ForgeHooks.onCropsGrowPost(p_222549_, p_222550_.m_7494_(), this.m_49966_());
                 p_222549_.m_7731_(p_222550_, p_222548_.m_61124_(f_57164_, Integer.valueOf(0)), 4);
              } else {
                 p_222549_.m_7731_(p_222550_, p_222548_.m_61124_(f_57164_, Integer.valueOf(j + 1)), 4);

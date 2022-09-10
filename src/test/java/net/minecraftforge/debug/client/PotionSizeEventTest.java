@@ -7,6 +7,7 @@ package net.minecraftforge.debug.client;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ScreenEvent;
 import net.minecraftforge.common.MinecraftForge;
@@ -49,9 +50,14 @@ public class PotionSizeEventTest
             if (player.getActiveEffects().size() <= 3)
             {
                 event.setCompact(true); // Force compact mode for 3 or less active effects
-            } else
+            }
+            else
             {
                 event.setCompact(false); // Force classic mode for 4 or more active effects
+            }
+            if (player.hasEffect(MobEffects.MOVEMENT_SLOWDOWN))
+            {
+                event.addHorizontalOffset(20); // Move the effect rendering to the right when slowness is enabled
             }
         }
     }

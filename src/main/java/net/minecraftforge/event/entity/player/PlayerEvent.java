@@ -6,6 +6,7 @@
 package net.minecraftforge.event.entity.player;
 
 import java.io.File;
+import java.util.Optional;
 
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -27,7 +28,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * PlayerEvent is fired whenever an event involving Living entities occurs. <br>
+ * PlayerEvent is fired whenever an event involving a {@link Player} occurs. <br>
  * If a method utilizes this {@link net.minecraftforge.eventbus.api.Event} as its parameter, the method will
  * receive every child event of this class.<br>
  * <br>
@@ -35,17 +36,20 @@ import org.jetbrains.annotations.Nullable;
  **/
 public class PlayerEvent extends LivingEvent
 {
-    private final Player entityPlayer;
+    private final Player player;
+
     public PlayerEvent(Player player)
     {
         super(player);
-        entityPlayer = player;
+        this.player = player;
     }
 
-    /**
-     * @return Player
-     */
-    public Player getPlayer() { return entityPlayer; }
+    @Override
+    public Player getEntity()
+    {
+        return player;
+    }
+
     /**
      * HarvestCheck is fired when a player attempts to harvest a block.<br>
      * This event is fired whenever a player attempts to harvest a block in
@@ -89,7 +93,7 @@ public class PlayerEvent extends LivingEvent
      * {@link #state} contains the block being broken. <br>
      * {@link #originalSpeed} contains the original speed at which the player broke the block. <br>
      * {@link #newSpeed} contains the newSpeed at which the player will break the block. <br>
-     * {@link #pos} contains the coordinates at which this event is occurring. Y value -1 means location is unknown.<br>
+     * {@link #pos} contains the coordinates at which this event is occurring. Optional value.<br>
      * <br>
      * This event is {@link net.minecraftforge.eventbus.api.Cancelable}.<br>
      * If it is canceled, the player is unable to break the block.<br>
@@ -101,25 +105,27 @@ public class PlayerEvent extends LivingEvent
     @Cancelable
     public static class BreakSpeed extends PlayerEvent
     {
+        private static final BlockPos LEGACY_UNKNOWN = new BlockPos(0, -1, 0);
         private final BlockState state;
         private final float originalSpeed;
         private float newSpeed = 0.0f;
-        private final BlockPos pos; // Y position of -1 notes unknown location
+        private final Optional<BlockPos> pos; // Y position of -1 notes unknown location
 
-        public BreakSpeed(Player player, BlockState state, float original, BlockPos pos)
+        public BreakSpeed(Player player, BlockState state, float original, @Nullable BlockPos pos)
         {
             super(player);
             this.state = state;
             this.originalSpeed = original;
             this.setNewSpeed(original);
-            this.pos = pos != null ? pos : new BlockPos(0, -1, 0);
+            this.pos = Optional.ofNullable(pos);
         }
 
         public BlockState getState() { return state; }
         public float getOriginalSpeed() { return originalSpeed; }
         public float getNewSpeed() { return newSpeed; }
         public void setNewSpeed(float newSpeed) { this.newSpeed = newSpeed; }
-        public BlockPos getPos() { return pos; }
+        public Optional<BlockPos> getPosition() { return this.pos; }
+        @Deprecated(forRemoval = true, since ="1.19") public BlockPos getPos() { return pos.orElse(LEGACY_UNKNOWN); }
     }
 
     /**

@@ -51,7 +51,7 @@ public class LowCodeModLanguageProvider implements IModLanguageProvider
                     throw new ModLoadingException(info, ModLoadingStage.CONSTRUCT, "fml.modloading.failedtoloadmodclass", e);
                 }
             } catch (NoSuchMethodException | ClassNotFoundException | InstantiationException | IllegalAccessException e) {
-                LOGGER.fatal(LOADING, "Unable to load FMLModContainer, wut?", e);
+                LOGGER.fatal(LOADING, "Unable to load LowCodeModContainer, wut?", e);
                 final Class<RuntimeException> mle = (Class<RuntimeException>) LamdbaExceptionUtils.uncheck(() -> Class.forName("net.minecraftforge.fml.ModLoadingException", true, Thread.currentThread().getContextClassLoader()));
                 final Class<ModLoadingStage> mls = (Class<ModLoadingStage>) LamdbaExceptionUtils.uncheck(() -> Class.forName("net.minecraftforge.fml.ModLoadingStage", true, Thread.currentThread().getContextClassLoader()));
                 throw LamdbaExceptionUtils.uncheck(() -> LamdbaExceptionUtils.uncheck(() -> mle.getConstructor(IModInfo.class, mls, String.class, Throwable.class)).newInstance(info, Enum.valueOf(mls, "CONSTRUCT"), "fml.modloading.failedtoloadmodclass", e));

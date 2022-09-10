@@ -9,7 +9,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.eventtest.internal.EventTest;
 import net.minecraftforge.eventtest.internal.TestHolder;
 
@@ -32,7 +32,7 @@ public class EntityJoinedWorldTest extends EventTest {
         MinecraftForge.EVENT_BUS.addListener(this::eventListener);
     }
 
-    private void eventListener(EntityJoinWorldEvent event) {
+    private void eventListener(EntityJoinLevelEvent event) {
         final Entity eventEntity = event.getEntity();
         final Player gamePlayer = Minecraft.getInstance().player;
 

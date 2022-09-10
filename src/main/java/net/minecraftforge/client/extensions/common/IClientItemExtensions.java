@@ -5,19 +5,24 @@
 
 package net.minecraftforge.client.extensions.common;
 
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.Model;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.client.ForgeHooksClient;
+import net.minecraftforge.client.IArmPoseTransformer;
 import net.minecraftforge.fml.LogicalSide;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -55,6 +60,37 @@ public interface IClientItemExtensions
     default Font getFont(ItemStack stack, FontContext context)
     {
         return null;
+    }
+
+    /**
+      * This method returns an ArmPose that can be defined using the {@link net.minecraft.client.model.HumanoidModel.ArmPose#create(String, boolean, IArmPoseTransformer)} method.
+      * This allows for creating custom item use animations.
+      *
+      * @param entityLiving The entity holding the item
+      * @param hand         The hand the ArmPose will be applied to
+      * @param itemStack    The stack being held
+      * @return A custom ArmPose that can be used to define movement of the arm
+      */
+    @Nullable
+    default HumanoidModel.ArmPose getArmPose(LivingEntity entityLiving, InteractionHand hand, ItemStack itemStack)
+    {
+        return null;
+    }
+
+    /**
+     * Called right before when client applies transformations to item in hand and render it.
+     *
+     * @param poseStack The pose stack
+     * @param player The player holding the item, it's always main client player
+     * @param arm The arm holding the item
+     * @param itemInHand The held item
+     * @param partialTick Partial tick time, useful for interpolation
+     * @param equipProcess Equip process time, Ranging from 0.0 to 1.0. 0.0 when it's done equipping
+     * @param swingProcess Swing process time, Ranging from 0.0 to 1.0. 0.0 when it's done swinging
+     * @return true if it should skip applying other transforms and go straight to rendering
+     */
+    default boolean applyForgeHandTransform(PoseStack poseStack, LocalPlayer player, HumanoidArm arm, ItemStack itemInHand, float partialTick, float equipProcess, float swingProcess) {
+        return false;
     }
 
     /**

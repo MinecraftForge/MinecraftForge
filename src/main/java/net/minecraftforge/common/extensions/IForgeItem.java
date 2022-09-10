@@ -14,6 +14,7 @@ import java.util.function.Consumer;
 import com.google.common.collect.Multimap;
 
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.enchantment.Enchantment;
@@ -40,6 +41,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.ToolAction;
 import net.minecraftforge.common.ToolActions;
+import net.minecraftforge.items.wrapper.ShulkerItemStackInvWrapper;
 import net.minecraftforge.registries.IForgeRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -215,16 +217,16 @@ public interface IForgeItem
     }
 
     /**
-     * ItemStack sensitive version of getContainerItem. Returns a full ItemStack
-     * instance of the result.
+     * ItemStack sensitive version of {@link Item#getCraftingRemainingItem()}.
+     * Returns a full ItemStack instance of the result.
      *
      * @param itemStack The current ItemStack
      * @return The resulting ItemStack
      */
     @SuppressWarnings("deprecation")
-    default ItemStack getContainerItem(ItemStack itemStack)
+    default ItemStack getCraftingRemainingItem(ItemStack itemStack)
     {
-        if (!hasContainerItem(itemStack))
+        if (!hasCraftingRemainingItem(itemStack))
         {
             return ItemStack.EMPTY;
         }
@@ -232,13 +234,13 @@ public interface IForgeItem
     }
 
     /**
-     * ItemStack sensitive version of hasContainerItem
+     * ItemStack sensitive version of {@link Item#hasCraftingRemainingItem()}.
      *
      * @param stack The current item stack
-     * @return True if this item has a 'container'
+     * @return True if this item has a crafting remaining item
      */
     @SuppressWarnings("deprecation")
-    default boolean hasContainerItem(ItemStack stack)
+    default boolean hasCraftingRemainingItem(ItemStack stack)
     {
         return self().hasCraftingRemainingItem();
     }
@@ -481,24 +483,24 @@ public interface IForgeItem
 
     /**
      * Gets the maximum number of items that this stack should be able to hold. This
-     * is a ItemStack (and thus NBT) sensitive version of Item.getItemStackLimit()
+     * is a ItemStack (and thus NBT) sensitive version of {@link Item#getMaxStackSize()}.
      *
      * @param stack The ItemStack
-     * @return The maximum number this item can be stacked to
+     * @return The maximum size this item can be stacked to
      */
     @SuppressWarnings("deprecation")
-    default int getItemStackLimit(ItemStack stack)
+    default int getMaxStackSize(ItemStack stack)
     {
         return self().getMaxStackSize();
     }
 
     /**
-     * ItemStack sensitive version of getItemEnchantability
+     * ItemStack sensitive version of {@link Item#getEnchantmentValue()}.
      *
      * @param stack The ItemStack
-     * @return the item echantability value
+     * @return the enchantment value
      */
-    default int getItemEnchantability(ItemStack stack)
+    default int getEnchantmentValue(ItemStack stack)
     {
         return self().getEnchantmentValue();
     }
@@ -654,7 +656,8 @@ public interface IForgeItem
     @Nullable
     default net.minecraftforge.common.capabilities.ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundTag nbt)
     {
-        return null;
+        var ret = ShulkerItemStackInvWrapper.createDefaultProvider(stack);
+        return ret;
     }
 
     /**
@@ -826,6 +829,20 @@ public interface IForgeItem
     default FoodProperties getFoodProperties(ItemStack stack, @Nullable LivingEntity entity)
     {
         return self().getFoodProperties();
+    }
+
+    /**
+     * Whether the given ItemStack should be excluded (if possible) when selecting the target hotbar slot of a "pick" action.
+     * By default, this returns true for enchanted stacks.
+     *
+     * @see Inventory#getSuitableHotbarSlot()
+     * @param player the player performing the picking
+     * @param inventorySlot the inventory slot of the item being up for replacement
+     * @return true to leave this stack in the hotbar if possible
+     */
+    default boolean isNotReplaceableByPickAction(ItemStack stack, Player player, int inventorySlot)
+    {
+        return stack.isEnchanted();
     }
 
 }
