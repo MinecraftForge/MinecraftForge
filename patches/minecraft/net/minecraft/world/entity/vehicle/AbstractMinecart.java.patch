@@ -133,7 +133,7 @@
        switch (railshape) {
           case ASCENDING_EAST:
 -            this.m_20256_(vec31.m_82520_(-d3, 0.0D, 0.0D));
-+         this.m_20256_(vec31.m_82520_(-1 * d3, 0.0D, 0.0D));
++         this.m_20256_(vec31.m_82520_(-d3, 0.0D, 0.0D));
              ++d1;
              break;
           case ASCENDING_WEST:
@@ -148,7 +148,7 @@
              break;
           case ASCENDING_SOUTH:
 -            this.m_20256_(vec31.m_82520_(0.0D, 0.0D, -d3));
-+         this.m_20256_(vec31.m_82520_(0.0D, 0.0D, -1 * d3));
++         this.m_20256_(vec31.m_82520_(0.0D, 0.0D, -d3));
              ++d1;
        }
  
