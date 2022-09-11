@@ -19,7 +19,7 @@ plugins {
     id 'com.github.ben-manes.versions' version '0.36.0'
     id 'net.minecraftforge.gradleutils' version '2.+'
     id 'eclipse'
-    id 'de.undercouch.download' version '4.1.2'
+    id 'de.undercouch.download' version '5.1.3'
     id 'net.minecraftforge.gradle.patcher' version '[5.1.50,5.2.0)' apply false
     id 'net.minecraftforge.gradle.mcp' version '[5.1.50,5.2.0)' apply false
 }
@@ -1200,55 +1200,47 @@ project(':forge') {
         lineEnding = '\n'
     }
 
-    def baseForgeVersion = System.getProperty("forge.compatibility_check_version")
-    if (baseForgeVersion == null)
-        baseForgeVersion = "${MC_VERSION}-${GIT_INFO.tag}.0"
-    if (baseForgeVersion == "null")
-        baseForgeVersion = null // Allow disabling from system property if not wanted
-    def baseForgeUniversal = null
-    if (baseForgeVersion != null)
-        baseForgeUniversal = project.dependencies.create("net.minecraftforge:forge:${baseForgeVersion}:universal")
+    def baseForgeVersionProperty = project.objects.property(String)
+    baseForgeVersionProperty.set(project.provider { getLatestForgeVersion(MC_VERSION) }.map { MC_VERSION + '-' + it })
+    baseForgeVersionProperty.finalizeValueOnRead()
     def jarCompatibilityTaskSetup = { task ->
         task.group = 'jar compatibility'
         task.onlyIf {
-            baseForgeVersion != null
+            baseForgeVersionProperty.getOrNull() != null
         }
-        task.inputs.property 'baseForgeVersion', baseForgeVersion
     }
 
-    task downloadBaseCompatibilityBinPatches(type: DownloadBaseCompatibilityBinPatches) {
-        inputVersion = baseForgeVersion
+    tasks.register('setupCheckJarCompatibility', SetupCheckJarCompatibility) {
+        inputVersion = baseForgeVersionProperty
     }
 
-    task applyBaseCompatibilityJarBinPatches(type: ApplyBinPatches) {
+    tasks.register('applyBaseCompatibilityJarBinPatches', ApplyBinPatches) {
         jarCompatibilityTaskSetup(it)
 
-        clean = createJoinedSRG.output
-        patch = downloadBaseCompatibilityBinPatches.output
+        clean = project.tasks.createJoinedSRG.output
+        patch = project.tasks.named('setupCheckJarCompatibility').flatMap { it.baseBinPatchesOutput }
         output = project.layout.buildDirectory.dir(name).map { it.file('output.jar') }
     }
 
-    task checkJarCompatibility(type: CheckJarCompatibility) {
+    tasks.register('mergeBaseForgeJar', MergeJars) {
         jarCompatibilityTaskSetup(it)
 
-        if (baseForgeVersion != null) {
-            def fmlLibs = project.configurations.detachedConfiguration(PACKED_DEPS.collect {
-                def artifactId = it.split(':')[1]
-                return project.dependencies.create("net.minecraftforge:${artifactId}:${baseForgeVersion}")
-            }.toArray(Dependency[]::new))
+        inputJars.from(project.tasks.named('applyBaseCompatibilityJarBinPatches').flatMap { it.output })
+        inputJars.from(baseForgeVersionProperty.map { inputVersion ->
+            def output = project.layout.buildDirectory.dir(name).map { it.file("forge-${inputVersion}-universal.jar") }.get().asFile
+            project.rootProject.extensions.download.run {
+                src "https://maven.minecraftforge.net/net/minecraftforge/forge/${inputVersion}/forge-${inputVersion}-universal.jar"
+                dest output
+            }
+            return output
+        })
+    }
 
-            baseJar = project.tasks.applyBaseCompatibilityJarBinPatches.output
-            baseLibraries.from(project.configurations.detachedConfiguration(baseForgeUniversal))
-            baseLibraries.from(project.tasks.createJoinedSRG.output)
-            baseLibraries.from(fmlLibs)
+    tasks.register('checkJarCompatibility', CheckJarCompatibility) {
+        jarCompatibilityTaskSetup(it)
+        dependsOn 'setupCheckJarCompatibility'
 
-            inputJar = project.tasks.reobfJar.output
-            concreteLibraries.from(PACKED_DEPS.collect { rootProject.tasks.getByPath(it).archiveFile })
-
-            commonLibraries.from(project.configurations.minecraftImplementation)
-            commonLibraries.from(project.configurations.installer)
-            commonLibraries.from(project.configurations.moduleonly)
-        }
+        baseJar = project.tasks.named('mergeBaseForgeJar').flatMap { it.output }
     }
 
     task checkAll(dependsOn: [checkATs, checkSAS, checkExcs, findFieldInstanceChecks, checkPatches, checkLicenses]){}
