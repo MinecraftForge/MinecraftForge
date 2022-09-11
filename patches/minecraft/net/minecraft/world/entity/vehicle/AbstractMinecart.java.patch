@@ -110,7 +110,7 @@
        }
  
     }
-@@ -390,33 +_,34 @@
+@@ -390,18 +_,19 @@
        d1 = (double)p_38156_.m_123342_();
        boolean flag = false;
        boolean flag1 = false;
@@ -132,26 +132,7 @@
 +      RailShape railshape = ((BaseRailBlock)p_38157_.m_60734_()).getRailDirection(p_38157_, this.f_19853_, p_38156_, this);
        switch (railshape) {
           case ASCENDING_EAST:
--            this.m_20256_(vec31.m_82520_(-d3, 0.0D, 0.0D));
-+         this.m_20256_(vec31.m_82520_(-d3, 0.0D, 0.0D));
-             ++d1;
-             break;
-          case ASCENDING_WEST:
--            this.m_20256_(vec31.m_82520_(d3, 0.0D, 0.0D));
-+         this.m_20256_(vec31.m_82520_(d3, 0.0D, 0.0D));
-             ++d1;
-             break;
-          case ASCENDING_NORTH:
--            this.m_20256_(vec31.m_82520_(0.0D, 0.0D, d3));
-+         this.m_20256_(vec31.m_82520_(0.0D, 0.0D, d3));
-             ++d1;
-             break;
-          case ASCENDING_SOUTH:
--            this.m_20256_(vec31.m_82520_(0.0D, 0.0D, -d3));
-+         this.m_20256_(vec31.m_82520_(0.0D, 0.0D, -d3));
-             ++d1;
-       }
- 
+             this.m_20256_(vec31.m_82520_(-d3, 0.0D, 0.0D));
 @@ -447,7 +_,7 @@
           }
        }
