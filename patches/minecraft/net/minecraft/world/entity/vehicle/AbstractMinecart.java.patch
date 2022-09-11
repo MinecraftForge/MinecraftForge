@@ -110,7 +110,7 @@
        }
  
     }
-@@ -390,7 +_,8 @@
+@@ -390,33 +_,34 @@
        d1 = (double)p_38156_.m_123342_();
        boolean flag = false;
        boolean flag1 = false;
@@ -120,7 +120,11 @@
           flag = p_38157_.m_61143_(PoweredRailBlock.f_55215_);
           flag1 = !flag;
        }
-@@ -401,22 +_,22 @@
+ 
+-      double d3 = 0.0078125D;
++      double d3 = getSlopeAdjustment();
+       if (this.m_20069_()) {
+          d3 *= 0.2D;
        }
  
        Vec3 vec31 = this.m_20184_();
@@ -129,22 +133,22 @@
        switch (railshape) {
           case ASCENDING_EAST:
 -            this.m_20256_(vec31.m_82520_(-d3, 0.0D, 0.0D));
-+         this.m_20256_(vec31.m_82520_(-1 * getSlopeAdjustment(), 0.0D, 0.0D));
++         this.m_20256_(vec31.m_82520_(-1 * d3, 0.0D, 0.0D));
              ++d1;
              break;
           case ASCENDING_WEST:
 -            this.m_20256_(vec31.m_82520_(d3, 0.0D, 0.0D));
-+         this.m_20256_(vec31.m_82520_(getSlopeAdjustment(), 0.0D, 0.0D));
++         this.m_20256_(vec31.m_82520_(d3, 0.0D, 0.0D));
              ++d1;
              break;
           case ASCENDING_NORTH:
 -            this.m_20256_(vec31.m_82520_(0.0D, 0.0D, d3));
-+         this.m_20256_(vec31.m_82520_(0.0D, 0.0D, getSlopeAdjustment()));
++         this.m_20256_(vec31.m_82520_(0.0D, 0.0D, d3));
              ++d1;
              break;
           case ASCENDING_SOUTH:
 -            this.m_20256_(vec31.m_82520_(0.0D, 0.0D, -d3));
-+         this.m_20256_(vec31.m_82520_(0.0D, 0.0D, -1 * getSlopeAdjustment()));
++         this.m_20256_(vec31.m_82520_(0.0D, 0.0D, -1 * d3));
              ++d1;
        }
  
