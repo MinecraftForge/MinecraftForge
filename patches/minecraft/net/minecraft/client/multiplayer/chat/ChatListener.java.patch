@@ -19,3 +19,14 @@
                 this.m_241119_(p_242290_, component);
              }
           }
+@@ -194,7 +_,9 @@
+    }
+ 
+    boolean m_241171_(ChatType.Bound p_241518_, PlayerChatMessage p_241542_, Component p_241510_) {
+-      this.f_240348_.f_91065_.m_93076_().m_93785_(p_241510_);
++      Component forgeComponent = net.minecraftforge.client.ForgeHooksClient.onClientChat(p_241518_, p_241510_, p_241542_, p_241542_.m_241067_());
++      if (forgeComponent == null) return false;
++      this.f_240348_.f_91065_.m_93076_().m_93785_(forgeComponent);
+       this.m_241119_(p_241518_, p_241542_.m_237220_());
+       this.m_240498_(p_241510_, p_241542_.m_241109_());
+       this.f_240659_ = Util.m_137550_();
