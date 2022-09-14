@@ -1169,12 +1169,11 @@ public class ForgeHooks
         return res == Result.DEFAULT ? 0 : res == Result.DENY ? -1 : 1;
     }
 
-    @SuppressWarnings("unchecked")
-    public static SpawnPlacementRegisterEvent onSpawnPlacementRegister(EntityType<?> entityType, SpawnPlacements.Type placementType, Heightmap.Types heightmap, SpawnPlacements.SpawnPredicate<? extends Entity> predicate)
+    public static void onSpawnPlacementRegister(Map<EntityType<?>, SpawnPlacementRegisterEvent.MergedSpawnPredicate> map)
     {
-        final SpawnPlacementRegisterEvent event = new SpawnPlacementRegisterEvent(entityType, placementType, heightmap, (SpawnPlacements.SpawnPredicate<Entity>) predicate);
-        MinecraftForge.EVENT_BUS.post(event);
-        return event;
+        var event = new SpawnPlacementRegisterEvent(map);
+        ModLoader.get().postEvent(event);
+        event.registerAll();
     }
 
     public static boolean hasNoElements(Ingredient ingredient)
