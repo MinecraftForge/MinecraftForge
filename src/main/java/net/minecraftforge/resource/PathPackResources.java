@@ -10,6 +10,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.AbstractPackResources;
 import net.minecraft.server.packs.PackType;
 import net.minecraftforge.common.ForgeConfig;
+import net.minecraftforge.config.boot.ForgeBootConfigurationManager;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -38,7 +39,7 @@ public class PathPackResources extends AbstractPackResources
     private final Path source;
     private final String packName;
 
-    private final ResourceCacheManager cacheManager = new ResourceCacheManager(true, ForgeConfig.COMMON.indexModPackCachesOnThread, (packType, namespace) -> resolve(packType.getDirectory(), namespace).toAbsolutePath());
+    private final ResourceCacheManager cacheManager = new ResourceCacheManager(true, ForgeBootConfigurationManager.getInstance().getConfiguration().indexModPackCachesOnThread, (packType, namespace) -> resolve(packType.getDirectory(), namespace).toAbsolutePath());
 
     /**
      * Constructs a java.nio.Path-based resource pack.

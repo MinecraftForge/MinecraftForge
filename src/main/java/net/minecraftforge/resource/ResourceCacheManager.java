@@ -13,8 +13,11 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
 import net.minecraftforge.common.ForgeConfig;
 import net.minecraftforge.common.ForgeConfigSpec;
+import net.minecraftforge.config.boot.ForgeBootConfigurationManager;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -37,6 +40,10 @@ import java.util.stream.Stream;
  */
 public class ResourceCacheManager
 {
+    /**
+     * Logging marker to handle the hiding of the entries from the debug file.
+     */
+    private static final Marker RESOURCE_CACHE_MARKER = MarkerFactory.getMarker("RESOURCE-CACHE");
 
     /**
      * Indicates if the underlying namespaced managers need to support reloading.
@@ -78,7 +85,7 @@ public class ResourceCacheManager
 
     public static boolean shouldUseCache()
     {
-        return getConfigValue(ForgeConfig.COMMON.cachePackAccess);
+        return getConfigValue(ForgeBootConfigurationManager.getInstance().getConfiguration().cachePackAccess);
     }
 
     private static boolean getConfigValue(Supplier<Boolean> configValue)
@@ -311,18 +318,13 @@ public class ResourceCacheManager
                         .forEach(this::injectIntoCache); // Inject the entry into the cache.
             } catch (NoSuchFileException noSuchFileException)
             {
-                // This is expected if the namespace does not exist in the pack (so no resources in the mod add all), or when
-                // for example assets or data is missing in a resource pack.
-                // This is sufficient on 1.19 since UFS handles the crash efficiently, on 1.18.2 likely not much.
-                if (ForgeConfig.COMMON.logMissingDirectoriesToDebugDuringResourceCaching.get()) {
-                    LOGGER.debug("Failed to cache resources, the directory does not exist!", noSuchFileException);
-                }
+                LOGGER.debug(RESOURCE_CACHE_MARKER, "Failed to cache resources, the directory does not exist!", noSuchFileException);
             } catch (IOException ioException)
             {
-                LOGGER.error("Failed to cache resources, some stuff might be missing!", ioException);
+                LOGGER.error(RESOURCE_CACHE_MARKER, "Failed to cache resources, some stuff might be missing!", ioException);
             } catch (Exception exception)
             {
-                LOGGER.error("Failed to cache resources, some stuff might be missing! Unknown exception!", exception);
+                LOGGER.error(RESOURCE_CACHE_MARKER, "Failed to cache resources, some stuff might be missing! Unknown exception!", exception);
             } finally
             {
                 cacheLoaded.set(true);

@@ -23,6 +23,7 @@ import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.repository.Pack;
 import net.minecraft.server.packs.repository.PackRepository;
 import net.minecraft.world.level.DataPackConfig;
+import net.minecraftforge.config.boot.ForgeBootConfigurationManager;
 import net.minecraftforge.event.AddPackFindersEvent;
 import net.minecraftforge.fml.*;
 import net.minecraftforge.internal.BrandingControl;
@@ -86,6 +87,7 @@ public class ClientModLoader
         loading = true;
         ClientModLoader.mc = minecraft;
         LogicalSidedProvider.setClient(()->minecraft);
+        ForgeBootConfigurationManager.getInstance().init();
         LanguageHook.loadForgeAndMCLangs();
         earlyLoaderGUI = new EarlyLoaderGUI(minecraft);
         createRunnableWithCatch(()->ModLoader.get().gatherAndInitializeMods(ModWorkManager.syncExecutor(), ModWorkManager.parallelExecutor(), new SpacedRunnable(earlyLoaderGUI::renderTick))).run();

@@ -7,6 +7,7 @@ package net.minecraftforge.common;
 
 import static net.minecraftforge.fml.Logging.FORGEMOD;
 
+import net.minecraftforge.config.boot.ForgeBootConfigurationManager;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.event.config.ModConfigEvent;
 import org.apache.commons.lang3.tuple.Pair;
@@ -82,41 +83,19 @@ public class ForgeConfig {
     /**
      * General configuration that doesn't need to be synchronized but needs to be available before server startup
      */
+    @Deprecated(since = "1.19", forRemoval = true)
     public static class Common {
+        @Deprecated(since = "1.19", forRemoval = true)
         public final BooleanValue cachePackAccess;
+        @Deprecated(since = "1.19", forRemoval = true)
         public final BooleanValue indexVanillaPackCachesOnThread;
+        @Deprecated(since = "1.19", forRemoval = true)
         public final BooleanValue indexModPackCachesOnThread;
-        public final BooleanValue logMissingDirectoriesToDebugDuringResourceCaching;
 
-        Common(ForgeConfigSpec.Builder builder) {
-            builder.comment("General configuration settings")
-                    .push("general");
-
-            cachePackAccess = builder
-                    .comment("Set this to true to cache resource listings in resource and data packs")
-                    .translation("forge.configgui.cachePackAccess")
-                    .worldRestart()
-                    .define("cachePackAccess", true);
-
-            indexVanillaPackCachesOnThread = builder
-                    .comment("Set this to true to index vanilla resource and data packs on thread")
-                    .translation("forge.configgui.indexVanillaPackCachesOnThread")
-                    .worldRestart()
-                    .define("indexVanillaPackCachesOnThread", false);
-
-            indexModPackCachesOnThread = builder
-                    .comment("Set this to true to index mod resource and data packs on thread")
-                    .translation("forge.configgui.indexModPackCachesOnThread")
-                    .worldRestart()
-                    .define("indexModPackCachesOnThread", false);
-
-            logMissingDirectoriesToDebugDuringResourceCaching = builder
-                    .comment("Set this to true to log missing directories (found during resource caching) to debug, instead of discarding the information. Note this can cause large log files in large mod packs.")
-                    .translation("forge.configgui.logMissingDirectoriesToDebugDuringResourceCaching")
-                    .worldRestart()
-                    .define("logMissingDirectoriesToDebugDuringResourceCaching", false);
-
-            builder.pop();
+        Common() {
+            cachePackAccess = ForgeBootConfigurationManager.getInstance().getConfiguration().cachePackAccess;
+            indexVanillaPackCachesOnThread = ForgeBootConfigurationManager.getInstance().getConfiguration().indexVanillaPackCachesOnThread;
+            indexModPackCachesOnThread = ForgeBootConfigurationManager.getInstance().getConfiguration().indexModPackCachesOnThread;
         }
     }
 
@@ -177,13 +156,11 @@ public class ForgeConfig {
         CLIENT = specPair.getLeft();
     }
 
-
-    static final ForgeConfigSpec commonSpec;
+    @Deprecated(since = "1.19", forRemoval = true)
     public static final Common COMMON;
     static {
-        final Pair<Common, ForgeConfigSpec> specPair = new ForgeConfigSpec.Builder().configure(Common::new);
-        commonSpec = specPair.getRight();
-        COMMON = specPair.getLeft();
+        //TODO: 1.20 remove this unless needed again.
+        COMMON = new Common();
     }
 
 

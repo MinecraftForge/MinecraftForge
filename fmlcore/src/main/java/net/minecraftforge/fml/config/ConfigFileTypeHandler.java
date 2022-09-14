@@ -25,8 +25,8 @@ import static net.minecraftforge.fml.config.ConfigTracker.CONFIG;
 
 public class ConfigFileTypeHandler {
     private static final Logger LOGGER = LogUtils.getLogger();
-    static ConfigFileTypeHandler TOML = new ConfigFileTypeHandler();
-    private static final Path defaultConfigPath = FMLPaths.GAMEDIR.get().resolve(FMLConfig.defaultConfigPath());
+    public static final ConfigFileTypeHandler TOML = new ConfigFileTypeHandler();
+    public static final Path DEFAULT_CONFIG_PATH = FMLPaths.GAMEDIR.get().resolve(FMLConfig.defaultConfigPath());
 
     public Function<ModConfig, CommentedFileConfig> reader(Path configBasePath) {
         return (c) -> {
@@ -44,7 +44,7 @@ public class ConfigFileTypeHandler {
             }
             catch (ParsingException ex)
             {
-                throw new ConfigLoadingException(c, ex);
+                throw new ConfigLoadingException(c.getFileName(), c.getType().name(), c.getModId(), ex);
             }
             LOGGER.debug(CONFIG, "Loaded TOML config file {}", configPath.toString());
             try {
@@ -68,7 +68,7 @@ public class ConfigFileTypeHandler {
 
     private boolean setupConfigFile(final ModConfig modConfig, final Path file, final ConfigFormat<?> conf) throws IOException {
         Files.createDirectories(file.getParent());
-        Path p = defaultConfigPath.resolve(modConfig.getFileName());
+        Path p = DEFAULT_CONFIG_PATH.resolve(modConfig.getFileName());
         if (Files.exists(p)) {
             LOGGER.info(CONFIG, "Loading default config file from path {}", p);
             Files.copy(p, file);
@@ -140,20 +140,12 @@ public class ConfigFileTypeHandler {
                 }
                 catch (ParsingException ex)
                 {
-                    throw new ConfigLoadingException(modConfig, ex);
+                    throw new ConfigLoadingException(modConfig.getFileName(), modConfig.getType().name(), modConfig.getModId(), ex);
                 }
                 LOGGER.debug(CONFIG, "Config file {} changed, sending notifies", this.modConfig.getFileName());
                 this.modConfig.getSpec().afterReload();
                 this.modConfig.fireEvent(IConfigEvent.reloading(this.modConfig));
             }
-        }
-    }
-
-    private static class ConfigLoadingException extends RuntimeException
-    {
-        public ConfigLoadingException(ModConfig config, Exception cause)
-        {
-            super("Failed loading config file " + config.getFileName() + " of type " + config.getType() + " for modid " + config.getModId(), cause);
         }
     }
 }
