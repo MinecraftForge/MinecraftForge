@@ -15,7 +15,7 @@ import org.slf4j.Logger;
 @Mod("spawn_placement_test")
 public class SpawnPlacementTest
 {
-    public static final boolean ENABLED = false;
+    public static final boolean ENABLED = true;
     public static final Logger LOGGER = LogUtils.getLogger();
 
     public SpawnPlacementTest()
@@ -28,6 +28,7 @@ public class SpawnPlacementTest
 
     private void onZombieSpawnPlacement(SpawnPlacementRegisterEvent event)
     {
+        LOGGER.info("Modifying spawn placements!");
         // AND: require zombies to spawn below y 40
         event.register(EntityType.ZOMBIE, ((entityType, level, spawnType, pos, random) -> pos.getY() < 40 && validMonsterSpawn(level, pos, entityType)), SpawnPlacementRegisterEvent.Operation.AND);
         // REPLACE: don't require darkness to spawn creepers

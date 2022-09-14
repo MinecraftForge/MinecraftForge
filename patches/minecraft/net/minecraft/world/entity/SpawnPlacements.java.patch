@@ -8,7 +8,7 @@
     public static <T extends Mob> void m_21754_(EntityType<T> p_21755_, SpawnPlacements.Type p_21756_, Heightmap.Types p_21757_, SpawnPlacements.SpawnPredicate<T> p_21758_) {
        SpawnPlacements.Data spawnplacements$data = f_21750_.put(p_21755_, new SpawnPlacements.Data(p_21757_, p_21756_, p_21758_));
        if (spawnplacements$data != null) {
-@@ -156,10 +_,46 @@
+@@ -156,10 +_,41 @@
        boolean m_217080_(EntityType<T> p_217081_, ServerLevelAccessor p_217082_, MobSpawnType p_217083_, BlockPos p_217084_, RandomSource p_217085_);
     }
  
@@ -48,11 +48,6 @@
 +
 +   public static void registerAll(Map<EntityType<?>, net.minecraftforge.event.entity.SpawnPlacementRegisterEvent.MergedSpawnPredicate> map)
 +   {
-+       map.forEach(((entityType, merged) -> {
-+           var data = f_21750_.put(entityType, new SpawnPlacements.Data(merged.getHeightmapType(), merged.getSpawnType(), merged.build()));
-+           if (data != null) {
-+               throw new IllegalStateException("Duplicate registration for type " + Registry.f_122826_.m_7981_(entityType));
-+           }
-+       }));
++       map.forEach(((entityType, merged) -> f_21750_.put(entityType, new SpawnPlacements.Data(merged.getHeightmapType(), merged.getSpawnType(), merged.build()))));
     }
  }
