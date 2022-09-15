@@ -5,9 +5,9 @@ import net.minecraft.world.Difficulty;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.biome.Biomes;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.SpawnPlacementRegisterEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
 import com.mojang.logging.LogUtils;
 import org.slf4j.Logger;
@@ -15,18 +15,18 @@ import org.slf4j.Logger;
 @Mod("spawn_placement_test")
 public class SpawnPlacementTest
 {
-    public static final boolean ENABLED = true;
+    public static final boolean ENABLED = false;
     public static final Logger LOGGER = LogUtils.getLogger();
 
     public SpawnPlacementTest()
     {
         if (ENABLED)
         {
-            MinecraftForge.EVENT_BUS.addListener(this::onZombieSpawnPlacement);
+            FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onSpawnPlacementRegister);
         }
     }
 
-    private void onZombieSpawnPlacement(SpawnPlacementRegisterEvent event)
+    private void onSpawnPlacementRegister(SpawnPlacementRegisterEvent event)
     {
         LOGGER.info("Modifying spawn placements!");
         // AND: require zombies to spawn below y 40
