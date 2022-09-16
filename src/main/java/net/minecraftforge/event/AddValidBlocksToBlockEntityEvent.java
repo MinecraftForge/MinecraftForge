@@ -28,13 +28,13 @@ import org.jetbrains.annotations.ApiStatus;
  *
  * Fired on the Mod bus {@link IModBusEvent}.
  */
-public class AddBlockEntityBlocksEvent extends Event implements IModBusEvent
+public class AddValidBlocksToBlockEntityEvent extends Event implements IModBusEvent
 {
     @ApiStatus.Internal
     public final Map<BlockEntityType<?>, Set<Block>> newBlocks;
 
     @ApiStatus.Internal
-    public AddBlockEntityBlocksEvent()
+    public AddValidBlocksToBlockEntityEvent()
     {
         newBlocks = new HashMap<>();
     }

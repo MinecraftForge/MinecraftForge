@@ -9,7 +9,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.regex.Matcher;
@@ -119,7 +118,7 @@ import net.minecraftforge.event.ModMismatchEvent;
 import net.minecraftforge.event.ServerChatEvent;
 import net.minecraftforge.event.RegisterStructureConversionsEvent;
 import net.minecraftforge.event.VanillaGameEvent;
-import net.minecraftforge.event.AddBlockEntityBlocksEvent;
+import net.minecraftforge.event.AddValidBlocksToBlockEntityEvent;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.event.entity.EntityAttributeModificationEvent;
 import net.minecraftforge.event.entity.EntityEvent;
@@ -1345,9 +1344,9 @@ public class ForgeHooks
         });
     }
 
-    public static AddBlockEntityBlocksEvent onBlockEntityBlocks()
+    public static AddValidBlocksToBlockEntityEvent onBlockEntityBlocks()
     {
-        final var event = new AddBlockEntityBlocksEvent();
+        final var event = new AddValidBlocksToBlockEntityEvent();
         ModLoader.get().postEvent(event);
         return event;
     }

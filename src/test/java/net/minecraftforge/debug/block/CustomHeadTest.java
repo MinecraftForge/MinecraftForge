@@ -22,7 +22,7 @@ import net.minecraft.world.level.material.Material;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.common.util.Lazy;
-import net.minecraftforge.event.AddBlockEntityBlocksEvent;
+import net.minecraftforge.event.AddValidBlocksToBlockEntityEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -62,7 +62,7 @@ public class CustomHeadTest
         BLAZE
     }
 
-    private void onBlockEntityBlocks(final AddBlockEntityBlocksEvent event)
+    private void onBlockEntityBlocks(final AddValidBlocksToBlockEntityEvent event)
     {
         event.addValidBlock(BlockEntityType.SKULL, BLAZE_HEAD);
         event.addValidBlock(BlockEntityType.SKULL, BLAZE_HEAD_WALL);

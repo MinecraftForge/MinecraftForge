@@ -12,7 +12,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.SignItem;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.event.AddBlockEntityBlocksEvent;
+import net.minecraftforge.event.AddValidBlocksToBlockEntityEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.RegistryObject;
 import net.minecraftforge.fml.common.Mod;
@@ -70,7 +70,7 @@ public class CustomSignsTest
         event.enqueueWork(() -> WoodType.register(TEST_WOOD_TYPE));
     }
 
-    private void onBlockEntityBlocks(final AddBlockEntityBlocksEvent event)
+    private void onBlockEntityBlocks(final AddValidBlocksToBlockEntityEvent event)
     {
         event.addValidBlock(BlockEntityType.SIGN, TEST_STANDING_SIGN);
         event.addValidBlock(BlockEntityType.SIGN, TEST_WALL_SIGN);
