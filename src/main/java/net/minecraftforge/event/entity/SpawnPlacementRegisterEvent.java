@@ -68,7 +68,7 @@ public class SpawnPlacementRegisterEvent extends Event implements IModBusEvent
 
     /**
      * Register a {@code predicate} for a given {@code entityType} and {@code operation}
-     * With the option of changing the {@code placementType} and {@code heightmap}.
+     * With the option of changing the {@code placementType} and {@code heightmap}. These are only applied if {@link Operation#REPLACE} is used.
      * Use {@code null} for the placement or heightmap to leave them as is (which should be done in almost every case)
      */
     public void register(EntityType<?> entityType, @Nullable SpawnPlacements.Type placementType, @Nullable Heightmap.Types heightmap, SpawnPlacements.SpawnPredicate<Entity> predicate, Operation operation)
@@ -91,16 +91,19 @@ public class SpawnPlacementRegisterEvent extends Event implements IModBusEvent
         }
     }
 
-    @ApiStatus.Internal
-    public void registerAll()
-    {
-        SpawnPlacements.registerAll(map);
-    }
-
     public enum Operation
     {
+        /**
+         * Checked third, these predicates must all pass along with the original predicate
+         */
         AND,
+        /**
+         * Checked second, only one of these predicates must pass along with the original predicate
+         */
         OR,
+        /**
+         * Checked first, the last mod to replace the predicate wipes out all other predicates. Listen with a low {@link EventPriority} if you need to do this.
+         */
         REPLACE
     }
 
@@ -147,14 +150,14 @@ public class SpawnPlacementRegisterEvent extends Event implements IModBusEvent
             else if (operation == Operation.REPLACE)
             {
                 replacementPredicate = predicate;
-            }
-            if (spawnType != null)
-            {
-                this.spawnType = spawnType;
-            }
-            if (heightmapType != null)
-            {
-                this.heightmapType = heightmapType;
+                if (spawnType != null)
+                {
+                    this.spawnType = spawnType;
+                }
+                if (heightmapType != null)
+                {
+                    this.heightmapType = heightmapType;
+                }
             }
         }
 

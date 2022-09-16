@@ -8,7 +8,7 @@
     public static <T extends Mob> void m_21754_(EntityType<T> p_21755_, SpawnPlacements.Type p_21756_, Heightmap.Types p_21757_, SpawnPlacements.SpawnPredicate<T> p_21758_) {
        SpawnPlacements.Data spawnplacements$data = f_21750_.put(p_21755_, new SpawnPlacements.Data(p_21757_, p_21756_, p_21758_));
        if (spawnplacements$data != null) {
-@@ -156,10 +_,41 @@
+@@ -156,10 +_,39 @@
        boolean m_217080_(EntityType<T> p_217081_, ServerLevelAccessor p_217082_, MobSpawnType p_217083_, BlockPos p_217084_, RandomSource p_217085_);
     }
  
@@ -40,9 +40,7 @@
 +   public static void fireSpawnPlacementEvent()
 +   {
 +       Map<EntityType<?>, net.minecraftforge.event.entity.SpawnPlacementRegisterEvent.MergedSpawnPredicate> map = Maps.newHashMap();
-+       f_21750_.forEach((type, data) -> {
-+           map.put(type, new net.minecraftforge.event.entity.SpawnPlacementRegisterEvent.MergedSpawnPredicate(data.f_21769_, data.f_21768_, data.f_21767_));
-+       });
++       f_21750_.forEach((type, data) -> map.put(type, new net.minecraftforge.event.entity.SpawnPlacementRegisterEvent.MergedSpawnPredicate(data.f_21769_, data.f_21768_, data.f_21767_)));
 +       net.minecraftforge.common.ForgeHooks.onSpawnPlacementRegister(map);
 +   }
 +

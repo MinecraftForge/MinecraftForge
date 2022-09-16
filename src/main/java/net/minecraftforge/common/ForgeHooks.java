@@ -67,7 +67,6 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.gameevent.GameEvent;
-import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.level.storage.LevelStorageSource;
 import net.minecraft.world.level.storage.WorldData;
@@ -1173,7 +1172,7 @@ public class ForgeHooks
     {
         var event = new SpawnPlacementRegisterEvent(map);
         ModLoader.get().postEvent(event);
-        event.registerAll();
+        SpawnPlacements.registerAll(map);
     }
 
     public static boolean hasNoElements(Ingredient ingredient)
