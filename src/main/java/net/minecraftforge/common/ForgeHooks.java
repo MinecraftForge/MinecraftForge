@@ -119,6 +119,7 @@ import net.minecraftforge.event.ModMismatchEvent;
 import net.minecraftforge.event.ServerChatEvent;
 import net.minecraftforge.event.RegisterStructureConversionsEvent;
 import net.minecraftforge.event.VanillaGameEvent;
+import net.minecraftforge.event.AddBlockEntityBlocksEvent;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.event.entity.EntityAttributeModificationEvent;
 import net.minecraftforge.event.entity.EntityEvent;
@@ -1342,6 +1343,13 @@ public class ForgeHooks
             newBuilder.combine(v);
             FORGE_ATTRIBUTES.put(k, newBuilder.build());
         });
+    }
+
+    public static AddBlockEntityBlocksEvent onBlockEntityBlocks()
+    {
+        final var event = new AddBlockEntityBlocksEvent();
+        ModLoader.get().postEvent(event);
+        return event;
     }
 
     public static void onEntityEnterSection(Entity entity, long packedOldPos, long packedNewPos)
