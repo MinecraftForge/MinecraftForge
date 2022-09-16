@@ -264,6 +264,7 @@ modId="custom_color_resolver_test"
 modId="custom_item_decorations_test"
 [[mods]]
 modId="ambient_occlusion_elements_test"
-
+[[mods]]
+modId="shader_transform_event_test"
 
 # ADD ABOVE THIS LINE
