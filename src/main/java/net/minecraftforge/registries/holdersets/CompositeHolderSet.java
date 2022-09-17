@@ -21,6 +21,7 @@ import net.minecraft.core.HolderSet;
 import net.minecraft.core.Registry;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.RandomSource;
+import net.minecraftforge.common.extensions.IForgeHolderSet;
 
 /**
  * Composite holdersets have component holdersets and possibly owner holdersets
@@ -160,5 +161,36 @@ public abstract class CompositeHolderSet<T> implements ICustomHolderSet<T>
     public Iterator<Holder<T>> iterator()
     {
         return this.getList().iterator();
+    }
+    
+    /**
+     * Maps the sub-holdersets of this composite such that,if the list contains more than one element,
+     * each element of the list will serialize as an object.
+     * Prevents crashes from trying to serialize non-homogenous lists to NBT.
+     * @return List of holdersets with homogenous serialization behavior.
+     * Returns a new List if size > 1, otherwise returns the composite's existing List.
+     */
+    public List<HolderSet<T>> homogenize()
+    {
+        List<HolderSet<T>> components = this.getComponents();
+        
+        if (components.size() <= 1) // avoid infinitely looping on single-element holdersets
+        {
+            return components;
+        }
+        
+        List<HolderSet<T>> outputs = new ArrayList<>();
+        for (HolderSet<T> holderset : components)
+        {
+            if (holderset instanceof ICustomHolderSet<T>) // serializes to object already
+            {
+                outputs.add(holderset);
+            }
+            else // serializes to string or list
+            {
+                outputs.add(new OrHolderSet<>(List.of(holderset)));
+            }
+        }
+        return outputs;
     }
 }
