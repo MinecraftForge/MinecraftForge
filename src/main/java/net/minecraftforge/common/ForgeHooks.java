@@ -55,7 +55,6 @@ import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.SpawnPlacements;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -124,7 +123,6 @@ import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.event.entity.EntityAttributeModificationEvent;
 import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.EntityTravelToDimensionEvent;
-import net.minecraftforge.event.entity.SpawnPlacementRegisterEvent;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
 import net.minecraftforge.event.entity.living.EnderManAngerEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
@@ -1166,13 +1164,6 @@ public class ForgeHooks
     public static int canEntitySpawn(Mob entity, LevelAccessor world, double x, double y, double z, BaseSpawner spawner, MobSpawnType spawnReason) {
         Result res = ForgeEventFactory.canEntitySpawn(entity, world, x, y, z, null, spawnReason);
         return res == Result.DEFAULT ? 0 : res == Result.DENY ? -1 : 1;
-    }
-
-    public static void onSpawnPlacementRegister(Map<EntityType<?>, SpawnPlacementRegisterEvent.MergedSpawnPredicate> map)
-    {
-        var event = new SpawnPlacementRegisterEvent(map);
-        ModLoader.get().postEvent(event);
-        SpawnPlacements.registerAll(map);
     }
 
     public static boolean hasNoElements(Ingredient ingredient)
