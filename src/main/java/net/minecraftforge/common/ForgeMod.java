@@ -455,6 +455,7 @@ public class ForgeMod
         MinecraftForge.EVENT_BUS.addListener(this::missingSoundMapping);
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, ForgeConfig.clientSpec);
         ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, ForgeConfig.serverSpec);
+        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, ForgeConfig.commonSpec); //TODO: Remove in 1.20 unless it is required outside of the use of Resource Caching.
         modEventBus.register(ForgeConfig.class);
         ForgeDeferredRegistriesSetup.setup(modEventBus);
         // Forge does not display problems when the remote is not matching.
