@@ -7,7 +7,6 @@ package net.minecraftforge.common;
 
 import static net.minecraftforge.fml.Logging.FORGEMOD;
 
-import net.minecraftforge.config.boot.ForgeBootConfigurationManager;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.event.config.ModConfigEvent;
 import org.apache.commons.lang3.tuple.Pair;
@@ -92,10 +91,31 @@ public class ForgeConfig {
         @Deprecated(since = "1.19", forRemoval = true)
         public final BooleanValue indexModPackCachesOnThread;
 
-        Common() {
-            cachePackAccess = ForgeBootConfigurationManager.getInstance().getConfiguration().cachePackAccess;
-            indexVanillaPackCachesOnThread = ForgeBootConfigurationManager.getInstance().getConfiguration().indexVanillaPackCachesOnThread;
-            indexModPackCachesOnThread = ForgeBootConfigurationManager.getInstance().getConfiguration().indexModPackCachesOnThread;
+        @Deprecated(since = "1.19", forRemoval = true)
+        Common(ForgeConfigSpec.Builder builder) {
+            builder.comment("[DEPRECATED]:General configuration settings")
+                    .push("general");
+
+            cachePackAccess = builder
+                    .comment("[DEPRECATED]:Set this to true to cache resource listings in resource and data packs")
+                    .translation("forge.configgui.cachePackAccess")
+                    .worldRestart()
+                    .define("cachePackAccess", true);
+
+            indexVanillaPackCachesOnThread = builder
+                    .comment("[DEPRECATED]:Set this to true to index vanilla resource and data packs on thread")
+                    .translation("forge.configgui.indexVanillaPackCachesOnThread")
+                    .worldRestart()
+                    .define("indexVanillaPackCachesOnThread", false);
+
+            indexModPackCachesOnThread = builder
+                    .comment("[DEPRECATED]: Set this to true to index mod resource and data packs on thread")
+                    .translation("forge.configgui.indexModPackCachesOnThread")
+                    .worldRestart()
+                    .define("indexModPackCachesOnThread", false);
+
+
+            builder.pop();
         }
     }
 
@@ -156,11 +176,16 @@ public class ForgeConfig {
         CLIENT = specPair.getLeft();
     }
 
+
+    @Deprecated(since = "1.19", forRemoval = true)
+    static final ForgeConfigSpec commonSpec;
     @Deprecated(since = "1.19", forRemoval = true)
     public static final Common COMMON;
     static {
         //TODO: 1.20 remove this unless needed again.
-        COMMON = new Common();
+        final Pair<Common, ForgeConfigSpec> specPair = new ForgeConfigSpec.Builder().configure(Common::new);
+        commonSpec = specPair.getRight();
+        COMMON = specPair.getLeft();
     }
 
 
