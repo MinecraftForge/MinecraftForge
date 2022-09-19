@@ -34,6 +34,7 @@ public final class ForgeBlockTagsProvider extends BlockTagsProvider
     {
         tag(BARRELS).addTag(BARRELS_WOODEN);
         tag(BARRELS_WOODEN).add(Blocks.BARREL);
+        tag(BOOKSHELVES).add(Blocks.BOOKSHELF);
         tag(CHESTS).addTags(CHESTS_ENDER, CHESTS_TRAPPED, CHESTS_WOODEN);
         tag(CHESTS_ENDER).add(Blocks.ENDER_CHEST);
         tag(CHESTS_TRAPPED).add(Blocks.TRAPPED_CHEST);
@@ -46,7 +47,7 @@ public final class ForgeBlockTagsProvider extends BlockTagsProvider
         tag(END_STONES).add(Blocks.END_STONE);
         tag(ENDERMAN_PLACE_ON_BLACKLIST);
         tag(FENCE_GATES).addTags(FENCE_GATES_WOODEN);
-        tag(FENCE_GATES_WOODEN).add(Blocks.OAK_FENCE_GATE, Blocks.SPRUCE_FENCE_GATE, Blocks.BIRCH_FENCE_GATE, Blocks.JUNGLE_FENCE_GATE, Blocks.ACACIA_FENCE_GATE, Blocks.DARK_OAK_FENCE_GATE, Blocks.CRIMSON_FENCE_GATE, Blocks.WARPED_FENCE_GATE);
+        tag(FENCE_GATES_WOODEN).add(Blocks.OAK_FENCE_GATE, Blocks.SPRUCE_FENCE_GATE, Blocks.BIRCH_FENCE_GATE, Blocks.JUNGLE_FENCE_GATE, Blocks.ACACIA_FENCE_GATE, Blocks.DARK_OAK_FENCE_GATE, Blocks.CRIMSON_FENCE_GATE, Blocks.WARPED_FENCE_GATE, Blocks.MANGROVE_FENCE_GATE);
         tag(FENCES).addTags(FENCES_NETHER_BRICK, FENCES_WOODEN);
         tag(FENCES_NETHER_BRICK).add(Blocks.NETHER_BRICK_FENCE);
         tag(FENCES_WOODEN).addTag(BlockTags.WOODEN_FENCES);

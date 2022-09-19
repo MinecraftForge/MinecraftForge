@@ -92,7 +92,7 @@ public interface IQuadTransformer
     private static BakedQuad copy(BakedQuad quad)
     {
         var vertices = quad.getVertices();
-        return new BakedQuad(Arrays.copyOf(vertices, vertices.length), quad.getTintIndex(), quad.getDirection(), quad.getSprite(), quad.isShade());
+        return new BakedQuad(Arrays.copyOf(vertices, vertices.length), quad.getTintIndex(), quad.getDirection(), quad.getSprite(), quad.isShade(), quad.hasAmbientOcclusion());
     }
 
     private static int findOffset(VertexFormatElement element)

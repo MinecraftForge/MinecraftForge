@@ -14,7 +14,13 @@ license="LGPL v2.1"
     modId="fluid_type_test"
 [[mods]]
     modId="potentialspawnsevent_test"
+[[mods]]
+    modId="block_grow_feature_test"
 
+[[mods]]
+    modId="advancement_event_test"
+[[mods]]
+    modId="shader_resources_test"
 
 # LEGACY TEST CASES
 ###### The mods below are from the old test framework and need to be yeeted later again.
@@ -22,6 +28,8 @@ license="LGPL v2.1"
 
 
 
+[[mods]]
+modId="on_tree_grow_block_test"
 [[mods]]
 modId="containertypetest"
 [[mods]]
@@ -217,6 +225,8 @@ modId="gametest_test"
 [[mods]]
 modId="many_mob_effects_test"
 [[mods]]
+modId="fluid_util_test"
+[[mods]]
 modId="potion_size_event_test"
 [[mods]]
 modId="recipe_book_extension_test"
@@ -245,12 +255,15 @@ modId="emissive_elements_test"
 [[mods]]
 modId="anvil_update_event_fix"
 [[mods]]
+modId="living_set_attack_target_event_test"
+[[mods]]
 modId="item_use_animation_test"
 [[mods]]
 modId="custom_color_resolver_test"
 [[mods]]
 modId="custom_item_decorations_test"
-
+[[mods]]
+modId="ambient_occlusion_elements_test"
 
 
 # ADD ABOVE THIS LINE

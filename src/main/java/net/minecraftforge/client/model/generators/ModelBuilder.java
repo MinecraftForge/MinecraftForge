@@ -320,6 +320,9 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
                     if (face.emissivity > 0) {
                         faceObj.addProperty("emissivity", face.emissivity);
                     }
+                    if (!face.hasAmbientOcclusion) {
+                        faceObj.addProperty("ambientocclusion", face.hasAmbientOcclusion);
+                    }
                     faces.add(dir.getSerializedName(), faceObj);
                 }
                 if (!part.faces.isEmpty()) {
@@ -517,6 +520,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
             private float[] uvs;
             private FaceRotation rotation = FaceRotation.ZERO;
             private int emissivity = 0;
+            private boolean hasAmbientOcclusion = true;
 
             FaceBuilder(Direction dir) {
                 // param unused for functional match
@@ -583,11 +587,22 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
                 return emissivity(15);
             }
 
+            /**
+             * Set the ambient occlusion of the face.
+             *
+             * @param ao the ambient occlusion
+             * @return this builder
+             */
+            public FaceBuilder ao(boolean ao) {
+                this.hasAmbientOcclusion = ao;
+                return this;
+            }
+
             BlockElementFace build() {
                 if (this.texture == null) {
                     throw new IllegalStateException("A model face must have a texture");
                 }
-                return new BlockElementFace(cullface, tintindex, texture, new BlockFaceUV(uvs, rotation.rotation), emissivity);
+                return new BlockElementFace(cullface, tintindex, texture, new BlockFaceUV(uvs, rotation.rotation), emissivity, hasAmbientOcclusion);
             }
 
             public ElementBuilder end() { return ElementBuilder.this; }

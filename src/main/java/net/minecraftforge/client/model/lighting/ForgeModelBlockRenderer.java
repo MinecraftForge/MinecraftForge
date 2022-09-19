@@ -7,6 +7,7 @@ package net.minecraftforge.client.model.lighting;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.color.block.BlockColors;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.ModelBlockRenderer;
@@ -67,8 +68,11 @@ public class ForgeModelBlockRenderer extends ModelBlockRenderer
 
     public static boolean render(VertexConsumer vertexConsumer, QuadLighter lighter, BlockAndTintGetter level, BakedModel model, BlockState state, BlockPos pos, PoseStack poseStack, boolean checkSides, RandomSource rand, long seed, int packedOverlay, ModelData modelData, RenderType renderType)
     {
+        ForgeModelBlockRenderer renderer = (ForgeModelBlockRenderer)Minecraft.getInstance().getBlockRenderer().getModelRenderer();
         var pose = poseStack.last();
         var empty = true;
+        var smoothLighter = lighter instanceof SmoothQuadLighter;
+        QuadLighter flatLighter = null;
 
         rand.setSeed(seed);
         List<BakedQuad> quads = model.getQuads(state, null, rand, modelData, renderType);
@@ -78,7 +82,19 @@ public class ForgeModelBlockRenderer extends ModelBlockRenderer
             lighter.setup(level, pos, state);
             for (BakedQuad quad : quads)
             {
-                lighter.process(vertexConsumer, pose, quad, packedOverlay);
+                if (smoothLighter && !quad.hasAmbientOcclusion())
+                {
+                    if (flatLighter == null)
+                    {
+                        flatLighter = renderer.flatLighter.get();
+                        flatLighter.setup(level, pos, state);
+                    }
+                    flatLighter.process(vertexConsumer, pose, quad, packedOverlay);
+                }
+                else
+                {
+                    lighter.process(vertexConsumer, pose, quad, packedOverlay);
+                }
             }
         }
 
@@ -99,11 +115,25 @@ public class ForgeModelBlockRenderer extends ModelBlockRenderer
                 }
                 for (BakedQuad quad : quads)
                 {
-                    lighter.process(vertexConsumer, pose, quad, packedOverlay);
+                    if (smoothLighter && !quad.hasAmbientOcclusion())
+                    {
+                        if (flatLighter == null)
+                        {
+                            flatLighter = renderer.flatLighter.get();
+                            flatLighter.setup(level, pos, state);
+                        }
+                        flatLighter.process(vertexConsumer, pose, quad, packedOverlay);
+                    }
+                    else
+                    {
+                        lighter.process(vertexConsumer, pose, quad, packedOverlay);
+                    }
                 }
             }
         }
         lighter.reset();
+        if (flatLighter != null)
+            flatLighter.reset();
         return !empty;
     }
 }

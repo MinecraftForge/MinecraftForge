@@ -1,5 +1,14 @@
 --- a/net/minecraft/client/ClientRecipeBook.java
 +++ b/net/minecraft/client/ClientRecipeBook.java
+@@ -51,7 +_,7 @@
+       for(Recipe<?> recipe : p_90643_) {
+          if (!recipe.m_5598_() && !recipe.m_142505_()) {
+             RecipeBookCategories recipebookcategories = m_90646_(recipe);
+-            String s = recipe.m_6076_();
++            String s = recipe.m_6076_().isEmpty() ? recipe.m_6423_().toString() : recipe.m_6076_(); // FORGE: Group value defaults to the recipe's ID if the recipe's explicit group is empty.
+             if (s.isEmpty()) {
+                map.computeIfAbsent(recipebookcategories, (p_90645_) -> {
+                   return Lists.newArrayList();
 @@ -103,6 +_,8 @@
        } else if (recipetype == RecipeType.f_44113_) {
           return RecipeBookCategories.SMITHING;
