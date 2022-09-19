@@ -12,6 +12,14 @@
           for(ContainerListener containerlistener : this.f_38848_) {
              containerlistener.m_7934_(this, p_150408_, itemstack1);
           }
+@@ -399,6 +_,7 @@
+             ItemStack itemstack10 = slot7.m_7993_();
+             ItemStack itemstack11 = this.m_142621_();
+             p_150434_.m_141945_(itemstack11, slot7.m_7993_(), clickaction);
++            if (net.minecraftforge.common.ForgeHooks.onItemStackedOn(itemstack11, itemstack10, slot7, clickaction, p_150434_, m_150446_())) { } else
+             if (!itemstack11.m_150926_(slot7, clickaction, p_150434_) && !itemstack10.m_150932_(itemstack11, slot7, clickaction, p_150434_, this.m_150446_())) {
+                if (itemstack10.m_41619_()) {
+                   if (!itemstack11.m_41619_()) {
 @@ -601,14 +_,15 @@
              ItemStack itemstack = slot.m_7993_();
              if (!itemstack.m_41619_() && ItemStack.m_150942_(p_38904_, itemstack)) {
