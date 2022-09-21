@@ -23,7 +23,10 @@ public interface IForgeRawTagBuilder
 
     /**
      * internal, called when a raw builder is written to json to add forge additions (e.g. the remove list)
+     * 
+     * Not called by vanilla code or forge hook
      */
+    @Deprecated(forRemoval = true, since = "1.19.2")
     default void serializeTagAdditions(final JsonObject tagJson)
     {
         TagBuilder rawBuilder = this.getRawBuilder();

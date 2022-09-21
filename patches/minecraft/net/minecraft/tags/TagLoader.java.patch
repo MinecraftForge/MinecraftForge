@@ -1,5 +1,15 @@
 --- a/net/minecraft/tags/TagLoader.java
 +++ b/net/minecraft/tags/TagLoader.java
+@@ -63,6 +_,9 @@
+                   if (tagfile.f_215960_()) {
+                      list.clear();
+                   }
++
++                  // FORGE: remove entries which match the removal list
++                  net.minecraftforge.common.ForgeHooks.removeTagEntries(tagfile.removeEntries(), list);
+ 
+                   String s1 = resource.m_215506_();
+                   tagfile.f_215959_().forEach((p_215997_) -> {
 @@ -164,7 +_,7 @@
        p_203899_.keySet().forEach((p_216008_) -> {
           m_144523_(p_203899_, multimap, set, p_216008_, (p_215984_, p_215985_) -> {

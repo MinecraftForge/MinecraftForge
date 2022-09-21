@@ -43,6 +43,7 @@ import net.minecraft.server.packs.PackType;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagEntry;
 import net.minecraft.tags.TagKey;
+import net.minecraft.tags.TagLoader;
 import net.minecraft.util.datafix.fixes.StructuresBecomeConfiguredFix;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.InteractionHand;
@@ -1179,6 +1180,7 @@ public class ForgeHooks
         return false;
     }
 
+    @Deprecated(forRemoval = true, since = "1.19.2")
     public static <T> void deserializeTagAdditions(List<TagEntry> list, JsonObject json, List<TagEntry> allList)
     {
         if (json.has("remove"))
@@ -1193,6 +1195,16 @@ public class ForgeHooks
                     dummy = TagEntry.tag(new ResourceLocation(s.substring(1)));
                 allList.removeIf(e -> e.equals(dummy));
             }
+        }
+    }
+    
+    public static void removeTagEntries(List<TagEntry> list, List<TagLoader.EntryWithSource> allList)
+    {
+        for (TagEntry remove : list)
+        {
+            allList.removeIf(entry -> entry.entry().isTag() == remove.isTag()
+                    && entry.entry().isRequired() == remove.isRequired()
+                    && entry.entry().getId().equals(remove.getId()));
         }
     }
 
