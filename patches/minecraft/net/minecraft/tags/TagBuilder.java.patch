@@ -1,6 +1,6 @@
 --- a/net/minecraft/tags/TagBuilder.java
 +++ b/net/minecraft/tags/TagBuilder.java
-@@ -4,16 +_,32 @@
+@@ -4,17 +_,35 @@
  import java.util.List;
  import net.minecraft.resources.ResourceLocation;
  
@@ -22,18 +22,21 @@
        return new TagBuilder();
     }
  
-+   // FORGE: use TagFile variant instead
++   /** @deprecated FORGE: Use TagFile variant instead
++    *  @see TagBuilder#buildTagFile()
++    */
 +   @Deprecated
     public List<TagEntry> m_215904_() {
        return List.copyOf(this.f_215897_);
     }
-+
+ 
 +   public TagFile buildTagFile() {
 +      return new TagFile(List.copyOf(this.f_215897_), this.replace, List.copyOf(this.removeEntries));
 +   }
- 
++
     public TagBuilder m_215902_(TagEntry p_215903_) {
        this.f_215897_.add(p_215903_);
+       return this;
 @@ -34,5 +_,16 @@
  
     public TagBuilder m_215909_(ResourceLocation p_215910_) {

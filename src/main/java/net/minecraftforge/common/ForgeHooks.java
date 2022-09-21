@@ -1180,6 +1180,9 @@ public class ForgeHooks
         return false;
     }
 
+    /** @deprecated Tags now use {@link TagFile} to load.
+     *  @see ForgeHooks#removeTagEntries(List, List)
+     */
     @Deprecated(forRemoval = true, since = "1.19.2")
     public static <T> void deserializeTagAdditions(List<TagEntry> list, JsonObject json, List<TagEntry> allList)
     {
