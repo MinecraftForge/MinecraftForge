@@ -22,8 +22,8 @@
        return new TagBuilder();
     }
  
-+   /** @deprecated FORGE: Use TagFile variant instead
-+    *  @see TagBuilder#buildTagFile()
++   /** @deprecated FORGE: Use {@link #buildTagFile()} instead
++    *  @see #buildTagFile()
 +    */
 +   @Deprecated
     public List<TagEntry> m_215904_() {

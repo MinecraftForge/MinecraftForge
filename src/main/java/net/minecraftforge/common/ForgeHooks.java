@@ -1180,8 +1180,8 @@ public class ForgeHooks
         return false;
     }
 
-    /** @deprecated Tags now use {@link TagFile} to load.
-     *  @see ForgeHooks#removeTagEntries(List, List)
+    /** @deprecated Tags now use {@link net.minecraft.tags.TagFile} to load. Use {@link #removeTagEntries(List, List)} instead.
+     *  @see #removeTagEntries(List, List)
      */
     @Deprecated(forRemoval = true, since = "1.19.2")
     public static <T> void deserializeTagAdditions(List<TagEntry> list, JsonObject json, List<TagEntry> allList)
@@ -1201,12 +1201,16 @@ public class ForgeHooks
         }
     }
     
+    /** Removes the tag entries specified in <code>list</code> from the list of tag entries to load specified by <code>allList</code>.
+     *
+     * @param list The list of tag entries to remove.
+     * @param allList The list of all loaded tag entries.
+     */
     public static void removeTagEntries(List<TagEntry> list, List<TagLoader.EntryWithSource> allList)
     {
         for (TagEntry remove : list)
         {
             allList.removeIf(entry -> entry.entry().isTag() == remove.isTag()
-                    && entry.entry().isRequired() == remove.isRequired()
                     && entry.entry().getId().equals(remove.getId()));
         }
     }

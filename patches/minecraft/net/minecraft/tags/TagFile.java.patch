@@ -1,12 +1,14 @@
 --- a/net/minecraft/tags/TagFile.java
 +++ b/net/minecraft/tags/TagFile.java
-@@ -4,8 +_,15 @@
+@@ -4,8 +_,17 @@
  import com.mojang.serialization.codecs.RecordCodecBuilder;
  import java.util.List;
  
 -public record TagFile(List<TagEntry> f_215959_, boolean f_215960_) {
 +public record TagFile(List<TagEntry> f_215959_, boolean f_215960_, List<TagEntry> removeEntries) {
-+   /** @deprecated Use removeEntries variant instead */
++   /** @deprecated Use {@link #TagFile(List, boolean, List)} instead
++    *  @see #TagFile(List, boolean, List)
++    */
 +   @Deprecated
 +   public TagFile(List<TagEntry> f_215959_, boolean f_215960_) {
 +      this(f_215959_, f_215960_, List.of());
