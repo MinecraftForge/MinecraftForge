@@ -22,7 +22,7 @@
        float f = GsonHelper.m_13820_(p_44348_, "experience", 0.0F);
        int i = GsonHelper.m_13824_(p_44348_, "cookingtime", this.f_44327_);
 -      return this.f_44328_.m_44352_(p_44347_, s, ingredient, itemstack, f, i);
-+      return this.f_44328_.create(p_44347_, s, ingredient, itemstack, f, i, net.minecraft.client.RecipeBookCategories.byLocation(new ResourceLocation(c)));
++      return this.f_44328_.create(p_44347_, s, ingredient, itemstack, f, i, new ResourceLocation(c));
     }
  
     public T m_8005_(ResourceLocation p_44350_, FriendlyByteBuf p_44351_) {
@@ -33,13 +33,13 @@
        float f = p_44351_.readFloat();
        int i = p_44351_.m_130242_();
 -      return this.f_44328_.m_44352_(p_44350_, s, ingredient, itemstack, f, i);
-+      return this.f_44328_.create(p_44350_, s, ingredient, itemstack, f, i, net.minecraft.client.RecipeBookCategories.byLocation(new ResourceLocation(c)));
++      return this.f_44328_.create(p_44350_, s, ingredient, itemstack, f, i, new ResourceLocation(c));
     }
  
     public void m_6178_(FriendlyByteBuf p_44335_, T p_44336_) {
        p_44335_.m_130070_(p_44336_.f_43728_);
-+      if (p_44336_.category.getLocation() != null) {
-+         p_44335_.m_130070_(p_44336_.category.getLocation().toString());
++      if (p_44336_.category != null) {
++         p_44335_.m_130070_(p_44336_.category.toString());
 +      } else {
 +         p_44335_.m_130070_("");
 +      }
@@ -51,6 +51,6 @@
  
     interface CookieBaker<T extends AbstractCookingRecipe> {
 -      T m_44352_(ResourceLocation p_44353_, String p_44354_, Ingredient p_44355_, ItemStack p_44356_, float p_44357_, int p_44358_);
-+      T create(ResourceLocation p_44353_, String p_44354_, Ingredient p_44355_, ItemStack p_44356_, float p_44357_, int p_44358_, net.minecraft.client.RecipeBookCategories category);
++      T create(ResourceLocation p_44353_, String p_44354_, Ingredient p_44355_, ItemStack p_44356_, float p_44357_, int p_44358_, ResourceLocation category);
     }
  }

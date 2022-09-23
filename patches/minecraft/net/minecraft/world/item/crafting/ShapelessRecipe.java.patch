@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/item/crafting/ShapelessRecipe.java
 +++ b/net/minecraft/world/item/crafting/ShapelessRecipe.java
-@@ -13,17 +_,21 @@
+@@ -13,17 +_,22 @@
  import net.minecraft.world.item.ItemStack;
  import net.minecraft.world.level.Level;
  
@@ -11,10 +11,11 @@
     final ItemStack f_44243_;
     final NonNullList<Ingredient> f_44244_;
 +   private final boolean isSimple;
-+   private final net.minecraft.client.RecipeBookCategories category;
++   @javax.annotation.Nullable
++   private final ResourceLocation category;
  
 -   public ShapelessRecipe(ResourceLocation p_44246_, String p_44247_, ItemStack p_44248_, NonNullList<Ingredient> p_44249_) {
-+   public ShapelessRecipe(ResourceLocation p_44246_, String p_44247_, ItemStack p_44248_, NonNullList<Ingredient> p_44249_, net.minecraft.client.RecipeBookCategories category) {
++   public ShapelessRecipe(ResourceLocation p_44246_, String p_44247_, ItemStack p_44248_, NonNullList<Ingredient> p_44249_, ResourceLocation category) {
        this.f_44241_ = p_44246_;
        this.f_44242_ = p_44247_;
        this.f_44243_ = p_44248_;
@@ -24,11 +25,12 @@
     }
  
     public ResourceLocation m_6423_() {
-@@ -38,6 +_,10 @@
+@@ -38,6 +_,11 @@
        return this.f_44242_;
     }
  
-+   public net.minecraft.client.RecipeBookCategories getCategory() {
++   @javax.annotation.Nullable
++   public ResourceLocation getCategory() {
 +      return this.category;
 +   }
 +
@@ -75,7 +77,7 @@
           } else {
              ItemStack itemstack = ShapedRecipe.m_151274_(GsonHelper.m_13930_(p_44291_, "result"));
 -            return new ShapelessRecipe(p_44290_, s, itemstack, nonnulllist);
-+            return new ShapelessRecipe(p_44290_, s, itemstack, nonnulllist, net.minecraft.client.RecipeBookCategories.byLocation(new ResourceLocation(c)));
++            return new ShapelessRecipe(p_44290_, s, itemstack, nonnulllist, new ResourceLocation(c));
           }
        }
  
@@ -101,13 +103,13 @@
  
           ItemStack itemstack = p_44294_.m_130267_();
 -         return new ShapelessRecipe(p_44293_, s, itemstack, nonnulllist);
-+         return new ShapelessRecipe(p_44293_, s, itemstack, nonnulllist, net.minecraft.client.RecipeBookCategories.byLocation(new ResourceLocation(c)));
++         return new ShapelessRecipe(p_44293_, s, itemstack, nonnulllist, new ResourceLocation(c));
        }
  
        public void m_6178_(FriendlyByteBuf p_44281_, ShapelessRecipe p_44282_) {
           p_44281_.m_130070_(p_44282_.f_44242_);
-+         if (p_44282_.category.getLocation() != null) {
-+            p_44281_.m_130070_(p_44282_.category.getLocation().toString());
++         if (p_44282_.category != null) {
++            p_44281_.m_130070_(p_44282_.category.toString());
 +         } else {
 +            p_44281_.m_130070_("");
 +         }

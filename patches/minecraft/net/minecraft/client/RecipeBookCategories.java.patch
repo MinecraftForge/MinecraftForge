@@ -19,6 +19,10 @@
 -   BLAST_FURNACE_MISC(new ItemStack(Items.f_42384_), new ItemStack(Items.f_42478_)),
 -   SMOKER_SEARCH(new ItemStack(Items.f_42522_)),
 -   SMOKER_FOOD(new ItemStack(Items.f_42485_)),
+-   STONECUTTER(new ItemStack(Items.f_42021_)),
+-   SMITHING(new ItemStack(Items.f_42481_)),
+-   CAMPFIRE(new ItemStack(Items.f_42485_)),
+-   UNKNOWN(new ItemStack(Items.f_42127_));
 +public enum RecipeBookCategories implements net.minecraftforge.common.IExtensibleEnum {
 +   CRAFTING_SEARCH(new net.minecraft.resources.ResourceLocation("crafting_search"), new ItemStack(Items.f_42522_)),
 +   CRAFTING_BUILDING_BLOCKS(new net.minecraft.resources.ResourceLocation("crafting_building_blocks"), new ItemStack(Blocks.f_50076_)),
@@ -34,15 +38,15 @@
 +   BLAST_FURNACE_MISC(new net.minecraft.resources.ResourceLocation("blast_furnace_misc"), new ItemStack(Items.f_42384_), new ItemStack(Items.f_42478_)),
 +   SMOKER_SEARCH(new net.minecraft.resources.ResourceLocation("smoker_search"), new ItemStack(Items.f_42522_)),
 +   SMOKER_FOOD(new net.minecraft.resources.ResourceLocation("smoker_food"), new ItemStack(Items.f_42485_)),
-    STONECUTTER(new ItemStack(Items.f_42021_)),
-    SMITHING(new ItemStack(Items.f_42481_)),
-    CAMPFIRE(new ItemStack(Items.f_42485_)),
-    UNKNOWN(new ItemStack(Items.f_42127_));
- 
++   STONECUTTER(new net.minecraft.resources.ResourceLocation("stonecutter"), new ItemStack(Items.f_42021_)),
++   SMITHING(new net.minecraft.resources.ResourceLocation("smithing"), new ItemStack(Items.f_42481_)),
++   CAMPFIRE(new net.minecraft.resources.ResourceLocation("campfire"), new ItemStack(Items.f_42485_)),
++   UNKNOWN(new net.minecraft.resources.ResourceLocation("unknown"), new ItemStack(Items.f_42127_));
++
 +   private static final Map<net.minecraft.resources.ResourceLocation, RecipeBookCategories> BY_LOCATION = java.util.Arrays.stream(values()).collect(java.util.stream.Collectors.toMap(RecipeBookCategories::getLocation, (map) -> {
 +      return map;
 +   }));
-+
+ 
     public static final List<RecipeBookCategories> f_92256_ = ImmutableList.of(SMOKER_SEARCH, SMOKER_FOOD);
     public static final List<RecipeBookCategories> f_92257_ = ImmutableList.of(BLAST_FURNACE_SEARCH, BLAST_FURNACE_BLOCKS, BLAST_FURNACE_MISC);
     public static final List<RecipeBookCategories> f_92258_ = ImmutableList.of(FURNACE_SEARCH, FURNACE_FOOD, FURNACE_BLOCKS, FURNACE_MISC);

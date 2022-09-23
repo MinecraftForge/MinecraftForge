@@ -1,7 +1,8 @@
 package net.minecraftforge.common.crafting;
 
-import net.minecraft.client.RecipeBookCategories;
+import net.minecraft.resources.ResourceLocation;
 
 public interface IRecipeWithCategory {
-    RecipeBookCategories getCategory();
+    @javax.annotation.Nullable
+    ResourceLocation getCategory();
 }
