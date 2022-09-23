@@ -1,0 +1,13 @@
+--- a/net/minecraft/world/item/crafting/BlastingRecipe.java
++++ b/net/minecraft/world/item/crafting/BlastingRecipe.java
+@@ -5,8 +_,8 @@
+ import net.minecraft.world.level.block.Blocks;
+ 
+ public class BlastingRecipe extends AbstractCookingRecipe {
+-   public BlastingRecipe(ResourceLocation p_43793_, String p_43794_, Ingredient p_43795_, ItemStack p_43796_, float p_43797_, int p_43798_) {
+-      super(RecipeType.f_44109_, p_43793_, p_43794_, p_43795_, p_43796_, p_43797_, p_43798_);
++   public BlastingRecipe(ResourceLocation p_43793_, String p_43794_, Ingredient p_43795_, ItemStack p_43796_, float p_43797_, int p_43798_, net.minecraft.client.RecipeBookCategories category) {
++      super(RecipeType.f_44109_, p_43793_, p_43794_, p_43795_, p_43796_, p_43797_, p_43798_, category);
+    }
+ 
+    public ItemStack m_8042_() {

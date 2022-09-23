@@ -9,6 +9,19 @@
              if (s.isEmpty()) {
                 map.computeIfAbsent(recipebookcategories, (p_90645_) -> {
                    return Lists.newArrayList();
+@@ -76,6 +_,12 @@
+ 
+    private static RecipeBookCategories m_90646_(Recipe<?> p_90647_) {
+       RecipeType<?> recipetype = p_90647_.m_6671_();
++      if (p_90647_ instanceof net.minecraftforge.common.crafting.IRecipeWithCategory) {
++         RecipeBookCategories categoryFromRecipe = ((net.minecraftforge.common.crafting.IRecipeWithCategory) p_90647_).getCategory();
++         if (categoryFromRecipe != RecipeBookCategories.UNKNOWN) {
++            return categoryFromRecipe;
++         }
++      }
+       if (recipetype == RecipeType.f_44107_) {
+          ItemStack itemstack = p_90647_.m_8043_();
+          CreativeModeTab creativemodetab = itemstack.m_41720_().m_41471_();
 @@ -103,6 +_,8 @@
        } else if (recipetype == RecipeType.f_44113_) {
           return RecipeBookCategories.SMITHING;

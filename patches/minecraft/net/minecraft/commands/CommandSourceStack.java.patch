@@ -8,4 +8,4 @@
 +public class CommandSourceStack implements SharedSuggestionProvider, net.minecraftforge.common.extensions.IForgeCommandSourceStack {
     public static final SimpleCommandExceptionType f_81286_ = new SimpleCommandExceptionType(Component.m_237115_("permissions.requires.player"));
     public static final SimpleCommandExceptionType f_81287_ = new SimpleCommandExceptionType(Component.m_237115_("permissions.requires.entity"));
-    private final CommandSource f_81288_;
+    public final CommandSource f_81288_;

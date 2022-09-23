@@ -1,20 +1,40 @@
 --- a/net/minecraft/world/item/crafting/ShapelessRecipe.java
 +++ b/net/minecraft/world/item/crafting/ShapelessRecipe.java
-@@ -18,12 +_,14 @@
+@@ -13,17 +_,21 @@
+ import net.minecraft.world.item.ItemStack;
+ import net.minecraft.world.level.Level;
+ 
+-public class ShapelessRecipe implements CraftingRecipe {
++public class ShapelessRecipe implements CraftingRecipe, net.minecraftforge.common.crafting.IRecipeWithCategory {
+    private final ResourceLocation f_44241_;
     final String f_44242_;
     final ItemStack f_44243_;
     final NonNullList<Ingredient> f_44244_;
 +   private final boolean isSimple;
++   private final net.minecraft.client.RecipeBookCategories category;
  
-    public ShapelessRecipe(ResourceLocation p_44246_, String p_44247_, ItemStack p_44248_, NonNullList<Ingredient> p_44249_) {
+-   public ShapelessRecipe(ResourceLocation p_44246_, String p_44247_, ItemStack p_44248_, NonNullList<Ingredient> p_44249_) {
++   public ShapelessRecipe(ResourceLocation p_44246_, String p_44247_, ItemStack p_44248_, NonNullList<Ingredient> p_44249_, net.minecraft.client.RecipeBookCategories category) {
        this.f_44241_ = p_44246_;
        this.f_44242_ = p_44247_;
        this.f_44243_ = p_44248_;
        this.f_44244_ = p_44249_;
 +      this.isSimple = p_44249_.stream().allMatch(Ingredient::isSimple);
++      this.category = category;
     }
  
     public ResourceLocation m_6423_() {
+@@ -38,6 +_,10 @@
+       return this.f_44242_;
+    }
+ 
++   public net.minecraft.client.RecipeBookCategories getCategory() {
++      return this.category;
++   }
++
+    public ItemStack m_8043_() {
+       return this.f_44243_;
+    }
 @@ -48,17 +_,20 @@
  
     public boolean m_5818_(CraftingContainer p_44262_, Level p_44263_) {
@@ -37,13 +57,14 @@
     }
  
     public ItemStack m_5874_(CraftingContainer p_44260_) {
-@@ -70,13 +_,14 @@
+@@ -70,16 +_,18 @@
     }
  
     public static class Serializer implements RecipeSerializer<ShapelessRecipe> {
 +      private static final ResourceLocation NAME = new ResourceLocation("minecraft", "crafting_shapeless");
        public ShapelessRecipe m_6729_(ResourceLocation p_44290_, JsonObject p_44291_) {
           String s = GsonHelper.m_13851_(p_44291_, "group", "");
++         String c = GsonHelper.m_13851_(p_44291_, "forge:category", "");
           NonNullList<Ingredient> nonnulllist = m_44275_(GsonHelper.m_13933_(p_44291_, "ingredients"));
           if (nonnulllist.isEmpty()) {
              throw new JsonParseException("No ingredients for shapeless recipe");
@@ -53,7 +74,11 @@
 +            throw new JsonParseException("Too many ingredients for shapeless recipe. The maximum is " + (ShapedRecipe.MAX_WIDTH * ShapedRecipe.MAX_HEIGHT));
           } else {
              ItemStack itemstack = ShapedRecipe.m_151274_(GsonHelper.m_13930_(p_44291_, "result"));
-             return new ShapelessRecipe(p_44290_, s, itemstack, nonnulllist);
+-            return new ShapelessRecipe(p_44290_, s, itemstack, nonnulllist);
++            return new ShapelessRecipe(p_44290_, s, itemstack, nonnulllist, net.minecraft.client.RecipeBookCategories.byLocation(new ResourceLocation(c)));
+          }
+       }
+ 
 @@ -88,7 +_,7 @@
  
           for(int i = 0; i < p_44276_.size(); ++i) {
@@ -63,3 +88,29 @@
                 nonnulllist.add(ingredient);
              }
           }
+@@ -98,6 +_,7 @@
+ 
+       public ShapelessRecipe m_8005_(ResourceLocation p_44293_, FriendlyByteBuf p_44294_) {
+          String s = p_44294_.m_130277_();
++         String c = p_44294_.m_130277_();
+          int i = p_44294_.m_130242_();
+          NonNullList<Ingredient> nonnulllist = NonNullList.m_122780_(i, Ingredient.f_43901_);
+ 
+@@ -106,11 +_,16 @@
+          }
+ 
+          ItemStack itemstack = p_44294_.m_130267_();
+-         return new ShapelessRecipe(p_44293_, s, itemstack, nonnulllist);
++         return new ShapelessRecipe(p_44293_, s, itemstack, nonnulllist, net.minecraft.client.RecipeBookCategories.byLocation(new ResourceLocation(c)));
+       }
+ 
+       public void m_6178_(FriendlyByteBuf p_44281_, ShapelessRecipe p_44282_) {
+          p_44281_.m_130070_(p_44282_.f_44242_);
++         if (p_44282_.category.getLocation() != null) {
++            p_44281_.m_130070_(p_44282_.category.getLocation().toString());
++         } else {
++            p_44281_.m_130070_("");
++         }
+          p_44281_.m_130130_(p_44282_.f_44244_.size());
+ 
+          for(Ingredient ingredient : p_44282_.f_44244_) {

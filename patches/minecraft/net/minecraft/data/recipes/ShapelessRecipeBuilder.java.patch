@@ -1,0 +1,62 @@
+--- a/net/minecraft/data/recipes/ShapelessRecipeBuilder.java
++++ b/net/minecraft/data/recipes/ShapelessRecipeBuilder.java
+@@ -26,6 +_,8 @@
+    private final Advancement.Builder f_126176_ = Advancement.Builder.m_138353_();
+    @Nullable
+    private String f_126177_;
++   @Nullable
++   private net.minecraft.client.RecipeBookCategories category;
+ 
+    public ShapelessRecipeBuilder(ItemLike p_126180_, int p_126181_) {
+       this.f_126173_ = p_126180_.m_5456_();
+@@ -78,6 +_,11 @@
+       return this;
+    }
+ 
++   public ShapelessRecipeBuilder category(@Nullable net.minecraft.client.RecipeBookCategories category) {
++      this.category = category;
++      return this;
++   }
++
+    public Item m_142372_() {
+       return this.f_126173_;
+    }
+@@ -85,7 +_,7 @@
+    public void m_126140_(Consumer<FinishedRecipe> p_126205_, ResourceLocation p_126206_) {
+       this.m_126207_(p_126206_);
+       this.f_126176_.m_138396_(f_236353_).m_138386_("has_the_recipe", RecipeUnlockedTrigger.m_63728_(p_126206_)).m_138354_(AdvancementRewards.Builder.m_10009_(p_126206_)).m_138360_(RequirementsStrategy.f_15979_);
+-      p_126205_.accept(new ShapelessRecipeBuilder.Result(p_126206_, this.f_126173_, this.f_126174_, this.f_126177_ == null ? "" : this.f_126177_, this.f_126175_, this.f_126176_, new ResourceLocation(p_126206_.m_135827_(), "recipes/" + this.f_126173_.m_41471_().m_40783_() + "/" + p_126206_.m_135815_())));
++      p_126205_.accept(new ShapelessRecipeBuilder.Result(p_126206_, this.f_126173_, this.f_126174_, this.f_126177_ == null ? "" : this.f_126177_, this.category, this.f_126175_, this.f_126176_, new ResourceLocation(p_126206_.m_135827_(), "recipes/" + this.f_126173_.m_41471_().m_40783_() + "/" + p_126206_.m_135815_())));
+    }
+ 
+    private void m_126207_(ResourceLocation p_126208_) {
+@@ -99,15 +_,18 @@
+       private final Item f_126215_;
+       private final int f_126216_;
+       private final String f_126217_;
++      @Nullable
++      private final net.minecraft.client.RecipeBookCategories category;
+       private final List<Ingredient> f_126218_;
+       private final Advancement.Builder f_126219_;
+       private final ResourceLocation f_126220_;
+ 
+-      public Result(ResourceLocation p_126222_, Item p_126223_, int p_126224_, String p_126225_, List<Ingredient> p_126226_, Advancement.Builder p_126227_, ResourceLocation p_126228_) {
++      public Result(ResourceLocation p_126222_, Item p_126223_, int p_126224_, String p_126225_, @Nullable net.minecraft.client.RecipeBookCategories category, List<Ingredient> p_126226_, Advancement.Builder p_126227_, ResourceLocation p_126228_) {
+          this.f_126214_ = p_126222_;
+          this.f_126215_ = p_126223_;
+          this.f_126216_ = p_126224_;
+          this.f_126217_ = p_126225_;
++         this.category = category;
+          this.f_126218_ = p_126226_;
+          this.f_126219_ = p_126227_;
+          this.f_126220_ = p_126228_;
+@@ -116,6 +_,9 @@
+       public void m_7917_(JsonObject p_126230_) {
+          if (!this.f_126217_.isEmpty()) {
+             p_126230_.addProperty("group", this.f_126217_);
++         }
++         if (this.category != null && this.category.getLocation() != null) {
++            p_126230_.addProperty("forge:category", this.category.getLocation().toString());
+          }
+ 
+          JsonArray jsonarray = new JsonArray();

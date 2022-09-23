@@ -1,24 +1,69 @@
 --- a/net/minecraft/client/RecipeBookCategories.java
 +++ b/net/minecraft/client/RecipeBookCategories.java
-@@ -12,7 +_,7 @@
+@@ -12,34 +_,46 @@
  import net.minecraftforge.api.distmarker.OnlyIn;
  
  @OnlyIn(Dist.CLIENT)
 -public enum RecipeBookCategories {
+-   CRAFTING_SEARCH(new ItemStack(Items.f_42522_)),
+-   CRAFTING_BUILDING_BLOCKS(new ItemStack(Blocks.f_50076_)),
+-   CRAFTING_REDSTONE(new ItemStack(Items.f_42451_)),
+-   CRAFTING_EQUIPMENT(new ItemStack(Items.f_42386_), new ItemStack(Items.f_42430_)),
+-   CRAFTING_MISC(new ItemStack(Items.f_42448_), new ItemStack(Items.f_42410_)),
+-   FURNACE_SEARCH(new ItemStack(Items.f_42522_)),
+-   FURNACE_FOOD(new ItemStack(Items.f_42485_)),
+-   FURNACE_BLOCKS(new ItemStack(Blocks.f_50069_)),
+-   FURNACE_MISC(new ItemStack(Items.f_42448_), new ItemStack(Items.f_42616_)),
+-   BLAST_FURNACE_SEARCH(new ItemStack(Items.f_42522_)),
+-   BLAST_FURNACE_BLOCKS(new ItemStack(Blocks.f_50173_)),
+-   BLAST_FURNACE_MISC(new ItemStack(Items.f_42384_), new ItemStack(Items.f_42478_)),
+-   SMOKER_SEARCH(new ItemStack(Items.f_42522_)),
+-   SMOKER_FOOD(new ItemStack(Items.f_42485_)),
 +public enum RecipeBookCategories implements net.minecraftforge.common.IExtensibleEnum {
-    CRAFTING_SEARCH(new ItemStack(Items.f_42522_)),
-    CRAFTING_BUILDING_BLOCKS(new ItemStack(Blocks.f_50076_)),
-    CRAFTING_REDSTONE(new ItemStack(Items.f_42451_)),
-@@ -36,7 +_,7 @@
++   CRAFTING_SEARCH(new net.minecraft.resources.ResourceLocation("crafting_search"), new ItemStack(Items.f_42522_)),
++   CRAFTING_BUILDING_BLOCKS(new net.minecraft.resources.ResourceLocation("crafting_building_blocks"), new ItemStack(Blocks.f_50076_)),
++   CRAFTING_REDSTONE(new net.minecraft.resources.ResourceLocation("crafting_redstone"), new ItemStack(Items.f_42451_)),
++   CRAFTING_EQUIPMENT(new net.minecraft.resources.ResourceLocation("crafting_equipment"), new ItemStack(Items.f_42386_), new ItemStack(Items.f_42430_)),
++   CRAFTING_MISC(new net.minecraft.resources.ResourceLocation("crafting_misc"), new ItemStack(Items.f_42448_), new ItemStack(Items.f_42410_)),
++   FURNACE_SEARCH(new net.minecraft.resources.ResourceLocation("furnace_search"), new ItemStack(Items.f_42522_)),
++   FURNACE_FOOD(new net.minecraft.resources.ResourceLocation("furnace_food"), new ItemStack(Items.f_42485_)),
++   FURNACE_BLOCKS(new net.minecraft.resources.ResourceLocation("furnace_blocks"), new ItemStack(Blocks.f_50069_)),
++   FURNACE_MISC(new net.minecraft.resources.ResourceLocation("furnace_misc"), new ItemStack(Items.f_42448_), new ItemStack(Items.f_42616_)),
++   BLAST_FURNACE_SEARCH(new net.minecraft.resources.ResourceLocation("blast_furnace_search"), new ItemStack(Items.f_42522_)),
++   BLAST_FURNACE_BLOCKS(new net.minecraft.resources.ResourceLocation("blast_furnace_blocks"), new ItemStack(Blocks.f_50173_)),
++   BLAST_FURNACE_MISC(new net.minecraft.resources.ResourceLocation("blast_furnace_misc"), new ItemStack(Items.f_42384_), new ItemStack(Items.f_42478_)),
++   SMOKER_SEARCH(new net.minecraft.resources.ResourceLocation("smoker_search"), new ItemStack(Items.f_42522_)),
++   SMOKER_FOOD(new net.minecraft.resources.ResourceLocation("smoker_food"), new ItemStack(Items.f_42485_)),
+    STONECUTTER(new ItemStack(Items.f_42021_)),
+    SMITHING(new ItemStack(Items.f_42481_)),
+    CAMPFIRE(new ItemStack(Items.f_42485_)),
+    UNKNOWN(new ItemStack(Items.f_42127_));
+ 
++   private static final Map<net.minecraft.resources.ResourceLocation, RecipeBookCategories> BY_LOCATION = java.util.Arrays.stream(values()).collect(java.util.stream.Collectors.toMap(RecipeBookCategories::getLocation, (map) -> {
++      return map;
++   }));
++
+    public static final List<RecipeBookCategories> f_92256_ = ImmutableList.of(SMOKER_SEARCH, SMOKER_FOOD);
     public static final List<RecipeBookCategories> f_92257_ = ImmutableList.of(BLAST_FURNACE_SEARCH, BLAST_FURNACE_BLOCKS, BLAST_FURNACE_MISC);
     public static final List<RecipeBookCategories> f_92258_ = ImmutableList.of(FURNACE_SEARCH, FURNACE_FOOD, FURNACE_BLOCKS, FURNACE_MISC);
     public static final List<RecipeBookCategories> f_92259_ = ImmutableList.of(CRAFTING_SEARCH, CRAFTING_EQUIPMENT, CRAFTING_BUILDING_BLOCKS, CRAFTING_MISC, CRAFTING_REDSTONE);
 -   public static final Map<RecipeBookCategories, List<RecipeBookCategories>> f_92260_ = ImmutableMap.of(CRAFTING_SEARCH, ImmutableList.of(CRAFTING_EQUIPMENT, CRAFTING_BUILDING_BLOCKS, CRAFTING_MISC, CRAFTING_REDSTONE), FURNACE_SEARCH, ImmutableList.of(FURNACE_FOOD, FURNACE_BLOCKS, FURNACE_MISC), BLAST_FURNACE_SEARCH, ImmutableList.of(BLAST_FURNACE_BLOCKS, BLAST_FURNACE_MISC), SMOKER_SEARCH, ImmutableList.of(SMOKER_FOOD));
 +   public static final Map<RecipeBookCategories, List<RecipeBookCategories>> f_92260_ = net.minecraftforge.client.RecipeBookManager.getAggregateCategories();
++   @javax.annotation.Nullable
++   private final net.minecraft.resources.ResourceLocation location;
     private final List<ItemStack> f_92261_;
  
     private RecipeBookCategories(ItemStack... p_92267_) {
-@@ -54,11 +_,15 @@
++      this.location = null;
++      this.f_92261_ = ImmutableList.copyOf(p_92267_);
++   }
++
++   private RecipeBookCategories(net.minecraft.resources.ResourceLocation location, ItemStack... p_92267_) {
++      this.location = location;
+       this.f_92261_ = ImmutableList.copyOf(p_92267_);
+    }
+ 
+@@ -54,11 +_,28 @@
           case SMOKER:
              return f_92256_;
           default:
@@ -27,8 +72,21 @@
        }
     }
  
++   @javax.annotation.Nullable
++   public net.minecraft.resources.ResourceLocation getLocation() {
++      return this.location;
++   }
++
     public List<ItemStack> m_92268_() {
        return this.f_92261_;
++   }
++
++   public static RecipeBookCategories byLocation(net.minecraft.resources.ResourceLocation location) {
++      return BY_LOCATION.getOrDefault(location, UNKNOWN);
++   }
++
++   public static RecipeBookCategories create(String name, net.minecraft.resources.ResourceLocation location, ItemStack... icons) {
++      throw new IllegalStateException("Enum not extended");
 +   }
 +
 +   public static RecipeBookCategories create(String name, ItemStack... icons) {
