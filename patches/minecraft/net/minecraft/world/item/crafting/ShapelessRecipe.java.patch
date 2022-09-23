@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/item/crafting/ShapelessRecipe.java
 +++ b/net/minecraft/world/item/crafting/ShapelessRecipe.java
-@@ -18,12 +_,17 @@
+@@ -18,12 +_,21 @@
     final String f_44242_;
     final ItemStack f_44243_;
     final NonNullList<Ingredient> f_44244_;
@@ -8,8 +8,11 @@
 +   @javax.annotation.Nullable
 +   private final ResourceLocation category;
  
--   public ShapelessRecipe(ResourceLocation p_44246_, String p_44247_, ItemStack p_44248_, NonNullList<Ingredient> p_44249_) {
-+   public ShapelessRecipe(ResourceLocation p_44246_, String p_44247_, ItemStack p_44248_, NonNullList<Ingredient> p_44249_, ResourceLocation category) {
+    public ShapelessRecipe(ResourceLocation p_44246_, String p_44247_, ItemStack p_44248_, NonNullList<Ingredient> p_44249_) {
++      this(p_44246_, p_44247_, p_44248_, p_44249_, null);
++   }
++
++   public ShapelessRecipe(ResourceLocation p_44246_, String p_44247_, ItemStack p_44248_, NonNullList<Ingredient> p_44249_, @javax.annotation.Nullable ResourceLocation category) {
        this.f_44241_ = p_44246_;
        this.f_44242_ = p_44247_;
        this.f_44243_ = p_44248_;

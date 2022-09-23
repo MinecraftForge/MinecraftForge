@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/item/crafting/ShapedRecipe.java
 +++ b/net/minecraft/world/item/crafting/ShapedRecipe.java
-@@ -21,21 +_,37 @@
+@@ -21,21 +_,41 @@
  import net.minecraft.world.item.Items;
  import net.minecraft.world.level.Level;
  
@@ -28,7 +28,10 @@
 +   @javax.annotation.Nullable
 +   private final ResourceLocation category;
  
--   public ShapedRecipe(ResourceLocation p_44153_, String p_44154_, int p_44155_, int p_44156_, NonNullList<Ingredient> p_44157_, ItemStack p_44158_) {
+    public ShapedRecipe(ResourceLocation p_44153_, String p_44154_, int p_44155_, int p_44156_, NonNullList<Ingredient> p_44157_, ItemStack p_44158_) {
++      this(p_44153_, p_44154_, p_44155_, p_44156_, p_44157_, p_44158_, null);
++   }
++
 +   public ShapedRecipe(ResourceLocation p_44153_, String p_44154_, int p_44155_, int p_44156_, NonNullList<Ingredient> p_44157_, ItemStack p_44158_, @javax.annotation.Nullable ResourceLocation category) {
        this.f_44150_ = p_44153_;
        this.f_44151_ = p_44154_;

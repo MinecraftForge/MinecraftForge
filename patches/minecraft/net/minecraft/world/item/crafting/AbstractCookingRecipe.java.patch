@@ -1,26 +1,25 @@
 --- a/net/minecraft/world/item/crafting/AbstractCookingRecipe.java
 +++ b/net/minecraft/world/item/crafting/AbstractCookingRecipe.java
-@@ -14,8 +_,10 @@
+@@ -14,8 +_,14 @@
     protected final ItemStack f_43730_;
     protected final float f_43731_;
     protected final int f_43732_;
 +   @javax.annotation.Nullable
 +   protected final ResourceLocation category;
  
--   public AbstractCookingRecipe(RecipeType<?> p_43734_, ResourceLocation p_43735_, String p_43736_, Ingredient p_43737_, ItemStack p_43738_, float p_43739_, int p_43740_) {
-+   public AbstractCookingRecipe(RecipeType<?> p_43734_, ResourceLocation p_43735_, String p_43736_, Ingredient p_43737_, ItemStack p_43738_, float p_43739_, int p_43740_, ResourceLocation category) {
+    public AbstractCookingRecipe(RecipeType<?> p_43734_, ResourceLocation p_43735_, String p_43736_, Ingredient p_43737_, ItemStack p_43738_, float p_43739_, int p_43740_) {
++      this(p_43734_, p_43735_, p_43736_, p_43737_, p_43738_, p_43739_, p_43740_, null);
++   }
++
++   public AbstractCookingRecipe(RecipeType<?> p_43734_, ResourceLocation p_43735_, String p_43736_, Ingredient p_43737_, ItemStack p_43738_, float p_43739_, int p_43740_, @javax.annotation.Nullable ResourceLocation category) {
        this.f_43726_ = p_43734_;
        this.f_43727_ = p_43735_;
        this.f_43728_ = p_43736_;
-@@ -23,6 +_,11 @@
+@@ -23,6 +_,7 @@
        this.f_43730_ = p_43738_;
        this.f_43731_ = p_43739_;
        this.f_43732_ = p_43740_;
 +      this.category = category;
-+   }
-+
-+   public AbstractCookingRecipe(RecipeType<?> p_43734_, ResourceLocation p_43735_, String p_43736_, Ingredient p_43737_, ItemStack p_43738_, float p_43739_, int p_43740_) {
-+      this(p_43734_, p_43735_, p_43736_, p_43737_, p_43738_, p_43739_, p_43740_, null);
     }
  
     public boolean m_5818_(Container p_43748_, Level p_43749_) {
