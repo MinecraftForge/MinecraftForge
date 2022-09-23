@@ -1,12 +1,6 @@
 --- a/net/minecraft/world/item/crafting/ShapelessRecipe.java
 +++ b/net/minecraft/world/item/crafting/ShapelessRecipe.java
-@@ -13,17 +_,22 @@
- import net.minecraft.world.item.ItemStack;
- import net.minecraft.world.level.Level;
- 
--public class ShapelessRecipe implements CraftingRecipe {
-+public class ShapelessRecipe implements CraftingRecipe, net.minecraftforge.common.crafting.IRecipeWithCategory {
-    private final ResourceLocation f_44241_;
+@@ -18,12 +_,17 @@
     final String f_44242_;
     final ItemStack f_44243_;
     final NonNullList<Ingredient> f_44244_;

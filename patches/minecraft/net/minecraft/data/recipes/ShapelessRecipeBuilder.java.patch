@@ -5,7 +5,7 @@
     @Nullable
     private String f_126177_;
 +   @Nullable
-+   private net.minecraft.client.RecipeBookCategories category;
++   private ResourceLocation category;
  
     public ShapelessRecipeBuilder(ItemLike p_126180_, int p_126181_) {
        this.f_126173_ = p_126180_.m_5456_();
@@ -13,7 +13,7 @@
        return this;
     }
  
-+   public ShapelessRecipeBuilder category(@Nullable net.minecraft.client.RecipeBookCategories category) {
++   public ShapelessRecipeBuilder category(@Nullable ResourceLocation category) {
 +      this.category = category;
 +      return this;
 +   }
@@ -35,13 +35,13 @@
        private final int f_126216_;
        private final String f_126217_;
 +      @Nullable
-+      private final net.minecraft.client.RecipeBookCategories category;
++      private final ResourceLocation category;
        private final List<Ingredient> f_126218_;
        private final Advancement.Builder f_126219_;
        private final ResourceLocation f_126220_;
  
 -      public Result(ResourceLocation p_126222_, Item p_126223_, int p_126224_, String p_126225_, List<Ingredient> p_126226_, Advancement.Builder p_126227_, ResourceLocation p_126228_) {
-+      public Result(ResourceLocation p_126222_, Item p_126223_, int p_126224_, String p_126225_, @Nullable net.minecraft.client.RecipeBookCategories category, List<Ingredient> p_126226_, Advancement.Builder p_126227_, ResourceLocation p_126228_) {
++      public Result(ResourceLocation p_126222_, Item p_126223_, int p_126224_, String p_126225_, @Nullable ResourceLocation category, List<Ingredient> p_126226_, Advancement.Builder p_126227_, ResourceLocation p_126228_) {
           this.f_126214_ = p_126222_;
           this.f_126215_ = p_126223_;
           this.f_126216_ = p_126224_;
@@ -55,8 +55,8 @@
           if (!this.f_126217_.isEmpty()) {
              p_126230_.addProperty("group", this.f_126217_);
 +         }
-+         if (this.category != null && this.category.getLocation() != null) {
-+            p_126230_.addProperty("forge:category", this.category.getLocation().toString());
++         if (this.category != null) {
++            p_126230_.addProperty("forge:category", this.category.toString());
           }
  
           JsonArray jsonarray = new JsonArray();

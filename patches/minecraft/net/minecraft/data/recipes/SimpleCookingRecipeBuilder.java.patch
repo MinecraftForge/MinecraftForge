@@ -5,7 +5,7 @@
     @Nullable
     private String f_126240_;
 +   @Nullable
-+   private net.minecraft.client.RecipeBookCategories category;
++   private ResourceLocation category;
     private final SimpleCookingSerializer<?> f_126241_;
  
     private SimpleCookingRecipeBuilder(ItemLike p_126243_, Ingredient p_126244_, float p_126245_, int p_126246_, SimpleCookingSerializer<?> p_126247_) {
@@ -13,7 +13,7 @@
        return this;
     }
  
-+   public SimpleCookingRecipeBuilder category(@Nullable net.minecraft.client.RecipeBookCategories category) {
++   public SimpleCookingRecipeBuilder category(@Nullable ResourceLocation category) {
 +      this.category = category;
 +      return this;
 +   }
@@ -35,7 +35,7 @@
        private final ResourceLocation f_126277_;
        private final String f_126278_;
 +      @Nullable
-+      private final net.minecraft.client.RecipeBookCategories category;
++      private final ResourceLocation category;
        private final Ingredient f_126279_;
        private final Item f_126280_;
        private final float f_126281_;
@@ -44,7 +44,7 @@
        private final RecipeSerializer<? extends AbstractCookingRecipe> f_126285_;
  
 -      public Result(ResourceLocation p_126287_, String p_126288_, Ingredient p_126289_, Item p_126290_, float p_126291_, int p_126292_, Advancement.Builder p_126293_, ResourceLocation p_126294_, RecipeSerializer<? extends AbstractCookingRecipe> p_126295_) {
-+      public Result(ResourceLocation p_126287_, String p_126288_, @Nullable net.minecraft.client.RecipeBookCategories category, Ingredient p_126289_, Item p_126290_, float p_126291_, int p_126292_, Advancement.Builder p_126293_, ResourceLocation p_126294_, RecipeSerializer<? extends AbstractCookingRecipe> p_126295_) {
++      public Result(ResourceLocation p_126287_, String p_126288_, @Nullable ResourceLocation category, Ingredient p_126289_, Item p_126290_, float p_126291_, int p_126292_, Advancement.Builder p_126293_, ResourceLocation p_126294_, RecipeSerializer<? extends AbstractCookingRecipe> p_126295_) {
           this.f_126277_ = p_126287_;
           this.f_126278_ = p_126288_;
 +         this.category = category;
@@ -56,8 +56,8 @@
           if (!this.f_126278_.isEmpty()) {
              p_126297_.addProperty("group", this.f_126278_);
 +         }
-+         if (this.category != null && this.category.getLocation() != null) {
-+            p_126297_.addProperty("forge:category", this.category.getLocation().toString());
++         if (this.category != null) {
++            p_126297_.addProperty("forge:category", this.category.toString());
           }
  
           p_126297_.add("ingredient", this.f_126279_.m_43942_());

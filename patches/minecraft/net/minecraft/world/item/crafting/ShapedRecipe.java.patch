@@ -5,7 +5,7 @@
  import net.minecraft.world.level.Level;
  
 -public class ShapedRecipe implements CraftingRecipe {
-+public class ShapedRecipe implements CraftingRecipe, net.minecraftforge.common.crafting.IShapedRecipe<CraftingContainer>, net.minecraftforge.common.crafting.IRecipeWithCategory {
++public class ShapedRecipe implements CraftingRecipe, net.minecraftforge.common.crafting.IShapedRecipe<CraftingContainer> {
 +   static int MAX_WIDTH = 3;
 +   static int MAX_HEIGHT = 3;
 +   /**

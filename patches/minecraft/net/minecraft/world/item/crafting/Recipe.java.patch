@@ -13,6 +13,18 @@
           }
        }
  
+@@ -42,6 +_,11 @@
+       return "";
+    }
+ 
++   @javax.annotation.Nullable
++   default ResourceLocation getCategory() {
++      return null;
++   }
++
+    default ItemStack m_8042_() {
+       return new ItemStack(Blocks.f_50091_);
+    }
 @@ -55,7 +_,7 @@
     default boolean m_142505_() {
        NonNullList<Ingredient> nonnulllist = this.m_7527_();

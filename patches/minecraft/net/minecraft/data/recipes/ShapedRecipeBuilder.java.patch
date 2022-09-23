@@ -5,7 +5,7 @@
     @Nullable
     private String f_126111_;
 +   @Nullable
-+   private net.minecraft.client.RecipeBookCategories category;
++   private ResourceLocation category;
  
     public ShapedRecipeBuilder(ItemLike p_126114_, int p_126115_) {
        this.f_126106_ = p_126114_.m_5456_();
@@ -13,7 +13,7 @@
        return this;
     }
  
-+   public ShapedRecipeBuilder category(@Nullable net.minecraft.client.RecipeBookCategories category) {
++   public ShapedRecipeBuilder category(@Nullable ResourceLocation category) {
 +      this.category = category;
 +      return this;
 +   }
@@ -35,14 +35,14 @@
        private final int f_126150_;
        private final String f_126151_;
 +      @Nullable
-+      private final net.minecraft.client.RecipeBookCategories category;
++      private final ResourceLocation category;
        private final List<String> f_126152_;
        private final Map<Character, Ingredient> f_126153_;
        private final Advancement.Builder f_126154_;
        private final ResourceLocation f_126155_;
  
 -      public Result(ResourceLocation p_176754_, Item p_176755_, int p_176756_, String p_176757_, List<String> p_176758_, Map<Character, Ingredient> p_176759_, Advancement.Builder p_176760_, ResourceLocation p_176761_) {
-+      public Result(ResourceLocation p_176754_, Item p_176755_, int p_176756_, String p_176757_, @Nullable net.minecraft.client.RecipeBookCategories category, List<String> p_176758_, Map<Character, Ingredient> p_176759_, Advancement.Builder p_176760_, ResourceLocation p_176761_) {
++      public Result(ResourceLocation p_176754_, Item p_176755_, int p_176756_, String p_176757_, @Nullable ResourceLocation category, List<String> p_176758_, Map<Character, Ingredient> p_176759_, Advancement.Builder p_176760_, ResourceLocation p_176761_) {
           this.f_126148_ = p_176754_;
           this.f_126149_ = p_176755_;
           this.f_126150_ = p_176756_;
@@ -56,8 +56,8 @@
           if (!this.f_126151_.isEmpty()) {
              p_126167_.addProperty("group", this.f_126151_);
 +         }
-+         if (this.category != null && this.category.getLocation() != null) {
-+            p_126167_.addProperty("forge:category", this.category.getLocation().toString());
++         if (this.category != null) {
++            p_126167_.addProperty("forge:category", this.category.toString());
           }
  
           JsonArray jsonarray = new JsonArray();

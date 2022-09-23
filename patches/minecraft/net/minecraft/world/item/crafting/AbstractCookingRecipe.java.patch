@@ -1,14 +1,5 @@
 --- a/net/minecraft/world/item/crafting/AbstractCookingRecipe.java
 +++ b/net/minecraft/world/item/crafting/AbstractCookingRecipe.java
-@@ -6,7 +_,7 @@
- import net.minecraft.world.item.ItemStack;
- import net.minecraft.world.level.Level;
- 
--public abstract class AbstractCookingRecipe implements Recipe<Container> {
-+public abstract class AbstractCookingRecipe implements Recipe<Container>, net.minecraftforge.common.crafting.IRecipeWithCategory {
-    protected final RecipeType<?> f_43726_;
-    protected final ResourceLocation f_43727_;
-    protected final String f_43728_;
 @@ -14,8 +_,10 @@
     protected final ItemStack f_43730_;
     protected final float f_43731_;
