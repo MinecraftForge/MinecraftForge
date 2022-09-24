@@ -4,7 +4,7 @@
        super(RecipeType.f_44108_, p_44460_, p_44461_, p_44462_, p_44463_, p_44464_, p_44465_);
     }
  
-+   public SmeltingRecipe(ResourceLocation p_44460_, String p_44461_, Ingredient p_44462_, ItemStack p_44463_, float p_44464_, int p_44465_, ResourceLocation category) {
++   public SmeltingRecipe(ResourceLocation p_44460_, String p_44461_, Ingredient p_44462_, ItemStack p_44463_, float p_44464_, int p_44465_, String category) {
 +      super(RecipeType.f_44108_, p_44460_, p_44461_, p_44462_, p_44463_, p_44464_, p_44465_, category);
 +   }
 +

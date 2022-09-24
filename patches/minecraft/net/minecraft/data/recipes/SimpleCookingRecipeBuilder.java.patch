@@ -5,7 +5,7 @@
     @Nullable
     private String f_126240_;
 +   @Nullable
-+   private ResourceLocation category;
++   private String category;
     private final SimpleCookingSerializer<?> f_126241_;
  
     private SimpleCookingRecipeBuilder(ItemLike p_126243_, Ingredient p_126244_, float p_126245_, int p_126246_, SimpleCookingSerializer<?> p_126247_) {
@@ -13,7 +13,7 @@
        return this;
     }
  
-+   public SimpleCookingRecipeBuilder category(@Nullable ResourceLocation category) {
++   public SimpleCookingRecipeBuilder category(@Nullable String category) {
 +      this.category = category;
 +      return this;
 +   }
@@ -26,16 +26,15 @@
        this.m_126265_(p_126264_);
        this.f_126239_.m_138396_(f_236353_).m_138386_("has_the_recipe", RecipeUnlockedTrigger.m_63728_(p_126264_)).m_138354_(AdvancementRewards.Builder.m_10009_(p_126264_)).m_138360_(RequirementsStrategy.f_15979_);
 -      p_126263_.accept(new SimpleCookingRecipeBuilder.Result(p_126264_, this.f_126240_ == null ? "" : this.f_126240_, this.f_126236_, this.f_126235_, this.f_126237_, this.f_126238_, this.f_126239_, new ResourceLocation(p_126264_.m_135827_(), "recipes/" + this.f_126235_.m_41471_().m_40783_() + "/" + p_126264_.m_135815_()), this.f_126241_));
-+      p_126263_.accept(new SimpleCookingRecipeBuilder.Result(p_126264_, this.f_126240_ == null ? "" : this.f_126240_, this.category, this.f_126236_, this.f_126235_, this.f_126237_, this.f_126238_, this.f_126239_, new ResourceLocation(p_126264_.m_135827_(), "recipes/" + this.f_126235_.m_41471_().m_40783_() + "/" + p_126264_.m_135815_()), this.f_126241_));
++      p_126263_.accept(new SimpleCookingRecipeBuilder.Result(p_126264_, this.f_126240_ == null ? "" : this.f_126240_, this.category == null ? "" : this.category, this.f_126236_, this.f_126235_, this.f_126237_, this.f_126238_, this.f_126239_, new ResourceLocation(p_126264_.m_135827_(), "recipes/" + this.f_126235_.m_41471_().m_40783_() + "/" + p_126264_.m_135815_()), this.f_126241_));
     }
  
     private void m_126265_(ResourceLocation p_126266_) {
-@@ -84,6 +_,8 @@
+@@ -84,6 +_,7 @@
     public static class Result implements FinishedRecipe {
        private final ResourceLocation f_126277_;
        private final String f_126278_;
-+      @Nullable
-+      private final ResourceLocation category;
++      private final String category;
        private final Ingredient f_126279_;
        private final Item f_126280_;
        private final float f_126281_;
@@ -44,7 +43,7 @@
        private final RecipeSerializer<? extends AbstractCookingRecipe> f_126285_;
  
 -      public Result(ResourceLocation p_126287_, String p_126288_, Ingredient p_126289_, Item p_126290_, float p_126291_, int p_126292_, Advancement.Builder p_126293_, ResourceLocation p_126294_, RecipeSerializer<? extends AbstractCookingRecipe> p_126295_) {
-+      public Result(ResourceLocation p_126287_, String p_126288_, @Nullable ResourceLocation category, Ingredient p_126289_, Item p_126290_, float p_126291_, int p_126292_, Advancement.Builder p_126293_, ResourceLocation p_126294_, RecipeSerializer<? extends AbstractCookingRecipe> p_126295_) {
++      public Result(ResourceLocation p_126287_, String p_126288_, String category, Ingredient p_126289_, Item p_126290_, float p_126291_, int p_126292_, Advancement.Builder p_126293_, ResourceLocation p_126294_, RecipeSerializer<? extends AbstractCookingRecipe> p_126295_) {
           this.f_126277_ = p_126287_;
           this.f_126278_ = p_126288_;
 +         this.category = category;
@@ -56,8 +55,8 @@
           if (!this.f_126278_.isEmpty()) {
              p_126297_.addProperty("group", this.f_126278_);
 +         }
-+         if (this.category != null) {
-+            p_126297_.addProperty("forge:category", this.category.toString());
++         if (!this.category.isEmpty()) {
++            p_126297_.addProperty("forge:category", this.category);
           }
  
           p_126297_.add("ingredient", this.f_126279_.m_43942_());

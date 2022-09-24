@@ -13,7 +13,7 @@
  
     private static RecipeBookCategories m_90646_(Recipe<?> p_90647_) {
        RecipeType<?> recipetype = p_90647_.m_6671_();
-+       if (p_90647_.getCategory() != null) {
++       if (!p_90647_.getCategory().isEmpty()) {
 +           RecipeBookCategories categoryFromRecipe = net.minecraft.client.RecipeBookCategories.byLocation(p_90647_.getCategory());
 +           if (categoryFromRecipe != RecipeBookCategories.UNKNOWN) {
 +               return categoryFromRecipe;

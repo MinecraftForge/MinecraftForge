@@ -1,18 +1,17 @@
 --- a/net/minecraft/world/item/crafting/ShapelessRecipe.java
 +++ b/net/minecraft/world/item/crafting/ShapelessRecipe.java
-@@ -18,12 +_,21 @@
+@@ -18,12 +_,20 @@
     final String f_44242_;
     final ItemStack f_44243_;
     final NonNullList<Ingredient> f_44244_;
 +   private final boolean isSimple;
-+   @javax.annotation.Nullable
-+   private final ResourceLocation category;
++   private final String category;
  
     public ShapelessRecipe(ResourceLocation p_44246_, String p_44247_, ItemStack p_44248_, NonNullList<Ingredient> p_44249_) {
 +      this(p_44246_, p_44247_, p_44248_, p_44249_, null);
 +   }
 +
-+   public ShapelessRecipe(ResourceLocation p_44246_, String p_44247_, ItemStack p_44248_, NonNullList<Ingredient> p_44249_, @javax.annotation.Nullable ResourceLocation category) {
++   public ShapelessRecipe(ResourceLocation p_44246_, String p_44247_, ItemStack p_44248_, NonNullList<Ingredient> p_44249_, String category) {
        this.f_44241_ = p_44246_;
        this.f_44242_ = p_44247_;
        this.f_44243_ = p_44248_;
@@ -22,12 +21,11 @@
     }
  
     public ResourceLocation m_6423_() {
-@@ -38,6 +_,11 @@
+@@ -38,6 +_,10 @@
        return this.f_44242_;
     }
  
-+   @javax.annotation.Nullable
-+   public ResourceLocation getCategory() {
++   public String getCategory() {
 +      return this.category;
 +   }
 +
@@ -74,7 +72,7 @@
           } else {
              ItemStack itemstack = ShapedRecipe.m_151274_(GsonHelper.m_13930_(p_44291_, "result"));
 -            return new ShapelessRecipe(p_44290_, s, itemstack, nonnulllist);
-+            return new ShapelessRecipe(p_44290_, s, itemstack, nonnulllist, c.isEmpty() ? null : new ResourceLocation(c));
++            return new ShapelessRecipe(p_44290_, s, itemstack, nonnulllist, c);
           }
        }
  
@@ -95,21 +93,17 @@
           int i = p_44294_.m_130242_();
           NonNullList<Ingredient> nonnulllist = NonNullList.m_122780_(i, Ingredient.f_43901_);
  
-@@ -106,11 +_,16 @@
+@@ -106,11 +_,12 @@
           }
  
           ItemStack itemstack = p_44294_.m_130267_();
 -         return new ShapelessRecipe(p_44293_, s, itemstack, nonnulllist);
-+         return new ShapelessRecipe(p_44293_, s, itemstack, nonnulllist, c.isEmpty() ? null : new ResourceLocation(c));
++         return new ShapelessRecipe(p_44293_, s, itemstack, nonnulllist, c);
        }
  
        public void m_6178_(FriendlyByteBuf p_44281_, ShapelessRecipe p_44282_) {
           p_44281_.m_130070_(p_44282_.f_44242_);
-+         if (p_44282_.category != null) {
-+            p_44281_.m_130070_(p_44282_.category.toString());
-+         } else {
-+            p_44281_.m_130070_("");
-+         }
++         p_44281_.m_130070_(p_44282_.category);
           p_44281_.m_130130_(p_44282_.f_44244_.size());
  
           for(Ingredient ingredient : p_44282_.f_44244_) {

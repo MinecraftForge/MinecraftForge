@@ -13,13 +13,12 @@
           }
        }
  
-@@ -42,6 +_,11 @@
+@@ -42,6 +_,10 @@
        return "";
     }
  
-+   @javax.annotation.Nullable
-+   default ResourceLocation getCategory() {
-+      return null;
++   default String getCategory() {
++      return "";
 +   }
 +
     default ItemStack m_8042_() {

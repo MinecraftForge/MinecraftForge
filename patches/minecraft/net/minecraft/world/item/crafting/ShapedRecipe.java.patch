@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/item/crafting/ShapedRecipe.java
 +++ b/net/minecraft/world/item/crafting/ShapedRecipe.java
-@@ -21,21 +_,41 @@
+@@ -21,21 +_,40 @@
  import net.minecraft.world.item.Items;
  import net.minecraft.world.level.Level;
  
@@ -25,14 +25,13 @@
     final ItemStack f_44149_;
     private final ResourceLocation f_44150_;
     final String f_44151_;
-+   @javax.annotation.Nullable
-+   private final ResourceLocation category;
++   private final String category;
  
     public ShapedRecipe(ResourceLocation p_44153_, String p_44154_, int p_44155_, int p_44156_, NonNullList<Ingredient> p_44157_, ItemStack p_44158_) {
 +      this(p_44153_, p_44154_, p_44155_, p_44156_, p_44157_, p_44158_, null);
 +   }
 +
-+   public ShapedRecipe(ResourceLocation p_44153_, String p_44154_, int p_44155_, int p_44156_, NonNullList<Ingredient> p_44157_, ItemStack p_44158_, @javax.annotation.Nullable ResourceLocation category) {
++   public ShapedRecipe(ResourceLocation p_44153_, String p_44154_, int p_44155_, int p_44156_, NonNullList<Ingredient> p_44157_, ItemStack p_44158_, String category) {
        this.f_44150_ = p_44153_;
        this.f_44151_ = p_44154_;
        this.f_44146_ = p_44155_;
@@ -43,12 +42,11 @@
     }
  
     public ResourceLocation m_6423_() {
-@@ -50,6 +_,11 @@
+@@ -50,6 +_,10 @@
        return this.f_44151_;
     }
  
-+   @javax.annotation.Nullable
-+   public ResourceLocation getCategory() {
++   public String getCategory() {
 +      return this.category;
 +   }
 +
@@ -139,7 +137,7 @@
           NonNullList<Ingredient> nonnulllist = ShapedRecipe.m_44202_(astring, map, i, j);
           ItemStack itemstack = ShapedRecipe.m_151274_(GsonHelper.m_13930_(p_44237_, "result"));
 -         return new ShapedRecipe(p_44236_, s, i, j, nonnulllist, itemstack);
-+         return new ShapedRecipe(p_44236_, s, i, j, nonnulllist, itemstack, c.isEmpty() ? null : new ResourceLocation(c));
++         return new ShapedRecipe(p_44236_, s, i, j, nonnulllist, itemstack, c);
        }
  
        public ShapedRecipe m_8005_(ResourceLocation p_44239_, FriendlyByteBuf p_44240_) {
@@ -150,23 +148,19 @@
           NonNullList<Ingredient> nonnulllist = NonNullList.m_122780_(i * j, Ingredient.f_43901_);
  
           for(int k = 0; k < nonnulllist.size(); ++k) {
-@@ -291,13 +_,18 @@
+@@ -291,13 +_,14 @@
           }
  
           ItemStack itemstack = p_44240_.m_130267_();
 -         return new ShapedRecipe(p_44239_, s, i, j, nonnulllist, itemstack);
-+         return new ShapedRecipe(p_44239_, s, i, j, nonnulllist, itemstack, c.isEmpty() ? null : new ResourceLocation(c));
++         return new ShapedRecipe(p_44239_, s, i, j, nonnulllist, itemstack, c);
        }
  
        public void m_6178_(FriendlyByteBuf p_44227_, ShapedRecipe p_44228_) {
           p_44227_.m_130130_(p_44228_.f_44146_);
           p_44227_.m_130130_(p_44228_.f_44147_);
           p_44227_.m_130070_(p_44228_.f_44151_);
-+         if (p_44228_.category != null) {
-+            p_44227_.m_130070_(p_44228_.category.toString());
-+         } else {
-+            p_44227_.m_130070_("");
-+         }
++         p_44227_.m_130070_(p_44228_.category);
  
           for(Ingredient ingredient : p_44228_.f_44148_) {
              ingredient.m_43923_(p_44227_);

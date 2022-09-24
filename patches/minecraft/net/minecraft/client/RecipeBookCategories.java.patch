@@ -9,11 +9,11 @@
     CRAFTING_SEARCH(new ItemStack(Items.f_42522_)),
     CRAFTING_BUILDING_BLOCKS(new ItemStack(Blocks.f_50076_)),
     CRAFTING_REDSTONE(new ItemStack(Items.f_42451_)),
-@@ -32,14 +_,25 @@
+@@ -32,14 +_,29 @@
     CAMPFIRE(new ItemStack(Items.f_42485_)),
     UNKNOWN(new ItemStack(Items.f_42127_));
  
-+   private static final Map<net.minecraft.resources.ResourceLocation, RecipeBookCategories> BY_LOCATION = java.util.Arrays.stream(values()).collect(java.util.stream.Collectors.toMap(RecipeBookCategories::getLocation, (map) -> {
++   private static final Map<String, RecipeBookCategories> BY_LOCATION = java.util.Arrays.stream(values()).collect(java.util.stream.Collectors.toMap(RecipeBookCategories::getLocation, (map) -> {
 +      return map;
 +   }));
 +
@@ -23,15 +23,19 @@
     public static final List<RecipeBookCategories> f_92259_ = ImmutableList.of(CRAFTING_SEARCH, CRAFTING_EQUIPMENT, CRAFTING_BUILDING_BLOCKS, CRAFTING_MISC, CRAFTING_REDSTONE);
 -   public static final Map<RecipeBookCategories, List<RecipeBookCategories>> f_92260_ = ImmutableMap.of(CRAFTING_SEARCH, ImmutableList.of(CRAFTING_EQUIPMENT, CRAFTING_BUILDING_BLOCKS, CRAFTING_MISC, CRAFTING_REDSTONE), FURNACE_SEARCH, ImmutableList.of(FURNACE_FOOD, FURNACE_BLOCKS, FURNACE_MISC), BLAST_FURNACE_SEARCH, ImmutableList.of(BLAST_FURNACE_BLOCKS, BLAST_FURNACE_MISC), SMOKER_SEARCH, ImmutableList.of(SMOKER_FOOD));
 +   public static final Map<RecipeBookCategories, List<RecipeBookCategories>> f_92260_ = net.minecraftforge.client.RecipeBookManager.getAggregateCategories();
-+   private final net.minecraft.resources.ResourceLocation location;
++   private final String location;
     private final List<ItemStack> f_92261_;
  
     private RecipeBookCategories(ItemStack... p_92267_) {
-+      this.location = new net.minecraft.resources.ResourceLocation(this.name().toLowerCase(java.util.Locale.ROOT));
++      this.location = new net.minecraft.resources.ResourceLocation(this.name().toLowerCase(java.util.Locale.ROOT)).toString();
 +      this.f_92261_ = ImmutableList.copyOf(p_92267_);
 +   }
 +
 +   private RecipeBookCategories(net.minecraft.resources.ResourceLocation location, ItemStack... p_92267_) {
++      this(location.toString(), p_92267_);
++   }
++
++   private RecipeBookCategories(String location, ItemStack... p_92267_) {
 +      this.location = location;
        this.f_92261_ = ImmutableList.copyOf(p_92267_);
     }
@@ -45,7 +49,7 @@
        }
     }
  
-+   public net.minecraft.resources.ResourceLocation getLocation() {
++   public String getLocation() {
 +      return this.location;
 +   }
 +
@@ -53,11 +57,11 @@
        return this.f_92261_;
 +   }
 +
-+   public static RecipeBookCategories byLocation(net.minecraft.resources.ResourceLocation location) {
++   public static RecipeBookCategories byLocation(String location) {
 +      return BY_LOCATION.getOrDefault(location, UNKNOWN);
 +   }
 +
-+   public static RecipeBookCategories create(String name, net.minecraft.resources.ResourceLocation location, ItemStack... icons) {
++   public static RecipeBookCategories create(String name, String location, ItemStack... icons) {
 +      throw new IllegalStateException("Enum not extended");
 +   }
 +

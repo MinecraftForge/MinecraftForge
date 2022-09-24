@@ -5,7 +5,7 @@
     @Nullable
     private String f_126111_;
 +   @Nullable
-+   private ResourceLocation category;
++   private String category;
  
     public ShapedRecipeBuilder(ItemLike p_126114_, int p_126115_) {
        this.f_126106_ = p_126114_.m_5456_();
@@ -13,7 +13,7 @@
        return this;
     }
  
-+   public ShapedRecipeBuilder category(@Nullable ResourceLocation category) {
++   public ShapedRecipeBuilder category(@Nullable String category) {
 +      this.category = category;
 +      return this;
 +   }
@@ -26,23 +26,22 @@
        this.m_126143_(p_126142_);
        this.f_126110_.m_138396_(f_236353_).m_138386_("has_the_recipe", RecipeUnlockedTrigger.m_63728_(p_126142_)).m_138354_(AdvancementRewards.Builder.m_10009_(p_126142_)).m_138360_(RequirementsStrategy.f_15979_);
 -      p_126141_.accept(new ShapedRecipeBuilder.Result(p_126142_, this.f_126106_, this.f_126107_, this.f_126111_ == null ? "" : this.f_126111_, this.f_126108_, this.f_126109_, this.f_126110_, new ResourceLocation(p_126142_.m_135827_(), "recipes/" + this.f_126106_.m_41471_().m_40783_() + "/" + p_126142_.m_135815_())));
-+      p_126141_.accept(new ShapedRecipeBuilder.Result(p_126142_, this.f_126106_, this.f_126107_, this.f_126111_ == null ? "" : this.f_126111_, this.category, this.f_126108_, this.f_126109_, this.f_126110_, new ResourceLocation(p_126142_.m_135827_(), "recipes/" + this.f_126106_.m_41471_().m_40783_() + "/" + p_126142_.m_135815_())));
++      p_126141_.accept(new ShapedRecipeBuilder.Result(p_126142_, this.f_126106_, this.f_126107_, this.f_126111_ == null ? "" : this.f_126111_, this.category == null ? "" : this.category, this.f_126108_, this.f_126109_, this.f_126110_, new ResourceLocation(p_126142_.m_135827_(), "recipes/" + this.f_126106_.m_41471_().m_40783_() + "/" + p_126142_.m_135815_())));
     }
  
     private void m_126143_(ResourceLocation p_126144_) {
-@@ -126,16 +_,19 @@
+@@ -126,16 +_,18 @@
        private final Item f_126149_;
        private final int f_126150_;
        private final String f_126151_;
-+      @Nullable
-+      private final ResourceLocation category;
++      private final String category;
        private final List<String> f_126152_;
        private final Map<Character, Ingredient> f_126153_;
        private final Advancement.Builder f_126154_;
        private final ResourceLocation f_126155_;
  
 -      public Result(ResourceLocation p_176754_, Item p_176755_, int p_176756_, String p_176757_, List<String> p_176758_, Map<Character, Ingredient> p_176759_, Advancement.Builder p_176760_, ResourceLocation p_176761_) {
-+      public Result(ResourceLocation p_176754_, Item p_176755_, int p_176756_, String p_176757_, @Nullable ResourceLocation category, List<String> p_176758_, Map<Character, Ingredient> p_176759_, Advancement.Builder p_176760_, ResourceLocation p_176761_) {
++      public Result(ResourceLocation p_176754_, Item p_176755_, int p_176756_, String p_176757_, String category, List<String> p_176758_, Map<Character, Ingredient> p_176759_, Advancement.Builder p_176760_, ResourceLocation p_176761_) {
           this.f_126148_ = p_176754_;
           this.f_126149_ = p_176755_;
           this.f_126150_ = p_176756_;
@@ -56,8 +55,8 @@
           if (!this.f_126151_.isEmpty()) {
              p_126167_.addProperty("group", this.f_126151_);
 +         }
-+         if (this.category != null) {
-+            p_126167_.addProperty("forge:category", this.category.toString());
++         if (!this.category.isEmpty()) {
++            p_126167_.addProperty("forge:category", this.category);
           }
  
           JsonArray jsonarray = new JsonArray();
