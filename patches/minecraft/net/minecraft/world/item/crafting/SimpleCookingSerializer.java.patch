@@ -1,7 +1,14 @@
 --- a/net/minecraft/world/item/crafting/SimpleCookingSerializer.java
 +++ b/net/minecraft/world/item/crafting/SimpleCookingSerializer.java
-@@ -19,29 +_,42 @@
+@@ -17,35 +_,65 @@
+       this.f_44328_ = p_44330_;
+    }
  
++   public SimpleCookingSerializer(SimpleCookingSerializer.ForgeCookieBaker<T> p_44330_, int p_44331_) {
++      this.f_44327_ = p_44331_;
++      this.f_44328_ = p_44330_;
++   }
++
     public T m_6729_(ResourceLocation p_44347_, JsonObject p_44348_) {
        String s = GsonHelper.m_13851_(p_44348_, "group", "");
 +      String c = GsonHelper.m_13851_(p_44348_, "forge:category", "");
@@ -22,7 +29,11 @@
        float f = GsonHelper.m_13820_(p_44348_, "experience", 0.0F);
        int i = GsonHelper.m_13824_(p_44348_, "cookingtime", this.f_44327_);
 -      return this.f_44328_.m_44352_(p_44347_, s, ingredient, itemstack, f, i);
-+      return this.f_44328_.create(p_44347_, s, ingredient, itemstack, f, i, new ResourceLocation(c));
++      if (this.f_44328_ instanceof SimpleCookingSerializer.ForgeCookieBaker<T>) {
++         return ((SimpleCookingSerializer.ForgeCookieBaker<T>) this.f_44328_).create(p_44347_, s, ingredient, itemstack, f, i, c.isEmpty() ? null : new ResourceLocation(c));
++      } else {
++         return this.f_44328_.m_44352_(p_44347_, s, ingredient, itemstack, f, i);
++      }
     }
  
     public T m_8005_(ResourceLocation p_44350_, FriendlyByteBuf p_44351_) {
@@ -33,7 +44,11 @@
        float f = p_44351_.readFloat();
        int i = p_44351_.m_130242_();
 -      return this.f_44328_.m_44352_(p_44350_, s, ingredient, itemstack, f, i);
-+      return this.f_44328_.create(p_44350_, s, ingredient, itemstack, f, i, new ResourceLocation(c));
++      if (this.f_44328_ instanceof SimpleCookingSerializer.ForgeCookieBaker<T>) {
++         return ((SimpleCookingSerializer.ForgeCookieBaker<T>) this.f_44328_).create(p_44350_, s, ingredient, itemstack, f, i, c.isEmpty() ? null : new ResourceLocation(c));
++      } else {
++         return this.f_44328_.m_44352_(p_44350_, s, ingredient, itemstack, f, i);
++      }
     }
  
     public void m_6178_(FriendlyByteBuf p_44335_, T p_44336_) {
@@ -46,11 +61,11 @@
        p_44336_.f_43729_.m_43923_(p_44335_);
        p_44335_.m_130055_(p_44336_.f_43730_);
        p_44335_.writeFloat(p_44336_.f_43731_);
-@@ -49,6 +_,6 @@
+       p_44335_.m_130130_(p_44336_.f_43732_);
++   }
++
++   interface ForgeCookieBaker<T extends AbstractCookingRecipe> extends CookieBaker<T> {
++      T create(ResourceLocation p_44353_, String p_44354_, Ingredient p_44355_, ItemStack p_44356_, float p_44357_, int p_44358_, @javax.annotation.Nullable ResourceLocation category);
     }
  
     interface CookieBaker<T extends AbstractCookingRecipe> {
--      T m_44352_(ResourceLocation p_44353_, String p_44354_, Ingredient p_44355_, ItemStack p_44356_, float p_44357_, int p_44358_);
-+      T create(ResourceLocation p_44353_, String p_44354_, Ingredient p_44355_, ItemStack p_44356_, float p_44357_, int p_44358_, ResourceLocation category);
-    }
- }

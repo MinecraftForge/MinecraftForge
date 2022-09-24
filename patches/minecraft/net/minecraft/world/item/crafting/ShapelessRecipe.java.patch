@@ -74,7 +74,7 @@
           } else {
              ItemStack itemstack = ShapedRecipe.m_151274_(GsonHelper.m_13930_(p_44291_, "result"));
 -            return new ShapelessRecipe(p_44290_, s, itemstack, nonnulllist);
-+            return new ShapelessRecipe(p_44290_, s, itemstack, nonnulllist, new ResourceLocation(c));
++            return new ShapelessRecipe(p_44290_, s, itemstack, nonnulllist, c.isEmpty() ? null : new ResourceLocation(c));
           }
        }
  
@@ -100,7 +100,7 @@
  
           ItemStack itemstack = p_44294_.m_130267_();
 -         return new ShapelessRecipe(p_44293_, s, itemstack, nonnulllist);
-+         return new ShapelessRecipe(p_44293_, s, itemstack, nonnulllist, new ResourceLocation(c));
++         return new ShapelessRecipe(p_44293_, s, itemstack, nonnulllist, c.isEmpty() ? null : new ResourceLocation(c));
        }
  
        public void m_6178_(FriendlyByteBuf p_44281_, ShapelessRecipe p_44282_) {

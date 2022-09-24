@@ -139,7 +139,7 @@
           NonNullList<Ingredient> nonnulllist = ShapedRecipe.m_44202_(astring, map, i, j);
           ItemStack itemstack = ShapedRecipe.m_151274_(GsonHelper.m_13930_(p_44237_, "result"));
 -         return new ShapedRecipe(p_44236_, s, i, j, nonnulllist, itemstack);
-+         return new ShapedRecipe(p_44236_, s, i, j, nonnulllist, itemstack, new ResourceLocation(c));
++         return new ShapedRecipe(p_44236_, s, i, j, nonnulllist, itemstack, c.isEmpty() ? null : new ResourceLocation(c));
        }
  
        public ShapedRecipe m_8005_(ResourceLocation p_44239_, FriendlyByteBuf p_44240_) {
@@ -155,7 +155,7 @@
  
           ItemStack itemstack = p_44240_.m_130267_();
 -         return new ShapedRecipe(p_44239_, s, i, j, nonnulllist, itemstack);
-+         return new ShapedRecipe(p_44239_, s, i, j, nonnulllist, itemstack, new ResourceLocation(c));
++         return new ShapedRecipe(p_44239_, s, i, j, nonnulllist, itemstack, c.isEmpty() ? null : new ResourceLocation(c));
        }
  
        public void m_6178_(FriendlyByteBuf p_44227_, ShapedRecipe p_44228_) {
