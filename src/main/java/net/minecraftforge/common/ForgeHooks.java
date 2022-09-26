@@ -43,7 +43,6 @@ import net.minecraft.server.packs.PackType;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagEntry;
 import net.minecraft.tags.TagKey;
-import net.minecraft.tags.TagLoader;
 import net.minecraft.util.datafix.fixes.StructuresBecomeConfiguredFix;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.InteractionHand;
@@ -1180,9 +1179,7 @@ public class ForgeHooks
         return false;
     }
 
-    /** @deprecated Tags now use {@link net.minecraft.tags.TagFile} to load. Use {@link #removeTagEntries(List, List)} instead.
-     *  @see #removeTagEntries(List, List)
-     */
+    /** @deprecated No longer called by vanilla code or forge hook. */
     @Deprecated(forRemoval = true, since = "1.19.2")
     public static <T> void deserializeTagAdditions(List<TagEntry> list, JsonObject json, List<TagEntry> allList)
     {
@@ -1198,20 +1195,6 @@ public class ForgeHooks
                     dummy = TagEntry.tag(new ResourceLocation(s.substring(1)));
                 allList.removeIf(e -> e.equals(dummy));
             }
-        }
-    }
-    
-    /** Removes the tag entries specified in <code>list</code> from the list of tag entries to load specified by <code>allList</code>.
-     *
-     * @param list The list of tag entries to remove.
-     * @param allList The list of all loaded tag entries.
-     */
-    public static void removeTagEntries(List<TagEntry> list, List<TagLoader.EntryWithSource> allList)
-    {
-        for (TagEntry remove : list)
-        {
-            allList.removeIf(entry -> entry.entry().isTag() == remove.isTag()
-                    && entry.entry().getId().equals(remove.getId()));
         }
     }
 
