@@ -249,16 +249,6 @@ public class ResourceCacheManager
     }
 
     /**
-     * Functional callback interface to get a walkable stream of paths.
-     * Supports throwing {@link IOException} if the stream can not be created.
-     */
-    @FunctionalInterface
-    private interface PathWalkerFactory
-    {
-        Stream<Path> createWalkingStream(Path path) throws IOException;
-    }
-
-    /**
      * Record for the delegated namespaced manager map.
      *
      * @param packType  The pack type.
@@ -477,5 +467,15 @@ public class ResourceCacheManager
         {
             return cacheLoaded.get();
         }
+    }
+
+    /**
+     * Functional callback interface to get a walkable stream of paths.
+     * Supports throwing {@link IOException} if the stream can not be created.
+     */
+    @FunctionalInterface
+    private interface PathWalkerFactory
+    {
+        Stream<Path> createWalkingStream(Path path) throws IOException;
     }
 }
