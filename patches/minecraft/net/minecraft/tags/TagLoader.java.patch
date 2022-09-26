@@ -1,21 +1,108 @@
 --- a/net/minecraft/tags/TagLoader.java
 +++ b/net/minecraft/tags/TagLoader.java
-@@ -64,6 +_,9 @@
-                      list.clear();
-                   }
+@@ -66,7 +_,12 @@
  
-+                  // FORGE: remove entries which match the removal list
-+                  net.minecraftforge.common.ForgeHooks.removeTagEntries(tagfile.removeEntries(), list);
-+
                    String s1 = resource.m_215506_();
                    tagfile.f_215959_().forEach((p_215997_) -> {
-                      list.add(new TagLoader.EntryWithSource(p_215997_, s1));
-@@ -164,7 +_,7 @@
+-                     list.add(new TagLoader.EntryWithSource(p_215997_, s1));
++                     // FORGE: Specify this tag is being added
++                     list.add(new TagLoader.EntryWithSource(p_215997_, s1, true));
++                  });
++                  // FORGE: Add removed tags
++                  tagfile.removeEntries().forEach(entry1 -> {
++                     list.add(new TagLoader.EntryWithSource(entry1, s1, false));
+                   });
+                } catch (Throwable throwable1) {
+                   if (reader != null) {
+@@ -119,21 +_,30 @@
+ 
+    }
+ 
++   /** @deprecated Forge: Use {{@link #buildPair(net.minecraft.tags.TagEntry.Lookup, List)} instead. */
++   @Deprecated
+    private Either<Collection<TagLoader.EntryWithSource>, Collection<T>> m_215978_(TagEntry.Lookup<T> p_215979_, List<TagLoader.EntryWithSource> p_215980_) {
+-      ImmutableSet.Builder<T> builder = ImmutableSet.builder();
++      return buildSets(p_215979_, p_215980_).mapRight(p -> p.additive());
++   }
++
++   // FORGE: Build both the additive and subtractive sets for the given tags
++   private Either<Collection<TagLoader.EntryWithSource>, AdditiveSubtractiveSets<T>> buildSets(TagEntry.Lookup<T> lookup, List<TagLoader.EntryWithSource> entries) {
++      ImmutableSet.Builder<T> additive = ImmutableSet.builder();
++      ImmutableSet.Builder<T> subtractive = ImmutableSet.builder();
+       List<TagLoader.EntryWithSource> list = new ArrayList<>();
+ 
+-      for(TagLoader.EntryWithSource tagloader$entrywithsource : p_215980_) {
+-         if (!tagloader$entrywithsource.f_216042_().m_215927_(p_215979_, builder::add)) {
++      for(TagLoader.EntryWithSource tagloader$entrywithsource : entries) {
++         if (!tagloader$entrywithsource.f_216042_().m_215927_(lookup, tagloader$entrywithsource.additive() ? additive::add : subtractive::add)) {
+             list.add(tagloader$entrywithsource);
+          }
+       }
+ 
+-      return list.isEmpty() ? Either.right(builder.build()) : Either.left(list);
++      return list.isEmpty() ? Either.right(new AdditiveSubtractiveSets<>(additive.build(), subtractive.build())) : Either.left(list);
+    }
+ 
+    public Map<ResourceLocation, Collection<T>> m_203898_(Map<ResourceLocation, List<TagLoader.EntryWithSource>> p_203899_) {
+-      final Map<ResourceLocation, Collection<T>> map = Maps.newHashMap();
++      // FORGE: Store the full information provided from the private build method
++      final Map<ResourceLocation, AdditiveSubtractiveSets<T>> map = Maps.newHashMap();
+       TagEntry.Lookup<T> lookup = new TagEntry.Lookup<T>() {
+          @Nullable
+          public T m_213619_(ResourceLocation p_216039_) {
+@@ -142,7 +_,9 @@
+ 
+          @Nullable
+          public Collection<T> m_214048_(ResourceLocation p_216041_) {
+-            return map.get(p_216041_);
++            // FORGE: Only return the additive sets
++            if (map.get(p_216041_) == null) { return null; }
++            return map.get(p_216041_).additive();
+          }
+       };
+       Multimap<ResourceLocation, ResourceLocation> multimap = HashMultimap.create();
+@@ -163,23 +_,40 @@
+       Set<ResourceLocation> set = Sets.newHashSet();
        p_203899_.keySet().forEach((p_216008_) -> {
           m_144523_(p_203899_, multimap, set, p_216008_, (p_215984_, p_215985_) -> {
-             this.m_215978_(lookup, p_215985_).ifLeft((p_215977_) -> {
+-            this.m_215978_(lookup, p_215985_).ifLeft((p_215977_) -> {
 -               f_13445_.error("Couldn't load tag {} as it is missing following references: {}", p_215984_, p_215977_.stream().map(Objects::toString).collect(Collectors.joining(", ")));
++            this.buildSets(lookup, p_215985_).ifLeft((p_215977_) -> {
++               // FORGE: Log the references on separate lines for easier visibility
 +               f_13445_.error("Couldn't load tag {} as it is missing following references: {}", p_215977_, p_215977_.stream().map(Objects::toString).collect(Collectors.joining(", \n\t")));
              }).ifRight((p_216001_) -> {
                 map.put(p_215984_, p_216001_);
              });
+          });
+       });
+-      return map;
++
++      // FORGE: Build the final result based on the difference of the add and removal sets
++      final Map<ResourceLocation, Collection<T>> result = Maps.newHashMap();
++      map.forEach((rl, col) -> {
++         result.put(rl, Sets.difference(col.additive(), col.subtractive()).stream().collect(ImmutableSet.toImmutableSet()));
++      });
++
++      return result;
+    }
+ 
+    public Map<ResourceLocation, Collection<T>> m_203900_(ResourceManager p_203901_) {
+       return this.m_203898_(this.m_144495_(p_203901_));
+    }
+ 
+-   public static record EntryWithSource(TagEntry f_216042_, String f_216043_) {
++   // FORGE: Store whether this entry is in the additive or subtractive list
++   public static record EntryWithSource(TagEntry f_216042_, String f_216043_, boolean additive) {
++      /** @deprecated Forge: Use {@link #EntryWithSource(TagEntry, Source, boolean)} instead. */
++      @Deprecated
++      public EntryWithSource(TagEntry f_216042_, String f_216043_) {
++         this(f_216042_, f_216043_, true);
++      }
+       public String toString() {
+          return this.f_216042_ + " (from " + this.f_216043_ + ")";
+       }
+    }
++
++   // FORGE: Store the additive/subtractive sets in a wrapper for convenience
++   private static record AdditiveSubtractiveSets<T>(Set<T> additive, Set<T> subtractive) {}
+ }
