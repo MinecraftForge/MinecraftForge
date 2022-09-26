@@ -82,34 +82,34 @@ public class ForgeConfig {
     /**
      * General configuration that doesn't need to be synchronized but needs to be available before server startup
      */
-    @Deprecated(since = "1.19", forRemoval = true)
+    @Deprecated(since = "1.19.2", forRemoval = true)
     public static class Common {
-        @Deprecated(since = "1.19", forRemoval = true)
+        @Deprecated(since = "1.19.2", forRemoval = true)
         public final BooleanValue cachePackAccess;
-        @Deprecated(since = "1.19", forRemoval = true)
+        @Deprecated(since = "1.19.2", forRemoval = true)
         public final BooleanValue indexVanillaPackCachesOnThread;
-        @Deprecated(since = "1.19", forRemoval = true)
+        @Deprecated(since = "1.19.2", forRemoval = true)
         public final BooleanValue indexModPackCachesOnThread;
 
-        @Deprecated(since = "1.19", forRemoval = true)
+        @Deprecated(since = "1.19.2", forRemoval = true)
         Common(ForgeConfigSpec.Builder builder) {
-            builder.comment("[DEPRECATED]:General configuration settings")
+            builder.comment("[DEPRECATED / NO EFFECT]:General configuration settings")
                     .push("general");
 
             cachePackAccess = builder
-                    .comment("[DEPRECATED]:Set this to true to cache resource listings in resource and data packs")
+                    .comment("[DEPRECATED / NO EFFECT] [NOW IN BOOT CONFIG]:Set this to true to cache resource listings in resource and data packs")
                     .translation("forge.configgui.cachePackAccess")
                     .worldRestart()
                     .define("cachePackAccess", true);
 
             indexVanillaPackCachesOnThread = builder
-                    .comment("[DEPRECATED]:Set this to true to index vanilla resource and data packs on thread")
+                    .comment("[DEPRECATED / NO EFFECT] [NOW IN BOOT CONFIG]:Set this to true to index vanilla resource and data packs on thread")
                     .translation("forge.configgui.indexVanillaPackCachesOnThread")
                     .worldRestart()
                     .define("indexVanillaPackCachesOnThread", false);
 
             indexModPackCachesOnThread = builder
-                    .comment("[DEPRECATED]: Set this to true to index mod resource and data packs on thread")
+                    .comment("[DEPRECATED / NO EFFECT] [NOW IN BOOT CONFIG]: Set this to true to index mod resource and data packs on thread")
                     .translation("forge.configgui.indexModPackCachesOnThread")
                     .worldRestart()
                     .define("indexModPackCachesOnThread", false);
@@ -177,9 +177,9 @@ public class ForgeConfig {
     }
 
 
-    @Deprecated(since = "1.19", forRemoval = true)
+    @Deprecated(since = "1.19.2", forRemoval = true)
     static final ForgeConfigSpec commonSpec;
-    @Deprecated(since = "1.19", forRemoval = true)
+    @Deprecated(since = "1.19.2", forRemoval = true)
     public static final Common COMMON;
     static {
         //TODO: 1.20 remove this unless needed again.

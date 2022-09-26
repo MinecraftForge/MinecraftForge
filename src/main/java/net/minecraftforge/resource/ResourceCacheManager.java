@@ -26,7 +26,12 @@ import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -41,11 +46,12 @@ import java.util.stream.Stream;
  * This class handles caching the resource listing calls on a pack, pack type and namespace level.
  */
 @ApiStatus.Internal
-public class ResourceCacheManager {
+public class ResourceCacheManager
+{
     /**
      * Logging marker to handle the hiding of the entries from the debug file.
      */
-    private static final Marker RESOURCE_CACHE_MARKER = MarkerFactory.getMarker("RESOURCE-CACHE");
+    private static final Marker RESOURCE_CACHE = MarkerFactory.getMarker("RESOURCE-CACHE");
 
     /**
      * Indicates if the underlying namespaced managers need to support reloading.
@@ -73,27 +79,33 @@ public class ResourceCacheManager {
      * @param indexOffThreadConfig True to index the file-tree off-thread.
      * @param pathBuilder          The path builder to use.
      */
-    @Deprecated(since = "1.19", forRemoval = true)
-    public ResourceCacheManager(final boolean supportsReloading, final ForgeConfigSpec.BooleanValue indexOffThreadConfig, final BiFunction<PackType, String, Path> pathBuilder) {
+    @Deprecated(since = "1.19.2", forRemoval = true)
+    public ResourceCacheManager(final boolean supportsReloading, final ForgeConfigSpec.BooleanValue indexOffThreadConfig, final BiFunction<PackType, String, Path> pathBuilder)
+    {
         this.supportsReloading = supportsReloading;
         this.indexOnThreadConfigurationKey = Iterators.getLast(indexOffThreadConfig.getPath().iterator());
         this.pathBuilder = pathBuilder;
     }
 
-    public ResourceCacheManager(final boolean supportsReloading, final String indexOffThreadConfig, final BiFunction<PackType, String, Path> pathBuilder) {
+    public ResourceCacheManager(final boolean supportsReloading, final String indexOnThreadConfigurationKey, final BiFunction<PackType, String, Path> pathBuilder)
+    {
         this.supportsReloading = supportsReloading;
-        this.indexOnThreadConfigurationKey = indexOffThreadConfig;
+        this.indexOnThreadConfigurationKey = indexOnThreadConfigurationKey;
         this.pathBuilder = pathBuilder;
     }
 
-    public static boolean shouldUseCache() {
+    public static boolean shouldUseCache()
+    {
         return getConfigValue("cachePackAccess", true);
     }
 
-    private static boolean getConfigValue(final String configKey, final boolean defaultValue) {
+    private static boolean getConfigValue(final String configKey, final boolean defaultValue)
+    {
         final Path configPath = FMLPaths.CONFIGDIR.get().resolve("forge-resource-caching.toml");
-        if (!Files.exists(configPath)) {
-            try {
+        if (!Files.exists(configPath))
+        {
+            try
+            {
                 Files.write(configPath, ImmutableList.of(
                                 "# This TOML configuration file controls the resource caching system which is used before the mod loading environment starts.",
                                 "# This file is read by the Forge boot loader, and is not used by the game itself.",
@@ -108,21 +120,28 @@ public class ResourceCacheManager {
                                 "indexModPackCachesOnThread=false"
                         ),
                         StandardOpenOption.CREATE_NEW);
-            } catch (IOException e) {
+            }
+            catch (IOException e)
+            {
                 throw new RuntimeException("Failed to create the default boot configuration file.", e);
             }
         }
 
         final List<String> lines;
-        try {
+        try
+        {
             lines = Files.readAllLines(configPath);
-        } catch (IOException e) {
+        }
+        catch (IOException e)
+        {
             throw new RuntimeException("Failed to read the boot configuration file.", e);
         }
 
-        for (final String line : lines) {
+        for (final String line : lines)
+        {
             final String trimmedLine = line.trim().replace(" ", "");
-            if (trimmedLine.startsWith(configKey)) {
+            if (trimmedLine.startsWith("%s=".formatted(configKey))) //We look for key=value combindation in the trimmed
+            {
                 return Boolean.parseBoolean(trimmedLine.substring(trimmedLine.indexOf('=') + 1));
             }
         }
@@ -130,7 +149,8 @@ public class ResourceCacheManager {
         return defaultValue;
     }
 
-    public boolean shouldIndexOnThread() {
+    public boolean shouldIndexOnThread()
+    {
         return getConfigValue(this.indexOnThreadConfigurationKey, false);
     }
 
@@ -139,10 +159,13 @@ public class ResourceCacheManager {
      *
      * @param namespace The namespace to index.
      */
-    public void index(final String namespace) {
-        for (final PackType packType : PackType.values()) {
+    public void index(final String namespace)
+    {
+        for (final PackType packType : PackType.values())
+        {
             final PackTypeAndNamespace key = new PackTypeAndNamespace(packType, namespace); // Make a key.
-            if (managersByNamespace.containsKey(key) && !supportsReloading) { // If we do not support reloading we just skip this.
+            if (managersByNamespace.containsKey(key) && !supportsReloading) // If we do not support reloading we just skip this.
+            {
                 return;
             }
 
@@ -165,7 +188,8 @@ public class ResourceCacheManager {
      */
     @SuppressWarnings("resource")
     // We close this automatically later on when the result is actually used. This is just a factory.
-    private Stream<Path> createWalkingStream(final Path path) throws IOException {
+    private Stream<Path> createWalkingStream(final Path path) throws IOException
+    {
         return Files.walk(path)
                 .filter(resourcePath -> !resourcePath.toString().endsWith(".mcmeta"));
     }
@@ -179,12 +203,14 @@ public class ResourceCacheManager {
      * @param filter            The ternary filter to apply.
      * @return A collection of resource locations which match the given filter, have the input path as prefix, are in the right pack type and have the given namespace as namespace.
      */
-    public Collection<ResourceLocation> getResources(final PackType type, final String resourceNamespace, final Path inputPath, final Predicate<ResourceLocation> filter) {
+    public Collection<ResourceLocation> getResources(final PackType type, final String resourceNamespace, final Path inputPath, final Predicate<ResourceLocation> filter)
+    {
         final PackTypeAndNamespace key = new PackTypeAndNamespace(type, resourceNamespace);
         final NamespacedResourceCacheManager manager = managersByNamespace.get(key);
 
         // Check if we even have a cached manager with the given namespace, else return an empty collection.
-        if (manager == null) {
+        if (manager == null)
+        {
             return Collections.emptyList();
         }
 
@@ -200,7 +226,8 @@ public class ResourceCacheManager {
      * @param type The type of the pack to get the namespaces for.
      * @return The namespaces which are known for the given pack type.
      */
-    public Set<String> getNamespaces(final PackType type) {
+    public Set<String> getNamespaces(final PackType type)
+    {
         return managersByNamespace.keySet().stream()
                 .filter(key -> key.packType() == type)
                 .map(PackTypeAndNamespace::namespace)
@@ -214,7 +241,8 @@ public class ResourceCacheManager {
      * @param namespace The namespace to check.
      * @return True if the namespace is completely cached for the given pack type.
      */
-    public boolean hasCached(final PackType packType, final String namespace) {
+    public boolean hasCached(final PackType packType, final String namespace)
+    {
         final PackTypeAndNamespace key = new PackTypeAndNamespace(packType, namespace);
         final NamespacedResourceCacheManager manager = managersByNamespace.get(key);
         return manager != null && manager.cacheLoaded();
@@ -225,7 +253,8 @@ public class ResourceCacheManager {
      * Supports throwing {@link IOException} if the stream can not be created.
      */
     @FunctionalInterface
-    private interface PathWalkerFactory {
+    private interface PathWalkerFactory
+    {
         Stream<Path> createWalkingStream(Path path) throws IOException;
     }
 
@@ -235,7 +264,8 @@ public class ResourceCacheManager {
      * @param packType  The pack type.
      * @param namespace The namespace.
      */
-    private record PackTypeAndNamespace(PackType packType, String namespace) {
+    private record PackTypeAndNamespace(PackType packType, String namespace)
+    {
     }
 
     /**
@@ -247,13 +277,15 @@ public class ResourceCacheManager {
      * @param resourceLocation The resource location for the resource.
      */
     private record ResourceCacheEntry(PackType packType, String namespace, Path path,
-                                      ResourceLocation resourceLocation) {
+                                      ResourceLocation resourceLocation)
+    {
     }
 
     /**
      * A namespaced and pack type specific cache which the {@link ResourceCacheManager} can delegate the handling to.
      */
-    private static class NamespacedResourceCacheManager {
+    private static class NamespacedResourceCacheManager
+    {
         private static final Logger LOGGER = LogUtils.getLogger();
 
         /**
@@ -289,16 +321,17 @@ public class ResourceCacheManager {
         /**
          * Creates a new namespaced resource cache manager.
          *
-         * @param packType            The pack type that this manager handles.
-         * @param namespace           The namespace that this manager handles.
-         * @param shouldIndexOnThread True to enable indexing on-thread.
-         * @param pathBuilder         The path builder to use.
-         * @param pathFinder          The path walker stream factory to use.
+         * @param packType      The pack type that this manager handles.
+         * @param namespace     The namespace that this manager handles.
+         * @param indexOnThread True to enable indexing on-thread.
+         * @param pathBuilder   The path builder to use.
+         * @param pathFinder    The path walker stream factory to use.
          */
-        private NamespacedResourceCacheManager(final PackType packType, final String namespace, final boolean shouldIndexOnThread, BiFunction<PackType, String, Path> pathBuilder, final PathWalkerFactory pathFinder) {
+        private NamespacedResourceCacheManager(final PackType packType, final String namespace, final boolean indexOnThread, BiFunction<PackType, String, Path> pathBuilder, final PathWalkerFactory pathFinder)
+        {
             this.packType = packType;
             this.namespace = namespace;
-            this.indexOnThread = shouldIndexOnThread;
+            this.indexOnThread = indexOnThread;
             this.pathBuilder = pathBuilder;
             this.pathFinder = pathFinder;
         }
@@ -306,14 +339,18 @@ public class ResourceCacheManager {
         /**
          * Triggers indexing of this manager.
          */
-        public void index() {
-            if (!indexOnThread) {
+        public void index()
+        {
+            if (!indexOnThread)
+            {
                 // Run off-thread.
                 CompletableFuture.runAsync(
                         this::doIndex,
                         Util.backgroundExecutor()
                 );
-            } else {
+            }
+            else
+            {
                 // Run on-thread
                 doIndex();
             }
@@ -323,31 +360,42 @@ public class ResourceCacheManager {
          * Performs the actual indexing of this manager.
          * Can be invoked on- or off-thread.
          */
-        private void doIndex() {
-            LOGGER.debug(RESOURCE_CACHE_MARKER, "Indexing resources for pack type {} and namespace {}, on thread: {}", packType, namespace, Thread.currentThread().getName());
+        private void doIndex()
+        {
+            LOGGER.debug(RESOURCE_CACHE, "Indexing resources for pack type {} and namespace {}, on thread: {}", packType, namespace, Thread.currentThread().getName());
 
             // Get the path to the root of the namespace in the current pack.
             final Path rootPath = pathBuilder.apply(packType, namespace);
 
             // Stream element resource that combines a normalized path and a joined path using the "/" as separator.
-            record PathWithLocationPath(Path path, String locationPath) {
+            record PathWithLocationPath(Path path, String locationPath)
+            {
             }
 
             // Build a walkable stream, process it
-            try (final Stream<Path> paths = pathFinder.createWalkingStream(rootPath)) {
+            try (final Stream<Path> paths = pathFinder.createWalkingStream(rootPath))
+            {
                 paths.parallel() // Run the stream in parallel
                         .map(rootPath::relativize) // Relative to the given root.
                         .map(path -> new PathWithLocationPath(path, Joiner.on('/').join(path))) // Create a common hierarchy.
                         .filter(path -> ResourceLocation.isValidPath(path.locationPath())) // Only process valid paths
                         .map(path -> new ResourceCacheEntry(packType, namespace, path.path(), new ResourceLocation(namespace, path.locationPath()))) // Create a cache entry.
                         .forEach(this::injectIntoCache); // Inject the entry into the cache.
-            } catch (NoSuchFileException noSuchFileException) {
-                LOGGER.debug(RESOURCE_CACHE_MARKER, "Failed to cache resources, the directory does not exist!", noSuchFileException);
-            } catch (IOException ioException) {
-                LOGGER.error(RESOURCE_CACHE_MARKER, "Failed to cache resources, some stuff might be missing!", ioException);
-            } catch (Exception exception) {
-                LOGGER.error(RESOURCE_CACHE_MARKER, "Failed to cache resources, some stuff might be missing! Unknown exception!", exception);
-            } finally {
+            }
+            catch (NoSuchFileException noSuchFileException)
+            {
+                LOGGER.debug(RESOURCE_CACHE, "Failed to cache resources, the directory does not exist!", noSuchFileException);
+            }
+            catch (IOException ioException)
+            {
+                LOGGER.error(RESOURCE_CACHE, "Failed to cache resources, some stuff might be missing!", ioException);
+            }
+            catch (Exception exception)
+            {
+                LOGGER.error(RESOURCE_CACHE, "Failed to cache resources, some stuff might be missing! Unknown exception!", exception);
+            }
+            finally
+            {
                 cacheLoaded.set(true);
             }
         }
@@ -358,7 +406,8 @@ public class ResourceCacheManager {
          *
          * @param entry The entry to inject into the cache, must not be null.
          */
-        private void injectIntoCache(final ResourceCacheEntry entry) {
+        private void injectIntoCache(final ResourceCacheEntry entry)
+        {
             injectIntoCache(entry.path().getParent(), entry);
         }
 
@@ -368,12 +417,16 @@ public class ResourceCacheManager {
          * @param parentPath The parent path to inject into the cache, can be null. Null will be treated as the root path.
          * @param entry      The entry to inject into the cache, must not be null.
          */
-        private void injectIntoCache(@Nullable final Path parentPath, final ResourceCacheEntry entry) {
+        private void injectIntoCache(@Nullable final Path parentPath, final ResourceCacheEntry entry)
+        {
             String pathEntry;
-            if (parentPath == null) {
+            if (parentPath == null)
+            {
                 // We have null, generally this only happens on the root directory.
                 pathEntry = "";
-            } else {
+            }
+            else
+            {
                 // Use the parent paths, we can not depend on a toString call here, since we need the / as separator.
                 pathEntry = Joiner.on("/").join(parentPath);
             }
@@ -382,7 +435,8 @@ public class ResourceCacheManager {
             this.entriesByPathPrefix.computeIfAbsent(pathEntry, e -> new CopyOnWriteArrayList<>()).add(entry);
 
             // Recursively walk to the top, while preventing duplicate entries.
-            if (parentPath != null && !pathEntry.isEmpty()) {
+            if (parentPath != null && !pathEntry.isEmpty())
+            {
                 this.injectIntoCache(parentPath.getParent(), entry);
             }
         }
@@ -394,9 +448,11 @@ public class ResourceCacheManager {
          * @param filter    The filter which the resources must match.
          * @return A collection of resource location which match the given path prefix and who match the filter.
          */
-        public Collection<ResourceLocation> getResources(final Path inputPath, final Predicate<ResourceLocation> filter) {
+        public Collection<ResourceLocation> getResources(final Path inputPath, final Predicate<ResourceLocation> filter)
+        {
             // We only have a cache once the atomic flag has been set.
-            if (!cacheLoaded()) {
+            if (!cacheLoaded())
+            {
                 // We need to return a mutable object here because the callers actually mutate the collection.
                 return new ArrayList<>();
             }
@@ -417,7 +473,8 @@ public class ResourceCacheManager {
          *
          * @return True if the cache has been loaded, false otherwise.
          */
-        public boolean cacheLoaded() {
+        public boolean cacheLoaded()
+        {
             return cacheLoaded.get();
         }
     }
