@@ -5,13 +5,18 @@
 
 package net.minecraftforge.fml;
 
+import com.mojang.logging.LogUtils;
 import net.minecraftforge.fml.config.IConfigSpec;
 import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.fml.loading.FMLLoader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.function.Supplier;
 
 public class ModLoadingContext
 {
+    private static final Logger LOGGER = LogUtils.getLogger();
     private static final ThreadLocal<ModLoadingContext> context = ThreadLocal.withInitial(ModLoadingContext::new);
     private Object languageExtension;
     private ModLoadingStage stage;
@@ -46,10 +51,24 @@ public class ModLoadingContext
     }
 
     public void registerConfig(ModConfig.Type type, IConfigSpec<?> spec) {
+        if (spec.isEmpty())
+        {
+            // This handles the case where a mod tries to register a config, without any options configured inside it.
+            LOGGER.debug("Attempted to register an empty config for type {} on mod {}", type, getActiveContainer().getModId());
+            return;
+        }
+
         getActiveContainer().addConfig(new ModConfig(type, spec, getActiveContainer()));
     }
 
     public void registerConfig(ModConfig.Type type, IConfigSpec<?> spec, String fileName) {
+        if (spec.isEmpty())
+        {
+            // This handles the case where a mod tries to register a config, without any options configured inside it.
+            LOGGER.debug("Attempted to register an empty config for type {} on mod {} using file name {}", type, getActiveContainer().getModId(), fileName);
+            return;
+        }
+
         getActiveContainer().addConfig(new ModConfig(type, spec, getActiveContainer(), fileName));
     }
 

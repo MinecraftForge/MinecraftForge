@@ -82,7 +82,6 @@ public class ForgeConfig {
     /**
      * General configuration that doesn't need to be synchronized but needs to be available before server startup
      */
-    @Deprecated(since = "1.19.2", forRemoval = true)
     public static class Common {
         @Deprecated(since = "1.19.2", forRemoval = true)
         public final BooleanValue cachePackAccess;
@@ -91,7 +90,6 @@ public class ForgeConfig {
         @Deprecated(since = "1.19.2", forRemoval = true)
         public final BooleanValue indexModPackCachesOnThread;
 
-        @Deprecated(since = "1.19.2", forRemoval = true)
         Common(ForgeConfigSpec.Builder builder) {
             builder.comment("[DEPRECATED / NO EFFECT]:General configuration settings")
                     .push("general");
@@ -177,12 +175,9 @@ public class ForgeConfig {
     }
 
 
-    @Deprecated(since = "1.19.2", forRemoval = true)
     static final ForgeConfigSpec commonSpec;
-    @Deprecated(since = "1.19.2", forRemoval = true)
     public static final Common COMMON;
     static {
-        //TODO: 1.20 remove this unless needed again.
         final Pair<Common, ForgeConfigSpec> specPair = new ForgeConfigSpec.Builder().configure(Common::new);
         commonSpec = specPair.getRight();
         COMMON = specPair.getLeft();
