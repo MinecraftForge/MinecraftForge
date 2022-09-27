@@ -16,16 +16,21 @@ import net.minecraft.server.packs.PackType;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.fml.loading.FMLPaths;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
 import java.io.IOException;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.nio.file.WatchEvent;
+import java.nio.file.WatchKey;
+import java.nio.file.WatchService;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -35,10 +40,15 @@ import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiFunction;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static java.nio.file.StandardWatchEventKinds.ENTRY_CREATE;
+import static java.nio.file.StandardWatchEventKinds.ENTRY_DELETE;
+import static java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY;
 
 /**
  * Cache manager for resources.
@@ -94,64 +104,24 @@ public class ResourceCacheManager
         this.pathBuilder = pathBuilder;
     }
 
+    /**
+     * Indicates if the caching system is enabled or not.
+     *
+     * @return {@code true} if the caching system is enabled, {@code false} otherwise.
+     */
     public static boolean shouldUseCache()
     {
-        return getConfigValue("cachePackAccess", true);
+        return ResourceManagerBootCacheConfigurationHandler.getInstance().getConfigValue("cachePackAccess", true);
     }
 
-    private static boolean getConfigValue(final String configKey, final boolean defaultValue)
-    {
-        final Path configPath = FMLPaths.CONFIGDIR.get().resolve("forge-resource-caching.toml");
-        if (!Files.exists(configPath))
-        {
-            try
-            {
-                Files.write(configPath, ImmutableList.of(
-                                "# This TOML configuration file controls the resource caching system which is used before the mod loading environment starts.",
-                                "# This file is read by the Forge boot loader, and is not used by the game itself.",
-                                "#",
-                                "# Set this to false to disable the resource cache. This will cause the game to scan the resource packs everytime it needs a list of resources.",
-                                "cacheResources=true",
-                                "",
-                                "# Set this to false to forge the caching of vanilla resources to happen on the main thread.",
-                                "indexVanillaPackCachesOnThread=false",
-                                "",
-                                "# Set this to false to forge the caching of mod resources to happen on the main thread.",
-                                "indexModPackCachesOnThread=false"
-                        ),
-                        StandardOpenOption.CREATE_NEW);
-            }
-            catch (IOException e)
-            {
-                throw new RuntimeException("Failed to create the default boot configuration file.", e);
-            }
-        }
-
-        final List<String> lines;
-        try
-        {
-            lines = Files.readAllLines(configPath);
-        }
-        catch (IOException e)
-        {
-            throw new RuntimeException("Failed to read the boot configuration file.", e);
-        }
-
-        for (final String line : lines)
-        {
-            final String trimmedLine = line.trim().replace(" ", "");
-            if (trimmedLine.startsWith("%s=".formatted(configKey))) //We look for key=value combindation in the trimmed
-            {
-                return Boolean.parseBoolean(trimmedLine.substring(trimmedLine.indexOf('=') + 1));
-            }
-        }
-
-        return defaultValue;
-    }
-
+    /**
+     * Indicates if this cache manager requires the indexing of the file-tree to happen on the main thread.
+     *
+     * @return {@code true} if the indexing of the file-tree should happen on the main thread, {@code false} otherwise.
+     */
     public boolean shouldIndexOnThread()
     {
-        return getConfigValue(this.indexOnThreadConfigurationKey, false);
+        return ResourceManagerBootCacheConfigurationHandler.getInstance().getConfigValue(this.indexOnThreadConfigurationKey, false);
     }
 
     /**
@@ -476,6 +446,178 @@ public class ResourceCacheManager
     @FunctionalInterface
     private interface PathWalkerFactory
     {
+        /**
+         * Create a new walkable stream of paths.
+         * The stream will be closed by the caller.
+         *
+         * @param path The path to create the stream for.
+         * @return A new stream of paths that are children (potentially several generations deep) of the given path.
+         * @throws IOException If the stream can not be created.
+         */
         Stream<Path> createWalkingStream(Path path) throws IOException;
+    }
+
+    /**
+     * Class to handle the reading, initial creation, and watching of the boot configuration file, for the resource cache manager.
+     */
+    private static final class ResourceManagerBootCacheConfigurationHandler
+    {
+        /**
+         * The current instance of the handler.
+         */
+        private static final ResourceManagerBootCacheConfigurationHandler INSTANCE = new ResourceManagerBootCacheConfigurationHandler();
+        /**
+         * The path to the boot configuration file.
+         */
+        private static final Path CONFIG_PATH = FMLPaths.CONFIGDIR.get().resolve("forge-resource-caching.toml");
+        /**
+         * The current configuration in the file.
+         * Each entry in the list represents a single line, might be a comment or a configuration entry.
+         * This is an atomic reference since the file watchdog runs on a different thread and the list might be updated while we are reading it.
+         */
+        private static final AtomicReference<List<String>> CURRENT_CONFIG_CONTENTS = new AtomicReference<>(readConfigFileContent());
+
+        /**
+         * Creates a new instance of the handler.
+         * Registers the watchdog thread.
+         */
+        private ResourceManagerBootCacheConfigurationHandler()
+        {
+            //Create and register the watchdog thread.
+            final Thread watchDog = new Thread(ResourceManagerBootCacheConfigurationHandler::monitorBootConfiguration);
+            watchDog.setDaemon(true); //Background thread.
+            watchDog.setName("Forge Resource Cache Configuration Watchdog");
+            watchDog.start();
+        }
+
+        /**
+         * Sets up, and runs a monitor on the boot configuration file, on the current thread.
+         * Make sure to invoke this from a background thread.
+         */
+        private static void monitorBootConfiguration()
+        {
+            //Get the configuration directory.
+            Path path = CONFIG_PATH.getParent();
+            try (final WatchService watchService = FileSystems.getDefault().newWatchService())
+            {
+                //Register a watch service on the configuration directory for any changes.
+                path.register(watchService, ENTRY_CREATE, ENTRY_MODIFY, ENTRY_DELETE);
+                while (true)
+                {
+                    //Grab the next key
+                    WatchKey key = watchService.take();
+                    //For each event in that key we check if it is our config file that is changed.
+                    for (WatchEvent<?> event : key.pollEvents())
+                    {
+                        if (event.context().equals(path.relativize(CONFIG_PATH)))
+                        {
+                            //And then we atomically update the config contents.
+                            CURRENT_CONFIG_CONTENTS.set(readConfigFileContent());
+                        }
+                    }
+                    //Reset the key, and continue.
+                    key.reset();
+                }
+            }
+            catch (IOException | InterruptedException e)
+            {
+                //Some generic failure occurred, that is not good. Let's kill it!
+                throw new RuntimeException("Failed to read boot configuration contents on update.", e);
+            }
+        }
+
+        /**
+         * Gives access to the current singleton instance of the handler.
+         *
+         * @return The instance of this handler.
+         */
+        public static ResourceManagerBootCacheConfigurationHandler getInstance()
+        {
+            return INSTANCE;
+        }
+
+        /**
+         * Gives access to the current cached configuration file contents.
+         *
+         * @return The current configuration file contents.
+         */
+        @NotNull
+        private static List<String> getConfigFileContent()
+        {
+            return CURRENT_CONFIG_CONTENTS.get();
+        }
+
+        /**
+         * Reads the current configuration file contents.
+         *
+         * @return The current configuration file contents.
+         */
+        @NotNull
+        private static List<String> readConfigFileContent()
+        {
+            if (!Files.exists(CONFIG_PATH))
+            {
+                try
+                {
+                    Files.write(CONFIG_PATH, ImmutableList.of(
+                                    "# This TOML configuration file controls the resource caching system which is used before the mod loading environment starts.",
+                                    "# This file is read by the Forge boot loader, and is not used by the game itself.",
+                                    "#",
+                                    "# Set this to false to disable the resource cache. This will cause the game to scan the resource packs everytime it needs a list of resources.",
+                                    "cacheResources=true",
+                                    "",
+                                    "# Set this to false to forge the caching of vanilla resources to happen on the main thread.",
+                                    "indexVanillaPackCachesOnThread=false",
+                                    "",
+                                    "# Set this to false to forge the caching of mod resources to happen on the main thread.",
+                                    "indexModPackCachesOnThread=false"
+                            ),
+                            StandardOpenOption.CREATE_NEW);
+                }
+                catch (IOException e)
+                {
+                    throw new RuntimeException("Failed to create the default boot configuration file.", e);
+                }
+            }
+
+            final List<String> lines;
+            try
+            {
+                lines = Files.readAllLines(CONFIG_PATH);
+            }
+            catch (IOException e)
+            {
+                throw new RuntimeException("Failed to read the boot configuration file.", e);
+            }
+            return lines;
+        }
+
+        /**
+         * Reads a config value from the current configuration file.
+         *
+         * @param configKey    The key of the config value to read.
+         * @param defaultValue The default value to return if the config value is not present.
+         * @return The value of the config value, or the default value if it is not present.
+         */
+        private boolean getConfigValue(final String configKey, final boolean defaultValue)
+        {
+            //Get all lines.
+            final List<String> lines = getConfigFileContent();
+
+            for (final String line : lines)
+            {
+                //For each line: Remove all strings, and then check if it is the line with the requested key value.
+                final String trimmedLine = line.trim().replace(" ", "");
+                if (trimmedLine.startsWith("%s=".formatted(configKey))) //We look for key=value combindation in the trimmed
+                {
+                    //If we found a match, try to parse it. This will only return true, if the content of the trimmed line after the equals is exactly equal to true, regardless of character case.
+                    //Else it will be false. So any number (including 0 and 1) will be a false.
+                    return Boolean.parseBoolean(trimmedLine.substring(trimmedLine.indexOf('=') + 1));
+                }
+            }
+
+            //If we did not find the key, we return the default value.
+            return defaultValue;
+        }
     }
 }
