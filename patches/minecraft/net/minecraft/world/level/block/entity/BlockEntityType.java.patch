@@ -9,13 +9,15 @@
     }
  
     @Nullable
-@@ -115,5 +_,10 @@
+@@ -115,5 +_,12 @@
        public BlockEntityType<T> m_58966_(Type<?> p_58967_) {
           return new BlockEntityType<>(this.f_58959_, this.f_58960_, p_58967_);
        }
 +   }
++
 +   // FORGE START. INTERNAL USE ONLY!
 +   private final java.util.Set<net.minecraft.resources.ResourceKey<Block>> additionalValidBlocks = new java.util.HashSet<>();
++
 +   public static void fireAddBlockEvent() {
 +       net.minecraftforge.common.ForgeHooks.onBlockEntityBlocks().forEach((type, blocks) -> type.additionalValidBlocks.addAll(blocks));
     }
