@@ -44,8 +44,6 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
-import com.google.common.collect.ObjectArrays;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /*
@@ -289,7 +287,6 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         private Map<List<String>, String> levelTranslationKeys = new HashMap<>();
         private List<String> currentPath = new ArrayList<>();
         private List<ConfigValue<?>> values = new ArrayList<>();
-        private boolean hasInvalidComment = false;
 
         //Object
         public <T> ConfigValue<T> define(String path, T defaultValue) {
@@ -323,7 +320,6 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
                 path = tmp;
             }
             storage.set(path, value);
-            checkComment(path);
             context = new BuilderContext();
             return new ConfigValue<>(this, path, defaultSupplier);
         }
@@ -339,7 +335,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         public <V extends Comparable<? super V>> ConfigValue<V> defineInRange(List<String> path, Supplier<V> defaultSupplier, V min, V max, Class<V> clazz) {
             Range<V> range = new Range<>(clazz, min, max);
             context.setRange(range);
-            context.setComment(ObjectArrays.concat(context.getComment(), "Range: " + range.toString()));
+            comment("Range: " + range.toString());
             if (min.compareTo(max) > 0)
                 throw new IllegalArgumentException("Range min most be less then max.");
             return define(path, defaultSupplier, range);
@@ -482,7 +478,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         public <V extends Enum<V>> EnumValue<V> defineEnum(List<String> path, Supplier<V> defaultSupplier, EnumGetMethod converter, Predicate<Object> validator, Class<V> clazz) {
             context.setClazz(clazz);
             V[] allowedValues = clazz.getEnumConstants();
-            context.setComment(ObjectArrays.concat(context.getComment(), "Allowed Values: " + Arrays.stream(allowedValues).filter(validator).map(Enum::name).collect(Collectors.joining(", "))));
+            comment("Allowed Values: " + Arrays.stream(allowedValues).filter(validator).map(Enum::name).collect(Collectors.joining(", ")));
             return new EnumValue<V>(this, define(path, new ValueSpec(defaultSupplier, validator, context), defaultSupplier).getPath(), defaultSupplier, converter, clazz);
         }
 
@@ -547,23 +543,19 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
 
         public Builder comment(String comment)
         {
-            hasInvalidComment = comment == null || comment.isEmpty();
-            if (hasInvalidComment)
-            {
-                comment = "No comment";
-            }
-            context.setComment(comment);
+            context.addComment(comment);
             return this;
         }
         public Builder comment(String... comment)
         {
-            hasInvalidComment = comment == null || comment.length < 1 || (comment.length == 1 && comment[0].isEmpty());
-            if (hasInvalidComment)
-            {
-                comment = new String[] {"No comment"};
-            }
+            // Iterate list first, to throw meaningful errors
+            // Don't add any comments until we make sure there is no nulls
+            for (int i = 0; i < comment.length; i++)
+                Preconditions.checkNotNull(comment[i], "Comment string at " + i + " is null.");
 
-            context.setComment(comment);
+            for (String s : comment)
+                context.addComment(s);
+
             return this;
         }
 
@@ -585,10 +577,9 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
 
         public Builder push(List<String> path) {
             currentPath.addAll(path);
-            checkComment(currentPath);
             if (context.hasComment()) {
                 levelComments.put(new ArrayList<String>(currentPath), context.buildComment());
-                context.setComment(); // Set to empty
+                context.clearComment(); // Set to empty
             }
             if (context.getTranslationKey() != null) {
                 levelTranslationKeys.put(new ArrayList<String>(currentPath), context.getTranslationKey());
@@ -626,19 +617,6 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
             return ret;
         }
 
-        private void checkComment(List<String> path)
-        {
-            if (hasInvalidComment)
-            {
-                hasInvalidComment = false;
-                if (!FMLEnvironment.production)
-                {
-                    LogManager.getLogger().error(CORE, "Null comment for config option {}, this is invalid and may be disallowed in the future.",
-                            DOT_JOINER.join(path));
-                }
-            }
-        }
-
         public interface BuilderConsumer {
             void accept(Builder builder);
         }
@@ -646,19 +624,25 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
 
     private static class BuilderContext
     {
-        private @NotNull String[] comment = new String[0];
+        private final List<String> comment = new LinkedList<>();
         private String langKey;
         private Range<?> range;
         private boolean worldRestart = false;
         private Class<?> clazz;
 
-        public void setComment(String... value)
+        public void addComment(String value)
         {
-            validate(value == null, "Passed in null value for comment");
-            this.comment = value;
+            // Don't use `validate` because it throws IllegalStateException, not NullPointerException
+            Preconditions.checkNotNull(value, "Passed in null value for comment");
+
+            if (value.isBlank() && comment.size() == 0)
+                throw new IllegalArgumentException("Can not add zero-length comment as top-most comment");
+
+            comment.add(value);
         }
-        public boolean hasComment() { return this.comment.length > 0; }
-        public String[] getComment() { return this.comment; }
+
+        public void clearComment() { comment.clear(); }
+        public boolean hasComment() { return this.comment.size() > 0; }
         public String buildComment() { return LINE_JOINER.join(comment); }
         public void setTranslationKey(String value) { this.langKey = value; }
         public String getTranslationKey() { return this.langKey; }
