@@ -5,7 +5,7 @@
  
     public boolean m_155262_(BlockState p_155263_) {
 -      return this.f_58915_.contains(p_155263_.m_60734_());
-+      return this.f_58915_.contains(p_155263_.m_60734_()) || additionalValidBlocks.contains(net.minecraft.resources.ResourceKey.m_135785_(net.minecraftforge.registries.ForgeRegistries.Keys.BLOCKS, net.minecraftforge.registries.ForgeRegistries.BLOCKS.getKey(p_155263_.m_60734_())));
++      return this.f_58915_.contains(p_155263_.m_60734_()) || additionalValidBlocks.contains(net.minecraftforge.registries.ForgeRegistries.BLOCKS.getResourceKey(p_155263_.m_60734_()));
     }
  
     @Nullable

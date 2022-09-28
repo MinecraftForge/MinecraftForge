@@ -7,11 +7,11 @@ package net.minecraftforge.event;
 
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Supplier;
 
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -41,35 +41,19 @@ public class AddValidBlocksToBlockEntityEvent extends Event implements IModBusEv
     }
 
     /**
-     * Adds a new {@code block} to the valid blocks list for the given {@code type}. This is a helper method which can be used with {@link RegistryObject}
-     */
-    public void addValidBlock(BlockEntityType<?> type, RegistryObject<Block> registryObject)
-    {
-        addValidBlock(type, registryObject.getId());
-    }
-
-    /**
-     * Adds a new {@code block} to the valid blocks list for the given {@code type}. This is a helper method which can be used with {@link RegistryObject}
+     * Adds a new {@code block} to the valid blocks list for the given {@code type}. It can be used with {@link RegistryObject}
      */
     public void addValidBlock(BlockEntityType<?> type, Supplier<? extends Block> supplier)
     {
-        final ResourceLocation id = ForgeRegistries.BLOCKS.getKey(supplier.get());
-        if (id == null)
+        final Optional<ResourceKey<Block>> resourceKey = ForgeRegistries.BLOCKS.getResourceKey(supplier.get());
+        if (resourceKey.isEmpty())
         {
             throw new NullPointerException("Tried to add a not registered Block to BlockEntityType: " + ForgeRegistries.BLOCK_ENTITY_TYPES.getKey(type) + " Block Class: " + supplier.get().getClass().getSimpleName());
         }
-        addValidBlock(type, id);
-    }
-
-    /**
-     * Adds a new {@code block} to the valid blocks list for the given {@code type}
-     */
-    private void addValidBlock(BlockEntityType<?> type, ResourceLocation block)
-    {
         if (!newBlocks.containsKey(type))
         {
             newBlocks.put(type, new HashSet<>());
         }
-        newBlocks.get(type).add(ResourceKey.create(ForgeRegistries.Keys.BLOCKS, block));
+        newBlocks.get(type).add(resourceKey.get());
     }
 }
