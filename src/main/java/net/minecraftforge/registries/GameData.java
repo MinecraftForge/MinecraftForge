@@ -359,7 +359,6 @@ public class GameData
             LOGGER.fatal("Detected errors during registry event dispatch, roll back to VANILLA complete");
         } else
         {
-            BlockEntityType.fireAddBlockEvent();
             ForgeHooks.modifyAttributes();
         }
     }
@@ -469,6 +468,7 @@ public class GameData
                 block.getLootTable();
             }
             DebugLevelSource.initValidStates();
+            BlockEntityType.fireAddBlockEvent();
         }
 
         private static class BlockDummyAir extends AirBlock //A named class so DummyBlockReplacementTest can detect if its a dummy
