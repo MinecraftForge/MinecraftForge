@@ -1345,9 +1345,9 @@ public class ForgeHooks
         });
     }
 
-    public static Map<BlockEntityType<?>, Set<ResourceKey<Block>>> onBlockEntityBlocks()
+    public static Map<BlockEntityType<?>, Set<Block>> onBlockEntityBlocks()
     {
-        final Map<BlockEntityType<?>, Set<ResourceKey<Block>>> newBlocks = new HashMap<>();
+        final Map<BlockEntityType<?>, Set<Block>> newBlocks = new HashMap<>();
         final var event = new AddValidBlocksToBlockEntityEvent(newBlocks);
         ModLoader.get().postEvent(event);
         return newBlocks;

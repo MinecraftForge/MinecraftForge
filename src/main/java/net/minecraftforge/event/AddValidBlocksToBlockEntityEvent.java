@@ -7,18 +7,15 @@ package net.minecraftforge.event;
 
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.function.Supplier;
 
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.event.IModBusEvent;
-import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
 import org.jetbrains.annotations.ApiStatus;
@@ -32,10 +29,10 @@ import org.jetbrains.annotations.ApiStatus;
  */
 public class AddValidBlocksToBlockEntityEvent extends Event implements IModBusEvent
 {
-    private final Map<BlockEntityType<?>, Set<ResourceKey<Block>>> newBlocks;
+    private final Map<BlockEntityType<?>, Set<Block>> newBlocks;
 
     @ApiStatus.Internal
-    public AddValidBlocksToBlockEntityEvent(Map<BlockEntityType<?>, Set<ResourceKey<Block>>> newBlocks)
+    public AddValidBlocksToBlockEntityEvent(Map<BlockEntityType<?>, Set<Block>> newBlocks)
     {
         this.newBlocks = newBlocks;
     }
@@ -43,17 +40,12 @@ public class AddValidBlocksToBlockEntityEvent extends Event implements IModBusEv
     /**
      * Adds a new {@code block} to the valid blocks list for the given {@code type}. It can be used with {@link RegistryObject}
      */
-    public void addValidBlock(BlockEntityType<?> type, Supplier<? extends Block> supplier)
+    public void addValidBlock(BlockEntityType<?> type, Supplier<? extends Block> block)
     {
-        final Optional<ResourceKey<Block>> resourceKey = ForgeRegistries.BLOCKS.getResourceKey(supplier.get());
-        if (resourceKey.isEmpty())
-        {
-            throw new NullPointerException("Tried to add a not registered Block to BlockEntityType: " + ForgeRegistries.BLOCK_ENTITY_TYPES.getKey(type) + " Block Class: " + supplier.get().getClass().getSimpleName());
-        }
         if (!newBlocks.containsKey(type))
         {
             newBlocks.put(type, new HashSet<>());
         }
-        newBlocks.get(type).add(resourceKey.get());
+        newBlocks.get(type).add(block.get());
     }
 }
