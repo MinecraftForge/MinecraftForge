@@ -64,6 +64,7 @@ import net.minecraft.world.item.*;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.level.storage.LevelStorageSource;
@@ -1344,11 +1345,12 @@ public class ForgeHooks
         });
     }
 
-    public static AddValidBlocksToBlockEntityEvent onBlockEntityBlocks()
+    public static Map<BlockEntityType<?>, Set<ResourceKey<Block>>> onBlockEntityBlocks()
     {
-        final var event = new AddValidBlocksToBlockEntityEvent();
+        final Map<BlockEntityType<?>, Set<ResourceKey<Block>>> newBlocks = new HashMap<>();
+        final var event = new AddValidBlocksToBlockEntityEvent(newBlocks);
         ModLoader.get().postEvent(event);
-        return event;
+        return newBlocks;
     }
 
     public static void onEntityEnterSection(Entity entity, long packedOldPos, long packedNewPos)

@@ -1,18 +1,22 @@
 --- a/net/minecraft/world/level/block/entity/BlockEntityType.java
 +++ b/net/minecraft/world/level/block/entity/BlockEntityType.java
-@@ -113,7 +_,14 @@
-       }
- 
-       public BlockEntityType<T> m_58966_(Type<?> p_58967_) {
--         return new BlockEntityType<>(this.f_58959_, this.f_58960_, p_58967_);
-+         return new BlockEntityType<>(this.f_58959_, new java.util.HashSet<>(f_58960_), p_58967_);
-       }
+@@ -85,7 +_,7 @@
     }
-+
-+   // FORGE START. INTERNAL USE ONLY!
-+   public static void fireAddBlockEvent()
-+   {
-+       net.minecraftforge.common.ForgeHooks.onBlockEntityBlocks().newBlocks.forEach((type, blocks) -> type.f_58915_.addAll(blocks));
+ 
+    public boolean m_155262_(BlockState p_155263_) {
+-      return this.f_58915_.contains(p_155263_.m_60734_());
++      return this.f_58915_.contains(p_155263_.m_60734_()) || additionalValidBlocks.contains(net.minecraft.resources.ResourceKey.m_135785_(net.minecraftforge.registries.ForgeRegistries.Keys.BLOCKS, net.minecraftforge.registries.ForgeRegistries.BLOCKS.getKey(p_155263_.m_60734_())));
+    }
+ 
+    @Nullable
+@@ -115,5 +_,10 @@
+       public BlockEntityType<T> m_58966_(Type<?> p_58967_) {
+          return new BlockEntityType<>(this.f_58959_, this.f_58960_, p_58967_);
+       }
 +   }
-+
++   // FORGE START. INTERNAL USE ONLY!
++   private final java.util.Set<net.minecraft.resources.ResourceKey<Block>> additionalValidBlocks = new java.util.HashSet<>();
++   public static void fireAddBlockEvent() {
++       net.minecraftforge.common.ForgeHooks.onBlockEntityBlocks().forEach((type, blocks) -> type.additionalValidBlocks.addAll(blocks));
+    }
  }

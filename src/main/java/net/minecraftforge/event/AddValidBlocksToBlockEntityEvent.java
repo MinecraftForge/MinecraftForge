@@ -5,18 +5,20 @@
 
 package net.minecraftforge.event;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Supplier;
 
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.event.IModBusEvent;
+import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
 import org.jetbrains.annotations.ApiStatus;
@@ -30,13 +32,20 @@ import org.jetbrains.annotations.ApiStatus;
  */
 public class AddValidBlocksToBlockEntityEvent extends Event implements IModBusEvent
 {
-    @ApiStatus.Internal
-    public final Map<BlockEntityType<?>, Set<Block>> newBlocks;
+    private final Map<BlockEntityType<?>, Set<ResourceKey<Block>>> newBlocks;
 
     @ApiStatus.Internal
-    public AddValidBlocksToBlockEntityEvent()
+    public AddValidBlocksToBlockEntityEvent(Map<BlockEntityType<?>, Set<ResourceKey<Block>>> newBlocks)
     {
-        newBlocks = new HashMap<>();
+        this.newBlocks = newBlocks;
+    }
+
+    /**
+     * Adds a new {@code block} to the valid blocks list for the given {@code type}. This is a helper method which can be used with {@link RegistryObject}
+     */
+    public void addValidBlock(BlockEntityType<?> type, RegistryObject<Block> registryObject)
+    {
+        addValidBlock(type, registryObject.getId());
     }
 
     /**
@@ -44,19 +53,23 @@ public class AddValidBlocksToBlockEntityEvent extends Event implements IModBusEv
      */
     public void addValidBlock(BlockEntityType<?> type, Supplier<? extends Block> supplier)
     {
-        addValidBlock(type, supplier.get());
+        final ResourceLocation id = ForgeRegistries.BLOCKS.getKey(supplier.get());
+        if (id == null)
+        {
+            throw new NullPointerException("Tried to add a not registered Block to BlockEntityType: " + ForgeRegistries.BLOCK_ENTITY_TYPES.getKey(type) + " Block Class: " + supplier.get().getClass().getSimpleName());
+        }
+        addValidBlock(type, id);
     }
 
     /**
      * Adds a new {@code block} to the valid blocks list for the given {@code type}
      */
-    public void addValidBlock(BlockEntityType<?> type, Block block)
+    private void addValidBlock(BlockEntityType<?> type, ResourceLocation block)
     {
         if (!newBlocks.containsKey(type))
         {
             newBlocks.put(type, new HashSet<>());
         }
-        newBlocks.get(type).add(block);
+        newBlocks.get(type).add(ResourceKey.create(ForgeRegistries.Keys.BLOCKS, block));
     }
-
 }
