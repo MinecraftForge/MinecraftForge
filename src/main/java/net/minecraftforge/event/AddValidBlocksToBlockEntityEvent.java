@@ -42,10 +42,6 @@ public class AddValidBlocksToBlockEntityEvent extends Event implements IModBusEv
      */
     public void addValidBlock(BlockEntityType<?> type, Supplier<? extends Block> block)
     {
-        if (!newBlocks.containsKey(type))
-        {
-            newBlocks.put(type, new HashSet<>());
-        }
-        newBlocks.get(type).add(block.get());
+        newBlocks.computeIfAbsent(type, x -> new HashSet<>()).add(block.get());
     }
 }
