@@ -68,7 +68,7 @@ public class ObjModel extends SimpleUnbakedGeometry<ObjModel>
             new Vec2(1, 0),
     };
 
-    private final Map<String, ModelGroup> parts = Maps.newHashMap();
+    private final Map<String, ModelGroup> parts = Maps.newLinkedHashMap();
     private final Set<String> rootComponentNames = Collections.unmodifiableSet(parts.keySet());
     private Set<String> allComponentNames;
 
@@ -582,7 +582,7 @@ public class ObjModel extends SimpleUnbakedGeometry<ObjModel>
 
     public class ModelGroup extends ModelObject
     {
-        final Map<String, ModelObject> parts = Maps.newHashMap();
+        final Map<String, ModelObject> parts = Maps.newLinkedHashMap();
 
         ModelGroup(String name)
         {
