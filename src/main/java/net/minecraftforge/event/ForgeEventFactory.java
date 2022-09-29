@@ -10,6 +10,8 @@ import java.util.*;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 
+import com.google.common.collect.ImmutableList;
+
 import com.mojang.authlib.GameProfile;
 
 import com.mojang.brigadier.CommandDispatcher;
@@ -663,9 +665,10 @@ public class ForgeEventFactory
 
     public static List<PreparableReloadListener> onResourceReload(ReloadableServerResources serverResources)
     {
-        AddReloadListenerEvent event = new AddReloadListenerEvent(serverResources);
+        List<PreparableReloadListener> listeners = new ArrayList<>(serverResources.listeners());
+        AddReloadListenerEvent event = new AddReloadListenerEvent(serverResources, listeners);
         MinecraftForge.EVENT_BUS.post(event);
-        return event.getListeners();
+        return ImmutableList.copyOf(listeners);
     }
 
     public static void onCommandRegister(CommandDispatcher<CommandSourceStack> dispatcher, Commands.CommandSelection environment, CommandBuildContext context)

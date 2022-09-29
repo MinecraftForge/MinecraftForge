@@ -22,18 +22,22 @@ import java.util.concurrent.Executor;
 
 /**
  * The main ResourceManager is recreated on each reload, just after {@link ReloadableServerResources}'s creation.
+ * A copy of the listeners attached from vanilla can be obtained from {@link ReloadableServerResources#listeners()}
  *
  * The event is fired on each reload and lets modders add their own ReloadListeners, for server-side resources.
  * The event is fired on the {@link MinecraftForge#EVENT_BUS}
  */
 public class AddReloadListenerEvent extends Event
 {
+    @Deprecated(forRemoval = true, since = "1.19.2")
     private final List<PreparableReloadListener> listeners = new ArrayList<>();
+    private final List<PreparableReloadListener> returnList;
     private final ReloadableServerResources serverResources;
 
-    public AddReloadListenerEvent(ReloadableServerResources serverResources)
+    public AddReloadListenerEvent(ReloadableServerResources serverResources, List<PreparableReloadListener> returnList)
     {
         this.serverResources = serverResources;
+        this.returnList = returnList;
     }
 
    /**
@@ -41,12 +45,47 @@ public class AddReloadListenerEvent extends Event
     */
     public void addListener(PreparableReloadListener listener)
     {
-       listeners.add(new WrappedStateAwareListener(listener));
+        var wrapped = new WrappedStateAwareListener(listener);
+        listeners.add(wrapped);
+        returnList.add(wrapped);
     }
 
+
+    /**
+     * Only use this method if you do something in a vanilla reload listener that depends on your own reloadable data.
+     * For example, if you require some reloadable data to be present in a recipe.
+     * @param listener The listener to add to the ResourceManager.
+     * @param current The listener which this listener should be loaded before. These can be obtained from various methods in {@link ReloadableServerResources}
+     */
+    public void addListenerBefore(PreparableReloadListener listener, PreparableReloadListener current)
+    {
+        var wrapped = new WrappedStateAwareListener(listener);
+        int index = returnList.indexOf(current);
+        if (index != -1)
+        {
+            returnList.add(index, wrapped); // success, we can add it to the return list
+        }
+        else
+        {
+            returnList.add(wrapped); // we did not find it, just append it to the end
+        }
+    }
+
+    /**
+     * @deprecated use getAllListeners as that contains the list of all listeners rather than mod-added ones
+     */
+    @Deprecated(forRemoval = true, since = "1.19.2")
     public List<PreparableReloadListener> getListeners()
     {
        return ImmutableList.copyOf(listeners);
+    }
+
+    /**
+     * @return A copy of the current sorted list of all reload listeners, included ones inserted within the vanilla list.
+     */
+    public List<PreparableReloadListener> getAllListeners()
+    {
+        return ImmutableList.copyOf(returnList);
     }
 
     /**
