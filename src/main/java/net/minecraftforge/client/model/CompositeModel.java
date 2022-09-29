@@ -23,10 +23,12 @@ import net.minecraft.client.resources.model.Material;
 import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.ModelState;
 import net.minecraft.client.resources.model.UnbakedModel;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.client.ChunkRenderTypeSet;
 import net.minecraftforge.client.RenderTypeGroup;
@@ -167,6 +169,15 @@ public class CompositeModel implements IUnbakedGeometry<CompositeModel>
                 }
             }
             return ConcatenatedListView.of(quadLists);
+        }
+
+        @Override
+        public @NotNull ModelData getModelData(@NotNull BlockAndTintGetter level, @NotNull BlockPos pos, @NotNull BlockState state, @NotNull ModelData modelData)
+        {
+            var builder = Data.builder();
+            for (var entry : children.entrySet())
+                builder.with(entry.getKey(), entry.getValue().getModelData(level, pos, state, Data.resolve(modelData, entry.getKey())));
+            return modelData.derive().with(Data.PROPERTY, builder.build()).build();
         }
 
         @Override
