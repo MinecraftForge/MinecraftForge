@@ -402,8 +402,7 @@ public class ObjModel extends SimpleUnbakedGeometry<ObjModel>
             faceNormal = abs;
         }
 
-        var quad = new BakedQuad[1];
-        var quadBaker = new QuadBakingVertexConsumer(q -> quad[0] = q);
+        var quadBaker = new QuadBakingVertexConsumer.Buffered();
 
         quadBaker.setSprite(texture);
         quadBaker.setTintIndex(tintIndex);
@@ -516,7 +515,7 @@ public class ObjModel extends SimpleUnbakedGeometry<ObjModel>
             }
         }
 
-        return Pair.of(quad[0], cull);
+        return Pair.of(quadBaker.getQuad(), cull);
     }
 
     public CompositeRenderable bakeRenderable(IGeometryBakingContext configuration)
