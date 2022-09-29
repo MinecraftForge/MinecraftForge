@@ -652,9 +652,11 @@ public class ObjModel extends SimpleUnbakedGeometry<ObjModel>
             int tintIndex = mat.diffuseTintIndex;
             Vector4f colorTint = mat.diffuseColor;
 
+            var rootTransform = owner.getRootTransform();
+            var transform = rootTransform.isIdentity() ? modelTransform.getRotation() : modelTransform.getRotation().compose(rootTransform);
             for (int[][] face : faces)
             {
-                Pair<BakedQuad, Direction> quad = makeQuad(face, tintIndex, colorTint, mat.ambientColor, texture, modelTransform.getRotation());
+                Pair<BakedQuad, Direction> quad = makeQuad(face, tintIndex, colorTint, mat.ambientColor, texture, transform);
                 if (quad.getRight() == null)
                     modelBuilder.addUnculledFace(quad.getLeft());
                 else
