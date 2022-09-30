@@ -640,7 +640,13 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
 
         public void clearComment() { comment.clear(); }
         public boolean hasComment() { return this.comment.size() > 0; }
-        public String buildComment() { return LINE_JOINER.join(comment); }
+        public String buildComment()
+        {
+            if (comment.stream().allMatch(String::isBlank))
+                throw new IllegalStateException("Can not build comment that comprises entirely of blank lines/whitespace");
+
+            return LINE_JOINER.join(comment);
+        }
         public void setTranslationKey(String value) { this.langKey = value; }
         public String getTranslationKey() { return this.langKey; }
         public <V extends Comparable<? super V>> void setRange(Range<V> value)

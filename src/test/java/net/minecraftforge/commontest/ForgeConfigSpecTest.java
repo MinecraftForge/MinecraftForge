@@ -63,6 +63,22 @@ public class ForgeConfigSpecTest
         executeSpeedTest("test.test.test.test.test.test.test.test.test.test", "deepKeyValue", "deepKeySpeedTest");
     }
 
+    @Test(expected = IllegalStateException.class)
+    public void allEmptyCommentTest() throws IllegalStateException
+    {
+        final ForgeConfigSpec.Builder builder = new ForgeConfigSpec.Builder();
+        final ForgeConfigSpec.ConfigValue<String> simpleValue = builder.comment("", "").define("allEmptyCommentTest", "someDefaultValue");
+        final ForgeConfigSpec spec = builder.build();
+    }
+
+    @Test
+    public void topPaddedCommentTest() throws IllegalStateException
+    {
+        final ForgeConfigSpec.Builder builder = new ForgeConfigSpec.Builder();
+        final ForgeConfigSpec.ConfigValue<String> simpleValue = builder.comment("", "Test").define("topPaddedCommentTest", "someDefaultValue");
+        final ForgeConfigSpec spec = builder.build();
+    }
+
     private <T> void executeSpeedTest(final String configKey, final T defaultKeyValue, final String testName) throws IOException
     {
         final ForgeConfigSpec.Builder builder = new ForgeConfigSpec.Builder();
