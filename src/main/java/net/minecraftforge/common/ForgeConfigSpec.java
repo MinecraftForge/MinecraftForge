@@ -635,9 +635,6 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
             // Don't use `validate` because it throws IllegalStateException, not NullPointerException
             Preconditions.checkNotNull(value, "Passed in null value for comment");
 
-            if (value.isBlank() && comment.size() == 0)
-                throw new IllegalArgumentException("Can not add zero-length comment as top-most comment");
-
             comment.add(value);
         }
 
