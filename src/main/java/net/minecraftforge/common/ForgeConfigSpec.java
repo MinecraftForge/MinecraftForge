@@ -645,10 +645,13 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         {
             if (comment.stream().allMatch(String::isBlank))
             {
-                if (!FMLEnvironment.production)
-                    throw new IllegalStateException("Can not build comment for config option " + DOT_JOINER.join(path) + " as it comprises entirely of blank lines/whitespace");
+                if (FMLEnvironment.production)
+                    LogManager.getLogger().warn(CORE, "Detected a comment that is all whitespace for config option {}, which causes obscure bugs in Forge's config system and will cause a crash in the future. Please report this to the mod author.",
+                            DOT_JOINER.join(path));
+                else
+                    throw new IllegalStateException("Can not build comment for config option " + DOT_JOINER.join(path) + " as it comprises entirely of blank lines/whitespace. This is not allowed as it causes a \"constantly correcting config\" bug with NightConfig in Forge's config system.");
 
-                return "A developer of this mod has defined this config option with an empty comment, which will cause a crash in the future. Please report this to the mod author.";
+                return "A developer of this mod has defined this config option with a blank comment, which causes obscure bugs in Forge's config system and will cause a crash in the future. Please report this to the mod author.";
             }
 
             return LINE_JOINER.join(comment);
