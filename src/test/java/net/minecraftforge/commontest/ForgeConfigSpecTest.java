@@ -63,7 +63,8 @@ public class ForgeConfigSpecTest
         executeSpeedTest("test.test.test.test.test.test.test.test.test.test", "deepKeyValue", "deepKeySpeedTest");
     }
 
-    @Test(expected = IllegalStateException.class)
+    //@Test(expected = IllegalStateException.class) - uncomment when this behaviour is disallowed
+    @Test
     public void allEmptyCommentTest() throws IllegalStateException
     {
         final ForgeConfigSpec.Builder builder = new ForgeConfigSpec.Builder();

@@ -310,7 +310,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         }
         public <T> ConfigValue<T> define(List<String> path, Supplier<T> defaultSupplier, Predicate<Object> validator, Class<?> clazz) {
             context.setClazz(clazz);
-            return define(path, new ValueSpec(defaultSupplier, validator, context), defaultSupplier);
+            return define(path, new ValueSpec(defaultSupplier, validator, context, path), defaultSupplier);
         }
         public <T> ConfigValue<T> define(List<String> path, ValueSpec value, Supplier<T> defaultSupplier) { // This is the root where everything at the end of the day ends up.
             if (!currentPath.isEmpty()) {
@@ -363,7 +363,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         }
         public <T> ConfigValue<List<? extends T>> defineList(List<String> path, Supplier<List<? extends T>> defaultSupplier, Predicate<Object> elementValidator) {
             context.setClazz(List.class);
-            return define(path, new ValueSpec(defaultSupplier, x -> x instanceof List && ((List<?>) x).stream().allMatch( elementValidator ), context) {
+            return define(path, new ValueSpec(defaultSupplier, x -> x instanceof List && ((List<?>) x).stream().allMatch( elementValidator ), context, path) {
                 @Override
                 public Object correct(Object value) {
                     if (value == null || !(value instanceof List) || ((List<?>)value).isEmpty()) {
@@ -383,7 +383,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
 
         public <T> ConfigValue<List<? extends T>> defineListAllowEmpty(List<String> path, Supplier<List<? extends T>> defaultSupplier, Predicate<Object> elementValidator) {
             context.setClazz(List.class);
-            return define(path, new ValueSpec(defaultSupplier, x -> x instanceof List && ((List<?>) x).stream().allMatch( elementValidator ), context) {
+            return define(path, new ValueSpec(defaultSupplier, x -> x instanceof List && ((List<?>) x).stream().allMatch( elementValidator ), context, path) {
                 @Override
                 public Object correct(Object value) {
                     if (value == null || !(value instanceof List)) {
@@ -479,7 +479,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
             context.setClazz(clazz);
             V[] allowedValues = clazz.getEnumConstants();
             comment("Allowed Values: " + Arrays.stream(allowedValues).filter(validator).map(Enum::name).collect(Collectors.joining(", ")));
-            return new EnumValue<V>(this, define(path, new ValueSpec(defaultSupplier, validator, context), defaultSupplier).getPath(), defaultSupplier, converter, clazz);
+            return new EnumValue<V>(this, define(path, new ValueSpec(defaultSupplier, validator, context, path), defaultSupplier).getPath(), defaultSupplier, converter, clazz);
         }
 
         //boolean
@@ -578,7 +578,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         public Builder push(List<String> path) {
             currentPath.addAll(path);
             if (context.hasComment()) {
-                levelComments.put(new ArrayList<String>(currentPath), context.buildComment());
+                levelComments.put(new ArrayList<>(currentPath), context.buildComment(path));
                 context.clearComment(); // Set to empty
             }
             if (context.getTranslationKey() != null) {
@@ -640,10 +640,16 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
 
         public void clearComment() { comment.clear(); }
         public boolean hasComment() { return this.comment.size() > 0; }
-        public String buildComment()
+        public String buildComment() { return buildComment(List.of("unknown", "unknown")); }
+        public String buildComment(final List<String> path)
         {
-            if (comment.stream().allMatch(String::isBlank))
-                throw new IllegalStateException("Can not build comment that comprises entirely of blank lines/whitespace");
+            if (!FMLEnvironment.production && comment.stream().allMatch(String::isBlank))
+            {
+                LogManager.getLogger().error(CORE, "Detected a comment that is all whitespace for config option {}, this is invalid and will be disallowed in the future.",
+                        DOT_JOINER.join(path));
+
+                return "No comment";
+            }
 
             return LINE_JOINER.join(comment);
         }
@@ -765,12 +771,12 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         private final Predicate<Object> validator;
         private Object _default = null;
 
-        private ValueSpec(Supplier<?> supplier, Predicate<Object> validator, BuilderContext context)
+        private ValueSpec(Supplier<?> supplier, Predicate<Object> validator, BuilderContext context, List<String> path)
         {
             Objects.requireNonNull(supplier, "Default supplier can not be null");
             Objects.requireNonNull(validator, "Validator can not be null");
 
-            this.comment = context.hasComment() ? context.buildComment() : null;
+            this.comment = context.hasComment() ? context.buildComment(path) : null;
             this.langKey = context.getTranslationKey();
             this.range = context.getRange();
             this.worldRestart = context.needsWorldRestart();
