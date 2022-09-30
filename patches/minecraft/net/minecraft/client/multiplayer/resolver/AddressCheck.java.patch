@@ -1,0 +1,11 @@
+--- a/net/minecraft/client/multiplayer/resolver/AddressCheck.java
++++ b/net/minecraft/client/multiplayer/resolver/AddressCheck.java
+@@ -16,7 +_,7 @@
+    boolean m_142408_(ServerAddress p_171830_);
+ 
+    static AddressCheck m_171828_() {
+-      final ImmutableList<Predicate<String>> immutablelist = Streams.stream(ServiceLoader.load(BlockListSupplier.class)).map(BlockListSupplier::createBlockList).filter(Objects::nonNull).collect(ImmutableList.toImmutableList());
++      final ImmutableList<Predicate<String>> immutablelist = Streams.stream(ServiceLoader.load(BlockListSupplier.class, net.minecraftforge.fml.loading.FMLLoader.class.getClassLoader())).map(BlockListSupplier::createBlockList).filter(Objects::nonNull).collect(ImmutableList.toImmutableList());
+       return new AddressCheck() {
+          public boolean m_142649_(ResolvedServerAddress p_171835_) {
+             String s = p_171835_.m_142727_();
