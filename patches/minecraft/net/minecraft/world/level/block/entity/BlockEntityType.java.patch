@@ -20,6 +20,6 @@
 +
 +   public static void fireAddBlockEvent() {
 +       net.minecraftforge.registries.ForgeRegistries.BLOCK_ENTITY_TYPES.forEach(t -> t.additionalValidBlocks.clear());
-+       net.minecraftforge.common.ForgeHooks.onBlockEntityBlocks().forEach((type, blocks) -> type.additionalValidBlocks.addAll(blocks));
++       net.minecraftforge.common.ForgeHooks.onBlockEntityBlocks((type, block) -> type.additionalValidBlocks.add(block));
     }
  }

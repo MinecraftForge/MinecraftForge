@@ -9,6 +9,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.regex.Matcher;
@@ -1345,12 +1346,10 @@ public class ForgeHooks
         });
     }
 
-    public static Map<BlockEntityType<?>, Set<Block>> onBlockEntityBlocks()
+    public static void onBlockEntityBlocks(BiConsumer<BlockEntityType<?>, Block> callback)
     {
-        final Map<BlockEntityType<?>, Set<Block>> newBlocks = new HashMap<>();
-        final var event = new AddValidBlocksToBlockEntityEvent(newBlocks);
+        final var event = new AddValidBlocksToBlockEntityEvent(callback);
         ModLoader.get().postEvent(event);
-        return newBlocks;
     }
 
     public static void onEntityEnterSection(Entity entity, long packedOldPos, long packedNewPos)

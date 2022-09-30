@@ -72,7 +72,7 @@ public class CustomSignsTest
 
     private void onBlockEntityBlocks(final AddValidBlocksToBlockEntityEvent event)
     {
-        event.addValidBlock(BlockEntityType.SIGN, TEST_STANDING_SIGN);
-        event.addValidBlock(BlockEntityType.SIGN, TEST_WALL_SIGN);
+        event.addValidBlock(BlockEntityType.SIGN, TEST_STANDING_SIGN.get());
+        event.addValidBlock(BlockEntityType.SIGN, TEST_WALL_SIGN.get());
     }
 }

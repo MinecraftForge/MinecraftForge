@@ -64,8 +64,8 @@ public class CustomHeadTest
 
     private void onBlockEntityBlocks(final AddValidBlocksToBlockEntityEvent event)
     {
-        event.addValidBlock(BlockEntityType.SKULL, BLAZE_HEAD);
-        event.addValidBlock(BlockEntityType.SKULL, BLAZE_HEAD_WALL);
+        event.addValidBlock(BlockEntityType.SKULL, BLAZE_HEAD.get());
+        event.addValidBlock(BlockEntityType.SKULL, BLAZE_HEAD_WALL.get());
     }
 
     @Mod.EventBusSubscriber(value= Dist.CLIENT, bus = Bus.MOD, modid = MODID)
