@@ -643,12 +643,12 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         public String buildComment() { return buildComment(List.of("unknown", "unknown")); }
         public String buildComment(final List<String> path)
         {
-            if (!FMLEnvironment.production && comment.stream().allMatch(String::isBlank))
+            if (comment.stream().allMatch(String::isBlank))
             {
-                LogManager.getLogger().error(CORE, "Detected a comment that is all whitespace for config option {}, this is invalid and will be disallowed in the future.",
-                        DOT_JOINER.join(path));
+                if (!FMLEnvironment.production)
+                    throw new IllegalStateException("Can not build comment for config option " + DOT_JOINER.join(path) + " as it comprises entirely of blank lines/whitespace");
 
-                return "No comment";
+                return "A developer of this mod has defined this config option with an empty comment, which will cause a crash in the future. Please report this to the mod author.";
             }
 
             return LINE_JOINER.join(comment);
