@@ -2,18 +2,14 @@
   "type": "minecraft:crafting_shaped",
   "key": {
     "#": {
-      "tag": "forge:rods/wooden"
-    },
-    "X": {
       "tag": "forge:string"
     }
   },
   "pattern": [
-    " #X",
-    "# X",
-    " #X"
+    "##",
+    "##"
   ],
   "result": {
-    "item": "minecraft:bow"
+    "item": "minecraft:white_wool"
   }
 }

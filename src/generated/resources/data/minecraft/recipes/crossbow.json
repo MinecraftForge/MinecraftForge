@@ -11,7 +11,7 @@
       "tag": "forge:ingots/iron"
     },
     "~": {
-      "item": "minecraft:string"
+      "tag": "forge:string"
     }
   },
   "pattern": [

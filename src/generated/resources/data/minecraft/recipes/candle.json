@@ -1,19 +1,18 @@
 {
   "type": "minecraft:crafting_shaped",
   "key": {
-    "#": {
-      "tag": "forge:rods/wooden"
+    "H": {
+      "item": "minecraft:honeycomb"
     },
-    "X": {
+    "S": {
       "tag": "forge:string"
     }
   },
   "pattern": [
-    " #X",
-    "# X",
-    " #X"
+    "S",
+    "H"
   ],
   "result": {
-    "item": "minecraft:bow"
+    "item": "minecraft:candle"
   }
 }
