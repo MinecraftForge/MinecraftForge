@@ -44,6 +44,7 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
+import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
 
 /*
@@ -59,6 +60,8 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
     private Config childConfig;
 
     private boolean isCorrecting = false;
+
+    private static final Logger LOGGER = LogManager.getLogger();
 
     private ForgeConfigSpec(UnmodifiableConfig storage, UnmodifiableConfig values, Map<List<String>, String> levelComments, Map<List<String>, String> levelTranslationKeys) {
         super(storage);
@@ -79,12 +82,12 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         this.childConfig = config;
         if (config != null && !isCorrect(config)) {
             String configName = config instanceof FileConfig ? ((FileConfig) config).getNioPath().toString() : config.toString();
-            LogManager.getLogger().warn(CORE, "Configuration file {} is not correct. Correcting", configName);
+            LOGGER.warn(CORE, "Configuration file {} is not correct. Correcting", configName);
             correct(config,
                     (action, path, incorrectValue, correctedValue) ->
-                            LogManager.getLogger().warn(CORE, "Incorrect key {} was corrected from {} to its default, {}. {}", DOT_JOINER.join( path ), incorrectValue, correctedValue, incorrectValue == correctedValue ? "This seems to be an error." : ""),
+                            LOGGER.warn(CORE, "Incorrect key {} was corrected from {} to its default, {}. {}", DOT_JOINER.join( path ), incorrectValue, correctedValue, incorrectValue == correctedValue ? "This seems to be an error." : ""),
                     (action, path, incorrectValue, correctedValue) ->
-                            LogManager.getLogger().debug(CORE, "The comment on key {} does not match the spec. This may create a backup.", DOT_JOINER.join( path )));
+                            LOGGER.debug(CORE, "The comment on key {} does not match the spec. This may create a backup.", DOT_JOINER.join( path )));
 
             if (config instanceof FileConfig) {
                 ((FileConfig) config).save();
@@ -263,12 +266,9 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
 
     private boolean stringsMatchIgnoringNewlines(@Nullable Object obj1, @Nullable Object obj2)
     {
-        if(obj1 instanceof String && obj2 instanceof String)
+        if (obj1 instanceof String string1 && obj2 instanceof String string2)
         {
-            String string1 = (String) obj1;
-            String string2 = (String) obj2;
-
-            if(string1.length() > 0 && string2.length() > 0)
+            if (string1.length() > 0 && string2.length() > 0)
             {
                 return string1.replaceAll("\r\n", "\n")
                         .equals(string2.replaceAll("\r\n", "\n"));
@@ -367,13 +367,13 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
                 @Override
                 public Object correct(Object value) {
                     if (value == null || !(value instanceof List) || ((List<?>)value).isEmpty()) {
-                        LogManager.getLogger().debug(CORE, "List on key {} is deemed to need correction. It is null, not a list, or an empty list. Modders, consider defineListAllowEmpty?", path.get(path.size() - 1));
+                        LOGGER.debug(CORE, "List on key {} is deemed to need correction. It is null, not a list, or an empty list. Modders, consider defineListAllowEmpty?", path.get(path.size() - 1));
                         return getDefault();
                     }
                     List<?> list = Lists.newArrayList((List<?>) value);
                     list.removeIf(elementValidator.negate());
                     if (list.isEmpty()) {
-                        LogManager.getLogger().debug(CORE, "List on key {} is deemed to need correction. It failed validation.", path.get(path.size() - 1));
+                        LOGGER.debug(CORE, "List on key {} is deemed to need correction. It failed validation.", path.get(path.size() - 1));
                         return getDefault();
                     }
                     return list;
@@ -387,13 +387,13 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
                 @Override
                 public Object correct(Object value) {
                     if (value == null || !(value instanceof List)) {
-                        LogManager.getLogger().debug(CORE, "List on key {} is deemed to need correction, as it is null or not a list.", path.get(path.size() - 1));
+                        LOGGER.debug(CORE, "List on key {} is deemed to need correction, as it is null or not a list.", path.get(path.size() - 1));
                         return getDefault();
                     }
                     List<?> list = Lists.newArrayList((List<?>) value);
                     list.removeIf(elementValidator.negate());
                     if (list.isEmpty()) {
-                        LogManager.getLogger().debug(CORE, "List on key {} is deemed to need correction. It failed validation.", path.get(path.size() - 1));
+                        LOGGER.debug(CORE, "List on key {} is deemed to need correction. It failed validation.", path.get(path.size() - 1));
                         return getDefault();
                     }
                     return list;
@@ -646,7 +646,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
             if (comment.stream().allMatch(String::isBlank))
             {
                 if (FMLEnvironment.production)
-                    LogManager.getLogger().warn(CORE, "Detected a comment that is all whitespace for config option {}, which causes obscure bugs in Forge's config system and will cause a crash in the future. Please report this to the mod author.",
+                    LOGGER.warn(CORE, "Detected a comment that is all whitespace for config option {}, which causes obscure bugs in Forge's config system and will cause a crash in the future. Please report this to the mod author.",
                             DOT_JOINER.join(path));
                 else
                     throw new IllegalStateException("Can not build comment for config option " + DOT_JOINER.join(path) + " as it comprises entirely of blank lines/whitespace. This is not allowed as it causes a \"constantly correcting config\" bug with NightConfig in Forge's config system.");
@@ -722,7 +722,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
                 boolean result = ((Number)min).doubleValue() <= n.doubleValue() && n.doubleValue() <= ((Number)max).doubleValue();
                 if(!result)
                 {
-                    LogManager.getLogger().debug(CORE, "Range value {} is not within its bounds {}-{}", n.doubleValue(), ((Number)min).doubleValue(), ((Number)max).doubleValue());
+                    LOGGER.debug(CORE, "Range value {} is not within its bounds {}-{}", n.doubleValue(), ((Number)min).doubleValue(), ((Number)max).doubleValue());
                 }
                 return result;
             }
@@ -732,7 +732,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
             boolean result = c.compareTo(min) >= 0 && c.compareTo(max) <= 0;
             if(!result)
             {
-                LogManager.getLogger().debug(CORE, "Range value {} is not within its bounds {}-{}", c, min, max);
+                LOGGER.debug(CORE, "Range value {} is not within its bounds {}-{}", c, min, max);
             }
             return result;
         }
