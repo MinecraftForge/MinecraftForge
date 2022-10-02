@@ -19,12 +19,13 @@ import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.client.resources.model.BuiltInModel;
 import net.minecraft.client.resources.model.Material;
 import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.ModelState;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.client.RenderTypeGroup;
+import net.minecraftforge.client.model.ElementsModel;
 import net.minecraftforge.client.model.IModelBuilder;
 import net.minecraftforge.client.model.SimpleModelState;
 import org.jetbrains.annotations.ApiStatus;
@@ -98,17 +99,28 @@ public class UnbakedGeometryHelper
         if (customModel != null)
             return customModel.bake(blockModel.customData, modelBakery, spriteGetter, modelState, blockModel.getOverrides(modelBakery, owner, spriteGetter), modelLocation);
 
-        Transformation rootTransform = blockModel.customData.getRootTransform();
-        if (!rootTransform.isIdentity())
-            modelState = new SimpleModelState(modelState.getRotation().compose(rootTransform), modelState.isUvLocked());
-
         // Handle vanilla item models here, since vanilla has a shortcut for them
         if (blockModel.getRootModel() == ModelBakery.GENERATION_MARKER)
             return ITEM_MODEL_GENERATOR.generateBlockModel(spriteGetter, blockModel).bake(modelBakery, blockModel, spriteGetter, modelState, modelLocation, guiLight3d);
 
-        var renderTypeHint = blockModel.customData.getRenderTypeHint();
-        var renderTypes = renderTypeHint != null ? blockModel.customData.getRenderType(renderTypeHint) : RenderTypeGroup.EMPTY;
-        return blockModel.bakeVanilla(modelBakery, owner, spriteGetter, modelState, modelLocation, guiLight3d, renderTypes);
+        return bakeVanilla(blockModel, modelBakery, owner, spriteGetter, modelState, modelLocation);
+    }
+
+    /**
+     * Helper for baking vanilla {@link BlockModel} instances.
+     *
+     * @deprecated Merge into the method above in 1.20 once the call from {@link BlockModel} is gone.
+     */
+    @ApiStatus.Internal
+    @Deprecated(forRemoval = true, since = "1.19.2")
+    public static BakedModel bakeVanilla(BlockModel blockModel, ModelBakery modelBakery, BlockModel owner, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelState, ResourceLocation modelLocation) {
+        if (blockModel.getRootModel() == ModelBakery.BLOCK_ENTITY_MARKER) {
+            var particleSprite = spriteGetter.apply(blockModel.getMaterial("particle"));
+            return new BuiltInModel(blockModel.getTransforms(), blockModel.getOverrides(modelBakery, owner, spriteGetter), particleSprite, blockModel.getGuiLight().lightLikeBlock());
+        }
+
+        var elementsModel = new ElementsModel(blockModel.getElements());
+        return elementsModel.bake(blockModel.customData, modelBakery, spriteGetter, modelState, blockModel.getOverrides(modelBakery, owner, spriteGetter), modelLocation);
     }
 
     /**
