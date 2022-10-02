@@ -749,4 +749,17 @@ public interface IForgeBlockState
     {
         return self().getBlock().canBeHydrated(self(), getter, pos, fluid, fluidPos);
     }
+
+    /**
+     * Returns the {@link BlockState} that this state looks like on the given side.
+     *
+     * @param level The level this block is in
+     * @param pos   The block's position in the level
+     * @param side  The side of the block that is being queried
+     * @return The appearance of this block from the given side
+     */
+    default BlockState getAppearance(BlockGetter level, BlockPos pos, Direction side)
+    {
+        return self().getBlock().getAppearance(self(), level, pos, side);
+    }
 }

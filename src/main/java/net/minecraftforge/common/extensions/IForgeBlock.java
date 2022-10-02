@@ -920,4 +920,26 @@ public interface IForgeBlock
     {
         return defaultColor;
     }
+
+    /**
+     * Returns the {@link BlockState} that this block looks like on the given side.
+     * <p>
+     * This method should be overridden by blocks that mimic the appearance of other blocks by wrapping their models,
+     * such as covers and facades used to hide cables and pipes which query the geometry and then clip it. This enables
+     * blocks with connected texture behavior to check the appearance of the block instead of the state itself, allowing
+     * them to seamlessly connect to any mimic blocks.
+     * <p>
+     * Note that this method will almost always be called from a rendering or meshing thread and level context will be
+     * limited.
+     *
+     * @param state The state of this block
+     * @param level The level this block is in
+     * @param pos   The block's position in the level
+     * @param side  The side of the block that is being queried
+     * @return The appearance of this block from the given side
+     */
+    default BlockState getAppearance(BlockState state, BlockGetter level, BlockPos pos, Direction side)
+    {
+        return state;
+    }
 }
