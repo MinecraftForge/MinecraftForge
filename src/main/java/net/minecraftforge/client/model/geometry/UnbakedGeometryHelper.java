@@ -113,8 +113,10 @@ public class UnbakedGeometryHelper
      */
     @ApiStatus.Internal
     @Deprecated(forRemoval = true, since = "1.19.2")
-    public static BakedModel bakeVanilla(BlockModel blockModel, ModelBakery modelBakery, BlockModel owner, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelState, ResourceLocation modelLocation) {
-        if (blockModel.getRootModel() == ModelBakery.BLOCK_ENTITY_MARKER) {
+    public static BakedModel bakeVanilla(BlockModel blockModel, ModelBakery modelBakery, BlockModel owner, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelState, ResourceLocation modelLocation)
+    {
+        if (blockModel.getRootModel() == ModelBakery.BLOCK_ENTITY_MARKER)
+        {
             var particleSprite = spriteGetter.apply(blockModel.getMaterial("particle"));
             return new BuiltInModel(blockModel.getTransforms(), blockModel.getOverrides(modelBakery, owner, spriteGetter), particleSprite, blockModel.getGuiLight().lightLikeBlock());
         }
