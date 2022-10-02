@@ -72,7 +72,7 @@ public class ForgeConfigSpecTest
     }
 
     @Test
-    public void topPaddedCommentTest() throws IllegalStateException
+    public void topPaddedCommentTest()
     {
         final ForgeConfigSpec.Builder builder = new ForgeConfigSpec.Builder();
         final ForgeConfigSpec.ConfigValue<String> simpleValue = builder.comment("", "Test").define("topPaddedCommentTest", "someDefaultValue");
