@@ -24,6 +24,7 @@ import net.minecraft.world.entity.projectile.WitherSkull;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.block.*;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.levelgen.feature.configurations.TreeConfiguration;
 import net.minecraft.world.level.material.FluidState;
@@ -37,6 +38,7 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraftforge.client.ForgeHooksClient;
+import net.minecraftforge.client.model.data.ModelData;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.IPlantable;
 
@@ -930,7 +932,8 @@ public interface IForgeBlock
      * them to seamlessly connect to any mimic blocks.
      * <p>
      * Note that this method will almost always be called from a rendering or meshing thread and level context will be
-     * limited.
+     * limited and asynchronous. If you need any data from your {@link BlockEntity}, it is recommended you put it in
+     * {@link ModelData} and query it by calling {@code level.getModelDataManager().getAt(pos)} in this method.
      *
      * @param state The state of this block
      * @param level The level this block is in
