@@ -10,8 +10,6 @@ import java.util.*;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 
-import com.google.common.collect.ImmutableList;
-
 import com.mojang.authlib.GameProfile;
 
 import com.mojang.brigadier.CommandDispatcher;
