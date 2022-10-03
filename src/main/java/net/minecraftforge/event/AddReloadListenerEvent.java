@@ -5,7 +5,6 @@
 
 package net.minecraftforge.event;
 
-import com.google.common.collect.ImmutableList;
 import net.minecraft.server.ReloadableServerResources;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.server.packs.resources.PreparableReloadListener;
@@ -19,6 +18,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
+
+import org.jetbrains.annotations.ApiStatus;
 
 /**
  * The main ResourceManager is recreated on each reload, just after {@link ReloadableServerResources}'s creation.
@@ -34,10 +35,22 @@ public class AddReloadListenerEvent extends Event
     private final List<PreparableReloadListener> returnList;
     private final ReloadableServerResources serverResources;
 
+    @ApiStatus.Internal
     public AddReloadListenerEvent(ReloadableServerResources serverResources, List<PreparableReloadListener> returnList)
     {
         this.serverResources = serverResources;
         this.returnList = returnList;
+    }
+
+    /**
+     * @deprecated this constructor will be removed as it lacks the proper context
+     */
+    @Deprecated(forRemoval = true, since = "1.19.2")
+    @ApiStatus.Internal
+    public AddReloadListenerEvent(ReloadableServerResources serverResources)
+    {
+        this.serverResources = serverResources;
+        this.returnList = new ArrayList<>();
     }
 
    /**
@@ -52,8 +65,11 @@ public class AddReloadListenerEvent extends Event
 
 
     /**
+     * This method inserts a {@link PreparableReloadListener} before a specified vanilla reload listener. It does not work for inserting listeners before modded reload listeners. Use event priorities for that functionality.
+     *
      * Only use this method if you do something in a vanilla reload listener that depends on your own reloadable data.
      * For example, if you require some reloadable data to be present in a recipe.
+     *
      * @param listener The listener to add to the ResourceManager.
      * @param current The listener which this listener should be loaded before. These can be obtained from various methods in {@link ReloadableServerResources}
      */
@@ -73,19 +89,20 @@ public class AddReloadListenerEvent extends Event
 
     /**
      * @deprecated use getAllListeners as that contains the list of all listeners rather than mod-added ones
+     * {@return a copy of the list of vanilla resource listeners}
      */
     @Deprecated(forRemoval = true, since = "1.19.2")
     public List<PreparableReloadListener> getListeners()
     {
-       return ImmutableList.copyOf(listeners);
+       return List.copyOf(listeners);
     }
 
     /**
-     * @return A copy of the current sorted list of all reload listeners, included ones inserted within the vanilla list.
+     * {@return a copy of the current list of reload listeners} This includes reload listeners from both vanilla and this event.
      */
     public List<PreparableReloadListener> getAllListeners()
     {
-        return ImmutableList.copyOf(returnList);
+        return List.copyOf(returnList);
     }
 
     /**
@@ -105,15 +122,18 @@ public class AddReloadListenerEvent extends Event
         return serverResources.getConditionContext();
     }
 
-    private static class WrappedStateAwareListener implements PreparableReloadListener {
+    private static class WrappedStateAwareListener implements PreparableReloadListener
+    {
         private final PreparableReloadListener wrapped;
 
-        private WrappedStateAwareListener(final PreparableReloadListener wrapped) {
+        private WrappedStateAwareListener(final PreparableReloadListener wrapped)
+        {
             this.wrapped = wrapped;
         }
 
         @Override
-        public CompletableFuture<Void> reload(final PreparationBarrier stage, final ResourceManager resourceManager, final ProfilerFiller preparationsProfiler, final ProfilerFiller reloadProfiler, final Executor backgroundExecutor, final Executor gameExecutor) {
+        public CompletableFuture<Void> reload(final PreparationBarrier stage, final ResourceManager resourceManager, final ProfilerFiller preparationsProfiler, final ProfilerFiller reloadProfiler, final Executor backgroundExecutor, final Executor gameExecutor)
+        {
             if (ModLoader.isLoadingStateValid())
                 return wrapped.reload(stage, resourceManager, preparationsProfiler, reloadProfiler, backgroundExecutor, gameExecutor);
             else

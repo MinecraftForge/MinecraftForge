@@ -668,7 +668,7 @@ public class ForgeEventFactory
         List<PreparableReloadListener> listeners = new ArrayList<>(serverResources.listeners());
         AddReloadListenerEvent event = new AddReloadListenerEvent(serverResources, listeners);
         MinecraftForge.EVENT_BUS.post(event);
-        return ImmutableList.copyOf(listeners);
+        return List.copyOf(listeners);
     }
 
     public static void onCommandRegister(CommandDispatcher<CommandSourceStack> dispatcher, Commands.CommandSelection environment, CommandBuildContext context)
