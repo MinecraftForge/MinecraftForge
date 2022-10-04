@@ -751,12 +751,13 @@ public interface IForgeBlockState
     }
 
     /**
-     * Returns the {@link BlockState} that this state looks like on the given side.
+     * Returns the {@link BlockState} that this state reports to look like on the given side for querying by other mods.
      *
      * @param level The level this block is in
      * @param pos   The block's position in the level
      * @param side  The side of the block that is being queried
      * @return The appearance of this block from the given side
+     * @see IForgeBlock#getAppearance(BlockState, BlockGetter, BlockPos, Direction)
      */
     default BlockState getAppearance(BlockGetter level, BlockPos pos, Direction side)
     {
