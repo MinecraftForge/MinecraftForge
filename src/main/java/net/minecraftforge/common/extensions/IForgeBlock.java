@@ -924,20 +924,6 @@ public interface IForgeBlock
         return defaultColor;
     }
 
-    /*
-     * Returns the {@link BlockState} that this block looks like on the given side.
-     * Overriding this does not change how this block renders. That still needs to be done in the model. This
-     * <p>
-     * This method should be overridden by blocks that mimic the appearance of other blocks by wrapping their models,
-     * such as covers and facades used to hide cables and pipes which query the geometry and then clip it. This enables
-     * blocks with connected texture behavior to check the appearance of the block instead of the state itself, allowing
-     * them to seamlessly connect to any mimic blocks, and allowing those to connect to each other.
-     * <p>
-     * Note that this method will almost always be called from a rendering or meshing thread and level context will be
-     * limited and asynchronous. If you need any data from your {@link BlockEntity}, it is recommended you put it in
-     * {@link ModelData} and query it by calling {@code level.getModelDataManager().getAt(pos)} in this method.
-     */
-
     /**
      * Returns the {@link BlockState} that this block reports to look like on the given side for querying by other mods.
      * Note: Overriding this does not change how this block renders. That still needs to be done in the model.
