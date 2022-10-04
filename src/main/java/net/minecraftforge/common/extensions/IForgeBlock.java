@@ -933,8 +933,8 @@ public interface IForgeBlock
      * <p>
      * <b>On the client, this method may be called from a rendering or meshing thread.</b>
      * If you need any data from your {@link BlockEntity}, make sure it can be safely accessed concurrently, or put it
-     * in {@link ModelData}. If you do the latter, note that {@link BlockGetter#getModelDataManager()} manager will
-     * return {@code null} if in a server context. In that case, it is safe to query your {@link BlockEntity} directly.
+     * in {@link ModelData}. If you do the latter, note that {@link BlockGetter#getModelDataManager()} will return
+     * {@code null} if in a server context. In that case, it is safe to query your {@link BlockEntity} directly.
      *
      * @param state The state of this block
      * @param level The level this block is in
