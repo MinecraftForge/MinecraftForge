@@ -750,11 +750,25 @@ public interface IForgeBlockState
         return self().getBlock().canBeHydrated(self(), getter, pos, fluid, fluidPos);
     }
 
+    /**
+     * Returns the factor by which movement speed is multiplied for an entity standing on this block.
+     *
+     * @param getter The level this block is in
+     * @param pos The block's position in the level
+     * @param entity The entity for which this speed factor is applied
+     */
     default float getSpeedFactor(BlockGetter getter, BlockPos pos, Entity entity)
     {
         return self().getBlock().getSpeedFactor(self(), getter, pos, entity);
     }
 
+    /**
+     * Returns the factor by which jump height is multiplied for an entity standing on this block.
+     *
+     * @param getter The level this block is in
+     * @param pos The block's position in the level
+     * @param entity The entity for which this jump factor is applied
+     */
     default float getJumpFactor(BlockGetter getter, BlockPos pos, Entity entity)
     {
         return self().getBlock().getJumpFactor(self(), getter, pos, entity);

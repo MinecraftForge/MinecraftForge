@@ -921,13 +921,28 @@ public interface IForgeBlock
         return defaultColor;
     }
 
-
-    default float getJumpFactor(BlockState state, BlockGetter getter, BlockPos pos, Entity entity)
+    /**
+     * Returns the factor by which jump height is multiplied for any entities standing on this block.
+     *
+     * @param state The state of this block
+     * @param getter The level this block is in
+     * @param pos The block's position in the level
+     * @param entity The entity for which this jump factor is applied
+     */
+    default float getJumpFactor(BlockState state, BlockGetter level, BlockPos pos, Entity entity)
     {
         return self().getJumpFactor();
     }
 
-    default float getSpeedFactor(BlockState state, BlockGetter getter, BlockPos pos, Entity entity)
+    /**
+     * Returns the factor by which movement speed is multiplied for any entities standing on this block.
+     *
+     * @param state The state of this block
+     * @param getter The level this block is in
+     * @param pos The block's position in the level
+     * @param entity The entity for which this speed factor is applied
+     */
+    default float getSpeedFactor(BlockState state, BlockGetter level, BlockPos pos, Entity entity)
     {
         return self().getSpeedFactor();
     }
