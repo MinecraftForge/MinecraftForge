@@ -67,16 +67,22 @@
     public ItemStack m_7397_(BlockGetter p_49823_, BlockPos p_49824_, BlockState p_49825_) {
        return new ItemStack(this);
     }
-@@ -400,10 +_,12 @@
+@@ -400,10 +_,18 @@
        return this.f_60447_;
     }
  
-+   @Deprecated //Forge: Use more sensitive version
++   /**
++    * @deprecated Use more sensitive version {@link net.minecraftforge.common.extensions.IForgeBlock#getSpeedFactor(BlockState, BlockGetter, BlockPos, Entity)}
++    */
++   @Deprecated
     public float m_49961_() {
        return this.f_60448_;
     }
  
-+   @Deprecated //Forge: Use more sensitive version
++   /**
++    * @deprecated Use more sensitive version {@link net.minecraftforge.common.extensions.IForgeBlock#getJumpFactor(BlockState, BlockGetter, BlockPos, Entity)}
++    */
++   @Deprecated
     public float m_49964_() {
        return this.f_60449_;
     }
