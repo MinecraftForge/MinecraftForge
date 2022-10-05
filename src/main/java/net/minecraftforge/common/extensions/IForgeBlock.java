@@ -920,4 +920,15 @@ public interface IForgeBlock
     {
         return defaultColor;
     }
+
+
+    default float getJumpFactor(BlockState state, BlockGetter getter, BlockPos pos, Entity entity)
+    {
+        return self().getJumpFactor();
+    }
+
+    default float getSpeedFactor(BlockState state, BlockGetter getter, BlockPos pos, Entity entity)
+    {
+        return self().getSpeedFactor();
+    }
 }

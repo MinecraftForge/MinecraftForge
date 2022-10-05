@@ -135,6 +135,27 @@
              return blockpos1;
           }
        }
+@@ -740,16 +_,16 @@
+    }
+ 
+    protected float m_20098_() {
+-      float f = this.f_19853_.m_8055_(this.m_20183_()).m_60734_().m_49964_();
+-      float f1 = this.f_19853_.m_8055_(this.m_20099_()).m_60734_().m_49964_();
++      float f = this.f_19853_.m_8055_(this.m_20183_()).getJumpFactor(this.f_19853_, this.m_20183_(), this);
++      float f1 = this.f_19853_.m_8055_(this.m_20099_()).getJumpFactor(this.f_19853_, this.m_20183_(), this);
+       return (double)f == 1.0D ? f1 : f;
+    }
+ 
+    protected float m_6041_() {
+       BlockState blockstate = this.f_19853_.m_8055_(this.m_20183_());
+-      float f = blockstate.m_60734_().m_49961_();
++      float f = blockstate.getSpeedFactor(this.f_19853_, this.m_20183_(), this);
+       if (!blockstate.m_60713_(Blocks.f_49990_) && !blockstate.m_60713_(Blocks.f_50628_)) {
+-         return (double)f == 1.0D ? this.f_19853_.m_8055_(this.m_20099_()).m_60734_().m_49961_() : f;
++         return (double)f == 1.0D ? this.f_19853_.m_8055_(this.m_20099_()).getSpeedFactor(this.f_19853_, this.m_20183_(), this) : f;
+       } else {
+          return f;
+       }
 @@ -804,10 +_,11 @@
        boolean flag1 = p_20273_.f_82480_ != vec3.f_82480_;
        boolean flag2 = p_20273_.f_82481_ != vec3.f_82481_;

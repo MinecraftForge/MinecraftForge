@@ -67,6 +67,19 @@
     public ItemStack m_7397_(BlockGetter p_49823_, BlockPos p_49824_, BlockState p_49825_) {
        return new ItemStack(this);
     }
+@@ -400,10 +_,12 @@
+       return this.f_60447_;
+    }
+ 
++   @Deprecated //Forge: Use more sensitive version
+    public float m_49961_() {
+       return this.f_60448_;
+    }
+ 
++   @Deprecated //Forge: Use more sensitive version
+    public float m_49964_() {
+       return this.f_60449_;
+    }
 @@ -424,6 +_,7 @@
     public void m_141997_(BlockState p_152450_, Level p_152451_, BlockPos p_152452_, Biome.Precipitation p_152453_) {
     }

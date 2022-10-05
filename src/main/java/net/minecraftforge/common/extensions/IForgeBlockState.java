@@ -749,4 +749,14 @@ public interface IForgeBlockState
     {
         return self().getBlock().canBeHydrated(self(), getter, pos, fluid, fluidPos);
     }
+
+    default float getSpeedFactor(BlockGetter getter, BlockPos pos, Entity entity)
+    {
+        return self().getBlock().getSpeedFactor(self(), getter, pos, entity);
+    }
+
+    default float getJumpFactor(BlockGetter getter, BlockPos pos, Entity entity)
+    {
+        return self().getBlock().getJumpFactor(self(), getter, pos, entity);
+    }
 }
