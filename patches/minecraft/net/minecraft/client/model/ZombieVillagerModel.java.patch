@@ -1,0 +1,10 @@
+--- a/net/minecraft/client/model/ZombieVillagerModel.java
++++ b/net/minecraft/client/model/ZombieVillagerModel.java
+@@ -46,6 +_,7 @@
+ 
+    public void m_6973_(T p_104175_, float p_104176_, float p_104177_, float p_104178_, float p_104179_, float p_104180_) {
+       super.m_6973_(p_104175_, p_104176_, p_104177_, p_104178_, p_104179_, p_104180_);
++      if (!net.minecraftforge.client.ForgeHooksClient.hasForgeArmPose(p_104175_))
+       AnimationUtils.m_102102_(this.f_102812_, this.f_102811_, p_104175_.m_5912_(), this.f_102608_, p_104178_);
+    }
+ 

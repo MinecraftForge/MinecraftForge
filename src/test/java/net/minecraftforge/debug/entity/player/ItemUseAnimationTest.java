@@ -9,6 +9,8 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.food.FoodProperties;
@@ -17,6 +19,8 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.UseAnim;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
@@ -30,6 +34,8 @@ import java.util.function.Consumer;
  * In game, use `/give @s item_use_animation_test:thing 1` to obtain test item
  * When you try to eat it, your arm in 3d person should start swinging really fast.
  * And item in your hand will go down little.
+ *
+ * The animation is permanently enabled for skeletons and drowned to show their special handling.
  */
 @Mod(ItemUseAnimationTest.MOD_ID)
 public class ItemUseAnimationTest
@@ -44,6 +50,19 @@ public class ItemUseAnimationTest
     public ItemUseAnimationTest()
     {
         ITEMS.register(FMLJavaModLoadingContext.get().getModEventBus());
+        MinecraftForge.EVENT_BUS.addListener(this::onEntityJoinLevel);
+    }
+
+    private void onEntityJoinLevel(EntityJoinLevelEvent event)
+    {
+        if (!event.loadedFromDisk())
+        {
+            EntityType<?> type = event.getEntity().getType();
+            if ((type == EntityType.DROWNED || type == EntityType.SKELETON) && event.getLevel().getRandom().nextFloat() < 0.3f)
+            {
+                event.getEntity().setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(THING.get()));
+            }
+        }
     }
 
     private static class ThingItem extends Item
@@ -82,6 +101,10 @@ public class ItemUseAnimationTest
                     if (!itemStack.isEmpty())
                     {
                         if (entityLiving.getUsedItemHand() == hand && entityLiving.getUseItemRemainingTicks() > 0)
+                        {
+                            return SWING_POSE;
+                        }
+                        if (entityLiving.getType() == EntityType.SKELETON || entityLiving.getType() == EntityType.DROWNED)
                         {
                             return SWING_POSE;
                         }

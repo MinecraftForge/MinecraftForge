@@ -1,0 +1,10 @@
+--- a/net/minecraft/client/model/PiglinModel.java
++++ b/net/minecraft/client/model/PiglinModel.java
+@@ -81,6 +_,7 @@
+             }
+          }
+       } else if (p_103366_.m_6095_() == EntityType.f_20531_) {
++         if (!net.minecraftforge.client.ForgeHooksClient.hasForgeArmPose(p_103366_))
+          AnimationUtils.m_102102_(this.f_102812_, this.f_102811_, p_103366_.m_5912_(), this.f_102608_, p_103369_);
+       }
+ 
