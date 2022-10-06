@@ -38,7 +38,7 @@ public class LivingUseTotemEvent extends LivingEvent
     }
 
     /**
-     * {@return The damage source that caused the entity to die.}
+     * {@return the damage source that caused the entity to die}
      */
     public DamageSource getSource()
     {
@@ -46,7 +46,7 @@ public class LivingUseTotemEvent extends LivingEvent
     }
 
     /**
-     * {@return The totem of undying being used from the entity's inventory.}
+     * {@return the totem of undying being used from the entity's inventory}
      */
     public ItemStack getTotem()
     {
@@ -54,7 +54,7 @@ public class LivingUseTotemEvent extends LivingEvent
     }
 
     /**
-     * {@return The hand holding the totem.}
+     * {@return the hand holding the totem}
      */
     public InteractionHand getHandHolding()
     {
