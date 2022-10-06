@@ -751,7 +751,8 @@ public interface IForgeBlockState
     }
 
     /**
-     * Returns the factor by which movement speed is multiplied for an entity standing on this block.
+     * Returns the factor by which movement speed is multiplied for any entities inside this block or
+     * standing on this block (unless overridden by the block the entity is in).
      *
      * @param getter The level this block is in
      * @param pos The block's position in the level
@@ -763,7 +764,8 @@ public interface IForgeBlockState
     }
 
     /**
-     * Returns the factor by which jump height is multiplied for an entity standing on this block.
+     * Returns the factor by which jump height is multiplied for any entities inside this block or
+     * standing on this block (unless overridden by the block the entity is in).
      *
      * @param getter The level this block is in
      * @param pos The block's position in the level
