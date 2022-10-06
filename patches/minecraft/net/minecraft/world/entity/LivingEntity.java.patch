@@ -209,6 +209,15 @@
              }
           }
  
+@@ -1175,7 +_,7 @@
+ 
+          for(InteractionHand interactionhand : InteractionHand.values()) {
+             ItemStack itemstack1 = this.m_21120_(interactionhand);
+-            if (itemstack1.m_150930_(Items.f_42747_)) {
++            if (itemstack1.m_150930_(Items.f_42747_) && net.minecraftforge.common.ForgeHooks.onLivingUseTotem(this, p_21263_, itemstack1, interactionhand)) {
+                itemstack = itemstack1.m_41777_();
+                itemstack1.m_41774_(1);
+                break;
 @@ -1185,7 +_,7 @@
           if (itemstack != null) {
              if (this instanceof ServerPlayer) {
