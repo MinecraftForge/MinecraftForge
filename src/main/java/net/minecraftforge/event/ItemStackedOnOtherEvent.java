@@ -20,17 +20,18 @@ import org.jetbrains.annotations.ApiStatus;
 
 /**
  * This event provides the functionality of the pair of functions used for the Bundle, in one event:
- *  - {@link Item#overrideOtherStackedOnMe(ItemStack, ItemStack, Slot, ClickAction, Player, SlotAccess)}
- *  - {@link Item#overrideStackedOnOther(ItemStack, Slot, ClickAction, Player)}
+ * <ul>
+ *     <li>{@link Item#overrideOtherStackedOnMe(ItemStack, ItemStack, Slot, ClickAction, Player, SlotAccess)}</li>
+ *     <li>{@link Item#overrideStackedOnOther(ItemStack, Slot, ClickAction, Player)}</li>
+ * </ul>
  *
- *  This event is fired before either of those are called, when a carried item is clicked on top of another in a GUI slot.
- *  This event (and item stacking on others in general) is fired on both {@linkplain LogicalSide}, but only on {@linkplain LogicalSide#CLIENT} for the creative menu.
+ *  This event is fired before either of the above are called, when a carried item is clicked on top of another in a GUI slot.
+ *  This event (and item stacking on others in general) is fired on both {@linkplain LogicalSide sides}, but only on {@linkplain LogicalSide#CLIENT the client} for the creative menu.
  *  Practically, that means that listeners of this event should require the player to be in survival mode if using capabilities that are not synced.
  *  <p>
  *  This event is {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}.
  *  If the event is cancelled, the container's logic halts, the carried item and the slot will not be swapped, and handling is assumed to have been done by the mod.
- *  This means also that the two above vanilla checks described above will not be called.
- *  * <p>
+ *  This also means that the two vanilla checks described above will not be called.
  */
 @Cancelable
 public class ItemStackedOnOtherEvent extends Event
@@ -54,7 +55,7 @@ public class ItemStackedOnOtherEvent extends Event
     }
 
     /**
-     * @return The stack being carried by the mouse. This may be empty!
+     * {@return the stack being carried by the mouse} This may be empty!
      */
     public ItemStack getCarriedItem()
     {
@@ -62,7 +63,7 @@ public class ItemStackedOnOtherEvent extends Event
     }
 
     /**
-     * @return The stack currently in the slot being clicked on. This may be empty!
+     * {@return the stack currently in the slot being clicked on} This may be empty!
      */
     public ItemStack getStackedOnItem()
     {
@@ -70,7 +71,7 @@ public class ItemStackedOnOtherEvent extends Event
     }
 
     /**
-     * @return The Slot being clicked on
+     * {@return the slot being clicked on}
      */
     public Slot getSlot()
     {
@@ -78,7 +79,7 @@ public class ItemStackedOnOtherEvent extends Event
     }
 
     /**
-     * @return The click action being used. By default {@linkplain ClickAction#PRIMARY} corresponds to left-click, and {@linkplain ClickAction#SECONDARY} is right-click.
+     * {@return the click action being used} By default {@linkplain ClickAction#PRIMARY} corresponds to left-click, and {@linkplain ClickAction#SECONDARY} is right-click.
      */
     public ClickAction getClickAction()
     {
@@ -86,7 +87,7 @@ public class ItemStackedOnOtherEvent extends Event
     }
 
     /**
-     * @return The player doing the item swap attempt
+     * {@return the player doing the item swap attempt}
      */
     public Player getPlayer()
     {
@@ -94,7 +95,7 @@ public class ItemStackedOnOtherEvent extends Event
     }
 
     /**
-     * @return This is a fake slot allowing the listener to see and change what item is being carried.
+     * {@return a fake slot allowing the listener to see and change what item is being carried}
      */
     public SlotAccess getCarriedSlotAccess()
     {
