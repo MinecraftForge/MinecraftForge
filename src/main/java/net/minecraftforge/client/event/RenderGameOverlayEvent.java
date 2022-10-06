@@ -17,7 +17,7 @@ import net.minecraft.client.gui.components.LerpingBossEvent;
 @Cancelable
 public class RenderGameOverlayEvent extends Event
 {
-    public PoseStack getMatrixStack()
+    public PoseStack getPoseStack()
     {
         return mStack;
     }
