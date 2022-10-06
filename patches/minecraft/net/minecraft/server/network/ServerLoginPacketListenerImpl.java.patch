@@ -1,5 +1,14 @@
 --- a/net/minecraft/server/network/ServerLoginPacketListenerImpl.java
 +++ b/net/minecraft/server/network/ServerLoginPacketListenerImpl.java
+@@ -43,7 +_,7 @@
+ public class ServerLoginPacketListenerImpl implements TickablePacketListener, ServerLoginPacketListener {
+    private static final AtomicInteger f_10014_ = new AtomicInteger(0);
+    static final Logger f_10015_ = LogUtils.getLogger();
+-   private static final int f_143698_ = 600;
++   private static final int f_143698_ = 20 * Integer.parseInt(System.getProperty("forge.readTimeout", "30"));
+    private static final RandomSource f_10016_ = RandomSource.m_216327_();
+    private final byte[] f_10017_;
+    final MinecraftServer f_10018_;
 @@ -65,7 +_,13 @@
     }
  
@@ -15,6 +24,15 @@
           this.m_10055_();
        } else if (this.f_10019_ == ServerLoginPacketListenerImpl.State.DELAY_ACCEPT) {
           ServerPlayer serverplayer = this.f_10018_.m_6846_().m_11259_(this.f_10021_.getId());
+@@ -76,7 +_,7 @@
+          }
+       }
+ 
+-      if (this.f_10020_++ == 600) {
++      if (this.f_10020_++ == f_143698_) {
+          this.m_10053_(Component.m_237115_("multiplayer.disconnect.slow_login"));
+       }
+ 
 @@ -178,14 +_,14 @@
        GameProfile gameprofile = this.f_10018_.m_236731_();
        if (gameprofile != null && p_10047_.f_238040_().equalsIgnoreCase(gameprofile.getName())) {
