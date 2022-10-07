@@ -265,7 +265,7 @@ public class ResourceCacheManager
          */
         private final String namespace;
         /**
-         * Indicates if the indexing should run off-thread.
+         * Indicates if the indexing should run on-thread.
          */
         private final boolean indexOnThread;
         /**
