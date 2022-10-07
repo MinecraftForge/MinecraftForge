@@ -309,18 +309,18 @@ public class ResourceCacheManager
          */
         public void index()
         {
-            if (!indexOnThread)
+            if (indexOnThread)
+            {
+                // Run on-thread
+                doIndex();
+            }
+            else
             {
                 // Run off-thread.
                 CompletableFuture.runAsync(
                         this::doIndex,
                         Util.backgroundExecutor()
                 );
-            }
-            else
-            {
-                // Run on-thread
-                doIndex();
             }
         }
 
