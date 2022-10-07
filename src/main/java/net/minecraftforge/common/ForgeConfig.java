@@ -91,23 +91,23 @@ public class ForgeConfig {
         public final BooleanValue indexModPackCachesOnThread;
 
         Common(ForgeConfigSpec.Builder builder) {
-            builder.comment("[DEPRECATED / NO EFFECT]:General configuration settings")
+            builder.comment("[DEPRECATED / NO EFFECT]: General configuration settings")
                     .push("general");
 
             cachePackAccess = builder
-                    .comment("[DEPRECATED / NO EFFECT] [NOW IN BOOT CONFIG]:Set this to true to cache resource listings in resource and data packs")
+                    .comment("[DEPRECATED / NO EFFECT] [NOW IN RESOURCE-CACHING CONFIG]: Set this to true to cache resource listings in resource and data packs")
                     .translation("forge.configgui.cachePackAccess")
                     .worldRestart()
                     .define("cachePackAccess", true);
 
             indexVanillaPackCachesOnThread = builder
-                    .comment("[DEPRECATED / NO EFFECT] [NOW IN BOOT CONFIG]:Set this to true to index vanilla resource and data packs on thread")
+                    .comment("[DEPRECATED / NO EFFECT] [NOW IN RESOURCE-CACHING CONFIG]: Set this to true to index vanilla resource and data packs on thread")
                     .translation("forge.configgui.indexVanillaPackCachesOnThread")
                     .worldRestart()
                     .define("indexVanillaPackCachesOnThread", false);
 
             indexModPackCachesOnThread = builder
-                    .comment("[DEPRECATED / NO EFFECT] [NOW IN BOOT CONFIG]: Set this to true to index mod resource and data packs on thread")
+                    .comment("[DEPRECATED / NO EFFECT] [NOW IN RESOURCE-CACHING CONFIG]: Set this to true to index mod resource and data packs on thread")
                     .translation("forge.configgui.indexModPackCachesOnThread")
                     .worldRestart()
                     .define("indexModPackCachesOnThread", false);

@@ -5,6 +5,7 @@
 
 package net.minecraftforge.resource;
 
+import com.electronwill.nightconfig.core.file.FileWatcher;
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterators;
@@ -68,8 +69,9 @@ public class ResourceCacheManager
      * Disabled for the (in-jar / downloaded) default vanilla pack.
      */
     private final boolean supportsReloading;
+
     /**
-     * Indicates if the indexing of the file-tree should happen off-thread or on-thread and block the process accordingly.
+     * The config key which can be used to check if the indexing of the file-tree should happen off-thread or on-thread and block the process accordingly.
      */
     private final String indexOnThreadConfigurationKey;
 
@@ -77,6 +79,7 @@ public class ResourceCacheManager
      * The path builder (different users have different requirements for how they want to handle this)
      */
     private final BiFunction<PackType, String, Path> pathBuilder;
+
     /**
      * The individual sub managers by pack type and namespace
      */
@@ -122,6 +125,17 @@ public class ResourceCacheManager
     public boolean shouldIndexOnThread()
     {
         return ResourceManagerBootCacheConfigurationHandler.getInstance().getConfigValue(this.indexOnThreadConfigurationKey, false);
+    }
+
+    /**
+     * Indicates if this cache manager requires the indexing of the file-tree to happen off the main thread.
+     *
+     * @return {@code true} if the indexing of the file-tree should happen off the main thread, {@code true} otherwise.
+     */
+    @Deprecated(forRemoval = true, since = "1.19.2")
+    public boolean shouldIndexOffThread()
+    {
+        return !this.shouldIndexOnThread();
     }
 
     /**
@@ -477,53 +491,34 @@ public class ResourceCacheManager
          */
         private static final AtomicReference<List<String>> CURRENT_CONFIG_CONTENTS = new AtomicReference<>(readConfigFileContent());
 
+        private final FileWatcher bootConfigFileWatcher;
+
         /**
          * Creates a new instance of the handler.
          * Registers the watchdog thread.
          */
         private ResourceManagerBootCacheConfigurationHandler()
         {
-            //Create and register the watchdog thread.
-            final Thread watchDog = new Thread(ResourceManagerBootCacheConfigurationHandler::monitorBootConfiguration);
-            watchDog.setDaemon(true); //Background thread.
-            watchDog.setName("Forge Resource Cache Configuration Watchdog");
-            watchDog.start();
+            this.bootConfigFileWatcher = monitorBootConfiguration();
         }
 
         /**
          * Sets up, and runs a monitor on the boot configuration file, on the current thread.
          * Make sure to invoke this from a background thread.
          */
-        private static void monitorBootConfiguration()
+        private static FileWatcher monitorBootConfiguration()
         {
             //Get the configuration directory.
-            Path path = CONFIG_PATH.getParent();
-            try (final WatchService watchService = FileSystems.getDefault().newWatchService())
+            final FileWatcher fileWatcher = new FileWatcher();
+            try
             {
-                //Register a watch service on the configuration directory for any changes.
-                path.register(watchService, ENTRY_CREATE, ENTRY_MODIFY, ENTRY_DELETE);
-                while (true)
-                {
-                    //Grab the next key
-                    WatchKey key = watchService.take();
-                    //For each event in that key we check if it is our config file that is changed.
-                    for (WatchEvent<?> event : key.pollEvents())
-                    {
-                        if (event.context().equals(path.relativize(CONFIG_PATH)))
-                        {
-                            //And then we atomically update the config contents.
-                            CURRENT_CONFIG_CONTENTS.set(readConfigFileContent());
-                        }
-                    }
-                    //Reset the key, and continue.
-                    key.reset();
-                }
+                fileWatcher.addWatch(CONFIG_PATH, () -> CURRENT_CONFIG_CONTENTS.set(readConfigFileContent()));
             }
-            catch (IOException | InterruptedException e)
+            catch (IOException e)
             {
-                //Some generic failure occurred, that is not good. Let's kill it!
                 throw new RuntimeException("Failed to read boot configuration contents on update.", e);
             }
+            return fileWatcher;
         }
 
         /**
