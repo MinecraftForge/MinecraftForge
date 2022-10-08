@@ -1,11 +1,12 @@
 --- a/net/minecraft/world/entity/animal/Cat.java
 +++ b/net/minecraft/world/entity/animal/Cat.java
-@@ -366,7 +_,7 @@
+@@ -365,8 +_,8 @@
+             if (this.m_21830_(p_28153_)) {
                 if (!(item instanceof DyeItem)) {
                    if (item.m_41472_() && this.m_6898_(itemstack) && this.m_21223_() < this.m_21233_()) {
++                     this.m_5634_((float)itemstack.getFoodProperties(this).m_38744_());
                       this.m_142075_(p_28153_, p_28154_, itemstack);
 -                     this.m_5634_((float)item.m_41473_().m_38744_());
-+                     this.m_5634_((float)itemstack.getFoodProperties(this).m_38744_());
                       return InteractionResult.CONSUME;
                    }
  
