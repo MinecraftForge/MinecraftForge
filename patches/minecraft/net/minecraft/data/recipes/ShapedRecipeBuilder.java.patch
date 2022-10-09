@@ -40,8 +40,9 @@
        private final Advancement.Builder f_126154_;
        private final ResourceLocation f_126155_;
  
-       public Result(ResourceLocation p_176754_, Item p_176755_, int p_176756_, String p_176757_, List<String> p_176758_, Map<Character, Ingredient> p_176759_, Advancement.Builder p_176760_, ResourceLocation p_176761_) {
-+         this(p_176754_, p_176755_, p_176756_, p_176757_, "", p_176758_, p_176759_, p_176760_, p_176761_);
+-      public Result(ResourceLocation p_176754_, Item p_176755_, int p_176756_, String p_176757_, List<String> p_176758_, Map<Character, Ingredient> p_176759_, Advancement.Builder p_176760_, ResourceLocation p_176761_) {
++      public Result(ResourceLocation p_176754_, Item p_176755_, int p_176756_, String p_176757_, List<String> category, Map<Character, Ingredient> p_176758_, Advancement.Builder p_176759_, ResourceLocation p_176760_) {
++         this(p_176754_, p_176755_, p_176756_, p_176757_, "", category, p_176758_, p_176759_, p_176760_);
 +      }
 +
 +      public Result(ResourceLocation p_176754_, Item p_176755_, int p_176756_, String p_176757_, String category, List<String> p_176758_, Map<Character, Ingredient> p_176759_, Advancement.Builder p_176760_, ResourceLocation p_176761_) {
