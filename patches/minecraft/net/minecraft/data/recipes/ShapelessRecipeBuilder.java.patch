@@ -30,7 +30,7 @@
     }
  
     private void m_126207_(ResourceLocation p_126208_) {
-@@ -99,15 +_,17 @@
+@@ -99,15 +_,21 @@
        private final Item f_126215_;
        private final int f_126216_;
        private final String f_126217_;
@@ -39,7 +39,10 @@
        private final Advancement.Builder f_126219_;
        private final ResourceLocation f_126220_;
  
--      public Result(ResourceLocation p_126222_, Item p_126223_, int p_126224_, String p_126225_, List<Ingredient> p_126226_, Advancement.Builder p_126227_, ResourceLocation p_126228_) {
+       public Result(ResourceLocation p_126222_, Item p_126223_, int p_126224_, String p_126225_, List<Ingredient> p_126226_, Advancement.Builder p_126227_, ResourceLocation p_126228_) {
++         this(p_126222_, p_126223_, p_126224_, p_126225_, "", p_126226_, p_126227_, p_126228_);
++      }
++
 +      public Result(ResourceLocation p_126222_, Item p_126223_, int p_126224_, String p_126225_, String category, List<Ingredient> p_126226_, Advancement.Builder p_126227_, ResourceLocation p_126228_) {
           this.f_126214_ = p_126222_;
           this.f_126215_ = p_126223_;

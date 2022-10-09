@@ -38,11 +38,13 @@
        private final Ingredient f_126279_;
        private final Item f_126280_;
        private final float f_126281_;
-@@ -92,9 +_,10 @@
-       private final ResourceLocation f_126284_;
+@@ -93,8 +_,13 @@
        private final RecipeSerializer<? extends AbstractCookingRecipe> f_126285_;
  
--      public Result(ResourceLocation p_126287_, String p_126288_, Ingredient p_126289_, Item p_126290_, float p_126291_, int p_126292_, Advancement.Builder p_126293_, ResourceLocation p_126294_, RecipeSerializer<? extends AbstractCookingRecipe> p_126295_) {
+       public Result(ResourceLocation p_126287_, String p_126288_, Ingredient p_126289_, Item p_126290_, float p_126291_, int p_126292_, Advancement.Builder p_126293_, ResourceLocation p_126294_, RecipeSerializer<? extends AbstractCookingRecipe> p_126295_) {
++         this(p_126287_, p_126288_, "", p_126289_, p_126290_, p_126291_, p_126292_, p_126293_, p_126294_, p_126295_);
++      }
++
 +      public Result(ResourceLocation p_126287_, String p_126288_, String category, Ingredient p_126289_, Item p_126290_, float p_126291_, int p_126292_, Advancement.Builder p_126293_, ResourceLocation p_126294_, RecipeSerializer<? extends AbstractCookingRecipe> p_126295_) {
           this.f_126277_ = p_126287_;
           this.f_126278_ = p_126288_;
