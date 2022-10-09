@@ -4,7 +4,7 @@
  
     public T m_6729_(ResourceLocation p_44347_, JsonObject p_44348_) {
        String s = GsonHelper.m_13851_(p_44348_, "group", "");
-+      String c = GsonHelper.m_13851_(p_44348_, "forge:category", "");
++      String forgeRecipeCategory = GsonHelper.m_13851_(p_44348_, "forge:category", "");
        JsonElement jsonelement = (JsonElement)(GsonHelper.m_13885_(p_44348_, "ingredient") ? GsonHelper.m_13933_(p_44348_, "ingredient") : GsonHelper.m_13930_(p_44348_, "ingredient"));
        Ingredient ingredient = Ingredient.m_43917_(jsonelement);
 +      //Forge: Check if primitive string to keep vanilla or a object which can contain a count field.
@@ -22,18 +22,18 @@
        float f = GsonHelper.m_13820_(p_44348_, "experience", 0.0F);
        int i = GsonHelper.m_13824_(p_44348_, "cookingtime", this.f_44327_);
 -      return this.f_44328_.m_44352_(p_44347_, s, ingredient, itemstack, f, i);
-+      return this.withCategory(this.f_44328_.m_44352_(p_44347_, s, ingredient, itemstack, f, i), c);
++      return this.withCategory(this.f_44328_.m_44352_(p_44347_, s, ingredient, itemstack, f, i), forgeRecipeCategory);
     }
  
     public T m_8005_(ResourceLocation p_44350_, FriendlyByteBuf p_44351_) {
        String s = p_44351_.m_130277_();
-+      String c = p_44351_.m_130277_();
++      String forgeRecipeCategory = p_44351_.m_130277_();
        Ingredient ingredient = Ingredient.m_43940_(p_44351_);
        ItemStack itemstack = p_44351_.m_130267_();
        float f = p_44351_.readFloat();
        int i = p_44351_.m_130242_();
 -      return this.f_44328_.m_44352_(p_44350_, s, ingredient, itemstack, f, i);
-+      return this.withCategory(this.f_44328_.m_44352_(p_44350_, s, ingredient, itemstack, f, i), c);
++      return this.withCategory(this.f_44328_.m_44352_(p_44350_, s, ingredient, itemstack, f, i), forgeRecipeCategory);
     }
  
     public void m_6178_(FriendlyByteBuf p_44335_, T p_44336_) {

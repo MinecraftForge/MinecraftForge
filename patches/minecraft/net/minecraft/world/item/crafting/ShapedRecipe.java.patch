@@ -129,7 +129,7 @@
 +      private static final ResourceLocation NAME = new ResourceLocation("minecraft", "crafting_shaped");
        public ShapedRecipe m_6729_(ResourceLocation p_44236_, JsonObject p_44237_) {
           String s = GsonHelper.m_13851_(p_44237_, "group", "");
-+         String c = GsonHelper.m_13851_(p_44237_, "forge:category", "");
++         String forgeRecipeCategory = GsonHelper.m_13851_(p_44237_, "forge:category", "");
           Map<String, Ingredient> map = ShapedRecipe.m_44210_(GsonHelper.m_13930_(p_44237_, "key"));
           String[] astring = ShapedRecipe.m_44186_(ShapedRecipe.m_44196_(GsonHelper.m_13933_(p_44237_, "pattern")));
           int i = astring[0].length();
@@ -137,14 +137,14 @@
           NonNullList<Ingredient> nonnulllist = ShapedRecipe.m_44202_(astring, map, i, j);
           ItemStack itemstack = ShapedRecipe.m_151274_(GsonHelper.m_13930_(p_44237_, "result"));
 -         return new ShapedRecipe(p_44236_, s, i, j, nonnulllist, itemstack);
-+         return new ShapedRecipe(p_44236_, s, i, j, nonnulllist, itemstack, c);
++         return new ShapedRecipe(p_44236_, s, i, j, nonnulllist, itemstack, forgeRecipeCategory);
        }
  
        public ShapedRecipe m_8005_(ResourceLocation p_44239_, FriendlyByteBuf p_44240_) {
           int i = p_44240_.m_130242_();
           int j = p_44240_.m_130242_();
           String s = p_44240_.m_130277_();
-+         String c = p_44240_.m_130277_();
++         String forgeRecipeCategory = p_44240_.m_130277_();
           NonNullList<Ingredient> nonnulllist = NonNullList.m_122780_(i * j, Ingredient.f_43901_);
  
           for(int k = 0; k < nonnulllist.size(); ++k) {
@@ -153,7 +153,7 @@
  
           ItemStack itemstack = p_44240_.m_130267_();
 -         return new ShapedRecipe(p_44239_, s, i, j, nonnulllist, itemstack);
-+         return new ShapedRecipe(p_44239_, s, i, j, nonnulllist, itemstack, c);
++         return new ShapedRecipe(p_44239_, s, i, j, nonnulllist, itemstack, forgeRecipeCategory);
        }
  
        public void m_6178_(FriendlyByteBuf p_44227_, ShapedRecipe p_44228_) {

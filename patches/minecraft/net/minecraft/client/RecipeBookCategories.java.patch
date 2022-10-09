@@ -9,13 +9,11 @@
     CRAFTING_SEARCH(new ItemStack(Items.f_42522_)),
     CRAFTING_BUILDING_BLOCKS(new ItemStack(Blocks.f_50076_)),
     CRAFTING_REDSTONE(new ItemStack(Items.f_42451_)),
-@@ -32,14 +_,29 @@
+@@ -32,14 +_,27 @@
     CAMPFIRE(new ItemStack(Items.f_42485_)),
     UNKNOWN(new ItemStack(Items.f_42127_));
  
-+   private static final Map<String, RecipeBookCategories> BY_LOCATION = java.util.Arrays.stream(values()).collect(java.util.stream.Collectors.toMap(RecipeBookCategories::getLocation, (map) -> {
-+      return map;
-+   }));
++   private static final Map<String, RecipeBookCategories> BY_LOCATION = java.util.Arrays.stream(values()).collect(java.util.stream.Collectors.toMap(RecipeBookCategories::getLocation, java.util.function.Function.identity()));
 +
     public static final List<RecipeBookCategories> f_92256_ = ImmutableList.of(SMOKER_SEARCH, SMOKER_FOOD);
     public static final List<RecipeBookCategories> f_92257_ = ImmutableList.of(BLAST_FURNACE_SEARCH, BLAST_FURNACE_BLOCKS, BLAST_FURNACE_MISC);

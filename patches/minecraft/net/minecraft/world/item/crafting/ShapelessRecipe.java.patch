@@ -61,7 +61,7 @@
 +      private static final ResourceLocation NAME = new ResourceLocation("minecraft", "crafting_shapeless");
        public ShapelessRecipe m_6729_(ResourceLocation p_44290_, JsonObject p_44291_) {
           String s = GsonHelper.m_13851_(p_44291_, "group", "");
-+         String c = GsonHelper.m_13851_(p_44291_, "forge:category", "");
++         String forgeRecipeCategory = GsonHelper.m_13851_(p_44291_, "forge:category", "");
           NonNullList<Ingredient> nonnulllist = m_44275_(GsonHelper.m_13933_(p_44291_, "ingredients"));
           if (nonnulllist.isEmpty()) {
              throw new JsonParseException("No ingredients for shapeless recipe");
@@ -72,7 +72,7 @@
           } else {
              ItemStack itemstack = ShapedRecipe.m_151274_(GsonHelper.m_13930_(p_44291_, "result"));
 -            return new ShapelessRecipe(p_44290_, s, itemstack, nonnulllist);
-+            return new ShapelessRecipe(p_44290_, s, itemstack, nonnulllist, c);
++            return new ShapelessRecipe(p_44290_, s, itemstack, nonnulllist, forgeRecipeCategory);
           }
        }
  
@@ -89,7 +89,7 @@
  
        public ShapelessRecipe m_8005_(ResourceLocation p_44293_, FriendlyByteBuf p_44294_) {
           String s = p_44294_.m_130277_();
-+         String c = p_44294_.m_130277_();
++         String forgeRecipeCategory = p_44294_.m_130277_();
           int i = p_44294_.m_130242_();
           NonNullList<Ingredient> nonnulllist = NonNullList.m_122780_(i, Ingredient.f_43901_);
  
@@ -98,7 +98,7 @@
  
           ItemStack itemstack = p_44294_.m_130267_();
 -         return new ShapelessRecipe(p_44293_, s, itemstack, nonnulllist);
-+         return new ShapelessRecipe(p_44293_, s, itemstack, nonnulllist, c);
++         return new ShapelessRecipe(p_44293_, s, itemstack, nonnulllist, forgeRecipeCategory);
        }
  
        public void m_6178_(FriendlyByteBuf p_44281_, ShapelessRecipe p_44282_) {
