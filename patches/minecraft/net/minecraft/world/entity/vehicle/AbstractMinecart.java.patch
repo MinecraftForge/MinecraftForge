@@ -221,8 +221,8 @@
 +   private float currentSpeedCapOnRail = getMaxCartSpeedOnRail();
 +   @Override public float getCurrentCartSpeedCapOnRail() { return currentSpeedCapOnRail; }
 +   @Override public void setCurrentCartSpeedCapOnRail(float value) { currentSpeedCapOnRail = Math.min(value, getMaxCartSpeedOnRail()); }
-+   private float maxSpeedAirLateral = DEFAULT_MAX_SPEED_AIR_LATERAL;
-+   @Override public float getMaxSpeedAirLateral() { return maxSpeedAirLateral; }
++   @org.jetbrains.annotations.Nullable private Float maxSpeedAirLateral = null;
++   @Override public float getMaxSpeedAirLateral() { return maxSpeedAirLateral == null ? (float) this.m_7097_() : maxSpeedAirLateral; }
 +   @Override public void setMaxSpeedAirLateral(float value) { maxSpeedAirLateral = value; }
 +   private float maxSpeedAirVertical = DEFAULT_MAX_SPEED_AIR_VERTICAL;
 +   @Override public float getMaxSpeedAirVertical() { return maxSpeedAirVertical; }
