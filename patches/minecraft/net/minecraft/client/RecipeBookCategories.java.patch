@@ -38,7 +38,7 @@
        this.f_92261_ = ImmutableList.copyOf(p_92267_);
     }
  
-@@ -54,11 +_,27 @@
+@@ -54,11 +_,31 @@
           case SMOKER:
              return f_92256_;
           default:
@@ -59,11 +59,15 @@
 +      return BY_LOCATION.getOrDefault(location, UNKNOWN);
 +   }
 +
-+   public static RecipeBookCategories create(String name, String location, ItemStack... icons) {
++   public static RecipeBookCategories create(String name, ItemStack... icons) {
 +      throw new IllegalStateException("Enum not extended");
 +   }
 +
-+   public static RecipeBookCategories create(String name, ItemStack... icons) {
++   public static RecipeBookCategories create(String name, net.minecraft.resources.ResourceLocation location, ItemStack... icons) {
++      throw new IllegalStateException("Enum not extended");
++   }
++
++   public static RecipeBookCategories create(String name, String location, ItemStack... icons) {
 +      throw new IllegalStateException("Enum not extended");
     }
  }
