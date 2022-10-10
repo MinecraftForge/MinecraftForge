@@ -187,7 +187,7 @@
 +      }
 +
 +      if (old != null && p_91153_ != old) {
-+         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.ScreenEvent.Closing(old));
++         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.ScreenEvent.Closing(old, p_91153_));
 +         old.m_7861_();
 +      }
 +

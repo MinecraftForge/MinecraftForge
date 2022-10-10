@@ -1045,10 +1045,23 @@ public abstract class ScreenEvent extends Event
      */
     public static class Closing extends ScreenEvent
     {
+        @Nullable
+        private final Screen newScreen;
+
         @ApiStatus.Internal
-        public Closing(Screen screen)
+        public Closing(Screen screen, @Nullable Screen newScreen)
         {
             super(screen);
+            this.newScreen = newScreen;
+        }
+
+        /**
+         * @return The screen that will be opened after this screen is closed. May be null.
+         */
+        @Nullable
+        public Screen getNewScreen()
+        {
+            return newScreen;
         }
     }
 }
