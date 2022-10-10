@@ -1056,7 +1056,8 @@ public abstract class ScreenEvent extends Event
         }
 
         /**
-         * @return The screen that will be opened after this screen is closed. May be null.
+         * {@return The screen that will be opened after the current screen is closed.<br>
+         * If null then the game will return to the gameplay.}
          */
         @Nullable
         public Screen getNewScreen()
