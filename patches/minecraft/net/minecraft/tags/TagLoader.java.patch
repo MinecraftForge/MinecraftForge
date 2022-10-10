@@ -33,7 +33,7 @@
  
 -      for(TagLoader.EntryWithSource tagloader$entrywithsource : p_215980_) {
 -         if (!tagloader$entrywithsource.f_216042_().m_215927_(p_215979_, builder::add)) {
-+      for(TagLoader.EntryWithSource tagloader$entrywithsource : entries) {
++      for (TagLoader.EntryWithSource tagloader$entrywithsource : entries) {
 +         if (!tagloader$entrywithsource.f_216042_().m_215927_(lookup, tagloader$entrywithsource.additive() ? additive::add : subtractive::add)) {
              list.add(tagloader$entrywithsource);
           }
@@ -56,7 +56,7 @@
           public Collection<T> m_214048_(ResourceLocation p_216041_) {
 -            return map.get(p_216041_);
 +            // FORGE: Only return the additive sets
-+            if (map.get(p_216041_) == null) { return null; }
++            if (map.get(p_216041_) == null) return null;
 +            return map.get(p_216041_).additive();
           }
        };
