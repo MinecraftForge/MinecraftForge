@@ -26,8 +26,10 @@
     }
  
     public T m_8005_(ResourceLocation p_44350_, FriendlyByteBuf p_44351_) {
-       String s = p_44351_.m_130277_();
-+      String forgeRecipeCategory = p_44351_.m_130277_();
+-      String s = p_44351_.m_130277_();
++      String[] groupAndCategory = p_44351_.m_130277_().split("\0");
++      String s = groupAndCategory[0];
++      String forgeRecipeCategory = groupAndCategory.length > 1 ? groupAndCategory[1] : "";
        Ingredient ingredient = Ingredient.m_43940_(p_44351_);
        ItemStack itemstack = p_44351_.m_130267_();
        float f = p_44351_.readFloat();
@@ -37,8 +39,8 @@
     }
  
     public void m_6178_(FriendlyByteBuf p_44335_, T p_44336_) {
-       p_44335_.m_130070_(p_44336_.f_43728_);
-+      p_44335_.m_130070_(p_44336_.category);
+-      p_44335_.m_130070_(p_44336_.f_43728_);
++      p_44335_.m_130070_(p_44336_.f_43728_ + (p_44336_.category.isEmpty() ? "" : "\0" + p_44336_.category));
        p_44336_.f_43729_.m_43923_(p_44335_);
        p_44335_.m_130055_(p_44336_.f_43730_);
        p_44335_.writeFloat(p_44336_.f_43731_);
