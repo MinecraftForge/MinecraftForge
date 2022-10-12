@@ -18,6 +18,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 /**
  * Extension interface for {@link Transformation}.
  */
+// TODO - 1.20: Transformation is not client-only, move this extension outside the client package
 public interface IForgeTransformation
 {
     private Transformation self()

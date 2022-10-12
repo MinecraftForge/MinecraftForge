@@ -27,16 +27,17 @@ public interface IForgePoseStack
      */
     default void pushTransformation(Transformation transformation)
     {
-        self().pushPose();
+        final PoseStack self = self();
+        self.pushPose();
 
         Vector3f trans = transformation.getTranslation();
-        self().translate(trans.x(), trans.y(), trans.z());
+        self.translate(trans.x(), trans.y(), trans.z());
 
-        self().mulPose(transformation.getLeftRotation());
+        self.mulPose(transformation.getLeftRotation());
 
         Vector3f scale = transformation.getScale();
-        self().scale(scale.x(), scale.y(), scale.z());
+        self.scale(scale.x(), scale.y(), scale.z());
 
-        self().mulPose(transformation.getRightRotation());
+        self.mulPose(transformation.getRightRotation());
     }
 }
