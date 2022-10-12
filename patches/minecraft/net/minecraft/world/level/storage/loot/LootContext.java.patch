@@ -48,8 +48,14 @@
        public LootContext.Builder m_230911_(RandomSource p_230912_) {
           this.f_78958_ = p_230912_;
           return this;
-@@ -191,7 +_,7 @@
+@@ -189,9 +_,13 @@
+          return (T)this.f_78956_.get(p_78983_);
+       }
  
++      public void setQueriedLootTableId(ResourceLocation queriedLootTableId) {
++         this.queriedLootTableId = queriedLootTableId;
++      }
++      
        public LootContext m_78975_(LootContextParamSet p_78976_) {
           Set<LootContextParam<?>> set = Sets.difference(this.f_78956_.keySet(), p_78976_.m_81398_());
 -         if (!set.isEmpty()) {
