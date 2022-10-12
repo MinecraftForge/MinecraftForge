@@ -54,7 +54,7 @@
        };
 +   }
 +
-+   private final net.minecraftforge.resource.ResourceCacheManager cacheManager = new net.minecraftforge.resource.ResourceCacheManager(false, net.minecraftforge.common.ForgeConfig.COMMON.indexVanillaPackCachesOnThread, (packType, namespace) -> f_182296_.get(packType).resolve(namespace));
++   private final net.minecraftforge.resource.ResourceCacheManager cacheManager = new net.minecraftforge.resource.ResourceCacheManager(false, "indexVanillaPackCachesOnThread", (packType, namespace) -> f_182296_.get(packType).resolve(namespace));
 +
 +   @Override
 +   public void initForNamespace(final String nameSpace) {

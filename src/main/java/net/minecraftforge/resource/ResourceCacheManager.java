@@ -5,21 +5,32 @@
 
 package net.minecraftforge.resource;
 
+import com.electronwill.nightconfig.core.ConfigFormat;
+import com.electronwill.nightconfig.core.ConfigSpec;
+import com.electronwill.nightconfig.core.file.CommentedFileConfig;
+import com.electronwill.nightconfig.core.io.ParsingException;
+import com.electronwill.nightconfig.core.io.WritingMode;
 import com.google.common.base.Joiner;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterators;
 import com.google.common.collect.Maps;
 import com.mojang.logging.LogUtils;
 import net.minecraft.Util;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
-import net.minecraftforge.common.ForgeConfig;
 import net.minecraftforge.common.ForgeConfigSpec;
+import net.minecraftforge.fml.loading.FMLPaths;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -31,7 +42,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BiFunction;
 import java.util.function.Predicate;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -40,23 +50,30 @@ import java.util.stream.Stream;
  * <p>
  * This class handles caching the resource listing calls on a pack, pack type and namespace level.
  */
+@ApiStatus.Internal
 public class ResourceCacheManager
 {
+    /**
+     * Logging marker to handle the hiding of the entries from the debug file.
+     */
+    private static final Marker RESOURCE_CACHE = MarkerFactory.getMarker("RESOURCE-CACHE");
 
     /**
      * Indicates if the underlying namespaced managers need to support reloading.
      * Disabled for the (in-jar / downloaded) default vanilla pack.
      */
     private final boolean supportsReloading;
+
     /**
-     * Indicates if the indexing of the file-tree should happen off-thread or on-thread and block the process accordingly.
+     * The config key which can be used to check if the indexing of the file-tree should happen off-thread or on-thread and block the process accordingly.
      */
-    private final ForgeConfigSpec.BooleanValue indexOffThreadConfigOption;
+    private final String indexOnThreadConfigurationKey;
 
     /**
      * The path builder (different users have different requirements for how they want to handle this)
      */
     private final BiFunction<PackType, String, Path> pathBuilder;
+
     /**
      * The individual sub managers by pack type and namespace
      */
@@ -69,35 +86,50 @@ public class ResourceCacheManager
      * @param indexOffThreadConfig True to index the file-tree off-thread.
      * @param pathBuilder          The path builder to use.
      */
+    @Deprecated(since = "1.19.2", forRemoval = true)
     public ResourceCacheManager(final boolean supportsReloading, final ForgeConfigSpec.BooleanValue indexOffThreadConfig, final BiFunction<PackType, String, Path> pathBuilder)
     {
         this.supportsReloading = supportsReloading;
-        this.indexOffThreadConfigOption = indexOffThreadConfig;
+        this.indexOnThreadConfigurationKey = Iterators.getLast(indexOffThreadConfig.getPath().iterator());
         this.pathBuilder = pathBuilder;
     }
 
-    public boolean shouldIndexOffThread()
+    public ResourceCacheManager(final boolean supportsReloading, final String indexOnThreadConfigurationKey, final BiFunction<PackType, String, Path> pathBuilder)
     {
-        return !getConfigValue(this.indexOffThreadConfigOption);
+        this.supportsReloading = supportsReloading;
+        this.indexOnThreadConfigurationKey = indexOnThreadConfigurationKey;
+        this.pathBuilder = pathBuilder;
     }
 
+    /**
+     * Indicates if the caching system is enabled or not.
+     *
+     * @return {@code true} if the caching system is enabled, {@code false} otherwise.
+     */
     public static boolean shouldUseCache()
     {
-        return getConfigValue(ForgeConfig.COMMON.cachePackAccess);
+        return ResourceManagerBootCacheConfigurationHandler.getInstance().getConfigValue("cachePackAccess", true);
     }
 
-    private static boolean getConfigValue(Supplier<Boolean> configValue)
+    /**
+     * Indicates if this cache manager requires the indexing of the file-tree to happen on the main thread.
+     *
+     * @return {@code true} if the indexing of the file-tree should happen on the main thread, {@code false} otherwise.
+     */
+    public boolean shouldIndexOnThread()
     {
-        // Yes we catch the early loading error on purpose.
-        // Both the indexing off-thread and if caching is enabled are configurable, so we need to catch the error.
-        // So when they are loaded early we preserve the default behaviour which is to not cache or index on thread.
-        try
-        {
-            return configValue.get();
-        } catch (IllegalStateException e)
-        {
-            return false;
-        }
+        return ResourceManagerBootCacheConfigurationHandler.getInstance().getConfigValue(this.indexOnThreadConfigurationKey, false);
+    }
+
+    /**
+     * Indicates if this cache manager requires the indexing of the file-tree to happen off the main thread.
+     *
+     * @return {@code true} if the indexing of the file-tree should happen off the main thread, {@code true} otherwise.
+     */
+    @Deprecated(forRemoval = true, since = "1.19.2")
+    public boolean shouldIndexOffThread()
+    {
+        return !this.shouldIndexOnThread();
     }
 
     /**
@@ -110,13 +142,13 @@ public class ResourceCacheManager
         for (final PackType packType : PackType.values())
         {
             final PackTypeAndNamespace key = new PackTypeAndNamespace(packType, namespace); // Make a key.
-            if (managersByNamespace.containsKey(key) && !supportsReloading)
-            { // If we do not support reloading we just skip this.
+            if (managersByNamespace.containsKey(key) && !supportsReloading) // If we do not support reloading we just skip this.
+            {
                 return;
             }
 
             // Create a new manager, overriding the previous one if it exists.
-            final NamespacedResourceCacheManager newManager = new NamespacedResourceCacheManager(packType, namespace, this.shouldIndexOffThread(), pathBuilder, this::createWalkingStream);
+            final NamespacedResourceCacheManager newManager = new NamespacedResourceCacheManager(packType, namespace, this.shouldIndexOnThread(), pathBuilder, this::createWalkingStream);
             this.managersByNamespace.put(key, newManager);
 
             // Index the inner manager (which will for sure exist, and will know the pack type and namespace already)
@@ -233,9 +265,9 @@ public class ResourceCacheManager
          */
         private final String namespace;
         /**
-         * Indicates if the indexing should run off-thread.
+         * Indicates if the indexing should run on-thread.
          */
-        private final boolean indexOffThread;
+        private final boolean indexOnThread;
         /**
          * The path builder to use.
          */
@@ -257,17 +289,17 @@ public class ResourceCacheManager
         /**
          * Creates a new namespaced resource cache manager.
          *
-         * @param packType       The pack type that this manager handles.
-         * @param namespace      The namespace that this manager handles.
-         * @param indexOffThread True to enable indexing off-thread.
-         * @param pathBuilder    The path builder to use.
-         * @param pathFinder     The path walker stream factory to use.
+         * @param packType      The pack type that this manager handles.
+         * @param namespace     The namespace that this manager handles.
+         * @param indexOnThread True to enable indexing on-thread.
+         * @param pathBuilder   The path builder to use.
+         * @param pathFinder    The path walker stream factory to use.
          */
-        private NamespacedResourceCacheManager(final PackType packType, final String namespace, final boolean indexOffThread, BiFunction<PackType, String, Path> pathBuilder, final PathWalkerFactory pathFinder)
+        private NamespacedResourceCacheManager(final PackType packType, final String namespace, final boolean indexOnThread, BiFunction<PackType, String, Path> pathBuilder, final PathWalkerFactory pathFinder)
         {
             this.packType = packType;
             this.namespace = namespace;
-            this.indexOffThread = indexOffThread;
+            this.indexOnThread = indexOnThread;
             this.pathBuilder = pathBuilder;
             this.pathFinder = pathFinder;
         }
@@ -277,17 +309,18 @@ public class ResourceCacheManager
          */
         public void index()
         {
-            if (indexOffThread)
+            if (indexOnThread)
+            {
+                // Run on-thread
+                doIndex();
+            }
+            else
             {
                 // Run off-thread.
                 CompletableFuture.runAsync(
                         this::doIndex,
                         Util.backgroundExecutor()
                 );
-            } else
-            {
-                // Run on-thread
-                doIndex();
             }
         }
 
@@ -297,6 +330,8 @@ public class ResourceCacheManager
          */
         private void doIndex()
         {
+            LOGGER.debug(RESOURCE_CACHE, "Indexing resources for pack type {} and namespace {}, on thread: {}", packType, namespace, Thread.currentThread().getName());
+
             // Get the path to the root of the namespace in the current pack.
             final Path rootPath = pathBuilder.apply(packType, namespace);
 
@@ -314,16 +349,20 @@ public class ResourceCacheManager
                         .filter(path -> ResourceLocation.isValidPath(path.locationPath())) // Only process valid paths
                         .map(path -> new ResourceCacheEntry(packType, namespace, path.path(), new ResourceLocation(namespace, path.locationPath()))) // Create a cache entry.
                         .forEach(this::injectIntoCache); // Inject the entry into the cache.
-            } catch (NoSuchFileException noSuchFileException)
+            }
+            catch (NoSuchFileException noSuchFileException)
             {
-                LOGGER.debug("Failed to cache resources, the directory does not exist!", noSuchFileException);
-            } catch (IOException ioException)
+                LOGGER.debug(RESOURCE_CACHE, "Failed to cache resources, the directory does not exist!", noSuchFileException);
+            }
+            catch (IOException ioException)
             {
-                LOGGER.error("Failed to cache resources, some stuff might be missing!", ioException);
-            } catch (Exception exception)
+                LOGGER.error(RESOURCE_CACHE, "Failed to cache resources, some stuff might be missing!", ioException);
+            }
+            catch (Exception exception)
             {
-                LOGGER.error("Failed to cache resources, some stuff might be missing! Unknown exception!", exception);
-            } finally
+                LOGGER.error(RESOURCE_CACHE, "Failed to cache resources, some stuff might be missing! Unknown exception!", exception);
+            }
+            finally
             {
                 cacheLoaded.set(true);
             }
@@ -353,7 +392,8 @@ public class ResourceCacheManager
             {
                 // We have null, generally this only happens on the root directory.
                 pathEntry = "";
-            } else
+            }
+            else
             {
                 // Use the parent paths, we can not depend on a toString call here, since we need the / as separator.
                 pathEntry = Joiner.on("/").join(parentPath);
@@ -379,7 +419,8 @@ public class ResourceCacheManager
         public Collection<ResourceLocation> getResources(final Path inputPath, final Predicate<ResourceLocation> filter)
         {
             // We only have a cache once the atomic flag has been set.
-            if (!cacheLoaded()) {
+            if (!cacheLoaded())
+            {
                 // We need to return a mutable object here because the callers actually mutate the collection.
                 return new ArrayList<>();
             }
@@ -413,6 +454,132 @@ public class ResourceCacheManager
     @FunctionalInterface
     private interface PathWalkerFactory
     {
+        /**
+         * Create a new walkable stream of paths.
+         * The stream will be closed by the caller.
+         *
+         * @param path The path to create the stream for.
+         * @return A new stream of paths that are children (potentially several generations deep) of the given path.
+         * @throws IOException If the stream can not be created.
+         */
         Stream<Path> createWalkingStream(Path path) throws IOException;
+    }
+
+    /**
+     * Class to handle the reading, initial creation, and watching of the boot configuration file, for the resource cache manager.
+     */
+    private static final class ResourceManagerBootCacheConfigurationHandler
+    {
+        /**
+         * The logger for the {@link ResourceManagerBootCacheConfigurationHandler}
+         */
+        private static final Logger LOGGER = LogUtils.getLogger();
+
+        /**
+         * The path to the boot configuration file.
+         */
+        private static final Path CONFIG_PATH = FMLPaths.CONFIGDIR.get().resolve("forge-resource-caching.toml");
+
+        /**
+         * The configuration specification for the resource cache configuration.
+         */
+        private static final ConfigSpec configSpec = new ConfigSpec();
+        static {
+            configSpec.define("cacheResources", Boolean.TRUE);
+            configSpec.define("indexVanillaPackCachesOnThread", Boolean.FALSE);
+            configSpec.define("indexModPackCachesOnThread", Boolean.FALSE);
+        }
+
+        /**
+         * The current instance of the handler.
+         * @implNote This needs to be the last static field (or at least below the config spec and the config path, else some of them create NPEs because they are not initialized yet)
+         */
+        private static final ResourceManagerBootCacheConfigurationHandler INSTANCE = new ResourceManagerBootCacheConfigurationHandler();
+
+        /**
+         * The configuration handle for the resource cache configuration.
+         */
+        private final CommentedFileConfig configurationHandle;
+
+        /**
+         * Creates a new instance of the handler.
+         * Registers the watchdog thread.
+         */
+        private ResourceManagerBootCacheConfigurationHandler()
+        {
+            this.configurationHandle = createConfiguration();
+        }
+
+        /**
+         * Creates the configuration handle for the resource cache configuration.
+         */
+        private static CommentedFileConfig createConfiguration()
+        {
+            final CommentedFileConfig configData = CommentedFileConfig.builder(CONFIG_PATH).sync()
+                    .onFileNotFound(ResourceManagerBootCacheConfigurationHandler::onConfigFileNotFound)
+                    .autosave()
+                    .autoreload()
+                    .concurrent()
+                    .writingMode(WritingMode.REPLACE)
+                    .build();
+            try
+            {
+                configData.load();
+            }
+            catch (ParsingException e)
+            {
+                throw new RuntimeException("Failed to load Force Resource Cache Configuration from %s".formatted(CONFIG_PATH), e);
+            }
+            if (!configSpec.isCorrect(configData)) {
+                LOGGER.warn("Configuration file {} is not correct. Correcting", CONFIG_PATH);
+                configSpec.correct(configData, (action, path, incorrectValue, correctedValue) ->
+                        LOGGER.warn("Incorrect key {} was corrected from {} to {}", path, incorrectValue, correctedValue));
+            }
+
+            configData.save();
+
+            return configData;
+        }
+
+        private static boolean onConfigFileNotFound(Path file, ConfigFormat<?> configFormat) throws IOException {
+            Files.write(file, ImmutableList.of(
+                            "# This TOML configuration file controls the resource caching system which is used before the mod loading environment starts.",
+                            "# This file is read by the Forge boot loader, and is not used by the game itself.",
+                            "#",
+                            "# Set this to false to disable the resource cache. This will cause the game to scan the resource packs everytime it needs a list of resources.",
+                            "cacheResources=true",
+                            "",
+                            "# Set this to true to force the caching of vanilla resources to happen on the main thread.",
+                            "indexVanillaPackCachesOnThread=false",
+                            "",
+                            "# Set this to true to force the caching of mod resources to happen on the main thread.",
+                            "indexModPackCachesOnThread=false"
+                    ),
+                    StandardOpenOption.CREATE_NEW);
+
+            return true;
+        }
+
+        /**
+         * Gives access to the current singleton instance of the handler.
+         *
+         * @return The instance of this handler.
+         */
+        public static ResourceManagerBootCacheConfigurationHandler getInstance()
+        {
+            return INSTANCE;
+        }
+
+        /**
+         * Reads a config value from the current configuration file.
+         *
+         * @param configKey    The key of the config value to read.
+         * @param defaultValue The default value to return if the config value is not present.
+         * @return The value of the config value, or the default value if it is not present.
+         */
+        private boolean getConfigValue(final String configKey, final boolean defaultValue)
+        {
+            return this.configurationHandle.<Boolean>getOptional(configKey).orElse(defaultValue);
+        }
     }
 }
