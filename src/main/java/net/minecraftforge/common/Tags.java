@@ -12,6 +12,7 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.biome.Biome;
@@ -481,6 +482,18 @@ public class Tags
         private static TagKey<Biome> tag(String name)
         {
             return TagKey.create(Registry.BIOME_REGISTRY, new ResourceLocation("forge", name));
+        }
+    }
+
+    public static class EntityTypes
+    {
+        private static void init() {}
+
+        public static final TagKey<EntityType<?>> BOSSES = tag("bosses");
+
+        private static TagKey<EntityType<?>> tag(String name)
+        {
+            return TagKey.create(Registry.ENTITY_TYPE_REGISTRY, new ResourceLocation("forge", name));
         }
     }
 }
