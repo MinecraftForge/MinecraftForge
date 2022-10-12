@@ -214,8 +214,8 @@
   "generic.attack_range": "Attack Range",
   "forge.stepHeight": "Step Height",
 
-  "fluid.minecraft.milk": "Milk",
-  "fluid.minecraft.flowing_milk": "Milk",
+  "fluid_type.minecraft.milk": "Milk",
+  "fluid_type.minecraft.flowing_milk": "Milk",
 
   "forge.experimentalsettings.tooltip": "This world uses experimental settings, which could stop working at any time.",
   "forge.selectWorld.backupWarning.experimental.additional" : "This message will not show again for this world."
