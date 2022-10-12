@@ -138,6 +138,7 @@ import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.living.LivingKnockBackEvent;
 import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
+import net.minecraftforge.event.entity.living.LivingUseTotemEvent;
 import net.minecraftforge.event.entity.living.LootingLevelEvent;
 import net.minecraftforge.event.entity.living.ShieldBlockEvent;
 import net.minecraftforge.event.entity.player.AdvancementEvent;
@@ -315,6 +316,11 @@ public class ForgeHooks
         LivingKnockBackEvent event = new LivingKnockBackEvent(target, strength, ratioX, ratioZ);
         MinecraftForge.EVENT_BUS.post(event);
         return event;
+    }
+
+    public static boolean onLivingUseTotem(LivingEntity entity, DamageSource damageSource, ItemStack totem, InteractionHand hand)
+    {
+        return !MinecraftForge.EVENT_BUS.post(new LivingUseTotemEvent(entity, damageSource, totem, hand));
     }
 
     public static float onLivingHurt(LivingEntity entity, DamageSource src, float amount)
