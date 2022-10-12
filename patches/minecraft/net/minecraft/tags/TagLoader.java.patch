@@ -1,6 +1,6 @@
 --- a/net/minecraft/tags/TagLoader.java
 +++ b/net/minecraft/tags/TagLoader.java
-@@ -66,7 +_,12 @@
+@@ -66,7 +_,11 @@
  
                    String s1 = resource.m_215506_();
                    tagfile.f_215959_().forEach((p_215997_) -> {
@@ -8,7 +8,6 @@
 +                     // FORGE: Specify this tag is being added
 +                     list.add(new TagLoader.EntryWithSource(p_215997_, s1, true));
 +                  });
-+                  // FORGE: Add removed tags
 +                  tagfile.removeEntries().forEach(entry1 -> {
 +                     list.add(new TagLoader.EntryWithSource(entry1, s1, false));
                    });
@@ -61,7 +60,7 @@
           }
        };
        Multimap<ResourceLocation, ResourceLocation> multimap = HashMultimap.create();
-@@ -163,23 +_,40 @@
+@@ -163,23 +_,39 @@
        Set<ResourceLocation> set = Sets.newHashSet();
        p_203899_.keySet().forEach((p_216008_) -> {
           m_144523_(p_203899_, multimap, set, p_216008_, (p_215984_, p_215985_) -> {
@@ -103,6 +102,5 @@
        }
     }
 +
-+   // FORGE: Store the additive/subtractive sets in a wrapper for convenience
 +   private static record AdditiveSubtractiveSets<T>(Set<T> additive, Set<T> subtractive) {}
  }

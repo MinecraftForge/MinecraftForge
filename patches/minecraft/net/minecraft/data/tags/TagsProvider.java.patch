@@ -33,13 +33,12 @@
     }
  
     public String m_6055_() {
-@@ -46,15 +_,18 @@
+@@ -46,15 +_,16 @@
        this.f_126543_.clear();
        this.m_6577_();
        this.f_126543_.forEach((p_236449_, p_236450_) -> {
 -         List<TagEntry> list = p_236450_.m_215904_();
 -         List<TagEntry> list1 = list.stream().filter((p_236444_) -> {
-+         // FORGE: Build TagFile directly 
 +         TagFile file = p_236450_.buildTagFile();
 +         List<TagEntry> list1 = Stream.concat(file.f_215959_().stream(), file.removeEntries().stream()).filter((p_236444_) -> {
              return !p_236444_.m_215940_(this.f_126540_::m_7804_, this.f_126543_::containsKey);
@@ -50,7 +49,6 @@
           } else {
 -            JsonElement jsonelement = TagFile.f_215958_.encodeStart(JsonOps.INSTANCE, new TagFile(list, false)).getOrThrow(false, f_126541_::error);
 -            Path path = this.f_236439_.m_236048_(p_236449_);
-+            // FORGE: Use built TagFile rather than creating a new one
 +            JsonElement jsonelement = TagFile.f_215958_.encodeStart(JsonOps.INSTANCE, file).getOrThrow(false, f_126541_::error);
 +            Path path = this.getPath(p_236449_);
 +            if (path == null) return; // Forge: Allow running this data provider without writing it. Recipe provider needs valid tags.

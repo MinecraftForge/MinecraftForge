@@ -1,6 +1,6 @@
 --- a/net/minecraft/tags/TagFile.java
 +++ b/net/minecraft/tags/TagFile.java
-@@ -4,8 +_,17 @@
+@@ -4,8 +_,16 @@
  import com.mojang.serialization.codecs.RecordCodecBuilder;
  import java.util.List;
  
@@ -16,7 +16,6 @@
 +
     public static final Codec<TagFile> f_215958_ = RecordCodecBuilder.create((p_215967_) -> {
 -      return p_215967_.group(TagEntry.f_215911_.listOf().fieldOf("values").forGetter(TagFile::f_215959_), Codec.BOOL.optionalFieldOf("replace", Boolean.valueOf(false)).forGetter(TagFile::f_215960_)).apply(p_215967_, TagFile::new);
-+      // FORGE: Serialize removeEntries in TagFile codec
 +      return p_215967_.group(TagEntry.f_215911_.listOf().fieldOf("values").forGetter(TagFile::f_215959_), Codec.BOOL.optionalFieldOf("replace", Boolean.valueOf(false)).forGetter(TagFile::f_215960_), TagEntry.f_215911_.listOf().optionalFieldOf("remove", List.of()).forGetter(TagFile::removeEntries)).apply(p_215967_, TagFile::new);
     });
  }
