@@ -88,19 +88,18 @@
                    ItemStack itemstack = ServerGamePacketListenerImpl.this.f_9743_.m_21120_(p_143679_).m_41777_();
                    InteractionResult interactionresult = p_143680_.m_143694_(ServerGamePacketListenerImpl.this.f_9743_, entity, p_143679_);
                    if (interactionresult.m_19077_()) {
-@@ -1551,13 +_,20 @@
+@@ -1551,13 +_,19 @@
                 }
  
                 public void m_142143_(InteractionHand p_143682_, Vec3 p_143683_) {
 -                  this.m_143678_(p_143682_, (p_143686_, p_143687_, p_143688_) -> {
 -                     return p_143687_.m_7111_(p_143686_, p_143683_, p_143688_);
-+
 +                   this.m_143678_(p_143682_, (p_143686_, p_143687_, p_143688_) -> {
-+                    InteractionResult onInteractEntityAtResult = net.minecraftforge.common.ForgeHooks.onInteractEntityAt(f_9743_, entity, p_143683_, p_143682_);
-+                    if (onInteractEntityAtResult != null) {
-+                     return onInteractEntityAtResult;
-+                    }
-+                    return p_143687_.m_7111_(p_143686_, p_143683_, p_143688_);
++                       InteractionResult onInteractEntityAtResult = net.minecraftforge.common.ForgeHooks.onInteractEntityAt(f_9743_, entity, p_143683_, p_143682_);
++                       if (onInteractEntityAtResult != null) {
++                           return onInteractEntityAtResult;
++                       }
++                       return p_143687_.m_7111_(p_143686_, p_143683_, p_143688_);
                    });
                 }
  
