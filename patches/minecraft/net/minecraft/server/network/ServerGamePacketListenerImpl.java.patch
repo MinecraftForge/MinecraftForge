@@ -92,10 +92,9 @@
  
                 public void m_142143_(InteractionHand p_143682_, Vec3 p_143683_) {
                    this.m_143678_(p_143682_, (p_143686_, p_143687_, p_143688_) -> {
--                     return p_143687_.m_7111_(p_143686_, p_143683_, p_143688_);
 +                     InteractionResult onInteractEntityAtResult = net.minecraftforge.common.ForgeHooks.onInteractEntityAt(f_9743_, entity, p_143683_, p_143682_);
 +                     if (onInteractEntityAtResult != null) return onInteractEntityAtResult;
-+                     return p_143686_.m_7111_(p_143686_, p_143683_, p_143688_);
+                      return p_143687_.m_7111_(p_143686_, p_143683_, p_143688_);
                    });
                 }
  
@@ -106,15 +105,6 @@
                       ServerGamePacketListenerImpl.this.f_9743_.m_5706_(entity);
                    } else {
                       ServerGamePacketListenerImpl.this.m_9942_(Component.m_237115_("multiplayer.disconnect.invalid_entity_attacked"));
-@@ -1575,7 +_,7 @@
-       this.f_9743_.m_9243_();
-       ServerboundClientCommandPacket.Action serverboundclientcommandpacket$action = p_9843_.m_133850_();
-       switch (serverboundclientcommandpacket$action) {
--         case PERFORM_RESPAWN:
-+          case PERFORM_RESPAWN:
-             if (this.f_9743_.f_8944_) {
-                this.f_9743_.f_8944_ = false;
-                this.f_9743_ = this.f_9745_.m_6846_().m_11236_(this.f_9743_, true);
 @@ -1757,6 +_,7 @@
     }
  
