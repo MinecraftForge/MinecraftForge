@@ -235,6 +235,8 @@ license="LGPL v2.1"
 [[mods]]
     modId="dyn_map_color_test"
 [[mods]]
+    modId="living_set_attack_target_event_test"
+[[mods]]
     modId="potentialspawnsevent_test"
 [[mods]]
     modId="block_grow_feature_test"
