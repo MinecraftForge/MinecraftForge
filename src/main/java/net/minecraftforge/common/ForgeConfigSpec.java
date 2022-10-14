@@ -772,7 +772,6 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         private final Class<?> clazz;
         private final Supplier<?> supplier;
         private final Predicate<Object> validator;
-        private Object _default = null;
 
         private ValueSpec(Supplier<?> supplier, Predicate<Object> validator, BuilderContext context, List<String> path)
         {
@@ -797,12 +796,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         public boolean test(Object value) { return validator.test(value); }
         public Object correct(Object value) { return range == null ? getDefault() : range.correct(value, getDefault()); }
 
-        public Object getDefault()
-        {
-            if (_default == null)
-                _default = supplier.get();
-            return _default;
-        }
+        public Object getDefault() { return supplier.get(); }
     }
 
     public static class ConfigValue<T> implements Supplier<T>
