@@ -116,12 +116,12 @@ public class ObjectHolderRegistry
             }
         });
 
-        // Scan actual fields annotated with @ObjectHolder second
+        // Scan actual fields annotated with @ObjectHolder second. Sorted so that we run all class-level holders first.
         annotations.stream()
-                .filter(a -> OBJECT_HOLDER.equals(a.annotationType())).filter(a -> a.targetType() == ElementType.FIELD)
+                .filter(a -> OBJECT_HOLDER.equals(a.annotationType())).sorted((a1, a2) -> a1.targetType().compareTo(a2.targetType()))
                 .forEach(data -> scanTarget(classModIds, classCache, data.clazz(),
                         data.memberName(), null, (String)data.annotationData().get("registryName"),
-                        (String)data.annotationData().get("value"), false, false));
+                        (String)data.annotationData().get("value"), data.targetType() == ElementType.TYPE, false));
 
         LOGGER.debug(REGISTRIES,"Found {} ObjectHolder annotations", objectHolders.size());
     }
@@ -185,8 +185,8 @@ public class ObjectHolderRegistry
         classModIds.put(targetClass, value);
         final int flags = Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC | Opcodes.ACC_SYNTHETIC;
         for (Field f : clazz.getFields())
-        {
-            if (((f.getModifiers() & flags) != flags) || f.isAnnotationPresent(ObjectHolder.class) || !registryClass.isAssignableFrom(f.getType()))
+        {   // Ignore invalid fields if possible. Modded OH's with invalid fields will throw an error later, but we cannot enforce the registry type here since it may not exist yet.
+            if (((f.getModifiers() & flags) != flags) || f.isAnnotationPresent(ObjectHolder.class) || (registryClass != null && !registryClass.isAssignableFrom(f.getType())))
                 continue;
             ObjectHolderRef ref = ObjectHolderRef.create(registryName, f, value + ':' + f.getName().toLowerCase(Locale.ENGLISH), extractFromExistingValues);
             if (ref != null)

@@ -18,19 +18,23 @@ import java.lang.annotation.Target;
  * from the registry. These values can then be referred within mod code directly.
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.FIELD)
+@Target({ElementType.FIELD, ElementType.TYPE})
 public @interface ObjectHolder
 {
     /**
      * The name of the registry to load registry entries from.
      * This string is parsed as a {@link ResourceLocation} and can contain a namespace.
+     * If this annotation is on a class, all public static final fields in this class MUST be from this registry.
      *
      * @return the registry name
      */
     String registryName();
 
     /**
-     * Represents a name in the form of a {@link ResourceLocation} which points to a registry object from the registry given by {@link #registryName()}.
+     * The purpose of this string depends on if this annotation is present on a Class or a Field.
+     * If on a class, this represents a modid that will be used as the domain for automatic field lookups.
+     * 
+     * If on a field, this represents a name in the form of a {@link ResourceLocation} which points to a registry object from the registry given by {@link #registryName()}.
      * Must specify the modid if not inside a class annotated with {@link Mod}.
      *
      * @return a name in the form of a {@link ResourceLocation}
