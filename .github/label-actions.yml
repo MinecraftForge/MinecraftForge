@@ -9,4 +9,4 @@ spam:
   # Set a lock reason
   lock-reason: 'spam'
   # Additionally, add the 'Submitterisspecialbunny' label
-  label: 'Submitterisspecialbunny'
+  # label: 'Submitterisspecialbunny'
