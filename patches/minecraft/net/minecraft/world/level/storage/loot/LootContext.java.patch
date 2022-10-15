@@ -48,12 +48,13 @@
        public LootContext.Builder m_230911_(RandomSource p_230912_) {
           this.f_78958_ = p_230912_;
           return this;
-@@ -189,9 +_,13 @@
+@@ -189,9 +_,14 @@
           return (T)this.f_78956_.get(p_78983_);
        }
  
-+      public void setQueriedLootTableId(ResourceLocation queriedLootTableId) {
++      public LootContext.Builder withQueriedLootTableId(ResourceLocation queriedLootTableId) {
 +         this.queriedLootTableId = queriedLootTableId;
++         return this;
 +      }
 +      
        public LootContext m_78975_(LootContextParamSet p_78976_) {
