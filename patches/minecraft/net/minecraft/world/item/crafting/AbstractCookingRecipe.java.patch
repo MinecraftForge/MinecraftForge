@@ -22,7 +22,7 @@
     }
  
     public boolean m_5818_(Container p_43748_, Level p_43749_) {
-@@ -53,6 +_,10 @@
+@@ -53,6 +_,14 @@
  
     public String m_6076_() {
        return this.f_43728_;
@@ -30,6 +30,10 @@
 +
 +   public String getCategory() {
 +      return this.category;
++   }
++
++   public void setCategory(String category) {
++      this.category = category;
     }
  
     public int m_43753_() {

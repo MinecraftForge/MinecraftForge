@@ -6,25 +6,30 @@
 package net.minecraftforge.network;
 
 import io.netty.buffer.Unpooled;
+import net.minecraft.client.ClientRecipeBook;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.MenuAccess;
 import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.searchtree.SearchRegistry;
 import net.minecraft.core.Registry;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
+import net.minecraft.network.protocol.game.ClientboundUpdateRecipesPacket;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.util.LogicalSidedProvider;
 import net.minecraftforge.entity.IEntityAdditionalSpawnData;
 
+import java.util.Collection;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Supplier;
@@ -320,6 +325,47 @@ public class PlayMessages
         public FriendlyByteBuf getAdditionalData()
         {
             return additionalData;
+        }
+    }
+
+    public static class SetRecipeCategory
+    {
+        private final Collection<Recipe<?>> recipes;
+
+        public SetRecipeCategory(Collection<Recipe<?>> recipes)
+        {
+            this.recipes = recipes;
+        }
+
+        public static void encode(SetRecipeCategory msg, FriendlyByteBuf buf)
+        {
+            buf.writeCollection(msg.recipes, (buf1, recipe) -> {
+                ClientboundUpdateRecipesPacket.toNetwork(buf1, recipe);
+                buf1.writeUtf(recipe.getCategory());
+            });
+        }
+
+        public static SetRecipeCategory decode(FriendlyByteBuf buf)
+        {
+            return new SetRecipeCategory(buf.readList(buf1 -> {
+                Recipe<?> recipe = ClientboundUpdateRecipesPacket.fromNetwork(buf1);
+                recipe.setCategory(buf.readUtf());
+                return recipe;
+            }));
+        }
+
+        public static void handle(SetRecipeCategory msg, Supplier<NetworkEvent.Context> ctx)
+        {
+            ctx.get().enqueueWork(() -> {
+                if (Minecraft.getInstance().player != null && Minecraft.getInstance().level != null) {
+                    Minecraft.getInstance().level.getRecipeManager().replaceRecipes(msg.recipes);
+                    ClientRecipeBook clientrecipebook = Minecraft.getInstance().player.getRecipeBook();
+                    clientrecipebook.setupCollections(Minecraft.getInstance().level.getRecipeManager().getRecipes());
+                    Minecraft.getInstance().populateSearchTree(SearchRegistry.RECIPE_COLLECTIONS, clientrecipebook.getCollections());
+                    net.minecraftforge.client.ForgeHooksClient.onRecipesUpdated(Minecraft.getInstance().level.getRecipeManager());
+                }
+            });
+            ctx.get().setPacketHandled(true);
         }
     }
 }

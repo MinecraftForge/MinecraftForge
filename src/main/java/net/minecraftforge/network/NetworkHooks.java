@@ -5,6 +5,7 @@
 
 package net.minecraftforge.network;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -16,6 +17,7 @@ import java.util.stream.Collectors;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.crafting.Recipe;
 import net.minecraftforge.client.ConfigScreenHandler;
 import net.minecraftforge.fml.util.thread.EffectiveSide;
 import net.minecraftforge.network.ConnectionData.ModMismatchData;
@@ -206,6 +208,12 @@ public class NetworkHooks
         player.containerMenu = c;
         player.initMenu(player.containerMenu);
         MinecraftForge.EVENT_BUS.post(new PlayerContainerEvent.Open(player, c));
+    }
+
+    public static void sendRecipeCategory(ServerPlayer player, Collection<Recipe<?>> recipes)
+    {
+        PlayMessages.SetRecipeCategory recipeCategoryPacket = new PlayMessages.SetRecipeCategory(recipes);
+        NetworkConstants.playChannel.sendTo(recipeCategoryPacket, player.connection.getConnection(), NetworkDirection.PLAY_TO_CLIENT);
     }
 
     /**

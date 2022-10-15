@@ -99,6 +99,12 @@ class NetworkInitialization {
                 consumerNetworkThread(PlayMessages.OpenContainer::handle).
                 add();
 
+        playChannel.messageBuilder(PlayMessages.SetRecipeCategory.class,2).
+                decoder(PlayMessages.SetRecipeCategory::decode).
+                encoder(PlayMessages.SetRecipeCategory::encode).
+                consumerNetworkThread(PlayMessages.SetRecipeCategory::handle).
+                add();
+
         return playChannel;
     }
 

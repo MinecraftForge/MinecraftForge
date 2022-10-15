@@ -13,13 +13,15 @@
           }
        }
  
-@@ -42,6 +_,10 @@
+@@ -42,6 +_,12 @@
        return "";
     }
  
 +   default String getCategory() {
 +      return "";
 +   }
++
++   default void setCategory(String category) { };
 +
     default ItemStack m_8042_() {
        return new ItemStack(Blocks.f_50091_);

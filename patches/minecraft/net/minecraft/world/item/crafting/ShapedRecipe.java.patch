@@ -25,10 +25,10 @@
     final ItemStack f_44149_;
     private final ResourceLocation f_44150_;
     final String f_44151_;
-+   private final String category;
++   private String category;
  
     public ShapedRecipe(ResourceLocation p_44153_, String p_44154_, int p_44155_, int p_44156_, NonNullList<Ingredient> p_44157_, ItemStack p_44158_) {
-+      this(p_44153_, p_44154_, p_44155_, p_44156_, p_44157_, p_44158_, null);
++      this(p_44153_, p_44154_, p_44155_, p_44156_, p_44157_, p_44158_, "");
 +   }
 +
 +   public ShapedRecipe(ResourceLocation p_44153_, String p_44154_, int p_44155_, int p_44156_, NonNullList<Ingredient> p_44157_, ItemStack p_44158_, String category) {
@@ -42,12 +42,16 @@
     }
  
     public ResourceLocation m_6423_() {
-@@ -50,6 +_,10 @@
+@@ -50,6 +_,14 @@
        return this.f_44151_;
     }
  
 +   public String getCategory() {
 +      return this.category;
++   }
++
++   public void setCategory(String category) {
++      this.category = category;
 +   }
 +
     public ItemStack m_8043_() {
@@ -122,7 +126,7 @@
     }
  
     public static Item m_151278_(JsonObject p_151279_) {
-@@ -269,21 +_,25 @@
+@@ -269,15 +_,17 @@
     }
  
     public static class Serializer implements RecipeSerializer<ShapedRecipe> {
@@ -141,28 +145,3 @@
        }
  
        public ShapedRecipe m_8005_(ResourceLocation p_44239_, FriendlyByteBuf p_44240_) {
-          int i = p_44240_.m_130242_();
-          int j = p_44240_.m_130242_();
--         String s = p_44240_.m_130277_();
-+         String[] groupAndCategory = p_44240_.m_130277_().split("\0");
-+         String s = groupAndCategory[0];
-+         String forgeRecipeCategory = groupAndCategory.length > 1 ? groupAndCategory[1] : "";
-          NonNullList<Ingredient> nonnulllist = NonNullList.m_122780_(i * j, Ingredient.f_43901_);
- 
-          for(int k = 0; k < nonnulllist.size(); ++k) {
-@@ -291,13 +_,13 @@
-          }
- 
-          ItemStack itemstack = p_44240_.m_130267_();
--         return new ShapedRecipe(p_44239_, s, i, j, nonnulllist, itemstack);
-+         return new ShapedRecipe(p_44239_, s, i, j, nonnulllist, itemstack, forgeRecipeCategory);
-       }
- 
-       public void m_6178_(FriendlyByteBuf p_44227_, ShapedRecipe p_44228_) {
-          p_44227_.m_130130_(p_44228_.f_44146_);
-          p_44227_.m_130130_(p_44228_.f_44147_);
--         p_44227_.m_130070_(p_44228_.f_44151_);
-+         p_44227_.m_130070_(p_44228_.f_44151_ + (p_44228_.category.isEmpty() ? "" : "\0" + p_44228_.category));
- 
-          for(Ingredient ingredient : p_44228_.f_44148_) {
-             ingredient.m_43923_(p_44227_);

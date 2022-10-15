@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/item/crafting/SimpleCookingSerializer.java
 +++ b/net/minecraft/world/item/crafting/SimpleCookingSerializer.java
-@@ -19,33 +_,47 @@
+@@ -19,16 +_,25 @@
  
     public T m_6729_(ResourceLocation p_44347_, JsonObject p_44348_) {
        String s = GsonHelper.m_13851_(p_44348_, "group", "");
@@ -22,34 +22,9 @@
        float f = GsonHelper.m_13820_(p_44348_, "experience", 0.0F);
        int i = GsonHelper.m_13824_(p_44348_, "cookingtime", this.f_44327_);
 -      return this.f_44328_.m_44352_(p_44347_, s, ingredient, itemstack, f, i);
-+      return this.withCategory(this.f_44328_.m_44352_(p_44347_, s, ingredient, itemstack, f, i), forgeRecipeCategory);
-    }
- 
-    public T m_8005_(ResourceLocation p_44350_, FriendlyByteBuf p_44351_) {
--      String s = p_44351_.m_130277_();
-+      String[] groupAndCategory = p_44351_.m_130277_().split("\0");
-+      String s = groupAndCategory[0];
-+      String forgeRecipeCategory = groupAndCategory.length > 1 ? groupAndCategory[1] : "";
-       Ingredient ingredient = Ingredient.m_43940_(p_44351_);
-       ItemStack itemstack = p_44351_.m_130267_();
-       float f = p_44351_.readFloat();
-       int i = p_44351_.m_130242_();
--      return this.f_44328_.m_44352_(p_44350_, s, ingredient, itemstack, f, i);
-+      return this.withCategory(this.f_44328_.m_44352_(p_44350_, s, ingredient, itemstack, f, i), forgeRecipeCategory);
-    }
- 
-    public void m_6178_(FriendlyByteBuf p_44335_, T p_44336_) {
--      p_44335_.m_130070_(p_44336_.f_43728_);
-+      p_44335_.m_130070_(p_44336_.f_43728_ + (p_44336_.category.isEmpty() ? "" : "\0" + p_44336_.category));
-       p_44336_.f_43729_.m_43923_(p_44335_);
-       p_44335_.m_130055_(p_44336_.f_43730_);
-       p_44335_.writeFloat(p_44336_.f_43731_);
-       p_44335_.m_130130_(p_44336_.f_43732_);
-+   }
-+
-+   public T withCategory(T recipe, String category) {
-+      recipe.category = category;
++      T recipe = this.f_44328_.m_44352_(p_44347_, s, ingredient, itemstack, f, i);
++      recipe.setCategory(forgeRecipeCategory);
 +      return recipe;
     }
  
-    interface CookieBaker<T extends AbstractCookingRecipe> {
+    public T m_8005_(ResourceLocation p_44350_, FriendlyByteBuf p_44351_) {

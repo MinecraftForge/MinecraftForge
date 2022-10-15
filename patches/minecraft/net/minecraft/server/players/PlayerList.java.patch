@@ -16,14 +16,16 @@
        GameRules gamerules = serverlevel1.m_46469_();
        boolean flag = gamerules.m_46207_(GameRules.f_46156_);
        boolean flag1 = gamerules.m_46207_(GameRules.f_46145_);
-@@ -168,6 +_,7 @@
+@@ -168,7 +_,9 @@
        servergamepacketlistenerimpl.m_9829_(new ClientboundChangeDifficultyPacket(leveldata.m_5472_(), leveldata.m_5474_()));
        servergamepacketlistenerimpl.m_9829_(new ClientboundPlayerAbilitiesPacket(p_11263_.m_150110_()));
        servergamepacketlistenerimpl.m_9829_(new ClientboundSetCarriedItemPacket(p_11263_.m_150109_().f_35977_));
 +      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.OnDatapackSyncEvent(this, p_11263_));
        servergamepacketlistenerimpl.m_9829_(new ClientboundUpdateRecipesPacket(this.f_11195_.m_129894_().m_44051_()));
++      net.minecraftforge.network.NetworkHooks.sendRecipeCategory(p_11263_, this.f_11195_.m_129894_().m_44051_());
        servergamepacketlistenerimpl.m_9829_(new ClientboundUpdateTagsPacket(TagNetworkSerialization.m_203950_(this.f_11206_)));
        this.m_11289_(p_11263_);
+       p_11263_.m_8951_().m_12850_();
 @@ -240,6 +_,7 @@
        }
  
@@ -112,11 +114,17 @@
     }
  
     @Nullable
-@@ -855,6 +_,7 @@
+@@ -855,11 +_,13 @@
           playeradvancements.m_135981_(this.f_11195_.m_129889_());
        }
  
 +      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.OnDatapackSyncEvent(this, null));
        this.m_11268_(new ClientboundUpdateTagsPacket(TagNetworkSerialization.m_203950_(this.f_11206_)));
        ClientboundUpdateRecipesPacket clientboundupdaterecipespacket = new ClientboundUpdateRecipesPacket(this.f_11195_.m_129894_().m_44051_());
+ 
+       for(ServerPlayer serverplayer : this.f_11196_) {
+          serverplayer.f_8906_.m_9829_(clientboundupdaterecipespacket);
++         net.minecraftforge.network.NetworkHooks.sendRecipeCategory(serverplayer, this.f_11195_.m_129894_().m_44051_());
+          serverplayer.m_8952_().m_12789_(serverplayer);
+       }
  

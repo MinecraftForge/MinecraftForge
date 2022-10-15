@@ -5,10 +5,10 @@
     final ItemStack f_44243_;
     final NonNullList<Ingredient> f_44244_;
 +   private final boolean isSimple;
-+   private final String category;
++   private String category;
  
     public ShapelessRecipe(ResourceLocation p_44246_, String p_44247_, ItemStack p_44248_, NonNullList<Ingredient> p_44249_) {
-+      this(p_44246_, p_44247_, p_44248_, p_44249_, null);
++      this(p_44246_, p_44247_, p_44248_, p_44249_, "");
 +   }
 +
 +   public ShapelessRecipe(ResourceLocation p_44246_, String p_44247_, ItemStack p_44248_, NonNullList<Ingredient> p_44249_, String category) {
@@ -21,12 +21,16 @@
     }
  
     public ResourceLocation m_6423_() {
-@@ -38,6 +_,10 @@
+@@ -38,6 +_,14 @@
        return this.f_44242_;
     }
  
 +   public String getCategory() {
 +      return this.category;
++   }
++
++   public void setCategory(String category) {
++      this.category = category;
 +   }
 +
     public ItemStack m_8043_() {
@@ -85,28 +89,3 @@
                 nonnulllist.add(ingredient);
              }
           }
-@@ -97,7 +_,9 @@
-       }
- 
-       public ShapelessRecipe m_8005_(ResourceLocation p_44293_, FriendlyByteBuf p_44294_) {
--         String s = p_44294_.m_130277_();
-+         String[] groupAndCategory = p_44294_.m_130277_().split("\0");
-+         String s = groupAndCategory[0];
-+         String forgeRecipeCategory = groupAndCategory.length > 1 ? groupAndCategory[1] : "";
-          int i = p_44294_.m_130242_();
-          NonNullList<Ingredient> nonnulllist = NonNullList.m_122780_(i, Ingredient.f_43901_);
- 
-@@ -106,11 +_,11 @@
-          }
- 
-          ItemStack itemstack = p_44294_.m_130267_();
--         return new ShapelessRecipe(p_44293_, s, itemstack, nonnulllist);
-+         return new ShapelessRecipe(p_44293_, s, itemstack, nonnulllist, forgeRecipeCategory);
-       }
- 
-       public void m_6178_(FriendlyByteBuf p_44281_, ShapelessRecipe p_44282_) {
--         p_44281_.m_130070_(p_44282_.f_44242_);
-+         p_44281_.m_130070_(p_44282_.f_44242_ + (p_44282_.category.isEmpty() ? "" : "\0" + p_44282_.category));
-          p_44281_.m_130130_(p_44282_.f_44244_.size());
- 
-          for(Ingredient ingredient : p_44282_.f_44244_) {
