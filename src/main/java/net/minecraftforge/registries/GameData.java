@@ -53,6 +53,7 @@ import net.minecraftforge.registries.holdersets.HolderSetType;
 import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
@@ -74,6 +75,7 @@ import static net.minecraftforge.registries.ForgeRegistries.Keys.*;
  * INTERNAL ONLY
  * MODDERS SHOULD HAVE NO REASON TO USE THIS CLASS
  */
+@ApiStatus.Internal
 public class GameData
 {
     private static final Logger LOGGER = LogManager.getLogger();
