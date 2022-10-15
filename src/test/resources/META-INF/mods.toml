@@ -268,6 +268,8 @@ modId="custom_item_decorations_test"
 modId="item_stacked_on_other_test"
 [[mods]]
 modId="ambient_occlusion_elements_test"
+[[mods]]
+modId="grindstone_event_test"
 
 
 # ADD ABOVE THIS LINE
