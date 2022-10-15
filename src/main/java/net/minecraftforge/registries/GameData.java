@@ -34,7 +34,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.levelgen.DebugLevelSource;
-import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Material;
 import net.minecraftforge.common.ForgeHooks;
@@ -83,7 +82,6 @@ public class GameData
     private static final ResourceLocation BLOCK_TO_ITEM = new ResourceLocation("minecraft:blocktoitemmap");
     private static final ResourceLocation BLOCKSTATE_TO_ID = new ResourceLocation("minecraft:blockstatetoid");
     private static final ResourceLocation BLOCKSTATE_TO_POINT_OF_INTEREST_TYPE = new ResourceLocation("minecraft:blockstatetopointofinteresttype");
-    private static final ResourceLocation STRUCTURES = new ResourceLocation("minecraft:structures");
 
     private static boolean hasInit = false;
     private static final boolean DISABLE_VANILLA_REGISTRIES = Boolean.parseBoolean(System.getProperty("forge.disableVanillaGameData", "false")); // Use for unit tests/debugging
@@ -133,7 +131,7 @@ public class GameData
 
         // Worldgen
         makeRegistry(WORLD_CARVERS).disableSaving().disableSync().create();
-        makeRegistry(FEATURES).addCallback(FeatureCallbacks.INSTANCE).disableSaving().disableSync().create();
+        makeRegistry(FEATURES).disableSaving().disableSync().create();
         makeRegistry(CHUNK_STATUS, "empty").disableSaving().disableSync().create();
         makeRegistry(BLOCK_STATE_PROVIDER_TYPES).disableSaving().disableSync().create();
         makeRegistry(FOLIAGE_PLACER_TYPES).disableSaving().disableSync().create();
@@ -167,7 +165,7 @@ public class GameData
     {
         return makeRegistry(FLUID_TYPES).disableSaving();
     }
-    
+
     static RegistryBuilder<HolderSetType> getHolderSetTypeRegistryBuilder()
     {
         return new RegistryBuilder<HolderSetType>().disableSaving().disableSync();
@@ -531,23 +529,6 @@ public class GameData
         {
             // some stuff hard patched in can cause this to derp if it's JUST vanilla, so skip
             if (stage!=RegistryManager.VANILLA) DefaultAttributes.validate();
-        }
-    }
-
-    private static class FeatureCallbacks implements IForgeRegistry.ClearCallback<Feature<?>>, IForgeRegistry.CreateCallback<Feature<?>>
-    {
-        static final FeatureCallbacks INSTANCE = new FeatureCallbacks();
-
-        @Override
-        public void onClear(IForgeRegistryInternal<Feature<?>> owner, RegistryManager stage)
-        {
-            owner.getSlaveMap(STRUCTURES, BiMap.class).clear();
-        }
-
-        @Override
-        public void onCreate(IForgeRegistryInternal<Feature<?>> owner, RegistryManager stage)
-        {
-            owner.setSlaveMap(STRUCTURES, HashBiMap.create());
         }
     }
 
