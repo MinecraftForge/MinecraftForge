@@ -188,6 +188,10 @@ tasks.jarJar.configure {
 // This tells ForgeGradle to reobfuscate the Jar-in-Jar .jar file
 // something that must be done in order for your mod to function
 // outside of your development workspace
+//
+// NOTE: This is currently required due to an issue in ForgeGradle itself, not automatically queuing Jar-in-Jar for reobfuscation
+//  https://github.com/MinecraftForge/ForgeGradle/issues/883
+//  If the issue is closed by the time you are reading this comment, then this reobfJarJar task registration should no longer be required
 /*
 reobf {
     jarJar { }
