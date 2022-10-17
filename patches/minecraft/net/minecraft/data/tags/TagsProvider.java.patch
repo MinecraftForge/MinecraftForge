@@ -22,8 +22,8 @@
        this.f_126540_ = p_126547_;
 +      this.modId = modId;
 +      this.existingFileHelper = existingFileHelper;
-+      this.resourceType = new net.minecraftforge.common.data.ExistingFileHelper.ResourceType(net.minecraft.server.packs.PackType.SERVER_DATA, ".json", TagManager.m_203918_(p_126547_.m_123023_()));
-+      this.elementResourceType = new net.minecraftforge.common.data.ExistingFileHelper.ResourceType(net.minecraft.server.packs.PackType.SERVER_DATA, ".json", net.minecraftforge.common.ForgeHooks.prefixNamespace(p_126547_.m_123023_().m_135782_()));
++      this.resourceType = new net.minecraftforge.common.data.ExistingFileHelper.ResourceType(net.minecraft.server.packs.PackType.SERVER_DATA, ".json", TagManager.m_203918_(p_126547_.m_123023_()), net.minecraftforge.common.data.ValidationPredicate.TAGS_VALIDATION_TYPE);
++      this.elementResourceType = new net.minecraftforge.common.data.ExistingFileHelper.ResourceType(net.minecraft.server.packs.PackType.SERVER_DATA, ".json", net.minecraftforge.common.ForgeHooks.prefixNamespace(p_126547_.m_123023_().m_135782_()), net.minecraftforge.common.data.ValidationPredicate.TAGS_VALIDATION_TYPE);
 +   }
 +
 +   // Forge: Allow customizing the path for a given tag or returning null

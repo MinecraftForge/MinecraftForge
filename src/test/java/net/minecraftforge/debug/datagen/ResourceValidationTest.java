@@ -19,7 +19,7 @@ import java.util.Objects;
 @Mod(ResourceValidationTest.MODID)
 public class ResourceValidationTest
 {
-    private static final boolean ENABLED = true;
+    private static final boolean ENABLED = false;
     public static final String MODID = "resource_validation_test";
 
     private static final boolean ENABLE_MODELS = true;

@@ -1,6 +1,6 @@
 --- a/net/minecraft/data/Main.java
 +++ b/net/minecraft/data/Main.java
-@@ -52,8 +_,15 @@
+@@ -52,8 +_,18 @@
        OptionSpec<Void> optionspec6 = optionparser.accepts("all", "Include all generators");
        OptionSpec<String> optionspec7 = optionparser.accepts("output", "Output folder").withRequiredArg().defaultsTo("generated");
        OptionSpec<String> optionspec8 = optionparser.accepts("input", "Input folder").withRequiredArg();
@@ -11,13 +11,16 @@
 +      OptionSpec<Void> flat = optionparser.accepts("flat", "Do not append modid prefix to output directory when generating for multiple mods");
 +      OptionSpec<String> assetIndex = optionparser.accepts("assetIndex").withRequiredArg();
 +      OptionSpec<java.io.File> assetsDir = optionparser.accepts("assetsDir").withRequiredArg().ofType(java.io.File.class);
++      final net.minecraftforge.common.data.ResourceLocationConverter rlConverter = new net.minecraftforge.common.data.ResourceLocationConverter();
++      OptionSpec<net.minecraft.resources.ResourceLocation> enableValidation = optionparser.accepts("enableValidation", "Validation types to explicitly enable").withOptionalArg().withValuesConvertedBy(rlConverter);
++      OptionSpec<net.minecraft.resources.ResourceLocation> disableValidation = optionparser.accepts("disableValidation", "Validation types to explicitly disable").withOptionalArg().withValuesConvertedBy(rlConverter);
        OptionSet optionset = optionparser.parse(p_129669_);
 -      if (!optionset.has(optionspec) && optionset.hasOptions()) {
 +      if (!optionset.has(optionspec) && optionset.hasOptions() && !(optionset.specs().size() == 1 && optionset.has(gameDir))) {
           Path path = Paths.get(optionspec7.value(optionset));
           boolean flag = optionset.has(optionspec6);
           boolean flag1 = flag || optionset.has(optionspec2);
-@@ -61,10 +_,14 @@
+@@ -61,10 +_,22 @@
           boolean flag3 = flag || optionset.has(optionspec3);
           boolean flag4 = flag || optionset.has(optionspec4);
           boolean flag5 = flag || optionset.has(optionspec5);
@@ -30,7 +33,15 @@
 +         java.util.Set<String> existingMods = new java.util.HashSet<>(optionset.valuesOf(existingMod));
 +         java.util.Set<String> mods = new java.util.HashSet<>(optionset.valuesOf(mod));
 +         boolean isFlat = mods.isEmpty() || optionset.has(flat);
-+         net.minecraftforge.data.loading.DatagenModLoader.begin(mods, path, inputs, existingPacks, existingMods, flag2, flag1, flag3, flag4, flag5, isFlat, optionset.valueOf(assetIndex), optionset.valueOf(assetsDir));
++         final java.util.Set<net.minecraft.resources.ResourceLocation> enabledValidation = optionset.has(enableValidation) ? new java.util.HashSet<>(optionset.valuesOf(enableValidation)) : java.util.Set.of();
++         final java.util.Set<net.minecraft.resources.ResourceLocation> disabledValidation = optionset.has(disableValidation) ? new java.util.HashSet<>(optionset.valuesOf(disableValidation)) : java.util.Set.of();
++         final net.minecraftforge.common.data.ValidationPredicate validationPredicate = (validationType, requestedPath, packType) -> {
++            if (validationType == null) return flag5;
++            else if (enabledValidation.contains(validationType)) return true;
++            else if (disabledValidation.contains(validationType)) return false;
++            return flag5;
++         };
++         net.minecraftforge.data.loading.DatagenModLoader.begin(mods, path, inputs, existingPacks, existingMods, flag2, flag1, flag3, flag4, validationPredicate, isFlat, optionset.valueOf(assetIndex), optionset.valueOf(assetsDir));
 +         if (mods.contains("minecraft") || mods.isEmpty())
 +            m_236679_(isFlat ? path : path.resolve("minecraft"), inputs, flag1, flag2, flag3, flag4, flag5, SharedConstants.m_183709_(), true).m_123917_();
        } else {
