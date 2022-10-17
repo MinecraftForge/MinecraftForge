@@ -22,6 +22,6 @@ public class ResourceLocationConverter implements ValueConverter<ResourceLocatio
     public String valuePattern()
     {
         // language=RegExp
-        return "^[a-z0-9_.-]+:[a-z0-9/._-]+$";
+        return "^([a-z][a-z0-9_.-]{1,63}:)?([a-z][a-z0-9/._-]{1,})$";
     }
 }

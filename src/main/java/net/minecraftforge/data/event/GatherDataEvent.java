@@ -69,7 +69,7 @@ public class GatherDataEvent extends Event implements IModBusEvent
         private final boolean client;
         private final boolean dev;
         private final boolean reports;
-        private final ValidationPredicate validationPredicate;
+        ValidationPredicate validationPredicate;
         private final boolean flat;
         private List<DataGenerator> generators = new ArrayList<>();
 
@@ -99,6 +99,9 @@ public class GatherDataEvent extends Event implements IModBusEvent
         public boolean isFlat() {
             return flat || getMods().size() == 1;
         }
+
+        public void setValidationPredicate(ValidationPredicate predicate) { this.validationPredicate = predicate; }
+        public ValidationPredicate getValidationPredicate() { return this.validationPredicate; }
 
         public DataGenerator makeGenerator(final Function<Path,Path> pathEnhancer, final boolean shouldExecute) {
             final DataGenerator generator = new DataGenerator(pathEnhancer.apply(path), inputs, DetectedVersion.tryDetectVersion(), shouldExecute);

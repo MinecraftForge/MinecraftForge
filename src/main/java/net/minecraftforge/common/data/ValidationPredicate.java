@@ -29,4 +29,14 @@ public interface ValidationPredicate
     {
         return (validationType, requestedPath, packType) -> canValidate(validationType, requestedPath, packType) && other.canValidate(validationType, requestedPath, packType);
     }
+
+    default ValidationPredicate or(ValidationPredicate other)
+    {
+        return (validationType, requestedPath, packType) -> canValidate(validationType, requestedPath, packType) || other.canValidate(validationType, requestedPath, packType);
+    }
+
+    default ValidationPredicate not()
+    {
+        return (validationType, requestedPath, packType) -> !this.canValidate(validationType, requestedPath, packType);
+    }
 }
