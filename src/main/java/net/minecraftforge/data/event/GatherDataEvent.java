@@ -8,10 +8,14 @@ package net.minecraftforge.data.event;
 import cpw.mods.modlauncher.api.LamdbaExceptionUtils;
 import net.minecraft.DetectedVersion;
 import net.minecraft.data.DataGenerator;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.PackType;
 import net.minecraftforge.common.data.ExistingFileHelper;
+import net.minecraftforge.common.data.ValidationPredicate;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.event.IModBusEvent;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -48,7 +52,14 @@ public class GatherDataEvent extends Event implements IModBusEvent
     public boolean includeClient() { return this.config.client; }
     public boolean includeDev() { return this.config.dev; }
     public boolean includeReports() { return this.config.reports; }
-    public boolean validate() { return this.config.validate; }
+
+    /**
+     * @deprecated Use {@link #validationPredicate()} and {@link ValidationPredicate#canValidate(ResourceLocation, ResourceLocation, PackType)}
+     */
+    @Deprecated(forRemoval = true, since = "1.19.2")
+    public boolean validate() { return false; }
+
+    public ValidationPredicate validationPredicate() { return this.config.validationPredicate; }
 
     public static class DataGeneratorConfig {
         private final Set<String> mods;
@@ -58,11 +69,18 @@ public class GatherDataEvent extends Event implements IModBusEvent
         private final boolean client;
         private final boolean dev;
         private final boolean reports;
-        private final boolean validate;
+        private final ValidationPredicate validationPredicate;
         private final boolean flat;
         private List<DataGenerator> generators = new ArrayList<>();
 
+        @ApiStatus.Internal
         public DataGeneratorConfig(final Set<String> mods, final Path path, final Collection<Path> inputs, final boolean server, final boolean client, final boolean dev, final boolean reports, final boolean validate, final boolean flat) {
+            this(mods, path, inputs, server, client, dev, reports, (type, p, pack) -> validate, flat);
+        }
+
+        @ApiStatus.Internal
+        public DataGeneratorConfig(final Set<String> mods, final Path path, final Collection<Path> inputs, final boolean server, final boolean client, final boolean dev, final boolean reports, final ValidationPredicate validationPredicate, final boolean flat)
+        {
             this.mods = mods;
             this.path = path;
             this.inputs = inputs;
@@ -70,9 +88,8 @@ public class GatherDataEvent extends Event implements IModBusEvent
             this.client = client;
             this.dev = dev;
             this.reports = reports;
-            this.validate = validate;
             this.flat = flat;
-
+            this.validationPredicate = validationPredicate;
         }
 
         public Set<String> getMods() {
