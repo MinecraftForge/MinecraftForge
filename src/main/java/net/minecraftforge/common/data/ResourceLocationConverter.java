@@ -7,7 +7,6 @@ package net.minecraftforge.common.data;
 
 import joptsimple.ValueConverter;
 import net.minecraft.resources.ResourceLocation;
-import org.intellij.lang.annotations.Language;
 
 public class ResourceLocationConverter implements ValueConverter<ResourceLocation>
 {
