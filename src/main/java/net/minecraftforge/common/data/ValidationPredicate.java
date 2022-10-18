@@ -9,6 +9,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
 
 import javax.annotation.Nullable;
+import java.util.Objects;
 
 /**
  * Interface used in order to determine if a {@link ExistingFileHelper} should validate the existence of a path.
@@ -43,5 +44,10 @@ public interface ValidationPredicate
     default ValidationPredicate not()
     {
         return (validationType, requestedPath, packType) -> !this.canValidate(validationType, requestedPath, packType);
+    }
+
+    static ValidationPredicate enableType(@Nullable ResourceLocation validationType)
+    {
+        return (type, path, pack) -> Objects.equals(type, validationType);
     }
 }

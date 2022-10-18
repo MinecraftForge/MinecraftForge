@@ -37,8 +37,7 @@ public class DatagenModLoader {
     }
 
     @ApiStatus.Internal
-    public static void begin(final Set<String> mods, final Path path, final Collection<Path> inputs, Collection<Path> existingPacks, Set<String> existingMods, final boolean serverGenerators, final boolean clientGenerators, final boolean devToolGenerators, final boolean reportsGenerator, final ValidationPredicate initialValidationPredicate, final boolean flat, final String assetIndex, final File assetsDir)
-    {
+    public static void begin(final Set<String> mods, final Path path, final Collection<Path> inputs, Collection<Path> existingPacks, Set<String> existingMods, final boolean serverGenerators, final boolean clientGenerators, final boolean devToolGenerators, final boolean reportsGenerator, final ValidationPredicate initialValidationPredicate, final boolean flat, final String assetIndex, final File assetsDir) {
         if (mods.contains("minecraft") && mods.size() == 1) return;
         LOGGER.info("Initializing Data Gatherer for mods {}", mods);
         runningDataGen = true;

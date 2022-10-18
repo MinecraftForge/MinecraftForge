@@ -7,7 +7,6 @@ package net.minecraftforge.debug.datagen;
 
 import net.minecraft.core.Registry;
 import net.minecraft.data.tags.BlockTagsProvider;
-import net.minecraft.data.tags.TagsProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.tags.TagEntry;
@@ -30,19 +29,19 @@ public class ResourceValidationTest
     private static final boolean ENABLE_MODELS = true;
     private static final boolean ENABLE_TAGS = true;
     private static final boolean ERROR_TAGS = false;
+    private static final boolean ERROR_TEXTURES = false;
 
     public ResourceValidationTest()
     {
         if (!ENABLED) return;
 
-        if (!ERROR_TAGS)
-        {
-            FMLJavaModLoadingContext.get().getModEventBus().addListener((final GatherValidationPredicatesEvent event) -> {
-                event.and(((ValidationPredicate) (validationType, requestedPath, packType) -> packType == PackType.SERVER_DATA
-                        && Objects.equals(validationType, ValidationPredicate.TAGS_VALIDATION_TYPE)
-                        && requestedPath.equals(new ResourceLocation(MODID, "tags/blocks/test_sub.json"))).not());
-            });
-        }
+        FMLJavaModLoadingContext.get().getModEventBus().addListener((final GatherValidationPredicatesEvent event) -> {
+            if (ERROR_TEXTURES) event.and(ValidationPredicate.enableType(new ResourceLocation("forge:textures")));
+
+            if (!ERROR_TAGS) event.andNot((validationType, requestedPath, packType) -> packType == PackType.SERVER_DATA
+                    && Objects.equals(validationType, ValidationPredicate.TAGS_VALIDATION_TYPE)
+                    && requestedPath.equals(new ResourceLocation(MODID, "tags/blocks/test_sub.json")));
+        });
 
         FMLJavaModLoadingContext.get().getModEventBus().addListener((final GatherDataEvent event) -> {
             if (ENABLE_MODELS)
