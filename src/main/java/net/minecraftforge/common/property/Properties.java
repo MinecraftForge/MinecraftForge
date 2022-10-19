@@ -9,6 +9,7 @@ import net.minecraft.client.resources.model.ModelState;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraftforge.client.model.data.ModelProperty;
 
+@Deprecated(since = "1.19.2", forRemoval = true)
 public class Properties
 {
     /**

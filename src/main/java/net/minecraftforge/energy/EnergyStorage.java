@@ -11,7 +11,7 @@ import net.minecraftforge.common.util.INBTSerializable;
 
 /**
  * Reference implementation of {@link IEnergyStorage}. Use/extend this or implement your own.
- *
+ * <p>
  * Derived from the Redstone Flux power system designed by King Lemming and originally utilized in Thermal Expansion and related mods.
  * Created with consent and permission of King Lemming and Team CoFH. Released with permission under LGPL 2.1 when bundled with Forge.
  */

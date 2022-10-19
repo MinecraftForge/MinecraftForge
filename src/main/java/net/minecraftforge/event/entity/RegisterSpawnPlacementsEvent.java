@@ -27,7 +27,7 @@ import org.jetbrains.annotations.ApiStatus;
  * This event allows each {@link EntityType} to have a {@link SpawnPlacements.SpawnPredicate} registered or modified.
  * Spawn Predicates are checked whenever an {@link Entity} of the given {@link EntityType} spawns in the world naturally.
  *
- * If registering your own entity's spawn placements, you should use {@link SpawnPlacementRegisterEvent#register(EntityType, SpawnPlacements.Type, Heightmap.Types, SpawnPlacements.SpawnPredicate, Operation)}
+ * If registering your own entity's spawn placements, you should use {@link RegisterSpawnPlacementsEvent#register(EntityType, SpawnPlacements.Type, Heightmap.Types, SpawnPlacements.SpawnPredicate, Operation)}
  * So that you ensure that your entity has a heightmap type and placement type registered.
  *
  * If modifying vanilla or another mod's spawn placements, you can use three operations:
@@ -41,12 +41,12 @@ import org.jetbrains.annotations.ApiStatus;
  *
  *  Fired on the Mod bus {@link IModBusEvent}.<br>
  */
-public class SpawnPlacementRegisterEvent extends Event implements IModBusEvent
+public class RegisterSpawnPlacementsEvent extends Event implements IModBusEvent
 {
     private final Map<EntityType<?>, MergedSpawnPredicate<?>> map;
 
     @ApiStatus.Internal
-    public SpawnPlacementRegisterEvent(Map<EntityType<?>, MergedSpawnPredicate<?>> map)
+    public RegisterSpawnPlacementsEvent(Map<EntityType<?>, MergedSpawnPredicate<?>> map)
     {
         this.map = map;
     }
