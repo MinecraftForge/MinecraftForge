@@ -84,7 +84,7 @@ public final class QuadTransformers {
     }
 
     /**
-     * {@return a new {@link BakedQuad} transformer that applies the specified lightmap}
+     * @return A new {@link BakedQuad} transformer that applies the specified lightmap
      */
     public static IQuadTransformer applyingLightmap(int lightmap)
     {
@@ -96,7 +96,19 @@ public final class QuadTransformers {
     }
 
     /**
-     * {@return a {@link BakedQuad} transformer that sets the lightmap to the given emissivity (0-15)}
+     * @return A new {@link BakedQuad} transformer that applies the specified block and sky light values.
+     */
+    public static IQuadTransformer applyingLightmap(int blockLight, int skyLight)
+    {
+        return quad -> {
+            var vertices = quad.getVertices();
+            for (int i = 0; i < 4; i++)
+                vertices[i * IQuadTransformer.STRIDE + IQuadTransformer.UV2] = LightTexture.pack(blockLight, skyLight);
+        };
+    }
+
+    /**
+     * @return A {@link BakedQuad} transformer that sets the lightmap to the given emissivity (0-15)
      */
     public static IQuadTransformer settingEmissivity(int emissivity)
     {
@@ -105,11 +117,38 @@ public final class QuadTransformers {
     }
 
     /**
-     * {@return a {@link BakedQuad} transformer that sets the lightmap to its max value}
+     * @return A {@link BakedQuad} transformer that sets the lightmap to its max value
      */
     public static IQuadTransformer settingMaxEmissivity()
     {
         return EMISSIVE_TRANSFORMERS[15];
+    }
+
+    /**
+     * @param color The color in ARGB format.
+     * @return A {@link BakedQuad} transformer that sets the color to the specified value.
+     */
+    public static IQuadTransformer applyingColor(int color)
+    {
+    	final int fixedColor = toABGR(color);
+        return quad -> {
+            var vertices = quad.getVertices();
+            for (int i = 0; i < 4; i++)
+                vertices[i * IQuadTransformer.STRIDE + IQuadTransformer.COLOR] = fixedColor;
+        };
+    }
+
+    /**
+     * Converts an ARGB color to an ABGR color, as the commonly used color format is not the format colors end up packed into.
+     * This function doubles as its own inverse.
+     * @param color ARGB color
+     * @return ABGR color
+     */
+    public static int toABGR(int argb)
+    {
+        return (argb & 0xFF00FF00) // alpha and green same spot
+             | ((argb >> 16) & 0x000000FF) // red moves to blue
+             | ((argb << 16) & 0x00FF0000); // blue moves to red
     }
 
     private QuadTransformers()

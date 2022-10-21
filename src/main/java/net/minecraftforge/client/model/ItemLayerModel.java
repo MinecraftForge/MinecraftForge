@@ -10,9 +10,13 @@ import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import com.mojang.datafixers.util.Either;
 import com.mojang.datafixers.util.Pair;
-import it.unimi.dsi.fastutil.ints.Int2IntMap;
-import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.JsonOps;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+
+import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.ints.IntSet;
@@ -26,6 +30,7 @@ import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.ModelState;
 import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.ExtraCodecs;
 import net.minecraftforge.client.ForgeRenderTypes;
 import net.minecraftforge.client.RenderTypeGroup;
 import net.minecraftforge.client.model.geometry.IGeometryBakingContext;
@@ -53,28 +58,28 @@ public class ItemLayerModel implements IUnbakedGeometry<ItemLayerModel>
 
     @Nullable
     private ImmutableList<Material> textures;
-    private final Int2IntMap emissiveLayers;
+    private final Int2ObjectMap<LayerData> layerData;
     private final Int2ObjectMap<ResourceLocation> renderTypeNames;
     private final boolean deprecatedLoader, logWarning;
 
     /**
-     * Use the map constructor below that allows setting the emissivity value rather than always using max.
+     * Use the below constructor which allows for providing extra data on a per-layer basis instead of only emissivity.
      */
     @Deprecated(forRemoval = true, since = "1.20")
     public ItemLayerModel(@Nullable ImmutableList<Material> textures, IntSet emissiveLayers, Int2ObjectMap<ResourceLocation> renderTypeNames)
     {
-        this(textures, emissiveLayers.intStream().collect(Int2IntOpenHashMap::new, (map, val) -> map.put(val, 15), (map1, map2) -> map1.putAll(map2)), renderTypeNames, false, false);
+        this(textures, emissiveLayers.intStream().collect(Int2ObjectArrayMap::new, (map, val) -> map.put(val, new LayerData(0xFFFFFFFF, 15, 15)), (map1, map2) -> map1.putAll(map2)), renderTypeNames, false, false);
     }
 
-    public ItemLayerModel(@Nullable ImmutableList<Material> textures, Int2IntMap emissiveLayers, Int2ObjectMap<ResourceLocation> renderTypeNames)
+    public ItemLayerModel(@Nullable ImmutableList<Material> textures, Int2ObjectMap<LayerData> layerData, Int2ObjectMap<ResourceLocation> renderTypeNames)
     {
-        this(textures, emissiveLayers, renderTypeNames, false, false);
+        this(textures, layerData, renderTypeNames, false, false);
     }
 
-    private ItemLayerModel(@Nullable ImmutableList<Material> textures, Int2IntMap emissiveLayers, Int2ObjectMap<ResourceLocation> renderTypeNames, boolean deprecatedLoader, boolean logWarning)
+    private ItemLayerModel(@Nullable ImmutableList<Material> textures, Int2ObjectMap<LayerData> layerData, Int2ObjectMap<ResourceLocation> renderTypeNames, boolean deprecatedLoader, boolean logWarning)
     {
         this.textures = textures;
-        this.emissiveLayers = emissiveLayers;
+        this.layerData = layerData;
         this.renderTypeNames = renderTypeNames;
         this.deprecatedLoader = deprecatedLoader;
         this.logWarning = logWarning;
@@ -105,7 +110,12 @@ public class ItemLayerModel implements IUnbakedGeometry<ItemLayerModel>
             TextureAtlasSprite sprite = spriteGetter.apply(textures.get(i));
             var unbaked = UnbakedGeometryHelper.createUnbakedItemElements(i, sprite);
             var quads = UnbakedGeometryHelper.bakeElements(unbaked, $ -> sprite, modelState, modelLocation);
-            if (emissiveLayers.containsKey(i)) QuadTransformers.settingEmissivity(emissiveLayers.get(i)).processInPlace(quads);
+            if (this.layerData.containsKey(i)) 
+            {
+            	var data = this.layerData.get(i);
+            	QuadTransformers.applyingLightmap(data.blockLight, data.skyLight).processInPlace(quads);
+            	QuadTransformers.applyingColor(data.color).processInPlace(quads);
+            }
             var renderTypeName = renderTypeNames.get(i);
             var renderTypes = renderTypeName != null ? context.getRenderType(renderTypeName) : null;
             builder.addQuads(renderTypes != null ? renderTypes : normalRenderTypes, quads);
@@ -159,41 +169,53 @@ public class ItemLayerModel implements IUnbakedGeometry<ItemLayerModel>
                 }
             }
 
-            var emissiveLayers = new Int2IntOpenHashMap();
-            readUnlit(jsonObject, "emissive_layers", renderTypeNames, emissiveLayers, false);
-            boolean logWarning = readUnlit(jsonObject, "fullbright_layers", renderTypeNames, emissiveLayers, true); // TODO: Deprecated name. To be removed in 1.20
+            var emissiveLayers = new Int2ObjectArrayMap<LayerData>();
+            readUnlit(jsonObject, "layer_data", renderTypeNames, emissiveLayers, false);
+            boolean logWarning = readUnlit(jsonObject, "emissive_layers", renderTypeNames, emissiveLayers, true); // TODO: Deprecated name. To be removed in 1.20
+            logWarning |= readUnlit(jsonObject, "fullbright_layers", renderTypeNames, emissiveLayers, true); // TODO: Deprecated name. To be removed in 1.20
 
             return new ItemLayerModel(null, emissiveLayers, renderTypeNames, deprecated, logWarning);
         }
 
-        private boolean readUnlit(JsonObject jsonObject, String name, Int2ObjectOpenHashMap<ResourceLocation> renderTypeNames, Int2IntMap litLayers, boolean logWarning)
+        protected boolean readUnlit(JsonObject jsonObject, String name, Int2ObjectOpenHashMap<ResourceLocation> renderTypeNames, Int2ObjectMap<LayerData> layerData, boolean logWarning)
         {
             if (!jsonObject.has(name))
                 return false;
             JsonElement ele = jsonObject.get(name);
-            if(ele.isJsonArray()) // Reading in array-mode, all specified layers are max emissivity
+            if(ele.isJsonArray()) // Legacy array-mode, all specified layers are max emissivity. TODO: To be removed in 1.20
             {
                 var fullbrightLayers = jsonObject.getAsJsonArray(name);
                 var renderType = new ResourceLocation("forge", "item_unlit");
                 for (var layer : fullbrightLayers)
                 {
-                    litLayers.put(layer.getAsInt(), 15);
+                    layerData.put(layer.getAsInt(), new LayerData(0xFFFFFFFF, 15, 15));
                     renderTypeNames.putIfAbsent(layer.getAsInt(), renderType);
                 }
                 return logWarning && !fullbrightLayers.isEmpty();
             }
-            else // Reading in map-mode, where each layer has a specified emissivity
+            else // New mode, extra data is specified on a per-layer basis.
             {
                 var fullbrightLayers = jsonObject.getAsJsonObject(name);
                 var renderType = new ResourceLocation("forge", "item_unlit");
                 for (var layerStr : fullbrightLayers.keySet())
                 {
                     int layer = Integer.parseInt(layerStr);
-                    litLayers.put(layer, fullbrightLayers.get(layerStr).getAsInt());
-                    renderTypeNames.putIfAbsent(layer, renderType);
+                    var data = LayerData.CODEC.parse(JsonOps.INSTANCE, fullbrightLayers.get(layerStr)).getOrThrow(false, LOGGER::error);
+                    layerData.put(layer, data);
+                    if(data.blockLight > 0 || data.skyLight > 0) renderTypeNames.putIfAbsent(layer, renderType);
                 }
                 return false; // Old name never supported this mode.
             }
         }
+    }
+
+    public static final Codec<Integer> COLOR = new ExtraCodecs.EitherCodec<>(Codec.INT, Codec.STRING).xmap(either -> either.map(Function.identity(), str -> (int) Long.parseLong(str, 16)), color -> Either.right(Integer.toHexString(color)));
+
+    public static record LayerData(int color, int blockLight, int skyLight) {
+        public static final Codec<LayerData> CODEC = RecordCodecBuilder.create(builder -> builder.group(
+                COLOR.optionalFieldOf("color", 0xFFFFFFFF).forGetter(LayerData::color),
+                Codec.intRange(0, 15).optionalFieldOf("block_light", 0).forGetter(LayerData::blockLight),
+                Codec.intRange(0, 15).optionalFieldOf("sky_light", 0).forGetter(LayerData::skyLight)
+                ).apply(builder, LayerData::new));
     }
 }
