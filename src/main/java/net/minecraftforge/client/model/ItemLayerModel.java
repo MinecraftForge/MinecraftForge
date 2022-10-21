@@ -107,9 +107,9 @@ public class ItemLayerModel implements IUnbakedGeometry<ItemLayerModel>
             var quads = UnbakedGeometryHelper.bakeElements(unbaked, $ -> sprite, modelState, modelLocation);
             if (this.layerData.containsKey(i)) 
             {
-            	var data = this.layerData.get(i);
-            	QuadTransformers.applyingLightmap(data.blockLight(), data.skyLight()).processInPlace(quads);
-            	QuadTransformers.applyingColor(data.color()).processInPlace(quads);
+                var data = this.layerData.get(i);
+                QuadTransformers.applyingLightmap(data.blockLight(), data.skyLight()).processInPlace(quads);
+                QuadTransformers.applyingColor(data.color()).processInPlace(quads);
             }
             var renderTypeName = renderTypeNames.get(i);
             var renderTypes = renderTypeName != null ? context.getRenderType(renderTypeName) : null;
