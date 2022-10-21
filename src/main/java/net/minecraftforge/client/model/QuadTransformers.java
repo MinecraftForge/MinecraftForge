@@ -130,7 +130,7 @@ public final class QuadTransformers {
      */
     public static IQuadTransformer applyingColor(int color)
     {
-    	final int fixedColor = toABGR(color);
+        final int fixedColor = toABGR(color);
         return quad -> {
             var vertices = quad.getVertices();
             for (int i = 0; i < 4; i++)
