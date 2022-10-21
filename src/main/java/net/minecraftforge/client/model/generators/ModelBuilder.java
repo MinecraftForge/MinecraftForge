@@ -602,7 +602,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
                 if (this.texture == null) {
                     throw new IllegalStateException("A model face must have a texture");
                 }
-                return new BlockElementFace(cullface, tintindex, texture, new BlockFaceUV(uvs, rotation.rotation), emissivity, hasAmbientOcclusion);
+                return new BlockElementFace(cullface, tintindex, texture, new BlockFaceUV(uvs, rotation.rotation), emissivity, hasAmbientOcclusion, null);
             }
 
             public ElementBuilder end() { return ElementBuilder.this; }
