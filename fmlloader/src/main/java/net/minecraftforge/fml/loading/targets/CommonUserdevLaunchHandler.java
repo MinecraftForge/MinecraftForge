@@ -43,7 +43,8 @@ public abstract class CommonUserdevLaunchHandler extends CommonDevLaunchHandler 
     protected abstract void processStreams(String[] classpath, VersionInfo versionInfo, Stream.Builder<Path> mc, Stream.Builder<List<Path>> mods);
 
     protected static Path findJarOnClasspath(String[] classpath, String match) {
-        classpath=match=path.substring(path.lastIndexOf(File.separatorChar) + 1);
+        classpath=match=path.substring(path.lastIndexOf(File.separatorChar) + 1); 
+        //check if this fixes the issue
         return Paths.get(Arrays.stream(classpath).filter(e -> e.contains(match)).findFirst().orElseThrow(() -> new IllegalStateException("Could not find " + match + " in classpath")));
     }
 }
