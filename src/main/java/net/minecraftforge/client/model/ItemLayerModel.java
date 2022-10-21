@@ -11,9 +11,10 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.mojang.datafixers.util.Pair;
+import it.unimi.dsi.fastutil.ints.Int2IntMap;
+import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import it.unimi.dsi.fastutil.ints.IntSet;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.ItemModelGenerator;
@@ -52,16 +53,25 @@ public class ItemLayerModel implements IUnbakedGeometry<ItemLayerModel>
 
     @Nullable
     private ImmutableList<Material> textures;
-    private final IntSet emissiveLayers;
+    private final Int2IntMap emissiveLayers;
     private final Int2ObjectMap<ResourceLocation> renderTypeNames;
     private final boolean deprecatedLoader, logWarning;
 
+    /**
+     * Use the map constructor below that allows setting the emissivity value rather than always using max.
+     */
+    @Deprecated(forRemoval = true, since = "1.20")
     public ItemLayerModel(@Nullable ImmutableList<Material> textures, IntSet emissiveLayers, Int2ObjectMap<ResourceLocation> renderTypeNames)
+    {
+        this(textures, emissiveLayers.intStream().collect(Int2IntOpenHashMap::new, (map, val) -> map.put(val, 15), (map1, map2) -> map1.putAll(map2)), renderTypeNames, false, false);
+    }
+
+    public ItemLayerModel(@Nullable ImmutableList<Material> textures, Int2IntMap emissiveLayers, Int2ObjectMap<ResourceLocation> renderTypeNames)
     {
         this(textures, emissiveLayers, renderTypeNames, false, false);
     }
 
-    private ItemLayerModel(@Nullable ImmutableList<Material> textures, IntSet emissiveLayers, Int2ObjectMap<ResourceLocation> renderTypeNames, boolean deprecatedLoader, boolean logWarning)
+    private ItemLayerModel(@Nullable ImmutableList<Material> textures, Int2IntMap emissiveLayers, Int2ObjectMap<ResourceLocation> renderTypeNames, boolean deprecatedLoader, boolean logWarning)
     {
         this.textures = textures;
         this.emissiveLayers = emissiveLayers;
@@ -95,7 +105,7 @@ public class ItemLayerModel implements IUnbakedGeometry<ItemLayerModel>
             TextureAtlasSprite sprite = spriteGetter.apply(textures.get(i));
             var unbaked = UnbakedGeometryHelper.createUnbakedItemElements(i, sprite);
             var quads = UnbakedGeometryHelper.bakeElements(unbaked, $ -> sprite, modelState, modelLocation);
-            if (emissiveLayers.contains(i)) QuadTransformers.settingMaxEmissivity().processInPlace(quads);
+            if (emissiveLayers.containsKey(i)) QuadTransformers.settingEmissivity(emissiveLayers.get(i)).processInPlace(quads);
             var renderTypeName = renderTypeNames.get(i);
             var renderTypes = renderTypeName != null ? context.getRenderType(renderTypeName) : null;
             builder.addQuads(renderTypes != null ? renderTypes : normalRenderTypes, quads);
@@ -149,25 +159,41 @@ public class ItemLayerModel implements IUnbakedGeometry<ItemLayerModel>
                 }
             }
 
-            var emissiveLayers = new IntOpenHashSet();
+            var emissiveLayers = new Int2IntOpenHashMap();
             readUnlit(jsonObject, "emissive_layers", renderTypeNames, emissiveLayers, false);
             boolean logWarning = readUnlit(jsonObject, "fullbright_layers", renderTypeNames, emissiveLayers, true); // TODO: Deprecated name. To be removed in 1.20
 
             return new ItemLayerModel(null, emissiveLayers, renderTypeNames, deprecated, logWarning);
         }
 
-        private boolean readUnlit(JsonObject jsonObject, String name, Int2ObjectOpenHashMap<ResourceLocation> renderTypeNames, IntOpenHashSet litLayers, boolean logWarning)
+        private boolean readUnlit(JsonObject jsonObject, String name, Int2ObjectOpenHashMap<ResourceLocation> renderTypeNames, Int2IntMap litLayers, boolean logWarning)
         {
             if (!jsonObject.has(name))
                 return false;
-            var fullbrightLayers = jsonObject.getAsJsonArray(name);
-            var renderType = new ResourceLocation("forge", "item_unlit");
-            for (var layer : fullbrightLayers)
+            JsonElement ele = jsonObject.get(name);
+            if(ele.isJsonArray()) // Reading in array-mode, all specified layers are max emissivity
             {
-                litLayers.add(layer.getAsInt());
-                renderTypeNames.putIfAbsent(layer.getAsInt(), renderType);
+                var fullbrightLayers = jsonObject.getAsJsonArray(name);
+                var renderType = new ResourceLocation("forge", "item_unlit");
+                for (var layer : fullbrightLayers)
+                {
+                    litLayers.put(layer.getAsInt(), 15);
+                    renderTypeNames.putIfAbsent(layer.getAsInt(), renderType);
+                }
+                return logWarning && !fullbrightLayers.isEmpty();
             }
-            return logWarning && !fullbrightLayers.isEmpty();
+            else // Reading in map-mode, where each layer has a specified emissivity
+            {
+                var fullbrightLayers = jsonObject.getAsJsonObject(name);
+                var renderType = new ResourceLocation("forge", "item_unlit");
+                for (var layerStr : fullbrightLayers.keySet())
+                {
+                    int layer = Integer.parseInt(layerStr);
+                    litLayers.put(layer, fullbrightLayers.get(layerStr).getAsInt());
+                    renderTypeNames.putIfAbsent(layer, renderType);
+                }
+                return false; // Old name never supported this mode.
+            }
         }
     }
 }
