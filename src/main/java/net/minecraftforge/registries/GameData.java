@@ -357,6 +357,7 @@ public class GameData
             LOGGER.fatal("Detected errors during registry event dispatch, rolling back to VANILLA state");
             revertTo(RegistryManager.VANILLA, false);
             LOGGER.fatal("Detected errors during registry event dispatch, roll back to VANILLA complete");
+            throw aggregate;
         } else
         {
             ForgeHooks.modifyAttributes();
