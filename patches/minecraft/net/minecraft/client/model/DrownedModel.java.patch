@@ -4,7 +4,7 @@
     }
  
     public void m_6839_(T p_102521_, float p_102522_, float p_102523_, float p_102524_) {
-+      if (!net.minecraftforge.client.ForgeHooksClient.hasForgeArmPose(p_102521_, this)) {
++      if (net.minecraftforge.client.ForgeHooksClient.hasForgeArmPose(p_102521_, this)) {
 +          super.m_6839_(p_102521_, p_102522_, p_102523_, p_102524_);
 +          return;
 +      }
