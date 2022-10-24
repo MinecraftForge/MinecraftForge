@@ -298,32 +298,9 @@ public class ForgeHooksClient
         return MinecraftForge.EVENT_BUS.post(new RenderArmEvent(poseStack, multiBufferSource, packedLight, player, arm));
     }
 
-    public static <T extends LivingEntity> boolean hasForgeArmPose(ItemStack item, T entity, InteractionHand hand)
+    public static <T extends LivingEntity> boolean hasForgeArmPose(T entity, HumanoidModel<T> model)
     {
-        return IClientItemExtensions.of(item).getArmPose(entity, hand, item) != null;
-    }
-
-    public static boolean hasForgeArmPose(LivingEntity entity)
-    {
-        return IClientItemExtensions.of(entity.getMainHandItem()).getArmPose(entity, InteractionHand.MAIN_HAND, entity.getMainHandItem()) != null;
-    }
-
-    public static <T extends LivingEntity> boolean setForgeArmPose(HumanoidModel<T> model, ItemStack item, T entity, InteractionHand hand)
-    {
-        HumanoidModel.ArmPose forgeArmPose = IClientItemExtensions.of(item).getArmPose(entity, hand, item);
-        if (forgeArmPose != null)
-        {
-            if (entity.getMainArm() == HumanoidArm.RIGHT)
-            {
-                model.rightArmPose = forgeArmPose;
-            }
-            else
-            {
-                model.leftArmPose = forgeArmPose;
-            }
-            return true;
-        }
-        return false;
+        return entity.getMainArm() == HumanoidArm.RIGHT ? model.rightArmPose.isCustom() : model.leftArmPose.isCustom();
     }
 
     public static void onTextureStitchedPre(TextureAtlas map, Set<ResourceLocation> resourceLocations)

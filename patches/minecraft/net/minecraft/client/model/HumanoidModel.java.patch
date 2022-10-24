@@ -27,7 +27,7 @@
        EMPTY(false),
        ITEM(false),
        BLOCK(false),
-@@ -411,10 +_,29 @@
+@@ -411,10 +_,33 @@
  
        private ArmPose(boolean p_102896_) {
           this.f_102890_ = p_102896_;
@@ -53,6 +53,10 @@
 +
 +      public <T extends LivingEntity> void applyTransform(HumanoidModel<T> model, T entity, net.minecraft.world.entity.HumanoidArm arm) {
 +         if (this.forgeArmPose != null) this.forgeArmPose.applyTransform(model, entity, arm);
++      }
++
++      public boolean isCustom() {
++          return this.forgeArmPose != null;
 +      }
 +      // FORGE END
     }

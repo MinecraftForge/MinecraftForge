@@ -1,18 +1,21 @@
 --- a/net/minecraft/client/model/SkeletonModel.java
 +++ b/net/minecraft/client/model/SkeletonModel.java
-@@ -38,6 +_,7 @@
+@@ -35,6 +_,10 @@
+    }
+ 
+    public void m_6839_(T p_103793_, float p_103794_, float p_103795_, float p_103796_) {
++      if (!net.minecraftforge.client.ForgeHooksClient.hasForgeArmPose(p_103793_, this)) {
++          super.m_6839_(p_103793_, p_103794_, p_103795_, p_103796_);
++          return;
++      }
        this.f_102816_ = HumanoidModel.ArmPose.EMPTY;
        this.f_102815_ = HumanoidModel.ArmPose.EMPTY;
        ItemStack itemstack = p_103793_.m_21120_(InteractionHand.MAIN_HAND);
-+      if (!net.minecraftforge.client.ForgeHooksClient.setForgeArmPose(this, itemstack, p_103793_, InteractionHand.MAIN_HAND))
-       if (itemstack.m_150930_(Items.f_42411_) && p_103793_.m_5912_()) {
-          if (p_103793_.m_5737_() == HumanoidArm.RIGHT) {
-             this.f_102816_ = HumanoidModel.ArmPose.BOW_AND_ARROW;
 @@ -52,6 +_,7 @@
     public void m_6973_(T p_103798_, float p_103799_, float p_103800_, float p_103801_, float p_103802_, float p_103803_) {
        super.m_6973_(p_103798_, p_103799_, p_103800_, p_103801_, p_103802_, p_103803_);
        ItemStack itemstack = p_103798_.m_21205_();
-+      if (!net.minecraftforge.client.ForgeHooksClient.hasForgeArmPose(itemstack, p_103798_, InteractionHand.MAIN_HAND))
++      if (!net.minecraftforge.client.ForgeHooksClient.hasForgeArmPose(p_103798_, this))
        if (p_103798_.m_5912_() && (itemstack.m_41619_() || !itemstack.m_150930_(Items.f_42411_))) {
           float f = Mth.m_14031_(this.f_102608_ * (float)Math.PI);
           float f1 = Mth.m_14031_((1.0F - (1.0F - this.f_102608_) * (1.0F - this.f_102608_)) * (float)Math.PI);

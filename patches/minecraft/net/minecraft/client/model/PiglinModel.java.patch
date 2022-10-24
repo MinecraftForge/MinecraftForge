@@ -1,10 +1,10 @@
 --- a/net/minecraft/client/model/PiglinModel.java
 +++ b/net/minecraft/client/model/PiglinModel.java
-@@ -81,6 +_,7 @@
-             }
-          }
-       } else if (p_103366_.m_6095_() == EntityType.f_20531_) {
-+         if (!net.minecraftforge.client.ForgeHooksClient.hasForgeArmPose(p_103366_))
-          AnimationUtils.m_102102_(this.f_102812_, this.f_102811_, p_103366_.m_5912_(), this.f_102608_, p_103369_);
-       }
- 
+@@ -50,6 +_,7 @@
+       float f2 = 0.08F + p_103368_ * 0.4F;
+       this.f_170808_.f_104205_ = (-(float)Math.PI / 6F) - Mth.m_14089_(f1 * 1.2F) * f2;
+       this.f_170807_.f_104205_ = ((float)Math.PI / 6F) + Mth.m_14089_(f1) * f2;
++      if (!net.minecraftforge.client.ForgeHooksClient.hasForgeArmPose(p_103366_, this))
+       if (p_103366_ instanceof AbstractPiglin abstractpiglin) {
+          PiglinArmPose piglinarmpose = abstractpiglin.m_6389_();
+          if (piglinarmpose == PiglinArmPose.DANCING) {

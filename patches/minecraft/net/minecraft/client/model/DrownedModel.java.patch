@@ -1,10 +1,13 @@
 --- a/net/minecraft/client/model/DrownedModel.java
 +++ b/net/minecraft/client/model/DrownedModel.java
-@@ -34,6 +_,7 @@
+@@ -31,6 +_,10 @@
+    }
+ 
+    public void m_6839_(T p_102521_, float p_102522_, float p_102523_, float p_102524_) {
++      if (!net.minecraftforge.client.ForgeHooksClient.hasForgeArmPose(p_102521_, this)) {
++          super.m_6839_(p_102521_, p_102522_, p_102523_, p_102524_);
++          return;
++      }
        this.f_102816_ = HumanoidModel.ArmPose.EMPTY;
        this.f_102815_ = HumanoidModel.ArmPose.EMPTY;
        ItemStack itemstack = p_102521_.m_21120_(InteractionHand.MAIN_HAND);
-+      if (!net.minecraftforge.client.ForgeHooksClient.setForgeArmPose(this, itemstack, p_102521_, InteractionHand.MAIN_HAND))
-       if (itemstack.m_150930_(Items.f_42713_) && p_102521_.m_5912_()) {
-          if (p_102521_.m_5737_() == HumanoidArm.RIGHT) {
-             this.f_102816_ = HumanoidModel.ArmPose.THROW_SPEAR;
