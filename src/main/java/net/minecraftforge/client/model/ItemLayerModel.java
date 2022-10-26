@@ -60,10 +60,10 @@ public class ItemLayerModel implements IUnbakedGeometry<ItemLayerModel>
     /**
      * Use the below constructor which allows for providing extra data on a per-layer basis instead of only emissivity.
      */
-    @Deprecated(forRemoval = true, since = "1.20")
+    @Deprecated(forRemoval = true, since = "1.19.2")
     public ItemLayerModel(@Nullable ImmutableList<Material> textures, IntSet emissiveLayers, Int2ObjectMap<ResourceLocation> renderTypeNames)
     {
-        this(textures, emissiveLayers.intStream().collect(Int2ObjectArrayMap::new, (map, val) -> map.put(val, new ForgeFaceData(0xFFFFFFFF, 15, 15)), (map1, map2) -> map1.putAll(map2)), renderTypeNames, false, false);
+        this(textures, emissiveLayers.intStream().collect(Int2ObjectArrayMap::new, (map, val) -> map.put(val, new ForgeFaceData(0xFFFFFFFF, 15, 15)), Int2ObjectMap::putAll), renderTypeNames, false, false);
     }
 
     public ItemLayerModel(@Nullable ImmutableList<Material> textures, Int2ObjectMap<ForgeFaceData> layerData, Int2ObjectMap<ResourceLocation> renderTypeNames)
@@ -177,7 +177,7 @@ public class ItemLayerModel implements IUnbakedGeometry<ItemLayerModel>
             if (!jsonObject.has(name))
                 return false;
             JsonElement ele = jsonObject.get(name);
-            if(ele.isJsonArray()) // Legacy array-mode, all specified layers are max emissivity. TODO: To be removed in 1.20
+            if (ele.isJsonArray()) // Legacy array-mode, all specified layers are max emissivity. TODO: To be removed in 1.20
             {
                 var fullbrightLayers = jsonObject.getAsJsonArray(name);
                 for (var layer : fullbrightLayers)
@@ -186,17 +186,15 @@ public class ItemLayerModel implements IUnbakedGeometry<ItemLayerModel>
                 }
                 return logWarning && !fullbrightLayers.isEmpty();
             }
-            else // New mode, extra data is specified on a per-layer basis.
+            
+            var fullbrightLayers = jsonObject.getAsJsonObject(name);
+            for (var entry : fullbrightLayers.entrySet())
             {
-                var fullbrightLayers = jsonObject.getAsJsonObject(name);
-                for (var layerStr : fullbrightLayers.keySet())
-                {
-                    int layer = Integer.parseInt(layerStr);
-                    var data = ForgeFaceData.CODEC.parse(JsonOps.INSTANCE, fullbrightLayers.get(layerStr)).getOrThrow(false, LOGGER::error);
-                    layerData.put(layer, data);
-                }
-                return false; // Old name never supported this mode.
+                int layer = Integer.parseInt(entry.getKey());
+                var data = ForgeFaceData.read(entry.getValue(), ForgeFaceData.DEFAULT);
+                layerData.put(layer, data);
             }
+            return false; // Old name never supported this mode.
         }
     }
 }

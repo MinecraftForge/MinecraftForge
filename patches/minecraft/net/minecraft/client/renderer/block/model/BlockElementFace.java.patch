@@ -1,10 +1,10 @@
 --- a/net/minecraft/client/renderer/block/model/BlockElementFace.java
 +++ b/net/minecraft/client/renderer/block/model/BlockElementFace.java
-@@ -19,12 +_,38 @@
+@@ -19,12 +_,43 @@
     public final int f_111355_;
     public final String f_111356_;
     public final BlockFaceUV f_111357_;
-+   @Deprecated(forRemoval = true, since = "1.20") public final int emissivity;
++   @Deprecated(forRemoval = true, since = "1.19.2") public final int emissivity;
 +   public final boolean hasAmbientOcclusion;
 +   private final net.minecraftforge.client.model.ForgeFaceData faceData; // If null, we defer to the parent BlockElement's ForgeFaceData, which is not nullable.
 +   @Nullable BlockElement parent;
@@ -13,12 +13,12 @@
 +      this(p_111359_, p_111360_, p_111361_, p_111362_, 0, true);
 +   }
 +
-+   @Deprecated(forRemoval = true, since = "1.20")
++   @Deprecated(forRemoval = true, since = "1.19.2")
 +   public BlockElementFace(@Nullable Direction p_111359_, int p_111360_, String p_111361_, BlockFaceUV p_111362_, int emissivity) {
 +      this(p_111359_, p_111360_, p_111361_, p_111362_, emissivity, true);
 +   }
 +
-+   @Deprecated(forRemoval = true, since = "1.20")
++   @Deprecated(forRemoval = true, since = "1.19.2")
 +   public BlockElementFace(@Nullable Direction p_111359_, int p_111360_, String p_111361_, BlockFaceUV p_111362_, int emissivity, boolean hasAmbientOcclusion) {
 +      this(p_111359_, p_111360_, p_111361_, p_111362_, emissivity, hasAmbientOcclusion, null);
 +   }
@@ -35,11 +35,16 @@
 +   }
 +
 +   public net.minecraftforge.client.model.ForgeFaceData getFaceData() {
-+      return this.faceData != null ? this.faceData : this.parent != null ? this.parent.faceData : net.minecraftforge.client.model.ForgeFaceData.DEFAULT;
++      if(this.faceData != null) {
++         return this.faceData;
++      } else if(this.parent != null) {
++         return this.parent.faceData;
++      }
++      return net.minecraftforge.client.model.ForgeFaceData.DEFAULT;
     }
  
     @OnlyIn(Dist.CLIENT)
-@@ -37,7 +_,15 @@
+@@ -37,7 +_,12 @@
           int i = this.m_111368_(jsonobject);
           String s = this.m_111370_(jsonobject);
           BlockFaceUV blockfaceuv = p_111367_.deserialize(jsonobject, BlockFaceUV.class);
@@ -48,10 +53,7 @@
 +         if (emissivity != net.minecraft.util.Mth.m_14045_(emissivity, 0, 15))
 +            throw new JsonParseException("The emissivity value must be between 0 and 15. Found: " + emissivity);
 +         boolean hasAmbientOcclusion = GsonHelper.m_13855_(jsonobject, "ambientocclusion", true);
-+         var faceData = jsonobject.has("forge_data") ?
-+            net.minecraftforge.client.model.ForgeFaceData.CODEC.parse(com.mojang.serialization.JsonOps.INSTANCE, GsonHelper.m_13930_(jsonobject, "forge_data"))
-+            .getOrThrow(false, error -> new JsonParseException(error))
-+            : null;
++         var faceData = net.minecraftforge.client.model.ForgeFaceData.read(jsonobject.get("forge_data"), null);
 +         return new BlockElementFace(direction, i, s, blockfaceuv, emissivity, hasAmbientOcclusion, faceData);
        }
  

@@ -8,7 +8,7 @@
 +      net.minecraftforge.client.ForgeHooksClient.fillNormal(aint, direction);
 +      var quad = new BakedQuad(aint, p_111603_.f_111355_, direction, p_111604_, p_111608_, p_111603_.hasAmbientOcclusion);
 +      var data = p_111603_.getFaceData();
-+      if(data != net.minecraftforge.client.model.ForgeFaceData.DEFAULT) {
++      if (!net.minecraftforge.client.model.ForgeFaceData.DEFAULT.equals(data)) {
 +         net.minecraftforge.client.model.QuadTransformers.applyingLightmap(data.blockLight(), data.skyLight()).processInPlace(quad);
 +         net.minecraftforge.client.model.QuadTransformers.applyingColor(data.color()).processInPlace(quad);
 +      }

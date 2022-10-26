@@ -7,8 +7,13 @@ package net.minecraftforge.client.model;
 
 import java.util.function.Function;
 
+import javax.annotation.Nullable;
+
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParseException;
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import net.minecraft.client.renderer.block.model.BlockElement;
@@ -37,4 +42,21 @@ public record ForgeFaceData(int color, int blockLight, int skyLight)
             Codec.intRange(0, 15).optionalFieldOf("block_light", 0).forGetter(ForgeFaceData::blockLight),
             Codec.intRange(0, 15).optionalFieldOf("sky_light", 0).forGetter(ForgeFaceData::skyLight))
             .apply(builder, ForgeFaceData::new));
+
+    /**
+     * Parses a ForgeFaceData from JSON
+     * @param obj The JsonObject to parse from, weakly-typed to JsonElement to reduce logic complexity.
+     * @param fallback What to return if the first parameter is null.
+     * @return The parsed ForgeFaceData, or the fallback parameter if the first parmeter is null.
+     * @throws JsonParseException
+     */
+    @Nullable
+    public static ForgeFaceData read(@Nullable JsonElement obj, @Nullable ForgeFaceData fallback) throws JsonParseException
+    {
+        if(obj == null)
+        {
+            return fallback;
+        }
+        return CODEC.parse(JsonOps.INSTANCE, obj).getOrThrow(false, JsonParseException::new);
+    }
 }
