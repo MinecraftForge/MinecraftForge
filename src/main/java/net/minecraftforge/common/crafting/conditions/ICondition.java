@@ -36,7 +36,7 @@ public interface ICondition
             if(input instanceof JsonObject obj && obj.has("forge:conditions")) {
                 try
                 {
-                    boolean result = CraftingHelper.processConditions(obj, "forge:conditions", IContext.EMPTY);    
+                    boolean result = CraftingHelper.processConditions(obj, "forge:conditions", IContext.TAGS_INVALID);    
                     return DataResult.success(Pair.of(result, input));
                 } 
                 catch(Exception ex)
@@ -69,6 +69,15 @@ public interface ICondition
             public <T> Map<ResourceLocation, Collection<Holder<T>>> getAllTags(ResourceKey<? extends Registry<T>> registry)
             {
                 return Collections.emptyMap();
+            }
+        };
+
+        IContext TAGS_INVALID = new IContext()
+        {
+            @Override
+            public <T> Map<ResourceLocation, Collection<Holder<T>>> getAllTags(ResourceKey<? extends Registry<T>> registry)
+            {
+                throw new UnsupportedOperationException("Usage of tag-based conditions is not permitted in this context!");
             }
         };
 
