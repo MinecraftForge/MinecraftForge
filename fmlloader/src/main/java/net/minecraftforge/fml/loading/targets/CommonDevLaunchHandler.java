@@ -29,7 +29,7 @@ public abstract class CommonDevLaunchHandler extends CommonLaunchHandler {
 
         // The extra jar is on the classpath, so try and pull it out of the legacy classpath
         var legacyCP = Objects.requireNonNull(System.getProperty("legacyClassPath"), "Missing legacyClassPath, cannot find client-extra").split(File.pathSeparator);
-        var extra = Paths.get(Arrays.stream(legacyCP).filter(e -> e.contains("client-extra")).findFirst().orElseThrow(() -> new IllegalStateException("Could not find client-extra in legacy classpath")));
+        var extra = findJarOnClasspath(legacyCP, "client-extra");
         mcstream.add(extra);
 
         // The MC code/Patcher edits are in exploded directories
@@ -77,9 +77,24 @@ public abstract class CommonDevLaunchHandler extends CommonLaunchHandler {
     protected List<Path> getFmlStuff(String[] classpath) {
         // We also want the FML things, fmlcore, javafmllanguage, mclanguage, I don't like hard coding these, but hey whatever works for now.
         return Arrays.stream(classpath)
-            .filter(e -> e.contains("fmlcore") || e.contains("javafmllanguage") || e.contains("lowcodelanguage") || e.contains("mclanguage"))
+            .filter(e -> {
+                // Extract file name from path
+                String name = e.substring(e.lastIndexOf(File.separatorChar) + 1);
+                return name.contains("fmlcore") || name.contains("javafmllanguage") || name.contains("lowcodelanguage") || name.contains("mclanguage");
+            })
             .map(Paths::get)
             .toList();
+    }
+
+    protected static Path findJarOnClasspath(String[] classpath, String match) {
+        return Paths.get(Arrays.stream(classpath)
+            .filter(e -> {
+                // Extract file name from path
+                String name = e.substring(e.lastIndexOf(File.separatorChar) + 1);
+                return name.contains(match);
+            })
+            .findFirst()
+            .orElseThrow(() -> new IllegalStateException("Could not find " + match + " in classpath")));
     }
 
     protected BiPredicate<String, String> getMcFilter(Path extra, List<Path> minecraft, Stream.Builder<List<Path>> mods) {
