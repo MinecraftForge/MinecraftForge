@@ -17,6 +17,15 @@
     }
  
     public void m_6742_(LivingEntity p_19467_, int p_19468_) {
+@@ -54,7 +_,7 @@
+          ((Player)p_19467_).m_36399_(0.005F * (float)(p_19468_ + 1));
+       } else if (this == MobEffects.f_19618_ && p_19467_ instanceof Player) {
+          if (!p_19467_.f_19853_.f_46443_) {
+-            ((Player)p_19467_).m_36324_().m_38707_(p_19468_ + 1, 1.0F);
++            ((Player)p_19467_).m_36324_().eat(p_19468_ + 1, 1.0F, p_19467_);
+          }
+       } else if ((this != MobEffects.f_19601_ || p_19467_.m_21222_()) && (this != MobEffects.f_19602_ || !p_19467_.m_21222_())) {
+          if (this == MobEffects.f_19602_ && !p_19467_.m_21222_() || this == MobEffects.f_19601_ && p_19467_.m_21222_()) {
 @@ -179,4 +_,29 @@
     public boolean m_19486_() {
        return this.f_19447_ == MobEffectCategory.BENEFICIAL;

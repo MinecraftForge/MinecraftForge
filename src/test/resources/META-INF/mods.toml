@@ -99,6 +99,8 @@ license="LGPL v2.1"
 [[mods]]
     modId="living_conversion_event_test"
 [[mods]]
+    modId="living_food_event_test"
+[[mods]]
     modId="player_game_mode_event_test"
 [[mods]]
     modId="structure_spawn_list_event_test"
