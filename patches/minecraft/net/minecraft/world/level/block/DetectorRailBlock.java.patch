@@ -1,5 +1,18 @@
 --- a/net/minecraft/world/level/block/DetectorRailBlock.java
 +++ b/net/minecraft/world/level/block/DetectorRailBlock.java
+@@ -30,8 +_,11 @@
+    private static final int f_153121_ = 20;
+ 
+    public DetectorRailBlock(BlockBehaviour.Properties p_52431_) {
++      this(p_52431_, f_52427_, RailShape.NORTH_SOUTH);
++   }
++   public DetectorRailBlock(BlockBehaviour.Properties p_52431_, EnumProperty<RailShape> shapeProperty, RailShape defaultShape) {
+       super(true, p_52431_);
+-      this.m_49959_(this.f_49792_.m_61090_().m_61124_(f_52428_, Boolean.valueOf(false)).m_61124_(f_52427_, RailShape.NORTH_SOUTH).m_61124_(f_152149_, Boolean.valueOf(false)));
++      this.m_49959_(this.f_49792_.m_61090_().m_61124_(f_52428_, Boolean.valueOf(false)).m_61124_(shapeProperty, defaultShape).m_61124_(f_152149_, Boolean.valueOf(false)));
+    }
+ 
+    public boolean m_7899_(BlockState p_52489_) {
 @@ -135,7 +_,9 @@
              return list.get(0).m_38534_().m_45436_();
           }

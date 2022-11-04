@@ -1,23 +1,36 @@
 --- a/net/minecraft/world/level/block/PoweredRailBlock.java
 +++ b/net/minecraft/world/level/block/PoweredRailBlock.java
-@@ -14,10 +_,16 @@
+@@ -14,10 +_,20 @@
  public class PoweredRailBlock extends BaseRailBlock {
     public static final EnumProperty<RailShape> f_55214_ = BlockStateProperties.f_61404_;
     public static final BooleanProperty f_55215_ = BlockStateProperties.f_61448_;
 +   private final boolean isActivator;  // TRUE for an Activator Rail, FALSE for Powered Rail
  
     public PoweredRailBlock(BlockBehaviour.Properties p_55218_) {
--      super(true, p_55218_);
 +      this(p_55218_, false);
 +   }
 +
-+   protected PoweredRailBlock(BlockBehaviour.Properties builder, boolean isPoweredRail) {
-+      super(true, builder);
-       this.m_49959_(this.f_49792_.m_61090_().m_61124_(f_55214_, RailShape.NORTH_SOUTH).m_61124_(f_55215_, Boolean.valueOf(false)).m_61124_(f_152149_, Boolean.valueOf(false)));
++   protected PoweredRailBlock(BlockBehaviour.Properties p_55218_, boolean isPoweredRail) {
++      this(p_55218_, isPoweredRail, f_55214_, RailShape.NORTH_SOUTH);
++   }
++
++   protected PoweredRailBlock(BlockBehaviour.Properties p_55218_, boolean isPoweredRail, EnumProperty<RailShape> shapeProperty, RailShape defaultShape) {
+       super(true, p_55218_);
+-      this.m_49959_(this.f_49792_.m_61090_().m_61124_(f_55214_, RailShape.NORTH_SOUTH).m_61124_(f_55215_, Boolean.valueOf(false)).m_61124_(f_152149_, Boolean.valueOf(false)));
++      this.m_49959_(this.f_49792_.m_61090_().m_61124_(shapeProperty, defaultShape).m_61124_(f_55215_, Boolean.valueOf(false)).m_61124_(f_152149_, Boolean.valueOf(false)));
 +      this.isActivator = !isPoweredRail;
     }
  
     protected boolean m_55219_(Level p_55220_, BlockPos p_55221_, BlockState p_55222_, boolean p_55223_, int p_55224_) {
+@@ -28,7 +_,7 @@
+          int j = p_55221_.m_123342_();
+          int k = p_55221_.m_123343_();
+          boolean flag = true;
+-         RailShape railshape = p_55222_.m_61143_(f_55214_);
++         RailShape railshape = p_55222_.m_61143_(m_7978_());
+          switch (railshape) {
+             case NORTH_SOUTH:
+                if (p_55223_) {
 @@ -99,13 +_,13 @@
  
     protected boolean m_55225_(Level p_55226_, BlockPos p_55227_, boolean p_55228_, int p_55229_, RailShape p_55230_) {
@@ -27,7 +40,7 @@
           return false;
        } else {
 -         RailShape railshape = blockstate.m_61143_(f_55214_);
-+         RailShape railshape = getRailDirection(blockstate, p_55226_, p_55227_, null);
++         RailShape railshape = ((PoweredRailBlock) blockstate.m_60734_()).getRailDirection(blockstate, p_55226_, p_55227_, null);
           if (p_55230_ != RailShape.EAST_WEST || railshape != RailShape.NORTH_SOUTH && railshape != RailShape.ASCENDING_NORTH && railshape != RailShape.ASCENDING_SOUTH) {
              if (p_55230_ != RailShape.NORTH_SOUTH || railshape != RailShape.EAST_WEST && railshape != RailShape.ASCENDING_EAST && railshape != RailShape.ASCENDING_WEST) {
 -               if (blockstate.m_61143_(f_55215_)) {
