@@ -167,7 +167,7 @@ public class EntityTeleportEvent extends EntityEvent
         }
 
         /**
-         * @deprecated Use {@link #EnderPearl(ServerPlayer, double, double, double, ThrownEnderpearl, float, HitResult)} the hit result-sensitive version}
+         * @deprecated Use {@linkplain #EnderPearl(ServerPlayer, double, double, double, ThrownEnderpearl, float, HitResult)} the hit result-sensitive version}.
          */
         @ApiStatus.Internal
         @Deprecated(forRemoval = true, since = "1.19.2")
