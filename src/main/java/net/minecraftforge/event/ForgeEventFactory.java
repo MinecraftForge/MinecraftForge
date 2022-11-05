@@ -719,9 +719,16 @@ public class ForgeEventFactory
         return event;
     }
 
+    @ApiStatus.Internal
     public static EntityTeleportEvent.EnderPearl onEnderPearlLand(ServerPlayer entity, double targetX, double targetY, double targetZ, ThrownEnderpearl pearlEntity, float attackDamage)
     {
-        EntityTeleportEvent.EnderPearl event = new EntityTeleportEvent.EnderPearl(entity, targetX, targetY, targetZ, pearlEntity, attackDamage);
+        return onEnderPearlLand(entity, targetX, targetY, targetZ, pearlEntity, attackDamage, null);
+    }
+
+    @ApiStatus.Internal
+    public static EntityTeleportEvent.EnderPearl onEnderPearlLand(ServerPlayer entity, double targetX, double targetY, double targetZ, ThrownEnderpearl pearlEntity, float attackDamage, @Nullable HitResult hitResult)
+    {
+        EntityTeleportEvent.EnderPearl event = new EntityTeleportEvent.EnderPearl(entity, targetX, targetY, targetZ, pearlEntity, attackDamage, hitResult);
         MinecraftForge.EVENT_BUS.post(event);
         return event;
     }
