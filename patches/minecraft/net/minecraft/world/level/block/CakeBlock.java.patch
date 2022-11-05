@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/level/block/CakeBlock.java
++++ b/net/minecraft/world/level/block/CakeBlock.java
+@@ -79,7 +_,7 @@
+          return InteractionResult.PASS;
+       } else {
+          p_51189_.m_36220_(Stats.f_12942_);
+-         p_51189_.m_36324_().m_38707_(2, 0.1F);
++         p_51189_.m_36324_().eat(2, 0.1F, p_51189_);
+          int i = p_51188_.m_61143_(f_51180_);
+          p_51186_.m_142346_(p_51189_, GameEvent.f_157806_, p_51187_);
+          if (i < 6) {

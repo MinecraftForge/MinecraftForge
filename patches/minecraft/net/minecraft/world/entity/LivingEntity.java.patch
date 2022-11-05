@@ -658,15 +658,28 @@
     }
  
     public ItemStack m_5584_(Level p_21067_, ItemStack p_21068_) {
-@@ -3198,7 +_,7 @@
+@@ -3198,13 +_,17 @@
     private void m_21063_(ItemStack p_21064_, Level p_21065_, LivingEntity p_21066_) {
        Item item = p_21064_.m_41720_();
        if (item.m_41472_()) {
 -         for(Pair<MobEffectInstance, Float> pair : item.m_41473_().m_38749_()) {
-+         for(Pair<MobEffectInstance, Float> pair : p_21064_.getFoodProperties(this).m_38749_()) {
-             if (!p_21065_.f_46443_ && pair.getFirst() != null && p_21065_.f_46441_.m_188501_() < pair.getSecond()) {
-                p_21066_.m_7292_(new MobEffectInstance(pair.getFirst()));
+-            if (!p_21065_.f_46443_ && pair.getFirst() != null && p_21065_.f_46441_.m_188501_() < pair.getSecond()) {
+-               p_21066_.m_7292_(new MobEffectInstance(pair.getFirst()));
++         List<Pair<MobEffectInstance, Float>> ret = net.minecraftforge.common.ForgeHooks.onLivingFoodEffect(p_21066_, p_21064_);
++         if(ret != null)
++         {
++            for(Pair<MobEffectInstance, Float> pair : ret) {
++               if (!p_21065_.f_46443_ && pair.getFirst() != null && p_21065_.f_46441_.m_188501_() < pair.getSecond()) {
++                  p_21066_.m_7292_(new MobEffectInstance(pair.getFirst()));
++               }
              }
+          }
+       }
+-
++      
+    }
+ 
+    private static byte m_21266_(EquipmentSlot p_21267_) {
 @@ -3234,6 +_,64 @@
        this.m_21166_(p_21191_ == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND);
     }
