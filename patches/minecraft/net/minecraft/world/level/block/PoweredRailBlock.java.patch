@@ -16,7 +16,7 @@
 +   }
 +
 +   /**
-+    * @apiNote Specifying a custom shape property through this constructor requires you to override
++    * Specifying a custom shape property through this constructor requires you to override
 +    * {@link PoweredRailBlock#getShapeProperty()}, {@link PoweredRailBlock#createBlockStateDefinition(StateDefinition.Builder)},
 +    * {@link PoweredRailBlock#rotate(BlockState, Rotation)}, {@link PoweredRailBlock#mirror(BlockState, Mirror)} and,
 +    * depending on the allowed values, potentially {@link net.minecraftforge.common.extensions.IForgeBaseRailBlock#isValidRailShape(RailShape)}
@@ -65,20 +65,16 @@
              p_55233_.m_46672_(p_55234_.m_7494_(), this);
           }
        }
-@@ -133,10 +_,16 @@
+@@ -133,10 +_,12 @@
     }
  
     public Property<RailShape> m_7978_() {
-+      if (customShapeProperty) {
-+         throw new IllegalStateException("Block has custom shape property but does not override getShapeProperty()");
-+      }
++      if (customShapeProperty) throw new IllegalStateException("Block has custom shape property but does not override getShapeProperty()");
        return f_55214_;
     }
  
     public BlockState m_6843_(BlockState p_55240_, Rotation p_55241_) {
-+      if (customShapeProperty) {
-+         throw new IllegalStateException("Block has custom shape property but does not override rotate()");
-+      }
++      if (customShapeProperty) throw new IllegalStateException("Block has custom shape property but does not override rotate()");
        switch (p_55241_) {
           case CLOCKWISE_180:
              switch ((RailShape)p_55240_.m_61143_(f_55214_)) {
@@ -92,13 +88,11 @@
              }
           case COUNTERCLOCKWISE_90:
              switch ((RailShape)p_55240_.m_61143_(f_55214_)) {
-@@ -209,6 +_,9 @@
+@@ -209,6 +_,7 @@
     }
  
     public BlockState m_6943_(BlockState p_55237_, Mirror p_55238_) {
-+      if (customShapeProperty) {
-+         throw new IllegalStateException("Block has custom shape property but does not override mirror()");
-+      }
++      if (customShapeProperty) throw new IllegalStateException("Block has custom shape property but does not override mirror()");
        RailShape railshape = p_55237_.m_61143_(f_55214_);
        switch (p_55238_) {
           case LEFT_RIGHT:
