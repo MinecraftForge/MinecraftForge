@@ -166,7 +166,11 @@ public class EntityTeleportEvent extends EntityEvent
             this.hitResult = hitResult;
         }
 
+        /**
+         * @deprecated Use {@link #EnderPearl(ServerPlayer, double, double, double, ThrownEnderpearl, float, HitResult)} the hit result-sensitive version}
+         */
         @ApiStatus.Internal
+        @Deprecated(forRemoval = true, since = "1.19.2")
         public EnderPearl(ServerPlayer entity, double targetX, double targetY, double targetZ, ThrownEnderpearl pearlEntity, float attackDamage)
         {
             this(entity, targetX, targetY, targetZ, pearlEntity, attackDamage, null);

@@ -719,13 +719,17 @@ public class ForgeEventFactory
         return event;
     }
 
+    /**
+     * @deprecated Use {@link #onEnderPearlLand(ServerPlayer, double, double, double, ThrownEnderpearl, float, HitResult) the hit result-sensitive version}
+     */
     @ApiStatus.Internal
+    @Deprecated(forRemoval = true, since = "1.19.2")
     public static EntityTeleportEvent.EnderPearl onEnderPearlLand(ServerPlayer entity, double targetX, double targetY, double targetZ, ThrownEnderpearl pearlEntity, float attackDamage)
     {
         return onEnderPearlLand(entity, targetX, targetY, targetZ, pearlEntity, attackDamage, null);
     }
 
-    @ApiStatus.Internal
+    @ApiStatus.Internal // TODO - 1.20: remove the nullable
     public static EntityTeleportEvent.EnderPearl onEnderPearlLand(ServerPlayer entity, double targetX, double targetY, double targetZ, ThrownEnderpearl pearlEntity, float attackDamage, @Nullable HitResult hitResult)
     {
         EntityTeleportEvent.EnderPearl event = new EntityTeleportEvent.EnderPearl(entity, targetX, targetY, targetZ, pearlEntity, attackDamage, hitResult);
