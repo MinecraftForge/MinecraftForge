@@ -6,6 +6,7 @@
 package net.minecraftforge.fml.loading.targets;
 
 import cpw.mods.jarhandling.SecureJar;
+import net.minecraftforge.fml.loading.FileUtils;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -77,22 +78,14 @@ public abstract class CommonDevLaunchHandler extends CommonLaunchHandler {
     protected List<Path> getFmlStuff(String[] classpath) {
         // We also want the FML things, fmlcore, javafmllanguage, mclanguage, I don't like hard coding these, but hey whatever works for now.
         return Arrays.stream(classpath)
-            .filter(e -> {
-                // Extract file name from path
-                String name = e.substring(e.lastIndexOf(File.separatorChar) + 1);
-                return name.contains("fmlcore") || name.contains("javafmllanguage") || name.contains("lowcodelanguage") || name.contains("mclanguage");
-            })
+            .filter(e -> FileUtils.matchFileName(e, "fmlcore", "javafmllanguage", "lowcodelanguage", "mclanguage"))
             .map(Paths::get)
             .toList();
     }
 
     protected static Path findJarOnClasspath(String[] classpath, String match) {
         return Paths.get(Arrays.stream(classpath)
-            .filter(e -> {
-                // Extract file name from path
-                String name = e.substring(e.lastIndexOf(File.separatorChar) + 1);
-                return name.contains(match);
-            })
+            .filter(e -> FileUtils.matchFileName(e, match))
             .findFirst()
             .orElseThrow(() -> new IllegalStateException("Could not find " + match + " in classpath")));
     }
