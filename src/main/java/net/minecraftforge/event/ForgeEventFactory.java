@@ -720,7 +720,7 @@ public class ForgeEventFactory
     }
 
     /**
-     * @deprecated Use {@link #onEnderPearlLand(ServerPlayer, double, double, double, ThrownEnderpearl, float, HitResult) the hit result-sensitive version}
+     * @deprecated Use {@linkplain #onEnderPearlLand(ServerPlayer, double, double, double, ThrownEnderpearl, float, HitResult) the hit result-sensitive version}.
      */
     @ApiStatus.Internal
     @Deprecated(forRemoval = true, since = "1.19.2")
