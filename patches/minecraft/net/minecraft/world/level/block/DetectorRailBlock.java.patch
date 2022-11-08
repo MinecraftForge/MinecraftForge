@@ -1,35 +1,14 @@
 --- a/net/minecraft/world/level/block/DetectorRailBlock.java
 +++ b/net/minecraft/world/level/block/DetectorRailBlock.java
-@@ -28,10 +_,22 @@
-    public static final EnumProperty<RailShape> f_52427_ = BlockStateProperties.f_61404_;
-    public static final BooleanProperty f_52428_ = BlockStateProperties.f_61448_;
-    private static final int f_153121_ = 20;
-+   private final boolean customShapeProperty;
+@@ -31,6 +_,10 @@
  
     public DetectorRailBlock(BlockBehaviour.Properties p_52431_) {
-+      this(p_52431_, f_52427_, RailShape.NORTH_SOUTH);
+       super(true, p_52431_);
++      this.registerDefaultState();
 +   }
 +
-+   /**
-+    * Specifying a custom shape property through this constructor requires you to override
-+    * {@link DetectorRailBlock#getShapeProperty()}, {@link DetectorRailBlock#createBlockStateDefinition(StateDefinition.Builder)},
-+    * {@link DetectorRailBlock#rotate(BlockState, Rotation)}, {@link DetectorRailBlock#mirror(BlockState, Mirror)} and,
-+    * depending on the allowed values, potentially {@link net.minecraftforge.common.extensions.IForgeBaseRailBlock#isValidRailShape(RailShape)}
-+    */
-+   public DetectorRailBlock(BlockBehaviour.Properties p_52431_, EnumProperty<RailShape> shapeProperty, RailShape defaultShape) {
-       super(true, p_52431_);
--      this.m_49959_(this.f_49792_.m_61090_().m_61124_(f_52428_, Boolean.valueOf(false)).m_61124_(f_52427_, RailShape.NORTH_SOUTH).m_61124_(f_152149_, Boolean.valueOf(false)));
-+      this.m_49959_(this.f_49792_.m_61090_().m_61124_(f_52428_, Boolean.valueOf(false)).m_61124_(shapeProperty, defaultShape).m_61124_(f_152149_, Boolean.valueOf(false)));
-+      this.customShapeProperty = shapeProperty != f_52427_;
-    }
- 
-    public boolean m_7899_(BlockState p_52489_) {
-@@ -119,6 +_,7 @@
-    }
- 
-    public Property<RailShape> m_7978_() {
-+      if (customShapeProperty) throw new IllegalStateException("Block has custom shape property but does not override getShapeProperty()");
-       return f_52427_;
++   protected void registerDefaultState() {
+       this.m_49959_(this.f_49792_.m_61090_().m_61124_(f_52428_, Boolean.valueOf(false)).m_61124_(f_52427_, RailShape.NORTH_SOUTH).m_61124_(f_152149_, Boolean.valueOf(false)));
     }
  
 @@ -135,7 +_,9 @@
@@ -43,19 +22,11 @@
           if (!list1.isEmpty()) {
              return AbstractContainerMenu.m_38938_((Container)list1.get(0));
           }
-@@ -154,6 +_,7 @@
+@@ -270,6 +_,6 @@
     }
  
-    public BlockState m_6843_(BlockState p_52466_, Rotation p_52467_) {
-+      if (customShapeProperty) throw new IllegalStateException("Block has custom shape property but does not override rotate()");
-       switch (p_52467_) {
-          case CLOCKWISE_180:
-             switch ((RailShape)p_52466_.m_61143_(f_52427_)) {
-@@ -226,6 +_,7 @@
+    protected void m_7926_(StateDefinition.Builder<Block, BlockState> p_52469_) {
+-      p_52469_.m_61104_(f_52427_, f_52428_, f_152149_);
++      p_52469_.m_61104_(m_7978_(), f_52428_, f_152149_);
     }
- 
-    public BlockState m_6943_(BlockState p_52463_, Mirror p_52464_) {
-+      if (customShapeProperty) throw new IllegalStateException("Block has custom shape property but does not override mirror()");
-       RailShape railshape = p_52463_.m_61143_(f_52427_);
-       switch (p_52464_) {
-          case LEFT_RIGHT:
+ }
