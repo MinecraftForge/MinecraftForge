@@ -29,23 +29,25 @@
           switch (railshape) {
              case NORTH_SOUTH:
                 if (p_55223_) {
-@@ -99,13 +_,13 @@
+@@ -99,14 +_,14 @@
  
     protected boolean m_55225_(Level p_55226_, BlockPos p_55227_, boolean p_55228_, int p_55229_, RailShape p_55230_) {
        BlockState blockstate = p_55226_.m_8055_(p_55227_);
 -      if (!blockstate.m_60713_(this)) {
-+      if (!(blockstate.m_60734_() instanceof PoweredRailBlock)) {
++      if (!(blockstate.m_60734_() instanceof PoweredRailBlock other)) {
           return false;
        } else {
 -         RailShape railshape = blockstate.m_61143_(f_55214_);
-+         RailShape railshape = ((PoweredRailBlock) blockstate.m_60734_()).getRailDirection(blockstate, p_55226_, p_55227_, null);
++         RailShape railshape = other.getRailDirection(blockstate, p_55226_, p_55227_, null);
           if (p_55230_ != RailShape.EAST_WEST || railshape != RailShape.NORTH_SOUTH && railshape != RailShape.ASCENDING_NORTH && railshape != RailShape.ASCENDING_SOUTH) {
              if (p_55230_ != RailShape.NORTH_SOUTH || railshape != RailShape.EAST_WEST && railshape != RailShape.ASCENDING_EAST && railshape != RailShape.ASCENDING_WEST) {
 -               if (blockstate.m_61143_(f_55215_)) {
-+               if (isActivator == (((PoweredRailBlock) blockstate.m_60734_()).isActivator)) {
-                   return p_55226_.m_46753_(p_55227_) ? true : this.m_55219_(p_55226_, p_55227_, blockstate, p_55228_, p_55229_ + 1);
+-                  return p_55226_.m_46753_(p_55227_) ? true : this.m_55219_(p_55226_, p_55227_, blockstate, p_55228_, p_55229_ + 1);
++               if (isActivator == other.isActivator) {
++                  return p_55226_.m_46753_(p_55227_) ? true : other.m_55219_(p_55226_, p_55227_, blockstate, p_55228_, p_55229_ + 1);
                 } else {
                    return false;
+                }
 @@ -125,7 +_,7 @@
        if (flag1 != flag) {
           p_55233_.m_7731_(p_55234_, p_55232_.m_61124_(f_55215_, Boolean.valueOf(flag1)), 3);
