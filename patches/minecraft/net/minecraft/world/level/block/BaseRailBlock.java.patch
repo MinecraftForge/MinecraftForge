@@ -39,8 +39,8 @@
        return blockstate.m_61124_(this.m_7978_(), flag1 ? RailShape.EAST_WEST : RailShape.NORTH_SOUTH).m_61124_(f_152149_, Boolean.valueOf(flag));
     }
  
-+   /*
-+    * Forge: Use {@link BaseRailBlock#getRailDirection(BlockState, BlockGetter, BlockPos, net.minecraft.world.entity.vehicle.AbstractMinecart)} for enhanced ability
++   /**
++    * @deprecated Forge: Use {@link BaseRailBlock#getRailDirection(BlockState, BlockGetter, BlockPos, net.minecraft.world.entity.vehicle.AbstractMinecart)} for enhanced ability
 +    * If you do change this property be aware that other functions in this/subclasses may break as they can make assumptions about this property
 +    */
 +   @Deprecated
