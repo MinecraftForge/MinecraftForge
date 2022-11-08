@@ -177,6 +177,8 @@ public class Tags
         public static final TagKey<Block> NEEDS_GOLD_TOOL = tag("needs_gold_tool");
         public static final TagKey<Block> NEEDS_NETHERITE_TOOL = tag("needs_netherite_tool");
 
+        public static final TagKey<Block> NETHER_PORTAL_FRAME_BLOCKS = tag("nether_portal_frame_blocks");
+
         private static TagKey<Block> tag(String name)
         {
             return BlockTags.create(new ResourceLocation("forge", name));

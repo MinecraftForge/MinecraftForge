@@ -5,16 +5,13 @@
 
 package net.minecraftforge.common.extensions;
 
-import java.util.Optional;
-import java.util.function.BiConsumer;
-
 import net.minecraft.client.Camera;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.SpawnPlacements;
-import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.entity.boss.wither.WitherBoss;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -23,34 +20,24 @@ import net.minecraft.world.entity.projectile.FishingHook;
 import net.minecraft.world.entity.projectile.WitherSkull;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.level.*;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.feature.configurations.TreeConfiguration;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.MaterialColor;
 import net.minecraft.world.level.pathfinder.BlockPathTypes;
-import net.minecraft.tags.BlockTags;
-import net.minecraft.core.Direction;
-import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.pathfinder.WalkNodeEvaluator;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraftforge.client.ForgeHooksClient;
-import net.minecraftforge.common.ForgeHooks;
-import net.minecraftforge.common.IPlantable;
-
-import net.minecraft.world.level.BlockAndTintGetter;
-import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.Explosion;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.world.level.LevelReader;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.ToolAction;
-import net.minecraftforge.common.ToolActions;
+import net.minecraftforge.common.*;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Optional;
+import java.util.function.BiConsumer;
 
 @SuppressWarnings("deprecation")
 public interface IForgeBlock
@@ -395,7 +382,7 @@ public interface IForgeBlock
      */
     default boolean isPortalFrame(BlockState state, BlockGetter level, BlockPos pos)
     {
-        return state.is(Blocks.OBSIDIAN);
+        return state.is(Tags.Blocks.NETHER_PORTAL_FRAME_BLOCKS);
     }
 
    /**

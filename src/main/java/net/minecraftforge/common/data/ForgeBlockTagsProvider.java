@@ -102,6 +102,7 @@ public final class ForgeBlockTagsProvider extends BlockTagsProvider
         tag(STORAGE_BLOCKS_RAW_IRON).add(Blocks.RAW_IRON_BLOCK);
         tag(STORAGE_BLOCKS_REDSTONE).add(Blocks.REDSTONE_BLOCK);
         tag(STORAGE_BLOCKS_NETHERITE).add(Blocks.NETHERITE_BLOCK);
+        tag(NETHER_PORTAL_FRAME_BLOCKS).add(Blocks.OBSIDIAN);
     }
 
     private void addColored(Consumer<Block> consumer, TagKey<Block> group, String pattern)
