@@ -7,12 +7,11 @@
 +   private final boolean isActivator;  // TRUE for an Activator Rail, FALSE for Powered Rail
  
     public PoweredRailBlock(BlockBehaviour.Properties p_55218_) {
--      super(true, p_55218_);
 +      this(p_55218_, false);
 +   }
 +
-+   protected PoweredRailBlock(BlockBehaviour.Properties builder, boolean isPoweredRail) {
-+      super(true, builder);
++   protected PoweredRailBlock(BlockBehaviour.Properties p_55218_, boolean isPoweredRail) {
+       super(true, p_55218_);
 +      this.isActivator = !isPoweredRail;
 +      this.registerDefaultState();
 +   }
