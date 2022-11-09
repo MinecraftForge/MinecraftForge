@@ -925,24 +925,29 @@ public interface IForgeBlock
     }
 
     /**
-     * Returns the {@link BlockState} that this block reports to look like on the given side for querying by other mods.
-     * Note: Overriding this does not change how this block renders. That still needs to be done in the model.
+     * Returns the {@link BlockState} that this block reports to look like on the given side, for querying by other mods.
+     * Note: Overriding this does not change how this block renders. That must still be handled in the block's model.
      * <p>
      * Common implementors would be covers and facades, or any other mimic blocks that proxy another block's model.
      * Common consumers would be models with connected textures that wish to seamlessly connect to mimic blocks.
      * <p>
-     * <b>On the client, this method may be called from a rendering or meshing thread.</b>
-     * If you need any data from your {@link BlockEntity}, make sure it can be safely accessed concurrently, or put it
-     * in {@link ModelData}. If you do the latter, note that {@link BlockGetter#getModelDataManager()} will return
-     * {@code null} if in a server context. In that case, it is safe to query your {@link BlockEntity} directly.
+     * <b>Note that this method may be called on the server, or on any of the client's meshing threads.</b><br/>
+     * As such, if you need any data from your {@link BlockEntity}, you should put it in {@link ModelData} to guarantee
+     * safe concurrent access to it on the client.<br/>
+     * Calling {@link BlockGetter#getModelDataManager()} will return {@code null} if in a server context, where it is
+     * safe to query your {@link BlockEntity} directly. Otherwise, {@link ModelDataManager#getAt(BlockPos)} will return
+     * the {@link ModelData} for the queried block, or {@code null} if none is present.
      *
-     * @param state The state of this block
-     * @param level The level this block is in
-     * @param pos   The block's position in the level
-     * @param side  The side of the block that is being queried
-     * @return The appearance of this block from the given side
+     * @param state      The state of this block
+     * @param level      The level this block is in
+     * @param pos        The block's position in the level
+     * @param side       The side of the block that is being queried
+     * @param queryState The state of the block that is querying the appearance, or {@code null} if not applicable
+     * @param queryPos   The position of the block that is querying the appearance, or {@code null} if not applicable
+     * @return The appearance of this block on the given side. By default, the current state
+     * @see IForgeBlockState#getAppearance(BlockAndTintGetter, BlockPos, Direction, BlockState, BlockPos)
      */
-    default BlockState getAppearance(BlockState state, BlockGetter level, BlockPos pos, Direction side)
+    default BlockState getAppearance(BlockState state, BlockAndTintGetter level, BlockPos pos, Direction side, @Nullable BlockState queryState, @Nullable BlockPos queryPos)
     {
         return state;
     }
