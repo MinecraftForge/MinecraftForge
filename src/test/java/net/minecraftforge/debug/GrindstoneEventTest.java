@@ -18,31 +18,42 @@ public class GrindstoneEventTest {
     @SubscribeEvent
     public static void onGrindestonePlace(GrindstoneEvent.OnplaceItem event)
     {
+        // all of these "recipes" are slot sensitive, the top and bottom must match exactly for the behavior to change
+        // switching the order will cause the "recipe" to fail
         ItemStack topItem = event.getTopItem();
         ItemStack bottomItem = event.getBottomItem();
+        // craft lapis + netherite to get diamond and 5 XP
+        // this "recipe" is handled in OnTakeItem so the inputs only shrink by 1 each time
         if (topItem.is(Items.LAPIS_LAZULI) && bottomItem.is(Items.NETHERITE_INGOT))
         {
             event.setOutput(new ItemStack(Items.DIAMOND, 1));
             event.setXp(5);
         }
 
+        // craft iron ore and flint to make raw iron ore, no XP is rewarded
+        // this "recipe" is *not* handled in OnTakeItem, so the inputs will always be set to empty regardless of stack size
         if (topItem.is(Items.IRON_ORE) && bottomItem.is(Items.FLINT))
         {
             event.setOutput(new ItemStack(Items.RAW_IRON, 3));
             event.setXp(0);
         }
 
+        // when placing an iron axe in the top slot, simply copy it to the output without change (do not remove enchants)
+        // still grant XP equivalent to all enchantments on the axe
         if (topItem.is(Items.IRON_AXE) && bottomItem.is(Items.AIR))
         {
             event.setOutput(topItem.copy());
             event.setXp(-1);
         }
 
+        // setting the output to empty will run default behavior, effectively ignoring all previous overrides to the event
+        // note this will ignore any XP value you set, effectively for this test mod this has no impact
         if (topItem.is(Items.IRON_SHOVEL) && bottomItem.is(Items.AIR))
         {
             event.setOutput(ItemStack.EMPTY);
         }
 
+        // canceling the event will prevent disenchanting an iron sword in the top slot
         if (topItem.is(Items.IRON_SWORD) && bottomItem.is(Items.AIR))
         {
             event.setCanceled(true);
@@ -50,9 +61,11 @@ public class GrindstoneEventTest {
     }
 
     @SubscribeEvent
-    public static void onGrindstoneTake(GrindstoneEvent.OnTakeItem event) {
+    public static void onGrindstoneTake(GrindstoneEvent.OnTakeItem event)
+    {
         ItemStack topItem = event.getTopItem();
         ItemStack bottomItem = event.getBottomItem();
+        // only shrink stacks by 1 for the lapis + netherite "recipe"
         if (topItem.is(Items.LAPIS_LAZULI) && bottomItem.is(Items.NETHERITE_INGOT))
         {
             ItemStack top = topItem.copy();
