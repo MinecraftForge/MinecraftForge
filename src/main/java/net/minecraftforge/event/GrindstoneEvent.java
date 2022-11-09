@@ -41,10 +41,10 @@ public abstract class GrindstoneEvent extends Event
     }
 
     /**
-     * This is the experience amount determined by the event, not the vanilla behavior. <br>
-     * If you are the first receiver of this event, it is guaranteed to be -1. <br>
-     * The value must be set to a positive value to override vanilla behavior. <br>
-     * if the value is equal to -1, the vanilla behavior for calculating experience will run. <br>
+     * This is the experience amount determined by the event, it will be -1 unless a mod calls {@link #setXp(int)}. <br>
+     * If set to a non-negative value, that value will be used instead of running vanilla behavior. <br>
+     * If the value is negative, the vanilla behavior for calculating experience will run. <br>
+     * Ignored if the output is empty or the event is canceled.
      * @return The experience amount given to the player. <br>
      */
     public int getXp()
@@ -67,8 +67,8 @@ public abstract class GrindstoneEvent extends Event
      * It is called from {@link GrindstoneMenu#createResult()}. <br>
      * If the event is canceled, vanilla behavior will not run, and the output will be set to {@link ItemStack#EMPTY}. <br>
      * If the event is not canceled, but the output is not empty, it will set the output and not run vanilla behavior. <br>
-     * if the output is empty, and the event is not canceled, vanilla behavior will execute. <br>
-     * if the amount of experience is larger than or equal 0, the vanilla behavior for calculating experience will not run. <br>
+     * If the event is not canceled and the output is empty, and the event is not canceled, the stack will be determined using vanilla behavior. <br>
+     * if the amount of experience is larger than or equal 0, the XP will be that value instead of using the vanilla logic. Ignored if the output is empty or the event is canceled. <br>
      */
     @Cancelable
     public static class OnplaceItem extends GrindstoneEvent
