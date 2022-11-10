@@ -5,7 +5,7 @@
        DataResult<WritableRegistry<E>> dataresult = DataResult.success(p_206763_, Lifecycle.stable());
  
 -      for(Map.Entry<ResourceKey<E>, RegistryResourceAccess.EntryThunk<E>> entry : map.entrySet()) {
-+      for(Map.Entry<ResourceKey<E>, RegistryResourceAccess.EntryThunk<E>> entry : net.minecraftforge.common.crafting.conditions.ICondition.filterThunks(map)) {
++      for(Map.Entry<ResourceKey<E>, RegistryResourceAccess.EntryThunk<E>> entry : net.minecraftforge.common.ForgeHooks.filterThunks(map)) {
           dataresult = dataresult.flatMap((p_214227_) -> {
              return this.m_214228_(p_214227_, p_206764_, p_206765_, entry.getKey(), Optional.of(entry.getValue()), p_206766_).map((p_206761_) -> {
                 return p_214227_;
