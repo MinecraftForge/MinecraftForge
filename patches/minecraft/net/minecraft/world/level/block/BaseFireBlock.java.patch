@@ -8,3 +8,12 @@
              if (optional.isPresent()) {
                 optional.get().m_77743_();
                 return;
+@@ -170,7 +_,7 @@
+          boolean flag = false;
+ 
+          for(Direction direction : Direction.values()) {
+-            if (p_49270_.m_8055_(blockpos$mutableblockpos.m_122190_(p_49271_).m_122173_(direction)).m_60713_(Blocks.f_50080_)) {
++            if (p_49270_.m_8055_(blockpos$mutableblockpos.m_122190_(p_49271_).m_122173_(direction)).isPortalFrame(p_49270_, blockpos$mutableblockpos)) {
+                flag = true;
+                break;
+             }
