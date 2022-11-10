@@ -33,6 +33,8 @@ import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 import net.minecraft.world.level.levelgen.placement.BiomeFilter;
 import net.minecraft.world.level.levelgen.placement.CountOnEveryLayerPlacement;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
+import net.minecraftforge.common.crafting.conditions.ICondition;
+import net.minecraftforge.common.crafting.conditions.ModLoadedCondition;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.common.data.JsonCodecProvider;
 import net.minecraftforge.common.world.BiomeModifier;
@@ -150,7 +152,7 @@ public class BiomeModifierTest
         // Create and add dataproviders.
         generator.addProvider(event.includeServer(), JsonCodecProvider.forDatapackRegistry(
             generator, existingFileHelper, MODID, ops, Registry.PLACED_FEATURE_REGISTRY, Map.of(
-                LARGE_BASALT_COLUMNS_RL, basaltFeature)));
+                LARGE_BASALT_COLUMNS_RL, basaltFeature)).setConditions(Map.of(LARGE_BASALT_COLUMNS_RL, new ICondition[] { new ModLoadedCondition("forge") })));
 
         generator.addProvider(event.includeServer(), JsonCodecProvider.forDatapackRegistry(
             generator, existingFileHelper, MODID, ops, ForgeRegistries.Keys.BIOME_MODIFIERS, Map.of(

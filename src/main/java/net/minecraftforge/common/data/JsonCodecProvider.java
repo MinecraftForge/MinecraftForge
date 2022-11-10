@@ -8,9 +8,11 @@ package net.minecraftforge.common.data;
 import com.mojang.logging.LogUtils;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Collections;
 import java.util.Map;
 
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DynamicOps;
 import com.mojang.serialization.JsonOps;
@@ -26,6 +28,8 @@ import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
+import net.minecraftforge.common.crafting.CraftingHelper;
+import net.minecraftforge.common.crafting.conditions.ICondition;
 import net.minecraftforge.common.data.ExistingFileHelper.ResourceType;
 import org.slf4j.Logger;
 
@@ -49,6 +53,7 @@ public class JsonCodecProvider<T> implements DataProvider
     protected final String directory;
     protected final Codec<T> codec;
     protected final Map<ResourceLocation, T> entries;
+    protected Map<ResourceLocation, ICondition[]> conditions = Collections.emptyMap();
 
     /**
      * @param dataGenerator DataGenerator provided by {@link GatherDataEvent}.
@@ -112,6 +117,18 @@ public class JsonCodecProvider<T> implements DataProvider
             final Path path = outputFolder.resolve(String.join("/", dataFolder, id.getNamespace(), this.directory, id.getPath() + ".json"));
             JsonElement encoded = this.codec.encodeStart(this.dynamicOps, value)
                   .getOrThrow(false, msg -> LOGGER.error("Failed to encode {}: {}", path, msg));
+            ICondition[] conditions = this.conditions.get(id);
+            if (conditions != null && conditions.length > 0) 
+            {
+                if(encoded instanceof JsonObject obj)
+                {
+                    obj.add("forge:conditions", CraftingHelper.serialize(conditions));
+                }
+                else
+                {
+                    LOGGER.error("Attempted to apply conditions to a type that is not a JsonObject! - Path: {}", path);
+                }
+            }
             DataProvider.saveStable(cache, encoded, path);
         }));
     }
@@ -125,5 +142,17 @@ public class JsonCodecProvider<T> implements DataProvider
     public String getName()
     {
         return String.format("%s generator for %s", this.directory, this.modid);
+    }
+
+    /**
+     * Applies a condition map to this provider.
+     * These conditions will be applied to the created JsonElements with the matching names.
+     * Null or empty arrays will not be written, and if the top-level json type is not JsonObject, attempting to add conditions will error.
+     * @param conditions The name->condition map to apply.
+     */
+    public JsonCodecProvider<T> setConditions(Map<ResourceLocation, ICondition[]> conditions)
+    {
+        this.conditions = conditions;
+        return this;
     }
 }

@@ -10,12 +10,8 @@ import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.Decoder;
 import com.mojang.serialization.DynamicOps;
-import com.mojang.serialization.JsonOps;
-
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
-import net.minecraft.resources.RegistryResourceAccess;
-import net.minecraft.resources.RegistryResourceAccess.EntryThunk;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
@@ -24,16 +20,17 @@ import net.minecraftforge.common.crafting.CraftingHelper;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 public interface ICondition
 {
-    
+
     Decoder<Boolean> DECODER = new Decoder<>() {
         @Override
-        public <T> DataResult<Pair<Boolean, T>> decode(DynamicOps<T> ops, T input) {
-            if(input instanceof JsonObject obj && obj.has("forge:conditions")) {
+        public <T> DataResult<Pair<Boolean, T>> decode(DynamicOps<T> ops, T input)
+        {
+            if(input instanceof JsonObject obj && obj.has("forge:conditions"))
+            {
                 try
                 {
                     boolean result = CraftingHelper.processConditions(obj, "forge:conditions", IContext.TAGS_INVALID);    
@@ -48,18 +45,10 @@ public interface ICondition
             return DataResult.success(Pair.of(true, input));
         }
     };
-    
+
     ResourceLocation getID();
 
     boolean test(IContext context);
-    
-    @SuppressWarnings("unchecked")
-    static <E> Collection<Entry<ResourceKey<E>, EntryThunk<E>>> filterThunks(Map<ResourceKey<E>, RegistryResourceAccess.EntryThunk<E>> map)
-    {
-        return map.entrySet().stream().filter(e -> 
-        ((EntryThunk<Boolean>)e.getValue()).parseElement(JsonOps.INSTANCE, DECODER)
-        .get().left().get().value()).toList(); // Validity of this .get() call is enforced by the above Decoder object, which only returns DataResult.success.
-    }
 
     interface IContext
     {
