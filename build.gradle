@@ -10,9 +10,13 @@ buildscript {
             name = "sonatype"
             url = "https://oss.sonatype.org/content/repositories/snapshots/"
         }
+        maven {
+            name = "Paladium-Public"
+            url = "http://repository.palagitium.dev/artifactory/Paladium-Public"
+        }
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT'
+        classpath 'fr.paladium.gradle:PalaForgeGradle:1.2.2-1.7.10'
     }
 }
 
