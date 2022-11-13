@@ -1,6 +1,11 @@
 --- a/net/minecraft/world/level/block/StemBlock.java
 +++ b/net/minecraft/world/level/block/StemBlock.java
-@@ -43,22 +_,24 @@
+@@ -39,26 +_,28 @@
+    }
+ 
+    protected boolean m_6266_(BlockState p_57053_, BlockGetter p_57054_, BlockPos p_57055_) {
+-      return p_57053_.m_60713_(Blocks.f_50093_);
++      return p_57053_.isFarmland(p_57054_, p_57055_);
     }
  
     public void m_213898_(BlockState p_222538_, ServerLevel p_222539_, BlockPos p_222540_, RandomSource p_222541_) {
@@ -20,7 +25,7 @@
                 BlockState blockstate = p_222539_.m_8055_(blockpos.m_7495_());
 -               if (p_222539_.m_8055_(blockpos).m_60795_() && (blockstate.m_60713_(Blocks.f_50093_) || blockstate.m_204336_(BlockTags.f_144274_))) {
 +               Block block = blockstate.m_60734_();
-+               if (p_222539_.m_46859_(blockpos) && (blockstate.canSustainPlant(p_222539_, blockpos.m_7495_(), Direction.UP, this) || block == Blocks.f_50093_ || block == Blocks.f_50493_ || block == Blocks.f_50546_ || block == Blocks.f_50599_ || block == Blocks.f_50440_)) {
++               if (p_222539_.m_46859_(blockpos) && (blockstate.canSustainPlant(p_222539_, blockpos.m_7495_(), Direction.UP, this) || blockstate.isFarmland(p_222539_, blockpos.m_7495_()) || block == Blocks.f_50493_ || block == Blocks.f_50546_ || block == Blocks.f_50599_ || block == Blocks.f_50440_)) {
                    p_222539_.m_46597_(blockpos, this.f_57015_.m_49966_());
                    p_222539_.m_46597_(p_222540_, this.f_57015_.m_7810_().m_49966_().m_61124_(HorizontalDirectionalBlock.f_54117_, direction));
                 }

@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/level/block/AttachedStemBlock.java
++++ b/net/minecraft/world/level/block/AttachedStemBlock.java
+@@ -40,7 +_,7 @@
+    }
+ 
+    protected boolean m_6266_(BlockState p_48863_, BlockGetter p_48864_, BlockPos p_48865_) {
+-      return p_48863_.m_60713_(Blocks.f_50093_);
++      return p_48863_.isFarmland(p_48864_, p_48865_);
+    }
+ 
+    public ItemStack m_7397_(BlockGetter p_48838_, BlockPos p_48839_, BlockState p_48840_) {

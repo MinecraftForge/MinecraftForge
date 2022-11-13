@@ -141,11 +141,11 @@
 +      } else if (net.minecraftforge.common.PlantType.NETHER.equals(type)) {
 +         return this == Blocks.f_50135_;
 +      } else if (net.minecraftforge.common.PlantType.CROP.equals(type)) {
-+         return state.m_60713_(Blocks.f_50093_);
++         return state.isFarmland(world, pos);
 +      } else if (net.minecraftforge.common.PlantType.CAVE.equals(type)) {
 +         return state.m_60783_(world, pos, Direction.UP);
 +      } else if (net.minecraftforge.common.PlantType.PLAINS.equals(type)) {
-+         return this == Blocks.f_50440_ || this.m_49966_().m_204336_(BlockTags.f_144274_) || this == Blocks.f_50093_;
++         return this == Blocks.f_50440_ || this.m_49966_().m_204336_(BlockTags.f_144274_) || this.m_49966_().isFarmland(world, pos);
 +      } else if (net.minecraftforge.common.PlantType.WATER.equals(type)) {
 +         return state.m_60767_() == net.minecraft.world.level.material.Material.f_76305_; //&& state.getValue(BlockLiquidWrapper)
 +      } else if (net.minecraftforge.common.PlantType.BEACH.equals(type)) {

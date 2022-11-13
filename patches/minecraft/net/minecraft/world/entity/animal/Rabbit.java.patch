@@ -9,3 +9,12 @@
                 return false;
              }
  
+@@ -556,7 +_,7 @@
+ 
+       protected boolean m_6465_(LevelReader p_29785_, BlockPos p_29786_) {
+          BlockState blockstate = p_29785_.m_8055_(p_29786_);
+-         if (blockstate.m_60713_(Blocks.f_50093_) && this.f_29779_ && !this.f_29780_) {
++         if (blockstate.isFarmland(p_29785_, p_29786_) && this.f_29779_ && !this.f_29780_) {
+             blockstate = p_29785_.m_8055_(p_29786_.m_7494_());
+             if (blockstate.m_60734_() instanceof CarrotBlock && ((CarrotBlock)blockstate.m_60734_()).m_52307_(blockstate)) {
+                this.f_29780_ = true;

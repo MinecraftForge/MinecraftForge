@@ -278,6 +278,16 @@ public interface IForgeBlockState
     }
 
     /**
+     * Determines if the block is considered farmland, allowing certain Crops and plants to be placed on it, and for Rabbits to target it.
+     * @param level The current level.
+     * @param pos The position of the farmland block.
+     * @return True to treat this as farmland.
+     */
+    default boolean isFarmland(BlockGetter level, BlockPos pos) {
+        return self().getBlock().isFarmland(self(), level, pos);
+    }
+
+    /**
      * Called when a tree grows on top of this block and tries to set it to dirt by the trunk placer.
      * An override that returns true is responsible for using the place function to
      * set blocks in the world properly during generation. A modded grass block might override this method

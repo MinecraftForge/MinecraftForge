@@ -1,5 +1,14 @@
 --- a/net/minecraft/world/level/block/CropBlock.java
 +++ b/net/minecraft/world/level/block/CropBlock.java
+@@ -36,7 +_,7 @@
+    }
+ 
+    protected boolean m_6266_(BlockState p_52302_, BlockGetter p_52303_, BlockPos p_52304_) {
+-      return p_52302_.m_60713_(Blocks.f_50093_);
++      return p_52302_.isFarmland(p_52303_, p_52304_);
+    }
+ 
+    public IntegerProperty m_7959_() {
 @@ -64,12 +_,14 @@
     }
  
