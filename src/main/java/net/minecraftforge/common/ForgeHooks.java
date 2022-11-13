@@ -296,12 +296,12 @@ public class ForgeHooks
     {
         MinecraftForge.EVENT_BUS.post(new LivingSetAttackTargetEvent(entity, target, targetType));
     }
-    
+
     public static LivingChangeTargetEvent onLivingChangeTarget(LivingEntity entity, LivingEntity originalTarget, ILivingTargetType targetType)
     {
         LivingChangeTargetEvent event = new LivingChangeTargetEvent(entity, originalTarget, targetType);
         MinecraftForge.EVENT_BUS.post(event);
-        
+
         return event;
     }
 
@@ -1646,10 +1646,14 @@ public class ForgeHooks
 
     public static boolean canUseEntitySelectors(SharedSuggestionProvider provider)
     {
-        if (provider instanceof CommandSourceStack source && source.source instanceof ServerPlayer player)
+        if (provider.hasPermission(Commands.LEVEL_GAMEMASTERS))
+        {
+            return true;
+        }
+        else if (provider instanceof CommandSourceStack source && source.source instanceof ServerPlayer player)
         {
             return PermissionAPI.getPermission(player, ForgeMod.USE_SELECTORS_PERMISSION);
         }
-        return provider.hasPermission(Commands.LEVEL_GAMEMASTERS);
+        return false;
     }
 }
