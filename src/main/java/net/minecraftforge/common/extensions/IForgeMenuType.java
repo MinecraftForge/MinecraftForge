@@ -9,11 +9,11 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.network.IContainerFactory;
+import net.minecraftforge.network.IMenuFactory;
 
 public interface IForgeMenuType<T>
 {
-    static <T extends AbstractContainerMenu> MenuType<T> create(IContainerFactory<T> factory)
+    static <T extends AbstractContainerMenu> MenuType<T> create(IMenuFactory<T> factory)
     {
         return new MenuType<>(factory);
     }
