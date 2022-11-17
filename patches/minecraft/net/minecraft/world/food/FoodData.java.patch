@@ -14,7 +14,7 @@
 +   public void m_38707_(int p_38708_, float p_38709_) {
 +      this.eat(p_38708_, p_38709_, null);
 +   }
-+   public void eat(int p_38708_, float p_38709_, @javax.annotation.Nullable net.minecraft.world.entity.LivingEntity entity) {
++   public void eat(int p_38708_, float p_38709_, @org.jetbrains.annotations.Nullable net.minecraft.world.entity.LivingEntity entity) {
 +      float[] ret = net.minecraftforge.common.ForgeHooks.onLivingEat(entity, p_38708_, p_38709_);
 +      if(ret != null)
 +         this.eatInternal((int)ret[0], ret[1]);
@@ -24,7 +24,7 @@
     public void m_38712_(Item p_38713_, ItemStack p_38714_) {
 +      this.eat(p_38713_, p_38714_, null);
 +   }
-+   public void eat(Item p_38713_, ItemStack p_38714_, @javax.annotation.Nullable net.minecraft.world.entity.LivingEntity entity) {
++   public void eat(Item p_38713_, ItemStack p_38714_, @org.jetbrains.annotations.Nullable net.minecraft.world.entity.LivingEntity entity) {
        if (p_38713_.m_41472_()) {
 -         FoodProperties foodproperties = p_38713_.m_41473_();
 -         this.m_38707_(foodproperties.m_38744_(), foodproperties.m_38745_());

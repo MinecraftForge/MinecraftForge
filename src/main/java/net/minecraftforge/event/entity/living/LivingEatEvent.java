@@ -1,4 +1,11 @@
+/*
+ * Copyright (c) Forge Development LLC and contributors
+ * SPDX-License-Identifier: LGPL-2.1-only
+ */
+
 package net.minecraftforge.event.entity.living;
+
+import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.food.FoodData;
@@ -9,56 +16,70 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Cancelable;
 
 /**
- * LivingEatEvent is fire when an LivingEntity eats food (item, cake, etc.).<br>
+ * LivingEatEvent is fire when a LivingEntity eats food (item, cake, etc.).<br>
  * Specifically it is fired for the method call {@link FoodData#eat()}.<br>
  * <br>
  * This event is fired via the {@link ForgeHooks#onLivingEat()} .<br>
  * <br>
  * {@link #foodAmount} contains the amount of food gain to occur<br>
  * {@link #saturationAmount} contains the amount of saturation gain to occur<br>
- * {@link #foodItem} contains the {@link ItemStack} that the entity ate (if available) for reference<br>
+ * {@link #foodItem} contains the {@link ItemStack} that the entity ate (if
+ * available) for reference<br>
  * <br>
  * This event is {@link Cancelable}.<br>
- * If this event is canceled, the FoodData does not change.<br>
+ * If this event is canceled, the food item is consumed but no changes will be
+ * made to the hunger and saturation.<br>
  * <br>
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  */
 @Cancelable
 public class LivingEatEvent extends LivingEvent
 {
-	private int foodAmount;
-	private float saturaionAmount;
-	private ItemStack foodItem = null;
-	
-	public LivingEatEvent(@javax.annotation.Nullable LivingEntity entity, int foodAmount, float saturationAmount) {
-		super(entity);
-		this.foodAmount = foodAmount;
-		this.saturaionAmount = saturationAmount;
-	}
-	
-	public LivingEatEvent(@javax.annotation.Nullable LivingEntity entity, ItemStack foodItem, FoodProperties prop) {
-		this(entity, prop.getNutrition(), prop.getSaturationModifier());
-		this.foodItem = foodItem;
-	}
+    private int foodAmount;
+    private float saturationAmount;
+    private final ItemStack foodItem;
 
-	public int getFoodAmount() {
-		return foodAmount;
-	}
+    private LivingEatEvent(@javax.annotation.Nullable LivingEntity entity, int foodAmount, float saturationAmount,
+            ItemStack foodItem)
+    {
+        super(entity);
+        this.foodAmount = foodAmount;
+        this.saturationAmount = saturationAmount;
+        this.foodItem = foodItem;
+    }
 
-	public void setFoodAmount(int foodAmount) {
-		this.foodAmount = foodAmount;
-	}
+    public LivingEatEvent(@Nullable LivingEntity entity, int foodAmount, float saturationAmount)
+    {
+        this(entity, foodAmount, saturationAmount, null);
+    }
 
-	public float getSaturaionAmount() {
-		return saturaionAmount;
-	}
+    public LivingEatEvent(@Nullable LivingEntity entity, ItemStack foodItem, FoodProperties prop)
+    {
+        this(entity, prop.getNutrition(), prop.getSaturationModifier(), foodItem);
+    }
 
-	public void setSaturaionAmount(float saturaionAmount) {
-		this.saturaionAmount = saturaionAmount;
-	}
+    public int getFoodAmount()
+    {
+        return foodAmount;
+    }
 
-	public ItemStack getFoodItem() {
-		return foodItem;
-	}
-	
+    public void setFoodAmount(int foodAmount)
+    {
+        this.foodAmount = foodAmount;
+    }
+
+    public float getSaturationAmount()
+    {
+        return saturationAmount;
+    }
+
+    public void setSaturationAmount(float saturaionAmount)
+    {
+        this.saturationAmount = saturaionAmount;
+    }
+
+    public ItemStack getFoodItem()
+    {
+        return foodItem;
+    }
 }

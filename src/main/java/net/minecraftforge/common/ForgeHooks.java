@@ -369,13 +369,13 @@ public class ForgeHooks
     public static float[] onLivingEat(LivingEntity entity, int foodAmount, float saturationAmount)
     {
         LivingEatEvent event = new LivingEatEvent(entity, foodAmount, saturationAmount);
-        return MinecraftForge.EVENT_BUS.post(event) ? null : new float[]{event.getFoodAmount(), event.getSaturaionAmount()};
+        return MinecraftForge.EVENT_BUS.post(event) ? null : new float[]{event.getFoodAmount(), event.getSaturationAmount()};
     }
     
     public static float[] onLivingEat(LivingEntity entity, ItemStack foodItem, FoodProperties prop)
     {
         LivingEatEvent event = new LivingEatEvent(entity, foodItem, prop);
-        return MinecraftForge.EVENT_BUS.post(event) ? null : new float[]{event.getFoodAmount(), event.getSaturaionAmount()};
+        return MinecraftForge.EVENT_BUS.post(event) ? null : new float[]{event.getFoodAmount(), event.getSaturationAmount()};
     }
     
     public static List<Pair<MobEffectInstance, Float>> onLivingFoodEffect(LivingEntity entity, ItemStack foodItem)
