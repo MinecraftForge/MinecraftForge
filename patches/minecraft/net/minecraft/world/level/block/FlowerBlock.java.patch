@@ -1,40 +1,41 @@
 --- a/net/minecraft/world/level/block/FlowerBlock.java
 +++ b/net/minecraft/world/level/block/FlowerBlock.java
-@@ -15,9 +_,20 @@
+@@ -15,6 +_,17 @@
     private final MobEffect f_53508_;
     private final int f_53509_;
  
 +   private final java.util.function.Supplier<MobEffect> suspiciousStewEffectSupplier;
 +
-+   public FlowerBlock(java.util.function.Supplier<MobEffect> suspiciousStewEffectSupplier, int effectDuration, BlockBehaviour.Properties properties) {
-+      super(properties);
++   public FlowerBlock(java.util.function.Supplier<MobEffect> suspiciousStewEffectSupplier, int p_53513_, BlockBehaviour.Properties p_53514_) {
++      super(p_53514_);
 +      this.f_53508_ = null;
 +      this.suspiciousStewEffectSupplier = suspiciousStewEffectSupplier;
-+      this.f_53509_ = effectDuration;
++      this.f_53509_ = p_53513_;
 +   }
 +
++   /** @deprecated FORGE: Use supplier version instead */
 +   @Deprecated
     public FlowerBlock(MobEffect p_53512_, int p_53513_, BlockBehaviour.Properties p_53514_) {
        super(p_53514_);
        this.f_53508_ = p_53512_;
-+      this.suspiciousStewEffectSupplier = null;
-       if (p_53512_.m_8093_()) {
-          this.f_53509_ = p_53513_;
+@@ -23,6 +_,7 @@
        } else {
-@@ -36,10 +_,16 @@
+          this.f_53509_ = p_53513_ * 20;
+       }
++      this.suspiciousStewEffectSupplier = null;
+ 
+    }
+ 
+@@ -36,10 +_,12 @@
     }
  
     public MobEffect m_53521_() {
-+      if (this.suspiciousStewEffectSupplier != null) {
-+         return this.suspiciousStewEffectSupplier.get();
-+      }
++      if (this.suspiciousStewEffectSupplier != null) return this.suspiciousStewEffectSupplier.get();
        return this.f_53508_;
     }
  
     public int m_53522_() {
-+      if (this.suspiciousStewEffectSupplier != null && !this.suspiciousStewEffectSupplier.get().m_8093_()) {
-+         return this.f_53509_ * 20;
-+      }
++      if (this.suspiciousStewEffectSupplier != null && !this.suspiciousStewEffectSupplier.get().m_8093_()) return this.f_53509_ * 20;
        return this.f_53509_;
     }
  }
