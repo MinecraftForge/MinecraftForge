@@ -19,13 +19,6 @@ import net.minecraftforge.eventbus.api.Cancelable;
  * LivingEatEvent is fire when a LivingEntity eats food (item, cake, etc.).<br>
  * Specifically it is fired for the method call {@link FoodData#eat()}.<br>
  * <br>
- * This event is fired via the {@link ForgeHooks#onLivingEat()} .<br>
- * <br>
- * {@link #foodAmount} contains the amount of food gain to occur<br>
- * {@link #saturationAmount} contains the amount of saturation gain to occur<br>
- * {@link #foodItem} contains the {@link ItemStack} that the entity ate (if
- * available) for reference<br>
- * <br>
  * This event is {@link Cancelable}.<br>
  * If this event is canceled, the food item is consumed but no changes will be
  * made to the hunger and saturation.<br>
@@ -58,26 +51,43 @@ public class LivingEatEvent extends LivingEvent
         this(entity, prop.getNutrition(), prop.getSaturationModifier(), foodItem);
     }
 
+    /**
+     * @return the amount of food gain to occur
+     */
     public int getFoodAmount()
     {
         return foodAmount;
     }
 
+    /**
+     * sets the amount of food gain to occur
+     * @param foodAmount
+     */
     public void setFoodAmount(int foodAmount)
     {
         this.foodAmount = foodAmount;
     }
 
+    /**
+     * @return the amount of saturation gain to occur
+     */
     public float getSaturationAmount()
     {
         return saturationAmount;
     }
 
+    /**
+     * sets the amount of saturation gain to occur
+     * @param saturaionAmount
+     */
     public void setSaturationAmount(float saturaionAmount)
     {
         this.saturationAmount = saturaionAmount;
     }
 
+    /**
+     * @return the {@link ItemStack} that the entity ate (if available)
+     */
     public ItemStack getFoodItem()
     {
         return foodItem;

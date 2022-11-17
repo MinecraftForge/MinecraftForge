@@ -9,11 +9,9 @@ import java.util.List;
 
 import com.mojang.datafixers.util.Pair;
 
-import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Cancelable;
 
@@ -22,13 +20,6 @@ import net.minecraftforge.eventbus.api.Cancelable;
  * regardless of if any effects are applied.<br>
  * Specifically it is fired for the method call
  * {@link LivingEntity#addEatEffect()}.<br>
- * <br>
- * This event is fired via the {@link ForgeHooks#onLivingFoodEffect()} .<br>
- * <br>
- * {@link #foodItem} contains the {@link ItemStack} that the entity ate (if
- * available) for reference<br>
- * {@link effectPairs} contains the effect-probability pair of {@link #foodItem}
- * which can be modified to change the applied effects and probability<br>
  * <br>
  * This event is {@link Cancelable}.<br>
  * If this event is canceled, no effect will be applied.<br>
@@ -49,16 +40,28 @@ public class LivingFoodEffectEvent extends LivingEvent
         effectPairs = foodItem.getFoodProperties(entity).getEffects();
     }
 
+    /**
+     * @return the {@link ItemStack} that the entity ate
+     */
     public ItemStack getFoodItem()
     {
         return foodItem;
     }
 
+    /**
+     * can be modified to change the applied effects and probability
+     * @return the effect-probability pair of {@link #foodItem}
+     */
     public List<Pair<MobEffectInstance, Float>> getEffects()
     {
         return effectPairs;
     }
     
+    /**
+     * adds a new {@link MobEffectInstance} and probability to apply
+     * @param effect {@link MobEffectInstance} to apply
+     * @param probability probability of application
+     */
     public void addEffect(MobEffectInstance effect, float probability)
     {
         this.effectPairs.add(new Pair<MobEffectInstance, Float>(effect, probability));
