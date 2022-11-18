@@ -35,7 +35,7 @@
     }
  
     public int m_53522_() {
-+      if (!this.suspiciousStewEffectSupplier.get().m_8093_()) return this.f_53509_ * 20;
++      if (this.f_53508_ == null && !this.suspiciousStewEffectSupplier.get().m_8093_()) return this.f_53509_ * 20;
        return this.f_53509_;
     }
  }
