@@ -1,18 +1,17 @@
 --- a/net/minecraft/world/food/FoodData.java
 +++ b/net/minecraft/world/food/FoodData.java
-@@ -19,17 +_,31 @@
+@@ -19,17 +_,32 @@
        this.f_38697_ = 5.0F;
     }
  
--   public void m_38707_(int p_38708_, float p_38709_) {
-+   public void eatInternal(int p_38708_, float p_38709_) {
-       this.f_38696_ = Math.min(p_38708_ + this.f_38696_, 20);
-       this.f_38697_ = Math.min(this.f_38697_ + (float)p_38708_ * p_38709_ * 2.0F, (float)this.f_38696_);
-    }
--
 +   @Deprecated
-+   public void m_38707_(int p_38708_, float p_38709_) {
+    public void m_38707_(int p_38708_, float p_38709_) {
+-      this.f_38696_ = Math.min(p_38708_ + this.f_38696_, 20);
+-      this.f_38697_ = Math.min(this.f_38697_ + (float)p_38708_ * p_38709_ * 2.0F, (float)this.f_38696_);
 +      this.eat(p_38708_, p_38709_, null);
++   public void eatInternal(int p_38708_, float p_38709_) {
++       this.f_38696_ = Math.min(p_38708_ + this.f_38696_, 20);
++       this.f_38697_ = Math.min(this.f_38697_ + (float)p_38708_ * p_38709_ * 2.0F, (float)this.f_38696_);
 +   }
 +   public void eat(int p_38708_, float p_38709_, @org.jetbrains.annotations.Nullable net.minecraft.world.entity.LivingEntity entity) {
 +      float[] ret = net.minecraftforge.common.ForgeHooks.onLivingEat(entity, p_38708_, p_38709_);
@@ -24,16 +23,17 @@
     public void m_38712_(Item p_38713_, ItemStack p_38714_) {
 +      this.eat(p_38713_, p_38714_, null);
 +   }
-+   public void eat(Item p_38713_, ItemStack p_38714_, @org.jetbrains.annotations.Nullable net.minecraft.world.entity.LivingEntity entity) {
++   public java.util.List<com.mojang.datafixers.util.Pair<net.minecraft.world.effect.MobEffectInstance, Float>> eat(Item p_38713_, ItemStack p_38714_, @org.jetbrains.annotations.Nullable net.minecraft.world.entity.LivingEntity entity) {
        if (p_38713_.m_41472_()) {
 -         FoodProperties foodproperties = p_38713_.m_41473_();
 -         this.m_38707_(foodproperties.m_38744_(), foodproperties.m_38745_());
-+         float[] ret = net.minecraftforge.common.ForgeHooks.onLivingEat(entity, p_38714_, p_38714_.getFoodProperties(entity));
++          net.minecraftforge.event.entity.living.LivingEatEvent ret = net.minecraftforge.common.ForgeHooks.onLivingEat(entity, p_38714_);
 +         if(ret != null)
-+            this.eatInternal((int)ret[0], ret[1]);
++            this.eatInternal(ret.getFoodAmount(), ret.getSaturationAmount());
++         return ret.getEffects();
        }
 -
-+      
++      return null;
     }
  
     public void m_38710_(Player p_38711_) {

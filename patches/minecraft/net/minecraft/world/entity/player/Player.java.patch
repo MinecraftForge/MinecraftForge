@@ -375,7 +375,7 @@
        return this.m_36218_(mutablecomponent);
     }
  
-@@ -1928,24 +_,24 @@
+@@ -1928,31 +_,31 @@
           Predicate<ItemStack> predicate = ((ProjectileWeaponItem)p_36349_.m_41720_()).m_6442_();
           ItemStack itemstack = ProjectileWeaponItem.m_43010_(this, predicate);
           if (!itemstack.m_41619_()) {
@@ -400,10 +400,18 @@
  
     public ItemStack m_5584_(Level p_36185_, ItemStack p_36186_) {
 -      this.m_36324_().m_38712_(p_36186_.m_41720_(), p_36186_);
-+      this.m_36324_().eat(p_36186_.m_41720_(), p_36186_, this);
++      List<com.mojang.datafixers.util.Pair<MobEffectInstance, Float>> effectList = this.m_36324_().eat(p_36186_.m_41720_(), p_36186_, this);
        this.m_36246_(Stats.f_12982_.m_12902_(p_36186_.m_41720_()));
        p_36185_.m_6263_((Player)null, this.m_20185_(), this.m_20186_(), this.m_20189_(), SoundEvents.f_12321_, SoundSource.PLAYERS, 0.5F, p_36185_.f_46441_.m_188501_() * 0.1F + 0.9F);
        if (this instanceof ServerPlayer) {
+          CriteriaTriggers.f_10592_.m_23682_((ServerPlayer)this, p_36186_);
+       }
+ 
+-      return super.m_5584_(p_36185_, p_36186_);
++      return super.eat(p_36185_, p_36186_, effectList);
+    }
+ 
+    protected boolean m_6757_(BlockState p_36262_) {
 @@ -2032,5 +_,63 @@
        public Component m_36423_() {
           return this.f_36413_;

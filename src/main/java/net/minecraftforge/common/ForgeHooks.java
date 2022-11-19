@@ -143,7 +143,6 @@ import net.minecraftforge.event.entity.living.LivingEvent.LivingJumpEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingTickEvent;
 import net.minecraftforge.event.entity.living.LivingChangeTargetEvent.ILivingTargetType;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
-import net.minecraftforge.event.entity.living.LivingFoodEffectEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.living.LivingKnockBackEvent;
 import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
@@ -372,16 +371,10 @@ public class ForgeHooks
         return MinecraftForge.EVENT_BUS.post(event) ? null : new float[]{event.getFoodAmount(), event.getSaturationAmount()};
     }
     
-    public static float[] onLivingEat(LivingEntity entity, ItemStack foodItem, FoodProperties prop)
+    public static LivingEatEvent onLivingEat(LivingEntity entity, ItemStack foodItem)
     {
-        LivingEatEvent event = new LivingEatEvent(entity, foodItem, prop);
-        return MinecraftForge.EVENT_BUS.post(event) ? null : new float[]{event.getFoodAmount(), event.getSaturationAmount()};
-    }
-    
-    public static List<Pair<MobEffectInstance, Float>> onLivingFoodEffect(LivingEntity entity, ItemStack foodItem)
-    {
-        LivingFoodEffectEvent event = new LivingFoodEffectEvent(entity, foodItem);
-        return MinecraftForge.EVENT_BUS.post(event) ? null : event.getEffects();
+        LivingEatEvent event = new LivingEatEvent(entity, foodItem);
+        return MinecraftForge.EVENT_BUS.post(event) ? null : event;
     }
 
     public static int getLootingLevel(Entity target, @Nullable Entity killer, @Nullable DamageSource cause)
