@@ -96,6 +96,7 @@ public class LivingEatEvent extends LivingEvent
     /**
      * @return the {@link ItemStack} that the entity ate (if available)
      */
+    @Nullable
     public ItemStack getFoodItem()
     {
         return foodItem;
@@ -105,6 +106,7 @@ public class LivingEatEvent extends LivingEvent
      * can be modified to change the applied effects and probability
      * @return the effect-probability pair of {@link #foodItem}
      */
+    @Nullable
     public List<Pair<MobEffectInstance, Float>> getEffects()
     {
         return effectPairs;
@@ -117,6 +119,7 @@ public class LivingEatEvent extends LivingEvent
      */
     public void addEffect(MobEffectInstance effect, float probability)
     {
+        if(this.effectPairs == null) return;
         this.effectPairs.add(new Pair<MobEffectInstance, Float>(effect, probability));
     }
 }

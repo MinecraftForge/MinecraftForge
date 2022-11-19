@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/food/FoodData.java
 +++ b/net/minecraft/world/food/FoodData.java
-@@ -19,17 +_,32 @@
+@@ -19,17 +_,34 @@
        this.f_38697_ = 5.0F;
     }
  
@@ -8,7 +8,10 @@
     public void m_38707_(int p_38708_, float p_38709_) {
 -      this.f_38696_ = Math.min(p_38708_ + this.f_38696_, 20);
 -      this.f_38697_ = Math.min(this.f_38697_ + (float)p_38708_ * p_38709_ * 2.0F, (float)this.f_38696_);
+-   }
+-
 +      this.eat(p_38708_, p_38709_, null);
++   }
 +   public void eatInternal(int p_38708_, float p_38709_) {
 +       this.f_38696_ = Math.min(p_38708_ + this.f_38696_, 20);
 +       this.f_38697_ = Math.min(this.f_38697_ + (float)p_38708_ * p_38709_ * 2.0F, (float)this.f_38696_);
@@ -18,7 +21,7 @@
 +      if(ret != null)
 +         this.eatInternal((int)ret[0], ret[1]);
 +   }
-+   // Use the LivingEntity sensitive version in favour of this.
++   // Use the LivingEntity sensitive version in favor of this.
 +   @Deprecated
     public void m_38712_(Item p_38713_, ItemStack p_38714_) {
 +      this.eat(p_38713_, p_38714_, null);
@@ -27,10 +30,12 @@
        if (p_38713_.m_41472_()) {
 -         FoodProperties foodproperties = p_38713_.m_41473_();
 -         this.m_38707_(foodproperties.m_38744_(), foodproperties.m_38745_());
-+          net.minecraftforge.event.entity.living.LivingEatEvent ret = net.minecraftforge.common.ForgeHooks.onLivingEat(entity, p_38714_);
++         net.minecraftforge.event.entity.living.LivingEatEvent ret = net.minecraftforge.common.ForgeHooks.onLivingEat(entity, p_38714_);
 +         if(ret != null)
++         {
 +            this.eatInternal(ret.getFoodAmount(), ret.getSaturationAmount());
-+         return ret.getEffects();
++            return ret.getEffects();
++         }
        }
 -
 +      return null;

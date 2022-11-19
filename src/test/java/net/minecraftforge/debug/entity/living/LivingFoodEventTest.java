@@ -31,14 +31,22 @@ public class LivingFoodEventTest
     // Tests the LivingEatEvent
     // Logs the items a LivingEntity is about to eat
     // Cancels the event if it is spider eye
-    // Changes to 1 nutrition and 0 saturation for anything else
+    // Changes to 1 nutrition and 0 saturation for any other food item
+    // Changes to 10 nutrition and 0 saturation if it is not a food item (cake, etc.)
     //
     // Entirely removes potion effects from eating a golden apple
     // Add a regeneration 4 effect to pufferfishes
     public void onLivingEat(LivingEatEvent event)
     {
+        if(event.getFoodItem() == null)
+        {
+            event.setFoodAmount(10);
+            event.setSaturationAmount(0);
+            LOGGER.info("Changed to 10 nutrition and 0 saturation");
+            return;
+        }
         LOGGER.info("{} is about to eat {} with {} nutrition and {} saturation", event.getEntity().getType(),
-                event.getFoodItem().getItem(), event.getFoodAmount(), event.getSaturationAmount());
+            event.getFoodItem().getItem(), event.getFoodAmount(), event.getSaturationAmount());
         Item item = event.getFoodItem().getItem();
         if (item == Items.SPIDER_EYE)
         {
@@ -49,7 +57,7 @@ public class LivingFoodEventTest
         {
             event.setFoodAmount(1);
             event.setSaturationAmount(0);
-            LOGGER.info("Changed to 1 nutrition and 0 saturation");
+            LOGGER.info("Changed to 4 nutrition and 0 saturation");
         }
         
         if (item == Items.GOLDEN_APPLE)

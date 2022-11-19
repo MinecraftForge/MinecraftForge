@@ -669,7 +669,7 @@
           if (!(this instanceof Player) || !((Player)this).m_150110_().f_35937_) {
              p_21068_.m_41774_(1);
           }
-@@ -3195,16 +_,10 @@
+@@ -3195,16 +_,12 @@
        return p_21068_;
     }
  
@@ -683,7 +683,9 @@
 -         }
 -      }
 -
-+   private void addEatEffect(List<Pair<MobEffectInstance, Float>> effectList) {
++   private void addEatEffect(@org.jetbrains.annotations.Nullable List<Pair<MobEffectInstance, Float>> effectList) {
++      if(effectList == null)
++          return;
 +      for(Pair<MobEffectInstance, Float> pair : effectList)
 +         if (!this.f_19853_.f_46443_ && pair.getFirst() != null && this.f_19853_.f_46441_.m_188501_() < pair.getSecond())
 +            this.m_7292_(new MobEffectInstance(pair.getFirst()));
