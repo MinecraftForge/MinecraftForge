@@ -41,10 +41,7 @@ public abstract class GrindstoneEvent extends Event
     }
 
     /**
-     * This is the experience amount determined by the event, it will be -1 unless a mod calls {@link #setXp(int)}. <br>
-     * If set to a non-negative value, that value will be used instead of running vanilla behavior. <br>
-     * If the value is negative, the vanilla behavior for calculating experience will run. <br>
-     * Ignored if the output is empty or the event is canceled.
+     * This is the experience amount determined by the event. It will be {@code -1} unless {@link #setXp(int)} is called. <br>
      * @return The experience amount given to the player. <br>
      */
     public int getXp()
@@ -64,11 +61,22 @@ public abstract class GrindstoneEvent extends Event
     /**
      * This event is {@link Cancelable} <br>
      * {@link OnplaceItem} is fired when the inputs to a grindstone are changed. <br>
-     * It is called from {@link GrindstoneMenu#createResult()}. <br>
-     * If the event is canceled, vanilla behavior will not run, and the output will be set to {@link ItemStack#EMPTY}. <br>
-     * If the event is not canceled, but the output is not empty, it will set the output and not run vanilla behavior. <br>
-     * If the event is not canceled and the output is empty, and the event is not canceled, the stack will be determined using vanilla behavior. <br>
-     * if the amount of experience is larger than or equal 0, the XP will be that value instead of using the vanilla logic. Ignored if the output is empty or the event is canceled. <br>
+     *
+     * The following rules apply:
+     * <ul>
+     *     <li>If the event is canceled, vanilla behavior will not run, and the output will be {@linkplain ItemStack#EMPTY empty}.</li>
+     *     <li>If the event is not canceled</li>
+     *     <ul>
+     *          <li>and the output is empty, the output will be determined by vanilla.</li>
+     *          <li>and the output is not empty, the output will be set, without running vanilla behavior.</li>
+     *     </ul>
+     *     <li>Vanilla XP calculation logic will be used unless all of the following criterias are met:</li>
+     *     <ul>
+     *         <li>the amount of experience is greater than or equal to {@code 0};</li>
+     *         <li>the event is not {@linkplain #isCanceled() canceled};</li>
+     *         <li>the {@linkplain #getOutput() output} is not empty.</li>
+     *     </ul>
+     * </ul>
      */
     @Cancelable
     public static class OnplaceItem extends GrindstoneEvent
