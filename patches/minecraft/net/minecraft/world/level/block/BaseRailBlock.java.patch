@@ -35,30 +35,30 @@
              p_49385_.m_46672_(p_49386_.m_7494_(), this);
           }
  
-@@ -139,6 +_,7 @@
+@@ -139,6 +_,11 @@
        return blockstate.m_61124_(this.m_7978_(), flag1 ? RailShape.EAST_WEST : RailShape.NORTH_SOUTH).m_61124_(f_152149_, Boolean.valueOf(flag));
     }
  
-+   @Deprecated //Forge: Use getRailDirection(IBlockAccess, BlockPos, IBlockState, EntityMinecart) for enhanced ability
++   /**
++    * @deprecated Forge: Use {@link BaseRailBlock#getRailDirection(BlockState, BlockGetter, BlockPos, net.minecraft.world.entity.vehicle.AbstractMinecart)} for enhanced ability
++    * If you do change this property be aware that other functions in this/subclasses may break as they can make assumptions about this property
++    */
++   @Deprecated
     public abstract Property<RailShape> m_7978_();
  
     public BlockState m_7417_(BlockState p_152151_, Direction p_152152_, BlockState p_152153_, LevelAccessor p_152154_, BlockPos p_152155_, BlockPos p_152156_) {
-@@ -152,4 +_,18 @@
+@@ -152,4 +_,14 @@
     public FluidState m_5888_(BlockState p_152158_) {
        return p_152158_.m_61143_(f_152149_) ? Fluids.f_76193_.m_76068_(false) : super.m_5888_(p_152158_);
     }
 +
-+    /* ======================================== FORGE START =====================================*/
-+
 +    @Override
-+    public boolean isFlexibleRail(BlockState state, BlockGetter world, BlockPos pos)
-+    {
-+        return  !this.f_49357_;
++    public boolean isFlexibleRail(BlockState state, BlockGetter world, BlockPos pos) {
++        return !this.f_49357_;
 +    }
 +
 +    @Override
 +    public RailShape getRailDirection(BlockState state, BlockGetter world, BlockPos pos, @javax.annotation.Nullable net.minecraft.world.entity.vehicle.AbstractMinecart cart) {
 +        return state.m_61143_(m_7978_());
 +    }
-+    /* ========================================= FORGE END ======================================*/
  }
