@@ -1184,8 +1184,6 @@ project(':forge') {
         excs.from patcher.excs
     }
 
-    task checkAll(dependsOn: [checkATs, checkSAS, checkExcs, findFieldInstanceChecks]){}
-
     task checkPatchesAndFix(type: CheckPatches, dependsOn: genPatches) {
         patchDir = file("$rootDir/patches")
         autoFix = true
@@ -1252,6 +1250,8 @@ project(':forge') {
             commonLibraries.from(project.configurations.moduleonly)
         }
     }
+
+    task checkAll(dependsOn: [checkATs, checkSAS, checkExcs, findFieldInstanceChecks, checkPatches, checkLicenses]){}
 
     task launcherJson(type: LauncherJson) {
         packedDependencies = [':fmlloader:jar']
