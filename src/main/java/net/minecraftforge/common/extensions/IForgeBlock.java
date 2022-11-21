@@ -24,6 +24,7 @@ import net.minecraft.world.entity.projectile.WitherSkull;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.block.*;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.levelgen.feature.configurations.TreeConfiguration;
 import net.minecraft.world.level.material.FluidState;
@@ -37,6 +38,8 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraftforge.client.ForgeHooksClient;
+import net.minecraftforge.client.model.data.ModelData;
+import net.minecraftforge.client.model.data.ModelDataManager;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.IPlantable;
 
@@ -919,5 +922,33 @@ public interface IForgeBlock
     default MaterialColor getMapColor(BlockState state, BlockGetter level, BlockPos pos, MaterialColor defaultColor)
     {
         return defaultColor;
+    }
+
+    /**
+     * Returns the {@link BlockState} that this block reports to look like on the given side, for querying by other mods.
+     * Note: Overriding this does not change how this block renders. That must still be handled in the block's model.
+     * <p>
+     * Common implementors would be covers and facades, or any other mimic blocks that proxy another block's model.
+     * Common consumers would be models with connected textures that wish to seamlessly connect to mimic blocks.
+     * <p>
+     * <b>Note that this method may be called on the server, or on any of the client's meshing threads.</b><br/>
+     * As such, if you need any data from your {@link BlockEntity}, you should put it in {@link ModelData} to guarantee
+     * safe concurrent access to it on the client.<br/>
+     * Calling {@link BlockGetter#getModelDataManager()} will return {@code null} if in a server context, where it is
+     * safe to query your {@link BlockEntity} directly. Otherwise, {@link ModelDataManager#getAt(BlockPos)} will return
+     * the {@link ModelData} for the queried block, or {@code null} if none is present.
+     *
+     * @param state      The state of this block
+     * @param level      The level this block is in
+     * @param pos        The block's position in the level
+     * @param side       The side of the block that is being queried
+     * @param queryState The state of the block that is querying the appearance, or {@code null} if not applicable
+     * @param queryPos   The position of the block that is querying the appearance, or {@code null} if not applicable
+     * @return The appearance of this block on the given side. By default, the current state
+     * @see IForgeBlockState#getAppearance(BlockAndTintGetter, BlockPos, Direction, BlockState, BlockPos)
+     */
+    default BlockState getAppearance(BlockState state, BlockAndTintGetter level, BlockPos pos, Direction side, @Nullable BlockState queryState, @Nullable BlockPos queryPos)
+    {
+        return state;
     }
 }
