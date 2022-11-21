@@ -12,10 +12,13 @@ import com.mojang.math.Matrix4f;
 import com.mojang.math.Transformation;
 import com.mojang.math.Vector3f;
 import com.mojang.math.Vector4f;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 /**
  * Extension interface for {@link Transformation}.
  */
+// TODO - 1.20: Transformation is not client-only, move this extension outside the client package
 public interface IForgeTransformation
 {
     private Transformation self()
@@ -37,22 +40,15 @@ public interface IForgeTransformation
      * Pushes and applies this transformation to the pose stack. The effects of this method can be reversed by a
      * corresponding {@link PoseStack#popPose()}.
      *
+     * @deprecated Use {@linkplain PoseStack#pushTransformation(Transformation)}, as {@linkplain Transformation} can be present in common code.
+     *
      * @param stack the pose stack to modify
      */
+    @OnlyIn(Dist.CLIENT) // TODO - 1.20: Remove in favour of client-only PoseStack extension
+    @Deprecated(forRemoval = true, since = "1.19.2")
     default void push(PoseStack stack)
     {
-        stack.pushPose();
-
-        Vector3f trans = self().getTranslation();
-        stack.translate(trans.x(), trans.y(), trans.z());
-
-        stack.mulPose(self().getLeftRotation());
-
-        Vector3f scale = self().getScale();
-        stack.scale(scale.x(), scale.y(), scale.z());
-
-        stack.mulPose(self().getRightRotation());
-
+        stack.pushTransformation(self());
     }
 
     /**
