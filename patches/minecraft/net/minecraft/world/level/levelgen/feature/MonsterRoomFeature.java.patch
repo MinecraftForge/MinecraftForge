@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/levelgen/feature/MonsterRoomFeature.java
 +++ b/net/minecraft/world/level/levelgen/feature/MonsterRoomFeature.java
-@@ -129,6 +_,6 @@
+@@ -130,6 +_,6 @@
     }
  
     private EntityType<?> m_225153_(RandomSource p_225154_) {

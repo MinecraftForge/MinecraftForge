@@ -6,12 +6,13 @@
 package net.minecraftforge.common.data;
 
 import com.google.gson.JsonObject;
+import net.minecraft.advancements.Advancement;
 import net.minecraft.data.CachedOutput;
-import net.minecraft.data.DataGenerator;
+import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.FinishedRecipe;
-import net.minecraft.data.recipes.RecipeProvider;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.data.recipes.ShapelessRecipeBuilder;
+import net.minecraft.data.recipes.packs.VanillaRecipeProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
@@ -30,16 +31,17 @@ import org.jetbrains.annotations.Nullable;
 import java.lang.reflect.Field;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
-public final class ForgeRecipeProvider extends RecipeProvider
+public final class ForgeRecipeProvider extends VanillaRecipeProvider
 {
     private final Map<Item, TagKey<Item>> replacements = new HashMap<>();
     private final Set<ResourceLocation> excludes = new HashSet<>();
 
-    public ForgeRecipeProvider(DataGenerator generatorIn)
+    public ForgeRecipeProvider(PackOutput packOutput)
     {
-        super(generatorIn);
+        super(packOutput);
     }
 
     private void exclude(ItemLike item)
@@ -53,7 +55,7 @@ public final class ForgeRecipeProvider extends RecipeProvider
     }
 
     @Override
-    protected void buildCraftingRecipes(Consumer<FinishedRecipe> consumer)
+    protected void buildRecipes(Consumer<FinishedRecipe> consumer)
     {
         replace(Items.STICK, Tags.Items.RODS_WOODEN);
         replace(Items.GOLD_INGOT, Tags.Items.INGOTS_GOLD);
@@ -84,7 +86,7 @@ public final class ForgeRecipeProvider extends RecipeProvider
         exclude(Blocks.COBBLED_DEEPSLATE_SLAB);
         exclude(Blocks.COBBLED_DEEPSLATE_WALL);
 
-        super.buildCraftingRecipes(vanilla -> {
+        super.buildRecipes(vanilla -> {
             FinishedRecipe modified = enhance(vanilla);
             if (modified != null)
                 consumer.accept(modified);
@@ -118,10 +120,19 @@ public final class ForgeRecipeProvider extends RecipeProvider
         return modified ? vanilla : null;
     }
 
+    @Nullable
     @Override
-    protected void saveAdvancement(CachedOutput output, JsonObject advancementJson, Path pathIn)
+    protected CompletableFuture<?> saveAdvancement(CachedOutput output, FinishedRecipe finishedRecipe, JsonObject advancementJson)
     {
-        //NOOP - We dont replace any of the advancement things yet...
+        // NOOP - We don't replace any of the advancement things yet...
+        return null;
+    }
+
+    @Override
+    protected CompletableFuture<?> buildAdvancement(CachedOutput p_253674_, ResourceLocation p_254102_, Advancement.Builder p_253712_)
+    {
+        // NOOP - We don't replace any of the advancement things yet...
+        return CompletableFuture.allOf();
     }
 
     @Nullable

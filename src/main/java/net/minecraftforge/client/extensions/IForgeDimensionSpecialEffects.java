@@ -6,12 +6,12 @@
 package net.minecraftforge.client.extensions;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Matrix4f;
-import com.mojang.math.Vector3f;
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.DimensionSpecialEffects;
 import net.minecraft.client.renderer.LightTexture;
+import org.joml.Matrix4f;
+import org.joml.Vector3f;
 
 /**
  * Extension interface for {@link DimensionSpecialEffects}.

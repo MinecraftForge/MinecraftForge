@@ -7,7 +7,7 @@ package net.minecraftforge.registries;
 
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
-import net.minecraft.data.BuiltinRegistries;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
@@ -52,7 +52,7 @@ public final class RegistryObject<T> implements Supplier<T>
      * Use {@link #createOptional(ResourceLocation, ResourceKey, String)} for RegistryObjects of optional registries.
      *
      * @param name the name of the object to look up in a registry
-     * @param registryKey the key of the registry. Supports lookups on {@link BuiltinRegistries}, {@link Registry}, and {@link RegistryManager#ACTIVE}.
+     * @param registryKey the key of the registry. Supports lookups on {@link BuiltInRegistries} and {@link RegistryManager#ACTIVE}.
      * @param modid the mod id calling context
      * @return a {@link RegistryObject} that stores the value of an object from a registry once it is ready
      * @see #createOptional(ResourceLocation, ResourceKey, String)
@@ -72,7 +72,7 @@ public final class RegistryObject<T> implements Supplier<T>
      * Use {@link #create(ResourceLocation, ResourceKey, String)} for RegistryObjects that should throw exceptions on missing registry.
      *
      * @param name the name of the object to look up in a registry
-     * @param registryKey the key of the registry. Supports lookups on {@link BuiltinRegistries}, {@link Registry}, and {@link RegistryManager#ACTIVE}.
+     * @param registryKey the key of the registry. Supports lookups on {@link BuiltInRegistries} and {@link RegistryManager#ACTIVE}.
      * @param modid the mod id calling context
      * @return a {@link RegistryObject} that stores the value of an object from a registry once it is ready
      * @see #create(ResourceLocation, ResourceKey, String)
@@ -92,7 +92,7 @@ public final class RegistryObject<T> implements Supplier<T>
      * Use {@link #createOptional(ResourceLocation, ResourceLocation, String)} for RegistryObjects of optional registries.
      *
      * @param name the name of the object to look up in a registry
-     * @param registryName the name of the registry. Supports lookups on {@link BuiltinRegistries}, {@link Registry}, and {@link RegistryManager#ACTIVE}.
+     * @param registryName the name of the registry. Supports lookups on {@link BuiltInRegistries} and {@link RegistryManager#ACTIVE}.
      * @param modid the mod id calling context
      * @return a {@link RegistryObject} that stores the value of an object from a registry once it is ready
      * @see #createOptional(ResourceLocation, ResourceLocation, String)
@@ -112,7 +112,7 @@ public final class RegistryObject<T> implements Supplier<T>
      * Use {@link #create(ResourceLocation, ResourceLocation, String)} for RegistryObjects that should throw exceptions on missing registry.
      *
      * @param name the name of the object to look up in a registry
-     * @param registryName the name of the registry. Supports lookups on {@link BuiltinRegistries}, {@link Registry}, and {@link RegistryManager#ACTIVE}.
+     * @param registryName the name of the registry. Supports lookups on {@link BuiltInRegistries} and {@link RegistryManager#ACTIVE}.
      * @param modid the mod id calling context
      * @return a {@link RegistryObject} that stores the value of an object from a registry once it is ready
      * @see #create(ResourceLocation, ResourceLocation, String)
@@ -251,17 +251,10 @@ public final class RegistryObject<T> implements Supplier<T>
             return;
         }
 
-        Registry<? extends T> vanillaRegistry = (Registry<? extends T>) Registry.REGISTRY.get(registryName);
+        Registry<? extends T> vanillaRegistry = (Registry<? extends T>) BuiltInRegistries.REGISTRY.get(registryName);
         if (vanillaRegistry != null)
         {
             updateReference(vanillaRegistry);
-            return;
-        }
-
-        Registry<? extends T> builtinRegistry = (Registry<? extends T>) BuiltinRegistries.REGISTRY.get(registryName);
-        if (builtinRegistry != null)
-        {
-            updateReference(builtinRegistry);
             return;
         }
 
@@ -288,8 +281,7 @@ public final class RegistryObject<T> implements Supplier<T>
     private static boolean registryExists(ResourceLocation registryName)
     {
         return RegistryManager.ACTIVE.getRegistry(registryName) != null
-                || Registry.REGISTRY.containsKey(registryName)
-                || BuiltinRegistries.REGISTRY.containsKey(registryName);
+                || BuiltInRegistries.REGISTRY.containsKey(registryName);
     }
 
     public ResourceLocation getId()
@@ -479,26 +471,13 @@ public final class RegistryObject<T> implements Supplier<T>
      * This should <b>only</b> be used in cases where vanilla code requires passing in a Holder.
      * Mod-written code should rely on RegistryObjects or Suppliers instead.
      * <p>
-     * The returned optional will be empty if the registry does not exist.
-     * Otherwise, the optional Holder will be present even if {@link #isPresent()} returns false.
+     * The returned optional will be empty if the registry does not exist or if {@link #isPresent() returns false}.
      *
      * @return an optional {@link Holder} instance pointing to this RegistryObject's name and value
      */
-    @SuppressWarnings("unchecked")
     @NotNull
     public Optional<Holder<T>> getHolder()
     {
-        if (this.holder == null && this.key != null && registryExists(this.key.registry()))
-        {
-            ResourceLocation registryName = this.key.registry();
-            Registry<T> registry = (Registry<T>) Registry.REGISTRY.get(registryName);
-            if (registry == null)
-                registry = (Registry<T>) BuiltinRegistries.REGISTRY.get(registryName);
-
-            if (registry != null)
-                this.holder = registry.getOrCreateHolder(this.key).result().get();
-        }
-
         return Optional.ofNullable(this.holder);
     }
 

@@ -5,25 +5,26 @@
 
 package net.minecraftforge.common.data;
 
-import com.mojang.logging.LogUtils;
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.Collections;
-import java.util.Map;
-
+import com.google.common.collect.ImmutableList;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.mojang.logging.LogUtils;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DynamicOps;
 import com.mojang.serialization.JsonOps;
-
-import java.util.function.BiConsumer;
 import cpw.mods.modlauncher.api.LamdbaExceptionUtils;
+import java.nio.file.Path;
+import java.util.Collections;
+import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.function.BiConsumer;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DataProvider;
+import net.minecraft.data.PackOutput;
+import net.minecraft.resources.RegistryDataLoader;
 import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -31,6 +32,8 @@ import net.minecraft.server.packs.PackType;
 import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.common.crafting.conditions.ICondition;
 import net.minecraftforge.common.data.ExistingFileHelper.ResourceType;
+import net.minecraftforge.data.event.GatherDataEvent;
+import net.minecraftforge.registries.DataPackRegistriesHooks;
 import org.slf4j.Logger;
 
 /**
@@ -57,7 +60,7 @@ public class JsonCodecProvider<T> implements DataProvider
 
     /**
      * @param dataGenerator DataGenerator provided by {@link GatherDataEvent}.
-     * @param dynamicOps DynamicOps to encode values to jsons with using the provided Codec, e.g. {@link JsonOps.INSTANCE}.
+     * @param dynamicOps DynamicOps to encode values to jsons with using the provided Codec, e.g. {@link JsonOps#INSTANCE}.
      * @param packType PackType specifying whether to generate entries in assets or data.
      * @param directory String representing the directory to generate jsons in, e.g. "dimension" or "cheesemod/cheese".
      * @param codec Codec to encode values to jsons with using the provided DynamicOps.
@@ -95,6 +98,7 @@ public class JsonCodecProvider<T> implements DataProvider
      * @param registryKey ResourceKey identifying the registry and its directory.
      * @param entries Map of entries to encode and their ResourceLocations. Paths for values are derived from the ResourceLocation's entryid:entrypath.
      */
+    @SuppressWarnings("unchecked")
     public static <T> JsonCodecProvider<T> forDatapackRegistry(DataGenerator dataGenerator, ExistingFileHelper existingFileHelper, String modid,
           RegistryOps<JsonElement> registryOps, ResourceKey<Registry<T>> registryKey, Map<ResourceLocation, T> entries)
     {
@@ -104,21 +108,25 @@ public class JsonCodecProvider<T> implements DataProvider
         final String registryFolder = registryId.getNamespace().equals("minecraft")
                                       ? registryId.getPath()
                                       : registryId.getNamespace() + "/" + registryId.getPath();
-        final Codec<T> codec = (Codec<T>) RegistryAccess.REGISTRIES.get(registryKey).codec();
+        RegistryDataLoader.RegistryData<?> registryData = DataPackRegistriesHooks.getDataPackRegistries().stream().filter(data -> data.key() == registryKey).findAny().orElseThrow();
+        final Codec<T> codec = (Codec<T>) registryData.elementCodec();
         return new JsonCodecProvider<>(dataGenerator, existingFileHelper, modid, registryOps, PackType.SERVER_DATA, registryFolder, codec, entries);
     }
 
     @Override
-    public void run(final CachedOutput cache) throws IOException
+    public CompletableFuture<?> run(final CachedOutput cache)
     {
-        final Path outputFolder = this.dataGenerator.getOutputFolder();
-        final String dataFolder = this.packType.getDirectory();
+        final Path outputFolder = this.dataGenerator.getPackOutput().getOutputFolder(this.packType == PackType.CLIENT_RESOURCES
+                ? PackOutput.Target.RESOURCE_PACK
+                : PackOutput.Target.DATA_PACK);
+        ImmutableList.Builder<CompletableFuture<?>> futuresBuilder = new ImmutableList.Builder<>();
+
         gather(LamdbaExceptionUtils.rethrowBiConsumer((id, value) -> {
-            final Path path = outputFolder.resolve(String.join("/", dataFolder, id.getNamespace(), this.directory, id.getPath() + ".json"));
+            final Path path = outputFolder.resolve(id.getNamespace()).resolve(this.directory).resolve(id.getPath() + ".json");
             JsonElement encoded = this.codec.encodeStart(this.dynamicOps, value)
                   .getOrThrow(false, msg -> LOGGER.error("Failed to encode {}: {}", path, msg));
             ICondition[] conditions = this.conditions.get(id);
-            if (conditions != null && conditions.length > 0) 
+            if (conditions != null && conditions.length > 0)
             {
                 if(encoded instanceof JsonObject obj)
                 {
@@ -129,8 +137,10 @@ public class JsonCodecProvider<T> implements DataProvider
                     LOGGER.error("Attempted to apply conditions to a type that is not a JsonObject! - Path: {}", path);
                 }
             }
-            DataProvider.saveStable(cache, encoded, path);
+            futuresBuilder.add(DataProvider.saveStable(cache, encoded, path));
         }));
+
+        return CompletableFuture.allOf(futuresBuilder.build().toArray(CompletableFuture[]::new));
     }
 
     protected void gather(BiConsumer<ResourceLocation, T> consumer)

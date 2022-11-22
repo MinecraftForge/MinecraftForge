@@ -6,7 +6,6 @@
 package net.minecraftforge.client.model.geometry;
 
 import com.mojang.math.Transformation;
-import com.mojang.math.Vector3f;
 import net.minecraft.Util;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.BlockElement;
@@ -16,11 +15,13 @@ import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.client.renderer.block.model.FaceBakery;
 import net.minecraft.client.renderer.block.model.ItemModelGenerator;
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
+import net.minecraft.client.renderer.texture.SpriteContents;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.BuiltInModel;
 import net.minecraft.client.resources.model.Material;
+import net.minecraft.client.resources.model.ModelBaker;
 import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.ModelState;
 import net.minecraft.core.Direction;
@@ -30,6 +31,7 @@ import net.minecraftforge.client.model.IModelBuilder;
 import net.minecraftforge.client.model.SimpleModelState;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Vector3f;
 
 import java.util.ArrayList;
 import java.util.BitSet;
@@ -93,17 +95,17 @@ public class UnbakedGeometryHelper
      * Helper for baking {@link BlockModel} instances. Handles baking custom geometries and deferring item model baking.
      */
     @ApiStatus.Internal
-    public static BakedModel bake(BlockModel blockModel, ModelBakery modelBakery, BlockModel owner, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelState, ResourceLocation modelLocation, boolean guiLight3d)
+    public static BakedModel bake(BlockModel blockModel, ModelBaker modelBaker, BlockModel owner, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelState, ResourceLocation modelLocation, boolean guiLight3d)
     {
         IUnbakedGeometry<?> customModel = blockModel.customData.getCustomGeometry();
         if (customModel != null)
-            return customModel.bake(blockModel.customData, modelBakery, spriteGetter, modelState, blockModel.getOverrides(modelBakery, owner, spriteGetter), modelLocation);
+            return customModel.bake(blockModel.customData, modelBaker, spriteGetter, modelState, blockModel.getOverrides(modelBaker, owner, spriteGetter), modelLocation);
 
         // Handle vanilla item models here, since vanilla has a shortcut for them
         if (blockModel.getRootModel() == ModelBakery.GENERATION_MARKER)
-            return ITEM_MODEL_GENERATOR.generateBlockModel(spriteGetter, blockModel).bake(modelBakery, blockModel, spriteGetter, modelState, modelLocation, guiLight3d);
+            return ITEM_MODEL_GENERATOR.generateBlockModel(spriteGetter, blockModel).bake(modelBaker, blockModel, spriteGetter, modelState, modelLocation, guiLight3d);
 
-        return bakeVanilla(blockModel, modelBakery, owner, spriteGetter, modelState, modelLocation);
+        return bakeVanilla(blockModel, modelBaker, owner, spriteGetter, modelState, modelLocation);
     }
 
     /**
@@ -113,48 +115,48 @@ public class UnbakedGeometryHelper
      */
     @ApiStatus.Internal
     @Deprecated(forRemoval = true, since = "1.19.2")
-    public static BakedModel bakeVanilla(BlockModel blockModel, ModelBakery modelBakery, BlockModel owner, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelState, ResourceLocation modelLocation)
+    public static BakedModel bakeVanilla(BlockModel blockModel, ModelBaker modelBaker, BlockModel owner, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelState, ResourceLocation modelLocation)
     {
         if (blockModel.getRootModel() == ModelBakery.BLOCK_ENTITY_MARKER)
         {
             var particleSprite = spriteGetter.apply(blockModel.getMaterial("particle"));
-            return new BuiltInModel(blockModel.getTransforms(), blockModel.getOverrides(modelBakery, owner, spriteGetter), particleSprite, blockModel.getGuiLight().lightLikeBlock());
+            return new BuiltInModel(blockModel.getTransforms(), blockModel.getOverrides(modelBaker, owner, spriteGetter), particleSprite, blockModel.getGuiLight().lightLikeBlock());
         }
 
         var elementsModel = new ElementsModel(blockModel.getElements());
-        return elementsModel.bake(blockModel.customData, modelBakery, spriteGetter, modelState, blockModel.getOverrides(modelBakery, owner, spriteGetter), modelLocation);
+        return elementsModel.bake(blockModel.customData, modelBaker, spriteGetter, modelState, blockModel.getOverrides(modelBaker, owner, spriteGetter), modelLocation);
     }
 
     /**
-     * Creates a list of {@linkplain BlockElement block elements} in the shape of the specified sprite.
+     * Creates a list of {@linkplain BlockElement block elements} in the shape of the specified sprite contents.
      * These can later be baked using the same, or another texture.
      * <p>
      * The {@link Direction#NORTH} and {@link Direction#SOUTH} faces take up the whole surface.
      */
-    public static List<BlockElement> createUnbakedItemElements(int layerIndex, TextureAtlasSprite sprite)
+    public static List<BlockElement> createUnbakedItemElements(int layerIndex, SpriteContents spriteContents)
     {
-        return ITEM_MODEL_GENERATOR.processFrames(layerIndex, "layer" + layerIndex, sprite);
+        return ITEM_MODEL_GENERATOR.processFrames(layerIndex, "layer" + layerIndex, spriteContents);
     }
 
     /**
-     * Creates a list of {@linkplain BlockElement block elements} in the shape of the specified sprite.
+     * Creates a list of {@linkplain BlockElement block elements} in the shape of the specified sprite contents.
      * These can later be baked using the same, or another texture.
      * <p>
      * The {@link Direction#NORTH} and {@link Direction#SOUTH} faces take up only the pixels the texture uses.
      */
-    public static List<BlockElement> createUnbakedItemMaskElements(int layerIndex, TextureAtlasSprite sprite)
+    public static List<BlockElement> createUnbakedItemMaskElements(int layerIndex, SpriteContents spriteContents)
     {
-        var elements = createUnbakedItemElements(layerIndex, sprite);
+        var elements = createUnbakedItemElements(layerIndex, spriteContents);
         elements.remove(0); // Remove north and south faces
 
-        int width = sprite.getWidth(), height = sprite.getHeight();
+        int width = spriteContents.width(), height = spriteContents.height();
         var bits = new BitSet(width * height);
 
         // For every frame in the texture, mark all the opaque pixels (this is what vanilla does too)
-        sprite.getUniqueFrames().forEach(frame -> {
+        spriteContents.getUniqueFrames().forEach(frame -> {
             for (int x = 0; x < width; x++)
                 for (int y = 0; y < height; y++)
-                    if (!sprite.isTransparent(frame, x, y))
+                    if (!spriteContents.isTransparent(frame, x, y))
                         bits.set(x + y * width);
         });
 

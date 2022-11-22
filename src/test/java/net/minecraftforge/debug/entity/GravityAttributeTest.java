@@ -8,14 +8,17 @@ package net.minecraftforge.debug.entity;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BiomeTags;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
-import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraftforge.common.ForgeMod;
+import net.minecraftforge.event.CreativeModeTabEvent;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegisterEvent;
 import org.apache.logging.log4j.LogManager;
@@ -31,7 +34,6 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.level.Level;
 import net.minecraft.server.level.ServerLevel;
@@ -117,7 +119,15 @@ public class GravityAttributeTest
     public void registerItems(RegisterEvent event)
     {
         event.register(ForgeRegistries.Keys.ITEMS, helper -> helper.register("gravity_stick",
-                new ItemGravityStick(new Properties().tab(CreativeModeTab.TAB_TOOLS).rarity(Rarity.RARE))));
+                new ItemGravityStick(new Properties().rarity(Rarity.RARE))));
+
+        FMLJavaModLoadingContext.get().getModEventBus().addListener((Consumer<CreativeModeTabEvent.BuildContents>) onBuildContents -> {
+            if (onBuildContents.getTab() == CreativeModeTabs.TOOLS_AND_UTILITIES) {
+                onBuildContents.register((flags, output, permissions) -> {
+                    output.accept(ForgeRegistries.ITEMS.getValue(new ResourceLocation("gravity_attribute_test", "gravity_stick")));
+                });
+            }
+        });
     }
 
     public static class ItemGravityStick extends Item

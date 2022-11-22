@@ -9,12 +9,12 @@
              if (s.isEmpty()) {
                 map.computeIfAbsent(recipebookcategories, (p_90645_) -> {
                    return Lists.newArrayList();
-@@ -103,6 +_,8 @@
-       } else if (recipetype == RecipeType.f_44113_) {
-          return RecipeBookCategories.SMITHING;
-       } else {
-+         RecipeBookCategories categories = net.minecraftforge.client.RecipeBookManager.findCategories((RecipeType) recipetype, p_90647_);
-+         if (categories != null) return categories;
-          f_90618_.warn("Unknown recipe category: {}/{}", LogUtils.defer(() -> {
-             return Registry.f_122864_.m_7981_(p_90647_.m_6671_());
-          }), LogUtils.defer(p_90647_::m_6423_));
+@@ -138,6 +_,8 @@
+          } else if (recipetype == RecipeType.f_44113_) {
+             return RecipeBookCategories.SMITHING;
+          } else {
++            RecipeBookCategories categories = net.minecraftforge.client.RecipeBookManager.findCategories((RecipeType) recipetype, p_90647_);
++            if (categories != null) return categories;
+             f_90618_.warn("Unknown recipe category: {}/{}", LogUtils.defer(() -> {
+                return BuiltInRegistries.f_256990_.m_7981_(p_90647_.m_6671_());
+             }), LogUtils.defer(p_90647_::m_6423_));

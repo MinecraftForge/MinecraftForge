@@ -1,20 +1,20 @@
 --- a/net/minecraft/world/level/block/Block.java
 +++ b/net/minecraft/world/level/block/Block.java
-@@ -64,10 +_,11 @@
+@@ -62,10 +_,11 @@
  import net.minecraft.world.phys.shapes.VoxelShape;
  import org.slf4j.Logger;
  
 -public class Block extends BlockBehaviour implements ItemLike {
 +public class Block extends BlockBehaviour implements ItemLike, net.minecraftforge.common.extensions.IForgeBlock {
     private static final Logger f_49790_ = LogUtils.getLogger();
-    private final Holder.Reference<Block> f_204296_ = Registry.f_122824_.m_203693_(this);
+    private final Holder.Reference<Block> f_204296_ = BuiltInRegistries.f_256975_.m_203693_(this);
 -   public static final IdMapper<BlockState> f_49791_ = new IdMapper<>();
 +   @Deprecated //Forge: Do not use, use GameRegistry
 +   public static final IdMapper<BlockState> f_49791_ = net.minecraftforge.registries.GameData.getBlockStateIDMap();
     private static final LoadingCache<VoxelShape, Boolean> f_49785_ = CacheBuilder.newBuilder().maximumSize(512L).weakKeys().build(new CacheLoader<VoxelShape, Boolean>() {
        public Boolean load(VoxelShape p_49972_) {
           return !Shapes.m_83157_(Shapes.m_83144_(), p_49972_, BooleanOp.f_82687_);
-@@ -180,7 +_,7 @@
+@@ -178,7 +_,7 @@
              f_49790_.error("Block classes should end with Block and {} doesn't.", (Object)s);
           }
        }
@@ -23,7 +23,7 @@
     }
  
     public static boolean m_152463_(BlockState p_152464_) {
-@@ -195,6 +_,8 @@
+@@ -193,6 +_,8 @@
        BlockState blockstate = p_152446_.m_8055_(p_152449_);
        if (p_152445_.m_60719_(blockstate, p_152448_)) {
           return false;
@@ -32,7 +32,7 @@
        } else if (blockstate.m_60815_()) {
           Block.BlockStatePairKey block$blockstatepairkey = new Block.BlockStatePairKey(p_152445_, blockstate, p_152448_);
           Object2ByteLinkedOpenHashMap<Block.BlockStatePairKey> object2bytelinkedopenhashmap = f_49789_.get();
-@@ -326,7 +_,7 @@
+@@ -324,7 +_,7 @@
     }
  
     private static void m_152440_(Level p_152441_, Supplier<ItemEntity> p_152442_, ItemStack p_152443_) {
@@ -41,7 +41,7 @@
           ItemEntity itementity = p_152442_.get();
           itementity.m_32060_();
           p_152441_.m_7967_(itementity);
-@@ -334,12 +_,13 @@
+@@ -332,12 +_,13 @@
     }
  
     public void m_49805_(ServerLevel p_49806_, BlockPos p_49807_, int p_49808_) {
@@ -56,7 +56,7 @@
     public float m_7325_() {
        return this.f_60444_;
     }
-@@ -386,8 +_,10 @@
+@@ -384,8 +_,10 @@
  
     public void m_5548_(BlockGetter p_49821_, Entity p_49822_) {
        p_49822_.m_20256_(p_49822_.m_20184_().m_82542_(1.0D, 0.0D, 1.0D));
@@ -67,7 +67,7 @@
     public ItemStack m_7397_(BlockGetter p_49823_, BlockPos p_49824_, BlockState p_49825_) {
        return new ItemStack(this);
     }
-@@ -424,6 +_,7 @@
+@@ -418,6 +_,7 @@
     public void m_141997_(BlockState p_152450_, Level p_152451_, BlockPos p_152452_, Biome.Precipitation p_152453_) {
     }
  
@@ -75,7 +75,7 @@
     public boolean m_6903_(Explosion p_49826_) {
        return true;
     }
-@@ -459,6 +_,7 @@
+@@ -453,6 +_,7 @@
        return p_152456_.m_61124_(p_152457_, p_152455_.m_61143_(p_152457_));
     }
  
@@ -83,7 +83,7 @@
     public SoundType m_49962_(BlockState p_49963_) {
        return this.f_60446_;
     }
-@@ -468,7 +_,7 @@
+@@ -462,7 +_,7 @@
           this.f_49788_ = Item.m_41439_(this);
        }
  
@@ -92,7 +92,7 @@
     }
  
     public boolean m_49967_() {
-@@ -489,6 +_,75 @@
+@@ -483,6 +_,75 @@
     protected ImmutableMap<BlockState, VoxelShape> m_152458_(Function<BlockState, VoxelShape> p_152459_) {
        return this.f_49792_.m_61056_().stream().collect(ImmutableMap.toImmutableMap(Function.identity(), p_152459_));
     }

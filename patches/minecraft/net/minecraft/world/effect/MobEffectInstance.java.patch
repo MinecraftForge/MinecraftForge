@@ -9,7 +9,7 @@
     private static final Logger f_19501_ = LogUtils.getLogger();
     private final MobEffect f_19502_;
     int f_19503_;
-@@ -74,6 +_,7 @@
+@@ -73,6 +_,7 @@
        this.f_19506_ = p_19549_.f_19506_;
        this.f_19508_ = p_19549_.f_19508_;
        this.f_19509_ = p_19549_.f_19509_;
@@ -17,7 +17,7 @@
     }
  
     public boolean m_19558_(MobEffectInstance p_19559_) {
-@@ -130,7 +_,7 @@
+@@ -129,7 +_,7 @@
     }
  
     public MobEffect m_19544_() {
@@ -26,7 +26,7 @@
     }
  
     public int m_19557_() {
-@@ -231,6 +_,7 @@
+@@ -230,6 +_,7 @@
  
     public CompoundTag m_19555_(CompoundTag p_19556_) {
        p_19556_.m_128405_("Id", MobEffect.m_19459_(this.m_19544_()));
@@ -34,7 +34,7 @@
        this.m_19567_(p_19556_);
        return p_19556_;
     }
-@@ -246,6 +_,7 @@
+@@ -245,6 +_,7 @@
           this.f_19510_.m_19555_(compoundtag);
           p_19568_.m_128365_("HiddenEffect", compoundtag);
        }
@@ -42,7 +42,7 @@
  
        this.f_216885_.ifPresent((p_216903_) -> {
           MobEffectInstance.FactorData.f_216907_.encodeStart(NbtOps.f_128958_, p_216903_).resultOrPartial(f_19501_::error).ifPresent((p_216906_) -> {
-@@ -256,8 +_,9 @@
+@@ -255,8 +_,9 @@
  
     @Nullable
     public static MobEffectInstance m_19560_(CompoundTag p_19561_) {
@@ -53,16 +53,13 @@
        return mobeffect == null ? null : m_19545_(mobeffect, p_19561_);
     }
  
-@@ -287,7 +_,7 @@
+@@ -286,12 +_,38 @@
           optional = Optional.empty();
        }
  
 -      return new MobEffectInstance(p_19546_, j, Math.max(i, 0), flag, flag1, flag2, mobeffectinstance, optional);
 +      return readCurativeItems(new MobEffectInstance(p_19546_, j, Math.max(0, i), flag, flag1, flag2, mobeffectinstance, optional), p_19547_);
     }
- 
-    public void m_19562_(boolean p_19563_) {
-@@ -300,7 +_,33 @@
  
     public int compareTo(MobEffectInstance p_19566_) {
        int i = 32147;

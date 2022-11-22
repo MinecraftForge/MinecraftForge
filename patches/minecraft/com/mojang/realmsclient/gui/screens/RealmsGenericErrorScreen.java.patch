@@ -13,6 +13,6 @@
 +       return super.m_7933_(key, scanCode, modifiers);
 +    }
 +
-    public void m_6305_(PoseStack p_88679_, int p_88680_, int p_88681_, float p_88682_) {
+    public void m_86412_(PoseStack p_88679_, int p_88680_, int p_88681_, float p_88682_) {
        this.m_7333_(p_88679_);
        m_93215_(p_88679_, this.f_96547_, this.f_200947_.getFirst(), this.f_96543_ / 2, 80, 16777215);

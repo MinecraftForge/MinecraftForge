@@ -3,7 +3,7 @@
 @@ -409,6 +_,7 @@
              list.add("");
              list.add(ChatFormatting.UNDERLINE + "Targeted Entity");
-             list.add(String.valueOf((Object)Registry.f_122826_.m_7981_(entity.m_6095_())));
+             list.add(String.valueOf((Object)BuiltInRegistries.f_256780_.m_7981_(entity.m_6095_())));
 +            entity.m_6095_().m_204041_().m_203616_().forEach(t -> list.add("#" + t.f_203868_()));
           }
  

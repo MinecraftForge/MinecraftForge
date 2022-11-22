@@ -5,23 +5,6 @@
 
 package net.minecraftforge.client.model.generators;
 
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
-
-import net.minecraft.data.CachedOutput;
-import net.minecraft.world.level.block.ButtonBlock;
-import net.minecraft.world.level.block.PressurePlateBlock;
-import net.minecraft.world.level.block.StandingSignBlock;
-import net.minecraft.world.level.block.WallSignBlock;
-import net.minecraftforge.registries.ForgeRegistries;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
@@ -31,35 +14,51 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.function.Function;
+import net.minecraft.core.Direction;
+import net.minecraft.core.Direction.Axis;
+import net.minecraft.data.CachedOutput;
+import net.minecraft.data.DataGenerator;
+import net.minecraft.data.DataProvider;
+import net.minecraft.data.PackOutput;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.ButtonBlock;
+import net.minecraft.world.level.block.CrossCollisionBlock;
 import net.minecraft.world.level.block.DoorBlock;
 import net.minecraft.world.level.block.FenceBlock;
 import net.minecraft.world.level.block.FenceGateBlock;
-import net.minecraft.world.level.block.CrossCollisionBlock;
 import net.minecraft.world.level.block.IronBarsBlock;
-import net.minecraft.world.level.block.RotatedPillarBlock;
 import net.minecraft.world.level.block.PipeBlock;
+import net.minecraft.world.level.block.PressurePlateBlock;
+import net.minecraft.world.level.block.RotatedPillarBlock;
 import net.minecraft.world.level.block.SlabBlock;
 import net.minecraft.world.level.block.StairBlock;
+import net.minecraft.world.level.block.StandingSignBlock;
 import net.minecraft.world.level.block.TrapDoorBlock;
 import net.minecraft.world.level.block.WallBlock;
-import net.minecraft.world.level.block.state.properties.WallSide;
-import net.minecraft.data.DataGenerator;
-import net.minecraft.data.DataProvider;
-import net.minecraft.world.level.block.state.properties.Property;
+import net.minecraft.world.level.block.WallSignBlock;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.AttachFace;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DoorHingeSide;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraft.world.level.block.state.properties.Half;
+import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.level.block.state.properties.SlabType;
 import net.minecraft.world.level.block.state.properties.StairsShape;
-import net.minecraft.core.Direction;
-import net.minecraft.core.Direction.Axis;
+import net.minecraft.world.level.block.state.properties.WallSide;
 import net.minecraftforge.common.data.ExistingFileHelper;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.registries.ForgeRegistries;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -83,28 +82,31 @@ public abstract class BlockStateProvider implements DataProvider {
         this.generator = gen;
         this.modid = modid;
         this.blockModels = new BlockModelProvider(gen, modid, exFileHelper) {
-            @Override public void run(CachedOutput p_236071_) throws IOException {}
+            @Override public CompletableFuture<?> run(CachedOutput cache) { return CompletableFuture.allOf(); }
 
             @Override protected void registerModels() {}
         };
         this.itemModels = new ItemModelProvider(gen, modid, this.blockModels.existingFileHelper) {
             @Override protected void registerModels() {}
 
-            @Override public void run(CachedOutput p_236071_) throws IOException {}
+            @Override public CompletableFuture<?> run(CachedOutput cache) { return CompletableFuture.allOf(); }
         };
     }
 
     @Override
-    public void run(CachedOutput cache) throws IOException {
+    public CompletableFuture<?> run(CachedOutput cache) {
         models().clear();
         itemModels().clear();
         registeredBlocks.clear();
         registerStatesAndModels();
         models().generateAll(cache);
         itemModels().generateAll(cache);
+        CompletableFuture<?>[] futures = new CompletableFuture<?>[this.registeredBlocks.size()];
+        int i = 0;
         for (Map.Entry<Block, IGeneratedBlockState> entry : registeredBlocks.entrySet()) {
-            saveBlockState(cache, entry.getValue().toJson(), entry.getKey());
+            futures[i++] = saveBlockState(cache, entry.getValue().toJson(), entry.getKey());
         }
+        return CompletableFuture.allOf(futures);
     }
 
     protected abstract void registerStatesAndModels();
@@ -853,16 +855,11 @@ public abstract class BlockStateProvider implements DataProvider {
         }, TrapDoorBlock.POWERED, TrapDoorBlock.WATERLOGGED);
     }
 
-    private void saveBlockState(CachedOutput cache, JsonObject stateJson, Block owner) {
+    private CompletableFuture<?> saveBlockState(CachedOutput cache, JsonObject stateJson, Block owner) {
         ResourceLocation blockName = Preconditions.checkNotNull(key(owner));
-        Path mainOutput = generator.getOutputFolder();
-        String pathSuffix = "assets/" + blockName.getNamespace() + "/blockstates/" + blockName.getPath() + ".json";
-        Path outputPath = mainOutput.resolve(pathSuffix);
-        try {
-            DataProvider.saveStable(cache, stateJson, outputPath);
-        } catch (IOException e) {
-            LOGGER.error("Couldn't save blockstate to {}", outputPath, e);
-        }
+        Path outputPath = this.generator.getPackOutput().getOutputFolder(PackOutput.Target.RESOURCE_PACK)
+                .resolve(blockName.getNamespace()).resolve("blockstates").resolve(blockName.getPath() + ".json");
+        return DataProvider.saveStable(cache, stateJson, outputPath);
     }
 
     @NotNull

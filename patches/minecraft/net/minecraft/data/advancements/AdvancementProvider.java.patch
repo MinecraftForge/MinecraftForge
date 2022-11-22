@@ -1,40 +1,53 @@
 --- a/net/minecraft/data/advancements/AdvancementProvider.java
 +++ b/net/minecraft/data/advancements/AdvancementProvider.java
-@@ -19,11 +_,18 @@
-    private static final Logger f_123960_ = LogUtils.getLogger();
-    private final DataGenerator.PathProvider f_236156_;
-    private final List<Consumer<Consumer<Advancement>>> f_123963_ = ImmutableList.of(new TheEndAdvancements(), new HusbandryAdvancements(), new AdventureAdvancements(), new NetherAdvancements(), new StoryAdvancements());
-+   protected net.minecraftforge.common.data.ExistingFileHelper fileHelper;
+@@ -18,8 +_,19 @@
+    private final PackOutput.PathProvider f_236156_;
+    private final List<AdvancementSubProvider> f_244266_;
+    private final CompletableFuture<HolderLookup.Provider> f_254664_;
++   @org.jetbrains.annotations.Nullable
++   protected final net.minecraftforge.common.data.ExistingFileHelper existingFileHelper;
  
++   /**
++    * @deprecated Forge: Use the {@linkplain #AdvancementProvider(PackOutput, CompletableFuture, List, net.minecraftforge.common.data.ExistingFileHelper) existing file helper variant}
++    */
 +   @Deprecated
-    public AdvancementProvider(DataGenerator p_123966_) {
-       this.f_236156_ = p_123966_.m_236036_(DataGenerator.Target.DATA_PACK, "advancements");
-    }
- 
-+   public AdvancementProvider(DataGenerator generatorIn, net.minecraftforge.common.data.ExistingFileHelper fileHelperIn) {
-+      this.f_236156_ = generatorIn.m_236036_(DataGenerator.Target.DATA_PACK, "advancements");
-+      this.fileHelper = fileHelperIn;
+    public AdvancementProvider(PackOutput p_256529_, CompletableFuture<HolderLookup.Provider> p_255722_, List<AdvancementSubProvider> p_255883_) {
++      this(p_256529_, p_255722_, p_255883_, null);
 +   }
 +
-    public void m_213708_(CachedOutput p_236158_) {
-       Set<ResourceLocation> set = Sets.newHashSet();
-       Consumer<Advancement> consumer = (p_236162_) -> {
-@@ -41,6 +_,18 @@
-          }
-       };
++   public AdvancementProvider(PackOutput p_256529_, CompletableFuture<HolderLookup.Provider> p_255722_, List<AdvancementSubProvider> p_255883_, @org.jetbrains.annotations.Nullable net.minecraftforge.common.data.ExistingFileHelper existingFileHelper) {
++      this.existingFileHelper = existingFileHelper;
+       this.f_236156_ = p_256529_.m_245269_(PackOutput.Target.DATA_PACK, "advancements");
+       this.f_244266_ = p_255883_;
+       this.f_254664_ = p_255722_;
+@@ -38,14 +_,27 @@
+             }
+          };
  
-+      registerAdvancements(consumer, fileHelper);
+-         for(AdvancementSubProvider advancementsubprovider : this.f_244266_) {
+-            advancementsubprovider.m_245571_(p_255484_, consumer);
+-         }
++         // Forge: Allow mods to take control of advancement registration
++         this.registerAdvancements(p_255484_, consumer, this.existingFileHelper);
+ 
+          return CompletableFuture.allOf(list.toArray((p_253393_) -> {
+             return new CompletableFuture[p_253393_];
+          }));
+       });
 +   }
 +
 +   /**
-+    * This method registers all {@link Advancement advancements}.
-+    * Mods can override this method to register their own custom advancements.
++    * Registers all {@linkplain Advancement advancements}.
 +    *
-+    * @param consumer a {@link Consumer} which saves any advancements provided
-+    * @param fileHelper the existing file helper to check for the existence of files like parent advancements
++    * @param registries the registries available for lookup including all registries in {@link net.minecraft.core.registries.Registries}
++    * @param saver a {@link Consumer} which saves any advancements provided
++    * @param existingFileHelper the existing file helper to check for the existence of files like parent advancements
 +    * @see Advancement.Builder#save(Consumer, ResourceLocation, net.minecraftforge.common.data.ExistingFileHelper)
-+   */
-+   protected void registerAdvancements(Consumer<Advancement> consumer, net.minecraftforge.common.data.ExistingFileHelper fileHelper) {
-       for(Consumer<Consumer<Advancement>> consumer1 : this.f_123963_) {
-          consumer1.accept(consumer);
-       }
++    */
++   protected void registerAdvancements(HolderLookup.Provider registries, Consumer<Advancement> saver, net.minecraftforge.common.data.ExistingFileHelper existingFileHelper) {
++      for (AdvancementSubProvider subProvider : this.f_244266_) {
++         subProvider.m_245571_(registries, saver);
++      }
+    }
+ 
+    public final String m_6055_() {

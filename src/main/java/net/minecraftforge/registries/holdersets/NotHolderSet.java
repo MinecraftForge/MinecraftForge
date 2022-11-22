@@ -11,6 +11,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import net.minecraft.core.HolderGetter;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.HolderOwner;
 import org.jetbrains.annotations.Nullable;
 
 import com.mojang.datafixers.util.Either;
@@ -44,23 +47,23 @@ public class NotHolderSet<T> implements ICustomHolderSet<T>
     public static <T> Codec<? extends ICustomHolderSet<T>> codec(ResourceKey<? extends Registry<T>> registryKey, Codec<Holder<T>> holderCodec, boolean forceList)
     {
         return RecordCodecBuilder.<NotHolderSet<T>>create(builder -> builder.group(
-                RegistryOps.retrieveRegistry(registryKey).forGetter(NotHolderSet::registry),
+                RegistryOps.retrieveRegistryLookup(registryKey).forGetter(NotHolderSet::registryLookup),
                 HolderSetCodec.create(registryKey, holderCodec, forceList).fieldOf("value").forGetter(NotHolderSet::value)
             ).apply(builder, NotHolderSet::new));
     }
 
     private final List<Runnable> owners = new ArrayList<>();
-    private final Registry<T> registry;
+    private final HolderLookup.RegistryLookup<T> registryLookup;
     private final HolderSet<T> value;
     @Nullable
     private List<Holder<T>> list = null;
-    
-    public Registry<T> registry() { return this.registry; }
+
+    public HolderLookup.RegistryLookup<T> registryLookup() { return this.registryLookup; }
     public HolderSet<T> value() { return this.value; }
-    
-    public NotHolderSet(Registry<T> registry, HolderSet<T> value)
+
+    public NotHolderSet(HolderLookup.RegistryLookup<T> registryLookup, HolderSet<T> value)
     {
-        this.registry = registry;
+        this.registryLookup = registryLookup;
         this.value = value;
         this.value.addInvalidationListener(this::invalidate);
     }
@@ -70,13 +73,13 @@ public class NotHolderSet<T> implements ICustomHolderSet<T>
     {
         return ForgeMod.NOT_HOLDER_SET.get();
     }
-    
+
     @Override
     public void addInvalidationListener(Runnable runnable)
     {
         this.owners.add(runnable);
     }
-    
+
     @Override
     public Iterator<Holder<T>> iterator()
     {
@@ -124,9 +127,15 @@ public class NotHolderSet<T> implements ICustomHolderSet<T>
     }
 
     @Override
-    public boolean isValidInRegistry(Registry<T> registry)
+    public boolean canSerializeIn(HolderOwner<T> holderOwner)
     {
-        return this.registry == registry;
+        return this.registryLookup.canSerializeIn(holderOwner);
+    }
+
+    @Override
+    public Optional<TagKey<T>> unwrapKey()
+    {
+        return Optional.empty();
     }
 
     @Override
@@ -134,13 +143,13 @@ public class NotHolderSet<T> implements ICustomHolderSet<T>
     {
         return "NotSet(" + this.value + ")";
     }
-    
+
     private List<Holder<T>> getList()
     {
         List<Holder<T>> thisList = this.list;
         if (thisList == null)
         {
-            List<Holder<T>> list = this.registry.holders()
+            List<Holder<T>> list = this.registryLookup.listElements()
                 .filter(holder -> !this.value.contains(holder))
                 .map(holder -> (Holder<T>)holder)
                 .toList();
@@ -152,7 +161,7 @@ public class NotHolderSet<T> implements ICustomHolderSet<T>
             return thisList;
         }
     }
-    
+
     private void invalidate()
     {
         this.list = null;

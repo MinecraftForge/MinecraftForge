@@ -3,6 +3,11 @@
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
+/*
+
+TODO: 1.19.3: Datagen went async for registries and holder lookups!
+
+
 package net.minecraftforge.debug.world;
 
 import java.util.List;
@@ -51,6 +56,7 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
+*/
 /**
  * <p>This tests the following features and requirements of biome modifier jsons::</p>
  * <ul>
@@ -62,7 +68,8 @@ import net.minecraftforge.registries.RegistryObject;
  * <p>If the biome modifiers are applied correctly, then badlands biomes should generate large basalt columns,
  * spawn magma cubes, have red-colored water, and be snowy. Additionally, biomes in the is_forest tag are missing
  * oak trees, pine trees, and skeletons.</p>
- */
+ *//*
+
 @Mod(BiomeModifierTest.MODID)
 public class BiomeModifierTest
 {
@@ -195,3 +202,4 @@ public class BiomeModifierTest
         }
     }
 }
+*/

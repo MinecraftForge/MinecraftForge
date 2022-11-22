@@ -12,6 +12,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.MenuAccess;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
@@ -53,7 +54,7 @@ public class PlayMessages
         SpawnEntity(Entity e)
         {
             this.entity = e;
-            this.typeId = Registry.ENTITY_TYPE.getId(e.getType()); //TODO: Codecs
+            this.typeId = BuiltInRegistries.ENTITY_TYPE.getId(e.getType()); //TODO: Codecs
             this.entityId = e.getId();
             this.uuid = e.getUUID();
             this.posX = e.getX();
@@ -144,7 +145,7 @@ public class PlayMessages
             ctx.get().enqueueWork(() -> {
                 try
                 {
-                    EntityType<?> type = Registry.ENTITY_TYPE.byId(msg.typeId);
+                    EntityType<?> type = BuiltInRegistries.ENTITY_TYPE.byId(msg.typeId);
                     Optional<Level> world = LogicalSidedProvider.CLIENTWORLD.get(ctx.get().getDirection().getReceptionSide());
                     Entity e = world.map(w -> type.customClientSpawn(msg, w)).orElse(null);
                     if (e == null)
@@ -257,7 +258,7 @@ public class PlayMessages
 
         OpenContainer(MenuType<?> id, int windowId, Component name, FriendlyByteBuf additionalData)
         {
-            this(Registry.MENU.getId(id), windowId, name, additionalData);
+            this(BuiltInRegistries.MENU.getId(id), windowId, name, additionalData);
         }
 
         private OpenContainer(int id, int windowId, Component name, FriendlyByteBuf additionalData)
@@ -304,7 +305,7 @@ public class PlayMessages
 
         public final MenuType<?> getType()
         {
-            return Registry.MENU.byId(this.id);
+            return BuiltInRegistries.MENU.byId(this.id);
         }
 
         public int getWindowId()

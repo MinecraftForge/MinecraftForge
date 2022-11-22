@@ -1,39 +1,43 @@
 --- a/net/minecraft/client/renderer/block/model/ItemOverrides.java
 +++ b/net/minecraft/client/renderer/block/model/ItemOverrides.java
-@@ -32,7 +_,11 @@
+@@ -31,7 +_,15 @@
        this.f_173461_ = new ResourceLocation[0];
     }
  
-+   @Deprecated //Forge: Use IUnbakedModel, add texture getter
-    public ItemOverrides(ModelBakery p_111740_, BlockModel p_111741_, Function<ResourceLocation, UnbakedModel> p_111742_, List<ItemOverride> p_111743_) {
-+      this(p_111740_, p_111741_, p_111742_, p_111740_.getAtlasSet()::m_117971_, p_111743_);
++   /**
++    * @deprecated Forge: Use {@link #ItemOverrides(ModelBaker, UnbakedModel, List, java.util.function.Function)}
++    */
++   @Deprecated
+    public ItemOverrides(ModelBaker p_251211_, BlockModel p_111741_, List<ItemOverride> p_111743_) {
++      this(p_251211_, p_111741_, p_111743_, p_251211_.getModelTextureGetter());
 +   }
-+   public ItemOverrides(ModelBakery p_111740_, UnbakedModel p_111741_, Function<ResourceLocation, UnbakedModel> p_111742_, Function<net.minecraft.client.resources.model.Material, net.minecraft.client.renderer.texture.TextureAtlasSprite> textureGetter, List<ItemOverride> p_111743_) {
++
++   public ItemOverrides(ModelBaker p_251211_, UnbakedModel p_111741_, List<ItemOverride> p_111743_, java.util.function.Function<net.minecraft.client.resources.model.Material, net.minecraft.client.renderer.texture.TextureAtlasSprite> spriteGetter) {
        this.f_173461_ = p_111743_.stream().flatMap(ItemOverride::m_173449_).map(ItemOverride.Predicate::m_173459_).distinct().toArray((p_173479_) -> {
           return new ResourceLocation[p_173479_];
        });
-@@ -46,7 +_,7 @@
+@@ -45,7 +_,7 @@
  
        for(int j = p_111743_.size() - 1; j >= 0; --j) {
           ItemOverride itemoverride = p_111743_.get(j);
--         BakedModel bakedmodel = this.m_173470_(p_111740_, p_111741_, p_111742_, itemoverride);
-+         BakedModel bakedmodel = this.bakeModel(p_111740_, p_111741_, p_111742_, textureGetter, itemoverride);
+-         BakedModel bakedmodel = this.m_246989_(p_251211_, p_111741_, itemoverride);
++         BakedModel bakedmodel = this.bakeModel(p_251211_, p_111741_, itemoverride, spriteGetter);
           ItemOverrides.PropertyMatcher[] aitemoverrides$propertymatcher = itemoverride.m_173449_().map((p_173477_) -> {
              int k = object2intmap.getInt(p_173477_.m_173459_());
              return new ItemOverrides.PropertyMatcher(k, p_173477_.m_173460_());
-@@ -60,9 +_,9 @@
+@@ -59,9 +_,9 @@
     }
  
     @Nullable
--   private BakedModel m_173470_(ModelBakery p_173471_, BlockModel p_173472_, Function<ResourceLocation, UnbakedModel> p_173473_, ItemOverride p_173474_) {
-+   private BakedModel bakeModel(ModelBakery p_173471_, UnbakedModel p_173472_, Function<ResourceLocation, UnbakedModel> p_173473_, Function<net.minecraft.client.resources.model.Material, net.minecraft.client.renderer.texture.TextureAtlasSprite> textureGetter, ItemOverride p_173474_) {
-       UnbakedModel unbakedmodel = p_173473_.apply(p_173474_.m_111718_());
--      return Objects.equals(unbakedmodel, p_173472_) ? null : p_173471_.m_119349_(p_173474_.m_111718_(), BlockModelRotation.X0_Y0);
-+      return Objects.equals(unbakedmodel, p_173472_) ? null : p_173471_.bake(p_173474_.m_111718_(), BlockModelRotation.X0_Y0, textureGetter);
+-   private BakedModel m_246989_(ModelBaker p_249483_, BlockModel p_251965_, ItemOverride p_250816_) {
++   private BakedModel bakeModel(ModelBaker p_249483_, UnbakedModel p_251965_, ItemOverride p_250816_, java.util.function.Function<net.minecraft.client.resources.model.Material, net.minecraft.client.renderer.texture.TextureAtlasSprite> spriteGetter) {
+       UnbakedModel unbakedmodel = p_249483_.m_245361_(p_250816_.m_111718_());
+-      return Objects.equals(unbakedmodel, p_251965_) ? null : p_249483_.m_245240_(p_250816_.m_111718_(), BlockModelRotation.X0_Y0);
++      return Objects.equals(unbakedmodel, p_251965_) ? null : p_249483_.bake(p_250816_.m_111718_(), BlockModelRotation.X0_Y0, spriteGetter);
     }
  
     @Nullable
-@@ -95,6 +_,10 @@
+@@ -94,6 +_,10 @@
        }
  
        return p_173465_;

@@ -12,10 +12,7 @@ import net.minecraft.gametest.framework.GameTestGenerator;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.gametest.framework.TestFunction;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.Items;
+import net.minecraft.world.item.*;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.EntityBlock;
@@ -31,6 +28,7 @@ import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.EnergyStorage;
 import net.minecraftforge.energy.IEnergyStorage;
+import net.minecraftforge.event.CreativeModeTabEvent;
 import net.minecraftforge.event.RegisterGameTestsEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -44,6 +42,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 @Mod(GameTestTest.MODID)
 public class GameTestTest
@@ -57,7 +56,7 @@ public class GameTestTest
             () -> new EnergyBlock(Properties.of(Material.STONE, MaterialColor.STONE)));
     @SuppressWarnings("unused")
     private static final RegistryObject<Item> ENERGY_BLOCK_ITEM = ITEMS.register("energy_block",
-            () -> new BlockItem(ENERGY_BLOCK.get(), new Item.Properties().tab(CreativeModeTab.TAB_MISC)));
+            () -> new BlockItem(ENERGY_BLOCK.get(), new Item.Properties()));
     private static final RegistryObject<BlockEntityType<EnergyBlockEntity>> ENERGY_BLOCK_ENTITY = BLOCK_ENTITIES.register("energy",
             () -> BlockEntityType.Builder.of(EnergyBlockEntity::new, ENERGY_BLOCK.get()).build(null));
 
@@ -71,6 +70,14 @@ public class GameTestTest
             BLOCKS.register(modBus);
             ITEMS.register(modBus);
             BLOCK_ENTITIES.register(modBus);
+
+            FMLJavaModLoadingContext.get().getModEventBus().addListener((Consumer<CreativeModeTabEvent.BuildContents>) onBuildContents -> {
+                if (onBuildContents.getTab() == CreativeModeTabs.INGREDIENTS) {
+                    onBuildContents.register((flags, output, permissions) -> {
+                        output.accept(ENERGY_BLOCK_ITEM.get());
+                    });
+                }
+            });
         }
     }
 

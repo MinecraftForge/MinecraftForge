@@ -5,6 +5,7 @@
 
 package net.minecraftforge.debug.fluid;
 
+import net.minecraft.world.item.*;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
@@ -13,6 +14,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions;
+import net.minecraftforge.event.CreativeModeTabEvent;
 import net.minecraftforge.fluids.DispenseFluidContainer;
 import net.minecraftforge.fluids.FluidType;
 import org.apache.commons.lang3.Validate;
@@ -33,12 +35,6 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
 
-import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.BucketItem;
-import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.DispenserBlock;
@@ -116,7 +112,7 @@ public class NewFluidTest
             new LiquidBlock(test_fluid, Properties.of(Material.WATER).noCollission().strength(100.0F).noLootTable())
     );
     public static RegistryObject<Item> test_fluid_bucket = ITEMS.register("test_fluid_bucket", () ->
-            new BucketItem(test_fluid, new Item.Properties().craftRemainder(Items.BUCKET).stacksTo(1).tab(CreativeModeTab.TAB_MISC))
+            new BucketItem(test_fluid, new Item.Properties().craftRemainder(Items.BUCKET).stacksTo(1))
     );
 
     // WARNING: this doesn't allow "any fluid", only the fluid from this test mod!
@@ -124,7 +120,7 @@ public class NewFluidTest
             new FluidloggableBlock(Properties.of(Material.WOOD).noCollission().strength(100.0F).noLootTable())
     );
     public static RegistryObject<Item> fluidloggable_blockitem = ITEMS.register("fluidloggable_block", () ->
-            new BlockItem(fluidloggable_block.get(), new Item.Properties().tab(CreativeModeTab.TAB_MISC))
+            new BlockItem(fluidloggable_block.get(), new Item.Properties())
     );
 
     public NewFluidTest()
@@ -139,6 +135,15 @@ public class NewFluidTest
             ITEMS.register(modEventBus);
             FLUID_TYPES.register(modEventBus);
             FLUIDS.register(modEventBus);
+
+            FMLJavaModLoadingContext.get().getModEventBus().addListener((Consumer<CreativeModeTabEvent.BuildContents>) onBuildContents -> {
+                if (onBuildContents.getTab() == CreativeModeTabs.INGREDIENTS) {
+                    onBuildContents.register((flags, output, permissions) -> {
+                        output.accept(fluidloggable_blockitem.get());
+                        output.accept(test_fluid_bucket.get());
+                    });
+                }
+            });
         }
     }
 

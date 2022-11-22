@@ -19,6 +19,7 @@ public final class CyclePresentException extends IllegalArgumentException {
      * @param cycles the cycles present
      */
     CyclePresentException(Set<Set<?>> cycles) {
+        super("Cycles present in graph: " + cycles);
         this.cycles = cycles;
     }
 

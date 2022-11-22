@@ -1,6 +1,6 @@
 --- a/net/minecraft/core/dispenser/DispenseItemBehavior.java
 +++ b/net/minecraft/core/dispenser/DispenseItemBehavior.java
-@@ -402,9 +_,10 @@
+@@ -405,9 +_,10 @@
                 level.m_46597_(blockpos, BaseFireBlock.m_49245_(level, blockpos));
                 level.m_142346_((Entity)null, GameEvent.f_157797_, blockpos);
              } else if (!CampfireBlock.m_51321_(blockstate) && !CandleBlock.m_152845_(blockstate) && !CandleCakeBlock.m_152910_(blockstate)) {

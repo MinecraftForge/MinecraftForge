@@ -7,7 +7,6 @@ package net.minecraftforge.debug.block;
 
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
-import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.*;
@@ -45,6 +44,7 @@ import net.minecraftforge.client.model.geometry.IGeometryBakingContext;
 import net.minecraftforge.client.model.geometry.IGeometryLoader;
 import net.minecraftforge.client.model.geometry.IUnbakedGeometry;
 import net.minecraftforge.common.util.ConcatenatedListView;
+import net.minecraftforge.event.CreativeModeTabEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -56,6 +56,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -72,7 +73,7 @@ public class FullPotsAccessorDemo
     private static final RegistryObject<Block> DIORITE_POT = BLOCKS.register("diorite_pot", DioriteFlowerPotBlock::new);
     private static final RegistryObject<Item> DIORITE_POT_ITEM = ITEMS.register(
             "diorite_pot",
-            () -> new BlockItem(DIORITE_POT.get(), new Item.Properties().tab(CreativeModeTab.TAB_MISC))
+            () -> new BlockItem(DIORITE_POT.get(), new Item.Properties())
     );
     private static final RegistryObject<BlockEntityType<DioriteFlowerPotBlockEntity>> DIORITE_POT_BLOCK_ENTITY = BLOCK_ENTITIES.register(
             "diorite_pot",
@@ -87,6 +88,8 @@ public class FullPotsAccessorDemo
             BLOCKS.register(bus);
             ITEMS.register(bus);
             BLOCK_ENTITIES.register(bus);
+
+            bus.addListener((CreativeModeTabEvent.BuildContents event) -> event.registerSimple(CreativeModeTabs.INGREDIENTS, DIORITE_POT_ITEM.get()));
         }
     }
 
@@ -256,15 +259,8 @@ public class FullPotsAccessorDemo
         private record DioritePotModelGeometry(UnbakedModel wrappedModel) implements IUnbakedGeometry<DioritePotModelGeometry>
         {
             @Override
-            public BakedModel bake(IGeometryBakingContext context, ModelBakery bakery, Function<net.minecraft.client.resources.model.Material, TextureAtlasSprite> spriteGetter, ModelState modelState, ItemOverrides overrides, ResourceLocation modelLocation)
-            {
-                return new DioritePotModel(wrappedModel.bake(bakery, spriteGetter, modelState, modelLocation));
-            }
-
-            @Override
-            public Collection<net.minecraft.client.resources.model.Material> getMaterials(IGeometryBakingContext context, Function<ResourceLocation, UnbakedModel> modelGetter, Set<Pair<String, String>> missingTextureErrors)
-            {
-                return wrappedModel.getMaterials(modelGetter, missingTextureErrors);
+            public BakedModel bake(IGeometryBakingContext context, ModelBaker baker, Function<net.minecraft.client.resources.model.Material, TextureAtlasSprite> spriteGetter, ModelState modelState, ItemOverrides overrides, ResourceLocation modelLocation) {
+                return new DioritePotModel(wrappedModel.bake(baker, spriteGetter, modelState, modelLocation));
             }
         }
 
@@ -299,8 +295,8 @@ public class FullPotsAccessorDemo
 
                 return potModel.getQuads(potState, face, rand, ModelData.EMPTY, renderType)
                         .stream()
-                        .filter(q -> !q.getSprite().getName().equals(POT_TEXTURE))
-                        .filter(q -> !q.getSprite().getName().equals(DIRT_TEXTURE))
+                        .filter(q -> !q.getSprite().contents().name().equals(POT_TEXTURE))
+                        .filter(q -> !q.getSprite().contents().name().equals(DIRT_TEXTURE))
                         .collect(Collectors.toList());
             }
 

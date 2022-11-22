@@ -5,8 +5,10 @@
 
 package net.minecraftforge.common.data;
 
-import net.minecraft.data.DataGenerator;
-import net.minecraft.data.tags.BlockTagsProvider;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.data.PackOutput;
+import net.minecraft.data.tags.IntrinsicHolderTagsProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
@@ -15,22 +17,24 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.registries.ForgeRegistries;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Locale;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
 import static net.minecraftforge.common.Tags.Blocks.*;
 
 public final class ForgeBlockTagsProvider extends BlockTagsProvider
 {
-    public ForgeBlockTagsProvider(DataGenerator gen, ExistingFileHelper existingFileHelper)
+    public ForgeBlockTagsProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider, @Nullable ExistingFileHelper existingFileHelper)
     {
-        super(gen, "forge", existingFileHelper);
+        super(output, lookupProvider, "forge", existingFileHelper);
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public void addTags()
+    public void addTags(HolderLookup.Provider p_256380_)
     {
         tag(BARRELS).addTag(BARRELS_WOODEN);
         tag(BARRELS_WOODEN).add(Blocks.BARREL);

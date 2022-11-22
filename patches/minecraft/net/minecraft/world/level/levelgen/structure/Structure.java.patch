@@ -1,9 +1,9 @@
 --- a/net/minecraft/world/level/levelgen/structure/Structure.java
 +++ b/net/minecraft/world/level/levelgen/structure/Structure.java
-@@ -40,11 +_,12 @@
+@@ -41,11 +_,12 @@
  public abstract class Structure {
-    public static final Codec<Structure> f_226553_ = Registry.f_235740_.m_194605_().dispatch(Structure::m_213658_, StructureType::m_226884_);
-    public static final Codec<Holder<Structure>> f_226554_ = RegistryFileCodec.m_135589_(Registry.f_235725_, f_226553_);
+    public static final Codec<Structure> f_226553_ = BuiltInRegistries.f_256763_.m_194605_().dispatch(Structure::m_213658_, StructureType::m_226884_);
+    public static final Codec<Holder<Structure>> f_226554_ = RegistryFileCodec.m_135589_(Registries.f_256944_, f_226553_);
 -   protected final Structure.StructureSettings f_226555_;
 +   //Forge: Make this field private so that the redirect coremod can target it
 +   private final Structure.StructureSettings f_226555_;
@@ -15,7 +15,7 @@
        });
     }
  
-@@ -56,6 +_,7 @@
+@@ -57,6 +_,7 @@
  
     protected Structure(Structure.StructureSettings p_226558_) {
        this.f_226555_ = p_226558_;
@@ -23,8 +23,8 @@
     }
  
     public HolderSet<Biome> m_226559_() {
-@@ -149,6 +_,29 @@
-    public abstract Optional<Structure.GenerationStub> m_214086_(Structure.GenerationContext p_226571_);
+@@ -157,6 +_,29 @@
+    }
  
     public abstract StructureType<?> m_213658_();
 +

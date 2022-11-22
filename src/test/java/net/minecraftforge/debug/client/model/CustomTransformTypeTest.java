@@ -40,6 +40,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.model.generators.*;
 import net.minecraftforge.common.data.ExistingFileHelper;
+import net.minecraftforge.event.CreativeModeTabEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -48,6 +49,8 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.function.Consumer;
 
 /*
  * Test mod for the custom transform types feature.
@@ -117,7 +120,7 @@ public class CustomTransformTypeTest
     public static final RegistryObject<BlockEntityType<ItemHangerBlockEntity>>
             ITEM_HANGER_BE = BLOCK_ENTITY_TYPES.register("item_hanger", () -> BlockEntityType.Builder.of(ItemHangerBlockEntity::new, ITEM_HANGER_BLOCK.get()).build(null));
     public static final RegistryObject<Item>
-            ITEM_HANGER_ITEM = ITEMS.register("item_hanger", () -> new ItemHangerItem(ITEM_HANGER_BLOCK.get(), new Item.Properties().tab(CreativeModeTab.TAB_MISC)));
+            ITEM_HANGER_ITEM = ITEMS.register("item_hanger", () -> new ItemHangerItem(ITEM_HANGER_BLOCK.get(), new Item.Properties()));
 
     public CustomTransformTypeTest()
     {
@@ -126,6 +129,13 @@ public class CustomTransformTypeTest
         BLOCKS.register(modBus);
         BLOCK_ENTITY_TYPES.register(modBus);
         ITEMS.register(modBus);
+        FMLJavaModLoadingContext.get().getModEventBus().addListener((Consumer<CreativeModeTabEvent.BuildContents>) onBuildContents -> {
+            if (onBuildContents.getTab() == CreativeModeTabs.INGREDIENTS) {
+                onBuildContents.register((flags, output, permissions) -> {
+                    output.accept(ITEM_HANGER_ITEM.get());
+                });
+            }
+        });
     }
 
     public void gatherData(GatherDataEvent event)

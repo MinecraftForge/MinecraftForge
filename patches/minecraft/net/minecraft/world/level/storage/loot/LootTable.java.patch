@@ -16,15 +16,15 @@
        this.f_79110_ = p_79116_;
        this.f_79111_ = LootItemFunctions.m_80770_(p_79116_);
     }
-@@ -79,6 +_,7 @@
+@@ -81,6 +_,7 @@
  
     }
  
 +   @Deprecated //Use other method or manually call ForgeHooks.modifyLoot
     public void m_79148_(LootContext p_79149_, Consumer<ItemStack> p_79150_) {
-       this.m_79131_(p_79149_, m_79142_(p_79150_));
+       this.m_79131_(p_79149_, m_246283_(p_79149_, p_79150_));
     }
-@@ -86,6 +_,7 @@
+@@ -88,6 +_,7 @@
     public ObjectArrayList<ItemStack> m_230922_(LootContext p_230923_) {
        ObjectArrayList<ItemStack> objectarraylist = new ObjectArrayList<>();
        this.m_79148_(p_230923_, objectarraylist::add);
@@ -32,7 +32,7 @@
        return objectarraylist;
     }
  
-@@ -94,8 +_,8 @@
+@@ -96,8 +_,8 @@
     }
  
     public void m_79136_(ValidationContext p_79137_) {
@@ -43,7 +43,7 @@
        }
  
        for(int j = 0; j < this.f_79110_.length; ++j) {
-@@ -177,6 +_,48 @@
+@@ -179,6 +_,48 @@
        return new LootTable.Builder();
     }
  
@@ -92,7 +92,7 @@
     public static class Builder implements FunctionUserBuilder<LootTable.Builder> {
        private final List<LootPool> f_79156_ = Lists.newArrayList();
        private final List<LootItemFunction> f_79157_ = Lists.newArrayList();
-@@ -231,7 +_,7 @@
+@@ -233,7 +_,7 @@
              }
           }
  

@@ -7,8 +7,9 @@ package net.minecraftforge.debug.client.model;
 
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
-import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.resources.model.ModelBaker;
+import net.minecraft.world.item.*;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Material;
@@ -38,6 +39,7 @@ import net.minecraftforge.client.model.generators.loaders.SeparateTransformsMode
 import net.minecraftforge.client.model.geometry.SimpleUnbakedGeometry;
 import net.minecraftforge.client.model.pipeline.QuadBakingVertexConsumer;
 import net.minecraftforge.common.data.ExistingFileHelper;
+import net.minecraftforge.event.CreativeModeTabEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.RegistryObject;
 import net.minecraftforge.fml.common.Mod;
@@ -46,19 +48,11 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Set;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 import net.minecraft.client.renderer.block.model.ItemTransforms;
-import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.ModelState;
-import net.minecraft.client.resources.model.UnbakedModel;
-import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import org.jetbrains.annotations.Nullable;
 
@@ -95,7 +89,7 @@ public class NewModelLoaderTest
     );
 
     public static RegistryObject<Item> obj_item = ITEMS.register("obj_block", () ->
-            new BlockItem(obj_block.get(), new Item.Properties().tab(CreativeModeTab.TAB_MISC)) {
+            new BlockItem(obj_block.get(), new Item.Properties()) {
                 @Override
                 public boolean canEquip(ItemStack stack, EquipmentSlot armorType, Entity entity)
                 {
@@ -105,23 +99,23 @@ public class NewModelLoaderTest
     );
 
     public static RegistryObject<Item> custom_transforms = ITEMS.register("custom_transforms", () ->
-            new Item(new Item.Properties().tab(CreativeModeTab.TAB_MISC))
+            new Item(new Item.Properties())
     );
 
     public static RegistryObject<Item> custom_vanilla_loader = ITEMS.register("custom_vanilla_loader", () ->
-            new Item(new Item.Properties().tab(CreativeModeTab.TAB_MISC))
+            new Item(new Item.Properties())
     );
 
     public static RegistryObject<Item> custom_loader = ITEMS.register("custom_loader", () ->
-            new Item(new Item.Properties().tab(CreativeModeTab.TAB_MISC))
+            new Item(new Item.Properties())
     );
 
     public static RegistryObject<Item> item_layers = ITEMS.register("item_layers", () ->
-            new Item(new Item.Properties().tab(CreativeModeTab.TAB_MISC))
+            new Item(new Item.Properties())
     );
 
     public static RegistryObject<Item> separate_perspective = ITEMS.register("separate_perspective", () ->
-            new Item(new Item.Properties().tab(CreativeModeTab.TAB_MISC))
+            new Item(new Item.Properties())
     );
 
     public NewModelLoaderTest()
@@ -133,6 +127,20 @@ public class NewModelLoaderTest
 
         modEventBus.addListener(this::modelRegistry);
         modEventBus.addListener(this::datagen);
+
+        FMLJavaModLoadingContext.get().getModEventBus().addListener((Consumer<CreativeModeTabEvent.BuildContents>) onBuildContents -> {
+            if (onBuildContents.getTab() == CreativeModeTabs.INGREDIENTS) {
+                onBuildContents.register((flags, output, permissions) -> {
+                    output.accept(obj_item.get());
+                    output.accept(custom_transforms.get());
+                    output.accept(custom_vanilla_loader.get());
+                    output.accept(custom_loader.get());
+                    output.accept(item_layers.get());
+                    output.accept(separate_perspective.get());
+
+                });
+            }
+        });
     }
 
     public void modelRegistry(ModelEvent.RegisterGeometryLoaders event)
@@ -152,8 +160,7 @@ public class NewModelLoaderTest
     static class TestModel extends SimpleUnbakedGeometry<TestModel>
     {
         @Override
-        protected void addQuads(IGeometryBakingContext owner, IModelBuilder<?> modelBuilder, ModelBakery bakery, Function< net.minecraft.client.resources.model.Material, TextureAtlasSprite> spriteGetter, ModelState modelTransform, ResourceLocation modelLocation)
-        {
+        protected void addQuads(IGeometryBakingContext owner, IModelBuilder<?> modelBuilder, ModelBaker baker, Function<net.minecraft.client.resources.model.Material, TextureAtlasSprite> spriteGetter, ModelState modelTransform, ResourceLocation modelLocation) {
             TextureAtlasSprite texture = spriteGetter.apply(owner.getMaterial("particle"));
 
             var quadBaker = new QuadBakingVertexConsumer.Buffered();
@@ -167,12 +174,6 @@ public class NewModelLoaderTest
             quadBaker.vertex(1, 1, 0.5f).color(255, 255, 255, 255).uv(texture.getU(16), texture.getV(0)).uv2(0).normal(0, 0, 0).endVertex();
 
             modelBuilder.addUnculledFace(quadBaker.getQuad());
-        }
-
-        @Override
-        public Collection< net.minecraft.client.resources.model.Material> getMaterials(IGeometryBakingContext context, Function<ResourceLocation, UnbakedModel> modelGetter, Set<Pair<String, String>> missingTextureErrors)
-        {
-            return Collections.singleton(context.getMaterial("particle"));
         }
     }
 

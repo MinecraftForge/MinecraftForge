@@ -1,6 +1,6 @@
 --- a/net/minecraft/tags/TagLoader.java
 +++ b/net/minecraft/tags/TagLoader.java
-@@ -164,7 +_,7 @@
+@@ -146,7 +_,7 @@
        p_203899_.keySet().forEach((p_216008_) -> {
           m_144523_(p_203899_, multimap, set, p_216008_, (p_215984_, p_215985_) -> {
              this.m_215978_(lookup, p_215985_).ifLeft((p_215977_) -> {

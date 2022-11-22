@@ -5,20 +5,24 @@
 
 package net.minecraftforge.debug.client.model;
 
+import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.event.CreativeModeTabEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.ObjectHolder;
 import net.minecraftforge.registries.RegisterEvent;
+
+import java.util.function.Consumer;
 
 @Mod(MultiLayerModelTest.MODID)
 public class MultiLayerModelTest
@@ -48,7 +52,14 @@ public class MultiLayerModelTest
         {
             if (!ENABLED || !event.getRegistryKey().equals(ForgeRegistries.Keys.ITEMS))
                 return;
-            event.register(ForgeRegistries.Keys.ITEMS, blockId, () -> new BlockItem(TEST_BLOCK, new Item.Properties().tab(CreativeModeTab.TAB_MISC)));
+            event.register(ForgeRegistries.Keys.ITEMS, blockId, () -> new BlockItem(TEST_BLOCK, new Item.Properties()));
+            FMLJavaModLoadingContext.get().getModEventBus().addListener((Consumer<CreativeModeTabEvent.BuildContents>) onBuildContents -> {
+                if (onBuildContents.getTab() == CreativeModeTabs.INGREDIENTS) {
+                    onBuildContents.register((flags, output, permissions) -> {
+                        output.accept(TEST_BLOCK.asItem());
+                    });
+                }
+            });
         }
 
         @SubscribeEvent

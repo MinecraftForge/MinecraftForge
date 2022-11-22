@@ -7,7 +7,6 @@ package net.minecraftforge.debug.fluid;
 
 import com.mojang.blaze3d.shaders.FogShape;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.math.Vector3f;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -15,10 +14,7 @@ import net.minecraft.client.renderer.FogRenderer;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.BucketItem;
-import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.Items;
+import net.minecraft.world.item.*;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LiquidBlock;
@@ -31,6 +27,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.minecraftforge.client.event.RegisterColorHandlersEvent;
 import net.minecraftforge.common.ForgeMod;
+import net.minecraftforge.event.CreativeModeTabEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fluids.FluidInteractionRegistry;
 import net.minecraftforge.fluids.FluidType;
@@ -46,6 +43,7 @@ import net.minecraftforge.registries.RegistryObject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
+import org.joml.Vector3f;
 
 import java.util.function.Consumer;
 import java.util.stream.Stream;
@@ -158,7 +156,7 @@ public class FluidTypeTest
     private static final RegistryObject<LiquidBlock> TEST_FLUID_BLOCK = BLOCKS.register("test_fluid_block", () ->
             new LiquidBlock(TEST_FLUID, BlockBehaviour.Properties.of(Material.WATER).noCollission().strength(100.0F).noLootTable()));
     private static final RegistryObject<Item> TEST_FLUID_BUCKET = ITEMS.register("test_fluid_bucket", () ->
-            new BucketItem(TEST_FLUID, new Item.Properties().craftRemainder(Items.BUCKET).stacksTo(1).tab(CreativeModeTab.TAB_MISC)));
+            new BucketItem(TEST_FLUID, new Item.Properties().craftRemainder(Items.BUCKET).stacksTo(1)));
 
     public FluidTypeTest()
     {
@@ -177,6 +175,17 @@ public class FluidTypeTest
             modEventBus.addListener(this::commonSetup);
 
             DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> new FluidTypeTestClient(modEventBus));
+
+            FMLJavaModLoadingContext.get().getModEventBus().addListener(new Consumer<CreativeModeTabEvent.BuildContents>() {
+                @Override
+                public void accept(CreativeModeTabEvent.BuildContents onBuildContents) {
+                    if (onBuildContents.getTab() == CreativeModeTabs.INGREDIENTS) {
+                        onBuildContents.register((flags, output, permission) -> {
+                            output.accept(new ItemStack(TEST_FLUID_BUCKET.get()));
+                        });
+                    }
+                }
+            });
         }
     }
 

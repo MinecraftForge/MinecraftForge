@@ -1,15 +1,6 @@
 --- a/net/minecraft/world/entity/boss/wither/WitherBoss.java
 +++ b/net/minecraft/world/entity/boss/wither/WitherBoss.java
-@@ -219,7 +_,7 @@
-          int k1 = this.m_31502_() - 1;
-          this.f_31430_.m_142711_(1.0F - (float)k1 / 220.0F);
-          if (k1 <= 0) {
--            Explosion.BlockInteraction explosion$blockinteraction = this.f_19853_.m_46469_().m_46207_(GameRules.f_46132_) ? Explosion.BlockInteraction.DESTROY : Explosion.BlockInteraction.NONE;
-+            Explosion.BlockInteraction explosion$blockinteraction = net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.f_19853_, this) ? Explosion.BlockInteraction.DESTROY : Explosion.BlockInteraction.NONE;
-             this.f_19853_.m_46518_(this, this.m_20185_(), this.m_20188_(), this.m_20189_(), 7.0F, false, explosion$blockinteraction);
-             if (!this.m_20067_()) {
-                this.f_19853_.m_6798_(1023, this.m_20183_(), 0);
-@@ -280,7 +_,7 @@
+@@ -278,7 +_,7 @@
  
           if (this.f_31429_ > 0) {
              --this.f_31429_;
@@ -18,7 +9,7 @@
                 int j1 = Mth.m_14107_(this.m_20186_());
                 int i2 = Mth.m_14107_(this.m_20185_());
                 int j2 = Mth.m_14107_(this.m_20189_());
-@@ -294,7 +_,7 @@
+@@ -292,7 +_,7 @@
                          int i1 = j2 + k2;
                          BlockPos blockpos = new BlockPos(l2, l, i1);
                          BlockState blockstate = this.f_19853_.m_8055_(blockpos);
@@ -27,11 +18,14 @@
                             flag = this.f_19853_.m_46953_(blockpos, true, this) || flag;
                          }
                       }
-@@ -315,6 +_,7 @@
+@@ -313,6 +_,10 @@
        }
     }
  
-+   @Deprecated //Forge: DO NOT USE use BlockState.canEntityDestroy
++   /**
++    * @deprecated Forge: Use {@link BlockState#canEntityDestroy(net.minecraft.world.level.BlockGetter, BlockPos, Entity)} instead.
++    */
++   @Deprecated
     public static boolean m_31491_(BlockState p_31492_) {
        return !p_31492_.m_60795_() && !p_31492_.m_204336_(BlockTags.f_13070_);
     }

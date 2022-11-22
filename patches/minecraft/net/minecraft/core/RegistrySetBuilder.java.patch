@@ -1,0 +1,13 @@
+--- a/net/minecraft/core/RegistrySetBuilder.java
++++ b/net/minecraft/core/RegistrySetBuilder.java
+@@ -37,6 +_,10 @@
+       return this.m_255162_(p_256261_, Lifecycle.stable(), p_256010_);
+    }
+ 
++   public List<? extends ResourceKey<? extends Registry<?>>> getEntryKeys() {
++      return this.f_254732_.stream().map(RegistrySetBuilder.RegistryStub::f_254738_).toList();
++   }
++
+    private RegistrySetBuilder.BuildState m_254900_(RegistryAccess p_256400_) {
+       RegistrySetBuilder.BuildState registrysetbuilder$buildstate = RegistrySetBuilder.BuildState.m_255369_(p_256400_, this.f_254732_.stream().map(RegistrySetBuilder.RegistryStub::f_254738_));
+       this.f_254732_.forEach((p_255629_) -> {

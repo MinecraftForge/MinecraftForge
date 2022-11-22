@@ -6,6 +6,10 @@
 package net.minecraftforge.client;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
+import com.google.common.graph.ElementOrder;
+import com.google.common.graph.GraphBuilder;
+import com.google.common.graph.MutableGraph;
 import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.shaders.FogShape;
@@ -14,8 +18,6 @@ import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.datafixers.util.Either;
-import com.mojang.math.Matrix4f;
-import com.mojang.math.Vector3f;
 import net.minecraft.ChatFormatting;
 import net.minecraft.FileUtil;
 import net.minecraft.client.Camera;
@@ -53,14 +55,16 @@ import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.ShaderInstance;
-import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.culling.Frustum;
+import net.minecraft.client.renderer.texture.SpriteContents;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.language.I18n;
+import net.minecraft.client.resources.metadata.animation.AnimationMetadataSection;
+import net.minecraft.client.resources.metadata.animation.FrameSize;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.Material;
 import net.minecraft.client.resources.model.ModelBakery;
@@ -70,18 +74,16 @@ import net.minecraft.client.sounds.SoundEngine;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.locale.Language;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
-import net.minecraft.network.chat.ChatSender;
 import net.minecraft.network.chat.ChatType;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
-import net.minecraft.network.chat.MessageSigner;
 import net.minecraft.network.chat.PlayerChatMessage;
 import net.minecraft.network.protocol.status.ServerStatus;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
-import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
@@ -93,6 +95,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
+import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.level.BlockAndTintGetter;
@@ -100,7 +103,6 @@ import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.FogType;
 import net.minecraft.world.phys.BlockHitResult;
@@ -142,17 +144,19 @@ import net.minecraftforge.client.textures.ForgeTextureMetadata;
 import net.minecraftforge.common.ForgeI18n;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.util.ItemStackMap;
+import net.minecraftforge.event.CreativeModeTabEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.IExtensionPoint;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoader;
-import net.minecraftforge.fml.StartupMessageManager;
 import net.minecraftforge.fml.VersionChecker;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.loading.toposort.CyclePresentException;
+import net.minecraftforge.fml.loading.toposort.TopologicalSort;
 import net.minecraftforge.network.NetworkConstants;
 import net.minecraftforge.network.NetworkRegistry;
-import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.GameData;
 import net.minecraftforge.versions.forge.ForgeVersion;
 import org.apache.commons.lang3.tuple.Pair;
@@ -163,6 +167,8 @@ import org.apache.logging.log4j.MarkerManager;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Matrix4f;
+import org.joml.Vector3f;
 
 import java.io.File;
 import java.io.IOException;
@@ -170,12 +176,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.Stack;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -296,16 +304,6 @@ public class ForgeHooksClient
     public static boolean renderSpecificFirstPersonArm(PoseStack poseStack, MultiBufferSource multiBufferSource, int packedLight, AbstractClientPlayer player, HumanoidArm arm)
     {
         return MinecraftForge.EVENT_BUS.post(new RenderArmEvent(poseStack, multiBufferSource, packedLight, player, arm));
-    }
-
-    public static void onTextureStitchedPre(TextureAtlas map, Set<ResourceLocation> resourceLocations)
-    {
-        StartupMessageManager.mcLoaderConsumer().ifPresent(c->c.accept("Atlas Stitching : "+map.location().toString()));
-        ModLoader.get().postEvent(new TextureStitchEvent.Pre(map, resourceLocations));
-//        ModelLoader.White.INSTANCE.register(map); // TODO Custom TAS
-        Sheets.SIGN_MATERIALS.values().stream()
-                .filter(rm -> rm.atlasLocation().equals(map.location()))
-                .forEach(rm -> resourceLocations.add(rm.texture()));
     }
 
     public static void onTextureStitchedPost(TextureAtlas map)
@@ -500,22 +498,6 @@ public class ForgeHooksClient
                 Minecraft.getInstance().getTextureAtlas(TextureAtlas.LOCATION_BLOCKS).apply(props.getFlowingTexture(fluidStateIn, level, pos)),
                 overlayTexture == null ? null : Minecraft.getInstance().getTextureAtlas(TextureAtlas.LOCATION_BLOCKS).apply(overlayTexture),
         };
-    }
-
-    public static void gatherFluidTextures(Set<Material> textures)
-    {
-        if (!ModLoader.isLoadingStateValid()) return;
-
-        ForgeRegistries.FLUIDS.getValues().stream()
-                .flatMap(ForgeHooksClient::getFluidMaterials)
-                .forEach(textures::add);
-    }
-
-    public static Stream<Material> getFluidMaterials(Fluid fluid)
-    {
-        return IClientFluidTypeExtensions.of(fluid).getTextures()
-                                         .filter(Objects::nonNull)
-                                         .map(ForgeHooksClient::getBlockMaterial);
     }
 
     @SuppressWarnings("deprecation")
@@ -785,17 +767,39 @@ public class ForgeHooksClient
     }
 
     @Nullable
-    public static TextureAtlasSprite loadTextureAtlasSprite(
-            TextureAtlas textureAtlas,
-            ResourceManager resourceManager, TextureAtlasSprite.Info textureInfo,
+    public static SpriteContents loadSpriteContents(
+            ResourceLocation name,
             Resource resource,
-            int atlasWidth, int atlasHeight,
-            int spriteX, int spriteY, int mipmapLevel,
-            NativeImage image
-    ) throws IOException
+            FrameSize frameSize,
+            NativeImage image,
+            AnimationMetadataSection animationMeta
+    )
     {
-        ForgeTextureMetadata metadata = ForgeTextureMetadata.forResource(resource);
-        return metadata.getLoader() == null ? null : metadata.getLoader().load(textureAtlas, resourceManager, textureInfo, resource, atlasWidth, atlasHeight, spriteX, spriteY, mipmapLevel, image);
+        try
+        {
+            ForgeTextureMetadata forgeMeta = ForgeTextureMetadata.forResource(resource);
+            return forgeMeta.getLoader() == null ? null : forgeMeta.getLoader().loadContents(name, resource, frameSize, image, animationMeta, forgeMeta);
+        }
+        catch (IOException e)
+        {
+            LOGGER.error("Unable to get Forge metadata for {}, falling back to vanilla loading", name);
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    @Nullable
+    public static TextureAtlasSprite loadTextureAtlasSprite(
+            ResourceLocation atlasName,
+            SpriteContents contents,
+            int atlasWidth, int atlasHeight,
+            int spriteX, int spriteY, int mipmapLevel
+    )
+    {
+        if (contents.forgeMeta == null || contents.forgeMeta.getLoader() == null)
+            return null;
+
+        return contents.forgeMeta.getLoader().makeSprite(atlasName, contents, atlasWidth, atlasHeight, spriteX, spriteY, mipmapLevel);
     }
 
 
@@ -957,9 +961,16 @@ public class ForgeHooksClient
     }
 
     @Nullable
-    public static Component onClientChat(ChatType.Bound boundChatType, Component message, PlayerChatMessage playerChatMessage, MessageSigner messageSigner)
+    public static Component onClientChat(ChatType.Bound boundChatType, Component message, UUID sender)
     {
-        ClientChatReceivedEvent event = new ClientChatReceivedEvent(boundChatType, message, playerChatMessage, messageSigner);
+        ClientChatReceivedEvent event = new ClientChatReceivedEvent(boundChatType, message, sender);
+        return MinecraftForge.EVENT_BUS.post(event) ? null : event.getMessage();
+    }
+
+    @Nullable
+    public static Component onClientPlayerChat(ChatType.Bound boundChatType, Component message, PlayerChatMessage playerChatMessage, UUID sender)
+    {
+        ClientChatReceivedEvent.Player event = new ClientChatReceivedEvent.Player(boundChatType, message, playerChatMessage, sender);
         return MinecraftForge.EVENT_BUS.post(event) ? null : event.getMessage();
     }
 
@@ -994,7 +1005,7 @@ public class ForgeHooksClient
         @SubscribeEvent
         public static void registerShaders(RegisterShadersEvent event) throws IOException
         {
-            event.registerShader(new ShaderInstance(event.getResourceManager(), new ResourceLocation("forge","rendertype_entity_unlit_translucent"), DefaultVertexFormat.NEW_ENTITY), (p_172645_) -> {
+            event.registerShader(new ShaderInstance(event.getResourceProvider(), new ResourceLocation("forge","rendertype_entity_unlit_translucent"), DefaultVertexFormat.NEW_ENTITY), (p_172645_) -> {
                 rendertypeEntityTranslucentUnlitShader = p_172645_;
             });
         }
@@ -1176,5 +1187,108 @@ public class ForgeHooksClient
         final var normalised = FileUtil.normalizeResourcePath(
             (isRelative ? basePath : "shaders/include/") + loc.getPath());
         return new ResourceLocation(loc.getNamespace(), normalised);
+    }
+
+    public static CreativeModeTab.DisplayItemsGenerator onCreativeModeTabBuildContents(CreativeModeTab tab, CreativeModeTab.DisplayItemsGenerator originalGenerator) {
+        Set<CreativeModeTabEvent.DisplayItemsAdapter> customGenerators = new HashSet<>();
+        CreativeModeTabEvent.BuildContents event = ModLoader.get().postEventWithReturn(new net.minecraftforge.event.CreativeModeTabEvent.BuildContents(tab, customGenerators));
+
+        record ModificationEntry(CreativeModeTab.TabVisibility tabVisibility, ItemStack before, ItemStack after) {}
+
+        return (featureFlagSet, output, hasPermissions) -> {
+            final Map<ItemStack, CreativeModeTab.TabVisibility> originalEntries = ItemStackMap.createTypeAndTagLinkedMap();
+            final Map<ItemStack, ModificationEntry> entries = ItemStackMap.createTypeAndTagMap();
+
+            originalGenerator.accept(featureFlagSet, originalEntries::put, hasPermissions);
+            customGenerators.forEach(generator -> generator.accept(featureFlagSet, (stack, visibility, before, after) -> {
+                if (stack.getCount() != 1)
+                    throw new IllegalArgumentException("The stack count must be 1");
+
+                entries.put(stack, new ModificationEntry(visibility, before, after));
+            }, hasPermissions));
+
+            // We switch to the stacks tag here, as we need to be able to compare and hash them for the graph!
+            // We could not handle this with an open hashset since the builder does not support this internally.
+            final MutableGraph<CompoundTag> graph = GraphBuilder.directed().nodeOrder(ElementOrder.insertion()).build();
+            final Map<CompoundTag, ItemStack> tagToStack = Maps.newHashMap();
+
+            CompoundTag lastStackTag = null;
+            for (ItemStack stack : originalEntries.keySet())
+            {
+                final CompoundTag tag = stack.serializeNBT();
+                tagToStack.put(tag, stack);
+                if (!stack.isEmpty())
+                {
+                    graph.addNode(tag);
+                }
+                if (lastStackTag != null)
+                {
+                    graph.putEdge(lastStackTag, tag);
+                }
+                lastStackTag = tag;
+            }
+
+            CompoundTag finalLastStackTag = lastStackTag;
+            entries.forEach((stack, modificationEntry) -> {
+                final CompoundTag tag = stack.serializeNBT();
+                if (!stack.isEmpty())
+                {
+                    graph.addNode(tag);
+                    tagToStack.put(tag, stack);
+                }
+                if (!modificationEntry.after.isEmpty())
+                {
+                    final CompoundTag afterTag = modificationEntry.after.serializeNBT();
+                    graph.putEdge(afterTag, tag);
+                    tagToStack.put(afterTag, modificationEntry.after);
+                }
+                else if (finalLastStackTag != null)
+                {
+                    // If the user does not specify an after, we assume it is the last stack and put it after that.
+                    graph.putEdge(finalLastStackTag, tag);
+                }
+                if (!modificationEntry.before.isEmpty())
+                {
+                    final CompoundTag beforeTag = modificationEntry.before.serializeNBT();
+                    graph.putEdge(tag, beforeTag);
+                    tagToStack.put(beforeTag, modificationEntry.before);
+                }
+            });
+
+            try
+            {
+                List<CompoundTag> tierList = TopologicalSort.topologicalSort(graph, null);
+
+                // Now we unwind the tags again so that they are sorted neatly.
+                for (CompoundTag tag : tierList)
+                {
+                    final ItemStack stack = tagToStack.get(tag);
+                    if (originalEntries.containsKey(stack))
+                    {
+                        output.accept(stack, originalEntries.get(stack));
+                    }
+                    else if (entries.containsKey(stack))
+                    {
+                        output.accept(stack, entries.get(stack).tabVisibility);
+                    }
+                }
+            }
+            catch (CyclePresentException cyclePresentException)
+            {
+                LOGGER.error("Failed to inject custom items into creative mode tab {} due to a cycle in the dependency graph", tab, cyclePresentException);
+                LOGGER.warn("Detected cycles:");
+                for (Set<Object> cycle : cyclePresentException.getCycles())
+                {
+                    graph.edges().forEach(edge -> {
+                        if (cycle.contains(edge.nodeU()) && cycle.contains(edge.nodeV()))
+                        {
+                            LOGGER.warn(" - {} -> {}", tagToStack.get(edge.nodeU()), tagToStack.get(edge.nodeV()));
+                        }
+                    });
+                }
+                LOGGER.error("Falling back to default!");
+                originalGenerator.accept(featureFlagSet, output, hasPermissions);
+            }
+        };
     }
 }

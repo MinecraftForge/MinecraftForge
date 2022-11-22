@@ -6,6 +6,7 @@
 package net.minecraftforge.event;
 
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.core.Holder;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
@@ -42,12 +43,12 @@ public class PlayLevelSoundEvent extends Event
     private final Level level;
     private final float originalVolume;
     private final float originalPitch;
-    private SoundEvent sound;
+    private Holder<SoundEvent> sound;
     private SoundSource source;
     private float newVolume;
     private float newPitch;
 
-    public PlayLevelSoundEvent(@NotNull Level level, @NotNull SoundEvent sound, @NotNull SoundSource source, float volume, float pitch)
+    public PlayLevelSoundEvent(@NotNull Level level, @NotNull Holder<SoundEvent> sound, @NotNull SoundSource source, float volume, float pitch)
     {
         this.level = level;
         this.sound = sound;
@@ -71,7 +72,7 @@ public class PlayLevelSoundEvent extends Event
      * {@return the sound event to be played}
      */
     @Nullable
-    public SoundEvent getSound()
+    public Holder<SoundEvent> getSound()
     {
         return this.sound;
     }
@@ -79,7 +80,7 @@ public class PlayLevelSoundEvent extends Event
     /**
      * Sets the sound event to be played.
      */
-    public void setSound(@Nullable SoundEvent sound)
+    public void setSound(@Nullable Holder<SoundEvent> sound)
     {
         this.sound = sound;
     }
@@ -165,7 +166,7 @@ public class PlayLevelSoundEvent extends Event
     {
         private final Entity entity;
 
-        public AtEntity(Entity entity, SoundEvent sound, SoundSource source, float volume, float pitch)
+        public AtEntity(Entity entity, Holder<SoundEvent> sound, SoundSource source, float volume, float pitch)
         {
             super(entity.level, sound, source, volume, pitch);
             this.entity = entity;
@@ -195,7 +196,7 @@ public class PlayLevelSoundEvent extends Event
     {
         private final Vec3 position;
 
-        public AtPosition(Level level, Vec3 position, SoundEvent sound, SoundSource source, float volume, float pitch)
+        public AtPosition(Level level, Vec3 position, Holder<SoundEvent> sound, SoundSource source, float volume, float pitch)
         {
             super(level, sound, source, volume, pitch);
             this.position = position;

@@ -8,6 +8,7 @@ package net.minecraftforge.fluids;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.Holder;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
@@ -15,7 +16,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.core.Registry;
 import net.minecraft.network.chat.Component;
 import net.minecraftforge.registries.ForgeRegistries;
 
@@ -41,7 +41,7 @@ public class FluidStack
 
     public static final Codec<FluidStack> CODEC = RecordCodecBuilder.create(
             instance -> instance.group(
-                    Registry.FLUID.byNameCodec().fieldOf("FluidName").forGetter(FluidStack::getFluid),
+                    BuiltInRegistries.FLUID.byNameCodec().fieldOf("FluidName").forGetter(FluidStack::getFluid),
                     Codec.INT.fieldOf("Amount").forGetter(FluidStack::getAmount),
                     CompoundTag.CODEC.optionalFieldOf("Tag").forGetter(stack -> Optional.ofNullable(stack.getTag()))
             ).apply(instance, (fluid, amount, tag) -> {

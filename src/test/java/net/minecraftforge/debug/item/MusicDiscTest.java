@@ -27,7 +27,7 @@ public class MusicDiscTest
     private static final DeferredRegister<SoundEvent> SOUND_EVENTS = DeferredRegister.create(ForgeRegistries.SOUND_EVENTS, MOD_ID);
 
     private static final RegistryObject<SoundEvent> TEST_SOUND_EVENT = SOUND_EVENTS.register("test_sound_event",
-            () -> new SoundEvent(new ResourceLocation(MOD_ID, "test_sound_event")));
+            () -> SoundEvent.createVariableRangeEvent(new ResourceLocation(MOD_ID, "test_sound_event")));
 
     private static final RegistryObject<Item> TEST_MUSIC_DISC = ITEMS.register("test_music_disc",
             () -> new RecordItem(1, TEST_SOUND_EVENT, new Item.Properties().stacksTo(1).rarity(Rarity.EPIC), 20));
