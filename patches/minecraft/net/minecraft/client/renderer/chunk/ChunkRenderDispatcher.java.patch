@@ -88,7 +88,7 @@
                    if (blockstate.m_60799_() != RenderShape.INVISIBLE) {
 -                     RenderType rendertype2 = ItemBlockRenderTypes.m_109282_(blockstate);
 +                     var model = blockrenderdispatcher.m_110910_(blockstate);
-+                     var modelData = getModelData(blockpos2);
++                     var modelData = model.getModelData(renderchunkregion, blockpos2, blockstate, getModelData(blockpos2));
 +                     randomsource.m_188584_(blockstate.m_60726_(blockpos2));
 +                     for (RenderType rendertype2 : model.getRenderTypes(blockstate, randomsource, modelData)) {
                       BufferBuilder bufferbuilder2 = p_234471_.m_108839_(rendertype2);
@@ -99,7 +99,7 @@
                       posestack.m_85836_();
                       posestack.m_85837_((double)(blockpos2.m_123341_() & 15), (double)(blockpos2.m_123342_() & 15), (double)(blockpos2.m_123343_() & 15));
 -                     blockrenderdispatcher.m_234355_(blockstate, blockpos2, renderchunkregion, posestack, bufferbuilder2, true, randomsource);
-+                     blockrenderdispatcher.renderBatched(blockstate, blockpos2, renderchunkregion, posestack, bufferbuilder2, true, randomsource, modelData, rendertype2);
++                     blockrenderdispatcher.renderBatched(blockstate, blockpos2, renderchunkregion, posestack, bufferbuilder2, true, randomsource, modelData, rendertype2, false);
                       posestack.m_85849_();
 +                     }
                    }
