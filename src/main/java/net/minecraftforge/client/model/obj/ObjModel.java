@@ -68,7 +68,7 @@ public class ObjModel extends SimpleUnbakedGeometry<ObjModel>
             new Vec2(1, 0),
     };
 
-    private final Map<String, ModelGroup> parts = Maps.newHashMap();
+    private final Map<String, ModelGroup> parts = Maps.newLinkedHashMap();
     private final Set<String> rootComponentNames = Collections.unmodifiableSet(parts.keySet());
     private Set<String> allComponentNames;
 
@@ -402,8 +402,7 @@ public class ObjModel extends SimpleUnbakedGeometry<ObjModel>
             faceNormal = abs;
         }
 
-        var quad = new BakedQuad[1];
-        var quadBaker = new QuadBakingVertexConsumer(q -> quad[0] = q);
+        var quadBaker = new QuadBakingVertexConsumer.Buffered();
 
         quadBaker.setSprite(texture);
         quadBaker.setTintIndex(tintIndex);
@@ -516,7 +515,7 @@ public class ObjModel extends SimpleUnbakedGeometry<ObjModel>
             }
         }
 
-        return Pair.of(quad[0], cull);
+        return Pair.of(quadBaker.getQuad(), cull);
     }
 
     public CompositeRenderable bakeRenderable(IGeometryBakingContext configuration)
@@ -582,7 +581,7 @@ public class ObjModel extends SimpleUnbakedGeometry<ObjModel>
 
     public class ModelGroup extends ModelObject
     {
-        final Map<String, ModelObject> parts = Maps.newHashMap();
+        final Map<String, ModelObject> parts = Maps.newLinkedHashMap();
 
         ModelGroup(String name)
         {
@@ -652,9 +651,11 @@ public class ObjModel extends SimpleUnbakedGeometry<ObjModel>
             int tintIndex = mat.diffuseTintIndex;
             Vector4f colorTint = mat.diffuseColor;
 
+            var rootTransform = owner.getRootTransform();
+            var transform = rootTransform.isIdentity() ? modelTransform.getRotation() : modelTransform.getRotation().compose(rootTransform);
             for (int[][] face : faces)
             {
-                Pair<BakedQuad, Direction> quad = makeQuad(face, tintIndex, colorTint, mat.ambientColor, texture, modelTransform.getRotation());
+                Pair<BakedQuad, Direction> quad = makeQuad(face, tintIndex, colorTint, mat.ambientColor, texture, transform);
                 if (quad.getRight() == null)
                     modelBuilder.addUnculledFace(quad.getLeft());
                 else

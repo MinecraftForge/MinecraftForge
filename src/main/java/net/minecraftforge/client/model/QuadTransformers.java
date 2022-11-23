@@ -64,7 +64,7 @@ public final class QuadTransformers {
             {
                 int offset = i * IQuadTransformer.STRIDE + IQuadTransformer.NORMAL;
                 int normalIn = vertices[offset];
-                if ((normalIn >> 8) != 0)
+                if ((normalIn & 0x00FFFFFF) != 0) // The ignored byte is padding and may be filled with user data
                 {
                     float x = ((byte) (normalIn & 0xFF)) / 127.0f;
                     float y = ((byte) ((normalIn >> 8) & 0xFF)) / 127.0f;
@@ -72,12 +72,11 @@ public final class QuadTransformers {
 
                     Vector3f pos = new Vector3f(x, y, z);
                     transform.transformNormal(pos);
-                    pos.normalize();
 
-                    vertices[offset] = (((byte) (x * 127.0f)) & 0xFF) |
-                            ((((byte) (y * 127.0f)) & 0xFF) << 8) |
-                            ((((byte) (z * 127.0f)) & 0xFF) << 16) |
-                            (normalIn & 0xFF000000);
+                    vertices[offset] = (((byte) (pos.x() * 127.0f)) & 0xFF) |
+                            ((((byte) (pos.y() * 127.0f)) & 0xFF) << 8) |
+                            ((((byte) (pos.z() * 127.0f)) & 0xFF) << 16) |
+                            (normalIn & 0xFF000000); // Restore padding, just in case
                 }
             }
         };

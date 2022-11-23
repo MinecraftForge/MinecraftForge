@@ -109,7 +109,7 @@
 +      BLOCK_RENDER_TYPES.put(net.minecraftforge.registries.ForgeRegistries.BLOCKS.getDelegateOrThrow(block), layers);
 +   }
 +
-+   public static void setRenderLayer(Fluid fluid, RenderType type) {
++   public static synchronized void setRenderLayer(Fluid fluid, RenderType type) {
 +      com.google.common.base.Preconditions.checkArgument(type.getChunkLayerId() >= 0, "The argument must be a valid chunk render type returned by RenderType#chunkBufferLayers().");
 +      checkClientLoading();
 +      FLUID_RENDER_TYPES.put(net.minecraftforge.registries.ForgeRegistries.FLUIDS.getDelegateOrThrow(fluid), type);

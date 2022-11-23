@@ -156,8 +156,7 @@ public class NewModelLoaderTest
         {
             TextureAtlasSprite texture = spriteGetter.apply(owner.getMaterial("particle"));
 
-            var quad = new BakedQuad[1];
-            var quadBaker = new QuadBakingVertexConsumer(q -> quad[0] = q);
+            var quadBaker = new QuadBakingVertexConsumer.Buffered();
 
             quadBaker.setDirection(Direction.UP);
             quadBaker.setSprite(texture);
@@ -167,7 +166,7 @@ public class NewModelLoaderTest
             quadBaker.vertex(1, 0, 0.5f).color(255, 255, 255, 255).uv(texture.getU(16), texture.getV(16)).uv2(0).normal(0, 0, 0).endVertex();
             quadBaker.vertex(1, 1, 0.5f).color(255, 255, 255, 255).uv(texture.getU(16), texture.getV(0)).uv2(0).normal(0, 0, 0).endVertex();
 
-            modelBuilder.addUnculledFace(quad[0]);
+            modelBuilder.addUnculledFace(quadBaker.getQuad());
         }
 
         @Override

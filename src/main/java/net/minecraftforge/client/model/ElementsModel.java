@@ -62,9 +62,11 @@ public class ElementsModel extends SimpleUnbakedGeometry<ElementsModel>
         if (deprecatedLoader)
             LOGGER.warn("Model \"" + modelLocation + "\" is using the deprecated loader \"minecraft:elements\" instead of \"forge:elements\". This loader will be removed in 1.20.");
 
-        var rootTransform = context.getRootTransform();
-        if (!rootTransform.isIdentity())
-            modelState = new SimpleModelState(modelState.getRotation().compose(rootTransform), modelState.isUvLocked());
+        // If there is a root transform, undo the ModelState transform, apply it, then re-apply the ModelState transform.
+        // This is necessary because of things like UV locking, which should only respond to the ModelState, and as such
+        // that is the only transform that should be applied during face bake.
+        var postTransform = context.getRootTransform().isIdentity() ? QuadTransformers.empty() :
+                QuadTransformers.applying(modelState.getRotation().compose(context.getRootTransform()).compose(modelState.getRotation().inverse()));
 
         for (BlockElement element : elements)
         {
@@ -73,6 +75,7 @@ public class ElementsModel extends SimpleUnbakedGeometry<ElementsModel>
                 var face = element.faces.get(direction);
                 var sprite = spriteGetter.apply(context.getMaterial(face.texture));
                 var quad = BlockModel.bakeFace(element, face, sprite, direction, modelState, modelLocation);
+                postTransform.processInPlace(quad);
 
                 if (face.cullForDirection == null)
                     modelBuilder.addUnculledFace(quad);
