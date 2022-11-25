@@ -8,7 +8,9 @@ package net.minecraftforge.client;
 import com.google.common.collect.ImmutableMap;
 import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.platform.Window;
+import com.mojang.blaze3d.preprocessor.GlslPreprocessor;
 import com.mojang.blaze3d.shaders.FogShape;
+import com.mojang.blaze3d.shaders.Program;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -130,6 +132,7 @@ import net.minecraftforge.client.event.RenderLevelStageEvent;
 import net.minecraftforge.client.event.RenderTooltipEvent;
 import net.minecraftforge.client.event.ScreenEvent;
 import net.minecraftforge.client.event.ScreenshotEvent;
+import net.minecraftforge.client.event.ShaderTransformEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.client.event.ToastAddEvent;
 import net.minecraftforge.client.event.ViewportEvent;
@@ -286,6 +289,13 @@ public class ForgeHooksClient
         RenderLevelStageEvent.Stage stage = RenderLevelStageEvent.Stage.fromRenderType(renderType);
         if (stage != null)
             dispatchRenderStage(stage, levelRenderer, poseStack, projectionMatrix, renderTick, camera, frustum);
+    }
+
+    public static String transformShader(String originShader, Program.Type type, String shaderName, String shaderSourceName, GlslPreprocessor glslPreprocessor)
+    {
+        ShaderTransformEvent event = new ShaderTransformEvent(originShader,type,shaderName,shaderSourceName,glslPreprocessor);
+        ModLoader.get().postEvent(event);
+        return event.getTransformedShader();
     }
 
     public static boolean renderSpecificFirstPersonHand(InteractionHand hand, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, float partialTick, float interpPitch, float swingProgress, float equipProgress, ItemStack stack)

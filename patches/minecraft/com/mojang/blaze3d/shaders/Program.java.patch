@@ -1,0 +1,10 @@
+--- a/com/mojang/blaze3d/shaders/Program.java
++++ b/com/mojang/blaze3d/shaders/Program.java
+@@ -58,6 +_,7 @@
+          throw new IOException("Could not load program " + p_166613_.m_85566_());
+       } else {
+          int i = GlStateManager.m_84447_(p_166613_.m_85571_());
++         s = net.minecraftforge.client.ForgeHooksClient.transformShader(s,p_166613_,p_166614_,p_166616_,p_166617_);
+          GlStateManager.m_157116_(i, p_166617_.m_166461_(s));
+          GlStateManager.m_84465_(i);
+          if (GlStateManager.m_84449_(i, 35713) == 0) {
