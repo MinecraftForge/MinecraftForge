@@ -9,7 +9,7 @@
        this.f_110901_ = new LiquidBlockRenderer();
     }
  
-@@ -45,19 +_,27 @@
+@@ -45,19 +_,30 @@
        return this.f_110899_;
     }
  
@@ -31,11 +31,14 @@
 +      renderBatched(p_234356_, p_234357_, p_234358_, p_234359_, p_234360_, p_234361_, p_234362_, net.minecraftforge.client.model.data.ModelData.EMPTY, null);
 +   }
 +   public void renderBatched(BlockState p_234356_, BlockPos p_234357_, BlockAndTintGetter p_234358_, PoseStack p_234359_, VertexConsumer p_234360_, boolean p_234361_, RandomSource p_234362_, net.minecraftforge.client.model.data.ModelData modelData, net.minecraft.client.renderer.RenderType renderType) {
++      renderBatched(p_234356_, p_234357_, p_234358_, p_234359_, p_234360_, p_234361_, p_234362_, modelData, renderType, true);
++   }
++   public void renderBatched(BlockState p_234356_, BlockPos p_234357_, BlockAndTintGetter p_234358_, PoseStack p_234359_, VertexConsumer p_234360_, boolean p_234361_, RandomSource p_234362_, net.minecraftforge.client.model.data.ModelData modelData, net.minecraft.client.renderer.RenderType renderType, boolean queryModelSpecificData) { // TODO 1.20: Move to the signature above
        try {
           RenderShape rendershape = p_234356_.m_60799_();
           if (rendershape == RenderShape.MODEL) {
 -            this.f_110900_.m_234379_(p_234358_, this.m_110910_(p_234356_), p_234356_, p_234357_, p_234359_, p_234360_, p_234361_, p_234362_, p_234356_.m_60726_(p_234357_), OverlayTexture.f_118083_);
-+            this.f_110900_.tesselateBlock(p_234358_, this.m_110910_(p_234356_), p_234356_, p_234357_, p_234359_, p_234360_, p_234361_, p_234362_, p_234356_.m_60726_(p_234357_), OverlayTexture.f_118083_, modelData, renderType);
++            this.f_110900_.tesselateBlock(p_234358_, this.m_110910_(p_234356_), p_234356_, p_234357_, p_234359_, p_234360_, p_234361_, p_234362_, p_234356_.m_60726_(p_234357_), OverlayTexture.f_118083_, modelData, renderType, queryModelSpecificData); // TODO 1.20: Remove last argument
           }
  
        } catch (Throwable throwable) {
