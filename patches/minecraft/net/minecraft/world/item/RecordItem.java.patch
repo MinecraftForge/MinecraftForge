@@ -51,7 +51,7 @@
           ItemStack itemstack = p_43048_.m_43722_();
           if (!level.f_46443_) {
 -            ((JukeboxBlock)Blocks.f_50131_).m_238345_(p_43048_.m_43723_(), level, blockpos, blockstate, itemstack);
-+            jukebox.setRecord(p_43048_.m_43723_(), level, blockpos, blockstate, itemstack);
++            jukebox.insertRecord(p_43048_.m_43723_(), level, blockpos, blockstate, itemstack);
              level.m_5898_((Player)null, 1010, blockpos, Item.m_41393_(this));
              itemstack.m_41774_(1);
              Player player = p_43048_.m_43723_();
