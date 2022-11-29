@@ -9,3 +9,15 @@
     public static final BooleanProperty f_54254_ = BlockStateProperties.f_61439_;
  
     public JukeboxBlock(BlockBehaviour.Properties p_54257_) {
+@@ -55,6 +_,11 @@
+       } else {
+          return InteractionResult.PASS;
+       }
++   }
++
++   @Override
++   public void insertRecord(@org.jetbrains.annotations.Nullable Entity entity, LevelAccessor level, BlockPos pos, BlockState state, ItemStack stack) {
++      m_238345_(entity, level, pos, state, stack);
+    }
+ 
+    public void m_238345_(@Nullable Entity p_238346_, LevelAccessor p_238347_, BlockPos p_238348_, BlockState p_238349_, ItemStack p_238350_) {

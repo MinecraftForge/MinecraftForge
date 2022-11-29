@@ -11,10 +11,6 @@ import javax.annotation.Nullable;
 
 public interface IForgeJukebox
 {
-    private JukeboxBlock self()
-    {
-        return (JukeboxBlock) this;
-    }
 
     /**
      * @param entity The entity inserting into jukebox. This can be null.
@@ -23,8 +19,5 @@ public interface IForgeJukebox
      * @param state The blockstate of the jukebox
      * @param stack The itemstack being inserted.
      */
-    default void insertRecord(@Nullable Entity entity, LevelAccessor level, BlockPos pos, BlockState state, ItemStack stack)
-    {
-        self().setRecord(entity, level, pos, state, stack);
-    }
+    void insertRecord(@Nullable Entity entity, LevelAccessor level, BlockPos pos, BlockState state, ItemStack stack);
 }
