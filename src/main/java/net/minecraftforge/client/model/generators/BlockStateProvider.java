@@ -162,6 +162,11 @@ public abstract class BlockStateProvider implements DataProvider {
         return new ResourceLocation(name.getNamespace(), ModelProvider.BLOCK_FOLDER + "/" + name.getPath());
     }
 
+    public ResourceLocation blockTexture(Block block, String folder) {
+        ResourceLocation name = key(block);
+        return new ResourceLocation(name.getNamespace(), ModelProvider.BLOCK_FOLDER + "/" + folder + "/" + name.getPath());
+    }
+
     private ResourceLocation extend(ResourceLocation rl, String suffix) {
         return new ResourceLocation(rl.getNamespace(), rl.getPath() + suffix);
     }
@@ -170,8 +175,16 @@ public abstract class BlockStateProvider implements DataProvider {
         return models().cubeAll(name(block), blockTexture(block));
     }
 
+    public ModelFile cubeAll(Block block, String path) {
+        return models().cubeAll(name(block), blockTexture(block, path));
+    }
+
     public void simpleBlock(Block block) {
         simpleBlock(block, cubeAll(block));
+    }
+
+    public void simpleBlock(Block block, String path){
+        simpleBlock(block, cubeAll(block, path));
     }
 
     public void simpleBlock(Block block, Function<ModelFile, ConfiguredModel[]> expander) {
