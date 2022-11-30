@@ -1,19 +1,11 @@
 --- a/net/minecraft/world/entity/animal/Parrot.java
 +++ b/net/minecraft/world/entity/animal/Parrot.java
-@@ -64,6 +_,7 @@
- import net.minecraft.world.level.block.state.BlockState;
- import net.minecraft.world.level.pathfinder.BlockPathTypes;
- import net.minecraft.world.phys.Vec3;
-+import net.minecraftforge.common.extensions.IForgeJukebox;
- 
- public class Parrot extends ShoulderRidingEntity implements FlyingAnimal {
-    private static final EntityDataAccessor<Integer> f_29354_ = SynchedEntityData.m_135353_(Parrot.class, EntityDataSerializers.f_135028_);
 @@ -171,7 +_,7 @@
     }
  
     public void m_8107_() {
 -      if (this.f_29349_ == null || !this.f_29349_.m_203195_(this.m_20182_(), 3.46D) || !this.f_19853_.m_8055_(this.f_29349_).m_60713_(Blocks.f_50131_)) {
-+      if (this.f_29349_ == null || !this.f_29349_.m_203195_(this.m_20182_(), 3.46D) || !(this.f_19853_.m_8055_(this.f_29349_).m_60734_() instanceof IForgeJukebox)) {
++      if (this.f_29349_ == null || !this.f_29349_.m_203195_(this.m_20182_(), 3.46D) || !(this.f_19853_.m_8055_(this.f_29349_).m_60734_() instanceof net.minecraftforge.common.extensions.IForgeJukebox jukebox && jukebox.canDance(this))) {
           this.f_29348_ = false;
           this.f_29349_ = null;
        }

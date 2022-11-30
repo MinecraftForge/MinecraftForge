@@ -1,13 +1,5 @@
 --- a/net/minecraft/world/entity/animal/allay/Allay.java
 +++ b/net/minecraft/world/entity/animal/allay/Allay.java
-@@ -65,6 +_,7 @@
- import net.minecraft.world.level.gameevent.vibrations.VibrationListener;
- import net.minecraft.world.phys.AABB;
- import net.minecraft.world.phys.Vec3;
-+import net.minecraftforge.common.extensions.IForgeJukebox;
- import org.jetbrains.annotations.Nullable;
- import org.slf4j.Logger;
- 
 @@ -326,7 +_,7 @@
  
     public boolean m_7243_(ItemStack p_218387_) {
@@ -22,7 +14,7 @@
  
     private boolean m_239812_() {
 -      return this.f_238682_ == null || !this.f_238682_.m_203195_(this.m_20182_(), (double)GameEvent.f_238690_.m_157827_()) || !this.f_19853_.m_8055_(this.f_238682_).m_60713_(Blocks.f_50131_);
-+      return this.f_238682_ == null || !this.f_238682_.m_203195_(this.m_20182_(), (double)GameEvent.f_238690_.m_157827_()) || !(this.f_19853_.m_8055_(this.f_238682_).m_60734_() instanceof IForgeJukebox);
++      return this.f_238682_ == null || !this.f_238682_.m_203195_(this.m_20182_(), (double)GameEvent.f_238690_.m_157827_()) || !(this.f_19853_.m_8055_(this.f_238682_).m_60734_() instanceof net.minecraftforge.common.extensions.IForgeJukebox jukebox && jukebox.canDance(this));
     }
  
     public float m_218394_(float p_218395_) {
