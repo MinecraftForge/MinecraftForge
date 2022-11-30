@@ -47,7 +47,7 @@
        BlockPos blockpos = p_43048_.m_8083_();
        BlockState blockstate = level.m_8055_(blockpos);
 -      if (blockstate.m_60713_(Blocks.f_50131_) && !blockstate.m_61143_(JukeboxBlock.f_54254_)) {
-+      if (blockstate.m_60734_() instanceof net.minecraftforge.common.extensions.IForgeJukebox jukebox && jukebox.hasRecord(level, blockpos, blockstate)) {
++      if (blockstate.m_60734_() instanceof net.minecraftforge.common.extensions.IForgeJukeboxBlock jukebox && jukebox.hasRecord(level, blockpos, blockstate)) {
           ItemStack itemstack = p_43048_.m_43722_();
           if (!level.f_46443_) {
 -            ((JukeboxBlock)Blocks.f_50131_).m_238345_(p_43048_.m_43723_(), level, blockpos, blockstate, itemstack);

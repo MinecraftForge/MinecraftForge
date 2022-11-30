@@ -15,13 +15,14 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.JukeboxBlock;
 import net.minecraft.world.level.block.entity.JukeboxBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Extension added to deal with mojang hardcoding the logic for playing records and parrot/allay dancing to only the vanilla jukebox.
+ *
+ * @see JukeboxBlock
  */
-public interface IForgeJukebox
+public interface IForgeJukeboxBlock
 {
 
     /**
@@ -31,14 +32,17 @@ public interface IForgeJukebox
      * @param state The blockstate of the jukebox
      * @param stack The itemstack being inserted.
      */
-    default void insertRecord(@Nullable Entity entity, LevelAccessor level, BlockPos pos, BlockState state, ItemStack stack) {
-        if (this instanceof JukeboxBlock jukebox) {
+    default void insertRecord(@Nullable Entity entity, LevelAccessor level, BlockPos pos, BlockState state, ItemStack stack)
+    {
+        if (this instanceof JukeboxBlock jukebox)
+        {
             jukebox.setRecord(entity, level, pos, state, stack);
         }
     }
 
     /**
      * Get the record of the jukebox.
+     *
      * @param level The level of the jukebox.
      * @param pos The position of the jukebox.
      * @return Returns the current record or empty;
@@ -50,10 +54,12 @@ public interface IForgeJukebox
 
     /**
      * Check if entity is able to dance while near this jukebox
+     *
      * @param entity The entity being check
      * @return Return true if the entity can dance
      */
-    default boolean canDance(Entity entity) {
+    default boolean canDance(Entity entity)
+    {
         return entity instanceof Allay || entity instanceof Parrot;
     }
 
@@ -63,8 +69,9 @@ public interface IForgeJukebox
      * @param state The blockstate of the jukebox
      * @return Return true if jukebox has a record.
      */
-    default boolean hasRecord(Level level, BlockPos pos, BlockState state) {
-        if(this instanceof JukeboxBlock) return !state.getValue(JukeboxBlock.HAS_RECORD);
+    default boolean hasRecord(Level level, BlockPos pos, BlockState state)
+    {
+        if (this instanceof JukeboxBlock) return !state.getValue(JukeboxBlock.HAS_RECORD);
         return false;
     }
 }
