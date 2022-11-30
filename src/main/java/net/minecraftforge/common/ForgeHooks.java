@@ -8,6 +8,7 @@ package net.minecraftforge.common;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.*;
+import java.util.Map.Entry;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
@@ -27,6 +28,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.Lifecycle;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
@@ -107,6 +109,7 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.BiomeSpecialEffects;
 import net.minecraft.world.level.biome.BiomeGenerationSettings;
 import net.minecraft.world.level.biome.MobSpawnSettings;
+import net.minecraftforge.common.crafting.conditions.ICondition;
 import net.minecraftforge.common.loot.IGlobalLootModifier;
 import net.minecraftforge.common.loot.LootModifierManager;
 import net.minecraftforge.common.loot.LootTableIdCondition;
@@ -171,8 +174,10 @@ import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
 import net.minecraft.ChatFormatting;
+import net.minecraft.resources.RegistryResourceAccess;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.RegistryResourceAccess.EntryThunk;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.Level;
@@ -1659,5 +1664,13 @@ public class ForgeHooks
             return PermissionAPI.getPermission(player, ForgeMod.USE_SELECTORS_PERMISSION);
         }
         return false;
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <E> Collection<Entry<ResourceKey<E>, EntryThunk<E>>> filterThunks(Map<ResourceKey<E>, RegistryResourceAccess.EntryThunk<E>> map)
+    {
+        return map.entrySet().stream().filter(e -> 
+        ((EntryThunk<Boolean>)e.getValue()).parseElement(JsonOps.INSTANCE, ICondition.DECODER)
+        .get().left().get().value()).toList(); // Validity of this .get() call is enforced by the above Decoder object, which only returns DataResult.success.
     }
 }
