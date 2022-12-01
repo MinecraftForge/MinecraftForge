@@ -56,10 +56,13 @@ public interface IForgeJukeboxBlock
      * @param pos The position of the jukebox.
      * @return the current record or empty.
      */
-    default ItemStack getRecord(BlockState state, Level level, BlockPos pos) {
-        if (level.getBlockEntity(pos) instanceof JukeboxBlockEntity jukebox) {
+    default ItemStack getRecord(BlockState state, Level level, BlockPos pos)
+    {
+        if (level.getBlockEntity(pos) instanceof JukeboxBlockEntity jukebox)
+        {
             return jukebox.getRecord();
-        } else {
+        } else
+        {
             return ItemStack.EMPTY;
         }
     }
@@ -75,11 +78,14 @@ public interface IForgeJukeboxBlock
      */
     default boolean canDance(BlockState state, Entity entity)
     {
-        if (entity instanceof Allay) {
+        if (entity instanceof Allay)
+        {
             return true;
-        } else if (entity instanceof Parrot) {
+        } else if (entity instanceof Parrot)
+        {
             return true;
-        } else {
+        } else
+        {
             return false;
         }
     }
@@ -94,9 +100,11 @@ public interface IForgeJukeboxBlock
      */
     default boolean hasRecord(BlockState state, Level level, BlockPos pos)
     {
-        if (this instanceof JukeboxBlock) {
+        if (this instanceof JukeboxBlock)
+        {
             return !state.getValue(JukeboxBlock.HAS_RECORD);
-        } else {
+        } else
+        {
             return false;
         }
     }
