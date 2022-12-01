@@ -68,7 +68,7 @@ public interface IForgeJukeboxBlock
     }
 
     /**
-     * Checks if an entity is allow to dance close to the jukebox.
+     * Checks if an entity is allowed to dance when close to the jukebox.
      * The actual behavior is controlled by the entity.
      * Right now only the vanilla parrot/allay currently use this.
      *
