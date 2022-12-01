@@ -649,24 +649,49 @@
     }
  
     public boolean m_5830_() {
-@@ -3178,7 +_,7 @@
+@@ -3178,13 +_,16 @@
     }
  
     public ItemStack m_6298_(ItemStack p_21272_) {
 -      return ItemStack.f_41583_;
 +      return net.minecraftforge.common.ForgeHooks.getProjectile(this, p_21272_, ItemStack.f_41583_);
     }
- 
+-
++   
     public ItemStack m_5584_(Level p_21067_, ItemStack p_21068_) {
-@@ -3198,7 +_,7 @@
-    private void m_21063_(ItemStack p_21064_, Level p_21065_, LivingEntity p_21066_) {
-       Item item = p_21064_.m_41720_();
-       if (item.m_41472_()) {
++       return this.eat(p_21067_, p_21068_, p_21068_.getFoodProperties(this).m_38749_());
++   }
++   public ItemStack eat(Level p_21067_, ItemStack p_21068_, List<Pair<MobEffectInstance, Float>> effectList) {
+       if (p_21068_.m_41614_()) {
+          p_21067_.m_6263_((Player)null, this.m_20185_(), this.m_20186_(), this.m_20189_(), this.m_7866_(p_21068_), SoundSource.NEUTRAL, 1.0F, 1.0F + (p_21067_.f_46441_.m_188501_() - p_21067_.f_46441_.m_188501_()) * 0.4F);
+-         this.m_21063_(p_21068_, p_21067_, this);
++         this.addEatEffect(effectList);
+          if (!(this instanceof Player) || !((Player)this).m_150110_().f_35937_) {
+             p_21068_.m_41774_(1);
+          }
+@@ -3195,16 +_,12 @@
+       return p_21068_;
+    }
+ 
+-   private void m_21063_(ItemStack p_21064_, Level p_21065_, LivingEntity p_21066_) {
+-      Item item = p_21064_.m_41720_();
+-      if (item.m_41472_()) {
 -         for(Pair<MobEffectInstance, Float> pair : item.m_41473_().m_38749_()) {
-+         for(Pair<MobEffectInstance, Float> pair : p_21064_.getFoodProperties(this).m_38749_()) {
-             if (!p_21065_.f_46443_ && pair.getFirst() != null && p_21065_.f_46441_.m_188501_() < pair.getSecond()) {
-                p_21066_.m_7292_(new MobEffectInstance(pair.getFirst()));
-             }
+-            if (!p_21065_.f_46443_ && pair.getFirst() != null && p_21065_.f_46441_.m_188501_() < pair.getSecond()) {
+-               p_21066_.m_7292_(new MobEffectInstance(pair.getFirst()));
+-            }
+-         }
+-      }
+-
++   private void addEatEffect(@org.jetbrains.annotations.Nullable List<Pair<MobEffectInstance, Float>> effectList) {
++      if(effectList == null)
++          return;
++      for(Pair<MobEffectInstance, Float> pair : effectList)
++         if (!this.f_19853_.f_46443_ && pair.getFirst() != null && this.f_19853_.f_46441_.m_188501_() < pair.getSecond())
++            this.m_7292_(new MobEffectInstance(pair.getFirst()));
+    }
+ 
+    private static byte m_21266_(EquipmentSlot p_21267_) {
 @@ -3234,6 +_,64 @@
        this.m_21166_(p_21191_ == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND);
     }

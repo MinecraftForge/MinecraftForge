@@ -125,6 +125,8 @@ modId="forge_chunk_manager_test"
 [[mods]]
 modId="living_conversion_event_test"
 [[mods]]
+modId="living_food_event_test"
+[[mods]]
 modId="player_game_mode_event_test"
 [[mods]]
 modId="forge_codecs_test"
