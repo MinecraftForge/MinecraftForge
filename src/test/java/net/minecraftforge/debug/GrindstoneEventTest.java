@@ -14,10 +14,13 @@ import net.minecraftforge.fml.Bindings;
 import net.minecraftforge.fml.common.Mod;
 
 @Mod("grindstone_event_test")
-public class GrindstoneEventTest {
+public class GrindstoneEventTest
+{
     private static final boolean ENABLED = false;
-    public GrindstoneEventTest() {
-        if (ENABLED) {
+    public GrindstoneEventTest()
+    {
+        if (ENABLED)
+        {
             MinecraftForge.EVENT_BUS.register(this);
         }
     }
