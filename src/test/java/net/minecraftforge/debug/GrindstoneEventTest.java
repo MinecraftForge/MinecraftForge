@@ -10,7 +10,6 @@ import net.minecraft.world.item.Items;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.GrindstoneEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.Bindings;
 import net.minecraftforge.fml.common.Mod;
 
 @Mod("grindstone_event_test")
@@ -26,7 +25,7 @@ public class GrindstoneEventTest
     }
 
     @SubscribeEvent
-    public void onGrindestonePlace(GrindstoneEvent.OnplaceItem event)
+    public void onGrindestonePlace(GrindstoneEvent.OnPlaceItem event)
     {
         // all of these "recipes" are slot sensitive, the top and bottom must match exactly for the behavior to change
         // switching the order will cause the "recipe" to fail

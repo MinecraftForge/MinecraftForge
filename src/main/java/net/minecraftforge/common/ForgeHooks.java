@@ -716,7 +716,7 @@ public class ForgeHooks
 
     public static int onGrindstoneChange(@Nonnull ItemStack top, @Nonnull ItemStack bottom, Container outputSlot, int xp)
     {
-        GrindstoneEvent.OnplaceItem e = new GrindstoneEvent.OnplaceItem(top, bottom, xp);
+        GrindstoneEvent.OnPlaceItem e = new GrindstoneEvent.OnPlaceItem(top, bottom, xp);
         if (MinecraftForge.EVENT_BUS.post(e))
         {
             outputSlot.setItem(0, ItemStack.EMPTY);
