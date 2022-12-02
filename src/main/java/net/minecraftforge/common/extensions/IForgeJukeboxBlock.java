@@ -42,9 +42,7 @@ public interface IForgeJukeboxBlock
     default void insertRecord(BlockState state, Level level, BlockPos pos, @Nullable Entity entity, ItemStack stack)
     {
         if (this instanceof JukeboxBlock jukebox)
-        {
             jukebox.setRecord(entity, level, pos, state, stack);
-        }
     }
 
     /**
@@ -59,12 +57,9 @@ public interface IForgeJukeboxBlock
     default ItemStack getRecord(BlockState state, Level level, BlockPos pos)
     {
         if (level.getBlockEntity(pos) instanceof JukeboxBlockEntity jukebox)
-        {
             return jukebox.getRecord();
-        } else
-        {
+        else
             return ItemStack.EMPTY;
-        }
     }
 
     /**
@@ -72,22 +67,13 @@ public interface IForgeJukeboxBlock
      * The actual behavior is controlled by the entity.
      * Right now only the vanilla parrot/allay currently use this.
      *
-     * @param state The blockstate of the jukebox
+     * @param state The blockstate of the jukebox.
      * @param entity The entity being checked.
      * @return true if the entity can dance.
      */
     default boolean canDance(BlockState state, Entity entity)
     {
-        if (entity instanceof Allay)
-        {
-            return true;
-        } else if (entity instanceof Parrot)
-        {
-            return true;
-        } else
-        {
-            return false;
-        }
+        return entity instanceof Allay || entity instanceof Parrot;
     }
 
     /**
@@ -101,11 +87,8 @@ public interface IForgeJukeboxBlock
     default boolean hasRecord(BlockState state, Level level, BlockPos pos)
     {
         if (this instanceof JukeboxBlock)
-        {
             return !state.getValue(JukeboxBlock.HAS_RECORD);
-        } else
-        {
+        else
             return false;
-        }
     }
 }
