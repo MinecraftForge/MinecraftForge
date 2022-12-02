@@ -11,6 +11,11 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
 
+/**
+ * Shared logic for the two events fired from grindstones.
+ * @see OnPlaceItem
+ * @see OnTakeItem
+ */
 public abstract class GrindstoneEvent extends Event
 {
     private final ItemStack top;
@@ -24,26 +29,19 @@ public abstract class GrindstoneEvent extends Event
         this.xp = xp;
     }
 
-    /**
-     * @return The item in the top input grindstone slot. <br>
-     */
+    /** @return The item in the top input grindstone slot. */
     public ItemStack getTopItem()
     {
         return top;
     }
 
-    /**
-     * @return The item in the bottom input grindstone slot. <br>
-     */
+    /** @return The item in the bottom input grindstone slot. */
     public ItemStack getBottomItem()
     {
         return bottom;
     }
 
-    /**
-     * This is the experience amount determined by the event. It will be {@code -1} unless {@link #setXp(int)} is called. <br>
-     * @return The experience amount given to the player. <br>
-     */
+    /** @return The experience amount given to the player. It will be {@code -1} unless {@link #setXp(int)} is called. */
     public int getXp()
     {
         return xp;
@@ -129,44 +127,31 @@ public abstract class GrindstoneEvent extends Event
             super(top, bottom, xp);
         }
 
-        /**
-         * @return The item in that will be in the top input grindstone slot after the event. <br>
-         */
+        /** @return The item in that will be in the top input grindstone slot after the event. */
         public ItemStack getNewTopItem()
         {
             return newTop;
         }
 
-        /**
-         * @return The item in that will be in the bottom input grindstone slot after the event. <br>
-         */
+        /** @return The item in that will be in the bottom input grindstone slot after the event. */
         public ItemStack getNewBottomItem()
         {
             return newBottom;
         }
 
-        /**
-         * Sets the itemstack in the top slot. <br>
-         * @param newTop
-         */
+        /** Sets the itemstack in the top slot. */
         public void setNewTopItem(ItemStack newTop)
         {
             this.newTop = newTop;
         }
 
-        /**
-         * Sets the itemstack in the bottom slot. <br>
-         * @param newBottom
-         */
+        /** Sets the itemstack in the bottom slot. */
         public void setNewBottomItem(ItemStack newBottom)
         {
             this.newBottom = newBottom;
         }
 
-        /**
-         * This is the experience amount that will be returned by the event. <br>
-         * @return The experience amount given to the player. <br>
-         */
+        /** @return The experience amount given to the player, will be the value from vanilla calculations unless modified by the event. */
         public int getXp()
         {
             return super.getXp();
