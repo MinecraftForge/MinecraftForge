@@ -55,16 +55,30 @@ public class ExistingFileHelper {
         String getSuffix();
 
         String getPrefix();
+
+        @Nullable
+        default ResourceLocation getValidationType()
+        {
+            return null;
+        }
     }
 
     public static class ResourceType implements IResourceType {
 
         final PackType packType;
         final String suffix, prefix;
-        public ResourceType(PackType type, String suffix, String prefix) {
+        final ResourceLocation validationType;
+        public ResourceType(PackType type, String suffix, String prefix, @Nullable ResourceLocation validationType)
+        {
             this.packType = type;
             this.suffix = suffix;
             this.prefix = prefix;
+            this.validationType = validationType;
+        }
+
+        public ResourceType(PackType type, String suffix, String prefix)
+        {
+            this(type, suffix, prefix, null);
         }
 
         @Override
@@ -75,11 +89,23 @@ public class ExistingFileHelper {
 
         @Override
         public String getPrefix() { return prefix; }
+
+        @Override
+        public @Nullable ResourceLocation getValidationType() { return validationType; }
     }
 
     private final MultiPackResourceManager clientResources, serverData;
-    private final boolean enable;
+    private final ValidationPredicate predicate;
     private final Multimap<PackType, ResourceLocation> generated = HashMultimap.create();
+
+    /**
+     * @deprecated Use the {@linkplain #ExistingFileHelper(Collection, Set, ValidationPredicate, String, File) the version with a predicate}
+     */
+    @Deprecated(forRemoval = true, since = "1.19.2")
+    public ExistingFileHelper(Collection<Path> existingPacks, final Set<String> existingMods, boolean enable, @Nullable final String assetIndex, @Nullable final File assetsDir)
+    {
+        this(existingPacks, existingMods, (validationType, requestedPath, packType) -> enable, assetIndex, assetsDir);
+    }
 
     /**
      * Create a new helper. This should probably <em>NOT</em> be used by mods, as
@@ -90,11 +116,12 @@ public class ExistingFileHelper {
      * other generated files.
      * @param existingPacks a collection of paths to existing packs
      * @param existingMods a set of mod IDs for existing mods
-     * @param enable {@code true} if validation is enabled
+     * @param predicate a predicate to use to determine if the existence of a resource should be actually checked
      * @param assetIndex the identifier for the asset index, generally Minecraft's current major version
      * @param assetsDir the directory in which to find vanilla assets and indexes
      */
-    public ExistingFileHelper(Collection<Path> existingPacks, final Set<String> existingMods, boolean enable, @Nullable final String assetIndex, @Nullable final File assetsDir) {
+    public ExistingFileHelper(Collection<Path> existingPacks, final Set<String> existingMods, ValidationPredicate predicate, @Nullable final String assetIndex, @Nullable final File assetsDir)
+    {
         List<PackResources> candidateClientResources = new ArrayList<>();
         List<PackResources> candidateServerResources = new ArrayList<>();
 
@@ -122,7 +149,7 @@ public class ExistingFileHelper {
         this.clientResources = new MultiPackResourceManager(PackType.CLIENT_RESOURCES, candidateClientResources);
         this.serverData = new MultiPackResourceManager(PackType.SERVER_DATA, candidateServerResources);
 
-        this.enable = enable;
+        this.predicate = predicate;
     }
 
     private ResourceManager getManager(PackType packType) {
@@ -134,16 +161,34 @@ public class ExistingFileHelper {
     }
 
     /**
-     * Check if a given resource exists in the known resource packs.
+     * Check if a given resource exists in the known resource packs. <br>
+     * This method will call {@linkplain #exists(ResourceLocation, PackType, String, String, ResourceLocation)}
+     * with a null validation type.
      *
      * @param loc      the complete location of the resource, e.g.
      *                 {@code "minecraft:textures/block/stone.png"}
      * @param packType the type of resources to check
      * @return {@code true} if the resource exists in any pack, {@code false}
-     *         otherwise
+     * otherwise
      */
-    public boolean exists(ResourceLocation loc, PackType packType) {
-        if (!enable) {
+    public boolean exists(ResourceLocation loc, PackType packType)
+    {
+        return exists(loc, packType, null);
+    }
+
+    /**
+     * Check if a given resource exists in the known resource packs.
+     *
+     * @param loc            the complete location of the resource, e.g.
+     *                       {@code "minecraft:textures/block/stone.png"}
+     * @param packType       the type of resources to check
+     * @param validationType the type of validation this is
+     * @return {@code true} if the resource exists in any pack, {@code false}
+     * otherwise
+     */
+    public boolean exists(ResourceLocation loc, PackType packType, @Nullable ResourceLocation validationType)
+    {
+        if (!predicate.canValidate(validationType, loc, packType)) {
             return true;
         }
         return generated.get(packType).contains(loc) || getManager(packType).getResource(loc).isPresent();
@@ -160,26 +205,48 @@ public class ExistingFileHelper {
      * @param type a {@link IResourceType} describing how to form the path to the
      *             resource
      * @return {@code true} if the resource exists in any pack, {@code false}
-     *         otherwise
+     * otherwise
      */
-    public boolean exists(ResourceLocation loc, IResourceType type) {
-        return exists(getLocation(loc, type.getSuffix(), type.getPrefix()), type.getPackType());
+    public boolean exists(ResourceLocation loc, IResourceType type)
+    {
+        return exists(getLocation(loc, type.getSuffix(), type.getPrefix()), type.getPackType(), type.getValidationType());
     }
 
     /**
-     * Check if a given resource exists in the known resource packs.
+     * Check if a given resource exists in the known resource packs. <br>
+     * This method will call {@linkplain #exists(ResourceLocation, PackType, String, String, ResourceLocation)}
+     * with a null validation type.
      *
      * @param loc        the base location of the resource, e.g.
      *                   {@code "minecraft:block/stone"}
      * @param packType   the type of resources to check
      * @param pathSuffix a string to append after the path, e.g. {@code ".json"}
      * @param pathPrefix a string to append before the path, before a slash, e.g.
-     *                   {@code "models"}
+     *                   {@code "models"}`
      * @return {@code true} if the resource exists in any pack, {@code false}
-     *         otherwise
+     * otherwise
      */
-    public boolean exists(ResourceLocation loc, PackType packType, String pathSuffix, String pathPrefix) {
-        return exists(getLocation(loc, pathSuffix, pathPrefix), packType);
+    public boolean exists(ResourceLocation loc, PackType packType, String pathSuffix, String pathPrefix)
+    {
+        return exists(loc, packType, pathSuffix, pathPrefix, null);
+    }
+
+    /**
+     * Check if a given resource exists in the known resource packs.
+     *
+     * @param loc            the base location of the resource, e.g.
+     *                       {@code "minecraft:block/stone"}
+     * @param packType       the type of resources to check
+     * @param pathSuffix     a string to append after the path, e.g. {@code ".json"}
+     * @param pathPrefix     a string to append before the path, before a slash, e.g.
+     *                       {@code "models"}`
+     * @param validationType the type of validation this is
+     * @return {@code true} if the resource exists in any pack, {@code false}
+     * otherwise
+     */
+    public boolean exists(ResourceLocation loc, PackType packType, String pathSuffix, String pathPrefix, @Nullable ResourceLocation validationType)
+    {
+        return exists(getLocation(loc, pathSuffix, pathPrefix), packType, validationType);
     }
 
     /**
@@ -238,10 +305,16 @@ public class ExistingFileHelper {
         return getManager(packType).getResource(loc).orElseThrow();
     }
 
+    public boolean isEnabled(@Nullable ResourceLocation validationType, ResourceLocation path, PackType packType)
+    {
+        return predicate.canValidate(validationType, path, packType);
+    }
+
     /**
-     * @return {@code true} if validation is enabled, {@code false} otherwise
+     * @deprecated Use {@link #isEnabled(ResourceLocation, ResourceLocation, PackType)} instead
      */
+    @Deprecated(forRemoval = true, since = "1.19.2")
     public boolean isEnabled() {
-        return enable;
+        return predicate.canValidate(null, new ResourceLocation("dummy"), PackType.CLIENT_RESOURCES);
     }
 }

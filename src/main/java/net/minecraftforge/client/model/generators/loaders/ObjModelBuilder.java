@@ -12,6 +12,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.model.generators.CustomLoaderBuilder;
 import net.minecraftforge.client.model.generators.ModelBuilder;
 import net.minecraftforge.common.data.ExistingFileHelper;
+import net.minecraftforge.common.data.ValidationPredicate;
 
 public class ObjModelBuilder<T extends ModelBuilder<T>> extends CustomLoaderBuilder<T>
 {
@@ -35,7 +36,7 @@ public class ObjModelBuilder<T extends ModelBuilder<T>> extends CustomLoaderBuil
     public ObjModelBuilder<T> modelLocation(ResourceLocation modelLocation)
     {
         Preconditions.checkNotNull(modelLocation, "modelLocation must not be null");
-        Preconditions.checkArgument(existingFileHelper.exists(modelLocation, PackType.CLIENT_RESOURCES),
+        Preconditions.checkArgument(existingFileHelper.exists(modelLocation, PackType.CLIENT_RESOURCES, ValidationPredicate.MODELS_VALIDATION_TYPE),
                 "OBJ Model %s does not exist in any known resource pack", modelLocation);
         this.modelLocation = modelLocation;
         return this;
@@ -68,7 +69,7 @@ public class ObjModelBuilder<T extends ModelBuilder<T>> extends CustomLoaderBuil
     public ObjModelBuilder<T> overrideMaterialLibrary(ResourceLocation mtlOverride)
     {
         Preconditions.checkNotNull(mtlOverride, "mtlOverride must not be null");
-        Preconditions.checkArgument(existingFileHelper.exists(mtlOverride, PackType.CLIENT_RESOURCES),
+        Preconditions.checkArgument(existingFileHelper.exists(mtlOverride, PackType.CLIENT_RESOURCES, ValidationPredicate.MODELS_VALIDATION_TYPE),
                 "OBJ Model %s does not exist in any known resource pack", mtlOverride);
         this.mtlOverride = mtlOverride;
         return this;

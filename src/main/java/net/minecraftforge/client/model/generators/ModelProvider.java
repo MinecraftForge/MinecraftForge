@@ -19,21 +19,21 @@ import com.google.gson.GsonBuilder;
 
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.data.HashCache;
 import net.minecraft.data.DataProvider;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.common.data.ExistingFileHelper.ResourceType;
+import net.minecraftforge.common.data.ValidationPredicate;
 
 public abstract class ModelProvider<T extends ModelBuilder<T>> implements DataProvider {
 
     public static final String BLOCK_FOLDER = "block";
     public static final String ITEM_FOLDER = "item";
 
-    protected static final ResourceType TEXTURE = new ResourceType(PackType.CLIENT_RESOURCES, ".png", "textures");
-    protected static final ResourceType MODEL = new ResourceType(PackType.CLIENT_RESOURCES, ".json", "models");
-    protected static final ResourceType MODEL_WITH_EXTENSION = new ResourceType(PackType.CLIENT_RESOURCES, "", "models");
+    protected static final ResourceType TEXTURE = new ResourceType(PackType.CLIENT_RESOURCES, ".png", "textures", new ResourceLocation("forge", "textures"));
+    protected static final ResourceType MODEL = new ResourceType(PackType.CLIENT_RESOURCES, ".json", "models", ValidationPredicate.MODELS_VALIDATION_TYPE);
+    protected static final ResourceType MODEL_WITH_EXTENSION = new ResourceType(PackType.CLIENT_RESOURCES, "", "models", ValidationPredicate.MODELS_VALIDATION_TYPE);
 
     private static final Gson GSON = (new GsonBuilder()).setPrettyPrinting().create();
     protected final DataGenerator generator;
