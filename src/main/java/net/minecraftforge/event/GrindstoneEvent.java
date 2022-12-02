@@ -29,19 +29,19 @@ public abstract class GrindstoneEvent extends Event
         this.xp = xp;
     }
 
-    /** @return The item in the top input grindstone slot. */
+    /** {@return The item in the top input grindstone slot.} */
     public ItemStack getTopItem()
     {
         return top;
     }
 
-    /** @return The item in the bottom input grindstone slot. */
+    /** {@return The item in the bottom input grindstone slot.} */
     public ItemStack getBottomItem()
     {
         return bottom;
     }
 
-    /** @return The experience amount given to the player. It will be {@code -1} unless {@link #setXp(int)} is called. */
+    /** {@return The experience amount given to the player. It will be {@code -1} unless {@link #setXp(int)} is called.} */
     public int getXp()
     {
         return xp;
@@ -127,13 +127,13 @@ public abstract class GrindstoneEvent extends Event
             super(top, bottom, xp);
         }
 
-        /** @return The item in that will be in the top input grindstone slot after the event. */
+        /** {@return The item in that will be in the top input grindstone slot after the event.} */
         public ItemStack getNewTopItem()
         {
             return newTop;
         }
 
-        /** @return The item in that will be in the bottom input grindstone slot after the event. */
+        /** {@return The item in that will be in the bottom input grindstone slot after the event.} */
         public ItemStack getNewBottomItem()
         {
             return newBottom;
@@ -151,7 +151,7 @@ public abstract class GrindstoneEvent extends Event
             this.newBottom = newBottom;
         }
 
-        /** @return The experience amount given to the player, will be the value from vanilla calculations unless modified by the event. */
+        /** {@return The experience amount given to the player, will be the value from vanilla calculations unless modified by the event.} */
         public int getXp()
         {
             return super.getXp();
