@@ -6,10 +6,10 @@
  
 +   private final java.util.function.Supplier<MobEffect> suspiciousStewEffectSupplier;
 +
-+   public FlowerBlock(java.util.function.Supplier<MobEffect> suspiciousStewEffectSupplier, int p_53513_, BlockBehaviour.Properties p_53514_) {
++   public FlowerBlock(java.util.function.Supplier<MobEffect> effectSupplier, int p_53513_, BlockBehaviour.Properties p_53514_) {
 +      super(p_53514_);
 +      this.f_53508_ = null;
-+      this.suspiciousStewEffectSupplier = suspiciousStewEffectSupplier;
++      this.suspiciousStewEffectSupplier = effectSupplier;
 +      this.f_53509_ = p_53513_;
 +   }
 +
@@ -35,7 +35,7 @@
     }
  
     public int m_53522_() {
-+      if (this.f_53508_ == null && !this.suspiciousStewEffectSupplier.get().m_8093_()) return this.f_53509_ * 20;
++      if (!this.suspiciousStewEffectSupplier.get().m_8093_()) return this.f_53509_ * 20;
        return this.f_53509_;
     }
  }
