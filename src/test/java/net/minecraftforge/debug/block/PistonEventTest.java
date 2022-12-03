@@ -154,9 +154,7 @@ public class PistonEventTest
         @Override
         protected void registerStatesAndModels()
         {
-            ModelFile model = models().cubeAll(shiftOnMove.getId().getPath(), mcLoc("block/furnace_top"));
-            simpleBlock(shiftOnMove.get(), model);
-            simpleBlockItem(shiftOnMove.get(), model);
+            simpleBlockWithItem(shiftOnMove.get(), models().cubeAll(shiftOnMove.getId().getPath(), mcLoc("block/furnace_top")));
         }
     }
 

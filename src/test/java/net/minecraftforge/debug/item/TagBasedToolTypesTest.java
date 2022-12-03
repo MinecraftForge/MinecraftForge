@@ -157,9 +157,7 @@ public class TagBasedToolTypesTest
             @Override
             protected void registerStatesAndModels()
             {
-                ModelFile model = models().cubeAll(STONE.getId().getPath(), mcLoc("block/debug"));
-                simpleBlock(STONE.get(), model);
-                simpleBlockItem(STONE.get(), model);
+                simpleBlockWithItem(STONE.get(), models().cubeAll(STONE.getId().getPath(), mcLoc("block/debug")));
             }
         });
         gen.addProvider(event.includeClient(), new ItemModelProvider(gen, MODID, existing)
