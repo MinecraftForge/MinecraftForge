@@ -209,7 +209,7 @@ public class VanillaInventoryCodeHooks
         for (int slot = 0; slot < itemHandler.getSlots(); slot++)
         {
             ItemStack stackInSlot = itemHandler.getStackInSlot(slot);
-            if (stackInSlot.isEmpty() || stackInSlot.getCount() < itemHandler.getSlotLimit(slot))
+            if (stackInSlot.isEmpty() || stackInSlot.getCount() < itemHandler.getMaxStackSize(slot, stackInSlot))
             {
                 return false;
             }

@@ -12,13 +12,14 @@ import org.jetbrains.annotations.NotNull;
 // combines multiple IItemHandlerModifiable into one interface
 public class CombinedInvWrapper implements IItemHandlerModifiable
 {
-
+    protected final IOGuarantees ioGuarantees;
     protected final IItemHandlerModifiable[] itemHandler; // the handlers
     protected final int[] baseIndex; // index-offsets of the different handlers
     protected final int slotCount; // number of total slots
 
-    public CombinedInvWrapper(IItemHandlerModifiable... itemHandler)
+    public CombinedInvWrapper(IOGuarantees ioGuarantees, IItemHandlerModifiable... itemHandler)
     {
+        this.ioGuarantees = ioGuarantees;
         this.itemHandler = itemHandler;
         this.baseIndex = new int[itemHandler.length];
         int index = 0;
@@ -28,6 +29,12 @@ public class CombinedInvWrapper implements IItemHandlerModifiable
             baseIndex[i] = index;
         }
         this.slotCount = index;
+    }
+
+    @Deprecated(forRemoval = true, since = "1.19.2")
+    public CombinedInvWrapper(IItemHandlerModifiable... itemHandler)
+    {
+        this(IOGuarantees.NONE, itemHandler);
     }
 
     // returns the handler index for the slot
@@ -119,11 +126,26 @@ public class CombinedInvWrapper implements IItemHandlerModifiable
     }
 
     @Override
+    public int getMaxStackSize(int slot, @NotNull ItemStack stack)
+    {
+        int index = getIndexForSlot(slot);
+        IItemHandlerModifiable handler = getHandlerFromIndex(index);
+        int localSlot = getSlotFromIndex(slot, index);
+        return handler.getMaxStackSize(localSlot, stack);
+    }
+
+    @Override
     public boolean isItemValid(int slot, @NotNull ItemStack stack)
     {
         int index = getIndexForSlot(slot);
         IItemHandlerModifiable handler = getHandlerFromIndex(index);
         int localSlot = getSlotFromIndex(slot, index);
         return handler.isItemValid(localSlot, stack);
+    }
+
+    @Override
+    public IOGuarantees getIOGuarantees()
+    {
+        return ioGuarantees;
     }
 }

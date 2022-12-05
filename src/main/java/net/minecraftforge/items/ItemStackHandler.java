@@ -73,7 +73,7 @@ public class ItemStackHandler implements IItemHandler, IItemHandlerModifiable, I
 
         ItemStack existing = this.stacks.get(slot);
 
-        int limit = getStackLimit(slot, stack);
+        int limit = getMaxStackSize(slot, stack);
 
         if (!existing.isEmpty())
         {
@@ -115,7 +115,7 @@ public class ItemStackHandler implements IItemHandler, IItemHandlerModifiable, I
 
         ItemStack existing = this.stacks.get(slot);
 
-        if (existing.isEmpty())
+        if (existing.isEmpty() || !isExtractionAllowed(slot, existing))
             return ItemStack.EMPTY;
 
         int toExtract = Math.min(amount, existing.getMaxStackSize());
@@ -151,6 +151,16 @@ public class ItemStackHandler implements IItemHandler, IItemHandlerModifiable, I
         return 64;
     }
 
+    @Override
+    public int getMaxStackSize(int slot, @NotNull ItemStack stack)
+    {
+        return getStackLimit(slot, stack);
+    }
+
+    /**
+     * @deprecated Use {@link #getMaxStackSize(int, ItemStack)}
+     */
+    @Deprecated(forRemoval = true, since = "1.19.2")
     protected int getStackLimit(int slot, @NotNull ItemStack stack)
     {
         return Math.min(getSlotLimit(slot), stack.getMaxStackSize());
@@ -160,6 +170,12 @@ public class ItemStackHandler implements IItemHandler, IItemHandlerModifiable, I
     public boolean isItemValid(int slot, @NotNull ItemStack stack)
     {
         return true;
+    }
+
+    @Override
+    public IOGuarantees getIOGuarantees()
+    {
+        return IOGuarantees.STRICT;
     }
 
     @Override

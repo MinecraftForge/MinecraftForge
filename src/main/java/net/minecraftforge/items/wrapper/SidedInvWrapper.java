@@ -96,7 +96,7 @@ public class SidedInvWrapper implements IItemHandlerModifiable
         int m;
         if (!stackInSlot.isEmpty())
         {
-            if (stackInSlot.getCount() >= Math.min(stackInSlot.getMaxStackSize(), getSlotLimit(slot)))
+            if (stackInSlot.getCount() >= getMaxStackSize(slot, stackInSlot))
                 return stack;
 
             if (!ItemHandlerHelper.canItemStacksStack(stack, stackInSlot))
@@ -105,7 +105,7 @@ public class SidedInvWrapper implements IItemHandlerModifiable
             if (!inv.canPlaceItemThroughFace(slot1, stack, side) || !inv.canPlaceItem(slot1, stack))
                 return stack;
 
-            m = Math.min(stack.getMaxStackSize(), getSlotLimit(slot)) - stackInSlot.getCount();
+            m = getMaxStackSize(slot, stack) - stackInSlot.getCount();
 
             if (stack.getCount() <= m)
             {
@@ -141,7 +141,7 @@ public class SidedInvWrapper implements IItemHandlerModifiable
             if (!inv.canPlaceItemThroughFace(slot1, stack, side) || !inv.canPlaceItem(slot1, stack))
                 return stack;
 
-            m = Math.min(stack.getMaxStackSize(), getSlotLimit(slot));
+            m = getMaxStackSize(slot, stack);
             if (m < stack.getCount())
             {
                 // copy the stack to not modify the original one
@@ -233,6 +233,19 @@ public class SidedInvWrapper implements IItemHandlerModifiable
     public boolean isItemValid(int slot, @NotNull ItemStack stack)
     {
         int slot1 = getSlot(inv, slot, side);
-        return slot1 == -1 ? false : inv.canPlaceItem(slot1, stack);
+        return slot1 == -1 ? false : inv.canPlaceItem(slot1, stack); // TODO: 1.20 - Change this to the face-aware method
+    }
+
+    @Override
+    public boolean isExtractionAllowed(int slot, @NotNull ItemStack stack)
+    {
+        int slot1 = getSlot(inv, slot, side);
+        return slot1 == -1 ? false : inv.canTakeItemThroughFace(slot1, stack, side);
+    }
+
+    @Override
+    public IOGuarantees getIOGuarantees()
+    {
+        return IOGuarantees.STRICT;
     }
 }

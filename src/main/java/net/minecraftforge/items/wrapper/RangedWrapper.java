@@ -91,6 +91,12 @@ public class RangedWrapper implements IItemHandlerModifiable {
     }
 
     @Override
+    public int getMaxStackSize(int slot, @NotNull ItemStack stack)
+    {
+        return checkSlot(slot) ? compose.getMaxStackSize(slot + minSlot, stack) : 0;
+    }
+
+    @Override
     public boolean isItemValid(int slot, @NotNull ItemStack stack)
     {
         if (checkSlot(slot))
@@ -99,6 +105,12 @@ public class RangedWrapper implements IItemHandlerModifiable {
         }
 
         return false;
+    }
+
+    @Override
+    public IOGuarantees getIOGuarantees()
+    {
+        return compose.getIOGuarantees();
     }
 
     private boolean checkSlot(int localSlot)
