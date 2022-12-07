@@ -13,6 +13,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.core.Direction;
+import net.minecraft.network.protocol.game.ServerboundPlayerActionPacket;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.context.UseOnContext;
@@ -250,10 +251,27 @@ public class PlayerInteractEvent extends PlayerEvent
     {
         private Result useBlock = DEFAULT;
         private Result useItem = DEFAULT;
+        private final Action action;
 
+        // TODO: Remove in 1.20
+        /**
+         * @deprecated Use the other constructors instead
+         */
+        @Deprecated(since = "1.19.2", forRemoval = true)
         public LeftClickBlock(Player player, BlockPos pos, Direction face)
         {
+            this(player, pos, face, Action.START);
+        }
+
+        public LeftClickBlock(Player player, BlockPos pos, Direction face, ServerboundPlayerActionPacket.Action action)
+        {
+            this(player, pos, face, Action.convert(action));
+        }
+
+        public LeftClickBlock(Player player, BlockPos pos, Direction face, Action action)
+        {
             super(player, InteractionHand.MAIN_HAND, pos, face);
+            this.action = action;
         }
 
         /**
@@ -270,6 +288,15 @@ public class PlayerInteractEvent extends PlayerEvent
         public Result getUseItem()
         {
             return useItem;
+        }
+
+        /**
+         * Warning: The event is fired every tick on the client under {@link Action#CLIENT_HOLD}
+         * @return The action type for this interaction. Will never be null.
+         */
+        @NotNull
+        public Action getAction() {
+        	return this.action;
         }
 
         public void setUseBlock(Result triggerBlock)
@@ -291,6 +318,22 @@ public class PlayerInteractEvent extends PlayerEvent
                 useBlock = DENY;
                 useItem = DENY;
             }
+        }
+
+        public static enum Action {
+        	START,
+        	STOP,
+        	ABORT,
+        	CLIENT_HOLD;
+        	
+        	public static Action convert(ServerboundPlayerActionPacket.Action action) {
+        		return switch (action) {
+        		default -> START;
+        		case START_DESTROY_BLOCK -> START;
+        		case STOP_DESTROY_BLOCK -> STOP;
+        		case ABORT_DESTROY_BLOCK -> ABORT;
+        		};
+        	}
         }
     }
 

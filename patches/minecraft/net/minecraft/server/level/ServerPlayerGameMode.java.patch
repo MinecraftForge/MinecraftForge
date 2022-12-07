@@ -5,7 +5,7 @@
  
     public void m_214168_(BlockPos p_215120_, ServerboundPlayerActionPacket.Action p_215121_, Direction p_215122_, int p_215123_, int p_215124_) {
 -      if (this.f_9245_.m_146892_().m_82557_(Vec3.m_82512_(p_215120_)) > ServerGamePacketListenerImpl.f_215198_) {
-+      net.minecraftforge.event.entity.player.PlayerInteractEvent.LeftClickBlock event = net.minecraftforge.common.ForgeHooks.onLeftClickBlock(f_9245_, p_215120_, p_215122_);
++      net.minecraftforge.event.entity.player.PlayerInteractEvent.LeftClickBlock event = net.minecraftforge.common.ForgeHooks.onLeftClickBlock(f_9245_, p_215120_, p_215122_, p_215121_);
 +      if (event.isCanceled() || (!this.m_9295_() && event.getResult() == net.minecraftforge.eventbus.api.Event.Result.DENY)) {
 +         return;
 +      }

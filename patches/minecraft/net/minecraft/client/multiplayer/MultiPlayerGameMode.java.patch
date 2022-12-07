@@ -23,7 +23,7 @@
              BlockState blockstate = this.f_105189_.f_91073_.m_8055_(p_105270_);
              this.f_105189_.m_91301_().m_120581_(this.f_105189_.f_91073_, p_105270_, blockstate, 1.0F);
              this.m_233729_(this.f_105189_.f_91073_, (p_233757_) -> {
-+               if (!net.minecraftforge.common.ForgeHooks.onLeftClickBlock(this.f_105189_.f_91074_, p_105270_, p_105271_).isCanceled())
++               if (!net.minecraftforge.common.ForgeHooks.onLeftClickBlock(this.f_105189_.f_91074_, p_105270_, p_105271_, ServerboundPlayerActionPacket.Action.START_DESTROY_BLOCK).isCanceled())
                 this.m_105267_(p_105270_);
                 return new ServerboundPlayerActionPacket(ServerboundPlayerActionPacket.Action.START_DESTROY_BLOCK, p_105270_, p_105271_, p_233757_);
              });
@@ -31,7 +31,7 @@
              if (this.f_105196_) {
                 this.f_105190_.m_104955_(new ServerboundPlayerActionPacket(ServerboundPlayerActionPacket.Action.ABORT_DESTROY_BLOCK, this.f_105191_, p_105271_));
              }
-+            net.minecraftforge.event.entity.player.PlayerInteractEvent.LeftClickBlock event = net.minecraftforge.common.ForgeHooks.onLeftClickBlock(this.f_105189_.f_91074_, p_105270_, p_105271_);
++            net.minecraftforge.event.entity.player.PlayerInteractEvent.LeftClickBlock event = net.minecraftforge.common.ForgeHooks.onLeftClickBlock(this.f_105189_.f_91074_, p_105270_, p_105271_, ServerboundPlayerActionPacket.Action.START_DESTROY_BLOCK);
  
              BlockState blockstate1 = this.f_105189_.f_91073_.m_8055_(p_105270_);
              this.f_105189_.m_91301_().m_120581_(this.f_105189_.f_91073_, p_105270_, blockstate1, 0.0F);
@@ -60,7 +60,7 @@
           BlockState blockstate1 = this.f_105189_.f_91073_.m_8055_(p_105284_);
           this.f_105189_.m_91301_().m_120581_(this.f_105189_.f_91073_, p_105284_, blockstate1, 1.0F);
           this.m_233729_(this.f_105189_.f_91073_, (p_233753_) -> {
-+            if (!net.minecraftforge.common.ForgeHooks.onLeftClickBlock(this.f_105189_.f_91074_, p_105284_, p_105285_).isCanceled())
++            if (!net.minecraftforge.common.ForgeHooks.onLeftClickBlock(this.f_105189_.f_91074_, p_105284_, p_105285_, ServerboundPlayerActionPacket.Action.START_DESTROY_BLOCK).isCanceled())
              this.m_105267_(p_105284_);
              return new ServerboundPlayerActionPacket(ServerboundPlayerActionPacket.Action.START_DESTROY_BLOCK, p_105284_, p_105285_, p_233753_);
           });
@@ -75,7 +75,7 @@
  
              ++this.f_105194_;
              this.f_105189_.m_91301_().m_120581_(this.f_105189_.f_91073_, p_105284_, blockstate, Mth.m_14036_(this.f_105193_, 0.0F, 1.0F));
-+            if (net.minecraftforge.common.ForgeHooks.onLeftClickBlock(this.f_105189_.f_91074_, p_105284_, p_105285_).getUseItem() == net.minecraftforge.eventbus.api.Event.Result.DENY) return true;
++            if (net.minecraftforge.common.ForgeHooks.onClientMineHold(this.f_105189_.f_91074_, p_105284_, p_105285_).getUseItem() == net.minecraftforge.eventbus.api.Event.Result.DENY) return true;
              if (this.f_105193_ >= 1.0F) {
                 this.f_105196_ = false;
                 this.m_233729_(this.f_105189_.f_91073_, (p_233739_) -> {
