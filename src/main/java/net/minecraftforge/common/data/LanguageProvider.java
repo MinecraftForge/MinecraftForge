@@ -24,12 +24,12 @@ import net.minecraft.world.level.block.Block;
 
 public abstract class LanguageProvider implements DataProvider {
     private final Map<String, String> data = new TreeMap<>();
-    private final DataGenerator gen;
+    private final PackOutput output;
     private final String modid;
     private final String locale;
 
-    public LanguageProvider(DataGenerator gen, String modid, String locale) {
-        this.gen = gen;
+    public LanguageProvider(PackOutput output, String modid, String locale) {
+        this.output = output;
         this.modid = modid;
         this.locale = locale;
     }
@@ -41,7 +41,7 @@ public abstract class LanguageProvider implements DataProvider {
         addTranslations();
 
         if (!data.isEmpty())
-            return save(cache, this.gen.getPackOutput().getOutputFolder(PackOutput.Target.RESOURCE_PACK).resolve(this.modid).resolve("lang").resolve(this.locale + ".json"));
+            return save(cache, this.output.getOutputFolder(PackOutput.Target.RESOURCE_PACK).resolve(this.modid).resolve("lang").resolve(this.locale + ".json"));
 
         return CompletableFuture.allOf();
     }
