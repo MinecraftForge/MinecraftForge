@@ -28,6 +28,14 @@ public abstract class LanguageProvider implements DataProvider {
     private final String modid;
     private final String locale;
 
+    /**
+     * @deprecated Use {@link #LanguageProvider(PackOutput, String, String)} instead
+     */
+    @Deprecated(forRemoval = true, since = "1.19.3")
+    public LanguageProvider(DataGenerator generator, String modid, String locale) {
+        this(generator.getPackOutput(), modid, locale);
+    }
+
     public LanguageProvider(PackOutput output, String modid, String locale) {
         this.output = output;
         this.modid = modid;

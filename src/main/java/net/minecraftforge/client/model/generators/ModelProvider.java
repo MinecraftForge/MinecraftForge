@@ -16,6 +16,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import net.minecraft.data.CachedOutput;
+import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
@@ -44,6 +45,14 @@ public abstract class ModelProvider<T extends ModelBuilder<T>> implements DataPr
 
     protected abstract void registerModels();
 
+    /**
+     * @deprecated Use {@link #ModelProvider(PackOutput, String, String, Function, ExistingFileHelper)} instead
+     */
+    @Deprecated(forRemoval = true, since = "1.19.3")
+    public ModelProvider(DataGenerator generator, String modid, String folder, Function<ResourceLocation, T> factory, ExistingFileHelper existingFileHelper) {
+        this(generator.getPackOutput(), modid, folder, factory, existingFileHelper);
+    }
+
     public ModelProvider(PackOutput output, String modid, String folder, Function<ResourceLocation, T> factory, ExistingFileHelper existingFileHelper) {
         Preconditions.checkNotNull(output);
         this.output = output;
@@ -55,6 +64,14 @@ public abstract class ModelProvider<T extends ModelBuilder<T>> implements DataPr
         this.factory = factory;
         Preconditions.checkNotNull(existingFileHelper);
         this.existingFileHelper = existingFileHelper;
+    }
+
+    /**
+     * @deprecated Use {@link #ModelProvider(PackOutput, String, String, BiFunction, ExistingFileHelper)} instead
+     */
+    @Deprecated(forRemoval = true, since = "1.19.3")
+    public ModelProvider(DataGenerator generator, String modid, String folder, BiFunction<ResourceLocation, ExistingFileHelper, T> builderFromModId, ExistingFileHelper existingFileHelper) {
+        this(generator.getPackOutput(), modid, folder, builderFromModId, existingFileHelper);
     }
 
     public ModelProvider(PackOutput output, String modid, String folder, BiFunction<ResourceLocation, ExistingFileHelper, T> builderFromModId, ExistingFileHelper existingFileHelper) {

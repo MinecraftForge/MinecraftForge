@@ -59,7 +59,17 @@ public class JsonCodecProvider<T> implements DataProvider
     protected Map<ResourceLocation, ICondition[]> conditions = Collections.emptyMap();
 
     /**
-     * @param output DataGenerator provided by {@link GatherDataEvent}.
+     * @deprecated Use {@link #JsonCodecProvider(PackOutput, ExistingFileHelper, String, DynamicOps, PackType, String, Codec, Map)} instead
+     */
+    @Deprecated(forRemoval = true, since = "1.19.3")
+    public JsonCodecProvider(DataGenerator generator, ExistingFileHelper existingFileHelper, String modid, DynamicOps<JsonElement> dynamicOps, PackType packType,
+         String directory, Codec<T> codec, Map<ResourceLocation, T> entries)
+    {
+        this(generator.getPackOutput(), existingFileHelper, modid, dynamicOps, packType, directory, codec, entries);
+    }
+
+    /**
+     * @param output {@linkplain PackOutput} provided by the {@link DataGenerator}.
      * @param dynamicOps DynamicOps to encode values to jsons with using the provided Codec, e.g. {@link JsonOps#INSTANCE}.
      * @param packType PackType specifying whether to generate entries in assets or data.
      * @param directory String representing the directory to generate jsons in, e.g. "dimension" or "cheesemod/cheese".
@@ -67,7 +77,7 @@ public class JsonCodecProvider<T> implements DataProvider
      * @param entries Map of named entries to serialize to jsons. Paths for values are derived from the ResourceLocation's entryid:entrypath as specified above.
      */
     public JsonCodecProvider(PackOutput output, ExistingFileHelper existingFileHelper, String modid, DynamicOps<JsonElement> dynamicOps, PackType packType,
-                             String directory, Codec<T> codec, Map<ResourceLocation, T> entries)
+         String directory, Codec<T> codec, Map<ResourceLocation, T> entries)
     {
         // Track generated data so other dataproviders can validate if needed.
         final ResourceType resourceType = new ResourceType(packType, ".json", directory);
@@ -86,13 +96,22 @@ public class JsonCodecProvider<T> implements DataProvider
     }
 
     /**
+     * @deprecated Use {@link #forDatapackRegistry(PackOutput, ExistingFileHelper, String, RegistryOps, ResourceKey, Map)} instead
+     */
+    public static <T> JsonCodecProvider<T> forDatapackRegistry(DataGenerator generator, ExistingFileHelper existingFileHelper, String modid,
+          RegistryOps<JsonElement> registryOps, ResourceKey<Registry<T>> registryKey, Map<ResourceLocation, T> entries)
+    {
+        return forDatapackRegistry(generator.getPackOutput(), existingFileHelper, modid, registryOps, registryKey, entries);
+    }
+
+    /**
      * {@return DatapackRegistryProvider that encodes using the registered loading codec for the provided registry key}
      * Ensures the correct directory and codec are used.
      * Only vanilla datapack registries enumerated in {@link RegistryAccess} and custom forge datapack registries can
      * be generated this way.
      *
      * @param <T> Registry element type, e.g. Biome
-     * @param output DataGenerator provided by {@link GatherDataEvent}.
+     * @param output {@linkplain PackOutput} provided by the {@link DataGenerator}.
      * @param modid namespace of the mod adding this DataProvider, for logging purposes.
      * @param registryOps RegistryOps to encode values to json with.
      * @param registryKey ResourceKey identifying the registry and its directory.

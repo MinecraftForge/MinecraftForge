@@ -25,6 +25,14 @@ public abstract class ItemModelProvider extends ModelProvider<ItemModelBuilder> 
         super(output, modid, ITEM_FOLDER, ItemModelBuilder::new, existingFileHelper);
     }
 
+    /**
+     * @deprecated Use {@link #ItemModelProvider(PackOutput, String, ExistingFileHelper)} instead
+     */
+    @Deprecated(forRemoval = true, since = "1.19.3")
+    public ItemModelProvider(DataGenerator generator, String modid, ExistingFileHelper existingFileHelper) {
+        this(generator.getPackOutput(), modid, existingFileHelper);
+    }
+
     public ItemModelBuilder basicItem(Item item)
     {
         return basicItem(Objects.requireNonNull(ForgeRegistries.ITEMS.getKey(item)));

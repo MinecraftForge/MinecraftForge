@@ -37,6 +37,15 @@ public abstract class SoundDefinitionsProvider implements DataProvider
     private final Map<String, SoundDefinition> sounds = new LinkedHashMap<>();
 
     /**
+     * @deprecated Use {@link #SoundDefinitionsProvider(PackOutput, String, ExistingFileHelper)} instead
+     */
+    @Deprecated(forRemoval = true, since = "1.19.3")
+    protected SoundDefinitionsProvider(final DataGenerator generator, final String modId, final ExistingFileHelper helper)
+    {
+        this(generator.getPackOutput(), modId, helper);
+    }
+
+    /**
      * Creates a new instance of this data provider.
      *
      * @param output The {@linkplain PackOutput} instance provided by the data generator.

@@ -25,6 +25,7 @@ import java.util.function.Function;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
 import net.minecraft.data.CachedOutput;
+import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
@@ -76,6 +77,14 @@ public abstract class BlockStateProvider implements DataProvider {
     private final String modid;
     private final BlockModelProvider blockModels;
     private final ItemModelProvider itemModels;
+
+    /**
+     * @deprecated Use {@link #BlockStateProvider(PackOutput, String, ExistingFileHelper)} instead
+     */
+    @Deprecated(forRemoval = true, since = "1.19.3")
+    public BlockStateProvider(DataGenerator generator, String modid, ExistingFileHelper exFileHelper) {
+        this(generator.getPackOutput(), modid, exFileHelper);
+    }
 
     public BlockStateProvider(PackOutput output, String modid, ExistingFileHelper exFileHelper) {
         this.output = output;

@@ -41,6 +41,15 @@ public abstract class GlobalLootModifierProvider implements DataProvider
     private final Map<String, JsonElement> toSerialize = new HashMap<>();
     private boolean replace = false;
 
+    /**
+     * @deprecated Use {@link #GlobalLootModifierProvider(PackOutput, String)} instead
+     */
+    @Deprecated(forRemoval = true, since = "1.19.3")
+    public GlobalLootModifierProvider(DataGenerator generator, String modid)
+    {
+        this(generator.getPackOutput(), modid);
+    }
+
     public GlobalLootModifierProvider(PackOutput output, String modid)
     {
         this.output = output;

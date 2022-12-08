@@ -20,6 +20,14 @@ public abstract class BlockModelProvider extends ModelProvider<BlockModelBuilder
         super(output, modid, BLOCK_FOLDER, BlockModelBuilder::new, existingFileHelper);
     }
 
+    /**
+     * @deprecated Use {@link #BlockModelProvider(PackOutput, String, ExistingFileHelper)} instead
+     */
+    @Deprecated(forRemoval = true, since = "1.19.3")
+    public BlockModelProvider(DataGenerator generator, String modid, ExistingFileHelper existingFileHelper) {
+        this(generator.getPackOutput(), modid, existingFileHelper);
+    }
+
     @NotNull
     @Override
     public String getName() {
