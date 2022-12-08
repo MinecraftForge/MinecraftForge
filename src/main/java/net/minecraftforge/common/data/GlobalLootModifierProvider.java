@@ -5,6 +5,7 @@
 
 package net.minecraftforge.common.data;
 
+import com.google.common.collect.ImmutableList;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
@@ -14,6 +15,7 @@ import cpw.mods.modlauncher.api.LamdbaExceptionUtils;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DataProvider;
+import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.loot.IGlobalLootModifier;
 import net.minecraftforge.common.loot.LootModifier;
@@ -24,6 +26,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 /**
@@ -59,26 +62,30 @@ public abstract class GlobalLootModifierProvider implements DataProvider
     protected abstract void start();
 
     @Override
-    public void run(CachedOutput cache) throws IOException
+    public CompletableFuture<?> run(CachedOutput cache)
     {
         start();
 
-        Path forgePath = gen.getOutputFolder().resolve("data/forge/loot_modifiers/global_loot_modifiers.json");
-        String modPath = "data/" + modid + "/loot_modifiers/";
+        Path forgePath = this.gen.getPackOutput().getOutputFolder(PackOutput.Target.DATA_PACK).resolve("forge").resolve("loot_modifiers").resolve("global_loot_modifiers.json");
+        Path modifierFolderPath = this.gen.getPackOutput().getOutputFolder(PackOutput.Target.DATA_PACK).resolve(this.modid).resolve("loot_modifiers");
         List<ResourceLocation> entries = new ArrayList<>();
+
+        ImmutableList.Builder<CompletableFuture<?>> futuresBuilder = new ImmutableList.Builder<>();
 
         toSerialize.forEach(LamdbaExceptionUtils.rethrowBiConsumer((name, json) ->
         {
             entries.add(new ResourceLocation(modid, name));
-            Path modifierPath = gen.getOutputFolder().resolve(modPath + name + ".json");
-            DataProvider.saveStable(cache, json, modifierPath);
+            Path modifierPath = modifierFolderPath.resolve(name + ".json");
+            futuresBuilder.add(DataProvider.saveStable(cache, json, modifierPath));
         }));
 
         JsonObject forgeJson = new JsonObject();
         forgeJson.addProperty("replace", this.replace);
         forgeJson.add("entries", GSON.toJsonTree(entries.stream().map(ResourceLocation::toString).collect(Collectors.toList())));
 
-        DataProvider.saveStable(cache, forgeJson, forgePath);
+        futuresBuilder.add(DataProvider.saveStable(cache, forgeJson, forgePath));
+
+        return CompletableFuture.allOf(futuresBuilder.build().toArray(CompletableFuture[]::new));
     }
 
     /**

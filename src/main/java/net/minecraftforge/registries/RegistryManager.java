@@ -19,7 +19,7 @@ import com.google.common.collect.Sets;
 
 import com.mojang.serialization.Lifecycle;
 import net.minecraft.core.WritableRegistry;
-import net.minecraft.data.BuiltinRegistries;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.core.Registry;
@@ -131,12 +131,7 @@ public class RegistryManager
 
     static <V> void registerToRootRegistry(ForgeRegistry<V> forgeReg)
     {
-        injectForgeRegistry(forgeReg, Registry.REGISTRY);
-    }
-
-    static <V> void registerToBuiltinRegistry(ForgeRegistry<V> forgeReg)
-    {
-        injectForgeRegistry(forgeReg, BuiltinRegistries.REGISTRY);
+        injectForgeRegistry(forgeReg, BuiltInRegistries.REGISTRY);
     }
 
     @SuppressWarnings("unchecked")
@@ -151,11 +146,14 @@ public class RegistryManager
     public static void postNewRegistryEvent()
     {
         NewRegistryEvent event = new NewRegistryEvent();
-        vanillaRegistryKeys = Set.copyOf(Registry.REGISTRY.keySet());
+        DataPackRegistryEvent.NewRegistry dataPackEvent = new DataPackRegistryEvent.NewRegistry();
+        vanillaRegistryKeys = Set.copyOf(BuiltInRegistries.REGISTRY.keySet());
 
         ModLoader.get().postEventWithWrapInModOrder(event, (mc, e) -> ModLoadingContext.get().setActiveContainer(mc), (mc, e) -> ModLoadingContext.get().setActiveContainer(null));
+        ModLoader.get().postEventWithWrapInModOrder(dataPackEvent, (mc, e) -> ModLoadingContext.get().setActiveContainer(mc), (mc, e) -> ModLoadingContext.get().setActiveContainer(null));
 
         event.fill();
+        dataPackEvent.process();
     }
 
     private void addLegacyName(ResourceLocation legacyName, ResourceLocation name)

@@ -1,8 +1,8 @@
 --- a/net/minecraft/world/entity/boss/EnderDragonPart.java
 +++ b/net/minecraft/world/entity/boss/EnderDragonPart.java
-@@ -8,13 +_,13 @@
- import net.minecraft.world.entity.Pose;
+@@ -11,13 +_,13 @@
  import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
+ import net.minecraft.world.item.ItemStack;
  
 -public class EnderDragonPart extends Entity {
 +public class EnderDragonPart extends net.minecraftforge.entity.PartEntity<EnderDragon> {

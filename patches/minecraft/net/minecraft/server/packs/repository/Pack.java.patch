@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/packs/repository/Pack.java
 +++ b/net/minecraft/server/packs/repository/Pack.java
-@@ -26,6 +_,7 @@
+@@ -27,6 +_,7 @@
     private final Pack.Position f_10406_;
     private final boolean f_10407_;
     private final boolean f_10408_;
@@ -8,47 +8,25 @@
     private final PackSource f_10409_;
  
     @Nullable
-@@ -38,7 +_,7 @@
-             try {
-                PackMetadataSection packmetadatasection = packresources.m_5550_(PackMetadataSection.f_10366_);
-                if (packmetadatasection != null) {
--                  pack = p_10434_.m_143873_(p_10431_, Component.m_237113_(packresources.m_8017_()), p_10432_, p_10433_, packmetadatasection, p_10435_, p_10436_);
-+                  pack = p_10434_.create(p_10431_, Component.m_237113_(packresources.m_8017_()), p_10432_, p_10433_, packmetadatasection, p_10435_, p_10436_, packresources.isHidden());
-                   break label54;
-                }
- 
-@@ -73,7 +_,12 @@
-       }
+@@ -50,6 +_,7 @@
+       this.f_10406_ = p_251298_;
+       this.f_10408_ = p_249753_;
+       this.f_10409_ = p_251608_;
++      this.hidden = p_250162_.hidden();
     }
  
-+   @Deprecated
-    public Pack(String p_10420_, boolean p_10421_, Supplier<PackResources> p_10422_, Component p_10423_, Component p_10424_, PackCompatibility p_10425_, Pack.Position p_10426_, boolean p_10427_, PackSource p_10428_) {
-+       this(p_10420_, p_10421_, p_10422_, p_10423_, p_10424_, p_10425_, p_10426_, p_10427_, p_10428_, false);
-+   }
-+
-+   public Pack(String p_10420_, boolean p_10421_, Supplier<PackResources> p_10422_, Component p_10423_, Component p_10424_, PackCompatibility p_10425_, Pack.Position p_10426_, boolean p_10427_, PackSource p_10428_, boolean hidden) {
-       this.f_10401_ = p_10420_;
-       this.f_10402_ = p_10422_;
-       this.f_10403_ = p_10423_;
-@@ -83,10 +_,16 @@
-       this.f_10406_ = p_10426_;
-       this.f_10408_ = p_10427_;
-       this.f_10409_ = p_10428_;
-+      this.hidden = hidden;
-    }
+    @Nullable
+@@ -68,7 +_,8 @@
  
-+   @Deprecated
-    public Pack(String p_143865_, Component p_143866_, boolean p_143867_, Supplier<PackResources> p_143868_, PackMetadataSection p_143869_, PackType p_143870_, Pack.Position p_143871_, PackSource p_143872_) {
--      this(p_143865_, p_143867_, p_143868_, p_143866_, p_143869_.m_10373_(), PackCompatibility.m_143885_(p_143869_, p_143870_), p_143871_, false, p_143872_);
-+      this(p_143865_, p_143867_, p_143868_, p_143866_, p_143869_.m_10373_(), PackCompatibility.m_143885_(p_143869_, p_143870_), p_143871_, false, p_143872_, false);
-+   }
-+
-+   public Pack(String p_143865_, Component p_143866_, boolean p_143867_, Supplier<PackResources> p_143868_, PackMetadataSection p_143869_, PackType p_143870_, Pack.Position p_143871_, PackSource p_143872_, boolean hidden) {
-+      this(p_143865_, p_143867_, p_143868_, p_143866_, p_143869_.m_10373_(), PackCompatibility.m_143885_(p_143869_, p_143870_), p_143871_, false, p_143872_, hidden);
-    }
+                FeatureFlagsMetadataSection featureflagsmetadatasection = packresources.m_5550_(FeatureFlagsMetadataSection.f_244642_);
+                FeatureFlagSet featureflagset = featureflagsmetadatasection != null ? featureflagsmetadatasection.f_244197_() : FeatureFlagSet.m_246902_();
+-               pack$info = new Pack.Info(packmetadatasection.m_10373_(), packmetadatasection.m_10374_(), featureflagset);
++               // Forge: Allow separate pack formats for server data and client resources and setting isHidden
++               pack$info = new Pack.Info(packmetadatasection.m_10373_(), packmetadatasection.getPackFormat(PackType.SERVER_DATA), packmetadatasection.getPackFormat(PackType.CLIENT_RESOURCES), featureflagset, packresources.isHidden());
+             }
  
-    public Component m_10429_() {
-@@ -131,6 +_,8 @@
+             return pack$info;
+@@ -127,6 +_,8 @@
        return this.f_10409_;
     }
  
@@ -57,21 +35,23 @@
     public boolean equals(Object p_10448_) {
        if (this == p_10448_) {
           return true;
-@@ -148,8 +_,15 @@
- 
-    @FunctionalInterface
-    public interface PackConstructor {
--      @Nullable
--      Pack m_143873_(String p_143874_, Component p_143875_, boolean p_143876_, Supplier<PackResources> p_143877_, PackMetadataSection p_143878_, Pack.Position p_143879_, PackSource p_143880_);
-+      @Deprecated
-+      @Nullable
-+      default Pack m_143873_(String p_143874_, Component p_143875_, boolean p_143876_, Supplier<PackResources> p_143877_, PackMetadataSection p_143878_, Pack.Position p_143879_, PackSource p_143880_)
-+      {
-+         return create(p_143874_, p_143875_, p_143876_, p_143877_, p_143878_, p_143879_, p_143880_, false);
-+      }
-+
-+      @Nullable
-+      Pack create(String p_143874_, Component p_143875_, boolean p_143876_, Supplier<PackResources> p_143877_, PackMetadataSection p_143878_, Pack.Position p_143879_, PackSource p_143880_, boolean hidden);
+@@ -142,9 +_,17 @@
+       return this.f_10401_.hashCode();
     }
  
-    public static enum Position {
+-   public static record Info(Component f_244592_, int f_244194_, FeatureFlagSet f_244041_) {
++   public static record Info(Component f_244592_, int dataFormat, int resourceFormat, FeatureFlagSet f_244041_, boolean hidden) {
++      public Info(Component f_244592_, int f_244194_, FeatureFlagSet f_244041_) {
++         this(f_244592_, f_244194_, f_244194_, f_244041_, false);
++      }
++
++      public int getFormat(PackType type) {
++         return type == PackType.SERVER_DATA ? this.dataFormat : this.resourceFormat;
++      }
++
+       public PackCompatibility m_246438_(PackType p_249204_) {
+-         return PackCompatibility.m_143882_(this.f_244194_, p_249204_);
++         return PackCompatibility.m_143882_(getFormat(p_249204_), p_249204_);
+       }
+    }
+ 

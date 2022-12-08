@@ -205,7 +205,7 @@ public interface IForgeBlock
     {
         if (isBed(state, levelReader, pos, entity) && levelReader instanceof Level level && BedBlock.canSetSpawn(level))
         {
-            return BedBlock.findStandUpPosition(type, levelReader, pos, orientation);
+            return BedBlock.findStandUpPosition(type, levelReader, pos, state.getValue(BedBlock.FACING), orientation);
         }
         return Optional.empty();
     }

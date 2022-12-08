@@ -21,6 +21,8 @@ import java.util.Random;
 @Mod(GuiLayeringTest.MODID)
 public class GuiLayeringTest
 {
+    private static final boolean ENABLED = false;
+
     private static final Random RANDOM = new Random();
     public static final String MODID = "gui_layer_test";
 
@@ -30,14 +32,15 @@ public class GuiLayeringTest
         @SubscribeEvent
         public static void guiOpen(ScreenEvent.Init event)
         {
-            if (event.getScreen() instanceof AbstractContainerScreen)
+            if (event.getScreen() instanceof AbstractContainerScreen && ENABLED)
             {
-                event.addListener(new Button(2, 2, 150, 20, Component.literal("Test Gui Layering"), btn -> {
+                event.addListener(Button.builder(Component.literal("Test Gui Layering"), btn -> {
                     Minecraft.getInstance().pushGuiLayer(new TestLayer(Component.literal("LayerScreen")));
-                }));
-                event.addListener(new Button(2, 25, 150, 20, Component.literal("Test Gui Normal"), btn -> {
+                }).pos(2,2).size(150, 20).build());
+
+                event.addListener(Button.builder(Component.literal("Test Gui Normal"), btn -> {
                     Minecraft.getInstance().setScreen(new TestLayer(Component.literal("LayerScreen")));
-                }));
+                }).pos(2, 25).size(150, 20).build());
             }
         }
 
@@ -72,9 +75,9 @@ public class GuiLayeringTest
                 xoff = RANDOM.nextInt(xoff);
                 yoff = RANDOM.nextInt(yoff);
 
-                this.addRenderableWidget(new Button(xoff, yoff + buttonSpacing * (cnt++), buttonWidth, buttonHeight, Component.literal("Push New Layer"), this::pushLayerButton));
-                this.addRenderableWidget(new Button(xoff, yoff + buttonSpacing * (cnt++), buttonWidth, buttonHeight, Component.literal("Pop Current Layer"), this::popLayerButton));
-                this.addRenderableWidget(new Button(xoff, yoff + buttonSpacing * (cnt++), buttonWidth, buttonHeight, Component.literal("Close entire stack"), this::closeStack));
+                this.addRenderableWidget(Button.builder(Component.literal("Push New Layer"), this::pushLayerButton).pos(xoff, yoff + buttonSpacing * (cnt++)).size(buttonWidth, buttonHeight).build());
+                this.addRenderableWidget(Button.builder(Component.literal("Pop Current Layer"), this::popLayerButton).pos(xoff, yoff + buttonSpacing * (cnt++)).size(buttonWidth, buttonHeight).build());
+                this.addRenderableWidget(Button.builder(Component.literal("Close entire stack"), this::closeStack).pos(xoff, yoff + buttonSpacing * (cnt++)).size(buttonWidth, buttonHeight).build());
             }
 
             private void closeStack(Button button)

@@ -45,8 +45,10 @@ import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.loot.IGlobalLootModifier;
 import net.minecraftforge.common.world.BiomeModifier;
 import net.minecraftforge.fluids.FluidType;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.holdersets.HolderSetType;
 
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 import net.minecraftforge.common.world.StructureModifier;
 
@@ -134,12 +136,6 @@ public class ForgeRegistries
      * Use {@link Keys#HOLDER_SET_TYPES} to create a {@link DeferredRegister}.
      */
     public static final Supplier<IForgeRegistry<HolderSetType>> HOLDER_SET_TYPES = DEFERRED_HOLDER_SET_TYPES.makeRegistry(GameData::getHolderSetTypeRegistryBuilder);
-
-    // Custom forge datapack registries
-    static final DeferredRegister<BiomeModifier> DEFERRED_BIOME_MODIFIERS = DeferredRegister.create(Keys.BIOME_MODIFIERS, "forge");
-    public static final Supplier<IForgeRegistry<BiomeModifier>> BIOME_MODIFIERS_BUILTIN = DEFERRED_BIOME_MODIFIERS.makeRegistry(() -> new RegistryBuilder<BiomeModifier>().disableSaving().dataPackRegistry(BiomeModifier.DIRECT_CODEC));
-    static final DeferredRegister<StructureModifier> DEFERRED_STRUCTURE_MODIFIERS = DeferredRegister.create(Keys.STRUCTURE_MODIFIERS, "forge");
-    public static final Supplier<IForgeRegistry<StructureModifier>> STRUCTURE_MODIFIERS_BUILTIN = DEFERRED_STRUCTURE_MODIFIERS.makeRegistry(() -> new RegistryBuilder<StructureModifier>().disableSaving().dataPackRegistry(StructureModifier.DIRECT_CODEC));
 
     public static final class Keys {
         //Vanilla

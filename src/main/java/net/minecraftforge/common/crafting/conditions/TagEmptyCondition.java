@@ -8,6 +8,7 @@ package net.minecraftforge.common.crafting.conditions;
 import com.google.gson.JsonObject;
 
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.util.GsonHelper;
@@ -30,7 +31,7 @@ public class TagEmptyCondition implements ICondition
 
     public TagEmptyCondition(ResourceLocation tag)
     {
-        this.tag = TagKey.create(Registry.ITEM_REGISTRY, tag);
+        this.tag = TagKey.create(Registries.ITEM, tag);
     }
 
     @Override

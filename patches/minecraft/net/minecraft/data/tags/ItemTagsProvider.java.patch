@@ -1,17 +1,21 @@
 --- a/net/minecraft/data/tags/ItemTagsProvider.java
 +++ b/net/minecraft/data/tags/ItemTagsProvider.java
-@@ -14,8 +_,14 @@
- public class ItemTagsProvider extends TagsProvider<Item> {
+@@ -13,10 +_,17 @@
+ public abstract class ItemTagsProvider extends IntrinsicHolderTagsProvider<Item> {
     private final Function<TagKey<Block>, TagBuilder> f_126528_;
  
-+   /** @deprecated Forge: Use the {@link #ItemTagsProvider(DataGenerator, BlockTagsProvider, String, net.minecraftforge.common.data.ExistingFileHelper) mod id variant} */
++   /**
++    * @deprecated Forge: Use the {@link #ItemTagsProvider(PackOutput, CompletableFuture, TagsProvider, String, net.minecraftforge.common.data.ExistingFileHelper) mod id variant}
++    */
 +   @Deprecated
-    public ItemTagsProvider(DataGenerator p_126530_, BlockTagsProvider p_126531_) {
-       super(p_126530_, Registry.f_122827_);
-+      this.f_126528_ = p_126531_::m_236451_;
+    public ItemTagsProvider(PackOutput p_255871_, CompletableFuture<HolderLookup.Provider> p_256035_, TagsProvider<Block> p_256467_) {
++      this(p_255871_, p_256035_, p_256467_, "vanilla", null);
 +   }
-+   public ItemTagsProvider(DataGenerator p_126530_, BlockTagsProvider p_126531_, String modId, @org.jetbrains.annotations.Nullable net.minecraftforge.common.data.ExistingFileHelper existingFileHelper) {
-+      super(p_126530_, Registry.f_122827_, modId, existingFileHelper);
-       this.f_126528_ = p_126531_::m_236451_;
++   public ItemTagsProvider(PackOutput p_255871_, CompletableFuture<HolderLookup.Provider> p_256035_, TagsProvider<Block> p_256467_, String modId, @org.jetbrains.annotations.Nullable net.minecraftforge.common.data.ExistingFileHelper existingFileHelper) {
+       super(p_255871_, Registries.f_256913_, p_256035_, (p_255790_) -> {
+          return p_255790_.m_204114_().m_205785_();
+-      });
++      }, modId, existingFileHelper);
+       this.f_126528_ = p_256467_::m_236451_;
     }
  

@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/levelgen/feature/Feature.java
 +++ b/net/minecraft/world/level/levelgen/feature/Feature.java
-@@ -155,7 +_,7 @@
+@@ -156,7 +_,7 @@
     }
  
     protected static boolean m_159747_(BlockState p_159748_) {

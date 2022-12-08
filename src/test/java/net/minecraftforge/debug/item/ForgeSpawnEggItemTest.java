@@ -6,6 +6,8 @@
 package net.minecraftforge.debug.item;
 
 import java.util.Map;
+import java.util.function.Consumer;
+
 import net.minecraft.client.renderer.entity.PigRenderer;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
@@ -13,12 +15,13 @@ import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.animal.Pig;
-import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.ForgeSpawnEggItem;
+import net.minecraftforge.event.CreativeModeTabEvent;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -41,7 +44,7 @@ public class ForgeSpawnEggItemTest
 
     private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MODID);
     private static final RegistryObject<ForgeSpawnEggItem> EGG = ITEMS.register("test_spawn_egg", () ->
-            new ForgeSpawnEggItem(ENTITY, 0x0000FF, 0xFF0000, new Item.Properties().tab(CreativeModeTab.TAB_MISC))
+            new ForgeSpawnEggItem(ENTITY, 0x0000FF, 0xFF0000, new Item.Properties())
     );
 
     public ForgeSpawnEggItemTest()
@@ -52,6 +55,13 @@ public class ForgeSpawnEggItemTest
             ENTITIES.register(FMLJavaModLoadingContext.get().getModEventBus());
 
             FMLJavaModLoadingContext.get().getModEventBus().register(this);
+            FMLJavaModLoadingContext.get().getModEventBus().addListener((Consumer<CreativeModeTabEvent.BuildContents>) onBuildContents -> {
+                if (onBuildContents.getTab() == CreativeModeTabs.INGREDIENTS) {
+                    onBuildContents.register((flags, output, permissions) -> {
+                        output.accept(EGG.get());
+                    });
+                }
+            });
         }
     }
 

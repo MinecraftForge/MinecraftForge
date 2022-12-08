@@ -1,16 +1,19 @@
 --- a/net/minecraft/data/tags/FluidTagsProvider.java
 +++ b/net/minecraft/data/tags/FluidTagsProvider.java
-@@ -7,8 +_,13 @@
+@@ -9,10 +_,15 @@
  import net.minecraft.world.level.material.Fluids;
  
- public class FluidTagsProvider extends TagsProvider<Fluid> {
-+   /** @deprecated Forge: Use the {@link #FluidTagsProvider(DataGenerator, String, net.minecraftforge.common.data.ExistingFileHelper) mod id variant} */
+ public class FluidTagsProvider extends IntrinsicHolderTagsProvider<Fluid> {
++   /** @deprecated Forge: Use the {@linkplain #FluidTagsProvider(PackOutput, CompletableFuture, String, net.minecraftforge.common.data.ExistingFileHelper) mod id variant} */
 +   @Deprecated
-    public FluidTagsProvider(DataGenerator p_126523_) {
-       super(p_126523_, Registry.f_122822_);
+    public FluidTagsProvider(PackOutput p_255941_, CompletableFuture<HolderLookup.Provider> p_256600_) {
++      this(p_255941_, p_256600_, "vanilla", null);
 +   }
-+   public FluidTagsProvider(DataGenerator p_126523_, String modId, @org.jetbrains.annotations.Nullable net.minecraftforge.common.data.ExistingFileHelper existingFileHelper) {
-+      super(p_126523_, Registry.f_122822_, modId, existingFileHelper);
++   public FluidTagsProvider(PackOutput p_255941_, CompletableFuture<HolderLookup.Provider> p_256600_, String modId, @org.jetbrains.annotations.Nullable net.minecraftforge.common.data.ExistingFileHelper existingFileHelper) {
+       super(p_255941_, Registries.f_256808_, p_256600_, (p_256474_) -> {
+          return p_256474_.m_205069_().m_205785_();
+-      });
++      }, modId, existingFileHelper);
     }
  
-    protected void m_6577_() {
+    protected void m_6577_(HolderLookup.Provider p_256366_) {

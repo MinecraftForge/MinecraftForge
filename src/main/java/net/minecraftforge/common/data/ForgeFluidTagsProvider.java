@@ -5,21 +5,24 @@
 
 package net.minecraftforge.common.data;
 
-import net.minecraft.data.DataGenerator;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.FluidTagsProvider;
 import net.minecraftforge.common.ForgeMod;
+
+import java.util.concurrent.CompletableFuture;
 
 import static net.minecraftforge.common.Tags.Fluids.MILK;
 
 public final class ForgeFluidTagsProvider extends FluidTagsProvider
 {
-    public ForgeFluidTagsProvider(DataGenerator gen, ExistingFileHelper existingFileHelper)
+    public ForgeFluidTagsProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider, ExistingFileHelper existingFileHelper)
     {
-        super(gen, "forge", existingFileHelper);
+        super(output, lookupProvider, "forge", existingFileHelper);
     }
 
     @Override
-    public void addTags()
+    public void addTags(HolderLookup.Provider lookupProvider)
     {
         tag(MILK).addOptional(ForgeMod.MILK.getId()).addOptional(ForgeMod.FLOWING_MILK.getId());
     }

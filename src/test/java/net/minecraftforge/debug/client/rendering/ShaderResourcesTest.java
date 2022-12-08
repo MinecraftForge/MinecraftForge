@@ -48,24 +48,24 @@ public class ShaderResourcesTest
 
             modEventBus.addListener(ClientInit::registerShaders);
         }
-        
+
         public static void registerShaders(final RegisterShadersEvent event)
         {
             if (!ENABLE)
                 return;
-    
+
             try
             {
                 event.registerShader(
                         new ShaderInstance(
-                                event.getResourceManager(),
+                                event.getResourceProvider(),
                                 new ResourceLocation(MODID, "vertex_cubemap"),
                                 DefaultVertexFormat.POSITION),
                         shader ->
                         {
                             LOGGER.info("Completely loaded shader {} with no issues", shader.getName());
                         });
-    
+
                 LOGGER.info("Loaded registered shaders with no exceptions");
             }
             catch (IOException e)

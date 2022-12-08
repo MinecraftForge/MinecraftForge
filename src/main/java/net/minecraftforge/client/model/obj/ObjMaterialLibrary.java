@@ -6,8 +6,8 @@
 package net.minecraftforge.client.model.obj;
 
 import com.google.common.collect.Maps;
-import com.mojang.math.Vector4f;
 import joptsimple.internal.Strings;
+import org.joml.Vector4f;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -100,11 +100,11 @@ public class ObjMaterialLibrary
     public static class Material
     {
         public final String name;
-        public Vector4f ambientColor = new Vector4f(0, 0, 0, 1);
+        public Vector4f ambientColor = new Vector4f();
         public String ambientColorMap;
         public Vector4f diffuseColor = new Vector4f(1, 1, 1, 1);
         public String diffuseColorMap;
-        public Vector4f specularColor = new Vector4f(0, 0, 0, 1);
+        public Vector4f specularColor = new Vector4f();
         public float specularHighlight = 0;
         public String specularColorMap;
 

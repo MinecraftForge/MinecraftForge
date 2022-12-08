@@ -1,6 +1,6 @@
 --- a/net/minecraft/network/chat/contents/TranslatableContents.java
 +++ b/net/minecraft/network/chat/contents/TranslatableContents.java
-@@ -94,6 +_,11 @@
+@@ -92,6 +_,11 @@
              }
           }
  

@@ -63,7 +63,10 @@ public class ForgeSpawnEggItem extends SpawnEggItem
         return ret != null ? ret : SpawnEggItem.byId(type);
     }
 
-
+    @Override
+    protected EntityType<?> getDefaultType() {
+        return this.typeSupplier.get();
+    }
 
     private static final DispenseItemBehavior DEFAULT_DISPENSE_BEHAVIOR = (source, stack) ->
     {

@@ -7,6 +7,7 @@ package net.minecraftforge.server.command;
 
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.core.Registry;
@@ -29,7 +30,7 @@ class DimensionsCommand
             .requires(cs->cs.hasPermission(0)) //permission
             .executes(ctx -> {
                 ctx.getSource().sendSuccess(Component.translatable("commands.forge.dimensions.list"), true);
-                final Registry<DimensionType> reg = ctx.getSource().registryAccess().registryOrThrow(Registry.DIMENSION_TYPE_REGISTRY);
+                final Registry<DimensionType> reg = ctx.getSource().registryAccess().registryOrThrow(Registries.DIMENSION_TYPE);
 
                 Map<ResourceLocation, List<ResourceLocation>> types = new HashMap<>();
                 for (ServerLevel dim : ctx.getSource().getServer().getAllLevels()) {

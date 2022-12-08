@@ -9,6 +9,9 @@ import net.minecraft.server.packs.PackType;
 
 public interface IForgePackResources
 {
+    /**
+     * {@return {@code true} if the pack should be hidden from any user interfaces}
+     */
     default boolean isHidden()
     {
         return false;

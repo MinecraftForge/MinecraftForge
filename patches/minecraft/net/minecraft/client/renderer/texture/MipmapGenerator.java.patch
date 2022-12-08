@@ -1,24 +1,27 @@
 --- a/net/minecraft/client/renderer/texture/MipmapGenerator.java
 +++ b/net/minecraft/client/renderer/texture/MipmapGenerator.java
-@@ -34,9 +_,12 @@
-             }
-          }
+@@ -26,12 +_,15 @@
+          anativeimage[0] = p_251300_[0];
+          boolean flag = m_246464_(anativeimage[0]);
  
-+         int maxMipmapLevel = net.minecraftforge.client.ForgeHooksClient.getMaxMipmapLevel(p_118055_.m_84982_(), p_118055_.m_85084_());
-          for(int k1 = 1; k1 <= p_118056_; ++k1) {
-             NativeImage nativeimage1 = anativeimage[k1 - 1];
--            NativeImage nativeimage = new NativeImage(nativeimage1.m_84982_() >> 1, nativeimage1.m_85084_() >> 1, false);
-+            // Forge: guard against invalid texture size, because we allow generating mipmaps regardless of texture sizes
-+            NativeImage nativeimage = new NativeImage(Math.max(1, nativeimage1.m_84982_() >> 1), Math.max(1, nativeimage1.m_85084_() >> 1), false);
-+            if (k1 <= maxMipmapLevel) {
-             int k = nativeimage.m_84982_();
-             int l = nativeimage.m_85084_();
++         int maxMipmapLevel = net.minecraftforge.client.ForgeHooksClient.getMaxMipmapLevel(anativeimage[0].m_84982_(), anativeimage[0].m_85084_());
+          for(int i = 1; i <= p_252326_; ++i) {
+             if (i < p_251300_.length) {
+                anativeimage[i] = p_251300_[i];
+             } else {
+                NativeImage nativeimage = anativeimage[i - 1];
+-               NativeImage nativeimage1 = new NativeImage(nativeimage.m_84982_() >> 1, nativeimage.m_85084_() >> 1, false);
++               // Forge: Guard against invalid texture size, because we allow generating mipmaps regardless of texture sizes
++               NativeImage nativeimage1 = new NativeImage(Math.max(1, nativeimage.m_84982_() >> 1), Math.max(1, nativeimage.m_85084_() >> 1), false);
++               if (i <= maxMipmapLevel) {
+                int j = nativeimage1.m_84982_();
+                int k = nativeimage1.m_85084_();
  
-@@ -44,6 +_,7 @@
-                for(int j1 = 0; j1 < l; ++j1) {
-                   nativeimage.m_84988_(i1, j1, m_118048_(nativeimage1.m_84985_(i1 * 2 + 0, j1 * 2 + 0), nativeimage1.m_84985_(i1 * 2 + 1, j1 * 2 + 0), nativeimage1.m_84985_(i1 * 2 + 0, j1 * 2 + 1), nativeimage1.m_84985_(i1 * 2 + 1, j1 * 2 + 1), flag));
+@@ -39,6 +_,7 @@
+                   for(int i1 = 0; i1 < k; ++i1) {
+                      nativeimage1.m_84988_(l, i1, m_118048_(nativeimage.m_84985_(l * 2 + 0, i1 * 2 + 0), nativeimage.m_84985_(l * 2 + 1, i1 * 2 + 0), nativeimage.m_84985_(l * 2 + 0, i1 * 2 + 1), nativeimage.m_84985_(l * 2 + 1, i1 * 2 + 1), flag));
+                   }
++               }
                 }
-+            }
-             }
  
-             anativeimage[k1] = nativeimage;
+                anativeimage[i] = nativeimage1;

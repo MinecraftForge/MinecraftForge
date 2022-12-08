@@ -11,6 +11,7 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.vehicle.Boat;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Explosion;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
@@ -72,13 +73,13 @@ public interface IForgeFluid
      * Returns whether the fluid can create a source.
      *
      * @param state the state of the fluid
-     * @param reader the reader that can get the fluid
+     * @param level the level that can get the fluid
      * @param pos the location of the fluid
      * @return {@code true} if the fluid can create a source, {@code false} otherwise
      */
-    default boolean canConvertToSource(FluidState state, LevelReader reader, BlockPos pos)
+    default boolean canConvertToSource(FluidState state, Level level, BlockPos pos)
     {
-        return getFluidType().canConvertToSource(state, reader, pos);
+        return getFluidType().canConvertToSource(state, level, pos);
     }
 
     /**

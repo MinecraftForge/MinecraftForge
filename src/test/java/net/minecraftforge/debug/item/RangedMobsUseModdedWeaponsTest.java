@@ -7,11 +7,8 @@ package net.minecraftforge.debug.item;
 
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.BowItem;
-import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.CrossbowItem;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.Items;
+import net.minecraft.world.item.*;
+import net.minecraftforge.event.CreativeModeTabEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
@@ -19,6 +16,8 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
+
+import java.util.function.Consumer;
 
 @Mod(RangedMobsUseModdedWeaponsTest.MOD_ID)
 public class RangedMobsUseModdedWeaponsTest {
@@ -34,10 +33,10 @@ public class RangedMobsUseModdedWeaponsTest {
     private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MOD_ID);
 
     private static final RegistryObject<Item> MODDED_BOW = ITEMS.register("modded_bow", () ->
-            new BowItem(new Item.Properties().tab(CreativeModeTab.TAB_COMBAT).defaultDurability(384))
+            new BowItem(new Item.Properties().defaultDurability(384))
     );
     private static final RegistryObject<Item> MODDED_CROSSBOW = ITEMS.register("modded_crossbow", () ->
-            new CrossbowItem(new Item.Properties().tab(CreativeModeTab.TAB_COMBAT).defaultDurability(326))
+            new CrossbowItem(new Item.Properties().defaultDurability(326))
     );
 
     public RangedMobsUseModdedWeaponsTest()
@@ -46,6 +45,14 @@ public class RangedMobsUseModdedWeaponsTest {
             IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
             ITEMS.register(modEventBus);
             modEventBus.addListener(this::onClientSetup);
+            FMLJavaModLoadingContext.get().getModEventBus().addListener((Consumer<CreativeModeTabEvent.BuildContents>) onBuildContents -> {
+                if (onBuildContents.getTab() == CreativeModeTabs.COMBAT) {
+                    onBuildContents.register((flags, output, permissions) -> {
+                        output.accept(MODDED_BOW.get());
+                        output.accept(MODDED_CROSSBOW.get());
+                    });
+                }
+            });
         }
     }
 

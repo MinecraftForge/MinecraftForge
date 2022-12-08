@@ -97,7 +97,7 @@
 @@ -612,8 +_,9 @@
  
                       posestack.m_85836_();
-                      posestack.m_85837_((double)(blockpos2.m_123341_() & 15), (double)(blockpos2.m_123342_() & 15), (double)(blockpos2.m_123343_() & 15));
+                      posestack.m_252880_((float)(blockpos2.m_123341_() & 15), (float)(blockpos2.m_123342_() & 15), (float)(blockpos2.m_123343_() & 15));
 -                     blockrenderdispatcher.m_234355_(blockstate, blockpos2, renderchunkregion, posestack, bufferbuilder2, true, randomsource);
 +                     blockrenderdispatcher.renderBatched(blockstate, blockpos2, renderchunkregion, posestack, bufferbuilder2, true, randomsource, modelData, rendertype2, false);
                       posestack.m_85849_();

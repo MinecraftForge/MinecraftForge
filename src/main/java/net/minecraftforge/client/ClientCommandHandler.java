@@ -29,6 +29,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.server.command.CommandHelper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.util.IdentityHashMap;
 import java.util.Map;
@@ -45,13 +46,10 @@ public class ClientCommandHandler
 
     private static void handleClientPlayerLogin(ClientPlayerNetworkEvent.LoggingIn event)
     {
-        // some custom server implementations do not send ClientboundCommandsPacket, provide a fallback
-        var suggestionDispatcher = mergeServerCommands(new CommandDispatcher<>(), new CommandBuildContext(event.getPlayer().connection.registryAccess()));
-        if (event.getConnection().getPacketListener() instanceof ClientPacketListener listener)
-        {
-            // Must set this, so that suggestions for client-only commands work, if server never sends commands packet
-            listener.commands = suggestionDispatcher;
-        }
+        final ClientPacketListener connection = event.getPlayer().connection;
+        // Some custom server implementations do not send ClientboundCommandsPacket, so we provide a fallback:
+        // Must set this, so that suggestions for client-only commands work, if server never sends commands packet
+        connection.commands = mergeServerCommands(new CommandDispatcher<>(), CommandBuildContext.simple(connection.registryAccess(), connection.enabledFeatures()));
     }
 
     /*
@@ -60,6 +58,7 @@ public class ClientCommandHandler
      * Merges command dispatcher use for suggestions to the command dispatcher used for client commands so they can be sent to the server, and vice versa so client commands appear
      * with server commands in suggestions
      */
+    @ApiStatus.Internal
     public static CommandDispatcher<SharedSuggestionProvider> mergeServerCommands(CommandDispatcher<SharedSuggestionProvider> serverCommands, CommandBuildContext buildContext)
     {
         CommandDispatcher<CommandSourceStack> commandsTemp = new CommandDispatcher<>();
@@ -143,10 +142,10 @@ public class ClientCommandHandler
     }
 
     /**
-     * Always try to execute the cached parsing of a typed command as a clientside command. Requires that the execute field of the commands to be set to send to server so that they aren't\
+     * Always try to execute the cached parsing of a typed command as a clientside command. Requires that the execute field of the commands to be set to send to server so that they aren't
      * treated as client command's that do nothing.
      *
-     * {@link net.minecraft.commands.Commands#performCommand(CommandSourceStack, String)} for reference
+     * {@link net.minecraft.commands.Commands#performCommand(ParseResults, String)} for reference
      *
      * @param command the full command to execute, no preceding slash
      * @return {@code false} leaves the message to be sent to the server, while {@code true} means it should be caught before LocalPlayer#sendCommand

@@ -1,24 +1,23 @@
 --- a/net/minecraft/client/resources/model/ModelManager.java
 +++ b/net/minecraft/client/resources/model/ModelManager.java
-@@ -19,7 +_,7 @@
- 
- @OnlyIn(Dist.CLIENT)
- public class ModelManager extends SimplePreparableReloadListener<ModelBakery> implements AutoCloseable {
+@@ -42,13 +_,14 @@
+ public class ModelManager implements PreparableReloadListener, AutoCloseable {
+    private static final Logger f_243848_ = LogUtils.getLogger();
+    private static final Map<ResourceLocation, ResourceLocation> f_244614_ = Map.of(Sheets.f_110737_, new ResourceLocation("banner_patterns"), Sheets.f_110736_, new ResourceLocation("beds"), Sheets.f_110740_, new ResourceLocation("chests"), Sheets.f_110738_, new ResourceLocation("shield_patterns"), Sheets.f_110739_, new ResourceLocation("signs"), Sheets.f_110735_, new ResourceLocation("shulker_boxes"), TextureAtlas.f_118259_, new ResourceLocation("blocks"));
 -   private Map<ResourceLocation, BakedModel> f_119397_;
 +   private Map<ResourceLocation, BakedModel> f_119397_ = new java.util.HashMap<>();
-    @Nullable
-    private AtlasSet f_119398_;
+    private final AtlasSet f_119398_;
     private final BlockModelShaper f_119399_;
-@@ -28,6 +_,7 @@
+    private final BlockColors f_119401_;
     private int f_119402_;
     private BakedModel f_119403_;
     private Object2IntMap<BlockState> f_119404_;
 +   private ModelBakery modelBakery;
  
     public ModelManager(TextureManager p_119406_, BlockColors p_119407_, int p_119408_) {
-       this.f_119400_ = p_119406_;
-@@ -36,6 +_,10 @@
-       this.f_119399_ = new BlockModelShaper(this);
+       this.f_119401_ = p_119407_;
+@@ -57,6 +_,10 @@
+       this.f_119398_ = new AtlasSet(f_244614_, p_119406_);
     }
  
 +   public BakedModel getModel(ResourceLocation modelLocation) {
@@ -28,24 +27,32 @@
     public BakedModel m_119422_(ModelResourceLocation p_119423_) {
        return this.f_119397_.getOrDefault(p_119423_, this.f_119403_);
     }
-@@ -66,6 +_,8 @@
-       this.f_119397_ = p_119419_.m_119251_();
-       this.f_119404_ = p_119419_.m_119355_();
-       this.f_119403_ = this.f_119397_.get(ModelBakery.f_119230_);
-+      this.modelBakery = p_119419_;
-+      net.minecraftforge.client.ForgeHooksClient.onModelBake(this, this.f_119397_, p_119419_);
-       p_119421_.m_6182_("cache");
-       this.f_119399_.m_110892_();
-       p_119421_.m_7238_();
-@@ -91,6 +_,7 @@
+@@ -71,6 +_,7 @@
+ 
+    public final CompletableFuture<Void> m_5540_(PreparableReloadListener.PreparationBarrier p_249079_, ResourceManager p_251134_, ProfilerFiller p_250336_, ProfilerFiller p_252324_, Executor p_250550_, Executor p_249221_) {
+       p_250336_.m_7242_();
++      net.minecraftforge.client.model.geometry.GeometryLoaderManager.init();
+       CompletableFuture<Map<ResourceLocation, BlockModel>> completablefuture = m_246704_(p_251134_, p_250550_);
+       CompletableFuture<Map<ResourceLocation, List<ModelBakery.LoadedJson>>> completablefuture1 = m_246899_(p_251134_, p_250550_);
+       CompletableFuture<ModelBakery> completablefuture2 = completablefuture.thenCombineAsync(completablefuture1, (p_251201_, p_251281_) -> {
+@@ -201,6 +_,8 @@
+       this.f_119397_ = modelbakery.m_119251_();
+       this.f_119404_ = modelbakery.m_119355_();
+       this.f_119403_ = p_248996_.f_244619_;
++      this.modelBakery = modelbakery;
++      net.minecraftforge.client.ForgeHooksClient.onModelBake(this, this.f_119397_, modelbakery);
+       p_251960_.m_6182_("cache");
+       this.f_119399_.m_245515_(p_248996_.f_244561_);
+       p_251960_.m_7238_();
+@@ -226,6 +_,7 @@
     }
  
     public TextureAtlas m_119428_(ResourceLocation p_119429_) {
 +      if (this.f_119398_ == null) throw new RuntimeException("getAtlasTexture called too early!");
-       return this.f_119398_.m_117973_(p_119429_);
+       return this.f_119398_.m_245433_(p_119429_);
     }
  
-@@ -103,5 +_,9 @@
+@@ -235,6 +_,10 @@
  
     public void m_119410_(int p_119411_) {
        this.f_119402_ = p_119411_;
@@ -54,4 +61,5 @@
 +   public ModelBakery getModelBakery() {
 +      return com.google.common.base.Preconditions.checkNotNull(modelBakery, "Attempted to query model bakery before it has been initialized.");
     }
- }
+ 
+    @OnlyIn(Dist.CLIENT)

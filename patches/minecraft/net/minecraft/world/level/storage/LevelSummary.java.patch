@@ -1,10 +1,11 @@
 --- a/net/minecraft/world/level/storage/LevelSummary.java
 +++ b/net/minecraft/world/level/storage/LevelSummary.java
-@@ -179,4 +_,7 @@
+@@ -189,4 +_,8 @@
           return this.f_164922_;
        }
     }
-+   public boolean isExperimental() {
++
++   public boolean isLifecycleExperimental() {
 +      return this.f_78344_.getLifecycle().equals(com.mojang.serialization.Lifecycle.experimental());
 +   }
  }

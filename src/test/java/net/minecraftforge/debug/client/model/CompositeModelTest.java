@@ -5,16 +5,13 @@
 
 package net.minecraftforge.debug.client.model;
 
+import net.minecraft.world.item.*;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.context.BlockPlaceContext;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.core.BlockPos;
@@ -22,6 +19,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.level.BlockGetter;
+import net.minecraftforge.event.CreativeModeTabEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.RegistryObject;
 import net.minecraftforge.fml.common.Mod;
@@ -29,6 +27,8 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.function.Consumer;
 
 @Mod(CompositeModelTest.MODID)
 public class CompositeModelTest
@@ -72,7 +72,7 @@ public class CompositeModelTest
     );
 
     public static RegistryObject<Item> composite_item = ITEMS.register("composite_block", () ->
-            new BlockItem(composite_block.get(), new Item.Properties().tab(CreativeModeTab.TAB_MISC)) {
+            new BlockItem(composite_block.get(), new Item.Properties()) {
                 @Override
                 public boolean canEquip(ItemStack stack, EquipmentSlot armorType, Entity entity)
                 {
@@ -87,5 +87,7 @@ public class CompositeModelTest
 
         BLOCKS.register(modEventBus);
         ITEMS.register(modEventBus);
+
+        modEventBus.addListener((CreativeModeTabEvent.BuildContents event) -> event.registerSimple(CreativeModeTabs.INGREDIENTS, composite_item.get()));
     }
 }

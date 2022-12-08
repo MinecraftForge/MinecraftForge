@@ -12,9 +12,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiComponent;
-import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.font.FontManager;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.network.chat.Component;
@@ -23,18 +21,14 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
-import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.*;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RegisterClientTooltipComponentFactoriesEvent;
 import net.minecraftforge.client.event.RenderTooltipEvent;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.CreativeModeTabEvent;
+import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -44,10 +38,9 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 @Mod(CustomTooltipTest.ID)
 public class CustomTooltipTest
@@ -59,18 +52,20 @@ public class CustomTooltipTest
     private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, ID);
     static final RegistryObject<Item> CUSTOM_ITEM = ITEMS.register(
             "test_item",
-            () -> new CustomItemWithTooltip(new Item.Properties().tab(CreativeModeTab.TAB_MISC))
+            () -> new CustomItemWithTooltip(new Item.Properties())
     );
 
     public CustomTooltipTest()
     {
         if (ENABLED) {
+            IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
             if (FMLEnvironment.dist.isClient())
             {
                 MinecraftForge.EVENT_BUS.register(ClientEventHandler.class);
-                FMLJavaModLoadingContext.get().getModEventBus().register(ClientModBusEventHandler.class);
+                modEventBus.register(ClientModBusEventHandler.class);
             }
-            ITEMS.register(FMLJavaModLoadingContext.get().getModEventBus());
+            ITEMS.register(modEventBus);
+            modEventBus.addListener((CreativeModeTabEvent.BuildContents event) -> event.registerSimple(CreativeModeTabs.INGREDIENTS, CUSTOM_ITEM.get()));
         }
     }
 
@@ -117,10 +112,10 @@ public class CustomTooltipTest
         @Override
         public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand)
         {
-            if (level.isClientSide)
+/*            if (level.isClientSide) Update to 1.19.3: Disable screen tests since logic for tooltips on buttons has changed massively!
             {
                 DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> TooltipTestScreen::show);
-            }
+            }*/
             return InteractionResultHolder.success(player.getItemInHand(hand));
         }
 
@@ -187,7 +182,9 @@ public class CustomTooltipTest
 
     }
 
-    static class TooltipTestScreen extends Screen
+/* Disabled on update to 1.19.3: Tooltips have changed massively, and mojang now handles them differently
+
+static class TooltipTestScreen extends Screen
     {
 
         private ItemStack testStack = ItemStack.EMPTY;
@@ -213,19 +210,20 @@ public class CustomTooltipTest
         @Override
         protected void init()
         {
-            addRenderableWidget(new Button(10, 10, 200, 20, Component.literal("Toggle Stack: EMPTY"), button -> {
+            addRenderableWidget(Button.builder(Component.literal("Toggle Stack: EMPTY"), button -> {
                 this.testStack = this.testStack.isEmpty() ? new ItemStack(Items.APPLE) : ItemStack.EMPTY;
                 button.setMessage(Component.literal("Toggle Stack: " + (testStack.isEmpty() ? "EMPTY" : "Apple")));
-            }));
-
-            addRenderableWidget(new Button(220, 10, 200, 20, Component.literal("Toggle Font: null"), button -> {
+            }).pos(10, 10).size(200,20).build());
+            addRenderableWidget(Button.builder(Component.literal("Toggle Font: null"), button -> {
                 this.testFont = this.testFont == null ? ClientModBusEventHandler.customFont : null;
                 button.setMessage(Component.literal("Toggle Font: " + (testFont == null ? "null" : "customFont")));
-            }));
+            }).pos(220, 10).size(200,20).build());
+
+
 
             // * must have stack context
             // # must have custom font
-            List<Map.Entry<String, Button.OnTooltip>> tooltipTests = Arrays.asList(
+            List<Map.Entry<String, Tooltip>> tooltipTests = Arrays.asList(
                     Map.entry(" 1 * ", this::test1),
                     Map.entry(" 2 * ", this::test2),
                     Map.entry(" 3  #", this::test3),
@@ -330,6 +328,6 @@ public class CustomTooltipTest
         {
             renderComponentTooltip(poseStack, List.of(Component.literal("test")), mouseX, mouseY, this.testFont, ItemStack.EMPTY);
         }
-    }
+    }*/
 
 }

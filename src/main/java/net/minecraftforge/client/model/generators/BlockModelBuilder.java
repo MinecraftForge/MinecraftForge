@@ -8,20 +8,21 @@ package net.minecraftforge.client.model.generators;
 import com.google.common.base.Preconditions;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import com.mojang.math.Quaternion;
 import com.mojang.math.Transformation;
-import com.mojang.math.Vector3f;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.StringRepresentable;
 import net.minecraftforge.common.data.ExistingFileHelper;
+import net.minecraftforge.common.util.TransformationHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
 
 /**
  * Builder for block models, does not currently provide any additional
  * functionality over {@link ModelBuilder}, purely a stub class with a concrete
  * generic.
- * 
+ *
  * @see ModelProvider
  * @see ModelBuilder
  */
@@ -58,9 +59,9 @@ public class BlockModelBuilder extends ModelBuilder<BlockModelBuilder>
     {
         private static final Vector3f ONE = new Vector3f(1, 1, 1);
 
-        private Vector3f translation = Vector3f.ZERO;
-        private Quaternion leftRotation = Quaternion.ONE.copy();
-        private Quaternion rightRotation = Quaternion.ONE.copy();
+        private Vector3f translation = new Vector3f();
+        private Quaternionf leftRotation = new Quaternionf();
+        private Quaternionf rightRotation = new Quaternionf();
         private Vector3f scale = ONE;
 
         private @Nullable TransformOrigin origin;
@@ -103,7 +104,7 @@ public class BlockModelBuilder extends ModelBuilder<BlockModelBuilder>
          * @return this builder
          * @throws NullPointerException if {@code rotation} is {@code null}
          */
-        public RootTransformBuilder rotation(Quaternion rotation)
+        public RootTransformBuilder rotation(Quaternionf rotation)
         {
             this.leftRotation = Preconditions.checkNotNull(rotation, "Rotation must not be null");
             return this;
@@ -120,7 +121,7 @@ public class BlockModelBuilder extends ModelBuilder<BlockModelBuilder>
          */
         public RootTransformBuilder rotation(float x, float y, float z, boolean isDegrees)
         {
-            return rotation(new Quaternion(x, y, z, isDegrees));
+            return rotation(TransformationHelper.quatFromXYZ(x, y, z, isDegrees));
         }
 
         /**
@@ -130,7 +131,7 @@ public class BlockModelBuilder extends ModelBuilder<BlockModelBuilder>
          * @return this builder
          * @throws NullPointerException if {@code leftRotation} is {@code null}
          */
-        public RootTransformBuilder leftRotation(Quaternion leftRotation)
+        public RootTransformBuilder leftRotation(Quaternionf leftRotation)
         {
             return rotation(leftRotation);
         }
@@ -146,7 +147,7 @@ public class BlockModelBuilder extends ModelBuilder<BlockModelBuilder>
          */
         public RootTransformBuilder leftRotation(float x, float y, float z, boolean isDegrees)
         {
-            return leftRotation(new Quaternion(x, y, z, isDegrees));
+            return leftRotation(TransformationHelper.quatFromXYZ(x, y, z, isDegrees));
         }
 
         /**
@@ -156,7 +157,7 @@ public class BlockModelBuilder extends ModelBuilder<BlockModelBuilder>
          * @return this builder
          * @throws NullPointerException if {@code rightRotation} is {@code null}
          */
-        public RootTransformBuilder rightRotation(Quaternion rightRotation)
+        public RootTransformBuilder rightRotation(Quaternionf rightRotation)
         {
             this.rightRotation = Preconditions.checkNotNull(rightRotation, "Rotation must not be null");
             return this;
@@ -173,7 +174,7 @@ public class BlockModelBuilder extends ModelBuilder<BlockModelBuilder>
          */
         public RootTransformBuilder rightRotation(float x, float y, float z, boolean isDegrees)
         {
-            return rightRotation(new Quaternion(x, y, z, isDegrees));
+            return rightRotation(TransformationHelper.quatFromXYZ(x, y, z, isDegrees));
         }
 
         /**
@@ -183,7 +184,7 @@ public class BlockModelBuilder extends ModelBuilder<BlockModelBuilder>
          * @return this builder
          * @throws NullPointerException if {@code rightRotation} is {@code null}
          */
-        public RootTransformBuilder postRotation(Quaternion postRotation)
+        public RootTransformBuilder postRotation(Quaternionf postRotation)
         {
             return rightRotation(postRotation);
         }
@@ -199,7 +200,7 @@ public class BlockModelBuilder extends ModelBuilder<BlockModelBuilder>
          */
         public RootTransformBuilder postRotation(float x, float y, float z, boolean isDegrees)
         {
-            return postRotation(new Quaternion(x, y, z, isDegrees));
+            return postRotation(TransformationHelper.quatFromXYZ(x, y, z, isDegrees));
         }
 
         /**
@@ -299,7 +300,7 @@ public class BlockModelBuilder extends ModelBuilder<BlockModelBuilder>
             // Write the transform to an object
             JsonObject transform = new JsonObject();
 
-            if (!translation.equals(Vector3f.ZERO))
+            if (!translation.equals(0, 0, 0))
             {
                 transform.add("translation", writeVec3(translation));
             }
@@ -309,12 +310,12 @@ public class BlockModelBuilder extends ModelBuilder<BlockModelBuilder>
                 transform.add("scale", writeVec3(scale));
             }
 
-            if (!leftRotation.equals(Quaternion.ONE))
+            if (!leftRotation.equals(0, 0, 0, 1))
             {
                 transform.add("rotation", writeQuaternion(leftRotation));
             }
 
-            if (!rightRotation.equals(Quaternion.ONE))
+            if (!rightRotation.equals(0, 0, 0, 1))
             {
                 transform.add("post_rotation", writeQuaternion(rightRotation));
             }
@@ -323,7 +324,7 @@ public class BlockModelBuilder extends ModelBuilder<BlockModelBuilder>
             {
                 transform.addProperty("origin", origin.getSerializedName());
             }
-            else if (originVec != null && !originVec.equals(Vector3f.ZERO))
+            else if (originVec != null && !originVec.equals(0, 0, 0))
             {
                 transform.add("origin", writeVec3(originVec));
             }
@@ -334,7 +335,7 @@ public class BlockModelBuilder extends ModelBuilder<BlockModelBuilder>
         public enum TransformOrigin implements StringRepresentable
         {
             CENTER(new Vector3f(.5f, .5f, .5f), "center"),
-            CORNER(Vector3f.ZERO, "corner"),
+            CORNER(new Vector3f(), "corner"),
             OPPOSING_CORNER(ONE, "opposing-corner");
 
             private final Vector3f vec;
@@ -385,13 +386,13 @@ public class BlockModelBuilder extends ModelBuilder<BlockModelBuilder>
             return array;
         }
 
-        private JsonArray writeQuaternion(Quaternion quaternion)
+        private JsonArray writeQuaternion(Quaternionf quaternion)
         {
             JsonArray array = new JsonArray();
-            array.add(quaternion.i());
-            array.add(quaternion.j());
-            array.add(quaternion.k());
-            array.add(quaternion.r());
+            array.add(quaternion.x());
+            array.add(quaternion.y());
+            array.add(quaternion.z());
+            array.add(quaternion.w());
             return array;
         }
     }
