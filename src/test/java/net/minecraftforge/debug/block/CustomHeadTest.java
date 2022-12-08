@@ -8,22 +8,19 @@ package net.minecraftforge.debug.block;
 import net.minecraft.client.model.SkullModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.renderer.blockentity.SkullBlockRenderer;
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SkullBlock;
 import net.minecraft.world.level.block.WallSkullBlock;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraft.world.level.block.entity.SkullBlockEntity;
 import net.minecraft.world.level.block.state.BlockBehaviour;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Material;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.common.util.Lazy;
+import net.minecraftforge.event.AddValidBlocksToBlockEntityEvent;
 import net.minecraftforge.event.CreativeModeTabEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -47,18 +44,16 @@ public class CustomHeadTest
     static final String MODID = "custom_head_test";
     private static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, MODID);
     private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MODID);
-    private static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, MODID);
-    private static final RegistryObject<Block> BLAZE_HEAD = BLOCKS.register("blaze_head", () -> new CustomSkullBlock(SkullType.BLAZE, BlockBehaviour.Properties.of(Material.DECORATION).strength(1.0F)));
-    private static final RegistryObject<Block> BLAZE_HEAD_WALL = BLOCKS.register("blaze_wall_head", () -> new CustomWallSkullBlock(SkullType.BLAZE, BlockBehaviour.Properties.of(Material.DECORATION).strength(1.0F).lootFrom(BLAZE_HEAD)));
+    private static final RegistryObject<Block> BLAZE_HEAD = BLOCKS.register("blaze_head", () -> new SkullBlock(SkullType.BLAZE, BlockBehaviour.Properties.of(Material.DECORATION).strength(1.0F)));
+    private static final RegistryObject<Block> BLAZE_HEAD_WALL = BLOCKS.register("blaze_wall_head", () -> new WallSkullBlock(SkullType.BLAZE, BlockBehaviour.Properties.of(Material.DECORATION).strength(1.0F).lootFrom(BLAZE_HEAD)));
     private static final RegistryObject<Item> BLAZE_HEAD_ITEM = ITEMS.register("blaze_head", () -> new StandingAndWallBlockItem(BLAZE_HEAD.get(), BLAZE_HEAD_WALL.get(), new Item.Properties().rarity(Rarity.UNCOMMON), Direction.DOWN));
-    private static final RegistryObject<BlockEntityType<CustomSkullBlockEntity>> CUSTOM_SKULL = BLOCK_ENTITIES.register("custom_skull", () -> BlockEntityType.Builder.of(CustomSkullBlockEntity::new, BLAZE_HEAD.get(), BLAZE_HEAD_WALL.get()).build(null));
 
     public CustomHeadTest()
     {
         IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();
+        modBus.addListener(this::onBlockEntityBlocks);
         BLOCKS.register(modBus);
         ITEMS.register(modBus);
-        BLOCK_ENTITIES.register(modBus);
         modBus.addListener(this::addCreative);
     }
 
@@ -68,46 +63,10 @@ public class CustomHeadTest
             event.accept(BLAZE_HEAD_ITEM);
     }
 
-    private static class CustomSkullBlock extends SkullBlock
+    private void onBlockEntityBlocks(final AddValidBlocksToBlockEntityEvent event)
     {
-        public CustomSkullBlock(Type type, Properties props)
-        {
-            super(type, props);
-        }
-
-        @Override
-        public BlockEntity newBlockEntity(BlockPos pos, BlockState state)
-        {
-            return new CustomSkullBlockEntity(pos, state);
-        }
-    }
-
-    private static class CustomWallSkullBlock extends WallSkullBlock
-    {
-        public CustomWallSkullBlock(SkullBlock.Type type, Properties props)
-        {
-            super(type, props);
-        }
-
-        @Override
-        public BlockEntity newBlockEntity(BlockPos pos, BlockState state)
-        {
-            return new CustomSkullBlockEntity(pos, state);
-        }
-    }
-
-    private static class CustomSkullBlockEntity extends SkullBlockEntity
-    {
-        public CustomSkullBlockEntity(BlockPos pos, BlockState state)
-        {
-            super(pos, state);
-        }
-
-        @Override
-        public BlockEntityType<?> getType()
-        {
-            return CUSTOM_SKULL.get();
-        }
+        event.addValidBlock(BlockEntityType.SKULL, BLAZE_HEAD.get());
+        event.addValidBlock(BlockEntityType.SKULL, BLAZE_HEAD_WALL.get());
     }
 
     private enum SkullType implements SkullBlock.Type
@@ -124,12 +83,6 @@ public class CustomHeadTest
         static void registerLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event)
         {
             event.registerLayerDefinition(BLAZE_HEAD_LAYER, Lazy.of(SkullModel::createMobHeadLayer));
-        }
-
-        @SubscribeEvent
-        static void registerLayerDefinitions(EntityRenderersEvent.RegisterRenderers event)
-        {
-            event.registerBlockEntityRenderer(CUSTOM_SKULL.get(), SkullBlockRenderer::new);
         }
 
         @SubscribeEvent

@@ -39,6 +39,7 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.AirBlock;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.levelgen.DebugLevelSource;
@@ -498,6 +499,7 @@ public class GameData
                 block.getLootTable();
             }
             DebugLevelSource.initValidStates();
+            BlockEntityType.fireAddBlockEvent();
         }
 
         private static class BlockDummyAir extends AirBlock //A named class so DummyBlockReplacementTest can detect if its a dummy

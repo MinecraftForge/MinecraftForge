@@ -21,6 +21,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -86,6 +87,7 @@ import net.minecraft.world.item.*;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.level.storage.LevelStorageSource;
@@ -126,6 +128,7 @@ import net.minecraftforge.common.loot.LootTableIdCondition;
 import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.common.util.Lazy;
 import net.minecraftforge.common.util.MavenVersionStringHelper;
+import net.minecraftforge.event.AddValidBlocksToBlockEntityEvent;
 import net.minecraftforge.event.AnvilUpdateEvent;
 import net.minecraftforge.event.DifficultyChangeEvent;
 import net.minecraftforge.event.ForgeEventFactory;
@@ -1268,6 +1271,12 @@ public class ForgeHooks
             newBuilder.combine(v);
             FORGE_ATTRIBUTES.put(k, newBuilder.build());
         });
+    }
+
+    public static void onBlockEntityBlocks(BiConsumer<BlockEntityType<?>, Block> callback)
+    {
+        final var event = new AddValidBlocksToBlockEntityEvent(callback);
+        ModLoader.get().postEvent(event);
     }
 
     public static void onEntityEnterSection(Entity entity, long packedOldPos, long packedNewPos)
