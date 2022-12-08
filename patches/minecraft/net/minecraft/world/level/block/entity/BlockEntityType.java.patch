@@ -1,5 +1,14 @@
 --- a/net/minecraft/world/level/block/entity/BlockEntityType.java
 +++ b/net/minecraft/world/level/block/entity/BlockEntityType.java
+@@ -88,7 +_,7 @@
+    }
+ 
+    public boolean m_155262_(BlockState p_155263_) {
+-      return this.f_58915_.contains(p_155263_.m_60734_());
++      return this.f_58915_.contains(p_155263_.m_60734_()) || additionalValidBlocks.contains(p_155263_.m_60734_());
+    }
+ 
+    @Nullable
 @@ -119,4 +_,11 @@
           return new BlockEntityType<>(this.f_58959_, this.f_58960_, p_58967_);
        }
