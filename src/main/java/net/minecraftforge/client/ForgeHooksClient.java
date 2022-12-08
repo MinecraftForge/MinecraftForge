@@ -477,6 +477,11 @@ public class ForgeHooksClient
         return event;
     }
 
+    public static void onModifyBakingResult(Map<ResourceLocation, BakedModel> models, ModelBakery modelBakery)
+    {
+        ModLoader.get().postEvent(new ModelEvent.ModifyBakingResult(models, modelBakery));
+    }
+
     public static void onModelBake(ModelManager modelManager, Map<ResourceLocation, BakedModel> models, ModelBakery modelBakery)
     {
         ModLoader.get().postEvent(new ModelEvent.BakingCompleted(modelManager, models, modelBakery));

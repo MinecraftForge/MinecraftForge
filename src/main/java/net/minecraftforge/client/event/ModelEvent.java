@@ -34,7 +34,53 @@ public abstract class ModelEvent extends Event
 
     /**
      * Fired when the {@link ModelManager} is notified of the resource manager reloading.
-     * Called after model registry is set up, but before it's passed to {@link net.minecraft.client.renderer.block.BlockModelShaper}.
+     * Called after the model registry is set up, but before it's passed to the
+     * {@link net.minecraft.client.renderer.block.BlockModelShaper}.
+     *
+     * <p>
+     * This event is fired from a worker thread and it is therefore not safe to access anything outside the
+     * model map and {@link ModelBakery} provided in this event.<br>
+     * The {@link ModelManager} firing this event is not fully set up with the latest data when this event fires and
+     * must therefore not be accessed in this event.
+     * </p>
+     *
+     * <p>This event is not {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}.</p>
+     *
+     * <p>This event is fired on the {@linkplain FMLJavaModLoadingContext#getModEventBus() mod-specific event bus},
+     * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
+     */
+    public static class ModifyBakingResult extends ModelEvent implements IModBusEvent
+    {
+        private final Map<ResourceLocation, BakedModel> models;
+        private final ModelBakery modelBakery;
+
+        @ApiStatus.Internal
+        public ModifyBakingResult(Map<ResourceLocation, BakedModel> models, ModelBakery modelBakery)
+        {
+            this.models = models;
+            this.modelBakery = modelBakery;
+        }
+
+        /**
+         * @return the modifiable registry map of models and their model names
+         */
+        public Map<ResourceLocation, BakedModel> getModels()
+        {
+            return models;
+        }
+
+        /**
+         * @return the model loader
+         */
+        public ModelBakery getModelBakery()
+        {
+            return modelBakery;
+        }
+    }
+
+    /**
+     * Fired when the {@link ModelManager} is notified of the resource manager reloading.
+     * Called after the model registry is set up and cached in the {@link net.minecraft.client.renderer.block.BlockModelShaper}.
      *
      * <p>This event is not {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}.</p>
      *
