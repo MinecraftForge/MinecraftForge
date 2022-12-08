@@ -14,7 +14,6 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraftforge.common.crafting.CraftingHelper;
-import org.slf4j.Logger;
 
 import java.util.Collection;
 import java.util.Collections;
