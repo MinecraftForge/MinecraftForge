@@ -77,7 +77,7 @@ public class JsonCodecProvider<T> implements DataProvider
      * @param entries Map of named entries to serialize to jsons. Paths for values are derived from the ResourceLocation's entryid:entrypath as specified above.
      */
     public JsonCodecProvider(PackOutput output, ExistingFileHelper existingFileHelper, String modid, DynamicOps<JsonElement> dynamicOps, PackType packType,
-         String directory, Codec<T> codec, Map<ResourceLocation, T> entries)
+          String directory, Codec<T> codec, Map<ResourceLocation, T> entries)
     {
         // Track generated data so other dataproviders can validate if needed.
         final ResourceType resourceType = new ResourceType(packType, ".json", directory);
