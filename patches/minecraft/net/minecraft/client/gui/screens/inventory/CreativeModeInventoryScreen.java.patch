@@ -18,7 +18,7 @@
           this.m_98630_();
        } else {
           (this.f_97732_).f_98639_.addAll(p_261591_);
-@@ -273,6 +_,31 @@
+@@ -273,6 +_,34 @@
     protected void m_7856_() {
        if (this.f_96541_.f_91072_.m_105290_()) {
           super.m_7856_();
@@ -47,6 +47,9 @@
 +            m_142416_(net.minecraft.client.gui.components.Button.m_253074_(Component.m_237113_(">"), b -> setCurrentPage(this.pages.get(Math.min(this.pages.indexOf(this.currentPage) + 1, this.pages.size() - 1)))).m_252794_(f_97735_ + f_97726_ - 20, f_97736_ - 50).m_253046_(20, 20).m_253136_());
 +         }
 +         this.currentPage = this.pages.stream().filter(page -> page.getVisibleTabs().contains(f_98507_)).findFirst().orElse(this.currentPage);
++         if (!this.currentPage.getVisibleTabs().contains(f_98507_)) {
++            f_98507_ = this.currentPage.getVisibleTabs().get(0);
++         }
           this.f_98510_ = new EditBox(this.f_96547_, this.f_97735_ + 82, this.f_97736_ + 6, 80, 9, Component.m_237115_("itemGroup.search"));
           this.f_98510_.m_94199_(50);
           this.f_98510_.m_94182_(false);
