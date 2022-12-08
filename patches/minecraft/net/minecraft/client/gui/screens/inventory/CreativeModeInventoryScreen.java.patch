@@ -80,11 +80,11 @@
           if (s.startsWith("#")) {
              s = s.substring(1);
 -            searchtree = this.f_96541_.m_231372_(SearchRegistry.f_119942_);
-+            searchtree = this.f_96541_.m_231372_(net.minecraftforge.client.CreativeModeTabSearchRegistry.getNameSearchKey(f_98507_));
++            searchtree = this.f_96541_.m_231372_(net.minecraftforge.client.CreativeModeTabSearchRegistry.getTagSearchKey(f_98507_));
              this.m_98619_(s);
           } else {
 -            searchtree = this.f_96541_.m_231372_(SearchRegistry.f_119941_);
-+            searchtree = this.f_96541_.m_231372_(net.minecraftforge.client.CreativeModeTabSearchRegistry.getTagSearchKey(f_98507_));
++            searchtree = this.f_96541_.m_231372_(net.minecraftforge.client.CreativeModeTabSearchRegistry.getNameSearchKey(f_98507_));
           }
  
           (this.f_97732_).f_98639_.addAll(searchtree.m_6293_(s.toLowerCase(Locale.ROOT)));
