@@ -28,9 +28,12 @@ public interface ICondition
         if (!(json instanceof JsonObject obj) || !obj.has("forge:conditions"))
             return true;
 
-        try {
+        try
+        {
             return CraftingHelper.processConditions(obj, "forge:conditions", IContext.TAGS_INVALID);
-        } catch (Exception exception) {
+        }
+        catch (Exception exception)
+        {
             LogUtils.getLogger().warn("Encountered exception reading conditions of json datapack registry entry: ", exception);
         }
         return true;
