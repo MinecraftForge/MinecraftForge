@@ -12,8 +12,11 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.tags.TagKey;
 import net.minecraftforge.common.crafting.CraftingHelper;
+import org.jetbrains.annotations.ApiStatus;
+import org.slf4j.Logger;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -22,7 +25,11 @@ import java.util.Set;
 
 public interface ICondition
 {
-    static boolean shouldRegisterEntry(JsonElement json)
+    @ApiStatus.Internal
+    Logger LOGGER = LogUtils.getLogger();
+
+    @ApiStatus.Internal
+    static <T> boolean shouldRegisterEntry(JsonElement json, Resource resource, ResourceKey<T> objectKey)
     {
         if (!(json instanceof JsonObject obj) || !obj.has("forge:conditions"))
             return true;
@@ -33,9 +40,9 @@ public interface ICondition
         }
         catch (Exception exception)
         {
-            LogUtils.getLogger().warn("Encountered exception reading conditions of json datapack registry entry: ", exception);
+            LOGGER.warn("Encountered exception reading conditions of entry {}/{} in pack {}: {}", objectKey.location(), objectKey.registry(), resource.sourcePackId(), exception);
         }
-        return true;
+        return false;
     }
 
     ResourceLocation getID();

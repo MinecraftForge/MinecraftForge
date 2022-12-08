@@ -13,7 +13,7 @@
           try {
              try (Reader reader = resource.m_215508_()) {
                 JsonElement jsonelement = JsonParser.parseReader(reader);
-+               if (!net.minecraftforge.common.crafting.conditions.ICondition.shouldRegisterEntry(jsonelement))
++               if (!net.minecraftforge.common.crafting.conditions.ICondition.shouldRegisterEntry(jsonelement, resource, resourcekey))
 +                  continue; // Forge: Skip loading an entry if it is disabled by a condition
                 DataResult<E> dataresult = p_256232_.parse(registryops, jsonelement);
                 E e = dataresult.getOrThrow(false, (p_248715_) -> {
