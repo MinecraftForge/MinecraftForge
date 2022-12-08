@@ -240,6 +240,9 @@ public class PlayerInteractEvent extends PlayerEvent
      * Canceling the event will cause none of the above noted methods to be called.
      * There are various results to this event, see the getters below.
      *
+     * This event is fired at various points during left clicking on blocks, at both the start and end on the server, and at the start and while held down on the client.
+     * Use {@link #getAction()} to check which type of action triggered this event.
+     *
      * Note that if the event is canceled and the player holds down left mouse, the event will continue to fire.
      * This is due to how vanilla calls the left click handler methods.
      *
@@ -321,9 +324,21 @@ public class PlayerInteractEvent extends PlayerEvent
         }
 
         public static enum Action {
+        	/**
+        	 * When the player first left clicks a block
+        	 */
         	START,
+        	/**
+        	 * When the player stops left clicking a block by completely breaking it
+        	 */
         	STOP,
+        	/**
+        	 * When the player stops left clicking a block by releasing the button, or no longer targeting the same block
+        	 */
         	ABORT,
+        	/**
+        	 * When the player is actively mining a block on the client side
+        	 */
         	CLIENT_HOLD;
         	
         	public static Action convert(ServerboundPlayerActionPacket.Action action) {
