@@ -5,9 +5,7 @@
 
 package net.minecraftforge.common.crafting;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 import com.google.common.collect.BiMap;
@@ -15,7 +13,6 @@ import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
@@ -25,8 +22,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraftforge.common.crafting.conditions.ICondition;
-import net.minecraftforge.common.crafting.conditions.IConditionSerializer;
 import net.minecraft.nbt.TagParser;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
@@ -47,17 +42,8 @@ public class CraftingHelper
     @SuppressWarnings("unused")
     private static final Marker CRAFTHELPER = MarkerManager.getMarker("CRAFTHELPER");
     private static Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
-    private static final Map<ResourceLocation, IConditionSerializer<?>> conditions = new HashMap<>();
     private static final BiMap<ResourceLocation, IIngredientSerializer<?>> ingredients = HashBiMap.create();
 
-    public static IConditionSerializer<?> register(IConditionSerializer<?> serializer)
-    {
-        ResourceLocation key = serializer.getID();
-        if (conditions.containsKey(key))
-            throw new IllegalStateException("Duplicate recipe condition serializer: " + key);
-        conditions.put(key, serializer);
-        return serializer;
-    }
     public static <T extends Ingredient> IIngredientSerializer<T> register(ResourceLocation key, IIngredientSerializer<T> serializer)
     {
         if (ingredients.containsKey(key))
@@ -196,52 +182,5 @@ public class CraftingHelper
         }
 
         return new ItemStack(item, GsonHelper.getAsInt(json, "count", 1));
-    }
-
-    public static boolean processConditions(JsonObject json, String memberName, ICondition.IContext context)
-    {
-        return !json.has(memberName) || processConditions(GsonHelper.getAsJsonArray(json, memberName), context);
-    }
-
-    public static boolean processConditions(JsonArray conditions, ICondition.IContext context)
-    {
-        for (int x = 0; x < conditions.size(); x++)
-        {
-            if (!conditions.get(x).isJsonObject())
-                throw new JsonSyntaxException("Conditions must be an array of JsonObjects");
-
-            JsonObject json = conditions.get(x).getAsJsonObject();
-            if (!CraftingHelper.getCondition(json).test(context))
-                return false;
-        }
-        return true;
-    }
-
-    public static ICondition getCondition(JsonObject json)
-    {
-        ResourceLocation type = new ResourceLocation(GsonHelper.getAsString(json, "type"));
-        IConditionSerializer<?> serializer = conditions.get(type);
-        if (serializer == null)
-            throw new JsonSyntaxException("Unknown condition type: " + type.toString());
-        return serializer.read(json);
-    }
-
-    public static <T extends ICondition> JsonObject serialize(T condition)
-    {
-        @SuppressWarnings("unchecked")
-        IConditionSerializer<T> serializer = (IConditionSerializer<T>)conditions.get(condition.getID());
-        if (serializer == null)
-            throw new JsonSyntaxException("Unknown condition type: " + condition.getID().toString());
-        return serializer.getJson(condition);
-    }
-
-    public static JsonArray serialize(ICondition... conditions)
-    {
-        JsonArray arr = new JsonArray();
-        for(ICondition iCond : conditions)
-        {
-            arr.add(serialize(iCond));
-        }
-        return arr;
     }
 }

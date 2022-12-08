@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.common.crafting.conditions;
+package net.minecraftforge.common.conditions;
 
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;

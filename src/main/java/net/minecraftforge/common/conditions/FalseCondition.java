@@ -3,11 +3,15 @@
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.common.crafting.conditions;
+package net.minecraftforge.common.conditions;
 
 import com.google.gson.JsonObject;
 import net.minecraft.resources.ResourceLocation;
 
+/**
+ * The FalseCondition always returns false.<p>
+ * Useful when content is shipped disabled or when a datapack wants to remove something.
+ */
 public final class FalseCondition implements ICondition
 {
     public static final FalseCondition INSTANCE = new FalseCondition();
@@ -16,7 +20,7 @@ public final class FalseCondition implements ICondition
     private FalseCondition() {}
 
     @Override
-    public ResourceLocation getID()
+    public ResourceLocation getSerializerId()
     {
         return NAME;
     }

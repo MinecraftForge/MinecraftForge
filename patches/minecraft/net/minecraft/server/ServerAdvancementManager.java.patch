@@ -4,15 +4,15 @@
     private static final Gson f_136022_ = (new GsonBuilder()).create();
     private AdvancementList f_136023_ = new AdvancementList();
     private final PredicateManager f_136024_;
-+   private final net.minecraftforge.common.crafting.conditions.ICondition.IContext context; //Forge: add context
++   private final net.minecraftforge.common.conditions.ICondition.IContext context; //Forge: add context
  
-+   /** @deprecated Forge: use {@linkplain ServerAdvancementManager#ServerAdvancementManager(PredicateManager, net.minecraftforge.common.crafting.conditions.ICondition.IContext) constructor with context}. */
++   /** @deprecated Forge: use {@linkplain ServerAdvancementManager#ServerAdvancementManager(PredicateManager, net.minecraftforge.common.conditions.ICondition.IContext) constructor with context}. */
 +   @Deprecated
     public ServerAdvancementManager(PredicateManager p_136027_) {
-+      this(p_136027_, net.minecraftforge.common.crafting.conditions.ICondition.IContext.EMPTY);
++      this(p_136027_, net.minecraftforge.common.conditions.ICondition.IContext.EMPTY);
 +   }
 +
-+   public ServerAdvancementManager(PredicateManager p_136027_, net.minecraftforge.common.crafting.conditions.ICondition.IContext context) {
++   public ServerAdvancementManager(PredicateManager p_136027_, net.minecraftforge.common.conditions.ICondition.IContext context) {
        super(f_136022_, "advancements");
        this.f_136024_ = p_136027_;
 +      this.context = context;

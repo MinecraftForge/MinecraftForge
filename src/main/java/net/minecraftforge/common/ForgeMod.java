@@ -85,19 +85,20 @@ import org.apache.logging.log4j.Logger;
 
 import net.minecraft.data.DataGenerator;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.common.conditions.AndCondition;
+import net.minecraftforge.common.conditions.ConditionHelper;
+import net.minecraftforge.common.conditions.FalseCondition;
+import net.minecraftforge.common.conditions.ItemExistsCondition;
+import net.minecraftforge.common.conditions.ModLoadedCondition;
+import net.minecraftforge.common.conditions.NotCondition;
+import net.minecraftforge.common.conditions.OrCondition;
+import net.minecraftforge.common.conditions.TagEmptyCondition;
+import net.minecraftforge.common.conditions.TrueCondition;
 import net.minecraftforge.common.crafting.CompoundIngredient;
 import net.minecraftforge.common.crafting.ConditionalRecipe;
 import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.common.crafting.StrictNBTIngredient;
 import net.minecraftforge.common.crafting.VanillaIngredientSerializer;
-import net.minecraftforge.common.crafting.conditions.AndCondition;
-import net.minecraftforge.common.crafting.conditions.FalseCondition;
-import net.minecraftforge.common.crafting.conditions.ItemExistsCondition;
-import net.minecraftforge.common.crafting.conditions.ModLoadedCondition;
-import net.minecraftforge.common.crafting.conditions.NotCondition;
-import net.minecraftforge.common.crafting.conditions.OrCondition;
-import net.minecraftforge.common.crafting.conditions.TagEmptyCondition;
-import net.minecraftforge.common.crafting.conditions.TrueCondition;
 import net.minecraftforge.common.data.ForgeBlockTagsProvider;
 import net.minecraftforge.common.data.ForgeEntityTypeTagsProvider;
 import net.minecraftforge.common.data.ForgeItemTagsProvider;
@@ -558,14 +559,14 @@ public class ForgeMod
     {
         if (event.getRegistryKey().equals(ForgeRegistries.Keys.RECIPE_SERIALIZERS))
         {
-            CraftingHelper.register(AndCondition.Serializer.INSTANCE);
-            CraftingHelper.register(FalseCondition.Serializer.INSTANCE);
-            CraftingHelper.register(ItemExistsCondition.Serializer.INSTANCE);
-            CraftingHelper.register(ModLoadedCondition.Serializer.INSTANCE);
-            CraftingHelper.register(NotCondition.Serializer.INSTANCE);
-            CraftingHelper.register(OrCondition.Serializer.INSTANCE);
-            CraftingHelper.register(TrueCondition.Serializer.INSTANCE);
-            CraftingHelper.register(TagEmptyCondition.Serializer.INSTANCE);
+            ConditionHelper.register(AndCondition.Serializer.INSTANCE);
+            ConditionHelper.register(FalseCondition.Serializer.INSTANCE);
+            ConditionHelper.register(ItemExistsCondition.Serializer.INSTANCE);
+            ConditionHelper.register(ModLoadedCondition.Serializer.INSTANCE);
+            ConditionHelper.register(NotCondition.Serializer.INSTANCE);
+            ConditionHelper.register(OrCondition.Serializer.INSTANCE);
+            ConditionHelper.register(TrueCondition.Serializer.INSTANCE);
+            ConditionHelper.register(TagEmptyCondition.Serializer.INSTANCE);
 
             CraftingHelper.register(new ResourceLocation("forge", "compound"), CompoundIngredient.Serializer.INSTANCE);
             CraftingHelper.register(new ResourceLocation("forge", "nbt"), StrictNBTIngredient.Serializer.INSTANCE);

@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.common.crafting.conditions;
+package net.minecraftforge.common.conditions;
 
 import com.google.gson.JsonObject;
 
@@ -22,7 +22,7 @@ public class ModLoadedCondition implements ICondition
     }
 
     @Override
-    public ResourceLocation getID()
+    public ResourceLocation getSerializerId()
     {
         return NAME;
     }

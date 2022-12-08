@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.common.crafting.conditions;
+package net.minecraftforge.common.conditions;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +16,6 @@ import com.google.gson.JsonSyntaxException;
 
 import net.minecraft.util.GsonHelper;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.common.crafting.CraftingHelper;
 
 public class OrCondition implements ICondition
 {
@@ -38,7 +37,7 @@ public class OrCondition implements ICondition
     }
 
     @Override
-    public ResourceLocation getID()
+    public ResourceLocation getSerializerId()
     {
         return NAME;
     }
@@ -70,7 +69,7 @@ public class OrCondition implements ICondition
         {
             JsonArray values = new JsonArray();
             for (ICondition child : value.children)
-                values.add(CraftingHelper.serialize(child));
+                values.add(ConditionHelper.serialize(child));
             json.add("values", values);
         }
 
@@ -82,7 +81,7 @@ public class OrCondition implements ICondition
             {
                 if (!j.isJsonObject())
                     throw new JsonSyntaxException("Or condition values must be an array of JsonObjects");
-                children.add(CraftingHelper.getCondition(j.getAsJsonObject()));
+                children.add(ConditionHelper.getCondition(j.getAsJsonObject()));
             }
             return new OrCondition(children.toArray(new ICondition[children.size()]));
         }

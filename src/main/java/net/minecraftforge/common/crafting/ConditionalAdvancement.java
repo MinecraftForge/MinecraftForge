@@ -18,7 +18,9 @@ import com.google.gson.JsonSyntaxException;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.util.GsonHelper;
-import net.minecraftforge.common.crafting.conditions.ICondition;
+import net.minecraftforge.common.conditions.ConditionHelper;
+import net.minecraftforge.common.conditions.ICondition;
+
 import org.jetbrains.annotations.Nullable;
 
 public class ConditionalAdvancement
@@ -38,7 +40,7 @@ public class ConditionalAdvancement
         JsonArray entries = GsonHelper.getAsJsonArray(json, "advancements", null);
         if (entries == null)
         {
-            return CraftingHelper.processConditions(json, "conditions", context) ? json : null;
+            return ConditionHelper.processConditions(json, "conditions", context) ? json : null;
         }
 
         int idx = 0;
@@ -46,7 +48,7 @@ public class ConditionalAdvancement
         {
             if (!ele.isJsonObject())
                 throw new JsonSyntaxException("Invalid advancement entry at index " + idx + " Must be JsonObject");
-            if (CraftingHelper.processConditions(GsonHelper.getAsJsonArray(ele.getAsJsonObject(), "conditions"), context))
+            if (ConditionHelper.processConditions(GsonHelper.getAsJsonArray(ele.getAsJsonObject(), "conditions"), context))
                 return GsonHelper.getAsJsonObject(ele.getAsJsonObject(), "advancement");
             idx++;
         }
@@ -118,7 +120,7 @@ public class ConditionalAdvancement
 
                 JsonArray conds = new JsonArray();
                 for (ICondition c : conditions.get(x))
-                    conds.add(CraftingHelper.serialize(c));
+                    conds.add(ConditionHelper.serialize(c));
                 holder.add("conditions", conds);
                 holder.add("advancement", advancements.get(x).get());
 

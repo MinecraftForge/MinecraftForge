@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.common.crafting.conditions;
+package net.minecraftforge.common.conditions;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,8 +16,10 @@ import com.google.gson.JsonSyntaxException;
 
 import net.minecraft.util.GsonHelper;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.common.crafting.CraftingHelper;
 
+/**
+ * The AndCondition forms the logical and of one of more conditions.
+ */
 public class AndCondition implements ICondition
 {
     private static final ResourceLocation NAME = new ResourceLocation("forge", "and");
@@ -38,7 +40,7 @@ public class AndCondition implements ICondition
     }
 
     @Override
-    public ResourceLocation getID()
+    public ResourceLocation getSerializerId()
     {
         return NAME;
     }
@@ -69,7 +71,7 @@ public class AndCondition implements ICondition
         {
             JsonArray values = new JsonArray();
             for (ICondition child : value.children)
-                values.add(CraftingHelper.serialize(child));
+                values.add(ConditionHelper.serialize(child));
             json.add("values", values);
         }
 
@@ -81,7 +83,7 @@ public class AndCondition implements ICondition
             {
                 if (!j.isJsonObject())
                     throw new JsonSyntaxException("And condition values must be an array of JsonObjects");
-                children.add(CraftingHelper.getCondition(j.getAsJsonObject()));
+                children.add(ConditionHelper.getCondition(j.getAsJsonObject()));
             }
             return new AndCondition(children.toArray(new ICondition[children.size()]));
         }

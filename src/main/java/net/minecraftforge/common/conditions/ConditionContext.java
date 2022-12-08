@@ -3,20 +3,23 @@
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.common.crafting.conditions;
-
-import net.minecraft.core.Holder;
-import net.minecraft.core.HolderSet;
-import net.minecraft.core.Registry;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.TagManager;
+package net.minecraftforge.common.conditions;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.IdentityHashMap;
 import java.util.Map;
 
+import net.minecraft.core.Holder;
+import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagManager;
+import net.minecraftforge.common.conditions.ICondition.IContext;
+
+/**
+ * Full implementation of {@link IContext} that holds all possible data.
+ */
 public class ConditionContext implements ICondition.IContext
 {
 	private final TagManager tagManager;

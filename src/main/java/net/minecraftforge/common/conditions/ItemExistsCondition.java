@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.common.crafting.conditions;
+package net.minecraftforge.common.conditions;
 
 import com.google.gson.JsonObject;
 
@@ -11,6 +11,9 @@ import net.minecraft.util.GsonHelper;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.registries.ForgeRegistries;
 
+/**
+ * The ItemExistsCondition can detect if a particular item is currently registered.
+ */
 public class ItemExistsCondition implements ICondition
 {
     private static final ResourceLocation NAME = new ResourceLocation("forge", "item_exists");
@@ -32,7 +35,7 @@ public class ItemExistsCondition implements ICondition
     }
 
     @Override
-    public ResourceLocation getID()
+    public ResourceLocation getSerializerId()
     {
         return NAME;
     }

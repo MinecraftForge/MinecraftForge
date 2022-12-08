@@ -9,7 +9,7 @@ import com.google.gson.JsonObject;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.minecraftforge.common.crafting.conditions.ICondition;
+import net.minecraftforge.common.conditions.ICondition;
 
 public interface IForgeRecipeSerializer<T extends Recipe<?>>
 {

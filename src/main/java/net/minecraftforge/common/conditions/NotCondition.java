@@ -3,12 +3,11 @@
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.common.crafting.conditions;
+package net.minecraftforge.common.conditions;
 
 import com.google.gson.JsonObject;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.common.crafting.CraftingHelper;
 
 public class NotCondition implements ICondition
 {
@@ -21,7 +20,7 @@ public class NotCondition implements ICondition
     }
 
     @Override
-    public ResourceLocation getID()
+    public ResourceLocation getSerializerId()
     {
         return NAME;
     }
@@ -45,13 +44,13 @@ public class NotCondition implements ICondition
         @Override
         public void write(JsonObject json, NotCondition value)
         {
-            json.add("value", CraftingHelper.serialize(value.child));
+            json.add("value", ConditionHelper.serialize(value.child));
         }
 
         @Override
         public NotCondition read(JsonObject json)
         {
-            return new NotCondition(CraftingHelper.getCondition(GsonHelper.getAsJsonObject(json, "value")));
+            return new NotCondition(ConditionHelper.getCondition(GsonHelper.getAsJsonObject(json, "value")));
         }
 
         @Override

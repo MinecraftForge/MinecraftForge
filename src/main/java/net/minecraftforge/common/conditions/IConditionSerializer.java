@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.common.crafting.conditions;
+package net.minecraftforge.common.conditions;
 
 import com.google.gson.JsonObject;
 
@@ -21,7 +21,7 @@ public interface IConditionSerializer<T extends ICondition>
     {
         JsonObject json = new JsonObject();
         this.write(json, value);
-        json.addProperty("type", value.getID().toString());
+        json.addProperty("type", value.getSerializerId().toString());
         return json;
     }
 }
