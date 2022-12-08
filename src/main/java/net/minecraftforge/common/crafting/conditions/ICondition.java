@@ -7,12 +7,14 @@ package net.minecraftforge.common.crafting.conditions;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.mojang.logging.LogUtils;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraftforge.common.crafting.CraftingHelper;
+import org.slf4j.Logger;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -26,7 +28,12 @@ public interface ICondition
         if (!(json instanceof JsonObject obj) || !obj.has("forge:conditions"))
             return true;
 
-        return CraftingHelper.processConditions(obj, "forge:conditions", IContext.TAGS_INVALID);
+        try {
+            return CraftingHelper.processConditions(obj, "forge:conditions", IContext.TAGS_INVALID);
+        } catch (Exception exception) {
+            LogUtils.getLogger().warn("Encountered exception reading conditions of json datapack registry entry: ", exception);
+        }
+        return true;
     }
 
     ResourceLocation getID();
