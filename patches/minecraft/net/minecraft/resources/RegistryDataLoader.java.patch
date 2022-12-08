@@ -9,11 +9,11 @@
     }
  
     static <E> void m_255048_(RegistryOps.RegistryInfoLookup p_256369_, ResourceManager p_256349_, ResourceKey<? extends Registry<E>> p_255792_, WritableRegistry<E> p_256211_, Decoder<E> p_256232_, Map<ResourceKey<?>, Exception> p_255884_) {
-@@ -138,6 +_,7 @@
+@@ -135,6 +_,7 @@
+          try {
+             try (Reader reader = resource.m_215508_()) {
+                JsonElement jsonelement = JsonParser.parseReader(reader);
++               if (!net.minecraftforge.common.crafting.conditions.ICondition.shouldRegisterEntry(jsonelement)) continue; // Forge: Skip loading an entry if it is disabled by a condition
                 DataResult<E> dataresult = p_256232_.parse(registryops, jsonelement);
                 E e = dataresult.getOrThrow(false, (p_248715_) -> {
                 });
-+               if (net.minecraftforge.common.crafting.conditions.ICondition.shouldRegisterEntry(jsonelement))
-                p_256211_.m_255290_(resourcekey, e, resource.m_247137_() ? Lifecycle.stable() : dataresult.lifecycle());
-             }
- 
