@@ -1,13 +1,16 @@
 package net.minecraftforge.common.data;
 
-import com.mojang.serialization.*;
+import com.mojang.serialization.JsonOps;
 import net.minecraft.client.renderer.texture.atlas.SpriteSource;
 import net.minecraft.client.renderer.texture.atlas.SpriteSources;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.BiConsumer;
 
 public abstract class SpriteSourceProvider extends JsonCodecProvider<List<SpriteSource>>
