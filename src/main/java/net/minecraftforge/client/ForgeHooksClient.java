@@ -435,7 +435,7 @@ public class ForgeHooksClient
     private static void drawScreenInternal(Screen screen, PoseStack poseStack, int mouseX, int mouseY, float partialTick)
     {
         if (!MinecraftForge.EVENT_BUS.post(new ScreenEvent.Render.Pre(screen, poseStack, mouseX, mouseY, partialTick)))
-            screen.render(poseStack, mouseX, mouseY, partialTick);
+            screen.renderWithTooltip(poseStack, mouseX, mouseY, partialTick);
         MinecraftForge.EVENT_BUS.post(new ScreenEvent.Render.Post(screen, poseStack, mouseX, mouseY, partialTick));
     }
 
