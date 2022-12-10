@@ -9,7 +9,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
-import org.apache.commons.lang3.mutable.MutableObject;
 import org.jetbrains.annotations.Nullable;
 
 import it.unimi.dsi.fastutil.Hash.Strategy;
@@ -26,8 +25,8 @@ public class MutableHashedLinkedMap<K, V> implements Iterable<Map.Entry<K, V>>
     private final Strategy<? super K> strategy;
     private final Map<K, Entry> entries;
     private final MergeFunction<K, V> merge;
-    private final MutableObject<Entry> head = new MutableObject<>();
-    private final MutableObject<Entry> last = new MutableObject<>();
+    private Entry head = null;
+    private Entry last = null;
 
     /**
      * Creates a mutable linked map with a default new-value-selecting merge function.
@@ -76,13 +75,13 @@ public class MutableHashedLinkedMap<K, V> implements Iterable<Map.Entry<K, V>>
 
         var self = new Entry(key, value);
 
-        var l = last.getValue();
+        var l = last;
         self.previous = l;
         if (l == null)
-            head.setValue(self);
+            head = self;
         else
             l.next = self;
-        last.setValue(self);
+        last = self;
 
         entries.put(key, self);
         return null;
@@ -98,7 +97,7 @@ public class MutableHashedLinkedMap<K, V> implements Iterable<Map.Entry<K, V>>
         if (ret == null)
             return null;
 
-        ret.remove();
+        remove(ret);
         return ret.getValue();
     }
 
@@ -114,7 +113,7 @@ public class MutableHashedLinkedMap<K, V> implements Iterable<Map.Entry<K, V>>
     {
         return new Iterator<>()
         {
-            private Entry current = head.getValue();
+            private Entry current = head;
             @Override public boolean hasNext() { return current != null; }
             @Override
             public Map.Entry<K, V> next()
@@ -144,7 +143,7 @@ public class MutableHashedLinkedMap<K, V> implements Iterable<Map.Entry<K, V>>
     public V putFirst(K key, V value)
     {
         if (head.getValue() != null)
-            return putBefore(head.getValue().getKey(), key, value);
+            return putBefore(head.getKey(), key, value);
         return put(key, value);
     }
 
@@ -176,7 +175,7 @@ public class MutableHashedLinkedMap<K, V> implements Iterable<Map.Entry<K, V>>
         {
             ret = entry.value;
             entry.value = merge.apply(key, ret, value);
-            entry.remove();
+            remove(entry);
         }
         else
         {
@@ -186,7 +185,7 @@ public class MutableHashedLinkedMap<K, V> implements Iterable<Map.Entry<K, V>>
 
         entry.previous = target;
         if (target.next == null)
-            last.setValue(target);
+            last = target;
         else
             target.next.previous = entry;
         entry.next = target.next;
@@ -223,7 +222,7 @@ public class MutableHashedLinkedMap<K, V> implements Iterable<Map.Entry<K, V>>
         {
             ret = entry.value;
             entry.value = merge.apply(key, ret, value);
-            entry.remove();
+            remove(entry);
         }
         else
         {
@@ -233,7 +232,7 @@ public class MutableHashedLinkedMap<K, V> implements Iterable<Map.Entry<K, V>>
 
         entry.previous = target.previous;
         if (target.previous == null)
-            head.setValue(entry);
+            head = entry;
         else
             target.previous.next = entry;
         entry.next = target;
@@ -241,6 +240,25 @@ public class MutableHashedLinkedMap<K, V> implements Iterable<Map.Entry<K, V>>
         target.previous = entry;
 
         return ret;
+    }
+
+    private void remove(Entry e)
+    {
+        if (head == null)
+            head = e.next;
+        else if (e.previous != null) // Should never be null, but just in case.
+        {
+            e.previous.next = e.next;
+            e.previous = null;
+        }
+
+        if (last == e)
+            last = e.previous;
+        else if (e.next != null) // Should never be null, but just in case.
+        {
+            e.next.previous = e.previous;
+            e.next = null;
+        }
     }
 
     public static interface MergeFunction<Key, Value>
@@ -260,25 +278,6 @@ public class MutableHashedLinkedMap<K, V> implements Iterable<Map.Entry<K, V>>
         {
             this.key = key;
             this.value = value;
-        }
-
-        private void remove()
-        {
-            if (this.previous == null)
-                head.setValue(this.next);
-            else
-            {
-                this.previous.next = this.next;
-                this.previous = null;
-            }
-
-            if (this.next == null)
-                last.setValue(this.previous);
-            else
-            {
-                this.next.previous = this.previous;
-                this.next = null;
-            }
         }
 
         @Override public K getKey() { return this.key; }
