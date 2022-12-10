@@ -18,7 +18,7 @@ import net.minecraft.world.item.CreativeModeTab.TabVisibility;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ItemLike;
-import net.minecraftforge.common.util.MutableHashedLinkedList;
+import net.minecraftforge.common.util.MutableHashedLinkedMap;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.LogicalSide;
@@ -114,10 +114,10 @@ public class CreativeModeTabEvent extends Event implements IModBusEvent
         private final CreativeModeTab tab;
         private final FeatureFlagSet flags;
         private final boolean hasPermissions;
-        private final MutableHashedLinkedList<ItemStack, TabVisibility> entries;
+        private final MutableHashedLinkedMap<ItemStack, TabVisibility> entries;
 
         @ApiStatus.Internal
-        public BuildContents(CreativeModeTab tab, FeatureFlagSet flags, boolean hasPermissions, MutableHashedLinkedList<ItemStack, TabVisibility> entries)
+        public BuildContents(CreativeModeTab tab, FeatureFlagSet flags, boolean hasPermissions, MutableHashedLinkedMap<ItemStack, TabVisibility> entries)
         {
             this.tab = tab;
             this.flags = flags;
@@ -143,7 +143,7 @@ public class CreativeModeTabEvent extends Event implements IModBusEvent
             return this.hasPermissions;
         }
 
-        public MutableHashedLinkedList<ItemStack, TabVisibility> getEntries()
+        public MutableHashedLinkedMap<ItemStack, TabVisibility> getEntries()
         {
             return this.entries;
         }

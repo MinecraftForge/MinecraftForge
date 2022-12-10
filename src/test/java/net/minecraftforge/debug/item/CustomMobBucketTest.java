@@ -43,7 +43,8 @@ public class CustomMobBucketTest
         }
     }
 
-    private void addCreative(CreativeModeTabEvent.BuildContents event) {
+    private void addCreative(CreativeModeTabEvent.BuildContents event)
+    {
         if (event.getTab() == CreativeModeTabs.INGREDIENTS)
             event.accept(COW_BUCKET);
     }
