@@ -142,7 +142,7 @@ public class MutableHashedLinkedMap<K, V> implements Iterable<Map.Entry<K, V>>
     @Nullable
     public V putFirst(K key, V value)
     {
-        if (head.getValue() != null)
+        if (head != null)
             return putBefore(head.getKey(), key, value);
         return put(key, value);
     }
