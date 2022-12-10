@@ -19,8 +19,6 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
-import java.util.function.Consumer;
-
 @Mod(CustomMobBucketTest.MODID)
 public class CustomMobBucketTest
 {
@@ -41,13 +39,12 @@ public class CustomMobBucketTest
         {
             IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
             ITEMS.register(modEventBus);
-            FMLJavaModLoadingContext.get().getModEventBus().addListener((Consumer<CreativeModeTabEvent.BuildContents>) onBuildContents -> {
-                if (onBuildContents.getTab() == CreativeModeTabs.INGREDIENTS) {
-                    onBuildContents.register((flags, output, permissions) -> {
-                        output.accept(COW_BUCKET.get());
-                    });
-                }
-            });
+            modEventBus.addListener(this::addCreative);
         }
+    }
+
+    private void addCreative(CreativeModeTabEvent.BuildContents event) {
+        if (event.getTab() == CreativeModeTabs.INGREDIENTS)
+            event.accept(COW_BUCKET);
     }
 }

@@ -23,9 +23,6 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 
-import java.util.Optional;
-import java.util.function.Consumer;
-
 @Mod(CustomSoundTypeTest.MODID)
 public class CustomSoundTypeTest
 {
@@ -51,7 +48,12 @@ public class CustomSoundTypeTest
         BLOCKS.register(modEventBus);
         ITEMS.register(modEventBus);
         SOUND_EVENTS.register(modEventBus);
+        modEventBus.addListener(this::addCreative);
+    }
 
-        modEventBus.addListener((CreativeModeTabEvent.BuildContents event) -> event.registerSimple(CreativeModeTabs.INGREDIENTS, TEST_STEP_BLOCK_ITEM.get()));
+    private void addCreative(CreativeModeTabEvent.BuildContents event)
+    {
+        if (event.getTab() == CreativeModeTabs.INGREDIENTS)
+            event.accept(TEST_STEP_BLOCK_ITEM);
     }
 }

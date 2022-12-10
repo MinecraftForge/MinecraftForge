@@ -9,8 +9,6 @@ import com.mojang.datafixers.util.Pair;
 import it.unimi.dsi.fastutil.longs.LongSet;
 import java.util.Map;
 import java.util.UUID;
-import java.util.function.Consumer;
-
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -51,13 +49,13 @@ public class ForgeChunkManagerTest
         modEventBus.addListener(this::commonSetup);
         BLOCKS.register(modEventBus);
         ITEMS.register(modEventBus);
-        FMLJavaModLoadingContext.get().getModEventBus().addListener((Consumer<CreativeModeTabEvent.BuildContents>) onBuildContents -> {
-            if (onBuildContents.getTab() == CreativeModeTabs.INGREDIENTS) {
-                onBuildContents.register((flags, output, permissions) -> {
-                    output.accept(CHUNK_LOADER_ITEM.get());
-                });
-            }
-        });
+        modEventBus.addListener(this::addCreative);
+    }
+
+    private void addCreative(CreativeModeTabEvent.BuildContents event)
+    {
+        if (event.getTab() == CreativeModeTabs.INGREDIENTS)
+            event.accept(CHUNK_LOADER_ITEM);
     }
 
     private void commonSetup(FMLCommonSetupEvent event)

@@ -7,8 +7,6 @@ package net.minecraftforge.debug.block;
 
 import java.util.List;
 import java.util.Locale;
-import java.util.function.Consumer;
-
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.level.block.Block;
@@ -66,8 +64,13 @@ public class PistonEventTest
         BLOCKS.register(modBus);
         ITEMS.register(modBus);
         modBus.addListener(this::gatherData);
+        modBus.addListener(this::addCreative);
+    }
 
-        modBus.addListener((CreativeModeTabEvent.BuildContents event) -> event.registerSimple(CreativeModeTabs.BUILDING_BLOCKS, SHIFT_ON_MOVE_ITEM.get()));
+    private void addCreative(CreativeModeTabEvent.BuildContents event)
+    {
+        if (event.getTab() == CreativeModeTabs.BUILDING_BLOCKS)
+            event.accept(SHIFT_ON_MOVE_ITEM);
     }
 
     @SubscribeEvent

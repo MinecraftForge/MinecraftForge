@@ -50,8 +50,6 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.function.Consumer;
-
 /*
  * Test mod for the custom transform types feature.
  * This test mod adds an item that should be held in the main hand, while another item is in the offhand.
@@ -129,13 +127,13 @@ public class CustomTransformTypeTest
         BLOCKS.register(modBus);
         BLOCK_ENTITY_TYPES.register(modBus);
         ITEMS.register(modBus);
-        FMLJavaModLoadingContext.get().getModEventBus().addListener((Consumer<CreativeModeTabEvent.BuildContents>) onBuildContents -> {
-            if (onBuildContents.getTab() == CreativeModeTabs.INGREDIENTS) {
-                onBuildContents.register((flags, output, permissions) -> {
-                    output.accept(ITEM_HANGER_ITEM.get());
-                });
-            }
-        });
+        modBus.addListener(this::addCreative);
+    }
+
+    private void addCreative(CreativeModeTabEvent.BuildContents event)
+    {
+        if (event.getTab() == CreativeModeTabs.INGREDIENTS)
+            event.accept(ITEM_HANGER_ITEM);
     }
 
     public void gatherData(GatherDataEvent event)

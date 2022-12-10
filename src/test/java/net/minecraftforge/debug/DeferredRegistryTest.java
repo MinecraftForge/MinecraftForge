@@ -78,8 +78,13 @@ public class DeferredRegistryTest {
         modBus.addListener(this::gatherData);
 
         MinecraftForge.EVENT_BUS.addListener(this::serverStarted);
+        modBus.addListener(this::addCreative);
+    }
 
-        modBus.addListener((CreativeModeTabEvent.BuildContents event) -> event.registerSimple(CreativeModeTabs.INGREDIENTS, ITEM.get()));
+    private void addCreative(CreativeModeTabEvent.BuildContents event)
+    {
+        if (event.getTab() == CreativeModeTabs.INGREDIENTS)
+            event.accept(ITEM);
     }
 
     public void serverStarted(ServerStartedEvent event)

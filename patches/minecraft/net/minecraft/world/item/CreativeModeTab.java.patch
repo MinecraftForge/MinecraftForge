@@ -44,7 +44,7 @@
     public void m_258021_(FeatureFlagSet p_260125_, boolean p_259855_) {
        CreativeModeTab.ItemDisplayBuilder creativemodetab$itemdisplaybuilder = new CreativeModeTab.ItemDisplayBuilder(this, p_260125_);
 -      this.f_256824_.m_257865_(p_260125_, creativemodetab$itemdisplaybuilder, p_259855_);
-+      net.minecraftforge.client.ForgeHooksClient.onCreativeModeTabBuildContents(this, this.f_256824_).m_257865_(p_260125_, creativemodetab$itemdisplaybuilder, p_259855_);
++      net.minecraftforge.client.ForgeHooksClient.onCreativeModeTabBuildContents(this, this.f_256824_, p_260125_, creativemodetab$itemdisplaybuilder, p_259855_);
        this.f_243839_ = creativemodetab$itemdisplaybuilder.f_244363_;
        this.f_243841_ = creativemodetab$itemdisplaybuilder.f_244585_;
        this.m_257466_();

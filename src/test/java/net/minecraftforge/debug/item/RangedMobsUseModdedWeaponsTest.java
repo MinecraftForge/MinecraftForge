@@ -17,8 +17,6 @@ import net.minecraftforge.registries.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 
-import java.util.function.Consumer;
-
 @Mod(RangedMobsUseModdedWeaponsTest.MOD_ID)
 public class RangedMobsUseModdedWeaponsTest {
 
@@ -45,14 +43,16 @@ public class RangedMobsUseModdedWeaponsTest {
             IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
             ITEMS.register(modEventBus);
             modEventBus.addListener(this::onClientSetup);
-            FMLJavaModLoadingContext.get().getModEventBus().addListener((Consumer<CreativeModeTabEvent.BuildContents>) onBuildContents -> {
-                if (onBuildContents.getTab() == CreativeModeTabs.COMBAT) {
-                    onBuildContents.register((flags, output, permissions) -> {
-                        output.accept(MODDED_BOW.get());
-                        output.accept(MODDED_CROSSBOW.get());
-                    });
-                }
-            });
+            modEventBus.addListener(this::addCreative);
+        }
+    }
+
+    private void addCreative(CreativeModeTabEvent.BuildContents event)
+    {
+        if (event.getTab() == CreativeModeTabs.COMBAT)
+        {
+            event.accept(MODDED_BOW);
+            event.accept(MODDED_CROSSBOW);
         }
     }
 

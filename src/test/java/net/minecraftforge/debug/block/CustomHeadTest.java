@@ -35,8 +35,6 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
-import java.util.function.Consumer;
-
 /**
  * Adds a blaze head block and item to test the event for registering a custom skull model and to demonstrate the proper way to register a custom mob skull.
  *
@@ -61,8 +59,13 @@ public class CustomHeadTest
         BLOCKS.register(modBus);
         ITEMS.register(modBus);
         BLOCK_ENTITIES.register(modBus);
+        modBus.addListener(this::addCreative);
+    }
 
-        modBus.addListener((CreativeModeTabEvent.BuildContents event) -> event.registerSimple(CreativeModeTabs.BUILDING_BLOCKS, BLAZE_HEAD_ITEM.get()));
+    private void addCreative(CreativeModeTabEvent.BuildContents event)
+    {
+        if (event.getTab() == CreativeModeTabs.BUILDING_BLOCKS)
+            event.accept(BLAZE_HEAD_ITEM);
     }
 
     private static class CustomSkullBlock extends SkullBlock

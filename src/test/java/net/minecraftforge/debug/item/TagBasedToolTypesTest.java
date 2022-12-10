@@ -41,7 +41,6 @@ import net.minecraftforge.registries.RegistryObject;
 
 import java.util.List;
 import java.util.Set;
-import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -97,22 +96,15 @@ public class TagBasedToolTypesTest
         BLOCKS.register(modEventBus);
         ITEMS.register(modEventBus);
         modEventBus.addListener(this::gatherData);
+        modEventBus.addListener(this::addCreative);
+    }
 
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(new Consumer<CreativeModeTabEvent.BuildContents>() {
-            @Override
-            public void accept(CreativeModeTabEvent.BuildContents onBuildContents) {
-                if (onBuildContents.getTab() == CreativeModeTabs.TOOLS_AND_UTILITIES) {
-                    onBuildContents.register((flags, output, permission) -> {
-                        output.accept(TOOL.get());
-                    });
-                } else if (onBuildContents.getTab() == CreativeModeTabs.BUILDING_BLOCKS) {
-                    onBuildContents.register((flags, output, permission) -> {
-                        output.accept(ORE_ITEM.get());
-                    });
-                }
-            }
-
-        });
+    private void addCreative(CreativeModeTabEvent.BuildContents event)
+    {
+        if (event.getTab() == CreativeModeTabs.TOOLS_AND_UTILITIES)
+            event.accept(TOOL);
+        if (event.getTab() == CreativeModeTabs.BUILDING_BLOCKS)
+            event.accept(ORE_ITEM);
     }
 
     @SubscribeEvent
