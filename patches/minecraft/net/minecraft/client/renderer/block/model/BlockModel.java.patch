@@ -39,6 +39,17 @@
     public Collection<ResourceLocation> m_7970_() {
        Set<ResourceLocation> set = Sets.newHashSet();
  
+@@ -127,6 +_,10 @@
+    }
+ 
+    public void m_5500_(Function<ResourceLocation, UnbakedModel> p_249059_) {
++      if (customData.hasCustomGeometry()) {
++         customData.getCustomGeometry().resolveParents(p_249059_);
++      }
++
+       Set<UnbakedModel> set = Sets.newLinkedHashSet();
+ 
+       for(BlockModel blockmodel = this; blockmodel.f_111419_ != null && blockmodel.f_111418_ == null; blockmodel = blockmodel.f_111418_) {
 @@ -161,11 +_,24 @@
        });
     }
