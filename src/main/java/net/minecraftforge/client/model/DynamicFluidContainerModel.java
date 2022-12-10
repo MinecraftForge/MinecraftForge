@@ -187,6 +187,12 @@ public class DynamicFluidContainerModel implements IUnbakedGeometry<DynamicFluid
         return modelBuilder.build();
     }
 
+    @Override
+    public void resolveParents(Function<ResourceLocation, UnbakedModel> modelGetter)
+    {
+        // NO-OP
+    }
+
     public static final class Loader implements IGeometryLoader<DynamicFluidContainerModel>
     {
         public static final Loader INSTANCE = new Loader(false);

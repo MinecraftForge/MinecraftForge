@@ -9,6 +9,7 @@ import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.resources.model.ModelBaker;
+import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -174,6 +175,12 @@ public class NewModelLoaderTest
             quadBaker.vertex(1, 1, 0.5f).color(255, 255, 255, 255).uv(texture.getU(16), texture.getV(0)).uv2(0).normal(0, 0, 0).endVertex();
 
             modelBuilder.addUnculledFace(quadBaker.getQuad());
+        }
+
+        @Override
+        public void resolveParents(Function<ResourceLocation, UnbakedModel> modelGetter)
+        {
+            // NO-OP
         }
     }
 

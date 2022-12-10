@@ -112,6 +112,12 @@ public class ItemLayerModel implements IUnbakedGeometry<ItemLayerModel>
         return builder.build();
     }
 
+    @Override
+    public void resolveParents(Function<ResourceLocation, UnbakedModel> modelGetter)
+    {
+        // NO-OP
+    }
+
     public static final class Loader implements IGeometryLoader<ItemLayerModel>
     {
         public static final Loader INSTANCE = new Loader(false);

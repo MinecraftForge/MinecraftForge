@@ -262,6 +262,12 @@ public class FullPotsAccessorDemo
             public BakedModel bake(IGeometryBakingContext context, ModelBaker baker, Function<net.minecraft.client.resources.model.Material, TextureAtlasSprite> spriteGetter, ModelState modelState, ItemOverrides overrides, ResourceLocation modelLocation) {
                 return new DioritePotModel(wrappedModel.bake(baker, spriteGetter, modelState, modelLocation));
             }
+
+            @Override
+            public void resolveParents(Function<ResourceLocation, UnbakedModel> modelGetter)
+            {
+                wrappedModel.resolveParents(modelGetter);
+            }
         }
 
         private static class DioritePotModel extends BakedModelWrapper<BakedModel>

@@ -84,6 +84,12 @@ public class ElementsModel extends SimpleUnbakedGeometry<ElementsModel>
         }
     }
 
+    @Override
+    public void resolveParents(Function<ResourceLocation, UnbakedModel> modelGetter)
+    {
+        // NO-OP
+    }
+
     public static final class Loader implements IGeometryLoader<ElementsModel>
     {
         public static final Loader INSTANCE = new Loader(false);

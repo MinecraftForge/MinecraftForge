@@ -30,6 +30,7 @@ import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.Material;
 import net.minecraft.client.resources.model.ModelBaker;
 import net.minecraft.client.resources.model.ModelState;
+import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
@@ -110,6 +111,12 @@ public class CompositeModel implements IUnbakedGeometry<CompositeModel>
         }
 
         return new Baked(context.isGui3d(), context.useBlockLight(), context.useAmbientOcclusion(), particle, context.getTransforms(), overrides, bakedParts, itemPassesBuilder.build());
+    }
+
+    @Override
+    public void resolveParents(Function<ResourceLocation, UnbakedModel> modelGetter)
+    {
+        children.values().forEach(child -> child.resolveParents(modelGetter));
     }
 
     @Override

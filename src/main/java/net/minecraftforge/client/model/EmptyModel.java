@@ -57,6 +57,12 @@ public class EmptyModel extends SimpleUnbakedGeometry<EmptyModel>
         return BAKED;
     }
 
+    @Override
+    public void resolveParents(Function<ResourceLocation, UnbakedModel> modelGetter)
+    {
+        // NO-OP
+    }
+
     private static class Baked extends SimpleBakedModel
     {
         private static final Material MISSING_TEXTURE = new Material(TextureAtlas.LOCATION_BLOCKS, MissingTextureAtlasSprite.getLocation());
