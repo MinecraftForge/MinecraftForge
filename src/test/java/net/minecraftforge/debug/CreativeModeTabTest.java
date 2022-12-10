@@ -9,8 +9,10 @@ import java.util.List;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.CreativeModeTab.TabVisibility;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.event.CreativeModeTabEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -62,28 +64,28 @@ public class CreativeModeTabTest
                 }));
     }
 
+    private static ItemStack i(ItemLike item) { return new ItemStack(item); }
+
     private static void onCreativeModeTabBuildContents(CreativeModeTabEvent.BuildContents event)
     {
+        var entries = event.getEntries();
+        var vis = TabVisibility.PARENT_AND_SEARCH_TABS;
         if (event.getTab() == LOGS)
         {
-            event.register((flags, builder, hasPermissions) -> {
-                builder.accept(new ItemStack(Blocks.STRIPPED_ACACIA_LOG), ItemStack.EMPTY, new ItemStack(Blocks.ACACIA_LOG));
-                builder.accept(new ItemStack(Blocks.STRIPPED_BIRCH_LOG), ItemStack.EMPTY, new ItemStack(Blocks.BIRCH_LOG));
-                builder.accept(new ItemStack(Blocks.STRIPPED_DARK_OAK_LOG), ItemStack.EMPTY, new ItemStack(Blocks.DARK_OAK_LOG));
-                builder.accept(new ItemStack(Blocks.STRIPPED_JUNGLE_LOG), ItemStack.EMPTY, new ItemStack(Blocks.JUNGLE_LOG));
-                builder.accept(new ItemStack(Blocks.STRIPPED_OAK_LOG), ItemStack.EMPTY, new ItemStack(Blocks.OAK_LOG));
-                builder.accept(new ItemStack(Blocks.STRIPPED_SPRUCE_LOG), ItemStack.EMPTY, new ItemStack(Blocks.SPRUCE_LOG));
-            });
+            entries.putAfter(i(Blocks.ACACIA_LOG),   i(Blocks.STRIPPED_ACACIA_LOG),   vis);
+            entries.putAfter(i(Blocks.BIRCH_LOG),    i(Blocks.STRIPPED_BIRCH_LOG),    vis);
+            entries.putAfter(i(Blocks.DARK_OAK_LOG), i(Blocks.STRIPPED_DARK_OAK_LOG), vis);
+            entries.putAfter(i(Blocks.JUNGLE_LOG),   i(Blocks.STRIPPED_JUNGLE_LOG),   vis);
+            entries.putAfter(i(Blocks.OAK_LOG),      i(Blocks.STRIPPED_OAK_LOG),      vis);
+            entries.putAfter(i(Blocks.SPRUCE_LOG),   i(Blocks.STRIPPED_SPRUCE_LOG),   vis);
         }
 
         if (event.getTab() == STONE)
         {
-            event.register((flags, builder, hasPermissions) -> {
-                builder.accept(new ItemStack(Blocks.SMOOTH_STONE), new ItemStack(Blocks.GRANITE), new ItemStack(Blocks.STONE));
-                builder.accept(new ItemStack(Blocks.POLISHED_GRANITE), new ItemStack(Blocks.DIORITE), new ItemStack(Blocks.GRANITE));
-                builder.accept(new ItemStack(Blocks.POLISHED_DIORITE), new ItemStack(Blocks.ANDESITE), new ItemStack(Blocks.DIORITE));
-                builder.accept(new ItemStack(Blocks.POLISHED_ANDESITE), ItemStack.EMPTY, new ItemStack(Blocks.ANDESITE));
-            });
+            entries.putBefore(i(Blocks.STONE),    i(Blocks.SMOOTH_STONE),      vis);
+            entries.putBefore(i(Blocks.GRANITE),  i(Blocks.POLISHED_GRANITE),  vis);
+            entries.putBefore(i(Blocks.DIORITE),  i(Blocks.POLISHED_DIORITE),  vis);
+            entries.putBefore(i(Blocks.ANDESITE), i(Blocks.POLISHED_ANDESITE), vis);
         }
     }
 }

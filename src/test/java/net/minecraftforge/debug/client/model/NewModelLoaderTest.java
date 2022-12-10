@@ -7,7 +7,6 @@ package net.minecraftforge.debug.client.model;
 
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
-import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.resources.model.ModelBaker;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.block.Block;
@@ -48,7 +47,7 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 
-import java.util.function.Consumer;
+import java.util.Arrays;
 import java.util.function.Function;
 
 import net.minecraft.client.renderer.block.model.ItemTransforms;
@@ -127,20 +126,22 @@ public class NewModelLoaderTest
 
         modEventBus.addListener(this::modelRegistry);
         modEventBus.addListener(this::datagen);
+        modEventBus.addListener(this::addCreative);
+    }
 
-        FMLJavaModLoadingContext.get().getModEventBus().addListener((Consumer<CreativeModeTabEvent.BuildContents>) onBuildContents -> {
-            if (onBuildContents.getTab() == CreativeModeTabs.INGREDIENTS) {
-                onBuildContents.register((flags, output, permissions) -> {
-                    output.accept(obj_item.get());
-                    output.accept(custom_transforms.get());
-                    output.accept(custom_vanilla_loader.get());
-                    output.accept(custom_loader.get());
-                    output.accept(item_layers.get());
-                    output.accept(separate_perspective.get());
-
-                });
-            }
-        });
+    private void addCreative(CreativeModeTabEvent.BuildContents event)
+    {
+        if (event.getTab() == CreativeModeTabs.INGREDIENTS)
+        {
+            Arrays.asList(
+                obj_item,
+                custom_transforms,
+                custom_vanilla_loader,
+                custom_loader,
+                item_layers,
+                separate_perspective
+            ).forEach(event::accept);
+        }
     }
 
     public void modelRegistry(ModelEvent.RegisterGeometryLoaders event)

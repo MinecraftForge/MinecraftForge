@@ -41,14 +41,15 @@ public class ItemUseAnimationTest
 
     public ItemUseAnimationTest()
     {
-        ITEMS.register(FMLJavaModLoadingContext.get().getModEventBus());
-        FMLJavaModLoadingContext.get().getModEventBus().addListener((Consumer<CreativeModeTabEvent.BuildContents>) onBuildContents -> {
-            if (onBuildContents.getTab() == CreativeModeTabs.COMBAT) {
-                onBuildContents.register((flags, output, permissions) -> {
-                    output.accept(THING.get());
-                });
-            }
-        });
+        var modBus = FMLJavaModLoadingContext.get().getModEventBus();
+        ITEMS.register(modBus);
+        modBus.addListener(this::addCreative);
+    }
+
+    private void addCreative(CreativeModeTabEvent.BuildContents event)
+    {
+        if (event.getTab() == CreativeModeTabs.COMBAT)
+            event.accept(THING);
     }
 
     private static class ThingItem extends Item

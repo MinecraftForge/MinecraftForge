@@ -6,10 +6,6 @@
 package net.minecraftforge.client;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
-import com.google.common.graph.ElementOrder;
-import com.google.common.graph.GraphBuilder;
-import com.google.common.graph.MutableGraph;
 import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.shaders.FogShape;
@@ -74,7 +70,6 @@ import net.minecraft.client.sounds.SoundEngine;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.locale.Language;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.chat.ChatType;
 import net.minecraft.network.chat.CommonComponents;
@@ -94,9 +89,11 @@ import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemStackLinkedSet;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.GameType;
@@ -144,7 +141,7 @@ import net.minecraftforge.client.textures.ForgeTextureMetadata;
 import net.minecraftforge.common.ForgeI18n;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.util.ItemStackMap;
+import net.minecraftforge.common.util.MutableHashedLinkedMap;
 import net.minecraftforge.event.CreativeModeTabEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -153,8 +150,6 @@ import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoader;
 import net.minecraftforge.fml.VersionChecker;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.loading.toposort.CyclePresentException;
-import net.minecraftforge.fml.loading.toposort.TopologicalSort;
 import net.minecraftforge.network.NetworkConstants;
 import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.registries.GameData;
@@ -176,7 +171,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -1189,106 +1183,26 @@ public class ForgeHooksClient
         return new ResourceLocation(loc.getNamespace(), normalised);
     }
 
-    public static CreativeModeTab.DisplayItemsGenerator onCreativeModeTabBuildContents(CreativeModeTab tab, CreativeModeTab.DisplayItemsGenerator originalGenerator) {
-        Set<CreativeModeTabEvent.DisplayItemsAdapter> customGenerators = new HashSet<>();
-        CreativeModeTabEvent.BuildContents event = ModLoader.get().postEventWithReturn(new net.minecraftforge.event.CreativeModeTabEvent.BuildContents(tab, customGenerators));
-
-        record ModificationEntry(CreativeModeTab.TabVisibility tabVisibility, ItemStack before, ItemStack after) {}
-
-        return (featureFlagSet, output, hasPermissions) -> {
-            final Map<ItemStack, CreativeModeTab.TabVisibility> originalEntries = ItemStackMap.createTypeAndTagLinkedMap();
-            final Map<ItemStack, ModificationEntry> entries = ItemStackMap.createTypeAndTagMap();
-
-            originalGenerator.accept(featureFlagSet, originalEntries::put, hasPermissions);
-            customGenerators.forEach(generator -> generator.accept(featureFlagSet, (stack, visibility, before, after) -> {
-                if (stack.getCount() != 1)
-                    throw new IllegalArgumentException("The stack count must be 1");
-
-                entries.put(stack, new ModificationEntry(visibility, before, after));
-            }, hasPermissions));
-
-            // We switch to the stacks tag here, as we need to be able to compare and hash them for the graph!
-            // We could not handle this with an open hashset since the builder does not support this internally.
-            final MutableGraph<CompoundTag> graph = GraphBuilder.directed().nodeOrder(ElementOrder.insertion()).build();
-            final Map<CompoundTag, ItemStack> tagToStack = Maps.newHashMap();
-
-            CompoundTag lastStackTag = null;
-            for (ItemStack stack : originalEntries.keySet())
-            {
-                final CompoundTag tag = stack.serializeNBT();
-                tagToStack.put(tag, stack);
-                if (!stack.isEmpty())
-                {
-                    graph.addNode(tag);
-                }
-                if (lastStackTag != null)
-                {
-                    graph.putEdge(lastStackTag, tag);
-                }
-                lastStackTag = tag;
+    public static void onCreativeModeTabBuildContents(CreativeModeTab tab, CreativeModeTab.DisplayItemsGenerator originalGenerator, FeatureFlagSet flags, CreativeModeTab.Output output, boolean hasPermisions)
+    {
+        final var entries = new MutableHashedLinkedMap<ItemStack, CreativeModeTab.TabVisibility>(ItemStackLinkedSet.TYPE_AND_TAG,
+            (key, left, right) -> {
+                //throw new IllegalStateException("Accidentally adding the same item stack twice " + key.getDisplayName().getString() + " to a Creative Mode Tab: " + tab.getDisplayName().getString());
+                // Vanilla adds enchanting books twice in both visibilities.
+                // This is just code cleanliness for them. For us lets just increase the visibility and merge the entries.
+                return CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS;
             }
+        );
 
-            CompoundTag finalLastStackTag = lastStackTag;
-            entries.forEach((stack, modificationEntry) -> {
-                final CompoundTag tag = stack.serializeNBT();
-                if (!stack.isEmpty())
-                {
-                    graph.addNode(tag);
-                    tagToStack.put(tag, stack);
-                }
-                if (!modificationEntry.after.isEmpty())
-                {
-                    final CompoundTag afterTag = modificationEntry.after.serializeNBT();
-                    graph.putEdge(afterTag, tag);
-                    tagToStack.put(afterTag, modificationEntry.after);
-                }
-                else if (finalLastStackTag != null)
-                {
-                    // If the user does not specify an after, we assume it is the last stack and put it after that.
-                    graph.putEdge(finalLastStackTag, tag);
-                }
-                if (!modificationEntry.before.isEmpty())
-                {
-                    final CompoundTag beforeTag = modificationEntry.before.serializeNBT();
-                    graph.putEdge(tag, beforeTag);
-                    tagToStack.put(beforeTag, modificationEntry.before);
-                }
-            });
+        originalGenerator.accept(flags, (stack, vis) -> {
+            if (stack.getCount() != 1)
+                throw new IllegalArgumentException("The stack count must be 1");
+            entries.put(stack, vis);
+        }, hasPermisions);
 
-            try
-            {
-                List<CompoundTag> tierList = TopologicalSort.topologicalSort(graph, null);
+        ModLoader.get().postEvent(new CreativeModeTabEvent.BuildContents(tab, flags, hasPermisions, entries));
 
-                // Now we unwind the tags again so that they are sorted neatly.
-                for (CompoundTag tag : tierList)
-                {
-                    final ItemStack stack = tagToStack.get(tag);
-                    if (originalEntries.containsKey(stack))
-                    {
-                        output.accept(stack, originalEntries.get(stack));
-                    }
-                    else if (entries.containsKey(stack))
-                    {
-                        output.accept(stack, entries.get(stack).tabVisibility);
-                    }
-                }
-            }
-            catch (CyclePresentException cyclePresentException)
-            {
-                LOGGER.error("Failed to inject custom items into creative mode tab {} due to a cycle in the dependency graph", tab, cyclePresentException);
-                LOGGER.warn("Detected cycles:");
-                for (Set<Object> cycle : cyclePresentException.getCycles())
-                {
-                    graph.edges().forEach(edge -> {
-                        if (cycle.contains(edge.nodeU()) && cycle.contains(edge.nodeV()))
-                        {
-                            LOGGER.warn(" - {} -> {}", tagToStack.get(edge.nodeU()), tagToStack.get(edge.nodeV()));
-                        }
-                    });
-                }
-                LOGGER.error("Falling back to default!");
-                originalGenerator.accept(featureFlagSet, output, hasPermissions);
-            }
-        };
+        for (var entry : entries)
+            output.accept(entry.getKey(), entry.getValue());
     }
 }

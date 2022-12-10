@@ -63,7 +63,7 @@ public class NewFluidTest
     private static ForgeFlowingFluid.Properties makeProperties()
     {
         return new ForgeFlowingFluid.Properties(test_fluid_type, test_fluid, test_fluid_flowing)
-                .bucket(test_fluid_bucket).block(test_fluid_block);
+                .bucket(TEST_FLUID_BUCKET).block(test_fluid_block);
     }
 
     public static RegistryObject<FluidType> test_fluid_type = FLUID_TYPES.register("test_fluid", () -> new FluidType(FluidType.Properties.create())
@@ -111,7 +111,7 @@ public class NewFluidTest
     public static RegistryObject<LiquidBlock> test_fluid_block = BLOCKS.register("test_fluid_block", () ->
             new LiquidBlock(test_fluid, Properties.of(Material.WATER).noCollission().strength(100.0F).noLootTable())
     );
-    public static RegistryObject<Item> test_fluid_bucket = ITEMS.register("test_fluid_bucket", () ->
+    public static RegistryObject<Item> TEST_FLUID_BUCKET = ITEMS.register("test_fluid_bucket", () ->
             new BucketItem(test_fluid, new Item.Properties().craftRemainder(Items.BUCKET).stacksTo(1))
     );
 
@@ -119,7 +119,7 @@ public class NewFluidTest
     public static RegistryObject<Block> fluidloggable_block = BLOCKS.register("fluidloggable_block", () ->
             new FluidloggableBlock(Properties.of(Material.WOOD).noCollission().strength(100.0F).noLootTable())
     );
-    public static RegistryObject<Item> fluidloggable_blockitem = ITEMS.register("fluidloggable_block", () ->
+    public static RegistryObject<Item> FLUID_LOGGABLE_BLOCK_ITEM = ITEMS.register("fluidloggable_block", () ->
             new BlockItem(fluidloggable_block.get(), new Item.Properties())
     );
 
@@ -135,15 +135,16 @@ public class NewFluidTest
             ITEMS.register(modEventBus);
             FLUID_TYPES.register(modEventBus);
             FLUIDS.register(modEventBus);
+            modEventBus.addListener(this::addCreative);
+        }
+    }
 
-            FMLJavaModLoadingContext.get().getModEventBus().addListener((Consumer<CreativeModeTabEvent.BuildContents>) onBuildContents -> {
-                if (onBuildContents.getTab() == CreativeModeTabs.INGREDIENTS) {
-                    onBuildContents.register((flags, output, permissions) -> {
-                        output.accept(fluidloggable_blockitem.get());
-                        output.accept(test_fluid_bucket.get());
-                    });
-                }
-            });
+    private void addCreative(CreativeModeTabEvent.BuildContents event)
+    {
+        if (event.getTab() == CreativeModeTabs.INGREDIENTS)
+        {
+            event.accept(FLUID_LOGGABLE_BLOCK_ITEM);
+            event.accept(TEST_FLUID_BUCKET);
         }
     }
 
@@ -155,7 +156,7 @@ public class NewFluidTest
         Validate.isTrue(state.getBlock() == Blocks.WATER && state2 == state);
         ItemStack stack = Fluids.WATER.getFluidType().getBucket(new FluidStack(Fluids.WATER, 1));
         Validate.isTrue(stack.getItem() == Fluids.WATER.getBucket());
-        event.enqueueWork(() -> DispenserBlock.registerBehavior(test_fluid_bucket.get(), DispenseFluidContainer.getInstance()));
+        event.enqueueWork(() -> DispenserBlock.registerBehavior(TEST_FLUID_BUCKET.get(), DispenseFluidContainer.getInstance()));
     }
 
     // WARNING: this doesn't allow "any fluid", only the fluid from this test mod!
@@ -198,7 +199,7 @@ public class NewFluidTest
         public ItemStack pickupBlock(LevelAccessor worldIn, BlockPos pos, BlockState state) {
             if (state.getValue(FLUIDLOGGED)) {
                 worldIn.setBlock(pos, state.setValue(FLUIDLOGGED, false), 3);
-                return new ItemStack(test_fluid_bucket.get());
+                return new ItemStack(TEST_FLUID_BUCKET.get());
             } else {
                 return ItemStack.EMPTY;
             }

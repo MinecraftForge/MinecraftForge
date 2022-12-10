@@ -7,15 +7,18 @@ package net.minecraftforge.event;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
+
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.CreativeModeTab.Output;
+import net.minecraft.world.item.CreativeModeTab.TabVisibility;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ItemLike;
-import net.minecraftforge.common.CreativeModeTabRegistry;
+import net.minecraftforge.common.util.MutableHashedLinkedMap;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.LogicalSide;
@@ -106,58 +109,20 @@ public class CreativeModeTabEvent extends Event implements IModBusEvent
      * This event is fired on the {@linkplain FMLJavaModLoadingContext#getModEventBus() mod-specific event bus},
      * only on the {@linkplain LogicalSide#CLIENT logical client}.
      */
-    public static final class BuildContents extends CreativeModeTabEvent
+    public static final class BuildContents extends CreativeModeTabEvent implements Output
     {
         private final CreativeModeTab tab;
-        private final Set<DisplayItemsAdapter> customGenerators;
+        private final FeatureFlagSet flags;
+        private final boolean hasPermissions;
+        private final MutableHashedLinkedMap<ItemStack, TabVisibility> entries;
 
         @ApiStatus.Internal
-        public BuildContents(CreativeModeTab tab, Set<DisplayItemsAdapter> customGenerators)
+        public BuildContents(CreativeModeTab tab, FeatureFlagSet flags, boolean hasPermissions, MutableHashedLinkedMap<ItemStack, TabVisibility> entries)
         {
             this.tab = tab;
-            this.customGenerators = customGenerators;
-        }
-
-        /**
-         * Registers the given generator.
-         */
-        public void register(DisplayItemsAdapter generator)
-        {
-            this.customGenerators.add(generator);
-        }
-
-        /**
-         * Registers the given generator if the provided creative mode tab matches this event's currently populating tab.
-         */
-        public void register(CreativeModeTab tab, DisplayItemsAdapter generator)
-        {
-            if (this.tab == tab)
-                this.customGenerators.add(generator);
-        }
-
-        /**
-         * Registers the given generator if the provided tab name matches this event's currently populating tab's name.
-         */
-        public void register(ResourceLocation tabName, DisplayItemsAdapter generator)
-        {
-            if (this.tab == CreativeModeTabRegistry.getTab(tabName))
-                this.customGenerators.add(generator);
-        }
-
-        /**
-         * Adds the given item if the provided creative mode tab matches this event's currently populating tab.
-         */
-        public void registerSimple(CreativeModeTab tab, ItemLike item)
-        {
-            this.register(tab, (enabledFlags, output, permissions) -> output.accept(item));
-        }
-
-        /**
-         * Adds the given items if the provided creative mode tab matches this event's currently populating tab.
-         */
-        public void registerSimple(CreativeModeTab tab, ItemLike... items)
-        {
-            this.register(tab, (enabledFlags, output, permissions) -> output.acceptAll(items));
+            this.flags = flags;
+            this.hasPermissions = hasPermissions;
+            this.entries = entries;
         }
 
         /**
@@ -167,70 +132,36 @@ public class CreativeModeTabEvent extends Event implements IModBusEvent
         {
             return this.tab;
         }
-    }
 
-    @FunctionalInterface
-    public interface DisplayItemsAdapter
-    {
-        void accept(FeatureFlagSet enabledFlags, CreativeModeTabPopulator populator, boolean hasPermissions);
-    }
-
-    @FunctionalInterface
-    public interface CreativeModeTabPopulator
-    {
-        void accept(ItemStack stack, CreativeModeTab.TabVisibility visibility, ItemStack before, ItemStack after);
-
-        default void accept(ItemStack stack, ItemStack before, ItemStack after)
+        public FeatureFlagSet getFlags()
         {
-            accept(stack, CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS, before, after);
+            return this.flags;
         }
 
-        default void accept(ItemLike stack, CreativeModeTab.TabVisibility visibility, ItemStack before, ItemStack after)
+        public boolean hasPermissions()
         {
-            accept(new ItemStack(stack), visibility, before, after);
+            return this.hasPermissions;
         }
 
-        default void accept(ItemLike stack, ItemStack before, ItemStack after)
+        public MutableHashedLinkedMap<ItemStack, TabVisibility> getEntries()
         {
-            accept(stack, CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS, before, after);
+            return this.entries;
         }
 
-        default void accept(ItemStack stack, CreativeModeTab.TabVisibility visibility)
+        @Override
+        public void accept(ItemStack stack, TabVisibility visibility)
         {
-            accept(stack, visibility, ItemStack.EMPTY, ItemStack.EMPTY);
+            getEntries().put(stack, visibility);
         }
 
-        default void accept(ItemStack stack)
+        public void accept(Supplier<? extends ItemLike> item, CreativeModeTab.TabVisibility visibility)
         {
-            this.accept(stack, CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
+           this.accept(item.get(), visibility);
         }
 
-        default void accept(ItemLike itemLike, CreativeModeTab.TabVisibility visibility)
+        public void accept(Supplier<? extends ItemLike> item)
         {
-            this.accept(new ItemStack(itemLike), visibility);
-        }
-
-        default void accept(ItemLike itemLike)
-        {
-            this.accept(new ItemStack(itemLike), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
-        }
-
-        default void acceptAll(Collection<ItemStack> stacks, CreativeModeTab.TabVisibility visibility)
-        {
-            stacks.forEach(stack -> this.accept(stack, visibility));
-        }
-
-        default void acceptAll(Collection<ItemStack> stacks)
-        {
-            this.acceptAll(stacks, CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
-        }
-
-        default void acceptAll(ItemLike... items)
-        {
-            for (ItemLike item : items)
-            {
-                this.accept(item);
-            }
+           this.accept(item.get());
         }
     }
 }

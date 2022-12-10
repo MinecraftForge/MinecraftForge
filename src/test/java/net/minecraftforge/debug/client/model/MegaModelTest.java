@@ -88,12 +88,13 @@ public class MegaModelTest
         BLOCKS.register(modEventBus);
         ITEMS.register(modEventBus);
         BLOCK_ENTITIES.register(modEventBus);
+        modEventBus.addListener(this::addCreative);
+    }
 
-        FMLJavaModLoadingContext.get().getModEventBus().addListener((Consumer<CreativeModeTabEvent.BuildContents>) onBuildContents -> {
-            if (onBuildContents.getTab() == CreativeModeTabs.BUILDING_BLOCKS) {
-                onBuildContents.register((p_259204_, p_259752_, p_260123_) -> p_259752_.accept(TEST_BLOCK_ITEM.get()));
-            }
-        });
+    private void addCreative(CreativeModeTabEvent.BuildContents event)
+    {
+        if (event.getTab() == CreativeModeTabs.BUILDING_BLOCKS)
+            event.accept(TEST_BLOCK_ITEM);
     }
 
     @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)

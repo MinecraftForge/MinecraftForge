@@ -35,8 +35,6 @@ import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.WoodType;
 
-import java.util.function.Consumer;
-
 @Mod(CustomSignsTest.MODID)
 public class CustomSignsTest
 {
@@ -66,9 +64,14 @@ public class CustomSignsTest
 
             eventBus.addListener(this::clientSetup);
             eventBus.addListener(this::commonSetup);
-
-            eventBus.addListener((CreativeModeTabEvent.BuildContents event) -> event.registerSimple(CreativeModeTabs.BUILDING_BLOCKS, TEST_SIGN.get()));
+            eventBus.addListener(this::addCreative);
         }
+    }
+
+    private void addCreative(CreativeModeTabEvent.BuildContents event)
+    {
+        if (event.getTab() == CreativeModeTabs.BUILDING_BLOCKS)
+            event.accept(TEST_SIGN);
     }
 
     private void clientSetup(final FMLClientSetupEvent event)
