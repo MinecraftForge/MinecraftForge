@@ -99,10 +99,10 @@ public abstract class BlockStateProvider implements DataProvider {
         itemModels().clear();
         registeredBlocks.clear();
         registerStatesAndModels();
-        models().generateAll(cache);
-        itemModels().generateAll(cache);
-        CompletableFuture<?>[] futures = new CompletableFuture<?>[this.registeredBlocks.size()];
+        CompletableFuture<?>[] futures = new CompletableFuture<?>[2 + this.registeredBlocks.size()];
         int i = 0;
+        futures[i++] = models().generateAll(cache);
+        futures[i++] = itemModels().generateAll(cache);
         for (Map.Entry<Block, IGeneratedBlockState> entry : registeredBlocks.entrySet()) {
             futures[i++] = saveBlockState(cache, entry.getValue().toJson(), entry.getKey());
         }

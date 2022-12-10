@@ -10,6 +10,7 @@ import com.google.common.collect.ImmutableMap;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -121,6 +122,12 @@ public class DelegatingPackResources extends AbstractPackResources
         }
 
         return null;
+    }
+
+    @Nullable
+    public Collection<PackResources> getChildren()
+    {
+        return delegates;
     }
 
     private List<PackResources> getCandidatePacks(PackType type, ResourceLocation location)
