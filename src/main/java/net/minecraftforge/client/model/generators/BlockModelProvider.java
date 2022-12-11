@@ -5,7 +5,6 @@
 
 package net.minecraftforge.client.model.generators;
 
-import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import org.jetbrains.annotations.NotNull;
@@ -18,14 +17,6 @@ public abstract class BlockModelProvider extends ModelProvider<BlockModelBuilder
 
     public BlockModelProvider(PackOutput output, String modid, ExistingFileHelper existingFileHelper) {
         super(output, modid, BLOCK_FOLDER, BlockModelBuilder::new, existingFileHelper);
-    }
-
-    /**
-     * @deprecated Use {@link #BlockModelProvider(PackOutput, String, ExistingFileHelper)} instead
-     */
-    @Deprecated(forRemoval = true, since = "1.19.3")
-    public BlockModelProvider(DataGenerator generator, String modid, ExistingFileHelper existingFileHelper) {
-        this(generator.getPackOutput(), modid, existingFileHelper);
     }
 
     @NotNull

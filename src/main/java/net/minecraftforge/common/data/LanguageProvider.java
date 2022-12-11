@@ -12,7 +12,6 @@ import java.util.TreeMap;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 import net.minecraft.data.CachedOutput;
-import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.PackOutput;
 import net.minecraft.world.effect.MobEffect;
@@ -27,14 +26,6 @@ public abstract class LanguageProvider implements DataProvider {
     private final PackOutput output;
     private final String modid;
     private final String locale;
-
-    /**
-     * @deprecated Use {@link #LanguageProvider(PackOutput, String, String)} instead
-     */
-    @Deprecated(forRemoval = true, since = "1.19.3")
-    public LanguageProvider(DataGenerator generator, String modid, String locale) {
-        this(generator.getPackOutput(), modid, locale);
-    }
 
     public LanguageProvider(PackOutput output, String modid, String locale) {
         this.output = output;

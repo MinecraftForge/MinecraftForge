@@ -13,7 +13,6 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 import net.minecraft.data.CachedOutput;
-import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
@@ -35,15 +34,6 @@ public abstract class SoundDefinitionsProvider implements DataProvider
     private final ExistingFileHelper helper;
 
     private final Map<String, SoundDefinition> sounds = new LinkedHashMap<>();
-
-    /**
-     * @deprecated Use {@link #SoundDefinitionsProvider(PackOutput, String, ExistingFileHelper)} instead
-     */
-    @Deprecated(forRemoval = true, since = "1.19.3")
-    protected SoundDefinitionsProvider(final DataGenerator generator, final String modId, final ExistingFileHelper helper)
-    {
-        this(generator.getPackOutput(), modId, helper);
-    }
 
     /**
      * Creates a new instance of this data provider.

@@ -5,7 +5,6 @@
 
 package net.minecraftforge.client.model.generators;
 
-import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
@@ -23,14 +22,6 @@ public abstract class ItemModelProvider extends ModelProvider<ItemModelBuilder> 
 
     public ItemModelProvider(PackOutput output, String modid, ExistingFileHelper existingFileHelper) {
         super(output, modid, ITEM_FOLDER, ItemModelBuilder::new, existingFileHelper);
-    }
-
-    /**
-     * @deprecated Use {@link #ItemModelProvider(PackOutput, String, ExistingFileHelper)} instead
-     */
-    @Deprecated(forRemoval = true, since = "1.19.3")
-    public ItemModelProvider(DataGenerator generator, String modid, ExistingFileHelper existingFileHelper) {
-        this(generator.getPackOutput(), modid, existingFileHelper);
     }
 
     public ItemModelBuilder basicItem(Item item)

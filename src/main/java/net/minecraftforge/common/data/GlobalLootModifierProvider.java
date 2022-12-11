@@ -13,7 +13,6 @@ import com.google.gson.JsonObject;
 import com.mojang.serialization.JsonOps;
 import cpw.mods.modlauncher.api.LamdbaExceptionUtils;
 import net.minecraft.data.CachedOutput;
-import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
@@ -40,15 +39,6 @@ public abstract class GlobalLootModifierProvider implements DataProvider
     private final String modid;
     private final Map<String, JsonElement> toSerialize = new HashMap<>();
     private boolean replace = false;
-
-    /**
-     * @deprecated Use {@link #GlobalLootModifierProvider(PackOutput, String)} instead
-     */
-    @Deprecated(forRemoval = true, since = "1.19.3")
-    public GlobalLootModifierProvider(DataGenerator generator, String modid)
-    {
-        this(generator.getPackOutput(), modid);
-    }
 
     public GlobalLootModifierProvider(PackOutput output, String modid)
     {

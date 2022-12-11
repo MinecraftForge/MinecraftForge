@@ -32,7 +32,6 @@ import net.minecraft.server.packs.PackType;
 import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.common.crafting.conditions.ICondition;
 import net.minecraftforge.common.data.ExistingFileHelper.ResourceType;
-import net.minecraftforge.data.event.GatherDataEvent;
 import net.minecraftforge.registries.DataPackRegistriesHooks;
 import org.slf4j.Logger;
 
@@ -59,16 +58,6 @@ public class JsonCodecProvider<T> implements DataProvider
     protected Map<ResourceLocation, ICondition[]> conditions = Collections.emptyMap();
 
     /**
-     * @deprecated Use {@link #JsonCodecProvider(PackOutput, ExistingFileHelper, String, DynamicOps, PackType, String, Codec, Map)} instead
-     */
-    @Deprecated(forRemoval = true, since = "1.19.3")
-    public JsonCodecProvider(DataGenerator generator, ExistingFileHelper existingFileHelper, String modid, DynamicOps<JsonElement> dynamicOps, PackType packType,
-         String directory, Codec<T> codec, Map<ResourceLocation, T> entries)
-    {
-        this(generator.getPackOutput(), existingFileHelper, modid, dynamicOps, packType, directory, codec, entries);
-    }
-
-    /**
      * @param output {@linkplain PackOutput} provided by the {@link DataGenerator}.
      * @param dynamicOps DynamicOps to encode values to jsons with using the provided Codec, e.g. {@link JsonOps#INSTANCE}.
      * @param packType PackType specifying whether to generate entries in assets or data.
@@ -93,15 +82,6 @@ public class JsonCodecProvider<T> implements DataProvider
         this.directory = directory;
         this.codec = codec;
         this.entries = entries;
-    }
-
-    /**
-     * @deprecated Use {@link #forDatapackRegistry(PackOutput, ExistingFileHelper, String, RegistryOps, ResourceKey, Map)} instead
-     */
-    public static <T> JsonCodecProvider<T> forDatapackRegistry(DataGenerator generator, ExistingFileHelper existingFileHelper, String modid,
-          RegistryOps<JsonElement> registryOps, ResourceKey<Registry<T>> registryKey, Map<ResourceLocation, T> entries)
-    {
-        return forDatapackRegistry(generator.getPackOutput(), existingFileHelper, modid, registryOps, registryKey, entries);
     }
 
     /**
