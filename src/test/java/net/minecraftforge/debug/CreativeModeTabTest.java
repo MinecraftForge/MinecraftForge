@@ -6,11 +6,15 @@
 package net.minecraftforge.debug;
 
 import java.util.List;
+import java.util.function.Supplier;
+
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTab.TabVisibility;
 import net.minecraft.world.item.CreativeModeTabs;
+import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.item.DyeItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Blocks;
@@ -62,6 +66,17 @@ public class CreativeModeTabTest
                     output.accept(new ItemStack(Blocks.DIORITE));
                     output.accept(new ItemStack(Blocks.ANDESITE));
                 }));
+
+        event.registerCreativeModeTab(new ResourceLocation(MOD_ID, "colors"), builder -> builder.title(Component.literal("Colors"))
+                .displayItems((features, output, hasPermissions) ->
+                {
+                    for (DyeColor color : DyeColor.values())
+                    {
+                        output.accept(DyeItem.byColor(color));
+                    }
+                })
+                .withTabFactory(CreativeModeColorTab::new)
+        );
     }
 
     private static ItemStack i(ItemLike item) { return new ItemStack(item); }
@@ -86,6 +101,30 @@ public class CreativeModeTabTest
             entries.putBefore(i(Blocks.GRANITE),  i(Blocks.POLISHED_GRANITE),  vis);
             entries.putBefore(i(Blocks.DIORITE),  i(Blocks.POLISHED_DIORITE),  vis);
             entries.putBefore(i(Blocks.ANDESITE), i(Blocks.POLISHED_ANDESITE), vis);
+        }
+    }
+
+    private static class CreativeModeColorTab extends CreativeModeTab
+    {
+        private final ItemStack[] iconItems;
+
+        public CreativeModeColorTab(Row row, int column, Type type, Component title, Supplier<ItemStack> iconGenerator, DisplayItemsGenerator displayItemsGenerator, ResourceLocation backgroundLocation, boolean hasSearchBar, int searchBarWidth, ResourceLocation tabsImage, int labelColor, int slotColor)
+        {
+            super(row, column, type, title, iconGenerator, displayItemsGenerator, backgroundLocation, hasSearchBar, searchBarWidth, tabsImage, labelColor, slotColor);
+
+            DyeColor[] colors = DyeColor.values();
+            iconItems = new ItemStack[colors.length];
+            for (int i = 0; i < colors.length; i++)
+            {
+                iconItems[i] = new ItemStack(DyeItem.byColor(colors[i]));
+            }
+        }
+
+        @Override
+        public ItemStack getIconItem()
+        {
+            int idx = (int)(System.currentTimeMillis() / 1200) % iconItems.length;
+            return iconItems[idx];
         }
     }
 }
