@@ -1168,20 +1168,23 @@ project(':forge') {
         }
     }
 
-    task checkATs(type: CheckATs, dependsOn: [extractInheritance, createSrg2Mcp]) {
-        inheritance = extractInheritance.output
-        ats.from patcher.accessTransformers
-        mappings = createSrg2Mcp.output
+    CheckTask.registerTask(tasks, 'ATs', CheckATs) {
+        it.dependsOn(extractInheritance, createSrg2Mcp)
+        it.ats.from patcher.accessTransformers
+        it.inheritance = extractInheritance.output
+        it.mappings = createSrg2Mcp.output
     }
 
     task checkSAS(type: CheckSAS, dependsOn: extractInheritance) {
         inheritance = extractInheritance.output
         sass.from patcher.sideAnnotationStrippers
+        type = CheckType.CHECK
     }
 
     task checkExcs(type: CheckExcs, dependsOn: jar) {
         binary = jar.archiveFile.get().asFile
         excs.from patcher.excs
+        type = CheckType.CHECK
     }
 
     task checkPatchesAndFix(type: CheckPatches, dependsOn: genPatches) {

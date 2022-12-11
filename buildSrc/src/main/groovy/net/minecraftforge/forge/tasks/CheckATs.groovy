@@ -3,24 +3,22 @@ package net.minecraftforge.forge.tasks
 import net.minecraftforge.srgutils.IMappingFile
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.RegularFileProperty
-
-import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.Optional
-import org.gradle.api.tasks.TaskAction
 import org.objectweb.asm.Opcodes
 
-abstract class CheckATs extends DefaultTask {
+abstract class CheckATs extends CheckTask {
+
 	@InputFile abstract RegularFileProperty getInheritance()
 	@InputFiles abstract ConfigurableFileCollection getAts()
     @InputFile @Optional abstract RegularFileProperty getMappings()
-	
-    @TaskAction
-    protected void exec() {
-        def mappings = mappings.map { IMappingFile.load(it.asFile) }.getOrNull()
+
+	@Override
+	void check(Reporter reporter, boolean fix) {
+		final mappings = mappings.map { IMappingFile.load(it.asFile) }.getOrNull()
 		Util.init()
-		def parse = { line ->
+		final parser = { String line ->
 			def idx = line.indexOf('#')
 			def comment = idx == -1 ? null : line.substring(idx)
 			if (idx != -1) line = line.substring(0, idx - 1)
@@ -28,13 +26,13 @@ abstract class CheckATs extends DefaultTask {
 			def key = cls + (desc.isEmpty() ? '' : ' ' + desc)
 			return [modifier, cls, desc, comment, key]
 		}
-		def accessLevel = { access ->
+		def accessLevel = { int access ->
 			if ((access & Opcodes.ACC_PUBLIC)    != 0) return 3
 			if ((access & Opcodes.ACC_PROTECTED) != 0) return 2
 			if ((access & Opcodes.ACC_PRIVATE)   != 0) return 0
 			return 1
 		}
-		def accessStr = { access ->
+		def accessStr = { String access ->
 			if (access.endsWith('-f') || access.endsWith('+f'))
 				return 4
 			switch (access.toLowerCase()) {
@@ -46,61 +44,63 @@ abstract class CheckATs extends DefaultTask {
 			}
 		}
 		def json = inheritance.get().asFile.json()
-		
-		ats.each { f -> 
-			TreeMap lines = [:]
+
+		ats.each { f ->
+			final TreeMap lines = [:]
 			def group = null
-			for (def line : f.readLines()) {
+			for (final line : f.readLines()) {
 				if (line.isEmpty()) continue
 				if (line.startsWith('#group ')) {
-					def (modifier, cls, desc, comment, key) = parse.call(line.substring(7))
-					
-					if (desc != '*' && desc != '*()' && desc != '<init>')
-						throw new IllegalStateException('Invalid group: ' + line)
-					
-					group = [modifier: modifier, cls: cls, desc: desc, comment: comment, 
-						existing: [] as Set,
-						children: [] as TreeSet,
-						group: true
+					def (modifier, cls, desc, comment, key) = parser.call(line.substring(7))
+
+					if (desc != '*' && desc != '*()' && desc != '<init>') {
+						reporter.report("Invalid group: $line", false)
+					}
+
+					group = [modifier: modifier, cls: cls, desc: desc, comment: comment,
+							 existing: [] as Set,
+							 children: [] as TreeSet,
+							 group: true
 					]
-					if (lines.containsKey(key))
-						throw new IllegalStateException('Duplicate group: ' + line)
-					
+					if (lines.containsKey(key)) {
+						reporter.report("Duplicate group: $line", false)
+					}
+
 					lines[key] = group
 				} else if (group != null) {
 					if (line.startsWith('#endgroup')) {
 						group = null
 					} else {
-						def (modifier, cls, desc, comment, key) = parse.call(line)
+						def (modifier, cls, desc, comment, key) = parser.call(line)
 						group['existing'].add(key)
 					}
 				} else if (line.startsWith('#endgroup')) {
-					throw new IllegalStateException('Invalid group ending: ' + line)
+					reporter.report("Invalid group ending: $line", false)
 				} else if (line.startsWith('#')) {
 					//Nom
 				} else {
-					def (modifier, cls, desc, comment, key) = parse.call(line)
+					def (modifier, cls, desc, comment, key) = parser.call(line)
 					if (lines.containsKey(key)) {
-						println('Duplicate: ' + line)
+						reporter.report("Found duplicate: $line")
 						continue
 					}
 					lines[key] = [modifier: modifier, cls: cls, desc: desc, comment: comment, group: false]
 				}
 			}
-			
+
 			// Process Groups, this will remove any entries outside the group that is covered by the group
-			for (def key : new ArrayList<>(lines.keySet())) {
-				def entry = lines.get(key)
+			for (final key : new ArrayList<>(lines.keySet())) {
+				final entry = lines[key]
 				if (entry != null && entry['group']) {
 					def cls = entry['cls']
 					def jcls = json.get(cls.replaceAll('\\.', '/'))
 					if (jcls == null) {
 						lines.remove(key)
-						println('Invalid Group: ' + key)
+						reporter.report("Invalid group: $key")
 					} else if ('*' == entry['desc']) {
 						if (!jcls.containsKey('fields')) {
 							lines.remove(key)
-							println('Invalid Group, Class has no fields: ' + key)
+							reporter.report("Invalid group, class has no fields: $key")
 						} else {
 							jcls['fields'].each { field, value ->
 								def fkey = cls + ' ' + field
@@ -121,7 +121,7 @@ abstract class CheckATs extends DefaultTask {
 					} else if ('*()' == entry['desc']) {
 						if (!jcls.containsKey('methods')) {
 							lines.remove(key)
-							println('Invalid Group, Class has no methods: ' + key)
+							reporter.report("Invalid group, class has no methods: $key")
 						} else {
 							jcls['methods'].each{ mtd, value ->
 								if (mtd.startsWith('<clinit>') || mtd.startsWith('lambda$'))
@@ -142,24 +142,24 @@ abstract class CheckATs extends DefaultTask {
 							entry['existing'].stream().findAll{ !entry['children'].contains(it) }.each{ println('Removed: ' + it) }
 						}
 					} else if ('<init>' == entry['desc']) { //Make all public non-abstract subclasses
-						json.each{ tcls,value -> 
+						json.each { tcls,value ->
 							if (!value.containsKey('methods') || ((value['access'] & Opcodes.ACC_ABSTRACT) != 0))
 								return
-							def parents = [] as Set
+							final parents = [] as Set
 							def parent = tcls
-							while (parent != null && json.containsKey(parent)) {
+							while (parent !== null && json.containsKey(parent)) {
 								parents.add(parent)
 								def p = json[parent]
-								parent = p == null ? null : p['superName']
+								parent = p === null ? null : p['superName']
 							}
 							if (parents.contains(cls.replaceAll('\\.', '/'))) {
-								value['methods'].each{ mtd, v -> 
+								value['methods'].each{ mtd, v ->
 									if (mtd.startsWith('<init>')) {
 										def child = tcls.replaceAll('/', '\\.') + ' ' + mtd.replace(' ', '')
 										if (accessLevel.call(v['access']) < 3) {
 											if (lines.containsKey(child)) {
 												lines.remove(child)
-											} else if (!entry['existing'].contains(child)) {
+											} else if (child !in entry['existing']) {
 												println('Added: ' + child)
 											}
 											entry['children'].add(child)
@@ -175,7 +175,7 @@ abstract class CheckATs extends DefaultTask {
 					}
 				}
 			}
-			
+
 			// Process normal lines, remove invalid and remove narrowing
 			for (def key : new ArrayList<>(lines.keySet())) {
 				def entry = lines.get(key)
@@ -184,84 +184,84 @@ abstract class CheckATs extends DefaultTask {
 					def jcls = json.get(cls.replaceAll('\\.', '/'))
 					if (jcls == null) {
 						lines.remove(key)
-						println('Invalid: ' + key)
+						reporter.report("Invalid: $key")
 					} else if (entry['desc'] == '') {
 						if (accessLevel.call(jcls['access']) > accessStr.call(entry['modifier']) && (entry.comment == null || !entry.comment.startsWith('#force '))) {
 							lines.remove(key)
-							println('Invalid Narrowing: ' + key)
+							reporter.report("Invalid Narrowing: $key")
 						}
 					} else if (!entry['desc'].contains('(')) {
 						if (!jcls.containsKey('fields') || !jcls['fields'].containsKey(entry['desc'])) {
 							lines.remove(key)
-							println('Invalid: ' + key)
+							reporter.report("Invalid: $key")
 						} else {
 							def value = jcls['fields'][entry['desc']]
 							if (accessLevel.call(value['access']) > accessStr.call(entry['modifier']) && (entry.comment == null || !entry.comment.startsWith('#force '))) {
 								lines.remove(key)
-								println('Invalid Narrowing: ' + key)
-								println(entry.comment)
+								reporter.report("Invalid Narrowing: $key - ${entry.comment}")
 							}
 						}
 					} else {
 						def jdesc = entry['desc'].replace('(', ' (')
 						if (!jcls.containsKey('methods') || !jcls['methods'].containsKey(jdesc)) {
 							lines.remove(key)
-							println('Invalid: ' + key)
+							reporter.report("Invalid: $key")
 						} else {
 							def value = jcls['methods'][jdesc]
 							if (accessLevel.call(value['access']) > accessStr.call(entry['modifier']) && (entry.comment == null || !entry.comment.startsWith('#force '))) {
 								lines.remove(key)
-								println('Invalid Narrowing: ' + key)
+								reporter.report("Invalid Narrowing: $key")
 							}
 						}
 					}
 				}
 			}
 
-			
-			def data = []
-            def remapComment = { entry ->
-                if (!mappings || !entry || !entry.desc) return null
-                def comment = entry.comment?.substring(1)?.trim()
-                def jsonCls = json.get(entry.cls.replaceAll('\\.', '/'))
-                def mappingsClass = mappings?.getClass(jsonCls.name)
-                if (!mappingsClass) return entry.comment
-                def idx = entry.desc.indexOf('(')
-                def mappedName = idx == -1
-                        ? mappingsClass.remapField(entry.desc)
-                        : mappingsClass.remapMethod(entry.desc.substring(0, idx), entry.desc.substring(idx))
-                if (!mappedName) return entry.comment
-                if (mappedName == '<init>')
-                    mappedName = 'constructor'
+			if (fix) {
+				def data = []
+				def remapComment = { entry ->
+					if (!mappings || !entry || !entry.desc) return null
+					def comment = entry.comment?.substring(1)?.trim()
+					def jsonCls = json.get(entry.cls.replaceAll('\\.', '/'))
+					def mappingsClass = mappings?.getClass(jsonCls.name)
+					if (!mappingsClass) return entry.comment
+					def idx = entry.desc.indexOf('(')
+					def mappedName = idx == -1
+							? mappingsClass.remapField(entry.desc)
+							: mappingsClass.remapMethod(entry.desc.substring(0, idx), entry.desc.substring(idx))
+					if (!mappedName) return entry.comment
+					if (mappedName == '<init>')
+						mappedName = 'constructor'
 
-                if (comment?.startsWith(mappedName))
-                    return '# ' + comment
-                if (comment && comment.indexOf(' ') != -1) {
-                    def split = comment.split(" - ").toList()
-                    if (split[0].indexOf(' ') != -1)
-                        // The first string is more than one word, so append before it
-                        return "# ${mappedName} - ${comment}"
-                    split.remove(0)
-                    return "# ${mappedName} - ${String.join(' - ', split)}"
-                }
-                return '# ' + mappedName
-            }
-			lines.each { key,value -> 
-				if (!value.group) {
-                    def comment = remapComment.call(value)
-					data.add(value.modifier + ' ' + key + (comment ? ' ' + comment : ''))
-				} else {
-					data.add('#group ' + value.modifier + ' ' + key + (value.comment == null ? '' : ' ' + value.comment))
-					value.children.each {
-                        def line = value.modifier + ' ' + it
-                        def (modifier, cls, desc, comment) = parse.call(line)
-                        comment = remapComment.call([modifier: modifier, cls: cls, desc: desc, comment: comment])
-                        data.add(line + (comment ? ' ' + comment : ''))
-                    }
-					data.add('#endgroup')
+					if (comment?.startsWith(mappedName))
+						return '# ' + comment
+					if (comment && comment.indexOf(' ') != -1) {
+						def split = comment.split(' - ').toList()
+						if (split[0].indexOf(' ') != -1)
+						// The first string is more than one word, so append before it
+							return "# ${mappedName} - ${comment}"
+						split.remove(0)
+						return "# ${mappedName} - ${String.join(' - ', split)}"
+					}
+					return '# ' + mappedName
 				}
+				lines.each { key, value ->
+					if (!value.group) {
+						def comment = remapComment.call(value)
+						data.add(value.modifier + ' ' + key + (comment ? ' ' + comment : ''))
+					} else {
+						data.add('#group ' + value.modifier + ' ' + key + (value.comment == null ? '' : ' ' + value.comment))
+						value.children.each {
+							def line = value.modifier + ' ' + it
+							def (modifier, cls, desc, comment) = parser.call(line)
+							comment = remapComment.call([modifier: modifier, cls: cls, desc: desc, comment: comment])
+							data.add(line + (comment ? ' ' + comment : ''))
+						}
+						data.add('#endgroup')
+					}
+				}
+				f.text = data.join('\n')
 			}
-			f.text = data.join('\n')
 		}
 	}
 }

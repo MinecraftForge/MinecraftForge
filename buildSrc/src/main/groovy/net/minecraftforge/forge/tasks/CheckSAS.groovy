@@ -8,36 +8,37 @@ import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.TaskAction
 
-abstract class CheckSAS extends DefaultTask {
+abstract class CheckSAS extends CheckTask {
+
 	@InputFile abstract RegularFileProperty getInheritance()
 	@InputFiles abstract ConfigurableFileCollection getSass()
-	
-    @TaskAction
-    protected void exec() {
-		Util.init()
-		def json = inheritance.get().asFile.json()
-		
-		sass.each { f -> 
-			def lines = []
-			f.eachLine { line ->
-				if (line[0] == '\t') return //Skip any tabbed lines, those are ones we add
-				def idx = line.indexOf('#')
-				if (idx == 0 || line.isEmpty()) {
-					lines.add(line)
-					return
-				}
-				def comment = idx == -1 ? null : line.substring(idx)
-				if (idx != -1) line = line.substring(0, idx - 1)
-				def (cls, name, desc) = (line.trim().replace('(', ' (') + '     ').split(' ', -1)
-				cls = cls.replaceAll('\\.', '/')
 
-				if (json[cls] == null) {
-					println('Invalid: ' + line)
-				} else if (name.isEmpty()) { //Class SAS
+    @Override
+    void check(Reporter reporter, boolean fix) {
+        Util.init()
+        def json = inheritance.get().asFile.json()
+
+        sass.each { f ->
+            final lines = []
+            f.eachLine { line ->
+                if (line[0] == '\t') return //Skip any tabbed lines, those are ones we add
+                def idx = line.indexOf('#')
+                if (idx == 0 || line.isEmpty()) {
+                    lines.add(line)
+                    return
+                }
+                def comment = idx == -1 ? null : line.substring(idx)
+                if (idx != -1) line = line.substring(0, idx - 1)
+                def (cls, name, desc) = (line.trim().replace('(', ' (') + '     ').split(' ', -1)
+                cls = cls.replaceAll('\\.', '/')
+
+                if (json[cls] == null) {
+                    reporter.report("Invalid: $line")
+                } else if (name.isEmpty()) { //Class SAS
                     def toAdd = []
                     def clsSided = isSided(json[cls])
                     def sided = clsSided
-                    
+
                     /* TODO: MergeTool doesn't do fields
                     if (json[cls]['fields'] != null) {
 						for (entry in json[cls]['fields']) {
@@ -48,7 +49,7 @@ abstract class CheckSAS extends DefaultTask {
 						}
                     }
                     */
-					if (json[cls]['methods'] != null) {
+                    if (json[cls]['methods'] != null) {
                         for (entry in json[cls]['methods']) {
                             if (isSided(entry.value)) {
                                 sided = true
@@ -59,35 +60,36 @@ abstract class CheckSAS extends DefaultTask {
                                 findChildMethods(json, cls, entry.key).each { lines.add('\t' + it) }
                                 findChildMethods(json, cls, entry.key).each { println(line + ' -- ' + it) }
                             }
-						}
+                        }
                     }
-                    
+
                     if (sided) {
                         lines.add(cls + (comment == null ? '' : ' ' + comment))
                         lines.addAll(toAdd.sort())
-                    } else
-                        println('Invalid: ' + line)
-                    
+                    } else {
+                        reporter.report("Invalid: $line")
+                    }
+
                 } else if (desc.isEmpty()) { // Fields
                     /* TODO: MergeTool doesn't do fields
                     if (json[cls]['fields'] != null && isSided(json[cls]['fields'][name]))
                         lines.add(cls + ' ' + name + (comment == null ? '' : ' ' + comment))
                     else
                     */
-                        println('Invalid: ' + line)
+                    reporter.report("Invalid: $line")
                 } else { // Methods
                     if (json[cls]['methods'] == null || !isSided(json[cls]['methods'][name + ' ' + desc]))
-                        println('Invalid: ' + line)
+                        reporter.report("Invalid: $line")
                     else {
                         lines.add(cls + ' ' + name + desc + (comment == null ? '' : ' ' + comment))
                         findChildMethods(json, cls, name + ' ' + desc).each { println(line + ' -- ' + it) }
                         findChildMethods(json, cls, name + ' ' + desc).each { lines.add('\t' + it) }
                     }
                 }
-			}
-			f.text = lines.join('\n')
-		}
-	}
+            }
+            if (fix) f.text = lines.join('\n')
+        }
+    }
 
     protected static isSided(json) {
         if (json == null || json['annotations'] == null)
