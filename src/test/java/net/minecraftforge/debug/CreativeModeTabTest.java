@@ -6,7 +6,6 @@
 package net.minecraftforge.debug;
 
 import java.util.List;
-import java.util.function.Supplier;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -108,9 +107,9 @@ public class CreativeModeTabTest
     {
         private final ItemStack[] iconItems;
 
-        public CreativeModeColorTab(Row row, int column, Type type, Component title, Supplier<ItemStack> iconGenerator, DisplayItemsGenerator displayItemsGenerator, ResourceLocation backgroundLocation, boolean hasSearchBar, int searchBarWidth, ResourceLocation tabsImage, int labelColor, int slotColor)
+        public CreativeModeColorTab(CreativeModeTab.Builder builder)
         {
-            super(row, column, type, title, iconGenerator, displayItemsGenerator, backgroundLocation, hasSearchBar, searchBarWidth, tabsImage, labelColor, slotColor);
+            super(builder);
 
             DyeColor[] colors = DyeColor.values();
             iconItems = new ItemStack[colors.length];
