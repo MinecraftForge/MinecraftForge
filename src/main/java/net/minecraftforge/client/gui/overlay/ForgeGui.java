@@ -575,7 +575,7 @@ public class ForgeGui extends Gui
         minecraft.getProfiler().push("chat");
 
         Window window = minecraft.getWindow();
-        var event = new CustomizeGuiOverlayEvent.Chat(window, pStack, minecraft.getFrameTime(), 0, height - 48);
+        var event = new CustomizeGuiOverlayEvent.Chat(window, pStack, minecraft.getFrameTime(), 0, height - 40);
         MinecraftForge.EVENT_BUS.post(event);
 
         pStack.pushPose();
