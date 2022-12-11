@@ -24,7 +24,6 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.Material;
 import net.minecraft.client.resources.model.ModelBaker;
 import net.minecraft.client.resources.model.ModelState;
-import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
@@ -82,12 +81,6 @@ public class ElementsModel extends SimpleUnbakedGeometry<ElementsModel>
                     modelBuilder.addCulledFace(modelState.getRotation().rotateTransform(face.cullForDirection), quad);
             }
         }
-    }
-
-    @Override
-    public void resolveParents(Function<ResourceLocation, UnbakedModel> modelGetter)
-    {
-        // NO-OP
     }
 
     public static final class Loader implements IGeometryLoader<ElementsModel>

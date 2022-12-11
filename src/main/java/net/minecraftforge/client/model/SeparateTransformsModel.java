@@ -80,7 +80,7 @@ public class SeparateTransformsModel implements IUnbakedGeometry<SeparateTransfo
     }
 
     @Override
-    public void resolveParents(Function<ResourceLocation, UnbakedModel> modelGetter)
+    public void resolveParents(Function<ResourceLocation, UnbakedModel> modelGetter, IGeometryBakingContext context)
     {
         baseModel.resolveParents(modelGetter);
         perspectives.values().forEach(model -> model.resolveParents(modelGetter));

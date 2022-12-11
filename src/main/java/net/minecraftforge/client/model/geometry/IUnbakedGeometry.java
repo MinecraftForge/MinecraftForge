@@ -35,7 +35,10 @@ public interface IUnbakedGeometry<T extends IUnbakedGeometry<T>>
      * {@link IUnbakedGeometry#bake(IGeometryBakingContext, ModelBaker, Function, ModelState, ItemOverrides, ResourceLocation)}
      * via {@link BlockModel#resolveParents(Function)}
      */
-    void resolveParents(Function<ResourceLocation, UnbakedModel> modelGetter);
+    default void resolveParents(Function<ResourceLocation, UnbakedModel> modelGetter, IGeometryBakingContext context)
+    {
+
+    }
 
     /**
      * {@return a set of all the components whose visibility may be configured via {@link IGeometryBakingContext}}

@@ -22,7 +22,6 @@ import net.minecraft.client.resources.model.BlockModelRotation;
 import net.minecraft.client.resources.model.Material;
 import net.minecraft.client.resources.model.ModelBaker;
 import net.minecraft.client.resources.model.ModelState;
-import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.entity.LivingEntity;
@@ -185,12 +184,6 @@ public class DynamicFluidContainerModel implements IUnbakedGeometry<DynamicFluid
         modelBuilder.setParticle(particleSprite);
 
         return modelBuilder.build();
-    }
-
-    @Override
-    public void resolveParents(Function<ResourceLocation, UnbakedModel> modelGetter)
-    {
-        // NO-OP
     }
 
     public static final class Loader implements IGeometryLoader<DynamicFluidContainerModel>

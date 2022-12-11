@@ -355,12 +355,6 @@ public class ObjModel extends SimpleUnbakedGeometry<ObjModel>
              .forEach(part -> part.addQuads(owner, modelBuilder, baker, spriteGetter, modelTransform, modelLocation));
     }
 
-    @Override
-    public void resolveParents(Function<ResourceLocation, UnbakedModel> modelGetter)
-    {
-        // NO-OP
-    }
-
     public Set<String> getRootComponentNames()
     {
         return rootComponentNames;

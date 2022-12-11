@@ -264,7 +264,7 @@ public class FullPotsAccessorDemo
             }
 
             @Override
-            public void resolveParents(Function<ResourceLocation, UnbakedModel> modelGetter)
+            public void resolveParents(Function<ResourceLocation, UnbakedModel> modelGetter, IGeometryBakingContext context)
             {
                 wrappedModel.resolveParents(modelGetter);
             }

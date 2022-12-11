@@ -114,7 +114,7 @@ public class CompositeModel implements IUnbakedGeometry<CompositeModel>
     }
 
     @Override
-    public void resolveParents(Function<ResourceLocation, UnbakedModel> modelGetter)
+    public void resolveParents(Function<ResourceLocation, UnbakedModel> modelGetter, IGeometryBakingContext context)
     {
         children.values().forEach(child -> child.resolveParents(modelGetter));
     }

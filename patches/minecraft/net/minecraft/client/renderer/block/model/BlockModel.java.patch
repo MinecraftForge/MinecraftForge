@@ -44,7 +44,7 @@
  
     public void m_5500_(Function<ResourceLocation, UnbakedModel> p_249059_) {
 +      if (customData.hasCustomGeometry()) {
-+         customData.getCustomGeometry().resolveParents(p_249059_);
++         customData.getCustomGeometry().resolveParents(p_249059_, customData);
 +      }
 +
        Set<UnbakedModel> set = Sets.newLinkedHashSet();
