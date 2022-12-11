@@ -1177,13 +1177,13 @@ project(':forge') {
 
     CheckTask.registerTask(tasks, 'SAS', CheckSAS) {
         it.dependsOn extractInheritance
-        sass.from patcher.sideAnnotationStrippers
+        it.sass.from patcher.sideAnnotationStrippers
     }
 
     CheckTask.registerTask(tasks, 'Excs', CheckExcs) {
         it.dependsOn jar
-        binary = jar.archiveFile.get().asFile
-        excs.from patcher.excs
+        it.binary = jar.archiveFile.get().asFile
+        it.excs.from patcher.excs
     }
 
     task checkPatchesAndFix(type: CheckPatches, dependsOn: genPatches) {
