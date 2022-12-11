@@ -18,6 +18,7 @@ abstract class SetupCheckJarCompatibility extends DefaultTask {
         onlyIf {
             inputVersion.getOrNull() != null
         }
+        outputs.upToDateWhen { false } // Never up to date, because this setup task should always run
 
         baseBinPatchesOutput.convention(project.layout.buildDirectory.dir(name).map { it.file('joined.lzma') })
     }
