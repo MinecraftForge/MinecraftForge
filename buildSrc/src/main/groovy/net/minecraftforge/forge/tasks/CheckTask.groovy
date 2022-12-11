@@ -22,13 +22,13 @@ abstract class CheckTask extends DefaultTask {
         
         if (reporter.messages) {
             if (getType().get() === CheckType.CHECK) {
-                logger.error('Check task {} found errors:\n{}', name, reporter.messages.join('\n'))
+                logger.error("Check task '{}' found errors:\n{}", name, reporter.messages.join('\n'))
                 throw new IllegalArgumentException("${reporter.messages.size()} errors were found!")
             } else {
                 if (logger.isEnabled(LogLevel.DEBUG)) {
-                    logger.error('Check task {} found {} errors and fixed {}:\n{}', name, reporter.messages.size(), reporter.fixed.size(), reporter.fixed.join('\n'))
+                    logger.error("Check task '{}' found {} errors and fixed {}:\n{}", name, reporter.messages.size(), reporter.fixed.size(), reporter.fixed.join('\n'))
                 } else {
-                    logger.error('Check task {} found {} errors and fixed {}.', name, reporter.messages.size(), reporter.fixed.size())
+                    logger.error("Check task '{}' found {} errors and fixed {}.", name, reporter.messages.size(), reporter.fixed.size())
                 }
 
                 if (reporter.notFixed) {

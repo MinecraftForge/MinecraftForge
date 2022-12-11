@@ -27,14 +27,13 @@ abstract class CheckATs extends CheckTask {
 			return [modifier, cls, desc, comment, key]
 		}
 		def accessLevel = { int access ->
-			if ((access & Opcodes.ACC_PUBLIC)    != 0) return 3
-			if ((access & Opcodes.ACC_PROTECTED) != 0) return 2
-			if ((access & Opcodes.ACC_PRIVATE)   != 0) return 0
+			if ((access & Opcodes.ACC_PUBLIC)    !== 0) return 3
+			if ((access & Opcodes.ACC_PROTECTED) !== 0) return 2
+			if ((access & Opcodes.ACC_PRIVATE)   !== 0) return 0
 			return 1
 		}
 		def accessStr = { String access ->
-			if (access.endsWith('-f') || access.endsWith('+f'))
-				return 4
+			if (access.endsWith('-f') || access.endsWith('+f')) return 4
 			switch (access.toLowerCase()) {
 				case 'public':    return 3
 				case 'protected': return 2
@@ -43,7 +42,7 @@ abstract class CheckATs extends CheckTask {
 				default:          return -1
 			}
 		}
-		def json = inheritance.get().asFile.json()
+		final json = (Map)inheritance.get().asFile.json()
 
 		ats.each { f ->
 			final TreeMap lines = [:]
@@ -57,10 +56,11 @@ abstract class CheckATs extends CheckTask {
 						reporter.report("Invalid group: $line", false)
 					}
 
-					group = [modifier: modifier, cls: cls, desc: desc, comment: comment,
-							 existing: [] as Set,
-							 children: [] as TreeSet,
-							 group: true
+					group = [
+							modifier: modifier, cls: cls, desc: desc, comment: comment,
+							existing: [] as Set,
+							children: [] as TreeSet,
+							group: true
 					]
 					if (lines.containsKey(key)) {
 						reporter.report("Duplicate group: $line", false)
@@ -71,7 +71,7 @@ abstract class CheckATs extends CheckTask {
 					if (line.startsWith('#endgroup')) {
 						group = null
 					} else {
-						def (modifier, cls, desc, comment, key) = parser.call(line)
+						final key = parser.call(line)[4]
 						group['existing'].add(key)
 					}
 				} else if (line.startsWith('#endgroup')) {
@@ -88,31 +88,37 @@ abstract class CheckATs extends CheckTask {
 				}
 			}
 
-			// Process Groups, this will remove any entries outside the group that is covered by the group
-			for (final key : new ArrayList<>(lines.keySet())) {
-				final entry = lines[key]
-				if (entry != null && entry['group']) {
+			final itr = lines.entrySet().iterator()
+			final toRemove = []
+			while (itr.hasNext()) {
+				final next = itr.next()
+				def key = next.key
+				final entry = (Map)next.value
+				if (entry === null) continue
+
+				// Process Groups, this will remove any entries outside the group that is covered by the group
+				if (entry['group']) {
 					def cls = entry['cls']
-					def jcls = json.get(cls.replaceAll('\\.', '/'))
-					if (jcls == null) {
-						lines.remove(key)
+					def jcls = json[cls.replaceAll('\\.', '/')]
+					if (jcls === null) {
+						itr.remove()
 						reporter.report("Invalid group: $key")
 					} else if ('*' == entry['desc']) {
 						if (!jcls.containsKey('fields')) {
-							lines.remove(key)
+							itr.remove()
 							reporter.report("Invalid group, class has no fields: $key")
 						} else {
 							jcls['fields'].each { field, value ->
 								def fkey = cls + ' ' + field
-								if (accessLevel.call(value['access']) < accessStr.call(entry['modifier'])) {
+								if (accessLevel((int)value['access']) < accessStr((String)entry['modifier'])) {
 									if (lines.containsKey(fkey)) {
-										lines.remove(fkey)
+										toRemove.add(fkey)
 									} else if (!entry['existing'].contains(fkey)) {
 										println('Added: ' + fkey)
 									}
 									entry['children'].add(fkey)
 								} else if (lines.containsKey(fkey)) {
-									lines.remove(fkey)
+									toRemove.add(fkey)
 									println('Removed: ' + fkey)
 								}
 							}
@@ -120,22 +126,21 @@ abstract class CheckATs extends CheckTask {
 						}
 					} else if ('*()' == entry['desc']) {
 						if (!jcls.containsKey('methods')) {
-							lines.remove(key)
+							itr.remove()
 							reporter.report("Invalid group, class has no methods: $key")
 						} else {
-							jcls['methods'].each{ mtd, value ->
-								if (mtd.startsWith('<clinit>') || mtd.startsWith('lambda$'))
-									return
+							jcls['methods'].each{ String mtd, Map value ->
+								if (mtd.startsWith('<clinit>') || mtd.startsWith('lambda$')) return
 								key = cls + ' ' + mtd.replace(' ', '')
-								if (accessLevel.call(value['access']) < accessStr.call(entry['modifier'])) {
+								if (accessLevel.call((int)value['access']) < accessStr.call((String)entry['modifier'])) {
 									if (lines.containsKey(key)) {
-										lines.remove(key)
+										toRemove.add(key)
 									} else if (!entry['existing'].contains(key)) {
 										println('Added: ' + key)
 									}
 									entry['children'].add(key)
 								} else if (lines.containsKey(key)) {
-									lines.remove(key)
+									toRemove.add(key)
 									println('Removed: ' + key)
 								}
 							}
@@ -143,7 +148,7 @@ abstract class CheckATs extends CheckTask {
 						}
 					} else if ('<init>' == entry['desc']) { //Make all public non-abstract subclasses
 						json.each { tcls,value ->
-							if (!value.containsKey('methods') || ((value['access'] & Opcodes.ACC_ABSTRACT) != 0))
+							if (value !instanceof Map || !value.containsKey('methods') || ((value['access'] & Opcodes.ACC_ABSTRACT) != 0))
 								return
 							final parents = [] as Set
 							def parent = tcls
@@ -153,18 +158,18 @@ abstract class CheckATs extends CheckTask {
 								parent = p === null ? null : p['superName']
 							}
 							if (parents.contains(cls.replaceAll('\\.', '/'))) {
-								value['methods'].each{ mtd, v ->
+								value['methods'].each { String mtd, Map v ->
 									if (mtd.startsWith('<init>')) {
 										def child = tcls.replaceAll('/', '\\.') + ' ' + mtd.replace(' ', '')
-										if (accessLevel.call(v['access']) < 3) {
+										if (accessLevel.call((int)v['access']) < 3) {
 											if (lines.containsKey(child)) {
-												lines.remove(child)
+												toRemove.add(child)
 											} else if (child !in entry['existing']) {
 												println('Added: ' + child)
 											}
 											entry['children'].add(child)
 										} else if (lines.containsKey(child)) {
-											lines.remove(child)
+											toRemove.add(child)
 											println('Removed: ' + child)
 										}
 									}
@@ -174,48 +179,47 @@ abstract class CheckATs extends CheckTask {
 						entry['existing'].stream().findAll{ !entry['children'].contains(it) }.each{ println('Removed: ' + it) }
 					}
 				}
-			}
 
-			// Process normal lines, remove invalid and remove narrowing
-			for (def key : new ArrayList<>(lines.keySet())) {
-				def entry = lines.get(key)
-				if (entry != null && !entry['group']) {
+				// Process normal lines, remove invalid and remove narrowing
+				else {
 					def cls = entry['cls']
 					def jcls = json.get(cls.replaceAll('\\.', '/'))
 					if (jcls == null) {
-						lines.remove(key)
+						itr.remove()
 						reporter.report("Invalid: $key")
 					} else if (entry['desc'] == '') {
-						if (accessLevel.call(jcls['access']) > accessStr.call(entry['modifier']) && (entry.comment == null || !entry.comment.startsWith('#force '))) {
-							lines.remove(key)
+						if (accessLevel.call((int)jcls['access']) > accessStr.call((String)entry['modifier']) && (entry.comment == null || !entry.comment.startsWith('#force '))) {
+							itr.remove()
 							reporter.report("Invalid Narrowing: $key")
 						}
 					} else if (!entry['desc'].contains('(')) {
 						if (!jcls.containsKey('fields') || !jcls['fields'].containsKey(entry['desc'])) {
-							lines.remove(key)
+							itr.remove()
 							reporter.report("Invalid: $key")
 						} else {
-							def value = jcls['fields'][entry['desc']]
-							if (accessLevel.call(value['access']) > accessStr.call(entry['modifier']) && (entry.comment == null || !entry.comment.startsWith('#force '))) {
-								lines.remove(key)
+							def value = jcls['fields'][(String)entry['desc']]
+							if (accessLevel.call((int)value['access']) > accessStr.call((String)entry['modifier']) && (entry.comment == null || !entry.comment.startsWith('#force '))) {
+								itr.remove()
 								reporter.report("Invalid Narrowing: $key - ${entry.comment}")
 							}
 						}
 					} else {
 						def jdesc = entry['desc'].replace('(', ' (')
 						if (!jcls.containsKey('methods') || !jcls['methods'].containsKey(jdesc)) {
-							lines.remove(key)
+							itr.remove()
 							reporter.report("Invalid: $key")
 						} else {
 							def value = jcls['methods'][jdesc]
-							if (accessLevel.call(value['access']) > accessStr.call(entry['modifier']) && (entry.comment == null || !entry.comment.startsWith('#force '))) {
-								lines.remove(key)
+							if (accessLevel.call((int)value['access']) > accessStr.call((String)entry['modifier']) && (entry.comment == null || !entry.comment.startsWith('#force '))) {
+								itr.remove()
 								reporter.report("Invalid Narrowing: $key")
 							}
 						}
 					}
 				}
 			}
+
+			toRemove.each(lines.&remove)
 
 			if (fix) {
 				def data = []
