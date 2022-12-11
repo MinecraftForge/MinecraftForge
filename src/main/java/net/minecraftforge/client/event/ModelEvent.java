@@ -33,13 +33,12 @@ public abstract class ModelEvent extends Event
     }
 
     /**
-     * Fired when the {@link ModelManager} is notified of the resource manager reloading.
-     * Called after the model registry is set up, but before it's passed to the
-     * {@link net.minecraft.client.renderer.block.BlockModelShaper}.
+     * Fired while the {@link ModelManager} is reloading models, after the model registry is set up, but before it's
+     * passed to the {@link net.minecraft.client.renderer.block.BlockModelShaper} for caching.
      *
      * <p>
      * This event is fired from a worker thread and it is therefore not safe to access anything outside the
-     * model map and {@link ModelBakery} provided in this event.<br>
+     * model registry and {@link ModelBakery} provided in this event.<br>
      * The {@link ModelManager} firing this event is not fully set up with the latest data when this event fires and
      * must therefore not be accessed in this event.
      * </p>
@@ -80,7 +79,9 @@ public abstract class ModelEvent extends Event
 
     /**
      * Fired when the {@link ModelManager} is notified of the resource manager reloading.
-     * Called after the model registry is set up and cached in the {@link net.minecraft.client.renderer.block.BlockModelShaper}.
+     * Called after the model registry is set up and cached in the {@link net.minecraft.client.renderer.block.BlockModelShaper}.<br>
+     * The model registry given by this event is unmodifiable. To modify the model registry, use
+     * {@link ModelEvent.ModifyBakingResult} instead.
      *
      * <p>This event is not {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}.</p>
      *
@@ -110,7 +111,7 @@ public abstract class ModelEvent extends Event
         }
 
         /**
-         * @return the modifiable registry map of models and their model names
+         * @return an unmodifiable view of the registry map of models and their model names
          */
         public Map<ResourceLocation, BakedModel> getModels()
         {
