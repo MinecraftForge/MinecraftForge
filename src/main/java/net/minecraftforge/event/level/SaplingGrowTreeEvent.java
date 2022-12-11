@@ -40,7 +40,7 @@ public class SaplingGrowTreeEvent extends LevelEvent
     private final RandomSource randomSource;
     private final BlockPos pos;
     @Nullable
-    private Holder<? extends ConfiguredFeature<?, ?>> feature;
+    private Holder<ConfiguredFeature<?, ?>> feature;
 
     @Deprecated(forRemoval = true, since = "1.19.2")
     public SaplingGrowTreeEvent(LevelAccessor level, RandomSource randomSource, BlockPos pos)
@@ -48,7 +48,7 @@ public class SaplingGrowTreeEvent extends LevelEvent
         this(level, randomSource, pos, null);
     }
 
-    public SaplingGrowTreeEvent(LevelAccessor level, RandomSource randomSource, BlockPos pos, @Nullable Holder<? extends ConfiguredFeature<?, ?>> feature)
+    public SaplingGrowTreeEvent(LevelAccessor level, RandomSource randomSource, BlockPos pos, @Nullable Holder<ConfiguredFeature<?, ?>> feature)
     {
         super(level);
         this.randomSource = randomSource;
@@ -76,15 +76,24 @@ public class SaplingGrowTreeEvent extends LevelEvent
      * {@return the holder of the feature which will be placed, possibly null}
      */
     @Nullable
-    public Holder<? extends ConfiguredFeature<?, ?>> getFeature() {
+    public Holder<ConfiguredFeature<?, ?>> getFeature()
+    {
         return feature;
     }
 
-    public void setFeature(@Nullable Holder<? extends ConfiguredFeature<?, ?>> feature) {
+    /**
+     * @param feature a {@linkplain Holder} referencing a tree feature to be placed instead of the current feature.
+     */
+    public void setFeature(@Nullable Holder<ConfiguredFeature<?, ?>> feature)
+    {
         this.feature = feature;
     }
 
-    public void setFeature(ResourceKey<ConfiguredFeature<?, ?>> featureKey) {
+    /**
+     * @param featureKey a {@linkplain ResourceKey} referencing a tree feature to be placed instead of the current feature.
+     */
+    public void setFeature(ResourceKey<ConfiguredFeature<?, ?>> featureKey)
+    {
         this.feature = this.getLevel().registryAccess().registryOrThrow(Registries.CONFIGURED_FEATURE).getHolder(featureKey).orElse(null);
     }
 }
