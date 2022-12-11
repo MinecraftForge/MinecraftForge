@@ -102,7 +102,7 @@ public class MegaModelTest
     {
 
         @SubscribeEvent
-        public static void onModelBakingCompleted(ModelEvent.BakingCompleted event)
+        public static void onModelBakingCompleted(ModelEvent.ModifyBakingResult event)
         {
             var name = new ModelResourceLocation(MOD_ID, REG_NAME, "");
             event.getModels().computeIfPresent(name, (n, m) -> new TransformingModelWrapper(m));
