@@ -1241,6 +1241,14 @@ project(':forge') {
         dependsOn 'setupCheckJarCompatibility'
 
         baseJar = project.tasks.named('mergeBaseForgeJar').flatMap { it.output }
+        baseLibraries.from(project.tasks.named('createJoinedSRG').flatMap { it.output })
+
+        inputJar = project.tasks.named('reobfJar').flatMap { it.output }
+        concreteLibraries.from(project.PACKED_DEPS.collect { project.rootProject.tasks.getByPath(it).archiveFile })
+
+        commonLibraries.from(project.configurations.minecraftImplementation)
+        commonLibraries.from(project.configurations.installer)
+        commonLibraries.from(project.configurations.moduleonly)
     }
 
     task checkAll(dependsOn: [checkATs, checkSAS, checkExcs, findFieldInstanceChecks, checkPatches, checkLicenses]){}
