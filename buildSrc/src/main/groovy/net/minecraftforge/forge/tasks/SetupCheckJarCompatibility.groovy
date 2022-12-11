@@ -31,17 +31,9 @@ abstract class SetupCheckJarCompatibility extends DefaultTask {
         }.toArray(Dependency[]::new))
 
         project.tasks.named('checkJarCompatibility') {
-            baseLibraries.from(project.tasks.createJoinedSRG.output)
             baseLibraries.from(project.provider {
                 fmlLibs.resolvedConfiguration.lenientConfiguration.files
             })
-
-            inputJar = project.tasks.reobfJar.output
-            concreteLibraries.from(project.PACKED_DEPS.collect { project.rootProject.tasks.getByPath(it).archiveFile })
-
-            commonLibraries.from(project.configurations.minecraftImplementation)
-            commonLibraries.from(project.configurations.installer)
-            commonLibraries.from(project.configurations.moduleonly)
         }
 
         def baseForgeUserdev = project.layout.buildDirectory.dir(name).map { it.file("forge-${inputVersion}-userdev.jar") }.get().asFile
