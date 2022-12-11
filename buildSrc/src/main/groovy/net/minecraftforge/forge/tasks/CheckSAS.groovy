@@ -15,21 +15,20 @@ abstract class CheckSAS extends CheckTask {
 
     @Override
     void check(Reporter reporter, boolean fix) {
-        Util.init()
-        def json = inheritance.get().asFile.json()
+        final json = (Map)inheritance.get().asFile.json()
 
         sass.each { f ->
             final lines = []
             f.eachLine { line ->
                 if (line[0] == '\t') return //Skip any tabbed lines, those are ones we add
-                def idx = line.indexOf('#')
+                final idx = line.indexOf('#')
                 if (idx == 0 || line.isEmpty()) {
                     lines.add(line)
                     return
                 }
                 def comment = idx == -1 ? null : line.substring(idx)
                 if (idx != -1) line = line.substring(0, idx - 1)
-                def (cls, name, desc) = (line.trim().replace('(', ' (') + '     ').split(' ', -1)
+                def (String cls, String name, String desc) = (line.trim().replace('(', ' (') + '     ').split(' ', -1)
                 cls = cls.replaceAll('\\.', '/')
 
                 if (json[cls] == null) {
@@ -47,8 +46,8 @@ abstract class CheckSAS extends CheckTask {
                                 toAdd.add('\t' + cls + ' ' + entry.key)
                             }
 						}
-                    }
-                    */
+                    } */
+
                     if (json[cls]['methods'] != null) {
                         for (entry in json[cls]['methods']) {
                             if (isSided(entry.value)) {
@@ -74,8 +73,7 @@ abstract class CheckSAS extends CheckTask {
                     /* TODO: MergeTool doesn't do fields
                     if (json[cls]['fields'] != null && isSided(json[cls]['fields'][name]))
                         lines.add(cls + ' ' + name + (comment == null ? '' : ' ' + comment))
-                    else
-                    */
+                    else */
                     reporter.report("Invalid: $line")
                 } else { // Methods
                     if (json[cls]['methods'] == null || !isSided(json[cls]['methods'][name + ' ' + desc]))
@@ -87,6 +85,7 @@ abstract class CheckSAS extends CheckTask {
                     }
                 }
             }
+
             if (fix) f.text = lines.join('\n')
         }
     }
@@ -95,13 +94,13 @@ abstract class CheckSAS extends CheckTask {
         if (json == null || json['annotations'] == null)
             return false
         for (ann in json['annotations']) {
-            if ('Lnet/minecraftforge/api/distmarker/OnlyIn;'.equals(ann.desc))
+            if ('Lnet/minecraftforge/api/distmarker/OnlyIn;' == ann.desc)
                 return true
         }
         return false
     }
     
-	protected static findChildMethods(json, cls, desc)
+	protected static findChildMethods(Map json, String cls, String desc)
 	{
 		return json.values().findAll{ it.methods != null && it.methods[desc] != null && it.methods[desc].override == cls && isSided(it.methods[desc]) }
 				.collect { it.name + ' ' + desc.replace(' ', '') } as TreeSet

@@ -24,11 +24,54 @@ abstract class CheckExcs extends CheckTask {
 
 	@Override
 	void check(Reporter reporter, boolean fix) {
-		Util.init()
-		def known = []
+		final Set<String> known = []
+		collectKnown(known)
+
+		excs.each { f ->
+			final lines = []
+			f.eachLine { line ->
+				def idx = line.indexOf('#')
+				if (idx == 0 || line.isEmpty()) {
+					return
+				}
+
+				if (idx != -1) line = line.substring(0, idx - 1)
+
+				if (!line.contains('=')) {
+					reporter.report("Invalid: $line")
+					return
+				}
+
+				def (String key, String value) = line.split('=', 2)
+				if (!known.contains(key)) {
+					reporter.report("Unknown: $line")
+					return
+				}
+
+				String desc = key.split('\\.', 2)[1]
+				if (!desc.contains('(')) {
+					reporter.report("Invalid: $line")
+					return
+				}
+				desc = '(' + desc.split('\\(', 2)[1]
+
+				def (exceptions, String args) = value.contains('|') ? value.split('|', 2) : [value, '']
+
+				if (args.split(',').length !== Type.getArgumentTypes(desc).length) {
+					reporter.report("Invalid: $line")
+					return
+				}
+				lines.add(line)
+			}
+
+			if (fix) f.text = lines.sort().join('\n')
+		}
+	}
+
+	private void collectKnown(Collection<String> known) {
 		binary.get().asFile.withInputStream { i ->
 			new ZipInputStream(i).withCloseable { zin ->
-				def visitor = new ClassVisitor(Opcodes.ASM9) {
+				final visitor = new ClassVisitor(Opcodes.ASM9) {
 					private String cls
 					@Override
 					void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
@@ -49,46 +92,6 @@ abstract class CheckExcs extends CheckTask {
 					}
 				}
 			}
-		}
-
-		excs.each { f ->
-			def lines = []
-			f.eachLine { line ->
-				def idx = line.indexOf('#')
-				if (idx == 0 || line.isEmpty()) {
-					return
-				}
-
-				if (idx != -1) line = line.substring(0, idx - 1)
-
-				if (!line.contains('=')) {
-					reporter.report("Invalid: $line")
-					return
-				}
-
-				def (key, value) = line.split('=', 2)
-				if (!known.contains(key)) {
-					reporter.report("Unknown: $line")
-					return
-				}
-
-				def (cls, desc) = key.split('\\.', 2)
-				if (!desc.contains('(')) {
-					reporter.report("Invalid: $line")
-					return
-				}
-				def name = desc.split('\\(', 2)[0]
-				desc = '(' + desc.split('\\(', 2)[1]
-
-				def (exceptions, args) = value.contains('|') ? value.split('|', 2) : [value, '']
-
-				if (args.split(',').length != Type.getArgumentTypes(desc).length) {
-					reporter.report("Invalid: $line")
-					return
-				}
-				lines.add(line)
-			}
-			if (fix) f.text = lines.sort().join('\n')
 		}
 	}
 }

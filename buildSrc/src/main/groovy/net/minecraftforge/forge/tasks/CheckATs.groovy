@@ -17,7 +17,6 @@ abstract class CheckATs extends CheckTask {
 	@Override
 	void check(Reporter reporter, boolean fix) {
 		final mappings = mappings.map { IMappingFile.load(it.asFile) }.getOrNull()
-		Util.init()
 		final parser = { String line ->
 			def idx = line.indexOf('#')
 			def comment = idx == -1 ? null : line.substring(idx)

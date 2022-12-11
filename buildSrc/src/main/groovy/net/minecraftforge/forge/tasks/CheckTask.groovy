@@ -16,6 +16,8 @@ abstract class CheckTask extends DefaultTask {
 
     @TaskAction
     void run() {
+        Util.init()
+
         final doFix = getType().get() === CheckType.FIX
         final Reporter reporter = new Reporter(doFix)
         check(reporter, doFix)
