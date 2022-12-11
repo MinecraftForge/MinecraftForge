@@ -169,6 +169,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -471,9 +472,14 @@ public class ForgeHooksClient
         return event;
     }
 
+    public static void onModifyBakingResult(Map<ResourceLocation, BakedModel> models, ModelBakery modelBakery)
+    {
+        ModLoader.get().postEvent(new ModelEvent.ModifyBakingResult(models, modelBakery));
+    }
+
     public static void onModelBake(ModelManager modelManager, Map<ResourceLocation, BakedModel> models, ModelBakery modelBakery)
     {
-        ModLoader.get().postEvent(new ModelEvent.BakingCompleted(modelManager, models, modelBakery));
+        ModLoader.get().postEvent(new ModelEvent.BakingCompleted(modelManager, Collections.unmodifiableMap(models), modelBakery));
     }
 
     public static BakedModel handleCameraTransforms(PoseStack poseStack, BakedModel model, ItemTransforms.TransformType cameraTransformType, boolean applyLeftHandTransform)

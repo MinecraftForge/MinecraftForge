@@ -35,6 +35,15 @@
        CompletableFuture<Map<ResourceLocation, BlockModel>> completablefuture = m_246704_(p_251134_, p_250550_);
        CompletableFuture<Map<ResourceLocation, List<ModelBakery.LoadedJson>>> completablefuture1 = m_246899_(p_251134_, p_250550_);
        CompletableFuture<ModelBakery> completablefuture2 = completablefuture.thenCombineAsync(completablefuture1, (p_251201_, p_251281_) -> {
+@@ -172,6 +_,8 @@
+             return "    " + p_248692_.m_119193_() + ":" + p_248692_.m_119203_();
+          }).collect(Collectors.joining("\n")));
+       });
++      p_252136_.m_6182_("forge_modify_baking_result");
++      net.minecraftforge.client.ForgeHooksClient.onModifyBakingResult(p_248945_.m_119251_(), p_248945_);
+       p_252136_.m_6182_("dispatch");
+       Map<ResourceLocation, BakedModel> map = p_248945_.m_119251_();
+       BakedModel bakedmodel = map.get(ModelBakery.f_119230_);
 @@ -201,6 +_,8 @@
        this.f_119397_ = modelbakery.m_119251_();
        this.f_119404_ = modelbakery.m_119355_();
