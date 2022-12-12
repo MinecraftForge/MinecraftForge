@@ -150,8 +150,9 @@ public class SidedInvWrapper implements IItemHandlerModifiable
             // by returning false if there's already a contained item. This doesn't work with modded inserted sizes > 1.
             // - Limit buckets to 1 in furnace fuel inputs.
             // - Limit brewing stand "bottle" inputs to 1.
-            if (inv instanceof AbstractFurnaceBlockEntity && getSlot(inv, slot, side) == 1 && stack.is(Items.BUCKET)
-                    || inv instanceof BrewingStandBlockEntity && getSlot(inv, slot, side) < 3)
+            // See also https://github.com/MinecraftForge/MinecraftForge/issues/9178
+            if ((inv instanceof AbstractFurnaceBlockEntity && getSlot(inv, slot, side) == 1 && stack.is(Items.BUCKET))
+                    || (inv instanceof BrewingStandBlockEntity && getSlot(inv, slot, side) < 3))
             {
                 m = 1;
             }
