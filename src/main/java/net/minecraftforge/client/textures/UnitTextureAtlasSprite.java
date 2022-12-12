@@ -6,9 +6,11 @@
 package net.minecraftforge.client.textures;
 
 import com.mojang.blaze3d.platform.NativeImage;
+import net.minecraft.client.renderer.texture.SpriteContents;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.metadata.animation.AnimationMetadataSection;
+import net.minecraft.client.resources.metadata.animation.FrameSize;
 import net.minecraft.resources.ResourceLocation;
 
 /**
@@ -23,10 +25,7 @@ public class UnitTextureAtlasSprite extends TextureAtlasSprite
 
     private UnitTextureAtlasSprite()
     {
-        super(new TextureAtlas(LOCATION),
-                new Info(LOCATION, 1, 1, AnimationMetadataSection.EMPTY),
-                0, 1, 1,
-                0, 0, new NativeImage(1, 1, false));
+        super(LOCATION, new SpriteContents(LOCATION, new FrameSize(1, 1), new NativeImage(1, 1, false), AnimationMetadataSection.EMPTY, null), 1, 1, 0, 0);
     }
 
     @Override

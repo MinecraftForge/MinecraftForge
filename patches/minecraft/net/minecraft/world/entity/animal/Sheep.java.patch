@@ -9,7 +9,7 @@
     private static final int f_149039_ = 40;
     private static final EntityDataAccessor<Byte> f_29799_ = SynchedEntityData.m_135353_(Sheep.class, EntityDataSerializers.f_135027_);
     private static final Map<DyeColor, ItemLike> f_29800_ = Util.m_137469_(Maps.newEnumMap(DyeColor.class), (p_29841_) -> {
-@@ -212,7 +_,7 @@
+@@ -232,7 +_,7 @@
  
     public InteractionResult m_6071_(Player p_29853_, InteractionHand p_29854_) {
        ItemStack itemstack = p_29853_.m_21120_(p_29854_);
@@ -18,7 +18,7 @@
           if (!this.f_19853_.f_46443_ && this.m_6220_()) {
              this.m_5851_(SoundSource.PLAYERS);
              this.m_146852_(GameEvent.f_157781_, p_29853_);
-@@ -362,5 +_,28 @@
+@@ -385,5 +_,28 @@
  
     protected float m_6431_(Pose p_29850_, EntityDimensions p_29851_) {
        return 0.95F * p_29851_.f_20378_;

@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/Camera.java
 +++ b/net/minecraft/client/Camera.java
-@@ -211,6 +_,18 @@
+@@ -206,6 +_,18 @@
        this.f_90549_ = false;
     }
  

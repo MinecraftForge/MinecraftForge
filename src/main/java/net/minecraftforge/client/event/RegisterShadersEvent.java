@@ -8,6 +8,7 @@ package net.minecraftforge.client.event;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.server.packs.resources.ResourceProvider;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.LogicalSide;
@@ -29,29 +30,29 @@ import java.util.function.Consumer;
  */
 public class RegisterShadersEvent extends Event implements IModBusEvent
 {
-    private final ResourceManager resourceManager;
+    private final ResourceProvider resourceProvider;
     private final List<Pair<ShaderInstance, Consumer<ShaderInstance>>> shaderList;
 
     @ApiStatus.Internal
-    public RegisterShadersEvent(ResourceManager resourceManager, List<Pair<ShaderInstance, Consumer<ShaderInstance>>> shaderList)
+    public RegisterShadersEvent(ResourceProvider resourceProvider, List<Pair<ShaderInstance, Consumer<ShaderInstance>>> shaderList)
     {
-        this.resourceManager = resourceManager;
+        this.resourceProvider = resourceProvider;
         this.shaderList = shaderList;
     }
 
     /**
-     * {@return the client-side resource manager}
+     * {@return the client-side resource provider}
      */
-    public ResourceManager getResourceManager()
+    public ResourceProvider getResourceProvider()
     {
-        return resourceManager;
+        return resourceProvider;
     }
 
     /**
      * Registers a shader, and a callback for when the shader is loaded.
      *
-     * <p>When creating a {@link ShaderInstance}, pass in the {@linkplain #getResourceManager()
-     * client-side resource manager} as the resource provider.</p>
+     * <p>When creating a {@link ShaderInstance}, pass in the {@linkplain #getResourceProvider()
+     * client-side resource provider} as the resource provider.</p>
      *
      * <p>Mods should not store the shader instance passed into this method. Instead, mods should store the shader
      * passed into the registered load callback.</p>

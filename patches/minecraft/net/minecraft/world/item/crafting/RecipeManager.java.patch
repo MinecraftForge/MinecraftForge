@@ -50,7 +50,7 @@
 +
 +   public static Recipe<?> fromJson(ResourceLocation p_44046_, JsonObject p_44047_, net.minecraftforge.common.crafting.conditions.ICondition.IContext context) {
        String s = GsonHelper.m_13906_(p_44047_, "type");
-       return Registry.f_122865_.m_6612_(new ResourceLocation(s)).orElseThrow(() -> {
+       return BuiltInRegistries.f_256769_.m_6612_(new ResourceLocation(s)).orElseThrow(() -> {
           return new JsonSyntaxException("Invalid or unsupported recipe type '" + s + "'");
 -      }).m_6729_(p_44046_, p_44047_);
 +      }).fromJson(p_44046_, p_44047_, context);

@@ -8,13 +8,15 @@ package net.minecraftforge.debug.client;
 import java.util.Random;
 
 import com.mojang.blaze3d.platform.NativeImage;
-import net.minecraft.client.renderer.texture.TextureAtlas;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.renderer.texture.Tickable;
+import net.minecraft.client.renderer.texture.*;
+import net.minecraft.client.resources.metadata.animation.AnimationMetadataSection;
+import net.minecraft.client.resources.metadata.animation.FrameSize;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.client.event.RegisterTextureAtlasSpriteLoadersEvent;
+import net.minecraftforge.client.textures.ForgeTextureMetadata;
 import net.minecraftforge.client.textures.ITextureAtlasSpriteLoader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -23,6 +25,7 @@ import net.minecraftforge.registries.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 @Mod(CustomTASTest.MOD_ID)
 public class CustomTASTest
@@ -52,27 +55,48 @@ public class CustomTASTest
     private static class TasLoader implements ITextureAtlasSpriteLoader
     {
         @Override
-        @NotNull
-        public TextureAtlasSprite load(TextureAtlas atlas, ResourceManager resourceManager, TextureAtlasSprite.Info textureInfo, Resource resource, int atlasWidth, int atlasHeight, int spriteX, int spriteY, int mipmapLevel, NativeImage image)
-        {
-            return new TextureAtlasSprite(
-                    atlas, textureInfo, mipmapLevel, atlasWidth, atlasHeight, spriteX, spriteY, image
-            )
-            {
-                private final Random random = new Random();
+        public SpriteContents loadContents(ResourceLocation name, Resource resource, FrameSize frameSize, NativeImage image, AnimationMetadataSection animationMeta, ForgeTextureMetadata forgeMeta) {
+            final class TASSpriteContents extends SpriteContents {
+
+                public TASSpriteContents(ResourceLocation p_249787_, FrameSize p_251031_, NativeImage p_252131_, AnimationMetadataSection p_250432_, @Nullable ForgeTextureMetadata forgeMeta) {
+                    super(p_249787_, p_251031_, p_252131_, p_250432_, forgeMeta);
+                }
 
                 @Override
-                public Tickable getAnimationTicker()
-                {
-                    return this::tick;
+                public @NotNull SpriteTicker createTicker() {
+                    return new Ticker();
                 }
 
-                private void tick()
-                {
-                    this.mainImage[0].fillRect(0, 0, 16, 16, 0xFF000000 | random.nextInt(0xFFFFFF));
-                    this.uploadFirstFrame();
+                class Ticker implements SpriteTicker {
+
+                    final Random random = new Random();
+
+                    @Override
+                    public void tickAndUpload(int p_248847_, int p_250486_) {
+                        TASSpriteContents.this.byMipLevel[0].fillRect(0, 0, 16, 16, 0xFF000000 | random.nextInt(0xFFFFFF));
+                        TASSpriteContents.this.uploadFirstFrame(p_248847_, p_250486_);
+                    }
+
+                    @Override
+                    public void close() {
+
+                    }
                 }
-            };
+            }
+
+            return new TASSpriteContents(name, frameSize, image, animationMeta, forgeMeta);
+        }
+
+        @Override
+        public @NotNull TextureAtlasSprite makeSprite(ResourceLocation atlasName, SpriteContents contents, int atlasWidth, int atlasHeight, int spriteX, int spriteY, int mipmapLevel) {
+            final class TASSprite extends TextureAtlasSprite {
+
+                public TASSprite(ResourceLocation p_250211_, SpriteContents p_248526_, int p_248950_, int p_249741_, int p_248672_, int p_248637_) {
+                    super(p_250211_, p_248526_, p_248950_, p_249741_, p_248672_, p_248637_);
+                }
+            }
+
+            return new TASSprite(atlasName, contents, atlasWidth, atlasHeight, spriteX, spriteY);
         }
     }
 

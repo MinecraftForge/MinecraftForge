@@ -1,0 +1,11 @@
+--- a/com/mojang/blaze3d/vertex/PoseStack.java
++++ b/com/mojang/blaze3d/vertex/PoseStack.java
+@@ -11,7 +_,7 @@
+ import org.joml.Quaternionf;
+ 
+ @OnlyIn(Dist.CLIENT)
+-public class PoseStack {
++public class PoseStack implements net.minecraftforge.client.extensions.IForgePoseStack {
+    private final Deque<PoseStack.Pose> f_85834_ = Util.m_137469_(Queues.newArrayDeque(), (p_85848_) -> {
+       Matrix4f matrix4f = new Matrix4f();
+       Matrix3f matrix3f = new Matrix3f();

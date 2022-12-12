@@ -10,8 +10,6 @@ import net.minecraftforge.fml.loading.VersionInfo;
 
 import java.io.File;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -41,8 +39,4 @@ public abstract class CommonUserdevLaunchHandler extends CommonDevLaunchHandler 
     }
 
     protected abstract void processStreams(String[] classpath, VersionInfo versionInfo, Stream.Builder<Path> mc, Stream.Builder<List<Path>> mods);
-
-    protected static Path findJarOnClasspath(String[] classpath, String match) {
-        return Paths.get(Arrays.stream(classpath).filter(e -> e.contains(match)).findFirst().orElseThrow(() -> new IllegalStateException("Could not find " + match + " in classpath")));
-    }
 }

@@ -7,8 +7,8 @@ package net.minecraftforge.client.model.pipeline;
 
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Transformation;
-import com.mojang.math.Vector3f;
-import com.mojang.math.Vector4f;
+import org.joml.Vector3f;
+import org.joml.Vector4f;
 
 /**
  * Vertex pipeline element that applies a transformation to incoming geometry.
@@ -28,7 +28,7 @@ public class TransformingVertexPipeline extends VertexConsumerWrapper
     {
         var vec = new Vector4f((float) x, (float) y, (float) z, 1);
         transformation.transformPosition(vec);
-        vec.perspectiveDivide();
+        vec.div(vec.w);
         return super.vertex(vec.x(), vec.y(), vec.z());
     }
 

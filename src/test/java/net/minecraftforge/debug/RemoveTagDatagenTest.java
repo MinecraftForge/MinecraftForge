@@ -5,13 +5,14 @@
 
 package net.minecraftforge.debug;
 
+import net.minecraft.core.HolderLookup;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.data.tags.BlockTagsProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraftforge.common.data.BlockTagsProvider;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
@@ -36,17 +37,17 @@ public class RemoveTagDatagenTest
         DataGenerator generator = event.getGenerator();
         ExistingFileHelper helper = event.getExistingFileHelper();
 
-        generator.addProvider(true, new BlockTagsProvider(generator, MODID, helper)
+        generator.addProvider(true, new BlockTagsProvider(generator.getPackOutput(), event.getLookupProvider(), MODID, helper)
         {
             @SuppressWarnings("unchecked")
             @Override
-            protected void addTags()
+            protected void addTags(HolderLookup.Provider provider)
             {
                 this.tag(TEST_TAG)
                     .remove(ForgeRegistries.BLOCKS.getKey(Blocks.DIRT))
                     .remove(ForgeRegistries.BLOCKS.getKey(Blocks.OAK_DOOR), ForgeRegistries.BLOCKS.getKey(Blocks.DARK_OAK_DOOR))
-                    .remove(Blocks.ANVIL)
-                    .remove(Blocks.BASALT, Blocks.POLISHED_BASALT)
+                    .remove(ForgeRegistries.BLOCKS.getKey(Blocks.ANVIL))
+                    .remove(ForgeRegistries.BLOCKS.getKey(Blocks.BASALT), ForgeRegistries.BLOCKS.getKey(Blocks.POLISHED_ANDESITE))
                     .remove(BlockTags.BEEHIVES)
                     .remove(BlockTags.BANNERS, BlockTags.BEDS);
             }

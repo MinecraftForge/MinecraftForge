@@ -9,7 +9,7 @@
           this.f_120088_.setSoTimeout(5000);
           this.f_120088_.joinGroup(this.f_120087_);
        }
-@@ -88,7 +_,19 @@
+@@ -87,7 +_,19 @@
           String s = LanServerPinger.m_120111_(p_120097_);
           String s1 = LanServerPinger.m_120116_(p_120097_);
           if (s1 != null) {

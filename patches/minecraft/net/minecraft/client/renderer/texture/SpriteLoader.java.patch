@@ -1,0 +1,33 @@
+--- a/net/minecraft/client/renderer/texture/SpriteLoader.java
++++ b/net/minecraft/client/renderer/texture/SpriteLoader.java
+@@ -64,7 +_,7 @@
+       int i1 = Math.min(j, k);
+       int j1 = Mth.m_14173_(i1);
+       int k1;
+-      if (j1 < p_261919_) {
++      if (false) { // Forge: Do not lower the mipmap level
+          f_244357_.warn("{}: dropping miplevel from {} to {}, because of minimum power of two: {}", this.f_244500_, p_261919_, j1, i1);
+          k1 = j1;
+       } else {
+@@ -138,6 +_,9 @@
+ 
+       FrameSize framesize = animationmetadatasection.m_245821_(nativeimage.m_84982_(), nativeimage.m_85084_());
+       if (Mth.m_246985_(nativeimage.m_84982_(), framesize.f_244129_()) && Mth.m_246985_(nativeimage.m_85084_(), framesize.f_244503_())) {
++         SpriteContents contents = net.minecraftforge.client.ForgeHooksClient.loadSpriteContents(p_251630_, p_250558_, framesize, nativeimage, animationmetadatasection);
++         if (contents != null)
++            return contents;
+          return new SpriteContents(p_251630_, framesize, nativeimage, animationmetadatasection);
+       } else {
+          f_244357_.error("Image {} size {},{} is not multiple of frame size {},{}", p_251630_, nativeimage.m_84982_(), nativeimage.m_85084_(), framesize.f_244129_(), framesize.f_244503_());
+@@ -151,6 +_,11 @@
+       int i = p_249904_.m_118174_();
+       int j = p_249904_.m_118187_();
+       p_249904_.m_118180_((p_251421_, p_250533_, p_251913_) -> {
++         TextureAtlasSprite sprite = net.minecraftforge.client.ForgeHooksClient.loadTextureAtlasSprite(this.f_244500_, p_251421_, i, j, p_250533_, p_251913_, p_251421_.f_243731_.length - 1);
++         if (sprite != null) {
++            map.put(p_251421_.m_246162_(), sprite);
++            return;
++         }
+          map.put(p_251421_.m_246162_(), new TextureAtlasSprite(this.f_244500_, p_251421_, i, j, p_250533_, p_251913_));
+       });
+       return map;

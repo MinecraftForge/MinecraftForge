@@ -20,6 +20,12 @@ import java.util.function.Supplier;
  */
 public class ConcatenatedListView<T> implements List<T>
 {
+    @SafeVarargs
+    public static <T> ConcatenatedListView<T> of(List<T>... lists)
+    {
+        return new ConcatenatedListView<>(List.of(lists));
+    }
+
     public static <T> List<T> of(List<? extends List<? extends T>> members)
     {
         return switch (members.size()) {

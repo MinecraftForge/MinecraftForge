@@ -19,7 +19,7 @@
     }
  
     public int m_92676_(ItemStack p_92677_, int p_92678_) {
--      ItemColor itemcolor = this.f_92674_.m_7942_(Registry.f_122827_.m_7447_(p_92677_.m_41720_()));
+-      ItemColor itemcolor = this.f_92674_.m_7942_(BuiltInRegistries.f_257033_.m_7447_(p_92677_.m_41720_()));
 +      ItemColor itemcolor = this.f_92674_.get(net.minecraftforge.registries.ForgeRegistries.ITEMS.getDelegateOrThrow(p_92677_.m_41720_()));
        return itemcolor == null ? -1 : itemcolor.m_92671_(p_92677_, p_92678_);
     }

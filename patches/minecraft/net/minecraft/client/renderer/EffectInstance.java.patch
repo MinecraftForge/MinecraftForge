@@ -10,7 +10,7 @@
        this.f_108932_ = p_108942_;
        Resource resource = p_108941_.m_215593_(resourcelocation);
  
-@@ -168,7 +_,8 @@
+@@ -150,7 +_,8 @@
        } else {
           EffectProgram effectprogram;
           if (program == null) {
@@ -18,5 +18,5 @@
 +            ResourceLocation rl = ResourceLocation.m_135820_(p_172569_);
 +            ResourceLocation resourcelocation = new ResourceLocation(rl.m_135827_(), "shaders/program/" + rl.m_135815_() + p_172568_.m_85569_());
              Resource resource = p_172567_.m_215593_(resourcelocation);
-             InputStream inputstream = resource.m_215507_();
  
+             try (InputStream inputstream = resource.m_215507_()) {

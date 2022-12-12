@@ -17,11 +17,12 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
 import net.minecraft.core.Holder;
-import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.gametest.framework.GameTestServer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.repository.PackSource;
 import net.minecraft.server.packs.repository.RepositorySource;
 import net.minecraft.world.level.storage.LevelResource;
@@ -65,6 +66,7 @@ import net.minecraftforge.fml.loading.FileUtils;
 import net.minecraftforge.forgespi.language.IModInfo;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.GameData;
+import org.jetbrains.annotations.ApiStatus;
 
 public class ServerLifecycleHooks
 {
@@ -188,25 +190,25 @@ public class ServerLifecycleHooks
         System.exit(retVal);
     }
 
-    //INTERNAL MODDERS DO NOT USE
+    @ApiStatus.Internal
     public static RepositorySource buildPackFinder(Map<IModFile, ? extends PathPackResources> modResourcePacks) {
-        return (packList, factory) -> serverPackFinder(modResourcePacks, packList, factory);
+        return packAcceptor -> serverPackFinder(modResourcePacks, packAcceptor);
     }
 
-    private static void serverPackFinder(Map<IModFile, ? extends PathPackResources> modResourcePacks, Consumer<Pack> consumer, Pack.PackConstructor factory) {
+    private static void serverPackFinder(Map<IModFile, ? extends PathPackResources> modResourcePacks, Consumer<Pack> packAcceptor) {
         for (Entry<IModFile, ? extends PathPackResources> e : modResourcePacks.entrySet())
         {
             IModInfo mod = e.getKey().getModInfos().get(0);
             if (Objects.equals(mod.getModId(), "minecraft")) continue; // skip the minecraft "mod"
             final String name = "mod:" + mod.getModId();
-            final Pack packInfo = Pack.create(name, false, e::getValue, factory, Pack.Position.BOTTOM, PackSource.DEFAULT);
-            if (packInfo == null) {
+            final Pack modPack = Pack.readMetaAndCreate(name, Component.literal(e.getValue().packId()), false, id -> e.getValue(), PackType.SERVER_DATA, Pack.Position.BOTTOM, PackSource.DEFAULT);
+            if (modPack == null) {
                 // Vanilla only logs an error, instead of propagating, so handle null and warn that something went wrong
                 ModLoader.get().addWarning(new ModLoadingWarning(mod, ModLoadingStage.ERROR, "fml.modloading.brokenresources", e.getKey()));
                 continue;
             }
             LOGGER.debug(CORE, "Generating PackInfo named {} for mod file {}", name, e.getKey().getFilePath());
-            consumer.accept(packInfo);
+            packAcceptor.accept(modPack);
         }
     }
 
@@ -225,12 +227,12 @@ public class ServerLifecycleHooks
               .toList();
 
         // Apply sorted biome modifiers to each biome.
-        registries.registryOrThrow(Registry.BIOME_REGISTRY).holders().forEach(biomeHolder ->
+        registries.registryOrThrow(Registries.BIOME).holders().forEach(biomeHolder ->
         {
             biomeHolder.value().modifiableBiomeInfo().applyBiomeModifiers(biomeHolder, biomeModifiers);
         });
         // Apply sorted structure modifiers to each structure.
-        registries.registryOrThrow(Registry.STRUCTURE_REGISTRY).holders().forEach(structureHolder ->
+        registries.registryOrThrow(Registries.STRUCTURE).holders().forEach(structureHolder ->
         {
             structureHolder.value().modifiableStructureInfo().applyStructureModifiers(structureHolder, structureModifiers);
         });

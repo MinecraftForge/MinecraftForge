@@ -22,7 +22,7 @@
        f_235379_.put(p_235389_, p_235390_);
        return Registry.m_122961_(p_235387_, p_235388_, p_235390_);
 @@ -117,12 +_,14 @@
-       m_235386_(p_235385_, "resource", m_235395_(ResourceKeyArgument.class), new ResourceKeyArgument.Info<Object>());
+       m_235386_(p_235385_, "resource_key", m_235395_(ResourceKeyArgument.class), new ResourceKeyArgument.Info<Object>());
        m_235386_(p_235385_, "template_mirror", TemplateMirrorArgument.class, SingletonArgumentInfo.m_235451_(TemplateMirrorArgument::m_234343_));
        m_235386_(p_235385_, "template_rotation", TemplateRotationArgument.class, SingletonArgumentInfo.m_235451_(TemplateRotationArgument::m_234414_));
 -      if (SharedConstants.f_136183_) {

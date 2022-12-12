@@ -24,3 +24,32 @@
     @Nullable
     public static SpawnEggItem m_43213_(@Nullable EntityType<?> p_43214_) {
        return f_43201_.get(p_43214_);
+@@ -141,15 +_,15 @@
+       if (p_43229_ != null && p_43229_.m_128425_("EntityTag", 10)) {
+          CompoundTag compoundtag = p_43229_.m_128469_("EntityTag");
+          if (compoundtag.m_128425_("id", 8)) {
+-            return EntityType.m_20632_(compoundtag.m_128461_("id")).orElse(this.f_43204_);
++            return EntityType.m_20632_(compoundtag.m_128461_("id")).orElse(this.getDefaultType());
+          }
+       }
+ 
+-      return this.f_43204_;
++      return this.getDefaultType();
+    }
+ 
+    public FeatureFlagSet m_245183_() {
+-      return this.f_43204_.m_245183_();
++      return this.getDefaultType().m_245183_();
+    }
+ 
+    public Optional<Mob> m_43215_(Player p_43216_, Mob p_43217_, EntityType<? extends Mob> p_43218_, ServerLevel p_43219_, Vec3 p_43220_, ItemStack p_43221_) {
+@@ -184,5 +_,9 @@
+             }
+          }
+       }
++   }
++
++   protected EntityType<?> getDefaultType() {
++      return f_43204_;
+    }
+ }

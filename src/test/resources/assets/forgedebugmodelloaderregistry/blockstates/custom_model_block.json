@@ -2,7 +2,6 @@
     "forge_marker": 1,
     "defaults": {
         "textures": {
-            //"#texture": "forgedebugmodelloaderregistry:texture",
             "#chest": "entity/chest/normal"
         },
         "model": "forgedebugmodelloaderregistry:chest.b3d",

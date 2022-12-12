@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/item/StandingAndWallBlockItem.java
 +++ b/net/minecraft/world/item/StandingAndWallBlockItem.java
-@@ -42,4 +_,9 @@
+@@ -48,4 +_,9 @@
        super.m_6192_(p_43252_, p_43253_);
        p_43252_.put(this.f_43246_, p_43253_);
     }

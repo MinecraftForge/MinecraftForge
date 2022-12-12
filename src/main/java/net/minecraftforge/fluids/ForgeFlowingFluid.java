@@ -7,6 +7,7 @@ package net.minecraftforge.fluids;
 
 import java.util.Optional;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.Blocks;
@@ -75,15 +76,15 @@ public abstract class ForgeFlowingFluid extends FlowingFluid
     }
 
     @Override
-    protected boolean canConvertToSource()
+    protected boolean canConvertToSource(Level level)
     {
         return false;
     }
 
     @Override
-    public boolean canConvertToSource(FluidState state, LevelReader reader, BlockPos pos)
+    public boolean canConvertToSource(FluidState state, Level level, BlockPos pos)
     {
-        return this.getFluidType().canConvertToSource(state, reader, pos);
+        return this.getFluidType().canConvertToSource(state, level, pos);
     }
 
     @Override

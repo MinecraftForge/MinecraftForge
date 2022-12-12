@@ -1,0 +1,7 @@
+{
+  "forge:conditions": [{
+    "type": "forge:mod_loaded",
+    "modid": "not_forge"
+  }],
+  "type": "irrelevant:wont_be_loaded"
+}
