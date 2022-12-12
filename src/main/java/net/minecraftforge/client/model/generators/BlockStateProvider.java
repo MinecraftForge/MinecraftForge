@@ -14,7 +14,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import java.io.IOException;
+
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
@@ -25,7 +25,6 @@ import java.util.function.Function;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
 import net.minecraft.data.CachedOutput;
-import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
@@ -73,20 +72,20 @@ public abstract class BlockStateProvider implements DataProvider {
     @VisibleForTesting
     protected final Map<Block, IGeneratedBlockState> registeredBlocks = new LinkedHashMap<>();
 
-    private final DataGenerator generator;
+    private final PackOutput output;
     private final String modid;
     private final BlockModelProvider blockModels;
     private final ItemModelProvider itemModels;
 
-    public BlockStateProvider(DataGenerator gen, String modid, ExistingFileHelper exFileHelper) {
-        this.generator = gen;
+    public BlockStateProvider(PackOutput output, String modid, ExistingFileHelper exFileHelper) {
+        this.output = output;
         this.modid = modid;
-        this.blockModels = new BlockModelProvider(gen, modid, exFileHelper) {
+        this.blockModels = new BlockModelProvider(output, modid, exFileHelper) {
             @Override public CompletableFuture<?> run(CachedOutput cache) { return CompletableFuture.allOf(); }
 
             @Override protected void registerModels() {}
         };
-        this.itemModels = new ItemModelProvider(gen, modid, this.blockModels.existingFileHelper) {
+        this.itemModels = new ItemModelProvider(output, modid, this.blockModels.existingFileHelper) {
             @Override protected void registerModels() {}
 
             @Override public CompletableFuture<?> run(CachedOutput cache) { return CompletableFuture.allOf(); }
@@ -186,6 +185,11 @@ public abstract class BlockStateProvider implements DataProvider {
 
     public void simpleBlockItem(Block block, ModelFile model) {
         itemModels().getBuilder(key(block).getPath()).parent(model);
+    }
+
+    public void simpleBlockWithItem(Block block, ModelFile model) {
+        simpleBlock(block, model);
+        simpleBlockItem(block, model);
     }
 
     public void simpleBlock(Block block, ConfiguredModel... models) {
@@ -857,7 +861,7 @@ public abstract class BlockStateProvider implements DataProvider {
 
     private CompletableFuture<?> saveBlockState(CachedOutput cache, JsonObject stateJson, Block owner) {
         ResourceLocation blockName = Preconditions.checkNotNull(key(owner));
-        Path outputPath = this.generator.getPackOutput().getOutputFolder(PackOutput.Target.RESOURCE_PACK)
+        Path outputPath = this.output.getOutputFolder(PackOutput.Target.RESOURCE_PACK)
                 .resolve(blockName.getNamespace()).resolve("blockstates").resolve(blockName.getPath() + ".json");
         return DataProvider.saveStable(cache, stateJson, outputPath);
     }

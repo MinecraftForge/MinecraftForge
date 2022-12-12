@@ -13,7 +13,6 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 import net.minecraft.data.CachedOutput;
-import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
@@ -30,7 +29,7 @@ import org.apache.logging.log4j.Logger;
 public abstract class SoundDefinitionsProvider implements DataProvider
 {
     private static final Logger LOGGER = LogManager.getLogger();
-    private final DataGenerator generator;
+    private final PackOutput output;
     private final String modId;
     private final ExistingFileHelper helper;
 
@@ -39,13 +38,13 @@ public abstract class SoundDefinitionsProvider implements DataProvider
     /**
      * Creates a new instance of this data provider.
      *
-     * @param generator The data generator instance provided by the event you are initializing this provider in.
+     * @param output The {@linkplain PackOutput} instance provided by the data generator.
      * @param modId The mod ID of the current mod.
      * @param helper The existing file helper provided by the event you are initializing this provider in.
      */
-    protected SoundDefinitionsProvider(final DataGenerator generator, final String modId, final ExistingFileHelper helper)
+    protected SoundDefinitionsProvider(final PackOutput output, final String modId, final ExistingFileHelper helper)
     {
-        this.generator = generator;
+        this.output = output;
         this.modId = modId;
         this.helper = helper;
     }
@@ -63,7 +62,7 @@ public abstract class SoundDefinitionsProvider implements DataProvider
         this.validate();
         if (!this.sounds.isEmpty())
         {
-            return this.save(cache, this.generator.getPackOutput().getOutputFolder(PackOutput.Target.RESOURCE_PACK).resolve(this.modId).resolve("sounds.json"));
+            return this.save(cache, this.output.getOutputFolder(PackOutput.Target.RESOURCE_PACK).resolve(this.modId).resolve("sounds.json"));
         }
 
         return CompletableFuture.allOf();

@@ -63,7 +63,7 @@ public class TRSRTransformerTest {
             event.accept(TEST_ITEM);
     }
 
-    public void onModelBake(ModelEvent.BakingCompleted e) {
+    public void onModelBake(ModelEvent.ModifyBakingResult e) {
         for (ResourceLocation id : e.getModels().keySet()) {
             if (MODID.equals(id.getNamespace()) && "test".equals(id.getPath())) {
                 e.getModels().put(id, new MyBakedModel(e.getModels().get(id)));

@@ -16,7 +16,7 @@
              stopwatch1.start();
              hashcache.m_253116_(hashcache.m_253234_(p_254418_, p_253750_::m_213708_).join());
              stopwatch1.stop();
-@@ -56,6 +_,30 @@
+@@ -56,6 +_,34 @@
     public DataGenerator.PackGenerator m_253030_(boolean p_253826_, String p_254134_) {
        Path path = this.f_244116_.m_247566_(PackOutput.Target.DATA_PACK).resolve("minecraft").resolve("datapacks").resolve(p_254134_);
        return new DataGenerator.PackGenerator(p_253826_, p_254134_, new PackOutput(path));
@@ -28,6 +28,10 @@
 +
 +   public PackOutput getPackOutput() {
 +      return this.f_244116_;
++   }
++
++   public PackOutput getPackOutput(String path) {
++      return new PackOutput(f_243753_.resolve(path));
 +   }
 +
 +   public <T extends DataProvider> T addProvider(boolean run, DataProvider.Factory<T> factory) {

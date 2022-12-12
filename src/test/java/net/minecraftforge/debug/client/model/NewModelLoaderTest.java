@@ -8,6 +8,7 @@ package net.minecraftforge.debug.client.model;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import net.minecraft.client.resources.model.ModelBaker;
+import net.minecraft.data.PackOutput;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -181,18 +182,19 @@ public class NewModelLoaderTest
     private void datagen(GatherDataEvent event)
     {
         DataGenerator gen = event.getGenerator();
+        final PackOutput output = gen.getPackOutput();
 
         // Let blockstate provider see generated item models by passing its existing file helper
-        ItemModelProvider itemModels = new ItemModels(gen, event.getExistingFileHelper());
+        ItemModelProvider itemModels = new ItemModels(output, event.getExistingFileHelper());
         gen.addProvider(event.includeClient(), itemModels);
-        gen.addProvider(event.includeClient(), new BlockStates(gen, itemModels.existingFileHelper));
+        gen.addProvider(event.includeClient(), new BlockStates(output, itemModels.existingFileHelper));
     }
 
     public static class ItemModels extends ItemModelProvider
     {
-        public ItemModels(DataGenerator generator, ExistingFileHelper existingFileHelper)
+        public ItemModels(PackOutput output, ExistingFileHelper existingFileHelper)
         {
-            super(generator, MODID, existingFileHelper);
+            super(output, MODID, existingFileHelper);
         }
 
         @Override
@@ -215,9 +217,9 @@ public class NewModelLoaderTest
 
     public static class BlockStates extends BlockStateProvider
     {
-        public BlockStates(DataGenerator gen, ExistingFileHelper exFileHelper)
+        public BlockStates(PackOutput output, ExistingFileHelper exFileHelper)
         {
-            super(gen, MODID, exFileHelper);
+            super(output, MODID, exFileHelper);
         }
 
         @Override

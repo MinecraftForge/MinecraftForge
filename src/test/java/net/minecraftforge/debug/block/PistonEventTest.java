@@ -17,6 +17,7 @@ import net.minecraft.world.level.block.piston.PistonStructureResolver;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.data.DataGenerator;
+import net.minecraft.data.PackOutput;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
@@ -25,7 +26,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.model.generators.BlockStateProvider;
-import net.minecraftforge.client.model.generators.ModelFile;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.event.CreativeModeTabEvent;
 import net.minecraftforge.event.level.PistonEvent;
@@ -146,22 +146,20 @@ public class PistonEventTest
     {
         DataGenerator gen = event.getGenerator();
 
-        gen.addProvider(event.includeClient(), new BlockStates(gen, event.getExistingFileHelper()));
+        gen.addProvider(event.includeClient(), new BlockStates(gen.getPackOutput(), event.getExistingFileHelper()));
     }
 
     private class BlockStates extends BlockStateProvider
     {
-        public BlockStates(DataGenerator gen, ExistingFileHelper exFileHelper)
+        public BlockStates(PackOutput output, ExistingFileHelper exFileHelper)
         {
-            super(gen, MODID, exFileHelper);
+            super(output, MODID, exFileHelper);
         }
 
         @Override
         protected void registerStatesAndModels()
         {
-            ModelFile model = models().cubeAll(SHIFT_ON_MOVE.getId().getPath(), mcLoc("block/furnace_top"));
-            simpleBlock(SHIFT_ON_MOVE.get(), model);
-            simpleBlockItem(SHIFT_ON_MOVE.get(), model);
+            simpleBlockWithItem(SHIFT_ON_MOVE.get(), models().cubeAll(SHIFT_ON_MOVE.getId().getPath(), mcLoc("block/furnace_top")));
         }
     }
 
