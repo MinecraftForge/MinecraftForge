@@ -33,8 +33,6 @@ import net.minecraft.advancements.critereon.InventoryChangeTrigger;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.PackOutput;
-import net.minecraft.data.advancements.AdvancementProvider;
-import net.minecraft.data.advancements.AdvancementSubProvider;
 import net.minecraft.data.recipes.*;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -140,7 +138,7 @@ public class DataGeneratorTest
         // Let blockstate provider see generated item models by passing its existing file helper
         ItemModelProvider itemModels = new ItemModels(packOutput, event.getExistingFileHelper());
         gen.addProvider(event.includeClient(), itemModels);
-        gen.addProvider(event.includeClient(), new BlockStates(gen, itemModels.existingFileHelper));
+        gen.addProvider(event.includeClient(), new BlockStates(gen.getPackOutput(), itemModels.existingFileHelper));
         gen.addProvider(event.includeClient(), new SoundDefinitions(packOutput, event.getExistingFileHelper()));
 
         gen.addProvider(event.includeServer(), new Recipes(packOutput));
@@ -681,9 +679,9 @@ public class DataGeneratorTest
     {
         private static final Logger LOGGER = LogManager.getLogger();
 
-        public BlockStates(DataGenerator gen, ExistingFileHelper exFileHelper)
+        public BlockStates(PackOutput output, ExistingFileHelper exFileHelper)
         {
-            super(gen, MODID, exFileHelper);
+            super(output, MODID, exFileHelper);
         }
 
         @Override
