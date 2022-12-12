@@ -1183,6 +1183,7 @@ project(':forge') {
     CheckTask.registerTask(tasks, 'SAS', CheckSAS) {
         it.dependsOn extractInheritance
         it.sass.from patcher.sideAnnotationStrippers
+        it.inheritance = extractInheritance.output
     }
 
     CheckTask.registerTask(tasks, 'Excs', CheckExcs) {

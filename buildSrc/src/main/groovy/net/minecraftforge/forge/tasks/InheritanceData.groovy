@@ -7,7 +7,7 @@ import groovy.transform.TupleConstructor
 
 @CompileStatic
 @TupleConstructor
-final class InheritanceData {
+final class InheritanceData implements Annotatable {
     String name
     int access
     String superName
@@ -17,14 +17,14 @@ final class InheritanceData {
     List<Annotation> annotations = []
 
     @TupleConstructor
-    static final class Method {
+    static final class Method implements Annotatable {
         int access
         String override
         List<Annotation> annotations = []
     }
 
     @TupleConstructor
-    static final class Field {
+    static final class Field implements Annotatable {
         int access
         String desc
         List<Annotation> annotations = []
@@ -41,4 +41,9 @@ final class InheritanceData {
             return GSON.fromJson(reader, new TypeToken<Map<String, InheritanceData>>() {})
         }
     }
+}
+
+@CompileStatic
+interface Annotatable {
+    List<InheritanceData.Annotation> getAnnotations()
 }

@@ -9,11 +9,25 @@ import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.TaskContainer
+import org.gradle.api.tasks.VerificationTask
 
 @CompileStatic
-abstract class CheckTask extends DefaultTask {
+abstract class CheckTask extends DefaultTask implements VerificationTask {
     @Input
     abstract Property<CheckType> getType()
+
+    private boolean ignoreFailures = false
+
+    @Input
+    @Override
+    boolean getIgnoreFailures() {
+        return ignoreFailures
+    }
+
+    @Override
+    void setIgnoreFailures(boolean ignoreFailures) {
+        this.ignoreFailures = ignoreFailures
+    }
 
     @TaskAction
     void run() {
@@ -26,7 +40,9 @@ abstract class CheckTask extends DefaultTask {
         if (reporter.messages) {
             if (getType().get() === CheckType.CHECK) {
                 logger.error("Check task '{}' found errors:\n{}", name, reporter.messages.join('\n'))
-                throw new IllegalArgumentException("${reporter.messages.size()} errors were found!")
+                if (!ignoreFailures) {
+                    throw new IllegalArgumentException("${reporter.messages.size()} errors were found!")
+                }
             } else {
                 if (logger.isEnabled(LogLevel.DEBUG)) {
                     logger.error("Check task '{}' found {} errors and fixed {}:\n{}", name, reporter.messages.size(), reporter.fixed.size(), reporter.fixed.join('\n'))
@@ -36,7 +52,9 @@ abstract class CheckTask extends DefaultTask {
 
                 if (reporter.notFixed) {
                     logger.error('{} errors could not be fixed:\n{}', reporter.notFixed.size(), reporter.notFixed.join('\n'))
-                    throw new IllegalArgumentException("${reporter.notFixed.size()} errors which cannot be fixed were found!")
+                    if (!ignoreFailures) {
+                        throw new IllegalArgumentException("${reporter.notFixed.size()} errors which cannot be fixed were found!")
+                    }
                 }
             }
         }
