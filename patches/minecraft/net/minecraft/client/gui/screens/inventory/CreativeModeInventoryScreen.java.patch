@@ -207,7 +207,7 @@
        this.m_93228_(p_98572_, this.f_97735_, this.f_97736_, 0, 0, this.f_97726_, this.f_97727_);
        this.f_98510_.m_86412_(p_98572_, p_98574_, p_98575_, p_98573_);
        RenderSystem.m_157429_(1.0F, 1.0F, 1.0F, 1.0F);
-@@ -671,7 +_,7 @@
+@@ -671,11 +_,12 @@
        int k = this.f_97736_ + 18;
        int i = k + 112;
        RenderSystem.m_157427_(GameRenderer::m_172817_);
@@ -216,6 +216,11 @@
        if (f_98507_.m_40791_()) {
           this.m_93228_(p_98572_, j, k + (int)((float)(i - k - 17) * this.f_98508_), 232 + (this.m_98631_() ? 0 : 12), 0, 12, 15);
        }
+ 
++      if (currentPage.getVisibleTabs().contains(f_98507_)) //Forge: only display tab selection when the selected tab is on the current page
+       this.m_98581_(p_98572_, f_98507_);
+       if (f_98507_.m_257962_() == CreativeModeTab.Type.INVENTORY) {
+          InventoryScreen.m_98850_(this.f_97735_ + 88, this.f_97736_ + 45, 20, (float)(this.f_97735_ + 88 - p_98574_), (float)(this.f_97736_ + 45 - 30 - p_98575_), this.f_96541_.f_91074_);
 @@ -684,7 +_,7 @@
     }
  
@@ -253,7 +258,7 @@
        this.m_93228_(p_98582_, l, i1, j, k, 26, 32);
        this.f_96542_.f_115093_ = 100.0F;
        l += 5;
-@@ -784,6 +_,15 @@
+@@ -784,6 +_,14 @@
  
     }
  
@@ -263,7 +268,6 @@
 +
 +   public void setCurrentPage(net.minecraftforge.client.gui.CreativeTabsScreenPage currentPage) {
 +      this.currentPage = currentPage;
-+      this.m_98560_(currentPage.getDefaultTab());
 +   }
 +
     @OnlyIn(Dist.CLIENT)
