@@ -22,14 +22,14 @@ import java.util.function.Predicate;
  */
 public interface ICondition extends Predicate<ICondition.IContext>
 {
-	/**
-	 * @return The ID of the serializer that is responsible for this condition.
-	 */
+    /**
+     * @return The ID of the serializer that is responsible for this condition.
+     */
     ResourceLocation getSerializerId();
 
     /**
      * Tests if this condition is met, given the context.
-	 * @param context The {@linkplain ICondition.IContext Condition Context}
+     * @param context The {@linkplain ICondition.IContext Condition Context}
      * @return True if this condition is met in this context.
      */
     @Override
@@ -40,9 +40,9 @@ public interface ICondition extends Predicate<ICondition.IContext>
      */
     interface IContext
     {
-    	/**
-    	 * The empty context is used during parsing when a context is not available for any reason.
-    	 */
+        /**
+         * The empty context is used during parsing when a context is not available for any reason.
+         */
         IContext EMPTY = new IContext()
         {
             @Override
