@@ -30,7 +30,6 @@ import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
 import java.util.Locale;
-import java.util.function.Consumer;
 
 @Mod("be_onload_test")
 public class BlockEntityOnLoadTest
@@ -54,9 +53,14 @@ public class BlockEntityOnLoadTest
             BLOCKS.register(modBus);
             ITEMS.register(modBus);
             BE_TYPES.register(modBus);
-
-            modBus.addListener((CreativeModeTabEvent.BuildContents event) -> event.registerSimple(CreativeModeTabs.BUILDING_BLOCKS, TEST_BLOCK_ITEM.get()));
+            modBus.addListener(this::addCreative);
         }
+    }
+
+    private void addCreative(CreativeModeTabEvent.BuildContents event)
+    {
+        if (event.getTab() == CreativeModeTabs.BUILDING_BLOCKS)
+            event.accept(TEST_BLOCK_ITEM);
     }
 
     private static class TestBlock extends Block implements EntityBlock

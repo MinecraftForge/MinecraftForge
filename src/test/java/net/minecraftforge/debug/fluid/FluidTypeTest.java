@@ -173,20 +173,16 @@ public class FluidTypeTest
             ITEMS.register(modEventBus);
 
             modEventBus.addListener(this::commonSetup);
+            modEventBus.addListener(this::addCreative);
 
             DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> new FluidTypeTestClient(modEventBus));
-
-            FMLJavaModLoadingContext.get().getModEventBus().addListener(new Consumer<CreativeModeTabEvent.BuildContents>() {
-                @Override
-                public void accept(CreativeModeTabEvent.BuildContents onBuildContents) {
-                    if (onBuildContents.getTab() == CreativeModeTabs.INGREDIENTS) {
-                        onBuildContents.register((flags, output, permission) -> {
-                            output.accept(new ItemStack(TEST_FLUID_BUCKET.get()));
-                        });
-                    }
-                }
-            });
         }
+    }
+
+    private void addCreative(CreativeModeTabEvent.BuildContents event)
+    {
+        if (event.getTab() == CreativeModeTabs.INGREDIENTS)
+            event.accept(TEST_FLUID_BUCKET);
     }
 
     private void commonSetup(FMLCommonSetupEvent event)
@@ -218,7 +214,7 @@ public class FluidTypeTest
 
         private void registerBlockColors(RegisterColorHandlersEvent.Block event)
         {
-            event.getBlockColors().register((state, getter, pos, index) ->
+            event.register((state, getter, pos, index) ->
             {
                 if (getter != null && pos != null)
                 {

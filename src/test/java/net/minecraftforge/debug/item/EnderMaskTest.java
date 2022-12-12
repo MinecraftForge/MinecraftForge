@@ -17,15 +17,13 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 
-import java.util.function.Consumer;
-
 @Mod(EnderMaskTest.MODID)
 public class EnderMaskTest
 {
     public static final String MODID = "ender_mask_test";
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MODID);
 
-    public static RegistryObject<Item> ender_mask = ITEMS.register("ender_mask", () ->
+    public static RegistryObject<Item> ENDER_MASK = ITEMS.register("ender_mask", () ->
             new ArmorItem(ArmorMaterials.LEATHER, EquipmentSlot.HEAD, (new Item.Properties()))
             {
                 @Override
@@ -40,12 +38,12 @@ public class EnderMaskTest
     {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
         ITEMS.register(modEventBus);
-        FMLJavaModLoadingContext.get().getModEventBus().addListener((Consumer<CreativeModeTabEvent.BuildContents>) onBuildContents -> {
-            if (onBuildContents.getTab() == CreativeModeTabs.INGREDIENTS) {
-                onBuildContents.register((flags, output, permissions) -> {
-                    output.accept(ender_mask.get());
-                });
-            }
-        });
+        modEventBus.addListener(this::addCreative);
+    }
+
+    private void addCreative(CreativeModeTabEvent.BuildContents event)
+    {
+        if (event.getTab() == CreativeModeTabs.INGREDIENTS)
+            event.accept(ENDER_MASK);
     }
 }

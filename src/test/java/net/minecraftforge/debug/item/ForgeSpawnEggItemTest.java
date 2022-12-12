@@ -6,8 +6,6 @@
 package net.minecraftforge.debug.item;
 
 import java.util.Map;
-import java.util.function.Consumer;
-
 import net.minecraft.client.renderer.entity.PigRenderer;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
@@ -51,18 +49,18 @@ public class ForgeSpawnEggItemTest
     {
         if (ENABLED)
         {
-            ITEMS.register(FMLJavaModLoadingContext.get().getModEventBus());
-            ENTITIES.register(FMLJavaModLoadingContext.get().getModEventBus());
-
-            FMLJavaModLoadingContext.get().getModEventBus().register(this);
-            FMLJavaModLoadingContext.get().getModEventBus().addListener((Consumer<CreativeModeTabEvent.BuildContents>) onBuildContents -> {
-                if (onBuildContents.getTab() == CreativeModeTabs.INGREDIENTS) {
-                    onBuildContents.register((flags, output, permissions) -> {
-                        output.accept(EGG.get());
-                    });
-                }
-            });
+            var eventBus = FMLJavaModLoadingContext.get().getModEventBus();
+            ITEMS.register(eventBus);
+            ENTITIES.register(eventBus);
+            eventBus.register(this);
+            eventBus.addListener(this::addCreative);
         }
+    }
+
+    private void addCreative(CreativeModeTabEvent.BuildContents event)
+    {
+        if (event.getTab() == CreativeModeTabs.INGREDIENTS)
+            event.accept(EGG);
     }
 
     @SubscribeEvent

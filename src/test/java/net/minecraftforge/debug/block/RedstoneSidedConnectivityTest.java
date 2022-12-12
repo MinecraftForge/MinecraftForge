@@ -25,8 +25,6 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.function.Consumer;
-
 @Mod(RedstoneSidedConnectivityTest.MODID)
 public class RedstoneSidedConnectivityTest
 {
@@ -48,8 +46,13 @@ public class RedstoneSidedConnectivityTest
         IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();
         BLOCKS.register(modBus);
         ITEMS.register(modBus);
+        modBus.addListener(this::addCreative);
+    }
 
-        modBus.addListener((CreativeModeTabEvent.BuildContents event) -> event.registerSimple(CreativeModeTabs.BUILDING_BLOCKS, TEST_REDSTONE_BLOCKITEM.get()));
+    private void addCreative(CreativeModeTabEvent.BuildContents event)
+    {
+        if (event.getTab() == CreativeModeTabs.BUILDING_BLOCKS)
+            event.accept(TEST_REDSTONE_BLOCKITEM);
     }
 
     private static class EastRedstoneBlock extends Block

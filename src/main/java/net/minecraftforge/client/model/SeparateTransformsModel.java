@@ -24,6 +24,7 @@ import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.Material;
 import net.minecraft.client.resources.model.ModelBaker;
 import net.minecraft.client.resources.model.ModelState;
+import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
@@ -76,6 +77,13 @@ public class SeparateTransformsModel implements IUnbakedGeometry<SeparateTransfo
                     return value.bake(baker, value, spriteGetter, modelState, modelLocation, context.useBlockLight());
                 }))
         );
+    }
+
+    @Override
+    public void resolveParents(Function<ResourceLocation, UnbakedModel> modelGetter, IGeometryBakingContext context)
+    {
+        baseModel.resolveParents(modelGetter);
+        perspectives.values().forEach(model -> model.resolveParents(modelGetter));
     }
 
     public static class Baked implements IDynamicBakedModel

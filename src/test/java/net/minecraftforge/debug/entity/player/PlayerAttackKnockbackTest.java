@@ -21,7 +21,6 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.UUID;
-import java.util.function.Consumer;
 
 /**
  * Tests if the patch to PlayerEntity to make it utilize Attributes.ATTACK_KNOCKBACK works
@@ -46,13 +45,13 @@ public class PlayerAttackKnockbackTest {
     {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
         ITEMS.register(modEventBus);
-        FMLJavaModLoadingContext.get().getModEventBus().addListener((Consumer<CreativeModeTabEvent.BuildContents>) onBuildContents -> {
-            if (onBuildContents.getTab() == CreativeModeTabs.COMBAT) {
-                onBuildContents.register((flags, output, permissions) -> {
-                    output.accept(KNOCKBACK_SWORD.get());
-                });
-            }
-        });
+        modEventBus.addListener(this::addCreative);
+    }
+
+    private void addCreative(CreativeModeTabEvent.BuildContents event)
+    {
+        if (event.getTab() == CreativeModeTabs.COMBAT)
+            event.accept(KNOCKBACK_SWORD);
     }
 
     static class KnockbackSwordItem extends SwordItem {
