@@ -15,8 +15,6 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 
-import java.util.function.Consumer;
-
 @Mod(DynBucketModelTest.MODID)
 public class DynBucketModelTest
 {
@@ -33,14 +31,16 @@ public class DynBucketModelTest
         {
             IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
             ITEMS.register(modEventBus);
-            FMLJavaModLoadingContext.get().getModEventBus().addListener((Consumer<CreativeModeTabEvent.BuildContents>) onBuildContents -> {
-                if (onBuildContents.getTab() == CreativeModeTabs.INGREDIENTS) {
-                    onBuildContents.register((flags, output, permissions) -> {
-                        output.accept(DRIP_BUCKET.get());
-                        output.accept(LAVA_OBSIDIAN.get());
-                    });
-                }
-            });
+            modEventBus.addListener(this::addCreative);
+        }
+    }
+
+    private void addCreative(CreativeModeTabEvent.BuildContents event)
+    {
+        if (event.getTab() == CreativeModeTabs.INGREDIENTS)
+        {
+            event.accept(DRIP_BUCKET);
+            event.accept(LAVA_OBSIDIAN);
         }
     }
 }

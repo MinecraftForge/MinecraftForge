@@ -37,7 +37,12 @@ public class EmissiveElementsTest
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
         BLOCKS.register(modEventBus);
         ITEMS.register(modEventBus);
+        modEventBus.addListener(this::addCreative);
+    }
 
-        modEventBus.addListener((CreativeModeTabEvent.BuildContents event) -> event.registerSimple(CreativeModeTabs.BUILDING_BLOCKS, TEST_BLOCK_ITEM.get()));
+    private void addCreative(CreativeModeTabEvent.BuildContents event)
+    {
+        if (event.getTab() == CreativeModeTabs.BUILDING_BLOCKS)
+            event.accept(TEST_BLOCK_ITEM);
     }
 }

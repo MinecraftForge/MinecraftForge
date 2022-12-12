@@ -19,8 +19,6 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
-import java.util.function.Consumer;
-
 /**
  * Test mod that demos disabling ambient occlusion on specific faces of "elements" models.
  */
@@ -50,8 +48,17 @@ public class AmbientOcclusionElementsTest
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
         BLOCKS.register(modEventBus);
         ITEMS.register(modEventBus);
+        modEventBus.addListener(this::addCreative);
+    }
 
-        modEventBus.addListener((CreativeModeTabEvent.BuildContents event) -> event.registerSimple(CreativeModeTabs.BUILDING_BLOCKS,
-                AO_BLOCK_SHADE_ITEM.get(), AO_BLOCK_NO_SHADE_ITEM.get(), NO_AO_BLOCK_SHADE_ITEM.get(), NO_AO_BLOCK_NO_SHADE_ITEM.get()));
+    private void addCreative(CreativeModeTabEvent.BuildContents event)
+    {
+        if (event.getTab() == CreativeModeTabs.BUILDING_BLOCKS)
+        {
+            event.accept(AO_BLOCK_SHADE_ITEM);
+            event.accept(AO_BLOCK_NO_SHADE_ITEM);
+            event.accept(NO_AO_BLOCK_SHADE_ITEM);
+            event.accept(NO_AO_BLOCK_NO_SHADE_ITEM);
+        }
     }
 }

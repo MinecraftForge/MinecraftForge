@@ -40,7 +40,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Consumer;
 
 @Mod(CustomTooltipTest.ID)
 public class CustomTooltipTest
@@ -65,8 +64,14 @@ public class CustomTooltipTest
                 modEventBus.register(ClientModBusEventHandler.class);
             }
             ITEMS.register(modEventBus);
-            modEventBus.addListener((CreativeModeTabEvent.BuildContents event) -> event.registerSimple(CreativeModeTabs.INGREDIENTS, CUSTOM_ITEM.get()));
+            modEventBus.addListener(this::addCreative);
         }
+    }
+
+    private void addCreative(CreativeModeTabEvent.BuildContents event)
+    {
+        if (event.getTab() == CreativeModeTabs.INGREDIENTS)
+            event.accept(CUSTOM_ITEM);
     }
 
     static record CustomTooltip(int color) implements TooltipComponent

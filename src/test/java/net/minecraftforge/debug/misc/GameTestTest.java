@@ -70,15 +70,14 @@ public class GameTestTest
             BLOCKS.register(modBus);
             ITEMS.register(modBus);
             BLOCK_ENTITIES.register(modBus);
-
-            FMLJavaModLoadingContext.get().getModEventBus().addListener((Consumer<CreativeModeTabEvent.BuildContents>) onBuildContents -> {
-                if (onBuildContents.getTab() == CreativeModeTabs.INGREDIENTS) {
-                    onBuildContents.register((flags, output, permissions) -> {
-                        output.accept(ENERGY_BLOCK_ITEM.get());
-                    });
-                }
-            });
+            modBus.addListener(this::addCreative);
         }
+    }
+
+    private void addCreative(CreativeModeTabEvent.BuildContents event)
+    {
+        if (event.getTab() == CreativeModeTabs.INGREDIENTS)
+            event.accept(ENERGY_BLOCK_ITEM);
     }
 
     @SubscribeEvent

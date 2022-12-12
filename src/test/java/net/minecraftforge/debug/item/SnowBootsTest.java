@@ -16,15 +16,13 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
-import java.util.function.Consumer;
-
 @Mod(SnowBootsTest.MODID)
 public class SnowBootsTest
 {
     public static final String MODID = "snow_boots_test";
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MODID);
 
-    public static RegistryObject<Item> snow_boots = ITEMS.register("snow_boots", () ->
+    public static RegistryObject<Item> SNOW_BOOTS = ITEMS.register("snow_boots", () ->
         new ArmorItem(ArmorMaterials.DIAMOND, EquipmentSlot.FEET, (new Item.Properties()))
         {
             @Override
@@ -38,12 +36,12 @@ public class SnowBootsTest
     {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
         ITEMS.register(modEventBus);
-        FMLJavaModLoadingContext.get().getModEventBus().addListener((Consumer<CreativeModeTabEvent.BuildContents>) onBuildContents -> {
-            if (onBuildContents.getTab() == CreativeModeTabs.COMBAT) {
-                onBuildContents.register((flags, output, permissions) -> {
-                    output.accept(snow_boots.get());
-                });
-            }
-        });
+        modEventBus.addListener(this::addCreative);
+    }
+
+    private void addCreative(CreativeModeTabEvent.BuildContents event)
+    {
+        if (event.getTab() == CreativeModeTabs.COMBAT)
+            event.accept(SNOW_BOOTS);
     }
 }

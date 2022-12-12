@@ -6,8 +6,6 @@
 package net.minecraftforge.debug.client.model;
 
 import java.util.List;
-import java.util.function.Consumer;
-
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.CreativeModeTabs;
@@ -56,12 +54,13 @@ public class TRSRTransformerTest {
         DistExecutor.runWhenOn(Dist.CLIENT, () -> () -> mod.addListener(this::onModelBake));
         BLOCKS.register(mod);
         ITEMS.register(mod);
+        mod.addListener(this::addCreative);
+    }
 
-        FMLJavaModLoadingContext.get().getModEventBus().addListener((Consumer<CreativeModeTabEvent.BuildContents>) onBuildContents -> {
-            if (onBuildContents.getTab() == CreativeModeTabs.BUILDING_BLOCKS) {
-                onBuildContents.register((p_259204_, p_259752_, p_260123_) -> p_259752_.accept(TEST_ITEM.get()));
-            }
-        });
+    private void addCreative(CreativeModeTabEvent.BuildContents event)
+    {
+        if (event.getTab() == CreativeModeTabs.BUILDING_BLOCKS)
+            event.accept(TEST_ITEM);
     }
 
     public void onModelBake(ModelEvent.BakingCompleted e) {

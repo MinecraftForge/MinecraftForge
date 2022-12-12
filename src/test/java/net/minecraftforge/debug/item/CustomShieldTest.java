@@ -31,14 +31,15 @@ public class CustomShieldTest
 
     public CustomShieldTest()
     {
-        ITEMS.register(FMLJavaModLoadingContext.get().getModEventBus());
-        FMLJavaModLoadingContext.get().getModEventBus().addListener((Consumer<CreativeModeTabEvent.BuildContents>) onBuildContents -> {
-            if (onBuildContents.getTab() == CreativeModeTabs.COMBAT) {
-                onBuildContents.register((flags, output, permissions) -> {
-                    output.accept(CUSTOM_SHIELD_ITEM.get());
-                });
-            }
-        });
+        var modBus = FMLJavaModLoadingContext.get().getModEventBus();
+        ITEMS.register(modBus);
+        modBus.addListener(this::addCreative);
+    }
+
+    private void addCreative(CreativeModeTabEvent.BuildContents event)
+    {
+        if (event.getTab() == CreativeModeTabs.COMBAT)
+            event.accept(CUSTOM_SHIELD_ITEM);
     }
 
     private static class CustomShieldItem extends Item

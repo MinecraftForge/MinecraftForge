@@ -48,9 +48,17 @@ public class CustomArmorModelTest
     {
         final IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();
         ITEMS.register(modBus);
+        modBus.addListener(this::addCreative);
+    }
 
-        modBus.addListener((CreativeModeTabEvent.BuildContents event) -> event.registerSimple(CreativeModeTabs.INGREDIENTS,
-                RED_LEGGINGS.get(), ENDERMAN_CHESTPLATE.get(), ENDERMAN_BOOTS.get()));
+    private void addCreative(CreativeModeTabEvent.BuildContents event)
+    {
+        if (event.getTab() == CreativeModeTabs.INGREDIENTS)
+        {
+            event.accept(RED_LEGGINGS);
+            event.accept(ENDERMAN_CHESTPLATE);
+            event.accept(ENDERMAN_BOOTS);
+        }
     }
 
     private static class TintedArmorItem extends ArmorItem

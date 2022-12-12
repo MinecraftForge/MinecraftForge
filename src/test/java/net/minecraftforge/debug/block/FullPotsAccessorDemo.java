@@ -56,7 +56,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -88,9 +87,14 @@ public class FullPotsAccessorDemo
             BLOCKS.register(bus);
             ITEMS.register(bus);
             BLOCK_ENTITIES.register(bus);
-
-            bus.addListener((CreativeModeTabEvent.BuildContents event) -> event.registerSimple(CreativeModeTabs.INGREDIENTS, DIORITE_POT_ITEM.get()));
+            bus.addListener(this::addCreative);
         }
+    }
+
+    private void addCreative(CreativeModeTabEvent.BuildContents event)
+    {
+        if (event.getTab() == CreativeModeTabs.INGREDIENTS)
+            event.accept(DIORITE_POT_ITEM);
     }
 
     private static class DioriteFlowerPotBlock extends Block implements EntityBlock
@@ -261,6 +265,12 @@ public class FullPotsAccessorDemo
             @Override
             public BakedModel bake(IGeometryBakingContext context, ModelBaker baker, Function<net.minecraft.client.resources.model.Material, TextureAtlasSprite> spriteGetter, ModelState modelState, ItemOverrides overrides, ResourceLocation modelLocation) {
                 return new DioritePotModel(wrappedModel.bake(baker, spriteGetter, modelState, modelLocation));
+            }
+
+            @Override
+            public void resolveParents(Function<ResourceLocation, UnbakedModel> modelGetter, IGeometryBakingContext context)
+            {
+                wrappedModel.resolveParents(modelGetter);
             }
         }
 

@@ -28,8 +28,6 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.function.Consumer;
-
 @Mod(CompositeModelTest.MODID)
 public class CompositeModelTest
 {
@@ -87,7 +85,12 @@ public class CompositeModelTest
 
         BLOCKS.register(modEventBus);
         ITEMS.register(modEventBus);
+        modEventBus.addListener(this::addCreative);
+    }
 
-        modEventBus.addListener((CreativeModeTabEvent.BuildContents event) -> event.registerSimple(CreativeModeTabs.INGREDIENTS, composite_item.get()));
+    private void addCreative(CreativeModeTabEvent.BuildContents event)
+    {
+        if (event.getTab() == CreativeModeTabs.INGREDIENTS)
+            event.accept(composite_item);
     }
 }

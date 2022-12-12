@@ -33,8 +33,6 @@ import net.minecraft.world.item.Item.Properties;
 
 import org.jetbrains.annotations.Nullable;
 
-import java.util.function.Consumer;
-
 @Mod(CustomElytraTest.MOD_ID)
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD, modid = CustomElytraTest.MOD_ID)
 public class CustomElytraTest
@@ -48,13 +46,13 @@ public class CustomElytraTest
         final IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();
         ITEMS.register(modBus);
         modBus.addListener(this::onClientSetup);
-        FMLJavaModLoadingContext.get().getModEventBus().addListener((Consumer<CreativeModeTabEvent.BuildContents>) onBuildContents -> {
-            if (onBuildContents.getTab() == CreativeModeTabs.INGREDIENTS) {
-                onBuildContents.register((flags, output, permissions) -> {
-                    output.accept(TEST_ELYTRA.get());
-                });
-            }
-        });
+        modBus.addListener(this::addCreative);
+    }
+
+    private void addCreative(CreativeModeTabEvent.BuildContents event)
+    {
+        if (event.getTab() == CreativeModeTabs.INGREDIENTS)
+            event.accept(TEST_ELYTRA);
     }
 
     private void onClientSetup(FMLClientSetupEvent event)

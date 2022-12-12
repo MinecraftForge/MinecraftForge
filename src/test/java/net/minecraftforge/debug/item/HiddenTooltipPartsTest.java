@@ -23,8 +23,6 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.function.Consumer;
-
 @Mod(HiddenTooltipPartsTest.MOD_ID)
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.FORGE, modid = HiddenTooltipPartsTest.MOD_ID)
 public class HiddenTooltipPartsTest
@@ -37,14 +35,15 @@ public class HiddenTooltipPartsTest
 
     public HiddenTooltipPartsTest()
     {
-        ITEMS.register(FMLJavaModLoadingContext.get().getModEventBus());
-        FMLJavaModLoadingContext.get().getModEventBus().addListener((Consumer<CreativeModeTabEvent.BuildContents>) onBuildContents -> {
-            if (onBuildContents.getTab() == CreativeModeTabs.INGREDIENTS) {
-                onBuildContents.register((flags, output, permissions) -> {
-                    output.accept(TEST_ITEM.get());
-                });
-            }
-        });
+        var modBus = FMLJavaModLoadingContext.get().getModEventBus();
+        ITEMS.register(modBus);
+        modBus.addListener(this::addCreative);
+    }
+
+    private void addCreative(CreativeModeTabEvent.BuildContents event)
+    {
+        if (event.getTab() == CreativeModeTabs.INGREDIENTS)
+            event.accept(TEST_ITEM);
     }
 
     static class TestItem extends Item
