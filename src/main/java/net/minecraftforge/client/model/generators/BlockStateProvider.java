@@ -192,6 +192,7 @@ public abstract class BlockStateProvider implements DataProvider {
         simpleBlock(block, model);
         simpleBlockItem(block, model);
     }
+
     public void simpleBlock(Block block, ConfiguredModel... models) {
         getVariantBuilder(block)
             .partialState().setModels(models);
