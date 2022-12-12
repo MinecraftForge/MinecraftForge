@@ -5,7 +5,97 @@
 
 package net.minecraftforge.debug;
 
-import static net.minecraftforge.debug.DataGeneratorTest.MODID;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.ObjectArrays;
+import com.google.common.collect.Sets;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonNull;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
+import net.minecraft.Util;
+import net.minecraft.advancements.Advancement;
+import net.minecraft.advancements.AdvancementRewards;
+import net.minecraft.advancements.FrameType;
+import net.minecraft.advancements.critereon.InventoryChangeTrigger;
+import net.minecraft.client.renderer.block.model.BlockModel.GuiLight;
+import net.minecraft.client.renderer.block.model.ItemTransform;
+import net.minecraft.client.renderer.block.model.ItemTransforms;
+import net.minecraft.client.renderer.block.model.Variant;
+import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.data.CachedOutput;
+import net.minecraft.data.DataGenerator;
+import net.minecraft.data.PackOutput;
+import net.minecraft.data.recipes.FinishedRecipe;
+import net.minecraft.data.recipes.RecipeCategory;
+import net.minecraft.data.recipes.RecipeProvider;
+import net.minecraft.data.recipes.ShapedRecipeBuilder;
+import net.minecraft.data.recipes.ShapelessRecipeBuilder;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.PackType;
+import net.minecraft.server.packs.resources.Resource;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.ItemTags;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.level.block.BarrelBlock;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.ButtonBlock;
+import net.minecraft.world.level.block.DoorBlock;
+import net.minecraft.world.level.block.FenceGateBlock;
+import net.minecraft.world.level.block.FurnaceBlock;
+import net.minecraft.world.level.block.IronBarsBlock;
+import net.minecraft.world.level.block.PressurePlateBlock;
+import net.minecraft.world.level.block.RotatedPillarBlock;
+import net.minecraft.world.level.block.SlabBlock;
+import net.minecraft.world.level.block.StairBlock;
+import net.minecraft.world.level.block.StandingSignBlock;
+import net.minecraft.world.level.block.TrapDoorBlock;
+import net.minecraft.world.level.block.WallSignBlock;
+import net.minecraftforge.client.model.generators.BlockStateProvider;
+import net.minecraftforge.client.model.generators.ConfiguredModel;
+import net.minecraftforge.client.model.generators.ItemModelProvider;
+import net.minecraftforge.client.model.generators.ModelBuilder;
+import net.minecraftforge.client.model.generators.ModelFile;
+import net.minecraftforge.client.model.generators.ModelFile.UncheckedModelFile;
+import net.minecraftforge.client.model.generators.MultiPartBlockStateBuilder;
+import net.minecraftforge.client.model.generators.VariantBlockStateBuilder;
+import net.minecraftforge.common.crafting.CompoundIngredient;
+import net.minecraftforge.common.crafting.ConditionalAdvancement;
+import net.minecraftforge.common.crafting.ConditionalRecipe;
+import net.minecraftforge.common.crafting.DifferenceIngredient;
+import net.minecraftforge.common.crafting.IntersectionIngredient;
+import net.minecraftforge.common.crafting.PartialNBTIngredient;
+import net.minecraftforge.common.crafting.StrictNBTIngredient;
+import net.minecraftforge.common.crafting.conditions.IConditionBuilder;
+import net.minecraftforge.common.data.BlockTagsProvider;
+import net.minecraftforge.common.data.ExistingFileHelper;
+import net.minecraftforge.common.data.ForgeAdvancementProvider;
+import net.minecraftforge.common.data.LanguageProvider;
+import net.minecraftforge.common.data.SoundDefinition;
+import net.minecraftforge.common.data.SoundDefinitionsProvider;
+import net.minecraftforge.data.event.GatherDataEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
+import net.minecraftforge.registries.ForgeRegistries;
+import org.apache.commons.lang3.tuple.Triple;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -26,93 +116,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-import com.google.gson.JsonNull;
-import com.google.gson.JsonPrimitive;
-import net.minecraft.Util;
-import net.minecraft.advancements.critereon.InventoryChangeTrigger;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.data.CachedOutput;
-import net.minecraft.data.PackOutput;
-import net.minecraft.data.advancements.AdvancementProvider;
-import net.minecraft.data.advancements.AdvancementSubProvider;
-import net.minecraft.data.recipes.*;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.Component;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.tags.ItemTags;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.level.block.ButtonBlock;
-import net.minecraft.world.level.block.DoorBlock;
-import net.minecraft.world.level.block.PressurePlateBlock;
-import net.minecraft.world.level.block.StandingSignBlock;
-import net.minecraft.world.level.block.WallSignBlock;
-import net.minecraftforge.common.crafting.CompoundIngredient;
-import net.minecraftforge.common.crafting.PartialNBTIngredient;
-import net.minecraftforge.common.crafting.DifferenceIngredient;
-import net.minecraftforge.common.crafting.IntersectionIngredient;
-import net.minecraftforge.common.crafting.StrictNBTIngredient;
-import net.minecraftforge.common.data.*;
-import net.minecraftforge.registries.ForgeRegistries;
-import org.apache.commons.lang3.tuple.Triple;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.jetbrains.annotations.Nullable;
-
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Multimap;
-import com.google.common.collect.ObjectArrays;
-import com.google.common.collect.Sets;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-
-import net.minecraft.advancements.Advancement;
-import net.minecraft.advancements.AdvancementRewards;
-import net.minecraft.advancements.FrameType;
-import net.minecraft.client.renderer.block.model.ItemTransforms;
-import net.minecraft.client.renderer.block.model.ItemTransform;
-import net.minecraft.client.renderer.block.model.Variant;
-import net.minecraft.client.renderer.block.model.BlockModel.GuiLight;
-import net.minecraft.data.DataGenerator;
-import net.minecraft.world.item.enchantment.Enchantments;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.effect.MobEffects;
-import net.minecraft.server.packs.resources.Resource;
-import net.minecraft.server.packs.PackType;
-import net.minecraft.tags.BlockTags;
-import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.client.model.generators.BlockStateProvider;
-import net.minecraftforge.client.model.generators.ConfiguredModel;
-import net.minecraftforge.client.model.generators.ItemModelProvider;
-import net.minecraftforge.client.model.generators.ModelBuilder;
-import net.minecraftforge.client.model.generators.ModelFile;
-import net.minecraftforge.client.model.generators.ModelFile.UncheckedModelFile;
-import net.minecraftforge.client.model.generators.MultiPartBlockStateBuilder;
-import net.minecraftforge.client.model.generators.VariantBlockStateBuilder;
-import net.minecraftforge.common.crafting.ConditionalAdvancement;
-import net.minecraftforge.common.crafting.ConditionalRecipe;
-import net.minecraftforge.common.crafting.conditions.IConditionBuilder;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
-import net.minecraftforge.data.event.GatherDataEvent;
-
-import net.minecraft.world.level.block.BarrelBlock;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.FenceGateBlock;
-import net.minecraft.world.level.block.FurnaceBlock;
-import net.minecraft.world.level.block.IronBarsBlock;
-import net.minecraft.world.level.block.RotatedPillarBlock;
-import net.minecraft.world.level.block.SlabBlock;
-import net.minecraft.world.level.block.StairBlock;
-import net.minecraft.world.level.block.TrapDoorBlock;
+import static net.minecraftforge.debug.DataGeneratorTest.MODID;
 
 @SuppressWarnings("deprecation")
 @Mod(MODID)
@@ -140,12 +144,12 @@ public class DataGeneratorTest
         // Let blockstate provider see generated item models by passing its existing file helper
         ItemModelProvider itemModels = new ItemModels(packOutput, event.getExistingFileHelper());
         gen.addProvider(event.includeClient(), itemModels);
-        gen.addProvider(event.includeClient(), new BlockStates(gen, itemModels.existingFileHelper));
+        gen.addProvider(event.includeClient(), new BlockStates(packOutput, itemModels.existingFileHelper));
         gen.addProvider(event.includeClient(), new SoundDefinitions(packOutput, event.getExistingFileHelper()));
 
         gen.addProvider(event.includeServer(), new Recipes(packOutput));
         gen.addProvider(event.includeServer(), new Tags(packOutput, lookupProvider, event.getExistingFileHelper()));
-        gen.addProvider(event.includeServer(), new Advancements(packOutput, lookupProvider, event.getExistingFileHelper()));
+        gen.addProvider(event.includeServer(), new ForgeAdvancementProvider(packOutput, lookupProvider, event.getExistingFileHelper(), List.of(new Advancements())));
     }
 
     public static class Recipes extends RecipeProvider implements IConditionBuilder
@@ -681,9 +685,9 @@ public class DataGeneratorTest
     {
         private static final Logger LOGGER = LogManager.getLogger();
 
-        public BlockStates(DataGenerator gen, ExistingFileHelper exFileHelper)
+        public BlockStates(PackOutput output, ExistingFileHelper exFileHelper)
         {
-            super(gen, MODID, exFileHelper);
+            super(output, MODID, exFileHelper);
         }
 
         @Override
@@ -1016,54 +1020,45 @@ public class DataGeneratorTest
         }
     }
 
-    public static class Advancements extends ForgeAdvancementProvider
-    {
+    private static class Advancements implements ForgeAdvancementProvider.AdvancementGenerator {
 
+        @Override
+        public void generate(HolderLookup.Provider registries, Consumer<Advancement> saver, ExistingFileHelper existingFileHelper) {
+            Advancement.Builder.advancement().display(Items.DIRT,
+                            Component.translatable(Items.DIRT.getDescriptionId()),
+                            Component.translatable("dirt_description"),
+                            new ResourceLocation("textures/gui/advancements/backgrounds/stone.png"),
+                            FrameType.TASK,
+                            true,
+                            true,
+                            false)
+                    .addCriterion("has_dirt", InventoryChangeTrigger.TriggerInstance.hasItems(Items.DIRT))
+                    .save(saver, new ResourceLocation(MODID, "obtain_dirt"), existingFileHelper);
 
-        public Advancements(PackOutput output, CompletableFuture<HolderLookup.Provider> providerCompletableFuture, ExistingFileHelper existingFileHelper)
-        {
-            super(output, providerCompletableFuture, existingFileHelper, List.of(new Provider()));
-        }
+            Advancement.Builder.advancement().display(Items.DIAMOND_BLOCK,
+                            Component.translatable(Items.DIAMOND_BLOCK.getDescriptionId()),
+                            Component.literal("You obtained a DiamondBlock"),
+                            new ResourceLocation("textures/gui/advancements/backgrounds/stone.png"),
+                            FrameType.CHALLENGE,
+                            true,
+                            true,
+                            false)
+                    .addCriterion("obtained_diamond_block", InventoryChangeTrigger.TriggerInstance.hasItems(Items.DIAMOND_BLOCK))
+                    .save(saver, new ResourceLocation("obtain_diamond_block"), existingFileHelper);
 
-        private static class Provider implements AdvancementGenerator {
+            Advancement.Builder.advancement()
+                    .display(Blocks.GRASS_BLOCK,
+                            Component.translatable("advancements.story.root.title"),
+                            Component.literal("Changed Description"),
+                            new ResourceLocation("textures/gui/advancements/backgrounds/stone.png"),
+                            FrameType.TASK,
+                            false,
+                            false,
+                            false)
+                    .addCriterion("crafting_table", InventoryChangeTrigger.TriggerInstance.hasItems(Blocks.CRAFTING_TABLE))
+                    .save(saver, new ResourceLocation("story/root"), existingFileHelper);
 
-            @Override
-            public void generate(HolderLookup.Provider registries, Consumer<Advancement> saver, ExistingFileHelper existingFileHelper) {
-                Advancement.Builder.advancement().display(Items.DIRT,
-                                Component.translatable(Items.DIRT.getDescriptionId()),
-                                Component.translatable("dirt_description"),
-                                new ResourceLocation("textures/gui/advancements/backgrounds/stone.png"),
-                                FrameType.TASK,
-                                true,
-                                true,
-                                false)
-                        .addCriterion("has_dirt", InventoryChangeTrigger.TriggerInstance.hasItems(Items.DIRT))
-                        .save(saver, new ResourceLocation(MODID, "obtain_dirt"), existingFileHelper);
-
-                Advancement.Builder.advancement().display(Items.DIAMOND_BLOCK,
-                                Component.translatable(Items.DIAMOND_BLOCK.getDescriptionId()),
-                                Component.literal("You obtained a DiamondBlock"),
-                                new ResourceLocation("textures/gui/advancements/backgrounds/stone.png"),
-                                FrameType.CHALLENGE,
-                                true,
-                                true,
-                                false)
-                        .addCriterion("obtained_diamond_block", InventoryChangeTrigger.TriggerInstance.hasItems(Items.DIAMOND_BLOCK))
-                        .save(saver, new ResourceLocation("obtain_diamond_block"), existingFileHelper);
-
-                Advancement.Builder.advancement()
-                        .display(Blocks.GRASS_BLOCK,
-                                Component.translatable("advancements.story.root.title"),
-                                Component.literal("Changed Description"),
-                                new ResourceLocation("textures/gui/advancements/backgrounds/stone.png"),
-                                FrameType.TASK,
-                                false,
-                                false,
-                                false)
-                        .addCriterion("crafting_table", InventoryChangeTrigger.TriggerInstance.hasItems(Blocks.CRAFTING_TABLE))
-                        .save(saver, new ResourceLocation("story/root"), existingFileHelper);
-
-                // This should cause an error because of the parent not existing
+            // This should cause an error because of the parent not existing
 /*            Advancement.Builder.advancement().display(Blocks.COBBLESTONE,
                     new TranslationTextComponent(Items.COBBLESTONE.getDescriptionId()),
                     new StringTextComponent("You got cobblestone"),
@@ -1076,18 +1071,17 @@ public class DataGeneratorTest
                     .parent(new ResourceLocation("not_there/not_here"))
                     .save(consumer, new ResourceLocation("illegal_parent"), fileHelper);*/
 
-                Advancement.Builder.advancement().display(Blocks.COBBLESTONE,
-                                Component.translatable(Items.COBBLESTONE.getDescriptionId()),
-                                Component.literal("You got cobblestone"),
-                                new ResourceLocation("textures/gui/advancements/backgrounds/stone.png"),
-                                FrameType.TASK,
-                                false,
-                                false,
-                                false)
-                        .addCriterion("get_cobbleStone", InventoryChangeTrigger.TriggerInstance.hasItems(Items.COBBLESTONE))
-                        .parent(new ResourceLocation("forge", "dummy_parent"))
-                        .save(saver, new ResourceLocation("good_parent"), existingFileHelper);
-            }
+            Advancement.Builder.advancement().display(Blocks.COBBLESTONE,
+                            Component.translatable(Items.COBBLESTONE.getDescriptionId()),
+                            Component.literal("You got cobblestone"),
+                            new ResourceLocation("textures/gui/advancements/backgrounds/stone.png"),
+                            FrameType.TASK,
+                            false,
+                            false,
+                            false)
+                    .addCriterion("get_cobbleStone", InventoryChangeTrigger.TriggerInstance.hasItems(Items.COBBLESTONE))
+                    .parent(new ResourceLocation("forge", "dummy_parent"))
+                    .save(saver, new ResourceLocation("good_parent"), existingFileHelper);
         }
     }
 

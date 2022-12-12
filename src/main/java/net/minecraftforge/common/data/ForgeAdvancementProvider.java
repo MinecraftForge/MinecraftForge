@@ -20,7 +20,7 @@ import java.util.function.Consumer;
  * An extension of the {@link AdvancementProvider} to provide a feature-complete
  * experience to generate modded advancements.
  */
-public abstract class ForgeAdvancementProvider extends AdvancementProvider
+public class ForgeAdvancementProvider extends AdvancementProvider
 {
     /**
      * Default constructor.
