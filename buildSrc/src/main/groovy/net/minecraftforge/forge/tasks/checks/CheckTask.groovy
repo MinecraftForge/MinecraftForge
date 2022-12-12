@@ -87,15 +87,17 @@ abstract class CheckTask extends DefaultTask implements VerificationTask {
         }
     }
 
-    static <T extends CheckTask> void registerTask(TaskContainer tasks, String taskName, Class<T> clazz,
-                                                   Action<T> configuration) {
+    static <T extends CheckTask> void registerTask(TaskContainer tasks, String taskName, @DelegatesTo.Target('type') Class<T> clazz,
+                                                   @DelegatesTo(genericTypeIndex = 0, target = 'type') Closure configuration) {
         taskName = taskName.capitalize()
         tasks.register("check$taskName", clazz) { CheckTask task ->
-            configuration.execute((T)task)
+            configuration.setDelegate((T) task)
+            configuration.call(task)
             task.mode.set(CheckMode.CHECK)
         }
         tasks.register("checkAndFix$taskName", clazz) { CheckTask task ->
-            configuration.execute((T)task)
+            configuration.setDelegate((T) task)
+            configuration.call(task)
             task.mode.set(CheckMode.FIX)
         }
     }

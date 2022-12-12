@@ -1174,28 +1174,28 @@ project(':forge') {
     }
 
     CheckTask.registerTask(tasks, 'ATs', CheckATs) {
-        it.dependsOn extractInheritance, createSrg2Mcp
-        it.ats.from patcher.accessTransformers
-        it.inheritance = extractInheritance.output
-        it.mappings = createSrg2Mcp.output
+        dependsOn extractInheritance, createSrg2Mcp
+        ats.from patcher.accessTransformers
+        inheritance = extractInheritance.output
+        mappings = createSrg2Mcp.output
     }
 
     CheckTask.registerTask(tasks, 'SAS', CheckSAS) {
-        it.dependsOn extractInheritance
-        it.sass.from patcher.sideAnnotationStrippers
-        it.inheritance = extractInheritance.output
+        dependsOn extractInheritance
+        sass.from patcher.sideAnnotationStrippers
+        inheritance = extractInheritance.output
     }
 
     CheckTask.registerTask(tasks, 'Excs', CheckExcs) {
-        it.dependsOn jar
-        it.binary = jar.archiveFile.get().asFile
-        it.excs.from patcher.excs
+        dependsOn jar
+        binary = jar.archiveFile.get().asFile
+        excs.from patcher.excs
     }
 
     CheckTask.registerTask(tasks, 'Patches', CheckPatches) {
-        it.dependsOn genPatches
-        it.patchDir = file("$rootDir/patches")
-        it.patchesWithS2SArtifact = [
+        dependsOn genPatches
+        patchDir = file("$rootDir/patches")
+        patchesWithS2SArtifact = [
                 'minecraft/net/minecraft/client/renderer/ViewArea.java.patch',
                 'minecraft/net/minecraft/data/models/blockstates/Variant.java.patch',
         ]
