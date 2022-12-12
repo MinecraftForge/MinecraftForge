@@ -2,41 +2,44 @@ package net.minecraftforge.forge.tasks.checks
 
 import groovy.transform.CompileStatic
 import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.provider.ListProperty
+import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputDirectory
+import org.gradle.api.tasks.Optional
 
 import java.nio.file.Files
-import java.nio.file.Paths
+import java.nio.file.Path
 import java.util.regex.Pattern
 
+@CompileStatic
 abstract class CheckPatches extends CheckTask {
     @InputDirectory abstract DirectoryProperty getPatchDir()
+    @Input @Optional abstract ListProperty<String> getPatchesWithS2SArtifact()
 
     @Override
-    @CompileStatic
     void check(Reporter reporter, boolean fix) {
-        def hasS2SArtifact = [
-                Paths.get('patches/minecraft/net/minecraft/client/renderer/ViewArea.java.patch'),
-                Paths.get('patches/minecraft/net/minecraft/data/models/blockstates/Variant.java.patch')
-        ]
-
-        patchDir.get().asFileTree.each { patch ->
-            final patchPath = project.rootDir.toPath().relativize(patch.toPath())
-            verifyPatch(patch, reporter, fix, patchPath.toString(), hasS2SArtifact.contains(patchPath))
+        final patchDir = getPatchDir().get().asFile.toPath()
+        Files.walk(patchDir).withCloseable {
+            it.filter(Files.&isRegularFile).forEach { path ->
+                final String relativeName = patchDir.relativize(path).toString()
+                verifyPatch(path, reporter, fix, relativeName, patchesWithS2SArtifact.get().contains(relativeName.replace('\\', '/')))
+            }
         }
     }
 
-    @CompileStatic
-    void verifyPatch(File patch, Reporter reporter, boolean fix, String patchPath, boolean hasS2SArtifact) {
-        def hunk_start_pattern = Pattern.compile('^@@ -[0-9,]* \\+[0-9,_]* @@$')
-        def white_space_pattern = Pattern.compile('^[+\\-]\\s*$')
-        def import_pattern = Pattern.compile('^[+\\-]\\s*import.*')
-        def field_pattern = Pattern.compile('^[+\\-][\\s]*((public|protected|private)[\\s]*)?(static[\\s]*)?(final)?([^=;]*)(=.*)?;\\s*$')
-        def method_pattern = Pattern.compile('^[+\\-][\\s]*((public|protected|private)[\\s]*)?(static[\\s]*)?(final)?([^(]*)[(]([^)]*)?[)]\\s*[{]\\s*$')
-        def class_pattern = Pattern.compile('^[+\\-][\\s]*((public|protected|private)[\\s]*)?(static[\\s]*)?(final[\\s]*)?(class|interface)([^{]*)[{]\\s*$')
+    void verifyPatch(Path patch, Reporter reporter, boolean fix, String patchPath, boolean hasS2SArtifact) {
+        final hunk_start_pattern = Pattern.compile('^@@ -[0-9,]* \\+[0-9,_]* @@$')
+        final white_space_pattern = Pattern.compile('^[+\\-]\\s*$')
+        final import_pattern = Pattern.compile('^[+\\-]\\s*import.*')
+        final field_pattern = Pattern.compile('^[+\\-][\\s]*((public|protected|private)[\\s]*)?(static[\\s]*)?(final)?([^=;]*)(=.*)?;\\s*$')
+        final method_pattern = Pattern.compile('^[+\\-][\\s]*((public|protected|private)[\\s]*)?(static[\\s]*)?(final)?([^(]*)[(]([^)]*)?[)]\\s*[{]\\s*$')
+        final class_pattern = Pattern.compile('^[+\\-][\\s]*((public|protected|private)[\\s]*)?(static[\\s]*)?(final[\\s]*)?(class|interface)([^{]*)[{]\\s*$')
+
+        final oldFixedErrors = reporter.fixed.size()
 
         final accessMap = [private: 0, null: 1, protected:2, public:3]
 
-        final lines = patch.readLines()
+        final lines = Files.readAllLines(patch)
 
         int hunksStart = 0
         boolean onlyWhiteSpace = false
@@ -56,7 +59,6 @@ abstract class CheckPatches extends CheckTask {
                 if (onlyWhiteSpace) {
                     if (!hasS2SArtifact)
                         reporter.report("Patch contains only white space hunk starting at line ${hunksStart + 1}, file: $patchPath")
-                    logger.lifecycle('Removing white space hunk starting at line {}, file: {}', hunksStart + 1, patchPath)
                     int toRemove = i - hunksStart
                     while (toRemove-- > 0)
                         newLines.remove(newLines.size() - 1)
@@ -74,7 +76,7 @@ abstract class CheckPatches extends CheckTask {
                     def prevTrim = prevLine.substring(1).replaceAll("\\s", "")
                     def currTrim = line.substring(1).replaceAll("\\s", "")
 
-                    if (prevTrim.equals(currTrim)) {
+                    if (prevTrim == currTrim) {
                         prefixChange = true
                     }
 
@@ -153,22 +155,21 @@ abstract class CheckPatches extends CheckTask {
         if (onlyWhiteSpace) {
             if (!hasS2SArtifact)
                 reporter.report("Patch contains only white space hunk starting at line ${hunksStart + 1}, file: $patchPath")
-            logger.lifecycle("Removing white space hunk starting at line {}, file: {}", hunksStart + 1, patchPath)
             def toRemove = i - hunksStart;
             while (toRemove-- > 0)
                 newLines.remove(newLines.size() - 1)
         }
 
-        if (reporter.fixed && fix) {
+        if ((reporter.fixed.size() > oldFixedErrors && fix) || hasS2SArtifact) {
             if (newLines.size() <= 2) {
                 logger.lifecycle("Patch is now empty removing, file: {}", patchPath)
-                Files.delete(patch.toPath())
+                Files.delete(patch)
             }
             else {
                 if (!hasS2SArtifact)
                     logger.lifecycle("*** Updating patch file. Please run setup then genPatches again. ***")
-                patch.withWriter('UTF-8') { writer ->
-                    newLines.each { l -> writer.write(l) }
+                Files.newBufferedWriter(patch).withCloseable {
+                    newLines.each { l -> it.write(l) }
                 }
             }
         }
