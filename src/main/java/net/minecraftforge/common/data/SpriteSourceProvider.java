@@ -18,6 +18,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
 
+/**
+ * <p>Data provider for atlas configuration files.<br>
+ * An atlas configuration is bound to a specific texture atlas such as the {@code minecraft:blocks} atlas and
+ * allows adding additional textures to the atlas by adding {@link SpriteSource}s to the configuration.</p>
+ * <p>See {@link SpriteSources} for the available sources and the constants in this class for the
+ * atlases used in vanilla Minecraft</p>
+ */
 public abstract class SpriteSourceProvider extends JsonCodecProvider<List<SpriteSource>>
 {
     protected static final ResourceLocation BLOCKS_ATLAS = new ResourceLocation("blocks");
@@ -47,8 +54,12 @@ public abstract class SpriteSourceProvider extends JsonCodecProvider<List<Sprite
 
     protected abstract void addSources();
 
-
-
+    /**
+     * Get or create a {@link SourceList} for the given atlas
+     * @param atlas The texture atlas the sources should be added to, see constants at the top for the format
+     *              and the vanilla atlases
+     * @return an existing {@code SourceList} for the given atlas or a new one if not present yet
+     */
     protected final SourceList atlas(ResourceLocation atlas)
     {
         return atlases.computeIfAbsent(atlas, $ -> new SourceList());
@@ -58,6 +69,10 @@ public abstract class SpriteSourceProvider extends JsonCodecProvider<List<Sprite
     {
         private final List<SpriteSource> sources = new ArrayList<>();
 
+        /**
+         * Add the given {@link SpriteSource} to this atlas configuration
+         * @param source The {@code SpriteSource} to be added
+         */
         public SourceList addSource(SpriteSource source)
         {
             sources.add(source);
