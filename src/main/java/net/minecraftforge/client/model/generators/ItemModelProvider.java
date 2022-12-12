@@ -5,7 +5,7 @@
 
 package net.minecraftforge.client.model.generators;
 
-import net.minecraft.data.DataGenerator;
+import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.common.data.ExistingFileHelper;
@@ -20,8 +20,8 @@ import java.util.Objects;
  */
 public abstract class ItemModelProvider extends ModelProvider<ItemModelBuilder> {
 
-    public ItemModelProvider(DataGenerator generator, String modid, ExistingFileHelper existingFileHelper) {
-        super(generator, modid, ITEM_FOLDER, ItemModelBuilder::new, existingFileHelper);
+    public ItemModelProvider(PackOutput output, String modid, ExistingFileHelper existingFileHelper) {
+        super(output, modid, ITEM_FOLDER, ItemModelBuilder::new, existingFileHelper);
     }
 
     public ItemModelBuilder basicItem(Item item)

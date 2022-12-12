@@ -32,7 +32,6 @@ import net.minecraft.server.packs.PackType;
 import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.common.crafting.conditions.ICondition;
 import net.minecraftforge.common.data.ExistingFileHelper.ResourceType;
-import net.minecraftforge.data.event.GatherDataEvent;
 import net.minecraftforge.registries.DataPackRegistriesHooks;
 import org.slf4j.Logger;
 
@@ -48,7 +47,7 @@ import org.slf4j.Logger;
 public class JsonCodecProvider<T> implements DataProvider
 {
     private static final Logger LOGGER = LogUtils.getLogger();
-    protected final DataGenerator dataGenerator;
+    protected final PackOutput output;
     protected final ExistingFileHelper existingFileHelper;
     protected final String modid;
     protected final DynamicOps<JsonElement> dynamicOps;
@@ -59,14 +58,14 @@ public class JsonCodecProvider<T> implements DataProvider
     protected Map<ResourceLocation, ICondition[]> conditions = Collections.emptyMap();
 
     /**
-     * @param dataGenerator DataGenerator provided by {@link GatherDataEvent}.
+     * @param output {@linkplain PackOutput} provided by the {@link DataGenerator}.
      * @param dynamicOps DynamicOps to encode values to jsons with using the provided Codec, e.g. {@link JsonOps#INSTANCE}.
      * @param packType PackType specifying whether to generate entries in assets or data.
      * @param directory String representing the directory to generate jsons in, e.g. "dimension" or "cheesemod/cheese".
      * @param codec Codec to encode values to jsons with using the provided DynamicOps.
      * @param entries Map of named entries to serialize to jsons. Paths for values are derived from the ResourceLocation's entryid:entrypath as specified above.
      */
-    public JsonCodecProvider(DataGenerator dataGenerator, ExistingFileHelper existingFileHelper, String modid, DynamicOps<JsonElement> dynamicOps, PackType packType,
+    public JsonCodecProvider(PackOutput output, ExistingFileHelper existingFileHelper, String modid, DynamicOps<JsonElement> dynamicOps, PackType packType,
           String directory, Codec<T> codec, Map<ResourceLocation, T> entries)
     {
         // Track generated data so other dataproviders can validate if needed.
@@ -75,7 +74,7 @@ public class JsonCodecProvider<T> implements DataProvider
         {
             existingFileHelper.trackGenerated(id, resourceType);
         }
-        this.dataGenerator = dataGenerator;
+        this.output = output;
         this.existingFileHelper = existingFileHelper;
         this.modid = modid;
         this.dynamicOps = dynamicOps;
@@ -92,14 +91,14 @@ public class JsonCodecProvider<T> implements DataProvider
      * be generated this way.
      *
      * @param <T> Registry element type, e.g. Biome
-     * @param dataGenerator DataGenerator provided by {@link GatherDataEvent}.
+     * @param output {@linkplain PackOutput} provided by the {@link DataGenerator}.
      * @param modid namespace of the mod adding this DataProvider, for logging purposes.
      * @param registryOps RegistryOps to encode values to json with.
      * @param registryKey ResourceKey identifying the registry and its directory.
      * @param entries Map of entries to encode and their ResourceLocations. Paths for values are derived from the ResourceLocation's entryid:entrypath.
      */
     @SuppressWarnings("unchecked")
-    public static <T> JsonCodecProvider<T> forDatapackRegistry(DataGenerator dataGenerator, ExistingFileHelper existingFileHelper, String modid,
+    public static <T> JsonCodecProvider<T> forDatapackRegistry(PackOutput output, ExistingFileHelper existingFileHelper, String modid,
           RegistryOps<JsonElement> registryOps, ResourceKey<Registry<T>> registryKey, Map<ResourceLocation, T> entries)
     {
         final ResourceLocation registryId = registryKey.location();
@@ -110,13 +109,13 @@ public class JsonCodecProvider<T> implements DataProvider
                                       : registryId.getNamespace() + "/" + registryId.getPath();
         RegistryDataLoader.RegistryData<?> registryData = DataPackRegistriesHooks.getDataPackRegistries().stream().filter(data -> data.key() == registryKey).findAny().orElseThrow();
         final Codec<T> codec = (Codec<T>) registryData.elementCodec();
-        return new JsonCodecProvider<>(dataGenerator, existingFileHelper, modid, registryOps, PackType.SERVER_DATA, registryFolder, codec, entries);
+        return new JsonCodecProvider<>(output, existingFileHelper, modid, registryOps, PackType.SERVER_DATA, registryFolder, codec, entries);
     }
 
     @Override
     public CompletableFuture<?> run(final CachedOutput cache)
     {
-        final Path outputFolder = this.dataGenerator.getPackOutput().getOutputFolder(this.packType == PackType.CLIENT_RESOURCES
+        final Path outputFolder = this.output.getOutputFolder(this.packType == PackType.CLIENT_RESOURCES
                 ? PackOutput.Target.RESOURCE_PACK
                 : PackOutput.Target.DATA_PACK);
         ImmutableList.Builder<CompletableFuture<?>> futuresBuilder = new ImmutableList.Builder<>();

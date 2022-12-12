@@ -15,6 +15,7 @@ import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.data.DataGenerator;
+import net.minecraft.data.PackOutput;
 import net.minecraft.data.models.model.ModelLocationUtils;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
@@ -139,17 +140,18 @@ public class CustomTransformTypeTest
     public void gatherData(GatherDataEvent event)
     {
         DataGenerator gen = event.getGenerator();
+        final PackOutput output = gen.getPackOutput();
 
-        gen.addProvider(event.includeClient(), new ItemModels(gen, event.getExistingFileHelper()));
-        gen.addProvider(event.includeClient(), new BlockStateModels(gen, event.getExistingFileHelper()));
+        gen.addProvider(event.includeClient(), new ItemModels(output, event.getExistingFileHelper()));
+        gen.addProvider(event.includeClient(), new BlockStateModels(output, event.getExistingFileHelper()));
     }
 
     public static class BlockStateModels extends BlockStateProvider
     {
 
-        public BlockStateModels(DataGenerator gen, ExistingFileHelper exFileHelper)
+        public BlockStateModels(PackOutput output, ExistingFileHelper exFileHelper)
         {
-            super(gen, MODID, exFileHelper);
+            super(output, MODID, exFileHelper);
         }
 
         @Override
@@ -164,9 +166,9 @@ public class CustomTransformTypeTest
 
     public static class ItemModels extends ItemModelProvider
     {
-        public ItemModels(DataGenerator generator, ExistingFileHelper existingFileHelper)
+        public ItemModels(PackOutput output, ExistingFileHelper existingFileHelper)
         {
-            super(generator, MODID, existingFileHelper);
+            super(output, MODID, existingFileHelper);
         }
 
         @Override

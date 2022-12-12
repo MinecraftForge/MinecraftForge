@@ -136,12 +136,12 @@ public class DataGeneratorTest
         PackOutput packOutput = gen.getPackOutput();
         CompletableFuture<HolderLookup.Provider> lookupProvider = event.getLookupProvider();
 
-        gen.addProvider(event.includeClient(), new Lang(gen));
+        gen.addProvider(event.includeClient(), new Lang(packOutput));
         // Let blockstate provider see generated item models by passing its existing file helper
-        ItemModelProvider itemModels = new ItemModels(gen, event.getExistingFileHelper());
+        ItemModelProvider itemModels = new ItemModels(packOutput, event.getExistingFileHelper());
         gen.addProvider(event.includeClient(), itemModels);
         gen.addProvider(event.includeClient(), new BlockStates(gen, itemModels.existingFileHelper));
-        gen.addProvider(event.includeClient(), new SoundDefinitions(gen, event.getExistingFileHelper()));
+        gen.addProvider(event.includeClient(), new SoundDefinitions(packOutput, event.getExistingFileHelper()));
 
         gen.addProvider(event.includeServer(), new Recipes(packOutput));
         gen.addProvider(event.includeServer(), new Tags(packOutput, lookupProvider, event.getExistingFileHelper()));
@@ -334,9 +334,9 @@ public class DataGeneratorTest
         private static final Logger LOGGER = LogManager.getLogger();
         private final ExistingFileHelper helper;
 
-        public SoundDefinitions(final DataGenerator generator, final ExistingFileHelper helper)
+        public SoundDefinitions(final PackOutput output, final ExistingFileHelper helper)
         {
-            super(generator, MODID, helper);
+            super(output, MODID, helper);
             this.helper = helper;
         }
 
@@ -589,7 +589,7 @@ public class DataGeneratorTest
 
     public static class Lang extends LanguageProvider
     {
-        public Lang(DataGenerator gen)
+        public Lang(PackOutput gen)
         {
             super(gen, MODID, "en_us");
         }
@@ -611,7 +611,7 @@ public class DataGeneratorTest
     {
         private static final Logger LOGGER = LogManager.getLogger();
 
-        public ItemModels(DataGenerator generator, ExistingFileHelper existingFileHelper)
+        public ItemModels(PackOutput generator, ExistingFileHelper existingFileHelper)
         {
             super(generator, MODID, existingFileHelper);
         }
