@@ -106,9 +106,7 @@ public class DeferredRegistryTest {
         gen.addProvider(event.includeClient(), new BlockStateProvider(gen, MODID, event.getExistingFileHelper()) {
             @Override
             protected void registerStatesAndModels() {
-                ModelFile model = models().cubeAll(BLOCK.getId().getPath(), mcLoc("block/furnace_top"));
-                simpleBlock(BLOCK.get(), model);
-                simpleBlockItem(BLOCK.get(), model);
+                simpleBlockWithItem(BLOCK.get(), models().cubeAll(BLOCK.getId().getPath(), mcLoc("block/furnace_top")));
             }
         });
     }
