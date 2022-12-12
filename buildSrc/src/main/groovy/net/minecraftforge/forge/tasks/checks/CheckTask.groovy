@@ -14,7 +14,7 @@ import org.gradle.api.tasks.VerificationTask
 @CompileStatic
 abstract class CheckTask extends DefaultTask implements VerificationTask {
     @Input
-    abstract Property<CheckType> getType()
+    abstract Property<CheckMode> getMode()
 
     private boolean ignoreFailures = false
 
@@ -33,12 +33,12 @@ abstract class CheckTask extends DefaultTask implements VerificationTask {
     void run() {
         Util.init()
 
-        final doFix = getType().get() === CheckType.FIX
+        final doFix = getMode().get() === CheckMode.FIX
         final Reporter reporter = new Reporter(doFix)
         check(reporter, doFix)
         
         if (reporter.messages) {
-            if (getType().get() === CheckType.CHECK) {
+            if (getMode().get() === CheckMode.CHECK) {
                 logger.error("Check task '{}' found errors:\n{}", name, reporter.messages.join('\n'))
                 if (!ignoreFailures) {
                     throw new IllegalArgumentException("${reporter.messages.size()} errors were found!")
@@ -92,11 +92,11 @@ abstract class CheckTask extends DefaultTask implements VerificationTask {
         taskName = taskName.capitalize()
         tasks.register("check$taskName", clazz) { CheckTask task ->
             configuration.execute((T)task)
-            task.type.set(CheckType.CHECK)
+            task.mode.set(CheckMode.CHECK)
         }
         tasks.register("checkAndFix$taskName", clazz) { CheckTask task ->
             configuration.execute((T)task)
-            task.type.set(CheckType.FIX)
+            task.mode.set(CheckMode.FIX)
         }
     }
 }
