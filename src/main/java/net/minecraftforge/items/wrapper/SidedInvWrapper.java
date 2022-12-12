@@ -17,11 +17,24 @@ import net.minecraftforge.items.ItemHandlerHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.function.IntUnaryOperator;
+
 public class SidedInvWrapper implements IItemHandlerModifiable
 {
     protected final WorldlyContainer inv;
     @Nullable
     protected final Direction side;
+
+    // A few special cases to account for canPlaceItem implementations attempting to limit specific inputs to 1,
+    // by returning false if there's already a contained item. This doesn't work with modded inserted sizes > 1.
+    // - Limit buckets to 1 in furnace fuel inputs.
+    // - Limit brewing stand "bottle" inputs to 1.
+    // Done using lambdas to avoid the overhead of instanceof checks in hot code.
+    private final IntUnaryOperator slotLimit;
+    private final InsertLimit newStackInsertLimit;
+    private interface InsertLimit {
+        int limitInsert(int wrapperSlot, int invSlot, ItemStack stack);
+    }
 
     @SuppressWarnings("unchecked")
     public static LazyOptional<IItemHandlerModifiable>[] create(WorldlyContainer inv, Direction... sides) {
@@ -37,6 +50,14 @@ public class SidedInvWrapper implements IItemHandlerModifiable
     {
         this.inv = inv;
         this.side = side;
+        if (inv instanceof BrewingStandBlockEntity)
+            this.slotLimit = wrapperSlot -> getSlot(inv, wrapperSlot, side) < 3 ? 1 : inv.getMaxStackSize();
+        else
+            this.slotLimit = wrapperSlot -> inv.getMaxStackSize();
+        if (inv instanceof AbstractFurnaceBlockEntity)
+            this.newStackInsertLimit = (wrapperSlot, invSlot, stack) -> invSlot == 1 && stack.is(Items.BUCKET) ? 1 : Math.min(stack.getMaxStackSize(), getSlotLimit(wrapperSlot));
+        else
+            this.newStackInsertLimit = (wrapperSlot, invSlot, stack) -> Math.min(stack.getMaxStackSize(), getSlotLimit(wrapperSlot));
     }
 
     public static int getSlot(WorldlyContainer inv, int slot, @Nullable Direction side)
@@ -144,18 +165,7 @@ public class SidedInvWrapper implements IItemHandlerModifiable
             if (!inv.canPlaceItemThroughFace(slot1, stack, side) || !inv.canPlaceItem(slot1, stack))
                 return stack;
 
-            m = Math.min(stack.getMaxStackSize(), getSlotLimit(slot));
-
-            // A few special cases to account for canPlaceItem implementations attempting to limit specific inputs to 1,
-            // by returning false if there's already a contained item. This doesn't work with modded inserted sizes > 1.
-            // - Limit buckets to 1 in furnace fuel inputs.
-            // - Limit brewing stand "bottle" inputs to 1.
-            // See also https://github.com/MinecraftForge/MinecraftForge/issues/9178
-            if ((inv instanceof AbstractFurnaceBlockEntity && getSlot(inv, slot, side) == 1 && stack.is(Items.BUCKET))
-                    || (inv instanceof BrewingStandBlockEntity && getSlot(inv, slot, side) < 3))
-            {
-                m = 1;
-            }
+            m = newStackInsertLimit.limitInsert(slot, slot1, stack);
 
             if (m < stack.getCount())
             {
@@ -241,7 +251,7 @@ public class SidedInvWrapper implements IItemHandlerModifiable
     @Override
     public int getSlotLimit(int slot)
     {
-        return inv.getMaxStackSize();
+        return slotLimit.applyAsInt(slot);
     }
 
     @Override
