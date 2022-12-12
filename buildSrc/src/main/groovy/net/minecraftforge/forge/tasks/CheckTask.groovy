@@ -44,7 +44,7 @@ abstract class CheckTask extends DefaultTask {
     abstract void check(Reporter reporter, boolean fix)
 
     @CompileStatic
-    protected static final class Reporter {
+    static final class Reporter {
         final boolean trackFixed
         Reporter(boolean trackFixed) {
             this.trackFixed = trackFixed
