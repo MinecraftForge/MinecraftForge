@@ -624,7 +624,7 @@ public class ForgeEventFactory
         return !blockGrowFeature(level, randomSource, pos, null).getResult().equals(Result.DENY);
     }
 
-    public static SaplingGrowTreeEvent blockGrowFeature(LevelAccessor level, RandomSource randomSource, BlockPos pos, @Nullable Holder<? extends ConfiguredFeature<?, ?>> holder)
+    public static SaplingGrowTreeEvent blockGrowFeature(LevelAccessor level, RandomSource randomSource, BlockPos pos, @Nullable Holder<ConfiguredFeature<?, ?>> holder)
     {
         SaplingGrowTreeEvent event = new SaplingGrowTreeEvent(level, randomSource, pos, holder);
         MinecraftForge.EVENT_BUS.post(event);
