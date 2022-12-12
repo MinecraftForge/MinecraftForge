@@ -1,4 +1,4 @@
-package net.minecraftforge.forge.tasks
+package net.minecraftforge.forge.tasks.checks
 
 import groovy.transform.CompileStatic
 

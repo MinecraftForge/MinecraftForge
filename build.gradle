@@ -1,4 +1,9 @@
 import groovy.json.JsonBuilder
+import net.minecraftforge.forge.tasks.checks.CheckATs
+import net.minecraftforge.forge.tasks.checks.CheckExcs
+import net.minecraftforge.forge.tasks.checks.CheckPatches
+import net.minecraftforge.forge.tasks.checks.CheckSAS
+import net.minecraftforge.forge.tasks.checks.CheckTask
 
 import java.nio.file.Files
 import java.util.Date
@@ -1186,18 +1191,13 @@ project(':forge') {
         it.excs.from patcher.excs
     }
 
-    task checkPatchesAndFix(type: CheckPatches, dependsOn: genPatches) {
-        patchDir = file("$rootDir/patches")
-        autoFix = true
-    }
-
-    task checkPatches(type: CheckPatches, dependsOn: genPatches) {
-        patchDir = file("$rootDir/patches")
-        autoFix = false
+    CheckTask.registerTask(tasks, 'Patches', CheckPatches) {
+        it.dependsOn genPatches
+        it.patchDir = file("$rootDir/patches")
     }
 
     genPatches {
-        finalizedBy checkPatches
+        finalizedBy checkAndFixPatches
         autoHeader true
         lineEnding = '\n'
     }

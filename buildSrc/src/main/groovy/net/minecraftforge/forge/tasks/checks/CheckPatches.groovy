@@ -1,37 +1,32 @@
-package net.minecraftforge.forge.tasks
+package net.minecraftforge.forge.tasks.checks
 
-import org.gradle.api.DefaultTask
+import groovy.transform.CompileStatic
 import org.gradle.api.file.DirectoryProperty
-import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputDirectory
-import org.gradle.api.tasks.TaskAction
 
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.util.regex.Pattern
 
-abstract class CheckPatches extends DefaultTask {
+abstract class CheckPatches extends CheckTask {
     @InputDirectory abstract DirectoryProperty getPatchDir()
-    @Input boolean autoFix = false
 
-    @TaskAction
-    protected void exec() {
+    @Override
+    @CompileStatic
+    void check(Reporter reporter, boolean fix) {
         def hasS2SArtifact = [
-                Paths.get("patches/minecraft/net/minecraft/client/renderer/ViewArea.java.patch"),
-                Paths.get("patches/minecraft/net/minecraft/data/models/blockstates/Variant.java.patch")
+                Paths.get('patches/minecraft/net/minecraft/client/renderer/ViewArea.java.patch'),
+                Paths.get('patches/minecraft/net/minecraft/data/models/blockstates/Variant.java.patch')
         ]
 
-        def verified = true;
         patchDir.get().asFileTree.each { patch ->
-            def patchPath = project.rootDir.toPath().relativize(patch.toPath())
-            verified &= verifyPatch(patch, autoFix, patchPath.toString(), hasS2SArtifact.contains(patchPath))
+            final patchPath = project.rootDir.toPath().relativize(patch.toPath())
+            verifyPatch(patch, reporter, fix, patchPath.toString(), hasS2SArtifact.contains(patchPath))
         }
-
-        if (!verified)
-            throw new RuntimeException('One or more patches failed verification. Check the log for errors.')
     }
 
-    def verifyPatch(patch, fix, patchPath, hasS2SArtifact) {
+    @CompileStatic
+    void verifyPatch(File patch, Reporter reporter, boolean fix, String patchPath, boolean hasS2SArtifact) {
         def hunk_start_pattern = Pattern.compile('^@@ -[0-9,]* \\+[0-9,_]* @@$')
         def white_space_pattern = Pattern.compile('^[+\\-]\\s*$')
         def import_pattern = Pattern.compile('^[+\\-]\\s*import.*')
@@ -39,46 +34,32 @@ abstract class CheckPatches extends DefaultTask {
         def method_pattern = Pattern.compile('^[+\\-][\\s]*((public|protected|private)[\\s]*)?(static[\\s]*)?(final)?([^(]*)[(]([^)]*)?[)]\\s*[{]\\s*$')
         def class_pattern = Pattern.compile('^[+\\-][\\s]*((public|protected|private)[\\s]*)?(static[\\s]*)?(final[\\s]*)?(class|interface)([^{]*)[{]\\s*$')
 
-        def accessMap = [("private"):0, (null):1, ("protected"):2, ("public"):3]
+        final accessMap = [private: 0, null: 1, protected:2, public:3]
 
-        def hasProblem = false;
-        def lines = patch.readLines()
+        final lines = patch.readLines()
 
-        def hunksStart = 0
-        def onlyWhiteSpace = false
+        int hunksStart = 0
+        boolean onlyWhiteSpace = false
 
-        def didFix = false
-        def newLines = []
-        def whiteSpaceErrors = []
+        final List<String> newLines = []
 
         // First two lines are file name ++/-- and we do not care
         newLines.add(lines[0] + '\n')
         newLines.add(lines[1] + '\n')
 
-        int i = 2
-        for (; i < lines.size(); ++i) {
+        int i
+        for (i = 2; i < lines.size(); ++i) {
             def line = lines[i]
             newLines.add(line + '\n')
 
             if (hunk_start_pattern.matcher(line).find()) {
                 if (onlyWhiteSpace) {
-                    if (fix || hasS2SArtifact) {
-                        logger.lifecycle("Removing white space hunk starting at line {}, file: {}", hunksStart + 1, patchPath)
-                        def toRemove = i - hunksStart;
-                        while (toRemove-- > 0)
-                            newLines.remove(newLines.size() - 1)
-                        didFix = true
-                    }
-                    else {
-                        logger.lifecycle("Patch contains only white space hunk starting at line {}, file: {}", hunksStart + 1, patchPath)
-                        hasProblem = true
-                    }
-                }
-                else {
-                    if (!whiteSpaceErrors.empty)
-                        hasProblem = true
-                    whiteSpaceErrors.each { error -> logger.lifecycle(error) }
-                    whiteSpaceErrors.clear()
+                    if (!hasS2SArtifact)
+                        reporter.report("Patch contains only white space hunk starting at line ${hunksStart + 1}, file: $patchPath")
+                    logger.lifecycle('Removing white space hunk starting at line {}, file: {}', hunksStart + 1, patchPath)
+                    int toRemove = i - hunksStart
+                    while (toRemove-- > 0)
+                        newLines.remove(newLines.size() - 1)
                 }
                 hunksStart = i
                 onlyWhiteSpace = true
@@ -105,8 +86,7 @@ abstract class CheckPatches extends DefaultTask {
                             pMatcher.group(5) == cMatcher.group(5) && // field name
                             pMatcher.group(3) == cMatcher.group(3) && // static
                             (accessMap[pMatcher.group(2)] < accessMap[cMatcher.group(2)] || pMatcher.group(4) != cMatcher.group(4))) {
-                        logger.lifecycle("Patch contains access changes or final removal at line {}, file: {}", i + 1, patchPath)
-                        hasProblem = true
+                        reporter.report("Patch contains access changes or final removal at line ${i + 1}, file: $patchPath", true)
                     }
 
                     pMatcher = method_pattern.matcher(prevLine)
@@ -117,8 +97,7 @@ abstract class CheckPatches extends DefaultTask {
                             pMatcher.group(5) == cMatcher.group(5) && // <T> void name
                             pMatcher.group(3) == cMatcher.group(3) && // static
                             (accessMap[pMatcher.group(2)] < accessMap[cMatcher.group(2)] || pMatcher.group(4) != cMatcher.group(4))) {
-                        logger.lifecycle("Patch contains access changes or final removal at line {}, file: {}", i + 1, patchPath)
-                        hasProblem = true
+                        reporter.report("Patch contains access changes or final removal at line ${i + 1}, file: $patchPath", true)
                     }
 
                     pMatcher = class_pattern.matcher(prevLine)
@@ -129,78 +108,58 @@ abstract class CheckPatches extends DefaultTask {
                             pMatcher.group(5) == cMatcher.group(5) && // class | interface
                             pMatcher.group(3) == cMatcher.group(3) && // static
                             (accessMap[pMatcher.group(2)] < accessMap[cMatcher.group(2)] || pMatcher.group(4) != cMatcher.group(4))) {
-                        logger.lifecycle("Patch contains access changes or final removal at line {}, file: {}", i + 1, patchPath)
-                        hasProblem = true
+                        reporter.report("Patch contains access changes or final removal at line ${i + 1}, file: $patchPath", true)
                     }
                 }
 
                 if (line.charAt(0) == (char)'-' && i + 1 < lines.size()) {
-                    def nextLine = lines[i + 1]
+                    final nextLine = lines[i + 1]
                     if (nextLine.charAt(0) == (char)'+') {
-                        def nextTrim = nextLine.substring(1).replaceAll("\\s", "")
-                        def currTrim = line.substring(1).replaceAll("\\s", "")
+                        final nextTrim = nextLine.substring(1).replaceAll("\\s", "")
+                        final currTrim = line.substring(1).replaceAll("\\s", "")
 
-                        if (nextTrim.equals(currTrim)) {
+                        if (nextTrim == currTrim) {
                             prefixChange = true
                         }
                     }
                 }
 
-                def isWhiteSpaceChange = white_space_pattern.matcher(line).find()
+                final isWhiteSpaceChange = white_space_pattern.matcher(line).find()
 
                 if (!prefixChange && !isWhiteSpaceChange) {
                     onlyWhiteSpace = hasS2SArtifact && import_pattern.matcher(line).find()
-                }
-                else if (isWhiteSpaceChange) {
-                    def prevLineChange = prevLine.startsWithAny('+','-')
-                    def nextLineChange = i + 1 < lines.size() && lines[i + 1].startsWithAny('+','-')
+                } else if (isWhiteSpaceChange) {
+                    final prevLineChange = prevLine.startsWithAny('+','-')
+                    final nextLineChange = i + 1 < lines.size() && lines[i + 1].startsWithAny('+','-')
 
                     if (!prevLineChange && !nextLineChange) {
-                        whiteSpaceErrors.add(String.format("Patch contains white space change in valid hunk at line %d (cannot auto fix), file: %s", i + 1, patchPath))
+                        reporter.report("Patch contains white space change in valid hunk at line ${i + 1} (cannot auto fix), file: $patchPath")
                     }
                 }
 
-                if (line.contains("\t")) {
-                    if (!fix) {
-                        logger.lifecycle("Patch contains tabs on line {}, file: {}", i + 1, patchPath)
-                        hasProblem = true
-                    }
-                    else {
-                        logger.lifecycle("Fixing tabs on line {}, file: {}", i + 1, patchPath)
-                        line = line.replaceAll('\t', '    ')
-                        newLines.remove(newLines.size() - 1)
-                        newLines.add(line + '\n')
-                        didFix = true
-                    }
+                if (line.contains('\t')) {
+                    reporter.report("Patch contains tabs on line ${i + 1}, file: $patchPath")
+                    line = line.replaceAll('\t', '    ')
+                    newLines.remove(newLines.size() - 1)
+                    newLines.add(line + '\n')
                 }
 
                 if (import_pattern.matcher(line).find() && !hasS2SArtifact) {
-                    logger.lifecycle("Patch contains import change on line {}, file: {}", i + 1, patchPath)
-                    hasProblem = true
+                    reporter.report("Patch contains import change on line ${i + 1}, file: $patchPath", false)
                 }
             }
         }
 
         if (onlyWhiteSpace) {
-            if (fix || hasS2SArtifact) {
-                logger.lifecycle("Removing white space hunk starting at line {}, file: {}", hunksStart + 1, patchPath)
-                def toRemove = i - hunksStart;
-                while (toRemove-- > 0)
-                    newLines.remove(newLines.size() - 1)
-                didFix = true
-            }
-            else {
-                logger.lifecycle("Patch contains only white space hunk starting at line {}, file: {}", hunksStart + 1, patchPath)
-                hasProblem = true
-            }
-        }
-        else {
-            if (!whiteSpaceErrors.empty)
-                hasProblem = true
-            whiteSpaceErrors.each { error -> logger.lifecycle(error) }
+            if (!hasS2SArtifact)
+                reporter.report("Patch contains only white space hunk starting at line ${hunksStart + 1}, file: $patchPath")
+            logger.lifecycle("Removing white space hunk starting at line {}, file: {}", hunksStart + 1, patchPath)
+            def toRemove = i - hunksStart;
+            while (toRemove-- > 0)
+                newLines.remove(newLines.size() - 1)
         }
 
-        if (didFix) {
+        if (reporter.fixed && fix) {
             if (newLines.size() <= 2) {
                 logger.lifecycle("Patch is now empty removing, file: {}", patchPath)
                 Files.delete(patch.toPath())
@@ -213,7 +172,5 @@ abstract class CheckPatches extends DefaultTask {
                 }
             }
         }
-
-        return !hasProblem
     }
 }

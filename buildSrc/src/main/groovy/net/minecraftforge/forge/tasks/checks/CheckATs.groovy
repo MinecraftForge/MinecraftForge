@@ -1,7 +1,8 @@
-package net.minecraftforge.forge.tasks
+package net.minecraftforge.forge.tasks.checks
 
 import groovy.transform.CompileStatic
 import groovy.transform.TupleConstructor
+import net.minecraftforge.forge.tasks.InheritanceData
 import net.minecraftforge.srgutils.IMappingFile
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.RegularFile
@@ -105,7 +106,7 @@ abstract class CheckATs extends CheckTask {
 							value.methods.each { mtd, v ->
 								if (mtd.startsWith('<init>')) {
 									def child = tcls.replaceAll('/', '\\.') + ' ' + mtd.replace(' ', '')
-									if (call(v.access) < 3) {
+									if (accessLevel(v.access) < 3) {
 										if (lines.containsKey(child)) {
 											toRemove.add(child)
 										} else if (child !in entry.existing) {

@@ -1,6 +1,7 @@
-package net.minecraftforge.forge.tasks
+package net.minecraftforge.forge.tasks.checks
 
 import groovy.transform.CompileStatic
+import net.minecraftforge.forge.tasks.Util
 import org.gradle.api.Action
 import org.gradle.api.DefaultTask
 import org.gradle.api.logging.LogLevel
