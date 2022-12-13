@@ -6,16 +6,16 @@
 package net.minecraftforge.common.data;
 
 import net.minecraft.client.renderer.texture.atlas.sources.SingleFile;
-import net.minecraft.data.DataGenerator;
+import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.Optional;
 
 public class ForgeSpriteSourceProvider extends SpriteSourceProvider
 {
-    public ForgeSpriteSourceProvider(DataGenerator generator, ExistingFileHelper fileHelper)
+    public ForgeSpriteSourceProvider(PackOutput output, ExistingFileHelper fileHelper)
     {
-        super(generator, fileHelper, "forge");
+        super(output, fileHelper, "forge");
     }
 
     @Override

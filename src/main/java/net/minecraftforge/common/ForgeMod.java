@@ -490,7 +490,7 @@ public class ForgeMod
         gen.addProvider(event.includeServer(), new ForgeLootTableProvider(packOutput));
         gen.addProvider(event.includeServer(), new ForgeBiomeTagsProvider(packOutput, lookupProvider, existingFileHelper));
 
-        gen.addProvider(event.includeClient(), new ForgeSpriteSourceProvider(gen, existingFileHelper));
+        gen.addProvider(event.includeClient(), new ForgeSpriteSourceProvider(packOutput, existingFileHelper));
     }
 
     public void missingSoundMapping(MissingMappingsEvent event)

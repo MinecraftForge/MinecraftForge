@@ -8,7 +8,7 @@ package net.minecraftforge.common.data;
 import com.mojang.serialization.JsonOps;
 import net.minecraft.client.renderer.texture.atlas.SpriteSource;
 import net.minecraft.client.renderer.texture.atlas.SpriteSources;
-import net.minecraft.data.DataGenerator;
+import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
 
@@ -40,9 +40,9 @@ public abstract class SpriteSourceProvider extends JsonCodecProvider<List<Sprite
 
     private final Map<ResourceLocation, SourceList> atlases = new HashMap<>();
 
-    public SpriteSourceProvider(DataGenerator generator, ExistingFileHelper fileHelper, String modid)
+    public SpriteSourceProvider(PackOutput output, ExistingFileHelper fileHelper, String modid)
     {
-        super(generator, fileHelper, modid, JsonOps.INSTANCE, PackType.CLIENT_RESOURCES, "atlases", SpriteSources.FILE_CODEC, Map.of());
+        super(output, fileHelper, modid, JsonOps.INSTANCE, PackType.CLIENT_RESOURCES, "atlases", SpriteSources.FILE_CODEC, Map.of());
     }
 
     @Override
