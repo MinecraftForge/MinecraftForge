@@ -42,6 +42,7 @@ public class BlockGeometryBakingContext implements IGeometryBakingContext
     private Transformation rootTransform;
     @Nullable
     private ResourceLocation renderTypeHint;
+    private boolean gui3d = true;
 
     @ApiStatus.Internal
     public BlockGeometryBakingContext(BlockModel owner)
@@ -94,7 +95,7 @@ public class BlockGeometryBakingContext implements IGeometryBakingContext
     @Override
     public boolean isGui3d()
     {
-        return true;
+        return gui3d;
     }
 
     @Override
@@ -142,12 +143,18 @@ public class BlockGeometryBakingContext implements IGeometryBakingContext
         this.renderTypeHint = renderTypeHint;
     }
 
+    public void setGui3d(boolean gui3d)
+    {
+        this.gui3d = gui3d;
+    }
+
     public void copyFrom(BlockGeometryBakingContext other)
     {
         this.customGeometry = other.customGeometry;
         this.rootTransform = other.rootTransform;
         this.visibilityData.copyFrom(other.visibilityData);
         this.renderTypeHint = other.renderTypeHint;
+        this.gui3d = other.gui3d;
     }
 
     public Collection<Material> getTextureDependencies(Function<ResourceLocation, UnbakedModel> modelGetter, Set<Pair<String, String>> missingTextureErrors)
