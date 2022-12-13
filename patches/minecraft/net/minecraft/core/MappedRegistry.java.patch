@@ -17,7 +17,16 @@
        this.m_205921_(p_256594_);
        Validate.notNull(p_256594_);
        Validate.notNull(p_256374_);
-@@ -300,6 +_,12 @@
+@@ -145,6 +_,8 @@
+          reference = this.f_205842_.computeIfAbsent(p_256594_, (p_258168_) -> {
+             return Holder.Reference.m_254896_(this.m_255331_(), p_258168_);
+          });
++         // Forge: Bind the value immediately so it can be queried while the registry is not frozen
++         reference.m_247654_(p_256374_);
+       }
+ 
+       this.f_205842_.put(p_256594_, reference);
+@@ -300,14 +_,17 @@
        return this.f_205842_.containsKey(p_175392_);
     }
  
@@ -30,6 +39,14 @@
     public Registry<T> m_203521_() {
        if (this.f_205845_) {
           return this;
+       } else {
+          this.f_205845_ = true;
+-         this.f_205843_.forEach((p_247989_, p_247990_) -> {
+-            p_247990_.m_247654_(p_247989_);
+-         });
+          List<ResourceLocation> list = this.f_205842_.entrySet().stream().filter((p_211055_) -> {
+             return !p_211055_.getValue().m_203633_();
+          }).map((p_211794_) -> {
 @@ -321,7 +_,8 @@
                    throw new IllegalStateException("Some intrusive holders were not registered: " + this.f_244282_.values());
                 }
