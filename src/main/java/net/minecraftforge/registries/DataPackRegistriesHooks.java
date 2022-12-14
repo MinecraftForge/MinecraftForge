@@ -39,7 +39,6 @@ public final class DataPackRegistriesHooks
             throw new IllegalCallerException("Attempted to call DataPackRegistriesHooks#grabNetworkableRegistries!");
         NETWORKABLE_REGISTRIES.forEach(builder::put);
         NETWORKABLE_REGISTRIES = new HashMap<>(builder.build());
-        SYNCED_CUSTOM_REGISTRIES.clear();
         return Collections.unmodifiableMap(NETWORKABLE_REGISTRIES);
     }
 
