@@ -178,7 +178,7 @@
        TooltipFlag.Default tooltipflag$default = this.f_96541_.f_91066_.f_92125_ ? TooltipFlag.Default.f_256730_ : TooltipFlag.Default.f_256752_;
        TooltipFlag tooltipflag = flag ? tooltipflag$default.m_257777_() : tooltipflag$default;
        List<Component> list = p_98591_.m_41651_(this.f_96541_.f_91074_, tooltipflag);
-@@ -641,8 +_,8 @@
+@@ -641,20 +_,20 @@
  
           int i = 1;
  
@@ -189,7 +189,12 @@
                 list1.add(i++, creativemodetab.m_40786_().m_6881_().m_130940_(ChatFormatting.BLUE));
              }
           }
-@@ -654,7 +_,7 @@
+       }
+ 
+-      this.m_169388_(p_98590_, list1, p_98591_.m_150921_(), p_98592_, p_98593_);
++      this.renderTooltip(p_98590_, list1, p_98591_.m_150921_(), p_98592_, p_98593_, null, p_98591_);
+    }
+ 
     protected void m_7286_(PoseStack p_98572_, float p_98573_, int p_98574_, int p_98575_) {
        RenderSystem.m_157429_(1.0F, 1.0F, 1.0F, 1.0F);
  
