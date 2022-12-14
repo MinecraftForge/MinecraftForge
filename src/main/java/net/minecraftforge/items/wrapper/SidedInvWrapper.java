@@ -25,14 +25,10 @@ public class SidedInvWrapper implements IItemHandlerModifiable
     @Nullable
     protected final Direction side;
 
-    // A few special cases to account for canPlaceItem implementations attempting to limit specific inputs to 1,
-    // by returning false if there's already a contained item. This doesn't work with modded inserted sizes > 1.
-    // - Limit buckets to 1 in furnace fuel inputs.
-    // - Limit brewing stand "bottle" inputs to 1.
-    // Done using lambdas to avoid the overhead of instanceof checks in hot code.
     private final IntUnaryOperator slotLimit;
     private final InsertLimit newStackInsertLimit;
-    private interface InsertLimit {
+    private interface InsertLimit
+    {
         int limitInsert(int wrapperSlot, int invSlot, ItemStack stack);
     }
 
@@ -50,6 +46,12 @@ public class SidedInvWrapper implements IItemHandlerModifiable
     {
         this.inv = inv;
         this.side = side;
+
+        // A few special cases to account for canPlaceItem implementations attempting to limit specific inputs to 1,
+        // by returning false if there's already a contained item. This doesn't work with modded inserted sizes > 1.
+        // - Limit buckets to 1 in furnace fuel inputs.
+        // - Limit brewing stand "bottle" inputs to 1.
+        // Done using lambdas to avoid the overhead of instanceof checks in hot code.
         if (inv instanceof BrewingStandBlockEntity)
             this.slotLimit = wrapperSlot -> getSlot(inv, wrapperSlot, side) < 3 ? 1 : inv.getMaxStackSize();
         else
