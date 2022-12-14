@@ -3,28 +3,24 @@
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-/*
-
-TODO: 1.19.3: Datagen went async for registries and holder lookups!
-
-
 package net.minecraftforge.debug.world;
 
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 
-import com.google.gson.JsonElement;
 import com.mojang.serialization.Codec;
-import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import net.minecraft.core.Holder;
-import net.minecraft.core.HolderSet;
-import net.minecraft.core.Registry;
-import net.minecraft.core.RegistryAccess;
-import net.minecraft.data.DataGenerator;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.HolderSet;;
+import net.minecraft.core.RegistrySetBuilder;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.data.DataProvider;
+import net.minecraft.data.PackOutput;
 import net.minecraft.data.worldgen.features.NetherFeatures;
-import net.minecraft.resources.RegistryOps;
+import net.minecraft.data.worldgen.placement.VegetationPlacements;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BiomeTags;
@@ -34,14 +30,10 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.Biome.Precipitation;
 import net.minecraft.world.level.biome.MobSpawnSettings.SpawnerData;
 import net.minecraft.world.level.levelgen.GenerationStep.Decoration;
-import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 import net.minecraft.world.level.levelgen.placement.BiomeFilter;
 import net.minecraft.world.level.levelgen.placement.CountOnEveryLayerPlacement;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
-import net.minecraftforge.common.crafting.conditions.ICondition;
-import net.minecraftforge.common.crafting.conditions.ModLoadedCondition;
-import net.minecraftforge.common.data.ExistingFileHelper;
-import net.minecraftforge.common.data.JsonCodecProvider;
+import net.minecraftforge.common.data.DatapackBuiltinEntriesProvider;
 import net.minecraftforge.common.world.BiomeModifier;
 import net.minecraftforge.common.world.ForgeBiomeModifiers.AddFeaturesBiomeModifier;
 import net.minecraftforge.common.world.ForgeBiomeModifiers.AddSpawnsBiomeModifier;
@@ -56,7 +48,6 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
-*/
 /**
  * <p>This tests the following features and requirements of biome modifier jsons::</p>
  * <ul>
@@ -68,35 +59,73 @@ import net.minecraftforge.registries.RegistryObject;
  * <p>If the biome modifiers are applied correctly, then badlands biomes should generate large basalt columns,
  * spawn magma cubes, have red-colored water, and be snowy. Additionally, biomes in the is_forest tag are missing
  * oak trees, pine trees, and skeletons.</p>
- *//*
-
+ */
 @Mod(BiomeModifierTest.MODID)
 public class BiomeModifierTest
 {
     public static final String MODID = "biome_modifiers_test";
     private static final boolean ENABLED = true;
 
-    private static final String LARGE_BASALT_COLUMNS = "large_basalt_columns";
-    private static final ResourceLocation LARGE_BASALT_COLUMNS_RL = new ResourceLocation(MODID, LARGE_BASALT_COLUMNS);
-    private static final ResourceKey<PlacedFeature> LARGE_BASALT_COLUMNS_KEY = ResourceKey.create(Registry.PLACED_FEATURE_REGISTRY, LARGE_BASALT_COLUMNS_RL);
+    /* Static registry objects */
 
-    private static final String MODIFY_BIOMES = "modify_biomes";
-    private static final ResourceLocation MODIFY_BIOMES_RL = new ResourceLocation(MODID, MODIFY_BIOMES);
+    // Biome Modifier Serializers
+    private static final DeferredRegister<Codec<? extends BiomeModifier>> BIOME_MODIFIER_SERIALIZERS = DeferredRegister.create(ForgeRegistries.Keys.BIOME_MODIFIER_SERIALIZERS, MODID);
+    private static final RegistryObject<Codec<TestModifier>> MODIFY_BIOMES = BIOME_MODIFIER_SERIALIZERS.register("modify_biomes", () ->
+            RecordCodecBuilder.create(builder -> builder.group(
+                    Biome.LIST_CODEC.fieldOf("biomes").forGetter(TestModifier::biomes),
+                    Precipitation.CODEC.fieldOf("precipitation").forGetter(TestModifier::precipitation),
+                    Codec.INT.fieldOf("water_color").forGetter(TestModifier::waterColor)
+            ).apply(builder, TestModifier::new))
+    );
 
-    private static final String ADD_BASALT = "add_basalt";
-    private static final ResourceLocation ADD_BASALT_RL = new ResourceLocation(MODID, ADD_BASALT);
+    /* Dynamic registry objects */
 
-    private static final String ADD_MAGMA_CUBES = "add_magma_cubes";
-    private static final ResourceLocation ADD_MAGMA_CUBES_RL = new ResourceLocation(MODID, ADD_MAGMA_CUBES);
+    private static final ResourceKey<PlacedFeature> LARGE_BASALT_COLUMNS = ResourceKey.create(Registries.PLACED_FEATURE, new ResourceLocation(MODID, "large_basalt_columns"));
 
-    private static final String MODIFY_BADLANDS = "modify_badlands";
-    private static final ResourceLocation MODIFY_BADLANDS_RL = new ResourceLocation(MODID, MODIFY_BADLANDS);
+    private static final ResourceKey<BiomeModifier> ADD_BASALT_MODIFIER = ResourceKey.create(ForgeRegistries.Keys.BIOME_MODIFIERS, new ResourceLocation(MODID, "add_basalt"));
+    private static final ResourceKey<BiomeModifier> ADD_MAGMA_CUBES_MODIFIER = ResourceKey.create(ForgeRegistries.Keys.BIOME_MODIFIERS, new ResourceLocation(MODID, "add_magma_cubes"));
+    private static final ResourceKey<BiomeModifier> MODIFY_BADLANDS_MODIFIER = ResourceKey.create(ForgeRegistries.Keys.BIOME_MODIFIERS, new ResourceLocation(MODID, "modify_badlands"));
+    private static final ResourceKey<BiomeModifier> REMOVE_FOREST_TREES_MODIFIER = ResourceKey.create(ForgeRegistries.Keys.BIOME_MODIFIERS, new ResourceLocation(MODID, "remove_forest_trees"));
+    private static final ResourceKey<BiomeModifier> REMOVE_FOREST_SKELETONS_MODIFIER = ResourceKey.create(ForgeRegistries.Keys.BIOME_MODIFIERS, new ResourceLocation(MODID, "remove_forest_skeletons"));
 
-    private static final String REMOVE_FOREST_TREES = "remove_forest_trees";
-    private static final ResourceLocation REMOVE_FOREST_TREES_RL = new ResourceLocation(MODID, REMOVE_FOREST_TREES);
+    private static final RegistrySetBuilder BUILDER = new RegistrySetBuilder()
+            .add(Registries.PLACED_FEATURE, context -> context.register(LARGE_BASALT_COLUMNS,
+                    new PlacedFeature(
+                            context.lookup(Registries.CONFIGURED_FEATURE).getOrThrow(NetherFeatures.LARGE_BASALT_COLUMNS),
+                            List.of(CountOnEveryLayerPlacement.of(1), BiomeFilter.biome())
+                    )
+            ))
+            .add(ForgeRegistries.Keys.BIOME_MODIFIERS, context -> {
+                var badlandsTag = context.lookup(Registries.BIOME).getOrThrow(BiomeTags.IS_BADLANDS);
+                var forestTag = context.lookup(Registries.BIOME).getOrThrow(BiomeTags.IS_FOREST);
 
-    private static final String REMOVE_FOREST_SKELETONS = "remove_forest_skeletons";
-    private static final ResourceLocation REMOVE_FOREST_SKELETONS_RL = new ResourceLocation(MODID, REMOVE_FOREST_SKELETONS);
+                context.register(ADD_BASALT_MODIFIER, new AddFeaturesBiomeModifier(
+                        badlandsTag,
+                        HolderSet.direct(context.lookup(Registries.PLACED_FEATURE).getOrThrow(LARGE_BASALT_COLUMNS)),
+                        Decoration.TOP_LAYER_MODIFICATION
+                ));
+
+                context.register(ADD_MAGMA_CUBES_MODIFIER, AddSpawnsBiomeModifier.singleSpawn(
+                        badlandsTag,
+                        new SpawnerData(EntityType.MAGMA_CUBE, 100, 1, 4)
+                ));
+
+                context.register(MODIFY_BADLANDS_MODIFIER, new TestModifier(
+                        badlandsTag,
+                        Precipitation.SNOW,
+                        0xFF000
+                ));
+
+                context.register(REMOVE_FOREST_TREES_MODIFIER, RemoveFeaturesBiomeModifier.allSteps(
+                        forestTag,
+                        HolderSet.direct(context.lookup(Registries.PLACED_FEATURE).getOrThrow(VegetationPlacements.TREES_BIRCH_AND_OAK))
+                ));
+
+                context.register(REMOVE_FOREST_SKELETONS_MODIFIER, new RemoveSpawnsBiomeModifier(
+                        forestTag,
+                        context.lookup(Registries.ENTITY_TYPE).getOrThrow(EntityTypeTags.SKELETONS)
+                ));
+            });
 
     public BiomeModifierTest()
     {
@@ -106,81 +135,39 @@ public class BiomeModifierTest
         IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();
 
         // Serializer types can be registered via deferred register.
-        final DeferredRegister<Codec<? extends BiomeModifier>> serializers = DeferredRegister.create(ForgeRegistries.Keys.BIOME_MODIFIER_SERIALIZERS, MODID);
-        serializers.register(modBus);
-        serializers.register(MODIFY_BIOMES, TestModifier::makeCodec);
+        BIOME_MODIFIER_SERIALIZERS.register(modBus);
 
         modBus.addListener(this::onGatherData);
     }
 
     private void onGatherData(GatherDataEvent event)
     {
-        // Example of how to datagen datapack registry objects.
-        final DataGenerator generator = event.getGenerator();
-        final ExistingFileHelper existingFileHelper = event.getExistingFileHelper();
-        final RegistryOps<JsonElement> ops = RegistryOps.create(JsonOps.INSTANCE, RegistryAccess.builtinCopy());
+        event.getGenerator().addProvider(event.includeServer(), (DataProvider.Factory<BiomeModifiers>) output -> new BiomeModifiers(output, event.getLookupProvider()));
+    }
 
-        // Create our placed feature and biome modifiers.
-        final ResourceKey<ConfiguredFeature<?,?>> configuredFeatureKey = NetherFeatures.LARGE_BASALT_COLUMNS.unwrapKey().get().cast(Registry.CONFIGURED_FEATURE_REGISTRY).get();
-        // Make sure we're using the holder from the registryaccess/registryops, the static ones won't work.
-        final Holder<ConfiguredFeature<?,?>> configuredFeatureHolder = ops.registry(Registry.CONFIGURED_FEATURE_REGISTRY).get().getOrCreateHolderOrThrow(configuredFeatureKey);
-        final PlacedFeature basaltFeature = new PlacedFeature(
-            configuredFeatureHolder,
-            List.of(CountOnEveryLayerPlacement.of(1), BiomeFilter.biome()));
+    private static class BiomeModifiers extends DatapackBuiltinEntriesProvider
+    {
 
-        final HolderSet.Named<Biome> badlandsTag = new HolderSet.Named<>(ops.registry(Registry.BIOME_REGISTRY).get(), BiomeTags.IS_BADLANDS);
-        final HolderSet.Named<Biome> forestsTag = new HolderSet.Named<>(ops.registry(Registry.BIOME_REGISTRY).get(), BiomeTags.IS_FOREST);
+        public BiomeModifiers(PackOutput output, CompletableFuture<HolderLookup.Provider> registries) {
+            super(output, registries, BUILDER, Set.of(MODID));
+        }
 
-        final BiomeModifier addBasaltFeature = new AddFeaturesBiomeModifier(
-            badlandsTag,
-            HolderSet.direct(ops.registry(Registry.PLACED_FEATURE_REGISTRY).get().getOrCreateHolderOrThrow(ResourceKey.create(Registry.PLACED_FEATURE_REGISTRY, LARGE_BASALT_COLUMNS_KEY.location()))),
-            Decoration.TOP_LAYER_MODIFICATION);
-
-        final BiomeModifier addSpawn = AddSpawnsBiomeModifier.singleSpawn(
-            badlandsTag,
-            new SpawnerData(EntityType.MAGMA_CUBE, 100, 1, 4));
-
-        final BiomeModifier biomeModifier = new TestModifier(
-            new HolderSet.Named<>(ops.registry(Registry.BIOME_REGISTRY).get(), BiomeTags.IS_BADLANDS),
-            Precipitation.SNOW,
-            0xFF0000
-            );
-
-        final BiomeModifier removeFeature = RemoveFeaturesBiomeModifier.allSteps(
-            forestsTag,
-            HolderSet.direct(ops.registry(Registry.PLACED_FEATURE_REGISTRY).get().getOrCreateHolderOrThrow(ResourceKey.create(Registry.PLACED_FEATURE_REGISTRY, new ResourceLocation("trees_birch_and_oak"))))
-            );
-
-        final BiomeModifier removeSpawn = new RemoveSpawnsBiomeModifier(
-            forestsTag,
-            new HolderSet.Named<>(ops.registry(Registry.ENTITY_TYPE_REGISTRY).get(), EntityTypeTags.SKELETONS)
-            );
-
-        // Create and add dataproviders.
-        generator.addProvider(event.includeServer(), JsonCodecProvider.forDatapackRegistry(
-            generator, existingFileHelper, MODID, ops, Registry.PLACED_FEATURE_REGISTRY, Map.of(
-                LARGE_BASALT_COLUMNS_RL, basaltFeature)).setConditions(Map.of(LARGE_BASALT_COLUMNS_RL, new ICondition[] { new ModLoadedCondition("forge") })));
-
-        generator.addProvider(event.includeServer(), JsonCodecProvider.forDatapackRegistry(
-            generator, existingFileHelper, MODID, ops, ForgeRegistries.Keys.BIOME_MODIFIERS, Map.of(
-                MODIFY_BADLANDS_RL, biomeModifier,
-                ADD_BASALT_RL, addBasaltFeature,
-                ADD_MAGMA_CUBES_RL, addSpawn,
-                REMOVE_FOREST_TREES_RL, removeFeature,
-                REMOVE_FOREST_SKELETONS_RL, removeSpawn)));
+        @Override
+        public String getName()
+        {
+            return "Biome Modifier Registries: " + MODID;
+        }
     }
 
     public record TestModifier(HolderSet<Biome> biomes, Precipitation precipitation, int waterColor) implements BiomeModifier
     {
-        private static final RegistryObject<Codec<? extends BiomeModifier>> SERIALIZER = RegistryObject.create(MODIFY_BIOMES_RL, ForgeRegistries.Keys.BIOME_MODIFIER_SERIALIZERS, MODID);
-
         @Override
         public void modify(Holder<Biome> biome, Phase phase, Builder builder)
         {
             if (phase == Phase.MODIFY && this.biomes.contains(biome))
             {
                 builder.getClimateSettings().setPrecipitation(this.precipitation);
-                builder.getEffects().waterColor(this.waterColor);
+                builder.getSpecialEffects().waterColor(this.waterColor);
                 if (this.precipitation == Precipitation.SNOW)
                     builder.getClimateSettings().setTemperature(0F);
             }
@@ -189,17 +176,7 @@ public class BiomeModifierTest
         @Override
         public Codec<? extends BiomeModifier> codec()
         {
-            return SERIALIZER.get();
-        }
-
-        private static Codec<TestModifier> makeCodec()
-        {
-            return RecordCodecBuilder.create(builder -> builder.group(
-                    Biome.LIST_CODEC.fieldOf("biomes").forGetter(TestModifier::biomes),
-                    Precipitation.CODEC.fieldOf("precipitation").forGetter(TestModifier::precipitation),
-                    Codec.INT.fieldOf("water_color").forGetter(TestModifier::waterColor)
-            ).apply(builder, TestModifier::new));
+            return MODIFY_BIOMES.get();
         }
     }
 }
-*/
