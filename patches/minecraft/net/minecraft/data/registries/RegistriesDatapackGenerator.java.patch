@@ -1,14 +1,19 @@
 --- a/net/minecraft/data/registries/RegistriesDatapackGenerator.java
 +++ b/net/minecraft/data/registries/RegistriesDatapackGenerator.java
-@@ -22,16 +_,28 @@
+@@ -18,20 +_,33 @@
+ import net.minecraft.resources.ResourceKey;
+ import org.slf4j.Logger;
+ 
++/**
++ * @deprecated Forge: Use {@link net.minecraftforge.common.data.DatapackBuiltinEntriesProvider} instead
++ */
++@Deprecated
+ public class RegistriesDatapackGenerator implements DataProvider {
     private static final Logger f_254654_ = LogUtils.getLogger();
     private final PackOutput f_254743_;
     private final CompletableFuture<HolderLookup.Provider> f_254747_;
 +   private final java.util.function.Predicate<String> namespacePredicate;
  
-+   /**
-+    * @deprecated Use mod-specific version instead
-+    */
 +   @Deprecated
     public RegistriesDatapackGenerator(PackOutput p_256643_, CompletableFuture<HolderLookup.Provider> p_255780_) {
        this.f_254747_ = p_255780_;
