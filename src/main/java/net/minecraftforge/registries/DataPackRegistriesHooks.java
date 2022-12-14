@@ -5,15 +5,20 @@
 
 package net.minecraftforge.registries;
 
+import com.google.common.collect.ImmutableMap;
 import net.minecraft.core.Registry;
+import net.minecraft.core.RegistrySynchronization;
 import net.minecraft.resources.RegistryDataLoader;
 import net.minecraft.resources.ResourceKey;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 @ApiStatus.Internal
@@ -21,18 +26,32 @@ public final class DataPackRegistriesHooks
 {
     private DataPackRegistriesHooks() {} // utility class
 
+    private static Map<ResourceKey<? extends Registry<?>>, RegistrySynchronization.NetworkedRegistryData<?>> NETWORKABLE_REGISTRIES = new LinkedHashMap<>();
     private static final List<RegistryDataLoader.RegistryData<?>> DATA_PACK_REGISTRIES = new ArrayList<>(RegistryDataLoader.WORLDGEN_REGISTRIES);
     private static final List<RegistryDataLoader.RegistryData<?>> DATA_PACK_REGISTRIES_VIEW = Collections.unmodifiableList(DATA_PACK_REGISTRIES);
     private static final Set<ResourceKey<? extends Registry<?>>> SYNCED_CUSTOM_REGISTRIES = new HashSet<>();
     private static final Set<ResourceKey<? extends Registry<?>>> SYNCED_CUSTOM_REGISTRIES_VIEW = Collections.unmodifiableSet(SYNCED_CUSTOM_REGISTRIES);
+
+    /* Internal forge hook for retaining mutable access to RegistryAccess's codec registry when it bootstraps. */
+    public static Map<ResourceKey<? extends Registry<?>>, RegistrySynchronization.NetworkedRegistryData<?>> grabNetworkableRegistries(ImmutableMap.Builder<ResourceKey<? extends Registry<?>>, RegistrySynchronization.NetworkedRegistryData<?>> builder)
+    {
+        if (!StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE).getCallerClass().equals(RegistrySynchronization.class))
+            throw new IllegalCallerException("Attempted to call DataPackRegistriesHooks#grabNetworkableRegistries!");
+        NETWORKABLE_REGISTRIES.forEach(builder::put);
+        NETWORKABLE_REGISTRIES = new HashMap<>(builder.build());
+        SYNCED_CUSTOM_REGISTRIES.clear();
+        return Collections.unmodifiableMap(NETWORKABLE_REGISTRIES);
+    }
 
     /* Internal forge method, registers a datapack registry codec and folder. */
     static <T> void addRegistryCodec(DataPackRegistryEvent.DataPackRegistryData<T> data)
     {
         RegistryDataLoader.RegistryData<T> loaderData = data.loaderData();
         DATA_PACK_REGISTRIES.add(loaderData);
-        if (data.networkCodec() != null)
+        if (data.networkCodec() != null) {
             SYNCED_CUSTOM_REGISTRIES.add(loaderData.key());
+            NETWORKABLE_REGISTRIES.put(loaderData.key(), new RegistrySynchronization.NetworkedRegistryData<>(loaderData.key(), data.networkCodec()));
+        }
     }
 
     /**

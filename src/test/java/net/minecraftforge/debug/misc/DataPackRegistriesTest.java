@@ -34,6 +34,7 @@ import net.minecraftforge.data.event.GatherDataEvent;
 import net.minecraftforge.event.TagsUpdatedEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.fml.util.thread.EffectiveSide;
@@ -53,7 +54,7 @@ import org.slf4j.Logger;
  * <li><code>data/data_pack_registries_test/tags/data_pack_registries_test/syncable/test.json</code></li>
  * </ul>
  */
-//@Mod(DataPackRegistriesTest.MODID)
+@Mod(DataPackRegistriesTest.MODID)
 public class DataPackRegistriesTest
 {
     private static final boolean ENABLED = true;

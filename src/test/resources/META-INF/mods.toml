@@ -269,6 +269,8 @@ modId="ambient_occlusion_elements_test"
 [[mods]]
 modId="grindstone_event_test"
 [[mods]]
+modId="data_pack_registries_test"
+[[mods]]
 modId="creative_mode_tab_test"
 
 
