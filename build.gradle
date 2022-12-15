@@ -1182,11 +1182,6 @@ project(':forge') {
         dependsOn 'findFieldInstanceChecks', 'checkLicenses'
         group = 'checks'
     }
-    afterEvaluate {
-        tasks.withType(CheckTask).all {
-            tasks.getByName(it.mode.get() === CheckMode.FIX ? 'checkAllAndFix' : 'checkAll').dependsOn(it)
-        }
-    }
 
     CheckTask.registerTask(tasks, 'ATs', CheckATs) {
         dependsOn extractInheritance, createSrg2Mcp
