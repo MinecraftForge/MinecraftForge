@@ -6,7 +6,9 @@
 package net.minecraftforge.common.conditions;
 
 import com.google.gson.JsonObject;
+import com.mojang.serialization.Codec;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.common.ForgeMod;
 
 /**
  * The FalseCondition always returns false.<p>
@@ -15,15 +17,7 @@ import net.minecraft.resources.ResourceLocation;
 public final class FalseCondition implements ICondition
 {
     public static final FalseCondition INSTANCE = new FalseCondition();
-    private static final ResourceLocation NAME = new ResourceLocation("forge", "false");
-
     private FalseCondition() {}
-
-    @Override
-    public ResourceLocation getSerializerId()
-    {
-        return NAME;
-    }
 
     @Override
     public boolean test(IContext condition)
@@ -37,23 +31,9 @@ public final class FalseCondition implements ICondition
         return "false";
     }
 
-    public static class Serializer implements IConditionSerializer<FalseCondition>
+    @Override
+    public Codec<? extends ICondition> codec()
     {
-        public static final Serializer INSTANCE = new Serializer();
-
-        @Override
-        public void write(JsonObject json, FalseCondition value) { }
-
-        @Override
-        public FalseCondition read(JsonObject json)
-        {
-            return FalseCondition.INSTANCE;
-        }
-
-        @Override
-        public ResourceLocation getID()
-        {
-            return FalseCondition.NAME;
-        }
+        return ForgeMod.FALSE_CONDITION_TYPE.get();
     }
 }

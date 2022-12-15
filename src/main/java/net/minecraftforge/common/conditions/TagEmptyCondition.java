@@ -5,39 +5,17 @@
 
 package net.minecraftforge.common.conditions;
 
-import com.google.gson.JsonObject;
-
-import net.minecraft.core.Registry;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.tags.TagKey;
-import net.minecraft.world.item.Item;
-import net.minecraft.util.GsonHelper;
+import com.mojang.serialization.Codec;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
+import net.minecraftforge.common.ForgeMod;
 
-public class TagEmptyCondition implements ICondition
+public record TagEmptyCondition<T>(TagKey<T> tag) implements ICondition
 {
-    private static final ResourceLocation NAME = new ResourceLocation("forge", "tag_empty");
-    private final TagKey<Item> tag;
-
-    public TagEmptyCondition(String location)
-    {
-        this(new ResourceLocation(location));
-    }
-
-    public TagEmptyCondition(String namespace, String path)
-    {
-        this(new ResourceLocation(namespace, path));
-    }
-
-    public TagEmptyCondition(ResourceLocation tag)
-    {
-        this.tag = TagKey.create(Registries.ITEM, tag);
-    }
-
-    @Override
-    public ResourceLocation getSerializerId()
-    {
-        return NAME;
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    public static TagEmptyCondition<?> from(ResourceKey<?> registry, ResourceLocation tag) {
+        return new TagEmptyCondition<>(TagKey.create((ResourceKey) registry, tag));
     }
 
     @Override
@@ -52,26 +30,9 @@ public class TagEmptyCondition implements ICondition
         return "tag_empty(\"" + tag.location() + "\")";
     }
 
-    public static class Serializer implements IConditionSerializer<TagEmptyCondition>
+    @Override
+    public Codec<? extends ICondition> codec()
     {
-        public static final Serializer INSTANCE = new Serializer();
-
-        @Override
-        public void write(JsonObject json, TagEmptyCondition value)
-        {
-            json.addProperty("tag", value.tag.location().toString());
-        }
-
-        @Override
-        public TagEmptyCondition read(JsonObject json)
-        {
-            return new TagEmptyCondition(new ResourceLocation(GsonHelper.getAsString(json, "tag")));
-        }
-
-        @Override
-        public ResourceLocation getID()
-        {
-            return TagEmptyCondition.NAME;
-        }
+        return ForgeMod.TAG_EMPTY_CONDITION_TYPE.get();
     }
 }

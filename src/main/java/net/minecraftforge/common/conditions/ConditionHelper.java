@@ -5,9 +5,7 @@
 
 package net.minecraftforge.common.conditions;
 
-import java.util.HashMap;
-import java.util.Map;
-
+import com.mojang.serialization.JsonOps;
 import org.slf4j.Logger;
 
 import com.google.gson.JsonArray;
@@ -17,7 +15,6 @@ import com.google.gson.JsonSyntaxException;
 import com.mojang.logging.LogUtils;
 
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import net.minecraftforge.common.conditions.ICondition.IContext;
 
@@ -28,38 +25,17 @@ import net.minecraftforge.common.conditions.ICondition.IContext;
 public class ConditionHelper {
 
     private static final Logger LOGGER = LogUtils.getLogger();
-    private static final Map<ResourceLocation, IConditionSerializer<?>> SERIALIZERS = new HashMap<>();
-
-    /**
-     * Registers a new {@link IConditionSerializer}
-     * @param serializer The serializer being registered
-     * @return The passed serializer
-     * @throws IllegalStateException If a serializer is already registered with the same ID
-     */
-    public static synchronized IConditionSerializer<?> register(IConditionSerializer<?> serializer)
-    {
-        ResourceLocation key = serializer.getID();
-        if (SERIALIZERS.containsKey(key))
-            throw new IllegalStateException("Duplicate recipe condition serializer: " + key);
-        SERIALIZERS.put(key, serializer);
-        return serializer;
-    }
 
     /**
      * Serializes a single condition as a {@link JsonObject}
      * @param condition The condition to be serialized
      * @return The serialized JSON
-     * @throws JsonSyntaxException If no serializer is registered for the condition
+     * @throws RuntimeException If no serializer is registered for the condition, or if the serializer encountered an exception encoding
      */
-    @SuppressWarnings({ "rawtypes", "unchecked" })
-    public static JsonObject serialize(ICondition condition)
+    public static JsonElement serialize(ICondition condition)
     {
-        IConditionSerializer serializer = SERIALIZERS.get(condition.getSerializerId());
-        if (serializer == null)
-        {
-            throw new JsonSyntaxException("Unknown condition type: " + condition.getSerializerId().toString());
-        }
-        return serializer.getJson(condition);
+        return ICondition.DIRECT_CODEC.encodeStart(JsonOps.INSTANCE, condition)
+                .getOrThrow(false, msg -> LOGGER.error("Encountered exception encoding condition: {}", msg));
     }
 
     /**
@@ -82,15 +58,12 @@ public class ConditionHelper {
      * Parses an {@link ICondition} from a {@link JsonObject}.
      * @param json The serialized condition JSON
      * @return The deserialized condition object
-     * @throws JsonSyntaxException If no serializer is registered for the specified condition type
+     * @throws RuntimeException If no serializer is registered for the specified condition type, or if the serializer encountered an exception decoding
      */
     public static ICondition getCondition(JsonObject json)
     {
-        ResourceLocation type = new ResourceLocation(GsonHelper.getAsString(json, "type"));
-        IConditionSerializer<?> serializer = ConditionHelper.SERIALIZERS.get(type);
-        if (serializer == null)
-            throw new JsonSyntaxException("Unknown condition type: " + type.toString());
-        return serializer.read(json);
+        return ICondition.DIRECT_CODEC.decode(JsonOps.INSTANCE, json)
+                .getOrThrow(false, msg -> LOGGER.error("Encountered exception decoding condition: {}", msg)).getFirst();
     }
 
     /**
@@ -127,7 +100,18 @@ public class ConditionHelper {
      */
     public static boolean processConditions(JsonObject json, String memberName, ICondition.IContext context)
     {
-        return !json.has(memberName) || processConditions(GsonHelper.getAsJsonArray(json, memberName), context);
+        final JsonElement conditionsMember = json.get(memberName);
+        if (conditionsMember == null) return true;
+        final JsonArray array;
+        if (conditionsMember.isJsonArray())
+        {
+            array = conditionsMember.getAsJsonArray();
+        } else
+        {
+            array = new JsonArray();
+            array.add(conditionsMember);
+        }
+        return !json.has(memberName) || processConditions(array, context);
     }
 
     /**

@@ -12,9 +12,12 @@ import net.minecraft.commands.synchronization.ArgumentTypeInfos;
 import net.minecraft.commands.synchronization.SingletonArgumentInfo;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.commands.Commands;
@@ -37,6 +40,7 @@ import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.pathfinder.BlockPathTypes;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions;
+import net.minecraftforge.common.conditions.ICondition;
 import net.minecraftforge.common.crafting.PartialNBTIngredient;
 import net.minecraftforge.common.crafting.DifferenceIngredient;
 import net.minecraftforge.common.crafting.IntersectionIngredient;
@@ -129,6 +133,7 @@ public class ForgeMod
     private static final DeferredRegister<ArgumentTypeInfo<?, ?>> COMMAND_ARGUMENT_TYPES = DeferredRegister.create(Registries.COMMAND_ARGUMENT_TYPE, "forge");
     private static final DeferredRegister<Codec<? extends BiomeModifier>> BIOME_MODIFIER_SERIALIZERS = DeferredRegister.create(ForgeRegistries.Keys.BIOME_MODIFIER_SERIALIZERS, "forge");
     private static final DeferredRegister<Codec<? extends StructureModifier>> STRUCTURE_MODIFIER_SERIALIZERS = DeferredRegister.create(ForgeRegistries.Keys.STRUCTURE_MODIFIER_SERIALIZERS, "forge");
+    private static final DeferredRegister<Codec<? extends ICondition>> CONDITION_SERIALIZERS = DeferredRegister.create(ForgeRegistries.Keys.CONDITION_SERIALIZERS, "forge");
     private static final DeferredRegister<HolderSetType> HOLDER_SET_TYPES = DeferredRegister.create(ForgeRegistries.Keys.HOLDER_SET_TYPES, "forge");
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -221,6 +226,35 @@ public class ForgeMod
      * Noop structure modifier. Can be used in a structure modifier json with "type": "forge:none".
      */
     public static final RegistryObject<Codec<NoneStructureModifier>> NONE_STRUCTURE_MODIFIER_TYPE = STRUCTURE_MODIFIER_SERIALIZERS.register("none", () -> Codec.unit(NoneStructureModifier.INSTANCE));
+
+    public static final RegistryObject<Codec<FalseCondition>> FALSE_CONDITION_TYPE = condition("false", Codec.unit(FalseCondition.INSTANCE));
+
+    public static final RegistryObject<Codec<TrueCondition>> TRUE_CONDITION_TYPE = condition("true", Codec.unit(TrueCondition.INSTANCE));
+
+    public static final RegistryObject<Codec<AndCondition>> AND_CONDITION_TYPE = condition("and", RecordCodecBuilder.create(in -> in.group(
+            ExtraCodecs.nonEmptyList(singleOrList(ICondition.DIRECT_CODEC)).fieldOf("values").forGetter(AndCondition::children)
+    ).apply(in, AndCondition::new)));
+
+    public static final RegistryObject<Codec<NotCondition>> NOT_CONDITION_TYPE = condition("not", RecordCodecBuilder.create(in -> in.group(
+            ICondition.DIRECT_CODEC.fieldOf("value").forGetter(NotCondition::value)
+    ).apply(in, NotCondition::new)));
+
+    public static final RegistryObject<Codec<OrCondition>> OR_CONDITION_TYPE = condition("or", RecordCodecBuilder.create(in -> in.group(
+            ExtraCodecs.nonEmptyList(singleOrList(ICondition.DIRECT_CODEC)).fieldOf("values").forGetter(OrCondition::values)
+    ).apply(in, OrCondition::new)));
+
+    public static final RegistryObject<Codec<ItemExistsCondition>> ITEM_EXISTS_CONDITION_TYPE = condition("item_exists", RecordCodecBuilder.create(in -> in.group(
+            ResourceLocation.CODEC.fieldOf("item").forGetter(ItemExistsCondition::item)
+    ).apply(in, ItemExistsCondition::new)));
+
+    public static final RegistryObject<Codec<ModLoadedCondition>> MOD_LOADED_CONDITION_TYPE = condition("mod_loaded", RecordCodecBuilder.create(in -> in.group(
+            Codec.STRING.fieldOf("modid").forGetter(ModLoadedCondition::modId)
+    ).apply(in, ModLoadedCondition::new)));
+
+    public static final RegistryObject<Codec<TagEmptyCondition<?>>> TAG_EMPTY_CONDITION_TYPE = condition("tag_empty", RecordCodecBuilder.create(in -> in.group(
+            ResourceLocation.CODEC.<ResourceKey<? extends Registry<?>>>xmap(ResourceKey::createRegistryKey, ResourceKey::location).optionalFieldOf("registry", Registries.ITEM).forGetter(it -> it.tag().registry()),
+            ResourceLocation.CODEC.fieldOf("tag").forGetter(it -> it.tag().location())
+    ).apply(in, TagEmptyCondition::from)));
 
     /**
      * Stock holder set type that represents any/all values in a registry. Can be used in a holderset object with {@code { "type": "forge:any" }}
@@ -433,6 +467,7 @@ public class ForgeMod
         COMMAND_ARGUMENT_TYPES.register(modEventBus);
         BIOME_MODIFIER_SERIALIZERS.register(modEventBus);
         STRUCTURE_MODIFIER_SERIALIZERS.register(modEventBus);
+        CONDITION_SERIALIZERS.register(modEventBus);
         HOLDER_SET_TYPES.register(modEventBus);
         VANILLA_FLUID_TYPES.register(modEventBus);
         MinecraftForge.EVENT_BUS.addListener(this::serverStopping);
@@ -559,15 +594,6 @@ public class ForgeMod
     {
         if (event.getRegistryKey().equals(ForgeRegistries.Keys.RECIPE_SERIALIZERS))
         {
-            ConditionHelper.register(AndCondition.Serializer.INSTANCE);
-            ConditionHelper.register(FalseCondition.Serializer.INSTANCE);
-            ConditionHelper.register(ItemExistsCondition.Serializer.INSTANCE);
-            ConditionHelper.register(ModLoadedCondition.Serializer.INSTANCE);
-            ConditionHelper.register(NotCondition.Serializer.INSTANCE);
-            ConditionHelper.register(OrCondition.Serializer.INSTANCE);
-            ConditionHelper.register(TrueCondition.Serializer.INSTANCE);
-            ConditionHelper.register(TagEmptyCondition.Serializer.INSTANCE);
-
             CraftingHelper.register(new ResourceLocation("forge", "compound"), CompoundIngredient.Serializer.INSTANCE);
             CraftingHelper.register(new ResourceLocation("forge", "nbt"), StrictNBTIngredient.Serializer.INSTANCE);
             CraftingHelper.register(new ResourceLocation("forge", "partial_nbt"), PartialNBTIngredient.Serializer.INSTANCE);
@@ -594,5 +620,18 @@ public class ForgeMod
     public void registerPermissionNodes(PermissionGatherEvent.Nodes event)
     {
         event.addNodes(USE_SELECTORS_PERMISSION);
+    }
+
+    private static <T extends ICondition> RegistryObject<Codec<T>> condition(String id, Codec<T> codec)
+    {
+        return CONDITION_SERIALIZERS.register(id, () -> codec);
+    }
+
+    private static <T> Codec<List<T>> singleOrList(Codec<T> codec)
+    {
+        return new ExtraCodecs.EitherCodec<>(codec, codec.listOf()).xmap(
+                either -> either.map(List::of, Function.identity()),
+                list -> list.size() == 1 ? Either.left(list.get(0)) : Either.right(list)
+        );
     }
 }
