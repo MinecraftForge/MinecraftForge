@@ -45,9 +45,9 @@ abstract class CheckTask extends DefaultTask implements VerificationTask {
                 }
             } else {
                 if (logger.isEnabled(LogLevel.DEBUG)) {
-                    logger.error("Check task '{}' found {} errors and fixed {}:\n{}", name, reporter.messages.size(), reporter.fixed.size(), reporter.fixed.join('\n'))
+                    logger.warn("Check task '{}' found {} errors and fixed {}:\n{}", name, reporter.messages.size(), reporter.fixed.size(), reporter.fixed.join('\n'))
                 } else {
-                    logger.error("Check task '{}' found {} errors and fixed {}.", name, reporter.messages.size(), reporter.fixed.size())
+                    logger.warn("Check task '{}' found {} errors and fixed {}.", name, reporter.messages.size(), reporter.fixed.size())
                 }
 
                 if (reporter.notFixed) {
@@ -94,11 +94,13 @@ abstract class CheckTask extends DefaultTask implements VerificationTask {
             configuration.setDelegate((T) task)
             configuration.call(task)
             task.mode.set(CheckMode.CHECK)
+            task.group = 'checks'
         }
         tasks.register("checkAndFix$taskName", clazz) { CheckTask task ->
             configuration.setDelegate((T) task)
             configuration.call(task)
             task.mode.set(CheckMode.FIX)
+            task.group = 'checks'
         }
     }
 }

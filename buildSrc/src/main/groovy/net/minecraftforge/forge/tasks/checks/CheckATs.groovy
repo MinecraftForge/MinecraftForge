@@ -34,6 +34,7 @@ abstract class CheckATs extends CheckTask {
 
     private static TreeMap<String, ATParser.Entry> process(File file, Reporter reporter, Map<String, InheritanceData> inheritance) {
         final TreeMap<String, ATParser.Entry> lines = ATParser.parse(file.readLines(), reporter)
+        final Map<String, ATParser.Entry> constructorGroups = [:]
 
         final itr = lines.entrySet().iterator()
         final toRemove = []
@@ -95,35 +96,7 @@ abstract class CheckATs extends CheckTask {
                         entry.existing.findAll { it !in entry.children }.each { println('Removed: ' + it) }
                     }
                 } else if ('<init>' == entry.desc) { //Make all public non-abstract subclasses
-                    inheritance.each { tcls, value ->
-                        if (!value.methods || ((value.access & Opcodes.ACC_ABSTRACT) != 0)) return
-                        final parents = [] as Set
-                        String parent = tcls
-                        while (parent !== null && inheritance.containsKey(parent)) {
-                            parents.add(parent)
-                            def p = inheritance[parent]
-                            parent = p === null ? null : p.superName
-                        }
-                        if (parents.contains(binaryName)) {
-                            value.methods.each { mtd, v ->
-                                if (mtd.startsWith('<init>')) {
-                                    def child = tcls.replaceAll('/', '\\.') + ' ' + mtd.replace(' ', '')
-                                    if (accessLevel(v.access) < 3) {
-                                        if (lines.containsKey(child)) {
-                                            toRemove.add(child)
-                                        } else if (child !in entry.existing) {
-                                            reporter.report("Missing group entry: $child")
-                                        }
-                                        entry.children.add(child)
-                                    } else if (lines.containsKey(child)) {
-                                        toRemove.add(child)
-                                        reporter.report("Found invalid group entry: $child")
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    entry.existing.findAll { it !in entry.children }.each{ println('Removed: ' + it) }
+                    constructorGroups.put(binaryName, entry)
                 }
             }
 
@@ -164,6 +137,33 @@ abstract class CheckATs extends CheckTask {
                 }
             }
         }
+
+        inheritance.each { tcls, value ->
+            if (!value.methods || ((value.access & Opcodes.ACC_ABSTRACT) != 0)) return
+            String parent = tcls
+            while (parent !== null) {
+                constructorGroups[parent]?.tap { entry ->
+                    value.methods.each { mtd, v ->
+                        if (mtd.startsWith('<init>')) {
+                            final child = tcls.replaceAll('/', '\\.') + ' ' + mtd.replace(' ', '')
+                            if (accessLevel(v.access) < 3) {
+                                if (lines.containsKey(child)) {
+                                    toRemove.add(child)
+                                } else if (child !in entry.existing) {
+                                    reporter.report("Missing group entry: $child")
+                                }
+                                entry.children.add(child)
+                            } else if (lines.containsKey(child)) {
+                                toRemove.add(child)
+                                reporter.report("Found invalid group entry: $child")
+                            }
+                        }
+                    }
+                }
+                parent = inheritance[parent]?.superName
+            }
+        }
+        constructorGroups.values().each { entry -> entry.existing.findAll { it !in entry.children }.each{ println('Removed: ' + it) } }
 
         toRemove.each(lines.&remove)
 
