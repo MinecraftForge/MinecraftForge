@@ -1024,10 +1024,12 @@ public class DataGeneratorTest
         }
     }
 
-    private static class Advancements implements ForgeAdvancementProvider.AdvancementGenerator {
+    private static class Advancements implements ForgeAdvancementProvider.AdvancementGenerator
+    {
 
         @Override
-        public void generate(HolderLookup.Provider registries, Consumer<Advancement> saver, ExistingFileHelper existingFileHelper) {
+        public void generate(HolderLookup.Provider registries, Consumer<Advancement> saver, ExistingFileHelper existingFileHelper)
+        {
             Advancement.Builder.advancement().display(Items.DIRT,
                             Component.translatable(Items.DIRT.getDescriptionId()),
                             Component.translatable("dirt_description"),

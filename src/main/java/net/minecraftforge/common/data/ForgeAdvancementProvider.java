@@ -23,7 +23,8 @@ import java.util.function.Consumer;
 public class ForgeAdvancementProvider extends AdvancementProvider
 {
     /**
-     * Default constructor.
+     * Constructs an advancement provider using the generators to write the
+     * advancements to a file.
      *
      * @param output the target directory of the data generator
      * @param registries a future of a lookup for registries and their objects

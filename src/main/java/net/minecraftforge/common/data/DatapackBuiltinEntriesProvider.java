@@ -26,7 +26,8 @@ public class DatapackBuiltinEntriesProvider extends RegistriesDatapackGenerator
 {
 
     /**
-     * Default constructor.
+     * Constructs a new datapack provider which generates all registry objects
+     * from the provided mods using the holder.
      *
      * @param output the target directory of the data generator
      * @param registries a future of a lookup for registries and their objects
@@ -38,7 +39,9 @@ public class DatapackBuiltinEntriesProvider extends RegistriesDatapackGenerator
     }
 
     /**
-     * Default constructor.
+     * Constructs a new datapack provider which generates all registry objects
+     * from the provided mods using the holder. All entries that need to be
+     * bootstrapped are provided within the {@link RegistrySetBuilder}.
      *
      * @param output the target directory of the data generator
      * @param registries a future of a lookup for registries and their objects
