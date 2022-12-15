@@ -204,7 +204,7 @@ abstract class CheckATs extends CheckTask {
                 def comment = remapComment.call(value)
                 data.add(value.modifier + ' ' + key + (comment ? ' ' + comment : ''))
             } else {
-                data.add('#group ' + value.modifier + ' ' + key + (' ' + (value.comment ?: '')).trim())
+                data.add(('#group ' + value.modifier + ' ' + key + ' ' + (value.comment ?: '')).trim())
                 value.children.each {
                     final line = value.modifier + ' ' + it
                     final entry = ATParser.parseEntry(line)

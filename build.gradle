@@ -1176,12 +1176,16 @@ project(':forge') {
 
     tasks.register('checkAll') {
         dependsOn 'checkLicenses'
+        group = 'checks'
     }
     tasks.register('checkAllAndFix') {
         dependsOn 'findFieldInstanceChecks', 'checkLicenses'
+        group = 'checks'
     }
-    tasks.withType(CheckTask).configureEach {
-        tasks.named(it.mode.get() === CheckMode.FIX ? 'checkAllAndFix' : 'checkAll').configure { t -> t.dependsOn(it) }
+    afterEvaluate {
+        tasks.withType(CheckTask).all {
+            tasks.getByName(it.mode.get() === CheckMode.FIX ? 'checkAllAndFix' : 'checkAll').dependsOn(it)
+        }
     }
 
     CheckTask.registerTask(tasks, 'ATs', CheckATs) {
@@ -1268,8 +1272,6 @@ project(':forge') {
         commonLibraries.from(project.configurations.installer)
         commonLibraries.from(project.configurations.moduleonly)
     }
-
-    task checkAll(dependsOn: [checkATs, checkSAS, checkExcs, findFieldInstanceChecks, checkPatches, checkLicenses]){}
 
     task launcherJson(type: LauncherJson) {
         packedDependencies = [':fmlloader:jar']
