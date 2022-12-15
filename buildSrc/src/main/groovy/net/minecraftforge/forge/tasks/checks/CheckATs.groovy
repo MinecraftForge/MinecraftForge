@@ -43,13 +43,15 @@ abstract class CheckATs extends CheckTask {
             final entry = next.value
             if (entry === null) continue
 
+            final binaryName = entry.cls.replaceAll('\\.', '/')
+
             // Process Groups, this will remove any entries outside the group that is covered by the group
             if (entry.group) {
-                final jcls = inheritance[entry.cls.replaceAll('\\.', '/')]
+                final jcls = inheritance[binaryName]
                 if (jcls === null) {
                     itr.remove()
                     reporter.report("Invalid group: $key")
-                } else if ('*' == entry['desc']) {
+                } else if ('*' == entry.desc) {
                     if (!jcls.fields) {
                         itr.remove()
                         reporter.report("Invalid group, class has no fields: $key")
@@ -60,12 +62,12 @@ abstract class CheckATs extends CheckTask {
                                 if (lines.containsKey(fkey)) {
                                     toRemove.add(fkey)
                                 } else if (!entry.existing.contains(fkey)) {
-                                    println('Added: ' + fkey)
+                                    reporter.report("Missing group entry: $fkey")
                                 }
                                 entry.children.add(fkey)
                             } else if (lines.containsKey(fkey)) {
                                 toRemove.add(fkey)
-                                println('Removed: ' + fkey)
+                                reporter.report("Found invalid group entry: $fkey")
                             }
                         }
                         entry.existing.findAll { it !in entry.children }.each { println('Removed: ' + it) }
@@ -82,12 +84,12 @@ abstract class CheckATs extends CheckTask {
                                 if (lines.containsKey(key)) {
                                     toRemove.add(key)
                                 } else if (!entry.existing.contains(key)) {
-                                    println('Added: ' + key)
+                                    reporter.report("Missing group entry: $key")
                                 }
                                 entry.children.add(key)
                             } else if (lines.containsKey(key)) {
                                 toRemove.add(key)
-                                println('Removed: ' + key)
+                                reporter.report("Found invalid group entry: $key")
                             }
                         }
                         entry.existing.findAll { it !in entry.children }.each { println('Removed: ' + it) }
@@ -102,7 +104,7 @@ abstract class CheckATs extends CheckTask {
                             def p = inheritance[parent]
                             parent = p === null ? null : p.superName
                         }
-                        if (parents.contains(entry.cls.replaceAll('\\.', '/'))) {
+                        if (parents.contains(binaryName)) {
                             value.methods.each { mtd, v ->
                                 if (mtd.startsWith('<init>')) {
                                     def child = tcls.replaceAll('/', '\\.') + ' ' + mtd.replace(' ', '')
@@ -110,12 +112,12 @@ abstract class CheckATs extends CheckTask {
                                         if (lines.containsKey(child)) {
                                             toRemove.add(child)
                                         } else if (child !in entry.existing) {
-                                            println('Added: ' + child)
+                                            reporter.report("Missing group entry: $child")
                                         }
                                         entry.children.add(child)
                                     } else if (lines.containsKey(child)) {
                                         toRemove.add(child)
-                                        println('Removed: ' + child)
+                                        reporter.report("Found invalid group entry: $child")
                                     }
                                 }
                             }
@@ -127,7 +129,7 @@ abstract class CheckATs extends CheckTask {
 
             // Process normal lines, remove invalid and remove narrowing
             else {
-                def jcls = inheritance.get(entry.cls.replaceAll('\\.', '/'))
+                def jcls = inheritance.get(binaryName)
                 if (jcls == null) {
                     itr.remove()
                     reporter.report("Invalid: $key")
@@ -300,5 +302,9 @@ class ATParser {
 
         @Lazy
         String key = {cls + (desc.isEmpty() ? '' : ' ' + desc)}()
+
+        Object getAt(String key) {
+            return getProperty(key)
+        }
     }
 }

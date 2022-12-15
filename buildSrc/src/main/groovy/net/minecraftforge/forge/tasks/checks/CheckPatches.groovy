@@ -13,6 +13,15 @@ import java.util.regex.Pattern
 
 @CompileStatic
 abstract class CheckPatches extends CheckTask {
+
+    private static final Pattern HUNK_START_PATTERN = Pattern.compile('^@@ -[0-9,]* \\+[0-9,_]* @@$')
+    private static final Pattern WHITESPACE_PATTERN = Pattern.compile('^[+\\-]\\s*$')
+    private static final Pattern IMPORT_PATTERN = Pattern.compile('^[+\\-]\\s*import.*')
+    private static final Pattern FIELD_PATTERN = Pattern.compile('^[+\\-][\\s]*((public|protected|private)[\\s]*)?(static[\\s]*)?(final)?([^=;]*)(=.*)?;\\s*$')
+    private static final Pattern METHOD_PATTERN = Pattern.compile('^[+\\-][\\s]*((public|protected|private)[\\s]*)?(static[\\s]*)?(final)?([^(]*)[(]([^)]*)?[)]\\s*[{]\\s*$')
+    private static final Pattern CLASS_PATTERN = Pattern.compile('^[+\\-][\\s]*((public|protected|private)[\\s]*)?(static[\\s]*)?(final[\\s]*)?(class|interface)([^{]*)[{]\\s*$')
+    private static final Map<String, Integer> ACCESS_MAP = [private: 0, protected: 2, public: 3].tap { it.put(null, 1) }
+
     @InputDirectory abstract DirectoryProperty getPatchDir()
     @Input @Optional abstract ListProperty<String> getPatchesWithS2SArtifact()
 
@@ -28,16 +37,7 @@ abstract class CheckPatches extends CheckTask {
     }
 
     void verifyPatch(Path patch, Reporter reporter, boolean fix, String patchPath, boolean hasS2SArtifact) {
-        final hunk_start_pattern = Pattern.compile('^@@ -[0-9,]* \\+[0-9,_]* @@$')
-        final white_space_pattern = Pattern.compile('^[+\\-]\\s*$')
-        final import_pattern = Pattern.compile('^[+\\-]\\s*import.*')
-        final field_pattern = Pattern.compile('^[+\\-][\\s]*((public|protected|private)[\\s]*)?(static[\\s]*)?(final)?([^=;]*)(=.*)?;\\s*$')
-        final method_pattern = Pattern.compile('^[+\\-][\\s]*((public|protected|private)[\\s]*)?(static[\\s]*)?(final)?([^(]*)[(]([^)]*)?[)]\\s*[{]\\s*$')
-        final class_pattern = Pattern.compile('^[+\\-][\\s]*((public|protected|private)[\\s]*)?(static[\\s]*)?(final[\\s]*)?(class|interface)([^{]*)[{]\\s*$')
-
         final oldFixedErrors = reporter.fixed.size()
-
-        final accessMap = [private: 0, null: 1, protected:2, public:3]
 
         final lines = Files.readAllLines(patch)
 
@@ -55,7 +55,7 @@ abstract class CheckPatches extends CheckTask {
             def line = lines[i]
             newLines.add(line + '\n')
 
-            if (hunk_start_pattern.matcher(line).find()) {
+            if (HUNK_START_PATTERN.matcher(line).find()) {
                 if (onlyWhiteSpace) {
                     if (!hasS2SArtifact)
                         reporter.report("Patch contains only white space hunk starting at line ${hunksStart + 1}, file: $patchPath")
@@ -80,36 +80,36 @@ abstract class CheckPatches extends CheckTask {
                         prefixChange = true
                     }
 
-                    def pMatcher = field_pattern.matcher(prevLine)
-                    def cMatcher = field_pattern.matcher(line)
+                    def pMatcher = FIELD_PATTERN.matcher(prevLine)
+                    def cMatcher = FIELD_PATTERN.matcher(line)
 
                     if (pMatcher.find() && cMatcher.find() &&
                             pMatcher.group(6) == cMatcher.group(6) && // = ...
                             pMatcher.group(5) == cMatcher.group(5) && // field name
                             pMatcher.group(3) == cMatcher.group(3) && // static
-                            (accessMap[pMatcher.group(2)] < accessMap[cMatcher.group(2)] || pMatcher.group(4) != cMatcher.group(4))) {
+                            (ACCESS_MAP[pMatcher.group(2)] < ACCESS_MAP[cMatcher.group(2)] || pMatcher.group(4) != cMatcher.group(4))) {
                         reporter.report("Patch contains access changes or final removal at line ${i + 1}, file: $patchPath", true)
                     }
 
-                    pMatcher = method_pattern.matcher(prevLine)
-                    cMatcher = method_pattern.matcher(line)
+                    pMatcher = METHOD_PATTERN.matcher(prevLine)
+                    cMatcher = METHOD_PATTERN.matcher(line)
 
                     if (pMatcher.find() && cMatcher.find() &&
                             pMatcher.group(6) == cMatcher.group(6) && // params
                             pMatcher.group(5) == cMatcher.group(5) && // <T> void name
                             pMatcher.group(3) == cMatcher.group(3) && // static
-                            (accessMap[pMatcher.group(2)] < accessMap[cMatcher.group(2)] || pMatcher.group(4) != cMatcher.group(4))) {
+                            (ACCESS_MAP[pMatcher.group(2)] < ACCESS_MAP[cMatcher.group(2)] || pMatcher.group(4) != cMatcher.group(4))) {
                         reporter.report("Patch contains access changes or final removal at line ${i + 1}, file: $patchPath", true)
                     }
 
-                    pMatcher = class_pattern.matcher(prevLine)
-                    cMatcher = class_pattern.matcher(line)
+                    pMatcher = CLASS_PATTERN.matcher(prevLine)
+                    cMatcher = CLASS_PATTERN.matcher(line)
 
                     if (pMatcher.find() && cMatcher.find() &&
                             pMatcher.group(6) == cMatcher.group(6) && // ClassName<> extends ...
                             pMatcher.group(5) == cMatcher.group(5) && // class | interface
                             pMatcher.group(3) == cMatcher.group(3) && // static
-                            (accessMap[pMatcher.group(2)] < accessMap[cMatcher.group(2)] || pMatcher.group(4) != cMatcher.group(4))) {
+                            (ACCESS_MAP[pMatcher.group(2)] < ACCESS_MAP[cMatcher.group(2)] || pMatcher.group(4) != cMatcher.group(4))) {
                         reporter.report("Patch contains access changes or final removal at line ${i + 1}, file: $patchPath", true)
                     }
                 }
@@ -126,10 +126,10 @@ abstract class CheckPatches extends CheckTask {
                     }
                 }
 
-                final isWhiteSpaceChange = white_space_pattern.matcher(line).find()
+                final isWhiteSpaceChange = WHITESPACE_PATTERN.matcher(line).find()
 
                 if (!prefixChange && !isWhiteSpaceChange) {
-                    onlyWhiteSpace = hasS2SArtifact && import_pattern.matcher(line).find()
+                    onlyWhiteSpace = hasS2SArtifact && IMPORT_PATTERN.matcher(line).find()
                 } else if (isWhiteSpaceChange) {
                     final prevLineChange = prevLine.startsWithAny('+','-')
                     final nextLineChange = i + 1 < lines.size() && lines[i + 1].startsWithAny('+','-')
@@ -146,7 +146,7 @@ abstract class CheckPatches extends CheckTask {
                     newLines.add(line + '\n')
                 }
 
-                if (import_pattern.matcher(line).find() && !hasS2SArtifact) {
+                if (IMPORT_PATTERN.matcher(line).find() && !hasS2SArtifact) {
                     reporter.report("Patch contains import change on line ${i + 1}, file: $patchPath", false)
                 }
             }
