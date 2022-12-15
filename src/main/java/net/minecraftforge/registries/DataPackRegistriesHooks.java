@@ -26,7 +26,7 @@ public final class DataPackRegistriesHooks
 {
     private DataPackRegistriesHooks() {} // utility class
 
-    private static Map<ResourceKey<? extends Registry<?>>, RegistrySynchronization.NetworkedRegistryData<?>> NETWORKABLE_REGISTRIES = new LinkedHashMap<>();
+    private static final Map<ResourceKey<? extends Registry<?>>, RegistrySynchronization.NetworkedRegistryData<?>> NETWORKABLE_REGISTRIES = new LinkedHashMap<>();
     private static final List<RegistryDataLoader.RegistryData<?>> DATA_PACK_REGISTRIES = new ArrayList<>(RegistryDataLoader.WORLDGEN_REGISTRIES);
     private static final List<RegistryDataLoader.RegistryData<?>> DATA_PACK_REGISTRIES_VIEW = Collections.unmodifiableList(DATA_PACK_REGISTRIES);
     private static final Set<ResourceKey<? extends Registry<?>>> SYNCED_CUSTOM_REGISTRIES = new HashSet<>();
@@ -38,7 +38,8 @@ public final class DataPackRegistriesHooks
         if (!StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE).getCallerClass().equals(RegistrySynchronization.class))
             throw new IllegalCallerException("Attempted to call DataPackRegistriesHooks#grabNetworkableRegistries!");
         NETWORKABLE_REGISTRIES.forEach(builder::put);
-        NETWORKABLE_REGISTRIES = new HashMap<>(builder.build());
+        NETWORKABLE_REGISTRIES.clear();
+        NETWORKABLE_REGISTRIES.putAll(builder.build());
         return Collections.unmodifiableMap(NETWORKABLE_REGISTRIES);
     }
 
