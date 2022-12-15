@@ -163,7 +163,7 @@ abstract class CheckATs extends CheckTask {
                 parent = inheritance[parent]?.superName
             }
         }
-        constructorGroups.values().each { entry -> entry.existing.findAll { it !in entry.children }.each{ println('Removed: ' + it) } }
+        constructorGroups.values().each { entry -> entry.existing.findAll { it !in entry.children }.each{  reporter.report("Found invalid group entry: $it") } }
 
         toRemove.each(lines.&remove)
 
