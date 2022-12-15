@@ -101,12 +101,13 @@ public class ConditionHelper {
     public static boolean processConditions(JsonObject json, String memberName, ICondition.IContext context)
     {
         final JsonElement conditionsMember = json.get(memberName);
-        if (conditionsMember == null)
-            throw new JsonSyntaxException("Missing " + memberName + ", expected to find a JsonArray");
+        if (conditionsMember == null) return true;
         final JsonArray array;
-        if (conditionsMember.isJsonArray()) {
+        if (conditionsMember.isJsonArray())
+        {
             array = conditionsMember.getAsJsonArray();
-        } else {
+        } else
+        {
             array = new JsonArray();
             array.add(conditionsMember);
         }

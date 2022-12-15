@@ -232,7 +232,7 @@ public class ForgeMod
     public static final RegistryObject<Codec<TrueCondition>> TRUE_CONDITION_TYPE = condition("true", Codec.unit(TrueCondition.INSTANCE));
 
     public static final RegistryObject<Codec<AndCondition>> AND_CONDITION_TYPE = condition("and", RecordCodecBuilder.create(in -> in.group(
-            ExtraCodecs.nonEmptyList(ICondition.DIRECT_CODEC.listOf()).fieldOf("values").forGetter(AndCondition::children)
+            ExtraCodecs.nonEmptyList(singleOrList(ICondition.DIRECT_CODEC)).fieldOf("values").forGetter(AndCondition::children)
     ).apply(in, AndCondition::new)));
 
     public static final RegistryObject<Codec<NotCondition>> NOT_CONDITION_TYPE = condition("not", RecordCodecBuilder.create(in -> in.group(
@@ -240,7 +240,7 @@ public class ForgeMod
     ).apply(in, NotCondition::new)));
 
     public static final RegistryObject<Codec<OrCondition>> OR_CONDITION_TYPE = condition("or", RecordCodecBuilder.create(in -> in.group(
-            ExtraCodecs.nonEmptyList(ICondition.DIRECT_CODEC.listOf()).fieldOf("values").forGetter(OrCondition::values)
+            ExtraCodecs.nonEmptyList(singleOrList(ICondition.DIRECT_CODEC)).fieldOf("values").forGetter(OrCondition::values)
     ).apply(in, OrCondition::new)));
 
     public static final RegistryObject<Codec<ItemExistsCondition>> ITEM_EXISTS_CONDITION_TYPE = condition("item_exists", RecordCodecBuilder.create(in -> in.group(
@@ -624,5 +624,13 @@ public class ForgeMod
 
     private static <T extends ICondition> RegistryObject<Codec<T>> condition(String id, Codec<T> codec) {
         return CONDITION_SERIALIZERS.register(id, () -> codec);
+    }
+
+    private static <T> Codec<List<T>> singleOrList(Codec<T> codec)
+    {
+        return new ExtraCodecs.EitherCodec<>(codec, codec.listOf()).xmap(
+                either -> either.map(List::of, Function.identity()),
+                list -> list.size() == 1 ? Either.left(list.get(0)) : Either.right(list)
+        );
     }
 }
