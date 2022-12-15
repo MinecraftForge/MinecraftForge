@@ -1521,7 +1521,7 @@ public class ForgeHooks
 
         for (PackType packType : PackType.values())
         {
-            String key = "forge:" + packType.bridgeType.name().toLowerCase(Locale.ROOT) + "_pack_format";
+            String key = makePackFormatKey(packType);
             if (json.has(key))
             {
                 map.put(packType, GsonHelper.getAsInt(json, key));
@@ -1539,9 +1539,13 @@ public class ForgeHooks
             int format = section.getPackFormat(packType);
             if (format != packFormat)
             {
-                json.addProperty("forge:" + packType.bridgeType.name().toLowerCase(Locale.ROOT) + "_pack_format", format);
+                json.addProperty(makePackFormatKey(packType), format);
             }
         }
+    }
+
+    private static String makePackFormatKey(PackType packType) {
+        return "forge:" + packType.bridgeType.name().toLowerCase(Locale.ROOT) + "_pack_format";
     }
 
     /**
