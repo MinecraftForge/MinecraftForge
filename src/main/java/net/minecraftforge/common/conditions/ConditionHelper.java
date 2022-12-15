@@ -15,7 +15,6 @@ import com.google.gson.JsonSyntaxException;
 import com.mojang.logging.LogUtils;
 
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.util.GsonHelper;
 import net.minecraftforge.common.conditions.ICondition.IContext;
 
 /**
@@ -42,7 +41,7 @@ public class ConditionHelper {
      * Serializes an array of conditions as a {@link JsonArray}
      * @param conditions The conditions to be serialized
      * @return The serialized JSON
-     * @throws JsonSyntaxException If no serializer is registered for any of the passed conditions.
+     * @throws RuntimeException If no serializer is registered for any of the passed conditions.
      */
     public static JsonArray serialize(ICondition... conditions)
     {
@@ -60,7 +59,7 @@ public class ConditionHelper {
      * @return The deserialized condition object
      * @throws RuntimeException If no serializer is registered for the specified condition type, or if the serializer encountered an exception decoding
      */
-    public static ICondition getCondition(JsonObject json)
+    public static ICondition getCondition(JsonElement json)
     {
         return ICondition.DIRECT_CODEC.decode(JsonOps.INSTANCE, json)
                 .getOrThrow(false, msg -> LOGGER.error("Encountered exception decoding condition: {}", msg)).getFirst();

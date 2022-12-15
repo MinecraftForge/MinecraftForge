@@ -13,7 +13,7 @@
           try {
              try (Reader reader = resource.m_215508_()) {
                 JsonElement jsonelement = JsonParser.parseReader(reader);
-+               if (net.minecraftforge.common.conditions.ConditionHelper.processRegistryEntry(jsonelement, resourcekey, resource.m_215506_()))
++               if (!net.minecraftforge.common.conditions.ConditionHelper.processRegistryEntry(jsonelement, resourcekey, resource.m_215506_()))
 +                  continue; // Skip loading entries with unmet conditions.
                 DataResult<E> dataresult = p_256232_.parse(registryops, jsonelement);
                 E e = dataresult.getOrThrow(false, (p_248715_) -> {
