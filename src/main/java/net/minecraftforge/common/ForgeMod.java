@@ -622,7 +622,8 @@ public class ForgeMod
         event.addNodes(USE_SELECTORS_PERMISSION);
     }
 
-    private static <T extends ICondition> RegistryObject<Codec<T>> condition(String id, Codec<T> codec) {
+    private static <T extends ICondition> RegistryObject<Codec<T>> condition(String id, Codec<T> codec)
+    {
         return CONDITION_SERIALIZERS.register(id, () -> codec);
     }
 
