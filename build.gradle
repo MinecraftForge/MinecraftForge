@@ -4,6 +4,7 @@ import net.minecraftforge.forge.tasks.checks.CheckExcs
 import net.minecraftforge.forge.tasks.checks.CheckPatches
 import net.minecraftforge.forge.tasks.checks.CheckSAS
 import net.minecraftforge.forge.tasks.checks.CheckTask
+import net.minecraftforge.forge.tasks.checks.CheckMode
 
 import java.nio.file.Files
 import java.util.Date
@@ -1173,6 +1174,16 @@ project(':forge') {
         }
     }
 
+    tasks.register('checkAll') {
+        dependsOn 'checkLicenses'
+    }
+    tasks.register('checkAllAndFix') {
+        dependsOn 'findFieldInstanceChecks', 'checkLicenses'
+    }
+    tasks.withType(CheckTask).configureEach {
+        tasks.named(it.mode.get() === CheckMode.FIX ? 'checkAllAndFix' : 'checkAll').configure { t -> t.dependsOn(it) }
+    }
+
     CheckTask.registerTask(tasks, 'ATs', CheckATs) {
         dependsOn extractInheritance, createSrg2Mcp
         ats.from patcher.accessTransformers
@@ -1202,7 +1213,7 @@ project(':forge') {
     }
 
     genPatches {
-        finalizedBy checkPatches
+        finalizedBy checkAndFixPatches
         autoHeader true
         lineEnding = '\n'
     }

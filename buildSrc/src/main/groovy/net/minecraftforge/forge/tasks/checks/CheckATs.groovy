@@ -103,11 +103,11 @@ abstract class CheckATs extends CheckTask {
             // Process normal lines, remove invalid and remove narrowing
             else {
                 def jcls = inheritance.get(binaryName)
-                if (jcls == null) {
+                if (jcls === null) {
                     itr.remove()
                     reporter.report("Invalid: $key")
                 } else if (entry.desc == '') {
-                    if (accessLevel(jcls.access) > accessStr(entry.modifier) && (entry.comment == null || !entry.comment.startsWith('#force '))) {
+                    if (accessLevel(jcls.access) > accessStr(entry.modifier) && (entry.comment === null || !entry.comment.startsWith('#force '))) {
                         itr.remove()
                         reporter.report("Invalid Narrowing: $key")
                     }
@@ -139,7 +139,7 @@ abstract class CheckATs extends CheckTask {
         }
 
         inheritance.each { tcls, value ->
-            if (!value.methods || ((value.access & Opcodes.ACC_ABSTRACT) != 0)) return
+            if (!value.methods || ((value.access & Opcodes.ACC_ABSTRACT) !== 0)) return
             String parent = tcls
             while (parent !== null) {
                 constructorGroups[parent]?.tap { entry ->
@@ -189,9 +189,9 @@ abstract class CheckATs extends CheckTask {
 
             if (comment?.startsWith(mappedName))
                 return '# ' + comment
-            if (comment && comment.indexOf(' ') != -1) {
+            if (comment && comment.indexOf(' ') !== -1) {
                 def split = comment.split(' - ').toList()
-                if (split[0].indexOf(' ') != -1)
+                if (split[0].indexOf(' ') !== -1)
                 // The first string is more than one word, so append before it
                     return "# ${mappedName} - ${comment}"
                 split.remove(0)
@@ -204,7 +204,7 @@ abstract class CheckATs extends CheckTask {
                 def comment = remapComment.call(value)
                 data.add(value.modifier + ' ' + key + (comment ? ' ' + comment : ''))
             } else {
-                data.add('#group ' + value.modifier + ' ' + key + (value.comment == null ? '' : ' ' + value.comment))
+                data.add('#group ' + value.modifier + ' ' + key + (' ' + (value.comment ?: '')).trim())
                 value.children.each {
                     final line = value.modifier + ' ' + it
                     final entry = ATParser.parseEntry(line)
@@ -261,7 +261,7 @@ class ATParser {
                 }
 
                 outLines[entry.key] = group
-            } else if (group != null) {
+            } else if (group !== null) {
                 if (line.startsWith('#endgroup')) {
                     group = null
                 } else {
@@ -286,8 +286,8 @@ class ATParser {
 
     static Entry parseEntry(String line) {
         final idx = line.indexOf('#')
-        final String comment = idx == -1 ? null : line.substring(idx)
-        if (idx != -1) line = line.substring(0, idx - 1)
+        final String comment = idx === -1 ? null : line.substring(idx)
+        if (idx !== -1) line = line.substring(0, idx - 1)
         final data = (line.trim() + '     ').split(' ', -1)
         new Entry(data[0], data[1], data[2], comment)
     }
