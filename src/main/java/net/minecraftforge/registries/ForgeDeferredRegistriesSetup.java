@@ -27,6 +27,7 @@ public class ForgeDeferredRegistriesSetup
         ForgeRegistries.DEFERRED_FLUID_TYPES.register(modEventBus);
         ForgeRegistries.DEFERRED_STRUCTURE_MODIFIER_SERIALIZERS.register(modEventBus);
         ForgeRegistries.DEFERRED_HOLDER_SET_TYPES.register(modEventBus);
+        ForgeRegistries.DEFERRED_CONDITION_SERIALIZERS.register(modEventBus);
 
         setup = true;
     }

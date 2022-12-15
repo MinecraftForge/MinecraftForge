@@ -5,16 +5,20 @@
 
 package net.minecraftforge.common.conditions;
 
+import com.mojang.serialization.Codec;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
+import net.minecraft.util.ExtraCodecs;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
 /**
@@ -23,14 +27,21 @@ import java.util.function.Predicate;
 public interface ICondition extends Predicate<ICondition.IContext>
 {
     /**
-     * @return The ID of the serializer that is responsible for this condition.
+     * Codec for (de)serializing conditions inline.
+     * Mods can use this for data generation.
      */
-    ResourceLocation getSerializerId();
+    Codec<ICondition> DIRECT_CODEC = ExtraCodecs.lazyInitializedCodec(() -> ForgeRegistries.CONDITION_SERIALIZERS.get().getCodec())
+            .dispatch(ICondition::codec, Function.identity());
+
+    /**
+     * @return the codec which serializes and deserializes this condition
+     */
+    Codec<? extends ICondition> codec();
 
     /**
      * Tests if this condition is met, given the context.
      * @param context The {@linkplain ICondition.IContext Condition Context}
-     * @return True if this condition is met in this context.
+     * @return {@code true} if this condition is met in this context.
      */
     @Override
     boolean test(IContext context);

@@ -5,22 +5,13 @@
 
 package net.minecraftforge.common.conditions;
 
-import com.google.gson.JsonObject;
-
-import net.minecraft.resources.ResourceLocation;
+import com.mojang.serialization.Codec;
+import net.minecraftforge.common.ForgeMod;
 
 public final class TrueCondition implements ICondition
 {
     public static final TrueCondition INSTANCE = new TrueCondition();
-    private static final ResourceLocation NAME = new ResourceLocation("forge", "true");
-
     private TrueCondition() {}
-
-    @Override
-    public ResourceLocation getSerializerId()
-    {
-        return NAME;
-    }
 
     @Override
     public boolean test(IContext context)
@@ -34,23 +25,9 @@ public final class TrueCondition implements ICondition
         return "true";
     }
 
-    public static class Serializer implements IConditionSerializer<TrueCondition>
+    @Override
+    public Codec<? extends ICondition> codec()
     {
-        public static final Serializer INSTANCE = new Serializer();
-
-        @Override
-        public void write(JsonObject json, TrueCondition value) { }
-
-        @Override
-        public TrueCondition read(JsonObject json)
-        {
-            return TrueCondition.INSTANCE;
-        }
-
-        @Override
-        public ResourceLocation getID()
-        {
-            return TrueCondition.NAME;
-        }
+        return ForgeMod.TRUE_CONDITION_TYPE.get();
     }
 }
