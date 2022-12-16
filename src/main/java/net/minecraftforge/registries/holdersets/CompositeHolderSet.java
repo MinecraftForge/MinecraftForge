@@ -12,6 +12,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
 
+import net.minecraft.core.HolderOwner;
 import org.jetbrains.annotations.Nullable;
 
 import com.mojang.datafixers.util.Either;
@@ -37,7 +38,7 @@ public abstract class CompositeHolderSet<T> implements ICustomHolderSet<T>
     private Set<Holder<T>> set = null;
     @Nullable
     private List<Holder<T>> list = null;
-    
+
     public CompositeHolderSet(List<HolderSet<T>> components)
     {
         this.components = components;
@@ -46,17 +47,17 @@ public abstract class CompositeHolderSet<T> implements ICustomHolderSet<T>
             holderset.addInvalidationListener(this::invalidate);
         }
     }
-    
+
     /**
      * {@return immutable Set of Holders given this composite holderset's component holdersets}
      */
     protected abstract Set<Holder<T>> createSet();
-    
+
     public List<HolderSet<T>> getComponents()
     {
         return this.components;
     }
-    
+
     public Set<Holder<T>> getSet()
     {
         Set<Holder<T>> thisSet = this.set;
@@ -71,7 +72,7 @@ public abstract class CompositeHolderSet<T> implements ICustomHolderSet<T>
             return thisSet;
         }
     }
-    
+
     public List<Holder<T>> getList()
     {
         List<Holder<T>> thisList = this.list;
@@ -86,13 +87,13 @@ public abstract class CompositeHolderSet<T> implements ICustomHolderSet<T>
             return thisList;
         }
     }
-    
+
     @Override
     public void addInvalidationListener(Runnable runnable)
     {
         this.owners.add(runnable);
     }
-    
+
     private void invalidate()
     {
         this.set = null;
@@ -144,16 +145,22 @@ public abstract class CompositeHolderSet<T> implements ICustomHolderSet<T>
     }
 
     @Override
-    public boolean isValidInRegistry(Registry<T> registry)
+    public boolean canSerializeIn(HolderOwner<T> holderOwner)
     {
         for (HolderSet<T> component : this.components)
         {
-            if (!component.isValidInRegistry(registry))
+            if (!component.canSerializeIn(holderOwner))
             {
                 return false;
             }
         }
         return true;
+    }
+
+    @Override
+    public Optional<TagKey<T>> unwrapKey()
+    {
+        return Optional.empty();
     }
 
     @Override

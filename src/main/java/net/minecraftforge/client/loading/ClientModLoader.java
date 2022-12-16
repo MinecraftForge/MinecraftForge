@@ -79,7 +79,7 @@ public class ClientModLoader
             }
         }
     }
-    public static void begin(final Minecraft minecraft, final PackRepository defaultResourcePacks, final ReloadableResourceManager mcResourceManager, ClientPackSource metadataSerializer)
+    public static void begin(final Minecraft minecraft, final PackRepository defaultResourcePacks, final ReloadableResourceManager mcResourceManager)
     {
         // force log4j to shutdown logging in a shutdown hook. This is because we disable default shutdown hook so the server properly logs it's shutdown
         Runtime.getRuntime().addShutdownHook(new Thread(LogManager::shutdown));
@@ -183,31 +183,34 @@ public class ClientModLoader
     }
 
     private static RepositorySource buildPackFinder(Map<IModFile, ? extends PathPackResources> modResourcePacks) {
-        return (packList, factory) -> clientPackFinder(modResourcePacks, packList, factory);
+        return packAcceptor -> clientPackFinder(modResourcePacks, packAcceptor);
     }
 
-    private static void clientPackFinder(Map<IModFile, ? extends PathPackResources> modResourcePacks, Consumer<Pack> consumer, Pack.PackConstructor factory) {
+    private static void clientPackFinder(Map<IModFile, ? extends PathPackResources> modResourcePacks, Consumer<Pack> packAcceptor) {
         List<PathPackResources> hiddenPacks = new ArrayList<>();
         for (Entry<IModFile, ? extends PathPackResources> e : modResourcePacks.entrySet())
         {
             IModInfo mod = e.getKey().getModInfos().get(0);
             final String name = "mod:" + mod.getModId();
-            final Pack packInfo = Pack.create(name, false, e::getValue, factory, Pack.Position.BOTTOM, PackSource.DEFAULT);
-            if (packInfo == null) {
+            final Pack modPack = Pack.readMetaAndCreate(name, Component.literal(e.getValue().packId()), false, id -> e.getValue(), PackType.CLIENT_RESOURCES, Pack.Position.BOTTOM, PackSource.DEFAULT);
+            if (modPack == null) {
                 // Vanilla only logs an error, instead of propagating, so handle null and warn that something went wrong
                 ModLoader.get().addWarning(new ModLoadingWarning(mod, ModLoadingStage.ERROR, "fml.modloading.brokenresources", e.getKey()));
                 continue;
             }
             LOGGER.debug(CORE, "Generating PackInfo named {} for mod file {}", name, e.getKey().getFilePath());
             if (mod.getOwningFile().showAsResourcePack()) {
-                consumer.accept(packInfo);
+                packAcceptor.accept(modPack);
             } else {
                 hiddenPacks.add(e.getValue());
             }
         }
-        final Pack packInfo = Pack.create("mod_resources", true, () -> new DelegatingPackResources("mod_resources", "Mod Resources",
-                new PackMetadataSection(Component.translatable("fml.resources.modresources", hiddenPacks.size()), PackType.CLIENT_RESOURCES.getVersion(SharedConstants.getCurrentVersion())),
-                hiddenPacks), factory, Pack.Position.BOTTOM, PackSource.DEFAULT);
-        consumer.accept(packInfo);
+
+        // Create a resource pack merging all mod resources that should be hidden
+        final Pack modResourcesPack = Pack.readMetaAndCreate("mod_resources", Component.literal("Mod Resources"), true,
+                id -> new DelegatingPackResources(id, false, new PackMetadataSection(Component.translatable("fml.resources.modresources", hiddenPacks.size()),
+                        PackType.CLIENT_RESOURCES.getVersion(SharedConstants.getCurrentVersion())), hiddenPacks),
+                PackType.CLIENT_RESOURCES, Pack.Position.BOTTOM, PackSource.DEFAULT);
+        packAcceptor.accept(modResourcesPack);
     }
 }

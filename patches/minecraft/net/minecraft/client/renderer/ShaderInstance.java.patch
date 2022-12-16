@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/ShaderInstance.java
 +++ b/net/minecraft/client/renderer/ShaderInstance.java
-@@ -95,10 +_,14 @@
+@@ -96,10 +_,14 @@
     @Nullable
     public final Uniform f_173320_;
  
@@ -15,9 +15,9 @@
 -      ResourceLocation resourcelocation = new ResourceLocation("shaders/core/" + p_173337_ + ".json");
 +      ResourceLocation resourcelocation = new ResourceLocation(shaderLocation.m_135827_(), "shaders/core/" + shaderLocation.m_135815_() + ".json");
  
-       try {
-          Reader reader = p_173336_.m_215597_(resourcelocation);
-@@ -222,8 +_,10 @@
+       try (Reader reader = p_173336_.m_215597_(resourcelocation)) {
+          JsonObject jsonobject = GsonHelper.m_13859_(reader);
+@@ -205,8 +_,10 @@
        Program program1 = p_173342_.m_85570_().get(p_173343_);
        Program program;
        if (program1 == null) {
@@ -27,10 +27,10 @@
 +         String s = "shaders/core/" + loc.m_135815_() + p_173342_.m_85569_();
 +         ResourceLocation resourcelocation = new ResourceLocation(loc.m_135827_(), s);
 +         Resource resource = p_173341_.m_215593_(resourcelocation);
-          InputStream inputstream = resource.m_215507_();
  
-          try {
-@@ -232,11 +_,11 @@
+          try (InputStream inputstream = resource.m_215507_()) {
+             final String s1 = FileUtil.m_179922_(s);
+@@ -214,11 +_,11 @@
                 private final Set<String> f_173369_ = Sets.newHashSet();
  
                 public String m_142138_(boolean p_173374_, String p_173375_) {
@@ -44,8 +44,8 @@
 -                     ResourceLocation resourcelocation = new ResourceLocation(p_173375_);
  
                       try {
-                         Reader reader = p_173341_.m_215597_(resourcelocation);
-@@ -262,7 +_,8 @@
+                         String s2;
+@@ -228,7 +_,8 @@
  
                          return s2;
                       } catch (IOException ioexception) {

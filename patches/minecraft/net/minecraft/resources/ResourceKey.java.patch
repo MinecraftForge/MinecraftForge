@@ -1,15 +1,15 @@
 --- a/net/minecraft/resources/ResourceKey.java
 +++ b/net/minecraft/resources/ResourceKey.java
 @@ -7,7 +_,7 @@
- import java.util.Optional;
  import net.minecraft.core.Registry;
+ import net.minecraft.core.registries.BuiltInRegistries;
  
 -public class ResourceKey<T> {
 +public class ResourceKey<T> implements Comparable<ResourceKey<?>> {
-    private static final Map<String, ResourceKey<?>> f_135775_ = Collections.synchronizedMap(Maps.newIdentityHashMap());
+    private static final ConcurrentMap<ResourceKey.InternKey, ResourceKey<?>> f_135775_ = (new MapMaker()).weakValues().makeMap();
     private final ResourceLocation f_135776_;
     private final ResourceLocation f_135777_;
-@@ -56,5 +_,18 @@
+@@ -55,6 +_,19 @@
  
     public ResourceLocation m_211136_() {
        return this.f_135776_;
@@ -27,4 +27,5 @@
 +      if (ret == 0) ret = this.m_135782_().compareTo(o.m_135782_());
 +      return ret;
     }
- }
+ 
+    static record InternKey(ResourceLocation f_256880_, ResourceLocation f_257046_) {

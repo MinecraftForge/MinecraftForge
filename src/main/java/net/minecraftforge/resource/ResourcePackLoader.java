@@ -53,7 +53,7 @@ public class ResourcePackLoader {
     @NotNull
     public static PathPackResources createPackForMod(IModFileInfo mf)
     {
-        return new PathPackResources(mf.getFile().getFileName(), mf.getFile().getFilePath()){
+        return new PathPackResources(mf.getFile().getFileName(), false, mf.getFile().getFilePath()){
             final IModFile modFile = mf.getFile();
             @NotNull
             @Override

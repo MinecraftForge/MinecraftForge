@@ -23,7 +23,7 @@ public enum KeyModifier {
             int keyCode = key.getValue();
             if (Minecraft.ON_OSX)
             {
-                return keyCode == GLFW.GLFW_KEY_LEFT_ALT || keyCode == GLFW.GLFW_KEY_RIGHT_ALT;
+                return keyCode == GLFW.GLFW_KEY_LEFT_SUPER || keyCode == GLFW.GLFW_KEY_RIGHT_SUPER;
             }
             else
             {

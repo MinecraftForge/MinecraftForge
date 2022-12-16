@@ -10,6 +10,7 @@
       ],
       "recipe": {
         "type": "minecraft:crafting_shaped",
+        "category": "building",
         "key": {
           "X": {
             "item": "minecraft:diamond_block"
@@ -36,6 +37,7 @@
       ],
       "recipe": {
         "type": "minecraft:crafting_shaped",
+        "category": "building",
         "key": {
           "X": {
             "item": "minecraft:diamond_block"

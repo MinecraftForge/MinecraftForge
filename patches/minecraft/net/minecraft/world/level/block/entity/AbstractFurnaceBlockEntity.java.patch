@@ -19,7 +19,7 @@
     public static Map<Item, Integer> m_58423_() {
        Map<Item, Integer> map = Maps.newLinkedHashMap();
        m_58374_(map, Items.f_42448_, 20000);
-@@ -210,9 +_,9 @@
+@@ -204,9 +_,9 @@
        super.m_142466_(p_155025_);
        this.f_58310_ = NonNullList.m_122780_(this.m_6643_(), ItemStack.f_41583_);
        ContainerHelper.m_18980_(p_155025_, this.f_58310_);
@@ -32,7 +32,7 @@
        this.f_58317_ = this.m_7743_(this.f_58310_.get(1));
        CompoundTag compoundtag = p_155025_.m_128469_("RecipesUsed");
  
-@@ -224,9 +_,9 @@
+@@ -218,9 +_,9 @@
  
     protected void m_183515_(CompoundTag p_187452_) {
        super.m_183515_(p_187452_);
@@ -45,7 +45,7 @@
        ContainerHelper.m_18973_(p_187452_, this.f_58310_);
        CompoundTag compoundtag = new CompoundTag();
        this.f_58320_.forEach((p_187449_, p_187450_) -> {
-@@ -254,28 +_,30 @@
+@@ -248,28 +_,30 @@
           }
  
           int i = p_155017_.m_6893_();
@@ -81,7 +81,7 @@
                    p_155017_.m_6029_(recipe);
                 }
  
-@@ -300,9 +_,9 @@
+@@ -294,9 +_,9 @@
  
     }
  
@@ -93,7 +93,7 @@
           if (itemstack.m_41619_()) {
              return false;
           } else {
-@@ -311,10 +_,10 @@
+@@ -305,10 +_,10 @@
                 return true;
              } else if (!itemstack1.m_41656_(itemstack)) {
                 return false;
@@ -106,7 +106,7 @@
              }
           }
        } else {
-@@ -322,15 +_,15 @@
+@@ -316,15 +_,15 @@
        }
     }
  
@@ -126,7 +126,7 @@
           }
  
           if (itemstack.m_150930_(Blocks.f_50057_.m_5456_()) && !p_155028_.get(1).m_41619_() && p_155028_.get(1).m_150930_(Items.f_42446_)) {
-@@ -349,7 +_,7 @@
+@@ -343,7 +_,7 @@
           return 0;
        } else {
           Item item = p_58343_.m_41720_();
@@ -135,7 +135,7 @@
        }
     }
  
-@@ -358,7 +_,7 @@
+@@ -352,7 +_,7 @@
     }
  
     public static boolean m_58399_(ItemStack p_58400_) {
@@ -144,7 +144,7 @@
     }
  
     public int[] m_7071_(Direction p_58363_) {
-@@ -438,7 +_,7 @@
+@@ -432,7 +_,7 @@
           return true;
        } else {
           ItemStack itemstack = this.f_58310_.get(1);
@@ -153,7 +153,7 @@
        }
     }
  
-@@ -496,5 +_,34 @@
+@@ -490,5 +_,34 @@
           p_58342_.m_36491_(itemstack);
        }
  

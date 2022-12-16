@@ -1,15 +1,15 @@
 --- a/net/minecraft/world/entity/vehicle/Boat.java
 +++ b/net/minecraft/world/entity/vehicle/Boat.java
-@@ -48,7 +_,7 @@
+@@ -50,7 +_,7 @@
  import net.minecraft.world.phys.shapes.Shapes;
  import net.minecraft.world.phys.shapes.VoxelShape;
  
--public class Boat extends Entity {
+-public class Boat extends Entity implements VariantHolder<Boat.Type> {
 +public class Boat extends Entity implements net.minecraftforge.common.extensions.IForgeBoat {
     private static final EntityDataAccessor<Integer> f_38282_ = SynchedEntityData.m_135353_(Boat.class, EntityDataSerializers.f_135028_);
     private static final EntityDataAccessor<Integer> f_38283_ = SynchedEntityData.m_135353_(Boat.class, EntityDataSerializers.f_135028_);
     private static final EntityDataAccessor<Float> f_38284_ = SynchedEntityData.m_135353_(Boat.class, EntityDataSerializers.f_135029_);
-@@ -439,7 +_,7 @@
+@@ -452,7 +_,7 @@
              for(int i2 = i1; i2 < j1; ++i2) {
                 blockpos$mutableblockpos.m_122178_(l1, k1, i2);
                 FluidState fluidstate = this.f_19853_.m_6425_(blockpos$mutableblockpos);
@@ -18,7 +18,7 @@
                    f = Math.max(f, fluidstate.m_76155_(this.f_19853_, blockpos$mutableblockpos));
                 }
  
-@@ -480,7 +_,7 @@
+@@ -493,7 +_,7 @@
                       blockpos$mutableblockpos.m_122178_(l1, k2, i2);
                       BlockState blockstate = this.f_19853_.m_8055_(blockpos$mutableblockpos);
                       if (!(blockstate.m_60734_() instanceof WaterlilyBlock) && Shapes.m_83157_(blockstate.m_60812_(this.f_19853_, blockpos$mutableblockpos).m_83216_((double)l1, (double)k2, (double)i2), voxelshape, BooleanOp.f_82689_)) {
@@ -27,7 +27,7 @@
                          ++k1;
                       }
                    }
-@@ -509,7 +_,7 @@
+@@ -522,7 +_,7 @@
              for(int i2 = i1; i2 < j1; ++i2) {
                 blockpos$mutableblockpos.m_122178_(k1, l1, i2);
                 FluidState fluidstate = this.f_19853_.m_6425_(blockpos$mutableblockpos);
@@ -36,7 +36,7 @@
                    float f = (float)l1 + fluidstate.m_76155_(this.f_19853_, blockpos$mutableblockpos);
                    this.f_38277_ = Math.max((double)f, this.f_38277_);
                    flag |= aabb.f_82289_ < (double)f;
-@@ -539,7 +_,7 @@
+@@ -552,7 +_,7 @@
              for(int i2 = i1; i2 < j1; ++i2) {
                 blockpos$mutableblockpos.m_122178_(k1, l1, i2);
                 FluidState fluidstate = this.f_19853_.m_6425_(blockpos$mutableblockpos);
@@ -45,7 +45,7 @@
                    if (!fluidstate.m_76170_()) {
                       return Boat.Status.UNDER_FLOWING_WATER;
                    }
-@@ -753,7 +_,7 @@
+@@ -766,7 +_,7 @@
              }
  
              this.m_183634_();
@@ -54,7 +54,7 @@
              this.f_19789_ -= (float)p_38307_;
           }
  
-@@ -809,7 +_,7 @@
+@@ -822,7 +_,7 @@
     }
  
     protected boolean m_7310_(Entity p_38390_) {
@@ -63,7 +63,7 @@
     }
  
     protected int m_213801_() {
-@@ -834,6 +_,16 @@
+@@ -843,6 +_,16 @@
  
     public boolean m_5842_() {
        return this.f_38279_ == Boat.Status.UNDER_WATER || this.f_38279_ == Boat.Status.UNDER_FLOWING_WATER;

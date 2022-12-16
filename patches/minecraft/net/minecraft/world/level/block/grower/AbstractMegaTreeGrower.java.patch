@@ -1,30 +1,12 @@
 --- a/net/minecraft/world/level/block/grower/AbstractMegaTreeGrower.java
 +++ b/net/minecraft/world/level/block/grower/AbstractMegaTreeGrower.java
-@@ -25,15 +_,24 @@
-       return super.m_213817_(p_222891_, p_222892_, p_222893_, p_222894_, p_222895_);
-    }
- 
-+   // Forge: context-sensitive version to be able to use data pack provided features
-+   @Nullable
-+   protected Holder<? extends ConfiguredFeature<?, ?>> getConfiguredMegaFeature(ServerLevel level, ChunkGenerator chunkGenerator, BlockPos pos, BlockState state, RandomSource random) {
-+      return m_213566_(random);
-+   }
-+
-+   /** @deprecated Forge: Use {@link #getConfiguredMegaFeature(ServerLevel, ChunkGenerator, BlockPos, BlockState, RandomSource)} instead */
-+   @Deprecated
-    @Nullable
-    protected abstract Holder<? extends ConfiguredFeature<?, ?>> m_213566_(RandomSource p_222904_);
- 
-    public boolean m_222896_(ServerLevel p_222897_, ChunkGenerator p_222898_, BlockPos p_222899_, BlockState p_222900_, RandomSource p_222901_, int p_222902_, int p_222903_) {
--      Holder<? extends ConfiguredFeature<?, ?>> holder = this.m_213566_(p_222901_);
--      if (holder == null) {
-+      Holder<? extends ConfiguredFeature<?, ?>> holder = this.getConfiguredMegaFeature(p_222897_, p_222898_, p_222899_, p_222900_, p_222901_);
-+      net.minecraftforge.event.level.SaplingGrowTreeEvent event = net.minecraftforge.event.ForgeEventFactory.blockGrowFeature(p_222897_, p_222901_, p_222899_, holder);
-+      if (event.getResult().equals(net.minecraftforge.eventbus.api.Event.Result.DENY) || event.getFeature() == null) {
+@@ -36,6 +_,9 @@
           return false;
        } else {
--         ConfiguredFeature<?, ?> configuredfeature = holder.m_203334_();
-+         ConfiguredFeature<?, ?> configuredfeature = event.getFeature().m_203334_();
-          BlockState blockstate = Blocks.f_50016_.m_49966_();
-          p_222897_.m_7731_(p_222899_.m_7918_(p_222902_, 0, p_222903_), blockstate, 4);
-          p_222897_.m_7731_(p_222899_.m_7918_(p_222902_ + 1, 0, p_222903_), blockstate, 4);
+          Holder<ConfiguredFeature<?, ?>> holder = p_222897_.m_8891_().m_175515_(Registries.f_256911_).m_203636_(resourcekey).orElse((Holder.Reference<ConfiguredFeature<?, ?>>)null);
++         var event = net.minecraftforge.event.ForgeEventFactory.blockGrowFeature(p_222897_, p_222901_, p_222899_, holder);
++         holder = event.getFeature();
++         if (event.getResult() == net.minecraftforge.eventbus.api.Event.Result.DENY) return false;
+          if (holder == null) {
+             return false;
+          } else {

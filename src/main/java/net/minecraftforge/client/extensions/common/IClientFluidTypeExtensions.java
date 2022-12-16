@@ -6,21 +6,14 @@
 package net.minecraftforge.client.extensions.common;
 
 import com.mojang.blaze3d.shaders.FogShape;
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.BufferUploader;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.Tesselator;
-import com.mojang.blaze3d.vertex.VertexFormat;
-import com.mojang.math.Matrix4f;
-import com.mojang.math.Vector3f;
+import java.util.Objects;
+import java.util.function.Consumer;
+import java.util.stream.Stream;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.FogRenderer;
-import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.ScreenEffectRenderer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
@@ -33,10 +26,7 @@ import net.minecraftforge.fluids.FluidType;
 import net.minecraftforge.fml.LogicalSide;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Objects;
-import java.util.function.Consumer;
-import java.util.stream.Stream;
+import org.joml.Vector3f;
 
 /**
  * {@linkplain LogicalSide#CLIENT Client-only} extensions to {@link FluidType}.
@@ -130,19 +120,20 @@ public interface IClientFluidTypeExtensions
         return null;
     }
 
-    /**
-     * Returns a stream of textures applied to a fluid.
-     *
-     * <p>This is used by the {@link net.minecraft.client.resources.model.ModelBakery} to load in all textures that
-     * can be applied on reload.
-     *
-     * @return a stream of textures applied to a fluid
-     */
-    default Stream<ResourceLocation> getTextures()
-    {
-        return Stream.of(this.getStillTexture(), this.getFlowingTexture(), this.getOverlayTexture())
-                     .filter(Objects::nonNull);
-    }
+    // Add entries to assets/minecraft/atlases/blocks.json if your texture location is not already covered by the default atlas search locations.
+    // /**
+    //  * Returns a stream of textures applied to a fluid.
+    //  *
+    //  * <p>This is used by the {@link net.minecraft.client.resources.model.ModelBakery} to load in all textures that
+    //  * can be applied on reload.
+    //  *
+    //  * @return a stream of textures applied to a fluid
+    //  */
+    // default Stream<ResourceLocation> getTextures()
+    // {
+    //     return Stream.of(this.getStillTexture(), this.getFlowingTexture(), this.getOverlayTexture())
+    //                  .filter(Objects::nonNull);
+    // }
 
     /**
      * Returns the location of the texture to apply to the camera when it is

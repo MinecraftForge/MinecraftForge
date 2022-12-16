@@ -7,11 +7,8 @@ package net.minecraftforge.debug.item;
 
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.BowItem;
-import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.CrossbowItem;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.Items;
+import net.minecraft.world.item.*;
+import net.minecraftforge.event.CreativeModeTabEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
@@ -34,10 +31,10 @@ public class RangedMobsUseModdedWeaponsTest {
     private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MOD_ID);
 
     private static final RegistryObject<Item> MODDED_BOW = ITEMS.register("modded_bow", () ->
-            new BowItem(new Item.Properties().tab(CreativeModeTab.TAB_COMBAT).defaultDurability(384))
+            new BowItem(new Item.Properties().defaultDurability(384))
     );
     private static final RegistryObject<Item> MODDED_CROSSBOW = ITEMS.register("modded_crossbow", () ->
-            new CrossbowItem(new Item.Properties().tab(CreativeModeTab.TAB_COMBAT).defaultDurability(326))
+            new CrossbowItem(new Item.Properties().defaultDurability(326))
     );
 
     public RangedMobsUseModdedWeaponsTest()
@@ -46,6 +43,16 @@ public class RangedMobsUseModdedWeaponsTest {
             IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
             ITEMS.register(modEventBus);
             modEventBus.addListener(this::onClientSetup);
+            modEventBus.addListener(this::addCreative);
+        }
+    }
+
+    private void addCreative(CreativeModeTabEvent.BuildContents event)
+    {
+        if (event.getTab() == CreativeModeTabs.COMBAT)
+        {
+            event.accept(MODDED_BOW);
+            event.accept(MODDED_CROSSBOW);
         }
     }
 

@@ -1,11 +1,11 @@
 --- a/net/minecraft/tags/ItemTags.java
 +++ b/net/minecraft/tags/ItemTags.java
-@@ -89,4 +_,8 @@
+@@ -93,4 +_,8 @@
     private static TagKey<Item> m_203854_(String p_203855_) {
-       return TagKey.m_203882_(Registry.f_122904_, new ResourceLocation(p_203855_));
+       return TagKey.m_203882_(Registries.f_256913_, new ResourceLocation(p_203855_));
     }
 +
 +   public static TagKey<Item> create(final ResourceLocation name) {
-+      return TagKey.m_203882_(Registry.f_122904_, name);
++      return TagKey.m_203882_(Registries.f_256913_, name);
 +   }
  }

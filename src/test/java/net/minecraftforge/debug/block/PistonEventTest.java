@@ -7,8 +7,8 @@ package net.minecraftforge.debug.block;
 
 import java.util.List;
 import java.util.Locale;
-
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.Blocks;
@@ -17,17 +17,17 @@ import net.minecraft.world.level.block.piston.PistonStructureResolver;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.data.DataGenerator;
+import net.minecraft.data.PackOutput;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.core.Direction;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.model.generators.BlockStateProvider;
-import net.minecraftforge.client.model.generators.ModelFile;
 import net.minecraftforge.common.data.ExistingFileHelper;
+import net.minecraftforge.event.CreativeModeTabEvent;
 import net.minecraftforge.event.level.PistonEvent;
 import net.minecraftforge.event.level.PistonEvent.PistonMoveType;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -55,10 +55,8 @@ public class PistonEventTest
     private static DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, MODID);
     private static DeferredRegister<Item>  ITEMS  = DeferredRegister.create(ForgeRegistries.ITEMS,  MODID);
 
-    private static RegistryObject<Block> shiftOnMove = BLOCKS.register(blockName, () -> new Block(Block.Properties.of(Material.STONE)));
-    static {
-        ITEMS.register(blockName, () -> new BlockItem(shiftOnMove.get(), new Item.Properties().tab(CreativeModeTab.TAB_BUILDING_BLOCKS)));
-    }
+    private static RegistryObject<Block> SHIFT_ON_MOVE = BLOCKS.register(blockName, () -> new Block(Block.Properties.of(Material.STONE)));
+    private static RegistryObject<Item> SHIFT_ON_MOVE_ITEM = ITEMS.register(blockName, () -> new BlockItem(SHIFT_ON_MOVE.get(), new Item.Properties()));
 
     public PistonEventTest()
     {
@@ -66,6 +64,13 @@ public class PistonEventTest
         BLOCKS.register(modBus);
         ITEMS.register(modBus);
         modBus.addListener(this::gatherData);
+        modBus.addListener(this::addCreative);
+    }
+
+    private void addCreative(CreativeModeTabEvent.BuildContents event)
+    {
+        if (event.getTab() == CreativeModeTabs.BUILDING_BLOCKS)
+            event.accept(SHIFT_ON_MOVE_ITEM);
     }
 
     @SubscribeEvent
@@ -104,10 +109,10 @@ public class PistonEventTest
 
             // Make the block move up and out of the way so long as it won't replace the piston
             BlockPos pushedBlockPos = event.getFaceOffsetPos();
-            if (world.getBlockState(pushedBlockPos).getBlock() == shiftOnMove.get() && event.getDirection() != Direction.DOWN)
+            if (world.getBlockState(pushedBlockPos).getBlock() == SHIFT_ON_MOVE.get() && event.getDirection() != Direction.DOWN)
             {
                 world.setBlockAndUpdate(pushedBlockPos, Blocks.AIR.defaultBlockState());
-                world.setBlockAndUpdate(pushedBlockPos.above(), shiftOnMove.get().defaultBlockState());
+                world.setBlockAndUpdate(pushedBlockPos.above(), SHIFT_ON_MOVE.get().defaultBlockState());
             }
 
             // Block pushing cobblestone (directly, indirectly works)
@@ -141,22 +146,20 @@ public class PistonEventTest
     {
         DataGenerator gen = event.getGenerator();
 
-        gen.addProvider(event.includeClient(), new BlockStates(gen, event.getExistingFileHelper()));
+        gen.addProvider(event.includeClient(), new BlockStates(gen.getPackOutput(), event.getExistingFileHelper()));
     }
 
     private class BlockStates extends BlockStateProvider
     {
-        public BlockStates(DataGenerator gen, ExistingFileHelper exFileHelper)
+        public BlockStates(PackOutput output, ExistingFileHelper exFileHelper)
         {
-            super(gen, MODID, exFileHelper);
+            super(output, MODID, exFileHelper);
         }
 
         @Override
         protected void registerStatesAndModels()
         {
-            ModelFile model = models().cubeAll(shiftOnMove.getId().getPath(), mcLoc("block/furnace_top"));
-            simpleBlock(shiftOnMove.get(), model);
-            simpleBlockItem(shiftOnMove.get(), model);
+            simpleBlockWithItem(SHIFT_ON_MOVE.get(), models().cubeAll(SHIFT_ON_MOVE.getId().getPath(), mcLoc("block/furnace_top")));
         }
     }
 

@@ -44,8 +44,7 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
-import com.google.common.collect.ObjectArrays;
-import org.jetbrains.annotations.NotNull;
+import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
 
 /*
@@ -61,6 +60,8 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
     private Config childConfig;
 
     private boolean isCorrecting = false;
+
+    private static final Logger LOGGER = LogManager.getLogger();
 
     private ForgeConfigSpec(UnmodifiableConfig storage, UnmodifiableConfig values, Map<List<String>, String> levelComments, Map<List<String>, String> levelTranslationKeys) {
         super(storage);
@@ -81,12 +82,12 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         this.childConfig = config;
         if (config != null && !isCorrect(config)) {
             String configName = config instanceof FileConfig ? ((FileConfig) config).getNioPath().toString() : config.toString();
-            LogManager.getLogger().warn(CORE, "Configuration file {} is not correct. Correcting", configName);
+            LOGGER.warn(CORE, "Configuration file {} is not correct. Correcting", configName);
             correct(config,
                     (action, path, incorrectValue, correctedValue) ->
-                            LogManager.getLogger().warn(CORE, "Incorrect key {} was corrected from {} to its default, {}. {}", DOT_JOINER.join( path ), incorrectValue, correctedValue, incorrectValue == correctedValue ? "This seems to be an error." : ""),
+                            LOGGER.warn(CORE, "Incorrect key {} was corrected from {} to its default, {}. {}", DOT_JOINER.join( path ), incorrectValue, correctedValue, incorrectValue == correctedValue ? "This seems to be an error." : ""),
                     (action, path, incorrectValue, correctedValue) ->
-                            LogManager.getLogger().debug(CORE, "The comment on key {} does not match the spec. This may create a backup.", DOT_JOINER.join( path )));
+                            LOGGER.debug(CORE, "The comment on key {} does not match the spec. This may create a backup.", DOT_JOINER.join( path )));
 
             if (config instanceof FileConfig) {
                 ((FileConfig) config).save();
@@ -265,12 +266,9 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
 
     private boolean stringsMatchIgnoringNewlines(@Nullable Object obj1, @Nullable Object obj2)
     {
-        if(obj1 instanceof String && obj2 instanceof String)
+        if (obj1 instanceof String string1 && obj2 instanceof String string2)
         {
-            String string1 = (String) obj1;
-            String string2 = (String) obj2;
-
-            if(string1.length() > 0 && string2.length() > 0)
+            if (string1.length() > 0 && string2.length() > 0)
             {
                 return string1.replaceAll("\r\n", "\n")
                         .equals(string2.replaceAll("\r\n", "\n"));
@@ -289,7 +287,6 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         private Map<List<String>, String> levelTranslationKeys = new HashMap<>();
         private List<String> currentPath = new ArrayList<>();
         private List<ConfigValue<?>> values = new ArrayList<>();
-        private boolean hasInvalidComment = false;
 
         //Object
         public <T> ConfigValue<T> define(String path, T defaultValue) {
@@ -313,7 +310,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         }
         public <T> ConfigValue<T> define(List<String> path, Supplier<T> defaultSupplier, Predicate<Object> validator, Class<?> clazz) {
             context.setClazz(clazz);
-            return define(path, new ValueSpec(defaultSupplier, validator, context), defaultSupplier);
+            return define(path, new ValueSpec(defaultSupplier, validator, context, path), defaultSupplier);
         }
         public <T> ConfigValue<T> define(List<String> path, ValueSpec value, Supplier<T> defaultSupplier) { // This is the root where everything at the end of the day ends up.
             if (!currentPath.isEmpty()) {
@@ -323,7 +320,6 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
                 path = tmp;
             }
             storage.set(path, value);
-            checkComment(path);
             context = new BuilderContext();
             return new ConfigValue<>(this, path, defaultSupplier);
         }
@@ -339,7 +335,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         public <V extends Comparable<? super V>> ConfigValue<V> defineInRange(List<String> path, Supplier<V> defaultSupplier, V min, V max, Class<V> clazz) {
             Range<V> range = new Range<>(clazz, min, max);
             context.setRange(range);
-            context.setComment(ObjectArrays.concat(context.getComment(), "Range: " + range.toString()));
+            comment("Range: " + range.toString());
             if (min.compareTo(max) > 0)
                 throw new IllegalArgumentException("Range min most be less then max.");
             return define(path, defaultSupplier, range);
@@ -367,17 +363,17 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         }
         public <T> ConfigValue<List<? extends T>> defineList(List<String> path, Supplier<List<? extends T>> defaultSupplier, Predicate<Object> elementValidator) {
             context.setClazz(List.class);
-            return define(path, new ValueSpec(defaultSupplier, x -> x instanceof List && ((List<?>) x).stream().allMatch( elementValidator ), context) {
+            return define(path, new ValueSpec(defaultSupplier, x -> x instanceof List && ((List<?>) x).stream().allMatch( elementValidator ), context, path) {
                 @Override
                 public Object correct(Object value) {
                     if (value == null || !(value instanceof List) || ((List<?>)value).isEmpty()) {
-                        LogManager.getLogger().debug(CORE, "List on key {} is deemed to need correction. It is null, not a list, or an empty list. Modders, consider defineListAllowEmpty?", path.get(path.size() - 1));
+                        LOGGER.debug(CORE, "List on key {} is deemed to need correction. It is null, not a list, or an empty list. Modders, consider defineListAllowEmpty?", path.get(path.size() - 1));
                         return getDefault();
                     }
                     List<?> list = Lists.newArrayList((List<?>) value);
                     list.removeIf(elementValidator.negate());
                     if (list.isEmpty()) {
-                        LogManager.getLogger().debug(CORE, "List on key {} is deemed to need correction. It failed validation.", path.get(path.size() - 1));
+                        LOGGER.debug(CORE, "List on key {} is deemed to need correction. It failed validation.", path.get(path.size() - 1));
                         return getDefault();
                     }
                     return list;
@@ -387,17 +383,17 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
 
         public <T> ConfigValue<List<? extends T>> defineListAllowEmpty(List<String> path, Supplier<List<? extends T>> defaultSupplier, Predicate<Object> elementValidator) {
             context.setClazz(List.class);
-            return define(path, new ValueSpec(defaultSupplier, x -> x instanceof List && ((List<?>) x).stream().allMatch( elementValidator ), context) {
+            return define(path, new ValueSpec(defaultSupplier, x -> x instanceof List && ((List<?>) x).stream().allMatch( elementValidator ), context, path) {
                 @Override
                 public Object correct(Object value) {
                     if (value == null || !(value instanceof List)) {
-                        LogManager.getLogger().debug(CORE, "List on key {} is deemed to need correction, as it is null or not a list.", path.get(path.size() - 1));
+                        LOGGER.debug(CORE, "List on key {} is deemed to need correction, as it is null or not a list.", path.get(path.size() - 1));
                         return getDefault();
                     }
                     List<?> list = Lists.newArrayList((List<?>) value);
                     list.removeIf(elementValidator.negate());
                     if (list.isEmpty()) {
-                        LogManager.getLogger().debug(CORE, "List on key {} is deemed to need correction. It failed validation.", path.get(path.size() - 1));
+                        LOGGER.debug(CORE, "List on key {} is deemed to need correction. It failed validation.", path.get(path.size() - 1));
                         return getDefault();
                     }
                     return list;
@@ -482,8 +478,8 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         public <V extends Enum<V>> EnumValue<V> defineEnum(List<String> path, Supplier<V> defaultSupplier, EnumGetMethod converter, Predicate<Object> validator, Class<V> clazz) {
             context.setClazz(clazz);
             V[] allowedValues = clazz.getEnumConstants();
-            context.setComment(ObjectArrays.concat(context.getComment(), "Allowed Values: " + Arrays.stream(allowedValues).filter(validator).map(Enum::name).collect(Collectors.joining(", "))));
-            return new EnumValue<V>(this, define(path, new ValueSpec(defaultSupplier, validator, context), defaultSupplier).getPath(), defaultSupplier, converter, clazz);
+            comment("Allowed Values: " + Arrays.stream(allowedValues).filter(validator).map(Enum::name).collect(Collectors.joining(", ")));
+            return new EnumValue<V>(this, define(path, new ValueSpec(defaultSupplier, validator, context, path), defaultSupplier).getPath(), defaultSupplier, converter, clazz);
         }
 
         //boolean
@@ -547,23 +543,19 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
 
         public Builder comment(String comment)
         {
-            hasInvalidComment = comment == null || comment.isEmpty();
-            if (hasInvalidComment)
-            {
-                comment = "No comment";
-            }
-            context.setComment(comment);
+            context.addComment(comment);
             return this;
         }
         public Builder comment(String... comment)
         {
-            hasInvalidComment = comment == null || comment.length < 1 || (comment.length == 1 && comment[0].isEmpty());
-            if (hasInvalidComment)
-            {
-                comment = new String[] {"No comment"};
-            }
+            // Iterate list first, to throw meaningful errors
+            // Don't add any comments until we make sure there is no nulls
+            for (int i = 0; i < comment.length; i++)
+                Preconditions.checkNotNull(comment[i], "Comment string at " + i + " is null.");
 
-            context.setComment(comment);
+            for (String s : comment)
+                context.addComment(s);
+
             return this;
         }
 
@@ -585,10 +577,9 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
 
         public Builder push(List<String> path) {
             currentPath.addAll(path);
-            checkComment(currentPath);
             if (context.hasComment()) {
-                levelComments.put(new ArrayList<String>(currentPath), context.buildComment());
-                context.setComment(); // Set to empty
+                levelComments.put(new ArrayList<>(currentPath), context.buildComment(path));
+                context.clearComment(); // Set to empty
             }
             if (context.getTranslationKey() != null) {
                 levelTranslationKeys.put(new ArrayList<String>(currentPath), context.getTranslationKey());
@@ -626,19 +617,6 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
             return ret;
         }
 
-        private void checkComment(List<String> path)
-        {
-            if (hasInvalidComment)
-            {
-                hasInvalidComment = false;
-                if (!FMLEnvironment.production)
-                {
-                    LogManager.getLogger().error(CORE, "Null comment for config option {}, this is invalid and may be disallowed in the future.",
-                            DOT_JOINER.join(path));
-                }
-            }
-        }
-
         public interface BuilderConsumer {
             void accept(Builder builder);
         }
@@ -646,20 +624,38 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
 
     private static class BuilderContext
     {
-        private @NotNull String[] comment = new String[0];
+        private final List<String> comment = new LinkedList<>();
         private String langKey;
         private Range<?> range;
         private boolean worldRestart = false;
         private Class<?> clazz;
 
-        public void setComment(String... value)
+        public void addComment(String value)
         {
-            validate(value == null, "Passed in null value for comment");
-            this.comment = value;
+            // Don't use `validate` because it throws IllegalStateException, not NullPointerException
+            Preconditions.checkNotNull(value, "Passed in null value for comment");
+
+            comment.add(value);
         }
-        public boolean hasComment() { return this.comment.length > 0; }
-        public String[] getComment() { return this.comment; }
-        public String buildComment() { return LINE_JOINER.join(comment); }
+
+        public void clearComment() { comment.clear(); }
+        public boolean hasComment() { return this.comment.size() > 0; }
+        public String buildComment() { return buildComment(List.of("unknown", "unknown")); }
+        public String buildComment(final List<String> path)
+        {
+            if (comment.stream().allMatch(String::isBlank))
+            {
+                if (FMLEnvironment.production)
+                    LOGGER.warn(CORE, "Detected a comment that is all whitespace for config option {}, which causes obscure bugs in Forge's config system and will cause a crash in the future. Please report this to the mod author.",
+                            DOT_JOINER.join(path));
+                else
+                    throw new IllegalStateException("Can not build comment for config option " + DOT_JOINER.join(path) + " as it comprises entirely of blank lines/whitespace. This is not allowed as it causes a \"constantly correcting config\" bug with NightConfig in Forge's config system.");
+
+                return "A developer of this mod has defined this config option with a blank comment, which causes obscure bugs in Forge's config system and will cause a crash in the future. Please report this to the mod author.";
+            }
+
+            return LINE_JOINER.join(comment);
+        }
         public void setTranslationKey(String value) { this.langKey = value; }
         public String getTranslationKey() { return this.langKey; }
         public <V extends Comparable<? super V>> void setRange(Range<V> value)
@@ -726,7 +722,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
                 boolean result = ((Number)min).doubleValue() <= n.doubleValue() && n.doubleValue() <= ((Number)max).doubleValue();
                 if(!result)
                 {
-                    LogManager.getLogger().debug(CORE, "Range value {} is not within its bounds {}-{}", n.doubleValue(), ((Number)min).doubleValue(), ((Number)max).doubleValue());
+                    LOGGER.debug(CORE, "Range value {} is not within its bounds {}-{}", n.doubleValue(), ((Number)min).doubleValue(), ((Number)max).doubleValue());
                 }
                 return result;
             }
@@ -736,7 +732,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
             boolean result = c.compareTo(min) >= 0 && c.compareTo(max) <= 0;
             if(!result)
             {
-                LogManager.getLogger().debug(CORE, "Range value {} is not within its bounds {}-{}", c, min, max);
+                LOGGER.debug(CORE, "Range value {} is not within its bounds {}-{}", c, min, max);
             }
             return result;
         }
@@ -776,14 +772,13 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         private final Class<?> clazz;
         private final Supplier<?> supplier;
         private final Predicate<Object> validator;
-        private Object _default = null;
 
-        private ValueSpec(Supplier<?> supplier, Predicate<Object> validator, BuilderContext context)
+        private ValueSpec(Supplier<?> supplier, Predicate<Object> validator, BuilderContext context, List<String> path)
         {
             Objects.requireNonNull(supplier, "Default supplier can not be null");
             Objects.requireNonNull(validator, "Validator can not be null");
 
-            this.comment = context.hasComment() ? context.buildComment() : null;
+            this.comment = context.hasComment() ? context.buildComment(path) : null;
             this.langKey = context.getTranslationKey();
             this.range = context.getRange();
             this.worldRestart = context.needsWorldRestart();
@@ -801,12 +796,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         public boolean test(Object value) { return validator.test(value); }
         public Object correct(Object value) { return range == null ? getDefault() : range.correct(value, getDefault()); }
 
-        public Object getDefault()
-        {
-            if (_default == null)
-                _default = supplier.get();
-            return _default;
-        }
+        public Object getDefault() { return supplier.get(); }
     }
 
     public static class ConfigValue<T> implements Supplier<T>

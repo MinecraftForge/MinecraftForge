@@ -1,10 +1,9 @@
 --- a/net/minecraft/client/gui/screens/OptionsScreen.java
 +++ b/net/minecraft/client/gui/screens/OptionsScreen.java
-@@ -140,4 +_,12 @@
-       m_93215_(p_96249_, this.f_96547_, this.f_96539_, this.f_96543_ / 2, 15, 16777215);
-       super.m_6305_(p_96249_, p_96250_, p_96251_, p_96252_);
+@@ -168,6 +_,14 @@
+       super.m_86412_(p_96249_, p_96250_, p_96251_, p_96252_);
     }
-+
+ 
 +    @Override
 +    public void m_7379_() {
 +        // We need to consider 2 potential parent screens here:
@@ -12,4 +11,7 @@
 +        // 2. From the pause menu, in which case exit back to game
 +        this.f_96541_.m_91152_(this.f_96235_ instanceof PauseScreen ? null : this.f_96235_);
 +    }
- }
++
+    private Button m_260993_(Component p_261565_, Supplier<Screen> p_262119_) {
+       return Button.m_253074_(p_261565_, (p_261361_) -> {
+          this.f_96541_.m_91152_(p_262119_.get());

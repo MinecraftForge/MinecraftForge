@@ -18,12 +18,10 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 
 import net.minecraft.client.resources.ClientPackSource;
-import net.minecraft.client.resources.AssetIndex;
-import net.minecraft.client.resources.DefaultClientPackResources;
+import net.minecraft.client.resources.IndexedAssetSource;
 import net.minecraft.data.DataProvider;
-import net.minecraft.data.HashCache;
 import net.minecraft.server.packs.FilePackResources;
-import net.minecraft.server.packs.FolderPackResources;
+import net.minecraft.server.packs.PathPackResources;
 import net.minecraft.server.packs.repository.ServerPacksSource;
 import net.minecraft.server.packs.resources.MultiPackResourceManager;
 import net.minecraft.server.packs.resources.Resource;
@@ -98,15 +96,14 @@ public class ExistingFileHelper {
         List<PackResources> candidateClientResources = new ArrayList<>();
         List<PackResources> candidateServerResources = new ArrayList<>();
 
-        candidateClientResources.add(new VanillaPackResources(ClientPackSource.BUILT_IN, "minecraft", "realms"));
-        if (assetIndex != null && assetsDir != null)
+        if (assetIndex != null && assetsDir != null && assetsDir.exists())
         {
-            candidateClientResources.add(new DefaultClientPackResources(ClientPackSource.BUILT_IN, new AssetIndex(assetsDir, assetIndex)));
+            candidateClientResources.add(ClientPackSource.createVanillaPackSource(IndexedAssetSource.createIndexFs(assetsDir.toPath(), assetIndex)));
         }
-        candidateServerResources.add(new VanillaPackResources(ServerPacksSource.BUILT_IN_METADATA, "minecraft"));
+        candidateServerResources.add(ServerPacksSource.createVanillaPackSource());
         for (Path existing : existingPacks) {
             File file = existing.toFile();
-            PackResources pack = file.isDirectory() ? new FolderPackResources(file) : new FilePackResources(file);
+            PackResources pack = file.isDirectory() ? new PathPackResources(file.getName(), file.toPath(), false) : new FilePackResources(file.getName(), file, false);
             candidateClientResources.add(pack);
             candidateServerResources.add(pack);
         }

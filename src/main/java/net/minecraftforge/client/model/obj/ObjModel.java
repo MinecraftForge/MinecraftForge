@@ -9,14 +9,12 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.mojang.math.Transformation;
-import com.mojang.math.Vector3f;
-import com.mojang.math.Vector4f;
 import joptsimple.internal.Strings;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.Material;
-import net.minecraft.client.resources.model.ModelBakery;
+import net.minecraft.client.resources.model.ModelBaker;
 import net.minecraft.client.resources.model.ModelState;
 import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.core.Direction;
@@ -35,6 +33,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Vector3f;
+import org.joml.Vector4f;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -68,7 +68,7 @@ public class ObjModel extends SimpleUnbakedGeometry<ObjModel>
             new Vec2(1, 0),
     };
 
-    private final Map<String, ModelGroup> parts = Maps.newHashMap();
+    private final Map<String, ModelGroup> parts = Maps.newLinkedHashMap();
     private final Set<String> rootComponentNames = Collections.unmodifiableSet(parts.keySet());
     private Set<String> allComponentNames;
 
@@ -326,7 +326,7 @@ public class ObjModel extends SimpleUnbakedGeometry<ObjModel>
     {
         return switch (line.length)
         {
-            case 1 -> new Vector3f(0, 0, 0);
+            case 1 -> new Vector3f();
             case 2 -> new Vector3f(Float.parseFloat(line[1]), 0, 0);
             case 3 -> new Vector3f(Float.parseFloat(line[1]), Float.parseFloat(line[2]), 0);
             default -> new Vector3f(Float.parseFloat(line[1]), Float.parseFloat(line[2]), Float.parseFloat(line[3]));
@@ -337,7 +337,7 @@ public class ObjModel extends SimpleUnbakedGeometry<ObjModel>
     {
         return switch (line.length)
         {
-            case 1 -> new Vector4f(0, 0, 0, 1);
+            case 1 -> new Vector4f();
             case 2 -> new Vector4f(Float.parseFloat(line[1]), 0, 0, 1);
             case 3 -> new Vector4f(Float.parseFloat(line[1]), Float.parseFloat(line[2]), 0, 1);
             case 4 -> new Vector4f(Float.parseFloat(line[1]), Float.parseFloat(line[2]), Float.parseFloat(line[3]), 1);
@@ -346,22 +346,13 @@ public class ObjModel extends SimpleUnbakedGeometry<ObjModel>
     }
 
     @Override
-    protected void addQuads(IGeometryBakingContext owner, IModelBuilder<?> modelBuilder, ModelBakery bakery, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelTransform, ResourceLocation modelLocation)
+    protected void addQuads(IGeometryBakingContext owner, IModelBuilder<?> modelBuilder, ModelBaker baker, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelTransform, ResourceLocation modelLocation)
     {
         for (var entry : deprecationWarnings.entrySet())
             LOGGER.warn("Model \"" + modelLocation + "\" is using the deprecated \"" + entry.getKey() + "\" field in its OBJ model instead of \"" + entry.getValue() + "\". This field will be removed in 1.20.");
 
         parts.values().stream().filter(part -> owner.isComponentVisible(part.name(), true))
-             .forEach(part -> part.addQuads(owner, modelBuilder, bakery, spriteGetter, modelTransform, modelLocation));
-    }
-
-    @Override
-    public Collection<Material> getMaterials(IGeometryBakingContext context, Function<ResourceLocation, UnbakedModel> modelGetter, Set<com.mojang.datafixers.util.Pair<String, String>> missingTextureErrors)
-    {
-        Set<Material> combined = Sets.newHashSet();
-        for (ModelGroup part : parts.values())
-            combined.addAll(part.getTextures(context, modelGetter, missingTextureErrors));
-        return combined;
+             .forEach(part -> part.addQuads(owner, modelBuilder, baker, spriteGetter, modelTransform, modelLocation));
     }
 
     public Set<String> getRootComponentNames()
@@ -387,23 +378,22 @@ public class ObjModel extends SimpleUnbakedGeometry<ObjModel>
         {
             needsNormalRecalculation |= ints.length < 3;
         }
-        Vector3f faceNormal = new Vector3f(0, 0, 0);
+        Vector3f faceNormal = new Vector3f();
         if (needsNormalRecalculation)
         {
             Vector3f a = positions.get(indices[0][0]);
             Vector3f ab = positions.get(indices[1][0]);
             Vector3f ac = positions.get(indices[2][0]);
-            Vector3f abs = ab.copy();
+            Vector3f abs = new Vector3f(ab);
             abs.sub(a);
-            Vector3f acs = ac.copy();
+            Vector3f acs = new Vector3f(ac);
             acs.sub(a);
             abs.cross(acs);
             abs.normalize();
             faceNormal = abs;
         }
 
-        var quad = new BakedQuad[1];
-        var quadBaker = new QuadBakingVertexConsumer(q -> quad[0] = q);
+        var quadBaker = new QuadBakingVertexConsumer.Buffered();
 
         quadBaker.setSprite(texture);
         quadBaker.setTintIndex(tintIndex);
@@ -430,14 +420,14 @@ public class ObjModel extends SimpleUnbakedGeometry<ObjModel>
         for (int i = 0; i < 4; i++)
         {
             int[] index = indices[Math.min(i, indices.length - 1)];
-            Vector4f position = new Vector4f(positions.get(index[0]));
+            Vector4f position = new Vector4f(positions.get(index[0]), 1);
             Vec2 texCoord = index.length >= 2 && texCoords.size() > 0 ? texCoords.get(index[1]) : DEFAULT_COORDS[i];
             Vector3f norm0 = !needsNormalRecalculation && index.length >= 3 && normals.size() > 0 ? normals.get(index[2]) : faceNormal;
             Vector3f normal = norm0;
             Vector4f color = index.length >= 4 && colors.size() > 0 ? colors.get(index[3]) : COLOR_WHITE;
             if (hasTransform)
             {
-                normal = norm0.copy();
+                normal = new Vector3f(norm0);
                 transformation.transformPosition(position);
                 transformation.transformNormal(normal);
             }
@@ -516,7 +506,7 @@ public class ObjModel extends SimpleUnbakedGeometry<ObjModel>
             }
         }
 
-        return Pair.of(quad[0], cull);
+        return Pair.of(quadBaker.getQuad(), cull);
     }
 
     public CompositeRenderable bakeRenderable(IGeometryBakingContext configuration)
@@ -549,7 +539,7 @@ public class ObjModel extends SimpleUnbakedGeometry<ObjModel>
             return name;
         }
 
-        public void addQuads(IGeometryBakingContext owner, IModelBuilder<?> modelBuilder, ModelBakery bakery, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelTransform, ResourceLocation modelLocation)
+        public void addQuads(IGeometryBakingContext owner, IModelBuilder<?> modelBuilder, ModelBaker baker, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelTransform, ResourceLocation modelLocation)
         {
             for (ModelMesh mesh : meshes)
             {
@@ -582,7 +572,7 @@ public class ObjModel extends SimpleUnbakedGeometry<ObjModel>
 
     public class ModelGroup extends ModelObject
     {
-        final Map<String, ModelObject> parts = Maps.newHashMap();
+        final Map<String, ModelObject> parts = Maps.newLinkedHashMap();
 
         ModelGroup(String name)
         {
@@ -590,12 +580,12 @@ public class ObjModel extends SimpleUnbakedGeometry<ObjModel>
         }
 
         @Override
-        public void addQuads(IGeometryBakingContext owner, IModelBuilder<?> modelBuilder, ModelBakery bakery, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelTransform, ResourceLocation modelLocation)
+        public void addQuads(IGeometryBakingContext owner, IModelBuilder<?> modelBuilder, ModelBaker baker, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelTransform, ResourceLocation modelLocation)
         {
-            super.addQuads(owner, modelBuilder, bakery, spriteGetter, modelTransform, modelLocation);
+            super.addQuads(owner, modelBuilder, baker, spriteGetter, modelTransform, modelLocation);
 
             parts.values().stream().filter(part -> owner.isComponentVisible(part.name(), true))
-                 .forEach(part -> part.addQuads(owner, modelBuilder, bakery, spriteGetter, modelTransform, modelLocation));
+                 .forEach(part -> part.addQuads(owner, modelBuilder, baker, spriteGetter, modelTransform, modelLocation));
         }
 
         @Override
@@ -652,9 +642,11 @@ public class ObjModel extends SimpleUnbakedGeometry<ObjModel>
             int tintIndex = mat.diffuseTintIndex;
             Vector4f colorTint = mat.diffuseColor;
 
+            var rootTransform = owner.getRootTransform();
+            var transform = rootTransform.isIdentity() ? modelTransform.getRotation() : modelTransform.getRotation().compose(rootTransform);
             for (int[][] face : faces)
             {
-                Pair<BakedQuad, Direction> quad = makeQuad(face, tintIndex, colorTint, mat.ambientColor, texture, modelTransform.getRotation());
+                Pair<BakedQuad, Direction> quad = makeQuad(face, tintIndex, colorTint, mat.ambientColor, texture, transform);
                 if (quad.getRight() == null)
                     modelBuilder.addUnculledFace(quad.getLeft());
                 else

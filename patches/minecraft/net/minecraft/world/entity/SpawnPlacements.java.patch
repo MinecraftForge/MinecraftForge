@@ -1,6 +1,14 @@
 --- a/net/minecraft/world/entity/SpawnPlacements.java
 +++ b/net/minecraft/world/entity/SpawnPlacements.java
-@@ -156,10 +_,26 @@
+@@ -42,6 +_,7 @@
+ public class SpawnPlacements {
+    private static final Map<EntityType<?>, SpawnPlacements.Data> f_21750_ = Maps.newHashMap();
+ 
++   @Deprecated // FORGE: use SpawnPlacementRegisterEvent to register and modify spawn placements
+    public static <T extends Mob> void m_21754_(EntityType<T> p_21755_, SpawnPlacements.Type p_21756_, Heightmap.Types p_21757_, SpawnPlacements.SpawnPredicate<T> p_21758_) {
+       SpawnPlacements.Data spawnplacements$data = f_21750_.put(p_21755_, new SpawnPlacements.Data(p_21757_, p_21756_, p_21758_));
+       if (spawnplacements$data != null) {
+@@ -156,10 +_,35 @@
        boolean m_217080_(EntityType<T> p_217081_, ServerLevelAccessor p_217082_, MobSpawnType p_217083_, BlockPos p_217084_, RandomSource p_217085_);
     }
  
@@ -26,5 +34,14 @@
 +          if (predicate == null) return net.minecraft.world.level.NaturalSpawner.canSpawnAtBody(this, world, pos, type);
 +          return predicate.test(world, pos, type);
 +      }
++   }
++
++   // ******* FORGE START. INTERNAL USE ONLY! ****** //
++   public static void fireSpawnPlacementEvent()
++   {
++       Map<EntityType<?>, net.minecraftforge.event.entity.SpawnPlacementRegisterEvent.MergedSpawnPredicate<?>> map = Maps.newHashMap();
++       f_21750_.forEach((type, data) -> map.put(type, new net.minecraftforge.event.entity.SpawnPlacementRegisterEvent.MergedSpawnPredicate<>(data.f_21769_, data.f_21768_, data.f_21767_)));
++       net.minecraftforge.fml.ModLoader.get().postEvent(new net.minecraftforge.event.entity.SpawnPlacementRegisterEvent(map));
++       map.forEach(((entityType, merged) -> f_21750_.put(entityType, new SpawnPlacements.Data(merged.getHeightmapType(), merged.getSpawnType(), merged.build()))));
     }
  }

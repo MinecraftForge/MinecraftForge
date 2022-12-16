@@ -8,6 +8,7 @@ package net.minecraftforge.debug.entity;
 import net.minecraft.client.renderer.entity.PigRenderer;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
@@ -178,7 +179,7 @@ public class PartEntityTest
             return this == entity || this.parent == entity;
         }
 
-        public Packet<?> getAddEntityPacket()
+        public Packet<ClientGamePacketListener> getAddEntityPacket()
         {
             throw new UnsupportedOperationException();
         }

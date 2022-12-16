@@ -20,7 +20,7 @@
        float[] afloat = new float[]{p_85998_[0], p_85998_[1], p_85998_[2], p_85998_[3]};
        int[] aint = new int[]{p_86002_[0], p_86002_[1], p_86002_[2], p_86002_[3]};
        int[] aint1 = p_85997_.m_111303_();
-@@ -101,12 +_,14 @@
+@@ -99,11 +_,13 @@
                 f5 = afloat[k] * p_86001_;
              }
  
@@ -28,12 +28,11 @@
 +            int l = applyBakedLighting(p_86002_[k], bytebuffer);
              float f9 = bytebuffer.getFloat(16);
              float f10 = bytebuffer.getFloat(20);
-             Vector4f vector4f = new Vector4f(f, f1, f2, 1.0F);
-             vector4f.m_123607_(matrix4f);
--            this.m_5954_(vector4f.m_123601_(), vector4f.m_123615_(), vector4f.m_123616_(), f3, f4, f5, 1.0F, f9, f10, p_86003_, l, vector3f.m_122239_(), vector3f.m_122260_(), vector3f.m_122269_());
-+            applyBakedNormals(vector3f, bytebuffer, p_85996_.m_85864_());
+             Vector4f vector4f = matrix4f.transform(new Vector4f(f, f1, f2, 1.0F));
+-            this.m_5954_(vector4f.x(), vector4f.y(), vector4f.z(), f3, f4, f5, 1.0F, f9, f10, p_86003_, l, vector3f.x(), vector3f.y(), vector3f.z());
++            applyBakedNormals(vector3f, bytebuffer, p_85996_.m_252943_());
 +            float vertexAlpha = p_86004_ ? alpha * (float) (bytebuffer.get(15) & 255) / 255.0F : alpha;
-+            this.m_5954_(vector4f.m_123601_(), vector4f.m_123615_(), vector4f.m_123616_(), f3, f4, f5, vertexAlpha, f9, f10, p_86003_, l, vector3f.m_122239_(), vector3f.m_122260_(), vector3f.m_122269_());
++            this.m_5954_(vector4f.x(), vector4f.y(), vector4f.z(), f3, f4, f5, vertexAlpha, f9, f10, p_86003_, l, vector3f.x(), vector3f.y(), vector3f.z());
           }
-       } catch (Throwable throwable1) {
-          if (memorystack != null) {
+       }
+ 

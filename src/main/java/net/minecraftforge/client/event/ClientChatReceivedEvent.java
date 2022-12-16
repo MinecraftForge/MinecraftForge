@@ -8,13 +8,13 @@ package net.minecraftforge.client.event;
 import net.minecraft.Util;
 import net.minecraft.network.chat.ChatType;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MessageSigner;
 import net.minecraft.network.chat.PlayerChatMessage;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.LogicalSide;
 import org.jetbrains.annotations.ApiStatus;
+import java.util.UUID;
 
 /**
  * Fired when a chat message is received on the client.
@@ -33,16 +33,14 @@ public class ClientChatReceivedEvent extends Event
 {
     private Component message;
     private final ChatType.Bound boundChatType;
-    private final PlayerChatMessage playerChatMessage;
-    private final MessageSigner messageSigner;
+    private final UUID sender;
 
     @ApiStatus.Internal
-    public ClientChatReceivedEvent(ChatType.Bound boundChatType, Component message, PlayerChatMessage playerChatMessage, MessageSigner messageSigner)
+    public ClientChatReceivedEvent(ChatType.Bound boundChatType, Component message, UUID sender)
     {
         this.boundChatType = boundChatType;
         this.message = message;
-        this.playerChatMessage = playerChatMessage;
-        this.messageSigner = messageSigner;
+        this.sender = sender;
     }
 
     /**
@@ -73,22 +71,12 @@ public class ClientChatReceivedEvent extends Event
     }
 
     /**
-     * {@return the full player chat message}.
-     * This contains the sender UUID, various signing data, and the optional unsigned contents.
+     * {@return the message sender}.
+     * This will be {@link Util#NIL_UUID} if the message is a system message.
      */
-    public PlayerChatMessage getPlayerChatMessage()
+    public UUID getSender()
     {
-        return this.playerChatMessage;
-    }
-
-    /**
-     * {@return the message signer}.
-     * This contains the sender UUID, timestamp of message creation, and signature salt.
-     * The {@linkplain MessageSigner#profileId() sender UUID} will be {@link Util#NIL_UUID} if the message is a system message.
-     */
-    public MessageSigner getMessageSigner()
-    {
-        return this.messageSigner;
+        return this.sender;
     }
 
     /**
@@ -96,6 +84,38 @@ public class ClientChatReceivedEvent extends Event
      */
     public boolean isSystem()
     {
-        return this.messageSigner.isSystem();
+        return this.sender.equals(Util.NIL_UUID);
+    }
+
+    /**
+     * Fired when a player chat message is received on the client.
+     *
+     * <p>This event is {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}.
+     * If the event is cancelled, the message is not displayed in the chat message window.</p>
+     *
+     * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
+     * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
+     *
+     * @see ChatType
+     */
+    public static class Player extends ClientChatReceivedEvent
+    {
+        private final PlayerChatMessage playerChatMessage;
+
+        @ApiStatus.Internal
+        public Player(ChatType.Bound boundChatType, Component message, PlayerChatMessage playerChatMessage, UUID sender)
+        {
+            super(boundChatType, message, sender);
+            this.playerChatMessage = playerChatMessage;
+        }
+
+        /**
+         * {@return the full player chat message}.
+         * This contains the sender UUID, various signing data, and the optional unsigned contents.
+         */
+        public PlayerChatMessage getPlayerChatMessage()
+        {
+            return this.playerChatMessage;
+        }
     }
 }

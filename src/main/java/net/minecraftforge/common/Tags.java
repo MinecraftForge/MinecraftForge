@@ -6,6 +6,7 @@
 package net.minecraftforge.common;
 
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BiomeTags;
 import net.minecraft.tags.BlockTags;
@@ -191,7 +192,7 @@ public class Tags
 
         private static TagKey<EntityType<?>> tag(String name)
         {
-            return TagKey.create(Registry.ENTITY_TYPE_REGISTRY, new ResourceLocation("forge", name));
+            return TagKey.create(Registries.ENTITY_TYPE, new ResourceLocation("forge", name));
         }
     }
 
@@ -614,7 +615,7 @@ public class Tags
 
         private static TagKey<Biome> tag(String name)
         {
-            return TagKey.create(Registry.BIOME_REGISTRY, new ResourceLocation("forge", name));
+            return TagKey.create(Registries.BIOME, new ResourceLocation("forge", name));
         }
     }
 }

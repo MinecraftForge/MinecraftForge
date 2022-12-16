@@ -28,6 +28,7 @@
       ],
       "recipe": {
         "type": "minecraft:crafting_shaped",
+        "category": "building",
         "key": {
           "X": {
             "item": "minecraft:dirt"

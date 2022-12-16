@@ -5,6 +5,7 @@
 
 package net.minecraftforge.common.extensions;
 
+import net.minecraft.world.entity.vehicle.MinecartFurnace;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.entity.vehicle.AbstractMinecart;
 import net.minecraft.world.level.block.state.properties.RailShape;
@@ -60,7 +61,8 @@ public interface IForgeBaseRailBlock
      */
     default float getRailMaxSpeed(BlockState state, Level level, BlockPos pos, AbstractMinecart cart)
     {
-        return 0.4f;
+        if (cart instanceof MinecartFurnace) return cart.isInWater() ? 0.15f : 0.2f;
+        else return cart.isInWater() ? 0.2f : 0.4f;
     }
 
     /**

@@ -13,11 +13,14 @@ import java.util.stream.Collectors;
 
 import io.netty.channel.ChannelHandler;
 import net.minecraft.commands.CommandBuildContext;
+import net.minecraft.commands.Commands;
 import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.commands.synchronization.ArgumentTypeInfo;
 import net.minecraft.commands.synchronization.ArgumentTypeInfos;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.data.registries.VanillaRegistries;
 import net.minecraft.gametest.framework.TestClassNameArgument;
 import net.minecraft.gametest.framework.TestFunctionArgument;
 import net.minecraft.network.protocol.Packet;
@@ -27,11 +30,15 @@ import net.minecraft.network.protocol.game.ClientboundUpdateAttributesPacket;
 import net.minecraft.network.protocol.game.ClientboundUpdateTagsPacket;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.tags.TagNetworkSerialization;
+import net.minecraft.world.flag.FeatureFlagSet;
+import net.minecraft.world.flag.FeatureFlags;
 import net.minecraftforge.network.NetworkHooks;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import net.minecraftforge.registries.RegistryManager;
+import net.minecraftforge.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
@@ -89,15 +96,14 @@ public class VanillaConnectionNetworkFilter extends VanillaPacketFilter
     @NotNull
     private static ClientboundCommandsPacket filterCommandList(ClientboundCommandsPacket packet)
     {
-        CommandBuildContext commandBuildContext = new CommandBuildContext(RegistryAccess.BUILTIN.get());
-        commandBuildContext.missingTagAccessPolicy(CommandBuildContext.MissingTagAccessPolicy.RETURN_EMPTY);
+        CommandBuildContext commandBuildContext = Commands.createValidationContext(VanillaRegistries.createLookup());
         RootCommandNode<SharedSuggestionProvider> root = packet.getRoot(commandBuildContext);
         RootCommandNode<SharedSuggestionProvider> newRoot = CommandTreeCleaner.cleanArgumentTypes(root, argType -> {
             if (argType instanceof TestFunctionArgument || argType instanceof TestClassNameArgument)
                 return false; // Vanilla connections should not have gametest on, so we should filter these out always
 
             ArgumentTypeInfo<?, ?> info = ArgumentTypeInfos.byClass(argType);
-            ResourceLocation id = Registry.COMMAND_ARGUMENT_TYPE.getKey(info);
+            ResourceLocation id = BuiltInRegistries.COMMAND_ARGUMENT_TYPE.getKey(info);
             return id != null && (id.getNamespace().equals("minecraft") || id.getNamespace().equals("brigadier"));
         });
         return new ClientboundCommandsPacket(newRoot);
@@ -116,8 +122,8 @@ public class VanillaConnectionNetworkFilter extends VanillaPacketFilter
 
     private static boolean isVanillaRegistry(ResourceLocation location)
     {
-        // Checks if the registry name is contained within the static view of vanilla registries both in Registry and builtin registries
+        // Checks if the registry name is contained within the static view of both BuiltInRegistries and VanillaRegistries
         return RegistryManager.getVanillaRegistryKeys().contains(location)
-                || RegistryAccess.REGISTRIES.keySet().stream().anyMatch(k -> k.location().equals(location));
+                || VanillaRegistries.DATAPACK_REGISTRY_KEYS.stream().anyMatch(k -> k.location().equals(location));
     }
 }

@@ -8,14 +8,17 @@ package net.minecraftforge.client.extensions;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.core.Direction;
 
-import com.mojang.math.Matrix4f;
 import com.mojang.math.Transformation;
-import com.mojang.math.Vector3f;
-import com.mojang.math.Vector4f;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import org.joml.Matrix4f;
+import org.joml.Vector3f;
+import org.joml.Vector4f;
 
 /**
  * Extension interface for {@link Transformation}.
  */
+// TODO - 1.20: Transformation is not client-only, move this extension outside the client package
 public interface IForgeTransformation
 {
     private Transformation self()
@@ -37,22 +40,15 @@ public interface IForgeTransformation
      * Pushes and applies this transformation to the pose stack. The effects of this method can be reversed by a
      * corresponding {@link PoseStack#popPose()}.
      *
+     * @deprecated Use {@linkplain PoseStack#pushTransformation(Transformation)}, as {@linkplain Transformation} can be present in common code.
+     *
      * @param stack the pose stack to modify
      */
+    @OnlyIn(Dist.CLIENT) // TODO - 1.20: Remove in favour of client-only PoseStack extension
+    @Deprecated(forRemoval = true, since = "1.19.2")
     default void push(PoseStack stack)
     {
-        stack.pushPose();
-
-        Vector3f trans = self().getTranslation();
-        stack.translate(trans.x(), trans.y(), trans.z());
-
-        stack.mulPose(self().getLeftRotation());
-
-        Vector3f scale = self().getScale();
-        stack.scale(scale.x(), scale.y(), scale.z());
-
-        stack.mulPose(self().getRightRotation());
-
+        stack.pushTransformation(self());
     }
 
     /**
@@ -62,7 +58,7 @@ public interface IForgeTransformation
      */
     default void transformPosition(Vector4f position)
     {
-        position.transform(self().getMatrix());
+        position.mul(self().getMatrix());
     }
 
     /**
@@ -72,7 +68,7 @@ public interface IForgeTransformation
      */
     default void transformNormal(Vector3f normal)
     {
-        normal.transform(self().getNormalMatrix());
+        normal.mul(self().getNormalMatrix());
         normal.normalize();
     }
 
@@ -124,11 +120,10 @@ public interface IForgeTransformation
         if (transform.isIdentity()) return Transformation.identity();
 
         Matrix4f ret = transform.getMatrix();
-        Matrix4f tmp = Matrix4f.createTranslateMatrix(origin.x(), origin.y(), origin.z());
-        ret.multiplyBackward(tmp);
-        tmp.setIdentity();
-        tmp.setTranslation(-origin.x(), -origin.y(), -origin.z());
-        ret.multiply(tmp);
+        Matrix4f tmp = new Matrix4f().translation(origin.x(), origin.y(), origin.z());
+        tmp.mul(ret, ret);
+        tmp.translation(-origin.x(), -origin.y(), -origin.z());
+        ret.mul(tmp);
         return new Transformation(ret);
     }
 }

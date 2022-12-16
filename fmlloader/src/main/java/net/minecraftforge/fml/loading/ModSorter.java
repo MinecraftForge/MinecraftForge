@@ -210,10 +210,24 @@ public class ModSorter
 
         if (!missingVersions.isEmpty()) {
             if (mandatoryMissing > 0) {
-                LOGGER.error(LOADING, "Missing mandatory dependencies: {}", missingVersions.stream().filter(IModInfo.ModVersion::isMandatory).map(IModInfo.ModVersion::getModId).collect(Collectors.joining(", ")));
+                LOGGER.error(
+                        LOADING,
+                        "Missing or unsupported mandatory dependencies:\n{}",
+                        missingVersions.stream()
+                                .filter(IModInfo.ModVersion::isMandatory)
+                                .map(ver -> formatDependencyError(ver, modVersions))
+                                .collect(Collectors.joining("\n"))
+                );
             }
             if (missingVersions.size() - mandatoryMissing > 0) {
-                LOGGER.error(LOADING, "Unsupported installed optional dependencies: {}", missingVersions.stream().filter(ver -> !ver.isMandatory()).map(IModInfo.ModVersion::getModId).collect(Collectors.joining(", ")));
+                LOGGER.error(
+                        LOADING,
+                        "Unsupported installed optional dependencies:\n{}",
+                        missingVersions.stream()
+                                .filter(ver -> !ver.isMandatory())
+                                .map(ver -> formatDependencyError(ver, modVersions))
+                                .collect(Collectors.joining("\n"))
+                );
             }
 
             return missingVersions.stream()
@@ -223,6 +237,18 @@ public class ModSorter
                     .toList();
         }
         return Collections.emptyList();
+    }
+
+    private static String formatDependencyError(IModInfo.ModVersion dependency, Map<String, ArtifactVersion> modVersions)
+    {
+        ArtifactVersion installed = modVersions.get(dependency.getModId());
+        return String.format(
+                "\tMod ID: '%s', Requested by: '%s', Expected range: '%s', Actual version: '%s'",
+                dependency.getModId(),
+                dependency.getOwner().getModId(),
+                dependency.getVersionRange(),
+                installed != null ? installed.toString() : "[MISSING]"
+        );
     }
 
     private boolean modVersionNotContained(final IModInfo.ModVersion mv, final Map<String, ArtifactVersion> modVersions)

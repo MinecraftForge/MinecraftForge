@@ -6,20 +6,18 @@
 package net.minecraftforge.registries;
 
 import com.mojang.logging.LogUtils;
-import net.minecraft.core.Registry;
-import net.minecraft.core.RegistryAccess;
-import net.minecraft.data.BuiltinRegistries;
-import net.minecraftforge.eventbus.api.Event;
-import net.minecraftforge.fml.event.IModBusEvent;
-import org.jetbrains.annotations.Nullable;
-import org.slf4j.Logger;
-
 import java.util.ArrayList;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+import net.minecraft.core.MappedRegistry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.fml.event.IModBusEvent;
+import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
 
 /**
  * Register new registries when you receive this event through {@link RegistryBuilder} and {@link #create(RegistryBuilder)}.
@@ -58,10 +56,14 @@ public class NewRegistryEvent extends Event implements IModBusEvent
         return registryHolder;
     }
 
+    @SuppressWarnings("deprecation")
     void fill()
     {
         RuntimeException aggregate = new RuntimeException();
         Map<RegistryBuilder<?>, IForgeRegistry<?>> builtRegistries = new IdentityHashMap<>();
+
+        if (BuiltInRegistries.REGISTRY instanceof MappedRegistry<?> rootRegistry)
+            rootRegistry.unfreeze();
 
         for (RegistryData<?> data : this.registries)
         {
@@ -74,6 +76,9 @@ public class NewRegistryEvent extends Event implements IModBusEvent
             }
         }
 
+        if (BuiltInRegistries.REGISTRY instanceof MappedRegistry<?> rootRegistry)
+            rootRegistry.freeze();
+
         if (aggregate.getSuppressed().length > 0)
             LOGGER.error(LogUtils.FATAL_MARKER, "Failed to create some forge registries, see suppressed exceptions for details", aggregate);
     }
@@ -85,16 +90,7 @@ public class NewRegistryEvent extends Event implements IModBusEvent
 
         builtRegistries.put(builder, registry);
 
-        RegistryAccess.RegistryData<?> dataPackRegistryData = builder.getDataPackRegistryData();
-        if (dataPackRegistryData != null) // if this is a datapack registry
-        {
-            if (!BuiltinRegistries.REGISTRY.containsKey(registry.getRegistryName()))
-            {
-                DataPackRegistriesHooks.addRegistryCodec(dataPackRegistryData);
-                RegistryManager.registerToBuiltinRegistry((ForgeRegistry<?>) registry);
-            }
-        }
-        else if (builder.getHasWrapper() && !Registry.REGISTRY.containsKey(registry.getRegistryName()))
+        if (builder.getHasWrapper() && !BuiltInRegistries.REGISTRY.containsKey(registry.getRegistryName()))
             RegistryManager.registerToRootRegistry((ForgeRegistry<?>) registry);
 
         data.registryHolder.registry = registry;

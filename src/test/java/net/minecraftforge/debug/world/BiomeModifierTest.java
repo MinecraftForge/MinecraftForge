@@ -3,6 +3,11 @@
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
+/*
+
+TODO: 1.19.3: Datagen went async for registries and holder lookups!
+
+
 package net.minecraftforge.debug.world;
 
 import java.util.List;
@@ -33,6 +38,8 @@ import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 import net.minecraft.world.level.levelgen.placement.BiomeFilter;
 import net.minecraft.world.level.levelgen.placement.CountOnEveryLayerPlacement;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
+import net.minecraftforge.common.crafting.conditions.ICondition;
+import net.minecraftforge.common.crafting.conditions.ModLoadedCondition;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.common.data.JsonCodecProvider;
 import net.minecraftforge.common.world.BiomeModifier;
@@ -49,6 +56,7 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
+*/
 /**
  * <p>This tests the following features and requirements of biome modifier jsons::</p>
  * <ul>
@@ -60,7 +68,8 @@ import net.minecraftforge.registries.RegistryObject;
  * <p>If the biome modifiers are applied correctly, then badlands biomes should generate large basalt columns,
  * spawn magma cubes, have red-colored water, and be snowy. Additionally, biomes in the is_forest tag are missing
  * oak trees, pine trees, and skeletons.</p>
- */
+ *//*
+
 @Mod(BiomeModifierTest.MODID)
 public class BiomeModifierTest
 {
@@ -150,7 +159,7 @@ public class BiomeModifierTest
         // Create and add dataproviders.
         generator.addProvider(event.includeServer(), JsonCodecProvider.forDatapackRegistry(
             generator, existingFileHelper, MODID, ops, Registry.PLACED_FEATURE_REGISTRY, Map.of(
-                LARGE_BASALT_COLUMNS_RL, basaltFeature)));
+                LARGE_BASALT_COLUMNS_RL, basaltFeature)).setConditions(Map.of(LARGE_BASALT_COLUMNS_RL, new ICondition[] { new ModLoadedCondition("forge") })));
 
         generator.addProvider(event.includeServer(), JsonCodecProvider.forDatapackRegistry(
             generator, existingFileHelper, MODID, ops, ForgeRegistries.Keys.BIOME_MODIFIERS, Map.of(
@@ -193,3 +202,4 @@ public class BiomeModifierTest
         }
     }
 }
+*/

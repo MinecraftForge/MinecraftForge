@@ -133,6 +133,7 @@ public class ForgeInternalHandler
     public void resourceReloadListeners(AddReloadListenerEvent event)
     {
         event.addListener(TierSortingRegistry.getReloadListener());
+        event.addListener(CreativeModeTabRegistry.getReloadListener());
     }
 }
 

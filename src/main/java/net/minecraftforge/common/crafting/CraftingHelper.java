@@ -234,4 +234,14 @@ public class CraftingHelper
             throw new JsonSyntaxException("Unknown condition type: " + condition.getID().toString());
         return serializer.getJson(condition);
     }
+
+    public static JsonArray serialize(ICondition... conditions)
+    {
+        JsonArray arr = new JsonArray();
+        for(ICondition iCond : conditions)
+        {
+            arr.add(serialize(iCond));
+        }
+        return arr;
+    }
 }

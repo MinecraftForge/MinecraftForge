@@ -1,18 +1,18 @@
 --- a/net/minecraft/world/item/Item.java
 +++ b/net/minecraft/world/item/Item.java
-@@ -46,9 +_,9 @@
+@@ -49,9 +_,9 @@
  import net.minecraft.world.phys.Vec3;
  import org.slf4j.Logger;
  
--public class Item implements ItemLike {
-+public class Item implements ItemLike, net.minecraftforge.common.extensions.IForgeItem {
+-public class Item implements FeatureElement, ItemLike {
++public class Item implements FeatureElement, ItemLike, net.minecraftforge.common.extensions.IForgeItem {
     private static final Logger f_150883_ = LogUtils.getLogger();
 -   public static final Map<Block, Item> f_41373_ = Maps.newHashMap();
 +   public static final Map<Block, Item> f_41373_ = net.minecraftforge.registries.GameData.getBlockItemMap();
     protected static final UUID f_41374_ = UUID.fromString("CB3F55D3-645C-4F38-A497-9C13A33DB5CF");
     protected static final UUID f_41375_ = UUID.fromString("FA233E1C-4180-4865-B01B-BCCE9785ACA3");
     public static final int f_150884_ = 64;
-@@ -96,7 +_,8 @@
+@@ -98,7 +_,8 @@
              f_150883_.error("Item classes should end with Item and {} doesn't.", (Object)s);
           }
        }
@@ -22,7 +22,7 @@
     }
  
     /** @deprecated */
-@@ -105,6 +_,8 @@
+@@ -107,6 +_,8 @@
        return this.f_204113_;
     }
  
@@ -31,7 +31,7 @@
     public void m_5929_(Level p_41428_, LivingEntity p_41429_, ItemStack p_41430_, int p_41431_) {
     }
  
-@@ -131,9 +_,9 @@
+@@ -133,9 +_,9 @@
     }
  
     public InteractionResultHolder<ItemStack> m_7203_(Level p_41432_, Player p_41433_, InteractionHand p_41434_) {
@@ -44,7 +44,7 @@
              p_41433_.m_6672_(p_41434_);
              return InteractionResultHolder.m_19096_(itemstack);
           } else {
-@@ -148,10 +_,12 @@
+@@ -150,10 +_,12 @@
        return this.m_41472_() ? p_41411_.m_5584_(p_41410_, p_41409_) : p_41409_;
     }
  
@@ -57,7 +57,7 @@
     public final int m_41462_() {
        return this.f_41371_;
     }
-@@ -165,11 +_,12 @@
+@@ -167,11 +_,12 @@
     }
  
     public int m_142158_(ItemStack p_150900_) {
@@ -72,7 +72,7 @@
        return Mth.m_14169_(f / 3.0F, 1.0F, 1.0F);
     }
  
-@@ -226,10 +_,12 @@
+@@ -228,10 +_,12 @@
     }
  
     @Nullable
@@ -85,7 +85,7 @@
     public boolean m_41470_() {
        return this.f_41378_ != null;
     }
-@@ -250,7 +_,7 @@
+@@ -252,7 +_,7 @@
  
     public int m_8105_(ItemStack p_41454_) {
        if (p_41454_.m_41720_().m_41472_()) {
@@ -94,7 +94,7 @@
        } else {
           return 0;
        }
-@@ -292,7 +_,7 @@
+@@ -294,7 +_,7 @@
     }
  
     public boolean m_8120_(ItemStack p_41456_) {
@@ -103,7 +103,7 @@
     }
  
     protected static BlockHitResult m_41435_(Level p_41436_, Player p_41437_, ClipContext.Fluid p_41438_) {
-@@ -305,11 +_,13 @@
+@@ -307,11 +_,13 @@
        float f5 = Mth.m_14031_(-f * ((float)Math.PI / 180F));
        float f6 = f3 * f4;
        float f7 = f2 * f4;
@@ -119,15 +119,7 @@
     public int m_6473_() {
        return 0;
     }
-@@ -322,6 +_,7 @@
-    }
- 
-    protected boolean m_220152_(CreativeModeTab p_220153_) {
-+      if (getCreativeTabs().stream().anyMatch(tab -> tab == p_220153_)) return true;
-       CreativeModeTab creativemodetab = this.m_41471_();
-       return creativemodetab != null && (p_220153_ == CreativeModeTab.f_40754_ || p_220153_ == creativemodetab);
-    }
-@@ -335,12 +_,20 @@
+@@ -320,12 +_,20 @@
        return false;
     }
  
@@ -149,7 +141,7 @@
     }
  
     public ItemStack m_7968_() {
-@@ -351,6 +_,8 @@
+@@ -336,6 +_,8 @@
        return this.f_41380_ != null;
     }
  
@@ -158,8 +150,8 @@
     @Nullable
     public FoodProperties m_41473_() {
        return this.f_41380_;
-@@ -381,6 +_,32 @@
-       return true;
+@@ -370,6 +_,32 @@
+       return this.f_243811_;
     }
  
 +   // FORGE START
@@ -191,15 +183,15 @@
     public static class Properties {
        int f_41478_ = 64;
        int f_41479_;
-@@ -392,6 +_,7 @@
-       @Nullable
+@@ -380,6 +_,7 @@
        FoodProperties f_41483_;
        boolean f_41484_;
+       FeatureFlagSet f_244559_ = FeatureFlags.f_244377_;
 +      private boolean canRepair = true;
  
        public Item.Properties m_41489_(FoodProperties p_41490_) {
           this.f_41483_ = p_41490_;
-@@ -434,6 +_,11 @@
+@@ -417,6 +_,11 @@
  
        public Item.Properties m_41486_() {
           this.f_41484_ = true;
@@ -210,4 +202,4 @@
 +         canRepair = false;
           return this;
        }
-    }
+ 

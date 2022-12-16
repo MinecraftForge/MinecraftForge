@@ -11,13 +11,18 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.mojang.datafixers.util.Pair;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
+import java.util.function.Function;
 import net.minecraft.client.renderer.block.model.BlockElement;
 import net.minecraft.client.renderer.block.model.BlockElementFace;
 import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.Material;
-import net.minecraft.client.resources.model.ModelBakery;
+import net.minecraft.client.resources.model.ModelBaker;
 import net.minecraft.client.resources.model.ModelState;
 import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.core.Direction;
@@ -28,12 +33,6 @@ import net.minecraftforge.client.model.geometry.IGeometryLoader;
 import net.minecraftforge.client.model.geometry.SimpleUnbakedGeometry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
-import java.util.function.Function;
 
 /**
  * A model composed of vanilla {@linkplain BlockElement block elements}.
@@ -57,14 +56,16 @@ public class ElementsModel extends SimpleUnbakedGeometry<ElementsModel>
     }
 
     @Override
-    protected void addQuads(IGeometryBakingContext context, IModelBuilder<?> modelBuilder, ModelBakery bakery, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelState, ResourceLocation modelLocation)
+    protected void addQuads(IGeometryBakingContext context, IModelBuilder<?> modelBuilder, ModelBaker baker, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelState, ResourceLocation modelLocation)
     {
         if (deprecatedLoader)
             LOGGER.warn("Model \"" + modelLocation + "\" is using the deprecated loader \"minecraft:elements\" instead of \"forge:elements\". This loader will be removed in 1.20.");
 
-        var rootTransform = context.getRootTransform();
-        if (!rootTransform.isIdentity())
-            modelState = new SimpleModelState(modelState.getRotation().compose(rootTransform), modelState.isUvLocked());
+        // If there is a root transform, undo the ModelState transform, apply it, then re-apply the ModelState transform.
+        // This is necessary because of things like UV locking, which should only respond to the ModelState, and as such
+        // that is the only transform that should be applied during face bake.
+        var postTransform = context.getRootTransform().isIdentity() ? QuadTransformers.empty() :
+                QuadTransformers.applying(modelState.getRotation().compose(context.getRootTransform()).compose(modelState.getRotation().inverse()));
 
         for (BlockElement element : elements)
         {
@@ -73,6 +74,7 @@ public class ElementsModel extends SimpleUnbakedGeometry<ElementsModel>
                 var face = element.faces.get(direction);
                 var sprite = spriteGetter.apply(context.getMaterial(face.texture));
                 var quad = BlockModel.bakeFace(element, face, sprite, direction, modelState, modelLocation);
+                postTransform.processInPlace(quad);
 
                 if (face.cullForDirection == null)
                     modelBuilder.addUnculledFace(quad);
@@ -80,26 +82,6 @@ public class ElementsModel extends SimpleUnbakedGeometry<ElementsModel>
                     modelBuilder.addCulledFace(modelState.getRotation().rotateTransform(face.cullForDirection), quad);
             }
         }
-    }
-
-    @Override
-    public Collection<Material> getMaterials(IGeometryBakingContext context, Function<ResourceLocation, UnbakedModel> modelGetter, Set<Pair<String, String>> missingTextureErrors)
-    {
-        Set<Material> textures = Sets.newHashSet();
-        if (context.hasMaterial("particle"))
-            textures.add(context.getMaterial("particle"));
-        for (BlockElement part : elements)
-        {
-            for (BlockElementFace face : part.faces.values())
-            {
-                Material texture = context.getMaterial(face.texture);
-                if (texture.texture().equals(MissingTextureAtlasSprite.getLocation()))
-                    missingTextureErrors.add(Pair.of(face.texture, context.getModelName()));
-                textures.add(texture);
-            }
-        }
-
-        return textures;
     }
 
     public static final class Loader implements IGeometryLoader<ElementsModel>
