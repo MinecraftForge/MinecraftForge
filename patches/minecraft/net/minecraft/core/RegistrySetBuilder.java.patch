@@ -1,20 +1,5 @@
 --- a/net/minecraft/core/RegistrySetBuilder.java
 +++ b/net/minecraft/core/RegistrySetBuilder.java
-@@ -28,6 +_,14 @@
-       };
-    }
- 
-+   static <T> HolderLookup.RegistryLookup<T> wrapRegistryLookup(final HolderLookup.RegistryLookup<T> lookup) {
-+      return new HolderLookup.RegistryLookup.Delegate<>() {
-+         @Override protected RegistryLookup<T> m_254893_() { return lookup; }
-+         @Override public Stream<HolderSet.Named<T>> m_214063_() { return Stream.empty(); }
-+         @Override public Optional<HolderSet.Named<T>> m_254901_(TagKey<T> key) { return Optional.of(HolderSet.m_255229_(lookup, key)); }
-+      };
-+   }
-+
-    public <T> RegistrySetBuilder m_255162_(ResourceKey<? extends Registry<T>> p_256446_, Lifecycle p_256394_, RegistrySetBuilder.RegistryBootstrap<T> p_256638_) {
-       this.f_254732_.add(new RegistrySetBuilder.RegistryStub<>(p_256446_, p_256394_, p_256638_));
-       return this;
 @@ -37,6 +_,10 @@
        return this.m_255162_(p_256261_, Lifecycle.stable(), p_256010_);
     }
@@ -31,7 +16,7 @@
           ImmutableMap.Builder<ResourceLocation, HolderGetter<?>> builder = ImmutableMap.builder();
           p_255995_.m_206193_().forEach((p_258197_) -> {
 -            builder.put(p_258197_.f_206233_().m_135782_(), RegistrySetBuilder.m_254882_(p_258197_.f_206234_().m_255303_()));
-+            builder.put(p_258197_.f_206233_().m_135782_(), RegistrySetBuilder.wrapRegistryLookup(p_258197_.f_206234_().m_255303_()));
++            builder.put(p_258197_.f_206233_().m_135782_(), net.minecraftforge.common.ForgeHooks.wrapRegistryLookup(p_258197_.f_206234_().m_255303_()));
           });
           p_256495_.forEach((p_256603_) -> {
              builder.put(p_256603_.m_135782_(), registrysetbuilder$universallookup);
