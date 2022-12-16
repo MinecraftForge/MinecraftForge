@@ -19,7 +19,6 @@ import com.mojang.datafixers.util.Either;
 
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
-import net.minecraft.core.Registry;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.RandomSource;
 
@@ -232,7 +231,7 @@ public abstract class CompositeHolderSet<T> implements ICustomHolderSet<T>
         for (int i=1; i<size; i++)
         {
             final SerializationType type = holderSets.get(i).serializationType();
-            if (type == SerializationType.UNKNOWN || type != firstType)
+            if (type != firstType) // don't need to check type == UNKNOWN again because type != firstType covers it
             {
                 return false;
             }
