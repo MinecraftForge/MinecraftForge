@@ -1,5 +1,20 @@
 --- a/net/minecraft/core/RegistrySetBuilder.java
 +++ b/net/minecraft/core/RegistrySetBuilder.java
+@@ -28,6 +_,14 @@
+       };
+    }
+ 
++   static <T> HolderLookup.RegistryLookup<T> wrapRegistryLookup(final HolderLookup.RegistryLookup<T> lookup) {
++      return new HolderLookup.RegistryLookup.Delegate<>() {
++         @Override protected RegistryLookup<T> m_254893_() { return lookup; }
++         @Override public Stream<HolderSet.Named<T>> m_214063_() { return Stream.empty(); }
++         @Override public Optional<HolderSet.Named<T>> m_254901_(TagKey<T> key) { return Optional.of(HolderSet.m_255229_(lookup, key)); }
++      };
++   }
++
+    public <T> RegistrySetBuilder m_255162_(ResourceKey<? extends Registry<T>> p_256446_, Lifecycle p_256394_, RegistrySetBuilder.RegistryBootstrap<T> p_256638_) {
+       this.f_254732_.add(new RegistrySetBuilder.RegistryStub<>(p_256446_, p_256394_, p_256638_));
+       return this;
 @@ -37,6 +_,10 @@
        return this.m_255162_(p_256261_, Lifecycle.stable(), p_256010_);
     }
@@ -11,3 +26,24 @@
     private RegistrySetBuilder.BuildState m_254900_(RegistryAccess p_256400_) {
        RegistrySetBuilder.BuildState registrysetbuilder$buildstate = RegistrySetBuilder.BuildState.m_255369_(p_256400_, this.f_254732_.stream().map(RegistrySetBuilder.RegistryStub::f_254738_));
        this.f_254732_.forEach((p_255629_) -> {
+@@ -81,7 +_,7 @@
+          RegistrySetBuilder.UniversalLookup registrysetbuilder$universallookup = new RegistrySetBuilder.UniversalLookup(registrysetbuilder$compositeowner);
+          ImmutableMap.Builder<ResourceLocation, HolderGetter<?>> builder = ImmutableMap.builder();
+          p_255995_.m_206193_().forEach((p_258197_) -> {
+-            builder.put(p_258197_.f_206233_().m_135782_(), RegistrySetBuilder.m_254882_(p_258197_.f_206234_().m_255303_()));
++            builder.put(p_258197_.f_206233_().m_135782_(), RegistrySetBuilder.wrapRegistryLookup(p_258197_.f_206234_().m_255303_()));
+          });
+          p_256495_.forEach((p_256603_) -> {
+             builder.put(p_256603_.m_135782_(), registrysetbuilder$universallookup);
+@@ -102,6 +_,11 @@
+ 
+             public <S> HolderGetter<S> m_255420_(ResourceKey<? extends Registry<? extends S>> p_255961_) {
+                return (HolderGetter<S>) BuildState.this.f_254690_.getOrDefault(p_255961_.m_135782_(), BuildState.this.f_254749_);
++            }
++
++            @Override
++            public <S> Optional<HolderLookup.RegistryLookup<T>> registryLookup(ResourceKey<? extends Registry<? extends S>> registry) {
++               return Optional.ofNullable((HolderLookup.RegistryLookup<T>) BuildState.this.f_254690_.get(registry.m_135782_()));
+             }
+          };
+       }
