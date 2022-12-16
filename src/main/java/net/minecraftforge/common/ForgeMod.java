@@ -43,6 +43,7 @@ import net.minecraftforge.common.crafting.IntersectionIngredient;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.common.data.ForgeBiomeTagsProvider;
 import net.minecraftforge.common.data.ForgeFluidTagsProvider;
+import net.minecraftforge.common.data.ForgeSpriteSourceProvider;
 import net.minecraftforge.common.extensions.IForgeEntity;
 import net.minecraftforge.common.extensions.IForgePlayer;
 import net.minecraftforge.common.loot.CanToolPerformAction;
@@ -488,6 +489,8 @@ public class ForgeMod
         gen.addProvider(event.includeServer(), new ForgeRecipeProvider(packOutput));
         gen.addProvider(event.includeServer(), new ForgeLootTableProvider(packOutput));
         gen.addProvider(event.includeServer(), new ForgeBiomeTagsProvider(packOutput, lookupProvider, existingFileHelper));
+
+        gen.addProvider(event.includeClient(), new ForgeSpriteSourceProvider(packOutput, existingFileHelper));
     }
 
     public void missingSoundMapping(MissingMappingsEvent event)
