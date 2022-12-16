@@ -10,7 +10,7 @@
 +            return DataResult.error("Not a registry ops");
 +
 +         return registryOps.f_254668_.m_254838_(resourceKey).map(registryInfo -> {
-+            if (!(registryInfo.f_254724_() instanceof HolderLookup.RegistryLookup<E> registryLookup))
++            if (!(registryInfo.f_254675_() instanceof HolderLookup.RegistryLookup<E> registryLookup))
 +               return DataResult.<HolderLookup.RegistryLookup<E>>error("Found holder getter but was not a registry lookup for " + resourceKey);
 +
 +            return DataResult.success(registryLookup, registryInfo.f_254751_());
