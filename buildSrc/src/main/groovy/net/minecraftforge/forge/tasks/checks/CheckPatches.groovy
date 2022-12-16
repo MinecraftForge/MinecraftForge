@@ -88,7 +88,7 @@ abstract class CheckPatches extends CheckTask {
                             pMatcher.group(5) == cMatcher.group(5) && // field name
                             pMatcher.group(3) == cMatcher.group(3) && // static
                             (ACCESS_MAP[pMatcher.group(2)] < ACCESS_MAP[cMatcher.group(2)] || pMatcher.group(4) != cMatcher.group(4))) {
-                        reporter.report("Patch contains access changes or final removal at line ${i + 1}, file: $patchPath", true)
+                        reporter.report("Patch contains access changes or final removal at line ${i + 1}, file: $patchPath", false)
                     }
 
                     pMatcher = METHOD_PATTERN.matcher(prevLine)
@@ -99,7 +99,7 @@ abstract class CheckPatches extends CheckTask {
                             pMatcher.group(5) == cMatcher.group(5) && // <T> void name
                             pMatcher.group(3) == cMatcher.group(3) && // static
                             (ACCESS_MAP[pMatcher.group(2)] < ACCESS_MAP[cMatcher.group(2)] || pMatcher.group(4) != cMatcher.group(4))) {
-                        reporter.report("Patch contains access changes or final removal at line ${i + 1}, file: $patchPath", true)
+                        reporter.report("Patch contains access changes or final removal at line ${i + 1}, file: $patchPath", false)
                     }
 
                     pMatcher = CLASS_PATTERN.matcher(prevLine)
@@ -110,7 +110,7 @@ abstract class CheckPatches extends CheckTask {
                             pMatcher.group(5) == cMatcher.group(5) && // class | interface
                             pMatcher.group(3) == cMatcher.group(3) && // static
                             (ACCESS_MAP[pMatcher.group(2)] < ACCESS_MAP[cMatcher.group(2)] || pMatcher.group(4) != cMatcher.group(4))) {
-                        reporter.report("Patch contains access changes or final removal at line ${i + 1}, file: $patchPath", true)
+                        reporter.report("Patch contains access changes or final removal at line ${i + 1}, file: $patchPath", false)
                     }
                 }
 
@@ -135,7 +135,7 @@ abstract class CheckPatches extends CheckTask {
                     final nextLineChange = i + 1 < lines.size() && lines[i + 1].startsWithAny('+','-')
 
                     if (!prevLineChange && !nextLineChange) {
-                        reporter.report("Patch contains white space change in valid hunk at line ${i + 1} (cannot auto fix), file: $patchPath")
+                        reporter.report("Patch contains white space change in valid hunk at line ${i + 1}, file: $patchPath", false)
                     }
                 }
 
