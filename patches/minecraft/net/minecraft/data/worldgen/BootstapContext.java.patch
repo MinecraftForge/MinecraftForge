@@ -5,5 +5,5 @@
  
     <S> HolderGetter<S> m_255420_(ResourceKey<? extends Registry<? extends S>> p_256410_);
 +
-+   default <S> java.util.Optional<net.minecraft.core.HolderLookup.RegistryLookup<T>> registryLookup(ResourceKey<? extends Registry<? extends S>> registry) { return java.util.Optional.empty(); }
++   default <S> java.util.Optional<net.minecraft.core.HolderLookup.RegistryLookup<S>> registryLookup(ResourceKey<? extends Registry<? extends S>> registry) { return java.util.Optional.empty(); }
  }

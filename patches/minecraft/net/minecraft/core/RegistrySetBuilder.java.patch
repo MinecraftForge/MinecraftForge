@@ -27,8 +27,8 @@
 +            }
 +
 +            @Override
-+            public <S> Optional<HolderLookup.RegistryLookup<T>> registryLookup(ResourceKey<? extends Registry<? extends S>> registry) {
-+               return Optional.ofNullable((HolderLookup.RegistryLookup<T>) BuildState.this.f_254690_.get(registry.m_135782_()));
++            public <S> Optional<HolderLookup.RegistryLookup<S>> registryLookup(ResourceKey<? extends Registry<? extends S>> registry) {
++               return Optional.ofNullable((HolderLookup.RegistryLookup<S>) BuildState.this.f_254690_.get(registry.m_135782_()));
              }
           };
        }
