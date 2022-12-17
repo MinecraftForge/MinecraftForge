@@ -42,7 +42,7 @@ import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.foliageplacers.FoliagePlacerType;
 import net.minecraft.world.level.levelgen.feature.treedecorators.TreeDecoratorType;
 import net.minecraftforge.common.Tags;
-import net.minecraftforge.common.conditions.ICondition;
+import net.minecraftforge.common.conditions.Condition;
 import net.minecraftforge.common.loot.IGlobalLootModifier;
 import net.minecraftforge.common.world.BiomeModifier;
 import net.minecraftforge.fluids.FluidType;
@@ -136,12 +136,12 @@ public class ForgeRegistries
      * Use {@link Keys#HOLDER_SET_TYPES} to create a {@link DeferredRegister}.
      */
     public static final Supplier<IForgeRegistry<HolderSetType>> HOLDER_SET_TYPES = DEFERRED_HOLDER_SET_TYPES.makeRegistry(GameData::getHolderSetTypeRegistryBuilder);
-    static final DeferredRegister<Codec<? extends ICondition>> DEFERRED_CONDITION_SERIALIZERS = DeferredRegister.create(Keys.CONDITION_SERIALIZERS, Keys.CONDITION_SERIALIZERS.location().getNamespace());
+    static final DeferredRegister<Codec<? extends Condition>> DEFERRED_CONDITION_SERIALIZERS = DeferredRegister.create(Keys.CONDITION_SERIALIZERS, Keys.CONDITION_SERIALIZERS.location().getNamespace());
     /**
      * Calling {@link Supplier#get()} before {@link NewRegistryEvent} is fired will result in a null registry returned.
      * Use {@link Keys#CONDITION_SERIALIZERS} to create a {@link DeferredRegister}.
      */
-    public static final Supplier<IForgeRegistry<Codec<? extends ICondition>>> CONDITION_SERIALIZERS = DEFERRED_CONDITION_SERIALIZERS.makeRegistry(() -> new RegistryBuilder<Codec<? extends ICondition>>().disableSaving().disableSync());
+    public static final Supplier<IForgeRegistry<Codec<? extends Condition>>> CONDITION_SERIALIZERS = DEFERRED_CONDITION_SERIALIZERS.makeRegistry(() -> new RegistryBuilder<Codec<? extends Condition>>().disableSaving().disableSync());
 
     public static final class Keys {
         //Vanilla
@@ -183,7 +183,7 @@ public class ForgeRegistries
         public static final ResourceKey<Registry<Codec<? extends IGlobalLootModifier>>> GLOBAL_LOOT_MODIFIER_SERIALIZERS = key("forge:global_loot_modifier_serializers");
         public static final ResourceKey<Registry<Codec<? extends BiomeModifier>>> BIOME_MODIFIER_SERIALIZERS = key("forge:biome_modifier_serializers");
         public static final ResourceKey<Registry<Codec<? extends StructureModifier>>> STRUCTURE_MODIFIER_SERIALIZERS = key("forge:structure_modifier_serializers");
-        public static final ResourceKey<Registry<Codec<? extends ICondition>>> CONDITION_SERIALIZERS = key("forge:condition_serializers");
+        public static final ResourceKey<Registry<Codec<? extends Condition>>> CONDITION_SERIALIZERS = key("forge:condition_serializers");
         public static final ResourceKey<Registry<FluidType>> FLUID_TYPES = key("forge:fluid_type");
         public static final ResourceKey<Registry<HolderSetType>> HOLDER_SET_TYPES = key("forge:holder_set_type");
 

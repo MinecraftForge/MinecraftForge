@@ -22,25 +22,25 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 /**
- * An {@link ICondition} represents any type of loading condition that can be applied to a JSON object.
+ * An {@link Condition} represents any type of loading condition that can be applied to a JSON object.
  */
-public interface ICondition extends Predicate<ICondition.IContext>
+public interface Condition extends Predicate<Condition.IContext>
 {
     /**
      * Codec for (de)serializing conditions inline.
      * Mods can use this for data generation.
      */
-    Codec<ICondition> DIRECT_CODEC = ExtraCodecs.lazyInitializedCodec(() -> ForgeRegistries.CONDITION_SERIALIZERS.get().getCodec())
-            .dispatch(ICondition::codec, Function.identity());
+    Codec<Condition> DIRECT_CODEC = ExtraCodecs.lazyInitializedCodec(() -> ForgeRegistries.CONDITION_SERIALIZERS.get().getCodec())
+            .dispatch(Condition::codec, Function.identity());
 
     /**
      * @return the codec which serializes and deserializes this condition
      */
-    Codec<? extends ICondition> codec();
+    Codec<? extends Condition> codec();
 
     /**
      * Tests if this condition is met, given the context.
-     * @param context The {@linkplain ICondition.IContext Condition Context}
+     * @param context The {@linkplain Condition.IContext Condition Context}
      * @return {@code true} if this condition is met in this context.
      */
     @Override

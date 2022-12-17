@@ -47,7 +47,7 @@ import net.minecraft.world.level.block.DoorBlock;
 import net.minecraft.world.level.block.PressurePlateBlock;
 import net.minecraft.world.level.block.StandingSignBlock;
 import net.minecraft.world.level.block.WallSignBlock;
-import net.minecraftforge.common.conditions.IConditionBuilder;
+import net.minecraftforge.common.conditions.ConditionBuilder;
 import net.minecraftforge.common.crafting.CompoundIngredient;
 import net.minecraftforge.common.crafting.PartialNBTIngredient;
 import net.minecraftforge.common.crafting.DifferenceIngredient;
@@ -148,7 +148,7 @@ public class DataGeneratorTest
         gen.addProvider(event.includeServer(), new Advancements(packOutput, lookupProvider, event.getExistingFileHelper()));
     }
 
-    public static class Recipes extends RecipeProvider implements IConditionBuilder
+    public static class Recipes extends RecipeProvider implements ConditionBuilder
     {
         public Recipes(PackOutput gen)
         {

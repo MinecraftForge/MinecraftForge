@@ -40,7 +40,7 @@ import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.pathfinder.BlockPathTypes;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions;
-import net.minecraftforge.common.conditions.ICondition;
+import net.minecraftforge.common.conditions.Condition;
 import net.minecraftforge.common.crafting.PartialNBTIngredient;
 import net.minecraftforge.common.crafting.DifferenceIngredient;
 import net.minecraftforge.common.crafting.IntersectionIngredient;
@@ -133,7 +133,7 @@ public class ForgeMod
     private static final DeferredRegister<ArgumentTypeInfo<?, ?>> COMMAND_ARGUMENT_TYPES = DeferredRegister.create(Registries.COMMAND_ARGUMENT_TYPE, "forge");
     private static final DeferredRegister<Codec<? extends BiomeModifier>> BIOME_MODIFIER_SERIALIZERS = DeferredRegister.create(ForgeRegistries.Keys.BIOME_MODIFIER_SERIALIZERS, "forge");
     private static final DeferredRegister<Codec<? extends StructureModifier>> STRUCTURE_MODIFIER_SERIALIZERS = DeferredRegister.create(ForgeRegistries.Keys.STRUCTURE_MODIFIER_SERIALIZERS, "forge");
-    private static final DeferredRegister<Codec<? extends ICondition>> CONDITION_SERIALIZERS = DeferredRegister.create(ForgeRegistries.Keys.CONDITION_SERIALIZERS, "forge");
+    private static final DeferredRegister<Codec<? extends Condition>> CONDITION_SERIALIZERS = DeferredRegister.create(ForgeRegistries.Keys.CONDITION_SERIALIZERS, "forge");
     private static final DeferredRegister<HolderSetType> HOLDER_SET_TYPES = DeferredRegister.create(ForgeRegistries.Keys.HOLDER_SET_TYPES, "forge");
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -232,15 +232,15 @@ public class ForgeMod
     public static final RegistryObject<Codec<TrueCondition>> TRUE_CONDITION_TYPE = condition("true", Codec.unit(TrueCondition.INSTANCE));
 
     public static final RegistryObject<Codec<AndCondition>> AND_CONDITION_TYPE = condition("and", RecordCodecBuilder.create(in -> in.group(
-            ExtraCodecs.nonEmptyList(singleOrList(ICondition.DIRECT_CODEC)).fieldOf("values").forGetter(AndCondition::children)
+            ExtraCodecs.nonEmptyList(singleOrList(Condition.DIRECT_CODEC)).fieldOf("values").forGetter(AndCondition::children)
     ).apply(in, AndCondition::new)));
 
     public static final RegistryObject<Codec<NotCondition>> NOT_CONDITION_TYPE = condition("not", RecordCodecBuilder.create(in -> in.group(
-            ICondition.DIRECT_CODEC.fieldOf("value").forGetter(NotCondition::value)
+            Condition.DIRECT_CODEC.fieldOf("value").forGetter(NotCondition::value)
     ).apply(in, NotCondition::new)));
 
     public static final RegistryObject<Codec<OrCondition>> OR_CONDITION_TYPE = condition("or", RecordCodecBuilder.create(in -> in.group(
-            ExtraCodecs.nonEmptyList(singleOrList(ICondition.DIRECT_CODEC)).fieldOf("values").forGetter(OrCondition::values)
+            ExtraCodecs.nonEmptyList(singleOrList(Condition.DIRECT_CODEC)).fieldOf("values").forGetter(OrCondition::values)
     ).apply(in, OrCondition::new)));
 
     public static final RegistryObject<Codec<ItemExistsCondition>> ITEM_EXISTS_CONDITION_TYPE = condition("item_exists", RecordCodecBuilder.create(in -> in.group(
@@ -252,6 +252,11 @@ public class ForgeMod
     ).apply(in, ModLoadedCondition::new)));
 
     public static final RegistryObject<Codec<TagEmptyCondition<?>>> TAG_EMPTY_CONDITION_TYPE = condition("tag_empty", RecordCodecBuilder.create(in -> in.group(
+            ResourceLocation.CODEC.<ResourceKey<? extends Registry<?>>>xmap(ResourceKey::createRegistryKey, ResourceKey::location).optionalFieldOf("registry", Registries.ITEM).forGetter(it -> it.tag().registry()),
+            ResourceLocation.CODEC.fieldOf("tag").forGetter(it -> it.tag().location())
+    ).apply(in, TagEmptyCondition::from)));
+
+    public static final RegistryObject<Codec<TagEmptyCondition<?>>> TAG_EXISTS_CONDITION_TYPE = condition("tag_exists", RecordCodecBuilder.create(in -> in.group(
             ResourceLocation.CODEC.<ResourceKey<? extends Registry<?>>>xmap(ResourceKey::createRegistryKey, ResourceKey::location).optionalFieldOf("registry", Registries.ITEM).forGetter(it -> it.tag().registry()),
             ResourceLocation.CODEC.fieldOf("tag").forGetter(it -> it.tag().location())
     ).apply(in, TagEmptyCondition::from)));
@@ -622,7 +627,7 @@ public class ForgeMod
         event.addNodes(USE_SELECTORS_PERMISSION);
     }
 
-    private static <T extends ICondition> RegistryObject<Codec<T>> condition(String id, Codec<T> codec)
+    private static <T extends Condition> RegistryObject<Codec<T>> condition(String id, Codec<T> codec)
     {
         return CONDITION_SERIALIZERS.register(id, () -> codec);
     }

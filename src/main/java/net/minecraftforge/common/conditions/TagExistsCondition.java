@@ -11,29 +11,29 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraftforge.common.ForgeMod;
 
-public record TagEmptyCondition<T>(TagKey<T> tag) implements Condition
+public record TagExistsCondition<T>(TagKey<T> tag) implements Condition
 {
     @SuppressWarnings({"unchecked", "rawtypes"})
-    public static TagEmptyCondition<?> from(ResourceKey<?> registry, ResourceLocation tag)
+    public static TagExistsCondition<?> from(ResourceKey<?> registry, ResourceLocation tag)
     {
-        return new TagEmptyCondition<>(TagKey.create((ResourceKey) registry, tag));
+        return new TagExistsCondition<>(TagKey.create((ResourceKey) registry, tag));
     }
 
     @Override
     public boolean test(Condition.IContext context)
     {
-        return context.getTag(tag).isEmpty();
+        return !context.getTag(tag).isEmpty();
     }
 
     @Override
     public String toString()
     {
-        return "tag_empty(\"" + tag.location() + "\")";
+        return "tag_exists(\"" + tag.location() + "\")";
     }
 
     @Override
     public Codec<? extends Condition> codec()
     {
-        return ForgeMod.TAG_EMPTY_CONDITION_TYPE.get();
+        return ForgeMod.TAG_EXISTS_CONDITION_TYPE.get();
     }
 }

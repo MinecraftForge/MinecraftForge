@@ -15,11 +15,11 @@ import com.google.gson.JsonSyntaxException;
 import com.mojang.logging.LogUtils;
 
 import net.minecraft.resources.ResourceKey;
-import net.minecraftforge.common.conditions.ICondition.IContext;
+import net.minecraftforge.common.conditions.Condition.IContext;
 
 /**
  * 
- * Holds code relating to the de/serialization and processing of {@link ICondition}s
+ * Holds code relating to the de/serialization and processing of {@link Condition}s
  */
 public class ConditionHelper {
 
@@ -31,9 +31,9 @@ public class ConditionHelper {
      * @return The serialized JSON
      * @throws RuntimeException If no serializer is registered for the condition, or if the serializer encountered an exception encoding
      */
-    public static JsonElement serialize(ICondition condition)
+    public static JsonElement serialize(Condition condition)
     {
-        return ICondition.DIRECT_CODEC.encodeStart(JsonOps.INSTANCE, condition)
+        return Condition.DIRECT_CODEC.encodeStart(JsonOps.INSTANCE, condition)
                 .getOrThrow(false, msg -> LOGGER.error("Encountered exception encoding condition: {}", msg));
     }
 
@@ -43,10 +43,10 @@ public class ConditionHelper {
      * @return The serialized JSON
      * @throws RuntimeException If no serializer is registered for any of the passed conditions.
      */
-    public static JsonArray serialize(ICondition... conditions)
+    public static JsonArray serialize(Condition... conditions)
     {
         JsonArray arr = new JsonArray();
-        for(ICondition iCond : conditions)
+        for (Condition iCond : conditions)
         {
             arr.add(ConditionHelper.serialize(iCond));
         }
@@ -54,14 +54,14 @@ public class ConditionHelper {
     }
 
     /**
-     * Parses an {@link ICondition} from a {@link JsonObject}.
+     * Parses an {@link Condition} from a {@link JsonObject}.
      * @param json The serialized condition JSON
      * @return The deserialized condition object
      * @throws RuntimeException If no serializer is registered for the specified condition type, or if the serializer encountered an exception decoding
      */
-    public static ICondition getCondition(JsonElement json)
+    public static Condition getCondition(JsonElement json)
     {
-        return ICondition.DIRECT_CODEC.decode(JsonOps.INSTANCE, json)
+        return Condition.DIRECT_CODEC.decode(JsonOps.INSTANCE, json)
                 .getOrThrow(false, msg -> LOGGER.error("Encountered exception decoding condition: {}", msg)).getFirst();
     }
 
@@ -69,11 +69,11 @@ public class ConditionHelper {
      * Given an array of conditions as JSON and a context, deserializes and executes all conditions.<br>
      * This method will fail-fast, in that if a condition fails, any following conditions will not be parsed or executed.
      * @param conditions The serialized condition array
-     * @param context The {@linkplain ICondition.IContext Condition Context}
+     * @param context The {@linkplain Condition.IContext Condition Context}
      * @return True if all conditions were successfully parsed and returned true, or the condition array is empty.
      * @throws JsonSyntaxException If a condition fails to be parsed.
      */
-    public static boolean processConditions(JsonArray conditions, ICondition.IContext context)
+    public static boolean processConditions(JsonArray conditions, Condition.IContext context)
     {
         for (int x = 0; x < conditions.size(); x++)
         {
@@ -93,11 +93,11 @@ public class ConditionHelper {
      * If the object does not contain the specified condition array, this method returns true.
      * @param json The outer JSON object
      * @param memberName The name of the condition array within the object
-     * @param context The {@linkplain ICondition.IContext Condition Context}
+     * @param context The {@linkplain Condition.IContext Condition Context}
      * @return True if all conditions were successfully parsed and returned true, or the condition array is empty/absent.
      * @throws JsonSyntaxException If a condition fails to be parsed
      */
-    public static boolean processConditions(JsonObject json, String memberName, ICondition.IContext context)
+    public static boolean processConditions(JsonObject json, String memberName, Condition.IContext context)
     {
         final JsonElement conditionsMember = json.get(memberName);
         if (conditionsMember == null) return true;

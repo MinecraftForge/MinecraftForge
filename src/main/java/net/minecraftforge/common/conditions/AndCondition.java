@@ -7,7 +7,6 @@ package net.minecraftforge.common.conditions;
 
 import com.google.common.base.Joiner;
 import com.mojang.serialization.Codec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraftforge.common.ForgeMod;
 
 import java.util.List;
@@ -15,13 +14,13 @@ import java.util.List;
 /**
  * The AndCondition forms the logical and of one of more conditions.
  */
-public record AndCondition(List<ICondition> children) implements ICondition
+public record AndCondition(List<Condition> children) implements Condition
 {
 
     @Override
     public boolean test(IContext context)
     {
-        for (ICondition child : children)
+        for (Condition child : children)
         {
             if (!child.test(context))
                 return false;
@@ -30,7 +29,7 @@ public record AndCondition(List<ICondition> children) implements ICondition
     }
 
     @Override
-    public Codec<? extends ICondition> codec()
+    public Codec<? extends Condition> codec()
     {
         return ForgeMod.AND_CONDITION_TYPE.get();
     }

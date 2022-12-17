@@ -8,7 +8,7 @@ package net.minecraftforge.common.conditions;
 import com.mojang.serialization.Codec;
 import net.minecraftforge.common.ForgeMod;
 
-public record NotCondition(ICondition value) implements ICondition
+public record NotCondition(Condition value) implements Condition
 {
     @Override
     public boolean test(IContext context)
@@ -19,11 +19,11 @@ public record NotCondition(ICondition value) implements ICondition
     @Override
     public String toString()
     {
-        return "!" + value;
+        return "!(" + value + ")";
     }
 
     @Override
-    public Codec<? extends ICondition> codec()
+    public Codec<? extends Condition> codec()
     {
         return ForgeMod.NOT_CONDITION_TYPE.get();
     }

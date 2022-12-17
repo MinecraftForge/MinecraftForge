@@ -9,53 +9,51 @@ import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
-import net.minecraft.world.item.Item;
-
 import java.util.List;
 
-public interface IConditionBuilder
+public interface ConditionBuilder
 {
-    default ICondition and(ICondition... values)
+    default Condition and(Condition... values)
     {
         return new AndCondition(List.of(values));
     }
 
-    default ICondition FALSE()
+    default Condition FALSE()
     {
         return FalseCondition.INSTANCE;
     }
 
-    default ICondition TRUE()
+    default Condition TRUE()
     {
         return TrueCondition.INSTANCE;
     }
 
-    default ICondition not(ICondition value)
+    default Condition not(Condition value)
     {
         return new NotCondition(value);
     }
 
-    default ICondition or(ICondition... values)
+    default Condition or(Condition... values)
     {
         return new OrCondition(List.of(values));
     }
 
-    default ICondition itemExists(String namespace, String path)
+    default Condition itemExists(String namespace, String path)
     {
         return new ItemExistsCondition(new ResourceLocation(namespace, path));
     }
 
-    default ICondition modLoaded(String modid)
+    default Condition modLoaded(String modid)
     {
         return new ModLoadedCondition(modid);
     }
 
-    default <T> ICondition tagEmpty(TagKey<T> tag)
+    default <T> Condition tagEmpty(TagKey<T> tag)
     {
         return new TagEmptyCondition<>(tag);
     }
 
-    default <T> ICondition tagEmpty(ResourceKey<? extends Registry<T>> registry, ResourceLocation tag)
+    default <T> Condition tagEmpty(ResourceKey<? extends Registry<T>> registry, ResourceLocation tag)
     {
         return new TagEmptyCondition<>(TagKey.create(registry, tag));
     }

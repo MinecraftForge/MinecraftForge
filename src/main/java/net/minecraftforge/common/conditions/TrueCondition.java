@@ -8,7 +8,7 @@ package net.minecraftforge.common.conditions;
 import com.mojang.serialization.Codec;
 import net.minecraftforge.common.ForgeMod;
 
-public final class TrueCondition implements ICondition
+public final class TrueCondition implements Condition
 {
     public static final TrueCondition INSTANCE = new TrueCondition();
     private TrueCondition() {}
@@ -26,7 +26,7 @@ public final class TrueCondition implements ICondition
     }
 
     @Override
-    public Codec<? extends ICondition> codec()
+    public Codec<? extends Condition> codec()
     {
         return ForgeMod.TRUE_CONDITION_TYPE.get();
     }

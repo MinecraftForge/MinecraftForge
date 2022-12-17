@@ -15,12 +15,12 @@ import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagManager;
-import net.minecraftforge.common.conditions.ICondition.IContext;
+import net.minecraftforge.common.conditions.Condition.IContext;
 
 /**
  * Full implementation of {@link IContext} that holds all possible data.
  */
-public class ConditionContext implements ICondition.IContext
+public class ConditionContext implements Condition.IContext
 {
 	private final TagManager tagManager;
 	private Map<ResourceKey<?>, Map<ResourceLocation, Collection<Holder<?>>>> loadedTags = null;
