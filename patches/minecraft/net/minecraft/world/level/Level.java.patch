@@ -220,14 +220,6 @@
        return list;
     }
  
-@@ -581,6 +_,7 @@
-          this.m_46745_(p_151544_).m_8092_(true);
-       }
- 
-+      this.m_46717_(p_151544_, m_8055_(p_151544_).m_60734_()); //Notify neighbors of changes
-    }
- 
-    public int m_5736_() {
 @@ -625,7 +_,7 @@
     public int m_46681_(BlockPos p_46682_, Direction p_46683_) {
        BlockState blockstate = this.m_8055_(p_46682_);
