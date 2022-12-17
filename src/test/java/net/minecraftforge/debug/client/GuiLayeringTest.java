@@ -23,7 +23,7 @@ import java.util.Random;
 @Mod(GuiLayeringTest.MODID)
 public class GuiLayeringTest
 {
-    private static final boolean ENABLED = true;
+    private static final boolean ENABLED = false;
 
     private static final Random RANDOM = new Random();
     public static final String MODID = "gui_layer_test";
