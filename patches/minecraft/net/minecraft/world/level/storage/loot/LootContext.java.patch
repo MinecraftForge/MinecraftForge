@@ -56,7 +56,7 @@
 +         this.queriedLootTableId = queriedLootTableId;
 +         return this;
 +      }
-+      
++
        public LootContext m_78975_(LootContextParamSet p_78976_) {
           Set<LootContextParam<?>> set = Sets.difference(this.f_78956_.keySet(), p_78976_.m_81398_());
 -         if (!set.isEmpty()) {
