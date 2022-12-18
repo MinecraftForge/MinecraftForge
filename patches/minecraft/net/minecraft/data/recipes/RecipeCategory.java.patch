@@ -1,0 +1,10 @@
+--- a/net/minecraft/data/recipes/RecipeCategory.java
++++ b/net/minecraft/data/recipes/RecipeCategory.java
+@@ -1,6 +_,6 @@
+ package net.minecraft.data.recipes;
+ 
+-public enum RecipeCategory {
++public enum RecipeCategory implements net.minecraftforge.common.IExtensibleEnum {
+    BUILDING_BLOCKS("building_blocks"),
+    DECORATIONS("decorations"),
+    REDSTONE("redstone"),
