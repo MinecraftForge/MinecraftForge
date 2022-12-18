@@ -5,37 +5,37 @@
 
 package net.minecraftforge.resource;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.*;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import net.minecraft.server.packs.PackResources;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.AbstractPackResources;
-import net.minecraft.server.packs.ResourcePackFileNotFoundException;
+import net.minecraft.server.packs.PackResources;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.metadata.MetadataSectionSerializer;
 import net.minecraft.server.packs.metadata.pack.PackMetadataSection;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.resources.IoSupplier;
+import org.jetbrains.annotations.Nullable;
 
 public class DelegatingPackResources extends AbstractPackResources
 {
+    private final PackMetadataSection packMeta;
     private final List<PackResources> delegates;
     private Map<String, List<PackResources>> namespacesAssets;
     private Map<String, List<PackResources>> namespacesData;
 
-    private final String name;
-    private final PackMetadataSection packInfo;
-
-    public DelegatingPackResources(String id, String name, PackMetadataSection packInfo, List<? extends PackResources> packs)
+    public DelegatingPackResources(String packId,  boolean isBuiltin, PackMetadataSection packMeta, List<? extends PackResources> packs)
     {
-        super(new File(id));
-        this.name = name;
-        this.packInfo = packInfo;
+        super(packId, isBuiltin);
+        this.packMeta = packMeta;
         this.delegates = ImmutableList.copyOf(packs);
         this.namespacesAssets = this.buildNamespaceMap(PackType.CLIENT_RESOURCES, delegates);
         this.namespacesData = this.buildNamespaceMap(PackType.SERVER_DATA, delegates);
@@ -70,29 +70,21 @@ public class DelegatingPackResources extends AbstractPackResources
         return ImmutableMap.copyOf(map);
     }
 
-    @Override
-    public String getName()
-    {
-        return name;
-    }
-
     @SuppressWarnings("unchecked")
+    @Nullable
     @Override
     public <T> T getMetadataSection(MetadataSectionSerializer<T> deserializer) throws IOException
     {
-        if (deserializer.getMetadataSectionName().equals("pack"))
-        {
-            return (T) packInfo;
-        }
-        return null;
+        return deserializer.getMetadataSectionName().equals("pack") ? (T) this.packMeta : null;
     }
 
     @Override
-    public Collection<ResourceLocation> getResources(PackType type, String pathIn, String pathIn2, Predicate<ResourceLocation> filter)
+    public void listResources(PackType type, String resourceNamespace, String paths, ResourceOutput resourceOutput)
     {
-        return delegates.stream()
-                .flatMap(r -> r.getResources(type, pathIn, pathIn2, filter).stream())
-                .collect(Collectors.toList());
+        for (PackResources delegate : this.delegates)
+        {
+            delegate.listResources(type, resourceNamespace, paths, resourceOutput);
+        }
     }
 
     @Override
@@ -110,51 +102,32 @@ public class DelegatingPackResources extends AbstractPackResources
         }
     }
 
+    @Nullable
     @Override
-    public InputStream getRootResource(String fileName) throws IOException
+    public IoSupplier<InputStream> getRootResource(String... paths)
     {
-        // root resources do not make sense here
-        throw new ResourcePackFileNotFoundException(this.file, fileName);
+        // Root resources do not make sense here
+        throw null;
     }
 
+    @Nullable
     @Override
-    protected InputStream getResource(String resourcePath) throws IOException
-    {
-        // never called, we override all methods that call this
-        throw new ResourcePackFileNotFoundException(this.file, resourcePath);
-    }
-
-    @Override
-    protected boolean hasResource(String resourcePath)
-    {
-        // never called, we override all methods that call this
-        return false;
-    }
-
-    @Override
-    public InputStream getResource(PackType type, ResourceLocation location) throws IOException
+    public IoSupplier<InputStream> getResource(PackType type, ResourceLocation location)
     {
         for (PackResources pack : getCandidatePacks(type, location))
         {
-            if (pack.hasResource(type, location))
-            {
+            IoSupplier<InputStream> ioSupplier = pack.getResource(type, location);
+            if (ioSupplier != null)
                 return pack.getResource(type, location);
-            }
         }
-        throw new ResourcePackFileNotFoundException(this.file, getFullPath(type, location));
+
+        return null;
     }
 
-    @Override
-    public boolean hasResource(PackType type, ResourceLocation location)
+    @Nullable
+    public Collection<PackResources> getChildren()
     {
-        for (PackResources pack : getCandidatePacks(type, location))
-        {
-            if (pack.hasResource(type, location))
-            {
-                return true;
-            }
-        }
-        return false;
+        return delegates;
     }
 
     private List<PackResources> getCandidatePacks(PackType type, ResourceLocation location)
@@ -163,11 +136,4 @@ public class DelegatingPackResources extends AbstractPackResources
         List<PackResources> packsWithNamespace = map.get(location.getNamespace());
         return packsWithNamespace == null ? Collections.emptyList() : packsWithNamespace;
     }
-
-    private static String getFullPath(PackType type, ResourceLocation location)
-    {
-        // stolen from ResourcePack
-        return String.format(Locale.ROOT, "%s/%s/%s", type.getDirectory(), location.getNamespace(), location.getPath());
-    }
-
 }

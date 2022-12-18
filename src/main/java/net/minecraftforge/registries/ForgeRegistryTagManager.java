@@ -133,6 +133,8 @@ class ForgeRegistryTagManager<V> implements ITagManager<V>
         Objects.requireNonNull(name);
         Objects.requireNonNull(defaults);
 
-        this.owner.getHolderHelper().ifPresent(h -> h.addOptionalTag(name, defaults));
+        NamespacedWrapper<V> wrapper = this.owner.getWrapper();
+        if (wrapper != null)
+            wrapper.addOptionalTag(name, defaults);
     }
 }

@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/item/crafting/RecipeSerializer.java
 +++ b/net/minecraft/world/item/crafting/RecipeSerializer.java
-@@ -5,7 +_,7 @@
+@@ -6,7 +_,7 @@
  import net.minecraft.network.FriendlyByteBuf;
  import net.minecraft.resources.ResourceLocation;
  
@@ -8,8 +8,8 @@
 +public interface RecipeSerializer<T extends Recipe<?>> extends net.minecraftforge.common.extensions.IForgeRecipeSerializer<T> {
     RecipeSerializer<ShapedRecipe> f_44076_ = m_44098_("crafting_shaped", new ShapedRecipe.Serializer());
     RecipeSerializer<ShapelessRecipe> f_44077_ = m_44098_("crafting_shapeless", new ShapelessRecipe.Serializer());
-    SimpleRecipeSerializer<ArmorDyeRecipe> f_44078_ = m_44098_("crafting_special_armordye", new SimpleRecipeSerializer<>(ArmorDyeRecipe::new));
-@@ -28,8 +_,10 @@
+    RecipeSerializer<ArmorDyeRecipe> f_44078_ = m_44098_("crafting_special_armordye", new SimpleCraftingRecipeSerializer<>(ArmorDyeRecipe::new));
+@@ -29,8 +_,10 @@
     RecipeSerializer<StonecutterRecipe> f_44095_ = m_44098_("stonecutting", new SingleItemRecipe.Serializer<>(StonecutterRecipe::new));
     RecipeSerializer<UpgradeRecipe> f_44096_ = m_44098_("smithing", new UpgradeRecipe.Serializer());
  

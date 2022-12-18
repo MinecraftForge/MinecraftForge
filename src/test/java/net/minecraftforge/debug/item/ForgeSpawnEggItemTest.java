@@ -13,12 +13,13 @@ import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.animal.Pig;
-import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.ForgeSpawnEggItem;
+import net.minecraftforge.event.CreativeModeTabEvent;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -41,18 +42,25 @@ public class ForgeSpawnEggItemTest
 
     private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MODID);
     private static final RegistryObject<ForgeSpawnEggItem> EGG = ITEMS.register("test_spawn_egg", () ->
-            new ForgeSpawnEggItem(ENTITY, 0x0000FF, 0xFF0000, new Item.Properties().tab(CreativeModeTab.TAB_MISC))
+            new ForgeSpawnEggItem(ENTITY, 0x0000FF, 0xFF0000, new Item.Properties())
     );
 
     public ForgeSpawnEggItemTest()
     {
         if (ENABLED)
         {
-            ITEMS.register(FMLJavaModLoadingContext.get().getModEventBus());
-            ENTITIES.register(FMLJavaModLoadingContext.get().getModEventBus());
-
-            FMLJavaModLoadingContext.get().getModEventBus().register(this);
+            var eventBus = FMLJavaModLoadingContext.get().getModEventBus();
+            ITEMS.register(eventBus);
+            ENTITIES.register(eventBus);
+            eventBus.register(this);
+            eventBus.addListener(this::addCreative);
         }
+    }
+
+    private void addCreative(CreativeModeTabEvent.BuildContents event)
+    {
+        if (event.getTab() == CreativeModeTabs.INGREDIENTS)
+            event.accept(EGG);
     }
 
     @SubscribeEvent

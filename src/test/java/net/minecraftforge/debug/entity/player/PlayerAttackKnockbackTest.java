@@ -11,11 +11,8 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.SwordItem;
-import net.minecraft.world.item.Tier;
-import net.minecraft.world.item.Tiers;
+import net.minecraft.world.item.*;
+import net.minecraftforge.event.CreativeModeTabEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -41,13 +38,20 @@ public class PlayerAttackKnockbackTest {
     static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MODID);
 
     static RegistryObject<Item> KNOCKBACK_SWORD = ITEMS.register("knockback_sword", () ->
-            new KnockbackSwordItem(Tiers.IRON, 3, -2.4F, ATTACK_KNOCKBACK_VALUE, (new Item.Properties()).tab(CreativeModeTab.TAB_COMBAT))
+            new KnockbackSwordItem(Tiers.IRON, 3, -2.4F, ATTACK_KNOCKBACK_VALUE, (new Item.Properties()))
     );
 
     public PlayerAttackKnockbackTest()
     {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
         ITEMS.register(modEventBus);
+        modEventBus.addListener(this::addCreative);
+    }
+
+    private void addCreative(CreativeModeTabEvent.BuildContents event)
+    {
+        if (event.getTab() == CreativeModeTabs.COMBAT)
+            event.accept(KNOCKBACK_SWORD);
     }
 
     static class KnockbackSwordItem extends SwordItem {

@@ -10,6 +10,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.PlayerRideableJumping;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.scores.Objective;
 import net.minecraft.world.scores.PlayerTeam;
@@ -119,14 +120,15 @@ public enum VanillaGuiOverlay
         }
     }),
     JUMP_BAR("jump_bar", (gui, poseStack, partialTick, screenWidth, screenHeight) -> {
-        if (gui.getMinecraft().player.isRidingJumpable() && !gui.getMinecraft().options.hideGui)
+        PlayerRideableJumping playerRideableJumping = gui.getMinecraft().player.jumpableVehicle();
+        if (playerRideableJumping != null && !gui.getMinecraft().options.hideGui)
         {
             gui.setupOverlayRenderState(true, false);
-            gui.renderJumpMeter(poseStack, screenWidth / 2 - 91);
+            gui.renderJumpMeter(playerRideableJumping, poseStack, screenWidth / 2 - 91);
         }
     }),
     EXPERIENCE_BAR("experience_bar", (gui, poseStack, partialTick, screenWidth, screenHeight) -> {
-        if (!gui.getMinecraft().player.isRidingJumpable() && !gui.getMinecraft().options.hideGui)
+        if (gui.getMinecraft().player.jumpableVehicle() == null && !gui.getMinecraft().options.hideGui)
         {
             gui.setupOverlayRenderState(true, false);
             gui.renderExperience(screenWidth / 2 - 91, poseStack);

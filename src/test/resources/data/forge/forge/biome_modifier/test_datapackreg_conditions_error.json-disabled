@@ -1,0 +1,6 @@
+{
+  "forge:conditions": [{
+    "type": "junk:not_real_type"
+  }],
+  "type": "irrelevant:wont_be_loaded"
+}

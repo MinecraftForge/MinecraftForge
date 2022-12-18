@@ -13,7 +13,7 @@
        } else {
 @@ -47,9 +_,10 @@
           if (screenconstructor == null) {
-             f_96195_.warn("Failed to create screen for menu type: {}", (Object)Registry.f_122863_.m_7981_(p_96202_));
+             f_96195_.warn("Failed to create screen for menu type: {}", (Object)BuiltInRegistries.f_256818_.m_7981_(p_96202_));
           } else {
 -            screenconstructor.m_96209_(p_96205_, p_96202_, p_96203_, p_96204_);
 +            return java.util.Optional.of(screenconstructor);

@@ -5,13 +5,15 @@
 
 package net.minecraftforge.debug.item;
 
+import net.minecraft.core.HolderLookup;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.data.loot.BlockLoot;
+import net.minecraft.data.PackOutput;
+import net.minecraft.data.loot.BlockLootSubProvider;
 import net.minecraft.data.loot.LootTableProvider;
-import net.minecraft.data.tags.BlockTagsProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.block.Block;
@@ -19,10 +21,6 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.material.MaterialColor;
-import net.minecraft.world.level.storage.loot.LootTable;
-import net.minecraft.world.level.storage.loot.LootTables;
-import net.minecraft.world.level.storage.loot.ValidationContext;
-import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraftforge.client.model.generators.BlockStateProvider;
 import net.minecraftforge.client.model.generators.ItemModelProvider;
@@ -30,7 +28,9 @@ import net.minecraftforge.client.model.generators.ModelFile;
 import net.minecraftforge.client.model.generators.ModelFile.UncheckedModelFile;
 import net.minecraftforge.common.ForgeTier;
 import net.minecraftforge.common.TierSortingRegistry;
+import net.minecraftforge.common.data.BlockTagsProvider;
 import net.minecraftforge.common.data.ExistingFileHelper;
+import net.minecraftforge.event.CreativeModeTabEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -41,14 +41,9 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
 import java.util.List;
-import java.util.Map;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
+import java.util.Set;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
-
-import com.google.common.collect.ImmutableList;
-import com.mojang.datafixers.util.Pair;
 
 @Mod(TagBasedToolTypesTest.MODID)
 public class TagBasedToolTypesTest
@@ -69,10 +64,10 @@ public class TagBasedToolTypesTest
 
     private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MODID);
     @SuppressWarnings("unused")
-    private static final RegistryObject<Item> ORE_ITEM = ITEMS.register(STONE.getId().getPath(), () -> new BlockItem(STONE.get(), (new Item.Properties()).tab(CreativeModeTab.TAB_BUILDING_BLOCKS)));
+    private static final RegistryObject<Item> ORE_ITEM = ITEMS.register(STONE.getId().getPath(), () -> new BlockItem(STONE.get(), (new Item.Properties())));
     private static final RegistryObject<Item> TOOL = ITEMS.register("test_tool", () ->
     {
-        return new DiggerItem(1, 1, MY_TIER, MINEABLE_TAG, new Item.Properties().tab(CreativeModeTab.TAB_TOOLS))
+        return new DiggerItem(1, 1, MY_TIER, MINEABLE_TAG, new Item.Properties())
         {
             @Override
             public float getDestroySpeed(ItemStack stack, BlockState state)
@@ -102,6 +97,15 @@ public class TagBasedToolTypesTest
         BLOCKS.register(modEventBus);
         ITEMS.register(modEventBus);
         modEventBus.addListener(this::gatherData);
+        modEventBus.addListener(this::addCreative);
+    }
+
+    private void addCreative(CreativeModeTabEvent.BuildContents event)
+    {
+        if (event.getTab() == CreativeModeTabs.TOOLS_AND_UTILITIES)
+            event.accept(TOOL);
+        if (event.getTab() == CreativeModeTabs.BUILDING_BLOCKS)
+            event.accept(ORE_ITEM);
     }
 
     @SubscribeEvent
@@ -109,60 +113,47 @@ public class TagBasedToolTypesTest
     {
         DataGenerator gen = event.getGenerator();
         ExistingFileHelper existing = event.getExistingFileHelper();
+        final PackOutput output = gen.getPackOutput();
 
-        gen.addProvider(event.includeServer(), new BlockTagsProvider(gen, MODID, existing)
+        gen.addProvider(event.includeServer(), new BlockTagsProvider(output, event.getLookupProvider(), MODID, existing)
         {
             @Override
-            protected void addTags()
-            {
+            protected void addTags(HolderLookup.Provider registry) {
                 this.tag(MINEABLE_TAG).add(STONE.get());
                 this.tag(REQUIRES_TAG).add(STONE.get());
             }
         });
 
-        gen.addProvider(event.includeServer(), new LootTableProvider(gen)
-        {
-            @Override
-            protected void validate(Map<ResourceLocation, LootTable> map, ValidationContext validationtracker)
+        final class TestBlockLootProvider extends BlockLootSubProvider {
+            public TestBlockLootProvider()
             {
-               map.forEach((name, table) -> LootTables.validate(validationtracker, name, table));
+                super(Set.of(), FeatureFlags.REGISTRY.allFlags());
             }
 
             @Override
-            protected List<Pair<Supplier<Consumer<BiConsumer<ResourceLocation, LootTable.Builder>>>, LootContextParamSet>> getTables()
+            protected Iterable<Block> getKnownBlocks()
             {
-                return ImmutableList.of(Pair.of(() ->
-                {
-                    return new BlockLoot()
-                    {
-
-                        @Override
-                        protected Iterable<Block> getKnownBlocks()
-                        {
-                            return BLOCKS.getEntries().stream().map(Supplier::get).collect(Collectors.toList());
-                        }
-
-                        @Override
-                        protected void addTables()
-                        {
-                            this.dropSelf(STONE.get());
-                        }
-                    };
-                }, LootContextParamSets.BLOCK));
+                return BLOCKS.getEntries().stream().map(Supplier::get).collect(Collectors.toList());
             }
-        });
 
-        gen.addProvider(event.includeClient(), new BlockStateProvider(gen, MODID, existing)
+            @Override
+            protected void generate()
+            {
+                this.dropSelf(STONE.get());
+            }
+        }
+
+        gen.addProvider(event.includeServer(), new LootTableProvider(event.getGenerator().getPackOutput(), Set.of(), List.of(new LootTableProvider.SubProviderEntry(TestBlockLootProvider::new, LootContextParamSets.BLOCK))));
+
+        gen.addProvider(event.includeClient(), new BlockStateProvider(output, MODID, existing)
         {
             @Override
             protected void registerStatesAndModels()
             {
-                ModelFile model = models().cubeAll(STONE.getId().getPath(), mcLoc("block/debug"));
-                simpleBlock(STONE.get(), model);
-                simpleBlockItem(STONE.get(), model);
+                simpleBlockWithItem(STONE.get(), models().cubeAll(STONE.getId().getPath(), mcLoc("block/debug")));
             }
         });
-        gen.addProvider(event.includeClient(), new ItemModelProvider(gen, MODID, existing)
+        gen.addProvider(event.includeClient(), new ItemModelProvider(output, MODID, existing)
         {
             @Override
             protected void registerModels()

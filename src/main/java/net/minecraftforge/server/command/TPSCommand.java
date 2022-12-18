@@ -12,6 +12,7 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.DimensionArgument;
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.server.level.ServerLevel;
@@ -46,10 +47,10 @@ class TPSCommand
     {
         long[] times = cs.getServer().getTickTime(dim.dimension());
 
-        if (times == null) // Null means the world is unloaded. Not invalid. That's taken car of by DimensionArgument itself.
+        if (times == null) // Null means the world is unloaded. Not invalid. That's taken care of by DimensionArgument itself.
             times = UNLOADED;
 
-        final Registry<DimensionType> reg = cs.registryAccess().registryOrThrow(Registry.DIMENSION_TYPE_REGISTRY);
+        final Registry<DimensionType> reg = cs.registryAccess().registryOrThrow(Registries.DIMENSION_TYPE);
         double worldTickTime = mean(times) * 1.0E-6D;
         double worldTPS = Math.min(1000.0 / worldTickTime, 20);
         cs.sendSuccess(Component.translatable("commands.forge.tps.summary.named", dim.dimension().location().toString(), reg.getKey(dim.dimensionType()), TIME_FORMATTER.format(worldTickTime), TIME_FORMATTER.format(worldTPS)), false);

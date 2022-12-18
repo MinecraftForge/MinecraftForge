@@ -14,10 +14,13 @@ import java.util.stream.StreamSupport;
 
 import net.minecraft.tags.BiomeTags;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
-import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraftforge.common.ForgeMod;
+import net.minecraftforge.event.CreativeModeTabEvent;
+import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.RegisterEvent;
+import net.minecraftforge.registries.RegistryObject;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -31,26 +34,29 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.level.Level;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
 import net.minecraft.world.item.Item.Properties;
 
-@Mod("gravity_attribute_test")
+@Mod(GravityAttributeTest.MODID)
 public class GravityAttributeTest
 {
     public static final boolean ENABLE = false;
-    private static Logger logger = LogManager.getLogger();
+    public static final String MODID = "gravity_attribute_test";
+    private static Logger logger = LogManager.getLogger(MODID);
     private int ticks;
     private static final UUID REDUCED_GRAVITY_ID = UUID.fromString("DEB06000-7979-4242-8888-00000DEB0600");
     private static final AttributeModifier REDUCED_GRAVITY = (new AttributeModifier(REDUCED_GRAVITY_ID, "Reduced gravity", (double)-0.80, Operation.MULTIPLY_TOTAL));
+    private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MODID);
+    private static final RegistryObject<Item> TEST_ITEM = ITEMS.register("gravity_stick", () -> new ItemGravityStick(new Properties().rarity(Rarity.RARE)));
 
 
     public GravityAttributeTest()
@@ -58,7 +64,10 @@ public class GravityAttributeTest
         if (ENABLE)
         {
             MinecraftForge.EVENT_BUS.register(this);
-            FMLJavaModLoadingContext.get().getModEventBus().register(this);
+            IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
+            modEventBus.register(this);
+            ITEMS.register(modEventBus);
+            modEventBus.addListener(this::addCreative);
         }
     }
 
@@ -113,11 +122,10 @@ public class GravityAttributeTest
         }
     }
 
-    @SubscribeEvent
-    public void registerItems(RegisterEvent event)
+    private void addCreative(CreativeModeTabEvent.BuildContents event)
     {
-        event.register(ForgeRegistries.Keys.ITEMS, helper -> helper.register("gravity_stick",
-                new ItemGravityStick(new Properties().tab(CreativeModeTab.TAB_TOOLS).rarity(Rarity.RARE))));
+        if (event.getTab() == CreativeModeTabs.TOOLS_AND_UTILITIES)
+            event.accept(TEST_ITEM);
     }
 
     public static class ItemGravityStick extends Item

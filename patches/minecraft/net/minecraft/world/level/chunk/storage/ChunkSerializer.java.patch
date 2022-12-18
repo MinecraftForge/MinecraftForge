@@ -1,14 +1,14 @@
 --- a/net/minecraft/world/level/chunk/storage/ChunkSerializer.java
 +++ b/net/minecraft/world/level/chunk/storage/ChunkSerializer.java
-@@ -156,6 +_,7 @@
-             return Registry.f_122822_.m_6612_(ResourceLocation.m_135820_(p_188285_));
+@@ -158,6 +_,7 @@
+             return BuiltInRegistries.f_257020_.m_6612_(ResourceLocation.m_135820_(p_258990_));
           }, p_188233_);
           chunkaccess = new LevelChunk(p_188231_.m_6018_(), p_188233_, upgradedata, levelchunkticks, levelchunkticks1, j1, alevelchunksection, m_196890_(p_188231_, p_188234_), blendingdata);
 +         if (p_188234_.m_128441_("ForgeCaps")) ((LevelChunk)chunkaccess).readCapsFromNBT(p_188234_.m_128469_("ForgeCaps"));
        } else {
-          ProtoChunkTicks<Block> protochunkticks = ProtoChunkTicks.m_193302_(p_188234_.m_128437_("block_ticks", 10), (p_196906_) -> {
-             return Registry.f_122824_.m_6612_(ResourceLocation.m_135820_(p_196906_));
-@@ -180,7 +_,7 @@
+          ProtoChunkTicks<Block> protochunkticks = ProtoChunkTicks.m_193302_(p_188234_.m_128437_("block_ticks", 10), (p_258992_) -> {
+             return BuiltInRegistries.f_256975_.m_6612_(ResourceLocation.m_135820_(p_258992_));
+@@ -182,7 +_,7 @@
           boolean flag3 = chunkstatus.m_62427_(ChunkStatus.f_62323_) || belowzeroretrogen != null && belowzeroretrogen.m_188466_().m_62427_(ChunkStatus.f_62323_);
           if (!flag && flag3) {
              for(BlockPos blockpos : BlockPos.m_121976_(p_188233_.m_45604_(), p_188231_.m_141937_(), p_188233_.m_45605_(), p_188233_.m_45608_(), p_188231_.m_151558_() - 1, p_188233_.m_45609_())) {
@@ -17,7 +17,7 @@
                    protochunk.m_63277_(blockpos);
                 }
              }
-@@ -219,6 +_,7 @@
+@@ -221,6 +_,7 @@
        }
  
        if (chunkstatus$chunktype == ChunkStatus.ChunkType.LEVELCHUNK) {
@@ -25,7 +25,7 @@
           return new ImposterProtoChunk((LevelChunk)chunkaccess, false);
        } else {
           ProtoChunk protochunk1 = (ProtoChunk)chunkaccess;
-@@ -252,6 +_,7 @@
+@@ -257,6 +_,7 @@
              protochunk1.m_188186_(generationstep$carving, new CarvingMask(compoundtag4.m_128467_(s1), chunkaccess.m_141937_()));
           }
  
@@ -33,7 +33,7 @@
           return protochunk1;
        }
     }
-@@ -359,6 +_,15 @@
+@@ -364,6 +_,15 @@
           }
  
           compoundtag.m_128365_("CarvingMasks", compoundtag4);

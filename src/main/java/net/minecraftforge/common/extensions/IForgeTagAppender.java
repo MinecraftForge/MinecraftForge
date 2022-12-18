@@ -6,6 +6,7 @@
 package net.minecraftforge.common.extensions;
 
 import net.minecraft.data.tags.TagsProvider;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 
@@ -34,32 +35,6 @@ public interface IForgeTagAppender<T>
     }
 
     /**
-     * Adds a registry entry to the tag json's remove list. Callable during datageneration.
-     * @param entry The entry to remove
-     * @return The builder for chaining
-     */
-    default TagsProvider.TagAppender<T> remove(final T entry)
-    {
-        return remove(this.self().registry.getKey(entry));
-    }
-
-    /**
-     * Adds multiple registry entries to the tag json's remove list. Callable during datageneration.
-     * @param entries The entries to remove
-     * @return The builder for chaining
-     */
-    @SuppressWarnings("unchecked")
-    default TagsProvider.TagAppender<T> remove(final T first, final T...entries)
-    {
-        this.remove(first);
-        for (T entry : entries)
-        {
-            this.remove(entry);
-        }
-        return self();
-    }
-
-    /**
      * Adds a single element's ID to the tag json's remove list. Callable during datageneration.
      * @param location The ID of the element to remove
      * @return The builder for chaining
@@ -82,6 +57,34 @@ public interface IForgeTagAppender<T>
         for (ResourceLocation location : locations)
         {
             this.remove(location);
+        }
+        return self();
+    }
+
+    /**
+     * Adds a resource key to the tag json's remove list. Callable during datageneration.
+     *
+     * @param resourceKey The resource key of the element to remove
+     * @return The appender for chaining
+     */
+    default TagsProvider.TagAppender<T> remove(final ResourceKey<T> resourceKey)
+    {
+        this.remove(resourceKey.location());
+        return self();
+    }
+
+    /**
+     * Adds multiple resource keys to the tag json's remove list. Callable during datageneration.
+     *
+     * @param resourceKeys The resource keys of the elements to remove
+     * @return The appender for chaining
+     */
+    default TagsProvider.TagAppender<T> remove(final ResourceKey<T> firstResourceKey, final ResourceKey<T>... resourceKeys)
+    {
+        this.remove(firstResourceKey.location());
+        for (ResourceKey<T> resourceKey : resourceKeys)
+        {
+            this.remove(resourceKey.location());
         }
         return self();
     }

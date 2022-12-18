@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/item/ItemEntity.java
 +++ b/net/minecraft/world/entity/item/ItemEntity.java
-@@ -43,6 +_,10 @@
+@@ -41,6 +_,10 @@
     @Nullable
     private UUID f_31982_;
     public final float f_31983_;
@@ -11,7 +11,7 @@
  
     public ItemEntity(EntityType<? extends ItemEntity> p_31991_, Level p_31992_) {
        super(p_31991_, p_31992_);
-@@ -59,6 +_,7 @@
+@@ -57,6 +_,7 @@
        this.m_6034_(p_149664_, p_149665_, p_149666_);
        this.m_20334_(p_149668_, p_149669_, p_149670_);
        this.m_32045_(p_149667_);
@@ -19,7 +19,7 @@
     }
  
     private ItemEntity(ItemEntity p_31994_) {
-@@ -86,6 +_,7 @@
+@@ -84,6 +_,7 @@
     }
  
     public void m_8119_() {
@@ -27,7 +27,7 @@
        if (this.m_32055_().m_41619_()) {
           this.m_146870_();
        } else {
-@@ -99,6 +_,9 @@
+@@ -97,6 +_,9 @@
           this.f_19856_ = this.m_20189_();
           Vec3 vec3 = this.m_20184_();
           float f = this.m_20192_() - 0.11111111F;
@@ -37,7 +37,7 @@
           if (this.m_20069_() && this.m_204036_(FluidTags.f_13131_) > (double)f) {
              this.m_32067_();
           } else if (this.m_20077_() && this.m_204036_(FluidTags.f_13132_) > (double)f) {
-@@ -120,7 +_,7 @@
+@@ -118,7 +_,7 @@
              this.m_6478_(MoverType.SELF, this.m_20184_());
              float f1 = 0.98F;
              if (this.f_19861_) {
@@ -46,7 +46,7 @@
              }
  
              this.m_20256_(this.m_20184_().m_82542_((double)f1, 0.98D, (double)f1));
-@@ -150,7 +_,14 @@
+@@ -148,7 +_,14 @@
              }
           }
  
@@ -62,7 +62,7 @@
              this.m_146870_();
           }
  
-@@ -208,6 +_,8 @@
+@@ -206,6 +_,8 @@
           return false;
        } else if (p_32028_.m_41782_() ^ p_32027_.m_41782_()) {
           return false;
@@ -71,7 +71,7 @@
        } else {
           return !p_32028_.m_41782_() || p_32028_.m_41783_().equals(p_32027_.m_41783_());
        }
-@@ -241,6 +_,7 @@
+@@ -239,6 +_,7 @@
     }
  
     public boolean m_6469_(DamageSource p_32013_, float p_32014_) {
@@ -79,7 +79,7 @@
        if (this.m_6673_(p_32013_)) {
           return false;
        } else if (!this.m_32055_().m_41619_() && this.m_32055_().m_150930_(Items.f_42686_) && p_32013_.m_19372_()) {
-@@ -254,7 +_,7 @@
+@@ -252,7 +_,7 @@
           this.f_31987_ = (int)((float)this.f_31987_ - p_32014_);
           this.m_146852_(GameEvent.f_223706_, p_32013_.m_7639_());
           if (this.f_31987_ <= 0) {
@@ -88,7 +88,7 @@
              this.m_146870_();
           }
  
-@@ -266,6 +_,7 @@
+@@ -264,6 +_,7 @@
        p_32050_.m_128376_("Health", (short)this.f_31987_);
        p_32050_.m_128376_("Age", (short)this.f_31985_);
        p_32050_.m_128376_("PickupDelay", (short)this.f_31986_);
@@ -96,7 +96,7 @@
        if (this.m_32057_() != null) {
           p_32050_.m_128362_("Thrower", this.m_32057_());
        }
-@@ -286,6 +_,7 @@
+@@ -284,6 +_,7 @@
        if (p_32034_.m_128441_("PickupDelay")) {
           this.f_31986_ = p_32034_.m_128448_("PickupDelay");
        }
@@ -104,7 +104,7 @@
  
        if (p_32034_.m_128403_("Owner")) {
           this.f_31982_ = p_32034_.m_128342_("Owner");
-@@ -305,10 +_,18 @@
+@@ -303,10 +_,18 @@
  
     public void m_6123_(Player p_32040_) {
        if (!this.f_19853_.f_46443_) {
@@ -124,7 +124,7 @@
              p_32040_.m_7938_(this, i);
              if (itemstack.m_41619_()) {
                 this.m_146870_();
-@@ -332,8 +_,8 @@
+@@ -330,8 +_,8 @@
     }
  
     @Nullable
@@ -135,7 +135,7 @@
        if (!this.f_19853_.f_46443_ && entity instanceof ItemEntity) {
           ((ItemEntity)entity).m_32069_();
        }
-@@ -409,7 +_,7 @@
+@@ -407,7 +_,7 @@
  
     public void m_32065_() {
        this.m_32062_();

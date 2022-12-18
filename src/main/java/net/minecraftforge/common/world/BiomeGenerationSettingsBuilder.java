@@ -5,18 +5,15 @@
 
 package net.minecraftforge.common.world;
 
+import java.util.ArrayList;
+import java.util.List;
 import net.minecraft.core.Holder;
-import net.minecraft.core.HolderSet;
 import net.minecraft.world.level.biome.BiomeGenerationSettings;
 import net.minecraft.world.level.levelgen.GenerationStep;
 import net.minecraft.world.level.levelgen.carver.ConfiguredWorldCarver;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Supplier;
-
-public class BiomeGenerationSettingsBuilder extends BiomeGenerationSettings.Builder
+public class BiomeGenerationSettingsBuilder extends BiomeGenerationSettings.PlainBuilder
 {
     public BiomeGenerationSettingsBuilder(BiomeGenerationSettings orig)
     {

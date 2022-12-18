@@ -1,40 +1,53 @@
 --- a/net/minecraft/data/DataGenerator.java
 +++ b/net/minecraft/data/DataGenerator.java
-@@ -21,12 +_,13 @@
-    private final List<DataProvider> f_236026_ = Lists.newArrayList();
+@@ -21,6 +_,7 @@
+    final Map<String, DataProvider> f_236026_ = new LinkedHashMap<>();
     private final WorldVersion f_236027_;
     private final boolean f_236028_;
-+   private final List<DataProvider> providerView = java.util.Collections.unmodifiableList(f_236025_);
++   private final Map<String, DataProvider> providersView = java.util.Collections.unmodifiableMap(this.f_236026_);
  
-    public DataGenerator(Path p_236030_, Collection<Path> p_236031_, WorldVersion p_236032_, boolean p_236033_) {
-       this.f_123907_ = p_236030_;
--      this.f_123906_ = p_236031_;
-       this.f_236027_ = p_236032_;
-       this.f_236028_ = p_236033_;
-+      this.f_123906_ = Lists.newArrayList(p_236031_);
-    }
- 
-    public Collection<Path> m_123913_() {
-@@ -51,6 +_,7 @@
-             f_123905_.debug("Generator {} already run for version {}", dataprovider.m_6055_(), this.f_236027_.getName());
+    public DataGenerator(Path p_251724_, WorldVersion p_250554_, boolean p_251323_) {
+       this.f_243753_ = p_251724_;
+@@ -38,6 +_,7 @@
+             f_123905_.debug("Generator {} already run for version {}", p_254418_, this.f_236027_.getName());
           } else {
-             f_123905_.info("Starting provider: {}", (Object)dataprovider.m_6055_());
-+            net.minecraftforge.fml.StartupMessageManager.addModMessage("Generating: " + dataprovider.m_6055_());
+             f_123905_.info("Starting provider: {}", (Object)p_254418_);
++            net.minecraftforge.fml.StartupMessageManager.addModMessage("Generating: " + p_254418_);
              stopwatch1.start();
-             dataprovider.m_213708_(hashcache.m_236107_(dataprovider));
+             hashcache.m_253116_(hashcache.m_253234_(p_254418_, p_253750_::m_213708_).join());
              stopwatch1.stop();
-@@ -73,6 +_,14 @@
- 
-    public DataGenerator.PathProvider m_236036_(DataGenerator.Target p_236037_, String p_236038_) {
-       return new DataGenerator.PathProvider(this, p_236037_, p_236038_);
+@@ -56,6 +_,34 @@
+    public DataGenerator.PackGenerator m_253030_(boolean p_253826_, String p_254134_) {
+       Path path = this.f_244116_.m_247566_(PackOutput.Target.DATA_PACK).resolve("minecraft").resolve("datapacks").resolve(p_254134_);
+       return new DataGenerator.PackGenerator(p_253826_, p_254134_, new PackOutput(path));
 +   }
 +
-+   public List<DataProvider> getProviders() {
-+       return this.providerView;
++   public Map<String, DataProvider> getProvidersView() {
++       return this.providersView;
 +   }
 +
-+   public void addInput(Path value) {
-+      this.f_123906_.add(value);
++   public PackOutput getPackOutput() {
++      return this.f_244116_;
++   }
++
++   public PackOutput getPackOutput(String path) {
++      return new PackOutput(f_243753_.resolve(path));
++   }
++
++   public <T extends DataProvider> T addProvider(boolean run, DataProvider.Factory<T> factory) {
++      return addProvider(run, factory.m_253034_(this.f_244116_));
++   }
++
++   public <T extends DataProvider> T addProvider(boolean run, T provider) {
++      String id = provider.m_6055_();
++
++      if (!DataGenerator.this.f_252429_.add(id))
++         throw new IllegalStateException("Duplicate provider: " + id);
++
++      if (run)
++         DataGenerator.this.f_236026_.put(id, provider);
++
++      return provider;
     }
  
     static {

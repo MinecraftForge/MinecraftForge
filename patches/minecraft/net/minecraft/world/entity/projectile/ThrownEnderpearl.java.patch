@@ -4,12 +4,12 @@
           if (entity instanceof ServerPlayer) {
              ServerPlayer serverplayer = (ServerPlayer)entity;
              if (serverplayer.f_8906_.m_6198_().m_129536_() && serverplayer.f_19853_ == this.f_19853_ && !serverplayer.m_5803_()) {
-+               net.minecraftforge.event.entity.EntityTeleportEvent.EnderPearl event = net.minecraftforge.event.ForgeEventFactory.onEnderPearlLand(serverplayer, this.m_20185_(), this.m_20186_(), this.m_20189_(), this, 5.0F);
++               net.minecraftforge.event.entity.EntityTeleportEvent.EnderPearl event = net.minecraftforge.event.ForgeEventFactory.onEnderPearlLand(serverplayer, this.m_20185_(), this.m_20186_(), this.m_20189_(), this, 5.0F, p_37504_);
 +               if (!event.isCanceled()) { // Don't indent to lower patch size
                 if (this.f_19796_.m_188501_() < 0.05F && this.f_19853_.m_46469_().m_46207_(GameRules.f_46134_)) {
                    Endermite endermite = EntityType.f_20567_.m_20615_(this.f_19853_);
-                   endermite.m_7678_(entity.m_20185_(), entity.m_20186_(), entity.m_20189_(), entity.m_146908_(), entity.m_146909_());
-@@ -59,8 +_,10 @@
+                   if (endermite != null) {
+@@ -61,8 +_,10 @@
                    entity.m_6021_(this.m_20185_(), this.m_20186_(), this.m_20189_());
                 }
  
@@ -21,7 +21,7 @@
              }
           } else if (entity != null) {
              entity.m_6021_(this.m_20185_(), this.m_20186_(), this.m_20189_());
-@@ -83,12 +_,12 @@
+@@ -85,12 +_,12 @@
     }
  
     @Nullable

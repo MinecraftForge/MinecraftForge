@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/SpawnerBlock.java
 +++ b/net/minecraft/world/level/block/SpawnerBlock.java
-@@ -29,11 +_,12 @@
+@@ -39,11 +_,12 @@
  
     public void m_213646_(BlockState p_222477_, ServerLevel p_222478_, BlockPos p_222479_, ItemStack p_222480_, boolean p_222481_) {
        super.m_213646_(p_222477_, p_222478_, p_222479_, p_222480_, p_222481_);

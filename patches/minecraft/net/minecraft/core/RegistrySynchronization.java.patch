@@ -1,0 +1,11 @@
+--- a/net/minecraft/core/RegistrySynchronization.java
++++ b/net/minecraft/core/RegistrySynchronization.java
+@@ -23,7 +_,7 @@
+       m_245912_(builder, Registries.f_256952_, Biome.f_47430_);
+       m_245912_(builder, Registries.f_256873_, ChatType.f_237005_);
+       m_245912_(builder, Registries.f_256787_, DimensionType.f_63843_);
+-      return builder.build();
++      return net.minecraftforge.registries.DataPackRegistriesHooks.grabNetworkableRegistries(builder); // FORGE: Keep the map so custom registries can be added later
+    });
+    public static final Codec<RegistryAccess> f_244380_ = m_247146_();
+ 

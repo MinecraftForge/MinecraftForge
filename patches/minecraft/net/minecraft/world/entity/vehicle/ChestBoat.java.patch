@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/vehicle/ChestBoat.java
 +++ b/net/minecraft/world/entity/vehicle/ChestBoat.java
-@@ -187,4 +_,26 @@
+@@ -190,4 +_,26 @@
     public void m_213775_() {
        this.f_219864_ = NonNullList.m_122780_(this.m_6643_(), ItemStack.f_41583_);
     }

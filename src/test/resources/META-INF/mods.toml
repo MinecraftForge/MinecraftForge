@@ -7,8 +7,6 @@ license="LGPL v2.1"
 [[mods]]
     modId="client_command_test"
 [[mods]]
-    modId="biome_modifiers_test"
-[[mods]]
     modId="structure_modifiers_test"
 [[mods]]
     modId="fluid_type_test"
@@ -173,6 +171,8 @@ modId="tag_based_tool_types"
 [[mods]]
 modId="check_spawn_event_test"
 [[mods]]
+modId="spawn_placement_test"
+[[mods]]
 modId="redstone_sided_connectivity_test"
 [[mods]]
 modId="permissions_changed_event_test"
@@ -242,7 +242,7 @@ modId="valid_railshape_test"
 modId="player_negotiation_event_test"
 [[mods]]
 modId="custom_rarity_test"
-[[mods]]
+[[modsDisabled]]
 modId="data_pack_registries_test"
 [[mods]]
 modId="mod_mismatch_test"
@@ -263,7 +263,15 @@ modId="custom_color_resolver_test"
 [[mods]]
 modId="custom_item_decorations_test"
 [[mods]]
+modId="item_stacked_on_other_test"
+[[mods]]
 modId="ambient_occlusion_elements_test"
+[[mods]]
+modId="grindstone_event_test"
+[[mods]]
+modId="data_pack_registries_test"
+[[mods]]
+modId="creative_mode_tab_test"
 
 
 # ADD ABOVE THIS LINE

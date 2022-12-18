@@ -59,8 +59,8 @@ public class TitleScreenModUpdateIndicator extends Screen
 
         RenderSystem.setShaderTexture(0, VERSION_CHECK_ICONS);
 
-        int x = modButton.x;
-        int y = modButton.y;
+        int x = modButton.getX();
+        int y = modButton.getY();
         int w = modButton.getWidth();
         int h = modButton.getHeight();
 

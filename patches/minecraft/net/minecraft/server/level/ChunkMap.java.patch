@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/level/ChunkMap.java
 +++ b/net/minecraft/server/level/ChunkMap.java
-@@ -385,6 +_,7 @@
+@@ -395,6 +_,7 @@
              this.f_140140_ = true;
           }
  
@@ -8,7 +8,7 @@
           return p_140179_;
        }
     }
-@@ -490,6 +_,7 @@
+@@ -500,6 +_,7 @@
              if (this.f_140131_.remove(p_140182_, p_140183_) && p_203002_ != null) {
                 if (p_203002_ instanceof LevelChunk) {
                    ((LevelChunk)p_203002_).m_62913_(false);
@@ -16,7 +16,7 @@
                 }
  
                 this.m_140258_(p_203002_);
-@@ -689,8 +_,14 @@
+@@ -699,8 +_,14 @@
              levelchunk.m_62952_();
              if (this.f_140132_.add(chunkpos.m_45588_())) {
                 levelchunk.m_62913_(true);
@@ -31,7 +31,7 @@
              }
  
              return levelchunk;
-@@ -793,6 +_,7 @@
+@@ -803,6 +_,7 @@
  
              this.f_140133_.m_46473_().m_6174_("chunkSave");
              CompoundTag compoundtag = ChunkSerializer.m_63454_(this.f_140133_, p_140259_);
@@ -39,7 +39,7 @@
              this.m_63502_(chunkpos, compoundtag);
              this.m_140229_(chunkpos, chunkstatus.m_62494_());
              return true;
-@@ -863,6 +_,7 @@
+@@ -873,6 +_,7 @@
  
           if (!p_183759_ && p_183758_) {
              p_183755_.m_9088_(p_183756_);
@@ -47,7 +47,7 @@
           }
  
        }
-@@ -1105,7 +_,7 @@
+@@ -1115,7 +_,7 @@
     }
  
     protected void m_140199_(Entity p_140200_) {
@@ -56,7 +56,7 @@
           EntityType<?> entitytype = p_140200_.m_6095_();
           int i = entitytype.m_20681_() * 16;
           if (i != 0) {
-@@ -1231,6 +_,7 @@
+@@ -1262,6 +_,7 @@
           }
        }
  

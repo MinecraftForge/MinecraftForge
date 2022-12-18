@@ -9,9 +9,9 @@ import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormatElement;
-import com.mojang.math.Vector3d;
-import com.mojang.math.Vector3f;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import org.joml.Vector3d;
+import org.joml.Vector3f;
 
 import java.util.Arrays;
 import java.util.IdentityHashMap;
@@ -31,8 +31,8 @@ public class RemappingVertexPipeline implements VertexConsumer
     private final VertexConsumer parent;
     private final VertexFormat targetFormat;
 
-    private final Vector3d position = new Vector3d(0, 0, 0);
-    private final Vector3f normal = new Vector3f(0, 0, 0);
+    private final Vector3d position = new Vector3d();
+    private final Vector3f normal = new Vector3f();
     private final int[] color = new int[] { 255, 255, 255, 255 };
     private final float[] uv0 = new float[] { 0, 0 };
     private final int[] uv1 = new int[] { OverlayTexture.NO_WHITE_U, OverlayTexture.WHITE_OVERLAY_V };
