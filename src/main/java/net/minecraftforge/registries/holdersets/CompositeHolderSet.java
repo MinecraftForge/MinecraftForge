@@ -176,6 +176,7 @@ public abstract class CompositeHolderSet<T> implements ICustomHolderSet<T>
      * 
      * Lists are considered non-homogenous if it contains more than one serialization type of holderset.
      * Holdersets may be serialized as strings, lists, or maps.
+     * @see {@link #isHomogenous}
      * @return List of holdersets with homogenous serialization behavior.
      * Returns a new List if size > 1 and serialization would be non-homogenous,
      * otherwise returns the composite's existing List.
@@ -228,7 +229,7 @@ public abstract class CompositeHolderSet<T> implements ICustomHolderSet<T>
         }
         
         final int size = holderSets.size();
-        for (int i=1; i<size; i++)
+        for (int i = 1; i < size; i++)
         {
             final SerializationType type = holderSets.get(i).serializationType();
             if (type != firstType) // don't need to check type == UNKNOWN again because type != firstType covers it
