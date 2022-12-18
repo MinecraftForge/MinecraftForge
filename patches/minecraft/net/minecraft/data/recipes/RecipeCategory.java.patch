@@ -8,3 +8,14 @@
     BUILDING_BLOCKS("building_blocks"),
     DECORATIONS("decorations"),
     REDSTONE("redstone"),
+@@ -19,5 +_,10 @@
+ 
+    public String m_247710_() {
+       return this.f_244582_;
++   }
++
++   public static RecipeCategory create(String name)
++   {
++       throw new IllegalStateException("Enum not extended");
+    }
+ }
