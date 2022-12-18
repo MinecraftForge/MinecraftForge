@@ -14,7 +14,7 @@
        return this.f_244582_;
 +   }
 +
-+   public static RecipeCategory create(String name)
++   public static RecipeCategory create(String name, RecipeCategory fieldName)
 +   {
 +       throw new IllegalStateException("Enum not extended");
     }
