@@ -1,13 +1,11 @@
 --- a/net/minecraft/world/item/crafting/CraftingBookCategory.java
 +++ b/net/minecraft/world/item/crafting/CraftingBookCategory.java
-@@ -1,8 +_,9 @@
- package net.minecraft.world.item.crafting;
+@@ -2,7 +_,7 @@
  
  import net.minecraft.util.StringRepresentable;
-+import net.minecraftforge.common.IExtensibleEnum;
  
 -public enum CraftingBookCategory implements StringRepresentable {
-+public enum CraftingBookCategory implements StringRepresentable, IExtensibleEnum {
++public enum CraftingBookCategory implements StringRepresentable, net.minecraftforge.common.IExtensibleEnum {
     BUILDING("building"),
     REDSTONE("redstone"),
     EQUIPMENT("equipment"),
