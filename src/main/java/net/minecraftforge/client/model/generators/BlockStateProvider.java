@@ -194,8 +194,7 @@ public abstract class BlockStateProvider implements DataProvider {
     }
 
     public void simpleBlockWithItem(Block block) {
-        simpleBlock(block, cubeAll(block));
-        simpleBlockItem(block, cubeAll(block));
+        simpleBlockWithItem(block, cubeAll(block));
     }
 
     public void simpleBlock(Block block, ConfiguredModel... models) {
