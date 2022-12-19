@@ -107,7 +107,7 @@ public class DelegatingPackResources extends AbstractPackResources
     public IoSupplier<InputStream> getRootResource(String... paths)
     {
         // Root resources do not make sense here
-        throw null;
+        return null;
     }
 
     @Nullable
