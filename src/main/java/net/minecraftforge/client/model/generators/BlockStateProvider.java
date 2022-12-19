@@ -64,6 +64,7 @@ import org.jetbrains.annotations.NotNull;
  * Data provider for blockstate files. Extends {@link BlockModelProvider} so that
  * blockstates and their referenced models can be provided in tandem.
  */
+@SuppressWarnings("unused")
 public abstract class BlockStateProvider implements DataProvider {
 
     private static final Logger LOGGER = LogManager.getLogger();
