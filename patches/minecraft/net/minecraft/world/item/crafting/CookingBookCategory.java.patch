@@ -1,11 +1,13 @@
 --- a/net/minecraft/world/item/crafting/CookingBookCategory.java
 +++ b/net/minecraft/world/item/crafting/CookingBookCategory.java
-@@ -2,7 +_,7 @@
+@@ -1,8 +_,9 @@
+ package net.minecraft.world.item.crafting;
  
  import net.minecraft.util.StringRepresentable;
++import net.minecraftforge.common.IExtensibleEnum;
  
 -public enum CookingBookCategory implements StringRepresentable {
-+public enum CookingBookCategory implements StringRepresentable, net.minecraftforge.common.IExtensibleEnum {
++public enum CookingBookCategory implements StringRepresentable, IExtensibleEnum {
     FOOD("food"),
     BLOCKS("blocks"),
     MISC("misc");
@@ -15,7 +17,7 @@
        return this.f_244064_;
 +   }
 +
-+   public static CraftingBookCategory create(String name, Object foo)
++   public static CookingBookCategory create(String name, String cookingBookCategoryName)
 +   {
 +      throw new IllegalStateException("Enum not extended");
     }
