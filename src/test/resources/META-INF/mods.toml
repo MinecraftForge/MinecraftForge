@@ -14,6 +14,8 @@ license="LGPL v2.1"
     modId="potentialspawnsevent_test"
 [[mods]]
     modId="block_grow_feature_test"
+[[mods]]
+    modId="biome_modifiers_test"
 
 [[mods]]
     modId="advancement_event_test"
