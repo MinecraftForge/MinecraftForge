@@ -6,7 +6,7 @@
           try {
 -            LootTable loottable = f_79189_.fromJson(p_79199_, LootTable.class);
 +            net.minecraft.server.packs.resources.Resource res = p_79215_.m_213713_(getPreparedPath(p_79198_)).orElse(null);
-+            LootTable loottable = net.minecraftforge.common.ForgeHooks.loadLootTable(f_79189_, p_79198_, p_79199_, res == null || !res.m_215506_().equals("vanilla"), this);
++            LootTable loottable = net.minecraftforge.common.ForgeHooks.loadLootTable(f_79189_, p_79198_, p_79199_, res == null || !res.m_215506_().equals(net.minecraft.server.packs.repository.BuiltInPackSource.f_243761_), this);
              builder.put(p_79198_, loottable);
           } catch (Exception exception) {
              f_79188_.error("Couldn't parse loot table {}", p_79198_, exception);
