@@ -22,16 +22,13 @@
     }
  
     private void m_111319_() {
-@@ -78,7 +_,11 @@
+@@ -78,7 +_,8 @@
              throw new JsonParseException("Expected shade to be a Boolean");
           } else {
              boolean flag = GsonHelper.m_13855_(jsonobject, "shade", true);
 -            return new BlockElement(vector3f, vector3f1, map, blockelementrotation, flag);
-+            var faceData = jsonobject.has("forge_data") ?
-+                net.minecraftforge.client.model.ForgeFaceData.CODEC.parse(com.mojang.serialization.JsonOps.INSTANCE, GsonHelper.m_13930_(jsonobject, "forge_data"))
-+                .getOrThrow(false, error -> new JsonParseException(error))
-+                : net.minecraftforge.client.model.ForgeFaceData.DEFAULT;
-+           return new BlockElement(vector3f, vector3f1, map, blockelementrotation, flag, faceData);
++            var faceData = net.minecraftforge.client.model.ForgeFaceData.read(jsonobject.get("forge_data"), net.minecraftforge.client.model.ForgeFaceData.DEFAULT);
++            return new BlockElement(vector3f, vector3f1, map, blockelementrotation, flag, faceData);
           }
        }
  
