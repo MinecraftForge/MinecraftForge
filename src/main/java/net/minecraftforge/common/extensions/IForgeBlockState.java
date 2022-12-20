@@ -19,6 +19,7 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.FishingHook;
 import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.levelgen.feature.configurations.TreeConfiguration;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.item.ItemStack;
@@ -764,5 +765,12 @@ public interface IForgeBlockState
     default BlockState getAppearance(BlockAndTintGetter level, BlockPos pos, Direction side, @Nullable BlockState queryState, @Nullable BlockPos queryPos)
     {
         return self().getBlock().getAppearance(self(), level, pos, side, queryState, queryPos);
+    }
+
+    /**
+     * @return true if the block can be push by a piston
+     */
+    default boolean isPushable(){
+        return self().getBlock().isPushable(self());
     }
 }

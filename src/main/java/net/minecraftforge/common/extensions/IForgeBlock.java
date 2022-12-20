@@ -951,4 +951,12 @@ public interface IForgeBlock
     {
         return state;
     }
+
+    /**
+     * @param state The state
+     * @return true if the block can be push by a piston
+     */
+    default boolean isPushable(BlockState state){
+        return !state.is(Blocks.OBSIDIAN) && !state.is(Blocks.CRYING_OBSIDIAN) && !state.is(Blocks.RESPAWN_ANCHOR) && !state.is(Blocks.REINFORCED_DEEPSLATE);
+    }
 }
