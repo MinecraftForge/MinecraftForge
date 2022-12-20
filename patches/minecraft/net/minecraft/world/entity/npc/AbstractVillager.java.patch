@@ -5,7 +5,7 @@
           CriteriaTriggers.f_10585_.m_70959_((ServerPlayer)this.f_35263_, this, p_35274_.m_45368_());
        }
 -
-+      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.player.PlayerVillagerTradeEvent(this.f_35263_, p_35274_, this));
++      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.player.TradeWithVillagerEvent(this.f_35263_, p_35274_, this));
     }
  
     protected abstract void m_8058_(MerchantOffer p_35299_);

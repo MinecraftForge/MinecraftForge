@@ -7,7 +7,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Cancelable;
 
 /**
- * PlayerVillagerTradeEvent is fired when a player trades with
+ * TradeWithVillagerEvent is fired when a player trades with
  * a villager inheriting from {@link AbstractVillager}. <br>
  * <br>
  * This event is not {@link Cancelable}.<br>
@@ -16,12 +16,12 @@ import net.minecraftforge.eventbus.api.Cancelable;
  * <br>
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
  */
-public class PlayerVillagerTradeEvent extends PlayerEvent
+public class TradeWithVillagerEvent extends PlayerEvent
 {
     private final MerchantOffer offer;
     private final AbstractVillager abstractVillager;
 
-    public PlayerVillagerTradeEvent(Player player, MerchantOffer offer, AbstractVillager abstractVillager)
+    public TradeWithVillagerEvent(Player player, MerchantOffer offer, AbstractVillager abstractVillager)
     {
         super(player);
         this.offer = offer;
