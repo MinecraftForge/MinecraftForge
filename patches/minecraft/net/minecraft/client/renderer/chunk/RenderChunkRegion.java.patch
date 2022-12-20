@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/chunk/RenderChunkRegion.java
 +++ b/net/minecraft/client/renderer/chunk/RenderChunkRegion.java
-@@ -66,4 +_,9 @@
+@@ -66,4 +_,14 @@
     public int m_141928_() {
        return this.f_112908_.m_141928_();
     }
@@ -8,5 +8,10 @@
 +   @Override
 +   public float getShade(float normalX, float normalY, float normalZ, boolean shade) {
 +      return this.f_112908_.getShade(normalX, normalY, normalZ, shade);
++   }
++
++   @Override
++   public net.minecraftforge.client.model.data.ModelDataManager getModelDataManager() {
++      return f_112908_.getModelDataManager();
 +   }
  }

@@ -8,6 +8,7 @@ package net.minecraftforge.fml.loading;
 import com.mojang.logging.LogUtils;
 import org.slf4j.Logger;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
@@ -52,5 +53,17 @@ public class FileUtils
         } else {
             return "";
         }
+    }
+    
+    public static boolean matchFileName(String path, String... matches) {
+        // Extract file name from path
+        String name = path.substring(Math.min(path.lastIndexOf(File.separatorChar) + 1, path.length()));
+        // Check if it contains any of the desired keywords
+        for (String match : matches) {
+            if (name.contains(match)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

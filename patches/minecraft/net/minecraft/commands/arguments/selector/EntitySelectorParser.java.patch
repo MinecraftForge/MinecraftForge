@@ -1,6 +1,6 @@
 --- a/net/minecraft/commands/arguments/selector/EntitySelectorParser.java
 +++ b/net/minecraft/commands/arguments/selector/EntitySelectorParser.java
-@@ -461,6 +_,9 @@
+@@ -459,6 +_,9 @@
           }
  
           this.f_121201_.skip();
@@ -10,7 +10,7 @@
           this.m_121281_();
        } else {
           this.m_121304_();
-@@ -476,6 +_,7 @@
+@@ -474,6 +_,7 @@
        p_121248_.suggest("@r", Component.m_237115_("argument.entity.selector.randomPlayer"));
        p_121248_.suggest("@s", Component.m_237115_("argument.entity.selector.self"));
        p_121248_.suggest("@e", Component.m_237115_("argument.entity.selector.allEntities"));

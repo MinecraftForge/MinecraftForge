@@ -1,7 +1,7 @@
 --- a/com/mojang/blaze3d/vertex/BufferBuilder.java
 +++ b/com/mojang/blaze3d/vertex/BufferBuilder.java
 @@ -486,4 +_,14 @@
-          this.f_166822_ = p_166829_;
+          this.f_166822_ = p_254368_;
        }
     }
 +

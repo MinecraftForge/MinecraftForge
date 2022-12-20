@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/piston/PistonMovingBlockEntity.java
 +++ b/net/minecraft/world/level/block/piston/PistonMovingBlockEntity.java
-@@ -106,7 +_,7 @@
+@@ -109,7 +_,7 @@
           List<Entity> list = p_155911_.m_45933_((Entity)null, PistonMath.m_60328_(aabb, direction, d0).m_82367_(aabb));
           if (!list.isEmpty()) {
              List<AABB> list1 = voxelshape.m_83299_();

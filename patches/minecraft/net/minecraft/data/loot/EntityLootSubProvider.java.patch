@@ -1,0 +1,27 @@
+--- a/net/minecraft/data/loot/EntityLootSubProvider.java
++++ b/net/minecraft/data/loot/EntityLootSubProvider.java
+@@ -45,10 +_,14 @@
+ 
+    public abstract void m_246942_();
+ 
++   protected java.util.stream.Stream<EntityType<?>> getKnownEntityTypes() {
++      return BuiltInRegistries.f_256780_.m_123024_();
++   }
++
+    public void m_245126_(BiConsumer<ResourceLocation, LootTable.Builder> p_251751_) {
+       this.m_246942_();
+       Set<ResourceLocation> set = Sets.newHashSet();
+-      BuiltInRegistries.f_256780_.m_203611_().forEach((p_249003_) -> {
++      this.getKnownEntityTypes().map(EntityType::m_204041_).forEach((p_249003_) -> {
+          EntityType<?> entitytype = p_249003_.m_203334_();
+          if (entitytype.m_245993_(this.f_244045_)) {
+             if (m_245552_(entitytype)) {
+@@ -81,7 +_,7 @@
+       }
+    }
+ 
+-   protected static boolean m_245552_(EntityType<?> p_249029_) {
++   protected boolean m_245552_(EntityType<?> p_249029_) {
+       return f_244591_.contains(p_249029_) || p_249029_.m_20674_() != MobCategory.MISC;
+    }
+ 

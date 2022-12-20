@@ -1,7 +1,7 @@
 --- a/net/minecraft/world/item/enchantment/EnchantmentHelper.java
 +++ b/net/minecraft/world/item/enchantment/EnchantmentHelper.java
 @@ -59,7 +_,14 @@
-       return Registry.f_122825_.m_7981_(p_182433_);
+       return BuiltInRegistries.f_256876_.m_7981_(p_182433_);
     }
  
 +   /** @deprecated forge: use {@link #getTagEnchantmentLevel(Enchantment, ItemStack)} or {@link ItemStack#getEnchantmentLevel(Enchantment)} */
@@ -75,7 +75,7 @@
 @@ -396,7 +_,7 @@
        boolean flag = p_44819_.m_150930_(Items.f_42517_);
  
-       for(Enchantment enchantment : Registry.f_122825_) {
+       for(Enchantment enchantment : BuiltInRegistries.f_256876_) {
 -         if ((!enchantment.m_6591_() || p_44820_) && enchantment.m_6592_() && (enchantment.f_44672_.m_7454_(item) || flag)) {
 +         if ((!enchantment.m_6591_() || p_44820_) && enchantment.m_6592_() && (enchantment.canApplyAtEnchantingTable(p_44819_) || (flag && enchantment.isAllowedOnBooks()))) {
              for(int i = enchantment.m_6586_(); i > enchantment.m_44702_() - 1; --i) {

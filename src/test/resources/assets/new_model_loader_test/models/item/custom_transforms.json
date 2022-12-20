@@ -5,9 +5,9 @@
   "textures": {
     "particle": "block/oak_planks"
   },
-  "transform": {
+  "display": {
     "firstperson_righthand": {
-      "scale": 3.0
+      "scale": [3.0, 3.0, 3.0]
     }
   }
 }

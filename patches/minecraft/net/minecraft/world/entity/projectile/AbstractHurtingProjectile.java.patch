@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/projectile/AbstractHurtingProjectile.java
 +++ b/net/minecraft/world/entity/projectile/AbstractHurtingProjectile.java
-@@ -64,7 +_,7 @@
+@@ -65,7 +_,7 @@
           }
  
           HitResult hitresult = ProjectileUtil.m_37294_(this, this::m_5603_);

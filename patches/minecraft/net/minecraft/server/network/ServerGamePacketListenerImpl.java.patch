@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-@@ -183,6 +_,12 @@
+@@ -182,6 +_,12 @@
  public class ServerGamePacketListenerImpl implements ServerPlayerConnection, TickablePacketListener, ServerGamePacketListener {
     static final Logger f_9744_ = LogUtils.getLogger();
     private static final int f_143608_ = 15000;
@@ -12,8 +12,8 @@
 +   @Deprecated
     public static final double f_215198_ = Mth.m_144952_(6.0D);
     private static final int f_215199_ = -1;
-    private static final int f_241635_ = 4096;
-@@ -432,9 +_,11 @@
+    private static final int f_244471_ = 4096;
+@@ -426,9 +_,11 @@
              }
  
              entity.m_19890_(d3, d4, d5, f, f1);
@@ -25,7 +25,7 @@
                 this.f_9742_.m_129512_(new ClientboundMoveVehiclePacket(entity));
                 return;
              }
-@@ -451,7 +_,7 @@
+@@ -445,7 +_,7 @@
     }
  
     private boolean m_9793_(Entity p_9794_) {
@@ -34,49 +34,41 @@
     }
  
     public void m_7376_(ServerboundAcceptTeleportationPacket p_9835_) {
-@@ -1040,7 +_,7 @@
-       Vec3 vec3 = blockhitresult.m_82450_();
-       BlockPos blockpos = blockhitresult.m_82425_();
-       Vec3 vec31 = Vec3.m_82512_(blockpos);
--      if (!(this.f_9743_.m_146892_().m_82557_(vec31) > f_215198_)) {
-+      if (this.f_9743_.canInteractWith(blockpos, 3)) {
-          Vec3 vec32 = vec3.m_82546_(vec31);
-          double d0 = 1.0000001D;
-          if (Math.abs(vec32.m_7096_()) < 1.0000001D && Math.abs(vec32.m_7098_()) < 1.0000001D && Math.abs(vec32.m_7094_()) < 1.0000001D) {
-@@ -1048,7 +_,7 @@
-             this.f_9743_.m_9243_();
-             int i = this.f_9743_.f_19853_.m_151558_();
-             if (blockpos.m_123342_() < i) {
--               if (this.f_9766_ == null && this.f_9743_.m_20275_((double)blockpos.m_123341_() + 0.5D, (double)blockpos.m_123342_() + 0.5D, (double)blockpos.m_123343_() + 0.5D) < 64.0D && serverlevel.m_7966_(this.f_9743_, blockpos)) {
-+               if (this.f_9766_ == null && serverlevel.m_7966_(this.f_9743_, blockpos)) {
-                   InteractionResult interactionresult = this.f_9743_.f_8941_.m_7179_(this.f_9743_, serverlevel, itemstack, interactionhand, blockhitresult);
-                   if (direction == Direction.UP && !interactionresult.m_19077_() && blockpos.m_123342_() >= i - 1 && m_9790_(this.f_9743_, itemstack)) {
-                      Component component = Component.m_237110_("build.tooHigh", i - 1).m_130940_(ChatFormatting.RED);
-@@ -1184,10 +_,12 @@
-                if (this.m_242598_(playerchatmessage)) {
-                   this.f_241681_.m_241849_(() -> {
-                      CompletableFuture<FilteredText> completablefuture = this.m_243132_(playerchatmessage.m_241775_().f_241656_());
--                     CompletableFuture<PlayerChatMessage> completablefuture1 = this.f_9745_.m_236742_().m_243107_(this.f_9743_, playerchatmessage);
-+                     CompletableFuture<PlayerChatMessage> completablefuture1 = net.minecraftforge.common.ForgeHooks.getServerChatSubmittedDecorator().m_243107_(this.f_9743_, playerchatmessage);
-                      return CompletableFuture.allOf(completablefuture, completablefuture1).thenAcceptAsync((p_243197_) -> {
-                         FilterMask filtermask = completablefuture.join().f_243010_();
--                        PlayerChatMessage playerchatmessage1 = completablefuture1.join().m_243072_(filtermask);
-+                        PlayerChatMessage playerchatmessage1 = completablefuture1.join();
-+                        if (playerchatmessage1 == null) return; // Forge: ServerChatEvent was canceled if this is null.
-+                        playerchatmessage1 = playerchatmessage1.m_243072_(filtermask);
-                         this.m_243086_(playerchatmessage1);
-                      }, this.f_9745_);
-                   });
-@@ -1383,7 +_,7 @@
+@@ -1036,7 +_,7 @@
+          Vec3 vec3 = blockhitresult.m_82450_();
+          BlockPos blockpos = blockhitresult.m_82425_();
+          Vec3 vec31 = Vec3.m_82512_(blockpos);
+-         if (!(this.f_9743_.m_146892_().m_82557_(vec31) > f_215198_)) {
++         if (this.f_9743_.canInteractWith(blockpos, 3)) {
+             Vec3 vec32 = vec3.m_82546_(vec31);
+             double d0 = 1.0000001D;
+             if (Math.abs(vec32.m_7096_()) < 1.0000001D && Math.abs(vec32.m_7098_()) < 1.0000001D && Math.abs(vec32.m_7094_()) < 1.0000001D) {
+@@ -1044,7 +_,7 @@
+                this.f_9743_.m_9243_();
+                int i = this.f_9743_.f_19853_.m_151558_();
+                if (blockpos.m_123342_() < i) {
+-                  if (this.f_9766_ == null && this.f_9743_.m_20275_((double)blockpos.m_123341_() + 0.5D, (double)blockpos.m_123342_() + 0.5D, (double)blockpos.m_123343_() + 0.5D) < 64.0D && serverlevel.m_7966_(this.f_9743_, blockpos)) {
++                  if (this.f_9766_ == null && serverlevel.m_7966_(this.f_9743_, blockpos)) {
+                      InteractionResult interactionresult = this.f_9743_.f_8941_.m_7179_(this.f_9743_, serverlevel, itemstack, interactionhand, blockhitresult);
+                      if (direction == Direction.UP && !interactionresult.m_19077_() && blockpos.m_123342_() >= i - 1 && m_9790_(this.f_9743_, itemstack)) {
+                         Component component = Component.m_237110_("build.tooHigh", i - 1).m_130940_(ChatFormatting.RED);
+@@ -1188,10 +_,13 @@
+                }
  
-    private CompletableFuture<Component> m_215246_(String p_215247_) {
-       Component component = Component.m_237113_(p_215247_);
--      CompletableFuture<Component> completablefuture = this.f_9745_.m_236742_().m_236961_(this.f_9743_, component).thenApply((p_238202_) -> {
-+      CompletableFuture<Component> completablefuture = net.minecraftforge.common.ForgeHooks.getServerChatPreviewDecorator().m_236961_(this.f_9743_, component).thenApply((p_238202_) -> {
-          return !component.equals(p_238202_) ? p_238202_ : null;
-       });
-       completablefuture.thenAcceptAsync((p_242747_) -> {
-@@ -1532,9 +_,10 @@
+                CompletableFuture<FilteredText> completablefuture = this.m_243132_(playerchatmessage.m_245728_());
+-               CompletableFuture<Component> completablefuture1 = this.f_9745_.m_236742_().m_236961_(this.f_9743_, playerchatmessage.m_245692_());
++               CompletableFuture<Component> completablefuture1 = net.minecraftforge.common.ForgeHooks.getServerChatSubmittedDecorator().m_236961_(this.f_9743_, playerchatmessage.m_245692_());
+                this.f_241681_.m_241849_((p_248212_) -> {
+                   return CompletableFuture.allOf(completablefuture, completablefuture1).thenAcceptAsync((p_248218_) -> {
+-                     PlayerChatMessage playerchatmessage1 = playerchatmessage.m_241956_(completablefuture1.join()).m_243072_(completablefuture.join().f_243010_());
++                     Component decoratedContent = completablefuture1.join();
++                     if (decoratedContent == null)
++                        return; // Forge: ServerChatEvent was canceled if this is null.
++                     PlayerChatMessage playerchatmessage1 = playerchatmessage.m_241956_(decoratedContent).m_243072_(completablefuture.join().f_243010_());
+                      this.m_243086_(playerchatmessage1);
+                   }, p_248212_);
+                });
+@@ -1434,9 +_,10 @@
              return;
           }
  
@@ -85,10 +77,10 @@
              p_9866_.m_179617_(new ServerboundInteractPacket.Handler() {
                 private void m_143678_(InteractionHand p_143679_, ServerGamePacketListenerImpl.EntityInteraction p_143680_) {
 +                  if(!ServerGamePacketListenerImpl.this.f_9743_.canInteractWith(entity, 1.5D)) return; //Forge: If the entity cannot be reached, do nothing. Original check was dist < 6, range is 4.5, so vanilla used padding=1.5
-                   ItemStack itemstack = ServerGamePacketListenerImpl.this.f_9743_.m_21120_(p_143679_).m_41777_();
-                   InteractionResult interactionresult = p_143680_.m_143694_(ServerGamePacketListenerImpl.this.f_9743_, entity, p_143679_);
-                   if (interactionresult.m_19077_()) {
-@@ -1552,12 +_,16 @@
+                   ItemStack itemstack = ServerGamePacketListenerImpl.this.f_9743_.m_21120_(p_143679_);
+                   if (itemstack.m_246617_(serverlevel.m_246046_())) {
+                      ItemStack itemstack1 = itemstack.m_41777_();
+@@ -1457,6 +_,8 @@
  
                 public void m_142143_(InteractionHand p_143682_, Vec3 p_143683_) {
                    this.m_143678_(p_143682_, (p_143686_, p_143687_, p_143688_) -> {
@@ -97,15 +89,16 @@
                       return p_143687_.m_7111_(p_143686_, p_143683_, p_143688_);
                    });
                 }
- 
-                public void m_141994_() {
+@@ -1465,6 +_,8 @@
                    if (!(entity instanceof ItemEntity) && !(entity instanceof ExperienceOrb) && !(entity instanceof AbstractArrow) && entity != ServerGamePacketListenerImpl.this.f_9743_) {
+                      ItemStack itemstack = ServerGamePacketListenerImpl.this.f_9743_.m_21120_(InteractionHand.MAIN_HAND);
+                      if (itemstack.m_246617_(serverlevel.m_246046_())) {
 +                     //Forge: Perform attack range check. Original check was dist < 6, range is 3, so vanilla used padding=3
 +                     if(ServerGamePacketListenerImpl.this.f_9743_.canHit(entity, 3))
-                      ServerGamePacketListenerImpl.this.f_9743_.m_5706_(entity);
+                         ServerGamePacketListenerImpl.this.f_9743_.m_5706_(entity);
+                      }
                    } else {
-                      ServerGamePacketListenerImpl.this.m_9942_(Component.m_237115_("multiplayer.disconnect.invalid_entity_attacked"));
-@@ -1757,6 +_,7 @@
+@@ -1669,6 +_,7 @@
     }
  
     public void m_7423_(ServerboundCustomPayloadPacket p_9860_) {

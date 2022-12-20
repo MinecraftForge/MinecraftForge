@@ -1,5 +1,0 @@
-{
-  "type": "forge:remove_spawns",
-  "biomes": "#minecraft:is_forest",
-  "entity_types": "#minecraft:skeletons"
-}

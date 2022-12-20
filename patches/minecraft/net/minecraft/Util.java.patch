@@ -12,7 +12,7 @@
     public static ExecutorService m_183988_() {
        return f_137443_;
     }
-@@ -248,7 +_,7 @@
+@@ -242,7 +_,7 @@
        try {
           type = DataFixers.m_14512_().getSchema(DataFixUtils.makeKey(SharedConstants.m_183709_().getWorldVersion())).getChoiceType(p_137552_, p_137553_);
        } catch (IllegalArgumentException illegalargumentexception) {

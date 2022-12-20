@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/pathfinder/WalkNodeEvaluator.java
 +++ b/net/minecraft/world/level/pathfinder/WalkNodeEvaluator.java
-@@ -120,7 +_,7 @@
+@@ -114,7 +_,7 @@
        BlockPathTypes blockpathtypes = this.m_77567_(this.f_77313_, p_77641_.f_77271_, p_77641_.f_77272_ + 1, p_77641_.f_77273_);
        BlockPathTypes blockpathtypes1 = this.m_77567_(this.f_77313_, p_77641_.f_77271_, p_77641_.f_77272_, p_77641_.f_77273_);
        if (this.f_77313_.m_21439_(blockpathtypes) >= 0.0F && blockpathtypes1 != BlockPathTypes.STICKY_HONEY) {
@@ -9,7 +9,7 @@
        }
  
        double d0 = this.m_142213_(new BlockPos(p_77641_.f_77271_, p_77641_.f_77272_, p_77641_.f_77273_));
-@@ -471,6 +_,11 @@
+@@ -459,6 +_,11 @@
                 if (l != 0 || j1 != 0) {
                    p_77609_.m_122178_(i + l, j + i1, k + j1);
                    BlockState blockstate = p_77608_.m_8055_(p_77609_);
@@ -21,7 +21,7 @@
                    if (blockstate.m_60713_(Blocks.f_50128_)) {
                       return BlockPathTypes.DANGER_CACTUS;
                    }
-@@ -496,6 +_,8 @@
+@@ -484,6 +_,8 @@
  
     protected static BlockPathTypes m_77643_(BlockGetter p_77644_, BlockPos p_77645_) {
        BlockState blockstate = p_77644_.m_8055_(p_77645_);
@@ -30,7 +30,7 @@
        Block block = blockstate.m_60734_();
        Material material = blockstate.m_60767_();
        if (blockstate.m_60795_()) {
-@@ -513,6 +_,8 @@
+@@ -501,6 +_,8 @@
              return BlockPathTypes.COCOA;
           } else {
              FluidState fluidstate = p_77644_.m_6425_(p_77645_);
@@ -39,7 +39,7 @@
              if (fluidstate.m_205070_(FluidTags.f_13132_)) {
                 return BlockPathTypes.LAVA;
              } else if (m_77622_(blockstate)) {
-@@ -531,6 +_,8 @@
+@@ -519,6 +_,8 @@
                 if (!blockstate.m_60647_(p_77644_, p_77645_, PathComputationType.LAND)) {
                    return BlockPathTypes.BLOCKED;
                 } else {

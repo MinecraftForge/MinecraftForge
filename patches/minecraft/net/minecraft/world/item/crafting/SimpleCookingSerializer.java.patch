@@ -1,7 +1,7 @@
 --- a/net/minecraft/world/item/crafting/SimpleCookingSerializer.java
 +++ b/net/minecraft/world/item/crafting/SimpleCookingSerializer.java
-@@ -21,11 +_,17 @@
-       String s = GsonHelper.m_13851_(p_44348_, "group", "");
+@@ -22,11 +_,17 @@
+       CookingBookCategory cookingbookcategory = CookingBookCategory.f_244271_.m_262792_(GsonHelper.m_13851_(p_44348_, "category", (String)null), CookingBookCategory.MISC);
        JsonElement jsonelement = (JsonElement)(GsonHelper.m_13885_(p_44348_, "ingredient") ? GsonHelper.m_13933_(p_44348_, "ingredient") : GsonHelper.m_13930_(p_44348_, "ingredient"));
        Ingredient ingredient = Ingredient.m_43917_(jsonelement);
 +      //Forge: Check if primitive string to keep vanilla or a object which can contain a count field.
@@ -11,11 +11,11 @@
 +      else {
        String s1 = GsonHelper.m_13906_(p_44348_, "result");
        ResourceLocation resourcelocation = new ResourceLocation(s1);
--      ItemStack itemstack = new ItemStack(Registry.f_122827_.m_6612_(resourcelocation).orElseThrow(() -> {
-+      itemstack = new ItemStack(Registry.f_122827_.m_6612_(resourcelocation).orElseThrow(() -> {
+-      ItemStack itemstack = new ItemStack(BuiltInRegistries.f_257033_.m_6612_(resourcelocation).orElseThrow(() -> {
++      itemstack = new ItemStack(BuiltInRegistries.f_257033_.m_6612_(resourcelocation).orElseThrow(() -> {
           return new IllegalStateException("Item: " + s1 + " does not exist");
        }));
 +      }
        float f = GsonHelper.m_13820_(p_44348_, "experience", 0.0F);
        int i = GsonHelper.m_13824_(p_44348_, "cookingtime", this.f_44327_);
-       return this.f_44328_.m_44352_(p_44347_, s, ingredient, itemstack, f, i);
+       return this.f_44328_.m_44352_(p_44347_, s, cookingbookcategory, ingredient, itemstack, f, i);

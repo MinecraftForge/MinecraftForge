@@ -1,23 +1,41 @@
 --- a/net/minecraft/data/HashCache.java
 +++ b/net/minecraft/data/HashCache.java
-@@ -92,6 +_,7 @@
-       MutableInt mutableint = new MutableInt();
-       this.f_236083_.forEach((p_236100_, p_236101_) -> {
-          Path path = this.m_236109_(p_236100_);
-+         if (!p_236101_.f_236114_.equals(p_236101_.f_236113_) || !Files.exists(path))//Forge: Only rewrite the cache file if it changed or is missing
-          p_236101_.f_236114_.m_236142_(this.f_236079_, path, DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(LocalDateTime.now()) + "\t" + p_236100_.m_6055_());
-          mutableint.add(p_236101_.f_236115_);
-       });
-@@ -231,10 +_,10 @@
-                bufferedwriter.write(p_236145_);
-                bufferedwriter.newLine();
+@@ -35,6 +_,7 @@
+    private final Path f_236080_;
+    private final String f_236081_;
+    private final Map<String, HashCache.ProviderCache> f_252445_;
++   private final Map<String, HashCache.ProviderCache> originalCaches;
+    private final Set<String> f_236083_ = new HashSet<>();
+    private final Set<Path> f_236084_ = new HashSet<>();
+    private final int f_236085_;
+@@ -61,6 +_,7 @@
+       }
  
--               for(Map.Entry<Path, HashCode> entry : this.f_236127_.entrySet()) {
-+               for(Map.Entry<Path, HashCode> entry : this.f_236127_.entrySet().stream().sorted(Map.Entry.comparingByKey()).toList()) {
-                   bufferedwriter.write(entry.getValue().toString());
-                   bufferedwriter.write(32);
--                  bufferedwriter.write(p_236143_.relativize(entry.getKey()).toString());
-+                  bufferedwriter.write(p_236143_.relativize(entry.getKey()).toString().replace("\\", "/")); // Forge: Standardize file paths.
-                   bufferedwriter.newLine();
-                }
-             } catch (Throwable throwable1) {
+       this.f_252445_ = map;
++      this.originalCaches = Map.copyOf(this.f_252445_);
+       this.f_236085_ = i;
+    }
+ 
+@@ -104,6 +_,8 @@
+       this.f_252445_.forEach((p_253378_, p_253379_) -> {
+          if (this.f_236083_.contains(p_253378_)) {
+             Path path = this.m_252859_(p_253378_);
++            // Forge: Only rewrite the cache file if it changed or is missing
++            if (!p_253379_.equals(this.originalCaches.get(p_253378_)) || !Files.exists(path))
+             p_253379_.m_236142_(this.f_236079_, path, DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(LocalDateTime.now()) + "\t" + p_253378_);
+          }
+ 
+@@ -211,10 +_,11 @@
+             bufferedwriter.write(p_236145_);
+             bufferedwriter.newLine();
+ 
+-            for(Map.Entry<Path, HashCode> entry : this.f_236127_.entrySet()) {
++            // Forge: Standardize order of entries
++            for(Map.Entry<Path, HashCode> entry : this.f_236127_.entrySet().stream().sorted(Map.Entry.comparingByKey()).toList()) {
+                bufferedwriter.write(entry.getValue().toString());
+                bufferedwriter.write(32);
+-               bufferedwriter.write(p_236143_.relativize(entry.getKey()).toString());
++               bufferedwriter.write(p_236143_.relativize(entry.getKey()).toString().replace("\\", "/")); // Forge: Standardize file paths.
+                bufferedwriter.newLine();
+             }
+          } catch (IOException ioexception) {

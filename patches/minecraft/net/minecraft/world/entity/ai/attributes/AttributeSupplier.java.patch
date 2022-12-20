@@ -22,7 +22,7 @@
 +      }
  
        private AttributeInstance m_22274_(Attribute p_22275_) {
-          AttributeInstance attributeinstance = new AttributeInstance(p_22275_, (p_22273_) -> {
+          AttributeInstance attributeinstance = new AttributeInstance(p_22275_, (p_258260_) -> {
 @@ -93,6 +_,7 @@
  
        public AttributeSupplier m_22265_() {

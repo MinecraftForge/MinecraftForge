@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/PlayerAdvancements.java
 +++ b/net/minecraft/server/PlayerAdvancements.java
-@@ -178,6 +_,10 @@
+@@ -164,6 +_,10 @@
        }
  
        this.m_136002_(p_136007_);
@@ -11,7 +11,7 @@
        this.m_136001_();
        this.m_135994_(p_136007_);
     }
-@@ -236,6 +_,8 @@
+@@ -197,6 +_,8 @@
     }
  
     public boolean m_135988_(Advancement p_135989_, String p_135990_) {
@@ -20,7 +20,7 @@
        boolean flag = false;
        AdvancementProgress advancementprogress = this.m_135996_(p_135989_);
        boolean flag1 = advancementprogress.m_8193_();
-@@ -243,11 +_,14 @@
+@@ -204,11 +_,14 @@
           this.m_136008_(p_135989_);
           this.f_135967_.add(p_135989_);
           flag = true;
@@ -35,7 +35,7 @@
           }
        }
  
-@@ -265,6 +_,7 @@
+@@ -226,6 +_,7 @@
           this.m_136004_(p_135999_);
           this.f_135967_.add(p_135999_);
           flag = true;

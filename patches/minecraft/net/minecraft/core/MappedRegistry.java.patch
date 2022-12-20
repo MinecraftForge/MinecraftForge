@@ -1,7 +1,7 @@
 --- a/net/minecraft/core/MappedRegistry.java
 +++ b/net/minecraft/core/MappedRegistry.java
-@@ -83,14 +_,24 @@
-       return this.m_205857_(p_205853_, p_205854_, p_205855_, p_205856_, true);
+@@ -121,7 +_,16 @@
+       }
     }
  
 +   private static final Set<ResourceLocation> KNOWN = new java.util.LinkedHashSet<>();
@@ -12,32 +12,48 @@
 +      KNOWN.add(m_123023_().m_135782_());
 +   }
 +
-    private Holder<T> m_205857_(int p_205858_, ResourceKey<T> p_205859_, T p_205860_, Lifecycle p_205861_, boolean p_205862_) {
+    public Holder.Reference<T> m_203704_(int p_256563_, ResourceKey<T> p_256594_, T p_256374_, Lifecycle p_256469_) {
 +      markKnown();
-       this.m_205921_(p_205859_);
-       Validate.notNull(p_205859_);
-       Validate.notNull(p_205860_);
-       this.f_122672_.size(Math.max(this.f_122672_.size(), p_205858_ + 1));
-       this.f_122673_.put(p_205860_, p_205858_);
-       this.f_211051_ = null;
--      if (p_205862_ && this.f_205842_.containsKey(p_205859_)) {
-+      // Forge: Fix bug where a key is considered a duplicate if getOrCreateHolder was called before the entry was registered
-+      if (p_205862_ && this.f_205842_.containsKey(p_205859_) && this.f_205842_.get(p_205859_).m_203633_()) {
-          Util.m_143785_("Adding duplicate key '" + p_205859_ + "' to registry");
+       this.m_205921_(p_256594_);
+       Validate.notNull(p_256594_);
+       Validate.notNull(p_256374_);
+@@ -145,6 +_,8 @@
+          reference = this.f_205842_.computeIfAbsent(p_256594_, (p_258168_) -> {
+             return Holder.Reference.m_254896_(this.m_255331_(), p_258168_);
+          });
++         // Forge: Bind the value immediately so it can be queried while the registry is not frozen
++         reference.m_247654_(p_256374_);
        }
  
-@@ -299,6 +_,14 @@
- 
-    public boolean m_142003_(ResourceKey<T> p_175392_) {
+       this.f_205842_.put(p_256594_, reference);
+@@ -300,14 +_,17 @@
        return this.f_205842_.containsKey(p_175392_);
-+   }
-+
+    }
+ 
 +   /** @deprecated Forge: For internal use only. Use the Register events when registering values. */
 +   @Deprecated
 +   public void unfreeze() {
 +      this.f_205845_ = false;
-+      if (this.f_205846_ != null && this.f_205847_ == null)
-+         this.f_205847_ = new IdentityHashMap<>();
-    }
- 
++   }
++
     public Registry<T> m_203521_() {
+       if (this.f_205845_) {
+          return this;
+       } else {
+          this.f_205845_ = true;
+-         this.f_205843_.forEach((p_247989_, p_247990_) -> {
+-            p_247990_.m_247654_(p_247989_);
+-         });
+          List<ResourceLocation> list = this.f_205842_.entrySet().stream().filter((p_211055_) -> {
+             return !p_211055_.getValue().m_203633_();
+          }).map((p_211794_) -> {
+@@ -321,7 +_,8 @@
+                   throw new IllegalStateException("Some intrusive holders were not registered: " + this.f_244282_.values());
+                }
+ 
+-               this.f_244282_ = null;
++               // Forge: We freeze/unfreeze vanilla registries more than once, so we need to keep the unregistered intrusive holders map around.
++               // this.unregisteredIntrusiveHolders = null;
+             }
+ 
+             return this;

@@ -1,8 +1,8 @@
 --- a/net/minecraft/world/entity/EntityType.java
 +++ b/net/minecraft/world/entity/EntityType.java
-@@ -292,6 +_,11 @@
-    private ResourceLocation f_20546_;
+@@ -300,6 +_,11 @@
     private final EntityDimensions f_20547_;
+    private final FeatureFlagSet f_244139_;
  
 +   private final java.util.function.Predicate<EntityType<?>> velocityUpdateSupplier;
 +   private final java.util.function.ToIntFunction<EntityType<?>> trackingRangeSupplier;
@@ -10,22 +10,22 @@
 +   private final java.util.function.BiFunction<net.minecraftforge.network.PlayMessages.SpawnEntity, Level, T> customClientFactory;
 +
     private static <T extends Entity> EntityType<T> m_20634_(String p_20635_, EntityType.Builder<T> p_20636_) {
-       return Registry.m_122961_(Registry.f_122826_, p_20635_, p_20636_.m_20712_(p_20635_));
+       return Registry.m_122961_(BuiltInRegistries.f_256780_, p_20635_, p_20636_.m_20712_(p_20635_));
     }
-@@ -305,6 +_,9 @@
+@@ -313,6 +_,9 @@
     }
  
-    public EntityType(EntityType.EntityFactory<T> p_20574_, MobCategory p_20575_, boolean p_20576_, boolean p_20577_, boolean p_20578_, boolean p_20579_, ImmutableSet<Block> p_20580_, EntityDimensions p_20581_, int p_20582_, int p_20583_) {
-+       this(p_20574_, p_20575_, p_20576_, p_20577_, p_20578_, p_20579_, p_20580_, p_20581_, p_20582_, p_20583_, EntityType::defaultVelocitySupplier, EntityType::defaultTrackingRangeSupplier, EntityType::defaultUpdateIntervalSupplier, null);
+    public EntityType(EntityType.EntityFactory<T> p_251402_, MobCategory p_251431_, boolean p_251439_, boolean p_251973_, boolean p_252007_, boolean p_250908_, ImmutableSet<Block> p_250201_, EntityDimensions p_251742_, int p_250479_, int p_249249_, FeatureFlagSet p_250427_) {
++       this(p_251402_, p_251431_, p_251439_, p_251973_, p_252007_, p_250908_, p_250201_, p_251742_, p_250479_, p_249249_, p_250427_, EntityType::defaultVelocitySupplier, EntityType::defaultTrackingRangeSupplier, EntityType::defaultUpdateIntervalSupplier, null);
 +   }
-+   public EntityType(EntityType.EntityFactory<T> p_20574_, MobCategory p_20575_, boolean p_20576_, boolean p_20577_, boolean p_20578_, boolean p_20579_, ImmutableSet<Block> p_20580_, EntityDimensions p_20581_, int p_20582_, int p_20583_, final java.util.function.Predicate<EntityType<?>> velocityUpdateSupplier, final java.util.function.ToIntFunction<EntityType<?>> trackingRangeSupplier, final java.util.function.ToIntFunction<EntityType<?>> updateIntervalSupplier, final java.util.function.BiFunction<net.minecraftforge.network.PlayMessages.SpawnEntity, Level, T> customClientFactory) {
-       this.f_20535_ = p_20574_;
-       this.f_20536_ = p_20575_;
-       this.f_20541_ = p_20579_;
-@@ -315,6 +_,10 @@
-       this.f_20547_ = p_20581_;
-       this.f_20542_ = p_20582_;
-       this.f_20543_ = p_20583_;
++   public EntityType(EntityType.EntityFactory<T> p_251402_, MobCategory p_251431_, boolean p_251439_, boolean p_251973_, boolean p_252007_, boolean p_250908_, ImmutableSet<Block> p_250201_, EntityDimensions p_251742_, int p_250479_, int p_249249_, FeatureFlagSet p_250427_, final java.util.function.Predicate<EntityType<?>> velocityUpdateSupplier, final java.util.function.ToIntFunction<EntityType<?>> trackingRangeSupplier, final java.util.function.ToIntFunction<EntityType<?>> updateIntervalSupplier, final java.util.function.BiFunction<net.minecraftforge.network.PlayMessages.SpawnEntity, Level, T> customClientFactory) {
+       this.f_20535_ = p_251402_;
+       this.f_20536_ = p_251431_;
+       this.f_20541_ = p_250908_;
+@@ -324,6 +_,10 @@
+       this.f_20542_ = p_250479_;
+       this.f_20543_ = p_249249_;
+       this.f_244139_ = p_250427_;
 +      this.velocityUpdateSupplier = velocityUpdateSupplier;
 +      this.trackingRangeSupplier = trackingRangeSupplier;
 +      this.updateIntervalSupplier = updateIntervalSupplier;
@@ -33,15 +33,15 @@
     }
  
     @Nullable
-@@ -326,6 +_,7 @@
-    public T m_20600_(ServerLevel p_20601_, @Nullable CompoundTag p_20602_, @Nullable Component p_20603_, @Nullable Player p_20604_, BlockPos p_20605_, MobSpawnType p_20606_, boolean p_20607_, boolean p_20608_) {
-       T t = this.m_20655_(p_20601_, p_20602_, p_20603_, p_20604_, p_20605_, p_20606_, p_20607_, p_20608_);
+@@ -371,6 +_,7 @@
+    public T m_262455_(ServerLevel p_262704_, @Nullable CompoundTag p_262603_, @Nullable Consumer<T> p_262621_, BlockPos p_262672_, MobSpawnType p_262644_, boolean p_262690_, boolean p_262590_) {
+       T t = this.m_262451_(p_262704_, p_262603_, p_262621_, p_262672_, p_262644_, p_262690_, p_262590_);
        if (t != null) {
-+         if (t instanceof net.minecraft.world.entity.Mob && net.minecraftforge.event.ForgeEventFactory.doSpecialSpawn((net.minecraft.world.entity.Mob) t, p_20601_, p_20605_.m_123341_(), p_20605_.m_123342_(), p_20605_.m_123343_(), null, p_20606_)) return null;
-          p_20601_.m_47205_(t);
++         if (t instanceof net.minecraft.world.entity.Mob && net.minecraftforge.event.ForgeEventFactory.doSpecialSpawn((net.minecraft.world.entity.Mob) t, p_262704_, p_262672_.m_123341_(), p_262672_.m_123342_(), p_262672_.m_123343_(), null, p_262644_)) return null;
+          p_262704_.m_47205_(t);
        }
  
-@@ -543,14 +_,23 @@
+@@ -591,14 +_,23 @@
     }
  
     public int m_20681_() {
@@ -65,7 +65,7 @@
        return this != f_20532_ && this != f_20467_ && this != f_20496_ && this != f_20549_ && this != f_20462_ && this != f_147033_ && this != f_20464_ && this != f_20506_ && this != f_20564_ && this != f_20569_;
     }
  
-@@ -573,6 +_,12 @@
+@@ -621,6 +_,12 @@
        return this.f_204038_;
     }
  
@@ -78,9 +78,9 @@
     public static class Builder<T extends Entity> {
        private final EntityType.EntityFactory<T> f_20685_;
        private final MobCategory f_20686_;
-@@ -585,6 +_,11 @@
-       private int f_20693_ = 3;
+@@ -634,6 +_,11 @@
        private EntityDimensions f_20694_ = EntityDimensions.m_20395_(0.6F, 1.8F);
+       private FeatureFlagSet f_244453_ = FeatureFlags.f_244377_;
  
 +      private java.util.function.Predicate<EntityType<?>> velocityUpdateSupplier = EntityType::defaultVelocitySupplier;
 +      private java.util.function.ToIntFunction<EntityType<?>> trackingRangeSupplier = EntityType::defaultTrackingRangeSupplier;
@@ -90,7 +90,7 @@
        private Builder(EntityType.EntityFactory<T> p_20696_, MobCategory p_20697_) {
           this.f_20685_ = p_20696_;
           this.f_20686_ = p_20697_;
-@@ -641,12 +_,36 @@
+@@ -695,12 +_,36 @@
           return this;
        }
  
@@ -123,8 +123,8 @@
              Util.m_137456_(References.f_16785_, p_20713_);
           }
  
--         return new EntityType<>(this.f_20685_, this.f_20686_, this.f_20688_, this.f_20689_, this.f_20690_, this.f_20691_, this.f_20687_, this.f_20694_, this.f_20692_, this.f_20693_);
-+         return new EntityType<>(this.f_20685_, this.f_20686_, this.f_20688_, this.f_20689_, this.f_20690_, this.f_20691_, this.f_20687_, this.f_20694_, this.f_20692_, this.f_20693_, velocityUpdateSupplier, trackingRangeSupplier, updateIntervalSupplier, customClientFactory);
+-         return new EntityType<>(this.f_20685_, this.f_20686_, this.f_20688_, this.f_20689_, this.f_20690_, this.f_20691_, this.f_20687_, this.f_20694_, this.f_20692_, this.f_20693_, this.f_244453_);
++         return new EntityType<>(this.f_20685_, this.f_20686_, this.f_20688_, this.f_20689_, this.f_20690_, this.f_20691_, this.f_20687_, this.f_20694_, this.f_20692_, this.f_20693_, this.f_244453_, velocityUpdateSupplier, trackingRangeSupplier, updateIntervalSupplier, customClientFactory);
        }
     }
  

@@ -1,19 +1,19 @@
 --- a/net/minecraft/data/loot/LootTableProvider.java
 +++ b/net/minecraft/data/loot/LootTableProvider.java
-@@ -36,7 +_,7 @@
+@@ -35,7 +_,7 @@
  
-    public void m_213708_(CachedOutput p_236269_) {
+    public CompletableFuture<?> m_213708_(CachedOutput p_254060_) {
        Map<ResourceLocation, LootTable> map = Maps.newHashMap();
--      this.f_124434_.forEach((p_124458_) -> {
-+      this.getTables().forEach((p_124458_) -> {
-          p_124458_.getFirst().get().accept((p_176077_, p_176078_) -> {
-             if (map.put(p_176077_, p_176078_.m_79165_(p_124458_.getSecond()).m_79167_()) != null) {
-                throw new IllegalStateException("Duplicate loot table " + p_176077_);
-@@ -47,13 +_,8 @@
+-      this.f_124434_.forEach((p_248012_) -> {
++      this.getTables().forEach((p_248012_) -> {
+          p_248012_.f_243941_().get().m_245126_((p_248006_, p_248007_) -> {
+             if (map.put(p_248006_, p_248007_.m_79165_(p_248012_.f_244144_).m_79167_()) != null) {
+                throw new IllegalStateException("Duplicate loot table " + p_248006_);
+@@ -46,13 +_,8 @@
           return null;
        }, map::get);
  
--      for(ResourceLocation resourcelocation : Sets.difference(BuiltInLootTables.m_78766_(), map.keySet())) {
+-      for(ResourceLocation resourcelocation : Sets.difference(this.f_243940_, map.keySet())) {
 -         validationcontext.m_79357_("Missing built-in table: " + resourcelocation);
 -      }
 +      validate(map, validationcontext);
@@ -24,24 +24,24 @@
        Multimap<String, String> multimap = validationcontext.m_79352_();
        if (!multimap.isEmpty()) {
           multimap.forEach((p_124446_, p_124447_) -> {
-@@ -72,6 +_,20 @@
- 
-          });
+@@ -69,6 +_,20 @@
+             return new CompletableFuture[p_253403_];
+          }));
        }
 +   }
 +
-+   protected List<Pair<Supplier<Consumer<BiConsumer<ResourceLocation, LootTable.Builder>>>, LootContextParamSet>> getTables() {
-+      return f_124434_;
++   public List<LootTableProvider.SubProviderEntry> getTables() {
++      return this.f_124434_;
 +   }
 +
-+   protected void validate(Map<ResourceLocation, LootTable> map, ValidationContext validationtracker) {
-+      for(ResourceLocation resourcelocation : Sets.difference(BuiltInLootTables.m_78766_(), map.keySet())) {
-+         validationtracker.m_79357_("Missing built-in table: " + resourcelocation);
++   protected void validate(Map<ResourceLocation, LootTable> map, ValidationContext validationcontext) {
++      for(ResourceLocation resourcelocation : Sets.difference(this.f_243940_, map.keySet())) {
++         validationcontext.m_79357_("Missing built-in table: " + resourcelocation);
 +      }
 +
-+      map.forEach((p_218436_2_, p_218436_3_) -> {
-+         LootTables.m_79202_(validationtracker, p_218436_2_, p_218436_3_);
++      map.forEach((p_124441_, p_124442_) -> {
++         LootTables.m_79202_(validationcontext, p_124441_, p_124442_);
 +      });
     }
  
-    public String m_6055_() {
+    public final String m_6055_() {

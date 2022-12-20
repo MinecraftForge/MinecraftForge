@@ -15,25 +15,12 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Maps;
 import com.mojang.logging.LogUtils;
-import net.minecraft.Util;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.packs.PackType;
-import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.fml.loading.FMLPaths;
-import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.Nullable;
-import org.slf4j.Logger;
-import org.slf4j.Marker;
-import org.slf4j.MarkerFactory;
-
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -41,9 +28,22 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BiFunction;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import net.minecraft.Util;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.PackResources;
+import net.minecraft.server.packs.PackType;
+import net.minecraft.server.packs.resources.IoSupplier;
+import net.minecraftforge.common.ForgeConfigSpec;
+import net.minecraftforge.fml.loading.FMLPaths;
+import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
 
 /**
  * Cache manager for resources.
@@ -57,6 +57,7 @@ public class ResourceCacheManager
      * Logging marker to handle the hiding of the entries from the debug file.
      */
     private static final Marker RESOURCE_CACHE = MarkerFactory.getMarker("RESOURCE-CACHE");
+    private static final Joiner SLASH_JOINER = Joiner.on('/');
 
     /**
      * Indicates if the underlying namespaced managers need to support reloading.
@@ -72,7 +73,7 @@ public class ResourceCacheManager
     /**
      * The path builder (different users have different requirements for how they want to handle this)
      */
-    private final BiFunction<PackType, String, Path> pathBuilder;
+    private final BiFunction<PackType, String, List<Path>> pathBuilder;
 
     /**
      * The individual sub managers by pack type and namespace
@@ -87,14 +88,14 @@ public class ResourceCacheManager
      * @param pathBuilder          The path builder to use.
      */
     @Deprecated(since = "1.19.2", forRemoval = true)
-    public ResourceCacheManager(final boolean supportsReloading, final ForgeConfigSpec.BooleanValue indexOffThreadConfig, final BiFunction<PackType, String, Path> pathBuilder)
+    public ResourceCacheManager(final boolean supportsReloading, final ForgeConfigSpec.BooleanValue indexOffThreadConfig, final BiFunction<PackType, String, List<Path>> pathBuilder)
     {
         this.supportsReloading = supportsReloading;
         this.indexOnThreadConfigurationKey = Iterators.getLast(indexOffThreadConfig.getPath().iterator());
         this.pathBuilder = pathBuilder;
     }
 
-    public ResourceCacheManager(final boolean supportsReloading, final String indexOnThreadConfigurationKey, final BiFunction<PackType, String, Path> pathBuilder)
+    public ResourceCacheManager(final boolean supportsReloading, final String indexOnThreadConfigurationKey, final BiFunction<PackType, String, List<Path>> pathBuilder)
     {
         this.supportsReloading = supportsReloading;
         this.indexOnThreadConfigurationKey = indexOnThreadConfigurationKey;
@@ -108,7 +109,8 @@ public class ResourceCacheManager
      */
     public static boolean shouldUseCache()
     {
-        return ResourceManagerBootCacheConfigurationHandler.getInstance().getConfigValue("cachePackAccess", true);
+        // TODO 1.19.3: Fix resource listing cache -SS
+        return false; // ResourceManagerBootCacheConfigurationHandler.getInstance().getConfigValue("cachePackAccess", true);
     }
 
     /**
@@ -173,15 +175,16 @@ public class ResourceCacheManager
     }
 
     /**
-     * Returns the cached resources for the given pack type, namespace, path prefix and filter.
+     * Lists the cached resources for the given pack type, namespace, path prefix and filter.
      *
      * @param type              The type of pack to look up in (data or resource)
      * @param resourceNamespace The namespace of the resources to look up.
      * @param inputPath         The input path prefix to check for.
-     * @param filter            The ternary filter to apply.
-     * @return A collection of resource locations which match the given filter, have the input path as prefix, are in the right pack type and have the given namespace as namespace.
+     * @param resourceFunction  The function that turns a resource location into an input stream supplier.
+     * @param resourceOutput    The resource output to accept resources.
      */
-    public Collection<ResourceLocation> getResources(final PackType type, final String resourceNamespace, final Path inputPath, final Predicate<ResourceLocation> filter)
+    public void listResources(final PackType type, final String resourceNamespace, final Path inputPath, final BiFunction<PackType, ResourceLocation, IoSupplier<InputStream>> resourceFunction,
+            final PackResources.ResourceOutput resourceOutput)
     {
         final PackTypeAndNamespace key = new PackTypeAndNamespace(type, resourceNamespace);
         final NamespacedResourceCacheManager manager = managersByNamespace.get(key);
@@ -189,11 +192,11 @@ public class ResourceCacheManager
         // Check if we even have a cached manager with the given namespace, else return an empty collection.
         if (manager == null)
         {
-            return Collections.emptyList();
+            return;
         }
 
         // Request the data from the manager.
-        return manager.getResources(inputPath, filter);
+        manager.listResources(inputPath, loc -> resourceFunction.apply(type, loc), resourceOutput);
     }
 
     /**
@@ -271,7 +274,7 @@ public class ResourceCacheManager
         /**
          * The path builder to use.
          */
-        private final BiFunction<PackType, String, Path> pathBuilder;
+        private final BiFunction<PackType, String, List<Path>> pathBuilder;
         /**
          * The path walker stream factory to use.
          */
@@ -295,7 +298,7 @@ public class ResourceCacheManager
          * @param pathBuilder   The path builder to use.
          * @param pathFinder    The path walker stream factory to use.
          */
-        private NamespacedResourceCacheManager(final PackType packType, final String namespace, final boolean indexOnThread, BiFunction<PackType, String, Path> pathBuilder, final PathWalkerFactory pathFinder)
+        private NamespacedResourceCacheManager(final PackType packType, final String namespace, final boolean indexOnThread, BiFunction<PackType, String, List<Path>> pathBuilder, final PathWalkerFactory pathFinder)
         {
             this.packType = packType;
             this.namespace = namespace;
@@ -332,9 +335,14 @@ public class ResourceCacheManager
         {
             LOGGER.debug(RESOURCE_CACHE, "Indexing resources for pack type {} and namespace {}, on thread: {}", packType, namespace, Thread.currentThread().getName());
 
-            // Get the path to the root of the namespace in the current pack.
-            final Path rootPath = pathBuilder.apply(packType, namespace);
+            // Get the path(s) to the root of the namespace in the current pack.
+            final List<Path> rootPaths = pathBuilder.apply(packType, namespace);
 
+            rootPaths.forEach(this::doIndex);
+        }
+
+        private void doIndex(Path rootPath)
+        {
             // Stream element resource that combines a normalized path and a joined path using the "/" as separator.
             record PathWithLocationPath(Path path, String locationPath)
             {
@@ -344,8 +352,9 @@ public class ResourceCacheManager
             try (final Stream<Path> paths = pathFinder.createWalkingStream(rootPath))
             {
                 paths.parallel() // Run the stream in parallel
+                        .filter(Predicate.not(rootPath::equals))
                         .map(rootPath::relativize) // Relative to the given root.
-                        .map(path -> new PathWithLocationPath(path, Joiner.on('/').join(path))) // Create a common hierarchy.
+                        .map(path -> new PathWithLocationPath(path, SLASH_JOINER.join(path))) // Create a common hierarchy.
                         .filter(path -> ResourceLocation.isValidPath(path.locationPath())) // Only process valid paths
                         .map(path -> new ResourceCacheEntry(packType, namespace, path.path(), new ResourceLocation(namespace, path.locationPath()))) // Create a cache entry.
                         .forEach(this::injectIntoCache); // Inject the entry into the cache.
@@ -410,30 +419,30 @@ public class ResourceCacheManager
         }
 
         /**
-         * Looks up resources in the given input path prefix as well as those that match the filter.
+         * Looks up resources in the given input path prefix.
          *
          * @param inputPath The input path prefix to look in.
-         * @param filter    The filter which the resources must match.
-         * @return A collection of resource location which match the given path prefix and who match the filter.
+         * @param resourceFunction The function that turns a resource location into an input stream supplier.
+         * @param resourceOutput The resource output to accept resources.
          */
-        public Collection<ResourceLocation> getResources(final Path inputPath, final Predicate<ResourceLocation> filter)
+        public void listResources(final Path inputPath, Function<ResourceLocation, IoSupplier<InputStream>> resourceFunction, final PackResources.ResourceOutput resourceOutput)
         {
             // We only have a cache once the atomic flag has been set.
             if (!cacheLoaded())
             {
-                // We need to return a mutable object here because the callers actually mutate the collection.
-                return new ArrayList<>();
+                return;
             }
 
             // Use the input path prefix, we can not depend on a toString call here, since we need the / as separator.
-            final String pathEntry = Joiner.on('/').join(inputPath);
+            final String pathEntry = SLASH_JOINER.join(inputPath);
 
             // Since we inject into the cache recursively we can now just grab the map entry that is the prefix and loop over its values.
             // We use getOrDefault with a stream combination since the returned list needs to be mutable.
-            return entriesByPathPrefix.getOrDefault(pathEntry, Collections.emptyList()).stream()
-                    .map(ResourceCacheEntry::resourceLocation)
-                    .filter(filter)
-                    .collect(Collectors.toList());
+            List<ResourceCacheEntry> entries = this.entriesByPathPrefix.get(pathEntry);
+            if (entries == null)
+                return;
+
+            entries.forEach(cacheEntry -> resourceOutput.accept(cacheEntry.resourceLocation(), resourceFunction.apply(cacheEntry.resourceLocation())));
         }
 
         /**

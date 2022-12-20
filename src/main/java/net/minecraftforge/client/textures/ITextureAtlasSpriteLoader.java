@@ -6,10 +6,13 @@
 package net.minecraftforge.client.textures;
 
 import com.mojang.blaze3d.platform.NativeImage;
-import net.minecraft.client.renderer.texture.TextureAtlas;
+import net.minecraft.client.renderer.texture.SpriteContents;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.resources.metadata.animation.AnimationMetadataSection;
+import net.minecraft.client.resources.metadata.animation.FrameSize;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
-import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraftforge.client.event.RegisterTextureAtlasSpriteLoadersEvent;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -24,15 +27,16 @@ import org.jetbrains.annotations.NotNull;
  * }
  * </pre>
  *
- * @see net.minecraftforge.client.event.RegisterTextureAtlasSpriteLoadersEvent
+ * @see RegisterTextureAtlasSpriteLoadersEvent
  */
 public interface ITextureAtlasSpriteLoader
 {
+    SpriteContents loadContents(ResourceLocation name, Resource resource, FrameSize frameSize, NativeImage image,
+            AnimationMetadataSection animationMeta, ForgeTextureMetadata forgeMeta);
+
     /**
-     * Load a {@link TextureAtlasSprite} for the given resource.
+     * Creates a {@link TextureAtlasSprite} from the given {@link SpriteContents}.
      */
     @NotNull
-    TextureAtlasSprite load(TextureAtlas atlas, ResourceManager resourceManager, TextureAtlasSprite.Info textureInfo,
-                            Resource resource, int atlasWidth, int atlasHeight, int spriteX, int spriteY,
-                            int mipmapLevel, NativeImage image);
+    TextureAtlasSprite makeSprite(ResourceLocation atlasName, SpriteContents contents, int atlasWidth, int atlasHeight, int spriteX, int spriteY, int mipmapLevel);
 }

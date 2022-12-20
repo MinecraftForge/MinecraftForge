@@ -1,8 +1,8 @@
 --- a/net/minecraft/world/level/block/state/BlockBehaviour.java
 +++ b/net/minecraft/world/level/block/state/BlockBehaviour.java
-@@ -95,6 +_,17 @@
-       this.f_60449_ = p_60452_.f_60893_;
+@@ -101,6 +_,17 @@
        this.f_60438_ = p_60452_.f_60903_;
+       this.f_243733_ = p_60452_.f_244138_;
        this.f_60439_ = p_60452_;
 +      final ResourceLocation lootTableCache = p_60452_.f_60894_;
 +      if (lootTableCache != null) {
@@ -18,7 +18,7 @@
     }
  
     /** @deprecated */
-@@ -143,7 +_,7 @@
+@@ -149,7 +_,7 @@
     /** @deprecated */
     @Deprecated
     public void m_6810_(BlockState p_60515_, Level p_60516_, BlockPos p_60517_, BlockState p_60518_, boolean p_60519_) {
@@ -27,7 +27,7 @@
           p_60516_.m_46747_(p_60517_);
        }
  
-@@ -220,7 +_,7 @@
+@@ -230,7 +_,7 @@
     /** @deprecated */
     @Deprecated
     public boolean m_6864_(BlockState p_60470_, BlockPlaceContext p_60471_) {
@@ -36,7 +36,7 @@
     }
  
     /** @deprecated */
-@@ -350,8 +_,8 @@
+@@ -360,8 +_,8 @@
        if (f == -1.0F) {
           return 0.0F;
        } else {
@@ -47,17 +47,17 @@
        }
     }
  
-@@ -384,8 +_,7 @@
+@@ -394,8 +_,7 @@
  
     public final ResourceLocation m_60589_() {
        if (this.f_60440_ == null) {
--         ResourceLocation resourcelocation = Registry.f_122824_.m_7981_(this.m_7374_());
--         this.f_60440_ = new ResourceLocation(resourcelocation.m_135827_(), "blocks/" + resourcelocation.m_135815_());
+-         ResourceLocation resourcelocation = BuiltInRegistries.f_256975_.m_7981_(this.m_7374_());
+-         this.f_60440_ = resourcelocation.m_246208_("blocks/");
 +         this.f_60440_ = this.lootTableSupplier.get();
        }
  
        return this.f_60440_;
-@@ -408,6 +_,14 @@
+@@ -418,6 +_,14 @@
        return this.f_60439_.f_60888_;
     }
  
@@ -72,7 +72,7 @@
     public abstract static class BlockStateBase extends StateHolder<Block, BlockState> {
        private final int f_60594_;
        private final boolean f_60595_;
-@@ -492,18 +_,22 @@
+@@ -508,18 +_,22 @@
           return this.f_60595_;
        }
  
@@ -97,10 +97,10 @@
        public BlockState m_60717_(Rotation p_60718_) {
           return this.m_60734_().m_6843_(this.m_7160_(), p_60718_);
        }
-@@ -886,8 +_,9 @@
-       ResourceLocation f_60894_;
+@@ -911,8 +_,9 @@
        boolean f_60895_ = true;
        boolean f_60896_;
+       boolean f_243850_ = true;
 +      private java.util.function.Supplier<ResourceLocation> lootTableSupplier;
        BlockBehaviour.StateArgumentPredicate<EntityType<?>> f_60897_ = (p_60935_, p_60936_, p_60937_, p_60938_) -> {
 -         return p_60935_.m_60783_(p_60936_, p_60937_, Direction.UP) && p_60935_.m_60791_() < 14;
@@ -108,7 +108,7 @@
        };
        BlockBehaviour.StatePredicate f_60898_ = (p_60985_, p_60986_, p_60987_) -> {
           return p_60985_.m_60767_().m_76337_() && p_60985_.m_60838_(p_60986_, p_60987_);
-@@ -1018,9 +_,15 @@
+@@ -1046,9 +_,15 @@
           return this;
        }
  

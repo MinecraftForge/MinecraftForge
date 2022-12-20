@@ -7,13 +7,13 @@ package net.minecraftforge.debug.client.rendering;
 
 import java.util.Map;
 
+import com.mojang.math.Transformation;
+import net.minecraftforge.common.util.TransformationHelper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.google.common.collect.ImmutableMap;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Matrix4f;
-import com.mojang.math.Quaternion;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LightTexture;
@@ -43,6 +43,8 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLEnvironment;
+import org.joml.Matrix4f;
+import org.joml.Quaternionf;
 
 /**
  * This mod is testing the use of {@link RenderLevelStageEvent} and is a modifaction of a pre-existing test mod that used the old
@@ -185,13 +187,11 @@ public class RenderableTest
             var map = ImmutableMap.<String, Matrix4f>builder();
 
             var left = new Matrix4f();
-            left.setIdentity();
-            left.multiply(Quaternion.fromYXZ(0, 0, (float)Math.sin(time * 0.4) * 0.1f));
+            left.rotation((float)Math.sin(time * 0.4) * 0.1f, 0, 0, 1);
             map.put("object_1", left);
 
             var right = new Matrix4f();
-            right.setIdentity();
-            right.multiply(Quaternion.fromYXZ(0, 0, -(float)Math.sin(time * 0.4) * 0.1f));
+            right.rotation(-(float)Math.sin(time * 0.4) * 0.1f, 0, 0, 1);
             map.put("object_9", right);
 
             var transforms = CompositeRenderable.Transforms.of(map.build());

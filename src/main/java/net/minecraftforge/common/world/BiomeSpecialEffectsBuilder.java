@@ -7,6 +7,7 @@ package net.minecraftforge.common.world;
 
 import java.util.Optional;
 
+import net.minecraft.core.Holder;
 import net.minecraft.sounds.Music;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.level.biome.AmbientAdditionsSettings;
@@ -33,12 +34,12 @@ public class BiomeSpecialEffectsBuilder extends BiomeSpecialEffects.Builder
         baseEffects.getBackgroundMusic().ifPresent(builder::backgroundMusic);
         return builder;
     }
-    
+
     public static BiomeSpecialEffectsBuilder create(int fogColor, int waterColor, int waterFogColor, int skyColor)
     {
         return new BiomeSpecialEffectsBuilder(fogColor, waterColor, waterFogColor, skyColor);
     }
-    
+
     protected BiomeSpecialEffectsBuilder(int fogColor, int waterColor, int waterFogColor, int skyColor)
     {
         super();
@@ -47,62 +48,62 @@ public class BiomeSpecialEffectsBuilder extends BiomeSpecialEffects.Builder
         this.waterFogColor(waterFogColor);
         this.skyColor(skyColor);
     }
-    
+
     public int getFogColor()
     {
         return this.fogColor.getAsInt();
     }
-    
+
     public int waterColor()
     {
         return this.waterColor.getAsInt();
     }
-    
+
     public int getWaterFogColor()
     {
         return this.waterFogColor.getAsInt();
     }
-    
+
     public int getSkyColor()
     {
         return this.skyColor.getAsInt();
     }
-    
+
     public BiomeSpecialEffects.GrassColorModifier getGrassColorModifier()
     {
         return this.grassColorModifier;
     }
-    
+
     public Optional<Integer> getFoliageColorOverride()
     {
         return this.foliageColorOverride;
     }
-    
+
     public Optional<Integer> getGrassColorOverride()
     {
         return this.grassColorOverride;
     }
-    
+
     public Optional<AmbientParticleSettings> getAmbientParticle()
     {
         return this.ambientParticle;
     }
-    
-    public Optional<SoundEvent> getAmbientLoopSound()
+
+    public Optional<Holder<SoundEvent>> getAmbientLoopSound()
     {
         return this.ambientLoopSoundEvent;
     }
-    
+
     public Optional<AmbientMoodSettings> getAmbientMoodSound()
     {
         return this.ambientMoodSettings;
     }
-    
+
     public Optional<AmbientAdditionsSettings> getAmbientAdditionsSound()
     {
         return this.ambientAdditionsSettings;
     }
-    
+
     public Optional<Music> getBackgroundMusic()
     {
         return this.backgroundMusic;

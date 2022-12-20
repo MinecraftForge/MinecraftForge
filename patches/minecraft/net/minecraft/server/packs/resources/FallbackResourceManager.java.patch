@@ -1,0 +1,24 @@
+--- a/net/minecraft/server/packs/resources/FallbackResourceManager.java
++++ b/net/minecraft/server/packs/resources/FallbackResourceManager.java
+@@ -98,8 +_,11 @@
+ 
+       for(int i = this.f_10599_.size() - 1; i >= 0; --i) {
+          FallbackResourceManager.PackEntry fallbackresourcemanager$packentry = this.f_10599_.get(i);
+-         PackResources packresources = fallbackresourcemanager$packentry.f_215433_;
+-         if (packresources != null) {
++         PackResources pack = fallbackresourcemanager$packentry.f_215433_;
++         if (pack != null) {
++            var children = pack.getChildren();
++            var packs = children == null ? List.of(pack) : children;
++            for (final PackResources packresources : packs) {
+             IoSupplier<InputStream> iosupplier = packresources.m_214146_(this.f_10601_, p_215367_);
+             if (iosupplier != null) {
+                IoSupplier<ResourceMetadata> iosupplier1;
+@@ -113,6 +_,7 @@
+                }
+ 
+                list.add(new Resource(packresources, iosupplier, iosupplier1));
++            }
+             }
+          }
+ 

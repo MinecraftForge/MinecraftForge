@@ -1,0 +1,17 @@
+--- a/net/minecraft/client/resources/model/ModelBaker.java
++++ b/net/minecraft/client/resources/model/ModelBaker.java
+@@ -6,9 +_,13 @@
+ import net.minecraftforge.api.distmarker.OnlyIn;
+ 
+ @OnlyIn(Dist.CLIENT)
+-public interface ModelBaker {
++public interface ModelBaker extends net.minecraftforge.client.extensions.IForgeModelBaker {
+    UnbakedModel m_245361_(ResourceLocation p_252194_);
+ 
++   /**
++    * @deprecated Forge: Use {@link #bake(ResourceLocation, ModelState, java.util.function.Function)} instead.
++    */
++   @Deprecated
+    @Nullable
+    BakedModel m_245240_(ResourceLocation p_250776_, ModelState p_251280_);
+ }

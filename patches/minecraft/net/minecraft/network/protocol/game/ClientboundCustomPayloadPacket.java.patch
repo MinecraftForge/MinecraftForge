@@ -51,5 +51,5 @@
 +
 +   @Override public int getIndex() { return Integer.MAX_VALUE; }
 +   @Override public ResourceLocation getName() { return m_132042_(); }
-+   @org.jetbrains.annotations.Nullable @Override public FriendlyByteBuf getInternalData() { return this.f_132030_; }
++   @Override public FriendlyByteBuf getInternalData() { return m_132045_(); }
  }

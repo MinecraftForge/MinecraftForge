@@ -15,6 +15,7 @@ import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.data.DataGenerator;
+import net.minecraft.data.PackOutput;
 import net.minecraft.data.models.model.ModelLocationUtils;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
@@ -40,6 +41,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.model.generators.*;
 import net.minecraftforge.common.data.ExistingFileHelper;
+import net.minecraftforge.event.CreativeModeTabEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -117,7 +119,7 @@ public class CustomTransformTypeTest
     public static final RegistryObject<BlockEntityType<ItemHangerBlockEntity>>
             ITEM_HANGER_BE = BLOCK_ENTITY_TYPES.register("item_hanger", () -> BlockEntityType.Builder.of(ItemHangerBlockEntity::new, ITEM_HANGER_BLOCK.get()).build(null));
     public static final RegistryObject<Item>
-            ITEM_HANGER_ITEM = ITEMS.register("item_hanger", () -> new ItemHangerItem(ITEM_HANGER_BLOCK.get(), new Item.Properties().tab(CreativeModeTab.TAB_MISC)));
+            ITEM_HANGER_ITEM = ITEMS.register("item_hanger", () -> new ItemHangerItem(ITEM_HANGER_BLOCK.get(), new Item.Properties()));
 
     public CustomTransformTypeTest()
     {
@@ -126,22 +128,30 @@ public class CustomTransformTypeTest
         BLOCKS.register(modBus);
         BLOCK_ENTITY_TYPES.register(modBus);
         ITEMS.register(modBus);
+        modBus.addListener(this::addCreative);
+    }
+
+    private void addCreative(CreativeModeTabEvent.BuildContents event)
+    {
+        if (event.getTab() == CreativeModeTabs.INGREDIENTS)
+            event.accept(ITEM_HANGER_ITEM);
     }
 
     public void gatherData(GatherDataEvent event)
     {
         DataGenerator gen = event.getGenerator();
+        final PackOutput output = gen.getPackOutput();
 
-        gen.addProvider(event.includeClient(), new ItemModels(gen, event.getExistingFileHelper()));
-        gen.addProvider(event.includeClient(), new BlockStateModels(gen, event.getExistingFileHelper()));
+        gen.addProvider(event.includeClient(), new ItemModels(output, event.getExistingFileHelper()));
+        gen.addProvider(event.includeClient(), new BlockStateModels(output, event.getExistingFileHelper()));
     }
 
     public static class BlockStateModels extends BlockStateProvider
     {
 
-        public BlockStateModels(DataGenerator gen, ExistingFileHelper exFileHelper)
+        public BlockStateModels(PackOutput output, ExistingFileHelper exFileHelper)
         {
-            super(gen, MODID, exFileHelper);
+            super(output, MODID, exFileHelper);
         }
 
         @Override
@@ -156,9 +166,9 @@ public class CustomTransformTypeTest
 
     public static class ItemModels extends ItemModelProvider
     {
-        public ItemModels(DataGenerator generator, ExistingFileHelper existingFileHelper)
+        public ItemModels(PackOutput output, ExistingFileHelper existingFileHelper)
         {
-            super(generator, MODID, existingFileHelper);
+            super(output, MODID, existingFileHelper);
         }
 
         @Override

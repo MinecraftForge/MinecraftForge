@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/item/BannerItem.java
 +++ b/net/minecraft/world/item/BannerItem.java
-@@ -35,7 +_,8 @@
+@@ -36,7 +_,8 @@
                 holder.m_203543_().map((p_220002_) -> {
                    return p_220002_.m_135782_().m_214299_();
                 }).ifPresent((p_220006_) -> {

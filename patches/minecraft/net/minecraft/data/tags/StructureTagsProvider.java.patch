@@ -1,16 +1,16 @@
 --- a/net/minecraft/data/tags/StructureTagsProvider.java
 +++ b/net/minecraft/data/tags/StructureTagsProvider.java
-@@ -7,8 +_,13 @@
+@@ -9,8 +_,13 @@
  import net.minecraft.world.level.levelgen.structure.Structure;
  
  public class StructureTagsProvider extends TagsProvider<Structure> {
-+   /** @deprecated Forge: Use the {@link #StructureTagsProvider(DataGenerator, String, net.minecraftforge.common.data.ExistingFileHelper) mod id variant} */
++   /** @deprecated Forge: Use the {@linkplain #StructureTagsProvider(PackOutput, CompletableFuture, String, net.minecraftforge.common.data.ExistingFileHelper) mod id variant} */
 +   @Deprecated
-    public StructureTagsProvider(DataGenerator p_236437_) {
-       super(p_236437_, BuiltinRegistries.f_235988_);
+    public StructureTagsProvider(PackOutput p_256522_, CompletableFuture<HolderLookup.Provider> p_256661_) {
+       super(p_256522_, Registries.f_256944_, p_256661_);
 +   }
-+   public StructureTagsProvider(DataGenerator p_236437_, String modId, @org.jetbrains.annotations.Nullable net.minecraftforge.common.data.ExistingFileHelper existingFileHelper) {
-+      super(p_236437_, BuiltinRegistries.f_235988_, modId, existingFileHelper);
++   public StructureTagsProvider(PackOutput p_256522_, CompletableFuture<HolderLookup.Provider> p_256661_, String modId, @org.jetbrains.annotations.Nullable net.minecraftforge.common.data.ExistingFileHelper existingFileHelper) {
++      super(p_256522_, Registries.f_256944_, p_256661_, modId, existingFileHelper);
     }
  
-    protected void m_6577_() {
+    protected void m_6577_(HolderLookup.Provider p_256087_) {

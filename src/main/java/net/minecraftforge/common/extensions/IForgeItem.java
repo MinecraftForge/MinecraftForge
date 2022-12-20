@@ -304,18 +304,6 @@ public interface IForgeItem
     }
 
     /**
-     * Gets a list of tabs that items belonging to this class can display on,
-     * combined properly with getSubItems allows for a single item to span many
-     * sub-items across many tabs.
-     *
-     * @return A list of all tabs that this item could possibly be one.
-     */
-    default java.util.Collection<CreativeModeTab> getCreativeTabs()
-    {
-        return java.util.Collections.singletonList(self().getItemCategory());
-    }
-
-    /**
      *
      * Should this item, when held, allow sneak-clicks to pass through to the
      * underlying block?
@@ -616,7 +604,7 @@ public interface IForgeItem
      */
     default boolean canContinueUsing(ItemStack oldStack, ItemStack newStack)
     {
-        return ItemStack.isSameIgnoreDurability(oldStack, newStack);
+        return ItemStack.isSame(oldStack, newStack);
     }
 
     /**

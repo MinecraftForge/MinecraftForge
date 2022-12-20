@@ -1,14 +1,14 @@
 --- a/net/minecraft/server/players/PlayerList.java
 +++ b/net/minecraft/server/players/PlayerList.java
-@@ -125,6 +_,7 @@
+@@ -131,6 +_,7 @@
     private boolean f_11209_;
     private static final boolean f_143988_ = false;
     private int f_11210_;
 +   private final List<ServerPlayer> playersView = java.util.Collections.unmodifiableList(f_11196_);
  
-    public PlayerList(MinecraftServer p_203842_, RegistryAccess.Frozen p_203843_, PlayerDataStorage p_203844_, int p_203845_) {
+    public PlayerList(MinecraftServer p_203842_, LayeredRegistryAccess<RegistryLayer> p_251844_, PlayerDataStorage p_203844_, int p_203845_) {
        this.f_11195_ = p_203842_;
-@@ -160,6 +_,7 @@
+@@ -167,6 +_,7 @@
        LevelData leveldata = serverlevel1.m_6106_();
        p_11263_.m_143427_(compoundtag);
        ServerGamePacketListenerImpl servergamepacketlistenerimpl = new ServerGamePacketListenerImpl(this.f_11195_, p_11262_, p_11263_);
@@ -16,15 +16,15 @@
        GameRules gamerules = serverlevel1.m_46469_();
        boolean flag = gamerules.m_46207_(GameRules.f_46156_);
        boolean flag1 = gamerules.m_46207_(GameRules.f_46145_);
-@@ -168,6 +_,7 @@
+@@ -176,6 +_,7 @@
        servergamepacketlistenerimpl.m_9829_(new ClientboundChangeDifficultyPacket(leveldata.m_5472_(), leveldata.m_5474_()));
        servergamepacketlistenerimpl.m_9829_(new ClientboundPlayerAbilitiesPacket(p_11263_.m_150110_()));
        servergamepacketlistenerimpl.m_9829_(new ClientboundSetCarriedItemPacket(p_11263_.m_150109_().f_35977_));
 +      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.OnDatapackSyncEvent(this, p_11263_));
        servergamepacketlistenerimpl.m_9829_(new ClientboundUpdateRecipesPacket(this.f_11195_.m_129894_().m_44051_()));
-       servergamepacketlistenerimpl.m_9829_(new ClientboundUpdateTagsPacket(TagNetworkSerialization.m_203950_(this.f_11206_)));
+       servergamepacketlistenerimpl.m_9829_(new ClientboundUpdateTagsPacket(TagNetworkSerialization.m_245799_(this.f_243858_)));
        this.m_11289_(p_11263_);
-@@ -240,6 +_,7 @@
+@@ -244,6 +_,7 @@
        }
  
        p_11263_.m_143429_();
@@ -32,7 +32,7 @@
     }
  
     protected void m_11273_(ServerScoreboard p_11274_, ServerPlayer p_11275_) {
-@@ -300,6 +_,7 @@
+@@ -304,6 +_,7 @@
           compoundtag1 = compoundtag;
           p_11225_.m_20258_(compoundtag);
           f_11188_.debug("loading single player");
@@ -40,7 +40,7 @@
        } else {
           compoundtag1 = this.f_11204_.m_78435_(p_11225_);
        }
-@@ -308,6 +_,7 @@
+@@ -312,6 +_,7 @@
     }
  
     protected void m_6765_(ServerPlayer p_11277_) {
@@ -48,7 +48,7 @@
        this.f_11204_.m_78433_(p_11277_);
        ServerStatsCounter serverstatscounter = this.f_11202_.get(p_11277_.m_20148_());
        if (serverstatscounter != null) {
-@@ -322,6 +_,7 @@
+@@ -326,6 +_,7 @@
     }
  
     public void m_11286_(ServerPlayer p_11287_) {
@@ -56,7 +56,7 @@
        ServerLevel serverlevel = p_11287_.m_9236_();
        p_11287_.m_36220_(Stats.f_12989_);
        this.m_6765_(p_11287_);
-@@ -462,6 +_,7 @@
+@@ -467,6 +_,7 @@
        this.f_11197_.put(serverplayer.m_20148_(), serverplayer);
        serverplayer.m_143429_();
        serverplayer.m_21153_(serverplayer.m_21223_());
@@ -64,7 +64,7 @@
        if (flag2) {
           serverplayer.f_8906_.m_9829_(new ClientboundSoundPacket(SoundEvents.f_12377_, SoundSource.BLOCKS, (double)blockpos.m_123341_(), (double)blockpos.m_123342_(), (double)blockpos.m_123343_(), 1.0F, 1.0F, serverlevel1.m_213780_().m_188505_()));
        }
-@@ -546,6 +_,7 @@
+@@ -551,6 +_,7 @@
     }
  
     public void m_5749_(GameProfile p_11254_) {
@@ -72,7 +72,7 @@
        this.f_11200_.m_11381_(new ServerOpListEntry(p_11254_, this.f_11195_.m_7022_(), this.f_11200_.m_11351_(p_11254_)));
        ServerPlayer serverplayer = this.m_11259_(p_11254_.getId());
        if (serverplayer != null) {
-@@ -555,6 +_,7 @@
+@@ -560,6 +_,7 @@
     }
  
     public void m_5750_(GameProfile p_11281_) {
@@ -80,7 +80,7 @@
        this.f_11200_.m_11393_(p_11281_);
        ServerPlayer serverplayer = this.m_11259_(p_11281_.getId());
        if (serverplayer != null) {
-@@ -784,13 +_,6 @@
+@@ -774,13 +_,6 @@
        if (serverstatscounter == null) {
           File file1 = this.f_11195_.m_129843_(LevelResource.f_78175_).toFile();
           File file2 = new File(file1, uuid + ".json");
@@ -94,7 +94,7 @@
  
           serverstatscounter = new ServerStatsCounter(this.f_11195_, file2);
           this.f_11202_.put(uuid, serverstatscounter);
-@@ -809,6 +_,8 @@
+@@ -799,6 +_,8 @@
           this.f_11203_.put(uuid, playeradvancements);
        }
  
@@ -103,7 +103,7 @@
        playeradvancements.m_135979_(p_11297_);
        return playeradvancements;
     }
-@@ -838,7 +_,7 @@
+@@ -828,7 +_,7 @@
     }
  
     public List<ServerPlayer> m_11314_() {
@@ -112,11 +112,11 @@
     }
  
     @Nullable
-@@ -855,6 +_,7 @@
+@@ -845,6 +_,7 @@
           playeradvancements.m_135981_(this.f_11195_.m_129889_());
        }
  
 +      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.OnDatapackSyncEvent(this, null));
-       this.m_11268_(new ClientboundUpdateTagsPacket(TagNetworkSerialization.m_203950_(this.f_11206_)));
+       this.m_11268_(new ClientboundUpdateTagsPacket(TagNetworkSerialization.m_245799_(this.f_243858_)));
        ClientboundUpdateRecipesPacket clientboundupdaterecipespacket = new ClientboundUpdateRecipesPacket(this.f_11195_.m_129894_().m_44051_());
  

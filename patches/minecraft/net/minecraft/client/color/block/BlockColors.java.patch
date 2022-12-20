@@ -19,7 +19,7 @@
     }
  
     public int m_92582_(BlockState p_92583_, Level p_92584_, BlockPos p_92585_) {
--      BlockColor blockcolor = this.f_92571_.m_7942_(Registry.f_122824_.m_7447_(p_92583_.m_60734_()));
+-      BlockColor blockcolor = this.f_92571_.m_7942_(BuiltInRegistries.f_256975_.m_7447_(p_92583_.m_60734_()));
 +      BlockColor blockcolor = this.f_92571_.get(net.minecraftforge.registries.ForgeRegistries.BLOCKS.getDelegateOrThrow(p_92583_.m_60734_()));
        if (blockcolor != null) {
           return blockcolor.m_92566_(p_92583_, (BlockAndTintGetter)null, (BlockPos)null, 0);
@@ -28,7 +28,7 @@
     }
  
     public int m_92577_(BlockState p_92578_, @Nullable BlockAndTintGetter p_92579_, @Nullable BlockPos p_92580_, int p_92581_) {
--      BlockColor blockcolor = this.f_92571_.m_7942_(Registry.f_122824_.m_7447_(p_92578_.m_60734_()));
+-      BlockColor blockcolor = this.f_92571_.m_7942_(BuiltInRegistries.f_256975_.m_7447_(p_92578_.m_60734_()));
 +      BlockColor blockcolor = this.f_92571_.get(net.minecraftforge.registries.ForgeRegistries.BLOCKS.getDelegateOrThrow(p_92578_.m_60734_()));
        return blockcolor == null ? -1 : blockcolor.m_92566_(p_92578_, p_92579_, p_92580_, p_92581_);
     }
@@ -37,7 +37,7 @@
 +   @Deprecated
     public void m_92589_(BlockColor p_92590_, Block... p_92591_) {
        for(Block block : p_92591_) {
--         this.f_92571_.m_122664_(p_92590_, Registry.f_122824_.m_7447_(block));
+-         this.f_92571_.m_122664_(p_92590_, BuiltInRegistries.f_256975_.m_7447_(block));
 +         this.f_92571_.put(net.minecraftforge.registries.ForgeRegistries.BLOCKS.getDelegateOrThrow(block), p_92590_);
        }
  

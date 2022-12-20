@@ -5,10 +5,11 @@
 
 package net.minecraftforge.common.data;
 
-import com.mojang.datafixers.util.Pair;
 import net.minecraft.advancements.critereon.ItemPredicate;
-import net.minecraft.data.DataGenerator;
+import net.minecraft.data.PackOutput;
 import net.minecraft.data.loot.LootTableProvider;
+import net.minecraft.data.loot.LootTableSubProvider;
+import net.minecraft.data.loot.packs.VanillaLootTableProvider;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.resources.ResourceLocation;
@@ -24,9 +25,6 @@ import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import net.minecraft.world.level.storage.loot.LootPool;
@@ -34,32 +32,30 @@ import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.ValidationContext;
 import net.minecraft.world.level.storage.loot.entries.CompositeEntryBase;
 import net.minecraft.world.level.storage.loot.entries.LootPoolEntryContainer;
-import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
 
 /**
  * Currently used only for replacing shears item to shears_dig tool action
  */
 public final class ForgeLootTableProvider extends LootTableProvider {
-
-    public ForgeLootTableProvider(DataGenerator gen) {
-        super(gen);
+    public ForgeLootTableProvider(PackOutput packOutput) {
+        super(packOutput, Set.of(), VanillaLootTableProvider.create(packOutput).getTables());
     }
 
     @Override
-    protected void validate(Map<ResourceLocation, LootTable> map, ValidationContext validationtracker) {
-        // do not validate against all registered loot tables
+    protected void validate(Map<ResourceLocation, LootTable> map, ValidationContext validationcontext) {
+        // Do not validate against all registered loot tables
     }
 
     @Override
-    protected List<Pair<Supplier<Consumer<BiConsumer<ResourceLocation, LootTable.Builder>>>, LootContextParamSet>> getTables() {
-        return super.getTables().stream().map(pair -> {
-            // provides new consumer with filtering only changed loot tables and replacing condition item to condition tag
-            return new Pair<Supplier<Consumer<BiConsumer<ResourceLocation, LootTable.Builder>>>, LootContextParamSet>(() -> replaceAndFilterChangesOnly(pair.getFirst().get()), pair.getSecond());
+    public List<LootTableProvider.SubProviderEntry> getTables() {
+        return super.getTables().stream().map(entry -> {
+            // Provides new sub provider with filtering only changed loot tables and replacing condition item to condition tag
+            return new LootTableProvider.SubProviderEntry(() -> replaceAndFilterChangesOnly(entry.provider().get()), entry.paramSet());
         }).collect(Collectors.toList());
     }
 
-    private Consumer<BiConsumer<ResourceLocation, LootTable.Builder>> replaceAndFilterChangesOnly(Consumer<BiConsumer<ResourceLocation, LootTable.Builder>> consumer) {
-        return (newConsumer) -> consumer.accept((resourceLocation, builder) -> {
+    private LootTableSubProvider replaceAndFilterChangesOnly(LootTableSubProvider subProvider) {
+        return newConsumer -> subProvider.generate((resourceLocation, builder) -> {
             if (findAndReplaceInLootTableBuilder(builder, Items.SHEARS, ToolActions.SHEARS_DIG)) {
                 newConsumer.accept(resourceLocation, builder);
             }
