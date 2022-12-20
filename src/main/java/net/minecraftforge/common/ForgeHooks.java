@@ -50,17 +50,20 @@ import it.unimi.dsi.fastutil.longs.LongSet;
 import net.minecraft.ResourceLocationException;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.core.*;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.datafix.fixes.StructuresBecomeConfiguredFix;
 import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.DefaultAttributes;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.monster.EnderMan;
+import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeType;
@@ -128,6 +131,7 @@ import net.minecraftforge.common.world.MobSpawnSettingsBuilder;
 import net.minecraftforge.event.AnvilUpdateEvent;
 import net.minecraftforge.event.DifficultyChangeEvent;
 import net.minecraftforge.event.ForgeEventFactory;
+import net.minecraftforge.event.GrindstoneEvent;
 import net.minecraftforge.event.ItemAttributeModifierEvent;
 import net.minecraftforge.event.ModMismatchEvent;
 import net.minecraftforge.event.ServerChatEvent;
@@ -708,6 +712,41 @@ public class ForgeHooks
         AnvilRepairEvent e = new AnvilRepairEvent(player, left, right, output);
         MinecraftForge.EVENT_BUS.post(e);
         return e.getBreakChance();
+    }
+
+    public static int onGrindstoneChange(@Nonnull ItemStack top, @Nonnull ItemStack bottom, Container outputSlot, int xp)
+    {
+        GrindstoneEvent.OnPlaceItem e = new GrindstoneEvent.OnPlaceItem(top, bottom, xp);
+        if (MinecraftForge.EVENT_BUS.post(e))
+        {
+            outputSlot.setItem(0, ItemStack.EMPTY);
+            return -1;
+        }
+        if (e.getOutput().isEmpty()) return Integer.MIN_VALUE;
+
+        outputSlot.setItem(0, e.getOutput());
+        return e.getXp();
+    }
+
+    public static boolean onGrindstoneTake(Container inputSlots, ContainerLevelAccess access, Function<Level, Integer> xpFunction)
+    {
+        access.execute((l,p) -> {
+            int xp = xpFunction.apply(l);
+            GrindstoneEvent.OnTakeItem e = new GrindstoneEvent.OnTakeItem(inputSlots.getItem(0), inputSlots.getItem(1), xp);
+            if (MinecraftForge.EVENT_BUS.post(e))
+            {
+                return;
+            }
+            if (l instanceof ServerLevel serverLevel)
+            {
+                ExperienceOrb.award(serverLevel, Vec3.atCenterOf(p), e.getXp());
+            }
+            l.levelEvent(1042, p, 0);
+            inputSlots.setItem(0, e.getNewTopItem());
+            inputSlots.setItem(1, e.getNewBottomItem());
+            inputSlots.setChanged();
+        });
+        return true;
     }
 
     private static ThreadLocal<Player> craftingPlayer = new ThreadLocal<Player>();

@@ -240,5 +240,7 @@ license="LGPL v2.1"
     modId="potentialspawnsevent_test"
 [[mods]]
     modId="block_grow_feature_test"
+[[mods]]
+    modId="grindstone_event_test"
 
 # ADD ABOVE THIS LINE
