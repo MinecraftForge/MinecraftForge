@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) Forge Development LLC and contributors
+ * SPDX-License-Identifier: LGPL-2.1-only
+ */
+
 package net.minecraftforge.event.entity.player;
 
 import net.minecraft.world.entity.npc.AbstractVillager;
@@ -5,22 +10,22 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.trading.MerchantOffer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Cancelable;
+import org.jetbrains.annotations.ApiStatus;
 
 /**
- * TradeWithVillagerEvent is fired when a player trades with
- * a villager inheriting from {@link AbstractVillager}. <br>
- * <br>
- * This event is not {@link Cancelable}.<br>
- * <br>
- * This event does not have a result. {@link HasResult} <br>
- * <br>
- * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
+ * Fired when a player trades with an {@link AbstractVillager}.
+ *
+ * <p>This event is not {@linkplain Cancelable cancellable}, and does not {@linkplain Event.HasResult have a result}.</p>
+ *
+ * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
+ * only on the {@linkplain LogicalSide#SERVER logical server}.</p>
  */
 public class TradeWithVillagerEvent extends PlayerEvent
 {
     private final MerchantOffer offer;
     private final AbstractVillager abstractVillager;
 
+    @ApiStatus.Internal
     public TradeWithVillagerEvent(Player player, MerchantOffer offer, AbstractVillager abstractVillager)
     {
         super(player);
@@ -29,7 +34,7 @@ public class TradeWithVillagerEvent extends PlayerEvent
     }
 
     /**
-     * The {@link MerchantOffer} the player used to trade with the villager.
+     * {@return the {@link MerchantOffer} selected by the player to trade with}
      */
     public MerchantOffer getMerchantOffer()
     {
@@ -37,7 +42,7 @@ public class TradeWithVillagerEvent extends PlayerEvent
     }
 
     /**
-     * The {@link AbstractVillager} used to complete the trade with.
+     * {@return the villager the player traded with}
      */
     public AbstractVillager getAbstractVillager()
     {
