@@ -114,6 +114,25 @@ public class ForgeGameTestHooks
         return "minecraft";
     }
 
+    public static String getBatch(Method method)
+    {
+        GameTest gameTest = method.getAnnotation(GameTest.class);
+
+        if (gameTest != null && !gameTest.batch().isEmpty())
+        {
+            return gameTest.batch();
+        }
+
+        GameTestHolder gameTestHolder = method.getDeclaringClass().getAnnotation(GameTestHolder.class);
+
+        if (gameTestHolder != null)
+        {
+            return gameTestHolder.batch();
+        }
+
+        return "defaultBatch";
+    }
+
     public static boolean prefixGameTestTemplate(Method method)
     {
         PrefixGameTestTemplate annotation = method.getAnnotation(PrefixGameTestTemplate.class);

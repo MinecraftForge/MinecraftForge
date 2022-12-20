@@ -25,4 +25,9 @@ public @interface GameTestHolder
      * Used as the default {@link GameTest#templateNamespace() template namespace} for any game tests in the class that do not specify one.
      */
     String value() default "minecraft";
+
+    /**
+     * Used as the default {@link GameTest#batch() batch} for any game tests in the class that do not specify one.
+     */
+    String batch() default "defaultBatch";
 }

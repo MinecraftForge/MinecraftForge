@@ -1,14 +1,20 @@
 --- a/net/minecraft/gametest/framework/GameTest.java
 +++ b/net/minecraft/gametest/framework/GameTest.java
-@@ -16,6 +_,11 @@
+@@ -10,11 +_,16 @@
+ public @interface GameTest {
+    int m_177042_() default 100;
+ 
+-   String m_177043_() default "defaultBatch";
++   String m_177043_() default "";
+ 
+    int m_177044_() default 0;
  
     boolean m_177045_() default true;
- 
++
 +   /**
 +    * The namespace of where to grab the structure from, generally a mod id.
 +    */
 +   String templateNamespace() default "";
-+
+ 
     String m_177046_() default "";
  
-    long m_177047_() default 0L;
