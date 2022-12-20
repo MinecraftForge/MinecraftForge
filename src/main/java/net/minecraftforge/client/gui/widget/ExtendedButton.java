@@ -33,6 +33,11 @@ public class ExtendedButton extends Button
         super(xPos, yPos, width, height, displayString, handler, createNarration);
     }
 
+    public ExtendedButton(Button.Builder builder)
+    {
+        super(builder);
+    }
+
     /**
      * Draws this button to the screen.
      */

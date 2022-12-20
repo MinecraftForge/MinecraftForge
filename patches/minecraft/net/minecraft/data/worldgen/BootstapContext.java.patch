@@ -1,0 +1,9 @@
+--- a/net/minecraft/data/worldgen/BootstapContext.java
++++ b/net/minecraft/data/worldgen/BootstapContext.java
+@@ -14,4 +_,6 @@
+    }
+ 
+    <S> HolderGetter<S> m_255420_(ResourceKey<? extends Registry<? extends S>> p_256410_);
++
++   default <S> java.util.Optional<net.minecraft.core.HolderLookup.RegistryLookup<S>> registryLookup(ResourceKey<? extends Registry<? extends S>> registry) { return java.util.Optional.empty(); }
+ }
