@@ -14,6 +14,8 @@ license="LGPL v2.1"
     modId="potentialspawnsevent_test"
 [[mods]]
     modId="block_grow_feature_test"
+[[mods]]
+    modId="biome_modifiers_test"
 
 [[mods]]
     modId="advancement_event_test"
@@ -268,6 +270,8 @@ modId="item_stacked_on_other_test"
 modId="ambient_occlusion_elements_test"
 [[mods]]
 modId="grindstone_event_test"
+[[mods]]
+modId="data_pack_registries_test"
 [[mods]]
 modId="creative_mode_tab_test"
 

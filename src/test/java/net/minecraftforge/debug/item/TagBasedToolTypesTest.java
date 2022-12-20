@@ -7,6 +7,7 @@ package net.minecraftforge.debug.item;
 
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.DataGenerator;
+import net.minecraft.data.PackOutput;
 import net.minecraft.data.loot.BlockLootSubProvider;
 import net.minecraft.data.loot.LootTableProvider;
 import net.minecraft.resources.ResourceLocation;
@@ -112,8 +113,9 @@ public class TagBasedToolTypesTest
     {
         DataGenerator gen = event.getGenerator();
         ExistingFileHelper existing = event.getExistingFileHelper();
+        final PackOutput output = gen.getPackOutput();
 
-        gen.addProvider(event.includeServer(), new BlockTagsProvider(gen.getPackOutput(), event.getLookupProvider(), MODID, existing)
+        gen.addProvider(event.includeServer(), new BlockTagsProvider(output, event.getLookupProvider(), MODID, existing)
         {
             @Override
             protected void addTags(HolderLookup.Provider registry) {
@@ -143,17 +145,15 @@ public class TagBasedToolTypesTest
 
         gen.addProvider(event.includeServer(), new LootTableProvider(event.getGenerator().getPackOutput(), Set.of(), List.of(new LootTableProvider.SubProviderEntry(TestBlockLootProvider::new, LootContextParamSets.BLOCK))));
 
-        gen.addProvider(event.includeClient(), new BlockStateProvider(gen, MODID, existing)
+        gen.addProvider(event.includeClient(), new BlockStateProvider(output, MODID, existing)
         {
             @Override
             protected void registerStatesAndModels()
             {
-                ModelFile model = models().cubeAll(STONE.getId().getPath(), mcLoc("block/debug"));
-                simpleBlock(STONE.get(), model);
-                simpleBlockItem(STONE.get(), model);
+                simpleBlockWithItem(STONE.get(), models().cubeAll(STONE.getId().getPath(), mcLoc("block/debug")));
             }
         });
-        gen.addProvider(event.includeClient(), new ItemModelProvider(gen, MODID, existing)
+        gen.addProvider(event.includeClient(), new ItemModelProvider(output, MODID, existing)
         {
             @Override
             protected void registerModels()

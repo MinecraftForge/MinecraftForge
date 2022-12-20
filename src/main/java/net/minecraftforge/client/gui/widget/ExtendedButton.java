@@ -33,6 +33,11 @@ public class ExtendedButton extends Button
         super(xPos, yPos, width, height, displayString, handler, createNarration);
     }
 
+    public ExtendedButton(Button.Builder builder)
+    {
+        super(builder);
+    }
+
     /**
      * Draws this button to the screen.
      */
@@ -40,7 +45,7 @@ public class ExtendedButton extends Button
     public void renderButton(PoseStack poseStack, int mouseX, int mouseY, float partialTick)
     {
         Minecraft mc = Minecraft.getInstance();
-        int k = this.getYImage(this.isHovered);
+        int k = this.getYImage(this.isHoveredOrFocused());
         ScreenUtils.blitWithBorder(poseStack, WIDGETS_LOCATION, this.getX(), this.getY(), 0, 46 + k * 20, this.width, this.height, 200, 20, 2, 3, 2, 2, this.getBlitOffset());
         this.renderBg(poseStack, mc, mouseX, mouseY);
 

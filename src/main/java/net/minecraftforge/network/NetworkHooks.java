@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraftforge.client.ConfigScreenHandler;
 import net.minecraftforge.fml.util.thread.EffectiveSide;
 import net.minecraftforge.network.ConnectionData.ModMismatchData;
@@ -66,9 +67,11 @@ public class NetworkHooks
         return ConnectionType.forVersionFlag(channel.attr(NetworkConstants.FML_NETVERSION).get());
     }
 
-    public static Packet<?> getEntitySpawningPacket(Entity entity)
+    @SuppressWarnings("unchecked")
+    public static Packet<ClientGamePacketListener> getEntitySpawningPacket(Entity entity)
     {
-        return NetworkConstants.playChannel.toVanillaPacket(new PlayMessages.SpawnEntity(entity), NetworkDirection.PLAY_TO_CLIENT);
+        // ClientboundCustomPayloadPacket is an instance of Packet<ClientGamePacketListener>
+        return (Packet<ClientGamePacketListener>) NetworkConstants.playChannel.toVanillaPacket(new PlayMessages.SpawnEntity(entity), NetworkDirection.PLAY_TO_CLIENT);
     }
 
     public static boolean onCustomPayload(final ICustomPacket<?> packet, final Connection manager) {

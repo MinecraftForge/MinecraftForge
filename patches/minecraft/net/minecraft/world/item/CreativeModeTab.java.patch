@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/item/CreativeModeTab.java
 +++ b/net/minecraft/world/item/CreativeModeTab.java
-@@ -28,14 +_,26 @@
+@@ -28,14 +_,30 @@
     private Consumer<List<ItemStack>> f_256965_;
     private final Supplier<ItemStack> f_256912_;
     private final CreativeModeTab.DisplayItemsGenerator f_256824_;
@@ -25,6 +25,10 @@
 +      this.tabsImage = tabsImage;
 +      this.labelColor = labelColor;
 +      this.slotColor = slotColor;
++   }
++
++   protected CreativeModeTab(CreativeModeTab.Builder builder) {
++      this(builder.f_256796_, builder.f_256977_, builder.f_256847_, builder.f_256856_, builder.f_256981_, builder.f_256953_, builder.backgroundLocation, builder.hasSearchBar, builder.searchBarWidth, builder.tabsImage, builder.labelColor, builder.slotColor);
     }
  
     public static CreativeModeTab.Builder m_257815_(CreativeModeTab.Row p_259342_, int p_260312_) {
@@ -83,7 +87,7 @@
        private final CreativeModeTab.Row f_256796_;
        private final int f_256977_;
        private Component f_256856_ = Component.m_237119_();
-@@ -136,6 +_,13 @@
+@@ -136,6 +_,14 @@
        private boolean f_256854_ = false;
        private CreativeModeTab.Type f_256847_ = CreativeModeTab.Type.CATEGORY;
        private String f_257036_ = "items.png";
@@ -94,10 +98,11 @@
 +      private net.minecraft.resources.ResourceLocation tabsImage = CREATIVE_INVENTORY_TABS_IMAGE;
 +      private int labelColor = 4210752;
 +      private int slotColor = -2130706433;
++      private java.util.function.Function<CreativeModeTab.Builder, CreativeModeTab> tabFactory = CreativeModeTab::new;
  
        public Builder(CreativeModeTab.Row p_259171_, int p_259661_) {
           this.f_256796_ = p_259171_;
-@@ -174,23 +_,57 @@
+@@ -174,11 +_,49 @@
  
        protected CreativeModeTab.Builder m_257623_(CreativeModeTab.Type p_259283_) {
           this.f_256847_ = p_259283_;
@@ -108,7 +113,6 @@
  
        public CreativeModeTab.Builder m_257609_(String p_259981_) {
 -         this.f_257036_ = p_259981_;
--         return this;
 +         return withBackgroundLocation(new net.minecraft.resources.ResourceLocation("textures/gui/container/creative_inventory/tab_" + p_259981_));
 +      }
 +
@@ -142,14 +146,19 @@
 +      public CreativeModeTab.Builder withSlotColor(int slotColor) {
 +          this.slotColor = slotColor;
 +          return this;
++      }
++
++      public CreativeModeTab.Builder withTabFactory(java.util.function.Function<CreativeModeTab.Builder, CreativeModeTab> tabFactory) {
++         this.tabFactory = tabFactory;
+          return this;
        }
  
-       public CreativeModeTab m_257652_() {
+@@ -186,11 +_,12 @@
           if ((this.f_256847_ == CreativeModeTab.Type.HOTBAR || this.f_256847_ == CreativeModeTab.Type.INVENTORY) && this.f_256953_ != f_256756_) {
              throw new IllegalStateException("Special tabs can't have display items");
           } else {
 -            CreativeModeTab creativemodetab = new CreativeModeTab(this.f_256796_, this.f_256977_, this.f_256847_, this.f_256856_, this.f_256981_, this.f_256953_);
-+            CreativeModeTab creativemodetab = new CreativeModeTab(this.f_256796_, this.f_256977_, this.f_256847_, this.f_256856_, this.f_256981_, this.f_256953_, this.backgroundLocation, this.hasSearchBar, this.searchBarWidth, this.tabsImage, this.labelColor, this.slotColor);
++            CreativeModeTab creativemodetab = tabFactory.apply(this);
              creativemodetab.f_257018_ = this.f_256854_;
              creativemodetab.f_40768_ = this.f_256851_;
              creativemodetab.f_40767_ = this.f_256992_;

@@ -16,7 +16,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import net.minecraft.data.CachedOutput;
-import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
@@ -34,7 +33,7 @@ public abstract class ModelProvider<T extends ModelBuilder<T>> implements DataPr
     protected static final ResourceType MODEL_WITH_EXTENSION = new ResourceType(PackType.CLIENT_RESOURCES, "", "models");
 
     private static final Gson GSON = (new GsonBuilder()).setPrettyPrinting().create();
-    protected final DataGenerator generator;
+    protected final PackOutput output;
     protected final String modid;
     protected final String folder;
     protected final Function<ResourceLocation, T> factory;
@@ -45,9 +44,9 @@ public abstract class ModelProvider<T extends ModelBuilder<T>> implements DataPr
 
     protected abstract void registerModels();
 
-    public ModelProvider(DataGenerator generator, String modid, String folder, Function<ResourceLocation, T> factory, ExistingFileHelper existingFileHelper) {
-        Preconditions.checkNotNull(generator);
-        this.generator = generator;
+    public ModelProvider(PackOutput output, String modid, String folder, Function<ResourceLocation, T> factory, ExistingFileHelper existingFileHelper) {
+        Preconditions.checkNotNull(output);
+        this.output = output;
         Preconditions.checkNotNull(modid);
         this.modid = modid;
         Preconditions.checkNotNull(folder);
@@ -58,8 +57,8 @@ public abstract class ModelProvider<T extends ModelBuilder<T>> implements DataPr
         this.existingFileHelper = existingFileHelper;
     }
 
-    public ModelProvider(DataGenerator generator, String modid, String folder, BiFunction<ResourceLocation, ExistingFileHelper, T> builderFromModId, ExistingFileHelper existingFileHelper) {
-        this(generator, modid, folder, loc->builderFromModId.apply(loc, existingFileHelper), existingFileHelper);
+    public ModelProvider(PackOutput output, String modid, String folder, BiFunction<ResourceLocation, ExistingFileHelper, T> builderFromModId, ExistingFileHelper existingFileHelper) {
+        this(output, modid, folder, loc->builderFromModId.apply(loc, existingFileHelper), existingFileHelper);
     }
 
     public T getBuilder(String path) {
@@ -408,6 +407,6 @@ public abstract class ModelProvider<T extends ModelBuilder<T>> implements DataPr
 
     protected Path getPath(T model) {
         ResourceLocation loc = model.getLocation();
-        return this.generator.getPackOutput().getOutputFolder(PackOutput.Target.RESOURCE_PACK).resolve(loc.getNamespace()).resolve("models").resolve(loc.getPath() + ".json");
+        return this.output.getOutputFolder(PackOutput.Target.RESOURCE_PACK).resolve(loc.getNamespace()).resolve("models").resolve(loc.getPath() + ".json");
     }
 }

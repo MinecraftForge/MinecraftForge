@@ -24,6 +24,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
@@ -46,6 +47,8 @@ import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.HolderSet;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.ChatDecorator;
 import net.minecraft.network.chat.ClickEvent;
@@ -55,6 +58,7 @@ import net.minecraft.network.chat.TextColor;
 import net.minecraft.network.chat.contents.LiteralContents;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.packs.PackType;
+import net.minecraft.server.packs.metadata.pack.PackMetadataSection;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagEntry;
 import net.minecraft.tags.TagKey;
@@ -1520,7 +1524,7 @@ public class ForgeHooks
 
         for (PackType packType : PackType.values())
         {
-            String key = "forge:" + packType.bridgeType.name().toLowerCase(Locale.ROOT) + "_pack_format";
+            String key = makePackFormatKey(packType);
             if (json.has(key))
             {
                 map.put(packType, GsonHelper.getAsInt(json, key));
@@ -1528,6 +1532,24 @@ public class ForgeHooks
         }
 
         return map.buildOrThrow();
+    }
+
+    public static void writeTypedPackFormats(JsonObject json, PackMetadataSection section)
+    {
+        int packFormat = section.getPackFormat();
+        for (PackType packType : PackType.values())
+        {
+            int format = section.getPackFormat(packType);
+            if (format != packFormat)
+            {
+                json.addProperty(makePackFormatKey(packType), format);
+            }
+        }
+    }
+
+    private static String makePackFormatKey(PackType packType)
+    {
+        return "forge:" + packType.bridgeType.name().toLowerCase(Locale.ROOT) + "_pack_format";
     }
 
     /**
@@ -1566,5 +1588,16 @@ public class ForgeHooks
             return PermissionAPI.getPermission(player, ForgeMod.USE_SELECTORS_PERMISSION);
         }
         return false;
+    }
+
+    @ApiStatus.Internal
+    public static <T> HolderLookup.RegistryLookup<T> wrapRegistryLookup(final HolderLookup.RegistryLookup<T> lookup)
+    {
+        return new HolderLookup.RegistryLookup.Delegate<>()
+        {
+            @Override protected RegistryLookup<T> parent() { return lookup; }
+            @Override public Stream<HolderSet.Named<T>> listTags() { return Stream.empty(); }
+            @Override public Optional<HolderSet.Named<T>> get(TagKey<T> key) { return Optional.of(HolderSet.emptyNamed(lookup, key)); }
+        };
     }
 }

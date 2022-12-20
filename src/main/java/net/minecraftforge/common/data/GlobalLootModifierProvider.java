@@ -13,14 +13,12 @@ import com.google.gson.JsonObject;
 import com.mojang.serialization.JsonOps;
 import cpw.mods.modlauncher.api.LamdbaExceptionUtils;
 import net.minecraft.data.CachedOutput;
-import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.loot.IGlobalLootModifier;
 import net.minecraftforge.common.loot.LootModifier;
 
-import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -37,14 +35,14 @@ import java.util.stream.Collectors;
 public abstract class GlobalLootModifierProvider implements DataProvider
 {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
-    private final DataGenerator gen;
+    private final PackOutput output;
     private final String modid;
     private final Map<String, JsonElement> toSerialize = new HashMap<>();
     private boolean replace = false;
 
-    public GlobalLootModifierProvider(DataGenerator gen, String modid)
+    public GlobalLootModifierProvider(PackOutput output, String modid)
     {
-        this.gen = gen;
+        this.output = output;
         this.modid = modid;
     }
 
@@ -66,8 +64,8 @@ public abstract class GlobalLootModifierProvider implements DataProvider
     {
         start();
 
-        Path forgePath = this.gen.getPackOutput().getOutputFolder(PackOutput.Target.DATA_PACK).resolve("forge").resolve("loot_modifiers").resolve("global_loot_modifiers.json");
-        Path modifierFolderPath = this.gen.getPackOutput().getOutputFolder(PackOutput.Target.DATA_PACK).resolve(this.modid).resolve("loot_modifiers");
+        Path forgePath = this.output.getOutputFolder(PackOutput.Target.DATA_PACK).resolve("forge").resolve("loot_modifiers").resolve("global_loot_modifiers.json");
+        Path modifierFolderPath = this.output.getOutputFolder(PackOutput.Target.DATA_PACK).resolve(this.modid).resolve("loot_modifiers");
         List<ResourceLocation> entries = new ArrayList<>();
 
         ImmutableList.Builder<CompletableFuture<?>> futuresBuilder = new ImmutableList.Builder<>();

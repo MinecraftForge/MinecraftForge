@@ -31,13 +31,14 @@ import com.google.gson.JsonPrimitive;
 import net.minecraft.Util;
 import net.minecraft.advancements.critereon.InventoryChangeTrigger;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.RegistrySetBuilder;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.PackOutput;
-import net.minecraft.data.advancements.AdvancementProvider;
-import net.minecraft.data.advancements.AdvancementSubProvider;
 import net.minecraft.data.recipes.*;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.ItemStack;
@@ -48,6 +49,7 @@ import net.minecraft.world.level.block.PressurePlateBlock;
 import net.minecraft.world.level.block.StandingSignBlock;
 import net.minecraft.world.level.block.WallSignBlock;
 import net.minecraftforge.common.conditions.ConditionBuilder;
+import net.minecraft.world.level.levelgen.NoiseGeneratorSettings;
 import net.minecraftforge.common.crafting.CompoundIngredient;
 import net.minecraftforge.common.crafting.PartialNBTIngredient;
 import net.minecraftforge.common.crafting.DifferenceIngredient;
@@ -123,6 +125,11 @@ public class DataGeneratorTest
 
     private static Gson GSON = null;
 
+    // Datapack registry objects
+    private static final ResourceKey<NoiseGeneratorSettings> TEST_SETTINGS = ResourceKey.create(Registries.NOISE_SETTINGS, new ResourceLocation(MODID, "test_settings"));
+    private static final RegistrySetBuilder BUILDER = new RegistrySetBuilder()
+            .add(Registries.NOISE_SETTINGS, context -> context.register(TEST_SETTINGS, NoiseGeneratorSettings.floatingIslands(context)));
+
     @SubscribeEvent
     public static void gatherData(GatherDataEvent event)
     {
@@ -136,16 +143,17 @@ public class DataGeneratorTest
         PackOutput packOutput = gen.getPackOutput();
         CompletableFuture<HolderLookup.Provider> lookupProvider = event.getLookupProvider();
 
-        gen.addProvider(event.includeClient(), new Lang(gen));
+        gen.addProvider(event.includeClient(), new Lang(packOutput));
         // Let blockstate provider see generated item models by passing its existing file helper
-        ItemModelProvider itemModels = new ItemModels(gen, event.getExistingFileHelper());
+        ItemModelProvider itemModels = new ItemModels(packOutput, event.getExistingFileHelper());
         gen.addProvider(event.includeClient(), itemModels);
-        gen.addProvider(event.includeClient(), new BlockStates(gen, itemModels.existingFileHelper));
-        gen.addProvider(event.includeClient(), new SoundDefinitions(gen, event.getExistingFileHelper()));
+        gen.addProvider(event.includeClient(), new BlockStates(packOutput, itemModels.existingFileHelper));
+        gen.addProvider(event.includeClient(), new SoundDefinitions(packOutput, event.getExistingFileHelper()));
 
         gen.addProvider(event.includeServer(), new Recipes(packOutput));
         gen.addProvider(event.includeServer(), new Tags(packOutput, lookupProvider, event.getExistingFileHelper()));
-        gen.addProvider(event.includeServer(), new Advancements(packOutput, lookupProvider, event.getExistingFileHelper()));
+        gen.addProvider(event.includeServer(), new ForgeAdvancementProvider(packOutput, lookupProvider, event.getExistingFileHelper(), List.of(new Advancements())));
+        gen.addProvider(event.includeServer(), new DatapackBuiltinEntriesProvider(packOutput, lookupProvider, BUILDER, Set.of(MODID)));
     }
 
     public static class Recipes extends RecipeProvider implements ConditionBuilder
@@ -334,9 +342,9 @@ public class DataGeneratorTest
         private static final Logger LOGGER = LogManager.getLogger();
         private final ExistingFileHelper helper;
 
-        public SoundDefinitions(final DataGenerator generator, final ExistingFileHelper helper)
+        public SoundDefinitions(final PackOutput output, final ExistingFileHelper helper)
         {
-            super(generator, MODID, helper);
+            super(output, MODID, helper);
             this.helper = helper;
         }
 
@@ -589,7 +597,7 @@ public class DataGeneratorTest
 
     public static class Lang extends LanguageProvider
     {
-        public Lang(DataGenerator gen)
+        public Lang(PackOutput gen)
         {
             super(gen, MODID, "en_us");
         }
@@ -611,7 +619,7 @@ public class DataGeneratorTest
     {
         private static final Logger LOGGER = LogManager.getLogger();
 
-        public ItemModels(DataGenerator generator, ExistingFileHelper existingFileHelper)
+        public ItemModels(PackOutput generator, ExistingFileHelper existingFileHelper)
         {
             super(generator, MODID, existingFileHelper);
         }
@@ -681,9 +689,9 @@ public class DataGeneratorTest
     {
         private static final Logger LOGGER = LogManager.getLogger();
 
-        public BlockStates(DataGenerator gen, ExistingFileHelper exFileHelper)
+        public BlockStates(PackOutput output, ExistingFileHelper exFileHelper)
         {
-            super(gen, MODID, exFileHelper);
+            super(output, MODID, exFileHelper);
         }
 
         @Override
@@ -1016,60 +1024,47 @@ public class DataGeneratorTest
         }
     }
 
-    public static class Advancements extends AdvancementProvider
+    private static class Advancements implements ForgeAdvancementProvider.AdvancementGenerator
     {
 
-
-        public Advancements(PackOutput output, CompletableFuture<HolderLookup.Provider> providerCompletableFuture, ExistingFileHelper existingFileHelper)
+        @Override
+        public void generate(HolderLookup.Provider registries, Consumer<Advancement> saver, ExistingFileHelper existingFileHelper)
         {
-            super(output, providerCompletableFuture, List.of(new Provider(existingFileHelper)));
-        }
+            Advancement.Builder.advancement().display(Items.DIRT,
+                            Component.translatable(Items.DIRT.getDescriptionId()),
+                            Component.translatable("dirt_description"),
+                            new ResourceLocation("textures/gui/advancements/backgrounds/stone.png"),
+                            FrameType.TASK,
+                            true,
+                            true,
+                            false)
+                    .addCriterion("has_dirt", InventoryChangeTrigger.TriggerInstance.hasItems(Items.DIRT))
+                    .save(saver, new ResourceLocation(MODID, "obtain_dirt"), existingFileHelper);
 
-        private static class Provider implements AdvancementSubProvider {
+            Advancement.Builder.advancement().display(Items.DIAMOND_BLOCK,
+                            Component.translatable(Items.DIAMOND_BLOCK.getDescriptionId()),
+                            Component.literal("You obtained a DiamondBlock"),
+                            new ResourceLocation("textures/gui/advancements/backgrounds/stone.png"),
+                            FrameType.CHALLENGE,
+                            true,
+                            true,
+                            false)
+                    .addCriterion("obtained_diamond_block", InventoryChangeTrigger.TriggerInstance.hasItems(Items.DIAMOND_BLOCK))
+                    .save(saver, new ResourceLocation("obtain_diamond_block"), existingFileHelper);
 
-            private final ExistingFileHelper fileHelper;
+            Advancement.Builder.advancement()
+                    .display(Blocks.GRASS_BLOCK,
+                            Component.translatable("advancements.story.root.title"),
+                            Component.literal("Changed Description"),
+                            new ResourceLocation("textures/gui/advancements/backgrounds/stone.png"),
+                            FrameType.TASK,
+                            false,
+                            false,
+                            false)
+                    .addCriterion("crafting_table", InventoryChangeTrigger.TriggerInstance.hasItems(Blocks.CRAFTING_TABLE))
+                    .save(saver, new ResourceLocation("story/root"), existingFileHelper);
 
-            private Provider(ExistingFileHelper fileHelper) {
-                this.fileHelper = fileHelper;
-            }
-
-            @Override
-            public void generate(HolderLookup.Provider registries, Consumer<Advancement> consumer) {
-                Advancement.Builder.advancement().display(Items.DIRT,
-                                Component.translatable(Items.DIRT.getDescriptionId()),
-                                Component.translatable("dirt_description"),
-                                new ResourceLocation("textures/gui/advancements/backgrounds/stone.png"),
-                                FrameType.TASK,
-                                true,
-                                true,
-                                false)
-                        .addCriterion("has_dirt", InventoryChangeTrigger.TriggerInstance.hasItems(Items.DIRT))
-                        .save(consumer, new ResourceLocation(MODID, "obtain_dirt"), fileHelper);
-
-                Advancement.Builder.advancement().display(Items.DIAMOND_BLOCK,
-                                Component.translatable(Items.DIAMOND_BLOCK.getDescriptionId()),
-                                Component.literal("You obtained a DiamondBlock"),
-                                new ResourceLocation("textures/gui/advancements/backgrounds/stone.png"),
-                                FrameType.CHALLENGE,
-                                true,
-                                true,
-                                false)
-                        .addCriterion("obtained_diamond_block", InventoryChangeTrigger.TriggerInstance.hasItems(Items.DIAMOND_BLOCK))
-                        .save(consumer, new ResourceLocation("obtain_diamond_block"), fileHelper);
-
-                Advancement.Builder.advancement()
-                        .display(Blocks.GRASS_BLOCK,
-                                Component.translatable("advancements.story.root.title"),
-                                Component.literal("Changed Description"),
-                                new ResourceLocation("textures/gui/advancements/backgrounds/stone.png"),
-                                FrameType.TASK,
-                                false,
-                                false,
-                                false)
-                        .addCriterion("crafting_table", InventoryChangeTrigger.TriggerInstance.hasItems(Blocks.CRAFTING_TABLE))
-                        .save(consumer, new ResourceLocation("story/root"), fileHelper);
-
-                // This should cause an error because of the parent not existing
+            // This should cause an error because of the parent not existing
 /*            Advancement.Builder.advancement().display(Blocks.COBBLESTONE,
                     new TranslationTextComponent(Items.COBBLESTONE.getDescriptionId()),
                     new StringTextComponent("You got cobblestone"),
@@ -1082,18 +1077,17 @@ public class DataGeneratorTest
                     .parent(new ResourceLocation("not_there/not_here"))
                     .save(consumer, new ResourceLocation("illegal_parent"), fileHelper);*/
 
-                Advancement.Builder.advancement().display(Blocks.COBBLESTONE,
-                                Component.translatable(Items.COBBLESTONE.getDescriptionId()),
-                                Component.literal("You got cobblestone"),
-                                new ResourceLocation("textures/gui/advancements/backgrounds/stone.png"),
-                                FrameType.TASK,
-                                false,
-                                false,
-                                false)
-                        .addCriterion("get_cobbleStone", InventoryChangeTrigger.TriggerInstance.hasItems(Items.COBBLESTONE))
-                        .parent(new ResourceLocation("forge", "dummy_parent"))
-                        .save(consumer, new ResourceLocation("good_parent"), fileHelper);
-            }
+            Advancement.Builder.advancement().display(Blocks.COBBLESTONE,
+                            Component.translatable(Items.COBBLESTONE.getDescriptionId()),
+                            Component.literal("You got cobblestone"),
+                            new ResourceLocation("textures/gui/advancements/backgrounds/stone.png"),
+                            FrameType.TASK,
+                            false,
+                            false,
+                            false)
+                    .addCriterion("get_cobbleStone", InventoryChangeTrigger.TriggerInstance.hasItems(Items.COBBLESTONE))
+                    .parent(new ResourceLocation("forge", "dummy_parent"))
+                    .save(saver, new ResourceLocation("good_parent"), existingFileHelper);
         }
     }
 
