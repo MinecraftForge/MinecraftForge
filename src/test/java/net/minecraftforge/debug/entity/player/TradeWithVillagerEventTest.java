@@ -30,8 +30,8 @@ public class TradeWithVillagerEventTest
     {
         if (!ENABLE) return;
         LOGGER.info("Player {} traded with villager {} and exchanged for {} {}.",
-        event.getEntity().getName().getString(), event.getAbstractVillager().getName().getString(),
-        event.getMerchantOffer().getResult().getCount(),
-        event.getMerchantOffer().getResult().getDisplayName().getString());
+                event.getEntity().getName().getString(), event.getAbstractVillager().getName().getString(),
+                event.getMerchantOffer().getResult().getCount(),
+                event.getMerchantOffer().getResult().getDisplayName().getString());
     }
 }
