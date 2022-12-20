@@ -27,6 +27,7 @@ import net.minecraft.client.resources.model.ModelState;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.model.ElementsModel;
+import net.minecraftforge.client.model.ForgeFaceData;
 import net.minecraftforge.client.model.IModelBuilder;
 import net.minecraftforge.client.model.SimpleModelState;
 import org.jetbrains.annotations.ApiStatus;
@@ -128,14 +129,32 @@ public class UnbakedGeometryHelper
     }
 
     /**
+     * @see #createUnbakedItemElements(int, SpriteContents, ForgeFaceData)
+     */
+    public static List<BlockElement> createUnbakedItemElements(int layerIndex, SpriteContents spriteContents)
+    {
+    	return createUnbakedItemElements(layerIndex, spriteContents, null);
+    }
+
+    /**
      * Creates a list of {@linkplain BlockElement block elements} in the shape of the specified sprite contents.
      * These can later be baked using the same, or another texture.
      * <p>
      * The {@link Direction#NORTH} and {@link Direction#SOUTH} faces take up the whole surface.
      */
-    public static List<BlockElement> createUnbakedItemElements(int layerIndex, SpriteContents spriteContents)
+    public static List<BlockElement> createUnbakedItemElements(int layerIndex, SpriteContents spriteContents, @Nullable ForgeFaceData faceData)
     {
-        return ITEM_MODEL_GENERATOR.processFrames(layerIndex, "layer" + layerIndex, spriteContents);
+        var elements = ITEM_MODEL_GENERATOR.processFrames(layerIndex, "layer" + layerIndex, spriteContents);
+        elements.forEach(element -> element.faceData = faceData);
+        return elements;
+    }
+
+    /**
+     * @see #createUnbakedItemMaskElements(int, SpriteContents, ForgeFaceData)
+     */
+    public static List<BlockElement> createUnbakedItemMaskElements(int layerIndex, SpriteContents spriteContents)
+    {
+    	return createUnbakedItemMaskElements(layerIndex, spriteContents, null);
     }
 
     /**
@@ -144,9 +163,9 @@ public class UnbakedGeometryHelper
      * <p>
      * The {@link Direction#NORTH} and {@link Direction#SOUTH} faces take up only the pixels the texture uses.
      */
-    public static List<BlockElement> createUnbakedItemMaskElements(int layerIndex, SpriteContents spriteContents)
+    public static List<BlockElement> createUnbakedItemMaskElements(int layerIndex, SpriteContents spriteContents, @Nullable ForgeFaceData faceData)
     {
-        var elements = createUnbakedItemElements(layerIndex, spriteContents);
+        var elements = createUnbakedItemElements(layerIndex, spriteContents, faceData);
         elements.remove(0); // Remove north and south faces
 
         int width = spriteContents.width(), height = spriteContents.height();
