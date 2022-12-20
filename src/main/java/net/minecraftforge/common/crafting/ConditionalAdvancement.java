@@ -19,7 +19,8 @@ import net.minecraft.advancements.Advancement;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.util.GsonHelper;
 import net.minecraftforge.common.conditions.ConditionHelper;
-import net.minecraftforge.common.conditions.Condition;
+import net.minecraftforge.common.conditions.IConditionContext;
+import net.minecraftforge.common.conditions.LoadingCondition;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -36,7 +37,7 @@ public class ConditionalAdvancement
      * @return The advancement that passed the conditions, or null if none did.
      */
     @Nullable
-    public static JsonObject processConditional(JsonObject json, Condition.IContext context) {
+    public static JsonObject processConditional(JsonObject json, IConditionContext context) {
         JsonArray entries = GsonHelper.getAsJsonArray(json, "advancements", null);
         if (entries == null)
         {
@@ -57,13 +58,13 @@ public class ConditionalAdvancement
 
     public static class Builder
     {
-        private List<Condition[]> conditions = new ArrayList<>();
+        private List<LoadingCondition[]> conditions = new ArrayList<>();
         private List<Supplier<JsonElement>> advancements = new ArrayList<>();
 
-        private List<Condition> currentConditions = new ArrayList<>();
+        private List<LoadingCondition> currentConditions = new ArrayList<>();
         private boolean locked = false;
 
-        public Builder addCondition(Condition condition)
+        public Builder addCondition(LoadingCondition condition)
         {
             if (locked)
                 throw new IllegalStateException("Attempted to modify finished builder");
@@ -95,7 +96,7 @@ public class ConditionalAdvancement
                 throw new IllegalStateException("Attempted to modify finished builder");
             if (currentConditions.isEmpty())
                 throw new IllegalStateException("Can not add a advancement with no conditions.");
-            conditions.add(currentConditions.toArray(new Condition[currentConditions.size()]));
+            conditions.add(currentConditions.toArray(new LoadingCondition[currentConditions.size()]));
             advancements.add(jsonSupplier);
             currentConditions.clear();
             return this;
@@ -119,7 +120,7 @@ public class ConditionalAdvancement
                 JsonObject holder = new JsonObject();
 
                 JsonArray conds = new JsonArray();
-                for (Condition c : conditions.get(x))
+                for (LoadingCondition c : conditions.get(x))
                     conds.add(ConditionHelper.serialize(c));
                 holder.add("conditions", conds);
                 holder.add("advancement", advancements.get(x).get());

@@ -8,13 +8,13 @@ package net.minecraftforge.common.conditions;
 import com.mojang.serialization.Codec;
 import net.minecraftforge.common.ForgeMod;
 
-public final class TrueCondition implements Condition
+public final class TrueCondition implements LoadingCondition
 {
     public static final TrueCondition INSTANCE = new TrueCondition();
     private TrueCondition() {}
 
     @Override
-    public boolean test(IContext context)
+    public boolean test(IConditionContext context)
     {
         return true;
     }
@@ -26,7 +26,7 @@ public final class TrueCondition implements Condition
     }
 
     @Override
-    public Codec<? extends Condition> codec()
+    public Codec<? extends LoadingCondition> codec()
     {
         return ForgeMod.TRUE_CONDITION_TYPE.get();
     }

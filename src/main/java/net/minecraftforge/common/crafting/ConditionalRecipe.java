@@ -22,7 +22,8 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.conditions.ConditionHelper;
-import net.minecraftforge.common.conditions.Condition;
+import net.minecraftforge.common.conditions.IConditionContext;
+import net.minecraftforge.common.conditions.LoadingCondition;
 import net.minecraftforge.registries.ObjectHolder;
 import org.jetbrains.annotations.Nullable;
 
@@ -41,12 +42,12 @@ public class ConditionalRecipe
         @Override
         public T fromJson(ResourceLocation recipeId, JsonObject json)
         {
-            return fromJson(recipeId, json, Condition.IContext.EMPTY);
+            return fromJson(recipeId, json, IConditionContext.EMPTY);
         }
 
         @SuppressWarnings("unchecked") // We return a nested one, so we can't know what type it is.
         @Override
-        public T fromJson(ResourceLocation recipeId, JsonObject json, Condition.IContext context)
+        public T fromJson(ResourceLocation recipeId, JsonObject json, IConditionContext context)
         {
             JsonArray items = GsonHelper.getAsJsonArray(json, "recipes");
             int idx = 0;
@@ -68,14 +69,14 @@ public class ConditionalRecipe
 
     public static class Builder
     {
-        private List<Condition[]> conditions = new ArrayList<>();
+        private List<LoadingCondition[]> conditions = new ArrayList<>();
         private List<FinishedRecipe> recipes = new ArrayList<>();
         private ResourceLocation advId;
         private ConditionalAdvancement.Builder adv;
 
-        private List<Condition> currentConditions = new ArrayList<>();
+        private List<LoadingCondition> currentConditions = new ArrayList<>();
 
-        public Builder addCondition(Condition condition)
+        public Builder addCondition(LoadingCondition condition)
         {
             currentConditions.add(condition);
             return this;
@@ -91,7 +92,7 @@ public class ConditionalRecipe
         {
             if (currentConditions.isEmpty())
                 throw new IllegalStateException("Can not add a recipe with no conditions.");
-            conditions.add(currentConditions.toArray(new Condition[currentConditions.size()]));
+            conditions.add(currentConditions.toArray(new LoadingCondition[currentConditions.size()]));
             recipes.add(recipe);
             currentConditions.clear();
             return this;
@@ -107,7 +108,7 @@ public class ConditionalRecipe
             ConditionalAdvancement.Builder builder = ConditionalAdvancement.builder();
             for(int i=0;i<recipes.size();i++)
             {
-                for(Condition cond : conditions.get(i))
+                for(LoadingCondition cond : conditions.get(i))
                     builder = builder.addCondition(cond);
                 builder = builder.addAdvancement(recipes.get(i));
             }
@@ -157,12 +158,12 @@ public class ConditionalRecipe
     private static class Finished implements FinishedRecipe
     {
         private final ResourceLocation id;
-        private final List<Condition[]> conditions;
+        private final List<LoadingCondition[]> conditions;
         private final List<FinishedRecipe> recipes;
         private final ResourceLocation advId;
         private final ConditionalAdvancement.Builder adv;
 
-        private Finished(ResourceLocation id, List<Condition[]> conditions, List<FinishedRecipe> recipes, @Nullable ResourceLocation advId, @Nullable ConditionalAdvancement.Builder adv)
+        private Finished(ResourceLocation id, List<LoadingCondition[]> conditions, List<FinishedRecipe> recipes, @Nullable ResourceLocation advId, @Nullable ConditionalAdvancement.Builder adv)
         {
             this.id = id;
             this.conditions = conditions;
@@ -180,7 +181,7 @@ public class ConditionalRecipe
                 JsonObject holder = new JsonObject();
 
                 JsonArray conds = new JsonArray();
-                for (Condition c : conditions.get(x))
+                for (LoadingCondition c : conditions.get(x))
                     conds.add(ConditionHelper.serialize(c));
                 holder.add("conditions", conds);
                 holder.add("recipe", recipes.get(x).serializeRecipe());

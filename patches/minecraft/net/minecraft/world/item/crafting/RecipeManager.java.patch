@@ -4,15 +4,15 @@
     private Map<RecipeType<?>, Map<ResourceLocation, Recipe<?>>> f_44007_ = ImmutableMap.of();
     private Map<ResourceLocation, Recipe<?>> f_199900_ = ImmutableMap.of();
     private boolean f_44008_;
-+   private final net.minecraftforge.common.conditions.ICondition.IContext context; //Forge: add context
++   private final net.minecraftforge.common.conditions.IConditionContext context; // Forge: add context
  
-+   /** @deprecated Forge: use {@linkplain RecipeManager#RecipeManager(net.minecraftforge.common.conditions.ICondition.IContext) constructor with context}. */
++   /** @deprecated Forge: use {@linkplain RecipeManager#RecipeManager(net.minecraftforge.common.conditions.IConditionContext) constructor with context}. */
 +   @Deprecated
     public RecipeManager() {
-+      this(net.minecraftforge.common.conditions.ICondition.IContext.EMPTY);
++      this(net.minecraftforge.common.conditions.IConditionContext.EMPTY);
 +   }
 +
-+   public RecipeManager(net.minecraftforge.common.conditions.ICondition.IContext context) {
++   public RecipeManager(net.minecraftforge.common.conditions.IConditionContext context) {
        super(f_44005_, "recipes");
 +      this.context = context;
     }
@@ -42,13 +42,13 @@
        });
     }
  
-+   /** @deprecated Forge: use {@linkplain #fromJson(ResourceLocation, JsonObject, net.minecraftforge.common.conditions.ICondition.IContext) overload with context}. */
++   /** @deprecated Forge: use {@linkplain #fromJson(ResourceLocation, JsonObject, net.minecraftforge.common.conditions.IConditionContext) overload with context}. */
 +   @Deprecated
     public static Recipe<?> m_44045_(ResourceLocation p_44046_, JsonObject p_44047_) {
-+      return fromJson(p_44046_, p_44047_, net.minecraftforge.common.conditions.ICondition.IContext.EMPTY);
++      return fromJson(p_44046_, p_44047_, net.minecraftforge.common.conditions.IConditionContext.EMPTY);
 +   }
 +
-+   public static Recipe<?> fromJson(ResourceLocation p_44046_, JsonObject p_44047_, net.minecraftforge.common.conditions.ICondition.IContext context) {
++   public static Recipe<?> fromJson(ResourceLocation p_44046_, JsonObject p_44047_, net.minecraftforge.common.conditions.IConditionContext context) {
        String s = GsonHelper.m_13906_(p_44047_, "type");
        return BuiltInRegistries.f_256769_.m_6612_(new ResourceLocation(s)).orElseThrow(() -> {
           return new JsonSyntaxException("Invalid or unsupported recipe type '" + s + "'");

@@ -9,10 +9,10 @@ import com.mojang.serialization.Codec;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.fml.ModList;
 
-public record ModLoadedCondition(String modId) implements Condition
+public record ModLoadedCondition(String modId) implements LoadingCondition
 {
     @Override
-    public boolean test(IContext context)
+    public boolean test(IConditionContext context)
     {
         return ModList.get().isLoaded(modId);
     }
@@ -24,7 +24,7 @@ public record ModLoadedCondition(String modId) implements Condition
     }
 
     @Override
-    public Codec<? extends Condition> codec()
+    public Codec<? extends LoadingCondition> codec()
     {
         return ForgeMod.MOD_LOADED_CONDITION_TYPE.get();
     }

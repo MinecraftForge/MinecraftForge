@@ -13,10 +13,10 @@ import net.minecraftforge.registries.ForgeRegistries;
 /**
  * The ItemExistsCondition can detect if a particular item is currently registered.
  */
-public record ItemExistsCondition(ResourceLocation item) implements Condition
+public record ItemExistsCondition(ResourceLocation item) implements LoadingCondition
 {
     @Override
-    public boolean test(IContext context)
+    public boolean test(IConditionContext context)
     {
         return ForgeRegistries.ITEMS.containsKey(item);
     }
@@ -28,7 +28,7 @@ public record ItemExistsCondition(ResourceLocation item) implements Condition
     }
 
     @Override
-    public Codec<? extends Condition> codec()
+    public Codec<? extends LoadingCondition> codec()
     {
         return ForgeMod.ITEM_EXISTS_CONDITION_TYPE.get();
     }

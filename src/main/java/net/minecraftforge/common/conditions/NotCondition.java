@@ -8,10 +8,10 @@ package net.minecraftforge.common.conditions;
 import com.mojang.serialization.Codec;
 import net.minecraftforge.common.ForgeMod;
 
-public record NotCondition(Condition value) implements Condition
+public record NotCondition(LoadingCondition value) implements LoadingCondition
 {
     @Override
-    public boolean test(IContext context)
+    public boolean test(IConditionContext context)
     {
         return !value.test(context);
     }
@@ -23,7 +23,7 @@ public record NotCondition(Condition value) implements Condition
     }
 
     @Override
-    public Codec<? extends Condition> codec()
+    public Codec<? extends LoadingCondition> codec()
     {
         return ForgeMod.NOT_CONDITION_TYPE.get();
     }

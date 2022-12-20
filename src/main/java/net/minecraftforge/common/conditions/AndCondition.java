@@ -14,13 +14,13 @@ import java.util.List;
 /**
  * The AndCondition forms the logical and of one of more conditions.
  */
-public record AndCondition(List<Condition> children) implements Condition
+public record AndCondition(List<LoadingCondition> children) implements LoadingCondition
 {
 
     @Override
-    public boolean test(IContext context)
+    public boolean test(IConditionContext context)
     {
-        for (Condition child : children)
+        for (LoadingCondition child : children)
         {
             if (!child.test(context))
                 return false;
@@ -29,7 +29,7 @@ public record AndCondition(List<Condition> children) implements Condition
     }
 
     @Override
-    public Codec<? extends Condition> codec()
+    public Codec<? extends LoadingCondition> codec()
     {
         return ForgeMod.AND_CONDITION_TYPE.get();
     }

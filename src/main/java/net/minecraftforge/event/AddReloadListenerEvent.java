@@ -11,7 +11,7 @@ import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.server.packs.resources.PreparableReloadListener;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.conditions.Condition;
+import net.minecraftforge.common.conditions.IConditionContext;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.ModLoader;
 
@@ -61,7 +61,7 @@ public class AddReloadListenerEvent extends Event
      * This context object holds data relevant to the current reload, such as staged tags.
      * @return The condition context for the currently active reload.
      */
-    public Condition.IContext getConditionContext()
+    public IConditionContext getConditionContext()
     {
         return serverResources.getConditionContext();
     }

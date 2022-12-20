@@ -11,12 +11,12 @@ import net.minecraftforge.common.ForgeMod;
 
 import java.util.List;
 
-public record OrCondition(List<Condition> values) implements Condition {
+public record OrCondition(List<LoadingCondition> values) implements LoadingCondition {
 
     @Override
-    public boolean test(IContext context)
+    public boolean test(IConditionContext context)
     {
-        for (Condition child : values)
+        for (LoadingCondition child : values)
         {
             if (child.test(context))
                 return true;
@@ -32,7 +32,7 @@ public record OrCondition(List<Condition> values) implements Condition {
     }
 
     @Override
-    public Codec<? extends Condition> codec()
+    public Codec<? extends LoadingCondition> codec()
     {
         return ForgeMod.OR_CONDITION_TYPE.get();
     }

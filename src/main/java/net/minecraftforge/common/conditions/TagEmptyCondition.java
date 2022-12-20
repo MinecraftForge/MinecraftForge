@@ -11,7 +11,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraftforge.common.ForgeMod;
 
-public record TagEmptyCondition<T>(TagKey<T> tag) implements Condition
+public record TagEmptyCondition<T>(TagKey<T> tag) implements LoadingCondition
 {
     @SuppressWarnings({"unchecked", "rawtypes"})
     public static TagEmptyCondition<?> from(ResourceKey<?> registry, ResourceLocation tag)
@@ -20,7 +20,7 @@ public record TagEmptyCondition<T>(TagKey<T> tag) implements Condition
     }
 
     @Override
-    public boolean test(Condition.IContext context)
+    public boolean test(IConditionContext context)
     {
         return context.getTag(tag).isEmpty();
     }
@@ -32,7 +32,7 @@ public record TagEmptyCondition<T>(TagKey<T> tag) implements Condition
     }
 
     @Override
-    public Codec<? extends Condition> codec()
+    public Codec<? extends LoadingCondition> codec()
     {
         return ForgeMod.TAG_EMPTY_CONDITION_TYPE.get();
     }

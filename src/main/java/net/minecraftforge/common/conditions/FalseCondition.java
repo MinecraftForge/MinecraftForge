@@ -12,13 +12,13 @@ import net.minecraftforge.common.ForgeMod;
  * The FalseCondition always returns false.<p>
  * Useful when content is shipped disabled or when a datapack wants to remove something.
  */
-public final class FalseCondition implements Condition
+public final class FalseCondition implements LoadingCondition
 {
     public static final FalseCondition INSTANCE = new FalseCondition();
     private FalseCondition() {}
 
     @Override
-    public boolean test(IContext condition)
+    public boolean test(IConditionContext condition)
     {
         return false;
     }
@@ -30,7 +30,7 @@ public final class FalseCondition implements Condition
     }
 
     @Override
-    public Codec<? extends Condition> codec()
+    public Codec<? extends LoadingCondition> codec()
     {
         return ForgeMod.FALSE_CONDITION_TYPE.get();
     }

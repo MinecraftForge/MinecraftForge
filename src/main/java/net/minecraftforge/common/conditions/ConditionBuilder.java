@@ -13,47 +13,47 @@ import java.util.List;
 
 public interface ConditionBuilder
 {
-    default Condition and(Condition... values)
+    default LoadingCondition and(LoadingCondition... values)
     {
         return new AndCondition(List.of(values));
     }
 
-    default Condition FALSE()
+    default LoadingCondition FALSE()
     {
         return FalseCondition.INSTANCE;
     }
 
-    default Condition TRUE()
+    default LoadingCondition TRUE()
     {
         return TrueCondition.INSTANCE;
     }
 
-    default Condition not(Condition value)
+    default LoadingCondition not(LoadingCondition value)
     {
         return new NotCondition(value);
     }
 
-    default Condition or(Condition... values)
+    default LoadingCondition or(LoadingCondition... values)
     {
         return new OrCondition(List.of(values));
     }
 
-    default Condition itemExists(String namespace, String path)
+    default LoadingCondition itemExists(String namespace, String path)
     {
         return new ItemExistsCondition(new ResourceLocation(namespace, path));
     }
 
-    default Condition modLoaded(String modid)
+    default LoadingCondition modLoaded(String modid)
     {
         return new ModLoadedCondition(modid);
     }
 
-    default <T> Condition tagEmpty(TagKey<T> tag)
+    default <T> LoadingCondition tagEmpty(TagKey<T> tag)
     {
         return new TagEmptyCondition<>(tag);
     }
 
-    default <T> Condition tagEmpty(ResourceKey<? extends Registry<T>> registry, ResourceLocation tag)
+    default <T> LoadingCondition tagEmpty(ResourceKey<? extends Registry<T>> registry, ResourceLocation tag)
     {
         return new TagEmptyCondition<>(TagKey.create(registry, tag));
     }
