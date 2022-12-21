@@ -46,7 +46,7 @@ public class ExtendedButton extends Button
         ScreenUtils.blitWithBorder(poseStack, WIDGETS_LOCATION, this.getX(), this.getY(), 0, 46 + k * 20, this.width, this.height, 200, 20, 2, 3, 2, 2, this.getBlitOffset());
         this.renderBg(poseStack, mc, mouseX, mouseY);
 
-        final FormattedText buttonText = mc.font.ellipsize(this.getMessage(), this.width - 6);
+        final FormattedText buttonText = mc.font.ellipsize(this.getMessage(), this.width - 6); // Remove 6 pixels so that the text is always contained within the button's borders
         drawCenteredString(poseStack, mc.font, Language.getInstance().getVisualOrder(buttonText), this.getX() + this.width / 2, this.getY() + (this.height - 8) / 2, getFGColor());
     }
 }

@@ -34,7 +34,7 @@ public interface IForgeFont
         final int ellipsisWidth = self.width(ELLIPSIS);
         if (strWidth > maxWidth)
         {
-            if (strWidth + ellipsisWidth > maxWidth) return self.substrByWidth(text, maxWidth);
+            if (ellipsisWidth >= maxWidth) return self.substrByWidth(text, maxWidth);
             return FormattedText.composite(
                     self.substrByWidth(text, maxWidth - ellipsisWidth),
                     ELLIPSIS
