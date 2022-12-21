@@ -1,20 +1,49 @@
 --- a/net/minecraft/data/recipes/RecipeCategory.java
 +++ b/net/minecraft/data/recipes/RecipeCategory.java
-@@ -1,6 +_,6 @@
+@@ -1,23 +_,36 @@
  package net.minecraft.data.recipes;
  
 -public enum RecipeCategory {
+-   BUILDING_BLOCKS("building_blocks"),
+-   DECORATIONS("decorations"),
+-   REDSTONE("redstone"),
+-   TRANSPORTATION("transportation"),
+-   TOOLS("tools"),
+-   COMBAT("combat"),
+-   FOOD("food"),
+-   BREWING("brewing"),
+-   MISC("misc");
++
 +public enum RecipeCategory implements net.minecraftforge.common.IExtensibleEnum {
-    BUILDING_BLOCKS("building_blocks"),
-    DECORATIONS("decorations"),
-    REDSTONE("redstone"),
-@@ -19,5 +_,10 @@
++   BUILDING_BLOCKS("building_blocks", net.minecraft.world.item.crafting.CraftingBookCategory.BUILDING),
++   DECORATIONS("decorations", net.minecraft.world.item.crafting.CraftingBookCategory.MISC),
++   REDSTONE("redstone", net.minecraft.world.item.crafting.CraftingBookCategory.REDSTONE),
++   TRANSPORTATION("transportation", net.minecraft.world.item.crafting.CraftingBookCategory.MISC),
++   TOOLS("tools", net.minecraft.world.item.crafting.CraftingBookCategory.EQUIPMENT),
++   COMBAT("combat", net.minecraft.world.item.crafting.CraftingBookCategory.EQUIPMENT),
++   FOOD("food", net.minecraft.world.item.crafting.CraftingBookCategory.MISC),
++   BREWING("brewing", net.minecraft.world.item.crafting.CraftingBookCategory.MISC),
++   MISC("misc", net.minecraft.world.item.crafting.CraftingBookCategory.MISC);
+ 
+    private final String f_244582_;
+ 
+-   private RecipeCategory(String p_251010_) {
++   private final net.minecraft.world.item.crafting.CraftingBookCategory craftingBookCategory;
++
++   private RecipeCategory(String p_251010_, net.minecraft.world.item.crafting.CraftingBookCategory category) {
+       this.f_244582_ = p_251010_;
++      this.craftingBookCategory = category;
+    }
  
     public String m_247710_() {
        return this.f_244582_;
 +   }
 +
-+   public static RecipeCategory create(String name, String recipeFolderName)
++    public net.minecraft.world.item.crafting.CraftingBookCategory getCraftingBookCategory() {
++        return this.craftingBookCategory;
++    }
++
++   public static RecipeCategory create(String name, String recipeFolderName, net.minecraft.world.item.crafting.CraftingBookCategory craftingBookCategory)
 +   {
 +       throw new IllegalStateException("Enum not extended");
     }

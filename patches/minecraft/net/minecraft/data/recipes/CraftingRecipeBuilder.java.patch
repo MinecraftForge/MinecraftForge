@@ -1,0 +1,27 @@
+--- a/net/minecraft/data/recipes/CraftingRecipeBuilder.java
++++ b/net/minecraft/data/recipes/CraftingRecipeBuilder.java
+@@ -5,23 +_,7 @@
+ 
+ public abstract class CraftingRecipeBuilder {
+    protected static CraftingBookCategory m_245179_(RecipeCategory p_250736_) {
+-      CraftingBookCategory craftingbookcategory;
+-      switch (p_250736_) {
+-         case BUILDING_BLOCKS:
+-            craftingbookcategory = CraftingBookCategory.BUILDING;
+-            break;
+-         case TOOLS:
+-         case COMBAT:
+-            craftingbookcategory = CraftingBookCategory.EQUIPMENT;
+-            break;
+-         case REDSTONE:
+-            craftingbookcategory = CraftingBookCategory.REDSTONE;
+-            break;
+-         default:
+-            craftingbookcategory = CraftingBookCategory.MISC;
+-      }
+-
+-      return craftingbookcategory;
++      return p_250736_.getCraftingBookCategory();
+    }
+ 
+    protected abstract static class CraftingResult implements FinishedRecipe {
