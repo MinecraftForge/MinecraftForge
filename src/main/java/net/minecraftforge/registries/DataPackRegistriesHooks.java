@@ -20,6 +20,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Stream;
 
 @ApiStatus.Internal
 public final class DataPackRegistriesHooks
@@ -64,10 +65,8 @@ public final class DataPackRegistriesHooks
         return DATA_PACK_REGISTRIES_VIEW;
     }
 
-    public static List<RegistryDataLoader.RegistryData<?>> getDataPackRegistriesWithDimensions() {
-        List<RegistryDataLoader.RegistryData<?>> mergedRegistries = new ArrayList<>(DATA_PACK_REGISTRIES_VIEW);
-        mergedRegistries.addAll(RegistryDataLoader.DIMENSION_REGISTRIES);
-        return mergedRegistries;
+    public static Stream<RegistryDataLoader.RegistryData<?>> getDataPackRegistriesWithDimensions() {
+        return Stream.concat(DATA_PACK_REGISTRIES_VIEW.stream(), RegistryDataLoader.DIMENSION_REGISTRIES.stream());
     }
 
     /**
