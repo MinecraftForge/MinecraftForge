@@ -64,6 +64,12 @@ public final class DataPackRegistriesHooks
         return DATA_PACK_REGISTRIES_VIEW;
     }
 
+    public static List<RegistryDataLoader.RegistryData<?>> getDataPackRegistriesWithDimensions() {
+        List<RegistryDataLoader.RegistryData<?>> mergedRegistries = new ArrayList<>(DATA_PACK_REGISTRIES_VIEW);
+        mergedRegistries.addAll(RegistryDataLoader.DIMENSION_REGISTRIES);
+        return mergedRegistries;
+    }
+
     /**
      * {@return An unmodifiable view of the set of synced non-vanilla datapack registry IDs}
      * Clients must have each of a server's synced datapack registries to be able to connect to that server;
