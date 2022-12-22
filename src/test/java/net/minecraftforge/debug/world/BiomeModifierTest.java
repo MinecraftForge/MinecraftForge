@@ -64,7 +64,7 @@ import net.minecraftforge.registries.RegistryObject;
 public class BiomeModifierTest
 {
     public static final String MODID = "biome_modifiers_test";
-    private static final boolean ENABLED = false;
+    private static final boolean ENABLED = true;
 
     /* Static registry objects */
 
