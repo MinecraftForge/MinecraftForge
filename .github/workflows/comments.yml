@@ -1,0 +1,13 @@
+name: 'Comment actions'
+
+on: issue_comment
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+  discussions: write
+
+jobs:
+  labels:
+    uses: MinecraftForge/SharedActions/.github/workflows/comment_actions.yml@main

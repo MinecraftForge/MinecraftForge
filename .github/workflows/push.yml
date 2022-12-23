@@ -1,0 +1,13 @@
+name: 'Push actions'
+
+on: push
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+  discussions: write
+
+jobs:
+  labels:
+    uses: MinecraftForge/SharedActions/.github/workflows/push_actions.yml@main

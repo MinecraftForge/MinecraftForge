@@ -1,0 +1,13 @@
+name: 'Pull Request actions'
+
+on: pull_request
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+  discussions: write
+
+jobs:
+  labels:
+    uses: MinecraftForge/SharedActions/.github/workflows/pr_actions.yml@main
