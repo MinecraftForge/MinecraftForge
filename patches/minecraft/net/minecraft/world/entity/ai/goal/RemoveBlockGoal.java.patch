@@ -9,11 +9,14 @@
           return false;
        } else if (this.f_25600_ > 0) {
           --this.f_25600_;
-@@ -133,6 +_,7 @@
+@@ -133,7 +_,9 @@
        if (chunkaccess == null) {
           return false;
        } else {
-+         if (!chunkaccess.m_8055_(p_25851_).canEntityDestroy(p_25850_, p_25851_, this.f_25837_)) return false;
-          return chunkaccess.m_8055_(p_25851_).m_60713_(this.f_25836_) && chunkaccess.m_8055_(p_25851_.m_7494_()).m_60795_() && chunkaccess.m_8055_(p_25851_.m_6630_(2)).m_60795_();
+-         return chunkaccess.m_8055_(p_25851_).m_60713_(this.f_25836_) && chunkaccess.m_8055_(p_25851_.m_7494_()).m_60795_() && chunkaccess.m_8055_(p_25851_.m_6630_(2)).m_60795_();
++         net.minecraft.world.level.block.state.BlockState state = chunkaccess.m_8055_(p_25851_);
++         if (!(state.canEntityDestroy(p_25850_, p_25851_, this.f_25837_) && net.minecraftforge.event.ForgeEventFactory.onEntityDestroyBlock(this.f_25837_, p_25851_, state))) return false;
++         return state.m_60713_(this.f_25836_) && chunkaccess.m_8055_(p_25851_.m_7494_()).m_60795_() && chunkaccess.m_8055_(p_25851_.m_6630_(2)).m_60795_();
        }
     }
+ }
