@@ -108,7 +108,7 @@ public class ResourceCacheManager
      */
     public static boolean shouldUseCache()
     {
-        return ResourceManagerBootCacheConfigurationHandler.getInstance().getConfigValue("cachePackAccess", true);
+        return ResourceManagerBootCacheConfigurationHandler.getInstance().getConfigValue("cacheResources", true);
     }
 
     /**
