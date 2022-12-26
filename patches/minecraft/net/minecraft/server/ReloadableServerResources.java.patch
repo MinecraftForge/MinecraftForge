@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/ReloadableServerResources.java
 +++ b/net/minecraft/server/ReloadableServerResources.java
-@@ -31,12 +_,12 @@
+@@ -31,20 +_,26 @@
     private static final CompletableFuture<Unit> f_206846_ = CompletableFuture.completedFuture(Unit.INSTANCE);
     private final CommandBuildContext.Configurable f_214300_;
     private final Commands f_206847_;
@@ -14,8 +14,11 @@
 +   private final ServerAdvancementManager f_206853_;
     private final ServerFunctionLibrary f_206854_;
  
++   public final RegistryAccess.Frozen registryAccess;
     public ReloadableServerResources(RegistryAccess.Frozen p_206857_, FeatureFlagSet p_250695_, Commands.CommandSelection p_206858_, int p_206859_) {
-@@ -45,6 +_,10 @@
++      this.registryAccess = p_206857_;
+       this.f_206849_ = new TagManager(p_206857_);
+       this.f_214300_ = CommandBuildContext.m_255409_(p_206857_, p_250695_);
        this.f_206847_ = new Commands(p_206858_, this.f_214300_);
        this.f_214300_.m_254905_(CommandBuildContext.MissingTagAccessPolicy.CREATE_NEW);
        this.f_206854_ = new ServerFunctionLibrary(p_206859_, this.f_206847_.m_82094_());

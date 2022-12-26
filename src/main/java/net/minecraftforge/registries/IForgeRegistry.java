@@ -10,6 +10,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.registries.attachment.IWithRegistryAttachments;
 import net.minecraftforge.registries.tags.ITagManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -24,7 +25,7 @@ import java.util.Set;
  *
  * @param <V> The top level type for the registry
  */
-public interface IForgeRegistry<V> extends Iterable<V>
+public interface IForgeRegistry<V> extends Iterable<V>, IWithRegistryAttachments<V>
 {
     ResourceKey<Registry<V>> getRegistryKey();
     ResourceLocation getRegistryName();

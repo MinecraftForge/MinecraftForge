@@ -233,6 +233,19 @@ public class RegistryBuilder<T>
     }
 
     /**
+     * Enables entry attachments for this registry if not already.
+     * All forge registries with wrappers inherently support registry attachments.
+     *
+     * @return this builder
+     * @see RegistryBuilder#hasWrapper()
+     */
+    public RegistryBuilder<T> supportsAttachments()
+    {
+        this.hasWrapper();
+        return this;
+    }
+
+    /**
      * Modders: Use {@link NewRegistryEvent#create(RegistryBuilder)} instead
      */
     IForgeRegistry<T> create()

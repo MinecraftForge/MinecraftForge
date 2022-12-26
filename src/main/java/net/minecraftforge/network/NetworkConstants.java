@@ -25,6 +25,7 @@ public class NetworkConstants
     public static final String FMLNETMARKER = "FML";
     /**
      * Netversion 3: {@link S2CModList} packet may include a list of non-vanilla synced datapack registry ids.
+     * Netversion 4: Added {@link net.minecraftforge.network.PlayMessages.SyncAttachments}
      */
     public static final int FMLNETVERSION = 3;
     public static final String NETVERSION = FMLNETMARKER + FMLNETVERSION;

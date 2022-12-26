@@ -11,11 +11,16 @@ import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.MenuAccess;
 import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -25,7 +30,13 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.util.LogicalSidedProvider;
 import net.minecraftforge.entity.IEntityAdditionalSpawnData;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.attachment.IRegistryAttachmentHolderInternal;
+import net.minecraftforge.registries.attachment.IRegistryAttachmentType;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Supplier;
@@ -321,6 +332,66 @@ public class PlayMessages
         public FriendlyByteBuf getAdditionalData()
         {
             return additionalData;
+        }
+    }
+
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    public record SyncAttachments<R>(ResourceKey<? extends Registry<R>> registry, List<SyncAttachments.Payload<R, ?>> payload)
+    {
+        public void encode(FriendlyByteBuf buf)
+        {
+            buf.writeResourceKey(registry);
+            buf.writeCollection(payload, (buf1, rPlayload) -> rPlayload.encode(buf1));
+        }
+
+        public static SyncAttachments<?> decode(FriendlyByteBuf buf) {
+            return new SyncAttachments(
+                    buf.readResourceKey(BuiltInRegistries.REGISTRY.key()),
+                    buf.readList(Payload::decode)
+            );
+        }
+
+        public static <R> void handle(SyncAttachments<R> msg, Supplier<NetworkEvent.Context> ctx)
+        {
+            ctx.get().enqueueWork(() -> {
+                final ClientLevel level = Minecraft.getInstance().level;
+                final Registry<R> registry = level.registryAccess().registryOrThrow(msg.registry);
+                msg.payload.forEach(it -> it.fill(msg.registry, registry));
+            });
+            ctx.get().setPacketHandled(true);
+        }
+
+        public record Payload<R, A>(ResourceKey<IRegistryAttachmentType<A>> type, Map<ResourceLocation, A> attachments) {
+            public void fill(ResourceKey<? extends Registry<R>> resourceKey, Registry<R> registry) {
+                final var holder = ((IRegistryAttachmentHolderInternal<R, A>) registry.attachment(type));
+                if (holder == null) return;
+                final Map<Holder<R>, A> map = new HashMap<>();
+                attachments.forEach((id, at) -> map.put(registry.getHolderOrThrow(ResourceKey.create(
+                        resourceKey, id
+                )), at));
+                holder.replaceWith(map);
+            }
+
+            public void encode(FriendlyByteBuf buf) {
+                buf.writeResourceKey(type);
+                final IRegistryAttachmentType<A> type = (IRegistryAttachmentType<A>) ForgeRegistries.REGISTRY_ATTACHMENT_TYPES.get().getValue(type().location());
+                final CompoundTag tag = new CompoundTag();
+                attachments.forEach((loc, at) -> tag.put(loc.toString(),
+                        type.getNetworkCodec().encodeStart(NbtOps.INSTANCE, at).getOrThrow(false, e -> {})));
+                buf.writeNbt(tag);
+            }
+
+            public static <R, A> Payload<R, A> decode(FriendlyByteBuf buf) {
+                final var key = buf.readResourceKey(ForgeRegistries.Keys.REGISTRY_ATTACHMENT_TYPES);
+                final IRegistryAttachmentType<A> type = (IRegistryAttachmentType<A>) ForgeRegistries.REGISTRY_ATTACHMENT_TYPES.get().getValue(key.location());
+                final CompoundTag tag = buf.readAnySizeNbt();
+                final Map<ResourceLocation, A> attachments = new HashMap<>();
+                tag.getAllKeys().forEach(k -> attachments.put(
+                        new ResourceLocation(k),
+                        type.getNetworkCodec().decode(NbtOps.INSTANCE, tag.get(k)).getOrThrow(false, e -> {}).getFirst()
+                ));
+                return new Payload<>((ResourceKey)key, attachments);
+            }
         }
     }
 }

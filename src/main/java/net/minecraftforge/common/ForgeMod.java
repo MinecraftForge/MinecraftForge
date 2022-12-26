@@ -56,13 +56,18 @@ import net.minecraftforge.common.world.ForgeBiomeModifiers.RemoveSpawnsBiomeModi
 import net.minecraftforge.common.world.NoneBiomeModifier;
 import net.minecraftforge.common.world.NoneStructureModifier;
 import net.minecraftforge.common.world.StructureModifier;
+import net.minecraftforge.event.AddReloadListenerEvent;
+import net.minecraftforge.event.OnDatapackSyncEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fluids.FluidType;
 import net.minecraftforge.fluids.ForgeFlowingFluid;
 import net.minecraftforge.fml.*;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.*;
+import net.minecraftforge.network.NetworkHooks;
+import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.registries.*;
+import net.minecraftforge.registries.attachment.RegistryAttachmentLoader;
 import net.minecraftforge.registries.holdersets.AndHolderSet;
 import net.minecraftforge.registries.holdersets.AnyHolderSet;
 import net.minecraftforge.registries.holdersets.HolderSetType;
@@ -451,6 +456,9 @@ public class ForgeMod
         MinecraftForge.EVENT_BUS.addListener(this::mappingChanged);
         MinecraftForge.EVENT_BUS.addListener(this::registerPermissionNodes);
 
+        MinecraftForge.EVENT_BUS.addListener(this::onDPSync);
+        MinecraftForge.EVENT_BUS.addListener(this::onAddPackFinders);
+
         ForgeRegistries.ITEMS.tags().addOptionalTagDefaults(Tags.Items.ENCHANTING_FUELS, Set.of(ForgeRegistries.ITEMS.getDelegateOrThrow(Items.LAPIS_LAZULI)));
     }
 
@@ -596,5 +604,23 @@ public class ForgeMod
     public void registerPermissionNodes(PermissionGatherEvent.Nodes event)
     {
         event.addNodes(USE_SELECTORS_PERMISSION);
+    }
+
+    public void onDPSync(final OnDatapackSyncEvent event)
+    {
+        final PacketDistributor.PacketTarget target;
+        if (event.getPlayer() == null)
+        {
+            target = PacketDistributor.ALL.noArg();
+        } else
+        {
+            target = PacketDistributor.PLAYER.with(event::getPlayer);
+        }
+        NetworkHooks.syncRegAttachments(target, event.getPlayerList().getServer().overworld().registryAccess());
+    }
+
+    public void onAddPackFinders(AddReloadListenerEvent event)
+    {
+         event.addListener(new RegistryAttachmentLoader(event.getServerResources().registryAccess));
     }
 }
