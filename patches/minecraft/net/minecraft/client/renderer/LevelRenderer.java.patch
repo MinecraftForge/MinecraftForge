@@ -100,13 +100,11 @@
              this.f_172946_.m_112267_(blockentity, p_109601_, p_109600_, multibuffersource$buffersource);
              p_109600_.m_85849_();
           }
-@@ -1275,7 +_,8 @@
-          this.f_109412_.m_110023_(p_109601_);
+@@ -1276,6 +_,7 @@
           this.f_109461_.m_91385_().m_83947_(false);
        }
--
+ 
 +      net.minecraftforge.client.ForgeHooksClient.dispatchRenderStage(net.minecraftforge.client.event.RenderLevelStageEvent.Stage.AFTER_BLOCK_ENTITIES, this, p_109600_, p_254120_, this.f_109477_, p_109604_, frustum);
-+      
        profilerfiller.m_6182_("destroyProgress");
  
        for(Long2ObjectMap.Entry<SortedSet<BlockDestructionProgress>> entry : this.f_109409_.long2ObjectEntrySet()) {
