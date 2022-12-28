@@ -8,14 +8,11 @@ package net.minecraftforge.common.util;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.event.TickEvent;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.function.BiConsumer;
-import java.util.function.BiFunction;
 import java.util.function.Consumer;
 
 public class TaskScheduler {
@@ -85,7 +82,7 @@ public class TaskScheduler {
         private final BiConsumer<ForgeTask<T>, T> task;
 
         @Nullable
-        private T passed;
+        public T passed;
 
         public boolean isCanceled = false;
 
