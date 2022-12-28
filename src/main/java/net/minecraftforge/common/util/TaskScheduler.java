@@ -13,42 +13,41 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 
 public class TaskScheduler {
     private static final ArrayList<ForgeTask<?>> tasks = new ArrayList<>();
+    private final Level level;
 
-    private TaskScheduler() {
-
+    @ApiStatus.Internal
+    public TaskScheduler(Level level) {
+        this.level = level;
     }
 
-    public static void requestTask(ForgeTask<?> task) {
+    public void requestTask(ResourceLocation name, int initialTickDelay, Consumer<ForgeTask<?>> toRun) {
+        ForgeTask<?> task = new ForgeTask<>(name, level, initialTickDelay, -1, (provided, ignored) -> toRun.accept(provided), null);
         tasks.add(task);
     }
 
-    public static void requestTask(@Nullable ResourceLocation name, Level level, TickEvent.Phase phase, int initialTickDelay, Consumer<ForgeTask<?>> toRun) {
-        ForgeTask<?> task = new ForgeTask<>(name, level, phase, initialTickDelay, -1, (ignored1, ignored2) -> null, (provided, ignored) -> toRun.accept(provided), null);
-        tasks.add(task);
-    }
-
-    public static <T> void requestRepeatingTask(@Nullable ResourceLocation name, Level level, TickEvent.Phase phase, int initialTickDelay, int repeatingTickDelay, BiFunction<ForgeTask<T>, T, T> toRepeat, BiConsumer<ForgeTask<T>, T> whenDone, T initialSharedInfo) {
-        ForgeTask<T> task = new ForgeTask<>(name, level, phase, initialTickDelay, repeatingTickDelay, toRepeat, whenDone, initialSharedInfo);
+    public <T> void requestRepeatingTask(ResourceLocation name, int initialTickDelay, int repeatingTickDelay, BiConsumer<ForgeTask<T>, T> toRun, @Nullable T initialSharedInfo) {
+        ForgeTask<T> task = new ForgeTask<>(name, level, initialTickDelay, repeatingTickDelay, toRun, initialSharedInfo);
         tasks.add(task);
     }
 
     @ApiStatus.Internal
-    public static void onStart(Level level) {
+    public void onEnd() {
         ProfilerFiller profiler = level.getProfiler();
 
-        for (ForgeTask<?> task : tasks) {
-            if (task.level != level) continue;
-            if (task.phase != TickEvent.Phase.START) continue;
+        tasks.removeIf(task -> {
             if (task.currentTickDelay != 0) {
                 task.currentTickDelay--;
-                continue;
+                return false;
             }
+
+            profiler.push("forgeTasks");
 
             String name;
             if (task.name != null) {
@@ -56,72 +55,26 @@ public class TaskScheduler {
             } else {
                 name = "null";
             }
+
             profiler.push(name);
             task.process();
             profiler.pop();
-            if (task.hasFailed) continue;
-            if (task.repeatTickDelay >= 0) {
+
+            profiler.pop();
+
+            if (!task.isCanceled && task.repeatTickDelay >= 0) {
                 task.currentTickDelay = task.repeatTickDelay;
-                continue;
+                return false;
             }
-            task.isDone = true;
-            profiler.push(name + "-done");
-            ((BiConsumer)task.callback).accept(task, task.passed);
-            profiler.pop();
-        }
-
-        tasks.removeIf(task -> task.hasFailed || task.isDone);
-    }
-
-    @ApiStatus.Internal
-    public static void onEnd(Level level) {
-        ProfilerFiller profiler = level.getProfiler();
-
-        for (ForgeTask<?> task : tasks) {
-            if (task.level != level) continue;
-            if (!task.isReady) {
-                task.isReady = true;
-                continue;
-            }
-            if (task.phase != TickEvent.Phase.END) continue;
-            if (task.currentTickDelay != 0) {
-                task.currentTickDelay--;
-                continue;
-            }
-
-            String name;
-            if (task.name != null) {
-                name = task.name.toString();
-            } else {
-                name = "null";
-            }
-            profiler.push(name);
-            task.process();
-            profiler.pop();
-            if (task.hasFailed) continue;
-            if (!task.isDone && task.repeatTickDelay >= 0) {
-                task.currentTickDelay = task.repeatTickDelay;
-                continue;
-            }
-            task.isDone = true;
-            profiler.push(name + "-done");
-            ((BiConsumer)task.callback).accept(task, task.passed);
-            profiler.pop();
-        }
-
-        tasks.removeIf(task -> task.hasFailed || task.isDone);
+            return true;
+        });
     }
 
 
     public static final class ForgeTask<T>{
-        @Nullable
         public final ResourceLocation name;
 
         public final Level level;
-
-        public final TickEvent.Phase phase;
-
-        private boolean isReady = false;
 
         private final int initialTickDelay;
 
@@ -129,43 +82,34 @@ public class TaskScheduler {
 
         private int currentTickDelay;
 
-        private final BiFunction<ForgeTask<T>, T, T> processor;
+        private final BiConsumer<ForgeTask<T>, T> task;
 
-        private final BiConsumer<ForgeTask<T>, T> callback;
-
+        @Nullable
         private T passed;
 
-        public boolean hasFailed = false;
+        public boolean isCanceled = false;
 
-        private boolean isDone = false;
-
-        public ForgeTask(@Nullable ResourceLocation name, Level level, TickEvent.Phase phase, int initialTickDelay, int repeatTickDelay, BiFunction<ForgeTask<T>, T, T> processor, BiConsumer<ForgeTask<T>, T> callback, T passed) {
+        private ForgeTask(ResourceLocation name, Level level, int initialTickDelay, int repeatTickDelay, BiConsumer<ForgeTask<T>, T> task, @Nullable T passed) {
             this.name = name;
             this.level = level;
-            this.phase = phase;
             this.initialTickDelay = initialTickDelay;
             currentTickDelay = initialTickDelay;
             this.repeatTickDelay = repeatTickDelay;
-            this.processor = processor;
-            this.callback = callback;
+            this.task = task;
             this.passed = passed;
         }
 
-        public void fail() {
-            hasFailed = true;
-        }
-
-        public void done() {
-            isDone = true;
+        public void cancel() {
+            isCanceled = true;
         }
 
         private void process() {
             try {
-                passed = processor.apply(this, passed);
-            } catch (Exception e) {
+                task.accept(this, passed);
+            } catch (Throwable throwable) {
                 System.err.println("An error has occurred processing ForgeTask!");
-                e.printStackTrace();
-                fail();
+                throwable.printStackTrace();
+                cancel();
             }
         }
 
@@ -174,15 +118,17 @@ public class TaskScheduler {
             return "ForgeTask{" +
                     "name='" + name + '\'' +
                     ", level=" + level +
-                    ", phase=" + phase +
-                    ", isReady=" + isReady +
                     ", initialTickDelay=" + initialTickDelay +
                     ", repeatTickDelay=" + repeatTickDelay +
                     ", currentTickDelay=" + currentTickDelay +
                     ", passed=" + passed +
-                    ", hasFailed=" + hasFailed +
-                    ", isDone=" + isDone +
+                    ", isCanceled=" + isCanceled +
                     '}';
         }
+    }
+
+    @Override
+    public String toString() {
+        return "TaskScheduler[" + level + "]";
     }
 }

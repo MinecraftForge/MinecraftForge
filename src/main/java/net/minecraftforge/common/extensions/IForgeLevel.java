@@ -8,7 +8,6 @@ package net.minecraftforge.common.extensions;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.function.BiConsumer;
-import java.util.function.BiFunction;
 import java.util.function.Consumer;
 
 import net.minecraft.resources.ResourceLocation;
@@ -16,7 +15,6 @@ import net.minecraft.world.level.Level;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.TaskScheduler;
 import net.minecraftforge.entity.PartEntity;
-import net.minecraftforge.event.TickEvent;
 import org.jetbrains.annotations.Nullable;
 
 public interface IForgeLevel extends ICapabilityProvider
@@ -43,18 +41,13 @@ public interface IForgeLevel extends ICapabilityProvider
         return Collections.emptyList();
     }
 
-    public default void requestTask(TaskScheduler.ForgeTask<?> task)
+    public default void requestTask(ResourceLocation name, int initialTickDelay, Consumer<TaskScheduler.ForgeTask<?>> toRun)
     {
-        TaskScheduler.requestTask(task);
+        ((Level)this).scheduler.requestTask(name, initialTickDelay, toRun);
     }
 
-    public default void requestTask(@Nullable ResourceLocation name, TickEvent.Phase phase, int initialTickDelay, Consumer<TaskScheduler.ForgeTask<?>> toRun)
+    public default <T> void requestRepeatingTask(ResourceLocation name, int initialTickDelay, int repeatingTickDelay, BiConsumer<TaskScheduler.ForgeTask<T>, T> toRun, @Nullable T initialSharedInfo)
     {
-        TaskScheduler.requestTask(name, (Level) this, phase, initialTickDelay, toRun);
-    }
-
-    public default <T> void requestRepeatingTask(@Nullable ResourceLocation name, TickEvent.Phase phase, int initialTickDelay, int repeatingTickDelay, BiFunction<TaskScheduler.ForgeTask<T>, T, T> toRepeat, BiConsumer<TaskScheduler.ForgeTask<T>, T> whenDone, T initialSharedInfo)
-    {
-        TaskScheduler.requestRepeatingTask(name, (Level) this, phase, initialTickDelay, repeatingTickDelay, toRepeat, whenDone, initialSharedInfo);
+        ((Level)this).scheduler.requestRepeatingTask(name, initialTickDelay, repeatingTickDelay, toRun, initialSharedInfo);
     }
 }
