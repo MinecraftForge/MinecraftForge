@@ -1,0 +1,5 @@
+{
+    "variants": {
+        "": { "model": "custom_signs_test:block/test_hanging_sign" }
+    }
+}
