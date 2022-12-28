@@ -22,10 +22,6 @@ public interface IForgePackResources
         return false;
     }
 
-    default void initForNamespace(final String nameSpace) {}
-
-    default void init(final PackType packType) {}
-
     /**
      * Gets a collection of {@code PackResource} instances nested inside this pack.
      * Used to merge several packs into one entry in the resource pack selection UI without
