@@ -47,6 +47,16 @@
                 if (this.m_142073_(p_40704_, p_40703_, blockpos2, blockhitresult)) {
                    this.m_142131_(p_40704_, p_40703_, itemstack, blockpos2);
                    if (p_40704_ instanceof ServerPlayer) {
+@@ -109,6 +_,9 @@
+          boolean flag1 = blockstate.m_60795_() || flag || block instanceof LiquidBlockContainer && ((LiquidBlockContainer)block).m_6044_(p_150717_, p_150718_, blockstate, this.f_40687_);
+          if (!flag1) {
+             return p_150719_ != null && this.m_142073_(p_150716_, p_150717_, p_150719_.m_82425_().m_121945_(p_150719_.m_82434_()), (BlockHitResult)null);
++         } else if (this.f_40687_.getFluidType().isVaporizedOnPlacement(p_150717_, p_150718_, new net.minecraftforge.fluids.FluidStack(this.f_40687_, net.minecraftforge.fluids.FluidType.BUCKET_VOLUME))) {
++            this.f_40687_.getFluidType().onVaporize(p_150716_, p_150717_, p_150718_, new net.minecraftforge.fluids.FluidStack(this.f_40687_, net.minecraftforge.fluids.FluidType.BUCKET_VOLUME));
++            return true;
+          } else if (p_150717_.m_6042_().f_63857_() && this.f_40687_.m_205067_(FluidTags.f_13131_)) {
+             int i = p_150718_.m_123341_();
+             int j = p_150718_.m_123342_();
 @@ -120,7 +_,7 @@
              }
  

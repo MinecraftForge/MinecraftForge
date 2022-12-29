@@ -14,6 +14,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.tags.FluidTags;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
@@ -30,7 +31,6 @@ import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
-import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.pathfinder.BlockPathTypes;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
@@ -823,12 +823,7 @@ public class FluidType
      */
     public boolean isVaporizedOnPlacement(Level level, BlockPos pos, FluidStack stack)
     {
-        if (level.dimensionType().ultraWarm())
-        {
-            BlockState state = this.getBlockForFluidState(level, pos, this.getStateForPlacement(level, pos, stack));
-            return state != null && state.getMaterial() == Material.WATER;
-        }
-        return false;
+        return level.dimensionType().ultraWarm() && stack.getFluid().getFluidType() == ForgeMod.WATER_TYPE.get();
     }
 
     /**
