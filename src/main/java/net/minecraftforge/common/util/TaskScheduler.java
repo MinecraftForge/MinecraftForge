@@ -9,10 +9,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 public class TaskScheduler {
@@ -24,13 +22,13 @@ public class TaskScheduler {
         this.level = level;
     }
 
-    public void requestTask(ResourceLocation name, int initialTickDelay, Consumer<ForgeTask<?>> toRun) {
-        ForgeTask<?> task = new ForgeTask<>(name, level, initialTickDelay, -1, (provided, ignored) -> toRun.accept(provided), null);
+    public <T> void requestTask(ResourceLocation name, int initialTickDelay, Consumer<ForgeTask<T>> toRun) {
+        ForgeTask<T> task = new ForgeTask<>(name, initialTickDelay, -1, toRun);
         tasks.add(task);
     }
 
-    public <T> void requestRepeatingTask(ResourceLocation name, int initialTickDelay, int repeatingTickDelay, BiConsumer<ForgeTask<T>, T> toRun, @Nullable T initialSharedInfo) {
-        ForgeTask<T> task = new ForgeTask<>(name, level, initialTickDelay, repeatingTickDelay, toRun, initialSharedInfo);
+    public <T> void requestRepeatingTask(ResourceLocation name, int initialTickDelay, int repeatingTickDelay, Consumer<ForgeTask<T>> toRun) {
+        ForgeTask<T> task = new ForgeTask<>(name, initialTickDelay, repeatingTickDelay, toRun);
         tasks.add(task);
     }
 
@@ -71,29 +69,22 @@ public class TaskScheduler {
     public static final class ForgeTask<T>{
         public final ResourceLocation name;
 
-        public final Level level;
-
         private final int initialTickDelay;
 
         private final int repeatTickDelay;
 
         private int currentTickDelay;
 
-        private final BiConsumer<ForgeTask<T>, T> task;
-
-        @Nullable
-        public T passed;
+        private final Consumer<ForgeTask<T>> task;
 
         public boolean isCanceled = false;
 
-        private ForgeTask(ResourceLocation name, Level level, int initialTickDelay, int repeatTickDelay, BiConsumer<ForgeTask<T>, T> task, @Nullable T passed) {
+        private ForgeTask(ResourceLocation name, int initialTickDelay, int repeatTickDelay, Consumer<ForgeTask<T>> task) {
             this.name = name;
-            this.level = level;
             this.initialTickDelay = initialTickDelay;
             currentTickDelay = initialTickDelay;
             this.repeatTickDelay = repeatTickDelay;
             this.task = task;
-            this.passed = passed;
         }
 
         public void cancel() {
@@ -102,7 +93,7 @@ public class TaskScheduler {
 
         private void process() {
             try {
-                task.accept(this, passed);
+                task.accept(this);
             } catch (Throwable throwable) {
                 System.err.println("An error has occurred processing ForgeTask!");
                 throwable.printStackTrace();
@@ -114,11 +105,9 @@ public class TaskScheduler {
         public String toString() {
             return "ForgeTask{" +
                     "name='" + name + '\'' +
-                    ", level=" + level +
                     ", initialTickDelay=" + initialTickDelay +
                     ", repeatTickDelay=" + repeatTickDelay +
                     ", currentTickDelay=" + currentTickDelay +
-                    ", passed=" + passed +
                     ", isCanceled=" + isCanceled +
                     '}';
         }

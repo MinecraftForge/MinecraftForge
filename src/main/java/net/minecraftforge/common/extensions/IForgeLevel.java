@@ -7,7 +7,6 @@ package net.minecraftforge.common.extensions;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import net.minecraft.resources.ResourceLocation;
@@ -15,7 +14,6 @@ import net.minecraft.world.level.Level;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.TaskScheduler;
 import net.minecraftforge.entity.PartEntity;
-import org.jetbrains.annotations.Nullable;
 
 public interface IForgeLevel extends ICapabilityProvider
 {
@@ -41,13 +39,13 @@ public interface IForgeLevel extends ICapabilityProvider
         return Collections.emptyList();
     }
 
-    public default void requestTask(ResourceLocation name, int initialTickDelay, Consumer<TaskScheduler.ForgeTask<?>> toRun)
+    public default <T> void requestTask(ResourceLocation name, int initialTickDelay, Consumer<TaskScheduler.ForgeTask<T>> toRun)
     {
         ((Level)this).scheduler.requestTask(name, initialTickDelay, toRun);
     }
 
-    public default <T> void requestRepeatingTask(ResourceLocation name, int initialTickDelay, int repeatingTickDelay, BiConsumer<TaskScheduler.ForgeTask<T>, T> toRun, @Nullable T initialSharedInfo)
+    public default <T> void requestRepeatingTask(ResourceLocation name, int initialTickDelay, int repeatingTickDelay, Consumer<TaskScheduler.ForgeTask<T>> toRun)
     {
-        ((Level)this).scheduler.requestRepeatingTask(name, initialTickDelay, repeatingTickDelay, toRun, initialSharedInfo);
+        ((Level)this).scheduler.requestRepeatingTask(name, initialTickDelay, repeatingTickDelay, toRun);
     }
 }

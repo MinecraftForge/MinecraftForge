@@ -8,7 +8,6 @@ package net.minecraftforge.debug;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.animal.AbstractFish;
-import net.minecraft.world.entity.animal.Salmon;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
@@ -22,7 +21,7 @@ import org.apache.logging.log4j.Logger;
 @Mod(TaskTest.MODID)
 public class TaskTest {
     public static final String MODID = "task_scheduler_test";
-    private static Logger LOGGER = LogManager.getLogger(PotionEventTest.class);
+    private static final Logger LOGGER = LogManager.getLogger(PotionEventTest.class);
 
     public TaskTest() {
         MinecraftForge.EVENT_BUS.addListener(TaskTest::yeetFish);
@@ -35,17 +34,18 @@ public class TaskTest {
         ServerLevel level = (ServerLevel) event.getLevel();
 
         ResourceLocation name = new ResourceLocation(MODID, "fish_yeeter");
-        event.getLevel().requestRepeatingTask(name, 1 + 20, 10, (task, shared) -> {
+        final int[] count = {0};
+        event.getLevel().requestRepeatingTask(name, 1 + 20, 10, task -> {
             LOGGER.info("count: " + level.getServer().getTickCount());
-            if (shared[0] == 10) {
+            if (count[0] == 10) {
                 LOGGER.info("done");
                 Vec3 position = clicked.position();
                 event.getLevel().explode(event.getTarget(), position.x, position.y, position.z, 4F, Level.ExplosionInteraction.TNT);
                 task.cancel();
             } else {
-                shared[0]++;
-                LOGGER.info("shared: " + shared[0]);
+                count[0]++;
+                LOGGER.info("count: " + count[0]);
             }
-        }, new int[] {0});
+        });
     }
 }
