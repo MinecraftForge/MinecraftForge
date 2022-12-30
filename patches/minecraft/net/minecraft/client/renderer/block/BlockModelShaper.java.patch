@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/block/BlockModelShaper.java
 +++ b/net/minecraft/client/renderer/block/BlockModelShaper.java
-@@ -23,8 +_,15 @@
+@@ -21,8 +_,15 @@
        this.f_110878_ = p_110880_;
     }
  

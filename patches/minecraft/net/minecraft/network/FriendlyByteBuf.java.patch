@@ -1,6 +1,6 @@
 --- a/net/minecraft/network/FriendlyByteBuf.java
 +++ b/net/minecraft/network/FriendlyByteBuf.java
-@@ -65,7 +_,7 @@
+@@ -71,7 +_,7 @@
  import net.minecraft.world.phys.BlockHitResult;
  import net.minecraft.world.phys.Vec3;
  
@@ -8,8 +8,8 @@
 +public class FriendlyByteBuf extends ByteBuf implements net.minecraftforge.common.extensions.IForgeFriendlyByteBuf {
     private static final int f_178335_ = 5;
     private static final int f_178336_ = 10;
-    private static final int f_178337_ = 2097152;
-@@ -517,6 +_,15 @@
+    public static final int f_178337_ = 2097152;
+@@ -578,6 +_,15 @@
     }
  
     public FriendlyByteBuf m_130055_(ItemStack p_130056_) {
@@ -25,8 +25,8 @@
        if (p_130056_.m_41619_()) {
           this.writeBoolean(false);
        } else {
-@@ -525,8 +_,8 @@
-          this.m_236818_(Registry.f_122827_, item);
+@@ -586,8 +_,8 @@
+          this.m_236818_(BuiltInRegistries.f_257033_, item);
           this.writeByte(p_130056_.m_41613_());
           CompoundTag compoundtag = null;
 -         if (item.m_41465_() || item.m_41468_()) {
@@ -36,8 +36,8 @@
           }
  
           this.m_130079_(compoundtag);
-@@ -542,7 +_,7 @@
-          Item item = this.m_236816_(Registry.f_122827_);
+@@ -603,7 +_,7 @@
+          Item item = this.m_236816_(BuiltInRegistries.f_257033_);
           int i = this.readByte();
           ItemStack itemstack = new ItemStack(item, i);
 -         itemstack.m_41751_(this.m_130260_());

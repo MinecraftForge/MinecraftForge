@@ -7,6 +7,7 @@ package net.minecraftforge.debug;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.packs.PackType;
+import net.minecraft.server.packs.PathPackResources;
 import net.minecraft.server.packs.metadata.pack.PackMetadataSection;
 import net.minecraft.server.packs.repository.Pack;
 import net.minecraft.server.packs.repository.PackSource;
@@ -14,38 +15,32 @@ import net.minecraftforge.event.AddPackFindersEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.resource.PathPackResources;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
 import java.io.IOException;
 
 @Mod(AddPackFinderEventTest.MODID)
-@Mod.EventBusSubscriber(modid=AddPackFinderEventTest.MODID, bus= Mod.EventBusSubscriber.Bus.MOD)
 public class AddPackFinderEventTest
 {
+    private static final boolean ENABLE = false;
     public static final String MODID = "add_pack_finders_test";
 
+    public AddPackFinderEventTest() {
+        if (!ENABLE)
+            return;
+
+        FMLJavaModLoadingContext.get().getModEventBus().register(this);
+    }
+
     @SubscribeEvent
-    public static void addPackFinders(AddPackFindersEvent event)
+    public void addPackFinders(AddPackFindersEvent event)
     {
-        try
+        if (event.getPackType() == PackType.CLIENT_RESOURCES)
         {
-            if (event.getPackType() == PackType.CLIENT_RESOURCES)
-            {
-                var resourcePath = ModList.get().getModFileById(MODID).getFile().findResource("test_nested_resource_pack");
-                var pack = new PathPackResources(ModList.get().getModFileById(MODID).getFile().getFileName() + ":" + resourcePath, resourcePath);
-                var metadataSection = pack.getMetadataSection(PackMetadataSection.SERIALIZER);
-                if (metadataSection != null)
-                {
-                    event.addRepositorySource((packConsumer, packConstructor) ->
-                            packConsumer.accept(packConstructor.create(
-                                    "builtin/add_pack_finders_test", Component.literal("display name"), false,
-                                    () -> pack, metadataSection, Pack.Position.BOTTOM, PackSource.BUILT_IN, false)));
-                }
-            }
-        }
-        catch(IOException ex)
-        {
-            throw new RuntimeException(ex);
+            var resourcePath = ModList.get().getModFileById(MODID).getFile().findResource("test_nested_resource_pack");
+            var pack = Pack.readMetaAndCreate("builtin/add_pack_finders_test", Component.literal("display name"), false,
+                    (path) -> new PathPackResources(path, resourcePath, false), PackType.CLIENT_RESOURCES, Pack.Position.BOTTOM, PackSource.BUILT_IN);
+            event.addRepositorySource((packConsumer) -> packConsumer.accept(pack));
         }
     }
 }

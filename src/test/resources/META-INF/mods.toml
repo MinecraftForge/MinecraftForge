@@ -7,8 +7,6 @@ license="LGPL v2.1"
 [[mods]]
     modId="client_command_test"
 [[mods]]
-    modId="biome_modifiers_test"
-[[mods]]
     modId="structure_modifiers_test"
 [[mods]]
     modId="fluid_type_test"
@@ -16,6 +14,8 @@ license="LGPL v2.1"
     modId="potentialspawnsevent_test"
 [[mods]]
     modId="block_grow_feature_test"
+[[mods]]
+    modId="biome_modifiers_test"
 
 [[mods]]
     modId="advancement_event_test"
@@ -244,7 +244,7 @@ modId="valid_railshape_test"
 modId="player_negotiation_event_test"
 [[mods]]
 modId="custom_rarity_test"
-[[mods]]
+[[modsDisabled]]
 modId="data_pack_registries_test"
 [[mods]]
 modId="mod_mismatch_test"
@@ -270,6 +270,12 @@ modId="item_stacked_on_other_test"
 modId="ambient_occlusion_elements_test"
 [[mods]]
 modId="grindstone_event_test"
+[[mods]]
+modId="data_pack_registries_test"
+[[mods]]
+modId="creative_mode_tab_test"
+[[mods]]
+modId="trade_with_villager_event_test"
 
 
 # ADD ABOVE THIS LINE

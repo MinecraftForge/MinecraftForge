@@ -6,6 +6,7 @@
 package net.minecraftforge.event;
 
 import net.minecraft.server.packs.PackType;
+import net.minecraft.server.packs.repository.PackRepository;
 import net.minecraft.server.packs.repository.RepositorySource;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.event.IModBusEvent;
@@ -13,7 +14,7 @@ import net.minecraftforge.fml.event.IModBusEvent;
 import java.util.function.Consumer;
 
 /**
- * Fired on PackRepository creation to allow mods to add new pack finders.
+ * Fired on {@link PackRepository} creation to allow mods to add new pack finders.
  */
 public class AddPackFindersEvent extends Event implements IModBusEvent
 {
@@ -36,7 +37,7 @@ public class AddPackFindersEvent extends Event implements IModBusEvent
     }
 
     /**
-     * @return the {@link PackType} of the resource manager being constructed.
+     * @return the {@link PackType} of the pack repository being constructed.
      */
     public PackType getPackType()
     {

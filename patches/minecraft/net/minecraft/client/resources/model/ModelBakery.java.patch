@@ -1,18 +1,9 @@
 --- a/net/minecraft/client/resources/model/ModelBakery.java
 +++ b/net/minecraft/client/resources/model/ModelBakery.java
-@@ -152,6 +_,8 @@
-    public ModelBakery(ResourceManager p_119247_, BlockColors p_119248_, ProfilerFiller p_119249_, int p_119250_) {
-       this.f_119243_ = p_119247_;
-       this.f_119209_ = p_119248_;
-+
-+      net.minecraftforge.client.model.geometry.GeometryLoaderManager.init();
-       p_119249_.m_6180_("missing_model");
- 
-       try {
-@@ -185,12 +_,20 @@
-       p_119249_.m_6182_("special");
-       this.m_119306_(new ModelResourceLocation("minecraft:trident_in_hand#inventory"));
-       this.m_119306_(new ModelResourceLocation("minecraft:spyglass_in_hand#inventory"));
+@@ -153,6 +_,13 @@
+       p_252014_.m_6182_("special");
+       this.m_119306_(ItemRenderer.f_244055_);
+       this.m_119306_(ItemRenderer.f_243706_);
 +      Set<ResourceLocation> additionalModels = Sets.newHashSet();
 +      net.minecraftforge.client.ForgeHooksClient.onRegisterAdditionalModels(additionalModels);
 +      for (ResourceLocation rl : additionalModels) {
@@ -20,60 +11,38 @@
 +         this.f_119212_.put(rl, unbakedmodel);
 +         this.f_119214_.put(rl, unbakedmodel);
 +      }
-       p_119249_.m_6182_("textures");
-       Set<Pair<String, String>> set = Sets.newLinkedHashSet();
-       Set<Material> set1 = this.f_119214_.values().stream().flatMap((p_119340_) -> {
-          return p_119340_.m_5500_(this::m_119341_, set).stream();
-       }).collect(Collectors.toSet());
-       set1.addAll(f_119234_);
-+      net.minecraftforge.client.ForgeHooksClient.gatherFluidTextures(set1);
-       set.stream().filter((p_119357_) -> {
-          return !p_119357_.getSecond().equals(f_119236_);
-       }).forEach((p_119292_) -> {
-@@ -229,6 +_,7 @@
-          try {
-             bakedmodel = this.m_119349_(p_119369_, BlockModelRotation.X0_Y0);
-          } catch (Exception exception) {
-+            exception.printStackTrace();
-             f_119235_.warn("Unable to bake model: '{}': {}", p_119369_, exception);
-          }
+       this.f_119214_.values().forEach((p_247954_) -> {
+          p_247954_.m_5500_(this::m_119341_);
+       });
+@@ -452,7 +_,17 @@
+          return ModelBakery.this.m_119341_(p_248568_);
+       }
  
-@@ -473,7 +_,13 @@
-    }
- 
-    @Nullable
-+   @Deprecated
-    public BakedModel m_119349_(ResourceLocation p_119350_, ModelState p_119351_) {
-+      return bake(p_119350_, p_119351_, this.f_119244_::m_117971_);
-+   }
++      @Override
++      public Function<Material, TextureAtlasSprite> getModelTextureGetter() {
++         return this.f_243920_;
++      }
 +
-+   @Nullable
-+   public BakedModel bake(ResourceLocation p_119350_, ModelState p_119351_, java.util.function.Function<Material, net.minecraft.client.renderer.texture.TextureAtlasSprite> sprites) {
-       Triple<ResourceLocation, Transformation, Boolean> triple = Triple.of(p_119350_, p_119351_.m_6189_(), p_119351_.m_7538_());
-       if (this.f_119213_.containsKey(triple)) {
-          return this.f_119213_.get(triple);
-@@ -484,11 +_,11 @@
-          if (unbakedmodel instanceof BlockModel) {
-             BlockModel blockmodel = (BlockModel)unbakedmodel;
-             if (blockmodel.m_111490_() == f_119232_) {
--               return f_119241_.m_111670_(this.f_119244_::m_117971_, blockmodel).m_111449_(this, blockmodel, this.f_119244_::m_117971_, p_119351_, p_119350_, false);
-+               return f_119241_.m_111670_(sprites, blockmodel).m_111449_(this, blockmodel, this.f_119244_::m_117971_, p_119351_, p_119350_, false);
+       public BakedModel m_245240_(ResourceLocation p_252176_, ModelState p_249765_) {
++         return bake(p_252176_, p_249765_, this.f_243920_);
++      }
++
++      @Override
++      public BakedModel bake(ResourceLocation p_252176_, ModelState p_249765_, Function<Material, TextureAtlasSprite> sprites) {
+          ModelBakery.BakedCacheKey modelbakery$bakedcachekey = new ModelBakery.BakedCacheKey(p_252176_, p_249765_.m_6189_(), p_249765_.m_7538_());
+          BakedModel bakedmodel = ModelBakery.this.f_119213_.get(modelbakery$bakedcachekey);
+          if (bakedmodel != null) {
+@@ -462,11 +_,11 @@
+             if (unbakedmodel instanceof BlockModel) {
+                BlockModel blockmodel = (BlockModel)unbakedmodel;
+                if (blockmodel.m_111490_() == ModelBakery.f_119232_) {
+-                  return ModelBakery.f_119241_.m_111670_(this.f_243920_, blockmodel).m_111449_(this, blockmodel, this.f_243920_, p_249765_, p_252176_, false);
++                  return ModelBakery.f_119241_.m_111670_(sprites, blockmodel).m_111449_(this, blockmodel, sprites, p_249765_, p_252176_, false);
+                }
              }
+ 
+-            BakedModel bakedmodel1 = unbakedmodel.m_7611_(this, this.f_243920_, p_249765_, p_252176_);
++            BakedModel bakedmodel1 = unbakedmodel.m_7611_(this, sprites, p_249765_, p_252176_);
+             ModelBakery.this.f_119213_.put(modelbakery$bakedcachekey, bakedmodel1);
+             return bakedmodel1;
           }
- 
--         BakedModel bakedmodel = unbakedmodel.m_7611_(this, this.f_119244_::m_117971_, p_119351_, p_119350_);
-+         BakedModel bakedmodel = unbakedmodel.m_7611_(this, sprites, p_119351_, p_119350_);
-          this.f_119213_.put(triple, bakedmodel);
-          return bakedmodel;
-       }
-@@ -543,6 +_,10 @@
-       public BlockStateDefinitionException(String p_119373_) {
-          super(p_119373_);
-       }
-+   }
-+
-+   public AtlasSet getAtlasSet() {
-+      return this.f_119244_;
-    }
- 
-    @OnlyIn(Dist.CLIENT)

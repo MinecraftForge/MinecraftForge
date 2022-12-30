@@ -3,7 +3,7 @@
 @@ -75,6 +_,7 @@
        this.f_120217_ = p_120236_;
        this.f_120218_ = p_120237_;
-       this.f_120222_ = new SoundBufferLibrary(p_120238_);
+       this.f_120222_ = new SoundBufferLibrary(p_249332_);
 +      net.minecraftforge.fml.ModLoader.get().postEvent(new net.minecraftforge.client.event.sound.SoundEngineLoadEvent(this));
     }
  

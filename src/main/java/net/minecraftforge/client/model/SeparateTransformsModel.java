@@ -7,11 +7,13 @@ package net.minecraftforge.client.model;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.datafixers.util.Pair;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.BlockModel;
@@ -20,7 +22,7 @@ import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.Material;
-import net.minecraft.client.resources.model.ModelBakery;
+import net.minecraft.client.resources.model.ModelBaker;
 import net.minecraft.client.resources.model.ModelState;
 import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.core.Direction;
@@ -37,13 +39,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.function.Function;
 
 /**
  * A model composed of multiple sub-models which are picked based on the {@link ItemTransforms.TransformType} being used.
@@ -69,7 +64,7 @@ public class SeparateTransformsModel implements IUnbakedGeometry<SeparateTransfo
     }
 
     @Override
-    public BakedModel bake(IGeometryBakingContext context, ModelBakery bakery, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelState, ItemOverrides overrides, ResourceLocation modelLocation)
+    public BakedModel bake(IGeometryBakingContext context, ModelBaker baker, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelState, ItemOverrides overrides, ResourceLocation modelLocation)
     {
         if (deprecatedLoader)
             LOGGER.warn("Model \"" + modelLocation + "\" is using the deprecated loader \"forge:separate-perspective\" instead of \"forge:separate_transforms\". This loader will be removed in 1.20.");
@@ -77,23 +72,18 @@ public class SeparateTransformsModel implements IUnbakedGeometry<SeparateTransfo
         return new Baked(
                 context.useAmbientOcclusion(), context.isGui3d(), context.useBlockLight(),
                 spriteGetter.apply(context.getMaterial("particle")), overrides,
-                baseModel.bake(bakery, baseModel, spriteGetter, modelState, modelLocation, context.useBlockLight()),
+                baseModel.bake(baker, baseModel, spriteGetter, modelState, modelLocation, context.useBlockLight()),
                 ImmutableMap.copyOf(Maps.transformValues(perspectives, value -> {
-                    return value.bake(bakery, value, spriteGetter, modelState, modelLocation, context.useBlockLight());
+                    return value.bake(baker, value, spriteGetter, modelState, modelLocation, context.useBlockLight());
                 }))
         );
     }
 
     @Override
-    public Collection<Material> getMaterials(IGeometryBakingContext context, Function<ResourceLocation, UnbakedModel> modelGetter, Set<Pair<String, String>> missingTextureErrors)
+    public void resolveParents(Function<ResourceLocation, UnbakedModel> modelGetter, IGeometryBakingContext context)
     {
-        Set<Material> textures = Sets.newHashSet();
-        if (context.hasMaterial("particle"))
-            textures.add(context.getMaterial("particle"));
-        textures.addAll(baseModel.getMaterials(modelGetter, missingTextureErrors));
-        for (BlockModel model : perspectives.values())
-            textures.addAll(model.getMaterials(modelGetter, missingTextureErrors));
-        return textures;
+        baseModel.resolveParents(modelGetter);
+        perspectives.values().forEach(model -> model.resolveParents(modelGetter));
     }
 
     public static class Baked implements IDynamicBakedModel

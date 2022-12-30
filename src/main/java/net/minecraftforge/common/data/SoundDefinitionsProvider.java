@@ -5,27 +5,22 @@
 
 package net.minecraftforge.common.data;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
+import java.nio.file.Path;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.function.Supplier;
 import net.minecraft.data.CachedOutput;
-import net.minecraft.data.DataGenerator;
-import net.minecraft.data.HashCache;
 import net.minecraft.data.DataProvider;
+import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 /**
  * Data provider for the {@code sounds.json} file, which identifies sound definitions
@@ -34,8 +29,7 @@ import java.util.stream.Collectors;
 public abstract class SoundDefinitionsProvider implements DataProvider
 {
     private static final Logger LOGGER = LogManager.getLogger();
-    private static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
-    private final DataGenerator generator;
+    private final PackOutput output;
     private final String modId;
     private final ExistingFileHelper helper;
 
@@ -44,13 +38,13 @@ public abstract class SoundDefinitionsProvider implements DataProvider
     /**
      * Creates a new instance of this data provider.
      *
-     * @param generator The data generator instance provided by the event you are initializing this provider in.
+     * @param output The {@linkplain PackOutput} instance provided by the data generator.
      * @param modId The mod ID of the current mod.
      * @param helper The existing file helper provided by the event you are initializing this provider in.
      */
-    protected SoundDefinitionsProvider(final DataGenerator generator, final String modId, final ExistingFileHelper helper)
+    protected SoundDefinitionsProvider(final PackOutput output, final String modId, final ExistingFileHelper helper)
     {
-        this.generator = generator;
+        this.output = output;
         this.modId = modId;
         this.helper = helper;
     }
@@ -61,15 +55,17 @@ public abstract class SoundDefinitionsProvider implements DataProvider
     public abstract void registerSounds();
 
     @Override
-    public void run(CachedOutput cache) throws IOException
+    public CompletableFuture<?> run(CachedOutput cache)
     {
         this.sounds.clear();
         this.registerSounds();
         this.validate();
         if (!this.sounds.isEmpty())
         {
-            this.save(cache, this.generator.getOutputFolder().resolve("assets/" + this.modId + "/sounds.json"));
+            return this.save(cache, this.output.getOutputFolder(PackOutput.Target.RESOURCE_PACK).resolve(this.modId).resolve("sounds.json"));
         }
+
+        return CompletableFuture.allOf();
     }
 
     @Override
@@ -208,7 +204,7 @@ public abstract class SoundDefinitionsProvider implements DataProvider
                 .filter(it -> !this.validate(it.getKey(), it.getValue()))
                 .map(Map.Entry::getKey)
                 .map(it -> this.modId + ":" + it)
-                .collect(Collectors.toList());
+                .toList();
         if (!notValid.isEmpty())
         {
             throw new IllegalStateException("Found invalid sound events: " + notValid);
@@ -228,7 +224,7 @@ public abstract class SoundDefinitionsProvider implements DataProvider
             case EVENT: return this.validateEvent(name, sound.name());
         }
         // Differently from all the other errors, this is not a 'missing sound' but rather something completely different
-        // that has broken the invariants of this sound definitions provider. In fact, a sound may only be either of
+        // that has broken the invariants of this sound definition's provider. In fact, a sound may only be either of
         // SOUND or EVENT type. Any other values is somebody messing with the internals, reflectively adding something
         // to an enum or passing `null` to a parameter annotated with `@NotNull`.
         throw new IllegalArgumentException("The given sound '" + sound.name() + "' does not have a valid type: expected either SOUND or EVENT, but found " + sound.type());
@@ -255,9 +251,9 @@ public abstract class SoundDefinitionsProvider implements DataProvider
         return valid;
     }
 
-    private void save(final CachedOutput cache, final Path targetFile) throws IOException
+    private CompletableFuture<?> save(final CachedOutput cache, final Path targetFile)
     {
-        DataProvider.saveStable(cache, this.mapToJson(this.sounds), targetFile);
+        return DataProvider.saveStable(cache, this.mapToJson(this.sounds), targetFile);
     }
 
     private JsonObject mapToJson(final Map<String, SoundDefinition> map)

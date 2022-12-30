@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/packs/resources/SimpleJsonResourceReloadListener.java
 +++ b/net/minecraft/server/packs/resources/SimpleJsonResourceReloadListener.java
-@@ -71,4 +_,8 @@
+@@ -48,4 +_,8 @@
  
        return map;
     }

@@ -22,7 +22,7 @@ minecraft {
     // See more information here: https://github.com/MinecraftForge/MCPConfig/blob/master/Mojang.md
     //
     // Parchment is an unofficial project maintained by ParchmentMC, separate from MinecraftForge
-    // Additional setup is needed to use their mappings: https://github.com/ParchmentMC/Parchment/wiki/Getting-Started
+    // Additional setup is needed to use their mappings: https://parchmentmc.org/docs/getting-started
     //
     // Use non-default mappings at your own risk. They may not always work.
     // Simply re-run your setup task after changing the mappings to update your workspace.
@@ -132,8 +132,6 @@ dependencies {
     minecraft '@FORGE_GROUP@:@FORGE_NAME@:@FORGE_VERSION@'
 
     // Real mod deobf dependency examples - these get remapped to your current mappings
-    // compileOnly fg.deobf("mezz.jei:jei-${mc_version}:${jei_version}:api") // Adds JEI API as a compile dependency
-    // runtimeOnly fg.deobf("mezz.jei:jei-${mc_version}:${jei_version}") // Adds the full JEI mod as a runtime dependency
     // implementation fg.deobf("com.tterrag.registrate:Registrate:MC${mc_version}-${registrate_version}") // Adds registrate as a dependency
 
     // Examples using mod jars from ./libs

@@ -15,6 +15,7 @@ import net.minecraft.core.HolderSet;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.RegistryCodecs;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DataProvider;
 import net.minecraft.resources.RegistryOps;
@@ -49,7 +50,7 @@ import org.apache.logging.log4j.Logger;
 @Mod(StructureModifierTest.MODID)
 public class StructureModifierTest
 {
-    private static final Codec<HolderSet<Structure>> STRUCTURE_LIST_CODEC = RegistryCodecs.homogeneousList(Registry.STRUCTURE_REGISTRY, Structure.DIRECT_CODEC);
+    private static final Codec<HolderSet<Structure>> STRUCTURE_LIST_CODEC = RegistryCodecs.homogeneousList(Registries.STRUCTURE, Structure.DIRECT_CODEC);
     public static final Logger LOGGER = LogManager.getLogger();
     public static final String MODID = "structure_modifiers_test";
     public static final boolean ENABLED = true;
@@ -77,7 +78,9 @@ public class StructureModifierTest
 
     private void onGatherData(GatherDataEvent event)
     {
-        // Example of how to datagen datapack registry objects.
+/*   TODO: During the update to 1.19.3 data providers got partially turned into async executions. Creating a registry ops requires this.
+
+     // Example of how to datagen datapack registry objects.
         DataGenerator generator = event.getGenerator();
         final RegistryOps<JsonElement> ops = RegistryOps.create(JsonOps.INSTANCE, RegistryAccess.BUILTIN.get());
 
@@ -91,7 +94,7 @@ public class StructureModifierTest
          DataProvider structureModifierProvider =
               JsonCodecProvider.forDatapackRegistry(generator, event.getExistingFileHelper(), MODID, ops, ForgeRegistries.Keys.STRUCTURE_MODIFIERS,
                     Map.of(MODIFY_STRONGHOLD_RL, structureModifier));
-        generator.addProvider(event.includeServer(), structureModifierProvider);
+        generator.addProvider(event.includeServer(), structureModifierProvider);*/
     }
 
     public record TestModifier(HolderSet<Structure> structures, MobCategory category, MobSpawnSettings.SpawnerData spawn)

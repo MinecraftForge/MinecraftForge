@@ -1,0 +1,46 @@
+--- a/net/minecraft/data/registries/RegistriesDatapackGenerator.java
++++ b/net/minecraft/data/registries/RegistriesDatapackGenerator.java
+@@ -18,12 +_,23 @@
+ import net.minecraft.resources.ResourceKey;
+ import org.slf4j.Logger;
+ 
++/**
++ * @deprecated Forge: Use {@link net.minecraftforge.common.data.DatapackBuiltinEntriesProvider} instead
++ */
++@Deprecated
+ public class RegistriesDatapackGenerator implements DataProvider {
+    private static final Logger f_254654_ = LogUtils.getLogger();
+    private final PackOutput f_254743_;
+    private final CompletableFuture<HolderLookup.Provider> f_254747_;
++   private final java.util.function.Predicate<String> namespacePredicate;
+ 
++   @Deprecated
+    public RegistriesDatapackGenerator(PackOutput p_256643_, CompletableFuture<HolderLookup.Provider> p_255780_) {
++      this(p_256643_, p_255780_, null);
++   }
++
++   public RegistriesDatapackGenerator(PackOutput p_256643_, CompletableFuture<HolderLookup.Provider> p_255780_, @org.jetbrains.annotations.Nullable java.util.Set<String> modIds) {
++      this.namespacePredicate = modIds == null ? namespace -> true : modIds::contains;
+       this.f_254747_ = p_255780_;
+       this.f_254743_ = p_256643_;
+    }
+@@ -31,7 +_,7 @@
+    public CompletableFuture<?> m_213708_(CachedOutput p_255785_) {
+       return this.f_254747_.thenCompose((p_256533_) -> {
+          DynamicOps<JsonElement> dynamicops = RegistryOps.m_255058_(JsonOps.INSTANCE, p_256533_);
+-         return CompletableFuture.allOf(RegistryDataLoader.f_243803_.stream().flatMap((p_256552_) -> {
++         return CompletableFuture.allOf(net.minecraftforge.registries.DataPackRegistriesHooks.getDataPackRegistriesWithDimensions().flatMap((p_256552_) -> {
+             return this.m_254918_(p_255785_, p_256533_, dynamicops, p_256552_).stream();
+          }).toArray((p_255809_) -> {
+             return new CompletableFuture[p_255809_];
+@@ -42,8 +_,8 @@
+    private <T> Optional<CompletableFuture<?>> m_254918_(CachedOutput p_256502_, HolderLookup.Provider p_256492_, DynamicOps<JsonElement> p_256000_, RegistryDataLoader.RegistryData<T> p_256449_) {
+       ResourceKey<? extends Registry<T>> resourcekey = p_256449_.f_243794_();
+       return p_256492_.m_254861_(resourcekey).map((p_255847_) -> {
+-         PackOutput.PathProvider packoutput$pathprovider = this.f_254743_.m_245269_(PackOutput.Target.DATA_PACK, resourcekey.m_135782_().m_135815_());
+-         return CompletableFuture.allOf(p_255847_.m_214062_().map((p_256105_) -> {
++         PackOutput.PathProvider packoutput$pathprovider = this.f_254743_.m_245269_(PackOutput.Target.DATA_PACK, net.minecraftforge.common.ForgeHooks.prefixNamespace(resourcekey.m_135782_()));
++         return CompletableFuture.allOf(p_255847_.m_214062_().filter(holder -> this.namespacePredicate.test(holder.m_205785_().m_135782_().m_135827_())).map((p_256105_) -> {
+             return m_255283_(packoutput$pathprovider.m_245731_(p_256105_.m_205785_().m_135782_()), p_256502_, p_256000_, p_256449_.f_244580_(), p_256105_.m_203334_());
+          }).toArray((p_256279_) -> {
+             return new CompletableFuture[p_256279_];

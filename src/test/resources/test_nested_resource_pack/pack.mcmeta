@@ -1,8 +1,8 @@
 {
    "pack": {
-      "pack_format": 8,
+      "pack_format": 12,
       "description": "Nested resource pack",
-      "forge:resource_pack_format": 9,
+      "forge:resource_pack_format": 12,
       "forge:data_pack_format": 10
    }
 }

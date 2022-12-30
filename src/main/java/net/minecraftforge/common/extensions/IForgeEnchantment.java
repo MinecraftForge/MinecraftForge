@@ -10,6 +10,8 @@ import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.EnchantmentCategory;
+import java.util.Set;
 
 public interface IForgeEnchantment
 {
@@ -31,25 +33,15 @@ public interface IForgeEnchantment
         return self().getDamageBonus(level, mobType);
     }
 
-    /**
-     * Determines what creative tabs this enchantment's variant of an enchanted book or similar item should appear in.
-     * @param book The item being added to the creative tab
-     * @param tab The creative tab that items are being added to
-     * @return whether the given Item's variant for this enchantment should appear in the respective creative tab
-     */
-    default boolean allowedInCreativeTab(Item book, CreativeModeTab tab)
-    {
-        if (!self().isAllowedOnBooks())
-        {
-            return false;
-        }
-        else if (tab == CreativeModeTab.TAB_SEARCH)
-        {
-            return self().category != null;
-        }
-        else
-        {
-            return tab.hasEnchantmentCategory(self().category);
-        }
-    }
+       /**
+        * Determines whether item variants of this enchantment can be added to a given creative tab with the allowed categories.
+        *
+        * @param book the item being added to the creative tab
+        * @param allowedCategories the enchantment categories allowed in the creative tab
+        * @return whether item variants of this enchantment can be added to a given creative tab with the allowed categories
+        */
+       default boolean allowedInCreativeTab(Item book, Set<EnchantmentCategory> allowedCategories)
+       {
+           return self().isAllowedOnBooks() && allowedCategories.contains(self().category);
+       }
 }

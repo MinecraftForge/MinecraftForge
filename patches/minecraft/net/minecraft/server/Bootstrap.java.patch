@@ -1,19 +1,19 @@
 --- a/net/minecraft/server/Bootstrap.java
 +++ b/net/minecraft/server/Bootstrap.java
-@@ -53,6 +_,8 @@
+@@ -47,6 +_,8 @@
                 DispenseItemBehavior.m_123402_();
                 CauldronInteraction.m_175649_();
-                Registry.m_206101_();
+                BuiltInRegistries.m_257498_();
 +               net.minecraftforge.registries.GameData.vanillaSnapshot();
 +               if (false) // skip redirectOutputToLog, Forge already redirects stdout and stderr output to log so that they print with more context
                 m_135890_();
              }
           }
-@@ -126,7 +_,6 @@
-          m_197757_();
+@@ -119,7 +_,6 @@
+          Commands.m_82138_();
        }
  
 -      DefaultAttributes.m_22296_();
     }
  
-    private static void m_197757_() {
+    private static void m_135890_() {

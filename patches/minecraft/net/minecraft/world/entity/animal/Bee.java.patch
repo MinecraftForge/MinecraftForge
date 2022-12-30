@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/animal/Bee.java
 +++ b/net/minecraft/world/entity/animal/Bee.java
-@@ -472,7 +_,7 @@
+@@ -474,7 +_,7 @@
           return false;
        } else {
           BlockEntity blockentity = this.f_19853_.m_7702_(this.f_27698_);
@@ -9,7 +9,7 @@
        }
     }
  
-@@ -614,8 +_,18 @@
+@@ -617,8 +_,18 @@
        return MobType.f_21642_;
     }
  

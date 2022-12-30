@@ -90,9 +90,15 @@ public class ModMismatchDisconnectedScreen extends Screen
             this.addRenderableWidget(new MismatchInfoPanel(minecraft, listWidth, listHeight, (this.height - this.listHeight) / 2, listLeft));
 
         int buttonWidth = Math.min(210, this.width / 2 - 20);
-        this.addRenderableWidget(new Button(Math.max(this.width / 4 - buttonWidth / 2, listLeft), upperButtonHeight, buttonWidth, 20, Component.literal(ForgeI18n.parseMessage("fml.button.open.file", logFile.getFileName())), button -> Util.getPlatform().openFile(logFile.toFile())));
-        this.addRenderableWidget(new Button(Math.min(this.width * 3 / 4 - buttonWidth / 2, listLeft + listWidth - buttonWidth), upperButtonHeight, buttonWidth, 20, Component.literal(ForgeI18n.parseMessage("fml.button.open.mods.folder")), button -> Util.getPlatform().openFile(modsDir.toFile())));
-        this.addRenderableWidget(new Button((this.width - buttonWidth) / 2, lowerButtonHeight, buttonWidth, 20, Component.translatable("gui.toMenu"), button -> this.minecraft.setScreen(this.parent)));
+        this.addRenderableWidget(Button.builder(Component.literal(ForgeI18n.parseMessage("fml.button.open.file", logFile.getFileName())), button -> Util.getPlatform().openFile(logFile.toFile()))
+                .bounds(Math.max(this.width / 4 - buttonWidth / 2, listLeft), upperButtonHeight, buttonWidth, 20)
+                .build());
+        this.addRenderableWidget(Button.builder(Component.literal(ForgeI18n.parseMessage("fml.button.open.mods.folder")), button -> Util.getPlatform().openFile(modsDir.toFile()))
+                .bounds(Math.min(this.width * 3 / 4 - buttonWidth / 2, listLeft + listWidth - buttonWidth), upperButtonHeight, buttonWidth, 20)
+                .build());
+        this.addRenderableWidget(Button.builder(Component.translatable("gui.toMenu"), button -> this.minecraft.setScreen(this.parent))
+                .bounds((this.width - buttonWidth) / 2, lowerButtonHeight, buttonWidth, 20)
+                .build());
     }
 
     @Override

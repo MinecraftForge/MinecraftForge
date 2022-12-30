@@ -5,9 +5,10 @@
 
 package net.minecraftforge.common.data;
 
-import net.minecraft.data.DataGenerator;
-import net.minecraft.data.tags.BlockTagsProvider;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.ItemTagsProvider;
+import net.minecraft.data.tags.TagsProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.DyeColor;
@@ -18,18 +19,19 @@ import net.minecraftforge.common.Tags;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.Locale;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
 public final class ForgeItemTagsProvider extends ItemTagsProvider
 {
-    public ForgeItemTagsProvider(DataGenerator gen, BlockTagsProvider blockTagProvider, ExistingFileHelper existingFileHelper)
+    public ForgeItemTagsProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider, TagsProvider<Block> blockTagProvider, ExistingFileHelper existingFileHelper)
     {
-        super(gen, blockTagProvider, "forge", existingFileHelper);
+        super(output, lookupProvider, blockTagProvider, "forge", existingFileHelper);
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public void addTags()
+    public void addTags(HolderLookup.Provider lookupProvider)
     {
         copy(Tags.Blocks.BARRELS, Tags.Items.BARRELS);
         copy(Tags.Blocks.BARRELS_WOODEN, Tags.Items.BARRELS_WOODEN);

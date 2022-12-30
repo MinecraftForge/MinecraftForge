@@ -24,7 +24,7 @@
     T m_203334_();
  
     boolean m_203633_();
-@@ -192,6 +_,10 @@
+@@ -193,6 +_,10 @@
  
        public Stream<TagKey<T>> m_203616_() {
           return this.f_205749_.stream();

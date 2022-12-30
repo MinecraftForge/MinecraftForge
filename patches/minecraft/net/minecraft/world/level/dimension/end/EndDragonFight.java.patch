@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/dimension/end/EndDragonFight.java
 +++ b/net/minecraft/world/level/dimension/end/EndDragonFight.java
-@@ -101,6 +_,7 @@
+@@ -102,6 +_,7 @@
  
           this.f_64068_ = p_64080_.m_128471_("DragonKilled");
           this.f_64069_ = p_64080_.m_128471_("PreviouslyKilled");
@@ -8,7 +8,7 @@
           if (p_64080_.m_128471_("IsRespawning")) {
              this.f_64073_ = DragonRespawnAnimation.START;
           }
-@@ -136,6 +_,7 @@
+@@ -137,6 +_,7 @@
  
        compoundtag.m_128379_("DragonKilled", this.f_64068_);
        compoundtag.m_128379_("PreviouslyKilled", this.f_64069_);
@@ -16,7 +16,7 @@
        if (this.f_64072_ != null) {
           compoundtag.m_128365_("ExitPortalLocation", NbtUtils.m_129224_(this.f_64072_));
        }
-@@ -508,6 +_,13 @@
+@@ -518,6 +_,13 @@
              endcrystal.m_31052_((BlockPos)null);
           }
        }

@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/StemBlock.java
 +++ b/net/minecraft/world/level/block/StemBlock.java
-@@ -43,22 +_,24 @@
+@@ -44,22 +_,24 @@
     }
  
     public void m_213898_(BlockState p_222538_, ServerLevel p_222539_, BlockPos p_222540_, RandomSource p_222541_) {
@@ -29,7 +29,7 @@
           }
  
        }
-@@ -92,5 +_,11 @@
+@@ -93,5 +_,11 @@
  
     public StemGrownBlock m_57056_() {
        return this.f_57015_;

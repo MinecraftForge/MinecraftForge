@@ -55,7 +55,7 @@ public class ModMismatchTest
             if (REGISTER_REGISTRY_ENTRY && FMLEnvironment.dist == Dist.DEDICATED_SERVER)
             {
                 IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
-                SOUND_EVENTS.register("mismatching_sound_event", () -> new SoundEvent(new ResourceLocation(MOD_ID, "server.connect.fail")));
+                SOUND_EVENTS.register("mismatching_sound_event", () -> SoundEvent.createVariableRangeEvent(new ResourceLocation(MOD_ID, "server.connect.fail")));
                 SOUND_EVENTS.register(eventBus);
             }
         }

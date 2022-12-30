@@ -1,6 +1,6 @@
 --- a/com/mojang/blaze3d/platform/GlStateManager.java
 +++ b/com/mojang/blaze3d/platform/GlStateManager.java
-@@ -539,9 +_,16 @@
+@@ -510,9 +_,16 @@
        f_84077_[f_84076_].f_84800_ = false;
     }
  
