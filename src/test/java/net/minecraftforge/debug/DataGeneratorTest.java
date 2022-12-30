@@ -30,12 +30,12 @@ import com.google.gson.JsonNull;
 import com.google.gson.JsonPrimitive;
 import net.minecraft.Util;
 import net.minecraft.advancements.critereon.InventoryChangeTrigger;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.core.RegistrySetBuilder;
+import net.minecraft.core.*;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.*;
+import net.minecraft.data.worldgen.BootstapContext;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
@@ -43,12 +43,18 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.biome.TheEndBiomeSource;
 import net.minecraft.world.level.block.ButtonBlock;
 import net.minecraft.world.level.block.DoorBlock;
 import net.minecraft.world.level.block.PressurePlateBlock;
 import net.minecraft.world.level.block.StandingSignBlock;
 import net.minecraft.world.level.block.WallSignBlock;
 import net.minecraftforge.common.conditions.ConditionBuilder;
+import net.minecraft.world.level.dimension.BuiltinDimensionTypes;
+import net.minecraft.world.level.dimension.DimensionType;
+import net.minecraft.world.level.dimension.LevelStem;
+import net.minecraft.world.level.levelgen.NoiseBasedChunkGenerator;
 import net.minecraft.world.level.levelgen.NoiseGeneratorSettings;
 import net.minecraftforge.common.crafting.CompoundIngredient;
 import net.minecraftforge.common.crafting.PartialNBTIngredient;
@@ -88,7 +94,6 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.model.generators.BlockStateProvider;
 import net.minecraftforge.client.model.generators.ConfiguredModel;
@@ -127,8 +132,10 @@ public class DataGeneratorTest
 
     // Datapack registry objects
     private static final ResourceKey<NoiseGeneratorSettings> TEST_SETTINGS = ResourceKey.create(Registries.NOISE_SETTINGS, new ResourceLocation(MODID, "test_settings"));
+    private static final ResourceKey<LevelStem> TEST_LEVEL_STEM = ResourceKey.create(Registries.LEVEL_STEM, new ResourceLocation(MODID, "test_level_stem"));
     private static final RegistrySetBuilder BUILDER = new RegistrySetBuilder()
-            .add(Registries.NOISE_SETTINGS, context -> context.register(TEST_SETTINGS, NoiseGeneratorSettings.floatingIslands(context)));
+            .add(Registries.NOISE_SETTINGS, context -> context.register(TEST_SETTINGS, NoiseGeneratorSettings.floatingIslands(context)))
+            .add(Registries.LEVEL_STEM, DataGeneratorTest::levelStem);
 
     @SubscribeEvent
     public static void gatherData(GatherDataEvent event)
@@ -156,7 +163,17 @@ public class DataGeneratorTest
         gen.addProvider(event.includeServer(), new DatapackBuiltinEntriesProvider(packOutput, lookupProvider, BUILDER, Set.of(MODID)));
     }
 
-    public static class Recipes extends RecipeProvider implements ConditionBuilder
+    public static void levelStem(BootstapContext<LevelStem> context) {
+        HolderGetter<DimensionType> dimensionTypes = context.lookup(Registries.DIMENSION_TYPE);
+        HolderGetter<NoiseGeneratorSettings> noiseGeneratorSettings = context.lookup(Registries.NOISE_SETTINGS);
+        HolderGetter<Biome> biomes = context.lookup(Registries.BIOME);
+        Holder<DimensionType> holder2 = dimensionTypes.getOrThrow(BuiltinDimensionTypes.END);
+        Holder<NoiseGeneratorSettings> holder3 = noiseGeneratorSettings.getOrThrow(NoiseGeneratorSettings.END);
+        LevelStem levelStem = new LevelStem(holder2, new NoiseBasedChunkGenerator(TheEndBiomeSource.create(biomes), holder3));
+        context.register(TEST_LEVEL_STEM, levelStem);
+    }
+
+    public static class Recipes extends RecipeProvider implements IConditionBuilder
     {
         public Recipes(PackOutput gen)
         {

@@ -274,6 +274,8 @@ modId="grindstone_event_test"
 modId="data_pack_registries_test"
 [[mods]]
 modId="creative_mode_tab_test"
+[[mods]]
+modId="trade_with_villager_event_test"
 
 
 # ADD ABOVE THIS LINE
