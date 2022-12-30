@@ -204,7 +204,7 @@ public class NewModelLoaderTest
                     .texture("layer0", "minecraft:item/coal")
                     .texture("layer1", "minecraft:item/stick")
                     .customLoader(ItemLayerModelBuilder::begin)
-                        .emissive(1)
+                        .emissive(15, 15, 1)
                     .end();
             withExistingParent(NewModelLoaderTest.separate_perspective.getId().getPath(), "forge:item/default")
                     .customLoader(SeparateTransformsModelBuilder::begin)
