@@ -110,7 +110,11 @@ public class ItemLayerModel implements IUnbakedGeometry<ItemLayerModel>
             }
 
             var emissiveLayers = new Int2ObjectArrayMap<ForgeFaceData>();
-            readLayerData(jsonObject, "forge_data", renderTypeNames, emissiveLayers, false);
+            if(jsonObject.has("forge_data"))
+            {
+                JsonObject forgeData = jsonObject.get("forge_data").getAsJsonObject();
+                readLayerData(forgeData, "layers", renderTypeNames, emissiveLayers, false);    
+            }
             return new ItemLayerModel(null, emissiveLayers, renderTypeNames);
         }
 
