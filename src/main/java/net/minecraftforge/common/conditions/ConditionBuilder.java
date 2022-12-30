@@ -18,9 +18,9 @@ import java.util.List;
  */
 public class ConditionBuilder
 {
-	/**
-	 * Returns a new condition that is the logical and of the passed values.
-	 */
+    /**
+     * Returns a new condition that is the logical and of the passed values.
+     */
     public static ICondition and(ICondition... values)
     {
         return new AndCondition(List.of(values));
@@ -112,89 +112,89 @@ public class ConditionBuilder
      */
     public static interface IConditionBuilder
     {
-    	/**
-    	 * @see ConditionBuilder#and
-    	 */
+        /**
+         * @see ConditionBuilder#and
+         */
         default ICondition and(ICondition... values)
         {
             return ConditionBuilder.and(values);
         }
 
         /**
-    	 * @see ConditionBuilder#FALSE
-    	 */
+         * @see ConditionBuilder#FALSE
+         */
         default ICondition FALSE()
         {
             return ConditionBuilder.FALSE();
         }
 
         /**
-    	 * @see ConditionBuilder#TRUE
-    	 */
+         * @see ConditionBuilder#TRUE
+         */
         default ICondition TRUE()
         {
             return ConditionBuilder.TRUE();
         }
 
         /**
-    	 * @see ConditionBuilder#not
-    	 */
+         * @see ConditionBuilder#not
+         */
         default ICondition not(ICondition value)
         {
             return ConditionBuilder.not(value);
         }
 
         /**
-    	 * @see ConditionBuilder#or
-    	 */
+         * @see ConditionBuilder#or
+         */
         default ICondition or(ICondition... values)
         {
             return ConditionBuilder.or(values);
         }
 
         /**
-    	 * @see ConditionBuilder#itemExis
-    	 */
+         * @see ConditionBuilder#itemExis
+         */
         default ICondition itemExists(String namespace, String path)
         {
             return ConditionBuilder.itemExists(namespace, path);
         }
 
         /**
-    	 * @see ConditionBuilder#modLoaded
-    	 */
+         * @see ConditionBuilder#modLoaded
+         */
         default ICondition modLoaded(String modid)
         {
             return ConditionBuilder.modLoaded(modid);
         }
 
         /**
-    	 * @see ConditionBuilder#tagEmpty
-    	 */
+         * @see ConditionBuilder#tagEmpty
+         */
         default <T> ICondition tagEmpty(TagKey<T> tag)
         {
             return ConditionBuilder.tagEmpty(tag);
         }
 
         /**
-    	 * @see ConditionBuilder#tagEmpty(ResourceKey, ResourceLocation)
-    	 */
+         * @see ConditionBuilder#tagEmpty(ResourceKey, ResourceLocation)
+         */
         default <T> ICondition tagEmpty(ResourceKey<? extends Registry<T>> registry, ResourceLocation tag)
         {
             return ConditionBuilder.tagEmpty(registry, tag);
         }
 
         /**
-    	 * @see ConditionBuilder#tagExists
-    	 */
+         * @see ConditionBuilder#tagExists
+         */
         default <T> ICondition tagExists(TagKey<T> tag)
         {
             return ConditionBuilder.tagExists(tag);
         }
 
         /**
-    	 * @see ConditionBuilder#tagExists(ResourceKey, ResourceLocation)
-    	 */
+         * @see ConditionBuilder#tagExists(ResourceKey, ResourceLocation)
+         */
         default <T> ICondition tagExists(ResourceKey<? extends Registry<T>> registry, ResourceLocation tag)
         {
             return ConditionBuilder.tagExists(registry, tag);
