@@ -17,8 +17,7 @@ import com.mojang.logging.LogUtils;
 import net.minecraft.resources.ResourceKey;
 
 /**
- * 
- * Holds code relating to the de/serialization and processing of {@link LoadingCondition}s
+ * Holds code relating to the de/serialization and processing of {@link ICondition}s
  */
 public class ConditionHelper {
 
@@ -30,9 +29,9 @@ public class ConditionHelper {
      * @return The serialized JSON
      * @throws RuntimeException If no serializer is registered for the condition, or if the serializer encountered an exception encoding
      */
-    public static JsonElement serialize(LoadingCondition condition)
+    public static JsonElement serialize(ICondition condition)
     {
-        return LoadingCondition.DIRECT_CODEC.encodeStart(JsonOps.INSTANCE, condition)
+        return ICondition.DIRECT_CODEC.encodeStart(JsonOps.INSTANCE, condition)
                 .getOrThrow(false, msg -> LOGGER.error("Encountered exception encoding condition: {}", msg));
     }
 
@@ -42,10 +41,10 @@ public class ConditionHelper {
      * @return The serialized JSON
      * @throws RuntimeException If no serializer is registered for any of the passed conditions.
      */
-    public static JsonArray serialize(LoadingCondition... conditions)
+    public static JsonArray serialize(ICondition... conditions)
     {
         JsonArray arr = new JsonArray();
-        for (LoadingCondition iCond : conditions)
+        for (ICondition iCond : conditions)
         {
             arr.add(ConditionHelper.serialize(iCond));
         }
@@ -53,14 +52,14 @@ public class ConditionHelper {
     }
 
     /**
-     * Parses an {@link LoadingCondition} from a {@link JsonObject}.
+     * Parses an {@link ICondition} from a {@link JsonObject}.
      * @param json The serialized condition JSON
      * @return The deserialized condition object
      * @throws RuntimeException If no serializer is registered for the specified condition type, or if the serializer encountered an exception decoding
      */
-    public static LoadingCondition getCondition(JsonElement json)
+    public static ICondition getCondition(JsonElement json)
     {
-        return LoadingCondition.DIRECT_CODEC.decode(JsonOps.INSTANCE, json)
+        return ICondition.DIRECT_CODEC.decode(JsonOps.INSTANCE, json)
                 .getOrThrow(false, msg -> LOGGER.error("Encountered exception decoding condition: {}", msg)).getFirst();
     }
 

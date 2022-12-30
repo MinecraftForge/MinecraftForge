@@ -5,10 +5,18 @@
 
 package net.minecraftforge.common.conditions;
 
+import org.jetbrains.annotations.ApiStatus;
+
 import com.mojang.serialization.Codec;
 import net.minecraftforge.common.ForgeMod;
 
-public final class TrueCondition implements LoadingCondition
+/**
+ * The TrueCondition always returns true.
+ * 
+ * @apiNote Internal. Use {@link ConditionBuilder}.
+ */
+@ApiStatus.Internal
+public final class TrueCondition implements ICondition
 {
     public static final TrueCondition INSTANCE = new TrueCondition();
     private TrueCondition() {}
@@ -26,7 +34,7 @@ public final class TrueCondition implements LoadingCondition
     }
 
     @Override
-    public Codec<? extends LoadingCondition> codec()
+    public Codec<? extends ICondition> codec()
     {
         return ForgeMod.TRUE_CONDITION_TYPE.get();
     }

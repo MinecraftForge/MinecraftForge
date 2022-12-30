@@ -50,7 +50,7 @@ import net.minecraft.world.level.block.DoorBlock;
 import net.minecraft.world.level.block.PressurePlateBlock;
 import net.minecraft.world.level.block.StandingSignBlock;
 import net.minecraft.world.level.block.WallSignBlock;
-import net.minecraftforge.common.conditions.ConditionBuilder;
+import net.minecraftforge.common.conditions.ConditionBuilder.IConditionBuilder;
 import net.minecraft.world.level.dimension.BuiltinDimensionTypes;
 import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.dimension.LevelStem;

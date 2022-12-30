@@ -23,7 +23,7 @@ import net.minecraft.util.GsonHelper;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.conditions.ConditionHelper;
 import net.minecraftforge.common.conditions.IConditionContext;
-import net.minecraftforge.common.conditions.LoadingCondition;
+import net.minecraftforge.common.conditions.ICondition;
 import net.minecraftforge.registries.ObjectHolder;
 import org.jetbrains.annotations.Nullable;
 
@@ -69,14 +69,14 @@ public class ConditionalRecipe
 
     public static class Builder
     {
-        private List<LoadingCondition[]> conditions = new ArrayList<>();
+        private List<ICondition[]> conditions = new ArrayList<>();
         private List<FinishedRecipe> recipes = new ArrayList<>();
         private ResourceLocation advId;
         private ConditionalAdvancement.Builder adv;
 
-        private List<LoadingCondition> currentConditions = new ArrayList<>();
+        private List<ICondition> currentConditions = new ArrayList<>();
 
-        public Builder addCondition(LoadingCondition condition)
+        public Builder addCondition(ICondition condition)
         {
             currentConditions.add(condition);
             return this;
@@ -92,7 +92,7 @@ public class ConditionalRecipe
         {
             if (currentConditions.isEmpty())
                 throw new IllegalStateException("Can not add a recipe with no conditions.");
-            conditions.add(currentConditions.toArray(new LoadingCondition[currentConditions.size()]));
+            conditions.add(currentConditions.toArray(new ICondition[currentConditions.size()]));
             recipes.add(recipe);
             currentConditions.clear();
             return this;
@@ -108,7 +108,7 @@ public class ConditionalRecipe
             ConditionalAdvancement.Builder builder = ConditionalAdvancement.builder();
             for(int i=0;i<recipes.size();i++)
             {
-                for(LoadingCondition cond : conditions.get(i))
+                for(ICondition cond : conditions.get(i))
                     builder = builder.addCondition(cond);
                 builder = builder.addAdvancement(recipes.get(i));
             }
@@ -158,12 +158,12 @@ public class ConditionalRecipe
     private static class Finished implements FinishedRecipe
     {
         private final ResourceLocation id;
-        private final List<LoadingCondition[]> conditions;
+        private final List<ICondition[]> conditions;
         private final List<FinishedRecipe> recipes;
         private final ResourceLocation advId;
         private final ConditionalAdvancement.Builder adv;
 
-        private Finished(ResourceLocation id, List<LoadingCondition[]> conditions, List<FinishedRecipe> recipes, @Nullable ResourceLocation advId, @Nullable ConditionalAdvancement.Builder adv)
+        private Finished(ResourceLocation id, List<ICondition[]> conditions, List<FinishedRecipe> recipes, @Nullable ResourceLocation advId, @Nullable ConditionalAdvancement.Builder adv)
         {
             this.id = id;
             this.conditions = conditions;
@@ -181,7 +181,7 @@ public class ConditionalRecipe
                 JsonObject holder = new JsonObject();
 
                 JsonArray conds = new JsonArray();
-                for (LoadingCondition c : conditions.get(x))
+                for (ICondition c : conditions.get(x))
                     conds.add(ConditionHelper.serialize(c));
                 holder.add("conditions", conds);
                 holder.add("recipe", recipes.get(x).serializeRecipe());

@@ -14,21 +14,21 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 /**
- * An {@link LoadingCondition} represents any type of loading condition that can be applied to a JSON object.
+ * An {@link ICondition} represents any type of loading condition that can be applied to a JSON object.
  */
-public interface LoadingCondition extends Predicate<IConditionContext>
+public interface ICondition extends Predicate<IConditionContext>
 {
     /**
      * Codec for (de)serializing conditions inline.
      * Mods can use this for data generation.
      */
-    Codec<LoadingCondition> DIRECT_CODEC = ExtraCodecs.lazyInitializedCodec(() -> ForgeRegistries.CONDITION_SERIALIZERS.get().getCodec())
-            .dispatch(LoadingCondition::codec, Function.identity());
+    Codec<ICondition> DIRECT_CODEC = ExtraCodecs.lazyInitializedCodec(() -> ForgeRegistries.CONDITION_SERIALIZERS.get().getCodec())
+            .dispatch(ICondition::codec, Function.identity());
 
     /**
      * @return the codec which serializes and deserializes this condition
      */
-    Codec<? extends LoadingCondition> codec();
+    Codec<? extends ICondition> codec();
 
     /**
      * Tests if this condition is met, given the context.

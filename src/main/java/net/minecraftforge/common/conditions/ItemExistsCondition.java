@@ -5,6 +5,8 @@
 
 package net.minecraftforge.common.conditions;
 
+import org.jetbrains.annotations.ApiStatus;
+
 import com.mojang.serialization.Codec;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.ForgeMod;
@@ -12,8 +14,11 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 /**
  * The ItemExistsCondition can detect if a particular item is currently registered.
+ * 
+ * @apiNote Internal. Use {@link ConditionBuilder}.
  */
-public record ItemExistsCondition(ResourceLocation item) implements LoadingCondition
+@ApiStatus.Internal
+public record ItemExistsCondition(ResourceLocation item) implements ICondition
 {
     @Override
     public boolean test(IConditionContext context)
@@ -28,7 +33,7 @@ public record ItemExistsCondition(ResourceLocation item) implements LoadingCondi
     }
 
     @Override
-    public Codec<? extends LoadingCondition> codec()
+    public Codec<? extends ICondition> codec()
     {
         return ForgeMod.ITEM_EXISTS_CONDITION_TYPE.get();
     }

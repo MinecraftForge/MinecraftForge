@@ -11,12 +11,20 @@ import net.minecraftforge.common.ForgeMod;
 
 import java.util.List;
 
-public record OrCondition(List<LoadingCondition> values) implements LoadingCondition {
+import org.jetbrains.annotations.ApiStatus;
+
+/**
+ * The OrCondition forms the logical or of one of more conditions.
+ * 
+ * @apiNote Internal. Use {@link ConditionBuilder}.
+ */
+@ApiStatus.Internal
+public record OrCondition(List<ICondition> values) implements ICondition {
 
     @Override
     public boolean test(IConditionContext context)
     {
-        for (LoadingCondition child : values)
+        for (ICondition child : values)
         {
             if (child.test(context))
                 return true;
@@ -32,7 +40,7 @@ public record OrCondition(List<LoadingCondition> values) implements LoadingCondi
     }
 
     @Override
-    public Codec<? extends LoadingCondition> codec()
+    public Codec<? extends ICondition> codec()
     {
         return ForgeMod.OR_CONDITION_TYPE.get();
     }

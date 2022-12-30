@@ -20,7 +20,7 @@ import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.util.GsonHelper;
 import net.minecraftforge.common.conditions.ConditionHelper;
 import net.minecraftforge.common.conditions.IConditionContext;
-import net.minecraftforge.common.conditions.LoadingCondition;
+import net.minecraftforge.common.conditions.ICondition;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -58,13 +58,13 @@ public class ConditionalAdvancement
 
     public static class Builder
     {
-        private List<LoadingCondition[]> conditions = new ArrayList<>();
+        private List<ICondition[]> conditions = new ArrayList<>();
         private List<Supplier<JsonElement>> advancements = new ArrayList<>();
 
-        private List<LoadingCondition> currentConditions = new ArrayList<>();
+        private List<ICondition> currentConditions = new ArrayList<>();
         private boolean locked = false;
 
-        public Builder addCondition(LoadingCondition condition)
+        public Builder addCondition(ICondition condition)
         {
             if (locked)
                 throw new IllegalStateException("Attempted to modify finished builder");
@@ -96,7 +96,7 @@ public class ConditionalAdvancement
                 throw new IllegalStateException("Attempted to modify finished builder");
             if (currentConditions.isEmpty())
                 throw new IllegalStateException("Can not add a advancement with no conditions.");
-            conditions.add(currentConditions.toArray(new LoadingCondition[currentConditions.size()]));
+            conditions.add(currentConditions.toArray(new ICondition[currentConditions.size()]));
             advancements.add(jsonSupplier);
             currentConditions.clear();
             return this;
@@ -120,7 +120,7 @@ public class ConditionalAdvancement
                 JsonObject holder = new JsonObject();
 
                 JsonArray conds = new JsonArray();
-                for (LoadingCondition c : conditions.get(x))
+                for (ICondition c : conditions.get(x))
                     conds.add(ConditionHelper.serialize(c));
                 holder.add("conditions", conds);
                 holder.add("advancement", advancements.get(x).get());

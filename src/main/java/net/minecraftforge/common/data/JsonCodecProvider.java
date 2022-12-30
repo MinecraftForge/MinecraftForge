@@ -30,7 +30,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
 import net.minecraftforge.common.conditions.ConditionHelper;
-import net.minecraftforge.common.conditions.LoadingCondition;
+import net.minecraftforge.common.conditions.ICondition;
 import net.minecraftforge.common.data.ExistingFileHelper.ResourceType;
 import net.minecraftforge.registries.DataPackRegistriesHooks;
 import org.slf4j.Logger;
@@ -55,7 +55,7 @@ public class JsonCodecProvider<T> implements DataProvider
     protected final String directory;
     protected final Codec<T> codec;
     protected final Map<ResourceLocation, T> entries;
-    protected Map<ResourceLocation, LoadingCondition[]> conditions = Collections.emptyMap();
+    protected Map<ResourceLocation, ICondition[]> conditions = Collections.emptyMap();
 
     /**
      * @param output {@linkplain PackOutput} provided by the {@link DataGenerator}.
@@ -96,7 +96,7 @@ public class JsonCodecProvider<T> implements DataProvider
             final Path path = outputFolder.resolve(id.getNamespace()).resolve(this.directory).resolve(id.getPath() + ".json");
             JsonElement encoded = this.codec.encodeStart(this.dynamicOps, value)
                   .getOrThrow(false, msg -> LOGGER.error("Failed to encode {}: {}", path, msg));
-            LoadingCondition[] conditions = this.conditions.get(id);
+            ICondition[] conditions = this.conditions.get(id);
             if (conditions != null && conditions.length > 0)
             {
                 if(encoded instanceof JsonObject obj)
@@ -131,7 +131,7 @@ public class JsonCodecProvider<T> implements DataProvider
      * Null or empty arrays will not be written, and if the top-level json type is not JsonObject, attempting to add conditions will error.
      * @param conditions The name->condition map to apply.
      */
-    public JsonCodecProvider<T> setConditions(Map<ResourceLocation, LoadingCondition[]> conditions)
+    public JsonCodecProvider<T> setConditions(Map<ResourceLocation, ICondition[]> conditions)
     {
         this.conditions = conditions;
         return this;

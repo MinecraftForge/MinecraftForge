@@ -5,22 +5,28 @@
 
 package net.minecraftforge.common.conditions;
 
+import java.util.List;
+
+import org.jetbrains.annotations.ApiStatus;
+
 import com.google.common.base.Joiner;
 import com.mojang.serialization.Codec;
-import net.minecraftforge.common.ForgeMod;
 
-import java.util.List;
+import net.minecraftforge.common.ForgeMod;
 
 /**
  * The AndCondition forms the logical and of one of more conditions.
+ * 
+ * @apiNote Internal. Use {@link ConditionBuilder}.
  */
-public record AndCondition(List<LoadingCondition> children) implements LoadingCondition
+@ApiStatus.Internal
+public record AndCondition(List<ICondition> children) implements ICondition
 {
 
     @Override
     public boolean test(IConditionContext context)
     {
-        for (LoadingCondition child : children)
+        for (ICondition child : children)
         {
             if (!child.test(context))
                 return false;
@@ -29,7 +35,7 @@ public record AndCondition(List<LoadingCondition> children) implements LoadingCo
     }
 
     @Override
-    public Codec<? extends LoadingCondition> codec()
+    public Codec<? extends ICondition> codec()
     {
         return ForgeMod.AND_CONDITION_TYPE.get();
     }

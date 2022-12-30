@@ -5,11 +5,19 @@
 
 package net.minecraftforge.common.conditions;
 
+import org.jetbrains.annotations.ApiStatus;
+
 import com.mojang.serialization.Codec;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.fml.ModList;
 
-public record ModLoadedCondition(String modId) implements LoadingCondition
+/**
+ * The mod loaded condition checks if a specific mod is loaded.
+ *
+ * @apiNote Internal. Use {@link ConditionBuilder}.
+ */
+@ApiStatus.Internal
+public record ModLoadedCondition(String modId) implements ICondition
 {
     @Override
     public boolean test(IConditionContext context)
@@ -24,7 +32,7 @@ public record ModLoadedCondition(String modId) implements LoadingCondition
     }
 
     @Override
-    public Codec<? extends LoadingCondition> codec()
+    public Codec<? extends ICondition> codec()
     {
         return ForgeMod.MOD_LOADED_CONDITION_TYPE.get();
     }
