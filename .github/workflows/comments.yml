@@ -1,0 +1,16 @@
+name: 'Comment actions'
+
+on: issue_comment
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+  discussions: write
+
+jobs:
+  labels:
+    uses: MinecraftForge/SharedActions/.github/workflows/comment_actions.yml@main
+    secrets:
+      GH_APP_KEY: ${{ secrets.GH_APP_KEY }}
+      GH_APP_NAME: ${{ secrets.GH_APP_NAME }}
