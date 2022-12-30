@@ -1,9 +1,10 @@
 --- a/net/minecraft/client/renderer/block/model/BlockElementFace.java
 +++ b/net/minecraft/client/renderer/block/model/BlockElementFace.java
-@@ -19,12 +_,29 @@
+@@ -19,12 +_,30 @@
     public final int f_111355_;
     public final String f_111356_;
     public final BlockFaceUV f_111357_;
++   @Nullable
 +   private final net.minecraftforge.client.model.ForgeFaceData faceData; // If null, we defer to the parent BlockElement's ForgeFaceData, which is not nullable.
 +   @Nullable
 +   BlockElement parent; // Parent canot be set by the constructor due to instantiation ordering. This shouldn't really ever be null, but it could theoretically be.
