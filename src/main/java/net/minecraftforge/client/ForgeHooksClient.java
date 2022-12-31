@@ -973,6 +973,13 @@ public class ForgeHooksClient
         ClientChatReceivedEvent.Player event = new ClientChatReceivedEvent.Player(boundChatType, message, playerChatMessage, sender);
         return MinecraftForge.EVENT_BUS.post(event) ? null : event.getMessage();
     }
+    
+    @Nullable
+    public static Component onClientSystemChat(Component message, boolean overlay)
+    {
+        ClientChatReceivedEvent.System event = new ClientChatReceivedEvent.System(message, overlay);
+        return MinecraftForge.EVENT_BUS.post(event) ? null : event.getMessage();
+    }
 
     @NotNull
     public static String onClientSendMessage(String message)

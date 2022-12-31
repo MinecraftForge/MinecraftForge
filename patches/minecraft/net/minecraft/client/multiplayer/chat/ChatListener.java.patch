@@ -30,3 +30,24 @@
                 this.m_241119_(p_251766_, component);
              }
           }
+@@ -159,14 +_,16 @@
+ 
+    public void m_240494_(Component p_240522_, boolean p_240642_) {
+       if (!this.f_240348_.f_91066_.m_231833_().m_231551_() || !this.f_240348_.m_91246_(this.m_240473_(p_240522_))) {
++         Component component = net.minecraftforge.client.ForgeHooksClient.onClientSystemChat(p_240522_, p_240642_);
++         if (component == null) return;
+          if (p_240642_) {
+-            this.f_240348_.f_91065_.m_93063_(p_240522_, false);
++            this.f_240348_.f_91065_.m_93063_(component, false);
+          } else {
+-            this.f_240348_.f_91065_.m_93076_().m_93785_(p_240522_);
+-            this.m_240498_(p_240522_, Instant.now());
++            this.f_240348_.f_91065_.m_93076_().m_93785_(component);
++            this.m_240498_(component, Instant.now());
+          }
+ 
+-         this.f_240348_.m_240477_().m_263195_(p_240522_);
++         this.f_240348_.m_240477_().m_263195_(component);
+       }
+    }
+ 

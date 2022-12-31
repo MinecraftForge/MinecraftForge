@@ -88,6 +88,15 @@ public class ClientChatReceivedEvent extends Event
     }
 
     /**
+     * {@return {@code true} if the bound chat type is not set}
+     * This will happen when the message is sent by the server and is not disguised as a player message
+     */
+    public boolean hasBoundChatType()
+    {
+        return this.boundChatType != null;
+    }
+
+    /**
      * Fired when a player chat message is received on the client.
      *
      * <p>This event is {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}.
@@ -116,6 +125,35 @@ public class ClientChatReceivedEvent extends Event
         public PlayerChatMessage getPlayerChatMessage()
         {
             return this.playerChatMessage;
+        }
+    }
+
+    /**
+     * Fired when a system chat message is received on the client.
+     *
+     * <p>This event is {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}.
+     * If the event is cancelled, the message is not displayed in the chat message window or in the overlay.</p>
+     *
+     * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
+     * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
+     */
+    public static class System extends ClientChatReceivedEvent
+    {
+        private final boolean overlay;
+
+        @ApiStatus.Internal
+        public System(Component message, boolean overlay)
+        {
+            super(null, message, Util.NIL_UUID);
+            this.overlay = overlay;
+        }
+
+        /**
+         * {@return whether the message goes to the overlay}
+         */
+        public boolean getOverlay()
+        {
+            return this.overlay;
         }
     }
 }
