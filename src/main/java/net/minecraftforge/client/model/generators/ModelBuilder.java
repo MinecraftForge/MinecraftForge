@@ -20,6 +20,7 @@ import com.google.common.base.Preconditions;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.mojang.serialization.JsonOps;
 
 import net.minecraft.client.renderer.block.model.BlockFaceUV;
 import net.minecraft.client.renderer.block.model.BlockModel.GuiLight;
@@ -32,6 +33,7 @@ import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+import net.minecraftforge.client.model.ForgeFaceData;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
@@ -60,7 +62,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
 
     protected final List<ElementBuilder> elements = new ArrayList<>();
 
-    protected CustomLoaderBuilder customLoader = null;
+    protected CustomLoaderBuilder<T> customLoader = null;
 
     protected ModelBuilder(ResourceLocation outputLocation, ExistingFileHelper existingFileHelper) {
         super(outputLocation);
@@ -317,11 +319,8 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
                     if (face.tintIndex != -1) {
                         faceObj.addProperty("tintindex", face.tintIndex);
                     }
-                    if (face.emissivity > 0) {
-                        faceObj.addProperty("emissivity", face.emissivity);
-                    }
-                    if (!face.hasAmbientOcclusion) {
-                        faceObj.addProperty("ambientocclusion", face.hasAmbientOcclusion);
+                    if (!face.getFaceData().equals(ForgeFaceData.DEFAULT)) {
+                        faceObj.add("forge_data", ForgeFaceData.CODEC.encodeStart(JsonOps.INSTANCE, face.getFaceData()).result().get());
                     }
                     faces.add(dir.getSerializedName(), faceObj);
                 }
@@ -368,6 +367,9 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
         private final Map<Direction, FaceBuilder> faces = new LinkedHashMap<>();
         private RotationBuilder rotation;
         private boolean shade = true;
+        private int color = 0xFFFFFFFF;
+        private int blockLight = 0, skyLight = 0;
+        private boolean hasAmbientOcclusion = true;
 
         private void validateCoordinate(float coord, char name) {
             Preconditions.checkArgument(!(coord < -16.0F) && !(coord > 32.0F), "Position " + name + " out of range, must be within [-16, 32]. Found: %d", coord);
@@ -499,6 +501,42 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
         public ElementBuilder cube(String texture) {
             return allFaces(addTexture(texture).andThen((dir, f) -> f.cullface(dir)));
         }
+        
+        /**
+         * Set the block and sky light of the element (0-15).
+         * Traditional "emissivity" values were set both of these to the same value.
+         *
+         * @param blockLight the block light
+         * @param skyLight the sky light
+         * @return this builder
+         */
+        public ElementBuilder emissivity(int blockLight, int skyLight) {
+            this.blockLight = blockLight;
+            this.skyLight = skyLight;
+            return this;
+        }
+
+        /**
+         * Sets the color of the element.
+         *
+         * @param color the color in ARGB format.
+         * @return this builder
+         */
+        public ElementBuilder color(int color) {
+            this.color = color;
+            return this;
+        }
+
+        /**
+         * Set the ambient occlusion of the element.
+         *
+         * @param ao the ambient occlusion
+         * @return this builder
+         */
+        public ElementBuilder ao(boolean ao) {
+            this.hasAmbientOcclusion = ao;
+            return this;
+        }
 
         private BiConsumer<Direction, FaceBuilder> addTexture(String texture) {
             return ($, f) -> f.texture(texture);
@@ -507,7 +545,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
         BlockElement build() {
             Map<Direction, BlockElementFace> faces = this.faces.entrySet().stream()
                     .collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue().build(), (k1, k2) -> { throw new IllegalArgumentException(); }, LinkedHashMap::new));
-            return new BlockElement(from, to, faces, rotation == null ? null : rotation.build(), shade);
+            return new BlockElement(from, to, faces, rotation == null ? null : rotation.build(), shade, new ForgeFaceData(this.color, this.blockLight, this.skyLight, this.hasAmbientOcclusion));
         }
 
         public T end() { return self(); }
@@ -519,7 +557,8 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
             private String texture = MissingTextureAtlasSprite.getLocation().toString();
             private float[] uvs;
             private FaceRotation rotation = FaceRotation.ZERO;
-            private int emissivity = 0;
+            private int color = 0xFFFFFFFF;
+            private int blockLight = 0, skyLight = 0;
             private boolean hasAmbientOcclusion = true;
 
             FaceBuilder(Direction dir) {
@@ -568,23 +607,28 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
             }
 
             /**
-             * Set the emissivity of the face (0-15).
+             * Set the block and sky light of the face (0-15).
+             * Traditional "emissivity" values set both of these to the same value.
              *
-             * @param emissivity the emissivity
+             * @param blockLight the block light
+             * @param skyLight the sky light
              * @return this builder
              */
-            public FaceBuilder emissivity(int emissivity) {
-                this.emissivity = emissivity;
+            public FaceBuilder emissivity(int blockLight, int skyLight) {
+                this.blockLight = blockLight;
+                this.skyLight = skyLight;
                 return this;
             }
 
             /**
-             * Make the face emissive (emissivity = 15).
+             * Sets the color of the face.
              *
+             * @param color the color in ARGB format.
              * @return this builder
              */
-            public FaceBuilder emissive() {
-                return emissivity(15);
+            public FaceBuilder color(int color) {
+                this.color = color;
+                return this;
             }
 
             /**
@@ -602,7 +646,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
                 if (this.texture == null) {
                     throw new IllegalStateException("A model face must have a texture");
                 }
-                return new BlockElementFace(cullface, tintindex, texture, new BlockFaceUV(uvs, rotation.rotation), emissivity, hasAmbientOcclusion);
+                return new BlockElementFace(cullface, tintindex, texture, new BlockFaceUV(uvs, rotation.rotation), new ForgeFaceData(this.color, this.blockLight, this.skyLight, this.hasAmbientOcclusion));
             }
 
             public ElementBuilder end() { return ElementBuilder.this; }
