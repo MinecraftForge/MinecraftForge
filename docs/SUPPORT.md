@@ -44,7 +44,7 @@ You can generally tell pretty quickly what caused the error at the head of your 
  1. If you can find the name of a mod in the trace, that mod most likely is the culprit.
     - Be aware that you may find multiple mods as participants of a crash. In that case, you can either report to both or try to reason (using the names in the stacktrace) about which mod is at fault.
  2. If you can only find Forge (usually starting with `net.minecraftforge`) alongside Vanilla (usually starting with `net.minecraft`) references, chances are that you have found a bug in Forge. In this case, use one of the various [support channels](#forge-support) listed below.
-    - The occurence of a single call to Forge somewhere in the stacktrace *does not* warrant a report to Forge if there are mods present in the crash report.
+    - The occurrence of a single call to Forge somewhere in the stacktrace *does not* warrant a report to Forge if there are mods present in the crash report.
  3. If there's no mention of Forge or a mod, but any Vanilla class, you might have found a Vanilla bug. You should probably still report it via the Forge channels first, however, due the nature of modded environments and the rarity of Vanilla crash bugs.
  4. Always check whether there's a mention of coremods at the beginning of a crash report. If there is and you can't find any clear culprit, consider reporting to these coremods first, since they are free to change any of the code executed in your environment.
 
