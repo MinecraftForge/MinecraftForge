@@ -83,19 +83,27 @@ public final class QuadTransformers {
     }
 
     /**
-     * {@return a new {@link BakedQuad} transformer that applies the specified lightmap}
+     * @return A new {@link BakedQuad} transformer that applies the specified packed light value.
      */
-    public static IQuadTransformer applyingLightmap(int lightmap)
+    public static IQuadTransformer applyingLightmap(int packedLight)
     {
         return quad -> {
             var vertices = quad.getVertices();
             for (int i = 0; i < 4; i++)
-                vertices[i * IQuadTransformer.STRIDE + IQuadTransformer.UV2] = lightmap;
+                vertices[i * IQuadTransformer.STRIDE + IQuadTransformer.UV2] = packedLight;
         };
     }
 
     /**
-     * {@return a {@link BakedQuad} transformer that sets the lightmap to the given emissivity (0-15)}
+     * @return A new {@link BakedQuad} transformer that applies the specified block and sky light values.
+     */
+    public static IQuadTransformer applyingLightmap(int blockLight, int skyLight)
+    {
+        return applyingLightmap(LightTexture.pack(blockLight, skyLight));
+    }
+
+    /**
+     * @return A {@link BakedQuad} transformer that sets the lightmap to the given emissivity (0-15)
      */
     public static IQuadTransformer settingEmissivity(int emissivity)
     {
@@ -104,11 +112,62 @@ public final class QuadTransformers {
     }
 
     /**
-     * {@return a {@link BakedQuad} transformer that sets the lightmap to its max value}
+     * @return A {@link BakedQuad} transformer that sets the lightmap to its max value
      */
     public static IQuadTransformer settingMaxEmissivity()
     {
         return EMISSIVE_TRANSFORMERS[15];
+    }
+
+    /**
+     * @param color The color in ARGB format.
+     * @return A {@link BakedQuad} transformer that sets the color to the specified value.
+     */
+    public static IQuadTransformer applyingColor(int color)
+    {
+        final int fixedColor = toABGR(color);
+        return quad -> {
+            var vertices = quad.getVertices();
+            for (int i = 0; i < 4; i++)
+                vertices[i * IQuadTransformer.STRIDE + IQuadTransformer.COLOR] = fixedColor;
+        };
+    }
+
+    /**
+     * This method supplies a default alpha value of 255 (no transparency)
+     * @param red The red value (0-255)
+     * @param green The green value (0-255)
+     * @param blue The blue value (0-255)
+     * @return A {@link BakedQuad} transformer that sets the color to the specified value.
+     */
+    public static IQuadTransformer applyingColor(int red, int green, int blue)
+    {
+        return applyingColor(255, red, green, blue);
+    }
+
+    /**
+     * @param alpha The alpha value (0-255)
+     * @param red The red value (0-255)
+     * @param green The green value (0-255)
+     * @param blue The blue value (0-255)
+     * @return A {@link BakedQuad} transformer that sets the color to the specified value.
+     */
+    public static IQuadTransformer applyingColor(int alpha, int red, int green, int blue)
+    {
+        return applyingColor(alpha << 24 | red << 16 | green << 8 | blue);
+    }
+
+    /**
+     * Converts an ARGB color to an ABGR color, as the commonly used color format is not the format colors end up packed into.
+     * This function doubles as its own inverse.
+     * @param color ARGB color
+     * @return ABGR color
+     */
+    public static int toABGR(int argb)
+    {
+        return (argb & 0xFF00FF00) // alpha and green same spot
+             | ((argb >> 16) & 0x000000FF) // red moves to blue
+             | ((argb << 16) & 0x00FF0000); // blue moves to red
     }
 
     private QuadTransformers()
