@@ -28,6 +28,15 @@
        Container container = m_155596_(p_155553_, p_155554_);
        if (container != null) {
           Direction direction = Direction.DOWN;
+@@ -209,6 +_,8 @@
+    }
+ 
+    public static boolean m_59331_(Container p_59332_, ItemEntity p_59333_) {
++      // Forge: Passing the container as the collector instance, as it is the Hopper [BlockEntity/MinecartEntity] instance
++      if(!p_59333_.isPickupAllowed(p_59332_, net.minecraftforge.items.pickup.ItemPickupReasons.HOPPER)) return false; // Forge: Check to see if item currently disallows being picked up by hoppers
+       boolean flag = false;
+       ItemStack itemstack = p_59333_.m_32055_().m_41777_();
+       ItemStack itemstack1 = m_59326_((Container)null, p_59332_, itemstack, (Direction)null);
 @@ -397,5 +_,14 @@
  
     protected AbstractContainerMenu m_6555_(int p_59312_, Inventory p_59313_) {

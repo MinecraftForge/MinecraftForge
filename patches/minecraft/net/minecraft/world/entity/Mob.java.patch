@@ -24,6 +24,14 @@
           for(ItemEntity itementity : this.f_19853_.m_45976_(ItemEntity.class, this.m_20191_().m_82377_((double)vec3i.m_123341_(), (double)vec3i.m_123342_(), (double)vec3i.m_123343_()))) {
              if (!itementity.m_213877_() && !itementity.m_32055_().m_41619_() && !itementity.m_32063_() && this.m_7243_(itementity.m_32055_())) {
                 this.m_7581_(itementity);
+@@ -517,6 +_,7 @@
+    }
+ 
+    protected void m_7581_(ItemEntity p_21471_) {
++      if(!p_21471_.isPickupAllowed(this, net.minecraftforge.items.pickup.ItemPickupReasons.LIVING_ENTITY)) return; // Forge: Check to see if item currently disallows being picked up for this entity
+       ItemStack itemstack = p_21471_.m_32055_();
+       ItemStack itemstack1 = this.m_255207_(itemstack.m_41777_());
+       if (!itemstack1.m_41619_()) {
 @@ -673,6 +_,14 @@
           this.m_146870_();
        } else if (!this.m_21532_() && !this.m_8023_()) {
