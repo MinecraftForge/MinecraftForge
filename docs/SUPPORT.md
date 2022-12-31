@@ -29,7 +29,7 @@ You're most likely to get fast and valuable responses to your issues if you repo
 
 The most important source for this information are the log files Forge creates for every run of the game. You can find them in the `logs` subdirectory of your Minecraft game directory. The most important log file is `latest.log` which contains all of Forge's and any mod's output for `info` of above. `debug.log` contains all the logs in `latest.log` plus the `debug` logs for more detailed debugging.
 
-If you're faced by a crash, consult these logs files first. Near the end of the log should be a section labelled 'Minecraft Crash Report', and after it, one about `a detailed walkthrough of the error, ...`. In these sections, you'll see a bunch of lines that look like
+If you're faced by a crash, consult these log files first. Near the end of the log should be a section labelled 'Minecraft Crash Report', and after it, one about `a detailed walkthrough of the error, ...`. In these sections, you'll see a bunch of lines that look like
 
 ```
 at some.words.related.to.a.mod.MoreWords(MoreWords.java:number)
