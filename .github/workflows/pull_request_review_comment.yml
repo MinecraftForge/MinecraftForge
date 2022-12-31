@@ -1,6 +1,6 @@
-name: 'PR Review'
+name: 'PR Review Comment'
 
-on: pull_request_review
+on: pull_request_review_comment
 
 jobs:
   upload_payload:
