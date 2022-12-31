@@ -88,8 +88,8 @@ public class ClientChatReceivedEvent extends Event
     }
 
     /**
-     * {@return {@code true} if the bound chat type is not set}
-     * This will happen when the message is sent by the server and is not disguised as a player message
+     * {@return {@code true} if the bound chat type is set}
+     * This will happen when the message is either sent by a player or is disguised as a player message
      */
     public boolean hasBoundChatType()
     {
