@@ -30,6 +30,7 @@ import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.pathfinder.BlockPathTypes;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
@@ -822,7 +823,12 @@ public class FluidType
      */
     public boolean isVaporizedOnPlacement(Level level, BlockPos pos, FluidStack stack)
     {
-        return level.dimensionType().ultraWarm() && stack.getFluid().getFluidType() == ForgeMod.WATER_TYPE.get();
+        if (level.dimensionType().ultraWarm())
+        {
+            BlockState state = this.getBlockForFluidState(level, pos, this.getStateForPlacement(level, pos, stack));
+            return state != null && state.getMaterial() == Material.WATER;
+        }
+        return false;
     }
 
     /**
