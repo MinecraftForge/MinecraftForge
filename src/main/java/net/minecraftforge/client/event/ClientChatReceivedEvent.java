@@ -151,7 +151,7 @@ public class ClientChatReceivedEvent extends Event
         /**
          * {@return whether the message goes to the overlay}
          */
-        public boolean getOverlay()
+        public boolean isOverlay()
         {
             return this.overlay;
         }
