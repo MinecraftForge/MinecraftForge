@@ -84,34 +84,6 @@ public class JsonCodecProvider<T> implements DataProvider
         this.entries = entries;
     }
 
-    /**
-     * {@return DatapackRegistryProvider that encodes using the registered loading codec for the provided registry key}
-     * Ensures the correct directory and codec are used.
-     * Only vanilla datapack registries enumerated in {@link RegistryAccess} and custom forge datapack registries can
-     * be generated this way.
-     *
-     * @param <T> Registry element type, e.g. Biome
-     * @param output {@linkplain PackOutput} provided by the {@link DataGenerator}.
-     * @param modid namespace of the mod adding this DataProvider, for logging purposes.
-     * @param registryOps RegistryOps to encode values to json with.
-     * @param registryKey ResourceKey identifying the registry and its directory.
-     * @param entries Map of entries to encode and their ResourceLocations. Paths for values are derived from the ResourceLocation's entryid:entrypath.
-     */
-    @SuppressWarnings("unchecked")
-    public static <T> JsonCodecProvider<T> forDatapackRegistry(PackOutput output, ExistingFileHelper existingFileHelper, String modid,
-          RegistryOps<JsonElement> registryOps, ResourceKey<Registry<T>> registryKey, Map<ResourceLocation, T> entries)
-    {
-        final ResourceLocation registryId = registryKey.location();
-        // Minecraft datapack registry folders are in data/json-namespace/registry-name/
-        // Non-vanilla registry folders are data/json-namespace/registry-namespace/registry-name/
-        final String registryFolder = registryId.getNamespace().equals("minecraft")
-                                      ? registryId.getPath()
-                                      : registryId.getNamespace() + "/" + registryId.getPath();
-        RegistryDataLoader.RegistryData<?> registryData = DataPackRegistriesHooks.getDataPackRegistries().stream().filter(data -> data.key() == registryKey).findAny().orElseThrow();
-        final Codec<T> codec = (Codec<T>) registryData.elementCodec();
-        return new JsonCodecProvider<>(output, existingFileHelper, modid, registryOps, PackType.SERVER_DATA, registryFolder, codec, entries);
-    }
-
     @Override
     public CompletableFuture<?> run(final CachedOutput cache)
     {

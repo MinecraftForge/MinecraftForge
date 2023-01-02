@@ -37,8 +37,6 @@ public class PathPackResources extends AbstractPackResources
 {
     private static final Logger LOGGER = LogUtils.getLogger();
     private final Path source;
-    private final ResourceCacheManager cacheManager = new ResourceCacheManager(true, "indexModPackCachesOnThread",
-            (packType, namespace) -> List.of(resolve(packType.getDirectory(), namespace).toAbsolutePath()));
 
     /**
      * Constructs a java.nio.Path-based resource pack.
@@ -52,21 +50,6 @@ public class PathPackResources extends AbstractPackResources
     {
         super(packId, isBuiltin);
         this.source = source;
-    }
-
-    @Override
-    public void initForNamespace(final String namespace)
-    {
-        if (ResourceCacheManager.shouldUseCache())
-        {
-            this.cacheManager.index(namespace);
-        }
-    }
-
-    @Override
-    public void init(final PackType packType)
-    {
-        getNamespacesFromDisk(packType).forEach(this::initForNamespace);
     }
 
     /**
@@ -116,11 +99,6 @@ public class PathPackResources extends AbstractPackResources
     @Override
     public Set<String> getNamespaces(PackType type)
     {
-        if (ResourceCacheManager.shouldUseCache())
-        {
-            return this.cacheManager.getNamespaces(type);
-        }
-
         return getNamespacesFromDisk(type);
     }
 

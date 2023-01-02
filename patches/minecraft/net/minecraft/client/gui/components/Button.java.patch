@@ -1,0 +1,29 @@
+--- a/net/minecraft/client/gui/components/Button.java
++++ b/net/minecraft/client/gui/components/Button.java
+@@ -29,6 +_,11 @@
+       this.f_252416_ = p_259552_;
+    }
+ 
++   protected Button(Builder builder) {
++      this(builder.f_252538_, builder.f_252462_, builder.f_252510_, builder.f_252447_, builder.f_252401_, builder.f_252468_, builder.f_252431_);
++      m_257544_(builder.f_256855_); // Forge: Make use of the Builder tooltip
++   }
++
+    public void m_5691_() {
+       this.f_93717_.m_93750_(this);
+    }
+@@ -92,9 +_,11 @@
+       }
+ 
+       public Button m_253136_() {
+-         Button button = new Button(this.f_252538_, this.f_252462_, this.f_252510_, this.f_252447_, this.f_252401_, this.f_252468_, this.f_252431_);
+-         button.m_257544_(this.f_256855_);
+-         return button;
++         return build(Button::new);
++      }
++
++      public Button build(java.util.function.Function<Builder, Button> builder) {
++         return builder.apply(this);
+       }
+    }
+ 

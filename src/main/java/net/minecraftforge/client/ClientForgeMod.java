@@ -36,7 +36,6 @@ public class ClientForgeMod
 
         // TODO: Deprecated. To be removed in 1.20
         event.register("bucket", DynamicFluidContainerModel.Loader.INSTANCE_DEPRECATED);
-        event.register("item-layers", ItemLayerModel.Loader.INSTANCE_DEPRECATED);
         event.register("separate-perspective", SeparateTransformsModel.Loader.INSTANCE_DEPRECATED);
     }
 
