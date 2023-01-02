@@ -15,10 +15,7 @@ public interface IForgeFont
 {
     FormattedText ELLIPSIS = FormattedText.of("...");
 
-    private Font self()
-    {
-        return (Font) this;
-    }
+    Font self();
 
     /**
      * If the width of the text exceeds {@code maxWidth}, an ellipse is added and the text is substringed.
