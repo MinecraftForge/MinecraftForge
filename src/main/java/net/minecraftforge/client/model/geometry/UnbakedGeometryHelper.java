@@ -147,7 +147,7 @@ public class UnbakedGeometryHelper
         var elements = ITEM_MODEL_GENERATOR.processFrames(layerIndex, "layer" + layerIndex, spriteContents);
         if(faceData != null)
         {
-            elements.forEach(element -> element.faceData = faceData);
+            elements.forEach(element -> element.setFaceData(faceData));
         }
         return elements;
     }
