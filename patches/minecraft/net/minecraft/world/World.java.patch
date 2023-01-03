@@ -737,7 +737,30 @@
              {
                  i1 = 1;
              }
-@@ -2900,7 +3091,7 @@
+@@ -2845,12 +3036,13 @@
+ 
+     public boolean func_147463_c(EnumSkyBlock p_147463_1_, int p_147463_2_, int p_147463_3_, int p_147463_4_)
+     {
+-        if (!this.func_72873_a(p_147463_2_, p_147463_3_, p_147463_4_, 17))
++        if (!this.func_72873_a(p_147463_2_, p_147463_3_, p_147463_4_, 15))
+         {
+             return false;
+         }
+         else
+         {
++            int updateRange = this.func_72873_a(p_147463_2_, p_147463_3_, p_147463_4_, 18) ? 17 : 15;
+             int l = 0;
+             int i1 = 0;
+             this.field_72984_F.func_76320_a("getBrightness");
+@@ -2893,14 +3085,14 @@
+                             k3 = MathHelper.func_76130_a(j2 - p_147463_3_);
+                             l3 = MathHelper.func_76130_a(k2 - p_147463_4_);
+ 
+-                            if (j3 + k3 + l3 < 17)
++                            if (j3 + k3 + l3 < updateRange)
+                             {
+                                 for (int i4 = 0; i4 < 6; ++i4)
+                                 {
                                      int j4 = i2 + Facing.field_71586_b[i4];
                                      int k4 = j2 + Facing.field_71587_c[i4];
                                      int l4 = k2 + Facing.field_71585_d[i4];
@@ -746,7 +769,16 @@
                                      i3 = this.func_72972_b(p_147463_1_, j4, k4, l4);
  
                                      if (i3 == l2 - i5 && i1 < this.field_72994_J.length)
-@@ -2998,10 +3189,10 @@
+@@ -2939,7 +3131,7 @@
+                         l3 = Math.abs(k2 - p_147463_4_);
+                         boolean flag = i1 < this.field_72994_J.length - 6;
+ 
+-                        if (j3 + k3 + l3 < 17 && flag)
++                        if (j3 + k3 + l3 < updateRange && flag)
+                         {
+                             if (this.func_72972_b(p_147463_1_, i2 - 1, j2, k2) < i3)
+                             {
+@@ -2998,10 +3190,10 @@
      public List func_94576_a(Entity p_94576_1_, AxisAlignedBB p_94576_2_, IEntitySelector p_94576_3_)
      {
          ArrayList arraylist = new ArrayList();
@@ -761,7 +793,7 @@
  
          for (int i1 = i; i1 <= j; ++i1)
          {
-@@ -3024,10 +3215,10 @@
+@@ -3024,10 +3216,10 @@
  
      public List func_82733_a(Class p_82733_1_, AxisAlignedBB p_82733_2_, IEntitySelector p_82733_3_)
      {
@@ -776,7 +808,7 @@
          ArrayList arraylist = new ArrayList();
  
          for (int i1 = i; i1 <= j; ++i1)
-@@ -3104,11 +3295,14 @@
+@@ -3104,11 +3296,14 @@
  
      public void func_72868_a(List p_72868_1_)
      {
@@ -794,7 +826,7 @@
          }
      }
  
-@@ -3121,7 +3315,7 @@
+@@ -3121,7 +3316,7 @@
      {
          Block block1 = this.func_147439_a(p_147472_2_, p_147472_3_, p_147472_4_);
          AxisAlignedBB axisalignedbb = p_147472_5_ ? null : p_147472_1_.func_149668_a(this, p_147472_2_, p_147472_3_, p_147472_4_);
@@ -803,7 +835,7 @@
      }
  
      public PathEntity func_72865_a(Entity p_72865_1_, Entity p_72865_2_, float p_72865_3_, boolean p_72865_4_, boolean p_72865_5_, boolean p_72865_6_, boolean p_72865_7_)
-@@ -3226,7 +3420,8 @@
+@@ -3226,7 +3421,8 @@
  
      public int func_72878_l(int p_72878_1_, int p_72878_2_, int p_72878_3_, int p_72878_4_)
      {
@@ -813,7 +845,7 @@
      }
  
      public boolean func_72864_z(int p_72864_1_, int p_72864_2_, int p_72864_3_)
-@@ -3374,7 +3569,7 @@
+@@ -3374,7 +3570,7 @@
  
      public long func_72905_C()
      {
@@ -822,7 +854,7 @@
      }
  
      public long func_82737_E()
-@@ -3384,22 +3579,22 @@
+@@ -3384,22 +3580,22 @@
  
      public long func_72820_D()
      {
@@ -849,7 +881,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -3419,12 +3614,20 @@
+@@ -3419,12 +3615,20 @@
  
          if (!this.field_72996_f.contains(p_72897_1_))
          {
@@ -871,7 +903,7 @@
          return true;
      }
  
-@@ -3514,8 +3717,7 @@
+@@ -3514,8 +3718,7 @@
  
      public boolean func_72958_C(int p_72958_1_, int p_72958_2_, int p_72958_3_)
      {
@@ -881,7 +913,7 @@
      }
  
      public void func_72823_a(String p_72823_1_, WorldSavedData p_72823_2_)
-@@ -3569,12 +3771,12 @@
+@@ -3569,12 +3772,12 @@
  
      public int func_72800_K()
      {
@@ -896,7 +928,7 @@
      }
  
      public Random func_72843_D(int p_72843_1_, int p_72843_2_, int p_72843_3_)
-@@ -3598,7 +3800,7 @@
+@@ -3598,7 +3801,7 @@
      @SideOnly(Side.CLIENT)
      public double func_72919_O()
      {
@@ -905,7 +937,7 @@
      }
  
      public CrashReportCategory func_72914_a(CrashReport p_72914_1_)
-@@ -3663,25 +3865,24 @@
+@@ -3663,25 +3866,24 @@
  
      public void func_147453_f(int p_147453_1_, int p_147453_2_, int p_147453_3_, Block p_147453_4_)
      {
@@ -944,7 +976,7 @@
                  }
              }
          }
-@@ -3722,4 +3923,110 @@
+@@ -3722,4 +3924,110 @@
              iworldaccess.func_147584_b();
          }
      }
