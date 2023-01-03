@@ -9,3 +9,16 @@
     }
  
     private void m_246472_(int p_252243_, int p_251110_, int p_249203_) {
+@@ -145,5 +_,12 @@
+ 
+    public void m_247255_(SpriteLoader.Preparations p_251993_) {
+       this.m_117960_(false, p_251993_.f_244353_() > 0);
++   }
++
++   /**
++    * {@return the set of sprites in this atlas.}
++    */
++   public java.util.Set<ResourceLocation> getTextureLocations() {
++      return java.util.Collections.unmodifiableSet(f_118264_.keySet());
+    }
+ }
