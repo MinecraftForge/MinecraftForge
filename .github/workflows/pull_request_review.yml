@@ -7,7 +7,7 @@ jobs:
     name: Upload payload
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v3 # Payload artifact is consumed in Actionable
         with:
           name: payload
           path: ${{ github.event_path }}
