@@ -1,10 +1,11 @@
 --- a/net/minecraft/client/renderer/block/model/BlockElement.java
 +++ b/net/minecraft/client/renderer/block/model/BlockElement.java
-@@ -28,14 +_,21 @@
+@@ -28,14 +_,22 @@
     public final Map<Direction, BlockElementFace> f_111310_;
     public final BlockElementRotation f_111311_;
     public final boolean f_111312_;
-+   private net.minecraftforge.client.model.ForgeFaceData faceData;
++   @Deprecated // TODO: 1.20 - Make private. Use getter / setter methods to access.
++   public net.minecraftforge.client.model.ForgeFaceData faceData;
  
     public BlockElement(Vector3f p_253626_, Vector3f p_254426_, Map<Direction, BlockElementFace> p_254454_, @Nullable BlockElementRotation p_254229_, boolean p_253661_) {
 +     this(p_253626_, p_254426_, p_254454_, p_254229_, p_253661_, net.minecraftforge.client.model.ForgeFaceData.DEFAULT);
@@ -43,6 +44,6 @@
 +   }
 +
 +   public void setFaceData(net.minecraftforge.client.model.ForgeFaceData faceData) {
-+      this.faceData = com.google.common.base.Preconditions.checkNotNull(faceData);
++      this.faceData = java.util.Objects.requireNonNull(faceData);
     }
  }
