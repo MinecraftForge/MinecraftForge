@@ -88,15 +88,6 @@ public class ClientChatReceivedEvent extends Event
     }
 
     /**
-     * {@return {@code true} if the bound chat type is set}
-     * This will happen when the message is either sent by a player or is disguised as a player message
-     */
-    public boolean hasBoundChatType()
-    {
-        return this.boundChatType != null;
-    }
-
-    /**
      * Fired when a player chat message is received on the client.
      *
      * <p>This event is {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}.
@@ -142,9 +133,9 @@ public class ClientChatReceivedEvent extends Event
         private final boolean overlay;
 
         @ApiStatus.Internal
-        public System(Component message, boolean overlay)
+        public System(ChatType.Bound boundChatType, Component message, boolean overlay)
         {
-            super(null, message, Util.NIL_UUID);
+            super(boundChatType, message, Util.NIL_UUID);
             this.overlay = overlay;
         }
 

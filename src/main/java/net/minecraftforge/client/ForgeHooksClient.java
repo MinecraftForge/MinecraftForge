@@ -72,10 +72,12 @@ import net.minecraft.core.Direction;
 import net.minecraft.locale.Language;
 import net.minecraft.network.Connection;
 import net.minecraft.network.chat.ChatType;
+import net.minecraft.network.chat.ChatTypeDecoration;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.network.chat.PlayerChatMessage;
+import net.minecraft.network.chat.Style;
 import net.minecraft.network.protocol.status.ServerStatus;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
@@ -973,11 +975,14 @@ public class ForgeHooksClient
         ClientChatReceivedEvent.Player event = new ClientChatReceivedEvent.Player(boundChatType, message, playerChatMessage, sender);
         return MinecraftForge.EVENT_BUS.post(event) ? null : event.getMessage();
     }
-    
+
+    private static final ChatTypeDecoration SYSTEM_CHAT_TYPE_DECORATION = new ChatTypeDecoration("forge.chatType.system", List.of(ChatTypeDecoration.Parameter.CONTENT), Style.EMPTY);
+    private static final ChatType SYSTEM_CHAT_TYPE = new ChatType(SYSTEM_CHAT_TYPE_DECORATION, SYSTEM_CHAT_TYPE_DECORATION);
+
     @Nullable
     public static Component onClientSystemChat(Component message, boolean overlay)
     {
-        ClientChatReceivedEvent.System event = new ClientChatReceivedEvent.System(message, overlay);
+        ClientChatReceivedEvent.System event = new ClientChatReceivedEvent.System(new ChatType.Bound(SYSTEM_CHAT_TYPE, Component.literal("System"), null), message, overlay);
         return MinecraftForge.EVENT_BUS.post(event) ? null : event.getMessage();
     }
 
