@@ -157,6 +157,12 @@ dependencies {
     // compileOnly fg.deobf("mezz.jei:jei-${mc_version}:${jei_version}:api") // Adds JEI API as a compile dependency
     // runtimeOnly fg.deobf("mezz.jei:jei-${mc_version}:${jei_version}") // Adds the full JEI mod as a runtime dependency
     // implementation fg.deobf("com.tterrag.registrate:Registrate:MC${mc_version}-${registrate_version}") // Adds registrate as a dependency
+    
+    // To configure your Java libraries to be loaded by Forge, you must add them to the configuration named minecraftLibrary.
+    // This takes the place of implementation when declaring dependencies.
+    // For more information:
+    // https://github.com/MinecraftForge/ForgeGradle/wiki/Dependencies#non-minecraft-dependencies
+    // minecraftLibrary 'com.example:dummy-lib:1.0'
 
     // Examples using mod jars from ./libs
     // implementation fg.deobf("blank:coolmod-${mc_version}:${coolmod_version}")
