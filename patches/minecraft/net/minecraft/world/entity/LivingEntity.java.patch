@@ -16,6 +16,16 @@
     public static final int f_147166_ = 2;
     public static final int f_147167_ = 4;
     public static final int f_147168_ = 98;
+@@ -241,7 +_,8 @@
+       this.f_20885_ = this.m_146908_();
+       this.f_19793_ = 0.6F;
+       NbtOps nbtops = NbtOps.f_128958_;
+-      this.f_20939_ = this.m_8075_(new Dynamic<>(nbtops, nbtops.createMap(ImmutableMap.of(nbtops.createString("memories"), nbtops.emptyMap()))));
++      Dynamic<?> dynamic = new Dynamic<>(nbtops, nbtops.createMap(ImmutableMap.of(nbtops.createString("memories"), nbtops.emptyMap())));
++      this.f_20939_ = net.minecraftforge.common.ForgeHooks.onLivingMakeBrain(this, this.m_8075_(dynamic), dynamic);
+    }
+ 
+    public Brain<?> m_6274_() {
 @@ -275,7 +_,7 @@
     }
  
@@ -76,6 +86,16 @@
           this.m_252836_();
        }
  
+@@ -724,7 +_,8 @@
+       }
+ 
+       if (p_21096_.m_128425_("Brain", 10)) {
+-         this.f_20939_ = this.m_8075_(new Dynamic<>(NbtOps.f_128958_, p_21096_.m_128423_("Brain")));
++         Dynamic<?> dynamic = new Dynamic<>(NbtOps.f_128958_, p_21096_.m_128423_("Brain"));
++         this.f_20939_ = net.minecraftforge.common.ForgeHooks.onLivingMakeBrain(this, this.m_8075_(dynamic), dynamic);
+       }
+ 
+    }
 @@ -739,7 +_,7 @@
              if (!mobeffectinstance.m_19552_(this, () -> {
                 this.m_141973_(mobeffectinstance, true, (Entity)null);
