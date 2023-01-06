@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/packs/resources/SimpleJsonResourceReloadListener.java
 +++ b/net/minecraft/server/packs/resources/SimpleJsonResourceReloadListener.java
-@@ -48,4 +_,8 @@
+@@ -48,4 +_,33 @@
  
        return map;
     }
@@ -8,4 +8,29 @@
 +   protected ResourceLocation getPreparedPath(ResourceLocation rl) {
 +      return new ResourceLocation(rl.m_135827_(), this.f_10765_ + "/" + rl.m_135815_() + ".json");
 +   }
++
++   @Override
++   protected void preApply(Map<ResourceLocation, JsonElement> data, ResourceManager manager, ProfilerFiller filler) {
++      final String memberName = getConditionsMemberName();
++      if (memberName == null) {
++         f_10762_.debug("Skipped condition checking for resources of type '{}', as they do not support conditions.", f_10765_);
++         return;
++      }
++      final var itr = data.entrySet().iterator();
++      while (itr.hasNext()) {
++         final var next = itr.next();
++         if (next.getValue().isJsonObject() && !net.minecraftforge.common.crafting.CraftingHelper.processConditions(next.getValue().getAsJsonObject(), memberName, conditionContext)) {
++            itr.remove();
++            f_10762_.debug("Skipped loading resource of type '{}', at path {}, as its conditions were not met.", f_10765_, next.getKey());
++         }
++      }
++   }
++
++   /**
++    * {@return the name of the array to parse conditions from} {@code null} if this reload listener does not support conditions.
++    */
++   @javax.annotation.Nullable protected String getConditionsMemberName() { return "forge:conditions"; }
++
++   protected net.minecraftforge.common.crafting.conditions.ICondition.IContext conditionContext;
++   public void setConditionContext(net.minecraftforge.common.crafting.conditions.ICondition.IContext context) { this.conditionContext = context; }
  }

@@ -36,10 +36,7 @@ public class ConditionalAdvancement
     @Nullable
     public static JsonObject processConditional(JsonObject json, ICondition.IContext context) {
         JsonArray entries = GsonHelper.getAsJsonArray(json, "advancements", null);
-        if (entries == null)
-        {
-            return CraftingHelper.processConditions(json, "conditions", context) ? json : null;
-        }
+        if (entries == null) return json;
 
         int idx = 0;
         for (JsonElement ele : entries)
