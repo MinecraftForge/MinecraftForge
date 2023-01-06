@@ -43,6 +43,7 @@ public class ConditionalAdvancement
         {
             if (!ele.isJsonObject())
                 throw new JsonSyntaxException("Invalid advancement entry at index " + idx + " Must be JsonObject");
+            // TODO - 1.20: rename to forge:conditions
             if (CraftingHelper.processConditions(GsonHelper.getAsJsonArray(ele.getAsJsonObject(), "conditions"), context))
                 return GsonHelper.getAsJsonObject(ele.getAsJsonObject(), "advancement");
             idx++;
