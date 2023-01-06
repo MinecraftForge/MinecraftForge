@@ -41,7 +41,8 @@ public class LivingMakeBrainEvent extends LivingEvent
         this.brainBuilder = brainBuilder;
     }
 
-    public <E extends LivingEntity> BrainBuilder<E> getTypedBrainBuilder(E ignoredEntity){
+    public <E extends LivingEntity> BrainBuilder<E> getTypedBrainBuilder(E ignoredEntity)
+    {
         return (BrainBuilder<E>) this.brainBuilder;
     }
 }

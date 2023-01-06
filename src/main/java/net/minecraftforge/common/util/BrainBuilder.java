@@ -48,10 +48,12 @@ public class BrainBuilder<E extends LivingEntity> {
     private final Set<Activity> coreActivities = Sets.newHashSet();
     private Activity defaultActivity = Activity.IDLE;
 
-    public BrainBuilder(Brain<E> ignoredBrain){
+    public BrainBuilder(Brain<E> ignoredBrain)
+    {
     }
 
-    public Brain.Provider<E> provider(){
+    public Brain.Provider<E> provider()
+    {
         return Brain.provider(this.memoryTypes, this.sensorTypes);
     }
 
@@ -106,29 +108,21 @@ public class BrainBuilder<E extends LivingEntity> {
     }
 
     /**  INTENDED FOR INTERNAL USE */
-    public void addAvailableBehaviorsByPriorityFrom(Map<Integer, Map<Activity, Set<BehaviorControl<? super E>>>> addFrom){
-        addFrom.forEach(((priority, activitySetMap) ->
-                activitySetMap.forEach(((activity, behaviorControls) ->
-                        this.availableBehaviorsByPriority.computeIfAbsent(priority,
-                                (p) -> Maps.newHashMap()).computeIfAbsent(activity, (a) -> Sets.newLinkedHashSet()).addAll(behaviorControls)))));
+    public void addAvailableBehaviorsByPriorityFrom(Map<Integer, Map<Activity, Set<BehaviorControl<? super E>>>> addFrom)
+    {
+        addFrom.forEach(((priority, activitySetMap) -> activitySetMap.forEach(((activity, behaviorControls) -> this.availableBehaviorsByPriority.computeIfAbsent(priority, (p) -> Maps.newHashMap()).computeIfAbsent(activity, (a) -> Sets.newLinkedHashSet()).addAll(behaviorControls)))));
     }
 
     /**  INTENDED FOR INTERNAL USE */
     public void addAvailableBehaviorsByPriorityTo(Map<Integer, Map<Activity, Set<BehaviorControl<? super E>>>> addTo){
-        this.availableBehaviorsByPriority.forEach(((priority, activitySetMap) -> activitySetMap
-                .forEach(((activity, behaviorControls) -> addTo.computeIfAbsent(priority,
-                        (p) -> Maps.newHashMap()).computeIfAbsent(activity, (a) -> Sets.newLinkedHashSet()).addAll(behaviorControls)))));
+        this.availableBehaviorsByPriority.forEach(((priority, activitySetMap) -> activitySetMap.forEach(((activity, behaviorControls) -> addTo.computeIfAbsent(priority, (p) -> Maps.newHashMap()).computeIfAbsent(activity, (a) -> Sets.newLinkedHashSet()).addAll(behaviorControls)))));
     }
 
     /** You may use this as a helper method for adding a behavior to an Activity by priority to an entity's brain. */
     public void addBehaviorToActivityByPriority(Integer priority, Activity activity, BehaviorControl<? super E> behaviorControl)
     {
-        this.availableBehaviorsByPriority.computeIfAbsent(priority,
-                (i) -> Maps.newHashMap()).computeIfAbsent(activity,
-                (a) -> Sets.newLinkedHashSet()).add(behaviorControl);
+        this.availableBehaviorsByPriority.computeIfAbsent(priority, (i) -> Maps.newHashMap()).computeIfAbsent(activity, (a) -> Sets.newLinkedHashSet()).add(behaviorControl);
     }
-
-
 
     /**  INTENDED FOR INTERNAL USE */
     public void addActivityRequirementsFrom(Map<Activity, Set<Pair<MemoryModuleType<?>, MemoryStatus>>> addFrom)
@@ -173,7 +167,8 @@ public class BrainBuilder<E extends LivingEntity> {
     }
 
     /**  INTENDED FOR INTERNAL USE */
-    public Brain<E> makeBrain(Dynamic<?> dynamic) {
+    public Brain<E> makeBrain(Dynamic<?> dynamic)
+    {
         Brain<E> brain = Brain.provider(this.memoryTypes, this.sensorTypes).makeBrain(dynamic);
         brain.copyFromBuilder(this);
         return brain;
