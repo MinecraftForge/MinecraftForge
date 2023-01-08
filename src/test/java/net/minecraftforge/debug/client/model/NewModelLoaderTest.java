@@ -33,7 +33,7 @@ import net.minecraftforge.client.model.generators.BlockModelBuilder;
 import net.minecraftforge.client.model.generators.BlockStateProvider;
 import net.minecraftforge.client.model.generators.ConfiguredModel;
 import net.minecraftforge.client.model.generators.ItemModelProvider;
-import net.minecraftforge.client.model.generators.loaders.ItemLayersModelBuilder;
+import net.minecraftforge.client.model.generators.loaders.ItemLayerModelBuilder;
 import net.minecraftforge.client.model.generators.loaders.ObjModelBuilder;
 import net.minecraftforge.client.model.generators.loaders.SeparateTransformsModelBuilder;
 import net.minecraftforge.client.model.geometry.SimpleUnbakedGeometry;
@@ -203,8 +203,8 @@ public class NewModelLoaderTest
             withExistingParent(NewModelLoaderTest.item_layers.getId().getPath(), "forge:item/default")
                     .texture("layer0", "minecraft:item/coal")
                     .texture("layer1", "minecraft:item/stick")
-                    .customLoader(ItemLayersModelBuilder::begin)
-                        .emissive(1)
+                    .customLoader(ItemLayerModelBuilder::begin)
+                        .emissive(15, 15, 1)
                     .end();
             withExistingParent(NewModelLoaderTest.separate_perspective.getId().getPath(), "forge:item/default")
                     .customLoader(SeparateTransformsModelBuilder::begin)

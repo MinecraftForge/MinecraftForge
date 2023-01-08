@@ -5,30 +5,37 @@
 
 package net.minecraftforge.client.model.generators.loaders;
 
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 import com.google.common.base.Preconditions;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.mojang.serialization.JsonOps;
+
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import it.unimi.dsi.fastutil.ints.IntSet;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.client.model.ForgeFaceData;
 import net.minecraftforge.client.model.generators.CustomLoaderBuilder;
 import net.minecraftforge.client.model.generators.ModelBuilder;
 import net.minecraftforge.common.data.ExistingFileHelper;
 
-import java.util.*;
-
-public class ItemLayersModelBuilder<T extends ModelBuilder<T>> extends CustomLoaderBuilder<T>
+public class ItemLayerModelBuilder<T extends ModelBuilder<T>> extends CustomLoaderBuilder<T>
 {
-    public static <T extends ModelBuilder<T>> ItemLayersModelBuilder<T> begin(T parent, ExistingFileHelper existingFileHelper)
+    public static <T extends ModelBuilder<T>> ItemLayerModelBuilder<T> begin(T parent, ExistingFileHelper existingFileHelper)
     {
-        return new ItemLayersModelBuilder<>(parent, existingFileHelper);
+        return new ItemLayerModelBuilder<>(parent, existingFileHelper);
     }
 
-    private final IntSet emissiveLayers = new IntOpenHashSet();
+    private final Int2ObjectMap<ForgeFaceData> faceData = new Int2ObjectOpenHashMap<>();
     private final Map<ResourceLocation, IntSet> renderTypes = new LinkedHashMap<>();
     private final IntSet layersWithRenderTypes = new IntOpenHashSet();
 
-    protected ItemLayersModelBuilder(T parent, ExistingFileHelper existingFileHelper)
+    protected ItemLayerModelBuilder(T parent, ExistingFileHelper existingFileHelper)
     {
         super(new ResourceLocation("forge:item_layers"), parent, existingFileHelper);
     }
@@ -36,18 +43,51 @@ public class ItemLayersModelBuilder<T extends ModelBuilder<T>> extends CustomLoa
     /**
      * Marks a set of layers to be rendered emissively.
      *
+     * @param blockLight The block light (0-15)
+     * @param skyLight The sky light (0-15)
      * @param layers the layers that will render unlit
      * @return this builder
      * @throws NullPointerException     if {@code layers} is {@code null}
      * @throws IllegalArgumentException if {@code layers} is empty
      * @throws IllegalArgumentException if any entry in {@code layers} is smaller than 0
      */
-    public ItemLayersModelBuilder<T> emissive(int... layers)
+    public ItemLayerModelBuilder<T> emissive(int blockLight, int skyLight, int... layers)
     {
         Preconditions.checkNotNull(layers, "Layers must not be null");
         Preconditions.checkArgument(layers.length > 0, "At least one layer must be specified");
         Preconditions.checkArgument(Arrays.stream(layers).allMatch(i -> i >= 0), "All layers must be >= 0");
-        Arrays.stream(layers).forEach(emissiveLayers::add);
+        for(int i : layers)
+        {
+            faceData.compute(i, (key, value) -> {
+                ForgeFaceData fallback = value == null ? ForgeFaceData.DEFAULT : value;
+                return new ForgeFaceData(fallback.color(), blockLight, skyLight, fallback.ambientOcclusion());
+            });
+        }
+        return this;
+    }
+
+    /**
+     * Marks a set of layers to be rendered with a specific color.
+     *
+     * @param color The color, in ARGB.
+     * @param layers the layers that will render with color
+     * @return this builder
+     * @throws NullPointerException     if {@code layers} is {@code null}
+     * @throws IllegalArgumentException if {@code layers} is empty
+     * @throws IllegalArgumentException if any entry in {@code layers} is smaller than 0
+     */
+    public ItemLayerModelBuilder<T> color(int color, int... layers)
+    {
+        Preconditions.checkNotNull(layers, "Layers must not be null");
+        Preconditions.checkArgument(layers.length > 0, "At least one layer must be specified");
+        Preconditions.checkArgument(Arrays.stream(layers).allMatch(i -> i >= 0), "All layers must be >= 0");
+        for(int i : layers)
+        {
+            faceData.compute(i, (key, value) -> {
+                ForgeFaceData fallback = value == null ? ForgeFaceData.DEFAULT : value;
+                return new ForgeFaceData(color, fallback.blockLight(), fallback.skyLight(), fallback.ambientOcclusion());
+            });
+        }
         return this;
     }
 
@@ -64,7 +104,7 @@ public class ItemLayersModelBuilder<T extends ModelBuilder<T>> extends CustomLoa
      * @throws IllegalArgumentException if any entry in {@code layers} is smaller than 0
      * @throws IllegalArgumentException if any entry in {@code layers} already has a render type
      */
-    public ItemLayersModelBuilder<T> renderType(String renderType, int... layers)
+    public ItemLayerModelBuilder<T> renderType(String renderType, int... layers)
     {
         Preconditions.checkNotNull(renderType, "Render type must not be null");
         ResourceLocation asLoc;
@@ -88,7 +128,7 @@ public class ItemLayersModelBuilder<T extends ModelBuilder<T>> extends CustomLoa
      * @throws IllegalArgumentException if any entry in {@code layers} is smaller than 0
      * @throws IllegalArgumentException if any entry in {@code layers} already has a render type
      */
-    public ItemLayersModelBuilder<T> renderType(ResourceLocation renderType, int... layers)
+    public ItemLayerModelBuilder<T> renderType(ResourceLocation renderType, int... layers)
     {
         Preconditions.checkNotNull(renderType, "Render type must not be null");
         Preconditions.checkNotNull(layers, "Layers must not be null");
@@ -109,9 +149,16 @@ public class ItemLayersModelBuilder<T extends ModelBuilder<T>> extends CustomLoa
     {
         json = super.toJson(json);
 
-        JsonArray unlitLayers = new JsonArray();
-        this.emissiveLayers.intStream().sorted().forEach(unlitLayers::add);
-        json.add("emissive_layers", unlitLayers);
+        JsonObject forgeData = new JsonObject();
+        JsonObject layerObj = new JsonObject();
+
+        for(Int2ObjectMap.Entry<ForgeFaceData> entry : this.faceData.int2ObjectEntrySet())
+        {
+            layerObj.add(String.valueOf(entry.getIntKey()), ForgeFaceData.CODEC.encodeStart(JsonOps.INSTANCE, entry.getValue()).getOrThrow(false, s -> {}));
+        }
+
+        forgeData.add("layers", layerObj);
+        json.add("forge_data", forgeData);
 
         JsonObject renderTypes = new JsonObject();
         this.renderTypes.forEach((renderType, layers) -> {
