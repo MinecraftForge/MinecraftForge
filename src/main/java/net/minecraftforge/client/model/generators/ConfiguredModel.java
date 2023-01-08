@@ -29,7 +29,7 @@ import org.jetbrains.annotations.Nullable;
  * {@link #allYRotations(ModelFile, int, boolean)}, or created by builder via
  * {@link #builder()}.
  */
-public final class ConfiguredModel {
+public class ConfiguredModel {
 
     /**
      * The default random weight of configured models, used by convenience
