@@ -309,6 +309,22 @@
        this.f_91026_.m_6180_("gui");
        this.f_91065_.m_193832_(this.f_91012_);
        this.f_91026_.m_7238_();
+@@ -1660,6 +_,7 @@
+ 
+             this.f_91005_.m_120596_();
+ 
++            net.minecraftforge.event.ForgeEventFactory.onPreWorldTick(this.f_91073_, () -> true);
+             try {
+                this.f_91073_.m_104726_(() -> {
+                   return true;
+@@ -1675,6 +_,7 @@
+ 
+                throw new ReportedException(crashreport);
+             }
++            net.minecraftforge.event.ForgeEventFactory.onPostWorldTick(this.f_91073_, () -> true);
+          }
+ 
+          this.f_91026_.m_6182_("animateTick");
 @@ -1694,6 +_,8 @@
        this.f_91026_.m_6182_("keyboard");
        this.f_91068_.m_90931_();
