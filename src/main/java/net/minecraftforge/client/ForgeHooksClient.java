@@ -978,11 +978,12 @@ public class ForgeHooksClient
 
     private static final ChatTypeDecoration SYSTEM_CHAT_TYPE_DECORATION = new ChatTypeDecoration("forge.chatType.system", List.of(ChatTypeDecoration.Parameter.CONTENT), Style.EMPTY);
     private static final ChatType SYSTEM_CHAT_TYPE = new ChatType(SYSTEM_CHAT_TYPE_DECORATION, SYSTEM_CHAT_TYPE_DECORATION);
+    private static final ChatType.Bound SYSTEM_CHAT_TYPE_BOUND = SYSTEM_CHAT_TYPE.bind(Component.literal("System"));
 
     @Nullable
     public static Component onClientSystemChat(Component message, boolean overlay)
     {
-        ClientChatReceivedEvent.System event = new ClientChatReceivedEvent.System(new ChatType.Bound(SYSTEM_CHAT_TYPE, Component.literal("System"), null), message, overlay);
+        ClientChatReceivedEvent.System event = new ClientChatReceivedEvent.System(SYSTEM_CHAT_TYPE_BOUND, message, overlay);
         return MinecraftForge.EVENT_BUS.post(event) ? null : event.getMessage();
     }
 
