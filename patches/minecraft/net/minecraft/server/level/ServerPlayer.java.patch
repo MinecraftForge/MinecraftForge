@@ -8,13 +8,15 @@
        boolean flag = this.f_19853_.m_46469_().m_46207_(GameRules.f_46142_);
        if (flag) {
           Component component = this.m_21231_().m_19293_();
-@@ -707,11 +_,12 @@
+@@ -707,11 +_,14 @@
     }
  
     @Nullable
 -   public Entity m_5489_(ServerLevel p_9180_) {
 +   public Entity changeDimension(ServerLevel p_9180_, net.minecraftforge.common.util.ITeleporter teleporter) {
 +      if (!net.minecraftforge.common.ForgeHooks.onTravelToDimension(this, p_9180_.m_46472_())) return null;
++      PortalInfo portalinfo = teleporter.getPortalInfo(this, p_9180_, this::m_7937_);
++      if (portalinfo == null) return null;
        this.f_8927_ = true;
        ServerLevel serverlevel = this.m_9236_();
        ResourceKey<Level> resourcekey = serverlevel.m_46472_();
@@ -23,14 +25,13 @@
           this.m_19877_();
           this.m_9236_().m_143261_(this, Entity.RemovalReason.CHANGED_DIMENSION);
           if (!this.f_8944_) {
-@@ -728,13 +_,14 @@
+@@ -728,13 +_,13 @@
           PlayerList playerlist = this.f_8924_.m_6846_();
           playerlist.m_11289_(this);
           serverlevel.m_143261_(this, Entity.RemovalReason.CHANGED_DIMENSION);
 -         this.m_146912_();
 -         PortalInfo portalinfo = this.m_7937_(p_9180_);
 +         this.revive();
-+         PortalInfo portalinfo = teleporter.getPortalInfo(this, p_9180_, this::m_7937_);
           if (portalinfo != null) {
 +            Entity e = teleporter.placeEntity(this, serverlevel, p_9180_, this.m_146908_(), spawnPortal -> {//Forge: Start vanilla logic
              serverlevel.m_46473_().m_6180_("moving");
