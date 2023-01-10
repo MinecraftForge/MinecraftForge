@@ -349,14 +349,17 @@
 +   public Entity changeDimension(ServerLevel p_20118_, net.minecraftforge.common.util.ITeleporter teleporter) {
 +      if (!net.minecraftforge.common.ForgeHooks.onTravelToDimension(this, p_20118_.m_46472_())) return null;
        if (this.f_19853_ instanceof ServerLevel && !this.m_213877_()) {
-          this.f_19853_.m_46473_().m_6180_("changeDimension");
-          this.m_19877_();
-          this.f_19853_.m_46473_().m_6180_("reposition");
+-         this.f_19853_.m_46473_().m_6180_("changeDimension");
+-         this.m_19877_();
+-         this.f_19853_.m_46473_().m_6180_("reposition");
 -         PortalInfo portalinfo = this.m_7937_(p_20118_);
 +         PortalInfo portalinfo = teleporter.getPortalInfo(this, p_20118_, this::m_7937_);
           if (portalinfo == null) {
              return null;
           } else {
++            this.f_19853_.m_46473_().m_6180_("changeDimension");
++            this.m_19877_();
++            this.f_19853_.m_46473_().m_6180_("reposition");
 +            Entity transportedEntity = teleporter.placeEntity(this, (ServerLevel) this.f_19853_, p_20118_, this.f_19857_, spawnPortal -> { //Forge: Start vanilla logic
              this.f_19853_.m_46473_().m_6182_("reloading");
              Entity entity = this.m_6095_().m_20615_(p_20118_);
