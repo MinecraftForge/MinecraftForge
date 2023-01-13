@@ -58,7 +58,7 @@ public class RuntimeDistCleaner implements ILaunchPluginService
                     .walk(stream -> stream.filter(Predicate.not(it ->
                     {
                         final String cname = it.getClassName();
-                        return cname.startsWith("cpw.mods.cl") // Exclude ModuleClassLoader and friends
+                        return cname.startsWith("cpw.mods.cl") || cname.equals("java.lang.ClassLoader") // Exclude ModuleClassLoader and friends
                                 || cname.startsWith("cpw.mods.modlauncher") // Exclude the transformer callers
                                 || cname.equals("java.lang.Method") || cname.equals("java.lang.Class") || cname.equals("java.lang.Field") // Exclude Class#getDeclaredMethods, and any other reflection methods
                                 || cname.equals("net.minecraftforge.fml.loading.RuntimeDistCleaner"); // And finally, exclude ourselves
