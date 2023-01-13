@@ -7,14 +7,16 @@ package net.minecraftforge.common.util;
 
 import java.util.function.Function;
 
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.portal.PortalInfo;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.portal.PortalForcer;
 import net.minecraft.server.level.ServerLevel;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Interface for handling the placement of entities during dimension change.
@@ -27,6 +29,23 @@ import org.jetbrains.annotations.Nullable;
  */
 public interface ITeleporter
 {
+    /**
+     * Called when the entity wants to teleport. Return false to cancel
+     * teleportation.
+     * <p>
+     * Note that this method should not attempt to load chunks in the
+     * destination level.
+     *
+     * @param entity the entity to be teleported
+     * @param dimension the dimension the entity is teleporting to
+     *
+     * @return false to cancel teleportation
+     */
+    default boolean canTeleport(Entity entity, ResourceKey<Level> dimension)
+    {
+        return true;
+    }
+
     /**
      * Called to handle placing the entity in the new world.
      * <p>
@@ -55,7 +74,8 @@ public interface ITeleporter
      * vanilla code and should not be used for your purposes.
      * Override this method to handle your own logic.
      * <p>
-     * Return {@code null} to prevent teleporting.
+     * This method should not return {@code null}. To prevent teleportation,
+     * return false from {@link #canTeleport(Entity, ResourceKey)}.
      *
      * @param entity The entity teleporting before the teleport
      * @param destWorld The world the entity is teleporting to
@@ -63,7 +83,7 @@ public interface ITeleporter
      *
      * @return The location, rotation, and motion of the entity in the destWorld after the teleport
      */
-    @Nullable
+    @NotNull
     default PortalInfo getPortalInfo(Entity entity, ServerLevel destWorld, Function<ServerLevel, PortalInfo> defaultPortalInfo)
     {
         return this.isVanilla() ? defaultPortalInfo.apply(destWorld) : new PortalInfo(entity.position(), Vec3.ZERO, entity.getYRot(), entity.getXRot());
