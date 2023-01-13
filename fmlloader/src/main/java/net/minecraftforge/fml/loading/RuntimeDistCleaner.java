@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import com.google.common.collect.Streams;
@@ -53,8 +54,19 @@ public class RuntimeDistCleaner implements ILaunchPluginService
         AtomicBoolean changes = new AtomicBoolean();
         if (remove(classNode.visibleAnnotations, DIST))
         {
-            LOGGER.error(DISTXFORM, "Attempted to load class {} for invalid dist {}", classNode.name, DIST);
-            throw new RuntimeException("Attempted to load class "+ classNode.name  + " for invalid dist "+ DIST);
+            final String message = StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE)
+                    .walk(stream -> stream.filter(Predicate.not(it ->
+                    {
+                        final String cname = it.getClassName();
+                        return cname.startsWith("cpw.mods.cl") // Exclude ModuleClassLoader and friends
+                                || cname.startsWith("cpw.mods.modlauncher") // Exclude the transformer callers
+                                || cname.equals("java.lang.Method") || cname.equals("java.lang.Class") || cname.equals("java.lang.Field") // Exclude Class#getDeclaredMethods, and any other reflection methods
+                                || cname.equals("net.minecraftforge.fml.loading.RuntimeDistCleaner"); // And finally, exclude ourselves
+                    })).findFirst())
+                    .map(frame -> "Class %s (%s) attempted to load class %s for invalid dist %s".formatted(frame.getClassName(), frame.toStackTraceElement(), classNode.name, DIST))
+                    .orElseGet(() -> "Attempted to load class %s for invalid dist %s".formatted(classNode.name, DIST));
+            LOGGER.error(DISTXFORM, message);
+            throw new RuntimeException(message);
         }
 
         if (classNode.interfaces != null )
