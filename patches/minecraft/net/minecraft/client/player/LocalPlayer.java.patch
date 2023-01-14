@@ -32,34 +32,47 @@
        this.f_108619_.m_91301_().m_120586_(this.f_108618_);
        if (this.m_6117_() && !this.m_20159_()) {
           this.f_108618_.f_108566_ *= 0.2F;
-@@ -660,7 +_,7 @@
+@@ -660,29 +_,31 @@
        }
  
        boolean flag4 = this.m_255269_();
 -      if ((this.f_19861_ || this.m_5842_() || this.m_20159_() && this.m_20202_().m_20096_()) && !flag1 && !flag2 && this.m_108733_() && !this.m_20142_() && flag4 && !this.m_6117_() && !this.m_21023_(MobEffects.f_19610_)) {
++      int sprint = 0;
 +      if ((this.f_19861_ || this.m_5842_() || this.m_20159_() && this.m_20202_().m_20096_() || this.canStartSwimming()) && !flag1 && !flag2 && this.m_108733_() && !this.m_20142_() && flag4 && !this.m_6117_() && !this.m_21023_(MobEffects.f_19610_)) {
           if (this.f_108583_ <= 0 && !this.f_108619_.f_91066_.f_92091_.m_90857_()) {
              this.f_108583_ = 7;
           } else {
-@@ -668,15 +_,15 @@
+-            this.m_6858_(true);
++            sprint = 1;
           }
        }
  
 -      if (!this.m_20142_() && (!this.m_20069_() || this.m_5842_()) && this.m_108733_() && flag4 && !this.m_6117_() && !this.m_21023_(MobEffects.f_19610_) && this.f_108619_.f_91066_.f_92091_.m_90857_()) {
-+      if (!this.m_20142_() && (!(this.m_20069_() || this.isInFluidType((fluidType, height) -> this.canSwimInFluidType(fluidType))) || (this.m_5842_() || this.canStartSwimming())) && this.m_108733_() && flag4 && !this.m_6117_() && !this.m_21023_(MobEffects.f_19610_) && this.f_108619_.f_91066_.f_92091_.m_90857_()) {
-          this.m_6858_(true);
+-         this.m_6858_(true);
++      if (!(this.m_20142_() || sprint == 1) && (!(this.m_20069_() || this.isInFluidType((fluidType, height) -> this.canSwimInFluidType(fluidType))) || (this.m_5842_() || this.canStartSwimming())) && this.m_108733_() && flag4 && !this.m_6117_() && !this.m_21023_(MobEffects.f_19610_) && this.f_108619_.f_91066_.f_92091_.m_90857_()) {
++         sprint = 2;
        }
  
-       if (this.m_20142_()) {
+-      if (this.m_20142_()) {
++      if (sprint > 0 || this.m_20142_()) {
           boolean flag5 = !this.f_108618_.m_108577_() || !flag4;
 -         boolean flag6 = flag5 || this.f_19862_ && !this.f_185931_ || this.m_20069_() && !this.m_5842_();
 +         boolean flag6 = flag5 || this.f_19862_ && !this.f_185931_ || (this.m_20069_() && !this.m_5842_()) || (this.isInFluidType((fluidType, height) -> this.canSwimInFluidType(fluidType)) && !this.canStartSwimming());
           if (this.m_6069_()) {
 -            if (!this.f_19861_ && !this.f_108618_.f_108573_ && flag5 || !this.m_20069_()) {
+-               this.m_6858_(false);
 +            if (!this.f_19861_ && !this.f_108618_.f_108573_ && flag5 || !(this.m_20069_() || this.isInFluidType((fluidType, height) -> this.canSwimInFluidType(fluidType)))) {
-                this.m_6858_(false);
++               sprint = -1;
              }
           } else if (flag6) {
+-            this.m_6858_(false);
++            sprint = -2;
+          }
+       }
++      if (sprint != 0 && !net.minecraftforge.client.ForgeHooksClient.beforeSprint(this, sprint > 0)) m_6858_(sprint > 0);
+ 
+       boolean flag7 = false;
+       if (this.m_150110_().f_35936_) {
 @@ -706,14 +_,15 @@
  
        if (this.f_108618_.f_108572_ && !flag7 && !flag && !this.m_150110_().f_35935_ && !this.m_20159_() && !this.m_6147_()) {

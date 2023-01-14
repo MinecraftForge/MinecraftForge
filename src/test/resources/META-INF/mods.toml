@@ -276,6 +276,8 @@ modId="data_pack_registries_test"
 modId="creative_mode_tab_test"
 [[mods]]
 modId="trade_with_villager_event_test"
+[[mods]]
+modId="sprint_event_test"
 
 
 # ADD ABOVE THIS LINE

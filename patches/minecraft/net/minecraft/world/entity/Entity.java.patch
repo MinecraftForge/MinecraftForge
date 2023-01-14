@@ -312,6 +312,14 @@
     public boolean m_6146_() {
        return true;
     }
+@@ -2009,6 +_,7 @@
+    }
+ 
+    public void m_6858_(boolean p_20274_) {
++      if (m_20142_() != p_20274_) net.minecraftforge.event.ForgeEventFactory.onEntitySprint(this, p_20274_);
+       this.m_20115_(3, p_20274_);
+    }
+ 
 @@ -2021,7 +_,7 @@
     }
  

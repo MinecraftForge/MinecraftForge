@@ -145,6 +145,7 @@ import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.MutableHashedLinkedMap;
 import net.minecraftforge.event.CreativeModeTabEvent;
+import net.minecraftforge.client.event.ShouldSprint;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.IExtensionPoint;
@@ -1223,5 +1224,10 @@ public class ForgeHooksClient
 
         for (var entry : entries)
             output.accept(entry.getKey(), entry.getValue());
+    }
+
+    public static boolean beforeSprint(LocalPlayer player, boolean willSprint) {
+        var event = new ShouldSprint(player, willSprint);
+        return MinecraftForge.EVENT_BUS.post(event);
     }
 }
