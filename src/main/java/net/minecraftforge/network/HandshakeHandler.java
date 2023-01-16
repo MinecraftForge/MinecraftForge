@@ -8,8 +8,14 @@ package net.minecraftforge.network;
 import com.google.common.collect.Multimap;
 import com.mojang.authlib.GameProfile;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.GenericDirtMessageScreen;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.multiplayer.ClientHandshakePacketListenerImpl;
+import net.minecraft.client.multiplayer.ServerData;
 import net.minecraft.core.Registry;
 import net.minecraft.network.Connection;
+import net.minecraft.network.ConnectionProtocol;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.handshake.ClientIntentionPacket;
 import net.minecraft.network.protocol.login.ClientboundCustomQueryPacket;
@@ -17,6 +23,8 @@ import net.minecraft.network.protocol.login.ServerboundCustomQueryPacket;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.network.ServerLoginPacketListenerImpl;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.LogMessageAdapter;
 import net.minecraftforge.event.entity.player.PlayerNegotiationEvent;
@@ -34,10 +42,7 @@ import org.apache.logging.log4j.MarkerManager;
 import com.google.common.collect.Maps;
 
 import java.util.*;
-import java.util.concurrent.CancellationException;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiConsumer;
@@ -186,13 +191,6 @@ public class HandshakeHandler
         c.get().setPacketHandled(true);
         //The connection data needs to be modified before a new ModMismatchData instance could be constructed
         NetworkHooks.appendConnectionData(c.get().getNetworkManager(), serverModList.getModList().stream().collect(Collectors.toMap(Function.identity(), s -> Pair.of("", ""))), serverModList.getChannels());
-        if (!mismatchedChannels.isEmpty()) {
-            LOGGER.error(FMLHSMARKER, "Terminating connection with server, mismatched mod list");
-            //Populate the mod mismatch attribute with a new mismatch data instance to indicate that the disconnect happened due to a mod mismatch
-            c.get().getNetworkManager().channel().attr(NetworkConstants.FML_MOD_MISMATCH_DATA).set(ModMismatchData.channel(mismatchedChannels, NetworkHooks.getConnectionData(c.get().getNetworkManager()), true));
-            c.get().getNetworkManager().disconnect(Component.literal("Connection closed - mismatched mod channel list"));
-            return;
-        }
         // Validate synced custom datapack registries, client cannot be missing any present on the server.
         List<String> missingDataPackRegistries = new ArrayList<>();
         Set<ResourceKey<? extends Registry<?>>> clientDataPackRegistries = DataPackRegistriesHooks.getSyncedCustomRegistries();
@@ -329,6 +327,78 @@ public class HandshakeHandler
         contextSupplier.get().setPacketHandled(true);
         NetworkConstants.handshakeChannel.reply(new HandshakeMessages.C2SAcknowledge(), contextSupplier.get());
     }
+
+    void handleClientReset(HandshakeMessages.S2CReset msg, final Supplier<NetworkEvent.Context> contextSupplier) {
+        NetworkEvent.Context context = contextSupplier.get();
+        Connection connection = context.getNetworkManager();
+
+        if (context.getDirection() != NetworkDirection.LOGIN_TO_CLIENT && context.getDirection() != NetworkDirection.PLAY_TO_CLIENT) {
+            connection.disconnect(Component.literal("Illegal packet received, terminating connection"));
+            throw new IllegalStateException("Invalid packet received, aborting connection");
+        }
+
+        LOGGER.debug(FMLHSMARKER, "Received reset from server");
+
+        ServerData serverData = Minecraft.getInstance().getCurrentServer();
+        Screen screen = Minecraft.getInstance().screen;
+
+        if (!handleClear(context)) {
+            return;
+        }
+
+        NetworkHooks.registerClientLoginChannel(connection);
+        connection.setProtocol(ConnectionProtocol.LOGIN);
+        connection.setListener(new ClientHandshakePacketListenerImpl(
+                connection, Minecraft.getInstance(), serverData, screen, true, null, statusMessage -> {}
+        ));
+
+        context.setPacketHandled(true);
+        NetworkConstants.handshakeChannel.reply(
+                new HandshakeMessages.C2SAcknowledge(),
+                new NetworkEvent.Context(connection, NetworkDirection.LOGIN_TO_CLIENT, 98)
+        );
+
+        LOGGER.debug(FMLHSMARKER, "Reset complete");
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    boolean handleClear(NetworkEvent.Context context) {
+        CompletableFuture<Void> future = context.enqueueWork(() -> {
+            LOGGER.debug(FMLHSMARKER, "Clearing");
+
+            // Clear
+            if (Minecraft.getInstance().level == null) {
+                // Ensure the GameData is reverted in case the client is reset during the handshake.
+                GameData.revertToFrozen();
+            }
+
+            // Clear
+            Minecraft.getInstance().clearLevel(new GenericDirtMessageScreen(Component.translatable("connect.negotiating")));
+            try {
+                context.getNetworkManager().channel().pipeline().remove("forge:forge_fixes");
+            } catch (NoSuchElementException ignored) {
+            }
+            try {
+                context.getNetworkManager().channel().pipeline().remove("forge:vanilla_filter");
+            } catch (NoSuchElementException ignored) {
+            }
+            // Restore
+//            Minecraft.getInstance().setCurrentServer(serverData);
+        });
+
+        LOGGER.debug(FMLHSMARKER, "Waiting for clear to complete");
+
+        try {
+            future.get();
+            LOGGER.debug("Clear complete, continuing reset");
+            return true;
+        } catch (Exception ex) {
+            LOGGER.error(FMLHSMARKER, "Failed to clear, closing connection", ex);
+            context.getNetworkManager().disconnect(Component.literal("Failed to clear, closing connection"));
+            return false;
+        }
+    }
+
     /**
      * FML will send packets, from Server to Client, from the messages queue until the queue is drained. Each message
      * will be indexed, and placed into the "pending acknowledgement" queue.

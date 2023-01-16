@@ -348,4 +348,19 @@ public class HandshakeMessages
             return mismatchedChannelData;
         }
     }
+
+    public static class S2CReset extends LoginIndexedMessage {
+
+        public S2CReset() {
+            super();
+        }
+
+        public void encode(FriendlyByteBuf buffer) {
+
+        }
+
+        public static S2CReset decode(FriendlyByteBuf buffer) {
+            return new S2CReset();
+        }
+    }
 }
