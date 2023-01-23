@@ -16,7 +16,7 @@
     }
  
     public static Material m_173381_(WoodType p_173382_) {
-@@ -190,5 +_,12 @@
+@@ -190,5 +_,13 @@
           default:
              return p_110773_;
        }
@@ -27,5 +27,6 @@
 +    */
 +   public static void addWoodType(WoodType woodType) {
 +      f_110743_.put(woodType, m_173385_(woodType));
++      f_244291_.put(woodType, m_245275_(woodType));
     }
  }
