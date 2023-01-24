@@ -1,0 +1,15 @@
+--- a/net/minecraft/world/item/SolidBucketItem.java
++++ b/net/minecraft/world/item/SolidBucketItem.java
+@@ -41,7 +_,12 @@
+       return this.f_151185_;
+    }
+ 
++   @Deprecated //Forge: use the ItemStack sensitive version
+    public boolean m_142073_(@Nullable Player p_151192_, Level p_151193_, BlockPos p_151194_, @Nullable BlockHitResult p_151195_) {
++      return emptyContents(p_151192_, p_151193_, p_151194_, p_151195_, new ItemStack(this));
++   }
++
++   public boolean emptyContents(@Nullable Player p_151192_, Level p_151193_, BlockPos p_151194_, @Nullable BlockHitResult p_151195_, ItemStack itemStack) {
+       if (p_151193_.m_46739_(p_151194_) && p_151193_.m_46859_(p_151194_)) {
+          if (!p_151193_.f_46443_) {
+             p_151193_.m_7731_(p_151194_, this.m_40614_().m_49966_(), 3);

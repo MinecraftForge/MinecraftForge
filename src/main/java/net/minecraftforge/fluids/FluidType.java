@@ -819,7 +819,7 @@ public class FluidType
      * @param stack the stack holding the fluid being placed
      * @return {@code true} if this fluid should be vaporized on placement, {@code false} otherwise
      *
-     * @see BucketItem#emptyContents(Player, Level, BlockPos, BlockHitResult)
+     * @see BucketItem#emptyContents(Player, Level, BlockPos, BlockHitResult, ItemStack)
      */
     public boolean isVaporizedOnPlacement(Level level, BlockPos pos, FluidStack stack)
     {
@@ -841,7 +841,7 @@ public class FluidType
      * @param pos the position the fluid is vaporized at
      * @param stack the stack holding the fluid being vaporized
      *
-     * @see BucketItem#emptyContents(Player, Level, BlockPos, BlockHitResult)
+     * @see BucketItem#emptyContents(Player, Level, BlockPos, BlockHitResult, ItemStack)
      */
     public void onVaporize(@Nullable Player player, Level level, BlockPos pos, FluidStack stack)
     {

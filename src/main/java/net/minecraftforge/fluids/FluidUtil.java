@@ -530,7 +530,7 @@ public class FluidUtil
      * Honors the amount of fluid contained by the used container.
      * Checks if water-like fluids should vaporize like in the nether.
      *
-     * Modeled after {@link BucketItem#emptyContents(Player, Level, BlockPos, BlockHitResult)}
+     * Modeled after {@link BucketItem#emptyContents(Player, Level, BlockPos, BlockHitResult, ItemStack)}
      *
      * @param player      Player who places the fluid. May be null for blocks like dispensers.
      * @param level       Level to place the fluid in
@@ -617,7 +617,7 @@ public class FluidUtil
 
     /**
      * Destroys a block when a fluid is placed in the same position.
-     * Modeled after {@link BucketItem#emptyContents(Player, Level, BlockPos, BlockHitResult)}
+     * Modeled after {@link BucketItem#emptyContents(Player, Level, BlockPos, BlockHitResult, ItemStack)}
      *
      * This is a helper method for implementing {@link IFluidBlock#place(Level, BlockPos, FluidStack, IFluidHandler.FluidAction)}.
      *
