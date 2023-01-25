@@ -812,12 +812,12 @@ public class ForgeEventFactory
 
     public static void onPreLevelTick(Level level, BooleanSupplier haveTime)
     {
-        MinecraftForge.EVENT_BUS.post(new TickEvent.LevelTickEvent(LogicalSide.SERVER, TickEvent.Phase.START, level, haveTime));
+        MinecraftForge.EVENT_BUS.post(new TickEvent.LevelTickEvent(level.isClientSide ? LogicalSide.CLIENT : LogicalSide.SERVER, TickEvent.Phase.START, level, haveTime));
     }
 
     public static void onPostLevelTick(Level level, BooleanSupplier haveTime)
     {
-        MinecraftForge.EVENT_BUS.post(new TickEvent.LevelTickEvent(LogicalSide.SERVER, TickEvent.Phase.END, level, haveTime));
+        MinecraftForge.EVENT_BUS.post(new TickEvent.LevelTickEvent(level.isClientSide ? LogicalSide.CLIENT : LogicalSide.SERVER, TickEvent.Phase.END, level, haveTime));
     }
 
     public static void onPreClientTick()
