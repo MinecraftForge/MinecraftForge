@@ -9,9 +9,20 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.LevelSimulatedReader;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.levelgen.feature.treedecorators.TreeDecorator;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
 
+/**
+ * This event is fired when {@link net.minecraft.world.level.levelgen.feature.treedecorators.AlterGroundDecorator#placeBlockAt(TreeDecorator.Context, BlockPos)}
+ * attempts to alter a ground block when generating a feature. An example of this would be large spruce trees converting grass blocks into podzol.
+ * <p>
+ * This event is {@linkplain Cancelable cancellable}.
+ * <p>
+ * This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus}
+ * only on the {@linkplain net.minecraftforge.fml.LogicalSide#SERVER logical server}.
+ */
 @Cancelable
 public class AlterGroundEvent extends Event {
     private final LevelSimulatedReader level;
@@ -35,14 +46,23 @@ public class AlterGroundEvent extends Event {
         return this.random;
     }
 
+    /**
+     * @return The position of the block that will be altered.
+     */
     public BlockPos getPos() {
         return this.pos;
     }
 
+    /**
+     * @return The new block state to be placed by the ground decorator.
+     */
     public BlockState getAlteredState() {
         return this.altered;
     }
 
+    /**
+     * @param altered The new block state to be placed by the ground decorator.
+     */
     public void setAlteredState(BlockState altered) {
         this.altered = altered;
     }
