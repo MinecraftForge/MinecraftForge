@@ -5,7 +5,7 @@
           BlockPos blockpos = p_225975_.m_6630_(i);
           if (Feature.m_65788_(p_225974_.m_226058_(), blockpos)) {
 -            p_225974_.m_226061_(blockpos, this.f_69303_.m_213972_(p_225974_.m_226067_(), p_225975_));
-+            p_225974_.m_226061_(blockpos, net.minecraftforge.event.ForgeEventFactory.alterGround(p_225974_.m_226058_(), p_225974_.m_226067_(), p_225975_, this.f_69303_.m_213972_(p_225974_.m_226067_(), p_225975_)));
++            p_225974_.m_226061_(blockpos, net.minecraftforge.event.ForgeEventFactory.alterGround(p_225974_.m_226058_(), p_225974_.m_226067_(), blockpos, this.f_69303_.m_213972_(p_225974_.m_226067_(), p_225975_)));
              break;
           }
  
