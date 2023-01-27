@@ -21,15 +21,14 @@ public interface IForgeDispensibleContainerItem
     }
 
     /**
-     * ItemStack sensitive version of {@link DispensibleContainerItem#emptyContents(Player, Level, BlockPos, BlockHitResult)}
-     * Tries to place the content of the container into the level as a block.
+     * Empties the contents of the container and returns whether it was successful.
      *
-     * @param player    Player who places the fluid. May be null for blocks like dispensers.
+     * @param player    Player who empties the container. May be null for blocks like dispensers.
      * @param level     Level to place the content in
-     * @param pos       The position in the level to place the content
+     * @param pos       The position in the level to empty the content
      * @param hitResult Hit result of the interaction. May be null for blocks like dispensers.
      * @param container ItemStack of the container. May be null for backwards compatibility.
-     * @return true if the placement was successful, false otherwise
+     * @return true if emptying the contents of the container was successful, false otherwise
      */
     default boolean emptyContents(@Nullable Player player, Level level, BlockPos pos, @Nullable BlockHitResult hitResult, @Nullable ItemStack container)
     {
