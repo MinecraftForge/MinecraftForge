@@ -156,7 +156,7 @@
        boolean flag = blockstate.m_204336_(BlockTags.f_144271_);
        if (flag || !p_20136_.m_60767_().m_76332_()) {
 -         SoundType soundtype = flag ? blockstate.m_60827_() : p_20136_.m_60827_();
-+         SoundType soundtype = blockstate.m_60713_(Blocks.f_50125_) ? blockstate.getSoundType(f_19853_, p_20135_, this) : p_20136_.getSoundType(f_19853_, p_20135_, this);
++         SoundType soundtype = flag ? blockstate.getSoundType(f_19853_, p_20135_, this) : p_20136_.getSoundType(f_19853_, p_20135_, this);
           this.m_5496_(soundtype.m_56776_(), soundtype.m_56773_() * 0.15F, soundtype.m_56774_());
        }
     }
