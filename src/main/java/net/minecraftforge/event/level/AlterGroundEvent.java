@@ -13,29 +13,32 @@ import net.minecraft.world.level.levelgen.feature.treedecorators.TreeDecorator;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
+import org.jetbrains.annotations.ApiStatus;
 
 /**
  * This event is fired when {@link net.minecraft.world.level.levelgen.feature.treedecorators.AlterGroundDecorator#placeBlockAt(TreeDecorator.Context, BlockPos)}
  * attempts to alter a ground block when generating a feature. An example of this would be large spruce trees converting grass blocks into podzol.
  * <p>
- * This event is {@linkplain Cancelable cancellable}.
+ * This event is not {@linkplain Cancelable cancellable}.
  * <p>
  * This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus}
  * only on the {@linkplain net.minecraftforge.fml.LogicalSide#SERVER logical server}.
  */
-@Cancelable
+@ApiStatus.Internal
 public class AlterGroundEvent extends Event {
     private final LevelSimulatedReader level;
     private final RandomSource random;
     private final BlockPos pos;
-    private BlockState altered;
+    private final BlockState originalAltered;
+    private BlockState newAltered;
 
     public AlterGroundEvent(LevelSimulatedReader level, RandomSource random, BlockPos pos, BlockState altered) {
         super();
         this.level = level;
         this.random = random;
         this.pos = pos;
-        this.altered = altered;
+        this.originalAltered = altered;
+        this.newAltered = altered;
     }
 
     public LevelSimulatedReader getLevel() {
@@ -47,23 +50,30 @@ public class AlterGroundEvent extends Event {
     }
 
     /**
-     * @return The position of the block that will be altered.
+     * {@return the position of the block that will be altered}
      */
     public BlockPos getPos() {
         return this.pos;
     }
 
     /**
-     * @return The new block state to be placed by the ground decorator.
+     * {@return the original block state that would be placed by the ground decorator}
      */
-    public BlockState getAlteredState() {
-        return this.altered;
+    public BlockState getOriginalAlteredState() {
+        return this.originalAltered;
     }
 
     /**
-     * @param altered The new block state to be placed by the ground decorator.
+     * {@return the new block state to be placed by the ground decorator}
      */
-    public void setAlteredState(BlockState altered) {
-        this.altered = altered;
+    public BlockState getNewAlteredState() {
+        return this.newAltered;
+    }
+
+    /**
+     * @param newAltered the new block state to be placed by the ground decorator
+     */
+    public void setNewAlteredState(BlockState newAltered) {
+        this.newAltered = newAltered;
     }
 }

@@ -1,15 +1,11 @@
 --- a/net/minecraft/world/level/levelgen/feature/treedecorators/AlterGroundDecorator.java
 +++ b/net/minecraft/world/level/levelgen/feature/treedecorators/AlterGroundDecorator.java
-@@ -71,8 +_,10 @@
-    private void m_225973_(TreeDecorator.Context p_225974_, BlockPos p_225975_) {
+@@ -72,7 +_,7 @@
        for(int i = 2; i >= -3; --i) {
           BlockPos blockpos = p_225975_.m_6630_(i);
--         if (Feature.m_65788_(p_225974_.m_226058_(), blockpos)) {
+          if (Feature.m_65788_(p_225974_.m_226058_(), blockpos)) {
 -            p_225974_.m_226061_(blockpos, this.f_69303_.m_213972_(p_225974_.m_226067_(), p_225975_));
-+         net.minecraft.world.level.block.state.BlockState blockState = this.f_69303_.m_213972_(p_225974_.m_226067_(), p_225975_);
-+         net.minecraftforge.event.level.AlterGroundEvent event = net.minecraftforge.event.ForgeEventFactory.alterGround(p_225974_.m_226058_(), p_225974_.m_226067_(), p_225975_, blockState);
-+         if (!event.isCanceled() && Feature.m_65788_(p_225974_.m_226058_(), blockpos)) {
-+            p_225974_.m_226061_(blockpos, blockState);
++            p_225974_.m_226061_(blockpos, net.minecraftforge.event.ForgeEventFactory.alterGround(p_225974_.m_226058_(), p_225974_.m_226067_(), p_225975_, this.f_69303_.m_213972_(p_225974_.m_226067_(), p_225975_)));
              break;
           }
  

@@ -633,11 +633,11 @@ public class ForgeEventFactory
         return event;
     }
 
-    public static AlterGroundEvent alterGround(LevelSimulatedReader level, RandomSource random, BlockPos pos, BlockState altered)
+    public static BlockState alterGround(LevelSimulatedReader level, RandomSource random, BlockPos pos, BlockState altered)
     {
         AlterGroundEvent event = new AlterGroundEvent(level, random, pos, altered);
         MinecraftForge.EVENT_BUS.post(event);
-        return event;
+        return event.getNewAlteredState();
     }
 
     public static void fireChunkTicketLevelUpdated(ServerLevel level, long chunkPos, int oldTicketLevel, int newTicketLevel, @Nullable ChunkHolder chunkHolder)
