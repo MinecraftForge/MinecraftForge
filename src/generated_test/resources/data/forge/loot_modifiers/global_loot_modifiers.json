@@ -1,5 +1,6 @@
 {
   "entries": [
+    "global_loot_test:should_never_be_loaded",
     "global_loot_test:dungeon_loot",
     "global_loot_test:wheat_harvest",
     "global_loot_test:smelting"

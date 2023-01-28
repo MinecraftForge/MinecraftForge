@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/packs/resources/SimpleJsonResourceReloadListener.java
 +++ b/net/minecraft/server/packs/resources/SimpleJsonResourceReloadListener.java
-@@ -48,4 +_,33 @@
+@@ -48,4 +_,42 @@
  
        return map;
     }
@@ -16,20 +16,29 @@
 +         f_10762_.debug("Skipped condition checking for resources of type '{}', as they do not support conditions.", f_10765_);
 +         return;
 +      }
++      final var replacements = new java.util.HashMap<ResourceLocation, JsonElement>();
++      final var defaultData = getDefaultData();
++      final boolean hasDefault = defaultData != null;
 +      final var itr = data.entrySet().iterator();
 +      while (itr.hasNext()) {
 +         final var next = itr.next();
 +         if (next.getValue().isJsonObject() && !net.minecraftforge.common.crafting.CraftingHelper.processConditions(next.getValue().getAsJsonObject(), memberName, conditionContext)) {
-+            itr.remove();
++            if (hasDefault) replacements.put(next.getKey(), defaultData); else itr.remove();
 +            f_10762_.debug("Skipped loading resource of type '{}', at path {}, as its conditions were not met.", f_10765_, next.getKey());
 +         }
 +      }
++      data.putAll(replacements);
 +   }
 +
 +   /**
 +    * {@return the name of the array to parse conditions from} {@code null} if this reload listener does not support conditions.
 +    */
 +   @javax.annotation.Nullable protected String getConditionsMemberName() { return "forge:conditions"; }
++
++   /**
++    * {@return the element to replace resources whose conditions aren't met with}
++    */
++   @javax.annotation.Nullable protected JsonElement getDefaultData() { return null; }
 +
 +   protected net.minecraftforge.common.crafting.conditions.ICondition.IContext conditionContext;
 +   public void setConditionContext(net.minecraftforge.common.crafting.conditions.ICondition.IContext context) { this.conditionContext = context; }

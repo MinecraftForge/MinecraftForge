@@ -14,7 +14,6 @@ import net.minecraft.advancements.critereon.ItemPredicate;
 import net.minecraft.advancements.critereon.MinMaxBounds;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.Enchantment.Rarity;
@@ -36,6 +35,7 @@ import net.minecraft.world.level.storage.loot.predicates.LootItemBlockStatePrope
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.world.level.storage.loot.predicates.MatchTool;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.common.crafting.conditions.FalseCondition;
 import net.minecraftforge.common.data.GlobalLootModifierProvider;
 import net.minecraftforge.common.loot.IGlobalLootModifier;
 import net.minecraftforge.common.loot.LootModifier;
@@ -118,6 +118,8 @@ public class GlobalLootModifiersTest {
                     new LootItemCondition[] { LootTableIdCondition.builder(new ResourceLocation("chests/simple_dungeon")).build() },
                     2)
             );
+
+            add("should_never_be_loaded", new SmeltingEnchantmentModifier(new MatchTool(ItemPredicate.ANY)), FalseCondition.INSTANCE);
         }
     }
 
@@ -134,7 +136,7 @@ public class GlobalLootModifiersTest {
     private static class SmeltingEnchantmentModifier extends LootModifier {
         public static final Supplier<Codec<SmeltingEnchantmentModifier>> CODEC = Suppliers.memoize(() -> RecordCodecBuilder.create(inst -> codecStart(inst).apply(inst, SmeltingEnchantmentModifier::new)));
 
-        public SmeltingEnchantmentModifier(LootItemCondition[] conditionsIn) {
+        public SmeltingEnchantmentModifier(LootItemCondition... conditionsIn) {
             super(conditionsIn);
         }
 

@@ -10,3 +10,13 @@
              builder.put(p_79198_, loottable);
           } catch (Exception exception) {
              f_79188_.error("Couldn't parse loot table {}", p_79198_, exception);
+@@ -66,5 +_,9 @@
+ 
+    public Set<ResourceLocation> m_79195_() {
+       return this.f_79190_.keySet();
++   }
++
++   @javax.annotation.Nullable @Override protected JsonElement getDefaultData() {
++      return m_79200_(LootTable.f_79105_);
+    }
+ }

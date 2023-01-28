@@ -1,0 +1,13 @@
+{
+  "type": "global_loot_test:smelting",
+  "conditions": [
+    {
+      "condition": "minecraft:match_tool"
+    }
+  ],
+  "forge:conditions": [
+    {
+      "type": "forge:false"
+    }
+  ]
+}

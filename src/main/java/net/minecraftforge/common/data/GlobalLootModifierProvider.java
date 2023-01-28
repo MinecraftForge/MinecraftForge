@@ -16,6 +16,8 @@ import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.common.crafting.CraftingHelper;
+import net.minecraftforge.common.crafting.conditions.ICondition;
 import net.minecraftforge.common.loot.IGlobalLootModifier;
 import net.minecraftforge.common.loot.LootModifier;
 
@@ -35,6 +37,7 @@ import java.util.stream.Collectors;
 public abstract class GlobalLootModifierProvider implements DataProvider
 {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
+    private static final ICondition[] EMPTY_CONDITIONS = new ICondition[0];
     private final PackOutput output;
     private final String modid;
     private final Map<String, JsonElement> toSerialize = new HashMap<>();
@@ -94,7 +97,22 @@ public abstract class GlobalLootModifierProvider implements DataProvider
      */
     public <T extends IGlobalLootModifier> void add(String modifier, T instance)
     {
+        this.add(modifier, instance, EMPTY_CONDITIONS);
+    }
+
+    /**
+     * Passes in the data needed to create the file without any extra objects.
+     *
+     * @param modifier   The name of the modifier, which will be the file name.
+     * @param instance   The instance to serialize
+     * @param conditions An array of {@link ICondition loading Conditions} to add to the modifier
+     */
+    public <T extends IGlobalLootModifier> void add(String modifier, T instance, ICondition... conditions)
+    {
         JsonElement json = IGlobalLootModifier.DIRECT_CODEC.encodeStart(JsonOps.INSTANCE, instance).getOrThrow(false, s -> {});
+        if (conditions.length > 0 && json instanceof JsonObject obj) {
+            obj.add("forge:conditions", CraftingHelper.serialize(conditions));
+        }
         this.toSerialize.put(modifier, json);
     }
 
