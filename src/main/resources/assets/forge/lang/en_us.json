@@ -220,5 +220,7 @@
   "forge.experimentalsettings.tooltip": "This world uses experimental settings, which could stop working at any time.",
   "forge.selectWorld.backupWarning.experimental.additional" : "This message will not show again for this world.",
 
+  "forge.chatType.system": "{0}",
+
   "pack.forge.description": "Forge resource pack"
 }
