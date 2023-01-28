@@ -5,16 +5,20 @@
 
 package net.minecraftforge.fml.loading;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.google.common.collect.Streams;
 import com.mojang.logging.LogUtils;
@@ -42,6 +46,11 @@ public class RuntimeDistCleaner implements ILaunchPluginService
     private static String DIST;
     private static final String ONLYIN = Type.getDescriptor(OnlyIn.class);
     private static final String ONLYINS = Type.getDescriptor(OnlyIns.class);
+    private static final Set<String> STACKTRACE_EXCLUDED_NAMES = Stream.of(
+            ClassLoader.class, // Exclude class loader lookup methods
+            Method.class, Class.class, Field.class, // Exclude Class#getDeclaredMethods, and any other reflection methods
+            RuntimeDistCleaner.class // Exclude ourselves as well
+    ).map(Class::getName).collect(Collectors.toSet());
     @Override
     public String name()
     {
@@ -58,10 +67,9 @@ public class RuntimeDistCleaner implements ILaunchPluginService
                     .walk(stream -> stream.filter(Predicate.not(it ->
                     {
                         final String cname = it.getClassName();
-                        return cname.startsWith("cpw.mods.cl") || cname.equals("java.lang.ClassLoader") // Exclude ModuleClassLoader and friends
+                        return cname.startsWith("cpw.mods.cl") // Exclude ModuleClassLoader and friends
                                 || cname.startsWith("cpw.mods.modlauncher") // Exclude the transformer callers
-                                || cname.equals("java.lang.Method") || cname.equals("java.lang.Class") || cname.equals("java.lang.Field") // Exclude Class#getDeclaredMethods, and any other reflection methods
-                                || cname.equals("net.minecraftforge.fml.loading.RuntimeDistCleaner"); // And finally, exclude ourselves
+                                || STACKTRACE_EXCLUDED_NAMES.contains(cname);
                     })).findFirst())
                     .map(frame -> "Class %s (%s) attempted to load class %s for invalid dist %s".formatted(frame.getClassName(), frame.toStackTraceElement(), classNode.name, DIST))
                     .orElseGet(() -> "Attempted to load class %s for invalid dist %s".formatted(classNode.name, DIST));
