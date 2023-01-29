@@ -145,7 +145,7 @@
     }
  
     public float m_32008_(float p_32009_) {
-@@ -425,4 +_,84 @@
+@@ -425,4 +_,85 @@
     public float m_213816_() {
        return 180.0F - this.m_32008_(0.5F) / ((float)Math.PI * 2F) * 360.0F;
     }
@@ -204,26 +204,27 @@
 +   public final boolean isPickupAllowed(Object collector, net.minecraftforge.items.pickup.ItemPickupReason... pickupReasons)
 +   {
 +      // check forge event to see if item is forcibly allowed to be picked up or not
-+      var event = new net.minecraftforge.event.entity.item.ItemPickupAllowedEvent(this, collector, pickupReasons);
++      var pickupReasonSet = com.google.common.collect.ImmutableSet.copyOf(pickupReasons);
++      var event = new net.minecraftforge.event.entity.item.ItemPickupAllowedEvent(this, collector, pickupReasonSet);
 +      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event);
 +      var eventResult = event.getResult();
 +
-+      if(eventResult == net.minecraftforge.eventbus.api.Event.Result.ALLOW) return true;
-+      if(eventResult == net.minecraftforge.eventbus.api.Event.Result.DENY) return false;
++      if (eventResult == net.minecraftforge.eventbus.api.Event.Result.ALLOW) return true;
++      if (eventResult == net.minecraftforge.eventbus.api.Event.Result.DENY) return false;
 +
 +      // check if vanilla flag has been set, if disallow pickup
-+      if(lifespan == f_149661_) return false;
++      if (lifespan == f_149661_) return false;
 +
 +      // check to see if any specified pickup reason is disallowed
-+      for(var pickupReason : pickupReasons)
++      for (var pickupReason : pickupReasons)
 +      {
-+         if(disabledPickupReasons.contains(pickupReason)) return false;
++         if (disabledPickupReasons.contains(pickupReason)) return false;
 +      }
 +
 +      // check to see if any query currently disallows picking up item
-+      for(var pickupQuery : pickupQueries)
++      for (var pickupQuery : pickupQueries)
 +      {
-+         if(!pickupQuery.query(this, m_32055_(), f_19853_, m_20183_(), collector)) return false;
++         if (!pickupQuery.query(this, m_32055_(), f_19853_, m_20183_(), collector, pickupReasonSet)) return false;
 +      }
 +
 +      return true;

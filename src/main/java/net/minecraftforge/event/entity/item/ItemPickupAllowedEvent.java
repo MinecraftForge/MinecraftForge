@@ -6,6 +6,7 @@
 package net.minecraftforge.event.entity.item;
 
 import org.apache.commons.lang3.ArrayUtils;
+import org.jetbrains.annotations.ApiStatus;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -14,27 +15,34 @@ import net.minecraft.world.level.Level;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.items.pickup.ItemPickupReason;
 
+import java.util.Set;
+
 /**
- * Event fired to check if the given item is currently allowed to be picked up or not
+ * Fired to check if the given item is currently allowed to be picked up or not.
  *
- * <p>This event is not {@link Cancelable cancellable}, and {@link HasResult has a result}.</p>
+ * <p>This event is not {@linkplain Cancelable cancellable}, and {@linkplain HasResult has a result}.</p>
  * <ul>
- *     <li>{@link Result#ALLOW} - forcibly allow this item to be picked up</li>
- *     <li>{@link Result#DEFAULT} - let the default logic dictate if this item should be picked up or not, this relies on the {@link ItemEntity#isPickupAllowed(Object, ItemPickupReason...)} method</li>
- *     <li>{@link Result#DENY} - forcibly disallow this item to be picked up</li>
+ *     <li>{@link Result#ALLOW} - Forcibly allow this item to be picked up.</li>
+ *     <li>{@link Result#DEFAULT} - Let the default logic dictate if this item should be picked up or not. This relies on the {@link ItemEntity#isPickupAllowed(Object, ItemPickupReason...)} method.</li>
+ *     <li>{@link Result#DENY} - Forcibly disallow this item to be picked up.</li>
  * </ul>
  *
- * <p>This event is fired on the {@link MinecraftForge#EVENT_BUS main Forge event bus}</p>
+ * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
+ * only on the {@linkplain LogicalSide#SERVER logical server}.</p>
+ *
+ * @see net.minecraftforge.items.pickup.ItemPickupReasons for possible collector types
  */
 @Event.HasResult
 public class ItemPickupAllowedEvent extends ItemEvent
 {
     private final Object collector;
-    private final ItemPickupReason[] pickupReasons;
+    private final Set<ItemPickupReason> pickupReasons;
 
-    public ItemPickupAllowedEvent(ItemEntity itemEntity, Object collector, ItemPickupReason... pickupReasons)
+    @ApiStatus.Internal
+    public ItemPickupAllowedEvent(ItemEntity itemEntity, Object collector, Set<ItemPickupReason> pickupReasons)
     {
         super(itemEntity);
 
@@ -64,6 +72,6 @@ public class ItemPickupAllowedEvent extends ItemEvent
 
     public boolean hasPickupReason(ItemPickupReason pickupReason)
     {
-        return ArrayUtils.contains(pickupReasons, pickupReason);
+        return pickupReasons.contains(pickupReason);
     }
 }
