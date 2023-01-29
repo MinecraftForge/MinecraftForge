@@ -128,7 +128,7 @@
              jsonobject.add("functions", p_79179_.serialize(p_79177_.f_79110_));
 +         }
 +         if (!ArrayUtils.isEmpty(p_79177_.conditions)) {
-+            jsonobject.add("forge:conditions", net.minecraftforge.common.crafting.CraftingHelper.serialize(p_79177_.conditions));
++            jsonobject.add(net.minecraftforge.common.crafting.CraftingHelper.DEFAULT_CONDITIONS_MEMBER_NAME, net.minecraftforge.common.crafting.CraftingHelper.serialize(p_79177_.conditions));
           }
  
           return jsonobject;

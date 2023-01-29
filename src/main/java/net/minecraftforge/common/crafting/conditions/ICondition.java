@@ -23,10 +23,10 @@ public interface ICondition
 {
     static boolean shouldRegisterEntry(JsonElement json)
     {
-        if (!(json instanceof JsonObject obj) || !obj.has("forge:conditions"))
+        if (!(json instanceof JsonObject obj) || !obj.has(CraftingHelper.DEFAULT_CONDITIONS_MEMBER_NAME))
             return true;
 
-        return CraftingHelper.processConditions(obj, "forge:conditions", IContext.TAGS_INVALID);
+        return CraftingHelper.processConditions(obj, CraftingHelper.DEFAULT_CONDITIONS_MEMBER_NAME, IContext.TAGS_INVALID);
     }
 
     ResourceLocation getID();

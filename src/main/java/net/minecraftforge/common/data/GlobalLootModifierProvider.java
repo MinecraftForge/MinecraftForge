@@ -111,7 +111,7 @@ public abstract class GlobalLootModifierProvider implements DataProvider
     {
         JsonElement json = IGlobalLootModifier.DIRECT_CODEC.encodeStart(JsonOps.INSTANCE, instance).getOrThrow(false, s -> {});
         if (conditions.length > 0 && json instanceof JsonObject obj) {
-            obj.add("forge:conditions", CraftingHelper.serialize(conditions));
+            obj.add(CraftingHelper.DEFAULT_CONDITIONS_MEMBER_NAME, CraftingHelper.serialize(conditions));
         }
         this.toSerialize.put(modifier, json);
     }

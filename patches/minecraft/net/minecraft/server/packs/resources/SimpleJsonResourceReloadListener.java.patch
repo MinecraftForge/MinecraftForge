@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/packs/resources/SimpleJsonResourceReloadListener.java
 +++ b/net/minecraft/server/packs/resources/SimpleJsonResourceReloadListener.java
-@@ -48,4 +_,42 @@
+@@ -48,4 +_,43 @@
  
        return map;
     }
@@ -21,10 +21,11 @@
 +      final boolean hasDefault = defaultData != null;
 +      final var itr = data.entrySet().iterator();
 +      while (itr.hasNext()) {
-+         final var next = itr.next();
-+         if (next.getValue().isJsonObject() && !net.minecraftforge.common.crafting.CraftingHelper.processConditions(next.getValue().getAsJsonObject(), memberName, conditionContext)) {
-+            if (hasDefault) replacements.put(next.getKey(), defaultData); else itr.remove();
-+            f_10762_.debug("Skipped loading resource of type '{}', at path {}, as its conditions were not met.", f_10765_, next.getKey());
++         final var entry = itr.next();
++         if (entry.getValue().isJsonObject() && !net.minecraftforge.common.crafting.CraftingHelper.processConditions(entry.getValue().getAsJsonObject(), memberName, conditionContext)) {
++            if (hasDefault) replacements.put(entry.getKey(), defaultData);
++            else itr.remove();
++            f_10762_.debug("Skipped loading resource of type '{}', at path {}, as its conditions were not met.", f_10765_, entry.getKey());
 +         }
 +      }
 +      data.putAll(replacements);
@@ -33,13 +34,13 @@
 +   /**
 +    * {@return the name of the array to parse conditions from} {@code null} if this reload listener does not support conditions.
 +    */
-+   @javax.annotation.Nullable protected String getConditionsMemberName() { return "forge:conditions"; }
++   @org.jetbrains.annotations.Nullable protected String getConditionsMemberName() { return net.minecraftforge.common.crafting.CraftingHelper.DEFAULT_CONDITIONS_MEMBER_NAME; }
 +
 +   /**
 +    * {@return the element to replace resources whose conditions aren't met with}
 +    */
-+   @javax.annotation.Nullable protected JsonElement getDefaultData() { return null; }
++   @org.jetbrains.annotations.Nullable protected JsonElement getDefaultData() { return null; }
 +
 +   protected net.minecraftforge.common.crafting.conditions.ICondition.IContext conditionContext;
-+   public void setConditionContext(net.minecraftforge.common.crafting.conditions.ICondition.IContext context) { this.conditionContext = context; }
++   @org.jetbrains.annotations.ApiStatus.Internal public final void setConditionContext(net.minecraftforge.common.crafting.conditions.ICondition.IContext context) { this.conditionContext = context; }
  }

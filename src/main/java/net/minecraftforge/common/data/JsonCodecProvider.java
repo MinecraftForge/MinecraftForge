@@ -101,7 +101,7 @@ public class JsonCodecProvider<T> implements DataProvider
             {
                 if(encoded instanceof JsonObject obj)
                 {
-                    obj.add("forge:conditions", CraftingHelper.serialize(conditions));
+                    obj.add(CraftingHelper.DEFAULT_CONDITIONS_MEMBER_NAME, CraftingHelper.serialize(conditions));
                 }
                 else
                 {
