@@ -67,8 +67,8 @@ public final class ItemPickupReason implements StringRepresentable, Comparable<I
     @Override
     public boolean equals(Object obj)
     {
-        if(this == obj) return true;
-        if(obj instanceof ItemPickupReason other) return name.equals(other.name);
+        if (this == obj) return true;
+        if (obj instanceof ItemPickupReason other) return name.equals(other.name);
         return false;
     }
 
