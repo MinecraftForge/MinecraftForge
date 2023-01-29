@@ -28,7 +28,7 @@
     }
  
     protected void m_7581_(ItemEntity p_21471_) {
-+      if (!p_21471_.isPickupAllowed(this, net.minecraftforge.items.pickup.ItemPickupReasons.LIVING_ENTITY)) return; // Forge: Check to see if item currently disallows being picked up for this entity
++      if (!p_21471_.isPickupAllowed(this, net.minecraftforge.items.pickup.ItemPickupReasons.LIVING_ENTITY)) return; // Forge: Check to see if the item currently disallows being picked up by this entity
        ItemStack itemstack = p_21471_.m_32055_();
        ItemStack itemstack1 = this.m_255207_(itemstack.m_41777_());
        if (!itemstack1.m_41619_()) {
