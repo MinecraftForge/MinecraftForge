@@ -50,21 +50,6 @@ public class ItemPickupAllowedEvent extends ItemEvent
         this.pickupReasons = pickupReasons;
     }
 
-    public ItemStack getItemStack()
-    {
-        return getEntity().getItem();
-    }
-
-    public Level getLevel()
-    {
-        return getEntity().getLevel();
-    }
-
-    public BlockPos getPos()
-    {
-        return getEntity().blockPosition();
-    }
-
     public Object getCollector()
     {
         return collector;

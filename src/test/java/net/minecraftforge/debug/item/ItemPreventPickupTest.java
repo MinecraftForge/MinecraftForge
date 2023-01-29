@@ -26,7 +26,7 @@ import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.items.pickup.ItemPickupQuery;
+import net.minecraftforge.items.pickup.ItemPickupPredicate;
 import net.minecraftforge.items.pickup.ItemPickupReasons;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -83,7 +83,7 @@ public class ItemPreventPickupTest
     });
 
     // if pickup is for hoppers && trying to pickup 2 or more of dummy item
-    public static final ItemPickupQuery HOPPER_IF_DUMMY_MORE_THAN_ONE = (item, stack, level, pos, collector, pickupReasons) -> {
+    public static final ItemPickupPredicate HOPPER_IF_DUMMY_MORE_THAN_ONE = (item, stack, level, pos, collector, pickupReasons) -> {
         // not dummy item or not for hopper pickup, return true, skip over to over queries & reasons
         // returning false here, would disallow the pickup, if it's not dummy or not for hoppers (& if dummy is not registered)
         if (!DUMMY.isPresent() || !pickupReasons.contains(ItemPickupReasons.HOPPER) || !stack.is(DUMMY.get())) return true;
@@ -116,19 +116,21 @@ public class ItemPreventPickupTest
     {
         if (ENABLE)
         {
+            var stack = event.getEntity().getItem();
+
             // register query for hopper picking up dummy item
             event.getEntity().addPickupQuery(HOPPER_IF_DUMMY_MORE_THAN_ONE);
 
             // forcibly disallow picking up iron ingots
-            if (event.getItemStack().is(Tags.Items.INGOTS_IRON)) event.setResult(Event.Result.DENY);
-            else if (event.getItemStack().is(DUMMY.get()))
+            if (stack.is(Tags.Items.INGOTS_IRON)) event.setResult(Event.Result.DENY);
+            else if (stack.is(DUMMY.get()))
             {
                 // only allow picking up dummy item if player is sneaking
                 if (event.hasPickupReason(ItemPickupReasons.PLAYER) && event.getCollector() instanceof Player player)
                     event.setResult(player.isShiftKeyDown() ? Event.Result.ALLOW : Event.Result.DENY);
                 // only allow picking up dummy item if zombie is standing on stone
                 else if (event.hasPickupReason(ItemPickupReasons.LIVING_ENTITY) && event.getCollector() instanceof Zombie zombie)
-                    event.setResult(event.getLevel().getBlockState(zombie.blockPosition().below()).is(BlockTags.BASE_STONE_OVERWORLD) ? Event.Result.ALLOW : Event.Result.DENY);
+                    event.setResult(event.getEntity().level.getBlockState(zombie.blockPosition().below()).is(BlockTags.BASE_STONE_OVERWORLD) ? Event.Result.ALLOW : Event.Result.DENY);
             }
         }
     }

@@ -19,7 +19,7 @@ import java.util.Objects;
 /**
  * Class representing a reason in which an ItemEntity is being picked up.
  */
-public final class ItemPickupReason implements StringRepresentable, Comparable<ItemPickupReason>
+public final class ItemPickupReason implements StringRepresentable
 {
     /**
      * package level of visibility to be accessible in {@link ItemPickupReasons}.
@@ -56,12 +56,6 @@ public final class ItemPickupReason implements StringRepresentable, Comparable<I
     public String getSerializedName()
     {
         return name;
-    }
-
-    @Override
-    public int compareTo(@NotNull ItemPickupReason other)
-    {
-        return name.compareTo(other.name);
     }
 
     @Override

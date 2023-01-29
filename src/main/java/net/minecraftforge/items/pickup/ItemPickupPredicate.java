@@ -12,9 +12,7 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
-import java.util.Objects;
 import java.util.Set;
-import java.util.function.Predicate;
 
 /**
  * FunctionalInterface used to query the Level to determine if the specified ItemEntity is valid to be picked up or not.
@@ -23,7 +21,7 @@ import java.util.function.Predicate;
  * <p>All queries must return true, in order for the item to be picked up by the collector.
  */
 @FunctionalInterface
-public interface ItemPickupQuery
+public interface ItemPickupPredicate
 {
     /**
      * Query if the specified ItemEntity is valid to be picked up or not.
