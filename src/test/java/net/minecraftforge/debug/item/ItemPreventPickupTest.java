@@ -118,8 +118,8 @@ public class ItemPreventPickupTest
         {
             var stack = event.getEntity().getItem();
 
-            // register query for hopper picking up dummy item
-            event.getEntity().addPickupQuery(HOPPER_IF_DUMMY_MORE_THAN_ONE);
+            // register predicate for hopper picking up dummy item
+            event.getEntity().addPickupPredicate(HOPPER_IF_DUMMY_MORE_THAN_ONE);
 
             // forcibly disallow picking up iron ingots
             if (stack.is(Tags.Items.INGOTS_IRON)) event.setResult(Event.Result.DENY);

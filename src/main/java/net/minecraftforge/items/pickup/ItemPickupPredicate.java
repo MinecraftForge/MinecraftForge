@@ -15,16 +15,16 @@ import net.minecraft.world.level.Level;
 import java.util.Set;
 
 /**
- * FunctionalInterface used to query the Level to determine if the specified ItemEntity is valid to be picked up or not.
+ * FunctionalInterface used to test the Level to determine if the specified ItemEntity is valid to be picked up or not.
  *
- * <p>Any query which returns false will disallow the item from being picked up.
- * <p>All queries must return true, in order for the item to be picked up by the collector.
+ * <p>Any predicate which returns false will disallow the item from being picked up.
+ * <p>All predicates must return true, in order for the item to be picked up by the collector.
  */
 @FunctionalInterface
 public interface ItemPickupPredicate
 {
     /**
-     * Query if the specified ItemEntity is valid to be picked up or not.
+     * Test if the specified ItemEntity is valid to be picked up or not.
      *
      * @param item The ItemEntity being picked up
      * @param stack The ItemStack being picked up
@@ -33,5 +33,5 @@ public interface ItemPickupPredicate
      * @param collector Object trying to pick up the ItemEntity or null
      * @return if the specified ItemEntity is valid to be picked up
      */
-    boolean query(@NotNull ItemEntity item, @NotNull ItemStack stack, @NotNull Level level, @NotNull BlockPos pos, @NotNull Object collector, @NotNull Set<ItemPickupReason> pickupReasons);
+    boolean test(@NotNull ItemEntity item, @NotNull ItemStack stack, @NotNull Level level, @NotNull BlockPos pos, @NotNull Object collector, @NotNull Set<ItemPickupReason> pickupReasons);
 }

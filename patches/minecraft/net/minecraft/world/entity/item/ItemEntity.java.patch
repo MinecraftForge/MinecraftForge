@@ -152,7 +152,7 @@
 +
 +   // FORGE START
 +   private final java.util.Set<net.minecraftforge.items.pickup.ItemPickupReason> disabledPickupReasons = com.google.common.collect.Sets.newHashSet();
-+   private final java.util.Set<net.minecraftforge.items.pickup.ItemPickupPredicate> pickupQueries = com.google.common.collect.Sets.newHashSet();
++   private final java.util.Set<net.minecraftforge.items.pickup.ItemPickupPredicate> pickupPredicates = com.google.common.collect.Sets.newHashSet();
 +
 +   /**
 +    * Disallow item from being picked up for the given {@link net.minecraftforge.items.pickup.ItemPickupReason reason}
@@ -173,21 +173,21 @@
 +   }
 +
 +   /**
-+    * Add a {@link net.minecraftforge.items.pickup.ItemPickupPredicate query} to validated when attempting to pick up this item.
++    * Add a {@link net.minecraftforge.items.pickup.ItemPickupPredicate predicate} to validated when attempting to pick up this item.
 +    *
-+    * @param pickupQuery Query to be validated when this item is being picked up
++    * @param pickupPredicate Predicate to be validated when this item is being picked up
 +    */
-+   public final void addPickupQuery(net.minecraftforge.items.pickup.ItemPickupPredicate pickupQuery) {
-+      pickupQueries.add(pickupQuery);
++   public final void addPickupPredicate(net.minecraftforge.items.pickup.ItemPickupPredicate pickupPredicate) {
++      pickupPredicates.add(pickupPredicate);
 +   }
 +
 +   /**
-+    * Remove the {@link net.minecraftforge.items.pickup.ItemPickupPredicate query} from being validated when this item is being picked up
++    * Remove the {@link net.minecraftforge.items.pickup.ItemPickupPredicate predicate} from being validated when this item is being picked up
 +    *
-+    * @param pickupQuery Query to no longer be validated when this item is being picked up
++    * @param pickupPredicate Predicate to no longer be validated when this item is being picked up
 +    */
-+   public final void removePickupQuery(net.minecraftforge.items.pickup.ItemPickupPredicate pickupQuery) {
-+      pickupQueries.remove(pickupQuery);
++   public final void removePickupPredicate(net.minecraftforge.items.pickup.ItemPickupPredicate pickupPredicate) {
++      pickupPredicates.remove(pickupPredicate);
 +   }
 +
 +   /**
@@ -215,9 +215,9 @@
 +         if (disabledPickupReasons.contains(pickupReason)) return false;
 +      }
 +
-+      // check to see if any query currently disallows picking up item
-+      for (var pickupQuery : pickupQueries) {
-+         if (!pickupQuery.query(this, m_32055_(), f_19853_, m_20183_(), collector, pickupReasonSet)) return false;
++      // check to see if any predicates currently disallows picking up item
++      for (var pickupPredicate : pickupPredicates) {
++         if (!pickupPredicate.test(this, m_32055_(), f_19853_, m_20183_(), collector, pickupReasonSet)) return false;
 +      }
 +
 +      return true;
