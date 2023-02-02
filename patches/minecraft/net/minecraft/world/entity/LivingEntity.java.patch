@@ -1,7 +1,11 @@
 --- a/net/minecraft/world/entity/LivingEntity.java
 +++ b/net/minecraft/world/entity/LivingEntity.java
-@@ -119,12 +_,14 @@
+@@ -117,14 +_,18 @@
+ import net.minecraft.world.phys.HitResult;
+ import net.minecraft.world.phys.Vec3;
  import net.minecraft.world.scores.PlayerTeam;
++import net.minecraftforge.common.ForgeHooks;
++import net.minecraftforge.event.entity.living.LivingSwapHandItemsEvent;
  import org.slf4j.Logger;
  
 -public abstract class LivingEntity extends Entity {
@@ -397,6 +401,20 @@
        if (!this.f_20911_ || this.f_20913_ >= this.m_21304_() / 2 || this.f_20913_ < 0) {
           this.f_20913_ = -1;
           this.f_20911_ = true;
+@@ -1793,9 +_,10 @@
+    }
+ 
+    private void m_21312_() {
+-      ItemStack itemstack = this.m_6844_(EquipmentSlot.OFFHAND);
+-      this.m_8061_(EquipmentSlot.OFFHAND, this.m_6844_(EquipmentSlot.MAINHAND));
+-      this.m_8061_(EquipmentSlot.MAINHAND, itemstack);
++      LivingSwapHandItemsEvent event = ForgeHooks.onLivingSwapHandItems(this);
++      if (event.isCanceled()) return;
++      this.m_8061_(EquipmentSlot.OFFHAND, event.getMainHandItem());
++      this.m_8061_(EquipmentSlot.MAINHAND, event.getOffHandItem());
+    }
+ 
+    protected void m_6088_() {
 @@ -1989,14 +_,17 @@
        }
  
