@@ -159,7 +159,7 @@ import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.living.LivingKnockBackEvent;
 import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
-import net.minecraftforge.event.entity.living.LivingSwapHandItemsEvent;
+import net.minecraftforge.event.entity.living.LivingSwapItemsEvent;
 import net.minecraftforge.event.entity.living.LivingUseTotemEvent;
 import net.minecraftforge.event.entity.living.LootingLevelEvent;
 import net.minecraftforge.event.entity.living.ShieldBlockEvent;
@@ -1287,9 +1287,9 @@ public class ForgeHooks
         return e;
     }
 
-    public static LivingSwapHandItemsEvent onLivingSwapHandItems(LivingEntity livingEntity)
+    public static LivingSwapItemsEvent.Hands onLivingSwapHandItems(LivingEntity livingEntity)
     {
-        LivingSwapHandItemsEvent event = new LivingSwapHandItemsEvent(livingEntity);
+        LivingSwapItemsEvent.Hands event = new LivingSwapItemsEvent.Hands(livingEntity);
         MinecraftForge.EVENT_BUS.post(event);
         return event;
     }
