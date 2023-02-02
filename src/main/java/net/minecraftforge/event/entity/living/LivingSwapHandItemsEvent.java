@@ -8,6 +8,7 @@ package net.minecraftforge.event.entity.living;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.eventbus.api.Cancelable;
+import org.jetbrains.annotations.ApiStatus;
 
 /**
  * LivingSwapHandItemsEvent is fired when a living entity is about to swap the items in their main and offhand. <br>
@@ -23,6 +24,7 @@ public class LivingSwapHandItemsEvent extends LivingEvent
     private ItemStack mainHandItem;
     private ItemStack offHandItem;
 
+    @ApiStatus.Internal
     public LivingSwapHandItemsEvent(LivingEntity entity)
     {
         super(entity);
