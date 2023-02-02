@@ -397,6 +397,20 @@
        if (!this.f_20911_ || this.f_20913_ >= this.m_21304_() / 2 || this.f_20913_ < 0) {
           this.f_20913_ = -1;
           this.f_20911_ = true;
+@@ -1793,9 +_,10 @@
+    }
+ 
+    private void m_21312_() {
+-      ItemStack itemstack = this.m_6844_(EquipmentSlot.OFFHAND);
+-      this.m_8061_(EquipmentSlot.OFFHAND, this.m_6844_(EquipmentSlot.MAINHAND));
+-      this.m_8061_(EquipmentSlot.MAINHAND, itemstack);
++      net.minecraftforge.event.entity.living.LivingSwapItemsEvent.Hands event = net.minecraftforge.common.ForgeHooks.onLivingSwapHandItems(this);
++      if (event.isCanceled()) return;
++      this.m_8061_(EquipmentSlot.OFFHAND, event.getItemSwappedToOffHand());
++      this.m_8061_(EquipmentSlot.MAINHAND, event.getItemSwappedToMainHand());
+    }
+ 
+    protected void m_6088_() {
 @@ -1989,14 +_,17 @@
        }
  
