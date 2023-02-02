@@ -29,7 +29,7 @@ public class LivingSwapHandItemsEventTest
     public void livingSwapHandItems(LivingSwapHandItemsEvent event)
     {
         LOGGER.info("{} swapping hands from {} to {}", event.getEntity(), event.getOffHandItem(), event.getMainHandItem());
-        if (event.getEntity().getMainHandItem().getItem().equals(Items.DIAMOND.asItem()))
+        if (event.getEntity().getMainHandItem().is(Items.DIAMOND))
             event.setCanceled(true);
     }
 }
