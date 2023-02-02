@@ -62,7 +62,7 @@ public class LivingSwapItemsEvent extends LivingEvent
          * Sets the item that will be swapped to the main hand of the entity.
          * @param item The item to swap to the main hand.
          */
-        public void setItemSwappedToMainhand(ItemStack item)
+        public void setItemSwappedToMainHand(ItemStack item)
         {
             this.toMainHand = item;
         }
@@ -71,7 +71,7 @@ public class LivingSwapItemsEvent extends LivingEvent
          * Sets the item that will be swapped to the offhand of the entity.
          * @param item The item to swap to the offhand.
          */
-        public void setItemSwappedToOffhand(ItemStack item)
+        public void setItemSwappedToOffHand(ItemStack item)
         {
             this.toOffHand = item;
         }
