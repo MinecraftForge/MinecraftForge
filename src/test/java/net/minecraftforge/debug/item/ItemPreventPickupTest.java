@@ -43,6 +43,8 @@ import java.util.List;
  * <ul>
  *     <li>If Player is sneaking</li>
  *     <li>If Zombie is standing on a Stone block</li>
+ *     <i>To summon a Zombie which can always pickup loot use the following command, regularly spawned Zombies have a 55% chance to be spawned with the ability to pickup loot.</i>
+ *     <p>{@code /summon minecraft:zombie ~ ~ ~ {CanPickUpLoot:1b}}
  *     <li>If Hopper is trying to pick up and it is stacked to 2 or more</li>
  * </ul>
  *
