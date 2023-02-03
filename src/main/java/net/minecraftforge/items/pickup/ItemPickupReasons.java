@@ -25,19 +25,19 @@ public class ItemPickupReasons
 {
     /**
      * Player is attempting to pick up an item
-     * <p>{@code collector} types <i>should</i> result in the {@link Player} attempting to pick up the item.
+     * <p>{@code collector} types should result in the {@link Player} attempting to pick up the item.
      */
     public static final ItemPickupReason PLAYER = getOrCreate("player");
 
     /**
      * LivingEntity is attempting to pick up an item
-     * <p>{@code collector} types <i>should</i> result in the {@link LivingEntity} attempting to pick up the item.
+     * <p>{@code collector} types should result in the {@link LivingEntity} attempting to pick up the item.
      */
     public static final ItemPickupReason LIVING_ENTITY = getOrCreate("living_entity");
 
     /**
      * Hopper is attempting to suck in an item
-     * <p>{@code collector} types <i>should</i> result in the {@link HopperBlockEntity} or {@link MinecartHopper} {@link Container containers} attempting to pick up the item.
+     * <p>{@code collector} types should result in the {@link HopperBlockEntity} or {@link MinecartHopper} {@link Container containers} attempting to pick up the item.
      */
     public static final ItemPickupReason HOPPER = getOrCreate("hopper");
 
