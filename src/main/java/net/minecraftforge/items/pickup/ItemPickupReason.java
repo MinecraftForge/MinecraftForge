@@ -11,8 +11,6 @@ import org.jetbrains.annotations.NotNull;
 
 import net.minecraft.util.StringRepresentable;
 
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
 
