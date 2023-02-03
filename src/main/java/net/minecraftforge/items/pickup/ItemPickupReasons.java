@@ -42,9 +42,7 @@ public interface ItemPickupReasons
     ItemPickupReason HOPPER = getOrCreate("hopper");
 
     /**
-     * Returns all registered pickup reasons.
-     *
-     * @return All registered pickup reasons.
+     * {@return all registered pickup reasons}
      */
     static Collection<ItemPickupReason> all()
     {

@@ -16,24 +16,23 @@ import java.util.Objects;
 
 /**
  * Class representing a reason in which an ItemEntity is being picked up.
+ * @see ItemPickupReasons
  */
 public final class ItemPickupReason implements StringRepresentable
 {
     /**
      * package level of visibility to be accessible in {@link ItemPickupReasons}.
-     * <p>Modders should <b>NOT</b> access this field.
      */
-    @ApiStatus.Internal
+    @ApiStatus.Internal // Modders should NOT access this field.
     static final Map<String, ItemPickupReason> reasons = Maps.newConcurrentMap();
 
     private final String name;
 
     /**
      * package level of visibility to be accessible in {@link ItemPickupReasons}.
-     * <p>Modders should <b>NOT</b> use this constructor.
      * @implNote Invoking this directly will <b>not</b> register the reason correctly to the internal reasons map.
      */
-    @ApiStatus.Internal
+    @ApiStatus.Internal // Modders should NOT access this field.
     ItemPickupReason(String name)
     {
         this.name = name;
