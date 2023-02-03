@@ -21,30 +21,30 @@ import java.util.Collections;
  * <p>This interface <b>should not</b> be custom implemented, instead make use of {@link #getOrCreate(String)}
  */
 @ApiStatus.NonExtendable
-public interface ItemPickupReasons
+public class ItemPickupReasons
 {
     /**
      * Player is attempting to pick up an item
      * <p>{@code collector} types <i>should</i> result in the {@link Player} attempting to pick up the item.
      */
-    ItemPickupReason PLAYER = getOrCreate("player");
+    public static final ItemPickupReason PLAYER = getOrCreate("player");
 
     /**
      * LivingEntity is attempting to pick up an item
      * <p>{@code collector} types <i>should</i> result in the {@link LivingEntity} attempting to pick up the item.
      */
-    ItemPickupReason LIVING_ENTITY = getOrCreate("living_entity");
+    public static final ItemPickupReason LIVING_ENTITY = getOrCreate("living_entity");
 
     /**
      * Hopper is attempting to suck in an item
      * <p>{@code collector} types <i>should</i> result in the {@link HopperBlockEntity} or {@link MinecartHopper} {@link Container containers} attempting to pick up the item.
      */
-    ItemPickupReason HOPPER = getOrCreate("hopper");
+    public static final ItemPickupReason HOPPER = getOrCreate("hopper");
 
     /**
      * {@return all registered pickup reasons}
      */
-    static Collection<ItemPickupReason> all()
+    public static Collection<ItemPickupReason> all()
     {
         return Collections.unmodifiableCollection(ItemPickupReason.reasons.values());
     }
@@ -65,8 +65,11 @@ public interface ItemPickupReasons
      * @return Gets or creates a given pickup reason.
      * @implNote This method will return the same value if called multiple times with the same {@code name} argument.
      */
-    static ItemPickupReason getOrCreate(String name)
+    public static ItemPickupReason getOrCreate(String name)
     {
         return ItemPickupReason.reasons.computeIfAbsent(name, ItemPickupReason::new);
+    }
+
+    private ItemPickupReasons() {
     }
 }
