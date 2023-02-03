@@ -23,7 +23,7 @@ license="LGPL v2.1"
     modId="shader_resources_test"
 
 [[mods]]
-    modId="living_swap_hand_items_event_test"
+    modId="living_swap_items_event_test"
 
 # LEGACY TEST CASES
 ###### The mods below are from the old test framework and need to be yeeted later again.
