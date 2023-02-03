@@ -18,7 +18,7 @@ import java.util.Collections;
 
 /**
  * Class containing all standard ItemPickupReasons provided by Forge.
- * <p>This interface <b>should not</b> be custom implemented, instead make use of {@link #getOrCreate(String)}
+ * <p>Make use of {@link #getOrCreate(String)} for building new {@link ItemPickupReason} instances.
  */
 @ApiStatus.NonExtendable
 public class ItemPickupReasons
