@@ -63,7 +63,7 @@ import java.util.List;
 @Mod(ItemPreventPickupTest.ID)
 public class ItemPreventPickupTest
 {
-    public static final boolean ENABLE = true;
+    public static final boolean ENABLE = false;
     public static final String ID = "item_prevent_pickup_test";
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, ID);
     public static final RegistryObject<Item> DUMMY = ITEMS.register("dummy", () -> new Item(new Item.Properties()) {
