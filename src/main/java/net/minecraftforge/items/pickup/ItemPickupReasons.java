@@ -21,7 +21,7 @@ import java.util.Collections;
  * <p>Make use of {@link #getOrCreate(String)} for building new {@link ItemPickupReason} instances.
  */
 @ApiStatus.NonExtendable
-public class ItemPickupReasons
+public final class ItemPickupReasons
 {
     /**
      * Player is attempting to pick up an item
@@ -70,6 +70,7 @@ public class ItemPickupReasons
         return ItemPickupReason.reasons.computeIfAbsent(name, ItemPickupReason::new);
     }
 
-    private ItemPickupReasons() {
+    private ItemPickupReasons()
+    {
     }
 }
