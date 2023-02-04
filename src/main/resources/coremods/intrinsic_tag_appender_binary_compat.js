@@ -30,7 +30,7 @@ function initializeCoreMod() {
                 removeSingleNode.instructions.add(new VarInsnNode(Opcodes.ALOAD, 0));
                 removeSingleNode.instructions.add(new VarInsnNode(Opcodes.ALOAD, 1));
                 removeSingleNode.instructions.add(new MethodInsnNode(
-                    Opcodes.INVOKESPECIAL,
+                    Opcodes.INVOKEINTERFACE,
                     'net/minecraftforge/common/extensions/IForgeIntrinsicHolderTagAppender',
                     'remove',
                     '(Ljava/lang/Object;)Lnet/minecraft/data/tags/IntrinsicHolderTagsProvider$IntrinsicTagAppender;'
@@ -48,7 +48,7 @@ function initializeCoreMod() {
                 removeMultiNode.instructions.add(new VarInsnNode(Opcodes.ALOAD, 1));
                 removeMultiNode.instructions.add(new VarInsnNode(Opcodes.ALOAD, 2));
                 removeMultiNode.instructions.add(new MethodInsnNode(
-                    Opcodes.INVOKESPECIAL,
+                    Opcodes.INVOKEINTERFACE,
                     'net/minecraftforge/common/extensions/IForgeIntrinsicHolderTagAppender',
                     'remove',
                     '(Ljava/lang/Object;[Ljava/lang/Object;)Lnet/minecraft/data/tags/IntrinsicHolderTagsProvider$IntrinsicTagAppender;'
