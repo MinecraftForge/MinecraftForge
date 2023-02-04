@@ -14,7 +14,7 @@
                          p_23196_.m_220407_(GameEvent.f_157797_, this.f_23159_, GameEvent.Context.m_223719_(p_23197_, blockstate4));
                          flag = true;
 +                     } else if (itemstack.m_41720_() instanceof net.minecraftforge.common.IPlantable) {
-+                        if (((net.minecraftforge.common.IPlantable)itemstack.m_41720_()).getPlantType(p_23196_, f_23159_) == net.minecraftforge.common.PlantType.CROP) {
++                        if (((net.minecraftforge.common.IPlantable)itemstack.m_41720_()).isVillagerPlantable(p_23196_, f_23159_)) {
 +                           p_23196_.m_7731_(f_23159_, ((net.minecraftforge.common.IPlantable)itemstack.m_41720_()).getPlant(p_23196_, f_23159_), 3);
 +                           flag = true;
 +                        }

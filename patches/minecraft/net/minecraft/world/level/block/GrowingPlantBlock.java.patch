@@ -1,0 +1,29 @@
+--- a/net/minecraft/world/level/block/GrowingPlantBlock.java
++++ b/net/minecraft/world/level/block/GrowingPlantBlock.java
+@@ -14,7 +_,7 @@
+ import net.minecraft.world.phys.shapes.CollisionContext;
+ import net.minecraft.world.phys.shapes.VoxelShape;
+ 
+-public abstract class GrowingPlantBlock extends Block {
++public abstract class GrowingPlantBlock extends Block implements net.minecraftforge.common.IPlantable {
+    protected final Direction f_53859_;
+    protected final boolean f_53860_;
+    protected final VoxelShape f_53861_;
+@@ -39,6 +_,7 @@
+    public boolean m_7898_(BlockState p_53876_, LevelReader p_53877_, BlockPos p_53878_) {
+       BlockPos blockpos = p_53878_.m_121945_(this.f_53859_.m_122424_());
+       BlockState blockstate = p_53877_.m_8055_(blockpos);
++      if (blockstate.canSustainPlant(p_53877_, blockpos, this.f_53859_, this)) {return true;}
+       if (!this.m_142209_(blockstate)) {
+          return false;
+       } else {
+@@ -64,4 +_,9 @@
+    protected abstract GrowingPlantHeadBlock m_7272_();
+ 
+    protected abstract Block m_7777_();
++
++   @Override
++   public BlockState getPlant(BlockGetter level, BlockPos pos) {
++      return m_7272_().m_49966_();
++   }
+ }

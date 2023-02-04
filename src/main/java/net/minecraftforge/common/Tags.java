@@ -178,6 +178,14 @@ public class Tags
         public static final TagKey<Block> NEEDS_GOLD_TOOL = tag("needs_gold_tool");
         public static final TagKey<Block> NEEDS_NETHERITE_TOOL = tag("needs_netherite_tool");
 
+        public static final TagKey<Block> PLANT_CROP = tag("plants/crop");
+        public static final TagKey<Block> PLANT_PLAINS = tag("plants/plains");
+        public static final TagKey<Block> PLANT_DESERT = tag("plants/desert");
+        public static final TagKey<Block> PLANT_BEACH = tag("plants/beach");
+        public static final TagKey<Block> PLANT_CAVE = tag("plants/cave");
+        public static final TagKey<Block> PLANT_WATER = tag("plants/water");
+        public static final TagKey<Block> PLANT_SOUL = tag("plants/soul");
+
         private static TagKey<Block> tag(String name)
         {
             return BlockTags.create(new ResourceLocation("forge", name));

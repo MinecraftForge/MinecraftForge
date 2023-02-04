@@ -48,15 +48,10 @@
     }
  
     public void m_7892_(BlockState p_51148_, Level p_51149_, BlockPos p_51150_, Entity p_51151_) {
-@@ -101,5 +_,15 @@
+@@ -101,5 +_,10 @@
  
     public boolean m_7357_(BlockState p_51143_, BlockGetter p_51144_, BlockPos p_51145_, PathComputationType p_51146_) {
        return false;
-+   }
-+
-+   @Override
-+   public net.minecraftforge.common.PlantType getPlantType(BlockGetter world, BlockPos pos) {
-+      return net.minecraftforge.common.PlantType.DESERT;
 +   }
 +
 +   @Override

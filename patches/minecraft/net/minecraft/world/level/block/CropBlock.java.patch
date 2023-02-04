@@ -37,3 +37,14 @@
           p_52278_.m_46953_(p_52279_, true, p_52280_);
        }
  
+@@ -165,5 +_,10 @@
+ 
+    protected void m_7926_(StateDefinition.Builder<Block, BlockState> p_52286_) {
+       p_52286_.m_61104_(f_52244_);
++   }
++
++   @Override
++   public boolean isVillagerPlantable(BlockGetter level, BlockPos pos) {
++      return true;
+    }
+ }

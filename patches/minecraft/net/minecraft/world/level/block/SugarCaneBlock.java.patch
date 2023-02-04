@@ -43,15 +43,10 @@
                    return true;
                 }
              }
-@@ -89,5 +_,15 @@
+@@ -89,5 +_,10 @@
  
     protected void m_7926_(StateDefinition.Builder<Block, BlockState> p_57186_) {
        p_57186_.m_61104_(f_57164_);
-+   }
-+
-+   @Override
-+   public net.minecraftforge.common.PlantType getPlantType(BlockGetter world, BlockPos pos) {
-+       return net.minecraftforge.common.PlantType.BEACH;
 +   }
 +
 +   @Override

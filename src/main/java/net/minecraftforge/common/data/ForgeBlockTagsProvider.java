@@ -106,6 +106,11 @@ public final class ForgeBlockTagsProvider extends BlockTagsProvider
         tag(STORAGE_BLOCKS_RAW_IRON).add(Blocks.RAW_IRON_BLOCK);
         tag(STORAGE_BLOCKS_REDSTONE).add(Blocks.REDSTONE_BLOCK);
         tag(STORAGE_BLOCKS_NETHERITE).add(Blocks.NETHERITE_BLOCK);
+        tag(PLANT_PLAINS).addTag(BlockTags.FLOWERS).add(Blocks.GRASS, Blocks.TALL_GRASS, Blocks.FERN, Blocks.LARGE_FERN);
+        tag(PLANT_BEACH).add(Blocks.SUGAR_CANE);
+        tag(PLANT_CAVE).add(Blocks.BROWN_MUSHROOM ,Blocks.RED_MUSHROOM);
+        tag(PLANT_SOUL).add(Blocks.NETHER_WART);
+        tag(PLANT_DESERT).add(Blocks.CACTUS, Blocks.DEAD_BUSH);
     }
 
     private void addColored(Consumer<Block> consumer, TagKey<Block> group, String pattern)

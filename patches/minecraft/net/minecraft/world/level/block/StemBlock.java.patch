@@ -29,15 +29,3 @@
           }
  
        }
-@@ -93,5 +_,11 @@
- 
-    public StemGrownBlock m_57056_() {
-       return this.f_57015_;
-+   }
-+
-+   //FORGE START
-+   @Override
-+   public net.minecraftforge.common.PlantType getPlantType(BlockGetter world, BlockPos pos) {
-+      return net.minecraftforge.common.PlantType.CROP;
-    }
- }

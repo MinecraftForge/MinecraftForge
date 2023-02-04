@@ -1,0 +1,30 @@
+--- a/net/minecraft/world/level/block/SporeBlossomBlock.java
++++ b/net/minecraft/world/level/block/SporeBlossomBlock.java
+@@ -14,7 +_,7 @@
+ import net.minecraft.world.phys.shapes.CollisionContext;
+ import net.minecraft.world.phys.shapes.VoxelShape;
+ 
+-public class SporeBlossomBlock extends Block {
++public class SporeBlossomBlock extends Block implements net.minecraftforge.common.IPlantable {
+    private static final VoxelShape f_154691_ = Block.m_49796_(2.0D, 13.0D, 2.0D, 14.0D, 16.0D, 14.0D);
+    private static final int f_154692_ = 14;
+    private static final int f_154693_ = 10;
+@@ -25,6 +_,7 @@
+    }
+ 
+    public boolean m_7898_(BlockState p_154709_, LevelReader p_154710_, BlockPos p_154711_) {
++      if (p_154710_.m_8055_(p_154711_.m_7494_()).canSustainPlant(p_154710_, p_154711_.m_7494_(), Direction.DOWN, this)) {return true;}
+       return Block.m_49863_(p_154710_, p_154711_.m_7494_(), Direction.DOWN) && !p_154710_.m_46801_(p_154711_);
+    }
+ 
+@@ -54,5 +_,10 @@
+ 
+    public VoxelShape m_5940_(BlockState p_154699_, BlockGetter p_154700_, BlockPos p_154701_, CollisionContext p_154702_) {
+       return f_154691_;
++   }
++
++   @Override
++   public BlockState getPlant(BlockGetter level, BlockPos pos) {
++      return m_49966_();
+    }
+ }

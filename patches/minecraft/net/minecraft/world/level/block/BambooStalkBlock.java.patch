@@ -23,6 +23,14 @@
              }
           }
  
+@@ -121,6 +_,7 @@
+    }
+ 
+    public boolean m_7898_(BlockState p_261860_, LevelReader p_262154_, BlockPos p_261493_) {
++      if (p_262154_.m_8055_(p_261493_.m_7495_()).canSustainPlant(p_262154_, p_261493_.m_7495_(), Direction.UP, this)) {return true;}
+       return p_262154_.m_8055_(p_261493_.m_7495_()).m_204336_(BlockTags.f_13065_);
+    }
+ 
 @@ -167,7 +_,7 @@
     }
  

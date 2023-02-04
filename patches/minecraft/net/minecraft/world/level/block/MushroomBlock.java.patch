@@ -1,11 +1,15 @@
 --- a/net/minecraft/world/level/block/MushroomBlock.java
 +++ b/net/minecraft/world/level/block/MushroomBlock.java
-@@ -72,7 +_,7 @@
+@@ -69,10 +_,11 @@
+    public boolean m_7898_(BlockState p_54880_, LevelReader p_54881_, BlockPos p_54882_) {
+       BlockPos blockpos = p_54882_.m_7495_();
+       BlockState blockstate = p_54881_.m_8055_(blockpos);
++      if (blockstate.canSustainPlant(p_54881_, blockpos, net.minecraft.core.Direction.UP, this)) {return true;}
        if (blockstate.m_204336_(BlockTags.f_13057_)) {
           return true;
        } else {
 -         return p_54881_.m_45524_(p_54882_, 0) < 13 && this.m_6266_(blockstate, p_54881_, blockpos);
-+         return p_54881_.m_45524_(p_54882_, 0) < 13 && blockstate.canSustainPlant(p_54881_, blockpos, net.minecraft.core.Direction.UP, this);
++         return p_54881_.m_45524_(p_54882_, 0) < 13 && this.m_6266_(p_54880_, p_54881_, p_54882_);
        }
     }
  
