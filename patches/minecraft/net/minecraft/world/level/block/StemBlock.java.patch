@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/StemBlock.java
 +++ b/net/minecraft/world/level/block/StemBlock.java
-@@ -44,9 +_,10 @@
+@@ -44,22 +_,23 @@
     }
  
     public void m_213898_(BlockState p_222538_, ServerLevel p_222539_, BlockPos p_222540_, RandomSource p_222541_) {
@@ -11,8 +11,10 @@
 +         if (net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_222539_, p_222540_, p_222538_, p_222541_.m_188503_((int)(25.0F / f) + 1) == 0)) {
              int i = p_222538_.m_61143_(f_57013_);
              if (i < 7) {
-                p_222538_ = p_222538_.m_61124_(f_57013_, Integer.valueOf(i + 1));
-@@ -55,11 +_,12 @@
+-               p_222538_ = p_222538_.m_61124_(f_57013_, Integer.valueOf(i + 1));
+-               p_222539_.m_7731_(p_222540_, p_222538_, 2);
++               p_222539_.m_7731_(p_222540_, p_222538_.m_61124_(f_57013_, Integer.valueOf(i + 1)), 2);
+             } else {
                 Direction direction = Direction.Plane.HORIZONTAL.m_235690_(p_222541_);
                 BlockPos blockpos = p_222540_.m_121945_(direction);
                 BlockState blockstate = p_222539_.m_8055_(blockpos.m_7495_());
