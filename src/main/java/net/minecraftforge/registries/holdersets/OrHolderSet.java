@@ -37,7 +37,7 @@ public class OrHolderSet<T> extends CompositeHolderSet<T>
     {
         return HolderSetCodec.create(registryKey, holderCodec, forceList)
             .listOf()
-            .xmap(OrHolderSet::new, OrHolderSet::getComponents)
+            .xmap(OrHolderSet::new, CompositeHolderSet::homogenize)
             .fieldOf("values")
             .codec();
     }
