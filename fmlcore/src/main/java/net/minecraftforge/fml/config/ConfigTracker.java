@@ -68,7 +68,9 @@ public class ConfigTracker {
             LOGGER.trace(CONFIG, "Closing config file type {} at {} for {}", config.getType(), config.getFileName(), config.getModId());
             // stop the filewatcher before we save the file and close it, so reload doesn't fire
             config.getHandler().unload(configBasePath, config);
-            config.fireEvent(IConfigEvent.unloading(config));
+            var unloading = IConfigEvent.unloading(config);
+            if (unloading != null)
+                config.fireEvent(unloading);
             config.save();
             config.setConfigData(null);
         }
