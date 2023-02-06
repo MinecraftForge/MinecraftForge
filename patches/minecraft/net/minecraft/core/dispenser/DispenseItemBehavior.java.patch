@@ -1,5 +1,14 @@
 --- a/net/minecraft/core/dispenser/DispenseItemBehavior.java
 +++ b/net/minecraft/core/dispenser/DispenseItemBehavior.java
+@@ -343,7 +_,7 @@
+             DispensibleContainerItem dispensiblecontaineritem = (DispensibleContainerItem)p_123562_.m_41720_();
+             BlockPos blockpos = p_123561_.m_7961_().m_121945_(p_123561_.m_6414_().m_61143_(DispenserBlock.f_52659_));
+             Level level = p_123561_.m_7727_();
+-            if (dispensiblecontaineritem.m_142073_((Player)null, level, blockpos, (BlockHitResult)null)) {
++            if (dispensiblecontaineritem.emptyContents((Player)null, level, blockpos, (BlockHitResult)null, p_123562_)) {
+                dispensiblecontaineritem.m_142131_((Player)null, level, p_123562_, blockpos);
+                return new ItemStack(Items.f_42446_);
+             } else {
 @@ -402,9 +_,10 @@
                 level.m_46597_(blockpos, BaseFireBlock.m_49245_(level, blockpos));
                 level.m_142346_((Entity)null, GameEvent.f_157797_, blockpos);
