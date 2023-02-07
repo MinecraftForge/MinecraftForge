@@ -20,7 +20,7 @@ import net.minecraft.world.entity.player.Player;
  *
  *  setResult(ALLOW) is the same as the old setHandled()
  *
- * @see net.minecraftforge.event.entity.player.PlayerEvent.ItemPickupEvent
+ * @see net.minecraftforge.event.entity.item.ItemPickupAllowedEvent
  * @deprecated Make use of newly implemented {@link net.minecraftforge.items.pickup.ItemPickupReason} system to dictate how/when items should/should not be allowed to be picked up
  */
 @Deprecated
