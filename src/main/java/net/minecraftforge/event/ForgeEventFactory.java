@@ -385,6 +385,7 @@ public class ForgeEventFactory
         return event.getExtraLife();
     }
 
+    @Deprecated // Forge: Make use of newly implemented ItemPickupReason system to dictate how/when items should/should not be allowed to be picked up
     public static int onItemPickup(ItemEntity entityItem, Player player)
     {
         Event event = new EntityItemPickupEvent(player, entityItem);

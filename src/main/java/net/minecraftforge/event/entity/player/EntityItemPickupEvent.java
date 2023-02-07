@@ -19,7 +19,11 @@ import net.minecraft.world.entity.player.Player;
  *  entity if all the items are picked up.
  *
  *  setResult(ALLOW) is the same as the old setHandled()
+ *
+ * @see net.minecraftforge.event.entity.player.PlayerEvent.ItemPickupEvent
+ * @deprecated Make use of newly implemented {@link net.minecraftforge.items.pickup.ItemPickupReason} system to dictate how/when items should/should not be allowed to be picked up
  */
+@Deprecated
 @Cancelable
 @Event.HasResult
 public class EntityItemPickupEvent extends PlayerEvent
