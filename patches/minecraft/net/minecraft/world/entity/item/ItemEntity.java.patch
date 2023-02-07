@@ -151,8 +151,8 @@
     }
 +
 +   // FORGE START
-+   private final java.util.Set<net.minecraftforge.items.pickup.ItemPickupReason> disabledPickupReasons = com.google.common.collect.Sets.newHashSet();
-+   private final java.util.Set<net.minecraftforge.items.pickup.ItemPickupPredicate> pickupPredicates = com.google.common.collect.Sets.newHashSet();
++   private final java.util.Set<net.minecraftforge.items.pickup.ItemPickupReason> disabledPickupReasons = new java.util.HashSet<>();
++   private final java.util.Set<net.minecraftforge.items.pickup.ItemPickupPredicate> pickupPredicates = new java.util.HashSet<>();
 +
 +   /**
 +    * Disallow item from being picked up for the given {@link net.minecraftforge.items.pickup.ItemPickupReason reason}
