@@ -27,11 +27,8 @@ public interface ItemPickupPredicate
      * Test if the specified ItemEntity is valid to be picked up or not.
      *
      * @param item The ItemEntity being picked up
-     * @param stack The ItemStack being picked up
-     * @param level Level containing the ItemEntity
-     * @param pos Position of the ItemEntity
      * @param collector Object trying to pick up the ItemEntity or null
      * @return if the specified ItemEntity is valid to be picked up
      */
-    boolean test(@NotNull ItemEntity item, @NotNull ItemStack stack, @NotNull Level level, @NotNull BlockPos pos, @NotNull Object collector, @NotNull Set<ItemPickupReason> pickupReasons);
+    boolean test(@NotNull ItemEntity item, @NotNull Object collector, @NotNull Set<ItemPickupReason> pickupReasons);
 }

@@ -217,7 +217,7 @@
 +
 +      // check to see if any predicates currently disallows picking up item
 +      for (var pickupPredicate : pickupPredicates) {
-+         if (!pickupPredicate.test(this, m_32055_(), f_19853_, m_20183_(), collector, pickupReasonSet)) return false;
++         if (!pickupPredicate.test(this, collector, pickupReasonSet)) return false;
 +      }
 +
 +      return true;

@@ -85,7 +85,8 @@ public class ItemPreventPickupTest
     });
 
     // if pickup is for hoppers && trying to pickup 2 or more of dummy item
-    public static final ItemPickupPredicate HOPPER_IF_DUMMY_MORE_THAN_ONE = (item, stack, level, pos, collector, pickupReasons) -> {
+    public static final ItemPickupPredicate HOPPER_IF_DUMMY_MORE_THAN_ONE = (item, collector, pickupReasons) -> {
+        var stack = item.getItem();
         // not dummy item or not for hopper pickup, return true, skip over to over queries & reasons
         // returning false here, would disallow the pickup, if it's not dummy or not for hoppers (& if dummy is not registered)
         if (!DUMMY.isPresent() || !pickupReasons.contains(ItemPickupReasons.HOPPER) || !stack.is(DUMMY.get())) return true;
