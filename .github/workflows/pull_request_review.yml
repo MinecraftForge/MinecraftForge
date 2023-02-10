@@ -1,0 +1,13 @@
+name: 'PR Review'
+
+on: pull_request_review
+
+jobs:
+  upload_payload:
+    name: Upload payload
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/upload-artifact@v3 # Payload artifact is consumed in Actionable
+        with:
+          name: payload
+          path: ${{ github.event_path }}

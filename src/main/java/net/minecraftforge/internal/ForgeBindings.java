@@ -38,6 +38,6 @@ public class ForgeBindings implements IBindingsProvider {
 
     @Override
     public Supplier<IConfigEvent.ConfigConfig> getConfigConfiguration() {
-        return ()->new IConfigEvent.ConfigConfig(ModConfigEvent.Loading::new, ModConfigEvent.Reloading::new);
+        return ()->new IConfigEvent.ConfigConfig(ModConfigEvent.Loading::new, ModConfigEvent.Reloading::new, ModConfigEvent.Unloading::new);
     }
 }

@@ -1,8 +1,13 @@
 {
   "parent": "forge:item/default",
-  "emissive_layers": [
-    1
-  ],
+  "forge_data": {
+    "layers": {
+      "1": {
+        "block_light": 15,
+        "sky_light": 15
+      }
+    }
+  },
   "loader": "forge:item_layers",
   "render_types": {},
   "textures": {

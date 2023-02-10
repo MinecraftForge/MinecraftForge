@@ -489,12 +489,13 @@
              if (map == null) {
                 map = Maps.newEnumMap(EquipmentSlot.class);
              }
-@@ -2523,6 +_,8 @@
+@@ -2523,6 +_,9 @@
        this.f_19853_.m_46473_().m_6180_("jump");
        if (this.f_20899_ && this.m_6129_()) {
           double d7;
 +         net.minecraftforge.fluids.FluidType fluidType = this.getMaxHeightFluidType();
 +         if (!fluidType.isAir()) d7 = this.getFluidTypeHeight(fluidType);
++         else
           if (this.m_20077_()) {
              d7 = this.m_204036_(FluidTags.f_13132_);
           } else {

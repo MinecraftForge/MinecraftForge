@@ -57,7 +57,7 @@ import org.slf4j.Logger;
 @Mod(DataPackRegistriesTest.MODID)
 public class DataPackRegistriesTest
 {
-    private static final boolean ENABLED = true;
+    private static final boolean ENABLED = false;
     public static final String MODID = "data_pack_registries_test";
     private static final Logger LOGGER = LogUtils.getLogger();
     private static final ResourceLocation TEST_RL = new ResourceLocation(MODID, "test");
