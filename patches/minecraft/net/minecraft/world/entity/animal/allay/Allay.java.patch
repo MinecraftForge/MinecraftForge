@@ -14,7 +14,7 @@
  
     private boolean m_239812_() {
 -      return this.f_238682_ == null || !this.f_238682_.m_203195_(this.m_20182_(), (double)GameEvent.f_238690_.m_157827_()) || !this.f_19853_.m_8055_(this.f_238682_).m_60713_(Blocks.f_50131_);
-+      return this.f_238682_ == null || !this.f_238682_.m_203195_(this.m_20182_(), (double)GameEvent.f_238690_.m_157827_()) || !(this.f_19853_.m_8055_(this.f_238682_) instanceof net.minecraftforge.common.extensions.IForgeJukeboxBlock jukeboxBlock && jukeboxBlock.canDance(this.f_19853_.m_8055_(this.f_238682_), this));
++      return this.f_238682_ == null || !this.f_238682_.m_203195_(this.m_20182_(), (double)GameEvent.f_238690_.m_157827_()) || !(this.f_19853_.m_8055_(this.f_238682_).m_60734_() instanceof net.minecraftforge.common.extensions.IForgeJukeboxBlock jukeboxBlock && jukeboxBlock.canDance(this.f_19853_.m_8055_(this.f_238682_), this));
     }
  
     public float m_218394_(float p_218395_) {
