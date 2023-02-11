@@ -600,6 +600,14 @@
           if (this.f_20935_.m_41781_()) {
              this.m_21329_();
           }
+@@ -2996,6 +_,7 @@
+    }
+ 
+    public void m_5810_() {
++      if (this.m_6117_() && !this.f_20935_.m_41619_()) this.f_20935_.onStopUsing(this, f_20936_);
+       if (!this.f_19853_.f_46443_) {
+          boolean flag = this.m_6117_();
+          this.m_21155_(1, false);
 @@ -3011,7 +_,7 @@
     public boolean m_21254_() {
        if (this.m_6117_() && !this.f_20935_.m_41619_()) {

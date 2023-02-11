@@ -202,6 +202,24 @@ public interface IForgeItem
     }
 
     /**
+     * Called when an entity stops using an item for any reason, notably when selecting another item without releasing or finishing.
+     * Note that dropping an item does not cause you to stop using it, see MC-231097. Consider using {@link net.minecraftforge.event.entity.item.ItemTossEvent} as a workaround.
+     *
+     * For most uses, you likely want one of the following:
+     * <ul>
+     *   <li>{@link Item#finishUsingItem(ItemStack, Level, LivingEntity)} for when the player releases and enough ticks have passed
+     *   <li>{@link Item#releaseUsing(ItemStack, Level, LivingEntity, int)} (ItemStack, Level, LivingEntity)} for when the player releases but the full timer has not passed
+     * </ul>
+     *
+     * @param stack  The Item being used
+     * @param entity The entity using the item, typically a player
+     * @param count  The amount of time in tick the item has been used for continuously
+     */
+    default void onStopUsing(ItemStack stack, LivingEntity entity, int count)
+    {
+    }
+
+    /**
      * Called when the player Left Clicks (attacks) an entity. Processed before
      * damage is done, if return value is true further processing is canceled and
      * the entity is not attacked.
