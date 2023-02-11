@@ -203,7 +203,6 @@ public interface IForgeItem
 
     /**
      * Called when an entity stops using an item for any reason, notably when selecting another item without releasing or finishing.
-     * Note that dropping an item does not cause you to stop using it, see MC-231097. Consider using {@link net.minecraftforge.event.entity.item.ItemTossEvent} as a workaround.
      *
      * For most uses, you likely want one of the following:
      * <ul>
