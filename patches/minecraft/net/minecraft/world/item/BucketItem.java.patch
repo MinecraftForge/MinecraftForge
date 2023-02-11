@@ -38,15 +38,17 @@
                          p_40704_.m_5496_(p_150709_, 1.0F, 1.0F);
                       });
                       p_40703_.m_142346_(p_40704_, GameEvent.f_157816_, blockpos);
-@@ -72,7 +_,7 @@
+@@ -72,8 +_,8 @@
                 return InteractionResultHolder.m_19100_(itemstack);
              } else {
                 BlockState blockstate = p_40703_.m_8055_(blockpos);
 -               BlockPos blockpos2 = blockstate.m_60734_() instanceof LiquidBlockContainer && this.f_40687_ == Fluids.f_76193_ ? blockpos : blockpos1;
+-               if (this.m_142073_(p_40704_, p_40703_, blockpos2, blockhitresult)) {
 +               BlockPos blockpos2 = canBlockContainFluid(p_40703_, blockpos, blockstate) ? blockpos : blockpos1;
-                if (this.m_142073_(p_40704_, p_40703_, blockpos2, blockhitresult)) {
++               if (this.emptyContents(p_40704_, p_40703_, blockpos2, blockhitresult, itemstack)) {
                    this.m_142131_(p_40704_, p_40703_, itemstack, blockpos2);
                    if (p_40704_ instanceof ServerPlayer) {
+                      CriteriaTriggers.f_10591_.m_59469_((ServerPlayer)p_40704_, blockpos2, itemstack);
 @@ -98,7 +_,12 @@
     public void m_142131_(@Nullable Player p_150711_, Level p_150712_, ItemStack p_150713_, BlockPos p_150714_) {
     }
