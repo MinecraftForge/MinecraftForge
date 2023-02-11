@@ -8,6 +8,14 @@
        return false;
     }
  
+@@ -276,6 +_,7 @@
+ 
+    public boolean m_108700_(boolean p_108701_) {
+       ServerboundPlayerActionPacket.Action serverboundplayeractionpacket$action = p_108701_ ? ServerboundPlayerActionPacket.Action.DROP_ALL_ITEMS : ServerboundPlayerActionPacket.Action.DROP_ITEM;
++      if (m_6117_() && m_7655_() == InteractionHand.MAIN_HAND && (p_108701_ || m_21211_().m_41613_() == 1)) m_5810_(); // Forge: fix MC-231097 on the clientside
+       ItemStack itemstack = this.m_150109_().m_182403_(p_108701_);
+       this.f_108617_.m_104955_(new ServerboundPlayerActionPacket(serverboundplayeractionpacket$action, BlockPos.f_121853_, Direction.DOWN));
+       return !itemstack.m_41619_();
 @@ -462,7 +_,14 @@
     }
  
