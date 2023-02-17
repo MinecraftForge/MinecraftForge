@@ -80,7 +80,7 @@ public class PistonEventTest
         {
             Level world = (Level) event.getLevel();
             PistonStructureResolver pistonHelper = event.getStructureHelper();
-            Player player = DistExecutor.safeCallWhenOn(Dist.CLIENT, () -> () -> Minecraft.getInstance().player);
+            Player player = DistExecutor.unsafeCallWhenOn(Dist.CLIENT, () -> () -> Minecraft.getInstance().player);
             if (world.isClientSide && player != null)
             {
                 if (pistonHelper.resolve())
@@ -122,7 +122,7 @@ public class PistonEventTest
         {
             boolean isSticky = event.getLevel().getBlockState(event.getPos()).getBlock() == Blocks.STICKY_PISTON;
 
-            Player player = DistExecutor.safeCallWhenOn(Dist.CLIENT, () -> () -> Minecraft.getInstance().player);
+            Player player = DistExecutor.unsafeCallWhenOn(Dist.CLIENT, () -> () -> Minecraft.getInstance().player);
             if (event.getLevel().isClientSide() && player != null)
             {
                 if (isSticky)
