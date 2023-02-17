@@ -30,6 +30,17 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
+/**
+ * This test mod provides two items for testing the Forge onStopUsing hook. Both items attempt to create an item that increases FOV and allows creative flight when used
+ * <ul>
+ *   <li>{@code stop_using_item:bad_scope}: Implements the item without the onStopUsing to demonstrate the problem.
+ *       Should see that when selecting another hotbar slot or dropping the item, the FOV is not properly reverted and you remain flying.
+ *   </li>
+ *   <li>{@code stop_using_item:good_scope}: Implements the item with onStopUsing to test that the hook hook works.
+ *       Should see that when selecting another hotbar slot or dropping the item, the FOV is properly reverted and you stop flying.
+ *   </li>
+ * </ul>
+ */
 @Mod(StopUsingItemTest.MODID)
 public class StopUsingItemTest
 {
