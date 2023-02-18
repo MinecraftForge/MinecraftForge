@@ -275,6 +275,8 @@ modId="data_pack_registries_test"
 [[mods]]
 modId="creative_mode_tab_test"
 [[mods]]
+modId="render_level_stages_test"
+[[mods]]
 modId="trade_with_villager_event_test"
 
 
