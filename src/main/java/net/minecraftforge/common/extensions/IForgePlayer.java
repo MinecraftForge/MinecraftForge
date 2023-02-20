@@ -54,6 +54,18 @@ public interface IForgePlayer
     }
 
     /**
+     * Checks if the player can attack an entity by targeting the passed vector.<br>
+     * On the server, additional leniency is added to account for movement/lag.
+     * @param vec The vector being range-checked.
+     * @param padding Extra validation distance.
+     * @return If the player can attack the entity.
+     */
+    default boolean canHit(Vec3 vec, double padding) // Do not rename to canAttack - will conflict with LivingEntity#canAttack
+    {
+        return self().getEyePosition().closerThan(vec, getAttackRange() + padding);
+    }
+
+    /**
      * Checks if the player can reach (right-click) the passed entity.<br>
      * On the server, additional leniency is added to account for movement/lag.
      * @param entity The entity being range-checked.
@@ -63,6 +75,18 @@ public interface IForgePlayer
     default boolean canInteractWith(Entity entity, double padding)
     {
         return isCloseEnough(entity, getReachDistance() + padding);
+    }
+
+    /**
+     * Checks if the player can reach (right-click) an entity by targeting the passed vector.<br>
+     * On the server, additional leniency is added to account for movement/lag.
+     * @param vec The vector being range-checked.
+     * @param padding Extra validation distance.
+     * @return If the player can interact with the entity.
+     */
+    default boolean canInteractWith(Vec3 vec, double padding)
+    {
+        return self().getEyePosition().closerThan(vec, getReachDistance() + padding);
     }
 
     /**
