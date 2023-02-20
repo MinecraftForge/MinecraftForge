@@ -22,15 +22,6 @@
     }
  
     /** @deprecated */
-@@ -107,6 +_,8 @@
-       return this.f_204113_;
-    }
- 
-+   /** @deprecated Forge: Use damage source sensitive version */
-+   @Deprecated
-    public void m_5929_(Level p_41428_, LivingEntity p_41429_, ItemStack p_41430_, int p_41431_) {
-    }
- 
 @@ -133,9 +_,9 @@
     }
  
