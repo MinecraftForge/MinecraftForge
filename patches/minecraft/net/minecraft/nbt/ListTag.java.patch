@@ -5,7 +5,7 @@
        if (p_177992_ >= 0 && p_177992_ < this.f_128716_.size()) {
           Tag tag = this.f_128716_.get(p_177992_);
 -         if (tag.m_7060_() == 11) {
-+         if (tag.m_7060_() == 12) {
++         if (tag.m_7060_() == 12) { // FORGE: Fix MC-260378 by using correct constant for long array tag which is Tag.TAG_LONG_ARRAY
              return ((LongArrayTag)tag).m_128851_();
           }
        }
