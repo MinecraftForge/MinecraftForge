@@ -63,8 +63,9 @@
              if (!list1.isEmpty()) {
                 throw new IllegalArgumentException(String.format(Locale.ROOT, "Couldn't define tag %s as it is missing following references: %s", resourcelocation, list1.stream().map(Objects::toString).collect(Collectors.joining(","))));
              } else {
-                JsonElement jsonelement = TagFile.f_215958_.encodeStart(JsonOps.INSTANCE, new TagFile(list, false)).getOrThrow(false, f_126541_::error);
+-               JsonElement jsonelement = TagFile.f_215958_.encodeStart(JsonOps.INSTANCE, new TagFile(list, false)).getOrThrow(false, f_126541_::error);
 -               Path path = this.f_236439_.m_245731_(resourcelocation);
++               JsonElement jsonelement = TagFile.f_215958_.encodeStart(JsonOps.INSTANCE, new TagFile(list, tagbuilder.isReplace())).getOrThrow(false, f_126541_::error);
 +               Path path = this.getPath(resourcelocation);
 +               if (path == null) return CompletableFuture.completedFuture(null); // Forge: Allow running this data provider without writing it. Recipe provider needs valid tags.
                 return DataProvider.m_253162_(p_253684_, jsonelement, path);
