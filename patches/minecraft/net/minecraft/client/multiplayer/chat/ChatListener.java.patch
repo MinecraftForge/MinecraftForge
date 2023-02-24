@@ -30,3 +30,12 @@
        this.m_241119_(p_241518_, p_241542_.m_237220_());
        this.m_240498_(p_241510_, p_241542_.m_241109_());
        this.f_240659_ = Util.m_137550_();
+@@ -263,6 +_,8 @@
+ 
+    public void m_240494_(Component p_240522_, boolean p_240642_) {
+       if (!this.f_240348_.f_91066_.m_231833_().m_231551_() || !this.f_240348_.m_91246_(this.m_240473_(p_240522_))) {
++         p_240522_ = net.minecraftforge.client.ForgeHooksClient.onClientSystemChat(p_240522_, p_240642_);
++         if (p_240522_ == null) return;
+          if (p_240642_) {
+             this.f_240348_.f_91065_.m_93063_(p_240522_, false);
+          } else {
