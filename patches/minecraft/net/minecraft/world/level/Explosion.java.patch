@@ -10,7 +10,7 @@
        this(p_46024_, p_46025_, p_46026_, p_46027_, p_46028_, p_46029_, false, Explosion.BlockInteraction.DESTROY_WITH_DECAY, p_46030_);
 @@ -81,6 +_,7 @@
        this.f_46010_ = p_46060_;
-       this.f_46018_ = p_46053_ == null ? DamageSource.m_19358_(this) : p_46053_;
+       this.f_46018_ = p_46053_ == null ? p_46051_.m_269111_().m_269093_(this) : p_46053_;
        this.f_46019_ = p_46054_ == null ? this.m_46062_(p_46052_) : p_46054_;
 +      this.position = new Vec3(this.f_46013_, this.f_46014_, this.f_46015_);
     }
@@ -24,7 +24,7 @@
        Vec3 vec3 = new Vec3(this.f_46013_, this.f_46014_, this.f_46015_);
  
        for(int k2 = 0; k2 < list.size(); ++k2) {
-@@ -238,7 +_,7 @@
+@@ -245,7 +_,7 @@
              if (!blockstate.m_60795_()) {
                 BlockPos blockpos1 = blockpos.m_7949_();
                 this.f_46012_.m_46473_().m_6180_("explosion_blocks");
@@ -33,7 +33,7 @@
                    Level $$9 = this.f_46012_;
                    if ($$9 instanceof ServerLevel) {
                       ServerLevel serverlevel = (ServerLevel)$$9;
-@@ -255,8 +_,7 @@
+@@ -262,8 +_,7 @@
                    }
                 }
  
@@ -43,7 +43,7 @@
                 this.f_46012_.m_46473_().m_7238_();
              }
           }
-@@ -347,6 +_,15 @@
+@@ -354,6 +_,15 @@
  
     public List<BlockPos> m_46081_() {
        return this.f_46020_;

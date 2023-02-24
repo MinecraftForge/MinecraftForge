@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/levelgen/structure/templatesystem/StructureProcessor.java
 +++ b/net/minecraft/world/level/levelgen/structure/templatesystem/StructureProcessor.java
-@@ -6,7 +_,34 @@
+@@ -8,9 +_,36 @@
  
  public abstract class StructureProcessor {
     @Nullable
@@ -35,4 +35,6 @@
 +   public StructureTemplate.StructureEntityInfo processEntity(LevelReader world, BlockPos seedPos, StructureTemplate.StructureEntityInfo rawEntityInfo, StructureTemplate.StructureEntityInfo entityInfo, StructurePlaceSettings placementSettings, StructureTemplate template) {
 +      return entityInfo;
 +   }
- }
+ 
+    public void m_271697_(LevelAccessor p_273167_, BlockPos p_273713_, BlockPos p_272620_, StructurePlaceSettings p_272830_, List<StructureTemplate.StructureBlockInfo> p_273019_) {
+    }

@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/block/model/ItemOverrides.java
 +++ b/net/minecraft/client/renderer/block/model/ItemOverrides.java
-@@ -31,7 +_,15 @@
+@@ -32,7 +_,15 @@
        this.f_173461_ = new ResourceLocation[0];
     }
  
@@ -16,7 +16,7 @@
        this.f_173461_ = p_111743_.stream().flatMap(ItemOverride::m_173449_).map(ItemOverride.Predicate::m_173459_).distinct().toArray((p_173479_) -> {
           return new ResourceLocation[p_173479_];
        });
-@@ -45,7 +_,7 @@
+@@ -46,7 +_,7 @@
  
        for(int j = p_111743_.size() - 1; j >= 0; --j) {
           ItemOverride itemoverride = p_111743_.get(j);
@@ -25,7 +25,7 @@
           ItemOverrides.PropertyMatcher[] aitemoverrides$propertymatcher = itemoverride.m_173449_().map((p_173477_) -> {
              int k = object2intmap.getInt(p_173477_.m_173459_());
              return new ItemOverrides.PropertyMatcher(k, p_173477_.m_173460_());
-@@ -59,9 +_,9 @@
+@@ -60,9 +_,9 @@
     }
  
     @Nullable
@@ -37,7 +37,7 @@
     }
  
     @Nullable
-@@ -94,6 +_,10 @@
+@@ -95,6 +_,10 @@
        }
  
        return p_173465_;

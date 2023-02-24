@@ -27,12 +27,12 @@ import net.minecraft.client.renderer.block.model.BlockModel.GuiLight;
 import net.minecraft.client.renderer.block.model.BlockElement;
 import net.minecraft.client.renderer.block.model.BlockElementFace;
 import net.minecraft.client.renderer.block.model.BlockElementRotation;
-import net.minecraft.client.renderer.block.model.ItemTransforms.TransformType;
 import net.minecraft.client.renderer.block.model.ItemTransform;
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraftforge.client.model.ForgeFaceData;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import org.jetbrains.annotations.Nullable;
@@ -245,10 +245,10 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
             root.addProperty("render_type", this.renderType);
         }
 
-        Map<TransformType, ItemTransform> transforms = this.transforms.build();
+        Map<ItemDisplayContext, ItemTransform> transforms = this.transforms.build();
         if (!transforms.isEmpty()) {
             JsonObject display = new JsonObject();
-            for (Entry<TransformType, ItemTransform> e : transforms.entrySet()) {
+            for (Entry<ItemDisplayContext, ItemTransform> e : transforms.entrySet()) {
                 JsonObject transform = new JsonObject();
                 ItemTransform vec = e.getValue();
                 if (vec.equals(ItemTransform.NO_TRANSFORM)) continue;
@@ -265,7 +265,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
                 if (hasRightRotation) {
                     transform.add("right_rotation", serializeVector3f(vec.rightRotation));
                 }
-                display.add(e.getKey().getSerializeName(), transform);
+                display.add(e.getKey().getSerializedName(), transform);
             }
             root.add("display", display);
         }
@@ -716,7 +716,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
 
     public class TransformsBuilder {
 
-        private final Map<TransformType, TransformVecBuilder> transforms = new LinkedHashMap<>();
+        private final Map<ItemDisplayContext, TransformVecBuilder> transforms = new LinkedHashMap<>();
 
         /**
          * Begin building a new transform for the given perspective.
@@ -725,12 +725,12 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
          * @return the builder for the given perspective
          * @throws NullPointerException if {@code type} is {@code null}
          */
-        public TransformVecBuilder transform(TransformType type) {
+        public TransformVecBuilder transform(ItemDisplayContext type) {
             Preconditions.checkNotNull(type, "Perspective cannot be null");
             return transforms.computeIfAbsent(type, TransformVecBuilder::new);
         }
 
-        Map<TransformType, ItemTransform> build() {
+        Map<ItemDisplayContext, ItemTransform> build() {
             return this.transforms.entrySet().stream()
                     .collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue().build(), (k1, k2) -> { throw new IllegalArgumentException(); }, LinkedHashMap::new));
         }
@@ -744,7 +744,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
             private Vector3f scale = new Vector3f(ItemTransform.Deserializer.DEFAULT_SCALE);
             private Vector3f rightRotation = new Vector3f(ItemTransform.Deserializer.DEFAULT_ROTATION);
 
-            TransformVecBuilder(TransformType type) {
+            TransformVecBuilder(ItemDisplayContext type) {
                 // param unused for functional match
             }
 

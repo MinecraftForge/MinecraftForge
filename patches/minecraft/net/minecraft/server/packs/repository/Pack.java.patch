@@ -16,17 +16,17 @@
     }
  
     @Nullable
-@@ -68,7 +_,8 @@
- 
-                FeatureFlagsMetadataSection featureflagsmetadatasection = packresources.m_5550_(FeatureFlagsMetadataSection.f_244642_);
-                FeatureFlagSet featureflagset = featureflagsmetadatasection != null ? featureflagsmetadatasection.f_244197_() : FeatureFlagSet.m_246902_();
--               pack$info = new Pack.Info(packmetadatasection.m_10373_(), packmetadatasection.m_10374_(), featureflagset);
-+               // Forge: Allow separate pack formats for server data and client resources and setting isHidden
-+               pack$info = new Pack.Info(packmetadatasection.m_10373_(), packmetadatasection.getPackFormat(PackType.SERVER_DATA), packmetadatasection.getPackFormat(PackType.CLIENT_RESOURCES), featureflagset, packresources.isHidden());
-             }
- 
-             return pack$info;
-@@ -127,6 +_,8 @@
+@@ -62,7 +_,8 @@
+          } else {
+             FeatureFlagsMetadataSection featureflagsmetadatasection = packresources.m_5550_(FeatureFlagsMetadataSection.f_244642_);
+             FeatureFlagSet featureflagset = featureflagsmetadatasection != null ? featureflagsmetadatasection.f_244197_() : FeatureFlagSet.m_246902_();
+-            return new Pack.Info(packmetadatasection.m_10373_(), packmetadatasection.m_10374_(), featureflagset);
++            // Forge: Allow separate pack formats for server data and client resources and setting isHidden
++            return new Pack.Info(packmetadatasection.m_10373_(), packmetadatasection.getPackFormat(PackType.SERVER_DATA), packmetadatasection.getPackFormat(PackType.CLIENT_RESOURCES), featureflagset, packresources.isHidden());
+          }
+       } catch (Exception exception) {
+          f_10399_.warn("Failed to read pack metadata", (Throwable)exception);
+@@ -116,6 +_,8 @@
        return this.f_10409_;
     }
  
@@ -35,7 +35,7 @@
     public boolean equals(Object p_10448_) {
        if (this == p_10448_) {
           return true;
-@@ -142,9 +_,17 @@
+@@ -131,9 +_,17 @@
        return this.f_10401_.hashCode();
     }
  

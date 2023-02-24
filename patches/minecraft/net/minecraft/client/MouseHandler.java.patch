@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/MouseHandler.java
 +++ b/net/minecraft/client/MouseHandler.java
-@@ -69,6 +_,7 @@
+@@ -73,6 +_,7 @@
              this.f_91510_ = -1;
           }
  
@@ -8,7 +8,7 @@
           boolean[] aboolean = new boolean[]{false};
           if (this.f_91503_.m_91265_() == null) {
              if (this.f_91503_.f_91080_ == null) {
-@@ -82,11 +_,19 @@
+@@ -86,11 +_,19 @@
                 if (flag) {
                    screen.m_169415_();
                    Screen.m_96579_(() -> {
@@ -30,7 +30,7 @@
                    }, "mouseReleased event handler", screen.getClass().getCanonicalName());
                 }
              }
-@@ -110,19 +_,26 @@
+@@ -114,19 +_,26 @@
                 }
              }
           }
@@ -60,7 +60,7 @@
              } else if (this.f_91503_.f_91074_ != null) {
                 if (this.f_91518_ != 0.0D && Math.signum(d0) != Math.signum(this.f_91518_)) {
                    this.f_91518_ = 0.0D;
-@@ -135,6 +_,7 @@
+@@ -139,6 +_,7 @@
                 }
  
                 this.f_91518_ -= (double)i;
@@ -68,7 +68,7 @@
                 if (this.f_91503_.f_91074_.m_5833_()) {
                    if (this.f_91503_.f_91065_.m_93085_().m_94768_()) {
                       this.f_91503_.f_91065_.m_93085_().m_205380_(-i);
-@@ -203,7 +_,9 @@
+@@ -207,7 +_,9 @@
                 double d2 = (p_91563_ - this.f_91507_) * (double)this.f_91503_.m_91268_().m_85445_() / (double)this.f_91503_.m_91268_().m_85443_();
                 double d3 = (p_91564_ - this.f_91508_) * (double)this.f_91503_.m_91268_().m_85446_() / (double)this.f_91503_.m_91268_().m_85444_();
                 Screen.m_96579_(() -> {
@@ -79,7 +79,7 @@
                 }, "mouseDragged event handler", screen.getClass().getCanonicalName());
              }
  
-@@ -286,6 +_,14 @@
+@@ -290,6 +_,14 @@
  
     public double m_91594_() {
        return this.f_91508_;

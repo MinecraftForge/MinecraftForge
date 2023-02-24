@@ -47,9 +47,16 @@ public class RegisterParticleProvidersEvent extends Event implements IModBusEven
      * or a redundant texture list error will occur when particle jsons load.
      * @param provider ParticleProvider responsible for providing that ParticleType's particles.
      */
+    @SuppressWarnings("deprecation")
     public <T extends ParticleOptions> void register(ParticleType<T> type, ParticleProvider<T> provider)
     {
         particleEngine.register(type, provider);
+    }
+
+    @SuppressWarnings("deprecation")
+    public <T extends ParticleOptions> void register(ParticleType<T> type, ParticleProvider.Sprite<T> sprite)
+    {
+        particleEngine.register(type, sprite);
     }
 
     /**
@@ -61,6 +68,7 @@ public class RegisterParticleProvidersEvent extends Event implements IModBusEven
      * or a missing texture list error will occur when particle jsons load.
      * @param registration SpriteParticleRegistration responsible for providing that ParticleType's particles.
      */
+    @SuppressWarnings("deprecation")
     public <T extends ParticleOptions> void register(ParticleType<T> type, ParticleEngine.SpriteParticleRegistration<T> registration)
     {
         particleEngine.register(type, registration);

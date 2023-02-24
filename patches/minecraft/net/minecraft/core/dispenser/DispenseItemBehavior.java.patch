@@ -1,6 +1,6 @@
 --- a/net/minecraft/core/dispenser/DispenseItemBehavior.java
 +++ b/net/minecraft/core/dispenser/DispenseItemBehavior.java
-@@ -346,7 +_,7 @@
+@@ -352,7 +_,7 @@
              DispensibleContainerItem dispensiblecontaineritem = (DispensibleContainerItem)p_123562_.m_41720_();
              BlockPos blockpos = p_123561_.m_7961_().m_121945_(p_123561_.m_6414_().m_61143_(DispenserBlock.f_52659_));
              Level level = p_123561_.m_7727_();
@@ -9,7 +9,7 @@
                 dispensiblecontaineritem.m_142131_((Player)null, level, p_123562_, blockpos);
                 return new ItemStack(Items.f_42446_);
              } else {
-@@ -405,9 +_,10 @@
+@@ -411,9 +_,10 @@
                 level.m_46597_(blockpos, BaseFireBlock.m_49245_(level, blockpos));
                 level.m_142346_((Entity)null, GameEvent.f_157797_, blockpos);
              } else if (!CampfireBlock.m_51321_(blockstate) && !CandleBlock.m_152845_(blockstate) && !CandleCakeBlock.m_152910_(blockstate)) {

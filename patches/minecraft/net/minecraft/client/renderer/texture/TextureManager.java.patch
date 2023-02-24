@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/texture/TextureManager.java
 +++ b/net/minecraft/client/renderer/texture/TextureManager.java
-@@ -166,6 +_,7 @@
+@@ -168,6 +_,7 @@
     public void m_118513_(ResourceLocation p_118514_) {
        AbstractTexture abstracttexture = this.m_174786_(p_118514_, MissingTextureAtlasSprite.m_118080_());
        if (abstracttexture != MissingTextureAtlasSprite.m_118080_()) {

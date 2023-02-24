@@ -1,6 +1,10 @@
 --- a/net/minecraft/world/entity/player/Inventory.java
 +++ b/net/minecraft/world/entity/player/Inventory.java
-@@ -129,7 +_,7 @@
+@@ -126,14 +_,14 @@
+          if (this.f_35974_.get(j).m_41619_()) {
+             return j;
+          }
+-      }
  
        for(int k = 0; k < 9; ++k) {
           int l = (this.f_35977_ + k) % 9;
@@ -9,7 +13,11 @@
              return l;
           }
        }
-@@ -177,7 +_,8 @@
++      }
+ 
+       return this.f_35977_;
+    }
+@@ -178,7 +_,8 @@
        int i = p_36049_.m_41613_();
        ItemStack itemstack = this.m_8020_(p_36048_);
        if (itemstack.m_41619_()) {
@@ -19,7 +27,7 @@
           if (p_36049_.m_41782_()) {
              itemstack.m_41751_(p_36049_.m_41783_().m_6426_());
           }
-@@ -228,7 +_,7 @@
+@@ -229,7 +_,7 @@
              }
           }
        }
@@ -28,7 +36,7 @@
     }
  
     public boolean m_36054_(ItemStack p_36055_) {
-@@ -277,6 +_,8 @@
+@@ -278,6 +_,8 @@
           } catch (Throwable throwable) {
              CrashReport crashreport = CrashReport.m_127521_(throwable, "Adding item to inventory");
              CrashReportCategory crashreportcategory = crashreport.m_127514_("Item being added");

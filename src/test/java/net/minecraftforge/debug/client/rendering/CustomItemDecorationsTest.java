@@ -51,7 +51,6 @@ public class CustomItemDecorationsTest
         @Override
         public boolean render(Font font, ItemStack stack, int xOffset, int yOffset, float blitOffset)
         {
-            RenderSystem.disableTexture();
             RenderSystem.disableBlend();
             Tesselator tesselator = Tesselator.getInstance();
             BufferBuilder bufferbuilder = tesselator.getBuilder();
@@ -61,7 +60,6 @@ public class CustomItemDecorationsTest
             fillRect(bufferbuilder, xOffset + 2, yOffset, blitOffset + 189, 13, 2, 0, 0, 0);
             fillRect(bufferbuilder, xOffset + 2, yOffset, blitOffset + 190, i, 1, j >> 16 & 255, j >> 8 & 255, j & 255);
             RenderSystem.enableBlend();
-            RenderSystem.enableTexture();
             return true;
         }
 

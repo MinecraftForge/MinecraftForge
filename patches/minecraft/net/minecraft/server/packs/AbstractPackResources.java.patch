@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/packs/AbstractPackResources.java
 +++ b/net/minecraft/server/packs/AbstractPackResources.java
-@@ -67,4 +_,10 @@
+@@ -64,4 +_,10 @@
     public boolean m_246538_() {
        return this.f_254645_;
     }

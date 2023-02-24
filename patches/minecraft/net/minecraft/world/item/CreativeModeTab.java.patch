@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/item/CreativeModeTab.java
 +++ b/net/minecraft/world/item/CreativeModeTab.java
-@@ -28,14 +_,30 @@
+@@ -29,14 +_,30 @@
     private Consumer<List<ItemStack>> f_256965_;
     private final Supplier<ItemStack> f_256912_;
     private final CreativeModeTab.DisplayItemsGenerator f_256824_;
@@ -32,7 +32,7 @@
     }
  
     public static CreativeModeTab.Builder m_257815_(CreativeModeTab.Row p_259342_, int p_260312_) {
-@@ -54,6 +_,10 @@
+@@ -55,6 +_,10 @@
        return this.f_40770_;
     }
  
@@ -43,16 +43,16 @@
     public String m_40788_() {
        return this.f_40766_;
     }
-@@ -92,7 +_,7 @@
+@@ -93,7 +_,7 @@
  
-    public void m_258021_(FeatureFlagSet p_260125_, boolean p_259855_) {
-       CreativeModeTab.ItemDisplayBuilder creativemodetab$itemdisplaybuilder = new CreativeModeTab.ItemDisplayBuilder(this, p_260125_);
--      this.f_256824_.m_257865_(p_260125_, creativemodetab$itemdisplaybuilder, p_259855_);
-+      net.minecraftforge.client.ForgeHooksClient.onCreativeModeTabBuildContents(this, this.f_256824_, p_260125_, creativemodetab$itemdisplaybuilder, p_259855_);
+    public void m_269498_(CreativeModeTab.ItemDisplayParameters p_270156_) {
+       CreativeModeTab.ItemDisplayBuilder creativemodetab$itemdisplaybuilder = new CreativeModeTab.ItemDisplayBuilder(this, p_270156_.f_268709_);
+-      this.f_256824_.m_257865_(p_270156_, creativemodetab$itemdisplaybuilder);
++      net.minecraftforge.client.ForgeHooksClient.onCreativeModeTabBuildContents(this, this.f_256824_, p_270156_, creativemodetab$itemdisplaybuilder);
        this.f_243839_ = creativemodetab$itemdisplaybuilder.f_244363_;
        this.f_243841_ = creativemodetab$itemdisplaybuilder.f_244585_;
        this.m_257466_();
-@@ -121,9 +_,34 @@
+@@ -122,9 +_,34 @@
  
     }
  
@@ -81,13 +81,13 @@
 +   }
 +
     public static class Builder {
-       private static final CreativeModeTab.DisplayItemsGenerator f_256756_ = (p_259074_, p_259433_, p_260293_) -> {
+       private static final CreativeModeTab.DisplayItemsGenerator f_256756_ = (p_270422_, p_259433_) -> {
        };
 +      private static final net.minecraft.resources.ResourceLocation CREATIVE_INVENTORY_TABS_IMAGE = new net.minecraft.resources.ResourceLocation("textures/gui/container/creative_inventory/tabs.png");
        private final CreativeModeTab.Row f_256796_;
        private final int f_256977_;
        private Component f_256856_ = Component.m_237119_();
-@@ -136,6 +_,14 @@
+@@ -137,6 +_,14 @@
        private boolean f_256854_ = false;
        private CreativeModeTab.Type f_256847_ = CreativeModeTab.Type.CATEGORY;
        private String f_257036_ = "items.png";
@@ -102,7 +102,7 @@
  
        public Builder(CreativeModeTab.Row p_259171_, int p_259661_) {
           this.f_256796_ = p_259171_;
-@@ -174,11 +_,49 @@
+@@ -175,11 +_,49 @@
  
        protected CreativeModeTab.Builder m_257623_(CreativeModeTab.Type p_259283_) {
           this.f_256847_ = p_259283_;
@@ -153,7 +153,7 @@
           return this;
        }
  
-@@ -186,11 +_,12 @@
+@@ -187,11 +_,12 @@
           if ((this.f_256847_ == CreativeModeTab.Type.HOTBAR || this.f_256847_ == CreativeModeTab.Type.INVENTORY) && this.f_256953_ != f_256756_) {
              throw new IllegalStateException("Special tabs can't have display items");
           } else {

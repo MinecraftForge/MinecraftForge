@@ -51,11 +51,11 @@ public interface IExtensibleEnum
                 either -> either.map(
                         str -> {
                             var val = enumValueFromNameFunction.apply(str);
-                            return val != null ? DataResult.success(val) : DataResult.error("Unknown enum value name: " + str);
+                            return val != null ? DataResult.success(val) : DataResult.error(() -> "Unknown enum value name: " + str);
                         },
                         num -> {
                             var values = valuesSupplier.get();
-                            return num >= 0 && num < values.length ? DataResult.success(values[num]) : DataResult.error("Unknown enum id: " + num);
+                            return num >= 0 && num < values.length ? DataResult.success(values[num]) : DataResult.error(() -> "Unknown enum id: " + num);
                         }
                 ),
                 value -> Either.left(value.getSerializedName())

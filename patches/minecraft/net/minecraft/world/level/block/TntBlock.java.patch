@@ -58,7 +58,7 @@
           if (!p_57453_.m_7500_()) {
 @@ -109,7 +_,7 @@
           BlockPos blockpos = p_57431_.m_82425_();
-          Entity entity = p_57432_.m_37282_();
+          Entity entity = p_57432_.m_19749_();
           if (p_57432_.m_6060_() && p_57432_.m_142265_(p_57429_, blockpos)) {
 -            m_57436_(p_57429_, blockpos, entity instanceof LivingEntity ? (LivingEntity)entity : null);
 +            onCaughtFire(p_57430_, p_57429_, blockpos, null, entity instanceof LivingEntity ? (LivingEntity)entity : null);

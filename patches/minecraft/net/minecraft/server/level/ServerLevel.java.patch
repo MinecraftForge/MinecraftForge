@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/level/ServerLevel.java
 +++ b/net/minecraft/server/level/ServerLevel.java
-@@ -187,10 +_,11 @@
+@@ -185,10 +_,11 @@
     private final List<CustomSpawner> f_8558_;
     @Nullable
     private final EndDragonFight f_8559_;
@@ -12,8 +12,8 @@
 +   private net.minecraftforge.common.util.LevelCapabilityData capabilityData;
  
     public ServerLevel(MinecraftServer p_214999_, Executor p_215000_, LevelStorageSource.LevelStorageAccess p_215001_, ServerLevelData p_215002_, ResourceKey<Level> p_215003_, LevelStem p_215004_, ChunkProgressListener p_215005_, boolean p_215006_, long p_215007_, List<CustomSpawner> p_215008_, boolean p_215009_) {
-       super(p_215002_, p_215003_, p_215004_.f_63975_(), p_214999_::m_129905_, false, p_215006_, p_215007_, p_214999_.m_213994_());
-@@ -231,6 +_,7 @@
+       super(p_215002_, p_215003_, p_214999_.m_206579_(), p_215004_.f_63975_(), p_214999_::m_129905_, false, p_215006_, p_215007_, p_214999_.m_213994_());
+@@ -229,6 +_,7 @@
  
        this.f_143245_ = new SleepStatus();
        this.f_243695_ = new GameEventDispatcher(this);
@@ -21,7 +21,7 @@
     }
  
     public void m_8606_(int p_8607_, int p_8608_, boolean p_8609_, boolean p_8610_) {
-@@ -259,8 +_,8 @@
+@@ -257,8 +_,8 @@
        int i = this.m_46469_().m_46215_(GameRules.f_151486_);
        if (this.f_143245_.m_144002_(i) && this.f_143245_.m_144004_(i, this.f_8546_)) {
           if (this.m_46469_().m_46207_(GameRules.f_46140_)) {
@@ -32,7 +32,7 @@
           }
  
           this.m_8804_();
-@@ -289,7 +_,7 @@
+@@ -287,7 +_,7 @@
        this.m_8807_();
        this.f_8557_ = false;
        profilerfiller.m_7238_();
@@ -41,7 +41,7 @@
        if (flag) {
           this.m_8886_();
        }
-@@ -321,7 +_,9 @@
+@@ -319,7 +_,9 @@
                       }
  
                       profilerfiller.m_6180_("tick");
@@ -52,7 +52,7 @@
                       profilerfiller.m_7238_();
                    }
                 }
-@@ -414,6 +_,7 @@
+@@ -412,6 +_,7 @@
           BlockPos blockpos1 = this.m_5452_(Heightmap.Types.MOTION_BLOCKING, this.m_46496_(i, 0, j, 15));
           BlockPos blockpos2 = blockpos1.m_7495_();
           Biome biome = this.m_204166_(blockpos1).m_203334_();
@@ -60,7 +60,7 @@
           if (biome.m_47477_(this, blockpos2)) {
              this.m_46597_(blockpos2, Blocks.f_50126_.m_49966_());
           }
-@@ -615,15 +_,19 @@
+@@ -611,15 +_,19 @@
           this.f_8548_.m_6846_().m_11270_(new ClientboundGameEventPacket(ClientboundGameEventPacket.f_132161_, this.f_46440_), this.m_46472_());
        }
  
@@ -84,7 +84,7 @@
        }
  
     }
-@@ -682,6 +_,7 @@
+@@ -678,6 +_,7 @@
                 return BuiltInRegistries.f_256780_.m_7981_(p_8664_.m_6095_()).toString();
              });
              profilerfiller.m_6174_("tickPassenger");
@@ -92,7 +92,7 @@
              p_8664_.m_6083_();
              profilerfiller.m_7238_();
  
-@@ -718,6 +_,7 @@
+@@ -714,6 +_,7 @@
              this.f_143244_.m_157554_();
           }
  
@@ -100,7 +100,7 @@
        }
     }
  
-@@ -810,6 +_,7 @@
+@@ -806,6 +_,7 @@
     }
  
     private void m_8853_(ServerPlayer p_8854_) {
@@ -108,7 +108,7 @@
        Entity entity = this.m_142646_().m_142694_(p_8854_.m_20148_());
        if (entity != null) {
           f_8566_.warn("Force-added player with duplicate UUID {}", (Object)p_8854_.m_20148_().toString());
-@@ -817,7 +_,8 @@
+@@ -813,7 +_,8 @@
           this.m_143261_((ServerPlayer)entity, Entity.RemovalReason.DISCARDED);
        }
  
@@ -118,7 +118,7 @@
     }
  
     private boolean m_8872_(Entity p_8873_) {
-@@ -825,7 +_,12 @@
+@@ -821,7 +_,12 @@
           f_8566_.warn("Tried to add entity {} but it was marked as removed already", (Object)EntityType.m_20613_(p_8873_.m_6095_()));
           return false;
        } else {
@@ -132,7 +132,7 @@
        }
     }
  
-@@ -862,10 +_,22 @@
+@@ -858,10 +_,22 @@
     }
  
     public void m_262808_(@Nullable Player p_263330_, double p_263393_, double p_263369_, double p_263354_, Holder<SoundEvent> p_263412_, SoundSource p_263338_, float p_263352_, float p_263390_, long p_263403_) {
@@ -155,7 +155,7 @@
        this.f_8548_.m_6846_().m_11241_(p_263545_, p_263544_.m_20185_(), p_263544_.m_20186_(), p_263544_.m_20189_(), (double)p_263491_.m_203334_().m_215668_(p_263530_), this.m_46472_(), new ClientboundSoundEntityPacket(p_263491_, p_263542_, p_263544_, p_263530_, p_263520_, p_263490_));
     }
  
-@@ -887,6 +_,7 @@
+@@ -883,6 +_,7 @@
     }
  
     public void m_214171_(GameEvent p_215041_, Vec3 p_215042_, GameEvent.Context p_215043_) {
@@ -163,7 +163,7 @@
        this.f_243695_.m_245905_(p_215041_, p_215042_, p_215043_);
     }
  
-@@ -923,10 +_,15 @@
+@@ -919,10 +_,15 @@
     }
  
     public void m_46672_(BlockPos p_215045_, Block p_215046_) {
@@ -179,7 +179,7 @@
        this.f_220350_.m_214152_(p_215052_, p_215053_, p_215054_);
     }
  
-@@ -1362,6 +_,12 @@
+@@ -1358,6 +_,12 @@
        });
     }
  
@@ -192,7 +192,7 @@
     public LevelEntityGetter<Entity> m_142646_() {
        return this.f_143244_.m_157567_();
     }
-@@ -1449,8 +_,8 @@
+@@ -1445,8 +_,8 @@
              ServerLevel.this.f_143246_.add(mob);
           }
  
@@ -203,7 +203,7 @@
                 ServerLevel.this.f_143247_.put(enderdragonpart.m_19879_(), enderdragonpart);
              }
           }
-@@ -1474,17 +_,25 @@
+@@ -1470,17 +_,25 @@
              ServerLevel.this.f_143246_.remove(mob);
           }
  

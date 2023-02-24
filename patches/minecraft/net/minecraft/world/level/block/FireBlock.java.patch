@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/FireBlock.java
 +++ b/net/minecraft/world/level/block/FireBlock.java
-@@ -103,13 +_,13 @@
+@@ -104,13 +_,13 @@
     protected BlockState m_53470_(BlockGetter p_53471_, BlockPos p_53472_) {
        BlockPos blockpos = p_53472_.m_7495_();
        BlockState blockstate = p_53471_.m_8055_(blockpos);
@@ -16,7 +16,11 @@
              }
           }
  
-@@ -132,7 +_,7 @@
+@@ -129,14 +_,14 @@
+       p_221161_.m_186460_(p_221162_, this, m_221148_(p_221161_.f_46441_));
+       if (p_221161_.m_46469_().m_46207_(GameRules.f_46131_)) {
+          if (!p_221160_.m_60710_(p_221161_, p_221162_)) {
+-            p_221161_.m_7471_(p_221162_, false);
           }
  
           BlockState blockstate = p_221161_.m_8055_(p_221162_.m_7495_());
@@ -25,7 +29,11 @@
           int i = p_221160_.m_61143_(f_53408_);
           if (!flag && p_221161_.m_46471_() && this.m_53428_(p_221161_, p_221162_) && p_221163_.m_188501_() < 0.2F + (float)i * 0.03F) {
              p_221161_.m_7471_(p_221162_, false);
-@@ -153,7 +_,7 @@
++            p_221161_.m_7471_(p_221162_, false);
+          } else {
+             int j = Math.min(15, i + p_221163_.m_188503_(3) / 2);
+             if (i != j) {
+@@ -154,7 +_,7 @@
                    return;
                 }
  
@@ -34,9 +42,9 @@
                    p_221161_.m_7471_(p_221162_, false);
                    return;
                 }
-@@ -161,12 +_,12 @@
+@@ -162,12 +_,12 @@
  
-             boolean flag1 = p_221161_.m_46761_(p_221162_);
+             boolean flag1 = p_221161_.m_204166_(p_221162_).m_203656_(BiomeTags.f_263839_);
              int k = flag1 ? -50 : 0;
 -            this.m_221150_(p_221161_, p_221162_.m_122029_(), 300 + k, p_221163_, i);
 -            this.m_221150_(p_221161_, p_221162_.m_122024_(), 300 + k, p_221163_, i);
@@ -53,7 +61,7 @@
              BlockPos.MutableBlockPos blockpos$mutableblockpos = new BlockPos.MutableBlockPos();
  
              for(int l = -1; l <= 1; ++l) {
-@@ -204,29 +_,28 @@
+@@ -205,29 +_,28 @@
        return p_53429_.m_46758_(p_53430_) || p_53429_.m_46758_(p_53430_.m_122024_()) || p_53429_.m_46758_(p_53430_.m_122029_()) || p_53429_.m_46758_(p_53430_.m_122012_()) || p_53429_.m_46758_(p_53430_.m_122019_());
     }
  
@@ -94,7 +102,7 @@
        }
  
     }
-@@ -238,7 +_,7 @@
+@@ -239,7 +_,7 @@
  
     private boolean m_53485_(BlockGetter p_53486_, BlockPos p_53487_) {
        for(Direction direction : Direction.values()) {
@@ -103,7 +111,7 @@
              return true;
           }
        }
-@@ -254,13 +_,14 @@
+@@ -255,13 +_,14 @@
  
           for(Direction direction : Direction.values()) {
              BlockState blockstate = p_221157_.m_8055_(p_221158_.m_121945_(direction));
@@ -119,7 +127,7 @@
     protected boolean m_7599_(BlockState p_53489_) {
        return this.m_221166_(p_53489_) > 0;
     }
-@@ -279,8 +_,21 @@
+@@ -280,8 +_,21 @@
     }
  
     private void m_53444_(Block p_53445_, int p_53446_, int p_53447_) {

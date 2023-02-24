@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/animal/allay/Allay.java
 +++ b/net/minecraft/world/entity/animal/allay/Allay.java
-@@ -329,7 +_,7 @@
+@@ -325,7 +_,7 @@
  
     public boolean m_7243_(ItemStack p_218387_) {
        ItemStack itemstack = this.m_21120_(InteractionHand.MAIN_HAND);

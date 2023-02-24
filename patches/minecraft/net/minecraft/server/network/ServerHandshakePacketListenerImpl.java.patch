@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/network/ServerHandshakePacketListenerImpl.java
 +++ b/net/minecraft/server/network/ServerHandshakePacketListenerImpl.java
-@@ -20,6 +_,7 @@
+@@ -21,6 +_,7 @@
     }
  
     public void m_7322_(ClientIntentionPacket p_9975_) {
@@ -8,3 +8,12 @@
        switch (p_9975_.m_134735_()) {
           case LOGIN:
              this.f_9966_.m_129498_(ConnectionProtocol.LOGIN);
+@@ -42,7 +_,7 @@
+             ServerStatus serverstatus = this.f_9965_.m_129928_();
+             if (this.f_9965_.m_6373_() && serverstatus != null) {
+                this.f_9966_.m_129498_(ConnectionProtocol.STATUS);
+-               this.f_9966_.m_129505_(new ServerStatusPacketListenerImpl(serverstatus, this.f_9966_));
++               this.f_9966_.m_129505_(new ServerStatusPacketListenerImpl(serverstatus, this.f_9966_, this.f_9965_.getStatusJson()));
+             } else {
+                this.f_9966_.m_129507_(f_9964_);
+             }

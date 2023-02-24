@@ -3,9 +3,9 @@
 @@ -10,7 +_,7 @@
        return BehaviorBuilder.m_258034_((p_259197_) -> {
           return p_259197_.group(p_259197_.m_258080_(MemoryModuleType.f_26336_)).apply(p_259197_, (p_259512_) -> {
-             return (p_259681_, p_260321_, p_259451_) -> {
--               if (!p_260321_.m_21206_().m_41619_() && !p_260321_.m_21206_().m_150930_(Items.f_42740_)) {
-+               if (!p_260321_.m_21206_().m_41619_() && !p_260321_.m_21206_().canPerformAction(net.minecraftforge.common.ToolActions.SHIELD_BLOCK)) {
-                   PiglinAi.m_34867_(p_260321_, true);
+             return (p_275996_, p_275997_, p_275998_) -> {
+-               if (!p_275997_.m_21206_().m_41619_() && !p_275997_.m_21206_().m_150930_(Items.f_42740_)) {
++               if (!p_275997_.m_21206_().m_41619_() && !p_275997_.m_21206_().canPerformAction(net.minecraftforge.common.ToolActions.SHIELD_BLOCK)) {
+                   PiglinAi.m_34867_(p_275997_, true);
                    return true;
                 } else {

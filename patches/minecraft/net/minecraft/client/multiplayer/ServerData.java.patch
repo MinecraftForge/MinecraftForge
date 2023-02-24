@@ -1,7 +1,7 @@
 --- a/net/minecraft/client/multiplayer/ServerData.java
 +++ b/net/minecraft/client/multiplayer/ServerData.java
-@@ -26,6 +_,7 @@
-    private String f_105372_;
+@@ -32,6 +_,7 @@
+    private byte[] f_271511_;
     private boolean f_105373_;
     private boolean f_242950_;
 +   public net.minecraftforge.client.ExtendedServerListData forgeData = null;

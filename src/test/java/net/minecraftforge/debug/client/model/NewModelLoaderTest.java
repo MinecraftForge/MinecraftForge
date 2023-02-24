@@ -209,8 +209,8 @@ public class NewModelLoaderTest
             withExistingParent(NewModelLoaderTest.separate_perspective.getId().getPath(), "forge:item/default")
                     .customLoader(SeparateTransformsModelBuilder::begin)
                         .base(nested().parent(getExistingFile(mcLoc("minecraft:item/coal"))))
-                        .perspective(ItemTransforms.TransformType.GUI, nested().parent(getExistingFile(mcLoc("minecraft:item/snowball"))))
-                        .perspective(ItemTransforms.TransformType.FIRST_PERSON_LEFT_HAND, nested().parent(getExistingFile(mcLoc("minecraft:item/bone"))))
+                        .perspective(ItemDisplayContext.GUI, nested().parent(getExistingFile(mcLoc("minecraft:item/snowball"))))
+                        .perspective(ItemDisplayContext.FIRST_PERSON_LEFT_HAND, nested().parent(getExistingFile(mcLoc("minecraft:item/bone"))))
                     .end();
         }
     }

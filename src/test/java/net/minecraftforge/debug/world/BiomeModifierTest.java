@@ -6,6 +6,7 @@
 package net.minecraftforge.debug.world;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
@@ -73,7 +74,7 @@ public class BiomeModifierTest
     private static final RegistryObject<Codec<TestModifier>> MODIFY_BIOMES = BIOME_MODIFIER_SERIALIZERS.register("modify_biomes", () ->
             RecordCodecBuilder.create(builder -> builder.group(
                     Biome.LIST_CODEC.fieldOf("biomes").forGetter(TestModifier::biomes),
-                    Precipitation.CODEC.fieldOf("precipitation").forGetter(TestModifier::precipitation),
+                    Codec.STRING.xmap(s -> Precipitation.valueOf(s.toUpperCase(Locale.ROOT)), e -> e.name().toLowerCase(Locale.ROOT)).fieldOf("precipitation").forGetter(TestModifier::precipitation),
                     Codec.INT.fieldOf("water_color").forGetter(TestModifier::waterColor)
             ).apply(builder, TestModifier::new))
     );
@@ -167,7 +168,7 @@ public class BiomeModifierTest
         {
             if (phase == Phase.MODIFY && this.biomes.contains(biome))
             {
-                builder.getClimateSettings().setPrecipitation(this.precipitation);
+                builder.getClimateSettings().setHasPrecipitation(true);
                 builder.getSpecialEffects().waterColor(this.waterColor);
                 if (this.precipitation == Precipitation.SNOW)
                     builder.getClimateSettings().setTemperature(0F);

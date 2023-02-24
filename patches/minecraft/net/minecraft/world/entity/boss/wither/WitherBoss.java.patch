@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/boss/wither/WitherBoss.java
 +++ b/net/minecraft/world/entity/boss/wither/WitherBoss.java
-@@ -278,7 +_,7 @@
+@@ -279,7 +_,7 @@
  
           if (this.f_31429_ > 0) {
              --this.f_31429_;
@@ -9,7 +9,7 @@
                 int j1 = Mth.m_14107_(this.m_20186_());
                 int i2 = Mth.m_14107_(this.m_20185_());
                 int j2 = Mth.m_14107_(this.m_20189_());
-@@ -292,7 +_,7 @@
+@@ -293,7 +_,7 @@
                          int i1 = j2 + k2;
                          BlockPos blockpos = new BlockPos(l2, l, i1);
                          BlockState blockstate = this.f_19853_.m_8055_(blockpos);
@@ -18,7 +18,7 @@
                             flag = this.f_19853_.m_46953_(blockpos, true, this) || flag;
                          }
                       }
-@@ -313,6 +_,10 @@
+@@ -314,6 +_,10 @@
        }
     }
  

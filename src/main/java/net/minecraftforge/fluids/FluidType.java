@@ -365,7 +365,7 @@ public class FluidType
      */
     public boolean canRideVehicleUnder(Entity vehicle, Entity rider)
     {
-        if (this == ForgeMod.WATER_TYPE.get()) return vehicle.rideableUnderWater();
+        if (this == ForgeMod.WATER_TYPE.get()) return !vehicle.dismountsUnderwater();
         return true;
     }
 

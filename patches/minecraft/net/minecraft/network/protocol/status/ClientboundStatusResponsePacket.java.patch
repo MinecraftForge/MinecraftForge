@@ -1,11 +1,22 @@
 --- a/net/minecraft/network/protocol/status/ClientboundStatusResponsePacket.java
 +++ b/net/minecraft/network/protocol/status/ClientboundStatusResponsePacket.java
-@@ -22,7 +_,7 @@
+@@ -3,12 +_,18 @@
+ import net.minecraft.network.FriendlyByteBuf;
+ import net.minecraft.network.protocol.Packet;
+ 
+-public record ClientboundStatusResponsePacket(ServerStatus f_134886_) implements Packet<ClientStatusPacketListener> {
++public record ClientboundStatusResponsePacket(ServerStatus f_134886_, @org.jetbrains.annotations.Nullable String cachedStatus) implements Packet<ClientStatusPacketListener> {
++   public ClientboundStatusResponsePacket(ServerStatus f_134886_) {
++      this(f_134886_, null);
++   }
++
+    public ClientboundStatusResponsePacket(FriendlyByteBuf p_179834_) {
+       this(p_179834_.m_271872_(ServerStatus.f_271163_));
     }
  
     public void m_5779_(FriendlyByteBuf p_134899_) {
--      p_134899_.m_130070_(f_134885_.toJson(this.f_134886_));
-+      p_134899_.m_130070_(this.f_134886_.getJson()); //Forge: Let the response cache the JSON
++      if (cachedStatus != null) p_134899_.m_130070_(cachedStatus);
++      else
+       p_134899_.m_272073_(ServerStatus.f_271163_, this.f_134886_);
     }
  
-    public void m_5797_(ClientStatusPacketListener p_134896_) {

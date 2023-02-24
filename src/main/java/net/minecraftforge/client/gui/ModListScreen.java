@@ -283,7 +283,7 @@ public class ModListScreen extends Screen
         this.addRenderableWidget(configButton);
         this.addRenderableWidget(openModsFolderButton);
 
-        search.setFocus(false);
+        search.setFocused(false);
         search.setCanLoseFocus(true);
         configButton.active = false;
 
