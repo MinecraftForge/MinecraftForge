@@ -27,6 +27,7 @@ public class KeyMappingLookup
         }
     }
 
+    @Deprecated(forRemoval = true)
     @Nullable
     public KeyMapping get(InputConstants.Key keyCode)
     {
@@ -59,6 +60,16 @@ public class KeyMappingLookup
         return null;
     }
 
+    /**
+     * Returns all active keys associated with the given key code and the active
+     * modifiers and conflict context.
+     *
+     * This could probably be renamed to something like getActiveMappings, but
+     * that would be a breaking change.
+     *
+     * @param keyCode the key being pressed
+     * @return the list of key mappings
+     */
     public List<KeyMapping> getAll(InputConstants.Key keyCode)
     {
         List<KeyMapping> matchingBindings = new ArrayList<KeyMapping>();
@@ -67,7 +78,11 @@ public class KeyMappingLookup
             Collection<KeyMapping> bindings = bindingsMap.get(keyCode);
             if (bindings != null)
             {
-                matchingBindings.addAll(bindings);
+                for (KeyMapping binding : bindings)
+                {
+                    if (binding.isConflictContextAndModifierActive())
+                        matchingBindings.add(binding);
+                }
             }
         }
         return matchingBindings;
