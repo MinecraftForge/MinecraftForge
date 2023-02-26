@@ -203,6 +203,7 @@ public interface IForgeItem
 
     /**
      * Called when an entity stops using an item for any reason, notably when selecting another item without releasing or finishing.
+     * This method is called in addition to any other hooks called when an item is finished using; when another hook is also called it will be called before this method.
      *
      * For most uses, you likely want one of the following:
      * <ul>
