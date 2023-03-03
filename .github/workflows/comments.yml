@@ -9,8 +9,11 @@ permissions:
   discussions: write
 
 jobs:
-  labels:
-    uses: MinecraftForge/SharedActions/.github/workflows/comment_actions.yml@main
-    secrets:
-      GH_APP_KEY: ${{ secrets.GH_APP_KEY }}
-      GH_APP_NAME: ${{ secrets.GH_APP_NAME }}
+  check_commands:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: ForgeForce/ForgeCommands@v1_new
+        with:
+          gh_app_key: ${{ secrets.GH_APP_KEY }}
+          gh_app_name: ${{ secrets.GH_APP_NAME }}
+          config_directory: ForgeForce/ActionsStore:configs@main
