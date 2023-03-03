@@ -9,6 +9,18 @@
        }
  
     }
+@@ -320,6 +_,11 @@
+    }
+ 
+    public void m_109128_(ResourceLocation p_109129_) {
++      p_109129_ = net.minecraftforge.client.ForgeHooksClient.onEntityShaderLoad(this.f_109050_, p_109129_);
++      if (p_109129_ == null) {
++         return;
++      }
++
+       if (this.f_109050_ != null) {
+          this.f_109050_.close();
+       }
 @@ -586,6 +_,7 @@
           list1.add(Pair.of(new ShaderInstance(p_250719_, "rendertype_crumbling", DefaultVertexFormat.f_85811_), (p_234230_) -> {
              f_172607_ = p_234230_;

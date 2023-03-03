@@ -49,6 +49,7 @@ import net.minecraft.client.renderer.FogRenderer;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.PostChain;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
@@ -131,6 +132,7 @@ import net.minecraftforge.client.event.RenderLevelStageEvent;
 import net.minecraftforge.client.event.RenderTooltipEvent;
 import net.minecraftforge.client.event.ScreenEvent;
 import net.minecraftforge.client.event.ScreenshotEvent;
+import net.minecraftforge.client.event.ShaderEffectLoadEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.client.event.ToastAddEvent;
 import net.minecraftforge.client.event.ViewportEvent;
@@ -568,6 +570,14 @@ public class ForgeHooksClient
                 entityRenderer.loadEffect(shader);
             }
         }
+    }
+
+    @Nullable
+    public static ResourceLocation onEntityShaderLoad(@Nullable PostChain currentEffect, ResourceLocation newShaderEffect)
+    {
+        ShaderEffectLoadEvent event = new ShaderEffectLoadEvent(currentEffect == null ? null : new ResourceLocation(currentEffect.getName()), newShaderEffect);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event.getNewShaderEffect();
     }
 
     private static int slotMainHand = 0;
