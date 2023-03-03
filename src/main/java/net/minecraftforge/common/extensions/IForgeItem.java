@@ -205,6 +205,10 @@ public interface IForgeItem
      * Called when an entity stops using an item for any reason, notably when selecting another item without releasing or finishing.
      * This method is called in addition to any other hooks called when an item is finished using; when another hook is also called it will be called before this method.
      *
+     * Note that if you break an item while using it (that is, it becomes empty without swapping the stack instance), this hook may not be called on the serverside as you are
+     * technically still using the empty item (thus this hook is called on air instead). It is necessary to call {@link LivingEntity#stopUsingItem()} as part of your
+     * {@link ItemStack#hurtAndBreak(int, LivingEntity, Consumer)} callback to prevent this issue.
+     *
      * For most uses, you likely want one of the following:
      * <ul>
      *   <li>{@link Item#finishUsingItem(ItemStack, Level, LivingEntity)} for when the player releases and enough ticks have passed
