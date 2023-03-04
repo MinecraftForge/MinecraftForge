@@ -39,8 +39,8 @@
 -      this.m_172993_(RenderType.m_110451_(), p_109600_, d0, d1, d2, p_254120_);
 -      this.m_172993_(RenderType.m_110457_(), p_109600_, d0, d1, d2, p_254120_);
 -      this.m_172993_(RenderType.m_110463_(), p_109600_, d0, d1, d2, p_254120_);
-+      // FORGE: render all layers in registration order
-+      for (RenderType type : net.minecraftforge.client.ChunkBufferLayerManager.getRegisteredTypes()) {
++      // FORGE: render all solid layers in registration order
++      for (RenderType type : net.minecraftforge.client.ChunkBufferLayerManager.getRegisteredSolidRenderTypes()) {
 +          this.m_172993_(type, p_109600_, d0, d1, d2, p_254120_);
 +      }
        if (this.f_109465_.m_104583_().m_108885_()) {
@@ -136,7 +136,22 @@
        }
  
        PoseStack posestack = RenderSystem.m_157191_();
-@@ -1341,7 +_,8 @@
+@@ -1334,14 +_,21 @@
+          this.f_109413_.m_83954_(Minecraft.f_91002_);
+          this.f_109413_.m_83945_(this.f_109461_.m_91385_());
+          profilerfiller.m_6182_("translucent");
+-         this.m_172993_(RenderType.m_110466_(), p_109600_, d0, d1, d2, p_254120_);
++         // FORGE: render all translucent layers in registration order
++         for (RenderType type : net.minecraftforge.client.ChunkBufferLayerManager.getRegisteredTranslucentRenderTypes()) {
++            this.m_172993_(type, p_109600_, d0, d1, d2, p_254120_);
++         }
+          profilerfiller.m_6182_("string");
+-         this.m_172993_(RenderType.m_110503_(), p_109600_, d0, d1, d2, p_254120_);
++         // FORGE: render all translucent layers in registration order
++         for (RenderType type : net.minecraftforge.client.ChunkBufferLayerManager.getRegisteredTripwireRenderTypes()) {
++            this.m_172993_(type, p_109600_, d0, d1, d2, p_254120_);
++         }
+          this.f_109415_.m_83954_(Minecraft.f_91002_);
           this.f_109415_.m_83945_(this.f_109461_.m_91385_());
           RenderStateShard.f_110126_.m_110185_();
           profilerfiller.m_6182_("particles");
@@ -146,9 +161,23 @@
           RenderStateShard.f_110126_.m_110188_();
        } else {
           profilerfiller.m_6182_("translucent");
-@@ -1355,7 +_,8 @@
+@@ -1349,13 +_,20 @@
+             this.f_109413_.m_83954_(Minecraft.f_91002_);
+          }
+ 
+-         this.m_172993_(RenderType.m_110466_(), p_109600_, d0, d1, d2, p_254120_);
++         // FORGE: render all translucent layers in registration order
++         for (RenderType type : net.minecraftforge.client.ChunkBufferLayerManager.getRegisteredTranslucentRenderTypes()) {
++            this.m_172993_(type, p_109600_, d0, d1, d2, p_254120_);
++         }
+          multibuffersource$buffersource.m_109912_(RenderType.m_110504_());
+          multibuffersource$buffersource.m_109911_();
           profilerfiller.m_6182_("string");
-          this.m_172993_(RenderType.m_110503_(), p_109600_, d0, d1, d2, p_254120_);
+-         this.m_172993_(RenderType.m_110503_(), p_109600_, d0, d1, d2, p_254120_);
++         // FORGE: render all translucent layers in registration order
++         for (RenderType type : net.minecraftforge.client.ChunkBufferLayerManager.getRegisteredTripwireRenderTypes()) {
++            this.m_172993_(type, p_109600_, d0, d1, d2, p_254120_);
++         }
           profilerfiller.m_6182_("particles");
 -         this.f_109461_.f_91061_.m_107336_(p_109600_, multibuffersource$buffersource, p_109606_, p_109604_, p_109601_);
 +         this.f_109461_.f_91061_.render(p_109600_, multibuffersource$buffersource, p_109606_, p_109604_, p_109601_, frustum);
@@ -172,6 +201,24 @@
           this.m_173012_(p_109604_);
           RenderSystem.m_69458_(true);
        }
+@@ -1416,7 +_,7 @@
+    private void m_172993_(RenderType p_172994_, PoseStack p_172995_, double p_172996_, double p_172997_, double p_172998_, Matrix4f p_254039_) {
+       RenderSystem.m_187554_();
+       p_172994_.m_110185_();
+-      if (p_172994_ == RenderType.m_110466_()) {
++      if (p_172994_.performTranslucentSort()) {
+          this.f_109461_.m_91307_().m_6180_("translucent_sort");
+          double d0 = p_172996_ - this.f_109445_;
+          double d1 = p_172997_ - this.f_109446_;
+@@ -1441,7 +_,7 @@
+       this.f_109461_.m_91307_().m_6523_(() -> {
+          return "render_" + p_172994_;
+       });
+-      boolean flag = p_172994_ != RenderType.m_110466_();
++      boolean flag = !p_172994_.performTranslucentSort();
+       ObjectListIterator<LevelRenderer.RenderChunkInfo> objectlistiterator = this.f_194297_.listIterator(flag ? 0 : this.f_194297_.size());
+       ShaderInstance shaderinstance = RenderSystem.m_157196_();
+ 
 @@ -1521,6 +_,7 @@
        shaderinstance.m_173362_();
        VertexBuffer.m_85931_();

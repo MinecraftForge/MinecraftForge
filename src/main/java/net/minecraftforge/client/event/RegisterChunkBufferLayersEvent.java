@@ -31,31 +31,61 @@ import com.mojang.blaze3d.vertex.DefaultVertexFormat;
  */
 public class RegisterChunkBufferLayersEvent extends Event implements IModBusEvent
 {
-    private final List<RenderType> renderTypes;
+    private final List<RenderType> solidRenderTypes;
+    private final List<RenderType> translucentRenderTypes;
+    private final List<RenderType> tripwireRenderTypes;
 
     @ApiStatus.Internal
-    public RegisterChunkBufferLayersEvent(List<RenderType> renderTypes)
+    public RegisterChunkBufferLayersEvent(List<RenderType> solidRenderTypes, List<RenderType> translucentRenderTypes, List<RenderType> tripwireRenderTypes)
     {
-        this.renderTypes = renderTypes;
+        this.solidRenderTypes = solidRenderTypes;
+        this.translucentRenderTypes = translucentRenderTypes;
+        this.tripwireRenderTypes = tripwireRenderTypes;
     }
 
     /**
-     * Registers a {@link RenderType} as a chunk buffer layer.
+     * Registers a {@link RenderType} as a solid chunk buffer layer.
      *
-     * @param after The existing render type to register after.
-     * @param value The render type to register as a new chunk layer.
+     * @param after The existing solid render type to register after.
+     * @param value The render type to register as a new solid chunk layer.
      */
-    public void registerAfter(RenderType after, RenderType value)
+    public void registerSolid(RenderType after, RenderType value)
+    {
+        registerToList(solidRenderTypes, after, value);
+    }
+
+    /**
+     * Registers a {@link RenderType} as a translucent chunk buffer layer.
+     *
+     * @param after The existing translucent render type to register after.
+     * @param value The render type to register as a new translucent chunk layer.
+     */
+    public void registerTranslucent(RenderType after, RenderType value)
+    {
+        registerToList(translucentRenderTypes, after, value);
+    }
+
+    /**
+     * Registers a {@link RenderType} as a tripwire chunk buffer layer.
+     *
+     * @param after The existing tripwire render type to register after.
+     * @param value The render type to register as a new tripwire chunk layer.
+     */
+    public void registerTripwire(RenderType after, RenderType value)
+    {
+        registerToList(tripwireRenderTypes, after, value);
+    }
+
+    private void registerToList(List<RenderType> list, RenderType after, RenderType value)
     {
         Objects.requireNonNull(after);
         Objects.requireNonNull(value);
-        Preconditions.checkArgument(renderTypes.contains(after), "Render type to register after is not registered");
-        Preconditions.checkArgument(!renderTypes.contains(value), "Render type already registered.");
+        Preconditions.checkArgument(list.contains(after), "Render type to register after is not registered");
+        Preconditions.checkArgument(!list.contains(value), "Render type already registered.");
         Preconditions.checkArgument(after.format() == DefaultVertexFormat.BLOCK, "The render type to register after must use the BLOCK vertex format.");
         Preconditions.checkArgument(value.format() == DefaultVertexFormat.BLOCK, "The render type to register must use the BLOCK vertex format.");
 
-        final var index = renderTypes.indexOf(after);
-
-        renderTypes.add(index + 1, value);
+        final var index = list.indexOf(after);
+        list.add(index + 1, value);
     }
 }

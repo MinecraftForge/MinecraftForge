@@ -1,5 +1,22 @@
 --- a/net/minecraft/client/renderer/RenderType.java
 +++ b/net/minecraft/client/renderer/RenderType.java
+@@ -28,7 +_,7 @@
+    private static final RenderType f_110372_ = m_173215_("solid", DefaultVertexFormat.f_85811_, VertexFormat.Mode.QUADS, 2097152, true, false, RenderType.CompositeState.m_110628_().m_110671_(f_110152_).m_173292_(f_173105_).m_173290_(f_110145_).m_110691_(true));
+    private static final RenderType f_110373_ = m_173215_("cutout_mipped", DefaultVertexFormat.f_85811_, VertexFormat.Mode.QUADS, 131072, true, false, RenderType.CompositeState.m_110628_().m_110671_(f_110152_).m_173292_(f_173106_).m_173290_(f_110145_).m_110691_(true));
+    private static final RenderType f_110374_ = m_173215_("cutout", DefaultVertexFormat.f_85811_, VertexFormat.Mode.QUADS, 131072, true, false, RenderType.CompositeState.m_110628_().m_110671_(f_110152_).m_173292_(f_173107_).m_173290_(f_110146_).m_110691_(true));
+-   private static final RenderType f_110375_ = m_173215_("translucent", DefaultVertexFormat.f_85811_, VertexFormat.Mode.QUADS, 2097152, true, true, m_173207_(f_173108_));
++   private static final RenderType f_110375_ = create("translucent", DefaultVertexFormat.f_85811_, VertexFormat.Mode.QUADS, 2097152, true, true, true, m_173207_(f_173108_));
+    private static final RenderType f_110376_ = m_173215_("translucent_moving_block", DefaultVertexFormat.f_85811_, VertexFormat.Mode.QUADS, 262144, false, true, m_110408_());
+    private static final RenderType f_110377_ = m_173215_("translucent_no_crumbling", DefaultVertexFormat.f_85811_, VertexFormat.Mode.QUADS, 262144, false, true, m_173207_(f_173110_));
+    private static final Function<ResourceLocation, RenderType> f_173155_ = Util.m_143827_((p_173206_) -> {
+@@ -138,6 +_,7 @@
+    private final int f_110391_;
+    private final boolean f_110392_;
+    private final boolean f_110393_;
++   private final boolean performTranslucentSort;
+    private final Optional<RenderType> f_110394_;
+ 
+    public static RenderType m_110451_() {
 @@ -301,27 +_,27 @@
     }
  
@@ -34,15 +51,75 @@
     }
  
     public static RenderType m_110502_() {
+@@ -352,13 +_,19 @@
+       return f_173152_;
+    }
+ 
++   @Deprecated(since = "1.19.3")
+    public RenderType(String p_173178_, VertexFormat p_173179_, VertexFormat.Mode p_173180_, int p_173181_, boolean p_173182_, boolean p_173183_, Runnable p_173184_, Runnable p_173185_) {
++      this(p_173178_, p_173179_, p_173180_, p_173181_, p_173182_, p_173183_, false, p_173184_, p_173185_);
++   }
++
++   public RenderType(String p_173178_, VertexFormat p_173179_, VertexFormat.Mode p_173180_, int p_173181_, boolean p_173182_, boolean p_173183_, boolean performTranslucentSort, Runnable p_173184_, Runnable p_173185_) {
+       super(p_173178_, p_173184_, p_173185_);
+       this.f_110389_ = p_173179_;
+       this.f_110390_ = p_173180_;
+       this.f_110391_ = p_173181_;
+       this.f_110392_ = p_173182_;
+       this.f_110393_ = p_173183_;
++      this.performTranslucentSort = performTranslucentSort;
+       this.f_110394_ = Optional.of(this);
+    }
+ 
+@@ -367,8 +_,12 @@
+    }
+ 
+    public static RenderType.CompositeRenderType m_173215_(String p_173216_, VertexFormat p_173217_, VertexFormat.Mode p_173218_, int p_173219_, boolean p_173220_, boolean p_173221_, RenderType.CompositeState p_173222_) {
+-      return new RenderType.CompositeRenderType(p_173216_, p_173217_, p_173218_, p_173219_, p_173220_, p_173221_, p_173222_);
++      return create(p_173216_, p_173217_, p_173218_, p_173219_, p_173220_, p_173221_, false, p_173222_);
+    }
++
++   public static RenderType.CompositeRenderType create(String p_173216_, VertexFormat p_173217_, VertexFormat.Mode p_173218_, int p_173219_, boolean p_173220_, boolean p_173221_, boolean performTranslucentSort, RenderType.CompositeState p_173222_) {
++       return new RenderType.CompositeRenderType(p_173216_, p_173217_, p_173218_, p_173219_, p_173220_, p_173221_, performTranslucentSort, p_173222_);
++    }
+ 
+    public void m_110412_(BufferBuilder p_110413_, int p_110414_, int p_110415_, int p_110416_) {
+       if (p_110413_.m_85732_()) {
 @@ -388,7 +_,7 @@
     }
  
     public static List<RenderType> m_110506_() {
 -      return f_234324_;
-+      return net.minecraftforge.client.ChunkBufferLayerManager.getRegisteredTypes();
++      return net.minecraftforge.client.ChunkBufferLayerManager.getAllRegisteredRenderTypes();
     }
  
     public int m_110507_() {
+@@ -415,6 +_,10 @@
+       return this.f_110392_;
+    }
+ 
++   public boolean performTranslucentSort() {
++      return this.performTranslucentSort;
++   }
++
+    public boolean m_234326_() {
+       return !this.f_110390_.f_231234_;
+    }
+@@ -432,8 +_,13 @@
+       private final Optional<RenderType> f_110513_;
+       private final boolean f_110514_;
+ 
++      @Deprecated(since = "1.19.3")
+       CompositeRenderType(String p_173258_, VertexFormat p_173259_, VertexFormat.Mode p_173260_, int p_173261_, boolean p_173262_, boolean p_173263_, RenderType.CompositeState p_173264_) {
+-         super(p_173258_, p_173259_, p_173260_, p_173261_, p_173262_, p_173263_, () -> {
++         this(p_173258_, p_173259_, p_173260_, p_173261_, p_173262_, p_173263_, false, p_173264_);
++      }
++
++      CompositeRenderType(String p_173258_, VertexFormat p_173259_, VertexFormat.Mode p_173260_, int p_173261_, boolean p_173262_, boolean p_173263_, boolean performTranslucentSort, RenderType.CompositeState p_173264_) {
++         super(p_173258_, p_173259_, p_173260_, p_173261_, p_173262_, p_173263_, performTranslucentSort, () -> {
+             p_173264_.f_110592_.forEach(RenderStateShard::m_110185_);
+          }, () -> {
+             p_173264_.f_110592_.forEach(RenderStateShard::m_110188_);
 @@ -608,4 +_,15 @@
           return this.f_110696_;
        }

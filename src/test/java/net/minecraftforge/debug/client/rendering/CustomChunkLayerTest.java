@@ -37,7 +37,7 @@ import net.minecraftforge.registries.RegistryObject;
 public class CustomChunkLayerTest
 {
     public static final String MODID = "custom_chunk_layer_test";
-    private static final boolean ENABLE = false;
+    private static final boolean ENABLE = true;
 
     private static RenderType TestRenderType = RenderType.create(
             "custom_chunk_layer_test:test",
@@ -91,7 +91,7 @@ public class CustomChunkLayerTest
         {
             if (!ENABLE) return;
 
-            event.registerAfter(RenderType.solid(), TestRenderType);
+            event.registerSolid(RenderType.solid(), TestRenderType);
         }
 
         @SubscribeEvent
