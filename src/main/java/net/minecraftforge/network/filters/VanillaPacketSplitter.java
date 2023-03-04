@@ -11,8 +11,6 @@ import java.util.function.Predicate;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.network.*;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.PacketFlow;
@@ -36,7 +34,7 @@ public class VanillaPacketSplitter
     private static final ResourceLocation CHANNEL = new ResourceLocation("forge", "split");
     private static final String VERSION = "1.1";
 
-    private static final int PROTOCOL_MAX = 2097152;
+    private static final int PROTOCOL_MAX = CompressionDecoder.MAXIMUM_UNCOMPRESSED_LENGTH;
 
     private static final int PAYLOAD_TO_CLIENT_MAX = 1048576;
     // 1 byte for state, 5 byte for VarInt PacketID
@@ -117,7 +115,6 @@ public class VanillaPacketSplitter
 
     private static final List<FriendlyByteBuf> receivedBuffers = new ArrayList<>();
 
-    @SuppressWarnings("unchecked")
     private static void onClientPacket(NetworkEvent.ServerCustomPayloadEvent event)
     {
         NetworkEvent.Context ctx = event.getSource().get();
@@ -152,9 +149,13 @@ public class VanillaPacketSplitter
             {
                 receivedBuffers.clear();
                 full.release();
-                ctx.enqueueWork(() -> ((Packet<ClientPacketListener>)packet).handle(Minecraft.getInstance().getConnection()));
+                ctx.enqueueWork(() -> genericsFtw(packet, event.getSource().get().getNetworkManager().getPacketListener()));
             }
         }
+    }
+
+    private static <T extends PacketListener> void genericsFtw(Packet<T> pkt, Object listener) {
+        pkt.handle((T) listener);
     }
 
     public enum RemoteCompatibility
