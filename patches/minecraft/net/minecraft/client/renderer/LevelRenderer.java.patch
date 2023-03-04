@@ -32,16 +32,20 @@
        profilerfiller.m_6182_("fog");
        FogRenderer.m_234172_(p_109604_, FogRenderer.FogMode.FOG_TERRAIN, Math.max(f, 32.0F), flag2, p_109601_);
        profilerfiller.m_6182_("terrain_setup");
-@@ -1154,7 +_,9 @@
+@@ -1153,9 +_,10 @@
+       profilerfiller.m_6182_("compilechunks");
        this.m_194370_(p_109604_);
        profilerfiller.m_6182_("terrain");
-       this.m_172993_(RenderType.m_110451_(), p_109600_, d0, d1, d2, p_254120_);
-+      this.f_109461_.m_91304_().m_119428_(TextureAtlas.f_118259_).setBlurMipmap(false, this.f_109461_.f_91066_.m_232119_().m_231551_() > 0); // FORGE: fix flickering leaves when mods mess up the blurMipmap settings
-       this.m_172993_(RenderType.m_110457_(), p_109600_, d0, d1, d2, p_254120_);
-+      this.f_109461_.m_91304_().m_119428_(TextureAtlas.f_118259_).restoreLastBlurMipmap();
-       this.m_172993_(RenderType.m_110463_(), p_109600_, d0, d1, d2, p_254120_);
+-      this.m_172993_(RenderType.m_110451_(), p_109600_, d0, d1, d2, p_254120_);
+-      this.m_172993_(RenderType.m_110457_(), p_109600_, d0, d1, d2, p_254120_);
+-      this.m_172993_(RenderType.m_110463_(), p_109600_, d0, d1, d2, p_254120_);
++      // FORGE: render all layers in registration order
++      for (RenderType type : net.minecraftforge.client.ChunkBufferLayerManager.getRegisteredTypes()) {
++          this.m_172993_(type, p_109600_, d0, d1, d2, p_254120_);
++      }
        if (this.f_109465_.m_104583_().m_108885_()) {
           Lighting.m_252995_(p_109600_.m_85850_().m_252922_());
+       } else {
 @@ -1186,7 +_,7 @@
        for(Entity entity : this.f_109465_.m_104735_()) {
           if (this.f_109463_.m_114397_(entity, frustum, d0, d1, d2) || entity.m_20367_(this.f_109461_.f_91074_)) {

@@ -1,0 +1,17 @@
+{
+  "render_type": "custom_chunk_layer_test:test",
+  "elements": [
+    {
+      "from": [ 0, 0, 0 ],
+      "to": [ 16, 16, 16 ],
+      "faces": {
+        "down":  { "texture": "#missing", "cullface": "down" },
+        "up":    { "texture": "#missing", "cullface": "up" },
+        "north": { "texture": "#missing", "cullface": "north" },
+        "south": { "texture": "#missing", "cullface": "south" },
+        "west":  { "texture": "#missing", "cullface": "west" },
+        "east":  { "texture": "#missing", "cullface": "east" }
+      }
+    }
+  ]
+}

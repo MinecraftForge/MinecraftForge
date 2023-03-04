@@ -34,21 +34,28 @@
     }
  
     public static RenderType m_110502_() {
-@@ -608,4 +_,17 @@
+@@ -388,7 +_,7 @@
+    }
+ 
+    public static List<RenderType> m_110506_() {
+-      return f_234324_;
++      return net.minecraftforge.client.ChunkBufferLayerManager.getRegisteredTypes();
+    }
+ 
+    public int m_110507_() {
+@@ -608,4 +_,15 @@
           return this.f_110696_;
        }
     }
 +
 +   // FORGE START
-+   private int chunkLayerId = -1;
++   private int chunkLayerId = -2;
 +   /** {@return the unique ID of this {@link RenderType} for chunk rendering purposes, or {@literal -1} if this is not a chunk {@link RenderType}} */
 +   public final int getChunkLayerId() {
-+      return chunkLayerId;
-+   }
-+   static {
-+      int i = 0;
-+      for (var layer : m_110506_())
-+         layer.chunkLayerId = i++;
++      if (chunkLayerId == -2) {
++         this.chunkLayerId = net.minecraftforge.client.ChunkBufferLayerManager.getId(this);
++      }
++      return this.chunkLayerId;
 +   }
 +   // FORGE END
  }
