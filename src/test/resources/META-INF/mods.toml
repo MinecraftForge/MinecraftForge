@@ -117,6 +117,8 @@ modId="custom_elytra_test"
 [[mods]]
 modId="snow_boots_test"
 [[mods]]
+modId="stop_using_item"
+[[mods]]
 modId="finite_water_test"
 [[mods]]
 modId="scaffolding_test"
