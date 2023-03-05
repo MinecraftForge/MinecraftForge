@@ -58,9 +58,30 @@ public class ChunkEvent extends LevelEvent
      **/
     public static class Load extends ChunkEvent
     {
+        private final boolean newChunk;
+
+        @Deprecated
         public Load(ChunkAccess chunk)
         {
+            this(chunk, false);
+        }
+
+        public Load(ChunkAccess chunk, boolean newChunk)
+        {
             super(chunk);
+            this.newChunk = newChunk;
+        }
+
+        /**
+         * Check whether the Chunk is newly generated, and being loaded for the first time.
+         * <br>
+         * Will only ever return {@code true} on the {@link net.minecraftforge.fml.LogicalSide#SERVER logical server}.
+         *
+         * @return whether the Chunk is newly generated
+         */
+        public boolean isNewChunk()
+        {
+            return newChunk;
         }
     }
 

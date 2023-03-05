@@ -24,7 +24,7 @@
 +               p_140384_.currentlyLoading = levelchunk; // Forge - bypass the future chain when getChunk is called, this prevents deadlocks.
                 levelchunk.m_156369_();
                 levelchunk.m_187958_(this.f_140133_);
-+               net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.level.ChunkEvent.Load(levelchunk));
++               net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.level.ChunkEvent.Load(levelchunk, !(protochunk instanceof ImposterProtoChunk)));
 +               } finally {
 +                   p_140384_.currentlyLoading = null; // Forge - Stop bypassing the future chain.
 +               }
