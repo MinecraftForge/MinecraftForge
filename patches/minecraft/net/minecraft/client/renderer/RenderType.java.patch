@@ -71,20 +71,19 @@
        this.f_110394_ = Optional.of(this);
     }
  
-@@ -367,8 +_,12 @@
+@@ -367,7 +_,11 @@
     }
  
     public static RenderType.CompositeRenderType m_173215_(String p_173216_, VertexFormat p_173217_, VertexFormat.Mode p_173218_, int p_173219_, boolean p_173220_, boolean p_173221_, RenderType.CompositeState p_173222_) {
 -      return new RenderType.CompositeRenderType(p_173216_, p_173217_, p_173218_, p_173219_, p_173220_, p_173221_, p_173222_);
 +      return create(p_173216_, p_173217_, p_173218_, p_173219_, p_173220_, p_173221_, false, p_173222_);
-    }
++   }
 +
 +   public static RenderType.CompositeRenderType create(String p_173216_, VertexFormat p_173217_, VertexFormat.Mode p_173218_, int p_173219_, boolean p_173220_, boolean p_173221_, boolean performTranslucentSort, RenderType.CompositeState p_173222_) {
-+       return new RenderType.CompositeRenderType(p_173216_, p_173217_, p_173218_, p_173219_, p_173220_, p_173221_, performTranslucentSort, p_173222_);
-+    }
++      return new RenderType.CompositeRenderType(p_173216_, p_173217_, p_173218_, p_173219_, p_173220_, p_173221_, performTranslucentSort, p_173222_);
+    }
  
     public void m_110412_(BufferBuilder p_110413_, int p_110414_, int p_110415_, int p_110416_) {
-       if (p_110413_.m_85732_()) {
 @@ -388,7 +_,7 @@
     }
  

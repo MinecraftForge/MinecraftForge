@@ -147,7 +147,7 @@
 +         }
           profilerfiller.m_6182_("string");
 -         this.m_172993_(RenderType.m_110503_(), p_109600_, d0, d1, d2, p_254120_);
-+         // FORGE: render all translucent layers in registration order
++         // FORGE: render all tripwire layers in registration order
 +         for (RenderType type : net.minecraftforge.client.ChunkBufferLayerManager.getRegisteredTripwireRenderTypes()) {
 +            this.m_172993_(type, p_109600_, d0, d1, d2, p_254120_);
 +         }
@@ -174,7 +174,7 @@
           multibuffersource$buffersource.m_109911_();
           profilerfiller.m_6182_("string");
 -         this.m_172993_(RenderType.m_110503_(), p_109600_, d0, d1, d2, p_254120_);
-+         // FORGE: render all translucent layers in registration order
++         // FORGE: render all tripwire layers in registration order
 +         for (RenderType type : net.minecraftforge.client.ChunkBufferLayerManager.getRegisteredTripwireRenderTypes()) {
 +            this.m_172993_(type, p_109600_, d0, d1, d2, p_254120_);
 +         }

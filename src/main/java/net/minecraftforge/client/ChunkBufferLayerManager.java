@@ -60,9 +60,9 @@ public final class ChunkBufferLayerManager
     }
 
     /**
-     * Returns the list of all registered solid chunk buffer layers.
+     * Returns the list of all registered translucent chunk buffer layers.
      *
-     * @return the list of all registered solid chunk buffer layers.
+     * @return the list of all registered translucent chunk buffer layers.
      */
     public static List<RenderType> getRegisteredTranslucentRenderTypes()
     {
@@ -70,9 +70,9 @@ public final class ChunkBufferLayerManager
     }
 
     /**
-     * Returns the list of all registered solid chunk buffer layers.
+     * Returns the list of all registered tripwire chunk buffer layers.
      *
-     * @return the list of all registered solid chunk buffer layers.
+     * @return the list of all registered tripwire chunk buffer layers.
      */
     public static List<RenderType> getRegisteredTripwireRenderTypes()
     {
