@@ -9,6 +9,14 @@
     static Minecraft f_90981_;
     private static final Logger f_90982_ = LogUtils.getLogger();
     public static final boolean f_91002_ = Util.m_137581_() == Util.OS.OSX;
+@@ -264,6 +_,7 @@
+    private final VirtualScreen f_90989_;
+    private final Window f_90990_;
+    private final Timer f_90991_ = new Timer(20.0F, 0L);
++   private final net.minecraftforge.client.renderer.BufferManager bufferManager;
+    private final RenderBuffers f_90993_;
+    public final LevelRenderer f_91060_;
+    private final EntityRenderDispatcher f_90994_;
 @@ -410,7 +_,6 @@
        this.f_231339_ = SignatureValidator.m_216358_(this.f_231338_.getServicesKey());
        this.f_90998_ = p_91084_.f_101905_.f_101942_;
@@ -34,19 +42,23 @@
        this.f_91038_.m_10506_();
        this.f_91066_.m_92145_(this.f_91038_);
        this.f_91039_ = new LanguageManager(this.f_91066_.f_92075_);
-@@ -502,6 +_,8 @@
+@@ -502,7 +_,9 @@
        this.f_91036_.m_7217_(blockentitywithoutlevelrenderer);
        this.f_90995_ = new ItemRenderer(this.f_90987_, this.f_91051_, this.f_91041_, blockentitywithoutlevelrenderer);
        this.f_91036_.m_7217_(this.f_90995_);
-+      // FORGE: We register chunk buffer layers early as the render buffers depend on it
-+      net.minecraftforge.client.ChunkBufferLayerManager.init();
-       this.f_90993_ = new RenderBuffers();
+-      this.f_90993_ = new RenderBuffers();
++      // FORGE: Set up the custom buffer manager so that RenderBuffers can rely on it
++      this.bufferManager = new net.minecraftforge.client.renderer.BufferManager();
++      this.f_90993_ = this.bufferManager.asRenderBuffers();
        this.f_91006_ = new PlayerSocialManager(this, this.f_193584_);
        this.f_91052_ = new BlockRenderDispatcher(this.f_91051_.m_119430_(), blockentitywithoutlevelrenderer, this.f_91040_);
-@@ -511,10 +_,13 @@
+       this.f_91036_.m_7217_(this.f_91052_);
+@@ -510,11 +_,14 @@
+       this.f_91036_.m_7217_(this.f_90994_);
        this.f_91063_ = new GameRenderer(this, this.f_90994_.m_234586_(), this.f_91036_, this.f_90993_);
        this.f_91036_.m_7217_(this.f_91063_.m_247116_());
-       this.f_91060_ = new LevelRenderer(this, this.f_90994_, this.f_167845_, this.f_90993_);
+-      this.f_91060_ = new LevelRenderer(this, this.f_90994_, this.f_167845_, this.f_90993_);
++      this.f_91060_ = new LevelRenderer(this, this.f_90994_, this.f_167845_, this.f_90993_, this.bufferManager);
 +      net.minecraftforge.fml.ModLoader.get().postEvent(new net.minecraftforge.client.event.RenderLevelStageEvent.RegisterStageEvent());
        this.f_91036_.m_7217_(this.f_91060_);
 -      this.m_91271_();
@@ -84,7 +96,7 @@
 +      net.minecraftforge.client.RecipeBookManager.init();
 +      net.minecraftforge.client.gui.overlay.GuiOverlayManager.init();
 +      net.minecraftforge.client.DimensionSpecialEffectsManager.init();
-+      net.minecraftforge.client.NamedRenderTypeManager.init();
++      net.minecraftforge.client.NamedRenderTypeManager.init(this.bufferManager);
 +      net.minecraftforge.client.ColorResolverManager.init();
 +      net.minecraftforge.client.ItemDecoratorHandler.init();
 +
@@ -467,7 +479,21 @@
              if (itemstack == null) {
                 return;
              }
-@@ -2721,6 +_,19 @@
+@@ -2715,12 +_,33 @@
+       return this.f_90990_;
+    }
+ 
++   /**
++    * Forge: Prefer {@link #bufferManager()} instead.
++    */
++   @Deprecated
+    public RenderBuffers m_91269_() {
+       return this.f_90993_;
+    }
++   
++   public net.minecraftforge.client.renderer.BufferManager bufferManager() {
++      return this.bufferManager;
++   }
  
     public void m_91312_(int p_91313_) {
        this.f_91051_.m_119410_(p_91313_);

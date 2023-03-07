@@ -10,7 +10,6 @@ import java.io.IOException;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormat;
 
-import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.RenderType.CompositeState;
@@ -22,12 +21,10 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.Material;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.ForgeRenderTypes;
-import net.minecraftforge.client.event.RegisterChunkBufferLayersEvent;
-import net.minecraftforge.client.event.RegisterNamedRenderTypesEvent;
+import net.minecraftforge.client.event.RegisterRenderTypesEvent;
 import net.minecraftforge.client.event.RegisterShadersEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -37,7 +34,7 @@ import net.minecraftforge.registries.RegistryObject;
 public class CustomChunkLayerTest
 {
     public static final String MODID = "custom_chunk_layer_test";
-    private static final boolean ENABLE = false;
+    private static final boolean ENABLE = true;
 
     private static RenderType TestRenderType = RenderType.create(
             "custom_chunk_layer_test:test",
@@ -87,15 +84,15 @@ public class CustomChunkLayerTest
         }
 
         @SubscribeEvent
-        public static void onRegisterChunkBufferLayers(RegisterChunkBufferLayersEvent event)
+        public static void onRegisterChunkBufferLayers(RegisterRenderTypesEvent.Solid event)
         {
             if (!ENABLE) return;
 
-            event.registerSolid(RenderType.solid(), TestRenderType);
+            event.register(RenderType.solid(), TestRenderType);
         }
 
         @SubscribeEvent
-        public static void onRegisterNamedRenderTypes(RegisterNamedRenderTypesEvent event)
+        public static void onRegisterNamedRenderTypes(RegisterRenderTypesEvent.Named event)
         {
             if (!ENABLE) return;
 

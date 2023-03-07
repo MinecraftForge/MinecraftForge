@@ -1,5 +1,36 @@
 --- a/net/minecraft/client/renderer/LevelRenderer.java
 +++ b/net/minecraft/client/renderer/LevelRenderer.java
+@@ -164,6 +_,7 @@
+    private final EntityRenderDispatcher f_109463_;
+    private final BlockEntityRenderDispatcher f_172946_;
+    private final RenderBuffers f_109464_;
++   private final net.minecraftforge.client.renderer.BufferManager bufferManager;
+    @Nullable
+    private ClientLevel f_109465_;
+    private final BlockingQueue<ChunkRenderDispatcher.RenderChunk> f_194306_ = new LinkedBlockingQueue<>();
+@@ -241,12 +_,21 @@
+    private int f_109450_;
+    private final float[] f_109451_ = new float[1024];
+    private final float[] f_109452_ = new float[1024];
+-
++   
++   /**
++    * @deprecated Use {@link #LevelRenderer(Minecraft, EntityRenderDispatcher, BlockEntityRenderDispatcher, RenderBuffers, net.minecraftforge.client.renderer.BufferManager)} instead.
++    */
++   @Deprecated(since = "1.19.3")
+    public LevelRenderer(Minecraft p_234245_, EntityRenderDispatcher p_234246_, BlockEntityRenderDispatcher p_234247_, RenderBuffers p_234248_) {
++       this(p_234245_, p_234246_, p_234247_, p_234248_, p_234245_.bufferManager());
++   }
++
++   public LevelRenderer(Minecraft p_234245_, EntityRenderDispatcher p_234246_, BlockEntityRenderDispatcher p_234247_, RenderBuffers p_234248_, net.minecraftforge.client.renderer.BufferManager bufferManager) {
+       this.f_109461_ = p_234245_;
+       this.f_109463_ = p_234246_;
+       this.f_172946_ = p_234247_;
+       this.f_109464_ = p_234248_;
++      this.bufferManager = bufferManager;
+ 
+       for(int i = 0; i < 32; ++i) {
+          for(int j = 0; j < 32; ++j) {
 @@ -264,6 +_,8 @@
     }
  
@@ -40,7 +71,7 @@
 -      this.m_172993_(RenderType.m_110457_(), p_109600_, d0, d1, d2, p_254120_);
 -      this.m_172993_(RenderType.m_110463_(), p_109600_, d0, d1, d2, p_254120_);
 +      // FORGE: render all solid layers in registration order
-+      for (RenderType type : net.minecraftforge.client.ChunkBufferLayerManager.getRegisteredSolidRenderTypes()) {
++      for (RenderType type : this.bufferManager.getSolidRenderTypes()) {
 +          this.m_172993_(type, p_109600_, d0, d1, d2, p_254120_);
 +      }
        if (this.f_109465_.m_104583_().m_108885_()) {
@@ -142,13 +173,13 @@
           profilerfiller.m_6182_("translucent");
 -         this.m_172993_(RenderType.m_110466_(), p_109600_, d0, d1, d2, p_254120_);
 +         // FORGE: render all translucent layers in registration order
-+         for (RenderType type : net.minecraftforge.client.ChunkBufferLayerManager.getRegisteredTranslucentRenderTypes()) {
++         for (RenderType type : this.bufferManager.getTranslucentRenderTypes()) {
 +            this.m_172993_(type, p_109600_, d0, d1, d2, p_254120_);
 +         }
           profilerfiller.m_6182_("string");
 -         this.m_172993_(RenderType.m_110503_(), p_109600_, d0, d1, d2, p_254120_);
 +         // FORGE: render all tripwire layers in registration order
-+         for (RenderType type : net.minecraftforge.client.ChunkBufferLayerManager.getRegisteredTripwireRenderTypes()) {
++         for (RenderType type : this.bufferManager.getTripwireRenderTypes()) {
 +            this.m_172993_(type, p_109600_, d0, d1, d2, p_254120_);
 +         }
           this.f_109415_.m_83954_(Minecraft.f_91002_);
@@ -167,7 +198,7 @@
  
 -         this.m_172993_(RenderType.m_110466_(), p_109600_, d0, d1, d2, p_254120_);
 +         // FORGE: render all translucent layers in registration order
-+         for (RenderType type : net.minecraftforge.client.ChunkBufferLayerManager.getRegisteredTranslucentRenderTypes()) {
++         for (RenderType type : this.bufferManager.getTranslucentRenderTypes()) {
 +            this.m_172993_(type, p_109600_, d0, d1, d2, p_254120_);
 +         }
           multibuffersource$buffersource.m_109912_(RenderType.m_110504_());
@@ -175,7 +206,7 @@
           profilerfiller.m_6182_("string");
 -         this.m_172993_(RenderType.m_110503_(), p_109600_, d0, d1, d2, p_254120_);
 +         // FORGE: render all tripwire layers in registration order
-+         for (RenderType type : net.minecraftforge.client.ChunkBufferLayerManager.getRegisteredTripwireRenderTypes()) {
++         for (RenderType type : this.bufferManager.getTripwireRenderTypes()) {
 +            this.m_172993_(type, p_109600_, d0, d1, d2, p_254120_);
 +         }
           profilerfiller.m_6182_("particles");

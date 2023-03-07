@@ -21,13 +21,16 @@ import org.jetbrains.annotations.ApiStatus;
 import java.util.Map;
 
 /**
- * Allows users to register custom named {@link RenderType render types}.
+ * @deprecated Use {@link RegisterRenderTypesEvent.Named} instead.
+ * 
+ * <p>Allows users to register custom named {@link RenderType render types}.
  *
  * <p>This event is not {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}.
  *
  * <p>This event is fired on the {@linkplain FMLJavaModLoadingContext#getModEventBus() mod-specific event bus},
  * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
  */
+@Deprecated(since = "1.19.3")
 public class RegisterNamedRenderTypesEvent extends Event implements IModBusEvent
 {
     private final Map<ResourceLocation, RenderTypeGroup> renderTypes;

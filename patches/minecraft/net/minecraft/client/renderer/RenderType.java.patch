@@ -51,11 +51,9 @@
     }
  
     public static RenderType m_110502_() {
-@@ -352,13 +_,19 @@
-       return f_173152_;
+@@ -353,12 +_,17 @@
     }
  
-+   @Deprecated(since = "1.19.3")
     public RenderType(String p_173178_, VertexFormat p_173179_, VertexFormat.Mode p_173180_, int p_173181_, boolean p_173182_, boolean p_173183_, Runnable p_173184_, Runnable p_173185_) {
 +      this(p_173178_, p_173179_, p_173180_, p_173181_, p_173182_, p_173183_, false, p_173184_, p_173185_);
 +   }
@@ -79,8 +77,8 @@
 +      return create(p_173216_, p_173217_, p_173218_, p_173219_, p_173220_, p_173221_, false, p_173222_);
 +   }
 +
-+   public static RenderType.CompositeRenderType create(String p_173216_, VertexFormat p_173217_, VertexFormat.Mode p_173218_, int p_173219_, boolean p_173220_, boolean p_173221_, boolean performTranslucentSort, RenderType.CompositeState p_173222_) {
-+      return new RenderType.CompositeRenderType(p_173216_, p_173217_, p_173218_, p_173219_, p_173220_, p_173221_, performTranslucentSort, p_173222_);
++   public static RenderType.CompositeRenderType create(String p_173258_, VertexFormat p_173259_, VertexFormat.Mode p_173260_, int p_173261_, boolean p_173262_, boolean p_173263_, boolean performTranslucentSort, RenderType.CompositeState p_173264_) {
++      return new RenderType.CompositeRenderType(p_173258_, p_173259_, p_173260_, p_173261_, p_173262_, p_173263_, performTranslucentSort, p_173264_);
     }
  
     public void m_110412_(BufferBuilder p_110413_, int p_110414_, int p_110415_, int p_110416_) {
@@ -89,7 +87,7 @@
  
     public static List<RenderType> m_110506_() {
 -      return f_234324_;
-+      return net.minecraftforge.client.ChunkBufferLayerManager.getAllRegisteredRenderTypes();
++      return net.minecraftforge.client.ForgeHooksClient.getChunkBufferLayers();
     }
  
     public int m_110507_() {
@@ -129,7 +127,7 @@
 +   /** {@return the unique ID of this {@link RenderType} for chunk rendering purposes, or {@literal -1} if this is not a chunk {@link RenderType}} */
 +   public final int getChunkLayerId() {
 +      if (chunkLayerId == -2) {
-+         this.chunkLayerId = net.minecraftforge.client.ChunkBufferLayerManager.getId(this);
++         this.chunkLayerId = net.minecraftforge.client.ForgeHooksClient.getChunkLayerId(this);
 +      }
 +      return this.chunkLayerId;
 +   }
