@@ -1,0 +1,52 @@
+--- a/net/minecraft/world/item/ArmorMaterials.java
++++ b/net/minecraft/world/item/ArmorMaterials.java
+@@ -82,4 +_,49 @@
+    public float m_6649_() {
+       return this.f_40467_;
+    }
++
++   //FORGE START
++   public static ArmorMaterial create(int[] durabilityPerSlot, int[] protectionPerSlot, int enchantmentValue, SoundEvent equipSound, Ingredient repairIngredient, String name, int toughness, float knockbackResistance) {
++      return new ArmorMaterial() {
++         @Override
++         public int m_7366_(EquipmentSlot slot) {
++            return durabilityPerSlot[slot.m_20749_()];
++         }
++
++         @Override
++         public int m_7365_(EquipmentSlot slot) {
++            return protectionPerSlot[slot.m_20749_()];
++         }
++
++         @Override
++         public int m_6646_() {
++            return enchantmentValue;
++         }
++
++         @Override
++         public SoundEvent m_7344_() {
++            return equipSound;
++         }
++
++         @Override
++         public Ingredient m_6230_() {
++            return repairIngredient;
++         }
++
++         @Override
++         public String m_6082_() {
++            return name;
++         }
++
++         @Override
++         public float m_6651_() {
++            return toughness;
++         }
++
++         @Override
++         public float m_6649_() {
++            return knockbackResistance;
++         }
++      };
++   }
+ }
