@@ -289,12 +289,13 @@
     public TextFilter m_8967_() {
        return this.f_8939_;
     }
-@@ -1550,11 +_,13 @@
+@@ -1550,11 +_,14 @@
  
     public boolean m_182294_(boolean p_182295_) {
        Inventory inventory = this.m_150109_();
 +      ItemStack selected = inventory.m_36056_();
 +      if (selected.m_41619_() || !selected.onDroppedByPlayer(this)) return false;
++      if (m_6117_() && m_7655_() == InteractionHand.MAIN_HAND && (p_182295_ || selected.m_41613_() == 1)) m_5810_(); // Forge: fix MC-231097 on the serverside
        ItemStack itemstack = inventory.m_182403_(p_182295_);
        this.f_36096_.m_182417_(inventory, inventory.f_35977_).ifPresent((p_182293_) -> {
           this.f_36096_.m_150404_(p_182293_, inventory.m_36056_());

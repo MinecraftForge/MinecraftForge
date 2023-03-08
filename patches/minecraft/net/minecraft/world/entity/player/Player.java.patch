@@ -135,11 +135,12 @@
           if (!this.f_19853_.f_46443_) {
              this.m_36246_(Stats.f_12982_.m_12902_(this.f_20935_.m_41720_()));
           }
-@@ -874,6 +_,7 @@
+@@ -874,6 +_,8 @@
              InteractionHand interactionhand = this.m_7655_();
              this.f_20935_.m_41622_(i, this, (p_219739_) -> {
                 p_219739_.m_21190_(interactionhand);
 +               net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(this, this.f_20935_, interactionhand);
++               m_5810_(); // Forge: fix MC-168573
              });
              if (this.f_20935_.m_41619_()) {
                 if (interactionhand == InteractionHand.MAIN_HAND) {
