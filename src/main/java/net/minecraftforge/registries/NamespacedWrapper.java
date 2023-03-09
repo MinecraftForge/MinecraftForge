@@ -51,7 +51,7 @@ class NamespacedWrapper<T> extends MappedRegistry<T> implements ILockableRegistr
     private final Multimap<TagKey<T>, Supplier<T>> optionalTags = Multimaps.newSetMultimap(new IdentityHashMap<>(), HashSet::new);
 
     boolean locked = false;
-    Lifecycle registryLifecycle = Lifecycle.experimental();
+    Lifecycle registryLifecycle = Lifecycle.stable();
     private boolean frozen = false; // Frozen is vanilla's variant of locked, but it can be unfrozen
     private List<Holder.Reference<T>> holdersSorted;
     private ObjectList<Holder.Reference<T>> holdersById = new ObjectArrayList<>(256);
@@ -62,7 +62,7 @@ class NamespacedWrapper<T> extends MappedRegistry<T> implements ILockableRegistr
 
     NamespacedWrapper(ForgeRegistry<T> fowner, Function<T, Holder.Reference<T>> intrusiveHolderCallback, RegistryManager stage)
     {
-        super(fowner.getRegistryKey(), Lifecycle.experimental(), intrusiveHolderCallback != null);
+        super(fowner.getRegistryKey(), Lifecycle.stable(), intrusiveHolderCallback != null);
         this.delegate = fowner;
         this.intrusiveHolderCallback = intrusiveHolderCallback;
         this.stage = stage;
