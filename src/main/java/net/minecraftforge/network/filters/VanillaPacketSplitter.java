@@ -154,7 +154,9 @@ public class VanillaPacketSplitter
         }
     }
 
-    private static <T extends PacketListener> void genericsFtw(Packet<T> pkt, Object listener) {
+    @SupressWarnings("unchecked")
+    private static <T extends PacketListener> void genericsFtw(Packet<T> pkt, Object listener)
+    {
         pkt.handle((T) listener);
     }
 
