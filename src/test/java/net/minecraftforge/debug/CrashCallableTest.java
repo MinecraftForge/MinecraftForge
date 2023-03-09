@@ -17,6 +17,7 @@ import net.minecraftforge.fml.common.Mod;
  * print an exception to the log (relies on a try-catch in vanilla code)</li>
  * <li>The "BadFlagCrashCallable" must never print to the crash report and must print an exception to the log</li>
  * </ul>
+ * To initiate a debug crash to test this, hold F3 + C for 10 seconds.
  */
 @Mod("crash_callable_test")
 public class CrashCallableTest
