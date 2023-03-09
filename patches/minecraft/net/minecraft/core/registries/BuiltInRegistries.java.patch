@@ -265,7 +265,7 @@
     }
  
 +   private static <T> Registry<T> forge(ResourceKey<? extends Registry<T>> key, BuiltInRegistries.RegistryBootstrap<T> def) {
-+      return forge(key, Lifecycle.experimental(), def);
++      return forge(key, Lifecycle.stable(), def);
 +   }
 +
     private static <T> DefaultedRegistry<T> m_257988_(ResourceKey<? extends Registry<T>> p_259887_, String p_259325_, BuiltInRegistries.RegistryBootstrap<T> p_259759_) {
@@ -273,7 +273,7 @@
     }
  
 +   private static <T> DefaultedRegistry<T> forge(ResourceKey<? extends Registry<T>> key, String defKey, BuiltInRegistries.RegistryBootstrap<T> def) {
-+      return forge(key, defKey, Lifecycle.experimental(), def);
++      return forge(key, defKey, Lifecycle.stable(), def);
 +   }
 +
     private static <T> DefaultedRegistry<T> m_257834_(ResourceKey<? extends Registry<T>> p_259296_, String p_259101_, BuiltInRegistries.RegistryBootstrap<T> p_259485_) {
