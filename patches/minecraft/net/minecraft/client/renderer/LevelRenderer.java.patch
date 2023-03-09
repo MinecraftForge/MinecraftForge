@@ -96,10 +96,18 @@
                    multibuffersource = multibuffersource$buffersource;
                 }
  
-@@ -1220,12 +_,14 @@
-       multibuffersource$buffersource.m_109912_(RenderType.m_110452_(TextureAtlas.f_118259_));
-       multibuffersource$buffersource.m_109912_(RenderType.m_110458_(TextureAtlas.f_118259_));
-       multibuffersource$buffersource.m_109912_(RenderType.m_110476_(TextureAtlas.f_118259_));
+@@ -1214,18 +_,17 @@
+          }
+       }
+ 
+-      multibuffersource$buffersource.m_173043_();
++      // FORGE: end all dynamic batches in order
++      multibuffersource$buffersource.m_109911_();
+       this.m_109588_(p_109600_);
+-      multibuffersource$buffersource.m_109912_(RenderType.m_110446_(TextureAtlas.f_118259_));
+-      multibuffersource$buffersource.m_109912_(RenderType.m_110452_(TextureAtlas.f_118259_));
+-      multibuffersource$buffersource.m_109912_(RenderType.m_110458_(TextureAtlas.f_118259_));
+-      multibuffersource$buffersource.m_109912_(RenderType.m_110476_(TextureAtlas.f_118259_));
 +      net.minecraftforge.client.ForgeHooksClient.dispatchRenderStage(net.minecraftforge.client.event.RenderLevelStageEvent.Stage.AFTER_ENTITIES, this, p_109600_, p_254120_, this.f_109477_, p_109604_, frustum);
        profilerfiller.m_6182_("blockentities");
  
@@ -121,7 +129,7 @@
  
                 this.f_172946_.m_112267_(blockentity1, p_109601_, p_109600_, multibuffersource1);
                 p_109600_.m_85849_();
-@@ -1251,9 +_,13 @@
+@@ -1251,31 +_,28 @@
  
        synchronized(this.f_109468_) {
           for(BlockEntity blockentity : this.f_109468_) {
@@ -135,7 +143,24 @@
              this.f_172946_.m_112267_(blockentity, p_109601_, p_109600_, multibuffersource$buffersource);
              p_109600_.m_85849_();
           }
-@@ -1276,6 +_,7 @@
+       }
+ 
+       this.m_109588_(p_109600_);
+-      multibuffersource$buffersource.m_109912_(RenderType.m_110451_());
+-      multibuffersource$buffersource.m_109912_(RenderType.m_173239_());
+-      multibuffersource$buffersource.m_109912_(RenderType.m_173242_());
+-      multibuffersource$buffersource.m_109912_(Sheets.m_110789_());
+-      multibuffersource$buffersource.m_109912_(Sheets.m_110790_());
+-      multibuffersource$buffersource.m_109912_(Sheets.m_110785_());
+-      multibuffersource$buffersource.m_109912_(Sheets.m_110786_());
+-      multibuffersource$buffersource.m_109912_(Sheets.m_110787_());
+-      multibuffersource$buffersource.m_109912_(Sheets.m_246640_());
+-      multibuffersource$buffersource.m_109912_(Sheets.m_110788_());
++      // FORGE: end all dynamic batches in order
++      multibuffersource$buffersource.m_109911_();
+       this.f_109464_.m_110109_().m_109928_();
+       if (flag3) {
+          this.f_109412_.m_110023_(p_109601_);
           this.f_109461_.m_91385_().m_83947_(false);
        }
  
@@ -167,7 +192,28 @@
        }
  
        PoseStack posestack = RenderSystem.m_157191_();
-@@ -1334,14 +_,21 @@
+@@ -1316,32 +_,30 @@
+       this.f_109461_.f_91064_.m_113457_(p_109600_, multibuffersource$buffersource, d0, d1, d2);
+       posestack.m_85849_();
+       RenderSystem.m_157182_();
+-      multibuffersource$buffersource.m_109912_(Sheets.m_110792_());
+-      multibuffersource$buffersource.m_109912_(Sheets.m_110762_());
+-      multibuffersource$buffersource.m_109912_(Sheets.m_110782_());
+-      multibuffersource$buffersource.m_109912_(RenderType.m_110481_());
+-      multibuffersource$buffersource.m_109912_(RenderType.m_110484_());
+-      multibuffersource$buffersource.m_109912_(RenderType.m_110490_());
+-      multibuffersource$buffersource.m_109912_(RenderType.m_110493_());
+-      multibuffersource$buffersource.m_109912_(RenderType.m_110487_());
+-      multibuffersource$buffersource.m_109912_(RenderType.m_110496_());
+-      multibuffersource$buffersource.m_109912_(RenderType.m_110499_());
+-      multibuffersource$buffersource.m_109912_(RenderType.m_110478_());
++      // FORGE: end all dynamic batches in order
++      multibuffersource$buffersource.m_109911_();
+       this.f_109464_.m_110108_().m_109911_();
+       if (this.f_109418_ != null) {
+-         multibuffersource$buffersource.m_109912_(RenderType.m_110504_());
++         //multibuffersource$buffersource.endBatch(RenderType.lines());
+          multibuffersource$buffersource.m_109911_();
           this.f_109413_.m_83954_(Minecraft.f_91002_);
           this.f_109413_.m_83945_(this.f_109461_.m_91385_());
           profilerfiller.m_6182_("translucent");
@@ -192,16 +238,16 @@
           RenderStateShard.f_110126_.m_110188_();
        } else {
           profilerfiller.m_6182_("translucent");
-@@ -1349,13 +_,20 @@
+@@ -1349,13 +_,19 @@
              this.f_109413_.m_83954_(Minecraft.f_91002_);
           }
  
 -         this.m_172993_(RenderType.m_110466_(), p_109600_, d0, d1, d2, p_254120_);
+-         multibuffersource$buffersource.m_109912_(RenderType.m_110504_());
 +         // FORGE: render all translucent layers in registration order
 +         for (RenderType type : this.bufferManager.getTranslucentRenderTypes()) {
 +            this.m_172993_(type, p_109600_, d0, d1, d2, p_254120_);
 +         }
-          multibuffersource$buffersource.m_109912_(RenderType.m_110504_());
           multibuffersource$buffersource.m_109911_();
           profilerfiller.m_6182_("string");
 -         this.m_172993_(RenderType.m_110503_(), p_109600_, d0, d1, d2, p_254120_);
