@@ -11,9 +11,16 @@ import javax.annotation.Nullable
 class TeamcityRequests {
     public static final Gson GSON = new Gson()
 
+    @Nullable
     static <T> T jsonRequest(TypeToken<T> clazz, String url) throws Exception {
-        final URLConnection conn = URI.create(url).toURL().openConnection()
+        final HttpURLConnection conn = (HttpURLConnection) URI.create(url).toURL().openConnection()
         conn.setRequestProperty('Accept', 'application/json')
+        conn.connect()
+
+        if (conn.responseCode !== 200) {
+            return null
+        }
+
         try (final InputStream is = conn.getInputStream()) {
             GSON.fromJson(new InputStreamReader(is), clazz.getType())
         }
@@ -21,9 +28,7 @@ class TeamcityRequests {
 
     @Nullable
     static Build findMatching(String commitId) throws IOException {
-        final builds = jsonRequest(new TypeToken<Builds>() {},
-                "https://teamcity.minecraftforge.net/guestAuth/app/rest/builds?locator=revision:($commitId),buildType:(id:MinecraftForge_MinecraftForge_MinecraftForge_MinecraftForge__Build)")
-        builds.build.find()
+        jsonRequest(new TypeToken<Builds>() {}, "https://teamcity.minecraftforge.net/guestAuth/app/rest/builds?locator=revision:($commitId),buildType:(id:MinecraftForge_MinecraftForge_MinecraftForge_MinecraftForge__Build)")?.build?.find()
     }
 
     @Nullable
