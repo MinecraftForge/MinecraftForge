@@ -1,0 +1,11 @@
+--- a/net/minecraft/core/Registry.java
++++ b/net/minecraft/core/Registry.java
+@@ -21,7 +_,7 @@
+ import net.minecraft.util.ExtraCodecs;
+ import net.minecraft.util.RandomSource;
+ 
+-public interface Registry<T> extends Keyable, IdMap<T> {
++public interface Registry<T> extends Keyable, IdMap<T>, net.minecraftforge.registries.attachment.IWithRegistryAttachments<T> {
+    ResourceKey<? extends Registry<T>> m_123023_();
+ 
+    default Codec<T> m_194605_() {

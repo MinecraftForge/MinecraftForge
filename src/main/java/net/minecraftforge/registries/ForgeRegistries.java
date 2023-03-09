@@ -45,10 +45,9 @@ import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.loot.IGlobalLootModifier;
 import net.minecraftforge.common.world.BiomeModifier;
 import net.minecraftforge.fluids.FluidType;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.registries.attachment.IRegistryAttachmentType;
 import net.minecraftforge.registries.holdersets.HolderSetType;
 
-import java.util.function.Consumer;
 import java.util.function.Supplier;
 import net.minecraftforge.common.world.StructureModifier;
 
@@ -136,6 +135,13 @@ public class ForgeRegistries
      * Use {@link Keys#HOLDER_SET_TYPES} to create a {@link DeferredRegister}.
      */
     public static final Supplier<IForgeRegistry<HolderSetType>> HOLDER_SET_TYPES = DEFERRED_HOLDER_SET_TYPES.makeRegistry(GameData::getHolderSetTypeRegistryBuilder);
+    static final DeferredRegister<IRegistryAttachmentType<?>> DEFERRED_REGISTRY_ATTACHMENT_TYPES = DeferredRegister.create(Keys.REGISTRY_ATTACHMENT_TYPES, "forge");
+    /**
+     * Calling {@link Supplier#get()} before {@link NewRegistryEvent} is fired will result in a null registry returned.
+     * Use {@link Keys#REGISTRY_ATTACHMENT_TYPES} to create a {@link DeferredRegister}.
+     */
+    public static final Supplier<IForgeRegistry<IRegistryAttachmentType<?>>> REGISTRY_ATTACHMENT_TYPES = DEFERRED_REGISTRY_ATTACHMENT_TYPES.makeRegistry(() -> new RegistryBuilder<IRegistryAttachmentType<?>>()
+            .disableOverrides().disableSaving());
 
     public static final class Keys {
         //Vanilla
@@ -183,6 +189,7 @@ public class ForgeRegistries
         // Forge Dynamic
         public static final ResourceKey<Registry<BiomeModifier>> BIOME_MODIFIERS = key("forge:biome_modifier");
         public static final ResourceKey<Registry<StructureModifier>> STRUCTURE_MODIFIERS = key("forge:structure_modifier");
+        public static final ResourceKey<Registry<IRegistryAttachmentType<?>>> REGISTRY_ATTACHMENT_TYPES = key("forge:registry_attachment_types");
 
         private static <T> ResourceKey<Registry<T>> key(String name)
         {

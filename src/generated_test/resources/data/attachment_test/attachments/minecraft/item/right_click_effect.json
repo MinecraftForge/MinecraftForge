@@ -1,0 +1,24 @@
+{
+  "replace": false,
+  "values": {
+    "minecraft:acacia_fence": {
+      "duration": 6,
+      "effect": "minecraft:nausea"
+    },
+    "minecraft:cactus": {
+      "amplifier": 3,
+      "duration": 10,
+      "effect": "minecraft:resistance",
+      "forge:conditions": [
+        {
+          "type": "forge:mod_loaded",
+          "modid": "not_a_mod"
+        }
+      ]
+    },
+    "minecraft:crafting_table": {
+      "duration": 90,
+      "effect": "minecraft:blindness"
+    }
+  }
+}

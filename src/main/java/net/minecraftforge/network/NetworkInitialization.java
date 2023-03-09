@@ -11,6 +11,8 @@ import net.minecraftforge.registries.RegistryManager;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.BiConsumer;
+import java.util.function.Supplier;
 
 class NetworkInitialization {
 
@@ -97,6 +99,12 @@ class NetworkInitialization {
                 decoder(PlayMessages.OpenContainer::decode).
                 encoder(PlayMessages.OpenContainer::encode).
                 consumerNetworkThread(PlayMessages.OpenContainer::handle).
+                add();
+
+        playChannel.messageBuilder(PlayMessages.SyncAttachments.class, 2).
+                decoder(PlayMessages.SyncAttachments::decode).
+                encoder(PlayMessages.SyncAttachments::encode).
+                consumerNetworkThread((BiConsumer<PlayMessages.SyncAttachments, Supplier<NetworkEvent.Context>>) PlayMessages.SyncAttachments::handle).
                 add();
 
         return playChannel;

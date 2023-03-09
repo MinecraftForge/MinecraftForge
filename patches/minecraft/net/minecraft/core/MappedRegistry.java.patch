@@ -57,3 +57,31 @@
              }
  
              return this;
+@@ -415,5 +_,27 @@
+ 
+    public HolderLookup.RegistryLookup<T> m_255303_() {
+       return this.f_256971_;
++   }
++
++   private boolean duringAttachmentLoading = false;
++   private final Map<ResourceKey<net.minecraftforge.registries.attachment.IRegistryAttachmentType<?>>, net.minecraftforge.registries.attachment.IRegistryAttachmentHolder<T, ?>> attachments = new HashMap<>();
++   @Override
++   @javax.annotation.Nullable
++   public <A> net.minecraftforge.registries.attachment.IRegistryAttachmentHolder<T, A> attachment(ResourceKey<net.minecraftforge.registries.attachment.IRegistryAttachmentType<A>> attachType) {
++      return attachments.computeIfAbsent((ResourceKey)attachType, it -> {
++         final var type = (net.minecraftforge.registries.attachment.IRegistryAttachmentType<A>)net.minecraftforge.registries.ForgeRegistries.REGISTRY_ATTACHMENT_TYPES.get().getValue(attachType.m_135782_());
++         if (!type.isValidFor(this.f_256817_)) return null;
++         final var impl = new net.minecraftforge.registries.attachment.RegistryAttachmentHolderImpl<>(type, this);
++         if (duringAttachmentLoading) impl.unfreeze(); // Start unfrozen if the method is called during attachment loading
++         return impl;
++      });
++   }
++   @Override
++   public Map<ResourceKey<net.minecraftforge.registries.attachment.IRegistryAttachmentType<?>>, net.minecraftforge.registries.attachment.IRegistryAttachmentHolder<T, ?>> attachments() {
++      return java.util.Collections.unmodifiableMap(attachments);
++   }
++   @Override
++   public void setDuringAttachmentLoading(boolean duringAttachmentLoading) {
++      this.duringAttachmentLoading = duringAttachmentLoading;
+    }
+ }

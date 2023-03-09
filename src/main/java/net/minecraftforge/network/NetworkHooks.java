@@ -5,6 +5,9 @@
 
 package net.minecraftforge.network;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -15,12 +18,19 @@ import java.util.stream.Collectors;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
+import net.minecraft.core.RegistryAccess;
+import net.minecraft.network.ConnectionProtocol;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.PacketFlow;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
+import net.minecraft.resources.ResourceKey;
 import net.minecraftforge.client.ConfigScreenHandler;
 import net.minecraftforge.fml.util.thread.EffectiveSide;
 import net.minecraftforge.network.ConnectionData.ModMismatchData;
 import net.minecraftforge.network.filters.NetworkFilters;
+import net.minecraftforge.network.filters.VanillaPacketSplitter;
+import net.minecraftforge.registries.attachment.IRegistryAttachmentHolderInternal;
+import net.minecraftforge.registries.attachment.IRegistryAttachmentType;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -239,5 +249,37 @@ public class NetworkHooks
     public static MCRegisterPacketHandler.ChannelList getChannelList(Connection mgr)
     {
         return mgr.channel().attr(NetworkConstants.FML_MC_REGISTRY).get();
+    }
+
+    public static void syncRegAttachments(PacketDistributor.PacketTarget target, RegistryAccess registryAccess)
+    {
+        registryAccess.registries().forEach(entry ->
+        {
+            final Object packet = regSyncPacket(entry);
+            if (packet == null) return;
+            final List<Packet<?>> out = new ArrayList<>();
+            VanillaPacketSplitter.appendPackets(
+                    ConnectionProtocol.PLAY, PacketFlow.CLIENTBOUND, NetworkConstants.playChannel.toVanillaPacket(packet, NetworkDirection.PLAY_TO_CLIENT), out
+            );
+            out.forEach(target::send);
+        });
+    }
+
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    private static <R> Object regSyncPacket(RegistryAccess.RegistryEntry<R> entry)
+    {
+        final List<PlayMessages.SyncAttachments.Payload<R, ?>> payloads = new ArrayList<>();
+        entry.value().attachments().forEach((key, holder) -> addPayload(payloads, (ResourceKey)key, (IRegistryAttachmentHolderInternal)holder));
+        if (payloads.isEmpty()) return null;
+        return new PlayMessages.SyncAttachments<>(entry.key(), payloads);
+    }
+
+    private static <R, A> void addPayload(List<PlayMessages.SyncAttachments.Payload<R, ?>> payloads, ResourceKey<IRegistryAttachmentType<A>> attachmentType, IRegistryAttachmentHolderInternal<R, A> holder)
+    {
+        final Map<ResourceLocation, A> byObjectId = new HashMap<>();
+        holder.view().forEach((obj, at) -> byObjectId.put(
+                obj.unwrapKey().orElseThrow().location(), at
+        ));
+        payloads.add(new PlayMessages.SyncAttachments.Payload<>(attachmentType, byObjectId));
     }
 }

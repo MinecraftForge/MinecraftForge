@@ -15,10 +15,11 @@ import com.mojang.serialization.DynamicOps;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
 import net.minecraft.tags.TagKey;
-import net.minecraft.world.level.biome.Biome;
 import net.minecraftforge.common.util.LogMessageAdapter;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
+import net.minecraftforge.registries.attachment.IRegistryAttachmentHolder;
+import net.minecraftforge.registries.attachment.IRegistryAttachmentType;
 import net.minecraftforge.registries.tags.ITagManager;
 import org.apache.commons.lang3.Validate;
 
@@ -1261,4 +1262,23 @@ public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegist
     }
 
     private record OverrideOwner<V>(String owner, ResourceKey<V> key){};
+
+    @Nullable
+    @Override
+    public <A> IRegistryAttachmentHolder<V, A> attachment(ResourceKey<IRegistryAttachmentType<A>> type)
+    {
+        return getWrapperOrThrow().attachment(type);
+    }
+
+    @Override
+    public Map<ResourceKey<IRegistryAttachmentType<?>>, IRegistryAttachmentHolder<V, ?>> attachments()
+    {
+        return getWrapperOrThrow().attachments();
+    }
+
+    @Override
+    public void setDuringAttachmentLoading(boolean duringAttachmentLoading)
+    {
+        getWrapperOrThrow().setDuringAttachmentLoading(duringAttachmentLoading);
+    }
 }
