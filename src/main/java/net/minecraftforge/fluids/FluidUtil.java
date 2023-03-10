@@ -143,8 +143,8 @@ public class FluidUtil
                         }
                         else
                         {
-                            //The result should be the same regardless of weather we are simulating or not.
-                            //So we must execute the transfer on the copied item stack so the resultContainer is correct.
+                            // We are acting on a COPY of the stack, so performing changes on the source is acceptable even if we are simulating.
+                            // We need to perform the change otherwise the call to getContainer() will be incorrect.
                             containerFluidHandler.fill(simulatedTransfer, IFluidHandler.FluidAction.EXECUTE);
                         }
 
