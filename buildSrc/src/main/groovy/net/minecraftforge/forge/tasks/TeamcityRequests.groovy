@@ -15,6 +15,8 @@ class TeamcityRequests {
     static <T> T jsonRequest(TypeToken<T> clazz, String url) throws Exception {
         final HttpURLConnection conn = (HttpURLConnection) URI.create(url).toURL().openConnection()
         conn.setRequestProperty('Accept', 'application/json')
+        conn.setReadTimeout(5 * 1000)
+        conn.setConnectTimeout(5 * 1000)
         conn.connect()
 
         if (conn.responseCode !== 200) {
@@ -28,7 +30,7 @@ class TeamcityRequests {
 
     @Nullable
     static Build findMatching(String commitId) throws IOException {
-        jsonRequest(new TypeToken<Builds>() {}, "https://teamcity.minecraftforge.net/guestAuth/app/rest/builds?locator=revision:($commitId),buildType:(id:MinecraftForge_MinecraftForge_MinecraftForge_MinecraftForge__Build)")?.build?.find()
+        jsonRequest(new TypeToken<Builds>() {}, "https://teamcity.minecraftforge.net/guestAuth/app/rest/builds?locator=revision:($commitId),buildType:(id:MinecraftForge_MinecraftForge_MinecraftForge_MinecraftForge__Build),status:SUCCESS")?.build?.find()
     }
 
     @Nullable
