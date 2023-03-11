@@ -8,7 +8,9 @@ package net.minecraftforge.debug.block;
 import java.util.List;
 import java.util.Locale;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.CreativeModeTabs;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.Blocks;
@@ -80,21 +82,10 @@ public class PistonEventTest
         {
             Level world = (Level) event.getLevel();
             PistonStructureResolver pistonHelper = event.getStructureHelper();
-            Player player = DistExecutor.unsafeCallWhenOn(Dist.CLIENT, () -> () -> Minecraft.getInstance().player);
-            if (world.isClientSide && player != null)
-            {
-                if (pistonHelper.resolve())
-                {
-                    player.sendSystemMessage(Component.literal(String.format(Locale.ENGLISH, "Piston will extend moving %d blocks and destroy %d blocks", pistonHelper.getToPush().size(), pistonHelper.getToDestroy().size())));
-                }
-                else
-                {
-                    player.sendSystemMessage(Component.literal("Piston won't extend"));
-                }
-            }
 
             if (pistonHelper.resolve())
             {
+                sendMessage(world, String.format(Locale.ENGLISH, "Piston will extend moving %d blocks and destroy %d blocks", pistonHelper.getToPush().size(), pistonHelper.getToDestroy().size()));
                 List<BlockPos> posList = pistonHelper.getToPush();
                 for (BlockPos newPos : posList)
                 {
@@ -105,6 +96,10 @@ public class PistonEventTest
                         world.setBlockAndUpdate(newPos, Blocks.AIR.defaultBlockState());
                     }
                 }
+            }
+            else
+            {
+                sendMessage(world, "Piston won't extend");
             }
 
             // Make the block move up and out of the way so long as it won't replace the piston
@@ -122,23 +117,28 @@ public class PistonEventTest
         {
             boolean isSticky = event.getLevel().getBlockState(event.getPos()).getBlock() == Blocks.STICKY_PISTON;
 
-            Player player = DistExecutor.unsafeCallWhenOn(Dist.CLIENT, () -> () -> Minecraft.getInstance().player);
-            if (event.getLevel().isClientSide() && player != null)
+            if (isSticky)
             {
-                if (isSticky)
-                {
-                    BlockPos targetPos = event.getFaceOffsetPos().relative(event.getDirection());
-                    boolean canPush = PistonBaseBlock.isPushable(event.getLevel().getBlockState(targetPos), (Level) event.getLevel(), event.getFaceOffsetPos(), event.getDirection().getOpposite(), false, event.getDirection());
-                    boolean isAir = event.getLevel().isEmptyBlock(targetPos);
-                    player.sendSystemMessage(Component.literal(String.format(Locale.ENGLISH, "Piston will retract moving %d blocks", !isAir && canPush ? 1 : 0)));
-                }
-                else
-                {
-                    player.sendSystemMessage(Component.literal("Piston will retract"));
-                }
+                BlockPos targetPos = event.getFaceOffsetPos().relative(event.getDirection());
+                boolean canPush = PistonBaseBlock.isPushable(event.getLevel().getBlockState(targetPos), (Level) event.getLevel(), event.getFaceOffsetPos(), event.getDirection().getOpposite(), false, event.getDirection());
+                boolean isAir = event.getLevel().isEmptyBlock(targetPos);
+                sendMessage(event.getLevel(), String.format(Locale.ENGLISH, "Piston will retract moving %d blocks", !isAir && canPush ? 1 : 0));
             }
+            else
+            {
+                sendMessage(event.getLevel(), "Piston will retract");
+            }
+
             // Offset twice to see if retraction will pull cobblestone
             event.setCanceled(event.getLevel().getBlockState(event.getFaceOffsetPos().relative(event.getDirection())).getBlock() == Blocks.COBBLESTONE && isSticky);
+        }
+    }
+
+    private static void sendMessage(LevelAccessor levelAccessor, String message)
+    {
+        if (!levelAccessor.isClientSide() && levelAccessor instanceof ServerLevel level)
+        {
+            level.getServer().sendSystemMessage(Component.literal(message));
         }
     }
 
