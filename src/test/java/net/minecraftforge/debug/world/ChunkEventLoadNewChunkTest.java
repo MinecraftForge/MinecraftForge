@@ -5,12 +5,12 @@
 
 package net.minecraftforge.debug.world;
 
+import com.mojang.logging.LogUtils;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraftforge.event.level.ChunkEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
 
 /**
  * Simple test for {@link ChunkEvent.Load#isNewChunk()}. Will log a message to console each time
@@ -32,10 +32,11 @@ import org.apache.logging.log4j.Logger;
  */
 @Mod(ChunkEventLoadNewChunkTest.MODID)
 @Mod.EventBusSubscriber
-public class ChunkEventLoadNewChunkTest {
+public class ChunkEventLoadNewChunkTest
+{
     static final String MODID = "chunk_event_load_new_chunk_test";
     private static final boolean ENABLED = true;
-    private static final Logger LOGGER = LogManager.getLogger(MODID);
+    private static final Logger LOGGER = LogUtils.getLogger();
 
     @SubscribeEvent
     public static void onChunkLoad(final ChunkEvent.Load event)
