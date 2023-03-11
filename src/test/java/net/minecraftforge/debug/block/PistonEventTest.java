@@ -50,6 +50,8 @@ import java.util.Objects;
 @Mod(value = PistonEventTest.MODID)
 public class PistonEventTest
 {
+    static final boolean ENABLE_PISTON_EVENT_LOGGING = false;
+
     public static final String MODID = "piston_event_test";
     public static String blockName = "shiftonmove";
     private static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, MODID);
@@ -134,6 +136,8 @@ public class PistonEventTest
 
     private static void sendMessage(LevelAccessor levelAccessor, String message)
     {
+        if (!ENABLE_PISTON_EVENT_LOGGING) return;
+
         if (!levelAccessor.isClientSide() && levelAccessor instanceof ServerLevel level)
         {
             level.getServer().sendSystemMessage(Component.literal(message));
