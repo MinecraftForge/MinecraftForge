@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/level/block/JukeboxBlock.java
++++ b/net/minecraft/world/level/block/JukeboxBlock.java
+@@ -27,7 +_,7 @@
+ import net.minecraft.world.level.gameevent.GameEvent;
+ import net.minecraft.world.phys.BlockHitResult;
+ 
+-public class JukeboxBlock extends BaseEntityBlock {
++public class JukeboxBlock extends BaseEntityBlock implements net.minecraftforge.common.extensions.IForgeJukeboxBlock {
+    public static final BooleanProperty f_54254_ = BlockStateProperties.f_61439_;
+ 
+    public JukeboxBlock(BlockBehaviour.Properties p_54257_) {

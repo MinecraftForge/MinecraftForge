@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/item/RecordItem.java
 +++ b/net/minecraft/world/item/RecordItem.java
-@@ -19,17 +_,42 @@
+@@ -19,27 +_,52 @@
  import net.minecraft.world.level.block.state.BlockState;
  
  public class RecordItem extends Item {
@@ -43,6 +43,18 @@
     }
  
     public InteractionResult m_6225_(UseOnContext p_43048_) {
+       Level level = p_43048_.m_43725_();
+       BlockPos blockpos = p_43048_.m_8083_();
+       BlockState blockstate = level.m_8055_(blockpos);
+-      if (blockstate.m_60713_(Blocks.f_50131_) && !blockstate.m_61143_(JukeboxBlock.f_54254_)) {
++      if (blockstate.m_60734_() instanceof net.minecraftforge.common.extensions.IForgeJukeboxBlock jukebox && jukebox.hasRecord(blockstate, level, blockpos)) {
+          ItemStack itemstack = p_43048_.m_43722_();
+          if (!level.f_46443_) {
+-            ((JukeboxBlock)Blocks.f_50131_).m_238345_(p_43048_.m_43723_(), level, blockpos, blockstate, itemstack);
++            jukebox.insertRecord(blockstate, level, blockpos, p_43048_.m_43723_(), itemstack);
+             level.m_5898_((Player)null, 1010, blockpos, Item.m_41393_(this));
+             itemstack.m_41774_(1);
+             Player player = p_43048_.m_43723_();
 @@ -72,7 +_,7 @@
     }
  
