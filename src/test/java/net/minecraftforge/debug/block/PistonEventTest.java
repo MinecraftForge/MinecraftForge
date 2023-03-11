@@ -38,6 +38,7 @@ import net.minecraftforge.registries.RegistryObject;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 /**
  * This test mod blocks pistons from moving cobblestone at all except indirectly
@@ -51,11 +52,11 @@ public class PistonEventTest
 {
     public static final String MODID = "piston_event_test";
     public static String blockName = "shiftonmove";
-    private static DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, MODID);
-    private static DeferredRegister<Item>  ITEMS  = DeferredRegister.create(ForgeRegistries.ITEMS,  MODID);
+    private static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, MODID);
+    private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MODID);
 
-    private static RegistryObject<Block> SHIFT_ON_MOVE = BLOCKS.register(blockName, () -> new Block(Block.Properties.of(Material.STONE)));
-    private static RegistryObject<Item> SHIFT_ON_MOVE_ITEM = ITEMS.register(blockName, () -> new BlockItem(SHIFT_ON_MOVE.get(), new Item.Properties()));
+    private static final RegistryObject<Block> SHIFT_ON_MOVE = BLOCKS.register(blockName, () -> new Block(Block.Properties.of(Material.STONE)));
+    private static final RegistryObject<Item> SHIFT_ON_MOVE_ITEM = ITEMS.register(blockName, () -> new BlockItem(SHIFT_ON_MOVE.get(), new Item.Properties()));
 
     public PistonEventTest()
     {
@@ -78,7 +79,7 @@ public class PistonEventTest
         if (event.getPistonMoveType() == PistonMoveType.EXTEND)
         {
             Level world = (Level) event.getLevel();
-            PistonStructureResolver pistonHelper = event.getStructureHelper();
+            PistonStructureResolver pistonHelper = Objects.requireNonNull(event.getStructureHelper());
 
             if (pistonHelper.resolve())
             {
@@ -146,7 +147,7 @@ public class PistonEventTest
         gen.addProvider(event.includeClient(), new BlockStates(gen.getPackOutput(), event.getExistingFileHelper()));
     }
 
-    private class BlockStates extends BlockStateProvider
+    private static class BlockStates extends BlockStateProvider
     {
         public BlockStates(PackOutput output, ExistingFileHelper exFileHelper)
         {
@@ -156,7 +157,7 @@ public class PistonEventTest
         @Override
         protected void registerStatesAndModels()
         {
-            simpleBlockWithItem(SHIFT_ON_MOVE.get(), models().cubeAll(SHIFT_ON_MOVE.getId().getPath(), mcLoc("block/furnace_top")));
+            simpleBlockWithItem(SHIFT_ON_MOVE.get(), models().cubeAll(Objects.requireNonNull(SHIFT_ON_MOVE.getId()).getPath(), mcLoc("block/furnace_top")));
         }
     }
 
