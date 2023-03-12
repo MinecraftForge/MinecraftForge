@@ -29,8 +29,8 @@ import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
-import net.minecraftforge.common.crafting.CraftingHelper;
-import net.minecraftforge.common.crafting.conditions.ICondition;
+import net.minecraftforge.common.conditions.ConditionHelper;
+import net.minecraftforge.common.conditions.ICondition;
 import net.minecraftforge.common.data.ExistingFileHelper.ResourceType;
 import net.minecraftforge.registries.DataPackRegistriesHooks;
 import org.slf4j.Logger;
@@ -101,7 +101,7 @@ public class JsonCodecProvider<T> implements DataProvider
             {
                 if(encoded instanceof JsonObject obj)
                 {
-                    obj.add("forge:conditions", CraftingHelper.serialize(conditions));
+                    obj.add("forge:conditions", ConditionHelper.serialize(conditions));
                 }
                 else
                 {

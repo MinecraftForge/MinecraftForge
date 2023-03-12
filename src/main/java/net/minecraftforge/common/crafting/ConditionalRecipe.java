@@ -21,7 +21,9 @@ import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.common.crafting.conditions.ICondition;
+import net.minecraftforge.common.conditions.ConditionHelper;
+import net.minecraftforge.common.conditions.IConditionContext;
+import net.minecraftforge.common.conditions.ICondition;
 import net.minecraftforge.registries.ObjectHolder;
 import org.jetbrains.annotations.Nullable;
 
@@ -40,12 +42,12 @@ public class ConditionalRecipe
         @Override
         public T fromJson(ResourceLocation recipeId, JsonObject json)
         {
-            return fromJson(recipeId, json, ICondition.IContext.EMPTY);
+            return fromJson(recipeId, json, IConditionContext.EMPTY);
         }
 
         @SuppressWarnings("unchecked") // We return a nested one, so we can't know what type it is.
         @Override
-        public T fromJson(ResourceLocation recipeId, JsonObject json, ICondition.IContext context)
+        public T fromJson(ResourceLocation recipeId, JsonObject json, IConditionContext context)
         {
             JsonArray items = GsonHelper.getAsJsonArray(json, "recipes");
             int idx = 0;
@@ -53,7 +55,7 @@ public class ConditionalRecipe
             {
                 if (!ele.isJsonObject())
                     throw new JsonSyntaxException("Invalid recipes entry at index " + idx + " Must be JsonObject");
-                if (CraftingHelper.processConditions(GsonHelper.getAsJsonArray(ele.getAsJsonObject(), "conditions"), context))
+                if (ConditionHelper.processConditions(ele.getAsJsonObject(), "conditions", context))
                     return (T)RecipeManager.fromJson(recipeId, GsonHelper.getAsJsonObject(ele.getAsJsonObject(), "recipe"));
                 idx++;
             }
@@ -180,7 +182,7 @@ public class ConditionalRecipe
 
                 JsonArray conds = new JsonArray();
                 for (ICondition c : conditions.get(x))
-                    conds.add(CraftingHelper.serialize(c));
+                    conds.add(ConditionHelper.serialize(c));
                 holder.add("conditions", conds);
                 holder.add("recipe", recipes.get(x).serializeRecipe());
 

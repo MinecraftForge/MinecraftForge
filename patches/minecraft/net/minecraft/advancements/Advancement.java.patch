@@ -13,13 +13,13 @@
           return "Task Advancement{parentId=" + this.f_138332_ + ", display=" + this.f_138334_ + ", rewards=" + this.f_138335_ + ", criteria=" + this.f_138336_ + ", requirements=" + Arrays.deepToString(this.f_138337_) + "}";
        }
  
-+      /** @deprecated Forge: use {@linkplain #fromJson(JsonObject, DeserializationContext, net.minecraftforge.common.crafting.conditions.ICondition.IContext) overload with context}. */
++      /** @deprecated Forge: use {@linkplain #fromJson(JsonObject, DeserializationContext, net.minecraftforge.common.conditions.IConditionContext) overload with context}. */
 +      @Deprecated
        public static Advancement.Builder m_138380_(JsonObject p_138381_, DeserializationContext p_138382_) {
-+         return fromJson(p_138381_, p_138382_, net.minecraftforge.common.crafting.conditions.ICondition.IContext.EMPTY);
++         return fromJson(p_138381_, p_138382_, net.minecraftforge.common.conditions.IConditionContext.EMPTY);
 +      }
 +
-+      public static Advancement.Builder fromJson(JsonObject p_138381_, DeserializationContext p_138382_, net.minecraftforge.common.crafting.conditions.ICondition.IContext context) {
++      public static Advancement.Builder fromJson(JsonObject p_138381_, DeserializationContext p_138382_, net.minecraftforge.common.conditions.IConditionContext context) {
 +         if ((p_138381_ = net.minecraftforge.common.crafting.ConditionalAdvancement.processConditional(p_138381_, context)) == null) return null;
           ResourceLocation resourcelocation = p_138381_.has("parent") ? new ResourceLocation(GsonHelper.m_13906_(p_138381_, "parent")) : null;
           DisplayInfo displayinfo = p_138381_.has("display") ? DisplayInfo.m_14981_(GsonHelper.m_13930_(p_138381_, "display")) : null;

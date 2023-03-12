@@ -20,7 +20,7 @@
        this.f_214300_.m_254905_(CommandBuildContext.MissingTagAccessPolicy.CREATE_NEW);
        this.f_206854_ = new ServerFunctionLibrary(p_206859_, this.f_206847_.m_82094_());
 +      // Forge: Create context object and pass it to the recipe manager.
-+      this.context = new net.minecraftforge.common.crafting.conditions.ConditionContext(this.f_206849_);
++      this.context = new net.minecraftforge.common.conditions.ConditionContext(this.f_206849_);
 +      this.f_206848_ = new RecipeManager(context);
 +      this.f_206853_ = new ServerAdvancementManager(this.f_206850_, context);
     }
@@ -51,14 +51,14 @@
        p_206871_.m_175515_(resourcekey).m_203652_(map);
 +   }
 +
-+   private final net.minecraftforge.common.crafting.conditions.ICondition.IContext context;
++   private final net.minecraftforge.common.conditions.IConditionContext context;
 +
 +   /**
 +    * Exposes the current condition context for usage in other reload listeners.<br>
 +    * This is not useful outside the reloading stage.
 +    * @return The condition context for the currently active reload.
 +    */
-+   public net.minecraftforge.common.crafting.conditions.ICondition.IContext getConditionContext() {
++   public net.minecraftforge.common.conditions.IConditionContext getConditionContext() {
 +      return this.context;
     }
  }
