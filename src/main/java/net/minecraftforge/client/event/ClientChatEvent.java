@@ -15,9 +15,6 @@ import org.jetbrains.annotations.ApiStatus;
 /**
  * Fired when the client is about to send a chat message to the server.
  *
- * <p>{@link #message} contains the message that will be sent to the server. This can be changed by mods.</p>
- * <p>{@link #originalMessage} contains the original message that was going to be sent to the server. This cannot be changed by mods.</p>
- *
  * <p>This event is {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}.
  * If the event is cancelled, the chat message will not be sent to the server.</p>
  *
@@ -35,10 +32,11 @@ public class ClientChatEvent extends Event
     {
         this.setMessage(message);
         this.originalMessage = Strings.nullToEmpty(message);
+        this.message = this.originalMessage;
     }
 
     /**
-     * {@return the message that will be sent to the server, if the event is not cancelled}
+     * {@return the message that will be sent to the server, if the event is not cancelled. This can be changed by mods.}
      */
     public String getMessage()
     {
@@ -56,7 +54,7 @@ public class ClientChatEvent extends Event
     }
 
     /**
-     * {@return the original message that was to be sent to the server}
+     * {@return the original message that was to be sent to the server. This cannot be changed by mods}
      */
     public String getOriginalMessage()
     {
