@@ -197,7 +197,7 @@ public interface IForgeItem
      * @param count  The amount of time in tick the item has been used for
      *               continuously
      */
-    /** @deprecated use {@link Item#onUseTick(Level,LivingEntity,ItemStack,int)} (note that {@link Item#onUseTick(Level,LivingEntity,ItemStack,int)} can be called with a `useItemRemaining ` of `-1`) */
+    /** @deprecated use {@link Item#onUseTick(Level,LivingEntity,ItemStack,int)} (note that {@link Item#onUseTick(Level,LivingEntity,ItemStack,int)} can be called with a <pre>useItemRemaining<pre> of <pre>-1<pre>) */
     @Deprecated(since = "1.19.3", forRemoval = true)
     default void onUsingTick(ItemStack stack, LivingEntity player, int count)
     {
