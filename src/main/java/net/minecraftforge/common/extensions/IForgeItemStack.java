@@ -250,7 +250,7 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundTag>
      * @param count  The amount of time in tick the item has been used for
      *               continuously
      */
-    @Deprecated(since = "1.20")
+    @Deprecated(since = "1.19.3", forRemoval = true)
     default void onUsingTick(LivingEntity player, int count)
     {
         self().getItem().onUsingTick(self(), player, count);
