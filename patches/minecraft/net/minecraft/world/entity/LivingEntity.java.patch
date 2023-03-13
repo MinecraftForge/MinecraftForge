@@ -760,3 +760,11 @@
           }
        } else {
           return EquipmentSlot.HEAD;
+@@ -3320,6 +_,7 @@
+       this.m_20334_(p_217037_.m_131503_(), p_217037_.m_131504_(), p_217037_.m_131505_());
+    }
+ 
++   /** @deprecated Forge: use {@linkplain net.minecraftforge.common.extensions.IForgeLivingEntity#canDisableShield(LivingEntity) the target-sensitive version} */ @Deprecated
+    public boolean m_213824_() {
+       return this.m_21205_().m_41720_() instanceof AxeItem;
+    }
