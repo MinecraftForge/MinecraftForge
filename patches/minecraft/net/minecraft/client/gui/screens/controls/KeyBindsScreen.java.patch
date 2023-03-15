@@ -2,13 +2,13 @@
 +++ b/net/minecraft/client/gui/screens/controls/KeyBindsScreen.java
 @@ -31,7 +_,7 @@
        this.m_7787_(this.f_193977_);
-       this.f_193978_ = this.m_142416_(Button.m_253074_(Component.m_237115_("controls.resetAll"), (p_193999_) -> {
+       this.f_193978_ = this.m_142416_(Button.m_253074_(Component.m_237115_("controls.resetAll"), (p_269619_) -> {
           for(KeyMapping keymapping : this.f_96282_.f_92059_) {
 -            keymapping.m_90848_(keymapping.m_90861_());
 +            keymapping.setToDefault();
           }
  
-          KeyMapping.m_90854_();
+          this.f_193977_.m_269130_();
 @@ -55,11 +_,14 @@
     public boolean m_7933_(int p_193987_, int p_193988_, int p_193989_) {
        if (this.f_193975_ != null) {
@@ -23,4 +23,4 @@
 +         if(!net.minecraftforge.client.settings.KeyModifier.isKeyCodeModifier(this.f_193975_.getKey()))
           this.f_193975_ = null;
           this.f_193976_ = Util.m_137550_();
-          KeyMapping.m_90854_();
+          this.f_193977_.m_269130_();

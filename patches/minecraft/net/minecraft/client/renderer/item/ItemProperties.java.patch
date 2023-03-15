@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/item/ItemProperties.java
 +++ b/net/minecraft/client/renderer/item/ItemProperties.java
-@@ -41,6 +_,9 @@
+@@ -47,6 +_,9 @@
     private static final Map<Item, Map<ResourceLocation, ItemPropertyFunction>> f_117825_ = Maps.newHashMap();
  
     private static ClampedItemPropertyFunction m_174581_(ResourceLocation p_174582_, ClampedItemPropertyFunction p_174583_) {
@@ -10,7 +10,7 @@
        f_117820_.put(p_174582_, p_174583_);
        return p_174583_;
     }
-@@ -50,6 +_,9 @@
+@@ -56,6 +_,9 @@
     }
  
     private static void m_174570_(Item p_174571_, ResourceLocation p_174572_, ClampedItemPropertyFunction p_174573_) {

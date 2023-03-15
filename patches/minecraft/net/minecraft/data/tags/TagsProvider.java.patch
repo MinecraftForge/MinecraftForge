@@ -1,7 +1,7 @@
 --- a/net/minecraft/data/tags/TagsProvider.java
 +++ b/net/minecraft/data/tags/TagsProvider.java
-@@ -32,15 +_,37 @@
-    protected final CompletableFuture<HolderLookup.Provider> f_254646_;
+@@ -36,20 +_,48 @@
+    private final CompletableFuture<TagsProvider.TagLookup<T>> f_273855_;
     protected final ResourceKey<? extends Registry<T>> f_254716_;
     protected final Map<ResourceLocation, TagBuilder> f_126543_ = Maps.newLinkedHashMap();
 +   protected final String modId;
@@ -13,18 +13,30 @@
 +   /**
 +    * @deprecated Forge: Use the {@linkplain #TagsProvider(PackOutput, ResourceKey, CompletableFuture, String, net.minecraftforge.common.data.ExistingFileHelper) mod id variant}
 +    */
-+   @Deprecated
     protected TagsProvider(PackOutput p_256596_, ResourceKey<? extends Registry<T>> p_255886_, CompletableFuture<HolderLookup.Provider> p_256513_) {
+-      this(p_256596_, p_255886_, p_256513_, CompletableFuture.completedFuture(TagsProvider.TagLookup.m_274566_()));
 +      this(p_256596_, p_255886_, p_256513_, "vanilla", null);
 +   }
 +   protected TagsProvider(PackOutput p_256596_, ResourceKey<? extends Registry<T>> p_255886_, CompletableFuture<HolderLookup.Provider> p_256513_, String modId, @org.jetbrains.annotations.Nullable net.minecraftforge.common.data.ExistingFileHelper existingFileHelper) {
-       this.f_236439_ = p_256596_.m_245269_(PackOutput.Target.DATA_PACK, TagManager.m_203918_(p_255886_));
-       this.f_254646_ = p_256513_;
-       this.f_254716_ = p_255886_;
++      this(p_256596_, p_255886_, p_256513_, CompletableFuture.completedFuture(TagsProvider.TagLookup.m_274566_()), modId, existingFileHelper);
+    }
+ 
++   /**
++    * @deprecated Forge: Use the {@linkplain #TagsProvider(PackOutput, ResourceKey, CompletableFuture, CompletableFuture, String, net.minecraftforge.common.data.ExistingFileHelper) mod id variant}
++    */
++   @Deprecated
+    protected TagsProvider(PackOutput p_275432_, ResourceKey<? extends Registry<T>> p_275476_, CompletableFuture<HolderLookup.Provider> p_275222_, CompletableFuture<TagsProvider.TagLookup<T>> p_275565_) {
++      this(p_275432_, p_275476_, p_275222_, p_275565_, "vanilla", null);
++   }
++   protected TagsProvider(PackOutput p_275432_, ResourceKey<? extends Registry<T>> p_275476_, CompletableFuture<HolderLookup.Provider> p_275222_, CompletableFuture<TagsProvider.TagLookup<T>> p_275565_, String modId, @org.jetbrains.annotations.Nullable net.minecraftforge.common.data.ExistingFileHelper existingFileHelper) {
+       this.f_236439_ = p_275432_.m_245269_(PackOutput.Target.DATA_PACK, TagManager.m_203918_(p_275476_));
+       this.f_254716_ = p_275476_;
+       this.f_273855_ = p_275565_;
+       this.f_275752_ = p_275222_;
 +      this.modId = modId;
 +      this.existingFileHelper = existingFileHelper;
-+      this.resourceType = new net.minecraftforge.common.data.ExistingFileHelper.ResourceType(net.minecraft.server.packs.PackType.SERVER_DATA, ".json", TagManager.m_203918_(p_255886_));
-+      this.elementResourceType = new net.minecraftforge.common.data.ExistingFileHelper.ResourceType(net.minecraft.server.packs.PackType.SERVER_DATA, ".json", net.minecraftforge.common.ForgeHooks.prefixNamespace(p_255886_.m_135782_()));
++      this.resourceType = new net.minecraftforge.common.data.ExistingFileHelper.ResourceType(net.minecraft.server.packs.PackType.SERVER_DATA, ".json", TagManager.m_203918_(p_275476_));
++      this.elementResourceType = new net.minecraftforge.common.data.ExistingFileHelper.ResourceType(net.minecraft.server.packs.PackType.SERVER_DATA, ".json", net.minecraftforge.common.ForgeHooks.prefixNamespace(p_275476_.m_135782_()));
 +   }
 +
 +   // Forge: Allow customizing the path for a given tag or returning null
@@ -39,12 +51,12 @@
     }
  
     protected abstract void m_6577_(HolderLookup.Provider p_256380_);
-@@ -49,7 +_,13 @@
-       return this.f_254646_.thenCompose((p_255494_) -> {
-          this.f_126543_.clear();
-          this.m_6577_(p_255494_);
--         HolderLookup.RegistryLookup<T> registrylookup = p_255494_.m_255025_(this.f_254716_);
-+         HolderLookup.RegistryLookup<T> registrylookup = p_255494_.m_254861_(this.f_254716_).orElseThrow(() -> {
+@@ -64,7 +_,13 @@
+ 
+          return new CombinedData<>(p_274778_, p_274779_);
+       }).thenCompose((p_274774_) -> {
+-         HolderLookup.RegistryLookup<T> registrylookup = p_274774_.f_273893_.m_255025_(this.f_254716_);
++         HolderLookup.RegistryLookup<T> registrylookup = p_274774_.f_273893_.m_254861_(this.f_254716_).orElseThrow(() -> {
 +            // FORGE: Throw a more descriptive error message if this is a Forge registry without tags enabled
 +            if (net.minecraftforge.registries.RegistryManager.ACTIVE.getRegistry(this.f_254716_) != null) {
 +               return new IllegalStateException("Forge registry " + this.f_254716_.m_135782_() + " does not have support for tags");
@@ -54,10 +66,10 @@
           Predicate<ResourceLocation> predicate = (p_255496_) -> {
              return registrylookup.m_254902_(ResourceKey.m_135785_(this.f_254716_, p_255496_)).isPresent();
           };
-@@ -59,12 +_,13 @@
+@@ -77,12 +_,13 @@
              List<TagEntry> list = tagbuilder.m_215904_();
-             List<TagEntry> list1 = list.stream().filter((p_255492_) -> {
-                return !p_255492_.m_215940_(predicate, this.f_126543_::containsKey);
+             List<TagEntry> list1 = list.stream().filter((p_274771_) -> {
+                return !p_274771_.m_215940_(predicate, predicate1);
 -            }).toList();
 +            }).filter(this::missing).toList(); // Forge: Add validation via existing resources
              if (!list1.isEmpty()) {
@@ -71,7 +83,7 @@
                 return DataProvider.m_253162_(p_253684_, jsonelement, path);
              }
           }).toArray((p_253442_) -> {
-@@ -73,22 +_,34 @@
+@@ -91,13 +_,23 @@
        });
     }
  
@@ -96,6 +108,9 @@
           return TagBuilder.m_215899_();
        });
     }
+@@ -118,11 +_,13 @@
+       });
+    }
  
 -   public static class TagAppender<T> {
 +   public static class TagAppender<T> implements net.minecraftforge.common.extensions.IForgeTagAppender<T> {
@@ -110,7 +125,7 @@
        }
  
        public final TagsProvider.TagAppender<T> m_255204_(ResourceKey<T> p_256138_) {
-@@ -118,6 +_,19 @@
+@@ -152,6 +_,19 @@
        public TagsProvider.TagAppender<T> m_176841_(ResourceLocation p_176842_) {
           this.f_126568_.m_215909_(p_176842_);
           return this;
@@ -129,4 +144,4 @@
 +          return modId;
        }
     }
- }
+ 

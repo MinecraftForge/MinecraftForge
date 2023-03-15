@@ -80,7 +80,7 @@ public class ClientCommandTest
                                 .then(Commands.argument("recipe", ResourceLocationArgument.id())
                                         .executes((context) -> {
                                             context.getSource()
-                                                    .sendSuccess(ResourceLocationArgument.getRecipe(context, "recipe").getResultItem().getDisplayName(), false);
+                                                    .sendSuccess(ResourceLocationArgument.getRecipe(context, "recipe").getResultItem(context.getSource().registryAccess()).getDisplayName(), false);
                                             return 1;
                                         })))
                         // Used for checking if getting a team works on the client side

@@ -105,12 +105,7 @@ public class ForgeGui extends Gui
 
         if (texture != null)
         {
-            RenderSystem.enableTexture();
             bind(texture);
-        }
-        else
-        {
-            RenderSystem.disableTexture();
         }
 
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
@@ -172,7 +167,7 @@ public class ForgeGui extends Gui
         minecraft.getProfiler().pop();
     }
 
-    void renderSpyglassOverlay()
+    void renderSpyglassOverlay(PoseStack stack)
     {
         float deltaFrame = this.minecraft.getDeltaFrameTime();
         this.scopeScale = Mth.lerp(0.5F * deltaFrame, this.scopeScale, 1.125F);
@@ -180,7 +175,7 @@ public class ForgeGui extends Gui
         {
             if (this.minecraft.player.isScoping())
             {
-                this.renderSpyglassOverlay(this.scopeScale);
+                this.renderSpyglassOverlay(stack, this.scopeScale);
             }
             else
             {
@@ -198,7 +193,7 @@ public class ForgeGui extends Gui
             Item item = itemstack.getItem();
             if (item == Blocks.CARVED_PUMPKIN.asItem())
             {
-                renderTextureOverlay(PUMPKIN_BLUR_LOCATION, 1.0F);
+                renderTextureOverlay(poseStack, PUMPKIN_BLUR_LOCATION, 1.0F);
             }
             else
             {
@@ -211,7 +206,7 @@ public class ForgeGui extends Gui
     {
         if (this.minecraft.player.getTicksFrozen() > 0)
         {
-            this.renderTextureOverlay(POWDER_SNOW_OUTLINE_LOCATION, this.minecraft.player.getPercentFrozen());
+            this.renderTextureOverlay(pStack, POWDER_SNOW_OUTLINE_LOCATION, this.minecraft.player.getPercentFrozen());
         }
     }
 
@@ -247,13 +242,13 @@ public class ForgeGui extends Gui
     }
 
     @Override
-    protected void renderPortalOverlay(float partialTick)
+    protected void renderPortalOverlay(PoseStack stack, float partialTick)
     {
         float f1 = Mth.lerp(partialTick, this.minecraft.player.oPortalTime, this.minecraft.player.portalTime);
 
         if (f1 > 0.0F)
         {
-            super.renderPortalOverlay(f1);
+            super.renderPortalOverlay(stack, f1);
         }
     }
 

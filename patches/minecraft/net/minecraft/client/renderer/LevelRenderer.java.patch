@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/LevelRenderer.java
 +++ b/net/minecraft/client/renderer/LevelRenderer.java
-@@ -164,6 +_,7 @@
+@@ -165,6 +_,7 @@
     private final EntityRenderDispatcher f_109463_;
     private final BlockEntityRenderDispatcher f_172946_;
     private final RenderBuffers f_109464_;
@@ -8,18 +8,16 @@
     @Nullable
     private ClientLevel f_109465_;
     private final BlockingQueue<ChunkRenderDispatcher.RenderChunk> f_194306_ = new LinkedBlockingQueue<>();
-@@ -241,12 +_,21 @@
-    private int f_109450_;
+@@ -243,11 +_,20 @@
     private final float[] f_109451_ = new float[1024];
     private final float[] f_109452_ = new float[1024];
--
-+   
+ 
 +   /**
 +    * @deprecated Use {@link #LevelRenderer(Minecraft, EntityRenderDispatcher, BlockEntityRenderDispatcher, RenderBuffers, net.minecraftforge.client.renderer.BufferManager)} instead.
 +    */
 +   @Deprecated(since = "1.19.3")
     public LevelRenderer(Minecraft p_234245_, EntityRenderDispatcher p_234246_, BlockEntityRenderDispatcher p_234247_, RenderBuffers p_234248_) {
-+       this(p_234245_, p_234246_, p_234247_, p_234248_, p_234245_.bufferManager());
++      this(p_234245_, p_234246_, p_234247_, p_234248_, p_234245_.bufferManager());
 +   }
 +
 +   public LevelRenderer(Minecraft p_234245_, EntityRenderDispatcher p_234246_, BlockEntityRenderDispatcher p_234247_, RenderBuffers p_234248_, net.minecraftforge.client.renderer.BufferManager bufferManager) {
@@ -31,7 +29,7 @@
  
        for(int i = 0; i < 32; ++i) {
           for(int j = 0; j < 32; ++j) {
-@@ -264,6 +_,8 @@
+@@ -265,6 +_,8 @@
     }
  
     private void m_109703_(LightTexture p_109704_, float p_109705_, double p_109706_, double p_109707_, double p_109708_) {
@@ -49,7 +47,7 @@
        float f = this.f_109461_.f_91073_.m_46722_(1.0F) / (Minecraft.m_91405_() ? 1.0F : 2.0F);
        if (!(f <= 0.0F)) {
           RandomSource randomsource = RandomSource.m_216335_((long)this.f_109477_ * 312987231L);
-@@ -1141,11 +_,13 @@
+@@ -1144,11 +_,13 @@
        RenderSystem.m_69421_(16640, Minecraft.f_91002_);
        float f = p_109605_.m_109152_();
        boolean flag2 = this.f_109461_.f_91073_.m_104583_().m_5781_(Mth.m_14107_(d0), Mth.m_14107_(d1)) || this.f_109461_.f_91065_.m_93090_().m_93715_();
@@ -63,7 +61,7 @@
        profilerfiller.m_6182_("fog");
        FogRenderer.m_234172_(p_109604_, FogRenderer.FogMode.FOG_TERRAIN, Math.max(f, 32.0F), flag2, p_109601_);
        profilerfiller.m_6182_("terrain_setup");
-@@ -1153,9 +_,10 @@
+@@ -1156,9 +_,10 @@
        profilerfiller.m_6182_("compilechunks");
        this.m_194370_(p_109604_);
        profilerfiller.m_6182_("terrain");
@@ -77,7 +75,7 @@
        if (this.f_109465_.m_104583_().m_108885_()) {
           Lighting.m_252995_(p_109600_.m_85850_().m_252922_());
        } else {
-@@ -1186,7 +_,7 @@
+@@ -1189,7 +_,7 @@
        for(Entity entity : this.f_109465_.m_104735_()) {
           if (this.f_109463_.m_114397_(entity, frustum, d0, d1, d2) || entity.m_20367_(this.f_109461_.f_91074_)) {
              BlockPos blockpos = entity.m_20183_();
@@ -86,9 +84,9 @@
                 ++this.f_109439_;
                 if (entity.f_19797_ == 0) {
                    entity.f_19790_ = entity.m_20185_();
-@@ -1206,6 +_,9 @@
-                   int i1 = i & 255;
-                   outlinebuffersource.m_109929_(k, l, i1, 255);
+@@ -1205,6 +_,9 @@
+                   int i = entity.m_19876_();
+                   outlinebuffersource.m_109929_(FastColor.ARGB32.m_13665_(i), FastColor.ARGB32.m_13667_(i), FastColor.ARGB32.m_13669_(i), 255);
                 } else {
 +                  if (this.m_109817_() && entity.hasCustomOutlineRendering(this.f_109461_.f_91074_)) { // FORGE: allow custom outline rendering
 +                     flag3 = true;
@@ -96,7 +94,7 @@
                    multibuffersource = multibuffersource$buffersource;
                 }
  
-@@ -1214,18 +_,17 @@
+@@ -1213,18 +_,17 @@
           }
        }
  
@@ -119,7 +117,7 @@
                 BlockPos blockpos4 = blockentity1.m_58899_();
                 MultiBufferSource multibuffersource1 = multibuffersource$buffersource;
                 p_109600_.m_85836_();
-@@ -1242,6 +_,9 @@
+@@ -1241,6 +_,9 @@
                       };
                    }
                 }
@@ -129,7 +127,7 @@
  
                 this.f_172946_.m_112267_(blockentity1, p_109601_, p_109600_, multibuffersource1);
                 p_109600_.m_85849_();
-@@ -1251,31 +_,28 @@
+@@ -1250,31 +_,28 @@
  
        synchronized(this.f_109468_) {
           for(BlockEntity blockentity : this.f_109468_) {
@@ -168,17 +166,17 @@
        profilerfiller.m_6182_("destroyProgress");
  
        for(Long2ObjectMap.Entry<SortedSet<BlockDestructionProgress>> entry : this.f_109409_.long2ObjectEntrySet()) {
-@@ -1291,7 +_,8 @@
+@@ -1290,7 +_,8 @@
                 p_109600_.m_85837_((double)blockpos2.m_123341_() - d0, (double)blockpos2.m_123342_() - d1, (double)blockpos2.m_123343_() - d2);
-                PoseStack.Pose posestack$pose = p_109600_.m_85850_();
-                VertexConsumer vertexconsumer1 = new SheetedDecalTextureGenerator(this.f_109464_.m_110108_().m_6299_(ModelBakery.f_119229_.get(k1)), posestack$pose.m_252922_(), posestack$pose.m_252943_(), 1.0F);
+                PoseStack.Pose posestack$pose1 = p_109600_.m_85850_();
+                VertexConsumer vertexconsumer1 = new SheetedDecalTextureGenerator(this.f_109464_.m_110108_().m_6299_(ModelBakery.f_119229_.get(k)), posestack$pose1.m_252922_(), posestack$pose1.m_252943_(), 1.0F);
 -               this.f_109461_.m_91289_().m_110918_(this.f_109465_.m_8055_(blockpos2), blockpos2, this.f_109465_, p_109600_, vertexconsumer1);
 +               net.minecraftforge.client.model.data.ModelData modelData = f_109465_.getModelDataManager().getAt(blockpos2);
 +               this.f_109461_.m_91289_().renderBreakingTexture(this.f_109465_.m_8055_(blockpos2), blockpos2, this.f_109465_, p_109600_, vertexconsumer1, modelData == null ? net.minecraftforge.client.model.data.ModelData.EMPTY : modelData);
                 p_109600_.m_85849_();
              }
           }
-@@ -1303,10 +_,13 @@
+@@ -1302,42 +_,41 @@
           profilerfiller.m_6182_("outline");
           BlockPos blockpos1 = ((BlockHitResult)hitresult).m_82425_();
           BlockState blockstate = this.f_109465_.m_8055_(blockpos1);
@@ -191,10 +189,9 @@
 +         net.minecraftforge.client.ForgeHooksClient.onDrawHighlight(this, p_109604_, hitresult, p_109601_, p_109600_, multibuffersource$buffersource);
        }
  
-       PoseStack posestack = RenderSystem.m_157191_();
-@@ -1316,32 +_,30 @@
        this.f_109461_.f_91064_.m_113457_(p_109600_, multibuffersource$buffersource, d0, d1, d2);
-       posestack.m_85849_();
+       multibuffersource$buffersource.m_173043_();
+       PoseStack posestack = RenderSystem.m_157191_();
        RenderSystem.m_157182_();
 -      multibuffersource$buffersource.m_109912_(Sheets.m_110792_());
 -      multibuffersource$buffersource.m_109912_(Sheets.m_110762_());
@@ -212,8 +209,7 @@
        this.f_109464_.m_110108_().m_109911_();
        if (this.f_109418_ != null) {
 -         multibuffersource$buffersource.m_109912_(RenderType.m_110504_());
-+         //multibuffersource$buffersource.endBatch(RenderType.lines());
-          multibuffersource$buffersource.m_109911_();
+-         multibuffersource$buffersource.m_109911_();
           this.f_109413_.m_83954_(Minecraft.f_91002_);
           this.f_109413_.m_83945_(this.f_109461_.m_91385_());
           profilerfiller.m_6182_("translucent");
@@ -238,7 +234,7 @@
           RenderStateShard.f_110126_.m_110188_();
        } else {
           profilerfiller.m_6182_("translucent");
-@@ -1349,13 +_,19 @@
+@@ -1345,13 +_,19 @@
              this.f_109413_.m_83954_(Minecraft.f_91002_);
           }
  
@@ -262,7 +258,7 @@
        }
  
        posestack.m_85836_();
-@@ -1379,6 +_,7 @@
+@@ -1375,6 +_,7 @@
           RenderStateShard.f_110127_.m_110185_();
           profilerfiller.m_6182_("weather");
           this.m_109703_(p_109606_, p_109601_, d0, d1, d2);
@@ -270,7 +266,7 @@
           this.m_173012_(p_109604_);
           RenderStateShard.f_110127_.m_110188_();
           this.f_109418_.m_110023_(p_109601_);
-@@ -1387,6 +_,7 @@
+@@ -1383,6 +_,7 @@
           RenderSystem.m_69458_(false);
           profilerfiller.m_6182_("weather");
           this.m_109703_(p_109606_, p_109601_, d0, d1, d2);
@@ -278,25 +274,25 @@
           this.m_173012_(p_109604_);
           RenderSystem.m_69458_(true);
        }
-@@ -1416,7 +_,7 @@
+@@ -1413,7 +_,7 @@
     private void m_172993_(RenderType p_172994_, PoseStack p_172995_, double p_172996_, double p_172997_, double p_172998_, Matrix4f p_254039_) {
        RenderSystem.m_187554_();
        p_172994_.m_110185_();
 -      if (p_172994_ == RenderType.m_110466_()) {
-+      if (p_172994_.performTranslucentSort()) {
++      if (p_172994_.performTranslucentSort()) { // FORGE: allow custom render types to perform translucent sorting
           this.f_109461_.m_91307_().m_6180_("translucent_sort");
           double d0 = p_172996_ - this.f_109445_;
           double d1 = p_172997_ - this.f_109446_;
-@@ -1441,7 +_,7 @@
+@@ -1442,7 +_,7 @@
        this.f_109461_.m_91307_().m_6523_(() -> {
           return "render_" + p_172994_;
        });
--      boolean flag = p_172994_ != RenderType.m_110466_();
-+      boolean flag = !p_172994_.performTranslucentSort();
-       ObjectListIterator<LevelRenderer.RenderChunkInfo> objectlistiterator = this.f_194297_.listIterator(flag ? 0 : this.f_194297_.size());
+-      boolean flag1 = p_172994_ != RenderType.m_110466_();
++      boolean flag1 = !p_172994_.performTranslucentSort(); // FORGE: allow custom render types to perform translucent sorting
+       ObjectListIterator<LevelRenderer.RenderChunkInfo> objectlistiterator = this.f_194297_.listIterator(flag1 ? 0 : this.f_194297_.size());
        ShaderInstance shaderinstance = RenderSystem.m_157196_();
  
-@@ -1521,6 +_,7 @@
+@@ -1526,6 +_,7 @@
        shaderinstance.m_173362_();
        VertexBuffer.m_85931_();
        this.f_109461_.m_91307_().m_7238_();
@@ -304,7 +300,7 @@
        p_172994_.m_110188_();
     }
  
-@@ -1782,6 +_,8 @@
+@@ -1740,6 +_,8 @@
     }
  
     public void m_202423_(PoseStack p_202424_, Matrix4f p_254034_, float p_202426_, Camera p_202427_, boolean p_202428_, Runnable p_202429_) {
@@ -313,7 +309,7 @@
        p_202429_.run();
        if (!p_202428_) {
           FogType fogtype = p_202427_.m_167685_();
-@@ -1914,6 +_,8 @@
+@@ -1861,6 +_,8 @@
     }
  
     public void m_253054_(PoseStack p_254145_, Matrix4f p_254537_, float p_254364_, double p_253843_, double p_253663_, double p_253795_) {
@@ -322,7 +318,7 @@
        float f = this.f_109465_.m_104583_().m_108871_();
        if (!Float.isNaN(f)) {
           RenderSystem.m_69464_();
-@@ -2100,7 +_,7 @@
+@@ -2047,7 +_,7 @@
              boolean flag = false;
              if (this.f_109461_.f_91066_.m_232080_().m_231551_() == PrioritizeChunkUpdates.NEARBY) {
                 BlockPos blockpos1 = chunkrenderdispatcher$renderchunk.m_112839_().m_7918_(8, 8, 8);
@@ -331,7 +327,7 @@
              } else if (this.f_109461_.f_91066_.m_232080_().m_231551_() == PrioritizeChunkUpdates.PLAYER_AFFECTED) {
                 flag = chunkrenderdispatcher$renderchunk.m_112842_();
              }
-@@ -2400,7 +_,12 @@
+@@ -2354,7 +_,12 @@
        this.f_109469_.m_110859_(p_109502_, p_109503_, p_109504_, p_109505_);
     }
  
@@ -344,7 +340,7 @@
        SoundInstance soundinstance = this.f_109410_.get(p_109516_);
        if (soundinstance != null) {
           this.f_109461_.m_91106_().m_120399_(soundinstance);
-@@ -2408,7 +_,7 @@
+@@ -2362,7 +_,7 @@
        }
  
        if (p_109515_ != null) {
@@ -353,16 +349,7 @@
           if (recorditem != null) {
              this.f_109461_.f_91065_.m_93055_(recorditem.m_43050_());
           }
-@@ -2548,7 +_,7 @@
-             break;
-          case 1010:
-             if (Item.m_41445_(p_234307_) instanceof RecordItem) {
--               this.m_109514_(((RecordItem)Item.m_41445_(p_234307_)).m_43051_(), p_234306_);
-+            this.playStreamingMusic(((RecordItem)Item.m_41445_(p_234307_)).m_43051_(), p_234306_, (RecordItem) Item.m_41445_(p_234307_));
-             } else {
-                this.m_109514_((SoundEvent)null, p_234306_);
-             }
-@@ -2700,7 +_,7 @@
+@@ -2656,7 +_,7 @@
           case 2001:
              BlockState blockstate = Block.m_49803_(p_234307_);
              if (!blockstate.m_60795_()) {
@@ -371,7 +358,16 @@
                 this.f_109465_.m_245747_(p_234306_, soundtype.m_56775_(), SoundSource.BLOCKS, (soundtype.m_56773_() + 1.0F) / 2.0F, soundtype.m_56774_() * 0.8F, false);
              }
  
-@@ -2915,7 +_,7 @@
+@@ -2751,7 +_,7 @@
+             break;
+          case 3002:
+             if (p_234307_ >= 0 && p_234307_ < Direction.Axis.f_122448_.length) {
+-               ParticleUtils.m_144967_(Direction.Axis.f_122448_[p_234307_], this.f_109465_, p_234306_, 0.125D, ParticleTypes.f_175830_, UniformInt.m_146622_(10, 19));
++            this.playStreamingMusic(((RecordItem)Item.m_41445_(p_234307_)).m_43051_(), p_234306_, (RecordItem) Item.m_41445_(p_234307_));
+             } else {
+                ParticleUtils.m_216313_(this.f_109465_, p_234306_, ParticleTypes.f_175830_, UniformInt.m_146622_(3, 5));
+             }
+@@ -2875,7 +_,7 @@
        } else {
           int i = p_109538_.m_45517_(LightLayer.SKY, p_109540_);
           int j = p_109538_.m_45517_(LightLayer.BLOCK, p_109540_);

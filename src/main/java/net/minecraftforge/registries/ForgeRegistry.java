@@ -7,6 +7,7 @@ package net.minecraftforge.registries;
 
 import java.util.*;
 import java.util.Map.Entry;
+import java.util.function.IntFunction;
 
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
@@ -351,6 +352,7 @@ public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegist
         return getIDRaw(this.names.get(name));
     }
 
+    @Override
     public V getValue(int id)
     {
         V ret = this.ids.get(id);
@@ -379,6 +381,11 @@ public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegist
     ForgeRegistry<V> copy(RegistryManager stage)
     {
         return new ForgeRegistry<>(stage, name, builder);
+    }
+
+    @Override
+    public void register(int id, ResourceLocation key, V value) {
+        add(id, key, value, key.getNamespace());
     }
 
     int add(int id, ResourceLocation key, V value)
@@ -995,7 +1002,7 @@ public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegist
                     int id = n.intValue();
                     if (ids.get(id) == null)
                     {
-                        return DataResult.error("Unknown registry id in " + ForgeRegistry.this.key + ": " + n);
+                        return DataResult.error(() -> "Unknown registry id in " + ForgeRegistry.this.key + ": " + n);
                     }
                     V val = ForgeRegistry.this.getValue(id);
                     return DataResult.success(val);
@@ -1004,7 +1011,7 @@ public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegist
             else
             {
                 return ResourceLocation.CODEC.decode(ops, input).flatMap(keyValuePair -> !ForgeRegistry.this.containsKey(keyValuePair.getFirst())
-                        ? DataResult.error("Unknown registry key in " + ForgeRegistry.this.key + ": " + keyValuePair.getFirst())
+                        ? DataResult.error(() -> "Unknown registry key in " + ForgeRegistry.this.key + ": " + keyValuePair.getFirst())
                         : DataResult.success(keyValuePair.mapFirst(ForgeRegistry.this::getValue)));
             }
         }
@@ -1015,7 +1022,7 @@ public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegist
             ResourceLocation key = getKey(input);
             if (key == null)
             {
-                return DataResult.error("Unknown registry element in " + ForgeRegistry.this.key + ": " + input);
+                return DataResult.error(() -> "Unknown registry element in " + ForgeRegistry.this.key + ": " + input);
             }
             T toMerge = ops.compressMaps() ? ops.createInt(getID(input)) : ops.createString(key.toString());
             return ops.mergeToPrimitive(prefix, toMerge);

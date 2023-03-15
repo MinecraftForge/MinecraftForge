@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/decoration/ArmorStand.java
 +++ b/net/minecraft/world/entity/decoration/ArmorStand.java
-@@ -71,7 +_,7 @@
+@@ -72,7 +_,7 @@
     public static final EntityDataAccessor<Rotations> f_31550_ = SynchedEntityData.m_135353_(ArmorStand.class, EntityDataSerializers.f_135037_);
     public static final EntityDataAccessor<Rotations> f_31527_ = SynchedEntityData.m_135353_(ArmorStand.class, EntityDataSerializers.f_135037_);
     private static final Predicate<Entity> f_31537_ = (p_31582_) -> {

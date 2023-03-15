@@ -1,9 +1,9 @@
 --- a/net/minecraft/server/Main.java
 +++ b/net/minecraft/server/Main.java
-@@ -79,6 +_,15 @@
-       OptionSpec<String> optionspec12 = optionparser.accepts("serverId").withRequiredArg();
+@@ -84,6 +_,15 @@
        OptionSpec<Void> optionspec13 = optionparser.accepts("jfrProfile");
-       OptionSpec<String> optionspec14 = optionparser.nonOptions();
+       OptionSpec<Path> optionspec14 = optionparser.accepts("pidFile").withRequiredArg().withValuesConvertedBy(new PathConverter());
+       OptionSpec<String> optionspec15 = optionparser.nonOptions();
 +      optionparser.accepts("allowUpdates").withRequiredArg().ofType(Boolean.class).defaultsTo(Boolean.TRUE); // Forge: allow mod updates to proceed
 +      optionparser.accepts("gameDir").withRequiredArg().ofType(File.class).defaultsTo(new File(".")); //Forge: Consume this argument, we use it in the launcher, and the client side.
 +      final OptionSpec<net.minecraft.core.BlockPos> spawnPosOpt;
@@ -16,32 +16,31 @@
  
        try {
           OptionSet optionset = optionparser.parse(p_129699_);
-@@ -86,6 +_,13 @@
+@@ -91,6 +_,13 @@
              optionparser.printHelpOn(System.err);
              return;
           }
-+         Path path1 = Paths.get("eula.txt");
-+         Eula eula = new Eula(path1);
++         Path path2 = Paths.get("eula.txt");
++         Eula eula = new Eula(path2);
 +
 +         if (!eula.m_135944_()) {
 +            f_129670_.info("You need to agree to the EULA in order to run the server. Go to eula.txt for more info.");
 +            return;
 +         }
  
-          CrashReport.m_127529_();
-          if (optionset.has(optionspec13)) {
-@@ -95,26 +_,25 @@
-          Bootstrap.m_135870_();
+          Path path = optionset.valueOf(optionspec14);
+          if (path != null) {
+@@ -106,25 +_,24 @@
           Bootstrap.m_135889_();
           Util.m_137584_();
+          Path path1 = Paths.get("server.properties");
 +         if (!optionset.has(optionspec1)) net.minecraftforge.server.loading.ServerModLoader.load(); // Load mods before we load almost anything else anymore. Single spot now. Only loads if they haven't passed the initserver param
-          Path path = Paths.get("server.properties");
-          DedicatedServerSettings dedicatedserversettings = new DedicatedServerSettings(path);
+          DedicatedServerSettings dedicatedserversettings = new DedicatedServerSettings(path1);
           dedicatedserversettings.m_139780_();
--         Path path1 = Paths.get("eula.txt");
--         Eula eula = new Eula(path1);
+-         Path path2 = Paths.get("eula.txt");
+-         Eula eula = new Eula(path2);
           if (optionset.has(optionspec1)) {
-             f_129670_.info("Initialized '{}' and '{}'", path.toAbsolutePath(), path1.toAbsolutePath());
+             f_129670_.info("Initialized '{}' and '{}'", path1.toAbsolutePath(), path2.toAbsolutePath());
              return;
           }
  
@@ -63,7 +62,7 @@
           LevelSummary levelsummary = levelstoragesource$levelstorageaccess.m_78308_();
           if (levelsummary != null) {
              if (levelsummary.m_193020_()) {
-@@ -160,6 +_,8 @@
+@@ -170,6 +_,8 @@
                          worlddimensions = dedicatedserverproperties.m_246483_(p_248079_.f_244104_());
                       }
  
@@ -72,7 +71,7 @@
                       WorldDimensions.Complete worlddimensions$complete = worlddimensions.m_245300_(registry);
                       Lifecycle lifecycle = worlddimensions$complete.m_245945_().add(p_248079_.f_244104_().m_211816_());
                       return new WorldLoader.DataLoadOutput<>(new PrimaryLevelData(levelsettings, worldoptions, worlddimensions$complete.f_244634_(), lifecycle), worlddimensions$complete.m_245593_());
-@@ -180,22 +_,33 @@
+@@ -190,22 +_,33 @@
  
           WorldData worlddata = worldstem.f_206895_();
           levelstoragesource$levelstorageaccess.m_78287_(registryaccess$frozen, worlddata);
@@ -92,7 +91,7 @@
              dedicatedserver1.m_129801_(optionset.valueOf(optionspec11));
              dedicatedserver1.m_129975_(optionset.has(optionspec2));
              dedicatedserver1.m_129948_(optionset.valueOf(optionspec12));
-             boolean flag1 = !optionset.has(optionspec) && !optionset.valuesOf(optionspec14).contains("nogui");
+             boolean flag1 = !optionset.has(optionspec) && !optionset.valuesOf(optionspec15).contains("nogui");
 -            if (flag1 && !GraphicsEnvironment.isHeadless()) {
 -               dedicatedserver1.m_139667_();
 +            if (dedicatedserver1 instanceof DedicatedServer dedicatedServer && flag1 && !GraphicsEnvironment.isHeadless()) {

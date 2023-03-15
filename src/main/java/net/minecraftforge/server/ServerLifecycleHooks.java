@@ -86,7 +86,6 @@ public class ServerLifecycleHooks
     public static boolean handleServerAboutToStart(final MinecraftServer server)
     {
         currentServer = server;
-        currentServer.getStatus().setForgeData(new ServerStatusPing()); //gathers NetworkRegistry data
         // on the dedi server we need to force the stuff to setup properly
         LogicalSidedProvider.setServer(()->server);
         ConfigTracker.INSTANCE.loadConfigs(ModConfig.Type.SERVER, getServerConfigPath(server));

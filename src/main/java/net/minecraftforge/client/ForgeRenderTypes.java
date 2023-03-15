@@ -371,7 +371,6 @@ public enum ForgeRenderTypes
             this.setupState = () -> {
                 this.blur = blur.get();
                 this.mipmap = mipmap.get();
-                RenderSystem.enableTexture();
                 TextureManager texturemanager = Minecraft.getInstance().getTextureManager();
                 texturemanager.getTexture(resLoc).setFilter(this.blur, this.mipmap);
                 RenderSystem.setShaderTexture(0, resLoc);
@@ -387,7 +386,6 @@ public enum ForgeRenderTypes
             this.setupState = () -> {
                 var mc = Minecraft.getInstance();
                 mc.getModelManager().getAtlas(texture).setBlurMipmap(blur, mc.options.mipmapLevels().get() > 0);
-                RenderSystem.enableTexture();
                 var texturemanager = mc.getTextureManager();
                 texturemanager.getTexture(texture).setFilter(blur, mipmap);
                 RenderSystem.setShaderTexture(0, texture);

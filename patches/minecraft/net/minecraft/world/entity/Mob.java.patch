@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/Mob.java
 +++ b/net/minecraft/world/entity/Mob.java
-@@ -210,7 +_,11 @@
+@@ -224,7 +_,11 @@
     }
  
     public void m_6710_(@Nullable LivingEntity p_21544_) {
@@ -13,7 +13,7 @@
     }
  
     public boolean m_6549_(EntityType<?> p_21399_) {
-@@ -499,9 +_,9 @@
+@@ -513,9 +_,9 @@
     public void m_8107_() {
        super.m_8107_();
        this.f_19853_.m_46473_().m_6180_("looting");
@@ -24,7 +24,7 @@
           for(ItemEntity itementity : this.f_19853_.m_45976_(ItemEntity.class, this.m_20191_().m_82377_((double)vec3i.m_123341_(), (double)vec3i.m_123342_(), (double)vec3i.m_123343_()))) {
              if (!itementity.m_213877_() && !itementity.m_32055_().m_41619_() && !itementity.m_32063_() && this.m_7243_(itementity.m_32055_())) {
                 this.m_7581_(itementity);
-@@ -673,6 +_,14 @@
+@@ -687,6 +_,14 @@
           this.m_146870_();
        } else if (!this.m_21532_() && !this.m_8023_()) {
           Entity entity = this.f_19853_.m_45930_(this, -1.0D);
@@ -39,7 +39,7 @@
           if (entity != null) {
              double d0 = entity.m_20280_(this);
              int i = this.m_6095_().m_20674_().m_21611_();
-@@ -1398,13 +_,23 @@
+@@ -1410,13 +_,23 @@
        return false;
     }
  

@@ -7,6 +7,7 @@ package net.minecraftforge.debug.recipe.recipebook;
 
 import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableList;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.RecipeBookCategories;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -26,7 +27,7 @@ public class RecipeBookExtensionClientHelper
         event.registerAggregateCategory(TESTING_SEARCH.get(), ImmutableList.of(TESTING_CAT_1.get(), TESTING_CAT_2.get()));
         event.registerRecipeCategoryFinder(RecipeBookExtensionTest.RECIPE_BOOK_TEST_RECIPE_TYPE.get(), r ->
         {
-            if (r.getResultItem().getItem() == Items.DIAMOND_BLOCK)
+            if (r.getResultItem(Minecraft.getInstance().level.registryAccess()).getItem() == Items.DIAMOND_BLOCK)
                 return TESTING_CAT_1.get();
             else return TESTING_CAT_2.get();
         });

@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/model/geom/LayerDefinitions.java
 +++ b/net/minecraft/client/model/geom/LayerDefinitions.java
-@@ -313,6 +_,7 @@
+@@ -319,6 +_,7 @@
        WoodType.m_61843_().forEach((p_247864_) -> {
           builder.put(ModelLayers.m_247439_(p_247864_), layerdefinition24);
        });

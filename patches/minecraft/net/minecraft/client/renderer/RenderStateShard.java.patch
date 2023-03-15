@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/RenderStateShard.java
 +++ b/net/minecraft/client/renderer/RenderStateShard.java
-@@ -115,7 +_,7 @@
+@@ -118,7 +_,7 @@
     protected static final RenderStateShard.ShaderStateShard f_173093_ = new RenderStateShard.ShaderStateShard(GameRenderer::m_172755_);
     protected static final RenderStateShard.ShaderStateShard f_173094_ = new RenderStateShard.ShaderStateShard(GameRenderer::m_172756_);
     protected static final RenderStateShard.ShaderStateShard f_173095_ = new RenderStateShard.ShaderStateShard(GameRenderer::m_172757_);

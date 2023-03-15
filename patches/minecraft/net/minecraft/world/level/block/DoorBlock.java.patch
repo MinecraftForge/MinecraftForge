@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/level/block/DoorBlock.java
++++ b/net/minecraft/world/level/block/DoorBlock.java
+@@ -48,7 +_,7 @@
+    protected static final VoxelShape f_52734_ = Block.m_49796_(0.0D, 0.0D, 0.0D, 3.0D, 16.0D, 16.0D);
+    private final BlockSetType f_271255_;
+ 
+-   public DoorBlock(BlockBehaviour.Properties p_273303_, BlockSetType p_272854_) {
++   protected DoorBlock(BlockBehaviour.Properties p_273303_, BlockSetType p_272854_) {
+       super(p_273303_.m_60918_(p_272854_.f_271136_()));
+       this.f_271255_ = p_272854_;
+       this.m_49959_(this.f_49792_.m_61090_().m_61124_(f_52726_, Direction.NORTH).m_61124_(f_52727_, Boolean.valueOf(false)).m_61124_(f_52728_, DoorHingeSide.LEFT).m_61124_(f_52729_, Boolean.valueOf(false)).m_61124_(f_52730_, DoubleBlockHalf.LOWER));

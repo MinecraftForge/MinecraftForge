@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/network/ServerConnectionListener.java
 +++ b/net/minecraft/server/network/ServerConnectionListener.java
-@@ -50,11 +_,12 @@
+@@ -47,11 +_,12 @@
  
  public class ServerConnectionListener {
     private static final Logger f_9701_ = LogUtils.getLogger();
@@ -15,7 +15,7 @@
     });
     final MinecraftServer f_9702_;
     public volatile boolean f_9700_;
-@@ -67,6 +_,8 @@
+@@ -64,6 +_,8 @@
     }
  
     public void m_9711_(@Nullable InetAddress p_9712_, int p_9713_) throws IOException {
@@ -24,12 +24,12 @@
        synchronized(this.f_9703_) {
           Class<? extends ServerSocketChannel> oclass;
           LazyLoadedValue<? extends EventLoopGroup> lazyloadedvalue;
-@@ -87,7 +_,7 @@
+@@ -84,7 +_,7 @@
                 } catch (ChannelException channelexception) {
                 }
  
--               p_9729_.pipeline().addLast("timeout", new ReadTimeoutHandler(30)).addLast("legacy_query", new LegacyQueryHandler(ServerConnectionListener.this)).addLast("splitter", new Varint21FrameDecoder()).addLast("decoder", new PacketDecoder(PacketFlow.SERVERBOUND)).addLast("prepender", new Varint21LengthFieldPrepender()).addLast("encoder", new PacketEncoder(PacketFlow.CLIENTBOUND));
-+               p_9729_.pipeline().addLast("timeout", new ReadTimeoutHandler(READ_TIMEOUT)).addLast("legacy_query", new LegacyQueryHandler(ServerConnectionListener.this)).addLast("splitter", new Varint21FrameDecoder()).addLast("decoder", new PacketDecoder(PacketFlow.SERVERBOUND)).addLast("prepender", new Varint21LengthFieldPrepender()).addLast("encoder", new PacketEncoder(PacketFlow.CLIENTBOUND));
+-               ChannelPipeline channelpipeline = p_9729_.pipeline().addLast("timeout", new ReadTimeoutHandler(30)).addLast("legacy_query", new LegacyQueryHandler(ServerConnectionListener.this));
++               ChannelPipeline channelpipeline = p_9729_.pipeline().addLast("timeout", new ReadTimeoutHandler(READ_TIMEOUT)).addLast("legacy_query", new LegacyQueryHandler(ServerConnectionListener.this));
+                Connection.m_264299_(channelpipeline, PacketFlow.SERVERBOUND);
                 int i = ServerConnectionListener.this.f_9702_.m_7032_();
                 Connection connection = (Connection)(i > 0 ? new RateKickingConnection(i) : new Connection(PacketFlow.SERVERBOUND));
-                ServerConnectionListener.this.f_9704_.add(connection);

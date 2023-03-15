@@ -328,7 +328,6 @@ public abstract class ScrollPanel extends AbstractContainerEventHandler implemen
             int barBgBlue  = this.barBgColor       & 0xff;
 
             RenderSystem.setShader(GameRenderer::getPositionColorShader);
-            RenderSystem.disableTexture();
             worldr.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
             worldr.vertex(barLeft,            this.bottom, 0.0D).color(barBgRed, barBgGreen, barBgBlue, barBgAlpha).endVertex();
             worldr.vertex(barLeft + barWidth, this.bottom, 0.0D).color(barBgRed, barBgGreen, barBgBlue, barBgAlpha).endVertex();
@@ -361,7 +360,6 @@ public abstract class ScrollPanel extends AbstractContainerEventHandler implemen
             tess.end();
         }
 
-        RenderSystem.enableTexture();
         RenderSystem.disableBlend();
         RenderSystem.disableScissor();
     }

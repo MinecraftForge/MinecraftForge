@@ -1,15 +1,15 @@
 --- a/com/mojang/math/Transformation.java
 +++ b/com/mojang/math/Transformation.java
-@@ -12,7 +_,7 @@
+@@ -14,7 +_,7 @@
  import org.joml.Vector3f;
  import org.joml.Vector3fc;
  
 -public final class Transformation {
 +public final class Transformation implements net.minecraftforge.client.extensions.IForgeTransformation {
     private final Matrix4f f_121078_;
-    private boolean f_121079_;
-    @Nullable
-@@ -139,6 +_,19 @@
+    public static final Codec<Transformation> f_268453_ = RecordCodecBuilder.create((p_269604_) -> {
+       return p_269604_.group(ExtraCodecs.f_252432_.fieldOf("translation").forGetter((p_269599_) -> {
+@@ -163,6 +_,19 @@
     public int hashCode() {
        return Objects.hash(this.f_121078_);
     }

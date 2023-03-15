@@ -4,8 +4,8 @@
        this.m_6478_(MoverType.SELF, this.m_20184_());
        float f = 0.98F;
        if (this.f_19861_) {
--         f = this.f_19853_.m_8055_(new BlockPos(this.m_20185_(), this.m_20186_() - 1.0D, this.m_20189_())).m_60734_().m_49958_() * 0.98F;
-+         BlockPos pos =new BlockPos(this.m_20185_(), this.m_20186_() - 1.0D, this.m_20189_());
+-         f = this.f_19853_.m_8055_(BlockPos.m_274561_(this.m_20185_(), this.m_20186_() - 1.0D, this.m_20189_())).m_60734_().m_49958_() * 0.98F;
++         BlockPos pos = BlockPos.m_274561_(this.m_20185_(), this.m_20186_() - 1.0D, this.m_20189_());
 +         f = this.f_19853_.m_8055_(pos).getFriction(this.f_19853_, pos, this) * 0.98F;
        }
  

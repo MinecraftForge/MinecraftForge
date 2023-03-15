@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/item/crafting/ShapelessRecipe.java
 +++ b/net/minecraft/world/item/crafting/ShapelessRecipe.java
-@@ -19,6 +_,7 @@
+@@ -20,6 +_,7 @@
     final CraftingBookCategory f_244076_;
     final ItemStack f_44243_;
     final NonNullList<Ingredient> f_44244_;
@@ -8,7 +8,7 @@
  
     public ShapelessRecipe(ResourceLocation p_251840_, String p_249640_, CraftingBookCategory p_249390_, ItemStack p_252071_, NonNullList<Ingredient> p_250689_) {
        this.f_44241_ = p_251840_;
-@@ -26,6 +_,7 @@
+@@ -27,6 +_,7 @@
        this.f_244076_ = p_249390_;
        this.f_44243_ = p_252071_;
        this.f_44244_ = p_250689_;
@@ -16,7 +16,7 @@
     }
  
     public ResourceLocation m_6423_() {
-@@ -54,17 +_,20 @@
+@@ -55,17 +_,20 @@
  
     public boolean m_5818_(CraftingContainer p_44262_, Level p_44263_) {
        StackedContents stackedcontents = new StackedContents();
@@ -37,8 +37,8 @@
 +      return i == this.f_44244_.size() && (isSimple ? stackedcontents.m_36475_(this, (IntList)null) : net.minecraftforge.common.util.RecipeMatcher.findMatches(inputs,  this.f_44244_) != null);
     }
  
-    public ItemStack m_5874_(CraftingContainer p_44260_) {
-@@ -76,14 +_,15 @@
+    public ItemStack m_5874_(CraftingContainer p_44260_, RegistryAccess p_266797_) {
+@@ -77,14 +_,15 @@
     }
  
     public static class Serializer implements RecipeSerializer<ShapelessRecipe> {
@@ -56,7 +56,7 @@
           } else {
              ItemStack itemstack = ShapedRecipe.m_151274_(GsonHelper.m_13930_(p_44291_, "result"));
              return new ShapelessRecipe(p_44290_, s, craftingbookcategory, itemstack, nonnulllist);
-@@ -95,7 +_,7 @@
+@@ -96,7 +_,7 @@
  
           for(int i = 0; i < p_44276_.size(); ++i) {
              Ingredient ingredient = Ingredient.m_43917_(p_44276_.get(i));

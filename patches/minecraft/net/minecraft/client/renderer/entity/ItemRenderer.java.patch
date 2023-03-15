@@ -1,24 +1,24 @@
 --- a/net/minecraft/client/renderer/entity/ItemRenderer.java
 +++ b/net/minecraft/client/renderer/entity/ItemRenderer.java
-@@ -83,7 +_,7 @@
- 
-    public ItemRenderer(TextureManager p_174225_, ModelManager p_174226_, ItemColors p_174227_, BlockEntityWithoutLevelRenderer p_174228_) {
-       this.f_115096_ = p_174225_;
--      this.f_115095_ = new ItemModelShaper(p_174226_);
-+      this.f_115095_ = new net.minecraftforge.client.model.ForgeItemModelShaper(p_174226_);
-       this.f_174223_ = p_174228_;
+@@ -80,7 +_,7 @@
+    public ItemRenderer(Minecraft p_266926_, TextureManager p_266774_, ModelManager p_266850_, ItemColors p_267016_, BlockEntityWithoutLevelRenderer p_267049_) {
+       this.f_265848_ = p_266926_;
+       this.f_115096_ = p_266774_;
+-      this.f_115095_ = new ItemModelShaper(p_266850_);
++      this.f_115095_ = new net.minecraftforge.client.model.ForgeItemModelShaper(p_266850_);
+       this.f_174223_ = p_267049_;
  
        for(Item item : BuiltInRegistries.f_257033_) {
-@@ -124,7 +_,7 @@
+@@ -121,7 +_,7 @@
              }
           }
  
--         p_115151_.m_7442_().m_111808_(p_115145_).m_111763_(p_115146_, p_115147_);
-+         p_115151_ = net.minecraftforge.client.ForgeHooksClient.handleCameraTransforms(p_115147_, p_115151_, p_115145_, p_115146_);
+-         p_115151_.m_7442_().m_269404_(p_270188_).m_111763_(p_115146_, p_115147_);
++         p_115151_ = net.minecraftforge.client.ForgeHooksClient.handleCameraTransforms(p_115147_, p_115151_, p_270188_, p_115146_);
           p_115147_.m_252880_(-0.5F, -0.5F, -0.5F);
           if (!p_115151_.m_7521_() && (!p_115144_.m_150930_(Items.f_42713_) || flag)) {
              boolean flag1;
-@@ -134,8 +_,8 @@
+@@ -131,8 +_,8 @@
              } else {
                 flag1 = true;
              }
@@ -29,7 +29,7 @@
              VertexConsumer vertexconsumer;
              if (p_115144_.m_204117_(ItemTags.f_215866_) && p_115144_.m_41790_()) {
                 p_115147_.m_85836_();
-@@ -159,9 +_,11 @@
+@@ -156,9 +_,11 @@
                 vertexconsumer = m_115211_(p_115148_, rendertype, true, p_115144_.m_41790_());
              }
  
@@ -38,12 +38,12 @@
 +            }
 +            }
           } else {
--            this.f_174223_.m_108829_(p_115144_, p_115145_, p_115147_, p_115148_, p_115149_, p_115150_);
-+            net.minecraftforge.client.extensions.common.IClientItemExtensions.of(p_115144_).getCustomRenderer().m_108829_(p_115144_, p_115145_, p_115147_, p_115148_, p_115149_, p_115150_);
+-            this.f_174223_.m_108829_(p_115144_, p_270188_, p_115147_, p_115148_, p_115149_, p_115150_);
++            net.minecraftforge.client.extensions.common.IClientItemExtensions.of(p_115144_).getCustomRenderer().m_108829_(p_115144_, p_270188_, p_115147_, p_115148_, p_115149_, p_115150_);
           }
  
           p_115147_.m_85849_();
-@@ -205,7 +_,7 @@
+@@ -202,7 +_,7 @@
           float f = (float)(i >> 16 & 255) / 255.0F;
           float f1 = (float)(i >> 8 & 255) / 255.0F;
           float f2 = (float)(i & 255) / 255.0F;
@@ -52,23 +52,21 @@
        }
  
     }
-@@ -308,6 +_,7 @@
+@@ -303,6 +_,7 @@
              crashreportcategory.m_128165_("Item Type", () -> {
-                return String.valueOf((Object)p_174237_.m_41720_());
+                return String.valueOf((Object)p_275431_.m_41720_());
              });
-+            crashreportcategory.m_128165_("Registry Name", () -> String.valueOf(net.minecraftforge.registries.ForgeRegistries.ITEMS.getKey(p_174237_.m_41720_())));
++            crashreportcategory.m_128165_("Registry Name", () -> String.valueOf(net.minecraftforge.registries.ForgeRegistries.ITEMS.getKey(p_275431_.m_41720_())));
              crashreportcategory.m_128165_("Item Damage", () -> {
-                return String.valueOf(p_174237_.m_41773_());
+                return String.valueOf(p_275431_.m_41773_());
              });
-@@ -368,6 +_,7 @@
-             RenderSystem.m_69482_();
+@@ -356,10 +_,15 @@
           }
  
-+         net.minecraftforge.client.ItemDecoratorHandler.of(p_115176_).render(p_115175_, p_115176_, p_115177_, p_115178_, f_115093_);
+          p_275269_.m_85849_();
++         net.minecraftforge.client.ItemDecoratorHandler.of(p_275590_).render(p_275652_, p_275590_, p_275202_, p_275508_, 0);
        }
     }
- 
-@@ -383,5 +_,9 @@
  
     public void m_6213_(ResourceManager p_115105_) {
        this.f_115095_.m_109403_();

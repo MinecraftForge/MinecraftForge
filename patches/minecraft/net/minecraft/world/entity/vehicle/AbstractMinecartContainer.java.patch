@@ -6,7 +6,7 @@
     public InteractionResult m_6096_(Player p_38232_, InteractionHand p_38233_) {
 +      InteractionResult ret = super.m_6096_(p_38232_, p_38233_);
 +      if (ret.m_19077_()) return ret;
-       return this.m_219931_(this::m_146852_, p_38232_);
+       return this.m_268996_(p_38232_);
     }
  
 @@ -119,6 +_,28 @@
