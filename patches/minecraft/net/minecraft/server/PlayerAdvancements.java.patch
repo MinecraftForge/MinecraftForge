@@ -32,13 +32,3 @@
        }
  
        if (flag1 && !advancementprogress.m_8193_()) {
-@@ -253,6 +_,9 @@
-          Set<Advancement> set = new HashSet<>();
-          Set<ResourceLocation> set1 = new HashSet<>();
- 
-+         if (net.minecraftforge.common.ForgeConfig.SERVER.fixAdvancementLoading.get())
-+            net.minecraftforge.common.AdvancementLoadFix.loadVisibility(this, this.f_135965_, this.f_263821_, this.f_263740_, this.f_135967_, advancement -> AdvancementVisibilityEvaluator.isVisible(advancement, adv -> m_135996_(adv).m_8193_()));
-+         else
-          for(Advancement advancement : this.f_263821_) {
-             this.m_264265_(advancement, set, set1);
-          }
