@@ -126,7 +126,7 @@
           for(int i2 = 0; i2 < p_262990_.size(); ++i2) {
              ClientTooltipComponent clienttooltipcomponent2 = p_262990_.get(i2);
 -            clienttooltipcomponent2.m_183452_(this.f_96547_, l, k1, p_263064_, this.f_96542_);
-+            clienttooltipcomponent2.m_183452_(preEvent.getFont(), k1, i1, p_263064_, this.f_96542_);
++            clienttooltipcomponent2.m_183452_(preEvent.getFont(), l, k1, p_263064_, this.f_96542_);
              k1 += clienttooltipcomponent2.m_142103_() + (i2 == 0 ? 2 : 0);
           }
  
