@@ -202,12 +202,13 @@
     protected Vec3 m_5763_(Vec3 p_36201_, MoverType p_36202_) {
        if (!this.f_36077_.f_35935_ && p_36201_.f_82480_ <= 0.0D && (p_36202_ == MoverType.SELF || p_36202_ == MoverType.PLAYER) && this.m_36343_() && this.m_36386_()) {
           double d0 = p_36201_.f_82479_;
-@@ -1047,10 +_,11 @@
+@@ -1046,11 +_,13 @@
+       return p_36201_;
     }
  
++   // Forge: Don't update this method to use IForgeEntity#getStepHeight() - https://github.com/MinecraftForge/MinecraftForge/issues/9376
     private boolean m_36386_() {
--      return this.f_19861_ || this.f_19789_ < this.m_274421_() && !this.f_19853_.m_45756_(this, this.m_20191_().m_82386_(0.0D, (double)(this.f_19789_ - this.m_274421_()), 0.0D));
-+      return this.f_19861_ || this.f_19789_ < this.getStepHeight() && !this.f_19853_.m_45756_(this, this.m_20191_().m_82386_(0.0D, (double)(this.f_19789_ - this.getStepHeight()), 0.0D));
+       return this.f_19861_ || this.f_19789_ < this.m_274421_() && !this.f_19853_.m_45756_(this, this.m_20191_().m_82386_(0.0D, (double)(this.f_19789_ - this.m_274421_()), 0.0D));
     }
  
     public void m_5706_(Entity p_36347_) {
