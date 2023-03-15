@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/damagesource/DamageSource.java
++++ b/net/minecraft/world/damagesource/DamageSource.java
+@@ -32,7 +_,7 @@
+       return this.f_268569_ != this.f_268595_;
+    }
+ 
+-   public DamageSource(Holder<DamageType> p_270906_, @Nullable Entity p_270796_, @Nullable Entity p_270459_, @Nullable Vec3 p_270623_) {
++   private DamageSource(Holder<DamageType> p_270906_, @Nullable Entity p_270796_, @Nullable Entity p_270459_, @Nullable Vec3 p_270623_) {
+       this.f_268495_ = p_270906_;
+       this.f_268569_ = p_270459_;
+       this.f_268595_ = p_270796_;

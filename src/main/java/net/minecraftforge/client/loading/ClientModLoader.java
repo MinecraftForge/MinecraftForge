@@ -140,8 +140,6 @@ public class ClientModLoader
 
     public static boolean completeModLoading()
     {
-        RenderSystem.disableTexture();
-        RenderSystem.enableTexture();
         List<ModLoadingWarning> warnings = ModLoader.get().getWarnings();
         boolean showWarnings = true;
         try {
@@ -209,7 +207,7 @@ public class ClientModLoader
         // Create a resource pack merging all mod resources that should be hidden
         final Pack modResourcesPack = Pack.readMetaAndCreate("mod_resources", Component.literal("Mod Resources"), true,
                 id -> new DelegatingPackResources(id, false, new PackMetadataSection(Component.translatable("fml.resources.modresources", hiddenPacks.size()),
-                        PackType.CLIENT_RESOURCES.getVersion(SharedConstants.getCurrentVersion())), hiddenPacks),
+                        SharedConstants.getCurrentVersion().getPackVersion(PackType.CLIENT_RESOURCES)), hiddenPacks),
                 PackType.CLIENT_RESOURCES, Pack.Position.BOTTOM, PackSource.DEFAULT);
         packAcceptor.accept(modResourcesPack);
     }

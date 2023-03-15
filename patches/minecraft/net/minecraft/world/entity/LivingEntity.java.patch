@@ -1,10 +1,10 @@
 --- a/net/minecraft/world/entity/LivingEntity.java
 +++ b/net/minecraft/world/entity/LivingEntity.java
-@@ -119,12 +_,14 @@
+@@ -117,12 +_,14 @@
  import net.minecraft.world.scores.PlayerTeam;
  import org.slf4j.Logger;
  
--public abstract class LivingEntity extends Entity {
+-public abstract class LivingEntity extends Entity implements Attackable {
 +public abstract class LivingEntity extends Entity implements net.minecraftforge.common.extensions.IForgeLivingEntity {
     private static final Logger f_201943_ = LogUtils.getLogger();
     private static final UUID f_20929_ = UUID.fromString("662A6B8D-DA3E-4C1C-8813-96EA6097278D");
@@ -16,7 +16,7 @@
     public static final int f_147166_ = 2;
     public static final int f_147167_ = 4;
     public static final int f_147168_ = 98;
-@@ -275,7 +_,7 @@
+@@ -270,7 +_,7 @@
     }
  
     public static AttributeSupplier.Builder m_21183_() {
@@ -25,7 +25,7 @@
     }
  
     protected void m_7840_(double p_20990_, boolean p_20991_, BlockState p_20992_, BlockPos p_20993_) {
-@@ -293,13 +_,15 @@
+@@ -288,13 +_,15 @@
           if (!p_20992_.m_60795_()) {
              double d0 = Math.min((double)(0.2F + f / 15.0F), 2.5D);
              int i = (int)(150.0D * d0);
@@ -42,32 +42,32 @@
     public boolean m_6040_() {
        return this.m_6336_() == MobType.f_21641_;
     }
-@@ -340,8 +_,8 @@
+@@ -335,8 +_,8 @@
              }
           }
  
--         if (this.m_204029_(FluidTags.f_13131_) && !this.f_19853_.m_8055_(new BlockPos(this.m_20185_(), this.m_20188_(), this.m_20189_())).m_60713_(Blocks.f_50628_)) {
+-         if (this.m_204029_(FluidTags.f_13131_) && !this.f_19853_.m_8055_(BlockPos.m_274561_(this.m_20185_(), this.m_20188_(), this.m_20189_())).m_60713_(Blocks.f_50628_)) {
 -            boolean flag1 = !this.m_6040_() && !MobEffectUtil.m_19588_(this) && (!flag || !((Player)this).m_150110_().f_35934_);
-+         if (!this.getEyeInFluidType().isAir() && !this.f_19853_.m_8055_(new BlockPos(this.m_20185_(), this.m_20188_(), this.m_20189_())).m_60713_(Blocks.f_50628_)) {
++         if (!this.getEyeInFluidType().isAir() && !this.f_19853_.m_8055_(BlockPos.m_274561_(this.m_20185_(), this.m_20188_(), this.m_20189_())).m_60713_(Blocks.f_50628_)) {
 +            boolean flag1 = this.canDrownInFluidType(this.getEyeInFluidType()) && !MobEffectUtil.m_19588_(this) && (!flag || !((Player)this).m_150110_().f_35934_);
              if (flag1) {
                 this.m_20301_(this.m_7302_(this.m_20146_()));
                 if (this.m_20146_() == -20) {
-@@ -359,10 +_,11 @@
+@@ -354,10 +_,11 @@
                 }
              }
  
--            if (!this.f_19853_.f_46443_ && this.m_20159_() && this.m_20202_() != null && !this.m_20202_().m_6146_()) {
+-            if (!this.f_19853_.f_46443_ && this.m_20159_() && this.m_20202_() != null && this.m_20202_().m_275843_()) {
 +            if (!this.f_19853_.f_46443_ && this.m_20159_() && this.m_20202_() != null && !this.m_20202_().canBeRiddenUnderFluidType(this.getEyeInFluidType(), this)) {
                 this.m_8127_();
              }
 -         } else if (this.m_20146_() < this.m_6062_()) {
 +         } // Forge: Move to if statement since we need to increase the air supply if in bubble column or can't drown
-+         if (this.m_20146_() < this.m_6062_() && (!this.canDrownInFluidType(this.getEyeInFluidType()) || this.f_19853_.m_8055_(new BlockPos(this.m_20185_(), this.m_20188_(), this.m_20189_())).m_60713_(Blocks.f_50628_))) {
++         if (this.m_20146_() < this.m_6062_() && (!this.canDrownInFluidType(this.getEyeInFluidType()) || this.f_19853_.m_8055_(BlockPos.m_274561_(this.m_20185_(), this.m_20188_(), this.m_20189_())).m_60713_(Blocks.f_50628_))) {
              this.m_20301_(this.m_7305_(this.m_20146_()));
           }
  
-@@ -375,7 +_,7 @@
+@@ -370,7 +_,7 @@
           }
        }
  
@@ -76,7 +76,7 @@
           this.m_252836_();
        }
  
-@@ -739,7 +_,7 @@
+@@ -732,7 +_,7 @@
              if (!mobeffectinstance.m_19552_(this, () -> {
                 this.m_141973_(mobeffectinstance, true, (Entity)null);
              })) {
@@ -85,7 +85,7 @@
                    iterator.remove();
                    this.m_7285_(mobeffectinstance);
                 }
-@@ -789,8 +_,10 @@
+@@ -782,8 +_,10 @@
           this.m_6842_(false);
        } else {
           Collection<MobEffectInstance> collection = this.f_20945_.values();
@@ -98,7 +98,7 @@
           this.m_6842_(this.m_21023_(MobEffects.f_19609_));
        }
  
-@@ -826,7 +_,7 @@
+@@ -819,7 +_,7 @@
              d0 *= 0.5D;
           }
        }
@@ -107,7 +107,7 @@
        return d0;
     }
  
-@@ -869,7 +_,9 @@
+@@ -862,7 +_,9 @@
  
           boolean flag;
           for(flag = false; iterator.hasNext(); flag = true) {
@@ -118,7 +118,7 @@
              iterator.remove();
           }
  
-@@ -903,6 +_,7 @@
+@@ -896,6 +_,7 @@
           return false;
        } else {
           MobEffectInstance mobeffectinstance = this.f_20945_.get(p_147208_.m_19544_());
@@ -126,7 +126,7 @@
           if (mobeffectinstance == null) {
              this.f_20945_.put(p_147208_.m_19544_(), p_147208_);
              this.m_142540_(p_147208_, p_147209_);
-@@ -917,6 +_,9 @@
+@@ -910,6 +_,9 @@
     }
  
     public boolean m_7301_(MobEffectInstance p_21197_) {
@@ -136,7 +136,7 @@
        if (this.m_6336_() == MobType.f_21641_) {
           MobEffect mobeffect = p_21197_.m_19544_();
           if (mobeffect == MobEffects.f_19605_ || mobeffect == MobEffects.f_19614_) {
-@@ -949,6 +_,7 @@
+@@ -942,6 +_,7 @@
     }
  
     public boolean m_21195_(MobEffect p_21196_) {
@@ -144,7 +144,7 @@
        MobEffectInstance mobeffectinstance = this.m_6234_(p_21196_);
        if (mobeffectinstance != null) {
           this.m_7285_(mobeffectinstance);
-@@ -985,6 +_,8 @@
+@@ -978,6 +_,8 @@
     }
  
     public void m_5634_(float p_21116_) {
@@ -153,7 +153,7 @@
        float f = this.m_21223_();
        if (f > 0.0F) {
           this.m_21153_(f + p_21116_);
-@@ -1005,6 +_,7 @@
+@@ -998,6 +_,7 @@
     }
  
     public boolean m_6469_(DamageSource p_21016_, float p_21017_) {
@@ -161,7 +161,7 @@
        if (this.m_6673_(p_21016_)) {
           return false;
        } else if (this.f_19853_.f_46443_) {
-@@ -1023,9 +_,11 @@
+@@ -1016,9 +_,11 @@
           boolean flag = false;
           float f1 = 0.0F;
           if (p_21017_ > 0.0F && this.m_21275_(p_21016_)) {
@@ -173,34 +173,33 @@
 +            if(ev.shieldTakesDamage()) this.m_7909_(p_21017_);
 +            f1 = ev.getBlockedDamage();
 +            p_21017_ -= ev.getBlockedDamage();
-             if (!p_21016_.m_19360_()) {
+             if (!p_21016_.m_269533_(DamageTypeTags.f_268524_)) {
                 Entity entity = p_21016_.m_7640_();
                 if (entity instanceof LivingEntity) {
-@@ -1036,6 +_,7 @@
- 
-             flag = true;
+@@ -1033,6 +_,7 @@
+          if (p_21016_.m_269533_(DamageTypeTags.f_268419_) && this.m_6095_().m_204039_(EntityTypeTags.f_144295_)) {
+             p_21017_ *= 5.0F;
           }
 +         }
  
-          this.f_20924_ = 1.5F;
+          this.f_267362_.m_267771_(1.5F);
           boolean flag1 = true;
-@@ -1070,11 +_,11 @@
-             if (entity1 instanceof Player) {
+@@ -1070,11 +_,10 @@
+                Player player1 = (Player)entity1;
                 this.f_20889_ = 100;
-                this.f_20888_ = (Player)entity1;
+                this.f_20888_ = player1;
 -            } else if (entity1 instanceof Wolf) {
 -               Wolf wolf = (Wolf)entity1;
 -               if (wolf.m_21824_()) {
-+            } else if (entity1 instanceof net.minecraft.world.entity.TamableAnimal) {
-+               net.minecraft.world.entity.TamableAnimal tamableEntity = (net.minecraft.world.entity.TamableAnimal)entity1;
++            } else if (entity1 instanceof net.minecraft.world.entity.TamableAnimal tamableEntity) {
 +               if (tamableEntity.m_21824_()) {
                    this.f_20889_ = 100;
--                  LivingEntity livingentity1 = wolf.m_21826_();
-+                  LivingEntity livingentity1 = tamableEntity.m_21826_();
-                   if (livingentity1 != null && livingentity1.m_6095_() == EntityType.f_20532_) {
-                      this.f_20888_ = (Player)livingentity1;
-                   } else {
-@@ -1147,7 +_,7 @@
+-                  LivingEntity livingentity2 = wolf.m_269323_();
++                  LivingEntity livingentity2 = tamableEntity.m_269323_();
+                   if (livingentity2 instanceof Player) {
+                      Player player = (Player)livingentity2;
+                      this.f_20888_ = player;
+@@ -1133,7 +_,7 @@
           if (this instanceof ServerPlayer) {
              CriteriaTriggers.f_10574_.m_35174_((ServerPlayer)this, p_21016_, f, p_21017_, flag);
              if (f1 > 0.0F && f1 < 3.4028235E37F) {
@@ -209,7 +208,7 @@
              }
           }
  
-@@ -1175,7 +_,7 @@
+@@ -1161,7 +_,7 @@
  
           for(InteractionHand interactionhand : InteractionHand.values()) {
              ItemStack itemstack1 = this.m_21120_(interactionhand);
@@ -218,7 +217,7 @@
                 itemstack = itemstack1.m_41777_();
                 itemstack1.m_41774_(1);
                 break;
-@@ -1185,7 +_,7 @@
+@@ -1171,7 +_,7 @@
           if (itemstack != null) {
              if (this instanceof ServerPlayer) {
                 ServerPlayer serverplayer = (ServerPlayer)this;
@@ -227,7 +226,7 @@
                 CriteriaTriggers.f_10551_.m_74431_(serverplayer, itemstack);
              }
  
-@@ -1254,6 +_,7 @@
+@@ -1240,6 +_,7 @@
     }
  
     public void m_6667_(DamageSource p_21014_) {
@@ -235,7 +234,7 @@
        if (!this.m_213877_() && !this.f_20890_) {
           Entity entity = p_21014_.m_7639_();
           LivingEntity livingentity = this.m_21232_();
-@@ -1289,10 +_,10 @@
+@@ -1275,10 +_,10 @@
        if (!this.f_19853_.f_46443_) {
           boolean flag = false;
           if (p_21269_ instanceof WitherBoss) {
@@ -248,7 +247,7 @@
                    this.f_19853_.m_7731_(blockpos, blockstate, 3);
                    flag = true;
                 }
-@@ -1309,12 +_,9 @@
+@@ -1295,12 +_,9 @@
  
     protected void m_6668_(DamageSource p_21192_) {
        Entity entity = p_21192_.m_7639_();
@@ -264,7 +263,7 @@
  
        boolean flag = this.f_20889_ > 0;
        if (this.m_6125_() && this.f_19853_.m_46469_().m_46207_(GameRules.f_46135_)) {
-@@ -1324,6 +_,10 @@
+@@ -1310,6 +_,10 @@
  
        this.m_5907_();
        this.m_21226_();
@@ -275,7 +274,7 @@
     }
  
     protected void m_5907_() {
-@@ -1331,7 +_,8 @@
+@@ -1317,7 +_,8 @@
  
     protected void m_21226_() {
        if (this.f_19853_ instanceof ServerLevel && !this.m_217046_() && (this.m_6124_() || this.f_20889_ > 0 && this.m_6149_() && this.f_19853_.m_46469_().m_46207_(GameRules.f_46135_))) {
@@ -285,7 +284,7 @@
        }
  
     }
-@@ -1347,7 +_,8 @@
+@@ -1333,7 +_,8 @@
        ResourceLocation resourcelocation = this.m_5743_();
        LootTable loottable = this.f_19853_.m_7654_().m_129898_().m_79217_(resourcelocation);
        LootContext.Builder lootcontext$builder = this.m_7771_(p_21022_, p_21021_);
@@ -295,7 +294,7 @@
     }
  
     protected LootContext.Builder m_7771_(boolean p_21105_, DamageSource p_21106_) {
-@@ -1360,6 +_,11 @@
+@@ -1346,6 +_,11 @@
     }
  
     public void m_147240_(double p_147241_, double p_147242_, double p_147243_) {
@@ -307,7 +306,7 @@
        p_147241_ *= 1.0D - this.m_21133_(Attributes.f_22278_);
        if (!(p_147241_ <= 0.0D)) {
           this.f_19812_ = true;
-@@ -1430,15 +_,9 @@
+@@ -1423,15 +_,9 @@
        } else {
           BlockPos blockpos = this.m_20183_();
           BlockState blockstate = this.m_146900_();
@@ -326,7 +325,7 @@
        }
     }
  
-@@ -1458,6 +_,11 @@
+@@ -1451,6 +_,11 @@
     }
  
     public boolean m_142535_(float p_147187_, float p_147188_, DamageSource p_147189_) {
@@ -338,7 +337,7 @@
        boolean flag = super.m_142535_(p_147187_, p_147188_, p_147189_);
        int i = this.m_5639_(p_147187_, p_147188_);
        if (i > 0) {
-@@ -1481,9 +_,10 @@
+@@ -1478,9 +_,10 @@
           int i = Mth.m_14107_(this.m_20185_());
           int j = Mth.m_14107_(this.m_20186_() - (double)0.2F);
           int k = Mth.m_14107_(this.m_20189_());
@@ -351,7 +350,7 @@
              this.m_5496_(soundtype.m_56779_(), soundtype.m_56773_() * 0.5F, soundtype.m_56774_() * 0.75F);
           }
  
-@@ -1531,9 +_,9 @@
+@@ -1527,9 +_,9 @@
              float f2 = f1 - p_21194_;
              if (f2 > 0.0F && f2 < 3.4028235E37F) {
                 if (this instanceof ServerPlayer) {
@@ -363,7 +362,7 @@
                 }
              }
           }
-@@ -1555,19 +_,22 @@
+@@ -1551,6 +_,8 @@
  
     protected void m_6475_(DamageSource p_21240_, float p_21241_) {
        if (!this.m_6673_(p_21240_)) {
@@ -371,21 +370,23 @@
 +         if (p_21241_ <= 0) return;
           p_21241_ = this.m_21161_(p_21240_, p_21241_);
           p_21241_ = this.m_6515_(p_21240_, p_21241_);
-          float f2 = Math.max(p_21241_ - this.m_6103_(), 0.0F);
-          this.m_7911_(this.m_6103_() - (p_21241_ - f2));
-          float f = p_21241_ - f2;
-          if (f > 0.0F && f < 3.4028235E37F && p_21240_.m_7639_() instanceof ServerPlayer) {
--            ((ServerPlayer)p_21240_.m_7639_()).m_36222_(Stats.f_12929_, Math.round(f * 10.0F));
+          float f1 = Math.max(p_21241_ - this.m_6103_(), 0.0F);
+@@ -1560,14 +_,16 @@
+             Entity entity = p_21240_.m_7639_();
+             if (entity instanceof ServerPlayer) {
+                ServerPlayer serverplayer = (ServerPlayer)entity;
+-               serverplayer.m_36222_(Stats.f_12929_, Math.round(f * 10.0F));
+             }
 +            ((ServerPlayer)p_21240_.m_7639_()).m_6278_(Stats.f_12988_.m_12902_(Stats.f_12929_), Math.round(f * 10.0F));
           }
  
-+         f2 = net.minecraftforge.common.ForgeHooks.onLivingDamage(this, p_21240_, f2);
-          if (f2 != 0.0F) {
-             float f1 = this.m_21223_();
--            this.m_21153_(f1 - f2);
-             this.m_21231_().m_19289_(p_21240_, f1, f2);
++         f1 = net.minecraftforge.common.ForgeHooks.onLivingDamage(this, p_21240_, f1);
+          if (f1 != 0.0F) {
+             float f2 = this.m_21223_();
+             this.m_21231_().m_19289_(p_21240_, f2, f1);
+             this.m_21153_(f2 - f1);
 +            this.m_21153_(f1 - f2); // Forge: moved to fix MC-121048
-             this.m_7911_(this.m_6103_() - f2);
+             this.m_7911_(this.m_6103_() - f1);
              this.m_146850_(GameEvent.f_223706_);
           }
 @@ -1622,6 +_,8 @@
@@ -397,7 +398,7 @@
        if (!this.f_20911_ || this.f_20913_ >= this.m_21304_() / 2 || this.f_20913_ < 0) {
           this.f_20913_ = -1;
           this.f_20911_ = true;
-@@ -1989,14 +_,17 @@
+@@ -1927,14 +_,17 @@
        }
  
        this.f_19812_ = true;
@@ -417,9 +418,9 @@
     }
  
     protected float m_6108_() {
-@@ -2010,14 +_,19 @@
+@@ -1948,14 +_,19 @@
     public void m_7023_(Vec3 p_21280_) {
-       if (this.m_6142_() || this.m_6109_()) {
+       if (this.m_6109_()) {
           double d0 = 0.08D;
 +         AttributeInstance gravity = this.m_21051_(net.minecraftforge.common.ForgeMod.ENTITY_GRAVITY.get());
           boolean flag = this.m_20184_().f_82480_ <= 0.0D;
@@ -439,7 +440,7 @@
              double d9 = this.m_20186_();
              float f4 = this.m_20142_() ? 0.9F : this.m_6108_();
              float f5 = 0.02F;
-@@ -2039,6 +_,7 @@
+@@ -1977,6 +_,7 @@
                 f4 = 0.96F;
              }
  
@@ -447,7 +448,7 @@
              this.m_19920_(f5, p_21280_);
              this.m_6478_(MoverType.SELF, this.m_20184_());
              Vec3 vec36 = this.m_20184_();
-@@ -2052,6 +_,7 @@
+@@ -1990,6 +_,7 @@
              if (this.f_19862_ && this.m_20229_(vec32.f_82479_, vec32.f_82480_ + (double)0.6F - this.m_20186_() + d9, vec32.f_82481_)) {
                 this.m_20334_(vec32.f_82479_, (double)0.3F, vec32.f_82481_);
              }
@@ -455,7 +456,7 @@
           } else if (this.m_20077_() && this.m_6129_() && !this.m_203441_(fluidstate)) {
              double d8 = this.m_20186_();
              this.m_19920_(0.02F, p_21280_);
-@@ -2114,7 +_,7 @@
+@@ -2052,7 +_,7 @@
              }
           } else {
              BlockPos blockpos = this.m_20099_();
@@ -464,7 +465,7 @@
              float f3 = this.f_19861_ ? f2 * 0.91F : 0.91F;
              Vec3 vec35 = this.m_21074_(p_21280_, f2);
              double d2 = vec35.f_82480_;
-@@ -2190,7 +_,7 @@
+@@ -2149,7 +_,7 @@
           double d0 = Mth.m_14008_(p_21298_.f_82479_, (double)-0.15F, (double)0.15F);
           double d1 = Mth.m_14008_(p_21298_.f_82481_, (double)-0.15F, (double)0.15F);
           double d2 = Math.max(p_21298_.f_82480_, (double)-0.15F);
@@ -473,7 +474,7 @@
              d2 = 0.0D;
           }
  
-@@ -2218,6 +_,7 @@
+@@ -2181,6 +_,7 @@
     }
  
     public void m_8119_() {
@@ -481,7 +482,7 @@
        super.m_8119_();
        this.m_21329_();
        this.m_21333_();
-@@ -2369,6 +_,7 @@
+@@ -2332,6 +_,7 @@
  
           ItemStack itemstack1 = this.m_6844_(equipmentslot);
           if (this.m_246525_(itemstack, itemstack1)) {
@@ -489,21 +490,22 @@
              if (map == null) {
                 map = Maps.newEnumMap(EquipmentSlot.class);
              }
-@@ -2523,6 +_,8 @@
+@@ -2477,6 +_,9 @@
        this.f_19853_.m_46473_().m_6180_("jump");
        if (this.f_20899_ && this.m_6129_()) {
           double d7;
 +         net.minecraftforge.fluids.FluidType fluidType = this.getMaxHeightFluidType();
 +         if (!fluidType.isAir()) d7 = this.getFluidTypeHeight(fluidType);
++         else
           if (this.m_20077_()) {
              d7 = this.m_204036_(FluidTags.f_13132_);
           } else {
-@@ -2533,15 +_,17 @@
+@@ -2487,15 +_,17 @@
           double d8 = this.m_20204_();
-          if (!flag1 || this.f_19861_ && !(d7 > d8)) {
+          if (!flag || this.f_19861_ && !(d7 > d8)) {
              if (!this.m_20077_() || this.f_19861_ && !(d7 > d8)) {
 +               if (fluidType.isAir() || this.f_19861_ && !(d7 > d8)) {
-                if ((this.f_19861_ || flag1 && d7 <= d8) && this.f_20954_ == 0) {
+                if ((this.f_19861_ || flag && d7 <= d8) && this.f_20954_ == 0) {
                    this.m_6135_();
                    this.f_20954_ = 10;
                 }
@@ -518,7 +520,7 @@
           }
        } else {
           this.f_20954_ = 0;
-@@ -2596,6 +_,8 @@
+@@ -2555,6 +_,8 @@
        boolean flag = this.m_20291_(7);
        if (flag && !this.f_19861_ && !this.m_20159_() && !this.m_21023_(MobEffects.f_19620_)) {
           ItemStack itemstack = this.m_6844_(EquipmentSlot.CHEST);
@@ -527,7 +529,7 @@
           if (itemstack.m_150930_(Items.f_42741_) && ElytraItem.m_41140_(itemstack)) {
              flag = true;
              int i = this.f_20937_ + 1;
-@@ -2831,8 +_,16 @@
+@@ -2786,8 +_,16 @@
  
     private void m_21329_() {
        if (this.m_6117_()) {
@@ -546,7 +548,7 @@
              this.m_142106_(this.f_20935_);
           } else {
              this.m_5810_();
-@@ -2855,7 +_,7 @@
+@@ -2810,7 +_,7 @@
  
     private boolean m_21332_() {
        int i = this.m_21212_();
@@ -555,7 +557,7 @@
        boolean flag = foodproperties != null && foodproperties.m_38748_();
        flag |= i <= this.f_20935_.m_41779_() - 7;
        return flag && i % 4 == 0;
-@@ -2885,8 +_,10 @@
+@@ -2840,8 +_,10 @@
     public void m_6672_(InteractionHand p_21159_) {
        ItemStack itemstack = this.m_21120_(p_21159_);
        if (!itemstack.m_41619_() && !this.m_6117_()) {
@@ -567,7 +569,7 @@
           if (!this.f_19853_.f_46443_) {
              this.m_21155_(1, true);
              this.m_21155_(2, p_21159_ == InteractionHand.OFF_HAND);
-@@ -2947,6 +_,9 @@
+@@ -2902,6 +_,9 @@
           vec31 = vec31.m_82496_(-this.m_146909_() * ((float)Math.PI / 180F));
           vec31 = vec31.m_82524_(-this.m_146908_() * ((float)Math.PI / 180F));
           vec31 = vec31.m_82520_(this.m_20185_(), this.m_20188_(), this.m_20189_());
@@ -577,17 +579,17 @@
           this.f_19853_.m_7106_(new ItemParticleOption(ParticleTypes.f_123752_, p_21061_), vec31.f_82479_, vec31.f_82480_, vec31.f_82481_, vec3.f_82479_, vec3.f_82480_ + 0.05D, vec3.f_82481_);
        }
  
-@@ -2960,7 +_,8 @@
+@@ -2915,7 +_,8 @@
           } else {
              if (!this.f_20935_.m_41619_() && this.m_6117_()) {
                 this.m_21137_(this.f_20935_, 16);
 -               ItemStack itemstack = this.f_20935_.m_41671_(this.f_19853_, this);
-+            ItemStack copy = this.f_20935_.m_41777_();
-+            ItemStack itemstack = net.minecraftforge.event.ForgeEventFactory.onItemUseFinish(this, copy, m_21212_(), this.f_20935_.m_41671_(this.f_19853_, this));
++               ItemStack copy = this.f_20935_.m_41777_();
++               ItemStack itemstack = net.minecraftforge.event.ForgeEventFactory.onItemUseFinish(this, copy, m_21212_(), this.f_20935_.m_41671_(this.f_19853_, this));
                 if (itemstack != this.f_20935_) {
                    this.m_21008_(interactionhand, itemstack);
                 }
-@@ -2986,7 +_,11 @@
+@@ -2941,7 +_,11 @@
  
     public void m_21253_() {
        if (!this.f_20935_.m_41619_()) {
@@ -599,7 +601,15 @@
           if (this.f_20935_.m_41781_()) {
              this.m_21329_();
           }
-@@ -3011,7 +_,7 @@
+@@ -2951,6 +_,7 @@
+    }
+ 
+    public void m_5810_() {
++      if (this.m_6117_() && !this.f_20935_.m_41619_()) this.f_20935_.onStopUsing(this, f_20936_);
+       if (!this.f_19853_.f_46443_) {
+          boolean flag = this.m_6117_();
+          this.m_21155_(1, false);
+@@ -2966,7 +_,7 @@
     public boolean m_21254_() {
        if (this.m_6117_() && !this.f_20935_.m_41619_()) {
           Item item = this.f_20935_.m_41720_();
@@ -608,7 +618,7 @@
              return false;
           } else {
              return item.m_8105_(this.f_20935_) - this.f_20936_ >= 5;
-@@ -3133,8 +_,8 @@
+@@ -3092,8 +_,8 @@
        }
  
        BlockState blockstate = this.f_19853_.m_8055_(p_21141_);
@@ -619,12 +629,12 @@
        }
  
        this.m_20124_(Pose.SLEEPING);
-@@ -3150,16 +_,16 @@
+@@ -3109,16 +_,16 @@
  
     private boolean m_21334_() {
-       return this.m_21257_().map((p_147236_) -> {
--         return this.f_19853_.m_8055_(p_147236_).m_60734_() instanceof BedBlock;
-+         return net.minecraftforge.event.ForgeEventFactory.fireSleepingLocationCheck(this, p_147236_);
+       return this.m_21257_().map((p_269792_) -> {
+-         return this.f_19853_.m_8055_(p_269792_).m_60734_() instanceof BedBlock;
++         return net.minecraftforge.event.ForgeEventFactory.fireSleepingLocationCheck(this, p_269792_);
        }).orElse(false);
     }
  
@@ -639,7 +649,7 @@
              Vec3 vec31 = BedBlock.m_260958_(this.m_6095_(), this.f_19853_, p_261435_, direction, this.m_146908_()).orElseGet(() -> {
                 BlockPos blockpos = p_261435_.m_7494_();
                 return new Vec3((double)blockpos.m_123341_() + 0.5D, (double)blockpos.m_123342_() + 0.1D, (double)blockpos.m_123343_() + 0.5D);
-@@ -3181,7 +_,9 @@
+@@ -3140,7 +_,9 @@
     @Nullable
     public Direction m_21259_() {
        BlockPos blockpos = this.m_21257_().orElse((BlockPos)null);
@@ -650,7 +660,7 @@
     }
  
     public boolean m_5830_() {
-@@ -3197,7 +_,7 @@
+@@ -3156,7 +_,7 @@
     }
  
     public ItemStack m_6298_(ItemStack p_21272_) {
@@ -659,7 +669,7 @@
     }
  
     public ItemStack m_5584_(Level p_21067_, ItemStack p_21068_) {
-@@ -3217,7 +_,7 @@
+@@ -3176,7 +_,7 @@
     private void m_21063_(ItemStack p_21064_, Level p_21065_, LivingEntity p_21066_) {
        Item item = p_21064_.m_41720_();
        if (item.m_41472_()) {
@@ -668,7 +678,7 @@
              if (!p_21065_.f_46443_ && pair.getFirst() != null && p_21065_.f_46441_.m_188501_() < pair.getSecond()) {
                 p_21066_.m_7292_(new MobEffectInstance(pair.getFirst()));
              }
-@@ -3253,6 +_,64 @@
+@@ -3212,6 +_,64 @@
        this.m_21166_(p_21191_ == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND);
     }
  
@@ -733,21 +743,12 @@
     public AABB m_6921_() {
        if (this.m_6844_(EquipmentSlot.HEAD).m_150930_(Items.f_42683_)) {
           float f = 0.5F;
-@@ -3263,6 +_,8 @@
+@@ -3222,6 +_,8 @@
     }
  
     public static EquipmentSlot m_147233_(ItemStack p_147234_) {
 +      final EquipmentSlot slot = p_147234_.getEquipmentSlot();
 +      if (slot != null) return slot; // FORGE: Allow modders to set a non-default equipment slot for a stack; e.g. a non-armor chestplate-slot item
-       Item item = p_147234_.m_41720_();
-       if (!p_147234_.m_150930_(Items.f_42047_) && (!(item instanceof BlockItem) || !(((BlockItem)item).m_40614_() instanceof AbstractSkullBlock))) {
-          if (item instanceof ArmorItem) {
-@@ -3270,7 +_,7 @@
-          } else if (p_147234_.m_150930_(Items.f_42741_)) {
-             return EquipmentSlot.CHEST;
-          } else {
--            return p_147234_.m_150930_(Items.f_42740_) ? EquipmentSlot.OFFHAND : EquipmentSlot.MAINHAND;
-+            return p_147234_.canPerformAction(net.minecraftforge.common.ToolActions.SHIELD_BLOCK) ? EquipmentSlot.OFFHAND : EquipmentSlot.MAINHAND;
-          }
-       } else {
-          return EquipmentSlot.HEAD;
+       Equipable equipable = Equipable.m_269088_(p_147234_);
+       return equipable != null ? equipable.m_40402_() : EquipmentSlot.MAINHAND;
+    }

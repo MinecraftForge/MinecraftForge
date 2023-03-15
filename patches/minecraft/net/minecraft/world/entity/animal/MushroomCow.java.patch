@@ -42,8 +42,8 @@
  
 +            java.util.List<ItemStack> items = new java.util.ArrayList<>();
              for(int i = 0; i < 5; ++i) {
--               this.f_19853_.m_7967_(new ItemEntity(this.f_19853_, this.m_20185_(), this.m_20227_(1.0D), this.m_20189_(), new ItemStack(this.m_262365_().f_28961_.m_60734_())));
-+               items.add(new ItemStack(this.m_262365_().f_28961_.m_60734_()));
+-               this.f_19853_.m_7967_(new ItemEntity(this.f_19853_, this.m_20185_(), this.m_20227_(1.0D), this.m_20189_(), new ItemStack(this.m_28554_().f_28961_.m_60734_())));
++               items.add(new ItemStack(this.m_28554_().f_28961_.m_60734_()));
              }
 +            return items;
           }
@@ -53,7 +53,7 @@
     }
  
 @@ -183,6 +_,7 @@
-       p_28944_.m_128359_("Type", this.m_262365_().m_7912_());
+       p_28944_.m_128359_("Type", this.m_28554_().m_7912_());
        if (this.f_28909_ != null) {
           p_28944_.m_128405_("EffectId", MobEffect.m_19459_(this.f_28909_));
 +         net.minecraftforge.common.ForgeHooks.saveMobEffect(p_28944_, "forge:effect_id", this.f_28909_);
@@ -61,7 +61,7 @@
        }
  
 @@ -193,6 +_,7 @@
-       this.m_262362_(MushroomCow.MushroomType.m_28976_(p_28936_.m_128461_("Type")));
+       this.m_28464_(MushroomCow.MushroomType.m_28976_(p_28936_.m_128461_("Type")));
        if (p_28936_.m_128425_("EffectId", 1)) {
           this.f_28909_ = MobEffect.m_19453_(p_28936_.m_128451_("EffectId"));
 +         this.f_28909_ = net.minecraftforge.common.ForgeHooks.loadMobEffect(p_28936_, "forge:effect_id", this.f_28909_);

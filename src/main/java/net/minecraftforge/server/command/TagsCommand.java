@@ -198,7 +198,7 @@ class TagsCommand
     {
         final String allElementNames = names.get().sorted().collect(Collectors.joining("\n"));
         final long totalPages = (count - 1) / PAGE_SIZE + 1;
-        final long actualPage = Mth.clamp(currentPage, 1, totalPages);
+        final long actualPage = (long) Mth.clamp(currentPage, 1, totalPages);
 
         MutableComponent containsComponent = Component.translatable(containsText, count);
         if (count > 0) // Highlight the count text, make it clickable, and append page counters

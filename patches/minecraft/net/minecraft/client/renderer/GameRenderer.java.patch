@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/GameRenderer.java
 +++ b/net/minecraft/client/renderer/GameRenderer.java
-@@ -299,6 +_,8 @@
+@@ -304,6 +_,8 @@
           this.m_109128_(new ResourceLocation("shaders/post/spider.json"));
        } else if (p_109107_ instanceof EnderMan) {
           this.m_109128_(new ResourceLocation("shaders/post/invert.json"));
@@ -9,7 +9,7 @@
        }
  
     }
-@@ -586,6 +_,7 @@
+@@ -597,6 +_,7 @@
           list1.add(Pair.of(new ShaderInstance(p_250719_, "rendertype_crumbling", DefaultVertexFormat.f_85811_), (p_234230_) -> {
              f_172607_ = p_234230_;
           }));
@@ -17,7 +17,7 @@
        } catch (IOException ioexception) {
           list1.forEach((p_172729_) -> {
              p_172729_.getFirst().close();
-@@ -667,19 +_,21 @@
+@@ -678,19 +_,21 @@
              boolean flag = false;
              int i = 3;
              double d1 = d0;
@@ -42,16 +42,16 @@
                 d1 = this.f_109059_.f_91077_.m_82450_().m_82557_(vec3);
              }
  
-@@ -694,7 +_,7 @@
+@@ -705,7 +_,7 @@
                 Entity entity1 = entityhitresult.m_82443_();
                 Vec3 vec33 = entityhitresult.m_82450_();
                 double d2 = vec3.m_82557_(vec33);
 -               if (flag && d2 > 9.0D) {
 +               if (false && flag && d2 > 9.0D) { //Forge: Always keep the entity result to allow for extended reach interactions.
-                   this.f_109059_.f_91077_ = BlockHitResult.m_82426_(vec33, Direction.m_122366_(vec31.f_82479_, vec31.f_82480_, vec31.f_82481_), new BlockPos(vec33));
+                   this.f_109059_.f_91077_ = BlockHitResult.m_82426_(vec33, Direction.m_122366_(vec31.f_82479_, vec31.f_82480_, vec31.f_82481_), BlockPos.m_274446_(vec33));
                 } else if (d2 < d1 || this.f_109059_.f_91077_ == null) {
                    this.f_109059_.f_91077_ = entityhitresult;
-@@ -748,7 +_,7 @@
+@@ -759,7 +_,7 @@
              d0 *= Mth.m_14139_(this.f_109059_.f_91066_.m_231925_().m_231551_(), 1.0D, (double)0.85714287F);
           }
  
@@ -60,7 +60,7 @@
        }
     }
  
-@@ -883,11 +_,11 @@
+@@ -894,12 +_,12 @@
  
           Window window = this.f_109059_.m_91268_();
           RenderSystem.m_69421_(256, Minecraft.f_91002_);
@@ -68,13 +68,14 @@
 +         Matrix4f matrix4f = (new Matrix4f()).setOrtho(0.0F, (float)((double)window.m_85441_() / window.m_85449_()), (float)((double)window.m_85442_() / window.m_85449_()), 0.0F, 1000.0F, net.minecraftforge.client.ForgeHooksClient.getGuiFarPlane());
           RenderSystem.m_252934_(matrix4f);
           PoseStack posestack = RenderSystem.m_157191_();
+          posestack.m_85836_();
           posestack.m_166856_();
 -         posestack.m_252880_(0.0F, 0.0F, -2000.0F);
 +         posestack.m_85837_(0.0D, 0.0D, 1000F-net.minecraftforge.client.ForgeHooksClient.getGuiFarPlane());
           RenderSystem.m_157182_();
           Lighting.m_84931_();
           PoseStack posestack1 = new PoseStack();
-@@ -923,7 +_,7 @@
+@@ -935,7 +_,7 @@
              }
           } else if (this.f_109059_.f_91080_ != null) {
              try {
@@ -83,7 +84,7 @@
              } catch (Throwable throwable1) {
                 CrashReport crashreport1 = CrashReport.m_127521_(throwable1, "Rendering screen");
                 CrashReportCategory crashreportcategory1 = crashreport1.m_127514_("Screen render details");
-@@ -1068,12 +_,19 @@
+@@ -1085,12 +_,19 @@
        Matrix4f matrix4f = posestack.m_85850_().m_252922_();
        this.m_252879_(matrix4f);
        camera.m_90575_(this.f_109059_.f_91073_, (Entity)(this.f_109059_.m_91288_() == null ? this.f_109059_.f_91074_ : this.f_109059_.m_91288_()), !this.f_109059_.f_91066_.m_92176_().m_90612_(), this.f_109059_.f_91066_.m_92176_().m_90613_(), p_109090_);

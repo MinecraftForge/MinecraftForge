@@ -33,7 +33,7 @@
           return protochunk1;
        }
     }
-@@ -364,6 +_,15 @@
+@@ -363,6 +_,15 @@
           }
  
           compoundtag.m_128365_("CarvingMasks", compoundtag4);

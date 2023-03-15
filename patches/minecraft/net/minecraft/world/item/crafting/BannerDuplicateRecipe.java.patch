@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/item/crafting/BannerDuplicateRecipe.java
 +++ b/net/minecraft/world/item/crafting/BannerDuplicateRecipe.java
-@@ -81,8 +_,8 @@
+@@ -82,8 +_,8 @@
        for(int i = 0; i < nonnulllist.size(); ++i) {
           ItemStack itemstack = p_43791_.m_8020_(i);
           if (!itemstack.m_41619_()) {

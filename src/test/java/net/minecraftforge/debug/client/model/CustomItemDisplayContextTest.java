@@ -8,7 +8,6 @@ package net.minecraftforge.debug.client.model;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.entity.ItemRenderer;
@@ -48,10 +47,11 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.data.event.GatherDataEvent;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegisterEvent;
 import net.minecraftforge.registries.RegistryObject;
 import org.jetbrains.annotations.Nullable;
 
-/*
+/**
  * Test mod for the custom transform types feature.
  * This test mod adds an item that should be held in the main hand, while another item is in the offhand.
  * When right-clicked on a block, the item will "hang" the stack from the offhand slot on the wall.
@@ -60,23 +60,24 @@ import org.jetbrains.annotations.Nullable;
  * when compared to similar items such as a fishing rod.
  * Editing that model json will reflect ingame after a resource reload (F3+T).
  */
-@Mod(CustomTransformTypeTest.MODID)
-public class CustomTransformTypeTest
+@Mod(CustomItemDisplayContextTest.MODID)
+public class CustomItemDisplayContextTest
 {
     public static final String MODID = "custom_transformtype_test";
 
-    @Mod.EventBusSubscriber(value= Dist.CLIENT, modid = MODID, bus= Mod.EventBusSubscriber.Bus.MOD)
+     @Mod.EventBusSubscriber(value= Dist.CLIENT, modid = MODID, bus= Mod.EventBusSubscriber.Bus.MOD)
     private static class RendererEvents
     {
-        public static final ItemTransforms.TransformType HANGING = ItemTransforms.TransformType.create(
-                "custom_transformtype_test_hanging",
-                new ResourceLocation("custom_transformtype_test", "hanging")
-        );
-
+        public static final ItemDisplayContext HANGING = ItemDisplayContext.create("custom_transformtype_test_hanging",  new ResourceLocation("custom_transformtype_test", "hanging"), null);
         @SubscribeEvent
         public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event)
         {
             event.registerBlockEntityRenderer(ITEM_HANGER_BE.get(), ItemHangerBlockEntityRenderer::new);
+        }
+
+        @SubscribeEvent
+        public static void registerContext(final RegisterEvent event) {
+            event.register(ForgeRegistries.Keys.DISPLAY_CONTEXTS, helper -> helper.register("hanging", HANGING));
         }
 
         private static class ItemHangerBlockEntityRenderer
@@ -121,7 +122,7 @@ public class CustomTransformTypeTest
     public static final RegistryObject<Item>
             ITEM_HANGER_ITEM = ITEMS.register("item_hanger", () -> new ItemHangerItem(ITEM_HANGER_BLOCK.get(), new Item.Properties()));
 
-    public CustomTransformTypeTest()
+    public CustomItemDisplayContextTest()
     {
         var modBus = FMLJavaModLoadingContext.get().getModEventBus();
         modBus.addListener(this::gatherData);

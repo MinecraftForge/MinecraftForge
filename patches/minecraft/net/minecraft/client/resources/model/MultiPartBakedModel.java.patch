@@ -98,7 +98,7 @@
        return this.f_119457_;
 +   }
 +
-+   public BakedModel applyTransform(net.minecraft.client.renderer.block.model.ItemTransforms.TransformType transformType, com.mojang.blaze3d.vertex.PoseStack poseStack, boolean applyLeftHandTransform) {
++   public BakedModel applyTransform(net.minecraft.world.item.ItemDisplayContext transformType, com.mojang.blaze3d.vertex.PoseStack poseStack, boolean applyLeftHandTransform) {
 +      return this.defaultModel.applyTransform(transformType, poseStack, applyLeftHandTransform);
 +   }
 +

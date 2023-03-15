@@ -24,7 +24,7 @@ public class EnderMaskTest
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MODID);
 
     public static RegistryObject<Item> ENDER_MASK = ITEMS.register("ender_mask", () ->
-            new ArmorItem(ArmorMaterials.LEATHER, EquipmentSlot.HEAD, (new Item.Properties()))
+            new ArmorItem(ArmorMaterials.LEATHER, ArmorItem.Type.HELMET, (new Item.Properties()))
             {
                 @Override
                 public boolean isEnderMask(ItemStack stack, Player player, EnderMan endermanEntity)

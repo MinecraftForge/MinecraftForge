@@ -150,7 +150,7 @@ public class GlobalLootModifiersTest {
 
         private static ItemStack smelt(ItemStack stack, LootContext context) {
             return context.getLevel().getRecipeManager().getRecipeFor(RecipeType.SMELTING, new SimpleContainer(stack), context.getLevel())
-                    .map(SmeltingRecipe::getResultItem)
+                    .map(smeltingRecipe -> smeltingRecipe.getResultItem(context.getLevel().registryAccess()))
                     .filter(itemStack -> !itemStack.isEmpty())
                     .map(itemStack -> ItemHandlerHelper.copyStackWithSize(itemStack, stack.getCount() * itemStack.getCount()))
                     .orElse(stack);

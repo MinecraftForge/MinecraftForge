@@ -5,9 +5,17 @@
 
 package net.minecraftforge.client.gui.widget;
 
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.AbstractSliderButton;
+import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.FormattedText;
 import net.minecraft.util.Mth;
+import net.minecraftforge.client.gui.ScreenUtils;
+import org.jetbrains.annotations.NotNull;
 import org.lwjgl.glfw.GLFW;
 
 import java.text.DecimalFormat;
@@ -216,4 +224,21 @@ public class ForgeSlider extends AbstractSliderButton
 
     @Override
     protected void applyValue() {}
+
+    @Override
+    public void renderWidget(@NotNull PoseStack poseStack, int mouseX, int mouseY, float partialTick)
+    {
+        RenderSystem.setShader(GameRenderer::getPositionTexShader);
+        RenderSystem.setShaderTexture(0, WIDGETS_LOCATION);
+
+        final Minecraft mc = Minecraft.getInstance();
+        final int bgYImage = !this.active ? 0 : (this.isHoveredOrFocused() ? 2 : 1);
+        ScreenUtils.blitWithBorder(poseStack, this.getX(), this.getY(), 0, 46 + bgYImage * 20, this.width, this.height, 200, 20, 2, 3, 2, 2, 0);
+
+        final int sliderYImage = (this.isHoveredOrFocused() ? 2 : 1) * 20;
+        ScreenUtils.blitWithBorder(poseStack, this.getX() + (int)(this.value * (double)(this.width - 8)), this.getY(), 0, 46 + sliderYImage, 8, this.height, 200, 20 , 2, 3, 2, 2, 0);
+
+        final FormattedText message = mc.font.ellipsize(getMessage(), this.width - 6);
+        drawCenteredString(poseStack, mc.font, Language.getInstance().getVisualOrder(message), this.getX() + this.width / 2, this.getY() + (this.height - 8) / 2, getFGColor());
+    }
 }

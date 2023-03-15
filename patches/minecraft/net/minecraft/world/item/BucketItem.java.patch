@@ -38,15 +38,44 @@
                          p_40704_.m_5496_(p_150709_, 1.0F, 1.0F);
                       });
                       p_40703_.m_142346_(p_40704_, GameEvent.f_157816_, blockpos);
-@@ -72,7 +_,7 @@
+@@ -72,8 +_,8 @@
                 return InteractionResultHolder.m_19100_(itemstack);
              } else {
                 BlockState blockstate = p_40703_.m_8055_(blockpos);
 -               BlockPos blockpos2 = blockstate.m_60734_() instanceof LiquidBlockContainer && this.f_40687_ == Fluids.f_76193_ ? blockpos : blockpos1;
+-               if (this.m_142073_(p_40704_, p_40703_, blockpos2, blockhitresult)) {
 +               BlockPos blockpos2 = canBlockContainFluid(p_40703_, blockpos, blockstate) ? blockpos : blockpos1;
-                if (this.m_142073_(p_40704_, p_40703_, blockpos2, blockhitresult)) {
++               if (this.emptyContents(p_40704_, p_40703_, blockpos2, blockhitresult, itemstack)) {
                    this.m_142131_(p_40704_, p_40703_, itemstack, blockpos2);
                    if (p_40704_ instanceof ServerPlayer) {
+                      CriteriaTriggers.f_10591_.m_59469_((ServerPlayer)p_40704_, blockpos2, itemstack);
+@@ -98,7 +_,12 @@
+    public void m_142131_(@Nullable Player p_150711_, Level p_150712_, ItemStack p_150713_, BlockPos p_150714_) {
+    }
+ 
++   @Deprecated //Forge: use the ItemStack sensitive version
+    public boolean m_142073_(@Nullable Player p_150716_, Level p_150717_, BlockPos p_150718_, @Nullable BlockHitResult p_150719_) {
++      return this.emptyContents(p_150716_, p_150717_, p_150718_, p_150719_, null);
++   }
++
++   public boolean emptyContents(@Nullable Player p_150716_, Level p_150717_, BlockPos p_150718_, @Nullable BlockHitResult p_150719_, @Nullable ItemStack container) {
+       if (!(this.f_40687_ instanceof FlowingFluid)) {
+          return false;
+       } else {
+@@ -107,8 +_,12 @@
+          Material material = blockstate.m_60767_();
+          boolean flag = blockstate.m_60722_(this.f_40687_);
+          boolean flag1 = blockstate.m_60795_() || flag || block instanceof LiquidBlockContainer && ((LiquidBlockContainer)block).m_6044_(p_150717_, p_150718_, blockstate, this.f_40687_);
++         java.util.Optional<net.minecraftforge.fluids.FluidStack> containedFluidStack = java.util.Optional.ofNullable(container).flatMap(net.minecraftforge.fluids.FluidUtil::getFluidContained);
+          if (!flag1) {
+-            return p_150719_ != null && this.m_142073_(p_150716_, p_150717_, p_150719_.m_82425_().m_121945_(p_150719_.m_82434_()), (BlockHitResult)null);
++            return p_150719_ != null && this.emptyContents(p_150716_, p_150717_, p_150719_.m_82425_().m_121945_(p_150719_.m_82434_()), (BlockHitResult)null, container);
++         } else if (containedFluidStack.isPresent() && this.f_40687_.getFluidType().isVaporizedOnPlacement(p_150717_, p_150718_, containedFluidStack.get())) {
++            this.f_40687_.getFluidType().onVaporize(p_150716_, p_150717_, p_150718_, containedFluidStack.get());
++            return true;
+          } else if (p_150717_.m_6042_().f_63857_() && this.f_40687_.m_205067_(FluidTags.f_13131_)) {
+             int i = p_150718_.m_123341_();
+             int j = p_150718_.m_123342_();
 @@ -120,7 +_,7 @@
              }
  

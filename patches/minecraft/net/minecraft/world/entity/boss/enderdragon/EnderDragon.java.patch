@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/boss/enderdragon/EnderDragon.java
 +++ b/net/minecraft/world/entity/boss/enderdragon/EnderDragon.java
-@@ -106,6 +_,14 @@
+@@ -107,6 +_,14 @@
        }
  
        this.f_31074_ = new EnderDragonPhaseManager(this);
@@ -15,7 +15,7 @@
     }
  
     public static AttributeSupplier.Builder m_31167_() {
-@@ -149,7 +_,11 @@
+@@ -150,7 +_,11 @@
        return adouble;
     }
  
@@ -27,7 +27,7 @@
        this.m_146874_();
        if (this.f_19853_.f_46443_) {
           this.m_21153_(this.m_21223_());
-@@ -419,7 +_,7 @@
+@@ -420,7 +_,7 @@
                 BlockPos blockpos = new BlockPos(k1, l1, i2);
                 BlockState blockstate = this.f_19853_.m_8055_(blockpos);
                 if (!blockstate.m_60795_() && !blockstate.m_204336_(BlockTags.f_215822_)) {
@@ -36,7 +36,7 @@
                       flag1 = this.f_19853_.m_7471_(blockpos, false) || flag1;
                    } else {
                       flag = true;
-@@ -510,7 +_,8 @@
+@@ -511,7 +_,8 @@
  
        if (this.f_19853_ instanceof ServerLevel) {
           if (this.f_31084_ > 150 && this.f_31084_ % 5 == 0 && flag) {
@@ -46,8 +46,8 @@
           }
  
           if (this.f_31084_ == 1 && !this.m_20067_()) {
-@@ -523,7 +_,8 @@
-       this.f_20883_ = this.m_146908_();
+@@ -522,7 +_,8 @@
+       this.m_6478_(MoverType.SELF, new Vec3(0.0D, (double)0.1F, 0.0D));
        if (this.f_31084_ == 200 && this.f_19853_ instanceof ServerLevel) {
           if (flag) {
 -            ExperienceOrb.m_147082_((ServerLevel)this.f_19853_, this.m_20182_(), Mth.m_14143_((float)i * 0.2F));
@@ -56,7 +56,7 @@
           }
  
           if (this.f_31073_ != null) {
-@@ -846,8 +_,19 @@
+@@ -845,8 +_,19 @@
        return false;
     }
  

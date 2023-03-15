@@ -5,6 +5,8 @@
 
 package net.minecraftforge.common.extensions;
 
+import net.minecraft.core.HolderSet.ListBacked;
+
 public interface IForgeHolderSet<T>
 {
     /**
@@ -22,5 +24,37 @@ public interface IForgeHolderSet<T>
     default public void addInvalidationListener(Runnable runnable)
     {
         // noop by default, mutable/composite holdersets must override
+    }
+
+    /**
+     * What format this holderset serializes to in json/nbt/etc
+     */
+    default public SerializationType serializationType()
+    {
+        // handle vanilla holderset types
+        return this instanceof ListBacked<T> listBacked
+            ? listBacked.unwrap().map(
+                // serializes as tag name if this holderset is named 
+                tag -> SerializationType.STRING, 
+                list -> list.size() == 1
+                    // if list has exactly one element then we have to check what kind, otherwise it's a list 
+                    ? list.get(0).unwrap().map(
+                        // if holder has a key bound then it's serialized as that string, otherwise it's inlined as an object
+                        key -> key == null ? SerializationType.OBJECT : SerializationType.STRING,
+                        value -> SerializationType.OBJECT)
+                    : SerializationType.LIST)
+            : SerializationType.UNKNOWN; // unsupported holderset impl, could be anything
+    }
+    
+    /**
+     * What format a holderset serializes to in json/nbt/etc
+     */
+    public static enum SerializationType
+    {
+        /** Unhandled/unsupported holderset implementation, could serialize as potentially anything **/
+        UNKNOWN,
+        STRING,
+        LIST,
+        OBJECT
     }
 }

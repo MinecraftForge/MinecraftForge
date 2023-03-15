@@ -27,12 +27,12 @@ public enum VanillaGuiOverlay
         if (Minecraft.useFancyGraphics())
         {
             gui.setupOverlayRenderState(true, false);
-            gui.renderVignette(gui.getMinecraft().getCameraEntity());
+            gui.renderVignette(poseStack, gui.getMinecraft().getCameraEntity());
         }
     }),
     SPYGLASS("spyglass", (gui, poseStack, partialTick, screenWidth, screenHeight) -> {
         gui.setupOverlayRenderState(true, false);
-        gui.renderSpyglassOverlay();
+        gui.renderSpyglassOverlay(poseStack);
     }),
     HELMET("helmet", (gui, poseStack, partialTick, screenWidth, screenHeight) -> {
         gui.setupOverlayRenderState(true, false);
@@ -47,7 +47,7 @@ public enum VanillaGuiOverlay
         if (!gui.getMinecraft().player.hasEffect(MobEffects.CONFUSION))
         {
             gui.setupOverlayRenderState(true, false);
-            gui.renderPortalOverlay(partialTick);
+            gui.renderPortalOverlay(poseStack, partialTick);
         }
 
     }),
@@ -69,18 +69,22 @@ public enum VanillaGuiOverlay
         if (!gui.getMinecraft().options.hideGui)
         {
             gui.setupOverlayRenderState(true, false);
-            gui.setBlitOffset(-90);
 
+            poseStack.pushPose();
+            poseStack.translate(0, 0, -90);
             gui.renderCrosshair(poseStack);
+            poseStack.popPose();
         }
     }),
     BOSS_EVENT_PROGRESS("boss_event_progress", (gui, poseStack, partialTick, screenWidth, screenHeight) -> {
         if (!gui.getMinecraft().options.hideGui)
         {
             gui.setupOverlayRenderState(true, false);
-            gui.setBlitOffset(-90);
 
+            poseStack.pushPose();
+            poseStack.translate(0, 0, -90);
             gui.renderBossHealth(poseStack);
+            poseStack.popPose();
         }
     }),
     PLAYER_HEALTH("player_health", (gui, poseStack, partialTick, screenWidth, screenHeight) -> {
@@ -138,7 +142,7 @@ public enum VanillaGuiOverlay
         if (!gui.getMinecraft().options.hideGui)
         {
             gui.setupOverlayRenderState(true, false);
-            if (gui.getMinecraft().options.heldItemTooltips && gui.getMinecraft().gameMode.getPlayerMode() != GameType.SPECTATOR)
+            if (gui.getMinecraft().gameMode.getPlayerMode() != GameType.SPECTATOR)
             {
                 gui.renderSelectedItemName(poseStack);
             }

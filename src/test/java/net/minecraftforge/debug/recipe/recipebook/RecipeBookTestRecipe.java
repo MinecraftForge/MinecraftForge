@@ -13,6 +13,7 @@ import com.mojang.serialization.Dynamic;
 import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -95,9 +96,9 @@ public class RecipeBookTestRecipe implements Recipe<RecipeBookExtensionTest.Reci
     }
 
     @Override
-    public ItemStack assemble(RecipeBookExtensionTest.RecipeBookTestContainer p_44001_)
+    public ItemStack assemble(RecipeBookExtensionTest.RecipeBookTestContainer p_44001_, RegistryAccess registryAccess)
     {
-        return this.getResultItem().copy();
+        return this.getResultItem(registryAccess).copy();
     }
 
     @Override
@@ -107,7 +108,7 @@ public class RecipeBookTestRecipe implements Recipe<RecipeBookExtensionTest.Reci
     }
 
     @Override
-    public ItemStack getResultItem()
+    public ItemStack getResultItem(RegistryAccess registryAccess)
     {
         return this.ingredients.result();
     }
@@ -160,7 +161,7 @@ public class RecipeBookTestRecipe implements Recipe<RecipeBookExtensionTest.Reci
     public record Ingredients(String group, List<String> pattern, Map<String, Ingredient> recipe, ItemStack result)
     {
         private static final Function<String, DataResult<String>> VERIFY_LENGTH_2 = s -> s.length() == 2 ? DataResult.success(s) :
-                DataResult.error("Key row length must be of 2!");
+                DataResult.error(() -> "Key row length must be of 2!");
         private static final Function<List<String>, DataResult<List<String>>> VERIFY_SIZE = l ->
         {
             if (l.size() <= 4 && l.size() >= 1)
@@ -169,10 +170,10 @@ public class RecipeBookTestRecipe implements Recipe<RecipeBookExtensionTest.Reci
                 Collections.reverse(temp); //reverse so the first row is at the bottom in the json.
                 return DataResult.success(ImmutableList.copyOf(temp));
             }
-            return DataResult.error("Pattern must have between 1 and 4 rows of keys");
+            return DataResult.error(() -> "Pattern must have between 1 and 4 rows of keys");
         };
         private static final Function<String, DataResult<String>> VERIFY_LENGTH_1 = s -> s.length() == 1 ? DataResult.success(s) :
-                DataResult.error("Key must be a single character!");
+                DataResult.error(() -> "Key must be a single character!");
 
         public static final Codec<Ingredient> INGREDIENT_CODEC = Codec.PASSTHROUGH.comapFlatMap(obj ->
         {
@@ -183,7 +184,7 @@ public class RecipeBookTestRecipe implements Recipe<RecipeBookExtensionTest.Reci
             }
             catch (Exception e)
             {
-                return DataResult.error("Failed to parse ingredient: " + e.getMessage());
+                return DataResult.error(() -> "Failed to parse ingredient: " + e.getMessage());
             }
         }, ingredient -> new Dynamic<>(JsonOps.INSTANCE, ingredient.toJson()));
 

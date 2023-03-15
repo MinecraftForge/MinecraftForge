@@ -37,7 +37,7 @@
           if (flag2) {
              this.f_19853_.m_214171_(GameEvent.f_238175_, vec3, GameEvent.Context.m_223717_(this));
              if (!this.m_20067_()) {
-@@ -422,7 +_,7 @@
+@@ -419,7 +_,7 @@
        public boolean m_8036_() {
           if (this.f_32554_.m_32530_() == null) {
              return false;
@@ -46,7 +46,7 @@
              return false;
           } else {
              return this.f_32554_.m_217043_().m_188503_(m_186073_(2000)) == 0;
-@@ -442,7 +_,7 @@
+@@ -439,7 +_,7 @@
           BlockState blockstate2 = this.f_32554_.m_32530_();
           if (blockstate2 != null) {
              blockstate2 = Block.m_49931_(blockstate2, this.f_32554_.f_19853_, blockpos);
@@ -55,7 +55,7 @@
                 level.m_7731_(blockpos, blockstate2, 3);
                 level.m_220407_(GameEvent.f_157797_, blockpos, GameEvent.Context.m_223719_(this.f_32554_, blockstate2));
                 this.f_32554_.m_32521_((BlockState)null);
-@@ -452,7 +_,7 @@
+@@ -449,7 +_,7 @@
        }
  
        private boolean m_32558_(Level p_32559_, BlockPos p_32560_, BlockState p_32561_, BlockState p_32562_, BlockState p_32563_, BlockPos p_32564_) {
@@ -64,7 +64,7 @@
        }
     }
  
-@@ -544,7 +_,7 @@
+@@ -551,7 +_,7 @@
        public boolean m_8036_() {
           if (this.f_32583_.m_32530_() != null) {
              return false;

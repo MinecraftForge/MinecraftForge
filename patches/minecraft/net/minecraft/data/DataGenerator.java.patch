@@ -9,7 +9,7 @@
     public DataGenerator(Path p_251724_, WorldVersion p_250554_, boolean p_251323_) {
        this.f_243753_ = p_251724_;
 @@ -38,6 +_,7 @@
-             f_123905_.debug("Generator {} already run for version {}", p_254418_, this.f_236027_.getName());
+             f_123905_.debug("Generator {} already run for version {}", p_254418_, this.f_236027_.m_132493_());
           } else {
              f_123905_.info("Starting provider: {}", (Object)p_254418_);
 +            net.minecraftforge.fml.StartupMessageManager.addModMessage("Generating: " + p_254418_);

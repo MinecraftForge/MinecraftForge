@@ -28,7 +28,7 @@
 +      return this.modifiableBiomeInfo().get().mobSpawnSettings();
     }
  
-    public Biome.Precipitation m_47530_() {
+    public boolean m_264473_() {
 @@ -188,7 +_,7 @@
     }
  
@@ -38,7 +38,7 @@
     }
  
     public int m_47539_() {
-@@ -393,4 +_,34 @@
+@@ -373,4 +_,34 @@
           return this.f_47738_;
        }
     }

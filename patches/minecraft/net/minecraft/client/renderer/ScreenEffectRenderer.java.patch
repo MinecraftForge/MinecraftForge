@@ -47,7 +47,7 @@
           }
        }
  
-@@ -90,9 +_,13 @@
+@@ -90,8 +_,12 @@
     }
  
     private static void m_110725_(Minecraft p_110726_, PoseStack p_110727_) {
@@ -56,9 +56,8 @@
 +
 +   public static void renderFluid(Minecraft p_110726_, PoseStack p_110727_, ResourceLocation texture) {
        RenderSystem.m_157427_(GameRenderer::m_172817_);
-       RenderSystem.m_69493_();
 -      RenderSystem.m_157456_(0, f_110714_);
 +      RenderSystem.m_157456_(0, texture);
        BufferBuilder bufferbuilder = Tesselator.m_85913_().m_85915_();
-       BlockPos blockpos = new BlockPos(p_110726_.f_91074_.m_20185_(), p_110726_.f_91074_.m_20188_(), p_110726_.f_91074_.m_20189_());
+       BlockPos blockpos = BlockPos.m_274561_(p_110726_.f_91074_.m_20185_(), p_110726_.f_91074_.m_20188_(), p_110726_.f_91074_.m_20189_());
        float f = LightTexture.m_234316_(p_110726_.f_91074_.f_19853_.m_6042_(), p_110726_.f_91074_.f_19853_.m_46803_(blockpos));
