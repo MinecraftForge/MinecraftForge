@@ -58,15 +58,6 @@
           }
        }
  
-@@ -924,7 +_,7 @@
-       RenderSystem.m_157429_(1.0F, 1.0F, 1.0F, 1.0F);
-    }
- 
--   public void m_264541_(PoseStack p_265563_, float p_265127_) {
-+   protected void m_264541_(PoseStack p_265563_, float p_265127_) {
-       RenderSystem.m_69465_();
-       RenderSystem.m_69458_(false);
-       float f = (float)Math.min(this.f_92977_, this.f_92978_);
 @@ -1054,7 +_,7 @@
           ItemStack itemstack = this.f_92986_.f_91074_.m_150109_().m_36056_();
           if (itemstack.m_41619_()) {
