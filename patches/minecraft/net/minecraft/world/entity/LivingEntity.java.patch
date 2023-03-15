@@ -371,7 +371,7 @@
           p_21241_ = this.m_21161_(p_21240_, p_21241_);
           p_21241_ = this.m_6515_(p_21240_, p_21241_);
           float f1 = Math.max(p_21241_ - this.m_6103_(), 0.0F);
-@@ -1560,14 +_,16 @@
+@@ -1560,10 +_,11 @@
              Entity entity = p_21240_.m_7639_();
              if (entity instanceof ServerPlayer) {
                 ServerPlayer serverplayer = (ServerPlayer)entity;
@@ -384,11 +384,6 @@
           if (f1 != 0.0F) {
              float f2 = this.m_21223_();
              this.m_21231_().m_19289_(p_21240_, f2, f1);
-             this.m_21153_(f2 - f1);
-+            this.m_21153_(f1 - f2); // Forge: moved to fix MC-121048
-             this.m_7911_(this.m_6103_() - f1);
-             this.m_146850_(GameEvent.f_223706_);
-          }
 @@ -1622,6 +_,8 @@
     }
  
