@@ -256,6 +256,17 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundTag>
     }
 
     /**
+     * Called when an entity stops using an item item for any reason.
+     *
+     * @param entity The entity using the item, typically a player
+     * @param count  The amount of time in tick the item has been used for continuously
+     */
+    default void onStopUsing(LivingEntity entity, int count)
+    {
+        self().getItem().onStopUsing(self(), entity, count);
+    }
+
+    /**
      * Retrieves the normal 'lifespan' of this item when it is dropped on the ground
      * as a EntityItem. This is in ticks, standard result is 6000, or 5 mins.
      *

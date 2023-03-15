@@ -1,10 +1,10 @@
 --- a/net/minecraft/client/renderer/block/model/ItemTransforms.java
 +++ b/net/minecraft/client/renderer/block/model/ItemTransforms.java
-@@ -20,11 +_,13 @@
+@@ -21,11 +_,13 @@
     public final ItemTransform f_111792_;
     public final ItemTransform f_111793_;
     public final ItemTransform f_111794_;
-+   public final com.google.common.collect.ImmutableMap<TransformType, ItemTransform> moddedTransforms;
++   public final com.google.common.collect.ImmutableMap<ItemDisplayContext, ItemTransform> moddedTransforms;
  
     private ItemTransforms() {
        this(ItemTransform.f_111754_, ItemTransform.f_111754_, ItemTransform.f_111754_, ItemTransform.f_111754_, ItemTransform.f_111754_, ItemTransform.f_111754_, ItemTransform.f_111754_, ItemTransform.f_111754_);
@@ -14,7 +14,7 @@
     public ItemTransforms(ItemTransforms p_111807_) {
        this.f_111787_ = p_111807_.f_111787_;
        this.f_111788_ = p_111807_.f_111788_;
-@@ -34,9 +_,16 @@
+@@ -35,9 +_,16 @@
        this.f_111792_ = p_111807_.f_111792_;
        this.f_111793_ = p_111807_.f_111793_;
        this.f_111794_ = p_111807_.f_111794_;
@@ -27,41 +27,41 @@
 +   }
 +
 +   public ItemTransforms(ItemTransform p_111798_, ItemTransform p_111799_, ItemTransform p_111800_, ItemTransform p_111801_, ItemTransform p_111802_, ItemTransform p_111803_, ItemTransform p_111804_, ItemTransform p_111805_,
-+           com.google.common.collect.ImmutableMap<TransformType, ItemTransform> moddedTransforms) {
++           com.google.common.collect.ImmutableMap<ItemDisplayContext, ItemTransform> moddedTransforms) {
        this.f_111787_ = p_111798_;
        this.f_111788_ = p_111799_;
        this.f_111789_ = p_111800_;
-@@ -45,6 +_,7 @@
+@@ -46,6 +_,7 @@
        this.f_111792_ = p_111803_;
        this.f_111793_ = p_111804_;
        this.f_111794_ = p_111805_;
 +      this.moddedTransforms = moddedTransforms;
     }
  
-    public ItemTransform m_111808_(ItemTransforms.TransformType p_111809_) {
-@@ -66,7 +_,7 @@
-          case FIXED:
-             return this.f_111794_;
+    public ItemTransform m_269404_(ItemDisplayContext p_270619_) {
+@@ -76,7 +_,7 @@
+             itemtransform = this.f_111794_;
+             break;
           default:
--            return ItemTransform.f_111754_;
-+            return moddedTransforms.getOrDefault(p_111809_, ItemTransform.f_111754_);
+-            itemtransform = ItemTransform.f_111754_;
++            return moddedTransforms.getOrDefault(p_270619_, ItemTransform.f_111754_);
        }
-    }
  
-@@ -94,7 +_,23 @@
-          ItemTransform itemtransform5 = this.m_111815_(p_111822_, jsonobject, "gui");
-          ItemTransform itemtransform6 = this.m_111815_(p_111822_, jsonobject, "ground");
-          ItemTransform itemtransform7 = this.m_111815_(p_111822_, jsonobject, "fixed");
+       return itemtransform;
+@@ -106,7 +_,23 @@
+          ItemTransform itemtransform5 = this.m_269518_(p_111822_, jsonobject, ItemDisplayContext.GUI);
+          ItemTransform itemtransform6 = this.m_269518_(p_111822_, jsonobject, ItemDisplayContext.GROUND);
+          ItemTransform itemtransform7 = this.m_269518_(p_111822_, jsonobject, ItemDisplayContext.FIXED);
 -         return new ItemTransforms(itemtransform1, itemtransform, itemtransform3, itemtransform2, itemtransform4, itemtransform5, itemtransform6, itemtransform7);
 +
-+         var builder = com.google.common.collect.ImmutableMap.<TransformType, ItemTransform>builder();
-+         for (TransformType type : TransformType.values()) {
++         var builder = com.google.common.collect.ImmutableMap.<ItemDisplayContext, ItemTransform>builder();
++         for (ItemDisplayContext type : ItemDisplayContext.values()) {
 +            if (type.isModded()) {
-+               var transform = this.m_111815_(p_111822_, jsonobject, type.getSerializeName());
++               var transform = this.m_269518_(p_111822_, jsonobject, type);
 +               var fallbackType = type;
-+               while (transform == ItemTransform.f_111754_ && fallbackType.fallback != null) {
-+                  fallbackType = fallbackType.fallback;
-+                  transform = this.m_111815_(p_111822_, jsonobject, fallbackType.getSerializeName());
++               while (transform == ItemTransform.f_111754_ && fallbackType.fallback() != null) {
++                  fallbackType = fallbackType.fallback();
++                  transform = this.m_269518_(p_111822_, jsonobject, fallbackType);
 +               }
 +               if (transform != ItemTransform.f_111754_){
 +                  builder.put(type, transform);
@@ -72,78 +72,4 @@
 +         return new ItemTransforms(itemtransform1, itemtransform, itemtransform3, itemtransform2, itemtransform4, itemtransform5, itemtransform6, itemtransform7, builder.build());
        }
  
-       private ItemTransform m_111815_(JsonDeserializationContext p_111816_, JsonObject p_111817_, String p_111818_) {
-@@ -103,19 +_,63 @@
-    }
- 
-    @OnlyIn(Dist.CLIENT)
--   public static enum TransformType {
--      NONE,
--      THIRD_PERSON_LEFT_HAND,
--      THIRD_PERSON_RIGHT_HAND,
--      FIRST_PERSON_LEFT_HAND,
--      FIRST_PERSON_RIGHT_HAND,
--      HEAD,
--      GUI,
--      GROUND,
--      FIXED;
-+   public static enum TransformType implements net.minecraftforge.common.IExtensibleEnum {
-+      NONE("none"),
-+      THIRD_PERSON_LEFT_HAND("thirdperson_lefthand"),
-+      THIRD_PERSON_RIGHT_HAND("thirdperson_righthand"),
-+      FIRST_PERSON_LEFT_HAND("firstperson_lefthand"),
-+      FIRST_PERSON_RIGHT_HAND("firstperson_righthand"),
-+      HEAD("head"),
-+      GUI("gui"),
-+      GROUND("ground"),
-+      FIXED("fixed");
- 
-       public boolean m_111841_() {
-          return this == FIRST_PERSON_LEFT_HAND || this == FIRST_PERSON_RIGHT_HAND;
-+      }
-+
-+      // Forge start
-+      private final String serializeName;
-+      private final boolean isModded;
-+      @javax.annotation.Nullable
-+      private final TransformType fallback;
-+
-+      private TransformType(String name) {
-+         serializeName = name;
-+         isModded = false;
-+         fallback = null;
-+      }
-+
-+      private TransformType(net.minecraft.resources.ResourceLocation serializeName) {
-+         this.serializeName = java.util.Objects.requireNonNull(serializeName, "Modded TransformTypes must have a non-null serializeName").toString();
-+         isModded = true;
-+         fallback = null;
-+      }
-+
-+      private TransformType(net.minecraft.resources.ResourceLocation serializeName, TransformType fallback) {
-+         this.serializeName = java.util.Objects.requireNonNull(serializeName, "Modded TransformTypes must have a non-null serializeName").toString();
-+         isModded = true;
-+         this.fallback = fallback;
-+      }
-+
-+      public boolean isModded() {
-+         return isModded;
-+      }
-+
-+      @javax.annotation.Nullable
-+      public TransformType fallback() {
-+         return fallback;
-+      }
-+
-+      public String getSerializeName() {
-+         return serializeName;
-+      }
-+
-+      public static TransformType create(String keyName, net.minecraft.resources.ResourceLocation serializeName) {
-+         throw new IllegalStateException("Enum not extended!");
-+      }
-+      public static TransformType create(String keyName, net.minecraft.resources.ResourceLocation serializeName, TransformType fallback) {
-+         throw new IllegalStateException("Enum not extended!");
-       }
-    }
- }
+       private ItemTransform m_269518_(JsonDeserializationContext p_270385_, JsonObject p_270436_, ItemDisplayContext p_270100_) {

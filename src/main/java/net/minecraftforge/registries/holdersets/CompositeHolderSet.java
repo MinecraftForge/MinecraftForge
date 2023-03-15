@@ -19,7 +19,6 @@ import com.mojang.datafixers.util.Either;
 
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
-import net.minecraft.core.Registry;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.RandomSource;
 
@@ -167,5 +166,78 @@ public abstract class CompositeHolderSet<T> implements ICustomHolderSet<T>
     public Iterator<Holder<T>> iterator()
     {
         return this.getList().iterator();
+    }
+    
+    /**
+     * Maps the sub-holdersets of this composite such that,
+     * if the list contains more than one element, and is non-homogenous,
+     * each element of the list will serialize as an object.
+     * Prevents crashes from trying to serialize non-homogenous lists to NBT.
+     * 
+     * Lists are considered non-homogenous if it contains more than one serialization type of holderset.
+     * Holdersets may be serialized as strings, lists, or maps.
+     * @see {@link #isHomogenous}
+     * @return List of holdersets with homogenous serialization behavior.
+     * Returns a new List if size > 1 and serialization would be non-homogenous,
+     * otherwise returns the composite's existing List.
+     */
+    public List<HolderSet<T>> homogenize()
+    {
+        List<HolderSet<T>> components = this.getComponents();
+        
+        if (this.isHomogenous())
+        {
+            return components;
+        }
+        
+        List<HolderSet<T>> outputs = new ArrayList<>();
+        for (HolderSet<T> holderset : components)
+        {
+            if (holderset instanceof ICustomHolderSet<T>) // serializes to object already
+            {
+                outputs.add(holderset);
+            }
+            else // serializes to string or list
+            {
+                outputs.add(new OrHolderSet<>(List.of(holderset)));
+            }
+        }
+        return outputs;
+    }
+    
+    /**
+     * @return True if all of our sub-holdersets have the same {@link SerializationType} (string, list, or object).
+     * False if we have more than one holderset AND if either we have more than one serialization type among them,
+     * or any holderset is {@link SerializationType.UNKNOWN}.
+     */
+    public boolean isHomogenous()
+    {
+        final List<HolderSet<T>> holderSets = this.getComponents();
+        
+        if (holderSets.size() < 2)
+        {
+            return true;
+        }
+        
+        // Get the first holderset and check if any subsequent holdersets are different
+        SerializationType firstType = holderSets.get(0).serializationType();
+        
+        // If any holderset has an unknown type, then we cannot assume we are homogenous
+        if (firstType == SerializationType.UNKNOWN)
+        {
+            return false;
+        }
+        
+        final int size = holderSets.size();
+        for (int i = 1; i < size; i++)
+        {
+            final SerializationType type = holderSets.get(i).serializationType();
+            if (type != firstType) // don't need to check type == UNKNOWN again because type != firstType covers it
+            {
+                return false;
+            }
+        }
+        
+        return true;
     }
 }

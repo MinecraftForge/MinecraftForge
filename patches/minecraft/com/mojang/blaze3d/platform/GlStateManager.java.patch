@@ -1,7 +1,7 @@
 --- a/com/mojang/blaze3d/platform/GlStateManager.java
 +++ b/com/mojang/blaze3d/platform/GlStateManager.java
-@@ -510,9 +_,16 @@
-       f_84077_[f_84076_].f_84800_ = false;
+@@ -500,9 +_,16 @@
+ 
     }
  
 +   /* Stores the last values sent into glMultiTexCoord2f */

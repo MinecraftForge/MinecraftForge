@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/LightTexture.java
 +++ b/net/minecraft/client/renderer/LightTexture.java
-@@ -136,6 +_,8 @@
+@@ -135,6 +_,8 @@
                       }
                    }
  
@@ -9,7 +9,7 @@
                    if (f5 > 0.0F) {
                       float f13 = Math.max(vector3f1.x(), Math.max(vector3f1.y(), vector3f1.z()));
                       if (f13 < 1.0F) {
-@@ -193,7 +_,7 @@
+@@ -192,7 +_,7 @@
     }
  
     public static int m_109883_(int p_109884_) {

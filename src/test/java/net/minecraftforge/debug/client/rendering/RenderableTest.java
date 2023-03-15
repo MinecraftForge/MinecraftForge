@@ -170,7 +170,7 @@ public class RenderableTest
         private static void render(Stage stage, PoseStack poseStack, int renderTick, float partialTick, double camX, double camY, double camZ, int xOffset)
         {
             double x = camX, y = camY, z = camZ;
-            if (!new BlockPos(0, y, 0).closerThan(new BlockPos(x, y, z), 100))
+            if (!BlockPos.containing(0, y, 0).closerThan(BlockPos.containing(x, y, z), 100))
                 return;
 
             var profiler = Minecraft.getInstance().getProfiler();

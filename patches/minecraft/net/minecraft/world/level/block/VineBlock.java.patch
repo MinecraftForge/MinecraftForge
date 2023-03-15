@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/VineBlock.java
 +++ b/net/minecraft/world/level/block/VineBlock.java
-@@ -22,7 +_,7 @@
+@@ -23,7 +_,7 @@
  import net.minecraft.world.phys.shapes.Shapes;
  import net.minecraft.world.phys.shapes.VoxelShape;
  
@@ -9,12 +9,12 @@
     public static final BooleanProperty f_57833_ = PipeBlock.f_55152_;
     public static final BooleanProperty f_57834_ = PipeBlock.f_55148_;
     public static final BooleanProperty f_57835_ = PipeBlock.f_55149_;
-@@ -156,7 +_,7 @@
-    }
+@@ -158,7 +_,7 @@
  
     public void m_213898_(BlockState p_222655_, ServerLevel p_222656_, BlockPos p_222657_, RandomSource p_222658_) {
--      if (p_222658_.m_188503_(4) == 0) {
+       if (p_222656_.m_46469_().m_46207_(GameRules.f_268705_)) {
+-         if (p_222658_.m_188503_(4) == 0) {
 +      if (p_222656_.f_46441_.m_188503_(4) == 0 && p_222656_.isAreaLoaded(p_222657_, 4)) { // Forge: check area to prevent loading unloaded chunks
-          Direction direction = Direction.m_235672_(p_222658_);
-          BlockPos blockpos = p_222657_.m_7494_();
-          if (direction.m_122434_().m_122479_() && !p_222655_.m_61143_(m_57883_(direction))) {
+             Direction direction = Direction.m_235672_(p_222658_);
+             BlockPos blockpos = p_222657_.m_7494_();
+             if (direction.m_122434_().m_122479_() && !p_222655_.m_61143_(m_57883_(direction))) {

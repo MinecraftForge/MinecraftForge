@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/Mob.java
 +++ b/net/minecraft/world/entity/Mob.java
-@@ -210,7 +_,11 @@
+@@ -224,7 +_,11 @@
     }
  
     public void m_6710_(@Nullable LivingEntity p_21544_) {
@@ -13,7 +13,7 @@
     }
  
     public boolean m_6549_(EntityType<?> p_21399_) {
-@@ -499,9 +_,9 @@
+@@ -513,9 +_,9 @@
     public void m_8107_() {
        super.m_8107_();
        this.f_19853_.m_46473_().m_6180_("looting");
@@ -47,7 +47,7 @@
           if (entity != null) {
              double d0 = entity.m_20280_(this);
              int i = this.m_6095_().m_20674_().m_21611_();
-@@ -1398,13 +_,23 @@
+@@ -1410,13 +_,23 @@
        return false;
     }
  

@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/item/crafting/BookCloningRecipe.java
 +++ b/net/minecraft/world/item/crafting/BookCloningRecipe.java
-@@ -79,8 +_,8 @@
+@@ -80,8 +_,8 @@
  
        for(int i = 0; i < nonnulllist.size(); ++i) {
           ItemStack itemstack = p_43820_.m_8020_(i);

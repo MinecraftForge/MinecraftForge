@@ -39,10 +39,10 @@ public class CustomArmorModelTest
     static final String MOD_ID = "custom_armor_model_test";
     private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MOD_ID);
     // demonstrates custom non-humanoid model
-    private static final RegistryObject<Item> RED_LEGGINGS = ITEMS.register("red_leggings", () -> new TintedArmorItem(ArmorMaterials.DIAMOND, EquipmentSlot.LEGS, new Properties().stacksTo(1)));
+    private static final RegistryObject<Item> RED_LEGGINGS = ITEMS.register("red_leggings", () -> new TintedArmorItem(ArmorMaterials.DIAMOND, ArmorItem.Type.LEGGINGS, new Properties().stacksTo(1)));
     // demonstrates the properties are copied from the vanilla model
-    private static final RegistryObject<Item> ENDERMAN_CHESTPLATE = ITEMS.register("enderman_chestplate", () -> new EndermanArmorItem(ArmorMaterials.GOLD, EquipmentSlot.CHEST, new Properties().stacksTo(1)));
-    private static final RegistryObject<Item> ENDERMAN_BOOTS = ITEMS.register("enderman_boots", () -> new EndermanArmorItem(ArmorMaterials.GOLD, EquipmentSlot.FEET, new Properties().stacksTo(1)));
+    private static final RegistryObject<Item> ENDERMAN_CHESTPLATE = ITEMS.register("enderman_chestplate", () -> new EndermanArmorItem(ArmorMaterials.GOLD, ArmorItem.Type.CHESTPLATE, new Properties().stacksTo(1)));
+    private static final RegistryObject<Item> ENDERMAN_BOOTS = ITEMS.register("enderman_boots", () -> new EndermanArmorItem(ArmorMaterials.GOLD, ArmorItem.Type.BOOTS, new Properties().stacksTo(1)));
 
     public CustomArmorModelTest()
     {
@@ -63,7 +63,7 @@ public class CustomArmorModelTest
 
     private static class TintedArmorItem extends ArmorItem
     {
-        public TintedArmorItem(ArmorMaterial material, EquipmentSlot slot, Properties props)
+        public TintedArmorItem(ArmorMaterial material, ArmorItem.Type slot, Properties props)
         {
             super(material, slot, props);
         }
@@ -85,7 +85,7 @@ public class CustomArmorModelTest
 
     private static class EndermanArmorItem extends ArmorItem
     {
-        public EndermanArmorItem(ArmorMaterial material, EquipmentSlot slot, Properties props)
+        public EndermanArmorItem(ArmorMaterial material, ArmorItem.Type slot, Properties props)
         {
             super(material, slot, props);
         }

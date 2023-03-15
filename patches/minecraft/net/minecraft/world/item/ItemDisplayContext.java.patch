@@ -1,0 +1,60 @@
+--- a/net/minecraft/world/item/ItemDisplayContext.java
++++ b/net/minecraft/world/item/ItemDisplayContext.java
+@@ -5,7 +_,7 @@
+ import net.minecraft.util.ByIdMap;
+ import net.minecraft.util.StringRepresentable;
+ 
+-public enum ItemDisplayContext implements StringRepresentable {
++public enum ItemDisplayContext implements StringRepresentable, net.minecraftforge.common.IExtensibleEnum {
+    NONE(0, "none"),
+    THIRD_PERSON_LEFT_HAND(1, "thirdperson_lefthand"),
+    THIRD_PERSON_RIGHT_HAND(2, "thirdperson_righthand"),
+@@ -16,14 +_,16 @@
+    GROUND(7, "ground"),
+    FIXED(8, "fixed");
+ 
+-   public static final Codec<ItemDisplayContext> f_268458_ = StringRepresentable.m_216439_(ItemDisplayContext::values);
+-   public static final IntFunction<ItemDisplayContext> f_268648_ = ByIdMap.m_262839_(ItemDisplayContext::m_269462_, values(), ByIdMap.OutOfBoundsStrategy.ZERO);
++   public static final Codec<ItemDisplayContext> f_268458_ = net.minecraft.util.ExtraCodecs.m_184415_(() -> net.minecraftforge.registries.ForgeRegistries.DISPLAY_CONTEXTS.get().getCodec());
++   public static final IntFunction<ItemDisplayContext> f_268648_ = id -> java.util.Objects.requireNonNullElse(((net.minecraftforge.registries.IForgeRegistryInternal<ItemDisplayContext>) net.minecraftforge.registries.ForgeRegistries.DISPLAY_CONTEXTS.get()).getValue(id < 0 ? Byte.MAX_VALUE + -id : id), NONE);
+    private byte f_268735_;
+    private final String f_268747_;
+ 
+    private ItemDisplayContext(int p_270624_, String p_270851_) {
+       this.f_268747_ = p_270851_;
+       this.f_268735_ = (byte)p_270624_;
++      this.isModded = false;
++      this.fallback = null;
+    }
+ 
+    public String m_7912_() {
+@@ -37,4 +_,29 @@
+    public boolean m_269069_() {
+       return this == FIRST_PERSON_LEFT_HAND || this == FIRST_PERSON_RIGHT_HAND;
+    }
++
++   // Forge start
++   private final boolean isModded;
++   @javax.annotation.Nullable
++   private final ItemDisplayContext fallback;
++
++   private ItemDisplayContext(net.minecraft.resources.ResourceLocation serializeName, ItemDisplayContext fallback) {
++      this.f_268735_ = 0; // If the context is never registered then it should be treated as the NONE one
++      this.f_268747_ = java.util.Objects.requireNonNull(serializeName, "Modded ItemDisplayContexts must have a non-null serializeName").toString();
++      this.isModded = true;
++      this.fallback = fallback;
++   }
++
++   public boolean isModded() {
++      return isModded;
++   }
++
++   public @javax.annotation.Nullable ItemDisplayContext fallback() {
++      return fallback;
++   }
++
++   public static ItemDisplayContext create(String keyName, net.minecraft.resources.ResourceLocation serializedName, @javax.annotation.Nullable ItemDisplayContext fallback) {
++      throw new IllegalStateException("Enum not extended!");
++   }
++   public static final net.minecraftforge.registries.IForgeRegistry.AddCallback<ItemDisplayContext> ADD_CALLBACK = (owner, stage, id, key, obj, oldObj) -> obj.f_268735_ = id > Byte.MAX_VALUE ? (byte) -(id - Byte.MAX_VALUE) : (byte) id; // if the ID is > 127 start doing negative IDs
+ }

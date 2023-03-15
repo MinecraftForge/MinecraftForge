@@ -1,17 +1,6 @@
 --- a/net/minecraft/server/PlayerAdvancements.java
 +++ b/net/minecraft/server/PlayerAdvancements.java
-@@ -164,6 +_,10 @@
-       }
- 
-       this.m_136002_(p_136007_);
-+
-+      if (net.minecraftforge.common.ForgeConfig.SERVER.fixAdvancementLoading.get())
-+         net.minecraftforge.common.AdvancementLoadFix.loadVisibility(this, this.f_135965_, this.f_135966_, this.f_135964_, this.f_135967_, this::m_136012_);
-+      else
-       this.m_136001_();
-       this.m_135994_(p_136007_);
-    }
-@@ -197,6 +_,8 @@
+@@ -167,6 +_,8 @@
     }
  
     public boolean m_135988_(Advancement p_135989_, String p_135990_) {
@@ -20,7 +9,7 @@
        boolean flag = false;
        AdvancementProgress advancementprogress = this.m_135996_(p_135989_);
        boolean flag1 = advancementprogress.m_8193_();
-@@ -204,11 +_,14 @@
+@@ -174,11 +_,14 @@
           this.m_136008_(p_135989_);
           this.f_135967_.add(p_135989_);
           flag = true;
@@ -35,11 +24,21 @@
           }
        }
  
-@@ -226,6 +_,7 @@
+@@ -197,6 +_,7 @@
           this.m_136004_(p_135999_);
           this.f_135967_.add(p_135999_);
           flag = true;
 +         net.minecraftforge.event.ForgeEventFactory.onAdvancementProgressedEvent(this.f_135968_, p_135999_, advancementprogress, p_136000_, net.minecraftforge.event.entity.player.AdvancementEvent.AdvancementProgressEvent.ProgressType.REVOKE);
        }
  
-       if (!advancementprogress.m_8206_()) {
+       if (flag1 && !advancementprogress.m_8193_()) {
+@@ -253,6 +_,9 @@
+          Set<Advancement> set = new HashSet<>();
+          Set<ResourceLocation> set1 = new HashSet<>();
+ 
++         if (net.minecraftforge.common.ForgeConfig.SERVER.fixAdvancementLoading.get())
++            net.minecraftforge.common.AdvancementLoadFix.loadVisibility(this, this.f_135965_, this.f_263821_, this.f_263740_, this.f_135967_, advancement -> AdvancementVisibilityEvaluator.isVisible(advancement, adv -> m_135996_(adv).m_8193_()));
++         else
+          for(Advancement advancement : this.f_263821_) {
+             this.m_264265_(advancement, set, set1);
+          }

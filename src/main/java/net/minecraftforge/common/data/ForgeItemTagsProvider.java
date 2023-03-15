@@ -24,7 +24,7 @@ import java.util.function.Consumer;
 
 public final class ForgeItemTagsProvider extends ItemTagsProvider
 {
-    public ForgeItemTagsProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider, TagsProvider<Block> blockTagProvider, ExistingFileHelper existingFileHelper)
+    public ForgeItemTagsProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider, CompletableFuture<TagLookup<Block>> blockTagProvider, ExistingFileHelper existingFileHelper)
     {
         super(output, lookupProvider, blockTagProvider, "forge", existingFileHelper);
     }

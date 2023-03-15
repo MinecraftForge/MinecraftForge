@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity.java
-@@ -58,6 +_,7 @@
+@@ -59,6 +_,7 @@
     public static final int f_154987_ = 4;
     public static final int f_154988_ = 200;
     public static final int f_154989_ = 2;
@@ -8,7 +8,7 @@
     protected NonNullList<ItemStack> f_58310_ = NonNullList.m_122780_(3, ItemStack.f_41583_);
     int f_58316_;
     int f_58317_;
-@@ -106,8 +_,10 @@
+@@ -107,8 +_,10 @@
     protected AbstractFurnaceBlockEntity(BlockEntityType<?> p_154991_, BlockPos p_154992_, BlockState p_154993_, RecipeType<? extends AbstractCookingRecipe> p_154994_) {
        super(p_154991_, p_154992_, p_154993_);
        this.f_222691_ = RecipeManager.m_220267_((RecipeType)p_154994_);
@@ -19,7 +19,7 @@
     public static Map<Item, Integer> m_58423_() {
        Map<Item, Integer> map = Maps.newLinkedHashMap();
        m_58374_(map, Items.f_42448_, 20000);
-@@ -204,9 +_,9 @@
+@@ -205,9 +_,9 @@
        super.m_142466_(p_155025_);
        this.f_58310_ = NonNullList.m_122780_(this.m_6643_(), ItemStack.f_41583_);
        ContainerHelper.m_18980_(p_155025_, this.f_58310_);
@@ -32,7 +32,7 @@
        this.f_58317_ = this.m_7743_(this.f_58310_.get(1));
        CompoundTag compoundtag = p_155025_.m_128469_("RecipesUsed");
  
-@@ -218,9 +_,9 @@
+@@ -219,9 +_,9 @@
  
     protected void m_183515_(CompoundTag p_187452_) {
        super.m_183515_(p_187452_);
@@ -45,12 +45,12 @@
        ContainerHelper.m_18973_(p_187452_, this.f_58310_);
        CompoundTag compoundtag = new CompoundTag();
        this.f_58320_.forEach((p_187449_, p_187450_) -> {
-@@ -248,28 +_,30 @@
+@@ -249,28 +_,30 @@
           }
  
           int i = p_155017_.m_6893_();
--         if (!p_155017_.m_58425_() && m_155005_(recipe, p_155017_.f_58310_, i)) {
-+         if (!p_155017_.m_58425_() && p_155017_.m_155005_(recipe, p_155017_.f_58310_, i)) {
+-         if (!p_155017_.m_58425_() && m_155005_(p_155014_.m_9598_(), recipe, p_155017_.f_58310_, i)) {
++         if (!p_155017_.m_58425_() && p_155017_.m_155005_(p_155014_.m_9598_(), recipe, p_155017_.f_58310_, i)) {
              p_155017_.f_58316_ = p_155017_.m_7743_(itemstack);
              p_155017_.f_58317_ = p_155017_.f_58316_;
              if (p_155017_.m_58425_()) {
@@ -70,30 +70,30 @@
              }
           }
  
--         if (p_155017_.m_58425_() && m_155005_(recipe, p_155017_.f_58310_, i)) {
-+         if (p_155017_.m_58425_() && p_155017_.m_155005_(recipe, p_155017_.f_58310_, i)) {
+-         if (p_155017_.m_58425_() && m_155005_(p_155014_.m_9598_(), recipe, p_155017_.f_58310_, i)) {
++         if (p_155017_.m_58425_() && p_155017_.m_155005_(p_155014_.m_9598_(), recipe, p_155017_.f_58310_, i)) {
              ++p_155017_.f_58318_;
              if (p_155017_.f_58318_ == p_155017_.f_58319_) {
                 p_155017_.f_58318_ = 0;
                 p_155017_.f_58319_ = m_222692_(p_155014_, p_155017_);
--               if (m_155026_(recipe, p_155017_.f_58310_, i)) {
-+               if (p_155017_.m_155026_(recipe, p_155017_.f_58310_, i)) {
+-               if (m_266209_(p_155014_.m_9598_(), recipe, p_155017_.f_58310_, i)) {
++               if (p_155017_.m_266209_(p_155014_.m_9598_(), recipe, p_155017_.f_58310_, i)) {
                    p_155017_.m_6029_(recipe);
                 }
  
-@@ -294,9 +_,9 @@
+@@ -295,9 +_,9 @@
  
     }
  
--   private static boolean m_155005_(@Nullable Recipe<?> p_155006_, NonNullList<ItemStack> p_155007_, int p_155008_) {
-+   private boolean m_155005_(@Nullable Recipe<?> p_155006_, NonNullList<ItemStack> p_155007_, int p_155008_) {
+-   private static boolean m_155005_(RegistryAccess p_266924_, @Nullable Recipe<?> p_155006_, NonNullList<ItemStack> p_155007_, int p_155008_) {
++   private boolean m_155005_(RegistryAccess p_266924_, @Nullable Recipe<?> p_155006_, NonNullList<ItemStack> p_155007_, int p_155008_) {
        if (!p_155007_.get(0).m_41619_() && p_155006_ != null) {
--         ItemStack itemstack = p_155006_.m_8043_();
-+         ItemStack itemstack = ((Recipe<WorldlyContainer>) p_155006_).m_5874_(this);
+-         ItemStack itemstack = p_155006_.m_8043_(p_266924_);
++         ItemStack itemstack = ((Recipe<WorldlyContainer>) p_155006_).m_5874_(this, p_266924_);
           if (itemstack.m_41619_()) {
              return false;
           } else {
-@@ -305,10 +_,10 @@
+@@ -306,10 +_,10 @@
                 return true;
              } else if (!itemstack1.m_41656_(itemstack)) {
                 return false;
@@ -106,27 +106,27 @@
              }
           }
        } else {
-@@ -316,15 +_,15 @@
+@@ -317,15 +_,15 @@
        }
     }
  
--   private static boolean m_155026_(@Nullable Recipe<?> p_155027_, NonNullList<ItemStack> p_155028_, int p_155029_) {
--      if (p_155027_ != null && m_155005_(p_155027_, p_155028_, p_155029_)) {
-+   private boolean m_155026_(@Nullable Recipe<?> p_155027_, NonNullList<ItemStack> p_155028_, int p_155029_) {
-+      if (p_155027_ != null && this.m_155005_(p_155027_, p_155028_, p_155029_)) {
-          ItemStack itemstack = p_155028_.get(0);
--         ItemStack itemstack1 = p_155027_.m_8043_();
-+         ItemStack itemstack1 = ((Recipe<WorldlyContainer>) p_155027_).m_5874_(this);
-          ItemStack itemstack2 = p_155028_.get(2);
+-   private static boolean m_266209_(RegistryAccess p_266740_, @Nullable Recipe<?> p_266780_, NonNullList<ItemStack> p_267073_, int p_267157_) {
+-      if (p_266780_ != null && m_155005_(p_266740_, p_266780_, p_267073_, p_267157_)) {
++   private boolean m_266209_(RegistryAccess p_266740_, @Nullable Recipe<?> p_266780_, NonNullList<ItemStack> p_267073_, int p_267157_) {
++      if (p_266780_ != null && this.m_155005_(p_266740_, p_266780_, p_267073_, p_267157_)) {
+          ItemStack itemstack = p_267073_.get(0);
+-         ItemStack itemstack1 = p_266780_.m_8043_(p_266740_);
++         ItemStack itemstack1 = ((Recipe<WorldlyContainer>) p_266780_).m_5874_(this, p_266740_);
+          ItemStack itemstack2 = p_267073_.get(2);
           if (itemstack2.m_41619_()) {
-             p_155028_.set(2, itemstack1.m_41777_());
+             p_267073_.set(2, itemstack1.m_41777_());
           } else if (itemstack2.m_150930_(itemstack1.m_41720_())) {
 -            itemstack2.m_41769_(1);
 +            itemstack2.m_41769_(itemstack1.m_41613_());
           }
  
-          if (itemstack.m_150930_(Blocks.f_50057_.m_5456_()) && !p_155028_.get(1).m_41619_() && p_155028_.get(1).m_150930_(Items.f_42446_)) {
-@@ -343,7 +_,7 @@
+          if (itemstack.m_150930_(Blocks.f_50057_.m_5456_()) && !p_267073_.get(1).m_41619_() && p_267073_.get(1).m_150930_(Items.f_42446_)) {
+@@ -344,7 +_,7 @@
           return 0;
        } else {
           Item item = p_58343_.m_41720_();
@@ -135,7 +135,7 @@
        }
     }
  
-@@ -352,7 +_,7 @@
+@@ -353,7 +_,7 @@
     }
  
     public static boolean m_58399_(ItemStack p_58400_) {
@@ -144,7 +144,7 @@
     }
  
     public int[] m_7071_(Direction p_58363_) {
-@@ -432,7 +_,7 @@
+@@ -429,7 +_,7 @@
           return true;
        } else {
           ItemStack itemstack = this.f_58310_.get(1);
@@ -153,7 +153,7 @@
        }
     }
  
-@@ -490,5 +_,34 @@
+@@ -487,5 +_,34 @@
           p_58342_.m_36491_(itemstack);
        }
  

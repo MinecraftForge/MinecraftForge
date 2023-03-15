@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/storage/LevelSummary.java
 +++ b/net/minecraft/world/level/storage/LevelSummary.java
-@@ -189,4 +_,8 @@
+@@ -192,4 +_,8 @@
           return this.f_164922_;
        }
     }

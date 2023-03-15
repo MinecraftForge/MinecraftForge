@@ -3,7 +3,7 @@
 @@ -42,13 +_,14 @@
  public class ModelManager implements PreparableReloadListener, AutoCloseable {
     private static final Logger f_243848_ = LogUtils.getLogger();
-    private static final Map<ResourceLocation, ResourceLocation> f_244614_ = Map.of(Sheets.f_110737_, new ResourceLocation("banner_patterns"), Sheets.f_110736_, new ResourceLocation("beds"), Sheets.f_110740_, new ResourceLocation("chests"), Sheets.f_110738_, new ResourceLocation("shield_patterns"), Sheets.f_110739_, new ResourceLocation("signs"), Sheets.f_110735_, new ResourceLocation("shulker_boxes"), TextureAtlas.f_118259_, new ResourceLocation("blocks"));
+    private static final Map<ResourceLocation, ResourceLocation> f_244614_ = Map.of(Sheets.f_110737_, new ResourceLocation("banner_patterns"), Sheets.f_110736_, new ResourceLocation("beds"), Sheets.f_110740_, new ResourceLocation("chests"), Sheets.f_110738_, new ResourceLocation("shield_patterns"), Sheets.f_110739_, new ResourceLocation("signs"), Sheets.f_110735_, new ResourceLocation("shulker_boxes"), Sheets.f_265912_, new ResourceLocation("armor_trims"), Sheets.f_271463_, new ResourceLocation("decorated_pot"), TextureAtlas.f_118259_, new ResourceLocation("blocks"));
 -   private Map<ResourceLocation, BakedModel> f_119397_;
 +   private Map<ResourceLocation, BakedModel> f_119397_ = new java.util.HashMap<>();
     private final AtlasSet f_119398_;
@@ -35,7 +35,7 @@
        CompletableFuture<Map<ResourceLocation, BlockModel>> completablefuture = m_246704_(p_251134_, p_250550_);
        CompletableFuture<Map<ResourceLocation, List<ModelBakery.LoadedJson>>> completablefuture1 = m_246899_(p_251134_, p_250550_);
        CompletableFuture<ModelBakery> completablefuture2 = completablefuture.thenCombineAsync(completablefuture1, (p_251201_, p_251281_) -> {
-@@ -172,6 +_,8 @@
+@@ -164,6 +_,8 @@
              return "    " + p_248692_.m_119193_() + ":" + p_248692_.m_119203_();
           }).collect(Collectors.joining("\n")));
        });
@@ -44,7 +44,7 @@
        p_252136_.m_6182_("dispatch");
        Map<ResourceLocation, BakedModel> map = p_248945_.m_119251_();
        BakedModel bakedmodel = map.get(ModelBakery.f_119230_);
-@@ -201,6 +_,8 @@
+@@ -193,6 +_,8 @@
        this.f_119397_ = modelbakery.m_119251_();
        this.f_119404_ = modelbakery.m_119355_();
        this.f_119403_ = p_248996_.f_244619_;
@@ -53,7 +53,7 @@
        p_251960_.m_6182_("cache");
        this.f_119399_.m_245515_(p_248996_.f_244561_);
        p_251960_.m_7238_();
-@@ -226,6 +_,7 @@
+@@ -218,6 +_,7 @@
     }
  
     public TextureAtlas m_119428_(ResourceLocation p_119429_) {
@@ -61,7 +61,7 @@
        return this.f_119398_.m_245433_(p_119429_);
     }
  
-@@ -235,6 +_,10 @@
+@@ -227,6 +_,10 @@
  
     public void m_119410_(int p_119411_) {
        this.f_119402_ = p_119411_;

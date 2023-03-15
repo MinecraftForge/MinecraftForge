@@ -94,6 +94,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemStackLinkedSet;
 import net.minecraft.world.item.crafting.RecipeManager;
@@ -154,6 +155,7 @@ import net.minecraftforge.fml.VersionChecker;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.network.NetworkConstants;
 import net.minecraftforge.network.NetworkRegistry;
+import net.minecraftforge.network.ServerStatusPing;
 import net.minecraftforge.registries.GameData;
 import net.minecraftforge.versions.forge.ForgeVersion;
 import org.apache.commons.lang3.tuple.Pair;
@@ -484,7 +486,7 @@ public class ForgeHooksClient
         ModLoader.get().postEvent(new ModelEvent.BakingCompleted(modelManager, Collections.unmodifiableMap(models), modelBakery));
     }
 
-    public static BakedModel handleCameraTransforms(PoseStack poseStack, BakedModel model, ItemTransforms.TransformType cameraTransformType, boolean applyLeftHandTransform)
+    public static BakedModel handleCameraTransforms(PoseStack poseStack, BakedModel model, ItemDisplayContext cameraTransformType, boolean applyLeftHandTransform)
     {
         model = model.applyTransform(cameraTransformType, poseStack, applyLeftHandTransform);
         return model;
@@ -818,10 +820,11 @@ public class ForgeHooksClient
 
     public static void processForgeListPingData(ServerStatus packet, ServerData target)
     {
-        if (packet.getForgeData() != null) {
-            final Map<String, String> mods = packet.getForgeData().getRemoteModData();
-            final Map<ResourceLocation, Pair<String, Boolean>> remoteChannels = packet.getForgeData().getRemoteChannels();
-            final int fmlver = packet.getForgeData().getFMLNetworkVersion();
+        packet.forgeData().ifPresentOrElse(forgeData ->
+        {
+            final Map<String, String> mods = forgeData.getRemoteModData();
+            final Map<ResourceLocation, ServerStatusPing.ChannelData> remoteChannels = forgeData.getRemoteChannels();
+            final int fmlver = forgeData.getFMLNetworkVersion();
 
             boolean fmlNetMatches = fmlver == NetworkConstants.FMLNETVERSION;
             boolean channelsMatch = NetworkRegistry.checkListPingCompatibilityForClient(remoteChannels);
@@ -867,11 +870,8 @@ public class ForgeHooksClient
             if (fmlver > NetworkConstants.FMLNETVERSION) {
                 extraReason = "fml.menu.multiplayer.clientoutdated";
             }
-            target.forgeData = new ExtendedServerListData("FML", extraServerMods.isEmpty() && fmlNetMatches && channelsMatch && modsMatch, mods.size(), extraReason, packet.getForgeData().isTruncated());
-        } else {
-            target.forgeData = new ExtendedServerListData("VANILLA", NetworkRegistry.canConnectToVanillaServer(),0, null);
-        }
-
+            target.forgeData = new ExtendedServerListData("FML", extraServerMods.isEmpty() && fmlNetMatches && channelsMatch && modsMatch, mods.size(), extraReason, forgeData.isTruncated());
+        }, () -> target.forgeData = new ExtendedServerListData("VANILLA", NetworkRegistry.canConnectToVanillaServer(),0, null));
     }
 
     private static final ResourceLocation ICON_SHEET = new ResourceLocation(ForgeVersion.MOD_ID, "textures/gui/icons.png");
@@ -1202,7 +1202,7 @@ public class ForgeHooksClient
         return new ResourceLocation(loc.getNamespace(), normalised);
     }
 
-    public static void onCreativeModeTabBuildContents(CreativeModeTab tab, CreativeModeTab.DisplayItemsGenerator originalGenerator, FeatureFlagSet flags, CreativeModeTab.Output output, boolean hasPermisions)
+    public static void onCreativeModeTabBuildContents(CreativeModeTab tab, CreativeModeTab.DisplayItemsGenerator originalGenerator, CreativeModeTab.ItemDisplayParameters params, CreativeModeTab.Output output)
     {
         final var entries = new MutableHashedLinkedMap<ItemStack, CreativeModeTab.TabVisibility>(ItemStackLinkedSet.TYPE_AND_TAG,
             (key, left, right) -> {
@@ -1213,13 +1213,13 @@ public class ForgeHooksClient
             }
         );
 
-        originalGenerator.accept(flags, (stack, vis) -> {
+        originalGenerator.accept(params, (stack, vis) -> {
             if (stack.getCount() != 1)
                 throw new IllegalArgumentException("The stack count must be 1");
             entries.put(stack, vis);
-        }, hasPermisions);
+        });
 
-        ModLoader.get().postEvent(new CreativeModeTabEvent.BuildContents(tab, flags, hasPermisions, entries));
+        ModLoader.get().postEvent(new CreativeModeTabEvent.BuildContents(tab, params, entries));
 
         for (var entry : entries)
             output.accept(entry.getKey(), entry.getValue());

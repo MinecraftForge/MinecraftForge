@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/projectile/FireworkRocketEntity.java
 +++ b/net/minecraft/world/entity/projectile/FireworkRocketEntity.java
-@@ -151,6 +_,13 @@
+@@ -150,6 +_,13 @@
  
     }
  
@@ -13,4 +13,4 @@
 +
     private void m_37080_() {
        this.f_19853_.m_7605_(this, (byte)17);
-       this.m_146852_(GameEvent.f_157812_, this.m_37282_());
+       this.m_146852_(GameEvent.f_157812_, this.m_19749_());

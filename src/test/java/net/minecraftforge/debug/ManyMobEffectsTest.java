@@ -93,7 +93,7 @@ public class ManyMobEffectsTest
         MinecraftForge.EVENT_BUS.addListener(ManyMobEffectsTest::mobInteract);
         modBus.addListener((CreativeModeTabEvent.Register event) -> event.registerCreativeModeTab(new ResourceLocation(MODID, "many_mob_effects_test"), builder -> builder.withSearchBar()
                 .icon(() -> new ItemStack(Items.POTION))
-                .displayItems((flags, output, isOperator) -> {
+                .displayItems((params, output) -> {
                     var stack = new ItemStack(Items.POTION);
                     PotionUtils.setCustomEffects(stack, List.of(new MobEffectInstance(LAST_EFFECT.get(), 1000)));
                     output.accept(stack);

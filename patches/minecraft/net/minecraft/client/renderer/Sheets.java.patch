@@ -1,22 +1,22 @@
 --- a/net/minecraft/client/renderer/Sheets.java
 +++ b/net/minecraft/client/renderer/Sheets.java
-@@ -135,11 +_,13 @@
+@@ -145,11 +_,13 @@
     }
  
     private static Material m_173385_(WoodType p_173386_) {
--      return new Material(f_110739_, new ResourceLocation("entity/signs/" + p_173386_.m_61846_()));
-+      ResourceLocation location = new ResourceLocation(p_173386_.m_61846_());
+-      return new Material(f_110739_, new ResourceLocation("entity/signs/" + p_173386_.f_61839_()));
++      ResourceLocation location = new ResourceLocation(p_173386_.f_61839_());
 +      return new Material(f_110739_, new ResourceLocation(location.m_135827_(), "entity/signs/" + location.m_135815_()));
     }
  
     private static Material m_245275_(WoodType p_251735_) {
--      return new Material(f_110739_, new ResourceLocation("entity/signs/hanging/" + p_251735_.m_61846_()));
-+      ResourceLocation location = new ResourceLocation(p_251735_.m_61846_());
+-      return new Material(f_110739_, new ResourceLocation("entity/signs/hanging/" + p_251735_.f_61839_()));
++      ResourceLocation location = new ResourceLocation(p_251735_.f_61839_());
 +      return new Material(f_110739_, new ResourceLocation(location.m_135827_(), "entity/signs/hanging/" + location.m_135815_()));
     }
  
     public static Material m_173381_(WoodType p_173382_) {
-@@ -190,5 +_,13 @@
+@@ -209,5 +_,13 @@
           default:
              return p_110773_;
        }

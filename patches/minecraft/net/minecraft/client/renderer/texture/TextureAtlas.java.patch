@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/texture/TextureAtlas.java
 +++ b/net/minecraft/client/renderer/texture/TextureAtlas.java
-@@ -74,6 +_,8 @@
+@@ -80,6 +_,8 @@
  
        this.f_118263_ = List.copyOf(list);
        this.f_118262_ = List.copyOf(list1);
@@ -8,8 +8,8 @@
 +      net.minecraftforge.client.ForgeHooksClient.onTextureStitchedPost(this);
     }
  
-    private void m_246472_(int p_252243_, int p_251110_, int p_249203_) {
-@@ -145,5 +_,12 @@
+    public void m_276079_(ResourceLocation p_276106_, Path p_276127_) throws IOException {
+@@ -151,5 +_,12 @@
  
     public void m_247255_(SpriteLoader.Preparations p_251993_) {
        this.m_117960_(false, p_251993_.f_244353_() > 0);

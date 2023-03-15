@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/projectile/ShulkerBullet.java
 +++ b/net/minecraft/world/entity/projectile/ShulkerBullet.java
-@@ -211,7 +_,7 @@
+@@ -212,7 +_,7 @@
           }
  
           HitResult hitresult = ProjectileUtil.m_37294_(this, this::m_5603_);

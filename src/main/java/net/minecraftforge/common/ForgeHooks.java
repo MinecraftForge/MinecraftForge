@@ -1549,7 +1549,7 @@ public class ForgeHooks
 
     private static String makePackFormatKey(PackType packType)
     {
-        return "forge:" + packType.bridgeType.name().toLowerCase(Locale.ROOT) + "_pack_format";
+        return "forge:" + packType.name().toLowerCase(Locale.ROOT) + "_pack_format";
     }
 
     /**

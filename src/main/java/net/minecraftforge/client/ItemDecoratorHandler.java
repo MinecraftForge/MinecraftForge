@@ -65,7 +65,6 @@ public final class ItemDecoratorHandler
 
     private void resetRenderState()
     {
-        RenderSystem.enableTexture();
         RenderSystem.enableDepthTest();
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
