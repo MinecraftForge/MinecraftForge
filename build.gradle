@@ -19,6 +19,7 @@ import net.minecraftforge.gradle.common.tasks.SignJar
 import net.minecraftforge.gradle.userdev.tasks.RenameJar
 import org.apache.tools.ant.filters.ReplaceTokens
 import org.gradle.plugins.ide.eclipse.model.SourceFolder
+import org.objectweb.asm.Opcodes
 
 plugins {
     id 'org.cadixdev.licenser' version '0.6.1'
@@ -1173,13 +1174,25 @@ project(':forge') {
             */
         }
     }
+    
+    task findFinalizeSpawnTargets(type: BytecodePredicateFinder, dependsOn: ['createJoinedSRG']) {
+        jar = createJoinedSRG.output
+        output = rootProject.file('src/main/resources/coremods/finalize_spawn_targets.json')
+        predicate = {
+            parent, node, insn -> 
+                'net/minecraft/world/level/BaseSpawner' != parent.name // Ignore this class as we special case it.
+                && insn.getOpcode() == Opcodes.INVOKEVIRTUAL 
+                && insn.name.equals('m_6518_') 
+                && insn.desc.equals('(Lnet/minecraft/world/level/ServerLevelAccessor;Lnet/minecraft/world/DifficultyInstance;Lnet/minecraft/world/entity/MobSpawnType;Lnet/minecraft/world/entity/SpawnGroupData;Lnet/minecraft/nbt/CompoundTag;)Lnet/minecraft/world/entity/SpawnGroupData;')
+        }
+    }
 
     tasks.register('checkAll') {
         dependsOn 'checkLicenses'
         group = 'checks'
     }
     tasks.register('checkAllAndFix') {
-        dependsOn 'findFieldInstanceChecks', 'checkLicenses'
+        dependsOn 'findFinalizeSpawnTargets', 'findFieldInstanceChecks', 'checkLicenses'
         group = 'checks'
     }
 
