@@ -138,30 +138,45 @@ public class ForgeMod
             ArgumentTypeInfos.registerByClass(ModIdArgument.class,
                     SingletonArgumentInfo.contextFree(ModIdArgument::modIdArgument)));
 
-    public static final RegistryObject<Attribute> SWIM_SPEED = ATTRIBUTES.register("swim_speed", () -> new RangedAttribute("forge.swimSpeed", 1.0D, 0.0D, 1024.0D).setSyncable(true));
-    public static final RegistryObject<Attribute> NAMETAG_DISTANCE = ATTRIBUTES.register("nametag_distance", () -> new RangedAttribute("forge.nameTagDistance", 64.0D, 0.0D, 64.0).setSyncable(true));
+    public static final RegistryObject<Attribute> SWIM_SPEED = ATTRIBUTES.register("swim_speed", () -> new RangedAttribute("forge.swim_speed", 1.0D, 0.0D, 1024.0D).setSyncable(true));
+    public static final RegistryObject<Attribute> NAMETAG_DISTANCE = ATTRIBUTES.register("nametag_distance", () -> new RangedAttribute("forge.name_tag_distance", 64.0D, 0.0D, 64.0).setSyncable(true));
     public static final RegistryObject<Attribute> ENTITY_GRAVITY = ATTRIBUTES.register("entity_gravity", () -> new RangedAttribute("forge.entity_gravity", 0.08D, -8.0D, 8.0D).setSyncable(true));
 
     /**
-     * Reach Distance represents the distance at which a player may interact with the world.  The default is 4.5 blocks.  Players in creative mode have an additional 0.5 blocks of reach distance.
-     * @see IForgePlayer#getReachDistance()
-     * @see IForgePlayer#canInteractWith(BlockPos, double)
-     * @see IForgePlayer#canInteractWith(Entity, double)
+     * Reach Distance represents the distance at which a player may interact with the world.  The default is 4.5 blocks.  Players in creative mode have an additional 0.5 blocks of block reach.
+     * @see IForgePlayer#getBlockReach()
+     * @see IForgePlayer#canReach(BlockPos, double)
      */
-    public static final RegistryObject<Attribute> REACH_DISTANCE = ATTRIBUTES.register("reach_distance", () -> new RangedAttribute("generic.reachDistance", 4.5D, 0.0D, 1024.0D).setSyncable(true));
+    public static final RegistryObject<Attribute> BLOCK_REACH = ATTRIBUTES.register("block_reach", () -> new RangedAttribute("forge.block_reach", 4.5D, 0.0D, 1024.0D).setSyncable(true));
 
     /**
-     * Attack Range represents the distance at which a player may attack an entity.  The default is 3 blocks.  Players in creative mode have an additional 3 blocks of attack reach.
-     * @see IForgePlayer#getAttackRange()
-     * @see IForgePlayer#canHit(Entity, double)
+     * TODO: Remove
+     * @deprecated - use {@link #BLOCK_REACH}
      */
-    public static final RegistryObject<Attribute> ATTACK_RANGE = ATTRIBUTES.register("attack_range", () -> new RangedAttribute("generic.attack_range", 3.0D, 0.0D, 1024.0D).setSyncable(true));
+    @Deprecated(forRemoval = true, since = "1.19.4")
+    public static final RegistryObject<Attribute> REACH_DISTANCE = BLOCK_REACH;
+
+    /**
+     * Attack Range represents the distance at which a player may attack an entity.  The default is 3 blocks.  Players in creative mode have an additional 3 blocks of entity reach.
+     * The default of 3.0 is technically considered a bug by Mojang - see MC-172289 and MC-92484. However, updating this value would allow for longer-range attacks on vanilla servers, which makes some people mad.
+     * @see IForgePlayer#getEntityReach()
+     * @see IForgePlayer#canReach(Entity, double)
+     * @see IForgePlayer#canReach(Vec3, double)
+     */
+    public static final RegistryObject<Attribute> ENTITY_REACH = ATTRIBUTES.register("entity_reach", () -> new RangedAttribute("forge.entity_reach", 3.0D, 0.0D, 1024.0D).setSyncable(true));
+
+    /**
+     * TODO: Remove
+     * @deprecated - use {@link #ENTITY_REACH}
+     */
+    @Deprecated(forRemoval = true, since = "1.19.4")
+    public static final RegistryObject<Attribute> ATTACK_RANGE = ENTITY_REACH;
 
     /**
      * Step Height Addition modifies the amount of blocks an entity may walk up without jumping.
      * @see IForgeEntity#getStepHeight()
      */
-    public static final RegistryObject<Attribute> STEP_HEIGHT_ADDITION = ATTRIBUTES.register("step_height_addition", () -> new RangedAttribute("forge.stepHeight", 0.0D, -512.0D, 512.0D).setSyncable(true));
+    public static final RegistryObject<Attribute> STEP_HEIGHT_ADDITION = ATTRIBUTES.register("step_height_addition", () -> new RangedAttribute("forge.step_height", 0.0D, -512.0D, 512.0D).setSyncable(true));
 
     /**
      * Noop biome modifier. Can be used in a biome modifier json with "type": "forge:none".
@@ -452,6 +467,10 @@ public class ForgeMod
         MinecraftForge.EVENT_BUS.addListener(this::registerPermissionNodes);
 
         ForgeRegistries.ITEMS.tags().addOptionalTagDefaults(Tags.Items.ENCHANTING_FUELS, Set.of(ForgeRegistries.ITEMS.getDelegateOrThrow(Items.LAPIS_LAZULI)));
+
+        // TODO: Remove when addAlias becomes proper API, as this should be done in the DR's above.
+        addAlias(ForgeRegistries.ATTRIBUTES, new ResourceLocation("forge", "reach_distance"), new ResourceLocation("forge", "block_reach"));
+        addAlias(ForgeRegistries.ATTRIBUTES, new ResourceLocation("forge", "attack_range"), new ResourceLocation("forge", "entity_reach"));
     }
 
     public void preInit(FMLCommonSetupEvent evt)
@@ -596,5 +615,15 @@ public class ForgeMod
     public void registerPermissionNodes(PermissionGatherEvent.Nodes event)
     {
         event.addNodes(USE_SELECTORS_PERMISSION);
+    }
+
+    /**
+     * TODO: Remove when {@link ForgeRegistry#addAlias(ResourceLocation, ResourceLocation)} is elevated to {@link IForgeRegistry}.
+     */
+    @Deprecated(forRemoval = true, since = "1.19.3")
+    private static <T> void addAlias(IForgeRegistry<T> registry, ResourceLocation from, ResourceLocation to)
+    {
+        ForgeRegistry<T> fReg = (ForgeRegistry<T>) registry;
+        fReg.addAlias(from, to);
     }
 }

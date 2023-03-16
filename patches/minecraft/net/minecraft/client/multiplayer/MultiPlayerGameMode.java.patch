@@ -84,7 +84,7 @@
  
     public float m_105286_() {
 -      return this.f_105197_.m_46408_() ? 5.0F : 4.5F;
-+      return (float) this.f_105189_.f_91074_.getReachDistance();
++      return (float) this.f_105189_.f_91074_.getBlockReach();
     }
  
     public void m_105287_() {

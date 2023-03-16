@@ -5,11 +5,12 @@
 
 package net.minecraftforge.common.extensions;
 
-import java.util.Optional;
-
 import net.minecraft.core.BlockPos;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.ForgeMod;
 
@@ -22,51 +23,112 @@ public interface IForgePlayer
     }
 
     /**
-     * The attack range is increased by 3 for creative players, unless it is currently zero, which disables attacks.
-     * @return The attack range of this player.
+     * The entity reach is increased by 3 for creative players, unless it is currently zero, which disables attacks and entity interactions.
+     * @return The entity reach of this player.
      */
+    default double getEntityReach()
+    {
+        double range = self().getAttributeValue(ForgeMod.ENTITY_REACH.get());
+        return range == 0 ? 0 : range + (self().isCreative() ? 3 : 0);
+    }
+
+    /**
+     * @deprecated Use {@link #getEntityReach()}
+     */
+    @Deprecated(forRemoval = true, since = "1.19.4")
     default double getAttackRange()
     {
-        double range = self().getAttributeValue(ForgeMod.ATTACK_RANGE.get());
-        return range == 0 ? 0 : range + (self().isCreative() ? 3 : 0);
+        return this.getEntityReach();
     }
 
     /**
      * The reach distance is increased by 0.5 for creative players, unless it is currently zero, which disables interactions.
      * @return The reach distance of this player.
      */
-    default double getReachDistance()
+    default double getBlockReach()
     {
-        double reach = self().getAttributeValue(ForgeMod.REACH_DISTANCE.get());
+        double reach = self().getAttributeValue(ForgeMod.BLOCK_REACH.get());
         return reach == 0 ? 0 : reach + (self().isCreative() ? 0.5 : 0);
     }
 
     /**
-     * Checks if the player can attack the passed entity.<br>
-     * On the server, additional leniency is added to account for movement/lag.
+     * @deprecated use {@link #getBlockReach()}
+     */
+    @Deprecated(forRemoval = true, since = "1.19.4")
+    default double getReachDistance()
+    {
+        return this.getBlockReach();
+    }
+
+    /**
+     * Checks if the player can reach an entity by targeting the passed vector.<br>
+     * On the server, additional padding is added to account for movement/lag.
+     * @param vec The vector being range-checked.
+     * @param padding Extra validation distance.
+     * @return If the player can attack the entity.
+     * @apiNote Do not use for block checks, as this method uses {@link #getEntityReach()}
+     */
+    default boolean canReach(Vec3 entityHitVec, double padding)
+    {
+        return self().getEyePosition().closerThan(entityHitVec, getEntityReach() + padding);
+    }
+
+    /**
+     * Checks if the player can reach an entity.<br>
+     * On the server, additional padding is added to account for movement/lag.
      * @param entity The entity being range-checked.
      * @param padding Extra validation distance.
      * @return If the player can attack the passed entity.
+     * @apiNote Prefer using {@link #canReach(Vec3, double)} if you have a {@link HitResult} available.
      */
-    default boolean canHit(Entity entity, double padding) // Do not rename to canAttack - will conflict with LivingEntity#canAttack
+    default boolean canReach(Entity entity, double padding)
     {
-        return isCloseEnough(entity, getAttackRange() + padding);
+        return isCloseEnough(entity, getEntityReach() + padding);
     }
 
     /**
-     * Checks if the player can reach (right-click) the passed entity.<br>
-     * On the server, additional leniency is added to account for movement/lag.
-     * @param entity The entity being range-checked.
-     * @param padding Extra validation distance.
-     * @return If the player can interact with the passed entity.
+     * @deprecated use {@link #canReach(Entity, double)}h
      */
+    @Deprecated(forRemoval = true, since = "1.19.4")
+    default boolean canHit(Entity entity, double padding)
+    {
+    	return canReach(entity, padding);
+    }
+
+    /**
+     * @deprecated use {@link #canReach(Entity, double)}h
+     */
+    @Deprecated(forRemoval = true, since = "1.19.4")
     default boolean canInteractWith(Entity entity, double padding)
     {
-        return isCloseEnough(entity, getReachDistance() + padding);
+    	return canReach(entity, padding);
     }
 
     /**
-     * Utility check to see if the player is close enough to a target entity.
+     * Checks if the player can reach a block.<br>
+     * On the server, additional padding is added to account for movement/lag.
+     * @param pos The position being range-checked.
+     * @param padding Extra validation distance.
+     * @return If the player can interact with this location.
+     */
+    default boolean canReach(BlockPos pos, double padding)
+    {
+        double reach = this.getBlockReach() + padding;
+        return self().getEyePosition().distanceToSqr(pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D) < reach * reach;
+    }
+
+    /**
+     * @deprecated use {@link #canReach(BlockPos, double)}
+     */
+    @Deprecated(forRemoval = true, since = "1.19.4")
+    default boolean canInteractWith(BlockPos pos, double padding)
+    {
+    	return canReach(pos, padding);
+    }
+
+    /**
+     * Utility check to see if the player is close enough to a target entity. Uses "eye-to-closest-corner" checks.
+     * Vanilla used "bottom-center-to-center" checks, so these are more accurate, and work better with large AABB's.
      * @param entity The entity being checked against
      * @param dist The max distance allowed
      * @return If the eye-to-center distance between this player and the passed entity is less than dist.
@@ -74,22 +136,9 @@ public interface IForgePlayer
     default boolean isCloseEnough(Entity entity, double dist)
     {
         Vec3 eye = self().getEyePosition();
-        Vec3 targetCenter = entity.getPosition(1.0F).add(0, entity.getBbHeight() / 2, 0);
-        Optional<Vec3> hit = entity.getBoundingBox().clip(eye, targetCenter); //This hit should almost always be present, but we have a fallback just in case.  It likely indicates lag if it is not present.
-        return (hit.isPresent() ? eye.distanceToSqr(hit.get()) : self().distanceToSqr(entity)) < dist * dist;
-    }
-
-    /**
-     * Checks if the player can reach (right-click) a block.<br>
-     * On the server, additional leniency is added to account for movement/lag.
-     * @param pos The position being range-checked.
-     * @param padding Extra validation distance.
-     * @return If the player can interact with this location.
-     */
-    default boolean canInteractWith(BlockPos pos, double padding)
-    {
-        double reach = getReachDistance() + padding;
-        return self().getEyePosition().distanceToSqr(pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D) < reach * reach;
+        AABB aabb = entity.getBoundingBox().inflate(entity.getPickRadius());
+        Vec3 target = new Vec3(Mth.clamp(eye.x, aabb.minX, aabb.maxX), Mth.clamp(eye.y, aabb.minY, aabb.maxY), Mth.clamp(eye.z, aabb.minZ, aabb.maxZ));
+        return eye.distanceToSqr(target) < dist * dist;
     }
 
 }
