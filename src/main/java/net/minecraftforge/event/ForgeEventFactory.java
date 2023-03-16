@@ -190,13 +190,13 @@ public class ForgeEventFactory
     }
 
     /**
-     * Vanilla calls to {@link Mob#finalizeSpawn} are replaced with calls to this method via coremod.<p>
+     * Vanilla calls to {@link Mob#finalizeSpawn} are replaced with calls to this method via coremod.<br>
      * Mods should call this method in place of calling {@link Mob#finalizeSpawn}. Super calls (from within overrides) should not be wrapped.
      * <p>
      * Returns the SpawnGroupData from this event, or null if it was canceled.
      * @see MobSpawnEvent.FinalizeSpawn
      * @see Mob#finalizeSpawn(ServerLevelAccessor, DifficultyInstance, MobSpawnType, SpawnGroupData, CompoundTag)
-     * @implNote Changes to this method must be reflected in the method redirector coremod. 
+     * @implNote Changes to the signature of this method must be reflected in the method redirector coremod. 
      */
     @Nullable
     public static SpawnGroupData onFinalizeSpawn(Mob mob, ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType spawnType, @Nullable SpawnGroupData spawnData, @Nullable CompoundTag spawnTag)
@@ -213,9 +213,9 @@ public class ForgeEventFactory
     }
 
     /**
-     * Returns the FinalizeSpawn event instance, or null if it was canceled.
-     * Separate since mob spawners perform special finalizeSpawn handling when NBT data is present.
-     * Note that the BaseSpawner param is not nullable on this version.
+     * Returns the FinalizeSpawn event instance, or null if it was canceled.<br>
+     * This is separate since mob spawners perform special finalizeSpawn handling when NBT data is present, but we still want to fire the event.<br>
+     * This overload is also the only way to pass through a {@link BaseSpawner} instance.
      * @see MobSpawnEvent.FinalizeSpawn
      */
     @Nullable

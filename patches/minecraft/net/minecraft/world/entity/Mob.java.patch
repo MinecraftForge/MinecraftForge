@@ -74,7 +74,7 @@
           if (entity != null) {
              double d0 = entity.m_20280_(this);
              int i = this.m_6095_().m_20674_().m_21611_();
-@@ -1020,6 +_,13 @@
+@@ -1020,6 +_,15 @@
  
     }
  
@@ -82,6 +82,8 @@
 +    * Forge: Deprecated, call via ForgeEventFactory.onFinalizeSpawn.<br>
 +    * Overrides are fine. Super calls within overrides are fine and should not be wrapped (as that will cause stack overflows).<br>
 +    * Vanilla calls are replaced with a transformer, and are not visible in source.
++    * <p>
++    * Be certain to either call super.finalizeSpawn or set the {@link #spawnType} field from within your override.
 +    */
 +   @Deprecated
 +   @org.jetbrains.annotations.ApiStatus.OverrideOnly

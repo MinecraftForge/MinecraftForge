@@ -5,9 +5,11 @@
 
 package net.minecraftforge.event.entity.living;
 
+import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Nullable;
+
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.DifficultyInstance;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
@@ -15,11 +17,10 @@ import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.level.BaseSpawner;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.fml.LogicalSide;
-import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * The subclasses of this event are fired whenever a mob performs a spawning-related action.
@@ -31,6 +32,9 @@ public abstract class MobSpawnEvent extends EntityEvent
     private final double y;
     private final double z;
 
+    /**
+     * @apiNote Do not construct directly. Access via {@link ForgeEventFactory#onFinalizeSpawn}.
+     */
     @ApiStatus.Internal
     public MobSpawnEvent(Mob mob, ServerLevelAccessor level, double x, double y, double z)
     {
@@ -48,7 +52,7 @@ public abstract class MobSpawnEvent extends EntityEvent
     }
 
     /**
-     * {@return the level relating to the mob spawn action}
+     * @return The level relating to the mob spawn action
      */
     public ServerLevelAccessor getLevel()
     {
@@ -56,7 +60,7 @@ public abstract class MobSpawnEvent extends EntityEvent
     }
 
     /**
-     * {@return the x-coordinate relating to the mob spawn action}
+     * @return The x-coordinate relating to the mob spawn action
      */
     public double getX()
     {
@@ -64,7 +68,7 @@ public abstract class MobSpawnEvent extends EntityEvent
     }
 
     /**
-     * {@return the y-coordinate relating to the mob spawn action}
+     * @return The y-coordinate relating to the mob spawn action
      */
     public double getY()
     {
@@ -72,7 +76,7 @@ public abstract class MobSpawnEvent extends EntityEvent
     }
 
     /**
-     * {@return the z-coordinate relating to the mob spawn action}
+     * @return The z-coordinate relating to the mob spawn action
      */
     public double getZ()
     {
@@ -84,7 +88,7 @@ public abstract class MobSpawnEvent extends EntityEvent
      * This allows mods to control mob initialization.<br>
      * In vanilla code, this event is injected by a transformer and not via patch, so calls cannot be traced via call hierarchy.
      * <p>
-     * Canceling this event will results in {@link Mob#finalizeSpawn} always returning null, instead of propagating the SpawnGroupData. <br>
+     * Canceling this event will result in {@link Mob#finalizeSpawn} not being called, and the returned value always being null, instead of propagating the SpawnGroupData.<br>
      * The entity will still be spawned. If you want to prevent the spawn, use {@link FinalizeSpawn#cancelSpawn()}
      * <p>
      * This event is fired on {@link MinecraftForge#EVENT_BUS}, and is only fired on the logical server.
@@ -161,7 +165,7 @@ public abstract class MobSpawnEvent extends EntityEvent
 
         /**
          * This is the NBT data the entity was loaded from, if applicable. It is unknown if the entity has already been loaded from this data, or if it will be loaded later.
-         * You should not modify this data.  If you need to change the data, you can create a copy, modify it, and set it via {@link FinalizeSpawn#setSpawnTag}
+         * Callers should not modify this data. If you need to change the data, you can create a copy, modify it, and set it via {@link FinalizeSpawn#setSpawnTag}
          * @return The spawn data this entity was or will be loaded from, if any.
          */
         @Nullable
@@ -192,9 +196,9 @@ public abstract class MobSpawnEvent extends EntityEvent
         }
 
         /**
-         * This method can be used to fully cancel the spawn of this mob.<p>
+         * This method can be used to cancel the spawn of this mob.<p>
          * This method must be used if you want to block the spawn, as canceling the event only blocks the call to {@link Mob#finalizeSpawn}.<p>
-         * Note that if this is cancelled, but the event is not, than {@link Mob#finalizeSpawn} will still be called, but the entity will not be spawned.
+         * Note that if the spawn is cancelled, but the event is not, then {@link Mob#finalizeSpawn} will still be called, but the entity will not be spawned.
          * Usually that has no side effects, but callers should be aware.
          * @param cancel If the spawn should be cancelled (or not).
          */
@@ -212,9 +216,9 @@ public abstract class MobSpawnEvent extends EntityEvent
     }
 
     /**
-     * This event is fired for a {@link Mob} that can despawn <i>each mob tick</i>.
-     * This event only fires if a mob can be allowed to despawn and will not
-     * otherwise fire if a despawn is certain.
+     * This event is fired from {@link Mob#checkDespawn()}.<br>
+     * It fires once per tick per mob that is attempting to despawn.<br>
+     * It is not fired if the mob is persistent (meaning it may not despawn).<br>
      * <p>
      * This event is not {@linkplain Cancelable cancellable}, but does {@linkplain HasResult have a result}.
      * {@link Result#DEFAULT} indicates that default despawn mechanics should be used.
