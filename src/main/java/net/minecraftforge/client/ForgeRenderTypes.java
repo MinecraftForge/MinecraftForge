@@ -377,4 +377,22 @@ public enum ForgeRenderTypes
             };
         }
     }
+
+    public static class MipmapFixTextureShard extends TextureStateShard
+    {
+        public MipmapFixTextureShard(ResourceLocation texture, boolean blur, boolean mipmap)
+        {
+            super(texture, blur, mipmap);
+            this.setupState = () -> {
+                var mc = Minecraft.getInstance();
+                mc.getModelManager().getAtlas(texture).setBlurMipmap(blur, mc.options.mipmapLevels().get() > 0);
+                var texturemanager = mc.getTextureManager();
+                texturemanager.getTexture(texture).setFilter(blur, mipmap);
+                RenderSystem.setShaderTexture(0, texture);
+            };
+            this.clearState = () -> {
+                Minecraft.getInstance().getModelManager().getAtlas(texture).restoreLastBlurMipmap();
+            };
+        }
+    }
 }

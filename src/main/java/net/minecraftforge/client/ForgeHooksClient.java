@@ -1224,4 +1224,16 @@ public class ForgeHooksClient
         for (var entry : entries)
             output.accept(entry.getKey(), entry.getValue());
     }
+    
+    public static List<RenderType> getChunkBufferLayers()
+    {
+        final var bufferManager = Minecraft.getInstance().bufferManager();
+        return bufferManager.getChunkRenderTypes();
+    }
+    
+    public static int getChunkLayerId(RenderType renderType)
+    {
+        final var bufferManager = Minecraft.getInstance().bufferManager();
+        return bufferManager.getChunkRenderTypes().indexOf(renderType);
+    }
 }

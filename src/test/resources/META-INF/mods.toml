@@ -21,6 +21,8 @@ license="LGPL v2.1"
     modId="advancement_event_test"
 [[mods]]
     modId="shader_resources_test"
+[[mods]]
+	modId="custom_chunk_layer_test"
 
 # LEGACY TEST CASES
 ###### The mods below are from the old test framework and need to be yeeted later again.

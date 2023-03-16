@@ -9,7 +9,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ModelEvent;
 import net.minecraftforge.client.event.RegisterClientReloadListenersEvent;
-import net.minecraftforge.client.event.RegisterNamedRenderTypesEvent;
+import net.minecraftforge.client.event.RegisterRenderTypesEvent;
 import net.minecraftforge.client.model.CompositeModel;
 import net.minecraftforge.client.model.DynamicFluidContainerModel;
 import net.minecraftforge.client.model.ElementsModel;
@@ -46,7 +46,7 @@ public class ClientForgeMod
     }
 
     @SubscribeEvent
-    public static void onRegisterNamedRenderTypes(RegisterNamedRenderTypesEvent event)
+    public static void onRegisterNamedRenderTypes(RegisterRenderTypesEvent.Named event)
     {
         event.register("item_unlit", RenderType.translucent(), ForgeRenderTypes.ITEM_UNSORTED_UNLIT_TRANSLUCENT.get());
     }
