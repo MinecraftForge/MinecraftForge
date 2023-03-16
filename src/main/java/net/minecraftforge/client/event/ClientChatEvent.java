@@ -36,7 +36,7 @@ public class ClientChatEvent extends Event
     }
 
     /**
-     * {@return the message that will be sent to the server, if the event is not cancelled. This can be changed by mods.}
+     * {@return the message that will be sent to the server, if the event is not cancelled. This can be changed by mods}
      */
     public String getMessage()
     {
@@ -54,7 +54,7 @@ public class ClientChatEvent extends Event
     }
 
     /**
-     * {@return the original message that was to be sent to the server. This cannot be changed by mods.}
+     * {@return the original message that was to be sent to the server. This cannot be changed by mods}
      */
     public String getOriginalMessage()
     {
