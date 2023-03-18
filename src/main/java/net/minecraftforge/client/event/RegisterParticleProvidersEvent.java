@@ -38,11 +38,37 @@ public class RegisterParticleProvidersEvent extends Event implements IModBusEven
         this.particleEngine = particleEngine;
     }
 
+    /**
+     * Registers a ParticleProvider for a non-json-based ParticleType.
+     * These particles do not receive a list of texture sprites to use for rendering themselves.
+     * @param <T> ParticleOptions used by the ParticleType and ParticleProvider.
+     * @param type ParticleType to register a ParticleProvider for.
+     * There must be no particle json with an ID matching this ParticleType,
+     * or a redundant texture list error will occur when particle jsons load.
+     * @param provider ParticleProvider responsible for providing that ParticleType's particles.
+     */
+    @SuppressWarnings("deprecation")
     public <T extends ParticleOptions> void register(ParticleType<T> type, ParticleProvider<T> provider)
     {
         particleEngine.register(type, provider);
     }
 
+    @SuppressWarnings("deprecation")
+    public <T extends ParticleOptions> void register(ParticleType<T> type, ParticleProvider.Sprite<T> sprite)
+    {
+        particleEngine.register(type, sprite);
+    }
+
+    /**
+     * Registers a ParticleProvider for a json-based ParticleType.
+     * Particle jsons define a list of texture sprites which the particle can use to render itself.
+     * @param <T> ParticleOptions used by the ParticleType and ParticleProvider.
+     * @param type ParticleType to register a ParticleProvider for.
+     * There must be a particle json with an ID matching this ParticleType in the <code>particles</code> asset folder,
+     * or a missing texture list error will occur when particle jsons load.
+     * @param registration SpriteParticleRegistration responsible for providing that ParticleType's particles.
+     */
+    @SuppressWarnings("deprecation")
     public <T extends ParticleOptions> void register(ParticleType<T> type, ParticleEngine.SpriteParticleRegistration<T> registration)
     {
         particleEngine.register(type, registration);

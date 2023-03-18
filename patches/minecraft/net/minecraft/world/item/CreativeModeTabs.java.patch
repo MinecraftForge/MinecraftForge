@@ -1,7 +1,7 @@
 --- a/net/minecraft/world/item/CreativeModeTabs.java
 +++ b/net/minecraft/world/item/CreativeModeTabs.java
-@@ -1027,7 +_,7 @@
-    }).m_257501_((p_261440_, p_261441_, p_261442_) -> {
+@@ -1063,7 +_,7 @@
+    }).m_257501_((p_270987_, p_261441_) -> {
        Set<ItemStack> set = ItemStackLinkedSet.m_261170_();
  
 -      for(CreativeModeTab creativemodetab : CreativeModeTabs.f_243931_) {
@@ -9,14 +9,13 @@
           if (creativemodetab.m_257962_() != CreativeModeTab.Type.SEARCH) {
              set.addAll(creativemodetab.m_261235_());
           }
-@@ -1450,11 +_,15 @@
-       return new ItemStack(Blocks.f_50087_);
-    }).m_257609_("inventory.png").m_257809_().m_257826_().m_257623_(CreativeModeTab.Type.INVENTORY).m_257794_().m_257652_();
-    private static final List<CreativeModeTab> f_243931_ = m_257615_(f_256788_, f_256725_, f_256776_, f_256791_, f_257028_, f_256917_, f_256750_, f_256869_, f_256797_, f_256839_, f_256968_, f_256731_, f_256837_, f_257039_);
+@@ -1524,10 +_,14 @@
+    private static final Comparator<Holder<PaintingVariant>> f_268478_ = Comparator.comparing(Holder::m_203334_, Comparator.<PaintingVariant>comparingInt((p_270004_) -> {
+       return p_270004_.m_218909_() * p_270004_.m_218908_();
+    }).thenComparing(PaintingVariant::m_218908_));
 +   private static final List<CreativeModeTab> DEFAULT_TABS = com.google.common.collect.ImmutableList.of(f_256917_, f_256750_, f_256837_, f_257039_);
     @Nullable
-    public static FeatureFlagSet f_256842_;
-    public static boolean f_256844_ = false;
+    private static CreativeModeTab.ItemDisplayParameters f_268496_;
 +   private static final List<CreativeModeTab> FORGE_TABS_VIEW = net.minecraftforge.common.util.ConcatenatedListView.of(net.minecraftforge.common.CreativeModeTabRegistry.getSortedCreativeModeTabs(), DEFAULT_TABS);
  
     private static List<CreativeModeTab> m_257615_(CreativeModeTab... p_259856_) {
@@ -25,7 +24,7 @@
        Map<Pair<CreativeModeTab.Row, Integer>, String> map = new HashMap<>();
  
        for(CreativeModeTab creativemodetab : p_259856_) {
-@@ -1469,7 +_,7 @@
+@@ -1542,7 +_,7 @@
     }
  
     public static CreativeModeTab m_257543_() {
@@ -33,26 +32,26 @@
 +      return net.minecraftforge.common.CreativeModeTabRegistry.getSortedCreativeModeTabs().stream().filter(CreativeModeTab::m_257497_).findFirst().orElse(f_256788_);
     }
  
-    private static void m_247461_(CreativeModeTab.Output p_249919_, Item p_249272_, CreativeModeTab.TabVisibility p_251809_) {
-@@ -1483,7 +_,7 @@
+    private static void m_269246_(CreativeModeTab.Output p_270129_, HolderLookup<Potion> p_270334_, Item p_270968_, CreativeModeTab.TabVisibility p_270778_) {
+@@ -1557,7 +_,7 @@
  
-    private static void m_247563_(CreativeModeTab.Output p_249134_, Set<EnchantmentCategory> p_251824_, CreativeModeTab.TabVisibility p_250904_) {
-       for(Enchantment enchantment : BuiltInRegistries.f_256876_) {
--         if (p_251824_.contains(enchantment.f_44672_)) {
-+         if (enchantment.allowedInCreativeTab(Items.f_42690_, p_251824_)) {
-             p_249134_.m_246267_(EnchantedBookItem.m_41161_(new EnchantmentInstance(enchantment, enchantment.m_6586_())), p_250904_);
-          }
-       }
-@@ -1492,7 +_,7 @@
+    private static void m_269182_(CreativeModeTab.Output p_270868_, HolderLookup<Enchantment> p_270903_, Set<EnchantmentCategory> p_270380_, CreativeModeTab.TabVisibility p_270407_) {
+       p_270903_.m_214062_().map(Holder::m_203334_).filter((p_270008_) -> {
+-         return p_270380_.contains(p_270008_.f_44672_);
++         return p_270008_.allowedInCreativeTab(Items.f_42690_, p_270380_);
+       }).map((p_270038_) -> {
+          return EnchantedBookItem.m_41161_(new EnchantmentInstance(p_270038_, p_270038_.m_6586_()));
+       }).forEach((p_269989_) -> {
+@@ -1567,7 +_,7 @@
  
-    private static void m_245641_(CreativeModeTab.Output p_249319_, Set<EnchantmentCategory> p_249855_, CreativeModeTab.TabVisibility p_251772_) {
-       for(Enchantment enchantment : BuiltInRegistries.f_256876_) {
--         if (p_249855_.contains(enchantment.f_44672_)) {
-+         if (enchantment.allowedInCreativeTab(Items.f_42690_, p_249855_)) {
-             for(int i = enchantment.m_44702_(); i <= enchantment.m_6586_(); ++i) {
-                p_249319_.m_246267_(EnchantedBookItem.m_41161_(new EnchantmentInstance(enchantment, i)), p_251772_);
-             }
-@@ -1531,11 +_,11 @@
+    private static void m_269335_(CreativeModeTab.Output p_270961_, HolderLookup<Enchantment> p_270628_, Set<EnchantmentCategory> p_271024_, CreativeModeTab.TabVisibility p_270805_) {
+       p_270628_.m_214062_().map(Holder::m_203334_).filter((p_269991_) -> {
+-         return p_271024_.contains(p_269991_.f_44672_);
++         return p_269991_.allowedInCreativeTab(Items.f_42690_, p_271024_);
+       }).flatMap((p_270024_) -> {
+          return IntStream.rangeClosed(p_270024_.m_44702_(), p_270024_.m_6586_()).mapToObj((p_270006_) -> {
+             return EnchantedBookItem.m_41161_(new EnchantmentInstance(p_270024_, p_270006_));
+@@ -1619,11 +_,11 @@
     }
  
     public static List<CreativeModeTab> m_257388_() {
@@ -66,23 +65,23 @@
     }
  
     public static CreativeModeTab m_258007_() {
-@@ -1543,12 +_,12 @@
+@@ -1631,12 +_,12 @@
     }
  
-    private static void m_257534_(FeatureFlagSet p_259307_, boolean p_260177_) {
+    private static void m_269421_(CreativeModeTab.ItemDisplayParameters p_270447_) {
 -      f_243931_.stream().filter((p_259647_) -> {
 +      m_257478_().stream().filter((p_259647_) -> {
           return p_259647_.m_257962_() == CreativeModeTab.Type.CATEGORY;
-       }).forEach((p_259425_) -> {
-          p_259425_.m_258021_(p_259307_, p_260177_);
+       }).forEach((p_269997_) -> {
+          p_269997_.m_269498_(p_270447_);
        });
 -      f_243931_.stream().filter((p_260124_) -> {
 +      m_257478_().stream().filter((p_260124_) -> {
           return p_260124_.m_257962_() != CreativeModeTab.Type.CATEGORY;
-       }).forEach((p_259952_) -> {
-          p_259952_.m_258021_(p_259307_, p_260177_);
-@@ -1568,5 +_,9 @@
-          m_257534_(f_256842_, f_256844_);
+       }).forEach((p_270002_) -> {
+          p_270002_.m_269498_(p_270447_);
+@@ -1651,5 +_,9 @@
+          m_269421_(f_268496_);
           return true;
        }
 +   }

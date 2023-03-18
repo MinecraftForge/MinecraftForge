@@ -92,16 +92,17 @@
           }
  
           (this.f_97732_).f_98639_.addAll(searchtree.m_6293_(s.toLowerCase(Locale.ROOT)));
-@@ -416,7 +_,7 @@
+@@ -415,7 +_,8 @@
+ 
     protected void m_7027_(PoseStack p_98616_, int p_98617_, int p_98618_) {
        if (f_98507_.m_40789_()) {
-          RenderSystem.m_69461_();
 -         this.f_96547_.m_92889_(p_98616_, f_98507_.m_40786_(), 8.0F, 6.0F, 4210752);
++         RenderSystem.m_69461_();
 +         this.f_96547_.m_92889_(p_98616_, f_98507_.m_40786_(), 8.0F, 6.0F, f_98507_.getLabelColor());
        }
  
     }
-@@ -426,7 +_,7 @@
+@@ -425,7 +_,7 @@
           double d0 = p_98531_ - (double)this.f_97735_;
           double d1 = p_98532_ - (double)this.f_97736_;
  
@@ -110,7 +111,7 @@
              if (this.m_98562_(creativemodetab, d0, d1)) {
                 return true;
              }
-@@ -447,7 +_,7 @@
+@@ -446,7 +_,7 @@
           double d1 = p_98623_ - (double)this.f_97736_;
           this.f_98509_ = false;
  
@@ -119,7 +120,7 @@
              if (this.m_98562_(creativemodetab, d0, d1)) {
                 this.m_98560_(creativemodetab);
                 return true;
-@@ -465,6 +_,7 @@
+@@ -464,6 +_,7 @@
     private void m_98560_(CreativeModeTab p_98561_) {
        CreativeModeTab creativemodetab = f_98507_;
        f_98507_ = p_98561_;
@@ -127,7 +128,7 @@
        this.f_97737_.clear();
        (this.f_97732_).f_98639_.clear();
        this.m_238391_();
-@@ -541,13 +_,15 @@
+@@ -540,13 +_,15 @@
           this.f_98511_ = null;
        }
  
@@ -135,7 +136,7 @@
 +      if (f_98507_.hasSearchBar()) {
           this.f_98510_.m_94194_(true);
           this.f_98510_.m_94190_(false);
-          this.f_98510_.m_94178_(true);
+          this.f_98510_.m_93692_(true);
           if (creativemodetab != p_98561_) {
              this.f_98510_.m_94144_("");
           }
@@ -144,7 +145,7 @@
  
           this.m_98630_();
        } else {
-@@ -604,7 +_,7 @@
+@@ -603,7 +_,7 @@
        this.m_7333_(p_98577_);
        super.m_86412_(p_98577_, p_98578_, p_98579_, p_98580_);
  
@@ -153,23 +154,22 @@
           if (this.m_98584_(p_98577_, creativemodetab, p_98578_, p_98579_)) {
              break;
           }
-@@ -614,6 +_,15 @@
+@@ -613,13 +_,22 @@
           this.m_96602_(p_98577_, f_98506_, p_98578_, p_98579_);
        }
  
 +      if (this.pages.size() != 1) {
 +         Component page = Component.m_237113_(String.format("%d / %d", this.pages.indexOf(this.currentPage) + 1, this.pages.size()));
-+         this.m_93250_(300);
-+         this.f_96542_.f_115093_ = 300.0F;
++         p_98577_.m_85836_();
++         p_98577_.m_252880_(0F, 0F, 300F);
 +         f_96547_.m_92744_(p_98577_, page.m_7532_(), f_97735_ + (f_97726_ / 2f) - (f_96547_.m_92852_(page) / 2f), f_97736_ - 44, -1);
-+         this.m_93250_(0);
-+         this.f_96542_.f_115093_ = 0.0F;
++         p_98577_.m_85849_();
 +      }
 +
-       RenderSystem.m_157429_(1.0F, 1.0F, 1.0F, 1.0F);
++      RenderSystem.m_157429_(1.0F, 1.0F, 1.0F, 1.0F);
        this.m_7025_(p_98577_, p_98578_, p_98579_);
     }
-@@ -621,7 +_,7 @@
+ 
     protected void m_6057_(PoseStack p_98590_, ItemStack p_98591_, int p_98592_, int p_98593_) {
        boolean flag = this.f_97734_ != null && this.f_97734_ instanceof CreativeModeInventoryScreen.CustomCreativeSlot;
        boolean flag1 = f_98507_.m_257962_() == CreativeModeTab.Type.CATEGORY;
@@ -178,7 +178,7 @@
        TooltipFlag.Default tooltipflag$default = this.f_96541_.f_91066_.f_92125_ ? TooltipFlag.Default.f_256730_ : TooltipFlag.Default.f_256752_;
        TooltipFlag tooltipflag = flag ? tooltipflag$default.m_257777_() : tooltipflag$default;
        List<Component> list = p_98591_.m_41651_(this.f_96541_.f_91074_, tooltipflag);
-@@ -641,20 +_,20 @@
+@@ -639,35 +_,36 @@
  
           int i = 1;
  
@@ -196,37 +196,32 @@
     }
  
     protected void m_7286_(PoseStack p_98572_, float p_98573_, int p_98574_, int p_98575_) {
-       RenderSystem.m_157429_(1.0F, 1.0F, 1.0F, 1.0F);
- 
 -      for(CreativeModeTab creativemodetab : CreativeModeTabs.m_257388_()) {
 +      for(CreativeModeTab creativemodetab : currentPage.getVisibleTabs()) {
-          RenderSystem.m_157427_(GameRenderer::m_172817_);
           RenderSystem.m_157456_(0, f_98504_);
           if (creativemodetab != f_98507_) {
-@@ -663,7 +_,7 @@
+             this.m_98581_(p_98572_, creativemodetab);
+          }
        }
  
-       RenderSystem.m_157427_(GameRenderer::m_172817_);
 -      RenderSystem.m_157456_(0, new ResourceLocation("textures/gui/container/creative_inventory/tab_" + f_98507_.m_40788_()));
 +      RenderSystem.m_157456_(0, f_98507_.getBackgroundLocation());
-       this.m_93228_(p_98572_, this.f_97735_, this.f_97736_, 0, 0, this.f_97726_, this.f_97727_);
+       m_93228_(p_98572_, this.f_97735_, this.f_97736_, 0, 0, this.f_97726_, this.f_97727_);
        this.f_98510_.m_86412_(p_98572_, p_98574_, p_98575_, p_98573_);
-       RenderSystem.m_157429_(1.0F, 1.0F, 1.0F, 1.0F);
-@@ -671,11 +_,12 @@
+       int j = this.f_97735_ + 175;
        int k = this.f_97736_ + 18;
        int i = k + 112;
-       RenderSystem.m_157427_(GameRenderer::m_172817_);
 -      RenderSystem.m_157456_(0, f_98504_);
 +      RenderSystem.m_157456_(0, f_98507_.getTabsImage());
        if (f_98507_.m_40791_()) {
-          this.m_93228_(p_98572_, j, k + (int)((float)(i - k - 17) * this.f_98508_), 232 + (this.m_98631_() ? 0 : 12), 0, 12, 15);
+          m_93228_(p_98572_, j, k + (int)((float)(i - k - 17) * this.f_98508_), 232 + (this.m_98631_() ? 0 : 12), 0, 12, 15);
        }
  
 +      if (currentPage.getVisibleTabs().contains(f_98507_)) //Forge: only display tab selection when the selected tab is on the current page
        this.m_98581_(p_98572_, f_98507_);
        if (f_98507_.m_257962_() == CreativeModeTab.Type.INVENTORY) {
-          InventoryScreen.m_98850_(this.f_97735_ + 88, this.f_97736_ + 45, 20, (float)(this.f_97735_ + 88 - p_98574_), (float)(this.f_97736_ + 45 - 30 - p_98575_), this.f_96541_.f_91074_);
-@@ -684,7 +_,7 @@
+          InventoryScreen.m_274545_(p_98572_, this.f_97735_ + 88, this.f_97736_ + 45, 20, (float)(this.f_97735_ + 88 - p_98574_), (float)(this.f_97736_ + 45 - 30 - p_98575_), this.f_96541_.f_91074_);
+@@ -676,7 +_,7 @@
     }
  
     private int m_258094_(CreativeModeTab p_260136_) {
@@ -235,7 +230,7 @@
        int j = 27;
        int k = 27 * i;
        if (p_260136_.m_6563_()) {
-@@ -696,7 +_,7 @@
+@@ -688,7 +_,7 @@
  
     private int m_257995_(CreativeModeTab p_260181_) {
        int i = 0;
@@ -244,7 +239,7 @@
           i -= 32;
        } else {
           i += this.f_97727_;
-@@ -724,8 +_,8 @@
+@@ -716,8 +_,8 @@
  
     protected void m_98581_(PoseStack p_98582_, CreativeModeTab p_98583_) {
        boolean flag = p_98583_ == f_98507_;
@@ -255,15 +250,15 @@
        int j = i * 26;
        int k = 0;
        int l = this.f_97735_ + this.m_258094_(p_98583_);
-@@ -742,6 +_,7 @@
+@@ -734,6 +_,7 @@
           i1 += this.f_97727_ - 4;
        }
  
 +      RenderSystem.m_69478_(); //Forge: Make sure blend is enabled else tabs show a white border.
-       this.m_93228_(p_98582_, l, i1, j, k, 26, 32);
-       this.f_96542_.f_115093_ = 100.0F;
-       l += 5;
-@@ -784,6 +_,14 @@
+       m_93228_(p_98582_, l, i1, j, k, 26, 32);
+       p_98582_.m_85836_();
+       p_98582_.m_252880_(0.0F, 0.0F, 100.0F);
+@@ -777,6 +_,14 @@
  
     }
  
@@ -278,7 +273,7 @@
     @OnlyIn(Dist.CLIENT)
     static class CustomCreativeSlot extends Slot {
        public CustomCreativeSlot(Container p_98633_, int p_98634_, int p_98635_, int p_98636_) {
-@@ -947,6 +_,22 @@
+@@ -944,6 +_,22 @@
  
        public boolean m_8010_(Player p_98665_) {
           return this.f_98655_.m_8010_(p_98665_);

@@ -9,6 +9,7 @@ import com.google.common.base.Preconditions;
 import com.google.gson.JsonObject;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraftforge.client.model.generators.CustomLoaderBuilder;
 import net.minecraftforge.client.model.generators.ModelBuilder;
 import net.minecraftforge.common.data.ExistingFileHelper;
@@ -38,11 +39,11 @@ public class SeparateTransformsModelBuilder<T extends ModelBuilder<T>> extends C
         return this;
     }
 
-    public SeparateTransformsModelBuilder<T> perspective(ItemTransforms.TransformType perspective, T modelBuilder)
+    public SeparateTransformsModelBuilder<T> perspective(ItemDisplayContext perspective, T modelBuilder)
     {
         Preconditions.checkNotNull(perspective, "layer must not be null");
         Preconditions.checkNotNull(modelBuilder, "modelBuilder must not be null");
-        childModels.put(perspective.getSerializeName(), modelBuilder);
+        childModels.put(perspective.getSerializedName(), modelBuilder);
         return this;
     }
 

@@ -30,4 +30,4 @@
 +      this.jumpInLiquidInternal(() -> type == net.minecraftforge.common.ForgeMod.LAVA_TYPE.get(), () -> super.jumpInFluid(type));
     }
  
-    public boolean m_142535_(float p_149717_, float p_149718_, DamageSource p_149719_) {
+    protected boolean m_7483_() {

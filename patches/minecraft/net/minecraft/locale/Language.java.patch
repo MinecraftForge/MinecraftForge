@@ -8,8 +8,8 @@
 +      final Map<String, String> map = new java.util.HashMap<>(builder.build());
 +      net.minecraftforge.server.LanguageHook.captureLanguageMap(map);
        return new Language() {
-          public String m_6834_(String p_128127_) {
-             return map.getOrDefault(p_128127_, p_128127_);
+          public String m_118919_(String p_128127_, String p_265421_) {
+             return map.getOrDefault(p_128127_, p_265421_);
 @@ -62,6 +_,11 @@
                 }, Style.f_131099_).isPresent();
              };
@@ -30,5 +30,5 @@
 +   // FORGE START
 +   public Map<String, String> getLanguageData() { return ImmutableMap.of(); }
  
-    public abstract String m_6834_(String p_128111_);
- 
+    public String m_6834_(String p_128111_) {
+       return this.m_118919_(p_128111_, p_128111_);

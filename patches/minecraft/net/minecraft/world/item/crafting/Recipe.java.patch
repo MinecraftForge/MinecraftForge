@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/item/crafting/Recipe.java
 +++ b/net/minecraft/world/item/crafting/Recipe.java
-@@ -21,9 +_,9 @@
+@@ -22,9 +_,9 @@
        NonNullList<ItemStack> nonnulllist = NonNullList.m_122780_(p_44004_.m_6643_(), ItemStack.f_41583_);
  
        for(int i = 0; i < nonnulllist.size(); ++i) {
@@ -13,7 +13,7 @@
           }
        }
  
-@@ -55,7 +_,7 @@
+@@ -60,7 +_,7 @@
     default boolean m_142505_() {
        NonNullList<Ingredient> nonnulllist = this.m_7527_();
        return nonnulllist.isEmpty() || nonnulllist.stream().anyMatch((p_151268_) -> {

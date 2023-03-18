@@ -23,7 +23,7 @@ public class SnowBootsTest
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MODID);
 
     public static RegistryObject<Item> SNOW_BOOTS = ITEMS.register("snow_boots", () ->
-        new ArmorItem(ArmorMaterials.DIAMOND, EquipmentSlot.FEET, (new Item.Properties()))
+        new ArmorItem(ArmorMaterials.DIAMOND, ArmorItem.Type.BOOTS, (new Item.Properties()))
         {
             @Override
             public boolean canWalkOnPowderedSnow(ItemStack stack, LivingEntity wearer) {

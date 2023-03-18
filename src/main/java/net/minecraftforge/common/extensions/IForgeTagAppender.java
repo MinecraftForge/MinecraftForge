@@ -79,6 +79,7 @@ public interface IForgeTagAppender<T>
      * @param resourceKeys The resource keys of the elements to remove
      * @return The appender for chaining
      */
+    @SuppressWarnings("unchecked")
     default TagsProvider.TagAppender<T> remove(final ResourceKey<T> firstResourceKey, final ResourceKey<T>... resourceKeys)
     {
         this.remove(firstResourceKey.location());

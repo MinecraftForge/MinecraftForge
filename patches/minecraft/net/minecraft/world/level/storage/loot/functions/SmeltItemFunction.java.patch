@@ -1,7 +1,7 @@
 --- a/net/minecraft/world/level/storage/loot/functions/SmeltItemFunction.java
 +++ b/net/minecraft/world/level/storage/loot/functions/SmeltItemFunction.java
 @@ -32,7 +_,7 @@
-             ItemStack itemstack = optional.get().m_8043_();
+             ItemStack itemstack = optional.get().m_8043_(p_81269_.m_78952_().m_9598_());
              if (!itemstack.m_41619_()) {
                 ItemStack itemstack1 = itemstack.m_41777_();
 -               itemstack1.m_41764_(p_81268_.m_41613_());

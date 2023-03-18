@@ -1,0 +1,11 @@
+--- a/net/minecraft/client/gui/components/AbstractButton.java
++++ b/net/minecraft/client/gui/components/AbstractButton.java
+@@ -32,7 +_,7 @@
+       RenderSystem.m_69482_();
+       m_275833_(p_275468_, this.m_252754_(), this.m_252907_(), this.m_5711_(), this.m_93694_(), 20, 4, 200, 20, 0, this.m_274533_());
+       RenderSystem.m_157429_(1.0F, 1.0F, 1.0F, 1.0F);
+-      int i = this.f_93623_ ? 16777215 : 10526880;
++      int i = getFGColor();
+       this.m_274375_(p_275468_, minecraft.f_91062_, i | Mth.m_14167_(this.f_93625_ * 255.0F) << 24);
+    }
+ 

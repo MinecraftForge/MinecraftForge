@@ -1,6 +1,6 @@
 --- a/net/minecraft/core/registries/BuiltInRegistries.java
 +++ b/net/minecraft/core/registries/BuiltInRegistries.java
-@@ -110,41 +_,89 @@
+@@ -111,41 +_,89 @@
     public static final DefaultedRegistry<GameEvent> f_256726_ = m_257834_(Registries.f_256827_, "step", (p_260052_) -> {
        return GameEvent.f_157785_;
     });
@@ -102,7 +102,7 @@
        return ChunkStatus.f_62314_;
     });
     public static final Registry<RuleTestType<?>> f_256978_ = m_258002_(Registries.f_256947_, (p_259641_) -> {
-@@ -153,42 +_,90 @@
+@@ -154,42 +_,90 @@
     public static final Registry<PosRuleTestType<?>> f_256957_ = m_258002_(Registries.f_257009_, (p_259262_) -> {
        return PosRuleTestType.f_74205_;
     });
@@ -205,7 +205,7 @@
        return Activity.f_37979_;
     });
     public static final Registry<LootPoolEntryType> f_257035_ = m_258002_(Registries.f_257032_, (p_260042_) -> {
-@@ -221,10 +_,18 @@
+@@ -222,10 +_,18 @@
     public static final Registry<BlockPredicateType<?>> f_256906_ = m_258002_(Registries.f_256774_, (p_260006_) -> {
        return BlockPredicateType.f_190444_;
     });
@@ -226,7 +226,7 @@
        return Feature.f_65731_;
     });
     public static final Registry<StructurePlacementType<?>> f_256950_ = m_258002_(Registries.f_256888_, (p_259179_) -> {
-@@ -239,10 +_,18 @@
+@@ -240,10 +_,18 @@
     public static final Registry<PlacementModifierType<?>> f_256986_ = m_258002_(Registries.f_256843_, (p_260335_) -> {
        return PlacementModifierType.f_191853_;
     });
@@ -247,7 +247,7 @@
        return FoliagePlacerType.f_68591_;
     });
     public static final Registry<TrunkPlacerType<?>> f_256920_ = m_258002_(Registries.f_256963_, (p_259690_) -> {
-@@ -251,7 +_,11 @@
+@@ -252,7 +_,11 @@
     public static final Registry<RootPlacerType<?>> f_256742_ = m_258002_(Registries.f_256768_, (p_259493_) -> {
        return RootPlacerType.f_225898_;
     });
@@ -260,12 +260,12 @@
        return TreeDecoratorType.f_70043_;
     });
     public static final Registry<FeatureSizeType<?>> f_256958_ = m_258002_(Registries.f_256720_, (p_259370_) -> {
-@@ -280,10 +_,18 @@
+@@ -282,10 +_,18 @@
        return m_258073_(p_260095_, Lifecycle.stable(), p_259057_);
     }
  
 +   private static <T> Registry<T> forge(ResourceKey<? extends Registry<T>> key, BuiltInRegistries.RegistryBootstrap<T> def) {
-+      return forge(key, Lifecycle.experimental(), def);
++      return forge(key, Lifecycle.stable(), def);
 +   }
 +
     private static <T> DefaultedRegistry<T> m_257988_(ResourceKey<? extends Registry<T>> p_259887_, String p_259325_, BuiltInRegistries.RegistryBootstrap<T> p_259759_) {
@@ -273,13 +273,13 @@
     }
  
 +   private static <T> DefaultedRegistry<T> forge(ResourceKey<? extends Registry<T>> key, String defKey, BuiltInRegistries.RegistryBootstrap<T> def) {
-+      return forge(key, defKey, Lifecycle.experimental(), def);
++      return forge(key, defKey, Lifecycle.stable(), def);
 +   }
 +
     private static <T> DefaultedRegistry<T> m_257834_(ResourceKey<? extends Registry<T>> p_259296_, String p_259101_, BuiltInRegistries.RegistryBootstrap<T> p_259485_) {
        return m_257762_(p_259296_, p_259101_, Lifecycle.stable(), p_259485_);
     }
-@@ -292,10 +_,19 @@
+@@ -294,10 +_,19 @@
        return m_257895_(p_259121_, new MappedRegistry<>(p_259121_, p_259977_, false), p_259874_, p_259977_);
     }
  
@@ -299,7 +299,7 @@
     private static <T> DefaultedRegistry<T> m_257762_(ResourceKey<? extends Registry<T>> p_260010_, String p_260220_, Lifecycle p_260139_, BuiltInRegistries.RegistryBootstrap<T> p_260185_) {
        return m_257895_(p_260010_, new DefaultedMappedRegistry<>(p_260220_, p_260010_, p_260139_, true), p_260185_, p_260139_);
     }
-@@ -341,7 +_,7 @@
+@@ -343,7 +_,7 @@
  
           if (p_259410_ instanceof DefaultedRegistry) {
              ResourceLocation resourcelocation = ((DefaultedRegistry)p_259410_).m_122315_();

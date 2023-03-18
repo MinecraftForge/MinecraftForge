@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/item/crafting/ShulkerBoxColoring.java
 +++ b/net/minecraft/world/item/crafting/ShulkerBoxColoring.java
-@@ -25,7 +_,7 @@
+@@ -26,7 +_,7 @@
              if (Block.m_49814_(itemstack.m_41720_()) instanceof ShulkerBoxBlock) {
                 ++i;
              } else {
@@ -9,16 +9,16 @@
                    return false;
                 }
  
-@@ -43,7 +_,7 @@
+@@ -44,7 +_,7 @@
  
-    public ItemStack m_5874_(CraftingContainer p_44322_) {
+    public ItemStack m_5874_(CraftingContainer p_44322_, RegistryAccess p_266985_) {
        ItemStack itemstack = ItemStack.f_41583_;
 -      DyeItem dyeitem = (DyeItem)Items.f_42535_;
 +      net.minecraft.world.item.DyeColor dyecolor = net.minecraft.world.item.DyeColor.WHITE;
  
        for(int i = 0; i < p_44322_.m_6643_(); ++i) {
           ItemStack itemstack1 = p_44322_.m_8020_(i);
-@@ -51,13 +_,14 @@
+@@ -52,13 +_,14 @@
              Item item = itemstack1.m_41720_();
              if (Block.m_49814_(item) instanceof ShulkerBoxBlock) {
                 itemstack = itemstack1;

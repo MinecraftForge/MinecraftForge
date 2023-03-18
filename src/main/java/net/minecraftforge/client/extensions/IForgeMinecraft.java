@@ -45,6 +45,6 @@ public interface IForgeMinecraft
      */
     default Locale getLocale()
     {
-        return self().getLanguageManager().getSelected().getJavaLocale();
+        return self().getLanguageManager().getJavaLocale();
     }
 }

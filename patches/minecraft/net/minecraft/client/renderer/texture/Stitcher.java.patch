@@ -24,7 +24,7 @@
              throw new StitcherException(holder.f_244486_, list.stream().map((p_247946_) -> {
                 return p_247946_.f_244486_;
              }).collect(ImmutableList.toImmutableList()));
-@@ -97,7 +_,7 @@
+@@ -95,7 +_,7 @@
           boolean flag4 = flag2 && j != l;
           boolean flag;
           if (flag3 ^ flag4) {

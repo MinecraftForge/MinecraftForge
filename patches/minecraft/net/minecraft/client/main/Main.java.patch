@@ -1,15 +1,6 @@
 --- a/net/minecraft/client/main/Main.java
 +++ b/net/minecraft/client/main/Main.java
-@@ -48,7 +_,7 @@
- 
-    @DontObfuscate
-    public static void main(String[] p_129642_) {
--      m_239872_(p_129642_, true);
-+      m_239872_(p_129642_, !net.minecraftforge.fml.loading.FMLConfig.isOptimizedDFUDisabled());
-    }
- 
-    public static void m_239872_(String[] p_239873_, boolean p_239874_) {
-@@ -142,7 +_,7 @@
+@@ -135,7 +_,7 @@
        }
  
        CrashReport.m_127529_();

@@ -112,16 +112,14 @@ public class CreativeModeTabEvent extends Event implements IModBusEvent
     public static final class BuildContents extends CreativeModeTabEvent implements Output
     {
         private final CreativeModeTab tab;
-        private final FeatureFlagSet flags;
-        private final boolean hasPermissions;
+        private final CreativeModeTab.ItemDisplayParameters parameters;
         private final MutableHashedLinkedMap<ItemStack, TabVisibility> entries;
 
         @ApiStatus.Internal
-        public BuildContents(CreativeModeTab tab, FeatureFlagSet flags, boolean hasPermissions, MutableHashedLinkedMap<ItemStack, TabVisibility> entries)
+        public BuildContents(CreativeModeTab tab, CreativeModeTab.ItemDisplayParameters parameters, MutableHashedLinkedMap<ItemStack, TabVisibility> entries)
         {
             this.tab = tab;
-            this.flags = flags;
-            this.hasPermissions = hasPermissions;
+            this.parameters = parameters;
             this.entries = entries;
         }
 
@@ -135,12 +133,17 @@ public class CreativeModeTabEvent extends Event implements IModBusEvent
 
         public FeatureFlagSet getFlags()
         {
-            return this.flags;
+            return this.parameters.enabledFeatures();
+        }
+
+        public CreativeModeTab.ItemDisplayParameters getParameters()
+        {
+            return parameters;
         }
 
         public boolean hasPermissions()
         {
-            return this.hasPermissions;
+            return this.parameters.hasPermissions();
         }
 
         public MutableHashedLinkedMap<ItemStack, TabVisibility> getEntries()

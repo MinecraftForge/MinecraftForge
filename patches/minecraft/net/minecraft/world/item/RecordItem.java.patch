@@ -1,7 +1,7 @@
 --- a/net/minecraft/world/item/RecordItem.java
 +++ b/net/minecraft/world/item/RecordItem.java
-@@ -19,17 +_,42 @@
- import net.minecraft.world.level.block.state.BlockState;
+@@ -22,17 +_,42 @@
+ import net.minecraft.world.level.gameevent.GameEvent;
  
  public class RecordItem extends Item {
 +   @Deprecated // Forge: refer to WorldRender#playRecord. Modders: there's no need to reflectively modify this map!
@@ -43,7 +43,7 @@
     }
  
     public InteractionResult m_6225_(UseOnContext p_43048_) {
-@@ -72,7 +_,7 @@
+@@ -80,7 +_,7 @@
     }
  
     public SoundEvent m_43051_() {

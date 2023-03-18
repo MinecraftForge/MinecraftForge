@@ -1,6 +1,6 @@
 --- a/net/minecraft/advancements/Advancement.java
 +++ b/net/minecraft/advancements/Advancement.java
-@@ -127,7 +_,7 @@
+@@ -144,7 +_,7 @@
        return this.f_138305_;
     }
  
@@ -9,7 +9,7 @@
        @Nullable
        private ResourceLocation f_138332_;
        @Nullable
-@@ -308,7 +_,14 @@
+@@ -325,7 +_,14 @@
           return "Task Advancement{parentId=" + this.f_138332_ + ", display=" + this.f_138334_ + ", rewards=" + this.f_138335_ + ", criteria=" + this.f_138336_ + ", requirements=" + Arrays.deepToString(this.f_138337_) + "}";
        }
  

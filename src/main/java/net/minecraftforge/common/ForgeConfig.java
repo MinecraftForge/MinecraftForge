@@ -28,8 +28,6 @@ public class ForgeConfig {
         public final DoubleValue zombieBaseSummonChance;
         public final DoubleValue zombieBabyChance;
 
-        public final BooleanValue fixAdvancementLoading;
-
         public final ConfigValue<String> permissionHandler;
 
         Server(ForgeConfigSpec.Builder builder) {
@@ -65,10 +63,6 @@ public class ForgeConfig {
                     .translation("forge.configgui.zombieBabyChance")
                     .worldRestart()
                     .defineInRange("zombieBabyChance", 0.05D, 0.0D, 1.0D);
-            fixAdvancementLoading = builder
-                    .comment("Fix advancement loading to use a proper topological sort. This may have visibility side-effects and can thus be turned off if needed for data-pack compatibility.")
-                    .translation("forge.configgui.fixAdvancementLoading")
-                    .define("fixAdvancementLoading", true);
 
             permissionHandler = builder
                     .comment("The permission handler used by the server. Defaults to forge:default_handler if no such handler with that name is registered.")
