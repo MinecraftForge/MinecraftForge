@@ -1,0 +1,17 @@
+--- a/net/minecraft/data/recipes/ShapelessRecipeBuilder.java
++++ b/net/minecraft/data/recipes/ShapelessRecipeBuilder.java
+@@ -35,6 +_,14 @@
+       this.f_126174_ = p_252227_;
+    }
+ 
++   public static ShapelessRecipeBuilder shapeless(ItemLike p_249659_) {
++      return shapeless(p_249659_, 1);
++   }
++
++   public static ShapelessRecipeBuilder shapeless(ItemLike p_249659_, int count) {
++      return m_246517_(RecipeCategory.MISC, p_249659_, count);
++   }
++
+    public static ShapelessRecipeBuilder m_245498_(RecipeCategory p_250714_, ItemLike p_249659_) {
+       return new ShapelessRecipeBuilder(p_250714_, p_249659_, 1);
+    }
