@@ -70,8 +70,8 @@ public class ModMismatchDisconnectedScreen extends Screen
         this.listHeight = modMismatchData.containsMismatches() ? 140 : 0;
         this.mismatchedDataFromServer = modMismatchData.mismatchedDataFromServer();
         this.presentModData = modMismatchData.presentModData();
-        this.missingModData = modMismatchData.mismatchedModData().entrySet().stream().filter(e -> e.getValue().equals(NetworkRegistry.ABSENT)).map(Entry::getKey).collect(Collectors.toList());
-        this.mismatchedModData = modMismatchData.mismatchedModData().entrySet().stream().filter(e -> !e.getValue().equals(NetworkRegistry.ABSENT)).collect(Collectors.toMap(Entry::getKey, Entry::getValue));
+        this.missingModData = modMismatchData.mismatchedModData().entrySet().stream().filter(e -> e.getValue().equals(NetworkRegistry.ABSENT.version())).map(Entry::getKey).collect(Collectors.toList());
+        this.mismatchedModData = modMismatchData.mismatchedModData().entrySet().stream().filter(e -> !e.getValue().equals(NetworkRegistry.ABSENT.version())).collect(Collectors.toMap(Entry::getKey, Entry::getValue));
         this.allModIds = presentModData.keySet().stream().map(ResourceLocation::getNamespace).distinct().collect(Collectors.toList());
         this.presentModUrls = ModList.get().getMods().stream().filter(info -> allModIds.contains(info.getModId())).map(info -> Pair.of(info.getModId(), (String)info.getConfig().getConfigElement("displayURL").orElse(""))).collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
     }
