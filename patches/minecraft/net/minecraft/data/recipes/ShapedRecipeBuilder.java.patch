@@ -4,12 +4,12 @@
        this.f_126107_ = p_248948_;
     }
  
-+   public static ShapedRecipeBuilder shaped(ItemLike p_249747_) {
-+      return shaped(p_249747_, 1);
++   public static ShapedRecipeBuilder shaped(ItemLike result) {
++      return shaped(result, 1);
 +   }
 +
-+   public static ShapedRecipeBuilder shaped(ItemLike p_249747_, int count) {
-+      return m_246608_(RecipeCategory.MISC, p_249747_, count);
++   public static ShapedRecipeBuilder shaped(ItemLike result, int count) {
++      return m_246608_(RecipeCategory.MISC, result, count);
 +   }
 +
     public static ShapedRecipeBuilder m_245327_(RecipeCategory p_250853_, ItemLike p_249747_) {
