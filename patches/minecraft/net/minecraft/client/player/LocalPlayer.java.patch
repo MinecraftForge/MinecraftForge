@@ -64,7 +64,7 @@
 +         boolean flag8 = flag7 || this.f_19862_ && !this.f_185931_ || this.m_20069_() && !this.m_5842_() || (this.isInFluidType((fluidType, height) -> this.canSwimInFluidType(fluidType)) && !this.canStartSwimming());
           if (this.m_6069_()) {
 -            if (!this.f_19861_ && !this.f_108618_.f_108573_ && flag7 || !this.m_20069_()) {
-+            if (!this.f_19861_ && !this.f_108618_.f_108573_ && flag5 || !(this.m_20069_() || this.isInFluidType((fluidType, height) -> this.canSwimInFluidType(fluidType)))) {
++            if (!this.f_19861_ && !this.f_108618_.f_108573_ && flag7 || !(this.m_20069_() || this.isInFluidType((fluidType, height) -> this.canSwimInFluidType(fluidType)))) {
                 this.m_6858_(false);
              }
           } else if (flag8) {
