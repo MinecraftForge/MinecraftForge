@@ -1,21 +1,11 @@
 --- a/net/minecraft/client/renderer/culling/Frustum.java
 +++ b/net/minecraft/client/renderer/culling/Frustum.java
-@@ -11,6 +_,7 @@
- @OnlyIn(Dist.CLIENT)
- public class Frustum {
-    public static final int f_194437_ = 4;
-+   private static final AABB INFINITE_AABB = new AABB(Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
-    private final FrustumIntersection f_252531_ = new FrustumIntersection();
-    private final Matrix4f f_252406_ = new Matrix4f();
-    private Vector4f f_194438_;
-@@ -59,6 +_,10 @@
+@@ -59,6 +_,8 @@
     }
  
     public boolean m_113029_(AABB p_113030_) {
 +      //FORGE: exit early for infinite bounds, these would otherwise fail in the intersection test at certain camera angles
-+      if (p_113030_.equals(INFINITE_AABB)) {
-+         return true;
-+      }
++      if (p_113030_.equals(net.minecraftforge.common.extensions.IForgeBlockEntity.INFINITE_EXTENT_AABB)) return true;
        return this.m_113006_(p_113030_.f_82288_, p_113030_.f_82289_, p_113030_.f_82290_, p_113030_.f_82291_, p_113030_.f_82292_, p_113030_.f_82293_);
     }
  
