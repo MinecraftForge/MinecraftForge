@@ -86,7 +86,7 @@ public class ItemLayerModel implements IUnbakedGeometry<ItemLayerModel>
         );
         var rootTransform = context.getRootTransform();
         if (!rootTransform.isIdentity())
-            modelState = new SimpleModelState(modelState.getRotation().compose(rootTransform), modelState.isUvLocked());
+            modelState = UnbakedGeometryHelper.composeRootTransformIntoModelState(modelState, rootTransform);
 
         var normalRenderTypes = new RenderTypeGroup(RenderType.translucent(), ForgeRenderTypes.ITEM_UNSORTED_TRANSLUCENT.get());
         CompositeModel.Baked.Builder builder = CompositeModel.Baked.builder(context, particle, overrides, context.getTransforms());
