@@ -19,6 +19,13 @@ import net.minecraftforge.client.event.RegisterItemDecorationsEvent;
  */
 public interface IItemDecorator
 {
+    /**
+     * Use {@linkplain IItemDecorator#render(PoseStack, Font, ItemStack, int, int)} instead.
+     */
+    @Deprecated(forRemoval = true, since = "1.19.4")
+    default boolean render(Font font, ItemStack stack, int xOffset, int yOffset, int blitOffset) {
+        return false;
+    }
 
     /**
      * Is called after {@linkplain ItemRenderer#renderGuiItemDecorations(PoseStack, Font, ItemStack, int, int, String)} is done rendering.
@@ -27,5 +34,7 @@ public interface IItemDecorator
      * The RenderState during this call will be: enableTexture, enableDepthTest, enableBlend and defaultBlendFunc
      * @return true if you have modified the RenderState and it has to be reset for other ItemDecorators
      */
-    boolean render(PoseStack poseStack, Font font, ItemStack stack, int xOffset, int yOffset);
+    default boolean render(PoseStack poseStack, Font font, ItemStack stack, int xOffset, int yOffset) {
+        return IItemDecorator.this.render(font, stack, xOffset, yOffset, 0);
+    }
 }
