@@ -23,7 +23,7 @@ public interface IItemDecorator
      * Use {@linkplain IItemDecorator#render(PoseStack, Font, ItemStack, int, int)} instead.
      */
     @Deprecated(forRemoval = true, since = "1.19.4")
-    default boolean render(Font font, ItemStack stack, int xOffset, int yOffset, int blitOffset) {
+    default boolean render(Font font, ItemStack stack, int xOffset, int yOffset, float blitOffset) {
         return false;
     }
 
