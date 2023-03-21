@@ -1,0 +1,11 @@
+--- a/net/minecraft/client/renderer/culling/Frustum.java
++++ b/net/minecraft/client/renderer/culling/Frustum.java
+@@ -59,6 +_,8 @@
+    }
+ 
+    public boolean m_113029_(AABB p_113030_) {
++      // FORGE: exit early for infinite bounds, these would otherwise fail in the intersection test at certain camera angles (GH-9321)
++      if (p_113030_.equals(net.minecraftforge.common.extensions.IForgeBlockEntity.INFINITE_EXTENT_AABB)) return true;
+       return this.m_113006_(p_113030_.f_82288_, p_113030_.f_82289_, p_113030_.f_82290_, p_113030_.f_82291_, p_113030_.f_82292_, p_113030_.f_82293_);
+    }
+ 
