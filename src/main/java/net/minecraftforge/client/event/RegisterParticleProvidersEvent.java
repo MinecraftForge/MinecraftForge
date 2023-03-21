@@ -54,7 +54,7 @@ public class RegisterParticleProvidersEvent extends Event implements IModBusEven
     public <T extends ParticleOptions> void registerSpecial(ParticleType<T> type, ParticleProvider<T> provider) {
         particleEngine.register(type, provider);
     }
-    
+
     /**
      * <p>Registers a ParticleProvider for a non-json-based ParticleType.
      * These particles do not receive a list of texture sprites to use for rendering themselves.</p>
@@ -90,7 +90,7 @@ public class RegisterParticleProvidersEvent extends Event implements IModBusEven
     {
         particleEngine.register(type, sprite);
     }
-    
+
     /**
      * <p>Registers a ParticleProvider for a json-based ParticleType with a single texture;
      * the resulting {@link TextureSheetParticle}s will use that texture when created.</p>
@@ -126,7 +126,7 @@ public class RegisterParticleProvidersEvent extends Event implements IModBusEven
     {
         particleEngine.register(type, registration);
     }
-    
+
     /**
      * <p>Registers a ParticleProvider for a json-based ParticleType.
      * Particle jsons define a list of texture sprites which the particle can use to render itself.</p>
