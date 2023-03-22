@@ -12,7 +12,7 @@
           }
  
           this.f_104411_.m_171649_(chunkpos);
-+         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.level.ChunkEvent.Load(levelchunk));
++         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.level.ChunkEvent.Load(levelchunk, false));
           return levelchunk;
        }
     }
