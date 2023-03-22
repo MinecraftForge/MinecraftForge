@@ -6,25 +6,19 @@
 package net.minecraftforge.debug.client.rendering;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.BufferUploader;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-import com.mojang.blaze3d.vertex.Tesselator;
-import com.mojang.blaze3d.vertex.VertexFormat;
+import com.mojang.blaze3d.vertex.PoseStack;
+
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.util.Mth;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.IItemDecorator;
-import net.minecraftforge.client.ItemDecoratorHandler;
 import net.minecraftforge.client.event.RegisterItemDecorationsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
-import net.minecraftforge.registries.ForgeRegistries;
 
 @Mod(CustomItemDecorationsTest.MOD_ID)
 public class CustomItemDecorationsTest
@@ -47,31 +41,22 @@ public class CustomItemDecorationsTest
 
     private static class StackSizeDurabilityBar implements IItemDecorator
     {
-
         @Override
-        public boolean render(Font font, ItemStack stack, int xOffset, int yOffset, float blitOffset)
+        public boolean render(PoseStack poseStack, Font font, ItemStack stack, int xOffset, int yOffset)
         {
             RenderSystem.disableBlend();
-            Tesselator tesselator = Tesselator.getInstance();
-            BufferBuilder bufferbuilder = tesselator.getBuilder();
-            float f = Math.max(0.0F, (stack.getMaxStackSize() - (float)stack.getCount()) / stack.getMaxStackSize());
-            int i = Math.round(13.0F - (float)stack.getCount() * 13.0F / stack.getMaxStackSize());
-            int j = Mth.hsvToRgb(f / 3.0F,1f,1f);
-            fillRect(bufferbuilder, xOffset + 2, yOffset, blitOffset + 189, 13, 2, 0, 0, 0);
-            fillRect(bufferbuilder, xOffset + 2, yOffset, blitOffset + 190, i, 1, j >> 16 & 255, j >> 8 & 255, j & 255);
+            float f = Math.max(0.0F, (float)stack.getCount() / stack.getMaxStackSize());
+            int i = Math.round((float)stack.getCount() * 13.0F / stack.getMaxStackSize());
+            int j = Mth.hsvToRgb(f / 3.0F, 1f, 1f) | 0xFF000000;
+            int x = xOffset + 2;
+            int y = yOffset + 13;
+            poseStack.pushPose();
+            poseStack.translate(0.0F, 0.0F, ItemRenderer.ITEM_COUNT_BLIT_OFFSET + 1F);
+            GuiComponent.fill(poseStack, x, y, x + 13, y + 2, 0xFF000000);
+            GuiComponent.fill(poseStack, x, y, x + i, y + 1, j);
+            poseStack.popPose();
             RenderSystem.enableBlend();
             return true;
-        }
-
-        private static void fillRect(BufferBuilder pRenderer, int pX, int pY, float pZ, int pWidth, int pHeight, int pRed, int pGreen, int pBlue)
-        {
-            RenderSystem.setShader(GameRenderer::getPositionColorShader);
-            pRenderer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
-            pRenderer.vertex(pX, pY, pZ).color(pRed, pGreen, pBlue, 255).endVertex();
-            pRenderer.vertex(pX, pY + pHeight, pZ).color(pRed, pGreen, pBlue, 255).endVertex();
-            pRenderer.vertex(pX + pWidth, pY + pHeight, pZ).color(pRed, pGreen, pBlue, 255).endVertex();
-            pRenderer.vertex(pX + pWidth, pY, pZ).color(pRed, pGreen, pBlue, 255).endVertex();
-            BufferUploader.drawWithShader(pRenderer.end());
         }
     }
 }
