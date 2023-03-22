@@ -42,10 +42,10 @@ public class RegisterParticleProvidersEvent extends Event implements IModBusEven
     /**
      * <p>Registers a ParticleProvider for a non-json-based ParticleType.
      * These particles do not receive a list of texture sprites to use for rendering themselves.</p>
-     * 
+     *
      * <p>There must be <strong>no</strong> particle json with an ID matching the ParticleType,
      * or a redundant texture list error will occur when particle jsons load.</p>
-     * 
+     *
      * @param <T> ParticleOptions used by the ParticleType and ParticleProvider.
      * @param type ParticleType to register a ParticleProvider for.
      * @param provider ParticleProvider function responsible for providing that ParticleType's particles.
@@ -58,10 +58,10 @@ public class RegisterParticleProvidersEvent extends Event implements IModBusEven
     /**
      * <p>Registers a ParticleProvider for a non-json-based ParticleType.
      * These particles do not receive a list of texture sprites to use for rendering themselves.</p>
-     * 
+     *
      * There must be <strong>no</strong> particle json with an ID matching the ParticleType,
      * or a redundant texture list error will occur when particle jsons load.</p>
-     * 
+     *
      * @param <T> ParticleOptions used by the ParticleType and ParticleProvider.
      * @param type ParticleType to register a ParticleProvider for.
      * @param provider ParticleProvider function responsible for providing that ParticleType's particles.
@@ -77,10 +77,10 @@ public class RegisterParticleProvidersEvent extends Event implements IModBusEven
     /**
      * <p>Registers a ParticleProvider for a json-based ParticleType with a single texture;
      * the resulting {@link TextureSheetParticle}s will use that texture when created.</p>
-     * 
+     *
      * <p>A particle json with an ID matching the ParticleType <strong>must exist</strong> in the <code>particles</code> asset folder,
      * or a missing texture list error will occur when particle jsons load.</p>
-     * 
+     *
      * @param <T> ParticleOptions used by the ParticleType and Sprite function.
      * @param type ParticleType to register a ParticleProvider for.
      * @param sprite Sprite function responsible for providing that ParticleType's particles.
@@ -94,10 +94,10 @@ public class RegisterParticleProvidersEvent extends Event implements IModBusEven
     /**
      * <p>Registers a ParticleProvider for a json-based ParticleType with a single texture;
      * the resulting {@link TextureSheetParticle}s will use that texture when created.</p>
-     * 
+     *
      * <p>A particle json with an ID matching the ParticleType <strong>must exist</strong> in the <code>particles</code> asset folder,
      * or a missing texture list error will occur when particle jsons load.</p>
-     * 
+     *
      * @param <T> ParticleOptions used by the ParticleType and Sprite function.
      * @param type ParticleType to register a ParticleProvider for.
      * @param sprite Sprite function responsible for providing that ParticleType's particles.
@@ -113,10 +113,10 @@ public class RegisterParticleProvidersEvent extends Event implements IModBusEven
     /**
      * <p>Registers a ParticleProvider for a json-based ParticleType.
      * Particle jsons define a list of texture sprites which the particle can use to render itself.</p>
-     * 
+     *
      * <p>A particle json with an ID matching the ParticleType <strong>must exist</strong> in the <code>particles</code> asset folder,
      * or a missing texture list error will occur when particle jsons load.</p>
-     * 
+     *
      * @param <T> ParticleOptions used by the ParticleType and SpriteParticleRegistration function.
      * @param type ParticleType to register a particle provider for.
      * @param registration SpriteParticleRegistration function responsible for providing that ParticleType's particles.
@@ -130,10 +130,10 @@ public class RegisterParticleProvidersEvent extends Event implements IModBusEven
     /**
      * <p>Registers a ParticleProvider for a json-based ParticleType.
      * Particle jsons define a list of texture sprites which the particle can use to render itself.</p>
-     * 
+     *
      * <p>A particle json with an ID matching the ParticleType <strong>must exist</strong> in the <code>particles</code> asset folder,
      * or a missing texture list error will occur when particle jsons load.</p>
-     * 
+     *
      * @param <T> ParticleOptions used by the ParticleType and SpriteParticleRegistration function.
      * @param type ParticleType to register a particle provider for.
      * @param registration SpriteParticleRegistration function responsible for providing that ParticleType's particles.
