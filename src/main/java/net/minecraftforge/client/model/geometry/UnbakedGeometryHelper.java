@@ -27,6 +27,8 @@ import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.model.ElementsModel;
 import net.minecraftforge.client.model.IModelBuilder;
+import net.minecraftforge.client.model.IQuadTransformer;
+import net.minecraftforge.client.model.QuadTransformers;
 import net.minecraftforge.client.model.SimpleModelState;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
@@ -243,5 +245,33 @@ public class UnbakedGeometryHelper
     public static BakedQuad bakeElementFace(BlockElement element, BlockElementFace face, TextureAtlasSprite sprite, Direction direction, ModelState state, ResourceLocation modelLocation)
     {
         return FACE_BAKERY.bakeQuad(element.from, element.to, face, sprite, direction, state, element.rotation, element.shade, modelLocation);
+    }
+
+    /**
+     * Create an {@link IQuadTransformer} to apply a {@link Transformation} that undoes the {@link ModelState}
+     * transform (blockstate transform), applies the given root transform and then re-applies the
+     * blockstate transform.
+     *
+     * @return an {@code IQuadTransformer} that applies the root transform to a baked quad that already has the
+     * transformation of the given {@code ModelState} applied to it
+     */
+    public static IQuadTransformer applyRootTransform(ModelState modelState, Transformation rootTransform)
+    {
+        // Move the origin of the ModelState transform and its inverse from the negative corner to the block center
+        // to replicate the way the ModelState transform is applied in the FaceBakery by moving the vertices such that
+        // the negative corner acts as the block center
+        Transformation transform = modelState.getRotation().applyOrigin(new Vector3f(.5F, .5F, .5F));
+        return QuadTransformers.applying(transform.compose(rootTransform).compose(transform.inverse()));
+    }
+
+    /**
+     * {@return a {@link ModelState} that combines the existing model state and the {@linkplain Transformation root transform}}
+     */
+    public static ModelState composeRootTransformIntoModelState(ModelState modelState, Transformation rootTransform)
+    {
+        // Move the origin of the root transform as if the negative corner were the block center to match the way the
+        // ModelState transform is applied in the FaceBakery by moving the vertices to be centered on that corner
+        rootTransform = rootTransform.applyOrigin(new Vector3f(-.5F, -.5F, -.5F));
+        return new SimpleModelState(modelState.getRotation().compose(rootTransform), modelState.isUvLocked());
     }
 }
