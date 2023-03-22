@@ -108,7 +108,7 @@
  
        if (p_32034_.m_128403_("Owner")) {
           this.f_265881_ = p_32034_.m_128342_("Owner");
-@@ -313,10 +_,16 @@
+@@ -313,10 +_,17 @@
  
     public void m_6123_(Player p_32040_) {
        if (!this.f_19853_.f_46443_) {
@@ -121,7 +121,8 @@
 +         if (hook < 0) return;
 +         ItemStack copy = itemstack.m_41777_();
 +         if (this.f_31986_ == 0 && (this.f_265881_ == null || this.f_265881_.equals(p_32040_.m_20148_())) && (hook == 1 || i <= 0 || p_32040_.m_150109_().m_36054_(itemstack))) {
-+            copy.m_41764_(copy.m_41613_() - itemstack.m_41613_());
++            i = copy.m_41613_() - itemstack.m_41613_();
++            copy.m_41764_(i);
 +            net.minecraftforge.event.ForgeEventFactory.firePlayerItemPickupEvent(p_32040_, this, copy);
              p_32040_.m_7938_(this, i);
              if (itemstack.m_41619_()) {
