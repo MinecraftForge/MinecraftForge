@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.fmlonlyclient;
+package net.minecraftforge.fmlonlyserver;
 
 import net.minecraftforge.fml.LoadingFailedException;
 import net.minecraftforge.fml.ModLoader;

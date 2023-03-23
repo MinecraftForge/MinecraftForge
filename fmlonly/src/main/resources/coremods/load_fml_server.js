@@ -12,7 +12,7 @@ function initializeCoreMod() {
             },
             'transformer': function(methodNode) {
                 var meth = ASMAPI.getMethodNode();
-                meth.visitMethodInsn(Opcodes.INVOKESTATIC, 'net/minecraftforge/fmlonlyclient/ServerModLoader', 'load', '()V', false)
+                meth.visitMethodInsn(Opcodes.INVOKESTATIC, 'net/minecraftforge/fmlonlyserver/ServerModLoader', 'load', '()V', false)
                 for (var i=0; i<methodNode.instructions.size(); i++) {
                     var ain = methodNode.instructions.get(i);
                     if (ain.getOpcode() == Opcodes.NEW && ain.desc == 'net/minecraft/server/dedicated/DedicatedServerSettings') {
