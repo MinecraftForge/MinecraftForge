@@ -6,6 +6,7 @@
 package net.minecraftforge.common;
 
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -134,6 +135,15 @@ public class ForgeInternalHandler
     {
         event.addListener(TierSortingRegistry.getReloadListener());
         event.addListener(CreativeModeTabRegistry.getReloadListener());
+    }
+
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    public void builtinMobSpawnBlocker(EntityJoinLevelEvent event)
+    {
+        if(event.getEntity() instanceof Mob mob && mob.isSpawnCancelled())
+        {
+            event.setCanceled(true);
+        }
     }
 }
 
