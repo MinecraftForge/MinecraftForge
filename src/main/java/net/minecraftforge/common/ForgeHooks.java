@@ -1093,11 +1093,6 @@ public class ForgeHooks
         return event.getVanillaNoteId();
     }
 
-    public static int canEntitySpawn(Mob entity, LevelAccessor world, double x, double y, double z, BaseSpawner spawner, MobSpawnType spawnReason) {
-        Result res = ForgeEventFactory.canEntitySpawn(entity, world, x, y, z, null, spawnReason);
-        return res == Result.DEFAULT ? 0 : res == Result.DENY ? -1 : 1;
-    }
-
     public static boolean hasNoElements(Ingredient ingredient)
     {
         ItemStack[] items = ingredient.getItems();

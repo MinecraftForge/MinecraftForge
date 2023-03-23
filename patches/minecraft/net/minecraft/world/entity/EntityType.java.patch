@@ -48,14 +48,6 @@
     }
  
     @Nullable
-@@ -380,6 +_,7 @@
-    public T m_262455_(ServerLevel p_262704_, @Nullable CompoundTag p_262603_, @Nullable Consumer<T> p_262621_, BlockPos p_262672_, MobSpawnType p_262644_, boolean p_262690_, boolean p_262590_) {
-       T t = this.m_262451_(p_262704_, p_262603_, p_262621_, p_262672_, p_262644_, p_262690_, p_262590_);
-       if (t != null) {
-+         if (t instanceof net.minecraft.world.entity.Mob && net.minecraftforge.event.ForgeEventFactory.doSpecialSpawn((net.minecraft.world.entity.Mob) t, p_262704_, p_262672_.m_123341_(), p_262672_.m_123342_(), p_262672_.m_123343_(), null, p_262644_)) return null;
-          p_262704_.m_47205_(t);
-       }
- 
 @@ -600,14 +_,23 @@
     }
  

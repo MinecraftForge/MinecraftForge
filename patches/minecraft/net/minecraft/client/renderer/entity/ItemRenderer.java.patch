@@ -64,7 +64,7 @@
           }
  
           p_275269_.m_85849_();
-+         net.minecraftforge.client.ItemDecoratorHandler.of(p_275590_).render(p_275652_, p_275590_, p_275202_, p_275508_, 0);
++         net.minecraftforge.client.ItemDecoratorHandler.of(p_275590_).render(p_275269_, p_275652_, p_275590_, p_275202_, p_275508_);
        }
     }
  
