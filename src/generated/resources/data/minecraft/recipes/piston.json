@@ -22,5 +22,6 @@
   ],
   "result": {
     "item": "minecraft:piston"
-  }
+  },
+  "show_notification": true
 }

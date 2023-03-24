@@ -12,5 +12,6 @@
   ],
   "result": {
     "item": "minecraft:iron_helmet"
-  }
+  },
+  "show_notification": true
 }

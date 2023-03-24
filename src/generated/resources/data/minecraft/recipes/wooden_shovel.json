@@ -16,5 +16,6 @@
   ],
   "result": {
     "item": "minecraft:wooden_shovel"
-  }
+  },
+  "show_notification": true
 }

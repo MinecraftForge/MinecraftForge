@@ -12,5 +12,6 @@
   ],
   "result": {
     "item": "minecraft:iron_boots"
-  }
+  },
+  "show_notification": true
 }

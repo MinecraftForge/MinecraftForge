@@ -19,5 +19,6 @@
   ],
   "result": {
     "item": "minecraft:soul_campfire"
-  }
+  },
+  "show_notification": true
 }

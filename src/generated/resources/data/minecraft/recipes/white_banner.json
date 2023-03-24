@@ -17,5 +17,6 @@
   ],
   "result": {
     "item": "minecraft:white_banner"
-  }
+  },
+  "show_notification": true
 }

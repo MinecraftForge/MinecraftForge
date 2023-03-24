@@ -16,5 +16,6 @@
   ],
   "result": {
     "item": "minecraft:painting"
-  }
+  },
+  "show_notification": true
 }

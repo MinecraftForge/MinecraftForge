@@ -16,5 +16,6 @@
   ],
   "result": {
     "item": "minecraft:shulker_box"
-  }
+  },
+  "show_notification": true
 }

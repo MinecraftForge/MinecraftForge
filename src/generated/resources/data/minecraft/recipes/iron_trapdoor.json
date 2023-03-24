@@ -12,5 +12,6 @@
   ],
   "result": {
     "item": "minecraft:iron_trapdoor"
-  }
+  },
+  "show_notification": true
 }

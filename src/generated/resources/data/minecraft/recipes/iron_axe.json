@@ -16,5 +16,6 @@
   ],
   "result": {
     "item": "minecraft:iron_axe"
-  }
+  },
+  "show_notification": true
 }
