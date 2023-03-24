@@ -175,8 +175,6 @@ modId="remove_tag_datagen_test"
 [[mods]]
 modId="tag_based_tool_types"
 [[mods]]
-modId="check_spawn_event_test"
-[[mods]]
 modId="spawn_placement_test"
 [[mods]]
 modId="redstone_sided_connectivity_test"
