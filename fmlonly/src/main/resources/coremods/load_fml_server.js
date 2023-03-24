@@ -13,11 +13,20 @@ function initializeCoreMod() {
             'transformer': function(methodNode) {
                 var meth = ASMAPI.getMethodNode();
                 meth.visitMethodInsn(Opcodes.INVOKESTATIC, 'net/minecraftforge/fmlonlyserver/ServerModLoader', 'load', '()V', false)
+
+                var methOptions = ASMAPI.getMethodNode();
+                methOptions.visitIntInsn(Opcodes.ALOAD, 1);
+                methOptions.visitMethodInsn(Opcodes.INVOKESTATIC, 'net/minecraftforge/fmlonlyserver/ServerModLoader', 'addOptions', '(Ljoptsimple/OptionParser;)V', false)
+
                 for (var i=0; i<methodNode.instructions.size(); i++) {
                     var ain = methodNode.instructions.get(i);
-                    if (ain.getOpcode() == Opcodes.NEW && ain.desc == 'net/minecraft/server/dedicated/DedicatedServerSettings') {
-                        methodNode.instructions.insert(ain, meth.instructions);
-                        break;
+                    if (ain.getOpcode() == Opcodes.INVOKESPECIAL && ain.owner == 'joptsimple/OptionParser' && ain.name == '<init>' && ain.desc == '()V') {
+                        // Inject after the STORE
+                        methodNode.instructions.insert(methodNode.instructions.get(i + 1), methOptions.instructions);
+                    } else if (ain.getOpcode() == Opcodes.NEW && ain.desc == 'net/minecraft/server/dedicated/DedicatedServerSettings') {
+                        // Insert before the creation in order to not "split up" the NEW and INVOKESPECIAL<init>
+                        methodNode.instructions.insertBefore(ain, meth.instructions);
+                        break; // By this point we've already reached the first injection point so break
                     }
                 }
                 return methodNode;
