@@ -1,8 +1,8 @@
 {
    "pack": {
-      "pack_format": 12,
+      "pack_format": 13,
       "description": "Forge tests resource pack",
-      "forge:resource_pack_format": 12,
-      "forge:data_pack_format": 10
+      "forge:client_resources_pack_format": 13,
+      "forge:server_data_pack_format": 12
    }
 }
