@@ -9,6 +9,7 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.WorldGenRegion;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
@@ -16,6 +17,7 @@ import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.level.BaseSpawner;
 import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraftforge.common.ForgeInternalHandler;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.entity.EntityEvent;
@@ -209,6 +211,7 @@ public abstract class MobSpawnEvent extends EntityEvent
         /**
          * Returns the current spawn cancellation status, which can be changed via {@link FinalizeSpawn#setSpawnCancelled(boolean)}.
          * @return If this mob's spawn is cancelled or not.
+         * @implNote This is enforced in {@link ForgeInternalHandler#builtinMobSpawnBlocker} and a patch in {@link WorldGenRegion#addEntity}
          */
         public boolean isSpawnCancelled() {
             return this.getEntity().isSpawnCancelled();
