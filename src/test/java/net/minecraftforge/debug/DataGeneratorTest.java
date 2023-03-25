@@ -444,8 +444,7 @@ public class DataGeneratorTest
         @Override
         public CompletableFuture<?> run(CachedOutput cache)
         {
-            super.run(cache);
-            return CompletableFuture.runAsync(this::test);
+            return super.run(cache).thenRun(this::test);
         }
 
         private void test()
@@ -695,7 +694,7 @@ public class DataGeneratorTest
         @Override
         public CompletableFuture<?> run(CachedOutput cache)
         {
-            super.run(cache);
+            var output = super.run(cache);
             List<String> errors = testModelResults(this.generatedModels, existingFileHelper, IGNORED_MODELS.stream().map(s -> new ResourceLocation(MODID, folder + "/" + s)).collect(Collectors.toSet()));
             if (!errors.isEmpty()) {
                 LOGGER.error("Found {} discrepancies between generated and vanilla item models: ", errors.size());
@@ -705,7 +704,7 @@ public class DataGeneratorTest
                 throw new AssertionError("Generated item models differed from vanilla equivalents, check above errors.");
             }
 
-            return CompletableFuture.allOf();
+            return output;
         }
 
         @Override
@@ -877,35 +876,35 @@ public class DataGeneratorTest
         @Override
         public CompletableFuture<?> run(CachedOutput cache)
         {
-            super.run(cache);
-            this.errors.addAll(testModelResults(models().generatedModels, models().existingFileHelper, Sets.union(IGNORED_MODELS, CUSTOM_MODELS)));
-            this.registeredBlocks.forEach((block, state) -> {
-                if (IGNORED_BLOCKS.contains(block)) return;
-                JsonObject generated = state.toJson();
-                try {
-                    Resource vanillaResource = models().existingFileHelper.getResource(ForgeRegistries.BLOCKS.getKey(block), PackType.CLIENT_RESOURCES, ".json", "blockstates");
-                    JsonObject existing = GSON.fromJson(vanillaResource.openAsReader(), JsonObject.class);
-                    if (state instanceof VariantBlockStateBuilder) {
-                        compareVariantBlockstates(block, generated, existing);
-                    } else if (state instanceof MultiPartBlockStateBuilder) {
-                        compareMultipartBlockstates(block, generated, existing);
-                    } else {
-                        throw new IllegalStateException("Unknown blockstate type: " + state.getClass());
+            return super.run(cache).thenRun(() -> {
+                this.errors.addAll(testModelResults(models().generatedModels, models().existingFileHelper, Sets.union(IGNORED_MODELS, CUSTOM_MODELS)));
+                this.registeredBlocks.forEach((block, state) -> {
+                    if (IGNORED_BLOCKS.contains(block)) return;
+                    JsonObject generated = state.toJson();
+                    try {
+                        Resource vanillaResource = models().existingFileHelper.getResource(ForgeRegistries.BLOCKS.getKey(block), PackType.CLIENT_RESOURCES, ".json", "blockstates");
+                        JsonObject existing = GSON.fromJson(vanillaResource.openAsReader(), JsonObject.class);
+                        if (state instanceof VariantBlockStateBuilder) {
+                            compareVariantBlockstates(block, generated, existing);
+                        } else if (state instanceof MultiPartBlockStateBuilder) {
+                            compareMultipartBlockstates(block, generated, existing);
+                        } else {
+                            throw new IllegalStateException("Unknown blockstate type: " + state.getClass());
+                        }
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
                     }
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
+                });
+
+                if (!errors.isEmpty()) {
+                    LOGGER.error("Found {} discrepancies between generated and vanilla models/blockstates: ", errors.size());
+                    for (String s : errors) {
+                        LOGGER.error("    {}", s);
+                    }
+                    throw new AssertionError("Generated blockstates/models differed from vanilla equivalents, check above errors.");
                 }
+
             });
-
-            if (!errors.isEmpty()) {
-                LOGGER.error("Found {} discrepancies between generated and vanilla models/blockstates: ", errors.size());
-                for (String s : errors) {
-                    LOGGER.error("    {}", s);
-                }
-                throw new AssertionError("Generated blockstates/models differed from vanilla equivalents, check above errors.");
-            }
-
-            return CompletableFuture.allOf();
         }
 
         private void compareVariantBlockstates(Block block, JsonObject generated, JsonObject vanilla) {
