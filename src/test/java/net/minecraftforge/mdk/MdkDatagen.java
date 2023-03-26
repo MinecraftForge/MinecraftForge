@@ -5,7 +5,6 @@
 
 package net.minecraftforge.mdk;
 
-
 import net.minecraft.DetectedVersion;
 import net.minecraft.data.metadata.PackMetadataGenerator;
 import net.minecraft.network.chat.Component;
