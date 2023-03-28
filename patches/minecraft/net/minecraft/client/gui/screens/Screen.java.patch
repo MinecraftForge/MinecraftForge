@@ -130,25 +130,28 @@
              k1 += clienttooltipcomponent2.m_142103_() + (i2 == 0 ? 2 : 0);
           }
  
-@@ -438,8 +_,18 @@
+@@ -432,7 +_,10 @@
+       this.f_96543_ = p_96608_;
+       this.f_96544_ = p_96609_;
+       if (!this.f_267454_) {
++         if (!net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.ScreenEvent.Init.Pre(this, this.f_96540_, this::addEventWidget, this::m_169411_))) {
+          this.m_7856_();
++         }
++         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.ScreenEvent.Init.Post(this, this.f_96540_, this::addEventWidget, this::m_169411_));
+       } else {
+          this.m_267719_();
        }
- 
-       this.f_267454_ = true;
-+      java.util.function.Consumer<GuiEventListener> add = (b) -> {
-+         if (b instanceof Renderable r)
-+            this.f_169369_.add(r);
-+         if (b instanceof NarratableEntry ne)
-+            this.f_169368_.add(ne);
-+         f_96540_.add(b);
-+      };
-+      if (!net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.ScreenEvent.Init.Pre(this, this.f_96540_, add, this::m_169411_))) {
-       this.m_169407_(false);
-       this.m_169378_(f_169370_);
+@@ -445,7 +_,10 @@
+    protected void m_232761_() {
+       this.m_169413_();
+       this.m_264131_();
++      if (!net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.ScreenEvent.Init.Pre(this, this.f_96540_, this::addEventWidget, this::m_169411_))) {
+       this.m_7856_();
 +      }
-+      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.ScreenEvent.Init.Post(this, this.f_96540_, add, this::m_169411_));
++      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.ScreenEvent.Init.Post(this, this.f_96540_, this::addEventWidget, this::m_169411_));
     }
  
-    protected void m_232761_() {
+    public List<? extends GuiEventListener> m_6702_() {
 @@ -467,6 +_,7 @@
     public void m_7333_(PoseStack p_96557_) {
        if (this.f_96541_.f_91073_ != null) {
@@ -165,14 +168,27 @@
     }
  
     public boolean m_7043_() {
-@@ -570,6 +_,10 @@
+@@ -572,6 +_,10 @@
+    public void m_7400_(List<Path> p_96591_) {
     }
  
-    public void m_7400_(List<Path> p_96591_) {
-+   }
-+
 +   public Minecraft getMinecraft() {
 +      return this.f_96541_;
-    }
- 
++   }
++
     private void m_169380_(long p_169381_, boolean p_169382_) {
+       this.f_169377_ = Util.m_137550_() + p_169381_;
+       if (p_169382_) {
+@@ -734,4 +_,12 @@
+          this.f_169422_ = p_169426_;
+       }
+    }
++
++   private void addEventWidget(GuiEventListener b) {
++      if (b instanceof Renderable r)
++         this.f_169369_.add(r);
++      if (b instanceof NarratableEntry ne)
++         this.f_169368_.add(ne);
++         f_96540_.add(b);
++   };
+ }
