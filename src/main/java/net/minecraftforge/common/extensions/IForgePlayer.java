@@ -114,7 +114,7 @@ public interface IForgePlayer
     default boolean canReach(BlockPos pos, double padding)
     {
         double reach = this.getBlockReach() + padding;
-        return self().getEyePosition().distanceToSqr(pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D) < reach * reach;
+        return self().getEyePosition().distanceToSqr(Vec3.atCenterOf(pos)) < reach * reach;
     }
 
     /**
@@ -128,17 +128,16 @@ public interface IForgePlayer
 
     /**
      * Utility check to see if the player is close enough to a target entity. Uses "eye-to-closest-corner" checks.
-     * Vanilla used "bottom-center-to-center" checks, so these are more accurate, and work better with large AABB's.
      * @param entity The entity being checked against
      * @param dist The max distance allowed
      * @return If the eye-to-center distance between this player and the passed entity is less than dist.
+     * @implNote This method inflates the bounding box by the pick radius, which differs from vanilla. But vanilla doesn't use the pick radius, the only entity with > 0 is AbstractHurtingProjectile.
      */
     default boolean isCloseEnough(Entity entity, double dist)
     {
         Vec3 eye = self().getEyePosition();
         AABB aabb = entity.getBoundingBox().inflate(entity.getPickRadius());
-        Vec3 target = new Vec3(Mth.clamp(eye.x, aabb.minX, aabb.maxX), Mth.clamp(eye.y, aabb.minY, aabb.maxY), Mth.clamp(eye.z, aabb.minZ, aabb.maxZ));
-        return eye.distanceToSqr(target) < dist * dist;
+        return aabb.distanceToSqr(eye) < dist * dist;
     }
 
 }

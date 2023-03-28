@@ -252,14 +252,15 @@
                 }
  
                 float f4 = 0.0F;
-@@ -1120,8 +_,8 @@
+@@ -1120,8 +_,9 @@
                    if (flag3) {
                       float f3 = 1.0F + EnchantmentHelper.m_44821_(this) * f;
  
 -                     for(LivingEntity livingentity : this.f_19853_.m_45976_(LivingEntity.class, p_36347_.m_20191_().m_82377_(1.0D, 0.25D, 1.0D))) {
 -                        if (livingentity != this && livingentity != p_36347_ && !this.m_7307_(livingentity) && (!(livingentity instanceof ArmorStand) || !((ArmorStand)livingentity).m_31677_()) && this.m_20280_(livingentity) < 9.0D) {
 +                     for(LivingEntity livingentity : this.f_19853_.m_45976_(LivingEntity.class, this.m_21120_(InteractionHand.MAIN_HAND).getSweepHitBox(this, p_36347_))) {
-+                        if (livingentity != this && livingentity != p_36347_ && !this.m_7307_(livingentity) && (!(livingentity instanceof ArmorStand) || !((ArmorStand)livingentity).m_31677_()) && this.canReach(livingentity, 0)) { // Original check was dist < 3, range is 3, so vanilla used padding=0
++                        double entityReachSq = Mth.m_144952_(this.getEntityReach()); // Use entity reach instead of constant 9.0. Vanilla uses bottom center-to-center checks here, so don't update this to use canReach, since it uses closest-corner checks.
++                        if (livingentity != this && livingentity != p_36347_ && !this.m_7307_(livingentity) && (!(livingentity instanceof ArmorStand) || !((ArmorStand)livingentity).m_31677_()) && this.m_20280_(livingentity) < entityReachSq) {
                             livingentity.m_147240_((double)0.4F, (double)Mth.m_14031_(this.m_146908_() * ((float)Math.PI / 180F)), (double)(-Mth.m_14089_(this.m_146908_() * ((float)Math.PI / 180F))));
                             livingentity.m_6469_(this.m_269291_().m_269075_(this), f3);
                          }

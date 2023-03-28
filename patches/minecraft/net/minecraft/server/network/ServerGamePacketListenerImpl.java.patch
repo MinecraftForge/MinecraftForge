@@ -6,8 +6,8 @@
     private static final int f_143608_ = 15000;
 +   /**
 +    * Forge: Deprecated in favor of range/reach attributes.
-+    * @see net.minecraftforge.common.ForgeMod#REACH_DISTANCE
-+    * @see net.minecraftforge.common.ForgeMod#ATTACK_RANGE
++    * @see net.minecraftforge.common.ForgeMod#BLOCK_REACH
++    * @see net.minecraftforge.common.ForgeMod#ENTITY_REACH
 +    */
 +   @Deprecated
     public static final double f_215198_ = Mth.m_144952_(6.0D);
@@ -73,7 +73,7 @@
  
           AABB aabb = entity.m_20191_();
 -         if (aabb.m_272282_(this.f_9743_.m_146892_()) < f_215198_) {
-+         if (this.f_9743_.canReach(entity, 2)) { // Tighten padding to 2 (from 3) due to eye-to-closest-corner check. (vanilla uses bottom center-to-center)
++         if (this.f_9743_.canReach(entity, 3)) { // Vanilla padding is 3.0 (distSq < 6.0 * 6.0)
              p_9866_.m_179617_(new ServerboundInteractPacket.Handler() {
                 private void m_143678_(InteractionHand p_143679_, ServerGamePacketListenerImpl.EntityInteraction p_143680_) {
                    ItemStack itemstack = ServerGamePacketListenerImpl.this.f_9743_.m_21120_(p_143679_);
