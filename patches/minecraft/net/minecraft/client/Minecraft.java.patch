@@ -285,17 +285,16 @@
                    this.f_91074_.m_6674_(InteractionHand.MAIN_HAND);
                 }
              }
-@@ -1581,14 +_,16 @@
+@@ -1581,6 +_,8 @@
              return false;
           } else {
              boolean flag = false;
--            switch (this.f_91077_.m_6662_()) {
 +            var inputEvent = net.minecraftforge.client.ForgeHooksClient.onClickInput(0, this.f_91066_.f_92096_, InteractionHand.MAIN_HAND);
 +            if (!inputEvent.isCanceled())
-+            switch(this.f_91077_.m_6662_()) {
+             switch (this.f_91077_.m_6662_()) {
                 case ENTITY:
                    this.f_91072_.m_105223_(this.f_91074_, ((EntityHitResult)this.f_91077_).m_82443_());
-                   break;
+@@ -1588,7 +_,7 @@
                 case BLOCK:
                    BlockHitResult blockhitresult = (BlockHitResult)this.f_91077_;
                    BlockPos blockpos = blockhitresult.m_82425_();
