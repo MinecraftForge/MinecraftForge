@@ -16,7 +16,7 @@
     public static final int f_147166_ = 2;
     public static final int f_147167_ = 4;
     public static final int f_147168_ = 98;
-@@ -270,7 +_,7 @@
+@@ -270,11 +_,11 @@
     }
  
     public static AttributeSupplier.Builder m_21183_() {
@@ -25,6 +25,11 @@
     }
  
     protected void m_7840_(double p_20990_, boolean p_20991_, BlockState p_20992_, BlockPos p_20993_) {
+-      if (!this.m_20069_()) {
++      if (!this.isInFluidType(((fluidType, aDouble) -> fluidType.getFallDistanceModifier(this) == 0))) {
+          this.m_20074_();
+       }
+ 
 @@ -288,13 +_,15 @@
           if (!p_20992_.m_60795_()) {
              double d0 = Math.min((double)(0.2F + f / 15.0F), 2.5D);
