@@ -1083,6 +1083,32 @@ project(':forge') {
                             '--existing', sourceSets.test.resources.srcDirs[0]
                 }
             }
+
+            forge_mdk_data {
+                parent runs.forge_data
+                taskName 'forge_mdk_data'
+
+                environment 'MOD_CLASSES', 'dummy' // Needed to work around FG limitation, FG will replace this!
+
+                ideaModule "${rootProject.name}.${project.name}.test"
+
+                mods {
+                    tests { sources sourceSets.test }
+                }
+
+                afterEvaluate {
+                    // Clear forge's main datagen args
+                    args.removeAll {
+                        forgeDataArgs.contains(it instanceof File ? (it as File).absolutePath : it.toString())
+                    }
+
+                    args '--flat', '--all', '--validate',
+                            '--mod', 'mdk_datagen',
+                            '--output', rootProject.file('src/generated_mdk/resources/'),
+                            '--existing', sourceSets.main.resources.srcDirs[0],
+                            '--existing', sourceSets.test.resources.srcDirs[0]
+                }
+            }
         }
     }
 
@@ -1596,6 +1622,10 @@ project(':forge') {
             ])
             rename 'gitignore\\.txt', '.gitignore'
             rename 'gitattributes\\.txt', '.gitattributes'
+        }
+        from(rootProject.file('src/generated_mdk/resources/')) {
+            into('src/main/resources/')
+            exclude '**/.cache/'
         }
     }
 

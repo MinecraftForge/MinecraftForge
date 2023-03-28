@@ -3,6 +3,9 @@ loaderVersion="[28,)"
 license="LGPL v2.1"
 
 [[mods]]
+modId="mdk_datagen"
+
+[[mods]]
     modId="eventtests"
 [[mods]]
     modId="client_command_test"
@@ -174,8 +177,6 @@ modId="send_datapacks_to_client"
 modId="remove_tag_datagen_test"
 [[mods]]
 modId="tag_based_tool_types"
-[[mods]]
-modId="check_spawn_event_test"
 [[mods]]
 modId="spawn_placement_test"
 [[mods]]

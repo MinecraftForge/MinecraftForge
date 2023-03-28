@@ -16,5 +16,6 @@
   ],
   "result": {
     "item": "minecraft:chain"
-  }
+  },
+  "show_notification": true
 }

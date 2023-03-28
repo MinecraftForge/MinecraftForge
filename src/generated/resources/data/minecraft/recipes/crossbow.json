@@ -22,5 +22,6 @@
   ],
   "result": {
     "item": "minecraft:crossbow"
-  }
+  },
+  "show_notification": true
 }

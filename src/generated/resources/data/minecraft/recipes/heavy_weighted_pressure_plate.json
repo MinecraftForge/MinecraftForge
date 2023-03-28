@@ -11,5 +11,6 @@
   ],
   "result": {
     "item": "minecraft:heavy_weighted_pressure_plate"
-  }
+  },
+  "show_notification": true
 }
