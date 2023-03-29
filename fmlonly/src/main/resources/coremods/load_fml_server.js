@@ -23,7 +23,7 @@ function initializeCoreMod() {
                     if (ain.getOpcode() == Opcodes.INVOKESPECIAL && ain.owner == 'joptsimple/OptionParser' && ain.name == '<init>' && ain.desc == '()V') {
                         // Inject after the STORE
                         methodNode.instructions.insert(methodNode.instructions.get(i + 1), methOptions.instructions);
-                    } else if (ain.getOpcode() == Opcodes.INVOKESTATIC && ain.owner == 'net/minecraft/Util' && ain.name == ASMAPI.mapMethod('m_137584_') && ain.desc == '()V') {
+                    } else if (ain.getOpcode() == Opcodes.INVOKESTATIC && ain.owner == 'net/minecraft/Util' && ain.name == ASMAPI.mapMethod('m_137584_') /* startTimerHackThread */ && ain.desc == '()V') {
                         methodNode.instructions.insert(ain, meth.instructions);
                         break; // By this point we've already reached the first injection point so break
                     }
