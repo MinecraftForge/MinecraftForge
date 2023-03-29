@@ -249,7 +249,6 @@ public class MutableHashedLinkedMap<K, V> implements Iterable<Map.Entry<K, V>>
         else if (e.previous != null) // Should never be null, but just in case.
         {
             e.previous.next = e.next;
-            e.previous = null;
         }
 
         if (last == e)
@@ -257,7 +256,6 @@ public class MutableHashedLinkedMap<K, V> implements Iterable<Map.Entry<K, V>>
         else if (e.next != null) // Should never be null, but just in case.
         {
             e.next.previous = e.previous;
-            e.next = null;
         }
     }
 
