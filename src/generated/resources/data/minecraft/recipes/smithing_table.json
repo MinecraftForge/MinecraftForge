@@ -16,5 +16,6 @@
   ],
   "result": {
     "item": "minecraft:smithing_table"
-  }
+  },
+  "show_notification": true
 }

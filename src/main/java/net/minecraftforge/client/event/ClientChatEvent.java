@@ -24,36 +24,37 @@ import org.jetbrains.annotations.ApiStatus;
 @Cancelable
 public class ClientChatEvent extends Event
 {
-    // private String message;
+    private String message;
     private final String originalMessage;
 
     @ApiStatus.Internal
     public ClientChatEvent(String message)
     {
-        // this.setMessage(message);
+        this.setMessage(message);
         this.originalMessage = Strings.nullToEmpty(message);
+        this.message = this.originalMessage;
     }
 
     /**
-     * {@return the message that will be sent to the server, if the event is not cancelled}
+     * {@return the message that will be sent to the server, if the event is not cancelled. This can be changed by mods}
      */
     public String getMessage()
     {
-        return this.originalMessage;
+        return this.message;
     }
 
-    // /**
-    //  * Sets the new message to be sent to the server, if the event is not cancelled.
-    //  *
-    //  * @param message the new message to be sent
-    //  */
-    // public void setMessage(String message)
-    // {
-    //     this.message = Strings.nullToEmpty(message);
-    // }
+    /**
+     * Sets the new message to be sent to the server, if the event is not cancelled.
+     *
+     * @param message the new message to be sent
+     */
+    public void setMessage(String message)
+    {
+        this.message = Strings.nullToEmpty(message);
+    }
 
     /**
-     * {@return the original message that was to be sent to the server}
+     * {@return the original message that was to be sent to the server. This cannot be changed by mods}
      */
     public String getOriginalMessage()
     {

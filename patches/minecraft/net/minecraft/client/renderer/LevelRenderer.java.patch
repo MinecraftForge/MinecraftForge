@@ -225,24 +225,24 @@
           if (recorditem != null) {
              this.f_109461_.f_91065_.m_93055_(recorditem.m_43050_());
           }
+@@ -2503,7 +_,7 @@
+          case 1010:
+             Item item = Item.m_41445_(p_234307_);
+             if (item instanceof RecordItem recorditem) {
+-               this.m_109514_(recorditem.m_43051_(), p_234306_);
++               this.playStreamingMusic(recorditem.m_43051_(), p_234306_, recorditem);
+             }
+             break;
+          case 1011:
 @@ -2656,7 +_,7 @@
           case 2001:
              BlockState blockstate = Block.m_49803_(p_234307_);
              if (!blockstate.m_60795_()) {
 -               SoundType soundtype = blockstate.m_60827_();
-+            SoundType soundtype = blockstate.getSoundType(this.f_109465_, p_234306_, null);
++               SoundType soundtype = blockstate.getSoundType(this.f_109465_, p_234306_, null);
                 this.f_109465_.m_245747_(p_234306_, soundtype.m_56775_(), SoundSource.BLOCKS, (soundtype.m_56773_() + 1.0F) / 2.0F, soundtype.m_56774_() * 0.8F, false);
              }
  
-@@ -2751,7 +_,7 @@
-             break;
-          case 3002:
-             if (p_234307_ >= 0 && p_234307_ < Direction.Axis.f_122448_.length) {
--               ParticleUtils.m_144967_(Direction.Axis.f_122448_[p_234307_], this.f_109465_, p_234306_, 0.125D, ParticleTypes.f_175830_, UniformInt.m_146622_(10, 19));
-+            this.playStreamingMusic(((RecordItem)Item.m_41445_(p_234307_)).m_43051_(), p_234306_, (RecordItem) Item.m_41445_(p_234307_));
-             } else {
-                ParticleUtils.m_216313_(this.f_109465_, p_234306_, ParticleTypes.f_175830_, UniformInt.m_146622_(3, 5));
-             }
 @@ -2875,7 +_,7 @@
        } else {
           int i = p_109538_.m_45517_(LightLayer.SKY, p_109540_);

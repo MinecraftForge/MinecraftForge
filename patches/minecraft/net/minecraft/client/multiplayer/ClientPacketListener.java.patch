@@ -72,7 +72,7 @@
     }
  
     public void m_7413_(ClientboundCustomPayloadPacket p_105004_) {
-+      if (!f_104888_.m_18695_() && net.minecraftforge.network.NetworkHooks.onCustomPayload(p_105004_, this.f_104885_)) return;
++      if (net.minecraftforge.network.NetworkHooks.onCustomPayload(p_105004_, this.f_104885_)) return;
        PacketUtils.m_131363_(p_105004_, this, this.f_104888_);
        ResourceLocation resourcelocation = p_105004_.m_132042_();
        FriendlyByteBuf friendlybytebuf = null;

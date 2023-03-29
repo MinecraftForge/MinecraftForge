@@ -1,14 +1,5 @@
 --- a/net/minecraft/world/level/block/TrapDoorBlock.java
 +++ b/net/minecraft/world/level/block/TrapDoorBlock.java
-@@ -42,7 +_,7 @@
-    protected static final VoxelShape f_57523_ = Block.m_49796_(0.0D, 13.0D, 0.0D, 16.0D, 16.0D, 16.0D);
-    private final BlockSetType f_271458_;
- 
--   public TrapDoorBlock(BlockBehaviour.Properties p_273079_, BlockSetType p_272964_) {
-+   protected TrapDoorBlock(BlockBehaviour.Properties p_273079_, BlockSetType p_272964_) {
-       super(p_273079_.m_60918_(p_272964_.f_271136_()));
-       this.f_271458_ = p_272964_;
-       this.m_49959_(this.f_49792_.m_61090_().m_61124_(f_54117_, Direction.NORTH).m_61124_(f_57514_, Boolean.valueOf(false)).m_61124_(f_57515_, Half.BOTTOM).m_61124_(f_57516_, Boolean.valueOf(false)).m_61124_(f_57517_, Boolean.valueOf(false)));
 @@ -149,4 +_,17 @@
  
        return super.m_7417_(p_57554_, p_57555_, p_57556_, p_57557_, p_57558_, p_57559_);

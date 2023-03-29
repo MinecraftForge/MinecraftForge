@@ -16,5 +16,6 @@
   ],
   "result": {
     "item": "minecraft:shield"
-  }
+  },
+  "show_notification": true
 }

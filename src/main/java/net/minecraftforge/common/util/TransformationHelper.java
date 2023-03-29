@@ -212,16 +212,9 @@ public final class TransformationHelper
                 elements.remove("origin");
             }
             if (!elements.isEmpty()) throw new JsonParseException("TRSR: can either have single 'matrix' key, or a combination of 'translation', 'rotation' OR 'left_rotation', 'scale', 'post-rotation' (legacy) OR 'right_rotation', 'origin'. Found: " + String.join(", ", elements));
-            Transformation matrix = new Transformation(translation, leftRot, scale, rightRot);
 
-            // Use a different origin if needed.
-            if (!TransformOrigin.CENTER.getVector().equals(origin))
-            {
-                Vector3f originFromCenter = new Vector3f(origin);
-                originFromCenter.sub(TransformOrigin.CENTER.getVector());
-                matrix = matrix.applyOrigin(originFromCenter);
-            }
-            return matrix;
+            Transformation matrix = new Transformation(translation, leftRot, scale, rightRot);
+            return matrix.applyOrigin(new Vector3f(origin));
         }
 
         private static Vector3f parseOrigin(JsonObject obj) {

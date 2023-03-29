@@ -3,6 +3,9 @@ loaderVersion="[28,)"
 license="LGPL v2.1"
 
 [[mods]]
+modId="mdk_datagen"
+
+[[mods]]
     modId="eventtests"
 [[mods]]
     modId="client_command_test"
@@ -21,6 +24,8 @@ license="LGPL v2.1"
     modId="advancement_event_test"
 [[mods]]
     modId="shader_resources_test"
+[[mods]]
+    modId="crash_callable_test"
 
 # LEGACY TEST CASES
 ###### The mods below are from the old test framework and need to be yeeted later again.
@@ -173,8 +178,6 @@ modId="remove_tag_datagen_test"
 [[mods]]
 modId="tag_based_tool_types"
 [[mods]]
-modId="check_spawn_event_test"
-[[mods]]
 modId="spawn_placement_test"
 [[mods]]
 modId="redstone_sided_connectivity_test"
@@ -280,6 +283,8 @@ modId="creative_mode_tab_test"
 modId="render_level_stages_test"
 [[mods]]
 modId="trade_with_villager_event_test"
+[[mods]]
+modId="chunk_event_load_new_chunk_test"
 
 
 # ADD ABOVE THIS LINE

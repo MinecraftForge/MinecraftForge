@@ -17,5 +17,6 @@
   ],
   "result": {
     "item": "minecraft:brown_banner"
-  }
+  },
+  "show_notification": true
 }
