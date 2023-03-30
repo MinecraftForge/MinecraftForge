@@ -61,7 +61,7 @@
              BlockPos.MutableBlockPos blockpos$mutableblockpos = new BlockPos.MutableBlockPos();
  
              for(int l = -1; l <= 1; ++l) {
-@@ -205,29 +_,28 @@
+@@ -205,28 +_,27 @@
        return p_53429_.m_46758_(p_53430_) || p_53429_.m_46758_(p_53430_.m_122024_()) || p_53429_.m_46758_(p_53430_.m_122029_()) || p_53429_.m_46758_(p_53430_.m_122012_()) || p_53429_.m_46758_(p_53430_.m_122019_());
     }
  
@@ -82,26 +82,26 @@
 -         if (p_221154_.m_188503_(p_221155_ + 10) < 5 && !p_221151_.m_46758_(p_221152_)) {
 -            int j = Math.min(p_221155_ + p_221154_.m_188503_(5) / 4, 15);
 -            p_221151_.m_7731_(p_221152_, this.m_53437_(p_221151_, p_221152_, j), 3);
+-         } else {
+-            p_221151_.m_7471_(p_221152_, false);
+-         }
 +   private void tryCatchFire(Level p_53432_, BlockPos p_53433_, int p_53434_, RandomSource p_53435_, int p_53436_, Direction face) {
 +      int i = p_53432_.m_8055_(p_53433_).getFlammability(p_53432_, p_53433_, face);
 +      if (p_53435_.m_188503_(p_53434_) < i) {
 +         BlockState blockstate = p_53432_.m_8055_(p_53433_);
-+         if (p_53435_.m_188503_(p_53434_ + 10) < 5 && !p_53432_.m_46758_(p_53433_)) {
-+            int j = Math.min(p_53434_ + p_53435_.m_188503_(5) / 4, 15);
-+            p_53432_.m_7731_(p_53433_, this.m_53437_(p_53432_, p_53433_, j), 3);
-          } else {
--            p_221151_.m_7471_(p_221152_, false);
-+            p_53432_.m_7471_(p_53433_, false);
-          }
++         blockstate.onCaughtFire(p_53432_, p_53433_, face, null);
  
 -         Block block = blockstate.m_60734_();
 -         if (block instanceof TntBlock) {
 -            TntBlock.m_57433_(p_221151_, p_221152_);
--         }
-+         blockstate.onCaughtFire(p_53432_, p_53433_, face, null);
++         if (p_53435_.m_188503_(p_53434_ + 10) < 5 && !p_53432_.m_46758_(p_53433_)) {
++            int j = Math.min(p_53434_ + p_53435_.m_188503_(5) / 4, 15);
++            p_53432_.m_7731_(p_53433_, this.m_53437_(p_53432_, p_53433_, j), 3);
++         } else {
++            p_53432_.m_7471_(p_53433_, false);
+          }
        }
  
-    }
 @@ -239,7 +_,7 @@
  
     private boolean m_53485_(BlockGetter p_53486_, BlockPos p_53487_) {
