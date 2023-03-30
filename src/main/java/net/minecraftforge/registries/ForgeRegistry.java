@@ -45,9 +45,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+@ApiStatus.Internal
 public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegistryModifiable<V>
 {
     public static Marker REGISTRIES = MarkerManager.getMarker("REGISTRIES");
@@ -480,25 +482,33 @@ public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegist
         return ret;
     }
 
-    void addAlias(ResourceLocation from, ResourceLocation to)
+    /**
+     * Adds an alias that maps from the name specified by <code>src</code> to the name specified by <code>dst</code>.<p>
+     * Any registry lookups that target the first name will resolve as the second name, if the first name is not present.
+     * @param src The source registry name to alias from.
+     * @param dst The target registry name to alias to.
+     * 
+     * TODO: Add as public API in IForgeRegistry and DeferredRegister.
+     */
+    public void addAlias(ResourceLocation src, ResourceLocation dst)
     {
         if (this.isLocked())
-            throw new IllegalStateException(String.format(Locale.ENGLISH, "Attempted to register the alias %s -> %s to late", from, to));
+            throw new IllegalStateException(String.format(Locale.ENGLISH, "Attempted to register the alias %s -> %s too late", src, dst));
 
-        if (from.equals(to))
+        if (src.equals(dst))
         {
-            LOGGER.warn(REGISTRIES, "Registry {} Ignoring invalid alias: {} -> {}", this.name, from, to);
+            LOGGER.warn(REGISTRIES, "Registry {} Ignoring invalid alias: {} -> {}", this.name, src, dst);
             return;
         }
 
-        this.aliases.put(from, to);
-        LOGGER.trace(REGISTRIES,"Registry {} alias: {} -> {}", this.name, from, to);
+        this.aliases.put(src, dst);
+        LOGGER.trace(REGISTRIES,"Registry {} alias: {} -> {}", this.name, src, dst);
     }
 
     void addDummy(ResourceLocation key)
     {
         if (this.isLocked())
-            throw new IllegalStateException(String.format(Locale.ENGLISH, "Attempted to register the dummy %s to late", key));
+            throw new IllegalStateException(String.format(Locale.ENGLISH, "Attempted to register the dummy %s too late", key));
         this.dummies.add(key);
         LOGGER.trace(REGISTRIES,"Registry {} dummy: {}", this.name, key);
     }
@@ -647,8 +657,14 @@ public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegist
         this.max = from.max;
         this.min = from.min;
         */
-        this.aliases.clear();
-        from.aliases.forEach(this::addAlias);
+        // Aliases from the active registry take priority over those from the staged (loaded) registry.
+        for (var entry : from.aliases.entrySet())
+        {
+            if (!this.aliases.containsKey(entry.getKey()))
+            {
+                this.aliases.put(entry.getKey(), entry.getValue());
+            }
+        }
 
         this.ids.clear();
         this.names.clear();
