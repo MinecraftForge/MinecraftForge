@@ -22,13 +22,16 @@
     }
  
     /** @deprecated */
-@@ -108,6 +_,8 @@
-       return this.f_204113_;
+@@ -109,8 +_,11 @@
     }
  
-+   /** @deprecated Forge: Use damage source sensitive version */
-+   @Deprecated
     public void m_5929_(Level p_41428_, LivingEntity p_41429_, ItemStack p_41430_, int p_41431_) {
++       p_41430_.onUsingTick(p_41429_, p_41431_);
+    }
+ 
++   /** @deprecated Forge: {@link net.minecraftforge.common.extensions.IForgeItem#onDestroyed(ItemEntity, DamageSource) Use damage source sensitive version} */
++   @Deprecated
+    public void m_142023_(ItemEntity p_150887_) {
     }
  
 @@ -134,9 +_,9 @@

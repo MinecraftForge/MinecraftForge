@@ -249,7 +249,10 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundTag>
      * @param player The Player using the item
      * @param count  The amount of time in tick the item has been used for
      *               continuously
+     *
+     * @deprecated {@link net.minecraft.world.item.ItemStack#onUseTick(Level, LivingEntity, int) Use Vanilla's Version}
      */
+    @Deprecated(since = "1.19.4", forRemoval = true)
     default void onUsingTick(LivingEntity player, int count)
     {
         self().getItem().onUsingTick(self(), player, count);

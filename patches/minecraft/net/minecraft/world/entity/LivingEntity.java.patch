@@ -519,25 +519,37 @@
           if (itemstack.m_150930_(Items.f_42741_) && ElytraItem.m_41140_(itemstack)) {
              flag = true;
              int i = this.f_20937_ + 1;
-@@ -2786,8 +_,16 @@
+@@ -2786,8 +_,11 @@
  
     private void m_21329_() {
        if (this.m_6117_()) {
 -         if (ItemStack.m_41746_(this.m_21120_(this.m_7655_()), this.f_20935_)) {
 -            this.f_20935_ = this.m_21120_(this.m_7655_());
 +         ItemStack itemStack = this.m_21120_(this.m_7655_());
-+         if (net.minecraftforge.common.ForgeHooks.canContinueUsing(this.f_20935_, itemStack)) this.f_20935_ = itemStack;
++         if (net.minecraftforge.common.ForgeHooks.canContinueUsing(this.f_20935_, itemStack)) {
++            this.f_20935_ = itemStack;
++         }
 +         if (itemStack == this.f_20935_) {
-+
-+            if (!this.f_20935_.m_41619_()) {
-+              f_20936_ = net.minecraftforge.event.ForgeEventFactory.onItemUseTick(this, f_20935_, f_20936_);
-+              if (f_20936_ > 0)
-+                 f_20935_.onUsingTick(this, f_20936_);
-+            }
-+
              this.m_142106_(this.f_20935_);
           } else {
              this.m_5810_();
+@@ -2797,12 +_,15 @@
+    }
+ 
+    protected void m_142106_(ItemStack p_147201_) {
++      if (!p_147201_.m_41619_())
++          this.f_20936_ = net.minecraftforge.event.ForgeEventFactory.onItemUseTick(this, p_147201_, this.m_21212_());
++      if (this.m_21212_() > 0)
+       p_147201_.m_41731_(this.f_19853_, this, this.m_21212_());
+       if (this.m_21332_()) {
+          this.m_21137_(p_147201_, 5);
+       }
+ 
+-      if (--this.f_20936_ == 0 && !this.f_19853_.f_46443_ && !p_147201_.m_41781_()) {
++      if (--this.f_20936_ <= 0 && !this.f_19853_.f_46443_ && !p_147201_.m_41781_()) {
+          this.m_8095_();
+       }
+ 
 @@ -2810,7 +_,7 @@
  
     private boolean m_21332_() {

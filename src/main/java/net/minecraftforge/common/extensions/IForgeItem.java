@@ -196,7 +196,9 @@ public interface IForgeItem
      * @param player The Player using the item
      * @param count  The amount of time in tick the item has been used for
      *               continuously
+     * @deprecated {@link net.minecraft.world.item.Item#onUseTick(Level, LivingEntity, ItemStack, int) Implement Vanilla's Version}
      */
+    @Deprecated(since = "1.19.4", forRemoval = true)
     default void onUsingTick(ItemStack stack, LivingEntity player, int count)
     {
     }
