@@ -189,6 +189,6 @@
 +         this.f_169369_.add(r);
 +      if (b instanceof NarratableEntry ne)
 +         this.f_169368_.add(ne);
-+         f_96540_.add(b);
-+   };
++      f_96540_.add(b);
++   }
  }
