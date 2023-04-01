@@ -19,5 +19,6 @@
   ],
   "result": {
     "item": "minecraft:flint_and_steel"
-  }
+  },
+  "show_notification": true
 }

@@ -5,9 +5,11 @@
 
 package net.minecraftforge.common.util;
 
+import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -22,11 +24,34 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectOpenCustomHashMap;
  */
 public class MutableHashedLinkedMap<K, V> implements Iterable<Map.Entry<K, V>>
 {
+    /**
+     * A strategy that uses {@link Objects#hashCode(Object)} and {@link Object#equals(Object)}.
+     */
+    public static final Strategy<? super Object> BASIC = new BasicStrategy();
+
+    /**
+     * A strategy that uses {@link System#identityHashCode(Object)} and {@code a == b} comparisons.
+     */
+    public static final Strategy<? super Object> IDENTITY = new IdentityStrategy();
+
     private final Strategy<? super K> strategy;
     private final Map<K, Entry> entries;
     private final MergeFunction<K, V> merge;
     private Entry head = null;
     private Entry last = null;
+    /*
+     * Number of changes done to the flow of the map, we do not care about value changes.
+     * This is to allow the iterator to fast fail with concurrent modification exceptions if needed.
+     */
+    private transient int changes = 0;
+
+    /**
+     * Creates a new instance using the {@link #BASIC} strategy.
+     */
+    public MutableHashedLinkedMap()
+    {
+        this(BASIC);
+    }
 
     /**
      * Creates a mutable linked map with a default new-value-selecting merge function.
@@ -73,8 +98,9 @@ public class MutableHashedLinkedMap<K, V> implements Iterable<Map.Entry<K, V>>
             return ret;
         }
 
-        var self = new Entry(key, value);
+        changes++;
 
+        var self = new Entry(key, value);
         var l = last;
         self.previous = l;
         if (l == null)
@@ -114,15 +140,40 @@ public class MutableHashedLinkedMap<K, V> implements Iterable<Map.Entry<K, V>>
         return new Iterator<>()
         {
             private Entry current = head;
+            private Entry last = null;
+            private int expectedChanges = changes;
+
             @Override public boolean hasNext() { return current != null; }
             @Override
             public Map.Entry<K, V> next()
             {
+                if (changes != expectedChanges)
+                    throw new ConcurrentModificationException();
+
                 if (!hasNext())
                     throw new NoSuchElementException();
-                var ret = current;
+
+                last = current;
                 current = current.next;
-                return ret;
+                return last;
+            }
+
+            @Override
+            public void remove()
+            {
+                if (last == null)
+                    throw new IllegalStateException("Invalid remove() call, must call next() first");
+
+                if (changes != expectedChanges)
+                    throw new ConcurrentModificationException();
+
+                var removed = entries.remove(last.getKey());
+                if (removed != last)
+                    throw new ConcurrentModificationException();
+
+                expectedChanges++;
+                MutableHashedLinkedMap.this.remove(last);
+                last = null;
             }
         };
     }
@@ -183,6 +234,8 @@ public class MutableHashedLinkedMap<K, V> implements Iterable<Map.Entry<K, V>>
             entries.put(key, entry);
         }
 
+        changes++;
+
         entry.previous = target;
         if (target.next == null)
             last = target;
@@ -230,6 +283,8 @@ public class MutableHashedLinkedMap<K, V> implements Iterable<Map.Entry<K, V>>
             entries.put(key, entry);
         }
 
+        changes++;
+
         entry.previous = target.previous;
         if (target.previous == null)
             head = entry;
@@ -244,7 +299,11 @@ public class MutableHashedLinkedMap<K, V> implements Iterable<Map.Entry<K, V>>
 
     private void remove(Entry e)
     {
-        if (head == null)
+        changes++;
+
+        var previous = e.previous;
+
+        if (head == e)
             head = e.next;
         else if (e.previous != null) // Should never be null, but just in case.
         {
@@ -253,10 +312,10 @@ public class MutableHashedLinkedMap<K, V> implements Iterable<Map.Entry<K, V>>
         }
 
         if (last == e)
-            last = e.previous;
+            last = previous;
         else if (e.next != null) // Should never be null, but just in case.
         {
-            e.next.previous = e.previous;
+            e.next.previous = previous;
             e.next = null;
         }
     }
@@ -312,6 +371,30 @@ public class MutableHashedLinkedMap<K, V> implements Iterable<Map.Entry<K, V>>
         {
             return (key == null ? 0 : strategy.hashCode(key)) ^
                    (value == null ? 0 : value.hashCode());
+        }
+    }
+
+    private static class BasicStrategy implements Strategy<Object> {
+        @Override
+        public int hashCode(Object o) {
+            return Objects.hashCode(o);
+        }
+
+        @Override
+        public boolean equals(Object a, Object b) {
+            return Objects.equals(a, b);
+        }
+    }
+
+    private static class IdentityStrategy implements Strategy<Object> {
+        @Override
+        public int hashCode(Object o) {
+            return System.identityHashCode(o);
+        }
+
+        @Override
+        public boolean equals(Object a, Object b) {
+            return a == b;
         }
     }
 }

@@ -1,0 +1,22 @@
+{
+  "item.bucket.empty_milk": {
+    "sounds": [
+      "item/bucket/empty1",
+      {
+        "name": "item/bucket/empty1",
+        "pitch": 0.9
+      },
+      "item/bucket/empty2",
+      "item/bucket/empty3"
+    ],
+    "subtitle": "subtitles.item.bucket.empty"
+  },
+  "item.bucket.fill_milk": {
+    "sounds": [
+      "item/bucket/fill1",
+      "item/bucket/fill2",
+      "item/bucket/fill3"
+    ],
+    "subtitle": "subtitles.item.bucket.fill"
+  }
+}

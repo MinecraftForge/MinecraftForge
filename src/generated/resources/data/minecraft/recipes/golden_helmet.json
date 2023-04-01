@@ -12,5 +12,6 @@
   ],
   "result": {
     "item": "minecraft:golden_helmet"
-  }
+  },
+  "show_notification": true
 }

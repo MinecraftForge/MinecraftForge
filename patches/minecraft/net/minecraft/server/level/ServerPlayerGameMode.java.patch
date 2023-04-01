@@ -9,7 +9,7 @@
 +      if (event.isCanceled() || (!this.m_9295_() && event.getResult() == net.minecraftforge.eventbus.api.Event.Result.DENY)) {
 +         return;
 +      }
-+      if (!this.f_9245_.canInteractWith(p_215120_, 1)) {
++      if (!this.f_9245_.canReach(p_215120_, 1.5)) { // Vanilla check is eye-to-center distance < 6, so padding is 6 - 4.5 = 1.5
           this.m_215125_(p_215120_, false, p_215124_, "too far");
        } else if (p_215120_.m_123342_() >= p_215123_) {
           this.f_9245_.f_8906_.m_9829_(new ClientboundBlockUpdatePacket(p_215120_, this.f_9244_.m_8055_(p_215120_)));

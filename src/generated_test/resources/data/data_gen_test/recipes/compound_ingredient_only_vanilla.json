@@ -20,5 +20,6 @@
   ],
   "result": {
     "item": "minecraft:dirt"
-  }
+  },
+  "show_notification": true
 }

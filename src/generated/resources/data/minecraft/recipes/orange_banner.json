@@ -17,5 +17,6 @@
   ],
   "result": {
     "item": "minecraft:orange_banner"
-  }
+  },
+  "show_notification": true
 }

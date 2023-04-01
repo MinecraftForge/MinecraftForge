@@ -16,11 +16,11 @@
                 float f2 = (float)(i & 255) / 255.0F;
 -               this.m_117106_(p_117119_, p_117120_, p_117123_, armoritem, flag, p_117124_, flag1, f, f1, f2, (String)null);
 -               this.m_117106_(p_117119_, p_117120_, p_117123_, armoritem, flag, p_117124_, flag1, 1.0F, 1.0F, 1.0F, "overlay");
-+               this.renderModel(p_117119_, p_117120_, p_117123_, flag1, model, f, f1, f2, this.getArmorResource(p_117121_, itemstack, p_117122_, null));
-+               this.renderModel(p_117119_, p_117120_, p_117123_, flag1, model, 1.0F, 1.0F, 1.0F, this.getArmorResource(p_117121_, itemstack, p_117122_, "overlay"));
++               this.renderModel(p_117119_, p_117120_, p_117123_, flag, model, f, f1, f2, this.getArmorResource(p_117121_, itemstack, p_117122_, null));
++               this.renderModel(p_117119_, p_117120_, p_117123_, flag, model, 1.0F, 1.0F, 1.0F, this.getArmorResource(p_117121_, itemstack, p_117122_, "overlay"));
              } else {
 -               this.m_117106_(p_117119_, p_117120_, p_117123_, armoritem, flag, p_117124_, flag1, 1.0F, 1.0F, 1.0F, (String)null);
-+               this.renderModel(p_117119_, p_117120_, p_117123_, flag1, model, 1.0F, 1.0F, 1.0F, this.getArmorResource(p_117121_, itemstack, p_117122_, null));
++               this.renderModel(p_117119_, p_117120_, p_117123_, flag, model, 1.0F, 1.0F, 1.0F, this.getArmorResource(p_117121_, itemstack, p_117122_, null));
              }
  
              if (p_117121_.f_19853_.m_246046_().m_245372_(FeatureFlags.f_244168_)) {

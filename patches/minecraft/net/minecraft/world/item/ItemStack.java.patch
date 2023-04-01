@@ -248,7 +248,7 @@
        this.m_41720_().m_5929_(p_41732_, p_41733_, this, p_41734_);
     }
  
-+   /** @deprecated Forge: Use damage source sensitive version */
++   /** @deprecated Forge: {@link net.minecraftforge.common.extensions.IForgeItemStack#onDestroyed(ItemEntity, DamageSource) Use damage source sensitive version} */
 +   @Deprecated
     public void m_150924_(ItemEntity p_150925_) {
        this.m_41720_().m_142023_(p_150925_);

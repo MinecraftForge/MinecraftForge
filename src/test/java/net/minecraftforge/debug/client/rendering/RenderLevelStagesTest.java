@@ -5,6 +5,7 @@
 
 package net.minecraftforge.debug.client.rendering;
 
+import net.minecraftforge.fml.loading.FMLLoader;
 import org.apache.logging.log4j.LogManager;
 
 import net.minecraftforge.client.event.RenderLevelStageEvent;
@@ -18,7 +19,10 @@ public class RenderLevelStagesTest
     
     public RenderLevelStagesTest()
     {
-        MinecraftForge.EVENT_BUS.addListener(this::onRenderLevelStages);
+        if (FMLLoader.getDist().isClient())
+        {
+            MinecraftForge.EVENT_BUS.addListener(this::onRenderLevelStages);
+        }
     }
     
     private int count = 0;

@@ -13,5 +13,6 @@
   ],
   "result": {
     "item": "minecraft:golden_leggings"
-  }
+  },
+  "show_notification": true
 }

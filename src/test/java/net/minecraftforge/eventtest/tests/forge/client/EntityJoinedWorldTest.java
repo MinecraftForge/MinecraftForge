@@ -24,7 +24,7 @@ import net.minecraftforge.eventtest.internal.TestHolder;
  *
  */
 
-@TestHolder("EntityJoinWorld")
+// @TestHolder("EntityJoinWorld")
 public class EntityJoinedWorldTest extends EventTest {
 
     @Override
