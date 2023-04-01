@@ -26,6 +26,8 @@ modId="mdk_datagen"
     modId="shader_resources_test"
 [[mods]]
     modId="crash_callable_test"
+[[mods]]
+    modId="custom_preset_editor_test"
 
 # LEGACY TEST CASES
 ###### The mods below are from the old test framework and need to be yeeted later again.
