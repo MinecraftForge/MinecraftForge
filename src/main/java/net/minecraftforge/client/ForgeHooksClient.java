@@ -1230,10 +1230,18 @@ public class ForgeHooksClient
             output.accept(entry.getKey(), entry.getValue());
     }
     
+    // Make sure the below method is only ever called once (by forge).
+    private static boolean initializedClientHooks = false;
     // Runs during Minecraft construction, before initial resource loading.
     @ApiStatus.Internal
     public static void initClientHooks(Minecraft mc, ReloadableResourceManager resourceManager)
     {
+        if (initializedClientHooks)
+        {
+            throw new IllegalStateException("Client hooks initialized more than once");
+        }
+        initializedClientHooks = true;
+        
         ForgeGameTestHooks.registerGametests();
         ModLoader.get().postEvent(new net.minecraftforge.client.event.RegisterClientReloadListenersEvent(resourceManager));
         ModLoader.get().postEvent(new net.minecraftforge.client.event.EntityRenderersEvent.RegisterLayerDefinitions());
