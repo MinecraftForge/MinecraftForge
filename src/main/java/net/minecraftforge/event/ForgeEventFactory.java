@@ -106,24 +106,10 @@ import net.minecraftforge.event.entity.living.LivingPackSizeEvent;
 import net.minecraftforge.event.entity.living.MobSpawnEvent;
 import net.minecraftforge.event.entity.living.MobSpawnEvent.AllowDespawn;
 import net.minecraftforge.event.entity.living.ZombieEvent.SummonAidEvent;
+import net.minecraftforge.event.entity.player.*;
 import net.minecraftforge.event.entity.player.AdvancementEvent.AdvancementEarnEvent;
 import net.minecraftforge.event.entity.player.AdvancementEvent.AdvancementProgressEvent;
 import net.minecraftforge.event.entity.player.AdvancementEvent.AdvancementProgressEvent.ProgressType;
-import net.minecraftforge.event.entity.player.ArrowLooseEvent;
-import net.minecraftforge.event.entity.player.ArrowNockEvent;
-import net.minecraftforge.event.entity.player.BonemealEvent;
-import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
-import net.minecraftforge.event.entity.player.FillBucketEvent;
-import net.minecraftforge.event.entity.player.ItemTooltipEvent;
-import net.minecraftforge.event.entity.player.PermissionsChangedEvent;
-import net.minecraftforge.event.entity.player.PlayerDestroyItemEvent;
-import net.minecraftforge.event.entity.player.PlayerEvent;
-import net.minecraftforge.event.entity.player.PlayerFlyableFallEvent;
-import net.minecraftforge.event.entity.player.PlayerSetSpawnEvent;
-import net.minecraftforge.event.entity.player.PlayerSleepInBedEvent;
-import net.minecraftforge.event.entity.player.PlayerWakeUpEvent;
-import net.minecraftforge.event.entity.player.SleepingLocationCheckEvent;
-import net.minecraftforge.event.entity.player.SleepingTimeCheckEvent;
 import net.minecraftforge.event.furnace.FurnaceFuelBurnTimeEvent;
 import net.minecraftforge.event.level.BlockEvent;
 import net.minecraftforge.event.level.BlockEvent.BlockToolModificationEvent;
@@ -795,9 +781,21 @@ public class ForgeEventFactory
         MinecraftForge.EVENT_BUS.post(new PlayerEvent.PlayerLoggedInEvent(player));
     }
 
+    public static Component firePlayerLoginMessage(ServerPlayer player, Component message, String oldName)
+    {
+        PlayerJoinMessageEvent event = new PlayerJoinMessageEvent(player, message, oldName);
+        return MinecraftForge.EVENT_BUS.post(event) ? null : event.getMessage();
+    }
+
     public static void firePlayerLoggedOut(Player player)
     {
         MinecraftForge.EVENT_BUS.post(new PlayerEvent.PlayerLoggedOutEvent(player));
+    }
+
+    public static Component firePlayerLogoutMessage(ServerPlayer player, Component message)
+    {
+        PlayerLeaveMessageEvent event = new PlayerLeaveMessageEvent(player, message);
+        return MinecraftForge.EVENT_BUS.post(event) ? null : event.getMessage();
     }
 
     public static void firePlayerRespawnEvent(Player player, boolean endConquered)
