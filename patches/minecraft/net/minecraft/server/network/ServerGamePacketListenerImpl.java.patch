@@ -52,6 +52,17 @@
                       InteractionResult interactionresult = this.f_9743_.f_8941_.m_7179_(this.f_9743_, serverlevel, itemstack, interactionhand, blockhitresult);
                       if (direction == Direction.UP && !interactionresult.m_19077_() && blockpos.m_123342_() >= i - 1 && m_9790_(this.f_9743_, itemstack)) {
                          Component component = Component.m_237110_("build.tooHigh", i - 1).m_130940_(ChatFormatting.RED);
+@@ -1116,7 +_,9 @@
+       this.f_241681_.close();
+       f_9744_.info("{} lost connection: {}", this.f_9743_.m_7755_().getString(), p_9825_.getString());
+       this.f_9745_.m_129929_();
+-      this.f_9745_.m_6846_().m_240416_(Component.m_237110_("multiplayer.player.left", this.f_9743_.m_5446_()).m_130940_(ChatFormatting.YELLOW), false);
++      Component leaveMessage = net.minecraftforge.event.ForgeEventFactory.firePlayerLogoutMessage(this.f_9743_, Component.m_237110_("multiplayer.player.left", this.f_9743_.m_5446_()).m_130940_(ChatFormatting.YELLOW));
++      if (leaveMessage != null && !leaveMessage.getString().isEmpty())
++         this.f_9745_.m_6846_().m_240416_(leaveMessage, false);
+       this.f_9743_.m_9231_();
+       this.f_9745_.m_6846_().m_11286_(this.f_9743_);
+       this.f_9743_.m_8967_().m_7670_();
 @@ -1182,10 +_,13 @@
                 }
  

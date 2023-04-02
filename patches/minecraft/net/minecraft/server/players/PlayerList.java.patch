@@ -24,6 +24,26 @@
        servergamepacketlistenerimpl.m_9829_(new ClientboundUpdateRecipesPacket(this.f_11195_.m_129894_().m_44051_()));
        servergamepacketlistenerimpl.m_9829_(new ClientboundUpdateTagsPacket(TagNetworkSerialization.m_245799_(this.f_243858_)));
        this.m_11289_(p_11263_);
+@@ -184,14 +_,15 @@
+       p_11263_.m_8952_().m_12789_(p_11263_);
+       this.m_11273_(serverlevel1.m_6188_(), p_11263_);
+       this.f_11195_.m_129929_();
+-      MutableComponent mutablecomponent;
++      Component component;
+       if (p_11263_.m_36316_().getName().equalsIgnoreCase(s)) {
+-         mutablecomponent = Component.m_237110_("multiplayer.player.joined", p_11263_.m_5446_());
++         component = net.minecraftforge.event.ForgeEventFactory.firePlayerLoginMessage(p_11263_, Component.m_237110_("multiplayer.player.joined", p_11263_.m_5446_()).m_130940_(ChatFormatting.YELLOW), null);
+       } else {
+-         mutablecomponent = Component.m_237110_("multiplayer.player.joined.renamed", p_11263_.m_5446_(), s);
++         component = net.minecraftforge.event.ForgeEventFactory.firePlayerLoginMessage(p_11263_, Component.m_237110_("multiplayer.player.joined.renamed", p_11263_.m_5446_(), s).m_130940_(ChatFormatting.YELLOW), s);
+       }
+ 
+-      this.m_240416_(mutablecomponent.m_130940_(ChatFormatting.YELLOW), false);
++      if (component != null && !component.getString().isEmpty())
++         this.m_240416_(component, false);
+       servergamepacketlistenerimpl.m_9774_(p_11263_.m_20185_(), p_11263_.m_20186_(), p_11263_.m_20189_(), p_11263_.m_146908_(), p_11263_.m_146909_());
+       ServerStatus serverstatus = this.f_11195_.m_129928_();
+       if (serverstatus != null) {
 @@ -249,6 +_,7 @@
        }
  
