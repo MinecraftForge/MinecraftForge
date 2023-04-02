@@ -5,13 +5,11 @@
 
 package net.minecraftforge.event;
 
-import java.util.Objects;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ServerboundChatPacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Cancelable;
-import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.LogicalSide;
 import org.jetbrains.annotations.ApiStatus;
 
@@ -26,28 +24,17 @@ import org.jetbrains.annotations.ApiStatus;
  * only on the {@linkplain LogicalSide#SERVER logical server}.
  **/
 @Cancelable
-public class ServerChatEvent extends Event
+public class ServerChatEvent extends MessageEvent
 {
-    private final ServerPlayer player;
     private final String username;
     private final String rawText;
-    private Component message;
 
     @ApiStatus.Internal
     public ServerChatEvent(ServerPlayer player, String rawText, Component message)
     {
-        this.player = player;
+        super(player, message);
         this.username = player.getGameProfile().getName();
         this.rawText = rawText;
-        this.message = message;
-    }
-
-    /**
-     * {@return the player who initiated the chat action}
-     */
-    public ServerPlayer getPlayer()
-    {
-        return this.player;
     }
 
     /**
@@ -64,21 +51,5 @@ public class ServerChatEvent extends Event
     public String getRawText()
     {
         return this.rawText;
-    }
-
-    /**
-     * Set the message to be sent to the relevant clients.
-     */
-    public void setMessage(Component message)
-    {
-        this.message = Objects.requireNonNull(message);
-    }
-
-    /**
-     * {@return the message that will be sent to the relevant clients, if the event is not cancelled}
-     */
-    public Component getMessage()
-    {
-        return this.message;
     }
 }
