@@ -22,7 +22,7 @@
        }
 +      modUpdateNotification = net.minecraftforge.client.gui.TitleScreenModUpdateIndicator.init(this, modButton);
  
-       this.m_142416_(new ImageButton(this.f_96543_ / 2 - 124, l + 72 + 12, 20, 20, 0, 106, 20, Button.f_93617_, 256, 256, (p_96791_) -> {
+       this.m_142416_(new ImageButton(this.f_96543_ / 2 - 124, l + 72 + 12, 20, 20, 0, 106, 20, Button.f_93617_, 256, 256, (p_280830_) -> {
           this.f_96541_.m_91152_(new LanguageSelectScreen(this, this.f_96541_.f_91066_, this.f_96541_.m_91102_()));
 @@ -162,7 +_,7 @@
        }).m_252987_(this.f_96543_ / 2 - 100, p_96764_ + p_96765_ * 1, 200, 20).m_257505_(tooltip).m_253136_())).f_93623_ = flag;
@@ -33,35 +33,35 @@
     }
  
     @Nullable
-@@ -245,6 +_,7 @@
-             this.f_232768_.m_232790_(p_96739_, i);
+@@ -244,6 +_,7 @@
+             this.f_232768_.m_280409_(p_282860_, i);
           }
  
-+         net.minecraftforge.client.ForgeHooksClient.renderMainMenu(this, p_96739_, this.f_96547_, this.f_96543_, this.f_96544_, i);
++         net.minecraftforge.client.ForgeHooksClient.renderMainMenu(this, p_282860_, this.f_96547_, this.f_96543_, this.f_96544_, i);
           if (this.f_96721_ != null) {
-             p_96739_.m_85836_();
-             p_96739_.m_252880_((float)(this.f_96543_ / 2 + 90), 70.0F, 0.0F);
-@@ -267,7 +_,14 @@
+             this.f_96721_.m_280672_(p_282860_, this.f_96543_, this.f_96547_, i);
+          }
+@@ -259,7 +_,14 @@
              s = s + I18n.m_118938_("menu.modded");
           }
  
--         m_93236_(p_96739_, this.f_96547_, s, 2, this.f_96544_ - 10, 16777215 | i);
+-         p_282860_.m_280488_(this.f_96547_, s, 2, this.f_96544_ - 10, 16777215 | i);
 +         net.minecraftforge.internal.BrandingControl.forEachLine(true, true, (brdline, brd) ->
-+            m_93236_(p_96739_, this.f_96547_, brd, 2, this.f_96544_ - ( 10 + brdline * (this.f_96547_.f_92710_ + 1)), 16777215 | i)
++            p_282860_.m_280488_(this.f_96547_, brd, 2, this.f_96544_ - ( 10 + brdline * (this.f_96547_.f_92710_ + 1)), 16777215 | i)
 +         );
 +
 +         net.minecraftforge.internal.BrandingControl.forEachAboveCopyrightLine((brdline, brd) ->
-+            m_93236_(p_96739_, this.f_96547_, brd, this.f_96543_ - f_96547_.m_92895_(brd), this.f_96544_ - (10 + (brdline + 1) * ( this.f_96547_.f_92710_ + 1)), 16777215 | i)
++            p_282860_.m_280488_(this.f_96547_, brd, this.f_96543_ - f_96547_.m_92895_(brd), this.f_96544_ - (10 + (brdline + 1) * ( this.f_96547_.f_92710_ + 1)), 16777215 | i)
 +         );
 +
  
           for(GuiEventListener guieventlistener : this.m_6702_()) {
              if (guieventlistener instanceof AbstractWidget) {
-@@ -280,6 +_,7 @@
-             RenderSystem.m_69482_();
-             this.f_96726_.m_86412_(p_96739_, p_96740_, p_96741_, p_96742_);
+@@ -272,6 +_,7 @@
+             RenderSystem.enableDepthTest();
+             this.f_96726_.m_88315_(p_282860_, p_281753_, p_283539_, p_282628_);
           }
-+         if (f1 >= 1.0f) modUpdateNotification.m_86412_(p_96739_, p_96740_, p_96741_, p_96742_);
++         if (f1 >= 1.0f) modUpdateNotification.m_88315_(p_282860_, p_281753_, p_283539_, p_282628_);
  
        }
     }

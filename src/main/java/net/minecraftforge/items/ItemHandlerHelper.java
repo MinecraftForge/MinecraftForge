@@ -38,7 +38,7 @@ public class ItemHandlerHelper
 
     public static boolean canItemStacksStack(@NotNull ItemStack a, @NotNull ItemStack b)
     {
-        if (a.isEmpty() || !a.sameItem(b) || a.hasTag() != b.hasTag())
+        if (a.isEmpty() || !ItemStack.isSameItem(a, b) || a.hasTag() != b.hasTag())
             return false;
 
         return (!a.hasTag() || a.getTag().equals(b.getTag())) && a.areCapsCompatible(b);
@@ -150,7 +150,7 @@ public class ItemHandlerHelper
         if (stack.isEmpty()) return;
 
         IItemHandler inventory = new PlayerMainInvWrapper(player.getInventory());
-        Level level = player.level;
+        Level level = player.level();
 
         // try adding it into the inventory
         ItemStack remainder = stack;

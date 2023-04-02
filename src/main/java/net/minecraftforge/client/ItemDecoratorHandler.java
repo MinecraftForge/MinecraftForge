@@ -9,12 +9,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import net.minecraft.client.gui.GuiGraphics;
 import org.jetbrains.annotations.ApiStatus;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 
 import net.minecraft.client.gui.Font;
 import net.minecraft.world.item.Item;
@@ -54,12 +54,12 @@ public final class ItemDecoratorHandler
         return DECORATOR_LOOKUP.getOrDefault(stack.getItem(), EMPTY);
     }
 
-    public void render(PoseStack poseStack, Font font, ItemStack stack, int xOffset, int yOffset)
+    public void render(GuiGraphics guiGraphics, Font font, ItemStack stack, int xOffset, int yOffset)
     {
         resetRenderState();
         for (IItemDecorator itemDecorator : itemDecorators)
         {
-            if (itemDecorator.render(poseStack, font, stack, xOffset, yOffset))
+            if (itemDecorator.render(guiGraphics, font, stack, xOffset, yOffset))
                 resetRenderState();
         }
     }

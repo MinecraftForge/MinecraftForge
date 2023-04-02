@@ -1,7 +1,7 @@
 --- a/net/minecraft/world/level/block/NoteBlock.java
 +++ b/net/minecraft/world/level/block/NoteBlock.java
-@@ -98,7 +_,9 @@
-       if (p_55035_.f_46443_) {
+@@ -89,7 +_,9 @@
+       } else if (p_55035_.f_46443_) {
           return InteractionResult.SUCCESS;
        } else {
 -         p_55034_ = p_55034_.m_61122_(f_55013_);
@@ -11,7 +11,7 @@
           p_55035_.m_7731_(p_55036_, p_55034_, 3);
           this.m_260916_(p_55037_, p_55034_, p_55035_, p_55036_);
           p_55037_.m_36220_(Stats.f_12960_);
-@@ -114,6 +_,9 @@
+@@ -109,6 +_,9 @@
     }
  
     public boolean m_8133_(BlockState p_55023_, Level p_55024_, BlockPos p_55025_, int p_55026_, int p_55027_) {

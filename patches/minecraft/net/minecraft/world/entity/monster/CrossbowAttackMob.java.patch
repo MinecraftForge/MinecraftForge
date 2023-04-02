@@ -9,6 +9,6 @@
        ItemStack itemstack = p_32337_.m_21120_(interactionhand);
 -      if (p_32337_.m_21055_(Items.f_42717_)) {
 +      if (p_32337_.m_21093_(is -> is.m_41720_() instanceof CrossbowItem)) {
-          CrossbowItem.m_40887_(p_32337_.f_19853_, p_32337_, interactionhand, itemstack, p_32338_, (float)(14 - p_32337_.f_19853_.m_46791_().m_19028_() * 4));
+          CrossbowItem.m_40887_(p_32337_.m_9236_(), p_32337_, interactionhand, itemstack, p_32338_, (float)(14 - p_32337_.m_9236_().m_46791_().m_19028_() * 4));
        }
  

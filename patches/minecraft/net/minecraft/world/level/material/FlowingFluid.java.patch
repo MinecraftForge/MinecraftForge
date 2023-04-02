@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/material/FlowingFluid.java
 +++ b/net/minecraft/world/level/material/FlowingFluid.java
-@@ -158,7 +_,7 @@
+@@ -159,7 +_,7 @@
           BlockState blockstate = p_256464_.m_8055_(blockpos);
           FluidState fluidstate = blockstate.m_60819_();
           if (fluidstate.m_76152_().m_6212_(this) && this.m_76061_(direction, p_256464_, p_76037_, p_76038_, blockpos, blockstate)) {
@@ -9,7 +9,7 @@
                 ++j;
              }
  
-@@ -166,7 +_,7 @@
+@@ -167,7 +_,7 @@
           }
        }
  
@@ -17,8 +17,8 @@
 +      if (j >= 2) {
           BlockState blockstate1 = p_256464_.m_8055_(p_76037_.m_7495_());
           FluidState fluidstate1 = blockstate1.m_60819_();
-          if (blockstate1.m_60767_().m_76333_() || this.m_76096_(fluidstate1)) {
-@@ -230,6 +_,15 @@
+          if (blockstate1.m_280296_() || this.m_76096_(fluidstate1)) {
+@@ -231,6 +_,15 @@
        return this.m_5613_().m_76145_().m_61124_(f_75947_, Boolean.valueOf(p_76069_));
     }
  

@@ -50,7 +50,7 @@
        Set<UnbakedModel> set = Sets.newLinkedHashSet();
  
        for(BlockModel blockmodel = this; blockmodel.f_111419_ != null && blockmodel.f_111418_ == null; blockmodel = blockmodel.f_111418_) {
-@@ -168,11 +_,24 @@
+@@ -168,11 +_,18 @@
        });
     }
  
@@ -65,13 +65,7 @@
     public BakedModel m_111449_(ModelBaker p_249720_, BlockModel p_111451_, Function<Material, TextureAtlasSprite> p_111452_, ModelState p_111453_, ResourceLocation p_111454_, boolean p_111455_) {
 +      return net.minecraftforge.client.model.geometry.UnbakedGeometryHelper.bake(this, p_249720_, p_111451_, p_111452_, p_111453_, p_111454_, p_111455_);
 +   }
-+
-+   /**
-+    * @deprecated Forge: For internal use only. Use {@link #bake(ModelBaker, BlockModel, Function, ModelState, ResourceLocation, boolean)}.
-+    */
-+   @Deprecated(forRemoval = true, since = "1.19.2") // TODO: We cannot remove it since it's vanilla code, but make it private in 1.20
-+   public BakedModel bakeVanilla(ModelBaker p_249720_, BlockModel p_111451_, Function<Material, TextureAtlasSprite> p_111452_, ModelState p_111453_, ResourceLocation p_111454_, boolean p_111455_, net.minecraftforge.client.RenderTypeGroup renderTypes) {
-+      if (true) return net.minecraftforge.client.model.geometry.UnbakedGeometryHelper.bakeVanilla(this, p_249720_, p_111451_, p_111452_, p_111453_, p_111454_); // Redirected, in case anyone actually uses this
++   private BakedModel bakeVanilla(ModelBaker p_249720_, BlockModel p_111451_, Function<Material, TextureAtlasSprite> p_111452_, ModelState p_111453_, ResourceLocation p_111454_, boolean p_111455_, net.minecraftforge.client.RenderTypeGroup renderTypes) {
        TextureAtlasSprite textureatlassprite = p_111452_.apply(this.m_111480_("particle"));
        if (this.m_111490_() == ModelBakery.f_119233_) {
           return new BuiltInModel(this.m_111491_(), this.m_246736_(p_249720_, p_111451_), textureatlassprite, this.m_111479_().m_111526_());

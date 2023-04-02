@@ -50,60 +50,64 @@ public class ClientCommandTest
                         .then(Commands.literal("server")
                                 .executes((context) -> {
                                     context.getSource().getServer();
-                                    context.getSource().sendSuccess(Component.literal("Successfully called getServer should have errored"), false);
+                                    context.getSource().sendSuccess(() ->Component.literal("Successfully called getServer should have errored"), false);
                                     return 1;
                                 }))
                         // Used for checking if attempting to get the server level on the client side errors
                         .then(Commands.literal("level")
                                 .executes((context) -> {
                                     context.getSource().getLevel();
-                                    context.getSource().sendSuccess(Component.literal("Successfully called getLevel should have errored"), false);
+                                    context.getSource().sendSuccess(() ->Component.literal("Successfully called getLevel should have errored"), false);
                                     return 1;
                                 }))
                         // Used for checking if getting a known objective argument works on the client side
                         .then(Commands.literal("get_objective")
                                 .then(Commands.argument("objective", ObjectiveArgument.objective())
                                         .executes((context) -> {
-                                            context.getSource().sendSuccess(Component.literal("Regular: ")
-                                                    .append(ObjectiveArgument.getObjective(context, "objective").getFormattedDisplayName()), false);
+                                            final Component msg = Component.literal("Regular: ")
+                                                    .append(ObjectiveArgument.getObjective(context, "objective").getFormattedDisplayName());
+                                            context.getSource().sendSuccess(() -> msg, false);
                                             return 1;
                                         })))
                         // Used for checking if getting a known advancement works on the client side
                         .then(Commands.literal("get_advancement")
                                 .then(Commands.argument("advancement", ResourceLocationArgument.id())
                                         .executes((context) -> {
-                                            context.getSource().sendSuccess(ResourceLocationArgument.getAdvancement(context, "advancement").getChatComponent(),
-                                                    false);
+                                            final Component msg = ResourceLocationArgument.getAdvancement(context, "advancement").getChatComponent();
+                                            context.getSource().sendSuccess(() -> msg, false);
                                             return 1;
                                         })))
                         // Used for checking if getting a known recipe works on the client side
                         .then(Commands.literal("get_recipe")
                                 .then(Commands.argument("recipe", ResourceLocationArgument.id())
                                         .executes((context) -> {
+                                            final Component msg = ResourceLocationArgument.getRecipe(context, "recipe").getResultItem(context.getSource().registryAccess()).getDisplayName();
                                             context.getSource()
-                                                    .sendSuccess(ResourceLocationArgument.getRecipe(context, "recipe").getResultItem(context.getSource().registryAccess()).getDisplayName(), false);
+                                                    .sendSuccess(() -> msg, false);
                                             return 1;
                                         })))
                         // Used for checking if getting a team works on the client side
                         .then(Commands.literal("get_team")
                                 .then(Commands.argument("team", TeamArgument.team())
                                         .executes((context) -> {
-                                            context.getSource().sendSuccess(TeamArgument.getTeam(context, "team").getFormattedDisplayName(), false);
+                                            final Component msg = TeamArgument.getTeam(context, "team").getFormattedDisplayName();
+                                            context.getSource().sendSuccess(() -> msg, false);
                                             return 1;
                                         })))
                         // Used for checking if a block position is valid works on the client side
                         .then(Commands.literal("get_loaded_blockpos")
                                 .then(Commands.argument("blockpos", BlockPosArgument.blockPos())
                                         .executes((context) -> {
+                                            final Component msg = Component.literal(BlockPosArgument.getLoadedBlockPos(context, "blockpos").toString());
                                             context.getSource()
-                                                    .sendSuccess(Component.literal(BlockPosArgument.getLoadedBlockPos(context, "blockpos").toString()), false);
+                                                    .sendSuccess(() -> msg, false);
                                             return 1;
                                         })))
                         // Used for checking if a command can have a requirement
                         .then(Commands.literal("requires")
                                 .requires((source) -> false)
                                 .executes((context) -> {
-                                    context.getSource().sendSuccess(Component.literal("Executed command"), false);
+                                    context.getSource().sendSuccess(() ->Component.literal("Executed command"), false);
                                     return 1;
                                 }))
                         // Used for testing the screen after using commands
@@ -114,7 +118,7 @@ public class ClientCommandTest
         LiteralArgumentBuilder<CommandSourceStack> fork = Commands.literal("clientcommandfork");
         fork.fork(event.getDispatcher().getRoot(), (context) -> List.of(context.getSource(), context.getSource()))
                 .executes((context) -> {
-                    context.getSource().sendSuccess(Component.literal("Executing forked command"), false);
+                    context.getSource().sendSuccess(() ->Component.literal("Executing forked command"), false);
                     return 1;
                 });
         event.getDispatcher().register(fork);
@@ -122,12 +126,12 @@ public class ClientCommandTest
 
     private int testCommand(CommandContext<CommandSourceStack> context)
     {
-        context.getSource().sendSuccess(Component.literal("Input: " + ResourceLocationArgument.getId(context, "block")), false);
-        context.getSource().sendSuccess(Component.literal("Teams: " + context.getSource().getAllTeams()), false);
-        context.getSource().sendSuccess(Component.literal("Players: " + context.getSource().getOnlinePlayerNames()), false);
-        context.getSource().sendSuccess(Component.literal("First recipe: " + context.getSource().getRecipeNames().findFirst().get()), false);
-        context.getSource().sendSuccess(Component.literal("Levels: " + context.getSource().levels()), false);
-        context.getSource().sendSuccess(Component.literal("Registry Access: " + context.getSource().registryAccess()), false);
+        context.getSource().sendSuccess(() ->Component.literal("Input: " + ResourceLocationArgument.getId(context, "block")), false);
+        context.getSource().sendSuccess(() ->Component.literal("Teams: " + context.getSource().getAllTeams()), false);
+        context.getSource().sendSuccess(() ->Component.literal("Players: " + context.getSource().getOnlinePlayerNames()), false);
+        context.getSource().sendSuccess(() ->Component.literal("First recipe: " + context.getSource().getRecipeNames().findFirst().get()), false);
+        context.getSource().sendSuccess(() ->Component.literal("Levels: " + context.getSource().levels()), false);
+        context.getSource().sendSuccess(() ->Component.literal("Registry Access: " + context.getSource().registryAccess()), false);
         return 0;
     }
 }

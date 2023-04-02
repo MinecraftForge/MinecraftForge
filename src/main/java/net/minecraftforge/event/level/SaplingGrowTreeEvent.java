@@ -9,11 +9,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.world.level.block.SaplingBlock;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Cancelable;
@@ -22,8 +19,6 @@ import org.jetbrains.annotations.Nullable;
 
 /**
  * This event is fired whenever a sapling, fungus, mushroom or azalea grows into a tree.
- * This event is fired during sapling growth in
- * {@link SaplingBlock#advanceTree(ServerLevel, BlockPos, BlockState, RandomSource)}.
  * <p>
  * This event is not {@linkplain Cancelable cancellable} but does {@linkplain HasResult have a result}.
  * {@linkplain Result#ALLOW ALLOW} and {@linkplain Result#DEFAULT DEFAULT} will allow the sapling to grow
@@ -32,8 +27,8 @@ import org.jetbrains.annotations.Nullable;
  * <p>
  * This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus}
  * only on the {@linkplain net.minecraftforge.fml.LogicalSide#SERVER logical server}.
- * TODO 1.20 rename event
  */
+// TODO: Rename to BlockFeatureGrowEvent in 1.20
 @HasResult
 public class SaplingGrowTreeEvent extends LevelEvent
 {
@@ -41,12 +36,6 @@ public class SaplingGrowTreeEvent extends LevelEvent
     private final BlockPos pos;
     @Nullable
     private Holder<ConfiguredFeature<?, ?>> feature;
-
-    @Deprecated(forRemoval = true, since = "1.19.2")
-    public SaplingGrowTreeEvent(LevelAccessor level, RandomSource randomSource, BlockPos pos)
-    {
-        this(level, randomSource, pos, null);
-    }
 
     public SaplingGrowTreeEvent(LevelAccessor level, RandomSource randomSource, BlockPos pos, @Nullable Holder<ConfiguredFeature<?, ?>> feature)
     {

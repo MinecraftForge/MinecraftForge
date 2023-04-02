@@ -1,7 +1,7 @@
 --- a/net/minecraft/client/gui/screens/OptionsScreen.java
 +++ b/net/minecraft/client/gui/screens/OptionsScreen.java
 @@ -151,6 +_,14 @@
-       super.m_86412_(p_96249_, p_96250_, p_96251_, p_96252_);
+       super.m_88315_(p_283520_, p_281826_, p_283378_, p_281975_);
     }
  
 +    @Override
@@ -13,5 +13,5 @@
 +    }
 +
     private Button m_260993_(Component p_261565_, Supplier<Screen> p_262119_) {
-       return Button.m_253074_(p_261565_, (p_261361_) -> {
+       return Button.m_253074_(p_261565_, (p_280808_) -> {
           this.f_96541_.m_91152_(p_262119_.get());

@@ -25,6 +25,7 @@ import net.minecraft.world.scores.Scoreboard;
 
 import java.util.Collection;
 import java.util.Set;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -44,9 +45,9 @@ public class ClientCommandSourceStack extends CommandSourceStack
      * Sends a success message without attempting to get the server side list of admins
      */
     @Override
-    public void sendSuccess(Component message, boolean sendToAdmins)
+    public void sendSuccess(Supplier<Component> message, boolean sendToAdmins)
     {
-        Minecraft.getInstance().player.sendSystemMessage(message);
+        Minecraft.getInstance().player.sendSystemMessage(message.get());
     }
 
     /**

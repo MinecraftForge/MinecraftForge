@@ -1,9 +1,9 @@
 --- a/net/minecraft/server/level/ChunkHolder.java
 +++ b/net/minecraft/server/level/ChunkHolder.java
-@@ -67,6 +_,7 @@
+@@ -63,6 +_,7 @@
+    private final ChunkHolder.LevelChangeListener f_140015_;
     private final ChunkHolder.PlayerProvider f_140016_;
     private boolean f_140017_;
-    private boolean f_140018_;
 +   LevelChunk currentlyLoading; // Forge: Used to bypass future chain when loading chunks.
     private CompletableFuture<Void> f_142981_ = CompletableFuture.completedFuture((Void)null);
  

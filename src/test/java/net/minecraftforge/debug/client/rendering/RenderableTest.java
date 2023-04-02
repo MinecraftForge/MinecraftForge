@@ -7,8 +7,6 @@ package net.minecraftforge.debug.client.rendering;
 
 import java.util.Map;
 
-import com.mojang.math.Transformation;
-import net.minecraftforge.common.util.TransformationHelper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -29,7 +27,6 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.ForgeRenderTypes;
 import net.minecraftforge.client.event.ModelEvent;
 import net.minecraftforge.client.event.RegisterClientReloadListenersEvent;
-import net.minecraftforge.client.event.RenderLevelLastEvent;
 import net.minecraftforge.client.event.RenderLevelStageEvent;
 import net.minecraftforge.client.event.RenderLevelStageEvent.Stage;
 import net.minecraftforge.client.model.geometry.StandaloneGeometryBakingContext;
@@ -44,11 +41,10 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import org.joml.Matrix4f;
-import org.joml.Quaternionf;
 
 /**
  * This mod is testing the use of {@link RenderLevelStageEvent} and is a modifaction of a pre-existing test mod that used the old
- * {@link RenderLevelLastEvent}. To restore the old behavior, set {@link #USE_LEVEL_RENDERER_STAGE} to false.
+ * RenderLevelLastEvent. To restore the old behavior, set {@link #USE_LEVEL_RENDERER_STAGE} to false.
  *
  * When you enter a world, there should be 6 sugar gliders rendering at (0, 120, 0) that test the various stages in {@link RenderLevelStageEvent}.
  * From left to right (with the sugar gliders facing you) they represent {@link Stage#AFTER_SKY}, {@link Stage#AFTER_SOLID_BLOCKS},
@@ -64,8 +60,6 @@ public class RenderableTest
     private static final Logger LOGGER = LogManager.getLogger();
 
     public static final boolean ENABLED = false; // Renders at (0, 120, 0)
-    public static final boolean USE_LEVEL_RENDERER_STAGE = true; // True when using RenderLevelStageEvent. False when using RenderLevelLastEvent
-
     public RenderableTest()
     {
         if (ENABLED)
@@ -90,13 +84,8 @@ public class RenderableTest
             var forgeBus = MinecraftForge.EVENT_BUS;
             modBus.addListener(Client::registerModels);
             modBus.addListener(Client::registerReloadListeners);
-            if (USE_LEVEL_RENDERER_STAGE)
-            {
-                modBus.addListener(Client::registerStage);
-                forgeBus.addListener(Client::renderStage);
-            }
-            else
-                forgeBus.addListener(Client::renderLast);
+            modBus.addListener(Client::registerStage);
+            forgeBus.addListener(Client::renderStage);
         }
 
         private static void registerModels(ModelEvent.RegisterAdditional event)
@@ -137,12 +126,6 @@ public class RenderableTest
         {
             var stage = event.register(new ResourceLocation(MODID, "test_stage"), null);
             LOGGER.info("Registered RenderLevelStageEvent.Stage: {}", stage);
-        }
-
-        public static void renderLast(RenderLevelLastEvent event)
-        {
-            Vec3 cam = Minecraft.getInstance().gameRenderer.getMainCamera().getPosition();
-            render(Stage.AFTER_SKY, event.getPoseStack(), 0, event.getPartialTick(), cam.x, cam.y, cam.z, 0);
         }
 
         private static void renderStage(RenderLevelStageEvent event)

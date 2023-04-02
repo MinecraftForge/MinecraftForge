@@ -18,7 +18,7 @@ import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ComputeFovModifierEvent;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.CreativeModeTabEvent;
+import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.event.VanillaGameEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -86,9 +86,9 @@ public class StopUsingItemTest
 		}
 	});
 
-	private void addCreative(CreativeModeTabEvent.BuildContents event)
+	private void addCreative(BuildCreativeModeTabContentsEvent event)
 	{
-		if (event.getTab() == CreativeModeTabs.COMBAT)
+		if (event.getTabKey() == CreativeModeTabs.COMBAT)
 		{
 			event.accept(BAD);
 			event.accept(GOOD);
@@ -125,14 +125,14 @@ public class StopUsingItemTest
 		{
 			player.startUsingItem(hand);
 			player.getAbilities().mayfly = true;
-			if (player.level.isClientSide)
+			if (player.level().isClientSide)
 				fovChange = 10f;
 			return InteractionResultHolder.consume(player.getItemInHand(hand));
 		}
 
 		public static void removeFov(LivingEntity living)
 		{
-			if (living.level.isClientSide)
+			if (living.level().isClientSide)
 				fovChange = 1f;
 			if (living instanceof Player player)
 			{

@@ -5,8 +5,6 @@
 
 package net.minecraftforge.common;
 
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.graph.ElementOrder;
@@ -19,15 +17,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.mojang.logging.LogUtils;
 import it.unimi.dsi.fastutil.booleans.BooleanConsumer;
-import java.io.IOException;
-import java.io.Reader;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.function.Consumer;
-import java.util.stream.Collectors;
+import net.minecraft.core.Holder;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.packs.resources.PreparableReloadListener;
@@ -40,8 +31,6 @@ import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.CreativeModeTabSearchRegistry;
-import net.minecraftforge.event.CreativeModeTabEvent;
-import net.minecraftforge.fml.ModLoader;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.fml.loading.toposort.TopologicalSort;
@@ -51,12 +40,22 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
+import java.io.IOException;
+import java.io.Reader;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
 public final class CreativeModeTabRegistry
 {
     private static final Logger LOGGER = LogUtils.getLogger();
     private static final ResourceLocation CREATIVE_MODE_TAB_ORDERING_JSON = new ResourceLocation("forge", "creative_mode_tab_ordering.json");
     private static final List<CreativeModeTab> SORTED_TABS = new ArrayList<>();
     private static final List<CreativeModeTab> SORTED_TABS_VIEW = Collections.unmodifiableList(SORTED_TABS);
+    private static final List<CreativeModeTab> DEFAULT_TABS = new ArrayList<>();
 
     /**
      * {@return an unmodifiable view of the sorted list of creative mode tabs in ascending order}
@@ -64,6 +63,10 @@ public final class CreativeModeTabRegistry
     public static List<CreativeModeTab> getSortedCreativeModeTabs()
     {
         return SORTED_TABS_VIEW;
+    }
+
+    public static List<CreativeModeTab> getDefaultTabs() {
+        return Collections.unmodifiableList(DEFAULT_TABS);
     }
 
     /**
@@ -74,7 +77,7 @@ public final class CreativeModeTabRegistry
     @Nullable
     public static CreativeModeTab getTab(ResourceLocation name)
     {
-        return creativeModeTabs.get(name);
+        return BuiltInRegistries.CREATIVE_MODE_TAB.get(name);
     }
 
     /**
@@ -85,67 +88,10 @@ public final class CreativeModeTabRegistry
     @Nullable
     public static ResourceLocation getName(CreativeModeTab tab)
     {
-        return creativeModeTabs.inverse().get(tab);
+        return BuiltInRegistries.CREATIVE_MODE_TAB.getKey(tab);
     }
 
-    private static void processCreativeModeTab(CreativeModeTab creativeModeTab, ResourceLocation name, List<Object> afterEntries, List<Object> beforeEntries)
-    {
-        creativeModeTabs.put(name, creativeModeTab);
-        for (Object after : afterEntries)
-        {
-            ResourceLocation other = getCreativeModeTabName(after);
-            edges.put(other, name);
-        }
-        for (Object before : beforeEntries)
-        {
-            ResourceLocation other = getCreativeModeTabName(before);
-            edges.put(name, other);
-        }
-    }
-
-    private static ResourceLocation getCreativeModeTabName(Object entry)
-    {
-        if (entry instanceof String s)
-            return new ResourceLocation(s);
-        if (entry instanceof ResourceLocation rl)
-            return rl;
-        if (entry instanceof CreativeModeTab t)
-            return Objects.requireNonNull(getName(t), "Can't have sorting dependencies for creative mode tabs not registered in the CreativeModeTabSortingRegistry");
-        throw new IllegalStateException("Invalid object type passed into the CreativeModeTab dependencies " + entry.getClass());
-    }
-
-    private static final BiMap<ResourceLocation, CreativeModeTab> creativeModeTabs = HashBiMap.create();
-    private static final BiMap<ResourceLocation, CreativeModeTab> vanillaCreativeModeTabs = HashBiMap.create();
     private static final Multimap<ResourceLocation, ResourceLocation> edges = HashMultimap.create();
-    private static final Multimap<ResourceLocation, ResourceLocation> vanillaEdges = HashMultimap.create();
-
-    static
-    {
-        final ResourceLocation buildingBlocks = new ResourceLocation("building_blocks");
-        final ResourceLocation coloredBlocks = new ResourceLocation("colored_blocks");
-        final ResourceLocation naturalBlocks = new ResourceLocation("natural_blocks");
-        final ResourceLocation functionalBlocks = new ResourceLocation("functional_blocks");
-        final ResourceLocation redstoneBlocks = new ResourceLocation("redstone_blocks");
-        final ResourceLocation toolsAndUtilities = new ResourceLocation("tools_and_utilities");
-        final ResourceLocation combat = new ResourceLocation("combat");
-        final ResourceLocation foodAndDrinks = new ResourceLocation("food_and_drinks");
-        final ResourceLocation ingredients = new ResourceLocation("ingredients");
-        final ResourceLocation spawnEggs = new ResourceLocation("spawn_eggs");
-
-        processCreativeModeTab(CreativeModeTabs.BUILDING_BLOCKS, buildingBlocks, List.of(), List.of());
-        processCreativeModeTab(CreativeModeTabs.COLORED_BLOCKS, coloredBlocks, List.of(buildingBlocks), List.of(naturalBlocks));
-        processCreativeModeTab(CreativeModeTabs.NATURAL_BLOCKS, naturalBlocks, List.of(coloredBlocks), List.of(functionalBlocks));
-        processCreativeModeTab(CreativeModeTabs.FUNCTIONAL_BLOCKS, functionalBlocks, List.of(naturalBlocks), List.of(redstoneBlocks));
-        processCreativeModeTab(CreativeModeTabs.REDSTONE_BLOCKS, redstoneBlocks, List.of(functionalBlocks), List.of(toolsAndUtilities));
-        processCreativeModeTab(CreativeModeTabs.TOOLS_AND_UTILITIES, toolsAndUtilities, List.of(redstoneBlocks), List.of(combat));
-        processCreativeModeTab(CreativeModeTabs.COMBAT, combat, List.of(toolsAndUtilities), List.of(foodAndDrinks));
-        processCreativeModeTab(CreativeModeTabs.FOOD_AND_DRINKS, foodAndDrinks, List.of(combat), List.of(ingredients));
-        processCreativeModeTab(CreativeModeTabs.INGREDIENTS, ingredients, List.of(foodAndDrinks), List.of(spawnEggs));
-        processCreativeModeTab(CreativeModeTabs.SPAWN_EGGS, spawnEggs, List.of(ingredients), List.of());
-
-        vanillaEdges.putAll(edges);
-        vanillaCreativeModeTabs.putAll(creativeModeTabs);
-    }
 
     static PreparableReloadListener getReloadListener()
     {
@@ -190,7 +136,7 @@ public final class CreativeModeTabRegistry
                             customOrder.add(CreativeModeTab);
                         }
 
-                        List<CreativeModeTab> missingCreativeModeTabs = creativeModeTabs.values().stream().filter(CreativeModeTab -> !customOrder.contains(CreativeModeTab)).toList();
+                        List<CreativeModeTab> missingCreativeModeTabs = BuiltInRegistries.CREATIVE_MODE_TAB.stream().filter(CreativeModeTab -> !customOrder.contains(CreativeModeTab)).toList();
                         if (!missingCreativeModeTabs.isEmpty())
                             throw new IllegalStateException("CreativeModeTabs missing from the ordered list: " + missingCreativeModeTabs.stream()
                                     .map(CreativeModeTab -> Objects.toString(CreativeModeTabRegistry.getName(CreativeModeTab))).collect(Collectors.joining(", ")));
@@ -214,13 +160,17 @@ public final class CreativeModeTabRegistry
     {
         final MutableGraph<CreativeModeTab> graph = GraphBuilder.directed().nodeOrder(ElementOrder.<CreativeModeTab>insertion()).build();
 
-        for (CreativeModeTab CreativeModeTab : creativeModeTabs.values())
+        for (CreativeModeTab tab : BuiltInRegistries.CREATIVE_MODE_TAB)
         {
-            graph.addNode(CreativeModeTab);
+            if (!DEFAULT_TABS.contains(tab))
+                graph.addNode(tab);
         }
-        edges.forEach((key, value) -> {
-            if (creativeModeTabs.containsKey(key) && creativeModeTabs.containsKey(value))
-                graph.putEdge(creativeModeTabs.get(key), creativeModeTabs.get(value));
+        edges.forEach((key, value) ->
+        {
+            final CreativeModeTab keyC = getTab(key);
+            final CreativeModeTab valueC = getTab(value);
+            if (keyC != null && valueC != null)
+                graph.putEdge(keyC, valueC);
         });
         List<CreativeModeTab> tierList = TopologicalSort.topologicalSort(graph, null);
 
@@ -229,7 +179,8 @@ public final class CreativeModeTabRegistry
 
     private static void setCreativeModeTabOrder(List<CreativeModeTab> tierList)
     {
-        runInServerThreadIfPossible(hasServer -> {
+        runInServerThreadIfPossible(hasServer ->
+        {
             SORTED_TABS.clear();
             SORTED_TABS.addAll(tierList);
         });
@@ -245,15 +196,53 @@ public final class CreativeModeTabRegistry
     }
 
     @ApiStatus.Internal
-    public static void fireCollectionEvent()
+    public static void sortTabs()
     {
         edges.clear();
-        edges.putAll(vanillaEdges);
 
-        creativeModeTabs.clear();
-        creativeModeTabs.putAll(vanillaCreativeModeTabs);
+        DEFAULT_TABS.add(BuiltInRegistries.CREATIVE_MODE_TAB.get(CreativeModeTabs.HOTBAR));
+        DEFAULT_TABS.add(BuiltInRegistries.CREATIVE_MODE_TAB.get(CreativeModeTabs.SEARCH));
+        DEFAULT_TABS.add(BuiltInRegistries.CREATIVE_MODE_TAB.get(CreativeModeTabs.OP_BLOCKS));
+        DEFAULT_TABS.add(BuiltInRegistries.CREATIVE_MODE_TAB.get(CreativeModeTabs.INVENTORY));
 
-        ModLoader.get().postEvent(new CreativeModeTabEvent.Register(CreativeModeTabRegistry::registerCreativeModeTab));
+        final List<Holder<CreativeModeTab>> indexed = new ArrayList<>();
+        BuiltInRegistries.CREATIVE_MODE_TAB.holders().filter(c -> !DEFAULT_TABS.contains(c.get())).forEach(indexed::add);
+        for (int i = 0; i < 10; i++) // Vanilla ordering
+        {
+            final Holder<CreativeModeTab> value = indexed.get(i);
+            final CreativeModeTab tab = value.get();
+            final ResourceLocation name = value.unwrapKey().orElseThrow().location();
+
+            final boolean specifiesOrder = !tab.tabsBefore.isEmpty() || !tab.tabsAfter.isEmpty();
+            for (final ResourceLocation after : tab.tabsAfter.isEmpty() ? (i + 1 == indexed.size() || specifiesOrder  ?
+                    List.<ResourceLocation>of() : List.of(indexed.get(i + 1).unwrapKey().orElseThrow().location())) : tab.tabsAfter)
+            {
+                edges.put(name, after);
+            }
+
+            for (final ResourceLocation before : tab.tabsBefore.isEmpty() ? (i == 0 || specifiesOrder ?
+                    List.<ResourceLocation>of() : List.of(indexed.get(i - 1).unwrapKey().orElseThrow().location())) : tab.tabsBefore)
+            {
+                edges.put(before, name);
+            }
+        }
+
+        for (int i = 10; i < indexed.size(); i++)
+        {
+            final Holder<CreativeModeTab> value = indexed.get(i);
+            final CreativeModeTab tab = value.get();
+            final ResourceLocation name = value.unwrapKey().orElseThrow().location();
+
+            for (final ResourceLocation after : tab.tabsAfter)
+            {
+                edges.put(name, after);
+            }
+
+            for (final ResourceLocation before : tab.tabsBefore)
+            {
+                edges.put(before, name);
+            }
+        }
 
         recalculateItemCreativeModeTabs();
 
@@ -261,22 +250,4 @@ public final class CreativeModeTabRegistry
             CreativeModeTabSearchRegistry.createSearchTrees();
     }
 
-    @ApiStatus.Internal
-    private static CreativeModeTab registerCreativeModeTab(Consumer<CreativeModeTab.Builder> configurator, ResourceLocation name, List<Object> afterEntries, List<Object> beforeEntries)
-    {
-        if (creativeModeTabs.containsKey(name))
-            throw new IllegalStateException("Duplicate creative mode tab with name: " + name);
-
-        // The initial values for the builder do not matter
-        CreativeModeTab.Builder builder = new CreativeModeTab.Builder(CreativeModeTab.Row.TOP, 0);
-        configurator.accept(builder);
-        CreativeModeTab creativeModeTab = builder.build();
-
-        if (creativeModeTab.isAlignedRight())
-            throw new IllegalStateException("CreativeModeTab " + name + " is aligned right, this is not supported!");
-
-        processCreativeModeTab(creativeModeTab, name, afterEntries, beforeEntries);
-
-        return creativeModeTab;
-    }
 }

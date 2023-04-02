@@ -4,11 +4,11 @@
              return false;
           } else {
              RandomSource randomsource = this.f_25725_.m_217043_();
--            if (this.f_25725_.f_19853_.m_46469_().m_46207_(GameRules.f_46132_) && randomsource.m_188503_(m_186073_(10)) == 0) {
-+            if (net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.f_25725_.f_19853_, this.f_25725_) && randomsource.m_188503_(m_186073_(10)) == 0) {
+-            if (this.f_25725_.m_9236_().m_46469_().m_46207_(GameRules.f_46132_) && randomsource.m_188503_(m_186073_(10)) == 0) {
++            if (net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.f_25725_.m_9236_(), this.f_25725_) && randomsource.m_188503_(m_186073_(10)) == 0) {
                 this.f_33555_ = Direction.m_235672_(randomsource);
                 BlockPos blockpos = BlockPos.m_274561_(this.f_25725_.m_20185_(), this.f_25725_.m_20186_() + 0.5D, this.f_25725_.m_20189_()).m_121945_(this.f_33555_);
-                BlockState blockstate = this.f_25725_.f_19853_.m_8055_(blockpos);
+                BlockState blockstate = this.f_25725_.m_9236_().m_8055_(blockpos);
 @@ -209,7 +_,7 @@
                       BlockState blockstate = level.m_8055_(blockpos1);
                       Block block = blockstate.m_60734_();

@@ -34,7 +34,7 @@ public class MdkDatagen
         var packOutput = gen.getPackOutput();
         gen.addProvider(true, new PackMetadataGenerator(packOutput)
                 .add(PackMetadataSection.TYPE, new PackMetadataSection(
-                        Component.literal("examplemod resources"),
+                        Component.literal("${mod_id} resources"),
                         DetectedVersion.BUILT_IN.getPackVersion(PackType.CLIENT_RESOURCES),
                         Arrays.stream(PackType.values()).collect(Collectors.toMap(Function.identity(), DetectedVersion.BUILT_IN::getPackVersion))
                 ))

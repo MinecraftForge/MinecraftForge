@@ -6,6 +6,7 @@
 package net.minecraftforge.debug.misc;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -78,9 +79,9 @@ public class ContainerTypeTest
         }
 
         @Override
-        protected void renderBg(PoseStack poseStack, float partialTick, int mouseX, int mouseY)
+        protected void renderBg(GuiGraphics graphics, float partialTick, int mouseX, int mouseY)
         {
-            drawString(poseStack, this.font, getMenu().text, mouseX, mouseY, -1);
+            graphics.drawString(this.font, getMenu().text, mouseX, mouseY, -1);
         }
     }
 

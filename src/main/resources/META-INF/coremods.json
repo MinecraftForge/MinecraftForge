@@ -2,6 +2,5 @@
   "field_to_method": "coremods/field_to_method.js",
   "field_to_instanceof": "coremods/field_to_instanceof.js",
   "add_bouncer_method": "coremods/add_bouncer_method.js",
-  "intrinsic_tag_appender_binary_compat": "coremods/intrinsic_tag_appender_binary_compat.js",
   "method_redirector": "coremods/method_redirector.js"
 }

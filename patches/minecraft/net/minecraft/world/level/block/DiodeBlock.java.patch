@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/DiodeBlock.java
 +++ b/net/minecraft/world/level/block/DiodeBlock.java
-@@ -165,6 +_,8 @@
+@@ -154,6 +_,8 @@
     protected void m_52580_(Level p_52581_, BlockPos p_52582_, BlockState p_52583_) {
        Direction direction = p_52583_.m_61143_(f_54117_);
        BlockPos blockpos = p_52582_.m_121945_(direction.m_122424_());

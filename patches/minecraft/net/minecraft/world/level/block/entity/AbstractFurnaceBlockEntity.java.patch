@@ -95,7 +95,7 @@
           } else {
 @@ -306,10 +_,10 @@
                 return true;
-             } else if (!itemstack1.m_41656_(itemstack)) {
+             } else if (!ItemStack.m_41656_(itemstack1, itemstack)) {
                 return false;
 -            } else if (itemstack1.m_41613_() < p_155008_ && itemstack1.m_41613_() < itemstack1.m_41741_()) {
 +            } else if (itemstack1.m_41613_() + itemstack.m_41613_() <= p_155008_ && itemstack1.m_41613_() + itemstack.m_41613_() <= itemstack1.m_41741_()) { // Forge fix: make furnace respect stack sizes in furnace recipes
@@ -153,7 +153,7 @@
        }
     }
  
-@@ -487,5 +_,34 @@
+@@ -494,5 +_,34 @@
           p_58342_.m_36491_(itemstack);
        }
  

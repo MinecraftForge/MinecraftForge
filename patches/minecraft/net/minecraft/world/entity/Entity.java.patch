@@ -9,7 +9,7 @@
     private static final Logger f_19849_ = LogUtils.getLogger();
     public static final String f_146815_ = "id";
     public static final String f_146816_ = "Passengers";
-@@ -139,6 +_,7 @@
+@@ -141,6 +_,7 @@
     private static final double f_146812_ = 0.0023333333333333335D;
     public static final String f_146824_ = "UUID";
     private static double f_19846_ = 1.0D;
@@ -17,7 +17,7 @@
     private final EntityType<?> f_19847_;
     private int f_19848_ = f_19843_.incrementAndGet();
     public boolean f_19850_;
-@@ -179,14 +_,17 @@
+@@ -181,14 +_,17 @@
     public double f_19790_;
     public double f_19791_;
     public double f_19792_;
@@ -35,7 +35,7 @@
     private final Set<TagKey<Fluid>> f_19801_ = new HashSet<>();
     public int f_19802_;
     protected boolean f_19803_ = true;
-@@ -233,6 +_,7 @@
+@@ -237,6 +_,7 @@
     private BlockState f_185934_ = null;
  
     public Entity(EntityType<?> p_19870_, Level p_19871_) {
@@ -43,7 +43,7 @@
        this.f_19847_ = p_19870_;
        this.f_19853_ = p_19871_;
        this.f_19815_ = p_19870_.m_20680_();
-@@ -250,7 +_,11 @@
+@@ -254,7 +_,11 @@
        this.f_19804_.m_135372_(f_146800_, 0);
        this.m_8097_();
        this.m_6034_(0.0D, 0.0D, 0.0D);
@@ -56,7 +56,7 @@
     }
  
     public boolean m_20039_(BlockPos p_20040_, BlockState p_20041_) {
-@@ -340,6 +_,7 @@
+@@ -344,6 +_,7 @@
  
     public void m_142687_(Entity.RemovalReason p_146834_) {
        this.m_142467_(p_146834_);
@@ -64,7 +64,7 @@
     }
  
     public void m_142036_() {
-@@ -457,7 +_,7 @@
+@@ -461,7 +_,7 @@
  
        if (this.m_20077_()) {
           this.m_20093_();
@@ -73,101 +73,89 @@
        }
  
        this.m_146871_();
-@@ -625,7 +_,7 @@
+@@ -672,7 +_,7 @@
                 double d1 = vec3.f_82479_;
                 double d2 = vec3.f_82480_;
                 double d3 = vec3.f_82481_;
 -               this.f_146794_ += (float)(vec3.m_82553_() * 0.6D);
-+               this.f_146794_ = (float) ((double) this.f_146794_ + vec3.m_82553_() * 0.6D);
-                boolean flag1 = blockstate.m_204336_(BlockTags.f_13082_) || blockstate.m_60713_(Blocks.f_152499_);
-                if (!flag1) {
-                   d2 = 0.0D;
-@@ -664,25 +_,23 @@
++               this.f_146794_ = (float)((double)this.f_146794_ + vec3.m_82553_() * 0.6D);
+                BlockPos blockpos1 = this.m_20097_();
+                BlockState blockstate1 = this.m_9236_().m_8055_(blockpos1);
+                boolean flag1 = this.m_285776_(blockstate1);
+@@ -716,16 +_,16 @@
+                   this.m_7311_(-this.m_6101_());
+                }
  
-             this.m_146872_();
-             float f2 = this.m_6041_();
--            this.m_20256_(this.m_20184_().m_82542_((double)f2, 1.0D, (double)f2));
--            if (this.f_19853_.m_46847_(this.m_20191_().m_82406_(1.0E-6D)).noneMatch((p_20127_) -> {
--               return p_20127_.m_204336_(BlockTags.f_13076_) || p_20127_.m_60713_(Blocks.f_49991_);
--            })) {
--               if (this.f_19831_ <= 0) {
--                  this.m_7311_(-this.m_6101_());
--               }
--
 -               if (this.f_146810_ && (this.f_146808_ || this.m_20071_())) {
--                  this.m_146873_();
--               }
--            }
--
++               if (this.f_146810_ && (this.f_146808_ || this.m_20071_() || this.isInFluidType((fluidType, height) -> this.canFluidExtinguish(fluidType)))) {
+                   this.m_146873_();
+                }
+             }
+ 
 -            if (this.m_6060_() && (this.f_146808_ || this.m_20071_())) {
-+            this.m_20256_(this.m_20184_().m_82542_((double) f2, 1.0D, (double) f2));
-+         }
-+         if (this.f_19853_.m_46847_(this.m_20191_().m_82406_(1.0E-6D)).noneMatch((p_20127_) -> p_20127_.m_204336_(BlockTags.f_13076_) || p_20127_.m_60713_(Blocks.f_49991_))) {
-+            if (this.f_19831_ <= 0) {
++            if (this.m_6060_() && (this.f_146808_ || this.m_20071_() || this.isInFluidType((fluidType, height) -> this.canFluidExtinguish(fluidType)))) {
                 this.m_7311_(-this.m_6101_());
              }
  
--            this.f_19853_.m_46473_().m_7238_();
--         }
-+            if (this.f_146810_ && (this.f_146808_ || this.m_20071_() || this.isInFluidType((fluidType, height) -> this.canFluidExtinguish(fluidType)))) {
-+               this.m_146873_();
-+            }
-+         }
-+
-+         if (this.m_6060_() && (this.f_146808_ || this.m_20071_() || this.isInFluidType((fluidType, height) -> this.canFluidExtinguish(fluidType)))) {
-+            this.m_7311_(-this.m_6101_());
-+         }
-+
-+         this.f_19853_.m_46473_().m_7238_();
-       }
-    }
- 
-@@ -738,10 +_,10 @@
-       int j = Mth.m_14107_(this.f_19825_.f_82480_ - (double)p_216987_);
-       int k = Mth.m_14107_(this.f_19825_.f_82481_);
-       BlockPos blockpos = new BlockPos(i, j, k);
--      if (this.f_19853_.m_8055_(blockpos).m_60795_()) {
-+      if (this.f_19853_.m_46859_(blockpos)) {
-          BlockPos blockpos1 = blockpos.m_7495_();
-          BlockState blockstate = this.f_19853_.m_8055_(blockpos1);
--         if (blockstate.m_204336_(BlockTags.f_13039_) || blockstate.m_204336_(BlockTags.f_13032_) || blockstate.m_60734_() instanceof FenceGateBlock) {
-+         if (blockstate.collisionExtendsVertically(this.f_19853_, blockpos1, this)) {
-             return blockpos1;
+-            this.m_9236_().m_46473_().m_7238_();
++            this.f_19853_.m_46473_().m_7238_();
           }
        }
-@@ -814,10 +_,11 @@
+    }
+@@ -813,7 +_,7 @@
+             return blockpos;
+          } else {
+             BlockState blockstate = this.m_9236_().m_8055_(blockpos);
+-            return (!((double)p_216987_ <= 0.5D) || !blockstate.m_204336_(BlockTags.f_13039_)) && !blockstate.m_204336_(BlockTags.f_13032_) && !(blockstate.m_60734_() instanceof FenceGateBlock) ? blockpos.m_175288_(Mth.m_14107_(this.f_19825_.f_82480_ - (double)p_216987_)) : blockpos;
++            return (!((double)p_216987_ <= 0.5D) || !blockstate.collisionExtendsVertically(this.m_9236_(), blockpos, this)) ? blockpos.m_175288_(Mth.m_14107_(this.f_19825_.f_82480_ - (double)p_216987_)) : blockpos;
+          }
+       } else {
+          int i = Mth.m_14107_(this.f_19825_.f_82479_);
+@@ -884,10 +_,11 @@
        boolean flag1 = p_20273_.f_82480_ != vec3.f_82480_;
        boolean flag2 = p_20273_.f_82481_ != vec3.f_82481_;
-       boolean flag3 = this.f_19861_ || flag1 && p_20273_.f_82480_ < 0.0D;
+       boolean flag3 = this.m_20096_() || flag1 && p_20273_.f_82480_ < 0.0D;
 -      if (this.m_274421_() > 0.0F && flag3 && (flag || flag2)) {
--         Vec3 vec31 = m_198894_(this, new Vec3(p_20273_.f_82479_, (double)this.m_274421_(), p_20273_.f_82481_), aabb, this.f_19853_, list);
--         Vec3 vec32 = m_198894_(this, new Vec3(0.0D, (double)this.m_274421_(), 0.0D), aabb.m_82363_(p_20273_.f_82479_, 0.0D, p_20273_.f_82481_), this.f_19853_, list);
+-         Vec3 vec31 = m_198894_(this, new Vec3(p_20273_.f_82479_, (double)this.m_274421_(), p_20273_.f_82481_), aabb, this.m_9236_(), list);
+-         Vec3 vec32 = m_198894_(this, new Vec3(0.0D, (double)this.m_274421_(), 0.0D), aabb.m_82363_(p_20273_.f_82479_, 0.0D, p_20273_.f_82481_), this.m_9236_(), list);
 -         if (vec32.f_82480_ < (double)this.m_274421_()) {
 +      float stepHeight = getStepHeight();
 +      if (stepHeight > 0.0F && flag3 && (flag || flag2)) {
 +         Vec3 vec31 = m_198894_(this, new Vec3(p_20273_.f_82479_, (double)stepHeight, p_20273_.f_82481_), aabb, this.f_19853_, list);
 +         Vec3 vec32 = m_198894_(this, new Vec3(0.0D, (double)stepHeight, 0.0D), aabb.m_82363_(p_20273_.f_82479_, 0.0D, p_20273_.f_82481_), this.f_19853_, list);
 +         if (vec32.f_82480_ < (double)stepHeight) {
-             Vec3 vec33 = m_198894_(this, new Vec3(p_20273_.f_82479_, 0.0D, p_20273_.f_82481_), aabb.m_82383_(vec32), this.f_19853_, list).m_82549_(vec32);
+             Vec3 vec33 = m_198894_(this, new Vec3(p_20273_.f_82479_, 0.0D, p_20273_.f_82481_), aabb.m_82383_(vec32), this.m_9236_(), list).m_82549_(vec32);
              if (vec33.m_165925_() > vec31.m_165925_()) {
                 vec31 = vec33;
-@@ -945,7 +_,7 @@
-       BlockState blockstate = this.f_19853_.m_8055_(p_20135_.m_7494_());
-       boolean flag = blockstate.m_204336_(BlockTags.f_144271_);
-       if (flag || !p_20136_.m_60767_().m_76332_()) {
--         SoundType soundtype = flag ? blockstate.m_60827_() : p_20136_.m_60827_();
-+         SoundType soundtype = flag ? blockstate.getSoundType(f_19853_, p_20135_, this) : p_20136_.getSoundType(f_19853_, p_20135_, this);
-          this.m_5496_(soundtype.m_56776_(), soundtype.m_56773_() * 0.15F, soundtype.m_56774_());
-       }
+@@ -1033,14 +_,15 @@
+       return !blockstate.m_204336_(BlockTags.f_144271_) && !blockstate.m_204336_(BlockTags.f_276549_) ? p_278049_ : blockpos;
     }
-@@ -1074,19 +_,22 @@
+ 
+-   protected void m_276961_(BlockState p_277472_, BlockState p_277630_) {
+-      SoundType soundtype = p_277472_.m_60827_();
++   protected void playCombinationStepSounds(BlockState p_277472_, BlockState p_277630_, BlockPos primaryPos, BlockPos secondaryPos) {
++      SoundType soundtype = p_277472_.getSoundType(this.f_19853_, primaryPos, this);
++      SoundType soundtype1 = p_277630_.getSoundType(this.f_19853_, secondaryPos, this);
+       this.m_5496_(soundtype.m_56776_(), soundtype.m_56773_() * 0.15F, soundtype.m_56774_());
+-      this.m_280568_(p_277630_);
++      this.playMuffledStepSound(p_277630_, secondaryPos);
+    }
+ 
+-   protected void m_280568_(BlockState p_283110_) {
+-      SoundType soundtype = p_283110_.m_60827_();
++   protected void playMuffledStepSound(BlockState p_283110_, BlockPos pos) {
++      SoundType soundtype = p_283110_.getSoundType(this.f_19853_, pos, this);
+       this.m_5496_(soundtype.m_56776_(), soundtype.m_56773_() * 0.05F, soundtype.m_56774_() * 0.8F);
+    }
+ 
+@@ -1176,19 +_,22 @@
  
     public void m_5844_() {
        if (this.m_6069_()) {
 -         this.m_20282_(this.m_20142_() && this.m_20069_() && !this.m_20159_());
 +         this.m_20282_(this.m_20142_() && (this.m_20069_() || this.isInFluidType((fluidType, height) -> this.canSwimInFluidType(fluidType))) && !this.m_20159_());
        } else {
--         this.m_20282_(this.m_20142_() && this.m_5842_() && !this.m_20159_() && this.f_19853_.m_6425_(this.f_19826_).m_205070_(FluidTags.f_13131_));
+-         this.m_20282_(this.m_20142_() && this.m_5842_() && !this.m_20159_() && this.m_9236_().m_6425_(this.f_19826_).m_205070_(FluidTags.f_13131_));
 +         this.m_20282_(this.m_20142_() && (this.m_5842_() || this.canStartSwimming()) && !this.m_20159_());
        }
  
@@ -177,7 +165,7 @@
        this.f_19799_.clear();
 +      this.forgeFluidTypeHeight.clear();
        this.m_20074_();
--      double d0 = this.f_19853_.m_6042_().f_63857_() ? 0.007D : 0.0023333333333333335D;
+-      double d0 = this.m_9236_().m_6042_().f_63857_() ? 0.007D : 0.0023333333333333335D;
 -      boolean flag = this.m_204031_(FluidTags.f_13132_, d0);
 -      return this.m_20069_() || flag;
 +      if (!(this.m_20202_() instanceof Boat)) {
@@ -188,7 +176,7 @@
     }
  
     void m_20074_() {
-@@ -1115,6 +_,7 @@
+@@ -1217,6 +_,7 @@
     private void m_20323_() {
        this.f_19800_ = this.m_204029_(FluidTags.f_13131_);
        this.f_19801_.clear();
@@ -196,16 +184,16 @@
        double d0 = this.m_20188_() - (double)0.11111111F;
        Entity entity = this.m_20202_();
        if (entity instanceof Boat boat) {
-@@ -1127,7 +_,7 @@
-       FluidState fluidstate = this.f_19853_.m_6425_(blockpos);
-       double d1 = (double)((float)blockpos.m_123342_() + fluidstate.m_76155_(this.f_19853_, blockpos));
+@@ -1229,7 +_,7 @@
+       FluidState fluidstate = this.m_9236_().m_6425_(blockpos);
+       double d1 = (double)((float)blockpos.m_123342_() + fluidstate.m_76155_(this.m_9236_(), blockpos));
        if (d1 > d0) {
 -         fluidstate.m_205075_().forEach(this.f_19801_::add);
 +         this.forgeFluidTypeOnEyes = fluidstate.getFluidType();
        }
  
     }
-@@ -1171,7 +_,7 @@
+@@ -1273,12 +_,13 @@
     }
  
     public boolean m_5843_() {
@@ -214,15 +202,18 @@
     }
  
     protected void m_20076_() {
-@@ -1180,19 +_,23 @@
-       int k = Mth.m_14107_(this.m_20189_());
-       BlockPos blockpos = new BlockPos(i, j, k);
-       BlockState blockstate = this.f_19853_.m_8055_(blockpos);
+       BlockPos blockpos = this.m_216999_();
+       BlockState blockstate = this.m_9236_().m_8055_(blockpos);
 +      if(!blockstate.addRunningEffects(f_19853_, blockpos, this))
        if (blockstate.m_60799_() != RenderShape.INVISIBLE) {
           Vec3 vec3 = this.m_20184_();
--         this.f_19853_.m_7106_(new BlockParticleOption(ParticleTypes.f_123794_, blockstate), this.m_20185_() + (this.f_19796_.m_188500_() - 0.5D) * (double)this.f_19815_.f_20377_, this.m_20186_() + 0.1D, this.m_20189_() + (this.f_19796_.m_188500_() - 0.5D) * (double)this.f_19815_.f_20377_, vec3.f_82479_ * -4.0D, 1.5D, vec3.f_82481_ * -4.0D);
-+         this.f_19853_.m_7106_(new BlockParticleOption(ParticleTypes.f_123794_, blockstate).setPos(blockpos), this.m_20185_() + (this.f_19796_.m_188500_() - 0.5D) * (double)this.f_19815_.f_20377_, this.m_20186_() + 0.1D, this.m_20189_() + (this.f_19796_.m_188500_() - 0.5D) * (double)this.f_19815_.f_20377_, vec3.f_82479_ * -4.0D, 1.5D, vec3.f_82481_ * -4.0D);
+          BlockPos blockpos1 = this.m_20183_();
+@@ -1292,17 +_,20 @@
+             d1 = Mth.m_14008_(d1, (double)blockpos.m_123343_(), (double)blockpos.m_123343_() + 1.0D);
+          }
+ 
+-         this.m_9236_().m_7106_(new BlockParticleOption(ParticleTypes.f_123794_, blockstate), d0, this.m_20186_() + 0.1D, d1, vec3.f_82479_ * -4.0D, 1.5D, vec3.f_82481_ * -4.0D);
++         this.m_9236_().m_7106_(new BlockParticleOption(ParticleTypes.f_123794_, blockstate).setPos(blockpos), d0, this.m_20186_() + 0.1D, d1, vec3.f_82479_ * -4.0D, 1.5D, vec3.f_82481_ * -4.0D);
        }
  
     }
@@ -240,7 +231,7 @@
     }
  
     public void m_19920_(float p_19921_, Vec3 p_19922_) {
-@@ -1510,6 +_,8 @@
+@@ -1620,6 +_,8 @@
              p_20241_.m_128379_("HasVisualFire", this.f_146813_);
           }
  
@@ -249,7 +240,7 @@
           if (!this.f_19841_.isEmpty()) {
              ListTag listtag = new ListTag();
  
-@@ -1520,6 +_,10 @@
+@@ -1630,6 +_,10 @@
              p_20241_.m_128365_("Tags", listtag);
           }
  
@@ -260,7 +251,7 @@
           this.m_7380_(p_20241_);
           if (this.m_20160_()) {
              ListTag listtag1 = new ListTag();
-@@ -1595,6 +_,9 @@
+@@ -1705,6 +_,9 @@
                 this.m_146915_(p_20259_.m_128471_("Glowing"));
                 this.m_146917_(p_20259_.m_128451_("TicksFrozen"));
                 this.f_146813_ = p_20259_.m_128471_("HasVisualFire");
@@ -270,16 +261,16 @@
                 if (p_20259_.m_128425_("Tags", 9)) {
                    this.f_19841_.clear();
                    ListTag listtag3 = p_20259_.m_128437_("Tags", 8);
-@@ -1683,6 +_,8 @@
+@@ -1793,6 +_,8 @@
        } else {
-          ItemEntity itementity = new ItemEntity(this.f_19853_, this.m_20185_(), this.m_20186_() + (double)p_19986_, this.m_20189_(), p_19985_);
+          ItemEntity itementity = new ItemEntity(this.m_9236_(), this.m_20185_(), this.m_20186_() + (double)p_19986_, this.m_20189_(), p_19985_);
           itementity.m_32060_();
 +         if (captureDrops() != null) captureDrops().add(itementity);
 +         else
-          this.f_19853_.m_7967_(itementity);
+          this.m_9236_().m_7967_(itementity);
           return itementity;
        }
-@@ -1719,6 +_,7 @@
+@@ -1829,6 +_,7 @@
  
     public void m_6083_() {
        this.m_20256_(Vec3.f_82478_);
@@ -287,7 +278,7 @@
        this.m_8119_();
        if (this.m_20159_()) {
           this.m_20202_().m_7332_(this);
-@@ -1767,6 +_,7 @@
+@@ -1877,6 +_,7 @@
              }
           }
  
@@ -295,7 +286,7 @@
           if (p_19967_ || this.m_7341_(p_19966_) && p_19966_.m_7310_(this)) {
              if (this.m_20159_()) {
                 this.m_8127_();
-@@ -1805,6 +_,7 @@
+@@ -1915,6 +_,7 @@
     public void m_6038_() {
        if (this.f_19824_ != null) {
           Entity entity = this.f_19824_;
@@ -303,7 +294,7 @@
           this.f_19824_ = null;
           entity.m_20351_(this);
        }
-@@ -1857,6 +_,8 @@
+@@ -1967,6 +_,8 @@
        return this.f_19823_.isEmpty();
     }
  
@@ -312,7 +303,7 @@
     protected boolean m_269011_() {
        return true;
     }
-@@ -2038,7 +_,7 @@
+@@ -2148,7 +_,7 @@
     }
  
     public boolean m_20143_() {
@@ -321,7 +312,7 @@
     }
  
     public void m_20282_(boolean p_20283_) {
-@@ -2144,7 +_,7 @@
+@@ -2258,7 +_,7 @@
           this.m_20254_(8);
        }
  
@@ -330,7 +321,7 @@
     }
  
     public void m_6845_(boolean p_20313_) {
-@@ -2240,7 +_,7 @@
+@@ -2354,7 +_,7 @@
     }
  
     protected Component m_5677_() {
@@ -339,7 +330,7 @@
     }
  
     public boolean m_7306_(Entity p_20356_) {
-@@ -2296,14 +_,20 @@
+@@ -2410,14 +_,20 @@
  
     @Nullable
     public Entity m_5489_(ServerLevel p_20118_) {
@@ -348,20 +339,20 @@
 +   @Nullable
 +   public Entity changeDimension(ServerLevel p_20118_, net.minecraftforge.common.util.ITeleporter teleporter) {
 +      if (!net.minecraftforge.common.ForgeHooks.onTravelToDimension(this, p_20118_.m_46472_())) return null;
-       if (this.f_19853_ instanceof ServerLevel && !this.m_213877_()) {
-          this.f_19853_.m_46473_().m_6180_("changeDimension");
+       if (this.m_9236_() instanceof ServerLevel && !this.m_213877_()) {
+          this.m_9236_().m_46473_().m_6180_("changeDimension");
           this.m_19877_();
-          this.f_19853_.m_46473_().m_6180_("reposition");
+          this.m_9236_().m_46473_().m_6180_("reposition");
 -         PortalInfo portalinfo = this.m_7937_(p_20118_);
 +         PortalInfo portalinfo = teleporter.getPortalInfo(this, p_20118_, this::m_7937_);
           if (portalinfo == null) {
              return null;
           } else {
 +            Entity transportedEntity = teleporter.placeEntity(this, (ServerLevel) this.f_19853_, p_20118_, this.f_19857_, spawnPortal -> { //Forge: Start vanilla logic
-             this.f_19853_.m_46473_().m_6182_("reloading");
+             this.m_9236_().m_46473_().m_6182_("reloading");
              Entity entity = this.m_6095_().m_20615_(p_20118_);
              if (entity != null) {
-@@ -2311,17 +_,19 @@
+@@ -2425,17 +_,19 @@
                 entity.m_7678_(portalinfo.f_77676_.f_82479_, portalinfo.f_77676_.f_82480_, portalinfo.f_77676_.f_82481_, portalinfo.f_77678_, entity.m_146909_());
                 entity.m_20256_(portalinfo.f_77677_);
                 p_20118_.m_143334_(entity);
@@ -374,16 +365,16 @@
 +            }); //Forge: End vanilla logic
  
              this.m_6089_();
-             this.f_19853_.m_46473_().m_7238_();
-             ((ServerLevel)this.f_19853_).m_8886_();
+             this.m_9236_().m_46473_().m_7238_();
+             ((ServerLevel)this.m_9236_()).m_8886_();
              p_20118_.m_8886_();
-             this.f_19853_.m_46473_().m_7238_();
+             this.m_9236_().m_46473_().m_7238_();
 -            return entity;
 +            return transportedEntity;
           }
        } else {
           return null;
-@@ -2443,6 +_,7 @@
+@@ -2557,6 +_,7 @@
        return this.f_19821_;
     }
  
@@ -391,7 +382,7 @@
     public boolean m_6063_() {
        return true;
     }
-@@ -2560,8 +_,10 @@
+@@ -2679,8 +_,10 @@
        EntityDimensions entitydimensions = this.f_19815_;
        Pose pose = this.m_20089_();
        EntityDimensions entitydimensions1 = this.m_6972_(pose);
@@ -402,19 +393,19 @@
 +      this.f_19816_ = sizeEvent.getNewEyeHeight();
        this.m_20090_();
        boolean flag = (double)entitydimensions1.f_20377_ <= 4.0D && (double)entitydimensions1.f_20378_ <= 4.0D;
-       if (!this.f_19853_.f_46443_ && !this.f_19803_ && !this.f_19794_ && flag && (entitydimensions1.f_20377_ > entitydimensions.f_20377_ || entitydimensions1.f_20378_ > entitydimensions.f_20378_) && !(this instanceof Player)) {
-@@ -2569,8 +_,9 @@
+       if (!this.m_9236_().f_46443_ && !this.f_19803_ && !this.f_19794_ && flag && (entitydimensions1.f_20377_ > entitydimensions.f_20377_ || entitydimensions1.f_20378_ > entitydimensions.f_20378_) && !(this instanceof Player)) {
+@@ -2688,8 +_,9 @@
           double d0 = (double)Math.max(0.0F, entitydimensions1.f_20377_ - entitydimensions.f_20377_) + 1.0E-6D;
           double d1 = (double)Math.max(0.0F, entitydimensions1.f_20378_ - entitydimensions.f_20378_) + 1.0E-6D;
           VoxelShape voxelshape = Shapes.m_83064_(AABB.m_165882_(vec3, d0, d1, d0));
 +         EntityDimensions finalEntitydimensions = entitydimensions1;
-          this.f_19853_.m_151418_(this, voxelshape, vec3, (double)entitydimensions1.f_20377_, (double)entitydimensions1.f_20378_, (double)entitydimensions1.f_20377_).ifPresent((p_185956_) -> {
+          this.m_9236_().m_151418_(this, voxelshape, vec3, (double)entitydimensions1.f_20377_, (double)entitydimensions1.f_20378_, (double)entitydimensions1.f_20377_).ifPresent((p_185956_) -> {
 -            this.m_146884_(p_185956_.m_82520_(0.0D, (double)(-entitydimensions1.f_20378_) / 2.0D, 0.0D));
 +            this.m_146884_(p_185956_.m_82520_(0.0D, (double)(-finalEntitydimensions.f_20378_) / 2.0D, 0.0D));
           });
        }
  
-@@ -2861,9 +_,17 @@
+@@ -2980,9 +_,17 @@
        this.f_19859_ = this.m_146908_();
     }
  
@@ -433,7 +424,7 @@
        } else {
           AABB aabb = this.m_20191_().m_82406_(0.001D);
           int i = Mth.m_14107_(aabb.f_82288_);
-@@ -2878,25 +_,28 @@
+@@ -2997,25 +_,28 @@
           Vec3 vec3 = Vec3.f_82478_;
           int k1 = 0;
           BlockPos.MutableBlockPos blockpos$mutableblockpos = new BlockPos.MutableBlockPos();
@@ -443,11 +434,11 @@
              for(int i2 = k; i2 < l; ++i2) {
                 for(int j2 = i1; j2 < j1; ++j2) {
                    blockpos$mutableblockpos.m_122178_(l1, i2, j2);
-                   FluidState fluidstate = this.f_19853_.m_6425_(blockpos$mutableblockpos);
+                   FluidState fluidstate = this.m_9236_().m_6425_(blockpos$mutableblockpos);
 -                  if (fluidstate.m_205070_(p_204032_)) {
 +                  net.minecraftforge.fluids.FluidType fluidType = fluidstate.getFluidType();
 +                  if (!fluidType.isAir()) {
-                      double d1 = (double)((float)i2 + fluidstate.m_76155_(this.f_19853_, blockpos$mutableblockpos));
+                      double d1 = (double)((float)i2 + fluidstate.m_76155_(this.m_9236_(), blockpos$mutableblockpos));
                       if (d1 >= aabb.f_82289_) {
                          flag1 = true;
 -                        d0 = Math.max(d1 - aabb.f_82289_, d0);
@@ -455,7 +446,7 @@
 +                        org.apache.commons.lang3.tuple.MutableTriple<Double, Vec3, Integer> interim = interimCalcs.computeIfAbsent(fluidType, t -> org.apache.commons.lang3.tuple.MutableTriple.of(0.0D, Vec3.f_82478_, 0));
 +                        interim.setLeft(Math.max(d1 - aabb.f_82289_, interim.getLeft()));
 +                        if (this.isPushedByFluid(fluidType)) {
-                            Vec3 vec31 = fluidstate.m_76179_(this.f_19853_, blockpos$mutableblockpos);
+                            Vec3 vec31 = fluidstate.m_76179_(this.m_9236_(), blockpos$mutableblockpos);
 -                           if (d0 < 0.4D) {
 -                              vec31 = vec31.m_82490_(d0);
 +                           if (interim.getLeft() < 0.4D) {
@@ -469,7 +460,7 @@
                          }
                       }
                    }
-@@ -2904,27 +_,28 @@
+@@ -3023,27 +_,28 @@
              }
           }
  
@@ -508,8 +499,8 @@
        }
     }
  
-@@ -2937,7 +_,10 @@
-       return !this.f_19853_.m_151572_(i, k, j, l);
+@@ -3056,7 +_,10 @@
+       return !this.m_9236_().m_151572_(i, k, j, l);
     }
  
 +   @Deprecated // Forge: Use getFluidTypeHeight instead
@@ -519,7 +510,7 @@
        return this.f_19799_.getDouble(p_204037_);
     }
  
-@@ -3069,6 +_,7 @@
+@@ -3192,6 +_,7 @@
  
           this.f_146801_.m_142044_();
        }
@@ -527,7 +518,7 @@
  
     }
  
-@@ -3196,6 +_,103 @@
+@@ -3319,6 +_,103 @@
     public boolean m_142265_(Level p_146843_, BlockPos p_146844_) {
        return true;
     }

@@ -6,7 +6,7 @@
 package net.minecraftforge.debug.fluid;
 
 import net.minecraft.world.item.*;
-import net.minecraft.world.level.material.Material;
+import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.StateDefinition;
@@ -14,7 +14,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions;
-import net.minecraftforge.event.CreativeModeTabEvent;
+import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.fluids.DispenseFluidContainer;
 import net.minecraftforge.fluids.FluidType;
 import org.apache.commons.lang3.Validate;
@@ -109,7 +109,7 @@ public class NewFluidTest
     );
 
     public static RegistryObject<LiquidBlock> test_fluid_block = BLOCKS.register("test_fluid_block", () ->
-            new LiquidBlock(test_fluid, Properties.of(Material.WATER).noCollission().strength(100.0F).noLootTable())
+            new LiquidBlock(test_fluid, Properties.of().noCollission().strength(100.0F).noLootTable())
     );
     public static RegistryObject<Item> TEST_FLUID_BUCKET = ITEMS.register("test_fluid_bucket", () ->
             new BucketItem(test_fluid, new Item.Properties().craftRemainder(Items.BUCKET).stacksTo(1))
@@ -117,7 +117,7 @@ public class NewFluidTest
 
     // WARNING: this doesn't allow "any fluid", only the fluid from this test mod!
     public static RegistryObject<Block> fluidloggable_block = BLOCKS.register("fluidloggable_block", () ->
-            new FluidloggableBlock(Properties.of(Material.WOOD).noCollission().strength(100.0F).noLootTable())
+            new FluidloggableBlock(Properties.of().mapColor(MapColor.WOOD).noCollission().strength(100.0F).noLootTable())
     );
     public static RegistryObject<Item> FLUID_LOGGABLE_BLOCK_ITEM = ITEMS.register("fluidloggable_block", () ->
             new BlockItem(fluidloggable_block.get(), new Item.Properties())
@@ -139,9 +139,9 @@ public class NewFluidTest
         }
     }
 
-    private void addCreative(CreativeModeTabEvent.BuildContents event)
+    private void addCreative(BuildCreativeModeTabContentsEvent event)
     {
-        if (event.getTab() == CreativeModeTabs.INGREDIENTS)
+        if (event.getTabKey() == CreativeModeTabs.INGREDIENTS)
         {
             event.accept(FLUID_LOGGABLE_BLOCK_ITEM);
             event.accept(TEST_FLUID_BUCKET);

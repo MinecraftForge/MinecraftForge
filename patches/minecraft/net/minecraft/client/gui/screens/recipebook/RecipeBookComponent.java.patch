@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/gui/screens/recipebook/RecipeBookComponent.java
 +++ b/net/minecraft/client/gui/screens/recipebook/RecipeBookComponent.java
-@@ -106,7 +_,7 @@
+@@ -104,7 +_,7 @@
        this.m_5674_();
        this.f_100279_.clear();
  
@@ -9,12 +9,3 @@
           this.f_100279_.add(new RecipeBookTabButton(recipebookcategories));
        }
  
-@@ -297,7 +_,7 @@
-       }
- 
-       if (itemstack != null && this.f_100272_.f_91080_ != null) {
--         this.f_100272_.f_91080_.m_96597_(p_100375_, this.f_100272_.f_91080_.m_96555_(itemstack), p_100378_, p_100379_);
-+         this.f_100272_.f_91080_.renderComponentTooltip(p_100375_, this.f_100272_.f_91080_.m_96555_(itemstack), p_100378_, p_100379_, itemstack);
-       }
- 
-    }

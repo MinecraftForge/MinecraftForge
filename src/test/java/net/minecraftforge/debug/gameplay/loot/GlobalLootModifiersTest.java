@@ -12,6 +12,7 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.advancements.critereon.EnchantmentPredicate;
 import net.minecraft.advancements.critereon.ItemPredicate;
 import net.minecraft.advancements.critereon.MinMaxBounds;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.data.DataGenerator;
@@ -29,6 +30,8 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.SmeltingRecipe;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.LootParams;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.LootTable;
@@ -179,11 +182,10 @@ public class GlobalLootModifiersTest {
             if(ctxTool == null || EnchantmentHelper.getItemEnchantmentLevel(Enchantments.SILK_TOUCH, ctxTool) > 0) return generatedLoot;
             ItemStack fakeTool = ctxTool.copy();
             fakeTool.enchant(Enchantments.SILK_TOUCH, 1);
-            LootContext.Builder builder = new LootContext.Builder(context);
+            LootParams.Builder builder = new LootParams.Builder(context.getLevel());
             builder.withParameter(LootContextParams.TOOL, fakeTool);
-            LootContext ctx = builder.create(LootContextParamSets.BLOCK);
-            LootTable loottable = context.getLevel().getServer().getLootTables().get(context.getParamOrNull(LootContextParams.BLOCK_STATE).getBlock().getLootTable());
-            return loottable.getRandomItems(ctx);
+            LootTable loottable = context.getLevel().getServer().getLootData().getLootTable(context.getParamOrNull(LootContextParams.BLOCK_STATE).getBlock().getLootTable());
+            return loottable.getRandomItems(builder.create(LootContextParamSets.EMPTY)); // TODO - porting: we need an AT
         }
 
         @Override

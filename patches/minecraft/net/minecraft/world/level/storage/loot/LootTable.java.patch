@@ -1,38 +1,39 @@
 --- a/net/minecraft/world/level/storage/loot/LootTable.java
 +++ b/net/minecraft/world/level/storage/loot/LootTable.java
-@@ -35,13 +_,13 @@
-    public static final LootTable f_79105_ = new LootTable(LootContextParamSets.f_81410_, new LootPool[0], new LootItemFunction[0]);
-    public static final LootContextParamSet f_79106_ = LootContextParamSets.f_81420_;
+@@ -39,14 +_,14 @@
     final LootContextParamSet f_79108_;
+    @Nullable
+    final ResourceLocation f_286958_;
 -   final LootPool[] f_79109_;
 +   private final List<LootPool> f_79109_;
     final LootItemFunction[] f_79110_;
     private final BiFunction<ItemStack, LootContext, ItemStack> f_79111_;
  
-    LootTable(LootContextParamSet p_79114_, LootPool[] p_79115_, LootItemFunction[] p_79116_) {
-       this.f_79108_ = p_79114_;
--      this.f_79109_ = p_79115_;
-+      this.f_79109_ = Lists.newArrayList(p_79115_);
-       this.f_79110_ = p_79116_;
-       this.f_79111_ = LootItemFunctions.m_80770_(p_79116_);
+    LootTable(LootContextParamSet p_287716_, @Nullable ResourceLocation p_287737_, LootPool[] p_287700_, LootItemFunction[] p_287663_) {
+       this.f_79108_ = p_287716_;
+       this.f_286958_ = p_287737_;
+-      this.f_79109_ = p_287700_;
++      this.f_79109_ = Lists.newArrayList(p_287700_);
+       this.f_79110_ = p_287663_;
+       this.f_79111_ = LootItemFunctions.m_80770_(p_287663_);
     }
-@@ -81,6 +_,7 @@
- 
+@@ -98,6 +_,7 @@
+       this.m_287190_(p_287704_, m_246283_(p_287704_.m_287182_(), p_287617_));
     }
  
 +   @Deprecated //Use other method or manually call ForgeHooks.modifyLoot
     public void m_79148_(LootContext p_79149_, Consumer<ItemStack> p_79150_) {
-       this.m_79131_(p_79149_, m_246283_(p_79149_, p_79150_));
+       this.m_79131_(p_79149_, m_246283_(p_79149_.m_78952_(), p_79150_));
     }
-@@ -88,6 +_,7 @@
-    public ObjectArrayList<ItemStack> m_230922_(LootContext p_230923_) {
+@@ -113,6 +_,7 @@
+    private ObjectArrayList<ItemStack> m_230922_(LootContext p_230923_) {
        ObjectArrayList<ItemStack> objectarraylist = new ObjectArrayList<>();
        this.m_79148_(p_230923_, objectarraylist::add);
 +      objectarraylist = net.minecraftforge.common.ForgeHooks.modifyLoot(this.getLootTableId(), objectarraylist, p_230923_);
        return objectarraylist;
     }
  
-@@ -96,8 +_,8 @@
+@@ -121,8 +_,8 @@
     }
  
     public void m_79136_(ValidationContext p_79137_) {
@@ -43,7 +44,7 @@
        }
  
        for(int j = 0; j < this.f_79110_.length; ++j) {
-@@ -179,6 +_,48 @@
+@@ -205,6 +_,26 @@
        return new LootTable.Builder();
     }
  
@@ -65,35 +66,13 @@
 +      this.lootTableId = java.util.Objects.requireNonNull(id);
 +   }
 +   public ResourceLocation getLootTableId() { return this.lootTableId; }
-+
-+   public LootPool getPool(String name) {
-+      return f_79109_.stream().filter(e -> name.equals(e.getName())).findFirst().orElse(null);
-+   }
-+
-+   public LootPool removePool(String name) {
-+      checkFrozen();
-+      for (LootPool pool : this.f_79109_) {
-+         if (name.equals(pool.getName())) {
-+            this.f_79109_.remove(pool);
-+            return pool;
-+         }
-+      }
-+      return null;
-+   }
-+
-+   public void addPool(LootPool pool) {
-+      checkFrozen();
-+      if (f_79109_.stream().anyMatch(e -> e == pool || e.getName() != null && e.getName().equals(pool.getName())))
-+         throw new RuntimeException("Attempted to add a duplicate pool to loot table: " + pool.getName());
-+      this.f_79109_.add(pool);
-+   }
 +   //======================== FORGE END ===============================================
 +
     public static class Builder implements FunctionUserBuilder<LootTable.Builder> {
        private final List<LootPool> f_79156_ = Lists.newArrayList();
        private final List<LootItemFunction> f_79157_ = Lists.newArrayList();
-@@ -233,7 +_,7 @@
-             }
+@@ -278,7 +_,7 @@
+             jsonobject.addProperty("random_sequence", p_79177_.f_286958_.toString());
           }
  
 -         if (p_79177_.f_79109_.length > 0) {

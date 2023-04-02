@@ -1,13 +1,13 @@
 --- a/net/minecraft/world/item/DyeColor.java
 +++ b/net/minecraft/world/item/DyeColor.java
 @@ -40,6 +_,7 @@
-    private final MaterialColor f_41036_;
+    private final MapColor f_283766_;
     private final float[] f_41039_;
     private final int f_41040_;
 +   private final net.minecraft.tags.TagKey<Item> tag;
     private final int f_41041_;
  
-    private DyeColor(int p_41046_, String p_41047_, int p_41048_, MaterialColor p_41049_, int p_41050_, int p_41051_) {
+    private DyeColor(int p_41046_, String p_41047_, int p_41048_, MapColor p_285297_, int p_41050_, int p_41051_) {
 @@ -50,6 +_,7 @@
        int i = (p_41048_ & 16711680) >> 16;
        int j = (p_41048_ & '\uff00') >> 8;

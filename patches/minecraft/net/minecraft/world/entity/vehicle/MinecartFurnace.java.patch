@@ -12,7 +12,7 @@
 @@ -125,6 +_,11 @@
        }
  
-       return InteractionResult.m_19078_(this.f_19853_.f_46443_);
+       return InteractionResult.m_19078_(this.m_9236_().f_46443_);
 +   }
 +
 +   @Override

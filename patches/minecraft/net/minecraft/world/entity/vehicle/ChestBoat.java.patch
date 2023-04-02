@@ -27,5 +27,5 @@
 +   }
 +
     public void m_5785_(Player p_270286_) {
-       this.f_19853_.m_214171_(GameEvent.f_157802_, this.m_20182_(), GameEvent.Context.m_223717_(p_270286_));
+       this.m_9236_().m_214171_(GameEvent.f_157802_, this.m_20182_(), GameEvent.Context.m_223717_(p_270286_));
     }

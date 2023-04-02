@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/gui/screens/worldselection/CreateWorldScreen.java
 +++ b/net/minecraft/client/gui/screens/worldselection/CreateWorldScreen.java
-@@ -119,6 +_,7 @@
+@@ -120,6 +_,7 @@
     public static void m_232896_(Minecraft p_232897_, @Nullable Screen p_232898_) {
        m_232899_(p_232897_, f_232866_);
        PackRepository packrepository = new PackRepository(new ServerPacksSource());
@@ -8,7 +8,7 @@
        WorldLoader.InitConfig worldloader$initconfig = m_245574_(packrepository, WorldDataConfiguration.f_244649_);
        CompletableFuture<WorldCreationContext> completablefuture = WorldLoader.m_214362_(worldloader$initconfig, (p_247792_) -> {
           return new WorldLoader.DataLoadOutput<>(new CreateWorldScreen.DataPackReloadCookie(new WorldGenSettings(WorldOptions.m_247394_(), WorldPresets.m_246552_(p_247792_.f_244104_())), p_247792_.f_244127_()), p_247792_.f_243759_());
-@@ -368,7 +_,7 @@
+@@ -367,7 +_,7 @@
                 if (p_269627_) {
                    p_270552_.accept(this.f_267389_.m_267573_().f_243842_());
                 } else {
@@ -17,7 +17,7 @@
                 }
  
              }, Component.m_237115_("dataPack.validation.failed"), CommonComponents.f_237098_, Component.m_237115_("dataPack.validation.back"), Component.m_237115_("dataPack.validation.reset")));
-@@ -482,6 +_,7 @@
+@@ -481,6 +_,7 @@
        if (path != null) {
           if (this.f_100832_ == null) {
              this.f_100832_ = ServerPacksSource.m_245786_(path);

@@ -10,9 +10,16 @@ import cpw.mods.modlauncher.api.ILaunchHandlerService;
 import cpw.mods.modlauncher.api.ITransformingClassLoaderBuilder;
 import net.minecraftforge.fml.loading.LogMarkers;
 import net.minecraftforge.api.distmarker.Dist;
+import org.apache.logging.log4j.core.LoggerContext;
+import org.apache.logging.log4j.core.config.ConfigurationFactory;
+import org.apache.logging.log4j.core.config.ConfigurationSource;
+import org.apache.logging.log4j.core.config.Configurator;
 import org.slf4j.Logger;
+import sun.misc.Unsafe;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.URI;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
@@ -44,6 +51,20 @@ public abstract class CommonLaunchHandler implements ILaunchHandlerService {
     @Override
     public void configureTransformationClassLoader(final ITransformingClassLoaderBuilder builder) {
 
+    }
+
+    protected String[] preLaunch(String[] arguments, ModuleLayer layer) {
+        URI uri;
+        try (var reader = layer.configuration().findModule("fmlloader").orElseThrow().reference().open()) {
+            uri = reader.find("log4j2.xml").orElseThrow();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        // Force the log4j2 configuration to be loaded from fmlloader
+        Configurator.reconfigure(ConfigurationFactory.getInstance().getConfiguration(LoggerContext.getContext(), ConfigurationSource.fromUri(uri)));
+
+        return arguments;
     }
 
     protected final Map<String, List<Path>> getModClasses() {

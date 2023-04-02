@@ -1,23 +1,23 @@
 --- a/net/minecraft/world/level/storage/PrimaryLevelData.java
 +++ b/net/minecraft/world/level/storage/PrimaryLevelData.java
-@@ -79,6 +_,7 @@
-    private final Set<String> f_78439_;
+@@ -82,6 +_,7 @@
     private boolean f_78440_;
+    private final Set<String> f_276525_;
     private final TimerQueue<MinecraftServer> f_78441_;
 +   private boolean confirmedExperimentalWarning = false;
  
-    private PrimaryLevelData(@Nullable DataFixer p_249266_, int p_249857_, @Nullable CompoundTag p_249309_, boolean p_251525_, int p_249614_, int p_252310_, int p_250544_, float p_250495_, long p_250393_, long p_252085_, int p_250455_, int p_248981_, int p_249051_, boolean p_249672_, int p_249807_, boolean p_252350_, boolean p_250231_, boolean p_249788_, WorldBorder.Settings p_251494_, int p_249519_, int p_250649_, @Nullable UUID p_248892_, Set<String> p_251898_, TimerQueue<MinecraftServer> p_251119_, @Nullable CompoundTag p_248915_, CompoundTag p_252274_, LevelSettings p_248619_, WorldOptions p_251512_, PrimaryLevelData.SpecialWorldProperty p_251396_, Lifecycle p_252247_) {
-       this.f_78452_ = p_249266_;
-@@ -124,7 +_,7 @@
-       }).convert(NbtOps.f_128958_).getValue();
-       return new PrimaryLevelData(p_78532_, p_78533_, p_78534_, p_78531_.get("WasModded").asBoolean(false), p_78531_.get("SpawnX").asInt(0), p_78531_.get("SpawnY").asInt(0), p_78531_.get("SpawnZ").asInt(0), p_78531_.get("SpawnAngle").asFloat(0.0F), i, p_78531_.get("DayTime").asLong(i), p_78536_.m_78389_(), p_78531_.get("clearWeatherTime").asInt(0), p_78531_.get("rainTime").asInt(0), p_78531_.get("raining").asBoolean(false), p_78531_.get("thunderTime").asInt(0), p_78531_.get("thundering").asBoolean(false), p_78531_.get("initialized").asBoolean(true), p_78531_.get("DifficultyLocked").asBoolean(false), WorldBorder.Settings.m_62037_(p_78531_, WorldBorder.f_61907_), p_78531_.get("WanderingTraderSpawnDelay").asInt(0), p_78531_.get("WanderingTraderSpawnChance").asInt(0), p_78531_.get("WanderingTraderId").read(UUIDUtil.f_235867_).result().orElse((UUID)null), p_78531_.get("ServerBrands").asStream().flatMap((p_78529_) -> {
+    private PrimaryLevelData(@Nullable DataFixer p_277859_, int p_277672_, @Nullable CompoundTag p_277888_, boolean p_278109_, int p_277714_, int p_278088_, int p_278037_, float p_277542_, long p_277414_, long p_277635_, int p_277595_, int p_277794_, int p_278007_, boolean p_277943_, int p_277674_, boolean p_277644_, boolean p_277749_, boolean p_278004_, WorldBorder.Settings p_277729_, int p_277856_, int p_278051_, @Nullable UUID p_277341_, Set<String> p_277989_, Set<String> p_277399_, TimerQueue<MinecraftServer> p_277860_, @Nullable CompoundTag p_277936_, EndDragonFight.Data p_289764_, LevelSettings p_278064_, WorldOptions p_278072_, PrimaryLevelData.SpecialWorldProperty p_277548_, Lifecycle p_277915_) {
+       this.f_78452_ = p_277859_;
+@@ -127,7 +_,7 @@
           return p_78529_.asString().result().stream();
--      }).collect(Collectors.toCollection(Sets::newLinkedHashSet)), new TimerQueue<>(TimerCallbacks.f_82226_, p_78531_.get("ScheduledEvents").asStream()), (CompoundTag)p_78531_.get("CustomBossEvents").orElseEmptyMap().getValue(), compoundtag, p_78535_, p_251864_, p_250651_, p_78538_);
-+      }).collect(Collectors.toCollection(Sets::newLinkedHashSet)), new TimerQueue<>(TimerCallbacks.f_82226_, p_78531_.get("ScheduledEvents").asStream()), (CompoundTag)p_78531_.get("CustomBossEvents").orElseEmptyMap().getValue(), compoundtag, p_78535_, p_251864_, p_250651_, p_78538_).withConfirmedWarning(p_78538_ != Lifecycle.stable() && p_78531_.get("confirmedExperimentalSettings").asBoolean(false));
+       }).collect(Collectors.toCollection(Sets::newLinkedHashSet)), p_78531_.get("removed_features").asStream().flatMap((p_277335_) -> {
+          return p_277335_.asString().result().stream();
+-      }).collect(Collectors.toSet()), new TimerQueue<>(TimerCallbacks.f_82226_, p_78531_.get("ScheduledEvents").asStream()), (CompoundTag)p_78531_.get("CustomBossEvents").orElseEmptyMap().getValue(), p_78531_.get("DragonFight").read(EndDragonFight.Data.f_289707_).resultOrPartial(f_78442_::error).orElse(EndDragonFight.Data.f_289709_), p_78535_, p_251864_, p_250651_, p_78538_);
++      }).collect(Collectors.toSet()), new TimerQueue<>(TimerCallbacks.f_82226_, p_78531_.get("ScheduledEvents").asStream()), (CompoundTag)p_78531_.get("CustomBossEvents").orElseEmptyMap().getValue(), p_78531_.get("DragonFight").read(EndDragonFight.Data.f_289707_).resultOrPartial(f_78442_::error).orElse(EndDragonFight.Data.f_289709_), p_78535_, p_251864_, p_250651_, p_78538_).withConfirmedWarning(p_78538_ != Lifecycle.stable() && p_78531_.get("confirmedExperimentalSettings").asBoolean(false));
     }
  
     public CompoundTag m_6626_(RegistryAccess p_78543_, @Nullable CompoundTag p_78544_) {
-@@ -198,6 +_,8 @@
+@@ -203,6 +_,8 @@
           p_78547_.m_128362_("WanderingTraderId", this.f_78438_);
        }
  
@@ -25,8 +25,8 @@
 +      p_78547_.m_128379_("confirmedExperimentalSettings", this.confirmedExperimentalWarning);
     }
  
-    public int m_6789_() {
-@@ -468,6 +_,15 @@
+    private static ListTag m_277055_(Set<String> p_277880_) {
+@@ -483,6 +_,15 @@
  
     public LevelSettings m_5926_() {
        return this.f_78443_.m_46935_();

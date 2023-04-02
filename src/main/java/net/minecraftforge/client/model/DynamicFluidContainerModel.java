@@ -5,12 +5,9 @@
 
 package net.minecraftforge.client.model;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
-import com.mojang.datafixers.util.Pair;
 import com.mojang.math.Transformation;
 import net.minecraft.client.color.item.ItemColor;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -22,7 +19,6 @@ import net.minecraft.client.resources.model.BlockModelRotation;
 import net.minecraft.client.resources.model.Material;
 import net.minecraft.client.resources.model.ModelBaker;
 import net.minecraft.client.resources.model.ModelState;
-import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.entity.LivingEntity;
@@ -40,16 +36,12 @@ import net.minecraftforge.client.model.geometry.StandaloneGeometryBakingContext;
 import net.minecraftforge.client.model.geometry.UnbakedGeometryHelper;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.registries.ForgeRegistries;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
-import java.util.Collection;
 import java.util.Map;
-import java.util.Set;
 import java.util.function.Function;
 
 /**
@@ -64,8 +56,6 @@ import java.util.function.Function;
  */
 public class DynamicFluidContainerModel implements IUnbakedGeometry<DynamicFluidContainerModel>
 {
-    private static final Logger LOGGER = LogManager.getLogger();
-
     // Depth offsets to prevent Z-fighting
     private static final Transformation FLUID_TRANSFORM = new Transformation(new Vector3f(), new Quaternionf(), new Vector3f(1, 1, 1.002f), new Quaternionf());
     private static final Transformation COVER_TRANSFORM = new Transformation(new Vector3f(), new Quaternionf(), new Vector3f(1, 1, 1.004f), new Quaternionf());
@@ -74,22 +64,13 @@ public class DynamicFluidContainerModel implements IUnbakedGeometry<DynamicFluid
     private final boolean flipGas;
     private final boolean coverIsMask;
     private final boolean applyFluidLuminosity;
-    private final boolean deprecatedLoader;
-    private final Map<String, String> deprecationWarnings;
 
-    public DynamicFluidContainerModel(Fluid fluid, boolean flipGas, boolean coverIsMask, boolean applyFluidLuminosity)
-    {
-        this(fluid, flipGas, coverIsMask, applyFluidLuminosity, false, Map.of());
-    }
-
-    private DynamicFluidContainerModel(Fluid fluid, boolean flipGas, boolean coverIsMask, boolean applyFluidLuminosity, boolean deprecatedLoader, Map<String, String> deprecationWarnings)
+    private DynamicFluidContainerModel(Fluid fluid, boolean flipGas, boolean coverIsMask, boolean applyFluidLuminosity)
     {
         this.fluid = fluid;
         this.flipGas = flipGas;
         this.coverIsMask = coverIsMask;
         this.applyFluidLuminosity = applyFluidLuminosity;
-        this.deprecatedLoader = deprecatedLoader;
-        this.deprecationWarnings = deprecationWarnings;
     }
 
     public static RenderTypeGroup getLayerRenderTypes(boolean unlit)
@@ -103,17 +84,12 @@ public class DynamicFluidContainerModel implements IUnbakedGeometry<DynamicFluid
      */
     public DynamicFluidContainerModel withFluid(Fluid newFluid)
     {
-        return new DynamicFluidContainerModel(newFluid, flipGas, coverIsMask, applyFluidLuminosity, false, Map.of());
+        return new DynamicFluidContainerModel(newFluid, flipGas, coverIsMask, applyFluidLuminosity);
     }
 
     @Override
     public BakedModel bake(IGeometryBakingContext context, ModelBaker baker, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelState, ItemOverrides overrides, ResourceLocation modelLocation)
     {
-        if (deprecatedLoader)
-            LOGGER.warn("Model \"" + modelLocation + "\" is using the deprecated loader \"forge:bucket\" instead of \"forge:fluid_container\". This loader will be removed in 1.20.");
-        for (var entry : deprecationWarnings.entrySet())
-            LOGGER.warn("Model \"" + modelLocation + "\" is using the deprecated \"" + entry.getKey() + "\" field in its fluid container model instead of \"" + entry.getValue() + "\". This field will be removed in 1.20.");
-
         Material particleLocation = context.hasMaterial("particle") ? context.getMaterial("particle") : null;
         Material baseLocation = context.hasMaterial("base") ? context.getMaterial("base") : null;
         Material fluidMaskLocation = context.hasMaterial("fluid") ? context.getMaterial("fluid") : null;
@@ -189,15 +165,10 @@ public class DynamicFluidContainerModel implements IUnbakedGeometry<DynamicFluid
 
     public static final class Loader implements IGeometryLoader<DynamicFluidContainerModel>
     {
-        public static final Loader INSTANCE = new Loader(false);
-        @Deprecated(forRemoval = true, since = "1.19")
-        public static final Loader INSTANCE_DEPRECATED = new Loader(true);
+        public static final Loader INSTANCE = new Loader();
 
-        private final boolean deprecated;
-
-        private Loader(boolean deprecated)
+        private Loader()
         {
-            this.deprecated = deprecated;
         }
 
         @Override
@@ -214,26 +185,8 @@ public class DynamicFluidContainerModel implements IUnbakedGeometry<DynamicFluid
             boolean coverIsMask = GsonHelper.getAsBoolean(jsonObject, "cover_is_mask", true);
             boolean applyFluidLuminosity = GsonHelper.getAsBoolean(jsonObject, "apply_fluid_luminosity", true);
 
-            // TODO: Deprecated names. To be removed in 1.20
-            var deprecationWarningsBuilder = ImmutableMap.<String, String>builder();
-            if (jsonObject.has("flipGas"))
-            {
-                flip = GsonHelper.getAsBoolean(jsonObject, "flipGas");
-                deprecationWarningsBuilder.put("flipGas", "flip_gas");
-            }
-            if (jsonObject.has("coverIsMask"))
-            {
-                coverIsMask = GsonHelper.getAsBoolean(jsonObject, "coverIsMask");
-                deprecationWarningsBuilder.put("coverIsMask", "cover_is_mask");
-            }
-            if (jsonObject.has("applyFluidLuminosity"))
-            {
-                applyFluidLuminosity = GsonHelper.getAsBoolean(jsonObject, "applyFluidLuminosity");
-                deprecationWarningsBuilder.put("applyFluidLuminosity", "apply_fluid_luminosity");
-            }
-
             // create new model with correct liquid
-            return new DynamicFluidContainerModel(fluid, flip, coverIsMask, applyFluidLuminosity, deprecated, deprecationWarningsBuilder.build());
+            return new DynamicFluidContainerModel(fluid, flip, coverIsMask, applyFluidLuminosity);
         }
     }
 

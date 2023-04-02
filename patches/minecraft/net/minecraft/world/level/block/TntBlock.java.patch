@@ -10,7 +10,7 @@
 +
     public void m_6807_(BlockState p_57466_, Level p_57467_, BlockPos p_57468_, BlockState p_57469_, boolean p_57470_) {
        if (!p_57469_.m_60713_(p_57466_.m_60734_())) {
-          if (p_57467_.m_46753_(p_57468_)) {
+          if (p_57467_.m_276867_(p_57468_)) {
 -            m_57433_(p_57467_, p_57468_);
 +            onCaughtFire(p_57466_, p_57467_, p_57468_, null, null);
              p_57467_.m_7471_(p_57468_, false);
@@ -19,7 +19,7 @@
 @@ -45,7 +_,7 @@
  
     public void m_6861_(BlockState p_57457_, Level p_57458_, BlockPos p_57459_, Block p_57460_, BlockPos p_57461_, boolean p_57462_) {
-       if (p_57458_.m_46753_(p_57459_)) {
+       if (p_57458_.m_276867_(p_57459_)) {
 -         m_57433_(p_57458_, p_57459_);
 +         onCaughtFire(p_57457_, p_57458_, p_57459_, null, null);
           p_57458_.m_7471_(p_57459_, false);

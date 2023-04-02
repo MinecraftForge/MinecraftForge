@@ -32,14 +32,14 @@ public class EnumArgumentTest
         event.getDispatcher().register(Commands.literal("enumargumenttest")
                 .then(Commands.argument("string", StringArgumentType.string())
                         .executes(context -> {
-                            context.getSource().sendSuccess(Component.literal("string: " + StringArgumentType.getString(context, "string")), false);
+                            context.getSource().sendSuccess(() -> Component.literal("string: " + StringArgumentType.getString(context, "string")), false);
 
                             return 1;
                         }))
                 .then(Commands.argument("enum", EnumArgument.enumArgument(ExampleEnum.class))
                         .executes(context -> {
                             context.getSource()
-                                    .sendSuccess(Component.literal("enum: " + context.getArgument("enum", ExampleEnum.class)), false);
+                                    .sendSuccess(() -> Component.literal("enum: " + context.getArgument("enum", ExampleEnum.class)), false);
 
                             return 1;
                         })));

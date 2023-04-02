@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/gui/components/toasts/ToastComponent.java
 +++ b/net/minecraft/client/gui/components/toasts/ToastComponent.java
-@@ -102,6 +_,7 @@
+@@ -101,6 +_,7 @@
     }
  
     public void m_94922_(Toast p_94923_) {

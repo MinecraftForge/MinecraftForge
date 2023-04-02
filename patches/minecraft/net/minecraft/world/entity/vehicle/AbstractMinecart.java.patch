@@ -9,7 +9,7 @@
     private static final EntityDataAccessor<Integer> f_38079_ = SynchedEntityData.m_135353_(AbstractMinecart.class, EntityDataSerializers.f_135028_);
     private static final EntityDataAccessor<Integer> f_38080_ = SynchedEntityData.m_135353_(AbstractMinecart.class, EntityDataSerializers.f_135028_);
     private static final EntityDataAccessor<Float> f_38081_ = SynchedEntityData.m_135353_(AbstractMinecart.class, EntityDataSerializers.f_135029_);
-@@ -75,6 +_,7 @@
+@@ -76,6 +_,7 @@
        p_38135_.put(RailShape.NORTH_WEST, Pair.of(vec3i2, vec3i));
        p_38135_.put(RailShape.NORTH_EAST, Pair.of(vec3i2, vec3i1));
     });
@@ -17,7 +17,7 @@
     private int f_38070_;
     private double f_38071_;
     private double f_38072_;
-@@ -84,6 +_,7 @@
+@@ -85,6 +_,7 @@
     private double f_38076_;
     private double f_38077_;
     private double f_38078_;
@@ -25,7 +25,7 @@
  
     protected AbstractMinecart(EntityType<?> p_38087_, Level p_38088_) {
        super(p_38087_, p_38088_);
-@@ -98,6 +_,14 @@
+@@ -99,6 +_,14 @@
        this.f_19856_ = p_38094_;
     }
  
@@ -40,7 +40,7 @@
     public static AbstractMinecart m_38119_(Level p_38120_, double p_38121_, double p_38122_, double p_38123_, AbstractMinecart.Type p_38124_) {
        if (p_38124_ == AbstractMinecart.Type.CHEST) {
           return new MinecartChest(p_38120_, p_38121_, p_38122_, p_38123_);
-@@ -132,7 +_,7 @@
+@@ -133,7 +_,7 @@
     }
  
     public boolean m_6094_() {
@@ -49,50 +49,50 @@
     }
  
     protected Vec3 m_7643_(Direction.Axis p_38132_, BlockUtil.FoundRectangle p_38133_) {
-@@ -301,9 +_,9 @@
- 
+@@ -303,9 +_,9 @@
           BlockPos blockpos = new BlockPos(k, i, j);
-          BlockState blockstate = this.f_19853_.m_8055_(blockpos);
--         if (BaseRailBlock.m_49416_(blockstate)) {
-+         if (canUseRail() && BaseRailBlock.m_49416_(blockstate)) {
+          BlockState blockstate = this.m_9236_().m_8055_(blockpos);
+          this.f_287786_ = BaseRailBlock.m_49416_(blockstate);
+-         if (this.f_287786_) {
++         if (canUseRail() && this.f_287786_) {
              this.m_6401_(blockpos, blockstate);
 -            if (blockstate.m_60713_(Blocks.f_50285_)) {
 +            if (blockstate.m_60734_() instanceof PoweredRailBlock && ((PoweredRailBlock) blockstate.m_60734_()).isActivatorRail()) {
                 this.m_6025_(k, i, j, blockstate.m_61143_(PoweredRailBlock.f_55215_));
              }
           } else {
-@@ -328,8 +_,11 @@
+@@ -330,8 +_,11 @@
           }
  
           this.m_19915_(this.m_146908_(), this.m_146909_());
 -         if (this.m_6064_() == AbstractMinecart.Type.RIDEABLE && this.m_20184_().m_165925_() > 0.01D) {
--            List<Entity> list = this.f_19853_.m_6249_(this, this.m_20191_().m_82377_((double)0.2F, 0.0D, (double)0.2F), EntitySelector.m_20421_(this));
+-            List<Entity> list = this.m_9236_().m_6249_(this, this.m_20191_().m_82377_((double)0.2F, 0.0D, (double)0.2F), EntitySelector.m_20421_(this));
 +         AABB box;
 +         if (getCollisionHandler() != null) box = getCollisionHandler().getMinecartCollisionBox(this);
 +         else                               box = this.m_20191_().m_82377_(0.2F, 0.0D, 0.2F);
 +         if (canBeRidden() && this.m_20184_().m_165925_() > 0.01D) {
-+            List<Entity> list = this.f_19853_.m_6249_(this, box, EntitySelector.m_20421_(this));
++            List<Entity> list = this.m_9236_().m_6249_(this, box, EntitySelector.m_20421_(this));
              if (!list.isEmpty()) {
                 for(int l = 0; l < list.size(); ++l) {
                    Entity entity1 = list.get(l);
-@@ -341,7 +_,7 @@
+@@ -343,7 +_,7 @@
                 }
              }
           } else {
--            for(Entity entity : this.f_19853_.m_45933_(this, this.m_20191_().m_82377_((double)0.2F, 0.0D, (double)0.2F))) {
-+            for(Entity entity : this.f_19853_.m_45933_(this, box)) {
+-            for(Entity entity : this.m_9236_().m_45933_(this, this.m_20191_().m_82377_((double)0.2F, 0.0D, (double)0.2F))) {
++            for(Entity entity : this.m_9236_().m_45933_(this, box)) {
                 if (!this.m_20363_(entity) && entity.m_6094_() && entity instanceof AbstractMinecart) {
                    entity.m_7334_(this);
                 }
-@@ -366,16 +_,23 @@
+@@ -368,16 +_,23 @@
     }
  
     protected void m_38163_() {
 -      double d0 = this.m_7097_();
-+      double d0 = f_19861_ ? this.m_7097_() : getMaxSpeedAirLateral();
++      double d0 = this.m_20096_() ? this.m_7097_() : getMaxSpeedAirLateral();
        Vec3 vec3 = this.m_20184_();
        this.m_20334_(Mth.m_14008_(vec3.f_82479_, -d0, d0), vec3.f_82480_, Mth.m_14008_(vec3.f_82481_, -d0, d0));
-       if (this.f_19861_) {
+       if (this.m_20096_()) {
           this.m_20256_(this.m_20184_().m_82490_(0.5D));
        }
  
@@ -104,13 +104,13 @@
 +      }
 +
        this.m_6478_(MoverType.SELF, this.m_20184_());
-       if (!this.f_19861_) {
+       if (!this.m_20096_()) {
 -         this.m_20256_(this.m_20184_().m_82490_(0.95D));
 +         this.m_20256_(this.m_20184_().m_82490_(getDragAir()));
        }
  
     }
-@@ -389,18 +_,19 @@
+@@ -391,18 +_,19 @@
        d1 = (double)p_38156_.m_123342_();
        boolean flag = false;
        boolean flag1 = false;
@@ -129,11 +129,11 @@
  
        Vec3 vec31 = this.m_20184_();
 -      RailShape railshape = p_38157_.m_61143_(((BaseRailBlock)p_38157_.m_60734_()).m_7978_());
-+      RailShape railshape = ((BaseRailBlock)p_38157_.m_60734_()).getRailDirection(p_38157_, this.f_19853_, p_38156_, this);
++      RailShape railshape = ((BaseRailBlock)p_38157_.m_60734_()).getRailDirection(p_38157_, this.m_9236_(), p_38156_, this);
        switch (railshape) {
           case ASCENDING_EAST:
              this.m_20256_(vec31.m_82520_(-d3, 0.0D, 0.0D));
-@@ -446,7 +_,7 @@
+@@ -448,7 +_,7 @@
           }
        }
  
@@ -142,7 +142,7 @@
           double d22 = this.m_20184_().m_165924_();
           if (d22 < 0.03D) {
              this.m_20256_(Vec3.f_82478_);
-@@ -475,10 +_,7 @@
+@@ -477,10 +_,7 @@
        d0 = d23 + d4 * d14;
        d2 = d10 + d5 * d14;
        this.m_6034_(d0, d1, d2);
@@ -154,37 +154,37 @@
        if (vec3i.m_123342_() != 0 && Mth.m_14107_(this.m_20185_()) - p_38156_.m_123341_() == vec3i.m_123341_() && Mth.m_14107_(this.m_20189_()) - p_38156_.m_123343_() == vec3i.m_123343_()) {
           this.m_6034_(this.m_20185_(), this.m_20186_() + (double)vec3i.m_123342_(), this.m_20189_());
        } else if (vec3i1.m_123342_() != 0 && Mth.m_14107_(this.m_20185_()) - p_38156_.m_123341_() == vec3i1.m_123341_() && Mth.m_14107_(this.m_20189_()) - p_38156_.m_123343_() == vec3i1.m_123343_()) {
-@@ -506,7 +_,10 @@
+@@ -508,7 +_,10 @@
           this.m_20334_(d26 * (double)(j - p_38156_.m_123341_()), vec35.f_82480_, d26 * (double)(i - p_38156_.m_123343_()));
        }
  
 -      if (flag) {
 +      if (shouldDoRailFunctions())
-+          baserailblock.onMinecartPass(p_38157_, f_19853_, p_38156_, this);
++          baserailblock.onMinecartPass(p_38157_, m_9236_(), p_38156_, this);
 +
 +      if (flag && shouldDoRailFunctions()) {
           Vec3 vec36 = this.m_20184_();
           double d27 = vec36.m_165924_();
           if (d27 > 0.01D) {
-@@ -566,7 +_,7 @@
+@@ -572,7 +_,7 @@
  
-       BlockState blockstate = this.f_19853_.m_8055_(new BlockPos(i, j, k));
+       BlockState blockstate = this.m_9236_().m_8055_(new BlockPos(i, j, k));
        if (BaseRailBlock.m_49416_(blockstate)) {
 -         RailShape railshape = blockstate.m_61143_(((BaseRailBlock)blockstate.m_60734_()).m_7978_());
-+         RailShape railshape = ((BaseRailBlock)blockstate.m_60734_()).getRailDirection(blockstate, this.f_19853_, new BlockPos(i, j, k), this);
++         RailShape railshape = ((BaseRailBlock)blockstate.m_60734_()).getRailDirection(blockstate, this.m_9236_(), new BlockPos(i, j, k), this);
           p_38098_ = (double)j;
           if (railshape.m_61745_()) {
              p_38098_ = (double)(j + 1);
-@@ -605,7 +_,7 @@
+@@ -611,7 +_,7 @@
  
-       BlockState blockstate = this.f_19853_.m_8055_(new BlockPos(i, j, k));
+       BlockState blockstate = this.m_9236_().m_8055_(new BlockPos(i, j, k));
        if (BaseRailBlock.m_49416_(blockstate)) {
 -         RailShape railshape = blockstate.m_61143_(((BaseRailBlock)blockstate.m_60734_()).m_7978_());
-+         RailShape railshape = ((BaseRailBlock)blockstate.m_60734_()).getRailDirection(blockstate, this.f_19853_, new BlockPos(i, j, k), this);
++         RailShape railshape = ((BaseRailBlock)blockstate.m_60734_()).getRailDirection(blockstate, this.m_9236_(), new BlockPos(i, j, k), this);
           Pair<Vec3i, Vec3i> pair = m_38125_(railshape);
           Vec3i vec3i = pair.getFirst();
           Vec3i vec3i1 = pair.getSecond();
-@@ -667,6 +_,10 @@
+@@ -673,6 +_,10 @@
     }
  
     public void m_7334_(Entity p_38165_) {
@@ -192,10 +192,10 @@
 +         getCollisionHandler().onEntityCollision(this, p_38165_);
 +         return;
 +      }
-       if (!this.f_19853_.f_46443_) {
+       if (!this.m_9236_().f_46443_) {
           if (!p_38165_.f_19794_ && !this.f_19794_) {
              if (!this.m_20363_(p_38165_)) {
-@@ -700,11 +_,11 @@
+@@ -706,11 +_,11 @@
  
                       Vec3 vec32 = this.m_20184_();
                       Vec3 vec33 = p_38165_.m_20184_();
@@ -209,7 +209,7 @@
                          p_38165_.m_20256_(vec33.m_82542_(0.2D, 1.0D, 0.2D));
                          p_38165_.m_5997_(vec32.f_82479_ + d0, 0.0D, vec32.f_82481_ + d1);
                          this.m_20256_(vec32.m_82542_(0.95D, 1.0D, 0.95D));
-@@ -803,6 +_,42 @@
+@@ -809,6 +_,42 @@
     public void m_38138_(boolean p_38139_) {
        this.m_20088_().m_135381_(f_38084_, p_38139_);
     }
@@ -234,10 +234,10 @@
 +   public double getMaxSpeedWithRail() { //Non-default because getMaximumSpeed is protected
 +      if (!canUseRail()) return m_7097_();
 +      BlockPos pos = this.getCurrentRailPosition();
-+      BlockState state = this.f_19853_.m_8055_(pos);
++      BlockState state = this.m_9236_().m_8055_(pos);
 +      if (!state.m_204336_(BlockTags.f_13034_)) return m_7097_();
 +
-+      float railMaxSpeed = ((BaseRailBlock)state.m_60734_()).getRailMaxSpeed(state, this.f_19853_, pos, this);
++      float railMaxSpeed = ((BaseRailBlock)state.m_60734_()).getRailMaxSpeed(state, this.m_9236_(), pos, this);
 +      return Math.min(railMaxSpeed, getCurrentCartSpeedCapOnRail());
 +   }
 +   @Override

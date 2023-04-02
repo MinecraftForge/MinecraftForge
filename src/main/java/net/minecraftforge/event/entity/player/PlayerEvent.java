@@ -125,7 +125,6 @@ public class PlayerEvent extends LivingEvent
         public float getNewSpeed() { return newSpeed; }
         public void setNewSpeed(float newSpeed) { this.newSpeed = newSpeed; }
         public Optional<BlockPos> getPosition() { return this.pos; }
-        @Deprecated(forRemoval = true, since ="1.19") public BlockPos getPos() { return pos.orElse(LEGACY_UNKNOWN); }
     }
 
     /**

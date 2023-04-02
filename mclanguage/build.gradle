@@ -41,6 +41,7 @@ ext {
 }
 
 jar.doFirst {
+    manifest.attributes['Automatic-Module-Name'] = project.name
     MANIFESTS.each { pkg, values ->
         if (pkg == '')
             manifest.attributes(values)

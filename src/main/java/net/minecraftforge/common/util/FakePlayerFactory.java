@@ -40,6 +40,6 @@ public class FakePlayerFactory
 
     public static void unloadLevel(ServerLevel level)
     {
-        fakePlayers.entrySet().removeIf(entry -> entry.getValue().level == level);
+        fakePlayers.entrySet().removeIf(entry -> entry.getValue().level() == level);
     }
 }

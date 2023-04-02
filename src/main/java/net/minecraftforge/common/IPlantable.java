@@ -16,7 +16,7 @@ import net.minecraft.world.level.BlockGetter;
 public interface IPlantable
 {
     default PlantType getPlantType(BlockGetter level, BlockPos pos) {
-        if (this instanceof CropBlock) return PlantType.CROP;
+        if (this instanceof CropBlock || this == Blocks.PITCHER_CROP) return PlantType.CROP;
         if (this instanceof SaplingBlock) return PlantType.PLAINS;
         if (this instanceof FlowerBlock) return PlantType.PLAINS;
         if (this == Blocks.DEAD_BUSH)      return PlantType.DESERT;
@@ -24,7 +24,7 @@ public interface IPlantable
         if (this == Blocks.RED_MUSHROOM)   return PlantType.CAVE;
         if (this == Blocks.BROWN_MUSHROOM) return PlantType.CAVE;
         if (this == Blocks.NETHER_WART)    return PlantType.NETHER;
-        if (this == Blocks.TALL_GRASS)      return PlantType.PLAINS;
+        if (this == Blocks.TALL_GRASS)     return PlantType.PLAINS;
         return net.minecraftforge.common.PlantType.PLAINS;
     }
 

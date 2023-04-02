@@ -58,49 +58,16 @@ public class ObjLoader implements IGeometryLoader<ObjModel>, ResourceManagerRelo
         boolean emissiveAmbient = GsonHelper.getAsBoolean(jsonObject, "emissive_ambient", true);
         String mtlOverride = GsonHelper.getAsString(jsonObject, "mtl_override", null);
 
-        // TODO: Deprecated names. To be removed in 1.20
-        var deprecationWarningsBuilder = ImmutableMap.<String, String>builder();
-        if (jsonObject.has("detectCullableFaces"))
-        {
-            automaticCulling = GsonHelper.getAsBoolean(jsonObject, "detectCullableFaces");
-            deprecationWarningsBuilder.put("detectCullableFaces", "automatic_culling");
-        }
-        if (jsonObject.has("diffuseLighting"))
-        {
-            shadeQuads = GsonHelper.getAsBoolean(jsonObject, "diffuseLighting");
-            deprecationWarningsBuilder.put("diffuseLighting", "shade_quads");
-        }
-        if (jsonObject.has("flip-v"))
-        {
-            flipV = GsonHelper.getAsBoolean(jsonObject, "flip-v");
-            deprecationWarningsBuilder.put("flip-v", "flip_v");
-        }
-        if (jsonObject.has("ambientToFullbright"))
-        {
-            emissiveAmbient = GsonHelper.getAsBoolean(jsonObject, "ambientToFullbright");
-            deprecationWarningsBuilder.put("ambientToFullbright", "emissive_ambient");
-        }
-        if (jsonObject.has("materialLibraryOverride"))
-        {
-            mtlOverride = GsonHelper.getAsString(jsonObject, "materialLibraryOverride");
-            deprecationWarningsBuilder.put("materialLibraryOverride", "mtl_override");
-        }
-
-        return loadModel(new ObjModel.ModelSettings(new ResourceLocation(modelLocation), automaticCulling, shadeQuads, flipV, emissiveAmbient, mtlOverride), deprecationWarningsBuilder.build());
+        return loadModel(new ObjModel.ModelSettings(new ResourceLocation(modelLocation), automaticCulling, shadeQuads, flipV, emissiveAmbient, mtlOverride));
     }
 
     public ObjModel loadModel(ObjModel.ModelSettings settings)
-    {
-        return loadModel(settings, Map.of());
-    }
-
-    private ObjModel loadModel(ObjModel.ModelSettings settings, Map<String, String> deprecationWarnings)
     {
         return modelCache.computeIfAbsent(settings, (data) -> {
             Resource resource = manager.getResource(settings.modelLocation()).orElseThrow();
             try (ObjTokenizer tokenizer = new ObjTokenizer(resource.open()))
             {
-                return ObjModel.parse(tokenizer, settings, deprecationWarnings);
+                return ObjModel.parse(tokenizer, settings);
             } catch (FileNotFoundException e)
             {
                 throw new RuntimeException("Could not find OBJ model", e);

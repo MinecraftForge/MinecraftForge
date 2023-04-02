@@ -29,7 +29,7 @@ class DimensionsCommand
         return Commands.literal("dimensions")
             .requires(cs->cs.hasPermission(0)) //permission
             .executes(ctx -> {
-                ctx.getSource().sendSuccess(Component.translatable("commands.forge.dimensions.list"), true);
+                ctx.getSource().sendSuccess(() -> Component.translatable("commands.forge.dimensions.list"), true);
                 final Registry<DimensionType> reg = ctx.getSource().registryAccess().registryOrThrow(Registries.DIMENSION_TYPE);
 
                 Map<ResourceLocation, List<ResourceLocation>> types = new HashMap<>();
@@ -38,7 +38,7 @@ class DimensionsCommand
                 }
 
                 types.keySet().stream().sorted().forEach(key -> {
-                    ctx.getSource().sendSuccess(Component.literal(key + ": " + types.get(key).stream().map(ResourceLocation::toString).sorted().collect(Collectors.joining(", "))), false);
+                    ctx.getSource().sendSuccess(() -> Component.literal(key + ": " + types.get(key).stream().map(ResourceLocation::toString).sorted().collect(Collectors.joining(", "))), false);
                 });
                 return 0;
             });

@@ -352,7 +352,7 @@ public class PlayerInteractEvent extends PlayerEvent
      */
     public Level getLevel()
     {
-        return getEntity().level;
+        return getEntity().level();
     }
 
     /**

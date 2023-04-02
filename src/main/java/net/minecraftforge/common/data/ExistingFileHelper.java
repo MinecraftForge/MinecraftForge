@@ -6,14 +6,13 @@
 package net.minecraftforge.common.data;
 
 import java.io.File;
-import java.io.IOException;
+import java.io.FileNotFoundException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 
@@ -36,6 +35,7 @@ import net.minecraftforge.fml.ModList;
 import net.minecraftforge.forgespi.language.IModFileInfo;
 import net.minecraftforge.resource.ResourcePackLoader;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.VisibleForTesting;
 
 /**
  * Enables data providers to check if other data files currently exist. The
@@ -226,13 +226,18 @@ public class ExistingFileHelper {
     }
 
     @VisibleForTesting
-    public Resource getResource(ResourceLocation loc, PackType packType, String pathSuffix, String pathPrefix) throws IOException {
+    public Resource getResource(ResourceLocation loc, PackType packType, String pathSuffix, String pathPrefix) throws FileNotFoundException {
         return getResource(getLocation(loc, pathSuffix, pathPrefix), packType);
     }
 
     @VisibleForTesting
-    public Resource getResource(ResourceLocation loc, PackType packType) throws IOException {
-        return getManager(packType).getResource(loc).orElseThrow();
+    public Resource getResource(ResourceLocation loc, PackType packType) throws FileNotFoundException {
+        return getManager(packType).getResourceOrThrow(loc);
+    }
+
+    @VisibleForTesting
+    public List<Resource> getResourceStack(ResourceLocation loc, PackType packType) {
+        return getManager(packType).getResourceStack(loc);
     }
 
     /**

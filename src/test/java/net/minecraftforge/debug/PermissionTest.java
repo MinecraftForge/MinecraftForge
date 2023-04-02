@@ -56,10 +56,10 @@ public class PermissionTest
         event.getDispatcher().register(Commands.literal("permtest")
             .requires(src -> canUseCommand(src, boolPerm))
             .executes(context -> {
-                context.getSource().sendSuccess(Component.literal("Blob"), false);
-                context.getSource().sendSuccess(Component.literal("String:" + PermissionAPI.getPermission((ServerPlayer) context.getSource().getEntity(), stringPerm)), false);
-                context.getSource().sendSuccess(Component.literal("Int: " + PermissionAPI.getPermission((ServerPlayer) context.getSource().getEntity(), intPerm)), false);
-                context.getSource().sendSuccess(PermissionAPI.getPermission((ServerPlayer) context.getSource().getEntity(), componentPerm), false);
+                context.getSource().sendSuccess(() -> Component.literal("Blob"), false);
+                context.getSource().sendSuccess(() -> Component.literal("String:" + PermissionAPI.getPermission((ServerPlayer) context.getSource().getEntity(), stringPerm)), false);
+                context.getSource().sendSuccess(() -> Component.literal("Int: " + PermissionAPI.getPermission((ServerPlayer) context.getSource().getEntity(), intPerm)), false);
+                context.getSource().sendSuccess(() -> PermissionAPI.getPermission((ServerPlayer) context.getSource().getEntity(), componentPerm), false);
 
                 return 1;
             }));
@@ -69,7 +69,7 @@ public class PermissionTest
         event.getDispatcher().register(Commands.literal("permtesterr")
             .requires(src -> canUseCommand(src, unregisteredPerm))
             .executes(context -> {
-                context.getSource().sendSuccess(Component.literal("Blob"), false);
+                context.getSource().sendSuccess(() -> Component.literal("Blob"), false);
                 return 1;
             }));
     }

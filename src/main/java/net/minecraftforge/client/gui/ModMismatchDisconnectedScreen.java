@@ -17,12 +17,12 @@ import java.util.stream.Collectors;
 import net.minecraftforge.client.gui.widget.ScrollPanel;
 import org.apache.commons.lang3.tuple.Pair;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.MultiLineLabel;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
@@ -102,13 +102,13 @@ public class ModMismatchDisconnectedScreen extends Screen
     }
 
     @Override
-    public void render(PoseStack stack, int mouseX, int mouseY, float partialTicks)
+    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks)
     {
-        this.renderBackground(stack);
+        this.renderBackground(guiGraphics);
         int textYOffset = modMismatchData.containsMismatches() ? 18 : 0;
-        drawCenteredString(stack, this.font, this.title, this.width / 2, (this.height - this.listHeight - this.textHeight) / 2 - textYOffset - 9 * 2, 0xAAAAAA);
-        this.message.renderCentered(stack, this.width / 2, (this.height - this.listHeight - this.textHeight) / 2 - textYOffset);
-        super.render(stack, mouseX, mouseY, partialTicks);
+        guiGraphics.drawCenteredString(this.font, this.title, this.width / 2, (this.height - this.listHeight - this.textHeight) / 2 - textYOffset - 9 * 2, 0xAAAAAA);
+        this.message.renderCentered(guiGraphics, this.width / 2, (this.height - this.listHeight - this.textHeight) / 2 - textYOffset);
+        super.render(guiGraphics, mouseX, mouseY, partialTicks);
     }
 
     class MismatchInfoPanel extends ScrollPanel
@@ -217,7 +217,7 @@ public class ModMismatchDisconnectedScreen extends Screen
         }
 
         @Override
-        protected void drawPanel(PoseStack stack, int entryRight, int relativeY, Tesselator tess, int mouseX, int mouseY)
+        protected void drawPanel(GuiGraphics guiGraphics, int entryRight, int relativeY, Tesselator tess, int mouseX, int mouseY)
         {
             int i = 0;
 
@@ -228,11 +228,11 @@ public class ModMismatchDisconnectedScreen extends Screen
                 int color = Optional.ofNullable(font.getSplitter().componentStyleAtWidth(name, 0)).map(Style::getColor).map(TextColor::getValue).orElse(0xFFFFFF);
                 //Only indent the given name if a version string is present. This makes it easier to distinguish table section headers and mod entries
                 int nameLeft = left + border + (versions == null ? 0 : nameIndent);
-                font.draw(stack, name, nameLeft, relativeY + i * 12, color);
+                guiGraphics.drawString(font, name, nameLeft, relativeY + i * 12, color, false);
                 if (versions != null)
                 {
-                    font.draw(stack, versions.getLeft(), left + border + nameIndent + nameWidth, relativeY + i * 12, color);
-                    font.draw(stack, versions.getRight(), left + border + nameIndent + nameWidth + versionWidth, relativeY + i * 12, color);
+                    guiGraphics.drawString(font, versions.getLeft(), left + border + nameIndent + nameWidth, relativeY + i * 12, color, false);
+                    guiGraphics.drawString(font, versions.getRight(), left + border + nameIndent + nameWidth + versionWidth, relativeY + i * 12, color, false);
                 }
 
                 i++;
@@ -240,13 +240,13 @@ public class ModMismatchDisconnectedScreen extends Screen
         }
 
         @Override
-        public void render(PoseStack stack, int mouseX, int mouseY, float partialTicks)
+        public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks)
         {
-            super.render(stack, mouseX, mouseY, partialTicks);
+            super.render(guiGraphics, mouseX, mouseY, partialTicks);
             Style style = getComponentStyleAt(mouseX, mouseY);
             if (style != null && style.getHoverEvent() != null)
             {
-                ModMismatchDisconnectedScreen.this.renderComponentHoverEffect(stack, style, mouseX, mouseY);
+                guiGraphics.renderComponentHoverEffect(font, style, mouseX, mouseY);
             }
         }
 

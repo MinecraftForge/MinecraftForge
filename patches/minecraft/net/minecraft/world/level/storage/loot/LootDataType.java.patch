@@ -1,0 +1,54 @@
+--- a/net/minecraft/world/level/storage/loot/LootDataType.java
++++ b/net/minecraft/world/level/storage/loot/LootDataType.java
+@@ -16,13 +_,13 @@
+    private static final Logger f_278425_ = LogUtils.getLogger();
+    public static final LootDataType<LootItemCondition> f_278407_ = new LootDataType<>(Deserializers.m_78798_().create(), m_278813_(LootItemCondition.class, LootDataManager::m_278755_), "predicates", m_278693_());
+    public static final LootDataType<LootItemFunction> f_278496_ = new LootDataType<>(Deserializers.m_78799_().create(), m_278813_(LootItemFunction.class, LootDataManager::m_278704_), "item_modifiers", m_278693_());
+-   public static final LootDataType<LootTable> f_278413_ = new LootDataType<>(Deserializers.m_78800_().create(), m_278629_(LootTable.class), "loot_tables", m_278846_());
++   public static final LootDataType<LootTable> f_278413_ = new LootDataType<>(Deserializers.m_78800_().create(), net.minecraftforge.common.ForgeHooks::getLootTableDeserializer, "loot_tables", m_278846_());
+    private final Gson f_278508_;
+-   private final BiFunction<ResourceLocation, JsonElement, Optional<T>> f_278485_;
++   private final org.apache.commons.lang3.function.TriFunction<ResourceLocation, JsonElement, net.minecraft.server.packs.resources.ResourceManager, Optional<T>> f_278485_;
+    private final String f_278462_;
+    private final LootDataType.Validator<T> f_278443_;
+ 
+-   private LootDataType(Gson p_279334_, BiFunction<Gson, String, BiFunction<ResourceLocation, JsonElement, Optional<T>>> p_279478_, String p_279433_, LootDataType.Validator<T> p_279363_) {
++   private LootDataType(Gson p_279334_, BiFunction<Gson, String, org.apache.commons.lang3.function.TriFunction<ResourceLocation, JsonElement, net.minecraft.server.packs.resources.ResourceManager, Optional<T>>> p_279478_, String p_279433_, LootDataType.Validator<T> p_279363_) {
+       this.f_278508_ = p_279334_;
+       this.f_278462_ = p_279433_;
+       this.f_278443_ = p_279363_;
+@@ -41,17 +_,17 @@
+       this.f_278443_.m_278714_(p_279366_, p_279106_, p_279124_);
+    }
+ 
+-   public Optional<T> m_278763_(ResourceLocation p_279253_, JsonElement p_279330_) {
+-      return this.f_278485_.apply(p_279253_, p_279330_);
++   public Optional<T> deserialize(ResourceLocation p_279253_, JsonElement p_279330_, net.minecraft.server.packs.resources.ResourceManager resourceManager) {
++      return this.f_278485_.apply(p_279253_, p_279330_, resourceManager);
+    }
+ 
+    public static Stream<LootDataType<?>> m_278779_() {
+       return Stream.of(f_278407_, f_278496_, f_278413_);
+    }
+ 
+-   private static <T> BiFunction<Gson, String, BiFunction<ResourceLocation, JsonElement, Optional<T>>> m_278629_(Class<T> p_279251_) {
++   private static <T> BiFunction<Gson, String, org.apache.commons.lang3.function.TriFunction<ResourceLocation, JsonElement, net.minecraft.server.packs.resources.ResourceManager, Optional<T>>> m_278629_(Class<T> p_279251_) {
+       return (p_279398_, p_279358_) -> {
+-         return (p_279297_, p_279222_) -> {
++         return (p_279297_, p_279222_, resourceManager) -> {
+             try {
+                return Optional.of(p_279398_.fromJson(p_279222_, p_279251_));
+             } catch (Exception exception) {
+@@ -62,10 +_,10 @@
+       };
+    }
+ 
+-   private static <T> BiFunction<Gson, String, BiFunction<ResourceLocation, JsonElement, Optional<T>>> m_278813_(Class<T> p_279337_, Function<T[], T> p_279252_) {
++   private static <T> BiFunction<Gson, String, org.apache.commons.lang3.function.TriFunction<ResourceLocation, JsonElement, net.minecraft.server.packs.resources.ResourceManager, Optional<T>>> m_278813_(Class<T> p_279337_, Function<T[], T> p_279252_) {
+       Class<T[]> oclass = (Class<T[]>)p_279337_.arrayType();
+       return (p_279462_, p_279351_) -> {
+-         return (p_279495_, p_279409_) -> {
++         return (p_279495_, p_279409_, resourceManager) -> {
+             try {
+                if (p_279409_.isJsonArray()) {
+                   T[] at = (T[])((Object[])p_279462_.fromJson(p_279409_, oclass));

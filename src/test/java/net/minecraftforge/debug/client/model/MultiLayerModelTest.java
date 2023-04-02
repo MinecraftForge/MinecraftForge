@@ -7,12 +7,12 @@ package net.minecraftforge.debug.client.model;
 
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.material.Material;
+import net.minecraft.world.level.material.MapColor;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
-import net.minecraftforge.event.CreativeModeTabEvent;
+import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
@@ -32,7 +32,7 @@ public class MultiLayerModelTest
 
     private static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, MODID);
     private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MODID);
-    private static final RegistryObject<Block> TEST_BLOCK = BLOCKS.register(blockName, () -> new Block(Block.Properties.of(Material.WOOD).noOcclusion()));
+    private static final RegistryObject<Block> TEST_BLOCK = BLOCKS.register(blockName, () -> new Block(Block.Properties.of().mapColor(MapColor.WOOD).noOcclusion()));
     private static final RegistryObject<Item> TEST_BLOCK_ITEM = ITEMS.register(blockName, () -> new BlockItem(TEST_BLOCK.get(), new Item.Properties()));
 
     public MultiLayerModelTest()
@@ -47,9 +47,9 @@ public class MultiLayerModelTest
         modEventBus.addListener(this::addCreative);
     }
 
-    private void addCreative(CreativeModeTabEvent.BuildContents event)
+    private void addCreative(BuildCreativeModeTabContentsEvent event)
     {
-        if (event.getTab() == CreativeModeTabs.INGREDIENTS)
+        if (event.getTabKey() == CreativeModeTabs.INGREDIENTS)
             event.accept(TEST_BLOCK);
     }
 

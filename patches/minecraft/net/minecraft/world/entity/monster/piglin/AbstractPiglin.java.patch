@@ -10,7 +10,7 @@
 -      if (this.f_34649_ > 300) {
 +      if (this.f_34649_ > 300 && net.minecraftforge.event.ForgeEventFactory.canLivingConvert(this, EntityType.f_20531_, (timer) -> this.f_34649_ = timer)) {
           this.m_7580_();
-          this.m_8063_((ServerLevel)this.f_19853_);
+          this.m_8063_((ServerLevel)this.m_9236_());
        }
 @@ -104,6 +_,7 @@
        ZombifiedPiglin zombifiedpiglin = this.m_21406_(EntityType.f_20531_, true);

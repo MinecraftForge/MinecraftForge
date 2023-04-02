@@ -3,7 +3,7 @@
 @@ -65,7 +_,7 @@
           }
  
-          HitResult hitresult = ProjectileUtil.m_37294_(this, this::m_5603_);
+          HitResult hitresult = ProjectileUtil.m_278158_(this, this::m_5603_);
 -         if (hitresult.m_6662_() != HitResult.Type.MISS) {
 +         if (hitresult.m_6662_() != HitResult.Type.MISS && !net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, hitresult)) {
              this.m_6532_(hitresult);

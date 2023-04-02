@@ -24,10 +24,10 @@
        super.m_8119_();
        if (this.f_20860_ == 2) {
 @@ -121,6 +_,7 @@
-             List<Entity> list1 = this.f_19853_.m_6249_(this, new AABB(this.m_20185_() - 3.0D, this.m_20186_() - 3.0D, this.m_20189_() - 3.0D, this.m_20185_() + 3.0D, this.m_20186_() + 6.0D + 3.0D, this.m_20189_() + 3.0D), Entity::m_6084_);
+             List<Entity> list1 = this.m_9236_().m_6249_(this, new AABB(this.m_20185_() - 3.0D, this.m_20186_() - 3.0D, this.m_20189_() - 3.0D, this.m_20185_() + 3.0D, this.m_20186_() + 6.0D + 3.0D, this.m_20189_() + 3.0D), Entity::m_6084_);
  
              for(Entity entity : list1) {
 +               if (!net.minecraftforge.event.ForgeEventFactory.onEntityStruckByLightning(entity, this))
-                entity.m_8038_((ServerLevel)this.f_19853_, this);
+                entity.m_8038_((ServerLevel)this.m_9236_(), this);
              }
  

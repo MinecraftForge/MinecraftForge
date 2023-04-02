@@ -42,9 +42,9 @@
           if (p_55230_ != RailShape.EAST_WEST || railshape != RailShape.NORTH_SOUTH && railshape != RailShape.ASCENDING_NORTH && railshape != RailShape.ASCENDING_SOUTH) {
              if (p_55230_ != RailShape.NORTH_SOUTH || railshape != RailShape.EAST_WEST && railshape != RailShape.ASCENDING_EAST && railshape != RailShape.ASCENDING_WEST) {
 -               if (blockstate.m_61143_(f_55215_)) {
--                  return p_55226_.m_46753_(p_55227_) ? true : this.m_55219_(p_55226_, p_55227_, blockstate, p_55228_, p_55229_ + 1);
+-                  return p_55226_.m_276867_(p_55227_) ? true : this.m_55219_(p_55226_, p_55227_, blockstate, p_55228_, p_55229_ + 1);
 +               if (isActivatorRail() == other.isActivatorRail()) {
-+                  return p_55226_.m_46753_(p_55227_) ? true : other.m_55219_(p_55226_, p_55227_, blockstate, p_55228_, p_55229_ + 1);
++                  return p_55226_.m_276867_(p_55227_) ? true : other.m_55219_(p_55226_, p_55227_, blockstate, p_55228_, p_55229_ + 1);
                 } else {
                    return false;
                 }

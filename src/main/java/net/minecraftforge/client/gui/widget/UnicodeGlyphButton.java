@@ -5,11 +5,9 @@
 
 package net.minecraftforge.client.gui.widget;
 
-import com.mojang.blaze3d.vertex.PoseStack;
-
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
-import net.minecraftforge.client.gui.ScreenUtils;
 
 /**
  * This class provides a button that shows a string glyph at the beginning. The glyph can be scaled using the glyphScale parameter.
@@ -29,14 +27,14 @@ public class UnicodeGlyphButton extends ExtendedButton
     }
 
     @Override
-    public void render(PoseStack poseStack, int mouseX, int mouseY, float partialTick)
+    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick)
     {
         if (this.visible)
         {
             Minecraft mc = Minecraft.getInstance();
             this.isHovered = mouseX >= this.getX() && mouseY >= this.getY() && mouseX < this.getX() + this.width && mouseY < this.getY() + this.height;
             int k = !this.active ? 0 : (this.isHoveredOrFocused() ? 2 : 1);
-            ScreenUtils.blitWithBorder(poseStack, WIDGETS_LOCATION, this.getX(), this.getY(), 0, 46 + k * 20, this.width, this.height, 200, 20, 2, 3, 2, 2, 0);
+            guiGraphics.blitWithBorder(WIDGETS_LOCATION, this.getX(), this.getY(), 0, 46 + k * 20, this.width, this.height, 200, 20, 2, 3, 2, 2);
 
             Component buttonText = this.createNarrationMessage();
             int glyphWidth = (int) (mc.font.width(glyph) * glyphScale);
@@ -50,14 +48,14 @@ public class UnicodeGlyphButton extends ExtendedButton
             strWidth = mc.font.width(buttonText);
             totalWidth = glyphWidth + strWidth;
 
-            poseStack.pushPose();
-            poseStack.scale(glyphScale, glyphScale, 1.0F);
-            this.drawCenteredString(poseStack, mc.font, Component.literal(glyph),
+            guiGraphics.pose().pushPose();
+            guiGraphics.pose().scale(glyphScale, glyphScale, 1.0F);
+            guiGraphics.drawCenteredString(mc.font, Component.literal(glyph),
                     (int) (((this.getX() + (this.width / 2) - (strWidth / 2)) / glyphScale) - (glyphWidth / (2 * glyphScale)) + 2),
                     (int) (((this.getY() + ((this.height - 8) / glyphScale) / 2) - 1) / glyphScale), getFGColor());
-            poseStack.popPose();
+            guiGraphics.pose().popPose();
 
-            this.drawCenteredString(poseStack, mc.font, buttonText, (int) (this.getX() + (this.width / 2) + (glyphWidth / glyphScale)),
+            guiGraphics.drawCenteredString(mc.font, buttonText, (int) (this.getX() + (this.width / 2) + (glyphWidth / glyphScale)),
                     this.getY() + (this.height - 8) / 2, getFGColor());
 
         }

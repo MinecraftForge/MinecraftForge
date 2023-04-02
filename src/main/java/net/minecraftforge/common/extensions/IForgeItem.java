@@ -190,20 +190,6 @@ public interface IForgeItem
     }
 
     /**
-     * Called each tick while using an item.
-     *
-     * @param stack  The Item being used
-     * @param player The Player using the item
-     * @param count  The amount of time in tick the item has been used for
-     *               continuously
-     * @deprecated {@link net.minecraft.world.item.Item#onUseTick(Level, LivingEntity, ItemStack, int) Implement Vanilla's Version}
-     */
-    @Deprecated(since = "1.19.4", forRemoval = true)
-    default void onUsingTick(ItemStack stack, LivingEntity player, int count)
-    {
-    }
-
-    /**
      * Called when an entity stops using an item for any reason, notably when selecting another item without releasing or finishing.
      * This method is called in addition to any other hooks called when an item is finished using; when another hook is also called it will be called before this method.
      *
@@ -595,7 +581,7 @@ public interface IForgeItem
             return true;
 
         if (!newStack.isDamageableItem() || !oldStack.isDamageableItem())
-            return !ItemStack.tagMatches(newStack, oldStack);
+            return !ItemStack.isSameItemSameTags(newStack, oldStack);
 
         CompoundTag newTag = newStack.getTag();
         CompoundTag oldTag = oldStack.getTag();
@@ -628,7 +614,11 @@ public interface IForgeItem
      */
     default boolean canContinueUsing(ItemStack oldStack, ItemStack newStack)
     {
-        return ItemStack.isSame(oldStack, newStack);
+        if (oldStack == newStack) {
+            return true;
+        } else {
+            return !oldStack.isEmpty() && !newStack.isEmpty() && ItemStack.isSameItem(newStack, oldStack);
+        }
     }
 
     /**
@@ -862,7 +852,6 @@ public interface IForgeItem
      */
     default boolean canGrindstoneRepair(ItemStack stack)
     {
-        // TODO 1.20: Change to return false; this changes the default behavior for all items from opt-out to opt-in.
-        return true;
+        return false;
     }
 }

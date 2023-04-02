@@ -33,5 +33,6 @@
     [
       "obtained_diamond_block"
     ]
-  ]
+  ],
+  "sends_telemetry_event": true
 }

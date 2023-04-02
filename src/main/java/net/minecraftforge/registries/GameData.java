@@ -40,13 +40,11 @@ import net.minecraft.world.entity.ai.village.poi.PoiType;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemDisplayContext;
-import net.minecraft.world.level.block.AirBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.levelgen.DebugLevelSource;
 import net.minecraft.world.level.material.Fluid;
-import net.minecraft.world.level.material.Material;
 import net.minecraftforge.common.CreativeModeTabRegistry;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.MinecraftForge;
@@ -209,9 +207,6 @@ public class GameData
         return new RegistryBuilder<ItemDisplayContext>()
             .setMaxID(128 * 2) /* 0 -> 127 gets positive ID, 128 -> 256 gets negative ID */.disableOverrides().disableSaving()
             .setDefaultKey(new ResourceLocation("minecraft:none"))
-            .onCreate((owner, stage) -> Arrays.stream(ItemDisplayContext.values())
-                    .filter(Predicate.not(ItemDisplayContext::isModded))
-                    .forEach(ctx -> owner.register(ctx.getId(), new ResourceLocation("minecraft", ctx.getSerializedName()), ctx)))
             .onAdd(ItemDisplayContext.ADD_CALLBACK);
     }
 
@@ -403,7 +398,7 @@ public class GameData
         {
             ForgeHooks.modifyAttributes();
             SpawnPlacements.fireSpawnPlacementEvent();
-            CreativeModeTabRegistry.fireCollectionEvent();
+            CreativeModeTabRegistry.sortTabs();
         }
     }
 
@@ -427,7 +422,7 @@ public class GameData
         }
     }
 
-    private static class BlockCallbacks implements IForgeRegistry.AddCallback<Block>, IForgeRegistry.ClearCallback<Block>, IForgeRegistry.BakeCallback<Block>, IForgeRegistry.CreateCallback<Block>, IForgeRegistry.DummyFactory<Block>
+    private static class BlockCallbacks implements IForgeRegistry.AddCallback<Block>, IForgeRegistry.ClearCallback<Block>, IForgeRegistry.BakeCallback<Block>, IForgeRegistry.CreateCallback<Block>
     {
         static final BlockCallbacks INSTANCE = new BlockCallbacks();
 
@@ -489,14 +484,6 @@ public class GameData
         }
 
         @Override
-        @Deprecated(forRemoval = true, since = "1.19.4")
-        public Block createDummy(ResourceLocation key)
-        {
-            Block ret = new DummyAirBlock(Block.Properties.of(Material.AIR).noCollission().noLootTable().air());
-            return ret;
-        }
-
-        @Override
         public void onBake(IForgeRegistryInternal<Block> owner, RegistryManager stage)
         {
             @SuppressWarnings("unchecked")
@@ -513,21 +500,6 @@ public class GameData
                 block.getLootTable();
             }
             DebugLevelSource.initValidStates();
-        }
-
-        @Deprecated(forRemoval = true, since = "1.19.4")
-        private static class DummyAirBlock extends AirBlock
-        {
-            private DummyAirBlock(Block.Properties properties)
-            {
-                super(properties);
-            }
-
-            @Override
-            public String getDescriptionId()
-            {
-                return "block.minecraft.air";
-            }
         }
     }
 
@@ -699,34 +671,6 @@ public class GameData
             loadPersistentDataToStagingRegistry(RegistryManager.ACTIVE, STAGING, remaps.get(key), missing.get(key), key, value);
         });
 
-        snapshot.forEach((key, value) ->
-        {
-            value.dummied.forEach(dummy ->
-            {
-                Map<ResourceLocation, Integer> m = missing.get(key);
-                ForgeRegistry<?> reg = STAGING.getRegistry(key);
-
-                // Currently missing locally, we just inject and carry on
-                if (m.containsKey(dummy))
-                {
-                    if (reg.markDummy(dummy, m.get(dummy)))
-                        m.remove(dummy);
-                }
-                else if (isLocalWorld)
-                {
-                   LOGGER.debug(REGISTRIES,"Registry {}: Resuscitating dummy entry {}", key, dummy);
-                }
-                else
-                {
-                    // The server believes this is a dummy block identity, but we seem to have one locally. This is likely a conflict
-                    // in mod setup - Mark this entry as a dummy
-                    int id = reg.getID(dummy);
-                    LOGGER.warn(REGISTRIES, "Registry {}: The ID {} @ {} is currently locally mapped - it will be replaced with a dummy for this session", dummy, key, id);
-                    reg.markDummy(dummy, id);
-                }
-            });
-        });
-
         int count = missing.values().stream().mapToInt(Map::size).sum();
         if (count > 0)
         {
@@ -791,17 +735,6 @@ public class GameData
 
         if (injectFrozenData)
         {
-            // If we're loading from disk, we can actually substitute air in the block map for anything that is otherwise "missing". This keeps the reference in the map, in case
-            // the block comes back later
-            missing.forEach((name, m) ->
-            {
-                if (m.isEmpty())
-                    return;
-                ForgeRegistry<?> reg = STAGING.getRegistry(name);
-                m.forEach((rl, id) -> reg.markDummy(rl, id));
-            });
-
-
             // If we're loading up the world from disk, we want to add in the new data that might have been provisioned by mods
             // So we load it from the frozen persistent registry
             RegistryManager.ACTIVE.registries.forEach((name, reg) ->
@@ -852,8 +785,6 @@ public class GameData
         ForgeRegistry<T> _new = to.getRegistry(name, RegistryManager.ACTIVE);
         snap.aliases.forEach(_new::addAlias);
         snap.blocked.forEach(_new::block);
-        // Load current dummies BEFORE the snapshot is loaded so that add() will remove from the list.
-        snap.dummied.forEach(_new::addDummy);
         _new.loadIds(snap.ids, snap.overrides, missing, remaps, active, name);
     }
 

@@ -108,18 +108,6 @@ public class UnbakedGeometryHelper
         if (blockModel.getRootModel() == ModelBakery.GENERATION_MARKER)
             return ITEM_MODEL_GENERATOR.generateBlockModel(spriteGetter, blockModel).bake(modelBaker, blockModel, spriteGetter, modelState, modelLocation, guiLight3d);
 
-        return bakeVanilla(blockModel, modelBaker, owner, spriteGetter, modelState, modelLocation);
-    }
-
-    /**
-     * Helper for baking vanilla {@link BlockModel} instances.
-     *
-     * @deprecated Merge into the method above in 1.20 once the call from {@link BlockModel} is gone.
-     */
-    @ApiStatus.Internal
-    @Deprecated(forRemoval = true, since = "1.19.2")
-    public static BakedModel bakeVanilla(BlockModel blockModel, ModelBaker modelBaker, BlockModel owner, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelState, ResourceLocation modelLocation)
-    {
         if (blockModel.getRootModel() == ModelBakery.BLOCK_ENTITY_MARKER)
         {
             var particleSprite = spriteGetter.apply(blockModel.getMaterial("particle"));

@@ -5,7 +5,7 @@
 
 package net.minecraftforge.debug;
 
-import net.minecraft.core.NonNullList;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffect;
@@ -19,21 +19,19 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.SuspiciousStewItem;
 import net.minecraft.world.item.alchemy.PotionUtils;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.CreativeModeTabEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegisterEvent;
 import net.minecraftforge.registries.RegistryObject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.List;
-import java.util.function.Consumer;
 
 /**
  * Registers 255 mob effects that log every tick on the client.
@@ -69,7 +67,7 @@ public class ManyMobEffectsTest
                 @Override
                 public void applyEffectTick(LivingEntity entity, int amplifier)
                 {
-                    if (entity.level.isClientSide)
+                    if (entity.level().isClientSide)
                     {
                         LOGGER.info("Effect Tick for {} on the client", index);
                     }
@@ -91,22 +89,24 @@ public class ManyMobEffectsTest
         IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();
         MOB_EFFECTS.register(modBus);
         MinecraftForge.EVENT_BUS.addListener(ManyMobEffectsTest::mobInteract);
-        modBus.addListener((CreativeModeTabEvent.Register event) -> event.registerCreativeModeTab(new ResourceLocation(MODID, "many_mob_effects_test"), builder -> builder.withSearchBar()
-                .icon(() -> new ItemStack(Items.POTION))
-                .displayItems((params, output) -> {
-                    var stack = new ItemStack(Items.POTION);
-                    PotionUtils.setCustomEffects(stack, List.of(new MobEffectInstance(LAST_EFFECT.get(), 1000)));
-                    output.accept(stack);
+        modBus.addListener((final RegisterEvent event) -> event.register(Registries.CREATIVE_MODE_TAB, helper ->
+            helper.register(new ResourceLocation(MODID, "many_mob_effects_test"), CreativeModeTab.builder().withSearchBar()
+                    .icon(() -> new ItemStack(Items.POTION))
+                    .displayItems((params, output) -> {
+                        var stack = new ItemStack(Items.POTION);
+                        PotionUtils.setCustomEffects(stack, List.of(new MobEffectInstance(LAST_EFFECT.get(), 1000)));
+                        output.accept(stack);
 
-                    stack = new ItemStack(Items.SUSPICIOUS_STEW);
-                    SuspiciousStewItem.saveMobEffect(stack, LAST_EFFECT.get(), 1000);
-                    output.accept(stack);
-                })));
+                        stack = new ItemStack(Items.SUSPICIOUS_STEW);
+                        SuspiciousStewItem.saveMobEffect(stack, LAST_EFFECT.get(), 1000);
+                        output.accept(stack);
+                    })
+                    .build())));
     }
 
     private static void mobInteract(PlayerInteractEvent.EntityInteract event)
     {
-        if (!event.getTarget().getLevel().isClientSide() && event.getTarget() instanceof MushroomCow cow)
+        if (!event.getTarget().level().isClientSide() && event.getTarget() instanceof MushroomCow cow)
         {
             var heldItem = event.getEntity().getItemInHand(event.getHand());
             if (heldItem.is(Items.POTION))

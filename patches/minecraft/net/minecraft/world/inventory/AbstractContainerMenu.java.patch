@@ -10,14 +10,14 @@
              }
           }
 @@ -401,6 +_,7 @@
-             ItemStack itemstack11 = this.m_142621_();
-             p_150434_.m_141945_(itemstack11, slot7.m_7993_(), clickaction);
-             if (!this.m_246200_(p_150434_, clickaction, slot7, itemstack10, itemstack11)) {
-+            if (!net.minecraftforge.common.ForgeHooks.onItemStackedOn(itemstack11, itemstack10, slot7, clickaction, p_150434_, m_150446_()))
-                if (itemstack10.m_41619_()) {
-                   if (!itemstack11.m_41619_()) {
-                      int l2 = clickaction == ClickAction.PRIMARY ? itemstack11.m_41613_() : 1;
-@@ -611,14 +_,15 @@
+             ItemStack itemstack10 = this.m_142621_();
+             p_150434_.m_141945_(itemstack10, slot7.m_7993_(), clickaction);
+             if (!this.m_246200_(p_150434_, clickaction, slot7, itemstack9, itemstack10)) {
++            if (!net.minecraftforge.common.ForgeHooks.onItemStackedOn(itemstack9, itemstack10, slot7, clickaction, p_150434_, m_150446_()))
+                if (itemstack9.m_41619_()) {
+                   if (!itemstack10.m_41619_()) {
+                      int i3 = clickaction == ClickAction.PRIMARY ? itemstack10.m_41613_() : 1;
+@@ -610,14 +_,15 @@
              ItemStack itemstack = slot.m_7993_();
              if (!itemstack.m_41619_() && ItemStack.m_150942_(p_38904_, itemstack)) {
                 int j = itemstack.m_41613_() + p_38904_.m_41613_();
@@ -38,11 +38,11 @@
                    flag = true;
                 }
 @@ -718,7 +_,7 @@
-             p_38925_.m_41764_(1);
+             i = 1;
              break;
           case 2:
--            p_38925_.m_41764_(p_38925_.m_41720_().m_41459_());
-+         p_38925_.m_41764_(p_38925_.m_41741_());
-       }
- 
-       p_38925_.m_41769_(p_38926_);
+-            i = p_279172_.m_41720_().m_41459_();
++            i = p_279172_.m_41741_();
+             break;
+          default:
+             i = p_279172_.m_41613_();

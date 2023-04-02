@@ -3,7 +3,7 @@
 @@ -10,6 +_,6 @@
  
     @DontObfuscate
-    public static String m_129629_() {
+    public static String getClientModName() {
 -      return "vanilla";
 +      return net.minecraftforge.internal.BrandingControl.getClientBranding();
     }

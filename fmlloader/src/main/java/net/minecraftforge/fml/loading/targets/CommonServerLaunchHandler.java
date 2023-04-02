@@ -14,7 +14,6 @@ import net.minecraftforge.api.distmarker.Dist;
 
 import java.nio.file.Path;
 import java.util.List;
-import java.util.concurrent.Callable;
 import java.util.function.BiPredicate;
 import java.util.stream.Stream;
 
@@ -26,7 +25,9 @@ public abstract class CommonServerLaunchHandler extends CommonLaunchHandler {
     @Override
     public ServiceRunner launchService(String[] arguments, ModuleLayer layer) {
         return () -> {
-            Class.forName(layer.findModule("minecraft").orElseThrow(),"net.minecraft.server.Main").getMethod("main", String[].class).invoke(null, (Object)arguments);
+            var args = preLaunch(arguments, layer);
+
+            Class.forName(layer.findModule("minecraft").orElseThrow(),"net.minecraft.server.Main").getMethod("main", String[].class).invoke(null, (Object)args);
         };
     }
 

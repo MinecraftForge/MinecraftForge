@@ -1,11 +1,11 @@
 --- a/net/minecraft/client/gui/screens/multiplayer/ServerSelectionList.java
 +++ b/net/minecraft/client/gui/screens/multiplayer/ServerSelectionList.java
-@@ -330,6 +_,8 @@
+@@ -318,6 +_,8 @@
              this.f_99855_.m_99707_(list1);
           }
  
-+         net.minecraftforge.client.ForgeHooksClient.drawForgePingInfo(this.f_99855_, f_99857_, p_99879_, p_99882_, p_99881_, p_99883_, i1, j1);
++         net.minecraftforge.client.ForgeHooksClient.drawForgePingInfo(this.f_99855_, f_99857_, p_281406_, p_281363_, p_282921_, p_283596_, i1, j1);
 +
-          if (this.f_99856_.f_91066_.m_231828_().m_231551_() || p_99887_) {
-             RenderSystem.m_157456_(0, ServerSelectionList.f_99759_);
-             GuiComponent.m_93172_(p_99879_, p_99882_, p_99881_, p_99882_ + 32, p_99881_ + 32, -1601138544);
+          if (this.f_99856_.f_91066_.m_231828_().m_231551_() || p_282999_) {
+             p_281406_.m_280509_(p_281363_, p_282921_, p_281363_ + 32, p_282921_ + 32, -1601138544);
+             int k1 = p_283567_ - p_281363_;

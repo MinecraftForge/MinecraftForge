@@ -1,41 +1,30 @@
 --- a/net/minecraft/client/renderer/block/ModelBlockRenderer.java
 +++ b/net/minecraft/client/renderer/block/ModelBlockRenderer.java
-@@ -40,72 +_,88 @@
+@@ -40,16 +_,20 @@
        this.f_110995_ = p_110999_;
     }
  
 +   @Deprecated //Forge: Model data and render type parameter
     public void m_234379_(BlockAndTintGetter p_234380_, BakedModel p_234381_, BlockState p_234382_, BlockPos p_234383_, PoseStack p_234384_, VertexConsumer p_234385_, boolean p_234386_, RandomSource p_234387_, long p_234388_, int p_234389_) {
 -      boolean flag = Minecraft.m_91086_() && p_234382_.m_60791_() == 0 && p_234381_.m_7541_();
--      Vec3 vec3 = p_234382_.m_60824_(p_234380_, p_234383_);
--      p_234384_.m_85837_(vec3.f_82479_, vec3.f_82480_, vec3.f_82481_);
 +      tesselateBlock(p_234380_, p_234381_, p_234382_, p_234383_, p_234384_, p_234385_, p_234386_, p_234387_, p_234388_, p_234389_, net.minecraftforge.client.model.data.ModelData.EMPTY, null);
 +   }
-+   public void tesselateBlock(BlockAndTintGetter p_111048_, BakedModel p_111049_, BlockState p_111050_, BlockPos p_111051_, PoseStack p_111052_, VertexConsumer p_111053_, boolean p_111054_, RandomSource p_111055_, long p_111056_, int p_111057_, net.minecraftforge.client.model.data.ModelData modelData, net.minecraft.client.renderer.RenderType renderType) {
-+      tesselateBlock(p_111048_, p_111049_, p_111050_, p_111051_, p_111052_, p_111053_, p_111054_, p_111055_, p_111056_, p_111057_, modelData, renderType, true);
-+   }
-+   public void tesselateBlock(BlockAndTintGetter p_111048_, BakedModel p_111049_, BlockState p_111050_, BlockPos p_111051_, PoseStack p_111052_, VertexConsumer p_111053_, boolean p_111054_, RandomSource p_111055_, long p_111056_, int p_111057_, net.minecraftforge.client.model.data.ModelData modelData, net.minecraft.client.renderer.RenderType renderType, boolean queryModelSpecificData) { // TODO 1.20: Move to the signature above
-+      boolean flag = Minecraft.m_91086_() && p_111050_.getLightEmission(p_111048_, p_111051_) == 0 && p_111049_.useAmbientOcclusion(p_111050_, renderType);
-+      Vec3 vec3 = p_111050_.m_60824_(p_111048_, p_111051_);
-+      p_111052_.m_85837_(vec3.f_82479_, vec3.f_82480_, vec3.f_82481_);
-+      if (queryModelSpecificData) modelData = p_111049_.getModelData(p_111048_, p_111051_, p_111050_, modelData); // TODO 1.20: Remove this line entirely
++   public void tesselateBlock(BlockAndTintGetter p_234380_, BakedModel p_234381_, BlockState p_234382_, BlockPos p_234383_, PoseStack p_234384_, VertexConsumer p_234385_, boolean p_234386_, RandomSource p_234387_, long p_234388_, int p_234389_, net.minecraftforge.client.model.data.ModelData modelData, net.minecraft.client.renderer.RenderType renderType) {
++      boolean flag = Minecraft.m_91086_() && p_234382_.getLightEmission(p_234380_, p_234383_) == 0 && p_234381_.useAmbientOcclusion(p_234382_, renderType);
+       Vec3 vec3 = p_234382_.m_60824_(p_234380_, p_234383_);
+       p_234384_.m_85837_(vec3.f_82479_, vec3.f_82480_, vec3.f_82481_);
  
        try {
           if (flag) {
 -            this.m_234390_(p_234380_, p_234381_, p_234382_, p_234383_, p_234384_, p_234385_, p_234386_, p_234387_, p_234388_, p_234389_);
-+            this.tesselateWithAO(p_111048_, p_111049_, p_111050_, p_111051_, p_111052_, p_111053_, p_111054_, p_111055_, p_111056_, p_111057_, modelData, renderType);
++            this.tesselateWithAO(p_234380_, p_234381_, p_234382_, p_234383_, p_234384_, p_234385_, p_234386_, p_234387_, p_234388_, p_234389_, modelData, renderType);
           } else {
 -            this.m_234401_(p_234380_, p_234381_, p_234382_, p_234383_, p_234384_, p_234385_, p_234386_, p_234387_, p_234388_, p_234389_);
-+            this.tesselateWithoutAO(p_111048_, p_111049_, p_111050_, p_111051_, p_111052_, p_111053_, p_111054_, p_111055_, p_111056_, p_111057_, modelData, renderType);
++            this.tesselateWithoutAO(p_234380_, p_234381_, p_234382_, p_234383_, p_234384_, p_234385_, p_234386_, p_234387_, p_234388_, p_234389_, modelData, renderType);
           }
  
        } catch (Throwable throwable) {
-          CrashReport crashreport = CrashReport.m_127521_(throwable, "Tesselating block model");
-          CrashReportCategory crashreportcategory = crashreport.m_127514_("Block model being tesselated");
--         CrashReportCategory.m_178950_(crashreportcategory, p_234380_, p_234383_, p_234382_);
-+         CrashReportCategory.m_178950_(crashreportcategory, p_111048_, p_111051_, p_111050_);
-          crashreportcategory.m_128159_("Using AO", flag);
-          throw new ReportedException(crashreport);
+@@ -61,51 +_,59 @@
        }
     }
  

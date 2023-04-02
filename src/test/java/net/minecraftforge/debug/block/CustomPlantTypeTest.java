@@ -9,7 +9,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.FlowerBlock;
 import net.minecraft.world.level.block.SoundType;
-import net.minecraft.world.level.material.Material;
+import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.effect.MobEffects;
@@ -63,7 +63,7 @@ public class CustomPlantTypeTest
     {
         public CustomBlock()
         {
-            super(Properties.of(Material.STONE));
+            super(Properties.of().mapColor(MapColor.STONE));
         }
 
         @Override
@@ -84,7 +84,7 @@ public class CustomPlantTypeTest
 
         public CustomPlantBlock()
         {
-            super(MobEffects.WEAKNESS, 9, Properties.of(Material.PLANT).noCollission().sound(SoundType.GRASS));
+            super(MobEffects.WEAKNESS, 9, Properties.of().mapColor(MapColor.PLANT).noCollission().sound(SoundType.GRASS));
         }
 
         @Override

@@ -12,7 +12,6 @@ import net.minecraftforge.registries.IForgeRegistry.AddCallback;
 import net.minecraftforge.registries.IForgeRegistry.BakeCallback;
 import net.minecraftforge.registries.IForgeRegistry.ClearCallback;
 import net.minecraftforge.registries.IForgeRegistry.CreateCallback;
-import net.minecraftforge.registries.IForgeRegistry.DummyFactory;
 import net.minecraftforge.registries.IForgeRegistry.MissingFactory;
 import net.minecraftforge.registries.IForgeRegistry.ValidateCallback;
 import org.jetbrains.annotations.Nullable;
@@ -39,8 +38,6 @@ public class RegistryBuilder<T>
     private boolean allowOverrides = true;
     private boolean allowModifications = false;
     private boolean hasWrapper = false;
-    @Deprecated(forRemoval = true, since = "1.19.4")
-    private DummyFactory<T> dummyFactory;
     private MissingFactory<T> missingFactory;
     private Set<ResourceLocation> legacyNames = new HashSet<>();
     @Nullable
@@ -83,8 +80,6 @@ public class RegistryBuilder<T>
             this.add((ValidateCallback<T>)inst);
         if (inst instanceof BakeCallback)
             this.add((BakeCallback<T>)inst);
-        if (inst instanceof DummyFactory)
-            this.set((DummyFactory<T>)inst);
         if (inst instanceof MissingFactory)
             this.set((MissingFactory<T>)inst);
         return this;
@@ -143,19 +138,6 @@ public class RegistryBuilder<T>
     public RegistryBuilder<T> onBake(BakeCallback<T> bake)
     {
         return this.add(bake);
-    }
-
-    @Deprecated(forRemoval = true, since = "1.19.4")
-    public RegistryBuilder<T> set(DummyFactory<T> factory)
-    {
-        this.dummyFactory = factory;
-        return this;
-    }
-
-    @Deprecated(forRemoval = true, since = "1.19.4")
-    public RegistryBuilder<T> dummy(DummyFactory<T> factory)
-    {
-        return this.set(factory);
     }
 
     public RegistryBuilder<T> set(MissingFactory<T> missing)
@@ -349,13 +331,6 @@ public class RegistryBuilder<T>
     public boolean getAllowModifications()
     {
         return allowModifications;
-    }
-
-    @Nullable
-    @Deprecated(forRemoval = true, since = "1.19.4")
-    public DummyFactory<T> getDummyFactory()
-    {
-        return dummyFactory;
     }
 
     @Nullable

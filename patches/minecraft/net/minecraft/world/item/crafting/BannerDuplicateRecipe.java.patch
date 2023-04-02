@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/item/crafting/BannerDuplicateRecipe.java
 +++ b/net/minecraft/world/item/crafting/BannerDuplicateRecipe.java
-@@ -82,8 +_,8 @@
+@@ -80,8 +_,8 @@
        for(int i = 0; i < nonnulllist.size(); ++i) {
           ItemStack itemstack = p_43791_.m_8020_(i);
           if (!itemstack.m_41619_()) {
@@ -9,5 +9,5 @@
 +            if (itemstack.hasCraftingRemainingItem()) {
 +               nonnulllist.set(i, itemstack.getCraftingRemainingItem());
              } else if (itemstack.m_41782_() && BannerBlockEntity.m_58504_(itemstack) > 0) {
-                ItemStack itemstack1 = itemstack.m_41777_();
-                itemstack1.m_41764_(1);
+                nonnulllist.set(i, itemstack.m_255036_(1));
+             }

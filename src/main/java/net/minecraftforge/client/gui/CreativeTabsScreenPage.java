@@ -6,7 +6,7 @@
 package net.minecraftforge.client.gui;
 
 import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.CreativeModeTabs;
+import net.minecraftforge.common.CreativeModeTabRegistry;
 import net.minecraftforge.common.util.ConcatenatedListView;
 
 import java.util.ArrayList;
@@ -17,18 +17,18 @@ public final class CreativeTabsScreenPage
     private final List<CreativeModeTab> tabs;
     private final List<CreativeModeTab> topTabs;
     private final List<CreativeModeTab> bottomTabs;
-    private final ConcatenatedListView<CreativeModeTab> visibleTabs;
+    private final List<CreativeModeTab> visibleTabs;
 
     public CreativeTabsScreenPage(List<CreativeModeTab> tabs)
     {
         this.tabs = tabs;
         this.topTabs = new ArrayList<>();
         this.bottomTabs = new ArrayList<>();
-        this.visibleTabs = ConcatenatedListView.of(tabs, CreativeModeTabs.defaultTabs());
+        this.visibleTabs = ConcatenatedListView.of(tabs, CreativeModeTabRegistry.getDefaultTabs());
 
         int maxLength = 10;
         int topLength = maxLength / 2;
-        int length = Math.min(10, tabs.size());
+        int length = tabs.size();
 
         for (int i = 0; i < length; i++)
         {
@@ -45,15 +45,19 @@ public final class CreativeTabsScreenPage
     public boolean isTop(CreativeModeTab tab)
     {
         if (!this.tabs.contains(tab))
-            return CreativeModeTabs.defaultTabs().indexOf(tab) < (CreativeModeTabs.defaultTabs().size() / 2);
+            return CreativeModeTabRegistry.getDefaultTabs().indexOf(tab) < (CreativeModeTabRegistry.getDefaultTabs().size() / 2);
 
         return this.topTabs.contains(tab);
     }
 
     public int getColumn(CreativeModeTab tab)
     {
+//        if (!this.tabs.contains(tab)) {
+//            return CreativeModeTabs.tabs().indexOf(tab) % 6;
+//        }
+//        return this.topTabs.contains(tab) ? this.topTabs.indexOf(tab) : this.bottomTabs.indexOf(tab);
         if (!this.tabs.contains(tab))
-            return (CreativeModeTabs.defaultTabs().indexOf(tab) % (CreativeModeTabs.defaultTabs().size() / 2)) + 5;
+            return (CreativeModeTabRegistry.getDefaultTabs().indexOf(tab) % (CreativeModeTabRegistry.getDefaultTabs().size() / 2)) + 5;
 
         return this.topTabs.contains(tab) ? this.topTabs.indexOf(tab) : this.bottomTabs.indexOf(tab);
     }

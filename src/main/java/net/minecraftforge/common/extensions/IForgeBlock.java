@@ -23,12 +23,13 @@ import net.minecraft.world.entity.projectile.FishingHook;
 import net.minecraft.world.entity.projectile.WitherSkull;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.level.SignalGetter;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.levelgen.feature.configurations.TreeConfiguration;
 import net.minecraft.world.level.material.FluidState;
-import net.minecraft.world.level.material.MaterialColor;
+import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.pathfinder.BlockPathTypes;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.core.Direction;
@@ -430,7 +431,7 @@ public interface IForgeBlock
     */
     default float getEnchantPowerBonus(BlockState state, LevelReader level, BlockPos pos)
     {
-        return state.is(Blocks.BOOKSHELF) ? 1: 0;
+        return state.is(BlockTags.ENCHANTMENT_POWER_PROVIDER) ? 1: 0;
     }
 
    /**
@@ -442,13 +443,13 @@ public interface IForgeBlock
     default void onNeighborChange(BlockState state, LevelReader level, BlockPos pos, BlockPos neighbor){}
 
    /**
-    * Called to determine whether to allow the a block to handle its own indirect power rather than using the default rules.
+    * Called to determine whether to allow the block to handle its own indirect power rather than using the default rules.
     * @param level The level
     * @param pos Block position in level
     * @param side The INPUT side of the block to be powered - ie the opposite of this block's output side
     * @return Whether Block#isProvidingWeakPower should be called when determining indirect power
     */
-    default boolean shouldCheckWeakPower(BlockState state, LevelReader level, BlockPos pos, Direction side)
+    default boolean shouldCheckWeakPower(BlockState state, SignalGetter level, BlockPos pos, Direction side)
     {
         return state.isRedstoneConductor(level, pos);
     }
@@ -606,7 +607,7 @@ public interface IForgeBlock
      */
     default boolean isFlammable(BlockState state, BlockGetter level, BlockPos pos, Direction direction)
     {
-        return state.getFlammability(level, pos, direction) > 0;
+        return state.ignitedByLava() || state.getFlammability(level, pos, direction) > 0;
     }
 
     /**
@@ -911,14 +912,14 @@ public interface IForgeBlock
     }
 
     /**
-     * Returns the {@link MaterialColor} shown on the map.
+     * Returns the {@link MapColor} shown on the map.
      *
      * @param state The state of this block
      * @param level The level this block is in
      * @param pos The blocks position in the level
-     * @param defaultColor The {@code MaterialColor} configured for the given {@code BlockState} in the {@link BlockBehaviour.Properties}
+     * @param defaultColor The {@code MapColor} configured for the given {@code BlockState} in the {@link BlockBehaviour.Properties}
      */
-    default MaterialColor getMapColor(BlockState state, BlockGetter level, BlockPos pos, MaterialColor defaultColor)
+    default MapColor getMapColor(BlockState state, BlockGetter level, BlockPos pos, MapColor defaultColor)
     {
         return defaultColor;
     }

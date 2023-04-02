@@ -40,9 +40,9 @@
        }
  
        protected void m_28686_() {
--         if (Fox.this.f_19853_.m_46469_().m_46207_(GameRules.f_46132_)) {
-+         if (net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(Fox.this.f_19853_, Fox.this)) {
-             BlockState blockstate = Fox.this.f_19853_.m_8055_(this.f_25602_);
+-         if (Fox.this.m_9236_().m_46469_().m_46207_(GameRules.f_46132_)) {
++         if (net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(Fox.this.m_9236_(), Fox.this)) {
+             BlockState blockstate = Fox.this.m_9236_().m_8055_(this.f_25602_);
              if (blockstate.m_60713_(Blocks.f_50685_)) {
                 this.m_148928_(blockstate);
 @@ -935,7 +_,7 @@

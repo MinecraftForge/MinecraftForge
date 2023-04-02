@@ -5,25 +5,22 @@
 
 package net.minecraftforge.client.gui.widget;
 
-import java.util.Collections;
-import java.util.List;
-
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexFormat;
-import net.minecraft.client.gui.components.Renderable;
-import net.minecraft.client.gui.narration.NarratableEntry;
-import net.minecraft.client.renderer.GameRenderer;
-
-import com.mojang.blaze3d.systems.RenderSystem;
-
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.components.events.AbstractContainerEventHandler;
 import net.minecraft.client.gui.components.events.GuiEventListener;
-import net.minecraftforge.client.gui.ScreenUtils;
+import net.minecraft.client.gui.narration.NarratableEntry;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.renderer.GameRenderer;
+
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Abstract scroll panel class.
@@ -160,18 +157,18 @@ public abstract class ScrollPanel extends AbstractContainerEventHandler implemen
     /**
      * Draws the background of the scroll panel. This runs AFTER Scissors are enabled.
      */
-    protected void drawBackground(PoseStack matrix, Tesselator tess, float partialTick)
+    protected void drawBackground(GuiGraphics guiGraphics, Tesselator tess, float partialTick)
     {
         BufferBuilder worldr = tess.getBuilder();
 
         if (this.client.level != null)
         {
-            this.drawGradientRect(matrix, this.left, this.top, this.right, this.bottom, bgColorFrom, bgColorTo);
+            this.drawGradientRect(guiGraphics, this.left, this.top, this.right, this.bottom, bgColorFrom, bgColorTo);
         }
         else // Draw dark dirt background
         {
             RenderSystem.setShader(GameRenderer::getPositionTexColorShader);
-            RenderSystem.setShaderTexture(0, GuiComponent.BACKGROUND_LOCATION);
+            RenderSystem.setShaderTexture(0, Screen.BACKGROUND_LOCATION);
             final float texScale = 32.0F;
             worldr.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
             worldr.vertex(this.left,  this.bottom, 0.0D).uv(this.left  / texScale, (this.bottom + (int)this.scrollDistance) / texScale).color(0x20, 0x20, 0x20, 0xFF).endVertex();
@@ -186,7 +183,7 @@ public abstract class ScrollPanel extends AbstractContainerEventHandler implemen
      * Draw anything special on the screen. Scissor (RenderSystem.enableScissor) is enabled
      * for anything that is rendered outside the view box. Do not mess with Scissor unless you support this.
      */
-    protected abstract void drawPanel(PoseStack poseStack, int entryRight, int relativeY, Tesselator tess, int mouseX, int mouseY);
+    protected abstract void drawPanel(GuiGraphics guiGraphics, int entryRight, int relativeY, Tesselator tess, int mouseX, int mouseY);
 
     protected boolean clickPanel(double mouseX, double mouseY, int button) { return false; }
 
@@ -295,7 +292,7 @@ public abstract class ScrollPanel extends AbstractContainerEventHandler implemen
     }
 
     @Override
-    public void render(PoseStack matrix, int mouseX, int mouseY, float partialTick)
+    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick)
     {
         Tesselator tess = Tesselator.getInstance();
         BufferBuilder worldr = tess.getBuilder();
@@ -304,10 +301,10 @@ public abstract class ScrollPanel extends AbstractContainerEventHandler implemen
         RenderSystem.enableScissor((int)(left  * scale), (int)(client.getWindow().getHeight() - (bottom * scale)),
                                    (int)(width * scale), (int)(height * scale));
 
-        this.drawBackground(matrix, tess, partialTick);
+        this.drawBackground(guiGraphics, tess, partialTick);
 
         int baseY = this.top + border - (int)this.scrollDistance;
-        this.drawPanel(matrix, right, baseY, tess, mouseX, mouseY);
+        this.drawPanel(guiGraphics, right, baseY, tess, mouseX, mouseY);
 
         RenderSystem.disableDepthTest();
 
@@ -364,9 +361,9 @@ public abstract class ScrollPanel extends AbstractContainerEventHandler implemen
         RenderSystem.disableScissor();
     }
 
-    protected void drawGradientRect(PoseStack poseStack, int left, int top, int right, int bottom, int color1, int color2)
+    protected void drawGradientRect(GuiGraphics guiGraphics, int left, int top, int right, int bottom, int color1, int color2)
     {
-        ScreenUtils.drawGradientRect(poseStack.last().pose(), 0, left, top, right, bottom, color1, color2);
+        guiGraphics.fillGradient(left, top, right, bottom, color1, color2);
     }
 
     @Override

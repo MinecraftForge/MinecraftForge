@@ -39,16 +39,16 @@
           }
        }
     }
-@@ -87,7 +_,7 @@
+@@ -86,7 +_,7 @@
        }
  
        BlockState blockstate1 = p_51154_.m_8055_(p_51155_.m_7495_());
--      return (blockstate1.m_60713_(Blocks.f_50128_) || blockstate1.m_60713_(Blocks.f_49992_) || blockstate1.m_60713_(Blocks.f_49993_)) && !p_51154_.m_8055_(p_51155_.m_7494_()).m_60767_().m_76332_();
-+      return blockstate1.canSustainPlant(p_51154_, p_51155_, Direction.UP, this) && !p_51154_.m_8055_(p_51155_.m_7494_()).m_60767_().m_76332_();
+-      return (blockstate1.m_60713_(Blocks.f_50128_) || blockstate1.m_204336_(BlockTags.f_13029_)) && !p_51154_.m_8055_(p_51155_.m_7494_()).m_278721_();
++      return blockstate1.canSustainPlant(p_51154_, p_51155_, Direction.UP, this) && !p_51154_.m_8055_(p_51155_.m_7494_()).m_278721_();
     }
  
     public void m_7892_(BlockState p_51148_, Level p_51149_, BlockPos p_51150_, Entity p_51151_) {
-@@ -100,5 +_,15 @@
+@@ -99,5 +_,15 @@
  
     public boolean m_7357_(BlockState p_51143_, BlockGetter p_51144_, BlockPos p_51145_, PathComputationType p_51146_) {
        return false;

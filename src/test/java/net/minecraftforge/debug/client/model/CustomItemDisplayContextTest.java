@@ -35,12 +35,11 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
-import net.minecraft.world.level.material.Material;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.model.generators.*;
 import net.minecraftforge.common.data.ExistingFileHelper;
-import net.minecraftforge.event.CreativeModeTabEvent;
+import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -116,7 +115,7 @@ public class CustomItemDisplayContextTest
     public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITY_TYPES = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, MODID);
 
     public static final RegistryObject<Block>
-            ITEM_HANGER_BLOCK = BLOCKS.register("item_hanger", () -> new ItemHangerBlock(BlockBehaviour.Properties.of(Material.WOOL).noCollission().noOcclusion().noLootTable()));
+            ITEM_HANGER_BLOCK = BLOCKS.register("item_hanger", () -> new ItemHangerBlock(BlockBehaviour.Properties.of().noCollission().noOcclusion().noLootTable()));
     public static final RegistryObject<BlockEntityType<ItemHangerBlockEntity>>
             ITEM_HANGER_BE = BLOCK_ENTITY_TYPES.register("item_hanger", () -> BlockEntityType.Builder.of(ItemHangerBlockEntity::new, ITEM_HANGER_BLOCK.get()).build(null));
     public static final RegistryObject<Item>
@@ -132,9 +131,9 @@ public class CustomItemDisplayContextTest
         modBus.addListener(this::addCreative);
     }
 
-    private void addCreative(CreativeModeTabEvent.BuildContents event)
+    private void addCreative(BuildCreativeModeTabContentsEvent event)
     {
-        if (event.getTab() == CreativeModeTabs.INGREDIENTS)
+        if (event.getTabKey() == CreativeModeTabs.INGREDIENTS)
             event.accept(ITEM_HANGER_ITEM);
     }
 

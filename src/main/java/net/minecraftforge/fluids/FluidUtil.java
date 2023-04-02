@@ -10,7 +10,6 @@ import net.minecraft.world.item.BucketItem;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.BucketPickup;
 import net.minecraft.world.level.block.LiquidBlockContainer;
-import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.material.Fluid;
@@ -141,7 +140,7 @@ public class FluidUtil
 
                                 if (soundevent != null)
                                 {
-                                    player.level.playSound(null, player.getX(), player.getY() + 0.5, player.getZ(), soundevent, SoundSource.BLOCKS, 1.0F, 1.0F);
+                                    player.level().playSound(null, player.getX(), player.getY() + 0.5, player.getZ(), soundevent, SoundSource.BLOCKS, 1.0F, 1.0F);
                                 }
                             }
                         }
@@ -193,7 +192,7 @@ public class FluidUtil
 
                         if (soundevent != null)
                         {
-                            player.level.playSound(null, player.getX(), player.getY() + 0.5, player.getZ(), soundevent, SoundSource.BLOCKS, 1.0F, 1.0F);
+                            player.level().playSound(null, player.getX(), player.getY() + 0.5, player.getZ(), soundevent, SoundSource.BLOCKS, 1.0F, 1.0F);
                         }
                     }
 
@@ -570,8 +569,7 @@ public class FluidUtil
 
         // check that we can place the fluid at the destination
         BlockState destBlockState = level.getBlockState(pos);
-        Material destMaterial = destBlockState.getMaterial();
-        boolean isDestNonSolid = !destMaterial.isSolid();
+        boolean isDestNonSolid = !destBlockState.isSolid();
         boolean isDestReplaceable = destBlockState.canBeReplaced(context);
         boolean canDestContainFluid = destBlockState.getBlock() instanceof LiquidBlockContainer && ((LiquidBlockContainer) destBlockState.getBlock()).canPlaceLiquid(level, pos, destBlockState, fluid);
         if (!level.isEmptyBlock(pos) && !isDestNonSolid && !isDestReplaceable && !canDestContainFluid)
@@ -642,10 +640,9 @@ public class FluidUtil
         if (!level.isClientSide)
         {
             BlockState destBlockState = level.getBlockState(pos);
-            Material destMaterial = destBlockState.getMaterial();
-            boolean isDestNonSolid = !destMaterial.isSolid();
+            boolean isDestNonSolid = !destBlockState.isSolid();
             boolean isDestReplaceable = false; //TODO: Needs BlockItemUseContext destBlockState.getBlock().isReplaceable(level, pos);
-            if ((isDestNonSolid || isDestReplaceable) && !destMaterial.isLiquid())
+            if ((isDestNonSolid || isDestReplaceable) && !destBlockState.liquid())
             {
                 level.destroyBlock(pos, true);
             }

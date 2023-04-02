@@ -24,11 +24,11 @@
           }
        }
 -
-+      f_35975_.forEach(e -> e.onArmorTick(f_35978_.f_19853_, f_35978_));
++      f_35975_.forEach(e -> e.onArmorTick(f_35978_.m_9236_(), f_35978_));
     }
  
     public boolean m_36054_(ItemStack p_36055_) {
-@@ -278,6 +_,8 @@
+@@ -277,6 +_,8 @@
           } catch (Throwable throwable) {
              CrashReport crashreport = CrashReport.m_127521_(throwable, "Adding item to inventory");
              CrashReportCategory crashreportcategory = crashreport.m_127514_("Item being added");

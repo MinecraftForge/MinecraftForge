@@ -7,6 +7,7 @@ package net.minecraftforge.client.extensions.common;
 
 import net.minecraft.client.particle.ParticleEngine;
 import net.minecraft.core.BlockPos;
+import net.minecraft.tags.FluidTags;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -15,7 +16,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.material.Material;
+import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.HitResult;
 import net.minecraftforge.fml.LogicalSide;
 import org.joml.Vector3d;
@@ -89,7 +90,8 @@ public interface IClientBlockExtensions
      */
     default Vector3d getFogColor(BlockState state, LevelReader level, BlockPos pos, Entity entity, Vector3d originalColor, float partialTick)
     {
-        if (state.getMaterial() == Material.WATER)
+        FluidState fluidState = level.getFluidState(pos);
+        if (fluidState.is(FluidTags.WATER))
         {
             float f12 = 0.0F;
 
@@ -105,7 +107,7 @@ public interface IClientBlockExtensions
             }
             return new Vector3d(0.02F + f12, 0.02F + f12, 0.2F + f12);
         }
-        else if (state.getMaterial() == Material.LAVA)
+        else if (fluidState.is(FluidTags.LAVA))
         {
             return new Vector3d(0.6F, 0.1F, 0.0F);
         }

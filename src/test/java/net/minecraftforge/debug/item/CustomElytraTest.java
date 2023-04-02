@@ -20,7 +20,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.event.CreativeModeTabEvent;
+import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.RegistryObject;
 import net.minecraftforge.fml.common.Mod;
@@ -49,9 +49,9 @@ public class CustomElytraTest
         modBus.addListener(this::addCreative);
     }
 
-    private void addCreative(CreativeModeTabEvent.BuildContents event)
+    private void addCreative(BuildCreativeModeTabContentsEvent event)
     {
-        if (event.getTab() == CreativeModeTabs.INGREDIENTS)
+        if (event.getTabKey() == CreativeModeTabs.INGREDIENTS)
             event.accept(TEST_ELYTRA);
     }
 
@@ -94,7 +94,7 @@ public class CustomElytraTest
         @Override
         public boolean elytraFlightTick(ItemStack stack, LivingEntity entity, int flightTicks)
         {
-            if (!entity.level.isClientSide)
+            if (!entity.level().isClientSide)
             {
                 //Adding 1 to flightTicks prevents damage on the very first tick.
                 int nextFlightTick = flightTicks + 1;

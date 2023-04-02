@@ -14,8 +14,8 @@
     private final Queue<Particle> f_107294_ = Queues.newArrayDeque();
     private final Map<ResourceLocation, ParticleEngine.MutableSpriteSet> f_107295_ = Maps.newHashMap();
     private final TextureAtlas f_107296_;
-@@ -191,10 +_,14 @@
-       this.m_107378_(ParticleTypes.f_235901_, ShriekParticle.Provider::new);
+@@ -194,10 +_,14 @@
+       this.m_107378_(ParticleTypes.f_276512_, SuspendedTownParticle.EggCrackProvider::new);
     }
  
 +   /** @deprecated Register via {@link net.minecraftforge.client.event.RegisterParticleProvidersEvent} */
@@ -30,7 +30,7 @@
     public <T extends ParticleOptions> void m_272137_(ParticleType<T> p_273423_, ParticleProvider.Sprite<T> p_273134_) {
        this.m_107378_(p_273423_, (p_272320_) -> {
           return (p_272323_, p_272324_, p_272325_, p_272326_, p_272327_, p_272328_, p_272329_, p_272330_) -> {
-@@ -208,10 +_,12 @@
+@@ -211,10 +_,12 @@
        });
     }
  
@@ -44,7 +44,7 @@
     }
  
     public CompletableFuture<Void> m_5540_(PreparableReloadListener.PreparationBarrier p_107305_, ResourceManager p_107306_, ProfilerFiller p_107307_, ProfilerFiller p_107308_, Executor p_107309_, Executor p_107310_) {
-@@ -310,7 +_,7 @@
+@@ -313,7 +_,7 @@
  
     @Nullable
     private <T extends ParticleOptions> Particle m_107395_(T p_107396_, double p_107397_, double p_107398_, double p_107399_, double p_107400_, double p_107401_, double p_107402_) {
@@ -53,7 +53,7 @@
        return particleprovider == null ? null : particleprovider.m_6966_(p_107396_, this.f_107287_, p_107397_, p_107398_, p_107399_, p_107400_, p_107401_, p_107402_);
     }
  
-@@ -391,15 +_,24 @@
+@@ -394,15 +_,24 @@
        }
     }
  
@@ -65,21 +65,21 @@
 +
 +   public void render(PoseStack p_107337_, MultiBufferSource.BufferSource p_107338_, LightTexture p_107339_, Camera p_107340_, float p_107341_, @Nullable net.minecraft.client.renderer.culling.Frustum clippingHelper) {
        p_107339_.m_109896_();
-       RenderSystem.m_69482_();
-+      RenderSystem.m_69388_(org.lwjgl.opengl.GL13.GL_TEXTURE2);
-+      RenderSystem.m_69388_(org.lwjgl.opengl.GL13.GL_TEXTURE0);
-       PoseStack posestack = RenderSystem.m_157191_();
+       RenderSystem.enableDepthTest();
++      RenderSystem.activeTexture(org.lwjgl.opengl.GL13.GL_TEXTURE2);
++      RenderSystem.activeTexture(org.lwjgl.opengl.GL13.GL_TEXTURE0);
+       PoseStack posestack = RenderSystem.getModelViewStack();
        posestack.m_85836_();
        posestack.m_252931_(p_107337_.m_85850_().m_252922_());
-       RenderSystem.m_157182_();
+       RenderSystem.applyModelViewMatrix();
  
 -      for(ParticleRenderType particlerendertype : f_107288_) {
 +      for(ParticleRenderType particlerendertype : this.f_107289_.keySet()) { // Forge: allow custom IParticleRenderType's
 +         if (particlerendertype == ParticleRenderType.f_107434_) continue;
           Iterable<Particle> iterable = this.f_107289_.get(particlerendertype);
           if (iterable != null) {
-             RenderSystem.m_157427_(GameRenderer::m_172829_);
-@@ -408,6 +_,7 @@
+             RenderSystem.setShader(GameRenderer::m_172829_);
+@@ -411,6 +_,7 @@
              particlerendertype.m_6505_(bufferbuilder, this.f_107291_);
  
              for(Particle particle : iterable) {
@@ -87,7 +87,7 @@
                 try {
                    particle.m_5744_(bufferbuilder, p_107340_, p_107341_);
                 } catch (Throwable throwable) {
-@@ -437,7 +_,7 @@
+@@ -440,7 +_,7 @@
     }
  
     public void m_107355_(BlockPos p_107356_, BlockState p_107357_) {
@@ -96,7 +96,7 @@
           VoxelShape voxelshape = p_107357_.m_60808_(this.f_107287_, p_107356_);
           double d0 = 0.25D;
           voxelshape.m_83286_((p_172273_, p_172274_, p_172275_, p_172276_, p_172277_, p_172278_) -> {
-@@ -457,7 +_,7 @@
+@@ -460,7 +_,7 @@
                       double d7 = d4 * d1 + p_172273_;
                       double d8 = d5 * d2 + p_172274_;
                       double d9 = d6 * d3 + p_172275_;
@@ -105,7 +105,7 @@
                    }
                 }
              }
-@@ -501,12 +_,18 @@
+@@ -504,12 +_,18 @@
              d0 = (double)i + aabb.f_82291_ + (double)0.1F;
           }
  

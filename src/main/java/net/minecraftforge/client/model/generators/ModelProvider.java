@@ -5,7 +5,6 @@
 
 package net.minecraftforge.client.model.generators;
 
-import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -22,6 +21,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.common.data.ExistingFileHelper.ResourceType;
+import org.jetbrains.annotations.VisibleForTesting;
 
 public abstract class ModelProvider<T extends ModelBuilder<T>> implements DataProvider {
 

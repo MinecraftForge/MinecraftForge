@@ -1,11 +1,11 @@
 --- a/net/minecraft/world/level/storage/loot/functions/SmeltItemFunction.java
 +++ b/net/minecraft/world/level/storage/loot/functions/SmeltItemFunction.java
-@@ -32,7 +_,7 @@
+@@ -31,7 +_,7 @@
+          if (optional.isPresent()) {
              ItemStack itemstack = optional.get().m_8043_(p_81269_.m_78952_().m_9598_());
              if (!itemstack.m_41619_()) {
-                ItemStack itemstack1 = itemstack.m_41777_();
--               itemstack1.m_41764_(p_81268_.m_41613_());
-+               itemstack1.m_41764_(p_81268_.m_41613_() * itemstack.m_41613_()); //Forge: Support smelting returning multiple
-                return itemstack1;
+-               return itemstack.m_255036_(p_81268_.m_41613_());
++               return itemstack.m_255036_(p_81268_.m_41613_() * itemstack.m_41613_()); // Forge: Support smelting returning multiple
              }
           }
+ 

@@ -10,7 +10,6 @@ import net.minecraft.world.item.Items;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.GrindstoneEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.Bindings;
 import net.minecraftforge.fml.common.Mod;
 
 @Mod("grindstone_event_test")
@@ -23,7 +22,7 @@ public class GrindstoneEventTest {
     }
 
     @SubscribeEvent
-    public void onGrindstonePlace(GrindstoneEvent.OnplaceItem event)
+    public void onGrindstonePlace(GrindstoneEvent.OnPlaceItem event)
     {
         // TODO 1.20: This will not work once IForgeItem#canGrindstoneRepair is changed to have items opt-in to being able to place
         //  rather than the current opt-out (the hook will no longer fire after the change). Fix?

@@ -33,15 +33,6 @@ public interface IForgePlayer
     }
 
     /**
-     * @deprecated Use {@link #getEntityReach()}
-     */
-    @Deprecated(forRemoval = true, since = "1.19.4")
-    default double getAttackRange()
-    {
-        return this.getEntityReach();
-    }
-
-    /**
      * The reach distance is increased by 0.5 for creative players, unless it is currently zero, which disables interactions.
      * @return The reach distance of this player.
      */
@@ -52,18 +43,9 @@ public interface IForgePlayer
     }
 
     /**
-     * @deprecated use {@link #getBlockReach()}
-     */
-    @Deprecated(forRemoval = true, since = "1.19.4")
-    default double getReachDistance()
-    {
-        return this.getBlockReach();
-    }
-
-    /**
      * Checks if the player can reach an entity by targeting the passed vector.<br>
      * On the server, additional padding is added to account for movement/lag.
-     * @param vec The vector being range-checked.
+     * @param entityHitVec The vector being range-checked.
      * @param padding Extra validation distance.
      * @return If the player can attack the entity.
      * @apiNote Do not use for block checks, as this method uses {@link #getEntityReach()}
@@ -87,24 +69,6 @@ public interface IForgePlayer
     }
 
     /**
-     * @deprecated use {@link #canReach(Entity, double)}h
-     */
-    @Deprecated(forRemoval = true, since = "1.19.4")
-    default boolean canHit(Entity entity, double padding)
-    {
-    	return canReach(entity, padding);
-    }
-
-    /**
-     * @deprecated use {@link #canReach(Entity, double)}h
-     */
-    @Deprecated(forRemoval = true, since = "1.19.4")
-    default boolean canInteractWith(Entity entity, double padding)
-    {
-    	return canReach(entity, padding);
-    }
-
-    /**
      * Checks if the player can reach a block.<br>
      * On the server, additional padding is added to account for movement/lag.
      * @param pos The position being range-checked.
@@ -115,15 +79,6 @@ public interface IForgePlayer
     {
         double reach = this.getBlockReach() + padding;
         return self().getEyePosition().distanceToSqr(Vec3.atCenterOf(pos)) < reach * reach;
-    }
-
-    /**
-     * @deprecated use {@link #canReach(BlockPos, double)}
-     */
-    @Deprecated(forRemoval = true, since = "1.19.4")
-    default boolean canInteractWith(BlockPos pos, double padding)
-    {
-    	return canReach(pos, padding);
     }
 
     /**

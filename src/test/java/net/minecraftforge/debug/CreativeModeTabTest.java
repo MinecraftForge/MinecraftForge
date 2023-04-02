@@ -5,9 +5,9 @@
 
 package net.minecraftforge.debug;
 
-import java.util.List;
-
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTab.TabVisibility;
@@ -17,10 +17,11 @@ import net.minecraft.world.item.DyeItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraftforge.event.CreativeModeTabEvent;
+import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.registries.RegisterEvent;
 
 @Mod(CreativeModeTabTest.MOD_ID)
 public class CreativeModeTabTest
@@ -28,8 +29,8 @@ public class CreativeModeTabTest
     public static final String MOD_ID = "creative_mode_tab_test";
     private static final boolean ENABLED = true;
 
-    private static CreativeModeTab LOGS;
-    private static CreativeModeTab STONE;
+    private static final ResourceKey<CreativeModeTab> LOGS = ResourceKey.create(Registries.CREATIVE_MODE_TAB, new ResourceLocation(MOD_ID, "logs"));
+    private static final ResourceKey<CreativeModeTab> STONE = ResourceKey.create(Registries.CREATIVE_MODE_TAB, new ResourceLocation(MOD_ID, "stone"));
 
     public CreativeModeTabTest()
     {
@@ -42,49 +43,55 @@ public class CreativeModeTabTest
         modEventBus.addListener(CreativeModeTabTest::onCreativeModeTabBuildContents);
     }
 
-    private static void onCreativeModeTabRegister(CreativeModeTabEvent.Register event)
+    private static void onCreativeModeTabRegister(RegisterEvent event)
     {
-        LOGS = event.registerCreativeModeTab(new ResourceLocation(MOD_ID, "logs"), builder -> builder.icon(() -> new ItemStack(Blocks.ACACIA_LOG))
-                .title(Component.literal("Logs"))
-                .withLabelColor(0x00FF00)
-                .displayItems((params, output) -> {
-                    output.accept(new ItemStack(Blocks.ACACIA_LOG));
-                    output.accept(new ItemStack(Blocks.BIRCH_LOG));
-                    output.accept(new ItemStack(Blocks.DARK_OAK_LOG));
-                    output.accept(new ItemStack(Blocks.JUNGLE_LOG));
-                    output.accept(new ItemStack(Blocks.OAK_LOG));
-                    output.accept(new ItemStack(Blocks.SPRUCE_LOG));
-                }));
+        event.register(Registries.CREATIVE_MODE_TAB, helper -> {
+            helper.register(LOGS, CreativeModeTab.builder().icon(() -> new ItemStack(Blocks.ACACIA_LOG))
+                    .title(Component.literal("Logs"))
+                    .withLabelColor(0x00FF00)
+                    .displayItems((params, output) -> {
+                        output.accept(new ItemStack(Blocks.ACACIA_LOG));
+                        output.accept(new ItemStack(Blocks.BIRCH_LOG));
+                        output.accept(new ItemStack(Blocks.DARK_OAK_LOG));
+                        output.accept(new ItemStack(Blocks.JUNGLE_LOG));
+                        output.accept(new ItemStack(Blocks.OAK_LOG));
+                        output.accept(new ItemStack(Blocks.SPRUCE_LOG));
+                    })
+                    .build());
+            helper.register(STONE, CreativeModeTab.builder().icon(() -> new ItemStack(Blocks.STONE))
+                    .title(Component.literal("Stone"))
+                    .withLabelColor(0x0000FF)
+                    .displayItems((params, output) -> {
+                        output.accept(new ItemStack(Blocks.STONE));
+                        output.accept(new ItemStack(Blocks.GRANITE));
+                        output.accept(new ItemStack(Blocks.DIORITE));
+                        output.accept(new ItemStack(Blocks.ANDESITE));
+                    })
+                    .withTabsAfter(CreativeModeTabs.BUILDING_BLOCKS)
+                    .build());
 
-        STONE = event.registerCreativeModeTab(new ResourceLocation(MOD_ID, "stone"), List.of(CreativeModeTabs.BUILDING_BLOCKS), List.of(), builder -> builder.icon(() -> new ItemStack(Blocks.STONE))
-                .title(Component.literal("Stone"))
-                .withLabelColor(0x0000FF)
-                .displayItems((params, output) -> {
-                    output.accept(new ItemStack(Blocks.STONE));
-                    output.accept(new ItemStack(Blocks.GRANITE));
-                    output.accept(new ItemStack(Blocks.DIORITE));
-                    output.accept(new ItemStack(Blocks.ANDESITE));
-                }));
-
-        event.registerCreativeModeTab(new ResourceLocation(MOD_ID, "colors"), builder -> builder.title(Component.literal("Colors"))
-                .displayItems((params, output) ->
-                {
-                    for (DyeColor color : DyeColor.values())
+            helper.register(new ResourceLocation(MOD_ID, "colors"), CreativeModeTab.builder().title(Component.literal("Colors"))
+                    .displayItems((params, output) ->
                     {
-                        output.accept(DyeItem.byColor(color));
-                    }
-                })
-                .withTabFactory(CreativeModeColorTab::new)
-        );
+                        for (DyeColor color : DyeColor.values())
+                        {
+                            output.accept(DyeItem.byColor(color));
+                        }
+                    })
+                    .withTabFactory(CreativeModeColorTab::new)
+                    .withTabsBefore(CreativeModeTabs.COLORED_BLOCKS)
+                    .build()
+            );
+        });
     }
 
     private static ItemStack i(ItemLike item) { return new ItemStack(item); }
 
-    private static void onCreativeModeTabBuildContents(CreativeModeTabEvent.BuildContents event)
+    private static void onCreativeModeTabBuildContents(BuildCreativeModeTabContentsEvent event)
     {
         var entries = event.getEntries();
         var vis = TabVisibility.PARENT_AND_SEARCH_TABS;
-        if (event.getTab() == LOGS)
+        if (event.getTabKey() == LOGS)
         {
             entries.putAfter(i(Blocks.ACACIA_LOG),   i(Blocks.STRIPPED_ACACIA_LOG),   vis);
             entries.putAfter(i(Blocks.BIRCH_LOG),    i(Blocks.STRIPPED_BIRCH_LOG),    vis);
@@ -94,7 +101,7 @@ public class CreativeModeTabTest
             entries.putAfter(i(Blocks.SPRUCE_LOG),   i(Blocks.STRIPPED_SPRUCE_LOG),   vis);
         }
 
-        if (event.getTab() == STONE)
+        if (event.getTabKey() == STONE)
         {
             entries.putBefore(i(Blocks.STONE),    i(Blocks.SMOOTH_STONE),      vis);
             entries.putBefore(i(Blocks.GRANITE),  i(Blocks.POLISHED_GRANITE),  vis);

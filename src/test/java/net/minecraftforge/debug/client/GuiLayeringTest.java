@@ -8,6 +8,7 @@ package net.minecraftforge.debug.client;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -55,11 +56,11 @@ public class GuiLayeringTest
             }
 
             @Override
-            public void render(PoseStack poseStack, int mouseX, int mouseY, float partialTicks)
+            public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks)
             {
-                this.renderBackground(poseStack);
-                drawString(poseStack, this.font, this.title, this.width / 2, 15, 0xFFFFFF);
-                super.render(poseStack, mouseX, mouseY, partialTicks);
+                this.renderBackground(graphics);
+                graphics.drawString(this.font, this.title, this.width / 2, 15, 0xFFFFFF);
+                super.render(graphics, mouseX, mouseY, partialTicks);
             }
 
             @Override

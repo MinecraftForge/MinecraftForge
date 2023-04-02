@@ -111,7 +111,7 @@ public class ModifiableBiomeInfo
             private MobSpawnSettingsBuilder mobSpawnSettings;
             
             /**
-             * @param biome A biome that has not had its modified biome data generated yet
+             * @param original the biome to copy
              * @return A ModifiedBiomeInfo.Builder with a copy of the biome's data
              */
             public static Builder copyOf(final BiomeInfo original)
@@ -126,7 +126,7 @@ public class ModifiableBiomeInfo
                     effectsBuilder,
                     generationBuilder,
                     mobSpawnBuilder
-                    );
+                );
             }
             
             private Builder(final ClimateSettingsBuilder climateSettings, final BiomeSpecialEffectsBuilder effects, final BiomeGenerationSettingsBuilder generationSettings, final MobSpawnSettingsBuilder mobSpawnSettings)
@@ -145,17 +145,6 @@ public class ModifiableBiomeInfo
             public ClimateSettingsBuilder getClimateSettings()
             {
                 return climateSettings;
-            }
-
-            /**
-             * {@return Builder for client special effects}
-             * 
-             * @deprecated Use {@link #getSpecialEffects()} as it provides read access. TODO remove this by 1.20
-             */
-            @Deprecated(forRemoval=true, since="1.19")
-            public BiomeSpecialEffects.Builder getEffects()
-            {
-                return effects;
             }
 
             public BiomeSpecialEffectsBuilder getSpecialEffects()

@@ -8,6 +8,7 @@ package net.minecraftforge.debug.client;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.brigadier.Command;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 
@@ -25,8 +26,8 @@ public class TestScreen extends Screen
     }
 
     @Override
-    public void render(PoseStack PoseStack, int MouseX, int MouseY, float PartialTick)
+    public void render(GuiGraphics graphics, int MouseX, int MouseY, float PartialTick)
     {
-        renderBackground(PoseStack);
+        renderBackground(graphics);
     }
 }

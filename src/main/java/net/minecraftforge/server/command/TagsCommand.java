@@ -115,7 +115,7 @@ class TagsCommand
 
         final long tagCount = registry.getTags().count();
 
-        ctx.getSource().sendSuccess(createMessage(
+        ctx.getSource().sendSuccess(() -> createMessage(
                 Component.translatable("commands.forge.tags.registry_key", Component.literal(registryKey.location().toString()).withStyle(ChatFormatting.GOLD)),
                 "commands.forge.tags.tag_count",
                 "commands.forge.tags.copy_tag_names",
@@ -143,7 +143,7 @@ class TagsCommand
         final HolderSet.Named<?> tag = registry.getTag(cast(tagKey))
                 .orElseThrow(() -> UNKNOWN_TAG.create(tagKey.location(), registryKey.location()));
 
-        ctx.getSource().sendSuccess(createMessage(
+        ctx.getSource().sendSuccess(() -> createMessage(
                 Component.translatable("commands.forge.tags.tag_key",
                         Component.literal(tagKey.registry().location().toString()).withStyle(ChatFormatting.GOLD),
                         Component.literal(tagKey.location().toString()).withStyle(ChatFormatting.DARK_GREEN)),
@@ -173,7 +173,7 @@ class TagsCommand
 
         final long containingTagsCount = elementHolder.tags().count();
 
-        ctx.getSource().sendSuccess(createMessage(
+        ctx.getSource().sendSuccess(() -> createMessage(
                 Component.translatable("commands.forge.tags.element",
                         Component.literal(registryKey.location().toString()).withStyle(ChatFormatting.GOLD),
                         Component.literal(elementLocation.toString()).withStyle(ChatFormatting.YELLOW)),

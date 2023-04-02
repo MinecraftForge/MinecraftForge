@@ -9,7 +9,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
@@ -42,7 +42,7 @@ public class CustomItemDecorationsTest
     private static class StackSizeDurabilityBar implements IItemDecorator
     {
         @Override
-        public boolean render(PoseStack poseStack, Font font, ItemStack stack, int xOffset, int yOffset)
+        public boolean render(GuiGraphics graphics, Font font, ItemStack stack, int xOffset, int yOffset)
         {
             RenderSystem.disableBlend();
             float f = Math.max(0.0F, (float)stack.getCount() / stack.getMaxStackSize());
@@ -50,11 +50,11 @@ public class CustomItemDecorationsTest
             int j = Mth.hsvToRgb(f / 3.0F, 1f, 1f) | 0xFF000000;
             int x = xOffset + 2;
             int y = yOffset + 13;
-            poseStack.pushPose();
-            poseStack.translate(0.0F, 0.0F, ItemRenderer.ITEM_COUNT_BLIT_OFFSET + 1F);
-            GuiComponent.fill(poseStack, x, y, x + 13, y + 2, 0xFF000000);
-            GuiComponent.fill(poseStack, x, y, x + i, y + 1, j);
-            poseStack.popPose();
+            graphics.pose().pushPose();
+            graphics.pose().translate(0.0F, 0.0F, ItemRenderer.ITEM_COUNT_BLIT_OFFSET + 1F);
+            graphics.fill(x, y, x + 13, y + 2, 0xFF000000);
+            graphics.fill(x, y, x + i, y + 1, j);
+            graphics.pose().popPose();
             RenderSystem.enableBlend();
             return true;
         }

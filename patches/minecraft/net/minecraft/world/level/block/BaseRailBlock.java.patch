@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/BaseRailBlock.java
 +++ b/net/minecraft/world/level/block/BaseRailBlock.java
-@@ -20,7 +_,7 @@
+@@ -19,7 +_,7 @@
  import net.minecraft.world.phys.shapes.CollisionContext;
  import net.minecraft.world.phys.shapes.VoxelShape;
  
@@ -9,7 +9,7 @@
     protected static final VoxelShape f_49355_ = Block.m_49796_(0.0D, 0.0D, 0.0D, 16.0D, 2.0D, 16.0D);
     protected static final VoxelShape f_49356_ = Block.m_49796_(0.0D, 0.0D, 0.0D, 16.0D, 8.0D, 16.0D);
     public static final BooleanProperty f_152149_ = BlockStateProperties.f_61362_;
-@@ -45,6 +_,7 @@
+@@ -44,6 +_,7 @@
  
     public VoxelShape m_5940_(BlockState p_49403_, BlockGetter p_49404_, BlockPos p_49405_, CollisionContext p_49406_) {
        RailShape railshape = p_49403_.m_60713_(this) ? p_49403_.m_61143_(this.m_7978_()) : null;
@@ -17,7 +17,7 @@
        return railshape != null && railshape.m_61745_() ? f_49356_ : f_49355_;
     }
  
-@@ -69,7 +_,7 @@
+@@ -68,7 +_,7 @@
  
     public void m_6861_(BlockState p_49377_, Level p_49378_, BlockPos p_49379_, Block p_49380_, BlockPos p_49381_, boolean p_49382_) {
        if (!p_49378_.f_46443_ && p_49378_.m_8055_(p_49379_).m_60713_(this)) {
@@ -26,7 +26,7 @@
           if (m_49398_(p_49379_, p_49378_, railshape)) {
              m_49950_(p_49377_, p_49378_, p_49379_);
              p_49378_.m_7471_(p_49379_, p_49382_);
-@@ -118,7 +_,7 @@
+@@ -113,7 +_,7 @@
     public void m_6810_(BlockState p_49384_, Level p_49385_, BlockPos p_49386_, BlockState p_49387_, boolean p_49388_) {
        if (!p_49388_) {
           super.m_6810_(p_49384_, p_49385_, p_49386_, p_49387_, p_49388_);
@@ -35,7 +35,7 @@
              p_49385_.m_46672_(p_49386_.m_7494_(), this);
           }
  
-@@ -139,6 +_,11 @@
+@@ -134,6 +_,11 @@
        return blockstate.m_61124_(this.m_7978_(), flag1 ? RailShape.EAST_WEST : RailShape.NORTH_SOUTH).m_61124_(f_152149_, Boolean.valueOf(flag));
     }
  
@@ -47,7 +47,7 @@
     public abstract Property<RailShape> m_7978_();
  
     public BlockState m_7417_(BlockState p_152151_, Direction p_152152_, BlockState p_152153_, LevelAccessor p_152154_, BlockPos p_152155_, BlockPos p_152156_) {
-@@ -151,5 +_,15 @@
+@@ -146,5 +_,15 @@
  
     public FluidState m_5888_(BlockState p_152158_) {
        return p_152158_.m_61143_(f_152149_) ? Fluids.f_76193_.m_76068_(false) : super.m_5888_(p_152158_);

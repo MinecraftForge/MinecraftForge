@@ -37,7 +37,9 @@ public class CrashReportExtender
 
     public static void addCrashReportHeader(StringBuilder stringbuilder, CrashReport crashReport)
     {
+        net.minecraftforge.forge.snapshots.ForgeSnapshotsMod.addCrashReportHeader(stringbuilder, crashReport);
     }
+
     public static String generateEnhancedStackTrace(final Throwable throwable) {
         return generateEnhancedStackTrace(throwable, true);
     }

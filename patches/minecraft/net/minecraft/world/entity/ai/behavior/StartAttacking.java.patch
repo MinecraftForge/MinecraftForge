@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/ai/behavior/StartAttacking.java
 +++ b/net/minecraft/world/entity/ai/behavior/StartAttacking.java
-@@ -30,8 +_,13 @@
+@@ -30,7 +_,11 @@
                       if (!p_258774_.m_6779_(livingentity)) {
                          return false;
                       } else {
@@ -11,7 +11,5 @@
 +
 +                        p_258778_.m_257512_(changeTargetEvent.getNewTarget());
                          p_258779_.m_257971_();
-+                        net.minecraftforge.common.ForgeHooks.onLivingSetAttackTarget(p_258774_, changeTargetEvent.getNewTarget(), net.minecraftforge.event.entity.living.LivingChangeTargetEvent.LivingTargetType.BEHAVIOR_TARGET); // TODO: Remove in 1.20
                          return true;
                       }
-                   }

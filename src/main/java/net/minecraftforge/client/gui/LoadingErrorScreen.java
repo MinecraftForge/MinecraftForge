@@ -6,9 +6,9 @@
 package net.minecraftforge.client.gui;
 
 import com.google.common.base.Strings;
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.ErrorScreen;
 import net.minecraft.client.gui.components.ObjectSelectionList;
 import net.minecraft.util.FormattedCharSequence;
@@ -78,17 +78,17 @@ public class LoadingErrorScreen extends ErrorScreen {
     }
 
     @Override
-    public void render(PoseStack poseStack, int mouseX, int mouseY, float partialTick)
+    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick)
     {
-        this.renderBackground(poseStack);
-        this.entryList.render(poseStack, mouseX, mouseY, partialTick);
-        drawMultiLineCenteredString(poseStack, font, this.modLoadErrors.isEmpty() ? warningHeader : errorHeader, this.width / 2, 10);
-        this.renderables.forEach(button -> button.render(poseStack, mouseX, mouseY, partialTick));
+        this.renderBackground(guiGraphics);
+        this.entryList.render(guiGraphics, mouseX, mouseY, partialTick);
+        drawMultiLineCenteredString(guiGraphics, font, this.modLoadErrors.isEmpty() ? warningHeader : errorHeader, this.width / 2, 10);
+        this.renderables.forEach(button -> button.render(guiGraphics, mouseX, mouseY, partialTick));
     }
 
-    private void drawMultiLineCenteredString(PoseStack poseStack, Font fr, Component str, int x, int y) {
+    private void drawMultiLineCenteredString(GuiGraphics guiGraphics, Font fr, Component str, int x, int y) {
         for (FormattedCharSequence s : fr.split(str, this.width)) {
-            fr.drawShadow(poseStack, s, (float) (x - fr.width(s) / 2.0), y, 0xFFFFFF);
+            guiGraphics.drawString(fr, s, (float) (x - fr.width(s) / 2.0), (float) y, 0xFFFFFF, true);
             y+=fr.lineHeight;
         }
     }
@@ -142,16 +142,16 @@ public class LoadingErrorScreen extends ErrorScreen {
             }
 
             @Override
-            public void render(PoseStack poseStack, int entryIdx, int top, int left, final int entryWidth, final int entryHeight, final int mouseX, final int mouseY, final boolean p_194999_5_, final float partialTick) {
+            public void render(GuiGraphics guiGraphics, int entryIdx, int top, int left, final int entryWidth, final int entryHeight, final int mouseX, final int mouseY, final boolean p_194999_5_, final float partialTick) {
                 Font font = Minecraft.getInstance().font;
                 final List<FormattedCharSequence> strings = font.split(message, LoadingEntryList.this.width - 20);
                 int y = top + 2;
                 for (FormattedCharSequence string : strings)
                 {
                     if (center)
-                        font.draw(poseStack, string, left + (width) - font.width(string) / 2F, y, 0xFFFFFF);
+                        guiGraphics.drawString(font, string, left + (width) - font.width(string) / 2F, (float) y, 0xFFFFFF, false);
                     else
-                        font.draw(poseStack, string, left + 5, y, 0xFFFFFF);
+                        guiGraphics.drawString(font, string, left + 5, y, 0xFFFFFF, false);
                     y += font.lineHeight;
                 }
             }

@@ -9,7 +9,7 @@
 +   }
 +
     private boolean m_157538_(T p_157539_, boolean p_157540_) {
-+      if (p_157539_ instanceof Entity entity && net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.EntityJoinLevelEvent(entity, entity.f_19853_, p_157540_))) return false;
++      if (p_157539_ instanceof Entity entity && net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.EntityJoinLevelEvent(entity, entity.m_9236_(), p_157540_))) return false;
 +      return addEntityWithoutEvent(p_157539_, p_157540_);
 +   }
 +

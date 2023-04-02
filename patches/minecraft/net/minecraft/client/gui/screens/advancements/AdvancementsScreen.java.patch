@@ -37,34 +37,34 @@
 @@ -98,6 +_,11 @@
        int i = (this.f_96543_ - 252) / 2;
        int j = (this.f_96544_ - 140) / 2;
-       this.m_7333_(p_97361_);
+       this.m_280273_(p_282589_);
 +      if (maxPages != 0) {
 +         net.minecraft.network.chat.Component page = Component.m_237113_(String.format("%d / %d", tabPage + 1, maxPages + 1));
 +         int width = this.f_96547_.m_92852_(page);
-+         this.f_96547_.m_92744_(p_97361_, page.m_7532_(), i + (252 / 2) - (width / 2), j - 44, -1);
++         p_282589_.m_280648_(this.f_96547_, page.m_7532_(), i + (252 / 2) - (width / 2), j - 44, -1);
 +      }
-       this.m_97373_(p_97361_, p_97362_, p_97363_, i, j);
-       this.m_97356_(p_97361_, i, j);
-       this.m_97381_(p_97361_, p_97362_, p_97363_, i, j);
-@@ -138,10 +_,12 @@
-          RenderSystem.m_157456_(0, f_97330_);
- 
+       this.m_97373_(p_282589_, p_282255_, p_283354_, i, j);
+       this.m_280088_(p_282589_, i, j);
+       this.m_280355_(p_282589_, p_282255_, p_283354_, i, j);
+@@ -135,10 +_,12 @@
+       p_283395_.m_280218_(f_97329_, p_281890_, p_282532_, 0, 0, 252, 140);
+       if (this.f_97335_.size() > 1) {
           for(AdvancementTab advancementtab : this.f_97335_.values()) {
 +            if (advancementtab.getPage() == tabPage)
-             advancementtab.m_97165_(p_97357_, p_97358_, p_97359_, advancementtab == this.f_97336_);
+             advancementtab.m_280105_(p_283395_, p_281890_, p_282532_, advancementtab == this.f_97336_);
           }
  
           for(AdvancementTab advancementtab1 : this.f_97335_.values()) {
 +            if (advancementtab1.getPage() == tabPage)
-             advancementtab1.m_274613_(p_97357_, p_97358_, p_97359_, this.f_96542_);
+             advancementtab1.m_280485_(p_283395_, p_281890_, p_282532_);
           }
        }
-@@ -161,7 +_,7 @@
+@@ -158,7 +_,7 @@
  
        if (this.f_97335_.size() > 1) {
           for(AdvancementTab advancementtab : this.f_97335_.values()) {
--            if (advancementtab.m_97154_(p_97385_, p_97386_, (double)p_97383_, (double)p_97384_)) {
-+            if (advancementtab.getPage() == tabPage && advancementtab.m_97154_(p_97385_, p_97386_, (double)p_97383_, (double)p_97384_)) {
-                this.m_96602_(p_97382_, advancementtab.m_97189_(), p_97383_, p_97384_);
+-            if (advancementtab.m_97154_(p_281519_, p_283371_, (double)p_283556_, (double)p_282458_)) {
++            if (advancementtab.getPage() == tabPage && advancementtab.m_97154_(p_281519_, p_283371_, (double)p_283556_, (double)p_282458_)) {
+                p_282784_.m_280557_(this.f_96547_, advancementtab.m_97189_(), p_283556_, p_282458_);
              }
           }

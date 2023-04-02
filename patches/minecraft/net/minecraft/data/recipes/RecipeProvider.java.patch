@@ -1,6 +1,6 @@
 --- a/net/minecraft/data/recipes/RecipeProvider.java
 +++ b/net/minecraft/data/recipes/RecipeProvider.java
-@@ -88,7 +_,9 @@
+@@ -89,7 +_,9 @@
              list.add(DataProvider.m_253162_(p_254020_, p_253413_.m_125966_(), this.f_236355_.m_245731_(p_253413_.m_6445_())));
              JsonObject jsonobject = p_253413_.m_5860_();
              if (jsonobject != null) {
@@ -11,7 +11,7 @@
              }
  
           }
-@@ -98,13 +_,23 @@
+@@ -99,13 +_,23 @@
        }));
     }
  

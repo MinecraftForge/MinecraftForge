@@ -1,29 +1,29 @@
 --- a/net/minecraft/world/entity/animal/Wolf.java
 +++ b/net/minecraft/world/entity/animal/Wolf.java
-@@ -325,11 +_,12 @@
-       } else {
-          if (this.m_21824_()) {
-             if (this.m_6898_(itemstack) && this.m_21223_() < this.m_21233_()) {
-+               this.m_5634_((float)itemstack.getFoodProperties(this).m_38744_());
-                if (!p_30412_.m_150110_().f_35937_) {
-                   itemstack.m_41774_(1);
-                }
- 
--               this.m_5634_((float)item.m_41473_().m_38744_());
-+               this.m_146852_(GameEvent.f_157806_, this);
-                return InteractionResult.SUCCESS;
-             }
- 
-@@ -360,7 +_,7 @@
+@@ -324,11 +_,12 @@
+          return flag ? InteractionResult.CONSUME : InteractionResult.PASS;
+       } else if (this.m_21824_()) {
+          if (this.m_6898_(itemstack) && this.m_21223_() < this.m_21233_()) {
++            this.m_5634_((float)itemstack.getFoodProperties(this).m_38744_());
+             if (!p_30412_.m_150110_().f_35937_) {
                 itemstack.m_41774_(1);
              }
  
--            if (this.f_19796_.m_188503_(3) == 0) {
-+            if (this.f_19796_.m_188503_(3) == 0 && !net.minecraftforge.event.ForgeEventFactory.onAnimalTame(this, p_30412_)) {
-                this.m_21828_(p_30412_);
-                this.f_21344_.m_26573_();
-                this.m_6710_((LivingEntity)null);
-@@ -400,7 +_,7 @@
+-            this.m_5634_((float)item.m_41473_().m_38744_());
++            this.m_146852_(GameEvent.f_157806_, this);
+             return InteractionResult.SUCCESS;
+          } else {
+             if (item instanceof DyeItem) {
+@@ -364,7 +_,7 @@
+             itemstack.m_41774_(1);
+          }
+ 
+-         if (this.f_19796_.m_188503_(3) == 0) {
++         if (this.f_19796_.m_188503_(3) == 0 && !net.minecraftforge.event.ForgeEventFactory.onAnimalTame(this, p_30412_)) {
+             this.m_21828_(p_30412_);
+             this.f_21344_.m_26573_();
+             this.m_6710_((LivingEntity)null);
+@@ -403,7 +_,7 @@
  
     public boolean m_6898_(ItemStack p_30440_) {
        Item item = p_30440_.m_41720_();

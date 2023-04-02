@@ -46,7 +46,10 @@ public abstract class CommonDevLaunchHandler extends CommonLaunchHandler {
         return new LocatedPaths(mcstream.build().toList(), mcFilter, modstream.build().toList(), getFmlStuff(legacyCP));
     }
 
+    @Override
     protected String[] preLaunch(String[] arguments, ModuleLayer layer) {
+        super.preLaunch(arguments, layer);
+
         if (getDist().isDedicatedServer())
             return arguments;
 

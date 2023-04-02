@@ -1,22 +1,6 @@
 --- a/net/minecraft/world/level/dimension/end/EndDragonFight.java
 +++ b/net/minecraft/world/level/dimension/end/EndDragonFight.java
-@@ -102,6 +_,7 @@
- 
-          this.f_64068_ = p_64080_.m_128471_("DragonKilled");
-          this.f_64069_ = p_64080_.m_128471_("PreviouslyKilled");
-+         this.f_64071_ = !p_64080_.m_128471_("LegacyScanPerformed"); // Forge: fix MC-105080
-          if (p_64080_.m_128471_("IsRespawning")) {
-             this.f_64073_ = DragonRespawnAnimation.START;
-          }
-@@ -137,6 +_,7 @@
- 
-       compoundtag.m_128379_("DragonKilled", this.f_64068_);
-       compoundtag.m_128379_("PreviouslyKilled", this.f_64069_);
-+      compoundtag.m_128379_("LegacyScanPerformed", !this.f_64071_); // Forge: fix MC-105080
-       if (this.f_64072_ != null) {
-          compoundtag.m_128365_("ExitPortalLocation", NbtUtils.m_129224_(this.f_64072_));
-       }
-@@ -518,6 +_,13 @@
+@@ -513,7 +_,14 @@
              endcrystal.m_31052_((BlockPos)null);
           }
        }
@@ -30,4 +14,5 @@
 +   public void removePlayer(ServerPlayer player) {
 +      this.f_64060_.m_6539_(player);
     }
- }
+ 
+    @Nullable

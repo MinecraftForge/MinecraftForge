@@ -17,6 +17,7 @@ dependencies {
     api("org.ow2.asm:asm-tree:${ASM_VERSION}")
     api("org.ow2.asm:asm-commons:${ASM_VERSION}")
     api("net.minecraftforge:forgespi:${SPI_VERSION}")
+    api("net.minecraftforge:mergetool:${MERGETOOL_VERSION}:api")
     api("org.apache.logging.log4j:log4j-api:${LOG4J_VERSION}")
     api("org.slf4j:slf4j-api:${SLF4J_API_VERSION}")
     api("com.google.guava:guava:${GUAVA_VERSION}")
@@ -69,6 +70,7 @@ ext {
 }
 
 jar.doFirst {
+    manifest.attributes['Automatic-Module-Name'] = project.name
     MANIFESTS.each { pkg, values ->
         manifest.attributes(values, pkg)
     }

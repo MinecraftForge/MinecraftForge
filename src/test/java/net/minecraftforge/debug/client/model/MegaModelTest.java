@@ -26,15 +26,16 @@ import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.material.Material;
+import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ModelEvent;
 import net.minecraftforge.client.model.BakedModelWrapper;
 import net.minecraftforge.client.model.IQuadTransformer;
+import net.minecraftforge.client.model.QuadTransformers;
 import net.minecraftforge.client.model.data.ModelData;
 import net.minecraftforge.client.model.data.ModelProperty;
-import net.minecraftforge.event.CreativeModeTabEvent;
+import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -49,7 +50,6 @@ import org.joml.Vector3f;
 
 import java.util.List;
 import java.util.Set;
-import java.util.function.Consumer;
 
 /**
  * Test mod that demos most Forge-provided model loaders in a single block + item, as well as in-JSON render states
@@ -91,9 +91,9 @@ public class MegaModelTest
         modEventBus.addListener(this::addCreative);
     }
 
-    private void addCreative(CreativeModeTabEvent.BuildContents event)
+    private void addCreative(BuildCreativeModeTabContentsEvent event)
     {
-        if (event.getTab() == CreativeModeTabs.BUILDING_BLOCKS)
+        if (event.getTabKey() == CreativeModeTabs.BUILDING_BLOCKS)
             event.accept(TEST_BLOCK_ITEM);
     }
 
@@ -114,7 +114,7 @@ public class MegaModelTest
     {
         public TestBlock()
         {
-            super(Properties.of(Material.STONE));
+            super(Properties.of().mapColor(MapColor.STONE));
         }
 
         @Nullable
@@ -178,7 +178,7 @@ public class MegaModelTest
             var quads = super.getQuads(state, side, rand, data, renderType);
             if (!data.has(TestData.PROPERTY))
                 return quads;
-            return IQuadTransformer.applying(data.get(TestData.PROPERTY).transform()).process(quads);
+            return QuadTransformers.applying(data.get(TestData.PROPERTY).transform()).process(quads);
         }
     }
 }

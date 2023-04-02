@@ -186,7 +186,7 @@ public class NetworkHooks
      */
     public static void openScreen(ServerPlayer player, MenuProvider containerSupplier, Consumer<FriendlyByteBuf> extraDataWriter)
     {
-        if (player.level.isClientSide) return;
+        if (player.level().isClientSide) return;
         player.doCloseContainer();
         player.nextContainerCounter();
         int openContainerId = player.containerCounter;

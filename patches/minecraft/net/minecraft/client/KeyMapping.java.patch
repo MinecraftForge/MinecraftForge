@@ -21,7 +21,7 @@
        if (keymapping != null) {
           keymapping.m_7249_(p_90839_);
        }
-@@ -96,7 +_,7 @@
+@@ -105,7 +_,7 @@
     }
  
     public boolean m_90857_() {
@@ -30,7 +30,7 @@
     }
  
     public String m_90858_() {
-@@ -130,7 +_,13 @@
+@@ -139,7 +_,13 @@
     }
  
     public int compareTo(KeyMapping p_90841_) {
@@ -45,7 +45,7 @@
     }
  
     public static Supplier<Component> m_90842_(String p_90843_) {
-@@ -141,6 +_,20 @@
+@@ -150,6 +_,20 @@
     }
  
     public boolean m_90850_(KeyMapping p_90851_) {
@@ -66,7 +66,7 @@
        return this.f_90816_.equals(p_90851_.f_90816_);
     }
  
-@@ -161,11 +_,13 @@
+@@ -170,11 +_,13 @@
     }
  
     public Component m_90863_() {
@@ -81,7 +81,7 @@
     }
  
     public String m_90865_() {
-@@ -175,4 +_,84 @@
+@@ -184,4 +_,84 @@
     public void m_7249_(boolean p_90846_) {
        this.f_90817_ = p_90846_;
     }

@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/ai/goal/RangedBowAttackGoal.java
 +++ b/net/minecraft/world/entity/ai/goal/RangedBowAttackGoal.java
-@@ -8,7 +_,7 @@
+@@ -10,7 +_,7 @@
  import net.minecraft.world.item.BowItem;
  import net.minecraft.world.item.Items;
  
@@ -9,7 +9,7 @@
     private final T f_25782_;
     private final double f_25783_;
     private int f_25784_;
-@@ -19,6 +_,10 @@
+@@ -21,6 +_,10 @@
     private boolean f_25789_;
     private int f_25790_ = -1;
  
@@ -20,7 +20,7 @@
     public RangedBowAttackGoal(T p_25792_, double p_25793_, int p_25794_, float p_25795_) {
        this.f_25782_ = p_25792_;
        this.f_25783_ = p_25793_;
-@@ -36,7 +_,7 @@
+@@ -38,7 +_,7 @@
     }
  
     protected boolean m_25803_() {
@@ -29,7 +29,7 @@
     }
  
     public boolean m_8045_() {
-@@ -121,7 +_,7 @@
+@@ -129,7 +_,7 @@
                 }
              }
           } else if (--this.f_25786_ <= 0 && this.f_25787_ >= -60) {

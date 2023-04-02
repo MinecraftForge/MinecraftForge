@@ -66,7 +66,7 @@ public class DeferredWorkQueue
                     timer,
                     aggregate
             );
-            //TODO 1.20: throw aggregate exception
+            throw aggregate;
         } else {
             LOGGER.debug(LOADING, "Synchronous work queue completed in {}", timer);
         }

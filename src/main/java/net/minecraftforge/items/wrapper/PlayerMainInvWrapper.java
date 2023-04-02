@@ -35,7 +35,7 @@ public class PlayerMainInvWrapper extends RangedWrapper
             ItemStack inSlot = getStackInSlot(slot);
             if(!inSlot.isEmpty())
             {
-                if (getInventoryPlayer().player.level.isClientSide)
+                if (getInventoryPlayer().player.level().isClientSide)
                 {
                     inSlot.setPopTime(5);
                 }

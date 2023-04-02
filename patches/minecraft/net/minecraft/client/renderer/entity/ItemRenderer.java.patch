@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/entity/ItemRenderer.java
 +++ b/net/minecraft/client/renderer/entity/ItemRenderer.java
-@@ -80,7 +_,7 @@
+@@ -68,7 +_,7 @@
     public ItemRenderer(Minecraft p_266926_, TextureManager p_266774_, ModelManager p_266850_, ItemColors p_267016_, BlockEntityWithoutLevelRenderer p_267049_) {
        this.f_265848_ = p_266926_;
        this.f_115096_ = p_266774_;
@@ -9,7 +9,7 @@
        this.f_174223_ = p_267049_;
  
        for(Item item : BuiltInRegistries.f_257033_) {
-@@ -121,7 +_,7 @@
+@@ -109,7 +_,7 @@
              }
           }
  
@@ -18,7 +18,7 @@
           p_115147_.m_252880_(-0.5F, -0.5F, -0.5F);
           if (!p_115151_.m_7521_() && (!p_115144_.m_150930_(Items.f_42713_) || flag)) {
              boolean flag1;
-@@ -131,8 +_,8 @@
+@@ -119,8 +_,8 @@
              } else {
                 flag1 = true;
              }
@@ -27,9 +27,9 @@
 +            for (var model : p_115151_.getRenderPasses(p_115144_, flag1)) {
 +            for (var rendertype : model.getRenderTypes(p_115144_, flag1)) {
              VertexConsumer vertexconsumer;
-             if (p_115144_.m_204117_(ItemTags.f_215866_) && p_115144_.m_41790_()) {
+             if (m_285827_(p_115144_) && p_115144_.m_41790_()) {
                 p_115147_.m_85836_();
-@@ -156,9 +_,11 @@
+@@ -144,9 +_,11 @@
                 vertexconsumer = m_115211_(p_115148_, rendertype, true, p_115144_.m_41790_());
              }
  
@@ -43,7 +43,7 @@
           }
  
           p_115147_.m_85849_();
-@@ -202,7 +_,7 @@
+@@ -194,7 +_,7 @@
           float f = (float)(i >> 16 & 255) / 255.0F;
           float f1 = (float)(i >> 8 & 255) / 255.0F;
           float f2 = (float)(i & 255) / 255.0F;
@@ -52,21 +52,7 @@
        }
  
     }
-@@ -303,6 +_,7 @@
-             crashreportcategory.m_128165_("Item Type", () -> {
-                return String.valueOf((Object)p_275431_.m_41720_());
-             });
-+            crashreportcategory.m_128165_("Registry Name", () -> String.valueOf(net.minecraftforge.registries.ForgeRegistries.ITEMS.getKey(p_275431_.m_41720_())));
-             crashreportcategory.m_128165_("Item Damage", () -> {
-                return String.valueOf(p_275431_.m_41773_());
-             });
-@@ -356,10 +_,15 @@
-          }
- 
-          p_275269_.m_85849_();
-+         net.minecraftforge.client.ItemDecoratorHandler.of(p_275590_).render(p_275269_, p_275652_, p_275590_, p_275202_, p_275508_);
-       }
-    }
+@@ -227,5 +_,9 @@
  
     public void m_6213_(ResourceManager p_115105_) {
        this.f_115095_.m_109403_();

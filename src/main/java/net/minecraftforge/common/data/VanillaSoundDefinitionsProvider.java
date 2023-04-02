@@ -5,12 +5,10 @@
 
 package net.minecraftforge.common.data;
 
-
 import net.minecraft.data.PackOutput;
 import net.minecraftforge.common.ForgeMod;
 
 public class VanillaSoundDefinitionsProvider extends SoundDefinitionsProvider {
-
     public VanillaSoundDefinitionsProvider(PackOutput output, ExistingFileHelper helper) {
         super(output, "minecraft", helper);
     }

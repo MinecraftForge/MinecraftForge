@@ -12,36 +12,36 @@
 @@ -455,7 +_,7 @@
              for(int i2 = i1; i2 < j1; ++i2) {
                 blockpos$mutableblockpos.m_122178_(l1, k1, i2);
-                FluidState fluidstate = this.f_19853_.m_6425_(blockpos$mutableblockpos);
+                FluidState fluidstate = this.m_9236_().m_6425_(blockpos$mutableblockpos);
 -               if (fluidstate.m_205070_(FluidTags.f_13131_)) {
 +               if (this.canBoatInFluid(fluidstate)) {
-                   f = Math.max(f, fluidstate.m_76155_(this.f_19853_, blockpos$mutableblockpos));
+                   f = Math.max(f, fluidstate.m_76155_(this.m_9236_(), blockpos$mutableblockpos));
                 }
  
 @@ -496,7 +_,7 @@
                       blockpos$mutableblockpos.m_122178_(l1, k2, i2);
-                      BlockState blockstate = this.f_19853_.m_8055_(blockpos$mutableblockpos);
-                      if (!(blockstate.m_60734_() instanceof WaterlilyBlock) && Shapes.m_83157_(blockstate.m_60812_(this.f_19853_, blockpos$mutableblockpos).m_83216_((double)l1, (double)k2, (double)i2), voxelshape, BooleanOp.f_82689_)) {
+                      BlockState blockstate = this.m_9236_().m_8055_(blockpos$mutableblockpos);
+                      if (!(blockstate.m_60734_() instanceof WaterlilyBlock) && Shapes.m_83157_(blockstate.m_60812_(this.m_9236_(), blockpos$mutableblockpos).m_83216_((double)l1, (double)k2, (double)i2), voxelshape, BooleanOp.f_82689_)) {
 -                        f += blockstate.m_60734_().m_49958_();
-+                        f += blockstate.getFriction(this.f_19853_, blockpos$mutableblockpos, this);
++                        f += blockstate.getFriction(this.m_9236_(), blockpos$mutableblockpos, this);
                          ++k1;
                       }
                    }
 @@ -525,7 +_,7 @@
              for(int i2 = i1; i2 < j1; ++i2) {
                 blockpos$mutableblockpos.m_122178_(k1, l1, i2);
-                FluidState fluidstate = this.f_19853_.m_6425_(blockpos$mutableblockpos);
+                FluidState fluidstate = this.m_9236_().m_6425_(blockpos$mutableblockpos);
 -               if (fluidstate.m_205070_(FluidTags.f_13131_)) {
 +               if (this.canBoatInFluid(fluidstate)) {
-                   float f = (float)l1 + fluidstate.m_76155_(this.f_19853_, blockpos$mutableblockpos);
+                   float f = (float)l1 + fluidstate.m_76155_(this.m_9236_(), blockpos$mutableblockpos);
                    this.f_38277_ = Math.max((double)f, this.f_38277_);
                    flag |= aabb.f_82289_ < (double)f;
 @@ -555,7 +_,7 @@
              for(int i2 = i1; i2 < j1; ++i2) {
                 blockpos$mutableblockpos.m_122178_(k1, l1, i2);
-                FluidState fluidstate = this.f_19853_.m_6425_(blockpos$mutableblockpos);
--               if (fluidstate.m_205070_(FluidTags.f_13131_) && d0 < (double)((float)blockpos$mutableblockpos.m_123342_() + fluidstate.m_76155_(this.f_19853_, blockpos$mutableblockpos))) {
-+               if (this.canBoatInFluid(fluidstate) && d0 < (double)((float)blockpos$mutableblockpos.m_123342_() + fluidstate.m_76155_(this.f_19853_, blockpos$mutableblockpos))) {
+                FluidState fluidstate = this.m_9236_().m_6425_(blockpos$mutableblockpos);
+-               if (fluidstate.m_205070_(FluidTags.f_13131_) && d0 < (double)((float)blockpos$mutableblockpos.m_123342_() + fluidstate.m_76155_(this.m_9236_(), blockpos$mutableblockpos))) {
++               if (this.canBoatInFluid(fluidstate) && d0 < (double)((float)blockpos$mutableblockpos.m_123342_() + fluidstate.m_76155_(this.m_9236_(), blockpos$mutableblockpos))) {
                    if (!fluidstate.m_76170_()) {
                       return Boat.Status.UNDER_FLOWING_WATER;
                    }
@@ -49,8 +49,8 @@
              }
  
              this.m_183634_();
--         } else if (!this.f_19853_.m_6425_(this.m_20183_().m_7495_()).m_205070_(FluidTags.f_13131_) && p_38307_ < 0.0D) {
-+         } else if (!this.canBoatInFluid(this.f_19853_.m_6425_(this.m_20183_().m_7495_())) && p_38307_ < 0.0D) {
+-         } else if (!this.m_9236_().m_6425_(this.m_20183_().m_7495_()).m_205070_(FluidTags.f_13131_) && p_38307_ < 0.0D) {
++         } else if (!this.canBoatInFluid(this.m_9236_().m_6425_(this.m_20183_().m_7495_())) && p_38307_ < 0.0D) {
              this.f_19789_ -= (float)p_38307_;
           }
  

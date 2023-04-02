@@ -18,6 +18,7 @@ import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.debug.recipe.recipebook.RecipeBookExtensionTest.RecipeBookTestContainer;
 
+import java.util.List;
 import java.util.Optional;
 
 public class RecipeBookTestMenu extends RecipeBookMenu<RecipeBookTestContainer>
@@ -58,7 +59,8 @@ public class RecipeBookTestMenu extends RecipeBookMenu<RecipeBookTestContainer>
             {
                 this.checkTakeAchievements(stack);
                 Container craftingContainer = RecipeBookTestMenu.this.container;
-                NonNullList<ItemStack> remainders = player.level.getRecipeManager().getRemainingItemsFor(RecipeBookExtensionTest.RECIPE_BOOK_TEST_RECIPE_TYPE.get(), RecipeBookTestMenu.this.container, player.level);
+                NonNullList<ItemStack> remainders = player.level()
+                        .getRecipeManager().getRemainingItemsFor(RecipeBookExtensionTest.RECIPE_BOOK_TEST_RECIPE_TYPE.get(), RecipeBookTestMenu.this.container, player.level());
                 for (int i = 0; i < remainders.size(); ++i)
                 {
                     ItemStack toRemove = craftingContainer.getItem(i);
@@ -73,7 +75,7 @@ public class RecipeBookTestMenu extends RecipeBookMenu<RecipeBookTestContainer>
                     {
                         if (toRemove.isEmpty())
                             craftingContainer.setItem(i, toRemove);
-                        else if (ItemStack.isSame(toRemove, toReplace) && ItemStack.tagMatches(toRemove, toReplace))
+                        else if (ItemStack.isSameItemSameTags(toRemove, toReplace))
                         {
                             toReplace.grow(toRemove.getCount());
                             craftingContainer.setItem(i, toReplace);
@@ -108,9 +110,9 @@ public class RecipeBookTestMenu extends RecipeBookMenu<RecipeBookTestContainer>
             protected void checkTakeAchievements(ItemStack stack)
             {
                 if (this.removeCount > 0)
-                    stack.onCraftedBy(RecipeBookTestMenu.this.player.level, RecipeBookTestMenu.this.player, this.removeCount);
+                    stack.onCraftedBy(RecipeBookTestMenu.this.player.level(), RecipeBookTestMenu.this.player, this.removeCount);
                 if (this.container instanceof RecipeHolder recipeHolder)
-                    recipeHolder.awardUsedRecipes(RecipeBookTestMenu.this.player);
+                    recipeHolder.awardUsedRecipes(RecipeBookTestMenu.this.player, List.of());
                 this.removeCount = 0;
             }
         };
@@ -250,7 +252,7 @@ public class RecipeBookTestMenu extends RecipeBookMenu<RecipeBookTestContainer>
     @Override
     public boolean recipeMatches(Recipe<? super RecipeBookTestContainer> recipe)
     {
-        return recipe.matches(this.container, this.player.level);
+        return recipe.matches(this.container, this.player.level());
     }
 
     @Override

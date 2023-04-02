@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/level/SignalGetter.java
++++ b/net/minecraft/world/level/SignalGetter.java
+@@ -65,7 +_,7 @@
+    default int m_277185_(BlockPos p_277961_, Direction p_277351_) {
+       BlockState blockstate = this.m_8055_(p_277961_);
+       int i = blockstate.m_60746_(this, p_277961_, p_277351_);
+-      return blockstate.m_60796_(this, p_277961_) ? Math.max(i, this.m_277173_(p_277961_)) : i;
++      return blockstate.shouldCheckWeakPower(this, p_277961_, p_277351_) ? Math.max(i, this.m_277173_(p_277961_)) : i;
+    }
+ 
+    default boolean m_276867_(BlockPos p_277626_) {

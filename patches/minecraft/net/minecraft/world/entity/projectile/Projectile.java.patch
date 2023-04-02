@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/projectile/Projectile.java
 +++ b/net/minecraft/world/entity/projectile/Projectile.java
-@@ -213,7 +_,7 @@
+@@ -214,7 +_,7 @@
        if (entity instanceof Player) {
           return entity.m_142265_(p_150167_, p_150168_);
        } else {

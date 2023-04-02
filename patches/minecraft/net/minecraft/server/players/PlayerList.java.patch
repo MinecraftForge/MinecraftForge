@@ -8,7 +8,7 @@
  
     public PlayerList(MinecraftServer p_203842_, LayeredRegistryAccess<RegistryLayer> p_251844_, PlayerDataStorage p_203844_, int p_203845_) {
        this.f_11195_ = p_203842_;
-@@ -168,6 +_,7 @@
+@@ -174,6 +_,7 @@
        LevelData leveldata = serverlevel1.m_6106_();
        p_11263_.m_143427_(compoundtag);
        ServerGamePacketListenerImpl servergamepacketlistenerimpl = new ServerGamePacketListenerImpl(this.f_11195_, p_11262_, p_11263_);
@@ -16,7 +16,7 @@
        GameRules gamerules = serverlevel1.m_46469_();
        boolean flag = gamerules.m_46207_(GameRules.f_46156_);
        boolean flag1 = gamerules.m_46207_(GameRules.f_46145_);
-@@ -177,6 +_,7 @@
+@@ -183,6 +_,7 @@
        servergamepacketlistenerimpl.m_9829_(new ClientboundChangeDifficultyPacket(leveldata.m_5472_(), leveldata.m_5474_()));
        servergamepacketlistenerimpl.m_9829_(new ClientboundPlayerAbilitiesPacket(p_11263_.m_150110_()));
        servergamepacketlistenerimpl.m_9829_(new ClientboundSetCarriedItemPacket(p_11263_.m_150109_().f_35977_));
@@ -24,7 +24,7 @@
        servergamepacketlistenerimpl.m_9829_(new ClientboundUpdateRecipesPacket(this.f_11195_.m_129894_().m_44051_()));
        servergamepacketlistenerimpl.m_9829_(new ClientboundUpdateTagsPacket(TagNetworkSerialization.m_245799_(this.f_243858_)));
        this.m_11289_(p_11263_);
-@@ -249,6 +_,7 @@
+@@ -255,6 +_,7 @@
        }
  
        p_11263_.m_143429_();
@@ -32,7 +32,7 @@
     }
  
     protected void m_11273_(ServerScoreboard p_11274_, ServerPlayer p_11275_) {
-@@ -309,6 +_,7 @@
+@@ -315,6 +_,7 @@
           compoundtag1 = compoundtag;
           p_11225_.m_20258_(compoundtag);
           f_11188_.debug("loading single player");
@@ -40,7 +40,7 @@
        } else {
           compoundtag1 = this.f_11204_.m_78435_(p_11225_);
        }
-@@ -317,6 +_,7 @@
+@@ -323,6 +_,7 @@
     }
  
     protected void m_6765_(ServerPlayer p_11277_) {
@@ -48,15 +48,15 @@
        this.f_11204_.m_78433_(p_11277_);
        ServerStatsCounter serverstatscounter = this.f_11202_.get(p_11277_.m_20148_());
        if (serverstatscounter != null) {
-@@ -331,6 +_,7 @@
+@@ -337,6 +_,7 @@
     }
  
     public void m_11286_(ServerPlayer p_11287_) {
 +      net.minecraftforge.event.ForgeEventFactory.firePlayerLoggedOut(p_11287_);
-       ServerLevel serverlevel = p_11287_.m_9236_();
+       ServerLevel serverlevel = p_11287_.m_284548_();
        p_11287_.m_36220_(Stats.f_12989_);
        this.m_6765_(p_11287_);
-@@ -472,6 +_,7 @@
+@@ -478,6 +_,7 @@
        this.f_11197_.put(serverplayer.m_20148_(), serverplayer);
        serverplayer.m_143429_();
        serverplayer.m_21153_(serverplayer.m_21223_());
@@ -64,7 +64,7 @@
        if (flag2) {
           serverplayer.f_8906_.m_9829_(new ClientboundSoundPacket(SoundEvents.f_12377_, SoundSource.BLOCKS, (double)blockpos.m_123341_(), (double)blockpos.m_123342_(), (double)blockpos.m_123343_(), 1.0F, 1.0F, serverlevel1.m_213780_().m_188505_()));
        }
-@@ -556,6 +_,7 @@
+@@ -562,6 +_,7 @@
     }
  
     public void m_5749_(GameProfile p_11254_) {
@@ -72,7 +72,7 @@
        this.f_11200_.m_11381_(new ServerOpListEntry(p_11254_, this.f_11195_.m_7022_(), this.f_11200_.m_11351_(p_11254_)));
        ServerPlayer serverplayer = this.m_11259_(p_11254_.getId());
        if (serverplayer != null) {
-@@ -565,6 +_,7 @@
+@@ -571,6 +_,7 @@
     }
  
     public void m_5750_(GameProfile p_11281_) {
@@ -80,7 +80,7 @@
        this.f_11200_.m_11393_(p_11281_);
        ServerPlayer serverplayer = this.m_11259_(p_11281_.getId());
        if (serverplayer != null) {
-@@ -779,13 +_,6 @@
+@@ -785,13 +_,6 @@
        if (serverstatscounter == null) {
           File file1 = this.f_11195_.m_129843_(LevelResource.f_78175_).toFile();
           File file2 = new File(file1, uuid + ".json");
@@ -94,7 +94,7 @@
  
           serverstatscounter = new ServerStatsCounter(this.f_11195_, file2);
           this.f_11202_.put(uuid, serverstatscounter);
-@@ -801,8 +_,11 @@
+@@ -807,8 +_,11 @@
           Path path = this.f_11195_.m_129843_(LevelResource.f_78174_).resolve(uuid + ".json");
           playeradvancements = new PlayerAdvancements(this.f_11195_.m_129933_(), this, this.f_11195_.m_129889_(), path, p_11297_);
           this.f_11203_.put(uuid, playeradvancements);
@@ -106,7 +106,7 @@
        playeradvancements.m_135979_(p_11297_);
        return playeradvancements;
     }
-@@ -832,7 +_,7 @@
+@@ -838,7 +_,7 @@
     }
  
     public List<ServerPlayer> m_11314_() {
@@ -115,7 +115,7 @@
     }
  
     @Nullable
-@@ -849,6 +_,7 @@
+@@ -855,6 +_,7 @@
           playeradvancements.m_135981_(this.f_11195_.m_129889_());
        }
  

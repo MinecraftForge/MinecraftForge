@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/gui/screens/worldselection/WorldOpenFlows.java
 +++ b/net/minecraft/client/gui/screens/worldselection/WorldOpenFlows.java
-@@ -159,13 +_,23 @@
+@@ -165,13 +_,23 @@
     }
  
     private void m_233145_(Screen p_233146_, String p_233147_, boolean p_233148_, boolean p_233149_) {
@@ -24,7 +24,7 @@
           } catch (Exception exception) {
              f_233088_.warn("Failed to load level data or datapacks, can't proceed with server load", (Throwable)exception);
              if (!p_233148_) {
-@@ -185,7 +_,9 @@
+@@ -191,7 +_,9 @@
           WorldData worlddata = worldstem.f_206895_();
           boolean flag = worlddata.m_246337_().m_247070_();
           boolean flag1 = worlddata.m_5754_() != Lifecycle.stable();
@@ -35,7 +35,7 @@
              this.f_233089_.m_247489_().m_247400_(levelstoragesource$levelstorageaccess).thenApply((p_233177_) -> {
                 return true;
              }).exceptionallyComposeAsync((p_233183_) -> {
-@@ -207,9 +_,11 @@
+@@ -213,9 +_,11 @@
                 return null;
              });
           } else {

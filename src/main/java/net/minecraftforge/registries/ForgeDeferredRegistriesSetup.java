@@ -5,8 +5,6 @@
 
 package net.minecraftforge.registries;
 
-import net.minecraftforge.common.world.BiomeModifier;
-import net.minecraftforge.common.world.StructureModifier;
 import net.minecraftforge.eventbus.api.IEventBus;
 
 public class ForgeDeferredRegistriesSetup
@@ -18,8 +16,13 @@ public class ForgeDeferredRegistriesSetup
      */
     public static void setup(IEventBus modEventBus)
     {
-        if (setup)
-            throw new IllegalStateException("Setup has already been called!");
+        synchronized (ForgeDeferredRegistriesSetup.class)
+        {
+            if (setup)
+                throw new IllegalStateException("Setup has already been called!");
+
+            setup = true;
+        }
 
         ForgeRegistries.DEFERRED_ENTITY_DATA_SERIALIZERS.register(modEventBus);
         ForgeRegistries.DEFERRED_GLOBAL_LOOT_MODIFIER_SERIALIZERS.register(modEventBus);
@@ -28,7 +31,5 @@ public class ForgeDeferredRegistriesSetup
         ForgeRegistries.DEFERRED_STRUCTURE_MODIFIER_SERIALIZERS.register(modEventBus);
         ForgeRegistries.DEFERRED_HOLDER_SET_TYPES.register(modEventBus);
         ForgeRegistries.DEFERRED_DISPLAY_CONTEXTS.register(modEventBus);
-
-        setup = true;
     }
 }

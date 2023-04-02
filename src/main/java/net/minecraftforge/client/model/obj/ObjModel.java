@@ -29,8 +29,6 @@ import net.minecraftforge.client.model.pipeline.QuadBakingVertexConsumer;
 import net.minecraftforge.client.model.renderable.CompositeRenderable;
 import net.minecraftforge.client.textures.UnitTextureAtlasSprite;
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
@@ -58,8 +56,6 @@ import java.util.stream.Stream;
  */
 public class ObjModel extends SimpleUnbakedGeometry<ObjModel>
 {
-    private static final Logger LOGGER = LogManager.getLogger();
-
     private static final Vector4f COLOR_WHITE = new Vector4f(1, 1, 1, 1);
     private static final Vec2[] DEFAULT_COORDS = {
             new Vec2(0, 0),
@@ -86,9 +82,7 @@ public class ObjModel extends SimpleUnbakedGeometry<ObjModel>
 
     public final ResourceLocation modelLocation;
 
-    private final Map<String, String> deprecationWarnings;
-
-    private ObjModel(ModelSettings settings, Map<String, String> deprecationWarnings)
+    private ObjModel(ModelSettings settings)
     {
         this.modelLocation = settings.modelLocation;
         this.automaticCulling = settings.automaticCulling;
@@ -96,19 +90,13 @@ public class ObjModel extends SimpleUnbakedGeometry<ObjModel>
         this.flipV = settings.flipV;
         this.emissiveAmbient = settings.emissiveAmbient;
         this.mtlOverride = settings.mtlOverride;
-        this.deprecationWarnings = deprecationWarnings;
     }
 
     public static ObjModel parse(ObjTokenizer tokenizer, ModelSettings settings) throws IOException
     {
-        return parse(tokenizer, settings, Map.of());
-    }
-
-    static ObjModel parse(ObjTokenizer tokenizer, ModelSettings settings, Map<String, String> deprecationWarnings) throws IOException
-    {
         var modelLocation = settings.modelLocation;
         var materialLibraryOverrideLocation = settings.mtlOverride;
-        var model = new ObjModel(settings, deprecationWarnings);
+        var model = new ObjModel(settings);
 
         // for relative references to material libraries
         String modelDomain = modelLocation.getNamespace();
@@ -348,9 +336,6 @@ public class ObjModel extends SimpleUnbakedGeometry<ObjModel>
     @Override
     protected void addQuads(IGeometryBakingContext owner, IModelBuilder<?> modelBuilder, ModelBaker baker, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelTransform, ResourceLocation modelLocation)
     {
-        for (var entry : deprecationWarnings.entrySet())
-            LOGGER.warn("Model \"" + modelLocation + "\" is using the deprecated \"" + entry.getKey() + "\" field in its OBJ model instead of \"" + entry.getValue() + "\". This field will be removed in 1.20.");
-
         parts.values().stream().filter(part -> owner.isComponentVisible(part.name(), true))
              .forEach(part -> part.addQuads(owner, modelBuilder, baker, spriteGetter, modelTransform, modelLocation));
     }

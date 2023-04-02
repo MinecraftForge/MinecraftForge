@@ -95,7 +95,7 @@ public class CraftingHelper
         return serializer.parse(buffer);
     }
 
-    public static Ingredient getIngredient(JsonElement json)
+    public static Ingredient getIngredient(JsonElement json, boolean allowEmpty)
     {
         if (json == null || json.isJsonNull())
             throw new JsonSyntaxException("Json cannot be null");
@@ -106,7 +106,7 @@ public class CraftingHelper
             List<Ingredient> vanilla = Lists.newArrayList();
             json.getAsJsonArray().forEach((ele) ->
             {
-                Ingredient ing = CraftingHelper.getIngredient(ele);
+                Ingredient ing = CraftingHelper.getIngredient(ele, allowEmpty);
 
                 if (ing.getClass() == Ingredient.class) //Vanilla, Due to how we read it splits each itemstack, so we pull out to re-merge later
                     vanilla.add(ing);

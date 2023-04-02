@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/Mob.java
 +++ b/net/minecraft/world/entity/Mob.java
-@@ -116,6 +_,9 @@
+@@ -115,6 +_,9 @@
     private CompoundTag f_21359_;
     private BlockPos f_21360_ = BlockPos.f_121853_;
     private float f_21341_ = -1.0F;
@@ -10,7 +10,7 @@
  
     protected Mob(EntityType<? extends Mob> p_21368_, Level p_21369_) {
        super(p_21368_, p_21369_);
-@@ -224,7 +_,11 @@
+@@ -229,7 +_,10 @@
     }
  
     public void m_6710_(@Nullable LivingEntity p_21544_) {
@@ -18,12 +18,11 @@
 +      net.minecraftforge.event.entity.living.LivingChangeTargetEvent changeTargetEvent = net.minecraftforge.common.ForgeHooks.onLivingChangeTarget(this, p_21544_, net.minecraftforge.event.entity.living.LivingChangeTargetEvent.LivingTargetType.MOB_TARGET);
 +      if(!changeTargetEvent.isCanceled()) {
 +          this.f_21362_ = changeTargetEvent.getNewTarget();
-+          net.minecraftforge.common.ForgeHooks.onLivingSetAttackTarget(this, this.f_21362_); // TODO: Remove in 1.20
 +      }
     }
  
     public boolean m_6549_(EntityType<?> p_21399_) {
-@@ -422,6 +_,9 @@
+@@ -427,6 +_,9 @@
           p_21484_.m_128379_("NoAI", this.m_21525_());
        }
  
@@ -33,11 +32,11 @@
     }
  
     public void m_7378_(CompoundTag p_21450_) {
-@@ -474,6 +_,14 @@
+@@ -479,6 +_,14 @@
        }
  
        this.m_21557_(p_21450_.m_128471_("NoAI"));
-+      
++
 +      if (p_21450_.m_128441_("forge:spawn_type")) {
 +         try {
 +            this.spawnType = MobSpawnType.valueOf(p_21450_.m_128461_("forge:spawn_type"));
@@ -48,22 +47,22 @@
     }
  
     protected void m_7625_(DamageSource p_21389_, boolean p_21390_) {
-@@ -513,9 +_,9 @@
+@@ -518,9 +_,9 @@
     public void m_8107_() {
        super.m_8107_();
-       this.f_19853_.m_46473_().m_6180_("looting");
--      if (!this.f_19853_.f_46443_ && this.m_21531_() && this.m_6084_() && !this.f_20890_ && this.f_19853_.m_46469_().m_46207_(GameRules.f_46132_)) {
+       this.m_9236_().m_46473_().m_6180_("looting");
+-      if (!this.m_9236_().f_46443_ && this.m_21531_() && this.m_6084_() && !this.f_20890_ && this.m_9236_().m_46469_().m_46207_(GameRules.f_46132_)) {
           Vec3i vec3i = this.m_213552_();
  
-+      if (!this.f_19853_.f_46443_ && this.m_21531_() && this.m_6084_() && !this.f_20890_ && net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.f_19853_, this)) {
-          for(ItemEntity itementity : this.f_19853_.m_45976_(ItemEntity.class, this.m_20191_().m_82377_((double)vec3i.m_123341_(), (double)vec3i.m_123342_(), (double)vec3i.m_123343_()))) {
++      if (!this.m_9236_().f_46443_ && this.m_21531_() && this.m_6084_() && !this.f_20890_ && net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.m_9236_(), this)) {
+          for(ItemEntity itementity : this.m_9236_().m_45976_(ItemEntity.class, this.m_20191_().m_82377_((double)vec3i.m_123341_(), (double)vec3i.m_123342_(), (double)vec3i.m_123343_()))) {
              if (!itementity.m_213877_() && !itementity.m_32055_().m_41619_() && !itementity.m_32063_() && this.m_7243_(itementity.m_32055_())) {
                 this.m_7581_(itementity);
-@@ -687,6 +_,14 @@
+@@ -692,6 +_,14 @@
           this.m_146870_();
        } else if (!this.m_21532_() && !this.m_8023_()) {
-          Entity entity = this.f_19853_.m_45930_(this, -1.0D);
-+         net.minecraftforge.eventbus.api.Event.Result result = net.minecraftforge.event.ForgeEventFactory.canEntityDespawn(this, (ServerLevel) this.f_19853_);
+          Entity entity = this.m_9236_().m_45930_(this, -1.0D);
++         net.minecraftforge.eventbus.api.Event.Result result = net.minecraftforge.event.ForgeEventFactory.canEntityDespawn(this, (ServerLevel) this.m_9236_());
 +         if (result == net.minecraftforge.eventbus.api.Event.Result.DENY) {
 +            f_20891_ = 0;
 +            entity = null;
@@ -74,7 +73,7 @@
           if (entity != null) {
              double d0 = entity.m_20280_(this);
              int i = this.m_6095_().m_20674_().m_21611_();
-@@ -1020,6 +_,16 @@
+@@ -1025,6 +_,16 @@
  
     }
  
@@ -91,7 +90,7 @@
     @Nullable
     public SpawnGroupData m_6518_(ServerLevelAccessor p_21434_, DifficultyInstance p_21435_, MobSpawnType p_21436_, @Nullable SpawnGroupData p_21437_, @Nullable CompoundTag p_21438_) {
        RandomSource randomsource = p_21434_.m_213780_();
-@@ -1030,6 +_,7 @@
+@@ -1035,6 +_,7 @@
           this.m_21559_(false);
        }
  
@@ -99,7 +98,7 @@
        return p_21437_;
     }
  
-@@ -1410,15 +_,25 @@
+@@ -1414,15 +_,25 @@
        return false;
     }
  
@@ -126,7 +125,7 @@
     public void m_147272_() {
        this.m_262441_((p_262562_) -> {
           return true;
-@@ -1442,5 +_,40 @@
+@@ -1449,5 +_,40 @@
     public ItemStack m_142340_() {
        SpawnEggItem spawneggitem = SpawnEggItem.m_43213_(this.m_6095_());
        return spawneggitem == null ? null : new ItemStack(spawneggitem);
@@ -144,7 +143,7 @@
 +   }
 +
 +   /**
-+    * This method exists so that spawns can be cancelled from the {@link net.minecraftforge.event.entity.living.MobSpawnEvent.FinalizeSpawn FinalizeSpawnEvent} 
++    * This method exists so that spawns can be cancelled from the {@link net.minecraftforge.event.entity.living.MobSpawnEvent.FinalizeSpawn FinalizeSpawnEvent}
 +    * without needing to hook up an additional handler for the {@link net.minecraftforge.event.entity.EntityJoinLevelEvent EntityJoinLevelEvent}.
 +    * @return if this mob will be blocked from spawning during {@link Level#addFreshEntity(Entity)}
 +    * @apiNote Not public-facing API.
@@ -156,7 +155,7 @@
 +
 +   /**
 +    * Marks this mob as being disallowed to spawn during {@link Level#addFreshEntity(Entity)}.<p>
-+    * @throws UnsupportedOperationException if this entity has already been {@link Entity#isAddedToWorld() added to the world}. 
++    * @throws UnsupportedOperationException if this entity has already been {@link Entity#isAddedToWorld() added to the world}.
 +    * @apiNote Not public-facing API.
 +    */
 +   @org.jetbrains.annotations.ApiStatus.Internal

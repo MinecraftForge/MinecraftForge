@@ -6,7 +6,7 @@
 package net.minecraftforge.client.event;
 
 import com.mojang.blaze3d.platform.Window;
-import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
@@ -23,14 +23,14 @@ import org.jetbrains.annotations.ApiStatus;
 public abstract class RenderGuiEvent extends Event
 {
     private final Window window;
-    private final PoseStack poseStack;
+    private final GuiGraphics guiGraphics;
     private final float partialTick;
 
     @ApiStatus.Internal
-    protected RenderGuiEvent(Window window, PoseStack poseStack, float partialTick)
+    protected RenderGuiEvent(Window window, GuiGraphics guiGraphics, float partialTick)
     {
         this.window = window;
-        this.poseStack = poseStack;
+        this.guiGraphics = guiGraphics;
         this.partialTick = partialTick;
     }
 
@@ -39,9 +39,9 @@ public abstract class RenderGuiEvent extends Event
         return window;
     }
 
-    public PoseStack getPoseStack()
+    public GuiGraphics getGuiGraphics()
     {
-        return poseStack;
+        return guiGraphics;
     }
 
     public float getPartialTick()
@@ -65,9 +65,9 @@ public abstract class RenderGuiEvent extends Event
     public static class Pre extends RenderGuiEvent
     {
         @ApiStatus.Internal
-        public Pre(Window window, PoseStack poseStack, float partialTick)
+        public Pre(Window window, GuiGraphics guiGraphics, float partialTick)
         {
-            super(window, poseStack, partialTick);
+            super(window, guiGraphics, partialTick);
         }
     }
 
@@ -82,9 +82,9 @@ public abstract class RenderGuiEvent extends Event
     public static class Post extends RenderGuiEvent
     {
         @ApiStatus.Internal
-        public Post(Window window, PoseStack poseStack, float partialTick)
+        public Post(Window window, GuiGraphics guiGraphics, float partialTick)
         {
-            super(window, poseStack, partialTick);
+            super(window, guiGraphics, partialTick);
         }
     }
 }

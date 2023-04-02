@@ -26,6 +26,7 @@ import net.minecraft.commands.Commands;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.RangedAttribute;
 import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.BlockGetter;
@@ -68,6 +69,7 @@ import net.minecraftforge.fluids.ForgeFlowingFluid;
 import net.minecraftforge.fml.*;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.*;
+import net.minecraftforge.forge.snapshots.ForgeSnapshotsMod;
 import net.minecraftforge.registries.*;
 import net.minecraftforge.registries.holdersets.AndHolderSet;
 import net.minecraftforge.registries.holdersets.AnyHolderSet;
@@ -123,6 +125,7 @@ import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @Mod("forge")
@@ -157,13 +160,6 @@ public class ForgeMod
     public static final RegistryObject<Attribute> BLOCK_REACH = ATTRIBUTES.register("block_reach", () -> new RangedAttribute("forge.block_reach", 4.5D, 0.0D, 1024.0D).setSyncable(true));
 
     /**
-     * TODO: Remove
-     * @deprecated - use {@link #BLOCK_REACH}
-     */
-    @Deprecated(forRemoval = true, since = "1.19.4")
-    public static final RegistryObject<Attribute> REACH_DISTANCE = BLOCK_REACH;
-
-    /**
      * Attack Range represents the distance at which a player may attack an entity.  The default is 3 blocks.  Players in creative mode have an additional 3 blocks of entity reach.
      * The default of 3.0 is technically considered a bug by Mojang - see MC-172289 and MC-92484. However, updating this value would allow for longer-range attacks on vanilla servers, which makes some people mad.
      * @see IForgePlayer#getEntityReach()
@@ -171,13 +167,6 @@ public class ForgeMod
      * @see IForgePlayer#canReach(Vec3, double)
      */
     public static final RegistryObject<Attribute> ENTITY_REACH = ATTRIBUTES.register("entity_reach", () -> new RangedAttribute("forge.entity_reach", 3.0D, 0.0D, 1024.0D).setSyncable(true));
-
-    /**
-     * TODO: Remove
-     * @deprecated - use {@link #ENTITY_REACH}
-     */
-    @Deprecated(forRemoval = true, since = "1.19.4")
-    public static final RegistryObject<Attribute> ATTACK_RANGE = ENTITY_REACH;
 
     /**
      * Step Height Addition modifies the amount of blocks an entity may walk up without jumping.
@@ -371,7 +360,7 @@ public class ForgeMod
                 @Override
                 public double motionScale(Entity entity)
                 {
-                    return entity.level.dimensionType().ultraWarm() ? 0.007D : 0.0023333333333333335D;
+                    return entity.level().dimensionType().ultraWarm() ? 0.007D : 0.0023333333333333335D;
                 }
 
                 @Override
@@ -428,6 +417,7 @@ public class ForgeMod
     public ForgeMod()
     {
         LOGGER.info(FORGEMOD,"Forge mod loading, version {}, for MC {} with MCP {}", ForgeVersion.getVersion(), MCPVersion.getMCVersion(), MCPVersion.getMCPVersion());
+        ForgeSnapshotsMod.logStartupWarning();
         INSTANCE = this;
         MinecraftForge.initialize();
         CrashReportCallables.registerCrashCallable("Crash Report UUID", ()-> {
@@ -450,6 +440,7 @@ public class ForgeMod
         modEventBus.addListener(this::gatherData);
         modEventBus.addListener(this::loadComplete);
         modEventBus.addListener(this::registerFluids);
+        modEventBus.addListener(this::registerVanillaDisplayContexts);
         modEventBus.addListener(this::registerRecipeSerializers);
         modEventBus.addListener(this::registerLootData);
         modEventBus.register(this);
@@ -603,6 +594,20 @@ public class ForgeMod
         }
     }
 
+    public void registerVanillaDisplayContexts(RegisterEvent event)
+    {
+        if (event.getRegistryKey().equals(ForgeRegistries.Keys.DISPLAY_CONTEXTS))
+        {
+            IForgeRegistryInternal<ItemDisplayContext> forgeRegistry = (IForgeRegistryInternal<ItemDisplayContext>) event.<ItemDisplayContext>getForgeRegistry();
+            if (forgeRegistry == null)
+                throw new IllegalStateException("Item display context was not a forge registry, wtf???");
+
+            Arrays.stream(ItemDisplayContext.values())
+                    .filter(Predicate.not(ItemDisplayContext::isModded))
+                    .forEach(ctx -> forgeRegistry.register(ctx.getId(), new ResourceLocation("minecraft", ctx.getSerializedName()), ctx));
+        }
+    }
+
     public void registerRecipeSerializers(RegisterEvent event)
     {
         if (event.getRegistryKey().equals(ForgeRegistries.Keys.RECIPE_SERIALIZERS))
@@ -647,7 +652,7 @@ public class ForgeMod
     /**
      * TODO: Remove when {@link ForgeRegistry#addAlias(ResourceLocation, ResourceLocation)} is elevated to {@link IForgeRegistry}.
      */
-    @Deprecated(forRemoval = true, since = "1.19.3")
+    @Deprecated(forRemoval = true, since = "1.20")
     private static <T> void addAlias(IForgeRegistry<T> registry, ResourceLocation from, ResourceLocation to)
     {
         ForgeRegistry<T> fReg = (ForgeRegistry<T>) registry;

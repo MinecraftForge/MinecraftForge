@@ -4,8 +4,8 @@
     public boolean m_8036_() {
        if (!super.m_8036_()) {
           return false;
--      } else if (!this.f_25189_.f_19853_.m_46469_().m_46207_(GameRules.f_46132_)) {
-+      } else if (!net.minecraftforge.common.ForgeHooks.canEntityDestroy(this.f_25189_.f_19853_, this.f_25190_, this.f_25189_)) {
+-      } else if (!this.f_25189_.m_9236_().m_46469_().m_46207_(GameRules.f_46132_)) {
++      } else if (!net.minecraftforge.common.ForgeHooks.canEntityDestroy(this.f_25189_.m_9236_(), this.f_25190_, this.f_25189_)) {
           return false;
        } else {
-          return this.m_25094_(this.f_25189_.f_19853_.m_46791_()) && !this.m_25200_();
+          return this.m_25094_(this.f_25189_.m_9236_().m_46791_()) && !this.m_25200_();

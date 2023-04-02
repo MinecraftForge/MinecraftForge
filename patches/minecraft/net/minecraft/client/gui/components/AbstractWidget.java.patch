@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/gui/components/AbstractWidget.java
 +++ b/net/minecraft/client/gui/components/AbstractWidget.java
-@@ -231,6 +_,10 @@
+@@ -234,6 +_,10 @@
        this.f_93618_ = p_93675_;
     }
  
@@ -11,7 +11,7 @@
     public void m_93650_(float p_93651_) {
        this.f_93625_ = p_93651_;
     }
-@@ -261,6 +_,19 @@
+@@ -264,6 +_,19 @@
  
     public void m_93692_(boolean p_93693_) {
        this.f_93616_ = p_93693_;

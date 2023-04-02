@@ -19,6 +19,7 @@ import net.minecraft.commands.Commands;
 import net.minecraft.core.MappedRegistry;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryCodecs;
+import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.CompressionDecoder;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
@@ -104,7 +105,7 @@ public class LoginPacketSplitTest
                 MinecraftForge.EVENT_BUS.addListener((final RegisterClientCommandsEvent event) -> event.getDispatcher().register(Commands.literal("big_data")
                         .executes(context ->
                         {
-                            context.getSource().sendSuccess(Component.literal("Registry has " + context.getSource().registryAccess().registryOrThrow(BIG_DATA).holders().count() + " entries."), true);
+                            context.getSource().sendSuccess(() -> Component.literal("Registry has " + context.getSource().registryAccess().registryOrThrow(BIG_DATA).holders().count() + " entries."), true);
                             return Command.SINGLE_SUCCESS;
                         })));
             }

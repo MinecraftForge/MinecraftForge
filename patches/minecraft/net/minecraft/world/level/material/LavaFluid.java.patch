@@ -8,7 +8,7 @@
 +                     p_230572_.m_46597_(blockpos, net.minecraftforge.event.ForgeEventFactory.fireFluidPlaceBlockEvent(p_230572_, blockpos, p_230573_, Blocks.f_50083_.m_49966_()));
                       return;
                    }
-                } else if (blockstate.m_60767_().m_76334_()) {
+                } else if (blockstate.m_280555_()) {
 @@ -86,8 +_,8 @@
                    return;
                 }
@@ -36,7 +36,7 @@
 +   /** @deprecated Forge: use {@link LavaFluid#isFlammable(LevelReader,BlockPos,Direction)} instead */
 +   @Deprecated
     private boolean m_76245_(LevelReader p_76246_, BlockPos p_76247_) {
-       return p_76247_.m_123342_() >= p_76246_.m_141937_() && p_76247_.m_123342_() < p_76246_.m_151558_() && !p_76246_.m_46805_(p_76247_) ? false : p_76246_.m_8055_(p_76247_).m_60767_().m_76335_();
+       return p_76247_.m_123342_() >= p_76246_.m_141937_() && p_76247_.m_123342_() < p_76246_.m_151558_() && !p_76246_.m_46805_(p_76247_) ? false : p_76246_.m_8055_(p_76247_).m_278200_();
     }
  
 +   private boolean isFlammable(LevelReader level, BlockPos pos, Direction face) {

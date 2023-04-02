@@ -13,7 +13,7 @@ import net.minecraft.data.loot.packs.VanillaLootTableProvider;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.storage.loot.predicates.AlternativeLootItemCondition;
+import net.minecraft.world.level.storage.loot.predicates.CompositeLootItemCondition;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.world.level.storage.loot.predicates.InvertedLootItemCondition;
 import net.minecraft.world.level.storage.loot.predicates.MatchTool;
@@ -114,7 +114,7 @@ public final class ForgeLootTableProvider extends LootTableProvider {
                 if (invLootCondition instanceof MatchTool && checkMatchTool((MatchTool) invLootCondition, from)) {
                     lootConditions[i] = InvertedLootItemCondition.invert(CanToolPerformAction.canToolPerformAction(toolAction)).build();
                     found = true;
-                } else if (invLootCondition instanceof AlternativeLootItemCondition && findAndReplaceInAlternative((AlternativeLootItemCondition) invLootCondition, from, toolAction)) {
+                } else if (invLootCondition instanceof CompositeLootItemCondition compositeLootItemCondition && findAndReplaceInComposite(compositeLootItemCondition, from, toolAction)) {
                     found = true;
                 }
             }
@@ -149,7 +149,7 @@ public final class ForgeLootTableProvider extends LootTableProvider {
         }
 
         for (int i = 0; i < lootConditions.length; i++) {
-            if (lootConditions[i] instanceof AlternativeLootItemCondition && findAndReplaceInAlternative((AlternativeLootItemCondition) lootConditions[i], from, toolAction)) {
+            if (lootConditions[i] instanceof CompositeLootItemCondition composite && findAndReplaceInComposite(composite, from, toolAction)) {
                 found = true;
             } else if (lootConditions[i] instanceof MatchTool && checkMatchTool((MatchTool) lootConditions[i], from)) {
                 lootConditions[i] = CanToolPerformAction.canToolPerformAction(toolAction).build();
@@ -160,12 +160,12 @@ public final class ForgeLootTableProvider extends LootTableProvider {
         return found;
     }
 
-    private boolean findAndReplaceInAlternative(AlternativeLootItemCondition alternative, Item from, ToolAction toolAction) {
-        LootItemCondition[] lootConditions = ObfuscationReflectionHelper.getPrivateValue(AlternativeLootItemCondition.class, alternative, "f_8146" + "8_");
+    private boolean findAndReplaceInComposite(CompositeLootItemCondition alternative, Item from, ToolAction toolAction) {
+        LootItemCondition[] lootConditions = ObfuscationReflectionHelper.getPrivateValue(CompositeLootItemCondition.class, alternative, "f_28560" + "9_");
         boolean found = false;
 
         if (lootConditions == null) {
-            throw new IllegalStateException(AlternativeLootItemCondition.class.getName() + " is missing field f_8146" + "8_");
+            throw new IllegalStateException(CompositeLootItemCondition.class.getName() + " is missing field f_28560" + "9_");
         }
 
         for (int i = 0; i < lootConditions.length; i++) {

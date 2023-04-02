@@ -460,8 +460,13 @@ public class DataGeneratorTest
             }
             final JsonObject actual;
             try {
+                List<Resource> resourceStack = this.helper.getResourceStack(new ResourceLocation("sounds.json"), PackType.CLIENT_RESOURCES);
+                // Get the first resource in the stack
+                // This guarantees vanilla even when a forge sounds.json is present because getResourceStack reverses the list
+                // so that the lower priority resources are first (to allow overwriting data in later entries)
+                Resource vanillaSoundResource = resourceStack.get(0);
                 actual = GSON.fromJson(
-                        this.helper.getResource(new ResourceLocation("sounds.json"), PackType.CLIENT_RESOURCES).openAsReader(),
+                        vanillaSoundResource.openAsReader(),
                         JsonObject.class
                 );
             } catch (IOException e) {

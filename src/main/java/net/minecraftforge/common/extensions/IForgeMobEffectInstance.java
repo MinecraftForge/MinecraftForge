@@ -30,7 +30,7 @@ public interface IForgeMobEffectInstance
      * @return true if the given ItemStack is in the list of curative items for this PotionEffect, false otherwise
      */
     default boolean isCurativeItem(ItemStack stack) {
-       return this.getCurativeItems().stream().anyMatch(e -> e.sameItem(stack));
+       return this.getCurativeItems().stream().anyMatch(e -> ItemStack.isSameItem(e, stack));
     }
 
     /***

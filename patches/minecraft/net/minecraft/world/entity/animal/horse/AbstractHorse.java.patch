@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/animal/horse/AbstractHorse.java
 +++ b/net/minecraft/world/entity/animal/horse/AbstractHorse.java
-@@ -331,6 +_,7 @@
+@@ -327,6 +_,7 @@
  
        this.f_30520_.m_19164_(this);
        this.m_7493_();
@@ -8,15 +8,15 @@
     }
  
     protected void m_7493_() {
-@@ -378,9 +_,9 @@
+@@ -374,9 +_,9 @@
     protected void m_7355_(BlockPos p_30584_, BlockState p_30585_) {
-       if (!p_30585_.m_60767_().m_76332_()) {
-          BlockState blockstate = this.f_19853_.m_8055_(p_30584_.m_7494_());
+       if (!p_30585_.m_278721_()) {
+          BlockState blockstate = this.m_9236_().m_8055_(p_30584_.m_7494_());
 -         SoundType soundtype = p_30585_.m_60827_();
-+         SoundType soundtype = p_30585_.getSoundType(f_19853_, p_30584_, this);
++         SoundType soundtype = p_30585_.getSoundType(m_9236_(), p_30584_, this);
           if (blockstate.m_60713_(Blocks.f_50125_)) {
 -            soundtype = blockstate.m_60827_();
-+            soundtype = blockstate.getSoundType(f_19853_, p_30584_, this);
++            soundtype = blockstate.getSoundType(m_9236_(), p_30584_, this);
           }
  
           if (this.m_20160_() && this.f_30523_) {
@@ -28,7 +28,7 @@
        if (p_275435_.f_82481_ > 0.0D) {
           float f = Mth.m_14031_(this.m_146908_() * ((float)Math.PI / 180F));
           float f1 = Mth.m_14089_(this.m_146908_() * ((float)Math.PI / 180F));
-@@ -1119,6 +_,25 @@
+@@ -1120,6 +_,25 @@
  
        this.m_214179_(p_30555_.m_213780_());
        return super.m_6518_(p_30555_, p_30556_, p_30557_, p_30558_, p_30559_);

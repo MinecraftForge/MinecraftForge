@@ -3,32 +3,32 @@
 @@ -26,10 +_,18 @@
     private static final Gson f_136022_ = (new GsonBuilder()).create();
     private AdvancementList f_136023_ = new AdvancementList();
-    private final PredicateManager f_136024_;
+    private final LootDataManager f_278379_;
 +   private final net.minecraftforge.common.crafting.conditions.ICondition.IContext context; //Forge: add context
  
-+   /** @deprecated Forge: use {@linkplain ServerAdvancementManager#ServerAdvancementManager(PredicateManager, net.minecraftforge.common.crafting.conditions.ICondition.IContext) constructor with context}. */
++   /** @deprecated Forge: use {@linkplain ServerAdvancementManager#ServerAdvancementManager(LootDataManager, net.minecraftforge.common.crafting.conditions.ICondition.IContext) constructor with context}. */
 +   @Deprecated
-    public ServerAdvancementManager(PredicateManager p_136027_) {
-+      this(p_136027_, net.minecraftforge.common.crafting.conditions.ICondition.IContext.EMPTY);
+    public ServerAdvancementManager(LootDataManager p_279237_) {
++      this(p_279237_, net.minecraftforge.common.crafting.conditions.ICondition.IContext.EMPTY);
 +   }
 +
-+   public ServerAdvancementManager(PredicateManager p_136027_, net.minecraftforge.common.crafting.conditions.ICondition.IContext context) {
++   public ServerAdvancementManager(LootDataManager p_279237_, net.minecraftforge.common.crafting.conditions.ICondition.IContext context) {
        super(f_136022_, "advancements");
-       this.f_136024_ = p_136027_;
+       this.f_278379_ = p_279237_;
 +      this.context = context;
     }
  
     protected void m_5787_(Map<ResourceLocation, JsonElement> p_136034_, ResourceManager p_136035_, ProfilerFiller p_136036_) {
 @@ -37,7 +_,11 @@
-       p_136034_.forEach((p_136039_, p_136040_) -> {
+       p_136034_.forEach((p_278903_, p_278904_) -> {
           try {
-             JsonObject jsonobject = GsonHelper.m_13918_(p_136040_, "advancement");
--            Advancement.Builder advancement$builder = Advancement.Builder.m_138380_(jsonobject, new DeserializationContext(p_136039_, this.f_136024_));
-+            Advancement.Builder advancement$builder = Advancement.Builder.fromJson(jsonobject, new DeserializationContext(p_136039_, this.f_136024_), this.context);
+             JsonObject jsonobject = GsonHelper.m_13918_(p_278904_, "advancement");
+-            Advancement.Builder advancement$builder = Advancement.Builder.m_138380_(jsonobject, new DeserializationContext(p_278903_, this.f_278379_));
++            Advancement.Builder advancement$builder = Advancement.Builder.fromJson(jsonobject, new DeserializationContext(p_278903_, this.f_278379_), this.context);
 +            if (advancement$builder == null) {
-+                f_136021_.debug("Skipping loading advancement {} as it's conditions were not met", p_136039_);
++                f_136021_.debug("Skipping loading advancement {} as its conditions were not met", p_278903_);
 +                return;
 +            }
-             map.put(p_136039_, advancement$builder);
+             map.put(p_278903_, advancement$builder);
           } catch (Exception exception) {
-             f_136021_.error("Parsing error loading custom advancement {}: {}", p_136039_, exception.getMessage());
+             f_136021_.error("Parsing error loading custom advancement {}: {}", p_278903_, exception.getMessage());

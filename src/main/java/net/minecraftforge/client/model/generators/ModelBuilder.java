@@ -15,7 +15,6 @@ import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
-import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -38,6 +37,7 @@ import net.minecraftforge.client.model.ForgeFaceData;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.common.util.TransformationHelper;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.VisibleForTesting;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
@@ -519,7 +519,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
         public ElementBuilder cube(String texture) {
             return allFaces(addTexture(texture).andThen((dir, f) -> f.cullface(dir)));
         }
-        
+
         /**
          * Set the block and sky light of the element (0-15).
          * Traditional "emissivity" values were set both of these to the same value.

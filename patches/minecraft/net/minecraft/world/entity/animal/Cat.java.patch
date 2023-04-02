@@ -18,4 +18,4 @@
 +            if (this.f_19796_.m_188503_(3) == 0 && !net.minecraftforge.event.ForgeEventFactory.onAnimalTame(this, p_28153_)) {
                 this.m_21828_(p_28153_);
                 this.m_21839_(true);
-                this.f_19853_.m_7605_(this, (byte)7);
+                this.m_9236_().m_7605_(this, (byte)7);

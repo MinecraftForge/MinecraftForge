@@ -12,5 +12,5 @@
 +   }
 +
     private void m_37080_() {
-       this.f_19853_.m_7605_(this, (byte)17);
+       this.m_9236_().m_7605_(this, (byte)17);
        this.m_146852_(GameEvent.f_157812_, this.m_19749_());

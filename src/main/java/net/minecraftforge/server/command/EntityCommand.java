@@ -89,7 +89,7 @@ class EntityCommand
                 if (info == null)
                     throw NO_ENTITIES.create();
 
-                sender.sendSuccess(Component.translatable("commands.forge.entity.list.single.header", name, info.getLeft()), false);
+                sender.sendSuccess(() -> Component.translatable("commands.forge.entity.list.single.header", name, info.getLeft()), false);
                 List<Map.Entry<ChunkPos, Integer>> toSort = new ArrayList<>();
                 toSort.addAll(info.getRight().entrySet());
                 toSort.sort((a, b) -> {
@@ -103,7 +103,7 @@ class EntityCommand
                 for (Map.Entry<ChunkPos, Integer> e : toSort)
                 {
                     if (limit-- == 0) break;
-                    sender.sendSuccess(Component.literal("  " + e.getValue() + ": " + e.getKey().x + ", " + e.getKey().z), false);
+                    sender.sendSuccess(() -> Component.literal("  " + e.getValue() + ": " + e.getKey().x + ", " + e.getKey().z), false);
                 }
                 return toSort.size();
             }
@@ -129,8 +129,8 @@ class EntityCommand
                     throw NO_ENTITIES.create();
 
                 int count = info.stream().mapToInt(Pair::getRight).sum();
-                sender.sendSuccess(Component.translatable("commands.forge.entity.list.multiple.header", count), false);
-                info.forEach(e -> sender.sendSuccess(Component.literal("  " + e.getValue() + ": " + e.getKey()), false));
+                sender.sendSuccess(() -> Component.translatable("commands.forge.entity.list.multiple.header", count), false);
+                info.forEach(e -> sender.sendSuccess(() -> Component.literal("  " + e.getValue() + ": " + e.getKey()), false));
                 return info.size();
             }
         }

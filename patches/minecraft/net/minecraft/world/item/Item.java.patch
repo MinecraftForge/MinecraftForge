@@ -22,11 +22,8 @@
     }
  
     /** @deprecated */
-@@ -109,8 +_,11 @@
-    }
- 
+@@ -111,6 +_,8 @@
     public void m_5929_(Level p_41428_, LivingEntity p_41429_, ItemStack p_41430_, int p_41431_) {
-+       p_41430_.onUsingTick(p_41429_, p_41431_);
     }
  
 +   /** @deprecated Forge: {@link net.minecraftforge.common.extensions.IForgeItem#onDestroyed(ItemEntity, DamageSource) Use damage source sensitive version} */

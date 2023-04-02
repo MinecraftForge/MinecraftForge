@@ -37,7 +37,7 @@ public interface IForgeAdvancementBuilder
         {
             if (fileHelper.exists(advancementId, PackType.SERVER_DATA, ".json", "advancements"))
             {
-                return new Advancement(advancementId, null, null, AdvancementRewards.EMPTY, Maps.newHashMap(), null);
+                return new Advancement(advancementId, null, null, AdvancementRewards.EMPTY, Maps.newHashMap(), new String[0][0], false);
             }
             return null;
         });

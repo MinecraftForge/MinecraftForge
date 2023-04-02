@@ -1,21 +1,20 @@
 --- a/net/minecraft/client/gui/components/BossHealthOverlay.java
 +++ b/net/minecraft/client/gui/components/BossHealthOverlay.java
-@@ -34,6 +_,8 @@
+@@ -33,13 +_,16 @@
  
           for(LerpingBossEvent lerpingbossevent : this.f_93699_.values()) {
              int k = i / 2 - 91;
-+            var event = net.minecraftforge.client.ForgeHooksClient.onCustomizeBossEventProgress(p_93705_, this.f_93698_.m_91268_(), lerpingbossevent, k, j, 10 + this.f_93698_.f_91062_.f_92710_);
++            var event = net.minecraftforge.client.ForgeHooksClient.onCustomizeBossEventProgress(p_283175_, this.f_93698_.m_91268_(), lerpingbossevent, k, j, 10 + this.f_93698_.f_91062_.f_92710_);
 +            if (!event.isCanceled()) {
-             RenderSystem.m_157456_(0, f_93697_);
-             this.m_93706_(p_93705_, k, j, lerpingbossevent);
+             this.m_280106_(p_283175_, k, j, lerpingbossevent);
              Component component = lerpingbossevent.m_18861_();
-@@ -41,7 +_,8 @@
+             int l = this.f_93698_.f_91062_.m_92852_(component);
              int i1 = i / 2 - l / 2;
              int j1 = j - 9;
-             this.f_93698_.f_91062_.m_92763_(p_93705_, component, (float)i1, (float)j1, 16777215);
+             p_283175_.m_280430_(this.f_93698_.f_91062_, component, i1, j1, 16777215);
 -            j += 10 + 9;
 +            }
 +            j += event.getIncrement();
-             if (j >= this.f_93698_.m_91268_().m_85446_() / 3) {
+             if (j >= p_283175_.m_280206_() / 3) {
                 break;
              }

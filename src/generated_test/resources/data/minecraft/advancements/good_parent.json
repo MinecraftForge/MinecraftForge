@@ -34,5 +34,6 @@
     [
       "get_cobbleStone"
     ]
-  ]
+  ],
+  "sends_telemetry_event": true
 }

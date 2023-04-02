@@ -9,9 +9,11 @@
              super.m_7249_(!this.m_90857_());
           }
        } else {
-@@ -24,4 +_,5 @@
+@@ -24,6 +_,7 @@
        }
  
     }
 +   @Override public boolean m_90857_() { return this.f_90817_ && (isConflictContextAndModifierActive() || f_92527_.getAsBoolean()); }
- }
+ 
+    protected void m_289748_() {
+       super.m_7249_(false);

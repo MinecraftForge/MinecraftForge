@@ -6,7 +6,7 @@
 package net.minecraftforge.client.event;
 
 import com.mojang.blaze3d.platform.InputConstants;
-import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.EffectRenderingInventoryScreen;
@@ -62,7 +62,7 @@ public abstract class ScreenEvent extends Event
      * See the two subclasses for listening before and after the initialization.
      *
      * <p>Listeners added through this event may also be marked as renderable or narratable, if they inherit from
-     * {@link net.minecraft.client.gui.components.Widget} and {@link net.minecraft.client.gui.narration.NarratableEntry}
+     * {@link net.minecraft.client.gui.components.Renderable} and {@link net.minecraft.client.gui.narration.NarratableEntry}
      * respectively.</p>
      *
      * @see Init.Pre
@@ -159,27 +159,27 @@ public abstract class ScreenEvent extends Event
      */
     public static abstract class Render extends ScreenEvent
     {
-        private final PoseStack poseStack;
+        private final GuiGraphics guiGraphics;
         private final int mouseX;
         private final int mouseY;
         private final float partialTick;
 
         @ApiStatus.Internal
-        protected Render(Screen screen, PoseStack poseStack, int mouseX, int mouseY, float partialTick)
+        protected Render(Screen screen, GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick)
         {
             super(screen);
-            this.poseStack = poseStack;
+            this.guiGraphics = guiGraphics;
             this.mouseX = mouseX;
             this.mouseY = mouseY;
             this.partialTick = partialTick;
         }
 
         /**
-         * {@return the pose stack used for rendering}
+         * {@return the gui graphics used for rendering}
          */
-        public PoseStack getPoseStack()
+        public GuiGraphics getGuiGraphics()
         {
-            return poseStack;
+            return guiGraphics;
         }
 
         /**
@@ -219,9 +219,9 @@ public abstract class ScreenEvent extends Event
         public static class Pre extends Render
         {
             @ApiStatus.Internal
-            public Pre(Screen screen, PoseStack poseStack, int mouseX, int mouseY, float partialTick)
+            public Pre(Screen screen, GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick)
             {
-                super(screen, poseStack, mouseX, mouseY, partialTick);
+                super(screen, guiGraphics, mouseX, mouseY, partialTick);
             }
         }
 
@@ -236,9 +236,9 @@ public abstract class ScreenEvent extends Event
         public static class Post extends Render
         {
             @ApiStatus.Internal
-            public Post(Screen screen, PoseStack poseStack, int mouseX, int mouseY, float partialTick)
+            public Post(Screen screen, GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick)
             {
-                super(screen, poseStack, mouseX, mouseY, partialTick);
+                super(screen, guiGraphics, mouseX, mouseY, partialTick);
             }
         }
     }
@@ -254,21 +254,21 @@ public abstract class ScreenEvent extends Event
      */
     public static class BackgroundRendered extends ScreenEvent
     {
-        private final PoseStack poseStack;
+        private final GuiGraphics guiGraphics;
 
         @ApiStatus.Internal
-        public BackgroundRendered(Screen screen, PoseStack poseStack)
+        public BackgroundRendered(Screen screen, GuiGraphics guiGraphics)
         {
             super(screen);
-            this.poseStack = poseStack;
+            this.guiGraphics = guiGraphics;
         }
 
         /**
-         * {@return the pose stack used for rendering}
+         * {@return the gui graphics used for rendering}
          */
-        public PoseStack getPoseStack()
+        public GuiGraphics getGuiGraphics()
         {
-            return poseStack;
+            return guiGraphics;
         }
     }
 

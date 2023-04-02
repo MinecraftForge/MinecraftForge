@@ -1,14 +1,14 @@
 --- a/net/minecraft/world/entity/monster/AbstractSkeleton.java
 +++ b/net/minecraft/world/entity/monster/AbstractSkeleton.java
 @@ -155,7 +_,7 @@
-       if (this.f_19853_ != null && !this.f_19853_.f_46443_) {
+       if (this.m_9236_() != null && !this.m_9236_().f_46443_) {
           this.f_21345_.m_25363_(this.f_32131_);
           this.f_21345_.m_25363_(this.f_32130_);
 -         ItemStack itemstack = this.m_21120_(ProjectileUtil.m_37297_(this, Items.f_42411_));
 +         ItemStack itemstack = this.m_21120_(ProjectileUtil.getWeaponHoldingHand(this, item -> item instanceof net.minecraft.world.item.BowItem));
           if (itemstack.m_150930_(Items.f_42411_)) {
              int i = 20;
-             if (this.f_19853_.m_46791_() != Difficulty.HARD) {
+             if (this.m_9236_().m_46791_() != Difficulty.HARD) {
 @@ -172,8 +_,10 @@
     }
  

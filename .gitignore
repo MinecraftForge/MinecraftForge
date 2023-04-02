@@ -37,9 +37,9 @@ src/generated_test/resources/.cache/
 src/generated_mdk/resources/.cache/
 
 #Patch rejects
-/patches-/
-*.patch.rej
-/projects/*/rejects/
+#/patches-/
+#*.patch.rej
+#/projects/*/rejects/
 
 # FML changelog
 changelog.txt

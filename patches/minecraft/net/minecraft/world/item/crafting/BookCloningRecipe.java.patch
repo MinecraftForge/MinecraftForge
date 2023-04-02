@@ -9,5 +9,5 @@
 +         if (itemstack.hasCraftingRemainingItem()) {
 +            nonnulllist.set(i, itemstack.getCraftingRemainingItem());
           } else if (itemstack.m_41720_() instanceof WrittenBookItem) {
-             ItemStack itemstack1 = itemstack.m_41777_();
-             itemstack1.m_41764_(1);
+             nonnulllist.set(i, itemstack.m_255036_(1));
+             break;

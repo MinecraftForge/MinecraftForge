@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/level/storage/loot/LootParams.java
++++ b/net/minecraft/world/level/storage/loot/LootParams.java
+@@ -124,7 +_,7 @@
+ 
+       public LootParams m_287235_(LootContextParamSet p_287701_) {
+          Set<LootContextParam<?>> set = Sets.difference(this.f_286945_.keySet(), p_287701_.m_81398_());
+-         if (!set.isEmpty()) {
++         if (false && !set.isEmpty()) { // Forge: Allow mods to pass custom loot parameters (not part of the vanilla loot table) to the loot context.
+             throw new IllegalArgumentException("Parameters not allowed in this parameter set: " + set);
+          } else {
+             Set<LootContextParam<?>> set1 = Sets.difference(p_287701_.m_81394_(), this.f_286945_.keySet());

@@ -12,12 +12,12 @@
 @@ -103,7 +_,7 @@
  
           this.m_5496_(soundevent, 1.0F, 1.0F);
-          return InteractionResult.m_19078_(this.f_19853_.f_46443_);
+          return InteractionResult.m_19078_(this.m_9236_().f_46443_);
 -      } else if (itemstack.m_150930_(Items.f_42574_) && this.m_6220_()) {
 +      } else if (false && itemstack.m_41720_() == Items.f_42574_ && this.m_6220_()) { //Forge: Moved to onSheared
           this.m_5851_(SoundSource.PLAYERS);
           this.m_146852_(GameEvent.f_157781_, p_28941_);
-          if (!this.f_19853_.f_46443_) {
+          if (!this.m_9236_().f_46443_) {
 @@ -144,7 +_,17 @@
        }
     }
@@ -29,20 +29,20 @@
 +   }
 +
     public void m_5851_(SoundSource p_28924_) {
-+      shearInternal(p_28924_).forEach(s -> this.f_19853_.m_7967_(new ItemEntity(this.f_19853_, this.m_20185_(), this.m_20227_(1.0D), this.m_20189_(), s)));
++      shearInternal(p_28924_).forEach(s -> this.m_9236_().m_7967_(new ItemEntity(this.m_9236_(), this.m_20185_(), this.m_20227_(1.0D), this.m_20189_(), s)));
 +   }
 +
 +   private java.util.List<ItemStack> shearInternal(SoundSource p_28924_) {
-       this.f_19853_.m_6269_((Player)null, this, SoundEvents.f_12075_, p_28924_, 1.0F, 1.0F);
-       if (!this.f_19853_.m_5776_()) {
-          Cow cow = EntityType.f_20557_.m_20615_(this.f_19853_);
+       this.m_9236_().m_6269_((Player)null, this, SoundEvents.f_12075_, p_28924_, 1.0F, 1.0F);
+       if (!this.m_9236_().m_5776_()) {
+          Cow cow = EntityType.f_20557_.m_20615_(this.m_9236_());
 @@ -166,11 +_,14 @@
              cow.m_20331_(this.m_20147_());
-             this.f_19853_.m_7967_(cow);
+             this.m_9236_().m_7967_(cow);
  
 +            java.util.List<ItemStack> items = new java.util.ArrayList<>();
              for(int i = 0; i < 5; ++i) {
--               this.f_19853_.m_7967_(new ItemEntity(this.f_19853_, this.m_20185_(), this.m_20227_(1.0D), this.m_20189_(), new ItemStack(this.m_28554_().f_28961_.m_60734_())));
+-               this.m_9236_().m_7967_(new ItemEntity(this.m_9236_(), this.m_20185_(), this.m_20227_(1.0D), this.m_20189_(), new ItemStack(this.m_28554_().f_28961_.m_60734_())));
 +               items.add(new ItemStack(this.m_28554_().f_28961_.m_60734_()));
              }
 +            return items;
@@ -62,12 +62,12 @@
  
 @@ -193,6 +_,7 @@
        this.m_28464_(MushroomCow.MushroomType.m_28976_(p_28936_.m_128461_("Type")));
-       if (p_28936_.m_128425_("EffectId", 1)) {
+       if (p_28936_.m_128425_("EffectId", 99)) {
           this.f_28909_ = MobEffect.m_19453_(p_28936_.m_128451_("EffectId"));
 +         this.f_28909_ = net.minecraftforge.common.ForgeHooks.loadMobEffect(p_28936_, "forge:effect_id", this.f_28909_);
        }
  
-       if (p_28936_.m_128425_("EffectDuration", 3)) {
+       if (p_28936_.m_128425_("EffectDuration", 99)) {
 @@ -235,6 +_,11 @@
        }
  

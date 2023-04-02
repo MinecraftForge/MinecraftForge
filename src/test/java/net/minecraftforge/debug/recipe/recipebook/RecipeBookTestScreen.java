@@ -7,6 +7,7 @@ package net.minecraftforge.debug.recipe.recipebook;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.CraftingScreen;
@@ -61,41 +62,40 @@ public class RecipeBookTestScreen extends AbstractContainerScreen<RecipeBookTest
     }
 
     @Override
-    public void render(PoseStack stack, int mouseX, int mouseY, float partialTicks)
+    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks)
     {
-        this.renderBackground(stack);
+        this.renderBackground(graphics);
         if (this.recipeBookComponent.isVisible() && this.widthTooNarrow)
         {
-            this.renderBg(stack, partialTicks, mouseX, mouseY);
-            this.recipeBookComponent.render(stack, mouseX, mouseY, partialTicks);
+            this.renderBg(graphics, partialTicks, mouseX, mouseY);
+            this.recipeBookComponent.render(graphics, mouseX, mouseY, partialTicks);
         }
         else
         {
-            this.recipeBookComponent.render(stack, mouseX, mouseY, partialTicks);
-            super.render(stack, mouseX, mouseY, partialTicks);
-            this.recipeBookComponent.renderGhostRecipe(stack, this.leftPos, this.topPos, true, partialTicks);
+            this.recipeBookComponent.render(graphics, mouseX, mouseY, partialTicks);
+            super.render(graphics, mouseX, mouseY, partialTicks);
+            this.recipeBookComponent.renderGhostRecipe(graphics, this.leftPos, this.topPos, true, partialTicks);
         }
-        this.renderTooltip(stack, mouseX, mouseY);
-        this.recipeBookComponent.renderTooltip(stack, this.leftPos, this.topPos, mouseX, mouseY);
+        this.renderTooltip(graphics, mouseX, mouseY);
+        this.recipeBookComponent.renderTooltip(graphics, this.leftPos, this.topPos, mouseX, mouseY);
     }
 
     @Override
-    protected void renderBg(PoseStack stack, float partialTicks, int mouseX, int mouseY)
+    protected void renderBg(GuiGraphics graphics, float partialTicks, int mouseX, int mouseY)
     {
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
-        RenderSystem.setShaderTexture(0, TEXTURE);
         int x = this.leftPos;
         int y = this.topPos;
-        this.blit(stack, x, y, 0, 0, this.imageWidth, this.imageHeight);
+        graphics.blit(TEXTURE, x, y, 0, 0, this.imageWidth, this.imageHeight);
     }
 
     /**
      * Color gotten from super
      */
     @Override
-    protected void renderLabels(PoseStack stack, int mouseX, int mouseY)
+    protected void renderLabels(GuiGraphics graphics, int mouseX, int mouseY)
     {
-        this.font.draw(stack, this.title, this.titleLabelX, this.titleLabelY, 4210752);
+        graphics.drawString(this.font, this.title, this.titleLabelX, this.titleLabelY, 4210752);
     }
 
     protected boolean isHovering(int x, int y, int width, int height, double mouseX, double mouseY)

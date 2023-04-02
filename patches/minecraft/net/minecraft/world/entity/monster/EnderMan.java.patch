@@ -26,7 +26,7 @@
        } else {
           Vec3 vec3 = p_32535_.m_20252_(1.0F).m_82541_();
 @@ -278,8 +_,10 @@
-       boolean flag = blockstate.m_60767_().m_76334_();
+       boolean flag = blockstate.m_280555_();
        boolean flag1 = blockstate.m_60819_().m_205070_(FluidTags.f_13131_);
        if (flag && !flag1) {
 +         net.minecraftforge.event.entity.EntityTeleportEvent.EnderEntity event = net.minecraftforge.event.ForgeEventFactory.onEnderTeleport(this, p_32544_, p_32545_, p_32546_);
@@ -35,21 +35,21 @@
 -         boolean flag2 = this.m_20984_(p_32544_, p_32545_, p_32546_, true);
 +         boolean flag2 = this.m_20984_(event.getTargetX(), event.getTargetY(), event.getTargetZ(), true);
           if (flag2) {
-             this.f_19853_.m_214171_(GameEvent.f_238175_, vec3, GameEvent.Context.m_223717_(this));
+             this.m_9236_().m_214171_(GameEvent.f_238175_, vec3, GameEvent.Context.m_223717_(this));
              if (!this.m_20067_()) {
 @@ -419,7 +_,7 @@
        public boolean m_8036_() {
           if (this.f_32554_.m_32530_() == null) {
              return false;
--         } else if (!this.f_32554_.f_19853_.m_46469_().m_46207_(GameRules.f_46132_)) {
-+         } else if (!net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.f_32554_.f_19853_, this.f_32554_)) {
+-         } else if (!this.f_32554_.m_9236_().m_46469_().m_46207_(GameRules.f_46132_)) {
++         } else if (!net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.f_32554_.m_9236_(), this.f_32554_)) {
              return false;
           } else {
              return this.f_32554_.m_217043_().m_188503_(m_186073_(2000)) == 0;
 @@ -439,7 +_,7 @@
           BlockState blockstate2 = this.f_32554_.m_32530_();
           if (blockstate2 != null) {
-             blockstate2 = Block.m_49931_(blockstate2, this.f_32554_.f_19853_, blockpos);
+             blockstate2 = Block.m_49931_(blockstate2, this.f_32554_.m_9236_(), blockpos);
 -            if (this.m_32558_(level, blockpos, blockstate2, blockstate, blockstate1, blockpos1)) {
 +            if (this.m_32558_(level, blockpos, blockstate2, blockstate, blockstate1, blockpos1) && !net.minecraftforge.event.ForgeEventFactory.onBlockPlace(f_32554_, net.minecraftforge.common.util.BlockSnapshot.create(level.m_46472_(), level, blockpos1), net.minecraft.core.Direction.UP)) {
                 level.m_7731_(blockpos, blockstate2, 3);
@@ -68,8 +68,8 @@
        public boolean m_8036_() {
           if (this.f_32583_.m_32530_() != null) {
              return false;
--         } else if (!this.f_32583_.f_19853_.m_46469_().m_46207_(GameRules.f_46132_)) {
-+         } else if (!net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.f_32583_.f_19853_, this.f_32583_)) {
+-         } else if (!this.f_32583_.m_9236_().m_46469_().m_46207_(GameRules.f_46132_)) {
++         } else if (!net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.f_32583_.m_9236_(), this.f_32583_)) {
              return false;
           } else {
              return this.f_32583_.m_217043_().m_188503_(m_186073_(20)) == 0;

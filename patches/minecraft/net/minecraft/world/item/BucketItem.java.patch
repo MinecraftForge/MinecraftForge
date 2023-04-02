@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/item/BucketItem.java
 +++ b/net/minecraft/world/item/BucketItem.java
-@@ -32,14 +_,28 @@
+@@ -31,14 +_,28 @@
  public class BucketItem extends Item implements DispensibleContainerItem {
     private final Fluid f_40687_;
  
@@ -29,7 +29,7 @@
        if (blockhitresult.m_6662_() == HitResult.Type.MISS) {
           return InteractionResultHolder.m_19098_(itemstack);
        } else if (blockhitresult.m_6662_() != HitResult.Type.BLOCK) {
-@@ -56,7 +_,7 @@
+@@ -55,7 +_,7 @@
                    ItemStack itemstack1 = bucketpickup.m_142598_(p_40703_, blockpos, blockstate1);
                    if (!itemstack1.m_41619_()) {
                       p_40704_.m_36246_(Stats.f_12982_.m_12902_(this));
@@ -38,7 +38,7 @@
                          p_40704_.m_5496_(p_150709_, 1.0F, 1.0F);
                       });
                       p_40703_.m_142346_(p_40704_, GameEvent.f_157816_, blockpos);
-@@ -72,8 +_,8 @@
+@@ -71,8 +_,8 @@
                 return InteractionResultHolder.m_19100_(itemstack);
              } else {
                 BlockState blockstate = p_40703_.m_8055_(blockpos);
@@ -48,8 +48,8 @@
 +               if (this.emptyContents(p_40704_, p_40703_, blockpos2, blockhitresult, itemstack)) {
                    this.m_142131_(p_40704_, p_40703_, itemstack, blockpos2);
                    if (p_40704_ instanceof ServerPlayer) {
-                      CriteriaTriggers.f_10591_.m_59469_((ServerPlayer)p_40704_, blockpos2, itemstack);
-@@ -98,7 +_,12 @@
+                      CriteriaTriggers.f_10591_.m_285767_((ServerPlayer)p_40704_, blockpos2, itemstack);
+@@ -97,7 +_,12 @@
     public void m_142131_(@Nullable Player p_150711_, Level p_150712_, ItemStack p_150713_, BlockPos p_150714_) {
     }
  
@@ -62,8 +62,8 @@
        if (!(this.f_40687_ instanceof FlowingFluid)) {
           return false;
        } else {
-@@ -107,8 +_,12 @@
-          Material material = blockstate.m_60767_();
+@@ -105,8 +_,12 @@
+          Block block = blockstate.m_60734_();
           boolean flag = blockstate.m_60722_(this.f_40687_);
           boolean flag1 = blockstate.m_60795_() || flag || block instanceof LiquidBlockContainer && ((LiquidBlockContainer)block).m_6044_(p_150717_, p_150718_, blockstate, this.f_40687_);
 +         java.util.Optional<net.minecraftforge.fluids.FluidStack> containedFluidStack = java.util.Optional.ofNullable(container).flatMap(net.minecraftforge.fluids.FluidUtil::getFluidContained);
@@ -76,7 +76,7 @@
           } else if (p_150717_.m_6042_().f_63857_() && this.f_40687_.m_205067_(FluidTags.f_13131_)) {
              int i = p_150718_.m_123341_();
              int j = p_150718_.m_123342_();
-@@ -120,7 +_,7 @@
+@@ -118,7 +_,7 @@
              }
  
              return true;
@@ -85,7 +85,7 @@
              ((LiquidBlockContainer)block).m_7361_(p_150717_, p_150718_, blockstate, ((FlowingFluid)this.f_40687_).m_76068_(false));
              this.m_7718_(p_150716_, p_150717_, p_150718_);
              return true;
-@@ -140,8 +_,25 @@
+@@ -138,8 +_,25 @@
     }
  
     protected void m_7718_(@Nullable Player p_40696_, LevelAccessor p_40697_, BlockPos p_40698_) {

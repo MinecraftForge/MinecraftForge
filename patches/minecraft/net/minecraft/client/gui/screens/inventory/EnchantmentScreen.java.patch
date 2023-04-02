@@ -1,20 +1,20 @@
 --- a/net/minecraft/client/gui/screens/inventory/EnchantmentScreen.java
 +++ b/net/minecraft/client/gui/screens/inventory/EnchantmentScreen.java
-@@ -140,7 +_,7 @@
-             int i2 = 86 - this.f_96547_.m_92895_(s);
-             FormattedText formattedtext = EnchantmentNames.m_98734_().m_98737_(this.f_96547_, i2);
-             int j2 = 6839882;
--            if ((l < i1 + 1 || this.f_96541_.f_91074_.f_36078_ < l1) && !this.f_96541_.f_91074_.m_150110_().f_35937_) {
-+            if (((l < i1 + 1 || this.f_96541_.f_91074_.f_36078_ < l1) && !this.f_96541_.f_91074_.m_150110_().f_35937_) || this.f_97732_.f_39447_[i1] == -1) { // Forge: render buttons as disabled when enchantable but enchantability not met on lower levels
-                m_93228_(p_98762_, j1, j + 14 + 19 * i1, 0, 185, 108, 19);
-                m_93228_(p_98762_, j1 + 1, j + 15 + 19 * i1, 16 * i1, 239, 16, 16);
-                this.f_96547_.m_274535_(p_98762_, formattedtext, k1, j + 16 + 19 * i1, i2, (j2 & 16711422) >> 1);
-@@ -179,10 +_,13 @@
+@@ -88,7 +_,7 @@
+             int l1 = 86 - this.f_96547_.m_92895_(s);
+             FormattedText formattedtext = EnchantmentNames.m_98734_().m_98737_(this.f_96547_, l1);
+             int i2 = 6839882;
+-            if ((k < l + 1 || this.f_96541_.f_91074_.f_36078_ < k1) && !this.f_96541_.f_91074_.m_150110_().f_35937_) {
++            if (((k < l + 1 || this.f_96541_.f_91074_.f_36078_ < k1) && !this.f_96541_.f_91074_.m_150110_().f_35937_) || this.f_97732_.f_39447_[i1] == -1) { // Forge: render buttons as disabled when enchantable but enchantability not met on lower levels
+                p_282430_.m_280218_(f_98747_, i1, j + 14 + 19 * l, 0, 185, 108, 19);
+                p_282430_.m_280218_(f_98747_, i1 + 1, j + 15 + 19 * l, 16 * l, 239, 16, 16);
+                p_282430_.m_280554_(this.f_96547_, formattedtext, j1, j + 16 + 19 * l, l1, (i2 & 16711422) >> 1);
+@@ -150,10 +_,13 @@
           Enchantment enchantment = Enchantment.m_44697_((this.f_97732_).f_39447_[j]);
           int l = (this.f_97732_).f_39448_[j];
           int i1 = j + 1;
--         if (this.m_6774_(60, 14 + 19 * j, 108, 17, (double)p_98768_, (double)p_98769_) && k > 0 && l >= 0 && enchantment != null) {
-+         if (this.m_6774_(60, 14 + 19 * j, 108, 17, (double)p_98768_, (double)p_98769_) && k > 0) {
+-         if (this.m_6774_(60, 14 + 19 * j, 108, 17, (double)p_282491_, (double)p_281953_) && k > 0 && l >= 0 && enchantment != null) {
++         if (this.m_6774_(60, 14 + 19 * j, 108, 17, (double)p_282491_, (double)p_281953_) && k > 0) {
              List<Component> list = Lists.newArrayList();
 -            list.add(Component.m_237110_("container.enchant.clue", enchantment.m_44700_(l)).m_130940_(ChatFormatting.WHITE));
 -            if (!flag) {

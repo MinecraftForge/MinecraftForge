@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/animal/Animal.java
 +++ b/net/minecraft/world/entity/animal/Animal.java
-@@ -205,6 +_,17 @@
+@@ -206,6 +_,17 @@
  
     public void m_27563_(ServerLevel p_27564_, Animal p_27565_) {
        AgeableMob ageablemob = this.m_142606_(p_27564_, p_27565_);
@@ -16,5 +16,5 @@
 +         return;
 +      }
        if (ageablemob != null) {
-          ServerPlayer serverplayer = this.m_27592_();
-          if (serverplayer == null && p_27565_.m_27592_() != null) {
+          ageablemob.m_6863_(true);
+          ageablemob.m_7678_(this.m_20185_(), this.m_20186_(), this.m_20189_(), 0.0F, 0.0F);

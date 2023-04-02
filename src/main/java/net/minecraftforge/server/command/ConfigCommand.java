@@ -43,13 +43,13 @@ public class ConfigCommand {
             final String configFileName = ConfigTracker.INSTANCE.getConfigFileName(modId, type);
             if (configFileName != null) {
                 File f = new File(configFileName);
-                context.getSource().sendSuccess(Component.translatable("commands.config.getwithtype",
+                context.getSource().sendSuccess(() -> Component.translatable("commands.config.getwithtype",
                         modId, type,
                         Component.literal(f.getName()).withStyle(ChatFormatting.UNDERLINE).
                                 withStyle((style) -> style.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_FILE, f.getAbsolutePath())))
                 ), true);
             } else {
-                context.getSource().sendSuccess(Component.translatable("commands.config.noconfig", modId, type),
+                context.getSource().sendSuccess(() -> Component.translatable("commands.config.noconfig", modId, type),
                         true);
             }
             return 0;

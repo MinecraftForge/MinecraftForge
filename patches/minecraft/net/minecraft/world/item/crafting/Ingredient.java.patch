@@ -80,7 +80,7 @@
     public static Ingredient m_43938_(Stream<? extends Ingredient.Value> p_43939_) {
        Ingredient ingredient = new Ingredient(p_43939_);
        return ingredient.m_43947_() ? f_43901_ : ingredient;
-@@ -136,11 +_,15 @@
+@@ -136,7 +_,9 @@
     }
  
     public static Ingredient m_43940_(FriendlyByteBuf p_43941_) {
@@ -91,13 +91,16 @@
     }
  
     public static Ingredient m_43917_(@Nullable JsonElement p_43918_) {
-       if (p_43918_ != null && !p_43918_.isJsonNull()) {
-+         Ingredient ret = net.minecraftforge.common.crafting.CraftingHelper.getIngredient(p_43918_);
+@@ -145,6 +_,8 @@
+ 
+    public static Ingredient m_288218_(@Nullable JsonElement p_289022_, boolean p_288974_) {
+       if (p_289022_ != null && !p_289022_.isJsonNull()) {
++         Ingredient ret = net.minecraftforge.common.crafting.CraftingHelper.getIngredient(p_289022_, p_288974_);
 +         if (ret != null) return ret;
-          if (p_43918_.isJsonObject()) {
-             return m_43938_(Stream.of(m_43919_(p_43918_.getAsJsonObject())));
-          } else if (p_43918_.isJsonArray()) {
-@@ -175,6 +_,12 @@
+          if (p_289022_.isJsonObject()) {
+             return m_43938_(Stream.of(m_43919_(p_289022_.getAsJsonObject())));
+          } else if (p_289022_.isJsonArray()) {
+@@ -179,6 +_,12 @@
        }
     }
  
@@ -110,7 +113,7 @@
     public static class ItemValue implements Ingredient.Value {
        private final ItemStack f_43951_;
  
-@@ -207,6 +_,9 @@
+@@ -211,6 +_,9 @@
              list.add(new ItemStack(holder));
           }
  

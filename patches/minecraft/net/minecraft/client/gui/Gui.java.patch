@@ -1,26 +1,24 @@
 --- a/net/minecraft/client/gui/Gui.java
 +++ b/net/minecraft/client/gui/Gui.java
-@@ -428,6 +_,10 @@
+@@ -424,6 +_,8 @@
  
           for(MobEffectInstance mobeffectinstance : Ordering.natural().reverse().sortedCopy(collection)) {
              MobEffect mobeffect = mobeffectinstance.m_19544_();
 +            var renderer = net.minecraftforge.client.extensions.common.IClientMobEffectExtensions.of(mobeffectinstance);
 +            if (!renderer.isVisibleInGui(mobeffectinstance)) continue;
-+            // Rebind in case previous renderHUDEffect changed texture
-+            RenderSystem.m_157456_(0, AbstractContainerScreen.f_97725_);
              if (mobeffectinstance.m_19575_()) {
                 int i = this.f_92977_;
                 int j = 1;
-@@ -456,6 +_,7 @@
+@@ -452,6 +_,7 @@
                    }
                 }
  
-+               if (renderer.renderGuiIcon(mobeffectinstance, this, p_93029_, i, j, 0, f)) continue;
++               if (renderer.renderGuiIcon(mobeffectinstance, this, p_282812_, i, j, 0, f)) continue;
                 TextureAtlasSprite textureatlassprite = mobeffecttexturemanager.m_118732_(mobeffect);
                 int i1 = j;
                 float f1 = f;
-@@ -583,12 +_,13 @@
-    public void m_93069_(PoseStack p_93070_) {
+@@ -574,12 +_,13 @@
+    public void m_280295_(GuiGraphics p_283501_) {
        this.f_92986_.m_91307_().m_6180_("selectedItemName");
        if (this.f_92993_ > 0 && !this.f_92994_.m_41619_()) {
 -         MutableComponent mutablecomponent = Component.m_237119_().m_7220_(this.f_92994_.m_41786_()).m_130940_(this.f_92994_.m_41791_().f_43022_);
@@ -35,22 +33,22 @@
           int j = (this.f_92977_ - i) / 2;
           int k = this.f_92978_ - 59;
           if (!this.f_92986_.f_91072_.m_105205_()) {
-@@ -602,7 +_,13 @@
+@@ -593,7 +_,13 @@
  
           if (l > 0) {
-             m_93172_(p_93070_, j - 2, k - 2, j + i + 2, k + 9 + 2, this.f_92986_.f_91066_.m_92143_(0));
--            this.m_93082_().m_92763_(p_93070_, mutablecomponent, (float)j, (float)k, 16777215 + (l << 24));
+             p_283501_.m_280509_(j - 2, k - 2, j + i + 2, k + 9 + 2, this.f_92986_.f_91066_.m_92143_(0));
+-            p_283501_.m_280430_(this.m_93082_(), mutablecomponent, j, k, 16777215 + (l << 24));
 +            Font font = net.minecraftforge.client.extensions.common.IClientItemExtensions.of(f_92994_).getFont(f_92994_, net.minecraftforge.client.extensions.common.IClientItemExtensions.FontContext.SELECTED_ITEM_NAME);
 +            if (font == null) {
-+               this.m_93082_().m_92763_(p_93070_, highlightTip, (float)j, (float)k, 16777215 + (l << 24));
++               p_283501_.m_280430_(this.m_93082_(), highlightTip, j, k, 16777215 + (l << 24));
 +            } else {
 +               j = (this.f_92977_ - font.m_92852_(highlightTip)) / 2;
-+               font.m_92763_(p_93070_, highlightTip, (float)j, (float)k, 16777215 + (l << 24));
++               p_283501_.m_280430_(font, highlightTip, j, k, 16777215 + (l << 24));
 +            }
           }
        }
  
-@@ -1054,7 +_,7 @@
+@@ -1037,7 +_,7 @@
           ItemStack itemstack = this.f_92986_.f_91074_.m_150109_().m_36056_();
           if (itemstack.m_41619_()) {
              this.f_92993_ = 0;

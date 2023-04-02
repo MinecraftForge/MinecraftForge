@@ -33,10 +33,6 @@ public class ClientForgeMod
         event.register("composite", CompositeModel.Loader.INSTANCE);
         event.register("item_layers", ItemLayerModel.Loader.INSTANCE);
         event.register("separate_transforms", SeparateTransformsModel.Loader.INSTANCE);
-
-        // TODO: Deprecated. To be removed in 1.20
-        event.register("bucket", DynamicFluidContainerModel.Loader.INSTANCE_DEPRECATED);
-        event.register("separate-perspective", SeparateTransformsModel.Loader.INSTANCE_DEPRECATED);
     }
 
     @SubscribeEvent

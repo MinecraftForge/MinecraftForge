@@ -13,7 +13,7 @@
        if (optional.isEmpty()) {
           return false;
        } else {
-+         net.minecraftforge.event.level.SaplingGrowTreeEvent event = net.minecraftforge.event.ForgeEventFactory.blockGrowFeature(p_221774_, p_221777_, p_221775_, optional.get());
++         var event = net.minecraftforge.event.ForgeEventFactory.blockGrowFeature(p_221774_, p_221777_, p_221775_, optional.get());
 +         if (event.getResult().equals(net.minecraftforge.eventbus.api.Event.Result.DENY)) return false;
           p_221774_.m_7471_(p_221775_, false);
 -         if (optional.get().m_203334_().m_224953_(p_221774_, p_221774_.m_7726_().m_8481_(), p_221777_, p_221775_)) {

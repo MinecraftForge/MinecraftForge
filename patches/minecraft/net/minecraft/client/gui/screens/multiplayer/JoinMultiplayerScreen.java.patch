@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/gui/screens/multiplayer/JoinMultiplayerScreen.java
 +++ b/net/minecraft/client/gui/screens/multiplayer/JoinMultiplayerScreen.java
-@@ -281,6 +_,11 @@
+@@ -283,6 +_,11 @@
  
     }
  

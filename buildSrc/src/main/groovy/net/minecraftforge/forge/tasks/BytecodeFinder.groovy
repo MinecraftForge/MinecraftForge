@@ -4,7 +4,7 @@ import groovy.json.JsonBuilder
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.tasks.InputFile
-import org.gradle.api.tasks.OutputFile
+import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
 import org.objectweb.asm.tree.ClassNode
 import org.objectweb.asm.tree.FieldNode
@@ -12,7 +12,9 @@ import org.objectweb.asm.tree.MethodNode
 
 abstract class BytecodeFinder extends DefaultTask {
     @InputFile abstract RegularFileProperty getJar()
-    @OutputFile abstract RegularFileProperty getOutput()
+    // It should be fine to mark the output as internal as we want to control when we run it anyways.
+    // This also shuts Gradle 8 up about implicit task dependencies.
+    @Internal abstract RegularFileProperty getOutput()
 
     BytecodeFinder() {
         output.convention(project.layout.buildDirectory.dir(name).map { it.file("output.json") })

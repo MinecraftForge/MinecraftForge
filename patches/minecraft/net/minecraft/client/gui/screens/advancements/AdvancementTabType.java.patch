@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/gui/screens/advancements/AdvancementTabType.java
 +++ b/net/minecraft/client/gui/screens/advancements/AdvancementTabType.java
-@@ -14,6 +_,7 @@
+@@ -12,6 +_,7 @@
     LEFT(0, 64, 32, 28, 5),
     RIGHT(96, 64, 32, 28, 5);
  

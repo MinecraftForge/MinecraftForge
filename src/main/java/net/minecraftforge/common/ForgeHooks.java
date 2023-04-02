@@ -11,9 +11,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Deque;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -30,7 +28,6 @@ import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
-import com.google.common.collect.Queues;
 import com.google.common.collect.Sets;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
@@ -40,7 +37,6 @@ import com.mojang.serialization.Lifecycle;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.ResourceLocationException;
-import net.minecraft.advancements.Advancement;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.SharedSuggestionProvider;
@@ -59,6 +55,8 @@ import net.minecraft.network.chat.contents.LiteralContents;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.metadata.pack.PackMetadataSection;
+import net.minecraft.server.packs.resources.Resource;
+import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagEntry;
 import net.minecraft.tags.TagKey;
@@ -74,8 +72,6 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ExperienceOrb;
-import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
@@ -96,7 +92,6 @@ import net.minecraft.world.level.storage.LevelStorageSource;
 import net.minecraft.world.level.storage.WorldData;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.LootTable;
-import net.minecraft.world.level.storage.loot.LootTables;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -114,7 +109,6 @@ import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.item.alchemy.PotionUtils;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.world.level.BaseSpawner;
 import net.minecraft.world.level.block.entity.FurnaceBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.AABB;
@@ -158,11 +152,9 @@ import net.minecraftforge.event.entity.living.LivingChangeTargetEvent.ILivingTar
 import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.living.LivingKnockBackEvent;
-import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
 import net.minecraftforge.event.entity.living.LivingUseTotemEvent;
 import net.minecraftforge.event.entity.living.LootingLevelEvent;
 import net.minecraftforge.event.entity.living.ShieldBlockEvent;
-import net.minecraftforge.event.entity.player.AdvancementEvent;
 import net.minecraftforge.event.entity.player.AnvilRepairEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.event.entity.player.CriticalHitEvent;
@@ -171,7 +163,6 @@ import net.minecraftforge.event.entity.living.LivingGetProjectileEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.level.BlockEvent;
 import net.minecraftforge.event.level.NoteBlockEvent;
-import net.minecraftforge.eventbus.api.Event.Result;
 import net.minecraftforge.fluids.FluidType;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoader;
@@ -182,6 +173,7 @@ import net.minecraftforge.registries.GameData;
 import net.minecraftforge.registries.RegistryManager;
 import net.minecraftforge.server.permission.PermissionAPI;
 
+import org.apache.commons.lang3.function.TriFunction;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
@@ -193,7 +185,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.state.pattern.BlockInWorld;
 import net.minecraft.world.level.material.Fluid;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
@@ -234,23 +225,6 @@ public class ForgeHooks
     public static void onDifficultyChange(Difficulty difficulty, Difficulty oldDifficulty)
     {
         MinecraftForge.EVENT_BUS.post(new DifficultyChangeEvent(difficulty, oldDifficulty));
-    }
-
-    //Optifine Helper Functions u.u, these are here specifically for Optifine
-    //Note: When using Optifine, these methods are invoked using reflection, which
-    //incurs a major performance penalty.
-    // TODO: Remove in 1.20
-    @Deprecated(since = "1.19.2", forRemoval = true)
-    public static void onLivingSetAttackTarget(LivingEntity entity, LivingEntity target)
-    {
-        MinecraftForge.EVENT_BUS.post(new LivingSetAttackTargetEvent(entity, target));
-    }
-
-    // TODO: Remove in 1.20
-    @Deprecated(since = "1.19.2", forRemoval = true)
-    public static void onLivingSetAttackTarget(LivingEntity entity, LivingEntity target, ILivingTargetType targetType)
-    {
-        MinecraftForge.EVENT_BUS.post(new LivingSetAttackTargetEvent(entity, target, targetType));
     }
 
     public static LivingChangeTargetEvent onLivingChangeTarget(LivingEntity entity, LivingEntity originalTarget, ILivingTargetType targetType)
@@ -392,7 +366,7 @@ public class ForgeHooks
         if (MinecraftForge.EVENT_BUS.post(event))
             return null;
 
-        if (!player.level.isClientSide)
+        if (!player.level().isClientSide)
             player.getCommandSenderWorld().addFreshEntity(event.getEntity());
         return event.getEntity();
     }
@@ -666,7 +640,7 @@ public class ForgeHooks
 
     public static int onGrindstoneChange(@NotNull ItemStack top, @NotNull ItemStack bottom, Container outputSlot, int xp)
     {
-        GrindstoneEvent.OnplaceItem e = new GrindstoneEvent.OnplaceItem(top, bottom, xp);
+        GrindstoneEvent.OnPlaceItem e = new GrindstoneEvent.OnPlaceItem(top, bottom, xp);
         if (MinecraftForge.EVENT_BUS.post(e))
         {
             outputSlot.setItem(0, ItemStack.EMPTY);
@@ -804,43 +778,38 @@ public class ForgeHooks
         return newGameType;
     }
 
-    private static ThreadLocal<Deque<LootTableContext>> lootContext = new ThreadLocal<Deque<LootTableContext>>();
-    private static LootTableContext getLootTableContext()
+    public static TriFunction<ResourceLocation, JsonElement, ResourceManager, Optional<LootTable>> getLootTableDeserializer(Gson gson, String directory)
     {
-        LootTableContext ctx = lootContext.get().peek();
-
-        if (ctx == null)
-            throw new JsonParseException("Invalid call stack, could not grab json context!"); // Should I throw this? Do we care about custom deserializers outside the manager?
-
-        return ctx;
+        return (location, data, resourceManager) -> {
+            try
+            {
+                Resource resource = resourceManager.getResource(location.withPath(directory + "/" + location.getPath() + ".json")).orElse(null);
+                boolean custom = resource == null || !resource.isBuiltin();
+                return Optional.ofNullable(loadLootTable(gson, location, data, custom));
+            }
+            catch (Exception exception)
+            {
+                LOGGER.error("Couldn't parse element {}:{}", directory, location, exception);
+                return Optional.empty();
+            }
+        };
     }
 
-    @Nullable
-    public static LootTable loadLootTable(Gson gson, ResourceLocation name, JsonElement data, boolean custom, LootTables lootTableManager)
+    public static LootTable loadLootTable(Gson gson, ResourceLocation name, JsonElement data, boolean custom)
     {
-        Deque<LootTableContext> que = lootContext.get();
-        if (que == null)
-        {
-            que = Queues.newArrayDeque();
-            lootContext.set(que);
-        }
-
-        LootTable ret = null;
+        LootTable ret;
         try
         {
-            que.push(new LootTableContext(name, custom));
             ret = gson.fromJson(data, LootTable.class);
             ret.setLootTableId(name);
-            que.pop();
         }
         catch (JsonParseException e)
         {
-            que.pop();
             throw e;
         }
 
         if (!custom)
-            ret = ForgeEventFactory.loadLootTable(name, ret, lootTableManager);
+            ret = ForgeEventFactory.loadLootTable(name, ret);
 
         if (ret != null)
            ret.freeze();
@@ -892,91 +861,6 @@ public class ForgeHooks
         Biome apply(final Biome.ClimateSettings climate, final BiomeSpecialEffects effects, final BiomeGenerationSettings gen, final MobSpawnSettings spawns);
     }
 
-    private static class LootTableContext
-    {
-        public final ResourceLocation name;
-        private final boolean vanilla;
-        public final boolean custom;
-        public int poolCount = 0;
-        public int entryCount = 0;
-        private HashSet<String> entryNames = Sets.newHashSet();
-
-        private LootTableContext(ResourceLocation name, boolean custom)
-        {
-            this.name = name;
-            this.custom = custom;
-            this.vanilla = "minecraft".equals(this.name.getNamespace());
-        }
-
-        private void resetPoolCtx()
-        {
-            this.entryCount = 0;
-            this.entryNames.clear();
-        }
-
-        public String validateEntryName(@Nullable String name)
-        {
-            if (name != null && !this.entryNames.contains(name))
-            {
-                this.entryNames.add(name);
-                return name;
-            }
-
-            if (!this.vanilla)
-                throw new JsonParseException("Loot Table \"" + this.name.toString() + "\" Duplicate entry name \"" + name + "\" for pool #" + (this.poolCount - 1) + " entry #" + (this.entryCount-1));
-
-            int x = 0;
-            while (this.entryNames.contains(name + "#" + x))
-                x++;
-
-            name = name + "#" + x;
-            this.entryNames.add(name);
-
-            return name;
-        }
-    }
-
-    public static String readPoolName(JsonObject json)
-    {
-        LootTableContext ctx = ForgeHooks.getLootTableContext();
-        ctx.resetPoolCtx();
-
-        if (json.has("name"))
-            return GsonHelper.getAsString(json, "name");
-
-        if (ctx.custom)
-            return "custom#" + json.hashCode(); //We don't care about custom ones modders shouldn't be editing them!
-
-        ctx.poolCount++;
-
-        if (!ctx.vanilla)
-            throw new JsonParseException("Loot Table \"" + ctx.name.toString() + "\" Missing `name` entry for pool #" + (ctx.poolCount - 1));
-
-        return ctx.poolCount == 1 ? "main" : "pool" + (ctx.poolCount - 1);
-    }
-
-    public static String readLootEntryName(JsonObject json, String type)
-    {
-        LootTableContext ctx = ForgeHooks.getLootTableContext();
-        ctx.entryCount++;
-
-        if (json.has("entryName"))
-            return ctx.validateEntryName(GsonHelper.getAsString(json, "entryName"));
-
-        if (ctx.custom)
-            return "custom#" + json.hashCode(); //We don't care about custom ones modders shouldn't be editing them!
-
-        String name = null;
-        if ("item".equals(type))
-            name = GsonHelper.getAsString(json, "name");
-        else if ("loot_table".equals(type))
-            name = GsonHelper.getAsString(json, "name");
-        else if ("empty".equals(type))
-            name = "empty";
-
-        return ctx.validateEntryName(name);
-    }
-
     public static boolean onCropsGrowPre(Level level, BlockPos pos, BlockState state, boolean def)
     {
         BlockEvent ev = new BlockEvent.CropGrowEvent.Pre(level,pos,state);
@@ -999,15 +883,6 @@ public class ForgeHooks
             return hitResult;
         }
         return null;
-    }
-
-    /**
-     * @deprecated See {@link ForgeEventFactory#onAdvancementEarnedEvent} and {@link ForgeEventFactory#onAdvancementProgressedEvent}
-     */
-    @Deprecated(forRemoval = true, since = "1.19.2")
-    public static void onAdvancement(ServerPlayer player, Advancement advancement)
-    {
-        MinecraftForge.EVENT_BUS.post(new AdvancementEvent(player, advancement));
     }
 
     /**
@@ -1307,20 +1182,11 @@ public class ForgeHooks
     }
 
     /**
-     * @deprecated To be removed in 1.20.
-     * Use {@link #readAdditionalLevelSaveData(CompoundTag, LevelStorageSource.LevelDirectory)} instead.
-     */
-    @Deprecated(forRemoval = true, since = "1.19.2")
-    public static void readAdditionalLevelSaveData(CompoundTag rootTag) {
-        readAdditionalLevelSaveData(rootTag, null);
-    }
-
-    /**
      * @param rootTag Level data file contents.
-     * @param levelDirectory Level currently being loaded. TODO 1.20 - Remove nullable annotation
+     * @param levelDirectory Level currently being loaded.
      */
     @ApiStatus.Internal
-    public static void readAdditionalLevelSaveData(CompoundTag rootTag, @Nullable LevelStorageSource.LevelDirectory levelDirectory)
+    public static void readAdditionalLevelSaveData(CompoundTag rootTag, LevelStorageSource.LevelDirectory levelDirectory)
     {
         CompoundTag tag = rootTag.getCompound("fml");
         if (tag.contains("LoadingModList"))

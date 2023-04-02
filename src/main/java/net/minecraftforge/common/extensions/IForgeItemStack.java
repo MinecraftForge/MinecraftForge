@@ -38,6 +38,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
+import java.util.Objects;
 
 /*
  * Extension added to ItemStack that bounces to ItemSack sensitive Item methods. Typically this is just for convince.
@@ -86,7 +87,7 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundTag>
        Player entityplayer = context.getPlayer();
        BlockPos blockpos = context.getClickedPos();
        BlockInWorld blockworldstate = new BlockInWorld(context.getLevel(), blockpos, false);
-       Registry<Block> registry = entityplayer.level.registryAccess().registryOrThrow(Registries.BLOCK);
+       Registry<Block> registry = entityplayer.level().registryAccess().registryOrThrow(Registries.BLOCK);
        if (entityplayer != null && !entityplayer.getAbilities().mayBuild && !self().hasAdventureModePlaceTagForBlock(registry, blockworldstate)) {
           return InteractionResult.PASS;
        } else {
@@ -241,21 +242,6 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundTag>
     default boolean onEntitySwing(LivingEntity entity)
     {
         return self().getItem().onEntitySwing(self(), entity);
-    }
-
-    /**
-     * Called each tick while using an item.
-     *
-     * @param player The Player using the item
-     * @param count  The amount of time in tick the item has been used for
-     *               continuously
-     *
-     * @deprecated {@link net.minecraft.world.item.ItemStack#onUseTick(Level, LivingEntity, int) Use Vanilla's Version}
-     */
-    @Deprecated(since = "1.19.4", forRemoval = true)
-    default void onUsingTick(LivingEntity player, int count)
-    {
-        self().getItem().onUsingTick(self(), player, count);
     }
 
     /**
@@ -444,7 +430,7 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundTag>
             return other.isEmpty();
         else
             return !other.isEmpty() && self().getCount() == other.getCount() && self().getItem() == other.getItem() &&
-            (limitTags ? self().areShareTagsEqual(other) : ItemStack.tagMatches(self(), other));
+            (limitTags ? self().areShareTagsEqual(other) : Objects.equals(self().getTag(), other.getTag()));
     }
 
     /**

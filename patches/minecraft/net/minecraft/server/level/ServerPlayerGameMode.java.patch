@@ -19,7 +19,7 @@
              if (!blockstate.m_60795_()) {
 +               if (event.getUseBlock() != net.minecraftforge.eventbus.api.Event.Result.DENY)
                 blockstate.m_60686_(this.f_9244_, p_215120_, this.f_9245_);
-                f = blockstate.m_60625_(this.f_9245_, this.f_9245_.f_19853_, p_215120_);
+                f = blockstate.m_60625_(this.f_9245_, this.f_9245_.m_9236_(), p_215120_);
              }
 @@ -221,7 +_,8 @@
  
@@ -119,7 +119,7 @@
 +         if (event.getUseBlock() == net.minecraftforge.eventbus.api.Event.Result.ALLOW || (event.getUseBlock() != net.minecraftforge.eventbus.api.Event.Result.DENY && !flag1)) {
              InteractionResult interactionresult = blockstate.m_60664_(p_9267_, p_9266_, p_9269_, p_9270_);
              if (interactionresult.m_19077_()) {
-                CriteriaTriggers.f_10562_.m_220040_(p_9266_, blockpos, itemstack);
+                CriteriaTriggers.f_10562_.m_285767_(p_9266_, blockpos, itemstack);
 @@ -319,8 +_,8 @@
              }
           }

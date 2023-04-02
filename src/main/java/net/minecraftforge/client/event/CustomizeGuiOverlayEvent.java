@@ -6,7 +6,7 @@
 package net.minecraftforge.client.event;
 
 import com.mojang.blaze3d.platform.Window;
-import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.LerpingBossEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Cancelable;
@@ -26,14 +26,14 @@ import java.util.ArrayList;
 public abstract class CustomizeGuiOverlayEvent extends Event
 {
     private final Window window;
-    private final PoseStack poseStack;
+    private final GuiGraphics guiGraphics;
     private final float partialTick;
 
     @ApiStatus.Internal
-    protected CustomizeGuiOverlayEvent(Window window, PoseStack poseStack, float partialTick)
+    protected CustomizeGuiOverlayEvent(Window window, GuiGraphics guiGraphics, float partialTick)
     {
         this.window = window;
-        this.poseStack = poseStack;
+        this.guiGraphics = guiGraphics;
         this.partialTick = partialTick;
     }
 
@@ -42,9 +42,9 @@ public abstract class CustomizeGuiOverlayEvent extends Event
         return window;
     }
 
-    public PoseStack getPoseStack()
+    public GuiGraphics getGuiGraphics()
     {
-        return poseStack;
+        return guiGraphics;
     }
 
     public float getPartialTick()
@@ -70,9 +70,9 @@ public abstract class CustomizeGuiOverlayEvent extends Event
         private int increment;
 
         @ApiStatus.Internal
-        public BossEventProgress(Window window, PoseStack poseStack, float partialTick, LerpingBossEvent bossEvent, int x, int y, int increment)
+        public BossEventProgress(Window window, GuiGraphics guiGraphics, float partialTick, LerpingBossEvent bossEvent, int x, int y, int increment)
         {
-            super(window, poseStack, partialTick);
+            super(window, guiGraphics, partialTick);
             this.bossEvent = bossEvent;
             this.x = x;
             this.y = y;
@@ -137,9 +137,9 @@ public abstract class CustomizeGuiOverlayEvent extends Event
         private final ArrayList<String> right;
 
         @ApiStatus.Internal
-        public DebugText(Window window, PoseStack poseStack, float partialTick, ArrayList<String> left, ArrayList<String> right)
+        public DebugText(Window window, GuiGraphics guiGraphics, float partialTick, ArrayList<String> left, ArrayList<String> right)
         {
-            super(window, poseStack, partialTick);
+            super(window, guiGraphics, partialTick);
             this.left = left;
             this.right = right;
         }
@@ -175,9 +175,9 @@ public abstract class CustomizeGuiOverlayEvent extends Event
         private int posY;
 
         @ApiStatus.Internal
-        public Chat(Window window, PoseStack poseStack, float partialTick, int posX, int posY)
+        public Chat(Window window, GuiGraphics guiGraphics, float partialTick, int posX, int posY)
         {
-            super(window, poseStack, partialTick);
+            super(window, guiGraphics, partialTick);
             this.setPosX(posX);
             this.setPosY(posY);
         }

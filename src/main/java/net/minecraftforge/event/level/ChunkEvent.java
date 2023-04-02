@@ -62,13 +62,6 @@ public class ChunkEvent extends LevelEvent
         private final boolean newChunk;
 
         @ApiStatus.Internal
-        @Deprecated(forRemoval = true, since = "1.19.3")
-        public Load(ChunkAccess chunk)
-        {
-            this(chunk, false);
-        }
-
-        @ApiStatus.Internal
         public Load(ChunkAccess chunk, boolean newChunk)
         {
             super(chunk);

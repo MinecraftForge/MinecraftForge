@@ -3,7 +3,7 @@
 @@ -28,6 +_,10 @@
  
     public void m_8037_() {
-       ServerLevel serverlevel = (ServerLevel)this.f_30925_.f_19853_;
+       ServerLevel serverlevel = (ServerLevel)this.f_30925_.m_9236_();
 +      // Forge: Trigger the trap in a tick task to avoid crashes when mods add goals to skeleton horses
 +      // (MC-206338/Forge PR #7509)
 +      serverlevel.m_7654_().m_6937_(new net.minecraft.server.TickTask(serverlevel.m_7654_().m_129921_(), () -> {

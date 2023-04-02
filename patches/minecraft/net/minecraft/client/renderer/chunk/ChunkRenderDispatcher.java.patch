@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/chunk/ChunkRenderDispatcher.java
 +++ b/net/minecraft/client/renderer/chunk/ChunkRenderDispatcher.java
-@@ -78,12 +_,15 @@
+@@ -79,12 +_,15 @@
     private Vec3 f_112683_ = Vec3.f_82478_;
  
     public ChunkRenderDispatcher(ClientLevel p_194405_, LevelRenderer p_194406_, Executor p_194407_, boolean p_194408_, ChunkBufferBuilderPack p_194409_) {
@@ -17,7 +17,7 @@
        this.f_112678_ = p_194409_;
        List<ChunkBufferBuilderPack> list = Lists.newArrayListWithExpectedSize(l);
  
-@@ -419,7 +_,7 @@
+@@ -420,7 +_,7 @@
           if (!chunkrenderdispatcher$compiledchunk.f_112749_.contains(p_112810_)) {
              return false;
           } else {
@@ -26,7 +26,7 @@
              p_112811_.m_112709_(this.f_112788_);
              return true;
           }
-@@ -451,7 +_,7 @@
+@@ -452,7 +_,7 @@
              this.f_202433_.incrementAndGet();
           }
  
@@ -35,7 +35,7 @@
           return this.f_112787_;
        }
  
-@@ -484,10 +_,20 @@
+@@ -485,10 +_,20 @@
           protected final double f_112847_;
           protected final AtomicBoolean f_112848_ = new AtomicBoolean(false);
           protected final boolean f_194420_;
@@ -56,7 +56,7 @@
           }
  
           public abstract CompletableFuture<ChunkRenderDispatcher.ChunkTaskResult> m_5869_(ChunkBufferBuilderPack p_112853_);
-@@ -499,6 +_,10 @@
+@@ -500,6 +_,10 @@
           public int compareTo(ChunkRenderDispatcher.RenderChunk.ChunkCompileTask p_112855_) {
              return Doubles.compare(this.f_112847_, p_112855_.f_112847_);
           }
@@ -67,12 +67,12 @@
        }
  
        @OnlyIn(Dist.CLIENT)
-@@ -506,8 +_,13 @@
+@@ -507,8 +_,13 @@
           @Nullable
           protected RenderChunkRegion f_112858_;
  
 +         @Deprecated
-          public RebuildTask(@Nullable double p_194427_, RenderChunkRegion p_194428_, boolean p_194429_) {
+          public RebuildTask(double p_194427_, @Nullable RenderChunkRegion p_194428_, boolean p_194429_) {
 -            super(p_194427_, p_194429_);
 +            this(null, p_194427_, p_194428_, p_194429_);
 +         }
@@ -82,7 +82,7 @@
              this.f_112858_ = p_194428_;
           }
  
-@@ -604,7 +_,10 @@
+@@ -605,7 +_,10 @@
                    }
  
                    if (blockstate.m_60799_() != RenderShape.INVISIBLE) {
@@ -94,18 +94,18 @@
                       BufferBuilder bufferbuilder2 = p_234471_.m_108839_(rendertype2);
                       if (set.add(rendertype2)) {
                          RenderChunk.this.m_112805_(bufferbuilder2);
-@@ -612,8 +_,9 @@
+@@ -613,8 +_,9 @@
  
                       posestack.m_85836_();
                       posestack.m_252880_((float)(blockpos2.m_123341_() & 15), (float)(blockpos2.m_123342_() & 15), (float)(blockpos2.m_123343_() & 15));
 -                     blockrenderdispatcher.m_234355_(blockstate, blockpos2, renderchunkregion, posestack, bufferbuilder2, true, randomsource);
-+                     blockrenderdispatcher.renderBatched(blockstate, blockpos2, renderchunkregion, posestack, bufferbuilder2, true, randomsource, modelData, rendertype2, false);
++                     blockrenderdispatcher.renderBatched(blockstate, blockpos2, renderchunkregion, posestack, bufferbuilder2, true, randomsource, modelData, rendertype2);
                       posestack.m_85849_();
 +                     }
                    }
                 }
  
-@@ -642,10 +_,10 @@
+@@ -643,10 +_,10 @@
           private <E extends BlockEntity> void m_234476_(ChunkRenderDispatcher.RenderChunk.RebuildTask.CompileResults p_234477_, E p_234478_) {
              BlockEntityRenderer<E> blockentityrenderer = Minecraft.m_91087_().m_167982_().m_112265_(p_234478_);
              if (blockentityrenderer != null) {
@@ -117,7 +117,7 @@
              }
  
           }
-@@ -673,8 +_,13 @@
+@@ -674,8 +_,13 @@
        class ResortTransparencyTask extends ChunkRenderDispatcher.RenderChunk.ChunkCompileTask {
           private final ChunkRenderDispatcher.CompiledChunk f_112886_;
  

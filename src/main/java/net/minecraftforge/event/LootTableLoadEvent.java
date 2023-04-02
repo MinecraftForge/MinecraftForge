@@ -7,31 +7,32 @@ package net.minecraftforge.event;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.storage.loot.LootTable;
-import net.minecraft.world.level.storage.loot.LootTables;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.fml.LogicalSide;
 
 /**
- * Event fired when a LootTable json is loaded from json.
- * This event is fired whenever resources are loaded, or when the server starts.
- * This event will NOT be fired for LootTables loaded from the world folder, these are
- * considered configurations files and should not be modified by mods.
+ * Fired when a {@link LootTable} is loaded from JSON.
+ * Loot tables loaded from world save datapacks will not fire this event as they are considered user configuration files.
+ * This event is fired whenever server resources are loaded or reloaded.
  *
- * Canceling the event will make it load a empty loot table.
+ * <p>This event is {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}.
+ * If the event is cancelled, the loot table will be made empty.</p>
  *
+ * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
+ * only on the {@linkplain LogicalSide#SERVER logical server}.</p>
  */
 @Cancelable
 public class LootTableLoadEvent extends Event
 {
     private final ResourceLocation name;
     private LootTable table;
-    private LootTables lootTableManager;
 
-    public LootTableLoadEvent(ResourceLocation name, LootTable table, LootTables lootTableManager)
+    public LootTableLoadEvent(ResourceLocation name, LootTable table)
     {
         this.name = name;
         this.table = table;
-        this.lootTableManager = lootTableManager;
     }
 
     public ResourceLocation getName()
@@ -42,11 +43,6 @@ public class LootTableLoadEvent extends Event
     public LootTable getTable()
     {
         return this.table;
-    }
-
-    public LootTables getLootTableManager()
-    {
-        return this.lootTableManager;
     }
 
     public void setTable(LootTable table)

@@ -5,7 +5,7 @@
  
        if (!itemstack.m_41619_()) {
 -         OptionalInt optionalint = p_115076_.m_218868_();
-+         MapItemSavedData mapitemsaveddata = MapItem.m_42853_(itemstack, p_115076_.f_19853_);
++         MapItemSavedData mapitemsaveddata = MapItem.m_42853_(itemstack, p_115076_.m_9236_());
           if (flag) {
              p_115079_.m_252880_(0.0F, 0.0F, 0.5F);
           } else {
@@ -22,7 +22,7 @@
              float f = 0.0078125F;
              p_115079_.m_85841_(0.0078125F, 0.0078125F, 0.0078125F);
              p_115079_.m_252880_(-64.0F, -64.0F, 0.0F);
--            MapItemSavedData mapitemsaveddata = MapItem.m_151128_(optionalint.getAsInt(), p_115076_.f_19853_);
+-            MapItemSavedData mapitemsaveddata = MapItem.m_151128_(optionalint.getAsInt(), p_115076_.m_9236_());
              p_115079_.m_252880_(0.0F, 0.0F, -1.0F);
              if (mapitemsaveddata != null) {
                 int i = this.m_174208_(p_115076_, 15728850, p_115081_);
@@ -32,7 +32,7 @@
           } else {
              int k = this.m_174208_(p_115076_, 15728880, p_115081_);
              p_115079_.m_85841_(0.5F, 0.5F, 0.5F);
-             this.f_115047_.m_269128_(itemstack, ItemDisplayContext.FIXED, k, OverlayTexture.f_118083_, p_115079_, p_115080_, p_115076_.f_19853_, p_115076_.m_19879_());
+             this.f_115047_.m_269128_(itemstack, ItemDisplayContext.FIXED, k, OverlayTexture.f_118083_, p_115079_, p_115080_, p_115076_.m_9236_(), p_115076_.m_19879_());
           }
 +         }
        }

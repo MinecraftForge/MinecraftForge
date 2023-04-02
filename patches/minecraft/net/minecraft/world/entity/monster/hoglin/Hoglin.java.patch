@@ -7,7 +7,7 @@
 -         if (this.f_34484_ > 300) {
 +         if (this.f_34484_ > 300 && net.minecraftforge.event.ForgeEventFactory.canLivingConvert(this, EntityType.f_20500_, (timer) -> this.f_34484_ = timer)) {
              this.m_219179_(SoundEvents.f_11959_);
-             this.m_34531_((ServerLevel)this.f_19853_);
+             this.m_34531_((ServerLevel)this.m_9236_());
           }
 @@ -219,6 +_,7 @@
        Zoglin zoglin = this.m_21406_(EntityType.f_20500_, true);

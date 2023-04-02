@@ -1,8 +1,8 @@
 --- a/net/minecraft/world/entity/boss/enderdragon/EnderDragon.java
 +++ b/net/minecraft/world/entity/boss/enderdragon/EnderDragon.java
-@@ -107,6 +_,14 @@
-       }
- 
+@@ -102,6 +_,14 @@
+       this.f_19794_ = true;
+       this.f_19811_ = true;
        this.f_31074_ = new EnderDragonPhaseManager(this);
 +      this.m_20234_(f_19843_.getAndAdd(this.f_31089_.length + 1) + 1); // Forge: Fix MC-158205: Make sure part ids are successors of parent mob id
 +   }
@@ -14,8 +14,8 @@
 +         this.f_31089_[i].m_20234_(p_20235_ + i + 1);
     }
  
-    public static AttributeSupplier.Builder m_31167_() {
-@@ -150,7 +_,11 @@
+    public void m_287231_(EndDragonFight p_287736_) {
+@@ -157,7 +_,11 @@
        return adouble;
     }
  
@@ -25,38 +25,38 @@
 +      if (this.f_20888_ != null) this.unlimitedLastHurtByPlayer = f_20888_;
 +      if (this.unlimitedLastHurtByPlayer != null && this.unlimitedLastHurtByPlayer.m_213877_()) this.unlimitedLastHurtByPlayer = null;
        this.m_146874_();
-       if (this.f_19853_.f_46443_) {
+       if (this.m_9236_().f_46443_) {
           this.m_21153_(this.m_21223_());
-@@ -420,7 +_,7 @@
+@@ -438,7 +_,7 @@
                 BlockPos blockpos = new BlockPos(k1, l1, i2);
-                BlockState blockstate = this.f_19853_.m_8055_(blockpos);
+                BlockState blockstate = this.m_9236_().m_8055_(blockpos);
                 if (!blockstate.m_60795_() && !blockstate.m_204336_(BlockTags.f_215822_)) {
--                  if (this.f_19853_.m_46469_().m_46207_(GameRules.f_46132_) && !blockstate.m_204336_(BlockTags.f_13069_)) {
-+                  if (net.minecraftforge.common.ForgeHooks.canEntityDestroy(this.f_19853_, blockpos, this) && !blockstate.m_204336_(BlockTags.f_13069_)) {
-                      flag1 = this.f_19853_.m_7471_(blockpos, false) || flag1;
+-                  if (this.m_9236_().m_46469_().m_46207_(GameRules.f_46132_) && !blockstate.m_204336_(BlockTags.f_13069_)) {
++                  if (net.minecraftforge.common.ForgeHooks.canEntityDestroy(this.m_9236_(), blockpos, this) && !blockstate.m_204336_(BlockTags.f_13069_)) {
+                      flag1 = this.m_9236_().m_7471_(blockpos, false) || flag1;
                    } else {
                       flag = true;
-@@ -511,7 +_,8 @@
+@@ -529,7 +_,8 @@
  
-       if (this.f_19853_ instanceof ServerLevel) {
+       if (this.m_9236_() instanceof ServerLevel) {
           if (this.f_31084_ > 150 && this.f_31084_ % 5 == 0 && flag) {
--            ExperienceOrb.m_147082_((ServerLevel)this.f_19853_, this.m_20182_(), Mth.m_14143_((float)i * 0.08F));
+-            ExperienceOrb.m_147082_((ServerLevel)this.m_9236_(), this.m_20182_(), Mth.m_14143_((float)i * 0.08F));
 +            int award = net.minecraftforge.event.ForgeEventFactory.getExperienceDrop(this, this.unlimitedLastHurtByPlayer, Mth.m_14143_((float)i * 0.08F));
-+            ExperienceOrb.m_147082_((ServerLevel)this.f_19853_, this.m_20182_(), award);
++            ExperienceOrb.m_147082_((ServerLevel) this.m_9236_(), this.m_20182_(), award);
           }
  
           if (this.f_31084_ == 1 && !this.m_20067_()) {
-@@ -522,7 +_,8 @@
+@@ -540,7 +_,8 @@
        this.m_6478_(MoverType.SELF, new Vec3(0.0D, (double)0.1F, 0.0D));
-       if (this.f_31084_ == 200 && this.f_19853_ instanceof ServerLevel) {
+       if (this.f_31084_ == 200 && this.m_9236_() instanceof ServerLevel) {
           if (flag) {
--            ExperienceOrb.m_147082_((ServerLevel)this.f_19853_, this.m_20182_(), Mth.m_14143_((float)i * 0.2F));
+-            ExperienceOrb.m_147082_((ServerLevel)this.m_9236_(), this.m_20182_(), Mth.m_14143_((float)i * 0.2F));
 +            int award = net.minecraftforge.event.ForgeEventFactory.getExperienceDrop(this, this.unlimitedLastHurtByPlayer, Mth.m_14143_((float)i * 0.2F));
-+            ExperienceOrb.m_147082_((ServerLevel)this.f_19853_, this.m_20182_(), award);
++            ExperienceOrb.m_147082_((ServerLevel) this.m_9236_(), this.m_20182_(), award);
           }
  
           if (this.f_31073_ != null) {
-@@ -845,8 +_,19 @@
+@@ -863,8 +_,19 @@
        return false;
     }
  

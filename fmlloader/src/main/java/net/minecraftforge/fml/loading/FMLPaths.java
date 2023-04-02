@@ -74,14 +74,6 @@ public enum FMLPaths
         }
     }
 
-    /**
-     * @deprecated Use {@link #getOrCreateGameRelativePath(Path)} instead.
-     */
-    @Deprecated(forRemoval = true, since = "1.19.4")
-    public static Path getOrCreateGameRelativePath(Path path, String name) {
-        return getOrCreateGameRelativePath(path);
-    }
-
     public static Path getOrCreateGameRelativePath(Path path) {
         Path gameFolderPath = FMLPaths.GAMEDIR.get().resolve(path);
 

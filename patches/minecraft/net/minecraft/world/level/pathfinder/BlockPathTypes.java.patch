@@ -8,7 +8,7 @@
     BLOCKED(-1.0F),
     OPEN(0.0F),
     WALKABLE(0.0F),
-@@ -34,5 +_,17 @@
+@@ -35,5 +_,17 @@
  
     public float m_77124_() {
        return this.f_77117_;

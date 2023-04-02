@@ -55,7 +55,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.storage.loot.LootTable;
-import net.minecraft.world.level.storage.loot.LootTables;
 import net.minecraft.server.packs.resources.PreparableReloadListener;
 import net.minecraft.world.level.BaseSpawner;
 import net.minecraft.world.InteractionResultHolder;
@@ -75,7 +74,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.Level;
 import net.minecraft.server.level.ServerLevel;
@@ -429,7 +427,7 @@ public class ForgeEventFactory
     public static int onItemExpire(ItemEntity entity, @NotNull ItemStack item)
     {
         if (item.isEmpty()) return -1;
-        ItemExpireEvent event = new ItemExpireEvent(entity, (item.isEmpty() ? 6000 : item.getItem().getEntityLifespan(item, entity.level)));
+        ItemExpireEvent event = new ItemExpireEvent(entity, (item.isEmpty() ? 6000 : item.getItem().getEntityLifespan(item, entity.level())));
         if (!MinecraftForge.EVENT_BUS.post(event)) return -1;
         return event.getExtraLife();
     }
@@ -443,7 +441,7 @@ public class ForgeEventFactory
 
     public static boolean canMountEntity(Entity entityMounting, Entity entityBeingMounted, boolean isMounting)
     {
-        boolean isCanceled = MinecraftForge.EVENT_BUS.post(new EntityMountEvent(entityMounting, entityBeingMounted, entityMounting.level, isMounting));
+        boolean isCanceled = MinecraftForge.EVENT_BUS.post(new EntityMountEvent(entityMounting, entityBeingMounted, entityMounting.level(), isMounting));
 
         if(isCanceled)
         {
@@ -579,8 +577,8 @@ public class ForgeEventFactory
         if (canContinueSleep == Result.DEFAULT)
         {
             return player.getSleepingPos().map(pos-> {
-                BlockState state = player.level.getBlockState(pos);
-                return state.getBlock().isBed(state, player.level, pos, player);
+                BlockState state = player.level().getBlockState(pos);
+                return state.getBlock().isBed(state, player.level(), pos, player);
             }).orElse(false);
         }
         else
@@ -594,7 +592,7 @@ public class ForgeEventFactory
 
         Result canContinueSleep = evt.getResult();
         if (canContinueSleep == Result.DEFAULT)
-            return !player.level.isDay();
+            return !player.level().isDay();
         else
             return canContinueSleep == Result.ALLOW;
     }
@@ -620,9 +618,9 @@ public class ForgeEventFactory
         return MinecraftForge.EVENT_BUS.post(new ProjectileImpactEvent(projectile, ray));
     }
 
-    public static LootTable loadLootTable(ResourceLocation name, LootTable table, LootTables lootTableManager)
+    public static LootTable loadLootTable(ResourceLocation name, LootTable table)
     {
-        LootTableLoadEvent event = new LootTableLoadEvent(name, table, lootTableManager);
+        LootTableLoadEvent event = new LootTableLoadEvent(name, table);
         if (MinecraftForge.EVENT_BUS.post(event))
             return LootTable.EMPTY;
         return event.getTable();
@@ -665,12 +663,6 @@ public class ForgeEventFactory
 
         Result result = event.getResult();
         return result == Result.DEFAULT ? level.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING) : result == Result.ALLOW;
-    }
-
-    @Deprecated(forRemoval = true, since = "1.19.2")
-    public static boolean saplingGrowTree(LevelAccessor level, RandomSource randomSource, BlockPos pos)
-    {
-        return !blockGrowFeature(level, randomSource, pos, null).getResult().equals(Result.DENY);
     }
 
     public static SaplingGrowTreeEvent blockGrowFeature(LevelAccessor level, RandomSource randomSource, BlockPos pos, @Nullable Holder<ConfiguredFeature<?, ?>> holder)
@@ -771,18 +763,8 @@ public class ForgeEventFactory
         return event;
     }
 
-    /**
-     * @deprecated Use {@linkplain #onEnderPearlLand(ServerPlayer, double, double, double, ThrownEnderpearl, float, HitResult) the hit result-sensitive version}.
-     */
     @ApiStatus.Internal
-    @Deprecated(forRemoval = true, since = "1.19.2")
-    public static EntityTeleportEvent.EnderPearl onEnderPearlLand(ServerPlayer entity, double targetX, double targetY, double targetZ, ThrownEnderpearl pearlEntity, float attackDamage)
-    {
-        return onEnderPearlLand(entity, targetX, targetY, targetZ, pearlEntity, attackDamage, null);
-    }
-
-    @ApiStatus.Internal // TODO - 1.20: remove the nullable
-    public static EntityTeleportEvent.EnderPearl onEnderPearlLand(ServerPlayer entity, double targetX, double targetY, double targetZ, ThrownEnderpearl pearlEntity, float attackDamage, @Nullable HitResult hitResult)
+    public static EntityTeleportEvent.EnderPearl onEnderPearlLand(ServerPlayer entity, double targetX, double targetY, double targetZ, ThrownEnderpearl pearlEntity, float attackDamage, HitResult hitResult)
     {
         EntityTeleportEvent.EnderPearl event = new EntityTeleportEvent.EnderPearl(entity, targetX, targetY, targetZ, pearlEntity, attackDamage, hitResult);
         MinecraftForge.EVENT_BUS.post(event);

@@ -16,6 +16,7 @@ import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
 import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.common.ForgeI18n;
 import net.minecraftforge.fml.ModList;
+import net.minecraftforge.forge.snapshots.ForgeSnapshotsMod;
 import net.minecraftforge.versions.forge.ForgeVersion;
 import net.minecraftforge.versions.mcp.MCPVersion;
 
@@ -31,7 +32,7 @@ public class BrandingControl
         if (brandings == null)
         {
             ImmutableList.Builder<String> brd = ImmutableList.builder();
-            brd.add("Forge " + ForgeVersion.getVersion());
+            brd.add(ForgeSnapshotsMod.BRANDING_NAME + ' ' + ForgeVersion.getVersion());
             brd.add("Minecraft " + MCPVersion.getMCVersion());
             brd.add("MCP " + MCPVersion.getMCPVersion());
             int tModCount = ModList.get().size();
@@ -70,11 +71,11 @@ public class BrandingControl
     }
 
     public static String getClientBranding() {
-        return "forge";
+        return ForgeSnapshotsMod.BRANDING_ID;
     }
 
     public static String getServerBranding() {
-        return "forge";
+        return ForgeSnapshotsMod.BRANDING_ID;
     }
 
     public static ResourceManagerReloadListener resourceManagerReloadListener() {

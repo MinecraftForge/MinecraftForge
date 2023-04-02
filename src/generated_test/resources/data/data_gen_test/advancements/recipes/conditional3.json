@@ -33,7 +33,8 @@
           "recipes": [
             "minecraft:netherite_block"
           ]
-        }
+        },
+        "sends_telemetry_event": false
       },
       "conditions": [
         {
@@ -75,7 +76,8 @@
           "recipes": [
             "minecraft:netherite_block"
           ]
-        }
+        },
+        "sends_telemetry_event": false
       },
       "conditions": [
         {

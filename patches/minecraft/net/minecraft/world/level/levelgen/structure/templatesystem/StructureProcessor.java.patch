@@ -1,14 +1,17 @@
 --- a/net/minecraft/world/level/levelgen/structure/templatesystem/StructureProcessor.java
 +++ b/net/minecraft/world/level/levelgen/structure/templatesystem/StructureProcessor.java
-@@ -8,9 +_,36 @@
+@@ -7,12 +_,40 @@
+ import net.minecraft.world.level.ServerLevelAccessor;
  
  public abstract class StructureProcessor {
++   /**
++    * @deprecated Forge: Use {@link #process(LevelReader, BlockPos, BlockPos, StructureTemplate.StructureBlockInfo, StructureTemplate.StructureBlockInfo, StructurePlaceSettings, StructureTemplate)} instead.
++    */
++   @Deprecated
     @Nullable
--   public abstract StructureTemplate.StructureBlockInfo m_7382_(LevelReader p_74416_, BlockPos p_74417_, BlockPos p_74418_, StructureTemplate.StructureBlockInfo p_74419_, StructureTemplate.StructureBlockInfo p_74420_, StructurePlaceSettings p_74421_);
-+   @Deprecated //Forge: Use process below, with the Template context
-+   public StructureTemplate.StructureBlockInfo m_7382_(LevelReader p_74416_, BlockPos p_74417_, BlockPos p_74418_, StructureTemplate.StructureBlockInfo p_74419_, StructureTemplate.StructureBlockInfo p_74420_, StructurePlaceSettings p_74421_) {
-+      return p_74420_;
-+   }
+    public StructureTemplate.StructureBlockInfo m_7382_(LevelReader p_74416_, BlockPos p_74417_, BlockPos p_74418_, StructureTemplate.StructureBlockInfo p_74419_, StructureTemplate.StructureBlockInfo p_74420_, StructurePlaceSettings p_74421_) {
+       return p_74420_;
+    }
  
     protected abstract StructureProcessorType<?> m_6953_();
 +
@@ -36,5 +39,5 @@
 +      return entityInfo;
 +   }
  
-    public void m_271697_(LevelAccessor p_273167_, BlockPos p_273713_, BlockPos p_272620_, StructurePlaceSettings p_272830_, List<StructureTemplate.StructureBlockInfo> p_273019_) {
-    }
+    public List<StructureTemplate.StructureBlockInfo> m_276976_(ServerLevelAccessor p_278247_, BlockPos p_277590_, BlockPos p_277935_, List<StructureTemplate.StructureBlockInfo> p_278070_, List<StructureTemplate.StructureBlockInfo> p_278053_, StructurePlaceSettings p_277497_) {
+       return p_278053_;

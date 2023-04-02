@@ -13,8 +13,8 @@
              this.m_6469_(this.m_269291_().m_269549_(), 1.0F);
           }
  
--         if (!this.f_19853_.m_46469_().m_46207_(GameRules.f_46132_)) {
-+         if (!net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.f_19853_, this)) {
+-         if (!this.m_9236_().m_46469_().m_46207_(GameRules.f_46132_)) {
++         if (!net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.m_9236_(), this)) {
              return;
           }
  
@@ -22,10 +22,10 @@
              int k = Mth.m_14107_(this.m_20186_());
              int l = Mth.m_14107_(this.m_20189_() + (double)((float)(i / 2 % 2 * 2 - 1) * 0.25F));
              BlockPos blockpos = new BlockPos(j, k, l);
--            if (this.f_19853_.m_8055_(blockpos).m_60795_() && blockstate.m_60710_(this.f_19853_, blockpos)) {
-+            if (this.f_19853_.m_46859_(blockpos) && blockstate.m_60710_(this.f_19853_, blockpos)) {
-                this.f_19853_.m_46597_(blockpos, blockstate);
-                this.f_19853_.m_220407_(GameEvent.f_157797_, blockpos, GameEvent.Context.m_223719_(this, blockstate));
+-            if (this.m_9236_().m_8055_(blockpos).m_60795_() && blockstate.m_60710_(this.m_9236_(), blockpos)) {
++            if (this.m_9236_().m_46859_(blockpos) && blockstate.m_60710_(this.m_9236_(), blockpos)) {
+                this.m_9236_().m_46597_(blockpos, blockstate);
+                this.m_9236_().m_220407_(GameEvent.f_157797_, blockpos, GameEvent.Context.m_223719_(this, blockstate));
              }
 @@ -130,7 +_,7 @@
  
@@ -35,7 +35,7 @@
 +      if (false && itemstack.m_41720_() == Items.f_42574_ && this.m_6220_()) { //Forge: Moved to onSheared
           this.m_5851_(SoundSource.PLAYERS);
           this.m_146852_(GameEvent.f_157781_, p_29920_);
-          if (!this.f_19853_.f_46443_) {
+          if (!this.m_9236_().f_46443_) {
 @@ -189,5 +_,22 @@
  
     public Vec3 m_7939_() {

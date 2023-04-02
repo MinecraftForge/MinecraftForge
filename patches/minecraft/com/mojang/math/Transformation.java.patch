@@ -5,7 +5,7 @@
  import org.joml.Vector3fc;
  
 -public final class Transformation {
-+public final class Transformation implements net.minecraftforge.client.extensions.IForgeTransformation {
++public final class Transformation implements net.minecraftforge.common.extensions.IForgeTransformation {
     private final Matrix4f f_121078_;
     public static final Codec<Transformation> f_268453_ = RecordCodecBuilder.create((p_269604_) -> {
        return p_269604_.group(ExtraCodecs.f_252432_.fieldOf("translation").forGetter((p_269599_) -> {

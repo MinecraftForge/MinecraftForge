@@ -6,7 +6,7 @@
 package net.minecraftforge.client.event;
 
 import com.mojang.blaze3d.platform.Window;
-import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraftforge.client.gui.overlay.NamedGuiOverlay;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Cancelable;
@@ -26,17 +26,17 @@ import org.jetbrains.annotations.ApiStatus;
 public abstract class RenderGuiOverlayEvent extends Event
 {
     private final Window window;
-    private final PoseStack poseStack;
+    private final GuiGraphics guiGraphics;
     private final float partialTick;
     private final NamedGuiOverlay overlay;
 
     @ApiStatus.Internal
-    protected RenderGuiOverlayEvent(Window window, PoseStack poseStack, float partialTick, NamedGuiOverlay overlay)
+    protected RenderGuiOverlayEvent(Window window, GuiGraphics guiGraphics, float partialTick, NamedGuiOverlay overlay)
     {
-        this.overlay = overlay;
         this.window = window;
-        this.poseStack = poseStack;
+        this.guiGraphics = guiGraphics;
         this.partialTick = partialTick;
+        this.overlay = overlay;
     }
 
     public Window getWindow()
@@ -44,9 +44,9 @@ public abstract class RenderGuiOverlayEvent extends Event
         return window;
     }
 
-    public PoseStack getPoseStack()
+    public GuiGraphics getGuiGraphics()
     {
-        return poseStack;
+        return guiGraphics;
     }
 
     public float getPartialTick()
@@ -75,9 +75,9 @@ public abstract class RenderGuiOverlayEvent extends Event
     public static class Pre extends RenderGuiOverlayEvent
     {
         @ApiStatus.Internal
-        public Pre(Window window, PoseStack poseStack, float partialTick, NamedGuiOverlay overlay)
+        public Pre(Window window, GuiGraphics guiGraphics, float partialTick, NamedGuiOverlay overlay)
         {
-            super(window, poseStack, partialTick, overlay);
+            super(window, guiGraphics, partialTick, overlay);
         }
     }
 
@@ -92,9 +92,9 @@ public abstract class RenderGuiOverlayEvent extends Event
     public static class Post extends RenderGuiOverlayEvent
     {
         @ApiStatus.Internal
-        public Post(Window window, PoseStack poseStack, float partialTick, NamedGuiOverlay overlay)
+        public Post(Window window, GuiGraphics guiGraphics, float partialTick, NamedGuiOverlay overlay)
         {
-            super(window, poseStack, partialTick, overlay);
+            super(window, guiGraphics, partialTick, overlay);
         }
     }
 }

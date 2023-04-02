@@ -1,32 +1,32 @@
 --- a/com/mojang/blaze3d/pipeline/RenderTarget.java
 +++ b/com/mojang/blaze3d/pipeline/RenderTarget.java
-@@ -112,7 +_,10 @@
-             GlStateManager.m_84331_(3553, 34892, 0);
-             GlStateManager.m_84331_(3553, 10242, 33071);
-             GlStateManager.m_84331_(3553, 10243, 33071);
+@@ -113,7 +_,10 @@
+             GlStateManager._texParameter(3553, 34892, 0);
+             GlStateManager._texParameter(3553, 10242, 33071);
+             GlStateManager._texParameter(3553, 10243, 33071);
 +         if (!stencilEnabled)
-             GlStateManager.m_84209_(3553, 0, 6402, this.f_83915_, this.f_83916_, 0, 6402, 5126, (IntBuffer)null);
+             GlStateManager._texImage2D(3553, 0, 6402, this.f_83915_, this.f_83916_, 0, 6402, 5126, (IntBuffer)null);
 +         else
-+            GlStateManager.m_84209_(3553, 0, org.lwjgl.opengl.GL30.GL_DEPTH32F_STENCIL8, this.f_83915_, this.f_83916_, 0, org.lwjgl.opengl.GL30.GL_DEPTH_STENCIL, org.lwjgl.opengl.GL30.GL_FLOAT_32_UNSIGNED_INT_24_8_REV, null);
++            GlStateManager._texImage2D(3553, 0, org.lwjgl.opengl.GL30.GL_DEPTH32F_STENCIL8, this.f_83915_, this.f_83916_, 0, org.lwjgl.opengl.GL30.GL_DEPTH_STENCIL, org.lwjgl.opengl.GL30.GL_FLOAT_32_UNSIGNED_INT_24_8_REV, null);
           }
  
           this.m_83936_(9728);
-@@ -123,7 +_,14 @@
-          GlStateManager.m_84486_(36160, this.f_83920_);
-          GlStateManager.m_84173_(36160, 36064, 3553, this.f_83923_, 0);
+@@ -124,7 +_,14 @@
+          GlStateManager._glBindFramebuffer(36160, this.f_83920_);
+          GlStateManager._glFramebufferTexture2D(36160, 36064, 3553, this.f_83923_, 0);
           if (this.f_83919_) {
 +         if(!stencilEnabled)
-             GlStateManager.m_84173_(36160, 36096, 3553, this.f_83924_, 0);
+             GlStateManager._glFramebufferTexture2D(36160, 36096, 3553, this.f_83924_, 0);
 +         else if(net.minecraftforge.common.ForgeConfig.CLIENT.useCombinedDepthStencilAttachment.get()) {
-+            GlStateManager.m_84173_(org.lwjgl.opengl.GL30.GL_FRAMEBUFFER, org.lwjgl.opengl.GL30.GL_DEPTH_STENCIL_ATTACHMENT, 3553, this.f_83924_, 0);
++            GlStateManager._glFramebufferTexture2D(org.lwjgl.opengl.GL30.GL_FRAMEBUFFER, org.lwjgl.opengl.GL30.GL_DEPTH_STENCIL_ATTACHMENT, 3553, this.f_83924_, 0);
 +         } else {
-+            GlStateManager.m_84173_(org.lwjgl.opengl.GL30.GL_FRAMEBUFFER, org.lwjgl.opengl.GL30.GL_DEPTH_ATTACHMENT, 3553, this.f_83924_, 0);
-+            GlStateManager.m_84173_(org.lwjgl.opengl.GL30.GL_FRAMEBUFFER, org.lwjgl.opengl.GL30.GL_STENCIL_ATTACHMENT, 3553, this.f_83924_, 0);
++            GlStateManager._glFramebufferTexture2D(org.lwjgl.opengl.GL30.GL_FRAMEBUFFER, org.lwjgl.opengl.GL30.GL_DEPTH_ATTACHMENT, 3553, this.f_83924_, 0);
++            GlStateManager._glFramebufferTexture2D(org.lwjgl.opengl.GL30.GL_FRAMEBUFFER, org.lwjgl.opengl.GL30.GL_STENCIL_ATTACHMENT, 3553, this.f_83924_, 0);
 +         }
           }
  
           this.m_83949_();
-@@ -291,4 +_,27 @@
+@@ -292,4 +_,27 @@
     public int m_83980_() {
        return this.f_83924_;
     }

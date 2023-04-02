@@ -7,17 +7,15 @@ package net.minecraftforge.client.gui.overlay;
 
 import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.Gui;
-import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.DebugScreenOverlay;
 import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.resources.language.I18n;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.util.StringUtil;
 import net.minecraft.world.effect.MobEffects;
@@ -40,7 +38,6 @@ import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.MinecraftForge;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -77,12 +74,7 @@ public class ForgeGui extends Gui
         return minecraft;
     }
 
-    public void setupOverlayRenderState(boolean blend, boolean depthText)
-    {
-        setupOverlayRenderState(blend, depthText, Gui.GUI_ICONS_LOCATION);
-    }
-
-    public void setupOverlayRenderState(boolean blend, boolean depthTest, @Nullable ResourceLocation texture)
+    public void setupOverlayRenderState(boolean blend, boolean depthTest)
     {
         if (blend)
         {
@@ -103,17 +95,12 @@ public class ForgeGui extends Gui
             RenderSystem.disableDepthTest();
         }
 
-        if (texture != null)
-        {
-            bind(texture);
-        }
-
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
     }
 
     @Override
-    public void render(PoseStack poseStack, float partialTick)
+    public void render(GuiGraphics guiGraphics, float partialTick)
     {
         this.screenWidth = this.minecraft.getWindow().getGuiScaledWidth();
         this.screenHeight = this.minecraft.getWindow().getGuiScaledHeight();
@@ -121,7 +108,7 @@ public class ForgeGui extends Gui
         rightHeight = 39;
         leftHeight = 39;
 
-        if (MinecraftForge.EVENT_BUS.post(new RenderGuiEvent.Pre(minecraft.getWindow(), poseStack, partialTick)))
+        if (MinecraftForge.EVENT_BUS.post(new RenderGuiEvent.Pre(minecraft.getWindow(), guiGraphics, partialTick)))
         {
             return;
         }
@@ -134,9 +121,9 @@ public class ForgeGui extends Gui
             try
             {
                 IGuiOverlay overlay = entry.overlay();
-                if (pre(entry, poseStack)) return;
-                overlay.render(this, poseStack, partialTick, screenWidth, screenHeight);
-                post(entry, poseStack);
+                if (pre(entry, guiGraphics)) return;
+                overlay.render(this, guiGraphics, partialTick, screenWidth, screenHeight);
+                post(entry, guiGraphics);
             } catch (Exception e)
             {
                 LOGGER.error("Error rendering overlay '{}'", entry.id(), e);
@@ -145,7 +132,7 @@ public class ForgeGui extends Gui
 
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 
-        MinecraftForge.EVENT_BUS.post(new RenderGuiEvent.Post(minecraft.getWindow(), poseStack, partialTick));
+        MinecraftForge.EVENT_BUS.post(new RenderGuiEvent.Post(minecraft.getWindow(), guiGraphics, partialTick));
     }
 
     public boolean shouldDrawSurvivalElements()
@@ -153,21 +140,20 @@ public class ForgeGui extends Gui
         return minecraft.gameMode.canHurtPlayer() && minecraft.getCameraEntity() instanceof Player;
     }
 
-    protected void renderSubtitles(PoseStack poseStack)
+    protected void renderSubtitles(GuiGraphics guiGraphics)
     {
-        this.subtitleOverlay.render(poseStack);
+        this.subtitleOverlay.render(guiGraphics);
     }
 
-    protected void renderBossHealth(PoseStack poseStack)
+    protected void renderBossHealth(GuiGraphics guiGraphics)
     {
-        bind(GuiComponent.GUI_ICONS_LOCATION);
         RenderSystem.defaultBlendFunc();
         minecraft.getProfiler().push("bossHealth");
-        this.bossOverlay.render(poseStack);
+        this.bossOverlay.render(guiGraphics);
         minecraft.getProfiler().pop();
     }
 
-    void renderSpyglassOverlay(PoseStack stack)
+    void renderSpyglassOverlay(GuiGraphics guiGraphics)
     {
         float deltaFrame = this.minecraft.getDeltaFrameTime();
         this.scopeScale = Mth.lerp(0.5F * deltaFrame, this.scopeScale, 1.125F);
@@ -175,7 +161,7 @@ public class ForgeGui extends Gui
         {
             if (this.minecraft.player.isScoping())
             {
-                this.renderSpyglassOverlay(stack, this.scopeScale);
+                this.renderSpyglassOverlay(guiGraphics, this.scopeScale);
             }
             else
             {
@@ -184,7 +170,7 @@ public class ForgeGui extends Gui
         }
     }
 
-    void renderHelmet(float partialTick, PoseStack poseStack)
+    void renderHelmet(float partialTick, GuiGraphics guiGraphics)
     {
         ItemStack itemstack = this.minecraft.player.getInventory().getArmor(3);
 
@@ -193,7 +179,7 @@ public class ForgeGui extends Gui
             Item item = itemstack.getItem();
             if (item == Blocks.CARVED_PUMPKIN.asItem())
             {
-                renderTextureOverlay(poseStack, PUMPKIN_BLUR_LOCATION, 1.0F);
+                renderTextureOverlay(guiGraphics, PUMPKIN_BLUR_LOCATION, 1.0F);
             }
             else
             {
@@ -202,15 +188,15 @@ public class ForgeGui extends Gui
         }
     }
 
-    void renderFrostbite(PoseStack pStack)
+    void renderFrostbite(GuiGraphics guiGraphics)
     {
         if (this.minecraft.player.getTicksFrozen() > 0)
         {
-            this.renderTextureOverlay(pStack, POWDER_SNOW_OUTLINE_LOCATION, this.minecraft.player.getPercentFrozen());
+            this.renderTextureOverlay(guiGraphics, POWDER_SNOW_OUTLINE_LOCATION, this.minecraft.player.getPercentFrozen());
         }
     }
 
-    protected void renderArmor(PoseStack poseStack, int width, int height)
+    protected void renderArmor(GuiGraphics guiGraphics, int width, int height)
     {
         minecraft.getProfiler().push("armor");
 
@@ -223,15 +209,15 @@ public class ForgeGui extends Gui
         {
             if (i < level)
             {
-                blit(poseStack, left, top, 34, 9, 9, 9);
+                guiGraphics.blit(GUI_ICONS_LOCATION, left, top, 34, 9, 9, 9);
             }
             else if (i == level)
             {
-                blit(poseStack, left, top, 25, 9, 9, 9);
+                guiGraphics.blit(GUI_ICONS_LOCATION, left, top, 25, 9, 9, 9);
             }
             else if (i > level)
             {
-                blit(poseStack, left, top, 16, 9, 9, 9);
+                guiGraphics.blit(GUI_ICONS_LOCATION, left, top, 16, 9, 9, 9);
             }
             left += 8;
         }
@@ -242,17 +228,15 @@ public class ForgeGui extends Gui
     }
 
     @Override
-    protected void renderPortalOverlay(PoseStack stack, float partialTick)
+    protected void renderPortalOverlay(GuiGraphics guiGraphics, float alpha)
     {
-        float f1 = Mth.lerp(partialTick, this.minecraft.player.oPortalTime, this.minecraft.player.portalTime);
-
-        if (f1 > 0.0F)
+        if (alpha > 0.0F)
         {
-            super.renderPortalOverlay(stack, f1);
+            super.renderPortalOverlay(guiGraphics, alpha);
         }
     }
 
-    protected void renderAir(int width, int height, PoseStack poseStack)
+    protected void renderAir(int width, int height, GuiGraphics guiGraphics)
     {
         minecraft.getProfiler().push("air");
         Player player = (Player) this.minecraft.getCameraEntity();
@@ -268,7 +252,7 @@ public class ForgeGui extends Gui
 
             for (int i = 0; i < full + partial; ++i)
             {
-                blit(poseStack, left - i * 8 - 9, top, (i < full ? 16 : 25), 18, 9, 9);
+                guiGraphics.blit(GUI_ICONS_LOCATION, left - i * 8 - 9, top, (i < full ? 16 : 25), 18, 9, 9);
             }
             rightHeight += 10;
         }
@@ -277,9 +261,8 @@ public class ForgeGui extends Gui
         minecraft.getProfiler().pop();
     }
 
-    public void renderHealth(int width, int height, PoseStack pStack)
+    public void renderHealth(int width, int height, GuiGraphics guiGraphics)
     {
-        bind(GUI_ICONS_LOCATION);
         minecraft.getProfiler().push("health");
         RenderSystem.enableBlend();
 
@@ -328,13 +311,13 @@ public class ForgeGui extends Gui
             regen = this.tickCount % Mth.ceil(healthMax + 5.0F);
         }
 
-        this.renderHearts(pStack, player, left, top, rowHeight, regen, healthMax, health, healthLast, absorb, highlight);
+        this.renderHearts(guiGraphics, player, left, top, rowHeight, regen, healthMax, health, healthLast, absorb, highlight);
 
         RenderSystem.disableBlend();
         minecraft.getProfiler().pop();
     }
 
-    public void renderFood(int width, int height, PoseStack poseStack)
+    public void renderFood(int width, int height, GuiGraphics guiGraphics)
     {
         minecraft.getProfiler().push("food");
 
@@ -368,24 +351,22 @@ public class ForgeGui extends Gui
                 y = top + (random.nextInt(3) - 1);
             }
 
-            blit(poseStack, x, y, 16 + background * 9, 27, 9, 9);
+            guiGraphics.blit(GUI_ICONS_LOCATION, x, y, 16 + background * 9, 27, 9, 9);
 
             if (idx < level)
-                blit(poseStack, x, y, icon + 36, 27, 9, 9);
+                guiGraphics.blit(GUI_ICONS_LOCATION, x, y, icon + 36, 27, 9, 9);
             else if (idx == level)
-                blit(poseStack, x, y, icon + 45, 27, 9, 9);
+                guiGraphics.blit(GUI_ICONS_LOCATION, x, y, icon + 45, 27, 9, 9);
         }
         RenderSystem.disableBlend();
         minecraft.getProfiler().pop();
     }
 
-    protected void renderSleepFade(int width, int height, PoseStack poseStack)
+    protected void renderSleepFade(int width, int height, GuiGraphics guiGraphics)
     {
         if (minecraft.player.getSleepTimer() > 0)
         {
             minecraft.getProfiler().push("sleep");
-            RenderSystem.disableDepthTest();
-            // RenderSystem.disableAlphaTest();
             int sleepTime = minecraft.player.getSleepTimer();
             float opacity = (float) sleepTime / 100.0F;
 
@@ -395,42 +376,38 @@ public class ForgeGui extends Gui
             }
 
             int color = (int) (220.0F * opacity) << 24 | 1052704;
-            fill(poseStack, 0, 0, width, height, color);
-            // RenderSystem.enableAlphaTest();
-            RenderSystem.enableDepthTest();
+            guiGraphics.fill(0, 0, width, height, color);
             minecraft.getProfiler().pop();
         }
     }
 
-    protected void renderExperience(int x, PoseStack poseStack)
+    protected void renderExperience(int x, GuiGraphics guiGraphics)
     {
-        bind(GUI_ICONS_LOCATION);
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+        guiGraphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.disableBlend();
 
         if (minecraft.gameMode.hasExperience())
         {
-            super.renderExperienceBar(poseStack, x);
+            super.renderExperienceBar(guiGraphics, x);
         }
         RenderSystem.enableBlend();
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+        guiGraphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
     }
 
     @Override
-    public void renderJumpMeter(PlayerRideableJumping playerRideableJumping, PoseStack poseStack, int x)
+    public void renderJumpMeter(PlayerRideableJumping playerRideableJumping, GuiGraphics guiGraphics, int x)
     {
-        bind(GUI_ICONS_LOCATION);
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+        guiGraphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.disableBlend();
 
-        super.renderJumpMeter(playerRideableJumping, poseStack, x);
+        super.renderJumpMeter(playerRideableJumping, guiGraphics, x);
 
         RenderSystem.enableBlend();
         minecraft.getProfiler().pop();
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+        guiGraphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
     }
 
-    protected void renderHUDText(int width, int height, PoseStack poseStack)
+    protected void renderHUDText(int width, int height, GuiGraphics guiGraphics)
     {
         minecraft.getProfiler().push("forgeHudText");
         RenderSystem.defaultBlendFunc();
@@ -458,7 +435,7 @@ public class ForgeGui extends Gui
             listR.addAll(debugOverlay.getRight());
         }
 
-        var event = new CustomizeGuiOverlayEvent.DebugText(minecraft.getWindow(), poseStack, minecraft.getFrameTime(), listL, listR);
+        var event = new CustomizeGuiOverlayEvent.DebugText(minecraft.getWindow(), guiGraphics, minecraft.getFrameTime(), listL, listR);
         MinecraftForge.EVENT_BUS.post(event);
 
         int top = 2;
@@ -466,8 +443,8 @@ public class ForgeGui extends Gui
         {
             if (msg != null && !msg.isEmpty())
             {
-                fill(poseStack, 1, top - 1, 2 + font.width(msg) + 1, top + font.lineHeight - 1, -1873784752);
-                font.draw(poseStack, msg, 2, top, 14737632);
+                guiGraphics.fill(1, top - 1, 2 + font.width(msg) + 1, top + font.lineHeight - 1, -1873784752);
+                guiGraphics.drawString(font, msg, 2, top, 14737632, false);
             }
             top += font.lineHeight;
         }
@@ -479,8 +456,8 @@ public class ForgeGui extends Gui
             {
                 int w = font.width(msg);
                 int left = width - 2 - w;
-                fill(poseStack, left - 1, top - 1, left + w + 1, top + font.lineHeight - 1, -1873784752);
-                font.draw(poseStack, msg, left, top, 14737632);
+                guiGraphics.fill(left - 1, top - 1, left + w + 1, top + font.lineHeight - 1, -1873784752);
+                guiGraphics.drawString(font, msg, left, top, 14737632, false);
             }
             top += font.lineHeight;
         }
@@ -488,15 +465,15 @@ public class ForgeGui extends Gui
         minecraft.getProfiler().pop();
     }
 
-    protected void renderFPSGraph(PoseStack poseStack)
+    protected void renderFPSGraph(GuiGraphics guiGraphics)
     {
         if (this.minecraft.options.renderDebug && this.minecraft.options.renderFpsChart)
         {
-            this.debugOverlay.render(poseStack);
+            this.debugOverlay.render(guiGraphics);
         }
     }
 
-    protected void renderRecordOverlay(int width, int height, float partialTick, PoseStack pStack)
+    protected void renderRecordOverlay(int width, int height, float partialTick, GuiGraphics guiGraphics)
     {
         if (overlayMessageTime > 0)
         {
@@ -507,22 +484,23 @@ public class ForgeGui extends Gui
 
             if (opacity > 8)
             {
-                pStack.pushPose();
-                pStack.translate(width / 2D, height - 68, 0.0D);
+                guiGraphics.pose().pushPose();
+                guiGraphics.pose().translate(width / 2D, height - 68, 0.0D);
                 RenderSystem.enableBlend();
                 RenderSystem.defaultBlendFunc();
                 int color = (animateOverlayMessageColor ? Mth.hsvToRgb(hue / 50.0F, 0.7F, 0.6F) & WHITE : WHITE);
-                drawBackdrop(pStack, font, -4, font.width(overlayMessageString), 16777215 | (opacity << 24));
-                font.drawShadow(pStack, overlayMessageString.getVisualOrderText(), -font.width(overlayMessageString) / 2, -4, color | (opacity << 24));
+                int messageWidth = font.width(overlayMessageString);
+                drawBackdrop(guiGraphics, font, -4, messageWidth, 16777215 | (opacity << 24));
+                guiGraphics.drawString(font, overlayMessageString.getVisualOrderText(), -messageWidth / 2, -4, color | (opacity << 24));
                 RenderSystem.disableBlend();
-                pStack.popPose();
+                guiGraphics.pose().popPose();
             }
 
             minecraft.getProfiler().pop();
         }
     }
 
-    protected void renderTitle(int width, int height, float partialTick, PoseStack pStack)
+    protected void renderTitle(int width, int height, float partialTick, GuiGraphics guiGraphics)
     {
         if (title != null && titleTime > 0)
         {
@@ -541,50 +519,50 @@ public class ForgeGui extends Gui
 
             if (opacity > 8)
             {
-                pStack.pushPose();
-                pStack.translate(width / 2D, height / 2D, 0.0D);
+                guiGraphics.pose().pushPose();
+                guiGraphics.pose().translate(width / 2D, height / 2D, 0.0D);
                 RenderSystem.enableBlend();
                 RenderSystem.defaultBlendFunc();
-                pStack.pushPose();
-                pStack.scale(4.0F, 4.0F, 4.0F);
+                guiGraphics.pose().pushPose();
+                guiGraphics.pose().scale(4.0F, 4.0F, 4.0F);
                 int l = opacity << 24 & -16777216;
-                this.getFont().drawShadow(pStack, this.title.getVisualOrderText(), (float) (-this.getFont().width(this.title) / 2), -10.0F, 16777215 | l);
-                pStack.popPose();
+                guiGraphics.drawString(this.font, this.title.getVisualOrderText(), -this.getFont().width(this.title) / 2, -10, 16777215 | l, true);
+                guiGraphics.pose().popPose();
                 if (this.subtitle != null)
                 {
-                    pStack.pushPose();
-                    pStack.scale(2.0F, 2.0F, 2.0F);
-                    this.getFont().drawShadow(pStack, this.subtitle.getVisualOrderText(), (float) (-this.getFont().width(this.subtitle) / 2), 5.0F, 16777215 | l);
-                    pStack.popPose();
+                    guiGraphics.pose().pushPose();
+                    guiGraphics.pose().scale(2.0F, 2.0F, 2.0F);
+                    guiGraphics.drawString(this.font, this.subtitle.getVisualOrderText(), -this.getFont().width(this.subtitle) / 2, 5, 16777215 | l, true);
+                    guiGraphics.pose().popPose();
                 }
                 RenderSystem.disableBlend();
-                pStack.popPose();
+                guiGraphics.pose().popPose();
             }
 
             this.minecraft.getProfiler().pop();
         }
     }
 
-    protected void renderChat(int width, int height, PoseStack pStack)
+    protected void renderChat(int width, int height, GuiGraphics guiGraphics)
     {
         minecraft.getProfiler().push("chat");
 
         Window window = minecraft.getWindow();
-        var event = new CustomizeGuiOverlayEvent.Chat(window, pStack, minecraft.getFrameTime(), 0, height - 40);
+        var event = new CustomizeGuiOverlayEvent.Chat(window, guiGraphics, minecraft.getFrameTime(), 0, height - 40);
         MinecraftForge.EVENT_BUS.post(event);
 
-        pStack.pushPose();
+        guiGraphics.pose().pushPose();
         // We give the absolute Y position of the chat component in the event and account for the chat component's own offsetting here.
-        pStack.translate(event.getPosX(), (event.getPosY() - height + 40) / chat.getScale(), 0.0D);
+        guiGraphics.pose().translate(event.getPosX(), (event.getPosY() - height + 40) / chat.getScale(), 0.0D);
         int mouseX = Mth.floor(minecraft.mouseHandler.xpos() * window.getGuiScaledWidth() / window.getScreenWidth());
         int mouseY = Mth.floor(minecraft.mouseHandler.ypos() * window.getGuiScaledHeight() / window.getScreenHeight());
-        chat.render(pStack, tickCount, mouseX, mouseY);
-        pStack.popPose();
+        chat.render(guiGraphics, tickCount, mouseX, mouseY);
+        guiGraphics.pose().popPose();
 
         minecraft.getProfiler().pop();
     }
 
-    protected void renderPlayerList(int width, int height, PoseStack poseStack)
+    protected void renderPlayerList(int width, int height, GuiGraphics guiGraphics)
     {
         Objective scoreobjective = this.minecraft.level.getScoreboard().getDisplayObjective(0);
         ClientPacketListener handler = minecraft.player.connection;
@@ -592,7 +570,7 @@ public class ForgeGui extends Gui
         if (minecraft.options.keyPlayerList.isDown() && (!minecraft.isLocalServer() || handler.getOnlinePlayers().size() > 1 || scoreobjective != null))
         {
             this.tabList.setVisible(true);
-            this.tabList.render(poseStack, width, this.minecraft.level.getScoreboard(), scoreobjective);
+            this.tabList.render(guiGraphics, width, this.minecraft.level.getScoreboard(), scoreobjective);
 
         }
         else
@@ -601,13 +579,11 @@ public class ForgeGui extends Gui
         }
     }
 
-    protected void renderHealthMount(int width, int height, PoseStack poseStack)
+    protected void renderHealthMount(int width, int height, GuiGraphics guiGraphics)
     {
         Player player = (Player) minecraft.getCameraEntity();
         Entity tmp = player.getVehicle();
         if (!(tmp instanceof LivingEntity)) return;
-
-        bind(GUI_ICONS_LOCATION);
 
         boolean unused = false;
         int left_align = width / 2 + 91;
@@ -636,12 +612,12 @@ public class ForgeGui extends Gui
             for (int i = 0; i < rowCount; ++i)
             {
                 int x = left_align - i * 8 - 9;
-                blit(poseStack, x, top, BACKGROUND, 9, 9, 9);
+                guiGraphics.blit(GUI_ICONS_LOCATION, x, top, BACKGROUND, 9, 9, 9);
 
                 if (i * 2 + 1 + heart < health)
-                    blit(poseStack, x, top, FULL, 9, 9, 9);
+                    guiGraphics.blit(GUI_ICONS_LOCATION, x, top, FULL, 9, 9, 9);
                 else if (i * 2 + 1 + heart == health)
-                    blit(poseStack, x, top, HALF, 9, 9, 9);
+                    guiGraphics.blit(GUI_ICONS_LOCATION, x, top, HALF, 9, 9, 9);
             }
 
             rightHeight += 10;
@@ -650,19 +626,14 @@ public class ForgeGui extends Gui
     }
 
     //Helper macros
-    private boolean pre(NamedGuiOverlay overlay, PoseStack poseStack)
+    private boolean pre(NamedGuiOverlay overlay, GuiGraphics guiGraphics)
     {
-        return MinecraftForge.EVENT_BUS.post(new RenderGuiOverlayEvent.Pre(minecraft.getWindow(), poseStack, minecraft.getFrameTime(), overlay));
+        return MinecraftForge.EVENT_BUS.post(new RenderGuiOverlayEvent.Pre(minecraft.getWindow(), guiGraphics, minecraft.getFrameTime(), overlay));
     }
 
-    private void post(NamedGuiOverlay overlay, PoseStack poseStack)
+    private void post(NamedGuiOverlay overlay, GuiGraphics guiGraphics)
     {
-        MinecraftForge.EVENT_BUS.post(new RenderGuiOverlayEvent.Post(minecraft.getWindow(), poseStack, minecraft.getFrameTime(), overlay));
-    }
-
-    private void bind(ResourceLocation res)
-    {
-        RenderSystem.setShaderTexture(0, res);
+        MinecraftForge.EVENT_BUS.post(new RenderGuiOverlayEvent.Post(minecraft.getWindow(), guiGraphics, minecraft.getFrameTime(), overlay));
     }
 
     private static class ForgeDebugScreenOverlay extends DebugScreenOverlay
@@ -683,10 +654,10 @@ public class ForgeGui extends Gui
         }
 
         @Override
-        protected void drawGameInformation(PoseStack poseStack) {}
+        protected void drawGameInformation(GuiGraphics guiGraphics) {}
 
         @Override
-        protected void drawSystemInformation(PoseStack poseStack) {}
+        protected void drawSystemInformation(GuiGraphics guiGraphics) {}
 
         private List<String> getLeft()
         {

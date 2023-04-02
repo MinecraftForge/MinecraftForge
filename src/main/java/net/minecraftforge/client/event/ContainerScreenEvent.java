@@ -5,7 +5,7 @@
 
 package net.minecraftforge.client.event;
 
-import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Cancelable;
@@ -53,25 +53,25 @@ public abstract class ContainerScreenEvent extends Event
      */
     public static abstract class Render extends ContainerScreenEvent
     {
-        private final PoseStack poseStack;
+        private final GuiGraphics guiGraphics;
         private final int mouseX;
         private final int mouseY;
 
         @ApiStatus.Internal
-        protected Render(AbstractContainerScreen<?> guiContainer, PoseStack poseStack, int mouseX, int mouseY)
+        protected Render(AbstractContainerScreen<?> guiContainer, GuiGraphics guiGraphics, int mouseX, int mouseY)
         {
             super(guiContainer);
-            this.poseStack = poseStack;
+            this.guiGraphics = guiGraphics;
             this.mouseX = mouseX;
             this.mouseY = mouseY;
         }
 
         /**
-         * {@return the pose stack used for rendering}
+         * {@return the gui graphics used for rendering}
          */
-        public PoseStack getPoseStack()
+        public GuiGraphics getGuiGraphics()
         {
-            return poseStack;
+            return guiGraphics;
         }
 
         /**
@@ -105,9 +105,9 @@ public abstract class ContainerScreenEvent extends Event
         public static class Foreground extends Render
         {
             @ApiStatus.Internal
-            public Foreground(AbstractContainerScreen<?> guiContainer, PoseStack poseStack, int mouseX, int mouseY)
+            public Foreground(AbstractContainerScreen<?> guiContainer, GuiGraphics guiGraphics, int mouseX, int mouseY)
             {
-                super(guiContainer, poseStack, mouseX, mouseY);
+                super(guiContainer, guiGraphics, mouseX, mouseY);
             }
         }
 
@@ -123,9 +123,9 @@ public abstract class ContainerScreenEvent extends Event
         public static class Background extends Render
         {
             @ApiStatus.Internal
-            public Background(AbstractContainerScreen<?> guiContainer, PoseStack poseStack, int mouseX, int mouseY)
+            public Background(AbstractContainerScreen<?> guiContainer, GuiGraphics guiGraphics, int mouseX, int mouseY)
             {
-                super(guiContainer, poseStack, mouseX, mouseY);
+                super(guiContainer, guiGraphics, mouseX, mouseY);
             }
         }
     }

@@ -47,7 +47,7 @@ class GenerateCommand
         BlockPos chunkpos = new BlockPos(pos.getX() >> 4, 0, pos.getZ() >> 4);
 
         ChunkGenWorker worker = new ChunkGenWorker(source, chunkpos, count, dim, interval);
-        source.sendSuccess(worker.getStartMessage(source), true);
+        source.sendSuccess(() -> worker.getStartMessage(source), true);
         WorldWorkerManager.addWorker(worker);
 
         return 0;

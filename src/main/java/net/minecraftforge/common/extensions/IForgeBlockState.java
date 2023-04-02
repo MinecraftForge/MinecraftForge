@@ -19,6 +19,7 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.FishingHook;
 import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.level.SignalGetter;
 import net.minecraft.world.level.levelgen.feature.configurations.TreeConfiguration;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.item.ItemStack;
@@ -382,13 +383,13 @@ public interface IForgeBlockState
     }
 
    /**
-    * Called to determine whether to allow the a block to handle its own indirect power rather than using the default rules.
+    * Called to determine whether to allow the block to handle its own indirect power rather than using the default rules.
     * @param level The level
     * @param pos Block position in level
     * @param side The INPUT side of the block to be powered - ie the opposite of this block's output side
     * @return Whether Block#isProvidingWeakPower should be called when determining indirect power
     */
-    default boolean shouldCheckWeakPower(LevelReader level, BlockPos pos, Direction side)
+    default boolean shouldCheckWeakPower(SignalGetter level, BlockPos pos, Direction side)
     {
         return self().getBlock().shouldCheckWeakPower(self(), level, pos, side);
     }
@@ -669,7 +670,7 @@ public interface IForgeBlockState
      */
     default boolean isScaffolding(LivingEntity entity)
     {
-        return self().getBlock().isScaffolding(self(), entity.level, entity.blockPosition(), entity);
+        return self().getBlock().isScaffolding(self(), entity.level(), entity.blockPosition(), entity);
     }
 
     /**

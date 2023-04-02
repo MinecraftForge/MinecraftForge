@@ -53,13 +53,15 @@ public class ResourcePackLoader {
     @NotNull
     public static PathPackResources createPackForMod(IModFileInfo mf)
     {
-        return new PathPackResources(mf.getFile().getFileName(), false, mf.getFile().getFilePath()){
-            final IModFile modFile = mf.getFile();
+        return new PathPackResources(mf.getFile().getFileName(), true, mf.getFile().getFilePath())
+        {
+            private final IModFile modFile = mf.getFile();
+
             @NotNull
             @Override
             protected Path resolve(@NotNull String... paths)
             {
-                return modFile.findResource(paths);
+                return this.modFile.findResource(paths);
             }
         };
     }

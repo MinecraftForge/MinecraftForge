@@ -7,6 +7,7 @@ package net.minecraftforge.common.util;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.Writer;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Map;
@@ -44,7 +45,7 @@ public class SortedProperties extends Properties
         return Collections.enumeration(new TreeSet<>(super.keySet()));
     }
 
-    public static void store(Properties props, OutputStream stream, String comment) throws IOException
+    public static void store(Properties props, Writer stream, String comment) throws IOException
     {
         SortedProperties sorted = new SortedProperties();
         sorted.putAll(props);

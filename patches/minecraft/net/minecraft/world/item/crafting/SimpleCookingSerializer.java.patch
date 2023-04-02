@@ -3,7 +3,7 @@
 @@ -22,11 +_,17 @@
        CookingBookCategory cookingbookcategory = CookingBookCategory.f_244271_.m_262792_(GsonHelper.m_13851_(p_44348_, "category", (String)null), CookingBookCategory.MISC);
        JsonElement jsonelement = (JsonElement)(GsonHelper.m_13885_(p_44348_, "ingredient") ? GsonHelper.m_13933_(p_44348_, "ingredient") : GsonHelper.m_13930_(p_44348_, "ingredient"));
-       Ingredient ingredient = Ingredient.m_43917_(jsonelement);
+       Ingredient ingredient = Ingredient.m_288218_(jsonelement, false);
 +      //Forge: Check if primitive string to keep vanilla or a object which can contain a count field.
 +      if (!p_44348_.has("result")) throw new com.google.gson.JsonSyntaxException("Missing result, expected to find a string or object");
 +      ItemStack itemstack;

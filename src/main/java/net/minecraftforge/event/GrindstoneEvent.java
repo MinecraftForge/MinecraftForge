@@ -60,7 +60,7 @@ public abstract class GrindstoneEvent extends Event
 
     /**
      * This event is {@link Cancelable} <br>
-     * {@link OnplaceItem} is fired when the inputs to a grindstone are changed. <br>
+     * {@link OnPlaceItem} is fired when the inputs to a grindstone are changed. <br>
      *
      * The following rules apply:
      * <ul>
@@ -79,11 +79,11 @@ public abstract class GrindstoneEvent extends Event
      * </ul>
      */
     @Cancelable
-    public static class OnplaceItem extends GrindstoneEvent
+    public static class OnPlaceItem extends GrindstoneEvent
     {
         private ItemStack output;
 
-        public OnplaceItem(ItemStack top, ItemStack bottom, int xp)
+        public OnPlaceItem(ItemStack top, ItemStack bottom, int xp)
         {
             super(top, bottom, xp);
             this.output = ItemStack.EMPTY;

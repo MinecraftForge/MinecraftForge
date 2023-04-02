@@ -5,58 +5,59 @@
 
 package net.minecraftforge.debug.client;
 
-import com.google.common.collect.ImmutableMap;
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.datafixers.util.Either;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiComponent;
-import net.minecraft.client.gui.font.FontManager;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
-import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.network.chat.Component;
-import net.minecraft.server.packs.resources.ReloadableResourceManager;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
-import net.minecraft.world.item.*;
+import net.minecraft.world.item.CreativeModeTabs;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RegisterClientTooltipComponentFactoriesEvent;
 import net.minecraftforge.client.event.RenderTooltipEvent;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.CreativeModeTabEvent;
+import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLEnvironment;
-import net.minecraftforge.registries.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegistryObject;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Mod(CustomTooltipTest.ID)
 public class CustomTooltipTest
 {
-
     static final boolean ENABLED = true;
     static final String ID = "custom_tooltip_test";
 
     private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, ID);
-    static final RegistryObject<Item> CUSTOM_ITEM = ITEMS.register(
-            "test_item",
-            () -> new CustomItemWithTooltip(new Item.Properties())
-    );
+    static final RegistryObject<Item> CUSTOM_ITEM = ITEMS.register("test_item", () -> new CustomItemWithTooltip(new Item.Properties()));
 
     public CustomTooltipTest()
     {
-        if (ENABLED) {
+        if (ENABLED)
+        {
             IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
             if (FMLEnvironment.dist.isClient())
             {
@@ -68,19 +69,16 @@ public class CustomTooltipTest
         }
     }
 
-    private void addCreative(CreativeModeTabEvent.BuildContents event)
+    private void addCreative(BuildCreativeModeTabContentsEvent event)
     {
-        if (event.getTab() == CreativeModeTabs.INGREDIENTS)
+        if (event.getTabKey() == CreativeModeTabs.INGREDIENTS)
             event.accept(CUSTOM_ITEM);
     }
 
-    static record CustomTooltip(int color) implements TooltipComponent
-    {
-    }
+    record CustomTooltip(int color) implements TooltipComponent {}
 
     record CustomClientTooltip(CustomTooltip tooltip) implements ClientTooltipComponent
     {
-
         @Override
         public int getHeight()
         {
@@ -94,9 +92,9 @@ public class CustomTooltipTest
         }
 
         @Override
-        public void renderImage(Font font, int x, int y, PoseStack poseStack, ItemRenderer itemRenderer_)
+        public void renderImage(Font font, int x, int y, GuiGraphics graphics)
         {
-            GuiComponent.fill(poseStack, x, y,  x + 10, y+ 10, tooltip.color);
+            graphics.fill(x, y, x + 10, y + 10,tooltip.color);
         }
     }
 
@@ -117,10 +115,10 @@ public class CustomTooltipTest
         @Override
         public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand)
         {
-/*            if (level.isClientSide) Update to 1.19.3: Disable screen tests since logic for tooltips on buttons has changed massively!
+            if (level.isClientSide)
             {
                 DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> TooltipTestScreen::show);
-            }*/
+            }
             return InteractionResultHolder.success(player.getItemInHand(hand));
         }
 
@@ -134,32 +132,15 @@ public class CustomTooltipTest
 
     private static class ClientModBusEventHandler
     {
-
-        static FontManager customFontManager;
-        static Font customFont;
-
-        @SubscribeEvent
-        public static void clientSetup(FMLClientSetupEvent event)
-        {
-            event.enqueueWork(() -> {
-                customFontManager = new FontManager(Minecraft.getInstance().textureManager);
-                customFont = customFontManager.createFont();
-                ((ReloadableResourceManager) Minecraft.getInstance().getResourceManager()).registerReloadListener(customFontManager.getReloadListener());
-                customFontManager.setRenames(ImmutableMap.of(Minecraft.DEFAULT_FONT, Minecraft.UNIFORM_FONT));
-            });
-        }
-
         @SubscribeEvent
         public static void onRegisterClientTooltipComponentFactories(RegisterClientTooltipComponentFactoriesEvent event)
         {
             event.register(CustomTooltip.class, CustomClientTooltip::new);
         }
-
     }
 
     private static class ClientEventHandler
     {
-
         @SubscribeEvent
         public static void gatherTooltips(RenderTooltipEvent.GatherComponents event)
         {
@@ -181,19 +162,15 @@ public class CustomTooltipTest
                 event.setBackgroundStart(0xFF0000FF);
                 event.setBackgroundEnd(0xFFFFFF00);
                 event.setBorderStart(0xFFFF0000);
-                event.setBorderEnd(0xFFFF0011);
+                event.setBorderEnd(0xFF000011);
             }
         }
-
     }
 
-/* Disabled on update to 1.19.3: Tooltips have changed massively, and mojang now handles them differently
-
-static class TooltipTestScreen extends Screen
+    static class TooltipTestScreen extends Screen
     {
-
         private ItemStack testStack = ItemStack.EMPTY;
-        private Font testFont = null;
+        private boolean testFont = false;
 
         protected TooltipTestScreen()
         {
@@ -206,10 +183,11 @@ static class TooltipTestScreen extends Screen
         }
 
         @Override
-        public void render(PoseStack poseStack, int mouseX, int mouseY, float partialTicks)
+        public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks)
         {
-            super.render(poseStack, mouseX, mouseY, partialTicks);
-            this.font.draw(poseStack, "* must have Stack, # must have custom font", 0, 0, 0xFFFFFF);
+            this.renderBackground(graphics);
+            super.render(graphics, mouseX, mouseY, partialTicks);
+            graphics.drawString(font, "* must have Stack, # must have custom font", 0, 0, 0xFFFFFF);
         }
 
         @Override
@@ -218,17 +196,15 @@ static class TooltipTestScreen extends Screen
             addRenderableWidget(Button.builder(Component.literal("Toggle Stack: EMPTY"), button -> {
                 this.testStack = this.testStack.isEmpty() ? new ItemStack(Items.APPLE) : ItemStack.EMPTY;
                 button.setMessage(Component.literal("Toggle Stack: " + (testStack.isEmpty() ? "EMPTY" : "Apple")));
-            }).pos(10, 10).size(200,20).build());
-            addRenderableWidget(Button.builder(Component.literal("Toggle Font: null"), button -> {
-                this.testFont = this.testFont == null ? ClientModBusEventHandler.customFont : null;
-                button.setMessage(Component.literal("Toggle Font: " + (testFont == null ? "null" : "customFont")));
-            }).pos(220, 10).size(200,20).build());
-
-
+            }).pos(10, 10).size(200, 20).build());
+            addRenderableWidget(Button.builder(Component.literal("Toggle Font: Default"), button -> {
+                this.testFont = !this.testFont;
+                button.setMessage(Component.literal("Toggle Font: " + (this.testFont ? "Unicode" : "Default")));
+            }).pos(220, 10).size(200, 20).build());
 
             // * must have stack context
             // # must have custom font
-            List<Map.Entry<String, Tooltip>> tooltipTests = Arrays.asList(
+            List<Map.Entry<String, TooltipTest>> tooltipTests = Arrays.asList(
                     Map.entry(" 1 * ", this::test1),
                     Map.entry(" 2 * ", this::test2),
                     Map.entry(" 3  #", this::test3),
@@ -248,7 +224,18 @@ static class TooltipTestScreen extends Screen
             int y = 50;
             for (var test : tooltipTests)
             {
-                addRenderableWidget(new Button(x, y, 100, 20, Component.literal(test.getKey()), button -> {}, test.getValue()));
+                addRenderableWidget(new Button.Builder(Component.literal(test.getKey()), button -> {})
+                        .bounds(x, y, 100, 20).build(b -> new Button(b) {
+                            @Override
+                            public void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTick)
+                            {
+                                super.renderWidget(graphics, mouseX, mouseY, partialTick);
+
+                                boolean showTooltip = this.isHovered || this.isFocused() && Minecraft.getInstance().getLastInputType().isKeyboard();
+                                if (showTooltip)
+                                    test.getValue().render(graphics, mouseX, mouseY);
+                            }
+                        }));
                 y+= 22;
                 if (y >= height - 50)
                 {
@@ -258,81 +245,89 @@ static class TooltipTestScreen extends Screen
             }
         }
 
-        private void test1(Button button, PoseStack poseStack, int mouseX, int mouseY)
+        private Component getTestComponent(boolean testFont)
         {
-            renderTooltip(poseStack, this.testStack, mouseX, mouseY);
+            return Component.literal("test").withStyle(s -> s.withFont(testFont ? Minecraft.UNIFORM_FONT : Minecraft.DEFAULT_FONT));
+        }
+
+        private void test1(GuiGraphics graphics, int mouseX, int mouseY)
+        {
+            graphics.renderTooltip(this.font, this.testStack, mouseX, mouseY);
         }
 
         // renderTooltip with List<Component> and all combinations of ItemStack/Font
-        private void test2(Button button, PoseStack poseStack, int mouseX, int mouseY)
+        private void test2(GuiGraphics graphics, int mouseX, int mouseY)
         {
-            renderTooltip(poseStack, List.of(Component.literal("test")), Optional.empty(), mouseX, mouseY, this.testStack);
+            graphics.renderTooltip(this.font, List.of(this.getTestComponent(false)), Optional.empty(), mouseX, mouseY);
         }
 
-        private void test3(Button button, PoseStack poseStack, int mouseX, int mouseY)
+        private void test3(GuiGraphics graphics, int mouseX, int mouseY)
         {
-            renderTooltip(poseStack, List.of(Component.literal("test")), Optional.empty(), mouseX, mouseY, this.testFont);
+            graphics.renderTooltip(this.font, List.of(this.getTestComponent(this.testFont)), Optional.empty(), mouseX, mouseY);
         }
 
-        private void test4(Button button, PoseStack poseStack, int mouseX, int mouseY)
+        private void test4(GuiGraphics graphics, int mouseX, int mouseY)
         {
-            renderTooltip(poseStack, List.of(Component.literal("test")), Optional.empty(), mouseX, mouseY, this.testFont, this.testStack);
+            graphics.renderTooltip(this.font, List.of(this.getTestComponent(this.testFont)), Optional.empty(), mouseX, mouseY);
         }
 
-        private void test5(Button button, PoseStack poseStack, int mouseX, int mouseY)
+        private void test5(GuiGraphics graphics, int mouseX, int mouseY)
         {
-            renderTooltip(poseStack, List.of(Component.literal("test")), Optional.empty(), mouseX, mouseY);
+            graphics.renderTooltip(this.font, List.of(this.getTestComponent(false)), Optional.empty(), mouseX, mouseY);
         }
 
         // renderTooltip with just Component
-        private void test6(Button button, PoseStack poseStack, int mouseX, int mouseY)
+        private void test6(GuiGraphics graphics, int mouseX, int mouseY)
         {
-            renderTooltip(poseStack, Component.literal("test"), mouseX, mouseY);
+            graphics.renderTooltip(this.font, this.getTestComponent(false), mouseX, mouseY);
         }
 
         // renderComponentTooltip with all combinations of ItemStack/Font
-        private void test7(Button button, PoseStack poseStack, int mouseX, int mouseY)
+        private void test7(GuiGraphics graphics, int mouseX, int mouseY)
         {
-            renderComponentTooltip(poseStack, List.of(Component.literal("test")), mouseX, mouseY, this.testStack);
+            graphics.renderComponentTooltip(this.font, List.of(this.getTestComponent(false)), mouseX, mouseY);
         }
 
-        private void test8(Button button, PoseStack poseStack, int mouseX, int mouseY)
+        private void test8(GuiGraphics graphics, int mouseX, int mouseY)
         {
-            renderComponentTooltip(poseStack, List.of(Component.literal("test")), mouseX, mouseY, this.testFont);
+            graphics.renderComponentTooltip(this.font, List.of(this.getTestComponent(this.testFont)), mouseX, mouseY);
         }
 
-        private void test9(Button button, PoseStack poseStack, int mouseX, int mouseY)
+        private void test9(GuiGraphics graphics, int mouseX, int mouseY)
         {
-            renderComponentTooltip(poseStack, List.of(Component.literal("test")), mouseX, mouseY, this.testFont, this.testStack);
+            graphics.renderComponentTooltip(this.font, List.of(this.getTestComponent(this.testFont)), mouseX, mouseY);
         }
 
-        private void test10(Button button, PoseStack poseStack, int mouseX, int mouseY)
+        private void test10(GuiGraphics graphics, int mouseX, int mouseY)
         {
-            renderComponentTooltip(poseStack, List.of(Component.literal("test")), mouseX, mouseY);
+            graphics.renderComponentTooltip(this.font, List.of(this.getTestComponent(false)), mouseX, mouseY);
         }
 
         // renderTooltip with list of FormattedCharSequence
-        private void test11(Button button, PoseStack poseStack, int mouseX, int mouseY)
+        private void test11(GuiGraphics graphics, int mouseX, int mouseY)
         {
-            renderTooltip(poseStack, List.of(Component.literal("test").getVisualOrderText()), mouseX, mouseY);
+            graphics.renderTooltip(this.font, List.of(this.getTestComponent(false).getVisualOrderText()), mouseX, mouseY);
         }
 
         // renderTooltip with list of FormattedCharSequence and Font
-        private void test12(Button button, PoseStack poseStack, int mouseX, int mouseY)
+        private void test12(GuiGraphics graphics, int mouseX, int mouseY)
         {
-            renderTooltip(poseStack, List.of(Component.literal("test").getVisualOrderText()), mouseX, mouseY, this.testFont);
+            graphics.renderTooltip(this.font, List.of(this.getTestComponent(this.testFont).getVisualOrderText()), mouseX, mouseY);
         }
 
         // legacy ToolTip methods
-        private void test13(Button button, PoseStack poseStack, int mouseX, int mouseY)
+        private void test13(GuiGraphics graphics, int mouseX, int mouseY)
         {
-            renderTooltip(poseStack, List.of(Component.literal("test").getVisualOrderText()), mouseX, mouseY, this.testFont);
+            graphics.renderTooltip(this.font, List.of(this.getTestComponent(this.testFont).getVisualOrderText()), mouseX, mouseY);
         }
 
-        private void test14(Button button, PoseStack poseStack, int mouseX, int mouseY)
+        private void test14(GuiGraphics graphics, int mouseX, int mouseY)
         {
-            renderComponentTooltip(poseStack, List.of(Component.literal("test")), mouseX, mouseY, this.testFont, ItemStack.EMPTY);
+            graphics.renderComponentTooltip(this.font, List.of(this.getTestComponent(this.testFont)), mouseX, mouseY);
         }
-    }*/
+    }
 
+    private interface TooltipTest {
+        void render(GuiGraphics graphics, int mouseX, int mouseY);
+    }
 }

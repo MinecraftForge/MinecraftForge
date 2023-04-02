@@ -7,10 +7,10 @@
 +   @Override
 +   public net.minecraft.world.InteractionResult m_6880_(ItemStack stack, net.minecraft.world.entity.player.Player playerIn, LivingEntity entity, net.minecraft.world.InteractionHand hand) {
 +      if (entity instanceof net.minecraftforge.common.IForgeShearable target) {
-+         if (entity.f_19853_.f_46443_) return net.minecraft.world.InteractionResult.SUCCESS;
++         if (entity.m_9236_().f_46443_) return net.minecraft.world.InteractionResult.SUCCESS;
 +         BlockPos pos = BlockPos.m_274446_(entity.m_20182_());
-+         if (target.isShearable(stack, entity.f_19853_, pos)) {
-+            java.util.List<ItemStack> drops = target.onSheared(playerIn, stack, entity.f_19853_, pos,
++         if (target.isShearable(stack, entity.m_9236_(), pos)) {
++            java.util.List<ItemStack> drops = target.onSheared(playerIn, stack, entity.m_9236_(), pos,
 +                    net.minecraft.world.item.enchantment.EnchantmentHelper.m_44843_(net.minecraft.world.item.enchantment.Enchantments.f_44987_, stack));
 +            java.util.Random rand = new java.util.Random();
 +            drops.forEach(d -> {

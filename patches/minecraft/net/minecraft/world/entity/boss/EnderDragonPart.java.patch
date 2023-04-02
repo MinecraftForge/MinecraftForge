@@ -11,7 +11,7 @@
     private final EntityDimensions f_31012_;
  
     public EnderDragonPart(EnderDragon p_31014_, String p_31015_, float p_31016_, float p_31017_) {
--      super(p_31014_.m_6095_(), p_31014_.f_19853_);
+-      super(p_31014_.m_6095_(), p_31014_.m_9236_());
 +      super(p_31014_);
        this.f_31012_ = EntityDimensions.m_20395_(p_31016_, p_31017_);
        this.m_6210_();

@@ -5,35 +5,11 @@
 
 package net.minecraftforge.fml.loading;
 
-import com.mojang.logging.LogUtils;
-import org.slf4j.Logger;
-
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 
 public class FileUtils
 {
-    private static final Logger LOGGER = LogUtils.getLogger();
-
-   /**
-    * @deprecated Use normal Java NIO methods instead
-    */
-    @Deprecated(forRemoval = true, since = "1.19.4")
-    public static Path getOrCreateDirectory(Path dirPath, String dirLabel) {
-        if (!Files.isDirectory(dirPath))
-        {
-            try {
-                Files.createDirectories(dirPath);
-            } catch (IOException e) {
-                throw new RuntimeException("Problem creating directory", e);
-            }
-        }
-
-        return dirPath;
-    }
-
 
     public static String fileExtension(final Path path) {
         String fileName = path.getFileName().toString();

@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/Options.java
 +++ b/net/minecraft/client/Options.java
-@@ -544,7 +_,8 @@
+@@ -545,7 +_,8 @@
     }, new OptionInstance.LazyEnum<>(() -> {
        return Stream.concat(Stream.of(""), Minecraft.m_91087_().m_91106_().m_194525_().stream()).toList();
     }, (p_232011_) -> {
@@ -10,7 +10,7 @@
     }, Codec.STRING), "", (p_275584_) -> {
        SoundManager soundmanager = Minecraft.m_91087_().m_91106_();
        soundmanager.m_194526_();
-@@ -868,6 +_,7 @@
+@@ -869,6 +_,7 @@
     }
  
     public Options(Minecraft p_92138_, File p_92139_) {
@@ -18,10 +18,11 @@
        this.f_92060_ = p_92138_;
        this.f_92110_ = new File(p_92139_, "options.txt");
        boolean flag = p_92138_.m_91103_();
-@@ -989,11 +_,20 @@
+@@ -990,11 +_,21 @@
        p_168428_.m_213982_("telemetryOptInExtra", this.f_260461_);
        this.f_263744_ = p_168428_.m_142682_("onboardAccessibility", this.f_263744_);
  
++      net.minecraftforge.forge.snapshots.ForgeSnapshotsMod.processOptions(p_168428_);
 +      processOptionsForge(p_168428_);
 +   }
 +   // FORGE: split off to allow reloading options after mod loading is done
@@ -41,7 +42,7 @@
           }
        }
  
-@@ -1012,6 +_,9 @@
+@@ -1013,6 +_,9 @@
     }
  
     public void m_92140_() {
@@ -51,7 +52,7 @@
        try {
           if (!this.f_92110_.exists()) {
              return;
-@@ -1040,7 +_,8 @@
+@@ -1041,7 +_,8 @@
              }
           }
  
@@ -61,7 +62,7 @@
              @Nullable
              private String m_168458_(String p_168459_) {
                 return compoundtag1.m_128441_(p_168459_) ? compoundtag1.m_128461_(p_168459_) : null;
-@@ -1203,6 +_,7 @@
+@@ -1204,6 +_,7 @@
     }
  
     public void m_92172_() {
@@ -69,7 +70,7 @@
        if (this.f_92060_.f_91074_ != null) {
           int i = 0;
  
-@@ -1267,6 +_,23 @@
+@@ -1268,6 +_,23 @@
        }
  
        p_92146_.m_10509_(set);

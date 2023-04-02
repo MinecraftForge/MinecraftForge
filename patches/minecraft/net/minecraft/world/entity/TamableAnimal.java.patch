@@ -9,7 +9,7 @@
 +      super.m_6667_(p_21809_);
 +
 +      if (this.f_20890_)
-       if (!this.f_19853_.f_46443_ && this.f_19853_.m_46469_().m_46207_(GameRules.f_46142_) && this.m_269323_() instanceof ServerPlayer) {
+       if (!this.m_9236_().f_46443_ && this.m_9236_().m_46469_().m_46207_(GameRules.f_46142_) && this.m_269323_() instanceof ServerPlayer) {
 -         this.m_269323_().m_213846_(this.m_21231_().m_19293_());
 +         this.m_269323_().m_213846_(deathMessage);
        }

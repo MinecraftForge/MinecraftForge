@@ -56,39 +56,6 @@ public interface IQuadTransformer
         };
     }
 
-    /**
-     * Creates a {@link BakedQuad} transformer that does nothing.
-     *
-     * @deprecated Use {@link QuadTransformers#empty()}
-     */
-    @Deprecated(forRemoval = true, since = "1.19")
-    static IQuadTransformer empty()
-    {
-        return QuadTransformers.empty();
-    }
-
-    /**
-     * Creates a {@link BakedQuad} transformer that applies the specified {@link Transformation}.
-     *
-     * @deprecated Use {@link QuadTransformers#applying(Transformation)}
-     */
-    @Deprecated(forRemoval = true, since = "1.19")
-    static IQuadTransformer applying(Transformation transform)
-    {
-        return QuadTransformers.applying(transform);
-    }
-
-    /**
-     * Creates a {@link BakedQuad} transformer that applies the specified lightmap.
-     *
-     * @deprecated Use {@link QuadTransformers#applyingLightmap(int)}
-     */
-    @Deprecated(forRemoval = true, since = "1.19")
-    static IQuadTransformer applyingLightmap(int lightmap)
-    {
-        return QuadTransformers.applyingLightmap(lightmap);
-    }
-
     private static BakedQuad copy(BakedQuad quad)
     {
         var vertices = quad.getVertices();

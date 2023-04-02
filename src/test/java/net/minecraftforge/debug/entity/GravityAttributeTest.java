@@ -16,7 +16,7 @@ import net.minecraft.tags.BiomeTags;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraftforge.common.ForgeMod;
-import net.minecraftforge.event.CreativeModeTabEvent;
+import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
@@ -105,7 +105,7 @@ public class GravityAttributeTest
                 {
                     AttributeInstance grav = liv.getAttribute(ForgeMod.ENTITY_GRAVITY.get());
 
-                    boolean inPlains = liv.level.getBiome(liv.blockPosition()).is(BiomeTags.IS_FOREST);
+                    boolean inPlains = liv.level().getBiome(liv.blockPosition()).is(BiomeTags.IS_FOREST);
                     if (inPlains && !grav.hasModifier(REDUCED_GRAVITY))
                     {
                         logger.info("Granted low gravity to Entity: {}", liv);
@@ -122,9 +122,9 @@ public class GravityAttributeTest
         }
     }
 
-    private void addCreative(CreativeModeTabEvent.BuildContents event)
+    private void addCreative(BuildCreativeModeTabContentsEvent event)
     {
-        if (event.getTab() == CreativeModeTabs.TOOLS_AND_UTILITIES)
+        if (event.getTabKey() == CreativeModeTabs.TOOLS_AND_UTILITIES)
             event.accept(TEST_ITEM);
     }
 

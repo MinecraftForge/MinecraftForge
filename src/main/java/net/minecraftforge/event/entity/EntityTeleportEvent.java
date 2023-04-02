@@ -153,27 +153,16 @@ public class EntityTeleportEvent extends EntityEvent
         private final ServerPlayer player;
         private final ThrownEnderpearl pearlEntity;
         private float attackDamage;
-        @Nullable
-        private final HitResult hitResult; // TODO - 1.20: make the hit result nonnull, remove the other constructor
+        private final HitResult hitResult;
 
         @ApiStatus.Internal
-        public EnderPearl(ServerPlayer entity, double targetX, double targetY, double targetZ, ThrownEnderpearl pearlEntity, float attackDamage, @Nullable HitResult hitResult)
+        public EnderPearl(ServerPlayer entity, double targetX, double targetY, double targetZ, ThrownEnderpearl pearlEntity, float attackDamage, HitResult hitResult)
         {
             super(entity, targetX, targetY, targetZ);
             this.pearlEntity = pearlEntity;
             this.player = entity;
             this.attackDamage = attackDamage;
             this.hitResult = hitResult;
-        }
-
-        /**
-         * @deprecated Use {@linkplain #EnderPearl(ServerPlayer, double, double, double, ThrownEnderpearl, float, HitResult)} the hit result-sensitive version}.
-         */
-        @ApiStatus.Internal
-        @Deprecated(forRemoval = true, since = "1.19.2")
-        public EnderPearl(ServerPlayer entity, double targetX, double targetY, double targetZ, ThrownEnderpearl pearlEntity, float attackDamage)
-        {
-            this(entity, targetX, targetY, targetZ, pearlEntity, attackDamage, null);
         }
 
         public ThrownEnderpearl getPearlEntity()

@@ -5,7 +5,7 @@
        }
  
 +      ItemStack stack = this.f_30520_.m_8020_(1);
-+      if (m_6010_(stack)) stack.onHorseArmorTick(f_19853_, this);
++      if (m_6010_(stack)) stack.onHorseArmorTick(m_9236_(), this);
     }
  
     protected SoundEvent m_7515_() {

@@ -3,11 +3,11 @@
 @@ -46,6 +_,8 @@
           if (entity instanceof ServerPlayer) {
              ServerPlayer serverplayer = (ServerPlayer)entity;
-             if (serverplayer.f_8906_.m_6198_() && serverplayer.f_19853_ == this.f_19853_ && !serverplayer.m_5803_()) {
+             if (serverplayer.f_8906_.m_6198_() && serverplayer.m_9236_() == this.m_9236_() && !serverplayer.m_5803_()) {
 +               net.minecraftforge.event.entity.EntityTeleportEvent.EnderPearl event = net.minecraftforge.event.ForgeEventFactory.onEnderPearlLand(serverplayer, this.m_20185_(), this.m_20186_(), this.m_20189_(), this, 5.0F, p_37504_);
 +               if (!event.isCanceled()) { // Don't indent to lower patch size
-                if (this.f_19796_.m_188501_() < 0.05F && this.f_19853_.m_46469_().m_46207_(GameRules.f_46134_)) {
-                   Endermite endermite = EntityType.f_20567_.m_20615_(this.f_19853_);
+                if (this.f_19796_.m_188501_() < 0.05F && this.m_9236_().m_46469_().m_46207_(GameRules.f_46134_)) {
+                   Endermite endermite = EntityType.f_20567_.m_20615_(this.m_9236_());
                    if (endermite != null) {
 @@ -60,8 +_,10 @@
                    entity.m_6021_(this.m_20185_(), this.m_20186_(), this.m_20189_());
@@ -28,7 +28,7 @@
 -   public Entity m_5489_(ServerLevel p_37506_) {
 +   public Entity changeDimension(ServerLevel p_37506_, net.minecraftforge.common.util.ITeleporter teleporter) {
        Entity entity = this.m_19749_();
-       if (entity != null && entity.f_19853_.m_46472_() != p_37506_.m_46472_()) {
+       if (entity != null && entity.m_9236_().m_46472_() != p_37506_.m_46472_()) {
           this.m_5602_((Entity)null);
        }
  

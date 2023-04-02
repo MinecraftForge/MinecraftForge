@@ -1,6 +1,6 @@
 --- a/com/mojang/realmsclient/gui/screens/RealmsNotificationsScreen.java
 +++ b/com/mojang/realmsclient/gui/screens/RealmsNotificationsScreen.java
-@@ -47,9 +_,9 @@
+@@ -45,9 +_,9 @@
        }
     };
     private final RealmsNotificationsScreen.DataFetcherConfiguration f_273849_ = new RealmsNotificationsScreen.DataFetcherConfiguration() {

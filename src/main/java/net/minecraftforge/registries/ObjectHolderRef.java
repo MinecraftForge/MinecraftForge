@@ -89,7 +89,7 @@ class ObjectHolderRef implements Consumer<Predicate<ResourceLocation>>
             return;
 
         Object thing;
-        if (registry.containsKey(injectedObject) && !registry.isDummied(injectedObject))
+        if (registry.containsKey(injectedObject))
         {
             thing = registry.getValue(injectedObject);
         }

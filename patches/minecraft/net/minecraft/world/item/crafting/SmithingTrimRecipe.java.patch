@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/item/crafting/SmithingTrimRecipe.java
++++ b/net/minecraft/world/item/crafting/SmithingTrimRecipe.java
+@@ -94,7 +_,7 @@
+    }
+ 
+    public boolean m_142505_() {
+-      return Stream.of(this.f_265958_, this.f_266040_, this.f_266053_).anyMatch(Ingredient::m_43947_);
++      return Stream.of(this.f_265958_, this.f_266040_, this.f_266053_).anyMatch(net.minecraftforge.common.ForgeHooks::hasNoElements);
+    }
+ 
+    public static class Serializer implements RecipeSerializer<SmithingTrimRecipe> {

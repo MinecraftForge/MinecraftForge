@@ -30,5 +30,6 @@
     "recipes": [
       "data_gen_test:difference_ingredient"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }

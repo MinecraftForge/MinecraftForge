@@ -1,7 +1,7 @@
 --- a/net/minecraft/world/entity/monster/Slime.java
 +++ b/net/minecraft/world/entity/monster/Slime.java
 @@ -124,6 +_,8 @@
-       if (this.f_19861_ && !this.f_33583_) {
+       if (this.m_20096_() && !this.f_33583_) {
           int i = this.m_33632_();
  
 +         // Forge: Don't spawn particles if it's handled by the implementation itself

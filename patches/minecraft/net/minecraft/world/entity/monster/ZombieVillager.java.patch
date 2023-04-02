@@ -1,12 +1,12 @@
 --- a/net/minecraft/world/entity/monster/ZombieVillager.java
 +++ b/net/minecraft/world/entity/monster/ZombieVillager.java
 @@ -126,7 +_,7 @@
-       if (!this.f_19853_.f_46443_ && this.m_6084_() && this.m_34408_()) {
+       if (!this.m_9236_().f_46443_ && this.m_6084_() && this.m_34408_()) {
           int i = this.m_34410_();
           this.f_34365_ -= i;
 -         if (this.f_34365_ <= 0) {
 +         if (this.f_34365_ <= 0 && net.minecraftforge.event.ForgeEventFactory.canLivingConvert(this, EntityType.f_20492_, (timer) -> this.f_34365_ = timer)) {
-             this.m_34398_((ServerLevel)this.f_19853_);
+             this.m_34398_((ServerLevel)this.m_9236_());
           }
        }
 @@ -228,7 +_,7 @@

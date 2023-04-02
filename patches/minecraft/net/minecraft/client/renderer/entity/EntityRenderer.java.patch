@@ -20,5 +20,5 @@
 -      if (!(d0 > 4096.0D)) {
 +      if (net.minecraftforge.client.ForgeHooksClient.isNameplateInRenderDistance(p_114498_, d0)) {
           boolean flag = !p_114498_.m_20163_();
-          float f = p_114498_.m_20206_() + 0.5F;
+          float f = p_114498_.m_278726_();
           int i = "deadmau5".equals(p_114499_.getString()) ? -10 : 0;

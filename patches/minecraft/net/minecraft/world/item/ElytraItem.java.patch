@@ -11,7 +11,7 @@
 +
 +   @Override
 +   public boolean elytraFlightTick(ItemStack stack, net.minecraft.world.entity.LivingEntity entity, int flightTicks) {
-+      if (!entity.f_19853_.f_46443_) {
++      if (!entity.m_9236_().f_46443_) {
 +         int nextFlightTick = flightTicks + 1;
 +         if (nextFlightTick % 10 == 0) {
 +            if (nextFlightTick % 20 == 0) {

@@ -5,9 +5,7 @@
 
 package net.minecraftforge.client.gui;
 
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.systems.RenderSystem;
-
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.TitleScreen;
 import net.minecraft.client.gui.screens.Screen;
@@ -50,21 +48,19 @@ public class TitleScreenModUpdateIndicator extends Screen
     }
 
     @Override
-    public void render(PoseStack poseStack, int mouseX, int mouseY, float partialTick)
+    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick)
     {
         if (showNotification == null || !showNotification.shouldDraw() || !FMLConfig.runVersionCheck())
         {
             return;
         }
 
-        RenderSystem.setShaderTexture(0, VERSION_CHECK_ICONS);
-
         int x = modButton.getX();
         int y = modButton.getY();
         int w = modButton.getWidth();
         int h = modButton.getHeight();
 
-        blit(poseStack, x + w - (h / 2 + 4), y + (h / 2 - 4), showNotification.getSheetOffset() * 8, (showNotification.isAnimated() && ((System.currentTimeMillis() / 800 & 1) == 1)) ? 8 : 0, 8, 8, 64, 16);
+        guiGraphics.blit(VERSION_CHECK_ICONS, x + w - (h / 2 + 4), y + (h / 2 - 4), showNotification.getSheetOffset() * 8, (showNotification.isAnimated() && ((System.currentTimeMillis() / 800 & 1) == 1)) ? 8 : 0, 8, 8, 64, 16);
     }
 
     public static TitleScreenModUpdateIndicator init(TitleScreen guiMainMenu, Button modButton)

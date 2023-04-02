@@ -1,0 +1,12 @@
+--- a/net/minecraft/world/level/block/entity/SignBlockEntity.java
++++ b/net/minecraft/world/level/block/entity/SignBlockEntity.java
+@@ -278,4 +_,9 @@
+       }
+ 
+    }
++
++   @Override
++   public net.minecraft.world.phys.AABB getRenderBoundingBox() {
++      return new net.minecraft.world.phys.AABB(this.m_58899_(), this.m_58899_().m_7918_(1, 1, 1));
++   }
+ }
