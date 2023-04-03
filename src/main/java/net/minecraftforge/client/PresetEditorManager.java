@@ -30,7 +30,9 @@ public final class PresetEditorManager
     {
         // Start with the vanilla entries
         Map<ResourceKey<WorldPreset>, PresetEditor> gatheredEditors = new HashMap<>();
-        PresetEditor.EDITORS.forEach((k,v) -> k.ifPresent(key -> gatheredEditors.put(key, v))); // vanilla's keys are all non-empty optionals
+        // Vanilla's map uses Optional<ResourceKey>s as its keys.
+        // As far as we can tell there's no good reason for this, so we'll just use regular keys.
+        PresetEditor.EDITORS.forEach((k,v) -> k.ifPresent(key -> gatheredEditors.put(key, v)));
         
         // Gather mods' entries
         RegisterPresetEditorsEvent event = new RegisterPresetEditorsEvent(gatheredEditors);
