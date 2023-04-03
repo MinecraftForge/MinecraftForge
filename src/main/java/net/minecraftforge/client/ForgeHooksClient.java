@@ -116,10 +116,12 @@ import net.minecraftforge.client.event.ClientPlayerChangeGameTypeEvent;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.client.event.ComputeFovModifierEvent;
 import net.minecraftforge.client.event.CustomizeGuiOverlayEvent;
+import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.client.event.ModelEvent;
 import net.minecraftforge.client.event.MovementInputUpdateEvent;
 import net.minecraftforge.client.event.RecipesUpdatedEvent;
+import net.minecraftforge.client.event.RegisterClientReloadListenersEvent;
 import net.minecraftforge.client.event.RegisterColorHandlersEvent;
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.client.event.RegisterParticleProvidersEvent;
@@ -1243,9 +1245,9 @@ public class ForgeHooksClient
         initializedClientHooks = true;
         
         ForgeGameTestHooks.registerGametests();
-        ModLoader.get().postEvent(new net.minecraftforge.client.event.RegisterClientReloadListenersEvent(resourceManager));
-        ModLoader.get().postEvent(new net.minecraftforge.client.event.EntityRenderersEvent.RegisterLayerDefinitions());
-        ModLoader.get().postEvent(new net.minecraftforge.client.event.EntityRenderersEvent.RegisterRenderers());
+        ModLoader.get().postEvent(new RegisterClientReloadListenersEvent(resourceManager));
+        ModLoader.get().postEvent(new EntityRenderersEvent.RegisterLayerDefinitions());
+        ModLoader.get().postEvent(new EntityRenderersEvent.RegisterRenderers());
         TextureAtlasSpriteLoaderManager.init();
         ClientTooltipComponentManager.init();
         EntitySpectatorShaderManager.init();
