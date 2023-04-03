@@ -39,6 +39,7 @@ public class RegistryBuilder<T>
     private boolean allowOverrides = true;
     private boolean allowModifications = false;
     private boolean hasWrapper = false;
+    @Deprecated(forRemoval = true, since = "1.19.4")
     private DummyFactory<T> dummyFactory;
     private MissingFactory<T> missingFactory;
     private Set<ResourceLocation> legacyNames = new HashSet<>();
@@ -144,12 +145,14 @@ public class RegistryBuilder<T>
         return this.add(bake);
     }
 
+    @Deprecated(forRemoval = true, since = "1.19.4")
     public RegistryBuilder<T> set(DummyFactory<T> factory)
     {
         this.dummyFactory = factory;
         return this;
     }
 
+    @Deprecated(forRemoval = true, since = "1.19.4")
     public RegistryBuilder<T> dummy(DummyFactory<T> factory)
     {
         return this.set(factory);
@@ -349,6 +352,7 @@ public class RegistryBuilder<T>
     }
 
     @Nullable
+    @Deprecated(forRemoval = true, since = "1.19.4")
     public DummyFactory<T> getDummyFactory()
     {
         return dummyFactory;
