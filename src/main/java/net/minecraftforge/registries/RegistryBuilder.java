@@ -145,12 +145,14 @@ public class RegistryBuilder<T>
         return this.add(bake);
     }
 
+    @Deprecated(forRemoval = true, since = "1.19.4")
     public RegistryBuilder<T> set(DummyFactory<T> factory)
     {
         this.dummyFactory = factory;
         return this;
     }
 
+    @Deprecated(forRemoval = true, since = "1.19.4")
     public RegistryBuilder<T> dummy(DummyFactory<T> factory)
     {
         return this.set(factory);
@@ -350,6 +352,7 @@ public class RegistryBuilder<T>
     }
 
     @Nullable
+    @Deprecated(forRemoval = true, since = "1.19.4")
     public DummyFactory<T> getDummyFactory()
     {
         return dummyFactory;

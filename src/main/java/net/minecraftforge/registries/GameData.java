@@ -516,7 +516,7 @@ public class GameData
         }
 
         @Deprecated(forRemoval = true, since = "1.19.4")
-        private static class DummyAirBlock extends AirBlock //A named class so DummyBlockReplacementTest can detect if its a dummy
+        private static class DummyAirBlock extends AirBlock
         {
             private DummyAirBlock(Block.Properties properties)
             {
