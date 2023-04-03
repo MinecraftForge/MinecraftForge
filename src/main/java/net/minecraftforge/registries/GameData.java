@@ -491,7 +491,7 @@ public class GameData
         @Override
         public Block createDummy(ResourceLocation key)
         {
-            Block ret = new BlockDummyAir(Block.Properties.of(Material.AIR));
+            Block ret = new DummyAirBlock(Block.Properties.of(Material.AIR).noCollission().noLootTable().air());
             return ret;
         }
 
