@@ -39,6 +39,7 @@ public class RegistryBuilder<T>
     private boolean allowOverrides = true;
     private boolean allowModifications = false;
     private boolean hasWrapper = false;
+    @Deprecated(forRemoval = true, since = "1.19.4")
     private DummyFactory<T> dummyFactory;
     private MissingFactory<T> missingFactory;
     private Set<ResourceLocation> legacyNames = new HashSet<>();

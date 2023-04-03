@@ -489,6 +489,7 @@ public class GameData
         }
 
         @Override
+        @Deprecated(forRemoval = true, since = "1.19.4")
         public Block createDummy(ResourceLocation key)
         {
             Block ret = new DummyAirBlock(Block.Properties.of(Material.AIR).noCollission().noLootTable().air());
@@ -514,9 +515,10 @@ public class GameData
             DebugLevelSource.initValidStates();
         }
 
-        private static class BlockDummyAir extends AirBlock //A named class so DummyBlockReplacementTest can detect if its a dummy
+        @Deprecated(forRemoval = true, since = "1.19.4")
+        private static class DummyAirBlock extends AirBlock //A named class so DummyBlockReplacementTest can detect if its a dummy
         {
-            private BlockDummyAir(Block.Properties properties)
+            private DummyAirBlock(Block.Properties properties)
             {
                 super(properties);
             }
