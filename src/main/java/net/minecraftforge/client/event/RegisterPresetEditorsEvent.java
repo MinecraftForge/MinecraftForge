@@ -7,6 +7,8 @@ package net.minecraftforge.client.event;
 
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.ApiStatus;
 
 import net.minecraft.client.gui.screens.worldselection.PresetEditor;
@@ -15,6 +17,7 @@ import net.minecraft.world.level.levelgen.presets.WorldPreset;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.LogicalSide;
+import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.event.IModBusEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
@@ -28,6 +31,8 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
  */
 public class RegisterPresetEditorsEvent extends Event implements IModBusEvent
 {
+    private static final Logger LOGGER = LogManager.getLogger();
+    
     private final Map<ResourceKey<WorldPreset>, PresetEditor> editors;
     
     @ApiStatus.Internal
@@ -41,6 +46,10 @@ public class RegisterPresetEditorsEvent extends Event implements IModBusEvent
      */
     public void register(ResourceKey<WorldPreset> key, PresetEditor editor)
     {
-        this.editors.put(key, editor);
+        PresetEditor old = this.editors.put(key, editor);
+        if (old != null)
+        {
+            LOGGER.debug("PresetEditor {} overridden by mod {}", key.location(), ModLoadingContext.get().getActiveNamespace());
+        }
     }
 }
