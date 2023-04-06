@@ -12,6 +12,7 @@
   "render_types": {},
   "textures": {
     "layer0": "minecraft:item/coal",
-    "layer1": "minecraft:item/stick"
+    "layer1": "minecraft:item/stick",
+    "particle": "minecraft:block/red_stained_glass"
   }
 }
