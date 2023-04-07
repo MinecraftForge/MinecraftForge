@@ -1,0 +1,11 @@
+--- a/net/minecraft/client/gui/screens/ChatScreen.java
++++ b/net/minecraft/client/gui/screens/ChatScreen.java
+@@ -98,7 +_,7 @@
+             return false;
+          }
+       } else {
+-         if (this.m_241797_(this.f_95573_.m_94155_(), true)) {
++         if (this.m_241797_(this.f_95573_.m_94155_(), true) && f_96541_.f_91080_ == this) {
+             this.f_96541_.m_91152_((Screen)null);
+          }
+ 
