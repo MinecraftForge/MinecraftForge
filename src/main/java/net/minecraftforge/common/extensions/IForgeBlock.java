@@ -311,6 +311,20 @@ public interface IForgeBlock
         return false;
     }
 
+    /**
+     * Returns true if the breaking particles created from the {@link BlockState} passed should be tinted with biome colors. 
+     * This method is only called by the client.
+     * 
+     * @param state The state of this block
+     * @param level The level the particles are spawning in
+     * @param pos The position of the block
+     * @return {@code true} if the particles should be tinted.
+     */
+    default boolean areBreakingParticlesTinted(BlockState state, Level level, BlockPos pos)
+    {
+        return !state.is(Blocks.GRASS_BLOCK);
+    }
+
    /**
     * Determines if this block can support the passed in plant, allowing it to be planted and grow.
     * Some examples:
