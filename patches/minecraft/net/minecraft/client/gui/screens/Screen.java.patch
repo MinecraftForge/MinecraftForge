@@ -179,10 +179,11 @@
     private void m_169380_(long p_169381_, boolean p_169382_) {
        this.f_169377_ = Util.m_137550_() + p_169381_;
        if (p_169382_) {
-@@ -734,4 +_,12 @@
+@@ -733,5 +_,13 @@
+          this.f_169421_ = p_169425_;
           this.f_169422_ = p_169426_;
        }
-    }
++   }
 +
 +   private void addEventWidget(GuiEventListener b) {
 +      if (b instanceof Renderable r)
@@ -190,5 +191,5 @@
 +      if (b instanceof NarratableEntry ne)
 +         this.f_169368_.add(ne);
 +      f_96540_.add(b);
-+   }
+    }
  }

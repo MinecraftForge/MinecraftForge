@@ -8,6 +8,7 @@ package net.minecraftforge.server;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.sun.jna.platform.unix.X11;
 import net.minecraft.locale.Language;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;

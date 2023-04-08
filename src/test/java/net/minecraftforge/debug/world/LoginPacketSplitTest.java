@@ -66,6 +66,7 @@ import java.util.stream.Collectors;
  * To test if the packet is too large simply remove the login packet from the {@link net.minecraftforge.network.filters.ForgeConnectionNetworkFilter}
  * and try connecting again. You should see the connection fail.
  */
+/**
 @Mod(LoginPacketSplitTest.MOD_ID)
 public class LoginPacketSplitTest
 {
@@ -289,3 +290,4 @@ public class LoginPacketSplitTest
         }
     }
 }
+ **/
