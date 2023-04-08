@@ -5,7 +5,7 @@
           }
  
 -         return true;
-+         return f_96541_.f_91080_ == this; // To Prevent closing the Screen if it isn't Chat Screen
++         return f_96541_.f_91080_ == this; // FORGE: Prevent closing the screen if another screen has been opened.
        }
     }
  

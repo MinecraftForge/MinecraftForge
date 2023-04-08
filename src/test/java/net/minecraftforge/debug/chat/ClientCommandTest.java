@@ -7,7 +7,6 @@ package net.minecraftforge.debug.chat;
 
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
-import net.minecraft.client.Minecraft;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.SharedSuggestionProvider;
@@ -17,7 +16,7 @@ import net.minecraft.commands.arguments.TeamArgument;
 import net.minecraft.commands.arguments.coordinates.BlockPosArgument;
 import net.minecraft.commands.synchronization.SuggestionProviders;
 import net.minecraft.network.chat.Component;
-import net.minecraftforge.PatchScreen;
+import net.minecraftforge.debug.client.TestScreen;
 import net.minecraftforge.client.event.RegisterClientCommandsEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
@@ -107,11 +106,9 @@ public class ClientCommandTest
                                     context.getSource().sendSuccess(Component.literal("Executed command"), false);
                                     return 1;
                                 }))
-                        .then(Commands.literal("screenpatch")
-                                .executes((stack) -> {
-                                    Minecraft.getInstance().setScreen(new PatchScreen(Component.literal("patch")));
-                                    return 1;
-                                })));
+                        // Used for testing the screen after using commands
+                        .then(Commands.literal("screentest")
+                                .executes((stack) -> TestScreen.open())));
 
         // Used for testing that client command redirects can only be used with client commands
         LiteralArgumentBuilder<CommandSourceStack> fork = Commands.literal("clientcommandfork");
