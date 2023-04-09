@@ -36,7 +36,6 @@ import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -255,19 +254,6 @@ public interface IForgeBlockState
     default boolean addRunningEffects(Level level, BlockPos pos, Entity entity)
     {
         return self().getBlock().addRunningEffects(self(), level, pos, entity);
-    }
-
-    /**
-     * Returns true if the breaking particles created from this should be tinted with biome colors. 
-     * This method is only called by the client.
-     * 
-     * @param level The level the particles are spawning in
-     * @param pos The position of the block
-     * @return {@code true} if the particles should be tinted.
-     */
-    default boolean areBreakingParticlesTinted(Level level, BlockPos pos)
-    {
-        return self().getBlock().areBreakingParticlesTinted(self(), level, pos);
     }
 
    /**

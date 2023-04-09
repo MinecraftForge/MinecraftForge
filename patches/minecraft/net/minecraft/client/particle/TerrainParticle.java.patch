@@ -5,7 +5,7 @@
        this.f_107228_ = 0.6F;
        this.f_107229_ = 0.6F;
 -      if (!p_172458_.m_60713_(Blocks.f_50440_)) {
-+      if (p_172458_.areBreakingParticlesTinted(p_172451_, p_172459_)) {
++      if (net.minecraftforge.client.extensions.common.IClientBlockExtensions.of(p_172458_).areBreakingParticlesTinted(p_172458_, p_172451_, p_172459_)) {
           int i = Minecraft.m_91087_().m_91298_().m_92577_(p_172458_, p_172451_, p_172459_, 0);
           this.f_107227_ *= (float)(i >> 16 & 255) / 255.0F;
           this.f_107228_ *= (float)(i >> 8 & 255) / 255.0F;

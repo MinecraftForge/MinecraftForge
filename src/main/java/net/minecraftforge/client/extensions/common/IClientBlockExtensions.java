@@ -5,6 +5,7 @@
 
 package net.minecraftforge.client.extensions.common;
 
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.ParticleEngine;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.effect.MobEffects;
@@ -14,6 +15,7 @@ import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.world.phys.HitResult;
@@ -110,5 +112,18 @@ public interface IClientBlockExtensions
             return new Vector3d(0.6F, 0.1F, 0.0F);
         }
         return originalColor;
+    }
+
+    /**
+     * Returns true if the breaking particles created from the {@link BlockState} passed should be tinted with biome colors. 
+     * 
+     * @param state The state of this block
+     * @param level The level the particles are spawning in
+     * @param pos The position of the block
+     * @return {@code true} if the particles should be tinted.
+     */
+    default boolean areBreakingParticlesTinted(BlockState state, ClientLevel level, BlockPos pos)
+    {
+        return !state.is(Blocks.GRASS_BLOCK);
     }
 }
