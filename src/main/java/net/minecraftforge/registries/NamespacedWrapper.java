@@ -220,6 +220,13 @@ class NamespacedWrapper<T> extends MappedRegistry<T> implements ILockableRegistr
         return Optional.ofNullable(this.holdersByName.get(key.location()));
     }
 
+    @Override
+    public @NotNull Holder<T> wrapAsHolder(@NotNull T value)
+    {
+        final Holder<T> holder = this.holders.get(value);
+        return holder == null ? Holder.direct(value) : holder;
+    }
+
     Optional<Holder<T>> getHolder(ResourceLocation location)
     {
         return Optional.ofNullable(this.holdersByName.get(location));
