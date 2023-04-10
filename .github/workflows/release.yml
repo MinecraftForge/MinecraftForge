@@ -26,7 +26,7 @@ jobs:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
           automatic_release_tag: "latest"
           prerelease: false
-          title: ${{ github.event.repository.name }} v${{ github.run_number }}
+          title: ${{ github.event.repository.name }}
           files: |
             TODO_FIND_PATH/build/libs/*.jar
             TODO_FIND_PATH/build/libs/*.jar
