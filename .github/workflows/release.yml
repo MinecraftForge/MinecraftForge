@@ -1,0 +1,32 @@
+name: Build and Release
+on: [workflow_dispatch]
+permissions: write-all
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Git Repository
+        uses: actions/checkout@v3
+      - name: Validate Gradle wrapper
+        uses: gradle/wrapper-validation-action@v1
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+      - name: Configure Git User Details
+        run: git config --global user.email "actions@github.com" && git config --global user.name "Github Actions"
+      - name: Build
+        run: ./gradlew build
+      - uses: "marvinpinto/action-automatic-releases@latest"
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          automatic_release_tag: "latest"
+          prerelease: false
+          title: ${{ github.event.repository.name }} v${{ github.run_number }}
+          files: |
+            TODO_FIND_PATH/build/libs/*.jar
+            TODO_FIND_PATH/build/libs/*.jar
