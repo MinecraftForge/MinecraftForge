@@ -37,8 +37,8 @@
              if (!nonnulllist.get(i).m_41619_()) {
 -               nonnulllist.get(i).m_41666_(this.f_35978_.f_19853_, this.f_35978_, i, this.f_35977_ == i);
 +               nonnulllist.get(i).m_41666_(this.f_35978_.f_19853_, this.f_35978_, index, this.f_35977_ == index);
-+               ++index;
              }
++            ++index;
           }
        }
 -
