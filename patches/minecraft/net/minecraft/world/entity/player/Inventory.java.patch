@@ -27,18 +27,13 @@
           if (p_36049_.m_41782_()) {
              itemstack.m_41751_(p_36049_.m_41783_().m_6426_());
           }
-@@ -222,14 +_,16 @@
-    }
- 
-    public void m_36068_() {
-+      int index = 0;
+@@ -225,11 +_,11 @@
        for(NonNullList<ItemStack> nonnulllist : this.f_35979_) {
           for(int i = 0; i < nonnulllist.size(); ++i) {
              if (!nonnulllist.get(i).m_41619_()) {
 -               nonnulllist.get(i).m_41666_(this.f_35978_.f_19853_, this.f_35978_, i, this.f_35977_ == i);
-+               nonnulllist.get(i).m_41666_(this.f_35978_.f_19853_, this.f_35978_, index, this.f_35977_ == index);
++               nonnulllist.get(i).m_41666_(this.f_35978_.f_19853_, this.f_35978_, i, nonnulllist == this.f_35974_ && this.f_35977_ == i);
              }
-+            ++index;
           }
        }
 -
