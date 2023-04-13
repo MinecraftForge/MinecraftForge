@@ -1,27 +1,13 @@
 --- a/net/minecraft/client/gui/screens/worldselection/CreateWorldScreen.java
 +++ b/net/minecraft/client/gui/screens/worldselection/CreateWorldScreen.java
-@@ -119,7 +_,8 @@
+@@ -119,6 +_,7 @@
     public static void m_232896_(Minecraft p_232897_, @Nullable Screen p_232898_) {
        m_232899_(p_232897_, f_232866_);
        PackRepository packrepository = new PackRepository(new ServerPacksSource());
--      WorldLoader.InitConfig worldloader$initconfig = m_245574_(packrepository, WorldDataConfiguration.f_244649_);
 +      net.minecraftforge.fml.ModLoader.get().postEvent(new net.minecraftforge.event.AddPackFindersEvent(net.minecraft.server.packs.PackType.SERVER_DATA, packrepository::addPackFinder));
-+      WorldLoader.InitConfig worldloader$initconfig = m_245574_(packrepository, new WorldDataConfiguration(new DataPackConfig(ImmutableList.of("vanilla"), ImmutableList.of()), FeatureFlags.f_244332_)); // FORGE: Load vanilla fallback with vanilla datapacks.
+       WorldLoader.InitConfig worldloader$initconfig = m_245574_(packrepository, WorldDataConfiguration.f_244649_);
        CompletableFuture<WorldCreationContext> completablefuture = WorldLoader.m_214362_(worldloader$initconfig, (p_247792_) -> {
           return new WorldLoader.DataLoadOutput<>(new CreateWorldScreen.DataPackReloadCookie(new WorldGenSettings(WorldOptions.m_247394_(), WorldPresets.m_246552_(p_247792_.f_244104_())), p_247792_.f_244127_()), p_247792_.f_243759_());
-       }, (p_247798_, p_247799_, p_247800_, p_247801_) -> {
-@@ -127,7 +_,10 @@
-          return new WorldCreationContext(p_247801_.f_243966_(), p_247800_, p_247799_, p_247801_.f_243979_());
-       }, Util.m_183991_(), p_232897_);
-       p_232897_.m_18701_(completablefuture::isDone);
--      p_232897_.m_91152_(new CreateWorldScreen(p_232897_, p_232898_, completablefuture.join(), Optional.of(WorldPresets.f_226437_), OptionalLong.empty()));
-+      // FORGE: Force load mods' datapacks after setting screen and ensure datapack selection reverts to vanilla if invalid.
-+      CreateWorldScreen createWorldScreen = new CreateWorldScreen(p_232897_, p_232898_, completablefuture.join().withDataConfiguration(new WorldDataConfiguration(new DataPackConfig(ImmutableList.of("vanilla"), ImmutableList.of()), FeatureFlags.f_244332_)), Optional.of(WorldPresets.f_226437_), OptionalLong.empty());
-+      p_232897_.m_91152_(createWorldScreen);
-+      createWorldScreen.m_269443_(packrepository, true, createWorldScreen::m_267734_);
-    }
- 
-    public static CreateWorldScreen m_275847_(Minecraft p_276017_, @Nullable Screen p_276029_, LevelSettings p_276055_, WorldCreationContext p_276028_, @Nullable Path p_276040_) {
 @@ -368,7 +_,7 @@
                 if (p_269627_) {
                    p_270552_.accept(this.f_267389_.m_267573_().f_243842_());
