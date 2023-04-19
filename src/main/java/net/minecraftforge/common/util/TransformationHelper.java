@@ -18,7 +18,9 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import net.minecraft.util.Mth;
-import net.minecraftforge.client.model.generators.BlockModelBuilder.RootTransformBuilder.TransformOrigin;
+import net.minecraft.util.StringRepresentable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Quaternionfc;
@@ -347,6 +349,51 @@ public final class TransformationHelper
                 return parseAxisRotation(e);
             }
             else throw new JsonParseException("Rotation: expected array or object, got: " + e);
+        }
+    }
+
+    public enum TransformOrigin implements StringRepresentable
+    {
+        CENTER(new Vector3f(.5f, .5f, .5f), "center"),
+        CORNER(new Vector3f(), "corner"),
+        OPPOSING_CORNER(new Vector3f(1, 1, 1), "opposing-corner");
+
+        private final Vector3f vec;
+        private final String name;
+
+        TransformOrigin(Vector3f vec, String name)
+        {
+            this.vec = vec;
+            this.name = name;
+        }
+
+        public Vector3f getVector()
+        {
+            return vec;
+        }
+
+        @Override
+        @NotNull
+        public String getSerializedName()
+        {
+            return name;
+        }
+
+        public static @Nullable TransformOrigin fromString(String originName)
+        {
+            if (CENTER.getSerializedName().equals(originName))
+            {
+                return CENTER;
+            }
+            if (CORNER.getSerializedName().equals(originName))
+            {
+                return CORNER;
+            }
+            if (OPPOSING_CORNER.getSerializedName().equals(originName))
+            {
+                return OPPOSING_CORNER;
+            }
+            return null;
         }
     }
 }
