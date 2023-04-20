@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/projectile/LlamaSpit.java
 +++ b/net/minecraft/world/entity/projectile/LlamaSpit.java
-@@ -30,6 +_,7 @@
+@@ -29,6 +_,7 @@
        super.m_8119_();
        Vec3 vec3 = this.m_20184_();
        HitResult hitresult = ProjectileUtil.m_37294_(this, this::m_5603_);

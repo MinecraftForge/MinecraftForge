@@ -12,6 +12,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -22,25 +23,30 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import com.google.gson.JsonNull;
 import com.google.gson.JsonPrimitive;
+import net.minecraft.DetectedVersion;
 import net.minecraft.Util;
 import net.minecraft.advancements.critereon.InventoryChangeTrigger;
 import net.minecraft.core.*;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.PackOutput;
+import net.minecraft.data.metadata.PackMetadataGenerator;
 import net.minecraft.data.recipes.*;
 import net.minecraft.data.worldgen.BootstapContext;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.packs.metadata.pack.PackMetadataSection;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.ItemTags;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.biome.Biome;
@@ -150,6 +156,13 @@ public class DataGeneratorTest
         PackOutput packOutput = gen.getPackOutput();
         CompletableFuture<HolderLookup.Provider> lookupProvider = event.getLookupProvider();
 
+        gen.addProvider(true, new PackMetadataGenerator(packOutput)
+                .add(PackMetadataSection.TYPE, new PackMetadataSection(
+                        Component.literal("Forge tests resource pack"),
+                        DetectedVersion.BUILT_IN.getPackVersion(PackType.CLIENT_RESOURCES),
+                        Arrays.stream(PackType.values()).collect(Collectors.toMap(Function.identity(), DetectedVersion.BUILT_IN::getPackVersion))
+                ))
+        );
         gen.addProvider(event.includeClient(), new Lang(packOutput));
         // Let blockstate provider see generated item models by passing its existing file helper
         ItemModelProvider itemModels = new ItemModels(packOutput, event.getExistingFileHelper());
@@ -431,8 +444,7 @@ public class DataGeneratorTest
         @Override
         public CompletableFuture<?> run(CachedOutput cache)
         {
-            super.run(cache);
-            return CompletableFuture.runAsync(this::test);
+            return super.run(cache).thenRun(this::test);
         }
 
         private void test()
@@ -682,7 +694,7 @@ public class DataGeneratorTest
         @Override
         public CompletableFuture<?> run(CachedOutput cache)
         {
-            super.run(cache);
+            var output = super.run(cache);
             List<String> errors = testModelResults(this.generatedModels, existingFileHelper, IGNORED_MODELS.stream().map(s -> new ResourceLocation(MODID, folder + "/" + s)).collect(Collectors.toSet()));
             if (!errors.isEmpty()) {
                 LOGGER.error("Found {} discrepancies between generated and vanilla item models: ", errors.size());
@@ -692,7 +704,7 @@ public class DataGeneratorTest
                 throw new AssertionError("Generated item models differed from vanilla equivalents, check above errors.");
             }
 
-            return CompletableFuture.allOf();
+            return output;
         }
 
         @Override
@@ -775,27 +787,27 @@ public class DataGeneratorTest
             ModelFile block = models().getBuilder("block")
                     .guiLight(GuiLight.SIDE)
                     .transforms()
-                    .transform(ItemTransforms.TransformType.GUI)
+                    .transform(ItemDisplayContext.GUI)
                     .rotation(30, 225, 0)
                     .scale(0.625f)
                     .end()
-                    .transform(ItemTransforms.TransformType.GROUND)
+                    .transform(ItemDisplayContext.GROUND)
                     .translation(0, 3, 0)
                     .scale(0.25f)
                     .end()
-                    .transform(ItemTransforms.TransformType.FIXED)
+                    .transform(ItemDisplayContext.FIXED)
                     .scale(0.5f)
                     .end()
-                    .transform(ItemTransforms.TransformType.THIRD_PERSON_RIGHT_HAND)
+                    .transform(ItemDisplayContext.THIRD_PERSON_RIGHT_HAND)
                     .rotation(75, 45, 0)
                     .translation(0, 2.5f, 0)
                     .scale(0.375f)
                     .end()
-                    .transform(ItemTransforms.TransformType.FIRST_PERSON_RIGHT_HAND)
+                    .transform(ItemDisplayContext.FIRST_PERSON_RIGHT_HAND)
                     .rotation(0, 45, 0)
                     .scale(0.4f)
                     .end()
-                    .transform(ItemTransforms.TransformType.FIRST_PERSON_LEFT_HAND)
+                    .transform(ItemDisplayContext.FIRST_PERSON_LEFT_HAND)
                     .rotation(0, 225, 0)
                     .scale(0.4f)
                     .end()
@@ -864,35 +876,35 @@ public class DataGeneratorTest
         @Override
         public CompletableFuture<?> run(CachedOutput cache)
         {
-            super.run(cache);
-            this.errors.addAll(testModelResults(models().generatedModels, models().existingFileHelper, Sets.union(IGNORED_MODELS, CUSTOM_MODELS)));
-            this.registeredBlocks.forEach((block, state) -> {
-                if (IGNORED_BLOCKS.contains(block)) return;
-                JsonObject generated = state.toJson();
-                try {
-                    Resource vanillaResource = models().existingFileHelper.getResource(ForgeRegistries.BLOCKS.getKey(block), PackType.CLIENT_RESOURCES, ".json", "blockstates");
-                    JsonObject existing = GSON.fromJson(vanillaResource.openAsReader(), JsonObject.class);
-                    if (state instanceof VariantBlockStateBuilder) {
-                        compareVariantBlockstates(block, generated, existing);
-                    } else if (state instanceof MultiPartBlockStateBuilder) {
-                        compareMultipartBlockstates(block, generated, existing);
-                    } else {
-                        throw new IllegalStateException("Unknown blockstate type: " + state.getClass());
+            return super.run(cache).thenRun(() -> {
+                this.errors.addAll(testModelResults(models().generatedModels, models().existingFileHelper, Sets.union(IGNORED_MODELS, CUSTOM_MODELS)));
+                this.registeredBlocks.forEach((block, state) -> {
+                    if (IGNORED_BLOCKS.contains(block)) return;
+                    JsonObject generated = state.toJson();
+                    try {
+                        Resource vanillaResource = models().existingFileHelper.getResource(ForgeRegistries.BLOCKS.getKey(block), PackType.CLIENT_RESOURCES, ".json", "blockstates");
+                        JsonObject existing = GSON.fromJson(vanillaResource.openAsReader(), JsonObject.class);
+                        if (state instanceof VariantBlockStateBuilder) {
+                            compareVariantBlockstates(block, generated, existing);
+                        } else if (state instanceof MultiPartBlockStateBuilder) {
+                            compareMultipartBlockstates(block, generated, existing);
+                        } else {
+                            throw new IllegalStateException("Unknown blockstate type: " + state.getClass());
+                        }
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
                     }
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
+                });
+
+                if (!errors.isEmpty()) {
+                    LOGGER.error("Found {} discrepancies between generated and vanilla models/blockstates: ", errors.size());
+                    for (String s : errors) {
+                        LOGGER.error("    {}", s);
+                    }
+                    throw new AssertionError("Generated blockstates/models differed from vanilla equivalents, check above errors.");
                 }
+
             });
-
-            if (!errors.isEmpty()) {
-                LOGGER.error("Found {} discrepancies between generated and vanilla models/blockstates: ", errors.size());
-                for (String s : errors) {
-                    LOGGER.error("    {}", s);
-                }
-                throw new AssertionError("Generated blockstates/models differed from vanilla equivalents, check above errors.");
-            }
-
-            return CompletableFuture.allOf();
         }
 
         private void compareVariantBlockstates(Block block, JsonObject generated, JsonObject vanilla) {
@@ -1131,7 +1143,7 @@ public class DataGeneratorTest
                 } else if (generatedDisplay != null) { // Both must be non-null
                     ItemTransforms generatedTransforms = GSON.fromJson(generatedDisplay, ItemTransforms.class);
                     ItemTransforms vanillaTransforms = GSON.fromJson(vanillaDisplay, ItemTransforms.class);
-                    for (ItemTransforms.TransformType type : ItemTransforms.TransformType.values()) {
+                    for (ItemDisplayContext type : ItemDisplayContext.values()) {
                         if (!generatedTransforms.getTransform(type).equals(vanillaTransforms.getTransform(type))) {
                             ret.add("Model " + loc  + " has transforms that differ from vanilla equivalent for perspective " + type.name());
                             return;

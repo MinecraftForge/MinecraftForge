@@ -35,6 +35,11 @@ abstract class CheckPatches extends CheckTask {
             }
         }
     }
+    
+    def accessChange(previous, current) {
+        //return ACCESS_MAP[previous] < ACCESS_MAP[current]
+        return previous != current
+    }
 
     void verifyPatch(Path patch, Reporter reporter, boolean fix, String patchPath, boolean hasS2SArtifact) {
         final oldFixedErrors = reporter.fixed.size()
@@ -87,7 +92,7 @@ abstract class CheckPatches extends CheckTask {
                             pMatcher.group(6) == cMatcher.group(6) && // = ...
                             pMatcher.group(5) == cMatcher.group(5) && // field name
                             pMatcher.group(3) == cMatcher.group(3) && // static
-                            (ACCESS_MAP[pMatcher.group(2)] < ACCESS_MAP[cMatcher.group(2)] || pMatcher.group(4) != cMatcher.group(4))) {
+                            (accessChange(pMatcher.group(2), cMatcher.group(2)) || pMatcher.group(4) != cMatcher.group(4))) {
                         reporter.report("Patch contains access changes or final removal at line ${i + 1}, file: $patchPath", false)
                     }
 
@@ -98,7 +103,7 @@ abstract class CheckPatches extends CheckTask {
                             pMatcher.group(6) == cMatcher.group(6) && // params
                             pMatcher.group(5) == cMatcher.group(5) && // <T> void name
                             pMatcher.group(3) == cMatcher.group(3) && // static
-                            (ACCESS_MAP[pMatcher.group(2)] < ACCESS_MAP[cMatcher.group(2)] || pMatcher.group(4) != cMatcher.group(4))) {
+                            (accessChange(pMatcher.group(2), cMatcher.group(2)) || pMatcher.group(4) != cMatcher.group(4))) {
                         reporter.report("Patch contains access changes or final removal at line ${i + 1}, file: $patchPath", false)
                     }
 
@@ -109,7 +114,7 @@ abstract class CheckPatches extends CheckTask {
                             pMatcher.group(6) == cMatcher.group(6) && // ClassName<> extends ...
                             pMatcher.group(5) == cMatcher.group(5) && // class | interface
                             pMatcher.group(3) == cMatcher.group(3) && // static
-                            (ACCESS_MAP[pMatcher.group(2)] < ACCESS_MAP[cMatcher.group(2)] || pMatcher.group(4) != cMatcher.group(4))) {
+                            (accessChange(pMatcher.group(2), cMatcher.group(2)) || pMatcher.group(4) != cMatcher.group(4))) {
                         reporter.report("Patch contains access changes or final removal at line ${i + 1}, file: $patchPath", false)
                     }
                 }

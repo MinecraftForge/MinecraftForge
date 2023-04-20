@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/gui/screens/OptionsScreen.java
 +++ b/net/minecraft/client/gui/screens/OptionsScreen.java
-@@ -168,6 +_,14 @@
+@@ -151,6 +_,14 @@
        super.m_86412_(p_96249_, p_96250_, p_96251_, p_96252_);
     }
  

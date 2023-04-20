@@ -17,5 +17,6 @@
   ],
   "result": {
     "item": "minecraft:red_banner"
-  }
+  },
+  "show_notification": true
 }

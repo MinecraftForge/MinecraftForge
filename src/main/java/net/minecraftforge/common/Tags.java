@@ -434,7 +434,9 @@ public class Tags
          *
          * @see net.minecraftforge.common.ToolAction
          * @see net.minecraftforge.common.ToolActions
+         * @deprecated Replaced by net.minecraft.tags.ItemTags#SWORDS
          */
+        @Deprecated(since = "1.19.4", forRemoval = true)
         public static final TagKey<Item> TOOLS_SWORDS = tag("tools/swords");
         /**
          * A tag containing all existing axes.
@@ -443,7 +445,9 @@ public class Tags
          *
          * @see net.minecraftforge.common.ToolAction
          * @see net.minecraftforge.common.ToolActions
+         * @deprecated Replaced by net.minecraft.tags.ItemTags#AXES
          */
+        @Deprecated(since = "1.19.4", forRemoval = true)
         public static final TagKey<Item> TOOLS_AXES = tag("tools/axes");
         /**
          * A tag containing all existing pickaxes.
@@ -452,7 +456,9 @@ public class Tags
          *
          * @see net.minecraftforge.common.ToolAction
          * @see net.minecraftforge.common.ToolActions
+         * @deprecated Replaced by net.minecraft.tags.ItemTags#PICKAXES
          */
+        @Deprecated(since = "1.19.4", forRemoval = true)
         public static final TagKey<Item> TOOLS_PICKAXES = tag("tools/pickaxes");
         /**
          * A tag containing all existing shovels.
@@ -461,7 +467,9 @@ public class Tags
          *
          * @see net.minecraftforge.common.ToolAction
          * @see net.minecraftforge.common.ToolActions
+         * @deprecated Replaced by net.minecraft.tags.ItemTags#SHOVELS
          */
+        @Deprecated(since = "1.19.4", forRemoval = true)
         public static final TagKey<Item> TOOLS_SHOVELS = tag("tools/shovels");
         /**
          * A tag containing all existing hoes.
@@ -470,7 +478,9 @@ public class Tags
          *
          * @see net.minecraftforge.common.ToolAction
          * @see net.minecraftforge.common.ToolActions
+         * @deprecated Replaced by net.minecraft.tags.ItemTags#HOES
          */
+        @Deprecated(since = "1.19.4", forRemoval = true)
         public static final TagKey<Item> TOOLS_HOES = tag("tools/hoes");
         /**
          * A tag containing all existing shields.

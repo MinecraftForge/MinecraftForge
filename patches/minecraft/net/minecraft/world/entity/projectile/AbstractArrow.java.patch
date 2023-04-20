@@ -9,12 +9,14 @@
           this.m_20095_();
        }
  
-@@ -186,7 +_,7 @@
+@@ -186,7 +_,9 @@
                 }
              }
  
 -            if (hitresult != null && !flag) {
-+            if (hitresult != null && hitresult.m_6662_() != HitResult.Type.MISS && !flag && !net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, hitresult)) {
++            if (hitresult != null && hitresult.m_6662_() != HitResult.Type.MISS && !flag) {
++               if (net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, hitresult))
++                  break;
                 this.m_6532_(hitresult);
                 this.f_19812_ = true;
              }

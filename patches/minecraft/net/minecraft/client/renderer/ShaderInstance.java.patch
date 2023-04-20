@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/ShaderInstance.java
 +++ b/net/minecraft/client/renderer/ShaderInstance.java
-@@ -96,10 +_,14 @@
+@@ -98,10 +_,14 @@
     @Nullable
     public final Uniform f_173320_;
  
@@ -17,7 +17,7 @@
  
        try (Reader reader = p_173336_.m_215597_(resourcelocation)) {
           JsonObject jsonobject = GsonHelper.m_13859_(reader);
-@@ -205,8 +_,10 @@
+@@ -208,8 +_,10 @@
        Program program1 = p_173342_.m_85570_().get(p_173343_);
        Program program;
        if (program1 == null) {
@@ -30,7 +30,7 @@
  
           try (InputStream inputstream = resource.m_215507_()) {
              final String s1 = FileUtil.m_179922_(s);
-@@ -214,11 +_,11 @@
+@@ -217,16 +_,17 @@
                 private final Set<String> f_173369_ = Sets.newHashSet();
  
                 public String m_142138_(boolean p_173374_, String p_173375_) {
@@ -43,11 +43,8 @@
                    } else {
 -                     ResourceLocation resourcelocation = new ResourceLocation(p_173375_);
  
-                      try {
-                         String s2;
-@@ -228,7 +_,8 @@
- 
-                         return s2;
+                      try (Reader reader = p_173341_.m_215597_(resourcelocation)) {
+                         return IOUtils.toString(reader);
                       } catch (IOException ioexception) {
 -                        ShaderInstance.f_173323_.error("Could not open GLSL import {}: {}", p_173375_, ioexception.getMessage());
 +                        // FORGE: specify the namespace of the failed import in case of duplicates from multiple mods

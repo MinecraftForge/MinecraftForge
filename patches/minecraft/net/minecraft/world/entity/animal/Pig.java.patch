@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/animal/Pig.java
 +++ b/net/minecraft/world/entity/animal/Pig.java
-@@ -200,7 +_,7 @@
+@@ -201,7 +_,7 @@
     }
  
     public void m_8038_(ServerLevel p_29473_, LightningBolt p_29474_) {
@@ -9,7 +9,7 @@
           ZombifiedPiglin zombifiedpiglin = EntityType.f_20531_.m_20615_(p_29473_);
           if (zombifiedpiglin != null) {
              zombifiedpiglin.m_8061_(EquipmentSlot.MAINHAND, new ItemStack(Items.f_42430_));
-@@ -213,6 +_,7 @@
+@@ -214,6 +_,7 @@
              }
  
              zombifiedpiglin.m_21530_();

@@ -13,5 +13,6 @@
   ],
   "result": {
     "item": "minecraft:golden_chestplate"
-  }
+  },
+  "show_notification": true
 }

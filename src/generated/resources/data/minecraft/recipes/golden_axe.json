@@ -16,5 +16,6 @@
   ],
   "result": {
     "item": "minecraft:golden_axe"
-  }
+  },
+  "show_notification": true
 }

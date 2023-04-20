@@ -16,5 +16,6 @@
   ],
   "result": {
     "item": "minecraft:spyglass"
-  }
+  },
+  "show_notification": true
 }

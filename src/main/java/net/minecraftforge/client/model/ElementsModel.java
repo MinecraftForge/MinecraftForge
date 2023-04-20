@@ -5,32 +5,26 @@
 
 package net.minecraftforge.client.model;
 
-import com.google.common.collect.Sets;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
-import com.mojang.datafixers.util.Pair;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 import java.util.function.Function;
 import net.minecraft.client.renderer.block.model.BlockElement;
-import net.minecraft.client.renderer.block.model.BlockElementFace;
 import net.minecraft.client.renderer.block.model.BlockModel;
-import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.Material;
 import net.minecraft.client.resources.model.ModelBaker;
 import net.minecraft.client.resources.model.ModelState;
-import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import net.minecraftforge.client.model.geometry.IGeometryBakingContext;
 import net.minecraftforge.client.model.geometry.IGeometryLoader;
 import net.minecraftforge.client.model.geometry.SimpleUnbakedGeometry;
+import net.minecraftforge.client.model.geometry.UnbakedGeometryHelper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -64,8 +58,10 @@ public class ElementsModel extends SimpleUnbakedGeometry<ElementsModel>
         // If there is a root transform, undo the ModelState transform, apply it, then re-apply the ModelState transform.
         // This is necessary because of things like UV locking, which should only respond to the ModelState, and as such
         // that is the only transform that should be applied during face bake.
-        var postTransform = context.getRootTransform().isIdentity() ? QuadTransformers.empty() :
-                QuadTransformers.applying(modelState.getRotation().compose(context.getRootTransform()).compose(modelState.getRotation().inverse()));
+        var postTransform = QuadTransformers.empty();
+        var rootTransform = context.getRootTransform();
+        if (!rootTransform.isIdentity())
+            postTransform = UnbakedGeometryHelper.applyRootTransform(modelState, rootTransform);
 
         for (BlockElement element : elements)
         {

@@ -29,6 +29,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.client.ChunkRenderTypeSet;
 import net.minecraftforge.client.model.data.ModelData;
@@ -41,22 +42,22 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * A model composed of multiple sub-models which are picked based on the {@link ItemTransforms.TransformType} being used.
+ * A model composed of multiple sub-models which are picked based on the {@link ItemDisplayContext} being used.
  */
 public class SeparateTransformsModel implements IUnbakedGeometry<SeparateTransformsModel>
 {
     private static final Logger LOGGER = LogManager.getLogger();
 
     private final BlockModel baseModel;
-    private final ImmutableMap<ItemTransforms.TransformType, BlockModel> perspectives;
+    private final ImmutableMap<ItemDisplayContext, BlockModel> perspectives;
     private final boolean deprecatedLoader;
 
-    public SeparateTransformsModel(BlockModel baseModel, ImmutableMap<ItemTransforms.TransformType, BlockModel> perspectives)
+    public SeparateTransformsModel(BlockModel baseModel, ImmutableMap<ItemDisplayContext, BlockModel> perspectives)
     {
         this(baseModel, perspectives, false);
     }
 
-    private SeparateTransformsModel(BlockModel baseModel, ImmutableMap<ItemTransforms.TransformType, BlockModel> perspectives, boolean deprecatedLoader)
+    private SeparateTransformsModel(BlockModel baseModel, ImmutableMap<ItemDisplayContext, BlockModel> perspectives, boolean deprecatedLoader)
     {
         this.baseModel = baseModel;
         this.perspectives = perspectives;
@@ -94,9 +95,9 @@ public class SeparateTransformsModel implements IUnbakedGeometry<SeparateTransfo
         private final TextureAtlasSprite particle;
         private final ItemOverrides overrides;
         private final BakedModel baseModel;
-        private final ImmutableMap<ItemTransforms.TransformType, BakedModel> perspectives;
+        private final ImmutableMap<ItemDisplayContext, BakedModel> perspectives;
 
-        public Baked(boolean isAmbientOcclusion, boolean isGui3d, boolean isSideLit, TextureAtlasSprite particle, ItemOverrides overrides, BakedModel baseModel, ImmutableMap<ItemTransforms.TransformType, BakedModel> perspectives)
+        public Baked(boolean isAmbientOcclusion, boolean isGui3d, boolean isSideLit, TextureAtlasSprite particle, ItemOverrides overrides, BakedModel baseModel, ImmutableMap<ItemDisplayContext, BakedModel> perspectives)
         {
             this.isAmbientOcclusion = isAmbientOcclusion;
             this.isGui3d = isGui3d;
@@ -157,7 +158,7 @@ public class SeparateTransformsModel implements IUnbakedGeometry<SeparateTransfo
         }
 
         @Override
-        public BakedModel applyTransform(ItemTransforms.TransformType cameraTransformType, PoseStack poseStack, boolean applyLeftHandTransform)
+        public BakedModel applyTransform(ItemDisplayContext cameraTransformType, PoseStack poseStack, boolean applyLeftHandTransform)
         {
             if (perspectives.containsKey(cameraTransformType))
             {
@@ -194,12 +195,12 @@ public class SeparateTransformsModel implements IUnbakedGeometry<SeparateTransfo
 
             JsonObject perspectiveData = GsonHelper.getAsJsonObject(jsonObject, "perspectives");
 
-            Map<ItemTransforms.TransformType, BlockModel> perspectives = new HashMap<>();
-            for (ItemTransforms.TransformType transform : ItemTransforms.TransformType.values())
+            Map<ItemDisplayContext, BlockModel> perspectives = new HashMap<>();
+            for (ItemDisplayContext transform : ItemDisplayContext.values())
             {
-                if (perspectiveData.has(transform.getSerializeName()))
+                if (perspectiveData.has(transform.getSerializedName()))
                 {
-                    BlockModel perspectiveModel = deserializationContext.deserialize(GsonHelper.getAsJsonObject(perspectiveData, transform.getSerializeName()), BlockModel.class);
+                    BlockModel perspectiveModel = deserializationContext.deserialize(GsonHelper.getAsJsonObject(perspectiveData, transform.getSerializedName()), BlockModel.class);
                     perspectives.put(transform, perspectiveModel);
                 }
             }

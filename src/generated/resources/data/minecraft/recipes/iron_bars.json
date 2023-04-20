@@ -13,5 +13,6 @@
   "result": {
     "count": 16,
     "item": "minecraft:iron_bars"
-  }
+  },
+  "show_notification": true
 }

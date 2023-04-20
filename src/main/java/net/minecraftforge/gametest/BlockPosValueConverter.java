@@ -14,7 +14,7 @@ public class BlockPosValueConverter implements ValueConverter<BlockPos>
     public BlockPos convert(String value)
     {
         String[] split = value.split(",");
-        return new BlockPos(Double.parseDouble(split[0]), Double.parseDouble(split[1]), Double.parseDouble(split[2]));
+        return BlockPos.containing(Double.parseDouble(split[0]), Double.parseDouble(split[1]), Double.parseDouble(split[2]));
     }
 
     @Override

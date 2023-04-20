@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/item/Item.java
 +++ b/net/minecraft/world/item/Item.java
-@@ -49,9 +_,9 @@
+@@ -50,9 +_,9 @@
  import net.minecraft.world.phys.Vec3;
  import org.slf4j.Logger;
  
@@ -12,7 +12,7 @@
     protected static final UUID f_41374_ = UUID.fromString("CB3F55D3-645C-4F38-A497-9C13A33DB5CF");
     protected static final UUID f_41375_ = UUID.fromString("FA233E1C-4180-4865-B01B-BCCE9785ACA3");
     public static final int f_150884_ = 64;
-@@ -98,7 +_,8 @@
+@@ -99,7 +_,8 @@
              f_150883_.error("Item classes should end with Item and {} doesn't.", (Object)s);
           }
        }
@@ -22,16 +22,19 @@
     }
  
     /** @deprecated */
-@@ -107,6 +_,8 @@
-       return this.f_204113_;
+@@ -109,8 +_,11 @@
     }
  
-+   /** @deprecated Forge: Use damage source sensitive version */
-+   @Deprecated
     public void m_5929_(Level p_41428_, LivingEntity p_41429_, ItemStack p_41430_, int p_41431_) {
++       p_41430_.onUsingTick(p_41429_, p_41431_);
     }
  
-@@ -133,9 +_,9 @@
++   /** @deprecated Forge: {@link net.minecraftforge.common.extensions.IForgeItem#onDestroyed(ItemEntity, DamageSource) Use damage source sensitive version} */
++   @Deprecated
+    public void m_142023_(ItemEntity p_150887_) {
+    }
+ 
+@@ -134,9 +_,9 @@
     }
  
     public InteractionResultHolder<ItemStack> m_7203_(Level p_41432_, Player p_41433_, InteractionHand p_41434_) {
@@ -44,7 +47,7 @@
              p_41433_.m_6672_(p_41434_);
              return InteractionResultHolder.m_19096_(itemstack);
           } else {
-@@ -150,10 +_,12 @@
+@@ -151,10 +_,12 @@
        return this.m_41472_() ? p_41411_.m_5584_(p_41410_, p_41409_) : p_41409_;
     }
  
@@ -57,7 +60,7 @@
     public final int m_41462_() {
        return this.f_41371_;
     }
-@@ -167,11 +_,12 @@
+@@ -168,11 +_,12 @@
     }
  
     public int m_142158_(ItemStack p_150900_) {
@@ -72,7 +75,7 @@
        return Mth.m_14169_(f / 3.0F, 1.0F, 1.0F);
     }
  
-@@ -228,10 +_,12 @@
+@@ -229,10 +_,12 @@
     }
  
     @Nullable
@@ -85,7 +88,7 @@
     public boolean m_41470_() {
        return this.f_41378_ != null;
     }
-@@ -252,7 +_,7 @@
+@@ -253,7 +_,7 @@
  
     public int m_8105_(ItemStack p_41454_) {
        if (p_41454_.m_41720_().m_41472_()) {
@@ -94,7 +97,7 @@
        } else {
           return 0;
        }
-@@ -294,7 +_,7 @@
+@@ -295,7 +_,7 @@
     }
  
     public boolean m_8120_(ItemStack p_41456_) {
@@ -103,13 +106,13 @@
     }
  
     protected static BlockHitResult m_41435_(Level p_41436_, Player p_41437_, ClipContext.Fluid p_41438_) {
-@@ -307,11 +_,13 @@
+@@ -308,11 +_,13 @@
        float f5 = Mth.m_14031_(-f * ((float)Math.PI / 180F));
        float f6 = f3 * f4;
        float f7 = f2 * f4;
 -      double d0 = 5.0D;
 -      Vec3 vec31 = vec3.m_82520_((double)f6 * 5.0D, (double)f5 * 5.0D, (double)f7 * 5.0D);
-+      double d0 = p_41437_.getReachDistance();
++      double d0 = p_41437_.getBlockReach();
 +      Vec3 vec31 = vec3.m_82520_((double)f6 * d0, (double)f5 * d0, (double)f7 * d0);
        return p_41436_.m_45547_(new ClipContext(vec3, vec31, ClipContext.Block.OUTLINE, p_41438_, p_41437_));
     }
@@ -119,7 +122,7 @@
     public int m_6473_() {
        return 0;
     }
-@@ -320,12 +_,20 @@
+@@ -321,12 +_,20 @@
        return false;
     }
  
@@ -141,7 +144,7 @@
     }
  
     public ItemStack m_7968_() {
-@@ -336,6 +_,8 @@
+@@ -337,6 +_,8 @@
        return this.f_41380_ != null;
     }
  
@@ -150,7 +153,7 @@
     @Nullable
     public FoodProperties m_41473_() {
        return this.f_41380_;
-@@ -370,6 +_,32 @@
+@@ -366,6 +_,32 @@
        return this.f_243811_;
     }
  
@@ -183,7 +186,7 @@
     public static class Properties {
        int f_41478_ = 64;
        int f_41479_;
-@@ -380,6 +_,7 @@
+@@ -376,6 +_,7 @@
        FoodProperties f_41483_;
        boolean f_41484_;
        FeatureFlagSet f_244559_ = FeatureFlags.f_244377_;
@@ -191,7 +194,7 @@
  
        public Item.Properties m_41489_(FoodProperties p_41490_) {
           this.f_41483_ = p_41490_;
-@@ -417,6 +_,11 @@
+@@ -413,6 +_,11 @@
  
        public Item.Properties m_41486_() {
           this.f_41484_ = true;

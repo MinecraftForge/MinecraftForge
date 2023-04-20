@@ -94,7 +94,7 @@ public class CustomTooltipTest
         }
 
         @Override
-        public void renderImage(Font font, int x, int y, PoseStack poseStack, ItemRenderer itemRenderer_, int zIndex)
+        public void renderImage(Font font, int x, int y, PoseStack poseStack, ItemRenderer itemRenderer_)
         {
             GuiComponent.fill(poseStack, x, y,  x + 10, y+ 10, tooltip.color);
         }

@@ -45,10 +45,8 @@ public class NetworkRegistry
      * Special value for clientAcceptedVersions and serverAcceptedVersions predicates indicating the other side lacks
      * this channel.
      */
-    @SuppressWarnings("RedundantStringConstructorCall")
-    public static String ABSENT = new String("ABSENT \uD83E\uDD14");
+    public static ServerStatusPing.ChannelData ABSENT = new ServerStatusPing.ChannelData(new ResourceLocation("absent"), "ABSENT \uD83E\uDD14", false);
 
-    @SuppressWarnings("RedundantStringConstructorCall")
     public static String ACCEPTVANILLA  = new String("ALLOWVANILLA \uD83D\uDC93\uD83D\uDC93\uD83D\uDC93");
 
     /**
@@ -68,7 +66,7 @@ public class NetworkRegistry
      */
     public static Predicate<String> acceptMissingOr(Predicate<String> versionCheck)
     {
-        return versionCheck.or(ABSENT::equals).or(ACCEPTVANILLA::equals);
+        return versionCheck.or(ABSENT.version()::equals).or(ACCEPTVANILLA::equals);
     }
 
     public static List<String> getServerNonVanillaNetworkMods()
@@ -172,11 +170,10 @@ public class NetworkRegistry
      * @see HandshakeMessages.S2CModList
      * @see HandshakeMessages.C2SModListReply
      */
-    static Map<ResourceLocation, Pair<String, Boolean>> buildChannelVersionsForListPing() {
+    static Map<ResourceLocation, ServerStatusPing.ChannelData> buildChannelVersionsForListPing() {
         return instances.entrySet().stream().
-                map( p -> Pair.of(p.getKey(), Pair.of(p.getValue().getNetworkProtocolVersion(), p.getValue().tryClientVersionOnServer(ABSENT)))).
-                filter(p -> !p.getLeft().getNamespace().equals("fml")).
-                collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
+                filter(p -> !p.getKey().getNamespace().equals("fml")).
+                collect(Collectors.toMap(Map.Entry::getKey, val -> new ServerStatusPing.ChannelData(val.getKey(), val.getValue().getNetworkProtocolVersion(), val.getValue().tryClientVersionOnServer(ABSENT.version()))));
     }
 
     static List<String> listRejectedVanillaMods(BiFunction<NetworkInstance, String, Boolean> testFunction) {
@@ -186,7 +183,7 @@ public class NetworkRegistry
                     final boolean test = testFunction.apply(ni, incomingVersion);
                     LOGGER.debug(NETREGISTRY, "Channel '{}' : Vanilla acceptance test: {}", ni.getChannelName(), test ? "ACCEPTED" : "REJECTED");
                     return Pair.of(ni.getChannelName(), test);
-                }).filter(p->!p.getRight()).collect(Collectors.toList());
+                }).filter(p->!p.getRight()).toList();
 
         if (!results.isEmpty()) {
             LOGGER.error(NETREGISTRY, "Channels [{}] rejected vanilla connections",
@@ -228,7 +225,7 @@ public class NetworkRegistry
     private static Map<ResourceLocation, String> validateChannels(final Map<ResourceLocation, String> incoming, final String originName, BiFunction<NetworkInstance, String, Boolean> testFunction) {
         final Map<ResourceLocation, String> results = instances.values().stream().
                 map(ni -> {
-                    final String incomingVersion = incoming.getOrDefault(ni.getChannelName(), ABSENT);
+                    final String incomingVersion = incoming.getOrDefault(ni.getChannelName(), ABSENT.version());
                     final boolean test = testFunction.apply(ni, incomingVersion);
                     LOGGER.debug(NETREGISTRY, "Channel '{}' : Version test of '{}' from {} : {}", ni.getChannelName(), incomingVersion, originName, test ? "ACCEPTED" : "REJECTED");
                     return Pair.of(Pair.of(ni.getChannelName(), incomingVersion), test);
@@ -258,20 +255,20 @@ public class NetworkRegistry
         return gatheredPayloads;
     }
 
-    public static boolean checkListPingCompatibilityForClient(Map<ResourceLocation, Pair<String, Boolean>> incoming) {
+    public static boolean checkListPingCompatibilityForClient(Map<ResourceLocation, ServerStatusPing.ChannelData> incoming) {
         Set<ResourceLocation> handled = new HashSet<>();
         final List<Pair<ResourceLocation, Boolean>> results = instances.values().stream().
                 filter(p -> !p.getChannelName().getNamespace().equals("fml")).
                 map(ni -> {
-                    final Pair<String, Boolean> incomingVersion = incoming.getOrDefault(ni.getChannelName(), Pair.of(ABSENT, true));
-                    final boolean test = ni.tryServerVersionOnClient(incomingVersion.getLeft());
+                    final ServerStatusPing.ChannelData incomingVersion = incoming.getOrDefault(ni.getChannelName(), ABSENT);
+                    final boolean test = ni.tryServerVersionOnClient(incomingVersion.version());
                     handled.add(ni.getChannelName());
                     LOGGER.debug(NETREGISTRY, "Channel '{}' : Version test of '{}' during listping : {}", ni.getChannelName(), incomingVersion, test ? "ACCEPTED" : "REJECTED");
                     return Pair.of(ni.getChannelName(), test);
                 }).filter(p->!p.getRight()).collect(Collectors.toList());
         final List<ResourceLocation> missingButRequired = incoming.entrySet().stream().
                 filter(p -> !p.getKey().getNamespace().equals("fml")).
-                filter(p -> !p.getValue().getRight()).
+                filter(p -> !p.getValue().required()).
                 filter(p -> !handled.contains(p.getKey())).
                 map(Map.Entry::getKey).
                 collect(Collectors.toList());

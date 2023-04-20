@@ -52,7 +52,7 @@ public class ClientModLoader
             }
         }
     }
-    public static void begin(final Minecraft minecraft, final PackRepository defaultResourcePacks, final ReloadableResourceManager mcResourceManager, ClientPackSource metadataSerializer)
+    public static void begin(final Minecraft minecraft, final PackRepository defaultResourcePacks, final ReloadableResourceManager mcResourceManager)
     {
         // force log4j to shutdown logging in a shutdown hook. This is because we disable default shutdown hook so the server properly logs it's shutdown
         Runtime.getRuntime().addShutdownHook(new Thread(LogManager::shutdown));

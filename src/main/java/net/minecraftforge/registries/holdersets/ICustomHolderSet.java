@@ -16,4 +16,10 @@ public interface ICustomHolderSet<T> extends HolderSet<T>
      * {@return HolderSetType registered to {@link ForgeRegistries.HOLDER_SET_TYPES}}
      */
     HolderSetType type();
+
+    @Override
+    default SerializationType serializationType()
+    {
+        return SerializationType.OBJECT;
+    }
 }

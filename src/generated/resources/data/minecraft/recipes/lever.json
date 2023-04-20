@@ -15,5 +15,6 @@
   ],
   "result": {
     "item": "minecraft:lever"
-  }
+  },
+  "show_notification": true
 }

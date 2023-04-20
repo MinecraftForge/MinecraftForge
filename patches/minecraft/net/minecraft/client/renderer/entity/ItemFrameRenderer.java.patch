@@ -32,7 +32,7 @@
           } else {
              int k = this.m_174208_(p_115076_, 15728880, p_115081_);
              p_115079_.m_85841_(0.5F, 0.5F, 0.5F);
-             this.f_115047_.m_174269_(itemstack, ItemTransforms.TransformType.FIXED, k, OverlayTexture.f_118083_, p_115079_, p_115080_, p_115076_.m_19879_());
+             this.f_115047_.m_269128_(itemstack, ItemDisplayContext.FIXED, k, OverlayTexture.f_118083_, p_115079_, p_115080_, p_115076_.f_19853_, p_115076_.m_19879_());
           }
 +         }
        }

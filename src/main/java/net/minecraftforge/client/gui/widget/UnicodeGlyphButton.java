@@ -35,9 +35,8 @@ public class UnicodeGlyphButton extends ExtendedButton
         {
             Minecraft mc = Minecraft.getInstance();
             this.isHovered = mouseX >= this.getX() && mouseY >= this.getY() && mouseX < this.getX() + this.width && mouseY < this.getY() + this.height;
-            int k = this.getYImage(this.isHoveredOrFocused());
-            ScreenUtils.blitWithBorder(poseStack, WIDGETS_LOCATION, this.getX(), this.getY(), 0, 46 + k * 20, this.width, this.height, 200, 20, 2, 3, 2, 2, this.getBlitOffset());
-            this.renderBg(poseStack, mc, mouseX, mouseY);
+            int k = !this.active ? 0 : (this.isHoveredOrFocused() ? 2 : 1);
+            ScreenUtils.blitWithBorder(poseStack, WIDGETS_LOCATION, this.getX(), this.getY(), 0, 46 + k * 20, this.width, this.height, 200, 20, 2, 3, 2, 2, 0);
 
             Component buttonText = this.createNarrationMessage();
             int glyphWidth = (int) (mc.font.width(glyph) * glyphScale);

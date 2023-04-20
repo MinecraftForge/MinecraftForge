@@ -16,5 +16,6 @@
   ],
   "result": {
     "item": "minecraft:iron_pickaxe"
-  }
+  },
+  "show_notification": true
 }

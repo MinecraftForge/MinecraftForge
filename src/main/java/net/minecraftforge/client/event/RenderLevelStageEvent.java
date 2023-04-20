@@ -171,6 +171,14 @@ public class RenderLevelStageEvent extends Event
         public static final Stage AFTER_CUTOUT_BLOCKS = register("after_cutout_blocks", RenderType.cutout());
         /**
          * Use this to render custom block-like geometry into the world.
+         */
+        public static final Stage AFTER_ENTITIES = register("after_entities", null);
+        /**
+         * Use this to render custom block-like geometry into the world.
+         */
+        public static final Stage AFTER_BLOCK_ENTITIES = register("after_block_entities", null);
+        /**
+         * Use this to render custom block-like geometry into the world.
          * Due to how transparency sorting works, this stage may not work properly with translucency. If you intend to render translucency,
          * try using {@link #AFTER_TRIPWIRE_BLOCKS} or {@link #AFTER_PARTICLES}.
          * Although this is called within a fabulous graphics target, it does not function properly in many cases.
