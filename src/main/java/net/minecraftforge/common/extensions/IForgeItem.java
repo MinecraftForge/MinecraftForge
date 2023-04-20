@@ -857,4 +857,12 @@ public interface IForgeItem
         return stack.isEnchanted();
     }
 
+    /**
+     * {@return true if the given ItemStack can be put into a grindstone to be repaired and/or stripped of its enchantments}
+     */
+    default boolean canGrindstoneRepair(ItemStack stack)
+    {
+        // TODO 1.20: Change to return false; this changes the default behavior for all items from opt-out to opt-in.
+        return true;
+    }
 }
