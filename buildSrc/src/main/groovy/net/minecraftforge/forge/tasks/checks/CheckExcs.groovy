@@ -1,5 +1,6 @@
 package net.minecraftforge.forge.tasks.checks
 
+import net.minecraftforge.forge.tasks.Util
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.tasks.InputFile
@@ -7,7 +8,6 @@ import org.gradle.api.tasks.InputFiles
 import org.objectweb.asm.ClassReader
 import org.objectweb.asm.ClassVisitor
 import org.objectweb.asm.MethodVisitor
-import org.objectweb.asm.Opcodes
 import org.objectweb.asm.Type
 
 import java.util.zip.ZipEntry
@@ -67,7 +67,7 @@ abstract class CheckExcs extends CheckTask {
     private void collectKnown(Collection<String> known) {
         binary.get().asFile.withInputStream { i ->
             new ZipInputStream(i).withCloseable { zin ->
-                final visitor = new ClassVisitor(Opcodes.ASM9) {
+                final visitor = new ClassVisitor(Util.ASM_LEVEL) {
                     private String cls
                     @Override
                     void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
