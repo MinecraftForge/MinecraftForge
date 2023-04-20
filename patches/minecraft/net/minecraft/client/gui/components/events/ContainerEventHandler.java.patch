@@ -1,0 +1,25 @@
+--- a/net/minecraft/client/gui/components/events/ContainerEventHandler.java
++++ b/net/minecraft/client/gui/components/events/ContainerEventHandler.java
+@@ -24,6 +_,8 @@
+    }
+ 
+    default boolean m_6375_(double p_94695_, double p_94696_, int p_94697_) {
++      boolean result = false; // Forge: Fix MC-147605
++
+       for(GuiEventListener guieventlistener : this.m_6702_()) {
+          if (guieventlistener.m_6375_(p_94695_, p_94696_, p_94697_)) {
+             this.m_7522_(guieventlistener);
+@@ -31,11 +_,11 @@
+                this.m_7897_(true);
+             }
+ 
+-            return true;
++            result = true;
+          }
+       }
+ 
+-      return false;
++      return result;
+    }
+ 
+    default boolean m_6348_(double p_94722_, double p_94723_, int p_94724_) {
