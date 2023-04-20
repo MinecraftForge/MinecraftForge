@@ -69,7 +69,8 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
 
     private final RootTransformsBuilder rootTransforms = new RootTransformsBuilder();
 
-    protected ModelBuilder(ResourceLocation outputLocation, ExistingFileHelper existingFileHelper) {
+    protected ModelBuilder(ResourceLocation outputLocation, ExistingFileHelper existingFileHelper)
+    {
         super(outputLocation);
         this.existingFileHelper = existingFileHelper;
     }
