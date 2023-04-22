@@ -23,7 +23,7 @@ abstract class ValidateDeprecations extends DefaultTask {
     abstract Property<String> getMcVersion()
 
     ValidateDeprecations() {
-        this.onlyIf { !System.env.MAVEN_USER }
+        this.onlyIf { !System.env.TEAMCITY_VERSION }
     }
 
     @TaskAction

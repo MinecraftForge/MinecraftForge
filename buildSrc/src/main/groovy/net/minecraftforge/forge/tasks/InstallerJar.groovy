@@ -6,7 +6,7 @@ import org.gradle.api.provider.SetProperty
 
 abstract class InstallerJar extends Zip {
     @Input @Optional abstract SetProperty<String> getPackedDependencies()
-    
+
     InstallerJar() {
         archiveClassifier.set('installer')
         archiveExtension.set('jar') // Needs to be Zip task to not override Manifest, so set extension
@@ -15,7 +15,7 @@ abstract class InstallerJar extends Zip {
         def installerJson = project.tasks.installerJson
         def launcherJson = project.tasks.launcherJson
         def downloadInstaller = project.tasks.downloadInstaller
-        
+
         dependsOn(installerJson, launcherJson, downloadInstaller)
         from(installerJson, launcherJson)
 
@@ -24,13 +24,13 @@ abstract class InstallerJar extends Zip {
             from(project.zipTree(downloadInstaller.output)) {
                 duplicatesStrategy = 'exclude'
             }
-            
-            if (!System.env.MAVEN_USER) {
+
+            if (!System.env.TEAMCITY_VERSION) {
                 dependsOn(project.universalJar)
                 from(project.universalJar) {
                     into '/maven/' + project.group.replace('.', '/') + '/' + project.universalJar.archiveBaseName.get() + '/' + project.version + '/'
                 }
-    
+
                 packedDependencies.get().forEach {
                     def jarTask = project.rootProject.getTasks().findByPath(it)
                     dependsOn(jarTask)
