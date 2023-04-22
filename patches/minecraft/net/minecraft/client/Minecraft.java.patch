@@ -2,7 +2,7 @@
 +++ b/net/minecraft/client/Minecraft.java
 @@ -249,7 +_,7 @@
  import org.slf4j.Logger;
- 
+
  @OnlyIn(Dist.CLIENT)
 -public class Minecraft extends ReentrantBlockableEventLoop<Runnable> implements WindowEventHandler {
 +public class Minecraft extends ReentrantBlockableEventLoop<Runnable> implements WindowEventHandler, net.minecraftforge.client.extensions.IForgeMinecraft {
@@ -19,7 +19,7 @@
        this.f_91035_ = !p_91084_.f_101908_.f_101930_;
 @@ -449,15 +_,15 @@
        }
- 
+
        this.f_90990_.m_85380_(this.f_91066_.m_232035_().m_231551_());
 +      // FORGE: Move mouse and keyboard handler setup further below
        this.f_91067_ = new MouseHandler(this);
@@ -65,7 +65,7 @@
 @@ -536,6 +_,7 @@
           TinyFileDialogs.tinyfd_messageBox("Minecraft", stringbuilder.toString(), "ok", "error", false);
        }
- 
+
 +      net.minecraftforge.client.ForgeHooksClient.initClientHooks(this, this.f_91036_);
        this.f_90990_.m_85409_(this.f_91066_.m_231817_().m_231551_());
        this.f_90990_.m_85424_(this.f_91066_.m_232123_().m_231551_());
@@ -80,7 +80,7 @@
              if (SharedConstants.f_136183_) {
                 this.m_91273_();
 @@ -562,20 +_,23 @@
- 
+
              this.f_167847_.m_168556_();
              this.m_286052_();
 +            if (net.minecraftforge.client.loading.ClientModLoader.completeModLoading())
@@ -112,9 +112,9 @@
 -      } else {
 -         this.m_278684_(realmsclient, reloadinstance, p_91084_.f_278410_);
 -      }
- 
+
     }
- 
+
 @@ -611,7 +_,7 @@
     private String m_91270_() {
        StringBuilder stringbuilder = new StringBuilder("Minecraft");
@@ -122,10 +122,10 @@
 -         stringbuilder.append("*");
 +         stringbuilder.append(' ').append(net.minecraftforge.forge.snapshots.ForgeSnapshotsMod.BRANDING_NAME).append('*');
        }
- 
+
        stringbuilder.append(" ");
 @@ -635,6 +_,8 @@
- 
+
     private UserApiService m_193585_(YggdrasilAuthenticationService p_193586_, GameConfig p_193587_) {
        try {
 +         if ("0".equals(p_193587_.f_101905_.f_101942_.m_92547_())) // Forge: We use "0" in dev. Short circuit to stop exception spam.
@@ -135,7 +135,7 @@
           f_90982_.error("Failed to verify authentication", (Throwable)authenticationexception);
 @@ -647,7 +_,7 @@
     }
- 
+
     private void m_91239_(Throwable p_91240_) {
 -      if (this.f_91038_.m_10523_().size() > 1) {
 +      if (this.f_91038_.m_10524_().stream().anyMatch(e -> !e.m_10449_())) { //Forge: This caused infinite loop if any resource packs are forced. Such as mod resources. So check if we can disable any.
@@ -144,7 +144,7 @@
           Util.m_137559_(p_91240_);
 @@ -739,7 +_,10 @@
     }
- 
+
     public void m_91271_() {
 -      this.f_90997_.m_235232_(SearchRegistry.f_119941_, (p_231389_) -> {
 +      var nameSearchKeys = net.minecraftforge.client.CreativeModeTabSearchRegistry.getNameSearchKeys();
@@ -179,7 +179,7 @@
 +         });
        });
     }
- 
+
 @@ -824,13 +_,13 @@
        Bootstrap.m_135875_(p_91333_.m_127526_());
        if (p_91333_.m_127527_() != null) {
@@ -195,12 +195,12 @@
 -         System.exit(-2);
 +         net.minecraftforge.server.ServerLifecycleHooks.handleExit(-2);
        }
- 
+
     }
 @@ -954,10 +_,6 @@
           f_90982_.error("setScreen called from non-game thread");
        }
- 
+
 -      if (this.f_91080_ != null) {
 -         this.f_91080_.m_7861_();
 -      }
@@ -211,7 +211,7 @@
 @@ -968,6 +_,19 @@
           }
        }
- 
+
 +      net.minecraftforge.client.ForgeHooksClient.clearGuiLayers(this);
 +      Screen old = this.f_91080_;
 +      if (p_91153_ != null) {
@@ -239,7 +239,7 @@
           this.f_91026_.m_7238_();
 +         net.minecraftforge.event.ForgeEventFactory.onRenderTickEnd(this.realPartialTick);
        }
- 
+
        if (this.f_91056_ != null) {
 @@ -1240,10 +_,12 @@
        this.f_90990_.m_85378_((double)i);
@@ -247,7 +247,7 @@
           this.f_91080_.m_6574_(this, this.f_90990_.m_85445_(), this.f_90990_.m_85446_());
 +         net.minecraftforge.client.ForgeHooksClient.resizeGuiLayers(this, this.f_90990_.m_85445_(), this.f_90990_.m_85446_());
        }
- 
+
        RenderTarget rendertarget = this.m_91385_();
        rendertarget.m_83941_(this.f_90990_.m_85441_(), this.f_90990_.m_85442_(), f_91002_);
 +      if (this.f_91063_ != null)
@@ -256,12 +256,12 @@
     }
 @@ -1517,6 +_,7 @@
     }
- 
+
     public void m_91395_() {
 +      if (this.m_91396_()) net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.GameShuttingDownEvent());
        this.f_91019_ = false;
     }
- 
+
 @@ -1546,10 +_,18 @@
           if (p_91387_ && this.f_91077_ != null && this.f_91077_.m_6662_() == HitResult.Type.BLOCK) {
              BlockHitResult blockhitresult = (BlockHitResult)this.f_91077_;
@@ -304,18 +304,18 @@
                          flag = true;
 @@ -1598,8 +_,10 @@
                    }
- 
+
                    this.f_91074_.m_36334_();
 +                  net.minecraftforge.common.ForgeHooks.onEmptyLeftClick(this.f_91074_);
              }
- 
+
 +            if (inputEvent.shouldSwingHand())
              this.f_91074_.m_6674_(InteractionHand.MAIN_HAND);
              return flag;
           }
 @@ -1615,6 +_,11 @@
              }
- 
+
              for(InteractionHand interactionhand : InteractionHand.values()) {
 +               var inputEvent = net.minecraftforge.client.ForgeHooksClient.onClickInput(1, this.f_91066_.f_92095_, interactionhand);
 +               if (inputEvent.isCanceled()) {
@@ -327,13 +327,13 @@
                    return;
 @@ -1635,7 +_,7 @@
                          }
- 
+
                          if (interactionresult.m_19077_()) {
 -                           if (interactionresult.m_19080_()) {
 +                           if (interactionresult.m_19080_() && inputEvent.shouldSwingHand()) {
                                this.f_91074_.m_6674_(interactionhand);
                             }
- 
+
 @@ -1647,7 +_,7 @@
                          int i = itemstack.m_41613_();
                          InteractionResult interactionresult1 = this.f_91072_.m_233732_(this.f_91074_, interactionhand, blockhitresult);
@@ -346,7 +346,7 @@
 @@ -1663,6 +_,9 @@
                    }
                 }
- 
+
 +               if (itemstack.m_41619_() && (this.f_91077_ == null || this.f_91077_.m_6662_() == HitResult.Type.MISS))
 +                  net.minecraftforge.common.ForgeHooks.onEmptyClick(this.f_91074_, interactionhand);
 +
@@ -356,27 +356,27 @@
 @@ -1689,6 +_,8 @@
           --this.f_91011_;
        }
- 
+
 +      net.minecraftforge.event.ForgeEventFactory.onPreClientTick();
 +
        this.f_91026_.m_6180_("gui");
        this.f_240378_.m_240688_();
        this.f_91065_.m_193832_(this.f_91012_);
 @@ -1780,6 +_,7 @@
- 
+
              this.f_91005_.m_120596_();
- 
+
 +            net.minecraftforge.event.ForgeEventFactory.onPreLevelTick(this.f_91073_, () -> true);
              try {
                 this.f_91073_.m_104726_(() -> {
                    return true;
 @@ -1795,6 +_,7 @@
- 
+
                 throw new ReportedException(crashreport);
              }
 +            net.minecraftforge.event.ForgeEventFactory.onPostLevelTick(this.f_91073_, () -> true);
           }
- 
+
           this.f_91026_.m_6182_("animateTick");
 @@ -1814,6 +_,8 @@
        this.f_91026_.m_6182_("keyboard");
@@ -385,11 +385,11 @@
 +
 +      net.minecraftforge.event.ForgeEventFactory.onPostClientTick();
     }
- 
+
     private boolean m_91278_() {
 @@ -2011,6 +_,7 @@
     }
- 
+
     public void m_91156_(ClientLevel p_91157_) {
 +      if (this.f_91073_ != null) net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.level.LevelEvent.Unload(this.f_91073_));
        ProgressScreen progressscreen = new ProgressScreen(true);
@@ -407,17 +407,17 @@
 +         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.level.LevelEvent.Unload(this.f_91073_));
           if (integratedserver != null) {
              this.f_91026_.m_6180_("waitForServer");
- 
+
 @@ -2061,6 +_,7 @@
           this.f_243981_.m_246151_();
           this.f_91065_.m_93089_();
           this.f_91010_ = false;
 +         net.minecraftforge.client.ForgeHooksClient.handleClientLevelClosing(this.f_91073_);
        }
- 
+
        this.f_91073_ = null;
 @@ -2167,6 +_,7 @@
- 
+
     private void m_91280_() {
        if (this.f_91077_ != null && this.f_91077_.m_6662_() != HitResult.Type.MISS) {
 +         if (net.minecraftforge.client.ForgeHooksClient.onClickInput(2, this.f_91066_.f_92097_, InteractionHand.MAIN_HAND).isCanceled()) return;
@@ -426,19 +426,19 @@
           HitResult.Type hitresult$type = this.f_91077_.m_6662_();
 @@ -2179,10 +_,7 @@
              }
- 
+
              Block block = blockstate.m_60734_();
 -            itemstack = block.m_7397_(this.f_91073_, blockpos, blockstate);
 -            if (itemstack.m_41619_()) {
 -               return;
 -            }
 +            itemstack = blockstate.getCloneItemStack(this.f_91077_, this.f_91073_, blockpos, this.f_91074_);
- 
+
              if (flag && Screen.m_96637_() && blockstate.m_155947_()) {
                 blockentity = this.f_91073_.m_7702_(blockpos);
 @@ -2193,7 +_,7 @@
              }
- 
+
              Entity entity = ((EntityHitResult)this.f_91077_).m_82443_();
 -            itemstack = entity.m_142340_();
 +            itemstack = entity.getPickedResult(this.f_91077_);
@@ -446,7 +446,7 @@
                 return;
              }
 @@ -2732,6 +_,19 @@
- 
+
     public void m_91312_(int p_91313_) {
        this.f_91051_.m_119410_(p_91313_);
 +   }
@@ -463,5 +463,5 @@
 +   public float getPartialTick() {
 +      return this.realPartialTick;
     }
- 
+
     public EntityModelSet m_167973_() {
