@@ -49,21 +49,17 @@ abstract class ValidateDeprecations extends DefaultTask {
                 "class ${node.name}"
             }
         }
-        if (node.fields != null) {
-            node.fields.each { field ->
-                field.visibleAnnotations?.each { annotation ->
-                    ValidateDeprecations.processAnnotations(annotation, mcVer, errors) {
-                        "field ${node.name}#${field.name}"
-                    }
+        node.fields?.each { field ->
+            field.visibleAnnotations?.each { annotation ->
+                ValidateDeprecations.processAnnotations(annotation, mcVer, errors) {
+                    "field ${node.name}#${field.name}"
                 }
             }
         }
-        if (node.methods != null) {
-            node.methods.each { method ->
-                method.visibleAnnotations?.each { annotation ->
-                    ValidateDeprecations.processAnnotations(annotation, mcVer, errors) {
-                        "method ${node.name}#${method.name}${method.desc}"
-                    }
+        node.methods?.each { method ->
+            method.visibleAnnotations?.each { annotation ->
+                ValidateDeprecations.processAnnotations(annotation, mcVer, errors) {
+                    "method ${node.name}#${method.name}${method.desc}"
                 }
             }
         }
@@ -71,11 +67,11 @@ abstract class ValidateDeprecations extends DefaultTask {
 
     private static void processAnnotations(AnnotationNode annotation, MinecraftVersion mcVer, List<String> errors, Closure context) {
         def values = annotation.values
-        if (values == null)
+        if (values === null)
             return
-        int forRemoval = values.indexOf("forRemoval")
-        int since = values.indexOf("since")
-        if (annotation.desc == "Ljava/lang/Deprecated;" && forRemoval != -1 && since != -1 && values.size() >= 4 && values[forRemoval + 1] == true) {
+        int forRemoval = values.indexOf('forRemoval')
+        int since = values.indexOf('since')
+        if (annotation.desc == 'Ljava/lang/Deprecated;' && forRemoval !== -1 && since !== -1 && values.size() >= 4 && values[forRemoval + 1] === true) {
             def oldVersion = MinecraftVersion.from(values[since + 1])
             def split = ValidateDeprecations.splitDots(oldVersion.toString())
             if (split.length < 2)
@@ -87,10 +83,10 @@ abstract class ValidateDeprecations extends DefaultTask {
     }
 
     private static int[] splitDots(String version) {
-        String[] pts = version.split("\\.");
-        int[] values = new int[pts.length];
+        String[] pts = version.split('\\.')
+        int[] values = new int[pts.length]
         for (int x = 0; x < pts.length; x++)
-            values[x] = Integer.parseInt(pts[x]);
-        return values;
+            values[x] = Integer.parseInt(pts[x])
+        return values
     }
 }
