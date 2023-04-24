@@ -66,10 +66,10 @@ public class CustomPoseTest {
         public <T extends LivingEntity> void updatePose(T entity, PoseStack stack, EntityModel<T> model, float partialTicks) {
             if (model instanceof HumanoidModel<T> humanoidModel)
             {
-                humanoidModel.rightArm.zRot = (float)Math.toRadians(180d + Math.sin((entity.tickCount + partialTicks)/2) *10);
+                humanoidModel.rightArm.zRot = (float)Math.toRadians(180d + Mth.sin((entity.tickCount + partialTicks)/2) *10);
                 humanoidModel.rightArm.xRot = 0;
                 if (model instanceof PlayerModel<T> playerModel) {
-                    playerModel.rightSleeve.zRot = (float)Math.toRadians(180d + Math.sin((entity.tickCount + partialTicks)/2) *10);
+                    playerModel.rightSleeve.zRot = (float)Math.toRadians(180d + Mth.sin((entity.tickCount + partialTicks)/2) *10);
                     playerModel.rightSleeve.xRot = 0;
                 }
             }
