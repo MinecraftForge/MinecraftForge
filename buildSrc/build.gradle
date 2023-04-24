@@ -9,4 +9,5 @@ dependencies {
     implementation 'net.minecraftforge:srgutils:0.4.+'
     implementation 'commons-io:commons-io:2.8.0'
     implementation 'com.google.code.gson:gson:2.10'
+    implementation 'org.eclipse.jgit:org.eclipse.jgit:6.5.0.202303070854-r'
 }

@@ -1264,7 +1264,7 @@ project(':forge') {
     }
 
     def baseForgeVersionProperty = project.objects.property(String)
-    baseForgeVersionProperty.set(project.provider { getLatestForgeVersion(MC_VERSION) }.map { MC_VERSION + '-' + it })
+    baseForgeVersionProperty.set(project.provider { TeamcityRequests.attemptFindBase(rootDir) ?: getLatestForgeVersion(MC_VERSION) })
     baseForgeVersionProperty.finalizeValueOnRead()
     def jarCompatibilityTaskSetup = { task ->
         task.group = 'jar compatibility'

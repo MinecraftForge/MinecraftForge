@@ -150,9 +150,10 @@ public class Util {
 		}
 	}
 
-    public static String getLatestForgeVersion(mcVersion) {
-        def json = new JsonSlurper().parseText(new URL("https://files.minecraftforge.net/net/minecraftforge/forge/promotions_slim.json").getText("UTF-8"))
-        return json.promos["$mcVersion-latest"]
+    static String getLatestForgeVersion(mcVersion) {
+        final json = new JsonSlurper().parseText(new URL('https://files.minecraftforge.net/net/minecraftforge/forge/promotions_slim.json').getText('UTF-8'))
+        final ver = json.promos["$mcVersion-latest"]
+        ver === null ? null : (mcVersion + '-' + ver)
     }
 
     static void processClassNodes(File file, Closure process) {
