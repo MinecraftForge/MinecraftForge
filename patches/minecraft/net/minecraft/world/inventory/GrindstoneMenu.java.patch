@@ -67,6 +67,17 @@
                 if (!ItemStack.m_41728_(itemstack, itemstack1)) {
                    this.f_39559_.m_6836_(0, ItemStack.f_41583_);
                    this.m_38946_();
+@@ -163,6 +_,10 @@
+             itemstack2 = flag3 ? itemstack : itemstack1;
+          }
+ 
++         // Forge: Skip the repair if the result would give an item stack with a count not normally obtainable
++         if (j > itemstack2.m_41741_())
++            this.f_39559_.m_6836_(0, ItemStack.f_41583_);
++         else
+          this.f_39559_.m_6836_(0, this.m_39579_(itemstack2, i, j));
+       }
+ 
 @@ -175,7 +_,7 @@
  
        for(Map.Entry<Enchantment, Integer> entry : map.entrySet()) {
