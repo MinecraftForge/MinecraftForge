@@ -193,12 +193,37 @@ public class ForgeEventFactory
      * Vanilla calls to {@link Mob#finalizeSpawn} are replaced with calls to this method via coremod.<br>
      * Mods should call this method in place of calling {@link Mob#finalizeSpawn}. Super calls (from within overrides) should not be wrapped.
      * <p>
-     * Returns the SpawnGroupData from this event, or null if it was canceled.
+     * When interfacing with this event, write all code as normal, and replace {@link Mob#finalizeSpawn} with {@link #onFinalizeSpawn}.<p>
+     * As an example, the following code block:
+     * 
+     * <blockquote><pre>
+     * var zombie = new Zombie(level);
+     * zombie.finalizeSpawn(level, difficulty, spawnType, spawnData, spawnTag);
+     * level.tryAddFreshEntityWithPassengers(zombie);
+     * if (zombie.isAddedToWorld()) {
+     *     // Do stuff with your new zombie
+     * }
+     * </blockquote></pre>
+     * 
+     * Would become:
+     * <blockquote><pre>
+     * var zombie = new Zombie(level);
+     * ForgeEventFactory.onFinalizeSpawn(zombie, level, difficulty, spawnType, spawnData, spawnTag);
+     * level.tryAddFreshEntityWithPassengers(zombie);
+     * if (zombie.isAddedToWorld()) {
+     *     // Do stuff with your new zombie
+     * }
+     * </blockquote></pre>
+     * <p>
+     * The only code that changes is the {@link Mob#finalizeSpawn} call.
+     * @return The SpawnGroupData from this event, or null if it was canceled. The return value of this method has no bearing on if the entity will be spawned.
      * @see MobSpawnEvent.FinalizeSpawn
      * @see Mob#finalizeSpawn(ServerLevelAccessor, DifficultyInstance, MobSpawnType, SpawnGroupData, CompoundTag)
+     * @apiNote Callers do not need to check if the entity's spawn was cancelled, as the spawn will be blocked by Forge.
      * @implNote Changes to the signature of this method must be reflected in the method redirector coremod. 
      */
     @Nullable
+    @SuppressWarnings("deprecation") // Call to deprecated Mob#finalizeSpawn is expected.
     public static SpawnGroupData onFinalizeSpawn(Mob mob, ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType spawnType, @Nullable SpawnGroupData spawnData, @Nullable CompoundTag spawnTag)
     {
         var event = new MobSpawnEvent.FinalizeSpawn(mob, level, mob.getX(), mob.getY(), mob.getZ(), difficulty, spawnType, spawnData, spawnTag, null);

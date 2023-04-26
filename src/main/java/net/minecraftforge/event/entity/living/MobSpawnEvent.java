@@ -86,14 +86,16 @@ public abstract class MobSpawnEvent extends EntityEvent
     }
 
     /**
-     * This event is fired before {@link Mob#finalizeSpawn(ServerLevelAccessor, DifficultyInstance, MobSpawnType, SpawnGroupData, CompoundTag)} is called.<br>
+     * This event is fired before {@link Mob#finalizeSpawn} is called.<br>
      * This allows mods to control mob initialization.<br>
-     * In vanilla code, this event is injected by a transformer and not via patch, so calls cannot be traced via call hierarchy.
+     * In vanilla code, this event is injected by a transformer and not via patch, so calls cannot be traced via call hierarchy (it is not source-visible).
      * <p>
      * Canceling this event will result in {@link Mob#finalizeSpawn} not being called, and the returned value always being null, instead of propagating the SpawnGroupData.<br>
-     * The entity will still be spawned. If you want to prevent the spawn, use {@link FinalizeSpawn#cancelSpawn()}
+     * The entity will still be spawned. If you want to prevent the spawn, use {@link FinalizeSpawn#setSpawnCancelled}, which will cause Forge to prevent the spawn.
      * <p>
      * This event is fired on {@link MinecraftForge#EVENT_BUS}, and is only fired on the logical server.
+     * @see ForgeEventFactory#onFinalizeSpawn
+     * @apiNote Callers do not need to check if the entity's spawn was cancelled, as the spawn will be blocked by Forge.
      */
     @Cancelable
     public static class FinalizeSpawn extends MobSpawnEvent
