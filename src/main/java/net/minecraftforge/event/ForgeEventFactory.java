@@ -195,23 +195,23 @@ public class ForgeEventFactory
      * <p>
      * When interfacing with this event, write all code as normal, and replace the call to {@link Mob#finalizeSpawn} with a call to this method.<p>
      * As an example, the following code block:
-     * <pre>
+     * <code><pre>
      * var zombie = new Zombie(level);
      * zombie.finalizeSpawn(level, difficulty, spawnType, spawnData, spawnTag);
      * level.tryAddFreshEntityWithPassengers(zombie);
      * if (zombie.isAddedToWorld()) {
      *     // Do stuff with your new zombie
      * }
-     * </pre>
+     * </pre></code>
      * Would become:
-     * <pre>
+     * <code><pre>
      * var zombie = new Zombie(level);
      * ForgeEventFactory.onFinalizeSpawn(zombie, level, difficulty, spawnType, spawnData, spawnTag);
      * level.tryAddFreshEntityWithPassengers(zombie);
      * if (zombie.isAddedToWorld()) {
      *     // Do stuff with your new zombie
      * }
-     * </pre>
+     * </pre></code>
      * The only code that changes is the {@link Mob#finalizeSpawn} call.
      * @return The SpawnGroupData from this event, or null if it was canceled. The return value of this method has no bearing on if the entity will be spawned.
      * @see MobSpawnEvent.FinalizeSpawn
