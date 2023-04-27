@@ -193,7 +193,7 @@ public class ForgeEventFactory
      * Vanilla calls to {@link Mob#finalizeSpawn} are replaced with calls to this method via coremod.<br>
      * Mods should call this method in place of calling {@link Mob#finalizeSpawn}. Super calls (from within overrides) should not be wrapped.
      * <p>
-     * When interfacing with this event, write all code as normal, and replace {@link Mob#finalizeSpawn} with {@link #onFinalizeSpawn}.<p>
+     * When interfacing with this event, write all code as normal, and replace the call to {@link Mob#finalizeSpawn} with a call to this method.<p>
      * As an example, the following code block:
      * <pre>
      * var zombie = new Zombie(level);
