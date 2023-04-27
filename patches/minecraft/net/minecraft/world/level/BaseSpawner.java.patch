@@ -1,6 +1,11 @@
 --- a/net/minecraft/world/level/BaseSpawner.java
 +++ b/net/minecraft/world/level/BaseSpawner.java
-@@ -135,8 +_,10 @@
+@@ -131,12 +_,14 @@
+                   entity.m_7678_(entity.m_20185_(), entity.m_20186_(), entity.m_20189_(), randomsource.m_188501_() * 360.0F, 0.0F);
+                   if (entity instanceof Mob) {
+                      Mob mob = (Mob)entity;
+-                     if (spawndata.m_186574_().isEmpty() && !mob.m_5545_(p_151312_, MobSpawnType.SPAWNER) || !mob.m_6914_(p_151312_)) {
++                     if (!net.minecraftforge.event.ForgeEventFactory.checkRulesAndObstructionSpawner(mob, p_151312_, MobSpawnType.SPAWNER, spawndata, this)) {
                          continue;
                       }
  

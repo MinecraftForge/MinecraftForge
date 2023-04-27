@@ -1,0 +1,11 @@
+--- a/net/minecraft/util/SpawnUtil.java
++++ b/net/minecraft/util/SpawnUtil.java
+@@ -23,7 +_,7 @@
+          if (p_216406_.m_6857_().m_61937_(blockpos$mutableblockpos) && m_216398_(p_216406_, p_216410_, blockpos$mutableblockpos, p_216411_)) {
+             T t = p_216404_.m_262451_(p_216406_, (CompoundTag)null, (Consumer<T>)null, blockpos$mutableblockpos, p_216405_, false, false);
+             if (t != null) {
+-               if (t.m_5545_(p_216406_, p_216405_) && t.m_6914_(p_216406_)) {
++               if (net.minecraftforge.event.ForgeEventFactory.checkRulesAndObstruction(t, p_216406_, p_216405_)) {
+                   p_216406_.m_47205_(t);
+                   return Optional.of(t);
+                }
