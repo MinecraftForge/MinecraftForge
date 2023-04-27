@@ -77,6 +77,7 @@ import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.level.SpawnData;
 import net.minecraft.world.level.Level;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.storage.ServerLevelData;
@@ -105,6 +106,7 @@ import net.minecraftforge.event.entity.living.LivingHealEvent;
 import net.minecraftforge.event.entity.living.LivingPackSizeEvent;
 import net.minecraftforge.event.entity.living.MobSpawnEvent;
 import net.minecraftforge.event.entity.living.MobSpawnEvent.AllowDespawn;
+import net.minecraftforge.event.entity.living.MobSpawnEvent.SpawnRules;
 import net.minecraftforge.event.entity.living.ZombieEvent.SummonAidEvent;
 import net.minecraftforge.event.entity.player.AdvancementEvent.AdvancementEarnEvent;
 import net.minecraftforge.event.entity.player.AdvancementEvent.AdvancementProgressEvent;
@@ -253,6 +255,21 @@ public class ForgeEventFactory
         AllowDespawn event = new AllowDespawn(entity, level);
         MinecraftForge.EVENT_BUS.post(event);
         return event.getResult();
+    }
+
+    public static boolean checkRulesAndObstruction(Mob mob, ServerLevelAccessor level, MobSpawnType spawnType)
+    {
+        var event = new SpawnRules(mob, level, spawnType, mob.checkSpawnRules(level, spawnType), mob.checkSpawnObstruction(level), null);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event.getRulesResult() && event.getObstructionResult();
+    }
+
+    public static boolean checkRulesAndObstructionSpawner(Mob mob, ServerLevelAccessor level, MobSpawnType spawnType, SpawnData spawnData, BaseSpawner spawner)
+    {
+        boolean rulesResult = !spawnData.getCustomSpawnRules().isEmpty() || mob.checkSpawnRules(level, spawnType);
+        var event = new SpawnRules(mob, level, spawnType, rulesResult, mob.checkSpawnObstruction(level), spawner);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event.getRulesResult() && event.getObstructionResult();
     }
 
     public static int getItemBurnTime(@NotNull ItemStack itemStack, int burnTime, @Nullable RecipeType<?> recipeType)

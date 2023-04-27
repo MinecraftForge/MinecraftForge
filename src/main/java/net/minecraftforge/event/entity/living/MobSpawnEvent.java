@@ -244,4 +244,66 @@ public abstract class MobSpawnEvent extends EntityEvent
             super(mob, level, mob.getX(), mob.getY(), mob.getZ());
         }
     }
+
+    public static class SpawnRules extends MobSpawnEvent
+    {
+        private final boolean vanillaRulesResult;
+        private final boolean vanillaObstructionResult;
+
+        @Nullable 
+        private final BaseSpawner spawner;
+
+        protected boolean rulesResult;
+        protected boolean obstructionResult;
+
+        public SpawnRules(Mob mob, ServerLevelAccessor level, MobSpawnType spawnType, boolean rulesResult, boolean obstructionResult, @Nullable BaseSpawner spawner)
+        {
+            super(mob, level, mob.getX(), mob.getY(), mob.getZ());
+            this.vanillaRulesResult = this.rulesResult = rulesResult;
+            this.vanillaObstructionResult = this.obstructionResult = obstructionResult;
+            this.spawner = spawner;
+        }
+
+        public boolean getVanillaRulesResult()
+        {
+            return this.vanillaRulesResult;
+        }
+
+        public boolean getVanillaObstructionResult()
+        {
+            return this.vanillaObstructionResult;
+        }
+
+        public boolean getRulesResult()
+        {
+            return this.rulesResult;
+        }
+
+        public void setRulesResult(boolean rulesResult)
+        {
+            this.rulesResult = rulesResult;
+        }
+
+        public boolean getObstructionResult()
+        {
+            return this.obstructionResult;
+        }
+
+        public void setObstructionResult(boolean obstructionResult)
+        {
+            this.obstructionResult = obstructionResult;
+        }
+
+        /**
+         * Retrieves the underlying {@link BaseSpawner} instance if this mob was created by a Mob Spawner of some form.
+         * This is always null unless {@link #getSpawnType()} is {@link MobSpawnType#SPAWNER}, and may still be null even then.
+         * @return The BaseSpawner responsible for triggering the spawn, or null if none is available.
+         */
+        @Nullable
+        public BaseSpawner getSpawner()
+        {
+            return spawner;
+        }
+    }
+
 }
