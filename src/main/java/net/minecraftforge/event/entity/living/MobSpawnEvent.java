@@ -245,6 +245,17 @@ public abstract class MobSpawnEvent extends EntityEvent
         }
     }
 
+    /**
+     * This event is fired when {@link Mob#checkSpawnRules()} and {@link Mob#checkSpawnObstruction} would be called.<br>
+     * It allows for modification to the result of both of methods, which can cause a spawn to be forcibly allowed (or prevented).
+     * <p>
+     * This event is fired before {@link FinalizeSpawn}. If either sub-result is false, then finalize will not be called, and the entity will not spawn.<br>
+     * It is possible this event is fired multiple times for the same entity, as some logic may check multiple potential spawn locations.
+     * <p>
+     * This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
+     * only on the {@linkplain LogicalSide#SERVER logical server}.
+     *
+     */
     public static class SpawnRules extends MobSpawnEvent
     {
         private final boolean vanillaRulesResult;
@@ -264,31 +275,53 @@ public abstract class MobSpawnEvent extends EntityEvent
             this.spawner = spawner;
         }
 
+        /**
+         * @return The vanilla result of {@link Mob#checkSpawnRules()} without modification.
+         */
         public boolean getVanillaRulesResult()
         {
             return this.vanillaRulesResult;
         }
 
+        /**
+         * @return The vanilla result of {@link Mob#checkSpawnObstruction()} without modification.
+         */
         public boolean getVanillaObstructionResult()
         {
             return this.vanillaObstructionResult;
         }
 
+        /**
+         * @return The current result of {@link Mob#checkSpawnRules()}, which has potentially been modified.
+         * @apiNote If this value is false, the mob will not be spawned and {@link FinalizeSpawn} will not be called.
+         */
         public boolean getRulesResult()
         {
             return this.rulesResult;
         }
 
+        /**
+         * Sets the current result of {@link Mob#checkSpawnRules()}.
+         * @param rulesResult The new rules result.
+         */
         public void setRulesResult(boolean rulesResult)
         {
             this.rulesResult = rulesResult;
         }
 
+        /**
+         * @return The current result of {@link Mob#checkSpawnObstruction()}, which has potentially been modified.
+         * @apiNote If this value is false, the mob will not be spawned and {@link FinalizeSpawn} will not be called.
+         */
         public boolean getObstructionResult()
         {
             return this.obstructionResult;
         }
 
+        /**
+         * Sets the current result of {@link Mob#checkSpawnObstruction()}.
+         * @param obstructionResult The new obstruction result.
+         */
         public void setObstructionResult(boolean obstructionResult)
         {
             this.obstructionResult = obstructionResult;
