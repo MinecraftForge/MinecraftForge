@@ -235,6 +235,13 @@ public class ForgeEventFactory
         return event.getResult();
     }
 
+    /**
+     * Computes the vanilla result of both {@link Mob#checkSpawnRules()} and {@link Mob#checkSpawnObstruction}, and fires {@link SpawnRules}.
+     * @param mob The mob being spawned.
+     * @param level The level the mob will be added to, if successful.
+     * @param spawnType The spawn type of the spawn.
+     * @return The logical and of {@link SpawnRules#getRulesResult()} and {@link SpawnRules#getObstructionResult()}, to be used in place of the original call.
+     */
     public static boolean checkRulesAndObstruction(Mob mob, ServerLevelAccessor level, MobSpawnType spawnType)
     {
         var event = new SpawnRules(mob, level, spawnType, mob.checkSpawnRules(level, spawnType), mob.checkSpawnObstruction(level), null);
@@ -242,6 +249,16 @@ public class ForgeEventFactory
         return event.getRulesResult() && event.getObstructionResult();
     }
 
+    /**
+     * Special variant of {@link #checkRulesAndObstruction} with an exception for rules checks on spawners that implement custom spawn rules.<br>
+     * By this point, custom spawn rules will have already been checked (their result cannot be modified by this event).
+     * @param mob The mob being spawned.
+     * @param level The level the mob will be added to, if successful.
+     * @param spawnType The spawn type of the spawn.
+     * @param spawnData The spawn data of the mob.
+     * @param spawner The spawner doing the spawning.
+     * @return The logical and of {@link SpawnRules#getRulesResult()} and {@link SpawnRules#getObstructionResult()}, to be used in place of the original call.
+     */
     public static boolean checkRulesAndObstructionSpawner(Mob mob, ServerLevelAccessor level, MobSpawnType spawnType, SpawnData spawnData, BaseSpawner spawner)
     {
         boolean rulesResult = !spawnData.getCustomSpawnRules().isEmpty() || mob.checkSpawnRules(level, spawnType);
