@@ -1,11 +1,13 @@
 --- a/net/minecraft/world/entity/monster/Phantom.java
 +++ b/net/minecraft/world/entity/monster/Phantom.java
-@@ -47,6 +_,31 @@
-    Vec3 f_33097_ = Vec3.f_82478_;
-    BlockPos f_33098_ = BlockPos.f_121853_;
-    Phantom.AttackPhase f_33096_ = Phantom.AttackPhase.CIRCLE;
+@@ -488,4 +_,37 @@
+          }
+       }
+    }
++
++   // Forge start
 +   @Nullable
-+   private net.minecraft.server.level.ServerPlayer spawnCause = null;
++   private java.util.UUID spawnCause = null;
 +
 +   /**
 +    * @return The player that caused this phantom spawn. null if not applicable.
@@ -13,7 +15,10 @@
 +   @Nullable
 +   public net.minecraft.server.level.ServerPlayer getSpawnCause()
 +   {
-+      return spawnCause;
++      if (spawnCause != null && f_19853_ instanceof net.minecraft.server.level.ServerLevel serverLevel)
++         return serverLevel.m_7654_().m_6846_().m_11259_(spawnCause);
++
++      return null;
 +   }
 +
 +   /**
@@ -27,8 +32,9 @@
 +    */
 +   public void setSpawnCause(@Nullable net.minecraft.server.level.ServerPlayer spawnCause)
 +   {
-+      this.spawnCause = spawnCause;
++      if (spawnCause == null)
++         this.spawnCause = null;
++      else
++         this.spawnCause = spawnCause.m_20148_();
 +   }
- 
-    public Phantom(EntityType<? extends Phantom> p_33101_, Level p_33102_) {
-       super(p_33101_, p_33102_);
+ }
