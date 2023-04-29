@@ -1,0 +1,34 @@
+--- a/net/minecraft/world/entity/monster/Phantom.java
++++ b/net/minecraft/world/entity/monster/Phantom.java
+@@ -47,6 +_,31 @@
+    Vec3 f_33097_ = Vec3.f_82478_;
+    BlockPos f_33098_ = BlockPos.f_121853_;
+    Phantom.AttackPhase f_33096_ = Phantom.AttackPhase.CIRCLE;
++   @Nullable
++   private net.minecraft.server.level.ServerPlayer spawnCause = null;
++
++   /**
++    * @return The player that caused this phantom spawn. null if not applicable.
++    */
++   @Nullable
++   public net.minecraft.server.level.ServerPlayer getSpawnCause()
++   {
++      return spawnCause;
++   }
++
++   /**
++    * Allows to specify spawn cause for phantoms (for event listeners).<br>
++    * <br>
++    * This should be called by mods right away when they create phantoms, so
++    * event listeners such as {@link net.minecraftforge.event.entity.EntityJoinLevelEvent} can figure out
++    * who caused this phantom to spawn.<br>
++    *
++    * @param spawnCause The player that caused phantoms to spawn
++    */
++   public void setSpawnCause(@Nullable net.minecraft.server.level.ServerPlayer spawnCause)
++   {
++      this.spawnCause = spawnCause;
++   }
+ 
+    public Phantom(EntityType<? extends Phantom> p_33101_, Level p_33102_) {
+       super(p_33101_, p_33102_);
