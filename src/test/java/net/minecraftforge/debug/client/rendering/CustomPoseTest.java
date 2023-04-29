@@ -15,11 +15,10 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Items;
-import net.minecraftforge.client.event.RegisterPoseEvent;
+import net.minecraftforge.client.event.EntityRenderersEvent.RegisterPoseEvent;
 import net.minecraftforge.client.model.pose.IPose;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
 import java.util.List;
@@ -37,10 +36,10 @@ public class CustomPoseTest {
 
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 
-        modEventBus.addListener(this::clientSetup);
+        modEventBus.addListener(this::registerPoses);
     }
 
-    private void clientSetup(RegisterPoseEvent event)
+    private void registerPoses(RegisterPoseEvent event)
     {
         ResourceLocation wave = new ResourceLocation(MODID, "wave");
         ResourceLocation tpose = new ResourceLocation(MODID, "tpose");

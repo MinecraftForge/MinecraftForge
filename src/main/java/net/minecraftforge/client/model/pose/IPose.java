@@ -14,8 +14,8 @@ import java.util.List;
 
 
 /**
- * An IPose that is used to modify the rendering of {@linkplain LivingEntity}.
- * Register it using {@linkplain net.minecraftforge.client.event.RegisterPoseEvent#register(IPose, ResourceLocation, List, List)}.
+ * An IPose that is used to modify the rendering of {@linkplain LivingEntity LivingEntities}.
+ * Register it using {@linkplain net.minecraftforge.client.event.EntityRenderersEvent.RegisterPoseEvent#register(IPose, ResourceLocation, List, List) RegisterPoseEvent#register}.
  */
 public interface IPose
 {
@@ -27,7 +27,7 @@ public interface IPose
 
     /**
      *
-     * @return if poses after this one and vanilla poses are     applied
+     * @return if other poses after this one and vanilla Model/PoseStack modifications are applied
      */
     boolean shouldOtherPosesActivate();
 

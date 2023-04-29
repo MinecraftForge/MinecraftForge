@@ -16,7 +16,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraftforge.client.event.RegisterPoseEvent;
+import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.fml.ModLoader;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.loading.toposort.TopologicalSort;
@@ -97,7 +97,7 @@ public class PoseSortingRegistry
 
     public static void init()
     {
-        RegisterPoseEvent event = new RegisterPoseEvent(PoseSortingRegistry::registerPose);
+        EntityRenderersEvent.RegisterPoseEvent event = new EntityRenderersEvent.RegisterPoseEvent(PoseSortingRegistry::registerPose);
         ModLoader.get().postEventWithWrapInModOrder(event, (mc, e) -> ModLoadingContext.get().setActiveContainer(mc), (mc, e) -> ModLoadingContext.get().setActiveContainer(null));
         recalculatePoses();
     }
