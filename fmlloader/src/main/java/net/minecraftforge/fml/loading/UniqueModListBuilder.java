@@ -16,6 +16,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.*;
+import static net.minecraftforge.fml.loading.LogMarkers.LOADING;
 
 public class UniqueModListBuilder
 {
@@ -75,6 +76,13 @@ public class UniqueModListBuilder
             final List<EarlyLoadingException.ExceptionData> duplicateModErrors = dupedMods.stream()
                                                                                    .map(dm -> new EarlyLoadingException.ExceptionData("fml.modloading.dupedmod", dm, Objects.toString(dm)))
                                                                                    .toList();
+            LOGGER.error(LOADING, "Found duplicate mods:\n{}", dupedMods.stream()
+                            .map(mod -> String.format("\tMod ID: '%s' from mod files: %s",
+                                    mod.getModId(),
+                                    modIds.get(mod.getModId()).stream()
+                                            .map(modInfo -> modInfo.getOwningFile().getFile().getFileName()).collect(joining(", "))
+                            )).collect(joining(" \n")));
+
             throw new EarlyLoadingException("Duplicate mods found", null,  duplicateModErrors);
         }
 
