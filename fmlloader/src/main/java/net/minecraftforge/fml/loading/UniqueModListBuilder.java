@@ -81,7 +81,7 @@ public class UniqueModListBuilder
                                     mod.getModId(),
                                     modIds.get(mod.getModId()).stream()
                                             .map(modInfo -> modInfo.getOwningFile().getFile().getFileName()).collect(joining(", "))
-                            )).collect(joining(" \n")));
+                            )).collect(joining("\n")));
 
             throw new EarlyLoadingException("Duplicate mods found", null,  duplicateModErrors);
         }
