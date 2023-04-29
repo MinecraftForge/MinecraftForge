@@ -1,24 +1,38 @@
 --- a/net/minecraft/world/entity/monster/Phantom.java
 +++ b/net/minecraft/world/entity/monster/Phantom.java
-@@ -488,4 +_,37 @@
+@@ -152,6 +_,7 @@
+       }
+ 
+       this.m_33108_(p_33132_.m_128451_("Size"));
++      this.spawnCause = p_33132_.m_128441_("ForgeSpawnCause") ? p_33132_.m_128342_("ForgeSpawnCause") : null;
+    }
+ 
+    public void m_7380_(CompoundTag p_33141_) {
+@@ -160,6 +_,7 @@
+       p_33141_.m_128405_("AY", this.f_33098_.m_123342_());
+       p_33141_.m_128405_("AZ", this.f_33098_.m_123343_());
+       p_33141_.m_128405_("Size", this.m_33172_());
++      if (spawnCause != null) p_33141_.m_128362_("ForgeSpawnCause", this.spawnCause);
+    }
+ 
+    public boolean m_6783_(double p_33107_) {
+@@ -487,5 +_,32 @@
+ 
           }
        }
-    }
++   }
 +
 +   // Forge start
 +   @Nullable
 +   private java.util.UUID spawnCause = null;
 +
 +   /**
-+    * @return The player that caused this phantom spawn. null if not applicable.
++    * @return UUID describing what caused phantom to spawn (generally a player's UUID). null if not applicable.
 +    */
 +   @Nullable
-+   public net.minecraft.server.level.ServerPlayer getSpawnCause()
++   public java.util.UUID getSpawnCause()
 +   {
-+      if (spawnCause != null && f_19853_ instanceof net.minecraft.server.level.ServerLevel serverLevel)
-+         return serverLevel.m_7654_().m_6846_().m_11259_(spawnCause);
-+
-+      return null;
++      return this.spawnCause;
 +   }
 +
 +   /**
@@ -26,15 +40,12 @@
 +    * <br>
 +    * This should be called by mods right away when they create phantoms, so
 +    * event listeners such as {@link net.minecraftforge.event.entity.EntityJoinLevelEvent} can figure out
-+    * who caused this phantom to spawn.<br>
++    * what caused this phantom to spawn.<br>
 +    *
-+    * @param spawnCause The player that caused phantoms to spawn
++    * @param spawnCause UUID describing what caused phantom to spawn (generally a player's UUID).
 +    */
-+   public void setSpawnCause(@Nullable net.minecraft.server.level.ServerPlayer spawnCause)
++   public void setSpawnCause(@Nullable java.util.UUID spawnCause)
 +   {
-+      if (spawnCause == null)
-+         this.spawnCause = null;
-+      else
-+         this.spawnCause = spawnCause.m_20148_();
-+   }
++      this.spawnCause = spawnCause;
+    }
  }

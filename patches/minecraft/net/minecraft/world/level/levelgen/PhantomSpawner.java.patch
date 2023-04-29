@@ -29,7 +29,7 @@
                                   for(int i1 = 0; i1 < l; ++i1) {
                                      Phantom phantom = EntityType.f_20509_.m_20615_(p_64576_);
                                      if (phantom != null) {
-+                                       phantom.setSpawnCause((ServerPlayer) player);
++                                       phantom.setSpawnCause(player.m_20148_());
                                         phantom.m_20035_(blockpos1, 0.0F, 0.0F);
                                         spawngroupdata = phantom.m_6518_(p_64576_, difficultyinstance, MobSpawnType.NATURAL, spawngroupdata, (CompoundTag)null);
                                         p_64576_.m_47205_(phantom);
