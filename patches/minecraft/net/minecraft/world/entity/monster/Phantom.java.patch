@@ -27,7 +27,8 @@
 +   private java.util.UUID spawnCause = null;
 +
 +   /**
-+    * @return UUID describing what caused phantom to spawn (generally a player's UUID). null if not applicable.
++    * This value is only available on the logical server, and will always be null on the client.
++    * @return The UUID of the entity that caused the Phantom to spawn, or null if unknown.
 +    */
 +   @Nullable
 +   public java.util.UUID getSpawnCause()
@@ -36,16 +37,15 @@
 +   }
 +
 +   /**
-+    * Allows to specify spawn cause for phantoms (for event listeners).<br>
-+    * <br>
-+    * This should be called by mods right away when they create phantoms, so
-+    * event listeners such as {@link net.minecraftforge.event.entity.EntityJoinLevelEvent} can figure out
-+    * what caused this phantom to spawn.<br>
-+    *
-+    * @param spawnCause UUID describing what caused phantom to spawn (generally a player's UUID).
++    * Sets the spawn cause of this phantom.
++    * <p>
++    * This should be called as soon as possible in the Phantom's lifecycle, to ensure it is present for event handlers.
++    * @param spawnCause The UUID of the entity that caused the Phantom to spawn.
++    * @throws UnsupportedOperationException if the spawn cause has already been set.
 +    */
-+   public void setSpawnCause(@Nullable java.util.UUID spawnCause)
++   public void setSpawnCause(@org.jetbrains.annotations.NotNull java.util.UUID spawnCause)
 +   {
-+      this.spawnCause = spawnCause;
++      if (this.spawnCause != null) throw new UnsupportedOperationException("Can not change spawn cause after it has been already set");
++      this.spawnCause = com.google.common.base.Preconditions.checkNotNull(spawnCause, "spawnCause is null");
     }
  }

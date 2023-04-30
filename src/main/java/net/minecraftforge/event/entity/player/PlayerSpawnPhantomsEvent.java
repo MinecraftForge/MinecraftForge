@@ -5,26 +5,22 @@
 
 package net.minecraftforge.event.entity.player;
 
+import net.minecraft.world.level.levelgen.PhantomSpawner;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Fired from {@link net.minecraft.world.level.levelgen.PhantomSpawner} per player when it attempts to spawn phantoms.<br>
- * <br>
- * This event fires before any checks (but <i>after</i> check if player is a spectator and
- * <i>after</i> global checks, such as dimension being dark enough or doInsomnia is true)
- * and generally allow you to change properties of <i>potential</i> phantom spawns through
- * {@link PlayerSpawnPhantomsEvent#setPhantomsToSpawn}.<br>
- * <br>
- * Behavior of {@link net.minecraft.world.level.levelgen.PhantomSpawner} is determined by {@link PlayerSpawnPhantomsEvent#getResult()}.<br>
- * See {@link PlayerSpawnPhantomsEvent#setResult} for documentation.<br>
- * <br>
- * This event is not {@link Cancelable}.<br>
- * <br>
+ * This event is fired from {@link PhantomSpawner#tick}, once per player, when phantoms would attempt to be spawned.<br>
+ * This event is not fired for spectating players.
+ * <p>
+ * This event is fired before any per-player checks (but <i>after<i/> {@link Player#isSpectator()}), but after all global checks.<br>
+ * The behavior of {@link PhantomSpawner} is determined by the result of this event.<br>
+ * See {@link #setResult} for documentation.<br>
+ * <p>
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
+ * @see PlayerSpawnPhantomsEvent#setResult for the effects of each result.
  */
 @Event.HasResult
 public class PlayerSpawnPhantomsEvent extends PlayerEvent
@@ -38,7 +34,7 @@ public class PlayerSpawnPhantomsEvent extends PlayerEvent
     }
 
     /**
-     * @return How many phantoms to spawn. This value varies from event to event because it represents random number game was about to spawn.
+     * @return How many phantoms will be spawned, if spawning is successful. The default value is randomly generated.
      */
     public int getPhantomsToSpawn()
     {
@@ -46,6 +42,7 @@ public class PlayerSpawnPhantomsEvent extends PlayerEvent
     }
 
     /**
+     * Sets the number of phantoms to be spawned.
      * @param phantomsToSpawn How many phantoms should spawn, given checks are passed.
      */
     public void setPhantomsToSpawn(int phantomsToSpawn)
@@ -54,14 +51,12 @@ public class PlayerSpawnPhantomsEvent extends PlayerEvent
     }
 
     /**
-     * Behavior of {@link net.minecraft.world.level.levelgen.PhantomSpawner} is determined by result:<br>
+     * The result of this event controls if phantoms will be spawned.<br>
      * <ul>
-     *     <li>If result is {@link Result#DEFAULT}, phantoms will be spawned when passing vanilla checks</li>
-     *     <li>If result is {@link Result#ALLOW}, phantoms will be spawned ignoring vanilla checks (except check whenever can phantoms fit in space)</li>
-     *     <li>If result is {@link Result#DENY}, no phantoms will be spawned</li>
+     * <li>If the result is {@link Result#ALLOW}, phantoms will always be spawned;</li>
+     * <li>If the result is {@link Result#DENY}, phantoms will never be spawned;</li>
+     * <li>If the result is {@link Result#DEFAULT}, vanilla checks will be run to determine if the spawn may occur.</li>
      * </ul>
-     *
-     * @param result The new result
      */
     @Override
     public void setResult(@NotNull Result result)
