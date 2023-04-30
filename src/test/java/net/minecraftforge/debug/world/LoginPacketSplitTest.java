@@ -66,6 +66,7 @@ import java.util.stream.Collectors;
  * To test if the packet is too large simply remove the login packet from the {@link net.minecraftforge.network.filters.ForgeConnectionNetworkFilter}
  * and try connecting again. You should see the connection fail.
  */
+
 @Mod(LoginPacketSplitTest.MOD_ID)
 public class LoginPacketSplitTest
 {
@@ -133,7 +134,7 @@ public class LoginPacketSplitTest
         record RegistryData(Registry<BigData> registry)
         {
         }
-        buf.writeWithCodec(RecordCodecBuilder.create(in -> in.group(
+        buf.writeJsonWithCodec(RecordCodecBuilder.create(in -> in.group(
                 RegistryCodecs.networkCodec(BIG_DATA, Lifecycle.stable(), BigData.CODEC).fieldOf("registry").forGetter(RegistryData::registry)
         ).apply(in, RegistryData::new)), new RegistryData(dummyRegistry)); // RegistryCodecs.networkCodec returns a list codec, and writeWithNbt doesn't like non-compounds
 
@@ -174,7 +175,7 @@ public class LoginPacketSplitTest
             final JsonObject mcmeta = new JsonObject();
             final JsonObject packJson = new JsonObject();
             packJson.addProperty("description", "A virtual resource pack.");
-            packJson.addProperty("pack_format", SharedConstants.getCurrentVersion().getPackVersion(com.mojang.bridge.game.PackType.DATA));
+            packJson.addProperty("pack_format", SharedConstants.getCurrentVersion().getPackVersion(PackType.SERVER_DATA));
             mcmeta.add("pack", packJson);
 
             putRoot("pack.mcmeta", mcmeta);
