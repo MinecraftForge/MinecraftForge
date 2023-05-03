@@ -33,14 +33,14 @@
     }
  
     @Nullable
-@@ -326,6 +_,7 @@
-    public T m_20600_(ServerLevel p_20601_, @Nullable CompoundTag p_20602_, @Nullable Component p_20603_, @Nullable Player p_20604_, BlockPos p_20605_, MobSpawnType p_20606_, boolean p_20607_, boolean p_20608_) {
-       T t = this.m_20655_(p_20601_, p_20602_, p_20603_, p_20604_, p_20605_, p_20606_, p_20607_, p_20608_);
-       if (t != null) {
-+         if (t instanceof net.minecraft.world.entity.Mob && net.minecraftforge.event.ForgeEventFactory.doSpecialSpawn((net.minecraft.world.entity.Mob) t, p_20601_, p_20605_.m_123341_(), p_20605_.m_123342_(), p_20605_.m_123343_(), null, p_20606_)) return null;
-          p_20601_.m_47205_(t);
-       }
- 
+@@ -351,6 +_,7 @@
+             Mob mob = (Mob)t;
+             mob.f_20885_ = mob.m_146908_();
+             mob.f_20883_ = mob.m_146908_();
++            if (!net.minecraftforge.event.ForgeEventFactory.doSpecialSpawn(mob, p_20656_, (float) mob.m_20185_(), (float) mob.m_20186_(), (float) mob.m_20189_(), null, p_20661_))
+             mob.m_6518_(p_20656_, p_20656_.m_6436_(mob.m_20183_()), p_20661_, (SpawnGroupData)null, p_20657_);
+             mob.m_8032_();
+          }
 @@ -543,14 +_,23 @@
     }
  
