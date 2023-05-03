@@ -1,0 +1,20 @@
+--- a/net/minecraft/client/tutorial/Tutorial.java
++++ b/net/minecraft/client/tutorial/Tutorial.java
+@@ -116,13 +_,15 @@
+    }
+ 
+    public void m_120588_(TutorialSteps p_120589_) {
+-      this.f_120559_.f_91066_.f_92030_ = p_120589_;
++      var event = net.minecraftforge.client.ForgeHooksClient.onTutorialStepChangePre(this.f_120559_.f_91066_.f_92030_, p_120589_);
++      if (event.isCanceled()) return;
++      this.f_120559_.f_91066_.f_92030_ = event.getNext();
+       this.f_120559_.f_91066_.m_92169_();
+       if (this.f_120560_ != null) {
+          this.f_120560_.m_7736_();
+          this.f_120560_ = p_120589_.m_120640_(this);
+       }
+-
++      net.minecraftforge.client.ForgeHooksClient.onTutorialStepChangePost(this.f_120559_.f_91066_.f_92030_, event.getNext());
+    }
+ 
+    public Minecraft m_120597_() {

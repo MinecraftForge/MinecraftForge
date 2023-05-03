@@ -1,0 +1,21 @@
+--- a/net/minecraft/client/tutorial/TutorialSteps.java
++++ b/net/minecraft/client/tutorial/TutorialSteps.java
+@@ -5,7 +_,7 @@
+ import net.minecraftforge.api.distmarker.OnlyIn;
+ 
+ @OnlyIn(Dist.CLIENT)
+-public enum TutorialSteps {
++public enum TutorialSteps implements net.minecraftforge.common.IExtensibleEnum {
+    MOVEMENT("movement", MovementTutorialStepInstance::new),
+    FIND_TREE("find_tree", FindTreeTutorialStepInstance::new),
+    PUNCH_TREE("punch_tree", PunchTreeTutorialStepInstance::new),
+@@ -37,5 +_,9 @@
+       }
+ 
+       return NONE;
++   }
++
++   public static <T extends TutorialStepInstance> TutorialSteps create(String registryName, String stepName, Function<Tutorial, T> constructor) {
++      throw new IllegalStateException("Enum not extended");
+    }
+ }

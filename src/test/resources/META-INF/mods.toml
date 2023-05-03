@@ -287,6 +287,7 @@ modId="render_level_stages_test"
 modId="trade_with_villager_event_test"
 [[mods]]
 modId="chunk_event_load_new_chunk_test"
-
+[[mods]]
+modId="tutorial_event_test"
 
 # ADD ABOVE THIS LINE
