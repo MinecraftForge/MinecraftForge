@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/BaseSpawner.java
 +++ b/net/minecraft/world/level/BaseSpawner.java
-@@ -127,11 +_,15 @@
+@@ -127,10 +_,15 @@
                    entity.m_7678_(entity.m_20185_(), entity.m_20186_(), entity.m_20189_(), randomsource.m_188501_() * 360.0F, 0.0F);
                    if (entity instanceof Mob) {
                       Mob mob = (Mob)entity;
@@ -11,11 +11,11 @@
                          continue;
                       }
  
++                     // Fire this early so mods can react to mobs that vanilla normally ignores.
++                     if (!net.minecraftforge.event.ForgeEventFactory.doSpecialSpawn(mob, (LevelAccessor)p_151312_, (float)entity.m_20185_(), (float)entity.m_20186_(), (float)entity.m_20189_(), this, MobSpawnType.SPAWNER))
                       if (this.f_45444_.m_186567_().m_128440_() == 1 && this.f_45444_.m_186567_().m_128425_("id", 8)) {
-+                        if (!net.minecraftforge.event.ForgeEventFactory.doSpecialSpawn(mob, (LevelAccessor)p_151312_, (float)entity.m_20185_(), (float)entity.m_20186_(), (float)entity.m_20189_(), this, MobSpawnType.SPAWNER))
                          ((Mob)entity).m_6518_(p_151312_, p_151312_.m_6436_(entity.m_20183_()), MobSpawnType.SPAWNER, (SpawnGroupData)null, (CompoundTag)null);
                       }
-                   }
 @@ -275,4 +_,12 @@
     public double m_45474_() {
        return this.f_45446_;

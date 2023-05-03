@@ -1,0 +1,10 @@
+--- a/net/minecraft/server/commands/SummonCommand.java
++++ b/net/minecraft/server/commands/SummonCommand.java
+@@ -55,6 +_,7 @@
+             throw f_138810_.create();
+          } else {
+             if (p_138825_ && entity instanceof Mob) {
++               if (!net.minecraftforge.event.ForgeEventFactory.doSpecialSpawn((Mob)entity, p_138821_.m_81372_(), (float)entity.m_20185_(), (float)entity.m_20186_(), (float)entity.m_20189_(), null, MobSpawnType.COMMAND))
+                ((Mob)entity).m_6518_(p_138821_.m_81372_(), p_138821_.m_81372_().m_6436_(entity.m_20183_()), MobSpawnType.COMMAND, (SpawnGroupData)null, (CompoundTag)null);
+             }
+ 
