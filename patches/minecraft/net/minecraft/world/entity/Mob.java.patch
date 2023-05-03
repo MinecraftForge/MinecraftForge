@@ -36,7 +36,7 @@
        }
  
        this.m_21557_(p_21450_.m_128471_("NoAI"));
-+      
++
 +      if (p_21450_.m_128441_("forge:spawn_type")) {
 +         try {
 +            this.spawnType = MobSpawnType.valueOf(p_21450_.m_128461_("forge:spawn_type"));
@@ -126,7 +126,7 @@
 +   }
 +
 +   /**
-+   * Returns the type of spawn that created this mob, if applicable.
++   * Returns the type of spawn that created this mob, if applicable.<br>
 +   * If it could not be determined, this will return null.
 +   * <p>
 +   * This is set via {@link Mob#finalizeSpawn}, so you should not call this from within that method, and instead use the parameter.
