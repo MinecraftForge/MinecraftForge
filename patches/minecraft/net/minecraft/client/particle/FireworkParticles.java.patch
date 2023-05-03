@@ -1,0 +1,14 @@
+--- a/net/minecraft/client/particle/FireworkParticles.java
++++ b/net/minecraft/client/particle/FireworkParticles.java
+@@ -202,8 +_,10 @@
+             }
+ 
+             switch (fireworkrocketitem$shape) {
+-               case SMALL_BALL:
+                default:
++                  net.minecraftforge.client.ForgeHooksClient.onFireworkShapeRender(this, new net.minecraft.world.phys.Vec3(this.f_107212_, this.f_107213_, this.f_107214_), fireworkrocketitem$shape, flag4, flag2, aint, aint1, this::m_106767_);
++                  break;
++               case SMALL_BALL:
+                   this.m_106778_(0.25D, 2, aint, aint1, flag4, flag2);
+                   break;
+                case LARGE_BALL:
