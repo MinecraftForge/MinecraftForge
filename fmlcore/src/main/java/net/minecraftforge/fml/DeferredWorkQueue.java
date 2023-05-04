@@ -11,9 +11,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 import com.google.common.base.Stopwatch;
@@ -53,17 +55,29 @@ public class DeferredWorkQueue
     public void runTasks() {
         if (tasks.isEmpty()) return;
         LOGGER.debug(LOADING, "Dispatching synchronous work for work queue {}: {} jobs", modLoadingStage, tasks.size());
+        RuntimeException aggregate = new RuntimeException();
         Stopwatch timer = Stopwatch.createStarted();
-        tasks.forEach(t->makeRunnable(t, Runnable::run));
+        tasks.forEach(t -> makeRunnable(t, Runnable::run, aggregate));
         timer.stop();
-        LOGGER.debug(LOADING, "Synchronous work queue completed in {}", timer);
+        if (aggregate.getSuppressed().length > 0) {
+            LOGGER.fatal(
+                    LOADING,
+                    "Synchronous work queue completed exceptionally in {}, see suppressed exceptions for details:",
+                    timer,
+                    aggregate
+            );
+            //TODO 1.20: throw aggregate exception
+        } else {
+            LOGGER.debug(LOADING, "Synchronous work queue completed in {}", timer);
+        }
     }
 
-    private static void makeRunnable(TaskInfo ti, Executor executor) {
+    private static void makeRunnable(TaskInfo ti, Executor executor, RuntimeException aggregate) {
         executor.execute(() -> {
             Stopwatch timer = Stopwatch.createStarted();
             ModLoadingContext.get().setActiveContainer(ti.owner);
             try {
+                ti.future.exceptionally(t -> captureException(ti.owner.getModId(), aggregate, t));
                 ti.task.run();
             } finally {
                 ModLoadingContext.get().setActiveContainer(null);
@@ -75,13 +89,38 @@ public class DeferredWorkQueue
         });
     }
 
+    private static <T> T captureException(String modId, RuntimeException aggregate, Throwable throwable) {
+        if (throwable instanceof CompletionException ce) {
+            throwable = ce.getCause();
+        }
+        aggregate.addSuppressed(throwable);
+        LOGGER.error("Mod '{}' encountered an error in a deferred task:", modId, throwable);
+        return null;
+    }
+
     public CompletableFuture<Void> enqueueWork(final ModContainer modInfo, final Runnable work) {
-        return CompletableFuture.runAsync(work, r->tasks.add(new TaskInfo(modInfo, r)));
+        return enqueueWork(modInfo, taskInfo -> CompletableFuture.runAsync(work, r -> taskInfo.task = r));
     }
 
     public <T> CompletableFuture<T> enqueueWork(final ModContainer modInfo, final Supplier<T> work) {
-        return CompletableFuture.supplyAsync(work, r->tasks.add(new TaskInfo(modInfo, r)));
+        return enqueueWork(modInfo, taskInfo -> CompletableFuture.supplyAsync(work, r -> taskInfo.task = r));
     }
 
-    record TaskInfo(ModContainer owner, Runnable task) {}
+    private <T> CompletableFuture<T> enqueueWork(final ModContainer modInfo, Function<TaskInfo, CompletableFuture<T>> futureGen) {
+        TaskInfo taskInfo = new TaskInfo(modInfo);
+        CompletableFuture<T> future = futureGen.apply(taskInfo);
+        taskInfo.future = future;
+        tasks.add(taskInfo);
+        return future;
+    }
+
+    private static class TaskInfo {
+        private final ModContainer owner;
+        private Runnable task;
+        private CompletableFuture<?> future;
+
+        private TaskInfo(ModContainer owner) {
+            this.owner = owner;
+        }
+    }
 }
