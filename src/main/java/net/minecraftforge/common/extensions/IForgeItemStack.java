@@ -587,4 +587,11 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundTag>
         return self().getItem().isNotReplaceableByPickAction(self(), player, inventorySlot);
     }
 
+    /**
+     * {@return true if the given ItemStack can be put into a grindstone to be repaired and/or stripped of its enchantments}
+     */
+    default boolean canGrindstoneRepair()
+    {
+        return self().getItem().canGrindstoneRepair(self());
+    }
 }
