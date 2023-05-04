@@ -34,18 +34,12 @@ public class DeferredWorkQueueTest
         }
 
         event.enqueueWork(() -> LOGGER.info("Enqueued runnable ran"));
-        event.enqueueWork(() -> "Enqueued supplier ran").thenApply(s ->
-        {
-            LOGGER.info(s);
-            return null;
-        });
+        event.enqueueWork(() -> "Enqueued supplier ran").thenAccept(LOGGER::info);
 
         event.enqueueWork(DeferredWorkQueueTest::executeThrowingRunnable);
-        event.enqueueWork(DeferredWorkQueueTest::executeThrowingSupplier).thenApply(s ->
-        {
-            LOGGER.error("This must not be printed");
-            return null;
-        });
+        event.enqueueWork(DeferredWorkQueueTest::executeThrowingSupplier).thenAccept(s ->
+                LOGGER.error("This must not be printed")
+        );
     }
 
     private static void executeThrowingRunnable()
