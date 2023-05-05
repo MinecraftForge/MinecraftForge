@@ -16,6 +16,7 @@ import net.minecraft.commands.arguments.TeamArgument;
 import net.minecraft.commands.arguments.coordinates.BlockPosArgument;
 import net.minecraft.commands.synchronization.SuggestionProviders;
 import net.minecraft.network.chat.Component;
+import net.minecraftforge.debug.client.TestScreen;
 import net.minecraftforge.client.event.RegisterClientCommandsEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
@@ -104,7 +105,10 @@ public class ClientCommandTest
                                 .executes((context) -> {
                                     context.getSource().sendSuccess(Component.literal("Executed command"), false);
                                     return 1;
-                                })));
+                                }))
+                        // Used for testing the screen after using commands
+                        .then(Commands.literal("screentest")
+                                .executes((stack) -> TestScreen.open())));
 
         // Used for testing that client command redirects can only be used with client commands
         LiteralArgumentBuilder<CommandSourceStack> fork = Commands.literal("clientcommandfork");

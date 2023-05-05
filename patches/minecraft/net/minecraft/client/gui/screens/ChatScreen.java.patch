@@ -1,0 +1,11 @@
+--- a/net/minecraft/client/gui/screens/ChatScreen.java
++++ b/net/minecraft/client/gui/screens/ChatScreen.java
+@@ -225,7 +_,7 @@
+             this.f_96541_.f_91074_.f_108617_.m_246175_(p_242400_);
+          }
+ 
+-         return true;
++         return f_96541_.f_91080_ == this; // FORGE: Prevent closing the screen if another screen has been opened.
+       }
+    }
+ 

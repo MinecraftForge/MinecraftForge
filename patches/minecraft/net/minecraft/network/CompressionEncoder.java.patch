@@ -13,7 +13,7 @@
           friendlybytebuf.m_130130_(0);
           friendlybytebuf.writeBytes(p_129453_);
        } else {
-+         if (!DISABLE_PACKET_DEBUG && i > net.minecraft.network.CompressionDecoder.MAXIMUM_UNCOMPRESSED_LENGTH) {
++         if (!DISABLE_PACKET_DEBUG && i > net.minecraft.network.CompressionDecoder.f_182672_) {
 +             p_129453_.markReaderIndex();
 +             LOGGER.error("Attempted to send packet over maximum protocol size: {} > 2097152\nData:\n{}", i,
 +                     net.minecraftforge.logging.PacketDump.getContentDump(p_129453_));

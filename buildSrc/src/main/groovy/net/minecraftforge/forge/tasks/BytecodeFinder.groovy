@@ -6,14 +6,9 @@ import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
-import org.objectweb.asm.ClassReader
-import org.objectweb.asm.Opcodes
 import org.objectweb.asm.tree.ClassNode
 import org.objectweb.asm.tree.FieldNode
 import org.objectweb.asm.tree.MethodNode
-
-import java.util.zip.ZipEntry
-import java.util.zip.ZipInputStream
 
 abstract class BytecodeFinder extends DefaultTask {
     @InputFile abstract RegularFileProperty getJar()
@@ -33,18 +28,7 @@ abstract class BytecodeFinder extends DefaultTask {
 
         pre()
 
-        jar.get().asFile.withInputStream { i ->
-            new ZipInputStream(i).withCloseable { zin ->
-                ZipEntry zein
-                while ((zein = zin.nextEntry) != null) {
-                    if (zein.name.endsWith('.class')) {
-                        def node = new ClassNode(Opcodes.ASM9)
-                        new ClassReader(zin).accept(node, 0)
-                        process(node)
-                    }
-                }
-            }
-        }
+        Util.processClassNodes(jar.get().asFile, this::process)
 
         post()
         outputFile.text = new JsonBuilder(getData()).toPrettyString()

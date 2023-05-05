@@ -70,6 +70,7 @@ public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegist
     private final BakeCallback<V> bake;
     private final MissingFactory<V> missing;
     private final BitSet availabilityMap;
+    @Deprecated(forRemoval = true, since = "1.19.4")
     private final Set<ResourceLocation> dummies = Sets.newHashSet();
     private final Set<Integer> blocked = Sets.newHashSet();
     private final Multimap<ResourceLocation, V> overrides = ArrayListMultimap.create();
@@ -77,6 +78,7 @@ public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegist
     private final Map<V, Holder.Reference<V>> delegatesByValue = Maps.newHashMap();
     private final BiMap<OverrideOwner<V>, V> owners = HashBiMap.create();
     private final ForgeRegistryTagManager<V> tagManager;
+    @Deprecated(forRemoval = true, since = "1.19.4")
     private final DummyFactory<V> dummyFactory;
     private final int min;
     private final int max;
@@ -505,6 +507,7 @@ public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegist
         LOGGER.trace(REGISTRIES,"Registry {} alias: {} -> {}", this.name, src, dst);
     }
 
+    @Deprecated(forRemoval = true, since = "1.19.4")
     void addDummy(ResourceLocation key)
     {
         if (this.isLocked())
@@ -581,6 +584,7 @@ public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegist
         return this.defaultValue;
     }
 
+    @Deprecated(forRemoval = true, since = "1.19.4")
     boolean isDummied(ResourceLocation key)
     {
         return this.dummies.contains(key);
@@ -818,7 +822,7 @@ public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegist
         }
     }
 
-    private record DumpRow(String id, String key, String value, String dummied) {}
+    private record DumpRow(String id, String key, String value, @Deprecated(forRemoval = true, since = "1.19.4") String dummied) {}
 
     public void loadIds(Map<ResourceLocation, Integer> ids, Map<ResourceLocation, String> overrides, Map<ResourceLocation, Integer> missing, Map<ResourceLocation, IdMappingEvent.IdRemapping> remapped, ForgeRegistry<V> old, ResourceLocation name)
     {
@@ -920,6 +924,7 @@ public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegist
         }
     }
 
+    @Deprecated(forRemoval = true, since = "1.19.4")
     boolean markDummy(ResourceLocation key, int id)
     {
         if (this.dummyFactory == null)
@@ -946,6 +951,7 @@ public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegist
         return true;
     }
 
+    @Deprecated(forRemoval = true, since = "1.19.4")
     private void createAndAddDummy(ResourceLocation key, int id)
     {
         V dummy = this.dummyFactory.createDummy(key);
@@ -1051,6 +1057,7 @@ public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegist
         public final Map<ResourceLocation, Integer> ids = Maps.newTreeMap(sorter);
         public final Map<ResourceLocation, ResourceLocation> aliases = Maps.newTreeMap(sorter);
         public final Set<Integer> blocked = Sets.newTreeSet();
+        @Deprecated(forRemoval = true, since = "1.19.4")
         public final Set<ResourceLocation> dummied = Sets.newTreeSet(sorter);
         public final Map<ResourceLocation, String> overrides = Maps.newTreeMap(sorter);
         private FriendlyByteBuf binary = null;

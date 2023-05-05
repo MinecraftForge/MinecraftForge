@@ -27,6 +27,8 @@ modId="mdk_datagen"
 [[mods]]
     modId="crash_callable_test"
 [[mods]]
+    modId="deferred_work_queue_test"
+[[mods]]
     modId="custom_preset_editor_test"
 
 # LEGACY TEST CASES

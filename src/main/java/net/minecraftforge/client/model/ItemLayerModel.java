@@ -56,10 +56,9 @@ public class ItemLayerModel implements IUnbakedGeometry<ItemLayerModel>
     @Override
     public BakedModel bake(IGeometryBakingContext context, ModelBaker baker, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelState, ItemOverrides overrides, ResourceLocation modelLocation)
     {
-        if (textures == null) {
+        if (textures == null)
+        {
             ImmutableList.Builder<Material> builder = ImmutableList.builder();
-            if (context.hasMaterial("particle"))
-                builder.add(context.getMaterial("particle"));
             for (int i = 0; context.hasMaterial("layer" + i); i++)
             {
                 builder.add(context.getMaterial("layer" + i));

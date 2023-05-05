@@ -201,6 +201,7 @@ public class NewModelLoaderTest
         protected void registerModels()
         {
             withExistingParent(NewModelLoaderTest.item_layers.getId().getPath(), "forge:item/default")
+                    .texture("particle", "minecraft:block/red_stained_glass")
                     .texture("layer0", "minecraft:item/coal")
                     .texture("layer1", "minecraft:item/stick")
                     .customLoader(ItemLayerModelBuilder::begin)
