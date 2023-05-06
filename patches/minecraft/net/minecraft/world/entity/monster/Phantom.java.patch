@@ -23,14 +23,14 @@
 +   }
 +
 +   // Forge start
-+   @Nullable
++   @org.jetbrains.annotations.Nullable
 +   private java.util.UUID spawnCause = null;
 +
 +   /**
 +    * This value is only available on the logical server, and will always be null on the client.
 +    * @return The UUID of the entity that caused the Phantom to spawn, or null if unknown.
 +    */
-+   @Nullable
++   @org.jetbrains.annotations.Nullable
 +   public java.util.UUID getSpawnCause()
 +   {
 +      return this.spawnCause;

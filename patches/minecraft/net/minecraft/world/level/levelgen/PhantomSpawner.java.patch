@@ -5,10 +5,9 @@
                    if (!player.m_5833_()) {
                       BlockPos blockpos = player.m_20183_();
 -                     if (!p_64576_.m_6042_().f_223549_() || blockpos.m_123342_() >= p_64576_.m_5736_() && p_64576_.m_45527_(blockpos)) {
--                        DifficultyInstance difficultyinstance = p_64576_.m_6436_(blockpos);
+                         DifficultyInstance difficultyinstance = p_64576_.m_6436_(blockpos);
 -                        if (difficultyinstance.m_19049_(randomsource.m_188501_() * 3.0F)) {
-+                     DifficultyInstance difficultyinstance = p_64576_.m_6436_(blockpos);
-+                     net.minecraftforge.event.entity.player.PlayerSpawnPhantomsEvent event = new net.minecraftforge.event.entity.player.PlayerSpawnPhantomsEvent(player, 1 + randomsource.m_188503_(difficultyinstance.m_19048_().m_19028_() + 1));
++                     var event = new net.minecraftforge.event.entity.player.PlayerSpawnPhantomsEvent(player, 1 + randomsource.m_188503_(difficultyinstance.m_19048_().m_19028_() + 1));
 +                     net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event);
 +                     if (event.getResult() == net.minecraftforge.eventbus.api.Event.Result.DENY) continue;
 +                     if (event.getResult() == net.minecraftforge.eventbus.api.Event.Result.ALLOW || !p_64576_.m_6042_().f_223549_() || blockpos.m_123342_() >= p_64576_.m_5736_() && p_64576_.m_45527_(blockpos)) {
