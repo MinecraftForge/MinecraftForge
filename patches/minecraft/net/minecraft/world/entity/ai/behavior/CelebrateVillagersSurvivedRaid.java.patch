@@ -1,0 +1,10 @@
+--- a/net/minecraft/world/entity/ai/behavior/CelebrateVillagersSurvivedRaid.java
++++ b/net/minecraft/world/entity/ai/behavior/CelebrateVillagersSurvivedRaid.java
+@@ -65,6 +_,7 @@
+       list.add(p_22697_.m_41070_());
+       compoundtag.m_128408_("Colors", list);
+       compoundtag.m_128344_("Type", (byte)FireworkRocketItem.Shape.BURST.m_41236_());
++      net.minecraftforge.common.ForgeHooks.saveFireworkShape(compoundtag, "forge:firework_shape", FireworkRocketItem.Shape.BURST);
+       CompoundTag compoundtag1 = itemstack.m_41698_("Fireworks");
+       ListTag listtag = new ListTag();
+       CompoundTag compoundtag2 = itemstack1.m_41737_("Explosion");

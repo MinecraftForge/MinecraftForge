@@ -9,18 +9,10 @@
        SMALL_BALL(0, "small_ball"),
        LARGE_BALL(1, "large_ball"),
        STAR(2, "star"),
-@@ -132,7 +_,17 @@
-       }
+@@ -133,6 +_,10 @@
  
        public static FireworkRocketItem.Shape m_41237_(int p_41238_) {
--         return f_41226_.apply(p_41238_);
-+         for (Shape value : values()) {
-+            if (value.f_41227_ == p_41238_) {
-+               return value;
-+            }
-+         }
-+
-+         return null;
+          return f_41226_.apply(p_41238_);
 +      }
 +
 +      public static Shape create(String registryName, int id, String shapeName) {

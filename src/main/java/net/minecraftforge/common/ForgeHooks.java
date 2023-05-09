@@ -124,6 +124,7 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.BiomeSpecialEffects;
 import net.minecraft.world.level.biome.BiomeGenerationSettings;
 import net.minecraft.world.level.biome.MobSpawnSettings;
+import net.minecraftforge.client.event.FireworkShapeRenderEvent;
 import net.minecraftforge.common.loot.IGlobalLootModifier;
 import net.minecraftforge.common.loot.LootModifierManager;
 import net.minecraftforge.common.loot.LootTableIdCondition;
@@ -1594,5 +1595,21 @@ public class ForgeHooks
             @Override public Stream<HolderSet.Named<T>> listTags() { return Stream.empty(); }
             @Override public Optional<HolderSet.Named<T>> get(TagKey<T> key) { return Optional.of(HolderSet.emptyNamed(lookup, key)); }
         };
+    }
+
+    public static void saveFireworkShape(CompoundTag nbt, String key, FireworkRocketItem.Shape shape) {
+        nbt.putString(key, shape.name());
+    }
+
+    public static FireworkRocketItem.Shape loadFireworkShape(CompoundTag nbt, String key, @Nullable FireworkRocketItem.Shape fallback) {
+        String id = nbt.getString(key);
+
+        for (FireworkRocketItem.Shape value : FireworkRocketItem.Shape.values()) {
+            if (value.name().equals(id)) {
+                return value;
+            }
+        }
+
+        return fallback;
     }
 }

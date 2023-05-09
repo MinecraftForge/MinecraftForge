@@ -1,0 +1,10 @@
+--- a/net/minecraft/world/item/crafting/FireworkStarRecipe.java
++++ b/net/minecraft/world/item/crafting/FireworkStarRecipe.java
+@@ -108,6 +_,7 @@
+ 
+       compoundtag.m_128408_("Colors", list);
+       compoundtag.m_128344_("Type", (byte)fireworkrocketitem$shape.m_41236_());
++      net.minecraftforge.common.ForgeHooks.saveFireworkShape(compoundtag, "forge:firework_shape", fireworkrocketitem$shape);
+       return itemstack;
+    }
+ 

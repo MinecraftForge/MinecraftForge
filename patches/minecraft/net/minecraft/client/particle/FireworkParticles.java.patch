@@ -1,5 +1,13 @@
 --- a/net/minecraft/client/particle/FireworkParticles.java
 +++ b/net/minecraft/client/particle/FireworkParticles.java
+@@ -193,6 +_,7 @@
+             int k = this.f_106754_ / 2;
+             CompoundTag compoundtag1 = this.f_106752_.m_128728_(k);
+             FireworkRocketItem.Shape fireworkrocketitem$shape = FireworkRocketItem.Shape.m_41237_(compoundtag1.m_128445_("Type"));
++            fireworkrocketitem$shape = net.minecraftforge.common.ForgeHooks.loadFireworkShape(compoundtag1, "forge:firework_shape", fireworkrocketitem$shape);
+             boolean flag4 = compoundtag1.m_128471_("Trail");
+             boolean flag2 = compoundtag1.m_128471_("Flicker");
+             int[] aint = compoundtag1.m_128465_("Colors");
 @@ -202,8 +_,10 @@
              }
  
