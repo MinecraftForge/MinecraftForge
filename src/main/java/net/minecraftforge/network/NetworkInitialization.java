@@ -26,7 +26,7 @@ class NetworkInitialization {
                 loginIndex(HandshakeMessages.LoginIndexedMessage::getLoginIndex, HandshakeMessages.LoginIndexedMessage::setLoginIndex).
                 decoder(HandshakeMessages.S2CReset::decode).
                 encoder(HandshakeMessages.S2CReset::encode).
-                consumerNetworkThread(HandshakeHandler.indexFirst(HandshakeHandler::handleClientReset)). //TODO
+                consumerNetworkThread(HandshakeHandler.indexFirst(HandshakeHandler::handleClientReset)).
                 add();
 
         handshakeChannel.messageBuilder(HandshakeMessages.C2SAcknowledge.class, 99, NetworkDirection.LOGIN_TO_SERVER).

@@ -332,75 +332,9 @@ public class HandshakeHandler
         NetworkConstants.handshakeChannel.reply(new HandshakeMessages.C2SAcknowledge(), contextSupplier.get());
     }
 
-    void handleClientReset(HandshakeMessages.S2CReset msg, final Supplier<NetworkEvent.Context> contextSupplier) {
-        NetworkEvent.Context context = contextSupplier.get();
-        Connection connection = context.getNetworkManager();
-
-        if (context.getDirection() != NetworkDirection.LOGIN_TO_CLIENT && context.getDirection() != NetworkDirection.PLAY_TO_CLIENT) {
-            connection.disconnect(Component.literal("Illegal packet received, terminating connection"));
-            throw new IllegalStateException("Invalid packet received, aborting connection");
-        }
-
-        LOGGER.debug(FMLHSMARKER, "Received reset from server");
-
-        ServerData serverData = Minecraft.getInstance().getCurrentServer();
-        Screen screen = Minecraft.getInstance().screen;
-
-        if (!handleClear(context)) {
-            return;
-        }
-
-        NetworkHooks.registerClientLoginChannel(connection);
-        connection.setProtocol(ConnectionProtocol.LOGIN);
-        connection.setListener(new ClientHandshakePacketListenerImpl(
-                connection, Minecraft.getInstance(), serverData, screen, true, null, statusMessage -> {}
-        ));
-
-        context.setPacketHandled(true);
-        NetworkConstants.handshakeChannel.reply(
-                new HandshakeMessages.C2SAcknowledge(),
-                new NetworkEvent.Context(connection, NetworkDirection.LOGIN_TO_CLIENT, 98)
-        );
-
-        LOGGER.debug(FMLHSMARKER, "Reset complete");
-    }
-
-    @OnlyIn(Dist.CLIENT)
-    boolean handleClear(NetworkEvent.Context context) {
-        CompletableFuture<Void> future = context.enqueueWork(() -> {
-            LOGGER.debug(FMLHSMARKER, "Clearing");
-
-            // Clear
-            if (Minecraft.getInstance().level == null) {
-                // Ensure the GameData is reverted in case the client is reset during the handshake.
-                GameData.revertToFrozen();
-            }
-
-            // Clear
-            Minecraft.getInstance().clearLevel(new GenericDirtMessageScreen(Component.translatable("connect.negotiating")));
-            try {
-                context.getNetworkManager().channel().pipeline().remove("forge:forge_fixes");
-            } catch (NoSuchElementException ignored) {
-            }
-            try {
-                context.getNetworkManager().channel().pipeline().remove("forge:vanilla_filter");
-            } catch (NoSuchElementException ignored) {
-            }
-            // Restore
-//            Minecraft.getInstance().setCurrentServer(serverData);
-        });
-
-        LOGGER.debug(FMLHSMARKER, "Waiting for clear to complete");
-
-        try {
-            future.get();
-            LOGGER.debug("Clear complete, continuing reset");
-            return true;
-        } catch (Exception ex) {
-            LOGGER.error(FMLHSMARKER, "Failed to clear, closing connection", ex);
-            context.getNetworkManager().disconnect(Component.literal("Failed to clear, closing connection"));
-            return false;
-        }
+    void handleClientReset(HandshakeMessages.S2CReset msg, final Supplier<NetworkEvent.Context> contextSupplier)
+    {
+        ClientResetPacketHandler.handleClientReset(msg, contextSupplier);
     }
 
     /**
