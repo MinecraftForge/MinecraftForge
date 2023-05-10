@@ -28,6 +28,8 @@ modId="mdk_datagen"
     modId="crash_callable_test"
 [[mods]]
     modId="deferred_work_queue_test"
+[[mods]]
+    modId="custom_game_rule_test"
 
 # LEGACY TEST CASES
 ###### The mods below are from the old test framework and need to be yeeted later again.
