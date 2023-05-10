@@ -119,7 +119,6 @@ public class GameData
     private static boolean hasInit = false;
     private static final boolean DISABLE_VANILLA_REGISTRIES = Boolean.parseBoolean(System.getProperty("forge.disableVanillaGameData", "false")); // Use for unit tests/debugging
     private static final BiConsumer<ResourceLocation, ForgeRegistry<?>> LOCK_VANILLA = (name, reg) -> reg.slaves.values().stream().filter(o -> o instanceof ILockableRegistry).forEach(o -> ((ILockableRegistry)o).lock());
-    private static boolean registrationCompleted = false;
 
     static {
         init();
@@ -406,8 +405,6 @@ public class GameData
             SpawnPlacements.fireSpawnPlacementEvent();
             CreativeModeTabRegistry.fireCollectionEvent();
         }
-
-        registrationCompleted = true;
     }
 
     //Lets us clear the map so we can rebuild it.
@@ -901,10 +898,5 @@ public class GameData
             prefix = oldPrefix;
         }
         return new ResourceLocation(prefix, name);
-    }
-
-    public static boolean isRegistrationCompleted()
-    {
-        return registrationCompleted;
     }
 }

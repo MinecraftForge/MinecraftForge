@@ -39,4 +39,13 @@ public class ModStateManager {
         nodes.forEach(n->graph.putEdge(lookup.getOrDefault(n.previous(), dummy), n));
         return TopologicalSort.topologicalSort(graph, Comparator.comparingInt(nodes::indexOf)).stream().filter(st->st!=dummy).toList();
     }
+
+    public IModLoadingState findState(final String stateName) {
+        return stateMap.values()
+                .stream()
+                .flatMap(Collection::stream)
+                .filter(mls -> mls.name().equals(stateName))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Unknown IModLoadingState: " + stateName));
+    }
 }
