@@ -250,7 +250,7 @@ public final class TransformationHelper
             if (!e.isJsonArray()) throw new JsonParseException("Matrix: expected an array, got: " + e);
             JsonArray m = e.getAsJsonArray();
             if (m.size() != 3) throw new JsonParseException("Matrix: expected an array of length 3, got: " + m.size());
-            Matrix4f matrix = new Matrix4f().zero();
+            Matrix4f matrix = new Matrix4f();
             for (int rowIdx = 0; rowIdx < 3; rowIdx++)
             {
                 if (!m.get(rowIdx).isJsonArray()) throw new JsonParseException("Matrix row: expected an array, got: " + m.get(rowIdx));
@@ -268,6 +268,8 @@ public final class TransformationHelper
                     }
                 }
             }
+            // JOML's unsafe matrix component setter does not recalculate these properties, so the matrix would stay marked as identity
+            matrix.determineProperties();
             return matrix;
         }
 
