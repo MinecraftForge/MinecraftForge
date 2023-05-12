@@ -9,7 +9,7 @@
           double d0 = -Mth.m_14139_((double)p_114445_, p_114444_.f_19790_, p_114444_.m_20185_());
           double d1 = -Mth.m_14139_((double)p_114445_, p_114444_.f_19791_, p_114444_.m_20186_());
           double d2 = -Mth.m_14139_((double)p_114445_, p_114444_.f_19792_, p_114444_.m_20189_());
- 
+
 -         for(EnderDragonPart enderdragonpart : ((EnderDragon)p_114444_).m_31156_()) {
 +         for(net.minecraftforge.entity.PartEntity<?> enderdragonpart : p_114444_.getParts()) {
              p_114442_.m_85836_();
@@ -18,7 +18,7 @@
 @@ -351,9 +_,14 @@
        return this.f_234577_;
     }
- 
+
 +   public Map<String, EntityRenderer<? extends Player>> getSkinMap() {
 +      return java.util.Collections.unmodifiableMap(f_114363_);
 +   }
@@ -28,5 +28,6 @@
        this.f_114362_ = EntityRenderers.m_174049_(entityrendererprovider$context);
        this.f_114363_ = EntityRenderers.m_174051_(entityrendererprovider$context);
 +      net.minecraftforge.fml.ModLoader.get().postEvent(new net.minecraftforge.client.event.EntityRenderersEvent.AddLayers(f_114362_, f_114363_));
++      net.minecraftforge.client.model.pose.PoseSortingRegistry.init();
     }
  }

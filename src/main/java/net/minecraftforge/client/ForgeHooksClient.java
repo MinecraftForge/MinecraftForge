@@ -275,7 +275,6 @@ public class ForgeHooksClient
         NamedRenderTypeManager.init();
         ColorResolverManager.init();
         ItemDecoratorHandler.init();
-        PoseSortingRegistry.init();
     }
 
     public static String getArmorTexture(Entity entity, ItemStack armor, String _default, EquipmentSlot slot, String type)

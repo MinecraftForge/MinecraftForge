@@ -97,6 +97,8 @@ public class PoseSortingRegistry
 
     public static void init()
     {
+        poses.clear();
+        edges.clear();
         EntityRenderersEvent.RegisterPoseEvent event = new EntityRenderersEvent.RegisterPoseEvent(PoseSortingRegistry::registerPose);
         ModLoader.get().postEventWithWrapInModOrder(event, (mc, e) -> ModLoadingContext.get().setActiveContainer(mc), (mc, e) -> ModLoadingContext.get().setActiveContainer(null));
         recalculatePoses();
