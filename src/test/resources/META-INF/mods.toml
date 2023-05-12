@@ -29,6 +29,8 @@ modId="mdk_datagen"
 [[mods]]
     modId="deferred_work_queue_test"
 [[mods]]
+    modId="custom_game_rule_test"
+[[mods]]
     modId="custom_preset_editor_test"
 
 # LEGACY TEST CASES
