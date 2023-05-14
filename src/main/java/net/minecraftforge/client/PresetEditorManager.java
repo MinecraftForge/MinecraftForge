@@ -21,9 +21,9 @@ import net.minecraftforge.fml.ModLoadingContext;
 public final class PresetEditorManager
 {
     private PresetEditorManager() {} // Utility class
-    
+
     private static Map<ResourceKey<WorldPreset>, PresetEditor> editors = Map.of();
-    
+
     @SuppressWarnings("deprecation")
     @ApiStatus.Internal
     static void init()
@@ -33,14 +33,14 @@ public final class PresetEditorManager
         // Vanilla's map uses Optional<ResourceKey>s as its keys.
         // As far as we can tell there's no good reason for this, so we'll just use regular keys.
         PresetEditor.EDITORS.forEach((k, v) -> k.ifPresent(key -> gatheredEditors.put(key, v)));
-        
+
         // Gather mods' entries
         RegisterPresetEditorsEvent event = new RegisterPresetEditorsEvent(gatheredEditors);
-        ModLoader.get().postEventWithWrapInModOrder(event, (mc, e) -> ModLoadingContext.get().setActiveContainer(mc), (mc, e) -> ModLoadingContext.get().setActiveContainer(null));
-        
+        ModLoader.get().postEventWrapContainerInModOrder(event);
+
         editors = gatheredEditors;
     }
-    
+
     /**
      * {@return Retrieves the PresetEditor for the given WorldPreset key, or null if no such PresetEditor exists.}
      * @param key ResourceKey for the specified WorldPreset/PresetEditor.
