@@ -1287,5 +1287,5 @@ public class ForgeHooksClient
             return true;
         }
         return false;
-	}
+    }
 }
