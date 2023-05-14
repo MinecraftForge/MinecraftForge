@@ -42,7 +42,7 @@ public class RegisterPresetEditorsEvent extends Event implements IModBusEvent
     }
 
     /**
-     * Registers a PresetEditor for a given workd preset key.
+     * Registers a PresetEditor for a given world preset key.
      */
     public void register(ResourceKey<WorldPreset> key, PresetEditor editor)
     {
