@@ -9,3 +9,14 @@
     private final Deque<PoseStack.Pose> f_85834_ = Util.m_137469_(Queues.newArrayDeque(), (p_85848_) -> {
        Matrix4f matrix4f = new Matrix4f();
        Matrix3f matrix3f = new Matrix3f();
+@@ -82,6 +_,10 @@
+ 
+    public void m_252931_(Matrix4f p_254128_) {
+       (this.f_85834_.getLast()).f_85852_.mul(p_254128_);
++   }
++
++   public int size() {
++      return this.f_85834_.size();
+    }
+ 
+    @OnlyIn(Dist.CLIENT)
