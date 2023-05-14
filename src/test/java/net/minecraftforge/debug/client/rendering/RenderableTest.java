@@ -49,10 +49,10 @@ import org.joml.Quaternionf;
 /**
  * This mod is testing the use of {@link RenderLevelStageEvent} and is a modifaction of a pre-existing test mod that used the old
  * {@link RenderLevelLastEvent}. To restore the old behavior, set {@link #USE_LEVEL_RENDERER_STAGE} to false.
- * 
+ *
  * When you enter a world, there should be 6 sugar gliders rendering at (0, 120, 0) that test the various stages in {@link RenderLevelStageEvent}.
  * From left to right (with the sugar gliders facing you) they represent {@link Stage#AFTER_SKY}, {@link Stage#AFTER_SOLID_BLOCKS},
- * {@link Stage#AFTER_TRANSLUCENT_BLOCKS}, {@link Stage#AFTER_TRIPWIRE_BLOCKS}, {@link Stage#AFTER_PARTICLES}, and {@link Stage#AFTER_WEATHER}. 
+ * {@link Stage#AFTER_TRANSLUCENT_BLOCKS}, {@link Stage#AFTER_TRIPWIRE_BLOCKS}, {@link Stage#AFTER_PARTICLES}, and {@link Stage#AFTER_WEATHER}.
  * Due to how weather modifies the projection matrix, it's sugar glider will be positioned weirdly. Below each sugar gliders is a render of
  * blue stained glass to test translucency with fabulous graphics. {@link Stage#AFTER_PARTICLES} will render the stained glass using
  * {@link ForgeRenderTypes#TRANSLUCENT_ON_PARTICLES_TARGET}.
@@ -63,7 +63,7 @@ public class RenderableTest
     public static final String MODID = "renderable_test";
     private static final Logger LOGGER = LogManager.getLogger();
 
-    public static final boolean ENABLED = true; // Renders at (0, 120, 0)
+    public static final boolean ENABLED = false; // Renders at (0, 120, 0)
     public static final boolean USE_LEVEL_RENDERER_STAGE = true; // True when using RenderLevelStageEvent. False when using RenderLevelLastEvent
 
     public RenderableTest()
