@@ -4,8 +4,8 @@ repositories {
 }
 
 dependencies {
-	implementation 'org.ow2.asm:asm:9.3'
-	implementation 'org.ow2.asm:asm-tree:9.3'
-    implementation 'net.minecraftforge:srgutils:0.4.+'
+    implementation 'org.ow2.asm:asm:9.5'
+    implementation 'org.ow2.asm:asm-tree:9.5'
+    implementation 'net.minecraftforge:srgutils:0.5.+'
     implementation 'commons-io:commons-io:2.8.0'
 }
