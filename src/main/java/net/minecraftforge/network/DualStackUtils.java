@@ -5,12 +5,15 @@
 
 package net.minecraftforge.network;
 
+import com.google.common.net.InetAddresses;
 import net.minecraft.client.multiplayer.resolver.ResolvedServerAddress;
 import net.minecraft.client.multiplayer.resolver.ServerAddress;
 import net.minecraft.client.multiplayer.resolver.ServerNameResolver;
 import net.minecraft.util.HttpUtil;
+import net.minecraftforge.common.ForgeConfig;
 
 import javax.annotation.Nullable;
+import java.net.SocketAddress;
 import java.net.Inet6Address;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
@@ -84,5 +87,29 @@ public class DualStackUtils
     public static String getMulticastGroup() {
         if (checkIPv6(getLocalAddress())) return "FF75:230::60";
         else return "224.0.2.60";
+    }
+
+    /**
+     * {@link SocketAddress#toString()} but with IPv6 address compression support
+     */
+    public static String getAddressString(final SocketAddress address) {
+        if (address instanceof final InetSocketAddress inetAddress) {
+            String formatted;
+            if (inetAddress.isUnresolved()) {
+                formatted = inetAddress.getHostName() + "/<unresolved>";
+            } else if (ForgeConfig.COMMON.compressIPv6Addresses.get()) {
+                formatted = InetAddresses.toAddrString(inetAddress.getAddress());
+                if (inetAddress.getAddress() instanceof Inet6Address)
+                    formatted = '[' + formatted + ']';
+
+                formatted = '/' + formatted;
+            } else {
+                return address.toString();
+            }
+
+            return formatted + ':' + inetAddress.getPort();
+        }
+
+        return address.toString();
     }
 }

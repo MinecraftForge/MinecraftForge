@@ -84,6 +84,8 @@ public class ForgeConfig {
         @Deprecated(since = "1.19.2", forRemoval = true)
         public final BooleanValue indexModPackCachesOnThread;
 
+        public final BooleanValue compressIPv6Addresses;
+
         Common(ForgeConfigSpec.Builder builder) {
             builder.comment("[DEPRECATED / NO EFFECT]: General configuration settings")
                     .push("general");
@@ -106,6 +108,11 @@ public class ForgeConfig {
                     .worldRestart()
                     .define("indexModPackCachesOnThread", false);
 
+            compressIPv6Addresses = builder
+                    .comment("When enabled, Forge will convert IPv6 addresses to their more compact, compressed representation")
+                    .translation("forge.configgui.compressIPv6Addresses")
+                    .define("compressIPv6Addresses", true);
+
 
             builder.pop();
         }
@@ -123,6 +130,7 @@ public class ForgeConfig {
 
         public final BooleanValue useCombinedDepthStencilAttachment;
 
+        @Deprecated(since = "1.19.4", forRemoval = true)
         public final BooleanValue compressLanIPv6Addresses;
 
         Client(ForgeConfigSpec.Builder builder) {
@@ -152,7 +160,7 @@ public class ForgeConfig {
                     .define("useCombinedDepthStencilAttachment", false);
 
             compressLanIPv6Addresses = builder
-                    .comment("When enabled, Forge will convert discovered 'Open to LAN' IPv6 addresses to their more compact, compressed representation")
+                    .comment("[DEPRECATED / NO EFFECT] [NOW IN COMMON CONFIG] When enabled, Forge will convert discovered 'Open to LAN' IPv6 addresses to their more compact, compressed representation")
                     .translation("forge.configgui.compressLanIPv6Addresses")
                     .define("compressLanIPv6Addresses", true);
 
