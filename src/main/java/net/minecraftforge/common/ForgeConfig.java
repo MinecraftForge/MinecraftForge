@@ -30,6 +30,8 @@ public class ForgeConfig {
 
         public final ConfigValue<String> permissionHandler;
 
+        public final BooleanValue advertiseDedicatedServerToLan;
+
         Server(ForgeConfigSpec.Builder builder) {
             builder.comment("Server configuration settings")
                    .push("server");
@@ -68,6 +70,11 @@ public class ForgeConfig {
                     .comment("The permission handler used by the server. Defaults to forge:default_handler if no such handler with that name is registered.")
                     .translation("forge.configgui.permissionHandler")
                     .define("permissionHandler", "forge:default_handler");
+
+            advertiseDedicatedServerToLan = builder
+                    .comment("Set this to true to enable advertising the dedicated server to local LAN clients so that it shows up in the Multiplayer screen automatically.")
+                    .translation("forge.configgui.advertiseDedicatedServerToLan")
+                    .define("advertiseDedicatedServerToLan", true);
 
             builder.pop();
         }

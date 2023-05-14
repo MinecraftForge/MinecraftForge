@@ -1,6 +1,10 @@
 --- a/net/minecraft/client/server/LanServerPinger.java
 +++ b/net/minecraft/client/server/LanServerPinger.java
-@@ -16,7 +_,7 @@
+@@ -12,11 +_,10 @@
+ import net.minecraftforge.api.distmarker.OnlyIn;
+ import org.slf4j.Logger;
+ 
+-@OnlyIn(Dist.CLIENT)
  public class LanServerPinger extends Thread {
     private static final AtomicInteger f_120101_ = new AtomicInteger(0);
     private static final Logger f_120102_ = LogUtils.getLogger();
@@ -18,3 +22,11 @@
              DatagramPacket datagrampacket = new DatagramPacket(abyte, abyte.length, inetaddress, 4445);
              this.f_120104_.send(datagrampacket);
           } catch (IOException ioexception) {
+@@ -74,6 +_,7 @@
+       }
+    }
+ 
++   @org.jetbrains.annotations.Nullable
+    public static String m_120116_(String p_120117_) {
+       int i = p_120117_.indexOf("[/MOTD]");
+       if (i < 0) {
