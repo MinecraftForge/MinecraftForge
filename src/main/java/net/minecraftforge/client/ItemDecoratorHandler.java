@@ -21,7 +21,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.client.event.RegisterItemDecorationsEvent;
 import net.minecraftforge.fml.ModLoader;
-import net.minecraftforge.fml.ModLoadingContext;
 
 @ApiStatus.Internal
 public final class ItemDecoratorHandler
@@ -44,7 +43,7 @@ public final class ItemDecoratorHandler
     {
         var decorators = new HashMap<Item, List<IItemDecorator>>();
         var event = new RegisterItemDecorationsEvent(decorators);
-        ModLoader.get().postEventWithWrapInModOrder(event, (mc, e) -> ModLoadingContext.get().setActiveContainer(mc), (mc, e) -> ModLoadingContext.get().setActiveContainer(null));
+        ModLoader.get().postEventWrapContainerInModOrder(event);
         var builder = new ImmutableMap.Builder<Item, ItemDecoratorHandler>();
         decorators.forEach((item, itemDecorators) -> builder.put(item, new ItemDecoratorHandler(itemDecorators)));
         DECORATOR_LOOKUP = builder.build();

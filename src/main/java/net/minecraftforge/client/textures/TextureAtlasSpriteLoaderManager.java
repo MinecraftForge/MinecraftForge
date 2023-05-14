@@ -9,7 +9,6 @@ import com.google.common.collect.ImmutableMap;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.event.RegisterTextureAtlasSpriteLoadersEvent;
 import net.minecraftforge.fml.ModLoader;
-import net.minecraftforge.fml.ModLoadingContext;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
@@ -38,7 +37,7 @@ public final class TextureAtlasSpriteLoaderManager
     {
         var loaders = new HashMap<ResourceLocation, ITextureAtlasSpriteLoader>();
         var event = new RegisterTextureAtlasSpriteLoadersEvent(loaders);
-        ModLoader.get().postEventWithWrapInModOrder(event, (mc, e) -> ModLoadingContext.get().setActiveContainer(mc), (mc, e) -> ModLoadingContext.get().setActiveContainer(null));
+        ModLoader.get().postEventWrapContainerInModOrder(event);
         LOADERS = ImmutableMap.copyOf(loaders);
     }
 

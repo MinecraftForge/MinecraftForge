@@ -379,7 +379,7 @@ public class GameData
                 if (forgeRegistry != null)
                     forgeRegistry.unfreeze();
 
-                ModLoader.get().postEventWithWrapInModOrder(registerEvent, (mc, e) -> ModLoadingContext.get().setActiveContainer(mc), (mc, e)-> ModLoadingContext.get().setActiveContainer(null));
+                ModLoader.get().postEventWrapContainerInModOrder(registerEvent);
 
                 if (forgeRegistry != null)
                     forgeRegistry.freeze();
