@@ -31,6 +31,8 @@ modId="mdk_datagen"
 [[mods]]
     modId="custom_game_rule_test"
 [[mods]]
+    modId="custom_preset_editor_test"
+[[mods]]
     modId="render_living_event_test"
 
 # LEGACY TEST CASES

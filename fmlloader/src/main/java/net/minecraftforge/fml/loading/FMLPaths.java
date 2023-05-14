@@ -9,6 +9,8 @@ import com.mojang.logging.LogUtils;
 import cpw.mods.modlauncher.api.IEnvironment;
 import org.slf4j.Logger;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
@@ -57,9 +59,13 @@ public enum FMLPaths
         for (FMLPaths path : FMLPaths.values())
         {
             path.absolutePath = rootPath.resolve(path.relativePath).toAbsolutePath().normalize();
-            if (path.isDirectory)
+            if (path.isDirectory && !Files.isDirectory(path.absolutePath))
             {
-                FileUtils.getOrCreateDirectory(path.absolutePath, path.name());
+                try {
+                   Files.createDirectories(path.absolutePath);
+                } catch (IOException e) {
+                   throw new RuntimeException(e);
+                }
             }
             if (LOGGER.isDebugEnabled(CORE))
             {
@@ -68,8 +74,26 @@ public enum FMLPaths
         }
     }
 
+    /**
+     * @deprecated Use {@link #getOrCreateGameRelativePath(Path)} instead.
+     */
+    @Deprecated(forRemoval = true, since = "1.19.4")
     public static Path getOrCreateGameRelativePath(Path path, String name) {
-        return FileUtils.getOrCreateDirectory(FMLPaths.GAMEDIR.get().resolve(path), name);
+        return getOrCreateGameRelativePath(path);
+    }
+
+    public static Path getOrCreateGameRelativePath(Path path) {
+        Path gameFolderPath = FMLPaths.GAMEDIR.get().resolve(path);
+
+        if (!Files.isDirectory(gameFolderPath)) {
+            try {
+                Files.createDirectories(gameFolderPath);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        return gameFolderPath;
     }
 
     public Path relative() {

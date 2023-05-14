@@ -69,7 +69,7 @@ public class FMLConfig
             LOGGER.trace(CORE, "Version check is {}", FMLConfig.runVersionCheck());
             LOGGER.trace(CORE, "Default config paths at {}", FMLConfig.defaultConfigPath());
         }
-        FMLPaths.getOrCreateGameRelativePath(Paths.get(FMLConfig.defaultConfigPath()), "default config directory");
+        FMLPaths.getOrCreateGameRelativePath(Paths.get(FMLConfig.defaultConfigPath()));
     }
 
     public static boolean splashScreenEnabled() {
