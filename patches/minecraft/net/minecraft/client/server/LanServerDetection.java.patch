@@ -18,7 +18,7 @@
 +               final String ip;
 +
 +               // compress to short form if enabled in config
-+               if (net.minecraftforge.common.ForgeConfig.COMMON.compressIPv6Addresses.get())
++               if (net.minecraftforge.common.ForgeConfig.COMMON.compressIPv6Addresses.get() || net.minecraftforge.common.ForgeConfig.CLIENT.compressLanIPv6Addresses.get())
 +                  ip = com.google.common.net.InetAddresses.toAddrString(p_120098_);
 +               else
 +                  ip = p_120098_.getHostAddress();

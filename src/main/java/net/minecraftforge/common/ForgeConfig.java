@@ -160,7 +160,7 @@ public class ForgeConfig {
                     .define("useCombinedDepthStencilAttachment", false);
 
             compressLanIPv6Addresses = builder
-                    .comment("[DEPRECATED / NO EFFECT] [NOW IN COMMON CONFIG] When enabled, Forge will convert discovered 'Open to LAN' IPv6 addresses to their more compact, compressed representation")
+                    .comment("[DEPRECATED] [NOW IN COMMON CONFIG] When enabled, Forge will convert discovered 'Open to LAN' IPv6 addresses to their more compact, compressed representation")
                     .translation("forge.configgui.compressLanIPv6Addresses")
                     .define("compressLanIPv6Addresses", true);
 
