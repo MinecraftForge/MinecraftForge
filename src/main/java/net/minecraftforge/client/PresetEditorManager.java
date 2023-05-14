@@ -16,7 +16,6 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.levelgen.presets.WorldPreset;
 import net.minecraftforge.client.event.RegisterPresetEditorsEvent;
 import net.minecraftforge.fml.ModLoader;
-import net.minecraftforge.fml.ModLoadingContext;
 
 public final class PresetEditorManager
 {
@@ -42,10 +41,12 @@ public final class PresetEditorManager
     }
 
     /**
-     * {@return Retrieves the PresetEditor for the given WorldPreset key, or null if no such PresetEditor exists.}
+     * {@return the PresetEditor for the given WorldPreset key, or null if no such PresetEditor exists}
+     *
      * @param key ResourceKey for the specified WorldPreset/PresetEditor.
      */
-    public static @Nullable PresetEditor get(ResourceKey<WorldPreset> key)
+    @Nullable
+    public static PresetEditor get(ResourceKey<WorldPreset> key)
     {
         return editors.get(key);
     }

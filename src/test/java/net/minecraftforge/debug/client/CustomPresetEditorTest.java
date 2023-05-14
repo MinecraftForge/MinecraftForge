@@ -50,8 +50,8 @@ public class CustomPresetEditorTest
 {
     public static final String MODID = "custom_preset_editor_test";
     public static final ResourceKey<WorldPreset> WORLD_PRESET_KEY = ResourceKey.create(Registries.WORLD_PRESET, new ResourceLocation(MODID, MODID));
-    
-    @EventBusSubscriber(modid=MODID, bus=Bus.MOD)
+
+    @EventBusSubscriber(modid = MODID, bus = Bus.MOD)
     public static class CommonModEvents
     {
         @SubscribeEvent
@@ -60,7 +60,7 @@ public class CustomPresetEditorTest
             DataGenerator gen = event.getGenerator();
             PackOutput packOutput = gen.getPackOutput();
             CompletableFuture<HolderLookup.Provider> lookupProvider = event.getLookupProvider();
-            
+
             RegistrySetBuilder registrySetBuilder =  new RegistrySetBuilder()
                 .add(Registries.WORLD_PRESET, context -> context.register(WORLD_PRESET_KEY, makeWorldPreset(context)));
 
@@ -73,7 +73,7 @@ public class CustomPresetEditorTest
                 }
             });
         }
-        
+
         private static WorldPreset makeWorldPreset(BootstapContext<WorldPreset> context)
         {
             Holder<NoiseGeneratorSettings> overworldNoise = context.lookup(Registries.NOISE_SETTINGS)
@@ -87,11 +87,9 @@ public class CustomPresetEditorTest
             LevelStem levelStem = new LevelStem(overworldDimensionType, chunkGenerator);
             return new WorldPreset(Map.of(LevelStem.OVERWORLD, levelStem));
         }
-        
-        
     }
-    
-    @EventBusSubscriber(modid=MODID, value=Dist.CLIENT, bus=Bus.MOD)
+
+    @EventBusSubscriber(modid = MODID, value = Dist.CLIENT, bus = Bus.MOD)
     public static class ClientModEvents
     {
         @SubscribeEvent
@@ -100,7 +98,7 @@ public class CustomPresetEditorTest
             event.register(WORLD_PRESET_KEY, SwampDesertScreen::new);
         }
     }
-    
+
     public static class SwampDesertScreen extends Screen
     {
         private final CreateWorldScreen parent;
@@ -110,7 +108,7 @@ public class CustomPresetEditorTest
             super(Component.literal(MODID));
             this.parent = parent;
         }
-        
+
         @Override
         protected void init()
         {
@@ -125,7 +123,7 @@ public class CustomPresetEditorTest
                     .bounds(this.width/2 + 5, this.height - 28, 150, 20)
                     .build());
         }
-        
+
         private OnPress onPressBiomeButton(ResourceKey<Biome> biomeKey)
         {
             return button -> {
@@ -133,7 +131,7 @@ public class CustomPresetEditorTest
                 this.minecraft.setScreen(this.parent);
             };
         }
-        
+
         private DimensionsUpdater singleBiomeDimension(ResourceKey<Biome> biomeKey)
         {
             // The original dimension list from the world preset json is provided to the DimensionsUpdater lambda here.

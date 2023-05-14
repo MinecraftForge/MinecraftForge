@@ -32,15 +32,15 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 public class RegisterPresetEditorsEvent extends Event implements IModBusEvent
 {
     private static final Logger LOGGER = LogManager.getLogger();
-    
+
     private final Map<ResourceKey<WorldPreset>, PresetEditor> editors;
-    
+
     @ApiStatus.Internal
     public RegisterPresetEditorsEvent(Map<ResourceKey<WorldPreset>, PresetEditor> editors)
     {
         this.editors = editors;
     }
-    
+
     /**
      * Registers a PresetEditor for a given workd preset key.
      */

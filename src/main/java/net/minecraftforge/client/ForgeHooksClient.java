@@ -53,7 +53,6 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.client.renderer.texture.SpriteContents;
 import net.minecraft.client.renderer.texture.TextureAtlas;
@@ -92,7 +91,6 @@ import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemDisplayContext;
@@ -165,7 +163,6 @@ import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.ServerStatusPing;
 import net.minecraftforge.registries.GameData;
 import net.minecraftforge.versions.forge.ForgeVersion;
-import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
@@ -1231,7 +1228,7 @@ public class ForgeHooksClient
         for (var entry : entries)
             output.accept(entry.getKey(), entry.getValue());
     }
-    
+
     // Make sure the below method is only ever called once (by forge).
     private static boolean initializedClientHooks = false;
     // Runs during Minecraft construction, before initial resource loading.
@@ -1243,7 +1240,7 @@ public class ForgeHooksClient
             throw new IllegalStateException("Client hooks initialized more than once");
         }
         initializedClientHooks = true;
-        
+
         ForgeGameTestHooks.registerGametests();
         ModLoader.get().postEvent(new RegisterClientReloadListenersEvent(resourceManager));
         ModLoader.get().postEvent(new EntityRenderersEvent.RegisterLayerDefinitions());
