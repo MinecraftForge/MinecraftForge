@@ -28,12 +28,19 @@
     }
  
     private static void m_262846_(TooltipRenderUtil.BlitPainter p_262974_, Matrix4f p_263030_, BufferBuilder p_263061_, int p_262982_, int p_262912_, int p_262946_, int p_263049_, int p_263118_, int p_263104_, int p_262979_) {
-@@ -49,8 +_,9 @@
+@@ -49,8 +_,17 @@
        p_262966_.m_262815_(p_263094_, p_262943_, p_262949_, p_263068_, p_262949_ + p_263111_, p_263068_ + 1, p_263095_, p_262918_, p_262918_);
     }
  
--   private static void m_262805_(TooltipRenderUtil.BlitPainter p_262933_, Matrix4f p_263035_, BufferBuilder p_263084_, int p_262945_, int p_262955_, int p_263017_, int p_262978_, int p_262950_, int p_262931_) {
++   /**
++    * @deprecated Forge: Use gradient overload instead
++    */
++   @Deprecated
+    private static void m_262805_(TooltipRenderUtil.BlitPainter p_262933_, Matrix4f p_263035_, BufferBuilder p_263084_, int p_262945_, int p_262955_, int p_263017_, int p_262978_, int p_262950_, int p_262931_) {
 -      p_262933_.m_262815_(p_263035_, p_263084_, p_262945_, p_262955_, p_262945_ + p_263017_, p_262955_ + p_262978_, p_262950_, p_262931_, p_262931_);
++      renderRectangle(p_262933_, p_263035_, p_263084_, p_262945_, p_262955_, p_263017_, p_262978_, p_262950_, p_262931_, p_262931_);
++   }
++
 +   // Forge: Allow specifying a gradient instead of a single color for the background
 +   private static void renderRectangle(TooltipRenderUtil.BlitPainter p_262933_, Matrix4f p_263035_, BufferBuilder p_263084_, int p_262945_, int p_262955_, int p_263017_, int p_262978_, int p_262950_, int p_262931_, int colorTo) {
 +      p_262933_.m_262815_(p_263035_, p_263084_, p_262945_, p_262955_, p_262945_ + p_263017_, p_262955_ + p_262978_, p_262950_, p_262931_, colorTo);
