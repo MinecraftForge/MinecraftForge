@@ -15,7 +15,7 @@
        ItemStack itemstack = p_40529_.m_43722_();
        Optional<BlockState> optional3 = Optional.empty();
        if (optional.isPresent()) {
-@@ -71,9 +_,20 @@
+@@ -71,9 +_,24 @@
        }
     }
  
@@ -34,5 +34,9 @@
 +   @Override
 +   public boolean canPerformAction(ItemStack stack, net.minecraftforge.common.ToolAction toolAction) {
 +      return net.minecraftforge.common.ToolActions.DEFAULT_AXE_ACTIONS.contains(toolAction);
++   }
++
++   public static void registerStrippable(Block block, Block stripped) {
++      f_150683_.put(block, stripped);
     }
  }
