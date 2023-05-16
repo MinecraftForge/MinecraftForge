@@ -15,6 +15,7 @@ import net.minecraft.advancements.critereon.MinMaxBounds;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.data.DataGenerator;
+import net.minecraft.data.PackOutput;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.Enchantment.Rarity;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
@@ -82,15 +83,15 @@ public class GlobalLootModifiersTest {
         public static void runData(GatherDataEvent event)
         {
             if(ENABLE)
-                event.getGenerator().addProvider(event.includeServer(), new DataProvider(event.getGenerator(), MODID));
+                event.getGenerator().addProvider(event.includeServer(), new DataProvider(event.getGenerator().getPackOutput(), MODID));
         }
     }
 
     private static class DataProvider extends GlobalLootModifierProvider
     {
-        public DataProvider(DataGenerator gen, String modid)
+        public DataProvider(PackOutput output, String modid)
         {
-            super(gen, modid);
+            super(output, modid);
         }
 
         @Override
@@ -147,7 +148,7 @@ public class GlobalLootModifiersTest {
 
         private static ItemStack smelt(ItemStack stack, LootContext context) {
             return context.getLevel().getRecipeManager().getRecipeFor(RecipeType.SMELTING, new SimpleContainer(stack), context.getLevel())
-                    .map(SmeltingRecipe::getResultItem)
+                    .map(smeltingRecipe -> smeltingRecipe.getResultItem(context.getLevel().registryAccess()))
                     .filter(itemStack -> !itemStack.isEmpty())
                     .map(itemStack -> ItemHandlerHelper.copyStackWithSize(itemStack, stack.getCount() * itemStack.getCount()))
                     .orElse(stack);

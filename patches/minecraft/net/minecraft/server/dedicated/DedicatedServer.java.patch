@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/dedicated/DedicatedServer.java
 +++ b/net/minecraft/server/dedicated/DedicatedServer.java
-@@ -82,6 +_,7 @@
+@@ -79,6 +_,7 @@
     public boolean m_7038_() throws IOException {
        Thread thread = new Thread("Server console handler") {
           public void run() {
@@ -8,7 +8,7 @@
              BufferedReader bufferedreader = new BufferedReader(new InputStreamReader(System.in, StandardCharsets.UTF_8));
  
              String s1;
-@@ -159,11 +_,13 @@
+@@ -156,11 +_,13 @@
           long i = Util.m_137569_();
           SkullBlockEntity.m_222885_(this.f_236721_, this);
           GameProfileCache.m_11004_(this.m_129797_());
@@ -22,10 +22,10 @@
           if (dedicatedserverproperties.f_139744_ != null) {
              this.m_129900_().m_46170_(GameRules.f_46153_).m_46246_(dedicatedserverproperties.f_139744_, this);
           }
-@@ -187,12 +_,13 @@
+@@ -183,12 +_,13 @@
+             thread1.start();
           }
  
-          Items.f_41852_.m_6787_(CreativeModeTab.f_40754_, NonNullList.m_122779_());
 +         // <3 you Grum for this, saves us ~30 patch files! --^
           if (dedicatedserverproperties.f_139721_) {
              MinecraftServerStatistics.m_18328_(this);
@@ -37,12 +37,3 @@
        }
     }
  
-@@ -318,7 +_,7 @@
-    }
- 
-    public boolean m_214000_() {
--      return this.m_7913_().f_214803_;
-+      return super.m_214000_() || this.m_7913_().f_214803_;
-    }
- 
-    public DedicatedPlayerList m_6846_() {

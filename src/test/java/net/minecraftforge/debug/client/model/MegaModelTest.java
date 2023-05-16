@@ -5,9 +5,7 @@
 
 package net.minecraftforge.debug.client.model;
 
-import com.mojang.math.Quaternion;
 import com.mojang.math.Transformation;
-import com.mojang.math.Vector3f;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.resources.model.BakedModel;
@@ -20,7 +18,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -36,6 +34,7 @@ import net.minecraftforge.client.model.BakedModelWrapper;
 import net.minecraftforge.client.model.IQuadTransformer;
 import net.minecraftforge.client.model.data.ModelData;
 import net.minecraftforge.client.model.data.ModelProperty;
+import net.minecraftforge.event.CreativeModeTabEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -45,9 +44,12 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
 
 import java.util.List;
 import java.util.Set;
+import java.util.function.Consumer;
 
 /**
  * Test mod that demos most Forge-provided model loaders in a single block + item, as well as in-JSON render states
@@ -75,7 +77,7 @@ public class MegaModelTest
 
     private static final String REG_NAME = "test_block";
     public static final RegistryObject<Block> TEST_BLOCK = BLOCKS.register(REG_NAME, TestBlock::new);
-    public static final RegistryObject<Item> TEST_BLOCK_ITEM = ITEMS.register(REG_NAME, () -> new BlockItem(TEST_BLOCK.get(), new Item.Properties().tab(CreativeModeTab.TAB_DECORATIONS)));
+    public static final RegistryObject<Item> TEST_BLOCK_ITEM = ITEMS.register(REG_NAME, () -> new BlockItem(TEST_BLOCK.get(), new Item.Properties()));
     public static final RegistryObject<BlockEntityType<?>> TEST_BLOCK_ENTITY = BLOCK_ENTITIES.register(REG_NAME, () -> new BlockEntityType<>(
             TestBlock.Entity::new, Set.of(TEST_BLOCK.get()), null
     ));
@@ -86,6 +88,13 @@ public class MegaModelTest
         BLOCKS.register(modEventBus);
         ITEMS.register(modEventBus);
         BLOCK_ENTITIES.register(modEventBus);
+        modEventBus.addListener(this::addCreative);
+    }
+
+    private void addCreative(CreativeModeTabEvent.BuildContents event)
+    {
+        if (event.getTab() == CreativeModeTabs.BUILDING_BLOCKS)
+            event.accept(TEST_BLOCK_ITEM);
     }
 
     @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
@@ -93,7 +102,7 @@ public class MegaModelTest
     {
 
         @SubscribeEvent
-        public static void onModelBakingCompleted(ModelEvent.BakingCompleted event)
+        public static void onModelBakingCompleted(ModelEvent.ModifyBakingResult event)
         {
             var name = new ModelResourceLocation(MOD_ID, REG_NAME, "");
             event.getModels().computeIfPresent(name, (n, m) -> new TransformingModelWrapper(m));
@@ -143,9 +152,9 @@ public class MegaModelTest
             {
                 return ModelData.builder().with(TestData.PROPERTY, new TestData(new Transformation(
                         new Vector3f(0, y * 0.2f, 0),
-                        Quaternion.ONE,
+                        new Quaternionf(1f, 1f, 1f, 1f),
                         Transformation.identity().getScale(),
-                        Quaternion.ONE
+                        new Quaternionf(1f, 1f, 1f, 1f)
                 ))).build();
             }
         }

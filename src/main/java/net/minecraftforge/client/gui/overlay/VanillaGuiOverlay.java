@@ -10,6 +10,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.PlayerRideableJumping;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.scores.Objective;
 import net.minecraft.world.scores.PlayerTeam;
@@ -26,12 +27,12 @@ public enum VanillaGuiOverlay
         if (Minecraft.useFancyGraphics())
         {
             gui.setupOverlayRenderState(true, false);
-            gui.renderVignette(gui.getMinecraft().getCameraEntity());
+            gui.renderVignette(poseStack, gui.getMinecraft().getCameraEntity());
         }
     }),
     SPYGLASS("spyglass", (gui, poseStack, partialTick, screenWidth, screenHeight) -> {
         gui.setupOverlayRenderState(true, false);
-        gui.renderSpyglassOverlay();
+        gui.renderSpyglassOverlay(poseStack);
     }),
     HELMET("helmet", (gui, poseStack, partialTick, screenWidth, screenHeight) -> {
         gui.setupOverlayRenderState(true, false);
@@ -46,7 +47,7 @@ public enum VanillaGuiOverlay
         if (!gui.getMinecraft().player.hasEffect(MobEffects.CONFUSION))
         {
             gui.setupOverlayRenderState(true, false);
-            gui.renderPortalOverlay(partialTick);
+            gui.renderPortalOverlay(poseStack, partialTick);
         }
 
     }),
@@ -68,18 +69,22 @@ public enum VanillaGuiOverlay
         if (!gui.getMinecraft().options.hideGui)
         {
             gui.setupOverlayRenderState(true, false);
-            gui.setBlitOffset(-90);
 
+            poseStack.pushPose();
+            poseStack.translate(0, 0, -90);
             gui.renderCrosshair(poseStack);
+            poseStack.popPose();
         }
     }),
     BOSS_EVENT_PROGRESS("boss_event_progress", (gui, poseStack, partialTick, screenWidth, screenHeight) -> {
         if (!gui.getMinecraft().options.hideGui)
         {
             gui.setupOverlayRenderState(true, false);
-            gui.setBlitOffset(-90);
 
+            poseStack.pushPose();
+            poseStack.translate(0, 0, -90);
             gui.renderBossHealth(poseStack);
+            poseStack.popPose();
         }
     }),
     PLAYER_HEALTH("player_health", (gui, poseStack, partialTick, screenWidth, screenHeight) -> {
@@ -119,14 +124,15 @@ public enum VanillaGuiOverlay
         }
     }),
     JUMP_BAR("jump_bar", (gui, poseStack, partialTick, screenWidth, screenHeight) -> {
-        if (gui.getMinecraft().player.isRidingJumpable() && !gui.getMinecraft().options.hideGui)
+        PlayerRideableJumping playerRideableJumping = gui.getMinecraft().player.jumpableVehicle();
+        if (playerRideableJumping != null && !gui.getMinecraft().options.hideGui)
         {
             gui.setupOverlayRenderState(true, false);
-            gui.renderJumpMeter(poseStack, screenWidth / 2 - 91);
+            gui.renderJumpMeter(playerRideableJumping, poseStack, screenWidth / 2 - 91);
         }
     }),
     EXPERIENCE_BAR("experience_bar", (gui, poseStack, partialTick, screenWidth, screenHeight) -> {
-        if (!gui.getMinecraft().player.isRidingJumpable() && !gui.getMinecraft().options.hideGui)
+        if (gui.getMinecraft().player.jumpableVehicle() == null && !gui.getMinecraft().options.hideGui)
         {
             gui.setupOverlayRenderState(true, false);
             gui.renderExperience(screenWidth / 2 - 91, poseStack);
@@ -136,7 +142,7 @@ public enum VanillaGuiOverlay
         if (!gui.getMinecraft().options.hideGui)
         {
             gui.setupOverlayRenderState(true, false);
-            if (gui.getMinecraft().options.heldItemTooltips && gui.getMinecraft().gameMode.getPlayerMode() != GameType.SPECTATOR)
+            if (gui.getMinecraft().gameMode.getPlayerMode() != GameType.SPECTATOR)
             {
                 gui.renderSelectedItemName(poseStack);
             }

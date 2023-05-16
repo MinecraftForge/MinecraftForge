@@ -1,26 +1,26 @@
 --- a/net/minecraft/world/item/Items.java
 +++ b/net/minecraft/world/item/Items.java
-@@ -1190,11 +_,23 @@
+@@ -1252,11 +_,23 @@
     }
  
-    private static Item m_151089_(Block p_151090_, CreativeModeTab p_151091_, Block... p_151092_) {
--      BlockItem blockitem = new BlockItem(p_151090_, (new Item.Properties()).m_41491_(p_151091_));
-+      BlockItem blockitem = new BlockItem(p_151090_, (new Item.Properties()).m_41491_(p_151091_)) {
+    private static Item m_245048_(Block p_252092_, Block... p_248886_) {
+-      BlockItem blockitem = new BlockItem(p_252092_, new Item.Properties());
++      BlockItem blockitem = new BlockItem(p_252092_, new Item.Properties()) {
 +         @Override
 +         public void m_6192_(java.util.Map<Block, Item> map, Item self) {
 +            super.m_6192_(map, self);
-+            for (Block b : p_151092_) {
++            for (Block b : p_248886_) {
 +               map.put(b, self);
 +            }
 +         }
  
--      for(Block block : p_151092_) {
+-      for(Block block : p_248886_) {
 -         Item.f_41373_.put(block, blockitem);
 -      }
 +         @Override
 +         public void removeFromBlockToItemMap(java.util.Map<Block, Item> map, Item self) {
 +            super.removeFromBlockToItemMap(map, self);
-+            for (Block b : p_151092_) {
++            for (Block b : p_248886_) {
 +               map.remove(b);
 +            }
 +         }

@@ -166,7 +166,7 @@ public class RecipeBookTestMenu extends RecipeBookMenu<RecipeBookTestContainer>
                 if (recipe.isEmpty())
                     this.resultContainer.setItem(0, ItemStack.EMPTY);
                 else if (player instanceof ServerPlayer sp && this.resultContainer.setRecipeUsed(level, sp, recipe.get())) {
-                    ItemStack stack = recipe.get().assemble(this.container);
+                    ItemStack stack = recipe.get().assemble(this.container, level.registryAccess());
                     this.resultContainer.setItem(0, stack);
                 }
             }

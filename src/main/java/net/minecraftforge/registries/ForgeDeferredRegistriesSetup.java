@@ -5,6 +5,8 @@
 
 package net.minecraftforge.registries;
 
+import net.minecraftforge.common.world.BiomeModifier;
+import net.minecraftforge.common.world.StructureModifier;
 import net.minecraftforge.eventbus.api.IEventBus;
 
 public class ForgeDeferredRegistriesSetup
@@ -23,10 +25,9 @@ public class ForgeDeferredRegistriesSetup
         ForgeRegistries.DEFERRED_GLOBAL_LOOT_MODIFIER_SERIALIZERS.register(modEventBus);
         ForgeRegistries.DEFERRED_BIOME_MODIFIER_SERIALIZERS.register(modEventBus);
         ForgeRegistries.DEFERRED_FLUID_TYPES.register(modEventBus);
-        ForgeRegistries.DEFERRED_BIOME_MODIFIERS.register(modEventBus);
         ForgeRegistries.DEFERRED_STRUCTURE_MODIFIER_SERIALIZERS.register(modEventBus);
-        ForgeRegistries.DEFERRED_STRUCTURE_MODIFIERS.register(modEventBus);
         ForgeRegistries.DEFERRED_HOLDER_SET_TYPES.register(modEventBus);
+        ForgeRegistries.DEFERRED_DISPLAY_CONTEXTS.register(modEventBus);
 
         setup = true;
     }

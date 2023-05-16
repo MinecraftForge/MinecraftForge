@@ -1,0 +1,19 @@
+--- a/net/minecraft/world/item/BundleItem.java
++++ b/net/minecraft/world/item/BundleItem.java
+@@ -40,7 +_,7 @@
+    }
+ 
+    public boolean m_142207_(ItemStack p_150733_, Slot p_150734_, ClickAction p_150735_, Player p_150736_) {
+-      if (p_150735_ != ClickAction.SECONDARY) {
++      if (p_150733_.m_41613_() != 1 || p_150735_ != ClickAction.SECONDARY) {
+          return false;
+       } else {
+          ItemStack itemstack = p_150734_.m_7993_();
+@@ -62,6 +_,7 @@
+    }
+ 
+    public boolean m_142305_(ItemStack p_150742_, ItemStack p_150743_, Slot p_150744_, ClickAction p_150745_, Player p_150746_, SlotAccess p_150747_) {
++      if (p_150742_.m_41613_() != 1) return false;
+       if (p_150745_ == ClickAction.SECONDARY && p_150744_.m_150651_(p_150746_)) {
+          if (p_150743_.m_41619_()) {
+             m_150780_(p_150742_).ifPresent((p_186347_) -> {

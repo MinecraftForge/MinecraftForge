@@ -1,6 +1,6 @@
 --- a/net/minecraft/resources/HolderSetCodec.java
 +++ b/net/minecraft/resources/HolderSetCodec.java
-@@ -20,6 +_,8 @@
+@@ -21,6 +_,8 @@
     private final Codec<Holder<E>> f_206656_;
     private final Codec<List<Holder<E>>> f_206657_;
     private final Codec<Either<TagKey<E>, List<Holder<E>>>> f_206658_;
@@ -8,7 +8,7 @@
 +   private final Codec<Either<net.minecraftforge.registries.holdersets.ICustomHolderSet<E>, Either<TagKey<E>, List<Holder<E>>>>> combinedCodec;
  
     private static <E> Codec<List<Holder<E>>> m_206667_(Codec<Holder<E>> p_206668_, boolean p_206669_) {
-       Function<List<Holder<E>>, DataResult<List<Holder<E>>>> function = ExtraCodecs.m_203984_(Holder::m_203376_);
+       Codec<List<Holder<E>>> codec = ExtraCodecs.m_264370_(p_206668_.listOf(), ExtraCodecs.m_203984_(Holder::m_203376_));
 @@ -42,6 +_,10 @@
        this.f_206656_ = p_206661_;
        this.f_206657_ = m_206667_(p_206661_, p_206662_);
@@ -21,20 +21,20 @@
  
     public <T> DataResult<Pair<HolderSet<E>, T>> decode(DynamicOps<T> p_206696_, T p_206697_) {
 @@ -49,9 +_,10 @@
-          Optional<? extends Registry<E>> optional = registryops.m_206826_(this.f_206655_);
+          Optional<HolderGetter<E>> optional = registryops.m_255006_(this.f_206655_);
           if (optional.isPresent()) {
-             Registry<E> registry = optional.get();
+             HolderGetter<E> holdergetter = optional.get();
 -            return this.f_206658_.decode(p_206696_, p_206697_).map((p_206682_) -> {
 +            // FORGE: use the wrapped codec to decode custom/tag/list instead of just tag/list
 +            return this.combinedCodec.decode(p_206696_, p_206697_).map((p_206682_) -> {
                 return p_206682_.mapFirst((p_206679_) -> {
--                  return p_206679_.map(registry::m_203561_, HolderSet::m_205800_);
-+                  return p_206679_.map(java.util.function.Function.identity(), tagOrList -> tagOrList.map(registry::m_203561_, HolderSet::m_205800_));
+-                  return p_206679_.map(holdergetter::m_254956_, HolderSet::m_205800_);
++                  return p_206679_.map(java.util.function.Function.identity(), tagOrList -> tagOrList.map(holdergetter::m_254956_, HolderSet::m_205800_));
                 });
              });
           }
-@@ -68,6 +_,9 @@
-                return DataResult.error("HolderSet " + p_206674_ + " is not valid in current registry set");
+@@ -70,6 +_,9 @@
+                });
              }
  
 +            // FORGE: use the dispatch codec to encode custom holdersets, otherwise fall back to vanilla tag/list

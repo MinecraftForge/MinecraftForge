@@ -1,0 +1,11 @@
+--- a/net/minecraft/core/RegistrySynchronization.java
++++ b/net/minecraft/core/RegistrySynchronization.java
+@@ -29,7 +_,7 @@
+       m_245912_(builder, Registries.f_266076_, TrimMaterial.f_266095_);
+       m_245912_(builder, Registries.f_256787_, DimensionType.f_63843_);
+       m_245912_(builder, Registries.f_268580_, DamageType.f_268510_);
+-      return builder.build();
++      return net.minecraftforge.registries.DataPackRegistriesHooks.grabNetworkableRegistries(builder); // FORGE: Keep the map so custom registries can be added later
+    });
+    public static final Codec<RegistryAccess> f_244380_ = m_247146_();
+ 

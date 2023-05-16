@@ -10,7 +10,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.event.ModelEvent;
 import net.minecraftforge.client.model.ElementsModel;
 import net.minecraftforge.fml.ModLoader;
-import net.minecraftforge.fml.ModLoadingContext;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
@@ -50,7 +49,7 @@ public final class GeometryLoaderManager
         var loaders = new HashMap<ResourceLocation, IGeometryLoader<?>>();
         loaders.put(new ResourceLocation("minecraft:elements"), ElementsModel.Loader.INSTANCE_DEPRECATED); // TODO: Deprecated. To be removed in 1.20
         var event = new ModelEvent.RegisterGeometryLoaders(loaders);
-        ModLoader.get().postEventWithWrapInModOrder(event, (mc, e) -> ModLoadingContext.get().setActiveContainer(mc), (mc, e) -> ModLoadingContext.get().setActiveContainer(null));
+        ModLoader.get().postEventWrapContainerInModOrder(event);
         LOADERS = ImmutableMap.copyOf(loaders);
         LOADER_LIST = loaders.keySet().stream().map(ResourceLocation::toString).collect(Collectors.joining(", "));
     }

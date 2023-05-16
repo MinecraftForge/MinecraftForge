@@ -1,0 +1,11 @@
+--- a/net/minecraft/client/gui/screens/inventory/HangingSignEditScreen.java
++++ b/net/minecraft/client/gui/screens/inventory/HangingSignEditScreen.java
+@@ -17,7 +_,7 @@
+    private static final Vector3f f_243728_ = new Vector3f(1.0F, 1.0F, 1.0F);
+    private static final int f_244604_ = 16;
+    private static final int f_244207_ = 16;
+-   private final ResourceLocation f_243720_ = new ResourceLocation("textures/gui/hanging_signs/" + this.f_244069_.f_61839_() + ".png");
++   private final ResourceLocation f_243720_ = new ResourceLocation(this.f_244069_.f_61839_() + ".png").m_246208_("textures/gui/hanging_signs/");
+ 
+    public HangingSignEditScreen(SignBlockEntity p_249425_, boolean p_250356_) {
+       super(p_249425_, p_250356_, Component.m_237115_("hanging_sign.edit"));

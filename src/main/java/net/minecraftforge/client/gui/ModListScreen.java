@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.server.packs.resources.IoSupplier;
 import net.minecraftforge.client.ConfigScreenHandler;
 import net.minecraftforge.client.gui.widget.ModListWidget;
 import net.minecraftforge.client.gui.widget.ScrollPanel;
@@ -264,14 +265,14 @@ public class ModListScreen extends Screen
         int y = this.height - 20 - PADDING;
         int fullButtonHeight = PADDING + 20 + PADDING;
 
-        doneButton = new Button(((listWidth + PADDING + this.width - doneButtonWidth) / 2), y, doneButtonWidth, 20, Component.translatable("gui.done"), b -> ModListScreen.this.onClose());
-        openModsFolderButton = new Button(6, y, this.listWidth, 20, Component.translatable("fml.menu.mods.openmodsfolder"), b -> Util.getPlatform().openFile(FMLPaths.MODSDIR.get().toFile()));
+        doneButton = Button.builder(Component.translatable("gui.done"), b -> ModListScreen.this.onClose()).bounds(((listWidth + PADDING + this.width - doneButtonWidth) / 2), y, doneButtonWidth, 20).build();
+        openModsFolderButton = Button.builder(Component.translatable("fml.menu.mods.openmodsfolder"), b -> Util.getPlatform().openFile(FMLPaths.MODSDIR.get().toFile())).bounds(6, y, this.listWidth, 20).build();
         y -= 20 + PADDING;
-        configButton = new Button(6, y, this.listWidth, 20, Component.translatable("fml.menu.mods.config"), b -> ModListScreen.this.displayModConfig());
+        configButton = Button.builder(Component.translatable("fml.menu.mods.config"), b -> ModListScreen.this.displayModConfig()).bounds(6, y, this.listWidth, 20).build();
         y -= 14 + PADDING;
         search = new EditBox(getFontRenderer(), PADDING + 1, y, listWidth - 2, 14, Component.translatable("fml.menu.mods.search"));
 
-        this.modList = new ModListWidget(this, listWidth, fullButtonHeight, search.y - getFontRenderer().lineHeight - PADDING);
+        this.modList = new ModListWidget(this, listWidth, fullButtonHeight, search.getY() - getFontRenderer().lineHeight - PADDING);
         this.modList.setLeftPos(6);
         this.modInfo = new InfoPanel(this.minecraft, modInfoWidth, this.height - PADDING - fullButtonHeight, PADDING);
 
@@ -282,17 +283,17 @@ public class ModListScreen extends Screen
         this.addRenderableWidget(configButton);
         this.addRenderableWidget(openModsFolderButton);
 
-        search.setFocus(false);
+        search.setFocused(false);
         search.setCanLoseFocus(true);
         configButton.active = false;
 
         final int width = listWidth / numButtons;
         int x = PADDING;
-        addRenderableWidget(SortType.NORMAL.button = new Button(x, PADDING, width - buttonMargin, 20, SortType.NORMAL.getButtonText(), b -> resortMods(SortType.NORMAL)));
+        addRenderableWidget(SortType.NORMAL.button = Button.builder(SortType.NORMAL.getButtonText(), b -> resortMods(SortType.NORMAL)).bounds(x, PADDING, width - buttonMargin, 20).build());
         x += width + buttonMargin;
-        addRenderableWidget(SortType.A_TO_Z.button = new Button(x, PADDING, width - buttonMargin, 20, SortType.A_TO_Z.getButtonText(), b -> resortMods(SortType.A_TO_Z)));
+        addRenderableWidget(SortType.A_TO_Z.button = Button.builder(SortType.A_TO_Z.getButtonText(), b -> resortMods(SortType.A_TO_Z)).bounds(x, PADDING, width - buttonMargin, 20).build());
         x += width + buttonMargin;
-        addRenderableWidget(SortType.Z_TO_A.button = new Button(x, PADDING, width - buttonMargin, 20, SortType.Z_TO_A.getButtonText(), b -> resortMods(SortType.Z_TO_A)));
+        addRenderableWidget(SortType.Z_TO_A.button = Button.builder(SortType.Z_TO_A.getButtonText(), b -> resortMods(SortType.Z_TO_A)).bounds(x, PADDING, width - buttonMargin, 20).build());
         resortMods(SortType.NORMAL);
         updateCache();
     }
@@ -371,7 +372,7 @@ public class ModListScreen extends Screen
         int x = modList.getLeft() + ((modList.getRight() - modList.getLeft()) / 2) - (getFontRenderer().width(text) / 2);
         this.search.render(poseStack, mouseX , mouseY, partialTick);
         super.render(poseStack, mouseX, mouseY, partialTick);
-        getFontRenderer().draw(poseStack, text.getVisualOrderText(), x, search.y - getFontRenderer().lineHeight, 0xFFFFFF);
+        getFontRenderer().draw(poseStack, text.getVisualOrderText(), x, search.getY() - getFontRenderer().lineHeight, 0xFFFFFF);
     }
 
     public Minecraft getMinecraftInstance()
@@ -412,9 +413,9 @@ public class ModListScreen extends Screen
             try
             {
                 NativeImage logo = null;
-                InputStream logoResource = resourcePack.getRootResource(logoFile);
+                IoSupplier<InputStream> logoResource = resourcePack.getRootResource(logoFile);
                 if (logoResource != null)
-                    logo = NativeImage.read(logoResource);
+                    logo = NativeImage.read(logoResource.get());
                 if (logo != null)
                 {
 

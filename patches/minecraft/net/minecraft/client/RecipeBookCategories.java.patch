@@ -18,14 +18,16 @@
     private final List<ItemStack> f_92261_;
  
     private RecipeBookCategories(ItemStack... p_92267_) {
-@@ -54,11 +_,15 @@
-          case SMOKER:
-             return f_92256_;
+@@ -59,7 +_,7 @@
+             list = f_92256_;
+             break;
           default:
--            return ImmutableList.of();
+-            throw new IncompatibleClassChangeError();
 +            return net.minecraftforge.client.RecipeBookManager.getCustomCategoriesOrEmpty(p_92270_);
        }
-    }
+ 
+       return list;
+@@ -67,5 +_,9 @@
  
     public List<ItemStack> m_92268_() {
        return this.f_92261_;

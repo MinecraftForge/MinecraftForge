@@ -1,5 +1,6 @@
 {
   "type": "minecraft:crafting_shaped",
+  "category": "equipment",
   "key": {
     "W": {
       "tag": "minecraft:planks"
@@ -15,5 +16,6 @@
   ],
   "result": {
     "item": "minecraft:shield"
-  }
+  },
+  "show_notification": true
 }

@@ -8,7 +8,7 @@ package net.minecraftforge.registries;
 import com.google.common.collect.Multimaps;
 import com.google.common.collect.SetMultimap;
 import net.minecraft.core.Registry;
-import net.minecraft.data.BuiltinRegistries;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
@@ -69,9 +69,8 @@ public class DeferredRegister<T>
     }
 
     /**
-     * DeferredRegister factory for custom forge registries, {@link Registry vanilla registries},
-     * or {@link BuiltinRegistries built-in registries} to lookup based on the provided registry key.
-     * Supports both registries that already exist or do not exist yet.
+     * DeferredRegister factory for custom forge registries or {@link BuiltInRegistries vanilla registries}
+     * to lookup based on the provided registry key. Supports both registries that already exist or do not exist yet.
      * <p>
      * If the registry is never created, any {@link RegistryObject}s made from this DeferredRegister will throw an exception.
      * To allow the optional existence of a registry without error, use {@link #createOptional(ResourceKey, String)}.
@@ -88,8 +87,8 @@ public class DeferredRegister<T>
     }
 
     /**
-     * DeferredRegister factory for the optional existence of custom forge registries, {@link Registry vanilla registries},
-     * or {@link BuiltinRegistries built-in registries} to lookup based on the provided registry key.
+     * DeferredRegister factory for the optional existence of custom forge registries
+     * or {@link BuiltInRegistries vanilla registries} to lookup based on the provided registry key.
      * Supports both registries that already exist or do not exist yet.
      * <p>
      * If the registry is never created, any {@link RegistryObject}s made from this DeferredRegister will never be filled but will not throw an exception.
@@ -106,9 +105,8 @@ public class DeferredRegister<T>
     }
 
     /**
-     * DeferredRegister factory for custom forge registries, {@link Registry vanilla registries},
-     * or {@link BuiltinRegistries built-in registries} to lookup based on the provided registry name.
-     * Supports both registries that already exist or do not exist yet.
+     * DeferredRegister factory for custom forge registries or {@link BuiltInRegistries vanilla registries}
+     * to lookup based on the provided registry name. Supports both registries that already exist or do not exist yet.
      * <p>
      * If the registry is never created, any {@link RegistryObject}s made from this DeferredRegister will throw an exception.
      * To allow the optional existence of a registry without error, use {@link #createOptional(ResourceLocation, String)}.
@@ -125,10 +123,10 @@ public class DeferredRegister<T>
     }
 
     /**
-     * DeferredRegister factory for the optional existence of custom forge registries, {@link Registry vanilla registries},
-     * or {@link BuiltinRegistries built-in registries} to lookup based on the provided registry name.
+     * DeferredRegister factory for the optional existence of custom forge registries
+     * or {@link BuiltInRegistries vanilla registries} to lookup based on the provided registry name.
+     * Supports both registries that already exist or do not exist yet.
      * <p>
-     * The registry may not exist at the time this DeferredRegister is created.
      * If the registry is never created, any {@link RegistryObject}s made from this DeferredRegister will never be filled but will not throw an exception.
      *
      * @param registryName The name of the registry, should include namespace. May come from another DeferredRegister through {@link #getRegistryName()}.

@@ -1,5 +1,6 @@
 {
   "type": "minecraft:crafting_shaped",
+  "category": "redstone",
   "key": {
     "#": {
       "tag": "forge:cobblestone/normal"
@@ -21,5 +22,6 @@
   ],
   "result": {
     "item": "minecraft:piston"
-  }
+  },
+  "show_notification": true
 }

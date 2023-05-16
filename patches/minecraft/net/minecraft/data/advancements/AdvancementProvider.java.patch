@@ -1,40 +1,14 @@
 --- a/net/minecraft/data/advancements/AdvancementProvider.java
 +++ b/net/minecraft/data/advancements/AdvancementProvider.java
-@@ -19,11 +_,18 @@
-    private static final Logger f_123960_ = LogUtils.getLogger();
-    private final DataGenerator.PathProvider f_236156_;
-    private final List<Consumer<Consumer<Advancement>>> f_123963_ = ImmutableList.of(new TheEndAdvancements(), new HusbandryAdvancements(), new AdventureAdvancements(), new NetherAdvancements(), new StoryAdvancements());
-+   protected net.minecraftforge.common.data.ExistingFileHelper fileHelper;
+@@ -14,6 +_,11 @@
+ import net.minecraft.data.PackOutput;
+ import net.minecraft.resources.ResourceLocation;
  
-+   @Deprecated
-    public AdvancementProvider(DataGenerator p_123966_) {
-       this.f_236156_ = p_123966_.m_236036_(DataGenerator.Target.DATA_PACK, "advancements");
-    }
- 
-+   public AdvancementProvider(DataGenerator generatorIn, net.minecraftforge.common.data.ExistingFileHelper fileHelperIn) {
-+      this.f_236156_ = generatorIn.m_236036_(DataGenerator.Target.DATA_PACK, "advancements");
-+      this.fileHelper = fileHelperIn;
-+   }
-+
-    public void m_213708_(CachedOutput p_236158_) {
-       Set<ResourceLocation> set = Sets.newHashSet();
-       Consumer<Advancement> consumer = (p_236162_) -> {
-@@ -41,6 +_,18 @@
-          }
-       };
- 
-+      registerAdvancements(consumer, fileHelper);
-+   }
-+
-+   /**
-+    * This method registers all {@link Advancement advancements}.
-+    * Mods can override this method to register their own custom advancements.
-+    *
-+    * @param consumer a {@link Consumer} which saves any advancements provided
-+    * @param fileHelper the existing file helper to check for the existence of files like parent advancements
-+    * @see Advancement.Builder#save(Consumer, ResourceLocation, net.minecraftforge.common.data.ExistingFileHelper)
-+   */
-+   protected void registerAdvancements(Consumer<Advancement> consumer, net.minecraftforge.common.data.ExistingFileHelper fileHelper) {
-       for(Consumer<Consumer<Advancement>> consumer1 : this.f_123963_) {
-          consumer1.accept(consumer);
-       }
++/**
++ * @deprecated Forge: Use {@link net.minecraftforge.common.data.ForgeAdvancementProvider} instead,
++ *             provides ease of access for the {@link net.minecraftforge.common.data.ExistingFileHelper} in the generator
++ */
++@Deprecated
+ public class AdvancementProvider implements DataProvider {
+    private final PackOutput.PathProvider f_236156_;
+    private final List<AdvancementSubProvider> f_244266_;

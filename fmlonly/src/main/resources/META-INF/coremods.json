@@ -1,3 +1,4 @@
 {
-  "load_fml_client": "coremods/load_fml_client.js"
+  "load_fml_client": "coremods/load_fml_client.js",
+  "load_fml_server": "coremods/load_fml_server.js"
 }

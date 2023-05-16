@@ -2,13 +2,20 @@ package net.minecraftforge.forge.tasks
 
 import groovy.json.JsonBuilder
 import groovy.json.JsonSlurper
+import org.objectweb.asm.ClassReader
+import org.objectweb.asm.Opcodes
+import org.objectweb.asm.tree.ClassNode
 
 import java.io.File
 import java.security.MessageDigest
 import java.text.SimpleDateFormat
 import java.util.Date
+import java.util.zip.ZipEntry
+import java.util.zip.ZipInputStream
 
 public class Util {
+    static final ASM_LEVEL = Opcodes.ASM9
+
 	static void init() {
 		File.metaClass.sha1 = { ->
 			MessageDigest md = MessageDigest.getInstance('SHA-1')
@@ -143,8 +150,24 @@ public class Util {
 		}
 	}
 
-    public static String getLatestForgeVersion(mcVersion) {
-        def json = new JsonSlurper().parseText(new URL("https://files.minecraftforge.net/net/minecraftforge/forge/promotions_slim.json").getText("UTF-8"))
-        return json.promos["$mcVersion-latest"]
+    static String getLatestForgeVersion(mcVersion) {
+        final json = new JsonSlurper().parseText(new URL('https://files.minecraftforge.net/net/minecraftforge/forge/promotions_slim.json').getText('UTF-8'))
+        final ver = json.promos["$mcVersion-latest"]
+        ver === null ? null : (mcVersion + '-' + ver)
+    }
+
+    static void processClassNodes(File file, Closure process) {
+        file.withInputStream { i ->
+            new ZipInputStream(i).withCloseable { zin ->
+                ZipEntry zein
+                while ((zein = zin.nextEntry) != null) {
+                    if (zein.name.endsWith('.class')) {
+                        def node = new ClassNode(ASM_LEVEL)
+                        new ClassReader(zin).accept(node, 0)
+                        process(node)
+                    }
+                }
+            }
+        }
     }
 }

@@ -1,0 +1,13 @@
+--- a/net/minecraft/client/gui/screens/worldselection/WorldCreationContext.java
++++ b/net/minecraft/client/gui/screens/worldselection/WorldCreationContext.java
+@@ -38,6 +_,10 @@
+       return new WorldCreationContext(this.f_244272_, this.f_244375_, p_250676_.apply(this.m_246480_(), this.f_243796_), this.f_243708_, this.f_232990_, this.f_243842_);
+    }
+ 
++   public WorldCreationContext withDataConfiguration(WorldDataConfiguration dataConfiguration) {
++      return new WorldCreationContext(this.f_244272_, this.f_244375_, this.f_243796_, this.f_243708_, this.f_232990_, dataConfiguration);
++   }
++
+    public RegistryAccess.Frozen m_246480_() {
+       return this.f_243708_.m_247579_();
+    }

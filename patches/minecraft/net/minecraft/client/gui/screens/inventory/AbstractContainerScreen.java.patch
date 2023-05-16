@@ -1,19 +1,19 @@
 --- a/net/minecraft/client/gui/screens/inventory/AbstractContainerScreen.java
 +++ b/net/minecraft/client/gui/screens/inventory/AbstractContainerScreen.java
-@@ -90,6 +_,7 @@
+@@ -88,6 +_,7 @@
        int i = this.f_97735_;
        int j = this.f_97736_;
        this.m_7286_(p_97795_, p_97798_, p_97796_, p_97797_);
 +      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.ContainerScreenEvent.Render.Background(this, p_97795_, p_97796_, p_97797_));
        RenderSystem.m_69465_();
-       super.m_6305_(p_97795_, p_97796_, p_97797_, p_97798_);
-       PoseStack posestack = RenderSystem.m_157191_();
-@@ -111,11 +_,12 @@
+       super.m_86412_(p_97795_, p_97796_, p_97797_, p_97798_);
+       p_97795_.m_85836_();
+@@ -104,11 +_,12 @@
              this.f_97734_ = slot;
              int l = slot.f_40220_;
              int i1 = slot.f_40221_;
--            m_169606_(p_97795_, l, i1, this.m_93252_());
-+            renderSlotHighlight(p_97795_, l, i1, this.m_93252_(), this.getSlotColor(k));
+-            m_169606_(p_97795_, l, i1, 0);
++            renderSlotHighlight(p_97795_, l, i1, 0, this.getSlotColor(k));
           }
        }
  
@@ -22,7 +22,7 @@
        ItemStack itemstack = this.f_97711_.m_41619_() ? this.f_97732_.m_142621_() : this.f_97711_;
        if (!itemstack.m_41619_()) {
           int l1 = 8;
-@@ -155,9 +_,13 @@
+@@ -147,9 +_,13 @@
     }
  
     public static void m_169606_(PoseStack p_169607_, int p_169608_, int p_169609_, int p_169610_) {
@@ -37,19 +37,17 @@
        RenderSystem.m_69444_(true, true, true, true);
        RenderSystem.m_69482_();
     }
-@@ -175,8 +_,10 @@
-       RenderSystem.m_157182_();
-       this.m_93250_(200);
-       this.f_96542_.f_115093_ = 200.0F;
-+      var font = net.minecraftforge.client.extensions.common.IClientItemExtensions.of(p_97783_).getFont(p_97783_, net.minecraftforge.client.extensions.common.IClientItemExtensions.FontContext.ITEM_COUNT);
-+      if (font == null) font = this.f_96547_;
-       this.f_96542_.m_115203_(p_97783_, p_97784_, p_97785_);
--      this.f_96542_.m_115174_(this.f_96547_, p_97783_, p_97784_, p_97785_ - (this.f_97711_.m_41619_() ? 0 : 8), p_97786_);
-+      this.f_96542_.m_115174_(font, p_97783_, p_97784_, p_97785_ - (this.f_97711_.m_41619_() ? 0 : 8), p_97786_);
-       this.m_93250_(0);
-       this.f_96542_.f_115093_ = 0.0F;
+@@ -165,7 +_,8 @@
+       p_275498_.m_85836_();
+       p_275498_.m_252880_(0.0F, 0.0F, 232.0F);
+       this.f_96542_.m_274369_(p_275498_, p_275341_, p_275289_, p_275690_);
+-      this.f_96542_.m_274364_(p_275498_, this.f_96547_, p_275341_, p_275289_, p_275690_ - (this.f_97711_.m_41619_() ? 0 : 8), p_275201_);
++      var font = net.minecraftforge.client.extensions.common.IClientItemExtensions.of(p_275341_).getFont(p_275341_, net.minecraftforge.client.extensions.common.IClientItemExtensions.FontContext.ITEM_COUNT);
++      this.f_96542_.m_274364_(p_275498_, font == null ? this.f_96547_ : font, p_275341_, p_275289_, p_275690_ - (this.f_97711_.m_41619_() ? 0 : 8), p_275201_);
+       p_275498_.m_85849_();
     }
-@@ -286,7 +_,8 @@
+ 
+@@ -272,7 +_,8 @@
        if (super.m_6375_(p_97748_, p_97749_, p_97750_)) {
           return true;
        } else {
@@ -59,7 +57,7 @@
           Slot slot = this.m_97744_(p_97748_, p_97749_);
           long i = Util.m_137550_();
           this.f_97723_ = this.f_97709_ == slot && i - this.f_97721_ < 250L && this.f_97722_ == p_97750_;
-@@ -297,6 +_,7 @@
+@@ -283,6 +_,7 @@
              int j = this.f_97735_;
              int k = this.f_97736_;
              boolean flag1 = this.m_7467_(p_97748_, p_97749_, j, k, p_97750_);
@@ -67,7 +65,7 @@
              int l = -1;
              if (slot != null) {
                 l = slot.f_40219_;
-@@ -322,7 +_,7 @@
+@@ -308,7 +_,7 @@
                    }
                 } else if (!this.f_97738_) {
                    if (this.f_97732_.m_142621_().m_41619_()) {
@@ -76,7 +74,7 @@
                          this.m_6597_(slot, l, p_97750_, ClickType.CLONE);
                       } else {
                          boolean flag2 = l != -999 && (InputConstants.m_84830_(Minecraft.m_91087_().m_91268_().m_85439_(), 340) || InputConstants.m_84830_(Minecraft.m_91087_().m_91268_().m_85439_(), 344));
-@@ -346,7 +_,7 @@
+@@ -332,7 +_,7 @@
                          this.f_97717_ = 0;
                       } else if (p_97750_ == 1) {
                          this.f_97717_ = 1;
@@ -85,7 +83,7 @@
                          this.f_97717_ = 2;
                       }
                    }
-@@ -415,10 +_,13 @@
+@@ -401,10 +_,13 @@
     }
  
     public boolean m_6348_(double p_97812_, double p_97813_, int p_97814_) {
@@ -99,7 +97,7 @@
        int k = -1;
        if (slot != null) {
           k = slot.f_40219_;
-@@ -432,7 +_,7 @@
+@@ -418,7 +_,7 @@
           if (m_96638_()) {
              if (!this.f_97724_.m_41619_()) {
                 for(Slot slot2 : this.f_97732_.f_38839_) {
@@ -108,7 +106,7 @@
                       this.m_6597_(slot2, slot2.f_40219_, p_97814_, ClickType.QUICK_MOVE);
                    }
                 }
-@@ -495,7 +_,7 @@
+@@ -481,7 +_,7 @@
  
              this.m_6597_((Slot)null, -999, AbstractContainerMenu.m_38930_(2, this.f_97717_), ClickType.QUICK_CRAFT);
           } else if (!this.f_97732_.m_142621_().m_41619_()) {
@@ -117,7 +115,7 @@
                 this.m_6597_(slot, k, p_97814_, ClickType.CLONE);
              } else {
                 boolean flag1 = k != -999 && (InputConstants.m_84830_(Minecraft.m_91087_().m_91268_().m_85439_(), 340) || InputConstants.m_84830_(Minecraft.m_91087_().m_91268_().m_85439_(), 344));
-@@ -542,34 +_,39 @@
+@@ -528,34 +_,39 @@
     }
  
     public boolean m_7933_(int p_97765_, int p_97766_, int p_97767_) {
@@ -164,7 +162,7 @@
                 this.m_6597_(this.f_97734_, this.f_97734_.f_40219_, i, ClickType.SWAP);
                 return true;
              }
-@@ -604,6 +_,18 @@
+@@ -590,6 +_,18 @@
  
     public T m_6262_() {
        return this.f_97732_;

@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/projectile/FishingHook.java
 +++ b/net/minecraft/world/entity/projectile/FishingHook.java
-@@ -228,8 +_,8 @@
+@@ -229,8 +_,8 @@
     private boolean m_37136_(Player p_37137_) {
        ItemStack itemstack = p_37137_.m_21205_();
        ItemStack itemstack1 = p_37137_.m_21206_();
@@ -11,7 +11,7 @@
        if (!p_37137_.m_213877_() && p_37137_.m_6084_() && (flag || flag1) && !(this.m_20280_(p_37137_) > 1024.0D)) {
           return false;
        } else {
-@@ -240,7 +_,7 @@
+@@ -241,7 +_,7 @@
  
     private void m_37171_() {
        HitResult hitresult = ProjectileUtil.m_37294_(this, this::m_5603_);
@@ -20,25 +20,25 @@
     }
  
     protected boolean m_5603_(Entity p_37135_) {
-@@ -295,7 +_,7 @@
+@@ -296,7 +_,7 @@
              double d1 = (double)((float)Mth.m_14107_(this.m_20186_()) + 1.0F);
              double d2 = this.m_20189_() + (double)(f2 * (float)this.f_37091_ * 0.1F);
-             BlockState blockstate = serverlevel.m_8055_(new BlockPos(d0, d1 - 1.0D, d2));
+             BlockState blockstate = serverlevel.m_8055_(BlockPos.m_274561_(d0, d1 - 1.0D, d2));
 -            if (blockstate.m_60713_(Blocks.f_49990_)) {
 +            if (serverlevel.m_8055_(new BlockPos((int)d0, (int)d1 - 1, (int)d2)).m_60767_() == net.minecraft.world.level.material.Material.f_76305_) {
                 if (this.f_19796_.m_188501_() < 0.15F) {
                    serverlevel.m_8767_(ParticleTypes.f_123795_, d0, d1 - (double)0.1F, d2, 1, (double)f1, 0.1D, (double)f2, 0.0D);
                 }
-@@ -331,7 +_,7 @@
+@@ -332,7 +_,7 @@
              double d5 = (double)((float)Mth.m_14107_(this.m_20186_()) + 1.0F);
              double d6 = this.m_20189_() + (double)(Mth.m_14089_(f6) * f7) * 0.1D;
-             BlockState blockstate1 = serverlevel.m_8055_(new BlockPos(d4, d5 - 1.0D, d6));
+             BlockState blockstate1 = serverlevel.m_8055_(BlockPos.m_274561_(d4, d5 - 1.0D, d6));
 -            if (blockstate1.m_60713_(Blocks.f_49990_)) {
-+            if (serverlevel.m_8055_(new BlockPos(d4, d5 - 1.0D, d6)).m_60767_() == net.minecraft.world.level.material.Material.f_76305_) {
++            if (blockstate1.m_60767_() == net.minecraft.world.level.material.Material.f_76305_) {
                 serverlevel.m_8767_(ParticleTypes.f_123769_, d4, d5, d6, 2 + this.f_19796_.m_188503_(2), (double)0.1F, 0.0D, (double)0.1F, 0.0D);
              }
           }
-@@ -402,6 +_,7 @@
+@@ -403,6 +_,7 @@
        Player player = this.m_37168_();
        if (!this.f_19853_.f_46443_ && player != null && !this.m_37136_(player)) {
           int i = 0;
@@ -46,11 +46,11 @@
           if (this.f_37094_ != null) {
              this.m_150155_(this.f_37094_);
              CriteriaTriggers.f_10553_.m_40416_((ServerPlayer)player, p_37157_, this, Collections.emptyList());
-@@ -409,8 +_,15 @@
+@@ -410,8 +_,15 @@
              i = this.f_37094_ instanceof ItemEntity ? 3 : 5;
           } else if (this.f_37089_ > 0) {
              LootContext.Builder lootcontext$builder = (new LootContext.Builder((ServerLevel)this.f_19853_)).m_78972_(LootContextParams.f_81460_, this.m_20182_()).m_78972_(LootContextParams.f_81463_, p_37157_).m_78972_(LootContextParams.f_81455_, this).m_230911_(this.f_19796_).m_78963_((float)this.f_37096_ + player.m_36336_());
-+            lootcontext$builder.m_78972_(LootContextParams.f_81458_, this.m_37282_()).m_78972_(LootContextParams.f_81455_, this);
++            lootcontext$builder.m_78972_(LootContextParams.f_81458_, this.m_19749_()).m_78972_(LootContextParams.f_81455_, this);
              LootTable loottable = this.f_19853_.m_7654_().m_129898_().m_79217_(BuiltInLootTables.f_78720_);
              List<ItemStack> list = loottable.m_230922_(lootcontext$builder.m_78975_(LootContextParamSets.f_81414_));
 +            event = new net.minecraftforge.event.entity.player.ItemFishedEvent(list, this.f_19861_ ? 2 : 1, this);
@@ -62,7 +62,7 @@
              CriteriaTriggers.f_10553_.m_40416_((ServerPlayer)player, p_37157_, this, list);
  
              for(ItemStack itemstack : list) {
-@@ -435,7 +_,7 @@
+@@ -436,7 +_,7 @@
           }
  
           this.m_146870_();

@@ -1,5 +1,6 @@
 {
   "type": "minecraft:crafting_shaped",
+  "category": "redstone",
   "key": {
     "#": {
       "tag": "forge:ingots/iron"
@@ -11,5 +12,6 @@
   ],
   "result": {
     "item": "minecraft:iron_trapdoor"
-  }
+  },
+  "show_notification": true
 }

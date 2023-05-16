@@ -1,0 +1,92 @@
+--- a/net/minecraft/world/item/CreativeModeTabs.java
++++ b/net/minecraft/world/item/CreativeModeTabs.java
+@@ -1063,7 +_,7 @@
+    }).m_257501_((p_270987_, p_261441_) -> {
+       Set<ItemStack> set = ItemStackLinkedSet.m_261170_();
+ 
+-      for(CreativeModeTab creativemodetab : CreativeModeTabs.f_243931_) {
++      for(CreativeModeTab creativemodetab : CreativeModeTabs.m_257478_()) {
+          if (creativemodetab.m_257962_() != CreativeModeTab.Type.SEARCH) {
+             set.addAll(creativemodetab.m_261235_());
+          }
+@@ -1524,10 +_,14 @@
+    private static final Comparator<Holder<PaintingVariant>> f_268478_ = Comparator.comparing(Holder::m_203334_, Comparator.<PaintingVariant>comparingInt((p_270004_) -> {
+       return p_270004_.m_218909_() * p_270004_.m_218908_();
+    }).thenComparing(PaintingVariant::m_218908_));
++   private static final List<CreativeModeTab> DEFAULT_TABS = com.google.common.collect.ImmutableList.of(f_256917_, f_256750_, f_256837_, f_257039_);
+    @Nullable
+    private static CreativeModeTab.ItemDisplayParameters f_268496_;
++   private static final List<CreativeModeTab> FORGE_TABS_VIEW = net.minecraftforge.common.util.ConcatenatedListView.of(net.minecraftforge.common.CreativeModeTabRegistry.getSortedCreativeModeTabs(), DEFAULT_TABS);
+ 
+    private static List<CreativeModeTab> m_257615_(CreativeModeTab... p_259856_) {
++      if (true)
++         return List.of(p_259856_); // Forge: We do not validate vanilla tabs here, we have our own mechanism for that. This should only be invoked when the field TABS is initialized, whose use-cases are patched out.
+       Map<Pair<CreativeModeTab.Row, Integer>, String> map = new HashMap<>();
+ 
+       for(CreativeModeTab creativemodetab : p_259856_) {
+@@ -1542,7 +_,7 @@
+    }
+ 
+    public static CreativeModeTab m_257543_() {
+-      return f_256788_;
++      return net.minecraftforge.common.CreativeModeTabRegistry.getSortedCreativeModeTabs().stream().filter(CreativeModeTab::m_257497_).findFirst().orElse(f_256788_);
+    }
+ 
+    private static void m_269246_(CreativeModeTab.Output p_270129_, HolderLookup<Potion> p_270334_, Item p_270968_, CreativeModeTab.TabVisibility p_270778_) {
+@@ -1557,7 +_,7 @@
+ 
+    private static void m_269182_(CreativeModeTab.Output p_270868_, HolderLookup<Enchantment> p_270903_, Set<EnchantmentCategory> p_270380_, CreativeModeTab.TabVisibility p_270407_) {
+       p_270903_.m_214062_().map(Holder::m_203334_).filter((p_270008_) -> {
+-         return p_270380_.contains(p_270008_.f_44672_);
++         return p_270008_.allowedInCreativeTab(Items.f_42690_, p_270380_);
+       }).map((p_270038_) -> {
+          return EnchantedBookItem.m_41161_(new EnchantmentInstance(p_270038_, p_270038_.m_6586_()));
+       }).forEach((p_269989_) -> {
+@@ -1567,7 +_,7 @@
+ 
+    private static void m_269335_(CreativeModeTab.Output p_270961_, HolderLookup<Enchantment> p_270628_, Set<EnchantmentCategory> p_271024_, CreativeModeTab.TabVisibility p_270805_) {
+       p_270628_.m_214062_().map(Holder::m_203334_).filter((p_269991_) -> {
+-         return p_271024_.contains(p_269991_.f_44672_);
++         return p_269991_.allowedInCreativeTab(Items.f_42690_, p_271024_);
+       }).flatMap((p_270024_) -> {
+          return IntStream.rangeClosed(p_270024_.m_44702_(), p_270024_.m_6586_()).mapToObj((p_270006_) -> {
+             return EnchantedBookItem.m_41161_(new EnchantmentInstance(p_270024_, p_270006_));
+@@ -1619,11 +_,11 @@
+    }
+ 
+    public static List<CreativeModeTab> m_257388_() {
+-      return f_243931_.stream().filter(CreativeModeTab::m_257497_).toList();
++      return FORGE_TABS_VIEW.stream().filter(CreativeModeTab::m_257497_).toList();
+    }
+ 
+    public static List<CreativeModeTab> m_257478_() {
+-      return f_243931_;
++      return FORGE_TABS_VIEW;
+    }
+ 
+    public static CreativeModeTab m_258007_() {
+@@ -1631,12 +_,12 @@
+    }
+ 
+    private static void m_269421_(CreativeModeTab.ItemDisplayParameters p_270447_) {
+-      f_243931_.stream().filter((p_259647_) -> {
++      m_257478_().stream().filter((p_259647_) -> {
+          return p_259647_.m_257962_() == CreativeModeTab.Type.CATEGORY;
+       }).forEach((p_269997_) -> {
+          p_269997_.m_269498_(p_270447_);
+       });
+-      f_243931_.stream().filter((p_260124_) -> {
++      m_257478_().stream().filter((p_260124_) -> {
+          return p_260124_.m_257962_() != CreativeModeTab.Type.CATEGORY;
+       }).forEach((p_270002_) -> {
+          p_270002_.m_269498_(p_270447_);
+@@ -1651,5 +_,9 @@
+          m_269421_(f_268496_);
+          return true;
+       }
++   }
++
++   public static List<CreativeModeTab> defaultTabs() {
++      return DEFAULT_TABS;
+    }
+ }

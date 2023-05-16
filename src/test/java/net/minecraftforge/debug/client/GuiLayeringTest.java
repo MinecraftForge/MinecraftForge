@@ -6,6 +6,7 @@
 package net.minecraftforge.debug.client;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
@@ -13,6 +14,8 @@ import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ScreenEvent;
+import net.minecraftforge.client.gui.widget.ExtendedButton;
+import net.minecraftforge.client.gui.widget.ForgeSlider;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
@@ -21,6 +24,8 @@ import java.util.Random;
 @Mod(GuiLayeringTest.MODID)
 public class GuiLayeringTest
 {
+    private static final boolean ENABLED = false;
+
     private static final Random RANDOM = new Random();
     public static final String MODID = "gui_layer_test";
 
@@ -30,14 +35,15 @@ public class GuiLayeringTest
         @SubscribeEvent
         public static void guiOpen(ScreenEvent.Init event)
         {
-            if (event.getScreen() instanceof AbstractContainerScreen)
+            if (event.getScreen() instanceof AbstractContainerScreen && ENABLED)
             {
-                event.addListener(new Button(2, 2, 150, 20, Component.literal("Test Gui Layering"), btn -> {
+                event.addListener(Button.builder(Component.literal("Test Gui Layering"), btn -> {
                     Minecraft.getInstance().pushGuiLayer(new TestLayer(Component.literal("LayerScreen")));
-                }));
-                event.addListener(new Button(2, 25, 150, 20, Component.literal("Test Gui Normal"), btn -> {
+                }).pos(2,2).size(150, 20).build());
+
+                event.addListener(Button.builder(Component.literal("Test Gui Normal"), btn -> {
                     Minecraft.getInstance().setScreen(new TestLayer(Component.literal("LayerScreen")));
-                }));
+                }).pos(2, 25).size(150, 20).build());
             }
         }
 
@@ -60,7 +66,7 @@ public class GuiLayeringTest
             protected void init()
             {
                 int buttonWidth = 150;
-                int buttonHeight = 20;
+                int buttonHeight = 30;
                 int buttonGap = 4;
                 int buttonSpacing = (buttonHeight + buttonGap);
                 int buttons = 3;
@@ -72,9 +78,11 @@ public class GuiLayeringTest
                 xoff = RANDOM.nextInt(xoff);
                 yoff = RANDOM.nextInt(yoff);
 
-                this.addRenderableWidget(new Button(xoff, yoff + buttonSpacing * (cnt++), buttonWidth, buttonHeight, Component.literal("Push New Layer"), this::pushLayerButton));
-                this.addRenderableWidget(new Button(xoff, yoff + buttonSpacing * (cnt++), buttonWidth, buttonHeight, Component.literal("Pop Current Layer"), this::popLayerButton));
-                this.addRenderableWidget(new Button(xoff, yoff + buttonSpacing * (cnt++), buttonWidth, buttonHeight, Component.literal("Close entire stack"), this::closeStack));
+                this.addRenderableWidget(Button.builder(Component.literal("Push New Layer"), this::pushLayerButton).pos(xoff, yoff + buttonSpacing * (cnt++)).size(buttonWidth, buttonHeight).build(ExtendedButton::new));
+                this.addRenderableWidget(Button.builder(Component.literal("Pop Current Layer"), this::popLayerButton).pos(xoff, yoff + buttonSpacing * (cnt++)).size(buttonWidth, buttonHeight).build(ExtendedButton::new));
+                this.addRenderableWidget(Button.builder(Component.literal("Close entire stack"), this::closeStack).pos(xoff, yoff + buttonSpacing * (cnt++)).size(buttonWidth, buttonHeight).build(ExtendedButton::new));
+
+                this.addRenderableWidget(new ForgeSlider(xoff, yoff + buttonSpacing * cnt, 50, 25, Component.literal("Val: ").withStyle(ChatFormatting.GOLD), Component.literal("some text which will be cut off"), 5, 55, 6, true));
             }
 
             private void closeStack(Button button)

@@ -7,7 +7,7 @@ package net.minecraftforge.client.extensions;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Transformation;
-import com.mojang.math.Vector3f;
+import org.joml.Vector3f;
 
 /**
  * Extension interface for {@link com.mojang.blaze3d.vertex.PoseStack}.

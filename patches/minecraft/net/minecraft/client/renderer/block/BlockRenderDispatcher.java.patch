@@ -63,9 +63,9 @@
 +                  this.f_110900_.renderModel(p_110914_.m_85850_(), p_110915_.m_6299_(renderType != null ? renderType : net.minecraftforge.client.RenderTypeHelper.getEntityRenderType(rt, false)), p_110913_, bakedmodel, f, f1, f2, p_110916_, p_110917_, modelData, rt);
                 break;
              case ENTITYBLOCK_ANIMATED:
--               this.f_173397_.m_108829_(new ItemStack(p_110913_.m_60734_()), ItemTransforms.TransformType.NONE, p_110914_, p_110915_, p_110916_, p_110917_);
+-               this.f_173397_.m_108829_(new ItemStack(p_110913_.m_60734_()), ItemDisplayContext.NONE, p_110914_, p_110915_, p_110916_, p_110917_);
 +            ItemStack stack = new ItemStack(p_110913_.m_60734_());
-+            net.minecraftforge.client.extensions.common.IClientItemExtensions.of(stack).getCustomRenderer().m_108829_(stack, ItemTransforms.TransformType.NONE, p_110914_, p_110915_, p_110916_, p_110917_);
++            net.minecraftforge.client.extensions.common.IClientItemExtensions.of(stack).getCustomRenderer().m_108829_(stack, ItemDisplayContext.NONE, p_110914_, p_110915_, p_110916_, p_110917_);
           }
  
        }

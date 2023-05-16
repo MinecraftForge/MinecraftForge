@@ -12,10 +12,10 @@ import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import net.minecraft.resources.ResourceLocation;
-import com.mojang.math.Matrix4f;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.systems.RenderSystem;
+import org.joml.Matrix4f;
 
 /**
  * This class provides several methods and constants used by the Config GUI classes.
@@ -212,7 +212,6 @@ public class ScreenUtils
         float endBlue    = (float)(endColor         & 255) / 255.0F;
 
         RenderSystem.enableDepthTest();
-        RenderSystem.disableTexture();
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
         RenderSystem.setShader(GameRenderer::getPositionColorShader);
@@ -227,7 +226,6 @@ public class ScreenUtils
         tessellator.end();
 
         RenderSystem.disableBlend();
-        RenderSystem.enableTexture();
     }
 
     public static void blitInscribed(PoseStack poseStack, int x, int y, int boundsWidth, int boundsHeight, int rectWidth, int rectHeight)

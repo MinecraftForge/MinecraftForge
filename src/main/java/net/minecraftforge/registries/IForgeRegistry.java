@@ -143,8 +143,10 @@ public interface IForgeRegistry<V> extends Iterable<V>
 
     /**
      * Factory for creating dummy entries, allowing worlds to be loaded and keep the missing block references.
+     * @deprecated Dummies are being removed due to lack of use and high maintenance cost. There will not be an equivalent replacement feature added.
      */
     @FunctionalInterface
+    @Deprecated(forRemoval = true, since = "1.19.4")
     interface DummyFactory<V>
     {
         V createDummy(ResourceLocation key);

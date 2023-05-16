@@ -11,7 +11,6 @@ import java.util.Map;
 import javax.annotation.Nullable;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Matrix4f;
 
 import net.minecraft.client.Camera;
 import net.minecraft.client.renderer.LevelRenderer;
@@ -21,13 +20,14 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.ForgeRenderTypes;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.event.IModBusEvent;
+import org.joml.Matrix4f;
 
 /**
- * Fires at various times during LevelRenderer.renderLevel. 
+ * Fires at various times during LevelRenderer.renderLevel.
  * Check {@link #getStage} to render during the appropriate time for your use case.
- * 
+ *
  * <p>This event is not {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}. </p>
- * 
+ *
  * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
  * only on the {@linkplain LogicalSide#CLIENT logical client}. </p>
  */
@@ -122,9 +122,9 @@ public class RenderLevelStageEvent extends Event
     /**
      * Use to create a custom {@linkplain RenderLevelStageEvent.Stage stages}.
      * Fired after the LevelRenderer has been created.
-     * 
+     *
      * <p>This event is not {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}. </p>
-     * 
+     *
      * <p>This event is fired on the {@linkplain FMLJavaModLoadingContext#getModEventBus() mod-specific event bus},
      * only on the {@linkplain LogicalSide#CLIENT logical client}. </p>
      */
@@ -171,6 +171,14 @@ public class RenderLevelStageEvent extends Event
         public static final Stage AFTER_CUTOUT_BLOCKS = register("after_cutout_blocks", RenderType.cutout());
         /**
          * Use this to render custom block-like geometry into the world.
+         */
+        public static final Stage AFTER_ENTITIES = register("after_entities", null);
+        /**
+         * Use this to render custom block-like geometry into the world.
+         */
+        public static final Stage AFTER_BLOCK_ENTITIES = register("after_block_entities", null);
+        /**
+         * Use this to render custom block-like geometry into the world.
          * Due to how transparency sorting works, this stage may not work properly with translucency. If you intend to render translucency,
          * try using {@link #AFTER_TRIPWIRE_BLOCKS} or {@link #AFTER_PARTICLES}.
          * Although this is called within a fabulous graphics target, it does not function properly in many cases.
@@ -184,7 +192,7 @@ public class RenderLevelStageEvent extends Event
          * Use this to render custom effects into the world, such as custom entity-like objects or special rendering effects.
          * Called within a fabulous graphics target.
          * Happens after entities render.
-         * 
+         *
          * @see ForgeRenderTypes#TRANSLUCENT_ON_PARTICLES_TARGET
          */
         public static final Stage AFTER_PARTICLES = register("after_particles", null);

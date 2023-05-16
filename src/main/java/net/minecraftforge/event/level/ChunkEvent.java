@@ -12,6 +12,7 @@ import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
+import org.jetbrains.annotations.ApiStatus;
 
 /**
  * ChunkEvent is fired when an event involving a chunk occurs.<br>
@@ -58,9 +59,32 @@ public class ChunkEvent extends LevelEvent
      **/
     public static class Load extends ChunkEvent
     {
+        private final boolean newChunk;
+
+        @ApiStatus.Internal
+        @Deprecated(forRemoval = true, since = "1.19.3")
         public Load(ChunkAccess chunk)
         {
+            this(chunk, false);
+        }
+
+        @ApiStatus.Internal
+        public Load(ChunkAccess chunk, boolean newChunk)
+        {
             super(chunk);
+            this.newChunk = newChunk;
+        }
+
+        /**
+         * Check whether the Chunk is newly generated, and being loaded for the first time.
+         *
+         * <p>Will only ever return {@code true} on the {@linkplain net.minecraftforge.fml.LogicalSide#SERVER logical server}.</p>
+         *
+         * @return whether the Chunk is newly generated
+         */
+        public boolean isNewChunk()
+        {
+            return newChunk;
         }
     }
 

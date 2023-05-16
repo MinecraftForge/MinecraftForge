@@ -5,16 +5,17 @@
 
 package net.minecraftforge.debug;
 
+import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraftforge.common.util.ForgeSoundType;
+import net.minecraftforge.event.CreativeModeTabEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.RegistryObject;
 import net.minecraftforge.fml.common.Mod;
@@ -32,14 +33,14 @@ public class CustomSoundTypeTest
     private static final DeferredRegister<SoundEvent> SOUND_EVENTS = DeferredRegister.create(ForgeRegistries.SOUND_EVENTS, MODID);
 
     private static final RegistryObject<SoundEvent> TEST_STEP_EVENT = SOUND_EVENTS.register("test_step",
-            () -> new SoundEvent(new ResourceLocation(MODID, "block.sound_type_test.step")));
+            () -> SoundEvent.createVariableRangeEvent(new ResourceLocation(MODID, "block.sound_type_test.step")));
     private static final SoundType TEST_SOUND_TYPE = new ForgeSoundType(1.0F, 1.0F, TEST_STEP_EVENT, TEST_STEP_EVENT, TEST_STEP_EVENT, TEST_STEP_EVENT, TEST_STEP_EVENT);
 
     private static final RegistryObject<Block> TEST_STEP_BLOCK = BLOCKS.register("test_block",
             () -> new Block(BlockBehaviour.Properties.of(Material.WOOD).sound(TEST_SOUND_TYPE)));
 
     private static final RegistryObject<Item> TEST_STEP_BLOCK_ITEM = ITEMS.register("test_block",
-            () -> new BlockItem(TEST_STEP_BLOCK.get(), new Item.Properties().tab(CreativeModeTab.TAB_MISC)));
+            () -> new BlockItem(TEST_STEP_BLOCK.get(), new Item.Properties()));
 
     public CustomSoundTypeTest()
     {
@@ -47,5 +48,12 @@ public class CustomSoundTypeTest
         BLOCKS.register(modEventBus);
         ITEMS.register(modEventBus);
         SOUND_EVENTS.register(modEventBus);
+        modEventBus.addListener(this::addCreative);
+    }
+
+    private void addCreative(CreativeModeTabEvent.BuildContents event)
+    {
+        if (event.getTab() == CreativeModeTabs.INGREDIENTS)
+            event.accept(TEST_STEP_BLOCK_ITEM);
     }
 }

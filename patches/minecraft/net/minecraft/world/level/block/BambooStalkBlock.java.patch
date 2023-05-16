@@ -1,0 +1,47 @@
+--- a/net/minecraft/world/level/block/BambooStalkBlock.java
++++ b/net/minecraft/world/level/block/BambooStalkBlock.java
+@@ -26,7 +_,7 @@
+ import net.minecraft.world.phys.shapes.CollisionContext;
+ import net.minecraft.world.phys.shapes.VoxelShape;
+ 
+-public class BambooStalkBlock extends Block implements BonemealableBlock {
++public class BambooStalkBlock extends Block implements BonemealableBlock, net.minecraftforge.common.IPlantable {
+    protected static final float f_260434_ = 3.0F;
+    protected static final float f_260643_ = 5.0F;
+    protected static final float f_260619_ = 1.5F;
+@@ -110,10 +_,11 @@
+ 
+    public void m_213898_(BlockState p_261931_, ServerLevel p_261751_, BlockPos p_261616_, RandomSource p_261766_) {
+       if (p_261931_.m_61143_(f_260694_) == 0) {
+-         if (p_261766_.m_188503_(3) == 0 && p_261751_.m_46859_(p_261616_.m_7494_()) && p_261751_.m_45524_(p_261616_.m_7494_(), 0) >= 9) {
++         if (p_261751_.m_46859_(p_261616_.m_7494_()) && p_261751_.m_45524_(p_261616_.m_7494_(), 0) >= 9) {
+             int i = this.m_261132_(p_261751_, p_261616_) + 1;
+-            if (i < 16) {
++            if (i < 16 && net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_261751_, p_261616_, p_261931_, p_261766_.m_188503_(3) == 0)) {
+                this.m_261305_(p_261931_, p_261751_, p_261616_, p_261766_, i);
++               net.minecraftforge.common.ForgeHooks.onCropsGrowPost(p_261751_, p_261616_, p_261931_);
+             }
+          }
+ 
+@@ -167,7 +_,7 @@
+    }
+ 
+    public float m_5880_(BlockState p_261691_, Player p_262171_, BlockGetter p_261621_, BlockPos p_261500_) {
+-      return p_262171_.m_21205_().m_41720_() instanceof SwordItem ? 1.0F : super.m_5880_(p_261691_, p_262171_, p_261621_, p_261500_);
++      return p_262171_.m_21205_().canPerformAction(net.minecraftforge.common.ToolActions.SWORD_DIG) ? 1.0F : super.m_5880_(p_261691_, p_262171_, p_261621_, p_261500_);
+    }
+ 
+    protected void m_261305_(BlockState p_261855_, Level p_262076_, BlockPos p_262109_, RandomSource p_261633_, int p_261759_) {
+@@ -208,5 +_,12 @@
+       }
+ 
+       return i;
++   }
++
++   @Override
++   public BlockState getPlant(BlockGetter world, BlockPos pos) {
++      BlockState state = world.m_8055_(pos);
++      if (state.m_60734_() != this) return m_49966_();
++      return state;
+    }
+ }

@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/gui/screens/controls/KeyBindsList.java
 +++ b/net/minecraft/client/gui/screens/controls/KeyBindsList.java
-@@ -51,7 +_,7 @@
+@@ -65,7 +_,7 @@
     }
  
     protected int m_5756_() {
@@ -9,52 +9,34 @@
     }
  
     public int m_5759_() {
-@@ -107,7 +_,7 @@
-       KeyEntry(final KeyMapping p_193916_, final Component p_193917_) {
-          this.f_193910_ = p_193916_;
-          this.f_193911_ = p_193917_;
--         this.f_193912_ = new Button(0, 0, 75, 20, p_193917_, (p_193939_) -> {
-+         this.f_193912_ = new Button(0, 0, 75 + 20 /* Forge: Add space */, 20, p_193917_, (p_193939_) -> {
+@@ -130,10 +_,11 @@
+          this.f_193912_ = Button.m_253074_(p_193917_, (p_269618_) -> {
              KeyBindsList.this.f_193858_.f_193975_ = p_193916_;
-          }) {
-             protected MutableComponent m_5646_() {
-@@ -115,6 +_,7 @@
-             }
-          };
-          this.f_193913_ = new Button(0, 0, 50, 20, Component.m_237115_("controls.reset"), (p_193935_) -> {
+             KeyBindsList.this.m_269130_();
+-         }).m_252987_(0, 0, 75, 20).m_252778_((p_253311_) -> {
++         }).m_252987_(0, 0, 75 + 20 /* Forge: Add space */, 20).m_252778_((p_253311_) -> {
+             return p_193916_.m_90862_() ? Component.m_237110_("narrator.controls.unbound", p_193917_) : Component.m_237110_("narrator.controls.bound", p_193917_, p_253311_.get());
+          }).m_253136_();
+          this.f_193913_ = Button.m_253074_(Component.m_237115_("controls.reset"), (p_269616_) -> {
 +            this.f_193910_.setToDefault();
              KeyBindsList.this.f_93386_.f_91066_.m_92159_(p_193916_, p_193916_.m_90861_());
-             KeyMapping.m_90854_();
-          }) {
-@@ -128,7 +_,7 @@
-          boolean flag = KeyBindsList.this.f_193858_.f_193975_ == this.f_193910_;
+             KeyBindsList.this.m_269130_();
+          }).m_252987_(0, 0, 50, 20).m_252778_((p_253313_) -> {
+@@ -145,7 +_,7 @@
+       public void m_6311_(PoseStack p_193923_, int p_193924_, int p_193925_, int p_193926_, int p_193927_, int p_193928_, int p_193929_, int p_193930_, boolean p_193931_, float p_193932_) {
           float f = (float)(p_193926_ + 90 - KeyBindsList.this.f_193859_);
           KeyBindsList.this.f_93386_.f_91062_.m_92889_(p_193923_, this.f_193911_, f, (float)(p_193925_ + p_193928_ / 2 - 9 / 2), 16777215);
--         this.f_193913_.f_93620_ = p_193926_ + 190;
-+         this.f_193913_.f_93620_ = p_193926_ + 190 + 20;
-          this.f_193913_.f_93621_ = p_193925_;
-          this.f_193913_.f_93623_ = !this.f_193910_.m_90864_();
-          this.f_193913_.m_6305_(p_193923_, p_193929_, p_193930_, p_193932_);
-@@ -136,11 +_,12 @@
-          this.f_193912_.f_93621_ = p_193925_;
-          this.f_193912_.m_93666_(this.f_193910_.m_90863_());
-          boolean flag1 = false;
-+         boolean keyCodeModifierConflict = true; // gracefully handle conflicts like SHIFT vs SHIFT+G
+-         this.f_193913_.m_252865_(p_193926_ + 190);
++         this.f_193913_.m_252865_(p_193926_ + 190 + 20);
+          this.f_193913_.m_253211_(p_193925_);
+          this.f_193913_.m_86412_(p_193923_, p_193929_, p_193930_, p_193932_);
+          this.f_193912_.m_252865_(p_193926_ + 105);
+@@ -174,7 +_,7 @@
+          MutableComponent mutablecomponent = Component.m_237119_();
           if (!this.f_193910_.m_90862_()) {
              for(KeyMapping keymapping : KeyBindsList.this.f_93386_.f_91066_.f_92059_) {
-                if (keymapping != this.f_193910_ && this.f_193910_.m_90850_(keymapping)) {
-                   flag1 = true;
--                  break;
-+                  keyCodeModifierConflict &= keymapping.hasKeyModifierConflict(this.f_193910_);
-                }
-             }
-          }
-@@ -148,7 +_,7 @@
-          if (flag) {
-             this.f_193912_.m_93666_(Component.m_237113_("> ").m_7220_(this.f_193912_.m_6035_().m_6881_().m_130940_(ChatFormatting.YELLOW)).m_130946_(" <").m_130940_(ChatFormatting.YELLOW));
-          } else if (flag1) {
--            this.f_193912_.m_93666_(this.f_193912_.m_6035_().m_6881_().m_130940_(ChatFormatting.RED));
-+            this.f_193912_.m_93666_(this.f_193912_.m_6035_().m_6881_().m_130940_(keyCodeModifierConflict ? ChatFormatting.GOLD : ChatFormatting.RED));
-          }
- 
-          this.f_193912_.m_6305_(p_193923_, p_193929_, p_193930_, p_193932_);
+-               if (keymapping != this.f_193910_ && this.f_193910_.m_90850_(keymapping)) {
++               if ((keymapping != this.f_193910_ && this.f_193910_.m_90850_(keymapping)) || keymapping.hasKeyModifierConflict(this.f_193910_)) { // FORGE: gracefully handle conflicts like SHIFT vs SHIFT+G
+                   if (this.f_268447_) {
+                      mutablecomponent.m_130946_(", ");
+                   }

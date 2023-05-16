@@ -1,5 +1,6 @@
 {
   "type": "minecraft:crafting_shaped",
+  "category": "redstone",
   "key": {
     "C": {
       "tag": "forge:chests/wooden"
@@ -15,5 +16,6 @@
   ],
   "result": {
     "item": "minecraft:hopper"
-  }
+  },
+  "show_notification": true
 }

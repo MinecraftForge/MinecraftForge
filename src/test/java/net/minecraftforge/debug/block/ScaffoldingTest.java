@@ -13,6 +13,7 @@ import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.material.MaterialColor;
 import net.minecraft.data.DataGenerator;
+import net.minecraft.data.PackOutput;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.resources.ResourceLocation;
@@ -55,14 +56,14 @@ public class ScaffoldingTest
     private void gatherData(final GatherDataEvent event)
     {
         DataGenerator gen = event.getGenerator();
-        gen.addProvider(event.includeClient(), new ScaffoldingBlockState(gen, MODID, event.getExistingFileHelper()));
+        gen.addProvider(event.includeClient(), new ScaffoldingBlockState(gen.getPackOutput(), MODID, event.getExistingFileHelper()));
     }
 
     static class ScaffoldingBlockState extends BlockStateProvider
     {
-        public ScaffoldingBlockState(DataGenerator gen, String modid, ExistingFileHelper exFileHelper)
+        public ScaffoldingBlockState(PackOutput output, String modid, ExistingFileHelper exFileHelper)
         {
-            super(gen, modid, exFileHelper);
+            super(output, modid, exFileHelper);
         }
 
         @Override

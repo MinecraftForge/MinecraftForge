@@ -1,5 +1,6 @@
 {
   "type": "minecraft:crafting_shaped",
+  "category": "misc",
   "key": {
     "#": {
       "item": "minecraft:obsidian"
@@ -18,5 +19,6 @@
   ],
   "result": {
     "item": "minecraft:enchanting_table"
-  }
+  },
+  "show_notification": true
 }

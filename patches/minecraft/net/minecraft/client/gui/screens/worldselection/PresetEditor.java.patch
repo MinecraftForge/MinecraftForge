@@ -1,0 +1,13 @@
+--- a/net/minecraft/client/gui/screens/worldselection/PresetEditor.java
++++ b/net/minecraft/client/gui/screens/worldselection/PresetEditor.java
+@@ -28,6 +_,10 @@
+ 
+ @OnlyIn(Dist.CLIENT)
+ public interface PresetEditor {
++   /**
++    * @deprecated Forge: Use {@link net.minecraftforge.client.PresetEditorManager#get(ResourceKey)} instead.
++    */
++   @Deprecated
+    Map<Optional<ResourceKey<WorldPreset>>, PresetEditor> f_232950_ = Map.of(Optional.of(WorldPresets.f_226438_), (p_232974_, p_232975_) -> {
+       ChunkGenerator chunkgenerator = p_232975_.f_243796_().m_246737_();
+       RegistryAccess registryaccess = p_232975_.m_246480_();

@@ -1,5 +1,6 @@
 {
   "type": "minecraft:crafting_shaped",
+  "category": "misc",
   "key": {
     "#": {
       "item": "minecraft:stone_pressure_plate"
@@ -19,5 +20,6 @@
   "result": {
     "count": 6,
     "item": "minecraft:detector_rail"
-  }
+  },
+  "show_notification": true
 }

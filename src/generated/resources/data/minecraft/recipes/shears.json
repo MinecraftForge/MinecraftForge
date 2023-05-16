@@ -1,5 +1,6 @@
 {
   "type": "minecraft:crafting_shaped",
+  "category": "equipment",
   "key": {
     "#": {
       "tag": "forge:ingots/iron"
@@ -11,5 +12,6 @@
   ],
   "result": {
     "item": "minecraft:shears"
-  }
+  },
+  "show_notification": true
 }

@@ -1,0 +1,10 @@
+--- a/net/minecraft/data/registries/VanillaRegistries.java
++++ b/net/minecraft/data/registries/VanillaRegistries.java
+@@ -36,6 +_,7 @@
+ 
+ public class VanillaRegistries {
+    private static final RegistrySetBuilder f_254635_ = (new RegistrySetBuilder()).m_254916_(Registries.f_256787_, DimensionTypes::m_236473_).m_254916_(Registries.f_257003_, (RegistrySetBuilder.RegistryBootstrap)Carvers::m_254873_).m_254916_(Registries.f_256911_, (RegistrySetBuilder.RegistryBootstrap)FeatureUtils::m_254925_).m_254916_(Registries.f_256988_, PlacementUtils::m_255199_).m_254916_(Registries.f_256944_, Structures::m_255324_).m_254916_(Registries.f_256998_, StructureSets::m_255117_).m_254916_(Registries.f_257011_, ProcessorLists::m_254888_).m_254916_(Registries.f_256948_, Pools::m_255181_).m_254916_(Registries.f_256952_, BiomeData::m_272174_).m_254916_(Registries.f_273919_, MultiNoiseBiomeSourceParameterLists::m_274553_).m_254916_(Registries.f_256865_, NoiseData::m_236475_).m_254916_(Registries.f_257040_, NoiseRouterData::m_255288_).m_254916_(Registries.f_256932_, NoiseGeneratorSettings::m_254959_).m_254916_(Registries.f_256729_, WorldPresets::m_254897_).m_254916_(Registries.f_256724_, FlatLevelGeneratorPresets::m_254848_).m_254916_(Registries.f_256873_, ChatType::m_237021_).m_254916_(Registries.f_266063_, TrimPatterns::m_266400_).m_254916_(Registries.f_266076_, TrimMaterials::m_266479_).m_254916_(Registries.f_268580_, DamageTypes::m_269594_);
++   public static final List<? extends net.minecraft.resources.ResourceKey<? extends net.minecraft.core.Registry<?>>> DATAPACK_REGISTRY_KEYS = f_254635_.getEntryKeys();
+ 
+    private static void m_255148_(HolderLookup.Provider p_256242_) {
+       m_271867_(p_256242_.m_255025_(Registries.f_256988_), p_256242_.m_255025_(Registries.f_256952_));

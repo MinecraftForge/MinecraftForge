@@ -1,38 +1,29 @@
 --- a/net/minecraft/client/renderer/entity/ItemFrameRenderer.java
 +++ b/net/minecraft/client/renderer/entity/ItemFrameRenderer.java
-@@ -62,7 +_,7 @@
-       ItemStack itemstack = p_115076_.m_31822_();
-       if (!flag) {
-          ModelManager modelmanager = this.f_234645_.m_110907_().m_110881_();
--         ModelResourceLocation modelresourcelocation = this.m_174212_(p_115076_, itemstack);
-+         ModelResourceLocation modelresourcelocation = p_115076_.m_31822_().m_41720_() instanceof MapItem ? f_115045_ : f_115044_;
-          p_115079_.m_85836_();
-          p_115079_.m_85837_(-0.5D, -0.5D, -0.5D);
-          this.f_234645_.m_110937_().m_111067_(p_115079_.m_85850_(), p_115080_.m_6299_(Sheets.m_110789_()), (BlockState)null, modelmanager.m_119422_(modelresourcelocation), 1.0F, 1.0F, 1.0F, p_115081_, OverlayTexture.f_118083_);
-@@ -70,30 +_,31 @@
+@@ -70,31 +_,32 @@
        }
  
        if (!itemstack.m_41619_()) {
 -         OptionalInt optionalint = p_115076_.m_218868_();
 +         MapItemSavedData mapitemsaveddata = MapItem.m_42853_(itemstack, p_115076_.f_19853_);
           if (flag) {
-             p_115079_.m_85837_(0.0D, 0.0D, 0.5D);
+             p_115079_.m_252880_(0.0F, 0.0F, 0.5F);
           } else {
-             p_115079_.m_85837_(0.0D, 0.0D, 0.4375D);
+             p_115079_.m_252880_(0.0F, 0.0F, 0.4375F);
           }
  
 -         int j = optionalint.isPresent() ? p_115076_.m_31823_() % 4 * 2 : p_115076_.m_31823_();
 +         int j = mapitemsaveddata != null ? p_115076_.m_31823_() % 4 * 2 : p_115076_.m_31823_();
-          p_115079_.m_85845_(Vector3f.f_122227_.m_122240_((float)j * 360.0F / 8.0F));
+          p_115079_.m_252781_(Axis.f_252403_.m_252977_((float)j * 360.0F / 8.0F));
 -         if (optionalint.isPresent()) {
 +         if (!net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.RenderItemInFrameEvent(p_115076_, this, p_115079_, p_115080_, p_115081_))) {
 +         if (mapitemsaveddata != null) {
-             p_115079_.m_85845_(Vector3f.f_122227_.m_122240_(180.0F));
+             p_115079_.m_252781_(Axis.f_252403_.m_252977_(180.0F));
              float f = 0.0078125F;
              p_115079_.m_85841_(0.0078125F, 0.0078125F, 0.0078125F);
-             p_115079_.m_85837_(-64.0D, -64.0D, 0.0D);
+             p_115079_.m_252880_(-64.0F, -64.0F, 0.0F);
 -            MapItemSavedData mapitemsaveddata = MapItem.m_151128_(optionalint.getAsInt(), p_115076_.f_19853_);
-             p_115079_.m_85837_(0.0D, 0.0D, -1.0D);
+             p_115079_.m_252880_(0.0F, 0.0F, -1.0F);
              if (mapitemsaveddata != null) {
                 int i = this.m_174208_(p_115076_, 15728850, p_115081_);
 -               Minecraft.m_91087_().f_91063_.m_109151_().m_168771_(p_115079_, p_115080_, optionalint.getAsInt(), mapitemsaveddata, true, i);
@@ -41,8 +32,18 @@
           } else {
              int k = this.m_174208_(p_115076_, 15728880, p_115081_);
              p_115079_.m_85841_(0.5F, 0.5F, 0.5F);
-             this.f_115047_.m_174269_(itemstack, ItemTransforms.TransformType.FIXED, k, OverlayTexture.f_118083_, p_115079_, p_115080_, p_115076_.m_19879_());
-+         }
+             this.f_115047_.m_269128_(itemstack, ItemDisplayContext.FIXED, k, OverlayTexture.f_118083_, p_115079_, p_115080_, p_115076_.f_19853_, p_115076_.m_19879_());
           }
++         }
        }
  
+       p_115079_.m_85849_();
+@@ -106,7 +_,7 @@
+ 
+    private ModelResourceLocation m_174212_(T p_174213_, ItemStack p_174214_) {
+       boolean flag = p_174213_.m_6095_() == EntityType.f_147033_;
+-      if (p_174214_.m_150930_(Items.f_42573_)) {
++      if (p_174214_.m_41720_() instanceof MapItem) {
+          return flag ? f_174202_ : f_115045_;
+       } else {
+          return flag ? f_174201_ : f_115044_;

@@ -6,6 +6,7 @@
 package net.minecraftforge.common.extensions;
 
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.monster.EnderMan;
 import net.minecraft.world.entity.player.Inventory;
@@ -85,7 +86,7 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundTag>
        Player entityplayer = context.getPlayer();
        BlockPos blockpos = context.getClickedPos();
        BlockInWorld blockworldstate = new BlockInWorld(context.getLevel(), blockpos, false);
-       Registry<Block> registry = entityplayer.level.registryAccess().registryOrThrow(Registry.BLOCK_REGISTRY);
+       Registry<Block> registry = entityplayer.level.registryAccess().registryOrThrow(Registries.BLOCK);
        if (entityplayer != null && !entityplayer.getAbilities().mayBuild && !self().hasAdventureModePlaceTagForBlock(registry, blockworldstate)) {
           return InteractionResult.PASS;
        } else {
@@ -248,10 +249,24 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundTag>
      * @param player The Player using the item
      * @param count  The amount of time in tick the item has been used for
      *               continuously
+     *
+     * @deprecated {@link net.minecraft.world.item.ItemStack#onUseTick(Level, LivingEntity, int) Use Vanilla's Version}
      */
+    @Deprecated(since = "1.19.4", forRemoval = true)
     default void onUsingTick(LivingEntity player, int count)
     {
         self().getItem().onUsingTick(self(), player, count);
+    }
+
+    /**
+     * Called when an entity stops using an item item for any reason.
+     *
+     * @param entity The entity using the item, typically a player
+     * @param count  The amount of time in tick the item has been used for continuously
+     */
+    default void onStopUsing(LivingEntity entity, int count)
+    {
+        self().getItem().onStopUsing(self(), entity, count);
     }
 
     /**
@@ -572,4 +587,11 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundTag>
         return self().getItem().isNotReplaceableByPickAction(self(), player, inventorySlot);
     }
 
+    /**
+     * {@return true if the given ItemStack can be put into a grindstone to be repaired and/or stripped of its enchantments}
+     */
+    default boolean canGrindstoneRepair()
+    {
+        return self().getItem().canGrindstoneRepair(self());
+    }
 }

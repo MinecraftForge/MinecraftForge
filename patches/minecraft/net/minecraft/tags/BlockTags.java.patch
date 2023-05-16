@@ -1,11 +1,11 @@
 --- a/net/minecraft/tags/BlockTags.java
 +++ b/net/minecraft/tags/BlockTags.java
-@@ -164,4 +_,8 @@
+@@ -172,4 +_,8 @@
     private static TagKey<Block> m_203846_(String p_203847_) {
-       return TagKey.m_203882_(Registry.f_122901_, new ResourceLocation(p_203847_));
+       return TagKey.m_203882_(Registries.f_256747_, new ResourceLocation(p_203847_));
     }
 +
 +   public static TagKey<Block> create(ResourceLocation name) {
-+      return TagKey.m_203882_(Registry.f_122901_, name);
++      return TagKey.m_203882_(Registries.f_256747_, name);
 +   }
  }

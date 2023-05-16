@@ -1,0 +1,11 @@
+--- a/net/minecraft/client/gui/screens/worldselection/WorldCreationUiState.java
++++ b/net/minecraft/client/gui/screens/worldselection/WorldCreationUiState.java
+@@ -226,7 +_,7 @@
+    @Nullable
+    public PresetEditor m_267744_() {
+       Holder<WorldPreset> holder = this.m_267828_().f_267398_();
+-      return holder != null ? PresetEditor.f_232950_.get(holder.m_203543_()) : null;
++      return holder != null ? holder.m_203543_().map(net.minecraftforge.client.PresetEditorManager::get).orElse(null) : null; // FORGE: redirect lookup to expanded map
+    }
+ 
+    public List<WorldCreationUiState.WorldTypeEntry> m_267815_() {

@@ -1,0 +1,40 @@
+--- a/net/minecraft/world/level/block/FenceGateBlock.java
++++ b/net/minecraft/world/level/block/FenceGateBlock.java
+@@ -41,11 +_,16 @@
+    protected static final VoxelShape f_53351_ = Shapes.m_83110_(Block.m_49796_(7.0D, 5.0D, 0.0D, 9.0D, 16.0D, 2.0D), Block.m_49796_(7.0D, 5.0D, 14.0D, 9.0D, 16.0D, 16.0D));
+    protected static final VoxelShape f_53352_ = Shapes.m_83110_(Block.m_49796_(0.0D, 2.0D, 7.0D, 2.0D, 13.0D, 9.0D), Block.m_49796_(14.0D, 2.0D, 7.0D, 16.0D, 13.0D, 9.0D));
+    protected static final VoxelShape f_53353_ = Shapes.m_83110_(Block.m_49796_(7.0D, 2.0D, 0.0D, 9.0D, 13.0D, 2.0D), Block.m_49796_(7.0D, 2.0D, 14.0D, 9.0D, 13.0D, 16.0D));
+-   private final WoodType f_271446_;
++   private final net.minecraft.sounds.SoundEvent openSound;
++   private final net.minecraft.sounds.SoundEvent closeSound;
+ 
+    public FenceGateBlock(BlockBehaviour.Properties p_273352_, WoodType p_273340_) {
+-      super(p_273352_.m_60918_(p_273340_.f_271317_()));
+-      this.f_271446_ = p_273340_;
++      this(p_273352_.m_60918_(p_273340_.f_271317_()), p_273340_.f_271162_(), p_273340_.f_271365_());
++   }
++   public FenceGateBlock(BlockBehaviour.Properties props, net.minecraft.sounds.SoundEvent openSound, net.minecraft.sounds.SoundEvent closeSound) {
++      super(props);
++      this.openSound = openSound;
++      this.closeSound = closeSound;
+       this.m_49959_(this.f_49792_.m_61090_().m_61124_(f_53341_, Boolean.valueOf(false)).m_61124_(f_53342_, Boolean.valueOf(false)).m_61124_(f_53343_, Boolean.valueOf(false)));
+    }
+ 
+@@ -133,7 +_,7 @@
+       }
+ 
+       boolean flag = p_53365_.m_61143_(f_53341_);
+-      p_53366_.m_5594_(p_53368_, p_53367_, flag ? this.f_271446_.f_271162_() : this.f_271446_.f_271365_(), SoundSource.BLOCKS, 1.0F, p_53366_.m_213780_().m_188501_() * 0.1F + 0.9F);
++      p_53366_.m_5594_(p_53368_, p_53367_, flag ? this.openSound : this.closeSound, SoundSource.BLOCKS, 1.0F, p_53366_.m_213780_().m_188501_() * 0.1F + 0.9F);
+       p_53366_.m_142346_(p_53368_, flag ? GameEvent.f_157796_ : GameEvent.f_157793_, p_53367_);
+       return InteractionResult.m_19078_(p_53366_.f_46443_);
+    }
+@@ -144,7 +_,7 @@
+          if (p_53372_.m_61143_(f_53342_) != flag) {
+             p_53373_.m_7731_(p_53374_, p_53372_.m_61124_(f_53342_, Boolean.valueOf(flag)).m_61124_(f_53341_, Boolean.valueOf(flag)), 2);
+             if (p_53372_.m_61143_(f_53341_) != flag) {
+-               p_53373_.m_5594_((Player)null, p_53374_, flag ? this.f_271446_.f_271162_() : this.f_271446_.f_271365_(), SoundSource.BLOCKS, 1.0F, p_53373_.m_213780_().m_188501_() * 0.1F + 0.9F);
++               p_53373_.m_5594_((Player)null, p_53374_, flag ? this.openSound : this.closeSound, SoundSource.BLOCKS, 1.0F, p_53373_.m_213780_().m_188501_() * 0.1F + 0.9F);
+                p_53373_.m_142346_((Entity)null, flag ? GameEvent.f_157796_ : GameEvent.f_157793_, p_53374_);
+             }
+          }

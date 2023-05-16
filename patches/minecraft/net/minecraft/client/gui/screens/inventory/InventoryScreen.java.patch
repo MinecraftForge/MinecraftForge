@@ -1,14 +1,16 @@
 --- a/net/minecraft/client/gui/screens/inventory/InventoryScreen.java
 +++ b/net/minecraft/client/gui/screens/inventory/InventoryScreen.java
-@@ -100,6 +_,11 @@
-    public static void m_98850_(int p_98851_, int p_98852_, int p_98853_, float p_98854_, float p_98855_, LivingEntity p_98856_) {
-       float f = (float)Math.atan((double)(p_98854_ / 40.0F));
-       float f1 = (float)Math.atan((double)(p_98855_ / 40.0F));
-+      renderEntityInInventoryRaw(p_98851_, p_98852_, p_98853_, f, f1, p_98856_);
+@@ -98,6 +_,13 @@
+    public static void m_274545_(PoseStack p_275396_, int p_275688_, int p_275245_, int p_275535_, float p_275604_, float p_275546_, LivingEntity p_275689_) {
+       float f = (float)Math.atan((double)(p_275604_ / 40.0F));
+       float f1 = (float)Math.atan((double)(p_275546_ / 40.0F));
++      // Forge: Allow passing in direct angle components instead of mouse position
++      renderEntityInInventoryFollowsAngle(p_275396_, p_275688_, p_275245_, p_275535_, f, f1, p_275689_);
 +   }
-+   public static void renderEntityInInventoryRaw(int p_98851_, int p_98852_, int p_98853_, float angleXComponent, float angleYComponent, LivingEntity p_98856_) {
++
++   public static void renderEntityInInventoryFollowsAngle(PoseStack p_275396_, int p_275688_, int p_275245_, int p_275535_, float angleXComponent, float angleYComponent, LivingEntity p_275689_) {
 +      float f = angleXComponent;
 +      float f1 = angleYComponent;
-       PoseStack posestack = RenderSystem.m_157191_();
-       posestack.m_85836_();
-       posestack.m_85837_((double)p_98851_, (double)p_98852_, 1050.0D);
+       Quaternionf quaternionf = (new Quaternionf()).rotateZ((float)Math.PI);
+       Quaternionf quaternionf1 = (new Quaternionf()).rotateX(f1 * 20.0F * ((float)Math.PI / 180F));
+       quaternionf.mul(quaternionf1);

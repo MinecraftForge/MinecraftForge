@@ -1,7 +1,7 @@
 --- a/net/minecraft/world/item/ElytraItem.java
 +++ b/net/minecraft/world/item/ElytraItem.java
-@@ -43,6 +_,25 @@
-       }
+@@ -27,6 +_,25 @@
+       return this.m_269277_(this, p_41137_, p_41138_, p_41139_);
     }
  
 +   @Override
@@ -23,6 +23,6 @@
 +      return true;
 +   }
 +
-    @Nullable
-    public SoundEvent m_142602_() {
+    public SoundEvent m_150681_() {
        return SoundEvents.f_11674_;
+    }

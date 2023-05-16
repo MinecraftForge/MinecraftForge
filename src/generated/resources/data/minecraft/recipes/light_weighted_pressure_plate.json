@@ -1,5 +1,6 @@
 {
   "type": "minecraft:crafting_shaped",
+  "category": "redstone",
   "key": {
     "#": {
       "tag": "forge:ingots/gold"
@@ -10,5 +11,6 @@
   ],
   "result": {
     "item": "minecraft:light_weighted_pressure_plate"
-  }
+  },
+  "show_notification": true
 }

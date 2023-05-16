@@ -205,7 +205,7 @@ public interface IForgeBlock
     {
         if (isBed(state, levelReader, pos, entity) && levelReader instanceof Level level && BedBlock.canSetSpawn(level))
         {
-            return BedBlock.findStandUpPosition(type, levelReader, pos, orientation);
+            return BedBlock.findStandUpPosition(type, levelReader, pos, state.getValue(BedBlock.FACING), orientation);
         }
         return Optional.empty();
     }
@@ -543,8 +543,7 @@ public interface IForgeBlock
     @Nullable
     default BlockPathTypes getAdjacentBlockPathType(BlockState state, BlockGetter level, BlockPos pos, @Nullable Mob mob, BlockPathTypes originalType)
     {
-        if (state.is(Blocks.CACTUS)) return BlockPathTypes.DANGER_CACTUS;
-        else if (state.is(Blocks.SWEET_BERRY_BUSH)) return BlockPathTypes.DANGER_OTHER;
+        if (state.is(Blocks.SWEET_BERRY_BUSH)) return BlockPathTypes.DANGER_OTHER;
         else if (WalkNodeEvaluator.isBurningBlock(state)) return BlockPathTypes.DANGER_FIRE;
         else return null;
     }

@@ -1,5 +1,6 @@
 {
   "type": "minecraft:crafting_shaped",
+  "category": "misc",
   "key": {
     "#": {
       "item": "minecraft:smooth_stone"
@@ -18,5 +19,6 @@
   ],
   "result": {
     "item": "minecraft:blast_furnace"
-  }
+  },
+  "show_notification": true
 }

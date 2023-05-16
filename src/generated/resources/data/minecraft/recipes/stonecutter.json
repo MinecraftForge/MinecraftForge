@@ -1,5 +1,6 @@
 {
   "type": "minecraft:crafting_shaped",
+  "category": "misc",
   "key": {
     "#": {
       "item": "minecraft:stone"
@@ -14,5 +15,6 @@
   ],
   "result": {
     "item": "minecraft:stonecutter"
-  }
+  },
+  "show_notification": true
 }

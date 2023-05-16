@@ -10,6 +10,7 @@ import net.minecraftforge.client.event.ScreenEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.GameShuttingDownEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.fml.loading.LoadingModList;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -58,6 +59,8 @@ public class TestFramework {
         LOGGER.info("Preparing all event tests.");
 
         tests = gatherEvents();
+        if (FMLLoader.getDist().isDedicatedServer()) return; // This entire thing doesn't work on servers...
+
         // Let each event set up
         tests.forEach(EventTest::registerEvents);
 

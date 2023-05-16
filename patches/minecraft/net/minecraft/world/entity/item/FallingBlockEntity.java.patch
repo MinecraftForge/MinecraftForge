@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/item/FallingBlockEntity.java
 +++ b/net/minecraft/world/entity/item/FallingBlockEntity.java
-@@ -117,11 +_,11 @@
+@@ -120,11 +_,11 @@
           if (!this.f_19853_.f_46443_) {
              BlockPos blockpos = this.m_20183_();
              boolean flag = this.f_31946_.m_60734_() instanceof ConcretePowderBlock;

@@ -7,8 +7,9 @@ package net.minecraftforge.debug.client.model;
 
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
-import com.mojang.datafixers.util.Pair;
-import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.resources.model.ModelBaker;
+import net.minecraft.data.PackOutput;
+import net.minecraft.world.item.*;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Material;
@@ -32,12 +33,13 @@ import net.minecraftforge.client.model.generators.BlockModelBuilder;
 import net.minecraftforge.client.model.generators.BlockStateProvider;
 import net.minecraftforge.client.model.generators.ConfiguredModel;
 import net.minecraftforge.client.model.generators.ItemModelProvider;
-import net.minecraftforge.client.model.generators.loaders.ItemLayersModelBuilder;
+import net.minecraftforge.client.model.generators.loaders.ItemLayerModelBuilder;
 import net.minecraftforge.client.model.generators.loaders.ObjModelBuilder;
 import net.minecraftforge.client.model.generators.loaders.SeparateTransformsModelBuilder;
 import net.minecraftforge.client.model.geometry.SimpleUnbakedGeometry;
 import net.minecraftforge.client.model.pipeline.QuadBakingVertexConsumer;
 import net.minecraftforge.common.data.ExistingFileHelper;
+import net.minecraftforge.event.CreativeModeTabEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.RegistryObject;
 import net.minecraftforge.fml.common.Mod;
@@ -46,19 +48,11 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Set;
+import java.util.Arrays;
 import java.util.function.Function;
 
 import net.minecraft.client.renderer.block.model.ItemTransforms;
-import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.ModelState;
-import net.minecraft.client.resources.model.UnbakedModel;
-import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import org.jetbrains.annotations.Nullable;
 
@@ -95,7 +89,7 @@ public class NewModelLoaderTest
     );
 
     public static RegistryObject<Item> obj_item = ITEMS.register("obj_block", () ->
-            new BlockItem(obj_block.get(), new Item.Properties().tab(CreativeModeTab.TAB_MISC)) {
+            new BlockItem(obj_block.get(), new Item.Properties()) {
                 @Override
                 public boolean canEquip(ItemStack stack, EquipmentSlot armorType, Entity entity)
                 {
@@ -105,23 +99,23 @@ public class NewModelLoaderTest
     );
 
     public static RegistryObject<Item> custom_transforms = ITEMS.register("custom_transforms", () ->
-            new Item(new Item.Properties().tab(CreativeModeTab.TAB_MISC))
+            new Item(new Item.Properties())
     );
 
     public static RegistryObject<Item> custom_vanilla_loader = ITEMS.register("custom_vanilla_loader", () ->
-            new Item(new Item.Properties().tab(CreativeModeTab.TAB_MISC))
+            new Item(new Item.Properties())
     );
 
     public static RegistryObject<Item> custom_loader = ITEMS.register("custom_loader", () ->
-            new Item(new Item.Properties().tab(CreativeModeTab.TAB_MISC))
+            new Item(new Item.Properties())
     );
 
     public static RegistryObject<Item> item_layers = ITEMS.register("item_layers", () ->
-            new Item(new Item.Properties().tab(CreativeModeTab.TAB_MISC))
+            new Item(new Item.Properties())
     );
 
     public static RegistryObject<Item> separate_perspective = ITEMS.register("separate_perspective", () ->
-            new Item(new Item.Properties().tab(CreativeModeTab.TAB_MISC))
+            new Item(new Item.Properties())
     );
 
     public NewModelLoaderTest()
@@ -133,6 +127,22 @@ public class NewModelLoaderTest
 
         modEventBus.addListener(this::modelRegistry);
         modEventBus.addListener(this::datagen);
+        modEventBus.addListener(this::addCreative);
+    }
+
+    private void addCreative(CreativeModeTabEvent.BuildContents event)
+    {
+        if (event.getTab() == CreativeModeTabs.INGREDIENTS)
+        {
+            Arrays.asList(
+                obj_item,
+                custom_transforms,
+                custom_vanilla_loader,
+                custom_loader,
+                item_layers,
+                separate_perspective
+            ).forEach(event::accept);
+        }
     }
 
     public void modelRegistry(ModelEvent.RegisterGeometryLoaders event)
@@ -152,8 +162,7 @@ public class NewModelLoaderTest
     static class TestModel extends SimpleUnbakedGeometry<TestModel>
     {
         @Override
-        protected void addQuads(IGeometryBakingContext owner, IModelBuilder<?> modelBuilder, ModelBakery bakery, Function< net.minecraft.client.resources.model.Material, TextureAtlasSprite> spriteGetter, ModelState modelTransform, ResourceLocation modelLocation)
-        {
+        protected void addQuads(IGeometryBakingContext owner, IModelBuilder<?> modelBuilder, ModelBaker baker, Function<net.minecraft.client.resources.model.Material, TextureAtlasSprite> spriteGetter, ModelState modelTransform, ResourceLocation modelLocation) {
             TextureAtlasSprite texture = spriteGetter.apply(owner.getMaterial("particle"));
 
             var quadBaker = new QuadBakingVertexConsumer.Buffered();
@@ -168,54 +177,50 @@ public class NewModelLoaderTest
 
             modelBuilder.addUnculledFace(quadBaker.getQuad());
         }
-
-        @Override
-        public Collection< net.minecraft.client.resources.model.Material> getMaterials(IGeometryBakingContext context, Function<ResourceLocation, UnbakedModel> modelGetter, Set<Pair<String, String>> missingTextureErrors)
-        {
-            return Collections.singleton(context.getMaterial("particle"));
-        }
     }
 
     private void datagen(GatherDataEvent event)
     {
         DataGenerator gen = event.getGenerator();
+        final PackOutput output = gen.getPackOutput();
 
         // Let blockstate provider see generated item models by passing its existing file helper
-        ItemModelProvider itemModels = new ItemModels(gen, event.getExistingFileHelper());
+        ItemModelProvider itemModels = new ItemModels(output, event.getExistingFileHelper());
         gen.addProvider(event.includeClient(), itemModels);
-        gen.addProvider(event.includeClient(), new BlockStates(gen, itemModels.existingFileHelper));
+        gen.addProvider(event.includeClient(), new BlockStates(output, itemModels.existingFileHelper));
     }
 
     public static class ItemModels extends ItemModelProvider
     {
-        public ItemModels(DataGenerator generator, ExistingFileHelper existingFileHelper)
+        public ItemModels(PackOutput output, ExistingFileHelper existingFileHelper)
         {
-            super(generator, MODID, existingFileHelper);
+            super(output, MODID, existingFileHelper);
         }
 
         @Override
         protected void registerModels()
         {
             withExistingParent(NewModelLoaderTest.item_layers.getId().getPath(), "forge:item/default")
+                    .texture("particle", "minecraft:block/red_stained_glass")
                     .texture("layer0", "minecraft:item/coal")
                     .texture("layer1", "minecraft:item/stick")
-                    .customLoader(ItemLayersModelBuilder::begin)
-                        .emissive(1)
+                    .customLoader(ItemLayerModelBuilder::begin)
+                        .emissive(15, 15, 1)
                     .end();
             withExistingParent(NewModelLoaderTest.separate_perspective.getId().getPath(), "forge:item/default")
                     .customLoader(SeparateTransformsModelBuilder::begin)
                         .base(nested().parent(getExistingFile(mcLoc("minecraft:item/coal"))))
-                        .perspective(ItemTransforms.TransformType.GUI, nested().parent(getExistingFile(mcLoc("minecraft:item/snowball"))))
-                        .perspective(ItemTransforms.TransformType.FIRST_PERSON_LEFT_HAND, nested().parent(getExistingFile(mcLoc("minecraft:item/bone"))))
+                        .perspective(ItemDisplayContext.GUI, nested().parent(getExistingFile(mcLoc("minecraft:item/snowball"))))
+                        .perspective(ItemDisplayContext.FIRST_PERSON_LEFT_HAND, nested().parent(getExistingFile(mcLoc("minecraft:item/bone"))))
                     .end();
         }
     }
 
     public static class BlockStates extends BlockStateProvider
     {
-        public BlockStates(DataGenerator gen, ExistingFileHelper exFileHelper)
+        public BlockStates(PackOutput output, ExistingFileHelper exFileHelper)
         {
-            super(gen, MODID, exFileHelper);
+            super(output, MODID, exFileHelper);
         }
 
         @Override

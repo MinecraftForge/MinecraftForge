@@ -1,0 +1,20 @@
+name: 'Pull Request Review Comment actions'
+
+on:
+  workflow_run:
+    workflows: [PR Review Comment]
+    types:
+      - completed
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+  discussions: write
+
+jobs:
+  labels:
+    uses: MinecraftForge/SharedActions/.github/workflows/pr_review_comment_actions.yml@main
+    secrets:
+      GH_APP_KEY: ${{ secrets.GH_APP_KEY }}
+      GH_APP_NAME: ${{ secrets.GH_APP_NAME }}

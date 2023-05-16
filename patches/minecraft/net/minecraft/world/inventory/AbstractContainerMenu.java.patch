@@ -1,26 +1,23 @@
 --- a/net/minecraft/world/inventory/AbstractContainerMenu.java
 +++ b/net/minecraft/world/inventory/AbstractContainerMenu.java
-@@ -211,9 +_,11 @@
-    private void m_150407_(int p_150408_, ItemStack p_150409_, Supplier<ItemStack> p_150410_) {
-       ItemStack itemstack = this.f_38841_.get(p_150408_);
-       if (!ItemStack.m_41728_(itemstack, p_150409_)) {
-+         boolean clientStackChanged = !p_150409_.equals(itemstack, true);
-          ItemStack itemstack1 = p_150410_.get();
-          this.f_38841_.set(p_150408_, itemstack1);
- 
-+         if(clientStackChanged)
-          for(ContainerListener containerlistener : this.f_38848_) {
-             containerlistener.m_7934_(this, p_150408_, itemstack1);
+@@ -229,6 +_,8 @@
+             ItemStack itemstack1 = p_150438_.get();
+             this.f_150394_.set(p_150436_, itemstack1);
+             if (this.f_150397_ != null) {
++               // Forge: Only synchronize a slot change if the itemstack actually changed in a way that is relevant to the client (i.e. share tag changed)
++               if (!p_150437_.equals(itemstack, true))
+                this.f_150397_.m_142074_(this, p_150436_, itemstack1);
+             }
           }
-@@ -400,6 +_,7 @@
+@@ -401,6 +_,7 @@
              ItemStack itemstack11 = this.m_142621_();
              p_150434_.m_141945_(itemstack11, slot7.m_7993_(), clickaction);
-             if (!itemstack11.m_150926_(slot7, clickaction, p_150434_) && !itemstack10.m_150932_(itemstack11, slot7, clickaction, p_150434_, this.m_150446_())) {
+             if (!this.m_246200_(p_150434_, clickaction, slot7, itemstack10, itemstack11)) {
 +            if (!net.minecraftforge.common.ForgeHooks.onItemStackedOn(itemstack11, itemstack10, slot7, clickaction, p_150434_, m_150446_()))
                 if (itemstack10.m_41619_()) {
                    if (!itemstack11.m_41619_()) {
                       int l2 = clickaction == ClickAction.PRIMARY ? itemstack11.m_41613_() : 1;
-@@ -601,14 +_,15 @@
+@@ -611,14 +_,15 @@
              ItemStack itemstack = slot.m_7993_();
              if (!itemstack.m_41619_() && ItemStack.m_150942_(p_38904_, itemstack)) {
                 int j = itemstack.m_41613_() + p_38904_.m_41613_();
@@ -40,7 +37,7 @@
                    slot.m_6654_();
                    flag = true;
                 }
-@@ -708,7 +_,7 @@
+@@ -718,7 +_,7 @@
              p_38925_.m_41764_(1);
              break;
           case 2:

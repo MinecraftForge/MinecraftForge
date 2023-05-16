@@ -1,6 +1,6 @@
 --- a/net/minecraft/tags/TagManager.java
 +++ b/net/minecraft/tags/TagManager.java
-@@ -30,7 +_,7 @@
+@@ -31,7 +_,7 @@
  
     public static String m_203918_(ResourceKey<? extends Registry<?>> p_203919_) {
        String s = f_203902_.get(p_203919_);

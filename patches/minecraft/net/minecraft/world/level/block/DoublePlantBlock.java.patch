@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/DoublePlantBlock.java
 +++ b/net/minecraft/world/level/block/DoublePlantBlock.java
-@@ -53,6 +_,7 @@
+@@ -54,6 +_,7 @@
           return super.m_7898_(p_52887_, p_52888_, p_52889_);
        } else {
           BlockState blockstate = p_52888_.m_8055_(p_52889_.m_7495_());

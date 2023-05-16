@@ -7,13 +7,13 @@ package net.minecraftforge.debug.client.rendering;
 
 import java.util.Map;
 
+import com.mojang.math.Transformation;
+import net.minecraftforge.common.util.TransformationHelper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.google.common.collect.ImmutableMap;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Matrix4f;
-import com.mojang.math.Quaternion;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LightTexture;
@@ -43,14 +43,16 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLEnvironment;
+import org.joml.Matrix4f;
+import org.joml.Quaternionf;
 
 /**
  * This mod is testing the use of {@link RenderLevelStageEvent} and is a modifaction of a pre-existing test mod that used the old
  * {@link RenderLevelLastEvent}. To restore the old behavior, set {@link #USE_LEVEL_RENDERER_STAGE} to false.
- * 
+ *
  * When you enter a world, there should be 6 sugar gliders rendering at (0, 120, 0) that test the various stages in {@link RenderLevelStageEvent}.
  * From left to right (with the sugar gliders facing you) they represent {@link Stage#AFTER_SKY}, {@link Stage#AFTER_SOLID_BLOCKS},
- * {@link Stage#AFTER_TRANSLUCENT_BLOCKS}, {@link Stage#AFTER_TRIPWIRE_BLOCKS}, {@link Stage#AFTER_PARTICLES}, and {@link Stage#AFTER_WEATHER}. 
+ * {@link Stage#AFTER_TRANSLUCENT_BLOCKS}, {@link Stage#AFTER_TRIPWIRE_BLOCKS}, {@link Stage#AFTER_PARTICLES}, and {@link Stage#AFTER_WEATHER}.
  * Due to how weather modifies the projection matrix, it's sugar glider will be positioned weirdly. Below each sugar gliders is a render of
  * blue stained glass to test translucency with fabulous graphics. {@link Stage#AFTER_PARTICLES} will render the stained glass using
  * {@link ForgeRenderTypes#TRANSLUCENT_ON_PARTICLES_TARGET}.
@@ -61,7 +63,7 @@ public class RenderableTest
     public static final String MODID = "renderable_test";
     private static final Logger LOGGER = LogManager.getLogger();
 
-    public static final boolean ENABLED = true; // Renders at (0, 120, 0)
+    public static final boolean ENABLED = false; // Renders at (0, 120, 0)
     public static final boolean USE_LEVEL_RENDERER_STAGE = true; // True when using RenderLevelStageEvent. False when using RenderLevelLastEvent
 
     public RenderableTest()
@@ -168,7 +170,7 @@ public class RenderableTest
         private static void render(Stage stage, PoseStack poseStack, int renderTick, float partialTick, double camX, double camY, double camZ, int xOffset)
         {
             double x = camX, y = camY, z = camZ;
-            if (!new BlockPos(0, y, 0).closerThan(new BlockPos(x, y, z), 100))
+            if (!BlockPos.containing(0, y, 0).closerThan(BlockPos.containing(x, y, z), 100))
                 return;
 
             var profiler = Minecraft.getInstance().getProfiler();
@@ -185,13 +187,11 @@ public class RenderableTest
             var map = ImmutableMap.<String, Matrix4f>builder();
 
             var left = new Matrix4f();
-            left.setIdentity();
-            left.multiply(Quaternion.fromYXZ(0, 0, (float)Math.sin(time * 0.4) * 0.1f));
+            left.rotation((float)Math.sin(time * 0.4) * 0.1f, 0, 0, 1);
             map.put("object_1", left);
 
             var right = new Matrix4f();
-            right.setIdentity();
-            right.multiply(Quaternion.fromYXZ(0, 0, -(float)Math.sin(time * 0.4) * 0.1f));
+            right.rotation(-(float)Math.sin(time * 0.4) * 0.1f, 0, 0, 1);
             map.put("object_9", right);
 
             var transforms = CompositeRenderable.Transforms.of(map.build());

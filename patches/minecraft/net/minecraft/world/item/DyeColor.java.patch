@@ -16,7 +16,7 @@
        this.f_41039_ = new float[]{(float)i / 255.0F, (float)j / 255.0F, (float)k / 255.0F};
        this.f_41040_ = p_41050_;
     }
-@@ -109,5 +_,22 @@
+@@ -100,5 +_,23 @@
  
     public String m_7912_() {
        return this.f_41035_;
@@ -31,7 +31,8 @@
 +      if (stack.m_41720_() instanceof DyeItem)
 +         return ((DyeItem)stack.m_41720_()).m_41089_();
 +
-+      for (DyeColor color : f_41032_) {
++      for (int x = 0; x < BLACK.m_41060_(); x++) {
++         DyeColor color = m_41053_(x);
 +         if (stack.m_204117_(color.getTag()))
 +             return color;
 +      }

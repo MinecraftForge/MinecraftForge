@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/TrapDoorBlock.java
 +++ b/net/minecraft/world/level/block/TrapDoorBlock.java
-@@ -152,4 +_,17 @@
+@@ -149,4 +_,17 @@
  
        return super.m_7417_(p_57554_, p_57555_, p_57556_, p_57557_, p_57558_, p_57559_);
     }

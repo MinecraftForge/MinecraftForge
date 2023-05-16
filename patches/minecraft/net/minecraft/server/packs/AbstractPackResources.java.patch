@@ -1,13 +1,13 @@
 --- a/net/minecraft/server/packs/AbstractPackResources.java
 +++ b/net/minecraft/server/packs/AbstractPackResources.java
-@@ -120,4 +_,10 @@
-    public String m_8017_() {
-       return this.f_10203_.getName();
+@@ -64,4 +_,10 @@
+    public boolean m_246538_() {
+       return this.f_254645_;
     }
 +
 +   @Override
 +   public String toString()
 +   {
-+      return String.format(java.util.Locale.ROOT, "%s: %s", getClass().getName(), f_10203_.getPath());
++      return String.format(java.util.Locale.ROOT, "%s: %s", getClass().getName(), this.f_243737_);
 +   }
  }

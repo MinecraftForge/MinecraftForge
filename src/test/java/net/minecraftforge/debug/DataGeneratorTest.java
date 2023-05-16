@@ -12,6 +12,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -20,36 +21,52 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import com.google.gson.JsonNull;
 import com.google.gson.JsonPrimitive;
+import net.minecraft.DetectedVersion;
 import net.minecraft.Util;
 import net.minecraft.advancements.critereon.InventoryChangeTrigger;
+import net.minecraft.core.*;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.data.CachedOutput;
-import net.minecraft.data.advancements.AdvancementProvider;
-import net.minecraft.data.recipes.ShapelessRecipeBuilder;
+import net.minecraft.data.PackOutput;
+import net.minecraft.data.metadata.PackMetadataGenerator;
+import net.minecraft.data.recipes.*;
+import net.minecraft.data.worldgen.BootstapContext;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.packs.metadata.pack.PackMetadataSection;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.ItemTags;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.biome.TheEndBiomeSource;
 import net.minecraft.world.level.block.ButtonBlock;
 import net.minecraft.world.level.block.DoorBlock;
 import net.minecraft.world.level.block.PressurePlateBlock;
 import net.minecraft.world.level.block.StandingSignBlock;
 import net.minecraft.world.level.block.WallSignBlock;
+import net.minecraft.world.level.dimension.BuiltinDimensionTypes;
+import net.minecraft.world.level.dimension.DimensionType;
+import net.minecraft.world.level.dimension.LevelStem;
+import net.minecraft.world.level.levelgen.NoiseBasedChunkGenerator;
+import net.minecraft.world.level.levelgen.NoiseGeneratorSettings;
 import net.minecraftforge.common.crafting.CompoundIngredient;
 import net.minecraftforge.common.crafting.PartialNBTIngredient;
 import net.minecraftforge.common.crafting.DifferenceIngredient;
 import net.minecraftforge.common.crafting.IntersectionIngredient;
 import net.minecraftforge.common.crafting.StrictNBTIngredient;
-import net.minecraftforge.common.data.SoundDefinition;
-import net.minecraftforge.common.data.SoundDefinitionsProvider;
+import net.minecraftforge.common.data.*;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.commons.lang3.tuple.Triple;
 import org.apache.logging.log4j.LogManager;
@@ -74,11 +91,7 @@ import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.block.model.ItemTransform;
 import net.minecraft.client.renderer.block.model.Variant;
 import net.minecraft.client.renderer.block.model.BlockModel.GuiLight;
-import net.minecraft.data.tags.BlockTagsProvider;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.data.recipes.FinishedRecipe;
-import net.minecraft.data.recipes.RecipeProvider;
-import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Items;
@@ -86,7 +99,6 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.model.generators.BlockStateProvider;
 import net.minecraftforge.client.model.generators.ConfiguredModel;
@@ -99,8 +111,6 @@ import net.minecraftforge.client.model.generators.VariantBlockStateBuilder;
 import net.minecraftforge.common.crafting.ConditionalAdvancement;
 import net.minecraftforge.common.crafting.ConditionalRecipe;
 import net.minecraftforge.common.crafting.conditions.IConditionBuilder;
-import net.minecraftforge.common.data.ExistingFileHelper;
-import net.minecraftforge.common.data.LanguageProvider;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
@@ -126,6 +136,13 @@ public class DataGeneratorTest
 
     private static Gson GSON = null;
 
+    // Datapack registry objects
+    private static final ResourceKey<NoiseGeneratorSettings> TEST_SETTINGS = ResourceKey.create(Registries.NOISE_SETTINGS, new ResourceLocation(MODID, "test_settings"));
+    private static final ResourceKey<LevelStem> TEST_LEVEL_STEM = ResourceKey.create(Registries.LEVEL_STEM, new ResourceLocation(MODID, "test_level_stem"));
+    private static final RegistrySetBuilder BUILDER = new RegistrySetBuilder()
+            .add(Registries.NOISE_SETTINGS, context -> context.register(TEST_SETTINGS, NoiseGeneratorSettings.floatingIslands(context)))
+            .add(Registries.LEVEL_STEM, DataGeneratorTest::levelStem);
+
     @SubscribeEvent
     public static void gatherData(GatherDataEvent event)
     {
@@ -136,28 +153,48 @@ public class DataGeneratorTest
                 .create();
 
         DataGenerator gen = event.getGenerator();
+        PackOutput packOutput = gen.getPackOutput();
+        CompletableFuture<HolderLookup.Provider> lookupProvider = event.getLookupProvider();
 
-        gen.addProvider(event.includeClient(), new Lang(gen));
+        gen.addProvider(true, new PackMetadataGenerator(packOutput)
+                .add(PackMetadataSection.TYPE, new PackMetadataSection(
+                        Component.literal("Forge tests resource pack"),
+                        DetectedVersion.BUILT_IN.getPackVersion(PackType.CLIENT_RESOURCES),
+                        Arrays.stream(PackType.values()).collect(Collectors.toMap(Function.identity(), DetectedVersion.BUILT_IN::getPackVersion))
+                ))
+        );
+        gen.addProvider(event.includeClient(), new Lang(packOutput));
         // Let blockstate provider see generated item models by passing its existing file helper
-        ItemModelProvider itemModels = new ItemModels(gen, event.getExistingFileHelper());
+        ItemModelProvider itemModels = new ItemModels(packOutput, event.getExistingFileHelper());
         gen.addProvider(event.includeClient(), itemModels);
-        gen.addProvider(event.includeClient(), new BlockStates(gen, itemModels.existingFileHelper));
-        gen.addProvider(event.includeClient(), new SoundDefinitions(gen, event.getExistingFileHelper()));
+        gen.addProvider(event.includeClient(), new BlockStates(packOutput, itemModels.existingFileHelper));
+        gen.addProvider(event.includeClient(), new SoundDefinitions(packOutput, event.getExistingFileHelper()));
 
-        gen.addProvider(event.includeServer(), new Recipes(gen));
-        gen.addProvider(event.includeServer(), new Tags(gen, event.getExistingFileHelper()));
-        gen.addProvider(event.includeServer(), new Advancements(gen, event.getExistingFileHelper()));
+        gen.addProvider(event.includeServer(), new Recipes(packOutput));
+        gen.addProvider(event.includeServer(), new Tags(packOutput, lookupProvider, event.getExistingFileHelper()));
+        gen.addProvider(event.includeServer(), new ForgeAdvancementProvider(packOutput, lookupProvider, event.getExistingFileHelper(), List.of(new Advancements())));
+        gen.addProvider(event.includeServer(), new DatapackBuiltinEntriesProvider(packOutput, lookupProvider, BUILDER, Set.of(MODID)));
+    }
+
+    public static void levelStem(BootstapContext<LevelStem> context) {
+        HolderGetter<DimensionType> dimensionTypes = context.lookup(Registries.DIMENSION_TYPE);
+        HolderGetter<NoiseGeneratorSettings> noiseGeneratorSettings = context.lookup(Registries.NOISE_SETTINGS);
+        HolderGetter<Biome> biomes = context.lookup(Registries.BIOME);
+        Holder<DimensionType> holder2 = dimensionTypes.getOrThrow(BuiltinDimensionTypes.END);
+        Holder<NoiseGeneratorSettings> holder3 = noiseGeneratorSettings.getOrThrow(NoiseGeneratorSettings.END);
+        LevelStem levelStem = new LevelStem(holder2, new NoiseBasedChunkGenerator(TheEndBiomeSource.create(biomes), holder3));
+        context.register(TEST_LEVEL_STEM, levelStem);
     }
 
     public static class Recipes extends RecipeProvider implements IConditionBuilder
     {
-        public Recipes(DataGenerator gen)
+        public Recipes(PackOutput gen)
         {
             super(gen);
         }
 
         @Override
-        protected void buildCraftingRecipes(Consumer<FinishedRecipe> consumer)
+        protected void buildRecipes(Consumer<FinishedRecipe> consumer)
         {
             // conditional recipe
             ResourceLocation ID = new ResourceLocation("data_gen_test", "conditional");
@@ -171,7 +208,7 @@ public class DataGeneratorTest
                 )
             )
             .addRecipe(
-                ShapedRecipeBuilder.shaped(Blocks.DIAMOND_BLOCK, 64)
+                ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, Blocks.DIAMOND_BLOCK, 64)
                 .pattern("XXX")
                 .pattern("XXX")
                 .pattern("XXX")
@@ -214,7 +251,7 @@ public class DataGeneratorTest
                             )
                     )
                     .addRecipe(
-                            ShapedRecipeBuilder.shaped(Blocks.DIAMOND_BLOCK, 64)
+                            ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, Blocks.DIAMOND_BLOCK, 64)
                                     .pattern("XXX")
                                     .pattern("XXX")
                                     .pattern("XXX")
@@ -231,7 +268,7 @@ public class DataGeneratorTest
                             tagEmpty(ItemTags.PLANKS)
                     )
                     .addRecipe(
-                            ShapedRecipeBuilder.shaped(Blocks.NETHERITE_BLOCK, 1)
+                            ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, Blocks.NETHERITE_BLOCK, 1)
                                     .pattern("XX")
                                     .pattern("XX")
                                     .define('X', Blocks.DIAMOND_BLOCK)
@@ -245,7 +282,7 @@ public class DataGeneratorTest
                             )
                     )
                     .addRecipe(
-                            ShapedRecipeBuilder.shaped(Blocks.NETHERITE_BLOCK, 9)
+                            ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, Blocks.NETHERITE_BLOCK, 9)
                                     .pattern("XX")
                                     .pattern("XX")
                                     .define('X', Blocks.DIAMOND_BLOCK)
@@ -264,14 +301,14 @@ public class DataGeneratorTest
                     stack.setDamageValue(3);
                     return stack;
                 }));
-            ShapelessRecipeBuilder.shapeless(Items.GOLDEN_PICKAXE)
+            ShapelessRecipeBuilder.shapeless(RecipeCategory.TOOLS, Items.GOLDEN_PICKAXE)
                                   .requires(nbtIngredient)
                                   .unlockedBy("has_pickaxe", has(Items.IRON_PICKAXE))
                                   .save(consumer, new ResourceLocation("data_gen_test", "exact_nbt_ingredient"));
 
             // ingredient tests
             // contains NBT match - should match a stone pickaxe that lost 3 durability, regardless of setting its name
-            ShapelessRecipeBuilder.shapeless(Items.IRON_PICKAXE)
+            ShapelessRecipeBuilder.shapeless(RecipeCategory.TOOLS, Items.IRON_PICKAXE)
                                   .requires(PartialNBTIngredient.of(Items.STONE_PICKAXE, Util.make(() ->
                                       {
                                         CompoundTag nbt = new CompoundTag();
@@ -282,7 +319,7 @@ public class DataGeneratorTest
                                   .save(consumer, new ResourceLocation("data_gen_test", "contains_nbt_ingredient_single_item"));
 
             // contains NBT match - should match a wood, stone, or iron pickaxe that was named "Diamond Pickaxe", regardless of damage
-            ShapelessRecipeBuilder.shapeless(Items.DIAMOND_PICKAXE)
+            ShapelessRecipeBuilder.shapeless(RecipeCategory.TOOLS, Items.DIAMOND_PICKAXE)
                                   .requires(PartialNBTIngredient.of(Util.make(() ->
                                       {
                                           CompoundTag nbt = new CompoundTag();
@@ -295,7 +332,7 @@ public class DataGeneratorTest
                                   .save(consumer, new ResourceLocation("data_gen_test", "contains_nbt_ingredient_item_set"));
 
             // intersection - should match all non-flammable planks
-            ShapedRecipeBuilder.shaped(Blocks.NETHERRACK)
+            ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, Blocks.NETHERRACK)
                     .pattern("###")
                     .pattern("###")
                     .pattern(" # ")
@@ -304,7 +341,7 @@ public class DataGeneratorTest
                     .save(consumer, new ResourceLocation("data_gen_test", "intersection_ingredient"));
 
             // difference - should match all flammable fences
-            ShapedRecipeBuilder.shaped(Items.FLINT_AND_STEEL)
+            ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, Items.FLINT_AND_STEEL)
                                .pattern(" # ")
                                .pattern("###")
                                .pattern(" # ")
@@ -313,7 +350,7 @@ public class DataGeneratorTest
                                .save(consumer, new ResourceLocation("data_gen_test", "difference_ingredient"));
 
             // compound - should match planks, logs, or bedrock
-            ShapedRecipeBuilder.shaped(Blocks.DIRT)
+            ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, Blocks.DIRT)
                                .pattern("###")
                                .pattern(" # ")
                                .define('#', CompoundIngredient.of(Ingredient.of(ItemTags.PLANKS), Ingredient.of(ItemTags.LOGS), Ingredient.of(Blocks.BEDROCK)))
@@ -321,7 +358,7 @@ public class DataGeneratorTest
                                .save(consumer, new ResourceLocation("data_gen_test", "compound_ingredient_only_vanilla"));
 
             // compound - should match planks, logs, or a stone pickaxe with 3 damage
-            ShapedRecipeBuilder.shaped(Blocks.GOLD_BLOCK)
+            ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, Blocks.GOLD_BLOCK)
                                .pattern("#")
                                .pattern("#")
                                .define('#', CompoundIngredient.of(Ingredient.of(ItemTags.PLANKS), Ingredient.of(ItemTags.LOGS), nbtIngredient))
@@ -335,9 +372,9 @@ public class DataGeneratorTest
         private static final Logger LOGGER = LogManager.getLogger();
         private final ExistingFileHelper helper;
 
-        public SoundDefinitions(final DataGenerator generator, final ExistingFileHelper helper)
+        public SoundDefinitions(final PackOutput output, final ExistingFileHelper helper)
         {
-            super(generator, MODID, helper);
+            super(output, MODID, helper);
             this.helper = helper;
         }
 
@@ -405,13 +442,12 @@ public class DataGeneratorTest
         }
 
         @Override
-        public void run(CachedOutput cache) throws IOException
+        public CompletableFuture<?> run(CachedOutput cache)
         {
-            super.run(cache);
-            test();
+            return super.run(cache).thenRun(this::test);
         }
 
-        private void test() throws IOException
+        private void test()
         {
             final JsonObject generated;
             try
@@ -422,10 +458,15 @@ public class DataGeneratorTest
             {
                 throw new RuntimeException("Unable to test for errors due to reflection error", e);
             }
-            final JsonObject actual = GSON.fromJson(
-                    this.helper.getResource(new ResourceLocation("sounds.json"), PackType.CLIENT_RESOURCES).openAsReader(),
-                    JsonObject.class
-            );
+            final JsonObject actual;
+            try {
+                actual = GSON.fromJson(
+                        this.helper.getResource(new ResourceLocation("sounds.json"), PackType.CLIENT_RESOURCES).openAsReader(),
+                        JsonObject.class
+                );
+            } catch (IOException e) {
+                throw new RuntimeException("Unable to test for errors due to missing sounds.json", e);
+            }
 
             final JsonObject filtered = new JsonObject();
             generated.entrySet().forEach(it -> filtered.add(it.getKey(), Optional.ofNullable(actual.get(it.getKey())).orElseGet(JsonNull::new)));
@@ -553,13 +594,13 @@ public class DataGeneratorTest
 
     public static class Tags extends BlockTagsProvider
     {
-        public Tags(DataGenerator gen, ExistingFileHelper existingFileHelper)
+        public Tags(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider, @Nullable ExistingFileHelper existingFileHelper)
         {
-            super(gen, MODID, existingFileHelper);
+            super(output, lookupProvider, MODID, existingFileHelper);
         }
 
         @Override
-        protected void addTags()
+        protected void addTags(HolderLookup.Provider provider)
         {
             tag(BlockTags.create(new ResourceLocation(MODID, "test")))
                 .add(Blocks.DIAMOND_BLOCK)
@@ -585,7 +626,7 @@ public class DataGeneratorTest
 
     public static class Lang extends LanguageProvider
     {
-        public Lang(DataGenerator gen)
+        public Lang(PackOutput gen)
         {
             super(gen, MODID, "en_us");
         }
@@ -607,7 +648,7 @@ public class DataGeneratorTest
     {
         private static final Logger LOGGER = LogManager.getLogger();
 
-        public ItemModels(DataGenerator generator, ExistingFileHelper existingFileHelper)
+        public ItemModels(PackOutput generator, ExistingFileHelper existingFileHelper)
         {
             super(generator, MODID, existingFileHelper);
         }
@@ -651,9 +692,9 @@ public class DataGeneratorTest
                 );
 
         @Override
-        public void run(CachedOutput cache) throws IOException
+        public CompletableFuture<?> run(CachedOutput cache)
         {
-            super.run(cache);
+            var output = super.run(cache);
             List<String> errors = testModelResults(this.generatedModels, existingFileHelper, IGNORED_MODELS.stream().map(s -> new ResourceLocation(MODID, folder + "/" + s)).collect(Collectors.toSet()));
             if (!errors.isEmpty()) {
                 LOGGER.error("Found {} discrepancies between generated and vanilla item models: ", errors.size());
@@ -662,6 +703,8 @@ public class DataGeneratorTest
                 }
                 throw new AssertionError("Generated item models differed from vanilla equivalents, check above errors.");
             }
+
+            return output;
         }
 
         @Override
@@ -675,9 +718,9 @@ public class DataGeneratorTest
     {
         private static final Logger LOGGER = LogManager.getLogger();
 
-        public BlockStates(DataGenerator gen, ExistingFileHelper exFileHelper)
+        public BlockStates(PackOutput output, ExistingFileHelper exFileHelper)
         {
-            super(gen, MODID, exFileHelper);
+            super(output, MODID, exFileHelper);
         }
 
         @Override
@@ -744,27 +787,27 @@ public class DataGeneratorTest
             ModelFile block = models().getBuilder("block")
                     .guiLight(GuiLight.SIDE)
                     .transforms()
-                    .transform(ItemTransforms.TransformType.GUI)
+                    .transform(ItemDisplayContext.GUI)
                     .rotation(30, 225, 0)
                     .scale(0.625f)
                     .end()
-                    .transform(ItemTransforms.TransformType.GROUND)
+                    .transform(ItemDisplayContext.GROUND)
                     .translation(0, 3, 0)
                     .scale(0.25f)
                     .end()
-                    .transform(ItemTransforms.TransformType.FIXED)
+                    .transform(ItemDisplayContext.FIXED)
                     .scale(0.5f)
                     .end()
-                    .transform(ItemTransforms.TransformType.THIRD_PERSON_RIGHT_HAND)
+                    .transform(ItemDisplayContext.THIRD_PERSON_RIGHT_HAND)
                     .rotation(75, 45, 0)
                     .translation(0, 2.5f, 0)
                     .scale(0.375f)
                     .end()
-                    .transform(ItemTransforms.TransformType.FIRST_PERSON_RIGHT_HAND)
+                    .transform(ItemDisplayContext.FIRST_PERSON_RIGHT_HAND)
                     .rotation(0, 45, 0)
                     .scale(0.4f)
                     .end()
-                    .transform(ItemTransforms.TransformType.FIRST_PERSON_LEFT_HAND)
+                    .transform(ItemDisplayContext.FIRST_PERSON_LEFT_HAND)
                     .rotation(0, 225, 0)
                     .scale(0.4f)
                     .end()
@@ -831,35 +874,37 @@ public class DataGeneratorTest
         private List<String> errors = new ArrayList<>();
 
         @Override
-        public void run(CachedOutput cache) throws IOException
+        public CompletableFuture<?> run(CachedOutput cache)
         {
-            super.run(cache);
-            this.errors.addAll(testModelResults(models().generatedModels, models().existingFileHelper, Sets.union(IGNORED_MODELS, CUSTOM_MODELS)));
-            this.registeredBlocks.forEach((block, state) -> {
-                if (IGNORED_BLOCKS.contains(block)) return;
-                JsonObject generated = state.toJson();
-                try {
-                    Resource vanillaResource = models().existingFileHelper.getResource(ForgeRegistries.BLOCKS.getKey(block), PackType.CLIENT_RESOURCES, ".json", "blockstates");
-                    JsonObject existing = GSON.fromJson(vanillaResource.openAsReader(), JsonObject.class);
-                    if (state instanceof VariantBlockStateBuilder) {
-                        compareVariantBlockstates(block, generated, existing);
-                    } else if (state instanceof MultiPartBlockStateBuilder) {
-                        compareMultipartBlockstates(block, generated, existing);
-                    } else {
-                        throw new IllegalStateException("Unknown blockstate type: " + state.getClass());
+            return super.run(cache).thenRun(() -> {
+                this.errors.addAll(testModelResults(models().generatedModels, models().existingFileHelper, Sets.union(IGNORED_MODELS, CUSTOM_MODELS)));
+                this.registeredBlocks.forEach((block, state) -> {
+                    if (IGNORED_BLOCKS.contains(block)) return;
+                    JsonObject generated = state.toJson();
+                    try {
+                        Resource vanillaResource = models().existingFileHelper.getResource(ForgeRegistries.BLOCKS.getKey(block), PackType.CLIENT_RESOURCES, ".json", "blockstates");
+                        JsonObject existing = GSON.fromJson(vanillaResource.openAsReader(), JsonObject.class);
+                        if (state instanceof VariantBlockStateBuilder) {
+                            compareVariantBlockstates(block, generated, existing);
+                        } else if (state instanceof MultiPartBlockStateBuilder) {
+                            compareMultipartBlockstates(block, generated, existing);
+                        } else {
+                            throw new IllegalStateException("Unknown blockstate type: " + state.getClass());
+                        }
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
                     }
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            });
+                });
 
-            if (!errors.isEmpty()) {
-                LOGGER.error("Found {} discrepancies between generated and vanilla models/blockstates: ", errors.size());
-                for (String s : errors) {
-                    LOGGER.error("    {}", s);
+                if (!errors.isEmpty()) {
+                    LOGGER.error("Found {} discrepancies between generated and vanilla models/blockstates: ", errors.size());
+                    for (String s : errors) {
+                        LOGGER.error("    {}", s);
+                    }
+                    throw new AssertionError("Generated blockstates/models differed from vanilla equivalents, check above errors.");
                 }
-                throw new AssertionError("Generated blockstates/models differed from vanilla equivalents, check above errors.");
-            }
+
+            });
         }
 
         private void compareVariantBlockstates(Block block, JsonObject generated, JsonObject vanilla) {
@@ -1008,16 +1053,11 @@ public class DataGeneratorTest
         }
     }
 
-    public static class Advancements extends AdvancementProvider
+    private static class Advancements implements ForgeAdvancementProvider.AdvancementGenerator
     {
 
-        public Advancements(DataGenerator generatorIn, ExistingFileHelper fileHelper)
-        {
-            super(generatorIn, fileHelper);
-        }
-
         @Override
-        protected void registerAdvancements(Consumer<Advancement> consumer, ExistingFileHelper fileHelper)
+        public void generate(HolderLookup.Provider registries, Consumer<Advancement> saver, ExistingFileHelper existingFileHelper)
         {
             Advancement.Builder.advancement().display(Items.DIRT,
                             Component.translatable(Items.DIRT.getDescriptionId()),
@@ -1028,7 +1068,7 @@ public class DataGeneratorTest
                             true,
                             false)
                     .addCriterion("has_dirt", InventoryChangeTrigger.TriggerInstance.hasItems(Items.DIRT))
-                    .save(consumer, new ResourceLocation(MODID, "obtain_dirt"), fileHelper);
+                    .save(saver, new ResourceLocation(MODID, "obtain_dirt"), existingFileHelper);
 
             Advancement.Builder.advancement().display(Items.DIAMOND_BLOCK,
                             Component.translatable(Items.DIAMOND_BLOCK.getDescriptionId()),
@@ -1039,7 +1079,7 @@ public class DataGeneratorTest
                             true,
                             false)
                     .addCriterion("obtained_diamond_block", InventoryChangeTrigger.TriggerInstance.hasItems(Items.DIAMOND_BLOCK))
-                    .save(consumer, new ResourceLocation("obtain_diamond_block"), fileHelper);
+                    .save(saver, new ResourceLocation("obtain_diamond_block"), existingFileHelper);
 
             Advancement.Builder.advancement()
                     .display(Blocks.GRASS_BLOCK,
@@ -1051,7 +1091,7 @@ public class DataGeneratorTest
                             false,
                             false)
                     .addCriterion("crafting_table", InventoryChangeTrigger.TriggerInstance.hasItems(Blocks.CRAFTING_TABLE))
-                    .save(consumer, new ResourceLocation("story/root"), fileHelper);
+                    .save(saver, new ResourceLocation("story/root"), existingFileHelper);
 
             // This should cause an error because of the parent not existing
 /*            Advancement.Builder.advancement().display(Blocks.COBBLESTONE,
@@ -1076,7 +1116,7 @@ public class DataGeneratorTest
                             false)
                     .addCriterion("get_cobbleStone", InventoryChangeTrigger.TriggerInstance.hasItems(Items.COBBLESTONE))
                     .parent(new ResourceLocation("forge", "dummy_parent"))
-                    .save(consumer, new ResourceLocation("good_parent"), fileHelper);
+                    .save(saver, new ResourceLocation("good_parent"), existingFileHelper);
         }
     }
 
@@ -1103,7 +1143,7 @@ public class DataGeneratorTest
                 } else if (generatedDisplay != null) { // Both must be non-null
                     ItemTransforms generatedTransforms = GSON.fromJson(generatedDisplay, ItemTransforms.class);
                     ItemTransforms vanillaTransforms = GSON.fromJson(vanillaDisplay, ItemTransforms.class);
-                    for (ItemTransforms.TransformType type : ItemTransforms.TransformType.values()) {
+                    for (ItemDisplayContext type : ItemDisplayContext.values()) {
                         if (!generatedTransforms.getTransform(type).equals(vanillaTransforms.getTransform(type))) {
                             ret.add("Model " + loc  + " has transforms that differ from vanilla equivalent for perspective " + type.name());
                             return;

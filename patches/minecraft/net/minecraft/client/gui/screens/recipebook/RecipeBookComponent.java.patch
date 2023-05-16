@@ -9,7 +9,7 @@
           this.f_100279_.add(new RecipeBookTabButton(recipebookcategories));
        }
  
-@@ -318,7 +_,7 @@
+@@ -297,7 +_,7 @@
        }
  
        if (itemstack != null && this.f_100272_.f_91080_ != null) {

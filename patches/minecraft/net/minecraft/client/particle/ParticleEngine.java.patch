@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/particle/ParticleEngine.java
 +++ b/net/minecraft/client/particle/ParticleEngine.java
-@@ -63,11 +_,11 @@
+@@ -74,11 +_,11 @@
     private static final int f_172264_ = 16384;
     private static final List<ParticleRenderType> f_107288_ = ImmutableList.of(ParticleRenderType.f_107429_, ParticleRenderType.f_107430_, ParticleRenderType.f_107432_, ParticleRenderType.f_107431_, ParticleRenderType.f_107433_);
     protected ClientLevel f_107287_;
@@ -14,37 +14,46 @@
     private final Queue<Particle> f_107294_ = Queues.newArrayDeque();
     private final Map<ResourceLocation, ParticleEngine.MutableSpriteSet> f_107295_ = Maps.newHashMap();
     private final TextureAtlas f_107296_;
-@@ -177,14 +_,18 @@
+@@ -191,10 +_,14 @@
        this.m_107378_(ParticleTypes.f_235901_, ShriekParticle.Provider::new);
     }
  
 +   /** @deprecated Register via {@link net.minecraftforge.client.event.RegisterParticleProvidersEvent} */
 +   @Deprecated
     public <T extends ParticleOptions> void m_107381_(ParticleType<T> p_107382_, ParticleProvider<T> p_107383_) {
--      this.f_107293_.put(Registry.f_122829_.m_7447_(p_107382_), p_107383_);
-+      this.f_107293_.put(Registry.f_122829_.m_7981_(p_107382_), p_107383_);
+-      this.f_107293_.put(BuiltInRegistries.f_257034_.m_7447_(p_107382_), p_107383_);
++      this.f_107293_.put(BuiltInRegistries.f_257034_.m_7981_(p_107382_), p_107383_);
+    }
+ 
++   /** @deprecated Register via {@link net.minecraftforge.client.event.RegisterParticleProvidersEvent} */
++   @Deprecated
+    public <T extends ParticleOptions> void m_272137_(ParticleType<T> p_273423_, ParticleProvider.Sprite<T> p_273134_) {
+       this.m_107378_(p_273423_, (p_272320_) -> {
+          return (p_272323_, p_272324_, p_272325_, p_272326_, p_272327_, p_272328_, p_272329_, p_272330_) -> {
+@@ -208,10 +_,12 @@
+       });
     }
  
 +   /** @deprecated Register via {@link net.minecraftforge.client.event.RegisterParticleProvidersEvent} */
 +   @Deprecated
     public <T extends ParticleOptions> void m_107378_(ParticleType<T> p_107379_, ParticleEngine.SpriteParticleRegistration<T> p_107380_) {
        ParticleEngine.MutableSpriteSet particleengine$mutablespriteset = new ParticleEngine.MutableSpriteSet();
-       this.f_107295_.put(Registry.f_122829_.m_7981_(p_107379_), particleengine$mutablespriteset);
--      this.f_107293_.put(Registry.f_122829_.m_7447_(p_107379_), p_107380_.m_107419_(particleengine$mutablespriteset));
-+      this.f_107293_.put(Registry.f_122829_.m_7981_(p_107379_), p_107380_.m_107419_(particleengine$mutablespriteset));
+       this.f_107295_.put(BuiltInRegistries.f_257034_.m_7981_(p_107379_), particleengine$mutablespriteset);
+-      this.f_107293_.put(BuiltInRegistries.f_257034_.m_7447_(p_107379_), p_107380_.m_107419_(particleengine$mutablespriteset));
++      this.f_107293_.put(BuiltInRegistries.f_257034_.m_7981_(p_107379_), p_107380_.m_107419_(particleengine$mutablespriteset));
     }
  
     public CompletableFuture<Void> m_5540_(PreparableReloadListener.PreparationBarrier p_107305_, ResourceManager p_107306_, ProfilerFiller p_107307_, ProfilerFiller p_107308_, Executor p_107309_, Executor p_107310_) {
-@@ -288,7 +_,7 @@
+@@ -310,7 +_,7 @@
  
     @Nullable
     private <T extends ParticleOptions> Particle m_107395_(T p_107396_, double p_107397_, double p_107398_, double p_107399_, double p_107400_, double p_107401_, double p_107402_) {
--      ParticleProvider<T> particleprovider = (ParticleProvider<T>)this.f_107293_.get(Registry.f_122829_.m_7447_(p_107396_.m_6012_()));
-+      ParticleProvider<T> particleprovider = (ParticleProvider<T>)this.f_107293_.get(Registry.f_122829_.m_7981_(p_107396_.m_6012_()));
+-      ParticleProvider<T> particleprovider = (ParticleProvider<T>)this.f_107293_.get(BuiltInRegistries.f_257034_.m_7447_(p_107396_.m_6012_()));
++      ParticleProvider<T> particleprovider = (ParticleProvider<T>)this.f_107293_.get(BuiltInRegistries.f_257034_.m_7981_(p_107396_.m_6012_()));
        return particleprovider == null ? null : particleprovider.m_6966_(p_107396_, this.f_107287_, p_107397_, p_107398_, p_107399_, p_107400_, p_107401_, p_107402_);
     }
  
-@@ -369,15 +_,25 @@
+@@ -391,15 +_,24 @@
        }
     }
  
@@ -58,11 +67,10 @@
        p_107339_.m_109896_();
        RenderSystem.m_69482_();
 +      RenderSystem.m_69388_(org.lwjgl.opengl.GL13.GL_TEXTURE2);
-+      RenderSystem.m_69493_();
 +      RenderSystem.m_69388_(org.lwjgl.opengl.GL13.GL_TEXTURE0);
        PoseStack posestack = RenderSystem.m_157191_();
        posestack.m_85836_();
-       posestack.m_166854_(p_107337_.m_85850_().m_85861_());
+       posestack.m_252931_(p_107337_.m_85850_().m_252922_());
        RenderSystem.m_157182_();
  
 -      for(ParticleRenderType particlerendertype : f_107288_) {
@@ -71,7 +79,7 @@
           Iterable<Particle> iterable = this.f_107289_.get(particlerendertype);
           if (iterable != null) {
              RenderSystem.m_157427_(GameRenderer::m_172829_);
-@@ -387,6 +_,7 @@
+@@ -408,6 +_,7 @@
              particlerendertype.m_6505_(bufferbuilder, this.f_107291_);
  
              for(Particle particle : iterable) {
@@ -79,16 +87,16 @@
                 try {
                    particle.m_5744_(bufferbuilder, p_107340_, p_107341_);
                 } catch (Throwable throwable) {
-@@ -417,7 +_,7 @@
+@@ -437,7 +_,7 @@
     }
  
     public void m_107355_(BlockPos p_107356_, BlockState p_107357_) {
--      if (!p_107357_.m_60795_()) {
+-      if (!p_107357_.m_60795_() && p_107357_.m_245147_()) {
 +      if (!p_107357_.m_60795_() && !net.minecraftforge.client.extensions.common.IClientBlockExtensions.of(p_107357_).addDestroyEffects(p_107357_, this.f_107287_, p_107356_, this)) {
           VoxelShape voxelshape = p_107357_.m_60808_(this.f_107287_, p_107356_);
           double d0 = 0.25D;
           voxelshape.m_83286_((p_172273_, p_172274_, p_172275_, p_172276_, p_172277_, p_172278_) -> {
-@@ -437,7 +_,7 @@
+@@ -457,7 +_,7 @@
                       double d7 = d4 * d1 + p_172273_;
                       double d8 = d5 * d2 + p_172274_;
                       double d9 = d6 * d3 + p_172275_;
@@ -97,7 +105,7 @@
                    }
                 }
              }
-@@ -481,12 +_,18 @@
+@@ -501,12 +_,18 @@
              d0 = (double)i + aabb.f_82291_ + (double)0.1F;
           }
  

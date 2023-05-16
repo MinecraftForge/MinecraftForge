@@ -10,7 +10,6 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.event.RegisterNamedRenderTypesEvent;
 import net.minecraftforge.fml.ModLoader;
-import net.minecraftforge.fml.ModLoadingContext;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.HashMap;
@@ -39,7 +38,7 @@ public final class NamedRenderTypeManager
         var renderTypes = new HashMap<ResourceLocation, RenderTypeGroup>();
         preRegisterVanillaRenderTypes(renderTypes);
         var event = new RegisterNamedRenderTypesEvent(renderTypes);
-        ModLoader.get().postEventWithWrapInModOrder(event, (mc, e) -> ModLoadingContext.get().setActiveContainer(mc), (mc, e) -> ModLoadingContext.get().setActiveContainer(null));
+        ModLoader.get().postEventWrapContainerInModOrder(event);
         RENDER_TYPES = ImmutableMap.copyOf(renderTypes);
     }
 

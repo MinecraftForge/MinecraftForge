@@ -2,5 +2,5 @@
   "type": "biome_modifiers_test:modify_biomes",
   "biomes": "#minecraft:is_badlands",
   "precipitation": "snow",
-  "water_color": 16711680
+  "water_color": 1044480
 }

@@ -1,16 +1,16 @@
 --- a/net/minecraft/world/entity/ExperienceOrb.java
 +++ b/net/minecraft/world/entity/ExperienceOrb.java
-@@ -89,7 +_,8 @@
+@@ -90,7 +_,8 @@
        this.m_6478_(MoverType.SELF, this.m_20184_());
        float f = 0.98F;
        if (this.f_19861_) {
--         f = this.f_19853_.m_8055_(new BlockPos(this.m_20185_(), this.m_20186_() - 1.0D, this.m_20189_())).m_60734_().m_49958_() * 0.98F;
-+         BlockPos pos =new BlockPos(this.m_20185_(), this.m_20186_() - 1.0D, this.m_20189_());
+-         f = this.f_19853_.m_8055_(BlockPos.m_274561_(this.m_20185_(), this.m_20186_() - 1.0D, this.m_20189_())).m_60734_().m_49958_() * 0.98F;
++         BlockPos pos = BlockPos.m_274561_(this.m_20185_(), this.m_20186_() - 1.0D, this.m_20189_());
 +         f = this.f_19853_.m_8055_(pos).getFriction(this.f_19853_, pos, this) * 0.98F;
        }
  
        this.m_20256_(this.m_20184_().m_82542_((double)f, 0.98D, (double)f));
-@@ -167,6 +_,7 @@
+@@ -168,6 +_,7 @@
     }
  
     public boolean m_6469_(DamageSource p_20785_, float p_20786_) {
@@ -18,7 +18,7 @@
        if (this.m_6673_(p_20785_)) {
           return false;
        } else if (this.f_19853_.f_46443_) {
-@@ -199,6 +_,7 @@
+@@ -200,6 +_,7 @@
     public void m_6123_(Player p_20792_) {
        if (!this.f_19853_.f_46443_) {
           if (p_20792_.f_36101_ == 0) {
@@ -26,7 +26,7 @@
              p_20792_.f_36101_ = 2;
              p_20792_.m_7938_(this, 1);
              int i = this.m_147092_(p_20792_, this.f_20770_);
-@@ -219,7 +_,7 @@
+@@ -220,7 +_,7 @@
        Map.Entry<EquipmentSlot, ItemStack> entry = EnchantmentHelper.m_44839_(Enchantments.f_44962_, p_147093_, ItemStack::m_41768_);
        if (entry != null) {
           ItemStack itemstack = entry.getValue();

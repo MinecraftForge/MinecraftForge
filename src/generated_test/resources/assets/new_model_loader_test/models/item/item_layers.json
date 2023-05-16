@@ -1,11 +1,18 @@
 {
   "parent": "forge:item/default",
-  "fullbright_layers": [
-    1
-  ],
-  "loader": "forge:item-layers",
+  "forge_data": {
+    "layers": {
+      "1": {
+        "block_light": 15,
+        "sky_light": 15
+      }
+    }
+  },
+  "loader": "forge:item_layers",
+  "render_types": {},
   "textures": {
     "layer0": "minecraft:item/coal",
-    "layer1": "minecraft:item/stick"
+    "layer1": "minecraft:item/stick",
+    "particle": "minecraft:block/red_stained_glass"
   }
 }

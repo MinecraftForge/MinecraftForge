@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/levelgen/structure/templatesystem/StructureTemplate.java
 +++ b/net/minecraft/world/level/levelgen/structure/templatesystem/StructureTemplate.java
-@@ -201,6 +_,10 @@
+@@ -200,6 +_,10 @@
        return m_74593_(p_74565_, p_74564_.m_74401_(), p_74564_.m_74404_(), p_74564_.m_74407_());
     }
  
@@ -11,7 +11,7 @@
     public boolean m_230328_(ServerLevelAccessor p_230329_, BlockPos p_230330_, BlockPos p_230331_, StructurePlaceSettings p_230332_, RandomSource p_230333_, int p_230334_) {
        if (this.f_74482_.isEmpty()) {
           return false;
-@@ -218,7 +_,7 @@
+@@ -217,7 +_,7 @@
              int i1 = Integer.MIN_VALUE;
              int j1 = Integer.MIN_VALUE;
  
@@ -20,7 +20,7 @@
                 BlockPos blockpos = structuretemplate$structureblockinfo.f_74675_;
                 if (boundingbox == null || boundingbox.m_71051_(blockpos)) {
                    FluidState fluidstate = p_230332_.m_74413_() ? p_230329_.m_6425_(blockpos) : null;
-@@ -330,7 +_,7 @@
+@@ -329,7 +_,7 @@
              }
  
              if (!p_230332_.m_74408_()) {
@@ -29,7 +29,7 @@
              }
  
              return true;
-@@ -359,14 +_,19 @@
+@@ -358,14 +_,19 @@
        });
     }
  
@@ -50,7 +50,7 @@
           }
  
           if (structuretemplate$structureblockinfo1 != null) {
-@@ -377,13 +_,29 @@
+@@ -380,13 +_,29 @@
        return list;
     }
  
@@ -86,17 +86,17 @@
              ListTag listtag = new ListTag();
              listtag.add(DoubleTag.m_128500_(vec31.f_82479_));
              listtag.add(DoubleTag.m_128500_(vec31.f_82480_));
-@@ -391,10 +_,10 @@
+@@ -394,10 +_,10 @@
              compoundtag.m_128365_("Pos", listtag);
              compoundtag.m_128473_("UUID");
-             m_74543_(p_74524_, compoundtag).ifPresent((p_205061_) -> {
--               float f = p_205061_.m_7890_(p_74527_);
--               f += p_205061_.m_6961_(p_74526_) - p_205061_.m_146908_();
-+               float f = p_205061_.m_7890_(placementIn.m_74404_());
-+               f += p_205061_.m_6961_(placementIn.m_74401_()) - p_205061_.m_146908_();
-                p_205061_.m_7678_(vec31.f_82479_, vec31.f_82480_, vec31.f_82481_, f, p_205061_.m_146909_());
--               if (p_74530_ && p_205061_ instanceof Mob) {
-+               if (placementIn.m_74414_() && p_205061_ instanceof Mob) {
-                   ((Mob)p_205061_).m_6518_(p_74524_, p_74524_.m_6436_(new BlockPos(vec31)), MobSpawnType.STRUCTURE, (SpawnGroupData)null, compoundtag);
+             m_74543_(p_74524_, compoundtag).ifPresent((p_275190_) -> {
+-               float f = p_275190_.m_7890_(p_74527_);
+-               f += p_275190_.m_6961_(p_74526_) - p_275190_.m_146908_();
++               float f = p_275190_.m_7890_(placementIn.m_74404_());
++               f += p_275190_.m_6961_(placementIn.m_74401_()) - p_275190_.m_146908_();
+                p_275190_.m_7678_(vec31.f_82479_, vec31.f_82480_, vec31.f_82481_, f, p_275190_.m_146909_());
+-               if (p_74530_ && p_275190_ instanceof Mob) {
++               if (placementIn.m_74414_() && p_275190_ instanceof Mob) {
+                   ((Mob)p_275190_).m_6518_(p_74524_, p_74524_.m_6436_(BlockPos.m_274446_(vec31)), MobSpawnType.STRUCTURE, (SpawnGroupData)null, compoundtag);
                 }
  

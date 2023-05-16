@@ -87,7 +87,7 @@
           }
  
        });
-@@ -465,7 +_,7 @@
+@@ -472,7 +_,7 @@
  
     public Stream<BlockPos> m_6267_() {
        return StreamSupport.stream(BlockPos.m_121976_(this.f_187604_.m_45604_(), this.m_141937_(), this.f_187604_.m_45605_(), this.f_187604_.m_45608_(), this.m_151558_() - 1, this.f_187604_.m_45609_()).spliterator(), false).filter((p_187990_) -> {
@@ -96,7 +96,7 @@
        });
     }
  
-@@ -553,6 +_,7 @@
+@@ -560,6 +_,7 @@
     }
  
     public void m_187957_() {
@@ -104,7 +104,7 @@
        this.f_187610_.values().forEach(BlockEntity::m_7651_);
        this.f_187610_.clear();
        this.f_156362_.values().forEach((p_187966_) -> {
-@@ -562,6 +_,7 @@
+@@ -569,6 +_,7 @@
     }
  
     public void m_156369_() {
@@ -112,7 +112,7 @@
        this.f_187610_.values().forEach((p_187988_) -> {
           Level level = this.f_62776_;
           if (level instanceof ServerLevel serverlevel) {
-@@ -619,6 +_,41 @@
+@@ -625,6 +_,41 @@
        this.f_196848_ = p_196865_;
     }
  
@@ -154,7 +154,7 @@
     class BoundTickingBlockEntity<T extends BlockEntity> implements TickingBlockEntity {
        private final T f_156428_;
        private final BlockEntityTicker<T> f_156429_;
-@@ -635,6 +_,7 @@
+@@ -641,6 +_,7 @@
              if (LevelChunk.this.m_156410_(blockpos)) {
                 try {
                    ProfilerFiller profilerfiller = LevelChunk.this.f_62776_.m_46473_();
@@ -162,7 +162,7 @@
                    profilerfiller.m_6521_(this::m_142280_);
                    BlockState blockstate = LevelChunk.this.m_8055_(blockpos);
                    if (this.f_156428_.m_58903_().m_155262_(blockstate)) {
-@@ -650,6 +_,12 @@
+@@ -656,6 +_,12 @@
                    CrashReport crashreport = CrashReport.m_127521_(throwable, "Ticking block entity");
                    CrashReportCategory crashreportcategory = crashreport.m_127514_("Block entity being ticked");
                    this.f_156428_.m_58886_(crashreportcategory);
@@ -175,7 +175,7 @@
                    throw new ReportedException(crashreport);
                 }
              }
-@@ -678,6 +_,34 @@
+@@ -684,6 +_,34 @@
        IMMEDIATE,
        QUEUED,
        CHECK;

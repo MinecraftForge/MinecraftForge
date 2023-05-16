@@ -1,12 +1,12 @@
 --- a/net/minecraft/client/renderer/entity/layers/HumanoidArmorLayer.java
 +++ b/net/minecraft/client/renderer/entity/layers/HumanoidArmorLayer.java
-@@ -46,17 +_,18 @@
+@@ -56,17 +_,18 @@
           if (armoritem.m_40402_() == p_117122_) {
              this.m_117386_().m_102872_(p_117124_);
              this.m_117125_(p_117124_, p_117122_);
 +            net.minecraft.client.model.Model model = getArmorModelHook(p_117121_, itemstack, p_117122_, p_117124_);
-             boolean flag = this.m_117128_(p_117122_);
-             boolean flag1 = itemstack.m_41790_();
+             boolean flag1 = this.m_117128_(p_117122_);
+             boolean flag = itemstack.m_41790_();
 -            if (armoritem instanceof DyeableArmorItem) {
 -               int i = ((DyeableArmorItem)armoritem).m_41121_(itemstack);
 +            if (armoritem instanceof net.minecraft.world.item.DyeableLeatherItem) {
@@ -14,17 +14,17 @@
                 float f = (float)(i >> 16 & 255) / 255.0F;
                 float f1 = (float)(i >> 8 & 255) / 255.0F;
                 float f2 = (float)(i & 255) / 255.0F;
--               this.m_117106_(p_117119_, p_117120_, p_117123_, armoritem, flag1, p_117124_, flag, f, f1, f2, (String)null);
--               this.m_117106_(p_117119_, p_117120_, p_117123_, armoritem, flag1, p_117124_, flag, 1.0F, 1.0F, 1.0F, "overlay");
-+               this.renderModel(p_117119_, p_117120_, p_117123_, flag1, model, f, f1, f2, this.getArmorResource(p_117121_, itemstack, p_117122_, null));
-+               this.renderModel(p_117119_, p_117120_, p_117123_, flag1, model, 1.0F, 1.0F, 1.0F, this.getArmorResource(p_117121_, itemstack, p_117122_, "overlay"));
+-               this.m_117106_(p_117119_, p_117120_, p_117123_, armoritem, flag, p_117124_, flag1, f, f1, f2, (String)null);
+-               this.m_117106_(p_117119_, p_117120_, p_117123_, armoritem, flag, p_117124_, flag1, 1.0F, 1.0F, 1.0F, "overlay");
++               this.renderModel(p_117119_, p_117120_, p_117123_, flag, model, f, f1, f2, this.getArmorResource(p_117121_, itemstack, p_117122_, null));
++               this.renderModel(p_117119_, p_117120_, p_117123_, flag, model, 1.0F, 1.0F, 1.0F, this.getArmorResource(p_117121_, itemstack, p_117122_, "overlay"));
              } else {
--               this.m_117106_(p_117119_, p_117120_, p_117123_, armoritem, flag1, p_117124_, flag, 1.0F, 1.0F, 1.0F, (String)null);
-+               this.renderModel(p_117119_, p_117120_, p_117123_, flag1, model, 1.0F, 1.0F, 1.0F, this.getArmorResource(p_117121_, itemstack, p_117122_, null));
+-               this.m_117106_(p_117119_, p_117120_, p_117123_, armoritem, flag, p_117124_, flag1, 1.0F, 1.0F, 1.0F, (String)null);
++               this.renderModel(p_117119_, p_117120_, p_117123_, flag, model, 1.0F, 1.0F, 1.0F, this.getArmorResource(p_117121_, itemstack, p_117122_, null));
              }
  
-          }
-@@ -88,7 +_,10 @@
+             if (p_117121_.f_19853_.m_246046_().m_245372_(FeatureFlags.f_244168_)) {
+@@ -104,7 +_,10 @@
     }
  
     private void m_117106_(PoseStack p_117107_, MultiBufferSource p_117108_, int p_117109_, ArmorItem p_117110_, boolean p_117111_, A p_117112_, boolean p_117113_, float p_117114_, float p_117115_, float p_117116_, @Nullable String p_117117_) {
@@ -36,7 +36,7 @@
        p_117112_.m_7695_(p_117107_, vertexconsumer, p_117109_, OverlayTexture.f_118083_, p_117114_, p_117115_, p_117116_, 1.0F);
     }
  
-@@ -100,8 +_,50 @@
+@@ -122,8 +_,50 @@
        return p_117129_ == EquipmentSlot.LEGS;
     }
  

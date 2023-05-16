@@ -1,7 +1,7 @@
 --- a/net/minecraft/network/syncher/EntityDataSerializers.java
 +++ b/net/minecraft/network/syncher/EntityDataSerializers.java
-@@ -134,16 +_,16 @@
-    public static final EntityDataSerializer<Holder<PaintingVariant>> f_238116_ = EntityDataSerializer.m_238081_(Registry.f_235728_.m_206115_());
+@@ -142,16 +_,16 @@
+    public static final EntityDataSerializer<Quaternionf> f_268624_ = EntityDataSerializer.m_238095_(FriendlyByteBuf::m_269101_, FriendlyByteBuf::m_269131_);
  
     public static void m_135050_(EntityDataSerializer<?> p_135051_) {
 -      f_135046_.m_13569_(p_135051_);

@@ -1,5 +1,6 @@
 {
   "type": "minecraft:crafting_shaped",
+  "category": "building",
   "key": {
     "#": {
       "type": "forge:intersection",
@@ -20,5 +21,6 @@
   ],
   "result": {
     "item": "minecraft:netherrack"
-  }
+  },
+  "show_notification": true
 }

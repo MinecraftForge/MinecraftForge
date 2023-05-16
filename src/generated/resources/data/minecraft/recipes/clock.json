@@ -1,5 +1,6 @@
 {
   "type": "minecraft:crafting_shaped",
+  "category": "equipment",
   "key": {
     "#": {
       "tag": "forge:ingots/gold"
@@ -15,5 +16,6 @@
   ],
   "result": {
     "item": "minecraft:clock"
-  }
+  },
+  "show_notification": true
 }

@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/player/LocalPlayer.java
 +++ b/net/minecraft/client/player/LocalPlayer.java
-@@ -162,6 +_,7 @@
+@@ -149,6 +_,7 @@
     }
  
     public boolean m_6469_(DamageSource p_108662_, float p_108663_) {
@@ -8,31 +8,23 @@
        return false;
     }
  
-@@ -289,6 +_,8 @@
-    }
+@@ -275,6 +_,7 @@
  
-    public void m_240287_(String p_240288_, @Nullable Component p_240289_) {
-+      p_240288_ = net.minecraftforge.client.ForgeHooksClient.onClientSendMessage(p_240288_);
-+      if (p_240288_.isEmpty()) return;
-       this.m_240966_(p_240288_, p_240289_);
-    }
- 
-@@ -333,6 +_,7 @@
-    }
- 
-    private void m_241110_(String p_241331_, @Nullable Component p_241563_) {
-+      if (net.minecraftforge.client.ClientCommandHandler.runCommand(p_241331_)) return;
-       ParseResults<SharedSuggestionProvider> parseresults = this.f_108617_.m_105146_().parse(p_241331_, this.f_108617_.m_105137_());
-       MessageSigner messagesigner = this.m_241001_();
-       LastSeenMessages.Update lastseenmessages$update = this.f_108617_.m_241918_();
-@@ -547,7 +_,13 @@
+    public boolean m_108700_(boolean p_108701_) {
+       ServerboundPlayerActionPacket.Action serverboundplayeractionpacket$action = p_108701_ ? ServerboundPlayerActionPacket.Action.DROP_ALL_ITEMS : ServerboundPlayerActionPacket.Action.DROP_ITEM;
++      if (m_6117_() && m_7655_() == InteractionHand.MAIN_HAND && (p_108701_ || m_21211_().m_41613_() == 1)) m_5810_(); // Forge: fix MC-231097 on the clientside
+       ItemStack itemstack = this.m_150109_().m_182403_(p_108701_);
+       this.f_108617_.m_104955_(new ServerboundPlayerActionPacket(serverboundplayeractionpacket$action, BlockPos.f_121853_, Direction.DOWN));
+       return !itemstack.m_41619_();
+@@ -456,7 +_,14 @@
     }
  
     public void m_5496_(SoundEvent p_108651_, float p_108652_, float p_108653_) {
 -      this.f_19853_.m_7785_(this.m_20185_(), this.m_20186_(), this.m_20189_(), p_108651_, this.m_5720_(), p_108652_, p_108653_, false);
-+      net.minecraftforge.event.PlayLevelSoundEvent.AtEntity event = net.minecraftforge.event.ForgeEventFactory.onPlaySoundAtEntity(this, p_108651_, this.m_5720_(), p_108652_, p_108653_);
++      net.minecraft.core.Holder<SoundEvent> holder = net.minecraft.core.registries.BuiltInRegistries.f_256894_.m_263177_(p_108651_);
++      net.minecraftforge.event.PlayLevelSoundEvent.AtEntity event = net.minecraftforge.event.ForgeEventFactory.onPlaySoundAtEntity(this, holder, this.m_5720_(), p_108652_, p_108653_);
 +      if (event.isCanceled() || event.getSound() == null) return;
-+      p_108651_ = event.getSound();
++      p_108651_ = event.getSound().get();
 +      SoundSource source = event.getSource();
 +      p_108652_ = event.getNewVolume();
 +      p_108653_ = event.getNewPitch();
@@ -40,7 +32,7 @@
     }
  
     public void m_6330_(SoundEvent p_108655_, SoundSource p_108656_, float p_108657_, float p_108658_) {
-@@ -703,6 +_,7 @@
+@@ -627,6 +_,7 @@
        this.f_108601_ = !this.m_150110_().f_35935_ && !this.m_6069_() && this.m_20175_(Pose.CROUCHING) && (this.m_6144_() || !this.m_5803_() && !this.m_20175_(Pose.STANDING));
        float f = Mth.m_14036_(0.3F + EnchantmentHelper.m_220302_(this), 0.0F, 1.0F);
        this.f_108618_.m_214106_(this.m_108635_(), f);
@@ -48,37 +40,37 @@
        this.f_108619_.m_91301_().m_120586_(this.f_108618_);
        if (this.m_6117_() && !this.m_20159_()) {
           this.f_108618_.f_108566_ *= 0.2F;
-@@ -729,7 +_,7 @@
-       }
- 
-       boolean flag4 = (float)this.m_36324_().m_38702_() > 6.0F || this.m_150110_().f_35936_;
--      if ((this.f_19861_ || this.m_5842_()) && !flag1 && !flag2 && this.m_108733_() && !this.m_20142_() && flag4 && !this.m_6117_() && !this.m_21023_(MobEffects.f_19610_)) {
-+      if ((this.f_19861_ || this.m_5842_() || this.canStartSwimming()) && !flag1 && !flag2 && this.m_108733_() && !this.m_20142_() && flag4 && !this.m_6117_() && !this.m_21023_(MobEffects.f_19610_)) {
+@@ -655,7 +_,7 @@
+       boolean flag4 = this.m_264082_();
+       boolean flag5 = this.m_20159_() ? this.m_20202_().m_20096_() : this.f_19861_;
+       boolean flag6 = !flag1 && !flag2;
+-      if ((flag5 || this.m_5842_()) && flag6 && flag4) {
++      if ((flag5 || this.m_5842_() || this.canStartSwimming()) && flag6 && flag4) {
           if (this.f_108583_ <= 0 && !this.f_108619_.f_91066_.f_92091_.m_90857_()) {
              this.f_108583_ = 7;
           } else {
-@@ -737,15 +_,15 @@
+@@ -663,15 +_,15 @@
           }
        }
  
--      if (!this.m_20142_() && (!this.m_20069_() || this.m_5842_()) && this.m_108733_() && flag4 && !this.m_6117_() && !this.m_21023_(MobEffects.f_19610_) && this.f_108619_.f_91066_.f_92091_.m_90857_()) {
+-      if ((!this.m_20069_() || this.m_5842_()) && flag4 && this.f_108619_.f_91066_.f_92091_.m_90857_()) {
 +      if (!this.m_20142_() && (!(this.m_20069_() || this.isInFluidType((fluidType, height) -> this.canSwimInFluidType(fluidType))) || (this.m_5842_() || this.canStartSwimming())) && this.m_108733_() && flag4 && !this.m_6117_() && !this.m_21023_(MobEffects.f_19610_) && this.f_108619_.f_91066_.f_92091_.m_90857_()) {
           this.m_6858_(true);
        }
  
        if (this.m_20142_()) {
-          boolean flag5 = !this.f_108618_.m_108577_() || !flag4;
--         boolean flag6 = flag5 || this.f_19862_ && !this.f_185931_ || this.m_20069_() && !this.m_5842_();
-+         boolean flag6 = flag5 || this.f_19862_ && !this.f_185931_ || (this.m_20069_() && !this.m_5842_()) || (this.isInFluidType((fluidType, height) -> this.canSwimInFluidType(fluidType)) && !this.canStartSwimming());
+          boolean flag7 = !this.f_108618_.m_108577_() || !this.m_255269_();
+-         boolean flag8 = flag7 || this.f_19862_ && !this.f_185931_ || this.m_20069_() && !this.m_5842_();
++         boolean flag8 = flag7 || this.f_19862_ && !this.f_185931_ || this.m_20069_() && !this.m_5842_() || (this.isInFluidType((fluidType, height) -> this.canSwimInFluidType(fluidType)) && !this.canStartSwimming());
           if (this.m_6069_()) {
--            if (!this.f_19861_ && !this.f_108618_.f_108573_ && flag5 || !this.m_20069_()) {
-+            if (!this.f_19861_ && !this.f_108618_.f_108573_ && flag5 || !(this.m_20069_() || this.isInFluidType((fluidType, height) -> this.canSwimInFluidType(fluidType)))) {
+-            if (!this.f_19861_ && !this.f_108618_.f_108573_ && flag7 || !this.m_20069_()) {
++            if (!this.f_19861_ && !this.f_108618_.f_108573_ && flag7 || !(this.m_20069_() || this.isInFluidType((fluidType, height) -> this.canSwimInFluidType(fluidType)))) {
                 this.m_6858_(false);
              }
-          } else if (flag6) {
-@@ -775,14 +_,15 @@
+          } else if (flag8) {
+@@ -701,14 +_,15 @@
  
-       if (this.f_108618_.f_108572_ && !flag7 && !flag && !this.m_150110_().f_35935_ && !this.m_20159_() && !this.m_6147_()) {
+       if (this.f_108618_.f_108572_ && !flag9 && !flag && !this.m_150110_().f_35935_ && !this.m_20159_() && !this.m_6147_()) {
           ItemStack itemstack = this.m_6844_(EquipmentSlot.CHEST);
 -         if (itemstack.m_150930_(Items.f_42741_) && ElytraItem.m_41140_(itemstack) && this.m_36319_()) {
 +         if (itemstack.canElytraFly(this) && this.m_36319_()) {
@@ -95,15 +87,15 @@
        }
  
        if (this.m_204029_(FluidTags.f_13131_)) {
-@@ -893,6 +_,7 @@
+@@ -819,6 +_,7 @@
  
     public void m_6083_() {
        super.m_6083_();
 +      if (this.m_36342_() && this.m_20159_()) this.f_108618_.f_108573_ = false;
        this.f_108611_ = false;
-       if (this.m_20202_() instanceof Boat) {
-          Boat boat = (Boat)this.m_20202_();
-@@ -1106,6 +_,18 @@
+       Entity entity = this.m_275832_();
+       if (entity instanceof Boat boat) {
+@@ -1044,6 +_,18 @@
        } else {
           return super.m_7398_(p_108758_);
        }

@@ -1,16 +1,19 @@
 --- a/net/minecraft/data/tags/EntityTypeTagsProvider.java
 +++ b/net/minecraft/data/tags/EntityTypeTagsProvider.java
-@@ -6,8 +_,13 @@
+@@ -8,10 +_,15 @@
  import net.minecraft.world.entity.EntityType;
  
- public class EntityTypeTagsProvider extends TagsProvider<EntityType<?>> {
-+   /** @deprecated Forge: Use the {@link #EntityTypeTagsProvider(DataGenerator, String, net.minecraftforge.common.data.ExistingFileHelper) mod id variant} */
+ public class EntityTypeTagsProvider extends IntrinsicHolderTagsProvider<EntityType<?>> {
++   /** @deprecated Forge: Use the {@linkplain #EntityTypeTagsProvider(PackOutput, CompletableFuture, String, net.minecraftforge.common.data.ExistingFileHelper) mod id variant} */
 +   @Deprecated
-    public EntityTypeTagsProvider(DataGenerator p_126517_) {
-       super(p_126517_, Registry.f_122826_);
+    public EntityTypeTagsProvider(PackOutput p_256095_, CompletableFuture<HolderLookup.Provider> p_256572_) {
++      this(p_256095_, p_256572_, "vanilla", null);
 +   }
-+   public EntityTypeTagsProvider(DataGenerator p_126517_, String modId, @org.jetbrains.annotations.Nullable net.minecraftforge.common.data.ExistingFileHelper existingFileHelper) {
-+      super(p_126517_, Registry.f_122826_, modId, existingFileHelper);
++   public EntityTypeTagsProvider(PackOutput p_256095_, CompletableFuture<HolderLookup.Provider> p_256572_, String modId, @org.jetbrains.annotations.Nullable net.minecraftforge.common.data.ExistingFileHelper existingFileHelper) {
+       super(p_256095_, Registries.f_256939_, p_256572_, (p_256665_) -> {
+          return p_256665_.m_204041_().m_205785_();
+-      });
++      }, modId, existingFileHelper);
     }
  
-    protected void m_6577_() {
+    protected void m_6577_(HolderLookup.Provider p_255894_) {

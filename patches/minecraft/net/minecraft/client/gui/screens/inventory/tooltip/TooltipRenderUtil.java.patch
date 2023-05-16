@@ -1,0 +1,49 @@
+--- a/net/minecraft/client/gui/screens/inventory/tooltip/TooltipRenderUtil.java
++++ b/net/minecraft/client/gui/screens/inventory/tooltip/TooltipRenderUtil.java
+@@ -18,16 +_,21 @@
+    private static final int f_262743_ = 1344798847;
+ 
+    public static void m_262796_(TooltipRenderUtil.BlitPainter p_262929_, Matrix4f p_263052_, BufferBuilder p_263082_, int p_263046_, int p_263101_, int p_263024_, int p_262926_, int p_263038_) {
++      renderTooltipBackground(p_262929_, p_263052_, p_263082_, p_263046_, p_263101_, p_263024_, p_262926_, p_263038_, f_262744_, f_262744_, f_262725_, f_262743_);
++   }
++
++   // Forge: Allow specifying colors for the inner border gradient and a gradient instead of a single color for the background and outer border
++   public static void renderTooltipBackground(TooltipRenderUtil.BlitPainter p_262929_, Matrix4f p_263052_, BufferBuilder p_263082_, int p_263046_, int p_263101_, int p_263024_, int p_262926_, int p_263038_, int backgroundTop, int backgroundBottom, int borderTop, int borderBottom) {
+       int i = p_263046_ - 3;
+       int j = p_263101_ - 3;
+       int k = p_263024_ + 3 + 3;
+       int l = p_262926_ + 3 + 3;
+-      m_262855_(p_262929_, p_263052_, p_263082_, i, j - 1, k, p_263038_, -267386864);
+-      m_262855_(p_262929_, p_263052_, p_263082_, i, j + l, k, p_263038_, -267386864);
+-      m_262805_(p_262929_, p_263052_, p_263082_, i, j, k, l, p_263038_, -267386864);
+-      m_262798_(p_262929_, p_263052_, p_263082_, i - 1, j, l, p_263038_, -267386864);
+-      m_262798_(p_262929_, p_263052_, p_263082_, i + k, j, l, p_263038_, -267386864);
+-      m_262846_(p_262929_, p_263052_, p_263082_, i, j + 1, k, l, p_263038_, 1347420415, 1344798847);
++      m_262855_(p_262929_, p_263052_, p_263082_, i, j - 1, k, p_263038_, backgroundTop);
++      m_262855_(p_262929_, p_263052_, p_263082_, i, j + l, k, p_263038_, backgroundBottom);
++      renderRectangle(p_262929_, p_263052_, p_263082_, i, j, k, l, p_263038_, backgroundTop, backgroundBottom);
++      m_262849_(p_262929_, p_263052_, p_263082_, i - 1, j, l, p_263038_, backgroundTop, backgroundBottom);
++      m_262849_(p_262929_, p_263052_, p_263082_, i + k, j, l, p_263038_, backgroundTop, backgroundBottom);
++      m_262846_(p_262929_, p_263052_, p_263082_, i, j + 1, k, l, p_263038_, borderTop, borderBottom);
+    }
+ 
+    private static void m_262846_(TooltipRenderUtil.BlitPainter p_262974_, Matrix4f p_263030_, BufferBuilder p_263061_, int p_262982_, int p_262912_, int p_262946_, int p_263049_, int p_263118_, int p_263104_, int p_262979_) {
+@@ -49,8 +_,17 @@
+       p_262966_.m_262815_(p_263094_, p_262943_, p_262949_, p_263068_, p_262949_ + p_263111_, p_263068_ + 1, p_263095_, p_262918_, p_262918_);
+    }
+ 
++   /**
++    * @deprecated Forge: Use gradient overload instead
++    */
++   @Deprecated
+    private static void m_262805_(TooltipRenderUtil.BlitPainter p_262933_, Matrix4f p_263035_, BufferBuilder p_263084_, int p_262945_, int p_262955_, int p_263017_, int p_262978_, int p_262950_, int p_262931_) {
+-      p_262933_.m_262815_(p_263035_, p_263084_, p_262945_, p_262955_, p_262945_ + p_263017_, p_262955_ + p_262978_, p_262950_, p_262931_, p_262931_);
++      renderRectangle(p_262933_, p_263035_, p_263084_, p_262945_, p_262955_, p_263017_, p_262978_, p_262950_, p_262931_, p_262931_);
++   }
++
++   // Forge: Allow specifying a gradient instead of a single color for the background
++   private static void renderRectangle(TooltipRenderUtil.BlitPainter p_262933_, Matrix4f p_263035_, BufferBuilder p_263084_, int p_262945_, int p_262955_, int p_263017_, int p_262978_, int p_262950_, int p_262931_, int colorTo) {
++      p_262933_.m_262815_(p_263035_, p_263084_, p_262945_, p_262955_, p_262945_ + p_263017_, p_262955_ + p_262978_, p_262950_, p_262931_, colorTo);
+    }
+ 
+    @FunctionalInterface

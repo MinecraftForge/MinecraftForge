@@ -34,10 +34,9 @@ public class UnicodeGlyphButton extends ExtendedButton
         if (this.visible)
         {
             Minecraft mc = Minecraft.getInstance();
-            this.isHovered = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
-            int k = this.getYImage(this.isHovered);
-            ScreenUtils.blitWithBorder(poseStack, WIDGETS_LOCATION, this.x, this.y, 0, 46 + k * 20, this.width, this.height, 200, 20, 2, 3, 2, 2, this.getBlitOffset());
-            this.renderBg(poseStack, mc, mouseX, mouseY);
+            this.isHovered = mouseX >= this.getX() && mouseY >= this.getY() && mouseX < this.getX() + this.width && mouseY < this.getY() + this.height;
+            int k = !this.active ? 0 : (this.isHoveredOrFocused() ? 2 : 1);
+            ScreenUtils.blitWithBorder(poseStack, WIDGETS_LOCATION, this.getX(), this.getY(), 0, 46 + k * 20, this.width, this.height, 200, 20, 2, 3, 2, 2, 0);
 
             Component buttonText = this.createNarrationMessage();
             int glyphWidth = (int) (mc.font.width(glyph) * glyphScale);
@@ -54,12 +53,12 @@ public class UnicodeGlyphButton extends ExtendedButton
             poseStack.pushPose();
             poseStack.scale(glyphScale, glyphScale, 1.0F);
             this.drawCenteredString(poseStack, mc.font, Component.literal(glyph),
-                    (int) (((this.x + (this.width / 2) - (strWidth / 2)) / glyphScale) - (glyphWidth / (2 * glyphScale)) + 2),
-                    (int) (((this.y + ((this.height - 8) / glyphScale) / 2) - 1) / glyphScale), getFGColor());
+                    (int) (((this.getX() + (this.width / 2) - (strWidth / 2)) / glyphScale) - (glyphWidth / (2 * glyphScale)) + 2),
+                    (int) (((this.getY() + ((this.height - 8) / glyphScale) / 2) - 1) / glyphScale), getFGColor());
             poseStack.popPose();
 
-            this.drawCenteredString(poseStack, mc.font, buttonText, (int) (this.x + (this.width / 2) + (glyphWidth / glyphScale)),
-                    this.y + (this.height - 8) / 2, getFGColor());
+            this.drawCenteredString(poseStack, mc.font, buttonText, (int) (this.getX() + (this.width / 2) + (glyphWidth / glyphScale)),
+                    this.getY() + (this.height - 8) / 2, getFGColor());
 
         }
     }

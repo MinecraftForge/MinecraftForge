@@ -15,16 +15,13 @@ function initializeCoreMod() {
                 var meth = ASMAPI.getMethodNode();
                 var resourcePackRepository = ASMAPI.mapField("f_91038_")
                 var resourceManager = ASMAPI.mapField("f_91036_")
-                var clientPackSource = ASMAPI.mapField("f_91037_")
-                
+
                 meth.visitVarInsn(Opcodes.ALOAD, 0);
                 meth.visitVarInsn(Opcodes.ALOAD, 0);
                 meth.visitFieldInsn(Opcodes.GETFIELD, "net/minecraft/client/Minecraft", resourcePackRepository, "Lnet/minecraft/server/packs/repository/PackRepository;");
                 meth.visitVarInsn(Opcodes.ALOAD, 0);
                 meth.visitFieldInsn(Opcodes.GETFIELD, "net/minecraft/client/Minecraft", resourceManager, "Lnet/minecraft/server/packs/resources/ReloadableResourceManager;");
-                meth.visitVarInsn(Opcodes.ALOAD, 0);
-                meth.visitFieldInsn(Opcodes.GETFIELD, "net/minecraft/client/Minecraft", clientPackSource, "Lnet/minecraft/client/resources/ClientPackSource;");
-                meth.visitMethodInsn(Opcodes.INVOKESTATIC, "net/minecraftforge/fmlonlyclient/ClientModLoader", "begin", "(Lnet/minecraft/client/Minecraft;Lnet/minecraft/server/packs/repository/PackRepository;Lnet/minecraft/server/packs/resources/ReloadableResourceManager;Lnet/minecraft/client/resources/ClientPackSource;)V", false)
+                meth.visitMethodInsn(Opcodes.INVOKESTATIC, "net/minecraftforge/fmlonlyclient/ClientModLoader", "begin", "(Lnet/minecraft/client/Minecraft;Lnet/minecraft/server/packs/repository/PackRepository;Lnet/minecraft/server/packs/resources/ReloadableResourceManager;)V", false)
                 for (var i=0; i<methodNode.instructions.size(); i++) {
                     var ain = methodNode.instructions.get(i);
                     if (ain.getOpcode() == Opcodes.PUTFIELD && ain.name.equals(resourceManager)) {

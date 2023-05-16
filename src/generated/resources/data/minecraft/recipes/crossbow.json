@@ -1,5 +1,6 @@
 {
   "type": "minecraft:crafting_shaped",
+  "category": "equipment",
   "key": {
     "#": {
       "tag": "forge:rods/wooden"
@@ -21,5 +22,6 @@
   ],
   "result": {
     "item": "minecraft:crossbow"
-  }
+  },
+  "show_notification": true
 }

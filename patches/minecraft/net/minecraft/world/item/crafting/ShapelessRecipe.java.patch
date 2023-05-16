@@ -1,21 +1,22 @@
 --- a/net/minecraft/world/item/crafting/ShapelessRecipe.java
 +++ b/net/minecraft/world/item/crafting/ShapelessRecipe.java
-@@ -18,12 +_,14 @@
-    final String f_44242_;
+@@ -20,6 +_,7 @@
+    final CraftingBookCategory f_244076_;
     final ItemStack f_44243_;
     final NonNullList<Ingredient> f_44244_;
 +   private final boolean isSimple;
  
-    public ShapelessRecipe(ResourceLocation p_44246_, String p_44247_, ItemStack p_44248_, NonNullList<Ingredient> p_44249_) {
-       this.f_44241_ = p_44246_;
-       this.f_44242_ = p_44247_;
-       this.f_44243_ = p_44248_;
-       this.f_44244_ = p_44249_;
-+      this.isSimple = p_44249_.stream().allMatch(Ingredient::isSimple);
+    public ShapelessRecipe(ResourceLocation p_251840_, String p_249640_, CraftingBookCategory p_249390_, ItemStack p_252071_, NonNullList<Ingredient> p_250689_) {
+       this.f_44241_ = p_251840_;
+@@ -27,6 +_,7 @@
+       this.f_244076_ = p_249390_;
+       this.f_44243_ = p_252071_;
+       this.f_44244_ = p_250689_;
++      this.isSimple = p_250689_.stream().allMatch(Ingredient::isSimple);
     }
  
     public ResourceLocation m_6423_() {
-@@ -48,17 +_,20 @@
+@@ -55,17 +_,20 @@
  
     public boolean m_5818_(CraftingContainer p_44262_, Level p_44263_) {
        StackedContents stackedcontents = new StackedContents();
@@ -36,14 +37,15 @@
 +      return i == this.f_44244_.size() && (isSimple ? stackedcontents.m_36475_(this, (IntList)null) : net.minecraftforge.common.util.RecipeMatcher.findMatches(inputs,  this.f_44244_) != null);
     }
  
-    public ItemStack m_5874_(CraftingContainer p_44260_) {
-@@ -70,13 +_,14 @@
+    public ItemStack m_5874_(CraftingContainer p_44260_, RegistryAccess p_266797_) {
+@@ -77,14 +_,15 @@
     }
  
     public static class Serializer implements RecipeSerializer<ShapelessRecipe> {
 +      private static final ResourceLocation NAME = new ResourceLocation("minecraft", "crafting_shapeless");
        public ShapelessRecipe m_6729_(ResourceLocation p_44290_, JsonObject p_44291_) {
           String s = GsonHelper.m_13851_(p_44291_, "group", "");
+          CraftingBookCategory craftingbookcategory = CraftingBookCategory.f_244644_.m_262792_(GsonHelper.m_13851_(p_44291_, "category", (String)null), CraftingBookCategory.MISC);
           NonNullList<Ingredient> nonnulllist = m_44275_(GsonHelper.m_13933_(p_44291_, "ingredients"));
           if (nonnulllist.isEmpty()) {
              throw new JsonParseException("No ingredients for shapeless recipe");
@@ -53,8 +55,8 @@
 +            throw new JsonParseException("Too many ingredients for shapeless recipe. The maximum is " + (ShapedRecipe.MAX_WIDTH * ShapedRecipe.MAX_HEIGHT));
           } else {
              ItemStack itemstack = ShapedRecipe.m_151274_(GsonHelper.m_13930_(p_44291_, "result"));
-             return new ShapelessRecipe(p_44290_, s, itemstack, nonnulllist);
-@@ -88,7 +_,7 @@
+             return new ShapelessRecipe(p_44290_, s, craftingbookcategory, itemstack, nonnulllist);
+@@ -96,7 +_,7 @@
  
           for(int i = 0; i < p_44276_.size(); ++i) {
              Ingredient ingredient = Ingredient.m_43917_(p_44276_.get(i));

@@ -1,0 +1,310 @@
+--- a/net/minecraft/core/registries/BuiltInRegistries.java
++++ b/net/minecraft/core/registries/BuiltInRegistries.java
+@@ -111,41 +_,89 @@
+    public static final DefaultedRegistry<GameEvent> f_256726_ = m_257834_(Registries.f_256827_, "step", (p_260052_) -> {
+       return GameEvent.f_157785_;
+    });
+-   public static final Registry<SoundEvent> f_256894_ = m_258002_(Registries.f_256840_, (p_260167_) -> {
++   /**
++    * @deprecated Forge: Use {@link net.minecraftforge.registries.ForgeRegistries#SOUND_EVENTS} instead.
++    */
++   @Deprecated
++   public static final Registry<SoundEvent> f_256894_ = forge(Registries.f_256840_, (p_260167_) -> {
+       return SoundEvents.f_12019_;
+    });
+-   public static final DefaultedRegistry<Fluid> f_257020_ = m_257834_(Registries.f_256808_, "empty", (p_259453_) -> {
++   /**
++    * @deprecated Forge: Use {@link net.minecraftforge.registries.ForgeRegistries#FLUIDS} instead.
++    */
++   @Deprecated
++   public static final DefaultedRegistry<Fluid> f_257020_ = forge(Registries.f_256808_, "empty", (p_259453_) -> {
+       return Fluids.f_76191_;
+    });
+-   public static final Registry<MobEffect> f_256974_ = m_258002_(Registries.f_256929_, (p_259689_) -> {
++   /**
++    * @deprecated Forge: Use {@link net.minecraftforge.registries.ForgeRegistries#MOB_EFFECTS} instead.
++    */
++   @Deprecated
++   public static final Registry<MobEffect> f_256974_ = forge(Registries.f_256929_, (p_259689_) -> {
+       return MobEffects.f_19621_;
+    });
+-   public static final DefaultedRegistry<Block> f_256975_ = m_257834_(Registries.f_256747_, "air", (p_259909_) -> {
++   /**
++    * @deprecated Forge: Use {@link net.minecraftforge.registries.ForgeRegistries#BLOCKS} instead.
++    */
++   @Deprecated
++   public static final DefaultedRegistry<Block> f_256975_ = forge(Registries.f_256747_, "air", (p_259909_) -> {
+       return Blocks.f_50016_;
+    });
+-   public static final Registry<Enchantment> f_256876_ = m_258002_(Registries.f_256762_, (p_259104_) -> {
++   /**
++    * @deprecated Forge: Use {@link net.minecraftforge.registries.ForgeRegistries#ENCHANTMENTS} instead.
++    */
++   @Deprecated
++   public static final Registry<Enchantment> f_256876_ = forge(Registries.f_256762_, (p_259104_) -> {
+       return Enchantments.f_44987_;
+    });
+-   public static final DefaultedRegistry<EntityType<?>> f_256780_ = m_257834_(Registries.f_256939_, "pig", (p_259175_) -> {
++   /**
++    * @deprecated Forge: Use {@link net.minecraftforge.registries.ForgeRegistries#ENTITY_TYPES} instead.
++    */
++   @Deprecated
++   public static final DefaultedRegistry<EntityType<?>> f_256780_ = forge(Registries.f_256939_, "pig", (p_259175_) -> {
+       return EntityType.f_20510_;
+    });
+-   public static final DefaultedRegistry<Item> f_257033_ = m_257834_(Registries.f_256913_, "air", (p_260227_) -> {
++   /**
++    * @deprecated Forge: Use {@link net.minecraftforge.registries.ForgeRegistries#ITEMS} instead.
++    */
++   @Deprecated
++   public static final DefaultedRegistry<Item> f_257033_ = forge(Registries.f_256913_, "air", (p_260227_) -> {
+       return Items.f_41852_;
+    });
+-   public static final DefaultedRegistry<Potion> f_256980_ = m_257988_(Registries.f_256973_, "empty", (p_259869_) -> {
++   /**
++    * @deprecated Forge: Use {@link net.minecraftforge.registries.ForgeRegistries#POTIONS} instead.
++    */
++   @Deprecated
++   public static final DefaultedRegistry<Potion> f_256980_ = forge(Registries.f_256973_, "empty", (p_259869_) -> {
+       return Potions.f_43598_;
+    });
+-   public static final Registry<ParticleType<?>> f_257034_ = m_258002_(Registries.f_256890_, (p_260266_) -> {
++   /**
++    * @deprecated Forge: Use {@link net.minecraftforge.registries.ForgeRegistries#PARTICLE_TYPES} instead.
++    */
++   @Deprecated
++   public static final Registry<ParticleType<?>> f_257034_ = forge(Registries.f_256890_, (p_260266_) -> {
+       return ParticleTypes.f_123794_;
+    });
+-   public static final Registry<BlockEntityType<?>> f_257049_ = m_258002_(Registries.f_256922_, (p_259434_) -> {
++   /**
++    * @deprecated Forge: Use {@link net.minecraftforge.registries.ForgeRegistries#BLOCK_ENTITY_TYPES} instead.
++    */
++   @Deprecated
++   public static final Registry<BlockEntityType<?>> f_257049_ = forge(Registries.f_256922_, (p_259434_) -> {
+       return BlockEntityType.f_58917_;
+    });
+-   public static final DefaultedRegistry<PaintingVariant> f_257051_ = m_257988_(Registries.f_256836_, "kebab", PaintingVariants::m_218942_);
++   /**
++    * @deprecated Forge: Use {@link net.minecraftforge.registries.ForgeRegistries#PAINTING_VARIANTS} instead.
++    */
++   @Deprecated
++   public static final DefaultedRegistry<PaintingVariant> f_257051_ = forge(Registries.f_256836_, "kebab", PaintingVariants::m_218942_);
+    public static final Registry<ResourceLocation> f_256771_ = m_258002_(Registries.f_256887_, (p_259833_) -> {
+       return Stats.f_12926_;
+    });
+-   public static final DefaultedRegistry<ChunkStatus> f_256940_ = m_257988_(Registries.f_256755_, "empty", (p_259971_) -> {
++   /**
++    * @deprecated Forge: Use {@link net.minecraftforge.registries.ForgeRegistries#CHUNK_STATUS} instead.
++    */
++   @Deprecated
++   public static final DefaultedRegistry<ChunkStatus> f_256940_ = forge(Registries.f_256755_, "empty", (p_259971_) -> {
+       return ChunkStatus.f_62314_;
+    });
+    public static final Registry<RuleTestType<?>> f_256978_ = m_258002_(Registries.f_256947_, (p_259641_) -> {
+@@ -154,42 +_,90 @@
+    public static final Registry<PosRuleTestType<?>> f_256957_ = m_258002_(Registries.f_257009_, (p_259262_) -> {
+       return PosRuleTestType.f_74205_;
+    });
+-   public static final Registry<MenuType<?>> f_256818_ = m_258002_(Registries.f_256798_, (p_259341_) -> {
++   /**
++    * @deprecated Forge: Use {@link net.minecraftforge.registries.ForgeRegistries#MENU_TYPES} instead.
++    */
++   @Deprecated
++   public static final Registry<MenuType<?>> f_256818_ = forge(Registries.f_256798_, (p_259341_) -> {
+       return MenuType.f_39964_;
+    });
+-   public static final Registry<RecipeType<?>> f_256990_ = m_258002_(Registries.f_256954_, (p_259086_) -> {
++   /**
++    * @deprecated Forge: Use {@link net.minecraftforge.registries.ForgeRegistries#RECIPE_TYPES} instead.
++    */
++   @Deprecated
++   public static final Registry<RecipeType<?>> f_256990_ = forge(Registries.f_256954_, (p_259086_) -> {
+       return RecipeType.f_44107_;
+    });
+-   public static final Registry<RecipeSerializer<?>> f_256769_ = m_258002_(Registries.f_256764_, (p_260230_) -> {
++   /**
++    * @deprecated Forge: Use {@link net.minecraftforge.registries.ForgeRegistries#RECIPE_SERIALIZERS} instead.
++    */
++   @Deprecated
++   public static final Registry<RecipeSerializer<?>> f_256769_ = forge(Registries.f_256764_, (p_260230_) -> {
+       return RecipeSerializer.f_44077_;
+    });
+-   public static final Registry<Attribute> f_256951_ = m_258002_(Registries.f_256728_, (p_260300_) -> {
++   /**
++    * @deprecated Forge: Use {@link net.minecraftforge.registries.ForgeRegistries#ATTRIBUTES} instead.
++    */
++   @Deprecated
++   public static final Registry<Attribute> f_256951_ = forge(Registries.f_256728_, (p_260300_) -> {
+       return Attributes.f_22286_;
+    });
+    public static final Registry<PositionSourceType<?>> f_256972_ = m_258002_(Registries.f_256792_, (p_259113_) -> {
+       return PositionSourceType.f_157871_;
+    });
+-   public static final Registry<ArgumentTypeInfo<?, ?>> f_256979_ = m_258002_(Registries.f_256982_, (RegistryBootstrap)ArgumentTypeInfos::m_235384_);
+-   public static final Registry<StatType<?>> f_256899_ = m_258002_(Registries.f_256849_, (p_259967_) -> {
++   /**
++    * @deprecated Forge: Use {@link net.minecraftforge.registries.ForgeRegistries#COMMAND_ARGUMENT_TYPES} instead.
++    */
++   @Deprecated
++   public static final Registry<ArgumentTypeInfo<?, ?>> f_256979_ = forge(Registries.f_256982_, (RegistryBootstrap)ArgumentTypeInfos::m_235384_);
++   /**
++    * @deprecated Forge: Use {@link net.minecraftforge.registries.ForgeRegistries#STAT_TYPES} instead.
++    */
++   @Deprecated
++   public static final Registry<StatType<?>> f_256899_ = forge(Registries.f_256849_, (p_259967_) -> {
+       return Stats.f_12982_;
+    });
+    public static final DefaultedRegistry<VillagerType> f_256934_ = m_257988_(Registries.f_257019_, "plains", (p_259473_) -> {
+       return VillagerType.f_35821_;
+    });
+-   public static final DefaultedRegistry<VillagerProfession> f_256735_ = m_257988_(Registries.f_256749_, "none", (p_259037_) -> {
++   /**
++    * @deprecated Forge: Use {@link net.minecraftforge.registries.ForgeRegistries#VILLAGER_PROFESSIONS} instead.
++    */
++   @Deprecated
++   public static final DefaultedRegistry<VillagerProfession> f_256735_ = forge(Registries.f_256749_, "none", (p_259037_) -> {
+       return VillagerProfession.f_35585_;
+    });
+-   public static final Registry<PoiType> f_256941_ = m_258002_(Registries.f_256805_, PoiTypes::m_218082_);
+-   public static final DefaultedRegistry<MemoryModuleType<?>> f_256784_ = m_257988_(Registries.f_257023_, "dummy", (p_259248_) -> {
++   /**
++    * @deprecated Forge: Use {@link net.minecraftforge.registries.ForgeRegistries#POI_TYPES} instead.
++    */
++   @Deprecated
++   public static final Registry<PoiType> f_256941_ = forge(Registries.f_256805_, PoiTypes::m_218082_);
++   /**
++    * @deprecated Forge: Use {@link net.minecraftforge.registries.ForgeRegistries#MEMORY_MODULE_TYPES} instead.
++    */
++   @Deprecated
++   public static final DefaultedRegistry<MemoryModuleType<?>> f_256784_ = forge(Registries.f_257023_, "dummy", (p_259248_) -> {
+       return MemoryModuleType.f_26349_;
+    });
+-   public static final DefaultedRegistry<SensorType<?>> f_256733_ = m_257988_(Registries.f_256937_, "dummy", (p_259757_) -> {
++   /**
++    * @deprecated Forge: Use {@link net.minecraftforge.registries.ForgeRegistries#SENSOR_TYPES} instead.
++    */
++   @Deprecated
++   public static final DefaultedRegistry<SensorType<?>> f_256733_ = forge(Registries.f_256937_, "dummy", (p_259757_) -> {
+       return SensorType.f_26809_;
+    });
+-   public static final Registry<Schedule> f_256962_ = m_258002_(Registries.f_256723_, (p_259540_) -> {
++   /**
++    * @deprecated Forge: Use {@link net.minecraftforge.registries.ForgeRegistries#SCHEDULES} instead.
++    */
++   @Deprecated
++   public static final Registry<Schedule> f_256962_ = forge(Registries.f_256723_, (p_259540_) -> {
+       return Schedule.f_38012_;
+    });
+-   public static final Registry<Activity> f_256785_ = m_258002_(Registries.f_257025_, (p_260197_) -> {
++   /**
++    * @deprecated Forge: Use {@link net.minecraftforge.registries.ForgeRegistries#ACTIVITIES} instead.
++    */
++   @Deprecated
++   public static final Registry<Activity> f_256785_ = forge(Registries.f_257025_, (p_260197_) -> {
+       return Activity.f_37979_;
+    });
+    public static final Registry<LootPoolEntryType> f_257035_ = m_258002_(Registries.f_257032_, (p_260042_) -> {
+@@ -222,10 +_,18 @@
+    public static final Registry<BlockPredicateType<?>> f_256906_ = m_258002_(Registries.f_256774_, (p_260006_) -> {
+       return BlockPredicateType.f_190444_;
+    });
+-   public static final Registry<WorldCarver<?>> f_257001_ = m_258002_(Registries.f_256812_, (p_260200_) -> {
++   /**
++    * @deprecated Forge: Use {@link net.minecraftforge.registries.ForgeRegistries#WORLD_CARVERS} instead.
++    */
++   @Deprecated
++   public static final Registry<WorldCarver<?>> f_257001_ = forge(Registries.f_256812_, (p_260200_) -> {
+       return WorldCarver.f_64974_;
+    });
+-   public static final Registry<Feature<?>> f_256810_ = m_258002_(Registries.f_256833_, (p_259143_) -> {
++   /**
++    * @deprecated Forge: Use {@link net.minecraftforge.registries.ForgeRegistries#FEATURES} instead.
++    */
++   @Deprecated
++   public static final Registry<Feature<?>> f_256810_ = forge(Registries.f_256833_, (p_259143_) -> {
+       return Feature.f_65731_;
+    });
+    public static final Registry<StructurePlacementType<?>> f_256950_ = m_258002_(Registries.f_256888_, (p_259179_) -> {
+@@ -240,10 +_,18 @@
+    public static final Registry<PlacementModifierType<?>> f_256986_ = m_258002_(Registries.f_256843_, (p_260335_) -> {
+       return PlacementModifierType.f_191853_;
+    });
+-   public static final Registry<BlockStateProviderType<?>> f_256760_ = m_258002_(Registries.f_256891_, (p_259345_) -> {
++   /**
++    * @deprecated Forge: Use {@link net.minecraftforge.registries.ForgeRegistries#BLOCK_STATE_PROVIDER_TYPES} instead.
++    */
++   @Deprecated
++   public static final Registry<BlockStateProviderType<?>> f_256760_ = forge(Registries.f_256891_, (p_259345_) -> {
+       return BlockStateProviderType.f_68752_;
+    });
+-   public static final Registry<FoliagePlacerType<?>> f_256861_ = m_258002_(Registries.f_256905_, (p_260329_) -> {
++   /**
++    * @deprecated Forge: Use {@link net.minecraftforge.registries.ForgeRegistries#FOLIAGE_PLACER_TYPES} instead.
++    */
++   @Deprecated
++   public static final Registry<FoliagePlacerType<?>> f_256861_ = forge(Registries.f_256905_, (p_260329_) -> {
+       return FoliagePlacerType.f_68591_;
+    });
+    public static final Registry<TrunkPlacerType<?>> f_256920_ = m_258002_(Registries.f_256963_, (p_259690_) -> {
+@@ -252,7 +_,11 @@
+    public static final Registry<RootPlacerType<?>> f_256742_ = m_258002_(Registries.f_256768_, (p_259493_) -> {
+       return RootPlacerType.f_225898_;
+    });
+-   public static final Registry<TreeDecoratorType<?>> f_256987_ = m_258002_(Registries.f_256845_, (p_259122_) -> {
++   /**
++    * @deprecated Forge: Use {@link net.minecraftforge.registries.ForgeRegistries#TREE_DECORATOR_TYPES} instead.
++    */
++   @Deprecated
++   public static final Registry<TreeDecoratorType<?>> f_256987_ = forge(Registries.f_256845_, (p_259122_) -> {
+       return TreeDecoratorType.f_70043_;
+    });
+    public static final Registry<FeatureSizeType<?>> f_256958_ = m_258002_(Registries.f_256720_, (p_259370_) -> {
+@@ -282,10 +_,18 @@
+       return m_258073_(p_260095_, Lifecycle.stable(), p_259057_);
+    }
+ 
++   private static <T> Registry<T> forge(ResourceKey<? extends Registry<T>> key, BuiltInRegistries.RegistryBootstrap<T> def) {
++      return forge(key, Lifecycle.stable(), def);
++   }
++
+    private static <T> DefaultedRegistry<T> m_257988_(ResourceKey<? extends Registry<T>> p_259887_, String p_259325_, BuiltInRegistries.RegistryBootstrap<T> p_259759_) {
+       return m_257600_(p_259887_, p_259325_, Lifecycle.stable(), p_259759_);
+    }
+ 
++   private static <T> DefaultedRegistry<T> forge(ResourceKey<? extends Registry<T>> key, String defKey, BuiltInRegistries.RegistryBootstrap<T> def) {
++      return forge(key, defKey, Lifecycle.stable(), def);
++   }
++
+    private static <T> DefaultedRegistry<T> m_257834_(ResourceKey<? extends Registry<T>> p_259296_, String p_259101_, BuiltInRegistries.RegistryBootstrap<T> p_259485_) {
+       return m_257762_(p_259296_, p_259101_, Lifecycle.stable(), p_259485_);
+    }
+@@ -294,10 +_,19 @@
+       return m_257895_(p_259121_, new MappedRegistry<>(p_259121_, p_259977_, false), p_259874_, p_259977_);
+    }
+ 
++   private static <T> Registry<T> forge(ResourceKey<? extends Registry<T>> key, Lifecycle cycle, BuiltInRegistries.RegistryBootstrap<T> def) {
++      return m_257895_(key, net.minecraftforge.registries.GameData.getWrapper(key, cycle), def, cycle);
++   }
++
+    private static <T> DefaultedRegistry<T> m_257600_(ResourceKey<? extends Registry<T>> p_259400_, String p_259678_, Lifecycle p_259157_, BuiltInRegistries.RegistryBootstrap<T> p_259806_) {
+       return m_257895_(p_259400_, new DefaultedMappedRegistry<>(p_259678_, p_259400_, p_259157_, false), p_259806_, p_259157_);
+    }
+ 
++   @SuppressWarnings("unchecked")
++   private static <T> DefaultedRegistry<T> forge(ResourceKey<? extends Registry<T>> key, String defKey, Lifecycle cycle, BuiltInRegistries.RegistryBootstrap<T> def) {
++      return (DefaultedRegistry<T>) m_257895_(key, net.minecraftforge.registries.GameData.getWrapper(key, cycle, defKey), def, cycle);
++   }
++
+    private static <T> DefaultedRegistry<T> m_257762_(ResourceKey<? extends Registry<T>> p_260010_, String p_260220_, Lifecycle p_260139_, BuiltInRegistries.RegistryBootstrap<T> p_260185_) {
+       return m_257895_(p_260010_, new DefaultedMappedRegistry<>(p_260220_, p_260010_, p_260139_, true), p_260185_, p_260139_);
+    }
+@@ -343,7 +_,7 @@
+ 
+          if (p_259410_ instanceof DefaultedRegistry) {
+             ResourceLocation resourcelocation = ((DefaultedRegistry)p_259410_).m_122315_();
+-            Validate.notNull(p_259410_.m_7745_(resourcelocation), "Missing default of DefaultedMappedRegistry: " + resourcelocation);
++            Validate.notNull(p_259410_.m_7745_(resourcelocation), "Missing default of DefaultedMappedRegistry: " + p_260209_.m_123023_() + ", Entry: " + resourcelocation);
+          }
+ 
+       });

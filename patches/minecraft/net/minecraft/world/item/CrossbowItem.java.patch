@@ -8,3 +8,11 @@
        List<ItemStack> list = m_40941_(p_40891_);
        float[] afloat = m_220023_(p_40889_.m_217043_());
  
+@@ -304,6 +_,7 @@
+             p_40910_.m_6263_((Player)null, p_40911_.m_20185_(), p_40911_.m_20186_(), p_40911_.m_20189_(), soundevent1, SoundSource.PLAYERS, 0.5F, 1.0F);
+          }
+       }
++      super.m_5929_(p_40910_, p_40911_, p_40912_, p_40913_); //TODO: Remove in 1.20, this is only here to trigger Forge's old onUseingTick method
+ 
+    }
+ 

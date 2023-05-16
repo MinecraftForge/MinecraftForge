@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/level/ChunkMap.java
 +++ b/net/minecraft/server/level/ChunkMap.java
-@@ -385,6 +_,7 @@
+@@ -398,6 +_,7 @@
              this.f_140140_ = true;
           }
  
@@ -8,7 +8,7 @@
           return p_140179_;
        }
     }
-@@ -490,6 +_,7 @@
+@@ -503,6 +_,7 @@
              if (this.f_140131_.remove(p_140182_, p_140183_) && p_203002_ != null) {
                 if (p_203002_ instanceof LevelChunk) {
                    ((LevelChunk)p_203002_).m_62913_(false);
@@ -16,7 +16,7 @@
                 }
  
                 this.m_140258_(p_203002_);
-@@ -689,8 +_,14 @@
+@@ -702,8 +_,14 @@
              levelchunk.m_62952_();
              if (this.f_140132_.add(chunkpos.m_45588_())) {
                 levelchunk.m_62913_(true);
@@ -24,14 +24,14 @@
 +               p_140384_.currentlyLoading = levelchunk; // Forge - bypass the future chain when getChunk is called, this prevents deadlocks.
                 levelchunk.m_156369_();
                 levelchunk.m_187958_(this.f_140133_);
-+               net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.level.ChunkEvent.Load(levelchunk));
++               net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.level.ChunkEvent.Load(levelchunk, !(protochunk instanceof ImposterProtoChunk)));
 +               } finally {
 +                   p_140384_.currentlyLoading = null; // Forge - Stop bypassing the future chain.
 +               }
              }
  
              return levelchunk;
-@@ -793,6 +_,7 @@
+@@ -806,6 +_,7 @@
  
              this.f_140133_.m_46473_().m_6174_("chunkSave");
              CompoundTag compoundtag = ChunkSerializer.m_63454_(this.f_140133_, p_140259_);
@@ -39,7 +39,7 @@
              this.m_63502_(chunkpos, compoundtag);
              this.m_140229_(chunkpos, chunkstatus.m_62494_());
              return true;
-@@ -863,6 +_,7 @@
+@@ -876,6 +_,7 @@
  
           if (!p_183759_ && p_183758_) {
              p_183755_.m_9088_(p_183756_);
@@ -47,7 +47,7 @@
           }
  
        }
-@@ -1105,7 +_,7 @@
+@@ -1118,7 +_,7 @@
     }
  
     protected void m_140199_(Entity p_140200_) {
@@ -56,7 +56,7 @@
           EntityType<?> entitytype = p_140200_.m_6095_();
           int i = entitytype.m_20681_() * 16;
           if (i != 0) {
-@@ -1231,6 +_,7 @@
+@@ -1268,6 +_,7 @@
           }
        }
  

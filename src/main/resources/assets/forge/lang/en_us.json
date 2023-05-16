@@ -202,21 +202,20 @@
   "forge.controlsgui.alt": "ALT + %s",
 
   "forge.container.enchant.limitedEnchantability": "Limited Enchantability",
-  "attribute.name.forge.swim_speed": "Swim Speed",
-  "attribute.name.forge.nametag_distance": "Nametag Render Distance",
-  "attribute.name.forge.entity_gravity": "Entity Gravity",
-  "attribute.name.generic.reach_distance": "Reach Distance",
-  "attribute.name.generic.attack_range": "Attack Range",
-  "forge.swimSpeed": "Swim Speed",
-  "forge.nameTagDistance": "Nametag Render Distance",
-  "forge.entity_gravity": "Entity Gravity",
-  "generic.reachDistance": "Reach Distance",
-  "generic.attack_range": "Attack Range",
-  "forge.stepHeight": "Step Height",
+  "forge.swim_speed": "Swim Speed",
+  "forge.name_tag_distance": "Nametag Render Distance",
+  "forge.entity_gravity": "Gravity",
+  "forge.block_reach": "Block Reach",
+  "forge.entity_reach": "Entity Reach",
+  "forge.step_height": "Step Height",
 
   "fluid_type.minecraft.milk": "Milk",
   "fluid_type.minecraft.flowing_milk": "Milk",
 
   "forge.experimentalsettings.tooltip": "This world uses experimental settings, which could stop working at any time.",
-  "forge.selectWorld.backupWarning.experimental.additional" : "This message will not show again for this world."
+  "forge.selectWorld.backupWarning.experimental.additional" : "This message will not show again for this world.",
+
+  "forge.chatType.system": "{0}",
+
+  "pack.forge.description": "Forge resource pack"
 }

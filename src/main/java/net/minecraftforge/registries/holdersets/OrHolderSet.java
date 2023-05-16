@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 import com.mojang.serialization.Codec;
 
 import net.minecraft.core.Holder;
+import net.minecraft.core.HolderOwner;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.HolderSetCodec;
@@ -36,11 +37,11 @@ public class OrHolderSet<T> extends CompositeHolderSet<T>
     {
         return HolderSetCodec.create(registryKey, holderCodec, forceList)
             .listOf()
-            .xmap(OrHolderSet::new, OrHolderSet::getComponents)
+            .xmap(OrHolderSet::new, CompositeHolderSet::homogenize)
             .fieldOf("values")
             .codec();
     }
-    
+
     public OrHolderSet(List<HolderSet<T>> values)
     {
         super(values);

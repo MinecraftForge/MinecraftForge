@@ -5,24 +5,21 @@
 
 package net.minecraftforge.registries;
 
+import com.google.common.collect.Lists;
+import net.minecraft.core.Holder;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.registries.IForgeRegistry.AddCallback;
+import net.minecraftforge.registries.IForgeRegistry.BakeCallback;
+import net.minecraftforge.registries.IForgeRegistry.ClearCallback;
+import net.minecraftforge.registries.IForgeRegistry.CreateCallback;
+import net.minecraftforge.registries.IForgeRegistry.DummyFactory;
+import net.minecraftforge.registries.IForgeRegistry.MissingFactory;
+import net.minecraftforge.registries.IForgeRegistry.ValidateCallback;
+import org.jetbrains.annotations.Nullable;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
-import java.util.function.Supplier;
-
-import com.google.common.base.Suppliers;
-import com.google.common.collect.Lists;
-import com.mojang.serialization.Codec;
-
-import net.minecraft.client.multiplayer.ClientPacketListener;
-import net.minecraft.core.Holder;
-import net.minecraft.core.Registry;
-import net.minecraft.core.RegistryAccess;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.registries.IForgeRegistry.*;
-import org.jetbrains.annotations.Nullable;
 
 public class RegistryBuilder<T>
 {
@@ -37,16 +34,17 @@ public class RegistryBuilder<T>
     private List<CreateCallback<T>> createCallback = Lists.newArrayList();
     private List<ValidateCallback<T>> validateCallback = Lists.newArrayList();
     private List<BakeCallback<T>> bakeCallback = Lists.newArrayList();
-    private Function<T, Holder.Reference<T>> vanillaHolder;
     private boolean saveToDisc = true;
     private boolean sync = true;
     private boolean allowOverrides = true;
     private boolean allowModifications = false;
     private boolean hasWrapper = false;
-    private Supplier<RegistryAccess.RegistryData<T>> dataPackRegistryData = () -> null; // If present, implies this is a datapack registry.
+    @Deprecated(forRemoval = true, since = "1.19.4")
     private DummyFactory<T> dummyFactory;
     private MissingFactory<T> missingFactory;
     private Set<ResourceLocation> legacyNames = new HashSet<>();
+    @Nullable
+    private Function<T, Holder.Reference<T>> intrusiveHolderCallback = null;
 
     public RegistryBuilder<T> setName(ResourceLocation name)
     {
@@ -147,12 +145,14 @@ public class RegistryBuilder<T>
         return this.add(bake);
     }
 
+    @Deprecated(forRemoval = true, since = "1.19.4")
     public RegistryBuilder<T> set(DummyFactory<T> factory)
     {
         this.dummyFactory = factory;
         return this;
     }
 
+    @Deprecated(forRemoval = true, since = "1.19.4")
     public RegistryBuilder<T> dummy(DummyFactory<T> factory)
     {
         return this.set(factory);
@@ -176,8 +176,8 @@ public class RegistryBuilder<T>
     }
 
     /**
-     * Prevents the registry from being synced to clients. Does *not* affect datapack registries, datapack registries are unsynced by default
-     * unless a non-null network codec is registered via {@link #dataPackRegistry(Codec, Codec)}
+     * Prevents the registry from being synced to clients.
+     *
      * @return this
      */
     public RegistryBuilder<T> disableSync()
@@ -215,9 +215,9 @@ public class RegistryBuilder<T>
         return this;
     }
 
-    RegistryBuilder<T> vanillaHolder(Function<T, Holder.Reference<T>> func)
+    RegistryBuilder<T> intrusiveHolderCallback(Function<T, Holder.Reference<T>> intrusiveHolderCallback)
     {
-        this.vanillaHolder = func;
+        this.intrusiveHolderCallback = intrusiveHolderCallback;
         return this;
     }
 
@@ -233,66 +233,6 @@ public class RegistryBuilder<T>
         // Tag system heavily relies on Registry<?> objects, so we need a wrapper for this registry to take advantage
         this.hasWrapper();
         return this;
-    }
-
-    /**
-     * <p>Register this registry as an unsynced datapack registry, which will cause data to be loaded from
-     * a datapack folder based on the registry's name. The mod that registers this registry does not need to exist
-     * on the client to connect to servers with the mod/registry.</p>
-     * <p>Data JSONs will be loaded from {@code data/<datapack_namespace>/modid/registryname/}, where modid is the mod that registered this registry.</p>
-     * 
-     * @param codec the codec to be used for loading data from datapacks on servers
-     * @return this builder
-     * 
-     * @see #dataPackRegistry(Codec, Codec)
-     */
-    public RegistryBuilder<T> dataPackRegistry(Codec<T> codec)
-    {
-        return this.dataPackRegistry(codec, null);
-    }
-
-    /**
-     * <p>Register this registry as a datapack registry, which will cause data to be loaded from
-     * a datapack folder based on the registry's name.</p>
-     * <p>Data JSONs will be loaded from {@code data/<datapack_namespace>/modid/registryname/}, where modid is the mod that registered this registry.</p>
-     * 
-     * @param codec the codec to be used for loading data from datapacks on servers
-     * @param networkCodec the codec to be used for syncing loaded data to clients.<br>
-     * If networkCodec is null, data will not be synced, and clients without the mod that registered this registry can
-     * connect to servers with the mod.<br>
-     * If networkCodec is not null, then data will be synced (accessible via {@link ClientPacketListener#registryAccess()}),
-     * and the mod must be present on a client to connect to servers with the mod.
-     * @return this builder
-     * 
-     * @see #dataPackRegistry(Codec)
-     */
-    public RegistryBuilder<T> dataPackRegistry(Codec<T> codec, @Nullable Codec<T> networkCodec)
-    {
-        this.hasWrapper(); // A wrapper is required for data pack registries.
-        this.disableSync(); // Datapack registries are synced using a different system than static registries.
-        // Supplier averts having to set the registry name before calling this.
-        this.dataPackRegistryData = Suppliers.memoize(() -> {
-            // Validate registry key.
-            if (this.registryName == null)
-                throw new IllegalStateException("Registry builder cannot build a datapack registry: registry name not set");
-                            
-            ResourceKey<Registry<T>> registryKey = ResourceKey.createRegistryKey(this.registryName);
-            return new RegistryAccess.RegistryData<>(registryKey, codec, networkCodec); 
-        });
-        return this;
-    }
-
-    /**
-     * Retrieves datapack registry information, if any.
-     * 
-     * @return RegistryData containing the registry's key and codec(s). If returned data is null, this has not been marked as a datapack registry.
-     * 
-     * @throws IllegalStateException if this has been marked as a datapack registry, but registry name has not been set.
-     */
-    @Nullable
-    RegistryAccess.RegistryData<T> getDataPackRegistryData()
-    {
-        return this.dataPackRegistryData.get();
     }
 
     /**
@@ -412,6 +352,7 @@ public class RegistryBuilder<T>
     }
 
     @Nullable
+    @Deprecated(forRemoval = true, since = "1.19.4")
     public DummyFactory<T> getDummyFactory()
     {
         return dummyFactory;
@@ -438,9 +379,9 @@ public class RegistryBuilder<T>
         return legacyNames;
     }
 
-    Function<T, Holder.Reference<T>> getVanillaHolder()
+    Function<T, Holder.Reference<T>> getIntrusiveHolderCallback()
     {
-        return this.vanillaHolder;
+        return this.intrusiveHolderCallback;
     }
 
     boolean getHasWrapper()

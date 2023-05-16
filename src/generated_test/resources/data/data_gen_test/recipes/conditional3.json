@@ -10,6 +10,7 @@
       ],
       "recipe": {
         "type": "minecraft:crafting_shaped",
+        "category": "building",
         "key": {
           "X": {
             "item": "minecraft:diamond_block"
@@ -21,7 +22,8 @@
         ],
         "result": {
           "item": "minecraft:netherite_block"
-        }
+        },
+        "show_notification": true
       }
     },
     {
@@ -36,6 +38,7 @@
       ],
       "recipe": {
         "type": "minecraft:crafting_shaped",
+        "category": "building",
         "key": {
           "X": {
             "item": "minecraft:diamond_block"
@@ -48,7 +51,8 @@
         "result": {
           "count": 9,
           "item": "minecraft:netherite_block"
-        }
+        },
+        "show_notification": true
       }
     }
   ]

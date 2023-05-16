@@ -5,6 +5,7 @@
 
 package net.minecraftforge.debug.client;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.ColorResolver;
@@ -49,7 +50,7 @@ public class CustomColorResolverTest
     private static class ClientHandler
     {
 
-        private static final ColorResolver COLOR_RESOLVER = (biome, x, z) -> biome.getPrecipitation() == Biome.Precipitation.NONE ? 0xFF0000 : 0x0000FF;
+        private static final ColorResolver COLOR_RESOLVER = (biome, x, z) -> biome.getPrecipitationAt(BlockPos.containing(x, 0, z)) == Biome.Precipitation.NONE ? 0xFF0000 : 0x0000FF;
 
         @SubscribeEvent
         static void registerColorResolver(RegisterColorHandlersEvent.ColorResolvers event)

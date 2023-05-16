@@ -1,24 +1,15 @@
 --- a/net/minecraft/server/packs/repository/PackRepository.java
 +++ b/net/minecraft/server/packs/repository/PackRepository.java
-@@ -24,13 +_,14 @@
+@@ -23,7 +_,7 @@
+    private List<Pack> f_10499_ = ImmutableList.of();
  
-    public PackRepository(Pack.PackConstructor p_10502_, RepositorySource... p_10503_) {
-       this.f_10500_ = p_10502_;
--      this.f_10497_ = ImmutableSet.copyOf(p_10503_);
-+      this.f_10497_ = new java.util.HashSet<>(java.util.Arrays.asList(p_10503_));
-    }
- 
-    public PackRepository(PackType p_143890_, RepositorySource... p_143891_) {
--      this((p_143894_, p_143895_, p_143896_, p_143897_, p_143898_, p_143899_, p_143900_) -> {
--         return new Pack(p_143894_, p_143895_, p_143896_, p_143897_, p_143898_, p_143890_, p_143899_, p_143900_);
-+      this((p_143894_, p_143895_, p_143896_, p_143897_, p_143898_, p_143899_, p_143900_, hidden) -> {
-+         return new Pack(p_143894_, p_143895_, p_143896_, p_143897_, p_143898_, p_143890_, p_143899_, p_143900_, hidden);
-       }, p_143891_);
-+      net.minecraftforge.fml.ModLoader.get().postEvent(new net.minecraftforge.event.AddPackFindersEvent(p_143890_, f_10497_::add));
+    public PackRepository(RepositorySource... p_251886_) {
+-      this.f_10497_ = ImmutableSet.copyOf(p_251886_);
++      this.f_10497_ = new java.util.HashSet<>(List.of(p_251886_)); //Forge: This needs to be a mutable set, so that we can add to it later on.
     }
  
     public void m_10506_() {
-@@ -90,6 +_,10 @@
+@@ -111,6 +_,10 @@
     @Nullable
     public Pack m_10507_(String p_10508_) {
        return this.f_10498_.get(p_10508_);

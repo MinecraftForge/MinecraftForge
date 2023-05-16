@@ -1,0 +1,62 @@
+--- a/net/minecraft/client/renderer/texture/SpriteContents.java
++++ b/net/minecraft/client/renderer/texture/SpriteContents.java
+@@ -32,14 +_,29 @@
+    public NativeImage[] f_243731_;
+    @Nullable
+    final SpriteContents.AnimatedTexture f_244575_;
++   @Nullable
++   public final net.minecraftforge.client.textures.ForgeTextureMetadata forgeMeta;
+ 
++   /**
++    * @deprecated Forge: Use the {@linkplain SpriteContents#SpriteContents(ResourceLocation, FrameSize, NativeImage, AnimationMetadataSection, net.minecraftforge.client.textures.ForgeTextureMetadata) overload with Forge metadata parameter} to properly forward custom loaders.
++    */
++   @Deprecated
+    public SpriteContents(ResourceLocation p_249787_, FrameSize p_251031_, NativeImage p_252131_, AnimationMetadataSection p_250432_) {
++      this(p_249787_, p_251031_, p_252131_, p_250432_, null);
++   }
++
++   public SpriteContents(ResourceLocation p_249787_, FrameSize p_251031_, NativeImage p_252131_, AnimationMetadataSection p_250432_, @org.jetbrains.annotations.Nullable net.minecraftforge.client.textures.ForgeTextureMetadata forgeMeta) {
+       this.f_243877_ = p_249787_;
+       this.f_244302_ = p_251031_.f_244129_();
+       this.f_244600_ = p_251031_.f_244503_();
+       this.f_244575_ = this.m_247391_(p_251031_, p_252131_.m_84982_(), p_252131_.m_85084_(), p_250432_);
+       this.f_243904_ = p_252131_;
+       this.f_243731_ = new NativeImage[]{this.f_243904_};
++      this.forgeMeta = forgeMeta;
++   }
++
++   public NativeImage getOriginalImage() {
++      return this.f_243904_;
+    }
+ 
+    public void m_246368_(int p_248864_) {
+@@ -124,6 +_,9 @@
+ 
+    void m_247381_(int p_248895_, int p_250245_, int p_250458_, int p_251337_, NativeImage[] p_248825_) {
+       for(int i = 0; i < this.f_243731_.length; ++i) {
++         // Forge: Skip uploading if the texture would be made invalid by mip level
++         if ((this.f_244302_ >> i) <= 0 || (this.f_244600_ >> i) <= 0)
++            break;
+          p_248825_[i].m_85003_(i, p_248895_ >> i, p_250245_ >> i, p_250458_ >> i, p_251337_ >> i, this.f_244302_ >> i, this.f_244600_ >> i, this.f_243731_.length > 1, false);
+       }
+ 
+@@ -241,7 +_,8 @@
+          for(int i = 0; i < this.f_244527_.length; ++i) {
+             int j = SpriteContents.this.f_244302_ >> i;
+             int k = SpriteContents.this.f_244600_ >> i;
+-            this.f_244527_[i] = new NativeImage(j, k, false);
++            // Forge: Guard against invalid texture size, because we allow generating mipmaps regardless of texture sizes
++            this.f_244527_[i] = new NativeImage(Math.max(1, j), Math.max(1, k), false);
+          }
+ 
+       }
+@@ -257,6 +_,9 @@
+             for(int k = 0; k < this.f_244527_.length; ++k) {
+                int l = SpriteContents.this.f_244302_ >> k;
+                int i1 = SpriteContents.this.f_244600_ >> k;
++               // Forge: Guard against invalid texture size, because we allow generating mipmaps regardless of texture sizes
++               if (l < 1 || i1 < 1)
++                  continue;
+ 
+                for(int j1 = 0; j1 < i1; ++j1) {
+                   for(int k1 = 0; k1 < l; ++k1) {

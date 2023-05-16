@@ -1,4 +1,10 @@
 import groovy.json.JsonBuilder
+import net.minecraftforge.forge.tasks.checks.CheckATs
+import net.minecraftforge.forge.tasks.checks.CheckExcs
+import net.minecraftforge.forge.tasks.checks.CheckPatches
+import net.minecraftforge.forge.tasks.checks.CheckSAS
+import net.minecraftforge.forge.tasks.checks.CheckTask
+import net.minecraftforge.forge.tasks.checks.CheckMode
 
 import java.nio.file.Files
 import java.util.Date
@@ -13,6 +19,7 @@ import net.minecraftforge.gradle.common.tasks.SignJar
 import net.minecraftforge.gradle.userdev.tasks.RenameJar
 import org.apache.tools.ant.filters.ReplaceTokens
 import org.gradle.plugins.ide.eclipse.model.SourceFolder
+import org.objectweb.asm.Opcodes
 
 plugins {
     id 'org.cadixdev.licenser' version '0.6.1'
@@ -36,18 +43,18 @@ ext {
         ]
     }
     MAPPING_CHANNEL = 'official'
-    MAPPING_VERSION = '1.19.2'
-    MC_VERSION = '1.19.2'
+    MAPPING_VERSION = '1.19.4'
+    MC_VERSION = '1.19.4'
     MC_NEXT_VERSION = '1.20'
-    MCP_VERSION = '20220805.130853'
+    MCP_VERSION = '20230314.122934'
     SPI_VERSION = '6.0.0'
     ACCESSTRANSFORMERS_VERSION = '8.0.4'
     COREMODS_VERSION = '5.0.1'
     EVENTBUS_VERSION = '6.0.3'
     MODLAUNCHER_VERSION = '10.0.8'
-    SECUREJARHANDLER_VERSION = '2.1.4'
+    SECUREJARHANDLER_VERSION = '2.1.6'
     BOOTSTRAPLAUNCHER_VERSION = '1.1.2'
-    ASM_VERSION = '9.3'
+    ASM_VERSION = '9.5'
     INSTALLER_VERSION = '2.1.+'
     MIXIN_VERSION = '0.8.5'
     TERMINALCONSOLEAPPENDER_VERSION = '1.2.0'
@@ -56,17 +63,17 @@ ext {
     JETBRAINS_ANNOTATIONS_VERSION = '23.0.0'
     SLF4J_API_VERSION = '1.8.0-beta4'
     APACHE_MAVEN_ARTIFACT_VERSION = '3.8.5'
+    JARJAR_VERSION = '0.3.19'
 
     // These versions should be kept in sync with the version manifest JSON
     // To use a version newer than the version manifest JSON, the dependency must be added to the installer configuration
-    MOJANG_LOGGING_VERSION = '1.0.0'
-    LOG4J_VERSION = '2.17.0'
-    GUAVA_VERSION = '31.0.1-jre'
-    GSON_VERSION = '2.8.9'
+    MOJANG_LOGGING_VERSION = '1.1.1'
+    LOG4J_VERSION = '2.19.0'
+    GUAVA_VERSION = '31.1-jre'
+    GSON_VERSION = '2.10'
     APACHE_COMMONS_LANG3_VERSION = '3.12.0'
     JOPT_SIMPLE_VERSION = '5.0.4'
     COMMONS_IO_VERSION = '2.11.0'
-    JARJAR_VERSION = '0.3.16'
 
     GIT_INFO = gradleutils.gitInfo
     VERSION = gradleutils.getFilteredMCTagOffsetBranchVersion(true, '[0-9]', MC_VERSION)
@@ -77,7 +84,7 @@ ext {
     INSTALLER_TOOLS = 'net.minecraftforge:installertools:1.3.0'
     JAR_SPLITTER = 'net.minecraftforge:jarsplitter:1.1.4'
     FART = 'net.minecraftforge:ForgeAutoRenamingTool:0.1.22:all'
-    MIN_TAG_FOR_CHANGELOG = "41.0"
+    MIN_TAG_FOR_CHANGELOG = '41.0'
 }
 
 println('Version: ' + VERSION +
@@ -1071,7 +1078,34 @@ project(':forge') {
                             '--mod', 'data_pack_registries_test',
                             '--mod', 'biome_modifiers_test',
                             '--mod', 'structure_modifiers_test',
+                            '--mod', 'custom_preset_editor_test',
                             '--output', rootProject.file('src/generated_test/resources/'),
+                            '--existing', sourceSets.main.resources.srcDirs[0],
+                            '--existing', sourceSets.test.resources.srcDirs[0]
+                }
+            }
+
+            forge_mdk_data {
+                parent runs.forge_data
+                taskName 'forge_mdk_data'
+
+                environment 'MOD_CLASSES', 'dummy' // Needed to work around FG limitation, FG will replace this!
+
+                ideaModule "${rootProject.name}.${project.name}.test"
+
+                mods {
+                    tests { sources sourceSets.test }
+                }
+
+                afterEvaluate {
+                    // Clear forge's main datagen args
+                    args.removeAll {
+                        forgeDataArgs.contains(it instanceof File ? (it as File).absolutePath : it.toString())
+                    }
+
+                    args '--flat', '--all', '--validate',
+                            '--mod', 'mdk_datagen',
+                            '--output', rootProject.file('src/generated_mdk/resources/'),
                             '--existing', sourceSets.main.resources.srcDirs[0],
                             '--existing', sourceSets.test.resources.srcDirs[0]
                 }
@@ -1168,40 +1202,70 @@ project(':forge') {
         }
     }
 
-    task checkATs(type: CheckATs, dependsOn: [extractInheritance, createSrg2Mcp]) {
-        inheritance = extractInheritance.output
+    task findFinalizeSpawnTargets(type: BytecodePredicateFinder, dependsOn: ['createJoinedSRG']) {
+        jar = createJoinedSRG.output
+        output = rootProject.file('src/main/resources/coremods/finalize_spawn_targets.json')
+        predicate = {
+            parent, node, insn ->
+                'net/minecraft/world/level/BaseSpawner' != parent.name // Ignore this class as we special case it.
+                && insn.getOpcode() == Opcodes.INVOKEVIRTUAL
+                && insn.name.equals('m_6518_')
+                && insn.desc.equals('(Lnet/minecraft/world/level/ServerLevelAccessor;Lnet/minecraft/world/DifficultyInstance;Lnet/minecraft/world/entity/MobSpawnType;Lnet/minecraft/world/entity/SpawnGroupData;Lnet/minecraft/nbt/CompoundTag;)Lnet/minecraft/world/entity/SpawnGroupData;')
+        }
+    }
+
+    tasks.register('validateDeprecations', ValidateDeprecations) {
+        input = tasks.jar.archiveFile
+        mcVersion = MC_VERSION
+    }
+
+    tasks.jar.finalizedBy 'validateDeprecations'
+
+    tasks.register('checkAll') {
+        dependsOn 'checkLicenses'
+        group = 'checks'
+    }
+    tasks.register('checkAllAndFix') {
+        dependsOn 'findFinalizeSpawnTargets', 'findFieldInstanceChecks', 'checkLicenses'
+        group = 'checks'
+    }
+
+    CheckTask.registerTask(tasks, 'ATs', CheckATs) {
+        dependsOn extractInheritance, createSrg2Mcp
         ats.from patcher.accessTransformers
+        inheritance = extractInheritance.output
         mappings = createSrg2Mcp.output
     }
 
-    task checkSAS(type: CheckSAS, dependsOn: extractInheritance) {
-        inheritance = extractInheritance.output
+    CheckTask.registerTask(tasks, 'SAS', CheckSAS) {
+        dependsOn extractInheritance
         sass.from patcher.sideAnnotationStrippers
+        inheritance = extractInheritance.output
     }
 
-    task checkExcs(type: CheckExcs, dependsOn: jar) {
+    CheckTask.registerTask(tasks, 'Excs', CheckExcs) {
+        dependsOn jar
         binary = jar.archiveFile.get().asFile
         excs.from patcher.excs
     }
 
-    task checkPatchesAndFix(type: CheckPatches, dependsOn: genPatches) {
+    CheckTask.registerTask(tasks, 'Patches', CheckPatches) {
+        dependsOn genPatches
         patchDir = file("$rootDir/patches")
-        autoFix = true
-    }
-
-    task checkPatches(type: CheckPatches, dependsOn: genPatches) {
-        patchDir = file("$rootDir/patches")
-        autoFix = false
+        patchesWithS2SArtifact = [
+                'minecraft/net/minecraft/client/renderer/ViewArea.java.patch',
+                'minecraft/net/minecraft/data/models/blockstates/Variant.java.patch',
+        ]
     }
 
     genPatches {
-        finalizedBy checkPatches
+        finalizedBy checkAndFixPatches
         autoHeader true
         lineEnding = '\n'
     }
 
     def baseForgeVersionProperty = project.objects.property(String)
-    baseForgeVersionProperty.set(project.provider { getLatestForgeVersion(MC_VERSION) }.map { MC_VERSION + '-' + it })
+    baseForgeVersionProperty.set(project.provider { TeamcityRequests.attemptFindBase(rootDir) ?: getLatestForgeVersion(MC_VERSION) })
     baseForgeVersionProperty.finalizeValueOnRead()
     def jarCompatibilityTaskSetup = { task ->
         task.group = 'jar compatibility'
@@ -1241,9 +1305,15 @@ project(':forge') {
         dependsOn 'setupCheckJarCompatibility'
 
         baseJar = project.tasks.named('mergeBaseForgeJar').flatMap { it.output }
-    }
+        baseLibraries.from(project.tasks.named('createJoinedSRG').flatMap { it.output })
 
-    task checkAll(dependsOn: [checkATs, checkSAS, checkExcs, findFieldInstanceChecks, checkPatches, checkLicenses]){}
+        inputJar = project.tasks.named('reobfJar').flatMap { it.output }
+        concreteLibraries.from(project.PACKED_DEPS.collect { project.rootProject.tasks.getByPath(it).archiveFile })
+
+        commonLibraries.from(project.configurations.minecraftImplementation)
+        commonLibraries.from(project.configurations.installer)
+        commonLibraries.from(project.configurations.moduleonly)
+    }
 
     task launcherJson(type: LauncherJson) {
         packedDependencies = [':fmlloader:jar']
@@ -1560,6 +1630,10 @@ project(':forge') {
             ])
             rename 'gitignore\\.txt', '.gitignore'
             rename 'gitattributes\\.txt', '.gitattributes'
+        }
+        from(rootProject.file('src/generated_mdk/resources/')) {
+            into('src/main/resources/')
+            exclude '**/.cache/'
         }
     }
 

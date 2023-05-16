@@ -7,25 +7,24 @@ package net.minecraftforge.client.model.geometry;
 
 import com.mojang.datafixers.util.Pair;
 import com.mojang.math.Transformation;
-import net.minecraft.client.renderer.block.model.BlockModel;
-import net.minecraft.client.renderer.block.model.ItemOverrides;
-import net.minecraft.client.renderer.block.model.ItemTransforms;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.resources.model.BakedModel;
-import net.minecraft.client.resources.model.Material;
-import net.minecraft.client.resources.model.ModelBakery;
-import net.minecraft.client.resources.model.ModelState;
-import net.minecraft.client.resources.model.UnbakedModel;
-import net.minecraft.resources.ResourceLocation;
-import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.Nullable;
-
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
+import net.minecraft.client.renderer.block.model.BlockModel;
+import net.minecraft.client.renderer.block.model.ItemOverrides;
+import net.minecraft.client.renderer.block.model.ItemTransforms;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.client.resources.model.Material;
+import net.minecraft.client.resources.model.ModelBaker;
+import net.minecraft.client.resources.model.ModelState;
+import net.minecraft.client.resources.model.UnbakedModel;
+import net.minecraft.resources.ResourceLocation;
+import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * A {@linkplain IGeometryBakingContext geometry baking context} that is bound to a {@link BlockModel}.
@@ -42,6 +41,7 @@ public class BlockGeometryBakingContext implements IGeometryBakingContext
     private Transformation rootTransform;
     @Nullable
     private ResourceLocation renderTypeHint;
+    private boolean gui3d = true;
 
     @ApiStatus.Internal
     public BlockGeometryBakingContext(BlockModel owner)
@@ -94,7 +94,7 @@ public class BlockGeometryBakingContext implements IGeometryBakingContext
     @Override
     public boolean isGui3d()
     {
-        return true;
+        return gui3d;
     }
 
     @Override
@@ -142,27 +142,26 @@ public class BlockGeometryBakingContext implements IGeometryBakingContext
         this.renderTypeHint = renderTypeHint;
     }
 
+    public void setGui3d(boolean gui3d)
+    {
+        this.gui3d = gui3d;
+    }
+
     public void copyFrom(BlockGeometryBakingContext other)
     {
         this.customGeometry = other.customGeometry;
         this.rootTransform = other.rootTransform;
         this.visibilityData.copyFrom(other.visibilityData);
         this.renderTypeHint = other.renderTypeHint;
+        this.gui3d = other.gui3d;
     }
 
-    public Collection<Material> getTextureDependencies(Function<ResourceLocation, UnbakedModel> modelGetter, Set<Pair<String, String>> missingTextureErrors)
-    {
-        IUnbakedGeometry<?> geometry = getCustomGeometry();
-        return geometry == null ? Collections.emptySet() :
-                geometry.getMaterials(this, modelGetter, missingTextureErrors);
-    }
-
-    public BakedModel bake(ModelBakery bakery, Function<Material, TextureAtlasSprite> bakedTextureGetter, ModelState modelTransform, ItemOverrides overrides, ResourceLocation modelLocation)
+    public BakedModel bake(ModelBaker baker, Function<Material, TextureAtlasSprite> bakedTextureGetter, ModelState modelTransform, ItemOverrides overrides, ResourceLocation modelLocation)
     {
         IUnbakedGeometry<?> geometry = getCustomGeometry();
         if (geometry == null)
             throw new IllegalStateException("Can not use custom baking without custom geometry");
-        return geometry.bake(this, bakery, bakedTextureGetter, modelTransform, overrides, modelLocation);
+        return geometry.bake(this, baker, bakedTextureGetter, modelTransform, overrides, modelLocation);
     }
 
     public static class VisibilityData

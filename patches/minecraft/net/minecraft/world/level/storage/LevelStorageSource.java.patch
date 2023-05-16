@@ -1,21 +1,7 @@
 --- a/net/minecraft/world/level/storage/LevelStorageSource.java
 +++ b/net/minecraft/world/level/storage/LevelStorageSource.java
-@@ -96,6 +_,13 @@
-       }
- 
-       Dynamic<T> dynamic1 = p_78206_.update(References.f_16795_, dynamic, p_78207_, SharedConstants.m_183709_().getWorldVersion());
-+      // The above line is modified (via the patch in V2832), such that the data fixer upper will retain dimensions that don't exist in the schema, in the dynamic.
-+      // When we parse the WorldGenSettings below, in vanilla, this uses the same call paths that can cause things to register (such as dimension types).
-+      // However, since at this point all resource data will have been loaded, anything that *would* register now is going to error later, because it'll create a Holder<> reference, that is not bound to anything. This unbound reference will then throw an error when the registries are frozen.
-+      // So, we freeze the registries before this call to parse(). This prevents them from leaking any new unbound holders into the registry.
-+      // Attempting to register to a frozen registry throws an exception, which we resolve via a patch in RegistryLoader, causing it to return DataResult.error() instead, and prevent the faulty dimension from registering without aborting the parsing of the WorldGenSettings
-+      // Finally, the resultOrPartial() promotes only the dimensions which successfully parsed, and the LenientUnboundedMapCodec which is patched into the WorldGenSettings codec ensures that *only* the invalid dimensions will fail to parse (see MC-197860), and not discard other dimensions as well.
-+      if (p_78205_.getOps() instanceof net.minecraft.resources.RegistryOps<T> ops) ops.f_206806_.m_203610_().forEach(e -> e.f_206234_().m_203521_());
-       DataResult<WorldGenSettings> dataresult = WorldGenSettings.f_64600_.parse(dynamic1);
-       return Pair.of(dataresult.resultOrPartial(Util.m_137489_("WorldGenSettings: ", f_78191_::error)).orElseGet(() -> {
-          RegistryAccess registryaccess = RegistryAccess.m_206154_(dynamic1);
-@@ -372,6 +_,19 @@
-          return LevelStorageSource.this.m_230817_(this.f_230867_, LevelStorageSource.m_211737_(p_211748_, p_211749_, p_211750_));
+@@ -388,6 +_,19 @@
+          return LevelStorageSource.this.m_230817_(this.f_230867_, LevelStorageSource.m_245503_(p_248747_, p_251873_, p_249187_, p_249736_));
        }
  
 +      public void readAdditionalLevelSaveData() {
@@ -32,9 +18,9 @@
 +      }
 +
        @Nullable
-       public DataPackConfig m_78309_() {
+       public WorldDataConfiguration m_247706_() {
           this.m_78313_();
-@@ -388,6 +_,8 @@
+@@ -404,6 +_,8 @@
           CompoundTag compoundtag1 = new CompoundTag();
           compoundtag1.m_128365_("Data", compoundtag);
  
@@ -43,7 +29,7 @@
           try {
              File file2 = File.createTempFile("level", ".dat", file1);
              NbtIo.m_128944_(compoundtag1, file2);
-@@ -402,6 +_,10 @@
+@@ -418,6 +_,10 @@
  
        public Optional<Path> m_182514_() {
           return !this.f_78270_.m_13639_() ? Optional.empty() : Optional.of(this.f_230867_.m_230860_());

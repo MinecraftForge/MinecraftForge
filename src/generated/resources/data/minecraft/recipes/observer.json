@@ -1,5 +1,6 @@
 {
   "type": "minecraft:crafting_shaped",
+  "category": "redstone",
   "key": {
     "#": {
       "tag": "forge:cobblestone/normal"
@@ -18,5 +19,6 @@
   ],
   "result": {
     "item": "minecraft:observer"
-  }
+  },
+  "show_notification": true
 }

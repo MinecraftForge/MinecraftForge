@@ -61,7 +61,7 @@ public class LivingEntityUseItemEvent extends LivingEvent
     /**
      * Fired every tick that a player is 'using' an item, see {@link Start} for info.
      *
-     * Cancel the event, or set the duration or {@literal <=} 0 to cause the player to stop using the item.
+     * Cancel the event, or set the duration to {@literal <=} 0 to cause the player to stop using the item.
      *
      */
     @Cancelable

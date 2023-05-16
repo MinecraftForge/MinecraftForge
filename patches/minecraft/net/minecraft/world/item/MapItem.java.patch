@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/item/MapItem.java
 +++ b/net/minecraft/world/item/MapItem.java
-@@ -56,8 +_,18 @@
+@@ -58,8 +_,18 @@
  
     @Nullable
     public static MapItemSavedData m_42853_(ItemStack p_42854_, Level p_42855_) {

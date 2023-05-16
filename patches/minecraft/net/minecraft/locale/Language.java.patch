@@ -1,6 +1,6 @@
 --- a/net/minecraft/locale/Language.java
 +++ b/net/minecraft/locale/Language.java
-@@ -59,7 +_,8 @@
+@@ -41,7 +_,8 @@
           f_128101_.error("Couldn't read strings from {}", "/assets/minecraft/lang/en_us.json", ioexception);
        }
  
@@ -8,9 +8,9 @@
 +      final Map<String, String> map = new java.util.HashMap<>(builder.build());
 +      net.minecraftforge.server.LanguageHook.captureLanguageMap(map);
        return new Language() {
-          public String m_6834_(String p_128127_) {
-             return map.getOrDefault(p_128127_, p_128127_);
-@@ -80,6 +_,11 @@
+          public String m_118919_(String p_128127_, String p_265421_) {
+             return map.getOrDefault(p_128127_, p_265421_);
+@@ -62,6 +_,11 @@
                 }, Style.f_131099_).isPresent();
              };
           }
@@ -22,7 +22,7 @@
        };
     }
  
-@@ -100,6 +_,9 @@
+@@ -82,6 +_,9 @@
     public static void m_128114_(Language p_128115_) {
        f_128104_ = p_128115_;
     }
@@ -30,5 +30,5 @@
 +   // FORGE START
 +   public Map<String, String> getLanguageData() { return ImmutableMap.of(); }
  
-    public abstract String m_6834_(String p_128111_);
- 
+    public String m_6834_(String p_128111_) {
+       return this.m_118919_(p_128111_, p_128111_);

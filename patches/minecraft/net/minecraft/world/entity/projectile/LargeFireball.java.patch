@@ -1,11 +1,12 @@
 --- a/net/minecraft/world/entity/projectile/LargeFireball.java
 +++ b/net/minecraft/world/entity/projectile/LargeFireball.java
-@@ -26,7 +_,7 @@
+@@ -24,7 +_,8 @@
     protected void m_6532_(HitResult p_37218_) {
        super.m_6532_(p_37218_);
        if (!this.f_19853_.f_46443_) {
 -         boolean flag = this.f_19853_.m_46469_().m_46207_(GameRules.f_46132_);
-+         boolean flag = net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.f_19853_, this.m_37282_());
-          this.f_19853_.m_46518_((Entity)null, this.m_20185_(), this.m_20186_(), this.m_20189_(), (float)this.f_37197_, flag, flag ? Explosion.BlockInteraction.DESTROY : Explosion.BlockInteraction.NONE);
++         // TODO 1.19.3: The creation of Level.ExplosionInteraction means this code path will fire EntityMobGriefingEvent twice. Should we try and fix it? -SS
++         boolean flag = net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.f_19853_, this.m_19749_());
+          this.f_19853_.m_255391_(this, this.m_20185_(), this.m_20186_(), this.m_20189_(), (float)this.f_37197_, flag, Level.ExplosionInteraction.MOB);
           this.m_146870_();
        }

@@ -1,5 +1,6 @@
 {
   "type": "minecraft:crafting_shaped",
+  "category": "misc",
   "key": {
     "I": {
       "item": "minecraft:iron_block"
@@ -15,5 +16,6 @@
   ],
   "result": {
     "item": "minecraft:anvil"
-  }
+  },
+  "show_notification": true
 }

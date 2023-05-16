@@ -1,5 +1,6 @@
 {
   "type": "minecraft:crafting_shaped",
+  "category": "equipment",
   "key": {
     "#": {
       "type": "forge:difference",
@@ -18,5 +19,6 @@
   ],
   "result": {
     "item": "minecraft:flint_and_steel"
-  }
+  },
+  "show_notification": true
 }

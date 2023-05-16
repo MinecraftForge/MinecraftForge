@@ -1,5 +1,6 @@
 {
   "type": "minecraft:crafting_shaped",
+  "category": "misc",
   "key": {
     "#": {
       "tag": "forge:rods/wooden"
@@ -19,5 +20,6 @@
   "result": {
     "count": 6,
     "item": "minecraft:powered_rail"
-  }
+  },
+  "show_notification": true
 }

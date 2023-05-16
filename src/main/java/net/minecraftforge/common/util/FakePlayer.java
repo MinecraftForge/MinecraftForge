@@ -8,17 +8,21 @@ package net.minecraftforge.common.util;
 import com.mojang.authlib.GameProfile;
 import java.util.Set;
 import javax.annotation.ParametersAreNonnullByDefault;
-import net.minecraft.core.BlockPos;
 import net.minecraft.network.Connection;
 import net.minecraft.network.PacketSendListener;
+import net.minecraft.network.chat.ChatType;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.PlayerChatMessage;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.PacketFlow;
 import net.minecraft.network.protocol.game.ClientboundPlayerPositionPacket;
 import net.minecraft.network.protocol.game.ServerboundAcceptTeleportationPacket;
 import net.minecraft.network.protocol.game.ServerboundBlockEntityTagQuery;
 import net.minecraft.network.protocol.game.ServerboundChangeDifficultyPacket;
+import net.minecraft.network.protocol.game.ServerboundChatAckPacket;
+import net.minecraft.network.protocol.game.ServerboundChatCommandPacket;
 import net.minecraft.network.protocol.game.ServerboundChatPacket;
+import net.minecraft.network.protocol.game.ServerboundChatSessionUpdatePacket;
 import net.minecraft.network.protocol.game.ServerboundClientCommandPacket;
 import net.minecraft.network.protocol.game.ServerboundClientInformationPacket;
 import net.minecraft.network.protocol.game.ServerboundCommandSuggestionPacket;
@@ -65,8 +69,8 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.stats.Stat;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.RelativeMovement;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.Nullable;
 
@@ -77,7 +81,7 @@ public class FakePlayer extends ServerPlayer
 {
     public FakePlayer(ServerLevel level, GameProfile name)
     {
-        super(level.getServer(), level, name, null);
+        super(level.getServer(), level, name);
         this.connection = new FakePlayerNetHandler(level.getServer(), this);
     }
 
@@ -122,7 +126,6 @@ public class FakePlayer extends ServerPlayer
         @Override public void handleBlockEntityTagQuery(ServerboundBlockEntityTagQuery packet) { }
         @Override public void handleMovePlayer(ServerboundMovePlayerPacket packet) { }
         @Override public void teleport(double x, double y, double z, float yaw, float pitch) { }
-        @Override public void teleport(double x, double y, double z, float yaw, float pitch, Set<ClientboundPlayerPositionPacket.RelativeArgument> flags) { }
         @Override public void handlePlayerAction(ServerboundPlayerActionPacket packet) { }
         @Override public void handleUseItemOn(ServerboundUseItemOnPacket packet) { }
         @Override public void handleUseItem(ServerboundUseItemPacket packet) { }
@@ -150,5 +153,13 @@ public class FakePlayer extends ServerPlayer
         @Override public void handleCustomPayload(ServerboundCustomPayloadPacket packet) { }
         @Override public void handleChangeDifficulty(ServerboundChangeDifficultyPacket packet) { }
         @Override public void handleLockDifficulty(ServerboundLockDifficultyPacket packet) { }
+        @Override public void teleport(double x, double y, double z, float yaw, float pitch, Set<RelativeMovement> relativeSet) { }
+        @Override public void ackBlockChangesUpTo(int sequence) { }
+        @Override public void handleChatCommand(ServerboundChatCommandPacket packet) { }
+        @Override public void handleChatAck(ServerboundChatAckPacket packet) { }
+        @Override public void addPendingMessage(PlayerChatMessage message) { }
+        @Override public void sendPlayerChatMessage(PlayerChatMessage message, ChatType.Bound boundChatType) { }
+        @Override public void sendDisguisedChatMessage(Component content, ChatType.Bound boundChatType) { }
+        @Override public void handleChatSessionUpdate(ServerboundChatSessionUpdatePacket packet) { }
     }
 }

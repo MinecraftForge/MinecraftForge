@@ -1,5 +1,6 @@
 {
   "type": "minecraft:crafting_shaped",
+  "category": "redstone",
   "key": {
     "#": {
       "tag": "forge:ingots/copper"
@@ -12,5 +13,6 @@
   ],
   "result": {
     "item": "minecraft:lightning_rod"
-  }
+  },
+  "show_notification": true
 }

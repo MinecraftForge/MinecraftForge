@@ -5,7 +5,6 @@
 
 package net.minecraftforge.client.extensions.common;
 
-import com.mojang.math.Vector3d;
 import net.minecraft.client.particle.ParticleEngine;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.effect.MobEffects;
@@ -19,6 +18,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.world.phys.HitResult;
 import net.minecraftforge.fml.LogicalSide;
+import org.joml.Vector3d;
 
 import java.util.function.Consumer;
 
@@ -71,7 +71,7 @@ public interface IClientBlockExtensions
      */
     default boolean addDestroyEffects(BlockState state, Level Level, BlockPos pos, ParticleEngine manager)
     {
-        return false;
+        return !state.shouldSpawnParticlesOnBreak();
     }
 
     /**

@@ -6,17 +6,17 @@
     private final Map<Player, Vec3> f_46021_ = Maps.newHashMap();
 +   private final Vec3 position;
  
-    public Explosion(Level p_151471_, @Nullable Entity p_151472_, double p_151473_, double p_151474_, double p_151475_, float p_151476_) {
-       this(p_151471_, p_151472_, p_151473_, p_151474_, p_151475_, p_151476_, false, Explosion.BlockInteraction.DESTROY);
-@@ -85,6 +_,7 @@
+    public Explosion(Level p_46024_, @Nullable Entity p_46025_, double p_46026_, double p_46027_, double p_46028_, float p_46029_, List<BlockPos> p_46030_) {
+       this(p_46024_, p_46025_, p_46026_, p_46027_, p_46028_, p_46029_, false, Explosion.BlockInteraction.DESTROY_WITH_DECAY, p_46030_);
+@@ -81,6 +_,7 @@
        this.f_46010_ = p_46060_;
-       this.f_46018_ = p_46053_ == null ? DamageSource.m_19358_(this) : p_46053_;
+       this.f_46018_ = p_46053_ == null ? p_46051_.m_269111_().m_269093_(this) : p_46053_;
        this.f_46019_ = p_46054_ == null ? this.m_46062_(p_46052_) : p_46054_;
 +      this.position = new Vec3(this.f_46013_, this.f_46014_, this.f_46015_);
     }
  
     private ExplosionDamageCalculator m_46062_(@Nullable Entity p_46063_) {
-@@ -180,6 +_,7 @@
+@@ -176,6 +_,7 @@
        int j2 = Mth.m_14107_(this.f_46015_ - (double)f2 - 1.0D);
        int j1 = Mth.m_14107_(this.f_46015_ + (double)f2 + 1.0D);
        List<Entity> list = this.f_46012_.m_45933_(this.f_46016_, new AABB((double)k1, (double)i2, (double)j2, (double)l1, (double)i1, (double)j1));
@@ -24,7 +24,7 @@
        Vec3 vec3 = new Vec3(this.f_46013_, this.f_46014_, this.f_46015_);
  
        for(int k2 = 0; k2 < list.size(); ++k2) {
-@@ -242,7 +_,7 @@
+@@ -245,7 +_,7 @@
              if (!blockstate.m_60795_()) {
                 BlockPos blockpos1 = blockpos.m_7949_();
                 this.f_46012_.m_46473_().m_6180_("explosion_blocks");
@@ -33,7 +33,7 @@
                    Level $$9 = this.f_46012_;
                    if ($$9 instanceof ServerLevel) {
                       ServerLevel serverlevel = (ServerLevel)$$9;
-@@ -259,8 +_,7 @@
+@@ -262,8 +_,7 @@
                    }
                 }
  
@@ -43,7 +43,7 @@
                 this.f_46012_.m_46473_().m_7238_();
              }
           }
-@@ -332,6 +_,15 @@
+@@ -354,6 +_,15 @@
  
     public List<BlockPos> m_46081_() {
        return this.f_46020_;

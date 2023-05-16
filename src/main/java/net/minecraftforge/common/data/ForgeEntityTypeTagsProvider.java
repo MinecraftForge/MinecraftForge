@@ -5,21 +5,24 @@
 
 package net.minecraftforge.common.data;
 
-import net.minecraft.data.DataGenerator;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.EntityTypeTagsProvider;
 import net.minecraft.world.entity.EntityType;
 import net.minecraftforge.common.Tags;
 
+import java.util.concurrent.CompletableFuture;
+
 public class ForgeEntityTypeTagsProvider extends EntityTypeTagsProvider
 {
-    
-    public ForgeEntityTypeTagsProvider(DataGenerator generator, ExistingFileHelper existingFileHelper)
+
+    public ForgeEntityTypeTagsProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider, ExistingFileHelper existingFileHelper)
     {
-        super(generator, "forge", existingFileHelper);
+        super(output, lookupProvider, "forge", existingFileHelper);
     }
 
     @Override
-    public void addTags()
+    public void addTags(HolderLookup.Provider lookupProvider)
     {
         tag(Tags.EntityTypes.BOSSES).add(EntityType.ENDER_DRAGON, EntityType.WITHER);
     }

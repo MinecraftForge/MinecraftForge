@@ -107,7 +107,7 @@ public class ConnectionData
         public static ModMismatchData registry(Multimap<ResourceLocation, ResourceLocation> mismatchedRegistryData, ConnectionData connectionData)
         {
             List<ResourceLocation> mismatchedRegistryMods = mismatchedRegistryData.values().stream().map(ResourceLocation::getNamespace).distinct().map(id -> new ResourceLocation(id, "")).toList();
-            Map<ResourceLocation, String> mismatchedRegistryModData = mismatchedRegistryMods.stream().map(id -> ModList.get().getModContainerById(id.getNamespace()).map(modContainer -> Pair.of(id, modContainer.getModInfo().getVersion().toString())).orElse(Pair.of(id, NetworkRegistry.ABSENT))).collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
+            Map<ResourceLocation, String> mismatchedRegistryModData = mismatchedRegistryMods.stream().map(id -> ModList.get().getModContainerById(id.getNamespace()).map(modContainer -> Pair.of(id, modContainer.getModInfo().getVersion().toString())).orElse(Pair.of(id, NetworkRegistry.ABSENT.version()))).collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
             Map<ResourceLocation, Pair<String, String>> presentModData = getServerSidePresentModData(mismatchedRegistryModData.keySet(), connectionData);
 
             return new ModMismatchData(mismatchedRegistryModData, presentModData, false);
@@ -140,7 +140,7 @@ public class ConnectionData
             {
                 mismatchedModVersions = ModList.get().getMods().stream().map(info -> Pair.of(info.getModId(), info.getVersion().toString())).collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
             }
-            return mismatchedChannels.keySet().stream().map(channel -> Pair.of(channel, mismatchedChannels.get(channel).equals(NetworkRegistry.ABSENT) ? NetworkRegistry.ABSENT : mismatchedModVersions.getOrDefault(channel.getNamespace(), NetworkRegistry.ABSENT))).collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
+            return mismatchedChannels.keySet().stream().map(channel -> Pair.of(channel, mismatchedChannels.get(channel).equals(NetworkRegistry.ABSENT.version()) ? NetworkRegistry.ABSENT.version() : mismatchedModVersions.getOrDefault(channel.getNamespace(), NetworkRegistry.ABSENT.version()))).collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
         }
 
 

@@ -1,5 +1,6 @@
 {
   "type": "minecraft:crafting_shaped",
+  "category": "misc",
   "key": {
     "#": {
       "tag": "forge:ingots/netherite"
@@ -15,5 +16,6 @@
   ],
   "result": {
     "item": "minecraft:lodestone"
-  }
+  },
+  "show_notification": true
 }

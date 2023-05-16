@@ -1,5 +1,6 @@
 {
   "type": "minecraft:crafting_shaped",
+  "category": "misc",
   "key": {
     "#": {
       "tag": "minecraft:planks"
@@ -15,5 +16,6 @@
   ],
   "result": {
     "item": "minecraft:jukebox"
-  }
+  },
+  "show_notification": true
 }

@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/MinecraftServer.java
 +++ b/net/minecraft/server/MinecraftServer.java
-@@ -240,7 +_,7 @@
+@@ -248,7 +_,7 @@
  
     public static <S extends MinecraftServer> S m_129872_(Function<Thread, S> p_129873_) {
        AtomicReference<S> atomicreference = new AtomicReference<>();
@@ -9,15 +9,15 @@
           atomicreference.get().m_130011_();
        }, "Server thread");
        thread.setUncaughtExceptionHandler((p_177909_, p_177910_) -> {
-@@ -332,6 +_,7 @@
+@@ -341,6 +_,7 @@
        this.m_129841_(dimensiondatastorage);
        this.f_129732_ = new CommandStorage(dimensiondatastorage);
        WorldBorder worldborder = serverlevel.m_6857_();
 +      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.level.LevelEvent.Load(f_129762_.get(Level.f_46428_)));
        if (!serverleveldata.m_6535_()) {
           try {
-             m_177896_(serverlevel, serverleveldata, worldgensettings.m_64660_(), flag);
-@@ -366,6 +_,7 @@
+             m_177896_(serverlevel, serverleveldata, worldoptions.m_245100_(), flag);
+@@ -375,6 +_,7 @@
              ServerLevel serverlevel1 = new ServerLevel(this, this.f_129738_, this.f_129744_, derivedleveldata, resourcekey1, entry.getValue(), p_129816_, flag, j, ImmutableList.of(), false);
              worldborder.m_61929_(new BorderChangeListener.DelegateBorderChangeListener(serverlevel1.m_6857_()));
              this.f_129762_.put(resourcekey1, serverlevel1);
@@ -25,7 +25,7 @@
           }
        }
  
-@@ -377,6 +_,7 @@
+@@ -386,6 +_,7 @@
           p_177898_.m_7250_(BlockPos.f_121853_.m_6630_(80), 0.0F);
        } else {
           ServerChunkCache serverchunkcache = p_177897_.m_7726_();
@@ -33,7 +33,7 @@
           ChunkPos chunkpos = new ChunkPos(serverchunkcache.m_214994_().m_224579_().m_183230_());
           int i = serverchunkcache.m_8481_().m_142051_(p_177897_);
           if (i < p_177897_.m_141937_()) {
-@@ -457,6 +_,7 @@
+@@ -469,6 +_,7 @@
                 ChunkPos chunkpos = new ChunkPos(i);
                 serverlevel1.m_7726_().m_6692_(chunkpos, true);
              }
@@ -41,7 +41,7 @@
           }
        }
  
-@@ -527,6 +_,8 @@
+@@ -539,6 +_,8 @@
     }
  
     public void m_7041_() {
@@ -50,7 +50,7 @@
        if (this.f_177872_.m_142763_()) {
           this.m_236737_();
        }
-@@ -571,6 +_,7 @@
+@@ -583,6 +_,7 @@
        for(ServerLevel serverlevel2 : this.m_129785_()) {
           if (serverlevel2 != null) {
              try {
@@ -58,15 +58,19 @@
                 serverlevel2.close();
              } catch (IOException ioexception1) {
                 f_129750_.error("Exception closing the level", (Throwable)ioexception1);
-@@ -619,6 +_,7 @@
+@@ -631,9 +_,11 @@
              throw new IllegalStateException("Failed to initialize server");
           }
  
 +         net.minecraftforge.server.ServerLifecycleHooks.handleServerStarted(this);
           this.f_129726_ = Util.m_137550_();
-          this.f_129757_.m_134908_(Component.m_237113_(this.f_129709_));
-          this.f_129757_.m_134912_(new ServerStatus.Version(SharedConstants.m_183709_().getName(), SharedConstants.m_183709_().getProtocolVersion()));
-@@ -653,6 +_,8 @@
+          this.f_271173_ = this.m_272273_().orElse((ServerStatus.Favicon)null);
+          this.f_129757_ = this.m_271988_();
++         resetStatusCache(f_129757_);
+ 
+          while(this.f_129764_) {
+             long i = Util.m_137550_() - this.f_129726_;
+@@ -662,6 +_,8 @@
              this.f_129717_ = true;
              JvmProfiler.f_185340_.m_183597_(this.f_129737_);
           }
@@ -75,7 +79,7 @@
        } catch (Throwable throwable1) {
           f_129750_.error("Encountered an unexpected exception", throwable1);
           CrashReport crashreport = m_206568_(throwable1);
-@@ -664,6 +_,7 @@
+@@ -673,6 +_,7 @@
              f_129750_.error("We were unable to save this crash report to disk.");
           }
  
@@ -83,7 +87,7 @@
           this.m_7268_(crashreport);
        } finally {
           try {
-@@ -676,6 +_,7 @@
+@@ -685,6 +_,7 @@
                 this.f_236721_.f_214336_().m_196559_();
              }
  
@@ -91,7 +95,7 @@
              this.m_6988_();
           }
  
-@@ -789,6 +_,7 @@
+@@ -799,11 +_,13 @@
  
     public void m_5705_(BooleanSupplier p_129871_) {
        long i = Util.m_137569_();
@@ -99,23 +103,37 @@
        ++this.f_129766_;
        this.m_5703_(p_129871_);
        if (i - this.f_129724_ >= 5000000000L) {
-@@ -810,6 +_,7 @@
-             Collections.shuffle(Arrays.asList(agameprofile));
-             this.f_129757_.m_134914_().m_134924_(agameprofile);
-          }
-+         this.f_129757_.invalidateJson();
+          this.f_129724_ = i;
+          this.f_129757_ = this.m_271988_();
++         resetStatusCache(f_129757_);
        }
  
        if (this.f_129766_ % 6000 == 0) {
-@@ -826,6 +_,7 @@
-       long i1 = Util.m_137569_();
-       this.f_129735_.m_13755_(i1 - i);
+@@ -820,11 +_,22 @@
+       long k = Util.m_137569_();
+       this.f_129735_.m_13755_(k - i);
        this.f_129754_.m_7238_();
 +      net.minecraftforge.event.ForgeEventFactory.onPostServerTick(p_129871_, this);
++   }
++
++   private static final com.google.gson.Gson GSON = new com.google.gson.Gson();
++   private String cachedServerStatus; // FORGE: cache the server status json in case a client spams requests
++   private void resetStatusCache(ServerStatus status) {
++      this.cachedServerStatus = GSON.toJson(ServerStatus.f_271163_.encodeStart(com.mojang.serialization.JsonOps.INSTANCE, status)
++              .result().orElseThrow());
++   }
++   public String getStatusJson() {
++      return cachedServerStatus;
     }
  
-    public void m_5703_(BooleanSupplier p_129954_) {
-@@ -833,7 +_,8 @@
+    private ServerStatus m_271988_() {
+       ServerStatus.Players serverstatus$players = this.m_271961_();
+-      return new ServerStatus(Component.m_130674_(this.f_129709_), Optional.of(serverstatus$players), Optional.of(ServerStatus.Version.m_272202_()), Optional.ofNullable(this.f_271173_), this.m_214005_());
++      return new ServerStatus(Component.m_130674_(this.f_129709_), Optional.of(serverstatus$players), Optional.of(ServerStatus.Version.m_272202_()), Optional.ofNullable(this.f_271173_), this.m_214005_(), Optional.of(new net.minecraftforge.network.ServerStatusPing()));
+    }
+ 
+    private ServerStatus.Players m_271961_() {
+@@ -852,7 +_,8 @@
        this.m_129890_().m_136128_();
        this.f_129754_.m_6182_("levels");
  
@@ -125,7 +143,7 @@
           this.f_129754_.m_6521_(() -> {
              return serverlevel + " " + serverlevel.m_46472_().m_135782_();
           });
-@@ -844,6 +_,7 @@
+@@ -863,6 +_,7 @@
           }
  
           this.f_129754_.m_6180_("tick");
@@ -133,7 +151,7 @@
  
           try {
              serverlevel.m_8793_(p_129954_);
-@@ -852,16 +_,18 @@
+@@ -871,16 +_,18 @@
              serverlevel.m_6026_(crashreport);
              throw new ReportedException(crashreport);
           }
@@ -153,7 +171,7 @@
           GameTestTicker.f_177648_.m_127790_();
        }
  
-@@ -929,7 +_,7 @@
+@@ -962,7 +_,7 @@
  
     @DontObfuscate
     public String m_130001_() {
@@ -162,16 +180,7 @@
     }
  
     public SystemReport m_177935_(SystemReport p_177936_) {
-@@ -1121,7 +_,7 @@
-    }
- 
-    public boolean m_214000_() {
--      return false;
-+      return net.minecraftforge.common.ForgeMod.isServerChatPreviewEnabled();
-    }
- 
-    public boolean m_129918_() {
-@@ -1287,6 +_,7 @@
+@@ -1310,6 +_,7 @@
           this.m_6846_().m_11315_();
           this.f_129734_.m_136120_(this.f_129740_.f_206585_.m_206860_());
           this.f_236720_.m_230370_(this.f_129740_.f_206584_);
@@ -179,23 +188,23 @@
        }, this);
        if (this.m_18695_()) {
           this.m_18701_(completablefuture::isDone);
-@@ -1296,10 +_,13 @@
+@@ -1319,10 +_,13 @@
     }
  
-    public static DataPackConfig m_129819_(PackRepository p_129820_, DataPackConfig p_129821_, boolean p_129822_) {
-+      net.minecraftforge.resource.ResourcePackLoader.loadResourcePacks(p_129820_, net.minecraftforge.server.ServerLifecycleHooks::buildPackFinder);
-       p_129820_.m_10506_();
+    public static WorldDataConfiguration m_246048_(PackRepository p_248681_, DataPackConfig p_248920_, boolean p_249869_, FeatureFlagSet p_251243_) {
++      net.minecraftforge.resource.ResourcePackLoader.loadResourcePacks(p_248681_, net.minecraftforge.server.ServerLifecycleHooks::buildPackFinder);
+       p_248681_.m_10506_();
 +      DataPackConfig.f_45842_.addModPacks(net.minecraftforge.common.ForgeHooks.getModPacks());
-+      p_129821_.addModPacks(net.minecraftforge.common.ForgeHooks.getModPacks());
-       if (p_129822_) {
--         p_129820_.m_10509_(Collections.singleton("vanilla"));
--         return DataPackConfig.f_45842_;
-+         p_129820_.m_10509_(net.minecraftforge.common.ForgeHooks.getModPacksWithVanilla());
-+         return new DataPackConfig(net.minecraftforge.common.ForgeHooks.getModPacksWithVanilla(), ImmutableList.of());
++      p_248920_.addModPacks(net.minecraftforge.common.ForgeHooks.getModPacks());
+       if (p_249869_) {
+-         p_248681_.m_10509_(Collections.singleton("vanilla"));
+-         return WorldDataConfiguration.f_244649_;
++         p_248681_.m_10509_(net.minecraftforge.common.ForgeHooks.getModPacksWithVanilla());
++         return new WorldDataConfiguration(new DataPackConfig(net.minecraftforge.common.ForgeHooks.getModPacksWithVanilla(), ImmutableList.of()), FeatureFlags.f_244332_);
        } else {
           Set<String> set = Sets.newLinkedHashSet();
  
-@@ -1450,6 +_,31 @@
+@@ -1488,6 +_,31 @@
  
     public abstract boolean m_7779_(GameProfile p_129840_);
  
@@ -227,7 +236,7 @@
     public void m_142116_(Path p_177911_) throws IOException {
     }
  
-@@ -1708,6 +_,10 @@
+@@ -1651,6 +_,10 @@
  
     public WorldData m_129910_() {
        return this.f_129749_;

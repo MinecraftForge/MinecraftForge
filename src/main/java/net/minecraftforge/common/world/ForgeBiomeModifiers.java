@@ -26,7 +26,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 public final class ForgeBiomeModifiers
 {
     private ForgeBiomeModifiers() {} // Utility class.
-    
+
     /**
      * <p>Stock biome modifier that adds features to biomes. Has the following json format:</p>
      * <pre>
@@ -38,7 +38,7 @@ public final class ForgeBiomeModifiers
      * }
      * </pre>
      * <p>Be wary of using this to add vanilla PlacedFeatures to biomes, as doing so may cause a feature cycle violation.</p>
-     * 
+     *
      * @param biomes Biomes to add features to.
      * @param features PlacedFeatures to add to biomes.
      * @param step Decoration step to run features in.
@@ -62,7 +62,6 @@ public final class ForgeBiomeModifiers
         }
     }
 
-    
     /**
      * <p>Stock biome modifier that removes features from biomes. Has the following json format:</p>
      * <pre>
@@ -73,7 +72,7 @@ public final class ForgeBiomeModifiers
      *   "steps": "underground_ores" OR ["underground_ores", "vegetal_decoration"] // one or more decoration steps; optional field, defaults to all steps if not specified
      * }
      * </pre>
-     * 
+     *
      * @param biomes Biomes to remove features from.
      * @param features PlacedFeatures to remove from biomes.
      * @param steps Decoration steps to remove features from.
@@ -89,7 +88,7 @@ public final class ForgeBiomeModifiers
         {
             return new RemoveFeaturesBiomeModifier(biomes, features, EnumSet.allOf(Decoration.class));
         }
-        
+
         @Override
         public void modify(Holder<Biome> biome, Phase phase, Builder builder)
         {
@@ -109,7 +108,7 @@ public final class ForgeBiomeModifiers
             return ForgeMod.REMOVE_FEATURES_BIOME_MODIFIER_TYPE.get();
         }
     }
-    
+
     /**
      * <p>Stock biome modifier that adds a mob spawn to a biome. Has the following json format:</p>
      * <pre>
@@ -144,7 +143,7 @@ public final class ForgeBiomeModifiers
      *   ]
      * }
      * </pre>
-     * 
+     *
      * @param biomes Biomes to add mob spawns to.
      * @param spawners List of SpawnerDatas specifying EntityType, weight, and pack size.
      */
@@ -160,7 +159,7 @@ public final class ForgeBiomeModifiers
         {
             return new AddSpawnsBiomeModifier(biomes, List.of(spawner));
         }
-        
+
         @Override
         public void modify(Holder<Biome> biome, Phase phase, Builder builder)
         {
@@ -191,7 +190,7 @@ public final class ForgeBiomeModifiers
      *   "entity_types": #namespace:entitytype_tag // Accepts an entity type, [list of entity types], or #namespace:entitytype_tag
      * }
      * </pre>
-     * 
+     *
      * @param biomes Biomes to add mob spawns to.
      * @param entityTypes EntityTypes to remove from spawn lists.
      */

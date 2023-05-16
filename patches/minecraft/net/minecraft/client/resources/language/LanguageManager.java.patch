@@ -1,0 +1,24 @@
+--- a/net/minecraft/client/resources/language/LanguageManager.java
++++ b/net/minecraft/client/resources/language/LanguageManager.java
+@@ -29,7 +_,7 @@
+    private String f_118967_;
+ 
+    public LanguageManager(String p_118971_) {
+-      this.f_118967_ = p_118971_;
++      m_264110_(p_118971_);
+    }
+ 
+    private static Map<String, LanguageInfo> m_118981_(Stream<PackResources> p_118982_) {
+@@ -66,8 +_,12 @@
+       Language.m_128114_(clientlanguage);
+    }
+ 
++   private java.util.Locale javaLocale; // Forge: add locale information for modders
++   public java.util.Locale getJavaLocale() { return javaLocale; }
+    public void m_264110_(String p_265224_) {
+       this.f_118967_ = p_265224_;
++      final String[] langSplit = p_265224_.split("_", 2);
++      this.javaLocale = langSplit.length == 1 ? new java.util.Locale(langSplit[0]) : new java.util.Locale(langSplit[0], langSplit[1]);
+    }
+ 
+    public String m_264236_() {

@@ -1,7 +1,7 @@
 --- a/net/minecraft/server/packs/metadata/pack/PackMetadataSection.java
 +++ b/net/minecraft/server/packs/metadata/pack/PackMetadataSection.java
-@@ -6,17 +_,29 @@
-    public static final PackMetadataSectionSerializer f_10366_ = new PackMetadataSectionSerializer();
+@@ -7,17 +_,29 @@
+    public static final MetadataSectionType<PackMetadataSection> f_243696_ = new PackMetadataSectionSerializer();
     private final Component f_10367_;
     private final int f_10368_;
 +   private final java.util.Map<net.minecraft.server.packs.PackType, Integer> packTypeVersions;

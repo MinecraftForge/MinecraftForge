@@ -5,7 +5,8 @@
 
 package net.minecraftforge.common.data;
 
-import net.minecraft.data.DataGenerator;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.BiomeTagsProvider;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.BiomeTags;
@@ -14,16 +15,18 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.Biomes;
 import net.minecraftforge.common.Tags;
 
+import java.util.concurrent.CompletableFuture;
+
 public final class ForgeBiomeTagsProvider extends BiomeTagsProvider
 {
 
-    public ForgeBiomeTagsProvider(DataGenerator arg, ExistingFileHelper existingFileHelper)
+    public ForgeBiomeTagsProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider, ExistingFileHelper existingFileHelper)
     {
-        super(arg, "forge", existingFileHelper);
+        super(output, lookupProvider, "forge", existingFileHelper);
     }
 
     @Override
-    protected void addTags()
+    protected void addTags(HolderLookup.Provider lookupProvider)
     {
         tag(Biomes.PLAINS, Tags.Biomes.IS_PLAINS);
         tag(Biomes.DESERT, Tags.Biomes.IS_HOT_OVERWORLD, Tags.Biomes.IS_DRY_OVERWORLD, Tags.Biomes.IS_SANDY, Tags.Biomes.IS_DESERT);

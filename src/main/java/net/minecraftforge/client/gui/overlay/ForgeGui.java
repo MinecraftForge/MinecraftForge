@@ -5,6 +5,7 @@
 
 package net.minecraftforge.client.gui.overlay;
 
+import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.Util;
@@ -22,6 +23,7 @@ import net.minecraft.util.StringUtil;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.PlayerRideableJumping;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
@@ -103,12 +105,7 @@ public class ForgeGui extends Gui
 
         if (texture != null)
         {
-            RenderSystem.enableTexture();
             bind(texture);
-        }
-        else
-        {
-            RenderSystem.disableTexture();
         }
 
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
@@ -170,7 +167,7 @@ public class ForgeGui extends Gui
         minecraft.getProfiler().pop();
     }
 
-    void renderSpyglassOverlay()
+    void renderSpyglassOverlay(PoseStack stack)
     {
         float deltaFrame = this.minecraft.getDeltaFrameTime();
         this.scopeScale = Mth.lerp(0.5F * deltaFrame, this.scopeScale, 1.125F);
@@ -178,7 +175,7 @@ public class ForgeGui extends Gui
         {
             if (this.minecraft.player.isScoping())
             {
-                this.renderSpyglassOverlay(this.scopeScale);
+                this.renderSpyglassOverlay(stack, this.scopeScale);
             }
             else
             {
@@ -196,7 +193,7 @@ public class ForgeGui extends Gui
             Item item = itemstack.getItem();
             if (item == Blocks.CARVED_PUMPKIN.asItem())
             {
-                renderTextureOverlay(PUMPKIN_BLUR_LOCATION, 1.0F);
+                renderTextureOverlay(poseStack, PUMPKIN_BLUR_LOCATION, 1.0F);
             }
             else
             {
@@ -209,7 +206,7 @@ public class ForgeGui extends Gui
     {
         if (this.minecraft.player.getTicksFrozen() > 0)
         {
-            this.renderTextureOverlay(POWDER_SNOW_OUTLINE_LOCATION, this.minecraft.player.getPercentFrozen());
+            this.renderTextureOverlay(pStack, POWDER_SNOW_OUTLINE_LOCATION, this.minecraft.player.getPercentFrozen());
         }
     }
 
@@ -245,13 +242,13 @@ public class ForgeGui extends Gui
     }
 
     @Override
-    protected void renderPortalOverlay(float partialTick)
+    protected void renderPortalOverlay(PoseStack stack, float partialTick)
     {
         float f1 = Mth.lerp(partialTick, this.minecraft.player.oPortalTime, this.minecraft.player.portalTime);
 
         if (f1 > 0.0F)
         {
-            super.renderPortalOverlay(f1);
+            super.renderPortalOverlay(stack, f1);
         }
     }
 
@@ -420,13 +417,13 @@ public class ForgeGui extends Gui
     }
 
     @Override
-    public void renderJumpMeter(PoseStack poseStack, int x)
+    public void renderJumpMeter(PlayerRideableJumping playerRideableJumping, PoseStack poseStack, int x)
     {
         bind(GUI_ICONS_LOCATION);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.disableBlend();
 
-        super.renderJumpMeter(poseStack, x);
+        super.renderJumpMeter(playerRideableJumping, poseStack, x);
 
         RenderSystem.enableBlend();
         minecraft.getProfiler().pop();
@@ -572,12 +569,16 @@ public class ForgeGui extends Gui
     {
         minecraft.getProfiler().push("chat");
 
-        var event = new CustomizeGuiOverlayEvent.Chat(minecraft.getWindow(), pStack, minecraft.getFrameTime(), 0, height - 48);
+        Window window = minecraft.getWindow();
+        var event = new CustomizeGuiOverlayEvent.Chat(window, pStack, minecraft.getFrameTime(), 0, height - 40);
         MinecraftForge.EVENT_BUS.post(event);
 
         pStack.pushPose();
-        pStack.translate(event.getPosX(), event.getPosY(), 0.0D);
-        chat.render(pStack, tickCount);
+        // We give the absolute Y position of the chat component in the event and account for the chat component's own offsetting here.
+        pStack.translate(event.getPosX(), (event.getPosY() - height + 40) / chat.getScale(), 0.0D);
+        int mouseX = Mth.floor(minecraft.mouseHandler.xpos() * window.getGuiScaledWidth() / window.getScreenWidth());
+        int mouseY = Mth.floor(minecraft.mouseHandler.ypos() * window.getGuiScaledHeight() / window.getScreenHeight());
+        chat.render(pStack, tickCount, mouseX, mouseY);
         pStack.popPose();
 
         minecraft.getProfiler().pop();

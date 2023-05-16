@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/MagmaBlock.java
 +++ b/net/minecraft/world/level/block/MagmaBlock.java
-@@ -47,7 +_,7 @@
+@@ -46,7 +_,7 @@
  
     public void m_213898_(BlockState p_221420_, ServerLevel p_221421_, BlockPos p_221422_, RandomSource p_221423_) {
        BlockPos blockpos = p_221422_.m_7494_();

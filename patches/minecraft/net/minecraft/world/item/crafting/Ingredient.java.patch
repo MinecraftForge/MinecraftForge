@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/item/crafting/Ingredient.java
 +++ b/net/minecraft/world/item/crafting/Ingredient.java
-@@ -29,12 +_,19 @@
+@@ -30,12 +_,19 @@
  import net.minecraft.world.level.ItemLike;
  
  public class Ingredient implements Predicate<ItemStack> {
@@ -20,29 +20,29 @@
  
     protected Ingredient(Stream<? extends Ingredient.Value> p_43907_) {
        this.f_43902_ = p_43907_.toArray((p_43933_) -> {
-@@ -78,7 +_,8 @@
+@@ -72,7 +_,8 @@
     }
  
     public IntList m_43931_() {
 -      if (this.f_43904_ == null) {
 +      if (this.f_43904_ == null || checkInvalidation()) {
 +         this.markValid();
-          this.m_43948_();
-          this.f_43904_ = new IntArrayList(this.f_43903_.length);
+          ItemStack[] aitemstack = this.m_43908_();
+          this.f_43904_ = new IntArrayList(aitemstack.length);
  
-@@ -94,6 +_,10 @@
+@@ -87,6 +_,10 @@
+    }
  
     public final void m_43923_(FriendlyByteBuf p_43924_) {
-       this.m_43948_();
 +      if (!this.isVanilla()) {
 +         net.minecraftforge.common.crafting.CraftingHelper.write(p_43924_, this);
 +         return;
 +      }
-       p_43924_.m_236828_(Arrays.asList(this.f_43903_), FriendlyByteBuf::m_130055_);
+       p_43924_.m_236828_(Arrays.asList(this.m_43908_()), FriendlyByteBuf::m_130055_);
     }
  
-@@ -115,6 +_,38 @@
-       return this.f_43902_.length == 0 && (this.f_43903_ == null || this.f_43903_.length == 0) && (this.f_43904_ == null || this.f_43904_.isEmpty());
+@@ -108,6 +_,38 @@
+       return this.f_43902_.length == 0;
     }
  
 +   public final boolean checkInvalidation() {
@@ -79,8 +79,8 @@
 +
     public static Ingredient m_43938_(Stream<? extends Ingredient.Value> p_43939_) {
        Ingredient ingredient = new Ingredient(p_43939_);
-       return ingredient.f_43902_.length == 0 ? f_43901_ : ingredient;
-@@ -143,11 +_,15 @@
+       return ingredient.m_43947_() ? f_43901_ : ingredient;
+@@ -136,11 +_,15 @@
     }
  
     public static Ingredient m_43940_(FriendlyByteBuf p_43941_) {
@@ -97,7 +97,7 @@
           if (p_43918_.isJsonObject()) {
              return m_43938_(Stream.of(m_43919_(p_43918_.getAsJsonObject())));
           } else if (p_43918_.isJsonArray()) {
-@@ -182,6 +_,12 @@
+@@ -175,6 +_,12 @@
        }
     }
  
@@ -110,7 +110,7 @@
     public static class ItemValue implements Ingredient.Value {
        private final ItemStack f_43951_;
  
-@@ -214,6 +_,9 @@
+@@ -207,6 +_,9 @@
              list.add(new ItemStack(holder));
           }
  

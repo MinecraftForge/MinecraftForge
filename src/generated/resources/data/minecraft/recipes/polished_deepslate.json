@@ -1,5 +1,6 @@
 {
   "type": "minecraft:crafting_shaped",
+  "category": "building",
   "key": {
     "S": {
       "tag": "forge:cobblestone/deepslate"
@@ -12,5 +13,6 @@
   "result": {
     "count": 4,
     "item": "minecraft:polished_deepslate"
-  }
+  },
+  "show_notification": true
 }

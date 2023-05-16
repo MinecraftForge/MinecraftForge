@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/SoundType.java
 +++ b/net/minecraft/world/level/block/SoundType.java
-@@ -99,6 +_,7 @@
+@@ -112,6 +_,7 @@
     private final SoundEvent f_56737_;
     private final SoundEvent f_56738_;
  

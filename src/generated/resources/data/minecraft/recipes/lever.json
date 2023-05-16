@@ -1,5 +1,6 @@
 {
   "type": "minecraft:crafting_shaped",
+  "category": "redstone",
   "key": {
     "#": {
       "tag": "forge:cobblestone/normal"
@@ -14,5 +15,6 @@
   ],
   "result": {
     "item": "minecraft:lever"
-  }
+  },
+  "show_notification": true
 }

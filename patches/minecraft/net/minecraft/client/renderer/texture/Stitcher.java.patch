@@ -1,30 +1,30 @@
 --- a/net/minecraft/client/renderer/texture/Stitcher.java
 +++ b/net/minecraft/client/renderer/texture/Stitcher.java
-@@ -13,6 +_,8 @@
+@@ -12,6 +_,8 @@
  
  @OnlyIn(Dist.CLIENT)
- public class Stitcher {
-+   private static final org.apache.logging.log4j.Logger LOGGER = org.apache.logging.log4j.LogManager.getLogger();
+ public class Stitcher<T extends Stitcher.Entry> {
++   private static final org.slf4j.Logger LOGGER = com.mojang.logging.LogUtils.getLogger();
 +
-    private static final Comparator<Stitcher.Holder> f_118161_ = Comparator.<Stitcher.Holder, Integer>comparing((p_118201_) -> {
+    private static final Comparator<Stitcher.Holder<?>> f_118161_ = Comparator.<Stitcher.Holder<?>, Integer>comparing((p_118201_) -> {
        return -p_118201_.f_118204_;
     }).thenComparing((p_118199_) -> {
-@@ -53,6 +_,14 @@
+@@ -52,6 +_,14 @@
  
-       for(Stitcher.Holder stitcher$holder : list) {
-          if (!this.m_118178_(stitcher$holder)) {
+       for(Stitcher.Holder<T> holder : list) {
+          if (!this.m_118178_(holder)) {
 +            if (LOGGER.isInfoEnabled()) {
 +               StringBuilder sb = new StringBuilder();
-+               sb.append("Unable to fit: ").append(stitcher$holder.f_118202_.m_118431_());
-+               sb.append(" - size: ").append(stitcher$holder.f_118202_.m_118434_()).append("x").append(stitcher$holder.f_118202_.m_118437_());
++               sb.append("Unable to fit: ").append(holder.f_244486_().m_246162_());
++               sb.append(" - size: ").append(holder.f_244486_.m_246492_()).append("x").append(holder.f_244486_.m_245330_());
 +               sb.append(" - Maybe try a lower resolution resourcepack?\n");
 +               list.forEach(h -> sb.append("\t").append(h).append("\n"));
 +               LOGGER.info(sb.toString());
 +            }
-             throw new StitcherException(stitcher$holder.f_118202_, list.stream().map((p_118195_) -> {
-                return p_118195_.f_118202_;
+             throw new StitcherException(holder.f_244486_, list.stream().map((p_247946_) -> {
+                return p_247946_.f_244486_;
              }).collect(ImmutableList.toImmutableList()));
-@@ -102,7 +_,7 @@
+@@ -95,7 +_,7 @@
           boolean flag4 = flag2 && j != l;
           boolean flag;
           if (flag3 ^ flag4) {
@@ -33,12 +33,3 @@
           } else {
              flag = flag1 && i <= j;
           }
-@@ -139,7 +_,7 @@
-       }
- 
-       public String toString() {
--         return "Holder{width=" + this.f_118203_ + ", height=" + this.f_118204_ + "}";
-+         return "Holder{width=" + this.f_118203_ + ", height=" + this.f_118204_ + ", name=" + this.f_118202_.m_118431_() + '}';
-       }
-    }
- 

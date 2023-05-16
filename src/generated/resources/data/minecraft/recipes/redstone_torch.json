@@ -1,5 +1,6 @@
 {
   "type": "minecraft:crafting_shaped",
+  "category": "redstone",
   "key": {
     "#": {
       "tag": "forge:rods/wooden"
@@ -14,5 +15,6 @@
   ],
   "result": {
     "item": "minecraft:redstone_torch"
-  }
+  },
+  "show_notification": true
 }
