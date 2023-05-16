@@ -22,7 +22,8 @@ import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.loading.toposort.TopologicalSort;
 import org.jetbrains.annotations.ApiStatus;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @ApiStatus.Internal
 public class PoseSortingRegistry
