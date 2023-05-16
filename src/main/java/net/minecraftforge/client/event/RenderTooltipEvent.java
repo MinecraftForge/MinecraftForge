@@ -303,7 +303,7 @@ public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api
         }
 
         /**
-         * {@return the gradient start color for the tooltip background}
+         * {@return the gradient start color for the tooltip background (top edge)}
          */
         public int getBackgroundStart()
         {
@@ -311,7 +311,7 @@ public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api
         }
 
         /**
-         * {@return the gradient end color for the tooltip background}
+         * {@return the gradient end color for the tooltip background (bottom edge)}
          */
         public int getBackgroundEnd()
         {
@@ -331,7 +331,7 @@ public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api
         }
 
         /**
-         * Sets the new start color for the gradient of the tooltip background.
+         * Sets the new start color for the gradient of the tooltip background (top edge).
          *
          * @param backgroundStart the new start color for the tooltip background
          */
@@ -341,7 +341,7 @@ public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api
         }
 
         /**
-         * Sets the new end color for the gradient of the tooltip background.
+         * Sets the new end color for the gradient of the tooltip background (bottom edge).
          *
          * @param backgroundEnd the new end color for the tooltip background
          */
@@ -351,7 +351,7 @@ public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api
         }
 
         /**
-         * {@return the gradient start color for the tooltip border}
+         * {@return the gradient start color for the tooltip border (top edge)}
          */
         public int getBorderStart()
         {
@@ -359,7 +359,7 @@ public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api
         }
 
         /**
-         * Sets the new start color for the gradient of the tooltip border.
+         * Sets the new start color for the gradient of the tooltip border (top edge).
          *
          * @param borderStart the new start color for the tooltip border
          */
@@ -369,7 +369,7 @@ public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api
         }
 
         /**
-         * {@return the gradient end color for the tooltip border}
+         * {@return the gradient end color for the tooltip border (bottom edge)}
          */
         public int getBorderEnd()
         {
@@ -377,7 +377,7 @@ public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api
         }
 
         /**
-         * Sets the new end color for the gradient of the tooltip border.
+         * Sets the new end color for the gradient of the tooltip border (bottom edge).
          *
          * @param borderEnd the new end color for the tooltip border
          */
@@ -387,7 +387,7 @@ public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api
         }
 
         /**
-         * {@return the original tooltip background's gradient start color}
+         * {@return the original tooltip background's gradient start color (top edge)}
          */
         public int getOriginalBackgroundStart()
         {
@@ -395,7 +395,7 @@ public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api
         }
 
         /**
-         * {@return the original tooltip background's gradient end color}
+         * {@return the original tooltip background's gradient end color (bottom edge)}
          */
         public int getOriginalBackgroundEnd()
         {
@@ -403,7 +403,7 @@ public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api
         }
 
         /**
-         * {@return the original tooltip border's gradient start color}
+         * {@return the original tooltip border's gradient start color (top edge)}
          */
         public int getOriginalBorderStart()
         {
@@ -411,7 +411,7 @@ public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api
         }
 
         /**
-         * {@return the original tooltip border's gradient end color}
+         * {@return the original tooltip border's gradient end color (bottom edge)}
          */
         public int getOriginalBorderEnd()
         {
