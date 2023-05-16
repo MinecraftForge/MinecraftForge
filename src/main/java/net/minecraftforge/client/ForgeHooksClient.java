@@ -259,24 +259,6 @@ public class ForgeHooksClient
         return 1000.0F + 10000.0F * (1 + guiLayers.size());
     }
 
-    public static void init()
-    {
-        ForgeGameTestHooks.registerGametests();
-        ModLoader.get().postEvent(new RegisterClientReloadListenersEvent((ReloadableResourceManager)Minecraft.getInstance().getResourceManager()));
-        ModLoader.get().postEvent(new EntityRenderersEvent.RegisterLayerDefinitions());
-        ModLoader.get().postEvent(new EntityRenderersEvent.RegisterRenderers());
-        TextureAtlasSpriteLoaderManager.init();
-        ClientTooltipComponentManager.init();
-        EntitySpectatorShaderManager.init();
-        ForgeHooksClient.onRegisterKeyMappings(Minecraft.getInstance().options);
-        RecipeBookManager.init();
-        GuiOverlayManager.init();
-        DimensionSpecialEffectsManager.init();
-        NamedRenderTypeManager.init();
-        ColorResolverManager.init();
-        ItemDecoratorHandler.init();
-    }
-
     public static String getArmorTexture(Entity entity, ItemStack armor, String _default, EquipmentSlot slot, String type)
     {
         String result = armor.getItem().getArmorTexture(armor, entity, slot, type);
