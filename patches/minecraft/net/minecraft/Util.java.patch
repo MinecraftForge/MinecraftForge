@@ -19,3 +19,13 @@
           if (SharedConstants.f_136183_) {
              throw illegalargumentexception;
           }
+@@ -649,7 +_,8 @@
+ 
+    public static <T, R> Function<T, R> m_143827_(final Function<T, R> p_143828_) {
+       return new Function<T, R>() {
+-         private final Map<T, R> f_143852_ = Maps.newHashMap();
++         // FORGE: Allow using memoized functions from multiple threads.
++         private final Map<T, R> f_143852_ = Maps.newConcurrentMap();
+ 
+          public R apply(T p_211578_) {
+             return this.f_143852_.computeIfAbsent(p_211578_, p_143828_);

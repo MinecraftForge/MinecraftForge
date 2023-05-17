@@ -10,6 +10,12 @@ buildscript {
 }
 
 import groovy.json.JsonBuilder
+import net.minecraftforge.forge.tasks.checks.CheckATs
+import net.minecraftforge.forge.tasks.checks.CheckExcs
+import net.minecraftforge.forge.tasks.checks.CheckPatches
+import net.minecraftforge.forge.tasks.checks.CheckSAS
+import net.minecraftforge.forge.tasks.checks.CheckTask
+import net.minecraftforge.forge.tasks.checks.CheckMode
 
 import java.nio.file.Files
 import java.util.Date
@@ -1150,34 +1156,45 @@ project(':forge') {
         }
     }
 
-    task checkATs(type: CheckATs, dependsOn: [extractInheritance, createSrg2Mcp]) {
-        inheritance = extractInheritance.output
+    tasks.register('checkAll') {
+        dependsOn 'checkLicenses'
+        group = 'checks'
+    }
+    tasks.register('checkAllAndFix') {
+        dependsOn 'findFieldInstanceChecks', 'checkLicenses'
+        group = 'checks'
+    }
+
+    CheckTask.registerTask(tasks, 'ATs', CheckATs) {
+        dependsOn extractInheritance, createSrg2Mcp
         ats.from patcher.accessTransformers
+        inheritance = extractInheritance.output
         mappings = createSrg2Mcp.output
     }
 
-    task checkSAS(type: CheckSAS, dependsOn: extractInheritance) {
-        inheritance = extractInheritance.output
+    CheckTask.registerTask(tasks, 'SAS', CheckSAS) {
+        dependsOn extractInheritance
         sass.from patcher.sideAnnotationStrippers
+        inheritance = extractInheritance.output
     }
 
-    task checkExcs(type: CheckExcs, dependsOn: jar) {
+    CheckTask.registerTask(tasks, 'Excs', CheckExcs) {
+        dependsOn jar
         binary = jar.archiveFile.get().asFile
         excs.from patcher.excs
     }
 
-    task checkPatchesAndFix(type: CheckPatches, dependsOn: genPatches) {
+    CheckTask.registerTask(tasks, 'Patches', CheckPatches) {
+        dependsOn genPatches
         patchDir = file("$rootDir/patches")
-        autoFix = true
-    }
-
-    task checkPatches(type: CheckPatches, dependsOn: genPatches) {
-        patchDir = file("$rootDir/patches")
-        autoFix = false
+        patchesWithS2SArtifact = [
+                'minecraft/net/minecraft/client/renderer/ViewArea.java.patch',
+                'minecraft/net/minecraft/data/models/blockstates/Variant.java.patch',
+        ]
     }
 
     genPatches {
-        finalizedBy checkPatches
+        finalizedBy checkAndFixPatches
         autoHeader true
         lineEnding = '\n'
     }
@@ -1223,9 +1240,15 @@ project(':forge') {
         dependsOn 'setupCheckJarCompatibility'
 
         baseJar = project.tasks.named('mergeBaseForgeJar').flatMap { it.output }
-    }
+        baseLibraries.from(project.tasks.named('createJoinedSRG').flatMap { it.output })
 
-    task checkAll(dependsOn: [checkATs, checkSAS, checkExcs, findFieldInstanceChecks, checkPatches, checkLicenses]){}
+        inputJar = project.tasks.named('reobfJar').flatMap { it.output }
+        concreteLibraries.from(project.PACKED_DEPS.collect { project.rootProject.tasks.getByPath(it).archiveFile })
+
+        commonLibraries.from(project.configurations.minecraftImplementation)
+        commonLibraries.from(project.configurations.installer)
+        commonLibraries.from(project.configurations.moduleonly)
+    }
 
     task launcherJson(type: LauncherJson) {
         packedDependencies = [':fmlloader:jar']

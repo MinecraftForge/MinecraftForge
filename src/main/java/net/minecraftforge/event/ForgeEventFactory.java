@@ -892,7 +892,7 @@ public class ForgeEventFactory
 
     public static void onPreWorldTick(Level level, BooleanSupplier haveTime)
     {
-        MinecraftForge.EVENT_BUS.post(new TickEvent.WorldTickEvent(LogicalSide.SERVER, TickEvent.Phase.START, level, haveTime));
+        MinecraftForge.EVENT_BUS.post(new TickEvent.WorldTickEvent(level.isClientSide ? LogicalSide.CLIENT : LogicalSide.SERVER, TickEvent.Phase.START, level, haveTime));
     }
 
     /**
@@ -908,7 +908,7 @@ public class ForgeEventFactory
 
     public static void onPostWorldTick(Level level, BooleanSupplier haveTime)
     {
-        MinecraftForge.EVENT_BUS.post(new TickEvent.WorldTickEvent(LogicalSide.SERVER, TickEvent.Phase.END, level, haveTime));
+        MinecraftForge.EVENT_BUS.post(new TickEvent.WorldTickEvent(level.isClientSide ? LogicalSide.CLIENT : LogicalSide.SERVER, TickEvent.Phase.END, level, haveTime));
     }
 
     public static void onPreClientTick()

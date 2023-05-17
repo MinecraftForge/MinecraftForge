@@ -1,5 +1,16 @@
 --- a/net/minecraft/world/level/block/DetectorRailBlock.java
 +++ b/net/minecraft/world/level/block/DetectorRailBlock.java
+@@ -31,6 +_,10 @@
+ 
+    public DetectorRailBlock(BlockBehaviour.Properties p_52431_) {
+       super(true, p_52431_);
++      this.registerDefaultState();
++   }
++
++   protected void registerDefaultState() {
+       this.m_49959_(this.f_49792_.m_61090_().m_61124_(f_52428_, Boolean.valueOf(false)).m_61124_(f_52427_, RailShape.NORTH_SOUTH).m_61124_(f_152149_, Boolean.valueOf(false)));
+    }
+ 
 @@ -135,7 +_,9 @@
              return list.get(0).m_38534_().m_45436_();
           }
@@ -11,3 +22,11 @@
           if (!list1.isEmpty()) {
              return AbstractContainerMenu.m_38938_((Container)list1.get(0));
           }
+@@ -270,6 +_,6 @@
+    }
+ 
+    protected void m_7926_(StateDefinition.Builder<Block, BlockState> p_52469_) {
+-      p_52469_.m_61104_(f_52427_, f_52428_, f_152149_);
++      p_52469_.m_61104_(m_7978_(), f_52428_, f_152149_);
+    }
+ }
