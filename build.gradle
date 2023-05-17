@@ -71,11 +71,10 @@ ext {
     // FML_VERSION = gradleutils.getFilteredMCTagOffsetBranchVersion(true, 'FML', MC_VERSION)
     FORGE_VERSION = VERSION.substring(MC_VERSION.length() + 1)
 
-    SPECIAL_SOURCE = 'net.md-5:SpecialSource:1.10.0'
     BINPATCH_TOOL = 'net.minecraftforge:binarypatcher:1.0.12:fatjar'
     INSTALLER_TOOLS = 'net.minecraftforge:installertools:1.3.0'
     JAR_SPLITTER = 'net.minecraftforge:jarsplitter:1.1.4'
-    FART = 'net.minecraftforge:ForgeAutoRenamingTool:0.1.22:all'
+    FART = 'net.minecraftforge:ForgeAutoRenamingTool:0.1.25:all'
     MIN_TAG_FOR_CHANGELOG = "39.0"
     LAST_RB = GIT_INFO.tag.rsplit('.', 1)[1] as int >= 1 ? GIT_INFO.tag + '.0' : null
 }
