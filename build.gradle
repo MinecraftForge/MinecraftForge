@@ -59,12 +59,12 @@ ext {
     COREMODS_VERSION = '5.0.1'
     EVENTBUS_VERSION = '5.0.3'
     MODLAUNCHER_VERSION = '9.1.3'
-    SECUREJARHANDLER_VERSION = '1.0.3'
+    SECUREJARHANDLER_VERSION = '1.0.8'
     BOOTSTRAPLAUNCHER_VERSION = '1.0.0'
-    ASM_VERSION = '9.2'
+    ASM_VERSION = '9.5'
     INSTALLER_VERSION = '2.1.+'
     MIXIN_VERSION = '0.8.5'
-    JARJAR_VERSION = '0.3.0'
+    JARJAR_VERSION = '0.3.19'
 
     GIT_INFO = gradleutils.gitInfo
     VERSION = gradleutils.getFilteredMCTagOffsetBranchVersion(true, '[0-9]', MC_VERSION)
@@ -258,6 +258,7 @@ def sharedDeps = {
     moduleonly "org.ow2.asm:asm-util:${ASM_VERSION}"
     moduleonly "org.ow2.asm:asm-analysis:${ASM_VERSION}"
     moduleonly "cpw.mods:bootstraplauncher:${BOOTSTRAPLAUNCHER_VERSION}"
+    moduleonly "net.minecraftforge:JarJarFileSystems:${JARJAR_VERSION}"
 
     installer "cpw.mods:securejarhandler:${SECUREJARHANDLER_VERSION}"
     installer "org.ow2.asm:asm:${ASM_VERSION}"
@@ -281,7 +282,8 @@ def sharedDeps = {
     installer 'org.jline:jline-terminal:3.12.+' //Dep of TerminaalConsoleeAppender
     installer "org.spongepowered:mixin:${MIXIN_VERSION}"
     installer 'org.openjdk.nashorn:nashorn-core:15.3'
-    installer "net.minecraftforge:JarJar:${JARJAR_VERSION}"
+    installer "net.minecraftforge:JarJarSelector:${JARJAR_VERSION}"
+    installer "net.minecraftforge:JarJarMetadata:${JARJAR_VERSION}"
 
     /*
     installer 'org.lwjgl:lwjgl:3.2.2'
@@ -450,6 +452,7 @@ def sharedFmlonlyForge = { Project prj ->
         run.jvmArgs '--add-modules', 'ALL-MODULE-PATH'
         // Additions to these JVM module args should be mirrored to server_files/args.txt and other similar blocks in the buildscript
         run.jvmArgs '--add-opens', 'java.base/java.util.jar=cpw.mods.securejarhandler'
+        run.jvmArgs '--add-opens', 'java.base/java.lang.invoke=cpw.mods.securejarhandler'
         run.jvmArgs '--add-exports', 'java.base/sun.security.util=cpw.mods.securejarhandler'
         run.jvmArgs '--add-exports', 'jdk.naming.dns/com.sun.jndi.dns=java.naming'
     }
@@ -640,6 +643,7 @@ project(':fmlonly') {
                           '--add-modules', 'ALL-MODULE-PATH',
                           // Additions to these JVM module args should be mirrored to server_files/args.txt and other similar blocks in the buildscript
                           '--add-opens', 'java.base/java.util.jar=cpw.mods.securejarhandler',
+                          '--add-opens', 'java.base/java.lang.invoke=cpw.mods.securejarhandler',
                           '--add-exports', 'java.base/sun.security.util=cpw.mods.securejarhandler',
                           '--add-exports', 'jdk.naming.dns/com.sun.jndi.dns=java.naming'
                     ]
@@ -1277,6 +1281,7 @@ project(':forge') {
                           '--add-modules', 'ALL-MODULE-PATH',
                           // Additions to these JVM module args should be mirrored to server_files/args.txt and other similar blocks in the buildscript
                           '--add-opens', 'java.base/java.util.jar=cpw.mods.securejarhandler',
+                          '--add-opens', 'java.base/java.lang.invoke=cpw.mods.securejarhandler',
                           '--add-exports', 'java.base/sun.security.util=cpw.mods.securejarhandler',
                           '--add-exports', 'jdk.naming.dns/com.sun.jndi.dns=java.naming'
                     ]

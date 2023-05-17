@@ -1,6 +1,7 @@
 -p @MODULE_PATH@
 --add-modules @MODULES@
 --add-opens java.base/java.util.jar=cpw.mods.securejarhandler
+--add-opens java.base/java.lang.invoke=cpw.mods.securejarhandler
 --add-exports java.base/sun.security.util=cpw.mods.securejarhandler
 --add-exports jdk.naming.dns/com.sun.jndi.dns=java.naming
 -Djava.net.preferIPv6Addresses=system
