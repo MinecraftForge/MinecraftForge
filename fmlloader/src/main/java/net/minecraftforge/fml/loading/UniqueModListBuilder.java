@@ -11,11 +11,16 @@ import net.minecraftforge.forgespi.language.IModInfo;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.slf4j.Logger;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static java.util.stream.Collectors.*;
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.joining;
 import static net.minecraftforge.fml.loading.LogMarkers.LOADING;
 
 public class UniqueModListBuilder
@@ -67,35 +72,34 @@ public class UniqueModListBuilder
 
         // Its theoretically possible that some mod has somehow moved an id to a secondary place, thus causing a dupe.
         // We can't handle this
-        final List<IModInfo> dupedMods = modIds.values().stream()
+        final List<String> dupedModErrors = modIds.values().stream()
                 .filter(modInfos -> modInfos.size() > 1)
-                .map(modInfos -> modInfos.get(0))
-                .toList();
+                .map(mods -> String.format("\tMod ID: '%s' from mod files: %s",
+                        mods.get(0).getModId(),
+                        mods.stream()
+                                .map(modInfo -> modInfo.getOwningFile().getFile().getFileName()).collect(joining(", "))
+                )).toList();
 
-        if (!dupedMods.isEmpty()) {
-            final List<EarlyLoadingException.ExceptionData> duplicateModErrors = dupedMods.stream()
-                                                                                   .map(dm -> new EarlyLoadingException.ExceptionData("fml.modloading.dupedmod", dm, Objects.toString(dm)))
-                                                                                   .toList();
-            LOGGER.error(LOADING, "Found duplicate mods:\n{}", dupedMods.stream()
-                            .map(mod -> String.format("\tMod ID: '%s' from mod files: %s",
-                                    mod.getModId(),
-                                    modIds.get(mod.getModId()).stream()
-                                            .map(modInfo -> modInfo.getOwningFile().getFile().getFileName()).collect(joining(", "))
-                            )).collect(joining("\n")));
-
-            throw new EarlyLoadingException("Duplicate mods found", null,  duplicateModErrors);
+        if (!dupedModErrors.isEmpty()) {
+            LOGGER.error(LOADING, "Found duplicate mods:\n{}", dupedModErrors);
+            throw new EarlyLoadingException("Duplicate mods found", null, dupedModErrors.stream()
+                    .map(s -> new EarlyLoadingException.ExceptionData(s))
+                    .toList());
         }
 
-        final List<ModFile> dupedLibs = versionedLibIds.values().stream()
-                .filter(modFiles -> modFiles.size() > 1)
-                .map(modFiles -> modFiles.get(0))
-                .toList();
 
-        if (!dupedLibs.isEmpty()) {
-            final List<EarlyLoadingException.ExceptionData> duplicateLibErrors = dupedLibs.stream()
-                .map(dm -> new EarlyLoadingException.ExceptionData("fml.modloading.dupedlib.versioned", dm, Objects.toString(dm)))
-                .toList();
-            throw new EarlyLoadingException("Duplicate plugins or libraries found", null,  duplicateLibErrors);
+        final List<String> dupedLibErrors = versionedLibIds.values().stream()
+                .filter(modFiles -> modFiles.size() > 1)
+                .map(mods -> String.format("\tDuped lib set: %s",
+                        mods.stream()
+                                .map(modFile -> modFile.getSecureJar().name()).collect(joining(", "))
+                )).toList();
+
+        if (!dupedLibErrors.isEmpty()) {
+            LOGGER.error(LOADING, "Found duplicate libs:\n{}", dupedLibErrors);
+            throw new EarlyLoadingException("Duplicate plugins or libraries found", null, dupedLibErrors.stream()
+                    .map(s -> new EarlyLoadingException.ExceptionData(s))
+                    .toList());
         }
 
         // Collect unique mod files by module name. This will be used for deduping purposes
