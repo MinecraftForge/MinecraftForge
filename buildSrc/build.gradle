@@ -1,10 +1,10 @@
 repositories {
     maven { url = 'https://maven.minecraftforge.net/' }
-	mavenCentral()
+    mavenCentral()
 }
 dependencies {
-	implementation 'org.ow2.asm:asm:9.5'
-	implementation 'org.ow2.asm:asm-tree:9.5'
+    implementation 'org.ow2.asm:asm:9.5'
+    implementation 'org.ow2.asm:asm-tree:9.5'
     implementation 'net.minecraftforge:srgutils:0.5.+'
     implementation 'commons-io:commons-io:2.8.0'
     implementation 'com.google.code.gson:gson:2.10'
