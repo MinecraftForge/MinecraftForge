@@ -22,7 +22,6 @@ import net.minecraftforge.fml.loading.targets.CommonLaunchHandler;
 import net.minecraftforge.forgespi.Environment;
 import net.minecraftforge.forgespi.coremod.ICoreModProvider;
 import org.apache.commons.lang3.tuple.Pair;
-import org.jetbrains.annotations.ApiStatus;
 import org.slf4j.Logger;
 
 import java.nio.file.Path;
@@ -202,9 +201,8 @@ public class FMLLoader
     }
 
     /**
-     * @see FMLEnvironment#dist
+     * Prefer {@link FMLEnvironment#dist}
      */
-    @ApiStatus.Internal
     public static Dist getDist()
     {
         return dist;
