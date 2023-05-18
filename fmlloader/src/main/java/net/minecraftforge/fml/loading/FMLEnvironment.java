@@ -14,6 +14,10 @@ import java.util.function.Supplier;
 
 public class FMLEnvironment
 {
+    /**
+     * This field holds the current physical distribution of the running game instance.<br>
+     * For information on how to properly guard sided-specific code and what is exclusive to each side, see {@link Dist}.
+     */
     public static final Dist dist = FMLLoader.getDist();
     public static final String naming = FMLLoader.getNaming();
     public static final boolean production = FMLLoader.isProduction() || System.getProperties().containsKey("production");
