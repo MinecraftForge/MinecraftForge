@@ -81,7 +81,7 @@ public class UniqueModListBuilder
                 )).toList();
 
         if (!dupedModErrors.isEmpty()) {
-            LOGGER.error(LOADING, "Found duplicate mods:\n{}", dupedModErrors);
+            LOGGER.error(LOADING, "Found duplicate mods:\n{}", dupedModErrors.stream().collect(joining("\n")));
             throw new EarlyLoadingException("Duplicate mods found", null, dupedModErrors.stream()
                     .map(s -> new EarlyLoadingException.ExceptionData(s))
                     .toList());
@@ -90,13 +90,14 @@ public class UniqueModListBuilder
 
         final List<String> dupedLibErrors = versionedLibIds.values().stream()
                 .filter(modFiles -> modFiles.size() > 1)
-                .map(mods -> String.format("\tDuped lib set: %s",
+                .map(mods -> String.format("\tLibrary: '%s' from files: %s",
+                        getModId(mods.get(0)),
                         mods.stream()
-                                .map(modFile -> modFile.getSecureJar().name()).collect(joining(", "))
+                                .map(modFile -> modFile.getFileName()).collect(joining(", "))
                 )).toList();
 
         if (!dupedLibErrors.isEmpty()) {
-            LOGGER.error(LOADING, "Found duplicate libs:\n{}", dupedLibErrors);
+            LOGGER.error(LOADING, "Found duplicate plugins or libraries:\n{}", dupedLibErrors.stream().collect(joining("\n")));
             throw new EarlyLoadingException("Duplicate plugins or libraries found", null, dupedLibErrors.stream()
                     .map(s -> new EarlyLoadingException.ExceptionData(s))
                     .toList());
