@@ -107,7 +107,7 @@
 +   private final java.util.function.Supplier<? extends Fluid> fluidSupplier;
 +   public Fluid getFluid() { return fluidSupplier.get(); }
 +
-+   private boolean canBlockContainFluid(Level worldIn, BlockPos posIn, BlockState blockstate)
++   protected boolean canBlockContainFluid(Level worldIn, BlockPos posIn, BlockState blockstate)
 +   {
 +      return blockstate.m_60734_() instanceof LiquidBlockContainer && ((LiquidBlockContainer)blockstate.m_60734_()).m_6044_(worldIn, posIn, blockstate, this.f_40687_);
     }
