@@ -16,10 +16,11 @@
     }
  
     public static Material m_173381_(WoodType p_173382_) {
-@@ -209,5 +_,13 @@
+@@ -208,6 +_,23 @@
+          case SINGLE:
           default:
              return p_110773_;
-       }
++      }
 +   }
 +
 +   /**
@@ -28,5 +29,14 @@
 +   public static void addWoodType(WoodType woodType) {
 +      f_110743_.put(woodType, m_173385_(woodType));
 +      f_244291_.put(woodType, m_245275_(woodType));
++   }
++
++   static {
++      if (net.minecraftforge.fml.ModLoader.isLoadingStateValid() && !net.minecraftforge.fml.ModLoader.get().hasCompletedState("LOAD_REGISTRIES")) {
++         com.mojang.logging.LogUtils.getLogger().error(
++                 "net.minecraft.client.renderer.Sheets loaded too early, modded registry-based materials may not work correctly",
++                 new IllegalStateException("net.minecraft.client.renderer.Sheets loaded too early")
++         );
+       }
     }
  }
