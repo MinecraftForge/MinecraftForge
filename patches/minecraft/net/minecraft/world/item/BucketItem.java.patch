@@ -70,7 +70,7 @@
           if (!flag1) {
 -            return p_150719_ != null && this.m_142073_(p_150716_, p_150717_, p_150719_.m_82425_().m_142300_(p_150719_.m_82434_()), (BlockHitResult)null);
 +            return p_150719_ != null && this.emptyContents(p_150716_, p_150717_, p_150719_.m_82425_().m_142300_(p_150719_.m_82434_()), (BlockHitResult)null, container);
-+         } else if (containedFluidStack.isPresent() && this.f_40687_.getAttributes().doesVaporize(p_150717_, p_150718_, containedFluidStack.get())) {
++         } else if (p_150717_.m_6042_().m_63951_() && containedFluidStack.isPresent() && this.f_40687_.getAttributes().doesVaporize(p_150717_, p_150718_, containedFluidStack.get())) {
 +            this.f_40687_.getAttributes().vaporize(p_150716_, p_150717_, p_150718_, containedFluidStack.get());
 +            return true;
           } else if (p_150717_.m_6042_().m_63951_() && this.f_40687_.m_205067_(FluidTags.f_13131_)) {
