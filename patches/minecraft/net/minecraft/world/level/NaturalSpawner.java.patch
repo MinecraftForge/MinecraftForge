@@ -31,7 +31,7 @@
           return false;
        } else {
 -         return p_46993_.m_5545_(p_46992_, MobSpawnType.NATURAL) && p_46993_.m_6914_(p_46992_);
-+         return net.minecraftforge.event.ForgeEventFactory.checkRulesAndObstruction(p_46993_, p_46992_, MobSpawnType.NATURAL);
++         return net.minecraftforge.event.ForgeEventFactory.checkSpawnPosition(p_46993_, p_46992_, MobSpawnType.NATURAL);
        }
     }
  
@@ -80,7 +80,7 @@
                          if (entity instanceof Mob) {
                             Mob mob = (Mob)entity;
 -                           if (mob.m_5545_(p_220451_, MobSpawnType.CHUNK_GENERATION) && mob.m_6914_(p_220451_)) {
-+                           if (net.minecraftforge.event.ForgeEventFactory.checkRulesAndObstruction(mob, p_220451_, MobSpawnType.CHUNK_GENERATION)) {
++                           if (net.minecraftforge.event.ForgeEventFactory.checkSpawnPosition(mob, p_220451_, MobSpawnType.CHUNK_GENERATION)) {
                                spawngroupdata = mob.m_6518_(p_220451_, p_220451_.m_6436_(mob.m_20183_()), MobSpawnType.CHUNK_GENERATION, spawngroupdata, (CompoundTag)null);
                                p_220451_.m_47205_(mob);
                                flag = true;
