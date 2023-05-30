@@ -401,8 +401,6 @@ public abstract class MobSpawnEvent extends EntityEvent
     }
 
     /**
-     * 
-     * 
      * This event is fired from {@link Mob#checkDespawn()}.<br>
      * It fires once per tick per mob that is attempting to despawn.<br>
      * It is not fired if the mob is persistent (meaning it may not despawn).<br>
