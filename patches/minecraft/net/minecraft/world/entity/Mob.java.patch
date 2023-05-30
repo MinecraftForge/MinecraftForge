@@ -126,7 +126,7 @@
 +   }
 +
 +   /**
-+   * Returns the type of spawn that created this mob, if applicable.<br>
++   * {@return the type of spawn that created this mob, if applicable}
 +   * If it could not be determined, this will return null.
 +   * <p>
 +   * This is set via {@link Mob#finalizeSpawn}, so you should not call this from within that method, and instead use the parameter.
