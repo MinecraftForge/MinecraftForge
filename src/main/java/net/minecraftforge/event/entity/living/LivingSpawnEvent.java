@@ -20,6 +20,9 @@ import net.minecraftforge.fml.LogicalSide;
 /**
  * Base class for mob spawn events.
  * Will not be fired directly.
+ * @see CheckSpawn 
+ * @see SpecialSpawn
+ * @see AllowDespawn
  */
 public class LivingSpawnEvent extends LivingEvent
 {
