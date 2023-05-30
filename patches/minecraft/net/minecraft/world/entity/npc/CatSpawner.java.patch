@@ -5,7 +5,7 @@
           return 0;
        } else {
 +         cat.m_20035_(p_35334_, 0.0F, 0.0F); // Fix MC-147659: Some witch huts spawn the incorrect cat
-+         // Note: This call to canEntitySpawn is erroneous, it is only provided for binary compatibility.
++         // Note: This call to canEntitySpawn is erroneous, it is only provided for backwards compatibility.
 +         if (net.minecraftforge.common.ForgeHooks.canEntitySpawn(cat, p_35335_, p_35334_.m_123341_(), p_35334_.m_123342_(), p_35334_.m_123343_(), null, MobSpawnType.NATURAL) == -1) return 0;
 +         if (!net.minecraftforge.event.ForgeEventFactory.doSpecialSpawn(cat, p_35335_, p_35334_.m_123341_(), p_35334_.m_123342_(), p_35334_.m_123343_(), null, MobSpawnType.NATURAL))
           cat.m_6518_(p_35335_, p_35335_.m_6436_(p_35334_), MobSpawnType.NATURAL, (SpawnGroupData)null, (CompoundTag)null);
