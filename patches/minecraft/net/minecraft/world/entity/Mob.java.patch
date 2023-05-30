@@ -78,7 +78,7 @@
     }
  
 +   /**
-+    * Calls to this method should be accompanied by firing the SpecialSpawn event via ForgeEventFactory.doSpecialSpawn.<br>
++    * <p>Calls to this method should be accompanied by firing the {@link net.minecraftforge.event.entity.living.LivingSpawnEvent.SpecialSpawn SpecialSpawn} event via {@link net.minecraftforge.event.ForgeEventFactory#doSpecialSpawn}.</p>
 +    * Additionally, if you override this method, you should ensure you either call super, or manually set {@link #spawnType} from your override.
 +    */
     @Nullable
