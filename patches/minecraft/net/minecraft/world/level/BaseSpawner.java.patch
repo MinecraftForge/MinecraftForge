@@ -5,13 +5,13 @@
                    if (entity instanceof Mob) {
                       Mob mob = (Mob)entity;
 -                     if (spawndata.m_186574_().isEmpty() && !mob.m_5545_(p_151312_, MobSpawnType.SPAWNER) || !mob.m_6914_(p_151312_)) {
-+                     if (!net.minecraftforge.event.ForgeEventFactory.checkRulesAndObstructionSpawner(mob, p_151312_, MobSpawnType.SPAWNER, spawndata, this)) {
++                     if (!net.minecraftforge.event.ForgeEventFactory.checkSpawnPositionSpawner(mob, p_151312_, MobSpawnType.SPAWNER, spawndata, this)) {
                          continue;
                       }
  
 -                     if (spawndata.m_186567_().m_128440_() == 1 && spawndata.m_186567_().m_128425_("id", 8)) {
 -                        ((Mob)entity).m_6518_(p_151312_, p_151312_.m_6436_(entity.m_20183_()), MobSpawnType.SPAWNER, (SpawnGroupData)null, (CompoundTag)null);
-+                     // Forge: Patch in the spawn event for spawners so it may be fired unconditionally, instead of only when vanilla normally would trigger it.
++                     // Forge: Patch in FinalizeSpawn for spawners so it may be fired unconditionally, instead of only when vanilla normally would trigger it.
 +                     var event = net.minecraftforge.event.ForgeEventFactory.onFinalizeSpawnSpawner(mob, p_151312_, p_151312_.m_6436_(entity.m_20183_()), null, compoundtag, this);
 +                     if (event != null && spawndata.m_186567_().m_128440_() == 1 && spawndata.m_186567_().m_128425_("id", 8)) {
 +                        ((Mob)entity).m_6518_(p_151312_, event.getDifficulty(), event.getSpawnType(), event.getSpawnData(), event.getSpawnTag());
