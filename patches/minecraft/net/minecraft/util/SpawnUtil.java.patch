@@ -1,0 +1,12 @@
+--- a/net/minecraft/util/SpawnUtil.java
++++ b/net/minecraft/util/SpawnUtil.java
+@@ -24,7 +_,8 @@
+          if (p_216406_.m_6857_().m_61937_(blockpos$mutableblockpos) && m_216398_(p_216406_, p_216410_, blockpos$mutableblockpos, p_216411_)) {
+             T t = p_216404_.m_20655_(p_216406_, (CompoundTag)null, (Component)null, (Player)null, blockpos$mutableblockpos, p_216405_, false, false);
+             if (t != null) {
+-               if (t.m_5545_(p_216406_, p_216405_) && t.m_6914_(p_216406_)) {
++               int res = net.minecraftforge.common.ForgeHooks.canEntitySpawn(t, p_216406_, t.m_20185_(), t.m_20186_(), t.m_20189_(), null, p_216405_);
++               if (res == 1 || (res == 0 && t.m_5545_(p_216406_, p_216405_) && t.m_6914_(p_216406_))) {
+                   p_216406_.m_47205_(t);
+                   return Optional.of(t);
+                }

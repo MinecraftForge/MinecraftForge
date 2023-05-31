@@ -1,0 +1,10 @@
+--- a/net/minecraft/world/level/levelgen/structure/structures/WoodlandMansionPieces.java
++++ b/net/minecraft/world/level/levelgen/structure/structures/WoodlandMansionPieces.java
+@@ -1052,6 +_,7 @@
+             for(Mob mob : list) {
+                mob.m_21530_();
+                mob.m_20035_(p_230214_, 0.0F, 0.0F);
++               if (!net.minecraftforge.event.ForgeEventFactory.doSpecialSpawn(mob, p_230215_, (float)mob.m_20185_(), (float)mob.m_20186_(), (float)mob.m_20189_(), null, MobSpawnType.STRUCTURE))
+                mob.m_6518_(p_230215_, p_230215_.m_6436_(mob.m_20183_()), MobSpawnType.STRUCTURE, (SpawnGroupData)null, (CompoundTag)null);
+                p_230215_.m_47205_(mob);
+                p_230215_.m_7731_(p_230214_, Blocks.f_50016_.m_49966_(), 2);

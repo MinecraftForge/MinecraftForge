@@ -185,7 +185,7 @@ public class ForgeEventFactory
         MinecraftForge.EVENT_BUS.post(new PlayerDestroyItemEvent(player, stack, hand));
     }
 
-    public static Result canEntitySpawn(Mob entity, LevelAccessor level, double x, double y, double z, BaseSpawner spawner, MobSpawnType spawnReason)
+    public static Result canEntitySpawn(Mob entity, LevelAccessor level, double x, double y, double z, @Nullable BaseSpawner spawner, MobSpawnType spawnReason)
     {
         if (entity == null)
             return Result.DEFAULT;
@@ -194,7 +194,7 @@ public class ForgeEventFactory
         return event.getResult();
     }
 
-    public static boolean doSpecialSpawn(Mob entity, LevelAccessor level, float x, float y, float z, BaseSpawner spawner, MobSpawnType spawnReason)
+    public static boolean doSpecialSpawn(Mob entity, LevelAccessor level, float x, float y, float z, @Nullable BaseSpawner spawner, MobSpawnType spawnReason)
     {
         return MinecraftForge.EVENT_BUS.post(new LivingSpawnEvent.SpecialSpawn(entity, level, x, y, z, spawner, spawnReason));
     }

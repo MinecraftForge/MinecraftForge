@@ -1,10 +1,12 @@
 --- a/net/minecraft/world/level/levelgen/PatrolSpawner.java
 +++ b/net/minecraft/world/level/levelgen/PatrolSpawner.java
-@@ -104,6 +_,7 @@
+@@ -104,6 +_,9 @@
              }
  
              patrollingmonster.m_6034_((double)p_224534_.m_123341_(), (double)p_224534_.m_123342_(), (double)p_224534_.m_123343_());
-+            if(net.minecraftforge.common.ForgeHooks.canEntitySpawn(patrollingmonster, p_224533_, p_224534_.m_123341_(), p_224534_.m_123342_(), p_224534_.m_123343_(), null, MobSpawnType.PATROL) == -1) return false;
++            // Note: This call to canEntitySpawn is erroneous, it is only provided for backwards compatibility.
++            if (net.minecraftforge.common.ForgeHooks.canEntitySpawn(patrollingmonster, p_224533_, p_224534_.m_123341_(), p_224534_.m_123342_(), p_224534_.m_123343_(), null, MobSpawnType.PATROL) == -1) return false;
++            if (!net.minecraftforge.event.ForgeEventFactory.doSpecialSpawn(patrollingmonster, p_224533_, p_224534_.m_123341_(), p_224534_.m_123342_(), p_224534_.m_123343_(), null, MobSpawnType.PATROL))
              patrollingmonster.m_6518_(p_224533_, p_224533_.m_6436_(p_224534_), MobSpawnType.PATROL, (SpawnGroupData)null, (CompoundTag)null);
              p_224533_.m_47205_(patrollingmonster);
              return true;

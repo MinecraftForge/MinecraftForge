@@ -5,23 +5,24 @@
 
 package net.minecraftforge.event.entity.living;
 
+import org.jetbrains.annotations.Nullable;
+
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.level.BaseSpawner;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.fml.LogicalSide;
-import org.jetbrains.annotations.Nullable;
 
 /**
- * This event is fired whenever a {@link Mob} should do something spawn-related.
- * <p>
- * This event is not {@linkplain Cancelable cancellable} and does not {@linkplain HasResult have a result}.
- * <p>
- * This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus}
- * only on the {@linkplain LogicalSide#SERVER logical server}.
+ * Base class for mob spawn events.
+ * Will not be fired directly.
+ * @see CheckSpawn 
+ * @see SpecialSpawn
+ * @see AllowDespawn
  */
 public class LivingSpawnEvent extends LivingEvent
 {
@@ -83,7 +84,7 @@ public class LivingSpawnEvent extends LivingEvent
     }
 
     /**
-     * This event is fired before a {@link Mob} spawns.
+     * This event is fired when {@link Mob#checkSpawnRules} would be called.
      * <p>
      * This event is not {@linkplain Cancelable cancellable}, but does {@linkplain HasResult have a result}.
      * {@linkplain Result#DEFAULT DEFAULT} indicates that default spawn rules should be used.
@@ -125,13 +126,14 @@ public class LivingSpawnEvent extends LivingEvent
     }
 
     /**
-     * This event is fired whenever a {@link Mob} is set to be spawned, to allow for mod-specific initializers.
+     * This event is fired whenever {@link Mob#finalizeSpawn} would be called.
      * <p>
      * This event is {@linkplain Cancelable cancellable} and does not {@linkplain HasResult have a result}.
-     * If the event is canceled, the mob will not spawn.
+     * If the event is canceled, then {@link Mob#finalizeSpawn} will not be called.<br>
+     * The mob will still be spawned. Preventing the spawn requires usage of {@link EntityJoinLevelEvent}.
      * <p>
      * This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
-     * only on the {@linkplain LogicalSide#SERVER logical server}.
+     * and only on the {@linkplain LogicalSide#SERVER logical server}.
      */
     @Cancelable
     public static class SpecialSpawn extends LivingSpawnEvent

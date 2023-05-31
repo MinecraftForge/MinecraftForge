@@ -1,0 +1,10 @@
+--- a/net/minecraft/world/level/levelgen/structure/structures/OceanMonumentPieces.java
++++ b/net/minecraft/world/level/levelgen/structure/structures/OceanMonumentPieces.java
+@@ -1442,6 +_,7 @@
+             ElderGuardian elderguardian = EntityType.f_20563_.m_20615_(p_228844_.m_6018_());
+             elderguardian.m_5634_(elderguardian.m_21233_());
+             elderguardian.m_7678_((double)blockpos.m_123341_() + 0.5D, (double)blockpos.m_123342_(), (double)blockpos.m_123343_() + 0.5D, 0.0F, 0.0F);
++            if (!net.minecraftforge.event.ForgeEventFactory.doSpecialSpawn(elderguardian, p_228844_, (float)elderguardian.m_20185_(), (float)elderguardian.m_20186_(), (float)elderguardian.m_20189_(), null, MobSpawnType.STRUCTURE))
+             elderguardian.m_6518_(p_228844_, p_228844_.m_6436_(elderguardian.m_20183_()), MobSpawnType.STRUCTURE, (SpawnGroupData)null, (CompoundTag)null);
+             p_228844_.m_47205_(elderguardian);
+             return true;

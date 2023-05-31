@@ -1,5 +1,14 @@
 --- a/net/minecraft/world/entity/Mob.java
 +++ b/net/minecraft/world/entity/Mob.java
+@@ -116,6 +_,8 @@
+    private CompoundTag f_21359_;
+    private BlockPos f_21360_ = BlockPos.f_121853_;
+    private float f_21341_ = -1.0F;
++   @Nullable
++   private MobSpawnType spawnType;
+ 
+    protected Mob(EntityType<? extends Mob> p_21368_, Level p_21369_) {
+       super(p_21368_, p_21369_);
 @@ -210,7 +_,11 @@
     }
  
@@ -13,6 +22,31 @@
     }
  
     public boolean m_6549_(EntityType<?> p_21399_) {
+@@ -408,6 +_,9 @@
+          p_21484_.m_128379_("NoAI", this.m_21525_());
+       }
+ 
++      if (this.spawnType != null) {
++         p_21484_.m_128359_("forge:spawn_type", this.spawnType.name());
++      }
+    }
+ 
+    public void m_7378_(CompoundTag p_21450_) {
+@@ -460,6 +_,14 @@
+       }
+ 
+       this.m_21557_(p_21450_.m_128471_("NoAI"));
++
++      if (p_21450_.m_128441_("forge:spawn_type")) {
++         try {
++            this.spawnType = MobSpawnType.valueOf(p_21450_.m_128461_("forge:spawn_type"));
++         } catch (Exception ex) {
++            p_21450_.m_128473_("forge:spawn_type");
++         }
++      }
+    }
+ 
+    protected void m_7625_(DamageSource p_21389_, boolean p_21390_) {
 @@ -499,9 +_,9 @@
     public void m_8107_() {
        super.m_8107_();
@@ -39,7 +73,26 @@
           if (entity != null) {
              double d0 = entity.m_20280_(this);
              int i = this.m_6095_().m_20674_().m_21611_();
-@@ -1374,13 +_,23 @@
+@@ -990,6 +_,10 @@
+ 
+    }
+ 
++   /**
++    * <p>Calls to this method should be accompanied by firing the {@link net.minecraftforge.event.entity.living.LivingSpawnEvent.SpecialSpawn SpecialSpawn} event via {@link net.minecraftforge.event.ForgeEventFactory#doSpecialSpawn}.</p>
++    * Additionally, if you override this method, you should ensure you either call super, or manually set {@link #spawnType} from your override.
++    */
+    @Nullable
+    public SpawnGroupData m_6518_(ServerLevelAccessor p_21434_, DifficultyInstance p_21435_, MobSpawnType p_21436_, @Nullable SpawnGroupData p_21437_, @Nullable CompoundTag p_21438_) {
+       RandomSource randomsource = p_21434_.m_213780_();
+@@ -1000,6 +_,7 @@
+          this.m_21559_(false);
+       }
+ 
++      this.spawnType = p_21436_;
+       return p_21437_;
+    }
+ 
+@@ -1374,15 +_,25 @@
        return false;
     }
  
@@ -56,11 +109,30 @@
           this.m_20256_(this.m_20184_().m_82520_(0.0D, 0.3D, 0.0D));
        }
  
-+   }
-+
+    }
+ 
 +   @Override
 +   public void jumpInFluid(net.minecraftforge.fluids.FluidType type) {
 +      this.jumpInLiquidInternal(() -> super.jumpInFluid(type));
-    }
- 
++   }
++
     public void m_147272_() {
+       this.f_21345_.m_148096_();
+       this.m_6274_().m_147343_();
+@@ -1404,5 +_,16 @@
+ 
+    public Iterable<BlockPos> m_238383_() {
+       return ImmutableSet.of(new BlockPos(this.m_20191_().f_82288_, (double)this.m_146904_(), this.m_20191_().f_82290_), new BlockPos(this.m_20191_().f_82288_, (double)this.m_146904_(), this.m_20191_().f_82293_), new BlockPos(this.m_20191_().f_82291_, (double)this.m_146904_(), this.m_20191_().f_82290_), new BlockPos(this.m_20191_().f_82291_, (double)this.m_146904_(), this.m_20191_().f_82293_));
++   }
++
++   /**
++   * {@return the type of spawn that created this mob, if applicable}
++   * If it could not be determined, this will return null.
++   * <p>
++   * This is set via {@link Mob#finalizeSpawn}, so you should not call this from within that method, and instead use the parameter.
++   */
++   @Nullable
++   public final MobSpawnType getSpawnType() {
++      return this.spawnType;
+    }
+ }
