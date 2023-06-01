@@ -13,3 +13,12 @@
           } else if (p_39052_ >= 1 && p_39052_ < 28) {
              if (!this.m_38903_(itemstack1, 28, 37, false)) {
                 return ItemStack.f_41583_;
+@@ -141,7 +_,7 @@
+          this.f_39034_.m_8050_(1, p_39054_);
+          this.f_39034_.m_8050_(2, p_39055_);
+          this.f_39032_.m_6201_(1);
+-         this.f_39033_.m_39292_(Level::m_151543_);
++         this.f_39033_.m_39292_(Level::blockEntityChangedWithoutNeighborUpdates);
+       }
+ 
+    }
