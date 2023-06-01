@@ -38,6 +38,15 @@
     }
  
     public final CompoundTag m_187480_() {
+@@ -133,7 +_,7 @@
+    }
+ 
+    protected static void m_155232_(Level p_155233_, BlockPos p_155234_, BlockState p_155235_) {
+-      p_155233_.m_151543_(p_155234_);
++      p_155233_.blockEntityChangedWithoutNeighborUpdates(p_155234_);
+       if (!p_155235_.m_60795_()) {
+          p_155233_.m_46717_(p_155234_, p_155235_.m_60734_());
+       }
 @@ -163,6 +_,13 @@
  
     public void m_7651_() {

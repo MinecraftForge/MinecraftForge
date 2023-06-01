@@ -207,7 +207,7 @@
           if (p_151539_ instanceof EnderDragon) {
              EnderDragon enderdragon = (EnderDragon)p_151539_;
  
-@@ -570,6 +_,12 @@
+@@ -570,17 +_,29 @@
           }
  
        });
@@ -220,6 +220,24 @@
        return list;
     }
  
+    @Nullable
+    public abstract Entity m_6815_(int p_46492_);
+ 
+-   public void m_151543_(BlockPos p_151544_) {
++   public void blockEntityChangedWithoutNeighborUpdates(BlockPos p_151544_) {
+       if (this.m_46805_(p_151544_)) {
+          this.m_46745_(p_151544_).m_8092_(true);
+       }
++   }
+ 
++   /** @deprecated Call {@link #blockEntityChangedWithoutNeighborUpdates(BlockPos)} instead. See <a href="https://github.com/MinecraftForge/MinecraftForge/pull/9235">#9235</a> for details. */
++   @Deprecated
++   public void m_151543_(BlockPos p_151544_) {
++      this.blockEntityChangedWithoutNeighborUpdates(p_151544_);
++      this.m_46717_(p_151544_, m_8055_(p_151544_).m_60734_()); //Notify neighbors of changes
+    }
+ 
+    public int m_5736_() {
 @@ -625,7 +_,7 @@
     public int m_46681_(BlockPos p_46682_, Direction p_46683_) {
        BlockState blockstate = this.m_8055_(p_46682_);
