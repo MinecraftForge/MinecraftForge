@@ -157,7 +157,7 @@ public class VersionChecker
                             }
                         }
 
-                        final boolean isGzipEncoded = huc.getContentEncoding().equals("gzip");
+                        final boolean isGzipEncoded = "gzip".equals(huc.getContentEncoding());
 
                         final String bodyStr;
                         try (InputStream inStream = isGzipEncoded ? new GZIPInputStream(huc.getInputStream()) : huc.getInputStream())
