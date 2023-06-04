@@ -6,22 +6,19 @@
 package net.minecraftforge.debug.client.rendering;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.PlayerModel;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Items;
-import net.minecraftforge.client.event.EntityRenderersEvent.RegisterPoseEvent;
+import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.model.pose.IPose;
+import net.minecraftforge.client.model.pose.PosePriority;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-
-import java.util.List;
 
 @Mod(CustomPoseTest.MODID)
 public class CustomPoseTest {
@@ -39,12 +36,10 @@ public class CustomPoseTest {
         modEventBus.addListener(this::registerPoses);
     }
 
-    private void registerPoses(RegisterPoseEvent event)
+    private void registerPoses(EntityRenderersEvent.AddLayers event)
     {
-        ResourceLocation wave = new ResourceLocation(MODID, "wave");
-        ResourceLocation tpose = new ResourceLocation(MODID, "tpose");
-        event.register(new LeatherArmorWavePose(), wave, List.of(), List.of());
-        event.register(new TPose(), tpose, List.of(), List.of(wave));
+        event.registerPose(new LeatherArmorWavePose(), PosePriority.NORMAL, false);
+        event.registerPose(new TPose(), PosePriority.NORMAL, true);
     }
 
     private static final class LeatherArmorWavePose implements IPose {
@@ -53,12 +48,6 @@ public class CustomPoseTest {
         public boolean isActive(LivingEntity entity)
         {
             return entity.getItemBySlot(EquipmentSlot.CHEST).is(Items.LEATHER_CHESTPLATE);
-        }
-
-        @Override
-        public boolean shouldOtherPosesActivate()
-        {
-            return true;
         }
 
         @Override
@@ -83,18 +72,18 @@ public class CustomPoseTest {
         }
 
         @Override
-        public boolean shouldOtherPosesActivate()
-        {
-            return false;
-        }
-
-        @Override
         public <T extends LivingEntity> void updatePose(T entity, PoseStack stack, EntityModel<T> model, float partialTicks) {
             if (model instanceof HumanoidModel<T> humanoidModel)
             {
+                humanoidModel.rightArm.loadPose(humanoidModel.rightArm.getInitialPose());
+                humanoidModel.leftArm.loadPose(humanoidModel.leftArm.getInitialPose());
+                humanoidModel.head.loadPose(humanoidModel.head.getInitialPose());
+                humanoidModel.hat.loadPose(humanoidModel.hat.getInitialPose());
                 humanoidModel.rightArm.zRot = (float)Math.toRadians(90);
                 humanoidModel.leftArm.zRot = (float)Math.toRadians(-90);
                 if (model instanceof PlayerModel<T> playerModel) {
+                    playerModel.rightSleeve.loadPose(playerModel.rightSleeve.getInitialPose());
+                    playerModel.leftSleeve.loadPose(playerModel.leftSleeve.getInitialPose());
                     playerModel.rightSleeve.zRot = (float)Math.toRadians(90);
                     playerModel.leftSleeve.zRot = (float)Math.toRadians(-90);
                 }

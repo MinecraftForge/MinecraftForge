@@ -5,109 +5,67 @@
 
 package net.minecraftforge.client.model.pose;
 
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
-import com.google.common.graph.ElementOrder;
-import com.google.common.graph.GraphBuilder;
-import com.google.common.graph.MutableGraph;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.model.EntityModel;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraftforge.client.event.EntityRenderersEvent;
-import net.minecraftforge.fml.ModLoader;
-import net.minecraftforge.fml.ModLoadingContext;
-import net.minecraftforge.fml.loading.toposort.TopologicalSort;
 import org.jetbrains.annotations.ApiStatus;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @ApiStatus.Internal
 public class PoseSortingRegistry
 {
-    private static final BiMap<ResourceLocation, IPose> poses = HashBiMap.create();
-    private static final Multimap<ResourceLocation, ResourceLocation> edges = HashMultimap.create();
 
+    private static final Map<IPose, PosePriority> unsortedReplacementPoses = new HashMap<>();
+    private static final Map<IPose, PosePriority> unsortedModifyingPoses = new HashMap<>();
+    private static final List<IPose> sortedModifyingPoses = new ArrayList<>();
+    private static final List<IPose> sortedReplacementPoses = new ArrayList<>();
 
-    private static final List<IPose> sortedPoses = new ArrayList<>();
-
-    private static IPose registerPose(IPose pose, ResourceLocation name, List<ResourceLocation> after, List<ResourceLocation> before)
+    public static void registerPose(IPose pose, PosePriority priority, boolean isReplacementPose)
     {
-        if (poses.containsKey(name))
-            throw new IllegalStateException("Duplicate pose name " + name);
-
-        processPose(pose, name, after, before);
-        return pose;
+        Map<IPose, PosePriority> poses = isReplacementPose ? unsortedReplacementPoses : unsortedModifyingPoses;
+        if (poses.containsKey(pose))
+            throw new IllegalStateException("Duplicate pose");
+        poses.put(pose, priority);
     }
 
     public static boolean shouldRenderOtherPoses(LivingEntity livingEntity) {
-        for (IPose pose : sortedPoses)
+        for (IPose pose : sortedReplacementPoses)
         {
-            if (pose.isActive(livingEntity) && !pose.shouldOtherPosesActivate())
+            if (pose.isActive(livingEntity))
                 return false;
         }
         return true;
     }
 
-    public static <T extends LivingEntity> void updatePose(T livingEntity, PoseStack stack, EntityModel<T> model, float partialTicks) {
-        for (IPose pose : sortedPoses)
+    public static <T extends LivingEntity> void updatePose(T livingEntity, PoseStack stack, EntityModel<T> model, float partialTicks, boolean isReplacementPoseActive) {
+        if (!isReplacementPoseActive) {
+            for (IPose pose : sortedReplacementPoses) {
+                if (pose.isActive(livingEntity)) {
+                    pose.updatePose(livingEntity, stack, model, partialTicks);
+                    return;
+                }
+            }
+        }
+
+        for (IPose pose : sortedModifyingPoses)
         {
             if (pose.isActive(livingEntity))
             {
                 pose.updatePose(livingEntity, stack, model, partialTicks);
-                if (!pose.shouldOtherPosesActivate())
-                    return;
             }
         }
     }
 
-    private static void processPose(IPose pose, ResourceLocation name, List<ResourceLocation> afters, List<ResourceLocation> befores)
-    {
-        poses.put(name, pose);
-        for(ResourceLocation after : afters)
-        {
-            edges.put(after, name);
-        }
-        for(ResourceLocation before : befores)
-        {
-            edges.put(name, before);
-        }
-    }
-
-
-    @SuppressWarnings("UnstableApiUsage")
-    private static void recalculatePoses()
-    {
-        final MutableGraph<IPose> graph = GraphBuilder.directed().nodeOrder(ElementOrder.<IPose>insertion()).build();
-
-        for(IPose pose : poses.values())
-        {
-            graph.addNode(pose);
-        }
-        edges.forEach((key, value) -> {
-            if (poses.containsKey(key) && poses.containsKey(value))
-                graph.putEdge(poses.get(key), poses.get(value));
-        });
-        List<IPose> poseList = TopologicalSort.topologicalSort(graph, null);
-
-        setPoseOrder(poseList);
-    }
-
     public static void init()
     {
-        poses.clear();
-        edges.clear();
-        EntityRenderersEvent.RegisterPoseEvent event = new EntityRenderersEvent.RegisterPoseEvent(PoseSortingRegistry::registerPose);
-        ModLoader.get().postEventWithWrapInModOrder(event, (mc, e) -> ModLoadingContext.get().setActiveContainer(mc), (mc, e) -> ModLoadingContext.get().setActiveContainer(null));
-        recalculatePoses();
+        setPoseOrder(sortedModifyingPoses, unsortedModifyingPoses.entrySet().stream().sorted(Map.Entry.comparingByValue()).map(Map.Entry::getKey).toList());
+        setPoseOrder(sortedReplacementPoses, unsortedReplacementPoses.entrySet().stream().sorted(Map.Entry.comparingByValue()).map(Map.Entry::getKey).toList());
     }
 
-    private static void setPoseOrder(List<IPose> poseList)
+    private static void setPoseOrder(List<IPose> originalList, List<IPose> sortedPoses)
     {
-        sortedPoses.clear();
-        sortedPoses.addAll(poseList);
+        originalList.clear();
+        originalList.addAll(sortedPoses);
     }
 }

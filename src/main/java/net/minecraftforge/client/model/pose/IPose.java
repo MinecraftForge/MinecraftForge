@@ -27,12 +27,6 @@ public interface IPose
 
     /**
      *
-     * @return if other poses after this one and vanilla Model/PoseStack modifications are applied
-     */
-    boolean shouldOtherPosesActivate();
-
-    /**
-     *
      * this is called right before rendering, modify the PoseStack or the EntityModel here
      */
 

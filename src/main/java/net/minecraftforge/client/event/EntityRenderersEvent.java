@@ -21,7 +21,6 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.player.PlayerRenderer;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -32,6 +31,8 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.model.pose.IPose;
+import net.minecraftforge.client.model.pose.PosePriority;
+import net.minecraftforge.client.model.pose.PoseSortingRegistry;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.LogicalSide;
@@ -40,7 +41,6 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Supplier;
@@ -204,6 +204,17 @@ public abstract class EntityRenderersEvent extends Event implements IModBusEvent
         {
             return entityModels;
         }
+
+        /**
+         * Register a pose
+         * @param pose the pose to register
+         * @param priority when your pose is applied compared to others
+         * @param isReplacementPose if this pose replaces the vanilla/all other modded posing. Only do it if you want to force a specific full model pose. If you want to make sure that your posing is applied, use a later priority
+         */
+        public void registerPose(IPose pose, PosePriority priority, boolean isReplacementPose)
+        {
+            PoseSortingRegistry.registerPose(pose, priority, isReplacementPose);
+        }
     }
 
     /**
@@ -248,41 +259,6 @@ public abstract class EntityRenderersEvent extends Event implements IModBusEvent
         public void registerSkullModel(SkullBlock.Type type, SkullModelBase model)
         {
             builder.put(type, model);
-        }
-    }
-
-    /**
-     * Allows users to register custom {@linkplain IPose poses}.
-     *
-     * <p>This event is not {@linkplain Cancelable cancelable}, and does not {@linkplain Event.HasResult have a result}.
-     *
-     * <p>This event is fired on the {@linkplain FMLJavaModLoadingContext#getModEventBus() mod-specific event bus},
-     * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
-     */
-    public static class RegisterPoseEvent extends EntityRenderersEvent
-    {
-
-        private final RegisterPoseConsumer registerPoseConsumer;
-
-        @ApiStatus.Internal
-        public RegisterPoseEvent(RegisterPoseConsumer registerPoseConsumer)
-        {
-            this.registerPoseConsumer = registerPoseConsumer;
-        }
-
-        /**
-         * Register a Pose
-         */
-        public void register(IPose pose, ResourceLocation name, List<ResourceLocation> after, List<ResourceLocation> before)
-        {
-            registerPoseConsumer.registerPose(pose, name, after, before);
-        }
-
-        @FunctionalInterface
-        @ApiStatus.Internal
-        public interface RegisterPoseConsumer
-        {
-            void registerPose(IPose pose, ResourceLocation name, List<ResourceLocation> after, List<ResourceLocation> before);
         }
     }
 }
