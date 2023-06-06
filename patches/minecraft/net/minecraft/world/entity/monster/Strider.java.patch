@@ -4,7 +4,7 @@
  
     private SpawnGroupData m_33881_(ServerLevelAccessor p_33882_, DifficultyInstance p_33883_, Mob p_33884_, @Nullable SpawnGroupData p_33885_) {
        p_33884_.m_7678_(this.m_20185_(), this.m_20186_(), this.m_20189_(), this.m_146908_(), 0.0F);
-+      if (!net.minecraftforge.event.ForgeEventFactory.doSpecialSpawn(p_33884_, p_33882_.m_6018_(), (float)p_33884_.m_20185_(), (float)p_33884_.m_20186_(), (float)p_33884_.m_20189_(), null, MobSpawnType.JOCKEY))
++      if (!net.minecraftforge.event.ForgeEventFactory.doSpecialSpawn(p_33884_, p_33882_, (float)p_33884_.m_20185_(), (float)p_33884_.m_20186_(), (float)p_33884_.m_20189_(), null, MobSpawnType.JOCKEY))
        p_33884_.m_6518_(p_33882_, p_33883_, MobSpawnType.JOCKEY, p_33885_, (CompoundTag)null);
        p_33884_.m_7998_(this, true);
        return new AgeableMob.AgeableMobGroupData(0.0F);

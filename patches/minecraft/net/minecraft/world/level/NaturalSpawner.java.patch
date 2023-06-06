@@ -24,7 +24,7 @@
 -                        if (m_46991_(p_47040_, mob, d2)) {
 +                        int canSpawn = net.minecraftforge.common.ForgeHooks.canEntitySpawn(mob, p_47040_, d0, i, d1, null, MobSpawnType.NATURAL);
 +                        if (canSpawn == 1 || (canSpawn == 0 && m_46991_(p_47040_, mob, d2))) {
-+                           if (!net.minecraftforge.event.ForgeEventFactory.doSpecialSpawn(mob, (LevelAccessor) p_47040_, (float)d0, (float)i, (float)d1, null, MobSpawnType.NATURAL))
++                           if (!net.minecraftforge.event.ForgeEventFactory.doSpecialSpawn(mob, p_47040_, (float)d0, (float)i, (float)d1, null, MobSpawnType.NATURAL))
                             spawngroupdata = mob.m_6518_(p_47040_, p_47040_.m_6436_(mob.m_20183_()), MobSpawnType.NATURAL, spawngroupdata, (CompoundTag)null);
                             ++j;
                             ++l1;
