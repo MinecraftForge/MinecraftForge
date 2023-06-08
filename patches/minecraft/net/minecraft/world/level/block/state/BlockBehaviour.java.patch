@@ -92,6 +92,14 @@
        public BlockState m_60717_(Rotation p_60718_) {
           return this.m_60734_().m_6843_(this.m_7160_(), p_60718_);
        }
+@@ -623,6 +_,7 @@
+       }
+ 
+       public PushReaction m_60811_() {
++         PushReaction reaction = m_60734_().getPistonPushReaction(m_7160_()); if (reaction != null) return reaction;
+          return this.f_278134_;
+       }
+ 
 @@ -972,8 +_,9 @@
        boolean f_243850_ = true;
        NoteBlockInstrument f_279538_ = NoteBlockInstrument.HARP;

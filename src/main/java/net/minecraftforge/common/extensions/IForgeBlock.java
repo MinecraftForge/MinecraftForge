@@ -30,6 +30,7 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.levelgen.feature.configurations.TreeConfiguration;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.MapColor;
+import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.level.pathfinder.BlockPathTypes;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.core.Direction;
@@ -950,5 +951,16 @@ public interface IForgeBlock
     default BlockState getAppearance(BlockState state, BlockAndTintGetter level, BlockPos pos, Direction side, @Nullable BlockState queryState, @Nullable BlockPos queryPos)
     {
         return state;
+    }
+
+    /**
+     * @deprecated call the method on BlockState
+     * @param state The state of this block
+     * @return the PushReaction of this state or null if the one passed into the block properties should be used
+     */
+    @Deprecated
+    default @Nullable PushReaction getPistonPushReaction(BlockState state)
+    {
+        return null;
     }
 }
