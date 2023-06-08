@@ -14,14 +14,14 @@
  
     public ServerLevel(MinecraftServer p_214999_, Executor p_215000_, LevelStorageSource.LevelStorageAccess p_215001_, ServerLevelData p_215002_, ResourceKey<Level> p_215003_, LevelStem p_215004_, ChunkProgressListener p_215005_, boolean p_215006_, long p_215007_, List<CustomSpawner> p_215008_, boolean p_215009_, @Nullable RandomSequences p_288977_) {
        super(p_215002_, p_215003_, p_214999_.m_206579_(), p_215004_.f_63975_(), p_214999_::m_129905_, false, p_215006_, p_215007_, p_214999_.m_213994_());
-@@ -247,6 +_,7 @@
-    @VisibleForTesting
-    public void m_287200_(@Nullable EndDragonFight p_287779_) {
-       this.f_8559_ = p_287779_;
+@@ -240,6 +_,7 @@
+             return new RandomSequences(i);
+          }, "random_sequences");
+       });
 +      this.initCapabilities();
     }
  
-    public void m_8606_(int p_8607_, int p_8608_, boolean p_8609_, boolean p_8610_) {
+    /** @deprecated */
 @@ -275,8 +_,8 @@
        int i = this.m_46469_().m_46215_(GameRules.f_151486_);
        if (this.f_143245_.m_144002_(i) && this.f_143245_.m_144004_(i, this.f_8546_)) {
