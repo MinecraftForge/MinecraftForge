@@ -92,11 +92,12 @@
        public BlockState m_60717_(Rotation p_60718_) {
           return this.m_60734_().m_6843_(this.m_7160_(), p_60718_);
        }
-@@ -623,6 +_,7 @@
+@@ -623,6 +_,8 @@
        }
  
        public PushReaction m_60811_() {
-+         PushReaction reaction = m_60734_().getPistonPushReaction(m_7160_()); if (reaction != null) return reaction;
++         PushReaction reaction = m_60734_().getPistonPushReaction(m_7160_());
++         if (reaction != null) return reaction;
           return this.f_278134_;
        }
  
