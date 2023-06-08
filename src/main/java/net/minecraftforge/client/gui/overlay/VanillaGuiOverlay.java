@@ -47,7 +47,7 @@ public enum VanillaGuiOverlay
         float f1 = Mth.lerp(partialTick, gui.getMinecraft().player.oSpinningEffectIntensity, gui.getMinecraft().player.spinningEffectIntensity);
         if (f1 > 0.0F && !gui.getMinecraft().player.hasEffect(MobEffects.CONFUSION)) {
             gui.setupOverlayRenderState(true, false);
-            gui.renderPortalOverlay(guiGraphics, partialTick);
+            gui.renderPortalOverlay(guiGraphics, f1);
         }
     }),
     HOTBAR("hotbar", (gui, guiGraphics, partialTick, screenWidth, screenHeight) -> {
