@@ -120,8 +120,8 @@ public class DifferenceIngredient extends AbstractIngredient
         @Override
         public DifferenceIngredient parse(JsonObject json)
         {
-            Ingredient base = Ingredient.fromJson(json.get("base"));
-            Ingredient without = Ingredient.fromJson(json.get("subtracted"));
+            Ingredient base = Ingredient.fromJson(json.get("base"), false);
+            Ingredient without = Ingredient.fromJson(json.get("subtracted"), false);
             return new DifferenceIngredient(base, without);
         }
 
