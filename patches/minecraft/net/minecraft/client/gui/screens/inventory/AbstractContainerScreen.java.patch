@@ -23,7 +23,7 @@
        ItemStack itemstack = this.f_97711_.m_41619_() ? this.f_97732_.m_142621_() : this.f_97711_;
        if (!itemstack.m_41619_()) {
           int l1 = 8;
-@@ -149,7 +_,10 @@
+@@ -149,13 +_,16 @@
     }
  
     public static void m_280359_(GuiGraphics p_283692_, int p_281453_, int p_281915_, int p_283504_) {
@@ -35,6 +35,13 @@
     }
  
     protected void m_280072_(GuiGraphics p_283594_, int p_282171_, int p_281909_) {
+       if (this.f_97732_.m_142621_().m_41619_() && this.f_97734_ != null && this.f_97734_.m_6657_()) {
+          ItemStack itemstack = this.f_97734_.m_7993_();
+-         p_283594_.m_280677_(this.f_96547_, this.m_280553_(itemstack), itemstack.m_150921_(), p_282171_, p_281909_);
++         p_283594_.renderTooltip(this.f_96547_, this.m_280553_(itemstack), itemstack.m_150921_(), itemstack, p_282171_, p_281909_);
+       }
+ 
+    }
 @@ -168,7 +_,8 @@
        p_282567_.m_280168_().m_85836_();
        p_282567_.m_280168_().m_252880_(0.0F, 0.0F, 232.0F);
