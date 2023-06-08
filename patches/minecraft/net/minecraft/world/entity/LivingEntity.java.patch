@@ -43,31 +43,15 @@
     public boolean m_6040_() {
        return this.m_6336_() == MobType.f_21641_;
     }
-@@ -352,8 +_,8 @@
+@@ -352,6 +_,8 @@
              }
           }
  
--         if (this.m_204029_(FluidTags.f_13131_) && !this.m_9236_().m_8055_(BlockPos.m_274561_(this.m_20185_(), this.m_20188_(), this.m_20189_())).m_60713_(Blocks.f_50628_)) {
--            boolean flag1 = !this.m_6040_() && !MobEffectUtil.m_19588_(this) && (!flag || !((Player)this).m_150110_().f_35934_);
-+         if (!this.getEyeInFluidType().isAir() && !this.m_9236_().m_8055_(BlockPos.m_274561_(this.m_20185_(), this.m_20188_(), this.m_20189_())).m_60713_(Blocks.f_50628_)) {
-+            boolean flag1 = this.canDrownInFluidType(this.getEyeInFluidType()) && !MobEffectUtil.m_19588_(this) && (!flag || !((Player)this).m_150110_().f_35934_);
++         net.minecraftforge.common.ForgeHooks.onLivingBreathe(this, -m_7302_(0), m_7305_(0));
++         if (false) // Forge: Handled in ForgeHooks#onLivingBreathe(LivingEntity, int, int)
+          if (this.m_204029_(FluidTags.f_13131_) && !this.m_9236_().m_8055_(BlockPos.m_274561_(this.m_20185_(), this.m_20188_(), this.m_20189_())).m_60713_(Blocks.f_50628_)) {
+             boolean flag1 = !this.m_6040_() && !MobEffectUtil.m_19588_(this) && (!flag || !((Player)this).m_150110_().f_35934_);
              if (flag1) {
-                this.m_20301_(this.m_7302_(this.m_20146_()));
-                if (this.m_20146_() == -20) {
-@@ -371,10 +_,11 @@
-                }
-             }
- 
--            if (!this.m_9236_().f_46443_ && this.m_20159_() && this.m_20202_() != null && this.m_20202_().m_275843_()) {
-+            if (!this.m_9236_().f_46443_ && this.m_20159_() && this.m_20202_() != null && !this.m_20202_().canBeRiddenUnderFluidType(this.getEyeInFluidType(), this)) {
-                this.m_8127_();
-             }
--         } else if (this.m_20146_() < this.m_6062_()) {
-+         } // Forge: Move to if statement since we need to increase the air supply if in bubble column or can't drown
-+         if (this.m_20146_() < this.m_6062_() && (!this.canDrownInFluidType(this.getEyeInFluidType()) || this.m_9236_().m_8055_(BlockPos.m_274561_(this.m_20185_(), this.m_20188_(), this.m_20189_())).m_60713_(Blocks.f_50628_))) {
-             this.m_20301_(this.m_7305_(this.m_20146_()));
-          }
- 
 @@ -387,7 +_,7 @@
           }
        }
