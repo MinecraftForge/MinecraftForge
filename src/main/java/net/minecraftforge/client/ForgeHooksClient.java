@@ -1094,7 +1094,7 @@ public class ForgeHooksClient
 
     private static Stream<ClientTooltipComponent> splitLine(FormattedText text, Font font, int maxWidth)
     {
-        if (text instanceof Component component && component.getContents() == ComponentContents.EMPTY && component.getSiblings().isEmpty())
+        if (text instanceof Component component && component.getString().isEmpty())
         {
             return Stream.of(component.getVisualOrderText()).map(ClientTooltipComponent::create);
         }
