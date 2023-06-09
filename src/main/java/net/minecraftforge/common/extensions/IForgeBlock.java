@@ -954,17 +954,18 @@ public interface IForgeBlock
     }
 
     /**
-     * Returns how the Block reacts to being pushed/pulled by a piston.<br/>
-     * NORMAL: is pushable and pullable by sticky pistons<br/>
-     * DESTROY: is being destroyed on pushing and pulling<br/>
-     * BLOCK: is not being able to be moved<br/>
-     * IGNORE: only usable by entities<br/>
-     * PUSH_ONLY: can only be pushed, blocks on trying to be pulled<br/>
-     * null: use the PistonPushReaction from the BlockBehaviour.Properties passed into the Block Constructor<br/>
+     * Returns the reaction of the block when pushed or pulled by a piston. This method should be not called directly, instead via {@link BlockState#getPistonPushReaction()}.
+     * <ul>
+     *     <li>NORMAL: is pushable and pullable by sticky pistons</li>
+     *     <li>DESTROY: is being destroyed on pushing and pulling</li>
+     *     <li>BLOCK: is not being able to be moved</li>
+     *     <li>IGNORE: only usable by entities</li>
+     *     <li>PUSH_ONLY: can only be pushed, blocks on trying to be pulled</li>
+     *     <li>{@code null}: use the PistonPushReaction from the BlockBehaviour.Properties passed into the Block Constructor</li>
+     * </ul>
      *
-     * @see BlockBehaviour.BlockStateBase#getPistonPushReaction()
      * @param state The state of this block
-     * @return the PushReaction of this state or null if the one passed into the block properties should be used
+     * @return the PushReaction of this state or {@code null} if the one passed into the block properties should be used
      */
     @Nullable
     default PushReaction getPistonPushReaction(BlockState state)
