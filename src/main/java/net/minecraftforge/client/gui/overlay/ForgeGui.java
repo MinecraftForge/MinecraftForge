@@ -654,7 +654,12 @@ public class ForgeGui extends Gui
         }
 
         @Override
-        protected void drawGameInformation(GuiGraphics guiGraphics) {}
+        protected void drawGameInformation(GuiGraphics guiGraphics)
+        {
+            // Replicate the depth test state "leak" caused by the text that is rendered here in vanilla
+            // being flushed when the graphs start drawing (PR #9539)
+            RenderSystem.disableDepthTest();
+        }
 
         @Override
         protected void drawSystemInformation(GuiGraphics guiGraphics) {}
