@@ -211,13 +211,15 @@ tasks.named('jar', Jar).configure {
                 'Implementation-Vendor'   : mod_authors
         ])
     }
+    preserveFileTimestamps = false
+    reproducibleFileOrder = true
     // Example configuration to allow publishing using the maven-publish plugin
     // This is the preferred method to reobfuscate your jar file
     finalizedBy('reobfJar')
 }
 
 // However if you are in a multi-project build, dev time needs unobfed jar files, so you can delay the obfuscation until publishing by doing
-// publish.dependsOn('reobfJar')
+// tasks.named('publish').configure { dependsOn('reobfJar') }
 
 publishing {
     publications {
