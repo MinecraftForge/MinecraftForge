@@ -5,7 +5,7 @@
              FormattedText formattedtext = EnchantmentNames.m_98734_().m_98737_(this.f_96547_, l1);
              int i2 = 6839882;
 -            if ((k < l + 1 || this.f_96541_.f_91074_.f_36078_ < k1) && !this.f_96541_.f_91074_.m_150110_().f_35937_) {
-+            if (((k < l + 1 || this.f_96541_.f_91074_.f_36078_ < k1) && !this.f_96541_.f_91074_.m_150110_().f_35937_) || this.f_97732_.f_39447_[i1] == -1) { // Forge: render buttons as disabled when enchantable but enchantability not met on lower levels
++            if (((k < l + 1 || this.f_96541_.f_91074_.f_36078_ < k1) && !this.f_96541_.f_91074_.m_150110_().f_35937_) || this.f_97732_.f_39447_[l] == -1) { // Forge: render buttons as disabled when enchantable but enchantability not met on lower levels
                 p_282430_.m_280218_(f_98747_, i1, j + 14 + 19 * l, 0, 185, 108, 19);
                 p_282430_.m_280218_(f_98747_, i1 + 1, j + 15 + 19 * l, 16 * l, 239, 16, 16);
                 p_282430_.m_280554_(this.f_96547_, formattedtext, j1, j + 16 + 19 * l, l1, (i2 & 16711422) >> 1);
