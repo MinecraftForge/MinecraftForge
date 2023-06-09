@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/entity/layers/HumanoidArmorLayer.java
 +++ b/net/minecraft/client/renderer/entity/layers/HumanoidArmorLayer.java
-@@ -54,17 +_,17 @@
+@@ -54,24 +_,24 @@
           if (armoritem.m_40402_() == p_117122_) {
              this.m_117386_().m_102872_(p_117124_);
              this.m_117125_(p_117124_, p_117122_);
@@ -16,24 +16,49 @@
                 float f2 = (float)(i & 255) / 255.0F;
 -               this.m_289609_(p_117119_, p_117120_, p_117123_, armoritem, p_117124_, flag, f, f1, f2, (String)null);
 -               this.m_289609_(p_117119_, p_117120_, p_117123_, armoritem, p_117124_, flag, 1.0F, 1.0F, 1.0F, "overlay");
-+               this.renderModel(p_117119_, p_117120_, p_117123_, armoritem, p_117124_, flag, f, f1, f2, this.getArmorResource(p_117121_, itemstack, p_117122_, null));
-+               this.renderModel(p_117119_, p_117120_, p_117123_, armoritem, p_117124_, flag, 1.0F, 1.0F, 1.0F, this.getArmorResource(p_117121_, itemstack, p_117122_, "overlay"));
++               this.renderModel(p_117119_, p_117120_, p_117123_, armoritem, model, flag, f, f1, f2, this.getArmorResource(p_117121_, itemstack, p_117122_, null));
++               this.renderModel(p_117119_, p_117120_, p_117123_, armoritem, model, flag, 1.0F, 1.0F, 1.0F, this.getArmorResource(p_117121_, itemstack, p_117122_, "overlay"));
              } else {
 -               this.m_289609_(p_117119_, p_117120_, p_117123_, armoritem, p_117124_, flag, 1.0F, 1.0F, 1.0F, (String)null);
-+               this.renderModel(p_117119_, p_117120_, p_117123_, armoritem, p_117124_, flag, 1.0F, 1.0F, 1.0F, this.getArmorResource(p_117121_, itemstack, p_117122_, null));
++               this.renderModel(p_117119_, p_117120_, p_117123_, armoritem, model, flag, 1.0F, 1.0F, 1.0F, this.getArmorResource(p_117121_, itemstack, p_117122_, null));
              }
  
              ArmorTrim.m_266285_(p_117121_.m_9236_().m_9598_(), itemstack).ifPresent((p_289638_) -> {
-@@ -103,7 +_,10 @@
+-               this.m_289604_(armoritem.m_40401_(), p_117119_, p_117120_, p_117123_, p_289638_, p_117124_, flag);
++               this.renderTrim(armoritem.m_40401_(), p_117119_, p_117120_, p_117123_, p_289638_, model, flag);
+             });
+             if (itemstack.m_41790_()) {
+-               this.m_289597_(p_117119_, p_117120_, p_117123_, p_117124_);
++               this.renderGlint(p_117119_, p_117120_, p_117123_, model);
+             }
+ 
+          }
+@@ -103,17 +_,26 @@
     }
  
     private void m_289609_(PoseStack p_289664_, MultiBufferSource p_289689_, int p_289681_, ArmorItem p_289650_, A p_289658_, boolean p_289668_, float p_289678_, float p_289674_, float p_289693_, @Nullable String p_289682_) {
 -      VertexConsumer vertexconsumer = p_289689_.m_6299_(RenderType.m_110431_(this.m_117080_(p_289650_, p_289668_, p_289682_)));
 +       renderModel(p_289664_, p_289689_, p_289681_, p_289650_, p_289658_, p_289668_, p_289678_, p_289674_, p_289693_, this.m_117080_(p_289650_, p_289668_, p_289682_));
 +   }
-+   private void renderModel(PoseStack p_289664_, MultiBufferSource p_289689_, int p_289681_, ArmorItem p_289650_, A p_289658_, boolean p_289668_, float p_289678_, float p_289674_, float p_289693_, ResourceLocation armorResource) {
++   private void renderModel(PoseStack p_289664_, MultiBufferSource p_289689_, int p_289681_, ArmorItem p_289650_, net.minecraft.client.model.Model p_289658_, boolean p_289668_, float p_289678_, float p_289674_, float p_289693_, ResourceLocation armorResource) {
 +      VertexConsumer vertexconsumer = net.minecraft.client.renderer.entity.ItemRenderer.m_115184_(p_289689_, RenderType.m_110431_(armorResource), false, p_289668_);
        p_289658_.m_7695_(p_289664_, vertexconsumer, p_289681_, OverlayTexture.f_118083_, p_289678_, p_289674_, p_289693_, 1.0F);
+    }
+ 
+    private void m_289604_(ArmorMaterial p_289690_, PoseStack p_289687_, MultiBufferSource p_289643_, int p_289683_, ArmorTrim p_289692_, A p_289663_, boolean p_289651_) {
++      m_289604_(p_289690_, p_289687_, p_289643_, p_289683_, p_289692_, p_289663_, p_289651_);
++   }
++   private void renderTrim(ArmorMaterial p_289690_, PoseStack p_289687_, MultiBufferSource p_289643_, int p_289683_, ArmorTrim p_289692_, net.minecraft.client.model.Model p_289663_, boolean p_289651_) {
+       TextureAtlasSprite textureatlassprite = this.f_266073_.m_118316_(p_289651_ ? p_289692_.m_267774_(p_289690_) : p_289692_.m_267606_(p_289690_));
+       VertexConsumer vertexconsumer = textureatlassprite.m_118381_(p_289643_.m_6299_(Sheets.m_266442_()));
+       p_289663_.m_7695_(p_289687_, vertexconsumer, p_289683_, OverlayTexture.f_118083_, 1.0F, 1.0F, 1.0F, 1.0F);
+    }
+ 
+    private void m_289597_(PoseStack p_289673_, MultiBufferSource p_289654_, int p_289649_, A p_289659_) {
++      m_289597_(p_289673_, p_289654_, p_289649_, p_289659_);
++   }
++   private void renderGlint(PoseStack p_289673_, MultiBufferSource p_289654_, int p_289649_, net.minecraft.client.model.Model p_289659_) {
+       p_289659_.m_7695_(p_289673_, p_289654_.m_6299_(RenderType.m_110484_()), p_289649_, OverlayTexture.f_118083_, 1.0F, 1.0F, 1.0F, 1.0F);
     }
  
 @@ -125,8 +_,50 @@
