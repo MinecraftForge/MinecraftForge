@@ -1628,7 +1628,7 @@ project(':forge') {
                     exclude it
             }
             filter(ReplaceTokens, tokens: [
-                FORGE_VERSION: project.version,
+                FORGE_VERSION: FORGE_VERSION,
                 FORGE_GROUP: project.group,
                 FORGE_NAME: project.name,
                 MC_VERSION: MC_VERSION,
