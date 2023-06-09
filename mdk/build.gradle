@@ -211,8 +211,12 @@ tasks.named('jar', Jar).configure {
                 'Implementation-Vendor'   : mod_authors
         ])
     }
+    
+    // The settings below make sure that your build is reproducible
+    // More information at https://docs.gradle.org/current/userguide/working_with_files.html#sec:reproducible_archives
     preserveFileTimestamps = false
     reproducibleFileOrder = true
+    
     // Example configuration to allow publishing using the maven-publish plugin
     // This is the preferred method to reobfuscate your jar file
     finalizedBy('reobfJar')
