@@ -94,11 +94,8 @@
  
           serverstatscounter = new ServerStatsCounter(this.f_11195_, file2);
           this.f_11202_.put(uuid, serverstatscounter);
-@@ -807,8 +_,11 @@
-          Path path = this.f_11195_.m_129843_(LevelResource.f_78174_).resolve(uuid + ".json");
-          playeradvancements = new PlayerAdvancements(this.f_11195_.m_129933_(), this, this.f_11195_.m_129889_(), path, p_11297_);
+@@ -809,6 +_,8 @@
           this.f_11203_.put(uuid, playeradvancements);
-+         this.f_11203_.put(uuid, playeradvancements);
        }
  
 +      // Forge: don't overwrite active player with a fake one.
