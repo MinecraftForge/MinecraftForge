@@ -109,18 +109,18 @@ public enum VanillaGuiOverlay
             gui.renderFood(screenWidth, screenHeight, guiGraphics);
         }
     }),
-    MOUNT_HEALTH("mount_health", (gui, guiGraphics, partialTick, screenWidth, screenHeight) -> {
-        if (!gui.getMinecraft().options.hideGui && gui.shouldDrawSurvivalElements())
-        {
-            gui.setupOverlayRenderState(true, false);
-            gui.renderHealthMount(screenWidth, screenHeight, guiGraphics);
-        }
-    }),
     AIR_LEVEL("air_level", (gui, guiGraphics, partialTick, screenWidth, screenHeight) -> {
         if (!gui.getMinecraft().options.hideGui && gui.shouldDrawSurvivalElements())
         {
             gui.setupOverlayRenderState(true, false);
             gui.renderAir(screenWidth, screenHeight, guiGraphics);
+        }
+    }),
+    MOUNT_HEALTH("mount_health", (gui, guiGraphics, partialTick, screenWidth, screenHeight) -> {
+        if (!gui.getMinecraft().options.hideGui && gui.shouldDrawSurvivalElements())
+        {
+            gui.setupOverlayRenderState(true, false);
+            gui.renderHealthMount(screenWidth, screenHeight, guiGraphics);
         }
     }),
     JUMP_BAR("jump_bar", (gui, guiGraphics, partialTick, screenWidth, screenHeight) -> {
@@ -155,14 +155,14 @@ public enum VanillaGuiOverlay
     SLEEP_FADE("sleep_fade", (gui, guiGraphics, partialTick, screenWidth, screenHeight) -> {
         gui.renderSleepFade(screenWidth, screenHeight, guiGraphics);
     }),
+    POTION_ICONS("potion_icons", (gui, guiGraphics, partialTick, screenWidth, screenHeight) -> {
+        gui.renderEffects(guiGraphics);
+    }),
     DEBUG_TEXT("debug_text", (gui, guiGraphics, partialTick, screenWidth, screenHeight) -> {
         gui.renderHUDText(screenWidth, screenHeight, guiGraphics);
     }),
     FPS_GRAPH("fps_graph", (gui, guiGraphics, partialTick, screenWidth, screenHeight) -> {
         gui.renderFPSGraph(guiGraphics);
-    }),
-    POTION_ICONS("potion_icons", (gui, guiGraphics, partialTick, screenWidth, screenHeight) -> {
-        gui.renderEffects(guiGraphics);
     }),
     RECORD_OVERLAY("record_overlay", (gui, guiGraphics, partialTick, screenWidth, screenHeight) -> {
         if (!gui.getMinecraft().options.hideGui)
@@ -170,16 +170,16 @@ public enum VanillaGuiOverlay
             gui.renderRecordOverlay(screenWidth, screenHeight, partialTick, guiGraphics);
         }
     }),
-    SUBTITLES("subtitles", (gui, guiGraphics, partialTick, screenWidth, screenHeight) -> {
-        if (!gui.getMinecraft().options.hideGui)
-        {
-            gui.renderSubtitles(guiGraphics);
-        }
-    }),
     TITLE_TEXT("title_text", (gui, guiGraphics, partialTick, screenWidth, screenHeight) -> {
         if (!gui.getMinecraft().options.hideGui)
         {
             gui.renderTitle(screenWidth, screenHeight, partialTick, guiGraphics);
+        }
+    }),
+    SUBTITLES("subtitles", (gui, guiGraphics, partialTick, screenWidth, screenHeight) -> {
+        if (!gui.getMinecraft().options.hideGui)
+        {
+            gui.renderSubtitles(guiGraphics);
         }
     }),
     SCOREBOARD("scoreboard", (gui, guiGraphics, partialTick, screenWidth, screenHeight) -> {
