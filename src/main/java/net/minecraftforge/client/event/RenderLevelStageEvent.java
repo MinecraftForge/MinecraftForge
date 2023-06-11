@@ -13,13 +13,19 @@ import javax.annotation.Nullable;
 import com.mojang.blaze3d.vertex.PoseStack;
 
 import net.minecraft.client.Camera;
+import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.LevelRenderer;
+import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.ForgeRenderTypes;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.event.IModBusEvent;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.joml.Matrix4f;
 
 /**
@@ -201,6 +207,11 @@ public class RenderLevelStageEvent extends Event
          * Called within a fabulous graphics target.
          */
         public static final Stage AFTER_WEATHER = register("after_weather", null);
+        /**
+         * Use this to render after everything in the level has been rendered.
+         * Called after {@link LevelRenderer#renderLevel(PoseStack, float, long, boolean, Camera, GameRenderer, LightTexture, Matrix4f)} finishes.
+         */
+        public static final Stage AFTER_LEVEL = register("after_level", null);
 
         private final String name;
 
