@@ -17,6 +17,22 @@
        this.f_79110_ = p_287663_;
        this.f_79111_ = LootItemFunctions.m_80770_(p_287663_);
     }
+@@ -77,12 +_,14 @@
+    public void m_79131_(LootContext p_79132_, Consumer<ItemStack> p_79133_) {
+       LootContext.VisitedEntry<?> visitedentry = LootContext.m_278811_(this);
+       if (p_79132_.m_278759_(visitedentry)) {
+-         Consumer<ItemStack> consumer = LootItemFunction.m_80724_(this.f_79111_, p_79133_, p_79132_);
++         ObjectArrayList<ItemStack> baseItems = new ObjectArrayList<>();
++         Consumer<ItemStack> consumer = LootItemFunction.m_80724_(this.f_79111_, baseItems::add, p_79132_);
+ 
+          for(LootPool lootpool : this.f_79109_) {
+             lootpool.m_79053_(consumer, p_79132_);
+          }
+ 
++         net.minecraftforge.common.ForgeHooks.modifyLoot(this.getLootTableId(), baseItems, p_79132_).forEach(p_79133_);
+          p_79132_.m_278639_(visitedentry);
+       } else {
+          f_79107_.warn("Detected infinite loop in loot tables");
 @@ -98,6 +_,7 @@
        this.m_287190_(p_287704_, m_246283_(p_287704_.m_287182_(), p_287617_));
     }
@@ -25,14 +41,6 @@
     public void m_79148_(LootContext p_79149_, Consumer<ItemStack> p_79150_) {
        this.m_79131_(p_79149_, m_246283_(p_79149_.m_78952_(), p_79150_));
     }
-@@ -113,6 +_,7 @@
-    private ObjectArrayList<ItemStack> m_230922_(LootContext p_230923_) {
-       ObjectArrayList<ItemStack> objectarraylist = new ObjectArrayList<>();
-       this.m_79148_(p_230923_, objectarraylist::add);
-+      objectarraylist = net.minecraftforge.common.ForgeHooks.modifyLoot(this.getLootTableId(), objectarraylist, p_230923_);
-       return objectarraylist;
-    }
- 
 @@ -121,8 +_,8 @@
     }
  
