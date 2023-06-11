@@ -172,7 +172,7 @@
        shaderinstance.m_173362_();
        VertexBuffer.m_85931_();
        this.f_109461_.m_91307_().m_7238_();
-+      net.minecraftforge.client.ForgeHooksClient.dispatchRenderStage(p_172994_, this, p_172995_, p_254039_, this.f_109477_, this.f_109461_.f_91063_.m_109153_(), this.f_109442_ != null ? this.f_109442_ : this.f_172938_);
++      net.minecraftforge.client.ForgeHooksClient.dispatchRenderStage(p_172994_, this, p_172995_, p_254039_, this.f_109477_, this.f_109461_.f_91063_.m_109153_(), this.getFrustum());
        p_172994_.m_110188_();
     }
  
@@ -203,11 +203,22 @@
              } else if (this.f_109461_.f_91066_.m_232080_().m_231551_() == PrioritizeChunkUpdates.PLAYER_AFFECTED) {
                 flag = chunkrenderdispatcher$renderchunk.m_112842_();
              }
-@@ -2396,7 +_,12 @@
+@@ -2396,7 +_,23 @@
        this.f_109469_.m_110859_(p_109502_, p_109503_, p_109504_, p_109505_);
     }
  
-+   @Deprecated // Forge: use item aware function below
++   public Frustum getFrustum() {
++      return this.f_109442_ != null ? this.f_109442_ : this.f_172938_;
++   }
++
++   public int getTicks() {
++      return this.f_109477_;
++   }
++
++   /**
++    * @deprecated Forge: Use item aware function below
++    */
++   @Deprecated
     public void m_109514_(@Nullable SoundEvent p_109515_, BlockPos p_109516_) {
 +      this.playStreamingMusic(p_109515_, p_109516_, p_109515_ == null? null : RecordItem.m_43040_(p_109515_));
 +   }
