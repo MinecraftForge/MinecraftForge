@@ -5,8 +5,8 @@
     }
  
 +   @Override
-+   public void findBlocks(java.util.function.BiPredicate<BlockState, BlockPos> p_285465_, BiConsumer<BlockPos, BlockState> p_285061_) {
-+      this.f_62685_.findBlocks(p_285465_, p_285061_);
++   public void findBlocks(java.util.function.BiPredicate<BlockState, BlockPos> p_285343_, BiConsumer<BlockPos, BlockState> p_285030_) {
++      this.f_62685_.findBlocks(p_285343_, p_285030_);
 +   }
 +
     public TickContainerAccess<Block> m_183531_() {
