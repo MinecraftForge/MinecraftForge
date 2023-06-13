@@ -27,6 +27,6 @@
        EntityRendererProvider.Context entityrendererprovider$context = new EntityRendererProvider.Context(this, this.f_173995_, this.f_234576_, this.f_234577_, p_174004_, this.f_173996_, this.f_114365_);
        this.f_114362_ = EntityRenderers.m_174049_(entityrendererprovider$context);
        this.f_114363_ = EntityRenderers.m_174051_(entityrendererprovider$context);
-+      net.minecraftforge.fml.ModLoader.get().postEvent(new net.minecraftforge.client.event.EntityRenderersEvent.AddLayers(f_114362_, f_114363_));
++      net.minecraftforge.fml.ModLoader.get().postEvent(new net.minecraftforge.client.event.EntityRenderersEvent.AddLayers(f_114362_, f_114363_, entityrendererprovider$context));
     }
  }
