@@ -41,7 +41,7 @@
 +       renderModel(p_289664_, p_289689_, p_289681_, p_289650_, p_289658_, p_289668_, p_289678_, p_289674_, p_289693_, this.m_117080_(p_289650_, p_289668_, p_289682_));
 +   }
 +   private void renderModel(PoseStack p_289664_, MultiBufferSource p_289689_, int p_289681_, ArmorItem p_289650_, net.minecraft.client.model.Model p_289658_, boolean p_289668_, float p_289678_, float p_289674_, float p_289693_, ResourceLocation armorResource) {
-+      VertexConsumer vertexconsumer = net.minecraft.client.renderer.entity.ItemRenderer.m_115184_(p_289689_, RenderType.m_110431_(armorResource), false, p_289668_);
++      VertexConsumer vertexconsumer = p_289689_.m_6299_(RenderType.m_110431_(armorResource));
        p_289658_.m_7695_(p_289664_, vertexconsumer, p_289681_, OverlayTexture.f_118083_, p_289678_, p_289674_, p_289693_, 1.0F);
     }
  
