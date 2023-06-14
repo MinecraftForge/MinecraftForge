@@ -16,5 +16,6 @@
   ],
   "result": {
     "item": "minecraft:jungle_fence_gate"
-  }
+  },
+  "show_notification": true
 }

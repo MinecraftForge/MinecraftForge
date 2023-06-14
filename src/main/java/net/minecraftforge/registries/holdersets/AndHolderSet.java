@@ -36,7 +36,7 @@ public class AndHolderSet<T> extends CompositeHolderSet<T>
     {
         return HolderSetCodec.create(registryKey, holderCodec, forceList)
             .listOf()
-            .xmap(AndHolderSet::new, AndHolderSet::getComponents)
+            .xmap(AndHolderSet::new, CompositeHolderSet::homogenize)
             .fieldOf("values")
             .codec();
     }

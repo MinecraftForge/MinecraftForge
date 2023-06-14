@@ -63,7 +63,7 @@ public class ExtendedBlockModelDeserializer extends BlockModel.Deserializer
 
         if (jsonobject.has("transform"))
         {
-            JsonObject transform = GsonHelper.getAsJsonObject(jsonobject, "transform");
+            JsonElement transform = jsonobject.get("transform");
             model.customData.setRootTransform(deserializationContext.deserialize(transform, Transformation.class));
         }
 

@@ -196,8 +196,32 @@ public interface IForgeItem
      * @param player The Player using the item
      * @param count  The amount of time in tick the item has been used for
      *               continuously
+     * @deprecated {@link net.minecraft.world.item.Item#onUseTick(Level, LivingEntity, ItemStack, int) Implement Vanilla's Version}
      */
+    @Deprecated(since = "1.19.4", forRemoval = true)
     default void onUsingTick(ItemStack stack, LivingEntity player, int count)
+    {
+    }
+
+    /**
+     * Called when an entity stops using an item for any reason, notably when selecting another item without releasing or finishing.
+     * This method is called in addition to any other hooks called when an item is finished using; when another hook is also called it will be called before this method.
+     *
+     * Note that if you break an item while using it (that is, it becomes empty without swapping the stack instance), this hook may not be called on the serverside as you are
+     * technically still using the empty item (thus this hook is called on air instead). It is necessary to call {@link LivingEntity#stopUsingItem()} as part of your
+     * {@link ItemStack#hurtAndBreak(int, LivingEntity, Consumer)} callback to prevent this issue.
+     *
+     * For most uses, you likely want one of the following:
+     * <ul>
+     *   <li>{@link Item#finishUsingItem(ItemStack, Level, LivingEntity)} for when the player releases and enough ticks have passed
+     *   <li>{@link Item#releaseUsing(ItemStack, Level, LivingEntity, int)} (ItemStack, Level, LivingEntity)} for when the player releases but the full timer has not passed
+     * </ul>
+     *
+     * @param stack  The Item being used
+     * @param entity The entity using the item, typically a player
+     * @param count  The amount of time in tick the item has been used for continuously
+     */
+    default void onStopUsing(ItemStack stack, LivingEntity entity, int count)
     {
     }
 
@@ -833,4 +857,12 @@ public interface IForgeItem
         return stack.isEnchanted();
     }
 
+    /**
+     * {@return true if the given ItemStack can be put into a grindstone to be repaired and/or stripped of its enchantments}
+     */
+    default boolean canGrindstoneRepair(ItemStack stack)
+    {
+        // TODO 1.20: Change to return false; this changes the default behavior for all items from opt-out to opt-in.
+        return true;
+    }
 }

@@ -3,6 +3,9 @@ loaderVersion="[28,)"
 license="LGPL v2.1"
 
 [[mods]]
+modId="mdk_datagen"
+
+[[mods]]
     modId="eventtests"
 [[mods]]
     modId="client_command_test"
@@ -21,6 +24,14 @@ license="LGPL v2.1"
     modId="advancement_event_test"
 [[mods]]
     modId="shader_resources_test"
+[[mods]]
+    modId="crash_callable_test"
+[[mods]]
+    modId="deferred_work_queue_test"
+[[mods]]
+    modId="custom_game_rule_test"
+[[mods]]
+    modId="custom_preset_editor_test"
 
 # LEGACY TEST CASES
 ###### The mods below are from the old test framework and need to be yeeted later again.
@@ -117,6 +128,8 @@ modId="custom_elytra_test"
 [[mods]]
 modId="snow_boots_test"
 [[mods]]
+modId="stop_using_item"
+[[mods]]
 modId="finite_water_test"
 [[mods]]
 modId="scaffolding_test"
@@ -170,8 +183,6 @@ modId="send_datapacks_to_client"
 modId="remove_tag_datagen_test"
 [[mods]]
 modId="tag_based_tool_types"
-[[mods]]
-modId="check_spawn_event_test"
 [[mods]]
 modId="spawn_placement_test"
 [[mods]]
@@ -229,6 +240,8 @@ modId="many_mob_effects_test"
 [[mods]]
 modId="fluid_util_test"
 [[mods]]
+modId="login_packet_split_test"
+[[mods]]
 modId="potion_size_event_test"
 [[mods]]
 modId="recipe_book_extension_test"
@@ -275,9 +288,12 @@ modId="data_pack_registries_test"
 [[mods]]
 modId="creative_mode_tab_test"
 [[mods]]
+modId="render_level_stages_test"
+[[mods]]
 modId="trade_with_villager_event_test"
 [[mods]]
 modId="alter_ground_event_test"
-
+[[mods]]
+modId="chunk_event_load_new_chunk_test"
 
 # ADD ABOVE THIS LINE

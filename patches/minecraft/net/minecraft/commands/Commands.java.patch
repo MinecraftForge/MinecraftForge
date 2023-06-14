@@ -1,15 +1,15 @@
 --- a/net/minecraft/commands/Commands.java
 +++ b/net/minecraft/commands/Commands.java
-@@ -186,7 +_,7 @@
+@@ -191,7 +_,7 @@
           JfrCommand.m_183645_(this.f_82090_);
        }
  
 -      if (SharedConstants.f_136183_) {
 +      if (net.minecraftforge.gametest.ForgeGameTestHooks.isGametestEnabled()) {
           TestCommand.m_127946_(this.f_82090_);
+          SpawnArmorTrimsCommand.m_266283_(this.f_82090_);
        }
- 
-@@ -210,6 +_,7 @@
+@@ -216,9 +_,11 @@
        if (p_230943_.f_82144_) {
           PublishCommand.m_138184_(this.f_82090_);
        }
@@ -17,7 +17,11 @@
  
        this.f_82090_.setConsumer((p_230954_, p_230955_, p_230956_) -> {
           p_230954_.getSource().m_81342_(p_230954_, p_230955_, p_230956_);
-@@ -235,7 +_,16 @@
++         p_230954_.getSource().m_81342_(p_230954_, p_230955_, p_230956_);
+       });
+    }
+ 
+@@ -241,7 +_,16 @@
  
        try {
           try {
@@ -35,7 +39,7 @@
           } catch (CommandRuntimeException commandruntimeexception) {
              commandsourcestack.m_81352_(commandruntimeexception.m_79226_());
              return 0;
-@@ -291,7 +_,8 @@
+@@ -297,7 +_,8 @@
        Map<CommandNode<CommandSourceStack>, CommandNode<SharedSuggestionProvider>> map = Maps.newHashMap();
        RootCommandNode<SharedSuggestionProvider> rootcommandnode = new RootCommandNode<>();
        map.put(this.f_82090_.getRoot(), rootcommandnode);

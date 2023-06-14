@@ -56,10 +56,9 @@ public class ItemLayerModel implements IUnbakedGeometry<ItemLayerModel>
     @Override
     public BakedModel bake(IGeometryBakingContext context, ModelBaker baker, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelState, ItemOverrides overrides, ResourceLocation modelLocation)
     {
-        if (textures == null) {
+        if (textures == null)
+        {
             ImmutableList.Builder<Material> builder = ImmutableList.builder();
-            if (context.hasMaterial("particle"))
-                builder.add(context.getMaterial("particle"));
             for (int i = 0; context.hasMaterial("layer" + i); i++)
             {
                 builder.add(context.getMaterial("layer" + i));
@@ -72,7 +71,7 @@ public class ItemLayerModel implements IUnbakedGeometry<ItemLayerModel>
         );
         var rootTransform = context.getRootTransform();
         if (!rootTransform.isIdentity())
-            modelState = new SimpleModelState(modelState.getRotation().compose(rootTransform), modelState.isUvLocked());
+            modelState = UnbakedGeometryHelper.composeRootTransformIntoModelState(modelState, rootTransform);
 
         var normalRenderTypes = new RenderTypeGroup(RenderType.translucent(), ForgeRenderTypes.ITEM_UNSORTED_TRANSLUCENT.get());
         CompositeModel.Baked.Builder builder = CompositeModel.Baked.builder(context, particle, overrides, context.getTransforms());

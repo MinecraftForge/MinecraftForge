@@ -16,5 +16,6 @@
   ],
   "result": {
     "item": "minecraft:wooden_hoe"
-  }
+  },
+  "show_notification": true
 }

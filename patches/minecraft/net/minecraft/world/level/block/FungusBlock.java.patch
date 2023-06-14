@@ -1,11 +1,13 @@
 --- a/net/minecraft/world/level/block/FungusBlock.java
 +++ b/net/minecraft/world/level/block/FungusBlock.java
-@@ -52,6 +_,8 @@
+@@ -52,7 +_,9 @@
  
     public void m_214148_(ServerLevel p_221243_, RandomSource p_221244_, BlockPos p_221245_, BlockState p_221246_) {
        this.m_255216_(p_221243_).ifPresent((p_256352_) -> {
+-         p_256352_.m_203334_().m_224953_(p_221243_, p_221243_.m_7726_().m_8481_(), p_221244_, p_221245_);
 +         net.minecraftforge.event.level.SaplingGrowTreeEvent event = net.minecraftforge.event.ForgeEventFactory.blockGrowFeature(p_221243_, p_221244_, p_221245_, p_256352_);
 +         if (event.getResult().equals(net.minecraftforge.eventbus.api.Event.Result.DENY)) return;
-          p_256352_.m_203334_().m_224953_(p_221243_, p_221243_.m_7726_().m_8481_(), p_221244_, p_221245_);
++         event.getFeature().m_203334_().m_224953_(p_221243_, p_221243_.m_7726_().m_8481_(), p_221244_, p_221245_);
        });
     }
+ }

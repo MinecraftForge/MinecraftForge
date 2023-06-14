@@ -10,7 +10,7 @@
     private final Map<Block, Set<Property<?>>> f_92572_ = Maps.newHashMap();
  
     public static BlockColors m_92574_() {
-@@ -73,11 +_,12 @@
+@@ -80,11 +_,12 @@
        blockcolors.m_92589_((p_92596_, p_92597_, p_92598_, p_92599_) -> {
           return p_92597_ != null && p_92598_ != null ? 2129968 : 7455580;
        }, Blocks.f_50196_);
@@ -24,7 +24,7 @@
        if (blockcolor != null) {
           return blockcolor.m_92566_(p_92583_, (BlockAndTintGetter)null, (BlockPos)null, 0);
        } else {
-@@ -87,13 +_,15 @@
+@@ -94,13 +_,15 @@
     }
  
     public int m_92577_(BlockState p_92578_, @Nullable BlockAndTintGetter p_92579_, @Nullable BlockPos p_92580_, int p_92581_) {

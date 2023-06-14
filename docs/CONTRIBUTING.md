@@ -7,7 +7,7 @@ Contributing to Forge
 
 3) Follow the code style of the class you're working in (braces on newlines & spaces instead of tabs in Forge classes, inline brackets in patches, etc).
 
-For more information, refer to [the wiki](https://github.com/MinecraftForge/MinecraftForge/wiki/If-you-want-to-contribute-to-Forge)
+For more information, refer to [the wiki][Wiki].
 
 
 Contributor License Agreement
@@ -16,3 +16,5 @@ Contributor License Agreement
 - You assign copyright ownership of your contributions to the patches codebase (everything under patches) to Forge, where it will be licensed under the LGPLv2.1 license.
 
 "Forge" is Forge Development LLC, a legally incorporated entity in Oregon, USA.
+
+[Wiki]: https://github.com/MinecraftForge/MinecraftForge/wiki/If-you-want-to-contribute-to-Forge

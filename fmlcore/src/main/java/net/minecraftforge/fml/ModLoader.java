@@ -82,6 +82,7 @@ public class ModLoader
     private boolean loadingStateValid;
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     private final Optional<Consumer<String>> statusConsumer = StartupMessageManager.modLoaderConsumer();
+    private final Set<IModLoadingState> completedStates = new HashSet<>();
     private ModList modList;
 
     private ModLoader()
@@ -200,6 +201,7 @@ public class ModLoader
         statusConsumer.ifPresent(c->c.accept(state.message().apply(this.modList)));
         state.inlineRunnable().ifPresent(a->a.accept(this.modList));
         state.buildTransition(syncExecutor, parallelExecutor).ifPresent(t->waitForTransition(state, syncExecutor, ticker, t));
+        completedStates.add(state);
     }
 
     private void dispatchAndHandleError(IModLoadingState state, ModWorkManager.DrivenExecutor syncExecutor, Executor parallelExecutor, final Runnable ticker, Function<Executor, CompletableFuture<Void>> preSyncTask, Function<Executor, CompletableFuture<Void>> postSyncTask) {
@@ -210,6 +212,7 @@ public class ModLoader
         statusConsumer.ifPresent(c->c.accept(state.message().apply(this.modList)));
         state.inlineRunnable().ifPresent(a->a.accept(this.modList));
         state.buildTransition(syncExecutor, parallelExecutor, preSyncTask, postSyncTask).ifPresent(t->waitForTransition(state, syncExecutor, ticker, t));
+        completedStates.add(state);
     }
 
     private void waitForTransition(final IModLoadingState state, final ModWorkManager.DrivenExecutor syncExecutor, final Runnable ticker, final CompletableFuture<Void> transition) {
@@ -296,6 +299,11 @@ public class ModLoader
         return get().loadingStateValid;
     }
 
+    public boolean hasCompletedState(final String stateName) {
+        IModLoadingState state = stateManager.findState(stateName);
+        return completedStates.contains(state);
+    }
+
     public <T extends Event & IModBusEvent> void runEventGenerator(Function<ModContainer, T> generator) {
         if (!loadingStateValid) {
             LOGGER.error("Cowardly refusing to send event generator to a broken mod state");
@@ -318,6 +326,9 @@ public class ModLoader
         }
         ModList.get().forEachModInOrder(mc -> mc.acceptEvent(e));
         return e;
+    }
+    public <T extends Event & IModBusEvent> void postEventWrapContainerInModOrder(T event) {
+        postEventWithWrapInModOrder(event, (mc, e) -> ModLoadingContext.get().setActiveContainer(mc), (mc, e) -> ModLoadingContext.get().setActiveContainer(null));
     }
     public <T extends Event & IModBusEvent> void postEventWithWrapInModOrder(T e, BiConsumer<ModContainer, T> pre, BiConsumer<ModContainer, T> post) {
         if (!loadingStateValid) {

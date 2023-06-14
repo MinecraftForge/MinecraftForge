@@ -10,7 +10,6 @@ import com.google.common.collect.ImmutableMap;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.event.RegisterGuiOverlaysEvent;
 import net.minecraftforge.fml.ModLoader;
-import net.minecraftforge.fml.ModLoadingContext;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
@@ -53,7 +52,7 @@ public final class GuiOverlayManager
         var orderedOverlays = new ArrayList<ResourceLocation>();
         preRegisterVanillaOverlays(overlays, orderedOverlays);
         var event = new RegisterGuiOverlaysEvent(overlays, orderedOverlays);
-        ModLoader.get().postEventWithWrapInModOrder(event, (mc, e) -> ModLoadingContext.get().setActiveContainer(mc), (mc, e) -> ModLoadingContext.get().setActiveContainer(null));
+        ModLoader.get().postEventWrapContainerInModOrder(event);
         OVERLAYS = orderedOverlays.stream()
                 .map(id -> new NamedGuiOverlay(id, overlays.get(id)))
                 .collect(ImmutableList.toImmutableList());

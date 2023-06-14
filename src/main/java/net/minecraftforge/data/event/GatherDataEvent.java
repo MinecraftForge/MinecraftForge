@@ -44,6 +44,7 @@ public class GatherDataEvent extends Event implements IModBusEvent
         return this.modContainer;
     }
 
+    public Collection<Path> getInputs() { return this.config.getInputs(); }
     public DataGenerator getGenerator() { return this.dataGenerator; }
     public ExistingFileHelper getExistingFileHelper() { return existingFileHelper; }
     public CompletableFuture<HolderLookup.Provider> getLookupProvider() { return this.config.lookupProvider; }

@@ -3,19 +3,19 @@
   "display": {
     "custom_transformtype_test:hanging": {
       "rotation": [
-        62,
+        180,
         147,
         40
       ],
       "scale": [
-        0.48,
+        1,
         0.48,
         0.48
       ],
       "translation": [
         -2.25,
         1.5,
-        -0.25
+        -3
       ]
     }
   },

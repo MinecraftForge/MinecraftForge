@@ -53,7 +53,6 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.client.renderer.texture.SpriteContents;
 import net.minecraft.client.renderer.texture.TextureAtlas;
@@ -80,6 +79,7 @@ import net.minecraft.network.chat.PlayerChatMessage;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.protocol.status.ServerStatus;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.resources.ReloadableResourceManager;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
@@ -91,9 +91,9 @@ import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemStackLinkedSet;
 import net.minecraft.world.item.crafting.RecipeManager;
@@ -114,10 +114,12 @@ import net.minecraftforge.client.event.ClientPlayerChangeGameTypeEvent;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.client.event.ComputeFovModifierEvent;
 import net.minecraftforge.client.event.CustomizeGuiOverlayEvent;
+import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.client.event.ModelEvent;
 import net.minecraftforge.client.event.MovementInputUpdateEvent;
 import net.minecraftforge.client.event.RecipesUpdatedEvent;
+import net.minecraftforge.client.event.RegisterClientReloadListenersEvent;
 import net.minecraftforge.client.event.RegisterColorHandlersEvent;
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.client.event.RegisterParticleProvidersEvent;
@@ -138,8 +140,11 @@ import net.minecraftforge.client.event.sound.PlaySoundEvent;
 import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 import net.minecraftforge.client.extensions.common.IClientMobEffectExtensions;
+import net.minecraftforge.client.gui.ClientTooltipComponentManager;
+import net.minecraftforge.client.gui.overlay.GuiOverlayManager;
 import net.minecraftforge.client.model.data.ModelData;
 import net.minecraftforge.client.textures.ForgeTextureMetadata;
+import net.minecraftforge.client.textures.TextureAtlasSpriteLoaderManager;
 import net.minecraftforge.common.ForgeI18n;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.MinecraftForge;
@@ -152,11 +157,12 @@ import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoader;
 import net.minecraftforge.fml.VersionChecker;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.gametest.ForgeGameTestHooks;
 import net.minecraftforge.network.NetworkConstants;
 import net.minecraftforge.network.NetworkRegistry;
+import net.minecraftforge.network.ServerStatusPing;
 import net.minecraftforge.registries.GameData;
 import net.minecraftforge.versions.forge.ForgeVersion;
-import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
@@ -484,7 +490,7 @@ public class ForgeHooksClient
         ModLoader.get().postEvent(new ModelEvent.BakingCompleted(modelManager, Collections.unmodifiableMap(models), modelBakery));
     }
 
-    public static BakedModel handleCameraTransforms(PoseStack poseStack, BakedModel model, ItemTransforms.TransformType cameraTransformType, boolean applyLeftHandTransform)
+    public static BakedModel handleCameraTransforms(PoseStack poseStack, BakedModel model, ItemDisplayContext cameraTransformType, boolean applyLeftHandTransform)
     {
         model = model.applyTransform(cameraTransformType, poseStack, applyLeftHandTransform);
         return model;
@@ -818,10 +824,11 @@ public class ForgeHooksClient
 
     public static void processForgeListPingData(ServerStatus packet, ServerData target)
     {
-        if (packet.getForgeData() != null) {
-            final Map<String, String> mods = packet.getForgeData().getRemoteModData();
-            final Map<ResourceLocation, Pair<String, Boolean>> remoteChannels = packet.getForgeData().getRemoteChannels();
-            final int fmlver = packet.getForgeData().getFMLNetworkVersion();
+        packet.forgeData().ifPresentOrElse(forgeData ->
+        {
+            final Map<String, String> mods = forgeData.getRemoteModData();
+            final Map<ResourceLocation, ServerStatusPing.ChannelData> remoteChannels = forgeData.getRemoteChannels();
+            final int fmlver = forgeData.getFMLNetworkVersion();
 
             boolean fmlNetMatches = fmlver == NetworkConstants.FMLNETVERSION;
             boolean channelsMatch = NetworkRegistry.checkListPingCompatibilityForClient(remoteChannels);
@@ -867,11 +874,8 @@ public class ForgeHooksClient
             if (fmlver > NetworkConstants.FMLNETVERSION) {
                 extraReason = "fml.menu.multiplayer.clientoutdated";
             }
-            target.forgeData = new ExtendedServerListData("FML", extraServerMods.isEmpty() && fmlNetMatches && channelsMatch && modsMatch, mods.size(), extraReason, packet.getForgeData().isTruncated());
-        } else {
-            target.forgeData = new ExtendedServerListData("VANILLA", NetworkRegistry.canConnectToVanillaServer(),0, null);
-        }
-
+            target.forgeData = new ExtendedServerListData("FML", extraServerMods.isEmpty() && fmlNetMatches && channelsMatch && modsMatch, mods.size(), extraReason, forgeData.isTruncated());
+        }, () -> target.forgeData = new ExtendedServerListData("VANILLA", NetworkRegistry.canConnectToVanillaServer(),0, null));
     }
 
     private static final ResourceLocation ICON_SHEET = new ResourceLocation(ForgeVersion.MOD_ID, "textures/gui/icons.png");
@@ -1202,7 +1206,7 @@ public class ForgeHooksClient
         return new ResourceLocation(loc.getNamespace(), normalised);
     }
 
-    public static void onCreativeModeTabBuildContents(CreativeModeTab tab, CreativeModeTab.DisplayItemsGenerator originalGenerator, FeatureFlagSet flags, CreativeModeTab.Output output, boolean hasPermisions)
+    public static void onCreativeModeTabBuildContents(CreativeModeTab tab, CreativeModeTab.DisplayItemsGenerator originalGenerator, CreativeModeTab.ItemDisplayParameters params, CreativeModeTab.Output output)
     {
         final var entries = new MutableHashedLinkedMap<ItemStack, CreativeModeTab.TabVisibility>(ItemStackLinkedSet.TYPE_AND_TAG,
             (key, left, right) -> {
@@ -1213,15 +1217,44 @@ public class ForgeHooksClient
             }
         );
 
-        originalGenerator.accept(flags, (stack, vis) -> {
+        originalGenerator.accept(params, (stack, vis) -> {
             if (stack.getCount() != 1)
                 throw new IllegalArgumentException("The stack count must be 1");
             entries.put(stack, vis);
-        }, hasPermisions);
+        });
 
-        ModLoader.get().postEvent(new CreativeModeTabEvent.BuildContents(tab, flags, hasPermisions, entries));
+        ModLoader.get().postEvent(new CreativeModeTabEvent.BuildContents(tab, params, entries));
 
         for (var entry : entries)
             output.accept(entry.getKey(), entry.getValue());
+    }
+
+    // Make sure the below method is only ever called once (by forge).
+    private static boolean initializedClientHooks = false;
+    // Runs during Minecraft construction, before initial resource loading.
+    @ApiStatus.Internal
+    public static void initClientHooks(Minecraft mc, ReloadableResourceManager resourceManager)
+    {
+        if (initializedClientHooks)
+        {
+            throw new IllegalStateException("Client hooks initialized more than once");
+        }
+        initializedClientHooks = true;
+
+        ForgeGameTestHooks.registerGametests();
+        ModLoader.get().postEvent(new RegisterClientReloadListenersEvent(resourceManager));
+        ModLoader.get().postEvent(new EntityRenderersEvent.RegisterLayerDefinitions());
+        ModLoader.get().postEvent(new EntityRenderersEvent.RegisterRenderers());
+        TextureAtlasSpriteLoaderManager.init();
+        ClientTooltipComponentManager.init();
+        EntitySpectatorShaderManager.init();
+        ForgeHooksClient.onRegisterKeyMappings(mc.options);
+        RecipeBookManager.init();
+        GuiOverlayManager.init();
+        DimensionSpecialEffectsManager.init();
+        NamedRenderTypeManager.init();
+        ColorResolverManager.init();
+        ItemDecoratorHandler.init();
+        PresetEditorManager.init();
     }
 }

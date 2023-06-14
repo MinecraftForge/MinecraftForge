@@ -19,5 +19,6 @@
   ],
   "result": {
     "item": "minecraft:dispenser"
-  }
+  },
+  "show_notification": true
 }

@@ -13,7 +13,6 @@ import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraftforge.client.event.RegisterRecipeBookCategoriesEvent;
 import net.minecraftforge.fml.ModLoader;
-import net.minecraftforge.fml.ModLoadingContext;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
@@ -68,7 +67,7 @@ public final class RecipeBookManager
         var typeCategories = new HashMap<RecipeBookType, ImmutableList<RecipeBookCategories>>();
         var recipeCategoryLookups = new HashMap<RecipeType<?>, Function<Recipe<?>, RecipeBookCategories>>();
         var event = new RegisterRecipeBookCategoriesEvent(aggregateCategories, typeCategories, recipeCategoryLookups);
-        ModLoader.get().postEventWithWrapInModOrder(event, (mc, e) -> ModLoadingContext.get().setActiveContainer(mc), (mc, e) -> ModLoadingContext.get().setActiveContainer(null));
+        ModLoader.get().postEventWrapContainerInModOrder(event);
         AGGREGATE_CATEGORIES.putAll(aggregateCategories);
         TYPE_CATEGORIES.putAll(typeCategories);
         RECIPE_CATEGORY_LOOKUPS.putAll(recipeCategoryLookups);

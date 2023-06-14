@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/food/FoodData.java
 +++ b/net/minecraft/world/food/FoodData.java
-@@ -24,9 +_,15 @@
+@@ -23,9 +_,15 @@
        this.f_38697_ = Math.min(this.f_38697_ + (float)p_38708_ * p_38709_ * 2.0F, (float)this.f_38696_);
     }
  

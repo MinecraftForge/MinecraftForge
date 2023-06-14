@@ -201,6 +201,7 @@ public class NewModelLoaderTest
         protected void registerModels()
         {
             withExistingParent(NewModelLoaderTest.item_layers.getId().getPath(), "forge:item/default")
+                    .texture("particle", "minecraft:block/red_stained_glass")
                     .texture("layer0", "minecraft:item/coal")
                     .texture("layer1", "minecraft:item/stick")
                     .customLoader(ItemLayerModelBuilder::begin)
@@ -209,8 +210,8 @@ public class NewModelLoaderTest
             withExistingParent(NewModelLoaderTest.separate_perspective.getId().getPath(), "forge:item/default")
                     .customLoader(SeparateTransformsModelBuilder::begin)
                         .base(nested().parent(getExistingFile(mcLoc("minecraft:item/coal"))))
-                        .perspective(ItemTransforms.TransformType.GUI, nested().parent(getExistingFile(mcLoc("minecraft:item/snowball"))))
-                        .perspective(ItemTransforms.TransformType.FIRST_PERSON_LEFT_HAND, nested().parent(getExistingFile(mcLoc("minecraft:item/bone"))))
+                        .perspective(ItemDisplayContext.GUI, nested().parent(getExistingFile(mcLoc("minecraft:item/snowball"))))
+                        .perspective(ItemDisplayContext.FIRST_PERSON_LEFT_HAND, nested().parent(getExistingFile(mcLoc("minecraft:item/bone"))))
                     .end();
         }
     }

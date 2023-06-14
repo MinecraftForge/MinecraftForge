@@ -18,7 +18,9 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import net.minecraft.util.Mth;
-import net.minecraftforge.client.model.generators.BlockModelBuilder.RootTransformBuilder.TransformOrigin;
+import net.minecraft.util.StringRepresentable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Quaternionfc;
@@ -212,16 +214,9 @@ public final class TransformationHelper
                 elements.remove("origin");
             }
             if (!elements.isEmpty()) throw new JsonParseException("TRSR: can either have single 'matrix' key, or a combination of 'translation', 'rotation' OR 'left_rotation', 'scale', 'post-rotation' (legacy) OR 'right_rotation', 'origin'. Found: " + String.join(", ", elements));
-            Transformation matrix = new Transformation(translation, leftRot, scale, rightRot);
 
-            // Use a different origin if needed.
-            if (!TransformOrigin.CENTER.getVector().equals(origin))
-            {
-                Vector3f originFromCenter = new Vector3f(origin);
-                originFromCenter.sub(TransformOrigin.CENTER.getVector());
-                matrix = matrix.applyOrigin(originFromCenter);
-            }
-            return matrix;
+            Transformation matrix = new Transformation(translation, leftRot, scale, rightRot);
+            return matrix.applyOrigin(new Vector3f(origin));
         }
 
         private static Vector3f parseOrigin(JsonObject obj) {
@@ -255,7 +250,7 @@ public final class TransformationHelper
             if (!e.isJsonArray()) throw new JsonParseException("Matrix: expected an array, got: " + e);
             JsonArray m = e.getAsJsonArray();
             if (m.size() != 3) throw new JsonParseException("Matrix: expected an array of length 3, got: " + m.size());
-            Matrix4f matrix = new Matrix4f().zero();
+            Matrix4f matrix = new Matrix4f();
             for (int rowIdx = 0; rowIdx < 3; rowIdx++)
             {
                 if (!m.get(rowIdx).isJsonArray()) throw new JsonParseException("Matrix row: expected an array, got: " + m.get(rowIdx));
@@ -273,6 +268,8 @@ public final class TransformationHelper
                     }
                 }
             }
+            // JOML's unsafe matrix component setter does not recalculate these properties, so the matrix would stay marked as identity
+            matrix.determineProperties();
             return matrix;
         }
 
@@ -354,6 +351,51 @@ public final class TransformationHelper
                 return parseAxisRotation(e);
             }
             else throw new JsonParseException("Rotation: expected array or object, got: " + e);
+        }
+    }
+
+    public enum TransformOrigin implements StringRepresentable
+    {
+        CENTER(new Vector3f(.5f, .5f, .5f), "center"),
+        CORNER(new Vector3f(), "corner"),
+        OPPOSING_CORNER(new Vector3f(1, 1, 1), "opposing-corner");
+
+        private final Vector3f vec;
+        private final String name;
+
+        TransformOrigin(Vector3f vec, String name)
+        {
+            this.vec = vec;
+            this.name = name;
+        }
+
+        public Vector3f getVector()
+        {
+            return vec;
+        }
+
+        @Override
+        @NotNull
+        public String getSerializedName()
+        {
+            return name;
+        }
+
+        public static @Nullable TransformOrigin fromString(String originName)
+        {
+            if (CENTER.getSerializedName().equals(originName))
+            {
+                return CENTER;
+            }
+            if (CORNER.getSerializedName().equals(originName))
+            {
+                return CORNER;
+            }
+            if (OPPOSING_CORNER.getSerializedName().equals(originName))
+            {
+                return OPPOSING_CORNER;
+            }
+            return null;
         }
     }
 }

@@ -19,5 +19,6 @@
   ],
   "result": {
     "item": "minecraft:campfire"
-  }
+  },
+  "show_notification": true
 }

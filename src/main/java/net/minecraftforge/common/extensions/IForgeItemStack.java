@@ -249,10 +249,24 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundTag>
      * @param player The Player using the item
      * @param count  The amount of time in tick the item has been used for
      *               continuously
+     *
+     * @deprecated {@link net.minecraft.world.item.ItemStack#onUseTick(Level, LivingEntity, int) Use Vanilla's Version}
      */
+    @Deprecated(since = "1.19.4", forRemoval = true)
     default void onUsingTick(LivingEntity player, int count)
     {
         self().getItem().onUsingTick(self(), player, count);
+    }
+
+    /**
+     * Called when an entity stops using an item item for any reason.
+     *
+     * @param entity The entity using the item, typically a player
+     * @param count  The amount of time in tick the item has been used for continuously
+     */
+    default void onStopUsing(LivingEntity entity, int count)
+    {
+        self().getItem().onStopUsing(self(), entity, count);
     }
 
     /**
@@ -573,4 +587,11 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundTag>
         return self().getItem().isNotReplaceableByPickAction(self(), player, inventorySlot);
     }
 
+    /**
+     * {@return true if the given ItemStack can be put into a grindstone to be repaired and/or stripped of its enchantments}
+     */
+    default boolean canGrindstoneRepair()
+    {
+        return self().getItem().canGrindstoneRepair(self());
+    }
 }

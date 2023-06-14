@@ -23,8 +23,10 @@ public class GrindstoneEventTest {
     }
 
     @SubscribeEvent
-    public void onGrindestonePlace(GrindstoneEvent.OnplaceItem event)
+    public void onGrindstonePlace(GrindstoneEvent.OnplaceItem event)
     {
+        // TODO 1.20: This will not work once IForgeItem#canGrindstoneRepair is changed to have items opt-in to being able to place
+        //  rather than the current opt-out (the hook will no longer fire after the change). Fix?
         // all of these "recipes" are slot sensitive, the top and bottom must match exactly for the behavior to change
         // switching the order will cause the "recipe" to fail
         ItemStack topItem = event.getTopItem();

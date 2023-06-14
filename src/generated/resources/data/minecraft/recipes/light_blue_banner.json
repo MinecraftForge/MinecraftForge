@@ -17,5 +17,6 @@
   ],
   "result": {
     "item": "minecraft:light_blue_banner"
-  }
+  },
+  "show_notification": true
 }

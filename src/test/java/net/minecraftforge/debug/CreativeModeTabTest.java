@@ -47,7 +47,7 @@ public class CreativeModeTabTest
         LOGS = event.registerCreativeModeTab(new ResourceLocation(MOD_ID, "logs"), builder -> builder.icon(() -> new ItemStack(Blocks.ACACIA_LOG))
                 .title(Component.literal("Logs"))
                 .withLabelColor(0x00FF00)
-                .displayItems((features, output, hasPermissions) -> {
+                .displayItems((params, output) -> {
                     output.accept(new ItemStack(Blocks.ACACIA_LOG));
                     output.accept(new ItemStack(Blocks.BIRCH_LOG));
                     output.accept(new ItemStack(Blocks.DARK_OAK_LOG));
@@ -59,7 +59,7 @@ public class CreativeModeTabTest
         STONE = event.registerCreativeModeTab(new ResourceLocation(MOD_ID, "stone"), List.of(CreativeModeTabs.BUILDING_BLOCKS), List.of(), builder -> builder.icon(() -> new ItemStack(Blocks.STONE))
                 .title(Component.literal("Stone"))
                 .withLabelColor(0x0000FF)
-                .displayItems((features, output, hasPermissions) -> {
+                .displayItems((params, output) -> {
                     output.accept(new ItemStack(Blocks.STONE));
                     output.accept(new ItemStack(Blocks.GRANITE));
                     output.accept(new ItemStack(Blocks.DIORITE));
@@ -67,7 +67,7 @@ public class CreativeModeTabTest
                 }));
 
         event.registerCreativeModeTab(new ResourceLocation(MOD_ID, "colors"), builder -> builder.title(Component.literal("Colors"))
-                .displayItems((features, output, hasPermissions) ->
+                .displayItems((params, output) ->
                 {
                     for (DyeColor color : DyeColor.values())
                     {

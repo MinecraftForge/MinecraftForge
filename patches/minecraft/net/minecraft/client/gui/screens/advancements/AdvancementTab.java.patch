@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/gui/screens/advancements/AdvancementTab.java
 +++ b/net/minecraft/client/gui/screens/advancements/AdvancementTab.java
-@@ -39,6 +_,7 @@
+@@ -38,6 +_,7 @@
     private int f_97141_ = Integer.MIN_VALUE;
     private float f_97142_;
     private boolean f_97143_;
@@ -8,7 +8,7 @@
  
     public AdvancementTab(Minecraft p_97145_, AdvancementsScreen p_97146_, AdvancementTabType p_97147_, int p_97148_, Advancement p_97149_, DisplayInfo p_97150_) {
        this.f_97126_ = p_97145_;
-@@ -53,6 +_,15 @@
+@@ -52,6 +_,15 @@
        this.m_97175_(this.f_97134_, p_97149_);
     }
  
@@ -24,7 +24,7 @@
     public AdvancementTabType m_169538_() {
        return this.f_97128_;
     }
-@@ -165,8 +_,8 @@
+@@ -151,8 +_,8 @@
           return null;
        } else {
           for(AdvancementTabType advancementtabtype : AdvancementTabType.values()) {

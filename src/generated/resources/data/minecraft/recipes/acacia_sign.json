@@ -18,5 +18,6 @@
   "result": {
     "count": 3,
     "item": "minecraft:acacia_sign"
-  }
+  },
+  "show_notification": true
 }

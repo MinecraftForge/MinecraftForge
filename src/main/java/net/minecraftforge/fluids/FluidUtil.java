@@ -138,7 +138,11 @@ public class FluidUtil
                             if (player != null)
                             {
                                 SoundEvent soundevent = simulatedTransfer.getFluid().getFluidType().getSound(simulatedTransfer, SoundActions.BUCKET_FILL);
-                                player.level.playSound(null, player.getX(), player.getY() + 0.5, player.getZ(), soundevent, SoundSource.BLOCKS, 1.0F, 1.0F);
+
+                                if (soundevent != null)
+                                {
+                                    player.level.playSound(null, player.getX(), player.getY() + 0.5, player.getZ(), soundevent, SoundSource.BLOCKS, 1.0F, 1.0F);
+                                }
                             }
                         }
                         else
@@ -186,7 +190,11 @@ public class FluidUtil
                     if (doDrain && player != null)
                     {
                         SoundEvent soundevent = transfer.getFluid().getFluidType().getSound(transfer, SoundActions.BUCKET_EMPTY);
-                        player.level.playSound(null, player.getX(), player.getY() + 0.5, player.getZ(), soundevent, SoundSource.BLOCKS, 1.0F, 1.0F);
+
+                        if (soundevent != null)
+                        {
+                            player.level.playSound(null, player.getX(), player.getY() + 0.5, player.getZ(), soundevent, SoundSource.BLOCKS, 1.0F, 1.0F);
+                        }
                     }
 
                     ItemStack resultContainer = containerFluidHandler.getContainer();
@@ -596,7 +604,12 @@ public class FluidUtil
             if (!result.isEmpty())
             {
                 SoundEvent soundevent = resource.getFluid().getFluidType().getSound(resource, SoundActions.BUCKET_EMPTY);
-                level.playSound(player, pos, soundevent, SoundSource.BLOCKS, 1.0F, 1.0F);
+
+                if (soundevent != null)
+                {
+                    level.playSound(player, pos, soundevent, SoundSource.BLOCKS, 1.0F, 1.0F);
+                }
+
                 return true;
             }
         }

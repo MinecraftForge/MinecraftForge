@@ -9,12 +9,12 @@
 +   @SuppressWarnings("unused") private static java.util.function.LongSupplier INNER_CLASS_SHIFT1 = new java.util.function.LongSupplier() { public long getAsLong() { return 0; } };
 +   @SuppressWarnings("unused") private static java.util.function.LongSupplier INNER_CLASS_SHIFT2 = new java.util.function.LongSupplier() { public long getAsLong() { return 0; } };
 +
-    public static ExecutorService m_183988_() {
-       return f_137443_;
+    public static ExecutorService m_183991_() {
+       return f_137444_;
     }
-@@ -242,7 +_,7 @@
+@@ -238,7 +_,7 @@
        try {
-          type = DataFixers.m_14512_().getSchema(DataFixUtils.makeKey(SharedConstants.m_183709_().getWorldVersion())).getChoiceType(p_137552_, p_137553_);
+          type = DataFixers.m_14512_().getSchema(DataFixUtils.makeKey(SharedConstants.m_183709_().m_183476_().m_193006_())).getChoiceType(p_137552_, p_137553_);
        } catch (IllegalArgumentException illegalargumentexception) {
 -         f_137446_.error("No data fixer registered for {}", (Object)p_137553_);
 +         f_137446_.debug("No data fixer registered for {}", (Object)p_137553_);

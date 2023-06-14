@@ -69,6 +69,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.stats.Stat;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.RelativeMovement;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.Nullable;
@@ -125,7 +126,6 @@ public class FakePlayer extends ServerPlayer
         @Override public void handleBlockEntityTagQuery(ServerboundBlockEntityTagQuery packet) { }
         @Override public void handleMovePlayer(ServerboundMovePlayerPacket packet) { }
         @Override public void teleport(double x, double y, double z, float yaw, float pitch) { }
-        @Override public void teleport(double x, double y, double z, float yaw, float pitch, Set<ClientboundPlayerPositionPacket.RelativeArgument> flags) { }
         @Override public void handlePlayerAction(ServerboundPlayerActionPacket packet) { }
         @Override public void handleUseItemOn(ServerboundUseItemOnPacket packet) { }
         @Override public void handleUseItem(ServerboundUseItemPacket packet) { }
@@ -153,8 +153,7 @@ public class FakePlayer extends ServerPlayer
         @Override public void handleCustomPayload(ServerboundCustomPayloadPacket packet) { }
         @Override public void handleChangeDifficulty(ServerboundChangeDifficultyPacket packet) { }
         @Override public void handleLockDifficulty(ServerboundLockDifficultyPacket packet) { }
-        @Override public void dismount(double x, double y, double z, float yaw, float pitch) { }
-        @Override public void teleport(double x, double y, double z, float yaw, float pitch, Set<ClientboundPlayerPositionPacket.RelativeArgument> relativeSet, boolean dismountVehicle) { }
+        @Override public void teleport(double x, double y, double z, float yaw, float pitch, Set<RelativeMovement> relativeSet) { }
         @Override public void ackBlockChangesUpTo(int sequence) { }
         @Override public void handleChatCommand(ServerboundChatCommandPacket packet) { }
         @Override public void handleChatAck(ServerboundChatAckPacket packet) { }

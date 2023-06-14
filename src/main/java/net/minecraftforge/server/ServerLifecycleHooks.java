@@ -7,6 +7,8 @@ package net.minecraftforge.server;
 
 import static net.minecraftforge.fml.Logging.CORE;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
@@ -35,7 +37,6 @@ import net.minecraftforge.fml.ModLoadingStage;
 import net.minecraftforge.fml.ModLoadingWarning;
 import net.minecraftforge.network.ConnectionType;
 import net.minecraftforge.network.NetworkConstants;
-import net.minecraftforge.network.ServerStatusPing;
 import net.minecraftforge.network.NetworkHooks;
 import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.forgespi.locating.IModFile;
@@ -62,7 +63,6 @@ import net.minecraftforge.event.server.ServerStartedEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.event.server.ServerStoppedEvent;
 import net.minecraftforge.event.server.ServerStoppingEvent;
-import net.minecraftforge.fml.loading.FileUtils;
 import net.minecraftforge.forgespi.language.IModInfo;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.GameData;
@@ -79,14 +79,19 @@ public class ServerLifecycleHooks
     private static Path getServerConfigPath(final MinecraftServer server)
     {
         final Path serverConfig = server.getWorldPath(SERVERCONFIG);
-        FileUtils.getOrCreateDirectory(serverConfig, "serverconfig");
+        if (!Files.isDirectory(serverConfig)) {
+            try {
+                Files.createDirectories(serverConfig);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
         return serverConfig;
     }
 
     public static boolean handleServerAboutToStart(final MinecraftServer server)
     {
         currentServer = server;
-        currentServer.getStatus().setForgeData(new ServerStatusPing()); //gathers NetworkRegistry data
         // on the dedi server we need to force the stuff to setup properly
         LogicalSidedProvider.setServer(()->server);
         ConfigTracker.INSTANCE.loadConfigs(ModConfig.Type.SERVER, getServerConfigPath(server));

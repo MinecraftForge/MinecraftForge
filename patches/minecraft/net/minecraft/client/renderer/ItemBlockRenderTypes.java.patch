@@ -5,18 +5,18 @@
  @OnlyIn(Dist.CLIENT)
  public class ItemBlockRenderTypes {
 +   @Deprecated
-    private static final Map<Block, RenderType> f_109275_ = Util.m_137469_(Maps.newHashMap(), (p_109296_) -> {
+    private static final Map<Block, RenderType> f_109275_ = Util.m_137469_(Maps.newHashMap(), (p_272331_) -> {
        RenderType rendertype = RenderType.m_110503_();
-       p_109296_.put(Blocks.f_50267_, rendertype);
-@@ -298,6 +_,7 @@
-       p_109296_.put(Blocks.f_50628_, rendertype3);
-       p_109296_.put(Blocks.f_152498_, rendertype3);
+       p_272331_.put(Blocks.f_50267_, rendertype);
+@@ -307,6 +_,7 @@
+       p_272331_.put(Blocks.f_50628_, rendertype3);
+       p_272331_.put(Blocks.f_152498_, rendertype3);
     });
 +   @Deprecated
     private static final Map<Fluid, RenderType> f_109276_ = Util.m_137469_(Maps.newHashMap(), (p_109290_) -> {
        RenderType rendertype = RenderType.m_110466_();
        p_109290_.put(Fluids.f_76192_, rendertype);
-@@ -305,6 +_,8 @@
+@@ -314,6 +_,8 @@
     });
     private static boolean f_109277_;
  
@@ -25,7 +25,7 @@
     public static RenderType m_109282_(BlockState p_109283_) {
        Block block = p_109283_.m_60734_();
        if (block instanceof LeavesBlock) {
-@@ -315,6 +_,8 @@
+@@ -324,6 +_,8 @@
        }
     }
  
@@ -34,7 +34,7 @@
     public static RenderType m_109293_(BlockState p_109294_) {
        Block block = p_109294_.m_60734_();
        if (block instanceof LeavesBlock) {
-@@ -329,6 +_,8 @@
+@@ -338,6 +_,8 @@
        }
     }
  
@@ -43,7 +43,7 @@
     public static RenderType m_109284_(BlockState p_109285_, boolean p_109286_) {
        RenderType rendertype = m_109282_(p_109285_);
        if (rendertype == RenderType.m_110466_()) {
-@@ -342,6 +_,8 @@
+@@ -351,6 +_,8 @@
        }
     }
  
@@ -52,7 +52,7 @@
     public static RenderType m_109279_(ItemStack p_109280_, boolean p_109281_) {
        Item item = p_109280_.m_41720_();
        if (item instanceof BlockItem) {
-@@ -353,8 +_,73 @@
+@@ -362,8 +_,73 @@
     }
  
     public static RenderType m_109287_(FluidState p_109288_) {

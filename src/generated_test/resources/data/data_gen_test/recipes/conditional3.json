@@ -22,7 +22,8 @@
         ],
         "result": {
           "item": "minecraft:netherite_block"
-        }
+        },
+        "show_notification": true
       }
     },
     {
@@ -50,7 +51,8 @@
         "result": {
           "count": 9,
           "item": "minecraft:netherite_block"
-        }
+        },
+        "show_notification": true
       }
     }
   ]
