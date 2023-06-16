@@ -132,7 +132,7 @@ public class DisplayWindow implements ImmediateWindowProvider {
         this.maximized = parsed.has(maximizedopt);
 
         var forgeVersion = parsed.valueOf(forgeversionopt);
-        StartupNotificationManager.modLoaderConsumer().ifPresent(c->c.accept("Minecraft Forge loading "+ forgeVersion));
+        StartupNotificationManager.modLoaderConsumer().ifPresent(c->c.accept("Forge loading "+ forgeVersion));
         performanceInfo = new PerformanceInfo();
         return start(parsed.valueOf(mcversionopt), forgeVersion);
     }

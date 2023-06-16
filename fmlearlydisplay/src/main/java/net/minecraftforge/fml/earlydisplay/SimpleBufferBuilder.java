@@ -44,9 +44,9 @@ public class SimpleBufferBuilder implements Closeable {
     private static final int[] ELEMENT_BUFFERS = new int[Format.values().length];
 
     static {
-        Arrays.fill(VERTEX_ARRAYS, -1);
-        Arrays.fill(VERTEX_BUFFERS, -1);
-        Arrays.fill(ELEMENT_BUFFERS, -1);
+        Arrays.fill(VERTEX_ARRAYS, 0);
+        Arrays.fill(VERTEX_BUFFERS, 0);
+        Arrays.fill(ELEMENT_BUFFERS, 0);
     }
 
     private long bufferAddr;   // Pointer to the backing buffer.
@@ -75,13 +75,9 @@ public class SimpleBufferBuilder implements Closeable {
     }
 
     public static void destroy() {
-        for (int i = 0; i < VERTEX_ARRAYS.length; i++) {
-            if (VERTEX_ARRAYS[i] == -1) continue; // This set of buffers was never allocated.
-
-            glDeleteBuffers(VERTEX_BUFFERS[i]);
-            glDeleteBuffers(ELEMENT_BUFFERS[i]);
-            glDeleteVertexArrays(VERTEX_ARRAYS[i]);
-        }
+        glDeleteBuffers(VERTEX_BUFFERS);
+        glDeleteBuffers(ELEMENT_BUFFERS);
+        glDeleteVertexArrays(VERTEX_ARRAYS);
     }
 
     /**
@@ -161,11 +157,16 @@ public class SimpleBufferBuilder implements Closeable {
      * @param a The alpha component. (0-1)
      * @return The same buffer.
      */
-    public SimpleBufferBuilder color(float r, float g, float b, float a) {
+    public SimpleBufferBuilder colour(float r, float g, float b, float a) {
         // Expand floats to 0-255 and forward.
-        return color((byte) (r * 255F), (byte) (g * 255F), (byte) (b * 255F), (byte) (a * 255F));
+        return colour((byte) (r * 255F), (byte) (g * 255F), (byte) (b * 255F), (byte) (a * 255F));
     }
 
+    /**
+     * @see ColourScheme.Colour#packedint(int)
+     * @param packedColor an ABGR packed int
+     * @return the same buffer.
+     */
     public SimpleBufferBuilder colour(int packedColor) {
         if (!building) throw new IllegalStateException("Not building."); // You did not call begin.
 
@@ -189,7 +190,7 @@ public class SimpleBufferBuilder implements Closeable {
      * @param a The alpha component. (0-255)
      * @return The same buffer.
      */
-    public SimpleBufferBuilder color(byte r, byte g, byte b, byte a) {
+    public SimpleBufferBuilder colour(byte r, byte g, byte b, byte a) {
         if (!building) throw new IllegalStateException("Not building."); // You did not call begin.
 
         if (elementIndex == format.types.length) throw new IllegalStateException("Expected endVertex"); // we have reached the end of elements to buffer for this vertex, we expected an endVertex call.
@@ -241,7 +242,7 @@ public class SimpleBufferBuilder implements Closeable {
     /**
      * Upload the current buffer.
      * <p>
-     * This assumes that a {@link GL15#GL_ARRAY_BUFFER} and {@link GL15#GL_ELEMENT_ARRAY_BUFFER}
+     * This assumes that a {@link org.lwjgl.opengl.GL32C#GL_ARRAY_BUFFER} and {@link org.lwjgl.opengl.GL32C#GL_ELEMENT_ARRAY_BUFFER}
      * are already bound and ready.
      * <p>
      * The vertex data and index data is uploaded to their respective buffers.
@@ -320,10 +321,10 @@ public class SimpleBufferBuilder implements Closeable {
         int vbo = VERTEX_BUFFERS[format.ordinal()];
         int ebo = ELEMENT_BUFFERS[format.ordinal()];
 
-        if (vao == -1) {
+        if (vao == 0) {
             // These 3 buffers are paired, you can't allocate one without the others.
-            assert vbo == -1;
-            assert ebo == -1;
+            assert vbo == 0;
+            assert ebo == 0;
 
             // Make new vertex array and buffers!
             vao = glGenVertexArrays();
