@@ -17,16 +17,17 @@
        this.f_91033_ = p_91084_.f_101908_.f_101926_;
        this.f_91034_ = !p_91084_.f_101908_.f_101929_;
        this.f_91035_ = !p_91084_.f_101908_.f_101930_;
-@@ -450,7 +_,7 @@
+@@ -449,15 +_,15 @@
+       }
  
        this.f_90990_.m_85380_(this.f_91066_.m_232035_().m_231551_());
++      // FORGE: Move mouse and keyboard handler setup further below
        this.f_91067_ = new MouseHandler(this);
 -      this.f_91067_.m_91524_(this.f_90990_.m_85439_());
-+      // FORGE: Move mouse handler setup further below
        this.f_91068_ = new KeyboardHandler(this);
-       this.f_91068_.m_90887_(this.f_90990_.m_85439_());
+-      this.f_91068_.m_90887_(this.f_90990_.m_85439_());
        RenderSystem.initRenderer(this.f_91066_.f_92035_, false);
-@@ -458,6 +_,7 @@
+       this.f_91042_ = new MainTarget(this.f_90990_.m_85441_(), this.f_90990_.m_85442_());
        this.f_91042_.m_83931_(0.0F, 0.0F, 0.0F, 0.0F);
        this.f_91042_.m_83954_(f_91002_);
        this.f_91036_ = new ReloadableResourceManager(PackType.CLIENT_RESOURCES);
@@ -49,14 +50,15 @@
        this.f_91036_.m_7217_(this.f_91061_);
        this.f_91053_ = new PaintingTextureManager(this.f_90987_);
        this.f_91036_.m_7217_(this.f_91053_);
-@@ -516,7 +_,9 @@
+@@ -516,7 +_,10 @@
        this.f_91047_ = new GpuWarnlistManager();
        this.f_91036_.m_7217_(this.f_91047_);
        this.f_91036_.m_7217_(this.f_205120_);
 -      this.f_91065_ = new Gui(this, this.f_90995_);
 +      this.f_91065_ = new net.minecraftforge.client.gui.overlay.ForgeGui(this);
-+      // FORGE: Moved mouse handler setup below ingame gui creation to prevent NPEs in mouse handler.
++      // FORGE: Moved keyboard and mouse handler setup below ingame gui creation to prevent NPEs in them.
 +      this.f_91067_.m_91524_(this.f_90990_.m_85439_());
++      this.f_91068_.m_90887_(this.f_90990_.m_85439_());
        this.f_91064_ = new DebugRenderer(this);
        RealmsClient realmsclient = RealmsClient.m_239151_(this);
        this.f_238717_ = new RealmsDataFetcher(realmsclient);
