@@ -196,7 +196,12 @@ public class DisplayWindow implements ImmediateWindowProvider {
         // we always render to an 854x480 texture and then fit that to the screen - with a scale factor
         this.context = new RenderElement.DisplayContext(854 * SCALE, 480 * SCALE, elementShader, colourScheme, performanceInfo);
         framebuffer = new EarlyFramebuffer(this.context);
-        this.font = new SimpleFont("PixelOperatorMono.ttf", SCALE, 20000, 1 + RenderElement.INDEX_TEXTURE_OFFSET);
+        try {
+            this.font = new SimpleFont("Monocraft.ttf", SCALE, 200000, 1 + RenderElement.INDEX_TEXTURE_OFFSET);
+        } catch (Throwable t) {
+            LOGGER.error("Crash during font initialization", t);
+            crashElegantly("An error occurred initializing a font for rendering. "+t.getMessage());
+        }
         this.elements = new ArrayList<>(Arrays.asList(
                 RenderElement.squir(),
                 RenderElement.anvil(font),

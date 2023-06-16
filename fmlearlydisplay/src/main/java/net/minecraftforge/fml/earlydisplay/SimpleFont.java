@@ -5,6 +5,7 @@
 
 package net.minecraftforge.fml.earlydisplay;
 
+import org.lwjgl.BufferUtils;
 import org.lwjgl.stb.STBTTAlignedQuad;
 import org.lwjgl.stb.STBTTFontinfo;
 import org.lwjgl.stb.STBTTPackContext;
@@ -62,18 +63,18 @@ public class SimpleFont {
         this.textureNumber = textureNumber;
         glBindTexture(GL_TEXTURE_2D, fontTextureId);
         try (var packedchars = STBTTPackedchar.malloc(GLYPH_COUNT)) {
-            int texwidth = 256 * scale;
-            int texheight = 128 * scale;
-            try (var memstack = MemoryStack.stackPush();
-                 STBTTPackRange.Buffer packRanges = STBTTPackRange.malloc(1)) {
-                var bitmap = memstack.malloc(texwidth * texheight);
+            int texwidth = 256 * scale * 1;
+            int texheight = 128 * scale * 1;
+            try (STBTTPackRange.Buffer packRanges = STBTTPackRange.malloc(1)) {
+                var bitmap = BufferUtils.createByteBuffer(texwidth * texheight);
                 try (STBTTPackRange packRange = STBTTPackRange.malloc()) {
                     packRanges.put(packRange.set(fontSize, 32, null, GLYPH_COUNT, packedchars, (byte) 1, (byte) 1));
                     packRanges.flip();
                 }
 
                 try (STBTTPackContext pc = STBTTPackContext.malloc()) {
-                    stbtt_PackBegin(pc, bitmap, texwidth, texheight, 0, 2, NULL);
+                    stbtt_PackBegin(pc, bitmap, texwidth, texheight, 0, 1, NULL);
+                    stbtt_PackSetOversampling(pc, 1, 1);
                     stbtt_PackSetSkipMissingCodepoints(pc, true);
                     stbtt_PackFontRanges(pc, buf, 0, packRanges);
                     stbtt_PackEnd(pc);
