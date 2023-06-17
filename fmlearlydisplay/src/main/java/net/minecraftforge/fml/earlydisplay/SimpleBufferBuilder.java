@@ -40,12 +40,14 @@ public class SimpleBufferBuilder implements Closeable {
     
     private static final int[] VERTEX_ARRAYS = new int[Format.values().length];
     private static final int[] VERTEX_BUFFERS = new int[Format.values().length];
+    private static final int[] VERTEX_BUFFER_LENGTHS = new int[Format.values().length];
     private static int elementBuffer = 0;
     private static int elementBufferVertexLength = 0;
     
     static {
         Arrays.fill(VERTEX_ARRAYS, 0);
         Arrays.fill(VERTEX_BUFFERS, 0);
+        Arrays.fill(VERTEX_BUFFER_LENGTHS, 0);
     }
     
     private long bufferAddr;   // Pointer to the backing buffer.
@@ -326,7 +328,20 @@ public class SimpleBufferBuilder implements Closeable {
             buffer.limit(index);
             
             // Upload the raw vertex data in dynamic mode.
-            glBufferData(GL_ARRAY_BUFFER, buffer, GL_DYNAMIC_DRAW);
+            final int vbo = VERTEX_BUFFERS[format.ordinal()];
+            final int vboSize = VERTEX_BUFFER_LENGTHS[format.ordinal()];
+            glBindBuffer(GL_ARRAY_BUFFER, vbo);
+            if (vboSize < index) {
+                // expand buffer, it's not big enough
+                var newVBOSize = Math.max(1024, vboSize);
+                while (newVBOSize < index){
+                    newVBOSize *= 2;
+                }
+                // because everything is overwritten anyway, we can do an in-place reallocation
+                glBufferData(GL_ARRAY_BUFFER, newVBOSize, GL_DYNAMIC_DRAW);
+                VERTEX_BUFFER_LENGTHS[format.ordinal()] = newVBOSize;
+            }
+            glBufferSubData(GL_ARRAY_BUFFER, 0, buffer);
             
             // The number of indices for triangles is equal to our vertex count, as that is
             // what we operate in. However, for Quads, we have exactly vertices + vertices / 2
@@ -374,7 +389,6 @@ public class SimpleBufferBuilder implements Closeable {
         }
         // Bind the vertex array and buffers!
         glBindVertexArray(vao);
-        glBindBuffer(GL_ARRAY_BUFFER, vbo);
         
         // Ask our Format to set up its data layout for the vertex array.
         format.bind();
