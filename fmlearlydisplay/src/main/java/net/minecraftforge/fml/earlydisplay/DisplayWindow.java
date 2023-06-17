@@ -165,8 +165,8 @@ public class DisplayWindow implements ImmediateWindowProvider {
             // Swap buffers; we're done
             glfwSwapBuffers(window);
         } finally {
-            renderLock.release();
             glfwMakeContextCurrent(0);
+            renderLock.release();
         }
     }
 
@@ -469,15 +469,20 @@ public class DisplayWindow implements ImmediateWindowProvider {
         while (!this.windowTick.isDone()) {
             this.windowTick.cancel(false);
         }
-        try {
-            var renderlocked = true;
-            do {
-                renderlocked = !renderLock.tryAcquire(100, TimeUnit.MILLISECONDS);
-                LOGGER.info("Render lock status "+ renderlocked);
-            } while (renderlocked);
-        } catch (InterruptedException e) {
-            Thread.interrupted();
-        }
+        var tries = 0;
+        var renderlockticket = false;
+        do {
+            try {
+                    renderlockticket = renderLock.tryAcquire(100, TimeUnit.MILLISECONDS);
+                    if (++tries > 9) {
+                        Thread.dumpStack();
+                        crashElegantly("We seem to be having trouble handing off the window, tried for 1 second");
+                    }
+            } catch (InterruptedException e) {
+                Thread.interrupted();
+            }
+        } while (!renderlockticket);
+
         // schedule a 50 ms ticker to try and smooth out the rendering
         renderScheduler.scheduleAtFixedRate(()->tickSemaphore.set(true), 50, 50, TimeUnit.MILLISECONDS);
 
