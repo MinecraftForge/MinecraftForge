@@ -67,7 +67,6 @@ import static org.lwjgl.opengl.GL32C.*;
 public class DisplayWindow implements ImmediateWindowProvider {
     private static final int[][] GL_VERSIONS = new int[][] {{4,6}, {4,5}, {4,4}, {4,3}, {4,2}, {4,1}, {4,0}, {3,3}, {3,2}};
     private static final Logger LOGGER = LoggerFactory.getLogger("EARLYDISPLAY");
-    private static final int SCALE = 1;
     private final AtomicBoolean tickSemaphore = new AtomicBoolean(true);
 
     private ColourScheme colourScheme;
@@ -87,6 +86,7 @@ public class DisplayWindow implements ImmediateWindowProvider {
     private ScheduledExecutorService renderScheduler;
     private int fbWidth;
     private int fbHeight;
+    private int fbScale;
     private int winWidth;
     private int winHeight;
     private int winX;
@@ -119,6 +119,7 @@ public class DisplayWindow implements ImmediateWindowProvider {
         winHeight = parsed.valueOf(heightopt);
         FMLConfig.updateConfig(FMLConfig.ConfigValue.EARLY_WINDOW_WIDTH, winWidth);
         FMLConfig.updateConfig(FMLConfig.ConfigValue.EARLY_WINDOW_HEIGHT, winHeight);
+        fbScale = FMLConfig.getIntConfigValue(FMLConfig.ConfigValue.EARLY_WINDOW_FBSCALE);
         try {
             var optionLines = Files.readAllLines(FMLPaths.GAMEDIR.get().resolve(Paths.get("options.txt")));
             var options = optionLines.stream().map(l->l.split(":")).filter(a->a.length == 2).collect(Collectors.toMap(a->a[0], a->a[1]));
@@ -129,7 +130,7 @@ public class DisplayWindow implements ImmediateWindowProvider {
             this.colourScheme = ColourScheme.RED; // default to red colourscheme
         }
 
-        this.maximized = parsed.has(maximizedopt);
+        this.maximized = parsed.has(maximizedopt) || FMLConfig.getBoolConfigValue(FMLConfig.ConfigValue.EARLY_WINDOW_MAXIMIZED);
 
         var forgeVersion = parsed.valueOf(forgeversionopt);
         StartupNotificationManager.modLoaderConsumer().ifPresent(c->c.accept("Forge loading "+ forgeVersion));
@@ -152,9 +153,9 @@ public class DisplayWindow implements ImmediateWindowProvider {
             tickSemaphore.set(true);
             glfwMakeContextCurrent(window);
             framebuffer.activate();
-            glViewport(0, 0, this.context.width(), this.context.height());
+            glViewport(0, 0, this.context.scaledWidth(), this.context.scaledHeight());
             this.context.elementShader().activate();
-            this.context.elementShader().updateScreenSizeUniform(this.context.width(), this.context.height());
+            this.context.elementShader().updateScreenSizeUniform(this.context.scaledWidth(), this.context.scaledHeight());
             glClearColor(colourScheme.bg().redf(), colourScheme.bg().greenf(), colourScheme.bg().bluef(), 1f);
             paintFramebuffer();
             this.context.elementShader().clear();
@@ -194,10 +195,10 @@ public class DisplayWindow implements ImmediateWindowProvider {
         glClearColor(colourScheme.bg().redf(), colourScheme.bg().greenf(), colourScheme.bg().bluef(), 1f);
 
         // we always render to an 854x480 texture and then fit that to the screen - with a scale factor
-        this.context = new RenderElement.DisplayContext(854 * SCALE, 480 * SCALE, elementShader, colourScheme, performanceInfo);
+        this.context = new RenderElement.DisplayContext(854, 480, fbScale, elementShader, colourScheme, performanceInfo);
         framebuffer = new EarlyFramebuffer(this.context);
         try {
-            this.font = new SimpleFont("Monocraft.ttf", SCALE, 200000, 1 + RenderElement.INDEX_TEXTURE_OFFSET);
+            this.font = new SimpleFont("Monocraft.ttf", fbScale, 200000, 1 + RenderElement.INDEX_TEXTURE_OFFSET);
         } catch (Throwable t) {
             LOGGER.error("Crash during font initialization", t);
             crashElegantly("An error occurred initializing a font for rendering. "+t.getMessage());
@@ -237,12 +238,12 @@ public class DisplayWindow implements ImmediateWindowProvider {
         var currentVAO = glGetInteger(GL_VERTEX_ARRAY_BINDING);
         var currentFB = glGetInteger(GL_READ_FRAMEBUFFER_BINDING);
         glfwSwapInterval(0);
-        glViewport(0, 0, this.context.width(), this.context.height());
+        glViewport(0, 0, this.context.scaledWidth(), this.context.scaledHeight());
         RenderElement.globalAlpha = alpha;
         framebuffer.activate();
         glClearColor(colourScheme.bg().redf(), colourScheme.bg().greenf(), colourScheme.bg().bluef(), alpha / 255f);
         elementShader.activate();
-        elementShader.updateScreenSizeUniform(this.context.width(), this.context.height());
+        elementShader.updateScreenSizeUniform(this.context.scaledWidth(), this.context.scaledHeight());
         paintFramebuffer();
         elementShader.clear();
         framebuffer.deactivate();
@@ -384,7 +385,7 @@ public class DisplayWindow implements ImmediateWindowProvider {
         glfwGetMonitorPos(primaryMonitor, x, y);
         int monitorX = x[0];
         int monitorY = y[0];
-
+//        glfwSetWindowSizeLimits(window, 854, 480, GLFW_DONT_CARE, GLFW_DONT_CARE);
         if (this.maximized) {
             glfwMaximizeWindow(window);
         }

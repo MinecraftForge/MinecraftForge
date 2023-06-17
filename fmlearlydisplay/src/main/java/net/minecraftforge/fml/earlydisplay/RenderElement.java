@@ -43,7 +43,15 @@ public class RenderElement {
         void accept(SimpleBufferBuilder bb, SimpleFont fh, DisplayContext ctx);
     }
 
-    public record DisplayContext(int width, int height, ElementShader elementShader, ColourScheme colourScheme, PerformanceInfo performance) {}
+    public record DisplayContext(int width, int height, int scale, ElementShader elementShader, ColourScheme colourScheme, PerformanceInfo performance) {
+        public int scaledWidth() {
+            return scale() * width();
+        }
+
+        public int scaledHeight() {
+            return scale() * height();
+        }
+    }
 
     public RenderElement(final Initializer rendererInitializer) {
         this.bb = new SimpleBufferBuilder(1);
@@ -71,7 +79,7 @@ public class RenderElement {
             texts.add(new SimpleFont.DisplayText(msg.getText()+"\n", colour));
         }
 
-        font.generateVerticesForTexts(0, context.height() -  texts.size() * font.lineSpacing() + font.descent(), bb, texts.toArray(SimpleFont.DisplayText[]::new));
+        font.generateVerticesForTexts(10, context.scaledHeight() -  texts.size() * font.lineSpacing() + font.descent() - 10, bb, texts.toArray(SimpleFont.DisplayText[]::new));
     }
     public static RenderElement monag() {
         return new RenderElement(RenderElement.initializeTexture("monagstudios.png", 45000, 4, (bb, ctx, sz, frame) -> {
@@ -86,9 +94,9 @@ public class RenderElement {
 
     public static RenderElement mojang(final int textureId, final int frameStart) {
         return new RenderElement(()->(bb, ctx, frame) -> {
-            var size = 256;
-            var x0 = (ctx.width() - 2 * size) / 2;
-            var y0 = 64;
+            var size = 256 * ctx.scale();
+            var x0 = (ctx.scaledWidth() - 2 * size) / 2;
+            var y0 = 64 * ctx.scale();
             ctx.elementShader().updateTextureUniform(0);
             ctx.elementShader().updateRenderTypeUniform(ElementShader.RenderType.TEXTURE);
             var fade = Math.min((frame - frameStart) * 10, 255);
@@ -106,17 +114,17 @@ public class RenderElement {
 
     public static RenderElement forgeVersionOverlay(SimpleFont font, String version) {
         return new RenderElement(RenderElement.initializeText(font, (bb, fnt, ctx)->
-                font.generateVerticesForTexts(ctx.width - font.stringWidth(version),
-                        ctx.height - font.lineSpacing() + font.descent(), bb,
+                font.generateVerticesForTexts(ctx.scaledWidth() - font.stringWidth(version),
+                        ctx.scaledHeight() - font.lineSpacing() + font.descent(), bb,
                         new SimpleFont.DisplayText(version, ctx.colourScheme.fg().packedint(RenderElement.globalAlpha)))));
     }
     public static RenderElement squir() {
         return new RenderElement(RenderElement.initializeTexture("squirrel.png", 45000, 3, (bb, context, size, frame) -> {
-            var inset = 0f;
+            var inset = 5f;
             var x0 = inset;
-            var x1 = inset + size[0];
+            var x1 = inset + size[0] * context.scale();
             var y0 = inset;
-            var y1 = inset + size[1];
+            var y1 = inset + size[1] * context.scale();
             int fade = (int) (Math.cos(frame * Math.PI / 16) * 16) + 16;
 //            int fade = 0xff;
             var colour = (Math.min(fade, globalAlpha) & 0xff) << 24 | 0xffffff;
@@ -126,10 +134,10 @@ public class RenderElement {
 
     public static RenderElement anvil(SimpleFont font) {
         return new RenderElement(RenderElement.initializeTexture("forge_anvil.png", 20000, 2, (bb, context, size, frame) -> {
-            var x0 = context.width() - size[0];
-            var x1 = context.width();
-            var y0 = context.height() - size[0] - font.descent() - font.lineSpacing();
-            var y1 = context.height() - font.descent() - font.lineSpacing();
+            var x0 = context.scaledWidth() - size[0] * context.scale();
+            var x1 = context.scaledWidth();
+            var y0 = context.scaledHeight() - size[0] * context.scale() - font.descent() - font.lineSpacing();
+            var y1 = context.scaledHeight() - font.descent() - font.lineSpacing();
             int frameidx = frame % 32;
             float framepos = (frameidx * (float)size[0]) / size[1];
             float framesize = size[0] / (float)size[1];
@@ -152,7 +160,7 @@ public class RenderElement {
         var alpha = 0xFF;
         for (int i = 0; i < barCount && i < size; i++) {
             final ProgressMeter pm = currentProgress.get(i);
-            Renderer barRenderer = barRenderer(i, alpha, font, pm);
+            Renderer barRenderer = barRenderer(i, alpha, font, pm, context);
             acc = barRenderer.then(acc);
             alpha >>= 1;
         }
@@ -160,15 +168,15 @@ public class RenderElement {
             acc.accept(buffer, context, frameNumber);
     }
     private static final int BAR_HEIGHT = 20;
-    private static Renderer barRenderer(int cnt, int alpha, SimpleFont font, ProgressMeter pm) {
+    private static Renderer barRenderer(int cnt, int alpha, SimpleFont font, ProgressMeter pm, DisplayContext context) {
         var barSpacing = font.lineSpacing() - font.descent() + BAR_HEIGHT;
-        var y = 250 + cnt * barSpacing;
+        var y = 250 * context.scale() + cnt * barSpacing;
         var colour = (alpha << 24) | 0xFFFFFF;
         Renderer bar;
         if (pm.steps() == 0) {
-            bar = progressBar(context->new int[] {50, y + font.lineSpacing() - font.descent(), context.width() - 100}, f->colour, RenderElement::indeterminateBar);
+            bar = progressBar(ctx->new int[] {50, y + font.lineSpacing() - font.descent(), context.scaledWidth() - 100}, f->colour, RenderElement::indeterminateBar);
         } else {
-            bar = progressBar(ctx -> new int[]{50, y + font.lineSpacing() - font.descent(), ctx.width() - 100}, f -> colour, f -> new float[]{0f, pm.progress()});
+            bar = progressBar(ctx -> new int[]{50, y + font.lineSpacing() - font.descent(), ctx.scaledWidth() - 100}, f -> colour, f -> new float[]{0f, pm.progress()});
         }
         Renderer label = (bb, ctx, frame) -> renderText(font, text(50, y, pm.label().getText(), colour), bb, ctx);
         return bar.then(label);
@@ -183,12 +191,12 @@ public class RenderElement {
     }
 
     private static void memoryInfo(SimpleFont font, final SimpleBufferBuilder buffer, final DisplayContext context, final int frameNumber) {
-        var y = 1;
+        var y = 10 * context.scale();
         PerformanceInfo pi = context.performance();
         final int colour = hsvToRGB((1.0f - (float)Math.pow(pi.memory(), 1.5f)) / 3f, 1.0f, 0.5f);
-        var bar = progressBar(ctx -> new int[]{50, y, ctx.width() - 100}, f -> colour, f -> new float[]{0f, pi.memory()});
+        var bar = progressBar(ctx -> new int[]{50, y, ctx.scaledWidth() - 100}, f -> colour, f -> new float[]{0f, pi.memory()});
         var width = font.stringWidth(pi.text());
-        Renderer label = (bb, ctx, frame) -> renderText(font, text(ctx.width() / 2 - width / 2, y + 18, pi.text(), context.colourScheme.fg().packedint(globalAlpha)), bb, ctx);
+        Renderer label = (bb, ctx, frame) -> renderText(font, text(ctx.scaledWidth() / 2 - width / 2, y + 18, pi.text(), context.colourScheme.fg().packedint(globalAlpha)), bb, ctx);
         bar.then(label).accept(buffer, context, frameNumber);
     }
 
