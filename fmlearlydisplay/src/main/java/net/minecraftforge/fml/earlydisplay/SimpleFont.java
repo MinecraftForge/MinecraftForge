@@ -54,7 +54,7 @@ public class SimpleFont {
         var ascent = new float[1];
         var descent = new float[1];
         var lineGap = new float[1];
-        int fontSize = 24 * scale;
+        int fontSize = 24;
         stbtt_GetScaledFontVMetrics(buf, 0, fontSize, ascent, descent, lineGap);
         this.lineSpacing = (int)(ascent[0] - descent[0] + lineGap[0]);
         this.descent = (int)Math.floor(descent[0]);
@@ -63,8 +63,8 @@ public class SimpleFont {
         this.textureNumber = textureNumber;
         glBindTexture(GL_TEXTURE_2D, fontTextureId);
         try (var packedchars = STBTTPackedchar.malloc(GLYPH_COUNT)) {
-            int texwidth = 256 * scale * 1;
-            int texheight = 128 * scale * 1;
+            int texwidth = 256;
+            int texheight = 128;
             try (STBTTPackRange.Buffer packRanges = STBTTPackRange.malloc(1)) {
                 var bitmap = BufferUtils.createByteBuffer(texwidth * texheight);
                 try (STBTTPackRange packRange = STBTTPackRange.malloc()) {

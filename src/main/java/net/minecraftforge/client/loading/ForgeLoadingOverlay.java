@@ -80,36 +80,35 @@ public class ForgeLoadingOverlay extends LoadingOverlay {
         }
         RenderSystem.enableBlend();
         RenderSystem.blendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        var width = this.minecraft.getWindow().getWidth();
-        var height = this.minecraft.getWindow().getHeight();
-        glViewport(0, 0, width, height);
+        var fbWidth = this.minecraft.getWindow().getWidth();
+        var fbHeight = this.minecraft.getWindow().getHeight();
+        glViewport(0, 0, fbWidth, fbHeight);
         final var twidth = this.displayWindow.context().width();
         final var theight = this.displayWindow.context().height();
-        var wscale = (float)width / twidth;
-        var hscale = (float)height / theight;
-        var scale = Math.min(wscale, hscale) / 2f;
-        var wleft = clamp(width * 0.5f - scale * twidth, 0, width);
-        var wtop = clamp(height * 0.5f - scale * theight, 0, height);
-        var wright = clamp(width * 0.5f + scale * twidth, 0, width);
-        var wbottom = clamp(height * 0.5f + scale * theight, 0, height);
-        scale *= 2f;
+        var wscale = (float)fbWidth / twidth;
+        var hscale = (float)fbHeight / theight;
+        var scale = this.displayWindow.context().scale() * Math.min(wscale, hscale) / 2f;
+        var wleft = clamp(fbWidth * 0.5f - scale * twidth, 0, fbWidth);
+        var wtop = clamp(fbHeight * 0.5f - scale * theight, 0, fbHeight);
+        var wright = clamp(fbWidth * 0.5f + scale * twidth, 0, fbWidth);
+        var wbottom = clamp(fbHeight * 0.5f + scale * theight, 0, fbHeight);
         GlStateManager.glActiveTexture(GL_TEXTURE0);
         RenderSystem.disableCull();
         BufferBuilder bufferbuilder = Tesselator.getInstance().getBuilder();
         RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, fade);
         RenderSystem.getModelViewMatrix().identity();
-        RenderSystem.setProjectionMatrix(new Matrix4f().setOrtho(0.0F, width, 0.0F, height, 0, 1f), VertexSorting.ORTHOGRAPHIC_Z);
+        RenderSystem.setProjectionMatrix(new Matrix4f().setOrtho(0.0F, fbWidth, 0.0F, fbHeight, 0.1f, -0.1f), VertexSorting.ORTHOGRAPHIC_Z);
         RenderSystem.setShader(GameRenderer::getPositionColorShader);
         // This is fill in around the edges - it's empty solid colour
         bufferbuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
         // top box from hpos
-        addQuad(bufferbuilder, 0, width, wtop, height, colour, fade);
+        addQuad(bufferbuilder, 0, fbWidth, wtop, fbHeight, colour, fade);
         // bottom box to hpos
-        addQuad(bufferbuilder, 0, width, 0, wtop, colour, fade);
+        addQuad(bufferbuilder, 0, fbWidth, 0, wtop, colour, fade);
         // left box to wpos
         addQuad(bufferbuilder, 0, wleft, wtop, wbottom, colour, fade);
         // right box from wpos
-        addQuad(bufferbuilder, wright, width, wtop, wbottom, colour, fade);
+        addQuad(bufferbuilder, wright, fbWidth, wtop, wbottom, colour, fade);
         BufferUploader.drawWithShader(bufferbuilder.end());
 
         // This is the actual screen data from the loading screen

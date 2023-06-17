@@ -35,7 +35,9 @@ public class FMLConfig
         DISABLE_OPTIMIZED_DFU("disableOptimizedDFU", Boolean.TRUE, "Disables Optimized DFU client-side - already disabled on servers"),
         EARLY_WINDOW_PROVIDER("earlyWindowProvider", "fmlearlywindow", "Early window provider"),
         EARLY_WINDOW_WIDTH("earlyWindowWidth", 854, "Early window width"),
-        EARLY_WINDOW_HEIGHT("earlyWindowHeight", 480, "Early window height")
+        EARLY_WINDOW_HEIGHT("earlyWindowHeight", 480, "Early window height"),
+        EARLY_WINDOW_FBSCALE("earlyWindowFBScale", 2, "Early window framebuffer scale"),
+        EARLY_WINDOW_MAXIMIZED("earlyWindowMaximized", true, "Early window starts maximized")
         ;
 
         private final String entry;
