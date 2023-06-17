@@ -302,8 +302,7 @@ public class SimpleBufferBuilder implements Closeable {
     /**
      * Upload the current buffer.
      * <p>
-     * This assumes that a {@link org.lwjgl.opengl.GL32C#GL_ARRAY_BUFFER} and {@link org.lwjgl.opengl.GL32C#GL_ELEMENT_ARRAY_BUFFER}
-     * are already bound and ready.
+     * This will bind a {@link org.lwjgl.opengl.GL32C#GL_ARRAY_BUFFER} and {@link org.lwjgl.opengl.GL32C#GL_ELEMENT_ARRAY_BUFFER}
      * <p>
      * The vertex data and index data is uploaded to their respective buffers.
      * <p>
@@ -350,6 +349,7 @@ public class SimpleBufferBuilder implements Closeable {
             
             if (mode == Mode.QUADS) {
                 ensureElementBufferLength(vertices);
+                glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementBuffer);
             }
             
             return indices;
@@ -386,29 +386,25 @@ public class SimpleBufferBuilder implements Closeable {
             // Cache the vertex array and buffers for future re-use.
             VERTEX_ARRAYS[format.ordinal()] = vao;
             VERTEX_BUFFERS[format.ordinal()] = vbo;
+            
+            // Ask our Format to set up its data layout for the vertex array.
+            // but only once, the VAO saves this state
+            glBindVertexArray(vao);
+            glBindBuffer(GL_ARRAY_BUFFER, vbo);
+            format.bind();
+            format.enable();
         }
         // Bind the vertex array and buffers!
         glBindVertexArray(vao);
         
-        // Ask our Format to set up its data layout for the vertex array.
-        format.bind();
-        
         // Upload the data.
         int indices = finishAndUpload();
         
-        // must be bound afterward, finishAndUpload could change what buffer is in use and delete the old one
-        if (mode == Mode.QUADS) {
-            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementBuffer);
-        }
-        
-        // Enable our format, draw, and disable the format.
-        format.enable();
         if (mode == Mode.QUADS) {
             glDrawElements(GL_TRIANGLES, indices, GL_UNSIGNED_INT, 0);
         } else {
             glDrawArrays(GL_TRIANGLES, 0, indices);
         }
-        format.disable();
         
         // Unbind the vertex array.
         glBindVertexArray(0);
