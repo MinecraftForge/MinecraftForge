@@ -5,7 +5,6 @@
 
 package net.minecraftforge.fml.earlydisplay;
 
-import org.lwjgl.system.MemoryStack;
 import org.lwjgl.system.MemoryUtil;
 
 import java.io.Closeable;
@@ -36,22 +35,22 @@ import static org.lwjgl.opengl.GL32C.*;
  * @author covers1624
  */
 public class SimpleBufferBuilder implements Closeable {
-
+    
     private static final MemoryUtil.MemoryAllocator ALLOCATOR = MemoryUtil.getAllocator(false);
-
+    
     private static final int[] VERTEX_ARRAYS = new int[Format.values().length];
     private static final int[] VERTEX_BUFFERS = new int[Format.values().length];
-    private static final int[] ELEMENT_BUFFERS = new int[Format.values().length];
-
+    private static int elementBuffer = 0;
+    private static int elementBufferVertexLength = 0;
+    
     static {
         Arrays.fill(VERTEX_ARRAYS, 0);
         Arrays.fill(VERTEX_BUFFERS, 0);
-        Arrays.fill(ELEMENT_BUFFERS, 0);
     }
-
+    
     private long bufferAddr;   // Pointer to the backing buffer.
     private ByteBuffer buffer; // ByteBuffer view of the backing buffer.
-
+    
     private Format format;     // The current format we are buffering.
     private Mode mode;         // The current mode we are buffering.
     private boolean building;  // If we are building the buffer.
@@ -73,13 +72,68 @@ public class SimpleBufferBuilder implements Closeable {
         bufferAddr = ALLOCATOR.malloc(capacity);
         buffer = MemoryUtil.memByteBuffer(bufferAddr, capacity);
     }
-
+    
     public static void destroy() {
         glDeleteBuffers(VERTEX_BUFFERS);
-        glDeleteBuffers(ELEMENT_BUFFERS);
+        glDeleteBuffers(elementBuffer);
         glDeleteVertexArrays(VERTEX_ARRAYS);
     }
+    
+    private static void ensureElementBufferLength(int vertices) {
+        if (elementBufferVertexLength >= vertices) {
+            return;
+        }
+        
+        // treating it as immutable storage, even though it's not
+        final var newElementBuffer = glGenBuffers();
+        var newElementBufferVertexLength = Math.max(1024, elementBufferVertexLength);
+        while (newElementBufferVertexLength < vertices) {
+            newElementBufferVertexLength *= 2;
+        }
+        
+        final var oldIndexCount = elementBufferVertexLength + elementBufferVertexLength / 2;
+        final var newIndexCount = newElementBufferVertexLength + newElementBufferVertexLength / 2;
+        
+        // allocate new buffer
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, newElementBuffer);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, newIndexCount * 4L, GL_STATIC_DRAW);
+        
+        // mapping avoids creating additional CPU copies of the data
+        // unsynchronized is fine because this is a brand-new buffer, and the old contents will be copied in afterward
+        // also can invalidate the whole buffer too, similarly because brand new, don't care what was there before
+        final var mappingOffset = oldIndexCount * 4;
+        final var mappingSize = (newIndexCount - oldIndexCount) * 4;
+        final var mappedBuffer = glMapBufferRange(GL_ELEMENT_ARRAY_BUFFER, mappingOffset, mappingSize, GL_MAP_WRITE_BIT | GL_MAP_UNSYNCHRONIZED_BIT | GL_MAP_INVALIDATE_BUFFER_BIT);
 
+        if(mappedBuffer == null){
+            throw new NullPointerException("OpenGL buffer mapping failed");
+        }
+        
+        final int quads = newElementBufferVertexLength / 4;
+        final int oldQuads = elementBufferVertexLength / 4;
+        // generate indices for the extension to the buffer
+        for (int i = oldQuads; i < quads; i++) {
+            // Quads are a bit different, we need to emit 2 triangles such that
+            // when combined they make up a single quad.
+            mappedBuffer.putInt(i * 4 + 0).putInt(i * 4 + 1).putInt(i * 4 + 2);
+            mappedBuffer.putInt(i * 4 + 1).putInt(i * 4 + 3).putInt(i * 4 + 2);
+        }
+
+        glUnmapBuffer(GL_ELEMENT_ARRAY_BUFFER);
+
+        if (elementBuffer != 0) {
+            // copy old data from previous element buffer
+            glBindBuffer(GL_COPY_READ_BUFFER, elementBuffer);
+            glCopyBufferSubData(GL_COPY_READ_BUFFER, GL_ELEMENT_ARRAY_BUFFER, 0, 0, mappingOffset);
+            glBindBuffer(GL_COPY_READ_BUFFER, 0);
+        }
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+        
+        glDeleteBuffers(elementBuffer);
+        elementBuffer = newElementBuffer;
+        elementBufferVertexLength = newElementBufferVertexLength;
+    }
+    
     /**
      * Start building a new set of vertex data in the
      * given format and mode.
@@ -88,8 +142,12 @@ public class SimpleBufferBuilder implements Closeable {
      * @param mode   The mode to start building in.
      */
     public SimpleBufferBuilder begin(Format format, Mode mode) {
-        if (bufferAddr == MemoryUtil.NULL) throw new IllegalStateException("Buffer has been freed."); // You already free'd the buffer
-        if (building) throw new IllegalStateException("Already building."); // Your already building verticies.
+        if (bufferAddr == MemoryUtil.NULL) {
+            throw new IllegalStateException("Buffer has been freed."); // You already free'd the buffer
+        }
+        if (building) {
+            throw new IllegalStateException("Already building."); // Your already building verticies.
+        }
         this.format = format;
         this.mode = mode;
         building = true;
@@ -266,32 +324,19 @@ public class SimpleBufferBuilder implements Closeable {
             // Reset position to 0, limit the buffer to our index.
             buffer.position(0);
             buffer.limit(index);
-
+            
             // Upload the raw vertex data in dynamic mode.
             glBufferData(GL_ARRAY_BUFFER, buffer, GL_DYNAMIC_DRAW);
-
+            
             // The number of indices for triangles is equal to our vertex count, as that is
             // what we operate in. However, for Quads, we have exactly vertices + vertices / 2
             // vertices once we convert the quads to triangles.
             indices = mode == Mode.TRIANGLES ? vertices : vertices + vertices / 2;
-
-            try (MemoryStack mStack = MemoryStack.stackPush()) {
-                // Allocate enough data to store all the indices we will need in bytes. We use ints for index.
-                if (mode == Mode.QUADS) {
-                    ByteBuffer indexBuffer = mStack.malloc(indices * 4);
-                    int quads = vertices / 4;
-                    for (int i = 0; i < quads; i++) {
-                        // Quads are a bit different, we need to emit 2 triangles such that
-                        // when combined they make up a single quad.
-                        indexBuffer.putInt(i * 4 + 0).putInt(i * 4 + 1).putInt(i * 4 + 2);
-                        indexBuffer.putInt(i * 4 + 1).putInt(i * 4 + 3).putInt(i * 4 + 2);
-                    }
-                    // Always flip position and limit!!
-                    indexBuffer.flip();
-                    // Upload the index buffer in dynamic mode.
-                    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexBuffer, GL_DYNAMIC_DRAW);
-                }
+            
+            if (mode == Mode.QUADS) {
+                ensureElementBufferLength(vertices);
             }
+            
             return indices;
         } finally {
             // Reset builder state for next begin call.
@@ -314,34 +359,33 @@ public class SimpleBufferBuilder implements Closeable {
 
         int vao = VERTEX_ARRAYS[format.ordinal()];
         int vbo = VERTEX_BUFFERS[format.ordinal()];
-        int ebo = ELEMENT_BUFFERS[format.ordinal()];
 
         if (vao == 0) {
             // These 3 buffers are paired, you can't allocate one without the others.
             assert vbo == 0;
-            assert ebo == 0;
 
             // Make new vertex array and buffers!
             vao = glGenVertexArrays();
             vbo = glGenBuffers();
-            ebo = glGenBuffers();
-
+            
             // Cache the vertex array and buffers for future re-use.
             VERTEX_ARRAYS[format.ordinal()] = vao;
             VERTEX_BUFFERS[format.ordinal()] = vbo;
-            ELEMENT_BUFFERS[format.ordinal()] = ebo;
         }
         // Bind the vertex array and buffers!
         glBindVertexArray(vao);
         glBindBuffer(GL_ARRAY_BUFFER, vbo);
-        if (mode == Mode.QUADS) {
-            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-        }
+        
         // Ask our Format to set up its data layout for the vertex array.
         format.bind();
         
         // Upload the data.
         int indices = finishAndUpload();
+        
+        // must be bound afterward, finishAndUpload could change what buffer is in use and delete the old one
+        if (mode == Mode.QUADS) {
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementBuffer);
+        }
         
         // Enable our format, draw, and disable the format.
         format.enable();
