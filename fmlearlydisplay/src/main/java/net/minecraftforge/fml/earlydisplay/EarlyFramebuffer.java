@@ -7,6 +7,7 @@ package net.minecraftforge.fml.earlydisplay;
 
 import java.nio.IntBuffer;
 
+import static net.minecraftforge.fml.earlydisplay.RenderElement.clamp;
 import static org.lwjgl.opengl.GL32C.*;
 
 public class EarlyFramebuffer {
@@ -38,8 +39,8 @@ public class EarlyFramebuffer {
     }
 
     void draw(int windowFBWidth, int windowFBHeight) {
-        var wscale = windowFBWidth / this.context.width();
-        var hscale = windowFBHeight / this.context.height();
+        var wscale = ((float)windowFBWidth / this.context.width());
+        var hscale = ((float)windowFBHeight / this.context.height());
         var scale = Math.min(wscale, hscale) / 2f;
         var wleft = (int)(windowFBWidth * 0.5f - scale * this.context.width());
         var wtop = (int)(windowFBHeight * 0.5f - scale * this.context.height());
@@ -51,7 +52,7 @@ public class EarlyFramebuffer {
         glClearColor(colour.redf(), colour.greenf(), colour.bluef(), 1f);
         glClear(GL_COLOR_BUFFER_BIT);
         // src Y are flipped, since our FB is flipped
-        glBlitFramebuffer(0, this.context.height(), this.context.width(), 0, wleft, wtop, wright, wbottom, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+        glBlitFramebuffer(0, this.context.height(), this.context.width(), 0, clamp(wleft, 0, windowFBWidth), clamp(wtop, 0, windowFBHeight), clamp(wright, 0, windowFBWidth), clamp(wbottom, 0, windowFBHeight), GL_COLOR_BUFFER_BIT, GL_LINEAR);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
 

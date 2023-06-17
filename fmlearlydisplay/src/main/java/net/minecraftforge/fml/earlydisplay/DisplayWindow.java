@@ -384,7 +384,7 @@ public class DisplayWindow implements ImmediateWindowProvider {
         glfwGetMonitorPos(primaryMonitor, x, y);
         int monitorX = x[0];
         int monitorY = y[0];
-
+//        glfwSetWindowSizeLimits(window, 854, 480, GLFW_DONT_CARE, GLFW_DONT_CARE);
         if (this.maximized) {
             glfwMaximizeWindow(window);
         }

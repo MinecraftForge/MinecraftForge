@@ -34,6 +34,7 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import static com.mojang.blaze3d.platform.GlConst.*;
+import static net.minecraft.util.Mth.clamp;
 import static org.lwjgl.opengl.GL30C.glViewport;
 import static org.lwjgl.opengl.GL30C.glTexParameterIi;
 
@@ -63,8 +64,8 @@ public class ForgeLoadingOverlay extends LoadingOverlay {
     public void render(final @NotNull GuiGraphics graphics, final int mouseX, final int mouseY, final float partialTick) {
         long millis = Util.getMillis();
         float fadeouttimer = this.fadeOutStart > -1L ? (float)(millis - this.fadeOutStart) / 1000.0F : -1.0F;
-        progress.setAbsolute(Mth.clamp((int)(this.reload.getActualProgress() * 100f), 0, 100));
-        var fade = 1.0F - Mth.clamp(fadeouttimer - 1.0F, 0.0F, 1.0F);
+        progress.setAbsolute(clamp((int)(this.reload.getActualProgress() * 100f), 0, 100));
+        var fade = 1.0F - clamp(fadeouttimer - 1.0F, 0.0F, 1.0F);
         var colour = this.displayWindow.context().colourScheme().bg();
         RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, fade);
         if (fadeouttimer >= 1.0F) {
@@ -84,11 +85,13 @@ public class ForgeLoadingOverlay extends LoadingOverlay {
         glViewport(0, 0, width, height);
         final var twidth = this.displayWindow.context().width();
         final var theight = this.displayWindow.context().height();
-        var wscale = width / twidth;
-        var hscale = height / theight;
+        var wscale = (float)width / twidth;
+        var hscale = (float)height / theight;
         var scale = Math.min(wscale, hscale) / 2f;
-        var wpos = width * 0.5f - scale * twidth;
-        var hpos = height * 0.5f - scale * theight;
+        var wleft = clamp(width * 0.5f - scale * twidth, 0, width);
+        var wtop = clamp(height * 0.5f - scale * theight, 0, height);
+        var wright = clamp(width * 0.5f + scale * twidth, 0, width);
+        var wbottom = clamp(height * 0.5f + scale * theight, 0, height);
         scale *= 2f;
         GlStateManager.glActiveTexture(GL_TEXTURE0);
         RenderSystem.disableCull();
@@ -100,13 +103,13 @@ public class ForgeLoadingOverlay extends LoadingOverlay {
         // This is fill in around the edges - it's empty solid colour
         bufferbuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
         // top box from hpos
-        addQuad(bufferbuilder, 0, width, height - hpos, height, colour, fade);
+        addQuad(bufferbuilder, 0, width, wtop, height, colour, fade);
         // bottom box to hpos
-        addQuad(bufferbuilder, 0, width, 0, hpos, colour, fade);
+        addQuad(bufferbuilder, 0, width, 0, wtop, colour, fade);
         // left box to wpos
-        addQuad(bufferbuilder, 0, wpos, hpos, height - hpos, colour, fade);
+        addQuad(bufferbuilder, 0, wleft, wtop, wbottom, colour, fade);
         // right box from wpos
-        addQuad(bufferbuilder, width - wpos, width, hpos, height - hpos, colour, fade);
+        addQuad(bufferbuilder, wright, width, wtop, wbottom, colour, fade);
         BufferUploader.drawWithShader(bufferbuilder.end());
 
         // This is the actual screen data from the loading screen
@@ -115,10 +118,10 @@ public class ForgeLoadingOverlay extends LoadingOverlay {
         RenderSystem.setShader(GameRenderer::getPositionTexColorShader);
         RenderSystem.setShaderTexture(0, displayWindow.getFramebufferTextureId());
         bufferbuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
-        bufferbuilder.vertex(wpos, hpos + theight * scale, 0f).uv(0, 0).color(1f, 1f, 1f, fade).endVertex();
-        bufferbuilder.vertex(twidth * scale + wpos, hpos + theight * scale, 0f).uv(1, 0).color(1f, 1f, 1f, fade).endVertex();
-        bufferbuilder.vertex(twidth * scale + wpos, hpos, 0f).uv(1, 1).color(1f, 1f, 1f, fade).endVertex();
-        bufferbuilder.vertex(wpos, hpos, 0f).uv(0, 1).color(1f, 1f, 1f, fade).endVertex();
+        bufferbuilder.vertex(wleft, wbottom, 0f).uv(0, 0).color(1f, 1f, 1f, fade).endVertex();
+        bufferbuilder.vertex(wright, wbottom, 0f).uv(1, 0).color(1f, 1f, 1f, fade).endVertex();
+        bufferbuilder.vertex(wright, wtop, 0f).uv(1, 1).color(1f, 1f, 1f, fade).endVertex();
+        bufferbuilder.vertex(wleft, wtop, 0f).uv(0, 1).color(1f, 1f, 1f, fade).endVertex();
         glTexParameterIi(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexParameterIi(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         BufferUploader.drawWithShader(bufferbuilder.end());
