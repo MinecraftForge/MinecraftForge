@@ -277,13 +277,8 @@ public class SimpleBufferBuilder implements Closeable {
 
             try (MemoryStack mStack = MemoryStack.stackPush()) {
                 // Allocate enough data to store all the indices we will need in bytes. We use ints for index.
-                ByteBuffer indexBuffer = mStack.malloc(indices * 4);
-                if (mode == Mode.TRIANGLES) {
-                    // Triangles are easy, just the number of vertices.
-                    for (int i = 0; i < vertices; i++) {
-                        indexBuffer.putInt(i);
-                    }
-                } else {
+                if (mode == Mode.QUADS) {
+                    ByteBuffer indexBuffer = mStack.malloc(indices * 4);
                     int quads = vertices / 4;
                     for (int i = 0; i < quads; i++) {
                         // Quads are a bit different, we need to emit 2 triangles such that
@@ -291,11 +286,11 @@ public class SimpleBufferBuilder implements Closeable {
                         indexBuffer.putInt(i * 4 + 0).putInt(i * 4 + 1).putInt(i * 4 + 2);
                         indexBuffer.putInt(i * 4 + 1).putInt(i * 4 + 3).putInt(i * 4 + 2);
                     }
+                    // Always flip position and limit!!
+                    indexBuffer.flip();
+                    // Upload the index buffer in dynamic mode.
+                    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexBuffer, GL_DYNAMIC_DRAW);
                 }
-                // Always flip position and limit!!
-                indexBuffer.flip();
-                // Upload the index buffer in dynamic mode.
-                glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexBuffer, GL_DYNAMIC_DRAW);
             }
             return indices;
         } finally {
@@ -339,18 +334,24 @@ public class SimpleBufferBuilder implements Closeable {
         // Bind the vertex array and buffers!
         glBindVertexArray(vao);
         glBindBuffer(GL_ARRAY_BUFFER, vbo);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+        if (mode == Mode.QUADS) {
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+        }
         // Ask our Format to set up its data layout for the vertex array.
         format.bind();
-
+        
         // Upload the data.
         int indices = finishAndUpload();
-
+        
         // Enable our format, draw, and disable the format.
         format.enable();
-        glDrawElements(GL_TRIANGLES, indices, GL_UNSIGNED_INT, 0);
+        if (mode == Mode.QUADS) {
+            glDrawElements(GL_TRIANGLES, indices, GL_UNSIGNED_INT, 0);
+        } else {
+            glDrawArrays(GL_TRIANGLES, 0, indices);
+        }
         format.disable();
-
+        
         // Unbind the vertex array.
         glBindVertexArray(0);
     }
