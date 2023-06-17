@@ -470,7 +470,11 @@ public class DisplayWindow implements ImmediateWindowProvider {
             this.windowTick.cancel(false);
         }
         try {
-            renderLock.tryAcquire(100, TimeUnit.MILLISECONDS);
+            var renderlocked = true;
+            do {
+                renderlocked = !renderLock.tryAcquire(100, TimeUnit.MILLISECONDS);
+                LOGGER.info("Render lock status "+ renderlocked);
+            } while (renderlocked);
         } catch (InterruptedException e) {
             Thread.interrupted();
         }
