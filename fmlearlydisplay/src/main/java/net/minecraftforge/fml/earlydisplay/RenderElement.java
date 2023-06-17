@@ -96,7 +96,7 @@ public class RenderElement {
         return new RenderElement(()->(bb, ctx, frame) -> {
             var size = 256 * ctx.scale();
             var x0 = (ctx.scaledWidth() - 2 * size) / 2;
-            var y0 = 64 * ctx.scale();
+            var y0 = 64 * ctx.scale() + 32;
             ctx.elementShader().updateTextureUniform(0);
             ctx.elementShader().updateRenderTypeUniform(ElementShader.RenderType.TEXTURE);
             var fade = Math.min((frame - frameStart) * 10, 255);
@@ -114,8 +114,8 @@ public class RenderElement {
 
     public static RenderElement forgeVersionOverlay(SimpleFont font, String version) {
         return new RenderElement(RenderElement.initializeText(font, (bb, fnt, ctx)->
-                font.generateVerticesForTexts(ctx.scaledWidth() - font.stringWidth(version),
-                        ctx.scaledHeight() - font.lineSpacing() + font.descent(), bb,
+                font.generateVerticesForTexts(ctx.scaledWidth() - font.stringWidth(version) - 10,
+                        ctx.scaledHeight() - font.lineSpacing() + font.descent() - 10, bb,
                         new SimpleFont.DisplayText(version, ctx.colourScheme.fg().packedint(RenderElement.globalAlpha)))));
     }
     public static RenderElement squir() {
