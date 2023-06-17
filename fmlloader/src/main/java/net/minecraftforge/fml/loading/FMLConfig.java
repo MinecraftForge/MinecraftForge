@@ -149,4 +149,8 @@ public class FMLConfig
         v.updateValue(INSTANCE.configData, value);
         INSTANCE.configData.save();
     }
+
+    public static String defaultConfigPath() {
+        return getConfigValue(ConfigValue.DEFAULT_CONFIG_PATH);
+    }
 }
