@@ -120,6 +120,7 @@ public class ServerLifecycleHooks
     public static void handleServerStopping(final MinecraftServer server)
     {
         allowLogins.set(false);
+        ConfigTracker.INSTANCE.unloadConfigs(ModConfig.Type.SERVER, getServerConfigPath(server));
         MinecraftForge.EVENT_BUS.post(new ServerStoppingEvent(server));
     }
 

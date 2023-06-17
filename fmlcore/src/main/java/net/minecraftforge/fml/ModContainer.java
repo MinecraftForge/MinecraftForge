@@ -5,12 +5,16 @@
 
 package net.minecraftforge.fml;
 
+import com.google.common.collect.Multimap;
+import com.google.common.collect.MultimapBuilder;
+import com.google.common.collect.Multimaps;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.config.IConfigEvent;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.IModBusEvent;
 import net.minecraftforge.forgespi.language.IModInfo;
 
+import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.IdentityHashMap;
@@ -45,7 +49,8 @@ public abstract class ModContainer
     protected Supplier<?> contextExtension;
     protected final Map<ModLoadingStage, Runnable> activityMap = new HashMap<>();
     protected final Map<Class<? extends IExtensionPoint<?>>, Supplier<?>> extensionPoints = new IdentityHashMap<>();
-    protected final EnumMap<ModConfig.Type, ModConfig> configs = new EnumMap<>(ModConfig.Type.class);
+    protected final Multimap<ModConfig.Type, ModConfig> configs = MultimapBuilder.enumKeys(ModConfig.Type.class).arrayListValues().build();
+    protected final Multimap<ModConfig.Type, ModConfig> configsView = Multimaps.unmodifiableMultimap(configs);
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     protected Optional<Consumer<IConfigEvent>> configHandler = Optional.empty();
 
@@ -144,6 +149,11 @@ public abstract class ModContainer
 
     public void addConfig(final ModConfig modConfig) {
        configs.put(modConfig.getType(), modConfig);
+    }
+
+    public Multimap<ModConfig.Type, ModConfig> getConfigs()
+    {
+        return configsView;
     }
 
     public void dispatchConfigEvent(IConfigEvent event) {

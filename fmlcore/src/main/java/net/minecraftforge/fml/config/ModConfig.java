@@ -12,6 +12,7 @@ import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.loading.StringUtils;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.nio.file.Path;
 import java.util.Locale;
 import java.util.concurrent.Callable;
@@ -86,7 +87,14 @@ public class ModConfig
     }
 
     public void acceptSyncedConfig(byte[] bytes) {
-        setConfigData(TomlFormat.instance().createParser().parse(new ByteArrayInputStream(bytes)));
+        if (bytes != null)
+        {
+            setConfigData(TomlFormat.instance().createParser().parse(new ByteArrayInputStream(bytes)));
+        }
+        else
+        {
+            setConfigData(null);
+        }
         fireEvent(IConfigEvent.reloading(this));
     }
 

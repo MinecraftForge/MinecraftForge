@@ -26,6 +26,9 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import net.minecraftforge.client.gui.config.widgets.ConfigGuiWidget;
+import net.minecraftforge.client.gui.config.widgets.ConfigGuiWidgetFactory;
+import net.minecraft.network.chat.Component;
 import net.minecraftforge.fml.config.IConfigSpec;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import org.apache.commons.lang3.tuple.Pair;
@@ -53,21 +56,23 @@ import org.jetbrains.annotations.Nullable;
  */
 public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfig> implements IConfigSpec<ForgeConfigSpec>//TODO: Remove extends and pipe everything through getSpec/getValues?
 {
-    private Map<List<String>, String> levelComments;
-    private Map<List<String>, String> levelTranslationKeys;
+    private final Map<List<String>, String> levelComments;
+    private final Map<List<String>, String> levelTranslationKeys;
 
-    private UnmodifiableConfig values;
+    private final UnmodifiableConfig values;
     private Config childConfig;
+    private final boolean visibleOnModConfigScreen;
 
     private boolean isCorrecting = false;
 
     private static final Logger LOGGER = LogManager.getLogger();
 
-    private ForgeConfigSpec(UnmodifiableConfig storage, UnmodifiableConfig values, Map<List<String>, String> levelComments, Map<List<String>, String> levelTranslationKeys) {
+    private ForgeConfigSpec(UnmodifiableConfig storage, UnmodifiableConfig values, Map<List<String>, String> levelComments, Map<List<String>, String> levelTranslationKeys, final boolean visibleOnModConfigScreen) {
         super(storage);
         this.values = values;
         this.levelComments = levelComments;
         this.levelTranslationKeys = levelTranslationKeys;
+        this.visibleOnModConfigScreen = visibleOnModConfigScreen;
     }
 
     public String getLevelComment(List<String> path) {
@@ -279,14 +284,21 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         return Objects.equals(obj1, obj2);
     }
 
+    public boolean isVisibleOnModConfigScreen()
+    {
+        return visibleOnModConfigScreen;
+    }
+
     public static class Builder
     {
         private final Config storage = Config.of(LinkedHashMap::new, InMemoryFormat.withUniversalSupport()); // Use LinkedHashMap for consistent ordering
         private BuilderContext context = new BuilderContext();
-        private Map<List<String>, String> levelComments = new HashMap<>();
-        private Map<List<String>, String> levelTranslationKeys = new HashMap<>();
-        private List<String> currentPath = new ArrayList<>();
-        private List<ConfigValue<?>> values = new ArrayList<>();
+        private final Map<List<String>, String> levelComments = new HashMap<>();
+        private final Map<List<String>, String> levelTranslationKeys = new HashMap<>();
+        private final List<String> currentPath = new ArrayList<>();
+        private final List<ConfigValue<?>> values = new ArrayList<>();
+        private Supplier<ConfigGuiWidgetFactory> widgetFactorySupplier;
+        private boolean visibleOnModConfigScreen = true;
 
         //Object
         public <T> ConfigValue<T> define(String path, T defaultValue) {
@@ -321,7 +333,11 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
             }
             storage.set(path, value);
             context = new BuilderContext();
-            return new ConfigValue<>(this, path, defaultSupplier);
+
+            final ConfigValue<T> result = new ConfigValue<>(this, path, defaultSupplier, widgetFactorySupplier);
+
+            this.widgetFactorySupplier = null;
+            return result;
         }
         public <V extends Comparable<? super V>> ConfigValue<V> defineInRange(String path, V defaultValue, V min, V max, Class<V> clazz) {
             return defineInRange(split(path), defaultValue, min, max, clazz);
@@ -336,6 +352,9 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
             Range<V> range = new Range<>(clazz, min, max);
             context.setRange(range);
             comment("Range: " + range.toString());
+            if (context.getErrorDescriber() == null) {
+                context.setErrorDescriber(range::getErrorMessage);
+            }
             if (min.compareTo(max) > 0)
                 throw new IllegalArgumentException("Range min most be less then max.");
             return define(path, defaultSupplier, range);
@@ -478,8 +497,20 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         public <V extends Enum<V>> EnumValue<V> defineEnum(List<String> path, Supplier<V> defaultSupplier, EnumGetMethod converter, Predicate<Object> validator, Class<V> clazz) {
             context.setClazz(clazz);
             V[] allowedValues = clazz.getEnumConstants();
+            if (context.getErrorDescriber() == null) {
+                context.setErrorDescriber((obj) -> {
+                    if (obj instanceof String string) {
+                        return Component.translatable("forge.configgui.error.enum.invalidName", string, Arrays.stream(allowedValues).filter(validator).map(Enum::name).collect(Collectors.joining("\n - ", "\n - ", "")));
+                    }
+
+                    return Component.translatable("forge.configgui.error.enum.needsToBeText");
+                });
+            }
             comment("Allowed Values: " + Arrays.stream(allowedValues).filter(validator).map(Enum::name).collect(Collectors.joining(", ")));
-            return new EnumValue<V>(this, define(path, new ValueSpec(defaultSupplier, validator, context, path), defaultSupplier).getPath(), defaultSupplier, converter, clazz);
+            final EnumValue<V> result = new EnumValue<V>(this, define(path, new ValueSpec(defaultSupplier, validator, context, path), defaultSupplier).getPath(), defaultSupplier, converter, clazz, widgetFactorySupplier);
+
+            this.widgetFactorySupplier = null;
+            return result;
         }
 
         //boolean
@@ -493,10 +524,22 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
             return define(split(path), defaultSupplier);
         }
         public BooleanValue define(List<String> path, Supplier<Boolean> defaultSupplier) {
-            return new BooleanValue(this, define(path, defaultSupplier, o -> {
+            if (context.getErrorDescriber() == null) {
+                context.setErrorDescriber((obj) -> {
+                    if (obj instanceof String string) {
+                        return Component.translatable("forge.configgui.error.boolean.notTrueOrFalse", string);
+                    }
+
+                    return Component.translatable("forge.configgui.error.boolean.needsToBeText");
+                });
+            }
+            final BooleanValue result = new BooleanValue(this, define(path, defaultSupplier, o -> {
                 if (o instanceof String) return ((String)o).equalsIgnoreCase("true") || ((String)o).equalsIgnoreCase("false");
                 return o instanceof Boolean;
-            }, Boolean.class).getPath(), defaultSupplier);
+            }, Boolean.class).getPath(), defaultSupplier, this.widgetFactorySupplier);
+
+            this.widgetFactorySupplier = null;
+            return result;
         }
 
         //Double
@@ -510,7 +553,10 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
             return defineInRange(split(path), defaultSupplier, min, max);
         }
         public DoubleValue defineInRange(List<String> path, Supplier<Double> defaultSupplier, double min, double max) {
-            return new DoubleValue(this, defineInRange(path, defaultSupplier, min, max, Double.class).getPath(), defaultSupplier);
+            final DoubleValue result = new DoubleValue(this, defineInRange(path, defaultSupplier, min, max, Double.class).getPath(), defaultSupplier, this.widgetFactorySupplier);
+
+            this.widgetFactorySupplier = null;
+            return result;
         }
 
         //Ints
@@ -524,7 +570,10 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
             return defineInRange(split(path), defaultSupplier, min, max);
         }
         public IntValue defineInRange(List<String> path, Supplier<Integer> defaultSupplier, int min, int max) {
-            return new IntValue(this, defineInRange(path, defaultSupplier, min, max, Integer.class).getPath(), defaultSupplier);
+            final IntValue result = new IntValue(this, defineInRange(path, defaultSupplier, min, max, Integer.class).getPath(), defaultSupplier, this.widgetFactorySupplier);
+
+            this.widgetFactorySupplier = null;
+            return result;
         }
 
         //Longs
@@ -538,7 +587,10 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
             return defineInRange(split(path), defaultSupplier, min, max);
         }
         public LongValue defineInRange(List<String> path, Supplier<Long> defaultSupplier, long min, long max) {
-            return new LongValue(this, defineInRange(path, defaultSupplier, min, max, Long.class).getPath(), defaultSupplier);
+            final LongValue result = new LongValue(this, defineInRange(path, defaultSupplier, min, max, Long.class).getPath(), defaultSupplier, this.widgetFactorySupplier);
+
+            this.widgetFactorySupplier = null;
+            return result;
         }
 
         public Builder comment(String comment)
@@ -568,6 +620,11 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         public Builder worldRestart()
         {
             context.worldRestart();
+            return this;
+        }
+
+        public Builder withErrorDescriber(Function<Object, Component> errorDescriber) {
+            context.setErrorDescriber(errorDescriber);
             return this;
         }
 
@@ -612,9 +669,21 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
             Config valueCfg = Config.of(Config.getDefaultMapCreator(true, true), InMemoryFormat.withSupport(ConfigValue.class::isAssignableFrom));
             values.forEach(v -> valueCfg.set(v.getPath(), v));
 
-            ForgeConfigSpec ret = new ForgeConfigSpec(storage, valueCfg, levelComments, levelTranslationKeys);
+            ForgeConfigSpec ret = new ForgeConfigSpec(storage, valueCfg, levelComments, levelTranslationKeys, visibleOnModConfigScreen);
             values.forEach(v -> v.spec = ret);
             return ret;
+        }
+
+        public Builder useConfigGuiWidgetFactory(final Supplier<ConfigGuiWidgetFactory> widgetFactorySupplier)
+        {
+            this.widgetFactorySupplier = widgetFactorySupplier;
+            return this;
+        }
+
+        public Builder removeSpecFromModConfigScreen()
+        {
+            this.visibleOnModConfigScreen = false;
+            return this;
         }
 
         public interface BuilderConsumer {
@@ -629,6 +698,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         private Range<?> range;
         private boolean worldRestart = false;
         private Class<?> clazz;
+        private Function<Object, Component> errorDescriber;
 
         public void addComment(String value)
         {
@@ -669,6 +739,8 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         public boolean needsWorldRestart() { return this.worldRestart; }
         public void setClazz(Class<?> clazz) { this.clazz = clazz; }
         public Class<?> getClazz(){ return this.clazz; }
+        public Function<Object, Component> getErrorDescriber() { return errorDescriber; }
+        public void setErrorDescriber(final Function<Object, Component> errorDescriber) { this.errorDescriber = errorDescriber; }
 
         public void ensureEmpty()
         {
@@ -676,6 +748,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
             validate(langKey, "Non-null translation key when null expected");
             validate(range, "Non-null range when null expected");
             validate(worldRestart, "Dangeling world restart value set to true");
+            validate(errorDescriber, "Non-null error describer when null expected");
         }
 
         private void validate(Object value, String message)
@@ -720,7 +793,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
             {
                 Number n = (Number) t;
                 boolean result = ((Number)min).doubleValue() <= n.doubleValue() && n.doubleValue() <= ((Number)max).doubleValue();
-                if(!result)
+                if (!result)
                 {
                     LOGGER.debug(CORE, "Range value {} is not within its bounds {}-{}", n.doubleValue(), ((Number)min).doubleValue(), ((Number)max).doubleValue());
                 }
@@ -730,11 +803,35 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
             V c = clazz.cast(t);
 
             boolean result = c.compareTo(min) >= 0 && c.compareTo(max) <= 0;
-            if(!result)
+            if (!result)
             {
                 LOGGER.debug(CORE, "Range value {} is not within its bounds {}-{}", c, min, max);
             }
             return result;
+        }
+
+        public Component getErrorMessage(Object t) {
+            if (isNumber(t))
+            {
+                Number n = (Number) t;
+                boolean result = ((Number)min).doubleValue() <= n.doubleValue() && n.doubleValue() <= ((Number)max).doubleValue();
+                if (!result)
+                {
+                    return Component.translatable("forge.configgui.error.ranged.notInBounds", n, min, max);
+                }
+
+                throw new IllegalStateException("Called the error message producor for a valid value!");
+            }
+            if (!clazz.isInstance(t)) return Component.translatable("forge.configgui.error.ranged.needsToBeOfType", clazz.getSimpleName());
+            V c = clazz.cast(t);
+
+            boolean result = c.compareTo(min) >= 0 && c.compareTo(max) <= 0;
+            if (!result)
+            {
+                return Component.translatable("forge.configgui.error.ranged.notInBounds", c, min, max);
+            }
+
+            throw new IllegalStateException("Called the error message producor for a valid value!");
         }
 
         public Object correct(Object value, Object def)
@@ -772,6 +869,8 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         private final Class<?> clazz;
         private final Supplier<?> supplier;
         private final Predicate<Object> validator;
+        private final Function<Object, Component> errorDescriber;
+        private Object _default = null;
 
         private ValueSpec(Supplier<?> supplier, Predicate<Object> validator, BuilderContext context, List<String> path)
         {
@@ -785,6 +884,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
             this.clazz = context.getClazz();
             this.supplier = supplier;
             this.validator = validator;
+            this.errorDescriber = context.getErrorDescriber();
         }
 
         public String getComment() { return comment; }
@@ -795,27 +895,32 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         public Class<?> getClazz(){ return this.clazz; }
         public boolean test(Object value) { return validator.test(value); }
         public Object correct(Object value) { return range == null ? getDefault() : range.correct(value, getDefault()); }
-
+        public Component getError(Object value)
+        {
+            return this.errorDescriber != null ? this.errorDescriber.apply(value) : Component.translatable("forge.configgui.entryInvalid");
+        }
         public Object getDefault() { return supplier.get(); }
     }
 
     public static class ConfigValue<T> implements Supplier<T>
     {
-        private static boolean USE_CACHES = true;
+        private static final boolean USE_CACHES = true;
 
         private final Builder parent;
         private final List<String> path;
         private final Supplier<T> defaultSupplier;
+        private Supplier<ConfigGuiWidgetFactory> screenWidgetFactorySupplier;
 
         private T cachedValue = null;
 
         private ForgeConfigSpec spec;
 
-        ConfigValue(Builder parent, List<String> path, Supplier<T> defaultSupplier)
+        ConfigValue(Builder parent, List<String> path, Supplier<T> defaultSupplier, final @Nullable Supplier<ConfigGuiWidgetFactory> widgetFactorySupplier)
         {
             this.parent = parent;
             this.path = path;
             this.defaultSupplier = defaultSupplier;
+            this.screenWidgetFactorySupplier = widgetFactorySupplier;
             this.parent.values.add(this);
         }
 
@@ -895,49 +1000,70 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         public void clearCache() {
             this.cachedValue = null;
         }
+
+        public Supplier<ConfigGuiWidgetFactory> getScreenWidgetFactorySupplier() {
+            return this.screenWidgetFactorySupplier;
+        }
+
+        void setScreenWidgetFactorySupplier(final Supplier<ConfigGuiWidgetFactory> screenWidgetFactorySupplier)
+        {
+            this.screenWidgetFactorySupplier = screenWidgetFactorySupplier;
+        }
     }
 
     public static class BooleanValue extends ConfigValue<Boolean>
     {
-        BooleanValue(Builder parent, List<String> path, Supplier<Boolean> defaultSupplier)
+        private static final Supplier<ConfigGuiWidgetFactory> FALLBACK_FACTORY = () -> ConfigGuiWidget.BooleanWidget.FACTORY;
+
+        BooleanValue(Builder parent, List<String> path, Supplier<Boolean> defaultSupplier, @Nullable final Supplier<ConfigGuiWidgetFactory> widgetFactorySupplier)
         {
-            super(parent, path, defaultSupplier);
+            super(parent, path, defaultSupplier, widgetFactorySupplier);
+            this.setScreenWidgetFactorySupplier(FALLBACK_FACTORY);
         }
     }
 
     public static class IntValue extends ConfigValue<Integer>
     {
-        IntValue(Builder parent, List<String> path, Supplier<Integer> defaultSupplier)
+        private static final Supplier<ConfigGuiWidgetFactory> FALLBACK_FACTORY = () -> ConfigGuiWidget.NumberWidget.INTEGER;
+
+        IntValue(Builder parent, List<String> path, Supplier<Integer> defaultSupplier, @Nullable final Supplier<ConfigGuiWidgetFactory> widgetFactorySupplier)
         {
-            super(parent, path, defaultSupplier);
+            super(parent, path, defaultSupplier, widgetFactorySupplier);
+            this.setScreenWidgetFactorySupplier(FALLBACK_FACTORY);
         }
 
         @Override
         protected Integer getRaw(Config config, List<String> path, Supplier<Integer> defaultSupplier)
         {
-            return config.getIntOrElse(path, () -> defaultSupplier.get());
+            return config.getIntOrElse(path, defaultSupplier::get);
         }
     }
 
     public static class LongValue extends ConfigValue<Long>
     {
-        LongValue(Builder parent, List<String> path, Supplier<Long> defaultSupplier)
+        private static final Supplier<ConfigGuiWidgetFactory> FALLBACK_FACTORY = () -> ConfigGuiWidget.NumberWidget.LONG;
+
+        LongValue(Builder parent, List<String> path, Supplier<Long> defaultSupplier, @Nullable final Supplier<ConfigGuiWidgetFactory> widgetFactorySupplier)
         {
-            super(parent, path, defaultSupplier);
+            super(parent, path, defaultSupplier, widgetFactorySupplier);
+            this.setScreenWidgetFactorySupplier(FALLBACK_FACTORY);
         }
 
         @Override
         protected Long getRaw(Config config, List<String> path, Supplier<Long> defaultSupplier)
         {
-            return config.getLongOrElse(path, () -> defaultSupplier.get());
+            return config.getLongOrElse(path, defaultSupplier::get);
         }
     }
 
     public static class DoubleValue extends ConfigValue<Double>
     {
-        DoubleValue(Builder parent, List<String> path, Supplier<Double> defaultSupplier)
+        private static final Supplier<ConfigGuiWidgetFactory> FALLBACK_FACTORY = () -> ConfigGuiWidget.NumberWidget.DOUBLE;
+
+        DoubleValue(Builder parent, List<String> path, Supplier<Double> defaultSupplier, @Nullable final Supplier<ConfigGuiWidgetFactory> widgetFactorySupplier)
         {
-            super(parent, path, defaultSupplier);
+            super(parent, path, defaultSupplier, widgetFactorySupplier);
+            this.setScreenWidgetFactorySupplier(FALLBACK_FACTORY);
         }
 
         @Override
@@ -950,12 +1076,15 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
 
     public static class EnumValue<T extends Enum<T>> extends ConfigValue<T>
     {
+        private static final Supplier<ConfigGuiWidgetFactory> FALLBACK_FACTORY = () -> ConfigGuiWidget.EnumWidget.FACTORY;
+
         private final EnumGetMethod converter;
         private final Class<T> clazz;
 
-        EnumValue(Builder parent, List<String> path, Supplier<T> defaultSupplier, EnumGetMethod converter, Class<T> clazz)
+        EnumValue(Builder parent, List<String> path, Supplier<T> defaultSupplier, EnumGetMethod converter, Class<T> clazz, @Nullable final Supplier<ConfigGuiWidgetFactory> widgetFactorySupplier)
         {
-            super(parent, path, defaultSupplier);
+            super(parent, path, defaultSupplier, widgetFactorySupplier);
+            this.setScreenWidgetFactorySupplier(FALLBACK_FACTORY);
             this.converter = converter;
             this.clazz = clazz;
         }
@@ -964,6 +1093,11 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         protected T getRaw(Config config, List<String> path, Supplier<T> defaultSupplier)
         {
             return config.getEnumOrElse(path, clazz, converter, defaultSupplier);
+        }
+
+        public Class<T> getEnumClass()
+        {
+            return clazz;
         }
     }
 

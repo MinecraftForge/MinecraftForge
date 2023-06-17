@@ -7,14 +7,20 @@ package net.minecraftforge.common;
 
 import static net.minecraftforge.fml.Logging.FORGEMOD;
 
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.client.gui.config.widgets.ConfigGuiWidget;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.event.config.ModConfigEvent;
+import net.minecraftforge.server.permission.PermissionAPI;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 
 import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
 import net.minecraftforge.common.ForgeConfigSpec.DoubleValue;
 import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
+
+import java.util.stream.Collectors;
 
 
 public class ForgeConfig {
@@ -32,6 +38,7 @@ public class ForgeConfig {
 
         Server(ForgeConfigSpec.Builder builder) {
             builder.comment("Server configuration settings")
+                   .translation("forge.configgui.server")
                    .push("server");
 
             removeErroringBlockEntities = builder
@@ -67,7 +74,31 @@ public class ForgeConfig {
             permissionHandler = builder
                     .comment("The permission handler used by the server. Defaults to forge:default_handler if no such handler with that name is registered.")
                     .translation("forge.configgui.permissionHandler")
-                    .define("permissionHandler", "forge:default_handler");
+                    .worldRestart()
+                    .useConfigGuiWidgetFactory(() -> ConfigGuiWidget.EditBoxBasedWidget.SIMPLE)
+                    .withErrorDescriber((value) ->
+                    {
+                        if (value instanceof String name && ResourceLocation.isValidResourceLocation(name))
+                        {
+                            if (!PermissionAPI.getAvailableFactories().containsKey(new ResourceLocation(name)))
+                            {
+                                return Component.translatable("forge.configgui.error.permissionHandler.unknownName", name, PermissionAPI.getAvailableFactories().keySet().stream().map(Object::toString).collect(Collectors.joining("\n - ", "\n - ", "")));
+                            }
+
+                            throw new IllegalStateException("Passed in valid name for error describer");
+                        }
+
+                        return Component.translatable("forge.configgui.error.permissionHandler.needsToBeText");
+                    })
+                    .define("permissionHandler", "forge:default_handler", obj ->
+                    {
+                        if (obj instanceof String name && ResourceLocation.isValidResourceLocation(name))
+                        {
+                            return PermissionAPI.getAvailableFactories().containsKey(new ResourceLocation(name));
+                        }
+
+                        return false;
+                    });
 
             builder.pop();
         }
@@ -102,7 +133,8 @@ public class ForgeConfig {
 
         Client(ForgeConfigSpec.Builder builder) {
             builder.comment("Client only settings, mostly things related to rendering")
-                   .push("client");
+                 .translation("forge.configgui.client")
+                 .push("client");
 
             alwaysSetupTerrainOffThread = builder
                 .comment("Enable Forge to queue all chunk updates to the Chunk Update thread.",

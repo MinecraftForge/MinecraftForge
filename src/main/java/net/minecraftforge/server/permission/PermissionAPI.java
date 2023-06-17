@@ -20,10 +20,12 @@ import net.minecraftforge.server.permission.nodes.PermissionDynamicContext;
 import net.minecraftforge.server.permission.nodes.PermissionNode;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
@@ -31,6 +33,10 @@ public final class PermissionAPI
 {
     private static final Logger LOGGER = LogManager.getLogger();
     private static IPermissionHandler activeHandler = null;
+
+    private static final Map<ResourceLocation, IPermissionHandlerFactory> availableHandlers = new HashMap<>();
+    private static final Map<ResourceLocation, IPermissionHandlerFactory> availableHandlersView = Collections.unmodifiableMap(availableHandlers);
+
 
     public static Collection<PermissionNode<?>> getRegisteredNodes()
     {
@@ -48,6 +54,24 @@ public final class PermissionAPI
     public static ResourceLocation getActivePermissionHandler()
     {
         return activeHandler == null ? null : activeHandler.getIdentifier();
+    }
+
+    /**
+     * Returns an unmodifiable map of all available permission handler factories.
+     *
+     * @return The map of available permission handler factories.
+     */
+    @NotNull
+    public static Map<ResourceLocation, IPermissionHandlerFactory> getAvailableFactories() {
+        if (availableHandlersView.isEmpty()) {
+            //We always have the default handler so this means we are on a client which never opened a single player world
+            //But immediately opened a server world and now wants to know which handlers are available.
+            //Generally this is caused by the config gui screen being shown
+            LOGGER.warn("Initializing client side permission handler because the client did not open a single player world but they were still requested.");
+            initializePermissionAPI();
+        }
+
+        return availableHandlersView;
     }
 
     /**
@@ -96,7 +120,7 @@ public final class PermissionAPI
     public static void initializePermissionAPI()
     {
         Class<?> callerClass = StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE).getCallerClass();
-        if (callerClass != ServerLifecycleHooks.class)
+        if (callerClass != ServerLifecycleHooks.class && callerClass != PermissionAPI.class)
         {
             LOGGER.warn("{} tried to initialize the PermissionAPI, this call will be ignored.", callerClass.getName());
             return;
@@ -106,7 +130,8 @@ public final class PermissionAPI
 
         PermissionGatherEvent.Handler handlerEvent = new PermissionGatherEvent.Handler();
         MinecraftForge.EVENT_BUS.post(handlerEvent);
-        Map<ResourceLocation, IPermissionHandlerFactory> availableHandlers = handlerEvent.getAvailablePermissionHandlerFactories();
+        availableHandlers.clear();
+        availableHandlers.putAll(handlerEvent.getAvailablePermissionHandlerFactories());
 
         try
         {

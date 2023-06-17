@@ -32,6 +32,10 @@ public class PermissionGatherEvent extends Event
      * Used to register a new PermissionHandler, a server config value exists to choose which one to use.
      * <p>Note: Create a new instance when registering a PermissionHandler.
      * If you cache it, make sure that your PermissionHandler is actually used after this event.</p>
+     * <p>Note: This event might be fired from the network thread if this is running on the client distribution,
+     * this happens because the config value for selecting the handler gets validated when the config data gets
+     * send over from the server and if the user never opened a single player world the handlers would not have
+     * been collected before, causing the event to be fired.</p>
      */
     public static class Handler extends PermissionGatherEvent
     {

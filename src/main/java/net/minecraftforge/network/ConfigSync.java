@@ -42,4 +42,8 @@ public class ConfigSync {
             Optional.ofNullable(tracker.fileMap().get(s2CConfigData.getFileName())).ifPresent(mc-> mc.acceptSyncedConfig(s2CConfigData.getBytes()));
         }
     }
+
+    public void unloadSyncedConfig() {
+        tracker.configSets().get(ModConfig.Type.SERVER).forEach(config -> config.acceptSyncedConfig(null));
+    }
 }
