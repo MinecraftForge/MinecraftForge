@@ -14,5 +14,8 @@ earlyWindowProvider = "fmlearlywindow"
 earlyWindowHeight = 480
 #Initial window width
 earlyWindowWidth = 854
-#Initial window colour scheme (RED or BLACK)
-earlyWindowColourScheme = "RED"
+# Start the early window as "maximized"
+earlyWindowMaximized = false
+# The rendering scale of the early window
+earlyWindowFBScale = 1
+
