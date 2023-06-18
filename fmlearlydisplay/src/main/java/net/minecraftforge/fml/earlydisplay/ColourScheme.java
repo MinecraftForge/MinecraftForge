@@ -17,11 +17,11 @@ public enum ColourScheme {
         this.foreground = foreground;
     }
 
-    public Colour bg() {
+    public Colour background() {
         return background;
     }
 
-    public Colour fg() {
+    public Colour foreground() {
         return foreground;
     }
 

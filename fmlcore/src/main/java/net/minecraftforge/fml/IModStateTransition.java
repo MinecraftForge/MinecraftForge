@@ -61,7 +61,7 @@ public interface IModStateTransition {
     EventGenerator<T> addCompletableFutureTaskForModDispatch(final Executor syncExecutor,
                                                              final Executor parallelExecutor,
                                                              final List<CompletableFuture<Void>> completableFutures,
-                                                             ProgressMeter progressBar,
+                                                             final ProgressMeter progressBar,
                                                              final EventGenerator<T> eventGenerator,
                                                              final BiFunction<ModLoadingStage, Throwable, ModLoadingStage> nextState,
                                                              final EventGenerator<T> nextGenerator) {

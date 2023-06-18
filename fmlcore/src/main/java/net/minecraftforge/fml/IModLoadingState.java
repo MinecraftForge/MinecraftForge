@@ -51,6 +51,7 @@ public interface IModLoadingState {
      * Used to compute progress.
      */
     ToIntFunction<ModList> size();
+
     /**
      * {@return an optional runnable, which runs before starting the transition from this state to the next}
      * @see #buildTransition(Executor, Executor, ProgressMeter, Function, Function)
@@ -69,7 +70,8 @@ public interface IModLoadingState {
      */
     default <T extends Event & IModBusEvent>
     Optional<CompletableFuture<Void>> buildTransition(final Executor syncExecutor,
-                                                      final Executor parallelExecutor, final ProgressMeter progressBar) {
+                                                      final Executor parallelExecutor,
+                                                      final ProgressMeter progressBar) {
         return buildTransition(syncExecutor, parallelExecutor, progressBar,
                 e -> CompletableFuture.runAsync(() -> {}, e),
                 e -> CompletableFuture.runAsync(() -> {}, e));
@@ -90,6 +92,7 @@ public interface IModLoadingState {
     <T extends Event & IModBusEvent>
     Optional<CompletableFuture<Void>> buildTransition(final Executor syncExecutor,
                                                       final Executor parallelExecutor,
-                                                      final ProgressMeter progressBar, final Function<Executor, CompletableFuture<Void>> preSyncTask,
+                                                      final ProgressMeter progressBar,
+                                                      final Function<Executor, CompletableFuture<Void>> preSyncTask,
                                                       final Function<Executor, CompletableFuture<Void>> postSyncTask);
 }

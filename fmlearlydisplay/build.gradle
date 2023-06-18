@@ -54,7 +54,6 @@ test {
 ext {
     MANIFESTS = [
         '': [
-            'FMLModType': 'LANGPROVIDER',
             'Timestamp': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
             'Git-Commit': GIT_INFO.abbreviatedId,
             'Git-Branch': GIT_INFO.branch,

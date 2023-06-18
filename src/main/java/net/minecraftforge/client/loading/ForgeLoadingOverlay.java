@@ -21,7 +21,6 @@ import net.minecraft.client.gui.screens.LoadingOverlay;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ReloadInstance;
-import net.minecraft.util.Mth;
 import net.minecraftforge.fml.StartupMessageManager;
 import net.minecraftforge.fml.earlydisplay.ColourScheme;
 import net.minecraftforge.fml.earlydisplay.DisplayWindow;
@@ -38,6 +37,14 @@ import static net.minecraft.util.Mth.clamp;
 import static org.lwjgl.opengl.GL30C.glViewport;
 import static org.lwjgl.opengl.GL30C.glTexParameterIi;
 
+/**
+ * This is an implementation of the LoadingOverlay that calls back into the early window rendering, as part of the
+ * game loading cycle. We completely replace the {@link #render(GuiGraphics, int, int, float)} call from the parent
+ * with one of our own, that allows us to blend our early loading screen into the main window, in the same manner as
+ * the Mojang screen. It also allows us to see and tick appropriately as the later stages of the loading system run.
+ *
+ * It is somewhat a copy of the superclass render method.
+ */
 public class ForgeLoadingOverlay extends LoadingOverlay {
     private final Minecraft minecraft;
     private final ReloadInstance reload;
@@ -66,7 +73,7 @@ public class ForgeLoadingOverlay extends LoadingOverlay {
         float fadeouttimer = this.fadeOutStart > -1L ? (float)(millis - this.fadeOutStart) / 1000.0F : -1.0F;
         progress.setAbsolute(clamp((int)(this.reload.getActualProgress() * 100f), 0, 100));
         var fade = 1.0F - clamp(fadeouttimer - 1.0F, 0.0F, 1.0F);
-        var colour = this.displayWindow.context().colourScheme().bg();
+        var colour = this.displayWindow.context().colourScheme().background();
         RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, fade);
         if (fadeouttimer >= 1.0F) {
             if (this.minecraft.screen != null) {

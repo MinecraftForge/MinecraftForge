@@ -156,7 +156,7 @@ public class DisplayWindow implements ImmediateWindowProvider {
             glViewport(0, 0, this.context.scaledWidth(), this.context.scaledHeight());
             this.context.elementShader().activate();
             this.context.elementShader().updateScreenSizeUniform(this.context.scaledWidth(), this.context.scaledHeight());
-            glClearColor(colourScheme.bg().redf(), colourScheme.bg().greenf(), colourScheme.bg().bluef(), 1f);
+            glClearColor(colourScheme.background().redf(), colourScheme.background().greenf(), colourScheme.background().bluef(), 1f);
             paintFramebuffer();
             this.context.elementShader().clear();
             framebuffer.deactivate();
@@ -192,7 +192,7 @@ public class DisplayWindow implements ImmediateWindowProvider {
         }
 
         // Set the clear color based on the colour scheme
-        glClearColor(colourScheme.bg().redf(), colourScheme.bg().greenf(), colourScheme.bg().bluef(), 1f);
+        glClearColor(colourScheme.background().redf(), colourScheme.background().greenf(), colourScheme.background().bluef(), 1f);
 
         // we always render to an 854x480 texture and then fit that to the screen - with a scale factor
         this.context = new RenderElement.DisplayContext(854, 480, fbScale, elementShader, colourScheme, performanceInfo);
@@ -241,7 +241,7 @@ public class DisplayWindow implements ImmediateWindowProvider {
         glViewport(0, 0, this.context.scaledWidth(), this.context.scaledHeight());
         RenderElement.globalAlpha = alpha;
         framebuffer.activate();
-        glClearColor(colourScheme.bg().redf(), colourScheme.bg().greenf(), colourScheme.bg().bluef(), alpha / 255f);
+        glClearColor(colourScheme.background().redf(), colourScheme.background().greenf(), colourScheme.background().bluef(), alpha / 255f);
         elementShader.activate();
         elementShader.updateScreenSizeUniform(this.context.scaledWidth(), this.context.scaledHeight());
         paintFramebuffer();

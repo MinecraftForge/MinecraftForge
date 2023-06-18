@@ -27,30 +27,11 @@ import java.util.concurrent.TimeUnit;
 @OnlyIn(Dist.CLIENT)
 public class ClientModLoader
 {
-    private static final Logger LOGGER = LogManager.getLogger();
     private static boolean loading;
     private static Minecraft mc;
     private static boolean loadingComplete;
     private static LoadingFailedException error;
 
-    private static class SpacedRunnable implements Runnable {
-        static final long NANO_SLEEP_TIME = TimeUnit.MILLISECONDS.toNanos(50);
-        private final Runnable wrapped;
-        private long lastRun;
-
-        private SpacedRunnable(final Runnable wrapped) {
-            this.wrapped = wrapped;
-            this.lastRun = System.nanoTime() - NANO_SLEEP_TIME;
-        }
-
-        @Override
-        public void run() {
-            if (System.nanoTime() - this.lastRun > NANO_SLEEP_TIME) {
-                wrapped.run();
-                this.lastRun = System.nanoTime();
-            }
-        }
-    }
     public static void begin(final Minecraft minecraft, final PackRepository defaultResourcePacks, final ReloadableResourceManager mcResourceManager)
     {
         // force log4j to shutdown logging in a shutdown hook. This is because we disable default shutdown hook so the server properly logs it's shutdown
@@ -80,11 +61,7 @@ public class ClientModLoader
 
     private static void startModLoading(ModWorkManager.DrivenExecutor syncExecutor, Executor parallelExecutor) {
         if (error!=null) throw error;
-//        earlyLoaderGUI.handleElsewhere();
         createRunnableWithCatch(() -> ModLoader.get().loadMods(syncExecutor, parallelExecutor, ()->{})).run();
-    }
-
-    private static void postSidedRunnable() {
     }
 
     private static void finishModLoading(ModWorkManager.DrivenExecutor syncExecutor, Executor parallelExecutor)
@@ -97,13 +74,6 @@ public class ClientModLoader
         syncExecutor.execute(()->mc.options.load());
     }
 
-    public static boolean completeModLoading()
-    {
-        return true;
-    }
-
-    public static void renderProgressText() {
-    }
     public static boolean isLoading()
     {
         return loading;

@@ -116,7 +116,7 @@ public class RenderElement {
         return new RenderElement(RenderElement.initializeText(font, (bb, fnt, ctx)->
                 font.generateVerticesForTexts(ctx.scaledWidth() - font.stringWidth(version) - 10,
                         ctx.scaledHeight() - font.lineSpacing() + font.descent() - 10, bb,
-                        new SimpleFont.DisplayText(version, ctx.colourScheme.fg().packedint(RenderElement.globalAlpha)))));
+                        new SimpleFont.DisplayText(version, ctx.colourScheme.foreground().packedint(RenderElement.globalAlpha)))));
     }
     public static RenderElement squir() {
         return new RenderElement(RenderElement.initializeTexture("squirrel.png", 45000, 3, (bb, context, size, frame) -> {
@@ -196,7 +196,7 @@ public class RenderElement {
         final int colour = hsvToRGB((1.0f - (float)Math.pow(pi.memory(), 1.5f)) / 3f, 1.0f, 0.5f);
         var bar = progressBar(ctx -> new int[]{50, y, ctx.scaledWidth() - 100}, f -> colour, f -> new float[]{0f, pi.memory()});
         var width = font.stringWidth(pi.text());
-        Renderer label = (bb, ctx, frame) -> renderText(font, text(ctx.scaledWidth() / 2 - width / 2, y + 18, pi.text(), context.colourScheme.fg().packedint(globalAlpha)), bb, ctx);
+        Renderer label = (bb, ctx, frame) -> renderText(font, text(ctx.scaledWidth() / 2 - width / 2, y + 18, pi.text(), context.colourScheme.foreground().packedint(globalAlpha)), bb, ctx);
         bar.then(label).accept(buffer, context, frameNumber);
     }
 
@@ -225,13 +225,13 @@ public class RenderElement {
             var x1 = pos[0] + pos[2] + 4 * inset;
             var y0 = pos[1];
             var y1 = y0 + BAR_HEIGHT;
-            QuadHelper.loadQuad(bb, x0, x1, y0, y1, 0f, 0f, 0f, 0f, context.colourScheme().fg().packedint(alpha));
+            QuadHelper.loadQuad(bb, x0, x1, y0, y1, 0f, 0f, 0f, 0f, context.colourScheme().foreground().packedint(alpha));
 
             x0 += inset;
             x1 -= inset;
             y0 += inset;
             y1 -= inset;
-            QuadHelper.loadQuad(bb, x0, x1, y0, y1, 0f, 0f, 0f, 0f, context.colourScheme().bg().packedint(RenderElement.globalAlpha));
+            QuadHelper.loadQuad(bb, x0, x1, y0, y1, 0f, 0f, 0f, 0f, context.colourScheme().background().packedint(RenderElement.globalAlpha));
 
             x1 = x0 + inset + (int)(progress[1] * pos[2]);
             x0 += inset + progress[0] * pos[2];

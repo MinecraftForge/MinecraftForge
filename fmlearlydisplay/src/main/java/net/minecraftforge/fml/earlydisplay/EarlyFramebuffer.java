@@ -48,7 +48,7 @@ public class EarlyFramebuffer {
         var wbottom = (int)(windowFBHeight * 0.5f + scale * this.context.height());
         glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
         glBindFramebuffer(GL_READ_FRAMEBUFFER, this.framebuffer);
-        final var colour = this.context.colourScheme().bg();
+        final var colour = this.context.colourScheme().background();
         glClearColor(colour.redf(), colour.greenf(), colour.bluef(), 1f);
         glClear(GL_COLOR_BUFFER_BIT);
         // src Y are flipped, since our FB is flipped
