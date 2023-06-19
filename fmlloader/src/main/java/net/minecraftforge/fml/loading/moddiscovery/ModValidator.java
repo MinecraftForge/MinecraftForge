@@ -8,11 +8,8 @@ package net.minecraftforge.fml.loading.moddiscovery;
 import com.mojang.logging.LogUtils;
 import cpw.mods.modlauncher.api.IModuleLayerManager;
 import cpw.mods.modlauncher.api.ITransformationService;
-import net.minecraftforge.fml.loading.EarlyLoadingException;
-import net.minecraftforge.fml.loading.LoadingModList;
-import net.minecraftforge.fml.loading.LogMarkers;
-import net.minecraftforge.fml.loading.ModSorter;
-import net.minecraftforge.fml.loading.progress.StartupMessageManager;
+import net.minecraftforge.fml.loading.*;
+import net.minecraftforge.fml.loading.progress.StartupNotificationManager;
 import net.minecraftforge.forgespi.language.IModFileInfo;
 import net.minecraftforge.forgespi.locating.IModFile;
 import org.jetbrains.annotations.NotNull;
@@ -52,7 +49,7 @@ public class ModValidator {
         if (LOGGER.isDebugEnabled(LogMarkers.SCAN)) {
             LOGGER.debug(LogMarkers.SCAN, "Found {} mod files with {} mods", candidateMods.size(), candidateMods.stream().mapToInt(mf -> mf.getModInfos().size()).sum());
         }
-        StartupMessageManager.modLoaderConsumer().ifPresent(c->c.accept("Found "+ candidateMods.size()+" modfiles to load"));
+        ImmediateWindowHandler.updateProgress("Found "+candidateMods.size()+" mod candidates");
     }
 
     @NotNull

@@ -7,6 +7,7 @@ package net.minecraftforge.fml;
 
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.event.IModBusEvent;
+import net.minecraftforge.fml.loading.progress.ProgressMeter;
 import net.minecraftforge.forgespi.language.IModFileInfo;
 import net.minecraftforge.forgespi.language.IModInfo;
 import net.minecraftforge.forgespi.language.ModFileScanData;
@@ -114,10 +115,11 @@ public class ModList
 
     <T extends Event & IModBusEvent> Function<Executor, CompletableFuture<Void>> futureVisitor(
             final IModStateTransition.EventGenerator<T> eventGenerator,
+            final ProgressMeter progressBar,
             final BiFunction<ModLoadingStage, Throwable, ModLoadingStage> stateChange) {
         return executor -> gather(
                 this.mods.stream()
-                .map(mod -> ModContainer.buildTransitionHandler(mod, eventGenerator, stateChange, executor))
+                .map(mod -> ModContainer.buildTransitionHandler(mod, eventGenerator, progressBar, stateChange, executor))
                 .collect(Collectors.toList()))
             .thenComposeAsync(ModList::completableFutureFromExceptionList, executor);
     }

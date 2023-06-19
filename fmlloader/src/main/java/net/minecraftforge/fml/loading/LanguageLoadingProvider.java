@@ -9,7 +9,7 @@ import com.mojang.logging.LogUtils;
 import cpw.mods.modlauncher.Launcher;
 import cpw.mods.modlauncher.api.IModuleLayerManager;
 import cpw.mods.modlauncher.util.ServiceLoaderUtils;
-import net.minecraftforge.fml.loading.progress.StartupMessageManager;
+import net.minecraftforge.fml.loading.progress.StartupNotificationManager;
 import net.minecraftforge.forgespi.language.IModLanguageProvider;
 import net.minecraftforge.fml.loading.moddiscovery.ExplodedDirectoryLocator;
 import net.minecraftforge.fml.loading.moddiscovery.ModFile;
@@ -83,7 +83,7 @@ public class LanguageLoadingProvider
     private void loadLanguageProviders() {
         LOGGER.debug(CORE, "Found {} language providers", ServiceLoaderUtils.streamServiceLoader(()->serviceLoader, sce->LOGGER.error("Problem with language loaders")).count());
         serviceLoader.forEach(languageProviders::add);
-
+        ImmediateWindowHandler.updateProgress("Loading language providers");
         languageProviders.forEach(lp -> {
             final Path lpPath;
             try {
@@ -98,7 +98,7 @@ public class LanguageLoadingProvider
                 throw new RuntimeException("Failed to find implementation version for language provider "+ lp.name());
             }
             LOGGER.debug(CORE, "Found language provider {}, version {}", lp.name(), impl);
-            StartupMessageManager.modLoaderConsumer().ifPresent(c->c.accept("Loaded language provider "+lp.name()+ " " + impl));
+            ImmediateWindowHandler.updateProgress("Loaded language provider "+lp.name()+ " " + impl);
             languageProviderMap.put(lp.name(), new ModLanguageWrapper(lp, new DefaultArtifactVersion(impl)));
         });
     }

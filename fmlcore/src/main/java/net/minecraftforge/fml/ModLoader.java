@@ -10,11 +10,13 @@ import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.event.IModBusEvent;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.fml.loading.FMLLoader;
+import net.minecraftforge.fml.loading.ImmediateWindowHandler;
 import net.minecraftforge.fml.loading.LoadingModList;
 import net.minecraftforge.fml.loading.moddiscovery.InvalidModIdentifier;
 import net.minecraftforge.fml.loading.moddiscovery.ModFileInfo;
 import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
-import net.minecraftforge.fml.loading.progress.StartupMessageManager;
+import net.minecraftforge.fml.loading.progress.ProgressMeter;
+import net.minecraftforge.fml.loading.progress.StartupNotificationManager;
 import net.minecraftforge.forgespi.language.IModInfo;
 import net.minecraftforge.forgespi.language.IModLanguageProvider;
 import net.minecraftforge.forgespi.locating.ForgeFeature;
@@ -81,7 +83,7 @@ public class ModLoader
     private final ModStateManager stateManager;
     private boolean loadingStateValid;
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-    private final Optional<Consumer<String>> statusConsumer = StartupMessageManager.modLoaderConsumer();
+    private final Optional<Consumer<String>> statusConsumer = StartupNotificationManager.modLoaderConsumer();
     private final Set<IModLoadingState> completedStates = new HashSet<>();
     private ModList modList;
 
@@ -133,20 +135,19 @@ public class ModLoader
      * @param periodicTask Optional periodic task to perform on the main thread while other activities run
      */
     public void gatherAndInitializeMods(final ModWorkManager.DrivenExecutor syncExecutor, final Executor parallelExecutor, final Runnable periodicTask) {
-        ForgeFeature.registerFeature("java_version", ForgeFeature.VersionFeatureTest.forVersionString(IModInfo.DependencySide.SERVER, System.getProperty("java.version")));
+        ForgeFeature.registerFeature("java_version", ForgeFeature.VersionFeatureTest.forVersionString(IModInfo.DependencySide.BOTH, System.getProperty("java.version")));
+        ForgeFeature.registerFeature("openGLVersion", ForgeFeature.VersionFeatureTest.forVersionString(IModInfo.DependencySide.CLIENT, ImmediateWindowHandler.getGLVersion()));
         loadingStateValid = true;
-        statusConsumer.ifPresent(c->c.accept("Waiting for scan to complete"));
         FMLLoader.backgroundScanHandler.waitForScanToComplete(periodicTask);
-        statusConsumer.ifPresent(c->c.accept("Loading mods"));
         final ModList modList = ModList.of(loadingModList.getModFiles().stream().map(ModFileInfo::getFile).toList(),
                 loadingModList.getMods());
         if (!this.loadingExceptions.isEmpty()) {
             LOGGER.fatal(CORE, "Error during pre-loading phase", loadingExceptions.get(0));
+            statusConsumer.ifPresent(c->c.accept("ERROR DURING MOD LOADING"));
             modList.setLoadedMods(Collections.emptyList());
             loadingStateValid = false;
             throw new LoadingFailedException(loadingExceptions);
         }
-        statusConsumer.ifPresent(c->c.accept("Validating features"));
         List<? extends ForgeFeature.Bound> failedBounds = loadingModList.getMods().stream()
                 .map(ModInfo::getForgeFeatures)
                 .flatMap(Collection::stream)
@@ -155,6 +156,7 @@ public class ModLoader
 
         if (!failedBounds.isEmpty()) {
             LOGGER.fatal(CORE, "Failed to validate feature bounds for mods");
+            statusConsumer.ifPresent(c->c.accept("ERROR DURING MOD LOADING"));
             modList.setLoadedMods(Collections.emptyList());
             loadingStateValid = false;
             throw new LoadingFailedException(failedBounds.stream()
@@ -162,7 +164,6 @@ public class ModLoader
                     .toList());
         }
 
-        statusConsumer.ifPresent(c->c.accept("Building Mod List"));
         final List<ModContainer> modContainers = loadingModList.getModFiles().stream()
                 .map(ModFileInfo::getFile)
                 .map(this::buildMods)
@@ -170,48 +171,42 @@ public class ModLoader
                 .toList();
         if (!loadingExceptions.isEmpty()) {
             LOGGER.fatal(CORE, "Failed to initialize mod containers", loadingExceptions.get(0));
+            statusConsumer.ifPresent(c->c.accept("ERROR DURING MOD LOADING"));
             modList.setLoadedMods(Collections.emptyList());
             loadingStateValid = false;
             throw new LoadingFailedException(loadingExceptions);
         }
         modList.setLoadedMods(modContainers);
         this.modList = modList;
-        statusConsumer.ifPresent(c->c.accept("Dispatching gathering events"));
-        stateManager.getStates(ModLoadingPhase.GATHER).forEach(mls->dispatchAndHandleError(mls, syncExecutor, parallelExecutor, periodicTask));
-        statusConsumer.ifPresent(c->c.accept("Gathering phase complete"));
+        var stateList = stateManager.getStates(ModLoadingPhase.GATHER);
+        var progress = StartupMessageManager.addProgressBar("Mod Gather", stateList.stream().mapToInt(mls -> mls.size().applyAsInt(modList)).sum());
+        stateList.forEach(mls->dispatchAndHandleError(mls, syncExecutor, parallelExecutor, periodicTask, progress));
+        progress.complete();
     }
 
     public void loadMods(final ModWorkManager.DrivenExecutor syncExecutor, final Executor parallelExecutor, final Runnable periodicTask) {
-        statusConsumer.ifPresent(c->c.accept("Performing load phase"));
-        stateManager.getStates(ModLoadingPhase.LOAD).forEach(mls->dispatchAndHandleError(mls, syncExecutor, parallelExecutor, periodicTask));
-        statusConsumer.ifPresent(c->c.accept("Mod setup complete"));
+        var stateList = stateManager.getStates(ModLoadingPhase.LOAD);
+        var progress = StartupMessageManager.addProgressBar("Mod Loading", stateList.stream().mapToInt(mls -> mls.size().applyAsInt(modList)).sum());
+        stateList.forEach(mls->dispatchAndHandleError(mls, syncExecutor, parallelExecutor, periodicTask, progress));
+        progress.complete();
     }
 
     public void finishMods(final ModWorkManager.DrivenExecutor syncExecutor, final Executor parallelExecutor, final Runnable periodicTask) {
-        statusConsumer.ifPresent(c->c.accept("Performing completion phase"));
-        stateManager.getStates(ModLoadingPhase.COMPLETE).forEach(mls->dispatchAndHandleError(mls, syncExecutor, parallelExecutor, periodicTask));
+        var stateList = stateManager.getStates(ModLoadingPhase.COMPLETE);
+        var progress = StartupMessageManager.addProgressBar("Mod Complete", stateList.stream().mapToInt(mls -> mls.size().applyAsInt(modList)).sum());
+        stateList.forEach(mls->dispatchAndHandleError(mls, syncExecutor, parallelExecutor, periodicTask, progress));
         statusConsumer.ifPresent(c->c.accept(String.format("Mod loading complete - %d mods loaded", this.modList.size())));
+        progress.complete();
     }
 
-    private void dispatchAndHandleError(IModLoadingState state, ModWorkManager.DrivenExecutor syncExecutor, Executor parallelExecutor, final Runnable ticker) {
+    private void dispatchAndHandleError(IModLoadingState state, ModWorkManager.DrivenExecutor syncExecutor, Executor parallelExecutor, final Runnable ticker, final ProgressMeter progressBar) {
         if (!isLoadingStateValid()) {
             LOGGER.error("Cowardly refusing to process mod state change request from {}", state);
             return;
         }
-        statusConsumer.ifPresent(c->c.accept(state.message().apply(this.modList)));
+        progressBar.label(progressBar.name()+ " working");
         state.inlineRunnable().ifPresent(a->a.accept(this.modList));
-        state.buildTransition(syncExecutor, parallelExecutor).ifPresent(t->waitForTransition(state, syncExecutor, ticker, t));
-        completedStates.add(state);
-    }
-
-    private void dispatchAndHandleError(IModLoadingState state, ModWorkManager.DrivenExecutor syncExecutor, Executor parallelExecutor, final Runnable ticker, Function<Executor, CompletableFuture<Void>> preSyncTask, Function<Executor, CompletableFuture<Void>> postSyncTask) {
-        if (!isLoadingStateValid()) {
-            LOGGER.error("Cowardly refusing to process mod state change request from {}", state);
-            return;
-        }
-        statusConsumer.ifPresent(c->c.accept(state.message().apply(this.modList)));
-        state.inlineRunnable().ifPresent(a->a.accept(this.modList));
-        state.buildTransition(syncExecutor, parallelExecutor, preSyncTask, postSyncTask).ifPresent(t->waitForTransition(state, syncExecutor, ticker, t));
+        state.buildTransition(syncExecutor, parallelExecutor, progressBar).ifPresent(t->waitForTransition(state, syncExecutor, ticker, t));
         completedStates.add(state);
     }
 
@@ -229,6 +224,7 @@ public class ModLoader
                     .collect(Collectors.toList());
             if (!notModLoading.isEmpty()) {
                 LOGGER.fatal("Encountered non-modloading exceptions!", e);
+                statusConsumer.ifPresent(c->c.accept("ERROR DURING MOD LOADING"));
                 throw e;
             }
 
@@ -237,6 +233,7 @@ public class ModLoader
                     .map(ModLoadingException.class::cast)
                     .collect(Collectors.toList());
             LOGGER.fatal(LOADING,"Failed to complete lifecycle event {}, {} errors found", state.name(), modLoadingExceptions.size());
+            statusConsumer.ifPresent(c->c.accept("ERROR DURING MOD LOADING"));
             throw new LoadingFailedException(modLoadingExceptions);
         }
     }

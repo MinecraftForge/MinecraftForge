@@ -1,0 +1,93 @@
+plugins {
+    id 'com.github.ben-manes.versions'
+    id 'org.javamodularity.moduleplugin' version '1.8.7' apply false
+    id 'org.cadixdev.licenser'
+}
+apply plugin: 'java-library'
+apply plugin: 'jacoco'
+apply plugin: 'org.javamodularity.moduleplugin'
+
+import org.gradle.internal.os.OperatingSystem
+
+switch (OperatingSystem.current()) {
+	case OperatingSystem.LINUX:
+		project.ext.lwjglNatives = "natives-linux"
+		break
+	case OperatingSystem.MAC_OS:
+		project.ext.lwjglNatives = "natives-macos"
+		break
+	case OperatingSystem.WINDOWS:
+		project.ext.lwjglNatives = "natives-windows"
+		break
+}
+
+
+dependencyUpdates.rejectVersionIf { isNonStable(it.candidate.version) }
+
+java.withSourcesJar()
+
+dependencies {
+    compileOnly('org.jetbrains:annotations:23.0.0')
+    implementation(project(':fmlloader'))
+    implementation(project(':fmlcore'))
+    implementation('org.lwjgl:lwjgl:3.3.1')
+    implementation('org.lwjgl:lwjgl-glfw:3.3.1')
+    implementation('org.lwjgl:lwjgl-opengl:3.3.1')
+    implementation('org.lwjgl:lwjgl-stb:3.3.1')
+    implementation('org.lwjgl:lwjgl-tinyfd:3.3.1')
+    implementation('org.slf4j:slf4j-api:1.8.0-beta4')
+    implementation("net.sf.jopt-simple:jopt-simple:${JOPT_SIMPLE_VERSION}")
+    testImplementation('org.junit.jupiter:junit-jupiter-api:5.8.2')
+    testImplementation('org.powermock:powermock-core:2.0.9')
+    testRuntimeOnly('org.junit.jupiter:junit-jupiter-engine:5.8.2')
+    testRuntimeOnly('org.slf4j:slf4j-jdk14:1.8.0-beta4')
+    testRuntimeOnly("org.lwjgl:lwjgl::$lwjglNatives")
+    testRuntimeOnly("org.lwjgl:lwjgl-glfw::$lwjglNatives")
+    testRuntimeOnly("org.lwjgl:lwjgl-opengl::$lwjglNatives")
+    testRuntimeOnly("org.lwjgl:lwjgl-stb::$lwjglNatives")
+}
+
+test {
+    useJUnitPlatform()
+}
+
+ext {
+    MANIFESTS = [
+        '': [
+            'Timestamp': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
+            'Git-Commit': GIT_INFO.abbreviatedId,
+            'Git-Branch': GIT_INFO.branch,
+            'Build-Number': "${System.getenv('BUILD_NUMBER')?:0}",
+        ] as LinkedHashMap,
+        'net/minecraftforge/fml/earlydisplay/': [
+            'Specification-Title':      'FMLEarlyDisplay',
+            'Specification-Vendor':     'Forge Development LLC',
+            'Specification-Version':    '1',
+            'Implementation-Title':     'FML Early Display',
+            'Implementation-Version':   '1.0',
+            'Implementation-Vendor':    'Forge'
+        ] as LinkedHashMap
+    ]
+}
+
+jar.doFirst {
+    MANIFESTS.each { pkg, values ->
+        if (pkg == '')
+            manifest.attributes(values)
+        else
+            manifest.attributes(values, pkg)
+    }
+}
+
+tasks.withType(JavaCompile) {
+    options.compilerArgs << '-Xlint:unchecked'
+}
+
+license {
+    header = rootProject.file('LICENSE-header.txt')
+    include 'net/minecraftforge/'
+}
+
+publishing.publications.mavenJava(MavenPublication) {
+    from components.java
+}

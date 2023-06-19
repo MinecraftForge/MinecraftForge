@@ -8,6 +8,8 @@ package net.minecraftforge.fml.loading.targets;
 import com.mojang.logging.LogUtils;
 import cpw.mods.modlauncher.api.ILaunchHandlerService;
 import cpw.mods.modlauncher.api.ITransformingClassLoaderBuilder;
+import cpw.mods.modlauncher.api.ServiceRunner;
+import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.fml.loading.LogMarkers;
 import net.minecraftforge.api.distmarker.Dist;
 import org.apache.logging.log4j.core.LoggerContext;
@@ -83,5 +85,29 @@ public abstract class CommonLaunchHandler implements ILaunchHandlerService {
         //final var explodedTargets = ((Map<String, List<ExplodedDirectoryLocator.ExplodedMod>>)arguments).computeIfAbsent("explodedTargets", a -> new ArrayList<>());
         //modClassPaths.forEach((modlabel,paths) -> explodedTargets.add(new ExplodedDirectoryLocator.ExplodedMod(modlabel, paths)));
         return modClassPaths;
+    }
+
+    @Override
+    public ServiceRunner launchService(final String[] arguments, final ModuleLayer gameLayer) {
+        FMLLoader.beforeStart(gameLayer);
+        return makeService(arguments, gameLayer);
+    }
+
+    protected abstract ServiceRunner makeService(final String[] arguments, final ModuleLayer gameLayer);
+
+    protected void clientService(final String[] arguments, final ModuleLayer layer) throws Throwable {
+        runTarget("net.minecraft.client.main.Main", arguments, layer);
+    }
+
+    protected void serverService(final String[] arguments, final ModuleLayer layer) throws Throwable {
+        runTarget("net.minecraft.server.Main", arguments, layer);
+    }
+
+    protected void dataService(final String[] arguments, final ModuleLayer layer) throws Throwable {
+        runTarget("net.minecraft.data.Main", arguments, layer);
+    }
+
+    protected void runTarget(final String target, final String[] arguments, final ModuleLayer layer) throws Throwable {
+        Class.forName(layer.findModule("minecraft").orElseThrow(),target).getMethod("main", String[].class).invoke(null, (Object)arguments);
     }
 }

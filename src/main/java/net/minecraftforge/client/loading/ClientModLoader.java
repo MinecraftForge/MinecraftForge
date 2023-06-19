@@ -25,6 +25,7 @@ import net.minecraft.server.packs.repository.PackRepository;
 import net.minecraft.world.level.DataPackConfig;
 import net.minecraftforge.event.AddPackFindersEvent;
 import net.minecraftforge.fml.*;
+import net.minecraftforge.fml.loading.ImmediateWindowHandler;
 import net.minecraftforge.internal.BrandingControl;
 import net.minecraftforge.logging.CrashReportExtender;
 import net.minecraftforge.common.util.LogicalSidedProvider;
@@ -59,7 +60,6 @@ public class ClientModLoader
     private static Minecraft mc;
     private static boolean loadingComplete;
     private static LoadingFailedException error;
-    private static EarlyLoaderGUI earlyLoaderGUI;
 
     private static class SpacedRunnable implements Runnable {
         static final long NANO_SLEEP_TIME = TimeUnit.MILLISECONDS.toNanos(50);
@@ -87,8 +87,7 @@ public class ClientModLoader
         ClientModLoader.mc = minecraft;
         LogicalSidedProvider.setClient(()->minecraft);
         LanguageHook.loadForgeAndMCLangs();
-        earlyLoaderGUI = new EarlyLoaderGUI(minecraft);
-        createRunnableWithCatch(()->ModLoader.get().gatherAndInitializeMods(ModWorkManager.syncExecutor(), ModWorkManager.parallelExecutor(), new SpacedRunnable(earlyLoaderGUI::renderTick))).run();
+        createRunnableWithCatch(()->ModLoader.get().gatherAndInitializeMods(ModWorkManager.syncExecutor(), ModWorkManager.parallelExecutor(), new SpacedRunnable(ImmediateWindowHandler::renderTick))).run();
         if (error == null) {
             ResourcePackLoader.loadResourcePacks(defaultResourcePacks, ClientModLoader::buildPackFinder);
             ModLoader.get().postEvent(new AddPackFindersEvent(PackType.CLIENT_RESOURCES, defaultResourcePacks::addPackFinder));
@@ -116,13 +115,12 @@ public class ClientModLoader
     }
 
     private static void startModLoading(ModWorkManager.DrivenExecutor syncExecutor, Executor parallelExecutor) {
-        earlyLoaderGUI.handleElsewhere();
-        createRunnableWithCatch(() -> ModLoader.get().loadMods(syncExecutor, parallelExecutor, new SpacedRunnable(earlyLoaderGUI::renderTick))).run();
+        createRunnableWithCatch(() -> ModLoader.get().loadMods(syncExecutor, parallelExecutor, new SpacedRunnable(ImmediateWindowHandler::renderTick))).run();
     }
 
     private static void finishModLoading(ModWorkManager.DrivenExecutor syncExecutor, Executor parallelExecutor)
     {
-        createRunnableWithCatch(() -> ModLoader.get().finishMods(syncExecutor, parallelExecutor, new SpacedRunnable(earlyLoaderGUI::renderTick))).run();
+        createRunnableWithCatch(() -> ModLoader.get().finishMods(syncExecutor, parallelExecutor, new SpacedRunnable(ImmediateWindowHandler::renderTick))).run();
         loading = false;
         loadingComplete = true;
         // reload game settings on main thread
@@ -172,9 +170,6 @@ public class ClientModLoader
         }
     }
 
-    public static void renderProgressText() {
-        earlyLoaderGUI.renderFromGUI();
-    }
     public static boolean isLoading()
     {
         return loading;

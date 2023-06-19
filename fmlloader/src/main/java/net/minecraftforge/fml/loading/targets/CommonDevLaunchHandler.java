@@ -6,6 +6,7 @@
 package net.minecraftforge.fml.loading.targets;
 
 import cpw.mods.jarhandling.SecureJar;
+import cpw.mods.modlauncher.api.ServiceRunner;
 import net.minecraftforge.fml.loading.FileUtils;
 
 import java.io.File;
@@ -127,4 +128,12 @@ public abstract class CommonDevLaunchHandler extends CommonLaunchHandler {
         // Generate a time-based random number, to mimic how n.m.client.Main works
         return Long.toString(System.nanoTime() % (int) Math.pow(10, length));
     }
+
+    @Override
+    protected ServiceRunner makeService(final String[] arguments, final ModuleLayer gameLayer) {
+        var args = preLaunch(arguments, gameLayer);
+        return ()->devService(args, gameLayer);
+    }
+
+    abstract void devService(final String[] arguments, final ModuleLayer gameLayer) throws Throwable;
 }

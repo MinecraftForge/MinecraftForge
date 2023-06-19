@@ -360,7 +360,6 @@ public class GameData
         ordered.addAll(keySet.stream().sorted(ResourceLocation::compareNamespaced).toList());
 
         RuntimeException aggregate = new RuntimeException();
-
         for (ResourceLocation rootRegistryName : ordered)
         {
             try
@@ -386,7 +385,6 @@ public class GameData
                 aggregate.addSuppressed(t);
             }
         }
-
         if (aggregate.getSuppressed().length > 0)
         {
             LOGGER.fatal("Failed to register some entries, see suppressed exceptions for details", aggregate);
@@ -771,9 +769,7 @@ public class GameData
     }
 
     private static void fireRemapEvent(final Map<ResourceLocation, Map<ResourceLocation, IdMappingEvent.IdRemapping>> remaps, final boolean isFreezing) {
-        StartupMessageManager.modLoaderConsumer().ifPresent(s->s.accept("Remapping mod data"));
         MinecraftForge.EVENT_BUS.post(new IdMappingEvent(remaps, isFreezing));
-        StartupMessageManager.modLoaderConsumer().ifPresent(s->s.accept("Remap complete"));
     }
 
     //Has to be split because of generics, Yay!

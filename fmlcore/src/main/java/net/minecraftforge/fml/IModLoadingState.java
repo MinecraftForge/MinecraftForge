@@ -7,12 +7,14 @@ package net.minecraftforge.fml;
 
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.event.IModBusEvent;
+import net.minecraftforge.fml.loading.progress.ProgressMeter;
 
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.ToIntFunction;
 
 /**
  * A mod loading state. During mod loading, the mod loader transitions between states in a defined sorted list of states,
@@ -45,24 +47,32 @@ public interface IModLoadingState {
     Function<ModList, String> message();
 
     /**
+     * @return a function that computes the size of this transition based on the size of the modlist.
+     * Used to compute progress.
+     */
+    ToIntFunction<ModList> size();
+
+    /**
      * {@return an optional runnable, which runs before starting the transition from this state to the next}
-     * @see #buildTransition(Executor, Executor, Function, Function)
+     * @see #buildTransition(Executor, Executor, ProgressMeter, Function, Function)
      */
     Optional<Consumer<ModList>> inlineRunnable();
 
     /**
      * Builds the transition task for this state with a blank pre-sync and post-sync task.
      *
-     * @param syncExecutor a synchronous executor
+     * @param <T>              a type of event fired on the mod-specific event bus
+     * @param syncExecutor     a synchronous executor
      * @param parallelExecutor a parallel executor
-     * @param <T> a type of event fired on the mod-specific event bus
+     * @param progressBar      a progress meter for tracking progress
      * @return a transition task for this state
-     * @see #buildTransition(Executor, Executor, Function, Function)
+     * @see #buildTransition(Executor, Executor, ProgressMeter, Function, Function)
      */
     default <T extends Event & IModBusEvent>
     Optional<CompletableFuture<Void>> buildTransition(final Executor syncExecutor,
-                                                      final Executor parallelExecutor) {
-        return buildTransition(syncExecutor, parallelExecutor,
+                                                      final Executor parallelExecutor,
+                                                      final ProgressMeter progressBar) {
+        return buildTransition(syncExecutor, parallelExecutor, progressBar,
                 e -> CompletableFuture.runAsync(() -> {}, e),
                 e -> CompletableFuture.runAsync(() -> {}, e));
     }
@@ -71,16 +81,18 @@ public interface IModLoadingState {
      * Builds the transition task for this state. The pre-sync and post-sync task functions allow the transition builder
      * to run these tasks on the same executor as the actual event dispatch and pre/post hooks.
      *
-     * @param syncExecutor a synchronous executor
+     * @param <T>              a type of event fired on the mod-specific event bus
+     * @param syncExecutor     a synchronous executor
      * @param parallelExecutor a parallel executor
-     * @param preSyncTask a function which returns a task to run before event pre-dispatch hook
-     * @param postSyncTask a function which returns a task to run after event post-dispatch hook
-     * @param <T> a type of event fired on the mod-specific event bus
+     * @param progressBar      a progress meter for tracking progress
+     * @param preSyncTask      a function which returns a task to run before event pre-dispatch hook
+     * @param postSyncTask     a function which returns a task to run after event post-dispatch hook
      * @return a transition task for this state
      */
     <T extends Event & IModBusEvent>
     Optional<CompletableFuture<Void>> buildTransition(final Executor syncExecutor,
                                                       final Executor parallelExecutor,
+                                                      final ProgressMeter progressBar,
                                                       final Function<Executor, CompletableFuture<Void>> preSyncTask,
                                                       final Function<Executor, CompletableFuture<Void>> postSyncTask);
 }

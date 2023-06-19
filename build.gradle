@@ -568,7 +568,7 @@ project(':fmlonly') {
 
     ext {
         MCP_ARTIFACT = project(':mcp').mcp.config.get()
-        PACKED_DEPS = [':fmlcore:jar', ':fmlloader:jar', ':javafmllanguage:jar', ':lowcodelanguage:jar', ':mclanguage:jar']
+        PACKED_DEPS = [':fmlcore:jar', ':fmlloader:jar', ':fmlearlydisplay:jar', ':javafmllanguage:jar', ':lowcodelanguage:jar', ':mclanguage:jar']
         MAVEN_PATH = "${group.replace('.', '/')}/${project.name}/${VERSION}"
     }
 
@@ -596,6 +596,7 @@ project(':fmlonly') {
     dependencies {
         implementation project(':fmlcore')
         implementation project(':fmlloader')
+        implementation project(':fmlearlydisplay')
         implementation project(':javafmllanguage')
         implementation project(':lowcodelanguage')
         implementation project(':mclanguage')
@@ -632,7 +633,7 @@ project(':fmlonly') {
     sharedFmlonlyForge.call(project)
 
     task launcherJson(type: LauncherJson) {
-        packedDependencies = [':fmlloader:jar']
+        packedDependencies = [':fmlloader:jar',':fmlearlydisplay:jar']
         doFirst {
             def fmlonly_client = project(':fmlonly').patcher.runs.fmlonly_client
             json = [
@@ -931,7 +932,7 @@ project(':forge') {
         // Essentially, the same as the old, except dropping the first number, and the builds are no longer unique.
         MCP_ARTIFACT = project(':mcp').mcp.config.get()
         VERSION_JSON = project(':mcp').file('build/mcp/downloadJson/version.json')
-        PACKED_DEPS = [':fmlcore:jar', ':fmlloader:jar', ':javafmllanguage:jar', ':lowcodelanguage:jar', ':mclanguage:jar']
+        PACKED_DEPS = [':fmlcore:jar', ':fmlloader:jar', ':fmlearlydisplay:jar', ':javafmllanguage:jar', ':lowcodelanguage:jar', ':mclanguage:jar']
         MAVEN_PATH = "${group.replace('.', '/')}/${project.name}/${VERSION}"
     }
 
@@ -951,6 +952,7 @@ project(':forge') {
         testImplementation 'org.hamcrest:hamcrest-all:1.3' // needs advanced matching for list order
         implementation project(':fmlcore')
         implementation project(':fmlloader')
+        implementation project(':fmlearlydisplay')
         implementation project(':javafmllanguage')
         implementation project(':lowcodelanguage')
         implementation project(':mclanguage')
@@ -1328,7 +1330,7 @@ project(':forge') {
     }
 
     task launcherJson(type: LauncherJson) {
-        packedDependencies = [':fmlloader:jar']
+        packedDependencies = [':fmlloader:jar',':fmlearlydisplay:jar']
         doFirst {
             def forge_client = project(':forge').patcher.runs.forge_client
             json = [

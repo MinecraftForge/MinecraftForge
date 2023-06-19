@@ -57,6 +57,9 @@ This software contains a partial repackaging of javaxdelta, a BSD licensed progr
 binary differences and applying them, sourced from the subversion at http://sourceforge.net/projects/javaxdelta/
 authored by genman, heikok, pivot.
 The only changes are to replace some Trove collection types with standard Java collections, and repackaged.
+
+This software includes the Monocraft font from https://github.com/IdreesInc/Monocraft/ for use in the early loading
+display.
 =========================================================================
 
 

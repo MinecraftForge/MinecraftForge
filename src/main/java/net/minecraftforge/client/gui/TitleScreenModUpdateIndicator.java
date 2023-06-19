@@ -50,7 +50,7 @@ public class TitleScreenModUpdateIndicator extends Screen
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick)
     {
-        if (showNotification == null || !showNotification.shouldDraw() || !FMLConfig.runVersionCheck())
+        if (showNotification == null || !showNotification.shouldDraw() || !FMLConfig.getBoolConfigValue(FMLConfig.ConfigValue.VERSION_CHECK))
         {
             return;
         }

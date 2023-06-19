@@ -1,8 +1,21 @@
-# does the splashscreen run
-splashscreen = true
-# max threads for parallel loading : -1 uses Runtime#availableProcessors
-maxThreads = -1
-# Enable forge global version checking
+#Enable forge global version checking
 versionCheck = true
-# Disables Optimized DFU client-side.
+#Disables Optimized DFU client-side
 disableOptimizedDFU = true
+#Default config path for servers
+defaultConfigPath = "defaultconfigs"
+#Max threads for early initialization parallelism, -1 is based on processor count
+maxThreads = -1
+#should we show the early splashscreen
+splashscreen = true
+#Early window provider (default fmlearlywindow)
+earlyWindowProvider = "fmlearlywindow"
+#Initial window height
+earlyWindowHeight = 480
+#Initial window width
+earlyWindowWidth = 854
+# Start the early window as "maximized"
+earlyWindowMaximized = false
+# The rendering scale of the early window
+earlyWindowFBScale = 1
+
