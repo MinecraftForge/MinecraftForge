@@ -87,7 +87,7 @@ ext {
     INSTALLER_TOOLS = 'net.minecraftforge:installertools:1.3.0'
     JAR_SPLITTER = 'net.minecraftforge:jarsplitter:1.1.4'
     FART = 'net.minecraftforge:ForgeAutoRenamingTool:0.1.22:all'
-    MIN_TAG_FOR_CHANGELOG = '41.0'
+    MIN_TAG_FOR_CHANGELOG = '46.0'
 }
 
 println('Version: ' + VERSION +
@@ -885,8 +885,8 @@ project(':forge') {
     apply plugin: 'net.minecraftforge.gradle.patcher'
     apply plugin: 'org.cadixdev.licenser'
 
-    applyPatches { 
-		verbose = true 
+    applyPatches {
+		verbose = true
 		//failOnError = false
 	}
 
