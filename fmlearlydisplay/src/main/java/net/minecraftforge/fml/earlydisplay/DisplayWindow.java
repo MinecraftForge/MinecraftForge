@@ -255,7 +255,11 @@ public class DisplayWindow implements ImmediateWindowProvider {
      */
     public Runnable start(@Nullable String mcVersion, final String forgeVersion) {
         initWindow(mcVersion);
-        renderScheduler = Executors.newSingleThreadScheduledExecutor();
+        renderScheduler = Executors.newSingleThreadScheduledExecutor(r -> {
+            final var thread = Executors.defaultThreadFactory().newThread(r);
+            thread.setDaemon(true);
+            return thread;
+        });
         renderScheduler.schedule(() -> initRender(mcVersion, forgeVersion), 1, TimeUnit.MILLISECONDS);
         return this::periodicTick;
     }
