@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/entity/animal/camel/Camel.java
++++ b/net/minecraft/world/entity/animal/camel/Camel.java
+@@ -307,7 +_,7 @@
+    }
+ 
+    protected void m_7355_(BlockPos p_252056_, BlockState p_251457_) {
+-      if (p_251457_.m_60827_() == SoundType.f_56746_) {
++      if (p_251457_.getSoundType(m_9236_(), p_252056_, this) == SoundType.f_56746_) {
+          this.m_5496_(SoundEvents.f_244016_, 1.0F, 1.0F);
+       } else {
+          this.m_5496_(SoundEvents.f_244506_, 1.0F, 1.0F);

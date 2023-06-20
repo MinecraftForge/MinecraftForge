@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/entity/animal/sniffer/Sniffer.java
++++ b/net/minecraft/world/entity/animal/sniffer/Sniffer.java
+@@ -277,7 +_,7 @@
+             }
+ 
+             if (this.f_19797_ % 10 == 0) {
+-               this.m_9236_().m_7785_(this.m_20185_(), this.m_20186_(), this.m_20189_(), blockstate.m_60827_().m_56778_(), this.m_5720_(), 0.5F, 0.5F, false);
++               this.m_9236_().m_7785_(this.m_20185_(), this.m_20186_(), this.m_20189_(), blockstate.getSoundType(m_9236_(), blockpos.m_7495_(), this).m_56778_(), this.m_5720_(), 0.5F, 0.5F, false);
+             }
+          }
+       }
