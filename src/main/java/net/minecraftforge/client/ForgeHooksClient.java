@@ -74,6 +74,7 @@ import net.minecraft.network.chat.ChatType;
 import net.minecraft.network.chat.ChatTypeDecoration;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.ComponentContents;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.network.chat.PlayerChatMessage;
 import net.minecraft.network.chat.Style;
@@ -1078,7 +1079,7 @@ public class ForgeHooksClient
         {
             return event.getTooltipElements().stream()
                     .flatMap(either -> either.map(
-                            text -> font.split(text, tooltipTextWidthF).stream().map(ClientTooltipComponent::create),
+                            text -> splitLine(text, font, tooltipTextWidthF),
                             component -> Stream.of(ClientTooltipComponent.create(component))
                     ))
                     .toList();
@@ -1089,6 +1090,15 @@ public class ForgeHooksClient
                         ClientTooltipComponent::create
                 ))
                 .toList();
+    }
+
+    private static Stream<ClientTooltipComponent> splitLine(FormattedText text, Font font, int maxWidth)
+    {
+        if (text instanceof Component component && component.getString().isEmpty())
+        {
+            return Stream.of(component.getVisualOrderText()).map(ClientTooltipComponent::create);
+        }
+        return font.split(text, maxWidth).stream().map(ClientTooltipComponent::create);
     }
 
     public static Comparator<ParticleRenderType> makeParticleRenderTypeComparator(List<ParticleRenderType> renderOrder)
