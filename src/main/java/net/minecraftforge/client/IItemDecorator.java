@@ -24,7 +24,5 @@ public interface IItemDecorator
      * The RenderState during this call will be: enableTexture, enableDepthTest, enableBlend and defaultBlendFunc
      * @return true if you have modified the RenderState and it has to be reset for other ItemDecorators
      */
-    default boolean render(GuiGraphics guiGraphics, Font font, ItemStack stack, int xOffset, int yOffset) {
-        return false;
-    }
+    boolean render(GuiGraphics guiGraphics, Font font, ItemStack stack, int xOffset, int yOffset);
 }
