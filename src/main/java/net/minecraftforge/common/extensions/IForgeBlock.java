@@ -30,6 +30,7 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.levelgen.feature.configurations.TreeConfiguration;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.MapColor;
+import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.level.pathfinder.BlockPathTypes;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.core.Direction;
@@ -970,5 +971,25 @@ public interface IForgeBlock
     default BlockState getAppearance(BlockState state, BlockAndTintGetter level, BlockPos pos, Direction side, @Nullable BlockState queryState, @Nullable BlockPos queryPos)
     {
         return state;
+    }
+
+    /**
+     * Returns the reaction of the block when pushed or pulled by a piston. This method should be not called directly, instead via {@link BlockState#getPistonPushReaction()}.
+     * <ul>
+     *     <li>NORMAL: is pushable and pullable by sticky pistons</li>
+     *     <li>DESTROY: is being destroyed on pushing and pulling</li>
+     *     <li>BLOCK: is not being able to be moved</li>
+     *     <li>IGNORE: only usable by entities</li>
+     *     <li>PUSH_ONLY: can only be pushed, blocks on trying to be pulled</li>
+     *     <li>{@code null}: use the PistonPushReaction from the BlockBehaviour.Properties passed into the Block Constructor</li>
+     * </ul>
+     *
+     * @param state The state of this block
+     * @return the PushReaction of this state or {@code null} if the one passed into the block properties should be used
+     */
+    @Nullable
+    default PushReaction getPistonPushReaction(BlockState state)
+    {
+        return null;
     }
 }
