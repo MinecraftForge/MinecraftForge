@@ -6,7 +6,6 @@
 package net.minecraftforge.fml.core;
 
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.IModLoadingState;
 import net.minecraftforge.fml.IModStateProvider;
 import net.minecraftforge.fml.ModLoadingPhase;
@@ -21,6 +20,7 @@ import net.minecraftforge.fml.event.lifecycle.FMLDedicatedServerSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
+import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.fml.loading.FMLPaths;
 
 import java.util.List;
@@ -63,8 +63,10 @@ public class ModStateProvider implements IModStateProvider {
     private final ModLoadingState CONFIG_LOAD = ModLoadingState.withInline("CONFIG_LOAD", "",
             ModLoadingPhase.LOAD,
             ml -> {
-                DistExecutor.unsafeRunWhenOn(Dist.CLIENT,
-                        () -> () -> ConfigTracker.INSTANCE.loadConfigs(ModConfig.Type.CLIENT, FMLPaths.CONFIGDIR.get()));
+                if(FMLEnvironment.dist.isClient())
+                {
+                    ConfigTracker.INSTANCE.loadConfigs(ModConfig.Type.CLIENT, FMLPaths.CONFIGDIR.get());
+                }
                 ConfigTracker.INSTANCE.loadConfigs(ModConfig.Type.COMMON, FMLPaths.CONFIGDIR.get());
             });
 
@@ -89,8 +91,7 @@ public class ModStateProvider implements IModStateProvider {
      */
     private final ModLoadingState SIDED_SETUP = ModLoadingState.withTransition("SIDED_SETUP", "COMMON_SETUP",
             ModLoadingPhase.LOAD,
-            new ParallelTransition(ModLoadingStage.SIDED_SETUP,
-                    DistExecutor.unsafeRunForDist(()->()-> FMLClientSetupEvent.class, ()->()-> FMLDedicatedServerSetupEvent.class)));
+            new ParallelTransition(ModLoadingStage.SIDED_SETUP, FMLEnvironment.dist.isClient() ? FMLClientSetupEvent.class : FMLDedicatedServerSetupEvent.class));
 
     /**
      * First {@linkplain ModLoadingPhase#COMPLETE completion state}, for enqueuing {@link net.minecraftforge.fml.InterModComms}

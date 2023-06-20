@@ -29,10 +29,10 @@ import net.minecraftforge.client.model.data.ModelData;
 import net.minecraftforge.common.util.TransformationHelper;
 import net.minecraftforge.event.CreativeModeTabEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.registries.RegistryObject;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.Nullable;
@@ -46,12 +46,14 @@ public class TRSRTransformerTest {
     private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MODID);
 
     private static final RegistryObject<Block> TEST_BLOCK = BLOCKS.register("test", () -> new Block(Block.Properties.of(Material.STONE)));
-    @SuppressWarnings("unused")
     private static final RegistryObject<Item> TEST_ITEM = ITEMS.register("test", () -> new BlockItem(TEST_BLOCK.get(), new Item.Properties()));
 
     public TRSRTransformerTest() {
         final IEventBus mod = FMLJavaModLoadingContext.get().getModEventBus();
-        DistExecutor.runWhenOn(Dist.CLIENT, () -> () -> mod.addListener(this::onModelBake));
+        if (FMLEnvironment.dist.isClient())
+        {
+            mod.addListener(EventHandler::onModelBake);
+        }
         BLOCKS.register(mod);
         ITEMS.register(mod);
         mod.addListener(this::addCreative);
@@ -63,15 +65,18 @@ public class TRSRTransformerTest {
             event.accept(TEST_ITEM);
     }
 
-    public void onModelBake(ModelEvent.ModifyBakingResult e) {
-        for (ResourceLocation id : e.getModels().keySet()) {
-            if (MODID.equals(id.getNamespace()) && "test".equals(id.getPath())) {
-                e.getModels().put(id, new MyBakedModel(e.getModels().get(id)));
+    public static class EventHandler 
+    {
+        public static void onModelBake(ModelEvent.ModifyBakingResult e) {
+            for (ResourceLocation id : e.getModels().keySet()) {
+                if (MODID.equals(id.getNamespace()) && "test".equals(id.getPath())) {
+                    e.getModels().put(id, new MyBakedModel(e.getModels().get(id)));
+                }
             }
         }
     }
 
-    public class MyBakedModel implements IDynamicBakedModel {
+    public static class MyBakedModel implements IDynamicBakedModel {
         private final BakedModel base;
 
         public MyBakedModel(BakedModel base) {

@@ -32,11 +32,11 @@ import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fluids.FluidInteractionRegistry;
 import net.minecraftforge.fluids.FluidType;
 import net.minecraftforge.fluids.ForgeFlowingFluid;
-import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
@@ -175,7 +175,10 @@ public class FluidTypeTest
             modEventBus.addListener(this::commonSetup);
             modEventBus.addListener(this::addCreative);
 
-            DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> new FluidTypeTestClient(modEventBus));
+            if (FMLEnvironment.dist.isClient())
+            {
+                FluidTypeTestClient.register(modEventBus);
+            }
         }
     }
 
@@ -200,19 +203,19 @@ public class FluidTypeTest
 
     private static class FluidTypeTestClient
     {
-        private FluidTypeTestClient(IEventBus modEventBus)
+        private static void register(IEventBus modEventBus)
         {
-            modEventBus.addListener(this::clientSetup);
-            modEventBus.addListener(this::registerBlockColors);
+            modEventBus.addListener(FluidTypeTestClient::clientSetup);
+            modEventBus.addListener(FluidTypeTestClient::registerBlockColors);
         }
 
-        private void clientSetup(FMLClientSetupEvent event)
+        private static void clientSetup(FMLClientSetupEvent event)
         {
             Stream.of(TEST_FLUID, TEST_FLUID_FLOWING).map(RegistryObject::get)
                     .forEach(fluid -> ItemBlockRenderTypes.setRenderLayer(fluid, RenderType.translucent()));
         }
 
-        private void registerBlockColors(RegisterColorHandlersEvent.Block event)
+        private static void registerBlockColors(RegisterColorHandlersEvent.Block event)
         {
             event.register((state, getter, pos, index) ->
             {

@@ -14,10 +14,7 @@ import com.mojang.logging.LogUtils;
 
 import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RegisterShadersEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLEnvironment;
@@ -35,14 +32,16 @@ public class ShaderResourcesTest
         if (ENABLE)
         {
             LOGGER = LogUtils.getLogger();
-
-            DistExecutor.unsafeRunWhenOn(Dist.CLIENT,() -> ClientInit::new);
+            if (FMLEnvironment.dist.isClient())
+            {
+               ClientInit.register();
+            }
         }
     }
 
     private class ClientInit
     {
-        public ClientInit()
+        private static void register()
         {
             final var modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 

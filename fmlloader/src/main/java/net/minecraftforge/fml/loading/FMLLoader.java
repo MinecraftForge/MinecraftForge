@@ -200,6 +200,9 @@ public class FMLLoader
         accessTransformer.offerResource(atPath, modName.getFileName());
     }
 
+    /**
+     * Prefer {@link FMLEnvironment#dist}
+     */
     public static Dist getDist()
     {
         return dist;
