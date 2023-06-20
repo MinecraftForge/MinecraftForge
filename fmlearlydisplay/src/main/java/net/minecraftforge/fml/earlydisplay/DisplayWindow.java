@@ -120,16 +120,19 @@ public class DisplayWindow implements ImmediateWindowProvider {
         FMLConfig.updateConfig(FMLConfig.ConfigValue.EARLY_WINDOW_WIDTH, winWidth);
         FMLConfig.updateConfig(FMLConfig.ConfigValue.EARLY_WINDOW_HEIGHT, winHeight);
         fbScale = FMLConfig.getIntConfigValue(FMLConfig.ConfigValue.EARLY_WINDOW_FBSCALE);
-        try {
-            var optionLines = Files.readAllLines(FMLPaths.GAMEDIR.get().resolve(Paths.get("options.txt")));
-            var options = optionLines.stream().map(l->l.split(":")).filter(a->a.length == 2).collect(Collectors.toMap(a->a[0], a->a[1]));
-            var colourScheme = Boolean.parseBoolean(options.getOrDefault("darkMojangStudiosBackground", "false"));
-            this.colourScheme = colourScheme ? ColourScheme.BLACK : ColourScheme.RED;
-        } catch (IOException ioe) {
-            // No options
-            this.colourScheme = ColourScheme.RED; // default to red colourscheme
+        if (System.getenv("FML_EARLY_WINDOW_DARK")!= null) {
+            this.colourScheme = ColourScheme.BLACK;
+        } else {
+            try {
+                var optionLines = Files.readAllLines(FMLPaths.GAMEDIR.get().resolve(Paths.get("options.txt")));
+                var options = optionLines.stream().map(l -> l.split(":")).filter(a -> a.length == 2).collect(Collectors.toMap(a -> a[0], a -> a[1]));
+                var colourScheme = Boolean.parseBoolean(options.getOrDefault("darkMojangStudiosBackground", "false"));
+                this.colourScheme = colourScheme ? ColourScheme.BLACK : ColourScheme.RED;
+            } catch (IOException ioe) {
+                // No options
+                this.colourScheme = ColourScheme.RED; // default to red colourscheme
+            }
         }
-
         this.maximized = parsed.has(maximizedopt) || FMLConfig.getBoolConfigValue(FMLConfig.ConfigValue.EARLY_WINDOW_MAXIMIZED);
 
         var forgeVersion = parsed.valueOf(forgeversionopt);
