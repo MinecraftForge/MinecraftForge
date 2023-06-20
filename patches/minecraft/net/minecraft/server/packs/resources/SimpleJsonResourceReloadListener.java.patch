@@ -8,4 +8,39 @@
 +   protected ResourceLocation getPreparedPath(ResourceLocation rl) {
 +      return new ResourceLocation(rl.m_135827_(), this.f_10765_ + "/" + rl.m_135815_() + ".json");
 +   }
++
++   @Override
++   protected void preApply(Map<ResourceLocation, JsonElement> data, ResourceManager manager, ProfilerFiller filler) {
++      final String memberName = getConditionsMemberName();
++      if (memberName == null) {
++         f_10762_.debug("Skipped condition checking for resources of type '{}', as they do not support conditions.", f_10765_);
++         return;
++      }
++      final var replacements = new java.util.HashMap<ResourceLocation, JsonElement>();
++      final var defaultData = getDefaultData();
++      final boolean hasDefault = defaultData != null;
++      final var itr = data.entrySet().iterator();
++      while (itr.hasNext()) {
++         final var entry = itr.next();
++         if (entry.getValue().isJsonObject() && !net.minecraftforge.common.crafting.CraftingHelper.processConditions(entry.getValue().getAsJsonObject(), memberName, conditionContext)) {
++            if (hasDefault) replacements.put(entry.getKey(), defaultData);
++            else itr.remove();
++            f_10762_.debug("Skipped loading resource of type '{}', at path {}, as its conditions were not met.", f_10765_, entry.getKey());
++         }
++      }
++      data.putAll(replacements);
++   }
++
++   /**
++    * {@return the name of the array to parse conditions from} {@code null} if this reload listener does not support conditions.
++    */
++   @org.jetbrains.annotations.Nullable protected String getConditionsMemberName() { return net.minecraftforge.common.crafting.CraftingHelper.DEFAULT_CONDITIONS_MEMBER_NAME; }
++
++   /**
++    * {@return the element to replace resources whose conditions aren't met with}
++    */
++   @org.jetbrains.annotations.Nullable protected JsonElement getDefaultData() { return null; }
++
++   protected net.minecraftforge.common.crafting.conditions.ICondition.IContext conditionContext;
++   @org.jetbrains.annotations.ApiStatus.Internal public final void setConditionContext(net.minecraftforge.common.crafting.conditions.ICondition.IContext context) { this.conditionContext = context; }
  }

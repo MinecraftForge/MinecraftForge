@@ -43,11 +43,12 @@
        }
  
        for(int j = 0; j < this.f_79110_.length; ++j) {
-@@ -179,6 +_,48 @@
+@@ -179,10 +_,54 @@
        return new LootTable.Builder();
     }
  
 +   //======================== FORGE START =============================================
++   private net.minecraftforge.common.crafting.conditions.ICondition[] conditions;
 +   private boolean isFrozen = false;
 +   public void freeze() {
 +      this.isFrozen = true;
@@ -92,7 +93,29 @@
     public static class Builder implements FunctionUserBuilder<LootTable.Builder> {
        private final List<LootPool> f_79156_ = Lists.newArrayList();
        private final List<LootItemFunction> f_79157_ = Lists.newArrayList();
-@@ -233,7 +_,7 @@
+       private LootContextParamSet f_79158_ = LootTable.f_79106_;
++      private net.minecraftforge.common.crafting.conditions.ICondition[] conditions;
+ 
+       public LootTable.Builder m_79161_(LootPool.Builder p_79162_) {
+          this.f_79156_.add(p_79162_.m_79082_());
+@@ -203,8 +_,15 @@
+          return this;
+       }
+ 
++      public LootTable.Builder withConditions(net.minecraftforge.common.crafting.conditions.ICondition... conditions) {
++         this.conditions = conditions;
++         return this;
++      }
++
+       public LootTable m_79167_() {
+-         return new LootTable(this.f_79158_, this.f_79156_.toArray(new LootPool[0]), this.f_79157_.toArray(new LootItemFunction[0]));
++         final LootTable table = new LootTable(this.f_79158_, this.f_79156_.toArray(new LootPool[0]), this.f_79157_.toArray(new LootItemFunction[0]));
++         table.conditions = conditions;
++         return table;
+       }
+    }
+ 
+@@ -233,12 +_,15 @@
              }
           }
  
@@ -101,3 +124,11 @@
              jsonobject.add("pools", p_79179_.serialize(p_79177_.f_79109_));
           }
  
+          if (!ArrayUtils.isEmpty((Object[])p_79177_.f_79110_)) {
+             jsonobject.add("functions", p_79179_.serialize(p_79177_.f_79110_));
++         }
++         if (!ArrayUtils.isEmpty(p_79177_.conditions)) {
++            jsonobject.add(net.minecraftforge.common.crafting.CraftingHelper.DEFAULT_CONDITIONS_MEMBER_NAME, net.minecraftforge.common.crafting.CraftingHelper.serialize(p_79177_.conditions));
+          }
+ 
+          return jsonobject;

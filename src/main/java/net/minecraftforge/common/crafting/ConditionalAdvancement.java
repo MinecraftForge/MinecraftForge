@@ -36,16 +36,14 @@ public class ConditionalAdvancement
     @Nullable
     public static JsonObject processConditional(JsonObject json, ICondition.IContext context) {
         JsonArray entries = GsonHelper.getAsJsonArray(json, "advancements", null);
-        if (entries == null)
-        {
-            return CraftingHelper.processConditions(json, "conditions", context) ? json : null;
-        }
+        if (entries == null) return json;
 
         int idx = 0;
         for (JsonElement ele : entries)
         {
             if (!ele.isJsonObject())
                 throw new JsonSyntaxException("Invalid advancement entry at index " + idx + " Must be JsonObject");
+            // TODO - 1.20: rename to forge:conditions
             if (CraftingHelper.processConditions(GsonHelper.getAsJsonArray(ele.getAsJsonObject(), "conditions"), context))
                 return GsonHelper.getAsJsonObject(ele.getAsJsonObject(), "advancement");
             idx++;

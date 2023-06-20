@@ -5,6 +5,7 @@
 
 package net.minecraftforge.common;
 
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.DetectedVersion;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BiomeColors;
@@ -26,6 +27,7 @@ import net.minecraft.commands.Commands;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.RangedAttribute;
 import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.BlockGetter;
@@ -40,6 +42,7 @@ import net.minecraft.util.ExtraCodecs;
 import net.minecraft.core.RegistryCodecs;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.pathfinder.BlockPathTypes;
+import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.minecraftforge.common.crafting.PartialNBTIngredient;
@@ -53,6 +56,7 @@ import net.minecraftforge.common.data.VanillaSoundDefinitionsProvider;
 import net.minecraftforge.common.extensions.IForgeEntity;
 import net.minecraftforge.common.extensions.IForgePlayer;
 import net.minecraftforge.common.loot.CanToolPerformAction;
+import net.minecraftforge.common.loot.IGlobalLootModifier;
 import net.minecraftforge.common.loot.LootTableIdCondition;
 import net.minecraftforge.common.world.BiomeModifier;
 import net.minecraftforge.common.world.ForgeBiomeModifiers.AddFeaturesBiomeModifier;
@@ -117,6 +121,7 @@ import org.apache.logging.log4j.MarkerManager;
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
@@ -264,6 +269,22 @@ public class ForgeMod
      * Can be used in a holderset object with {@code { "type": "forge:not", "value": holderset }}</p>
      */
     public static final RegistryObject<HolderSetType> NOT_HOLDER_SET = HOLDER_SET_TYPES.register("not", () -> NotHolderSet::codec);
+
+    private static final DeferredRegister<Codec<? extends IGlobalLootModifier>> LOOT_MODIFIERS = DeferredRegister.create(ForgeRegistries.Keys.GLOBAL_LOOT_MODIFIER_SERIALIZERS, "forge");
+    public static final RegistryObject<Codec<IGlobalLootModifier>> NOP_LOOT_MODIFIER = LOOT_MODIFIERS.register("nop", () -> Codec.unit(new IGlobalLootModifier()
+    {
+        @Override
+        public @NotNull ObjectArrayList<ItemStack> apply(ObjectArrayList<ItemStack> generatedLoot, LootContext context)
+        {
+            return generatedLoot;
+        }
+
+        @Override
+        public Codec<? extends IGlobalLootModifier> codec()
+        {
+            return NOP_LOOT_MODIFIER.get();
+        }
+    }));
 
     private static final DeferredRegister<FluidType> VANILLA_FLUID_TYPES = DeferredRegister.create(ForgeRegistries.Keys.FLUID_TYPES, "minecraft");
 
@@ -459,6 +480,7 @@ public class ForgeMod
         STRUCTURE_MODIFIER_SERIALIZERS.register(modEventBus);
         HOLDER_SET_TYPES.register(modEventBus);
         VANILLA_FLUID_TYPES.register(modEventBus);
+        LOOT_MODIFIERS.register(modEventBus);
         MinecraftForge.EVENT_BUS.addListener(this::serverStopping);
         MinecraftForge.EVENT_BUS.addListener(this::missingSoundMapping);
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, ForgeConfig.clientSpec);

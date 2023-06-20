@@ -1,0 +1,17 @@
+--- a/net/minecraft/server/packs/resources/SimplePreparableReloadListener.java
++++ b/net/minecraft/server/packs/resources/SimplePreparableReloadListener.java
+@@ -9,6 +_,7 @@
+       return CompletableFuture.supplyAsync(() -> {
+          return this.m_5944_(p_10781_, p_10782_);
+       }, p_10784_).thenCompose(p_10780_::m_6769_).thenAcceptAsync((p_10792_) -> {
++         this.preApply(p_10792_, p_10781_, p_10783_);
+          this.m_5787_(p_10792_, p_10781_, p_10783_);
+       }, p_10785_);
+    }
+@@ -16,4 +_,6 @@
+    protected abstract T m_5944_(ResourceManager p_10796_, ProfilerFiller p_10797_);
+ 
+    protected abstract void m_5787_(T p_10793_, ResourceManager p_10794_, ProfilerFiller p_10795_);
++
++   protected void preApply(T data, ResourceManager manager, ProfilerFiller filler) {}
+ }

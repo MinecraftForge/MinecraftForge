@@ -1,24 +1,19 @@
 --- a/net/minecraft/world/item/crafting/RecipeManager.java
 +++ b/net/minecraft/world/item/crafting/RecipeManager.java
-@@ -37,9 +_,17 @@
-    private Map<RecipeType<?>, Map<ResourceLocation, Recipe<?>>> f_44007_ = ImmutableMap.of();
-    private Map<ResourceLocation, Recipe<?>> f_199900_ = ImmutableMap.of();
-    private boolean f_44008_;
-+   private final net.minecraftforge.common.crafting.conditions.ICondition.IContext context; //Forge: add context
- 
-+   /** @deprecated Forge: use {@linkplain RecipeManager#RecipeManager(net.minecraftforge.common.crafting.conditions.ICondition.IContext) constructor with context}. */
-+   @Deprecated
-    public RecipeManager() {
-+      this(net.minecraftforge.common.crafting.conditions.ICondition.IContext.EMPTY);
-+   }
-+
-+   public RecipeManager(net.minecraftforge.common.crafting.conditions.ICondition.IContext context) {
+@@ -42,6 +_,12 @@
        super(f_44005_, "recipes");
-+      this.context = context;
     }
  
++   @Deprecated(forRemoval = true, since = "1.19.3")
++   public RecipeManager(net.minecraftforge.common.crafting.conditions.ICondition.IContext context) {
++      this();
++      this.conditionContext = context;
++   }
++
     protected void m_5787_(Map<ResourceLocation, JsonElement> p_44037_, ResourceManager p_44038_, ProfilerFiller p_44039_) {
-@@ -49,9 +_,18 @@
+       this.f_44008_ = false;
+       Map<RecipeType<?>, ImmutableMap.Builder<ResourceLocation, Recipe<?>>> map = Maps.newHashMap();
+@@ -49,9 +_,14 @@
  
        for(Map.Entry<ResourceLocation, JsonElement> entry : p_44037_.entrySet()) {
           ResourceLocation resourcelocation = entry.getKey();
@@ -26,11 +21,7 @@
  
           try {
 -            Recipe<?> recipe = m_44045_(resourcelocation, GsonHelper.m_13918_(entry.getValue(), "top element"));
-+            if (entry.getValue().isJsonObject() && !net.minecraftforge.common.crafting.CraftingHelper.processConditions(entry.getValue().getAsJsonObject(), "conditions", this.context)) {
-+               f_44006_.debug("Skipping loading recipe {} as it's conditions were not met", resourcelocation);
-+               continue;
-+            }
-+            Recipe<?> recipe = fromJson(resourcelocation, GsonHelper.m_13918_(entry.getValue(), "top element"), this.context);
++            Recipe<?> recipe = fromJson(resourcelocation, GsonHelper.m_13918_(entry.getValue(), "top element"), conditionContext);
 +            if (recipe == null) {
 +               f_44006_.info("Skipping loading recipe {} as it's serializer returned null", resourcelocation);
 +               continue;
@@ -38,7 +29,7 @@
              map.computeIfAbsent(recipe.m_6671_(), (p_44075_) -> {
                 return ImmutableMap.builder();
              }).put(resourcelocation, recipe);
-@@ -141,11 +_,17 @@
+@@ -141,12 +_,21 @@
        });
     }
  
@@ -55,5 +46,9 @@
 -      }).m_6729_(p_44046_, p_44047_);
 +      }).fromJson(p_44046_, p_44047_, context);
     }
++
++   @Override // TODO - 1.20: Change this to forge:conditions
++   protected String getConditionsMemberName() { return "conditions"; }
  
     public void m_44024_(Iterable<Recipe<?>> p_44025_) {
+       this.f_44008_ = false;

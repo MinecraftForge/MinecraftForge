@@ -49,6 +49,7 @@ public class CraftingHelper
     private static Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
     private static final Map<ResourceLocation, IConditionSerializer<?>> conditions = new HashMap<>();
     private static final BiMap<ResourceLocation, IIngredientSerializer<?>> ingredients = HashBiMap.create();
+    public static final String DEFAULT_CONDITIONS_MEMBER_NAME = "forge:conditions";
 
     public static IConditionSerializer<?> register(IConditionSerializer<?> serializer)
     {
