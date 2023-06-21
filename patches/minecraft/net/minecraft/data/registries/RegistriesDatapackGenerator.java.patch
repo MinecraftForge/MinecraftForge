@@ -1,6 +1,6 @@
 --- a/net/minecraft/data/registries/RegistriesDatapackGenerator.java
 +++ b/net/minecraft/data/registries/RegistriesDatapackGenerator.java
-@@ -18,12 +_,23 @@
+@@ -18,20 +_,36 @@
  import net.minecraft.resources.ResourceKey;
  import org.slf4j.Logger;
  
@@ -24,7 +24,12 @@
        this.f_254747_ = p_255780_;
        this.f_254743_ = p_256643_;
     }
-@@ -31,7 +_,7 @@
+ 
++   /** Forge: Call this to get the registry holder lookup provider that includes elements added via {@link net.minecraftforge.common.data.DatapackBuiltinEntriesProvider} */
++   public CompletableFuture<HolderLookup.Provider> getRegistryProvider() {
++      return f_254747_;
++   }
++
     public CompletableFuture<?> m_213708_(CachedOutput p_255785_) {
        return this.f_254747_.thenCompose((p_256533_) -> {
           DynamicOps<JsonElement> dynamicops = RegistryOps.m_255058_(JsonOps.INSTANCE, p_256533_);
