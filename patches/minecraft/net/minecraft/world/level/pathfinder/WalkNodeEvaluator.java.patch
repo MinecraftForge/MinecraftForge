@@ -9,6 +9,15 @@
        }
  
        double d0 = this.m_142213_(new BlockPos(p_77641_.f_77271_, p_77641_.f_77272_, p_77641_.f_77273_));
+@@ -306,7 +_,7 @@
+    }
+ 
+    private double m_255203_() {
+-      return Math.max(1.125D, (double)this.f_77313_.m_274421_());
++      return Math.max(1.125D, (double)this.f_77313_.getStepHeight());
+    }
+ 
+    private Node m_230619_(int p_230620_, int p_230621_, int p_230622_, BlockPathTypes p_230623_, float p_230624_) {
 @@ -453,6 +_,11 @@
                 if (l != 0 || j1 != 0) {
                    p_77609_.m_122178_(i + l, j + i1, k + j1);
