@@ -38,9 +38,10 @@ public class FlatQuadLighter extends QuadLighter
         isFullCube = Block.isShapeFullBlock(state.getCollisionShape(level, pos));
         for (Direction side : SIDES)
         {
-            packedLight[side.ordinal()] = LevelRenderer.getLightColor(level, pos.relative(side));
+            packedLight[side.ordinal()] = getLightColor(level, pos.relative(side), state);
         }
-        packedLight[6] = LevelRenderer.getLightColor(level, pos);
+        //Note: We can just use the LevelRenderer method as we know the state is the state at the given position
+        packedLight[6] = LevelRenderer.getLightColor(level, state, pos);
     }
 
     @Override
