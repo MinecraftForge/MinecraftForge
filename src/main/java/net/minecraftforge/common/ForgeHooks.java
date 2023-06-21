@@ -85,6 +85,7 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.material.Fluids;
@@ -473,6 +474,15 @@ public class ForgeHooks
         else if (end.length() > 0)
             ichat.append(Component.literal(string.substring(lastEnd)));
         return ichat;
+    }
+
+    public static void dropXpForBlock(BlockState state, ServerLevel level, BlockPos pos, ItemStack stack)
+    {
+        int fortuneLevel = stack.getEnchantmentLevel(Enchantments.BLOCK_FORTUNE);
+        int silkTouchLevel = stack.getEnchantmentLevel(Enchantments.SILK_TOUCH);
+        int exp = state.getExpDrop(level, level.random, pos, fortuneLevel, silkTouchLevel);
+        if (exp > 0)
+            state.getBlock().popExperience(level, pos, exp);
     }
 
     public static int onBlockBreakEvent(Level level, GameType gameType, ServerPlayer entityPlayer, BlockPos pos)
