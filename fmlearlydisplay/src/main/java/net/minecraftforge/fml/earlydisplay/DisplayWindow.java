@@ -9,6 +9,7 @@ import joptsimple.OptionParser;
 import net.minecraftforge.fml.loading.FMLConfig;
 import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.fml.loading.FMLPaths;
+import net.minecraftforge.fml.loading.ImmediateWindowHandler;
 import net.minecraftforge.fml.loading.ImmediateWindowProvider;
 import net.minecraftforge.fml.loading.progress.StartupNotificationManager;
 import org.jetbrains.annotations.Nullable;
@@ -96,6 +97,7 @@ public class DisplayWindow implements ImmediateWindowProvider {
     private boolean maximized;
     private String glVersion;
     private SimpleFont font;
+    private Runnable repaintTick = ()->{};
 
     @Override
     public String name() {
@@ -151,7 +153,9 @@ public class DisplayWindow implements ImmediateWindowProvider {
      * When the thread is killed, context is destroyed.
      */
     private void renderThreadFunc() {
-        if (!renderLock.tryAcquire()) return;
+        if (!renderLock.tryAcquire()) {
+            return;
+        }
         try {
             tickSemaphore.set(true);
             glfwMakeContextCurrent(window);
@@ -167,8 +171,10 @@ public class DisplayWindow implements ImmediateWindowProvider {
             framebuffer.draw(this.fbWidth, this.fbHeight);
             // Swap buffers; we're done
             glfwSwapBuffers(window);
+        } catch (Throwable t) {
+            LOGGER.error("BARF", t);
         } finally {
-            glfwMakeContextCurrent(0);
+            if (this.windowTick != null) glfwMakeContextCurrent(0); // we release the gl context IF we're running off the main thread
             renderLock.release();
         }
     }
@@ -473,6 +479,7 @@ public class DisplayWindow implements ImmediateWindowProvider {
      */
     public long setupMinecraftWindow(final IntSupplier width, final IntSupplier height, final Supplier<String> title, final LongSupplier monitorSupplier) {
         // we have to spin wait for the window ticker
+        ImmediateWindowHandler.updateProgress("Initializing Game Graphics");
         while (!this.windowTick.isDone()) {
             this.windowTick.cancel(false);
         }
@@ -489,7 +496,8 @@ public class DisplayWindow implements ImmediateWindowProvider {
                 Thread.interrupted();
             }
         } while (!renderlockticket);
-
+        // we don't want the lock, just making sure it's back on the main thread
+        renderLock.release();
         // schedule a 50 ms ticker to try and smooth out the rendering
         renderScheduler.scheduleAtFixedRate(()->tickSemaphore.set(true), 50, 50, TimeUnit.MILLISECONDS);
 
@@ -501,6 +509,8 @@ public class DisplayWindow implements ImmediateWindowProvider {
         glfwSetFramebufferSizeCallback(window, null).free();
         glfwSetWindowPosCallback(window, null).free();
         glfwSetWindowSizeCallback(window, null).free();
+        this.repaintTick = this::renderThreadFunc; // the repaint will continue to be called until the overlay takes over
+        this.windowTick = null; // this tells the render thread that the async ticker is done
         return window;
     }
 
@@ -551,6 +561,7 @@ public class DisplayWindow implements ImmediateWindowProvider {
     @Override
     public void periodicTick() {
         glfwPollEvents();
+        repaintTick.run();
     }
 
     public void addMojangTexture(final int textureId) {

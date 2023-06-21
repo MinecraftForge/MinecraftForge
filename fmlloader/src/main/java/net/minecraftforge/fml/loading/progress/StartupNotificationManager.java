@@ -24,6 +24,13 @@ public class StartupNotificationManager {
         }
     }
 
+    public static ProgressMeter prependProgressBar(final String barName, final int count) {
+        var pm = new ProgressMeter(barName, count, 0, new Message(barName, Message.MessageType.ML));
+        synchronized (progressMeters) {
+            progressMeters.addLast(pm);
+        }
+        return pm;
+    }
     public static ProgressMeter addProgressBar(final String barName, final int count) {
         var pm = new ProgressMeter(barName, count, 0, new Message(barName, Message.MessageType.ML));
         synchronized (progressMeters) {
