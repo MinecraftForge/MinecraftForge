@@ -44,7 +44,7 @@
        }
  
        for(int j = 0; j < this.f_79110_.length; ++j) {
-@@ -205,6 +_,26 @@
+@@ -205,6 +_,50 @@
        return new LootTable.Builder();
     }
  
@@ -66,6 +66,30 @@
 +      this.lootTableId = java.util.Objects.requireNonNull(id);
 +   }
 +   public ResourceLocation getLootTableId() { return this.lootTableId; }
++
++   @org.jetbrains.annotations.Nullable
++   public LootPool getPool(String name) {
++      return f_79109_.stream().filter(e -> name.equals(e.getName())).findFirst().orElse(null);
++   }
++
++   @org.jetbrains.annotations.Nullable
++   public LootPool removePool(String name) {
++      checkFrozen();
++      for (LootPool pool : this.f_79109_) {
++         if (name.equals(pool.getName())) {
++            this.f_79109_.remove(pool);
++            return pool;
++         }
++      }
++      return null;
++   }
++
++   public void addPool(LootPool pool) {
++      checkFrozen();
++      if (f_79109_.stream().anyMatch(e -> e == pool || e.getName() != null && e.getName().equals(pool.getName())))
++         throw new RuntimeException("Attempted to add a duplicate pool to loot table: " + pool.getName());
++      this.f_79109_.add(pool);
++   }
 +   //======================== FORGE END ===============================================
 +
     public static class Builder implements FunctionUserBuilder<LootTable.Builder> {
