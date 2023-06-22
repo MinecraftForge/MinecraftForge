@@ -869,9 +869,6 @@ public class ForgeHooks
 
         ctx.poolCount++;
 
-        if (!ctx.vanilla)
-            throw new JsonParseException("Loot Table \"" + ctx.name.toString() + "\" Missing `name` entry for pool #" + (ctx.poolCount - 1));
-
         return ctx.poolCount == 1 ? "main" : "pool" + (ctx.poolCount - 1);
     }
 
