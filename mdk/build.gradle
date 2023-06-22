@@ -32,12 +32,9 @@ minecraft {
     // Simply re-run your setup task after changing the mappings to update your workspace.
     mappings channel: mapping_channel, version: mapping_version
 
-    // When true, this property will have all Eclipse run configurations run the "prepareX" task for the given run configuration before launching the game.
+    // When true, this property will have all Eclipse/IntelliJ IDEA run configurations run the "prepareX" task for the given run configuration before launching the game.
     // In most cases, it is not necessary to enable.
     // enableEclipsePrepareRuns = true
-
-    // When true, this property will have all IntelliJ IDEA run configurations run the "prepareX" task for the given run configuration before launching the game.
-    // In most cases, it is not necessary to enable.
     // enableIdeaPrepareRuns = true
 
     // This property allows configuring Gradle's ProcessResources task(s) to run on IDE output locations before launching the game.
