@@ -27,4 +27,8 @@ public class StartupMessageManager {
     public static ProgressMeter addProgressBar(final String barName, final int count) {
         return StartupNotificationManager.addProgressBar(barName, count);
     }
+
+    public static ProgressMeter prependProgressBar(final String barName, final int count) {
+        return StartupNotificationManager.prependProgressBar(barName, count);
+    }
 }

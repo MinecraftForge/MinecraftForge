@@ -61,33 +61,16 @@ public class ClientModLoader
     private static boolean loadingComplete;
     private static LoadingFailedException error;
 
-    private static class SpacedRunnable implements Runnable {
-        static final long NANO_SLEEP_TIME = TimeUnit.MILLISECONDS.toNanos(50);
-        private final Runnable wrapped;
-        private long lastRun;
-
-        private SpacedRunnable(final Runnable wrapped) {
-            this.wrapped = wrapped;
-            this.lastRun = System.nanoTime() - NANO_SLEEP_TIME;
-        }
-
-        @Override
-        public void run() {
-            if (System.nanoTime() - this.lastRun > NANO_SLEEP_TIME) {
-                wrapped.run();
-                this.lastRun = System.nanoTime();
-            }
-        }
-    }
     public static void begin(final Minecraft minecraft, final PackRepository defaultResourcePacks, final ReloadableResourceManager mcResourceManager)
     {
         // force log4j to shutdown logging in a shutdown hook. This is because we disable default shutdown hook so the server properly logs it's shutdown
         Runtime.getRuntime().addShutdownHook(new Thread(LogManager::shutdown));
+        ImmediateWindowHandler.updateProgress("Loading mods");
         loading = true;
         ClientModLoader.mc = minecraft;
         LogicalSidedProvider.setClient(()->minecraft);
         LanguageHook.loadForgeAndMCLangs();
-        createRunnableWithCatch(()->ModLoader.get().gatherAndInitializeMods(ModWorkManager.syncExecutor(), ModWorkManager.parallelExecutor(), new SpacedRunnable(ImmediateWindowHandler::renderTick))).run();
+        createRunnableWithCatch(()->ModLoader.get().gatherAndInitializeMods(ModWorkManager.syncExecutor(), ModWorkManager.parallelExecutor(), ImmediateWindowHandler::renderTick)).run();
         if (error == null) {
             ResourcePackLoader.loadResourcePacks(defaultResourcePacks, ClientModLoader::buildPackFinder);
             ModLoader.get().postEvent(new AddPackFindersEvent(PackType.CLIENT_RESOURCES, defaultResourcePacks::addPackFinder));
@@ -115,12 +98,12 @@ public class ClientModLoader
     }
 
     private static void startModLoading(ModWorkManager.DrivenExecutor syncExecutor, Executor parallelExecutor) {
-        createRunnableWithCatch(() -> ModLoader.get().loadMods(syncExecutor, parallelExecutor, new SpacedRunnable(ImmediateWindowHandler::renderTick))).run();
+        createRunnableWithCatch(() -> ModLoader.get().loadMods(syncExecutor, parallelExecutor, ImmediateWindowHandler::renderTick)).run();
     }
 
     private static void finishModLoading(ModWorkManager.DrivenExecutor syncExecutor, Executor parallelExecutor)
     {
-        createRunnableWithCatch(() -> ModLoader.get().finishMods(syncExecutor, parallelExecutor, new SpacedRunnable(ImmediateWindowHandler::renderTick))).run();
+        createRunnableWithCatch(() -> ModLoader.get().finishMods(syncExecutor, parallelExecutor, ImmediateWindowHandler::renderTick)).run();
         loading = false;
         loadingComplete = true;
         // reload game settings on main thread

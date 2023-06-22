@@ -23,8 +23,9 @@ public class ModWorkManager {
 
         default void drive(Runnable ticker) {
             if (!selfDriven()) {
-                while (driveOne()) {
-                    ticker.run();
+                ticker.run();
+                while (true) {
+                    if (!driveOne()) break;
                 }
             } else {
                 // park for a bit so other threads can schedule

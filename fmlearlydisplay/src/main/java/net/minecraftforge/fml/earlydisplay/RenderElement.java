@@ -168,21 +168,22 @@ public class RenderElement {
             acc.accept(buffer, context, frameNumber);
     }
     private static final int BAR_HEIGHT = 20;
+    private static final int BAR_WIDTH = 400;
     private static Renderer barRenderer(int cnt, int alpha, SimpleFont font, ProgressMeter pm, DisplayContext context) {
         var barSpacing = font.lineSpacing() - font.descent() + BAR_HEIGHT;
         var y = 250 * context.scale() + cnt * barSpacing;
         var colour = (alpha << 24) | 0xFFFFFF;
         Renderer bar;
         if (pm.steps() == 0) {
-            bar = progressBar(ctx->new int[] {50, y + font.lineSpacing() - font.descent(), context.scaledWidth() - 100}, f->colour, RenderElement::indeterminateBar);
+            bar = progressBar(ctx->new int[] {(ctx.scaledWidth() - BAR_WIDTH * ctx.scale()) / 2, y + font.lineSpacing() - font.descent(), BAR_WIDTH * ctx.scale()}, f->colour, frame -> indeterminateBar(frame, cnt == 0));
         } else {
-            bar = progressBar(ctx -> new int[]{50, y + font.lineSpacing() - font.descent(), ctx.scaledWidth() - 100}, f -> colour, f -> new float[]{0f, pm.progress()});
+            bar = progressBar(ctx -> new int[]{(ctx.scaledWidth() - BAR_WIDTH * ctx.scale()) / 2, y + font.lineSpacing() - font.descent(), BAR_WIDTH * ctx.scale()}, f -> colour, f -> new float[]{0f, pm.progress()});
         }
-        Renderer label = (bb, ctx, frame) -> renderText(font, text(50, y, pm.label().getText(), colour), bb, ctx);
+        Renderer label = (bb, ctx, frame) -> renderText(font, text((ctx.scaledWidth() - BAR_WIDTH * ctx.scale()) / 2, y, pm.label().getText(), colour), bb, ctx);
         return bar.then(label);
     }
-    private static float[] indeterminateBar(int frame) {
-        if (RenderElement.globalAlpha != 0xFF) {
+    private static float[] indeterminateBar(int frame, boolean isActive) {
+        if (RenderElement.globalAlpha != 0xFF || !isActive) {
             return new float[] {0f,1f};
         } else {
             var progress = frame % 100;
@@ -194,7 +195,7 @@ public class RenderElement {
         var y = 10 * context.scale();
         PerformanceInfo pi = context.performance();
         final int colour = hsvToRGB((1.0f - (float)Math.pow(pi.memory(), 1.5f)) / 3f, 1.0f, 0.5f);
-        var bar = progressBar(ctx -> new int[]{50, y, ctx.scaledWidth() - 100}, f -> colour, f -> new float[]{0f, pi.memory()});
+        var bar = progressBar(ctx -> new int[]{(ctx.scaledWidth() - BAR_WIDTH * ctx.scale()) / 2, y, BAR_WIDTH * ctx.scale()}, f -> colour, f -> new float[]{0f, pi.memory()});
         var width = font.stringWidth(pi.text());
         Renderer label = (bb, ctx, frame) -> renderText(font, text(ctx.scaledWidth() / 2 - width / 2, y + 18, pi.text(), context.colourScheme.foreground().packedint(globalAlpha)), bb, ctx);
         bar.then(label).accept(buffer, context, frameNumber);

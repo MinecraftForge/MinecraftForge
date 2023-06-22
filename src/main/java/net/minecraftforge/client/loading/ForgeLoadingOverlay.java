@@ -60,7 +60,7 @@ public class ForgeLoadingOverlay extends LoadingOverlay {
         this.onFinish = errorConsumer;
         this.displayWindow = displayWindow;
         displayWindow.addMojangTexture(mc.getTextureManager().getTexture(new ResourceLocation("textures/gui/title/mojangstudios.png")).getId());
-        this.progress = StartupMessageManager.addProgressBar("Minecraft Progress", 100);
+        this.progress = StartupMessageManager.prependProgressBar("Minecraft Progress", 100);
     }
 
     public static Supplier<LoadingOverlay> newInstance(Supplier<Minecraft> mc, Supplier<ReloadInstance> ri, Consumer<Optional<Throwable>> handler, DisplayWindow window) {

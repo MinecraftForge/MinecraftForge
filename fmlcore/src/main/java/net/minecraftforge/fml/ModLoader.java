@@ -135,7 +135,7 @@ public class ModLoader
      * @param periodicTask Optional periodic task to perform on the main thread while other activities run
      */
     public void gatherAndInitializeMods(final ModWorkManager.DrivenExecutor syncExecutor, final Executor parallelExecutor, final Runnable periodicTask) {
-        ForgeFeature.registerFeature("java_version", ForgeFeature.VersionFeatureTest.forVersionString(IModInfo.DependencySide.BOTH, System.getProperty("java.version")));
+        ForgeFeature.registerFeature("javaVersion", ForgeFeature.VersionFeatureTest.forVersionString(IModInfo.DependencySide.BOTH, System.getProperty("java.version")));
         ForgeFeature.registerFeature("openGLVersion", ForgeFeature.VersionFeatureTest.forVersionString(IModInfo.DependencySide.CLIENT, ImmediateWindowHandler.getGLVersion()));
         loadingStateValid = true;
         FMLLoader.backgroundScanHandler.waitForScanToComplete(periodicTask);
@@ -205,11 +205,20 @@ public class ModLoader
             return;
         }
         progressBar.label(progressBar.name()+ " working");
-        state.inlineRunnable().ifPresent(a->a.accept(this.modList));
+        syncExecutor.drive(ticker);
+        state.inlineRunnable().ifPresent(a->this.handleInlineTransition(a, state, syncExecutor, ticker));
         state.buildTransition(syncExecutor, parallelExecutor, progressBar).ifPresent(t->waitForTransition(state, syncExecutor, ticker, t));
         completedStates.add(state);
     }
 
+    private void handleInlineTransition(final Consumer<ModList> transition, final IModLoadingState state, final ModWorkManager.DrivenExecutor syncExecutor, final Runnable ticker) {
+        var pb = StartupMessageManager.addProgressBar("State transition " +state.name()+" running", 0);
+        syncExecutor.drive(ticker);
+        transition.accept(this.modList);
+        syncExecutor.drive(ticker);
+        pb.complete();
+        syncExecutor.drive(ticker);
+    }
     private void waitForTransition(final IModLoadingState state, final ModWorkManager.DrivenExecutor syncExecutor, final Runnable ticker, final CompletableFuture<Void> transition) {
         while (!transition.isDone()) {
             syncExecutor.drive(ticker);

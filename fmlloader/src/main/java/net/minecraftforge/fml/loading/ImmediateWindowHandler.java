@@ -10,8 +10,6 @@ import net.minecraftforge.fml.loading.progress.StartupNotificationManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.lang.invoke.MethodHandles;
-import java.lang.invoke.MethodType;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.*;
@@ -28,7 +26,7 @@ public class ImmediateWindowHandler {
         if (!List.of("forgeclient", "forgeclientuserdev", "forgeclientdev").contains(launchTarget)) {
             provider = new DummyProvider();
             LOGGER.info("ImmediateWindowProvider not loading because launch target is {}", launchTarget);
-        } else if (!FMLConfig.getBoolConfigValue(FMLConfig.ConfigValue.SPLASHSCREEN)) {
+        } else if (!FMLConfig.getBoolConfigValue(FMLConfig.ConfigValue.EARLY_WINDOW_CONTROL)) {
             provider = new DummyProvider();
             LOGGER.info("ImmediateWindowProvider not loading because splash screen is disabled");
         } else {
@@ -88,6 +86,7 @@ public class ImmediateWindowHandler {
         private static Method NV_HANDOFF;
         private static Method NV_POSITION;
         private static Method NV_OVERLAY;
+        private static Method NV_VERSION;
 
         @Override
         public String name() {
@@ -131,7 +130,11 @@ public class ImmediateWindowHandler {
 
         @Override
         public String getGLVersion() {
-            return "3.2"; // The default minecraft GL version
+            try {
+                return (String) NV_VERSION.invoke(null);
+            } catch (Throwable e) {
+                throw new IllegalStateException("How did you get here?", e);
+            }
         }
 
         @Override
@@ -144,6 +147,7 @@ public class ImmediateWindowHandler {
                 NV_HANDOFF = methods.get("windowHandoff");
                 NV_OVERLAY = methods.get("loadingOverlay");
                 NV_POSITION = methods.get("windowPositioning");
+                NV_VERSION = methods.get("glVersion");
             }
         }
 
