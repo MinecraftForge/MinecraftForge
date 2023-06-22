@@ -7,7 +7,6 @@ package net.minecraftforge.fml.loading;
 
 import com.electronwill.nightconfig.core.CommentedConfig;
 import com.electronwill.nightconfig.core.ConfigSpec;
-import com.electronwill.nightconfig.core.UnmodifiableCommentedConfig;
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import com.electronwill.nightconfig.core.file.FileNotFoundAction;
 import com.electronwill.nightconfig.core.io.ParsingException;
@@ -17,9 +16,7 @@ import org.slf4j.Logger;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
 
@@ -28,7 +25,7 @@ import static net.minecraftforge.fml.loading.LogMarkers.CORE;
 public class FMLConfig
 {
     public enum ConfigValue {
-        SPLASHSCREEN("splashscreen", Boolean.TRUE, "should we show the early splashscreen"),
+        EARLY_WINDOW_CONTROL("earlyWindowControl", Boolean.TRUE, "Should we control the window. Disabling this disables new GL features and can be bad for mods that rely on them."),
         MAX_THREADS("maxThreads", -1, "Max threads for early initialization parallelism,  -1 is based on processor count", FMLConfig::maxThreads),
         VERSION_CHECK("versionCheck", Boolean.TRUE, "Enable forge global version checking"),
         DEFAULT_CONFIG_PATH("defaultConfigPath", "defaultconfigs", "Default config path for servers"),
@@ -63,6 +60,7 @@ public class FMLConfig
             } else {
                 spec.define(this.entry, this.defaultValue);
             }
+            commentedConfig.add(this.entry, this.defaultValue);
             commentedConfig.setComment(this.entry, this.comment);
         }
         @SuppressWarnings("unchecked")

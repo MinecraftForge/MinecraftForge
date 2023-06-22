@@ -135,7 +135,7 @@ public class ModLoader
      * @param periodicTask Optional periodic task to perform on the main thread while other activities run
      */
     public void gatherAndInitializeMods(final ModWorkManager.DrivenExecutor syncExecutor, final Executor parallelExecutor, final Runnable periodicTask) {
-        ForgeFeature.registerFeature("java_version", ForgeFeature.VersionFeatureTest.forVersionString(IModInfo.DependencySide.BOTH, System.getProperty("java.version")));
+        ForgeFeature.registerFeature("javaVersion", ForgeFeature.VersionFeatureTest.forVersionString(IModInfo.DependencySide.BOTH, System.getProperty("java.version")));
         ForgeFeature.registerFeature("openGLVersion", ForgeFeature.VersionFeatureTest.forVersionString(IModInfo.DependencySide.CLIENT, ImmediateWindowHandler.getGLVersion()));
         loadingStateValid = true;
         FMLLoader.backgroundScanHandler.waitForScanToComplete(periodicTask);
