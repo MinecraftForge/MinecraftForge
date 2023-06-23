@@ -36,8 +36,14 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
-import java.util.concurrent.*;
+import java.util.StringJoiner;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.Semaphore;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -46,6 +52,7 @@ import java.util.function.IntConsumer;
 import java.util.function.IntSupplier;
 import java.util.function.LongSupplier;
 import java.util.function.Supplier;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import static org.lwjgl.glfw.GLFW.*;
@@ -191,6 +198,7 @@ public class DisplayWindow implements ImmediateWindowProvider {
         // Wait for one frame to be complete before swapping; enable vsync in other words.
         glfwSwapInterval(1);
         createCapabilities();
+        LOGGER.info("GL info: "+ glGetString(GL_RENDERER) + " GL version " + glGetString(GL_VERSION) + ", " + glGetString(GL_VENDOR));
 
         elementShader = new ElementShader();
         try {
@@ -263,12 +271,12 @@ public class DisplayWindow implements ImmediateWindowProvider {
      * Start the window and Render Thread; we're ready to go.
      */
     public Runnable start(@Nullable String mcVersion, final String forgeVersion) {
-        initWindow(mcVersion);
         renderScheduler = Executors.newSingleThreadScheduledExecutor(r -> {
             final var thread = Executors.defaultThreadFactory().newThread(r);
             thread.setDaemon(true);
             return thread;
         });
+        initWindow(mcVersion);
         renderScheduler.schedule(() -> initRender(mcVersion, forgeVersion), 1, TimeUnit.MILLISECONDS);
         return this::periodicTick;
     }
@@ -294,16 +302,19 @@ public class DisplayWindow implements ImmediateWindowProvider {
         msgBuilder.append(errorDetails);
         msgBuilder.append("\n\n");
         msgBuilder.append("If you click yes, we will try and open " + ERROR_URL + " in your default browser");
-        LOGGER.error("ERROR DISPLAY\n"+msgBuilder.toString());
-        var res = TinyFileDialogs.tinyfd_messageBox("Minecraft: Forge",msgBuilder.toString(), "yesno", "error", false);
-        if (res) {
-            try {
-                Desktop.getDesktop().browse(URI.create(ERROR_URL));
-            } catch (IOException ioe) {
-                TinyFileDialogs.tinyfd_messageBox("Minecraft: Forge", "Sadly, we couldn't open your browser.\nVisit " + ERROR_URL, "ok", "error", false);
+        LOGGER.error("ERROR DISPLAY\n"+msgBuilder);
+        // we show the display on a new dedicated thread
+        Executors.newSingleThreadExecutor().submit(()-> {
+            var res = TinyFileDialogs.tinyfd_messageBox("Minecraft: Forge", msgBuilder.toString(), "yesno", "error", false);
+            if (res) {
+                try {
+                    Desktop.getDesktop().browse(URI.create(ERROR_URL));
+                } catch (IOException ioe) {
+                    TinyFileDialogs.tinyfd_messageBox("Minecraft: Forge", "Sadly, we couldn't open your browser.\nVisit " + ERROR_URL, "ok", "error", false);
+                }
             }
-        }
-        System.exit(1);
+            System.exit(1);
+        });
     }
     /**
      * Called to initialize the window when preparing for the Render Thread.
@@ -361,11 +372,22 @@ public class DisplayWindow implements ImmediateWindowProvider {
             crashElegantly("Failed to get current display resolution.\nglfwGetVideoMode failed.\n");
             throw new IllegalStateException("Can't get a resolution");
         }
-        long window;
-        int versidx= 0;
+        long window = 0;
+        var successfulWindow = new AtomicBoolean(false);
+        var windowFailFuture = renderScheduler.schedule(()->{
+            if (!successfulWindow.get()) crashElegantly("Timed out trying to setup the Game Window.");
+        }, 10, TimeUnit.SECONDS);
+        int versidx = 0;
+        var skipVersions = FMLConfig.<String>getListConfigValue(FMLConfig.ConfigValue.EARLY_WINDOW_SKIP_GL_VERSIONS);
         final String[] lastGLError=new String[GL_VERSIONS.length];
         do {
-            LOGGER.info("Trying GL version "+GL_VERSIONS[versidx][0]+"."+GL_VERSIONS[versidx][1]);
+            final var glVersionToTry = GL_VERSIONS[versidx][0] + "." + GL_VERSIONS[versidx][1];
+            if (skipVersions.contains(glVersionToTry)) {
+                LOGGER.info("Skipping GL version "+ glVersionToTry+" because of configuration");
+                versidx++;
+                continue;
+            }
+            LOGGER.info("Trying GL version " + glVersionToTry);
             glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, GL_VERSIONS[versidx][0]); // we try our versions one at a time
             glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, GL_VERSIONS[versidx][1]);
             glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
@@ -377,14 +399,19 @@ public class DisplayWindow implements ImmediateWindowProvider {
                 LOGGER.trace(lastGLError[versidx]);
             }
             versidx++;
-            if (versidx== GL_VERSIONS.length) {
-                LOGGER.error("Failed to find any valid GLFW profile. "+lastGLError[0]);
-                crashElegantly("Failed to find a valid GLFW profile.\nWe tried "+
-                        Arrays.stream(GL_VERSIONS).map(p->p[0]+"."+p[1]).collect(Collectors.joining(", "))+
-                        " but none of them worked.\n"+String.join("\n", Arrays.asList(lastGLError)));
-                throw new IllegalStateException("Failed to create a GLFW window with any profile");
-            }
-        } while (window == 0);
+        } while (window == 0 && versidx < GL_VERSIONS.length);
+//        LockSupport.parkNanos(TimeUnit.SECONDS.toNanos(12));
+        if (versidx== GL_VERSIONS.length && window == 0) {
+            LOGGER.error("Failed to find any valid GLFW profile. "+lastGLError[0]);
+
+            crashElegantly("Failed to find a valid GLFW profile.\nWe tried "+
+                    Arrays.stream(GL_VERSIONS).map(p->p[0]+"."+p[1]).filter(o -> !skipVersions.contains(o))
+                            .collect(Collector.of(()->new StringJoiner(", ").setEmptyValue("no versions"), StringJoiner::add, StringJoiner::merge, StringJoiner::toString))+
+                    " but none of them worked.\n"+ Arrays.stream(lastGLError).filter(Objects::nonNull).collect(Collectors.joining("\n")));
+            throw new IllegalStateException("Failed to create a GLFW window with any profile");
+        }
+        successfulWindow.set(true);
+        if (!windowFailFuture.cancel(true)) throw new IllegalStateException("We died but didn't somehow?");
         var requestedVersion = GL_VERSIONS[versidx-1][0]+"."+GL_VERSIONS[versidx-1][1];
         var maj = glfwGetWindowAttrib(window, GLFW_CONTEXT_VERSION_MAJOR);
         var min = glfwGetWindowAttrib(window, GLFW_CONTEXT_VERSION_MINOR);
@@ -430,7 +457,6 @@ public class DisplayWindow implements ImmediateWindowProvider {
 
         // Show the window
         glfwShowWindow(window);
-
         glfwGetWindowPos(window, x, y);
         this.winX = x[0];
         this.winY = y[0];
@@ -438,6 +464,10 @@ public class DisplayWindow implements ImmediateWindowProvider {
         this.fbWidth = x[0];
         this.fbHeight = y[0];
         glfwPollEvents();
+    }
+
+    private void badWindowHandler(final int code, final long desc) {
+        LOGGER.error("Got error from GLFW window init: "+code+ " "+MemoryUtil.memUTF8(desc));
     }
 
     private void winResize(long window, int width, int height) {
@@ -462,7 +492,7 @@ public class DisplayWindow implements ImmediateWindowProvider {
     private void handleLastGLFWError(BiConsumer<Integer, String> handler) {
         try (MemoryStack memorystack = MemoryStack.stackPush()) {
             PointerBuffer pointerbuffer = memorystack.mallocPointer(1);
-            int error = org.lwjgl.glfw.GLFW.glfwGetError(pointerbuffer);
+            int error = glfwGetError(pointerbuffer);
             if (error != GLFW_NO_ERROR) {
                 long pDescription = pointerbuffer.get();
                 String description = pDescription == 0L ? "" : MemoryUtil.memUTF8(pDescription);

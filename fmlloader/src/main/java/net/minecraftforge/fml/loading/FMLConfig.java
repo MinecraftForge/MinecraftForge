@@ -34,7 +34,8 @@ public class FMLConfig
         EARLY_WINDOW_WIDTH("earlyWindowWidth", 854, "Early window width"),
         EARLY_WINDOW_HEIGHT("earlyWindowHeight", 480, "Early window height"),
         EARLY_WINDOW_FBSCALE("earlyWindowFBScale", 1, "Early window framebuffer scale"),
-        EARLY_WINDOW_MAXIMIZED("earlyWindowMaximized", Boolean.FALSE, "Early window starts maximized")
+        EARLY_WINDOW_MAXIMIZED("earlyWindowMaximized", Boolean.FALSE, "Early window starts maximized"),
+        EARLY_WINDOW_SKIP_GL_VERSIONS("earlyWindowSkipGLVersions", List.of(), "Skip specific GL versions, may help with buggy graphics card drivers")
         ;
 
         private final String entry;
