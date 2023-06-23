@@ -29,7 +29,8 @@ public class PoseSortingRegistry
         poses.put(pose, priority);
     }
 
-    public static boolean shouldRenderOtherPoses(LivingEntity livingEntity) {
+    public static boolean shouldRenderOtherPoses(LivingEntity livingEntity)
+    {
         for (IPose pose : sortedReplacementPoses)
         {
             if (pose.isActive(livingEntity))
@@ -38,10 +39,14 @@ public class PoseSortingRegistry
         return true;
     }
 
-    public static <T extends LivingEntity> void updatePose(T livingEntity, PoseStack stack, EntityModel<T> model, float partialTicks, boolean isReplacementPoseActive) {
-        if (!isReplacementPoseActive) {
-            for (IPose pose : sortedReplacementPoses) {
-                if (pose.isActive(livingEntity)) {
+    public static <T extends LivingEntity> void updatePose(T livingEntity, PoseStack stack, EntityModel<T> model, float partialTicks, boolean isReplacementPoseActive)
+    {
+        if (!isReplacementPoseActive)
+        {
+            for (IPose pose : sortedReplacementPoses)
+            {
+                if (pose.isActive(livingEntity))
+                {
                     pose.updatePose(livingEntity, stack, model, partialTicks);
                     return;
                 }

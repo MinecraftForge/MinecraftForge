@@ -56,14 +56,16 @@ public class CustomPoseTest {
             {
                 humanoidModel.rightArm.zRot = (float)Math.toRadians(180d + Mth.sin((entity.tickCount + partialTicks)/2) *10);
                 humanoidModel.rightArm.xRot = 0;
-                if (model instanceof PlayerModel<T> playerModel) {
+                if (model instanceof PlayerModel<T> playerModel)
+                {
                     playerModel.rightSleeve.zRot = (float)Math.toRadians(180d + Mth.sin((entity.tickCount + partialTicks)/2) *10);
                     playerModel.rightSleeve.xRot = 0;
                 }
             }
         }
     }
-    private static final class TPose implements IPose {
+    private static final class TPose implements IPose
+    {
 
         @Override
         public boolean isActive(LivingEntity entity)
@@ -72,7 +74,8 @@ public class CustomPoseTest {
         }
 
         @Override
-        public <T extends LivingEntity> void updatePose(T entity, PoseStack stack, EntityModel<T> model, float partialTicks) {
+        public <T extends LivingEntity> void updatePose(T entity, PoseStack stack, EntityModel<T> model, float partialTicks)
+        {
             if (model instanceof HumanoidModel<T> humanoidModel)
             {
                 humanoidModel.rightArm.loadPose(humanoidModel.rightArm.getInitialPose());
@@ -81,7 +84,8 @@ public class CustomPoseTest {
                 humanoidModel.hat.loadPose(humanoidModel.hat.getInitialPose());
                 humanoidModel.rightArm.zRot = (float)Math.toRadians(90);
                 humanoidModel.leftArm.zRot = (float)Math.toRadians(-90);
-                if (model instanceof PlayerModel<T> playerModel) {
+                if (model instanceof PlayerModel<T> playerModel)
+                {
                     playerModel.rightSleeve.loadPose(playerModel.rightSleeve.getInitialPose());
                     playerModel.leftSleeve.loadPose(playerModel.leftSleeve.getInitialPose());
                     playerModel.rightSleeve.zRot = (float)Math.toRadians(90);
