@@ -1,0 +1,30 @@
+name: Java CI
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Validate gradlew integrity
+      uses: gradle/wrapper-validation-action@v1    
+    - name: Set up JDK
+      uses: actions/setup-java@v3
+      with:
+        distribution: 'temurin'
+        java-version: '17'
+    - name: Cache
+      uses: actions/cache@v3
+      with:
+        path: |
+          ~/.gradle/caches
+          ~/.gradle/wrapper
+        key: ${{ runner.os }}-gradle-${{ hashFiles('build.gradle', '**/gradle-wrapper.properties') }}
+    - name: Build with Gradle
+      run: ./gradlew build
+    - name: Archive Forge Binaries
+      uses: actions/upload-artifact@v3
+      with:
+        name: Forge Jars
+        path: build/libs/*.jar
