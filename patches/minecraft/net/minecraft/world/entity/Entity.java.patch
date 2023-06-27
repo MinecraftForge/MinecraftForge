@@ -17,14 +17,7 @@
     private final EntityType<?> f_19847_;
     private int f_19848_ = f_19843_.incrementAndGet();
     public boolean f_19850_;
-@@ -181,14 +_,17 @@
-    public double f_19790_;
-    public double f_19791_;
-    public double f_19792_;
-+   @Deprecated // Forge - see IForgeEntity#getStepHeight
-    public float f_19793_;
-    public boolean f_19794_;
-    protected final RandomSource f_19796_ = RandomSource.m_216327_();
+@@ -187,8 +_,10 @@
     public int f_19797_;
     private int f_19831_ = -this.m_6101_();
     protected boolean f_19798_;
@@ -524,6 +517,14 @@
  
     }
  
+@@ -3264,6 +_,7 @@
+       return false;
+    }
+ 
++   @Deprecated /** Forge: Use {@link net.minecraftforge.common.extensions.IForgeEntity#getStepHeight()} */
+    public float m_274421_() {
+       return this.f_19793_;
+    }
 @@ -3319,6 +_,103 @@
     public boolean m_142265_(Level p_146843_, BlockPos p_146844_) {
        return true;
