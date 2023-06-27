@@ -44,7 +44,7 @@ public class ForgeGameTestHooks
     @SuppressWarnings("deprecation")
     public static void registerGametests()
     {
-        if (!registeredGametests && isGametestEnabled())
+        if (!registeredGametests && isGametestEnabled() && ModLoader.isLoadingStateValid())
         {
             Set<String> enabledNamespaces = getEnabledNamespaces();
             LOGGER.info("Enabled Gametest Namespaces: {}", enabledNamespaces);
