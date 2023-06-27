@@ -1,0 +1,42 @@
+--- a/net/minecraft/client/renderer/SpriteCoordinateExpander.java
++++ b/net/minecraft/client/renderer/SpriteCoordinateExpander.java
+@@ -16,27 +_,33 @@
+    }
+ 
+    public VertexConsumer m_5483_(double p_110801_, double p_110802_, double p_110803_) {
+-      return this.f_110795_.m_5483_(p_110801_, p_110802_, p_110803_);
++      this.f_110795_.m_5483_(p_110801_, p_110802_, p_110803_);
++      return this; //Forge: Fix MC-263524 not working with chained methods
+    }
+ 
+    public VertexConsumer m_6122_(int p_110826_, int p_110827_, int p_110828_, int p_110829_) {
+-      return this.f_110795_.m_6122_(p_110826_, p_110827_, p_110828_, p_110829_);
++      this.f_110795_.m_6122_(p_110826_, p_110827_, p_110828_, p_110829_);
++      return this; //Forge: Fix MC-263524 not working with chained methods
+    }
+ 
+    public VertexConsumer m_7421_(float p_110805_, float p_110806_) {
+-      return this.f_110795_.m_7421_(this.f_110796_.m_118367_((double)(p_110805_ * 16.0F)), this.f_110796_.m_118393_((double)(p_110806_ * 16.0F)));
++      this.f_110795_.m_7421_(this.f_110796_.m_118367_((double)(p_110805_ * 16.0F)), this.f_110796_.m_118393_((double)(p_110806_ * 16.0F)));
++      return this; //Forge: Fix MC-263524 not working with chained methods
+    }
+ 
+    public VertexConsumer m_7122_(int p_110823_, int p_110824_) {
+-      return this.f_110795_.m_7122_(p_110823_, p_110824_);
++      this.f_110795_.m_7122_(p_110823_, p_110824_);
++      return this; //Forge: Fix MC-263524 not working with chained methods
+    }
+ 
+    public VertexConsumer m_7120_(int p_110835_, int p_110836_) {
+-      return this.f_110795_.m_7120_(p_110835_, p_110836_);
++      this.f_110795_.m_7120_(p_110835_, p_110836_);
++      return this; //Forge: Fix MC-263524 not working with chained methods
+    }
+ 
+    public VertexConsumer m_5601_(float p_110831_, float p_110832_, float p_110833_) {
+-      return this.f_110795_.m_5601_(p_110831_, p_110832_, p_110833_);
++      this.f_110795_.m_5601_(p_110831_, p_110832_, p_110833_);
++      return this; //Forge: Fix MC-263524 not working with chained methods
+    }
+ 
+    public void m_5752_() {
