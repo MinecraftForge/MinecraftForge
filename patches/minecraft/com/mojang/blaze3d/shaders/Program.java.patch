@@ -1,0 +1,36 @@
+--- a/com/mojang/blaze3d/shaders/Program.java
++++ b/com/mojang/blaze3d/shaders/Program.java
+@@ -44,21 +_,30 @@
+       return this.f_85536_;
+    }
+ 
+-   public static Program m_166604_(Program.Type p_166605_, String p_166606_, InputStream p_166607_, String p_166608_, GlslPreprocessor p_166609_) throws IOException {
++   public static Program m_166604_(Program.Type p_166605_, String p_166606_, InputStream p_166607_, String p_166608_, GlslPreprocessor p_166609_) throws IOException
++   {
++        return compileShader(p_166605_, p_166606_, p_166607_, p_166608_, new net.minecraftforge.client.renderer.IForgeGlslPreprocessor[]{p_166609_});
++   }
++
++   public static Program compileShader(Program.Type p_166605_, String p_166606_, InputStream p_166607_, String p_166608_, net.minecraftforge.client.renderer.IForgeGlslPreprocessor... p_166609_) throws IOException {
+       RenderSystem.assertOnRenderThread();
+-      int i = m_166612_(p_166605_, p_166606_, p_166607_, p_166608_, p_166609_);
++      int i = compileShaderInternal(p_166605_, p_166606_, p_166607_, p_166608_, p_166609_);
+       Program program = new Program(p_166605_, i, p_166606_);
+       p_166605_.m_85570_().put(p_166606_, program);
+       return program;
+    }
+ 
+    protected static int m_166612_(Program.Type p_166613_, String p_166614_, InputStream p_166615_, String p_166616_, GlslPreprocessor p_166617_) throws IOException {
++      return compileShaderInternal(p_166613_, p_166614_, p_166615_, p_166616_, new net.minecraftforge.client.renderer.IForgeGlslPreprocessor[]{p_166617_});
++   }
++
++   protected static int compileShaderInternal(Program.Type p_166613_, String p_166614_, InputStream p_166615_, String p_166616_, net.minecraftforge.client.renderer.IForgeGlslPreprocessor... p_166617_) throws IOException {
+       String s = IOUtils.toString(p_166615_, StandardCharsets.UTF_8);
+       if (s == null) {
+          throw new IOException("Could not load program " + p_166613_.m_85566_());
+       } else {
+          int i = GlStateManager.glCreateShader(p_166613_.m_85571_());
+-         GlStateManager.glShaderSource(i, p_166617_.m_166461_(s));
++         GlStateManager.glShaderSource(i, net.minecraftforge.client.util.GlslPreprocessorUtils.toShaderProgram(s, p_166613_, p_166617_));
+          GlStateManager.glCompileShader(i);
+          if (GlStateManager.glGetShaderi(i, 35713) == 0) {
+             String s1 = StringUtils.trim(GlStateManager.glGetShaderInfoLog(i, 32768));

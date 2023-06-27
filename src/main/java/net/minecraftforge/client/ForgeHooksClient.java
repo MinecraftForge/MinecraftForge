@@ -8,8 +8,11 @@ package net.minecraftforge.client;
 import com.google.common.collect.ImmutableMap;
 import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.platform.Window;
+import com.mojang.blaze3d.preprocessor.GlslPreprocessor;
 import com.mojang.blaze3d.shaders.FogShape;
+import com.mojang.blaze3d.shaders.Shader;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -40,6 +43,7 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.multiplayer.MultiPlayerGameMode;
 import net.minecraft.client.multiplayer.PlayerInfo;
 import net.minecraft.client.multiplayer.ServerData;
+import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.ParticleEngine;
 import net.minecraft.client.particle.ParticleRenderType;
 import net.minecraft.client.player.AbstractClientPlayer;
@@ -85,6 +89,7 @@ import net.minecraft.server.packs.resources.ReloadableResourceManager;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
+import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
@@ -123,6 +128,7 @@ import net.minecraftforge.client.event.MovementInputUpdateEvent;
 import net.minecraftforge.client.event.RecipesUpdatedEvent;
 import net.minecraftforge.client.event.RegisterClientReloadListenersEvent;
 import net.minecraftforge.client.event.RegisterColorHandlersEvent;
+import net.minecraftforge.client.event.RegisterGlslPreprocessorsEvent;
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.client.event.RegisterParticleProvidersEvent;
 import net.minecraftforge.client.event.RegisterShadersEvent;
@@ -131,9 +137,11 @@ import net.minecraftforge.client.event.RenderBlockScreenEffectEvent;
 import net.minecraftforge.client.event.RenderHandEvent;
 import net.minecraftforge.client.event.RenderHighlightEvent;
 import net.minecraftforge.client.event.RenderLevelStageEvent;
+import net.minecraftforge.client.event.RenderTargetEvent;
 import net.minecraftforge.client.event.RenderTooltipEvent;
 import net.minecraftforge.client.event.ScreenEvent;
 import net.minecraftforge.client.event.ScreenshotEvent;
+import net.minecraftforge.client.event.ShaderEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.client.event.ToastAddEvent;
 import net.minecraftforge.client.event.ViewportEvent;
@@ -144,6 +152,8 @@ import net.minecraftforge.client.extensions.common.IClientMobEffectExtensions;
 import net.minecraftforge.client.gui.ClientTooltipComponentManager;
 import net.minecraftforge.client.gui.overlay.GuiOverlayManager;
 import net.minecraftforge.client.model.data.ModelData;
+import net.minecraftforge.client.renderer.IForgeGlslPreprocessor;
+import net.minecraftforge.client.renderer.transparency.OITLevelRenderer;
 import net.minecraftforge.client.textures.ForgeTextureMetadata;
 import net.minecraftforge.client.textures.TextureAtlasSpriteLoaderManager;
 import net.minecraftforge.common.ForgeI18n;
@@ -198,6 +208,8 @@ import java.util.stream.Stream;
 @ApiStatus.Internal
 public class ForgeHooksClient
 {
+    public static final String UNIFORM_OIT_NAME = "oitEnabled";
+    public static final String UNIFORM_OIT_TYPE = "bool";
     private static final Logger LOGGER = LogManager.getLogger();
     private static final Marker CLIENTHOOKS = MarkerManager.getMarker("CLIENTHOOKS");
 
@@ -989,6 +1001,68 @@ public class ForgeHooksClient
         return RenderTypeHelper.getEntityRenderType(chunkRenderType, cull);
     }
 
+    public static IForgeGlslPreprocessor[] onShaderProgramCreation(GlslPreprocessor glslPreprocessor, ShaderInstance shaderInstance)
+    {
+        final RegisterGlslPreprocessorsEvent event = new RegisterGlslPreprocessorsEvent(shaderInstance);
+        ModLoader.get().postEvent(event);
+        final List<IForgeGlslPreprocessor> preprocessors = new ArrayList<>();
+        preprocessors.add(glslPreprocessor);
+        preprocessors.addAll(event.getPreprocessors());
+        return preprocessors.toArray(new IForgeGlslPreprocessor[0]);
+    }
+
+    public static void onLevelRenderingEnd(ProfilerFiller profilerfiller)
+    {
+        OITLevelRenderer.getInstance().endLevelRendering(profilerfiller);
+    }
+
+    public static void onLevelRenderingStart(ProfilerFiller profilerfiller)
+    {
+        OITLevelRenderer.getInstance().startLevelRendering(profilerfiller);
+    }
+
+    public static void renderChunkGeometry(RenderType renderType, PoseStack currentPoseStack, double cameraX, double cameraY, double cameraZ, Matrix4f projectionMatrix)
+    {
+        OITLevelRenderer.getInstance().checkHandlesThenQueueOrRender(renderType, currentPoseStack, cameraX, cameraY, cameraZ, projectionMatrix);
+    }
+
+    public static void renderParticles(ParticleRenderType particlerendertype, Iterable<Particle> particles, Frustum clippingHelper, Camera camera, float partialTickTime)
+    {
+        OITLevelRenderer.getInstance().checkHandlesThenQueueOrRender(particlerendertype, particles, clippingHelper, camera, partialTickTime);
+    }
+
+    public static void renderBuffer(RenderType renderType, BufferBuilder.RenderedBuffer buffer)
+    {
+        OITLevelRenderer.getInstance().checkHandlesThenQueueOrRender(renderType, buffer);
+    }
+
+    public static void onRenderTargetSetup(int width, int height, boolean onOsx)
+    {
+        ModLoader.get().postEvent(new RenderTargetEvent.Create(
+           width, height, onOsx
+        ));
+    }
+
+    public static void onRenderTargetResize(int width, int height, boolean onOsx)
+    {
+        MinecraftForge.EVENT_BUS.post(new RenderTargetEvent.Resize(
+           width, height, onOsx
+        ));
+    }
+
+    public static boolean shouldPerformVertexSortingFor(RenderType renderType)
+    {
+        return !OITLevelRenderer.getInstance().willHandle(renderType);
+    }
+
+    public static void afterShaderAttachment(Shader shader)
+    {
+        if (!(shader instanceof ShaderInstance shaderInstance))
+            return;
+
+        ModLoader.get().postEvent(new ShaderEvent.OnAttachmentInitialization(shaderInstance));
+    }
+
     @Mod.EventBusSubscriber(value = Dist.CLIENT, modid="forge", bus= Mod.EventBusSubscriber.Bus.MOD)
     public static class ClientEvents
     {
@@ -1243,4 +1317,6 @@ public class ForgeHooksClient
         ItemDecoratorHandler.init();
         PresetEditorManager.init();
     }
+
+
 }

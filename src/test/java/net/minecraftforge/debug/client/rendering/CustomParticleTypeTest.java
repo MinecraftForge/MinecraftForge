@@ -43,6 +43,11 @@ public class CustomParticleTypeTest
             {
                 ParticleRenderType.TERRAIN_SHEET.end(tess);
             }
+
+            @Override
+            public boolean requiresTransparencySorting() {
+                return false;
+            }
         };
         private static final ParticleRenderType CUSTOM_TYPE_TWO = new ParticleRenderType()
         {
@@ -57,6 +62,11 @@ public class CustomParticleTypeTest
             public void end(Tesselator tess)
             {
                 ParticleRenderType.TERRAIN_SHEET.end(tess);
+            }
+
+            @Override
+            public boolean requiresTransparencySorting() {
+                return false;
             }
         };
 

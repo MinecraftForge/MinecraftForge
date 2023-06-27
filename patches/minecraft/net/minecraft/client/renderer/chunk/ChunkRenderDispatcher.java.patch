@@ -17,12 +17,22 @@
        this.f_112678_ = p_194409_;
        List<ChunkBufferBuilderPack> list = Lists.newArrayListWithExpectedSize(l);
  
+@@ -273,8 +_,7 @@
+       final Set<RenderType> f_112749_ = new ObjectArraySet<>(RenderType.m_110506_().size());
+       final List<BlockEntity> f_112752_ = Lists.newArrayList();
+       VisibilitySet f_112753_ = new VisibilitySet();
+-      @Nullable
+-      BufferBuilder.SortState f_112754_;
++      Map<RenderType, BufferBuilder.SortState> f_112754_ = new Reference2ObjectArrayMap<>();
+ 
+       public boolean m_112757_() {
+          return this.f_112749_.isEmpty();
 @@ -420,7 +_,7 @@
           if (!chunkrenderdispatcher$compiledchunk.f_112749_.contains(p_112810_)) {
              return false;
           } else {
 -            this.f_112788_ = new ChunkRenderDispatcher.RenderChunk.ResortTransparencyTask(this.m_112832_(), chunkrenderdispatcher$compiledchunk);
-+            this.f_112788_ = new ChunkRenderDispatcher.RenderChunk.ResortTransparencyTask(new net.minecraft.world.level.ChunkPos(m_112839_()), this.m_112832_(), chunkrenderdispatcher$compiledchunk);
++            this.f_112788_ = new ChunkRenderDispatcher.RenderChunk.ResortTransparencyTask(p_112810_, new net.minecraft.world.level.ChunkPos(m_112839_()), this.m_112832_(), chunkrenderdispatcher$compiledchunk);
              p_112811_.m_112709_(this.f_112788_);
              return true;
           }
@@ -82,6 +92,16 @@
              this.f_112858_ = p_194428_;
           }
  
+@@ -540,7 +_,8 @@
+                   ChunkRenderDispatcher.CompiledChunk chunkrenderdispatcher$compiledchunk = new ChunkRenderDispatcher.CompiledChunk();
+                   chunkrenderdispatcher$compiledchunk.f_112753_ = chunkrenderdispatcher$renderchunk$rebuildtask$compileresults.f_234487_;
+                   chunkrenderdispatcher$compiledchunk.f_112752_.addAll(chunkrenderdispatcher$renderchunk$rebuildtask$compileresults.f_234485_);
+-                  chunkrenderdispatcher$compiledchunk.f_112754_ = chunkrenderdispatcher$renderchunk$rebuildtask$compileresults.f_234488_;
++                  chunkrenderdispatcher$compiledchunk.f_112754_.clear();
++                  chunkrenderdispatcher$compiledchunk.f_112754_.putAll(chunkrenderdispatcher$renderchunk$rebuildtask$compileresults.f_234488_);
+                   List<CompletableFuture<Void>> list = Lists.newArrayList();
+                   chunkrenderdispatcher$renderchunk$rebuildtask$compileresults.f_234486_.forEach((p_234482_, p_234483_) -> {
+                      list.add(ChunkRenderDispatcher.this.m_234450_(p_234483_, RenderChunk.this.m_112807_(p_234482_)));
 @@ -605,7 +_,10 @@
                    }
  
@@ -94,17 +114,37 @@
                       BufferBuilder bufferbuilder2 = p_234471_.m_108839_(rendertype2);
                       if (set.add(rendertype2)) {
                          RenderChunk.this.m_112805_(bufferbuilder2);
-@@ -613,8 +_,9 @@
+@@ -613,20 +_,21 @@
  
                       posestack.m_85836_();
                       posestack.m_252880_((float)(blockpos2.m_123341_() & 15), (float)(blockpos2.m_123342_() & 15), (float)(blockpos2.m_123343_() & 15));
 -                     blockrenderdispatcher.m_234355_(blockstate, blockpos2, renderchunkregion, posestack, bufferbuilder2, true, randomsource);
 +                     blockrenderdispatcher.renderBatched(blockstate, blockpos2, renderchunkregion, posestack, bufferbuilder2, true, randomsource, modelData, rendertype2);
                       posestack.m_85849_();
+-                  }
+-               }
+-
+-               if (set.contains(RenderType.m_110466_())) {
+-                  BufferBuilder bufferbuilder1 = p_234471_.m_108839_(RenderType.m_110466_());
+-                  if (!bufferbuilder1.m_231164_()) {
+-                     bufferbuilder1.m_277127_(VertexSorting.m_277071_(p_234468_ - (float)blockpos.m_123341_(), p_234469_ - (float)blockpos.m_123342_(), p_234470_ - (float)blockpos.m_123343_()));
+-                     chunkrenderdispatcher$renderchunk$rebuildtask$compileresults.f_234488_ = bufferbuilder1.m_166770_();
 +                     }
                    }
                 }
  
+                for(RenderType rendertype1 : set) {
++                  if (rendertype1.f_110393_ && net.minecraftforge.client.ForgeHooksClient.shouldPerformVertexSortingFor(rendertype1)) {
++                     BufferBuilder bufferbuilder1 = p_234471_.m_108839_(rendertype1);
++                     if (!bufferbuilder1.m_231164_()) {
++                        bufferbuilder1.m_277127_(VertexSorting.m_277071_(p_234468_ - (float)blockpos.m_123341_(), p_234469_ - (float)blockpos.m_123342_(), p_234470_ - (float)blockpos.m_123343_()));
++                        chunkrenderdispatcher$renderchunk$rebuildtask$compileresults.f_234488_.put(rendertype1, bufferbuilder1.m_166770_());
++                     }
++                  }
++
+                   BufferBuilder.RenderedBuffer bufferbuilder$renderedbuffer = p_234471_.m_108839_(rendertype1).m_231168_();
+                   if (bufferbuilder$renderedbuffer != null) {
+                      chunkrenderdispatcher$renderchunk$rebuildtask$compileresults.f_234486_.put(rendertype1, bufferbuilder$renderedbuffer);
 @@ -643,10 +_,10 @@
           private <E extends BlockEntity> void m_234476_(ChunkRenderDispatcher.RenderChunk.RebuildTask.CompileResults p_234477_, E p_234478_) {
              BlockEntityRenderer<E> blockentityrenderer = Minecraft.m_91087_().m_167982_().m_112265_(p_234478_);
@@ -117,18 +157,66 @@
              }
  
           }
-@@ -674,8 +_,13 @@
+@@ -665,22 +_,28 @@
+             public final List<BlockEntity> f_234485_ = new ArrayList<>();
+             public final Map<RenderType, BufferBuilder.RenderedBuffer> f_234486_ = new Reference2ObjectArrayMap<>();
+             public VisibilitySet f_234487_ = new VisibilitySet();
+-            @Nullable
+-            public BufferBuilder.SortState f_234488_;
++            public Map<RenderType, BufferBuilder.SortState> f_234488_ = new Reference2ObjectArrayMap<>();
+          }
+       }
+ 
+       @OnlyIn(Dist.CLIENT)
        class ResortTransparencyTask extends ChunkRenderDispatcher.RenderChunk.ChunkCompileTask {
           private final ChunkRenderDispatcher.CompiledChunk f_112886_;
++         private final RenderType renderType;
  
 +         @Deprecated
           public ResortTransparencyTask(double p_112889_, ChunkRenderDispatcher.CompiledChunk p_112890_) {
 -            super(p_112889_, true);
-+            this(null, p_112889_, p_112890_);
++            this(RenderType.m_110466_(), null, p_112889_, p_112890_);
 +         }
 +
-+         public ResortTransparencyTask(@Nullable net.minecraft.world.level.ChunkPos pos, double p_112889_, ChunkRenderDispatcher.CompiledChunk p_112890_) {
++         public ResortTransparencyTask(@Nullable RenderType renderType, @Nullable net.minecraft.world.level.ChunkPos pos, double p_112889_, ChunkRenderDispatcher.CompiledChunk p_112890_) {
 +            super(pos, p_112889_, true);
              this.f_112886_ = p_112890_;
++            this.renderType = renderType;
           }
  
+          protected String m_183497_() {
+-            return "rend_chk_sort";
++            return "rend_chk_sort_" + this.renderType;
+          }
+ 
+          public CompletableFuture<ChunkRenderDispatcher.ChunkTaskResult> m_5869_(ChunkBufferBuilderPack p_112893_) {
+@@ -696,19 +_,22 @@
+                float f = (float)vec3.f_82479_;
+                float f1 = (float)vec3.f_82480_;
+                float f2 = (float)vec3.f_82481_;
+-               BufferBuilder.SortState bufferbuilder$sortstate = this.f_112886_.f_112754_;
+-               if (bufferbuilder$sortstate != null && !this.f_112886_.m_112758_(RenderType.m_110466_())) {
+-                  BufferBuilder bufferbuilder = p_112893_.m_108839_(RenderType.m_110466_());
++               BufferBuilder.SortState bufferbuilder$sortstate = this.f_112886_.f_112754_.get(this.renderType);
++               if (bufferbuilder$sortstate != null && !this.f_112886_.m_112758_(renderType)) {
++                  BufferBuilder bufferbuilder = p_112893_.m_108839_(renderType);
+                   RenderChunk.this.m_112805_(bufferbuilder);
+-                  bufferbuilder.m_166775_(bufferbuilder$sortstate);
+-                  bufferbuilder.m_277127_(VertexSorting.m_277071_(f - (float)RenderChunk.this.f_112793_.m_123341_(), f1 - (float)RenderChunk.this.f_112793_.m_123342_(), f2 - (float)RenderChunk.this.f_112793_.m_123343_()));
+-                  this.f_112886_.f_112754_ = bufferbuilder.m_166770_();
++                  if (net.minecraftforge.client.ForgeHooksClient.shouldPerformVertexSortingFor(renderType))
++                  {
++                     bufferbuilder.m_166775_(bufferbuilder$sortstate);
++                     bufferbuilder.m_277127_(VertexSorting.m_277071_(f - (float) RenderChunk.this.f_112793_.m_123341_(), f1 - (float) RenderChunk.this.f_112793_.m_123342_(), f2 - (float) RenderChunk.this.f_112793_.m_123343_()));
++                     this.f_112886_.f_112754_.put(this.renderType, bufferbuilder.m_166770_());
++                  }
+                   BufferBuilder.RenderedBuffer bufferbuilder$renderedbuffer = bufferbuilder.m_231175_();
+                   if (this.f_112848_.get()) {
+                      bufferbuilder$renderedbuffer.m_231200_();
+                      return CompletableFuture.completedFuture(ChunkRenderDispatcher.ChunkTaskResult.CANCELLED);
+                   } else {
+-                     CompletableFuture<ChunkRenderDispatcher.ChunkTaskResult> completablefuture = ChunkRenderDispatcher.this.m_234450_(bufferbuilder$renderedbuffer, RenderChunk.this.m_112807_(RenderType.m_110466_())).thenApply((p_112898_) -> {
++                     CompletableFuture<ChunkRenderDispatcher.ChunkTaskResult> completablefuture = ChunkRenderDispatcher.this.m_234450_(bufferbuilder$renderedbuffer, RenderChunk.this.m_112807_(renderType)).thenApply((p_112898_) -> {
+                         return ChunkRenderDispatcher.ChunkTaskResult.CANCELLED;
+                      });
+                      return completablefuture.handle((p_234491_, p_234492_) -> {

@@ -53,7 +53,7 @@
        return particleprovider == null ? null : particleprovider.m_6966_(p_107396_, this.f_107287_, p_107397_, p_107398_, p_107399_, p_107400_, p_107401_, p_107402_);
     }
  
-@@ -394,15 +_,24 @@
+@@ -394,35 +_,27 @@
        }
     }
  
@@ -78,15 +78,61 @@
 +         if (particlerendertype == ParticleRenderType.f_107434_) continue;
           Iterable<Particle> iterable = this.f_107289_.get(particlerendertype);
           if (iterable != null) {
-             RenderSystem.setShader(GameRenderer::m_172829_);
-@@ -411,6 +_,7 @@
-             particlerendertype.m_6505_(bufferbuilder, this.f_107291_);
+-            RenderSystem.setShader(GameRenderer::m_172829_);
+-            Tesselator tesselator = Tesselator.m_85913_();
+-            BufferBuilder bufferbuilder = tesselator.m_85915_();
+-            particlerendertype.m_6505_(bufferbuilder, this.f_107291_);
+-
+-            for(Particle particle : iterable) {
+-               try {
+-                  particle.m_5744_(bufferbuilder, p_107340_, p_107341_);
+-               } catch (Throwable throwable) {
+-                  CrashReport crashreport = CrashReport.m_127521_(throwable, "Rendering Particle");
+-                  CrashReportCategory crashreportcategory = crashreport.m_127514_("Particle being rendered");
+-                  crashreportcategory.m_128165_("Particle", particle::toString);
+-                  crashreportcategory.m_128165_("Particle Type", particlerendertype::toString);
+-                  throw new ReportedException(crashreport);
+-               }
+-            }
+-
+-            particlerendertype.m_6294_(tesselator);
++            net.minecraftforge.client.ForgeHooksClient.renderParticles(particlerendertype, iterable, clippingHelper, p_107340_, p_107341_);
+          }
+       }
  
-             for(Particle particle : iterable) {
-+               if (clippingHelper != null && particle.shouldCull() && !clippingHelper.m_113029_(particle.m_107277_())) continue;
-                try {
-                   particle.m_5744_(bufferbuilder, p_107340_, p_107341_);
-                } catch (Throwable throwable) {
+@@ -433,6 +_,32 @@
+       p_107339_.m_109891_();
+    }
+ 
++   public void renderParticlesWithType(final ParticleRenderType particleRenderType, final Iterable<Particle> toRender, @Nullable final net.minecraft.client.renderer.culling.Frustum clippingHelper, Camera p_107340_, float partialTickTime, java.util.function.Consumer<net.minecraft.client.renderer.ShaderInstance> afterSetupAction, java.util.function.Consumer<net.minecraft.client.renderer.ShaderInstance> postRenderAction) {
++      RenderSystem.setShader(GameRenderer::m_172829_);
++      Tesselator tesselator = Tesselator.m_85913_();
++      BufferBuilder bufferbuilder = tesselator.m_85915_();
++      particleRenderType.m_6505_(bufferbuilder, this.f_107291_);
++      afterSetupAction.accept(RenderSystem.getShader());
++
++      for(Particle particle : toRender) {
++         if (clippingHelper != null && particle.shouldCull() && !clippingHelper.m_113029_(particle.m_107277_())) continue;
++         try {
++            particle.m_5744_(bufferbuilder, p_107340_, partialTickTime);
++         } catch (Throwable throwable) {
++            CrashReport crashreport = CrashReport.m_127521_(throwable, "Rendering Particle");
++            CrashReportCategory crashreportcategory = crashreport.m_127514_("Particle being rendered");
++            crashreportcategory.m_128165_("Particle", particle::toString);
++            crashreportcategory.m_128165_("Particle Type", particleRenderType::toString);
++            throw new ReportedException(crashreport);
++         }
++      }
++
++      final net.minecraft.client.renderer.ShaderInstance shaderInstance = RenderSystem.getShader();
++
++      particleRenderType.m_6294_(tesselator);
++      postRenderAction.accept(shaderInstance);
++   }
++
+    public void m_107342_(@Nullable ClientLevel p_107343_) {
+       this.f_107287_ = p_107343_;
+       this.m_263560_();
 @@ -440,7 +_,7 @@
     }
  
