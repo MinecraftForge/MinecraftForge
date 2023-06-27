@@ -1,0 +1,16 @@
+--- a/net/minecraft/data/tags/DamageTypeTagsProvider.java
++++ b/net/minecraft/data/tags/DamageTypeTagsProvider.java
+@@ -9,8 +_,13 @@
+ import net.minecraft.world.damagesource.DamageTypes;
+ 
+ public class DamageTypeTagsProvider extends TagsProvider<DamageType> {
++   /** @deprecated Forge: Use the {@linkplain #DamageTypeTagsProvider(PackOutput, CompletableFuture, String, net.minecraftforge.common.data.ExistingFileHelper) mod id variant} */
++   @Deprecated
+    public DamageTypeTagsProvider(PackOutput p_270719_, CompletableFuture<HolderLookup.Provider> p_270256_) {
+       super(p_270719_, Registries.f_268580_, p_270256_);
++   }
++   public DamageTypeTagsProvider(PackOutput p_270719_, CompletableFuture<HolderLookup.Provider> p_270256_, String modId, @org.jetbrains.annotations.Nullable net.minecraftforge.common.data.ExistingFileHelper existingFileHelper) {
++      super(p_270719_, Registries.f_268580_, p_270256_, modId, existingFileHelper);
+    }
+ 
+    protected void m_6577_(HolderLookup.Provider p_270108_) {
