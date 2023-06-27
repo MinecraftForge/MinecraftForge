@@ -30,6 +30,9 @@ import net.minecraft.world.level.block.SkullBlock.Type;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraftforge.client.ForgeHooksClient;
+import net.minecraftforge.client.model.pose.IPose;
+import net.minecraftforge.client.model.pose.PosePriority;
+import net.minecraftforge.client.model.pose.PoseSortingRegistry;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.LogicalSide;
@@ -200,6 +203,17 @@ public abstract class EntityRenderersEvent extends Event implements IModBusEvent
         public EntityModelSet getEntityModels()
         {
             return entityModels;
+        }
+
+        /**
+         * Register a pose
+         * @param pose the pose to register
+         * @param priority when your pose is applied compared to others
+         * @param isReplacementPose if this pose replaces the vanilla/all other modded posing. Only do it if you want to force a specific full model pose. If you want to make sure that your posing is applied, use a later priority
+         */
+        public void registerPose(IPose pose, PosePriority priority, boolean isReplacementPose)
+        {
+            PoseSortingRegistry.registerPose(pose, priority, isReplacementPose);
         }
     }
 
