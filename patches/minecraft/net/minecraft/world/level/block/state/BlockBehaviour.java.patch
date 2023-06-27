@@ -27,7 +27,7 @@
           p_60516_.m_46747_(p_60517_);
        }
  
-@@ -355,8 +_,8 @@
+@@ -355,14 +_,15 @@
        if (f == -1.0F) {
           return 0.0F;
        } else {
@@ -38,6 +38,13 @@
        }
     }
  
+    /** @deprecated */
+    @Deprecated
+    public void m_213646_(BlockState p_222949_, ServerLevel p_222950_, BlockPos p_222951_, ItemStack p_222952_, boolean p_222953_) {
++      if (p_222953_) net.minecraftforge.common.ForgeHooks.dropXpForBlock(p_222949_, p_222950_, p_222951_, p_222952_);
+    }
+ 
+    /** @deprecated */
 @@ -389,8 +_,7 @@
  
     public final ResourceLocation m_60589_() {

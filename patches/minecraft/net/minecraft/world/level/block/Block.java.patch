@@ -32,6 +32,22 @@
        } else if (blockstate.m_60815_()) {
           Block.BlockStatePairKey block$blockstatepairkey = new Block.BlockStatePairKey(p_152445_, blockstate, p_152448_);
           Object2ByteLinkedOpenHashMap<Block.BlockStatePairKey> object2bytelinkedopenhashmap = f_49789_.get();
+@@ -276,11 +_,14 @@
+    }
+ 
+    public static void m_49881_(BlockState p_49882_, Level p_49883_, BlockPos p_49884_, @Nullable BlockEntity p_49885_, @Nullable Entity p_49886_, ItemStack p_49887_) {
++      dropResources(p_49882_, p_49883_, p_49884_, p_49885_, p_49886_, p_49887_, true);
++   }
++   public static void dropResources(BlockState p_49882_, Level p_49883_, BlockPos p_49884_, @Nullable BlockEntity p_49885_, @Nullable Entity p_49886_, ItemStack p_49887_, boolean dropXp) {
+       if (p_49883_ instanceof ServerLevel) {
+          m_49874_(p_49882_, (ServerLevel)p_49883_, p_49884_, p_49885_, p_49886_, p_49887_).forEach((p_49944_) -> {
+             m_49840_(p_49883_, p_49884_, p_49944_);
+          });
+-         p_49882_.m_222967_((ServerLevel)p_49883_, p_49884_, p_49887_, true);
++         p_49882_.m_222967_((ServerLevel)p_49883_, p_49884_, p_49887_, dropXp);
+       }
+ 
+    }
 @@ -313,7 +_,7 @@
     }
  
@@ -56,6 +72,16 @@
     public float m_7325_() {
        return this.f_60444_;
     }
+@@ -345,7 +_,8 @@
+    public void m_6240_(Level p_49827_, Player p_49828_, BlockPos p_49829_, BlockState p_49830_, @Nullable BlockEntity p_49831_, ItemStack p_49832_) {
+       p_49828_.m_36246_(Stats.f_12949_.m_12902_(this));
+       p_49828_.m_36399_(0.005F);
+-      m_49881_(p_49830_, p_49827_, p_49829_, p_49831_, p_49828_, p_49832_);
++      //Forge: Don't drop xp as part of the resources as it is handled by the patches in ServerPlayerGameMode#destroyBlock
++      dropResources(p_49830_, p_49827_, p_49829_, p_49831_, p_49828_, p_49832_, false);
+    }
+ 
+    public void m_6402_(Level p_49847_, BlockPos p_49848_, BlockState p_49849_, @Nullable LivingEntity p_49850_, ItemStack p_49851_) {
 @@ -373,8 +_,10 @@
  
     public void m_5548_(BlockGetter p_49821_, Entity p_49822_) {
