@@ -40,6 +40,7 @@ import net.minecraft.commands.Commands;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.SpawnGroupData;
+import net.minecraft.world.entity.SpawnPlacements;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
@@ -75,6 +76,7 @@ import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.level.SpawnData;
 import net.minecraft.world.level.Level;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.storage.ServerLevelData;
@@ -103,6 +105,8 @@ import net.minecraftforge.event.entity.living.LivingHealEvent;
 import net.minecraftforge.event.entity.living.LivingPackSizeEvent;
 import net.minecraftforge.event.entity.living.MobSpawnEvent;
 import net.minecraftforge.event.entity.living.MobSpawnEvent.AllowDespawn;
+import net.minecraftforge.event.entity.living.MobSpawnEvent.PositionCheck;
+import net.minecraftforge.event.entity.living.MobSpawnEvent.SpawnPlacementCheck;
 import net.minecraftforge.event.entity.living.ZombieEvent.SummonAidEvent;
 import net.minecraftforge.event.entity.player.AdvancementEvent.AdvancementEarnEvent;
 import net.minecraftforge.event.entity.player.AdvancementEvent.AdvancementProgressEvent;
@@ -188,6 +192,55 @@ public class ForgeEventFactory
     }
 
     /**
+     * Internal, should only be called via {@link SpawnPlacements#checkSpawnRules}.
+     * @see SpawnPlacementCheck
+     */
+    @ApiStatus.Internal
+    public static boolean checkSpawnPlacements(EntityType<?> entityType, ServerLevelAccessor level, MobSpawnType spawnType, BlockPos pos, RandomSource random, boolean defaultResult)
+    {
+        var event = new SpawnPlacementCheck(entityType, level, spawnType, pos, random, defaultResult);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event.getResult() == Result.DEFAULT ? defaultResult : event.getResult() == Result.ALLOW;
+    }
+
+    /**
+     * Checks if the current position of the passed mob is valid for spawning, by firing {@link PositionCheck}.<br>
+     * The default check is to perform the logical and of {@link Mob#checkSpawnRules} and {@link Mob#checkSpawnObstruction}.<br>
+     * @param mob The mob being spawned.
+     * @param level The level the mob will be added to, if successful.
+     * @param spawnType The spawn type of the spawn.
+     * @return True, if the position is valid, as determined by the contract of {@link PositionCheck}.
+     * @see PositionCheck
+     */
+    public static boolean checkSpawnPosition(Mob mob, ServerLevelAccessor level, MobSpawnType spawnType)
+    {
+        var event = new PositionCheck(mob, level, spawnType, null);
+        MinecraftForge.EVENT_BUS.post(event);
+        if (event.getResult() == Result.DEFAULT)
+        {
+            return mob.checkSpawnRules(level, spawnType) && mob.checkSpawnObstruction(level);
+        }
+        return event.getResult() == Result.ALLOW;
+    }
+
+    /**
+     * Specialized variant of {@link #checkSpawnPosition} for spawners, as they have slightly different checks.
+     * @see #CheckSpawnPosition
+     * @implNote See in-line comments about custom spawn rules.
+     */
+    public static boolean checkSpawnPositionSpawner(Mob mob, ServerLevelAccessor level, MobSpawnType spawnType, SpawnData spawnData, BaseSpawner spawner)
+    {
+        var event = new PositionCheck(mob, level, spawnType, null);
+        MinecraftForge.EVENT_BUS.post(event);
+        if (event.getResult() == Result.DEFAULT)
+        {
+            // Spawners do not evaluate Mob#checkSpawnRules if any custom rules are present. This is despite the fact that these two methods do not check the same things.
+            return (spawnData.getCustomSpawnRules().isPresent() || mob.checkSpawnRules(level, spawnType)) && mob.checkSpawnObstruction(level);
+        }
+        return event.getResult() == Result.ALLOW;
+    }
+
+    /**
      * Vanilla calls to {@link Mob#finalizeSpawn} are replaced with calls to this method via coremod.<br>
      * Mods should call this method in place of calling {@link Mob#finalizeSpawn}. Super calls (from within overrides) should not be wrapped.
      * <p>
@@ -236,7 +289,7 @@ public class ForgeEventFactory
      * Returns the FinalizeSpawn event instance, or null if it was canceled.<br>
      * This is separate since mob spawners perform special finalizeSpawn handling when NBT data is present, but we still want to fire the event.<br>
      * This overload is also the only way to pass through a {@link BaseSpawner} instance.
-     * @see MobSpawnEvent.FinalizeSpawn
+     * @see #onFinalizeSpawn
      */
     @Nullable
     public static MobSpawnEvent.FinalizeSpawn onFinalizeSpawnSpawner(Mob mob, ServerLevelAccessor level, DifficultyInstance difficulty, @Nullable SpawnGroupData spawnData, @Nullable CompoundTag spawnTag, BaseSpawner spawner)
