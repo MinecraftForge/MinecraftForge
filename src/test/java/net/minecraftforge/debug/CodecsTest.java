@@ -61,9 +61,9 @@ public class CodecsTest
             LOGGER.error("Error decoding withTag: {}", error);
         }).getFirst();
 
-        if (!noTag.equals(noTag_decode))
+        if (!noTag.isFluidStackIdentical(noTag_decode))
             throw new IllegalStateException("Decoded noTag does not match");
-        if (!withTag.equals(withTag_decode))
+        if (!withTag.isFluidStackIdentical(withTag_decode))
             throw new IllegalStateException("Decoded withTag does not match");
     }
 }
