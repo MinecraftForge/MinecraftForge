@@ -155,12 +155,12 @@ public class ModLoader
                 .toList();
 
         if (!failedBounds.isEmpty()) {
-            LOGGER.fatal(CORE, "Failed to validate feature bounds for mods");
+            LOGGER.fatal(CORE, "Failed to validate feature bounds for mods: {}", failedBounds);
             statusConsumer.ifPresent(c->c.accept("ERROR DURING MOD LOADING"));
             modList.setLoadedMods(Collections.emptyList());
             loadingStateValid = false;
             throw new LoadingFailedException(failedBounds.stream()
-                    .map(fb -> new ModLoadingException(fb.modInfo(), ModLoadingStage.CONSTRUCT, "fml.modloading.feature.missing", null, fb.featureName(), fb.featureBound(), ForgeFeature.featureValue(fb)))
+                    .map(fb -> new ModLoadingException(fb.modInfo(), ModLoadingStage.CONSTRUCT, "fml.modloading.feature.missing", null, fb, ForgeFeature.featureValue(fb)))
                     .toList());
         }
 

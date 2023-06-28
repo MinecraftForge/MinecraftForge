@@ -6,6 +6,7 @@
 package net.minecraftforge.common.util;
 
 import net.minecraftforge.common.ForgeI18n;
+import net.minecraftforge.forgespi.locating.ForgeFeature;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.artifact.versioning.Restriction;
 import org.apache.maven.artifact.versioning.VersionRange;
@@ -79,5 +80,18 @@ public class MavenVersionStringHelper {
 
     public static void parseVersionRange(final StringBuffer stringBuffer, final Object range) {
         stringBuffer.append(versionRangeToString((VersionRange) range));
+    }
+
+    public static void parseFeatureBoundValue(final StringBuffer stringBuffer, final Object range) {
+        if (range instanceof ForgeFeature.Bound bound) {
+            stringBuffer.append(bound.featureName());
+            if (bound.bound() instanceof Boolean b) {
+                stringBuffer.append("=").append(b);
+            } else if (bound.bound() instanceof VersionRange vr) {
+                stringBuffer.append(" ").append(versionRangeToString(vr));
+            } else {
+                stringBuffer.append("=\"").append(bound.featureBound()).append("\"");
+            }
+        }
     }
 }
