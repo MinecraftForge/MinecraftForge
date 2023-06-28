@@ -65,6 +65,6 @@ public class ModFileParser {
         return coreModPaths.entrySet().stream()
                 .peek(e-> LOGGER.debug(LogMarkers.LOADING,"Found coremod {} with Javascript path {}", e.getKey(), e.getValue()))
                 .map(e -> new CoreModFile(e.getKey(), modFile.findResource(e.getValue()),modFile))
-                .collect(Collectors.toList());
+                .toList();
     }
 }

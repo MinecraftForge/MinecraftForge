@@ -55,27 +55,35 @@ public class ModFileInfo implements IModFileInfo, IConfigurable
         this.modFile = modFile;
         this.config = config;
         configFileConsumer.accept(this);
+        // modloader is essential
         var modLoader = config.<String>getConfigElement("modLoader")
                 .orElseThrow(()->new InvalidModFileException("Missing ModLoader in file", this));
+        // as is modloader version
         var modLoaderVersion = config.<String>getConfigElement("loaderVersion")
                 .map(MavenVersionAdapter::createFromVersionSpec)
                 .orElseThrow(()->new InvalidModFileException("Missing ModLoader version in file", this));
         this.languageSpecs = new ArrayList<>(List.of(new LanguageSpec(modLoader, modLoaderVersion)));
+        // the remaining properties are optional with sensible defaults
         this.license = config.<String>getConfigElement("license")
-            .orElse("");
-        this.showAsResourcePack = config.<Boolean>getConfigElement("showAsResourcePack").orElse(false);
-        this.usesServices = config.<List<String>>getConfigElement("services").orElse(List.of());
-        this.properties = config.<Map<String, Object>>getConfigElement("properties").orElse(Collections.emptyMap());
+                .orElse("");
+        this.showAsResourcePack = config.<Boolean>getConfigElement("showAsResourcePack")
+                .orElse(false);
+        this.usesServices = config.<List<String>>getConfigElement("services")
+                .orElse(List.of());
+        this.properties = config.<Map<String, Object>>getConfigElement("properties")
+                .orElse(Collections.emptyMap());
         this.modFile.setFileProperties(this.properties);
-        this.issueURL = config.<String>getConfigElement("issueTrackerURL").map(StringUtils::toURL).orElse(null);
+        this.issueURL = config.<String>getConfigElement("issueTrackerURL")
+                .map(StringUtils::toURL)
+                .orElse(null);
         final List<? extends IConfigurable> modConfigs = config.getConfigList("mods");
         if (modConfigs.isEmpty())
         {
             throw new InvalidModFileException("Missing mods list", this);
         }
         this.mods = modConfigs.stream()
-                .map(mi-> new ModInfo(this, mi))
-                .collect(Collectors.toList());
+                .map(mi-> (IModInfo)new ModInfo(this, mi))
+                .toList();
         if (LOGGER.isDebugEnabled(LogMarkers.LOADING))
         {
             LOGGER.debug(LogMarkers.LOADING, "Found valid mod file {} with {} mods - versions {}",
