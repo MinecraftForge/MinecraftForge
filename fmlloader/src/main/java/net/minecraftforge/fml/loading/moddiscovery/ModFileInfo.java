@@ -26,7 +26,14 @@ import java.security.SignatureException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -43,10 +50,11 @@ public class ModFileInfo implements IModFileInfo, IConfigurable
     private final String license;
     private final List<String> usesServices;
 
-    ModFileInfo(final ModFile modFile, final IConfigurable config)
+    ModFileInfo(final ModFile modFile, final IConfigurable config, Consumer<IModFileInfo> configFileConsumer)
     {
         this.modFile = modFile;
         this.config = config;
+        configFileConsumer.accept(this);
         var modLoader = config.<String>getConfigElement("modLoader")
                 .orElseThrow(()->new InvalidModFileException("Missing ModLoader in file", this));
         var modLoaderVersion = config.<String>getConfigElement("loaderVersion")
@@ -77,8 +85,8 @@ public class ModFileInfo implements IModFileInfo, IConfigurable
         }
     }
 
-    public ModFileInfo(final ModFile file, final IConfigurable config, final List<LanguageSpec> languageSpecs) {
-        this(file, config);
+    public ModFileInfo(final ModFile file, final IConfigurable config, Consumer<IModFileInfo> configFileConsumer, final List<LanguageSpec> languageSpecs) {
+        this(file, config, configFileConsumer);
         this.languageSpecs.addAll(languageSpecs);
     }
 

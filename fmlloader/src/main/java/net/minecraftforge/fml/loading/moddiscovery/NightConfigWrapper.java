@@ -33,9 +33,12 @@ public class NightConfigWrapper implements IConfigurable {
     @Override
     @SuppressWarnings("unchecked")
     public <T> Optional<T> getConfigElement(final String... key) {
-        return this.config.getOptional(asList(key)).map(value -> {
+        var path = asList(key);
+        return this.config.getOptional(path).map(value -> {
             if (value instanceof UnmodifiableConfig) {
                 return (T) ((UnmodifiableConfig) value).valueMap();
+            } else if (value instanceof ArrayList<?> al && al.size() > 0 && al.get(0) instanceof UnmodifiableConfig) {
+                throw new InvalidModFileException("The configuration path " + path + " is invalid. I wasn't expecting a multi-object list - remove one of the [[ ]]", file);
             }
             return (T) value;
         });

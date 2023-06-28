@@ -86,10 +86,16 @@ public class ModInfo implements IModInfo, IConfigurable
                 .collect(Collectors.toList()))
                 .orElse(Collections.emptyList());
 
-        this.features = ownFile.map(mfi -> mfi.<Map<String, String>>getConfigElement("features", this.modId)
+        this.features = ownFile.map(mfi -> mfi.<Map<String, Object>>getConfigElement("features", this.modId)
                 .stream()
                 .flatMap(m->m.entrySet().stream())
-                .map(e->new ForgeFeature.Bound(e.getKey(), e.getValue(), this))
+                .map(e->{
+                    if (e.getValue() instanceof String val) {
+                        return new ForgeFeature.Bound(e.getKey(), val, this);
+                    } else {
+                        throw new InvalidModFileException("Invalid feature bound {"+e.getValue()+"} for key {"+e.getKey()+"} only strings are accepted", this.owningFile);
+                    }
+                })
                 .collect(Collectors.toList())).orElse(Collections.emptyList());
 
         this.properties = ownFile.map(mfi -> mfi.<Map<String, Object>>getConfigElement("modproperties", this.modId)

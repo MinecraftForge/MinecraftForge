@@ -44,9 +44,7 @@ public class ModFileParser {
         fileConfig.load();
         fileConfig.close();
         final NightConfigWrapper configWrapper = new NightConfigWrapper(fileConfig);
-        final ModFileInfo modFileInfo = new ModFileInfo(modFile, configWrapper);
-        configWrapper.setFile(modFileInfo);
-        return modFileInfo;
+        return new ModFileInfo(modFile, configWrapper, configWrapper::setFile);
     }
 
     protected static List<CoreModFile> getCoreMods(final ModFile modFile) {
