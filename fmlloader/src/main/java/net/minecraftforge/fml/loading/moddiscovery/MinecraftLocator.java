@@ -96,9 +96,7 @@ public class MinecraftLocator extends AbstractModProvider implements IModLocator
 
         final NightConfigWrapper configWrapper = new NightConfigWrapper(conf);
         //final ModFileInfo modFileInfo = new ModFileInfo(modFile, configWrapper, extralangs.build().toList());
-        final ModFileInfo modFileInfo = new ModFileInfo(modFile, configWrapper, List.of());
-        configWrapper.setFile(modFileInfo);
-        return modFileInfo;
+        return new ModFileInfo(modFile, configWrapper, configWrapper::setFile, List.of());
     }
 
     @Override

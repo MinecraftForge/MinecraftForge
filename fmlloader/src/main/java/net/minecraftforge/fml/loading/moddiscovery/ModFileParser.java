@@ -44,9 +44,7 @@ public class ModFileParser {
         fileConfig.load();
         fileConfig.close();
         final NightConfigWrapper configWrapper = new NightConfigWrapper(fileConfig);
-        final ModFileInfo modFileInfo = new ModFileInfo(modFile, configWrapper);
-        configWrapper.setFile(modFileInfo);
-        return modFileInfo;
+        return new ModFileInfo(modFile, configWrapper, configWrapper::setFile);
     }
 
     protected static List<CoreModFile> getCoreMods(final ModFile modFile) {
@@ -67,6 +65,6 @@ public class ModFileParser {
         return coreModPaths.entrySet().stream()
                 .peek(e-> LOGGER.debug(LogMarkers.LOADING,"Found coremod {} with Javascript path {}", e.getKey(), e.getValue()))
                 .map(e -> new CoreModFile(e.getKey(), modFile.findResource(e.getValue()),modFile))
-                .collect(Collectors.toList());
+                .toList();
     }
 }
