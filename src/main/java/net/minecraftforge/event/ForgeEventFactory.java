@@ -18,6 +18,7 @@ import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementProgress;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.core.Holder;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.ReloadableServerResources;
 import net.minecraft.server.level.ChunkHolder;
@@ -758,9 +759,9 @@ public class ForgeEventFactory
         return event.getNewTime();
     }
 
-    public static List<PreparableReloadListener> onResourceReload(ReloadableServerResources serverResources)
+    public static List<PreparableReloadListener> onResourceReload(ReloadableServerResources serverResources, RegistryAccess registryAccess)
     {
-        AddReloadListenerEvent event = new AddReloadListenerEvent(serverResources);
+        AddReloadListenerEvent event = new AddReloadListenerEvent(serverResources, registryAccess);
         MinecraftForge.EVENT_BUS.post(event);
         return event.getListeners();
     }
