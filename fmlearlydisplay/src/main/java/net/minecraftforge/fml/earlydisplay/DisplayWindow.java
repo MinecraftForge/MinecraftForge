@@ -35,6 +35,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -221,13 +222,16 @@ public class DisplayWindow implements ImmediateWindowProvider {
             crashElegantly("An error occurred initializing a font for rendering. "+t.getMessage());
         }
         this.elements = new ArrayList<>(Arrays.asList(
-                RenderElement.squir(),
                 RenderElement.anvil(font),
                 RenderElement.logMessageOverlay(font),
                 RenderElement.forgeVersionOverlay(font, mcVersion+"-"+forgeVersion.split("-")[0]),
                 RenderElement.performanceBar(font),
                 RenderElement.progressBars(font)
         ));
+
+        var date = Calendar.getInstance();
+        if (FMLConfig.getBoolConfigValue(FMLConfig.ConfigValue.EARLY_WINDOW_SQUIR) || (date.get(Calendar.MONTH) == Calendar.APRIL && date.get(Calendar.DAY_OF_MONTH) == 1))
+            this.elements.add(0, RenderElement.squir());
 
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

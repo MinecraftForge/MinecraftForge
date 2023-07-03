@@ -53,7 +53,7 @@ ext {
     MERGETOOL_VERSION = '1.1.5'
     ACCESSTRANSFORMERS_VERSION = '8.0.4'
     COREMODS_VERSION = '5.0.1'
-    EVENTBUS_VERSION = '6.0.3'
+    EVENTBUS_VERSION = '6.0.5'
     MODLAUNCHER_VERSION = '10.0.9'
     SECUREJARHANDLER_VERSION = '2.1.10'
     BOOTSTRAPLAUNCHER_VERSION = '1.1.2'
@@ -291,7 +291,7 @@ def sharedDeps = {
     installer "com.electronwill.night-config:core:${NIGHTCONFIG_VERSION}"
     installer "com.electronwill.night-config:toml:${NIGHTCONFIG_VERSION}"
     installer "org.apache.maven:maven-artifact:${APACHE_MAVEN_ARTIFACT_VERSION}"
-    installer 'net.jodah:typetools:0.8.3'
+    installer 'net.jodah:typetools:0.6.3'
     installer "net.minecrell:terminalconsoleappender:${TERMINALCONSOLEAPPENDER_VERSION}"
     installer "org.jline:jline-reader:${JLINE_VERSION}"   // Dep of TerminalConsoleAppender
     installer "org.jline:jline-terminal:${JLINE_VERSION}" // Dep of TerminalConsoleAppender
