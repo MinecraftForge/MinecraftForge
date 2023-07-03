@@ -15,6 +15,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.DebugScreenOverlay;
 import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.util.Mth;
 import net.minecraft.util.StringUtil;
@@ -376,7 +377,7 @@ public class ForgeGui extends Gui
             }
 
             int color = (int) (220.0F * opacity) << 24 | 1052704;
-            guiGraphics.fill(0, 0, width, height, color);
+            guiGraphics.fill(RenderType.guiOverlay(), 0, 0, width, height, color);
             minecraft.getProfiler().pop();
         }
     }
