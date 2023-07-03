@@ -77,10 +77,18 @@ public class ForgeConfig {
      * General configuration that doesn't need to be synchronized but needs to be available before server startup
      */
     public static class Common {
+        public final BooleanValue warnOnKnownNetworkingIssues;
 
         Common(ForgeConfigSpec.Builder builder) {
-            builder.comment("[DEPRECATED / NO EFFECT]: General configuration settings")
+            builder.comment("General configuration settings")
                     .push("general");
+
+            warnOnKnownNetworkingIssues = builder
+                    .comment("Set this to true to enable checking for known potential issues with dedicated server networking.",
+                            "If any are found, a detailed warning is logged with a list of possible solutions.",
+                            "This may be useful if players are having trouble connecting to your dedicated server.")
+                    .translation("forge.configgui.warnOnKnownNetworkingIssues")
+                    .define("warnOnKnownNetworkingIssues", true);
 
             builder.pop();
         }
