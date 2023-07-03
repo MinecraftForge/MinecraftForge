@@ -184,7 +184,10 @@ public class ServerLifecycleHooks
 
     private static void rejectConnection(final Connection manager, ConnectionType type, String message) {
         manager.setProtocol(ConnectionProtocol.LOGIN);
-        LOGGER.info(SERVERHOOKS, "Disconnecting {} connection attempt: {}", type, message);
+        String ip = "local";
+        if (manager.getRemoteAddress() != null)
+           ip = manager.getRemoteAddress().toString();
+        LOGGER.info(SERVERHOOKS, "[{}] Disconnecting {} connection attempt: {}", ip, type, message);
         MutableComponent text = Component.literal(message);
         manager.send(new ClientboundLoginDisconnectPacket(text));
         manager.disconnect(text);
