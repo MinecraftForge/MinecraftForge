@@ -76,7 +76,7 @@ import static org.lwjgl.opengl.GL32C.*;
 public class DisplayWindow implements ImmediateWindowProvider {
     private static final int[][] GL_VERSIONS = new int[][] {{4,6}, {4,5}, {4,4}, {4,3}, {4,2}, {4,1}, {4,0}, {3,3}, {3,2}};
     private static final Logger LOGGER = LoggerFactory.getLogger("EARLYDISPLAY");
-    private final AtomicBoolean tickSemaphore = new AtomicBoolean(true);
+    private final AtomicBoolean animationTimerTrigger = new AtomicBoolean(true);
 
     private ColourScheme colourScheme;
     private ElementShader elementShader;
@@ -151,8 +151,8 @@ public class DisplayWindow implements ImmediateWindowProvider {
         return start(parsed.valueOf(mcversionopt), forgeVersion);
     }
 
-    // The width and height of the framebuffer that we're rendering to.
-
+    private static final long MINFRAMETIME = TimeUnit.MILLISECONDS.toNanos(10); // This is the FPS cap on the window - note animation is capped at 20FPS via the tickTimer
+    private long nextFrameTime = 0;
     /**
      * The main render loop.
      * renderThread executes this.
@@ -165,7 +165,11 @@ public class DisplayWindow implements ImmediateWindowProvider {
             return;
         }
         try {
-            tickSemaphore.set(true);
+            long nt;
+            if ((nt = System.nanoTime()) < nextFrameTime) {
+                return;
+            }
+            nextFrameTime = nt + MINFRAMETIME;
             glfwMakeContextCurrent(window);
             framebuffer.activate();
             glViewport(0, 0, this.context.scaledWidth(), this.context.scaledHeight());
@@ -238,6 +242,8 @@ public class DisplayWindow implements ImmediateWindowProvider {
         glfwMakeContextCurrent(0);
         this.windowTick = renderScheduler.scheduleAtFixedRate(this::renderThreadFunc, 50, 50, TimeUnit.MILLISECONDS);
         this.performanceTick = renderScheduler.scheduleAtFixedRate(performanceInfo::update, 0, 500, TimeUnit.MILLISECONDS);
+        // schedule a 50 ms ticker to try and smooth out the rendering
+        renderScheduler.scheduleAtFixedRate(()-> animationTimerTrigger.set(true), 1, 50, TimeUnit.MILLISECONDS);
     }
 
     /**
@@ -250,7 +256,7 @@ public class DisplayWindow implements ImmediateWindowProvider {
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
         this.elements.removeIf(element -> !element.render(context, framecount));
-        if (tickSemaphore.compareAndSet(true, false)) // we only increment the framecount on a periodic basis
+        if (animationTimerTrigger.compareAndSet(true, false)) // we only increment the framecount on a periodic basis
             framecount++;
     }
 
@@ -532,8 +538,6 @@ public class DisplayWindow implements ImmediateWindowProvider {
         } while (!renderlockticket);
         // we don't want the lock, just making sure it's back on the main thread
         renderLock.release();
-        // schedule a 50 ms ticker to try and smooth out the rendering
-        renderScheduler.scheduleAtFixedRate(()->tickSemaphore.set(true), 50, 50, TimeUnit.MILLISECONDS);
 
         glfwMakeContextCurrent(window);
         // Set the title to what the game wants
