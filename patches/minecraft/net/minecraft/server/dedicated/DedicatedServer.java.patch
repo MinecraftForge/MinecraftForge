@@ -37,3 +37,11 @@
        }
     }
  
+@@ -492,6 +_,7 @@
+    }
+ 
+    public void m_7041_() {
++      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.GameShuttingDownEvent());
+       super.m_7041_();
+       Util.m_137580_();
+       SkullBlockEntity.m_196704_();

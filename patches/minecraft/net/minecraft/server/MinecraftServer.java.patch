@@ -41,15 +41,6 @@
           }
        }
  
-@@ -538,6 +_,8 @@
-    }
- 
-    public void m_7041_() {
-+      if (m_130010_() && m_6982_()) net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.GameShuttingDownEvent());
-+
-       if (this.f_177872_.m_142763_()) {
-          this.m_236737_();
-       }
 @@ -582,6 +_,7 @@
        for(ServerLevel serverlevel2 : this.m_129785_()) {
           if (serverlevel2 != null) {
