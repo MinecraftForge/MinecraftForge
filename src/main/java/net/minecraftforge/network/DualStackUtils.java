@@ -62,33 +62,49 @@ public class DualStackUtils
      */
     public static boolean checkIPv6(final InetAddress inetAddress)
     {
+        // only log debug messages if we're not in the server pinger thread, as otherwise it's unclear which IP
+        // corresponds to which server as soon as you have more than one server in the multiplayer server list
+        final String currentThreadName = Thread.currentThread().getName();
+        final boolean shouldLogDebug = !currentThreadName.contains("Server Pinger #");
+
         if (inetAddress instanceof Inet6Address addr)
         {
-            LOGGER.debug("Detected IPv6 address: \"" + addr.getHostAddress() + "\"");
+            if (shouldLogDebug)
+                LOGGER.debug("Detected IPv6 address: \"" + addr.getHostAddress() + "\"");
+
             System.setProperty("java.net.preferIPv4Stack", "false");
             System.setProperty("java.net.preferIPv6Addresses", "true");
             return true;
         }
         else if (inetAddress instanceof Inet4Address addr)
         {
-            LOGGER.debug("Detected IPv4 address: \"" + addr.getHostAddress() + "\"");
+            if (shouldLogDebug)
+                LOGGER.debug("Detected IPv4 address: \"" + addr.getHostAddress() + "\"");
+
             System.setProperty("java.net.preferIPv4Stack", "true");
             System.setProperty("java.net.preferIPv6Addresses", "false");
             return false;
         }
         else
         {
-            final String addr = inetAddress == null ? "null" : "\"" + inetAddress.getHostAddress() + "\"";
-            LOGGER.debug("Unable to determine IP version of address: " + addr);
+            if (shouldLogDebug) {
+                final String addr = inetAddress == null ? "null" : "\"" + inetAddress.getHostAddress() + "\"";
+                LOGGER.debug("Unable to determine IP version of address: " + addr);
+            }
+
             if (INITIAL_PREFER_IPv4_STACK.equalsIgnoreCase("false") && INITIAL_PREFER_IPv6_ADDRESSES.equalsIgnoreCase("true"))
             {
-                LOGGER.debug("Assuming IPv6 as Java was explicitly told to prefer it...");
+                if (shouldLogDebug)
+                    LOGGER.debug("Assuming IPv6 as Java was explicitly told to prefer it...");
+
                 System.setProperty("java.net.preferIPv4Stack", "false");
                 System.setProperty("java.net.preferIPv6Addresses", "true");
                 return true;
             }
 
-            LOGGER.debug("Assuming IPv4...");
+            if (shouldLogDebug)
+                LOGGER.debug("Assuming IPv4...");
+
             System.setProperty("java.net.preferIPv4Stack", "true");
             System.setProperty("java.net.preferIPv6Addresses", "false");
             return false;
