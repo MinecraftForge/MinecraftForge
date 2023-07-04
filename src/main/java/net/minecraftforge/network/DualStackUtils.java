@@ -23,8 +23,8 @@ import java.util.Optional;
 
 public class DualStackUtils
 {
-    private static final String INITIAL_PREFER_IPv4_STACK = System.getProperty("java.net.preferIPv4Stack");
-    private static final String INITIAL_PREFER_IPv6_ADDRESSES = System.getProperty("java.net.preferIPv6Addresses");
+    private static final String INITIAL_PREFER_IPv4_STACK = System.getProperty("java.net.preferIPv4Stack") == null ? "false" : System.getProperty("java.net.preferIPv4Stack");
+    private static final String INITIAL_PREFER_IPv6_ADDRESSES = System.getProperty("java.net.preferIPv6Addresses") == null ? "false" : System.getProperty("java.net.preferIPv6Addresses");
 
     private static final Logger LOGGER = LogManager.getLogger();
 
@@ -140,5 +140,14 @@ public class DualStackUtils
     public static String getMulticastGroup() {
         if (checkIPv6(getLocalAddress())) return "FF75:230::60";
         else return "224.0.2.60";
+    }
+
+    /**
+     * Logs the initial values of the {@code java.net.preferIPv4Stack} and {@code java.net.preferIPv6Addresses} system
+     * properties that Java has read on JVM start. Useful for debugging hostname lookup failures.
+     */
+    public static void logInitialPreferences() {
+        LOGGER.debug("Initial IPv4 stack preference: " + INITIAL_PREFER_IPv4_STACK);
+        LOGGER.debug("Initial IPv6 addresses preference: " + INITIAL_PREFER_IPv6_ADDRESSES);
     }
 }
