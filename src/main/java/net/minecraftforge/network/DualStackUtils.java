@@ -5,13 +5,13 @@
 
 package net.minecraftforge.network;
 
+import com.mojang.logging.LogUtils;
 import net.minecraft.client.multiplayer.resolver.ResolvedServerAddress;
 import net.minecraft.client.multiplayer.resolver.ServerAddress;
 import net.minecraft.client.multiplayer.resolver.ServerNameResolver;
 import net.minecraft.util.HttpUtil;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.ApiStatus;
+import org.slf4j.Logger;
 
 import javax.annotation.Nullable;
 import java.net.Inet4Address;
@@ -26,7 +26,7 @@ public class DualStackUtils
     private static final String INITIAL_PREFER_IPv4_STACK = System.getProperty("java.net.preferIPv4Stack") == null ? "false" : System.getProperty("java.net.preferIPv4Stack");
     private static final String INITIAL_PREFER_IPv6_ADDRESSES = System.getProperty("java.net.preferIPv6Addresses") == null ? "false" : System.getProperty("java.net.preferIPv6Addresses");
 
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger LOGGER = LogUtils.getLogger();
 
     /**
      * Called by {@link net.minecraftforge.common.MinecraftForge} to load this class so that the initial network
