@@ -17,18 +17,44 @@
        this.f_79110_ = p_287663_;
        this.f_79111_ = LootItemFunctions.m_80770_(p_287663_);
     }
-@@ -98,6 +_,7 @@
-       this.m_287190_(p_287704_, m_246283_(p_287704_.m_287182_(), p_287617_));
+@@ -70,10 +_,12 @@
+       };
     }
  
-+   @Deprecated //Use other method or manually call ForgeHooks.modifyLoot
-    public void m_79148_(LootContext p_79149_, Consumer<ItemStack> p_79150_) {
-       this.m_79131_(p_79149_, m_246283_(p_79149_.m_78952_(), p_79150_));
++   @Deprecated // Use a non-'Raw' version of 'getRandomItems', so that the Forge Global Loot Modifiers will be applied
+    public void m_287190_(LootParams p_287669_, Consumer<ItemStack> p_287781_) {
+       this.m_79131_((new LootContext.Builder(p_287669_)).m_287259_(this.f_286958_), p_287781_);
     }
-@@ -113,6 +_,7 @@
+ 
++   @Deprecated // Use a non-'Raw' version of 'getRandomItems', so that the Forge Global Loot Modifiers will be applied
+    public void m_79131_(LootContext p_79132_, Consumer<ItemStack> p_79133_) {
+       LootContext.VisitedEntry<?> visitedentry = LootContext.m_278811_(this);
+       if (p_79132_.m_278759_(visitedentry)) {
+@@ -91,15 +_,15 @@
+    }
+ 
+    public void m_287276_(LootParams p_287748_, long p_287729_, Consumer<ItemStack> p_287583_) {
+-      this.m_79131_((new LootContext.Builder(p_287748_)).m_78965_(p_287729_).m_287259_(this.f_286958_), m_246283_(p_287748_.m_287182_(), p_287583_));
++      this.m_230922_((new LootContext.Builder(p_287748_)).m_78965_(p_287729_).m_287259_(this.f_286958_)).forEach(p_287583_);
+    }
+ 
+    public void m_287228_(LootParams p_287704_, Consumer<ItemStack> p_287617_) {
+-      this.m_287190_(p_287704_, m_246283_(p_287704_.m_287182_(), p_287617_));
++      this.m_287195_(p_287704_).forEach(p_287617_);
+    }
+ 
+    public void m_79148_(LootContext p_79149_, Consumer<ItemStack> p_79150_) {
+-      this.m_79131_(p_79149_, m_246283_(p_79149_.m_78952_(), p_79150_));
++      this.m_230922_(p_79149_).forEach(p_79150_);
+    }
+ 
+    public ObjectArrayList<ItemStack> m_287214_(LootParams p_287574_, long p_287773_) {
+@@ -112,7 +_,8 @@
+ 
     private ObjectArrayList<ItemStack> m_230922_(LootContext p_230923_) {
        ObjectArrayList<ItemStack> objectarraylist = new ObjectArrayList<>();
-       this.m_79148_(p_230923_, objectarraylist::add);
+-      this.m_79148_(p_230923_, objectarraylist::add);
++      this.m_79131_(p_230923_, m_246283_(p_230923_.m_78952_(), objectarraylist::add));
 +      objectarraylist = net.minecraftforge.common.ForgeHooks.modifyLoot(this.getLootTableId(), objectarraylist, p_230923_);
        return objectarraylist;
     }
