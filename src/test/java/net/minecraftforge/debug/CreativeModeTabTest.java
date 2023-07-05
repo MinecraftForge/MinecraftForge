@@ -5,6 +5,7 @@
 
 package net.minecraftforge.debug;
 
+import java.util.List;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
@@ -16,6 +17,7 @@ import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.DyeItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ItemLike;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -82,6 +84,18 @@ public class CreativeModeTabTest
                     .withTabsBefore(CreativeModeTabs.COLORED_BLOCKS)
                     .build()
             );
+
+            List<Block> blocks = List.of(Blocks.GRANITE, Blocks.DIORITE, Blocks.ANDESITE, Blocks.COBBLESTONE);
+            for (int i = 0; i < blocks.size(); i++)
+            {
+                Block block = blocks.get(i);
+                helper.register(new ResourceLocation(MOD_ID, "dummy" + i), CreativeModeTab.builder()
+                      .title(Component.literal("Dummy " + i))
+                      .icon(() -> new ItemStack(block))
+                      .displayItems((params, output) -> output.accept(block))
+                      .build()
+                );
+            }
         });
     }
 

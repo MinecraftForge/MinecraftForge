@@ -17,6 +17,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.mojang.logging.LogUtils;
 import it.unimi.dsi.fastutil.booleans.BooleanConsumer;
+import java.util.Comparator;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
@@ -172,7 +173,9 @@ public final class CreativeModeTabRegistry
             if (keyC != null && valueC != null)
                 graph.putEdge(keyC, valueC);
         });
-        List<CreativeModeTab> tierList = TopologicalSort.topologicalSort(graph, null);
+        //Note: We can ignore the null warning as we validate getting tabs by key before adding to the graph
+        // so the graph should only contain tabs that we know have names in the registry
+        List<CreativeModeTab> tierList = TopologicalSort.topologicalSort(graph, Comparator.comparing(tab -> getName(tab)));
 
         setCreativeModeTabOrder(tierList);
     }
@@ -207,47 +210,56 @@ public final class CreativeModeTabRegistry
 
         final List<Holder<CreativeModeTab>> indexed = new ArrayList<>();
         BuiltInRegistries.CREATIVE_MODE_TAB.holders().filter(c -> !DEFAULT_TABS.contains(c.get())).forEach(indexed::add);
-        for (int i = 0; i < 10; i++) // Vanilla ordering
+        int vanillaTabs = 10;
+
+        for (int i = 0; i < vanillaTabs; i++) // Vanilla ordering
         {
             final Holder<CreativeModeTab> value = indexed.get(i);
             final CreativeModeTab tab = value.get();
             final ResourceLocation name = value.unwrapKey().orElseThrow().location();
 
-            final boolean specifiesOrder = !tab.tabsBefore.isEmpty() || !tab.tabsAfter.isEmpty();
-            for (final ResourceLocation after : tab.tabsAfter.isEmpty() ? (i + 1 == indexed.size() || specifiesOrder  ?
-                    List.<ResourceLocation>of() : List.of(indexed.get(i + 1).unwrapKey().orElseThrow().location())) : tab.tabsAfter)
+            if (!tab.tabsBefore.isEmpty() || !tab.tabsAfter.isEmpty())
+                addTabOrder(tab, name);
+            else
             {
-                edges.put(name, after);
-            }
-
-            for (final ResourceLocation before : tab.tabsBefore.isEmpty() ? (i == 0 || specifiesOrder ?
-                    List.<ResourceLocation>of() : List.of(indexed.get(i - 1).unwrapKey().orElseThrow().location())) : tab.tabsBefore)
-            {
-                edges.put(before, name);
+                // If there is no order specified ensure vanilla ordering by specifying the previous and next indexed tab as edges
+                if (i != 0)
+                    edges.put(indexed.get(i - 1).unwrapKey().orElseThrow().location(), name);
+                if (i + 1 < indexed.size())
+                    edges.put(name, indexed.get(i + 1).unwrapKey().orElseThrow().location());
             }
         }
 
-        for (int i = 10; i < indexed.size(); i++)
+        ResourceLocation lastVanilla = indexed.get(vanillaTabs - 1).unwrapKey().orElseThrow().location();
+        for (int i = vanillaTabs; i < indexed.size(); i++)
         {
             final Holder<CreativeModeTab> value = indexed.get(i);
             final CreativeModeTab tab = value.get();
             final ResourceLocation name = value.unwrapKey().orElseThrow().location();
 
-            for (final ResourceLocation after : tab.tabsAfter)
-            {
-                edges.put(name, after);
-            }
-
-            for (final ResourceLocation before : tab.tabsBefore)
-            {
-                edges.put(before, name);
-            }
+            if (!tab.tabsBefore.isEmpty() || !tab.tabsAfter.isEmpty())
+                addTabOrder(tab, name);
+            else // if there is no order specified ensure the tab comes after the last vanilla tab
+                edges.put(lastVanilla, name);
         }
 
         recalculateItemCreativeModeTabs();
 
         if (FMLEnvironment.dist == Dist.CLIENT && !FMLLoader.getLaunchHandler().isData())
             CreativeModeTabSearchRegistry.createSearchTrees();
+    }
+
+    private static void addTabOrder(CreativeModeTab tab, ResourceLocation name)
+    {
+        for (final ResourceLocation after : tab.tabsAfter)
+        {
+            edges.put(name, after);
+        }
+
+        for (final ResourceLocation before : tab.tabsBefore)
+        {
+            edges.put(before, name);
+        }
     }
 
 }
