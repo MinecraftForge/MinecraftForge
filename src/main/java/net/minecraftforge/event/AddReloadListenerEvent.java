@@ -6,6 +6,7 @@
 package net.minecraftforge.event;
 
 import com.google.common.collect.ImmutableList;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.server.ReloadableServerResources;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.server.packs.resources.PreparableReloadListener;
@@ -30,10 +31,12 @@ public class AddReloadListenerEvent extends Event
 {
     private final List<PreparableReloadListener> listeners = new ArrayList<>();
     private final ReloadableServerResources serverResources;
+    private final RegistryAccess registryAccess;
 
-    public AddReloadListenerEvent(ReloadableServerResources serverResources)
+    public AddReloadListenerEvent(ReloadableServerResources serverResources, RegistryAccess registryAccess)
     {
         this.serverResources = serverResources;
+        this.registryAccess = registryAccess;
     }
 
    /**
@@ -64,6 +67,16 @@ public class AddReloadListenerEvent extends Event
     public ICondition.IContext getConditionContext()
     {
         return serverResources.getConditionContext();
+    }
+
+    /**
+     * Provides access to the loaded registries associated with these server resources.
+     * All built-in and dynamic registries are loaded and frozen by this point.
+     * @return The RegistryAccess context for the currently active reload.
+     */
+    public RegistryAccess getRegistryAccess()
+    {
+        return registryAccess;
     }
 
     private static class WrappedStateAwareListener implements PreparableReloadListener {

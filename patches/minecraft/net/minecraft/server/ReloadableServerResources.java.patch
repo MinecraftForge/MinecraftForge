@@ -30,7 +30,7 @@
        ReloadableServerResources reloadableserverresources = new ReloadableServerResources(p_251163_, p_250212_, p_249301_, p_251126_);
 -      return SimpleReloadInstance.m_203834_(p_248588_, reloadableserverresources.m_206890_(), p_249136_, p_249601_, f_206846_, f_206845_.isDebugEnabled()).m_7237_().whenComplete((p_255534_, p_255535_) -> {
 +      List<PreparableReloadListener> listeners = new java.util.ArrayList<>(reloadableserverresources.m_206890_());
-+      listeners.addAll(net.minecraftforge.event.ForgeEventFactory.onResourceReload(reloadableserverresources));
++      listeners.addAll(net.minecraftforge.event.ForgeEventFactory.onResourceReload(reloadableserverresources, p_251163_));
 +      return SimpleReloadInstance.m_203834_(p_248588_, listeners, p_249136_, p_249601_, f_206846_, f_206845_.isDebugEnabled()).m_7237_().whenComplete((p_214309_, p_214310_) -> {
           reloadableserverresources.f_214300_.m_254905_(CommandBuildContext.MissingTagAccessPolicy.FAIL);
        }).thenApply((p_214306_) -> {
