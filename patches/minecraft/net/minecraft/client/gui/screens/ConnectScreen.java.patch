@@ -1,0 +1,11 @@
+--- a/net/minecraft/client/gui/screens/ConnectScreen.java
++++ b/net/minecraft/client/gui/screens/ConnectScreen.java
+@@ -86,6 +_,8 @@
+                }
+ 
+                if (!optional.isPresent()) {
++                  ConnectScreen.f_95683_.error("Couldn't connect to server: Unknown host \"{}\"", p_249536_.m_171863_());
++                  net.minecraftforge.network.DualStackUtils.logInitialPreferences();
+                   p_251955_.execute(() -> {
+                      p_251955_.m_91152_(new DisconnectedScreen(ConnectScreen.this.f_95686_, ConnectScreen.this.f_278471_, ConnectScreen.f_169260_));
+                   });
