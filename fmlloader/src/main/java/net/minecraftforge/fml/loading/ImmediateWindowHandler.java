@@ -133,7 +133,7 @@ public class ImmediateWindowHandler {
             try {
                 return (String) NV_VERSION.invoke(null);
             } catch (Throwable e) {
-                throw new IllegalStateException("How did you get here?", e);
+                return "3.2"; // Vanilla sets 3.2 in com.mojang.blaze3d.platform.Window
             }
         }
 
