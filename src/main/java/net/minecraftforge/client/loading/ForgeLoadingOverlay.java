@@ -21,6 +21,7 @@ import net.minecraft.client.gui.screens.LoadingOverlay;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ReloadInstance;
+import net.minecraft.util.Mth;
 import net.minecraftforge.fml.StartupMessageManager;
 import net.minecraftforge.fml.earlydisplay.ColourScheme;
 import net.minecraftforge.fml.earlydisplay.DisplayWindow;
@@ -33,7 +34,6 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import static com.mojang.blaze3d.platform.GlConst.*;
-import static net.minecraft.util.Mth.clamp;
 import static org.lwjgl.opengl.GL30C.glViewport;
 import static org.lwjgl.opengl.GL30C.glTexParameterIi;
 
@@ -71,8 +71,8 @@ public class ForgeLoadingOverlay extends LoadingOverlay {
     public void render(final @NotNull GuiGraphics graphics, final int mouseX, final int mouseY, final float partialTick) {
         long millis = Util.getMillis();
         float fadeouttimer = this.fadeOutStart > -1L ? (float)(millis - this.fadeOutStart) / 1000.0F : -1.0F;
-        progress.setAbsolute(clamp((int)(this.reload.getActualProgress() * 100f), 0, 100));
-        var fade = 1.0F - clamp(fadeouttimer - 1.0F, 0.0F, 1.0F);
+        progress.setAbsolute(Mth.clamp((int)(this.reload.getActualProgress() * 100f), 0, 100));
+        var fade = 1.0F - Mth.clamp(fadeouttimer - 1.0F, 0.0F, 1.0F);
         var colour = this.displayWindow.context().colourScheme().background();
         RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, fade);
         if (fadeouttimer >= 1.0F) {
@@ -95,10 +95,10 @@ public class ForgeLoadingOverlay extends LoadingOverlay {
         var wscale = (float)fbWidth / twidth;
         var hscale = (float)fbHeight / theight;
         var scale = this.displayWindow.context().scale() * Math.min(wscale, hscale) / 2f;
-        var wleft = clamp(fbWidth * 0.5f - scale * twidth, 0, fbWidth);
-        var wtop = clamp(fbHeight * 0.5f - scale * theight, 0, fbHeight);
-        var wright = clamp(fbWidth * 0.5f + scale * twidth, 0, fbWidth);
-        var wbottom = clamp(fbHeight * 0.5f + scale * theight, 0, fbHeight);
+        var wleft = Mth.clamp(fbWidth * 0.5f - scale * twidth, 0, fbWidth);
+        var wtop = Mth.clamp(fbHeight * 0.5f - scale * theight, 0, fbHeight);
+        var wright = Mth.clamp(fbWidth * 0.5f + scale * twidth, 0, fbWidth);
+        var wbottom = Mth.clamp(fbHeight * 0.5f + scale * theight, 0, fbHeight);
         GlStateManager.glActiveTexture(GL_TEXTURE0);
         RenderSystem.disableCull();
         BufferBuilder bufferbuilder = Tesselator.getInstance().getBuilder();
