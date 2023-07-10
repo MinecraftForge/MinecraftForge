@@ -295,5 +295,7 @@ modId="trade_with_villager_event_test"
 modId="chunk_event_load_new_chunk_test"
 [[mods]]
 modId="custom_fluid_container_test"
+[[mods]]
+modId="alter_ground_event_test"
 
 # ADD ABOVE THIS LINE
