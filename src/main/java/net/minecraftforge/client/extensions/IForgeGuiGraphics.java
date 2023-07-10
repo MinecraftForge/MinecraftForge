@@ -136,4 +136,63 @@ public interface IForgeGuiGraphics
 
         self().blit(texture, x, y, boundsWidth, boundsHeight, 0.0f,0.0f, rectWidth, rectHeight, rectWidth, rectHeight);
     }
+
+    /**
+     * Version of {@link GuiGraphics#blitNineSliced(ResourceLocation, int, int, int, int, int, int, int, int, int)} that supports specifying the texture's size.
+     */
+    default void blitNineSlicedSized(ResourceLocation texture, int x, int y, int width, int height, int sliceSize, int uWidth, int vHeight, int uOffset, int vOffset,
+          int textureWidth, int textureHeight)
+    {
+        blitNineSlicedSized(texture, x, y, width, height, sliceSize, sliceSize, uWidth, vHeight, uOffset, vOffset, textureWidth, textureHeight);
+    }
+
+    /**
+     * Version of {@link GuiGraphics#blitNineSliced(ResourceLocation, int, int, int, int, int, int, int, int, int, int)} that supports specifying the texture's size.
+     */
+    default void blitNineSlicedSized(ResourceLocation texture, int x, int y, int width, int height, int sliceWidth, int sliceHeight, int uWidth, int vHeight,
+          int uOffset, int vOffset, int textureWidth, int textureHeight)
+    {
+        blitNineSlicedSized(texture, x, y, width, height, sliceWidth, sliceHeight, sliceWidth, sliceHeight, uWidth, vHeight, uOffset, vOffset, textureWidth, textureHeight);
+    }
+
+    /**
+     * Version of {@link GuiGraphics#blitNineSliced(ResourceLocation, int, int, int, int, int, int, int, int, int, int, int, int)} that supports specifying the texture's size.
+     */
+    default void blitNineSlicedSized(ResourceLocation texture, int x, int y, int width, int height, int cornerWidth, int cornerHeight, int edgeWidth, int edgeHeight,
+          int uWidth, int vHeight, int uOffset, int vOffset, int textureWidth, int textureHeight)
+    {
+        cornerWidth = Math.min(cornerWidth, width / 2);
+        edgeWidth = Math.min(edgeWidth, width / 2);
+        cornerHeight = Math.min(cornerHeight, height / 2);
+        edgeHeight = Math.min(edgeHeight, height / 2);
+        GuiGraphics self = self();
+        if (width == uWidth && height == vHeight)
+        {
+            self.blit(texture, x, y, uOffset, vOffset, width, height, textureWidth, textureHeight);
+        }
+        else if (height == vHeight)
+        {
+            self.blit(texture, x, y, uOffset, vOffset, cornerWidth, height, textureWidth, textureHeight);
+            self.blitRepeating(texture, x + cornerWidth, y, width - edgeWidth - cornerWidth, height, uOffset + cornerWidth, vOffset, uWidth - edgeWidth - cornerWidth, vHeight, textureWidth, textureHeight);
+            self.blit(texture, x + width - edgeWidth, y, uOffset + uWidth - edgeWidth, vOffset, edgeWidth, height, textureWidth, textureHeight);
+        }
+        else if (width == uWidth)
+        {
+            self.blit(texture, x, y, uOffset, vOffset, width, cornerHeight, textureWidth, textureHeight);
+            self.blitRepeating(texture, x, y + cornerHeight, width, height - edgeHeight - cornerHeight, uOffset, vOffset + cornerHeight, uWidth, vHeight - edgeHeight - cornerHeight, textureWidth, textureHeight);
+            self.blit(texture, x, y + height - edgeHeight, uOffset, vOffset + vHeight - edgeHeight, width, edgeHeight, textureWidth, textureHeight);
+        }
+        else
+        {
+            self.blit(texture, x, y, uOffset, vOffset, cornerWidth, cornerHeight, textureWidth, textureHeight);
+            self.blitRepeating(texture, x + cornerWidth, y, width - edgeWidth - cornerWidth, cornerHeight, uOffset + cornerWidth, vOffset, uWidth - edgeWidth - cornerWidth, cornerHeight, textureWidth, textureHeight);
+            self.blit(texture, x + width - edgeWidth, y, uOffset + uWidth - edgeWidth, vOffset, edgeWidth, cornerHeight, textureWidth, textureHeight);
+            self.blit(texture, x, y + height - edgeHeight, uOffset, vOffset + vHeight - edgeHeight, cornerWidth, edgeHeight, textureWidth, textureHeight);
+            self.blitRepeating(texture, x + cornerWidth, y + height - edgeHeight, width - edgeWidth - cornerWidth, edgeHeight, uOffset + cornerWidth, vOffset + vHeight - edgeHeight, uWidth - edgeWidth - cornerWidth, edgeHeight, textureWidth, textureHeight);
+            self.blit(texture, x + width - edgeWidth, y + height - edgeHeight, uOffset + uWidth - edgeWidth, vOffset + vHeight - edgeHeight, edgeWidth, edgeHeight, textureWidth, textureHeight);
+            self.blitRepeating(texture, x, y + cornerHeight, cornerWidth, height - edgeHeight - cornerHeight, uOffset, vOffset + cornerHeight, cornerWidth, vHeight - edgeHeight - cornerHeight, textureWidth, textureHeight);
+            self.blitRepeating(texture, x + cornerWidth, y + cornerHeight, width - edgeWidth - cornerWidth, height - edgeHeight - cornerHeight, uOffset + cornerWidth, vOffset + cornerHeight, uWidth - edgeWidth - cornerWidth, vHeight - edgeHeight - cornerHeight, textureWidth, textureHeight);
+            self.blitRepeating(texture, x + width - edgeWidth, y + cornerHeight, cornerWidth, height - edgeHeight - cornerHeight, uOffset + uWidth - edgeWidth, vOffset + cornerHeight, edgeWidth, vHeight - edgeHeight - cornerHeight, textureWidth, textureHeight);
+        }
+    }
 }
