@@ -33,6 +33,26 @@
        int i = p_282636_.m_272191_(p_281596_, (float)p_281586_, (float)p_282816_, p_281743_, p_282394_, this.f_279612_.m_85850_().m_252922_(), this.f_279627_, Font.DisplayMode.NORMAL, 0, 15728880);
        this.m_286081_();
        return i;
+@@ -405,6 +_,10 @@
+    }
+ 
+    public void m_280543_(ResourceLocation p_283059_, int p_283575_, int p_283192_, int p_281790_, int p_283642_, int p_282691_, int p_281912_, int p_281728_, int p_282324_) {
++      blitRepeating(p_283059_, p_283575_, p_283192_, p_281790_, p_283642_, p_282691_, p_281912_, p_281728_, p_282324_, 256, 256);
++   }
++
++   public void blitRepeating(ResourceLocation p_283059_, int p_283575_, int p_283192_, int p_281790_, int p_283642_, int p_282691_, int p_281912_, int p_281728_, int p_282324_, int textureWidth, int textureHeight) {
+       int i = p_283575_;
+ 
+       int j;
+@@ -417,7 +_,7 @@
+          for(IntIterator intiterator1 = m_280358_(p_283642_, p_282324_); intiterator1.hasNext(); l += i1) {
+             i1 = intiterator1.nextInt();
+             int j1 = (p_282324_ - i1) / 2;
+-            this.m_280218_(p_283059_, i, l, p_282691_ + k, p_281912_ + j1, j, i1);
++            this.m_280163_(p_283059_, i, l, p_282691_ + k, p_281912_ + j1, j, i1, textureWidth, textureHeight);
+          }
+       }
+ 
 @@ -477,6 +_,7 @@
              crashreportcategory.m_128165_("Item Type", () -> {
                 return String.valueOf((Object)p_281675_.m_41720_());
