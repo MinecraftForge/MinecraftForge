@@ -83,7 +83,7 @@
                 return DataProvider.m_253162_(p_253684_, jsonelement, path);
              }
           }).toArray((p_253442_) -> {
-@@ -91,13 +_,23 @@
+@@ -91,13 +_,25 @@
        });
     }
  
@@ -104,7 +104,9 @@
  
     protected TagBuilder m_236451_(TagKey<T> p_236452_) {
        return this.f_126543_.computeIfAbsent(p_236452_.f_203868_(), (p_236442_) -> {
-+         existingFileHelper.trackGenerated(p_236442_, resourceType);
++         if (existingFileHelper != null) {
++            existingFileHelper.trackGenerated(p_236442_, resourceType);
++         }
           return TagBuilder.m_215899_();
        });
     }
