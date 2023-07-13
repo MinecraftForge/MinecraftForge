@@ -667,9 +667,20 @@ public class ForgeEventFactory
         return event.getCharge();
     }
 
+    public static ProjectileImpactEvent.ImpactResult onProjectileImpactResult(Projectile projectile, HitResult ray)
+    {
+        ProjectileImpactEvent event = new ProjectileImpactEvent(projectile, ray);
+
+        // Remove this when the event is no longer cancelable
+        if (MinecraftForge.EVENT_BUS.post(event))
+            return ProjectileImpactEvent.ImpactResult.SKIP_ENTITY;
+
+        return event.getImpactResult();
+    }
+
     public static boolean onProjectileImpact(Projectile projectile, HitResult ray)
     {
-        return MinecraftForge.EVENT_BUS.post(new ProjectileImpactEvent(projectile, ray));
+        return onProjectileImpactResult(projectile, ray) != ProjectileImpactEvent.ImpactResult.DEFAULT;
     }
 
     public static LootTable loadLootTable(ResourceLocation name, LootTable table)
