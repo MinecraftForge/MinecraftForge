@@ -50,3 +50,13 @@
              }
  
              if (entityhitresult == null || this.m_36796_() <= 0) {
+@@ -197,6 +_,9 @@
+ 
+             hitresult = null;
+          }
++
++         if (this.m_213877_())
++            return;
+ 
+          vec3 = this.m_20184_();
+          double d5 = vec3.f_82479_;
