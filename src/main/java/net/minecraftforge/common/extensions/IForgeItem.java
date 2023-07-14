@@ -330,8 +330,26 @@ public interface IForgeItem
     /**
      * Called to tick armor in the armor slot. Override to do something
      */
+    @Deprecated(forRemoval = true, since = "1.20.1") // Use onInventoryTick
     default void onArmorTick(ItemStack stack, Level level, Player player)
     {
+    }
+
+    /**
+     * Called to tick this items in a players inventory, the indexes are the global slot index.
+     */
+    default void onInventoryTick(ItemStack stack, Level level, Player player, int slotIndex, int selectedIndex)
+    {
+    	// For compatibility reasons we have to use non-local index values, I think this is a vanilla bug but lets maintain compatibility
+    	int vanillaIndex = slotIndex;
+    	if (slotIndex >= 36) {
+    		vanillaIndex -= 36;
+    		if (vanillaIndex >= 4)
+    			vanillaIndex -= 4;
+			else
+				onArmorTick(stack, level, player);
+    	}
+		stack.inventoryTick(level, player, vanillaIndex, selectedIndex == vanillaIndex);
     }
 
     /**
