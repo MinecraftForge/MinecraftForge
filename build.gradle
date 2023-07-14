@@ -27,8 +27,8 @@ plugins {
     id 'net.minecraftforge.gradleutils' version '2.+'
     id 'eclipse'
     id 'de.undercouch.download' version '5.4.0'
-    id 'net.minecraftforge.gradle.patcher' version '[6.0.6,6.2)' apply false
-    id 'net.minecraftforge.gradle.mcp' version '[6.0.6,6.2)' apply false
+    id 'net.minecraftforge.gradle.patcher' version '[6.0.11,6.2)' apply false
+    id 'net.minecraftforge.gradle.mcp' version '[6.0.11,6.2)' apply false
 }
 
 Util.init() //Init all our extension methods!
@@ -887,9 +887,8 @@ project(':forge') {
     apply plugin: 'org.cadixdev.licenser'
 
     applyPatches { 
-		verbose = true 
-		//failOnError = false
-	}
+        level 'WARNING'
+    }
 
     sourceSets {
         main {

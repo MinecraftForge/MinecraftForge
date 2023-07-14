@@ -1,5 +1,14 @@
 --- a/net/minecraft/world/entity/projectile/AbstractArrow.java
 +++ b/net/minecraft/world/entity/projectile/AbstractArrow.java
+@@ -66,6 +_,8 @@
+    @Nullable
+    private List<Entity> f_36702_;
+ 
++   private final IntOpenHashSet ignoredEntities = new IntOpenHashSet();
++
+    protected AbstractArrow(EntityType<? extends AbstractArrow> p_36721_, Level p_36722_) {
+       super(p_36721_, p_36722_);
+    }
 @@ -150,7 +_,7 @@
           --this.f_36706_;
        }
@@ -9,14 +18,54 @@
           this.m_20095_();
        }
  
-@@ -186,7 +_,9 @@
+@@ -186,9 +_,28 @@
                 }
              }
  
 -            if (hitresult != null && !flag) {
+-               this.m_6532_(hitresult);
+-               this.f_19812_ = true;
 +            if (hitresult != null && hitresult.m_6662_() != HitResult.Type.MISS && !flag) {
-+               if (net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, hitresult))
-+                  break;
-                this.m_6532_(hitresult);
-                this.f_19812_ = true;
++               switch (net.minecraftforge.event.ForgeEventFactory.onProjectileImpactResult(this, hitresult)) {
++                  case SKIP_ENTITY:
++                     if (hitresult.m_6662_() != HitResult.Type.ENTITY) { // If there is no entity, we just return default behaviour
++                        this.m_6532_(hitresult);
++                        this.f_19812_ = true;
++                        break;
++                     }
++                     ignoredEntities.add(entityhitresult.m_82443_().m_19879_());
++                     entityhitresult = null; // Don't process any further
++                     break;
++                  case STOP_AT_CURRENT_NO_DAMAGE:
++                     this.m_146870_();
++                     entityhitresult = null; // Don't process any further
++                     break;
++                  case STOP_AT_CURRENT:
++                     this.m_36767_((byte) 0);
++                  case DEFAULT:
++                     this.m_6532_(hitresult);
++                     this.f_19812_ = true;
++                     break;
++               }
              }
+ 
+             if (entityhitresult == null || this.m_36796_() <= 0) {
+@@ -198,6 +_,9 @@
+             hitresult = null;
+          }
+ 
++         if (this.m_213877_())
++            return;
++
+          vec3 = this.m_20184_();
+          double d5 = vec3.f_82479_;
+          double d6 = vec3.f_82480_;
+@@ -422,7 +_,7 @@
+    }
+ 
+    protected boolean m_5603_(Entity p_36743_) {
+-      return super.m_5603_(p_36743_) && (this.f_36701_ == null || !this.f_36701_.contains(p_36743_.m_19879_()));
++      return super.m_5603_(p_36743_) && (this.f_36701_ == null || !this.f_36701_.contains(p_36743_.m_19879_())) && !this.ignoredEntities.contains(p_36743_.m_19879_());
+    }
+ 
+    public void m_7380_(CompoundTag p_36772_) {
