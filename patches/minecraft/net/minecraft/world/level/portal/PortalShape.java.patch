@@ -9,3 +9,12 @@
     };
     private static final float f_256985_ = 4.0F;
     private static final double f_256802_ = 1.0D;
+@@ -207,7 +_,7 @@
+       Direction.Axis direction$axis = blockstate.m_61145_(BlockStateProperties.f_61364_).orElse(Direction.Axis.X);
+       double d0 = (double)p_259931_.f_124349_;
+       double d1 = (double)p_259931_.f_124350_;
+-      EntityDimensions entitydimensions = p_259166_.m_6972_(p_259166_.m_20089_());
++      EntityDimensions entitydimensions = p_259166_.getDimensionsForge(p_259166_.m_20089_());
+       int i = p_259901_ == direction$axis ? 0 : 90;
+       Vec3 vec3 = p_259901_ == direction$axis ? p_260043_ : new Vec3(p_260043_.f_82481_, p_260043_.f_82480_, -p_260043_.f_82479_);
+       double d2 = (double)entitydimensions.f_20377_ / 2.0D + (d0 - (double)entitydimensions.f_20377_) * p_259630_.m_7096_();
