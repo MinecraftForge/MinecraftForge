@@ -187,7 +187,7 @@
                 list1.add(i++, creativemodetab.m_40786_().m_6881_().m_130940_(ChatFormatting.BLUE));
              }
           }
-@@ -639,13 +_,13 @@
+@@ -639,21 +_,22 @@
     }
  
     protected void m_7286_(GuiGraphics p_282663_, float p_282504_, int p_282089_, int p_282249_) {
@@ -203,8 +203,10 @@
        this.f_98510_.m_88315_(p_282663_, p_282089_, p_282249_, p_282504_);
        int j = this.f_97735_ + 175;
        int k = this.f_97736_ + 18;
-@@ -654,6 +_,7 @@
-          p_282663_.m_280218_(f_98504_, j, k + (int)((float)(i - k - 17) * this.f_98508_), 232 + (this.m_98631_() ? 0 : 12), 0, 12, 15);
+       int i = k + 112;
+       if (f_98507_.m_40791_()) {
+-         p_282663_.m_280218_(f_98504_, j, k + (int)((float)(i - k - 17) * this.f_98508_), 232 + (this.m_98631_() ? 0 : 12), 0, 12, 15);
++         p_282663_.m_280218_(f_98507_.getTabsImage(), j, k + (int)((float)(i - k - 17) * this.f_98508_), 232 + (this.m_98631_() ? 0 : 12), 0, 12, 15);
        }
  
 +      if (currentPage.getVisibleTabs().contains(f_98507_)) //Forge: only display tab selection when the selected tab is on the current page
@@ -240,14 +242,16 @@
        int j = i * 26;
        int k = 0;
        int l = this.f_97735_ + this.m_258094_(p_283489_);
-@@ -720,6 +_,7 @@
+@@ -720,7 +_,8 @@
           i1 += this.f_97727_ - 4;
        }
  
+-      p_283590_.m_280218_(f_98504_, l, i1, j, k, 26, 32);
 +      com.mojang.blaze3d.systems.RenderSystem.enableBlend(); //Forge: Make sure blend is enabled else tabs show a white border.
-       p_283590_.m_280218_(f_98504_, l, i1, j, k, 26, 32);
++      p_283590_.m_280218_(p_283489_.getTabsImage(), l, i1, j, k, 26, 32);
        p_283590_.m_280168_().m_85836_();
        p_283590_.m_280168_().m_252880_(0.0F, 0.0F, 100.0F);
+       l += 5;
 @@ -763,6 +_,14 @@
  
     }
