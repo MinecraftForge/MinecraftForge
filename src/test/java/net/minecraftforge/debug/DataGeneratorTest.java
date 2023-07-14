@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -34,6 +35,7 @@ import net.minecraft.DetectedVersion;
 import net.minecraft.Util;
 import net.minecraft.advancements.critereon.InventoryChangeTrigger;
 import net.minecraft.core.*;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.PackOutput;
@@ -169,6 +171,7 @@ public class DataGeneratorTest
         gen.addProvider(event.includeClient(), itemModels);
         gen.addProvider(event.includeClient(), new BlockStates(packOutput, itemModels.existingFileHelper));
         gen.addProvider(event.includeClient(), new SoundDefinitions(packOutput, event.getExistingFileHelper()));
+        gen.addProvider(event.includeClient(), new ParticleDescriptions(packOutput, event.getExistingFileHelper()));
 
         gen.addProvider(event.includeServer(), new Recipes(packOutput));
         gen.addProvider(event.includeServer(), new Tags(packOutput, lookupProvider, event.getExistingFileHelper()));
@@ -1122,6 +1125,80 @@ public class DataGeneratorTest
                     .addCriterion("get_cobbleStone", InventoryChangeTrigger.TriggerInstance.hasItems(Items.COBBLESTONE))
                     .parent(new ResourceLocation("forge", "dummy_parent"))
                     .save(saver, new ResourceLocation("good_parent"), existingFileHelper);
+        }
+    }
+
+    private static class ParticleDescriptions extends ParticleDescriptionProvider {
+
+        public ParticleDescriptions(PackOutput output, ExistingFileHelper fileHelper) {
+            super(output, fileHelper);
+        }
+
+        @Override
+        protected void addDescriptions() {
+            this.sprite(ParticleTypes.DRIPPING_LAVA, new ResourceLocation("drip_hang"));
+
+            this.spriteSet(ParticleTypes.CLOUD, new ResourceLocation("generic"), 8, true);
+
+            this.spriteSet(ParticleTypes.FISHING,
+                    new ResourceLocation("splash_0"),
+                    new ResourceLocation("splash_1"),
+                    new ResourceLocation("splash_2"),
+                    new ResourceLocation("splash_3")
+            );
+
+            this.spriteSet(ParticleTypes.ENCHANT, () -> new Iterator<>() {
+
+                private final ResourceLocation base = new ResourceLocation("sga");
+                private char suffix = 'a';
+
+                @Override
+                public boolean hasNext() {
+                    return this.suffix <= 'z';
+                }
+
+                @Override
+                public ResourceLocation next() {
+                    return this.base.withSuffix("_" + this.suffix++);
+                }
+            });
+        }
+
+        @Override
+        public CompletableFuture<?> run(CachedOutput cache) {
+            return super.run(cache).thenRun(this::validateResults);
+        }
+
+        private void validateResults() {
+            var errors = Stream.of(ParticleTypes.DRIPPING_LAVA, ParticleTypes.CLOUD, ParticleTypes.FISHING, ParticleTypes.ENCHANT)
+                    .map(ForgeRegistries.PARTICLE_TYPES::getKey).map(particle -> {
+                        try (var resource = this.fileHelper.getResource(particle, PackType.CLIENT_RESOURCES, ".json", "particles").openAsReader()) {
+                            var existingTextures = GSON.fromJson(resource, JsonObject.class).get("textures").getAsJsonArray();
+                            var generatedTextures = this.descriptions.get(particle);
+
+                            // Check texture size
+                            if (existingTextures.size() != generatedTextures.size()) {
+                                LOGGER.error("%s had a different number of sprites, expected %s, actual %s", particle, existingTextures.size(), generatedTextures.size());
+                                return particle;
+                            }
+
+                            boolean error = false;
+                            for (int i = 0; i < generatedTextures.size(); ++i) {
+                                if (!existingTextures.get(i).getAsString().equals(generatedTextures.get(i))) {
+                                    LOGGER.error("%s index %s: expected %s, actual %s", particle, i, existingTextures.get(i).getAsString(), generatedTextures.get(i));
+                                    error = true;
+                                }
+                            }
+
+                            return error ? particle : null;
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }).filter(Objects::nonNull).toList();
+
+            if (!errors.isEmpty()) {
+                throw new AssertionError(String.format("Validation errors found in %s; see above for details", errors.stream().reduce("", (str, rl) -> str + ", " + rl, (str1, str2) -> str1 + ", " + str2)));
+            }
         }
     }
 
