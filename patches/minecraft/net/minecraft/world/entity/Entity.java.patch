@@ -649,7 +649,7 @@
 +   /**
 +    * Accessor method for {@link #getEyeHeight(Pose, EntityDimensions)}
 +    */
-+   public final float getEyeHeightAccess(Pose pose, EntityDimensions size) {
++   public float getEyeHeightAccess(Pose pose, EntityDimensions size) {
 +      return this.m_6380_(pose, size);
 +   }
 +
