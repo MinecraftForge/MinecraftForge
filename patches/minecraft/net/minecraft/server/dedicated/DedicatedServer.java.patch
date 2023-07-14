@@ -1,5 +1,14 @@
 --- a/net/minecraft/server/dedicated/DedicatedServer.java
 +++ b/net/minecraft/server/dedicated/DedicatedServer.java
+@@ -68,6 +_,8 @@
+    private MinecraftServerGui f_139605_;
+    @Nullable
+    private final TextFilterClient f_139606_;
++   @Nullable
++   private net.minecraft.client.server.LanServerPinger dediLanPinger;
+ 
+    public DedicatedServer(Thread p_214789_, LevelStorageSource.LevelStorageAccess p_214790_, PackRepository p_214791_, WorldStem p_214792_, DedicatedServerSettings p_214793_, DataFixer p_214794_, Services p_214795_, ChunkProgressListenerFactory p_214796_) {
+       super(p_214789_, p_214790_, p_214791_, p_214792_, Proxy.NO_PROXY, p_214794_, p_214795_, p_214796_);
 @@ -79,6 +_,7 @@
     public boolean m_7038_() throws IOException {
        Thread thread = new Thread("Server console handler") {
@@ -22,26 +31,41 @@
           if (dedicatedserverproperties.f_139744_ != null) {
              this.m_129900_().m_46170_(GameRules.f_46153_).m_46246_(dedicatedserverproperties.f_139744_, this);
           }
-@@ -183,12 +_,13 @@
-             thread1.start();
-          }
- 
-+         // <3 you Grum for this, saves us ~30 patch files! --^
-          if (dedicatedserverproperties.f_139721_) {
-             MinecraftServerStatistics.m_18328_(this);
+@@ -188,7 +_,12 @@
              f_139598_.info("JMX monitoring enabled");
           }
  
 -         return true;
++         if (net.minecraftforge.common.ForgeConfig.SERVER.advertiseDedicatedServerToLan.get()) {
++            this.dediLanPinger = new net.minecraft.client.server.LanServerPinger(this.m_129916_(), String.valueOf(this.m_7448_()));
++            this.dediLanPinger.start();
++         }
++
 +         return net.minecraftforge.server.ServerLifecycleHooks.handleServerStarting(this);
        }
     }
  
-@@ -492,6 +_,7 @@
+@@ -263,6 +_,10 @@
+          this.f_139601_.m_7530_();
+       }
+ 
++      if (this.dediLanPinger != null) {
++         this.dediLanPinger.interrupt();
++         this.dediLanPinger = null;
++      }
+    }
+ 
+    public void m_5703_(BooleanSupplier p_139661_) {
+@@ -492,7 +_,12 @@
     }
  
     public void m_7041_() {
 +      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.GameShuttingDownEvent());
        super.m_7041_();
++      if (this.dediLanPinger != null) {
++         this.dediLanPinger.interrupt();
++         this.dediLanPinger = null;
++      }
        Util.m_137580_();
        SkullBlockEntity.m_196704_();
+    }
