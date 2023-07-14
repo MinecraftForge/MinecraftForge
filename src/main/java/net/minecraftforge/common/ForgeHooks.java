@@ -47,6 +47,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.HolderSet;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.ChatDecorator;
 import net.minecraft.network.chat.ClickEvent;
@@ -70,6 +71,7 @@ import net.minecraft.world.Difficulty;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.effect.MobEffectUtil;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -89,6 +91,7 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.level.storage.LevelStorageSource;
@@ -144,10 +147,12 @@ import net.minecraftforge.event.entity.EntityTravelToDimensionEvent;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
 import net.minecraftforge.event.entity.living.EnderManAngerEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
+import net.minecraftforge.event.entity.living.LivingBreatheEvent;
 import net.minecraftforge.event.entity.living.LivingChangeTargetEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
+import net.minecraftforge.event.entity.living.LivingDrownEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingJumpEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingTickEvent;
@@ -1525,5 +1530,55 @@ public class ForgeHooks
             @Override public Stream<HolderSet.Named<T>> listTags() { return Stream.empty(); }
             @Override public Optional<HolderSet.Named<T>> get(TagKey<T> key) { return Optional.of(HolderSet.emptyNamed(lookup, key)); }
         };
+    }
+
+    /**
+     * Handles living entities being under water. This fires the {@link LivingBreatheEvent} and if the entity's air supply
+     * is less than or equal to zero also the {@link LivingDrownEvent}. Additionally when the entity is under water it will
+     * dismount if {@link IForgeEntity#canBeRiddenUnderFluidType(FluidType, Entity)} returns false.
+     * 
+     * @param entity           The living entity which is currently updated
+     * @param consumeAirAmount The amount of air to consume when the entity is unable to breathe
+     * @param refillAirAmount  The amount of air to refill when the entity is able to breathe
+     */
+    public static void onLivingBreathe(LivingEntity entity, int consumeAirAmount, int refillAirAmount)
+    {
+        boolean isAir = entity.getEyeInFluidType().isAir() || entity.level().getBlockState(BlockPos.containing(entity.getX(), entity.getEyeY(), entity.getZ())).is(Blocks.BUBBLE_COLUMN);
+        boolean canBreathe = isAir || !entity.canDrownInFluidType(entity.getEyeInFluidType()) || MobEffectUtil.hasWaterBreathing(entity) || (entity instanceof Player && ((Player) entity).getAbilities().invulnerable);
+        LivingBreatheEvent breatheEvent = new LivingBreatheEvent(entity, canBreathe, consumeAirAmount, refillAirAmount);
+        MinecraftForge.EVENT_BUS.post(breatheEvent);
+        if (breatheEvent.canBreathe())
+        {
+            entity.setAirSupply(Math.min(entity.getAirSupply() + breatheEvent.getRefillAirAmount(), entity.getMaxAirSupply()));
+        }
+        else
+        {
+            entity.setAirSupply(entity.getAirSupply() - breatheEvent.getConsumeAirAmount());
+        }
+
+        if (entity.getAirSupply() <= 0)
+        {
+            LivingDrownEvent drownEvent = new LivingDrownEvent(entity, entity.getAirSupply() <= -20);
+            if (!MinecraftForge.EVENT_BUS.post(drownEvent) && drownEvent.isDrowning())
+            {
+                entity.setAirSupply(0);
+                Vec3 vec3 = entity.getDeltaMovement();
+
+                for (int i = 0; i < 8; ++i)
+                {
+                    double d2 = entity.getRandom().nextDouble() - entity.getRandom().nextDouble();
+                    double d3 = entity.getRandom().nextDouble() - entity.getRandom().nextDouble();
+                    double d4 = entity.getRandom().nextDouble() - entity.getRandom().nextDouble();
+                    entity.level().addParticle(ParticleTypes.BUBBLE, entity.getX() + d2, entity.getY() + d3, entity.getZ() + d4, vec3.x, vec3.y, vec3.z);
+                }
+
+                entity.hurt(entity.damageSources().drown(), 2.0F);
+            }
+        }
+
+        if (isAir && !entity.level().isClientSide && entity.isPassenger() && entity.getVehicle() != null && !entity.getVehicle().canBeRiddenUnderFluidType(entity.getEyeInFluidType(), entity))
+        {
+            entity.stopRiding();
+        }
     }
 }
