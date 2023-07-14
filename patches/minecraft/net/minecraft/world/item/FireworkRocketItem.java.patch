@@ -1,0 +1,40 @@
+--- a/net/minecraft/world/item/FireworkRocketItem.java
++++ b/net/minecraft/world/item/FireworkRocketItem.java
+@@ -107,7 +_,7 @@
+       return itemstack;
+    }
+ 
+-   public static enum Shape {
++   public static enum Shape implements net.minecraftforge.common.IExtensibleEnum {
+       SMALL_BALL(0, "small_ball"),
+       LARGE_BALL(1, "large_ball"),
+       STAR(2, "star"),
+@@ -131,8 +_,28 @@
+          return this.f_41228_;
+       }
+ 
++      public void save(net.minecraft.nbt.CompoundTag tag) {
++         tag.m_128344_("Type", (byte)m_41236_());
++         tag.m_128359_("forge:shape_type", name());
++      }
++
++      /** Use {getShape(ComoundTag)} */
++      @Deprecated
+       public static FireworkRocketItem.Shape m_41237_(int p_41238_) {
+          return f_41226_.apply(p_41238_);
++      }
++
++      public static FireworkRocketItem.Shape getShape(net.minecraft.nbt.CompoundTag tag) {
++         var name = tag.m_128425_("forge:shape_type", 8) ? tag.m_128461_("forge:shape_type") : null;
++         if (name == null) return m_41237_(tag.m_128445_("Type"));
++         for (var ret : values())
++             if (ret.name().equals(name))
++                 return ret;
++         return SMALL_BALL;
++      }
++
++      public static Shape create(String registryName, int id, String shapeName) {
++         throw new IllegalStateException("Enum not extended");
+       }
+    }
+ }

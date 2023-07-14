@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/item/FireworkStarItem.java
++++ b/net/minecraft/world/item/FireworkStarItem.java
+@@ -23,7 +_,7 @@
+    }
+ 
+    public static void m_41256_(CompoundTag p_41257_, List<Component> p_41258_) {
+-      FireworkRocketItem.Shape fireworkrocketitem$shape = FireworkRocketItem.Shape.m_41237_(p_41257_.m_128445_("Type"));
++      FireworkRocketItem.Shape fireworkrocketitem$shape = FireworkRocketItem.Shape.getShape(p_41257_);
+       p_41258_.add(Component.m_237115_("item.minecraft.firework_star.shape." + fireworkrocketitem$shape.m_41241_()).m_130940_(ChatFormatting.GRAY));
+       int[] aint = p_41257_.m_128465_("Colors");
+       if (aint.length > 0) {
