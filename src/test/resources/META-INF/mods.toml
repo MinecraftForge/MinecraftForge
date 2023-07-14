@@ -270,6 +270,7 @@ modId="item_stacked_on_other_test"
 modId="ambient_occlusion_elements_test"
 [[mods]]
 modId="grindstone_event_test"
-
+[[mods]]
+modId="alter_ground_event_test"
 
 # ADD ABOVE THIS LINE
