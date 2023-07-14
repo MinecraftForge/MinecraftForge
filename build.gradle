@@ -27,8 +27,8 @@ plugins {
     id 'net.minecraftforge.gradleutils' version '2.+'
     id 'eclipse'
     id 'de.undercouch.download' version '5.1.3'
-    id 'net.minecraftforge.gradle.patcher' version '[5.1.50,5.2.0)' apply false
-    id 'net.minecraftforge.gradle.mcp' version '[5.1.50,5.2.0)' apply false
+    id 'net.minecraftforge.gradle.patcher' version '[5.1.77,5.2.0)' apply false
+    id 'net.minecraftforge.gradle.mcp' version '[5.1.77,5.2.0)' apply false
 }
 
 Util.init() //Init all our extension methods!
@@ -883,6 +883,10 @@ project(':forge') {
     apply plugin: 'java-library'
     apply plugin: 'net.minecraftforge.gradle.patcher'
     apply plugin: 'org.cadixdev.licenser'
+
+    applyPatches { 
+        level 'WARNING'
+    }
 
     sourceSets {
         main {
