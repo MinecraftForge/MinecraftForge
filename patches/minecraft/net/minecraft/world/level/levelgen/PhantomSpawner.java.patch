@@ -1,0 +1,28 @@
+--- a/net/minecraft/world/level/levelgen/PhantomSpawner.java
++++ b/net/minecraft/world/level/levelgen/PhantomSpawner.java
+@@ -42,19 +_,21 @@
+                for(ServerPlayer serverplayer : p_64576_.m_6907_()) {
+                   if (!serverplayer.m_5833_()) {
+                      BlockPos blockpos = serverplayer.m_20183_();
+-                     if (!p_64576_.m_6042_().f_223549_() || blockpos.m_123342_() >= p_64576_.m_5736_() && p_64576_.m_45527_(blockpos)) {
+-                        DifficultyInstance difficultyinstance = p_64576_.m_6436_(blockpos);
++                     DifficultyInstance difficultyinstance = p_64576_.m_6436_(blockpos);
++                     var event = new net.minecraftforge.event.entity.player.PlayerSpawnPhantomsEvent(serverplayer, 1 + randomsource.m_188503_(difficultyinstance.m_19048_().m_19028_() + 1));
++                     if (event.getResult() == net.minecraftforge.eventbus.api.Event.Result.DENY) continue;
++                     if (event.getResult() == net.minecraftforge.eventbus.api.Event.Result.ALLOW || !p_64576_.m_6042_().f_223549_() || blockpos.m_123342_() >= p_64576_.m_5736_() && p_64576_.m_45527_(blockpos)) {
+                         if (difficultyinstance.m_19049_(randomsource.m_188501_() * 3.0F)) {
+                            ServerStatsCounter serverstatscounter = serverplayer.m_8951_();
+                            int j = Mth.m_14045_(serverstatscounter.m_13015_(Stats.f_12988_.m_12902_(Stats.f_12992_)), 1, Integer.MAX_VALUE);
+                            int k = 24000;
+-                           if (randomsource.m_188503_(j) >= 72000) {
++                           if (event.getResult() == net.minecraftforge.eventbus.api.Event.Result.ALLOW || randomsource.m_188503_(j) >= 72000) {
+                               BlockPos blockpos1 = blockpos.m_6630_(20 + randomsource.m_188503_(15)).m_122030_(-10 + randomsource.m_188503_(21)).m_122020_(-10 + randomsource.m_188503_(21));
+                               BlockState blockstate = p_64576_.m_8055_(blockpos1);
+                               FluidState fluidstate = p_64576_.m_6425_(blockpos1);
+                               if (NaturalSpawner.m_47056_(p_64576_, blockpos1, blockstate, fluidstate, EntityType.f_20509_)) {
+                                  SpawnGroupData spawngroupdata = null;
+-                                 int l = 1 + randomsource.m_188503_(difficultyinstance.m_19048_().m_19028_() + 1);
++                                 int l = event.getPhantomsToSpawn();
+ 
+                                  for(int i1 = 0; i1 < l; ++i1) {
+                                     Phantom phantom = EntityType.f_20509_.m_20615_(p_64576_);
