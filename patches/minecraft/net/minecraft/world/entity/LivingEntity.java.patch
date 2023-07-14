@@ -1,7 +1,10 @@
 --- a/net/minecraft/world/entity/LivingEntity.java
 +++ b/net/minecraft/world/entity/LivingEntity.java
-@@ -119,12 +_,14 @@
+@@ -117,14 +_,17 @@
+ import net.minecraft.world.phys.HitResult;
+ import net.minecraft.world.phys.Vec3;
  import net.minecraft.world.scores.PlayerTeam;
++
  import org.slf4j.Logger;
  
 -public abstract class LivingEntity extends Entity implements Attackable {
@@ -643,12 +646,15 @@
     }
  
     public boolean m_5830_() {
-@@ -3187,11 +_,11 @@
+@@ -3187,11 +_,14 @@
     }
  
     protected float m_6431_(Pose p_21131_, EntityDimensions p_21132_) {
 -      return super.m_6380_(p_21131_, p_21132_);
-+      return this.getEyeHeightForge(p_21131_, p_21132_);
++       float eyeHeight = super.m_6380_(p_21131_, p_21132_);
++       var evt = new net.minecraftforge.event.entity.EntityEvent.EyeHeight(self(), p_21131_, p_21132_, eyeHeight);
++       net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(evt);
++       return evt.getNewEyeHeight();
     }
  
     public ItemStack m_6298_(ItemStack p_21272_) {
