@@ -436,7 +436,7 @@
     }
  
 +   /**
-+    * @deprecated Can be overridden. Use {@link #getEyeHeightForge(Pose, EntitySize)} instead.
++    * @deprecated Can be overridden. Use {@link #getEyeHeightForge(Pose, EntityDimensions)} instead.
 +    */
 +   @Deprecated
     protected float m_6380_(Pose p_19976_, EntityDimensions p_19977_) {
