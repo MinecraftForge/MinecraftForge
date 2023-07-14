@@ -144,7 +144,7 @@ public enum VanillaGuiOverlay
             gui.setupOverlayRenderState(true, false);
             if (gui.getMinecraft().gameMode.getPlayerMode() != GameType.SPECTATOR)
             {
-                gui.renderSelectedItemName(guiGraphics);
+                gui.renderSelectedItemName(guiGraphics, Math.max(gui.leftHeight, gui.rightHeight));
             }
             else if (gui.getMinecraft().player.isSpectator())
             {

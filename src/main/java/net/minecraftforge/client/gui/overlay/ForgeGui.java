@@ -485,8 +485,12 @@ public class ForgeGui extends Gui
 
             if (opacity > 8)
             {
+                //Include a shift based on the bar height plus the difference between the height that renderSelectedItemName
+                // renders at (59) and the height that the overlay/status bar renders at (68) by default
+                int yShift = Math.max(leftHeight, rightHeight) + (68 - 59);
                 guiGraphics.pose().pushPose();
-                guiGraphics.pose().translate(width / 2D, height - 68, 0.0D);
+                //If y shift is smaller less than the default y level, just render it at the base y level
+                guiGraphics.pose().translate(width / 2D, height - Math.max(yShift, 68), 0.0D);
                 RenderSystem.enableBlend();
                 RenderSystem.defaultBlendFunc();
                 int color = (animateOverlayMessageColor ? Mth.hsvToRgb(hue / 50.0F, 0.7F, 0.6F) & WHITE : WHITE);

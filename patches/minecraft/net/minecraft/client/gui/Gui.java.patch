@@ -17,8 +17,14 @@
                 TextureAtlasSprite textureatlassprite = mobeffecttexturemanager.m_118732_(mobeffect);
                 int i1 = j;
                 float f1 = f;
-@@ -574,12 +_,13 @@
+@@ -572,16 +_,21 @@
+    }
+ 
     public void m_280295_(GuiGraphics p_283501_) {
++      renderSelectedItemName(p_283501_, 0);
++   }
++
++   public void renderSelectedItemName(GuiGraphics p_283501_, int yShift) {
        this.f_92986_.m_91307_().m_6180_("selectedItemName");
        if (this.f_92993_ > 0 && !this.f_92994_.m_41619_()) {
 -         MutableComponent mutablecomponent = Component.m_237119_().m_7220_(this.f_92994_.m_41786_()).m_130940_(this.f_92994_.m_41791_().f_43022_);
@@ -31,8 +37,11 @@
 +         Component highlightTip = this.f_92994_.getHighlightTip(mutablecomponent);
 +         int i = this.m_93082_().m_92852_(highlightTip);
           int j = (this.f_92977_ - i) / 2;
-          int k = this.f_92978_ - 59;
+-         int k = this.f_92978_ - 59;
++         int k = this.f_92978_ - Math.max(yShift, 59);
           if (!this.f_92986_.f_91072_.m_105205_()) {
+             k += 14;
+          }
 @@ -593,7 +_,13 @@
  
           if (l > 0) {
