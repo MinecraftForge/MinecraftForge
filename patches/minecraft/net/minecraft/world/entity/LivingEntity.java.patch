@@ -643,15 +643,7 @@
     }
  
     public boolean m_5830_() {
-@@ -3187,11 +_,14 @@
-    }
- 
-    protected float m_6431_(Pose p_21131_, EntityDimensions p_21132_) {
--      return super.m_6380_(p_21131_, p_21132_);
-+       float eyeHeight = super.m_6380_(p_21131_, p_21132_);
-+       var evt = new net.minecraftforge.event.entity.EntityEvent.EyeHeight(self(), p_21131_, p_21132_, eyeHeight);
-+       net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(evt);
-+       return evt.getNewEyeHeight();
+@@ -3191,7 +_,7 @@
     }
  
     public ItemStack m_6298_(ItemStack p_21272_) {
