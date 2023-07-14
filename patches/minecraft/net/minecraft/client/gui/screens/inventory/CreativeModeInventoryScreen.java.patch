@@ -1,13 +1,5 @@
 --- a/net/minecraft/client/gui/screens/inventory/CreativeModeInventoryScreen.java
 +++ b/net/minecraft/client/gui/screens/inventory/CreativeModeInventoryScreen.java
-@@ -49,7 +_,6 @@
- 
- @OnlyIn(Dist.CLIENT)
- public class CreativeModeInventoryScreen extends EffectRenderingInventoryScreen<CreativeModeInventoryScreen.ItemPickerMenu> {
--   private static final ResourceLocation f_98504_ = new ResourceLocation("textures/gui/container/creative_inventory/tabs.png");
-    private static final String f_169735_ = "textures/gui/container/creative_inventory/tab_";
-    private static final String f_169736_ = "CustomCreativeLock";
-    private static final int f_169737_ = 5;
 @@ -74,6 +_,8 @@
     private boolean f_98515_;
     private final Set<TagKey<Item>> f_98516_ = new HashSet<>();
