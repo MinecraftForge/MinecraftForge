@@ -9,21 +9,13 @@
           this.f_120088_.setSoTimeout(5000);
           this.f_120088_.joinGroup(this.f_120087_);
        }
-@@ -87,7 +_,19 @@
+@@ -87,7 +_,11 @@
           String s = LanServerPinger.m_120111_(p_120097_);
           String s1 = LanServerPinger.m_120116_(p_120097_);
           if (s1 != null) {
 -            s1 = p_120098_.getHostAddress() + ":" + s1;
 +            if (net.minecraftforge.network.DualStackUtils.checkIPv6(p_120098_)) {
-+               final String ip;
-+
-+               // compress to short form if enabled in config
-+               if (net.minecraftforge.common.ForgeConfig.CLIENT.compressLanIPv6Addresses.get())
-+                  ip = com.google.common.net.InetAddresses.toAddrString(p_120098_);
-+               else
-+                  ip = p_120098_.getHostAddress();
-+
-+               s1 = "[" + ip + "]:" + s1;
++               s1 = "[" + com.google.common.net.InetAddresses.toAddrString(p_120098_) + "]:" + s1;
 +            } else {
 +               s1 = p_120098_.getHostAddress() + ":" + s1;
 +            }
