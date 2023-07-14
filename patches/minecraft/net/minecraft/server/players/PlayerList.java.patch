@@ -8,7 +8,15 @@
  
     public PlayerList(MinecraftServer p_203842_, LayeredRegistryAccess<RegistryLayer> p_251844_, PlayerDataStorage p_203844_, int p_203845_) {
        this.f_11195_ = p_203842_;
-@@ -174,6 +_,7 @@
+@@ -167,13 +_,14 @@
+       p_11263_.m_284127_(serverlevel1);
+       String s1 = "local";
+       if (p_11262_.m_129523_() != null) {
+-         s1 = p_11262_.m_129523_().toString();
++         s1 = net.minecraftforge.network.DualStackUtils.getAddressString(p_11262_.m_129523_());
+       }
+ 
+       f_11188_.info("{}[{}] logged in with entity id {} at ({}, {}, {})", p_11263_.m_7755_().getString(), s1, p_11263_.m_19879_(), p_11263_.m_20185_(), p_11263_.m_20186_(), p_11263_.m_20189_());
        LevelData leveldata = serverlevel1.m_6106_();
        p_11263_.m_143427_(compoundtag);
        ServerGamePacketListenerImpl servergamepacketlistenerimpl = new ServerGamePacketListenerImpl(this.f_11195_, p_11262_, p_11263_);

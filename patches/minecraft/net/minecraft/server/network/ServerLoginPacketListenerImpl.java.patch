@@ -15,6 +15,16 @@
           this.m_10055_();
        } else if (this.f_10019_ == ServerLoginPacketListenerImpl.State.DELAY_ACCEPT) {
           ServerPlayer serverplayer = this.f_10018_.m_6846_().m_11259_(this.f_10021_.getId());
+@@ -138,7 +_,8 @@
+    }
+ 
+    public String m_10056_() {
+-      return this.f_10021_ != null ? this.f_10021_ + " (" + this.f_10013_.m_129523_() + ")" : String.valueOf((Object)this.f_10013_.m_129523_());
++      final String addressString = net.minecraftforge.network.DualStackUtils.getAddressString(this.f_10013_.m_129523_());
++      return this.f_10021_ != null ? this.f_10021_ + " (" + addressString + ")" : addressString;
+    }
+ 
+    public void m_5990_(ServerboundHelloPacket p_10047_) {
 @@ -147,14 +_,14 @@
        GameProfile gameprofile = this.f_10018_.m_236731_();
        if (gameprofile != null && p_10047_.f_238040_().equalsIgnoreCase(gameprofile.getName())) {

@@ -105,6 +105,7 @@ public class ForgeConfig {
 
         public final BooleanValue useCombinedDepthStencilAttachment;
 
+        @Deprecated(since = "1.20.1", forRemoval = true) // Config option ignored.
         public final BooleanValue compressLanIPv6Addresses;
 
         Client(ForgeConfigSpec.Builder builder) {
@@ -134,7 +135,7 @@ public class ForgeConfig {
                     .define("useCombinedDepthStencilAttachment", false);
 
             compressLanIPv6Addresses = builder
-                    .comment("When enabled, Forge will convert discovered 'Open to LAN' IPv6 addresses to their more compact, compressed representation")
+                    .comment("[DEPRECATED] [NOW IN COMMON CONFIG] When enabled, Forge will convert discovered 'Open to LAN' IPv6 addresses to their more compact, compressed representation")
                     .translation("forge.configgui.compressLanIPv6Addresses")
                     .define("compressLanIPv6Addresses", true);
 
