@@ -16,6 +16,16 @@
     public static final int f_147166_ = 2;
     public static final int f_147167_ = 4;
     public static final int f_147168_ = 98;
+@@ -239,7 +_,8 @@
+       this.f_20885_ = this.m_146908_();
+       this.m_274367_(0.6F);
+       NbtOps nbtops = NbtOps.f_128958_;
+-      this.f_20939_ = this.m_8075_(new Dynamic<>(nbtops, nbtops.createMap(ImmutableMap.of(nbtops.createString("memories"), nbtops.emptyMap()))));
++      var dyn = new Dynamic<>(nbtops, nbtops.createMap(ImmutableMap.of(nbtops.createString("memories"), nbtops.emptyMap())));
++      this.f_20939_ = net.minecraftforge.common.ForgeHooks.onLivingMakeBrain(this, this.m_8075_(dyn), dyn);
+    }
+ 
+    public Brain<?> m_6274_() {
 @@ -273,7 +_,7 @@
     }
  
@@ -61,6 +71,16 @@
           this.m_252836_();
        }
  
+@@ -734,7 +_,8 @@
+       }
+ 
+       if (p_21096_.m_128425_("Brain", 10)) {
+-         this.f_20939_ = this.m_8075_(new Dynamic<>(NbtOps.f_128958_, p_21096_.m_128423_("Brain")));
++         var dyn = new Dynamic<>(NbtOps.f_128958_, p_21096_.m_128423_("Brain"));
++         this.f_20939_ = net.minecraftforge.common.ForgeHooks.onLivingMakeBrain(this, this.m_8075_(dyn), dyn);
+       }
+ 
+    }
 @@ -749,7 +_,7 @@
              if (!mobeffectinstance.m_19552_(this, () -> {
                 this.m_141973_(mobeffectinstance, true, (Entity)null);
@@ -370,14 +390,12 @@
        if (!this.f_20911_ || this.f_20913_ >= this.m_21304_() / 2 || this.f_20913_ < 0) {
           this.f_20913_ = -1;
           this.f_20911_ = true;
-@@ -1760,9 +_,11 @@
-    }
+@@ -1761,8 +_,10 @@
  
     private void m_21312_() {
--      ItemStack itemstack = this.m_6844_(EquipmentSlot.OFFHAND);
+       ItemStack itemstack = this.m_6844_(EquipmentSlot.OFFHAND);
 -      this.m_8061_(EquipmentSlot.OFFHAND, this.m_6844_(EquipmentSlot.MAINHAND));
 -      this.m_8061_(EquipmentSlot.MAINHAND, itemstack);
-+      ItemStack itemstack = this.m_6844_(EquipmentSlot.OFFHAND);
 +      var event = net.minecraftforge.common.ForgeHooks.onLivingSwapHandItems(this);
 +      if (event.isCanceled()) return;
 +      this.m_8061_(EquipmentSlot.OFFHAND, event.getItemSwappedToOffHand());

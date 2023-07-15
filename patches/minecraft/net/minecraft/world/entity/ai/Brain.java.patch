@@ -1,0 +1,31 @@
+--- a/net/minecraft/world/entity/ai/Brain.java
++++ b/net/minecraft/world/entity/ai/Brain.java
+@@ -478,6 +_,28 @@
+       return builder.build();
+    }
+ 
++   public net.minecraftforge.common.util.BrainBuilder<E> createBuilder(){
++      var builder = new net.minecraftforge.common.util.BrainBuilder<>(this);
++      builder.getMemoryTypes().addAll(this.f_21843_.keySet());
++      builder.getSensorTypes().addAll(this.f_21844_.keySet());
++      builder.addAvailableBehaviorsByPriorityFrom(this.f_21845_);
++      builder.setSchedule(this.m_21932_());
++      builder.addActivityRequirementsFrom(this.f_21847_);
++      builder.addActivityMemoriesToEraseWhenStoppedFrom(this.f_21848_);
++      builder.getCoreActivities().addAll(this.f_21849_);
++      builder.setDefaultActivity(this.f_21851_);
++      return builder;
++   }
++
++   public void copyFromBuilder(net.minecraftforge.common.util.BrainBuilder<E> builder){
++      builder.addAvailableBehaviorsByPriorityTo(this.f_21845_);
++      this.m_21912_(builder.getSchedule());
++      builder.addActivityRequirementsTo(this.f_21847_);
++      builder.addActivityMemoriesToEraseWhenStoppedTo(this.f_21848_);
++      this.m_21930_(builder.getCoreActivities());
++      this.m_21944_(builder.getDefaultActivity());
++   }
++
+    static final class MemoryValue<U> {
+       private final MemoryModuleType<U> f_22030_;
+       private final Optional<? extends ExpirableValue<U>> f_22031_;
