@@ -356,6 +356,20 @@ public class FluidType
     }
 
     /**
+     * When {@code false}, the fluid will no longer update its height value while
+     * within a boat while it is not within a fluid ({@link Boat#isUnderWater()}.
+     *
+     * @param state the state of the fluid the rider is within
+     * @param boat the boat the rider is within that is not inside a fluid
+     * @param rider the rider of the boat
+     * @return {@code true} if the fluid height should be updated, {@code false} otherwise
+     */
+    public boolean shouldUpdateWhileBoating(FluidState state, Boat boat, Entity rider)
+    {
+        return !this.supportsBoating(state, boat);
+    }
+
+    /**
      * Returns whether the entity can ride in this vehicle under the fluid.
      *
      * @param vehicle the vehicle being ridden in

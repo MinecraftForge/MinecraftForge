@@ -5,6 +5,7 @@
 
 package net.minecraftforge.common.extensions;
 
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.vehicle.Boat;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraftforge.fluids.FluidType;
@@ -36,5 +37,18 @@ public interface IForgeBoat
     default boolean canBoatInFluid(FluidType type)
     {
         return type.supportsBoating(self());
+    }
+
+    /**
+     * When {@code false}, the fluid will no longer update its height value while
+     * within a boat while it is not within a fluid ({@link Boat#isUnderWater()}.
+     *
+     * @param state the state of the fluid the rider is within
+     * @param rider the rider of the boat
+     * @return {@code true} if the fluid height should be updated, {@code false} otherwise
+     */
+    default boolean shouldUpdateFluidWhileRiding(FluidState state, Entity rider)
+    {
+        return state.shouldUpdateWhileBoating(self(), rider);
     }
 }

@@ -13,6 +13,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.vehicle.Boat;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.entity.Entity;
@@ -443,5 +444,18 @@ public interface IForgeEntity extends ICapabilitySerializable<CompoundTag>
         EntityEvent.EyeHeight evt = new EntityEvent.EyeHeight(self(), pose, size, eyeHeight);
         MinecraftForge.EVENT_BUS.post(evt);
         return evt.getNewEyeHeight();
+    }
+
+    /**
+     * When {@code false}, the fluid will no longer update its height value while
+     * within a boat while it is not within a fluid ({@link Boat#isUnderWater()}.
+     *
+     * @param state the state of the fluid the rider is within
+     * @param boat the boat the rider is within that is not inside a fluid
+     * @return {@code true} if the fluid height should be updated, {@code false} otherwise
+     */
+    default boolean shouldUpdateFluidWhileBoating(FluidState state, Boat boat)
+    {
+        return boat.shouldUpdateFluidWhileRiding(state, self());
     }
 }
