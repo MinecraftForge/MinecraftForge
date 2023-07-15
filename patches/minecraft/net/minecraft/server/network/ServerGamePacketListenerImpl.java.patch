@@ -25,6 +25,19 @@
                 this.f_9742_.m_129512_(new ClientboundMoveVehiclePacket(entity));
                 return;
              }
+@@ -983,8 +_,10 @@
+          case SWAP_ITEM_WITH_OFFHAND:
+             if (!this.f_9743_.m_5833_()) {
+                ItemStack itemstack = this.f_9743_.m_21120_(InteractionHand.OFF_HAND);
+-               this.f_9743_.m_21008_(InteractionHand.OFF_HAND, this.f_9743_.m_21120_(InteractionHand.MAIN_HAND));
+-               this.f_9743_.m_21008_(InteractionHand.MAIN_HAND, itemstack);
++               var event = net.minecraftforge.common.ForgeHooks.onLivingSwapHandItems(this.f_9743_);
++               if (event.isCanceled()) return;
++               this.f_9743_.m_21008_(InteractionHand.OFF_HAND, event.getItemSwappedToOffHand());
++               this.f_9743_.m_21008_(InteractionHand.MAIN_HAND, event.getItemSwappedToMainHand());
+                this.f_9743_.m_5810_();
+             }
+ 
 @@ -1035,7 +_,7 @@
           Vec3 vec3 = blockhitresult.m_82450_();
           BlockPos blockpos = blockhitresult.m_82425_();
