@@ -38,6 +38,7 @@ public class FluidUtilTest
 	private static void runTests(FMLCommonSetupEvent commonSetupEvent)
 	{
 		test_tryEmptyContainer();
+		test_tryFillContainer();
 		test_tryEmptyContainerAndStow_stackable();
 
 		LogManager.getLogger().info("FluidUtilTest ok!");
@@ -68,6 +69,35 @@ public class FluidUtilTest
 		checkItemStack(executeResult.getResult(), Items.BUCKET, 1);
 		checkFluidStack(targetTank.getFluid(), Fluids.WATER, 1000);
 		checkItemStack(sourceStack, Items.WATER_BUCKET, 2); // Apparently the stack is not supposed to be modified
+	}
+
+	/**
+	 * Ensures that tryFillContainer doesn't change the target fluid handler when simulating.
+	 * Ant that the result of the simulated transfver is valid.
+	 * Regression test for the root cause of <a href="https://github.com/MinecraftForge/MinecraftForge/issues/6796">issue #6796</a>.
+	 */
+	private static void test_tryFillContainer()
+	{
+		var targetStack = new ItemStack(Items.BUCKET, 2);
+		var sourceTank = new FluidTank(10000);
+		sourceTank.setFluid(new FluidStack(Fluids.WATER, 5000));
+
+		// Simulate is not supposed to modify anything
+		var simulateResult = FluidUtil.tryFillContainer(targetStack, sourceTank, 1000, null, false);
+		if (!simulateResult.isSuccess())
+			throw new AssertionError("Failed to transfer.");
+		checkItemStack(simulateResult.getResult(), Items.WATER_BUCKET, 1);
+		// Tank and stack shouldn't be modified
+		checkItemStack(targetStack, Items.BUCKET, 2);
+		checkFluidStack(sourceTank.getFluid(), Fluids.WATER, 5000);
+
+		// Execute should modify
+		var executeResult = FluidUtil.tryFillContainer(targetStack, sourceTank, 1000, null, true);
+		if (!executeResult.isSuccess())
+			throw new AssertionError("Failed to transfer.");
+		checkItemStack(executeResult.getResult(), Items.WATER_BUCKET, 1);
+		checkFluidStack(sourceTank.getFluid(), Fluids.WATER, 4000);
+		checkItemStack(targetStack, Items.BUCKET, 2);
 	}
 
 	/**
