@@ -297,5 +297,7 @@ modId="chunk_event_load_new_chunk_test"
 modId="custom_fluid_container_test"
 [[mods]]
 modId="alter_ground_event_test"
+[[mods]]
+modId="keymapping_test"
 
 # ADD ABOVE THIS LINE
