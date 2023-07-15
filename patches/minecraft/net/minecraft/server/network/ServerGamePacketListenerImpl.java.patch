@@ -41,7 +41,7 @@
 -               ItemStack itemstack = this.f_9743_.m_21120_(InteractionHand.OFF_HAND);
 -               this.f_9743_.m_21008_(InteractionHand.OFF_HAND, this.f_9743_.m_21120_(InteractionHand.MAIN_HAND));
 -               this.f_9743_.m_21008_(InteractionHand.MAIN_HAND, itemstack);
-+               net.minecraftforge.event.entity.living.LivingSwapItemsEvent.Hands event = net.minecraftforge.common.ForgeHooks.onLivingSwapHandItems(this.f_9743_);
++               var event = net.minecraftforge.common.ForgeHooks.onLivingSwapHandItems(this.f_9743_);
 +               if (event.isCanceled()) return;
 +               this.f_9743_.m_21008_(InteractionHand.OFF_HAND, event.getItemSwappedToOffHand());
 +               this.f_9743_.m_21008_(InteractionHand.MAIN_HAND, event.getItemSwappedToMainHand());
