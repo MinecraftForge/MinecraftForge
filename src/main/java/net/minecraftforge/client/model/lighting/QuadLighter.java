@@ -158,6 +158,7 @@ public abstract class QuadLighter
      * as it only uses the state for querying if the state has emissive rendering but instead looks up the state at the given position for checking the
      * light emission.
      */
+    @Deprecated(since = "1.20.1")
     protected static int getLightColor(BlockAndTintGetter level, BlockPos pos, BlockState state)
     {
         if (state.emissiveRendering(level, pos))
