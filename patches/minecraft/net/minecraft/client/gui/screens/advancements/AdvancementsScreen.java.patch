@@ -21,7 +21,7 @@
 +          m_142416_(net.minecraft.client.gui.components.Button.m_253074_(Component.m_237113_(">"), b -> tabPage = Math.min(tabPage + 1, maxPages))
 +              .m_252794_(guiLeft + f_169556_ - 20, guiTop - 50).m_253046_(20, 20).m_253136_());
 +          maxPages = this.f_97335_.size() / AdvancementTabType.MAX_TABS;
-+      }
++     }
     }
  
     public void m_7861_() {
@@ -34,7 +34,7 @@
                 this.f_97334_.m_104401_(advancementtab.m_97182_(), true);
                 break;
              }
-@@ -98,6 +_,11 @@
+@@ -98,9 +_,15 @@
        int i = (this.f_96543_ - 252) / 2;
        int j = (this.f_96544_ - 140) / 2;
        this.m_280273_(p_282589_);
@@ -46,6 +46,10 @@
        this.m_97373_(p_282589_, p_282255_, p_283354_, i, j);
        this.m_280088_(p_282589_, i, j);
        this.m_280355_(p_282589_, p_282255_, p_283354_, i, j);
++      super.m_88315_(p_282589_, p_282255_, p_283354_, p_283123_);
+    }
+ 
+    public boolean m_7979_(double p_97347_, double p_97348_, int p_97349_, double p_97350_, double p_97351_) {
 @@ -135,10 +_,12 @@
        p_283395_.m_280218_(f_97329_, p_281890_, p_282532_, 0, 0, 252, 140);
        if (this.f_97335_.size() > 1) {
