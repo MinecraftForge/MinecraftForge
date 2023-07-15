@@ -160,7 +160,7 @@
           this.m_5496_(soundtype.m_56776_(), soundtype.m_56773_() * 0.15F, soundtype.m_56774_());
        }
     }
-@@ -1074,19 +_,22 @@
+@@ -1074,31 +_,38 @@
  
     public void m_5844_() {
        if (this.m_6069_()) {
@@ -188,6 +188,24 @@
     }
  
     void m_20074_() {
+       Entity entity = this.m_20202_();
++      java.util.function.BooleanSupplier updateFluidHeight = () -> this.m_204031_(FluidTags.f_13131_, 0.014D);
+       if (entity instanceof Boat boat) {
+          if (!boat.m_5842_()) {
+             this.f_19798_ = false;
+-            return;
++            updateFluidHeight = () -> {
++               this.updateFluidHeightAndDoFluidPushing(state -> this.shouldUpdateFluidWhileBoating(state, boat));
++               return false;
++            };
+          }
+       }
+ 
+-      if (this.m_204031_(FluidTags.f_13131_, 0.014D)) {
++      if (updateFluidHeight.getAsBoolean()) {
+          if (!this.f_19798_ && !this.f_19803_) {
+             this.m_5841_();
+          }
 @@ -1115,6 +_,7 @@
     private void m_20323_() {
        this.f_19800_ = this.m_204029_(FluidTags.f_13131_);
@@ -414,19 +432,24 @@
           });
        }
  
-@@ -2861,9 +_,17 @@
+@@ -2861,9 +_,22 @@
        this.f_19859_ = this.m_146908_();
     }
  
-+   @Deprecated // Forge: Use no parameter version instead, only for vanilla Tags
++   @Deprecated // Forge: Use predicate version instead, only for vanilla Tags
     public boolean m_204031_(TagKey<Fluid> p_204032_, double p_204033_) {
-+      this.updateFluidHeightAndDoFluidPushing();
++      this.updateFluidHeightAndDoFluidPushing(com.google.common.base.Predicates.alwaysTrue());
 +      if(p_204032_ == FluidTags.f_13131_) return this.isInFluidType(net.minecraftforge.common.ForgeMod.WATER_TYPE.get());
 +      else if (p_204032_ == FluidTags.f_13132_) return this.isInFluidType(net.minecraftforge.common.ForgeMod.LAVA_TYPE.get());
 +      else return false;
 +   }
 +
++   @Deprecated(forRemoval = true, since = "1.19.4")
 +   public void updateFluidHeightAndDoFluidPushing() {
++      this.updateFluidHeightAndDoFluidPushing(com.google.common.base.Predicates.alwaysTrue());
++   }
++
++   public void updateFluidHeightAndDoFluidPushing(Predicate<FluidState> shouldUpdate) {
        if (this.m_146899_()) {
 -         return false;
 +         return;
@@ -446,7 +469,7 @@
                    FluidState fluidstate = this.f_19853_.m_6425_(blockpos$mutableblockpos);
 -                  if (fluidstate.m_205070_(p_204032_)) {
 +                  net.minecraftforge.fluids.FluidType fluidType = fluidstate.getFluidType();
-+                  if (!fluidType.isAir()) {
++                  if (!fluidType.isAir() && shouldUpdate.test(fluidstate)) {
                       double d1 = (double)((float)i2 + fluidstate.m_76155_(this.f_19853_, blockpos$mutableblockpos));
                       if (d1 >= aabb.f_82289_) {
                          flag1 = true;
