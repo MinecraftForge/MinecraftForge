@@ -430,14 +430,6 @@ public interface IForgeEntity extends ICapabilitySerializable<CompoundTag>
         return false;
     }
 
-    default EntityDimensions getDimensionsForge(Pose pose)
-    {
-        EntityDimensions size = self().getDimensions(pose);
-        EntityEvent.Size evt = new EntityEvent.Size(self(), pose, size);
-        MinecraftForge.EVENT_BUS.post(evt);
-        return evt.getNewSize();
-    }
-
     default float getEyeHeightForge(Pose pose, EntityDimensions size)
     {
         float eyeHeight = self().getEyeHeightAccess(pose, size);

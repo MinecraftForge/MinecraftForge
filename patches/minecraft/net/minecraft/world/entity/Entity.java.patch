@@ -604,7 +604,7 @@
     public float m_274421_() {
        return this.f_19793_;
     }
-@@ -3319,6 +_,103 @@
+@@ -3319,6 +_,111 @@
     public boolean m_142265_(Level p_146843_, BlockPos p_146844_) {
        return true;
     }
@@ -701,6 +701,14 @@
 +   @Override
 +   public net.minecraftforge.fluids.FluidType getMaxHeightFluidType() {
 +      return this.forgeFluidTypeHeight.object2DoubleEntrySet().stream().max(java.util.Comparator.comparingDouble(Object2DoubleMap.Entry::getDoubleValue)).map(Object2DoubleMap.Entry::getKey).orElseGet(net.minecraftforge.common.ForgeMod.EMPTY_TYPE);
++   }
++
++   public EntityDimensions getDimensionsForge(Pose pose) {
++       EntityDimensions size = m_6972_(pose);
++       if (size == null) size = this.f_19815_; // this is called in the entity constructor so it is possible that subclasses are not initalized and dont return anything here. Souse the default.
++       var evt = new net.minecraftforge.event.entity.EntityEvent.Size(this, pose, size);
++       net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(evt);
++       return evt.getNewSize();
 +   }
 +
 +   /* ================================== Forge End =====================================*/

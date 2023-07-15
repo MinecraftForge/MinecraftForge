@@ -21,7 +21,7 @@
 +          m_142416_(net.minecraft.client.gui.components.Button.m_253074_(Component.m_237113_(">"), b -> tabPage = Math.min(tabPage + 1, maxPages))
 +              .m_252794_(guiLeft + f_169556_ - 20, guiTop - 50).m_253046_(20, 20).m_253136_());
 +          maxPages = this.f_97335_.size() / AdvancementTabType.MAX_TABS;
-+     }
++      }
     }
  
     public void m_7861_() {
