@@ -10,7 +10,6 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.Pose;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.extensions.IForgeEntity;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
 
@@ -128,7 +127,7 @@ public class EntityEvent extends Event
     }
 
     /**
-     * This event is fired whenever {@link IForgeEntity#getDimensionsForge(Pose)} gets called.<br>
+     * This event is fired whenever the {@link Pose} changes, and in a few other hardcoded scenarios.<br>
      * CAREFUL: This is also fired in the Entity constructor. Therefore the entity(subclass) might not be fully initialized. Check Entity#isAddedToWorld() or !Entity#firstUpdate.<br>
      * If you change the player's size, you probably want to set the eye height accordingly as well<br>
      * <br>
@@ -141,53 +140,48 @@ public class EntityEvent extends Event
     public static class Size extends EntityEvent
     {
         private final Pose pose;
-        private final EntityDimensions originalSize;
+        private final EntityDimensions oldSize;
         private EntityDimensions newSize;
-
-        public Size(Entity entity, Pose pose, EntityDimensions size)
-        {
-            super(entity);
-            this.pose = pose;
-            this.originalSize = size;
-            this.newSize = size;
-        }
-
-        public Pose getPose() { return pose; }
-        public EntityDimensions getOriginalSize() { return originalSize; }
-        public EntityDimensions getNewSize() { return newSize; }
-        public void setNewSize(EntityDimensions newSize) { this.newSize = newSize; }
-    }
-
-    /**
-     * This event is fired whenever {@link IForgeEntity#getEyeHeightForge(Pose)} gets called.<br>
-     * CAREFUL: This is also fired in the Entity constructor. Therefore the entity(subclass) might not be fully initialized. Check Entity#isAddedToWorld() or !Entity#firstUpdate.<br>
-     * <br>
-     * This event is not {@link Cancelable}.<br>
-     * <br>
-     * This event does not have a result. {@link HasResult}
-     * <br>
-     * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
-     **/
-    public static class EyeHeight extends EntityEvent
-    {
-        private final Pose pose;
-        private final EntityDimensions size;
-        private final float originalEyeHeight;
+        private final float oldEyeHeight;
         private float newEyeHeight;
 
-        public EyeHeight(Entity entity, Pose pose, EntityDimensions size, float eyeHeight)
+        public Size(Entity entity, Pose pose, EntityDimensions size, float defaultEyeHeight)
+        {
+            this(entity, pose, size, size, defaultEyeHeight, defaultEyeHeight);
+        }
+
+        public Size(Entity entity, Pose pose, EntityDimensions oldSize, EntityDimensions newSize, float oldEyeHeight, float newEyeHeight)
         {
             super(entity);
             this.pose = pose;
-            this.size = size;
-            this.originalEyeHeight = eyeHeight;
-            this.newEyeHeight = eyeHeight;
+            this.oldSize = oldSize;
+            this.newSize = newSize;
+            this.oldEyeHeight = oldEyeHeight;
+            this.newEyeHeight = newEyeHeight;
         }
 
+
         public Pose getPose() { return pose; }
-        public EntityDimensions getSize() { return size; }
-        public float getOriginalEyeHeight() { return originalEyeHeight; }
+        public EntityDimensions getOldSize() { return oldSize; }
+        public EntityDimensions getNewSize() { return newSize; }
+        public void setNewSize(EntityDimensions size)
+        {
+            setNewSize(size, false);
+        }
+
+        /**
+         * Set the new size of the entity. Set updateEyeHeight to true to also update the eye height according to the new size.
+         */
+        public void setNewSize(EntityDimensions size, boolean updateEyeHeight)
+        {
+            this.newSize = size;
+            if (updateEyeHeight)
+            {
+                this.newEyeHeight = this.getEntity().getEyeHeightAccess(this.getPose(), this.newSize);
+            }
+        }
+        public float getOldEyeHeight() { return oldEyeHeight; }
         public float getNewEyeHeight() { return newEyeHeight; }
-        public void setNewEyeHeight(float newEyeHeight) { this.newEyeHeight = newEyeHeight; }
+        public void setNewEyeHeight(float newHeight) { this.newEyeHeight = newHeight; }
     }
 }
