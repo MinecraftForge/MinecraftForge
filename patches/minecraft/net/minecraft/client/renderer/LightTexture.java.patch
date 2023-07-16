@@ -4,7 +4,7 @@
                       }
                    }
  
-+                  clientlevel.m_104583_().adjustLightmapColors(clientlevel, p_109882_, f, f7, f8, j, i, vector3f1);
++                  clientlevel.m_104583_().adjustLightmapColors(clientlevel, p_109882_, j, i, f9, f10, f11, f7, m_234316_(clientlevel.m_6042_(), i), f8, f, vector3f1);
 +
                    if (f5 > 0.0F) {
                       float f13 = Math.max(vector3f1.x(), Math.max(vector3f1.y(), vector3f1.z()));
