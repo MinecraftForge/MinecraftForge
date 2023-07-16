@@ -17,7 +17,9 @@ import net.minecraft.world.entity.vehicle.Boat;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.MobCategory;
+import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.SpawnEggItem;
 import net.minecraft.world.item.ItemStack;
@@ -27,9 +29,11 @@ import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.HitResult;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.ForgeSpawnEggItem;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.SoundAction;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.entity.PartEntity;
+import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.fluids.FluidType;
 import org.jetbrains.annotations.Nullable;
 
@@ -424,6 +428,14 @@ public interface IForgeEntity extends ICapabilitySerializable<CompoundTag>
     default boolean hasCustomOutlineRendering(Player player)
     {
         return false;
+    }
+
+    default float getEyeHeightForge(Pose pose, EntityDimensions size)
+    {
+        float eyeHeight = self().getEyeHeightAccess(pose, size);
+        EntityEvent.EyeHeight evt = new EntityEvent.EyeHeight(self(), pose, size, eyeHeight);
+        MinecraftForge.EVENT_BUS.post(evt);
+        return evt.getNewEyeHeight();
     }
 
     /**
