@@ -705,8 +705,8 @@
 +
 +   public EntityDimensions getDimensionsForge(Pose pose) {
 +       EntityDimensions size = m_6972_(pose);
-+       if (size == null) size = this.f_19815_; // this is called in the entity constructor so it is possible that subclasses are not initalized and dont return anything here. Souse the default.
-+       var evt = new net.minecraftforge.event.entity.EntityEvent.Size(this, pose, size);
++       if (size == null) size = this.f_19815_; // this is called in the entity constructor so it is possible that subclasses are not initalized and dont return anything here. So use the default.
++       var evt = new net.minecraftforge.event.entity.EntityEvent.Size(this, pose, size, this.m_6380_(pose, size));
 +       net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(evt);
 +       return evt.getNewSize();
 +   }

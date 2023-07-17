@@ -128,8 +128,8 @@ public class EntityEvent extends Event
     }
 
     /**
-     * This event is fired whenever {@link IForgeEntity#getDimensionsForge(Pose)} gets called.<br>
-     * CAREFUL: This is also fired in the Entity constructor. Therefore the entity(subclass) might not be fully initialized. Check Entity#isAddedToWorld() or !Entity#firstUpdate.<br>
+     * This event is fired whenever {@link Entity#getDimensionsForge(Pose)} gets called.<br>
+     * CAREFUL: This is also fired in the Entity constructor. Therefore, the entity (subclass) might not be fully initialized. Check {@link Entity#isAddedToWorld()} or {@code !Entity.firstUpdate}.<br>
      * If you change the player's size, you probably want to set the eye height accordingly as well<br>
      * <br>
      * This event is not {@link Cancelable}.<br>
@@ -143,24 +143,60 @@ public class EntityEvent extends Event
         private final Pose pose;
         private final EntityDimensions originalSize;
         private EntityDimensions newSize;
+        private final float oldEyeHeight;
+        private float newEyeHeight;
 
         public Size(Entity entity, Pose pose, EntityDimensions size)
         {
+            this(entity, pose, size, 1.0f); // Eye height doesn't matter this is just for binary compatibility.
+        }
+
+        @Deprecated(forRemoval = true, since = "1.20.1")
+        public Size(Entity entity, Pose pose, EntityDimensions size, float defaultEyeHeight)
+        {
+            this(entity, pose, size, size, defaultEyeHeight, defaultEyeHeight);
+        }
+
+        @Deprecated(forRemoval = true, since = "1.20.1")
+        public Size(Entity entity, Pose pose, EntityDimensions oldSize, EntityDimensions newSize, float oldEyeHeight, float newEyeHeight)
+        {
             super(entity);
             this.pose = pose;
-            this.originalSize = size;
-            this.newSize = size;
+            this.originalSize = oldSize;
+            this.newSize = newSize;
+            this.oldEyeHeight = oldEyeHeight;
+            this.newEyeHeight = newEyeHeight;
         }
 
         public Pose getPose() { return pose; }
+        /** @deprecated Use {@link #getOriginalSize()} */
+        @Deprecated(forRemoval = true, since = "1.20.1")
+        public EntityDimensions getOldSize() { return this.getOriginalSize(); }
         public EntityDimensions getOriginalSize() { return originalSize; }
         public EntityDimensions getNewSize() { return newSize; }
-        public void setNewSize(EntityDimensions newSize) { this.newSize = newSize; }
+        public void setNewSize(EntityDimensions size) { this.newSize = size; }
+
+        /** @deprecated Use {@link EyeHeight} to hook into changes to eye height. Updating the eye height will not actually so anything anymore. */
+        @Deprecated(forRemoval = true)
+        public void setNewSize(EntityDimensions size, boolean updateEyeHeight)
+        {
+            this.setNewSize(size);
+            if (updateEyeHeight)
+            {
+                this.newEyeHeight = this.getEntity().getEyeHeightAccess(this.getPose(), this.newSize);
+            }
+        }
+        /** @deprecated Use {@link EyeHeight} to hook into changes to eye height. */
+        @Deprecated(forRemoval = true, since = "1.20.1")
+        public float getOldEyeHeight() { return oldEyeHeight; }
+        /** @deprecated Use {@link EyeHeight} to hook into changes to eye height. */
+        @Deprecated(forRemoval = true, since = "1.20.1")
+        public void setNewEyeHeight(float eyeHeight) { this.newEyeHeight = eyeHeight; }
     }
 
     /**
-     * This event is fired whenever {@link IForgeEntity#getEyeHeightForge(Pose)} gets called.<br>
-     * CAREFUL: This is also fired in the Entity constructor. Therefore the entity(subclass) might not be fully initialized. Check Entity#isAddedToWorld() or !Entity#firstUpdate.<br>
+     * This event is fired whenever {@link IForgeEntity#getEyeHeightForge(Pose, EntityDimensions)} gets called.<br>
+     * CAREFUL: This is also fired in the Entity constructor. Therefore, the entity (subclass) might not be fully initialized. Check {@link Entity#isAddedToWorld()} or {@code !Entity.firstUpdate}.<br>
      * <br>
      * This event is not {@link Cancelable}.<br>
      * <br>
