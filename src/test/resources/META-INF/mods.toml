@@ -35,6 +35,9 @@ modId="mdk_datagen"
 [[mods]]
     modId="level_sensitive_light_block_test"
 
+[[mods]]
+    modId="living_swap_items_event_test"
+
 # LEGACY TEST CASES
 ###### The mods below are from the old test framework and need to be yeeted later again.
 
@@ -297,5 +300,7 @@ modId="chunk_event_load_new_chunk_test"
 modId="custom_fluid_container_test"
 [[mods]]
 modId="alter_ground_event_test"
+[[mods]]
+modId="keymapping_test"
 
 # ADD ABOVE THIS LINE

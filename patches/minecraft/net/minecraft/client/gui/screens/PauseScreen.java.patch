@@ -1,0 +1,10 @@
+--- a/net/minecraft/client/gui/screens/PauseScreen.java
++++ b/net/minecraft/client/gui/screens/PauseScreen.java
+@@ -82,6 +_,7 @@
+       } else {
+          gridlayout$rowhelper.m_264139_(this.m_262456_(f_262254_, SocialInteractionsScreen::new));
+       }
++      gridlayout$rowhelper.m_264108_(Button.m_253074_(Component.m_237115_("fml.menu.mods"), button -> this.f_96541_.m_91152_(new net.minecraftforge.client.gui.ModListScreen(this))).m_252780_(f_262268_).m_253136_(), 2);
+ 
+       Component component = this.f_96541_.m_91090_() ? f_262217_ : f_262246_;
+       this.f_252482_ = gridlayout$rowhelper.m_264108_(Button.m_253074_(component, (p_280815_) -> {

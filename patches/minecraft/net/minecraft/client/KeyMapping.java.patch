@@ -12,6 +12,15 @@
     private static final Set<String> f_90811_ = Sets.newHashSet();
     public static final String f_167805_ = "key.categories.movement";
     public static final String f_167806_ = "key.categories.misc";
+@@ -41,7 +_,7 @@
+    private int f_90818_;
+ 
+    public static void m_90835_(InputConstants.Key p_90836_) {
+-      KeyMapping keymapping = f_90810_.get(p_90836_);
++      for (KeyMapping keymapping : f_90810_.getAll(p_90836_))
+       if (keymapping != null) {
+          ++keymapping.f_90818_;
+       }
 @@ -49,7 +_,7 @@
     }
  

@@ -50,7 +50,7 @@ public class SmoothQuadLighter extends QuadLighter
                     pos.setWithOffset(origin, x - 1, y - 1, z - 1);
                     BlockState neighborState = level.getBlockState(pos);
                     t[x][y][z] = neighborState.getLightBlock(level, pos) < 15;
-                    int brightness = getLightColor(level, pos, state);
+                    int brightness = LevelRenderer.getLightColor(level, neighborState, pos);
                     s[x][y][z] = LightTexture.sky(brightness);
                     b[x][y][z] = LightTexture.block(brightness);
                     ao[x][y][z] = neighborState.getShadeBrightness(level, pos);

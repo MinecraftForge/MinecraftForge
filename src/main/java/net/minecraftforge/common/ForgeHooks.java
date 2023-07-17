@@ -35,6 +35,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import com.mojang.serialization.Dynamic;
 import com.mojang.serialization.Lifecycle;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
@@ -77,6 +78,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.Brain;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -128,6 +130,7 @@ import net.minecraftforge.common.loot.IGlobalLootModifier;
 import net.minecraftforge.common.loot.LootModifierManager;
 import net.minecraftforge.common.loot.LootTableIdCondition;
 import net.minecraftforge.common.util.BlockSnapshot;
+import net.minecraftforge.common.util.BrainBuilder;
 import net.minecraftforge.common.util.Lazy;
 import net.minecraftforge.common.util.MavenVersionStringHelper;
 import net.minecraftforge.event.AnvilUpdateEvent;
@@ -160,6 +163,8 @@ import net.minecraftforge.event.entity.living.LivingChangeTargetEvent.ILivingTar
 import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.living.LivingKnockBackEvent;
+import net.minecraftforge.event.entity.living.LivingMakeBrainEvent;
+import net.minecraftforge.event.entity.living.LivingSwapItemsEvent;
 import net.minecraftforge.event.entity.living.LivingUseTotemEvent;
 import net.minecraftforge.event.entity.living.LootingLevelEvent;
 import net.minecraftforge.event.entity.living.ShieldBlockEvent;
@@ -241,6 +246,14 @@ public class ForgeHooks
         MinecraftForge.EVENT_BUS.post(event);
 
         return event;
+    }
+
+    public static Brain<?> onLivingMakeBrain(LivingEntity entity, Brain<?> originalBrain, Dynamic<?> dynamic)
+    {
+        BrainBuilder<?> brainBuilder = originalBrain.createBuilder();
+        LivingMakeBrainEvent event = new LivingMakeBrainEvent(entity, brainBuilder);
+        MinecraftForge.EVENT_BUS.post(event);
+        return brainBuilder.makeBrain(dynamic);
     }
 
     public static boolean onLivingTick(LivingEntity entity)
@@ -1226,6 +1239,13 @@ public class ForgeHooks
         return e;
     }
 
+    public static LivingSwapItemsEvent.Hands onLivingSwapHandItems(LivingEntity livingEntity)
+    {
+        LivingSwapItemsEvent.Hands event = new LivingSwapItemsEvent.Hands(livingEntity);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event;
+    }
+
     public static void writeAdditionalLevelSaveData(WorldData worldData, CompoundTag levelTag)
     {
         CompoundTag fmlData = new CompoundTag();
@@ -1536,7 +1556,7 @@ public class ForgeHooks
      * Handles living entities being under water. This fires the {@link LivingBreatheEvent} and if the entity's air supply
      * is less than or equal to zero also the {@link LivingDrownEvent}. Additionally when the entity is under water it will
      * dismount if {@link IForgeEntity#canBeRiddenUnderFluidType(FluidType, Entity)} returns false.
-     * 
+     *
      * @param entity           The living entity which is currently updated
      * @param consumeAirAmount The amount of air to consume when the entity is unable to breathe
      * @param refillAirAmount  The amount of air to refill when the entity is able to breathe

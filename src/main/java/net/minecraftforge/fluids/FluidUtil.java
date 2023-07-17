@@ -146,7 +146,9 @@ public class FluidUtil
                         }
                         else
                         {
-                            containerFluidHandler.fill(simulatedTransfer, IFluidHandler.FluidAction.SIMULATE);
+                            // We are acting on a COPY of the stack, so performing changes on the source is acceptable even if we are simulating.
+                            // We need to perform the change otherwise the call to getContainer() will be incorrect.
+                            containerFluidHandler.fill(simulatedTransfer, IFluidHandler.FluidAction.EXECUTE);
                         }
 
                         ItemStack resultContainer = containerFluidHandler.getContainer();
