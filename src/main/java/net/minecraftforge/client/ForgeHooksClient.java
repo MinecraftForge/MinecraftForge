@@ -496,7 +496,8 @@ public class ForgeHooksClient
         return new Material(TextureAtlas.LOCATION_BLOCKS, loc);
     }
 
-    public static void fillNormal(int[] faceData, Direction facing) {
+    public static void fillNormal(int[] faceData, Direction facing)
+    {
         fillNormal(faceData, facing, false);
     }
 
