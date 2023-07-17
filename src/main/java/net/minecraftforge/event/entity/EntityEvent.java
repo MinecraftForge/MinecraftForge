@@ -141,35 +141,39 @@ public class EntityEvent extends Event
     public static class Size extends EntityEvent
     {
         private final Pose pose;
-        private final EntityDimensions oldSize; // TODO: rename to originalSize?
+        private final EntityDimensions originalSize;
         private EntityDimensions newSize;
         private final float oldEyeHeight;
         private float newEyeHeight;
 
-        @Deprecated
+        // TODO: remove defaultEyeHeight parameter
+        @Deprecated(forRemoval = true, since = "1.20.1")
         public Size(Entity entity, Pose pose, EntityDimensions size, float defaultEyeHeight)
         {
             this(entity, pose, size, size, defaultEyeHeight, defaultEyeHeight);
         }
 
-        @Deprecated
-        public Size(Entity entity, Pose pose, EntityDimensions oldSize, EntityDimensions newSize, float oldEyeHeight, float newEyeHeight)
+        @Deprecated(forRemoval = true, since = "1.20.1")
+        public Size(Entity entity, Pose pose, EntityDimensions originalSize, EntityDimensions newSize, float oldEyeHeight, float newEyeHeight)
         {
             super(entity);
             this.pose = pose;
-            this.oldSize = oldSize;
+            this.originalSize = originalSize;
             this.newSize = newSize;
             this.oldEyeHeight = oldEyeHeight;
             this.newEyeHeight = newEyeHeight;
         }
 
         public Pose getPose() { return pose; }
-        public EntityDimensions getOldSize() { return oldSize; }
+        public EntityDimensions getOriginalSize() { return originalSize; }
         public EntityDimensions getNewSize() { return newSize; }
         public void setNewSize(EntityDimensions size) { this.newSize = size; }
 
+        /** @deprecated Use {@link #getOriginalSize()}. */
+        @Deprecated(forRemoval = true, since = "1.20.1")
+        public EntityDimensions getOldSize() { return originalSize; }
         /** @deprecated Use {@link EyeHeight} to hook into changes to eye height. */
-        @Deprecated(forRemoval = true)
+        @Deprecated(forRemoval = true, since = "1.20.1")
         public void setNewSize(EntityDimensions size, boolean updateEyeHeight)
         {
             this.setNewSize(size);
@@ -179,10 +183,13 @@ public class EntityEvent extends Event
             }
         }
         /** @deprecated Use {@link EyeHeight} to hook into changes to eye height. */
-        @Deprecated(forRemoval = true)
+        @Deprecated(forRemoval = true, since = "1.20.1")
         public float getOldEyeHeight() { return oldEyeHeight; }
         /** @deprecated Use {@link EyeHeight} to hook into changes to eye height. */
-        @Deprecated(forRemoval = true)
+        @Deprecated(forRemoval = true, since = "1.20.1")
+        public float getNewEyeHeight() { return newEyeHeight; }
+        /** @deprecated Use {@link EyeHeight} to hook into changes to eye height. */
+        @Deprecated(forRemoval = true, since = "1.20.1")
         public void setNewEyeHeight(float eyeHeight) { this.newEyeHeight = eyeHeight; }
     }
 
