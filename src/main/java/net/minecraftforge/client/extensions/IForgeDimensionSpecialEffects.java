@@ -67,40 +67,15 @@ public interface IForgeDimensionSpecialEffects
      * Allows for manipulating the coloring of the lightmap texture.
      * Will be called for each 16*16 combination of sky/block light values.
      *
-     * @param level             The current level (client-side).
-     * @param partialTicks      Progress between ticks.
-     * @param skyDarken         Current darkness of the sky.
-     * @param blockLightFlicker Block light flicker factor.
-     * @param modifiedSkyLight  Sky light brightness factor (accounting for sky darkness).
-     * @param pixelX            X-coordinate of the lightmap texture (block).
-     * @param pixelY            Y-coordinate of the lightmap texture (sky).
-     * @param colors            The color values that will be used: [r, g, b].
-     * @see LightTexture#updateLightTexture(float)
-     * @deprecated Use {@link #adjustLightmapColors(ClientLevel, float, int, int, float, float, float, float, float, float, float, Vector3f)}.
-     */
-    @Deprecated(forRemoval = true, since = "1.20.1")
-    default void adjustLightmapColors(ClientLevel level, float partialTicks, float skyDarken, float blockLightFlicker, float modifiedSkyLight, int pixelX, int pixelY, Vector3f colors) {}
-
-    /**
-     * Allows for manipulating the coloring of the lightmap texture.
-     * Will be called for each 16*16 combination of sky/block light values.
-     *
-     * @param level              The current level (client-side).
-     * @param partialTicks       Progress between ticks.
-     * @param pixelX             X-coordinate of the lightmap texture (block).
-     * @param pixelY             Y-coordinate of the lightmap texture (sky).
-     * @param blockLightRed      Block light brightness factor (red color).
-     * @param blockLightGreen    Block light brightness factor (green color).
-     * @param blockLightBlue     Block light brightness factor (blue color).
-     * @param blockLightFlicker  Block light brightness flicker factor.
-     * @param unmodifiedSkyLight Sky light brightness factor (without additional sky darkness calculation).
-     * @param modifiedSkyLight   Sky light brightness factor (accounting for sky darkness).
-     * @param skyDarken          Current darkness of the sky.
-     * @param colors             The color values that will be used: [r, g, b].
+     * @param level                The current level (client-side).
+     * @param partialTicks         Progress between ticks.
+     * @param skyDarken            Current darkness of the sky (can be used to calculate sky light).
+     * @param blockLightRedFlicker Block light flicker factor (red color) (can be used to calculate block light).
+     * @param skyLight             Sky light brightness (accounting for sky darkness).
+     * @param pixelX               X-coordinate of the lightmap texture (block).
+     * @param pixelY               Y-coordinate of the lightmap texture (sky).
+     * @param colors               The color values that will be used: [r, g, b].
      * @see LightTexture#updateLightTexture(float)
      */
-    default void adjustLightmapColors(ClientLevel level, float partialTicks, int pixelX, int pixelY, float blockLightRed, float blockLightGreen, float blockLightBlue, float blockLightFlicker, float unmodifiedSkyLight, float modifiedSkyLight, float skyDarken, Vector3f colors)
-    {
-        this.adjustLightmapColors(level, partialTicks, skyDarken, blockLightFlicker, modifiedSkyLight, pixelX, pixelY, colors);
-    }
+    default void adjustLightmapColors(ClientLevel level, float partialTicks, float skyDarken, float blockLightRedFlicker, float skyLight, int pixelX, int pixelY, Vector3f colors) {}
 }
