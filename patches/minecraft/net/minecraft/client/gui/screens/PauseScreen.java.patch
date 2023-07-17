@@ -1,0 +1,14 @@
+--- a/net/minecraft/client/gui/screens/PauseScreen.java
++++ b/net/minecraft/client/gui/screens/PauseScreen.java
+@@ -77,9 +_,10 @@
+             this.f_96541_.m_91152_(new SocialInteractionsScreen());
+          }));
+       }
++      this.m_142416_(new Button(this.f_96543_ / 2 - 102, this.f_96544_ / 4 + 120 - 16, 204, 20, Component.m_237115_("fml.menu.mods"), modButton -> this.f_96541_.m_91152_(new net.minecraftforge.client.gui.ModListScreen(this))));
+ 
+       Component component = this.f_96541_.m_91090_() ? Component.m_237115_("menu.returnToMenu") : Component.m_237115_("menu.disconnect");
+-      this.m_142416_(new Button(this.f_96543_ / 2 - 102, this.f_96544_ / 4 + 120 + -16, 204, 20, component, (p_96315_) -> {
++      this.m_142416_(new Button(this.f_96543_ / 2 - 102, this.f_96544_ / 4 + 144 + -16, 204, 20, component, (p_96315_) -> {
+          boolean flag = this.f_96541_.m_91090_();
+          boolean flag1 = this.f_96541_.m_91294_();
+          p_96315_.f_93623_ = false;
