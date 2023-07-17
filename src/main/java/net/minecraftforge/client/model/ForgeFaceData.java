@@ -32,7 +32,8 @@ import net.minecraft.util.ExtraCodecs;
  */
 public record ForgeFaceData(int color, int blockLight, int skyLight, boolean ambientOcclusion, boolean calculateNormals)
 {
-    public ForgeFaceData(int color, int blockLight, int skyLight, boolean ambientOcclusion) {
+    public ForgeFaceData(int color, int blockLight, int skyLight, boolean ambientOcclusion)
+    {
         this(color, blockLight, skyLight, ambientOcclusion, false);
     }
 
