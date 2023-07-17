@@ -113,6 +113,7 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.syncher.EntityDataSerializer;
 import net.minecraft.network.protocol.game.ClientboundBlockUpdatePacket;
+import net.minecraft.network.protocol.game.ServerboundPlayerActionPacket;
 import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.item.alchemy.PotionUtils;
 import net.minecraft.stats.Stats;
@@ -769,9 +770,25 @@ public class ForgeHooks
         return evt.isCanceled() ? evt.getCancellationResult() : null;
     }
 
+    /**
+     * @deprecated Use {@link #onLeftClickBlock(Player, BlockPos, Direction, ServerboundPlayerActionPacket.Action)} instead
+     */
+    @Deprecated(since = "1.20.1", forRemoval = true)
     public static PlayerInteractEvent.LeftClickBlock onLeftClickBlock(Player player, BlockPos pos, Direction face)
     {
-        PlayerInteractEvent.LeftClickBlock evt = new PlayerInteractEvent.LeftClickBlock(player, pos, face);
+        return onLeftClickBlock(player, pos, face, ServerboundPlayerActionPacket.Action.START_DESTROY_BLOCK);
+    }
+
+    public static PlayerInteractEvent.LeftClickBlock onLeftClickBlock(Player player, BlockPos pos, Direction face, ServerboundPlayerActionPacket.Action action)
+    {
+        PlayerInteractEvent.LeftClickBlock evt = new PlayerInteractEvent.LeftClickBlock(player, pos, face, PlayerInteractEvent.LeftClickBlock.Action.convert(action));
+        MinecraftForge.EVENT_BUS.post(evt);
+        return evt;
+    }
+
+    public static PlayerInteractEvent.LeftClickBlock onClientMineHold(Player player, BlockPos pos, Direction face)
+    {
+        PlayerInteractEvent.LeftClickBlock evt = new PlayerInteractEvent.LeftClickBlock(player, pos, face, PlayerInteractEvent.LeftClickBlock.Action.CLIENT_HOLD);
         MinecraftForge.EVENT_BUS.post(evt);
         return evt;
     }

@@ -13,6 +13,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.core.Direction;
+import net.minecraft.network.protocol.game.ServerboundPlayerActionPacket;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.context.UseOnContext;
@@ -29,6 +30,8 @@ import static net.minecraftforge.eventbus.api.Event.Result.DEFAULT;
 import static net.minecraftforge.eventbus.api.Event.Result.DENY;
 
 import net.minecraftforge.fml.LogicalSide;
+
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -239,6 +242,9 @@ public class PlayerInteractEvent extends PlayerEvent
      * Canceling the event will cause none of the above noted methods to be called.
      * There are various results to this event, see the getters below.
      *
+     * This event is fired at various points during left clicking on blocks, at both the start and end on the server, and at the start and while held down on the client.
+     * Use {@link #getAction()} to check which type of action triggered this event.
+     *
      * Note that if the event is canceled and the player holds down left mouse, the event will continue to fire.
      * This is due to how vanilla calls the left click handler methods.
      *
@@ -250,10 +256,19 @@ public class PlayerInteractEvent extends PlayerEvent
     {
         private Result useBlock = DEFAULT;
         private Result useItem = DEFAULT;
+        private final Action action;
 
+        @Deprecated(since = "1.20.1", forRemoval = true)
         public LeftClickBlock(Player player, BlockPos pos, Direction face)
         {
+            this(player, pos, face, Action.START);
+        }
+
+        @ApiStatus.Internal
+        public LeftClickBlock(Player player, BlockPos pos, Direction face, Action action)
+        {
             super(player, InteractionHand.MAIN_HAND, pos, face);
+            this.action = action;
         }
 
         /**
@@ -270,6 +285,14 @@ public class PlayerInteractEvent extends PlayerEvent
         public Result getUseItem()
         {
             return useItem;
+        }
+
+        /**
+         * @return The action type for this interaction. Will never be null.
+         */
+        @NotNull
+        public Action getAction() {
+        	return this.action;
         }
 
         public void setUseBlock(Result triggerBlock)
@@ -291,6 +314,35 @@ public class PlayerInteractEvent extends PlayerEvent
                 useBlock = DENY;
                 useItem = DENY;
             }
+        }
+
+        public static enum Action {
+        	/**
+        	 * When the player first left clicks a block
+        	 */
+        	START,
+        	/**
+        	 * When the player stops left clicking a block by completely breaking it
+        	 */
+        	STOP,
+        	/**
+        	 * When the player stops left clicking a block by releasing the button, or no longer targeting the same block before it breaks.
+        	 */
+        	ABORT,
+        	/**
+        	 * When the player is actively mining a block on the client side
+        	 * Warning: The event is fired every tick on the client
+        	 */
+        	CLIENT_HOLD;
+
+        	public static Action convert(ServerboundPlayerActionPacket.Action action) {
+        		return switch (action) {
+        		default -> START;
+        		case START_DESTROY_BLOCK -> START;
+        		case STOP_DESTROY_BLOCK -> STOP;
+        		case ABORT_DESTROY_BLOCK -> ABORT;
+        		};
+        	}
         }
     }
 
