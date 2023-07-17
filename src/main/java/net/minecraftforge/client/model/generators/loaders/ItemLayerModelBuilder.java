@@ -60,7 +60,7 @@ public class ItemLayerModelBuilder<T extends ModelBuilder<T>> extends CustomLoad
         {
             faceData.compute(i, (key, value) -> {
                 ForgeFaceData fallback = value == null ? ForgeFaceData.DEFAULT : value;
-                return new ForgeFaceData(fallback.color(), blockLight, skyLight, fallback.ambientOcclusion());
+                return new ForgeFaceData(fallback.color(), blockLight, skyLight, fallback.ambientOcclusion(), fallback.calculateNormals());
             });
         }
         return this;
@@ -85,7 +85,7 @@ public class ItemLayerModelBuilder<T extends ModelBuilder<T>> extends CustomLoad
         {
             faceData.compute(i, (key, value) -> {
                 ForgeFaceData fallback = value == null ? ForgeFaceData.DEFAULT : value;
-                return new ForgeFaceData(color, fallback.blockLight(), fallback.skyLight(), fallback.ambientOcclusion());
+                return new ForgeFaceData(color, fallback.blockLight(), fallback.skyLight(), fallback.ambientOcclusion(), fallback.calculateNormals());
             });
         }
         return this;
