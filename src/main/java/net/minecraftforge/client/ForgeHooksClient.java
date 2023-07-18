@@ -1241,18 +1241,18 @@ public class ForgeHooksClient
      */
    public static Direction getNearestStable(float nX, float nY, float nZ)
    {
-       Direction direction = Direction.NORTH;
-       float f = Float.MIN_VALUE;
+       Direction ret = Direction.NORTH;
+       float sum = Float.MIN_VALUE;
 
-       for(Direction direction1 : Direction.values()) {
-           float f1 = nX * (float)direction1.getNormal().getX() + nY * (float)direction1.getNormal().getY() + nZ * (float)direction1.getNormal().getZ();
-           if (f1 > f + Constants.EPSILON) {
-               f = f1;
-               direction = direction1;
+       for(Direction dir : Direction.values()) {
+           float newSum = nX * (float)dir.getNormal().getX() + nY * (float)dir.getNormal().getY() + nZ * (float)dir.getNormal().getZ();
+           if (newSum > sum + Constants.EPSILON) {
+               sum = newSum;
+               ret = dir;
            }
        }
 
-       return direction;
+       return ret;
     }
 
     // Make sure the below method is only ever called once (by forge).
