@@ -1239,7 +1239,8 @@ public class ForgeHooksClient
      * @param nZ Z component of the normal
      * @return the nearest Direction to the passed in normal
      */
-   public static Direction getNearestStable(float nX, float nY, float nZ) {
+   public static Direction getNearestStable(float nX, float nY, float nZ)
+   {
        Direction direction = Direction.NORTH;
        float f = Float.MIN_VALUE;
 
