@@ -388,6 +388,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
         private int color = 0xFFFFFFFF;
         private int blockLight = 0, skyLight = 0;
         private boolean hasAmbientOcclusion = true;
+        private boolean calculateNormals = false;
 
         private void validateCoordinate(float coord, char name) {
             Preconditions.checkArgument(!(coord < -16.0F) && !(coord > 32.0F), "Position " + name + " out of range, must be within [-16, 32]. Found: %d", coord);
@@ -556,6 +557,17 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
             return this;
         }
 
+        /**
+         *  Sets whether we should calculate actual normals for the faces of this model or inherit them from facing the
+         *  way vanilla does
+         * @param calc whether to calculate normals
+         * @return this builder
+         */
+        public ElementBuilder calculateNormals(boolean calc) {
+            this.calculateNormals = calc;
+            return this;
+        }
+
         private BiConsumer<Direction, FaceBuilder> addTexture(String texture) {
             return ($, f) -> f.texture(texture);
         }
@@ -563,7 +575,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
         BlockElement build() {
             Map<Direction, BlockElementFace> faces = this.faces.entrySet().stream()
                     .collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue().build(), (k1, k2) -> { throw new IllegalArgumentException(); }, LinkedHashMap::new));
-            return new BlockElement(from, to, faces, rotation == null ? null : rotation.build(), shade, new ForgeFaceData(this.color, this.blockLight, this.skyLight, this.hasAmbientOcclusion));
+            return new BlockElement(from, to, faces, rotation == null ? null : rotation.build(), shade, new ForgeFaceData(this.color, this.blockLight, this.skyLight, this.hasAmbientOcclusion, this.calculateNormals));
         }
 
         public T end() { return self(); }
@@ -578,6 +590,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
             private int color = 0xFFFFFFFF;
             private int blockLight = 0, skyLight = 0;
             private boolean hasAmbientOcclusion = true;
+            private boolean calculateNormals = false;
 
             FaceBuilder(Direction dir) {
                 // param unused for functional match
@@ -660,11 +673,22 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
                 return this;
             }
 
+            /**
+             *  Sets whether we should calculate actual normals for this face or inherit them from facing the
+             *  way vanilla does
+             * @param calc whether to calculate normals
+             * @return this builder
+             */
+            public FaceBuilder calculateNormals(boolean calc) {
+                this.calculateNormals = calc;
+                return this;
+            }
+
             BlockElementFace build() {
                 if (this.texture == null) {
                     throw new IllegalStateException("A model face must have a texture");
                 }
-                return new BlockElementFace(cullface, tintindex, texture, new BlockFaceUV(uvs, rotation.rotation), new ForgeFaceData(this.color, this.blockLight, this.skyLight, this.hasAmbientOcclusion));
+                return new BlockElementFace(cullface, tintindex, texture, new BlockFaceUV(uvs, rotation.rotation), new ForgeFaceData(this.color, this.blockLight, this.skyLight, this.hasAmbientOcclusion, this.calculateNormals));
             }
 
             public ElementBuilder end() { return ElementBuilder.this; }

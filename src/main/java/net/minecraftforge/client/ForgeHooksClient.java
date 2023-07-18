@@ -496,21 +496,30 @@ public class ForgeHooksClient
         return new Material(TextureAtlas.LOCATION_BLOCKS, loc);
     }
 
+    public static void fillNormal(int[] faceData, Direction facing)
+    {
+        fillNormal(faceData, facing, false);
+    }
+
     /**
      * internal, relies on fixed format of FaceBakery
      */
     // TODO Do we need this?
-    public static void fillNormal(int[] faceData, Direction facing)
+    public static void fillNormal(int[] faceData, Direction facing, boolean calculateNormals)
     {
-        Vector3f v1 = getVertexPos(faceData, 3);
-        Vector3f t1 = getVertexPos(faceData, 1);
-        Vector3f v2 = getVertexPos(faceData, 2);
-        Vector3f t2 = getVertexPos(faceData, 0);
-        v1.sub(t1);
-        v2.sub(t2);
-        v2.cross(v1);
-        v2.normalize();
-
+        Vector3f v2;
+        if (calculateNormals) {
+            Vector3f v1 = getVertexPos(faceData, 3);
+            Vector3f t1 = getVertexPos(faceData, 1);
+            v2 = getVertexPos(faceData, 2);
+            Vector3f t2 = getVertexPos(faceData, 0);
+            v1.sub(t1);
+            v2.sub(t2);
+            v2.cross(v1);
+            v2.normalize();
+        } else {
+            v2 = new Vector3f(facing.getNormal().getX(), facing.getNormal().getY(), facing.getNormal().getZ());
+        }
         int x = ((byte) Math.round(v2.x() * 127)) & 0xFF;
         int y = ((byte) Math.round(v2.y() * 127)) & 0xFF;
         int z = ((byte) Math.round(v2.z() * 127)) & 0xFF;

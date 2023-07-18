@@ -5,7 +5,7 @@
        }
  
 -      return new BakedQuad(aint, p_111603_.f_111355_, direction, p_111604_, p_111608_);
-+      net.minecraftforge.client.ForgeHooksClient.fillNormal(aint, direction);
++      net.minecraftforge.client.ForgeHooksClient.fillNormal(aint, direction, p_111603_.getFaceData().calculateNormals());
 +      var data = p_111603_.getFaceData();
 +      var quad = new BakedQuad(aint, p_111603_.f_111355_, direction, p_111604_, p_111608_, data.ambientOcclusion());
 +      if (!net.minecraftforge.client.model.ForgeFaceData.DEFAULT.equals(data)) {
