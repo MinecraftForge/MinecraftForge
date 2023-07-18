@@ -1,0 +1,11 @@
+--- a/com/mojang/blaze3d/vertex/SheetedDecalTextureGenerator.java
++++ b/com/mojang/blaze3d/vertex/SheetedDecalTextureGenerator.java
+@@ -46,7 +_,7 @@
+ 
+    public void m_5752_() {
+       Vector3f vector3f = this.f_85869_.transform(new Vector3f(this.f_85876_, this.f_85877_, this.f_85878_));
+-      Direction direction = Direction.m_122372_(vector3f.x(), vector3f.y(), vector3f.z());
++      Direction direction = net.minecraftforge.client.ForgeHooksClient.getNearestStable(vector3f.x(), vector3f.y(), vector3f.z());
+       Vector4f vector4f = this.f_85868_.transform(new Vector4f(this.f_85870_, this.f_85871_, this.f_85872_, 1.0F));
+       vector4f.rotateY((float)Math.PI);
+       vector4f.rotateX((-(float)Math.PI / 2F));

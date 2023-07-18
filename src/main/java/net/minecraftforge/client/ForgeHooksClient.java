@@ -12,8 +12,10 @@ import com.mojang.blaze3d.shaders.FogShape;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.SheetedDecalTextureGenerator;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.datafixers.util.Either;
+import com.mojang.math.Constants;
 import net.minecraft.FileUtil;
 import net.minecraft.client.Camera;
 import net.minecraft.client.KeyMapping;
@@ -1222,6 +1224,34 @@ public class ForgeHooksClient
 
         for (var entry : entries)
             output.accept(entry.getKey(), entry.getValue());
+    }
+
+    /**
+     * This function is a clone of {@link Direction#getNearest(float, float, float)} designed to return a consistent
+     * direction when the normal is at an inflection point (ie 45 degrees) rounding errors
+     * from associated matrix multiplication (such as during {@link SheetedDecalTextureGenerator#endVertex()}
+     * can cause the direction chosen to be unstable.
+     *
+     * This is a port of the downstream changes from https://github.com/neoforged/NeoForge PR #26
+     *
+     * @param nX X component of the normal
+     * @param nY Y component of the normal
+     * @param nZ Z component of the normal
+     * @return the nearest Direction to the passed in normal
+     */
+   public static Direction getNearestStable(float nX, float nY, float nZ) {
+       Direction direction = Direction.NORTH;
+       float f = Float.MIN_VALUE;
+
+       for(Direction direction1 : Direction.values()) {
+           float f1 = nX * (float)direction1.getNormal().getX() + nY * (float)direction1.getNormal().getY() + nZ * (float)direction1.getNormal().getZ();
+           if (f1 > f + Constants.EPSILON) {
+               f = f1;
+               direction = direction1;
+           }
+       }
+
+       return direction;
     }
 
     // Make sure the below method is only ever called once (by forge).
