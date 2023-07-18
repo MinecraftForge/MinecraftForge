@@ -14,8 +14,7 @@ import net.minecraftforge.eventbus.api.Event;
 import java.util.Locale;
 import java.util.Map;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
+import com.google.common.base.Preconditions;
 
 /**
  * Fired for registering structure conversions for pre-1.18.2 worlds. This is used by {@link StructuresBecomeConfiguredFix}
@@ -92,11 +91,11 @@ public class RegisterStructureConversionsEvent extends Event
      */
     public void register(String oldStructureID, StructuresBecomeConfiguredFix.Conversion conversion)
     {
-        checkNotNull(oldStructureID, "Original structure ID must not be null");
-        checkArgument(oldStructureID.toLowerCase(Locale.ROOT).equals(oldStructureID),
+        Preconditions.checkNotNull(oldStructureID, "Original structure ID must not be null");
+        Preconditions.checkArgument(oldStructureID.toLowerCase(Locale.ROOT).equals(oldStructureID),
                 "Original structure ID should be in all lowercase");
-        checkNotNull(conversion, "Structure conversion must not be null");
-        checkNotNull(conversion.fallback(), "Fallback structure ID in structure conversion must not be null");
+        Preconditions.checkNotNull(conversion, "Structure conversion must not be null");
+        Preconditions.checkNotNull(conversion.fallback(), "Fallback structure ID in structure conversion must not be null");
         if (map.putIfAbsent(oldStructureID.toLowerCase(Locale.ROOT), conversion) != null)
         {
             throw new IllegalArgumentException("Conversion has already been registered for structure " + oldStructureID);

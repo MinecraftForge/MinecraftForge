@@ -13,13 +13,12 @@ import net.minecraft.Util;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.Direction;
+import net.minecraftforge.client.model.IQuadTransformer;
 import net.minecraftforge.client.textures.UnitTextureAtlasSprite;
 
 import java.util.IdentityHashMap;
 import java.util.Map;
 import java.util.function.Consumer;
-
-import static net.minecraftforge.client.model.IQuadTransformer.*;
 
 /**
  * Vertex consumer that outputs {@linkplain BakedQuad baked quads}.
@@ -34,7 +33,7 @@ public class QuadBakingVertexConsumer implements VertexConsumer
         for (var element : DefaultVertexFormat.BLOCK.getElements())
             map.put(element, DefaultVertexFormat.BLOCK.getOffset(i++) / 4); // Int offset
     });
-    private static final int QUAD_DATA_SIZE = STRIDE * 4;
+    private static final int QUAD_DATA_SIZE = IQuadTransformer.STRIDE * 4;
 
     private final Consumer<BakedQuad> quadConsumer;
 
@@ -55,7 +54,7 @@ public class QuadBakingVertexConsumer implements VertexConsumer
     @Override
     public VertexConsumer vertex(double x, double y, double z)
     {
-        int offset = vertexIndex * STRIDE + POSITION;
+        int offset = vertexIndex * IQuadTransformer.STRIDE + IQuadTransformer.POSITION;
         quadData[offset] = Float.floatToRawIntBits((float) x);
         quadData[offset + 1] = Float.floatToRawIntBits((float) y);
         quadData[offset + 2] = Float.floatToRawIntBits((float) z);
@@ -65,7 +64,7 @@ public class QuadBakingVertexConsumer implements VertexConsumer
     @Override
     public VertexConsumer normal(float x, float y, float z)
     {
-        int offset = vertexIndex * STRIDE + NORMAL;
+        int offset = vertexIndex * IQuadTransformer.STRIDE + IQuadTransformer.NORMAL;
         quadData[offset] = ((int) (x * 127.0f) & 0xFF) |
                            (((int) (y * 127.0f) & 0xFF) << 8) |
                            (((int) (z * 127.0f) & 0xFF) << 16);
@@ -75,7 +74,7 @@ public class QuadBakingVertexConsumer implements VertexConsumer
     @Override
     public VertexConsumer color(int r, int g, int b, int a)
     {
-        int offset = vertexIndex * STRIDE + COLOR;
+        int offset = vertexIndex * IQuadTransformer.STRIDE + IQuadTransformer.COLOR;
         quadData[offset] = ((a & 0xFF) << 24) |
                            ((b & 0xFF) << 16) |
                            ((g & 0xFF) << 8) |
@@ -86,7 +85,7 @@ public class QuadBakingVertexConsumer implements VertexConsumer
     @Override
     public VertexConsumer uv(float u, float v)
     {
-        int offset = vertexIndex * STRIDE + UV0;
+        int offset = vertexIndex * IQuadTransformer.STRIDE + IQuadTransformer.UV0;
         quadData[offset] = Float.floatToRawIntBits(u);
         quadData[offset + 1] = Float.floatToRawIntBits(v);
         return this;
@@ -95,9 +94,9 @@ public class QuadBakingVertexConsumer implements VertexConsumer
     @Override
     public VertexConsumer overlayCoords(int u, int v)
     {
-        if (UV1 >= 0) // Vanilla doesn't support this, but it may be added by a 3rd party
+        if (IQuadTransformer.UV1 >= 0) // Vanilla doesn't support this, but it may be added by a 3rd party
         {
-            int offset = vertexIndex * STRIDE + UV1;
+            int offset = vertexIndex * IQuadTransformer.STRIDE + IQuadTransformer.UV1;
             quadData[offset] = (u & 0xFFFF) | ((v & 0xFFFF) << 16);
         }
         return this;
@@ -106,7 +105,7 @@ public class QuadBakingVertexConsumer implements VertexConsumer
     @Override
     public VertexConsumer uv2(int u, int v)
     {
-        int offset = vertexIndex * STRIDE + UV2;
+        int offset = vertexIndex * IQuadTransformer.STRIDE + IQuadTransformer.UV2;
         quadData[offset] = (u & 0xFFFF) | ((v & 0xFFFF) << 16);
         return this;
     }
@@ -117,7 +116,7 @@ public class QuadBakingVertexConsumer implements VertexConsumer
         Integer baseOffset = ELEMENT_OFFSETS.get(element);
         if (baseOffset != null)
         {
-            int offset = vertexIndex * STRIDE + baseOffset;
+            int offset = vertexIndex * IQuadTransformer.STRIDE + baseOffset;
             System.arraycopy(rawData, 0, quadData, offset, rawData.length);
         }
         return this;

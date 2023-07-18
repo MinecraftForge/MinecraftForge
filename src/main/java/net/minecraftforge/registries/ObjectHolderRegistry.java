@@ -29,8 +29,6 @@ import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 
-import static net.minecraftforge.registries.ForgeRegistry.REGISTRIES;
-
 /**
  * Internal registry for tracking {@link ObjectHolder} references
  */
@@ -84,7 +82,7 @@ public class ObjectHolderRegistry
 
     public static void findObjectHolders()
     {
-        LOGGER.debug(REGISTRIES,"Processing ObjectHolder annotations");
+        LOGGER.debug(ForgeRegistry.REGISTRIES,"Processing ObjectHolder annotations");
         final List<ModFileScanData.AnnotationData> annotations = ModList.get().getAllScanData().stream()
             .map(ModFileScanData::getAnnotations)
             .flatMap(Collection::stream)
@@ -123,7 +121,7 @@ public class ObjectHolderRegistry
                         data.memberName(), null, (String)data.annotationData().get("registryName"),
                         (String)data.annotationData().get("value"), false, false));
 
-        LOGGER.debug(REGISTRIES,"Found {} ObjectHolder annotations", objectHolders.size());
+        LOGGER.debug(ForgeRegistry.REGISTRIES,"Found {} ObjectHolder annotations", objectHolders.size());
     }
 
     private static void scanTarget(Map<Type, String> classModIds, Map<Type, Class<?>> classCache, Type type,
@@ -159,7 +157,7 @@ public class ObjectHolderRegistry
                 String prefix = classModIds.get(type);
                 if (prefix == null)
                 {
-                    LOGGER.warn(REGISTRIES,"Found an unqualified ObjectHolder annotation ({}) without a modid context at {}.{}, ignoring", value, type, annotationTarget);
+                    LOGGER.warn(ForgeRegistry.REGISTRIES,"Found an unqualified ObjectHolder annotation ({}) without a modid context at {}.{}, ignoring", value, type, annotationTarget);
                     throw new IllegalStateException("Unqualified reference to ObjectHolder");
                 }
                 value = prefix + ':' + value;
@@ -210,9 +208,9 @@ public class ObjectHolderRegistry
     {
         try
         {
-            LOGGER.debug(REGISTRIES, "Applying holder lookups");
+            LOGGER.debug(ForgeRegistry.REGISTRIES, "Applying holder lookups");
             applyObjectHolders(key -> true);
-            LOGGER.debug(REGISTRIES, "Holder lookups applied");
+            LOGGER.debug(ForgeRegistry.REGISTRIES, "Holder lookups applied");
         } catch (RuntimeException e)
         {
             // It is more important that the calling contexts continue without exception to prevent further cascading errors

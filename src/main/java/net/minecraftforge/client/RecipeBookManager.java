@@ -22,8 +22,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
-import static net.minecraft.client.RecipeBookCategories.*;
-
 /**
  * Manager for {@link RecipeBookType recipe book types} and {@link RecipeBookCategories categories}.
  * <p>
@@ -63,7 +61,13 @@ public final class RecipeBookManager
     public static void init()
     {
         // The ImmutableMap is the patched out value of AGGREGATE_CATEGORIES
-        var aggregateCategories = new HashMap<>(ImmutableMap.of(CRAFTING_SEARCH, ImmutableList.of(CRAFTING_EQUIPMENT, CRAFTING_BUILDING_BLOCKS, CRAFTING_MISC, CRAFTING_REDSTONE), FURNACE_SEARCH, ImmutableList.of(FURNACE_FOOD, FURNACE_BLOCKS, FURNACE_MISC), BLAST_FURNACE_SEARCH, ImmutableList.of(BLAST_FURNACE_BLOCKS, BLAST_FURNACE_MISC), SMOKER_SEARCH, ImmutableList.of(SMOKER_FOOD)));
+        var aggregateCategories = new HashMap<>(ImmutableMap.of(
+            RecipeBookCategories.CRAFTING_SEARCH, ImmutableList.of(RecipeBookCategories.CRAFTING_EQUIPMENT, RecipeBookCategories.CRAFTING_BUILDING_BLOCKS, RecipeBookCategories.CRAFTING_MISC, RecipeBookCategories.CRAFTING_REDSTONE),
+            RecipeBookCategories.FURNACE_SEARCH, ImmutableList.of(RecipeBookCategories.FURNACE_FOOD, RecipeBookCategories.FURNACE_BLOCKS, RecipeBookCategories.FURNACE_MISC),
+            RecipeBookCategories.BLAST_FURNACE_SEARCH, ImmutableList.of(RecipeBookCategories.BLAST_FURNACE_BLOCKS, RecipeBookCategories.BLAST_FURNACE_MISC),
+            RecipeBookCategories.SMOKER_SEARCH, ImmutableList.of(RecipeBookCategories.SMOKER_FOOD)
+        ));
+
         var typeCategories = new HashMap<RecipeBookType, ImmutableList<RecipeBookCategories>>();
         var recipeCategoryLookups = new HashMap<RecipeType<?>, Function<Recipe<?>, RecipeBookCategories>>();
         var event = new RegisterRecipeBookCategoriesEvent(aggregateCategories, typeCategories, recipeCategoryLookups);

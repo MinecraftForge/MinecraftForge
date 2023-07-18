@@ -5,11 +5,11 @@
 
 package net.minecraftforge.client.loading;
 
-import static net.minecraftforge.fml.Logging.CORE;
-import static net.minecraftforge.fml.Logging.LOADING;
 
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.*;
 import java.util.function.Consumer;
@@ -34,11 +34,8 @@ import net.minecraftforge.resource.PathPackResources;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.mojang.blaze3d.systems.RenderSystem;
-
 import net.minecraft.SharedConstants;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.ClientPackSource;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.metadata.pack.PackMetadataSection;
@@ -121,7 +118,7 @@ public class ClientModLoader
 
     public static boolean completeModLoading()
     {
-        List<ModLoadingWarning> warnings = ModLoader.get().getWarnings();
+        var warnings = ModLoader.get().getWarnings();
         boolean showWarnings = true;
         try {
             showWarnings = ForgeConfig.CLIENT.showLoadWarnings.get();
@@ -131,8 +128,8 @@ public class ClientModLoader
         if (!showWarnings) {
             //User disabled warning screen, as least log them
             if (!warnings.isEmpty()) {
-                LOGGER.warn(LOADING, "Mods loaded with {} warning(s)", warnings.size());
-                warnings.forEach(warning -> LOGGER.warn(LOADING, warning.formatToString()));
+                LOGGER.warn(Logging.LOADING, "Mods loaded with {} warning(s)", warnings.size());
+                warnings.forEach(warning -> LOGGER.warn(Logging.LOADING, warning.formatToString()));
             }
             warnings = Collections.emptyList(); //Clear warnings, as the user does not want to see them
         }
@@ -163,7 +160,7 @@ public class ClientModLoader
     }
 
     private static void clientPackFinder(Map<IModFile, ? extends PathPackResources> modResourcePacks, Consumer<Pack> packAcceptor) {
-        List<PathPackResources> hiddenPacks = new ArrayList<>();
+        var hiddenPacks = new ArrayList<PathPackResources>();
         for (Entry<IModFile, ? extends PathPackResources> e : modResourcePacks.entrySet())
         {
             IModInfo mod = e.getKey().getModInfos().get(0);
@@ -174,7 +171,7 @@ public class ClientModLoader
                 ModLoader.get().addWarning(new ModLoadingWarning(mod, ModLoadingStage.ERROR, "fml.modloading.brokenresources", e.getKey()));
                 continue;
             }
-            LOGGER.debug(CORE, "Generating PackInfo named {} for mod file {}", name, e.getKey().getFilePath());
+            LOGGER.debug(Logging.CORE, "Generating PackInfo named {} for mod file {}", name, e.getKey().getFilePath());
             if (mod.getOwningFile().showAsResourcePack()) {
                 packAcceptor.accept(modPack);
             } else {

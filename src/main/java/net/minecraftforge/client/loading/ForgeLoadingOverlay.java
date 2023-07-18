@@ -5,6 +5,7 @@
 
 package net.minecraftforge.client.loading;
 
+import com.mojang.blaze3d.platform.GlConst;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
@@ -28,14 +29,11 @@ import net.minecraftforge.fml.earlydisplay.DisplayWindow;
 import net.minecraftforge.fml.loading.progress.ProgressMeter;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix4f;
+import org.lwjgl.opengl.GL30C;
 
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
-
-import static com.mojang.blaze3d.platform.GlConst.*;
-import static org.lwjgl.opengl.GL30C.glViewport;
-import static org.lwjgl.opengl.GL30C.glTexParameterIi;
 
 /**
  * This is an implementation of the LoadingOverlay that calls back into the early window rendering, as part of the
@@ -82,14 +80,14 @@ public class ForgeLoadingOverlay extends LoadingOverlay {
             displayWindow.render(0xff);
         } else {
             GlStateManager._clearColor(colour.redf(), colour.greenf(), colour.bluef(), 1f);
-            GlStateManager._clear(GL_COLOR_BUFFER_BIT, Minecraft.ON_OSX);
+            GlStateManager._clear(GlConst.GL_COLOR_BUFFER_BIT, Minecraft.ON_OSX);
             displayWindow.render(0xFF);
         }
         RenderSystem.enableBlend();
-        RenderSystem.blendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        RenderSystem.blendFunc(GlConst.GL_SRC_ALPHA, GlConst.GL_ONE_MINUS_SRC_ALPHA);
         var fbWidth = this.minecraft.getWindow().getWidth();
         var fbHeight = this.minecraft.getWindow().getHeight();
-        glViewport(0, 0, fbWidth, fbHeight);
+        GL30C.glViewport(0, 0, fbWidth, fbHeight);
         final var twidth = this.displayWindow.context().width();
         final var theight = this.displayWindow.context().height();
         var wscale = (float)fbWidth / twidth;
@@ -99,7 +97,7 @@ public class ForgeLoadingOverlay extends LoadingOverlay {
         var wtop = Mth.clamp(fbHeight * 0.5f - scale * theight, 0, fbHeight);
         var wright = Mth.clamp(fbWidth * 0.5f + scale * twidth, 0, fbWidth);
         var wbottom = Mth.clamp(fbHeight * 0.5f + scale * theight, 0, fbHeight);
-        GlStateManager.glActiveTexture(GL_TEXTURE0);
+        GlStateManager.glActiveTexture(GlConst.GL_TEXTURE0);
         RenderSystem.disableCull();
         BufferBuilder bufferbuilder = Tesselator.getInstance().getBuilder();
         RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, fade);
@@ -120,7 +118,7 @@ public class ForgeLoadingOverlay extends LoadingOverlay {
 
         // This is the actual screen data from the loading screen
         RenderSystem.enableBlend();
-        RenderSystem.blendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        RenderSystem.blendFunc(GlConst.GL_SRC_ALPHA, GlConst.GL_ONE_MINUS_SRC_ALPHA);
         RenderSystem.setShader(GameRenderer::getPositionTexColorShader);
         RenderSystem.setShaderTexture(0, displayWindow.getFramebufferTextureId());
         bufferbuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
@@ -128,8 +126,8 @@ public class ForgeLoadingOverlay extends LoadingOverlay {
         bufferbuilder.vertex(wright, wbottom, 0f).uv(1, 0).color(1f, 1f, 1f, fade).endVertex();
         bufferbuilder.vertex(wright, wtop, 0f).uv(1, 1).color(1f, 1f, 1f, fade).endVertex();
         bufferbuilder.vertex(wleft, wtop, 0f).uv(0, 1).color(1f, 1f, 1f, fade).endVertex();
-        glTexParameterIi(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        glTexParameterIi(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        GL30C.glTexParameterIi(GlConst.GL_TEXTURE_2D, GlConst.GL_TEXTURE_MIN_FILTER, GlConst.GL_NEAREST);
+        GL30C.glTexParameterIi(GlConst.GL_TEXTURE_2D, GlConst.GL_TEXTURE_MAG_FILTER, GlConst.GL_NEAREST);
         BufferUploader.drawWithShader(bufferbuilder.end());
         RenderSystem.defaultBlendFunc();
         RenderSystem.disableBlend();

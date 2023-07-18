@@ -11,7 +11,6 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.Lifecycle;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -23,7 +22,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.BiConsumer;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import net.minecraft.core.IdMapper;
 import net.minecraft.core.MappedRegistry;
@@ -58,47 +56,14 @@ import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.StartupMessageManager;
 import net.minecraftforge.fml.util.EnhancedRuntimeException;
 import net.minecraftforge.fml.util.thread.EffectiveSide;
+import net.minecraftforge.registries.ForgeRegistries.Keys;
 import net.minecraftforge.registries.holdersets.HolderSetType;
 import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
-
-import static net.minecraftforge.registries.ForgeRegistries.Keys.ACTIVITIES;
-import static net.minecraftforge.registries.ForgeRegistries.Keys.ATTRIBUTES;
-import static net.minecraftforge.registries.ForgeRegistries.Keys.BIOMES;
-import static net.minecraftforge.registries.ForgeRegistries.Keys.BLOCKS;
-import static net.minecraftforge.registries.ForgeRegistries.Keys.BLOCK_ENTITY_TYPES;
-import static net.minecraftforge.registries.ForgeRegistries.Keys.BLOCK_STATE_PROVIDER_TYPES;
-import static net.minecraftforge.registries.ForgeRegistries.Keys.CHUNK_STATUS;
-import static net.minecraftforge.registries.ForgeRegistries.Keys.COMMAND_ARGUMENT_TYPES;
-import static net.minecraftforge.registries.ForgeRegistries.Keys.ENCHANTMENTS;
-import static net.minecraftforge.registries.ForgeRegistries.Keys.ENTITY_DATA_SERIALIZERS;
-import static net.minecraftforge.registries.ForgeRegistries.Keys.ENTITY_TYPES;
-import static net.minecraftforge.registries.ForgeRegistries.Keys.FEATURES;
-import static net.minecraftforge.registries.ForgeRegistries.Keys.FLUIDS;
-import static net.minecraftforge.registries.ForgeRegistries.Keys.FLUID_TYPES;
-import static net.minecraftforge.registries.ForgeRegistries.Keys.FOLIAGE_PLACER_TYPES;
-import static net.minecraftforge.registries.ForgeRegistries.Keys.GLOBAL_LOOT_MODIFIER_SERIALIZERS;
-import static net.minecraftforge.registries.ForgeRegistries.Keys.ITEMS;
-import static net.minecraftforge.registries.ForgeRegistries.Keys.MEMORY_MODULE_TYPES;
-import static net.minecraftforge.registries.ForgeRegistries.Keys.MENU_TYPES;
-import static net.minecraftforge.registries.ForgeRegistries.Keys.MOB_EFFECTS;
-import static net.minecraftforge.registries.ForgeRegistries.Keys.PAINTING_VARIANTS;
-import static net.minecraftforge.registries.ForgeRegistries.Keys.PARTICLE_TYPES;
-import static net.minecraftforge.registries.ForgeRegistries.Keys.POI_TYPES;
-import static net.minecraftforge.registries.ForgeRegistries.Keys.POTIONS;
-import static net.minecraftforge.registries.ForgeRegistries.Keys.RECIPE_SERIALIZERS;
-import static net.minecraftforge.registries.ForgeRegistries.Keys.RECIPE_TYPES;
-import static net.minecraftforge.registries.ForgeRegistries.Keys.SCHEDULES;
-import static net.minecraftforge.registries.ForgeRegistries.Keys.SENSOR_TYPES;
-import static net.minecraftforge.registries.ForgeRegistries.Keys.SOUND_EVENTS;
-import static net.minecraftforge.registries.ForgeRegistries.Keys.STAT_TYPES;
-import static net.minecraftforge.registries.ForgeRegistries.Keys.TREE_DECORATOR_TYPES;
-import static net.minecraftforge.registries.ForgeRegistries.Keys.VILLAGER_PROFESSIONS;
-import static net.minecraftforge.registries.ForgeRegistries.Keys.WORLD_CARVERS;
-import static net.minecraftforge.registries.ForgeRegistry.REGISTRIES;
 
 /**
  * INTERNAL ONLY
@@ -108,6 +73,7 @@ import static net.minecraftforge.registries.ForgeRegistry.REGISTRIES;
 public class GameData
 {
     private static final Logger LOGGER = LogManager.getLogger();
+    private static Marker REGISTRIES = ForgeRegistry.REGISTRIES;
     private static final int MAX_VARINT = Integer.MAX_VALUE - 1; //We were told it is their intention to have everything in a reg be unlimited, so assume that until we find cases where it isnt.
 
     private static final ResourceLocation BLOCK_TO_ITEM = new ResourceLocation("minecraft:blocktoitemmap");
@@ -134,52 +100,52 @@ public class GameData
         hasInit = true;
 
         // Game objects
-        makeRegistry(BLOCKS, "air").addCallback(BlockCallbacks.INSTANCE).legacyName("blocks").intrusiveHolderCallback(Block::builtInRegistryHolder).create();
-        makeRegistry(FLUIDS, "empty").intrusiveHolderCallback(Fluid::builtInRegistryHolder).create();
-        makeRegistry(ITEMS, "air").addCallback(ItemCallbacks.INSTANCE).legacyName("items").intrusiveHolderCallback(Item::builtInRegistryHolder).create();
-        makeRegistry(MOB_EFFECTS).legacyName("potions").create();
-        makeRegistry(SOUND_EVENTS).legacyName("soundevents").create();
-        makeRegistry(POTIONS, "empty").legacyName("potiontypes").create();
-        makeRegistry(ENCHANTMENTS).legacyName("enchantments").create();
-        makeRegistry(ENTITY_TYPES, "pig").legacyName("entities").intrusiveHolderCallback(EntityType::builtInRegistryHolder).create();
-        makeRegistry(BLOCK_ENTITY_TYPES).disableSaving().legacyName("blockentities").create();
-        makeRegistry(PARTICLE_TYPES).disableSaving().create();
-        makeRegistry(MENU_TYPES).disableSaving().create();
-        makeRegistry(PAINTING_VARIANTS, "kebab").create();
-        makeRegistry(RECIPE_TYPES).disableSaving().disableSync().create();
-        makeRegistry(RECIPE_SERIALIZERS).disableSaving().create();
-        makeRegistry(ATTRIBUTES).onValidate(AttributeCallbacks.INSTANCE).disableSaving().disableSync().create();
-        makeRegistry(STAT_TYPES).create();
-        makeRegistry(COMMAND_ARGUMENT_TYPES).disableSaving().create();
+        makeRegistry(Keys.BLOCKS, "air").addCallback(BlockCallbacks.INSTANCE).legacyName("blocks").intrusiveHolderCallback(Block::builtInRegistryHolder).create();
+        makeRegistry(Keys.FLUIDS, "empty").intrusiveHolderCallback(Fluid::builtInRegistryHolder).create();
+        makeRegistry(Keys.ITEMS, "air").addCallback(ItemCallbacks.INSTANCE).legacyName("items").intrusiveHolderCallback(Item::builtInRegistryHolder).create();
+        makeRegistry(Keys.MOB_EFFECTS).legacyName("potions").create();
+        makeRegistry(Keys.SOUND_EVENTS).legacyName("soundevents").create();
+        makeRegistry(Keys.POTIONS, "empty").legacyName("potiontypes").create();
+        makeRegistry(Keys.ENCHANTMENTS).legacyName("enchantments").create();
+        makeRegistry(Keys.ENTITY_TYPES, "pig").legacyName("entities").intrusiveHolderCallback(EntityType::builtInRegistryHolder).create();
+        makeRegistry(Keys.BLOCK_ENTITY_TYPES).disableSaving().legacyName("blockentities").create();
+        makeRegistry(Keys.PARTICLE_TYPES).disableSaving().create();
+        makeRegistry(Keys.MENU_TYPES).disableSaving().create();
+        makeRegistry(Keys.PAINTING_VARIANTS, "kebab").create();
+        makeRegistry(Keys.RECIPE_TYPES).disableSaving().disableSync().create();
+        makeRegistry(Keys.RECIPE_SERIALIZERS).disableSaving().create();
+        makeRegistry(Keys.ATTRIBUTES).onValidate(AttributeCallbacks.INSTANCE).disableSaving().disableSync().create();
+        makeRegistry(Keys.STAT_TYPES).create();
+        makeRegistry(Keys.COMMAND_ARGUMENT_TYPES).disableSaving().create();
 
         // Villagers
-        makeRegistry(VILLAGER_PROFESSIONS, "none").create();
-        makeRegistry(POI_TYPES).addCallback(PointOfInterestTypeCallbacks.INSTANCE).disableSync().create();
-        makeRegistry(MEMORY_MODULE_TYPES, "dummy").disableSync().create();
-        makeRegistry(SENSOR_TYPES, "dummy").disableSaving().disableSync().create();
-        makeRegistry(SCHEDULES).disableSaving().disableSync().create();
-        makeRegistry(ACTIVITIES).disableSaving().disableSync().create();
+        makeRegistry(Keys.VILLAGER_PROFESSIONS, "none").create();
+        makeRegistry(Keys.POI_TYPES).addCallback(PointOfInterestTypeCallbacks.INSTANCE).disableSync().create();
+        makeRegistry(Keys.MEMORY_MODULE_TYPES, "dummy").disableSync().create();
+        makeRegistry(Keys.SENSOR_TYPES, "dummy").disableSaving().disableSync().create();
+        makeRegistry(Keys.SCHEDULES).disableSaving().disableSync().create();
+        makeRegistry(Keys.ACTIVITIES).disableSaving().disableSync().create();
 
         // Worldgen
-        makeRegistry(WORLD_CARVERS).disableSaving().disableSync().create();
-        makeRegistry(FEATURES).disableSaving().disableSync().create();
-        makeRegistry(CHUNK_STATUS, "empty").disableSaving().disableSync().create();
-        makeRegistry(BLOCK_STATE_PROVIDER_TYPES).disableSaving().disableSync().create();
-        makeRegistry(FOLIAGE_PLACER_TYPES).disableSaving().disableSync().create();
-        makeRegistry(TREE_DECORATOR_TYPES).disableSaving().disableSync().create();
+        makeRegistry(Keys.WORLD_CARVERS).disableSaving().disableSync().create();
+        makeRegistry(Keys.FEATURES).disableSaving().disableSync().create();
+        makeRegistry(Keys.CHUNK_STATUS, "empty").disableSaving().disableSync().create();
+        makeRegistry(Keys.BLOCK_STATE_PROVIDER_TYPES).disableSaving().disableSync().create();
+        makeRegistry(Keys.FOLIAGE_PLACER_TYPES).disableSaving().disableSync().create();
+        makeRegistry(Keys.TREE_DECORATOR_TYPES).disableSaving().disableSync().create();
 
         // Dynamic Worldgen
-        makeRegistry(BIOMES).disableSync().create();
+        makeRegistry(Keys.BIOMES).disableSync().create();
     }
 
     static RegistryBuilder<EntityDataSerializer<?>> getDataSerializersRegistryBuilder()
     {
-        return makeRegistry(ENTITY_DATA_SERIALIZERS, 256 /*vanilla space*/, MAX_VARINT).disableSaving().disableOverrides();
+        return makeRegistry(Keys.ENTITY_DATA_SERIALIZERS, 256 /*vanilla space*/, MAX_VARINT).disableSaving().disableOverrides();
     }
 
     static RegistryBuilder<Codec<? extends IGlobalLootModifier>> getGLMSerializersRegistryBuilder()
     {
-        return makeRegistry(GLOBAL_LOOT_MODIFIER_SERIALIZERS).disableSaving().disableSync();
+        return makeRegistry(Keys.GLOBAL_LOOT_MODIFIER_SERIALIZERS).disableSaving().disableSync();
     }
 
     static RegistryBuilder<Codec<? extends BiomeModifier>> getBiomeModifierSerializersRegistryBuilder()
@@ -194,7 +160,7 @@ public class GameData
 
     static RegistryBuilder<FluidType> getFluidTypeRegistryBuilder()
     {
-        return makeRegistry(FLUID_TYPES).disableSaving();
+        return makeRegistry(Keys.FLUID_TYPES).disableSaving();
     }
 
     static RegistryBuilder<HolderSetType> getHolderSetTypeRegistryBuilder()
@@ -246,19 +212,19 @@ public class GameData
     @SuppressWarnings("unchecked")
     public static Map<Block,Item> getBlockItemMap()
     {
-        return RegistryManager.ACTIVE.getRegistry(ITEMS).getSlaveMap(BLOCK_TO_ITEM, Map.class);
+        return RegistryManager.ACTIVE.getRegistry(Keys.ITEMS).getSlaveMap(BLOCK_TO_ITEM, Map.class);
     }
 
     @SuppressWarnings("unchecked")
     public static IdMapper<BlockState> getBlockStateIDMap()
     {
-        return RegistryManager.ACTIVE.getRegistry(BLOCKS).getSlaveMap(BLOCKSTATE_TO_ID, IdMapper.class);
+        return RegistryManager.ACTIVE.getRegistry(Keys.BLOCKS).getSlaveMap(BLOCKSTATE_TO_ID, IdMapper.class);
     }
 
     @SuppressWarnings("unchecked")
     public static Map<BlockState, PoiType> getBlockStatePointOfInterestTypeMap()
     {
-        return RegistryManager.ACTIVE.getRegistry(POI_TYPES).getSlaveMap(BLOCKSTATE_TO_POINT_OF_INTEREST_TYPE, Map.class);
+        return RegistryManager.ACTIVE.getRegistry(Keys.POI_TYPES).getSlaveMap(BLOCKSTATE_TO_POINT_OF_INTEREST_TYPE, Map.class);
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -532,7 +498,7 @@ public class GameData
         public void onCreate(IForgeRegistryInternal<Item> owner, RegistryManager stage)
         {
             // We share the blockItem map between items and blocks registries
-            Map<?, ?> map = stage.getRegistry(BLOCKS).getSlaveMap(BLOCK_TO_ITEM, Map.class);
+            Map<?, ?> map = stage.getRegistry(Keys.BLOCKS).getSlaveMap(BLOCK_TO_ITEM, Map.class);
             owner.setSlaveMap(BLOCK_TO_ITEM, map);
         }
     }

@@ -28,8 +28,6 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
-import static net.minecraftforge.common.util.TextTable.column;
-
 @Mod(LazyCapabilitiesOnItemsTest.MOD_ID)
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD, modid = LazyCapabilitiesOnItemsTest.MOD_ID)
 public class LazyCapabilitiesOnItemsTest
@@ -146,8 +144,8 @@ public class LazyCapabilitiesOnItemsTest
             bus.unregister(capAttachmentHandler);
 
             TextTable table = new TextTable(Lists.newArrayList(
-              column("Test type", TextTable.Alignment.LEFT),
-              column("Total time", TextTable.Alignment.CENTER)
+                TextTable.column("Test type", TextTable.Alignment.LEFT),
+                TextTable.column("Total time", TextTable.Alignment.CENTER)
             ));
 
             table.add("Lazy: Disabled / Caps: None", simpleNoCapsLazyDisabledElapsed + " ms.");

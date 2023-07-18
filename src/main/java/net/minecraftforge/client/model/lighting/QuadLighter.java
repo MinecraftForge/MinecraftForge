@@ -14,11 +14,11 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.client.model.IQuadTransformer;
+
 import org.joml.Vector3f;
 
 import java.util.Objects;
-
-import static net.minecraftforge.client.model.IQuadTransformer.*;
 
 /**
  * Base class for all quad lighting providers.
@@ -84,15 +84,15 @@ public abstract class QuadLighter
         var vertices = quad.getVertices();
         for (int i = 0; i < 4; i++)
         {
-            int offset = i * STRIDE;
-            positions[i][0] = Float.intBitsToFloat(vertices[offset + POSITION]);
-            positions[i][1] = Float.intBitsToFloat(vertices[offset + POSITION + 1]);
-            positions[i][2] = Float.intBitsToFloat(vertices[offset + POSITION + 2]);
-            int packedNormal = vertices[offset + NORMAL];
+            int offset = i * IQuadTransformer.STRIDE;
+            positions[i][0] = Float.intBitsToFloat(vertices[offset + IQuadTransformer.POSITION]);
+            positions[i][1] = Float.intBitsToFloat(vertices[offset + IQuadTransformer.POSITION + 1]);
+            positions[i][2] = Float.intBitsToFloat(vertices[offset + IQuadTransformer.POSITION + 2]);
+            int packedNormal = vertices[offset + IQuadTransformer.NORMAL];
             normals[i][0] = (byte) (packedNormal & 0xFF);
             normals[i][1] = (byte) ((packedNormal >> 8) & 0xFF);
             normals[i][2] = (byte) ((packedNormal >> 16) & 0xFF);
-            packedLightmaps[i] = vertices[offset + UV2];
+            packedLightmaps[i] = vertices[offset + IQuadTransformer.UV2];
         }
         if (normals[0][0] == 0 && normals[0][1] == 0 && normals[0][2] == 0)
         {

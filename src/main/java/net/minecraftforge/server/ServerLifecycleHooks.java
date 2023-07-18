@@ -5,8 +5,6 @@
 
 package net.minecraftforge.server;
 
-import static net.minecraftforge.fml.Logging.CORE;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -30,6 +28,7 @@ import net.minecraft.server.packs.repository.RepositorySource;
 import net.minecraft.world.level.storage.LevelResource;
 import net.minecraftforge.common.world.StructureModifier;
 import net.minecraftforge.fml.DistExecutor;
+import net.minecraftforge.fml.Logging;
 import net.minecraftforge.common.util.LogicalSidedProvider;
 import net.minecraftforge.common.world.BiomeModifier;
 import net.minecraftforge.fml.ModLoader;
@@ -215,7 +214,7 @@ public class ServerLifecycleHooks
                 ModLoader.get().addWarning(new ModLoadingWarning(mod, ModLoadingStage.ERROR, "fml.modloading.brokenresources", e.getKey()));
                 continue;
             }
-            LOGGER.debug(CORE, "Generating PackInfo named {} for mod file {}", name, e.getKey().getFilePath());
+            LOGGER.debug(Logging.CORE, "Generating PackInfo named {} for mod file {}", name, e.getKey().getFilePath());
             packAcceptor.accept(modPack);
         }
     }

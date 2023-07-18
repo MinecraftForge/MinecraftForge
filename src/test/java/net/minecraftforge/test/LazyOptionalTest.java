@@ -8,13 +8,12 @@ package net.minecraftforge.test;
 import com.mojang.datafixers.util.Unit;
 import net.minecraftforge.common.util.LazyOptional;
 import org.apache.commons.lang3.mutable.MutableInt;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class LazyOptionalTest
 {
@@ -49,8 +48,8 @@ public class LazyOptionalTest
         {
             thread.join();
         }
-        assertEquals(threads.size(), successfulThreads.get());
-        assertEquals(1, supplierCalls.get());
+        Assertions.assertEquals(threads.size(), successfulThreads.get());
+        Assertions.assertEquals(1, supplierCalls.get());
     }
 
     @Test
@@ -62,6 +61,6 @@ public class LazyOptionalTest
         });
         badLazy.ifPresent(u -> {});
         badLazy.ifPresent(u -> {});
-        assertEquals(1, supplierCalls.intValue());
+        Assertions.assertEquals(1, supplierCalls.intValue());
     }
 }

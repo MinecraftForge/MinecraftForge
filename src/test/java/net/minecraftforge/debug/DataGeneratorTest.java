@@ -5,8 +5,6 @@
 
 package net.minecraftforge.debug;
 
-import static net.minecraftforge.debug.DataGeneratorTest.MODID;
-
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -130,7 +128,7 @@ import net.minecraft.world.level.block.StairBlock;
 import net.minecraft.world.level.block.TrapDoorBlock;
 
 @SuppressWarnings("deprecation")
-@Mod(MODID)
+@Mod(DataGeneratorTest.MODID)
 @Mod.EventBusSubscriber(bus = Bus.MOD)
 public class DataGeneratorTest
 {

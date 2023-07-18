@@ -5,6 +5,7 @@
 
 package net.minecraftforge.server.console;
 
+import com.google.common.base.Preconditions;
 import com.mojang.brigadier.ParseResults;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.suggestion.Suggestion;
@@ -21,8 +22,6 @@ import org.jline.reader.ParsedLine;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 final class ConsoleCommandCompleter implements Completer
 {
     private static final Logger logger = LogManager.getLogger();
@@ -30,7 +29,7 @@ final class ConsoleCommandCompleter implements Completer
 
     public ConsoleCommandCompleter(DedicatedServer server)
     {
-        this.server = checkNotNull(server, "server");
+        this.server = Preconditions.checkNotNull(server, "server");
     }
 
     @Override
