@@ -148,6 +148,7 @@ import net.minecraftforge.client.gui.overlay.GuiOverlayManager;
 import net.minecraftforge.client.model.data.ModelData;
 import net.minecraftforge.client.textures.ForgeTextureMetadata;
 import net.minecraftforge.client.textures.TextureAtlasSpriteLoaderManager;
+import net.minecraftforge.common.ForgeConfig;
 import net.minecraftforge.common.ForgeI18n;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.MinecraftForge;
@@ -1232,6 +1233,8 @@ public class ForgeHooksClient
      * from associated matrix multiplication (such as during {@link SheetedDecalTextureGenerator#endVertex()}
      * can cause the direction chosen to be unstable.
      *
+     * The function will only take effect if the Forge Client config option "stabilizeDirectionGetNearest" is enabled.
+     *
      * This is a port of the downstream changes from https://github.com/neoforged/NeoForge PR #26
      *
      * @param nX X component of the normal
@@ -1241,18 +1244,20 @@ public class ForgeHooksClient
      */
    public static Direction getNearestStable(float nX, float nY, float nZ)
    {
-       Direction ret = Direction.NORTH;
-       float sum = Float.MIN_VALUE;
-
-       for(Direction dir : Direction.values()) {
-           float newSum = nX * (float)dir.getNormal().getX() + nY * (float)dir.getNormal().getY() + nZ * (float)dir.getNormal().getZ();
-           if (newSum > sum + Constants.EPSILON) {
-               sum = newSum;
-               ret = dir;
+       if (ForgeConfig.CLIENT.stabilizeDirectionGetNearest.get()) {
+           Direction ret = Direction.NORTH;
+           float sum = Float.MIN_VALUE;
+           for(Direction dir : Direction.values()) {
+               float newSum = nX * (float)dir.getNormal().getX() + nY * (float)dir.getNormal().getY() + nZ * (float)dir.getNormal().getZ();
+               if (newSum > sum + Constants.EPSILON) {
+                   sum = newSum;
+                   ret = dir;
+               }
            }
+           return ret;
+       } else {
+           return Direction.getNearest(nX, nY, nZ);
        }
-
-       return ret;
     }
 
     // Make sure the below method is only ever called once (by forge).
