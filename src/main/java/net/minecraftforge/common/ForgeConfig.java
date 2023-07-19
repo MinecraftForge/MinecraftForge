@@ -106,6 +106,8 @@ public class ForgeConfig {
         @Deprecated(since = "1.20.1", forRemoval = true) // Config option ignored.
         public final BooleanValue compressLanIPv6Addresses;
 
+        public final BooleanValue stabilizeDirectionGetNearest;
+
         Client(ForgeConfigSpec.Builder builder) {
             builder.comment("Client only settings, mostly things related to rendering")
                    .push("client");
@@ -136,6 +138,11 @@ public class ForgeConfig {
                     .comment("[DEPRECATED] Does nothing anymore, IPv6 addresses will be compressed always")
                     .translation("forge.configgui.compressLanIPv6Addresses")
                     .define("compressLanIPv6Addresses", true);
+
+            stabilizeDirectionGetNearest = builder
+                    .comment("When enabled, a slightly biased Direction#getNearest calculation will be used to prevent normal fighting on 45 degree angle faces.")
+                    .translation("forge.configgui.stabilizeDirectionGetNearest")
+                    .define("stabilizeDirectionGetNearest", true);
 
             builder.pop();
         }
