@@ -512,7 +512,7 @@ public class ForgeHooksClient
     public static void fillNormal(int[] faceData, Direction facing, boolean calculateNormals)
     {
         Vector3f v2;
-        if (calculateNormals) {
+        if (calculateNormals || ForgeConfig.CLIENT.calculateAllNormals.get()) {
             Vector3f v1 = getVertexPos(faceData, 3);
             Vector3f t1 = getVertexPos(faceData, 1);
             v2 = getVertexPos(faceData, 2);

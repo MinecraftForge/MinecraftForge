@@ -195,6 +195,8 @@
   "forge.configgui.indexVanillaPackCachesOnThread": "Index vanilla resource packs on thread",
   "forge.configgui.indexModPackCachesOnThread.tooltip": "Set this to true to index mod resource and data packs on thread",
   "forge.configgui.indexModPackCachesOnThread": "Index mod resource packs on thread",
+  "forge.configgui.calculateAllNormals": "Calculate All Normals",
+  "forge.configgui.calculateAllNormals.tooltip": "During block model baking, manually calculates the normal for all faces. You will need to reload your resources to see results.",
   "forge.configgui.stabilizeDirectionGetNearest": "Stabilize Direction Get Nearest",
   "forge.configgui.stabilizeDirectionGetNearest.tooltip": "When enabled, a slightly biased Direction#getNearest calculation will be used to prevent normal fighting on 45 degree angle faces.",
 
