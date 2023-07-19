@@ -60,7 +60,7 @@
           return new IllegalStateException("Unregistered creative tab: " + this);
        });
 -      this.f_256824_.m_257865_(p_270156_, creativemodetab$itemdisplaybuilder);
-+      net.minecraftforge.client.ForgeHooksClient.onCreativeModeTabBuildContents(this, resourcekey, this.f_256824_, p_270156_, creativemodetab$itemdisplaybuilder);
++      net.minecraftforge.common.ForgeHooks.onCreativeModeTabBuildContents(this, resourcekey, this.f_256824_, p_270156_, creativemodetab$itemdisplaybuilder);
        this.f_243839_ = creativemodetab$itemdisplaybuilder.f_244363_;
        this.f_243841_ = creativemodetab$itemdisplaybuilder.f_244585_;
        this.m_257466_();
