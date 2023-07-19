@@ -6,7 +6,7 @@
       "tag": "forge:rods/wooden"
     },
     "X": {
-      "item": "minecraft:string"
+      "tag": "forge:string"
     }
   },
   "pattern": [
