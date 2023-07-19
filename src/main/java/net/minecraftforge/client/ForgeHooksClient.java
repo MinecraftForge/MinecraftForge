@@ -12,8 +12,10 @@ import com.mojang.blaze3d.shaders.FogShape;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.SheetedDecalTextureGenerator;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.datafixers.util.Either;
+import com.mojang.math.Constants;
 import net.minecraft.FileUtil;
 import net.minecraft.client.Camera;
 import net.minecraft.client.KeyMapping;
@@ -1210,6 +1212,39 @@ public class ForgeHooksClient
     {
         // Bounce to ForgeHooks.onCreativeModeBuildContents(...)
         ForgeHooks.onCreativeModeTabBuildContents(tab, tabKey, originalGenerator, params, output);
+    }
+
+    /**
+     * This function is a clone of {@link Direction#getNearest(float, float, float)} designed to return a consistent
+     * direction when the normal is at an inflection point (ie 45 degrees) rounding errors
+     * from associated matrix multiplication (such as during {@link SheetedDecalTextureGenerator#endVertex()}
+     * can cause the direction chosen to be unstable.
+     *
+     * The function will only take effect if the Forge Client config option "stabilizeDirectionGetNearest" is enabled.
+     *
+     * This is a port of the downstream changes from https://github.com/neoforged/NeoForge PR #26
+     *
+     * @param nX X component of the normal
+     * @param nY Y component of the normal
+     * @param nZ Z component of the normal
+     * @return the nearest Direction to the passed in normal, biased slightly in favor of the order of declaration
+     */
+   public static Direction getNearestStable(float nX, float nY, float nZ)
+   {
+       if (ForgeConfig.CLIENT.stabilizeDirectionGetNearest.get()) {
+           Direction ret = Direction.NORTH;
+           float sum = Float.MIN_VALUE;
+           for(Direction dir : Direction.values()) {
+               float newSum = nX * (float)dir.getNormal().getX() + nY * (float)dir.getNormal().getY() + nZ * (float)dir.getNormal().getZ();
+               if (newSum > sum + Constants.EPSILON) {
+                   sum = newSum;
+                   ret = dir;
+               }
+           }
+           return ret;
+       } else {
+           return Direction.getNearest(nX, nY, nZ);
+       }
     }
 
     // Make sure the below method is only ever called once (by forge).

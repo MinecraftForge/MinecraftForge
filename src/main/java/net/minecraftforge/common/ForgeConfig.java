@@ -108,6 +108,9 @@ public class ForgeConfig {
 
         public final BooleanValue calculateAllNormals;
 
+        public final BooleanValue stabilizeDirectionGetNearest;
+
+
         Client(ForgeConfigSpec.Builder builder) {
             builder.comment("Client only settings, mostly things related to rendering")
                    .push("client");
@@ -147,6 +150,11 @@ public class ForgeConfig {
                             "You will need to reload your resources to see results.")
                     .translation("forge.configgui.calculateAllNormals")
                     .define("calculateAllNormals", false);
+
+            stabilizeDirectionGetNearest = builder
+                    .comment("When enabled, a slightly biased Direction#getNearest calculation will be used to prevent normal fighting on 45 degree angle faces.")
+                    .translation("forge.configgui.stabilizeDirectionGetNearest")
+                    .define("stabilizeDirectionGetNearest", true);
 
             builder.pop();
         }
