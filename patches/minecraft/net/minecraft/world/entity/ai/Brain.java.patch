@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/ai/Brain.java
 +++ b/net/minecraft/world/entity/ai/Brain.java
-@@ -478,6 +_,28 @@
+@@ -478,6 +_,30 @@
        return builder.build();
     }
  
@@ -14,6 +14,7 @@
 +      builder.addActivityMemoriesToEraseWhenStoppedFrom(this.f_21848_);
 +      builder.getCoreActivities().addAll(this.f_21849_);
 +      builder.setDefaultActivity(this.f_21851_);
++      builder.setActiveActivites(this.f_21850_);
 +      return builder;
 +   }
 +
@@ -24,6 +25,7 @@
 +      builder.addActivityMemoriesToEraseWhenStoppedTo(this.f_21848_);
 +      this.m_21930_(builder.getCoreActivities());
 +      this.m_21944_(builder.getDefaultActivity());
++      this.f_21850_.addAll(builder.getActiveActivites());
 +   }
 +
     static final class MemoryValue<U> {
