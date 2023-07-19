@@ -2,20 +2,21 @@
   "type": "minecraft:crafting_shaped",
   "category": "equipment",
   "key": {
-    "#": {
-      "tag": "forge:rods/wooden"
+    "O": {
+      "item": "minecraft:slime_ball"
     },
-    "X": {
+    "~": {
       "tag": "forge:string"
     }
   },
   "pattern": [
-    " #X",
-    "# X",
-    " #X"
+    "~~ ",
+    "~O ",
+    "  ~"
   ],
   "result": {
-    "item": "minecraft:bow"
+    "count": 2,
+    "item": "minecraft:lead"
   },
   "show_notification": true
 }

@@ -1,5 +1,34 @@
 --- a/net/minecraft/tags/TagLoader.java
 +++ b/net/minecraft/tags/TagLoader.java
+@@ -59,6 +_,7 @@
+                tagfile.f_215959_().forEach((p_215997_) -> {
+                   list.add(new TagLoader.EntryWithSource(p_215997_, s));
+                });
++               tagfile.remove().forEach(e -> list.add(new TagLoader.EntryWithSource(e, s, true)));
+             } catch (Exception exception) {
+                f_13445_.error("Couldn't read tag list {} from {} in data pack {}", resourcelocation1, resourcelocation, resource.m_215506_(), exception);
+             }
+@@ -69,16 +_,17 @@
+    }
+ 
+    private Either<Collection<TagLoader.EntryWithSource>, Collection<T>> m_215978_(TagEntry.Lookup<T> p_215979_, List<TagLoader.EntryWithSource> p_215980_) {
+-      ImmutableSet.Builder<T> builder = ImmutableSet.builder();
++      var builder = new java.util.HashSet<T>();
+       List<TagLoader.EntryWithSource> list = new ArrayList<>();
+ 
+       for(TagLoader.EntryWithSource tagloader$entrywithsource : p_215980_) {
+-         if (!tagloader$entrywithsource.f_216042_().m_215927_(p_215979_, builder::add)) {
++         if (!tagloader$entrywithsource.f_216042_().m_215927_(p_215979_, tagloader$entrywithsource.remove() ? builder::remove : builder::add)) {
++            if (!tagloader$entrywithsource.remove()) // Treat all removals as optional at runtime. If it was missing, then it could of never been added.
+             list.add(tagloader$entrywithsource);
+          }
+       }
+ 
+-      return list.isEmpty() ? Either.right(builder.build()) : Either.left(list);
++      return list.isEmpty() ? Either.right(List.copyOf(builder)) : Either.left(list);
+    }
+ 
+    public Map<ResourceLocation, Collection<T>> m_203898_(Map<ResourceLocation, List<TagLoader.EntryWithSource>> p_203899_) {
 @@ -100,7 +_,7 @@
        });
        dependencysorter.m_284430_((p_284682_, p_284683_) -> {
@@ -9,3 +38,13 @@
           }).ifRight((p_216001_) -> {
              map.put(p_284682_, p_216001_);
           });
+@@ -112,7 +_,8 @@
+       return this.m_203898_(this.m_144495_(p_203901_));
+    }
+ 
+-   public static record EntryWithSource(TagEntry f_216042_, String f_216043_) {
++   public static record EntryWithSource(TagEntry f_216042_, String f_216043_, boolean remove) {
++      public EntryWithSource(TagEntry f_216042_, String f_216043_) { this(f_216042_, f_216043_, false); }
+       public String toString() {
+          return this.f_216042_ + " (from " + this.f_216043_ + ")";
+       }
