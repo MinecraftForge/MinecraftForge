@@ -1,21 +1,20 @@
 {
   "type": "minecraft:crafting_shaped",
-  "category": "equipment",
+  "category": "misc",
   "key": {
     "#": {
-      "tag": "forge:rods/wooden"
+      "tag": "minecraft:planks"
     },
-    "X": {
+    "@": {
       "tag": "forge:string"
     }
   },
   "pattern": [
-    " #X",
-    "# X",
-    " #X"
+    "@@",
+    "##"
   ],
   "result": {
-    "item": "minecraft:bow"
+    "item": "minecraft:loom"
   },
   "show_notification": true
 }

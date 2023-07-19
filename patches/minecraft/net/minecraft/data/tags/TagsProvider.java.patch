@@ -66,9 +66,12 @@
           Predicate<ResourceLocation> predicate = (p_255496_) -> {
              return registrylookup.m_254902_(ResourceKey.m_135785_(this.f_254716_, p_255496_)).isPresent();
           };
-@@ -77,12 +_,13 @@
+@@ -75,14 +_,16 @@
+             ResourceLocation resourcelocation = p_255499_.getKey();
+             TagBuilder tagbuilder = p_255499_.getValue();
              List<TagEntry> list = tagbuilder.m_215904_();
-             List<TagEntry> list1 = list.stream().filter((p_274771_) -> {
+-            List<TagEntry> list1 = list.stream().filter((p_274771_) -> {
++            List<TagEntry> list1 = java.util.stream.Stream.concat(list.stream(), tagbuilder.getRemoveEntries()).filter((p_274771_) -> {
                 return !p_274771_.m_215940_(predicate, predicate1);
 -            }).toList();
 +            }).filter(this::missing).toList(); // Forge: Add validation via existing resources
@@ -77,7 +80,8 @@
              } else {
 -               JsonElement jsonelement = TagFile.f_215958_.encodeStart(JsonOps.INSTANCE, new TagFile(list, false)).getOrThrow(false, f_126541_::error);
 -               Path path = this.f_236439_.m_245731_(resourcelocation);
-+               JsonElement jsonelement = TagFile.f_215958_.encodeStart(JsonOps.INSTANCE, new TagFile(list, tagbuilder.isReplace())).getOrThrow(false, f_126541_::error);
++               var removed = tagbuilder.getRemoveEntries().toList();
++               JsonElement jsonelement = TagFile.f_215958_.encodeStart(JsonOps.INSTANCE, new TagFile(list, tagbuilder.isReplace(), removed)).getOrThrow(false, f_126541_::error);
 +               Path path = this.getPath(resourcelocation);
 +               if (path == null) return CompletableFuture.completedFuture(null); // Forge: Allow running this data provider without writing it. Recipe provider needs valid tags.
                 return DataProvider.m_253162_(p_253684_, jsonelement, path);

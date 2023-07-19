@@ -1,21 +1,22 @@
 {
   "type": "minecraft:crafting_shaped",
-  "category": "equipment",
+  "category": "misc",
   "key": {
-    "#": {
-      "tag": "forge:rods/wooden"
+    "I": {
+      "item": "minecraft:bamboo"
     },
-    "X": {
+    "~": {
       "tag": "forge:string"
     }
   },
   "pattern": [
-    " #X",
-    "# X",
-    " #X"
+    "I~I",
+    "I I",
+    "I I"
   ],
   "result": {
-    "item": "minecraft:bow"
+    "count": 6,
+    "item": "minecraft:scaffolding"
   },
   "show_notification": true
 }

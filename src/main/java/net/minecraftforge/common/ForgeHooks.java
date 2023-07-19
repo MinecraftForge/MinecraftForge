@@ -134,7 +134,9 @@ import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.common.util.BrainBuilder;
 import net.minecraftforge.common.util.Lazy;
 import net.minecraftforge.common.util.MavenVersionStringHelper;
+import net.minecraftforge.common.util.MutableHashedLinkedMap;
 import net.minecraftforge.event.AnvilUpdateEvent;
+import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.event.DifficultyChangeEvent;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.GrindstoneEvent;
@@ -1081,22 +1083,8 @@ public class ForgeHooks
         return false;
     }
 
-    public static <T> void deserializeTagAdditions(List<TagEntry> list, JsonObject json, List<TagEntry> allList)
-    {
-        if (json.has("remove"))
-        {
-            for (JsonElement entry : GsonHelper.getAsJsonArray(json, "remove"))
-            {
-                String s = GsonHelper.convertToString(entry, "value");
-                TagEntry dummy;
-                if (!s.startsWith("#"))
-                    dummy = TagEntry.optionalElement(new ResourceLocation(s));
-                else
-                    dummy = TagEntry.tag(new ResourceLocation(s.substring(1)));
-                allList.removeIf(e -> e.equals(dummy));
-            }
-        }
-    }
+    @Deprecated(forRemoval = true, since = "1.20.1") // Tags use a codec now This was never used in 1.20
+    public static <T> void deserializeTagAdditions(List<TagEntry> list, JsonObject json, List<TagEntry> allList) {}
 
     @Nullable
     public static EntityDataSerializer<?> getSerializer(int id, CrudeIncrementalIntIdentityHashBiMap<EntityDataSerializer<?>> vanilla)
@@ -1617,5 +1605,28 @@ public class ForgeHooks
         {
             entity.stopRiding();
         }
+    }
+
+    public static void onCreativeModeTabBuildContents(CreativeModeTab tab, ResourceKey<CreativeModeTab> tabKey, CreativeModeTab.DisplayItemsGenerator originalGenerator, CreativeModeTab.ItemDisplayParameters params, CreativeModeTab.Output output)
+    {
+        final var entries = new MutableHashedLinkedMap<ItemStack, CreativeModeTab.TabVisibility>(ItemStackLinkedSet.TYPE_AND_TAG,
+                (key, left, right) -> {
+                    //throw new IllegalStateException("Accidentally adding the same item stack twice " + key.getDisplayName().getString() + " to a Creative Mode Tab: " + tab.getDisplayName().getString());
+                    // Vanilla adds enchanting books twice in both visibilities.
+                    // This is just code cleanliness for them. For us lets just increase the visibility and merge the entries.
+                    return CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS;
+                }
+        );
+
+        originalGenerator.accept(params, (stack, vis) -> {
+            if (stack.getCount() != 1)
+                throw new IllegalArgumentException("The stack count must be 1");
+            entries.put(stack, vis);
+        });
+
+        ModLoader.get().postEvent(new BuildCreativeModeTabContentsEvent(tab, tabKey, params, entries));
+
+        for (var entry : entries)
+            output.accept(entry.getKey(), entry.getValue());
     }
 }

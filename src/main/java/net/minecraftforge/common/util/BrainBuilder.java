@@ -48,6 +48,7 @@ public class BrainBuilder<E extends LivingEntity> {
     private final Map<Activity, Set<Pair<MemoryModuleType<?>, MemoryStatus>>> activityRequirements = Maps.newHashMap();
     private final Map<Activity, Set<MemoryModuleType<?>>> activityMemoriesToEraseWhenStopped = Maps.newHashMap();
     private final Set<Activity> coreActivities = Sets.newHashSet();
+    private final Set<Activity> activeActivites = Sets.newHashSet();
     private Activity defaultActivity = Activity.IDLE;
 
     public BrainBuilder(Brain<E> ignoredBrain) {}
@@ -94,6 +95,15 @@ public class BrainBuilder<E extends LivingEntity> {
 
     public void setDefaultActivity(Activity defaultActivity) {
         this.defaultActivity = defaultActivity;
+    }
+
+    public Set<Activity> getActiveActivites() {
+        return this.activeActivites;
+    }
+
+    public void setActiveActivites(Set<Activity> value) {
+        this.activeActivites.clear();
+        this.activeActivites.addAll(value);
     }
 
     /** You may use this as a helper method for adding a behavior to an Activity by priority to an entity's brain. */
