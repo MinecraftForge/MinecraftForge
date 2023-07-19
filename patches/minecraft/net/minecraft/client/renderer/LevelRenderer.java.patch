@@ -18,11 +18,12 @@
        float f = this.f_109461_.f_91073_.m_46722_(1.0F) / (Minecraft.m_91405_() ? 1.0F : 2.0F);
        if (!(f <= 0.0F)) {
           RandomSource randomsource = RandomSource.m_216335_((long)this.f_109477_ * 312987231L);
-@@ -1145,11 +_,13 @@
+@@ -1145,11 +_,14 @@
        RenderSystem.clear(16640, Minecraft.f_91002_);
        float f = p_109605_.m_109152_();
        boolean flag1 = this.f_109461_.f_91073_.m_104583_().m_5781_(Mth.m_14107_(d0), Mth.m_14107_(d1)) || this.f_109461_.f_91065_.m_93090_().m_93715_();
 +      FogRenderer.m_234172_(p_109604_, FogRenderer.FogMode.FOG_SKY, f, flag1, p_109601_);
++      net.minecraftforge.client.ForgeHooksClient.onLevelRenderingStart(profilerfiller);
        profilerfiller.m_6182_("sky");
        RenderSystem.setShader(GameRenderer::m_172808_);
        this.m_202423_(p_109600_, p_254120_, p_109601_, p_109604_, flag1, () -> {
@@ -160,7 +161,7 @@
           this.m_173012_(p_109604_);
           RenderStateShard.f_110127_.m_110188_();
           this.f_109418_.m_110023_(p_109601_);
-@@ -1384,6 +_,7 @@
+@@ -1384,9 +_,12 @@
           RenderSystem.depthMask(false);
           profilerfiller.m_6182_("weather");
           this.m_109703_(p_109606_, p_109601_, d0, d1, d2);
@@ -168,6 +169,39 @@
           this.m_173012_(p_109604_);
           RenderSystem.depthMask(true);
        }
++
++      net.minecraftforge.client.ForgeHooksClient.onLevelRenderingEnd(profilerfiller);
+ 
+       posestack.m_85849_();
+       RenderSystem.applyModelViewMatrix();
+@@ -1412,9 +_,13 @@
+    }
+ 
+    private void m_172993_(RenderType p_172994_, PoseStack p_172995_, double p_172996_, double p_172997_, double p_172998_, Matrix4f p_254039_) {
++      net.minecraftforge.client.ForgeHooksClient.renderChunkGeometry(p_172994_, p_172995_, p_172996_, p_172997_, p_172998_, p_254039_);
++   }
++
++   public void renderChunkGeometryForLayer(RenderType p_172994_, PoseStack p_172995_, double p_172996_, double p_172997_, double p_172998_, Matrix4f p_254039_, java.util.function.Consumer<ShaderInstance> afterSetupAction, java.util.function.Consumer<ShaderInstance> postRenderAction) {
+       RenderSystem.assertOnRenderThread();
+       p_172994_.m_110185_();
+-      if (p_172994_ == RenderType.m_110466_()) {
++      if (p_172994_.f_110393_) {
+          this.f_109461_.m_91307_().m_6180_("translucent_sort");
+          double d0 = p_172996_ - this.f_109445_;
+          double d1 = p_172997_ - this.f_109446_;
+@@ -1515,8 +_,12 @@
+                uniform.m_85633_();
+             }
+ 
++            afterSetupAction.accept(shaderinstance);
++
+             vertexbuffer.m_85921_();
+             vertexbuffer.m_166882_();
++
++            postRenderAction.accept(shaderinstance);
+          }
+       }
+ 
 @@ -1527,6 +_,7 @@
        shaderinstance.m_173362_();
        VertexBuffer.m_85931_();

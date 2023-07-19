@@ -106,6 +106,8 @@ public class ForgeConfig {
         @Deprecated(since = "1.20.1", forRemoval = true) // Config option ignored.
         public final BooleanValue compressLanIPv6Addresses;
 
+        public final BooleanValue orderIndependentTransparentRendering;
+
         Client(ForgeConfigSpec.Builder builder) {
             builder.comment("Client only settings, mostly things related to rendering")
                    .push("client");
@@ -136,6 +138,11 @@ public class ForgeConfig {
                     .comment("[DEPRECATED] Does nothing anymore, IPv6 addresses will be compressed always")
                     .translation("forge.configgui.compressLanIPv6Addresses")
                     .define("compressLanIPv6Addresses", true);
+
+            orderIndependentTransparentRendering = builder
+                    .comment("When enabled, Forge will use order independent transparency to render transparent blocks. This may improve performance, but may also cause issues with some mods.")
+                    .translation("forge.configgui.orderIndependentTransparentRendering")
+                    .define("orderIndependentTransparentRendering", true);
 
             builder.pop();
         }

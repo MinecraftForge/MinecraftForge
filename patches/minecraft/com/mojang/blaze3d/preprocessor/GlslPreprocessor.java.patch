@@ -1,0 +1,55 @@
+--- a/com/mojang/blaze3d/preprocessor/GlslPreprocessor.java
++++ b/com/mojang/blaze3d/preprocessor/GlslPreprocessor.java
+@@ -14,13 +_,33 @@
+ import net.minecraftforge.api.distmarker.OnlyIn;
+ 
+ @OnlyIn(Dist.CLIENT)
+-public abstract class GlslPreprocessor {
++public abstract class GlslPreprocessor implements net.minecraftforge.client.renderer.IForgeGlslPreprocessor {
+    private static final String f_166454_ = "/\\*(?:[^*]|\\*+[^*/])*\\*+/";
+    private static final String f_166455_ = "//[^\\v]*";
+    private static final Pattern f_166456_ = Pattern.compile("(#(?:/\\*(?:[^*]|\\*+[^*/])*\\*+/|\\h)*moj_import(?:/\\*(?:[^*]|\\*+[^*/])*\\*+/|\\h)*(?:\"(.*)\"|<(.*)>))");
+    private static final Pattern f_166457_ = Pattern.compile("(#(?:/\\*(?:[^*]|\\*+[^*/])*\\*+/|\\h)*version(?:/\\*(?:[^*]|\\*+[^*/])*\\*+/|\\h)*(\\d+))\\b");
+    private static final Pattern f_166458_ = Pattern.compile("(?:^|\\v)(?:\\s|/\\*(?:[^*]|\\*+[^*/])*\\*+/|(//[^\\v]*))*\\z");
+ 
++   private final Pattern importPattern;
++   private final String importPatternPrefix;
++
++   public GlslPreprocessor()
++   {
++      this.importPattern = f_166456_;
++      this.importPatternPrefix = "moj_import";
++   }
++
++   public GlslPreprocessor(String importPatternPrefix)
++   {
++       this.importPattern = Pattern.compile("(#(?:/\\*(?:[^*]|\\*+[^*/])*\\*+/|\\h)*%s(?:/\\*(?:[^*]|\\*+[^*/])*\\*+/|\\h)*(?:\"(.*)\"|<(.*)>))".formatted(importPatternPrefix));
++       this.importPatternPrefix = importPatternPrefix;
++   }
++
++   public List<String> process(String p_166462_, com.mojang.blaze3d.shaders.Program.Type type)
++   {
++      return m_166461_(p_166462_);
++   }
++
+    public List<String> m_166461_(String p_166462_) {
+       GlslPreprocessor.Context glslpreprocessor$context = new GlslPreprocessor.Context();
+       List<String> list = this.m_166469_(p_166462_, glslpreprocessor$context, "");
+@@ -33,7 +_,7 @@
+       int j = 0;
+       String s = "";
+       List<String> list = Lists.newArrayList();
+-      Matcher matcher = f_166456_.matcher(p_166470_);
++      Matcher matcher = importPattern.matcher(p_166470_);
+ 
+       while(matcher.find()) {
+          if (!m_166476_(p_166470_, matcher, j)) {
+@@ -62,7 +_,7 @@
+ 
+                   list.addAll(list1);
+                } else {
+-                  String s6 = flag ? String.format(Locale.ROOT, "/*#moj_import \"%s\"*/", s1) : String.format(Locale.ROOT, "/*#moj_import <%s>*/", s1);
++                  String s6 = flag ? String.format(Locale.ROOT, "/*#" + importPatternPrefix +" \"%s\"*/", s1) : String.format(Locale.ROOT, "/*#" + importPatternPrefix + " <%s>*/", s1);
+                   list.add(s + s2 + s6);
+                }
+ 

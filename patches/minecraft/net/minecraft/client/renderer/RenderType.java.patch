@@ -1,5 +1,14 @@
 --- a/net/minecraft/client/renderer/RenderType.java
 +++ b/net/minecraft/client/renderer/RenderType.java
+@@ -19,7 +_,7 @@
+ import net.minecraftforge.api.distmarker.OnlyIn;
+ 
+ @OnlyIn(Dist.CLIENT)
+-public abstract class RenderType extends RenderStateShard {
++public abstract class RenderType extends RenderStateShard implements net.minecraftforge.client.renderer.IForgeRenderType {
+    private static final int f_173153_ = 4;
+    private static final int f_173154_ = 1048576;
+    public static final int f_173148_ = 2097152;
 @@ -314,7 +_,7 @@
     }
  
@@ -42,7 +51,24 @@
     }
  
     public static RenderType m_110502_() {
-@@ -669,4 +_,17 @@
+@@ -425,14 +_,12 @@
+ 
+    public void m_276775_(BufferBuilder p_277996_, VertexSorting p_277677_) {
+       if (p_277996_.m_85732_()) {
+-         if (this.f_110393_) {
++         if (this.f_110393_ && net.minecraftforge.client.ForgeHooksClient.shouldPerformVertexSortingFor(this)) {
+             p_277996_.m_277127_(p_277677_);
+          }
+ 
+          BufferBuilder.RenderedBuffer bufferbuilder$renderedbuffer = p_277996_.m_231175_();
+-         this.m_110185_();
+-         BufferUploader.m_231202_(bufferbuilder$renderedbuffer);
+-         this.m_110188_();
++         net.minecraftforge.client.ForgeHooksClient.renderBuffer(this, bufferbuilder$renderedbuffer);
+       }
+    }
+ 
+@@ -669,4 +_,23 @@
           return this.f_110696_;
        }
     }
@@ -57,6 +83,12 @@
 +      int i = 0;
 +      for (var layer : m_110506_())
 +         layer.chunkLayerId = i++;
++   }
++
++   @Override
++   public RenderType me()
++   {
++      return this;
 +   }
 +   // FORGE END
  }

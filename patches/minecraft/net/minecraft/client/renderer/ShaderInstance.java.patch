@@ -1,8 +1,11 @@
 --- a/net/minecraft/client/renderer/ShaderInstance.java
 +++ b/net/minecraft/client/renderer/ShaderInstance.java
-@@ -98,10 +_,14 @@
+@@ -97,11 +_,17 @@
+    public final Uniform f_173319_;
     @Nullable
     public final Uniform f_173320_;
++   @Nullable
++   public final Uniform OIT_ENABLE;
  
 +   @Deprecated // FORGE: Use the ResourceLocation variant below
     public ShaderInstance(ResourceProvider p_173336_, String p_173337_, VertexFormat p_173338_) throws IOException {
@@ -17,7 +20,33 @@
  
        try (Reader reader = p_173336_.m_215597_(resourcelocation)) {
           JsonObject jsonobject = GsonHelper.m_13859_(reader);
-@@ -208,8 +_,10 @@
+@@ -164,8 +_,8 @@
+          }
+ 
+          this.f_173302_ = m_173346_(GsonHelper.m_13841_(jsonobject, "blend", (JsonObject)null));
+-         this.f_173305_ = m_173340_(p_173336_, Program.Type.VERTEX, s1);
+-         this.f_173306_ = m_173340_(p_173336_, Program.Type.FRAGMENT, s);
++         this.f_173305_ = getOrCreate(p_173336_, Program.Type.VERTEX, s1, this);
++         this.f_173306_ = getOrCreate(p_173336_, Program.Type.FRAGMENT, s, this);
+          this.f_173299_ = ProgramManager.m_85577_();
+          if (this.f_173304_ != null) {
+             int l = 0;
+@@ -202,36 +_,45 @@
+       this.f_173318_ = this.m_173348_("LineWidth");
+       this.f_173319_ = this.m_173348_("GameTime");
+       this.f_173320_ = this.m_173348_("ChunkOffset");
+-   }
+-
+-   private static Program m_173340_(final ResourceProvider p_173341_, Program.Type p_173342_, String p_173343_) throws IOException {
++      this.OIT_ENABLE = this.m_173348_(net.minecraftforge.client.ForgeHooksClient.UNIFORM_OIT_NAME);
++   }
++
++   private static Program m_173340_(final ResourceProvider p_173341_, Program.Type p_173342_, String p_173343_) throws IOException
++   {
++        return getOrCreate(p_173341_, p_173342_, p_173343_, null);
++   }
++
++   private static Program getOrCreate(final ResourceProvider p_173341_, Program.Type p_173342_, String p_173343_, @Nullable ShaderInstance shaderInstance) throws IOException {
        Program program1 = p_173342_.m_85570_().get(p_173343_);
        Program program;
        if (program1 == null) {
@@ -30,7 +59,8 @@
  
           try (InputStream inputstream = resource.m_215507_()) {
              final String s1 = FileUtil.m_179922_(s);
-@@ -217,16 +_,17 @@
+-            program = Program.m_166604_(p_173342_, p_173343_, inputstream, resource.m_215506_(), new GlslPreprocessor() {
++            program = Program.compileShader(p_173342_, p_173343_, inputstream, resource.m_215506_(), net.minecraftforge.client.ForgeHooksClient.onShaderProgramCreation(new GlslPreprocessor() {
                 private final Set<String> f_173369_ = Sets.newHashSet();
  
                 public String m_142138_(boolean p_173374_, String p_173375_) {
@@ -52,3 +82,21 @@
                          return "#error " + ioexception.getMessage();
                       }
                    }
+                }
+-            });
++            }, shaderInstance));
+          }
+       } else {
+          program = program1;
+@@ -501,4 +_,11 @@
+    public int m_108943_() {
+       return this.f_173299_;
+    }
++
++   ///FORGE START
++   public void registerCustomUniform(Uniform uniform)
++   {
++      this.f_173331_.add(uniform);
++   }
++   ///FORGE END
+ }

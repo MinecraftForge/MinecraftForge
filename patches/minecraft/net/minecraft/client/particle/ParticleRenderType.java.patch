@@ -1,0 +1,67 @@
+--- a/net/minecraft/client/particle/ParticleRenderType.java
++++ b/net/minecraft/client/particle/ParticleRenderType.java
+@@ -29,6 +_,9 @@
+       public String toString() {
+          return "TERRAIN_SHEET";
+       }
++
++      @Override
++      public boolean requiresTransparencySorting() { return true; }
+    };
+    ParticleRenderType f_107430_ = new ParticleRenderType() {
+       public void m_6505_(BufferBuilder p_107448_, TextureManager p_107449_) {
+@@ -46,6 +_,9 @@
+       public String toString() {
+          return "PARTICLE_SHEET_OPAQUE";
+       }
++
++      @Override
++      public boolean requiresTransparencySorting() { return false; }
+    };
+    ParticleRenderType f_107431_ = new ParticleRenderType() {
+       public void m_6505_(BufferBuilder p_107455_, TextureManager p_107456_) {
+@@ -63,6 +_,9 @@
+       public String toString() {
+          return "PARTICLE_SHEET_TRANSLUCENT";
+       }
++
++      @Override
++      public boolean requiresTransparencySorting() { return true; }
+    };
+    ParticleRenderType f_107432_ = new ParticleRenderType() {
+       public void m_6505_(BufferBuilder p_107462_, TextureManager p_107463_) {
+@@ -79,6 +_,9 @@
+       public String toString() {
+          return "PARTICLE_SHEET_LIT";
+       }
++
++      @Override
++      public boolean requiresTransparencySorting() { return false; }
+    };
+    ParticleRenderType f_107433_ = new ParticleRenderType() {
+       public void m_6505_(BufferBuilder p_107469_, TextureManager p_107470_) {
+@@ -92,6 +_,9 @@
+       public String toString() {
+          return "CUSTOM";
+       }
++
++      @Override
++      public boolean requiresTransparencySorting() { return false; }
+    };
+    ParticleRenderType f_107434_ = new ParticleRenderType() {
+       public void m_6505_(BufferBuilder p_107476_, TextureManager p_107477_) {
+@@ -103,9 +_,14 @@
+       public String toString() {
+          return "NO_RENDER";
+       }
++
++      @Override
++      public boolean requiresTransparencySorting() { return false; }
+    };
+ 
+    void m_6505_(BufferBuilder p_107436_, TextureManager p_107437_);
+ 
+    void m_6294_(Tesselator p_107438_);
++
++   boolean requiresTransparencySorting();
+ }
