@@ -1201,7 +1201,7 @@ public class ForgeHooksClient
         return new ResourceLocation(loc.getNamespace(), normalised);
     }
 
-    @Deprecated
+    @Deprecated(forRemoval = true, since = "1.20.1")
     public static void onCreativeModeTabBuildContents(CreativeModeTab tab, ResourceKey<CreativeModeTab> tabKey, CreativeModeTab.DisplayItemsGenerator originalGenerator, CreativeModeTab.ItemDisplayParameters params, CreativeModeTab.Output output)
     {
         final var entries = new MutableHashedLinkedMap<ItemStack, CreativeModeTab.TabVisibility>(ItemStackLinkedSet.TYPE_AND_TAG,
