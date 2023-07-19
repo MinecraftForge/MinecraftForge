@@ -1081,22 +1081,8 @@ public class ForgeHooks
         return false;
     }
 
-    public static <T> void deserializeTagAdditions(List<TagEntry> list, JsonObject json, List<TagEntry> allList)
-    {
-        if (json.has("remove"))
-        {
-            for (JsonElement entry : GsonHelper.getAsJsonArray(json, "remove"))
-            {
-                String s = GsonHelper.convertToString(entry, "value");
-                TagEntry dummy;
-                if (!s.startsWith("#"))
-                    dummy = TagEntry.optionalElement(new ResourceLocation(s));
-                else
-                    dummy = TagEntry.tag(new ResourceLocation(s.substring(1)));
-                allList.removeIf(e -> e.equals(dummy));
-            }
-        }
-    }
+    @Deprecated(forRemoval = true, since = "1.20.1") // Tags use a codec now This was never used in 1.20
+    public static <T> void deserializeTagAdditions(List<TagEntry> list, JsonObject json, List<TagEntry> allList) {}
 
     @Nullable
     public static EntityDataSerializer<?> getSerializer(int id, CrudeIncrementalIntIdentityHashBiMap<EntityDataSerializer<?>> vanilla)
