@@ -106,6 +106,8 @@ public class ForgeConfig {
         @Deprecated(since = "1.20.1", forRemoval = true) // Config option ignored.
         public final BooleanValue compressLanIPv6Addresses;
 
+        public final BooleanValue calculateAllNormals;
+
         Client(ForgeConfigSpec.Builder builder) {
             builder.comment("Client only settings, mostly things related to rendering")
                    .push("client");
@@ -136,6 +138,15 @@ public class ForgeConfig {
                     .comment("[DEPRECATED] Does nothing anymore, IPv6 addresses will be compressed always")
                     .translation("forge.configgui.compressLanIPv6Addresses")
                     .define("compressLanIPv6Addresses", true);
+
+            calculateAllNormals = builder
+                    .comment("During block model baking, manually calculates the normal for all faces.",
+                            "This was the default behavior of forge between versions 31.0 and 47.1.",
+                            "May result in differences between vanilla rendering and forge rendering.",
+                            "Will only produce differences for blocks that contain non-axis aligned faces.",
+                            "You will need to reload your resources to see results.")
+                    .translation("forge.configgui.calculateAllNormals")
+                    .define("calculateAllNormals", false);
 
             builder.pop();
         }

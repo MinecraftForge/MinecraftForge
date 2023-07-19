@@ -146,6 +146,7 @@ import net.minecraftforge.client.gui.overlay.GuiOverlayManager;
 import net.minecraftforge.client.model.data.ModelData;
 import net.minecraftforge.client.textures.ForgeTextureMetadata;
 import net.minecraftforge.client.textures.TextureAtlasSpriteLoaderManager;
+import net.minecraftforge.common.ForgeConfig;
 import net.minecraftforge.common.ForgeI18n;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.MinecraftForge;
@@ -508,7 +509,7 @@ public class ForgeHooksClient
     public static void fillNormal(int[] faceData, Direction facing, boolean calculateNormals)
     {
         Vector3f v2;
-        if (calculateNormals) {
+        if (calculateNormals || ForgeConfig.CLIENT.calculateAllNormals.get()) {
             Vector3f v1 = getVertexPos(faceData, 3);
             Vector3f t1 = getVertexPos(faceData, 1);
             v2 = getVertexPos(faceData, 2);
