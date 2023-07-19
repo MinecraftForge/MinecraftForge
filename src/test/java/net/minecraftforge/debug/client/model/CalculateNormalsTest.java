@@ -60,6 +60,3 @@ public class CalculateNormalsTest {
     }
 
 }
-
-
-
