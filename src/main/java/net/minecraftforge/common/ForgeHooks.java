@@ -130,20 +130,8 @@ import net.minecraft.world.level.biome.MobSpawnSettings;
 import net.minecraftforge.common.loot.IGlobalLootModifier;
 import net.minecraftforge.common.loot.LootModifierManager;
 import net.minecraftforge.common.loot.LootTableIdCondition;
-import net.minecraftforge.common.util.BlockSnapshot;
-import net.minecraftforge.common.util.BrainBuilder;
-import net.minecraftforge.common.util.Lazy;
-import net.minecraftforge.common.util.MavenVersionStringHelper;
-import net.minecraftforge.event.AnvilUpdateEvent;
-import net.minecraftforge.event.DifficultyChangeEvent;
-import net.minecraftforge.event.ForgeEventFactory;
-import net.minecraftforge.event.GrindstoneEvent;
-import net.minecraftforge.event.ItemAttributeModifierEvent;
-import net.minecraftforge.event.ItemStackedOnOtherEvent;
-import net.minecraftforge.event.ModMismatchEvent;
-import net.minecraftforge.event.ServerChatEvent;
-import net.minecraftforge.event.RegisterStructureConversionsEvent;
-import net.minecraftforge.event.VanillaGameEvent;
+import net.minecraftforge.common.util.*;
+import net.minecraftforge.event.*;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.event.entity.EntityAttributeModificationEvent;
 import net.minecraftforge.event.entity.EntityEvent;
@@ -1617,5 +1605,28 @@ public class ForgeHooks
         {
             entity.stopRiding();
         }
+    }
+
+    public static void onCreativeModeTabBuildContents(CreativeModeTab tab, ResourceKey<CreativeModeTab> tabKey, CreativeModeTab.DisplayItemsGenerator originalGenerator, CreativeModeTab.ItemDisplayParameters params, CreativeModeTab.Output output)
+    {
+        final var entries = new MutableHashedLinkedMap<ItemStack, CreativeModeTab.TabVisibility>(ItemStackLinkedSet.TYPE_AND_TAG,
+                (key, left, right) -> {
+                    //throw new IllegalStateException("Accidentally adding the same item stack twice " + key.getDisplayName().getString() + " to a Creative Mode Tab: " + tab.getDisplayName().getString());
+                    // Vanilla adds enchanting books twice in both visibilities.
+                    // This is just code cleanliness for them. For us lets just increase the visibility and merge the entries.
+                    return CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS;
+                }
+        );
+
+        originalGenerator.accept(params, (stack, vis) -> {
+            if (stack.getCount() != 1)
+                throw new IllegalArgumentException("The stack count must be 1");
+            entries.put(stack, vis);
+        });
+
+        ModLoader.get().postEvent(new BuildCreativeModeTabContentsEvent(tab, tabKey, params, entries));
+
+        for (var entry : entries)
+            output.accept(entry.getKey(), entry.getValue());
     }
 }
