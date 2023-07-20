@@ -1,10 +1,11 @@
 --- a/net/minecraft/client/renderer/entity/LivingEntityRenderer.java
 +++ b/net/minecraft/client/renderer/entity/LivingEntityRenderer.java
-@@ -49,14 +_,17 @@
+@@ -49,14 +_,18 @@
     }
  
     public void m_7392_(T p_115308_, float p_115309_, float p_115310_, PoseStack p_115311_, MultiBufferSource p_115312_, int p_115313_) {
-+      if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.RenderLivingEvent.Pre<T, M>(p_115308_, this, p_115310_, p_115311_, p_115312_, p_115313_))) return;
++      if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.RenderLivingEvent.AboutToRender<T, M>(p_115308_, this, p_115310_, p_115311_, p_115312_, p_115313_))) return;
++      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.RenderLivingEvent.Pre<T, M>(p_115308_, this, p_115310_, p_115311_, p_115312_, p_115313_));
        p_115311_.m_85836_();
        this.f_115290_.f_102608_ = this.m_115342_(p_115308_, p_115310_);
 -      this.f_115290_.f_102609_ = p_115308_.m_20159_();

@@ -20,6 +20,7 @@ import org.jetbrains.annotations.ApiStatus;
  * Fired when a player is being rendered.
  * See the two subclasses for listening for before and after rendering.
  *
+ * @see RenderPlayerEvent.AboutToRender
  * @see RenderPlayerEvent.Pre
  * @see RenderPlayerEvent.Post
  * @see PlayerRenderer
@@ -87,16 +88,31 @@ public abstract class RenderPlayerEvent extends PlayerEvent
 
     /**
      * Fired <b>before</b> the player is rendered.
-     * This can be used for rendering additional effects or suppressing rendering.
+     * This should be used for suppressing rendering.
      *
      * <p>This event is {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}.
-     * If this event is cancelled, then the player will not be rendered and the corresponding
-     * {@link RenderPlayerEvent.Post} will not be fired.</p>
+     * If this event is cancelled, then the player will not be rendered.
      *
      * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
      * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
     @Cancelable
+    public static class AboutToRender extends RenderPlayerEvent
+    {
+        @ApiStatus.Internal
+        public AboutToRender(Player player, PlayerRenderer renderer, float partialTick, PoseStack poseStack, MultiBufferSource multiBufferSource, int packedLight) {
+            super(player, renderer, partialTick, poseStack, multiBufferSource, packedLight);
+        }
+    }
+
+    /**
+     * Fired <b>before</b> the player is rendered. This can be used for rendering additional effects.
+     *
+     * <p>This event is not {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}.</p>
+     *
+     * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
+     * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
+     */
     public static class Pre extends RenderPlayerEvent
     {
         @ApiStatus.Internal
@@ -104,10 +120,21 @@ public abstract class RenderPlayerEvent extends PlayerEvent
         {
             super(player, renderer, partialTick, poseStack, multiBufferSource, packedLight);
         }
+
+        /**
+         * The functionality to cancel the player render has been moved to {@link AboutToRender}
+         * @param cancel The new canceled value
+         */
+        @Deprecated(since = "1.20.1", forRemoval = true)
+        @Override
+        public void setCanceled(boolean cancel) {
+            super.setCanceled(cancel);
+        }
     }
 
     /**
-     * Fired <b>after</b> the player is rendered, if the corresponding {@link RenderPlayerEvent.Pre} is not cancelled.
+     * Fired <b>after</b> the player is rendered. This event can be used to render additional effects. If you have
+     * pushed to the pose stack in your pre event don't forget to pop here if you have not done so already.
      *
      * <p>This event is not {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}.</p>
      *

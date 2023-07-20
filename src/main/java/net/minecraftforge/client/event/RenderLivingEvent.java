@@ -26,6 +26,7 @@ import org.jetbrains.annotations.ApiStatus;
  *
  * @param <T> the living entity that is being rendered
  * @param <M> the model for the living entity
+ * @see RenderLivingEvent.AboutToRender
  * @see RenderLivingEvent.Pre
  * @see RenderLivingEvent.Post
  * @see RenderPlayerEvent
@@ -104,11 +105,29 @@ public abstract class RenderLivingEvent<T extends LivingEntity, M extends Entity
 
     /**
      * Fired <b>before</b> an entity is rendered.
-     * This can be used to render additional effects or suppress rendering.
+     * This should be used for suppressing rendering.
      *
-     * <p>This event is {@linkplain Cancelable cancelable}, and does not {@linkplain HasResult have a result}.
-     * If this event is cancelled, then the entity will not be rendered and the corresponding
-     * {@link RenderLivingEvent.Post} will not be fired.</p>
+     * <p>This event is {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}.
+     * If this event is cancelled, then the player will not be rendered.
+     *
+     * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
+     * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
+     */
+    @Cancelable
+    public static class AboutToRender<T extends LivingEntity, M extends EntityModel<T>> extends RenderLivingEvent<T, M>
+    {
+        @ApiStatus.Internal
+        public AboutToRender(LivingEntity entity, LivingEntityRenderer<T, M> renderer, float partialTick, PoseStack poseStack, MultiBufferSource multiBufferSource, int packedLight)
+        {
+            super(entity, renderer, partialTick, poseStack, multiBufferSource, packedLight);
+        }
+    }
+
+
+    /**
+     * Fired <b>before</b> an entity is rendered. This can be used for rendering additional effects.
+     *
+     * <p>This event is not {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}.</p>
      *
      * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
      * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
@@ -116,7 +135,6 @@ public abstract class RenderLivingEvent<T extends LivingEntity, M extends Entity
      * @param <T> the living entity that is being rendered
      * @param <M> the model for the living entity
      */
-    @Cancelable
     public static class Pre<T extends LivingEntity, M extends EntityModel<T>> extends RenderLivingEvent<T, M>
     {
         @ApiStatus.Internal
@@ -124,18 +142,26 @@ public abstract class RenderLivingEvent<T extends LivingEntity, M extends Entity
         {
             super(entity, renderer, partialTick, poseStack, multiBufferSource, packedLight);
         }
+
+        /**
+         * The functionality to cancel the living render has been moved to {@link RenderLivingEvent.AboutToRender}
+         * @param cancel The new canceled value
+         */
+        @Deprecated(since = "1.20.1", forRemoval = true)
+        @Override
+        public void setCanceled(boolean cancel) {
+            super.setCanceled(cancel);
+        }
     }
 
     /**
-     * Fired <b>after</b> an entity is rendered, if the corresponding {@link RenderLivingEvent.Post} is not cancelled.
+     * Fired <b>after</b> an entity is rendered. This event can be used to render additional effects. If you have
+     * pushed to the pose stack in your pre event don't forget to pop here if you have not done so already.
      *
-     * <p>This event is not {@linkplain Cancelable cancelable}, and does not {@linkplain HasResult have a result}.</p>
+     * <p>This event is not {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}.</p>
      *
      * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
      * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
-     *
-     * @param <T> the living entity that was rendered
-     * @param <M> the model for the living entity
      */
     public static class Post<T extends LivingEntity, M extends EntityModel<T>> extends RenderLivingEvent<T, M>
     {
