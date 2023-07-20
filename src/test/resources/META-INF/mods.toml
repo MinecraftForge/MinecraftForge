@@ -41,6 +41,12 @@ modId="mdk_datagen"
 [[mods]]
     modId="calculate_normals_test"
 
+[[mods]]
+    modId="rendering_pre_post_test"
+
+[[mods]]
+    modId="cancel_test_pig"
+
 # LEGACY TEST CASES
 ###### The mods below are from the old test framework and need to be yeeted later again.
 
