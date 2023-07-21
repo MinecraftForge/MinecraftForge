@@ -41,7 +41,7 @@
        this.m_8097_();
        this.m_6034_(0.0D, 0.0D, 0.0D);
 -      this.f_19816_ = this.m_6380_(Pose.STANDING, this.f_19815_);
-+      this.f_19815_ = this.getDimensionsForge(Pose.STANDING);
++      this.f_19815_ = this.getDimensionsFromEntityTypeForge();
 +      this.f_19816_ = this.getEyeHeightForge(Pose.STANDING, this.f_19815_);
 +      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.EntityEvent.EntityConstructing(this));
 +      this.gatherCapabilities();
@@ -604,7 +604,7 @@
     public float m_274421_() {
        return this.f_19793_;
     }
-@@ -3319,6 +_,111 @@
+@@ -3319,6 +_,119 @@
     public boolean m_142265_(Level p_146843_, BlockPos p_146844_) {
        return true;
     }
@@ -707,6 +707,14 @@
 +       EntityDimensions size = m_6972_(pose);
 +       if (size == null) size = this.f_19815_; // this is called in the entity constructor so it is possible that subclasses are not initalized and dont return anything here. So use the default.
 +       var evt = new net.minecraftforge.event.entity.EntityEvent.Size(this, pose, size, this.m_6380_(pose, size));
++       net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(evt);
++       return evt.getNewSize();
++   }
++
++   private EntityDimensions getDimensionsFromEntityTypeForge() {
++       EntityDimensions size = f_19847_.m_20680_();
++       if (size == null) size = this.f_19815_; // this is called in the entity constructor so it is possible that subclasses are not initalized and dont return anything here. So use the default.
++       var evt = new net.minecraftforge.event.entity.EntityEvent.Size(this, Pose.STANDING, size, this.m_6380_(Pose.STANDING, size));
 +       net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(evt);
 +       return evt.getNewSize();
 +   }
