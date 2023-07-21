@@ -59,7 +59,7 @@ public class RenderingPrePostTest
         }
     }
 
-    @Mod.EventBusSubscriber(value= Dist.CLIENT, bus= Mod.EventBusSubscriber.Bus.MOD)
+    @Mod.EventBusSubscriber(modid = MODID, value= Dist.CLIENT, bus= Mod.EventBusSubscriber.Bus.MOD)
     private static class RenderingPrePostTestClient
     {
         @SubscribeEvent
@@ -69,7 +69,7 @@ public class RenderingPrePostTest
         }
     }
 
-    @Mod.EventBusSubscriber(value= Dist.CLIENT, bus= Mod.EventBusSubscriber.Bus.FORGE)
+    @Mod.EventBusSubscriber(modid = MODID, value= Dist.CLIENT, bus= Mod.EventBusSubscriber.Bus.FORGE)
     private static class RaiseHeightClient
     {
 
@@ -94,7 +94,7 @@ public class RenderingPrePostTest
         }
     }
 
-    @Mod.EventBusSubscriber(value= Dist.CLIENT, bus= Mod.EventBusSubscriber.Bus.FORGE)
+    @Mod.EventBusSubscriber(modid = MODID, value= Dist.CLIENT, bus= Mod.EventBusSubscriber.Bus.FORGE)
     private static class DoublerClient
     {
         public static final boolean DO_DOUBLE = true;

@@ -19,7 +19,7 @@ public class CancelTestPigMod {
     public static final boolean DO_CANCEL = true;
 
 
-    @Mod.EventBusSubscriber(value= Dist.CLIENT, bus= Mod.EventBusSubscriber.Bus.FORGE)
+    @Mod.EventBusSubscriber(modid = MODID, value= Dist.CLIENT, bus= Mod.EventBusSubscriber.Bus.FORGE)
     private static class CancelTestPigClient
     {
 
