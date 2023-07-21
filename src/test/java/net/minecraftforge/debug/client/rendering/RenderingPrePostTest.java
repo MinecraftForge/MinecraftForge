@@ -12,8 +12,9 @@ import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.animal.Pig;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
-import net.minecraftforge.client.event.RenderLivingEvent;
+import net.minecraftforge.client.event.RenderLivingModificationEvent;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
+import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -59,7 +60,7 @@ public class RenderingPrePostTest
         }
     }
 
-    @Mod.EventBusSubscriber(value= Dist.CLIENT, bus= Mod.EventBusSubscriber.Bus.MOD)
+    @Mod.EventBusSubscriber(modid = MODID, value= Dist.CLIENT, bus= Mod.EventBusSubscriber.Bus.MOD)
     private static class RenderingPrePostTestClient
     {
         @SubscribeEvent
@@ -69,48 +70,44 @@ public class RenderingPrePostTest
         }
     }
 
-    @Mod.EventBusSubscriber(value= Dist.CLIENT, bus= Mod.EventBusSubscriber.Bus.FORGE)
+    @Mod.EventBusSubscriber(modid = MODID, value= Dist.CLIENT, bus= Mod.EventBusSubscriber.Bus.FORGE)
     private static class RaiseHeightClient
     {
+        public static final boolean DO_RAISE = true;
 
-        public static final boolean DO_RAISE = false;
-        @SubscribeEvent
-        public static void entityPre(RenderLivingEvent.Pre<?, ?> evt)
-        {
-            if (DO_RAISE && evt.getEntity().getType().equals(TEST_PIG.get()))
+        @SubscribeEvent(priority = EventPriority.HIGHEST)
+        public static void entityRender(RenderLivingModificationEvent<?, ?> ev) {
+            if (DO_RAISE && ev.getRenderer() instanceof SpecialPigRenderer)
             {
-                evt.getPoseStack().pushPose();
-                evt.getPoseStack().translate(0.0, 0.5, 0.0);
-            }
-        }
-
-        @SubscribeEvent
-        public static void entityPost(RenderLivingEvent.Post<?, ?> evt)
-        {
-            if (DO_RAISE && evt.getEntity().getType().equals(TEST_PIG.get()))
-            {
-                evt.getPoseStack().popPose();
+                ev.addConsumers(RenderLivingModificationEvent.RenderConsumers.Both(
+                        evt -> {
+                            evt.getPoseStack().pushPose();
+                            evt.getPoseStack().translate(0.0, 0.5, 0.0);
+                        },
+                        evt -> evt.getPoseStack().popPose()));
             }
         }
     }
 
-    @Mod.EventBusSubscriber(value= Dist.CLIENT, bus= Mod.EventBusSubscriber.Bus.FORGE)
+    @Mod.EventBusSubscriber(modid = MODID, value= Dist.CLIENT, bus= Mod.EventBusSubscriber.Bus.FORGE)
     private static class DoublerClient
     {
         public static final boolean DO_DOUBLE = true;
+
         @SubscribeEvent
-        public static void entityPre(RenderLivingEvent.Pre<?, ?> evt)
+        public static void entityRender(RenderLivingModificationEvent<?, ?> ev)
         {
-            if (!evt.isCanceled() && DO_DOUBLE && evt.getEntity().getType().equals(TEST_PIG.get()))
-            {
-                evt.getPoseStack().pushPose();
-                evt.getPoseStack().translate(0.0, 0.5, 0.0);
-                if (evt.getRenderer() instanceof SpecialPigRenderer pig) {
-                    pig.nestedRenderer.render((Pig)evt.getEntity(), 0.0f, evt.getPartialTick(), evt.getPoseStack(), evt.getMultiBufferSource(), evt.getPackedLight());
-                }
-                evt.getPoseStack().popPose();
+            if (DO_DOUBLE && ev.getRenderer() instanceof SpecialPigRenderer) {
+                ev.addConsumers(RenderLivingModificationEvent.RenderConsumers.Pre(evt -> {
+                    evt.getPoseStack().pushPose();
+                    evt.getPoseStack().translate(0.0, 0.5, 0.0);
+                    if (evt.getRenderer() instanceof SpecialPigRenderer pig) {
+                        pig.nestedRenderer.render((Pig)evt.getEntity(), evt.getRenderTime(),
+                                evt.getPartialTick(), evt.getPoseStack(), evt.getMultiBufferSource(), evt.getPackedLight());
+                    }
+                    evt.getPoseStack().popPose();
+                }));
             }
         }
-
     }
 }

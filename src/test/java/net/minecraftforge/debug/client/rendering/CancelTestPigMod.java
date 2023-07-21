@@ -6,7 +6,7 @@
 package net.minecraftforge.debug.client.rendering;
 
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.RenderLivingEvent;
+import net.minecraftforge.client.event.RenderLivingModificationEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -19,17 +19,18 @@ public class CancelTestPigMod {
     public static final boolean DO_CANCEL = true;
 
 
-    @Mod.EventBusSubscriber(value= Dist.CLIENT, bus= Mod.EventBusSubscriber.Bus.FORGE)
+    @Mod.EventBusSubscriber(modid = MODID, value= Dist.CLIENT, bus= Mod.EventBusSubscriber.Bus.FORGE)
     private static class CancelTestPigClient
     {
 
         @SubscribeEvent(priority = EventPriority.LOW)
-        public static void entityPre(RenderLivingEvent.Pre<?, ?> evt)
+        public static void entityRender(RenderLivingModificationEvent<?, ?> evt)
         {
             if (DO_CANCEL && evt.getRenderer() instanceof RenderingPrePostTest.SpecialPigRenderer)
             {
                 evt.setCanceled(true);
             }
         }
+
     }
 }

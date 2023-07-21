@@ -1,11 +1,14 @@
 --- a/net/minecraft/client/renderer/entity/LivingEntityRenderer.java
 +++ b/net/minecraft/client/renderer/entity/LivingEntityRenderer.java
-@@ -49,14 +_,17 @@
+@@ -49,14 +_,20 @@
     }
  
     public void m_7392_(T p_115308_, float p_115309_, float p_115310_, PoseStack p_115311_, MultiBufferSource p_115312_, int p_115313_) {
-+      if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.RenderLivingEvent.Pre<T, M>(p_115308_, this, p_115310_, p_115311_, p_115312_, p_115313_))) return;
++      net.minecraftforge.client.event.RenderLivingModificationEvent<T, M> ev = new net.minecraftforge.client.event.RenderLivingModificationEvent<T, M>(p_115308_, this, p_115309_, p_115310_, p_115311_, p_115312_, p_115313_);
++      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(ev);
++      if (ev.isCanceled()) return;
        p_115311_.m_85836_();
++      net.minecraftforge.client.event.RenderLivingModificationEvent.dispatchPre(ev);
        this.f_115290_.f_102608_ = this.m_115342_(p_115308_, p_115310_);
 -      this.f_115290_.f_102609_ = p_115308_.m_20159_();
 +
@@ -29,11 +32,11 @@
           f8 = p_115308_.f_267362_.m_267711_(p_115310_);
           f5 = p_115308_.f_267362_.m_267590_(p_115310_);
           if (p_115308_.m_6162_()) {
-@@ -131,6 +_,7 @@
+@@ -129,6 +_,7 @@
+          }
+       }
  
++      net.minecraftforge.client.event.RenderLivingModificationEvent.dispatchPost(ev);
        p_115311_.m_85849_();
        super.m_7392_(p_115308_, p_115309_, p_115310_, p_115311_, p_115312_, p_115313_);
-+      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.RenderLivingEvent.Post<T, M>(p_115308_, this, p_115310_, p_115311_, p_115312_, p_115313_));
     }
- 
-    @Nullable
