@@ -9,3 +9,12 @@
                 this.m_21828_(p_29414_);
                 this.m_9236_().m_7605_(this, (byte)7);
              } else {
+@@ -352,7 +_,7 @@
+    }
+ 
+    public boolean m_6094_() {
+-      return true;
++      return net.minecraftforge.common.ForgeHooks.onPushCheck(this, true);
+    }
+ 
+    protected void m_7324_(Entity p_29367_) {

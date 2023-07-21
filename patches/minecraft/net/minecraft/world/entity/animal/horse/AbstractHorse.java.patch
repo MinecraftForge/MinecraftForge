@@ -1,5 +1,14 @@
 --- a/net/minecraft/world/entity/animal/horse/AbstractHorse.java
 +++ b/net/minecraft/world/entity/animal/horse/AbstractHorse.java
+@@ -267,7 +_,7 @@
+    }
+ 
+    public boolean m_6094_() {
+-      return !this.m_20160_();
++      return net.minecraftforge.common.ForgeHooks.onPushCheck(this, !this.m_20160_());
+    }
+ 
+    private void m_30610_() {
 @@ -327,6 +_,7 @@
  
        this.f_30520_.m_19164_(this);

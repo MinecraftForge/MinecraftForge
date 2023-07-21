@@ -8,7 +8,9 @@ package net.minecraftforge.event.entity;
 import net.minecraft.core.SectionPos;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityDimensions;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Pose;
+import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.extensions.IForgeEntity;
 import net.minecraftforge.eventbus.api.Cancelable;
@@ -225,5 +227,42 @@ public class EntityEvent extends Event
         public float getOriginalEyeHeight() { return originalEyeHeight; }
         public float getNewEyeHeight() { return newEyeHeight; }
         public void setNewEyeHeight(float newEyeHeight) { this.newEyeHeight = newEyeHeight; }
+    }
+
+
+    /**
+     * IsPushable is fired when an Entity is about to be pushed.<br>
+     * This event is fired whenever a push check is called from
+     * {@code LivingEntity#isPushable()} and other implementations
+     * <br>
+     * This event is fired via the {@link ForgeHooks#onPushCheck(Entity, boolean)}.<br>
+     * <br>
+     * This event is not {@link Cancelable}.<br>
+     * <br>
+     * This event does not have a result. {@link HasResult}<br>
+     * <br>
+     * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
+     **/
+    public static class IsPushable extends EntityEvent
+    {
+
+        private boolean pushable;
+
+        public IsPushable(Entity entity, boolean pushable)
+        {
+            super(entity);
+
+            this.pushable = pushable;
+        }
+
+        public boolean isPushable()
+        {
+            return this.pushable;
+        }
+
+        public void setPushable(boolean pushable)
+        {
+            this.pushable = pushable;
+        }
     }
 }

@@ -533,6 +533,15 @@
           if (itemstack.m_150930_(Items.f_42741_) && ElytraItem.m_41140_(itemstack)) {
              flag = true;
              int i = this.f_20937_ + 1;
+@@ -2764,7 +_,7 @@
+    }
+ 
+    public boolean m_6094_() {
+-      return this.m_6084_() && !this.m_5833_() && !this.m_6147_();
++      return net.minecraftforge.common.ForgeHooks.onPushCheck(this, this.m_6084_() && !this.m_5833_() && !this.m_6147_());
+    }
+ 
+    public float m_6080_() {
 @@ -2821,8 +_,11 @@
  
     private void m_21329_() {

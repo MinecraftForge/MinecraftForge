@@ -376,6 +376,13 @@ public class ForgeHooks
         MinecraftForge.EVENT_BUS.post(new LivingJumpEvent(entity));
     }
 
+    public static boolean onPushCheck(Entity entity, boolean pushable)
+    {
+        var event = new EntityEvent.IsPushable(entity, pushable);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event.isPushable();
+    }
+
     @Nullable
     public static ItemEntity onPlayerTossEvent(@NotNull Player player, @NotNull ItemStack item, boolean includeName)
     {

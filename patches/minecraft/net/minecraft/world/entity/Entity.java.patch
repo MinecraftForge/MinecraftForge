@@ -247,6 +247,15 @@
     }
  
     public void m_19920_(float p_19921_, Vec3 p_19922_) {
+@@ -1525,7 +_,7 @@
+    }
+ 
+    public boolean m_6094_() {
+-      return false;
++      return net.minecraftforge.common.ForgeHooks.onPushCheck(this, false);
+    }
+ 
+    public void m_5993_(Entity p_19953_, int p_19954_, DamageSource p_19955_) {
 @@ -1620,6 +_,8 @@
              p_20241_.m_128379_("HasVisualFire", this.f_146813_);
           }

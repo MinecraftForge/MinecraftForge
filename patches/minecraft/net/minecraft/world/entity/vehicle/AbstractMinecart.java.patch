@@ -45,7 +45,7 @@
  
     public boolean m_6094_() {
 -      return true;
-+      return canBePushed;
++      return net.minecraftforge.common.ForgeHooks.onPushCheck(this, canBePushed);
     }
  
     protected Vec3 m_7643_(Direction.Axis p_38132_, BlockUtil.FoundRectangle p_38133_) {

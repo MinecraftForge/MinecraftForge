@@ -9,6 +9,15 @@
     private static final EntityDataAccessor<Integer> f_38282_ = SynchedEntityData.m_135353_(Boat.class, EntityDataSerializers.f_135028_);
     private static final EntityDataAccessor<Integer> f_38283_ = SynchedEntityData.m_135353_(Boat.class, EntityDataSerializers.f_135028_);
     private static final EntityDataAccessor<Float> f_38284_ = SynchedEntityData.m_135353_(Boat.class, EntityDataSerializers.f_135029_);
+@@ -133,7 +_,7 @@
+    }
+ 
+    public boolean m_6094_() {
+-      return true;
++      return net.minecraftforge.common.ForgeHooks.onPushCheck(this, true);
+    }
+ 
+    protected Vec3 m_7643_(Direction.Axis p_38335_, BlockUtil.FoundRectangle p_38336_) {
 @@ -455,7 +_,7 @@
              for(int i2 = i1; i2 < j1; ++i2) {
                 blockpos$mutableblockpos.m_122178_(l1, k1, i2);

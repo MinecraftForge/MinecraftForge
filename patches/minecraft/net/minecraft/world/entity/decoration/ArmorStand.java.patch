@@ -9,3 +9,12 @@
     };
     private final NonNullList<ItemStack> f_31538_ = NonNullList.m_122780_(2, ItemStack.f_41583_);
     private final NonNullList<ItemStack> f_31539_ = NonNullList.m_122780_(4, ItemStack.f_41583_);
+@@ -271,7 +_,7 @@
+    }
+ 
+    public boolean m_6094_() {
+-      return false;
++      return net.minecraftforge.common.ForgeHooks.onPushCheck(this, false);
+    }
+ 
+    protected void m_7324_(Entity p_31564_) {
