@@ -1247,7 +1247,6 @@ public class ForgeHooksClient
        }
     }
 
-
     // Make sure the below method is only ever called once (by forge).
     private static boolean initializedClientHooks = false;
     // Runs during Minecraft construction, before initial resource loading.
