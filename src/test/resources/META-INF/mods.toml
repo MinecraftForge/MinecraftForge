@@ -305,5 +305,7 @@ modId="custom_fluid_container_test"
 modId="alter_ground_event_test"
 [[mods]]
 modId="keymapping_test"
+[[mods]]
+modId="is_pushable_test"
 
 # ADD ABOVE THIS LINE
