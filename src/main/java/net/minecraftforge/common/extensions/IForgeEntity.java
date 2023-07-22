@@ -430,12 +430,10 @@ public interface IForgeEntity extends ICapabilitySerializable<CompoundTag>
         return false;
     }
 
+    @Deprecated(forRemoval = true, since = "1.20.1") // Remove Entity Eye/Size hooks, as they need to be redesigned
     default float getEyeHeightForge(Pose pose, EntityDimensions size)
     {
-        float eyeHeight = self().getEyeHeightAccess(pose, size);
-        EntityEvent.EyeHeight evt = new EntityEvent.EyeHeight(self(), pose, size, eyeHeight);
-        MinecraftForge.EVENT_BUS.post(evt);
-        return evt.getNewEyeHeight();
+        return self().getEyeHeightAccess(pose, size);
     }
 
     /**
