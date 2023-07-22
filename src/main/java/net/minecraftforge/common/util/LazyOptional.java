@@ -48,7 +48,7 @@ public class LazyOptional<T> {
     // non-null and contains non-null value -> resolved
     // non-null and contains null -> resolved, but supplier returned null (contract violation)
     private Mutable<T> resolved;
-    private Set<WeakReference<NonNullConsumer<LazyOptional<T>>>> listeners = new HashSet<>();
+    private Set<NonNullConsumer<LazyOptional<T>>> listeners = new HashSet<>();
     private boolean isValid = true;
 
     private static final @NotNull LazyOptional<Void> EMPTY = new LazyOptional<>(null);
@@ -268,7 +268,7 @@ public class LazyOptional<T> {
      */
     public void addListener(NonNullConsumer<LazyOptional<T>> listener) {
         if (isPresent())
-            this.listeners.add(new WeakReference<>(listener));
+            this.listeners.add(listener);
         else
             listener.accept(this);
     }
@@ -278,7 +278,7 @@ public class LazyOptional<T> {
      * This allows modder who know they will not need to be notified, to remove the hard reference that this holds to their listener.
      */
     public void removeListener(NonNullConsumer<LazyOptional<T>> listener) {
-        this.listeners.removeIf(e -> e.get() == null || e.get() == listener);
+        this.listeners.remove(listener);
     }
 
     /**
@@ -298,10 +298,7 @@ public class LazyOptional<T> {
     public void invalidate() {
         if (this.isValid) {
             this.isValid = false;
-            this.listeners.stream()
-                .map(WeakReference::get)
-                .filter(e -> e != null)
-                .forEach(e -> e.accept(this));
+            this.listeners.forEach(e -> e.accept(this));
             this.listeners.clear();
         }
     }
