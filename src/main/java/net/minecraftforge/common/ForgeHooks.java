@@ -1583,13 +1583,13 @@ public class ForgeHooks
 
         if (entity.getAirSupply() <= 0)
         {
-            LivingDrownEvent drownEvent = new LivingDrownEvent(entity, entity.getAirSupply() <= -20);
+            LivingDrownEvent drownEvent = new LivingDrownEvent(entity);
             if (!MinecraftForge.EVENT_BUS.post(drownEvent) && drownEvent.isDrowning())
             {
                 entity.setAirSupply(0);
                 Vec3 vec3 = entity.getDeltaMovement();
 
-                for (int i = 0; i < 8; ++i)
+                for (int i = 0; i < drownEvent.getBubbleCount(); ++i)
                 {
                     double d2 = entity.getRandom().nextDouble() - entity.getRandom().nextDouble();
                     double d3 = entity.getRandom().nextDouble() - entity.getRandom().nextDouble();
@@ -1597,7 +1597,7 @@ public class ForgeHooks
                     entity.level().addParticle(ParticleTypes.BUBBLE, entity.getX() + d2, entity.getY() + d3, entity.getZ() + d4, vec3.x, vec3.y, vec3.z);
                 }
 
-                entity.hurt(entity.damageSources().drown(), 2.0F);
+                if (drownEvent.getDamageAmount() > 0) entity.hurt(entity.damageSources().drown(), drownEvent.getDamageAmount());
             }
         }
 
