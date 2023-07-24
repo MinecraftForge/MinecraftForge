@@ -25,13 +25,15 @@ import net.minecraftforge.eventbus.api.Cancelable;
 public class LivingBreatheEvent extends LivingEvent
 {
     private boolean canBreathe;
+    private boolean canRefillAir;
     private int consumeAirAmount;
     private int refillAirAmount;
 
-    public LivingBreatheEvent(LivingEntity entity, boolean canBreathe, int consumeAirAmount, int refillAirAmount)
+    public LivingBreatheEvent(LivingEntity entity, boolean canBreathe, boolean canRefillAir, int consumeAirAmount, int refillAirAmount)
     {
         super(entity);
         this.canBreathe = canBreathe;
+        this.canRefillAir = canRefillAir;
         this.consumeAirAmount = Math.max(consumeAirAmount, 0);
         this.refillAirAmount = Math.max(refillAirAmount, 0);
     }
@@ -44,6 +46,16 @@ public class LivingBreatheEvent extends LivingEvent
     public void setCanBreathe(boolean canBreathe)
     {
         this.canBreathe = canBreathe;
+    }
+
+    public boolean canRefillAir()
+    {
+        return canRefillAir;
+    }
+
+    public void setCanRefillAir(boolean canRefillAir)
+    {
+        this.canRefillAir = canRefillAir;
     }
 
     public int getConsumeAirAmount()

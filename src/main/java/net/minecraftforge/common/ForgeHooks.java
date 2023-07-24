@@ -1569,12 +1569,15 @@ public class ForgeHooks
     public static void onLivingBreathe(LivingEntity entity, int consumeAirAmount, int refillAirAmount)
     {
         boolean isAir = entity.getEyeInFluidType().isAir() || entity.level().getBlockState(BlockPos.containing(entity.getX(), entity.getEyeY(), entity.getZ())).is(Blocks.BUBBLE_COLUMN);
-        boolean canBreathe = isAir || !entity.canDrownInFluidType(entity.getEyeInFluidType()) || MobEffectUtil.hasWaterBreathing(entity) || (entity instanceof Player && ((Player) entity).getAbilities().invulnerable);
-        LivingBreatheEvent breatheEvent = new LivingBreatheEvent(entity, canBreathe, consumeAirAmount, refillAirAmount);
+        boolean canBreathe = !entity.canDrownInFluidType(entity.getEyeInFluidType()) || MobEffectUtil.hasWaterBreathing(entity) || (entity instanceof Player && ((Player) entity).getAbilities().invulnerable);
+        LivingBreatheEvent breatheEvent = new LivingBreatheEvent(entity, isAir || canBreathe, isAir, consumeAirAmount, refillAirAmount);
         MinecraftForge.EVENT_BUS.post(breatheEvent);
         if (breatheEvent.canBreathe())
         {
-            entity.setAirSupply(Math.min(entity.getAirSupply() + breatheEvent.getRefillAirAmount(), entity.getMaxAirSupply()));
+            if (breatheEvent.canRefillAir())
+            {
+                entity.setAirSupply(Math.min(entity.getAirSupply() + breatheEvent.getRefillAirAmount(), entity.getMaxAirSupply()));
+            }
         }
         else
         {
