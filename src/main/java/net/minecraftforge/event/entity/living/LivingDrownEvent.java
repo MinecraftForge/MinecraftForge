@@ -57,6 +57,16 @@ public class LivingDrownEvent extends LivingEvent
     }
 
     /**
+     * Constructor which auto-populates with some vanilla values.
+     * 
+     * @see #LivingDrownEvent(LivingEntity, boolean, float, boolean)
+     */
+    public LivingDrownEvent(LivingEntity entity, boolean isDrowning)
+    {
+        this(entity, isDrowning, 2.0F, 8);
+    }
+
+    /**
      * This method returns true if the entity is "actively" drowning.<br>
      * For most entities, this happens when their air supply reaches -20.<br>
      * When this is true, the entity will take damage, spawn particles, and reset their air supply to 0.

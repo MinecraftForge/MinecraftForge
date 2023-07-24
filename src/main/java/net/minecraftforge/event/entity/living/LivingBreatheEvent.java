@@ -5,7 +5,9 @@
 
 package net.minecraftforge.event.entity.living;
 
+import net.minecraft.world.effect.MobEffectUtil;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Cancelable;
@@ -35,6 +37,11 @@ public class LivingBreatheEvent extends LivingEvent
         this.canRefillAir = canRefillAir;
         this.consumeAirAmount = Math.max(consumeAirAmount, 0);
         this.refillAirAmount = Math.max(refillAirAmount, 0);
+    }
+
+    public LivingBreatheEvent(LivingEntity entity, boolean canBreathe, int consumeAirAmount, int refillAirAmount)
+    {
+        this(entity, canBreathe, !entity.canDrownInFluidType(entity.getEyeInFluidType()) || MobEffectUtil.hasWaterBreathing(entity) || (entity instanceof Player && ((Player) entity).getAbilities().invulnerable), consumeAirAmount, refillAirAmount);
     }
 
     /**
