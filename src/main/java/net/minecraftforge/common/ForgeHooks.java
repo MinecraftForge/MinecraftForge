@@ -1565,10 +1565,13 @@ public class ForgeHooks
      * @param entity           The living entity which is currently updated
      * @param consumeAirAmount The amount of air to consume when the entity is unable to breathe
      * @param refillAirAmount  The amount of air to refill when the entity is able to breathe
+     * @implNote This method needs to closely replicate the logic found right after the call site in {@link LivingEntity#baseTick()} as it overrides it.
      */
     public static void onLivingBreathe(LivingEntity entity, int consumeAirAmount, int refillAirAmount)
     {
+    	// Check things that vanilla considers to be air - these will cause the air supply to be increased.
         boolean isAir = entity.getEyeInFluidType().isAir() || entity.level().getBlockState(BlockPos.containing(entity.getX(), entity.getEyeY(), entity.getZ())).is(Blocks.BUBBLE_COLUMN);
+        // The following effects cause the entity to not drown, but do not cause the air supply to be increased.
         boolean canBreathe = !entity.canDrownInFluidType(entity.getEyeInFluidType()) || MobEffectUtil.hasWaterBreathing(entity) || (entity instanceof Player && ((Player) entity).getAbilities().invulnerable);
         LivingBreatheEvent breatheEvent = new LivingBreatheEvent(entity, isAir || canBreathe, isAir, consumeAirAmount, refillAirAmount);
         MinecraftForge.EVENT_BUS.post(breatheEvent);
