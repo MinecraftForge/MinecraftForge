@@ -88,6 +88,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.ToolAction;
 import net.minecraftforge.common.capabilities.CapabilityDispatcher;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.common.extensions.IForgeEntity;
 import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.event.brewing.PlayerBrewedPotionEvent;
 import net.minecraftforge.event.brewing.PotionBrewEvent;
@@ -792,7 +793,7 @@ public class ForgeEventFactory
         MinecraftForge.EVENT_BUS.post(event);
     }
 
-    @Deprecated(forRemoval = true, since = "1.20.1") // Remove Entity Eye/Size hooks, as they need to be redesigned
+    @Deprecated(forRemoval = true, since = "1.20.1") // Remove this, as it will be replaced by IForgeEntity#getDimensionsForge(Pose) and IForgeEntity#getEyeHeightForge(Pose, EntityDimensions)
     public static net.minecraftforge.event.entity.EntityEvent.Size getEntitySizeForge(Entity entity, Pose pose, EntityDimensions size, float eyeHeight)
     {
         var evt = new EntityEvent.Size(entity, pose, size, eyeHeight);
@@ -800,7 +801,7 @@ public class ForgeEventFactory
         return evt;
     }
 
-    @Deprecated(forRemoval = true, since = "1.20.1") // Remove Entity Eye/Size hooks, as they need to be redesigned
+    @Deprecated(forRemoval = true, since = "1.20.1") // Remove this, as it will be replaced by IForgeEntity#getDimensionsForge(Pose) and IForgeEntity#getEyeHeightForge(Pose, EntityDimensions)
     public static net.minecraftforge.event.entity.EntityEvent.Size getEntitySizeForge(Entity entity, Pose pose, EntityDimensions oldSize, EntityDimensions newSize, float newEyeHeight)
     {
         var evt = new EntityEvent.Size(entity, pose, oldSize, newSize, entity.getEyeHeight(), newEyeHeight);
