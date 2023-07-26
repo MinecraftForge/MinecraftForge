@@ -1565,16 +1565,22 @@ public class ForgeHooks
      * @param entity           The living entity which is currently updated
      * @param consumeAirAmount The amount of air to consume when the entity is unable to breathe
      * @param refillAirAmount  The amount of air to refill when the entity is able to breathe
+     * @implNote This method needs to closely replicate the logic found right after the call site in {@link LivingEntity#baseTick()} as it overrides it.
      */
     public static void onLivingBreathe(LivingEntity entity, int consumeAirAmount, int refillAirAmount)
     {
+    	// Check things that vanilla considers to be air - these will cause the air supply to be increased.
         boolean isAir = entity.getEyeInFluidType().isAir() || entity.level().getBlockState(BlockPos.containing(entity.getX(), entity.getEyeY(), entity.getZ())).is(Blocks.BUBBLE_COLUMN);
-        boolean canBreathe = isAir || !entity.canDrownInFluidType(entity.getEyeInFluidType()) || MobEffectUtil.hasWaterBreathing(entity) || (entity instanceof Player && ((Player) entity).getAbilities().invulnerable);
-        LivingBreatheEvent breatheEvent = new LivingBreatheEvent(entity, canBreathe, consumeAirAmount, refillAirAmount);
+        // The following effects cause the entity to not drown, but do not cause the air supply to be increased.
+        boolean canBreathe = !entity.canDrownInFluidType(entity.getEyeInFluidType()) || MobEffectUtil.hasWaterBreathing(entity) || (entity instanceof Player && ((Player) entity).getAbilities().invulnerable);
+        LivingBreatheEvent breatheEvent = new LivingBreatheEvent(entity, isAir || canBreathe, consumeAirAmount, refillAirAmount, isAir);
         MinecraftForge.EVENT_BUS.post(breatheEvent);
         if (breatheEvent.canBreathe())
         {
-            entity.setAirSupply(Math.min(entity.getAirSupply() + breatheEvent.getRefillAirAmount(), entity.getMaxAirSupply()));
+            if (breatheEvent.canRefillAir())
+            {
+                entity.setAirSupply(Math.min(entity.getAirSupply() + breatheEvent.getRefillAirAmount(), entity.getMaxAirSupply()));
+            }
         }
         else
         {
@@ -1583,13 +1589,13 @@ public class ForgeHooks
 
         if (entity.getAirSupply() <= 0)
         {
-            LivingDrownEvent drownEvent = new LivingDrownEvent(entity, entity.getAirSupply() <= -20);
+            LivingDrownEvent drownEvent = new LivingDrownEvent(entity, entity.getAirSupply() <= -20, 2.0F, 8);
             if (!MinecraftForge.EVENT_BUS.post(drownEvent) && drownEvent.isDrowning())
             {
                 entity.setAirSupply(0);
                 Vec3 vec3 = entity.getDeltaMovement();
 
-                for (int i = 0; i < 8; ++i)
+                for (int i = 0; i < drownEvent.getBubbleCount(); ++i)
                 {
                     double d2 = entity.getRandom().nextDouble() - entity.getRandom().nextDouble();
                     double d3 = entity.getRandom().nextDouble() - entity.getRandom().nextDouble();
@@ -1597,11 +1603,11 @@ public class ForgeHooks
                     entity.level().addParticle(ParticleTypes.BUBBLE, entity.getX() + d2, entity.getY() + d3, entity.getZ() + d4, vec3.x, vec3.y, vec3.z);
                 }
 
-                entity.hurt(entity.damageSources().drown(), 2.0F);
+                if (drownEvent.getDamageAmount() > 0) entity.hurt(entity.damageSources().drown(), drownEvent.getDamageAmount());
             }
         }
 
-        if (isAir && !entity.level().isClientSide && entity.isPassenger() && entity.getVehicle() != null && !entity.getVehicle().canBeRiddenUnderFluidType(entity.getEyeInFluidType(), entity))
+        if (!isAir && !entity.level().isClientSide && entity.isPassenger() && entity.getVehicle() != null && !entity.getVehicle().canBeRiddenUnderFluidType(entity.getEyeInFluidType(), entity))
         {
             entity.stopRiding();
         }

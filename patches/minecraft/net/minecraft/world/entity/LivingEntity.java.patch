@@ -53,11 +53,12 @@
     public boolean m_6040_() {
        return this.m_6336_() == MobType.f_21641_;
     }
-@@ -352,6 +_,8 @@
+@@ -352,6 +_,9 @@
              }
           }
  
-+         net.minecraftforge.common.ForgeHooks.onLivingBreathe(this, -m_7302_(0), m_7305_(0));
++         int airSupply = this.m_20146_();
++         net.minecraftforge.common.ForgeHooks.onLivingBreathe(this, airSupply - m_7302_(airSupply), m_7305_(airSupply) - airSupply);
 +         if (false) // Forge: Handled in ForgeHooks#onLivingBreathe(LivingEntity, int, int)
           if (this.m_204029_(FluidTags.f_13131_) && !this.m_9236_().m_8055_(BlockPos.m_274561_(this.m_20185_(), this.m_20188_(), this.m_20189_())).m_60713_(Blocks.f_50628_)) {
              boolean flag1 = !this.m_6040_() && !MobEffectUtil.m_19588_(this) && (!flag || !((Player)this).m_150110_().f_35934_);

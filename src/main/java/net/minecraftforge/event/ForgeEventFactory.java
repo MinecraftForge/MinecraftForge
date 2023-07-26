@@ -40,11 +40,13 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.SpawnPlacements;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -89,6 +91,7 @@ import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.event.brewing.PlayerBrewedPotionEvent;
 import net.minecraftforge.event.brewing.PotionBrewEvent;
+import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.EntityMobGriefingEvent;
 import net.minecraftforge.event.entity.EntityMountEvent;
 import net.minecraftforge.event.entity.EntityStruckByLightningEvent;
@@ -268,7 +271,7 @@ public class ForgeEventFactory
      * @see MobSpawnEvent.FinalizeSpawn
      * @see Mob#finalizeSpawn(ServerLevelAccessor, DifficultyInstance, MobSpawnType, SpawnGroupData, CompoundTag)
      * @apiNote Callers do not need to check if the entity's spawn was cancelled, as the spawn will be blocked by Forge.
-     * @implNote Changes to the signature of this method must be reflected in the method redirector coremod. 
+     * @implNote Changes to the signature of this method must be reflected in the method redirector coremod.
      */
     @Nullable
     @SuppressWarnings("deprecation") // Call to deprecated Mob#finalizeSpawn is expected.
@@ -787,6 +790,22 @@ public class ForgeEventFactory
     {
         RegisterCommandsEvent event = new RegisterCommandsEvent(dispatcher, environment, context);
         MinecraftForge.EVENT_BUS.post(event);
+    }
+
+    @Deprecated(forRemoval = true, since = "1.20.1") // Remove Entity Eye/Size hooks, as they need to be redesigned
+    public static net.minecraftforge.event.entity.EntityEvent.Size getEntitySizeForge(Entity entity, Pose pose, EntityDimensions size, float eyeHeight)
+    {
+        var evt = new EntityEvent.Size(entity, pose, size, eyeHeight);
+        MinecraftForge.EVENT_BUS.post(evt);
+        return evt;
+    }
+
+    @Deprecated(forRemoval = true, since = "1.20.1") // Remove Entity Eye/Size hooks, as they need to be redesigned
+    public static net.minecraftforge.event.entity.EntityEvent.Size getEntitySizeForge(Entity entity, Pose pose, EntityDimensions oldSize, EntityDimensions newSize, float newEyeHeight)
+    {
+        var evt = new EntityEvent.Size(entity, pose, oldSize, newSize, entity.getEyeHeight(), newEyeHeight);
+        MinecraftForge.EVENT_BUS.post(evt);
+        return evt;
     }
 
     public static boolean canLivingConvert(LivingEntity entity, EntityType<? extends LivingEntity> outcome, Consumer<Integer> timer)
