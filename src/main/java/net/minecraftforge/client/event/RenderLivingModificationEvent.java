@@ -19,7 +19,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
-import java.util.stream.IntStream;
 
 /**
  * Fired when a {@link LivingEntity} is rendered.
@@ -42,7 +41,7 @@ public class RenderLivingModificationEvent<T extends LivingEntity, M extends Ent
     private final MultiBufferSource multiBufferSource;
     private final int packedLight;
 
-    private final float renderTime;
+    private final float yaw;
 
     public static class RenderConsumers {
         @Nullable
@@ -72,7 +71,7 @@ public class RenderLivingModificationEvent<T extends LivingEntity, M extends Ent
     private final List<RenderConsumers> consumers = new ArrayList<>();
 
     @ApiStatus.Internal
-    public RenderLivingModificationEvent(T entity, LivingEntityRenderer<T, M> renderer, float renderTime, float partialTick, PoseStack poseStack,
+    public RenderLivingModificationEvent(T entity, LivingEntityRenderer<T, M> renderer, float yaw, float partialTick, PoseStack poseStack,
                                          MultiBufferSource multiBufferSource, int packedLight)
     {
         this.entity = entity;
@@ -81,7 +80,7 @@ public class RenderLivingModificationEvent<T extends LivingEntity, M extends Ent
         this.poseStack = poseStack;
         this.multiBufferSource = multiBufferSource;
         this.packedLight = packedLight;
-        this.renderTime = renderTime;
+        this.yaw = yaw;
     }
 
     public void addConsumers(RenderConsumers consumer)
@@ -130,8 +129,8 @@ public class RenderLivingModificationEvent<T extends LivingEntity, M extends Ent
         return partialTick;
     }
 
-    public float getRenderTime() {
-        return renderTime;
+    public float getYaw() {
+        return yaw;
     }
 
     /**

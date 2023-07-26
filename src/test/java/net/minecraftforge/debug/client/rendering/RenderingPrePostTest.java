@@ -102,7 +102,7 @@ public class RenderingPrePostTest
                     evt.getPoseStack().pushPose();
                     evt.getPoseStack().translate(0.0, 0.5, 0.0);
                     if (evt.getRenderer() instanceof SpecialPigRenderer pig) {
-                        pig.nestedRenderer.render((Pig)evt.getEntity(), evt.getRenderTime(),
+                        pig.nestedRenderer.render((Pig)evt.getEntity(), evt.getYaw(),
                                 evt.getPartialTick(), evt.getPoseStack(), evt.getMultiBufferSource(), evt.getPackedLight());
                     }
                     evt.getPoseStack().popPose();
