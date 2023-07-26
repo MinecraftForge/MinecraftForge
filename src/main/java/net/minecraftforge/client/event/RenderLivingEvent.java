@@ -18,6 +18,8 @@ import net.minecraftforge.fml.LogicalSide;
 import org.jetbrains.annotations.ApiStatus;
 
 /**
+ * This class has been deprecated in favor of {@link RenderLivingModificationEvent}
+ *
  * Fired when a {@link LivingEntity} is rendered.
  * See the two subclasses to listen for before and after rendering.
  *
@@ -31,6 +33,7 @@ import org.jetbrains.annotations.ApiStatus;
  * @see RenderPlayerEvent
  * @see LivingEntityRenderer
  */
+@Deprecated(since="1.20.1")
 public abstract class RenderLivingEvent<T extends LivingEntity, M extends EntityModel<T>> extends Event
 {
     private final LivingEntity entity;
@@ -117,6 +120,7 @@ public abstract class RenderLivingEvent<T extends LivingEntity, M extends Entity
      * @param <M> the model for the living entity
      */
     @Cancelable
+    @Deprecated(since="1.20.1")
     public static class Pre<T extends LivingEntity, M extends EntityModel<T>> extends RenderLivingEvent<T, M>
     {
         @ApiStatus.Internal
@@ -137,6 +141,7 @@ public abstract class RenderLivingEvent<T extends LivingEntity, M extends Entity
      * @param <T> the living entity that was rendered
      * @param <M> the model for the living entity
      */
+    @Deprecated(since="1.20.1")
     public static class Post<T extends LivingEntity, M extends EntityModel<T>> extends RenderLivingEvent<T, M>
     {
         @ApiStatus.Internal
