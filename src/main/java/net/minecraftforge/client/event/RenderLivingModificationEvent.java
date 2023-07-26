@@ -26,6 +26,13 @@ import java.util.function.Consumer;
  * <p>Despite this event's use of generic type parameters, this is not a {@link net.minecraftforge.eventbus.api.GenericEvent},
  * and should not be treated as such (such as using generic-specific listeners, which may cause a {@link ClassCastException}).</p>
  *
+ * <p>This event is {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}.
+ * If this event is cancelled, then the entity will not be rendered and the corresponding pre and post callbacks will
+ * not be called.
+ *
+ * Use {@link RenderLivingModificationEvent#addConsumers} to add additional rendering logic before or after the main
+ * rendering has occurred.
+ *
  * @param <T> the living entity that is being rendered
  * @param <M> the model for the living entity
  * @see RenderPlayerEvent
@@ -55,14 +62,31 @@ public class RenderLivingModificationEvent<T extends LivingEntity, M extends Ent
             this.post = post;
         }
 
+        /**
+         * Use this if you only need to add logic to before the entity rendering occurs
+         * @param consumer the callback that will be called before rendering occurs
+         * @return a render consumer object for use with {@link RenderLivingModificationEvent}
+         */
         public static RenderConsumers Pre(Consumer<RenderLivingModificationEvent<?, ?>> consumer) {
             return new RenderConsumers(consumer, null);
         }
 
+        /**
+         * Use this if you only need to add logic to after the entity rendering occurs
+         * @param consumer the callback that will be called after rendering occurs
+         * @return a render consumer object for use with {@link RenderLivingModificationEvent}
+         */
         public static RenderConsumers Post(Consumer<RenderLivingModificationEvent<?, ?>> consumer) {
             return new RenderConsumers(null, consumer);
         }
 
+        /**
+         * Use this you need to add logic to both before and after the entity rendering occurs. If you are manipulating
+         * the pose stack across the rendering, make sure to call pop in your post.
+         * @param pre the callback that will be called before rendering occurs
+         * @param post the callback that will be called after rendering occurs
+         * @return a render consumer object for use with {@link RenderLivingModificationEvent}
+         */
         public static RenderConsumers Both(Consumer<RenderLivingModificationEvent<?, ?>> pre, Consumer<RenderLivingModificationEvent<?, ?>> post) {
             return new RenderConsumers(pre, post);
         }
@@ -83,6 +107,14 @@ public class RenderLivingModificationEvent<T extends LivingEntity, M extends Ent
         this.yaw = yaw;
     }
 
+    /**
+     * Add callback logic to run before or after the main rendering occurs. Replaces the old {@link RenderLivingEvent.Pre}
+     * and {@link RenderLivingEvent.Post} events. Guarantees that all post callbacks will be called in the opposite order
+     * of all pre callbacks.
+     *
+     * See {@link RenderConsumers#Pre}, {@link RenderConsumers#Post}, {@link RenderConsumers#Both}
+     * @param consumer The Renderconsumers object holding your pre/post callbacks.
+     */
     public void addConsumers(RenderConsumers consumer)
     {
         consumers.add(consumer);
@@ -129,6 +161,9 @@ public class RenderLivingModificationEvent<T extends LivingEntity, M extends Ent
         return partialTick;
     }
 
+    /**
+     * @return the yaw of the entity being rendered
+     */
     public float getYaw() {
         return yaw;
     }
