@@ -99,7 +99,7 @@ public class RenderLivingModificationEvent<T extends LivingEntity, M extends Ent
 
     void postPhase() {
         for (int i = consumers.size() - 1; i >= 0; i--) {
-            RenderConsumers con = consumers.get(i);
+            var con = consumers.get(i);
             if (con.post != null) {
                 con.post.accept(this);
             }
