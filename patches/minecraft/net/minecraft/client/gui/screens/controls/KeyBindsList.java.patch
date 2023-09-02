@@ -1,5 +1,32 @@
 --- a/net/minecraft/client/gui/screens/controls/KeyBindsList.java
 +++ b/net/minecraft/client/gui/screens/controls/KeyBindsList.java
+@@ -21,6 +_,7 @@
+ import net.minecraft.client.gui.navigation.FocusNavigationEvent;
+ import net.minecraft.network.chat.Component;
+ import net.minecraft.network.chat.MutableComponent;
++import net.minecraft.network.chat.Style;
+ import net.minecraftforge.api.distmarker.Dist;
+ import net.minecraftforge.api.distmarker.OnlyIn;
+ import org.apache.commons.lang3.ArrayUtils;
+@@ -30,6 +_,8 @@
+    final KeyBindsScreen f_193858_;
+    int f_193859_;
+ 
++   static final int NAME_SPLIT_LENGTH = 185;
++
+    public KeyBindsList(KeyBindsScreen p_193861_, Minecraft p_193862_) {
+       super(p_193862_, p_193861_.f_96543_ + 45, p_193861_.f_96544_, 20, p_193861_.f_96544_ - 32, 20);
+       this.f_193858_ = p_193861_;
+@@ -47,7 +_,8 @@
+          Component component = Component.m_237115_(keymapping.m_90860_());
+          int i = p_193862_.f_91062_.m_92852_(component);
+          if (i > this.f_193859_) {
+-            this.f_193859_ = i;
++            // Forge: Set a max width for keybind descriptions to ensure readability
++            this.f_193859_ = Math.min(i, NAME_SPLIT_LENGTH);
+          }
+ 
+          this.m_7085_(new KeyBindsList.KeyEntry(keymapping, component));
 @@ -65,7 +_,7 @@
     }
  
@@ -22,11 +49,19 @@
              KeyBindsList.this.f_93386_.f_91066_.m_92159_(p_193916_, p_193916_.m_90861_());
              KeyBindsList.this.m_269130_();
           }).m_252987_(0, 0, 50, 20).m_252778_((p_253313_) -> {
-@@ -145,7 +_,7 @@
+@@ -144,8 +_,14 @@
+ 
        public void m_6311_(PoseStack p_193923_, int p_193924_, int p_193925_, int p_193926_, int p_193927_, int p_193928_, int p_193929_, int p_193930_, boolean p_193931_, float p_193932_) {
           float f = (float)(p_193926_ + 90 - KeyBindsList.this.f_193859_);
-          KeyBindsList.this.f_93386_.f_91062_.m_92889_(p_193923_, this.f_193911_, f, (float)(p_193925_ + p_193928_ / 2 - 9 / 2), 16777215);
+-         KeyBindsList.this.f_93386_.f_91062_.m_92889_(p_193923_, this.f_193911_, f, (float)(p_193925_ + p_193928_ / 2 - 9 / 2), 16777215);
 -         this.f_193913_.m_252865_(p_193926_ + 190);
++         // Forge: Trim strings that are too long and show a tooltip when hovering over the trimmed string
++         List<net.minecraft.network.chat.FormattedText> lines = KeyBindsList.this.f_93386_.f_91062_.m_92865_().m_92414_(this.f_193911_, NAME_SPLIT_LENGTH, Style.f_131099_);
++         Component nameComponent = lines.size() > 1 ? Component.m_237113_(lines.get(0).getString() + "...") : this.f_193911_;
++         if (lines.size() > 1 && this.m_5953_(p_193929_ + 95, p_193930_) && p_193929_ < p_193926_ - 90 + KeyBindsList.this.f_193859_) {
++            KeyBindsList.this.f_193858_.m_257959_(net.minecraft.locale.Language.m_128107_().m_128112_(lines));
++         }
++         KeyBindsList.this.f_93386_.f_91062_.m_92889_(p_193923_, nameComponent, f, (float)(p_193925_ + p_193928_ / 2 - 9 / 2), 16777215);
 +         this.f_193913_.m_252865_(p_193926_ + 190 + 20);
           this.f_193913_.m_253211_(p_193925_);
           this.f_193913_.m_86412_(p_193923_, p_193929_, p_193930_, p_193932_);
