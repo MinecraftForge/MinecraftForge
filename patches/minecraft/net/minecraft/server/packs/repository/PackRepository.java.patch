@@ -5,7 +5,7 @@
     public PackRepository(Pack.PackConstructor p_10502_, RepositorySource... p_10503_) {
        this.f_10500_ = p_10502_;
 -      this.f_10497_ = ImmutableSet.copyOf(p_10503_);
-+      this.f_10497_ = new java.util.HashSet<>(java.util.Arrays.asList(p_10503_));
++      this.f_10497_ = new java.util.LinkedHashSet<>(List.of(p_10503_)); //Forge: This needs to be a mutable set, so that we can add to it later on.
     }
  
     public PackRepository(PackType p_143890_, RepositorySource... p_143891_) {
