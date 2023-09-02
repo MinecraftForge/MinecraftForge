@@ -5,7 +5,7 @@
  
     public PackRepository(RepositorySource... p_251886_) {
 -      this.f_10497_ = ImmutableSet.copyOf(p_251886_);
-+      this.f_10497_ = new java.util.HashSet<>(List.of(p_251886_)); //Forge: This needs to be a mutable set, so that we can add to it later on.
++      this.f_10497_ = new java.util.LinkedHashSet<>(List.of(p_251886_)); //Forge: This needs to be a mutable set, so that we can add to it later on.
     }
  
     public void m_10506_() {
