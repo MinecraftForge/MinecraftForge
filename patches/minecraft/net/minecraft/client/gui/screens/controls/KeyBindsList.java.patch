@@ -1,13 +1,5 @@
 --- a/net/minecraft/client/gui/screens/controls/KeyBindsList.java
 +++ b/net/minecraft/client/gui/screens/controls/KeyBindsList.java
-@@ -21,6 +_,7 @@
- import net.minecraft.client.gui.navigation.FocusNavigationEvent;
- import net.minecraft.network.chat.Component;
- import net.minecraft.network.chat.MutableComponent;
-+import net.minecraft.network.chat.Style;
- import net.minecraftforge.api.distmarker.Dist;
- import net.minecraftforge.api.distmarker.OnlyIn;
- import org.apache.commons.lang3.ArrayUtils;
 @@ -30,6 +_,8 @@
     final KeyBindsScreen f_193858_;
     int f_193859_;
@@ -56,7 +48,7 @@
 -         KeyBindsList.this.f_93386_.f_91062_.m_92889_(p_193923_, this.f_193911_, f, (float)(p_193925_ + p_193928_ / 2 - 9 / 2), 16777215);
 -         this.f_193913_.m_252865_(p_193926_ + 190);
 +         // Forge: Trim strings that are too long and show a tooltip when hovering over the trimmed string
-+         List<net.minecraft.network.chat.FormattedText> lines = KeyBindsList.this.f_93386_.f_91062_.m_92865_().m_92414_(this.f_193911_, NAME_SPLIT_LENGTH, Style.f_131099_);
++         List<net.minecraft.network.chat.FormattedText> lines = KeyBindsList.this.f_93386_.f_91062_.m_92865_().m_92414_(this.f_193911_, NAME_SPLIT_LENGTH, net.minecraft.network.chat.Style.f_131099_);
 +         Component nameComponent = lines.size() > 1 ? Component.m_237113_(lines.get(0).getString() + "...") : this.f_193911_;
 +         if (lines.size() > 1 && this.m_5953_(p_193929_ + 95, p_193930_) && p_193929_ < p_193926_ - 90 + KeyBindsList.this.f_193859_) {
 +            KeyBindsList.this.f_193858_.m_257959_(net.minecraft.locale.Language.m_128107_().m_128112_(lines));
