@@ -39,6 +39,10 @@ public abstract class CommonServerLaunchHandler extends CommonLaunchHandler {
                       !path.startsWith("META-INF/"));
             }, mcextra
         );
+
+        // Todo in 1.20.2: Possibly breaking change - make the filter null to benefit from the SecureJar.Provider.fromPath() null path filter optimisation.
+        // This is considered breaking because currently no code does null checks on the filter
+        // returned by LocatedPaths and the default filter always returns true.
         BiPredicate<String, String> filter = (path, base) -> true;
 
         var mcstream = Stream.<Path>builder().add(mc).add(mcextra_filtered.getRootPath());
