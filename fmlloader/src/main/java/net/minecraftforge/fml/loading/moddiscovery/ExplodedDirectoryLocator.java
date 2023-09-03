@@ -34,7 +34,7 @@ public class ExplodedDirectoryLocator implements IModLocator {
         explodedMods.forEach(explodedMod ->
                 ModJarMetadata.buildFile(this,
                         jar->jar.moduleDataProvider().findFile("/META-INF/mods.toml").isPresent(),
-                        (a,b) -> true,
+                        null,
                         explodedMod.paths().toArray(Path[]::new))
                 .ifPresentOrElse(f->mods.put(explodedMod, f), () -> LOGGER.warn(LogMarkers.LOADING, "Failed to find exploded resource mods.toml in directory {}", explodedMod.paths().get(0).toString())));
         return mods.values().stream().map(mf->new IModLocator.ModFileOrException(mf, null)).toList();
