@@ -21,6 +21,7 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Optional;
 
 public class FMLModContainer extends ModContainer
@@ -71,7 +72,7 @@ public class FMLModContainer extends ModContainer
         catch (Throwable e)
         {
             // When a mod constructor throws an exception, it's wrapped in an InvocationTargetException which hides the
-            // actual exception from mod loading error screen.
+            // actual exception from the mod loading error screen.
             if (e instanceof InvocationTargetException)
                 e = e.getCause(); // unwrap the exception
 
