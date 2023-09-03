@@ -70,6 +70,11 @@ public class FMLModContainer extends ModContainer
         }
         catch (Throwable e)
         {
+            // When a mod constructor throws an exception, it's wrapped in an InvocationTargetException which hides the
+            // actual exception from mod loading error screen.
+            if (e instanceof InvocationTargetException)
+                e = e.getCause(); // unwrap the exception
+
             LOGGER.error(LOADING,"Failed to create mod instance. ModID: {}, class {}", getModId(), modClass.getName(), e);
             throw new ModLoadingException(modInfo, ModLoadingStage.CONSTRUCT, "fml.modloading.failedtoloadmod", e, modClass);
         }
