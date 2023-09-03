@@ -499,6 +499,13 @@ public class ForgeGui extends Gui
         }
     }
 
+    @Override
+    public void clearCache()
+    {
+        super.clearCache();
+        this.debugOverlay.clearChunkCache();
+    }
+
     protected void renderRecordOverlay(int width, int height, float partialTick, PoseStack pStack)
     {
         if (overlayMessageTime > 0)
