@@ -22,6 +22,9 @@ license="LGPL v2.1"
 [[mods]]
     modId="shader_resources_test"
 
+#[[mods]]
+#    modId="constructor_throw_test"
+
 # LEGACY TEST CASES
 ###### The mods below are from the old test framework and need to be yeeted later again.
 
