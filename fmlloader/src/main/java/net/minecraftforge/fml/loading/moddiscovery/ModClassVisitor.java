@@ -36,7 +36,7 @@ public class ModClassVisitor extends ClassVisitor
     public void visit(int version, int access, String name, String signature, String superName, String[] interfaces)
     {
         this.asmType = Type.getObjectType(name);
-        this.asmSuperType = superName != null && superName.length() > 0 ? Type.getObjectType(superName) : null;
+        this.asmSuperType = superName != null && !superName.isEmpty() ? Type.getObjectType(superName) : null;
         this.interfaces = Stream.of(interfaces).map(Type::getObjectType).collect(Collectors.toSet());
     }
 
@@ -65,7 +65,7 @@ public class ModClassVisitor extends ClassVisitor
         classes.add(new ModFileScanData.ClassData(this.asmType, this.asmSuperType, this.interfaces));
         final List<ModFileScanData.AnnotationData> collect = this.annotations.stream().
                 filter(ma->ModFileScanData.interestingAnnotations().test(ma.getASMType())).
-                map(a -> ModAnnotation.fromModAnnotation(this.asmType, a)).collect(Collectors.toList());
+                map(a -> ModAnnotation.fromModAnnotation(this.asmType, a)).toList();
         annotations.addAll(collect);
     }
 

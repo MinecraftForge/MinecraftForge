@@ -32,9 +32,9 @@ public class BackgroundScanHandler
 
     private static final Logger LOGGER = LogUtils.getLogger();
     private final ExecutorService modContentScanner;
-    private final List<ModFile> pendingFiles;
-    private final List<ModFile> scannedFiles;
-    private final List<ModFile> allFiles;
+    //private final List<ModFile> pendingFiles;
+    //private final List<ModFile> scannedFiles;
+    //private final List<ModFile> allFiles;
     private final List<ModFile> modFiles;
     private ScanStatus status;
     private LoadingModList loadingModList;
@@ -44,11 +44,12 @@ public class BackgroundScanHandler
         modContentScanner = Executors.newSingleThreadExecutor(r -> {
             final Thread thread = Executors.defaultThreadFactory().newThread(r);
             thread.setDaemon(true);
+            thread.setName("Background Scan Handler");
             return thread;
         });
-        scannedFiles = new ArrayList<>();
-        pendingFiles = new ArrayList<>();
-        allFiles = new ArrayList<>();
+        //scannedFiles = new ArrayList<>();
+        //pendingFiles = new ArrayList<>();
+        //allFiles = new ArrayList<>();
         status = ScanStatus.NOT_STARTED;
     }
 
@@ -63,8 +64,8 @@ public class BackgroundScanHandler
         }
         status = ScanStatus.RUNNING;
         ImmediateWindowHandler.updateProgress("Scanning mod candidates");
-        allFiles.add(file);
-        pendingFiles.add(file);
+        //allFiles.add(file);
+        //pendingFiles.add(file);
         final CompletableFuture<ModFileScanData> future = CompletableFuture.supplyAsync(file::compileContent, modContentScanner)
                 .whenComplete(file::setScanResult)
                 .whenComplete((r,t)-> this.addCompletedFile(file,r,t));
@@ -76,8 +77,8 @@ public class BackgroundScanHandler
             status = ScanStatus.ERRORED;
             LOGGER.error(LogMarkers.SCAN,"An error occurred scanning file {}", file, throwable);
         }
-        pendingFiles.remove(file);
-        scannedFiles.add(file);
+        //pendingFiles.remove(file);
+        //scannedFiles.add(file);
     }
 
     public void setLoadingModList(LoadingModList loadingModList)
