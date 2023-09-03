@@ -43,7 +43,7 @@ public abstract class CommonClientLaunchHandler extends CommonLaunchHandler {
         var lowcodelang = LibraryFinder.findPathForMaven(vers.forgeGroup(), "lowcodelanguage", "", "", vers.mcAndForgeVersion());
         var mclang = LibraryFinder.findPathForMaven(vers.forgeGroup(), "mclanguage", "", "", vers.mcAndForgeVersion());
 
-        return new LocatedPaths(mcstream.build().toList(), (a,b) -> true, modstream.build().toList(), List.of(fmlcore, javafmllang, lowcodelang, mclang));
+        return new LocatedPaths(mcstream.build().toList(), null, modstream.build().toList(), List.of(fmlcore, javafmllang, lowcodelang, mclang));
     }
 
     protected abstract void processMCStream(VersionInfo versionInfo, Stream.Builder<Path> mc, Stream.Builder<List<Path>> mods);

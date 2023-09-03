@@ -31,7 +31,7 @@ public final class ModJarMetadata implements JarMetadata {
     // TODO: Remove helper functions to cleanup api
     @Deprecated(forRemoval = true, since="1.18")
     static IModFile buildFile(IModLocator locator, Path... files) {
-        return buildFile(locator, j->true, (a,b) -> true, files).orElseThrow(()->new IllegalArgumentException("Failed to find valid JAR file"));
+        return buildFile(locator, j->true, null, files).orElseThrow(()->new IllegalArgumentException("Failed to find valid JAR file"));
     }
 
     // TODO: Remove helper functions to cleanup api
